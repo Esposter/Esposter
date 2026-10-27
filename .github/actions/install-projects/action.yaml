@@ -24,3 +24,11 @@ runs:
       env:
         FILTER: ${{ inputs.filter }}
       run: pnpm --filter "$FILTER" --filter "{.}" --fail-if-no-match i
+    # The store this install left is saved only on a miss of its lockfile key, and only from the default branch and
+    # `ai/queue` (`openspec/specs/architecture/ci-caches/design.md`). A job that never restored a store has no key here
+    - name: 💾 Save the pnpm store
+      if: env.PNPM_STORE_KEY != '' && env.PNPM_STORE_HIT != 'true' && (github.ref_name == 'main' || github.ref_name == 'ai/queue')
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ env.PNPM_STORE_PATH }}
+        key: ${{ env.PNPM_STORE_KEY }}

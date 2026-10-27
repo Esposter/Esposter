@@ -11,9 +11,37 @@ runs:
       shell: bash
       run: echo "PNPM_CONFIG_AGGREGATE_OUTPUT=true" >> "$GITHUB_ENV"
     # pnpm from `packageManager`, node from `.node-version`. `install: false` because each caller owns its
-    # own install — the root alone with `--ignore-scripts` for format, `install-projects` everywhere else.
+    # own install — the root alone with `--ignore-scripts` for format, `install-projects` everywhere else. `cache`
+    # stays off: it saves under a key unique to each run, so it would save on every run. The store is keyed below.
     - name: 📦 Install pnpm and node
       uses: pnpm/setup@fa36a5ef7dcdefc3a7cb25655c122e00cf6e636e # v3.1.2
       with:
-        cache: true
         install: false
+    # Keyed on the lockfile's contents, so a lockfile already saved restores under its exact key and saves nothing.
+    # The restore falls back to the newest store of the same platform.
+    - name: 🔑 Key the pnpm store by its lockfile
+      id: pnpm-store
+      shell: bash
+      env:
+        LOCKFILE_HASH: ${{ hashFiles('pnpm-lock.yaml') }}
+      run: |
+        echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+        echo "key=pnpm-store-$RUNNER_OS-$RUNNER_ARCH-$LOCKFILE_HASH" >> "$GITHUB_OUTPUT"
+    - name: ♻️ Restore the pnpm store
+      id: pnpm-store-cache
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ steps.pnpm-store.outputs.path }}
+        key: ${{ steps.pnpm-store.outputs.key }}
+        restore-keys: pnpm-store-${{ runner.os }}-${{ runner.arch }}-
+    # install-projects saves the store its install leaves, and reads these three to save only on a miss
+    - name: 📝 Hand the pnpm store to install-projects
+      shell: bash
+      env:
+        CACHE_HIT: ${{ steps.pnpm-store-cache.outputs.cache-hit }}
+        STORE_KEY: ${{ steps.pnpm-store.outputs.key }}
+        STORE_PATH: ${{ steps.pnpm-store.outputs.path }}
+      run: |
+        echo "PNPM_STORE_HIT=$CACHE_HIT" >> "$GITHUB_ENV"
+        echo "PNPM_STORE_KEY=$STORE_KEY" >> "$GITHUB_ENV"
+        echo "PNPM_STORE_PATH=$STORE_PATH" >> "$GITHUB_ENV"

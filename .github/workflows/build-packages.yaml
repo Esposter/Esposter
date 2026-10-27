@@ -48,31 +48,30 @@ jobs:
       # readable, rather than as a missing barrel in `typecheck`
       - name: 🔍 Verify the build is complete
         uses: ./.github/actions/verify-package-builds
-      # The coverage shards only restore the hosted game data's mirror, under the lock's hash. A lock no cache holds yet
-      # is filled here, every object and index entry it names, and the cache action saves it under that key as this job
-      # ends, before any shard starts. The fill runs on the built `@esposter/shared` and `@esposter/shared-node`, so it
-      # follows the build
-      - name: ♻️ Look up the game data mirror
+      # The coverage shards only restore the hosted game data's mirror, under the lock's hash. Every branch restores the
+      # newest mirror it can see; the default branch and `ai/queue` alone fill and save one, so a lock no cache holds yet
+      # is filled there, every object and index entry it names, and saved under that key before any shard starts
+      # (`openspec/specs/architecture/ci-caches/design.md`). The fill runs on the built `@esposter/shared` and
+      # `@esposter/shared-node`, so it follows the build
+      - name: ♻️ Restore the game data mirror
         id: game-data-mirror
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ~/Esposter/cache/content
-          key: game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json') }}
-          lookup-only: true
-      # Every object is named by its hash, so whatever an earlier lock's mirror holds is still valid, and the fill
-      # downloads only what that mirror lacks
-      - name: ♻️ Restore an earlier game data mirror
-        if: steps.game-data-mirror.outputs.cache-hit != 'true'
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/Esposter/cache/content
           key: game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json') }}
           restore-keys: game-data-mirror-
-
+      # Every object is named by its hash, so whatever an earlier lock's mirror holds is still valid, and the fill
+      # downloads only what that mirror lacks
       - name: 📥 Fill the game data mirror
-        if: steps.game-data-mirror.outputs.cache-hit != 'true'
+        if: steps.game-data-mirror.outputs.cache-hit != 'true' && (github.ref_name == 'main' || github.ref_name == 'ai/queue')
         working-directory: packages/genshin-world
         run: pnpm game-data:mirror
+      - name: 💾 Save the game data mirror
+        if: steps.game-data-mirror.outputs.cache-hit != 'true' && (github.ref_name == 'main' || github.ref_name == 'ai/queue')
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/Esposter/cache/content
+          key: game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json') }}
       # `*/dist` is the build output, and the generated barrels and the `src/generated` files a build hook writes
       # (gitignored) sit beside the sources; libraries only, so their common ancestor `packages` is where the artifact
       # unpacks
