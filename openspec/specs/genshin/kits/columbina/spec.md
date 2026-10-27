@@ -4,9 +4,9 @@ Columbina's kit as built: her three strikes, charged attack, plunges, Gravity In
 
 ## Requirements
 
-### Requirement: Basic attacks deal Hydro
+### Requirement: Basic attacks deal Hydro, and Moondew Cleanse deals Dendro
 
-Columbina's normal attacks SHALL be three strikes, a charged attack, a collision attack and two plunging attacks, and every hit SHALL deal Hydro damage that applies one unit of Hydro gauge.
+Columbina's normal attacks SHALL be three strikes, a charged attack, a collision attack and two plunging attacks. Her strikes SHALL deal Hydro damage that applies one unit of Hydro gauge, her plunges SHALL deal Hydro damage that applies one unit on landing and none on the collision, and her charged attack SHALL deal Hydro damage at one unit while no Dew stands. While Dew stands her charged attack is Moondew Cleanse, which deals Dendro damage and applies no gauge. The wiki's Normal Attack and Plunging Attack text and its gauge units give these (`~/Esposter/cache/genshin-wiki/Category_Columbina_Talents.json`).
 
 #### Scenario: Strike chain plays three strikes in order
 
@@ -216,5 +216,4 @@ While the party holds Dew, her charged attack SHALL be Moondew Cleanse, which sp
 
 ## Open
 
-- [ ] **Every basic-attack hit is Hydro and applies one unit of Hydro gauge** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Columbina_Talents.json`: Moondew Cleanse deals AoE Dendro DMG.
 - [ ] **A Lunar-Bloom consumes its auras as Bloom does** — no source yet: no cached line states how a Lunar-Bloom consumes its element.
