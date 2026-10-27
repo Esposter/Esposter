@@ -10,7 +10,7 @@ So every module that touches a browser API faces the same question, and the fail
 flowchart TD
   Code["app/ module"] --> Q{"What is the browser API for?"}
   Q -->|"state that outlives a reload"| S["useLocalStorage(LocalStorageKey.X, default)"]
-  Q -->|"one-shot I/O or an effect"| P["a client-only phase — onMounted, useReadData, a .client.ts plugin"]
+  Q -->|"one-shot I/O or an effect"| P["a client-only phase"]
   Q -->|"both environments have a real answer"| F["checkIsServer() at the fork"]
   S --> Safe["reads the default off-browser"]
   P --> Safe2["never runs off-browser"]

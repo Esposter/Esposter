@@ -1,6 +1,6 @@
 # Charts
 
-`apps/web/app/components/Styled/ApexChart.vue` is the app's one chart: every dashboard chart visual, the survey response summary and the sheet's column chart mount it. It mounts ApexCharts directly and replaced `vue3-apexcharts`, a component wrapper whose whole job was that mount. It is a component of the app rather than a package, because what it adds over the engine (the app's theme, its tokens and where the engine sits in a component's lifecycle) is this app's alone ([dependency admission](../dependency-admission/design.md)).
+`apps/web/app/components/Styled/ApexChart.vue` is the app's one chart: every dashboard chart visual, the survey response summary and the sheet's column chart mount it. It mounts ApexCharts directly It mounts ApexCharts directly, with no component wrapper, since that mount is all a wrapper would add. It is a component of the app rather than a package, because what it adds over the engine (the app's theme, its tokens and where the engine sits in a component's lifecycle) is this app's alone ([dependency admission](../dependency-admission/design.md)).
 
 ## How a chart is drawn
 
@@ -8,7 +8,7 @@
 flowchart TD
   props["options, series and type<br/>from the caller"]
   theme["the app's light or dark mode"]
-  styled["getStyledApexOptions<br/>theme, marker shapes, escaped legend"]
+  styled["getStyledApexOptions"]
   mounted{"drawn yet?"}
   same{"same chart type<br/>as the last draw?"}
   update["updateOptions on a copy<br/>animated in place"]
@@ -196,6 +196,6 @@ Verdict counts: 5 in-scope defects, 49 fixed upstream and kept, 49 out of scope 
 
 ## Sources
 
-- [apexcharts/vue3-apexcharts](https://github.com/apexcharts/vue3-apexcharts), whose source was read at 1.11.3 and whose tracker the Upstream table judges.
+- [the vue3-apexcharts repository](https://github.com/apexcharts/vue3-apexcharts), whose source was read at 1.11.3 and whose tracker the Upstream table judges.
 - The engine's [methods](https://apexcharts.com/docs/methods/) and [events](https://apexcharts.com/docs/options/chart/events/) documentation, for what is reached on the instance and in the options.
-- The engine's update helpers in [apexcharts/apexcharts.js](https://github.com/apexcharts/apexcharts.js), for the config it writes into.
+- The engine's update helpers in [the apexcharts.js repository](https://github.com/apexcharts/apexcharts.js), for the config it writes into.

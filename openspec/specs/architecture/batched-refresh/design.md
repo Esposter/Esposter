@@ -22,7 +22,7 @@ The caller that starts a flight awaits the run owed after it, and so does every 
 
 ## Failure
 
-A run that fails puts its keys back in the dirty set and logs the error, so the next mark reads them again. It also schedules one more run without a mark, paced by the backoff from [retry and backoff](../retry-and-backoff/design.md): the first retry waits one second, and each one after doubles up to thirty seconds. A success resets the count. After five retries in a row the keys stay dirty until the next mark, so a server that stays down is not asked forever. The wait does not reset when the retries stop: the next mark's read runs only after the backoff's last wait, the thirty-second maximum, so a server that recovered is read within that window rather than at once.
+A run that fails puts its keys back in the dirty set and logs the error, so the next mark reads them again. It also schedules one more run without a mark, paced by the backoff from [retry and backoff](../retry-and-backoff/design.md). A success resets the count. After five retries in a row the keys stay dirty until the next mark, so a server that stays down is not asked forever. The wait does not reset when the retries stop: the next mark's read runs only after the backoff's last wait, the thirty-second maximum, so a server that recovered is read within that window rather than at once.
 
 The primitive never rejects. Its callers do not need to wrap a call in a result, because the failure is already logged and retried.
 
