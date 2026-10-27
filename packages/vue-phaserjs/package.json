@@ -55,13 +55,14 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest",
-    "typecheck": "vue-tsc"
+    "typecheck": "tsrs --fast --runExternalCode"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@vue/test-utils": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
+    "vize": "catalog:",
     "vue-tsc": "catalog:"
   },
   "peerDependencies": {

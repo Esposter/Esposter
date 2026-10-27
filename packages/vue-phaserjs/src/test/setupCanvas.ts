@@ -46,6 +46,7 @@ const mockCanvasContext: CanvasRenderingContext2D = {
   isContextLost: () => false,
   isPointInPath: () => false,
   isPointInStroke: () => false,
+  lang: "inherit",
   letterSpacing: "0px",
   lineCap: "butt",
   lineDashOffset: 0,

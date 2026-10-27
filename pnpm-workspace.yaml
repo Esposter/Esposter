@@ -249,6 +249,7 @@ catalog:
   vite-plus: ^1.4.0
   vitest: ^5.0.5
   vitest-browser-vue: ^3.1.0
+  vize: ^0.587.0
   vue: ^3.5.44
   vue-eslint-parser: ^10.4.1
   vue-router: ^5.4.0
