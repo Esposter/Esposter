@@ -6,7 +6,7 @@ Sethos's kit as built, with his three strikes, the fully-charged Aimed Shot, Anc
 
 ### Requirement: Sethos's strikes
 
-Sethos's three strikes SHALL land in order, the second strike being two hits, each hitting the enemies within reach with the poise the cached wiki gives them (18.879, 8.791 and 25.809, in `~/Esposter/cache/genshin-wiki/Category_Sethos_Talents.json`).
+Sethos's three strikes SHALL land in order, the second strike being two hits, each hitting the enemies within reach with the poise (18.879, 8.791 and 25.809).
 
 #### Scenario: Three strikes in sequence
 
@@ -53,7 +53,7 @@ Sethos's plunge attacks SHALL land on the enemies within reach as their action s
 
 ### Requirement: Constellation 1's CRIT Rate on the charged attack
 
-Constellation 1 SHALL add 15% CRIT Rate to the fully-charged Aimed Shot alone, and to no normal attack (open on the design page: gcsim gives it to the Shadowpiercing Shot).
+Constellation 1 SHALL add 15% CRIT Rate to the fully-charged Aimed Shot alone, and to no normal attack.
 
 #### Scenario: Constellation 1 raises the fully-charged Aimed Shot's CRIT Rate
 
