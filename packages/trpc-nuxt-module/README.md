@@ -5,12 +5,14 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-tRPC for [Nuxt](https://nuxt.com). A Nuxt module that registers your router's HTTP handler — and, when you ask for it, a WebSocket handler over Nitro's own WebSockets — fetches through the request event during server rendering so a call never leaves the process, and decorates the typed client with `useQuery`, `useLazyQuery`, `useMutation` and `useSubscription`, each a composable over Nuxt's own `useAsyncData`.
+tRPC for [Nuxt](https://nuxt.com): a Nuxt module that registers your router's HTTP handler — and, when you ask for it, a WebSocket handler over Nitro's own WebSockets — fetches through the request event during server rendering so a call never leaves the process, and decorates the typed client with `useQuery`, `useLazyQuery`, `useMutation` and `useSubscription`, each a composable over Nuxt's own `useAsyncData`.
 
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -83,26 +85,35 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 
 | Export                                                       | Description                                                                                                     |
 | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| `trpc-nuxt-module`                                           | The module — `router`, `createContext`, `endpoint` and `webSocket` options                                      |
 | `createTRPCNuxtClient`                                       | The typed client, every procedure decorated with `useQuery`, `useLazyQuery`, `useMutation` or `useSubscription` |
-| `httpLink`, `httpBatchLink`                                  | tRPC's links, sending through the request event during server rendering                                         |
-| `getQueryKey`, `getMutationKey`                              | The `useAsyncData` keys a procedure's data is cached under, for `useNuxtData` and `refreshNuxtData`             |
+| `getMutationKey`, `getQueryKey`                              | The `useAsyncData` keys a procedure's data is cached under, for `useNuxtData` and `refreshNuxtData`             |
+| `httpBatchLink`, `httpLink`                                  | tRPC's links, sending through the request event during server rendering                                         |
+| `trpc-nuxt-module`                                           | The module — `router`, `createContext`, `endpoint` and `webSocket` options                                      |
 | `trpc-nuxt-module/runtime/server/createTRPCEventHandler`     | The HTTP handler over tRPC's fetch adapter, for a Nitro app without Nuxt                                        |
 | `trpc-nuxt-module/runtime/server/createTRPCWebSocketHandler` | The WebSocket handler over tRPC's `applyWSSHandler` and crossws, for a Nitro app without Nuxt                   |
 
 A WebSocket connection's open and close call the `trpc-nuxt-module:webSocket:open` and `trpc-nuxt-module:webSocket:close` Nitro runtime hooks with its context, typed off your router.
 
-### Commands
+## <a name="commands">⌨️ Commands</a>
 
 Run from `packages/trpc-nuxt-module/`:
 
 ```bash
-pnpm build        # compile to dist/
-pnpm test         # vitest watch mode (coverage is run from the repo root)
 pnpm bench        # the event handler against tRPC's own fetch adapter
+pnpm build        # compile to dist/
+pnpm lint         # lint the package
 pnpm lint:fix     # auto-fix lint
+pnpm test         # vitest watch mode (coverage is run from the repo root)
 pnpm typecheck    # type check
 ```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [Nitro](https://nitro.build/)
+- [Nuxt](https://nuxt.com/docs)
+- [tRPC](https://trpc.io/docs)
+- [Vitest](https://vitest.dev/guide/)
+- [Vue](https://vuejs.org/guide/introduction.html)
 
 ## <a name="license">⚖️ License</a>
 

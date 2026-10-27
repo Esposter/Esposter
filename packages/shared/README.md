@@ -5,12 +5,14 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Shared TypeScript utilities, types, and error classes for the Esposter platform. Works in both browser and server environments.
+Shared TypeScript utilities, types, and error classes for the Esposter platform.
 
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -24,6 +26,8 @@ pnpm i @esposter/shared zod
 ## <a name="documentation">📖 Documentation</a>
 
 We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/shared) to level up.
+
+Works in both browser and server environments.
 
 ### Key Exports
 
@@ -40,7 +44,7 @@ throw new InvalidOperationError(Operation.Read, file.name, zodError.message);
 ```ts
 import { takeOne } from "@esposter/shared";
 
-// Safe index access — throws on out-of-bounds instead of returning undefined
+// The first item, typed without `undefined`; an out-of-bounds index still yields `undefined` at runtime
 const first = takeOne(items);
 ```
 
@@ -49,7 +53,7 @@ const first = takeOne(items);
 ```ts
 import type { ToData, DeepOmit, GetPaths } from "@esposter/shared";
 
-// ToData<T> — strips class methods, returns plain data shape
+// ToData<T> — the plain data shape of T, with its `toJSON` method removed at every depth
 type RawColumn = ToData<Column>;
 ```
 
@@ -74,16 +78,23 @@ import { capitalize, truncate, toKebabCase } from "@esposter/shared";
 import { getResult, getResultAsync, withFinalizer } from "@esposter/shared";
 ```
 
-### Commands
+## <a name="commands">⌨️ Commands</a>
 
 Run from `packages/shared/`:
 
 ```bash
 pnpm build        # compile to dist/
-pnpm test         # vitest watch mode (coverage is run from the repo root)
+pnpm lint         # eslint
 pnpm lint:fix     # auto-fix lint
+pnpm test         # vitest watch mode (coverage is run from the repo root)
 pnpm typecheck    # type check
 ```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [neverthrow](https://github.com/supermacro/neverthrow)
+- [Vitest](https://vitest.dev/guide/)
+- [Zod](https://zod.dev/)
 
 ## <a name="license">⚖️ License</a>
 

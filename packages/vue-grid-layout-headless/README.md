@@ -5,12 +5,14 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-A headless grid: `useGridLayout` returns the placement of items on a grid of cells and the pointer handlers that move, resize, drop and compact them, with no styling.
+A headless grid: `useGridLayout` returns the placement of items on a grid of cells, their tiles and a `startGesture` handler that moves or resizes them, with no styling.
 
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -24,6 +26,67 @@ pnpm i vue-grid-layout-headless
 ## <a name="documentation">📖 Documentation</a>
 
 We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/vue-grid-layout-headless) to level up.
+
+### Key Exports
+
+| Export              | Kind       | Purpose                                                                                                    |
+| ------------------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
+| `CollisionMode`     | enum       | What a dropped item does to the items it lands on: push, swap, or prevent the drop                         |
+| `CompactType`       | enum       | The direction a layout compacts in: vertical, horizontal, or none                                          |
+| `GridCommit`        | interface  | What a release writes back: the cells one gesture changed or added, and the ids it removed                 |
+| `GridItem`          | interface  | A cell the grid places, named by the entity it lays out                                                    |
+| `GridLayout`        | interface  | What a grid hands its consumer: the tiles to draw, the drag placeholder, the height and the press handler  |
+| `GridLayoutOptions` | interface  | What a grid lays out and how its gestures read the pointer, passed to the composable as a getter           |
+| `GridTile`          | interface  | An item as the grid draws it: its box, and the offset a dragged item is drawn at                           |
+| `ResizeEdge`        | enum       | The edge or corner a resize pulls                                                                          |
+| `startExternalDrag` | function   | Drags an item from outside every grid, such as a palette entry, and lands it on the grid under the release |
+| `useGridLayout`     | composable | Places items on a grid, and previews and commits the moves and resizes a pointer makes of them             |
+
+### Usage
+
+```vue
+<script setup lang="ts">
+import { CollisionMode, CompactType, useGridLayout } from "vue-grid-layout-headless";
+import { shallowRef, useTemplateRef } from "vue";
+
+const root = useTemplateRef<HTMLElement>("root");
+const items = shallowRef([{ h: 2, id: "a", w: 4, x: 0, y: 0 }]);
+const { startGesture, tiles } = useGridLayout(root, () => ({
+  collision: CollisionMode.Push,
+  columnNumber: 12,
+  compactType: CompactType.Vertical,
+  dragStartDistance: 4,
+  isEditable: true,
+  items: items.value,
+  rowHeight: 40,
+  spacing: { gap: 10, padding: 10 },
+  // onCommit receives what each gesture changed, once its pointer is released
+  onCommit: () => {},
+}));
+</script>
+
+<template>
+  <div ref="root">
+    <div v-for="{ item } in tiles" :key="item.id" @pointerdown="startGesture($event, item)" />
+  </div>
+</template>
+```
+
+Each tile's `geometry` is the box to draw it in, in pixels from the grid's top left corner.
+
+## <a name="commands">⌨️ Commands</a>
+
+```bash
+pnpm build
+pnpm lint
+pnpm lint:fix
+pnpm test
+pnpm typecheck
+```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [Vue](https://vuejs.org/guide/introduction.html)
 
 ## <a name="license">⚖️ License</a>
 

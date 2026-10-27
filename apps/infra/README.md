@@ -8,6 +8,8 @@
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -53,16 +55,16 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 
 ### Project Layout
 
-- `src/index.ts` is the generated source barrel.
 - `dist/index.js` is the compiled Pulumi runtime entrypoint used by `Pulumi.yaml`.
-- `Pulumi.yaml` defines the Pulumi project.
-- `Pulumi.prod.yaml` holds stack-specific configuration.
 - `docs/` holds what a stack operator reads before an `up` — the Azure overview, naming conventions, security constraints, the search indexes, and the stacks.
-- `src/azure/resources/` and `src/github/` hold the resource declarations, one resource per file, grouped by provider namespace and resource type.
+- `Pulumi.prod.yaml` holds stack-specific configuration.
+- `Pulumi.yaml` defines the Pulumi project.
 - `src/azure/constants/` holds values shared by more than one resource file — locations, tags, role definition IDs, and settings that must stay identical across stacks.
+- `src/azure/resources/` and `src/github/` hold the resource declarations, one resource per file, grouped by provider namespace and resource type.
 - `src/azure/services/` holds the factories that build a repeated block of resource arguments from the few things that differ per resource.
+- `src/index.ts` is the generated source barrel.
 
-### Commands
+## <a name="commands">⌨️ Commands</a>
 
 Run from `apps/infra/`:
 
@@ -71,15 +73,17 @@ pnpm build             # regenerate the barrel and compile the Pulumi program to
 pnpm infra:preview     # preview Pulumi changes
 pnpm infra:refresh     # refresh Pulumi state from Azure
 pnpm infra:up          # apply Pulumi changes
+pnpm lint              # lint (check only)
 pnpm lint:fix          # auto-fix lint issues
 pnpm test              # vitest watch mode (coverage is run from the repo root)
 pnpm typecheck         # type check
 ```
 
-### References
+## <a name="related">🔗 Related Documentation</a>
 
-- [Pulumi Azure Native provider docs](https://www.pulumi.com/registry/packages/azure-native/)
-- [Azure Native installation and authentication](https://www.pulumi.com/registry/packages/azure-native/installation-configuration/)
+- [Pulumi](https://www.pulumi.com/docs/)
+- [Pulumi Azure Native](https://www.pulumi.com/registry/packages/azure-native/)
+- [Vitest](https://vitest.dev/guide/)
 
 ## <a name="license">⚖️ License</a>
 

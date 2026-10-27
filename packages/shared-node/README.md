@@ -5,12 +5,14 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Node-only shared tooling for Esposter — the machine-wide download cache, hidden-window child processes and benchmark reporting reused across packages. Server/build environment only; never import in browser code.
+Node-only shared tooling for Esposter — the machine-wide download cache, hidden-window child processes and benchmark reporting reused across packages.
 
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -30,6 +32,8 @@ spawnSync("pnpm", ["install"], { stdio: "inherit" });
 ## <a name="documentation">📖 Documentation</a>
 
 We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
+
+Server/build environment only; never import in browser code.
 
 ### What's Included
 
@@ -54,32 +58,33 @@ const bytes = await readContentAddressedObject(
 );
 ```
 
-| Export                                                                                           | Description                                                                      |
-| ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
-| `BenchmarkMarkdownReporter`                                                                      | Vitest reporter — writes `Foo.bench.md` + `Foo.bench.json` beside `Foo.bench.ts` |
-| `BENCHMARK_RUN_OPTIONS`                                                                          | Run options every `bench.compare` passes, fixing the iteration count             |
-| `buildBenchmarkFileReport`                                                                       | Projects a module's reported tests into a structured `BenchmarkReport`           |
-| `formatBenchmarkMarkdown`                                                                        | Renders a `BenchmarkReport` to Markdown tables                                   |
-| `writeBenchmarkReport`                                                                           | Persists the JSON + Markdown report artifacts                                    |
-| `readBenchmarkEnvironment`                                                                       | Captures CPU/OS/runtime metadata for reproducible results                        |
-| `BenchmarkFile` · `BenchmarkGroup` · `BenchmarkReport` · `BenchmarkResult` · `BenchmarkTestCase` | Report data models                                                               |
+| Export                                                    | Description                                                                      |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `BENCHMARK_RUN_OPTIONS` (`/bench`)                        | Run options every `bench.compare` passes, fixing the iteration count             |
+| `BenchmarkMarkdownReporter` (default export, `/reporter`) | Vitest reporter — writes `Foo.bench.md` + `Foo.bench.json` beside `Foo.bench.ts` |
 
 ### Architecture Notes
 
-- **Node-only**: depends on Node built-ins (`fs`, `os`) — must not be bundled into the browser app.
 - Depends on `@esposter/shared` for shared types and utilities.
+- **Node-only**: depends on Node built-ins (`fs`, `os`) — must not be bundled into the browser app.
 - Wired into `vitest bench` via `BenchmarkMarkdownReporter`; the emitted artifacts are committed and diffed offline as the speed gate.
 
-### Commands
+## <a name="commands">⌨️ Commands</a>
 
 Run from `packages/shared-node/`:
 
 ```bash
 pnpm build        # compile to dist/
-pnpm test         # vitest watch mode (coverage is run from the repo root)
+pnpm lint         # eslint
 pnpm lint:fix     # auto-fix lint
+pnpm test         # vitest watch mode (coverage is run from the repo root)
 pnpm typecheck    # type check
 ```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [Claude Code](https://code.claude.com/docs)
+- [Vitest](https://vitest.dev/guide/)
 
 ## <a name="license">⚖️ License</a>
 

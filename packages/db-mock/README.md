@@ -2,11 +2,13 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-In-memory PostgreSQL database factory for testing — server environment only. Uses [PGlite](https://github.com/electric-sql/pglite) to spin up a real Drizzle ORM database with the full Esposter schema applied, without needing a running Postgres instance.
+In-memory PostgreSQL database factory for testing, server environment only: it uses [PGlite](https://github.com/electric-sql/pglite) to spin up a real Drizzle ORM database with the full Esposter schema applied, without needing a running Postgres instance.
 
 ## Table of Contents
 
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -14,6 +16,13 @@ In-memory PostgreSQL database factory for testing — server environment only. U
 ## <a name="documentation">📖 Documentation</a>
 
 We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
+
+### Key Exports
+
+| Export              | Kind     | Purpose                                                                                                         |
+| ------------------- | -------- | --------------------------------------------------------------------------------------------------------------- |
+| `createMockDb`      | function | Boots an in-memory PGlite database from the committed snapshot, as a Drizzle handle with the Esposter relations |
+| `SNAPSHOT_FILENAME` | const    | File name of the pre-migrated data directory snapshot, which `pnpm snapshot:gen` produces                       |
 
 ### Usage
 
@@ -40,21 +49,30 @@ Loading a pre-migrated directory skips PGlite's `initdb` and runtime migration g
 
 ### Peer Dependencies
 
+`@esposter/db-mock` is private and is used from inside the workspace, not installed from npm. Its peers are:
+
 ```bash
-pnpm i -D @esposter/db-mock @electric-sql/pglite @esposter/db-schema drizzle-orm
+pnpm i -D @electric-sql/pglite @esposter/db-schema drizzle-orm
 ```
 
-### Commands
+## <a name="commands">⌨️ Commands</a>
 
 Run from `packages/db-mock/`:
 
 ```bash
 pnpm build        # compile to dist/
+pnpm lint         # check
+pnpm lint:fix     # auto-fix lint
 pnpm snapshot:gen # regenerate snapshot.tar.gz from the current schema
 pnpm test         # vitest watch mode
-pnpm lint:fix     # auto-fix lint
 pnpm typecheck    # type check
 ```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [Drizzle ORM](https://orm.drizzle.team/docs/overview)
+- [PGlite](https://pglite.dev/docs/)
+- [Vitest](https://vitest.dev/guide/)
 
 ## <a name="license">⚖️ License</a>
 

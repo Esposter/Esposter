@@ -5,12 +5,14 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-TresJS for Nuxt — a Nuxt module that auto-imports the TresJS core API, registers TresCanvas for client and server, and registers every installed @tresjs package's components and composables, with no devtools UI of its own.
+A Nuxt module for TresJS that auto-imports the TresJS core API, registers TresCanvas for client and server, and registers every installed @tresjs package's components and composables, with no devtools UI of its own.
 
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -24,6 +26,44 @@ pnpm i tresjs-nuxt
 ## <a name="documentation">📖 Documentation</a>
 
 We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/tresjs-nuxt) to level up.
+
+### Key Exports
+
+| Export          | Kind      | Purpose                                                                                                                    |
+| :-------------- | :-------- | :------------------------------------------------------------------------------------------------------------------------- |
+| `default`       | const     | The Nuxt module: auto-imports the TresJS core API, registers `TresCanvas` and each installed `@tresjs/*` package's exports |
+| `ModuleOptions` | interface | The `tres` config key: `glsl` loads the `vite-plugin-glsl` peer, and `modules` names extra packages whose exports register |
+
+### Usage
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  modules: ["tresjs-nuxt"],
+  // Loads the optional vite-plugin-glsl peer, which the app installs itself
+  tres: { glsl: true },
+});
+```
+
+## <a name="commands">⌨️ Commands</a>
+
+Run from `packages/tresjs-nuxt/`:
+
+```bash
+pnpm build        # compile to dist/
+pnpm lint         # lint the package
+pnpm lint:fix     # auto-fix lint
+pnpm test         # vitest watch mode
+pnpm typecheck    # type check
+```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [Nuxt](https://nuxt.com/docs)
+- [three.js](https://threejs.org/docs/)
+- [TresJS](https://tresjs.org/)
+- [Vitest](https://vitest.dev/guide/)
+- [Vue](https://vuejs.org/guide/introduction.html)
 
 ## <a name="license">⚖️ License</a>
 

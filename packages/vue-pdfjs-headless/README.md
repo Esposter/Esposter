@@ -5,12 +5,14 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Headless Vue composables over pdfjs-dist: a document's loading, a page's drawing and the viewer's state, with no styling and no renderer of its own.
+Headless Vue composables over pdfjs-dist that load a document, draw its pages and track the viewer's state, with no styling and no renderer of its own.
 
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -23,7 +25,62 @@ pnpm i vue-pdfjs-headless
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/vue-pdfjs-headless) to level up.
+
+### Key Exports
+
+| Export              | Kind       | Purpose                                                                                                       |
+| ------------------- | ---------- | ------------------------------------------------------------------------------------------------------------- |
+| `PdfRenderer`       | interface  | The renderer's API module, its data folder URLs and its worker, which the consumer supplies                   |
+| `PdfSource`         | type       | A document by its URL, its bytes, or a file the reader picked                                                 |
+| `PdfViewerState`    | interface  | The viewer's pages, zoom, rotation, search, download and print, as state and actions                          |
+| `readXfdf`          | function   | Reads the free-text annotations of an XFDF file, or an error naming what is wrong with it                     |
+| `usePdfAnnotations` | composable | The reader's comments and free-text annotations, exported to and imported from XFDF                           |
+| `usePdfDocument`    | composable | Loads a document from a source through the consumer's renderer, with its password prompt and failure as state |
+| `usePdfPage`        | composable | Draws one page of a loaded document into a canvas, at the canvas's width and the device's pixel ratio         |
+| `usePdfThumbnails`  | composable | One thumbnail per page, drawn only while its row is in view of the sidebar                                    |
+| `usePdfViewer`      | composable | Builds the renderer's viewer for a loaded document, with its pages, zoom and search as state                  |
+| `usePdfZoomGesture` | composable | Pinch and Ctrl-wheel zoom the viewer about the pointer, keeping the content under it in place                 |
+| `writeXfdf`         | function   | Writes free-text annotations as XFDF                                                                          |
+
+### Usage
+
+```ts
+import * as pdfjs from "pdfjs-dist";
+import { shallowRef } from "vue";
+import { usePdfDocument, usePdfPage } from "vue-pdfjs-headless";
+
+const canvas = shallowRef<HTMLCanvasElement>();
+const { pdfDocument } = usePdfDocument({
+  renderer: {
+    api: pdfjs,
+    cMapUrl: "/cmaps/",
+    standardFontDataUrl: "/fonts/",
+    wasmUrl: "/wasm/",
+    workerSrc: "/pdf.worker.mjs",
+  },
+  source: "/document.pdf",
+});
+usePdfPage({ canvas, pageNumber: 1, pdfDocument });
+```
+
+Bind `canvas` to a `<canvas ref="canvas" />` in the component's template, and the page is drawn into it.
+
+## <a name="commands">⌨️ Commands</a>
+
+```bash
+pnpm build
+pnpm lint
+pnpm lint:fix
+pnpm test
+pnpm typecheck
+```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [neverthrow](https://github.com/supermacro/neverthrow)
+- [pdf.js](https://mozilla.github.io/pdf.js/)
+- [Vue](https://vuejs.org/guide/introduction.html)
 
 ## <a name="license">⚖️ License</a>
 

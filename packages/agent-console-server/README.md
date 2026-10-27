@@ -5,12 +5,14 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Runs your Claude Code sessions on your own machine and serves them to the [Esposter agent console](https://esposter.com/agent-console) over one WebSocket that admits only the browsers paired with it. Sessions go through the Claude Agent SDK with your own settings, CLAUDE.md, skills, hooks and plugins, and they are written where the terminal writes them, so `claude --resume <id>` picks up a console session and the console picks up a terminal one. The wire is Zod contracts, exported as the `contracts` subpath.
+Runs your Claude Code sessions on your own machine and serves them to the [Esposter agent console](https://esposter.com/agent-console) over one WebSocket that admits only the browsers paired with it.
 
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -27,15 +29,17 @@ Press Connect on the page, or hold Ctrl and click the one-time link the host pri
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra/claude-interface/agent-console) to level up.
+
+Sessions go through the Claude Agent SDK with your own settings, CLAUDE.md, skills, hooks and plugins, and they are written where the terminal writes them, so `claude --resume <id>` picks up a console session and the console picks up a terminal one. The wire is Zod contracts, exported as the `contracts` subpath.
 
 `agent-console-server [--port <port>] [--hostname <address>] [--origin <app origin>]`, and `agent-console-server devices [--revoke <id>]`
 
 | Flag         | Default                | What it does                                                                                              |
 | :----------- | :--------------------- | :-------------------------------------------------------------------------------------------------------- |
-| `--port`     | `7437`                 | The port to listen on, and the one in the link it prints                                                  |
 | `--hostname` | `127.0.0.1`            | The address to listen on. `0.0.0.0` lets another machine reach the host, over a network you already trust |
 | `--origin`   | `https://esposter.com` | The app the printed link opens, and the one origin that may pair, such as `http://localhost:3000`         |
+| `--port`     | `7437`                 | The port to listen on, and the one in the link it prints                                                  |
 
 | Export                           | What it is                                                                                      |
 | :------------------------------- | :---------------------------------------------------------------------------------------------- |
@@ -44,7 +48,29 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 | `createClaudeAgentSdkDriver`     | The Claude Code driver, one streaming-input Agent SDK query per open session                    |
 | `Driver`                         | The interface another agent's driver implements                                                 |
 
-Commands: `pnpm build`, `pnpm test`, `pnpm typecheck`, `pnpm lint:fix`. `pnpm dev` builds the host and starts it for the local dev server at `http://localhost:3000`, then rebuilds and restarts it on every change to the source, which ends its open sessions and leaves the page to reconnect. Close any other host first, since both take the same port, and pair through the link it prints — the page's Connect starts the installed host, which only the deployed site may pair with.
+## <a name="commands">⌨️ Commands</a>
+
+Run from `packages/agent-console-server/`:
+
+```bash
+pnpm build        # compile to dist/
+pnpm build:sea    # single-executable build
+pnpm dev          # local dev server, below
+pnpm lint         # eslint
+pnpm lint:fix     # auto-fix lint
+pnpm start        # node bin/cli.js
+pnpm test         # vitest watch mode
+pnpm typecheck    # type check
+```
+
+`pnpm dev` builds the host and starts it for the local dev server at `http://localhost:3000`, then rebuilds and restarts it on every change to the source, which ends its open sessions and leaves the page to reconnect. Close any other host first, since both take the same port, and pair through the link it prints — the page's Connect starts the installed host, which only the deployed site may pair with.
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [Claude Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview)
+- [Claude Code](https://code.claude.com/docs)
+- [Vitest](https://vitest.dev/guide/)
+- [Zod](https://zod.dev/)
 
 ## <a name="license">⚖️ License</a>
 

@@ -2,11 +2,13 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-Shared build and lint configuration for all Esposter packages. Provides ESLint configs, TSConfig bases, and the tsdown build configurations every package's `tsdown.config.ts` composes.
+Shared build and lint configuration for all Esposter packages, providing ESLint configs, TSConfig bases, and the tsdown build configurations every package's `tsdown.config.ts` composes.
 
 ## Table of Contents
 
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -19,12 +21,12 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 
 | Config        | File                         | Purpose                                                                  |
 | ------------- | ---------------------------- | ------------------------------------------------------------------------ |
+| Barrel        | `generateExports`            | Writes `packages/*/src/index.ts` from the build's `build:prepare` hook   |
 | ESLint        | `eslint/`                    | Shared ESLint rules (oxlint + typescript-eslint + perfectionist)         |
 | tsdown (base) | `getTsdownConfiguration`     | Platform-neutral bundle config, plus the gates a published package owes  |
 | tsdown (Node) | `getTsdownConfigurationNode` | The base, targeting Node                                                 |
 | tsdown (Vue)  | `getTsdownConfigurationVue`  | The base, compiling `.vue` files and emitting their declarations         |
 | Vitest        | `getVitestConfiguration`     | The shared test config, running Vue as the app ships it (no Options API) |
-| Barrel        | `generateExports`            | Writes `packages/*/src/index.ts` from the build's `build:prepare` hook   |
 
 ### Usage in other packages
 
@@ -45,7 +47,7 @@ export default eslintConfiguration.append({ ignores: ["dist"] });
 Inside this monorepo a package composes the pieces itself instead, because each config extends the Nuxt-generated
 one the app emits — copy `packages/db/eslint.config.js` rather than writing that wiring from scratch.
 
-### Commands
+## <a name="commands">⌨️ Commands</a>
 
 Run from `packages/configuration/`:
 
@@ -53,8 +55,13 @@ Run from `packages/configuration/`:
 pnpm build        # compile to dist/
 pnpm lint         # check
 pnpm lint:fix     # auto-fix
+pnpm test         # vitest watch mode
 pnpm typecheck    # type check
 ```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [Vitest](https://vitest.dev/guide/)
 
 ## <a name="license">⚖️ License</a>
 

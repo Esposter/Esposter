@@ -5,14 +5,14 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-A parser for [Tiled Map Editor](http://www.mapeditor.org/) \*.tmx files.
-
-Inspired by [tmx-map-parser](https://github.com/praghus/tmx-map-parser).
+A parser for [Tiled Map Editor](http://www.mapeditor.org/) \*.tmx files, inspired by [tmx-map-parser](https://github.com/praghus/tmx-map-parser).
 
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -26,6 +26,19 @@ pnpm i parse-tmx
 ## <a name="documentation">📖 Documentation</a>
 
 We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/parse-tmx) to level up.
+
+### Key Exports
+
+| Export             | Kind      | Purpose                                                                                                      |
+| :----------------- | :-------- | :----------------------------------------------------------------------------------------------------------- |
+| `parseTileset`     | function  | Reads an external tileset file, as Tiled writes one, into the embedded tileset it holds, without a map       |
+| `parseTmx`         | function  | Parses a `.tmx` string into a `TMXParsed`, matching Phaser's tilemap export and supporting external tilesets |
+| `PropertyType`     | enum      | The types a Tiled custom property can have, such as `int` or `string`                                        |
+| `Shape`            | enum      | The shapes a Tiled object can take, such as `rectangle` or `polygon`                                         |
+| `TMXLayerParsed`   | interface | A layer as parsed: its tile data, flips, objects and properties                                              |
+| `TMXMapParsed`     | class     | The map element's attributes, with the defaults a map that omits them reads as                               |
+| `TMXParsed`        | class     | The parse result, holding the parsed map as `map`                                                            |
+| `TMXTilesetParsed` | type      | A tileset as parsed: an embedded one or an external one                                                      |
 
 ### Usage
 
@@ -118,16 +131,24 @@ const loadMap = async () => {
 }
 ```
 
-### Commands
+## <a name="commands">⌨️ Commands</a>
 
 Run from `packages/parse-tmx/`:
 
 ```bash
+pnpm bench        # run the benchmarks once
 pnpm build        # compile to dist/
-pnpm test         # vitest watch mode (coverage is run from the repo root)
+pnpm lint         # lint the package
 pnpm lint:fix     # auto-fix lint
+pnpm test         # vitest watch mode (coverage is run from the repo root)
 pnpm typecheck    # type check
 ```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [neverthrow](https://github.com/supermacro/neverthrow)
+- [Tiled](https://doc.mapeditor.org/en/stable/)
+- [Vitest](https://vitest.dev/guide/)
 
 ## <a name="license">⚖️ License</a>
 

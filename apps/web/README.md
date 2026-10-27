@@ -8,6 +8,8 @@ The main Esposter web application — a Nuxt full-stack app serving the frontend
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -56,35 +58,20 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 
 ### Tech Stack
 
-| Layer      | Technology                                                     |
-| ---------- | -------------------------------------------------------------- |
-| Framework  | [Nuxt](https://nuxt.com)                                       |
-| UI         | [Vue](https://vuejs.org), [Vuetify 0](https://0.vuetifyjs.com) |
-| Styling    | [UnoCSS](https://unocss.dev) (Attributify mode), Sass          |
-| State      | [Pinia](https://pinia.vuejs.org)                               |
-| API        | [tRPC](https://trpc.io) via `trpc-nuxt-module`                 |
-| Validation | [Zod](https://zod.dev)                                         |
-| Database   | [Drizzle ORM](https://orm.drizzle.team) (PostgreSQL)           |
-| Storage    | Azure Table Storage, Azure Blob Storage                        |
-| Real-time  | Azure WebPubSub + NodeJS EventEmitter                          |
-| Auth       | [better-auth](https://github.com/better-auth/better-auth)      |
-| Testing    | [Vitest](https://vitest.dev)                                   |
-| Linting    | Oxlint + ESLint                                                |
-
-### Commands
-
-All commands run from `apps/web/`:
-
-```bash
-pnpm dev              # start dev server (http://localhost:3000)
-pnpm build            # production build
-pnpm preview          # preview production build locally
-pnpm start            # run the built server (.output), reading .env when present
-pnpm typecheck        # vue-tsc type check
-pnpm lint             # eslint (check only); oxlint runs once from the repo root
-pnpm lint:fix         # eslint --fix (always use this; never fix manually)
-pnpm test             # vitest watch mode (coverage is run from the repo root)
-```
+| Layer      | Technology                                                                                                                                                                                       |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| API        | [tRPC](https://trpc.io/docs) via `trpc-nuxt-module`                                                                                                                                              |
+| Auth       | [better-auth](https://www.better-auth.com/docs)                                                                                                                                                  |
+| Database   | [Drizzle ORM](https://orm.drizzle.team/docs/overview) ([PostgreSQL](https://www.postgresql.org/docs/current/))                                                                                   |
+| Framework  | [Nuxt](https://nuxt.com/docs)                                                                                                                                                                    |
+| Linting    | [Oxlint](https://oxc.rs/docs/guide/usage/linter) + ESLint                                                                                                                                        |
+| Real-time  | [Azure WebPubSub](https://learn.microsoft.com/azure/azure-web-pubsub/overview) + NodeJS EventEmitter                                                                                             |
+| State      | [Pinia](https://pinia.vuejs.org/)                                                                                                                                                                |
+| Storage    | [Azure Table Storage](https://learn.microsoft.com/azure/storage/tables/table-storage-overview), [Azure Blob Storage](https://learn.microsoft.com/azure/storage/blobs/storage-blobs-introduction) |
+| Styling    | [UnoCSS](https://unocss.dev/) (Attributify mode)                                                                                                                                                 |
+| Testing    | [Vitest](https://vitest.dev/guide/)                                                                                                                                                              |
+| UI         | [Vue](https://vuejs.org/guide/introduction.html), [Vuetify 0](https://0.vuetifyjs.com/)                                                                                                          |
+| Validation | [Zod](https://zod.dev/)                                                                                                                                                                          |
 
 ### App Structure
 
@@ -110,7 +97,6 @@ apps/web/
 │   ├── db/               # Drizzle connection and migrations output
 │   ├── models/           # Server-side models
 │   ├── plugins/          # Nitro plugins (security, web push)
-│   ├── routes/           # Nuxt server routes
 │   ├── services/         # Server-side services (RBAC, moderation, etc.)
 │   └── trpc/             # tRPC router definitions
 └── shared/
@@ -122,6 +108,52 @@ apps/web/
     ├── types/            # Global type declarations
     └── util/             # Isomorphic utilities
 ```
+
+## <a name="commands">⌨️ Commands</a>
+
+All commands run from `apps/web/`:
+
+```bash
+pnpm build            # production build
+pnpm dev              # start dev server (http://localhost:3000)
+pnpm lint             # eslint (check only); oxlint runs once from the repo root
+pnpm lint:fix         # eslint --fix (always use this; never fix manually)
+pnpm preview          # preview production build locally
+pnpm start            # run the built server (.output), reading .env when present
+pnpm test             # vitest watch mode (coverage is run from the repo root)
+pnpm typecheck        # Nuxt typecheck, then tsrs over the service worker
+```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [Apexcharts](https://apexcharts.com/docs/)
+- [Azure Blob Storage](https://learn.microsoft.com/azure/storage/blobs/storage-blobs-introduction)
+- [Azure Event Grid](https://learn.microsoft.com/azure/event-grid/overview)
+- [Azure Service Bus](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-messaging-overview)
+- [Azure Table Storage](https://learn.microsoft.com/azure/storage/tables/table-storage-overview)
+- [Azure Web PubSub](https://learn.microsoft.com/azure/azure-web-pubsub/overview)
+- [better-auth](https://www.better-auth.com/docs)
+- [CodeMirror](https://codemirror.net/docs/)
+- [Drizzle ORM](https://orm.drizzle.team/docs/overview)
+- [LiveKit](https://docs.livekit.io/)
+- [MJML](https://documentation.mjml.io/)
+- [Oxlint](https://oxc.rs/docs/guide/usage/linter)
+- [pdf.js](https://mozilla.github.io/pdf.js/)
+- [Phaser](https://phaser.io/learn)
+- [Pinia](https://pinia.vuejs.org/)
+- [PostgreSQL](https://www.postgresql.org/docs/current/)
+- [SuperJSON](https://github.com/flightcontrolhq/superjson)
+- [Temporal](https://tc39.es/proposal-temporal/docs/)
+- [three.js](https://threejs.org/docs/)
+- [Tiptap](https://tiptap.dev/docs)
+- [TresJS](https://tresjs.org/)
+- [tRPC](https://trpc.io/docs)
+- [Vite+](https://viteplus.dev/guide/)
+- [Vitest](https://vitest.dev/guide/)
+- [Vue](https://vuejs.org/guide/introduction.html)
+- [Vue Flow](https://vueflow.dev/)
+- [Vuetify 0](https://0.vuetifyjs.com/)
+- [Zod](https://zod.dev/)
 
 ## <a name="license">⚖️ License</a>
 

@@ -5,12 +5,14 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Mock Azure service classes for local development and testing. Provides in-memory implementations of Azure Table Storage, Blob Storage, Service Bus, and EventGrid clients that mirror the real Azure SDK interfaces.
+Mock Azure service classes for local development and testing, providing in-memory implementations of Azure Table Storage, Blob Storage, Service Bus, and EventGrid clients that mirror the real Azure SDK interfaces.
 
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -18,7 +20,7 @@ Mock Azure service classes for local development and testing. Provides in-memory
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-pnpm i -D azure-mock @azure/core-http-compat @azure/core-rest-pipeline @azure/data-tables @azure/eventgrid @azure/service-bus @azure/storage-blob
+pnpm i -D azure-mock @azure/core-http-compat @azure/core-rest-pipeline @azure/data-tables @azure/eventgrid @azure/search-documents @azure/service-bus @azure/storage-blob @azure/storage-queue
 ```
 
 ## <a name="documentation">📖 Documentation</a>
@@ -29,16 +31,16 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 
 | Class                          | Azure Equivalent           | Description                                  |
 | ------------------------------ | -------------------------- | -------------------------------------------- |
-| `MockTableClient`              | `TableClient`              | In-memory Azure Table Storage                |
-| `MockContainerClient`          | `ContainerClient`          | In-memory blob container, listing and paging |
+| `MockBlobBatchClient`          | `BlobBatchClient`          | In-memory batched blob deletion              |
 | `MockBlobClient`               | `BlobClient`               | In-memory blob read, copy and delete         |
 | `MockBlockBlobClient`          | `BlockBlobClient`          | In-memory block blob upload and download     |
-| `MockBlobBatchClient`          | `BlobBatchClient`          | In-memory batched blob deletion              |
-| `MockSearchClient`             | `SearchClient`             | In-memory Azure AI Search index              |
-| `MockQueueClient`              | `QueueClient`              | In-memory Azure Storage Queue                |
-| `MockServiceBusSender`         | `ServiceBusSender`         | In-memory Azure Service Bus                  |
-| `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`   | In-memory Azure Web PubSub                   |
+| `MockContainerClient`          | `ContainerClient`          | In-memory blob container, listing and paging |
 | `MockEventGridPublisherClient` | `EventGridPublisherClient` | In-memory EventGrid publisher                |
+| `MockQueueClient`              | `QueueClient`              | In-memory Azure Storage Queue                |
+| `MockSearchClient`             | `SearchClient`             | In-memory Azure AI Search index              |
+| `MockServiceBusSender`         | `ServiceBusSender`         | In-memory Azure Service Bus                  |
+| `MockTableClient`              | `TableClient`              | In-memory Azure Table Storage                |
+| `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`   | Stub: `group().sendToAll` and nothing else   |
 
 Each client's state lives in an exported `Mock*Database` map (`MockTableDatabase`, `MockContainerDatabase`, …), so a test resets by clearing the one it seeded.
 
@@ -55,16 +57,25 @@ const entity = await mockTableClient.getEntity("pk", "rk");
 
 Replace real Azure clients with their mock equivalents by swapping them in your test setup or local `.env` configuration.
 
-### Commands
+## <a name="commands">⌨️ Commands</a>
 
 Run from `packages/azure-mock/`:
 
 ```bash
 pnpm build        # compile to dist/
-pnpm test         # vitest watch mode (coverage is run from the repo root)
+pnpm lint         # check
 pnpm lint:fix     # auto-fix lint
+pnpm test         # vitest watch mode (coverage is run from the repo root)
 pnpm typecheck    # type check
 ```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [Azure Blob Storage](https://learn.microsoft.com/azure/storage/blobs/storage-blobs-introduction)
+- [Azure Event Grid](https://learn.microsoft.com/azure/event-grid/overview)
+- [Azure Service Bus](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-messaging-overview)
+- [Azure Table Storage](https://learn.microsoft.com/azure/storage/tables/table-storage-overview)
+- [Vitest](https://vitest.dev/guide/)
 
 ## <a name="license">⚖️ License</a>
 

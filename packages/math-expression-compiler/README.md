@@ -5,12 +5,14 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Math expressions compiled once into a function of plain numbers, in mathjs's numeric language and held to mathjs's recorded answers. A formula is parsed into a tree, the tree is compiled into a function of its variables' values, and that function is called once per row with no parsing or lookup per call.
+Math expressions compiled once into a function of plain numbers, in mathjs's numeric language and held to mathjs's recorded answers.
 
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -32,27 +34,39 @@ const evaluate = parseMathExpression("col0 * (1 - col1)").match(
 evaluate([10, 0.25]); // 7.5
 ```
 
-| Export                      | What it does                                                                                                                   |
-| :-------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
-| `parseMathExpression`       | A formula to its tree, or a `Result` holding the first error with its position                                                 |
-| `compileMathExpression`     | A tree and its variable names to a function of the variables' values, which yields `NaN` where a formula has no numeric answer |
-| `getMathExpressionNames`    | The names a tree reads that it does not assign itself and that are not constants                                               |
-| `MathExpressionFunctionMap` | Each function of the language by its mathjs name, as the signatures it takes: argument kinds, arities and computation          |
-| `MathExpressionConstantMap` | The named constants of the language                                                                                            |
-| `MathExpressionError`       | The error a parse returns                                                                                                      |
-
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/math-expression-compiler) to level up.
 
-## Commands
+A formula is parsed into a tree, the tree is compiled into a function of its variables' values, and that function is called once per row with no parsing or lookup per call.
 
-| Command          | What it does                             |
-| :--------------- | :--------------------------------------- |
-| `pnpm build`     | Builds `dist` and regenerates the barrel |
-| `pnpm test`      | Runs the tests                           |
-| `pnpm lint:fix`  | Lints the package and fixes what it can  |
-| `pnpm typecheck` | Typechecks the package                   |
+### Key exports
+
+| Export                      | What it does                                                                                                                   |
+| :-------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
+| `compileMathExpression`     | A tree and its variable names to a function of the variables' values, which yields `NaN` where a formula has no numeric answer |
+| `getMathExpressionNames`    | The names a tree reads that it does not assign itself and that are not constants                                               |
+| `MathExpressionConstantMap` | The named constants of the language                                                                                            |
+| `MathExpressionError`       | The error a parse returns                                                                                                      |
+| `MathExpressionFunctionMap` | Each function of the language by its mathjs name, as the signatures it takes: argument kinds, arities and computation          |
+| `parseMathExpression`       | A formula to its tree, or a `Result` holding the first error with its position                                                 |
+
+## <a name="commands">⌨️ Commands</a>
+
+```bash
+pnpm bench       # Runs the benchmarks with Vitest
+pnpm build       # Builds `dist` and regenerates the barrel
+pnpm lint        # Lints the package
+pnpm lint:fix    # Lints the package and fixes what it can
+pnpm test        # Runs the tests with Vitest in watch mode
+pnpm typecheck   # Typechecks the package
+```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [math.js](https://mathjs.org/docs/)
+- [neverthrow](https://github.com/supermacro/neverthrow)
+- [Vitest](https://vitest.dev/guide/)
 
 ## <a name="license">⚖️ License</a>
 

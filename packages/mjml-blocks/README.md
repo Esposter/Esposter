@@ -5,12 +5,14 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-MJML's components as block types on the headless block editor — each component's attributes, defaults and nesting rules, a render to MJML's JSON form and source, and a read back from MJML, with no framework, DOM or MJML runtime.
+MJML's components as block types on the headless block editor, with a render to MJML's JSON form and source and a read back from MJML that refuses what the package does not take.
 
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -58,6 +60,7 @@ const { bodyChildrenSchema } = createMjmlNodeSchema({
     props: z.strictObject({ href: z.string(), id: z.string() }),
     type: z.literal("link"),
   }),
+  maxChildren: Number.MAX_SAFE_INTEGER,
   richText,
 });
 const registry = createMjmlRegistry({
@@ -89,17 +92,37 @@ const json = renderMjmlDocument(document, registry, { context: undefined, isStam
 const { html } = await mjml2html(json, { validationLevel: "strict" });
 ```
 
+## <a name="documentation">📖 Documentation</a>
+
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/mjml-blocks) to level up.
+
+The package carries each component's attributes, defaults and nesting rules, and has no framework, DOM or MJML runtime: the compile is the consumer's, as the Getting Started shows.
+
+### Key exports
+
 | Export               | What it is                                                                                          |
 | :------------------- | :-------------------------------------------------------------------------------------------------- |
 | `createMjmlRegistry` | MJML's component set as block types, with the consumer's leaf types and rich text                   |
 | `MjmlDocument`       | a document whose head is the root's props, typed by the registry                                    |
+| `parseMjmlDocument`  | MJML source read back into a document, refusing a tag, attribute or value the package does not take |
 | `renderMjmlDocument` | a checked document rendered to MJML's JSON form                                                     |
 | `serializeMjml`      | MJML's JSON form written as MJML source                                                             |
-| `parseMjmlDocument`  | MJML source read back into a document, refusing a tag, attribute or value the package does not take |
 
-## <a name="documentation">📖 Documentation</a>
+## <a name="commands">⌨️ Commands</a>
 
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/mjml-blocks) to level up.
+```bash
+pnpm build       # Builds `dist`
+pnpm lint        # Lints the package
+pnpm lint:fix    # Lints the package and fixes what it can
+pnpm test        # Runs the tests with Vitest in watch mode
+pnpm typecheck   # Typechecks the package
+```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [MJML](https://documentation.mjml.io/)
+- [Vitest](https://vitest.dev/guide/)
+- [Zod](https://zod.dev/)
 
 ## <a name="license">⚖️ License</a>
 

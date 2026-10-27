@@ -5,15 +5,14 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-The parts of Azure's wire contract that both a real client and a fake one have to agree on: the OData filter
-clause vocabulary shared by Table Storage and Search, the entity key casing convention, and the service limits.
-No SDK client is constructed here and no credential is read — this package is pure data and pure functions, so
-it runs anywhere.
+The Azure wire conventions that a real client and a fake one both have to speak: the OData filter clause vocabulary shared by Table Storage and Search, the entity key casing convention, and the service limits.
 
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -27,6 +26,26 @@ pnpm add @esposter/azure
 ## <a name="documentation">📖 Documentation</a>
 
 We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
+
+No SDK client is constructed here and no credential is read — this package is pure data and pure functions, so
+it runs anywhere.
+
+### Key Exports
+
+| Export                      | Kind     | Purpose                                                                      |
+| --------------------------- | -------- | ---------------------------------------------------------------------------- |
+| `AZURE_MAX_PAGE_SIZE`       | const    | Largest page size the service returns in one call                            |
+| `BinaryOperator`            | enum     | Comparison operators Table Storage understands                               |
+| `Clause`                    | type     | A filter condition on one property, the unit OData strings are built from    |
+| `CompositeKey`              | class    | The `partitionKey` and `rowKey` pair every Table entity carries              |
+| `CompositeKeyPropertyNames` | const    | The `CompositeKey` property names, so callers never restate the strings      |
+| `deserializeClause`         | function | Parses a serialized filter clause back into a `Clause`, throwing on no match |
+| `escapeValue`               | function | Quotes a string as an OData literal, doubling embedded single quotes         |
+| `getPartitionKeyFilter`     | function | The filter selecting everything under one partition key                      |
+| `getTableNullClause`        | function | The Table Storage "is null" clause, a negated `NaN` comparison               |
+| `SearchOperator`            | enum     | Collection predicates only Azure Search supports                             |
+| `serializeClauses`          | function | Serializes clauses into a Table Storage OData filter string                  |
+| `serializeValue`            | function | Renders one `SerializableValue` as a literal for Table or Search             |
 
 ### Clauses
 
@@ -93,16 +112,23 @@ import { CompositeKey, CompositeKeyPropertyNames, serializeKey } from "@esposter
 `AZURE_MAX_BATCH_SIZE`, `AZURE_MAX_PAGE_SIZE` and `AZURE_MAX_QUEUE_VISIBILITY_TIMEOUT_MS` are the service's own
 ceilings, named so a caller paginating, batching or enqueueing does not hard-code them.
 
-### Commands
+## <a name="commands">⌨️ Commands</a>
 
 Run from `packages/azure/`:
 
 ```bash
 pnpm build        # compile to dist/
-pnpm test         # vitest watch mode (coverage is run from the repo root)
+pnpm lint         # check
 pnpm lint:fix     # auto-fix lint
+pnpm test         # vitest watch mode (coverage is run from the repo root)
 pnpm typecheck    # type check
 ```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [Azure Table Storage](https://learn.microsoft.com/azure/storage/tables/table-storage-overview)
+- [Vitest](https://vitest.dev/guide/)
+- [Zod](https://zod.dev/)
 
 ## <a name="license">⚖️ License</a>
 

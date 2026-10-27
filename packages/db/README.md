@@ -2,11 +2,13 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-Azure client factories and the server-side domain services built on them — server environment only. Covers Azure Table Storage, Blob Storage, Queue Storage, Service Bus, AI Search and Web PubSub, plus the message, moderation, resource and RBAC services shared by the app and the Azure Functions.
+Azure client factories and the server-side domain services built on them, server environment only, covering Azure Table Storage, Blob Storage, Service Bus and AI Search, plus the message, moderation, resource and RBAC services shared by the app and the Azure Functions.
 
 ## Table of Contents
 
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -20,12 +22,11 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 Every Azure client is reached through a `get*` factory taking the connection string; the app wraps each in a
 `use*` composable that supplies it from runtime config.
 
-| Export                      | Returns                                                           |
-| --------------------------- | ----------------------------------------------------------------- |
-| `getTableClient`            | A `TableClient` typed by `AzureTableEntityMap`, table provisioned |
-| `getContainerClient`        | A `ContainerClient`, container created and its properties synced  |
-| `getServiceBusSender`       | A cached `ServiceBusSender` for an `AzureQueue`                   |
-| `getWebPubSubServiceClient` | A `WebPubSubServiceClient` for an `AzureWebPubSubHub`             |
+| Export                | Returns                                                           |
+| --------------------- | ----------------------------------------------------------------- |
+| `getContainerClient`  | A `ContainerClient`, container created and its properties synced  |
+| `getServiceBusSender` | A cached `ServiceBusSender` for an `AzureQueue`                   |
+| `getTableClient`      | A `TableClient` typed by `AzureTableEntityMap`, table provisioned |
 
 `getTableClient` and `getContainerClient` provision on first use and memoize the promise, so the create call
 is paid once per process rather than once per request (`createProvisionedClientCache`).
@@ -35,6 +36,15 @@ resource purging, blob SAS minting and cloning, Azure Table entity marshalling (
 `deserializeEntity`) and the RBAC reads `checkHasPermission` / `getPermissions`. The filter vocabulary those
 services build their queries from — clause serialization, key casing, service limits — is `@esposter/azure`.
 
+### Usage
+
+```ts
+import { getFilesBlobNames } from "@esposter/db";
+
+// Every blob each file owns, flattened into the one list a delete publishes
+const blobNames = getFilesBlobNames("prefix", [{ filename: "photo.png", id: "file-id" }]);
+```
+
 ### Architecture Notes
 
 - **Server-only**: this package must not be imported in browser code.
@@ -42,16 +52,27 @@ services build their queries from — clause serialization, key casing, service 
   constants — this package never re-declares them.
 - Every factory here takes a **connection string**, in the app and in the Azure Functions alike — the app is hosted outside Azure and has no managed identity to use, and the Functions' own identity covers the host's storage bindings rather than the clients this package builds. Moving off keys is an app-side migration, tracked as a proposal on the infra roadmap.
 
-### Commands
+## <a name="commands">⌨️ Commands</a>
 
 Run from `packages/db/`:
 
 ```bash
+pnpm bench        # run benchmarks once
 pnpm build        # compile to dist/
-pnpm test         # vitest watch mode (coverage is run from the repo root)
+pnpm lint         # check
 pnpm lint:fix     # auto-fix lint
+pnpm test         # vitest watch mode (coverage is run from the repo root)
 pnpm typecheck    # type check
 ```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [Azure Blob Storage](https://learn.microsoft.com/azure/storage/blobs/storage-blobs-introduction)
+- [Azure Service Bus](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-messaging-overview)
+- [Azure Table Storage](https://learn.microsoft.com/azure/storage/tables/table-storage-overview)
+- [Azure Web PubSub](https://learn.microsoft.com/azure/azure-web-pubsub/overview)
+- [Drizzle ORM](https://orm.drizzle.team/docs/overview)
+- [Vitest](https://vitest.dev/guide/)
 
 ## <a name="license">⚖️ License</a>
 

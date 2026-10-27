@@ -5,12 +5,14 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Content-addressed version storage for documents handed over whole. Every version is stored as a zstd **keyframe** — compressed on its own — or as a **delta** compressed against exactly one keyframe, using that keyframe's plaintext as the dictionary. Reconstructing any version is at most two reads, a version whose content is already held costs nothing, and the backend is anything that can store bytes by key.
+Content-addressed version storage for documents handed over whole, where every version is a zstd **keyframe**, compressed on its own, or a **delta** against a keyframe.
 
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -66,34 +68,42 @@ const plaintext = await keyframeStore.read(second.hash).match(
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up. The object format on disk and the contract a caller writes and reads through are specified in the [keyframe store area](https://github.com/Esposter/Esposter/tree/main/openspec/specs/keyframe-store).
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/keyframe-store) to level up. The object format on disk and the contract a caller writes and reads through are specified in the [keyframe store area](https://github.com/Esposter/Esposter/tree/main/openspec/specs/keyframe-store).
+
+Each delta is compressed against exactly one keyframe, using that keyframe's plaintext as the dictionary. Reconstructing any version is at most two reads, a version whose content is already held costs nothing, and the backend is anything that can store bytes by key.
 
 ### Key exports
 
 | Export                 | Role                                                                                                                                                                      |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `createKeyframeStore`  | The factory, taking an `ObjectStore` and optional `KeyframeStoreOptions`                                                                                                  |
-| `ObjectStore`          | The backend interface — `read`, `write`, `delete` by key                                                                                                                  |
 | `KeyframeStore`        | `write(plaintext, anchor)`, `read(hash)`, `collect(released, retained)` — every one a `ResultAsync`                                                                       |
+| `KeyframeStoreOptions` | `compressionLevel`, `promotionRatio`, `segmentBudgetRatio`, each defaulted from `constants` — the level from `@esposter/shared`'s, which the app's browser encoder shares |
+| `ObjectStore`          | The backend interface — `read`, `write`, `delete` by key                                                                                                                  |
 | `VersionAnchor`        | What a lineage passes to a write: its keyframe's hash and the bytes anchored to it                                                                                        |
 | `WrittenVersion`       | What a write reports: the hash, its base, both sizes and whether it was deduplicated                                                                                      |
-| `KeyframeStoreOptions` | `compressionLevel`, `promotionRatio`, `segmentBudgetRatio`, each defaulted from `constants` — the level from `@esposter/shared`'s, which the app's browser encoder shares |
 
-### Commands
+## <a name="commands">⌨️ Commands</a>
 
 Run from `packages/keyframe-store/`:
 
 ```bash
-pnpm build        # compile to dist/
-pnpm test         # vitest watch mode (coverage is run from the repo root)
 pnpm bench        # the codec benchmark, writing the colocated *.bench.md
+pnpm build        # compile to dist/
+pnpm lint         # lint the package
 pnpm lint:fix     # auto-fix lint
+pnpm test         # vitest watch mode (coverage is run from the repo root)
 pnpm typecheck    # type check
 ```
 
+## <a name="related">🔗 Related Documentation</a>
+
+- [neverthrow](https://github.com/supermacro/neverthrow)
+- [Vitest](https://vitest.dev/guide/)
+
 ## <a name="license">⚖️ License</a>
 
-This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
+Licensed under [Apache-2.0][url-license].
 
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE

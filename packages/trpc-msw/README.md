@@ -5,12 +5,14 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-tRPC for [Mock Service Worker](https://mswjs.io). Register a resolver per procedure, typed off your router, and every call your client makes is answered at the network by tRPC's own handlers — so batching, your transformer, your error formatter, `FormData` input and subscriptions over server-sent events or WebSockets all behave exactly as they do against the real server.
+tRPC for [Mock Service Worker](https://mswjs.io): register a resolver per procedure, typed off your router, and every call your client makes is answered at the network by tRPC's own handlers.
 
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -54,26 +56,35 @@ test("reads a post", async () => {
 
 We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/trpc-msw) to level up. It covers the design and the upstream `msw-trpc` issues this package answers.
 
+The result is that batching, your transformer, your error formatter, `FormData` input and subscriptions over server-sent events or WebSockets all behave exactly as they do against the real server.
+
 ### Key exports
 
 | Export                     | Description                                                                                                                     |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | `createTRPCMsw`            | The factory — returns the msw `handlers`, the typed `trpc` registration proxy and `reset`                                       |
-| `TRPCMswOptions`           | `t`, `endpoint`, and optionally `router`, `webSocketUrl`, `createContext`, `allowMethodOverride` and `onUnhandledProcedure`     |
+| `TRPCMswOptions`           | `t`, `endpoint`, and optionally `allowMethodOverride`, `createContext`, `onUnhandledProcedure`, `router` and `webSocketUrl`     |
 | `UnhandledProcedureAction` | `Error` (default) answers an unregistered procedure with tRPC's `NOT_FOUND`; `Bypass` passes the request on to the next handler |
 
 Pass your real `router` and every call is first judged by that procedure's own input parsers (Standard Schema validators, or plain functions), so a client sending what your server would reject gets the same `BAD_REQUEST` instead of a mocked answer; the resolver receives what those parsers return, as it does on the server. A resolver receives what a real one does — `ctx`, `input`, `path`, `signal` — and returns the procedure's output before the transformer, which runs on the way out as it does on the server. A thrown `TRPCError` reaches the client through your error formatter.
 
-### Commands
+## <a name="commands">⌨️ Commands</a>
 
 Run from `packages/trpc-msw/`:
 
 ```bash
 pnpm build        # compile to dist/
-pnpm test         # vitest watch mode (coverage is run from the repo root)
+pnpm lint         # lint the package
 pnpm lint:fix     # auto-fix lint
+pnpm test         # vitest watch mode (coverage is run from the repo root)
 pnpm typecheck    # type check
 ```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [MSW](https://mswjs.io/docs/)
+- [tRPC](https://trpc.io/docs)
+- [Vitest](https://vitest.dev/guide/)
 
 ## <a name="license">⚖️ License</a>
 

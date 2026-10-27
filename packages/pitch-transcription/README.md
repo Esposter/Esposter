@@ -5,12 +5,14 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-The notes played in a recording: each note's pitch, start, length, loudness and pitch bend, heard by Spotify's Basic Pitch model on ONNX Runtime and written as MIDI if you want a file. It hears several notes at once, on any instrument. The trained model ships with the package, and the step that turns the model's readings into notes imports without ONNX Runtime.
+The notes played in a recording: each note's pitch, start, length, loudness and pitch bend, heard by Spotify's Basic Pitch model on ONNX Runtime and written as MIDI if you want a file.
 
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -51,27 +53,37 @@ A worker or a server that already holds the readings imports note creation from 
 
 We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/pitch-transcription) to level up. It explains how the package works and how it absorbed `@spotify/basic-pitch`.
 
-### Key exports
+It hears several notes at once, on any instrument. The trained model ships with the package, and the step that turns the model's readings into notes imports without ONNX Runtime.
 
-| Export                  | Role                                                                                                               |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `readModel`             | The model's frame, onset and contour readings over a recording, a window at a time, each output disposed once read |
-| `createNotes`           | The readings turned into notes, with Basic Pitch's thresholds, inferred onsets, frequency range and melodia trick  |
-| `addPitchBends`         | Each note's bend at every frame, in contour bins of a third of a semitone                                          |
-| `convertNotesToSeconds` | Notes timed in seconds rather than the model's frames                                                              |
-| `writeMidi`             | Notes as a MIDI file's bytes, each bend written as its share of the bend's range                                   |
-| `MODEL_URL`             | The shipped model file, Basic Pitch's ONNX export                                                                  |
+### Key Exports
 
-### Commands
+| Export                  | Kind     | Purpose                                                                                                            |
+| :---------------------- | :------- | :----------------------------------------------------------------------------------------------------------------- |
+| `addPitchBends`         | function | Each note's bend at every frame, in contour bins of a third of a semitone                                          |
+| `convertNotesToSeconds` | function | Notes timed in seconds rather than the model's frames                                                              |
+| `createNotes`           | function | The readings turned into notes, with Basic Pitch's thresholds, inferred onsets, frequency range and melodia trick  |
+| `MODEL_URL`             | const    | The shipped model file, Basic Pitch's ONNX export                                                                  |
+| `readModel`             | function | The model's frame, onset and contour readings over a recording, a window at a time, each output disposed once read |
+| `writeMidi`             | function | Notes as a MIDI file's bytes, each bend written as its share of the bend's range                                   |
+
+## <a name="commands">⌨️ Commands</a>
 
 Run from `packages/pitch-transcription/`:
 
 ```bash
+pnpm bench        # run the benchmarks once
 pnpm build        # compile to dist/
-pnpm test         # vitest watch mode (coverage is run from the repo root)
+pnpm lint         # lint the package
 pnpm lint:fix     # auto-fix lint
+pnpm test         # vitest watch mode (coverage is run from the repo root)
 pnpm typecheck    # type check
 ```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [Basic Pitch](https://github.com/spotify/basic-pitch)
+- [ONNX Runtime](https://onnxruntime.ai/docs/)
+- [Vitest](https://vitest.dev/guide/)
 
 ## <a name="license">⚖️ License</a>
 

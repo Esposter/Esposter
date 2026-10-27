@@ -13,6 +13,8 @@ It is an unofficial, non-commercial fan engine, not affiliated with HoYoverse. I
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands)
+- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -72,6 +74,42 @@ A web worker generating the ground imports its generators from the `genshin-engi
 ## <a name="documentation">📖 Documentation</a>
 
 We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/genshin) to level up. The engine's design, from the order a frame runs in to each module's job, is its [architecture page](https://github.com/Esposter/Esposter/blob/main/openspec/specs/genshin/engine-architecture/design.md), and the look it draws is its [rendering style](https://github.com/Esposter/Esposter/blob/main/openspec/specs/genshin/rendering-style/design.md).
+
+### Key Exports
+
+| Export                   | Kind     | Purpose                                                                                             |
+| ------------------------ | -------- | --------------------------------------------------------------------------------------------------- |
+| `computeTerrainTile`     | function | Samples one terrain tile's grid, normals and colours from the region's heights                      |
+| `createFogUniforms`      | function | One set of fog uniforms per world, read by the fog pass                                             |
+| `createGenshinRenderer`  | function | A three.js WebGPU renderer, falling back to WebGL 2 where WebGPU is missing                         |
+| `createGodraysLight`     | function | A second, unlit sun whose one shadow map covers the view for the god rays to march through          |
+| `createGradeLutTexture`  | function | The colour grade's cube as a 3D texture the LUT pass samples                                        |
+| `createLightUniforms`    | function | One set of light uniforms per world, shared by every material                                       |
+| `createPostPipeline`     | function | Builds the frame's post chain over a scene, from outlines to grade and anti-aliasing                |
+| `createPostUniforms`     | function | The post chain's uniforms: outline colour and thickness, god-ray colour, grade and white balance    |
+| `createRampTexture`      | function | A one-row texture of the irradiance the toon lighting steps between                                 |
+| `createToonMaterial`     | function | The environment's toon material, stepping from shade to lit on the world's ramp, with the sky's rim |
+| `QualityTier`            | enum     | The three quality tiers a renderer's cost is set by                                                 |
+| `QualityTierSettingsMap` | const    | What each quality tier spends: shadow maps, cascades, god-ray steps, bloom and anti-aliasing        |
+
+## <a name="commands">⌨️ Commands</a>
+
+Run from `packages/genshin-engine/`:
+
+```bash
+pnpm bench        # vitest bench, one run
+pnpm build        # tsdown
+pnpm lint         # lint the package
+pnpm lint:fix     # eslint --fix
+pnpm test         # vitest watch mode
+pnpm typecheck    # tsrs --fast
+```
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [three.js](https://threejs.org/docs/)
+- [tsdown](https://tsdown.dev/)
+- [Vitest](https://vitest.dev/guide/)
 
 ## <a name="license">⚖️ License</a>
 
