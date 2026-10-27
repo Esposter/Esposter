@@ -55,6 +55,8 @@ The rest of the config's widgets, the cameras, the avatar attachments, the water
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `~/Esposter/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, the widget config with each widget's type, cooldowns and cooldown group, and `~/Esposter/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`, which names each spawned gadget. Both are read from the dump outside the repository and nothing from them is committed.
 - [Gadget](https://genshin-impact.fandom.com/wiki/Gadget), Genshin Impact Wiki: the gadgets as the bag's tab, and the cooldowns that run while the world is paused.
+- Collector with no failure cooldown has none: (`~/Esposter.noindex/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, the collector `220004`, which has no `coolDownOnFail`).
+- A cooldown keeps running while the world is paused: "as the game's do".
 
 ## Open
 

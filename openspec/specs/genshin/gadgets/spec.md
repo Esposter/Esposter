@@ -40,7 +40,7 @@ A gadget SHALL start its configured cooldown after a use that works and its cool
 
 - **GIVEN** a collector gadget has no failure cooldown configured
 - **WHEN** a use of it fails
-- **THEN** no cooldown starts (`~/Esposter.noindex/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, the collector `220004`, which has no `coolDownOnFail`)
+- **THEN** no cooldown starts
 
 ### Requirement: A gadget is refused while its cooldown group is not ready
 
@@ -76,7 +76,7 @@ Gadgets in one cooldown group SHALL share their cooldown, and a gadget with no g
 
 ### Requirement: A cooldown keeps running while the world is paused
 
-A cooldown SHALL keep counting down while the world is paused, as the game's do, since it is kept as a ready moment rather than ticked.
+A cooldown SHALL keep counting down while the world is paused, since it is kept as a ready moment rather than ticked.
 
 #### Scenario: Cooldown started before a menu runs on while it is open
 
