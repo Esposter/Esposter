@@ -89,7 +89,7 @@ flowchart TD
 ## Open
 
 - [ ] **A forest of the game's is a handful of species placed many times** — no source yet: no table checked names the game's forest species.
-- [ ] **The oak has a few dozen surface roots and a few dozen limbs** — no source yet: the oak's own record, which is hosted rather than kept in the repository; the bark export `{data-root}/genshin-parity/extracted/windrise/assets/Mesh/Stages_Unique_CyTree01_Bark_Lod1.obj` holds 340 connected pieces (28 of 50 faces or more, the largest 712 faces) and does not tell roots from limbs.
+- [ ] **The oak has a few dozen surface roots and a few dozen limbs** — no source yet: the oak's own record, which is hosted rather than kept in the repository; the bark export `Stages_Unique_CyTree01_Bark_Lod1.obj`, in the windrise mesh folder that [development exports](../derived-assets/development-exports/design.md) cites, holds 340 connected pieces (28 of 50 faces or more, the largest 712 faces) and does not tell roots from limbs.
 - [ ] **The oak's hundred or so tubes make a few tens of thousands of vertices** — no source yet: `computeTreeTubes.bench.md` measures 8 and 32 tubes, not the oak's.
 - [ ] **The switch is read off a recording of a walk away from one of the game's trees** — no source yet: no capture of that walk is in `{data-root}/genshin-parity/captures/`.
 - [ ] **the oak's surface roots are the bark mesh's second submesh** — no source yet: the oak's mesh export under `{data-root}/genshin-parity/extracted/windrise/`, not yet read for its submeshes.

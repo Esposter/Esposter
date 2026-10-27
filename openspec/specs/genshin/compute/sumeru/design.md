@@ -17,5 +17,5 @@
 
 ## Open
 
-- [ ] **The sumeru-city-location camera pose image is written** — no source yet: the pose image the solve writes is not on disk, since no `pose` folder exists under `{data-root}/genshin-parity/`.
-- [ ] **The sumeru-city-location shadow image is written** — no source yet: the shadow image the sun solve writes is not on disk, since no `shadows` folder exists under `{data-root}/genshin-parity/`.
+- [ ] **The sumeru-city-location camera pose image is written** — no source yet, for the reason [Liyue](../liyue/design.md) gives.
+- [ ] **The sumeru-city-location shadow image is written** — no source yet, for the reason [Liyue](../liyue/design.md) gives for its shadow image.

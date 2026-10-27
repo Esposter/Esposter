@@ -94,7 +94,7 @@ The values are starting points, not the game's: each is marked provisional where
 
 ## Sources
 
-- [Weather](https://genshin-impact.fandom.com/wiki/Weather), Genshin Impact Wiki: not on disk, so no wording from it is checked here.
+- [Weather](https://genshin-impact.fandom.com/wiki/Weather), Genshin Impact Wiki.
 - [Lightning](https://genshin-impact.fandom.com/wiki/Lightning), Genshin Impact Wiki: lightning striking the land during thunderstorms.
 - A sandstorm recording in the Desert of Hadramaveth, the camera still, a short clip; the haze's colour and the sand's streaks are matched to it (the file itself is open below). the wiki's `File:Desert of Hadramaveth.png` and https://www.youtube.com/watch?v=k_FKK0qcYHw at 0–40 s (`{data-root}/genshin-parity/captures/yt-k_FKK0qcYHw-0-40.mp4`).
 

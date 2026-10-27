@@ -105,10 +105,10 @@ A recipe the table shows from the start is open from the start. One it hides is 
 
 ## Open
 
-- [ ] **Mystic Offering opens at Adventure Rank 45** — no source yet: the dump's open-state row 1600 (`{data-root}/genshin-parity/text/ExcelBinOutput/OpenStateConfigData.json`) gates rank 45 but names no system, so the game's gate for this tab is unverified.
+- [ ] **The Mystic Offering's gate at Adventure Rank 45** is the [Artifact Strongbox](../artifact-strongbox/design.md) open item too: the dump's open-state row 1600 (`{data-root}/genshin-parity/text/ExcelBinOutput/OpenStateConfigData.json`) gates rank 45 but names no system, so the game's gate for this tab is unverified.
 - [ ] **The talent draws of 10%, 25%, 20%, 25% and 10%** — no source yet: the wiki's Crafting Talents category is not in `{data-root}/cache/genshin-wiki/`, and none of the rows with a 0.25 parameter in `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json` names a crafting talent.
 - [ ] **A character's crafting talent gives a double, a refund or a regional extra** — no source yet: the wiki's Crafting Talents category is not in `{data-root}/cache/genshin-wiki/`.
-- [ ] **The Xiao Lantern is a quest's item** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`: row 200004 is itemType ITEM_MATERIAL, not a quest item.
+- [ ] **The Xiao Lantern is a quest's item** — contradicted by the material table [character profile](../character-profile/design.md) cites: row 200004 is itemType ITEM_MATERIAL, not a quest item.
 - [ ] **The homeworld's rows belong to the Serenitea Pot** — no source yet: their recipe type is named RECIPE_TYPE_COMBINE_HOMEWORLD in `{data-root}/genshin-parity/text/ExcelBinOutput/CombineExcelConfigData.json`, and no Serenitea Pot text was read for them.
 - [ ] **Timaeus stands beside the bench** — no source yet: the wiki's Timaeus page, named in Sources, is not in `{data-root}/cache/genshin-wiki/`.
 - [ ] **The bench stands where its scene group record places it** — no source yet: the scene group record's Craft member is not compared with the published `craftingBenchPlaces/mondstadt`.

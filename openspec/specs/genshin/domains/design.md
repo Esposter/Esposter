@@ -41,7 +41,7 @@ flowchart TD
 
 ## Sources
 
-- [Domains](https://genshin-impact.fandom.com/wiki/Domains), Genshin Impact Wiki: the unlocking ranks, not yet read: the page is not in the cache (see Open). The quest unlocks and the weekday schedule are not read yet.
+- [Domains](https://genshin-impact.fandom.com/wiki/Domains), Genshin Impact Wiki: the unlocking ranks, not yet read (see Open). The quest unlocks and the weekday schedule are not read yet.
 - [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: the Domains of Forgery and Mastery turning at the reset. Not yet read, for the same reason.
 
 ## Open

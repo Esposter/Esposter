@@ -30,7 +30,7 @@ flowchart LR
 | `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`        | Each time of day's sky, haze and light colours and strengths           |
 | `packages/genshin-world/src/services/login/scene/getLoginScreenDirection.ts` | A screen point read off the reference, as the direction it lights from |
 | `packages/genshin-world/src/components/Login/Scene/Sky.reference.ts`         | The sky the scene is compared with, per hour                           |
-| `packages/genshin-world/src/components/Login/Scene/Light.reference.ts`       | The light the scene is compared with, per hour                         |
+| `packages/genshin-world/src/components/Login/Scene/Light.reference.ts`       | The light reference, as [light](../light/design.md) describes it       |
 
 ## Open
 

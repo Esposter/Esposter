@@ -39,12 +39,10 @@ The artifact sets' caller is the Archive's composable: it hands the artifacts th
 
 ## Key files
 
-| File                                                                           | Role after the change                                         |
-| :----------------------------------------------------------------------------- | :------------------------------------------------------------ |
-| `packages/genshin-world/src/components/World/Enemies/Index.vue`                | The defeat that counts toward a living being's entry          |
-| `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts`                | Already reads the living beings' codex                        |
-| `packages/genshin-world/src/services/archive/getViewpointPlaces.ts`            | Each viewpoint's place as the scene group record gives it     |
-| `packages/genshin-world/src/services/archive/computeViewpointInteractables.ts` | An offered viewpoint's prompt on the ground beneath its place |
+| File                                                            | Role after the change                                |
+| :-------------------------------------------------------------- | :--------------------------------------------------- |
+| `packages/genshin-world/src/components/World/Enemies/Index.vue` | The defeat that counts toward a living being's entry |
+| `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts` | Already reads the living beings' codex               |
 
 ## Sources
 

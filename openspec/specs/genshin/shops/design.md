@@ -46,7 +46,7 @@ flowchart TD
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ShopGoodsExcelConfigData`, the goods, their prices, limits, refreshes, ranks and dates, and "ShopExcelConfigData", the shops and their refreshes. The table's refresh kinds are none, daily, weekly and monthly.
-- `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/RefreshPolicyExcelConfigData.json` row 101000, which holds 14400 seconds: the daily refresh's row, grounding the requirement "Refreshes happen at four in the morning game time".
+- "RefreshPolicyExcelConfigData" row 101000 of the dump ([Original Resin](../original-resin/design.md) cites its file), which holds 14400 seconds: the daily refresh's row, grounding the requirement "Refreshes happen at four in the morning game time".
 - `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ShopExcelConfigData.json`, shop 102: the shop whose monthly refresh falls on the first of the month. It grounds that day but names no hour, so the monthly hour is unsourced (see the spec's Open), and the requirement "Refreshes happen at four in the morning game time" rests on the daily row alone for its hour.
 
 ## Open

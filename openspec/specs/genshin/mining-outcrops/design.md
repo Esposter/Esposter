@@ -47,4 +47,4 @@ flowchart TD
 - [ ] **Reputation's mining outcrop search at level 2 of a nation marks them** — no source: no reputation source was checked for the search or its level.
 - [ ] **The respawn is at 06:00 on the wiki, two hours after the reset** — no source: the wiki's Mining Outcrop page is not in the cache.
 - [ ] **A break drops one to three Magical Crystal Chunks** — no source: the figure is the wiki's and provisional, its page is not cached, and the dump's gather rows hold no count.
-- [ ] **The 04:00 reset is read in UTC+8, the server's clock** — no source: a game row that names the zone, since the dump's refresh row gives 14400 seconds with none, and the wiki's Daily Reset page is not in the cache.
+- [ ] **The 04:00 reset is read in UTC+8, the server's clock** — no source: a game row that names the zone, since the dump's refresh row gives 14400 seconds with none; it is the question [Domains](../domains/design.md) also leaves open.
