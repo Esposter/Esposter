@@ -16,7 +16,7 @@ Faruzan's normal attacks SHALL be four strikes, a fully charged shot, a collisio
 
 ### Requirement: Poise on the shot and plunges
 
-Faruzan's fully charged shot and plunges SHALL deal the poise of her own Parthian Shot page, 20 for the shot, 50 for the low plunge and 100 for the high plunge.
+Faruzan's fully charged shot and plunges SHALL deal poise of 20 for the shot, 50 for the low plunge and 100 for the high plunge.
 
 #### Scenario: The fully charged shot deals 20 poise
 
@@ -55,7 +55,7 @@ The Wind's Secret Ways SHALL deal its initial hit and set Dazzling Polyhedron st
 - **GIVEN** Faruzan has enough energy
 - **WHEN** the player casts The Wind's Secret Ways
 - **THEN** its initial hit lands
-- **AND** Dazzling Polyhedron stands for 788 frames, about 13.1 seconds (gcsim's figure; the table's 12 seconds is open, see the design's Not built)
+- **AND** Dazzling Polyhedron stands for 788 frames, about 13.1 seconds
 
 #### Scenario: The burst is refused without enough energy
 
