@@ -1,0 +1,1 @@
+{ "compilerOptions": { "lib": ["ESNext", "DOM", "DOM.Iterable"] }, "extends": "./tsconfig.library.json" }
