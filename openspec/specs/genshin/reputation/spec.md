@@ -64,7 +64,7 @@ Each request and each bounty SHALL pay the nation's Reputation EXP and Mora, wit
 
 - **GIVEN** two bounties of the same kind differ in difficulty
 - **WHEN** each is claimed
-- **THEN** the harder one pays more Reputation EXP and more Mora (`~/Esposter/genshin-parity/text/ExcelBinOutput/RewardExcelConfigData.json`, bounty rewards 2010101 and 2010102)
+- **THEN** the harder one pays more Reputation EXP and more Mora
 
 ### Requirement: Requests and bounties are claimable three times a week across nations
 
