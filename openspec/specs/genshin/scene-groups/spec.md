@@ -83,7 +83,7 @@ A field that only the server's group scripts hold SHALL be left unset rather tha
 
 - **GIVEN** a camp's monsters and their levels are needed
 - **WHEN** the record is read
-- **THEN** the record gives no monsters for the camp (whose sources hold no monster)
+- **THEN** the record gives no monsters for the camp
 - **AND** the camp keeps its stand-in
 
 #### Scenario: A trigger's region is left without a place
