@@ -63,7 +63,7 @@ The jump list, the map's marks and a revive SHALL use only unlocked landmarks, a
 
 ### Requirement: First unlock pays Primogems
 
-Windrise's statue SHALL pay five Primogems and fifty Adventure EXP on its first unlock and no more after (`~/Esposter/genshin-parity/text/ExcelBinOutput/RewardExcelConfigData.json`, rewardId 220311, and `~/Esposter/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json`, sceneId 3 pointId 4).
+Windrise's statue SHALL pay five Primogems and fifty Adventure EXP on its first unlock and no more after.
 
 #### Scenario: First unlock of Windrise's statue
 
@@ -72,12 +72,16 @@ Windrise's statue SHALL pay five Primogems and fifty Adventure EXP on its first 
 
 ### Requirement: Waypoints unlock as statues do
 
-A Teleport Waypoint SHALL be unlocked by resonating with it on F, as a statue is, and its first unlock SHALL pay the Primogems and Adventure EXP its transport point's reward row holds, once.
+A Teleport Waypoint SHALL be unlocked by resonating with it on F, as a statue is.
 
 #### Scenario: Waypoint unlocked on F
 
 - **WHEN** the player resonates with a Teleport Waypoint on F
 - **THEN** the waypoint is unlocked and offered as a jump
+
+### Requirement: Waypoint's first unlock pays its reward
+
+A Teleport Waypoint's first unlock SHALL pay the Primogems and Adventure EXP its transport point's reward row holds, once.
 
 #### Scenario: Waypoint's first unlock pays its point's reward
 
@@ -86,7 +90,7 @@ A Teleport Waypoint SHALL be unlocked by resonating with it on F, as a statue is
 
 #### Scenario: Waypoint whose point has no reward row pays nothing
 
-- **WHEN** a Teleport Waypoint whose transport point has no reward row is unlocked for the first time (`~/Esposter/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json` has no row for points 1865 to 2051, the points of eleven Mondstadt waypoints)
+- **WHEN** a Teleport Waypoint whose transport point has no reward row is unlocked for the first time
 - **THEN** nothing is added to the wallet or the adventure rank
 
 #### Scenario: A later unlock pays nothing again

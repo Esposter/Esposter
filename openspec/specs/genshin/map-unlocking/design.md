@@ -49,6 +49,9 @@ flowchart TD
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `TransPointRewardConfigData`, each transport point's reward, and `RewardExcelConfigData`, the Adventure EXP and Primogems each reward pays.
+- `~/Esposter/genshin-parity/text/ExcelBinOutput/RewardExcelConfigData.json`, rewardId 220311, grounds the requirement "First unlock pays Primogems".
+- `~/Esposter/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json`, sceneId 3 pointId 4, grounds the requirement "First unlock pays Primogems".
+- `~/Esposter/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json` has no row for points 1865 to 2051, the points of eleven Mondstadt waypoints, grounding scenario "Waypoint whose point has no reward row pays nothing".
 
 ## Open
 
