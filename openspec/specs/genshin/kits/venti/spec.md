@@ -6,7 +6,7 @@ Venti's kit as built, with Skyward Sonnet's Wind Domain, the Stormeye and Splitt
 
 ### Requirement: Venti's shots
 
-Venti's six shots, the first and fourth of which fire two arrows each, and his fully charged aimed shot SHALL land on the enemies within reach, with their arrows and shots priced round his body (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/venti/attack.go` line 16).
+Venti's six shots, the first and fourth of which fire two arrows each, and his fully charged aimed shot SHALL land on the enemies within reach, with their arrows and shots priced round his body (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/venti/attack.go` line 16 for the six shots, and lines 53-59 for the box each arrow lands through; `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/venti/aimed.go` lines 72-78 for the shot's box).
 
 #### Scenario: Six shots in sequence
 
