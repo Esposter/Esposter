@@ -109,8 +109,7 @@ catalog:
   "@trpc/client": ^11.19.0
   "@trpc/server": ^11.19.0
   "@tsdown/css": ^0.23.2
-  # Held inside 5.0.x by the `@types/mjml` rule in renovate.json, which carries the reason
-  "@types/mjml": ~5.0.0
+  "@types/mjml": ^5.4.2
   "@types/node": ^26.6.5
   "@types/sax": ^1.2.7
   "@types/three": ^0.186.0
@@ -273,9 +272,6 @@ nodeOptions: --max-old-space-size=8192 --trace-warnings
 overrides:
   nitro: npm:nitro-nightly@latest
   typescript: npm:typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2
-  # Every `@types/mjml` dependent (apps/web, mjml-blocks) takes the catalog's 5.0.0, so a range a transitive package
-  # carries cannot resolve a 4.x copy whose `@types/mjml-core@~4.18` the registry no longer publishes
-  "@types/mjml": "catalog:"
   # Nuxt's and its tools' optional `oxc-parser` peers resolve per subtree, so the stable and nightly stacks each took their
   # own 0.140, 0.153, 0.154 or 0.155 copy, and `nuxt-nightly` split into peer variants that each declare a separate `NuxtApp`.
   # One forced copy keeps a single `nuxt-nightly`; remove once Nuxt pins `oxc-parser` so its peers stop resolving loose

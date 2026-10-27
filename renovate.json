@@ -43,12 +43,6 @@
       "matchPackageNames": ["vue-tsc"]
     },
     {
-      "allowedVersions": "<5.1.0",
-      "automerge": false,
-      "description": "`@types/mjml` 5.4.0 depends on `@types/mjml-core@~5.4`, which the registry does not publish (its newest is 5.1.0), so no install resolves it. The catalog holds the same minor with a tilde range. Drop this rule with that range once a release resolves.",
-      "matchPackageNames": ["@types/mjml"]
-    },
-    {
       "automerge": false,
       "description": "The pair is pinned to one exact RC and moves as one, following the `rc` dist-tag: drizzle publishes a per-commit build (`1.0.0-rc.5-ab785fc`) under a tag per branch, and without the tag every one of those is a proposal. A release candidate can change what `db:gen` emits, so the grouped bump is read rather than merged on green. Drop `followTag` once 1.0.0 reaches `latest`.",
       "followTag": "rc",

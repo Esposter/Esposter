@@ -393,6 +393,9 @@ catalogs:
     '@tsdown/css':
       specifier: ^0.23.2
       version: 0.23.2
+    '@types/mjml':
+      specifier: ^5.4.2
+      version: 5.4.2
     '@types/node':
       specifier: ^26.6.5
       version: 26.6.5
@@ -781,7 +784,6 @@ catalogs:
 overrides:
   nitro: npm:nitro-nightly@latest
   typescript: npm:typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2
-  '@types/mjml': ~5.0.0
   oxc-parser: ^0.156.0
   vite: ^8.3.5
   phaser4-rex-plugins>i18next-http-backend: ^4.0.6
@@ -1319,8 +1321,8 @@ importers:
         specifier: 'catalog:'
         version: 2.18.2(csstype@3.2.3)
       '@types/mjml':
-        specifier: ~5.0.0
-        version: 5.0.0
+        specifier: 'catalog:'
+        version: 5.4.2
       '@types/three':
         specifier: 'catalog:'
         version: 0.186.0
@@ -1971,8 +1973,8 @@ importers:
         specifier: workspace:*
         version: link:../configuration
       '@types/mjml':
-        specifier: ~5.0.0
-        version: 5.0.0
+        specifier: 'catalog:'
+        version: 5.4.2
       mjml:
         specifier: 'catalog:'
         version: 5.4.1(svgo@4.1.0)(terser@5.51.2)
@@ -6815,8 +6817,8 @@ packages:
   '@types/mjml-core@5.1.1':
     resolution: {integrity: sha512-H3ycAWAk7LCLUqX/uLVbrndU9zZ93tcjbfmrAoe2lsPw+lEpiLl0Gi6vYNXEcY7Ww/tv/oXm/9HkAGYWyY1TTw==}
 
-  '@types/mjml@5.0.0':
-    resolution: {integrity: sha512-z6P0yjEOVOz6cZVyD3vkPSifzVH0fa9M8BFM8Jl9HtpeFkBJyCZHRLPx1uFnkZijgAYmtO/JfSbp4EF1fNwsXQ==}
+  '@types/mjml@5.4.2':
+    resolution: {integrity: sha512-f3Ueveyh+m1gD5jYVbUJhHAGBIhexi+N+XHqiuCyfkWixOWSiUTNSxuGt/NGlxNNePlqgV3BeJFsquGQQfXN7A==}
 
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
@@ -19554,7 +19556,7 @@ snapshots:
 
   '@types/mjml-core@5.1.1': {}
 
-  '@types/mjml@5.0.0':
+  '@types/mjml@5.4.2':
     dependencies:
       '@types/mjml-core': 5.1.1
 
