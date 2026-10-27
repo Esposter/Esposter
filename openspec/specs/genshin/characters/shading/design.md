@@ -391,7 +391,7 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 - [ ] **The face's flip, `_FaceFlipFactor` and its angle rule** — no source yet: a game listing that names `_FaceFlipFactor`, since none under `{data-root}/genshin-parity/extracted/shaders` does, and the repo's `updateFaceDraw.ts` is repo code.
 - [ ] **The face's shadow colour `C = Cm * mix(S, 1, F)` and the no-face-map case lit** — no source yet: a rendered face that checks the equation, since `{data-root}/genshin-parity/extracted/shaders/asm/uber/00432.asm` is not decoded to this form.
 - [ ] **The outline's region intensities `_OutLineIntensity{k}`** — no source yet: the pixel program's read of each intensity, since the 885 listing's `cb0` indices are not matched to the names.
-- [ ] **The outline's `_OutLineZOffset` at `cb0[31].x` is not built** — no source yet: the game's `_OutLineZOffset` bias, which no listing under `{data-root}/genshin-parity/extracted/shaders/asm/uber` or `Shader#*.dat` names.
+- [ ] **The outline's "\_OutLineZOffset" at `cb0[31].x` is not built** — no source yet: the game's "_OutLineZOffset" bias, which no listing under `{data-root}/genshin-parity/extracted/shaders/asm/uber` or `Shader#*.dat` names.
 - [ ] **Each program's index is the same in its `NNNNN.dxbc` and its `programs.tsv` line** — no source yet: the cited file `programs.tsv` is not on disk
 - [ ] **The nose shows a dark mark in front light, as the character screen draws it** — no source yet: the Hydro Lumine character-screen video (https://www.youtube.com/watch?v=KPlvZW6udfk, 0:18) is not on disk.
 - [ ] **A pale dot on the nose of a back-lit face is the lit flank** — no source yet: a rendered back-lit frame of the face.

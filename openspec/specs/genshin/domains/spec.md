@@ -71,6 +71,6 @@ The game's day SHALL turn at 04:00 in UTC+8, and a Domain of Forgery's day SHALL
 ## Open
 
 - [ ] **Forgery opens at 16, Blessing at 22 and Mastery at 27** — no source yet: the wiki's Domain page is not in the cache, and no table read here ties 22 or 27 to a kind.
-- [ ] **A Domain of Blessing is open every day** — no source yet: the wiki's Domain page is not in the cache, and the day rows of `DailyDungeonConfigData` are not mapped to weekdays.
+- [ ] **A Domain of Blessing is open every day** — no source yet: the wiki's Domain page is not in the cache, and the day rows of "DailyDungeonConfigData" are not mapped to weekdays.
 - [ ] **Forgery and Mastery open on Sundays and their two set days** — no source yet: the set days' weekday mapping is unread, and the wiki's Domain page is not in the cache.
 - [ ] **The game's day turns at 04:00 in UTC+8, Forgery's at the reset** — no source yet: the wiki's Daily Reset page is not in the cache.

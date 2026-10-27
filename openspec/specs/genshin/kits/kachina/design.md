@@ -37,7 +37,7 @@ flowchart TD
 
 - [ ] **The burst's hit lands at 18 frames** — no source yet: her record tags the hitmark `NoGcsimUnit`, and neither the clip (which carries no events) nor a source gives the frame.
 - [ ] **Her Turbo Twirly spend rates are 0.923 a second mounted and not climbing, 1.2 climbing, 3.6 a climb jump, 10 a Perform Attack and 2 a dismount** — no source yet: they sit in the commented-out data block of the 'Go, Go Turbo Twirly!' revision in `{data-root}/cache/genshin-wiki/Category_Kachina_Talents.json`, and the visible page text was not read against them.
-- [ ] **Her charged attack's clip `ExtraAttack_AS` and her high plunge's clip `FallingAttack_Strike_As` are each 102 frames** — no source yet: neither clip is in `{data-root}/genshin-parity/extracted/timings/11290214/AnimationClip/`, whose `ExtraAttack` clip is 32 frames.
+- [ ] **Her charged attack's clip "ExtraAttack_AS" and her high plunge's clip "FallingAttack_Strike_As" are each 102 frames** — no source yet: neither clip is in `{data-root}/genshin-parity/extracted/timings/11290214/AnimationClip/`, whose "ExtraAttack" clip is 32 frames.
 
 ## Key files
 

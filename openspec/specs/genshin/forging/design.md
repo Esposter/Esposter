@@ -92,7 +92,7 @@ flowchart TD
 
 ## Sources
 
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ForgeExcelConfigData` for the recipes and their forge points, `ForgeUpdateExcelConfigData` for the queues by rank, `ForgeRandomExcelConfigData` for each drop's random table, and `MaterialExcelConfigData`, whose `ITEM_USE_UNLOCK_FORGE` uses name the recipes each diagram opens.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ForgeExcelConfigData` for the recipes and their forge points, "ForgeUpdateExcelConfigData" for the queues by rank, `ForgeRandomExcelConfigData` for each drop's random table, and `MaterialExcelConfigData`, whose `ITEM_USE_UNLOCK_FORGE` uses name the recipes each diagram opens.
 - `ProudSkillExcelConfigData` for the five forging talents' effects, and `AvatarSkillDepotExcelConfigData` for the depot each character's talent is in: Venti's and Bennett's in the talents list, Diluc's, Zhongli's and Ganyu's in the inherent proud skill list.
 - The English text map in the dump, searched by the three forge refusal lines' text ids, holds none of them (see Open).
 - [Forging](https://genshin-impact.fandom.com/wiki/Forging), Genshin Impact Wiki: the cap and the reset. Its claims wait on a source.
@@ -101,7 +101,7 @@ flowchart TD
 
 - [ ] **The game day's cap of 400,000 forge points** — no source: the wiki's Forging page is not on disk, so the equivalence of a forge point to Weapon EXP is open, and no cap value is in the dump.
 - [ ] **The game day turns at four in the morning in the game's time zone** — no source: the reset hour is not in the dump, and the wiki's Forging page is not on disk.
-- [ ] **The three refusal lines are the game's own, keyed in `genshin-text`** — no source: their `forgePointNoticeTextMapHash` values were not found in `{data-root}/genshin-dump-backup-6.6/TextMap/TextMapEN.json`.
+- [ ] **The three refusal lines are the game's own, keyed in `genshin-text`** — no source: their "forgePointNoticeTextMapHash" values were not found in `{data-root}/genshin-dump-backup-6.6/TextMap/TextMapEN.json`.
 - [ ] **Venti's reduce-time of a fifth and Bennett's one-in-five extra copy** — no source: their talent rows (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`, 221 to 224 and 321 to 324) and their depots' proud groups name no forge talent.
 - [ ] **The drop id 208001500 is in neither the dump nor the repository's other tables** — contradicted by `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ForgeExcelConfigData.json`: names 208001500 as row 12001's `mainRandomDropId`.
 - [ ] **Adventure EXP past rank 60 is paid into the wallet as Mora** — no source: the rank-60 rule is not in the dump, and the wiki's Forging page is not on disk.

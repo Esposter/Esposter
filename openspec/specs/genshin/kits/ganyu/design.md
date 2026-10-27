@@ -23,7 +23,7 @@ flowchart LR
 
 - [ ] **The Ice Lotus takes no health in the kit** — contradicted by `{data-root}/cache/genshin-wiki/Category_Ganyu_Talents.json`: gives its Inherited HP as 120% to 255% of Max HP.
 - [ ] **Constellation 1's Cryo RES cut lasts 5 seconds or 6** — no source yet: the Constellation 1 wiki page is not in `{data-root}/cache/genshin-wiki/`, and gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/ganyu/cons.go` gives 300 frames beside a comment that says 6 seconds, which the kit's `packages/genshin-world/src/services/kit/characters/ganyuKit.ts` comment also cites from the wiki.
-- [ ] **The record's area is a 12.5-metre circle** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/ganyu/burst.go`: its field is a 10-metre circle (`burstArea`).
+- [ ] **The record's area is a 12.5-metre circle** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/ganyu/burst.go`: its field is a 10-metre circle ("burstArea").
 - [ ] **The Ice Lotus flower's 120% multiplier** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/ganyu/zz_ganyu.dm.go`: its level-1 lotus table is 1.32, which both hits use.
 
 ## Key files

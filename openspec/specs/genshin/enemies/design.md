@@ -56,7 +56,7 @@ A region's data places its enemies in camps, each member with its kind, its leve
 
 The wiki's Reset page gives the first two rows' timers: a common enemy outside an elite's group comes back 12 hours after its defeat, and the commons of an elite's group come back with the elite at the daily reset, as the wiki gives for elites with limited spawn points per day. The boss row's five seconds is the build's `BOSS_RESPAWN_AFTER_CLAIM_DURATION` (`packages/genshin-world/src/services/bosses/constants.ts`), applied by `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`; no page on disk gives it as the game's.
 
-The daily reset is the server's 04:00, UTC+8, as the [reset clock](../reset-clock/design.md) sets out (`packages/genshin-world/src/services/time/constants.ts` for the hour and the zone, and the `REFRESH_DAILY` rows of `{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json` with `14400`, the 4:00 hour).
+The daily reset is the server's 04:00, UTC+8, as the [reset clock](../reset-clock/design.md) sets out (`packages/genshin-world/src/services/time/constants.ts` for the hour and the zone, and the "REFRESH_DAILY" rows of `{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json` with `14400`, the 4:00 hour).
 
 A common or elite member's return is saved as the [save data](../save-data/design.md) page keeps it (`packages/genshin-world/src/models/enemy/EnemyRespawnSave.ts`). A boss camp's defeat is saved as its moment of defeat (`packages/genshin-world/src/models/enemy/BossDefeatSave.ts`), beside the blossom it left and the last teleport, so a reload reads the same return.
 
@@ -128,7 +128,7 @@ A capsule that a hit landed on is tinted white for 0.15 seconds (`ENEMY_HIT_TINT
 - [Adventure EXP](https://genshin-impact.fandom.com/wiki/Adventure_EXP), Genshin Impact Wiki, not in the wiki cache: the Adventure EXP sources the open item below rests on.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's dump of the game's data: `MonsterExcelConfigData`, `MonsterCurveExcelConfigData` and `AnimalCodexExcelConfigData`, the tables the kinds are read from.
 - `{data-root}/genshin-parity/text/ExcelBinOutput/MonsterCurveExcelConfigData.json`, the defense curve's multipliers; grounds the requirement "Enemy stats grow by the game's level curves".
-- `{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, the `REFRESH_DAILY` rows with `14400`, the 04:00 daily reset; grounds scenario "An elite camp member returns at the next daily reset".
+- `{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, the "REFRESH_DAILY" rows with `14400`, the 04:00 daily reset; grounds scenario "An elite camp member returns at the next daily reset".
 
 ## Reference
 
@@ -148,7 +148,7 @@ A capsule that a hit landed on is tinted white for 0.15 seconds (`ENEMY_HIT_TINT
 - [ ] **The Mora shares and Character EXP by level band are the wiki's table** — no source yet: the Module:Drops Table/data wiki page is not in the wiki cache, and the Module:Drops Table page, which reads its values from it, is not either, so no band's share or Character EXP is stated.
 - [ ] **The second and third material tiers start at levels 40 and 60** — no source yet: the Module:Drops Table/data wiki page, which holds the tiers' rates by level, is not in the wiki cache. The tier shares in `packages/genshin-world/src/services/enemy/constants.ts` are the repo's own table, not evidence of the game's.
 - [ ] **Enemies give no Adventure EXP, the game awarding it only for a boss's reward** — no source yet: the wiki's Adventure EXP page, named in Sources, is not in the wiki cache.
-- [ ] **The daily reset is read on the server's UTC+8 clock** — no source yet: no row of the game's exports names the zone; the export's daily refresh rows give the 04:00 hour (`{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, `REFRESH_DAILY`), and the Reset wiki page is not in the wiki cache.
+- [ ] **The daily reset is read on the server's UTC+8 clock** — no source yet: no row of the game's exports names the zone; the export's daily refresh rows give the 04:00 hour (`{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, "REFRESH_DAILY"), and the Reset wiki page is not in the wiki cache.
 - [ ] **The hosted `enemies/kinds` record holds the Hilichurl Fighter, and `enemies/levelCurves` its first ten levels** — no source yet: `packages/genshin-world/src/generated/gameDataLock.json` records only each record's hash (lines 115 and 116), and the record is in Blob storage, not on disk; reading it there settles this.
 - [ ] **An elite's camp comes back whole at the next daily reset, for an elite with no limited daily spawn points** — no source yet: the Reset wiki page is not in the wiki cache, and it would give daily-reset respawn only for elites with limited spawn points per day and for the commons of their groups.
 - [ ] **A camp with a normal boss among it comes back whole with the boss** — no source yet: the Normal Bosses wiki page is not in the wiki cache, and it would say nothing of the camp's other members or of Weekly Bosses.

@@ -1,6 +1,6 @@
 # Mining outcrops
 
-The rules a region's mining outcrops follow, the Magical Crystal Chunks a player mines for: the Adventure Rank that opens them, and when a mined one comes back. A mining outcrop is drawn each day at the daily reset, hour `GAME_DAY_START_HOUR` on the server's clock (`{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`: its daily policies are `REFRESH_DAILY` at `14400` seconds from midnight), the reset the world's ley line outcrops are drawn at too, and a mined one stays gone until the day's next draw. Their places are built per region by `genshin:assets mining-outcrops`, which the main session publishes, the Magical Crystal Chunk points the fit places. Each standing place is drawn in the world as a rock, with `WorldStandIns` mounted on the standing places (`packages/genshin-world/src/components/World/Windrise/Index.vue`), and a standing one is struck as an ore by the `strike-ore` handler (`packages/genshin-world/src/components/World/Session/Index.vue`), as the [proposal](../../../changes/genshin-gathering/design.md) describes. The places are built by `scripts/src/services/genshinAssets/miningOutcrops/buildMiningOutcropPlaces.ts`.
+The rules a region's mining outcrops follow, the Magical Crystal Chunks a player mines for: the Adventure Rank that opens them, and when a mined one comes back. A mining outcrop is drawn each day at the daily reset, hour `GAME_DAY_START_HOUR` on the server's clock (`{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`: its daily policies are "REFRESH_DAILY" at `14400` seconds from midnight), the reset the world's ley line outcrops are drawn at too, and a mined one stays gone until the day's next draw. Their places are built per region by `genshin:assets mining-outcrops`, which the main session publishes, the Magical Crystal Chunk points the fit places. Each standing place is drawn in the world as a rock, with `WorldStandIns` mounted on the standing places (`packages/genshin-world/src/components/World/Windrise/Index.vue`), and a standing one is struck as an ore by the `strike-ore` handler (`packages/genshin-world/src/components/World/Session/Index.vue`), as the [proposal](../../../changes/genshin-gathering/design.md) describes. The places are built by `scripts/src/services/genshinAssets/miningOutcrops/buildMiningOutcropPlaces.ts`.
 
 ## How it works
 
@@ -39,7 +39,7 @@ flowchart TD
 
 - [Mining Outcrop](https://genshin-impact.fandom.com/wiki/Mining_Outcrop), Genshin Impact Wiki: Magical Crystal Chunks from rank 30, and the respawn at 06:00, two hours after the reset.
 - [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: what comes back at the daily reset and around it.
-- `{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, policy 101000, the 04:00 as `REFRESH_DAILY` at `14400` seconds. Grounds the requirement "Mined outcrop returns at the next 04:00".
+- `{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, policy 101000, the 04:00 as "REFRESH_DAILY" at `14400` seconds. Grounds the requirement "Mined outcrop returns at the next 04:00".
 
 ## Open
 

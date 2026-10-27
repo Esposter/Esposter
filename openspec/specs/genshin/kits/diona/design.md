@@ -21,7 +21,7 @@ flowchart LR
 
 ## Provisional constants
 
-- **The shield's seconds read the hold's cooldown.** The kit reads group 3932 at index 4, which the dump gives as 15, the hold's cooldown (the wiki's Holding CD 15s, gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/diona/skill.go:80`), where the shield's duration is index 5, 1.8 seconds at level 1 (the wiki's "1.8–2.4s per Paw", and gcsim's `pawDur`, which adds one such duration for each paw that hits, capped at five). The kit's shield outlasts the game's: the overlay's `parameters.shieldSeconds` reads index 4 (`packages/genshin-world/src/data/kits/diona.json`).
+- **The shield's seconds read the hold's cooldown.** The kit reads group 3932 at index 4, which the dump gives as 15, the hold's cooldown (the wiki's Holding CD 15s, gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/diona/skill.go:80`), where the shield's duration is index 5, 1.8 seconds at level 1 (the wiki's "1.8–2.4s per Paw", and gcsim's "pawDur", which adds one such duration for each paw that hits, capped at five). The kit's shield outlasts the game's: the overlay's `parameters.shieldSeconds` reads index 4 (`packages/genshin-world/src/data/kits/diona.json`).
 - **The paws' poise is the spec's provisional zero.** The wiki's Icy Paw DMG gives 30 poise each (its advanced properties), but the spec pins that zero as provisional, so the kit's paws deal none.
 - **The hold's threshold is open.** The half-second hold threshold has no source in gcsim, whose hold is a release at 29 frames (`{data-root}/cache/gcsim-v2.47.2/internal/characters/diona/skill.go:20`), or in the cached wiki.
 - **The plunges' frames are unsourced.** gcsim has no plunge file for Diona, so the plunges' frames wait on a recording.

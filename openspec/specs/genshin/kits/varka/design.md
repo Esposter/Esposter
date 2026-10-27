@@ -4,7 +4,7 @@ Varka's kit is its record and one behaviour module, `createVarkaKitBehaviour`, a
 
 Proud skill groups 12832 (his skill) and 12839 (his burst) give their talent multipliers (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`); the table reads his cooldowns as 16 and 15 seconds (skills 11282 and 11285 in `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarSkillExcelConfigData.json`, matching gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/varka/skill.go`, line 28, and `burst.go`, line 60), his energy cost as 60 (11285's `costElemVal`) and his charged stamina as 50 (group 12831, index 11, which also holds his attacks' multipliers).
 
-gcsim sources: the folder `{data-root}/cache/gcsim-v2.47.2/internal/characters/varka/`, with `attack.go`, `charge.go`, `skill.go` and `burst.go`, the talent names in its `config.yml` and the multiplier tables in its generated `zz_varka.dm.go`.
+gcsim sources: the folder `{data-root}/cache/gcsim-v2.47.2/internal/characters/varka/`, with `attack.go`, `charge.go`, `skill.go` and `burst.go`, the talent names in its `config.yml` and the multiplier tables in its generated "zz_varka.dm.go".
 
 ## Decisions
 

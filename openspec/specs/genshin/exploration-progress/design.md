@@ -45,7 +45,7 @@ flowchart TD
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the explore total and event tables, read as the references folder's copies and never committed.
 - Progress counts camps, chests and waypoints only, scenario "Gathered item adds no weight": (EventIDs 21 to 38, each `EXPLORE_EVENT_ITEM_ADD` in `{data-root}/genshin-parity/text/ExcelBinOutput/WorldAreaExploreEventConfigData.json`)
-- Progress counts camps, chests and waypoints only, scenario "Force entered adds no weight": (EventID 39, `EXPLORE_EVENT_ENTER_FORCE` in `{data-root}/genshin-parity/text/ExcelBinOutput/WorldAreaExploreEventConfigData.json`)
+- Progress counts camps, chests and waypoints only, scenario "Force entered adds no weight": (EventID 39, "EXPLORE_EVENT_ENTER_FORCE" in `{data-root}/genshin-parity/text/ExcelBinOutput/WorldAreaExploreEventConfigData.json`)
 
 ## Open
 

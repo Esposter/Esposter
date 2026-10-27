@@ -220,7 +220,7 @@ The forge SHALL NOT yet show a blacksmith's place on the map.
 
 - [ ] **Enhancement ore forge points are capped at 400,000 per game day** — no source yet: no cap value is in the dump, and the wiki's Forging page is not on disk.
 - [ ] **The game day restarts at four in the morning on the game's clock** — no source yet: the reset hour is not in the dump, and the wiki's Forging page is not on disk.
-- [ ] **A refused enhancement ore order shows the game's own refusal line for that ore** — no source yet: the refusal lines' `forgePointNoticeTextMapHash` values were not found in the game's English text map.
+- [ ] **A refused enhancement ore order shows the game's own refusal line for that ore** — no source yet: the refusal lines' "forgePointNoticeTextMapHash" values were not found in the game's English text map.
 - [ ] **A recipe is refused until the player's rank and its diagram allow it** — no source yet: each recipe's rank and unlock uses were not tied to its row in `ForgeExcelConfigData.json` and `MaterialExcelConfigData.json`.
 - [ ] **An order takes its cost as it starts, a finished unit waits when the bag is full, forging runs over real time and collects at any blacksmith, and a reload empties the queues** — no source yet: the forge service tests were not opened for these assertions.
 - [ ] **Adventure EXP past rank sixty is paid as Mora into the wallet** — no source yet: the forge's order-obtaining test was not opened for this assertion, and the rank-60 rule is not in the dump.

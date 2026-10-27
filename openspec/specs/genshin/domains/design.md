@@ -47,8 +47,8 @@ flowchart TD
 ## Open
 
 - [ ] **Ranks 16, 22 and 27 open the three kinds** — no source yet: the wiki's Domain page is not in the cache, and no table read here ties 22 or 27 to a kind.
-- [ ] **A Domain of Blessing opens every day** — no source yet: the wiki's Domain page is not in the cache, and `DailyDungeonConfigData` keys its day rows by obfuscated names with no weekday mapping read here.
-- [ ] **Forgery and Mastery open on Sundays and their two set days** — no source yet: the same `DailyDungeonConfigData` rows are unmapped to weekdays, and the wiki's Domain page is not in the cache.
+- [ ] **A Domain of Blessing opens every day** — no source yet: the wiki's Domain page is not in the cache, and "DailyDungeonConfigData" keys its day rows by obfuscated names with no weekday mapping read here.
+- [ ] **Forgery and Mastery open on Sundays and their two set days** — no source yet: the same "DailyDungeonConfigData" rows are unmapped to weekdays, and the wiki's Domain page is not in the cache.
 - [ ] **A Domain of Trounce opens every day** — no source yet: the wiki's Domain page is not in the cache.
 - [ ] **The game's day turns at 04:00 in UTC+8** — no source yet: the wiki's Daily Reset page is not in the cache.
 - [ ] **A Domain of Forgery's day turns at the reset, not at midnight** — no source yet: the wiki's Daily Reset page is not in the cache.

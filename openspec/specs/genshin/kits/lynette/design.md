@@ -21,6 +21,6 @@ Not built yet: Enigmatic Feint's hold, its Shadowsign and release strike, which 
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lynette), MIT: Lynette's strikes' hitmarks, cancel frames and boxes, the charged attack, the plunges and their collision, Enigmatic Feint's press, and Magic Trick: Astonishing Shift's initial hit and the Bogglecat Box's 754-frame duration, first tick and interval, and tick circle (`bogglecatbox.go`).
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lynette), MIT: Lynette's strikes' hitmarks, cancel frames and boxes, the charged attack, the plunges and their collision, Enigmatic Feint's press, and Magic Trick: Astonishing Shift's initial hit and the Bogglecat Box's 754-frame duration, first tick and interval, and tick circle ("bogglecatbox.go").
 - The game data, `{data-root}/genshin-parity/text/ExcelBinOutput/`: groups 8331, 8332 and 8339 are the normal attack, Enigmatic Feint and Magic Trick groups (skill rows 10831, 10832 and 10835), with the burst's 18-second cooldown and 70 energy cost on row 10835 and the skill's 12-second cooldown on row 10832.
 - The cached wiki, `{data-root}/cache/genshin-wiki/Category_Lynette_Talents.json`: the Magic Trick's poise of 40 and its 70 energy, and Enigmatic Feint's Anemo DMG.
