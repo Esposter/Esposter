@@ -40,4 +40,4 @@ Lohen's kit is its record and one behaviour module, `createLohenKitBehaviour`, a
 
 ## Open
 
-- [ ] **The skill's 20-frame animation** — no source yet: gcsim has no Lohen folder, and the cached Category:Lohen Talents page (titled Moratorium on Questioning) gives no animation frames.
+- [ ] **The skill's 20-frame animation** — no source yet: gcsim has no Lohen folder, and the cached Category:Lohen Talents pages (seven, from Moratorium on Questioning to Manifest Judgment, `~/Esposter.noindex/cache/genshin-wiki/Category_Lohen_Talents.json`) give no animation frames.
