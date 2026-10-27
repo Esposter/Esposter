@@ -204,7 +204,7 @@ catalog:
   onnxruntime-common: ^1.31.1
   onnxruntime-node: ^1.31.1
   oxc-parser: ^0.155.0
-  oxfmt: ^0.74.0
+  oxfmt: ^0.75.0
   oxlint: ^1.89.0
   oxlint-tsgolint: ^7.0.2005
   parse5: ^8.0.1
