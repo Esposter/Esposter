@@ -33,7 +33,7 @@ Each dealt commission SHALL keep the rank it was dealt at, and its reward SHALL 
 
 ### Requirement: A finished commission
 
-A finished commission SHALL be claimed free, an unfinished one SHALL be claimed for one Encounter Point, and a claimed commission SHALL not be claimed again.
+A finished commission SHALL be claimed free, and an unfinished one SHALL be claimed for one Encounter Point.
 
 #### Scenario: A finished commission is claimed without spending a point
 
@@ -49,6 +49,10 @@ A finished commission SHALL be claimed free, an unfinished one SHALL be claimed 
 - **THEN** its reward is paid
 - **AND** one Encounter Point is spent
 
+### Requirement: A claimed commission is not claimed again
+
+A claimed commission SHALL not be claimed again.
+
 #### Scenario: A claimed commission pays nothing when claimed again
 
 - **GIVEN** a commission has already been claimed
@@ -57,7 +61,7 @@ A finished commission SHALL be claimed free, an unfinished one SHALL be claimed 
 
 ### Requirement: A player
 
-A player SHALL claim at most four commissions a day, whichever way each was made (`~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `1812726784`).
+A player SHALL claim at most four commissions a day, whichever way each was made.
 
 #### Scenario: A fifth claim in one day is refused
 
@@ -69,13 +73,13 @@ A player SHALL claim at most four commissions a day, whichever way each was made
 
 - **GIVEN** four claims have been made today and Katheryne's bonus is not yet given
 - **WHEN** the player talks to Katheryne
-- **THEN** Katheryne's bonus is drawn for the band the player's rank falls in at that moment, and the day records it as given (the game's text, `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `1812726784`)
+- **THEN** Katheryne's bonus is drawn for the band the player's rank falls in at that moment, and the day records it as given
 
 #### Scenario: A claim does not draw Katheryne's bonus
 
 - **GIVEN** three claims have been made today
 - **WHEN** the player makes the fourth claim
-- **THEN** the claim pays its reward only, and Katheryne's bonus remains to be given (the game's text, `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `33283106`)
+- **THEN** the claim pays its reward only, and Katheryne's bonus remains to be given
 
 #### Scenario: Katheryne gives the bonus once a day
 
@@ -85,13 +89,13 @@ A player SHALL claim at most four commissions a day, whichever way each was made
 
 ### Requirement: Katheryne's bonus
 
-Katheryne's bonus SHALL give the same Primogems and Adventure EXP in every band, and its Mora and Companionship EXP SHALL rise with the band (`~/Esposter/genshin-parity/text/ExcelBinOutput/RewardPreviewExcelConfigData.json`, rows `2001` to `2012`: Primogem `201` at 20 and Adventure EXP `102` at 500 in every band, Mora `202` from 3875 to 13175 and Companionship EXP `105` from 35 to 100).
+Katheryne's bonus SHALL give the same Primogems and Adventure EXP in every band, and its Mora and Companionship EXP SHALL rise with the band.
 
 #### Scenario: The Adventure Treasure Pack is not paid by the bonus
 
 - **GIVEN** Katheryne's bonus is drawn
 - **WHEN** its items are listed
-- **THEN** the Adventure Treasure Pack is not among them (item `107004` is at count `0` in every band of `~/Esposter/genshin-parity/text/ExcelBinOutput/RewardPreviewExcelConfigData.json`)
+- **THEN** the Adventure Treasure Pack is not among them
 
 ### Requirement: Each reward item
 

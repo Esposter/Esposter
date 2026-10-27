@@ -77,8 +77,10 @@ The three daily task tables are read from the dump (`scripts/src/services/genshi
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `DailyTaskExcelConfigData`, `DailyTaskRewardExcelConfigData` and `DailyTaskLevelExcelConfigData`, the tasks, their reward tiers and the Adventure Rank bands, with `RewardPreviewExcelConfigData` for each reward's items.
 - [Commission](https://genshin-impact.fandom.com/wiki/Commission), Genshin Impact Wiki: the four commissions a day, the unlock at Adventure Rank 12, and the bonus's items the dump's preview is checked against. Its figures are the dump's.
-- `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `1812726784`: grounds the requirement "A player".
-- `~/Esposter/genshin-parity/text/ExcelBinOutput/RewardPreviewExcelConfigData.json`, rows `2001` to `2012`: grounds the requirement "Katheryne's bonus".
+- `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `1812726784`: grounds the requirement "A player" and scenario "Katheryne's bonus is given once the day's four are claimed".
+- `~/Esposter/genshin-parity/text/ExcelBinOutput/RewardPreviewExcelConfigData.json`, rows `2001` to `2012`: Primogem `201` at 20 and Adventure EXP `102` at 500 in every band, Mora `202` from 3875 to 13175 and Companionship EXP `105` from 35 to 100; grounds the requirement "Katheryne's bonus".
+- `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `33283106`: grounds scenario "A claim does not draw Katheryne's bonus".
+- `~/Esposter/genshin-parity/text/ExcelBinOutput/RewardPreviewExcelConfigData.json`, item `107004` is at count `0` in every band: grounds scenario "The Adventure Treasure Pack is not paid by the bonus".
 
 ## Reference
 
