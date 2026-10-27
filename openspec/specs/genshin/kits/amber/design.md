@@ -8,11 +8,18 @@ Amber's kit is its record and one behaviour module, `createAmberKitBehaviour`, a
 - **Fiery Rain's arrows are priced at twice the burst radius.** Each arrow lands at random within a radius of 2 round the burst's centre (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/amber/amber.go:26`) and is itself a circle of that radius (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/amber/burst.go:47`), so a summon's arrow is priced at 4 round the body. gcsim states the radius once, at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/amber/amber.go:26`, and scales it at Ascension (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/amber/asc.go:29`), so the record leaves the radius and the arrows' areas `Unsourced`: the field is written twice in the package, and a random landing point has no place to cite. The eighteen arrows are gcsim's three loops of five, three and ten (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/amber/burst.go:41` to `:69`). Ascension 1, Every Arrow Finds Its Target, adds 10% CRIT Rate (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/amber/asc.go:18`), priced on the summon's combatant (`packages/genshin-world/src/services/kit/characters/amberKit.ts`), and widens the radius by 30% (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/amber/asc.go:29`). The [character kits proposal](../../../../changes/genshin-character-kits/design.md) settles the arrow area at 4, which the record holds once it is republished, and Ascension 1's widening is built in `packages/genshin-world/src/services/kit/characters/amberKit.ts` as her passive, scaling the base arrows' areas by 30%.
 - **Baron Bunny lands where Amber stands.** The throw is not built, so it is priced round Amber's body (`packages/genshin-world/src/services/kit/characters/amberKit.ts`), and the throw's distance is open, see [not built](#not-built). Its HP is 41.36% of Amber's Max HP, from group 2132's index 0 (`0.4136`, `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`), which the wiki's Explosive Puppet page gives as 41.4% at level 1 (`~/Esposter/cache/genshin-wiki/Category_Amber_Talents.json`).
 
+```mermaid
+flowchart LR
+  PUPPET["Explosive Puppet cast"] --> BUNNY["Baron Bunny at Amber's body"]
+  BUNNY -->|"taunt on the enemies"| STRIKES["enemies strike the bunny"]
+  BUNNY -->|"the bunny's explosion"| BLAST["explosion round Amber"]
+```
+
 ## Not built
 
 - **Constellation 6's Movement SPD is open, and its ten seconds stand over gcsim's fifteen.** gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/amber/burst.go:71` to `:80` gives only the ATK share, 15% for 900 frames, to every member. The dump's talent `216` holds 0.15, 0.15 and 10 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`), which fits the ten seconds, but its two 0.15s do not say which is the Movement SPD, so that share has no source. The game data is first, so the ten seconds stand.
 - **The throw's distance is open.** The cached wiki's Explosive Puppet page says only that a longer hold throws the bunny further, so the 1.4 metres the design once cited has no source.
-- **Amber's A4 is left.** Its ATK bonus after a weak-point hit now has a hit to follow: the strike gives the Ruin machines' weak points to an aimed hit (provisional, see the kits README). The bonus itself is not built, so it stays left.
+- **Amber's A4 is left.** Its ATK bonus after a weak-point hit has a hit to follow: the strike gives the Ruin machines' weak points to an aimed hit (provisional, see the kits README). The bonus itself is not built, so it stays left.
 - **Amber's Constellation 2 is left.** Its manual detonation needs a charged attack that reports the bunny it lands on: `ChargedAttackLanded` names no target, and `damageKitTaunt` has no caller, so no shot reaches the bunny.
 
 ## Key files
