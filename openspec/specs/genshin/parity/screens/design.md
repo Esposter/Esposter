@@ -16,7 +16,7 @@ A screen to be matched is a presentational component in the world package, with 
 
 ## Open
 
-- [ ] **Scaling by height alone was tried first** — no source yet, as the [references page](../references/design.md) records for its own trial.
+- [ ] **Scaling by height alone was tried first** — no source yet: no commit, snapshot or note records a height-only trial.
 - [ ] **A window narrower than 16:9 keeps its text inside its boxes** — no source yet: no test or screenshot of a narrow window is cited for the `--unit` scaling.
 - [ ] **The opening shows the game's first screens in turn and hands each on by its own timing** — no source yet: a reading of the screens' order and timing from the opening recordings `{data-root}/genshin-parity/captures/localized-opening-japanese.mkv` and `{data-root}/genshin-parity/captures/localized-opening-korean.mkv`, which are not yet read.
 - [ ] **The screen scales the game's 1920 by 1080 by the window's smaller axis, as the game scales its interface** — no source yet: a reference still of the game's interface at a window other than 16:9, to fix the scale by the smaller axis, is needed; no file name in `{data-root}/genshin-parity/references/` names one.
