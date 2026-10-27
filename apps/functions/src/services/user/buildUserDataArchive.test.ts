@@ -73,6 +73,19 @@ vi.mock(import("#src/services/shared/db"), () => ({
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
 
+const readArchiveEntries = (blobName: string) => {
+  const archiveBytes = MockContainerDatabase.get(AzureContainer.DataExports)?.get(blobName);
+  assert.exists(archiveBytes);
+  return unzipSync(archiveBytes);
+};
+const readEntryText = (entries: ReturnType<typeof unzipSync>, entryName: string) => {
+  const entry = entries[entryName];
+  assert.exists(entry);
+  return strFromU8(entry);
+};
+const readEntryJson = (entries: ReturnType<typeof unzipSync>, entryName: string) =>
+  jsonDateParse(readEntryText(entries, entryName));
+
 describe(buildUserDataArchive, () => {
   const attachmentBytes = new Uint8Array([255]);
   const callId = "callsession1";
@@ -105,18 +118,6 @@ describe(buildUserDataArchive, () => {
     MockTableDatabase.clear();
   });
 
-  const readArchiveEntries = (blobName: string) => {
-    const archiveBytes = MockContainerDatabase.get(AzureContainer.DataExports)?.get(blobName);
-    assert.exists(archiveBytes);
-    return unzipSync(archiveBytes);
-  };
-  const readEntryText = (entries: ReturnType<typeof unzipSync>, entryName: string) => {
-    const entry = entries[entryName];
-    assert.exists(entry);
-    return strFromU8(entry);
-  };
-  const readEntryJson = (entries: ReturnType<typeof unzipSync>, entryName: string) =>
-    jsonDateParse(readEntryText(entries, entryName));
   const seedAttachment = async (blobName: string) => {
     const containerClient = await getContainerClient(AzureContainer.MessageAssets);
     await containerClient.getBlockBlobClient(blobName).upload(attachmentBytes, attachmentBytes.length);
@@ -166,7 +167,7 @@ describe(buildUserDataArchive, () => {
     });
 
     // The account's own stores: a save, a profile image, an owned resource with a working copy and asset, and a
-    // moderation record naming the person as its target
+    // Moderation record naming the person as its target
     const savesContainerClient = await getContainerClient(AzureContainer.GenshinAssets);
     await writeJsonBlob(savesContainerClient, `${userId}/save.json`, content);
     const publicContainerClient = await getContainerClient(AzureContainer.PublicUserAssets);
@@ -232,7 +233,7 @@ describe(buildUserDataArchive, () => {
     );
     const bookmark = takeOne(await mockDb.insert(bookmarksInApp).values({ path, title, userId }).returning());
     // The notification, the achievement, the settings and the status are written by the system or are the account's
-    // current state, so their rows carry no creation time
+    // Current state, so their rows carry no creation time
     await mockDb
       .insert(notificationsInNotification)
       .values({ severity: NotificationSeverity.Info, title, type: AppNotificationType.Message, userId });
@@ -246,8 +247,17 @@ describe(buildUserDataArchive, () => {
     await buildUserDataArchive(userId, blobName);
     const account = readEntryJson(readArchiveEntries(blobName), "account.json");
 
-    expect(account.user).toStrictEqual(expect.objectContaining({ createdAt: user.createdAt }));
-    expect(account.user).not.toHaveProperty("updatedAt");
+    expect(account.user).toStrictEqual({
+      biography: user.biography,
+      createdAt: user.createdAt,
+      email: user.email,
+      emailVerified: user.emailVerified,
+      id: user.id,
+      image: user.image,
+      name: user.name,
+      storageBytesUsed: user.storageBytesUsed,
+      storageTier: user.storageTier,
+    });
     expect(account.blocks).toStrictEqual([{ blockedId: otherUserId, blockerId: userId, createdAt: block.createdAt }]);
     expect(account.bookmarks).toStrictEqual([
       { createdAt: bookmark.createdAt, path, resourceType: null, title, userId },
@@ -286,7 +296,7 @@ describe(buildUserDataArchive, () => {
     await mockDb.insert(likesInPost).values({ postId: post.id, userId: otherUserId, value: -1 });
 
     // The person reacted in a room they are a member of, on a message whose reaction row another member shares, and
-    // another member's reaction on the same message is not theirs
+    // Another member's reaction on the same message is not theirs
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values([
       { roomId: room.id, userId },
@@ -340,13 +350,13 @@ describe(buildUserDataArchive, () => {
       title,
     });
     // A post like carries the time it was made. A reaction carries none: its row is shared by its reactors, so its time is
-    // the first reactor's, not the person's, and the exact shape leaves it out
+    // The first reactor's, not the person's, and the exact shape leaves it out
     expect(readEntryJson(entries, "likes.json")).toStrictEqual([
       { createdAt: like.createdAt, kind: ArchiveLikeKind.Post, targetId: otherPost.id, value: 1 },
       { emojiTag, kind: ArchiveLikeKind.Emoji, roomId: room.id, targetId: messageRowKey },
     ]);
     // A request the person sent carries the time it was sent. One they received is the sender's act, and a friendship is one
-    // row for the pair, made when the receiver accepted it, so neither carries a time
+    // Row for the pair, made when the receiver accepted it, so neither carries a time
     expect(readEntryJson(entries, "friends.json")).toStrictEqual({
       friends: [{ id: friendUserId, name }],
       received: [{ id: receivedUserId, name }],
@@ -397,7 +407,7 @@ describe(buildUserDataArchive, () => {
       id: room.id,
       name,
       settings: {
-        allowedMimeCategories: expect.any(Array),
+        allowedMimeCategories: room.allowedMimeCategories,
         isInvitePaused: false,
         isReadOnly: true,
         maxFileSizeBytes: 0,
@@ -457,7 +467,7 @@ describe(buildUserDataArchive, () => {
     const entries = readArchiveEntries(blobName);
 
     // The publication is the draft version it was taken at, the time it began, which a republish does not move, and the time
-    // it was last published, all as the row stores them
+    // It was last published, all as the row stores them
     expect(readEntryJson(entries, `resources/${publishedResource.id}/publications.json`)).toStrictEqual({
       createdAt: publication.createdAt,
       publishedAt: publication.publishedAt,
@@ -481,7 +491,7 @@ describe(buildUserDataArchive, () => {
     const entries = readArchiveEntries(blobName);
 
     // The hashes, sizes and revision counters are the store's bookkeeping, and the update and delete times are not the
-    // person's, so the record holds what the person wrote and when it was created
+    // Person's, so the record holds what the person wrote and when it was created
     expect(readEntryJson(entries, `resources/${resource.id}/resource.json`)).toStrictEqual({
       contentVersion: 0,
       createdAt: resource.createdAt,
@@ -532,8 +542,10 @@ describe(buildUserDataArchive, () => {
     const otherRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
 
     // The action the person took in the room they own, at a fixed time, beside another moderator's action there against
-    // the person, and one the person took in a room they do not own
-    const actionTime = new Date("2025-03-04T05:06:07.890Z");
+    // The person, and one the person took in a room they do not own
+    const actionTime = new Date(
+      Temporal.Duration.from({ hours: 1, seconds: 2, milliseconds: 3 }).total("milliseconds"),
+    );
     const moderationLogClient = await getTableClient(AzureTable.ModerationLog);
     const actions = [
       {
@@ -558,7 +570,7 @@ describe(buildUserDataArchive, () => {
         type: AdminActionType.Warn,
       },
     ];
-    for (const action of actions) await moderationLogClient.createEntity(serializeEntity(action));
+    await Promise.all(actions.map((action) => moderationLogClient.createEntity(serializeEntity(action))));
 
     await buildUserDataArchive(userId, blobName);
     const entries = readArchiveEntries(blobName);
@@ -607,7 +619,7 @@ describe(buildUserDataArchive, () => {
       { roomId: room.id, userId: otherUserId },
     ]);
     // The person's unfollow is a decision they made, so its row stays; the other person's follow of the same thread is
-    // not theirs
+    // Not theirs
     const follow = takeOne(
       await mockDb
         .insert(threadFollowsInMessage)
@@ -654,7 +666,7 @@ describe(buildUserDataArchive, () => {
     const entries = readArchiveEntries(blobName);
 
     // The membership keeps the person's own settings, the time they joined and the time they last read the room, and
-    // the roles they hold there
+    // The roles they hold there
     expect(readEntryJson(entries, "memberships.json")).toStrictEqual([
       {
         createdAt: membership.createdAt,
@@ -694,7 +706,7 @@ describe(buildUserDataArchive, () => {
     const entries = readArchiveEntries(blobName);
 
     // A favorite carries the time it was starred. An access carries the time it was first opened, as the row stores it
-    // beside the time it was last opened
+    // Beside the time it was last opened
     expect(readEntryJson(entries, "favorites.json")).toStrictEqual([
       { createdAt: favorite.createdAt, resourceId: resource.id },
     ]);
@@ -725,7 +737,7 @@ describe(buildUserDataArchive, () => {
 
     await buildUserDataArchive(userId, blobName);
 
-    expect(download.mock.contexts).toContainEqual(expect.objectContaining({ name: attachmentBlobName }));
-    expect(downloadToBuffer.mock.contexts).not.toContainEqual(expect.objectContaining({ name: attachmentBlobName }));
+    expect(download.mock.contexts.map((context) => context.name)).toContain(attachmentBlobName);
+    expect(downloadToBuffer.mock.contexts.map((context) => context.name)).not.toContain(attachmentBlobName);
   });
 });
