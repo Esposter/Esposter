@@ -32,6 +32,7 @@ import {
   MAP_ZOOM_TRACK_TOP,
 } from "#src/services/map/constants";
 import { findAreaAt } from "#src/services/map/findAreaAt";
+import { findAreaNameAt } from "#src/services/map/findAreaNameAt";
 import { findLandmarkArea } from "#src/services/map/findLandmarkArea";
 import { ORIGINAL_RESIN_CAP } from "#src/services/originalResin/constants";
 import { regenerateOriginalResin } from "#src/services/originalResin/regenerateOriginalResin";
@@ -161,10 +162,12 @@ const areaLabels = computed(() =>
     z,
   })),
 );
-// The area the character stands in, named at the bottom right with its progress line as the map names it
+// The place the character stands in, named at the bottom right with its progress line as the map names it: its city
+// Where it stands in one, else its area, whose progress line it carries
 const regionTag = computed(() => {
   const area = findAreaAt(catalogue, camera.x, camera.z);
-  return area && { name: area.name, progressSegments: progressSegmentsMap.value.get(area.id) ?? [] };
+  const name = findAreaNameAt(catalogue, camera.x, camera.z);
+  return area && name && { name, progressSegments: progressSegmentsMap.value.get(area.id) ?? [] };
 });
 // The filled areas' progress, read out of the hidden drawing by a screen reader as a list of its own
 const areaProgresses = computed(() => areaLabels.value.filter(({ progressSegments }) => progressSegments.length > 0));
