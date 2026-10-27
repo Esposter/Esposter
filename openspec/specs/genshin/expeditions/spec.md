@@ -202,7 +202,7 @@ An expedition place SHALL be open only once its named statue has been resonated.
 
 ### Requirement: The expedition bonus chance follows the sent character's level
 
-The chance of an expedition bonus SHALL rise with the level of the character sent, as the game's bonus table gives it.
+The chance of an expedition bonus SHALL rise with the level of the character sent.
 
 #### Scenario: A level 1 character has a 20 percent bonus chance
 

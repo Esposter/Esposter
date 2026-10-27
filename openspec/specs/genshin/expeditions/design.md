@@ -69,6 +69,7 @@ stateDiagram-v2
 - [Expedition](https://genshin-impact.fandom.com/wiki/Expedition), Genshin Impact Wiki: the unlock at rank 14 through Katheryne, any character but the Traveler for 4, 8, 12 or 20 hours, still usable while away, places opened by their statues, the timer running offline, recall forfeiting the reward, and two at once rising with rank.
 - [Exploration Talents](https://genshin-impact.fandom.com/wiki/Exploration_Talents), Genshin Impact Wiki: the expedition bonus's kind, in its Expedition Bonuses section.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the expedition tables, the bonus table, the proud skills that carry the talents, the reward previews and the player level table's expedition limit.
+- Requirement "The expedition bonus chance follows the sent character's level": "as the game's bonus table gives it".
 
 ## Open
 
