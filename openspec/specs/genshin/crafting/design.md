@@ -101,6 +101,7 @@ A recipe the table shows from the start is open from the start. One it hides is 
 - [Condensed Resin](https://genshin-impact.fandom.com/wiki/Condensed_Resin), Genshin Impact Wiki: the 60 resin a craft takes and the five a player can hold, the figures the proposal settles its decisions from.
 - `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, the game's text 953962629, which says no more than 5 Condensed Resin can be held; grounds the requirement "Condensed Resin stops at the five a player can hold".
 - `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/CombineExcelConfigData.json`, where 21 rows of combine type five name a Mora cost of 300, 900 or 2700; grounds the requirement "A conversion turns one material into another with its catalyst".
+- [scene group record](../scene-groups/design.md), which places the bench's Craft member; grounds the requirement "The crafting bench stands at its city's recorded place" and scenario "Mondstadt's bench stands at its recorded place".
 
 ## Open
 

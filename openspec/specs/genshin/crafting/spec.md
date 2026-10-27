@@ -95,23 +95,15 @@ Crafting Condensed Resin SHALL be refused once the bag has no room for another.
 - **WHEN** a craft of Condensed Resin is asked for
 - **THEN** the craft is refused
 
-### Requirement: A crafting talent may add extra results and a character without one crafts plainly
+### Requirement: A crafting talent may add extra results
 
 A character with a crafting talent SHALL draw its extra results, refunds or regional materials at the talent's chance on each craft it applies to.
-
-A character without one SHALL craft only the recipe's own results.
 
 #### Scenario: A talent adds an extra result to a craft
 
 - **GIVEN** a character whose talent doubles the result of a recipe
 - **WHEN** a craft of that recipe's result is made and the talent's chance comes up
 - **THEN** the extra result is added to the batch
-
-#### Scenario: A character with no talent crafts plainly
-
-- **GIVEN** a character with no crafting talent
-- **WHEN** a batch is crafted
-- **THEN** only the recipe's own results are put in the bag
 
 #### Scenario: A talent's extra with no room in the bag is dropped
 
@@ -120,9 +112,19 @@ A character without one SHALL craft only the recipe's own results.
 - **THEN** the extra is dropped
 - **AND** the craft is not refused
 
+### Requirement: A character without a crafting talent crafts plainly
+
+A character without a crafting talent SHALL craft only the recipe's own results.
+
+#### Scenario: A character with no talent crafts plainly
+
+- **GIVEN** a character with no crafting talent
+- **WHEN** a batch is crafted
+- **THEN** only the recipe's own results are put in the bag
+
 ### Requirement: Open recipes are listed under one tab per combine type
 
-Open recipes SHALL be listed under one tab per combine type, each named by the game's own text, in the table's order, with the first tab shown until one is picked. A conversion SHALL be listed under its own tab, apart from the craft tab of the same combine type.
+Open recipes SHALL be listed under one tab per combine type, each named by the game's own text, in the game's order, with the first tab shown until one is picked. A conversion SHALL be listed under its own tab, apart from the craft tab of the same combine type.
 
 #### Scenario: The bench opens on its first tab
 
@@ -135,13 +137,15 @@ Open recipes SHALL be listed under one tab per combine type, each named by the g
 
 The save SHALL count each recipe's batches since the player first crafted it, across visits.
 
-A merge SHALL keep the account's counts.
-
 #### Scenario: Batches count across visits
 
 - **GIVEN** a recipe crafted on an earlier visit
 - **WHEN** it is crafted again on a later visit
 - **THEN** the count includes both visits' batches
+
+### Requirement: A merge keeps the account's counts
+
+A merge SHALL keep the account's counts.
 
 #### Scenario: A guest's counts do not replace the account's
 
@@ -149,13 +153,9 @@ A merge SHALL keep the account's counts.
 - **WHEN** the guest's save merges into the account
 - **THEN** the count kept is the account's
 
-### Requirement: The recipe build refuses a table it cannot read
+### Requirement: The recipe build refuses a tier that is not three of one material
 
 The recipe build SHALL refuse a three-for-one tier that is not three of one material.
-
-The recipe build SHALL refuse a conversion that is not one material and its catalyst.
-
-The recipe build SHALL refuse a hidden recipe that no instruction opens.
 
 #### Scenario: A tier row that is not three of one material refuses the build
 
@@ -163,33 +163,39 @@ The recipe build SHALL refuse a hidden recipe that no instruction opens.
 - **WHEN** the recipe build runs
 - **THEN** the build fails
 
+### Requirement: The recipe build refuses a conversion that is not one material and its catalyst
+
+The recipe build SHALL refuse a conversion that is not one material and its catalyst.
+
 #### Scenario: a conversion that is not one material and its catalyst is refused
 
 - **GIVEN** a conversion row that does not take exactly one material and its catalyst
 - **WHEN** the recipe build runs
 - **THEN** the build fails
 
+### Requirement: The recipe build refuses a hidden recipe that no instruction opens
+
+The recipe build SHALL refuse a hidden recipe that no instruction opens.
+
 #### Scenario: A hidden recipe no instruction opens refuses the build
 
-- **GIVEN** a recipe the table hides and no instruction opens
+- **GIVEN** a recipe the game hides and no instruction opens
 - **WHEN** the recipe build runs
 - **THEN** the build fails
 
 ### Requirement: The crafting bench stands at its city's recorded place
 
-A city's crafting bench SHALL stand in the world at the place its scene group record gives.
+A city's crafting bench SHALL stand in the world at its place.
 
 #### Scenario: Mondstadt's bench stands at its recorded place
 
 - **GIVEN** the player is in Mondstadt's Market District
 - **WHEN** the player looks for the crafting bench
-- **THEN** the bench stands at the place its scene group record gives
+- **THEN** the bench stands at its place
 
-### Requirement: Using the bench opens crafting
+### Requirement: The crafting bench offers its prompt only within reach
 
 The crafting bench SHALL offer its prompt only within the character's reach.
-
-Using the bench SHALL open the crafting screen with the party's crafter picked.
 
 #### Scenario: The bench offers its prompt within reach
 
@@ -202,6 +208,10 @@ Using the bench SHALL open the crafting screen with the party's crafter picked.
 - **GIVEN** the character is out of reach of the bench
 - **WHEN** the player looks at the bench
 - **THEN** no interaction prompt is shown
+
+### Requirement: Using the bench opens crafting
+
+Using the bench SHALL open the crafting screen with the party's crafter picked.
 
 #### Scenario: Using the bench opens crafting with the party's crafter picked
 
@@ -241,11 +251,11 @@ The crafting bench SHALL show each recipe the party has learned together with it
 
 ### Requirement: A conversion turns one material into another with its catalyst
 
-The bench SHALL hold each conversion of the game's conversion sections as a recipe that takes one material and the catalyst it names, makes one item and costs the Mora its row names (most convert rows name none; some rows of combine type five name 300, 900 or 2700). A conversion SHALL be open from the start.
+The bench SHALL hold each conversion of the game's conversion sections as a recipe that takes one material and the catalyst it names, makes one item and costs Mora (none for most conversions; 300, 900 or 2700 for some of combine type five). A conversion SHALL be open from the start.
 
 #### Scenario: a conversion takes its material and its catalyst
 
-- **GIVEN** a conversion row of combine type nine that takes a boss material and Dream Solvent (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/CombineExcelConfigData.json`, combine type 9: Dvalin's Claw and Dream Solvent make Dvalin's Plume)
+- **GIVEN** a conversion row of combine type nine that takes a boss material and Dream Solvent (combine type 9: Dvalin's Claw and Dream Solvent make Dvalin's Plume)
 - **WHEN** the recipe build runs
 - **THEN** the conversion is held with its material and its catalyst, one result and no Mora
 
@@ -259,7 +269,7 @@ The bench SHALL hold each conversion of the game's conversion sections as a reci
 
 - **GIVEN** the bag holds more of a conversion's material than its catalyst pays for
 - **WHEN** the times the conversion can be crafted are counted
-- **THEN** the count is the least the catalyst pays for, and for a conversion whose row names Mora, the least the wallet's Mora pays for too
+- **THEN** the count is the least the catalyst pays for, and for a conversion that costs Mora, the least the wallet's Mora pays for too
 
 #### Scenario: a conversion spends its material and its catalyst from the bag
 
