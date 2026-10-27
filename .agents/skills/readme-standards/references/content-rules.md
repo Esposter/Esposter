@@ -1,15 +1,13 @@
 # README Content
 
-Read when writing a README's description, Getting Started, Documentation link, commands or links.
+Read when writing a README's description, Getting Started, design-notes line, Key Exports, commands or links.
 
 1. **Description** — lead with what it does, not what it is. "Drizzle ORM schemas and migrations" beats "A library of database schemas".
-2. **Getting Started** — install command + one minimal working example. Omit when the package is neither installed nor run directly — that's every private _library_ package, which jumps straight to Documentation and carries an Architecture / How It Works section instead. `apps/web` is private but **keeps** a Getting Started: it's a runnable app with a real dev setup.
-3. **Documentation** — always the sentence "We highly recommend you take a look at the [documentation](...) to level up." Link to the package's specs at `https://github.com/Esposter/Esposter/tree/main/openspec/specs/<slug>` when they exist. Otherwise link to the specs root at `https://github.com/Esposter/Esposter/tree/main/openspec/specs`. A generated package README links the specs root, since a new package has no spec of its own yet.
-
-   Either way add a key-exports table or architecture notes so the README is useful without opening the specs.
-
-4. **Commands** — list the package's own `pnpm` scripts (build, test, lint:fix, typecheck), not root scripts.
-5. **Command reference** — a package that is run rather than imported (a CLI, a plugin's slash commands) carries one table of every command it answers to, first under Documentation: the invocation form once above it, then a row per command with its argument and what it does — the ones on no menu included, in their own table. The table is the reference and the prose around it is the explanation; a verb named in prose alone is one nobody finds when they need it.
-6. **No filler** — skip "we are excited to…", lengthy prose, or content that duplicates `AGENTS.md`. READMEs are reference docs.
-7. **Root README** — keep the Packages table in sync when adding/removing packages. Columns: Package (link), Description, Published (✓ or —).
-8. **GitHub URL convention** — `blob/main` for files, `tree/main` for directories (e.g. `.../tree/main/packages/shared` vs `.../blob/main/LICENSE`). Never use relative paths.
+2. **Getting Started** — the install command and one minimal working example, plus any peer requirement as one line. Omit it when the package is neither installed nor run directly, which is every private library: those go straight to Key Exports. `apps/web` is private but **keeps** Getting Started, since it is a runnable app with a real dev setup.
+3. **Design notes** — one line directly under the description: "Design notes live in [the specs](...)." Link the package's specs at `https://github.com/Esposter/Esposter/tree/main/openspec/specs/<slug>` when they exist, and otherwise the specs root at `https://github.com/Esposter/Esposter/tree/main/openspec/specs`. A generated package README links the specs root, since a new package has no spec of its own yet. This line replaces the old Documentation section and its "level up" sentence.
+4. **Key Exports** — a table of the exports a reader imports or calls, and what each does. Internal helpers stay out. Omit it when nothing is exported for a reader to call.
+5. **Commands** — only where the package is run rather than imported: an app, a plugin, or a tool a person runs. A usage example that Getting Started does not already show gets its own Usage section, between Key Exports and Commands: one code block, with the import the reader needs. A plugin carries one table of every command it answers to, the invocation form once above it and a row per command, the ones on no menu included in their own table. An app or tool lists the commands a person runs by hand. A library carries no Commands section; its scripts stay in `package.json`.
+6. **What stays out** — no Related Documentation: a technology is named in the root README's stack tables and a package does not restate them. No section that explains how the package is built or works inside (architecture, how it works, flow, conventions, layout, what's included): those belong to the specs (`AGENTS.md`, "Where everything is owned"). One exception: a constraint a consumer must respect, such as "server-only", stays as a single bullet under Getting Started or Key Exports.
+7. **No filler** — skip "we are excited to…" and any prose a reader does not act on. A README is for the person using the package.
+8. **Root README** — keep the Packages table in sync when adding or removing packages. Columns: Package (link), Description, Published (✓ or —). `scripts/src/workspace/packageInventories.test.ts` reads it.
+9. **GitHub URL convention** — `blob/main` for files, `tree/main` for directories (`.../tree/main/packages/shared` against `.../blob/main/LICENSE`). Never a relative path.

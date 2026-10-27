@@ -9,12 +9,12 @@ Genshin Impact's interface as a fan recreation: the game's own screen units, fac
 
 It is an unofficial, non-commercial fan work, not affiliated with HoYoverse. It ships no image or font from the game: each glyph is a vector path traced from the game's own, and the face is the open one nearest it.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/genshin/interface-library).
+
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 📖 [Documentation](#documentation)
-- ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
+- 🧩 [Key Exports](#key-exports)
 - ⚖️ [License](#license)
 
 ---
@@ -40,16 +40,7 @@ import "genshin-interface/style.css";
 </template>
 ```
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/blob/main/openspec/specs/genshin/interface-library/design.md) to level up. It compares the library against the game.
-
-It holds the pieces every screen of the game's is made from, as presentational Vue components:
-
-- `GameScreen`, the root a screen is drawn in: the game's 1920 by 1080 unit, its face and its pointer;
-- its round buttons and their glyphs, the server bar, the progress bar, the prompt band, the notice card, the wait mark and the ornamented divider.
-
-### Key Exports
+## <a name="key-exports">🧩 Key Exports</a>
 
 | Export              | Kind      | Purpose                                                                                  |
 | ------------------- | --------- | ---------------------------------------------------------------------------------------- |
@@ -64,32 +55,13 @@ It holds the pieces every screen of the game's is made from, as presentational V
 | `RoundButton`       | component | The game's round button with a glyph, labelled for a screen reader                       |
 | `ToastNotice`       | component | The game's notice card, dropped at the top of a screen                                   |
 
-## <a name="commands">⌨️ Commands</a>
-
-Run from `packages/genshin-interface/`:
-
-```bash
-pnpm build           # tsdown
-pnpm lint            # lint the package
-pnpm lint:fix        # eslint --fix
-pnpm test            # vitest watch mode
-pnpm test:visual     # vitest, browser config
-pnpm typecheck       # tsrs --fast --runExternalCode
-```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [tsdown](https://tsdown.dev/)
-- [Vitest](https://vitest.dev/guide/)
-- [Vue](https://vuejs.org/guide/introduction.html)
-
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/genshin-interface/latest?color=brightgreen
+[badge-npm-version]: https://img.shields.io/npm/v/genshin-interface/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/genshin-interface/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/genshin-interface/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/genshin-interface.svg

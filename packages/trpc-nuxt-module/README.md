@@ -7,12 +7,12 @@
 
 tRPC for [Nuxt](https://nuxt.com): a Nuxt module that registers your router's HTTP handler — and, when you ask for it, a WebSocket handler over Nitro's own WebSockets — fetches through the request event during server rendering so a call never leaves the process, and decorates the typed client with `useQuery`, `useLazyQuery`, `useMutation` and `useSubscription`, each a composable over Nuxt's own `useAsyncData`.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/trpc-nuxt-module).
+
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 📖 [Documentation](#documentation)
-- ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
+- 🧩 [Key Exports](#key-exports)
 - ⚖️ [License](#license)
 
 ---
@@ -77,11 +77,7 @@ const { data } = await $trpc.greeting.useQuery(name);
 </template>
 ```
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/trpc-nuxt-module) to level up. It covers the design and the upstream `trpc-nuxt` issues this module answers.
-
-### Key exports
+## <a name="key-exports">🧩 Key Exports</a>
 
 | Export                                                       | Description                                                                                                     |
 | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
@@ -94,34 +90,13 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 
 A WebSocket connection's open and close call the `trpc-nuxt-module:webSocket:open` and `trpc-nuxt-module:webSocket:close` Nitro runtime hooks with its context, typed off your router.
 
-## <a name="commands">⌨️ Commands</a>
-
-Run from `packages/trpc-nuxt-module/`:
-
-```bash
-pnpm bench        # the event handler against tRPC's own fetch adapter
-pnpm build        # compile to dist/
-pnpm lint         # lint the package
-pnpm lint:fix     # auto-fix lint
-pnpm test         # vitest watch mode (coverage is run from the repo root)
-pnpm typecheck    # type check
-```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [Nitro](https://nitro.build/)
-- [Nuxt](https://nuxt.com/docs)
-- [tRPC](https://trpc.io/docs)
-- [Vitest](https://vitest.dev/guide/)
-- [Vue](https://vuejs.org/guide/introduction.html)
-
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/trpc-nuxt-module/latest?color=brightgreen
+[badge-npm-version]: https://img.shields.io/npm/v/trpc-nuxt-module/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/trpc-nuxt-module/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/trpc-nuxt-module/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/trpc-nuxt-module.svg

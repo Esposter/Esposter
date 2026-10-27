@@ -7,12 +7,13 @@
 
 Runs your Claude Code sessions on your own machine and serves them to the [Esposter agent console](https://esposter.com/agent-console) over one WebSocket that admits only the browsers paired with it.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra/claude-interface/agent-console).
+
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 📖 [Documentation](#documentation)
+- 🧩 [Key Exports](#key-exports)
 - ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -27,19 +28,9 @@ On Windows there is also a standalone host that needs no Node or pnpm: download 
 
 Press Connect on the page, or hold Ctrl and click the one-time link the host prints. Each browser pairs with a credential of its own, and the host proves itself with a key before a page sends it. The host keeps its key and each browser's credential hash in `{home}/.agent-console-server`, and the browser keeps its credential and the host's public key in local storage, so a paired page stays paired across restarts. `agent-console-server devices` lists the paired browsers, and `devices --revoke <id>` removes one.
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra/claude-interface/agent-console) to level up.
-
 Sessions go through the Claude Agent SDK with your own settings, CLAUDE.md, skills, hooks and plugins, and they are written where the terminal writes them, so `claude --resume <id>` picks up a console session and the console picks up a terminal one. The wire is Zod contracts, exported as the `contracts` subpath.
 
-`agent-console-server [--port <port>] [--hostname <address>] [--origin <app origin>]`, and `agent-console-server devices [--revoke <id>]`
-
-| Flag         | Default                | What it does                                                                                              |
-| :----------- | :--------------------- | :-------------------------------------------------------------------------------------------------------- |
-| `--hostname` | `127.0.0.1`            | The address to listen on. `0.0.0.0` lets another machine reach the host, over a network you already trust |
-| `--origin`   | `https://esposter.com` | The app the printed link opens, and the one origin that may pair, such as `http://localhost:3000`         |
-| `--port`     | `7437`                 | The port to listen on, and the one in the link it prints                                                  |
+## <a name="key-exports">🧩 Key Exports</a>
 
 | Export                           | What it is                                                                                      |
 | :------------------------------- | :---------------------------------------------------------------------------------------------- |
@@ -50,35 +41,32 @@ Sessions go through the Claude Agent SDK with your own settings, CLAUDE.md, skil
 
 ## <a name="commands">⌨️ Commands</a>
 
+`agent-console-server [--port <port>] [--hostname <address>] [--origin <app origin>]`, and `agent-console-server devices [--revoke <id>]`
+
+| Flag         | Default                | What it does                                                                                              |
+| :----------- | :--------------------- | :-------------------------------------------------------------------------------------------------------- |
+| `--hostname` | `127.0.0.1`            | The address to listen on. `0.0.0.0` lets another machine reach the host, over a network you already trust |
+| `--origin`   | `https://esposter.com` | The app the printed link opens, and the one origin that may pair, such as `http://localhost:3000`         |
+| `--port`     | `7437`                 | The port to listen on, and the one in the link it prints                                                  |
+
 Run from `packages/agent-console-server/`:
 
 ```bash
 pnpm build        # compile to dist/
 pnpm build:sea    # single-executable build
 pnpm dev          # local dev server, below
-pnpm lint         # eslint
-pnpm lint:fix     # auto-fix lint
 pnpm start        # node bin/cli.js
-pnpm test         # vitest watch mode
-pnpm typecheck    # type check
 ```
 
 `pnpm dev` builds the host and starts it for the local dev server at `http://localhost:3000`, then rebuilds and restarts it on every change to the source, which ends its open sessions and leaves the page to reconnect. Close any other host first, since both take the same port, and pair through the link it prints — the page's Connect starts the installed host, which only the deployed site may pair with.
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [Claude Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview)
-- [Claude Code](https://code.claude.com/docs)
-- [Vitest](https://vitest.dev/guide/)
-- [Zod](https://zod.dev/)
 
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/agent-console-server/latest?color=brightgreen
+[badge-npm-version]: https://img.shields.io/npm/v/agent-console-server/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/agent-console-server/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/agent-console-server/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/agent-console-server.svg

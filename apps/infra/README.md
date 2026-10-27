@@ -4,12 +4,12 @@
 
 [Pulumi](https://github.com/pulumi/pulumi) infrastructure-as-code for Esposter's Azure and GitHub resources — every cloud resource declared from TypeScript, through the Azure Native and GitHub providers.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra).
+
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 📖 [Documentation](#documentation)
 - ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -49,21 +49,6 @@ cd apps/infra
 pulumi stack select prod
 ```
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra) to level up.
-
-### Project Layout
-
-- `dist/index.js` is the compiled Pulumi runtime entrypoint used by `Pulumi.yaml`.
-- `docs/` holds what a stack operator reads before an `up` — the Azure overview, naming conventions, security constraints, the search indexes, and the stacks.
-- `Pulumi.prod.yaml` holds stack-specific configuration.
-- `Pulumi.yaml` defines the Pulumi project.
-- `src/azure/constants/` holds values shared by more than one resource file — locations, tags, role definition IDs, and settings that must stay identical across stacks.
-- `src/azure/resources/` and `src/github/` hold the resource declarations, one resource per file, grouped by provider namespace and resource type.
-- `src/azure/services/` holds the factories that build a repeated block of resource arguments from the few things that differ per resource.
-- `src/index.ts` is the generated source barrel.
-
 ## <a name="commands">⌨️ Commands</a>
 
 Run from `apps/infra/`:
@@ -73,21 +58,11 @@ pnpm build             # regenerate the barrel and compile the Pulumi program to
 pnpm infra:preview     # preview Pulumi changes
 pnpm infra:refresh     # refresh Pulumi state from Azure
 pnpm infra:up          # apply Pulumi changes
-pnpm lint              # lint (check only)
-pnpm lint:fix          # auto-fix lint issues
-pnpm test              # vitest watch mode (coverage is run from the repo root)
-pnpm typecheck         # type check
 ```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [Pulumi](https://www.pulumi.com/docs/)
-- [Pulumi Azure Native](https://www.pulumi.com/registry/packages/azure-native/)
-- [Vitest](https://vitest.dev/guide/)
 
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE

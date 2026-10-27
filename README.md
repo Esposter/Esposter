@@ -11,17 +11,17 @@
 
 ## Table of Contents
 
-- 📖 [Documentation](#documentation)
+- 🧱 [The Stack](#the-stack)
 - 🏠 [Local Development](#local-development)
-- 🧱 [Architecture](#architecture)
+- 🧭 [Architecture](#architecture)
 - 📦 [Packages](#packages)
 - 🔌 [Claude Code Plugins](#claude-code-plugins)
 - 🤝 [Community](#community)
 - ⚖️ [License](#license)
 
-## <a name="documentation">📖 Documentation</a>
+---
 
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
+## <a name="the-stack">🧱 The Stack</a>
 
 ### Toolchain
 
@@ -316,10 +316,12 @@ Locally preview production build:
 pnpm -C apps/web preview
 ```
 
-## <a name="architecture">🧱 Architecture</a>
+## <a name="architecture">🧭 Architecture</a>
 
 Esposter is a pnpm workspaces monorepo. See [monorepo tooling](https://github.com/Esposter/Esposter/blob/main/openspec/specs/architecture/monorepo-tooling/design.md) for workspace script orchestration and publishing boundaries.
 Packages are used directly by the nuxt application via `workspace:*`.
+
+How AI sessions land their commits, and how those commits are reviewed on the way to `main`, is in [the review docs](https://github.com/Esposter/Esposter/blob/main/openspec/specs/infra/review/design.md).
 
 ### Workspace Graph
 
@@ -331,26 +333,6 @@ Regenerate it from the repo root with:
 
 ```bash
 pnpm graph:gen
-```
-
-### Review
-
-AI sessions commit faster than any reviewer reads, so nothing between a commit and a reviewed release waits on a
-person. Each session lands its commits on the one permanent `ai/queue` branch with `git pull --rebase origin ai/queue` and `git push origin HEAD:ai/queue`. A GitHub Actions workflow
-then reviews what landed there: it takes the commits `main` does not have yet in windows of at most 300 changed files,
-has headless Haiku reviewers read each window in batches of files they can read whole, and fast-forwards `main` to the
-window's last commit. Each window that passes opens an issue for its findings. A fixer session then fixes what it can and
-lands its commits on `ai/queue`, and a settler session settles what the fixer left open, so every finding ends fixed,
-refuted or recorded. The design and the figures live in
-[the review docs](https://github.com/Esposter/Esposter/blob/main/openspec/specs/infra/review/design.md).
-
-```mermaid
-flowchart LR
-  S[AI sessions] -->|git push to ai/queue| Q[(ai/queue)]
-  Q -->|window of commits| R[Haiku reviewers]
-  R -->|window passed: fast-forward| M[(main)]
-  R -->|findings| I[Review issue]
-  I -->|fixer, then settler: commits| Q
 ```
 
 ## <a name="packages">📦 Packages</a>
@@ -422,12 +404,12 @@ This project is licensed under the [Apache-2.0 license](https://github.com/Espos
 
 [badge-ci]: https://github.com/Esposter/Esposter/actions/workflows/CI.yaml/badge.svg?event=push&branch=main
 [url-ci]: https://github.com/Esposter/Esposter/actions/workflows/CI.yaml?query=event%3Apush+branch%3Amain
-[badge-duplicates]: https://img.shields.io/badge/duplicate%20code-0%20clones-33c854
-[badge-score]: https://img.shields.io/badge/score-94%2F100-33c854
+[badge-duplicates]: https://img.shields.io/badge/duplicate%20code-0%20clones-1b7a5f
+[badge-score]: https://img.shields.io/badge/score-94%2F100-1b7a5f
 [url-score]: https://github.com/Esposter/Esposter/blob/main/SCORE.md
 [badge-openssf]: https://api.scorecard.dev/projects/github.com/Esposter/Esposter/badge
 [url-openssf]: https://scorecard.dev/viewer/?uri=github.com/Esposter/Esposter
 [badge-skills]: https://skills.sh/b/Esposter/Esposter
 [url-skills]: https://skills.sh/Esposter/Esposter
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE

@@ -7,12 +7,12 @@
 
 Math expressions compiled once into a function of plain numbers, in mathjs's numeric language and held to mathjs's recorded answers.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/math-expression-compiler).
+
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 📖 [Documentation](#documentation)
-- ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
+- 🧩 [Key Exports](#key-exports)
 - ⚖️ [License](#license)
 
 ---
@@ -34,13 +34,7 @@ const evaluate = parseMathExpression("col0 * (1 - col1)").match(
 evaluate([10, 0.25]); // 7.5
 ```
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/math-expression-compiler) to level up.
-
-A formula is parsed into a tree, the tree is compiled into a function of its variables' values, and that function is called once per row with no parsing or lookup per call.
-
-### Key exports
+## <a name="key-exports">🧩 Key Exports</a>
 
 | Export                      | What it does                                                                                                                   |
 | :-------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
@@ -51,30 +45,13 @@ A formula is parsed into a tree, the tree is compiled into a function of its var
 | `MathExpressionFunctionMap` | Each function of the language by its mathjs name, as the signatures it takes: argument kinds, arities and computation          |
 | `parseMathExpression`       | A formula to its tree, or a `Result` holding the first error with its position                                                 |
 
-## <a name="commands">⌨️ Commands</a>
-
-```bash
-pnpm bench       # Runs the benchmarks with Vitest
-pnpm build       # Builds `dist` and regenerates the barrel
-pnpm lint        # Lints the package
-pnpm lint:fix    # Lints the package and fixes what it can
-pnpm test        # Runs the tests with Vitest in watch mode
-pnpm typecheck   # Typechecks the package
-```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [math.js](https://mathjs.org/docs/)
-- [neverthrow](https://github.com/supermacro/neverthrow)
-- [Vitest](https://vitest.dev/guide/)
-
 ## <a name="license">⚖️ License</a>
 
 Licensed under [Apache-2.0][url-license].
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/math-expression-compiler/latest?color=brightgreen
+[badge-npm-version]: https://img.shields.io/npm/v/math-expression-compiler/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/math-expression-compiler/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/math-expression-compiler/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/math-expression-compiler.svg

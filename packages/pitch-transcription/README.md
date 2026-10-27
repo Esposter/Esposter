@@ -7,12 +7,12 @@
 
 The notes played in a recording: each note's pitch, start, length, loudness and pitch bend, heard by Spotify's Basic Pitch model on ONNX Runtime and written as MIDI if you want a file.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/pitch-transcription).
+
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 📖 [Documentation](#documentation)
-- ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
+- 🧩 [Key Exports](#key-exports)
 - ⚖️ [License](#license)
 
 ---
@@ -47,15 +47,11 @@ const midiBytes = writeMidi(timedNotes);
 await session.release();
 ```
 
-A worker or a server that already holds the readings imports note creation from `pitch-transcription/notes`, which never loads ONNX Runtime. `pitch-transcription` takes `onnxruntime-common` as a peer, and the runtime the session runs on is yours to choose: `onnxruntime-node` under Node, `onnxruntime-web` in a browser.
+A worker or a server that already holds the readings imports note creation from `pitch-transcription/notes`, which never loads ONNX Runtime.
 
-## <a name="documentation">📖 Documentation</a>
+`pitch-transcription` takes `onnxruntime-common` as a peer; the runtime the session runs on is yours to choose, `onnxruntime-node` under Node or `onnxruntime-web` in a browser.
 
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/pitch-transcription) to level up. It explains how the package works and how it absorbed `@spotify/basic-pitch`.
-
-It hears several notes at once, on any instrument. The trained model ships with the package, and the step that turns the model's readings into notes imports without ONNX Runtime.
-
-### Key Exports
+## <a name="key-exports">🧩 Key Exports</a>
 
 | Export                  | Kind     | Purpose                                                                                                            |
 | :---------------------- | :------- | :----------------------------------------------------------------------------------------------------------------- |
@@ -66,32 +62,13 @@ It hears several notes at once, on any instrument. The trained model ships with 
 | `readModel`             | function | The model's frame, onset and contour readings over a recording, a window at a time, each output disposed once read |
 | `writeMidi`             | function | Notes as a MIDI file's bytes, each bend written as its share of the bend's range                                   |
 
-## <a name="commands">⌨️ Commands</a>
-
-Run from `packages/pitch-transcription/`:
-
-```bash
-pnpm bench        # run the benchmarks once
-pnpm build        # compile to dist/
-pnpm lint         # lint the package
-pnpm lint:fix     # auto-fix lint
-pnpm test         # vitest watch mode (coverage is run from the repo root)
-pnpm typecheck    # type check
-```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [Basic Pitch](https://github.com/spotify/basic-pitch)
-- [ONNX Runtime](https://onnxruntime.ai/docs/)
-- [Vitest](https://vitest.dev/guide/)
-
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE). It is derived from [basic-pitch-ts](https://github.com/spotify/basic-pitch-ts), Copyright 2022 Spotify AB, and ships its trained model unmodified, both under the Apache-2.0 license; see `NOTICE`.
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/pitch-transcription/latest?color=brightgreen
+[badge-npm-version]: https://img.shields.io/npm/v/pitch-transcription/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/pitch-transcription/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/pitch-transcription/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/pitch-transcription.svg

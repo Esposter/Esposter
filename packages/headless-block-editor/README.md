@@ -7,12 +7,13 @@
 
 A headless block editor: a typed node tree over a registry, the commands that edit it as JSON Patch operations, and navigation, with no framework or DOM.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/headless-block-editor).
+
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 📖 [Documentation](#documentation)
-- ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
+- 🧩 [Key Exports](#key-exports)
+- 📝 [Usage](#usage)
 - ⚖️ [License](#license)
 
 ---
@@ -23,13 +24,7 @@ A headless block editor: a typed node tree over a registry, the commands that ed
 pnpm i headless-block-editor zod
 ```
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/headless-block-editor) to level up.
-
-A registry declares its root, the content types the root accepts and the props schema its props pass, beside its types. `renderBlockNodes` folds a checked document into a consumer's output, rendering each node once its slots have rendered. Its undo history is the bounded history of @esposter/shared.
-
-### Key Exports
+## <a name="key-exports">🧩 Key Exports</a>
 
 | Export                      | Kind      | Purpose                                                                                                                |
 | :-------------------------- | :-------- | :--------------------------------------------------------------------------------------------------------------------- |
@@ -46,7 +41,7 @@ A registry declares its root, the content types the root accepts and the props s
 | `renderBlockNodes`          | function  | Renders each node once its slots have rendered, skipping a node whose type the registry lacks                          |
 | `updateBlockNodeProps`      | function  | One JSON Patch add per prop, replacing a prop the node already has                                                     |
 
-### Usage
+## <a name="usage">📝 Usage</a>
 
 ```ts
 import { applyBlockEdit, insertBlockNode } from "headless-block-editor";
@@ -60,29 +55,13 @@ const operations = insertBlockNode(document, registry, children, "/content/0/pro
 const edit = applyBlockEdit(documentSchema, document, operations);
 ```
 
-## <a name="commands">⌨️ Commands</a>
-
-```bash
-pnpm build       # Builds `dist`
-pnpm lint        # Lints the package
-pnpm lint:fix    # Lints the package and fixes what it can
-pnpm test        # Runs the tests with Vitest in watch mode
-pnpm typecheck   # Typechecks the package
-```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [neverthrow](https://github.com/supermacro/neverthrow)
-- [Vitest](https://vitest.dev/guide/)
-- [Zod](https://zod.dev/)
-
 ## <a name="license">⚖️ License</a>
 
 Licensed under [Apache-2.0][url-license].
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/headless-block-editor/latest?color=brightgreen
+[badge-npm-version]: https://img.shields.io/npm/v/headless-block-editor/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/headless-block-editor/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/headless-block-editor/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/headless-block-editor.svg

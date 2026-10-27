@@ -7,12 +7,12 @@
 
 Mock Azure service classes for local development and testing, providing in-memory implementations of Azure Table Storage, Blob Storage, Service Bus, and EventGrid clients that mirror the real Azure SDK interfaces.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
+
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 📖 [Documentation](#documentation)
-- ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
+- 🧩 [Key Exports](#key-exports)
 - ⚖️ [License](#license)
 
 ---
@@ -23,11 +23,20 @@ Mock Azure service classes for local development and testing, providing in-memor
 pnpm i -D azure-mock @azure/core-http-compat @azure/core-rest-pipeline @azure/data-tables @azure/eventgrid @azure/search-documents @azure/service-bus @azure/storage-blob @azure/storage-queue
 ```
 
-## <a name="documentation">📖 Documentation</a>
+### Usage
 
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
+```ts
+import { MockTableClient } from "azure-mock";
 
-### Available Mocks
+const mockTableClient = new MockTableClient("", "tableName");
+
+await mockTableClient.upsertEntity({ partitionKey: "pk", rowKey: "rk", value: 42 });
+const entity = await mockTableClient.getEntity("pk", "rk");
+```
+
+Replace real Azure clients with their mock equivalents by swapping them in your test setup or local `.env` configuration.
+
+## <a name="key-exports">🧩 Key Exports</a>
 
 | Class                          | Azure Equivalent           | Description                                  |
 | ------------------------------ | -------------------------- | -------------------------------------------- |
@@ -44,46 +53,13 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 
 Each client's state lives in an exported `Mock*Database` map (`MockTableDatabase`, `MockContainerDatabase`, …), so a test resets by clearing the one it seeded.
 
-### Usage
-
-```ts
-import { MockTableClient } from "azure-mock";
-
-const mockTableClient = new MockTableClient("", "tableName");
-
-await mockTableClient.upsertEntity({ partitionKey: "pk", rowKey: "rk", value: 42 });
-const entity = await mockTableClient.getEntity("pk", "rk");
-```
-
-Replace real Azure clients with their mock equivalents by swapping them in your test setup or local `.env` configuration.
-
-## <a name="commands">⌨️ Commands</a>
-
-Run from `packages/azure-mock/`:
-
-```bash
-pnpm build        # compile to dist/
-pnpm lint         # check
-pnpm lint:fix     # auto-fix lint
-pnpm test         # vitest watch mode (coverage is run from the repo root)
-pnpm typecheck    # type check
-```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [Azure Blob Storage](https://learn.microsoft.com/azure/storage/blobs/storage-blobs-introduction)
-- [Azure Event Grid](https://learn.microsoft.com/azure/event-grid/overview)
-- [Azure Service Bus](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-messaging-overview)
-- [Azure Table Storage](https://learn.microsoft.com/azure/storage/tables/table-storage-overview)
-- [Vitest](https://vitest.dev/guide/)
-
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/azure-mock/latest?color=brightgreen
+[badge-npm-version]: https://img.shields.io/npm/v/azure-mock/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/azure-mock/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/azure-mock/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/azure-mock.svg

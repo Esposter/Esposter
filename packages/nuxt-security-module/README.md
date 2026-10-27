@@ -7,12 +7,13 @@
 
 A Nuxt security module for [Nitro 3](https://nitro.build) and h3 2 that sets security headers on rendered pages, a per-request nonce Content Security Policy, subresource integrity, CORS, allowed methods, basic auth and a request size limit.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/nuxt-security-module).
+
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 📖 [Documentation](#documentation)
-- ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
+- 🧩 [Key Exports](#key-exports)
+- 📝 [Usage](#usage)
 - ⚖️ [License](#license)
 
 ---
@@ -28,13 +29,7 @@ pnpm i nuxt-security-module
 export default defineNuxtConfig({ modules: ["nuxt-security-module"] });
 ```
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/nuxt-security-module) to level up.
-
-The nonce is written onto the page's own tags, the prerender policy is a `<meta>` element, and the framework's `X-Powered-By` header is removed. It replaces [nuxt-security](https://github.com/Baroshem/nuxt-security). Its upstream audit, every issue it was held to, and the defaults it ships are on the documentation page, with the package's status and the steps not yet built: [nuxt-security-module](https://github.com/Esposter/Esposter/blob/main/openspec/specs/nuxt-security-module/README.md).
-
-### Key Exports
+## <a name="key-exports">🧩 Key Exports</a>
 
 | Export                   | Kind      | Purpose                                                                                                                  |
 | :----------------------- | :-------- | :----------------------------------------------------------------------------------------------------------------------- |
@@ -43,7 +38,7 @@ The nonce is written onto the page's own tags, the prerender policy is a `<meta>
 | `ModuleOptions`          | interface | The module's options, one key per feature, each on or off; the `security` config key takes a partial of them             |
 | `rateLimiter`            | const     | Default export of `./runtime/server/middleware/rateLimiter`: refuses a request with `429` once its key's window is spent |
 
-### Usage
+## <a name="usage">📝 Usage</a>
 
 ```ts
 // nuxt.config.ts
@@ -56,31 +51,13 @@ export default defineNuxtConfig({
 });
 ```
 
-## <a name="commands">⌨️ Commands</a>
-
-```bash
-pnpm bench       # Runs the benchmarks with Vitest
-pnpm build       # Builds `dist`
-pnpm lint        # Lints the package
-pnpm lint:fix    # Lints the package and fixes what it can
-pnpm test        # Runs the tests with Vitest in watch mode
-pnpm typecheck   # Typechecks the package
-```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [Nitro](https://nitro.build/)
-- [Nuxt](https://nuxt.com/docs)
-- [Vitest](https://vitest.dev/guide/)
-- [Zod](https://zod.dev/)
-
 ## <a name="license">⚖️ License</a>
 
 Licensed under [Apache-2.0][url-license].
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/nuxt-security-module/latest?color=brightgreen
+[badge-npm-version]: https://img.shields.io/npm/v/nuxt-security-module/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/nuxt-security-module/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/nuxt-security-module/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/nuxt-security-module.svg

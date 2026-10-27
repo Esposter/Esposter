@@ -4,20 +4,18 @@
 
 Drizzle ORM schemas, relations, and migrations for Esposter's PostgreSQL database, the source of truth for all relational data and usable in both browser and server environments.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
+
 ## Table of Contents
 
-- 📖 [Documentation](#documentation)
-- ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
+- 🧩 [Key Exports](#key-exports)
+- 📝 [Usage](#usage)
+- 🗃️ [Migrations](#migrations)
 - ⚖️ [License](#license)
 
 ---
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
-
-### Key Exports
+## <a name="key-exports">🧩 Key Exports</a>
 
 | Export               | Kind     | Purpose                                                                                               |
 | -------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
@@ -31,7 +29,7 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 | `schema`             | const    | Every table and enum, keyed by its export name                                                        |
 | `usersInAuth`        | const    | The `auth.users` table, one row per user account                                                      |
 
-### Usage
+## <a name="usage">📝 Usage</a>
 
 ```ts
 import type { Database } from "@esposter/db-schema";
@@ -41,59 +39,13 @@ import { usersInAuth } from "@esposter/db-schema";
 export const countUsers = (db: Database) => db.$count(usersInAuth);
 ```
 
-### Migration Workflow
+## <a name="migrations">🗃️ Migrations</a>
 
-After editing a schema file, generate the migration with `pnpm db:gen` (see Commands). Migrations are output to
-`apps/web/server/db/migrations/` and are applied by `pnpm --filter @esposter/db-schema db:migrate`, which `pnpm dev` runs first and the deploy's pre-deploy step runs too.
-
-### Schema Layout
-
-One file per table in `src/schema/`, named after the table it declares, and every one of them — plus every
-`pgEnum` — registered in the generated registry `src/generated/schema.ts`, which `pnpm registry:gen` writes from
-those files so no list is kept by hand. `drizzle-kit` reads the `src/schema/**/*.ts` glob from `drizzle.config.ts`,
-and the files under `src/schema/` are the table list.
-
-What the tree does not say is the split: Postgres holds relational data, while message **content** lives in
-Azure Table Storage, so a `messages` row is metadata and its body is not in this package at all.
-
-### Conventions
-
-- Use the `pgTable` wrapper (re-exported from this package), **not** raw drizzle `pgTable` — the wrapper adds standard metadata columns.
-- Columns use camelCase property names matching TypeScript properties.
-- All `z.discriminatedUnion` schemas must end with `satisfies z.ZodType<UnionType>`.
-- Each model file holds exactly one interface/class and one schema.
-
-## <a name="commands">⌨️ Commands</a>
-
-Run from `packages/db-schema/`:
-
-```bash
-pnpm build        # compile to dist/
-pnpm db:gen       # generate migration SQL from schema changes
-pnpm db:migrate   # apply the generated migrations to the database
-pnpm db:pull      # pull the schema from the database
-pnpm db:studio    # open Drizzle Studio UI for visual inspection
-pnpm db:up        # upgrade snapshot metadata to a newer drizzle-kit format
-pnpm lint         # check
-pnpm lint:fix     # auto-fix lint
-pnpm registry:gen # regenerate the schema and relation registries in src/generated/
-pnpm test         # vitest watch mode
-pnpm typecheck    # type check
-```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [Azure Blob Storage](https://learn.microsoft.com/azure/storage/blobs/storage-blobs-introduction)
-- [Azure Event Grid](https://learn.microsoft.com/azure/event-grid/overview)
-- [Azure Table Storage](https://learn.microsoft.com/azure/storage/tables/table-storage-overview)
-- [Drizzle Kit](https://orm.drizzle.team/docs/kit-overview)
-- [Drizzle ORM](https://orm.drizzle.team/docs/overview)
-- [Vitest](https://vitest.dev/guide/)
-- [Zod](https://zod.dev/)
+After editing a schema file, generate the migration with `pnpm db:gen`. Migrations are output to `apps/web/server/db/migrations/` and applied by `pnpm --filter @esposter/db-schema db:migrate`, which `pnpm dev` runs first and the deploy's pre-deploy step runs too.
 
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE

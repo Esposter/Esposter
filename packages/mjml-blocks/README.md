@@ -7,12 +7,12 @@
 
 MJML's components as block types on the headless block editor, with a render to MJML's JSON form and source and a read back from MJML that refuses what the package does not take.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/mjml-blocks).
+
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 📖 [Documentation](#documentation)
-- ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
+- 🧩 [Key Exports](#key-exports)
 - ⚖️ [License](#license)
 
 ---
@@ -92,13 +92,7 @@ const json = renderMjmlDocument(document, registry, { context: undefined, isStam
 const { html } = await mjml2html(json, { validationLevel: "strict" });
 ```
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/mjml-blocks) to level up.
-
-The package carries each component's attributes, defaults and nesting rules, and has no framework, DOM or MJML runtime: the compile is the consumer's, as the Getting Started shows.
-
-### Key exports
+## <a name="key-exports">🧩 Key Exports</a>
 
 | Export               | What it is                                                                                          |
 | :------------------- | :-------------------------------------------------------------------------------------------------- |
@@ -108,29 +102,13 @@ The package carries each component's attributes, defaults and nesting rules, and
 | `renderMjmlDocument` | a checked document rendered to MJML's JSON form                                                     |
 | `serializeMjml`      | MJML's JSON form written as MJML source                                                             |
 
-## <a name="commands">⌨️ Commands</a>
-
-```bash
-pnpm build       # Builds `dist`
-pnpm lint        # Lints the package
-pnpm lint:fix    # Lints the package and fixes what it can
-pnpm test        # Runs the tests with Vitest in watch mode
-pnpm typecheck   # Typechecks the package
-```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [MJML](https://documentation.mjml.io/)
-- [Vitest](https://vitest.dev/guide/)
-- [Zod](https://zod.dev/)
-
 ## <a name="license">⚖️ License</a>
 
 Licensed under [Apache-2.0][url-license].
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/mjml-blocks/latest?color=brightgreen
+[badge-npm-version]: https://img.shields.io/npm/v/mjml-blocks/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/mjml-blocks/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/mjml-blocks/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/mjml-blocks.svg

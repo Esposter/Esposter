@@ -7,12 +7,12 @@
 
 tRPC for [Mock Service Worker](https://mswjs.io): register a resolver per procedure, typed off your router, and every call your client makes is answered at the network by tRPC's own handlers.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/trpc-msw).
+
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 📖 [Documentation](#documentation)
-- ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
+- 🧩 [Key Exports](#key-exports)
 - ⚖️ [License](#license)
 
 ---
@@ -52,13 +52,9 @@ test("reads a post", async () => {
 });
 ```
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/trpc-msw) to level up. It covers the design and the upstream `msw-trpc` issues this package answers.
-
 The result is that batching, your transformer, your error formatter, `FormData` input and subscriptions over server-sent events or WebSockets all behave exactly as they do against the real server.
 
-### Key exports
+## <a name="key-exports">🧩 Key Exports</a>
 
 | Export                     | Description                                                                                                                     |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
@@ -68,31 +64,13 @@ The result is that batching, your transformer, your error formatter, `FormData` 
 
 Pass your real `router` and every call is first judged by that procedure's own input parsers (Standard Schema validators, or plain functions), so a client sending what your server would reject gets the same `BAD_REQUEST` instead of a mocked answer; the resolver receives what those parsers return, as it does on the server. A resolver receives what a real one does — `ctx`, `input`, `path`, `signal` — and returns the procedure's output before the transformer, which runs on the way out as it does on the server. A thrown `TRPCError` reaches the client through your error formatter.
 
-## <a name="commands">⌨️ Commands</a>
-
-Run from `packages/trpc-msw/`:
-
-```bash
-pnpm build        # compile to dist/
-pnpm lint         # lint the package
-pnpm lint:fix     # auto-fix lint
-pnpm test         # vitest watch mode (coverage is run from the repo root)
-pnpm typecheck    # type check
-```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [MSW](https://mswjs.io/docs/)
-- [tRPC](https://trpc.io/docs)
-- [Vitest](https://vitest.dev/guide/)
-
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/trpc-msw/latest?color=brightgreen
+[badge-npm-version]: https://img.shields.io/npm/v/trpc-msw/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/trpc-msw/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/trpc-msw/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/trpc-msw.svg

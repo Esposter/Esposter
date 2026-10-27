@@ -9,12 +9,12 @@ Genshin Impact's own text in its fifteen languages, as an unofficial, non-commer
 
 Nothing is translated by hand: each string is the game's own, in the game's own translation.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/genshin/game-text).
+
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 📖 [Documentation](#documentation)
-- ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
+- 🧩 [Key Exports](#key-exports)
 - ⚖️ [License](#license)
 
 ---
@@ -35,15 +35,7 @@ const gameText = await GameTextLoaderMap[language]();
 console.log(gameText[GameTextKey.Loading]);
 ```
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/blob/main/openspec/specs/genshin/game-text/design.md) to level up. It explains where the text comes from and how to reference a new string.
-
-- every string the package references, looked up by the game's own text id, with English bundled and every other language a chunk loaded on first use;
-- `matchGameLanguage`, the game language nearest a reader's browser locale or `Accept-Language` header;
-- the game's languages, each with its BCP-47 tag and its own name for itself.
-
-### Key Exports
+## <a name="key-exports">🧩 Key Exports</a>
 
 | Export                   | Kind      | Purpose                                                                                        |
 | ------------------------ | --------- | ---------------------------------------------------------------------------------------------- |
@@ -58,30 +50,13 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 | `matchGameLanguage`      | function  | The game language nearest a list of preferred tags, English when none matches                  |
 | `splitGameTextColors`    | function  | Splits a game string into plain runs and colour-tagged runs                                    |
 
-## <a name="commands">⌨️ Commands</a>
-
-Run from `packages/genshin-text/`:
-
-```bash
-pnpm build        # tsdown
-pnpm lint         # lint the package
-pnpm lint:fix     # eslint --fix
-pnpm test         # vitest watch mode
-pnpm typecheck    # tsrs --fast
-```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [tsdown](https://tsdown.dev/)
-- [Vitest](https://vitest.dev/guide/)
-
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/genshin-text/latest?color=brightgreen
+[badge-npm-version]: https://img.shields.io/npm/v/genshin-text/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/genshin-text/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/genshin-text/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/genshin-text.svg

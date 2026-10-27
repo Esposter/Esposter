@@ -7,12 +7,13 @@
 
 A parser for [Tiled Map Editor](http://www.mapeditor.org/) \*.tmx files, inspired by [tmx-map-parser](https://github.com/praghus/tmx-map-parser).
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/parse-tmx).
+
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 📖 [Documentation](#documentation)
-- ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
+- 🧩 [Key Exports](#key-exports)
+- 📝 [Usage](#usage)
 - ⚖️ [License](#license)
 
 ---
@@ -23,11 +24,7 @@ A parser for [Tiled Map Editor](http://www.mapeditor.org/) \*.tmx files, inspire
 pnpm i parse-tmx
 ```
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/parse-tmx) to level up.
-
-### Key Exports
+## <a name="key-exports">🧩 Key Exports</a>
 
 | Export             | Kind      | Purpose                                                                                                      |
 | :----------------- | :-------- | :----------------------------------------------------------------------------------------------------------- |
@@ -40,7 +37,7 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 | `TMXParsed`        | class     | The parse result, holding the parsed map as `map`                                                            |
 | `TMXTilesetParsed` | type      | A tileset as parsed: an embedded one or an external one                                                      |
 
-### Usage
+## <a name="usage">📝 Usage</a>
 
 ```ts
 import { parseTmx } from "parse-tmx";
@@ -62,7 +59,7 @@ const { map } = (await parseTmx(xmlString, translateFlips)).match(
 console.log(map.layers.length);
 ```
 
-### Example data
+### <a name="example-data">📄 Example data</a>
 
 [TMX Map Format documentation](https://doc.mapeditor.org/en/stable/reference/tmx-map-format/)
 
@@ -131,32 +128,13 @@ console.log(map.layers.length);
 }
 ```
 
-## <a name="commands">⌨️ Commands</a>
-
-Run from `packages/parse-tmx/`:
-
-```bash
-pnpm bench        # run the benchmarks once
-pnpm build        # compile to dist/
-pnpm lint         # lint the package
-pnpm lint:fix     # auto-fix lint
-pnpm test         # vitest watch mode (coverage is run from the repo root)
-pnpm typecheck    # type check
-```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [neverthrow](https://github.com/supermacro/neverthrow)
-- [Tiled](https://doc.mapeditor.org/en/stable/)
-- [Vitest](https://vitest.dev/guide/)
-
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/parse-tmx/latest?color=brightgreen
+[badge-npm-version]: https://img.shields.io/npm/v/parse-tmx/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/parse-tmx/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/parse-tmx/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/parse-tmx.svg

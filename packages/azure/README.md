@@ -7,12 +7,12 @@
 
 The Azure wire conventions that a real client and a fake one both have to speak: the OData filter clause vocabulary shared by Table Storage and Search, the entity key casing convention, and the service limits.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
+
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 📖 [Documentation](#documentation)
-- ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
+- 🧩 [Key Exports](#key-exports)
 - ⚖️ [License](#license)
 
 ---
@@ -23,14 +23,7 @@ The Azure wire conventions that a real client and a fake one both have to speak:
 pnpm add @esposter/azure
 ```
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
-
-No SDK client is constructed here and no credential is read — this package is pure data and pure functions, so
-it runs anywhere.
-
-### Key Exports
+## <a name="key-exports">🧩 Key Exports</a>
 
 | Export                      | Kind     | Purpose                                                                      |
 | --------------------------- | -------- | ---------------------------------------------------------------------------- |
@@ -76,10 +69,9 @@ import { escapeValue, serializeValue } from "@esposter/azure";
 ### Filters
 
 `serializeClauses` turns a clause array into a Table Storage filter string and `serializeSearchClauses` into a
-Search one; the two differ only in how a `Date` renders, which is why they share a single core. Clauses on the
-same key are grouped — a range pair is joined with `and`, anything else with `or` — so a caller never assembles
-the boolean structure by hand. `deserializeClause` is the inverse, and is what lets a fake client evaluate a
-filter it was handed rather than pattern-matching the string.
+Search one; the two differ only in how a `Date` renders. Clauses on the same key are grouped — a range pair is
+joined with `and`, anything else with `or` — so a caller never assembles the boolean structure by hand.
+`deserializeClause` is the inverse.
 
 ```ts
 import { BinaryOperator, CompositeKeyPropertyNames, getTableNullClause, serializeClauses } from "@esposter/azure";
@@ -91,17 +83,13 @@ const filter = serializeClauses([
 ]);
 ```
 
-Null is where the two services diverge and the helpers carry the difference: Table Storage cannot compare
-against null at all, so `getTableNullClause` expresses "is null" as a negated `NaN` comparison, while Search
-supports it directly through `getSearchNullClause` / `getSearchNonNullClause`. `getPartitionKeyFilter` is the
-one-clause case worth naming, since a read, a count and a purge of the same entity must all start from it.
+Null is where the two services diverge and the helpers carry the difference: `getTableNullClause` expresses "is null" for Table Storage, while Search supports it directly through `getSearchNullClause` / `getSearchNonNullClause`. `getPartitionKeyFilter` is the one-clause case worth naming, since a read, a count and a purge of the same entity must all start from it.
 
 ### Keys
 
 `CompositeKey` is the `partitionKey`/`rowKey` pair every Table entity carries, and `CompositeKeyPropertyNames`
-is how those names are referred to without restating the strings. The wire spells those two capitalized and
-JavaScript does not, so `serializeKey` and `deserializeKey` convert at the boundary and nothing in between has
-to know.
+is how those names are referred to without restating the strings. `serializeKey` and `deserializeKey` convert
+at the boundary.
 
 ```ts
 import { CompositeKey, CompositeKeyPropertyNames, serializeKey } from "@esposter/azure";
@@ -112,31 +100,13 @@ import { CompositeKey, CompositeKeyPropertyNames, serializeKey } from "@esposter
 `AZURE_MAX_BATCH_SIZE`, `AZURE_MAX_PAGE_SIZE` and `AZURE_MAX_QUEUE_VISIBILITY_TIMEOUT_MS` are the service's own
 ceilings, named so a caller paginating, batching or enqueueing does not hard-code them.
 
-## <a name="commands">⌨️ Commands</a>
-
-Run from `packages/azure/`:
-
-```bash
-pnpm build        # compile to dist/
-pnpm lint         # check
-pnpm lint:fix     # auto-fix lint
-pnpm test         # vitest watch mode (coverage is run from the repo root)
-pnpm typecheck    # type check
-```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [Azure Table Storage](https://learn.microsoft.com/azure/storage/tables/table-storage-overview)
-- [Vitest](https://vitest.dev/guide/)
-- [Zod](https://zod.dev/)
-
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/@esposter/azure/latest?color=brightgreen
+[badge-npm-version]: https://img.shields.io/npm/v/@esposter/azure/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/@esposter/azure/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/@esposter/azure/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/@esposter/azure.svg

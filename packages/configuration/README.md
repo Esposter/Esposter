@@ -4,31 +4,16 @@
 
 Shared build and lint configuration for all Esposter packages, providing ESLint configs, TSConfig bases, and the tsdown build configurations every package's `tsdown.config.ts` composes.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
+
 ## Table of Contents
 
-- 📖 [Documentation](#documentation)
-- ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
+- 📝 [Usage](#usage)
 - ⚖️ [License](#license)
 
 ---
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
-
-### What's Included
-
-| Config        | File                         | Purpose                                                                  |
-| ------------- | ---------------------------- | ------------------------------------------------------------------------ |
-| Barrel        | `generateExports`            | Writes `packages/*/src/index.ts` from the build's `build:prepare` hook   |
-| ESLint        | `eslint/`                    | Shared ESLint rules (oxlint + typescript-eslint + perfectionist)         |
-| tsdown (base) | `getTsdownConfiguration`     | Platform-neutral bundle config, plus the gates a published package owes  |
-| tsdown (Node) | `getTsdownConfigurationNode` | The base, targeting Node                                                 |
-| tsdown (Vue)  | `getTsdownConfigurationVue`  | The base, compiling `.vue` files and emitting their declarations         |
-| Vitest        | `getVitestConfiguration`     | The shared test config, running Vue as the app ships it (no Options API) |
-
-### Usage in other packages
+## <a name="usage">📝 Usage</a>
 
 ```ts
 // tsdown.config.ts
@@ -47,25 +32,9 @@ export default eslintConfiguration.append({ ignores: ["dist"] });
 Inside this monorepo a package composes the pieces itself instead, because each config extends the Nuxt-generated
 one the app emits — copy `packages/db/eslint.config.js` rather than writing that wiring from scratch.
 
-## <a name="commands">⌨️ Commands</a>
-
-Run from `packages/configuration/`:
-
-```bash
-pnpm build        # compile to dist/
-pnpm lint         # check
-pnpm lint:fix     # auto-fix
-pnpm test         # vitest watch mode
-pnpm typecheck    # type check
-```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [Vitest](https://vitest.dev/guide/)
-
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE

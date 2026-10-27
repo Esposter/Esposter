@@ -4,12 +4,11 @@
 
 A Claude Code plugin that writes the follow-ups a session leaves unfinished into an Esposter TodoList, tagged with the repository and session that found them, and drains a repository's follow-ups again one change at a time until none is left.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/resource/todolist-agent-follow-ups).
+
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 📖 [Documentation](#documentation)
-- ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
 - ⚖️ [License](#license)
 
 ---
@@ -23,35 +22,9 @@ claude plugin marketplace add Esposter/Esposter
 claude plugin install follow-ups@esposter
 ```
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/blob/main/openspec/specs/resource/todolist-agent-follow-ups/design.md) to level up. It covers the origin a follow-up carries, the procedures the plugin's tools call, and what counts as a follow-up.
-
-### Architecture Notes
-
-- **Capture** — work a session saw and is leaving undone becomes a todo the moment it is recognised, instead of a line in scrollback.
-- **Drain** — a session takes its repository's open follow-ups in the owner's order, does each through the repository's own change loop, and ticks it or hands it back.
-- **One install, every repository** — the endpoint, the session's values and the skills travel with the plugin, and the API key stays in the credential store.
-
-## <a name="commands">⌨️ Commands</a>
-
-Run from `packages/follow-ups/`:
-
-```bash
-pnpm lint         # eslint
-pnpm lint:fix     # auto-fix lint
-pnpm test         # vitest watch mode
-pnpm typecheck    # type check
-```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [Claude Code](https://code.claude.com/docs)
-- [Vitest](https://vitest.dev/guide/)
-
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE

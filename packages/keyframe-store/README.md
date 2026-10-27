@@ -7,12 +7,12 @@
 
 Content-addressed version storage for documents handed over whole, where every version is a zstd **keyframe**, compressed on its own, or a **delta** against a keyframe.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/keyframe-store).
+
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 📖 [Documentation](#documentation)
-- ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
+- 🧩 [Key Exports](#key-exports)
 - ⚖️ [License](#license)
 
 ---
@@ -66,13 +66,7 @@ const plaintext = await keyframeStore.read(second.hash).match(
 );
 ```
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/keyframe-store) to level up. The object format on disk and the contract a caller writes and reads through are specified there.
-
-Each delta is compressed against exactly one keyframe, using that keyframe's plaintext as the dictionary. Reconstructing any version is at most two reads, a version whose content is already held costs nothing, and the backend is anything that can store bytes by key.
-
-### Key exports
+## <a name="key-exports">🧩 Key Exports</a>
 
 | Export                 | Role                                                                                                                                                                      |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -83,31 +77,13 @@ Each delta is compressed against exactly one keyframe, using that keyframe's pla
 | `VersionAnchor`        | What a lineage passes to a write: its keyframe's hash and the bytes anchored to it                                                                                        |
 | `WrittenVersion`       | What a write reports: the hash, its base, both sizes and whether it was deduplicated                                                                                      |
 
-## <a name="commands">⌨️ Commands</a>
-
-Run from `packages/keyframe-store/`:
-
-```bash
-pnpm bench        # the codec benchmark, writing the colocated *.bench.md
-pnpm build        # compile to dist/
-pnpm lint         # lint the package
-pnpm lint:fix     # auto-fix lint
-pnpm test         # vitest watch mode (coverage is run from the repo root)
-pnpm typecheck    # type check
-```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [neverthrow](https://github.com/supermacro/neverthrow)
-- [Vitest](https://vitest.dev/guide/)
-
 ## <a name="license">⚖️ License</a>
 
 Licensed under [Apache-2.0][url-license].
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/keyframe-store/latest?color=brightgreen
+[badge-npm-version]: https://img.shields.io/npm/v/keyframe-store/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/keyframe-store/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/keyframe-store/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/keyframe-store.svg

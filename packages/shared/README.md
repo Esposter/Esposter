@@ -7,12 +7,12 @@
 
 Shared TypeScript utilities, types, and error classes for the Esposter platform.
 
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/shared).
+
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 📖 [Documentation](#documentation)
-- ⌨️ [Commands](#commands)
-- 🔗 [Related Documentation](#related)
+- 🧩 [Key Exports](#key-exports)
 - ⚖️ [License](#license)
 
 ---
@@ -23,13 +23,9 @@ Shared TypeScript utilities, types, and error classes for the Esposter platform.
 pnpm i @esposter/shared zod
 ```
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/shared) to level up.
-
 Works in both browser and server environments.
 
-### Key Exports
+## <a name="key-exports">🧩 Key Exports</a>
 
 #### Error Classes
 
@@ -78,31 +74,13 @@ import { capitalize, truncate, toKebabCase } from "@esposter/shared";
 import { getResult, getResultAsync, withFinalizer } from "@esposter/shared";
 ```
 
-## <a name="commands">⌨️ Commands</a>
-
-Run from `packages/shared/`:
-
-```bash
-pnpm build        # compile to dist/
-pnpm lint         # eslint
-pnpm lint:fix     # auto-fix lint
-pnpm test         # vitest watch mode (coverage is run from the repo root)
-pnpm typecheck    # type check
-```
-
-## <a name="related">🔗 Related Documentation</a>
-
-- [neverthrow](https://github.com/supermacro/neverthrow)
-- [Vitest](https://vitest.dev/guide/)
-- [Zod](https://zod.dev/)
-
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/@esposter/shared/latest?color=brightgreen
+[badge-npm-version]: https://img.shields.io/npm/v/@esposter/shared/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/@esposter/shared/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/@esposter/shared/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/@esposter/shared.svg
