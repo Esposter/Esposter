@@ -4,14 +4,7 @@ A post's comments have a **Sort by** select above them, with four orders: Hot (t
 
 ## How it works
 
-| Option | `sortBy`                    |
-| ------ | --------------------------- |
-| Hot    | `ranking` desc, `id` desc   |
-| Top    | `likeCount` desc, `id` desc |
-| New    | `createdAt` desc, `id` desc |
-| Old    | `createdAt` asc, `id` asc   |
-
-- **One map.** `PostSortType` carries Old, and `PostSortTypeSortByMap` maps it, so the feed and the comments read the same table. The feed's select lists only Hot, New and Top; Old orders a thread and is not a feed order. Each select draws its options through one helper, so the marks come from one icon map.
+- **One map.** `PostSortType` carries Old, and `PostSortTypeSortByMap` maps it, so the feed and the comments read the same map. The feed's select lists only Hot, New and Top; Old orders a thread and is not a feed order. Each select draws its options through one helper, so the marks come from one icon map.
 - **One sort for the whole tree.** The comment store holds the chosen sort once. Every branch reads its pages with it. Changing the sort clears every loaded branch, so no open branch keeps rows the old order read.
 - **The root branch remounts.** A branch reads its first page in setup, and a branch that is already mounted does not run setup again. The post page keys the root branch by the sort, so the root remounts and reads under the new order.
 - **Expansion lives in the store.** Which replies are open is a set of comment ids in the store, not a flag on each card. A remounted card therefore comes back open and mounts its branch, which reads its own first page under the current sort.

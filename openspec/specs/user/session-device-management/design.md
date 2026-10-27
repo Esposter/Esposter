@@ -26,7 +26,7 @@ sequenceDiagram
 
   Owner->>Card: Revoke (confirm dialog)
   Card->>R: deleteSession(id)
-  R->>PG: own unexpired rows — resolves the token, and is the ownership check
+  R->>PG: read own unexpired row
   R->>BA: revokeSession({ token })
   BA->>PG: row deleted
   PG->>PS: sessionId cascades
@@ -42,14 +42,13 @@ sequenceDiagram
 
 Expired rows are filtered out of the listing, the same way better-auth's own listing filters them — nobody is signed in with a session that has run out, and showing it invites a revoke that does nothing.
 
-**A push subscription belongs to the session that created it, not to the browser that once signed in.** `pushSubscriptions.sessionId` references `sessions` and cascades, so a revoke takes that device's pushes with it — and so do a plain sign-out and an expiry, with no cleanup path of their own. A subscription outliving its session still resolves and still delivers ([push notifications](../../esbabbler/push-notifications/design.md)), which is the hole this closes: keyed by account alone, a device someone had signed out of kept receiving that account's pushes.
+**A push subscription belongs to the session that created it, not to the browser that once signed in.** `pushSubscriptions.sessionId` references `sessions` and cascades, so a revoke takes that device's pushes with it — and so do a plain sign-out and an expiry, with no cleanup path of their own. A subscription outliving its session still resolves and still delivers ([push notifications](../../esbabbler/push-notifications/design.md)). Keyed to the session, a device that signs out stops receiving that account's pushes.
 
 Losing the row costs nothing, which is what makes the cascade cheap rather than destructive: `usePushSubscription` resubscribes on mount, so the next authenticated load writes it again under the session actually in use. That is also why the migration **clears the existing rows** — they predate the column, so no value would satisfy the constraint, and each browser rewrites its own on its next visit.
 
-The constraint is worth the friction it caused. Writing a subscription now requires its session to exist as a row, which turned out to be false in the test harness rather than in the app: `auth.api.getSession` was mocked to fabricate session identity that nothing had ever stored. Since its one caller awaits it, the mock now writes the row it fabricates, which is what the real sign-in does — so the suite exercises the same invariant production does instead of one nothing enforced.
+Writing a subscription requires its session to exist as a row. The test mock for `auth.api.getSession` writes the row it fabricates, as sign-in does, so the suite exercises the same invariant production does.
 
-One genuine schema fix travels with this: `sessions.userId` cascades on the user row, like every other row a user owns, so deleting a user who still holds a session removes it. It never did, so deleting a user who still held a session violated the constraint — a defect the suite was hiding, because no test had a session row until this feature gave sessions a reader.
-
+One genuine schema fix travels with this: `sessions.userId` cascades on the user row, like every other row a user owns, so deleting a user who still holds a session removes it.
 **Live connections are closed explicitly**, because a Web PubSub client access url outlives the session that minted it. Web PubSub identifies a connection by _device_ — `userId⟂sessionId`, see `generateWebPubSubClientAccessUrl` — so `closeUserConnections` addresses exactly one session's connections. It is best-effort in full, the service client included: the revoke has already landed by then, so a hub that cannot be reached costs a connection living until it drops on its own, rather than a revoke reported as failed.
 
 Revoking your **own** row is sign-out: the wording says so before the click, and the card lands on the login route rather than refreshing a listing the page can no longer read. The auth cookie is left in place and inert — it names a session row that no longer exists, so the next request resolves no session.

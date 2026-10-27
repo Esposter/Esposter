@@ -78,5 +78,5 @@ Paths relative to `apps/web`.
 
 ## Notes
 
-- The `accounts` table is better-auth's stock shape, which already permits many rows against one `userId` — nothing about this feature is a custom schema.
+- The `accounts` table is better-auth's stock shape, so nothing about this feature is a custom schema.
 - Password sign-up is [rejected](../../../rejected/user/password-auth/design.md), which closes the mirror-image attack on this feature: an attacker who could create a local account at the victim's address would otherwise wait for the victim's first OAuth sign-in to be linked into the attacker's row. Nothing should re-introduce one as a step toward anything here.

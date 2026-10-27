@@ -48,4 +48,4 @@ Paths relative to `apps/web`.
 ## Notes
 
 - There is no "member since" line: the `users` table carries no `createdAt` column to render one from.
-- Comments are intentionally excluded from the post list — a stream of context-free comments reads as noise. Revisit with a tab if it is asked for.
+- A stream of context-free comments reads as noise. Revisit with a tab if it is asked for.

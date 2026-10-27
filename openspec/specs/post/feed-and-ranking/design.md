@@ -27,6 +27,8 @@ flowchart LR
 sign(likes) × log10(max(|likes|, 1)) + max(0, createdAtMs − 1.5e12) / 45e6
 ```
 
+Here `1.5e12` is `POST_RANKING_EPOCH_MS` and `45e6` is `POST_RANKING_AGE_PER_ORDER_OF_MAGNITUDE_MS`, both declared in `apps/web/server/services/post/constants.ts`.
+
 The log term means early likes matter most; the time term gives newer posts a constant head start (each ~12.5 hours of age is worth one order of magnitude of likes). Because age is baked in as an absolute offset, scores never need recomputation — newer posts simply start higher. Every like create/update/delete and comment create recomputes the score in the same transaction that updates the counters.
 
 **Feed UI** — the page's full width: the toolbar, a card per post (who and when with the author's actions at the end, the post, then the vote pill and the comment count), and a `StyledWaypoint` sentinel at the bottom that triggers `readMorePosts` while `hasMore` holds. The page scrolls the document, so pulling to refresh is the browser's own, which reloads the feed.

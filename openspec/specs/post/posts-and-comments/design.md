@@ -11,7 +11,7 @@ flowchart TD
   PARENT -->|"set"| COMMENT["comment — description only, depth parent plus 1"]
   POST --> GUARD["updatePost, deletePost — ownedBy plus a parentId IS NULL check"]
   COMMENT --> GUARDC["updateComment, deleteComment — ownedBy plus a parentId IS NOT NULL check"]
-  GUARD --> CASCADE["deleting a post cascades to its comments"]
+  GUARD --> CASCADE["cascades to comments"]
   POST --> SHARED["shared posts table"]
   COMMENT --> SHARED
 ```
@@ -34,7 +34,7 @@ The two guards are why a post procedure cannot touch a comment and vice versa, e
 
 ```mermaid
 flowchart TD
-  ROUTE["/post/[id]"] -->|"readPosts — parentId is the route id"| BRANCH["a branch — one node's replies, keyed by that node"]
+  ROUTE["/post/[id]"] -->|"readPosts — parentId is the route id"| BRANCH["replies of one node"]
   BRANCH --> CARD["reply card"]
   CARD -->|"expand — the read is the expansion"| BRANCH
   CARD -->|"scroll — the waypoint on that branch"| BRANCH

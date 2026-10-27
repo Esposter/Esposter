@@ -12,7 +12,7 @@ The stores this reads are the ones in the [user data inventory](../../architectu
 
 **Links are short-lived and owner-only.** The download is a read-only SAS valid for fifteen minutes (`DATA_EXPORT_LINK_DURATION_MS`), minted on request for the owner of a ready, unexpired export. The archive itself is private, so a link is the only way in.
 
-**Expiry is enforced twice.** The row carries an expiry seven days after it is ready, and the private container's lifecycle rule deletes the blob after the same period. A link is refused once the row has expired, even if the blob still exists.
+**Expiry is enforced twice.** The row carries an expiry seven days after it is ready (`DATA_EXPORT_RETENTION`), and the private container's lifecycle rule deletes the blob after the same period. A link is refused once the row has expired, even if the blob still exists.
 
 **One export is active per person.** A second request while one is queued or building returns the first one's status. This bounds the work an account can start.
 
@@ -79,7 +79,7 @@ sequenceDiagram
   Handler->>DB: mark ready, expiry set
   Person->>Web: Get download link
   Web->>DB: check ready and unexpired
-  Web-->>Person: read link, valid fifteen minutes
+  Web-->>Person: read link, valid fifteen minutes (DATA_EXPORT_LINK_DURATION_MS)
 ```
 
 A failed build marks the row failed with its reason and leaves the blob to the lifecycle rule. A replayed event rebuilds the same export id over its own blob.
@@ -88,10 +88,10 @@ A failed build marks the row failed with its reason and leaves the blob to the l
 
 | Path                                                      | Role                                                            |
 | :-------------------------------------------------------- | :-------------------------------------------------------------- |
-| "packages/db-schema/src/schema/user/dataExportsInUser.ts" | New: the export row: status, blob name, ready and expiry times  |
+| `packages/db-schema/src/schema/user/dataExportsInUser.ts` | The export row: status, blob name, ready and expiry times       |
 | `apps/web/server/trpc/routers/user.ts`                    | Request, status and link procedures                             |
-| "apps/web/server/services/user/getDataExportLink.ts"      | New: the short-lived read link, owner-only and expiry-checked   |
-| "apps/functions/src/handlers/exportUserDataHandler.ts"    | New: the streamed archive build                                 |
-| "apps/functions/src/functions/exportUserData.ts"          | New: the event registration                                     |
+| `apps/web/server/services/user/getDataExportLink.ts`      | The short-lived read link, owner-only and expiry-checked        |
+| `apps/functions/src/handlers/exportUserDataHandler.ts`    | The streamed archive build                                      |
+| `apps/functions/src/functions/exportUserData.ts`          | The event registration                                          |
 | `apps/infra/src/azure/resources/`                         | The private container, its lifecycle rule and the subscriptions |
 | `apps/web/app/pages/user/settings.vue`                    | The Download my data flow                                       |

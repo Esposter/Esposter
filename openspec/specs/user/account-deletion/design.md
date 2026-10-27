@@ -88,7 +88,7 @@ Every step treats an already-gone target as done. A 404 from a blob delete count
 
 - Messages a person wrote in a room they have since left stay attributed to them. Membership is the only index from a user to a room.
 - Moderation records in other people's rooms that name the user, and resource activity on resources the user does not own, are kept as the platform's audit trail. Whether that retention is lawful is an owner decision.
-- The Azure AI Search index may keep message text, so the removal there cannot be verified until the indexer's handling of deleted rows is recorded.
+- The Azure AI Search index may keep the text of messages the sweep removes. No sweep step deletes documents from it: member-room messages are marked with `deletedAt`, which the search's not-deleted clause hides ([message search](../../esbabbler/message-search/design.md)), and owned-room rows are left to the indexer's own handling, which `apps/infra/docs/azure/search-indexes.md` does not cover.
 - The shared character-pack files are kept, as above.
 
 ## Key files

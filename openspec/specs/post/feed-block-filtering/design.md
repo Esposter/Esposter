@@ -6,6 +6,16 @@ Blocking someone hides their posts and comments from everything you read. The `b
 
 When the caller of `readPosts` is authenticated, the query adds `userId NOT IN (SELECT blockedId FROM blocks WHERE blockerId = viewer)` (`getNotBlockedWhere`) as a `RAW` clause beside the cursor clause. Comment listings run through the same procedure, so blocked users' comments disappear from threads too. Because the filter lives in the `where`, cursors stay consistent — pages simply skip blocked rows server-side.
 
+```mermaid
+flowchart LR
+  read[post.readPosts] --> viewer{Viewer authenticated?}
+  viewer -->|yes| blocked[Add NOT IN blocks clause]
+  viewer -->|no| cursor[Cursor clause alone]
+  blocked --> combined[Where with the cursor clause]
+  cursor --> combined
+  combined --> page[Page of rows, blocked users skipped]
+```
+
 Deliberate boundaries:
 
 - **`readPost` stays readable** — navigating directly to a blocked user's post is an intentional act, and rate-limited/unauthenticated readers have no block list anyway. Only the feeds filter.
