@@ -26,7 +26,7 @@ flowchart TD
 - **The package draws no chrome, so the app keeps the look.** The toolbar, the thumbnail's row and the password field are the app's, drawn with the UI library, so the keyboard and the labels are the library's and its menus open inside the dialog's top layer. Rejected: the renderer's own toolbar, whose menus portal to the body and so leave the dialog's top layer.
 - **One document for both views.** The attachment owns the load, so the thumbnail and the dialog read the same document. A closed dialog keeps a password prompt until it is answered or the attachment unmounts.
 - **The renderer loads after mount.** `loadPdfRenderer` imports `pdfjs-dist` in the browser only, so nothing renders on the server and no module import runs at load. The viewer's components load only when a viewer mounts, so an attachment that is never opened loads no viewer code.
-- **The renderer's data is served from its own install.** The character maps, the standard fonts and the image decoders' WebAssembly are Nitro public assets mounted from `pdfjs-dist`'s own folders, as the Temporal polyfill is mounted from its install, under base URLs named once as constants the loader reads too. They move with the renderer's version in the lockfile, so no committed copy is kept, and the control-character sweep needs no exclusion for one. Rejected: copying the folders in a build step, which is the committed copy again under another name.
+- **The renderer's data is served from its own install.** The character maps, the standard fonts and the image decoders' WebAssembly are Nitro public assets mounted from `pdfjs-dist`'s own folders, as [static assets](../static-assets/design.md) mounts a package's own files, under base URLs named once as constants the loader reads too, and the control-character sweep needs no exclusion for one. Rejected: a committed copy, as the [polyfills](../polyfills/design.md) page rejects it.
 - **The page itself is drawn as authored in either theme, and the chrome around it follows the app's.**
 - **The dialog draws the controls an attachment's reader uses.** Download and print are the package's, and the toolbar's buttons call them. The thumbnail sidebar, bookmarks and fullscreen are built by the package and drawn by the dialog once an attachment needs them. Annotation editing and comments are the [PDF annotations change](../../vue-pdfjs-headless/annotations/design.md)'s.
 
@@ -48,10 +48,9 @@ flowchart TD
 
 ## Notes
 
-The `fullscreen` permissions grant stays in `apps/web/configuration/security.ts`, although the viewer has no fullscreen control: the call view's stage calls `requestFullscreen` on its own element, and that grant is its. The renderer's folders are served under `/pdfjs/character-maps/`, `/pdfjs/standard_fonts/` and `/pdfjs/wasm/`, the paths named once in `apps/web/app/services/pdf/constants.ts`.
+The `fullscreen` permissions grant stays in `apps/web/configuration/security.ts`, although the viewer has no fullscreen control: the call view's stage calls `requestFullscreen` on its own element, and that grant is its. The renderer's folders are served under the base URLs `apps/web/app/services/pdf/constants.ts` names once.
 
 ## Sources
 
 - [pdf.js](https://github.com/mozilla/pdf.js): the `web/pdf_viewer.mjs` components and the `getDocument` options.
-- [vue-pdf-embed](https://github.com/hrynko/vue-pdf-embed), the thumbnail wrapper replaced.
-- [@vue-pdf-viewer/viewer](https://www.npmjs.com/package/@vue-pdf-viewer/viewer), the full viewer replaced, read from its tracker and its documentation only.
+- [@vue-pdf-viewer](https://www.npmjs.com/package/@vue-pdf-viewer/viewer), read from its tracker and its documentation only.

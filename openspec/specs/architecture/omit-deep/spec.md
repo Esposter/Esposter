@@ -1,6 +1,6 @@
 ## Purpose
 
-The recursive key omission in @esposter/shared, which replaced lodash-omitdeep, and the upstream issues it was audited against.
+The recursive key omission in @esposter/shared, and the upstream issues of lodash-omitdeep it was audited against.
 
 ## Requirements
 

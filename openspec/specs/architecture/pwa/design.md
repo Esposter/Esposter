@@ -9,7 +9,7 @@ flowchart LR
   Src["service-worker/sw.ts"] -->|injectManifest, precache list injected| SW["sw.js at the root"]
   Cfg["configuration/pwa.ts"] -->|manifest, client, strategy| Mod["@vite-pwa/nuxt"]
   Mod --> SW
-  Mod --> Plugin["$pwa, registered by the module's client plugin"]
+  Mod --> Plugin["$pwa<br/>the module's client plugin"]
   Plugin -->|needRefresh| Toast["ToastStack's Reload notice"]
   Toast -->|updateServiceWorker, SKIP_WAITING| SW
   SW -->|push| Tabs["open tabs, via postMessage"]
@@ -44,4 +44,4 @@ flowchart LR
 - **Orientation is unlocked.** The app has landscape surfaces, the Genshin world and the call stage, which a portrait lock would block on installed Android copies.
 - **Maskable icons are drawn, not padded.** The mark sits at 70% scale on the light background, inside the safe zone, so no launcher's mask crops it. The `any` icons keep the unpadded artwork.
 - **The offline home entry has no revision.** The `/` entry in the precache list carries `revision: null`, so each new worker fetches it at install rather than trusting a cached copy.
-- **Typecheck is the shared Node base with the WebWorker lib.** The worker extends `packages/configuration/tsconfig.node.json`, which loads the shared `global.d.ts` (its `Object.groupBy` overload). Replacing `include` in the worker's config drops that file and breaks the typecheck of the server-side packages the payload type reaches.
+- The worker extends `packages/configuration/tsconfig.node.json`, which loads the shared `global.d.ts` (its `Object.groupBy` overload). Replacing `include` in the worker's config drops that file and breaks the typecheck of the server-side packages the payload type reaches.

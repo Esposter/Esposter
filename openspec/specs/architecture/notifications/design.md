@@ -8,7 +8,7 @@ The publisher states **what happened and who it concerns**. Everything about how
 
 ```mermaid
 flowchart TD
-  SRC["Any mutation<br/>message, friend request, reminder, resource operation"] --> PUB["publishNotification<br/>one typed event, one topic"]
+  SRC["Any mutation"] --> PUB["publishNotification<br/>one typed event, one topic"]
   PUB --> FN["ProcessNotification<br/>one Azure Function"]
   FN --> RES["resolveNotification<br/>copy, deep link, recipient user ids"]
   RES --> POL{"AppNotificationTypeChannelMap[type]"}
@@ -50,7 +50,7 @@ Feedback about the tab's own action is **not** a member: it never leaves the tab
 
 A type whose channels include the bell writes one `notifications` row per recipient, in one statement. The row is the render shape the panel already uses, and its `severity` comes from `AppNotificationTypeSeverityMap` rather than from a field every publisher would restate identically.
 
-Rows are trimmed to `NOTIFICATION_RETENTION_MS` on the write path, where the recipients are already known — nothing else trims them, and the only other delete is the cascade that takes a user's rows with the user, so an untrimmed bell is a table that only grows. The trim is best-effort, and so is everything past it: the insert above is the last step allowed to fail the invocation, because Event Grid reads a throw as a retry request and this handler is marked replayable — a trim that failed the invocation would have the rows it was trimming written a second time. The unread badge is a property of what the panel read, so no count rides on the push payload and no service worker writes one.
+Rows are trimmed to `NOTIFICATION_RETENTION_MS` on the write path, where the recipients are already known — nothing else trims them, and the only other delete is the cascade that takes a user's rows with the user, so an untrimmed bell is a table that only grows. The trim is best-effort, and so is everything past it: a trim that failed the invocation would have the rows it was trimming written a second time, so the bell insert is the one step allowed to fail, as [persist then notify](../persist-then-notify/design.md) states for this handler. The unread badge is a property of what the panel read, so no count rides on the push payload and no service worker writes one.
 
 ## Delivery
 
@@ -58,7 +58,7 @@ Rows are trimmed to `NOTIFICATION_RETENTION_MS` on the write path, where the rec
 
 A subscription is per-session, which is what lets a resource operation exclude the session that caused it: that tab showed the toast synchronously, and every other device of the same user is still owed the push.
 
-Failure is Event Grid's once it has the event, not the publisher's. Every notification has a dead-letter destination and a replay ([dead-letter replay](../../infra/eventgrid-dead-letter/design.md)), the reminder among them — it publishes an event like every other notification rather than calling `web-push` inline, and an inline send has neither. That covers accepted events only: a publish that fails before Event Grid accepts it has no event to retry and no dead letter to alert on, so it reaches the publisher's `console.error` and nothing else. Publishes sit after the write they report and never fail it ([persist then notify](../persist-then-notify/design.md)).
+Failure is Event Grid's once it has the event, not the publisher's. Every notification has a dead-letter destination and a replay ([dead-letter replay](../../infra/eventgrid-dead-letter/design.md)), the reminder among them — it publishes an event like every other notification rather than calling `web-push` inline, and an inline send has neither. That covers accepted events only: a publish Event Grid never accepts has no event to retry or dead-letter, and is logged by the publisher as [persist then notify](../persist-then-notify/design.md) sets out. Publishes sit after the write they report and never fail it ([persist then notify](../persist-then-notify/design.md)).
 
 ## Adding a notification type
 

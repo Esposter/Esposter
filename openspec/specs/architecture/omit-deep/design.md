@@ -1,6 +1,6 @@
 # omitDeep
 
-`omitDeep` in `@esposter/shared` returns a copy of a value with the named keys removed at every depth. It replaced `lodash-omitdeep`, whose one call site is the clicker's save trigger in `useReadClicker`: the trigger compares the omitted state against the previous snapshot, so the copy has to be stable across ticks and must drop the ticking counters from class instances as well as plain objects.
+`omitDeep` in `@esposter/shared` returns a copy of a value with the named keys removed at every depth. Its one call site is the clicker's save trigger in `useReadClicker`: the trigger compares the omitted state against the previous snapshot, so the copy has to be stable across ticks and must drop the ticking counters from class instances as well as plain objects.
 
 ## How the walk treats a value
 

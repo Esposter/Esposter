@@ -4,7 +4,7 @@ When a feature page calls a procedure "rate-limited", this is the mechanism it m
 
 A limiter is defined by two configured numbers — how many points a key may spend (`points`) and the window it spends them in (`duration`, in seconds) — a mandatory `keyPrefix` naming its keyspace, and optionally a `blockDuration` that locks a key out for a further period once it overspends. Each limiter lives in its own file under `server/services/rateLimiter/`.
 
-## The four limiters
+## The limiters
 
 | Limiter               | Budget (points, in its file)         | Key prefix        | Keyed on                        | Guards                                   |
 | --------------------- | ------------------------------------ | ----------------- | ------------------------------- | ---------------------------------------- |

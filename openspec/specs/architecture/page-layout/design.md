@@ -9,7 +9,7 @@ flowchart TD
   R[A route] --> A[App.vue<br/>the dock, and the dock insets on the root]
   A --> P[The page]
   P --> L{Which layout}
-  L -->|layout: immersive| I[The whole viewport<br/>no dock, no shell, the window never scrolls]
+  L -->|layout: immersive| I[The whole viewport]
   L -->|NuxtLayout name=resource| RS[The resource header over the default shell]
   L -->|NuxtLayout name=messages| MS[The room's drawers over the default shell]
   L -->|NuxtLayout| D[The default shell]
@@ -30,7 +30,7 @@ flowchart TD
 
 ## What the width changes
 
-A wide screen docks every drawer the page has, open. A narrow one keeps each closed behind a button as a `UiDialog` sheet arriving from its own side, and a page picked from inside one closes it. Both renders start narrow, since the server has no screen ([responsive breakpoints](../responsive/design.md)), so the layout decides after mount.
+A wide screen docks every drawer the page has, open. A narrow one keeps each closed behind a button as a `UiDialog` sheet arriving from its own side, and a page picked from inside one closes it. Both renders start narrow, as [responsive breakpoints](../responsive/design.md) sets out.
 
 - **The button that opens a drawer is `AppDrawerButton`**, placed by the page in its own header — beside the title, in the toolbar — since where it reads naturally is the page's call. The component owns the rest: it exists only on a narrow screen and opens its side's drawer. A page with a drawer and no button leaves a phone no way to reach the drawer at all.
 - **A drawer is titled once.** A sheet draws a title bar with a close button over what the page put in it. Content that already draws its own — the room's side panes, each under one `MessageRightSideBarHeader` with its title and close — passes `is-right-title-hidden`, and the sheet keeps its title only as the dialog's accessible name, so no screen shows two titles and two close buttons for one pane.
