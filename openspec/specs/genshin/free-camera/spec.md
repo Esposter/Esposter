@@ -1,6 +1,6 @@
 ## Purpose
 
-The free camera, flown over the continent with the keyboard, the mouse and a gamepad's sticks from wherever the follow camera left the view, which the tuning panel mounts in photo mode (`packages/genshin-world/src/components/World/FreeCamera/Index.vue`). Its input is read once a frame and its look turns once a frame, its motion runs in fixed steps ahead of the floating origin's shift, and it is held above the ground and the water's surface (`packages/genshin-world/src/components/World/Session/Index.vue`, `packages/genshin-world/src/components/World/FreeCamera/Index.vue`).
+The free camera, flown over the continent from wherever the follow camera left the view, and held above the ground and the water's surface.
 
 ## Requirements
 

@@ -1,6 +1,6 @@
 ## Purpose
 
-The third-person camera behind the character, as the game's follows its own — an orbit round a pivot above the body, turned by the mouse or the right stick and zoomed by the wheel, pulled in wherever the ground, the water's surface or a landmark stands between it and the character, and run once a frame on the body's place blended between its last two steps. A click locks the pointer, Left Alt shows the cursor, and photo mode holds the body and orbits the view round it.
+The third-person camera behind the character, as the game's follows its own: an orbit round a pivot above the body that the ground, the water and the landmarks pull in.
 
 ## Requirements
 

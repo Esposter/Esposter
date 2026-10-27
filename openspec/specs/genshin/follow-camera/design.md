@@ -34,7 +34,7 @@ The arm is cleared each frame before the eye is placed. A sphere of the camera's
 
 ## The pointer and photo mode
 
-A click on the world locks the pointer, as the game hides its cursor in play, and Left Alt lets it go to show the cursor, as the game's Show Cursor does; a lock let go that way does not open the Paimon menu, which a lock lost to `Escape` does ([screens](../screens/design.md)). The next click takes the pointer again (`packages/genshin-world/src/components/World/Character/Index.vue`, `packages/genshin-world/src/components/World/Session/Index.vue`).
+A click on the world locks the pointer, as the game hides its cursor in play, and Left Alt lets it go to show the cursor, as the game's Show Cursor does; a lock let go that way does not open the Paimon menu ([controls](../controls/design.md) states the Escape case). The next click takes the pointer again (`packages/genshin-world/src/components/World/Character/Index.vue`, `packages/genshin-world/src/components/World/Session/Index.vue`).
 
 Photo mode, chosen from the Paimon menu, holds the body where it stands and keeps the follow camera on it as an orbit: the look turns the view round the body and the wheel zooms it, within the same range and pitch limits as the follow camera. That range is shared until the game's photo mode range is solved ([follow camera proposal](../../../changes/genshin-follow-camera/design.md)). The world's clock runs on as the game's does in photo mode. Leaving photo mode gives the view back to the follow camera where the orbit left it, the body still standing where it did. Under the tuning panel photo mode hands the view to the [free camera](../free-camera/design.md) instead (`packages/genshin-world/src/components/World/Session/Index.vue`).
 

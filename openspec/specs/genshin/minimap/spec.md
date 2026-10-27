@@ -1,6 +1,6 @@
 ## Purpose
 
-The HUD's corner map, as the game keeps one in play (`~/Esposter/genshin-parity/references/hud-world-keys.png`). The map's one drawing of the catalogue, cut to a circle round the character with north up, under the game's own marks placed by its interface tree (see the open list), the N at the top of the rim, the view's fan and the character's arrow. Pressing it opens the map, as M does. The marks are the game's own, as its interface tree places them (`~/Esposter/genshin-parity/extracted/character/interface/json/GameObject/GrpMap.json`, scale 0.6; `~/Esposter/genshin-parity/extracted/character/interface/json/GameObject/MarkSightFan.json`, scale 1.25; `~/Esposter/genshin-parity/extracted/character/interface/json/GameObject/MarkLocalAvatar.json` and `~/Esposter/genshin-parity/extracted/character/interface/json/GameObject/MarkSouth.json`, at the centre at scale 1).
+The HUD's corner map, the catalogue's one drawing cut to a circle round the character with north up, under the game's own marks.
 
 ## Requirements
 

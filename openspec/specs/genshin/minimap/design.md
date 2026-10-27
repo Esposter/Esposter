@@ -6,11 +6,11 @@ In the world, the game keeps a small round map in the top left of its heads-up d
 
 ```mermaid
 flowchart LR
-  CAM["The character's place and facing and the view's yaw, read as they change"] --> MOVE["The drawing moved under the centre, north up"]
-  DRAW["Map/Drawing: the filled areas' outlines and the unlocked jump landmarks"] --> MOVE
-  MOVE --> CUT["Cut to a circle a fixed number of metres across, fading out at its rim"]
-  CAM --> MARKS["The fan turned by the view's yaw, the arrow by the character's facing"]
-  CUT --> MINI["The minimap, the N at the top of its rim"]
+  CAM[Character and camera yaw] --> MOVE[Drawing moved to centre]
+  DRAW[Map drawing] --> MOVE
+  MOVE --> CUT[Cut to a circle]
+  CAM --> MARKS[Fan and arrow]
+  CUT --> MINI[Minimap]
   MARKS --> MINI
   MINI -->|"pressed"| MAP["The map opens"]
 ```
@@ -44,7 +44,7 @@ flowchart LR
 
 - `~/Esposter/genshin-parity/references/hud-world-keys.png` and `~/Esposter/genshin-parity/references/hud-stamina-climb.png` — the English PC client's world HUD at 1080 high, the [HUD](../hud/design.md)'s references, which show the ring over olive ground and over a flat sky.
 - `~/Esposter/genshin-parity/captures/bili-av251752644-stamina.mp4` — the Chinese client's play, its minimap over open sea from 488 to 496 seconds, where the fan, the ring, the fill and the N are each read on a flat ground.
-- `~/Esposter/genshin-parity/captures/oculus-minimap.mkv` — walking in on an Anemoculus in Mondstadt from its far side until the minimap marks it, and the moment its sound plays, 30 seconds at most; the distance at which the mark shows and the sound's start are read from it. The sound's start is replaced by the audio pass. The distance at which the mark shows stays on the recording. On the wiki and YouTube, none found (searched 2026-10-11).
+- `~/Esposter/genshin-parity/captures/oculus-minimap.mkv` — walking in on an Anemoculus in Mondstadt from its far side until the minimap marks it, and the moment its sound plays, 30 seconds at most; the distance at which the mark shows and the sound's start are read from it. The sound's start is read by the [audio pass](../sound-effects/design.md). The distance at which the mark shows stays on the recording. On the wiki and YouTube, none found (searched 2026-10-11).
 
 ## Open
 

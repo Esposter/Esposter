@@ -9,7 +9,7 @@ flowchart LR
   DOWN["A finger lands"] --> WHERE{"Where?"}
   WHERE -->|"the stick's area, no stick held"| STICK["The stick held where it stands"]
   WHERE -->|"elsewhere, no drag held"| DRAG["A drag of the look"]
-  STICK -->|"moves"| AXES["Its offset from where it landed over the reach, at most a full push"]
+  STICK -->|"moves"| AXES[Stick offset]
   AXES --> SET["input.setTouchStick: read with the gamepad's left stick"]
   DRAG -->|"moves"| TURN["input.turn: added to the pointer's look"]
   JUMP["An action button of the HUD held: attack, aim, jump or sprint"] --> PRESS["input.press of its action's key, released as its pointer's capture ends"]

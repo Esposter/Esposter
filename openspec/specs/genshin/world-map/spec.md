@@ -1,6 +1,6 @@
 ## Purpose
 
-The data the Genshin world is built from. A catalogue of every region, area and subarea the game ships, organised as the game organises its own map, with the separate maps as layers. Each region's authored data (its landmarks now, its shapes as they are drawn) is a JSON file fetched when the camera comes within reach of its areas and released when it leaves, validated against its schema on the way in.
+The data the Genshin world is built from: a catalogue of every region, area and subarea the game ships, with each region's authored data fetched when the camera comes within reach of its areas.
 
 ## Requirements
 

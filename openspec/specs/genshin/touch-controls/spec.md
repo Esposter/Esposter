@@ -1,6 +1,6 @@
 ## Purpose
 
-The world's controls on a touch screen, as the game's mobile client lays them out. A thumb in the stick's area at the bottom left pushes the stick, which stands still where the game places it, a drag anywhere else turns the look, and the HUD's touch layout puts the attack, jump and sprint buttons at the bottom right. They feed the same input the keys, mouse and gamepad do.
+The world's controls on a touch screen, as the game's mobile client lays them out, feeding the same input the keys, mouse and gamepad do.
 
 ## Requirements
 
