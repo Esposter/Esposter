@@ -2,7 +2,8 @@ import { getRestatedPointerFindings } from "#src/services/sweeps/duplicateProse/
 import { describe, expect, test } from "vitest";
 
 describe(getRestatedPointerFindings, () => {
-  const ARGUMENT = "the queue holds the overflow for the next run rather than hiding the work from review";
+  const ARGUMENT =
+    "the queue holds the overflow for the next run rather than hiding the work from every reviewer of the change";
   const OWNER_PATH = "openspec/specs/infra/review/design.md";
   // No tracked path is in these fixtures, so the run is judged as prose, with no repository read
   const NO_REPOSITORY_PATHS = new Set<string>();

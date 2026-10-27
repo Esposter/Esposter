@@ -10,13 +10,13 @@ import { getProseWords } from "#src/services/sweeps/duplicateProse/getProseWords
 import { readRepositoryPathShingles } from "#src/services/sweeps/duplicateProse/readRepositoryPathShingles";
 
 // Every run of prose two pages or skills of different owners share, read off the tree. A README, a ledger and a
-// spec's requirements are shaped by a template each of their kind repeats — a requirement is a SHALL and its scenarios,
-// which `openspec validate` holds — so the designs, proposals, tasks and skills are the pages read; a run that is a
-// citation rather than prose is set aside (`checkIsPathRun`).
+// Spec's requirements are shaped by a template each of their kind repeats — a requirement is a SHALL and its scenarios,
+// Which `openspec validate` holds — so the designs, proposals, tasks and skills are the pages read; a run that is a
+// Citation rather than prose is set aside (`checkIsPathRun`).
 // A `{data-root}` path names a game-data file a page cites, and a markdown link's target names the page or anchor it
-// cites: each is a citation by the same convention a repository path is, so its words are set aside like a tracked path's
+// Cites: each is a citation by the same convention a repository path is, so its words are set aside like a tracked path's
 const DATA_ROOT_PATH_REGEX = /\{data-root\}\/[^\s`()[\]<>]+/gu;
-const LINK_TARGET_REGEX = /\]\(([^)\s]+)\)/gu;
+const LINK_TARGET_REGEX = /(?<=\]\()[^)\s]+(?=\))/gu;
 export const readDuplicateProseFindings = (): DuplicateProseFinding[] => {
   const pages = readCitingPages().filter(
     ({ path }) =>
@@ -25,8 +25,8 @@ export const readDuplicateProseFindings = (): DuplicateProseFinding[] => {
   const citationShingles = getPathShingles(
     pages
       .flatMap(({ text }) => [
-        ...[...text.matchAll(DATA_ROOT_PATH_REGEX)].map(([path]) => path),
-        ...[...text.matchAll(LINK_TARGET_REGEX)].map(([, target]) => target),
+        ...Array.from(text.matchAll(DATA_ROOT_PATH_REGEX), ({ 0: path }) => path),
+        ...Array.from(text.matchAll(LINK_TARGET_REGEX), ({ 0: target }) => target),
       ])
       .map((path) => getProseWords(path).join(" ")),
   );
