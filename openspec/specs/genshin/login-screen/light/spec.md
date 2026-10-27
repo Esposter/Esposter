@@ -86,10 +86,12 @@ The post chain SHALL draw no god rays.
 
 - [ ] **The walkway and the bridges draw no edge glow** — no source yet: the walkway's and the bridges' fitted strength is in the hosted `login/stoneLight` record, and no copy of that record is on disk.
 - [ ] **The night darkens at 0.14 per metre of height** — no source yet: the rate is in the hosted `login/stoneLight` record, which is not kept locally.
+- [ ] **The stone darkens with height up to 20 metres** — no source yet: the hosted `login/stoneLight` record is not on disk, and no kept file gives the height where the game's stone stops darkening.
 - [ ] **The haze hides the stone under the walkway, its wall's top about 3 metres under the walkway at night and 6 at dawn, and the dusk's haze hides no more than about three quarters of the far towers** — no source yet: the haze tops are not measured in any kept file.
-- [ ] **The login is drawn at the medium tier on the phone client** — no source yet: the repo holds no phone tier, since the app's one quality tier constant, GENSHIN_QUALITY_TIER, is High for every client.
+- [ ] **The login is drawn at the medium tier on the phone client** — no source yet: no phone recording of the login is on disk (`~/Esposter.noindex/genshin-parity/captures/mobile-touch.png` shows the world), and `~/Esposter.noindex/genshin-parity/game/config.ini` holds no quality tier.
 - [ ] **The post chain draws no god rays** — no source yet: the login scene's post chain was not read for a god-ray pass.
 - [ ] **The door and the towers glow at an eighth of the material's strength** — no source yet: the glow the login still `~/Esposter/genshin-parity/references/login-day-title.png` shows is not measured against the door material's `_RGStrength` (1.1 in `~/Esposter/genshin-parity/extracted/login-bytype-assets/Material/LoginScene_Door01.json`).
 - [ ] **The scene draws no outline round its stone** — no source yet: a capture of the login stone's edges in the game, the outline's absence read off it
 - [ ] **Occlusion reaches 8 metres in the day, dusk and night frames, and the dawn and phone frames draw none** — no source yet: the per-hour occlusion scores in `~/Esposter/genshin-parity/comparisons/` (none kept yet), and a recording of the phone frame at the game's medium tier for its none
 - [ ] **The sun and the moon cast shadows across the walkway, the night's moon at 0.8 strength** — no source yet: a recording of the walkway's shadows at night in the game, the moon's shadow strength read off it
+- [ ] **The night's moon shadows are filtered over two texels** — no source yet: a recording of the walkway's shadows at night in the game, the filter's softness read off it
