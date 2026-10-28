@@ -1,4 +1,4 @@
-import type { ExcelPlayerLevelRow } from "#src/models/genshinAssets/adventureRank/ExcelPlayerLevelRow";
+import type { ExcelPlayerLevelRow } from "#src/models/genshinAssets/shared/ExcelPlayerLevelRow";
 import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 import type { AdventureRankLevel } from "genshin-world";
 

@@ -1,5 +1,5 @@
 import type { ExcelPlayerLevelLockRow } from "#src/models/genshinAssets/adventureRank/ExcelPlayerLevelLockRow";
-import type { ExcelPlayerLevelRow } from "#src/models/genshinAssets/adventureRank/ExcelPlayerLevelRow";
+import type { ExcelPlayerLevelRow } from "#src/models/genshinAssets/shared/ExcelPlayerLevelRow";
 import type { ExcelWorldLevelRow } from "#src/models/genshinAssets/adventureRank/ExcelWorldLevelRow";
 
 import { toAdventureRankLevel } from "#src/services/genshinAssets/adventureRank/toAdventureRankLevel";
