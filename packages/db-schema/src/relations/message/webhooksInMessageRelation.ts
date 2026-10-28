@@ -10,4 +10,5 @@ export const webhooksInMessageRelation = defineRelationsPart(schema, (r) => ({
   },
 }));
 
+// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
 export const WebhookInMessageRelations = { creator: { columns: PublicUserColumns }, room: true } as const;

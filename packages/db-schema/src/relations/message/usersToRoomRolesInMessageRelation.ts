@@ -13,4 +13,5 @@ export const usersToRoomRolesInMessageRelation = defineRelationsPart(schema, (r)
   },
 }));
 
+// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
 export const UserToRoomRoleInMessageRelations = { role: true } as const;

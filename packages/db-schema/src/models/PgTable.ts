@@ -8,6 +8,7 @@ import type {
   PgTableWithColumns,
 } from "drizzle-orm/pg-core";
 
+// Without this annotation the inferred table type breaks drizzle's query calls in apps/web's server routes (TS2769)
 export interface PgTable {
   <TTableName extends string, TColumnsMap extends Record<string, AnyPgColumnBuilder>, TSchema extends string>(
     name: TTableName,

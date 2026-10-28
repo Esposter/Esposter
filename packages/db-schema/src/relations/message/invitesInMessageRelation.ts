@@ -11,6 +11,7 @@ export const invitesInMessageRelation = defineRelationsPart(schema, (r) => ({
 
 // The room's memberships are counted, never read: the invite is readable by anyone holding its code, and a member's
 // Row carries fields that are theirs alone
+// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
 export const InviteInMessageRelations = {
   room: { with: { usersToRoomsInMessage: { columns: { userId: true } } } },
   user: { columns: PublicUserColumns },

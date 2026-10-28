@@ -12,4 +12,5 @@ export const userAchievementsInAchievementRelation = defineRelationsPart(schema,
   },
 }));
 
+// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
 export const UserAchievementInAchievementRelations = { achievement: true } as const;
