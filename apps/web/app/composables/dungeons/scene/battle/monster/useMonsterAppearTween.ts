@@ -7,7 +7,7 @@ export const useMonsterAppearTween = (isEnemy: boolean) => {
   const { monsterPosition, monsterTween } = storeToRefs(battleMonsterStore);
   const xEnd = isEnemy ? 768 : 256;
   // The tween runs from wherever the position currently is, so it is reset to the initial one first
-  monsterPosition.value = { ...initialMonsterPosition };
+  monsterPosition.value = structuredClone(initialMonsterPosition);
 
   return useSkippableAnimation(
     () =>

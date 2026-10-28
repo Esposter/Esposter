@@ -8,7 +8,7 @@ export const useMonsterInfoContainerAppearTween = (isEnemy: boolean) => {
   const { monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(battleMonsterStore);
   const xEnd = isEnemy ? 0 : 556;
 
-  monsterInfoContainerPosition.value = { ...initialMonsterInfoContainerPosition };
+  monsterInfoContainerPosition.value = structuredClone(initialMonsterInfoContainerPosition);
 
   const onAppear = () => {
     monsterInfoContainerPosition.value.x = xEnd;
