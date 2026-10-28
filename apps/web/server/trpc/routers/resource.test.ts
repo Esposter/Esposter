@@ -133,9 +133,10 @@ describe("resourceRouter", () => {
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);
   });
 
-  // `updatedAt` is populated by drizzle's $onUpdateFn(() => new Date()), so faking Date makes recency assertable
+  // `updatedAt` is populated by drizzle's $onUpdateFn(() => new Date()), so faking Date makes recency assertable.
+  // Off the epoch, which a channel with no age limit cuts off at: a version written at the epoch is not newer than it
   beforeEach(() => {
-    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+    vi.useFakeTimers({ now: 1, toFake: ["Date"] });
   });
 
   afterEach(() => {
@@ -416,8 +417,8 @@ describe("resourceRouter", () => {
     const olderResource = await dashboardCaller.createResource({ name });
     vi.advanceTimersByTime(1);
     const newerResource = await sheetCaller.createResource({ name });
-    const { items: updatedAfterItems } = await caller.readResources({ updatedAfter: new Date(1) });
-    const { items: updatedBeforeItems } = await caller.readResources({ updatedBefore: new Date(0) });
+    const { items: updatedAfterItems } = await caller.readResources({ updatedAfter: new Date(2) });
+    const { items: updatedBeforeItems } = await caller.readResources({ updatedBefore: new Date(1) });
 
     expect(updatedAfterItems.map(({ id }) => id)).toStrictEqual([newerResource.id]);
     expect(updatedBeforeItems.map(({ id }) => id)).toStrictEqual([olderResource.id]);
