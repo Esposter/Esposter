@@ -356,7 +356,7 @@ The body's program is "Shader#0" of the layout's shader export, with 693 compile
 - **The brightness is a plain multiply, Exact on the form.** About a third of the body's variants read "_ES_CharacterMainLightBrightness" (`cb0[269].x` in each header), each as a single `mul` on the lit colour and on the specular term (the first `mul` into `r11` and the `mul` on `cb0[269].x` before the `movc`; the count is Provisional, see Open). The value is not on the material: the body's saved properties hold no "_ES_CharacterMainLightBrightness", and no extracted dump carries it (Exact on the absence; `{data-root}/genshin-parity/extracted/characters/playergirl/inventory-values.txt` holds no such key). Its value is the game's own and is not read, so the world takes 1 (Provisional: a game-set value below 1 would be missing from the lit colour).
 - **No fog reaches the body's program, Provisional on the scan.** None of the variants reads a fog constant, see Open. The shader's properties declare "_FogStart", "_FogEnd", "_FogDensity" and "_FogColor", but no compiled variant reads them, so the game's body draws without fog. The world's height fog is a depth pass in the post pipeline (`createHeightFogNode`, `createPostPipeline`), applied to every scene pixel with depth below 1, the avatar's included. Whether the game's own post pass fogs characters is not read (Provisional).
 - **The haze at the close-up is zero, Exact on the form and Provisional on the evaluation.** The fog's integral starts at the world's start distance, so a pixel nearer than that gets no haze. At 3 m the factor is zero for every setting that sets a density: Windrise (`FOG_START_DISTANCE` 60 m, `FOG_DENSITY` 0.0024 and `FOG_HEIGHT_FALLOFF` 0.02, in `packages/genshin-world/src/services/windrise/constants.ts`) and the login's sky states (starting at 10 m, with densities in the hundreds to hundreds of thousands and falloffs of a tenth to one, each state in `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`), both level and tilted 10 degrees up. The evaluation is of the form `createHeightFogNode` writes, at the eye's height of 1.5 m, with the world's unit taken as the metre (the ground tiles are 1024 metres, Provisional on the unit). So the fog does not reach a close-up.
-- **The tone curve is the game's, Exact on the code path.** Both canvases pass the renderer's `GENSHIN_TONE_MAPPING`, which is `NoToneMapping`, and the post pipeline ends every pixel on `toneMapGenshinNode`, the avatar's included. Three's ACES Filmic is the canvas's default only where a canvas omits the prop, and none does. Against three's ACES Filmic, per channel on a grey, the game's curve gives 0.179 against 0.032 at scene 0.05, 0.335 against 0.213 at 0.18, 0.535 against 0.558 at 0.5, 0.702 against 0.763 at 1 (white, the sides differ by 0.061), and 0.968 against 0.952 at 4. The two cross near scene 0.5, so the shadows of the game's curve are lighter and its highlights darker than ACES. The game's own curve on characters is not read (Provisional).
+- **The tone curve is the game's, owned by [rendering style](../../rendering-style/design.md).** Against three's ACES Filmic, per channel on a grey, the game's curve gives 0.179 against 0.032 at scene 0.05, 0.335 against 0.213 at 0.18, 0.535 against 0.558 at 0.5, 0.702 against 0.763 at 1 (white, the sides differ by 0.061), and 0.968 against 0.952 at 4. The two cross near scene 0.5, so the shadows of the game's curve are lighter and its highlights darker than ACES. The game's own curve on characters is not read (Provisional).
 
 ### The colour space of each texture, per slot (Derived, Provisional)
 
@@ -366,6 +366,21 @@ A texture decodes as sRGB only where the shading multiplies the colour in the sp
 - **A linear project** gives a colour texture the default sRGB import, so the same product comes out as `main_lin x ramp_lin`.
 
 The only case where a ramp stays raw is an artist painting it in linear values, and nothing in the data points to that. So the colour slots decode as sRGB: "_MainTex", "_PackedShadowRampTex", "_MTMap" (the metal map's matcap colour) and any ramp. The data slots are read as they are stored: "_LightMapTex", "_FaceMapTex", the face shadow, the masks and the noise, whose values are thresholds, distances or channels. Each slot's entry in `AVATAR_TEXTURE_SLOTS` carries this flag (`packages/genshin-world/src/services/character/avatar/constants.ts`, which defines it). Provisional until a game frame confirms the ramps.
+
+## Key files
+
+| File                                                                          | Role                                                                                        |
+| :---------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
+| `packages/genshin-engine/src/character/shading/constants.ts`                  | The shading's configured values, each equation's constant named beside it                   |
+| `packages/genshin-engine/src/character/shading/createCharacterShadingNode.ts` | The body's path as TSL nodes, from the region through the lit colour to the outputs         |
+| `packages/genshin-engine/src/character/createCharacterShadingInputs.ts`       | The shading's inputs, each with the default the page sets out                               |
+| `packages/genshin-engine/src/character/shading/createFaceShadeNode.ts`        | The face's shadow lookup as a TSL node, from the threshold and the face map                 |
+| `packages/genshin-engine/src/character/shading/updateFaceDraw.ts`             | The face's threshold and flip, set once a frame from the light and the root bone's rotation |
+| `packages/genshin-engine/src/character/shading/createOutlineColorNode.ts`     | The game outline's colour as a TSL node, by region and toned as the body is                 |
+
+## Sources
+
+- MMD's toon lookup, which a pack's toon is drawn for; [drawing a character](../drawing/design.md) names three-stdlib's `MMDLoader` as the oracle for the pose and mesh.
 
 ## Open
 

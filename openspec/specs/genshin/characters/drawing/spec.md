@@ -2,7 +2,7 @@
 
 ## Purpose
 
-A character's parsed model becomes one skinned mesh, each material shaded by the game's own character shader from its pack's inputs, with its outline and its stance at its holder's origin. The poses it takes are procedural and provisional, not the game's clips.
+A character's parsed model becomes one skinned mesh, each material shaded by the game's own character shader from its pack's inputs, with its outline and its stance at its holder's origin.
 
 ## Requirements
 

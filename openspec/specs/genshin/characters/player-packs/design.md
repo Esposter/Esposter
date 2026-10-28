@@ -7,7 +7,7 @@ The layout the release is read into is the one [the characters index](../README.
 ```mermaid
 flowchart TD
   OPEN["the character screen, its character drawn as its capsule"] --> PICK{"Load this character's official model"}
-  PICK -->|"the downloaded .zips"| ZIP["readCharacterPackZips: one release per zip, a zip that cannot be read named and skipped"]
+  PICK -->|"the downloaded .zips"| ZIP["readCharacterPackZips"]
   PICK -->|"their extracted folder"| FOLDER["readCharacterPackFolders: one release, or one per folder holding a model"]
   ZIP --> READ["readPickedCharacterPacks: each release read in the page, a failing one skipped and named"]
   FOLDER --> READ
@@ -69,7 +69,7 @@ A signed-in player's accepted pack is also kept with their account, in the `gens
 
 Reading is limited to the owner. `genshin.readCharacterPacks` returns the caller's own list, and `/api/genshin/character-packs/files/{sha256}` answers with a file's bytes only when the caller's own list names that hash. Any other hash gets 404, and no session gets 401. The response is `private`, so no shared cache holds it (`apps/web/server/api/genshin/character-packs/files/[sha256].get.ts`).
 
-On load, the reader is chosen as [the characters index](../README.md) sets out. The account's copy is cached in the browser the first time it is read, so a later load on that device does not fetch it again (`packages/genshin-world/src/services/character/chooseCharacterPackReader.ts`, `packages/genshin-world/src/composables/useCharacterPacks.ts`). The host's copy and the capsule follow.
+On load, the reader is chosen as [the characters index](../README.md) sets out. The host's copy and the capsule follow.
 
 The limits are the `MAX_CHARACTER_PACK_*` and `MAX_ACCOUNT_CHARACTER_PACKS_SIZE` constants in `apps/web/server/services/genshin/accountCharacterPack/constants.ts`, which set 32 MB a file, 256 MB a pack and 1 GB an account, each sized for a release's model and textures with room to spare; the largest held release runs to tens of megabytes.
 
