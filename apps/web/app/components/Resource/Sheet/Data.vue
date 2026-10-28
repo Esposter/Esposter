@@ -11,6 +11,7 @@ const { displayRows } = storeToRefs(rowStore);
 const isColumnsOpen = ref(true);
 const isDataOpen = ref(true);
 const statistics = computed(() => computeDataSourceStatistics(dataSource.value));
+const hasContent = computed(() => dataSource.value.columns.length > 0 || dataSource.value.rows.length > 0);
 
 useSheetCommands();
 await loadContent();
@@ -23,15 +24,10 @@ await loadContent();
         <ResourceSheetToolbarUndoButton />
         <ResourceSheetToolbarRedoButton />
       </div>
-      <ResourceSheetMetadataBar
-        v-if="dataSource.columns.length > 0 || dataSource.rows.length > 0"
-        :metadata="dataSource.metadata"
-        flex-1
-        min-w-0
-      />
+      <ResourceSheetMetadataBar v-if="hasContent" :metadata="dataSource.metadata" flex-1 min-w-0 />
     </div>
     <!-- "Not yet imported" is an empty data section (the blob is written on first save) -->
-    <template v-if="dataSource.columns.length > 0 || dataSource.rows.length > 0">
+    <template v-if="hasContent">
       <UiCollapsible v-model="isColumnsOpen">
         <template #title>
           <h2 ui-heading>Columns</h2>
