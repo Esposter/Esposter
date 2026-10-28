@@ -76,7 +76,7 @@ Riptide Blast SHALL land 0.8 seconds after its hit and clear the enemy's Riptide
 
 ### Requirement: Hydrospout ticks
 
-From Constellation 1, Hydrospout SHALL tick on each enemy every 3.9 seconds from the first Riptide on that enemy.
+From Constellation 4, Hydrospout SHALL tick on each enemy every 3.9 seconds from the first Riptide on that enemy.
 
 #### Scenario: Hydrospout ticks every 3.9 seconds
 
