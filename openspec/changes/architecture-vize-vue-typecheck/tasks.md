@@ -18,7 +18,7 @@
 ## 4. Extend to the remaining Vue packages
 
 - [ ] 4.1 Run the same comparison on `packages/genshin-interface`, `packages/genshin-world` and `packages/vue-phaserjs`, each as its own commit. Verified by each package's diagnostic diff recorded in `design.md`.
-  - 2026-10-28, `genshin-interface`: `tsrs` 0 diagnostics, `vue-tsc` 0 diagnostics, diff 0 lines; clean. `genshin-world` and `vue-phaserjs` are not compared yet, so this task stays open.
+  - 2026-10-28, `genshin-interface`: `tsrs` 0 diagnostics, `vue-tsc` 0 diagnostics, diff 0 lines; clean. `genshin-world` is not compared yet, so this task stays open. The `genshin-interface` result is recorded in `design.md`.
 
 ## 5. The `apps/web` Nuxt typecheck
 
