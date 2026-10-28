@@ -70,4 +70,4 @@ Soft delete leaves the partition intact: history survives the [recycle bin](../r
 - Icons are severity-neutral. An activity trail records what happened; it does not judge it.
 - Activity is the durable trail; the [notifications bell](../notifications/design.md) is ephemeral session feedback. They share event sources but never storage.
 - No cross-resource feed (the portal's subscription-level log) — per-resource only until something needs more.
-- Entries are not aged out by a timer and writes are not capped; they are removed only by the purge-time sweep under Cleanup.
+- Entries are not aged out by a timer and writes are not capped.
