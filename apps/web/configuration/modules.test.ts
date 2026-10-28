@@ -7,7 +7,7 @@ const getModuleName = (nuxtModule: (typeof nonVitestModules)[number]) =>
   Array.isArray(nuxtModule) ? nuxtModule[0] : nuxtModule;
 
 describe("modules", () => {
-  const SOURCE_PATH_PATTERN = /^\.\.\/\.\.\/packages\/[^/]+\/src\/module\.ts$/u;
+  const SOURCE_PATH_REGEX = /^\.\.\/\.\.\/packages\/[^/]+\/src\/module\.ts$/u;
 
   const workspacePackageNames = Object.entries({ ...packageJson.dependencies, ...packageJson.devDependencies })
     .filter(([, version]) => version === "workspace:*")
@@ -27,6 +27,6 @@ describe("modules", () => {
         ),
       );
 
-    expect(workspaceModuleNames.filter((moduleName) => !SOURCE_PATH_PATTERN.test(moduleName))).toStrictEqual([]);
+    expect(workspaceModuleNames.filter((moduleName) => !SOURCE_PATH_REGEX.test(moduleName))).toStrictEqual([]);
   });
 });
