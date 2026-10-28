@@ -33,7 +33,7 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 CREATE INDEX "resources_name_trgm_index" ON "resources" USING gin ("name" gin_trgm_ops);
 ```
 
-The index is declared in the drizzle schema too, so drizzle-kit's next diff does not try to drop something it cannot see. The extension has no schema-level representation and is created by the migration alone.
+The index is declared in the drizzle schema too, so drizzle-kit's next diff does not try to drop something it cannot see. The extension has no schema-level representation.
 
 Tests run against PGlite, which loads `pg_trgm` as a contrib extension in both `createMockDb` and the snapshot generator — otherwise the index and `similarity()` resolve against nothing.
 
