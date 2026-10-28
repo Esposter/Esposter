@@ -14,10 +14,10 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   const editedItem = ref<TItem>();
   const originalItem = computed(() => {
     const editedItemValue = editedItem.value;
-    if (editedItemValue) {
-      const checkIsOriginalItem = getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], editedItemValue);
-      return items.value.find((item) => checkIsOriginalItem(item));
-    } else return undefined;
+    if (!editedItemValue) return undefined;
+
+    const checkIsOriginalItem = getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], editedItemValue);
+    return items.value.find((item) => checkIsOriginalItem(item));
   });
   // Written by the edit dialog's form, which counts every field's rules as the reader types
   const isEditFormValid = ref(true);
