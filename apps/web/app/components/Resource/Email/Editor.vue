@@ -17,9 +17,9 @@ const { getEmailDocument, setMergeFieldColumns } = pageBuilderDocumentStore;
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const { getDevice } = pageBuilderCanvasStore;
 const resourceStore = useResourceStore();
-const { resource } = storeToRefs(resourceStore);
+const { currentResourceId } = storeToRefs(resourceStore);
 // Read before the load's await, so it names the email this blade mounted for even if the next one loads meanwhile
-const resourceId = resource.value?.id ?? "";
+const resourceId = currentResourceId.value;
 const emailDocument = computed(() => getEmailDocument(resourceId));
 await loadContent();
 // The page builder's edits are saved through the content store's own autosave cadence, which the document's deep watch drives

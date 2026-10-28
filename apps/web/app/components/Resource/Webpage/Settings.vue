@@ -10,9 +10,8 @@ const webpageEditorStore = useWebpageEditorStore();
 const { loadContent, saveWebpage } = webpageEditorStore;
 const { webpageEditor } = storeToRefs(webpageEditorStore);
 const resourceStore = useResourceStore();
-const { resource } = storeToRefs(resourceStore);
-const resourceId = computed(() => resource.value?.id ?? "");
-const uploadFile = useUploadResourceFile(ResourceType.Webpage, () => resourceId.value);
+const { currentResourceId } = storeToRefs(resourceStore);
+const uploadFile = useUploadResourceFile(ResourceType.Webpage, () => currentResourceId.value);
 const shareImageFiles = ref<File[]>([]);
 // A picked image uploads at once and only its url is kept, so the file never waits in the form
 watch(shareImageFiles, async (files) => {
@@ -23,7 +22,7 @@ watch(shareImageFiles, async (files) => {
 });
 // Autosave the share preview as it is edited, the same as the Sheet's Settings blade. The save writes the page builder's
 // Document too, so an unsaved edit of the page is never written over by the share preview's older tree
-watchAutosave(webpageEditor, () => saveWebpage(resourceId.value));
+watchAutosave(webpageEditor, () => saveWebpage(currentResourceId.value));
 await loadContent();
 </script>
 

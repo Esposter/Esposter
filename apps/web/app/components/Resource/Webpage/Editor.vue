@@ -5,20 +5,19 @@ import { useResourceStore } from "@/store/resource";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
 
 const resourceStore = useResourceStore();
-const { resource } = storeToRefs(resourceStore);
+const { currentResourceId } = storeToRefs(resourceStore);
 const webpageEditorStore = useWebpageEditorStore();
 const { loadContent, saveWebpage } = webpageEditorStore;
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const { getDocument } = pageBuilderDocumentStore;
 await loadContent();
-const resourceId = computed(() => resource.value?.id ?? "");
 // The page builder's edits are saved through the content store's own autosave cadence, which the document's deep watch drives
 watchAutosave(
-  computed(() => getDocument(resourceId.value)),
-  () => saveWebpage(resourceId.value),
+  computed(() => getDocument(currentResourceId.value)),
+  () => saveWebpage(currentResourceId.value),
 );
 </script>
 
 <template>
-  <PageBuilderEditor :kind="webpageKind" :resource-id />
+  <PageBuilderEditor :kind="webpageKind" :resource-id="currentResourceId" />
 </template>
