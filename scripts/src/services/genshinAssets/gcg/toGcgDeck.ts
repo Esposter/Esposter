@@ -3,7 +3,7 @@ import type { ExcelGcgCharRow } from "#src/models/genshinAssets/gcg/ExcelGcgChar
 import type { ExcelGcgCostRow } from "#src/models/genshinAssets/gcg/ExcelGcgCostRow";
 import type { ExcelGcgDeckRow } from "#src/models/genshinAssets/gcg/ExcelGcgDeckRow";
 import type { ExcelGcgSkillRow } from "#src/models/genshinAssets/gcg/ExcelGcgSkillRow";
-import type { GcgDeckSlice } from "#src/models/genshinAssets/gcg/GcgDeckSlice";
+import type { GcgDeckSlice } from "#src/models/genshinAssets/shared/GcgDeckSlice";
 
 import { findRow } from "#src/services/genshinAssets/gcg/findRow";
 import { toCard } from "#src/services/genshinAssets/gcg/toCard";

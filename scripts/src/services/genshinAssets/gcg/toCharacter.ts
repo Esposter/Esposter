@@ -1,6 +1,6 @@
 import type { ExcelGcgCharRow } from "#src/models/genshinAssets/gcg/ExcelGcgCharRow";
 import type { ExcelGcgSkillRow } from "#src/models/genshinAssets/gcg/ExcelGcgSkillRow";
-import type { GcgDeckSliceCharacter } from "#src/models/genshinAssets/gcg/GcgDeckSlice";
+import type { GcgDeckSliceCharacter } from "#src/models/genshinAssets/shared/GcgDeckSliceCharacter";
 
 import { findRow } from "#src/services/genshinAssets/gcg/findRow";
 import { findTagSuffix } from "#src/services/genshinAssets/gcg/findTagSuffix";

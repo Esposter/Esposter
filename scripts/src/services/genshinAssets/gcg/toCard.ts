@@ -1,6 +1,6 @@
 import type { ExcelGcgCardRow } from "#src/models/genshinAssets/gcg/ExcelGcgCardRow";
 import type { ExcelGcgSkillRow } from "#src/models/genshinAssets/gcg/ExcelGcgSkillRow";
-import type { GcgDeckSliceCard } from "#src/models/genshinAssets/gcg/GcgDeckSlice";
+import type { GcgDeckSliceCard } from "#src/models/genshinAssets/shared/GcgDeckSliceCard";
 
 import { findRow } from "#src/services/genshinAssets/gcg/findRow";
 import { toCardCompanion } from "#src/services/genshinAssets/gcg/toCardCompanion";

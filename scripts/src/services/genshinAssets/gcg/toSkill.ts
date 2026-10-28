@@ -1,5 +1,5 @@
 import type { ExcelGcgSkillRow } from "#src/models/genshinAssets/gcg/ExcelGcgSkillRow";
-import type { GcgDeckSliceSkill } from "#src/models/genshinAssets/gcg/GcgDeckSlice";
+import type { GcgDeckSliceSkill } from "#src/models/genshinAssets/shared/GcgDeckSliceSkill";
 
 import { toCosts } from "#src/services/genshinAssets/gcg/toCosts";
 import { toSkillKind } from "#src/services/genshinAssets/gcg/toSkillKind";

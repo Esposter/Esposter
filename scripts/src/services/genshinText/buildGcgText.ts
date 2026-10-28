@@ -1,4 +1,4 @@
-import type { GcgDeckSlice } from "#src/models/genshinAssets/gcg/GcgDeckSlice";
+import type { GcgDeckSlice } from "#src/models/genshinAssets/shared/GcgDeckSlice";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { GcgDeckIdCreatedCardIdsMap } from "#src/services/genshinAssets/gcg/constants";
