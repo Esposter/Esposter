@@ -26,12 +26,12 @@ flowchart LR
 
 ## Key files
 
-| File                                                                    | Role                                                   |
-| ----------------------------------------------------------------------- | ------------------------------------------------------ |
-| `app/pages/resource-explorer/create/[type].vue`                         | the Sheet branch, submit, and blade routing            |
-| `app/components/Resource/Create/SheetFile.vue`                          | drop zone, picker, parse, preview                      |
-| `app/services/resource/sheet/dataSource/getDataSourceTypeByFilename.ts` | extension → format, from the format map's own `accept` |
-| `app/services/resource/sheet/dataSource/DataSourceConfigurationMap.ts`  | the reused `accept` + `deserialize`                    |
+| File                                                                             | Role                                                   |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `apps/web/app/pages/resource-explorer/create/[type].vue`                         | the Sheet branch, submit, and blade routing            |
+| `apps/web/app/components/Resource/Create/SheetFile.vue`                          | drop zone, picker, parse, preview                      |
+| `apps/web/app/services/resource/sheet/dataSource/getDataSourceTypeByFilename.ts` | extension → format, from the format map's own `accept` |
+| `apps/web/app/services/resource/sheet/dataSource/DataSourceConfigurationMap.ts`  | the reused `accept` + `deserialize`                    |
 
 ## Notes
 
