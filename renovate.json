@@ -64,13 +64,7 @@
     {
       "automerge": false,
       "description": "pnpm ships its new workspace settings in minors (`autoDedupe` arrived in 12.6), and a setting this repo should turn on is visible only in the release notes, never in a green check. So the bot never merges a pnpm bump: each one is taken by the hand pass, which reads each release it crosses with `gh release view` and lands the settings worth taking in `pnpm-workspace.yaml` in the same commit, and the bot's PR for it is closed as superseded. `automerge: false` keeps that read-before-merge bump from merging unread.",
-      "groupName": "pnpm",
       "matchPackageNames": ["pnpm"]
-    },
-    {
-      "description": "The collector calls its own reusable workflow at `@ai/queue`; a branch ref is not a version to bump, and a tag here would freeze the collector on one release.",
-      "enabled": false,
-      "matchPackageNames": ["Esposter/Esposter"]
     },
     {
       "automerge": true,
