@@ -12,7 +12,7 @@ flowchart LR
   STICK -->|"moves"| AXES[Stick offset]
   AXES --> SET["input.setTouchStick: read with the gamepad's left stick"]
   DRAG -->|"moves"| TURN["input.turn: added to the pointer's look"]
-  JUMP["An action button of the HUD held: attack, aim, jump or sprint"] --> PRESS["input.press of its action's key, released as its pointer's capture ends"]
+  JUMP[Action buttons held] --> PRESS["input.press of its action's key, released as its pointer's capture ends"]
   SET --> READ["The frame's one read of the input"]
   TURN --> READ
   PRESS --> READ
@@ -40,7 +40,7 @@ flowchart LR
 ## Notes
 
 - **The stick's sizes are the game's canvas units.** Its area, back and head scale with the screen as the game's do, so its reach is a share of the screen rather than a fixed distance on the glass. Its rings and arcs are measured on the newest recording, which another phone's draws 0.9 times as large, so the game sizes it by device. The chevrons' shape, the back's stroke and the arrow's size are provisional, too small on the recordings to measure, and so is the look's turn for a pixel of a drag, until a drag is measured ([roadmap](../../../changes/genshin-roadmap/tasks.md)).
-- **On a wider phone the game's stick stands further in.** Its group stands 87 units further from the screen's left on a 19.5:9 recording and 95 on a 20:9 one, where the canvas's inset moves ours 59, as a notch's safe area would, as the party's right inset does ([HUD](../hud/design.md)). The offset is keyed by the window's shape (`TouchStickShapePositionMap`): 16:9 stands 199.5 units in, 19.5:9 227.5 and 20:9 235.5, the 28 and 36 past the inset (`packages/genshin-world/src/services/hud/TouchStickShapePositionMap.ts`). A shape nobody recorded takes the nearest recorded one, provisionally, until a third recording measures it (`packages/genshin-world/src/services/hud/getTouchStickShape.ts`).
+- **On a wider phone the game's stick stands further in.** Its group stands 87 units further from the screen's left on a 19.5:9 recording and 95 on a 20:9 one, where the canvas's inset moves ours 59, as a notch's safe area would, as the party's right inset does ([HUD](../hud/design.md)). The offset is keyed by the window's shape (`TouchStickShapePositionMap`): 16:9 stands 199.5 units in (`STICK_IN_16X9`), 19.5:9 227.5 and 20:9 235.5, the 28 and 36 past the inset (`packages/genshin-world/src/services/hud/TouchStickShapePositionMap.ts`). A shape nobody recorded takes the nearest recorded one, provisionally, until a third recording measures it (`packages/genshin-world/src/services/hud/getTouchStickShape.ts`).
 - **The tuning panel's free camera rises by touch but does not fall.** The game's touch layout has no button to descend, so the free camera flown by touch climbs on the jump button and has no way back down (`packages/genshin-world/src/components/Hud/Actions/Index.vue`, whose four buttons include no descend).
 
 ## Sources
@@ -52,7 +52,7 @@ flowchart LR
 
 - `hud-world-pickup.png` (`{data-root}/genshin-parity/references/hud-world-pickup.png`) — the mobile client's play screen from a public recording, the [HUD](../hud/design.md)'s reference, which shows the stick at rest.
 - The held stick, measured on three public recordings of the mobile client: [d9ZWM3cAlf0](https://www.youtube.com/watch?v=d9ZWM3cAlf0) (16:9, 6.1, 33 held frames), [HqQob991B8Q](https://www.youtube.com/watch?v=HqQob991B8Q) (19.5:9, 9 held and 5 at rest) and [quYgZtHhIa4](https://www.youtube.com/watch?v=quYgZtHhIa4) (20:9, 17 held), none showing the thumb itself.
-- `mobile-touch.png` — a recording of a drag of the mobile client's look (`{data-root}/genshin-parity/captures/mobile-touch.png`). On the wiki and YouTube, none found (searched 2026-10-11).
+- `mobile-touch.png` — a recording of a drag of the mobile client's look (`{data-root}/genshin-parity/captures/mobile-touch.png`). On the wiki and YouTube, none found.
 
 ## Open
 

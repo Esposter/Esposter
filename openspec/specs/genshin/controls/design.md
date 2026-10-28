@@ -14,7 +14,7 @@ Keys, mouse buttons and gamepad buttons share one namespace of codes. A key is i
 flowchart TD
   K["keydown, keyup"] --> FIELD{"Typed into a field?"}
   FIELD -->|"yes"| SKIP["The field's alone"]
-  FIELD -->|"no"| HELD["Codes held, and codes pressed since the last read"]
+  FIELD -->|"no"| HELD[Held and pressed codes]
   MB["mousedown, mouseup"] --> HELD
   PAD["The first gamepad's buttons, polled at the read"] --> HELD
   HELD --> READ["readInput, once a frame"]

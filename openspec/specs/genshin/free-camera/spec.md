@@ -54,7 +54,7 @@ A click on the canvas SHALL lock the pointer, and while it is locked the pointer
 
 ### Requirement: The gamepad's left stick moves and its right stick turns the look
 
-The first connected gamepad's left stick SHALL move the free camera and its right stick SHALL turn the look at two and a half radians a second, each with a dead zone at the stick's centre.
+The first connected gamepad's left stick SHALL move the free camera and its right stick SHALL turn the look at two and a half radians a second (`GAMEPAD_LOOK_RADIANS_PER_SECOND`), each with a dead zone at the stick's centre.
 
 #### Scenario: Left stick moves the camera over the ground
 
@@ -76,12 +76,12 @@ The first connected gamepad's left stick SHALL move the free camera and its righ
 
 ### Requirement: Touch moves and looks under the thumbs
 
-On a touch screen a stick under the left thumb SHALL move the camera, a drag on the right half SHALL turn the look, and a button SHALL rise.
+On a touch screen a stick under the left thumb SHALL move the camera, a drag anywhere else on the screen SHALL turn the look, and a button SHALL rise.
 
 #### Scenario: Left thumb stick moves and right drag looks
 
 - **GIVEN** a touch screen is in use
-- **WHEN** the player moves a stick under the left thumb and drags on the right half
+- **WHEN** the player moves a stick under the left thumb and drags anywhere else on the screen
 - **THEN** the camera moves with the stick and turns with the drag
 
 #### Scenario: Touch button rises

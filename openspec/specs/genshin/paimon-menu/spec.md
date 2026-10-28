@@ -91,7 +91,7 @@ The quit prompt SHALL offer Cancel and Confirm, and Confirm SHALL leave the worl
 
 ### Requirement: The menu opens and closes on a fixed timing
 
-The Paimon menu SHALL fade its side bar in on opening and draw its panel a tenth of a second later on the same curve, and SHALL close in reverse with its panel first, while Quit Game SHALL replace the menu at once (the 160 millisecond fade and 100 millisecond panel delay).
+The Paimon menu SHALL fade its side bar in on opening and draw its panel a tenth of a second later on the same curve, and SHALL close in reverse with its panel first, while Quit Game SHALL replace the menu at once (the 160 millisecond fade, `PAIMON_MENU_FADE_MS`, and the 100 millisecond panel delay, `PAIMON_MENU_PANEL_DELAY_MS`).
 
 #### Scenario: Menu opening
 
@@ -99,7 +99,7 @@ The Paimon menu SHALL fade its side bar in on opening and draw its panel a tenth
 - **WHEN** the Paimon menu opens
 - **THEN** the side bar fades in
 - **AND** the panel follows a tenth of a second later on the same curve
-- **AND** the menu is fully open within 26 hundredths of a second (160 plus 100 milliseconds)
+- **AND** the menu is fully open within 26 hundredths of a second (160 plus 100 milliseconds, `PAIMON_MENU_FADE_MS` and `PAIMON_MENU_PANEL_DELAY_MS`)
 
 #### Scenario: Menu closing
 

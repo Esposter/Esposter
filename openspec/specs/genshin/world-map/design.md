@@ -10,9 +10,9 @@ flowchart TD
   CAM[Camera plus the floating origin] --> R
   R -->|newly in reach| F["Fetch a region's file from /data/genshin/regions"]
   F --> Z{Valid against the schema?}
-  Z -->|no| ERR[Logged, that region left undrawn, the rest load]
+  Z -->|no| ERR[Region left undrawn]
   Z -->|yes, still wanted| USE[Landmarks built by their kits]
-  R -->|out of reach| DROP[Region data released, its landmarks unmounted]
+  R -->|out of reach| DROP[Region released]
 ```
 
 - **The catalogue follows the game's hierarchy.** It runs region, then area, then subarea, with the names the game and its wiki use, and an area's subregion where it has one, such as Liyue's Chenyu Vale or Sumeru's Dharma Forest. Windrise is a subarea of Galesong Hill in Mondstadt (`packages/genshin-world/src/data/catalogue.json`). The catalogue is the file people edit, its outlines and its subareas' kinds of ground aside, published by `genshin:data authored` as the `catalogue/catalogue` record of the [hosted game data](../hosted-game-data/design.md) (`scripts/src/services/gameData/readAuthoredGameData.ts`). The world's screen reads it before it opens, since every view needs it, parsed against its schema as it arrives (`readCatalogue`, `packages/genshin-world/src/services/world/readCatalogue.ts`), and hands it to each view that reads it: the region data's reach, the weather, the map, the minimap and the jumps.
@@ -49,7 +49,7 @@ flowchart TD
 
 - **Names come from the wiki.** The catalogue's names are taken from the game's wiki, whose check is open (Open), and no region's shape is taken from any map's imagery.
 - **A place no polygon holds is in no area.** The game's polygons leave stretches of sea and a few gaps between areas outside every outline (`{data-root}/genshin-parity/text/BinOutput/Scene/WorldArea/scene3_worldArea.json`), so there the weather is clear (`packages/genshin-world/src/composables/useAreaWeather.ts`, line 23) and a region loads only once another outline is in reach (`packages/genshin-engine/src/world/computeOutlineDistance.ts`, line 5).
-- **The region bases keep the outlines round the waypoints' tiles.** Each published region ground was fitted inside its areas' outlines as they were drawn round their waypoints' tiles ([scene derivation](../scene-derivation/design.md)), and stays as published; its refit over the game's polygons is open (Open).
+- **The region grounds stay as published.** Each published region ground is fitted inside its areas' outlines as drawn round their waypoints' tiles ([scene derivation](../scene-derivation/design.md)), and its refit over the game's polygons is open (Open).
 - **An outline is flat.** The game's polygons also carry a height band, a floor and a ceiling ("minArea" and "maxArea" `y` of each polygon in `{data-root}/genshin-parity/text/BinOutput/Scene/WorldArea/scene3_worldArea.json`); the catalogue keeps only the outline on the ground, so an area or a subarea holds every height over it (`packages/genshin-world/src/models/world/Catalogue.ts`).
 - **Event areas are left out.** Places that existed only for an event, such as the Golden Apple Archipelago, are not part of the continent the catalogue describes; the game's word that they were event-only is open (Open), and `packages/genshin-world/src/data/catalogue.json` holds no Golden Apple entry.
 - **A region's buildings' kit palettes are read by the palette reader** — `packages/genshin-world/src/services/world/readRegionPalettes.ts`.
@@ -61,7 +61,7 @@ flowchart TD
 
 ## Reference
 
-- `world-map.mkv` — the map opened on M over the character's own area, the zoom slider pressed in and out to its ends, a waypoint chosen on the map and Teleport pressed on the panel it opens, 30 seconds at most. Partly found 2026-10-11: https://www.youtube.com/watch?v=gN1IURjDuWo covering 0–30 s (`{data-root}/genshin-parity/captures/yt-gN1IURjDuWo-world-map.mp4`); found 2026-10-18 the panel open on a chosen waypoint, a PC clip in the Indonesian client: https://www.youtube.com/watch?v=Mhw53PsdhKI (`{data-root}/genshin-parity/captures/yt-Mhw53PsdhKI-waypoint.webm`, about 120–135 s), showing the panel's sidebar and its Teleport button; still sought: Teleport pressed on it, and the zoom slider's ends on the English PC map.
+- `world-map.mkv` — the map opened on M over the character's own area, the zoom slider pressed in and out to its ends, a waypoint chosen on the map and Teleport pressed on the panel it opens, 30 seconds at most. Partly found: https://www.youtube.com/watch?v=gN1IURjDuWo covering 0–30 s (`{data-root}/genshin-parity/captures/yt-gN1IURjDuWo-world-map.mp4`); found, the panel open on a chosen waypoint, a PC clip in the Indonesian client: https://www.youtube.com/watch?v=Mhw53PsdhKI (`{data-root}/genshin-parity/captures/yt-Mhw53PsdhKI-waypoint.webm`, about 120–135 s), showing the panel's sidebar and its Teleport button; still sought: Teleport pressed on it, and the zoom slider's ends on the English PC map.
 
 ## Open
 
