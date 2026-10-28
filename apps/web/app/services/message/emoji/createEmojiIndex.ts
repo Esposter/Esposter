@@ -8,14 +8,14 @@ import { EMOJI_GROUP_VALUES } from "@/services/message/emoji/constants";
 import { getEmojiCharacterKey } from "@/services/message/emoji/getEmojiCharacterKey";
 import characterEmojiRecordMap from "unicode-emoji-json/data-by-emoji.json";
 
+const checkIsEmojiGroup = (group: string): group is EmojiGroup => EMOJI_GROUP_VALUES.has(group);
+
 // Every emoji the dataset ships is offered, with no version cutoff: whichever Unicode release
 // `unicode-emoji-json` is pinned to in the catalog is the one the picker has, so bumping the dependency is
 // The whole of "support the newest emoji". Whether a glyph actually renders is the reader's OS and font
 // Talking, which no build-time filter can know — if a box is ever reported, the answer is runtime canvas
 // Measurement, not a hardcoded version.
 // Source: https://github.com/muan/unicode-emoji-json, generated from https://unicode.org/Public/emoji
-const checkIsEmojiGroup = (group: string): group is EmojiGroup => EMOJI_GROUP_VALUES.has(group);
-
 export const createEmojiIndex = (): EmojiIndex => {
   const characterEmojiMap = new Map<string, Emoji>();
   const groupEmojisMap = new Map<EmojiGroup, Emoji[]>(EmojiGroups.map((group) => [group, []]));
