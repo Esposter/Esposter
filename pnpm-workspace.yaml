@@ -108,7 +108,7 @@ catalog:
   "@tresjs/core": ^5.10.0
   "@trpc/client": ^11.19.0
   "@trpc/server": ^11.19.0
-  "@tsdown/css": ^0.23.2
+  "@tsdown/css": ^0.23.3
   "@types/mjml": ^5.4.2
   "@types/node": ^26.6.5
   "@types/sax": ^1.2.7
