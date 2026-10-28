@@ -7,7 +7,7 @@ committed.
 
 | Reference | Screen | Mean difference | Shape | Tone | FLIP |
 | :-------- | :----- | --------------: | ----: | ---: | ---: |
-| `character-artifacts` | `CharacterScreen` | 3.19% | 0.798 | 1.49% | 0.1375 |
+| `character-artifacts` | `CharacterScreen` | 3.09% | 0.816 | 1.41% | 0.1341 |
 | `character-artifacts-tabs` | `CharacterScreen` | 0.88% | 0.976 | 0.32% | 0.0474 |
 | `character-attributes` | `CharacterScreen` | 2.57% | 0.806 | 1.06% | 0.0950 |
 | `character-attributes-panel` | `CharacterScreen` | 4.95% | 0.607 | 2.78% | 0.1793 |
