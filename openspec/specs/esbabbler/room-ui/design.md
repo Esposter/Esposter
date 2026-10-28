@@ -27,7 +27,7 @@ flowchart TD
 
 Each room's re-read is one pair: the total and the per-role groups are read together and written only once both return, so a failed read leaves the last settled pair standing. A total is never written beside groups from another read, which keeps the roleless remainder from going negative on a mixed pair.
 
-On failure the batched refresh puts the room back as dirty and retries with exponential backoff, up to five retries in a row, the bound `MAX_RETRIES` declares in `apps/web/app/services/shared/createBatchedRefresh.ts`. After that the room waits for the next change to mark it, and that change's re-read is the retry. Until a read settles, the counts show the pre-change pair.
+On failure the batched refresh puts the room back as dirty and retries with exponential backoff, up to the number of retries in a row that `MAX_RETRIES` declares in `apps/web/app/services/shared/createBatchedRefresh.ts`. After that the room waits for the next change to mark it, and that change's re-read is the retry. Until a read settles, the counts show the pre-change pair.
 
 Options rejected for a failed read:
 

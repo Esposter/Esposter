@@ -28,7 +28,7 @@ flowchart TD
 
 - **Profile card** — avatar, display name, biography; shown from the member list and message avatars.
 - **Editing** — the bottom-left user panel opens the edit dialog: `name`, biography, avatar upload, with a preview of the card as others see it.
-- `users.biography` — text, max 160 chars (`USER_BIOGRAPHY_MAX_LENGTH` in `packages/db-schema/src/services/user/constants.ts`), shown beneath the display name.
+- `users.biography` — text, capped at the length `USER_BIOGRAPHY_MAX_LENGTH` declares in `packages/db-schema/src/services/user/constants.ts`, shown beneath the display name.
 - `user.updateUser` — restricted to the caller's own row; validates `name` (`USER_NAME_MAX_LENGTH`), `biography`, `image`.
 - Avatar upload uses the standard two-step SAS flow ([file uploads](../../architecture/file-uploads/design.md)) into `AzureContainer.PublicUserAssets` at `{userId}/ProfileImage`; rooms have the equivalent room profile image at `rooms/{roomId}/ProfileImage`.
 
