@@ -47,7 +47,7 @@ The sun and the moon SHALL sit where their references show them, the light takin
 
 ### Requirement: Dusk sunlight direction
 
-The dusk's sunlight SHALL fall about 50 degrees up and about 50 degrees off the walkway's +z axis.
+The dusk's sunlight SHALL fall 49.7 degrees up and 49.7 degrees off the walkway's +z axis (`DUSK_LIGHT_DIRECTION`).
 
 #### Scenario: Dusk shadows
 

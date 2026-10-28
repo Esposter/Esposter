@@ -6,7 +6,7 @@ A screen's interface is laid out by the game's own tree. Unity places every piec
 
 ```mermaid
 flowchart LR
-  MEASURED["A prefab, a group's spacing, a text line: measured"] --> LEAF["Scoped CSS inside the GameRect holding it"]
+  MEASURED["Pieces the tree cannot hold: measured"] --> LEAF["Scoped CSS inside the GameRect holding it"]
   RECT["GameRect: nested in the nearest GameRect, or on the canvas"] --> LEAF
 ```
 
@@ -20,7 +20,7 @@ flowchart LR
 
 ## Notes
 
-- **A measured leaf is written from its parent's box**, such as the prompt's `calc(var(--unit) * 38 - var(--canvas-unit) * 128)` from a container standing 128 canvas units in (`packages/genshin-world/src/components/Login/Interface/Index.vue`, the `bottom` rule). The measure stays the one taken off the recording, and the parent's term keeps it where the recording shows on any window.
+- **The prompt's measure is written from its parent's box**, `calc(var(--unit) * 38 - var(--canvas-unit) * 128)` from a container standing 128 canvas units in (`packages/genshin-world/src/components/Login/Interface/Index.vue`, the `bottom` rule). The measure stays the one taken off the recording, and the parent's term keeps it where the recording shows on any window.
 
 ## Key files
 

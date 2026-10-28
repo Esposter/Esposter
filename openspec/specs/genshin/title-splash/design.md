@@ -44,4 +44,4 @@ flowchart LR
 
 ## Sources
 
-- Requirement "Every white of the opening is the game's near-white": "as the game's PC client draws it".
+- The user's own recording of the PC client's splash, which the near-white is read from; no still of it is kept yet, as the Open list records.

@@ -7,7 +7,7 @@ In the game, a key or the Paimon menu opens a screen over the world: the map, th
 ```mermaid
 stateDiagram-v2
   World --> PaimonMenu: Escape, a pad's Start, or the pointer's lock lost
-  World --> Screen: its shortcut (M, C, L, B, J, F1 to F5, O, Enter)
+  World --> Screen: its shortcut
   PaimonMenu --> Screen: an enabled entry
   PaimonMenu --> World: Back, Escape or Start
   Screen --> World: its own shortcut, Escape, Start, a pad's cancel, or its way back
@@ -39,7 +39,7 @@ The rule is read only while the world is shown (`packages/genshin-world/src/comp
 
 Every menu answers true to all three (`packages/genshin-world/src/services/screen/constants.ts`, `MENU_SCREEN_BEHAVIOUR`), as the game's single-player menus pause its simulation and its time while its music and particles carry on. The fishing point holds the world alone, keeping its HUD and its pointer (`packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`). Photo mode and a talk hold nothing: their clock runs with the HUD hidden, photo mode's camera orbits the character and its pointer still turns it, while a talk lets the pointer go for its replies. The world in play answers false to all three.
 
-- **Held.** Under any screen but the world, the character on the field and its body neither step, photo mode's and a talk's included. Only photo mode's follow camera still looks, orbiting the held body; a menu's and a talk's stand where they are. Only a menu holds the world's fixed-step loops, so Windrise's clock and its clouds stand still under a menu and run on under a talk and in photo mode. Drawing goes on, so the world stays behind the screen (`packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`). This is a different thing from the world screen's `isPaused`, which stops drawing altogether while the opening covers the world.
+- **Held.** Under a menu and the fishing point, the character on the field and its body neither step, and the world's fixed-step loops and its clock stand still; under a menu, Windrise's clock and its clouds stand still too. Photo mode and a talk hold nothing: the character steps, the clock runs, and the follow camera still looks, orbiting the character in photo mode. Drawing goes on, so the world stays behind the screen (`packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`). This is a different thing from the world screen's `isPaused`, which stops drawing altogether while the opening covers the world.
 - **Pointer.** A screen that lets the pointer go releases the lock when it opens. Closing it does not take the lock back, since the browser grants one only to a click; a click on the world takes it, as it did the first time (`packages/genshin-world/src/components/World/Session/Index.vue`, the pointer release a screen asks for).
 - **A press that closes a screen is spent.** When the screen returns to the world, the world reads the input once more, so the key or click that closed it never reaches the world in play as an interact, a jump or an attack (`packages/genshin-world/src/components/World/Session/Index.vue`).
 - **A lock lost in play opens the menu.** The browser keeps `Escape` for itself while the pointer is locked, so a lock lost with the world in play opens the Paimon menu as the key would have (`packages/genshin-world/src/components/World/Session/Index.vue`, the `pointerlockchange` listener).

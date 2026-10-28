@@ -40,13 +40,13 @@ flowchart LR
 
 ## The scene
 
-Every part's shape, place and stone is fitted from the game's own assets ([derived assets](../derived-assets/design.md)), and whatever the blocks cannot hold is read off the captures and expressed over what they can. Each builder takes the record it builds from as its first argument. What a record sets (where the door stands, how long it takes to rise, the camera's height and rest, the rows the glide wraps by) is read or computed from the record where it is used (`getLoginDoorPosition`, `computeLoginDoorLiftMs`, `computeLoginCameraHeight`, `computeLoginCameraZ`, `computeLoginGlideTitleScrolled`), so no fitted value is a constant of the package's (`packages/genshin-world/src/services/login/door/getLoginDoorPosition.ts`, `packages/genshin-world/src/services/login/door/computeLoginDoorLiftMs.ts`, `packages/genshin-world/src/services/login/scene/computeLoginCameraHeight.ts`, `packages/genshin-world/src/services/login/scene/computeLoginCameraZ.ts`, `packages/genshin-world/src/services/login/scene/computeLoginGlideTitleScrolled.ts`).
+Every part's shape, place and stone is fitted from the game's own assets ([derived assets](../derived-assets/design.md)), and whatever the blocks cannot hold is read off the captures and expressed over what they can. Each builder takes the record it builds from as its first argument. What a record sets (where the door stands, how long it takes to rise, the camera's height and rest, the rows the glide wraps by) is read or computed from the record where it is used (`packages/genshin-world/src/services/login/door/getLoginDoorPosition.ts`, `packages/genshin-world/src/services/login/door/computeLoginDoorLiftMs.ts`, `packages/genshin-world/src/services/login/scene/computeLoginCameraHeight.ts`, `packages/genshin-world/src/services/login/scene/computeLoginCameraZ.ts`, `packages/genshin-world/src/services/login/scene/computeLoginGlideTitleScrolled.ts`).
 
 ```mermaid
 flowchart TD
   DATA["Every fitted part, a record of the hosted game data's login dataset"] --> READ["GameOpening reads them during the splashes"]
   READ --> SCENE[Login/Scene builds them with the engine's kits]
-  REF[Each hour's title frame, the door captures, the flight's frames] --> CAM["Camera: solved on the witness, one pose, the glide's pace by the walkway's repeats"]
+  REF[Each hour's title frame, the door captures, the flight's frames] --> CAM["Camera: solved on the witness"]
   REF --> BANDS[Each cloud band's heights and spread]
   REF --> LIGHT["Each time of day's colours, and its lights' strengths over the fitted stone"]
   CAM --> SCENE
@@ -88,7 +88,7 @@ flowchart TD
 - [ ] **The flight covers about two thirds of the way** — no source yet: the flight's share is not measured in the captures.
 - [ ] **The scene alone, as a reference shows it with no interface, is silent** — no source yet: no scene-only reference with its audio is kept in `{data-root}/genshin-parity/captures/`.
 - [ ] **The arrangement's unit test holds the cross-ratio of the dais over the walkway along the door's foot** — no source yet: `scripts/src/services/genshinAssets/scene/computeCrossRatio.test.ts` does not name the dais, the walkway or the door.
-- [ ] **The night title is the wiki's `File:Moon - Title screen - Night.png`** — no source yet: the wiki's still is not in `{data-root}/cache/genshin-wiki/`. Partly found: https://www.youtube.com/watch?v=D-iWDjSOL-s at 0–30 s (`{data-root}/genshin-parity/captures/yt-D-iWDjSOL-s-login-dawn.mp4`); still sought: the build is not stated and the source is 720p30.
+- [ ] **The night title is the wiki's `File:Moon - Title screen - Night.png`** — no source yet: the wiki's still is not in `{data-root}/cache/genshin-wiki/`, so `login-night.mkv` is not yet confirmed as its title. The video at https://www.youtube.com/watch?v=D-iWDjSOL-s is the dawn recording (`{data-root}/genshin-parity/captures/yt-D-iWDjSOL-s-login-dawn.mp4`), not the night's.
 - [ ] **The game opens on its login screen once the health notice has faded** — no source yet: a recording of the English client's launch through the health notice, with the openings under `{data-root}/genshin-parity/captures/` not yet read for it
 - [ ] **The console's opening shows the login at the same place, stages and timings** — no source yet: a recording of the console's opening, and no file under `{data-root}/genshin-parity/captures/` names a console
 - [ ] **Its music plays from the start, looping as the game's does** — no source yet: a recording of the login's music starting as the screen shows; `{data-root}/genshin-parity/extracted/login/music/playlist.json` holds the loop (`isLooping`) and the first piece at `playAt` 0, not the moment playback begins
