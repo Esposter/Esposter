@@ -22,7 +22,7 @@ flowchart TD
   PATH -->|"no"| SHARE{"Guaranteed, or the 75% share"}
   SHARE -->|"yes"| EITHER["Either promotional weapon"]
   SHARE -->|"no"| STDW["Another five-star weapon, the next guaranteed"]
-  KIND -->|"standard or beginners'"| ANY["A character or a weapon with equal chance, then any of it"]
+  KIND -->|"standard or beginners'"| ANY["Equal chance by kind<br/>then any of it"]
   ROLL -->|"four-star"| F4["Featured by share or guarantee, else any of a kind"]
   ROLL -->|"three-star"| F3["A three-star weapon"]
   PROMO --> RET["Returns by duplicate count into the wallet"]
@@ -85,7 +85,7 @@ flowchart TD
 
 - **The rarity stars are one shared piece.** `RarityStars` is a shared piece of the interface package, alongside its other pieces rather than the wish's, since the game draws its stars the same way on every screen that shows a rarity. `packages/genshin-interface/src/components/RarityStars/Index.vue`.
 - **The banners' pools are the wiki's, by the game's ids.** `packages/genshin-world/src/services/wish/constants.ts` lists the standard wish's and the beginners' characters and weapons as the wiki's Wanderlust Invocation and Beginners' Wish item pools give them, and `createBanners` builds the two permanent banners from the stat tables, each item's rarity read from them and its name from the world's names in the reader's language `packages/genshin-world/src/services/wish/createBanners.ts`. The beginners' wish takes the standard wish's three-star weapons alone `packages/genshin-world/src/services/wish/constants.ts`. A member the wiki's pool lists that the dump's tables do not hold yet, Alyosha, is left out until a later dump carries it `packages/genshin-world/src/services/wish/constants.ts`. Each event banner the wish schedule has open at the game's time is built on the standard wish's pool, derived once, with its promoted five-stars and featured four-stars read from the schedule by id ([wish proposal](../../../changes/archive/2026-10-18-genshin-wish/design.md)) `packages/genshin-world/src/services/wish/createBanners.ts`.
-- **The beginners' wish keeps counters of its own.** The game's details do not say whether it shares the standard wish's, and the guides that say anything say it does not `packages/genshin-world/src/services/wish/InitialBannerKindWishPityMap.ts`.
+- The game's details do not say whether the beginners' wish shares the standard wish's counters, and the guides that say anything say it does not `packages/genshin-world/src/services/wish/InitialBannerKindWishPityMap.ts`.
 
 ## Parity
 
@@ -108,7 +108,7 @@ Compared with the game over the reference clip `yt-uhCW3MZTgL8`, the FLIP bar of
 - [Wanderlust Invocation](https://genshin-impact.fandom.com/wiki/Wanderlust_Invocation), Genshin Impact Wiki: the standard wish's rates, its item pool, and its equal chance of a character or a weapon at each rarity.
 - [Beginners' Wish](https://genshin-impact.fandom.com/wiki/Beginners%27_Wish), Genshin Impact Wiki: its item pool, twenty wishes, eight Acquaint Fates for ten, no four-star or five-star weapons, and Noelle on the eighth wish.
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the wish screen on F3.
-- `wish-ten.mkv` — a ten-wish on the English PC client at 1080p, from Wish ×10 to the summary dismissed. A published 1080p clip (`yt-uhCW3MZTgL8.mp4`) shows the event banner and single pulls' reveals only, so the ten-pull results grid is still owed. Found 2026-10-11: https://www.youtube.com/watch?v=gFmdG_0s5L0 at 0–76 s (`{data-root}/genshin-parity/captures/yt-gFmdG_0s5L0-wish-ten.mp4`), the English PC client at 1080p and 60 frames a second in 2022: Wish ×10 pressed at about 16.5 s, the reveals, the results grid at about 44–50 s, Obtained at about 50–51 s and the banner back at about 51.3 s; a small channel mark sits at the bottom right. Its stills from 16 s for 36 are under `frames/yt-gFmdG_0s5L0-wish-ten@16/`.
+- `yt-gFmdG_0s5L0-wish-ten.mp4` — a ten-wish on the English PC client at 1080p, from Wish ×10 to the summary dismissed. A published 1080p clip (`yt-uhCW3MZTgL8.mp4`) shows the event banner and single pulls' reveals only, so the ten-pull results grid is still owed. https://www.youtube.com/watch?v=gFmdG_0s5L0 at 0–76 s (`{data-root}/genshin-parity/captures/yt-gFmdG_0s5L0-wish-ten.mp4`), the English PC client at 1080p and 60 frames a second in 2022: Wish ×10 pressed at about 16.5 s, the reveals, the results grid at about 44–50 s, Obtained at about 50–51 s and the banner back at about 51.3 s; a small channel mark sits at the bottom right. Its stills from 16 s for 36 are under `frames/yt-gFmdG_0s5L0-wish-ten@16/`.
 - a wiki banner page for a weapon event from the twenty-third of September to the thirteenth of October, grounding the scenario _An event banner page is read into its window and featured items_. The Open section's weapon event item says the banner page is not cached.
 - a banner page that names an item the names do not hold, one of the wiki's `Category:Wish` event banner pages that `buildWishSchedule` reads, grounding the scenario _A schedule naming an unknown item fails the build_.
 
@@ -126,6 +126,5 @@ Compared with the game over the reference clip `yt-uhCW3MZTgL8`, the FLIP bar of
 - [ ] **The wish screen opens on F3, as in the game** — no source yet: the wiki's Controls page is not cached.
 - [ ] **`wish-details-2` to `wish-details-4` are 2560 by 1440 popups over a blurred sky** — no source yet: a view of the blurred sky behind each popup in `{data-root}/genshin-parity/references/wish-details-2.png` to `-4.png`, which are 2560 by 1440 on disk and were not viewed.
 - [ ] **The stills under `{data-root}/genshin-parity/frames/yt-gFmdG_0s5L0-wish-ten@16/` and the clip's timestamps (16.5 to 51.3 seconds)** — no source yet: the timestamps, not checked against the stills, which are held in `frames/` rather than `captures/`.
-- [ ] **`wish-ten.mkv` is a ten-wish capture on the English PC client** — no source yet: no `wish-ten.mkv` is in the captures; `captures/yt-gFmdG_0s5L0-wish-ten.mp4` is the clip present.
 - [ ] **The Standard banner has no whole-frame reference until `wish-standard.png` lands** — no source yet: a check of whether `{data-root}/genshin-parity/captures/wish-standard.png` (1920 by 1080, on disk) is a whole-frame reference, which was not viewed.
 - [ ] **The card's keys `UI_GACHA_SHOW_PANEL_A041_*` belong to the Born of Ocean Swell banner** — no source yet: the key-to-banner mapping is not checked.

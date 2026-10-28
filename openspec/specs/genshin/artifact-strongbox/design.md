@@ -13,7 +13,7 @@ flowchart TD
   PICK --> CHECK{"craftStrongbox: count right, distinct, all offerable?"}
   CHECK -->|"no"| NONE["Nothing given up"]
   CHECK -->|"yes"| REMOVE["Three artifacts removed from the bag"]
-  REMOVE --> ROLL["rollStrongboxArtifact: a piece of the set, drawn evenly, rolled at five stars"]
+  REMOVE --> ROLL["rollStrongboxArtifact<br/>five-star piece"]
   ROLL --> PICKUP["pickUpDroppedItem takes the artifact in, as a drop"]
 ```
 

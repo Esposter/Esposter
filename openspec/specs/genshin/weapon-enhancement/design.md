@@ -11,7 +11,7 @@ flowchart TD
   TABLES -->|"WeaponData"| DATA["WeaponData"]
   REQUIRED --> ENHANCE["enhanceWeapon: paid EXP at Mora, levels gained, excess returned as ores"]
   DATA --> ENHANCE
-  DATA --> ASCEND["ascendWeapon: at the cap, the next phase's Mora, items and Adventure Rank"]
+  DATA --> ASCEND["ascendWeapon<br/>at the phase cap"]
   DATA --> REFINE["refineWeapon: each rank gained at its Mora, past the fifth lost"]
   ENHANCE --> WEAPON["Weapon"]
   ASCEND --> WEAPON
@@ -30,7 +30,7 @@ flowchart TD
 - **Each source gives its EXP.** An ore gives its own EXP, 400, 2000 or 10000 by id (`{data-root}/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`, ids 104011, 104012 and 104013 with "ITEM_USE_ADD_WEAPON_EXP"; `packages/genshin-world/src/services/weapon/constants.ts`). A fodder weapon gives its base, plus 80% of the EXP it was levelled with, floored (`packages/genshin-world/src/services/weapon/constants.ts`, `FODDER_EXP_SHARE`), where the invested EXP is every level it rose past from level 1 plus the EXP it holds towards the next (`packages/genshin-world/src/services/weapon/getWeaponInvestedExp.ts`).
 - **Ten points of paid EXP cost one Mora.** Paid EXP is the ores' and the fodders' bases, floored to Mora; the recovered share costs nothing (`packages/genshin-world/src/services/weapon/enhanceWeapon.ts`, `EXP_PER_MORA` in `packages/genshin-world/src/services/weapon/constants.ts`).
 - **Levels are gained while the EXP holds each requirement.** The EXP left after a level carries towards the next, up to the phase's cap (`packages/genshin-world/src/services/weapon/enhanceWeapon.ts`).
-- **EXP past the cap comes back as ores.** The leftover is returned as the Enhancement Ores it fills, largest first (`packages/genshin-world/src/services/weapon/enhanceWeapon.ts`). Mora is charged on all paid EXP even where the excess comes back (`packages/genshin-world/src/services/weapon/enhanceWeapon.ts`). What is under the smallest ore is lost (`packages/genshin-world/src/services/weapon/enhanceWeapon.ts`); that remainder is a provisional rule, settled by a recording on the [roadmap](../../../changes/genshin-roadmap/tasks.md).
+- **EXP past the cap comes back as ores.** The leftover is returned as the Enhancement Ores it fills, largest first (`packages/genshin-world/src/services/weapon/enhanceWeapon.ts`). Mora is charged on all paid EXP even where the excess comes back (`packages/genshin-world/src/services/weapon/enhanceWeapon.ts`). What is under the smallest ore is lost (`packages/genshin-world/src/services/weapon/enhanceWeapon.ts`); that remainder is a provisional rule, and the [roadmap](../../../changes/genshin-roadmap/tasks.md) records that its recording does not show the ore returned past the cap.
 - **A wallet short of the Mora refuses the whole enhancement**, and nothing is spent (`packages/genshin-world/src/services/weapon/enhanceWeapon.ts`).
 
 ## Ascension
