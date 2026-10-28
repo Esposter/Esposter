@@ -2,7 +2,7 @@
 
 ## Why
 
-The webpage and email editors run GrapesJS, which mounts through a belt of a dozen plugins, saves the HTML that only the live editor can produce, and offers no keyboard or single-pointer path for a drag. The hard parts of the work are the document shape, the canvas, the styling model, the undo model, the email engine and the cutover, and the design answers each in one of its sub-pages. The program replaces the engine rather than thinning it, because thinning cannot reach the accessibility and state model the editors need.
+The webpage and email editors used GrapesJS until the cutover, which removed it. GrapesJS mounted through a belt of a dozen plugins, saved the HTML that only the live editor can produce, and offered no keyboard or single-pointer path for a drag. The hard parts of the work are the document shape, the canvas, the styling model, the undo model, the email engine and the cutover, and the design answers each in one of its sub-pages. The program replaces the engine rather than thinning it, because thinning cannot reach the accessibility and state model the editors need.
 
 ## What Changes
 
