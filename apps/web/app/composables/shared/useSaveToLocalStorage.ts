@@ -10,7 +10,7 @@ export const useSaveToLocalStorage = () => {
       createAlert(z.prettifyError(parsedResult.error), "error");
       return false;
     }
-    // eslint-disable-next-line no-restricted-syntax -- the writer half of the offline save system: the key is a parameter, so there is no ref to own it.
+    // eslint-disable-next-line no-restricted-syntax -- the writer half of the offline save system: the key is a parameter, so there is no ref to own it — see openspec/specs/architecture/browser-execution/design.md
     window.localStorage.setItem(key, JSON.stringify(parsedResult.data));
     return true;
   };
