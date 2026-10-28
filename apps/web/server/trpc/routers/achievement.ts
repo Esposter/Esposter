@@ -36,7 +36,6 @@ export const achievementRouter = router({
       where: { unlockedAt: { isNotNull: true }, userId: { eq: userId } },
       with: UserAchievementInAchievementRelations,
     });
-    const unlockedUserAchievementNames = new Set(unlockedUserAchievements.map(({ achievement }) => achievement.name));
     // The trigger's zod schema and the predicates are server-only, and the schema's cycles cannot be sent as JSON, so
     // The map ships its client fields alone
     return Object.fromEntries(
@@ -49,7 +48,8 @@ export const achievementRouter = router({
           {
             ...achievementDefinition,
             description:
-              achievementDefinition.isHidden && !unlockedUserAchievementNames.has(achievementName)
+              achievementDefinition.isHidden &&
+              !unlockedUserAchievements.some(({ achievement }) => achievement.name === achievementName)
                 ? HIDDEN_ACHIEVEMENT_DESCRIPTION
                 : achievementDefinition.description,
           },
