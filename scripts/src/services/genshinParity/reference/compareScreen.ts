@@ -69,6 +69,7 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
     pointer: reference.pointer,
     props: reference.props,
     screen: reference.screen,
+    variant: reference.variant,
     width,
     witness,
   });

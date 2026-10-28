@@ -47,6 +47,7 @@ export const openParityPage = async ({
   pageRoot,
   props,
   screen,
+  variant,
   width,
   witness,
   witnessMeshes,
@@ -95,6 +96,7 @@ export const openParityPage = async ({
     }, RESOURCE_TIMING_BUFFER_SIZE);
     const motionQuery = motion ? `&motion=${motion}` : "";
     const propsQuery = props ? `&props=${encodeURIComponent(JSON.stringify(props))}` : "";
+    const variantQuery = variant ? `&variant=${encodeURIComponent(variant)}` : "";
     const backdropQuery = backdropPath ? `&backdrop=${PARITY_BACKDROP_FILE}` : "";
     if (backdropPath) await page.route(`**/${PARITY_BACKDROP_FILE}`, (route) => route.fulfill({ path: backdropPath }));
     const witnessQuery = witness
@@ -126,7 +128,9 @@ export const openParityPage = async ({
     const pageUrl = pageRoot ?? (await resolveParityPageRoot());
     // Opened at its load event rather than once idle, so a fetch the page issues after ready is not in the readings a
     // Caller takes at the ready signal
-    await page.goto(`${pageUrl}?screen=${screen}${motionQuery}${propsQuery}${backdropQuery}${witnessQuery}`);
+    await page.goto(
+      `${pageUrl}?screen=${screen}${motionQuery}${propsQuery}${variantQuery}${backdropQuery}${witnessQuery}`,
+    );
     // The page is drawn once it is ready, or never once a failure nothing caught has stopped it
     const readPageState = () =>
       page.evaluate(() => {

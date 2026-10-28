@@ -75,7 +75,7 @@ committed.
 | `spiral-abyss-entry` | `SpiralAbyssEntry` | pending: no recording of the screen yet | | | |
 | `sumeru-city-location` | `WorldScreen` | 32.42% | 0.227 | 28.07% | 0.8157 |
 | `title-splash` | `SplashTitle` | 0.20% | 1.000 | 0.01% | 0.0090 |
-| `title-splash-mainland` | `SplashTitle` | 3.54% | 0.925 | 1.85% | 0.1038 |
+| `title-splash-mainland` | `SplashTitle` | 1.89% | 0.991 | 0.89% | 0.0807 |
 | `weapon-screen` | `WeaponScreen` | pending: no recording of the screen yet | | | |
 | `windrise-statue-day` | `WorldScreen` | 26.73% | 0.306 | 26.74% | 0.7579 |
 | `wish-screen` | `WishScreen` | 50.94% | 0.429 | 49.24% | 0.8740 |

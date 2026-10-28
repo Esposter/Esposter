@@ -18,6 +18,8 @@ export interface ParityPageOptions {
   // Props over the fixture's, as JSON the page reads
   props?: Record<string, unknown>;
   screen: string;
+  // The fixture's variant the page renders over its props, by its name in the fixture's `variants`
+  variant?: string;
   width: number;
   // A component whose exports the page draws in place of the scene's own parts, served to it from the exports
   witness?: DerivedAssetComponent;

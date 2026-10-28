@@ -896,6 +896,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     props: { language: "ChineseSimplified" },
     screen: "SplashTitle",
     seconds: 5,
+    variant: "chineseSimplified",
   },
   "weapon-screen": { pending: "no recording of the screen yet", screen: "WeaponScreen" },
   // The statue under the oak by day, from the 2026 recording's fixed camera east of it, a game minute a real second

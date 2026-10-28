@@ -45,4 +45,7 @@ export interface ParityReferenceBase {
   // The ground behind it in the reference's own pixels, so a name's strokes count and the painted terrain between them,
   // Which the page does not draw, never does
   silhouettes?: ParitySilhouette[];
+  // The fixture's variant the screen is shot in, by its name in the fixture's `variants`, for a state its props alone do
+  // Not draw, such as the logo a language's client shows
+  variant?: string;
 }
