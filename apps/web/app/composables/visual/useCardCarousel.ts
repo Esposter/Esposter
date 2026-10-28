@@ -6,7 +6,6 @@ interface UseCardCarouselOptions {
   cards: () => Card[];
   duration: number;
 }
-
 // The carousel's cycle: each move takes the top-right card through its active turn, and rotates the stack by one
 export const useCardCarousel = ({ cards, duration }: UseCardCarouselOptions) => {
   // Fake card ids are just the card indexes, so we can "rotate" by incrementing the whole list by 1.

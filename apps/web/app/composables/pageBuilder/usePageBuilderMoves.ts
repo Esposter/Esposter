@@ -33,7 +33,6 @@ type MoveKind<
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 > = PageBuilderKind<TNode, TRoot, TDefinition, TDocument>;
-
 // The move of a node to the index one away from it in its own slot, or none when no sibling sits at that index
 const getSiblingMoveOperations = <
   TNode extends BlockNode,
@@ -58,11 +57,10 @@ const getSiblingMoveOperations = <
 
   return moveBlockNode(document, kind.registry, kind.children, nodePointer, slotPointer, index + offset);
 };
-
 // The keyboard and command moves of the selected node in one open resource's webpage: Alt with an arrow moves it among
 // Its siblings or into and out of a container, Move to moves it to the end of any slot that accepts it, and Delete removes
 // It. Each edit is one history entry, and a move keeps the node selected; focus is the caller's to move. Each landed edit is
-// Announced once through announce
+// Announced once through `announce`.
 // The kind's signature, which each composable lists as its own inputs, so the duplicate-code gate skips it
 // `jscpd:ignore-start`
 export const usePageBuilderMoves = <

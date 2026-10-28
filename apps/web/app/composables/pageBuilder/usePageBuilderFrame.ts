@@ -10,7 +10,6 @@ import { getFrameScale } from "vue-canvas-frame-headless";
 // The frame is scaled to fit its pane, so the scale maps the frame's own pixels to the app's viewport
 const getFrameScaleOf = (frameElement: HTMLIFrameElement) =>
   getFrameScale(frameElement.parentElement?.clientWidth ?? 0, frameElement.offsetWidth);
-
 // The canvas's frame as the page builder reads it: a node's element in the frame, the frame's geometry for a palette drag, and
 // Where the selection's toolbar sits in the app's viewport. The frame is the document the content root is drawn in
 export const usePageBuilderFrame = (

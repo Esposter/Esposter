@@ -22,7 +22,6 @@ export const useItemOptionGrid = createUseGrid(ItemOptionGrid, (grid) => {
   const inventorySceneStore = useInventorySceneStore();
   const { inventory } = storeToRefs(inventorySceneStore);
   grid.grid = computed(() => [...inventory.value.map((item) => [item]), [PlayerSpecialInput.Cancel]]);
-
   // The grid is a singleton, so this watch must outlive the component that first reads it. A detached scope keeps it
   // Running after that component unmounts, where its own scope would stop it
   effectScope(true).run(() => {

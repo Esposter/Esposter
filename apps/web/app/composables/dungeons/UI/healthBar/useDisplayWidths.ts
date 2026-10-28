@@ -22,7 +22,6 @@ export const useDisplayWidths = (totalDisplayWidth: MaybeRefOrGetter<number>, di
         newTotalDisplayWidth - ((leftCapDisplayWidth.value ?? 0) + (middleDisplayWidth.value ?? 0));
     }
   };
-
   // Each cap's total is the width its image first reports, and it is kept from then on
   watchOnce(leftCapDisplayWidth, (newLeftCapDisplayWidth) => {
     totalLeftCapDisplayWidth.value = newLeftCapDisplayWidth;
@@ -30,7 +29,6 @@ export const useDisplayWidths = (totalDisplayWidth: MaybeRefOrGetter<number>, di
   watchOnce(rightCapDisplayWidth, (newRightCapDisplayWidth) => {
     totalRightCapDisplayWidth.value = newRightCapDisplayWidth;
   });
-
   // Once both caps have measured, the width they leave for the middle is final, so it is set and synced once. Syncing
   // Writes the caps again, which is why this is a one-shot rather than a watch that would re-run on its own writes
   const measuredCapsWidth = computed(() =>

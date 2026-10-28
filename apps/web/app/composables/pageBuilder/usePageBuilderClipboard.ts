@@ -16,7 +16,7 @@ import { getBlockNode, pasteBlockNodes } from "headless-block-editor";
 
 // Copy, cut and paste of the selected node in one open resource's document. The clipboard carries the node as JSON,
 // Tagged with the kind's editor, and a paste lands where an insert would, as a copy with fresh ids. Each landed edit is
-// Announced once through announce
+// Announced once through `announce`.
 // The kind's signature, which each composable lists as its own inputs, so the duplicate-code gate skips it
 // `jscpd:ignore-start`
 export const usePageBuilderClipboard = <

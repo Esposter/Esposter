@@ -41,7 +41,6 @@ const getDropTargetAt = <
 const stopClick = (clickEvent: MouseEvent) => {
   clickEvent.stopPropagation();
 };
-
 // A release can land on the control the press started on, and the browser clicks that control. The click that follows a
 // Drag is stopped before it reaches the control, and the stop is dropped once the release's click has been dispatched
 const swallowNextClick = () => {
@@ -50,7 +49,6 @@ const swallowNextClick = () => {
     window.removeEventListener("click", stopClick, { capture: true });
   }, 0);
 };
-
 // A palette block or a merge field dragged to the point under the pointer. The drop indicator's target is held here for the
 // Canvas to draw, and a release with a target inserts the block there, announced once. A merge field released over a text
 // Is appended to that text. A press that never moves past the threshold is a click that the palette's own button handles,
@@ -72,7 +70,6 @@ export const usePageBuilderDrag = <
   const dropTarget = shallowRef<DropTarget>();
   // Set once a drag passes the threshold, so the editor can let the pointer pass through the canvas frame, whose document would take it
   const isDragging = ref(false);
-
   // Tracks a press until its release, a cancel or Escape. Each move past the threshold reaches onMove, and the release reaches
   // `onRelease` with its point only while the press was dragging
   const trackDrag = (
@@ -135,7 +132,6 @@ export const usePageBuilderDrag = <
       },
     );
   };
-
   // A merge field released over a text is appended to it, and the release over no text, or outside the frame, appends nothing
   const startMergeFieldDrag = (
     columnName: string,

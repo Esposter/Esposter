@@ -46,7 +46,6 @@ export const useDragReorder = () => {
   tryOnScopeDispose(() => {
     disposeDragReorder(context);
   });
-
   // A handle, as a selector, limits a drag to a press inside it, for rows whose own content is pressed for other things
   return <T>(values: T[], onReorder: (values: T[]) => void, handle?: string) =>
     getDragReorderProps(context, values, onReorder, handle);

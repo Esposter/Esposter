@@ -16,7 +16,6 @@ import { getBlockNode } from "headless-block-editor";
 
 // What one field edit writes: the operations, and the history entry they record as
 type FieldEdit = Pick<PageBuilderHistoryEntry, "interactionId" | "label" | "operations">;
-
 // The style of the selected node at the breakpoint the device edits and the state the style panel edits. A field's edit
 // Merges into one history entry per field, state and breakpoint, and a reset is an entry of its own
 export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
@@ -89,7 +88,6 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
   const resetField = (property: StyleProperty) => {
     setField(property, "");
   };
-
   // Copy takes the selected node's whole style, and paste replaces the selected node's style with the copied one, so the
   // Two nodes match after it. The copied style is shared, never mutated, since every edit above writes a new style
   const copyStyle = () => {

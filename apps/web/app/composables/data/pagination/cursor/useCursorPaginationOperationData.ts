@@ -10,7 +10,6 @@ import { checkIsServer, createExponentialBackoff, getResultAsync, noop, withFina
 // Result is dropped rather than landing on the replacement. A cache hydration replaces data too, but without retiring
 // It: the rows it restores are the partition's own, so a read still in flight keeps landing on them
 const retiredCursorPaginationData = new WeakSet<object>();
-
 // Empties a partition, retiring the data it held so a read issued against that data is dropped when it lands
 export const emptyCursorPaginationData = <TItem>(data: Ref<CursorPaginationData<TItem>>, isLoaded: Ref<boolean>) => {
   retiredCursorPaginationData.add(data.value);

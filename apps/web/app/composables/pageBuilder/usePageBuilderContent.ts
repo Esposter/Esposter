@@ -18,10 +18,8 @@ interface ContentTarget<TValue, TProps> {
   props: TProps;
   propsSchema: z.ZodType<TValue>;
 }
-
 // The props the form edits: the root's, or a node's own props as its type's props schema parses them
 type ContentValue<TNode extends BlockNode, TRoot extends BlockRootProps> = OwnProps<TNode["props"]> | TRoot;
-
 // The target a selection edits: the selected node, or the root when nothing is selected or the id is not found.
 // The target is undefined when the node's type is not in the registry
 const getContentTarget = <
@@ -56,7 +54,6 @@ const getContentTarget = <
     propsSchema: definition.propsSchema,
   };
 };
-
 // The form of the selected node's content, edited through the page builder's history: a value that is not valid is
 // Shown by the form but not applied, and a value applies as one edit of the props it changes
 export const usePageBuilderContent = <

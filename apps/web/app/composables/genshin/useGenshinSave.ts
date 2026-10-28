@@ -57,7 +57,6 @@ export const useGenshinSave = async () => {
   // So a start still being retried never takes the lease for a page nobody is on
   let retryStartNow: (() => void) | undefined;
   let isLeft = false;
-
   // The server's now is read between the call's send and its answer, so the offset is taken from their midpoint
   const setServerClockOffset = (serverNow: string, sentAt: number, receivedAt: number) => {
     serverClockOffsetMs.value = Math.round(
@@ -184,7 +183,6 @@ export const useGenshinSave = async () => {
     const guestSave = readGuestSave();
     const start = await startUntilStarted(crypto.randomUUID(), 0);
     if (!start) return;
-
     // The journal is read from the browser as it stands now, not from the copy this page cached when it was keyed, since
     // Another window of the browser may have written it since. It is adopted only by the start that replaced the session
     // Which wrote it, since only then is the save it holds the one the account would have kept. Any other journal is out
@@ -265,7 +263,6 @@ export const useGenshinSave = async () => {
   }
 
   await useReadData(readLocalSave, readAccountSave);
-
   // The world's save is its whole state, kept as the latest for the next save to send
   const onWorldSave = (save: GenshinSave) => {
     latestSave = save;

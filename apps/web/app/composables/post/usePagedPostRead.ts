@@ -8,7 +8,6 @@ type PostPagingOperations = Pick<
   "readItems" | "readMoreItems"
 >;
 type ReadPostsQuery = Except<NonNullable<z.input<typeof readPostsInputSchema>>, "cursor">;
-
 // The paging every post list shares: the first page reads into the list under its payload key, and each later page
 // Follows the cursor the page before it left. The cursor is the paging's own, so a query never carries one
 export const usePagedPostRead = ({ readItems, readMoreItems }: PostPagingOperations) => {

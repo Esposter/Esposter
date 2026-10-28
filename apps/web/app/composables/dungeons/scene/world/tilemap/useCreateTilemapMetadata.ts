@@ -11,7 +11,6 @@ import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 export const useCreateTilemapMetadata = (layerNameEnum: Record<string, string>) => {
   const worldSceneStore = useWorldSceneStore();
   const { layerMap, objectLayerMap, tilemap } = storeToRefs(worldSceneStore);
-
   // Both maps belong to the tilemap being created, so each is built fresh rather than kept from the tilemap before
   const rawLayerMap = new Map<string, ReturnType<typeof createLayer>>();
   for (const layerName of Object.values(layerNameEnum)) {
@@ -24,7 +23,6 @@ export const useCreateTilemapMetadata = (layerNameEnum: Record<string, string>) 
     const layer = createLayer(tilemap.value, layerName, tilesets);
     const debugLayerNames: string[] = [LayerName.Collision, LayerName.Encounter];
     if (debugLayerNames.includes(layerName)) layer.setAlpha(IS_PRODUCTION ? 0 : 0.7);
-
     // A layer holds its scene, so it enters the store raw like the tilemap it belongs to
     rawLayerMap.set(layerName, markRaw(layer));
   }

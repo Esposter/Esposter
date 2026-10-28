@@ -14,7 +14,6 @@ const takeMutationResult = <TResult>(outcome: MutationOutcome<TResult>): TResult
   if (outcome.status === MutationStatus.Failed) throw outcome.error;
   throw new InvalidOperationError(Operation.Create, "character pack", "was not kept, as its request was dropped");
 };
-
 // The packs the player's account keeps, read while the player is signed in, and kept or removed on it. A kept pack's files
 // Are each uploaded under their own hashes first, and the account names the pack only once every one of them has landed
 export const useAccountCharacterPacks = () => {
