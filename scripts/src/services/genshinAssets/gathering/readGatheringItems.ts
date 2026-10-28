@@ -1,6 +1,6 @@
-import type { GatherRow } from "#src/models/genshinAssets/gathering/GatherRow";
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 import type { InteractiveMapLabel } from "#src/models/genshinAssets/points/InteractiveMapLabel";
+import type { GatherRow } from "#src/models/genshinAssets/shared/GatherRow";
 import type { GatheringItem } from "genshin-world";
 
 import {

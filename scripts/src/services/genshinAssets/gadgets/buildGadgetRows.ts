@@ -1,5 +1,5 @@
 import type { ConfigWidgetFile } from "#src/models/genshinAssets/gadgets/ConfigWidgetFile";
-import type { GatherRow } from "#src/models/genshinAssets/gathering/GatherRow";
+import type { GatherRow } from "#src/models/genshinAssets/shared/GatherRow";
 
 import { CONFIG_WIDGET_PATH, SERENITEA_POT_ITEM_ID } from "#src/services/genshinAssets/gadgets/constants";
 import { toGadgetRows } from "#src/services/genshinAssets/gadgets/toGadgetRows";
