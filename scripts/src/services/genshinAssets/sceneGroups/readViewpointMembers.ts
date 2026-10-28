@@ -1,4 +1,4 @@
-import type { ExcelViewCodexRow } from "#src/models/genshinAssets/archive/ExcelViewCodexRow";
+import type { ExcelViewCodexRow } from "#src/models/genshinAssets/shared/ExcelViewCodexRow";
 import type { SceneGroupMember } from "genshin-world";
 
 import { VIEW_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";

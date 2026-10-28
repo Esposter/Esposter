@@ -1,4 +1,4 @@
-import type { ExcelPushTipsRow } from "#src/models/genshinAssets/archive/ExcelPushTipsRow";
+import type { ExcelPushTipsRow } from "#src/models/genshinAssets/shared/ExcelPushTipsRow";
 
 import { PUSH_TIPS_TUTORIAL_TYPE } from "#src/services/genshinAssets/archive/constants";
 

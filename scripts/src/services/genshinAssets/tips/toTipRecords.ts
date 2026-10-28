@@ -1,5 +1,5 @@
-import type { ExcelPushTipsCodexRow } from "#src/models/genshinAssets/archive/ExcelPushTipsCodexRow";
-import type { ExcelPushTipsRow } from "#src/models/genshinAssets/archive/ExcelPushTipsRow";
+import type { ExcelPushTipsCodexRow } from "#src/models/genshinAssets/shared/ExcelPushTipsCodexRow";
+import type { ExcelPushTipsRow } from "#src/models/genshinAssets/shared/ExcelPushTipsRow";
 import type { ExcelGlobalWatcherRow } from "#src/models/genshinAssets/tips/ExcelGlobalWatcherRow";
 import type { Tip, TipTrigger } from "genshin-world";
 

@@ -1,6 +1,6 @@
 import type { ArchiveCandidate } from "#src/models/genshinAssets/archive/ArchiveCandidate";
-import type { ExcelPushTipsCodexRow } from "#src/models/genshinAssets/archive/ExcelPushTipsCodexRow";
-import type { ExcelPushTipsRow } from "#src/models/genshinAssets/archive/ExcelPushTipsRow";
+import type { ExcelPushTipsCodexRow } from "#src/models/genshinAssets/shared/ExcelPushTipsCodexRow";
+import type { ExcelPushTipsRow } from "#src/models/genshinAssets/shared/ExcelPushTipsRow";
 
 import { PUSH_TIPS_CODEX_TABLE_NAME, PUSH_TIPS_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { toTutorialPushTipMap } from "#src/services/genshinAssets/archive/toTutorialPushTipMap";

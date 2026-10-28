@@ -1,7 +1,7 @@
 import type { ArchiveCandidate } from "#src/models/genshinAssets/archive/ArchiveCandidate";
-import type { ExcelEquipAffixRow } from "#src/models/genshinAssets/archive/ExcelEquipAffixRow";
+import type { ExcelEquipAffixRow } from "#src/models/genshinAssets/shared/ExcelEquipAffixRow";
 import type { ExcelReliquaryCodexRow } from "#src/models/genshinAssets/archive/ExcelReliquaryCodexRow";
-import type { ExcelReliquarySetRow } from "#src/models/genshinAssets/archive/ExcelReliquarySetRow";
+import type { ExcelReliquarySetRow } from "#src/models/genshinAssets/shared/ExcelReliquarySetRow";
 import type { ExcelWeaponCodexRow } from "#src/models/genshinAssets/archive/ExcelWeaponCodexRow";
 import type { ExcelWeaponRow } from "#src/models/genshinAssets/stats/ExcelWeaponRow";
 

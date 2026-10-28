@@ -1,6 +1,6 @@
 import type { ArchiveCandidate } from "#src/models/genshinAssets/archive/ArchiveCandidate";
 import type { ExcelAnimalCodexRow } from "#src/models/genshinAssets/archive/ExcelAnimalCodexRow";
-import type { ExcelAnimalDescribeRow } from "#src/models/genshinAssets/archive/ExcelAnimalDescribeRow";
+import type { ExcelAnimalDescribeRow } from "#src/models/genshinAssets/shared/ExcelAnimalDescribeRow";
 import type { ExcelMonsterDescribeRow } from "#src/models/genshinAssets/enemies/ExcelMonsterDescribeRow";
 
 import {

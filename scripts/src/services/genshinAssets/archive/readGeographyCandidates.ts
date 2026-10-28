@@ -1,4 +1,4 @@
-import type { ExcelViewCodexRow } from "#src/models/genshinAssets/archive/ExcelViewCodexRow";
+import type { ExcelViewCodexRow } from "#src/models/genshinAssets/shared/ExcelViewCodexRow";
 import type { ViewpointCandidate } from "#src/models/genshinAssets/archive/ViewpointCandidate";
 
 import { VIEW_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
