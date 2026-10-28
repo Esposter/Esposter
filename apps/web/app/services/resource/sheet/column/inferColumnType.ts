@@ -6,8 +6,8 @@ import { DateFormats } from "#shared/models/resource/sheet/column/DateFormat";
 import { parseDate } from "#shared/util/date/parseDate";
 import { normalizeString } from "@esposter/shared";
 
-const BooleanValueStrings: readonly string[] = Object.values(BooleanValue);
-const checkIsBooleanValue = (value: string): value is BooleanValue => BooleanValueStrings.includes(value);
+const BOOLEAN_VALUE_STRINGS: readonly string[] = Object.values(BooleanValue);
+const checkIsBooleanValue = (value: string): value is BooleanValue => BOOLEAN_VALUE_STRINGS.includes(value);
 
 export const inferColumnType = (values: string[]): DatasetColumnType => {
   const normalizedValues = values.map((value) => normalizeString(value)).filter(Boolean);
