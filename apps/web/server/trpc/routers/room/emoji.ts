@@ -59,6 +59,7 @@ export const emojiRouter = router({
     if (checkIsUnicodeEmojiSlug(name))
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, name);
 
+    const roomEmojiContext = JSON.stringify({ name, roomId });
     const newRoomEmoji = await ctx.db.transaction(async (tx) => {
       // The room row is locked first, because the cap is a count and a count has no constraint behind it: two
       // Transactions reading 49 would both insert. The unique index is what makes a duplicate name impossible;
@@ -70,28 +71,20 @@ export const emojiRouter = router({
         .for("update");
       const roomEmojiCount = await readRoomEmojiCount(tx, roomId);
       if (roomEmojiCount >= MAX_ROOM_EMOJIS)
-        throw getInvalidOperationError(
-          Operation.Create,
-          DatabaseEntityType.RoomEmoji,
-          JSON.stringify({ name, roomId }),
-        );
+        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, roomEmojiContext);
 
       const existingRoomEmoji = await tx.query.roomEmojisInMessage.findFirst({
         columns: { id: true },
         where: { name: { eq: name }, roomId: { eq: roomId } },
       });
       if (existingRoomEmoji)
-        throw getInvalidOperationError(
-          Operation.Create,
-          DatabaseEntityType.RoomEmoji,
-          JSON.stringify({ name, roomId }),
-        );
+        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, roomEmojiContext);
 
       return requireMutation(
         (await tx.insert(roomEmojisInMessage).values({ id, name, roomId }).returning())[0],
         Operation.Create,
         DatabaseEntityType.RoomEmoji,
-        JSON.stringify({ name, roomId }),
+        roomEmojiContext,
       );
     });
     const roomEmojiWithSasUrl = await getRoomEmojiWithSasUrl(containerClient, newRoomEmoji);
