@@ -25,7 +25,7 @@ describe(listChargedBlobsByUser, () => {
     db = await createMockDb();
     await db
       .insert(usersInAuth)
-      .values([createUser(userId, new Date(0), "name"), createUser(otherUserId, new Date(0), "otherName")]);
+      .values([createUser(userId, new Date(0), "name"), createUser(otherUserId, new Date(0), "name")]);
   });
 
   afterEach(async () => {

@@ -1,8 +1,9 @@
 import { createContainerClient } from "#src/services/azure/container/createContainerClient.test";
 import { deleteUserDirectories } from "#src/services/azure/container/deleteUserDirectories";
+import { getCharacterPackStagingPrefix } from "#src/services/azure/container/getCharacterPackStagingPrefix";
 import { listBlobNames } from "#src/services/azure/container/listBlobNames";
 import { uploadBlobs } from "#src/services/azure/container/uploadBlobs.test";
-import { AzureContainer } from "@esposter/db-schema";
+import { AzureContainer, getSaveBlobName, getUserProfileImageBlobName } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -21,28 +22,30 @@ describe(deleteUserDirectories, () => {
     const userAssetsClient = createContainerClient(AzureContainer.UserAssets);
     const genshinAssetsClient = createContainerClient(AzureContainer.GenshinAssets);
     await uploadBlobs(publicUserAssetsClient, [
-      `${userId}/ProfileImage`,
+      getUserProfileImageBlobName(userId),
       `${userId}/ProfileImage.thumb`,
-      `${otherUserId}/ProfileImage`,
+      getUserProfileImageBlobName(otherUserId),
     ]);
     await uploadBlobs(userAssetsClient, [`${userId}/CallBackground/0`]);
     // The shared character-pack files are keyed by hash across accounts, so the sweep never reaches them, and a staged
     // Pack sits outside the user's prefix, so it is left for its own sweep
     await uploadBlobs(genshinAssetsClient, [
-      `${userId}/save.json`,
-      `character-packs/staging/${userId}/keep/${sha256}`,
+      getSaveBlobName(userId),
+      `${getCharacterPackStagingPrefix(userId)}keep/${sha256}`,
       `character-packs/files/${sha256}`,
     ]);
 
     await deleteUserDirectories([publicUserAssetsClient, userAssetsClient, genshinAssetsClient], userId);
 
-    await expect(listBlobNames(publicUserAssetsClient, "")).resolves.toStrictEqual([`${otherUserId}/ProfileImage`]);
+    await expect(listBlobNames(publicUserAssetsClient, "")).resolves.toStrictEqual([
+      getUserProfileImageBlobName(otherUserId),
+    ]);
     await expect(listBlobNames(userAssetsClient, "")).resolves.toStrictEqual([]);
     const genshinAssetsBlobNames = await listBlobNames(genshinAssetsClient, "");
 
     expect(genshinAssetsBlobNames.toSorted()).toStrictEqual([
       `character-packs/files/${sha256}`,
-      `character-packs/staging/${userId}/keep/${sha256}`,
+      `${getCharacterPackStagingPrefix(userId)}keep/${sha256}`,
     ]);
   });
 
@@ -53,7 +56,7 @@ describe(deleteUserDirectories, () => {
 
     const userId = crypto.randomUUID();
     const containerClient = createContainerClient(AzureContainer.PublicUserAssets);
-    await uploadBlobs(containerClient, [`${userId}/ProfileImage`, `${userId}/ProfileImage.thumb`]);
+    await uploadBlobs(containerClient, [getUserProfileImageBlobName(userId), `${userId}/ProfileImage.thumb`]);
     await deleteUserDirectories([containerClient], userId);
 
     await expect(deleteUserDirectories([containerClient], userId)).resolves.toBeUndefined();

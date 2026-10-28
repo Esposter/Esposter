@@ -69,7 +69,7 @@ describe(createMockDb, () => {
     await db
       .insert(usersInAuth)
       .values({ email: `${userId}@example.com`, emailVerified: false, id: userId, name: userId });
-    await db.insert(accountsInAuth).values({ accountId: userId, id: userId, providerId: "credential", userId });
+    await db.insert(accountsInAuth).values({ accountId: userId, id: userId, providerId: "providerId", userId });
 
     await db.delete(usersInAuth).where(eq(usersInAuth.id, userId));
 

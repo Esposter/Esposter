@@ -1,8 +1,9 @@
 import { createContainerClient } from "#src/services/azure/container/createContainerClient.test";
 import { deleteCharacterPackStaging } from "#src/services/azure/container/deleteCharacterPackStaging";
+import { getCharacterPackStagingPrefix } from "#src/services/azure/container/getCharacterPackStagingPrefix";
 import { listBlobNames } from "#src/services/azure/container/listBlobNames";
 import { uploadBlobs } from "#src/services/azure/container/uploadBlobs.test";
-import { AzureContainer } from "@esposter/db-schema";
+import { AzureContainer, getSaveBlobName } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -20,9 +21,9 @@ describe(deleteCharacterPackStaging, () => {
     const genshinAssetsClient = createContainerClient(AzureContainer.GenshinAssets);
     // The shared character-pack files are keyed by hash across accounts, so the staging sweep never reaches them
     await uploadBlobs(genshinAssetsClient, [
-      `${userId}/save.json`,
-      `character-packs/staging/${userId}/keep/${sha256}`,
-      `character-packs/staging/${otherUserId}/keep/${sha256}`,
+      getSaveBlobName(userId),
+      `${getCharacterPackStagingPrefix(userId)}keep/${sha256}`,
+      `${getCharacterPackStagingPrefix(otherUserId)}keep/${sha256}`,
       `character-packs/files/${sha256}`,
     ]);
 
@@ -31,9 +32,9 @@ describe(deleteCharacterPackStaging, () => {
     // The user's own prefix sorts before or after the pack folders depending on the id's first character, so both sides sort
     expect((await listBlobNames(genshinAssetsClient, "")).toSorted()).toStrictEqual(
       [
-        `${userId}/save.json`,
+        getSaveBlobName(userId),
         `character-packs/files/${sha256}`,
-        `character-packs/staging/${otherUserId}/keep/${sha256}`,
+        `${getCharacterPackStagingPrefix(otherUserId)}keep/${sha256}`,
       ].toSorted(),
     );
   });
@@ -45,7 +46,7 @@ describe(deleteCharacterPackStaging, () => {
 
     const userId = crypto.randomUUID();
     const genshinAssetsClient = createContainerClient(AzureContainer.GenshinAssets);
-    await uploadBlobs(genshinAssetsClient, [`character-packs/staging/${userId}/keep/${userId}`]);
+    await uploadBlobs(genshinAssetsClient, [`${getCharacterPackStagingPrefix(userId)}keep/${userId}`]);
     await deleteCharacterPackStaging(genshinAssetsClient, userId);
 
     await expect(deleteCharacterPackStaging(genshinAssetsClient, userId)).resolves.toBeUndefined();
