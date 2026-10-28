@@ -33,11 +33,16 @@ export const fitLoginWalkway = async (
 ): Promise<{ bottom: number; pieces: LoginWalkwayPiece[]; top: number }> => {
   const heightCountMap = new Map<number, number>();
   const pieces: LoginWalkwayPiece[] = [];
-  for (const placement of placements
-    .filter(({ mesh }) => WALKWAY_MESH_REGEX.test(mesh))
-    .toSorted((firstPlacement, secondPlacement) => firstPlacement.mesh.localeCompare(secondPlacement.mesh))) {
-    // oxlint-disable-next-line no-await-in-loop -- one small piece is read at a time
-    const { faces, vertices } = await readObjMesh(join(meshDirectory, `${placement.mesh}.obj`));
+  const placedMeshes = await Promise.all(
+    placements
+      .filter(({ mesh }) => WALKWAY_MESH_REGEX.test(mesh))
+      .toSorted((firstPlacement, secondPlacement) => firstPlacement.mesh.localeCompare(secondPlacement.mesh))
+      .map(async (placement) => ({ obj: await readObjMesh(join(meshDirectory, `${placement.mesh}.obj`)), placement })),
+  );
+  for (const {
+    obj: { faces, vertices },
+    placement,
+  } of placedMeshes) {
     const world = toWorldVertices(vertices, placement);
     for (const [, y] of world) heightCountMap.set(roundFitted(y), (heightCountMap.get(roundFitted(y)) ?? 0) + 1);
     const triangles = faces.flatMap(([first, second, third]) => {

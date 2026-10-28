@@ -56,6 +56,13 @@ const waypointsAtom = atom({ key: "waypoints", plugin: "genshin-mods" } as const
 let warnedLastCacheRequestAt = 0;
 let isTurnRunning = false;
 
+// The engine's timer and hook slots take no promise, so an action run from one floats. Every action run through here
+// Resolves each of its outcomes rather than rejecting, which is what lets the floating stand
+const runDetached = (action: () => Promise<void>): void => {
+  // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer and hook slots take no promise, and every action run through here resolves each of its outcomes
+  action();
+};
+
 // The cache goes cold at a known instant, so its warning is one timer armed for that instant at each turn's end, from the
 // Request that last read or wrote the cache, rather than a check on a clock. The timer warns once for that request, and
 // Stands down while a turn runs, since that turn's end arms it again. A timer left from an earlier turn finds the cache
@@ -83,8 +90,7 @@ const armCacheWarning = async ($: EngineInterface) => {
   if (delayMs === undefined) return;
 
   $.clock.after(delayMs, () => {
-    // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and every call in the warning resolves
-    warnCache($);
+    runDetached(() => warnCache($));
   });
 };
 
@@ -147,14 +153,12 @@ const watchPulse = async ($: EngineInterface) => {
   const cwd = await $.session.cwd();
   if (!(await $.fs.exists(`${cwd}/${MACHINE_WATCHER_SCRIPT}`))) return;
 
-  // oxlint-disable-next-line no-underscore-dangle -- The chunks are discarded, and the binding is only the loop's syntax
-  for await (const _chunk of $.process.spawn({ argv: ["pnpm", "ai:machine:watch"], cwd })) {
+  for await (const _ of $.process.spawn({ argv: ["pnpm", "ai:machine:watch"], cwd })) {
     // The watcher's output is discarded, since nothing in the session reads it
   }
 
   $.clock.after(MACHINE_WATCHER_RETRY_MILLISECONDS, () => {
-    // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and the watcher's run settles as its process exits
-    watchPulse($);
+    runDetached(() => watchPulse($));
   });
 };
 
@@ -190,7 +194,7 @@ export const registerLifecycle = (on: On, typeSafeKey: string): void => {
         $.command.register({ argumentHint: "[on|off]", description: ModDescriptionMap[name], name }),
       ),
     );
-    watchPulse($);
+    runDetached(() => watchPulse($));
     return next(e);
   });
 
@@ -219,8 +223,7 @@ export const registerLifecycle = (on: On, typeSafeKey: string): void => {
     const { tasks } = await read($, commissionAtom);
     if (tasks.length > 0 && tasks.every(({ status }) => status === "completed")) await closeCommission($);
     $.clock.after(0, () => {
-      // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and scoring resolves every outcome itself
-      scoreSins($, e.text, typeSafeKey);
+      runDetached(() => scoreSins($, e.text, typeSafeKey));
     });
     return next(e);
   });
@@ -269,8 +272,7 @@ export const registerLifecycle = (on: On, typeSafeKey: string): void => {
     await armCacheWarning($);
     if (e.reason === "answer" && (await read($, enabledModsAtom)).waypoints)
       $.clock.after(0, () => {
-        // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and a fork resolves every outcome rather than rejecting
-        suggestWaypoints($);
+        runDetached(() => suggestWaypoints($));
       });
     return result;
   });

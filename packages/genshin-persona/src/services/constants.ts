@@ -51,8 +51,7 @@ export const VOICE_SOCKET_PATH: string =
 // What names the plugin's own files outside its state directory
 export const PLUGIN_MARKER = "genshin-persona";
 // The WAV a sentence is played from carries the process, so two synthesizers on one machine never share a name.
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
-export const PLAYER_FILE_PREFIX: string = `${PLUGIN_MARKER}-${process.pid}-`;
+export const PLAYER_FILE_PREFIX: `${typeof PLUGIN_MARKER}-${number}-` = `${PLUGIN_MARKER}-${process.pid}-`;
 // How many of a character's lines the session holds for the prompt hint, and the length each tip is cut to, at the
 // Last sentence that fits
 export const MAX_SPINNER_TIP_COUNT = 200;
@@ -107,11 +106,9 @@ export const LORE_MOMENT_LOCALE = "en-AU";
 export const DEFAULT_LANGUAGE: GameLanguage = GameLanguage.English;
 // The source of the clip a voice is cloned from, and of the stems every dub files a character's clips under
 export const WIKI_ORIGIN = "https://genshin-impact.fandom.com";
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template would otherwise infer
-export const WIKI_VOICE_OVERS_URL: string = `${WIKI_ORIGIN}/api.php?action=parse&prop=wikitext&format=json&page=`;
+export const WIKI_VOICE_OVERS_URL: `${typeof WIKI_ORIGIN}/api.php?action=parse&prop=wikitext&format=json&page=` = `${WIKI_ORIGIN}/api.php?action=parse&prop=wikitext&format=json&page=`;
 // The imageinfo query, which answers a file title with the file's URL in one call
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template would otherwise infer
-export const WIKI_IMAGE_INFO_URL: string = `${WIKI_ORIGIN}/api.php?action=query&prop=imageinfo&iiprop=url&format=json&titles=`;
+export const WIKI_IMAGE_INFO_URL: `${typeof WIKI_ORIGIN}/api.php?action=query&prop=imageinfo&iiprop=url&format=json&titles=` = `${WIKI_ORIGIN}/api.php?action=query&prop=imageinfo&iiprop=url&format=json&titles=`;
 // oxlint-disable-next-line naming/no-site-name-literal -- the plugin ships on its own, without `@esposter/shared` to read `SITE_NAME` from
 export const WIKI_USER_AGENT = "esposter-genshin-persona (card authoring)";
 // A host that takes the connection and never finishes would otherwise hold the hook a reply waits behind open

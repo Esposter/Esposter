@@ -115,13 +115,14 @@ const speak = async (request: SpeechRequest, player: AudioPlayer | undefined, ch
     if (playerFailure) writeVoiceLog(`the player did not play: ${playerFailure}`);
   };
   let playback: Promise<void> = Promise.resolve();
+  let status = VoiceStatus.Ok;
   for (const line of request.lines) {
     // oxlint-disable-next-line no-await-in-loop -- One device: lines synthesize and play back one after another
     const clip = await synthesizer.synthesize(line, speaker);
     if (!clip) {
-      // oxlint-disable-next-line no-await-in-loop -- The reading ends at a line the engine could not speak
-      await playback;
-      return VoiceStatus.Error;
+      // The reading ends at a line the engine could not speak, once the line before it has played
+      status = VoiceStatus.Error;
+      break;
     }
 
     if (synthesizer.device !== settledDevice) {
@@ -139,7 +140,7 @@ const speak = async (request: SpeechRequest, player: AudioPlayer | undefined, ch
   }
 
   await playback;
-  return VoiceStatus.Ok;
+  return status;
 };
 // The player is spawned before the first line is synthesized, so its start is paid under that synthesis rather than
 // In front of the first sound. A request that throws is dropped and keeps the engine

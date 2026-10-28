@@ -1,3 +1,5 @@
+import { getResultAsync } from "#src/services/error/getResultAsync";
+import { noop } from "#src/util/function/noop";
 import { settleAll } from "#src/util/promise/settleAll";
 import { describe, expect, test } from "vitest";
 
@@ -19,14 +21,15 @@ describe(settleAll, () => {
     expect.hasAssertions();
     const { promise, resolve } = Promise.withResolvers<string>();
     const events: string[] = [];
-    // eslint-disable-next-line no-restricted-syntax -- `settleAll` rejects, and this asserts that rejection directly: a Result wrapper would assert the wrapper rather than the primitive under test
-    const settling = settleAll([
-      async () => {
-        await promise;
-        events.push("settled");
-      },
-      () => Promise.reject(new Error("a")),
-    ]).catch(() => {
+    const settling = getResultAsync(() =>
+      settleAll([
+        async () => {
+          await promise;
+          events.push("settled");
+        },
+        () => Promise.reject(new Error("a")),
+      ]),
+    ).match(noop, () => {
       events.push("threw");
     });
     await new Promise((resolveTick) => {
@@ -46,16 +49,17 @@ describe(settleAll, () => {
     expect.hasAssertions();
     const { promise, resolve } = Promise.withResolvers<string>();
     const events: string[] = [];
-    // eslint-disable-next-line no-restricted-syntax -- `settleAll` rejects, and this asserts that rejection directly: a Result wrapper would assert the wrapper rather than the primitive under test
-    const settling = settleAll([
-      async () => {
-        await promise;
-        events.push("settled");
-      },
-      () => {
-        throw new Error("a");
-      },
-    ]).catch(() => {
+    const settling = getResultAsync(() =>
+      settleAll([
+        async () => {
+          await promise;
+          events.push("settled");
+        },
+        () => {
+          throw new Error("a");
+        },
+      ]),
+    ).match(noop, () => {
       events.push("threw");
     });
     await new Promise((resolveTick) => {
@@ -78,11 +82,9 @@ describe(settleAll, () => {
 
   test("carries every rejection of a wave under the first one's message", async () => {
     expect.hasAssertions();
-    // eslint-disable-next-line no-restricted-syntax -- `settleAll` rejects, and this asserts that rejection directly: a Result wrapper would assert the wrapper rather than the primitive under test
-    const caughtError = await settleAll([
-      () => Promise.reject(new Error("a")),
-      () => Promise.reject(new Error("b")),
-    ]).catch((error: unknown) => error);
+    const caughtError = await getResultAsync(() =>
+      settleAll([() => Promise.reject(new Error("a")), () => Promise.reject(new Error("b"))]),
+    ).match(noop, (error: unknown) => error);
 
     expect(caughtError).toMatchInlineSnapshot(`[AggregateError: a]`);
     expect(caughtError instanceof AggregateError ? caughtError.errors : []).toMatchInlineSnapshot(`

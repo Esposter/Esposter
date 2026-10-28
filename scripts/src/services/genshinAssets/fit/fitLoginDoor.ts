@@ -160,11 +160,11 @@ export const fitLoginDoor = async (
       ),
       DOOR_DECIMALS,
     );
-    const depths = (groupDepthsMap.get(group) ?? []).reduce(
-      // oxlint-disable-next-line no-accumulating-spread -- a part keeps about a dozen depths, so the copies cost nothing
-      (kept, depth) => (depth - (kept.at(-1) ?? -Infinity) < DOOR_MIN_DEPTH_STEP ? kept : [...kept, depth]),
-      [least],
-    );
+    const depths = [least];
+    for (const depth of groupDepthsMap.get(group) ?? []) {
+      if (depth - (depths.at(-1) ?? -Infinity) < DOOR_MIN_DEPTH_STEP) continue;
+      depths.push(depth);
+    }
     return fitReliefLayers(heights, depths, grid, groupHeightsMap.get(group));
   };
   const sampleCount = piecePoses[0]?.length ?? 0;

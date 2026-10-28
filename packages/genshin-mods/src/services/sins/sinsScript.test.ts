@@ -1,7 +1,6 @@
 /* oxlint-disable no-restricted-properties -- The script writes plain JSON with no date in it, so the shared reviver is not needed */
-import type { AddressInfo } from "node:net";
-
 import type { Server } from "node:http";
+import type { AddressInfo } from "node:net";
 
 // oxlint-disable-next-line no-restricted-imports -- A mod has no shared-node dependency, so this test's own spawn passes windowsHide, as the other plugins' helpers do
 import { spawn } from "node:child_process";

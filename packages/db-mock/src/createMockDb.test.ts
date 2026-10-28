@@ -36,8 +36,7 @@ describe(createMockDb, () => {
     await migratedPGlite.exec("CREATE EXTENSION IF NOT EXISTS pg_trgm");
     const previousJson = await generateDrizzleJson({});
     const statements = await generateMigration(previousJson, await generateDrizzleJson(schema, previousJson.id));
-    // oxlint-disable-next-line no-await-in-loop -- Order is the contract: a migration's statements run in the order they were generated
-    for (const statement of statements) await migratedPGlite.exec(statement);
+    await migratedPGlite.exec(statements.join("\n"));
     migratedIntrospection = await introspect(migratedPGlite);
 
     const snapshotPGlite = new PGlite({

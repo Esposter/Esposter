@@ -16,6 +16,7 @@ export const rejoiningSessionSchema: z.ZodObject<{
   events: z.ZodArray<typeof agentEventSchema>;
   isSideChat: z.ZodBoolean;
   sessionId: z.ZodString;
+  // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- events is a zod discriminated union over AgentEventType, and zod carries that enum behind typeof rather than as the enum type, so the rule cannot see it in this value
 }> = z.object({
   events: createUniqueArraySchema(agentEventSchema, "id"),
   isSideChat: z.boolean(),

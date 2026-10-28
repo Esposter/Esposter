@@ -62,8 +62,7 @@ describe(MockTableClient, () => {
     await client.createEntity<TableEntity>({ partitionKey: "", rowKey: "0" });
     const entities = await readByPage(client);
 
-    // oxlint-disable-next-line no-shadow -- destructuring the entity's own partitionKey to project it, not the suite constant
-    expect(entities.map(({ partitionKey, rowKey }) => ({ partitionKey, rowKey }))).toStrictEqual([
+    expect(entities.map((entity) => ({ partitionKey: entity.partitionKey, rowKey: entity.rowKey }))).toStrictEqual([
       { partitionKey: "", rowKey: "0" },
       { partitionKey: "", rowKey: "1" },
       { partitionKey: " ", rowKey: "0" },

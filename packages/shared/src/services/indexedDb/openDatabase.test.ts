@@ -172,7 +172,7 @@ describe(openDatabase, () => {
     expect.hasAssertions();
 
     const database = await openDatabase<{
-      logs: { indexes: Record<never, never>; key: number; value: { text: string } };
+      logs: { indexes: Record<string, IDBValidKey>; key: number; value: { text: string } };
     }>("generatedKeys", 1, {
       upgrade: (upgradeDatabase) => {
         upgradeDatabase.createObjectStore("logs", { autoIncrement: true });
@@ -186,15 +186,13 @@ describe(openDatabase, () => {
   test("#315 stores a NaN value and reads it back", async () => {
     expect.hasAssertions();
 
-    const database = await openDatabase<{ counters: { indexes: Record<never, never>; key: string; value: number } }>(
-      "nanValues",
-      1,
-      {
-        upgrade: (upgradeDatabase) => {
-          upgradeDatabase.createObjectStore("counters");
-        },
+    const database = await openDatabase<{
+      counters: { indexes: Record<string, IDBValidKey>; key: string; value: number };
+    }>("nanValues", 1, {
+      upgrade: (upgradeDatabase) => {
+        upgradeDatabase.createObjectStore("counters");
       },
-    );
+    });
     await database.put("counters", Number.NaN, "a");
 
     await expect(database.get("counters", "a")).resolves.toBeNaN();

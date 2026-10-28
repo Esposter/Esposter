@@ -16,6 +16,7 @@ export const childEventsMessageSchema: z.ZodObject<{
   events: z.ZodArray<typeof agentEventSchema>;
   sessionId: z.ZodString;
   type: z.ZodLiteral<ChildMessageType.Events>;
+  // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- events is a zod discriminated union over AgentEventType, and zod carries that enum behind typeof rather than as the enum type, so the rule cannot see it in this value
 }> = z.object({
   ...createBaseChildMessageSchema(z.literal(ChildMessageType.Events)).shape,
   events: createUniqueArraySchema(agentEventSchema, "id"),

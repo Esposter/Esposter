@@ -1,12 +1,12 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { runCommand } from "#src/services/timing/runCommand";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawn } from "@esposter/shared-node/child-process";
 import { defineCommand } from "citty";
+import { readFileSync } from "node:fs";
 import { constants } from "node:os";
-
-// oxlint-disable-next-line no-restricted-imports -- the repo-root manifest, which no `#` map can reach
-import packageJson from "../../../package.json" with { type: "json" };
+import { join } from "node:path";
 
 const CROSS_OS_PROPERTY = "crossOS";
 
@@ -25,6 +25,9 @@ await runCommand(
     },
     run: ({ args }) => {
       const { platform } = process;
+      const packageJson = parseMachineJson<Record<string, unknown>>(
+        readFileSync(join(REPOSITORY_ROOT, "package.json"), "utf8"),
+      );
       const command = (packageJson[CROSS_OS_PROPERTY] as Record<string, Partial<Record<string, string>>>)[
         args.script
       ]?.[platform];

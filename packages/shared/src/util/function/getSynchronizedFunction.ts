@@ -1,3 +1,5 @@
+import { withFinalizerAsync } from "#src/services/error/withFinalizerAsync";
+
 // Every in-flight fire-and-forget, so callers that need completion (tests, shutdown) can await
 // A deterministic drain instead of polling for observable side effects
 const pendingPromises = new Set<Promise<unknown>>();
@@ -7,10 +9,12 @@ const pendingPromises = new Set<Promise<unknown>>();
 export const getSynchronizedFunction =
   <TArgs extends unknown[]>(asyncFunction: (...args: TArgs) => Promise<unknown>): ((...args: TArgs) => void) =>
   (...args: TArgs) => {
-    // eslint-disable-next-line no-restricted-syntax -- deregisters this promise from the drain set on both paths without touching its outcome, which is the one thing a Result wrapper cannot do here: this function must never reject
-    const promise = asyncFunction(...args).finally(() => {
-      pendingPromises.delete(promise);
-    });
+    const promise = withFinalizerAsync(
+      () => asyncFunction(...args),
+      () => {
+        pendingPromises.delete(promise);
+      },
+    );
     pendingPromises.add(promise);
   };
 

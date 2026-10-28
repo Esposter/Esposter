@@ -5,9 +5,6 @@ import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { beforeAll, describe, expect, test } from "vitest";
 
-// oxlint-disable-next-line no-restricted-imports -- the repo-root linter config, which no `#` map can reach
-import oxlintConfiguration from "../../../oxlint.config.ts";
-
 interface OxlintConfiguration {
   jsPlugins: string[];
   overrides: { rules?: Record<string, unknown> }[];
@@ -23,21 +20,18 @@ describe("oxlintPlugins", () => {
   const PLUGINS_DIRECTORY = "scripts/src/oxlint";
   const PLUGIN_EXTENSION = ".ts";
   const SUITE_EXTENSION = ".test.ts";
-  const { jsPlugins, overrides, rules } = oxlintConfiguration as OxlintConfiguration;
   const pluginPaths = readdirSync(join(REPOSITORY_ROOT, PLUGINS_DIRECTORY))
     .filter((fileName) => fileName.endsWith(PLUGIN_EXTENSION) && !fileName.endsWith(SUITE_EXTENSION))
     .map((fileName) => `./${PLUGINS_DIRECTORY}/${fileName}`)
     .toSorted();
-  const enabledRules = new Set(
-    [rules, ...overrides.map((override) => override.rules ?? {})].flatMap((ruleMap) =>
-      Object.entries(ruleMap)
-        .filter(([, setting]) => setting !== "off")
-        .map(([rule]) => rule),
-    ),
-  );
+  let configuration: OxlintConfiguration = { jsPlugins: [], overrides: [], rules: {} };
   let plugins: Plugin[] = [];
 
   beforeAll(async () => {
+    const { default: oxlintConfiguration } = (await import(join(REPOSITORY_ROOT, "oxlint.config.ts"))) as {
+      default: OxlintConfiguration;
+    };
+    configuration = oxlintConfiguration;
     plugins = await Promise.all(
       pluginPaths.map(async (pluginPath) => {
         const { default: plugin } = (await import(join(REPOSITORY_ROOT, pluginPath))) as { default: Plugin };
@@ -49,12 +43,20 @@ describe("oxlintPlugins", () => {
   test("loads every plugin entrypoint", () => {
     expect.hasAssertions();
 
-    expect(jsPlugins.toSorted()).toStrictEqual(pluginPaths);
+    expect(configuration.jsPlugins.toSorted()).toStrictEqual(pluginPaths);
   });
 
   test("enables every rule a plugin defines", () => {
     expect.hasAssertions();
 
+    const { overrides, rules } = configuration;
+    const enabledRules = new Set(
+      [rules, ...overrides.map((override) => override.rules ?? {})].flatMap((ruleMap) =>
+        Object.entries(ruleMap)
+          .filter(([, setting]) => setting !== "off")
+          .map(([rule]) => rule),
+      ),
+    );
     const disabledRules = plugins
       .flatMap(({ meta, rules: pluginRules }) => Object.keys(pluginRules).map((rule) => `${meta?.name}/${rule}`))
       .filter((rule) => !enabledRules.has(rule));

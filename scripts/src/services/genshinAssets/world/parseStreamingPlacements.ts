@@ -13,19 +13,17 @@ const CHUNK_RECORDS_BIT = 2;
 const CHUNK_KNOWN_BITS = CHUNK_ID_BIT | CHUNK_RECORDS_BIT;
 // A record's fields, each present where its bit of the record's leading mask is set and written in the bits' order;
 // Bit 9 is a flag with no bytes. A mask with a bit past these ends its chunk, as no record of a placement carries one
-/* eslint-disable perfectionist/sort-objects -- bit order is the format */
 const RecordBit = {
   Flags: 1,
-  PathHash: 1 << 1,
-  PrefabId: 1 << 2,
-  Radius: 1 << 3,
-  Position: 1 << 4,
-  Rotation: 1 << 5,
-  Scale: 1 << 6,
   Instance: 1 << 7,
   Parent: 1 << 8,
+  PathHash: 1 << 1,
+  Position: 1 << 4,
+  PrefabId: 1 << 2,
+  Radius: 1 << 3,
+  Rotation: 1 << 5,
+  Scale: 1 << 6,
 } as const;
-/* eslint-enable perfectionist/sort-objects */
 const RECORD_MASK_LIMIT = 1 << 10;
 // A vector's components each present where their bit of its own leading byte is set, x first
 const VECTOR_AXES = [1, 2, 4] as const;

@@ -9,6 +9,7 @@ import { describe, expect, test } from "vitest";
 
 // `pnpm pack` reads the same `files` the release's `npm-packlist` does, and is the packer the repo already runs
 const readPackedPaths = async (packageDirectory: string): Promise<string[]> => {
+  // oxlint-disable-next-line typescript/strict-void-return -- promisify settles through the callback and never reads execFile's ChildProcess return, and a void wrapper would lose the promisify.custom that resolves { stdout } (packages/shared-node/src/services/childProcess/execFile.ts:13-15)
   const { stdout } = await promisify(execFile)(PNPM_FILE, [...PNPM_ARGS, "pack", "--dry-run", "--json"], {
     cwd: join(REPOSITORY_ROOT, packageDirectory),
     encoding: "utf8",

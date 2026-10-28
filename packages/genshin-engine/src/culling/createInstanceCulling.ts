@@ -41,7 +41,9 @@ export const createInstanceCulling = ({ count, indexCount, isVisible }: Instance
   })().compute(count);
   return {
     cull: (renderer: Renderer) => {
+      // oxlint-disable-next-line typescript/no-floating-promises -- cull is typed void, so the promise cannot be returned for the caller to await, and genshin-engine's package.json (packages/genshin-engine/package.json) lists no @esposter/shared dependency, only @esposter/shared-node as a dev dependency, so the engine cannot import a shared helper to wrap it
       renderer.compute(resetCount);
+      // oxlint-disable-next-line typescript/no-floating-promises -- the same constraint as the line above: cull is typed void and the engine imports no shared promise helper, so the second compute is not awaited either
       renderer.compute(cullInstances);
     },
     dispose: () => {

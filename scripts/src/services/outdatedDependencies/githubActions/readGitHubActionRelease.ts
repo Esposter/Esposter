@@ -13,6 +13,7 @@ const TAG_REF_REGEX = /^(?<sha>[\da-f]{40})\trefs\/tags\/(?<tag>[^^\s]+)(?<peele
 // The second time peeled to the commit it tags, which is the sha a pin holds — so a peeled line overrides the tag
 // Object's. Bounded like every request a script makes, so a stalled remote is an error row rather than a hung run
 export const readGitHubActionRelease = async ({ packageName, specifier }: DependencyEntry): Promise<Release> => {
+  // oxlint-disable-next-line typescript/strict-void-return -- promisify settles through the callback and never reads execFile's ChildProcess return, and a void wrapper would lose the promisify.custom that resolves { stdout } (packages/shared-node/src/services/childProcess/execFile.ts:13-15)
   const { stdout } = await promisify(execFile)(
     "git",
     ["ls-remote", "--tags", `https://github.com/${packageName}.git`],

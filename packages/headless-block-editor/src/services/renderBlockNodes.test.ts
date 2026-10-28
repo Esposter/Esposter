@@ -22,7 +22,7 @@ interface SectionNodeProps extends BlockNodeProps {
 type TestNode = HeadingNode | ImageNode | SectionNode;
 
 // The consumer's children port for the test nodes: one exhaustive switch over the node's type
-const TEST_RENDER_CHILDREN = (node: TestNode): ReturnType<BlockChildren<TestNode>> => {
+const TEST_RENDER_CHILDREN: BlockChildren<TestNode> = (node) => {
   switch (node.type) {
     case "heading":
     case "image":

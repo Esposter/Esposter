@@ -1,6 +1,7 @@
 import type { PackageManifest } from "@esposter/configuration";
 
 import { getFileSizeReport } from "@esposter/configuration";
+import { jsonDateParse } from "@esposter/shared";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -29,8 +30,7 @@ describe("@esposter/functions", () => {
   // Because the suite runs from the repo root as well as from here
   test("declares the entry point the Functions host loads", () => {
     expect.hasAssertions();
-    // oxlint-disable-next-line no-restricted-properties -- a package manifest carries no dates, so reviving them would only cost a pass over it
-    const { main } = JSON.parse(readFileSync(resolve(packageDirectory, "package.json"), "utf8")) as PackageManifest;
+    const { main } = jsonDateParse(readFileSync(resolve(packageDirectory, "package.json"), "utf8")) as PackageManifest;
 
     expect(main).toBe("./dist/index.js");
     expect(existsSync(resolve(packageDirectory, main ?? ""))).toBe(true);

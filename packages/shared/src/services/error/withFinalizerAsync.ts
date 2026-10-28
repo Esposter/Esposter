@@ -1,4 +1,3 @@
-/* oxlint-disable typescript/require-await -- async wrappers intentional: converts sync throws into rejections so ResultAsync.fromPromise captures them */
 import type { Promisable } from "type-fest";
 
 import { getResultAsync } from "#src/services/error/getResultAsync";
@@ -9,9 +8,14 @@ export const withFinalizerAsync = async <T>(
   callback: () => Promisable<T>,
   finalizer?: () => Promisable<void>,
 ): Promise<T> => {
-  const callbackResult = await getResultAsync(async () => callback());
+  const callbackResult = await getResultAsync(async () => {
+    const value = await callback();
+    return value;
+  });
   if (finalizer)
-    await getResultAsync(async () => finalizer()).match(noop, (error) => {
+    await getResultAsync(async () => {
+      await finalizer();
+    }).match(noop, (error) => {
       reportFinalizerError(callbackResult, error);
     });
   return callbackResult.match(

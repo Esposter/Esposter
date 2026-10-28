@@ -209,9 +209,9 @@ export const usePdfViewer = ({
     printRoot = undefined;
   };
 
-  const followBookmark = (item: PdfOutline[number]) => {
-    if (item.dest) linkService?.goToDestination(item.dest);
-  };
+  const followBookmark = getSynchronizedFunction(async (item: PdfOutline[number]) => {
+    if (item.dest) await linkService?.goToDestination(item.dest);
+  });
   const goToPage = (pageNumber: number) => {
     if (pdfViewer && Number.isInteger(pageNumber) && pageNumber >= 1 && pageNumber <= pagesCount.value)
       pdfViewer.currentPageNumber = pageNumber;

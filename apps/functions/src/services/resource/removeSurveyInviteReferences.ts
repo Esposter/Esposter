@@ -12,7 +12,7 @@ import {
   resourcesInResource,
   ResourceType,
 } from "@esposter/db-schema";
-import { getResultAsync, InvalidOperationError, noop, Operation, takeOne } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, noop, Operation, settleAll, takeOne } from "@esposter/shared";
 import { and, eq, inArray, notInArray } from "drizzle-orm";
 import { createHash } from "node:crypto";
 
@@ -20,6 +20,8 @@ import { createHash } from "node:crypto";
 // EmailNodeType.SurveyInvite). The functions app cannot import the web's enums, so the tags are repeated here and only
 // Ever matched against stored content
 const SURVEY_INVITE_NODE_TYPES = new Set(["survey-invite", "SurveyInvite"]);
+// How many resources are rewritten at once, each held only until its own write and charge are done
+const RESOURCE_REWRITE_CONCURRENCY = 4;
 
 type StoredNode = Record<string, unknown>;
 
@@ -127,21 +129,21 @@ export const removeSurveyInviteReferences = async (
       ),
     );
 
-  for (const [sourceId, sourceLinks] of Map.groupBy(
-    danglingSurveyLinks,
-    (danglingSurveyLink) => danglingSurveyLink.sourceId,
-  )) {
-    const { contentVersion, userId } = takeOne(sourceLinks);
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource's copy at a time, each a read, a write and a charge
-    await getResultAsync(() =>
-      removeSurveyInviteReferencesFromResource(
-        context,
-        containerClient,
-        { contentVersion, id: sourceId, userId },
-        new Set(sourceLinks.map(({ targetId }) => targetId)),
-      ),
-    ).match(noop, (error) => {
-      context.error(`Failed to remove survey invites from resource ${sourceId}: `, error);
-    });
-  }
+  const sourceLinkEntries = [...Map.groupBy(danglingSurveyLinks, (danglingSurveyLink) => danglingSurveyLink.sourceId)];
+  await settleAll(
+    sourceLinkEntries.map(([sourceId, sourceLinks]) => async () => {
+      const { contentVersion, userId } = takeOne(sourceLinks);
+      await getResultAsync(() =>
+        removeSurveyInviteReferencesFromResource(
+          context,
+          containerClient,
+          { contentVersion, id: sourceId, userId },
+          new Set(sourceLinks.map(({ targetId }) => targetId)),
+        ),
+      ).match(noop, (error) => {
+        context.error(`Failed to remove survey invites from resource ${sourceId}: `, error);
+      });
+    }),
+    RESOURCE_REWRITE_CONCURRENCY,
+  );
 };

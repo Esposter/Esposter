@@ -32,16 +32,22 @@ export const readSceneLayout = async (layoutDirectory: string): Promise<SceneLay
   const objects: SceneObject[] = [];
   const objectNameMap = new Map<string, string>();
   const gameObjectDrawingMap = new Map<string, SceneDrawing>();
-  for (const block of await readdir(layoutDirectory)) {
-    const getTypeDirectory = (type: AssetType): string => join(layoutDirectory, block, type);
-    // oxlint-disable-next-line no-await-in-loop -- one block's files are listed at a time
-    const fileLists = await Promise.all(
-      LAYOUT_ASSET_TYPES.map((type) =>
-        existsSync(getTypeDirectory(type)) ? readdir(getTypeDirectory(type)) : Promise.resolve([]),
+  const getTypeDirectory = (block: string, type: AssetType): string => join(layoutDirectory, block, type);
+  const blocks = await readdir(layoutDirectory);
+  // Every block's type folders are listed at once, since a listing returns names only
+  const blockFileLists = await Promise.all(
+    blocks.map(async (block) => ({
+      block,
+      fileLists: await Promise.all(
+        LAYOUT_ASSET_TYPES.map((type) =>
+          existsSync(getTypeDirectory(block, type)) ? readdir(getTypeDirectory(block, type)) : Promise.resolve([]),
+        ),
       ),
-    );
+    })),
+  );
+  for (const { block, fileLists } of blockFileLists)
     for (const file of new Set(fileLists.flat())) {
-      const readType = <T>(type: AssetType): Promise<T[]> => readAll<T>(join(getTypeDirectory(type), file));
+      const readType = <T>(type: AssetType): Promise<T[]> => readAll<T>(join(getTypeDirectory(block, type), file));
       // oxlint-disable-next-line no-await-in-loop -- one file's dump is read at a time, holding its thousands of files
       const [gameObjects, transforms, meshFilters, meshRenderers, skinnedMeshRenderers] = await Promise.all([
         readType<DumpedGameObject>(AssetType.GameObject),
@@ -87,6 +93,5 @@ export const readSceneLayout = async (layoutDirectory: string): Promise<SceneLay
       for (const { m_GameObject, m_Materials, m_Mesh } of skinnedMeshRenderers)
         setDrawing(m_GameObject.m_PathID, m_Mesh, toPointers(m_Materials));
     }
-  }
   return { gameObjectDrawingMap, objectNameMap, objects };
 };

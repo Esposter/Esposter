@@ -6,7 +6,7 @@ import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
-import { jsonDateParse } from "@esposter/shared";
+import { jsonDateParse, settleAll } from "@esposter/shared";
 import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
@@ -15,6 +15,7 @@ import { Matrix4, Quaternion, Ray, Vector3 } from "three";
 
 // Far enough back that the path starts behind every part
 const PATH_START = 100_000;
+const MESH_READ_CONCURRENCY = 4;
 // Where a straight path through a component's exports, as the witness lays them out, passes through them: a line along
 // Three's +z at a point across it, each part it pierces with the depths it enters and leaves at, nearest first. A
 // Camera that glides along the path passes through exactly these, so a stand-in of ours that blocks the path anywhere
@@ -27,26 +28,34 @@ export const readPathClearance = async (
   const layout = jsonDateParse<SceneLayout>(await readFile(join(directory.root, WITNESS_LAYOUT_FILE_NAME), "utf8"));
   const ray = new Ray(new Vector3(x, y, -PATH_START), new Vector3(0, 0, 1));
   const hit = new Vector3();
-  const pierced: PiercedPart[] = [];
-  for (const { mesh, position, rotation, scale } of layout.placements) {
-    const path = join(directory.assets, AssetType.Mesh, `${mesh}.obj`);
-    if (!existsSync(path)) continue;
-    // oxlint-disable-next-line no-await-in-loop -- one mesh is read at a time
-    const { faces, vertices } = await readObjMesh(path);
-    const matrix = new Matrix4().compose(new Vector3(...position), new Quaternion(...rotation), new Vector3(...scale));
-    const world = vertices.map((vertex) => new Vector3(...toRightHanded(vertex)).applyMatrix4(matrix));
-    const depths = faces.flatMap(([first, second, third]) => {
-      const [a, b, c] = [world[first], world[second], world[third]];
-      return a && b && c && ray.intersectTriangle(a, b, c, false, hit) ? [hit.z] : [];
-    });
-    if (depths.length > 0)
-      pierced.push({
-        depths: [...new Set(depths.map((depth) => Math.round(depth * 100) / 100))].toSorted(
-          (firstDepth, secondDepth) => firstDepth - secondDepth,
-        ),
-        mesh,
-        position,
+  const piercedByMesh = await settleAll(
+    layout.placements.map(({ mesh, position, rotation, scale }) => async (): Promise<PiercedPart[]> => {
+      const path = join(directory.assets, AssetType.Mesh, `${mesh}.obj`);
+      if (!existsSync(path)) return [];
+      const { faces, vertices } = await readObjMesh(path);
+      const matrix = new Matrix4().compose(
+        new Vector3(...position),
+        new Quaternion(...rotation),
+        new Vector3(...scale),
+      );
+      const world = vertices.map((vertex) => new Vector3(...toRightHanded(vertex)).applyMatrix4(matrix));
+      const depths = faces.flatMap(([first, second, third]) => {
+        const [a, b, c] = [world[first], world[second], world[third]];
+        return a && b && c && ray.intersectTriangle(a, b, c, false, hit) ? [hit.z] : [];
       });
-  }
-  return pierced.toSorted(({ depths: [first = 0] }, { depths: [second = 0] }) => first - second);
+      return depths.length > 0
+        ? [
+            {
+              depths: [...new Set(depths.map((depth) => Math.round(depth * 100) / 100))].toSorted(
+                (firstDepth, secondDepth) => firstDepth - secondDepth,
+              ),
+              mesh,
+              position,
+            },
+          ]
+        : [];
+    }),
+    MESH_READ_CONCURRENCY,
+  );
+  return piercedByMesh.flat().toSorted(({ depths: [first = 0] }, { depths: [second = 0] }) => first - second);
 };

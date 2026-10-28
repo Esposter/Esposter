@@ -26,30 +26,31 @@ export const exportBlockBySource = async (
   { isUnparsed = false }: { isUnparsed?: boolean } = {},
 ): Promise<void> => {
   const blockName = basename(block, ".blk");
-  for (const type of types) {
-    const typeDirectory = join(directory, blockName, type);
-    runAnimeStudio(
-      [
-        join(INSTALLED_BLOCKS_DIRECTORY, block),
-        typeDirectory,
-        "--types",
-        isUnparsed ? `${type}${ANIMESTUDIO_UNPARSED_SUFFIX}` : type,
-        "--export_type",
-        exportType,
-        "--group_assets",
-        AnimeStudioGroupType.BySource,
-      ],
-      GENSHIN_ANIMESTUDIO_OPTIONS,
-    );
-    const sourceDirectory = join(typeDirectory, `${blockName}${SOURCE_EXPORT_SUFFIX}`);
-    if (!existsSync(sourceDirectory)) continue;
-    // oxlint-disable-next-line no-await-in-loop -- a type's files are moved once AnimeStudio has written them
-    const files = await readdir(sourceDirectory);
-    // oxlint-disable-next-line no-await-in-loop -- as above
-    await Promise.all(
-      files.map((file) => rename(join(sourceDirectory, file), join(typeDirectory, file.toLowerCase()))),
-    );
-    // oxlint-disable-next-line no-await-in-loop -- as above
-    await rm(sourceDirectory, { recursive: true });
-  }
+  // Each type's export runs synchronously as its body starts, so the exports still run in type order.
+  // Each type's files are moved once AnimeStudio has written them
+  await Promise.all(
+    types.map(async (type) => {
+      const typeDirectory = join(directory, blockName, type);
+      runAnimeStudio(
+        [
+          join(INSTALLED_BLOCKS_DIRECTORY, block),
+          typeDirectory,
+          "--types",
+          isUnparsed ? `${type}${ANIMESTUDIO_UNPARSED_SUFFIX}` : type,
+          "--export_type",
+          exportType,
+          "--group_assets",
+          AnimeStudioGroupType.BySource,
+        ],
+        GENSHIN_ANIMESTUDIO_OPTIONS,
+      );
+      const sourceDirectory = join(typeDirectory, `${blockName}${SOURCE_EXPORT_SUFFIX}`);
+      if (!existsSync(sourceDirectory)) return;
+      const files = await readdir(sourceDirectory);
+      await Promise.all(
+        files.map((file) => rename(join(sourceDirectory, file), join(typeDirectory, file.toLowerCase()))),
+      );
+      await rm(sourceDirectory, { recursive: true });
+    }),
+  );
 };

@@ -66,6 +66,7 @@ const handleSay = (request: IncomingMessage, response: ServerResponse) => {
       return;
     }
 
+    // oxlint-disable-next-line typescript/no-floating-promises -- genshin-persona's package.json (packages/genshin-persona/package.json) declares no @esposter/shared dependency, so no shared helper is importable, and the no-void rule bans the void operator this would otherwise use; the request's end listener is synchronous, so the notification is not awaited and the 204 is written without it
     mcp.notification({ method: "notifications/claude/channel", params: { content: line, meta: { sender: "desk" } } });
     writeEnded(response, 204);
   });

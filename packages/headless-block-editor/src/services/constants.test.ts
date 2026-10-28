@@ -87,7 +87,7 @@ export const TEST_NODE_SCHEMA: z.ZodType<TestNode> = z.discriminatedUnion("type"
 export const TEST_ROOT_CONTENT_SCHEMA: z.ZodType<TestNode> = z.discriminatedUnion("type", [TEST_SECTION_SCHEMA]);
 
 // The consumer's children port: one exhaustive switch over the node's type
-export const TEST_CHILDREN = (node: TestNode): ReturnType<BlockChildren<TestNode>> => {
+export const TEST_CHILDREN: BlockChildren<TestNode> = (node: TestNode) => {
   switch (node.type) {
     case "heading":
     case "image":

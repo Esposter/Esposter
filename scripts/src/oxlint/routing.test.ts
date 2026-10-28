@@ -1,9 +1,9 @@
 import { setupPluginSuite } from "#src/services/oxlint/shared/setupPluginSuite.test";
+import { RoutePath } from "@esposter/shared";
 import { describe } from "vitest";
 
 describe("routing", () => {
-  // oxlint-disable-next-line routing/no-route-literal -- the fixture spells the route segment the rule reports
-  const SEGMENT = "/calls";
+  const SEGMENT = RoutePath.CallsIndex;
   const RULE = "routing/no-route-literal";
   const FIXTURES = [
     { name: "pathLiteral", source: `export const a ="/genshin";`, violations: 1 },

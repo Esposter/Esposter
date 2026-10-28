@@ -87,9 +87,8 @@ export const openParityPage = async ({
     page.on("pageerror", (error) => {
       console.error(`parity page: ${String(error)}`);
     });
-    page.on("console", (message) => {
-      // oxlint-disable-next-line typescript/no-floating-promises -- the report's own result is an error it has already printed
-      if (message.type() === "error") reportConsoleError(message);
+    page.on("console", async (message) => {
+      if (message.type() === "error") await reportConsoleError(message);
     });
     await page.addInitScript((size) => {
       performance.setResourceTimingBufferSize(size);

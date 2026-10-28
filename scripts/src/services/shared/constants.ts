@@ -10,10 +10,8 @@ export const QUEUE_BRANCH = "ai/queue";
 // The remote every fleet ref and queue read names, which a fetch mirrors and a push lands on
 export const REMOTE_NAME = "origin";
 // The two branches as origin holds them, which a read names after a fetch
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
-export const REMOTE_MAIN_REF: string = `${REMOTE_NAME}/${MAIN_BRANCH}`;
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
-export const REMOTE_QUEUE_REF: string = `${REMOTE_NAME}/${QUEUE_BRANCH}`;
+export const REMOTE_MAIN_REF: `${typeof REMOTE_NAME}/${typeof MAIN_BRANCH}` = `${REMOTE_NAME}/${MAIN_BRANCH}`;
+export const REMOTE_QUEUE_REF: `${typeof REMOTE_NAME}/${typeof QUEUE_BRANCH}` = `${REMOTE_NAME}/${QUEUE_BRANCH}`;
 export const NPM_REGISTRY_URL = "https://registry.npmjs.org";
 // What a spawned `git` or `gh` may print: a paginated slurp of a long-lived pull request's comments, a log of
 // Every commit's body, a listing of every tracked file each run to megabytes, and the default buffer throws

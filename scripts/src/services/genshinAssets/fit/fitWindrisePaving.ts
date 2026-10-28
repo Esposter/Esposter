@@ -29,12 +29,13 @@ export const fitWindrisePaving = async (): Promise<{
   ]);
   const meshDirectory = join(getComponentDirectory(DerivedAssetComponent.Windrise).assets, AssetType.Mesh);
   const stones = placements.filter(({ mesh }) => PAVING_MESH_REGEX.test(mesh));
-  const shapes: Record<string, PavingStoneShape> = {};
-  for (const mesh of new Set(stones.map((stone) => stone.mesh))) {
-    // oxlint-disable-next-line no-await-in-loop -- one mesh is read at a time
-    const { vertices } = await readObjMesh(join(meshDirectory, `${mesh}.obj`));
-    shapes[mesh] = fitPavingStoneShape(vertices.map((vertex) => toRightHanded(vertex)));
-  }
+  const shapeEntries = await Promise.all(
+    Array.from(new Set(stones.map((stone) => stone.mesh)), async (mesh): Promise<[string, PavingStoneShape]> => {
+      const { vertices } = await readObjMesh(join(meshDirectory, `${mesh}.obj`));
+      return [mesh, fitPavingStoneShape(vertices.map((vertex) => toRightHanded(vertex)))];
+    }),
+  );
+  const shapes: Record<string, PavingStoneShape> = Object.fromEntries(shapeEntries);
   return {
     placements: stones.map(({ mesh, position, rotation, scale }) => ({
       mesh,

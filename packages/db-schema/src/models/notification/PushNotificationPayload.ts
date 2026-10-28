@@ -15,6 +15,7 @@ export interface PushNotificationPayload {
   title?: null | string;
 }
 
+// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the data's severity and type are zod enum schemas, which carry typeof NotificationSeverity and typeof AppNotificationType rather than the enum types the interface names, so the rule cannot see them in this value
 export const pushNotificationPayloadSchema = z.object({
   body: z.string(),
   data: z.object({ severity: notificationSeveritySchema, type: appNotificationTypeSchema, url: z.string() }),

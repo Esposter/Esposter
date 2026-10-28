@@ -65,19 +65,26 @@ export const fitLoginTowerFacades = async (
     ),
   );
   const stone: Vector = [stoneColor.r, stoneColor.g, stoneColor.b];
+  // Each tower's textures and mesh are read together, every tower at once, and its facade is worked out from them after
+  const towerReads = await Promise.all(
+    Array.from(meshPathMap, async ([tower, meshPath]) => {
+      const placement = partPlacements.find(({ mesh, part }) => part === tower && meshPath.endsWith(`${mesh}.obj`));
+      const materialNames = (placement?.materials ?? []).map((pathId) => pathIdNameMap.get(pathId) ?? "");
+      const materialTextures = await Promise.all(
+        materialNames.map(async (name) => ({
+          diffuse: await readOptionalTexture(join(textureDirectory, `${name}_Diffuse.png`)),
+          mask: await readOptionalTexture(join(textureDirectory, `${name}_SMBE.png`)),
+        })),
+      );
+      return { materialTextures, mesh: await readObjMesh(meshPath), tower };
+    }),
+  );
   const facades: Record<string, TowerFacade> = {};
-  for (const [tower, meshPath] of meshPathMap) {
-    const placement = partPlacements.find(({ mesh, part }) => part === tower && meshPath.endsWith(`${mesh}.obj`));
-    const materialNames = (placement?.materials ?? []).map((pathId) => pathIdNameMap.get(pathId) ?? "");
-    // oxlint-disable-next-line no-await-in-loop -- one tower's textures are read at a time
-    const materialTextures = await Promise.all(
-      materialNames.map(async (name) => ({
-        diffuse: await readOptionalTexture(join(textureDirectory, `${name}_Diffuse.png`)),
-        mask: await readOptionalTexture(join(textureDirectory, `${name}_SMBE.png`)),
-      })),
-    );
-    // oxlint-disable-next-line no-await-in-loop -- one mesh of tens of thousands of vertices is read at a time
-    const { faceGroups, faces, faceUvs, uvs, vertices } = await readObjMesh(meshPath);
+  for (const {
+    materialTextures,
+    mesh: { faceGroups, faces, faceUvs, uvs, vertices },
+    tower,
+  } of towerReads) {
     const profile = fitLatheProfile(vertices, { bandHeight: TOWER_BAND_HEIGHT, tolerance: TOWER_RADIUS_TOLERANCE });
     const [axisX, axisZ] = profile.axis;
     const maxRadius = Math.max(...profile.sections.map(({ bottomRadius }) => bottomRadius));

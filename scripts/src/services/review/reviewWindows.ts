@@ -48,8 +48,7 @@ export const reviewWindows = async (
         const outcome: ReviewBatchOutcome =
           Date.now() >= deadline
             ? { isUnreached: true }
-            : // oxlint-disable-next-line typescript/require-await -- the async wrapper turns a synchronous throw into a rejection
-              await getResultAsync(async () => reviewBatch(getDirectory(windowIndex, end), base, end, files)).match(
+            : await getResultAsync(() => reviewBatch(getDirectory(windowIndex, end), base, end, files)).match(
                 (reviewed): ReviewBatchOutcome => reviewed,
                 (error): ReviewBatchOutcome => ({ error }),
               );

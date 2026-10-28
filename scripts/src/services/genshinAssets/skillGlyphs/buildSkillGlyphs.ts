@@ -10,6 +10,7 @@ import { readSkillDepotMap } from "#src/services/genshinAssets/stats/readSkillDe
 import { readSkillMap } from "#src/services/genshinAssets/stats/readSkillMap";
 import { resolveWikiFiles } from "#src/services/genshinParity/shared/resolveWikiFiles";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
+import { settleAll } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";
 import { GameDataset, skillGlyphsSchema, SkillGlyphTones } from "genshin-world";
 
@@ -17,6 +18,9 @@ import { GameDataset, skillGlyphsSchema, SkillGlyphTones } from "genshin-world";
 const getTitles = (talentName: string) => [
   ...new Set(["", "-"].map((colon) => `File:Talent ${talentName.replaceAll(":", colon)}.png`)),
 ];
+
+// The talents traced at once: each trace holds a whole enlarged icon while it runs, so the pool bounds how many are held
+const TALENT_TRACE_CONCURRENCY = 4;
 
 // Every playable character's skill and burst icons as the HUD's buttons carry them, each traced from the wiki's render
 // Of its talent (`File:Talent <Name>.png`) by `traceTalentIcon`, one entry a character of the hosted `skillGlyphs` index,
@@ -60,7 +64,7 @@ export const buildSkillGlyphs = async (): Promise<{
       .map((title) => pathMap.get(title))
       .find(Boolean);
   const notes: string[] = [];
-  const characterIdSkillGlyphsEntries: [number, SkillGlyphs][] = [];
+  const traces: (() => Promise<[number, SkillGlyphs]>)[] = [];
   for (const { characterId, name, talentNameMap } of characterTalents) {
     const burstPath = findPath(talentNameMap.burst);
     const skillPath = findPath(talentNameMap.skill);
@@ -69,16 +73,15 @@ export const buildSkillGlyphs = async (): Promise<{
       notes.push(`${name} (${characterId}): ${missingNames.join(" and ")} not on the wiki`);
       continue;
     }
-    characterIdSkillGlyphsEntries.push([
+    traces.push(async () => [
       characterId,
       skillGlyphsSchema.parse({
-        // oxlint-disable-next-line no-await-in-loop -- Each trace holds a whole enlarged icon, so one is traced at a time
         burst: await traceTalentIcon(burstPath, SkillGlyphTonesMap[SkillGlyphTones.Burst]),
-        // oxlint-disable-next-line no-await-in-loop -- Each trace holds a whole enlarged icon, so one is traced at a time
         skill: await traceTalentIcon(skillPath, SkillGlyphTonesMap[SkillGlyphTones.Skill]),
       }),
     ]);
   }
+  const characterIdSkillGlyphsEntries = await settleAll(traces, TALENT_TRACE_CONCURRENCY);
   notes.push(`${characterIdSkillGlyphsEntries.length} of ${characterTalents.length} characters' icons traced`);
   return {
     loaderMapSource: getSkillGlyphsLoaderMapSource(characterIdSkillGlyphsEntries.map(([characterId]) => characterId)),

@@ -23,28 +23,27 @@ export const writeResourceEntries = async (archive: UserDataArchive, userId: Use
     // oxlint-disable-next-line no-await-in-loop -- The archive takes one entry at a time, so its entries stay in order
     await archive.addJsonEntry(`${entryDirectory}/resource.json`, resource);
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource at a time, as its purge runs
-    const publication = await db.query.resourcePublicationsInResource.findFirst({
-      columns: { createdAt: true, publishedAt: true, publishedContentVersion: true, publishVersion: true },
-      where: { resourceId: { eq: resource.id } },
-    });
+    const [publication, links, content, workingAssets] = await Promise.all([
+      db.query.resourcePublicationsInResource.findFirst({
+        columns: { createdAt: true, publishedAt: true, publishedContentVersion: true, publishVersion: true },
+        where: { resourceId: { eq: resource.id } },
+      }),
+      db.query.resourceLinksInResource.findMany({
+        columns: { sourceId: true, targetId: true, type: true },
+        where: { sourceId: { eq: resource.id } },
+      }),
+      readJsonBlob(containerClient, getContentBlobName(resource.id)),
+      db.query.resourceWorkingAssetsInResource.findMany({
+        columns: { assetHash: true },
+        where: { resourceId: { eq: resource.id } },
+      }),
+    ]);
     // oxlint-disable-next-line no-await-in-loop -- The archive takes one entry at a time, so its entries stay in order
     if (publication) await archive.addJsonEntry(`${entryDirectory}/publications.json`, publication);
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource at a time, as its purge runs
-    const links = await db.query.resourceLinksInResource.findMany({
-      columns: { sourceId: true, targetId: true, type: true },
-      where: { sourceId: { eq: resource.id } },
-    });
     // oxlint-disable-next-line no-await-in-loop -- The archive takes one entry at a time, so its entries stay in order
     if (links.length > 0) await archive.addJsonEntry(`${entryDirectory}/links.json`, links);
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource at a time, as its purge runs
-    const content = await readJsonBlob(containerClient, getContentBlobName(resource.id));
     // oxlint-disable-next-line no-await-in-loop -- The archive takes one entry at a time, so its entries stay in order
     if (content) await archive.addEntry(`${entryDirectory}/content.json`, content);
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource at a time, as its purge runs
-    const workingAssets = await db.query.resourceWorkingAssetsInResource.findMany({
-      columns: { assetHash: true },
-      where: { resourceId: { eq: resource.id } },
-    });
     for (const { assetHash } of workingAssets)
       // oxlint-disable-next-line no-await-in-loop -- One asset at a time, streamed as it is read
       await writeBlobEntry(
