@@ -33,13 +33,13 @@ export const getKeyAction = (event: KeyboardEvent, scope: KeyScope): KeyAction |
   if (checkIsEditableTarget(event.target)) return undefined;
 
   const key = event.key.toLowerCase();
-  const command = event.ctrlKey || event.metaKey;
+  const isCommandHeld = event.ctrlKey || event.metaKey;
   return KEY_BINDINGS.find(
     (binding) =>
       binding.scope === scope &&
       binding.key.toLowerCase() === key &&
       checkMatchesModifier(binding.alt, event.altKey) &&
-      checkMatchesModifier(binding.command, command) &&
+      checkMatchesModifier(binding.command, isCommandHeld) &&
       !(binding.skipOnControl && checkIsControlTarget(event.target)),
   )?.action;
 };
