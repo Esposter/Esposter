@@ -14,7 +14,6 @@ const IDENTIFIER_REGEX = /^[A-Za-z_$][\w$]*$/u;
 const newNode = (): KeyTree => Object.create(null) as KeyTree;
 
 // The node a segment leads to, made if it is not there yet.
-// A key that also prefixes other keys moves under `self`, since one node cannot be both a string and a branch.
 const descend = (node: KeyTree, segment: string): KeyTree => {
   const entry = node[segment];
   if (entry !== undefined && typeof entry !== "string") return entry;
@@ -24,7 +23,7 @@ const descend = (node: KeyTree, segment: string): KeyTree => {
   return child;
 };
 
-// Keys are unique, which leaves a literal `self` segment as the one collision: it takes the slot the prefixed key's own name needs
+// A key that also prefixes other keys sits under `self`, since one node cannot be both a string and a branch; a literal `self` segment is the one collision
 const insertKey = (tree: KeyTree, key: string): void => {
   const segments = key.split("/");
   const leaf = segments.pop() ?? key;
