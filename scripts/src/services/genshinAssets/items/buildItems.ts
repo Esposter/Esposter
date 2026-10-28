@@ -5,8 +5,7 @@ import { readPublishedGameData } from "#src/services/gameData/readPublishedGameD
 import { readCookingRecipes } from "#src/services/genshinAssets/cooking/readCookingRecipes";
 import { readMondstadtExpeditionPlaces } from "#src/services/genshinAssets/expeditions/readMondstadtExpeditionPlaces";
 import { MATERIAL_TYPE_NONE } from "#src/services/genshinAssets/gathering/constants";
-import { checkIsAddItemConsumable } from "#src/services/genshinAssets/items/checkIsAddItemConsumable";
-import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
+import { BAG_MATERIAL_TYPES, MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readItemTableMap } from "#src/services/genshinAssets/items/readItemTableMap";
 import { toBagMaterialType } from "#src/services/genshinAssets/items/toBagMaterialType";
 import { checkIsFishingAssociationGood } from "#src/services/genshinAssets/shops/checkIsFishingAssociationGood";
@@ -101,7 +100,12 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
       ...groceryGoods.map(({ itemId }) => itemId),
       ...fishingGoodItemIds,
       ...goodHunterGoods.map(({ itemId }) => itemId),
-      ...materialRows.filter((row) => checkIsAddItemConsumable(row)).map(({ id }) => id),
+      ...materialRows
+        .filter(
+          ({ materialType }) =>
+            materialType !== undefined && BAG_MATERIAL_TYPES.includes(toBagMaterialType(materialType)),
+        )
+        .map(({ id }) => id),
       ...questRewardItemIds,
     ]),
   ]
