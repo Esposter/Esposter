@@ -21,7 +21,7 @@ export const walkAssetClosure = (
 ): { assets: ResolvedObject[]; objects: SceneObject[]; unresolved: string[] } => {
   const parentKeyChildrenMap = groupSceneChildren(objects);
   const reached: SceneObject[] = [];
-  const assetMap = new Map<string, ResolvedObject>();
+  const resolvedObjectMap = new Map<string, ResolvedObject>();
   const unresolved: string[] = [];
   const reachedKeys = new Set<string>();
   const visit = (object: SceneObject): void => {
@@ -31,7 +31,7 @@ export const walkAssetClosure = (
     reached.push(object);
     for (const pointer of gameObjectDrawingMap.get(toObjectKey(object.file, object.gameObjectId))?.pointers ?? []) {
       const resolved = resolveObjectPointer(cabMap, object.file, pointer);
-      if (resolved) assetMap.set(toObjectKey(resolved.file, resolved.pathId), resolved);
+      if (resolved) resolvedObjectMap.set(toObjectKey(resolved.file, resolved.pathId), resolved);
       else unresolved.push(`${object.name}: file ${pointer.fileIndex} of ${object.file}, path ID ${pointer.pathId}`);
     }
     const children = parentKeyChildrenMap.get(toObjectKey(object.file, object.transformId)) ?? [];
@@ -46,5 +46,5 @@ export const walkAssetClosure = (
     if (object) visit(object);
     else unresolved.push(`${root.name}: game object ${root.pathId} in ${root.block}`);
   }
-  return { assets: [...assetMap.values()], objects: reached, unresolved };
+  return { assets: [...resolvedObjectMap.values()], objects: reached, unresolved };
 };

@@ -23,22 +23,22 @@ export const mergeAssetMapLines = async function* (
   let previous: string[] | undefined;
   let shardIndex = -1;
   let from = "";
-  let inEntries = false;
-  let inTrailer = false;
+  let isInEntries = false;
+  let isInTrailer = false;
   let entry: string[] | undefined;
   for await (const { index, line, root } of readShardLines(shards)) {
     if (index !== shardIndex) {
       shardIndex = index;
       from = toEscaped(root);
-      inEntries = false;
-      inTrailer = false;
+      isInEntries = false;
+      isInTrailer = false;
       entry = undefined;
     }
     const trimmed = line.trim();
-    if (!inEntries) {
+    if (!isInEntries) {
       if (index === 0) yield line;
-      if (trimmed === ENTRIES_OPENING) inEntries = true;
-    } else if (inTrailer) {
+      if (trimmed === ENTRIES_OPENING) isInEntries = true;
+    } else if (isInTrailer) {
       if (index === 0) trailer.push(line);
     } else if (entry) {
       entry.push(trimmed.startsWith(SOURCE_PREFIX) ? rebaseSource(line, from, to, root) : line);
@@ -49,7 +49,7 @@ export const mergeAssetMapLines = async function* (
       }
     } else if (trimmed.startsWith("{")) entry = [line];
     else if (trimmed === ENTRIES_CLOSING) {
-      inTrailer = true;
+      isInTrailer = true;
       if (index === 0) trailer.push(line);
     }
   }

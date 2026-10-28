@@ -57,5 +57,7 @@ export const readPathClearance = async (
     }),
     MESH_READ_CONCURRENCY,
   );
-  return piercedByMesh.flat().toSorted(({ depths: [first = 0] }, { depths: [second = 0] }) => first - second);
+  return piercedByMesh
+    .flat()
+    .toSorted(({ depths: [firstDepth = 0] }, { depths: [secondDepth = 0] }) => firstDepth - secondDepth);
 };

@@ -14,7 +14,7 @@ export const mergeCabMaps = (maps: Buffer[], baseFolder: string): Buffer => {
       if (!firstRecords.has(key)) firstRecords.set(key, record);
     }
   const records = [...firstRecords.entries()]
-    .toSorted(([left], [right]) => (left < right ? -1 : Number(left > right)))
+    .toSorted(([firstKey], [secondKey]) => (firstKey < secondKey ? -1 : Number(firstKey > secondKey)))
     .map(([, record]) => record);
   return writeCabMap({ baseFolder, records });
 };

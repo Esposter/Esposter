@@ -22,7 +22,7 @@ export const linkInstalledBlocks = async (): Promise<BlockFile[]> => {
   await rm(INSTALLED_BLOCKS_DIRECTORY, { force: true, recursive: true });
   await linkBlockFiles(streamingFiles, GAME_BLOCKS_DIRECTORY, INSTALLED_BLOCKS_DIRECTORY);
   await linkBlockFiles(persistentFiles, GAME_PERSISTENT_BLOCKS_DIRECTORY, INSTALLED_BLOCKS_DIRECTORY);
-  return [...streamingFiles, ...persistentFiles].toSorted((left, right) =>
-    left.path < right.path ? -1 : Number(left.path > right.path),
+  return [...streamingFiles, ...persistentFiles].toSorted((firstFile, secondFile) =>
+    firstFile.path < secondFile.path ? -1 : Number(firstFile.path > secondFile.path),
   );
 };

@@ -8,6 +8,6 @@ export const readWalkwayLift = (placements: readonly AssetPlacement[], clips: re
     .find(({ name }) => name === "Ani_Login_Lift")
     ?.curves.find(({ component, property }) => property === "position" && component === "y")
     ?.samples.at(-1);
-  const block = placements.find(({ name }) => /^LoginScene_Bridge01_\d+_Vo$/u.test(name));
-  return (height ?? 0) * (block?.scale[1] ?? 0);
+  const assetPlacement = placements.find(({ name }) => /^LoginScene_Bridge01_\d+_Vo$/u.test(name));
+  return (height ?? 0) * (assetPlacement?.scale[1] ?? 0);
 };
