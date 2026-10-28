@@ -4,12 +4,12 @@ Where work is placed and how it is shaped — a fact resolved once at the consum
 
 | Unit                                                                           | Swept                  | Notes |
 | ------------------------------------------------------------------------------ | ---------------------- | ----- |
-| `server/trpc/routers/message`, `room`                                          | 2026-10-14 · Haiku 5.5 |       |
-| `server/trpc/routers` — the rest                                               | 2026-10-14 · Haiku 5.5 |       |
-| `server/trpc` — `middleware`, `procedure`, `plugins`                           | 2026-10-14 · Haiku 5.5 |       |
-| `server/services/message`                                                      | 2026-10-14 · Haiku 5.5 |       |
-| `server/services/resource`, `room`, `role`, `user`                             | 2026-10-14 · Haiku 5.5 |       |
-| `server/services` — the rest                                                   | 2026-10-14 · Haiku 5.5 |       |
+| `server/trpc/routers/message`, `room`                                          | 2026-10-29 · Haiku 5.5 |       |
+| `server/trpc/routers` — the rest                                               | 2026-10-29 · Haiku 5.5 |       |
+| `server/trpc` — `middleware`, `procedure`, `plugins`                           | 2026-10-29 · Haiku 5.5 |       |
+| `server/services/message`                                                      | 2026-10-29 · Haiku 5.5 |       |
+| `server/services/resource`, `room`, `role`, `user`                             | 2026-10-29 · Haiku 5.5 |       |
+| `server/services` — the rest                                                   | 2026-10-29 · Haiku 5.5 |       |
 | `server/api`, `server/plugins`                                                 | 2026-10-14 · Haiku 5.5 |       |
 | `apps/functions`                                                               | 2026-10-14 · Haiku 5.5 |       |
 | `packages/db`, `packages/db-schema/src/services`                               | 2026-10-14 · Haiku 5.5 |       |
