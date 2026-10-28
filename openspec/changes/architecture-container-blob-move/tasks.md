@@ -13,4 +13,4 @@
 ## 3. Verify and retire
 
 - [ ] 3.1 Read a dungeon save, a call background, the logo and an export archive through the app on prod, each from its new container. Verified by each read returning the stored content, not an empty result.
-- [ ] 3.2 Delete the four old containers through the infra follow-up once 3.1 passes, as the [azure services](../../specs/architecture/azure-services/design.md) design says. Verified by the infra program no longer naming them.
+- [ ] 3.2 Delete the four old containers once 3.1 passes, as the owner does, per the [azure services](../../specs/architecture/azure-services/design.md) design. Verified by the infra program no longer naming them.
