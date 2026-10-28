@@ -27,6 +27,11 @@ const getGridEmojis = (component: VueWrapper) => {
   const grid = component.findComponent(StyledEmojiPickerGrid);
   return grid.exists() ? grid.findAll("button[aria-label]").map((button) => button.text()) : [];
 };
+// One category's emoji by character, in the order the grid shows them
+const getCategoryCharacters = (group: EmojiGroup) =>
+  getEmojiIndex()
+    .groupEmojisMap.get(group)
+    ?.map(({ character }) => character);
 
 describe("styledEmojiPickerPanel", () => {
   const RAIL_BUTTON_SELECTOR = '[role="radiogroup"][aria-label="Categories"] [role="radio"]';
@@ -50,11 +55,7 @@ describe("styledEmojiPickerPanel", () => {
 
     const component = await mountSuspended(StyledEmojiPickerPanel);
 
-    expect(getGridEmojis(component)).toStrictEqual(
-      getEmojiIndex()
-        .groupEmojisMap.get(EmojiGroup.SmileysAndEmotion)
-        ?.map(({ character }) => character),
-    );
+    expect(getGridEmojis(component)).toStrictEqual(getCategoryCharacters(EmojiGroup.SmileysAndEmotion));
   });
 
   test("renders one rail button per category", async () => {
@@ -143,11 +144,7 @@ describe("styledEmojiPickerPanel", () => {
     await component.find(`${RAIL_BUTTON_SELECTOR}[aria-label="${EmojiGroup.AnimalsAndNature}"]`).trigger("click");
 
     expect((component.find("input").element as HTMLInputElement).value).toBe("");
-    expect(getGridEmojis(component)).toStrictEqual(
-      getEmojiIndex()
-        .groupEmojisMap.get(EmojiGroup.AnimalsAndNature)
-        ?.map(({ character }) => character),
-    );
+    expect(getGridEmojis(component)).toStrictEqual(getCategoryCharacters(EmojiGroup.AnimalsAndNature));
   });
 
   // The grid is one stop in the tab order, so Tab crosses it once rather than once per emoji, and the arrows walk from it
