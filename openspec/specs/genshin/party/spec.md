@@ -1,6 +1,6 @@
 ## Purpose
 
-The player's party as the game keeps it — up to four characters in each team Party Setup holds, one team deployed and one of its members on the field. A member's key switches it in past the one second cooldown, never one who is down, and Left Alt with the key also uses that member's burst. A team is added, renamed, disbanded or deployed under the game's own limits and refusals, and the deployed team's elements give its Elemental Resonances. The state is plain data and pure rules in genshin-world, read by the world screen once a frame.
+The player's party as the game keeps it — up to four characters in each team Party Setup holds, one team deployed and one of its members on the field.
 
 ## Requirements
 

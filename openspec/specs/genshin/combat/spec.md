@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's combat rules as built — pure, tested functions in the world package over plain state. An element's attack is left on a target as an aura that decays, a second element triggers the reactions the game tries in its own priority, each consuming its auras by its coefficient, and Electro-Charged, Quicken, Burning and Freeze keep their coexisting auras and ticks. The damage formula, the level multiplier, the internal cooldowns on applying an element and on a reaction's damage, shields and energy follow the community's documented mechanics, each held to a worked example from them. The Traveler's kit prices its hits through them, and an enemy's strike on the party does too.
+Genshin's combat rules as built — pure, tested functions in the world package over plain state.
 
 ## Requirements
 

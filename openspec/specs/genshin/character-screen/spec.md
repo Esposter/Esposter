@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's character screen on C, its layout measured off the English client's own frame at 21:9 — the player's characters across the top, the six tabs down the left in the game's words (`{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`), and the chosen character's Attributes panel down the right with its level and attributes by group from the game's own sums. Its look is provisional until its passes measure it. A frame in genshin-interface knows no words or data; the world's screen fills it.
+The game's character screen on C, its layout measured off the English client's own frame at 21:9 — the player's characters across the top, the six tabs down the left in the game's words (`{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`), and the chosen character's Attributes panel down the right with its level and attributes by group from the game's own sums.
 
 ## Requirements
 

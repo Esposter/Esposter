@@ -1,6 +1,6 @@
 ## Purpose
 
-Each playable character's six constellations read per skill set from the game's table, the third and fifth raising a combat talent by three, and a character holding its own Stella Fortuna, which a duplicate draw brings and activates the next constellation with, and a five-star past six copies brings a Masterless one. The constellations' effects, the Traveler's element sets' sources and the Constellation tab wait on their pages (`scripts/src/services/genshinAssets/stats/getCharacterConstellationKits.ts`, `packages/genshin-world/src/services/wish/makeWishes.ts`).
+Each playable character's six constellations read per skill set from the game's table, the third and fifth raising a combat talent by three, and a character holding its own Stella Fortuna, which a duplicate draw brings and activates the next constellation with, and a five-star past six copies brings a Masterless one.
 
 ## Requirements
 

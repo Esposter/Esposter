@@ -1,6 +1,6 @@
 # Party
 
-In the game, a party is a team of up to four characters, and the player keeps several: Party Setup, on `L`, holds the teams set up, one of them deployed, and one member of the deployed team is on the field (`{data-root}/genshin-parity/captures/yt-greLeGJE-Jg-party-setup.mp4`, at 30 seconds: four characters in Party 1, and four team dots). The keys `1` to `4`, and a pad's directions, switch the member on the field. `genshin-world` keeps this as a `Party`, plain data with a few rules over it, so it runs the same in a test as in the world.
+In the game, a party is a team of up to four characters, and the player keeps several: Party Setup, on `L`, holds the teams set up, one of them deployed, and one member of the deployed team is on the field (`{data-root}/genshin-parity/captures/yt-greLeGJE-Jg-party-setup.mp4`, at 30 seconds: four characters in Party 1, and four team dots). The keys `1` to `4`, and a pad's directions, switch the member on the field. `genshin-world` keeps this as a `Party`, plain data with a few rules over it, read by the world screen once a frame, so it runs the same in a test as in the world.
 
 ## How it works
 

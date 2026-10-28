@@ -1,6 +1,6 @@
 ## Purpose
 
-The character screen's Profile tab as built — each playable character's stories and voice-overs read from the game's fetter tables by their text ids in every language, each opened at the Friendship Level its fetter gives and locked with the game's own unlock line until then, beside the chosen entry's title and text (the game's rows are `{data-root}/genshin-parity/text/ExcelBinOutput/FetterStoryExcelConfigData.json` and `{data-root}/genshin-parity/text/ExcelBinOutput/FettersExcelConfigData.json`, and the behaviour is tested in `packages/genshin-world/src/services/profile/toCharacterProfileEntries.test.ts` and `packages/genshin-world/src/services/profile/checkProfileStoryUnlocked.test.ts`). The model's space, the voice line with its voice actor and the namecard's art are not drawn yet.
+The character screen's Profile tab as built — each playable character's stories and voice-overs read from the game's fetter tables by their text ids in every language, each opened at the Friendship Level its fetter gives and locked with the game's own unlock line until then, beside the chosen entry's title and text (the game's rows are `{data-root}/genshin-parity/text/ExcelBinOutput/FetterStoryExcelConfigData.json` and `{data-root}/genshin-parity/text/ExcelBinOutput/FettersExcelConfigData.json`, and the behaviour is tested in `packages/genshin-world/src/services/profile/toCharacterProfileEntries.test.ts` and `packages/genshin-world/src/services/profile/checkProfileStoryUnlocked.test.ts`).
 
 ## Requirements
 

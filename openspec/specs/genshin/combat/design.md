@@ -1,6 +1,6 @@
 # Combat
 
-The game's combat is one small set of rules every character and enemy shares, and its community has documented them to the decimal. They live in `genshin-world` under `packages/genshin-world/src/services/combat`, as functions over plain state with no rendering, no input and no three.js, since the engine knows no rule of the game as it knows no place. The world calls into them from its fixed steps: the character on the field's kit prices each of its hits, and the [enemies](../enemies/design.md) age their elements and strike the party through them.
+The game's combat is one small set of rules every character and enemy shares, and its community has documented them to the decimal, each held to a worked example from them. They live in `genshin-world` under `packages/genshin-world/src/services/combat`, as functions over plain state with no rendering, no input and no three.js, since the engine knows no rule of the game as it knows no place. The world calls into them from its fixed steps: the character on the field's kit prices each of its hits, and the [enemies](../enemies/design.md) age their elements and strike the party through them.
 
 ## How it works
 
@@ -187,9 +187,9 @@ The character on the field runs its kit at the world's fixed step ([character co
 
 ```mermaid
 flowchart TD
-  PRESS["A frame's presses, held for the step, and the attack held"] --> GATE{"Allowed? Movement state, cooldown, charges, energy, stamina"}
+  PRESS["A frame's presses, held for the step, and the attack held"] --> GATE{"Allowed to start?"}
   GATE -->|"no"| IDLE["Nothing starts"]
-  GATE -->|"yes"| ACTION["The kit's action: string, charged attack, plunge, skill or burst"]
+  GATE -->|"yes"| ACTION["The kit's action"]
   ACTION -->|"it starts"| AIM["The body turns to the enemy its area scores highest"]
   ACTION -->|"each hitmark, past the action's end too"| HIT["A hit lands on each enemy in its area"]
   HIT --> STRIKE["strikeEnemy: the hit priced and applied"]
@@ -306,18 +306,18 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 
 ## Notes
 
-- An aura left over after a reaction is taxed and decays as an attack of the gauge left would, since the sources give no rate for a leftover.
-- **A Freeze over a Freeze keeps the larger.** Frozen triggered again over a Freeze keeps the larger gauge at the Freeze's growing rate, as any aura reapplied keeps its rate. A new Freeze starts at 0.4U a second.
+- A leftover aura is taxed and decays as an attack of the gauge left would ([Auras](#auras)), since the sources give no rate for it.
+- **A Freeze over a Freeze keeps the larger.** Frozen triggered again over a Freeze keeps the larger gauge at the Freeze's growing rate. A new Freeze starts at 0.4U a second.
 - **No Frozen duration is extended.** Mona's Constellation 1 names a Frozen 15% longer, but the wiki's notes find it has no effect on Frozen's duration, contrary to its description ([Prophecy of Submersion](https://genshin-impact.fandom.com/wiki/Prophecy_of_Submersion)), and gcsim leaves it out as bugged (`{data-root}/cache/gcsim-v2.47.2/internal/characters/mona/cons.go:39`). No other source extends a Frozen, so the Frozen gauge's decay has no hook to lengthen it.
 - **A Moondrift's place is gcsim's guess.** gcsim leaves the three a metre out from the enemy at even bearings and marks the place a guess; it matters only to whether three stand within 20 metres of the character on the field. The kit keeps the three even bearings at a metre: gcsim gives no measured placement, so the even spacing is the least-biased choice until a recording says otherwise. The roadmap's manual verification has the question.
 - A source contributes to Lunar-Charged while the aura holds more than the others laid above its share. gcsim keeps each source's durability apart; one rate for all of them is the simplification.
 - **Burning's first tick is a quarter second after it lights.** The library places its first Pyro between a quarter second and 0.42 seconds after the text, and the rules take the earliest.
 - **Electro-Charged's last tick is seen at the step.** An aura decaying out between two steps ends it at the step after, so a target advanced at the world's fixed step ends within a sixtieth of a second of the game's.
 - The wiki names a single other Wet enemy within 5 metres, marking the radius to verify, and says nothing of which one is taken when several stand there, so the nearest is a provisional choice.
-- The wiki has a hit roll as it hits an enemy and does not say what several enemies do; gcsim rolls for each enemy, with a fifth of a second after a pass in which none rolls, which its own source calls a guess. One roll a hit is the provisional choice, and a swap starting the misses afresh is gcsim's assumption.
-- **A Dendro Core is drawn by nothing yet.** No source gives the size a hit finds a core at, so a kit's hit sets one off where it would strike an enemy standing on the core's ground point, provisionally. The core stands unseen until the world draws it.
+- The wiki has a hit roll as it hits an enemy and does not say what several enemies do, so one roll a hit is the provisional choice, and a swap starting the misses afresh is gcsim's assumption.
+- **A Dendro Core is drawn by nothing yet.** A kit's hit sets one off where it would strike an enemy standing on the core's ground point, provisionally. The core stands unseen until the world draws it.
 - **Only a kit's own hit sets a Dendro Core off.** A Swirl's spread, a Burning tick's Pyro and an explosion leave the cores be, and a core's burst, Burgeon and Hyperbloom deal the 2% the wiki gives the party nothing yet.
-- **A Crystallize shard is drawn by nothing yet.** No source gives the reach the game draws a shard to the character from, so it is gcsim's shard radius, provisionally. The shard lies unseen until the world draws it.
+- **A Crystallize shard is drawn by nothing yet.** The reach a shard is picked up from is gcsim's shard radius, provisionally. The shard lies unseen until the world draws it.
 - **The wiki's mastery scales are taken as written.** Its 2.78 and 4.44 are rounded, and its tables of the bonus they give read them as written.
 
 ## Sources

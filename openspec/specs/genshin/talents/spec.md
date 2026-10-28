@@ -1,6 +1,6 @@
 ## Purpose
 
-Each playable character's three combat talents levelled from 1 by the game's proud skill table (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`), each level raised by the ascension phase it needs and paid in Mora and talent materials, and the passives each phase opens. The stats run writes the table, the upgrade is a pure rule over it, and the Talents tab waits on its page.
+Each playable character's three combat talents levelled from 1 by the game's proud skill table (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`), each level raised by the ascension phase it needs and paid in Mora and talent materials, and the passives each phase opens.
 
 ## Requirements
 

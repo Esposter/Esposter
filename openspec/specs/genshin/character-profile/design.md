@@ -28,7 +28,7 @@ flowchart LR
 
 ## Notes
 
-- **Not drawn yet.** The reference's `Voice:` line with the voice actor, the player's UID, and the character's model in the middle of the page. The model waits on [characters](../characters/README.md), the rest on their own pages.
+- **Not drawn yet.** The reference's `Voice:` line with the voice actor, the player's UID, the namecard's art, and the character's model in the middle of the page. The model waits on [characters](../characters/README.md), the rest on their own pages.
 - **The `Friendship` text** is written with the other game text (`packages/genshin-text/src/generated/text/English.json`, line 140; the game's text id 3501231455 in `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json` reads "Friendship"), but no place in this frame shows it, so nothing draws it yet.
 
 ## Key files

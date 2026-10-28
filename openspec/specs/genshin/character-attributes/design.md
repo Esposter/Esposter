@@ -6,7 +6,7 @@ Every number the character screen's Attributes tab shows is computed the way the
 
 ```mermaid
 flowchart LR
-  DUMP["The dump's game tables, outside the repository"] -->|"genshin:assets stats"| TABLES["buildStatTables: roster, weapons, sets, curves"]
+  DUMP["The dump's game tables, outside the repository"] -->|"genshin:assets stats"| TABLES["buildStatTables: the stat tables"]
   TABLES -->|"published under stats/ keys"| HOSTED["The hosted game data"]
   HOSTED -->|"readStatTables, fetched by key as the world starts"| STAT_TABLES["StatTables: each table by id or name"]
   STAT_TABLES -->|"the roster"| CREATE["createCharacter"]
@@ -14,7 +14,7 @@ flowchart LR
   CHARACTER --> LINES["getCharacterAttributeLines"]
   STAT_TABLES -->|"handed to the character screen"| LINES
   LINES -->|"every attribute line it carries"| SUM["computeCharacterAttributes"]
-  SUM --> ATTRIBUTES["Max HP, ATK, DEF, and every attribute's total"]
+  SUM --> ATTRIBUTES["The character's attributes"]
 ```
 
 ### The tables
@@ -71,7 +71,7 @@ A new character is `createCharacter` over the roster: level 1 in its first phase
 ## Open
 
 - [ ] **Every Attributes-tab number is computed the way the game computes it** — no source yet: no test sums a recorded character's lines to its Attributes tab; the one capture, `{data-root}/genshin-parity/captures/character-attributes-1080.png` (Jean at level 50: Max HP 8,639, ATK 625, DEF 397), has no test.
-- [ ] **Every attribute's name is filed under its id in the game's text** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/ManualTextMapConfigData.json`: six of 41 Attribute ids have no row there.
+- [ ] **Every attribute's name is filed under its id in the game's text** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/ManualTextMapConfigData.json`: a few of the Attribute ids have no row there.
 - [ ] **The crossbow rows are the Traveler's discarded shooter forms, from 7.1** — no source yet: the dump gives the five crossbow rows no English name and holds no patch version.
 - [ ] **The tables run to hundreds of kilobytes** — no source yet: the published stats files are not in the checkout.
 - [ ] **The Traveler's base HP, ATK and DEF match the wiki at each level and phase** — no source yet: the wiki's Traveler page is not cached.
