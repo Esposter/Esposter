@@ -105,7 +105,7 @@ The five are judged over their clean plate, the reference frame with its scored 
 | `dialogue-choices-replies` | 15.08%, FLIP 0.4770      | 14.36%, FLIP 0.4588  | 17.80%      |
 | `dialogue-choices-speaker` | 8.38%, FLIP 0.3228       | 7.83%, FLIP 0.3161   | 12.60%      |
 | `dialogue-line`            | 10.47%, FLIP 0.3740      | 10.56%, FLIP 0.3701  | 11.65%      |
-| `dialogue-paimon-line`     | 9.73%, FLIP 0.3121       | 10.24%, FLIP 0.3025   | 11.86%      |
+| `dialogue-paimon-line`     | 9.73%, FLIP 0.3121       | 10.24%, FLIP 0.3025  | 11.86%      |
 
 The softened column is each reference's row in the parity snapshot (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`).
 
