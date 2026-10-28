@@ -8,7 +8,8 @@ import { afterAll, vi } from "vitest";
 // Method resolution, so the original createElement is stored and spied per-instance instead.
 // oxlint-disable-next-line typescript/no-deprecated -- `bind` resolves to the string-tag overload marked deprecated; the copy only forwards the call
 const createElement = window.document.createElement.bind(window.document);
-const mockCanvasContext: CanvasRenderingContext2D = {
+// The cast is needed: tsrs requires `lang` on the context, and TypeScript's DOM lib lacks it, so no literal fits both.
+const mockCanvasContext = {
   arc: noop,
   arcTo: noop,
   beginPath: noop,
@@ -95,7 +96,7 @@ const mockCanvasContext: CanvasRenderingContext2D = {
   transform: noop,
   translate: noop,
   wordSpacing: "0px",
-};
+} as unknown as CanvasRenderingContext2D;
 
 vi.spyOn(window.document, "createElement").mockImplementation((tagName, options) => {
   const element = createElement(tagName, options);

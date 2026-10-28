@@ -19,6 +19,7 @@
 
 - [ ] 4.1 Run the same comparison on `packages/genshin-interface`, `packages/genshin-world` and `packages/vue-phaserjs`, each as its own commit. Verified by each package's diagnostic diff recorded in `design.md`.
   - `genshin-interface` is compared and its result is recorded in `design.md`; `genshin-world` is still open.
+  - `vue-phaserjs` is compared and clean (`tsrs` and `vue-tsc` both 0 diagnostics, diff empty) after the canvas mock cast in `src/test/setupCanvas.ts`; `genshin-world` is still open.
 
 ## 5. The `apps/web` Nuxt typecheck
 
