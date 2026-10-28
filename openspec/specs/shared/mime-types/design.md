@@ -1,6 +1,6 @@
 # mime-types
 
-`packages/shared` (`@esposter/shared`) answers the three questions the app asks of a file: which media type an extension names (`lookup`), which extension a media type is saved under (`extension`), and the full `Content-Type` header for either, with the media type's charset attached (`contentType`). It replaces `mime-types`, which the app used in a handful of places, and is the absorption the [dependency admission](../../architecture/dependency-admission/design.md) page's standard is written against.
+`packages/shared` (`@esposter/shared`) answers the three questions the app asks of a file: which media type an extension names (`lookup`), which extension a media type is saved under (`extension`), and the full `Content-Type` header for either, with the media type's charset attached (`contentType`). It replaces `mime-types`, and is the absorption the [dependency admission](../../architecture/dependency-admission/design.md) page's standard is written against.
 
 The data stays a dependency. `mime-db` is the IANA-derived dataset `mime-types` itself read, and it changes without us, so it is kept as a catalog entry; what we take back is the layer that decided which type an extension means. The rules that layer enforces are the ones `mime-types` settled, ported with their tests.
 
@@ -10,8 +10,8 @@ The data stays a dependency. `mime-db` is the IANA-derived dataset `mime-types` 
 flowchart TD
   caller["lookup, extension, contentType<br/>or charset"]
   dataset["mime-db db.json<br/>read on first use"]
-  entries["media type entries<br/>charset, extensions, source"]
-  score["getMimeScore<br/>facet, source, type, length"]
+  entries["media type entries"]
+  score["getMimeScore"]
   extensionMap["extension map<br/>one media type per extension"]
   caller --> entries
   dataset --> entries
@@ -21,7 +21,7 @@ flowchart TD
 ```
 
 - **The dataset is read on first use**, not at import. A bundle that reaches none of the three functions never carries the dataset JSON, and `@esposter/shared` stays `sideEffects: false`.
-- **One media type per extension.** Several types can list one extension (`mp4` is claimed by `application/mp4` and `video/mp4`). `getMimeScore` ranks them the way `mime-score` does, and the higher score keeps the extension. A tie goes to the type the dataset lists later, which is the order `mime-types` has always used; the dataset the catalog pins has no tie at the top, so that rule decides nothing today.
+- **One media type per extension.** Several types can list one extension (`mp4` is claimed by `application/mp4` and `video/mp4`). `getMimeScore` ranks them the way `mime-score` does, and the higher score keeps the extension. A tie goes to the type the dataset lists later, which is the order `mime-types` uses; the dataset the catalog pins has no tie at the top.
 - **`extension` returns the first extension a type lists**, the order the dataset keeps.
 - **No `node:path`.** `lookup` reads a path's last segment itself, with the separators of both posix and Windows paths, so the function runs in a browser.
 
@@ -32,7 +32,7 @@ Every `jshttp/mime-types` issue, with its verdict. The four verdicts and what ea
 | Upstream                                                | Verdict            | Proof                                                                                                                                                                                                             |
 | :------------------------------------------------------ | :----------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [#165](https://github.com/jshttp/mime-types/issues/165) | In scope — defect  | Duplicate of #138; "resolves the extension .mp4 to video/mp4" in `lookup.test.ts`, and "prefers video/mp4 over application/mp4" in `getMimeScore.test.ts`                                                         |
-| [#162](https://github.com/jshttp/mime-types/issues/162) | Out of scope       | A backport into the v2 line, which this rewrite does not continue; `mime-db` 1.54.0 is already the dataset here                                                                                                   |
+| [#162](https://github.com/jshttp/mime-types/issues/162) | Out of scope       | A backport into the v2 line, which this rewrite does not continue; `mime-db` is already the dataset here                                                                                                          |
 | [#159](https://github.com/jshttp/mime-types/issues/159) | In scope — defect  | Fixed by construction: `@esposter/shared` is `sideEffects: false`, and the dataset is read on first use, so an unused import is dropped by the bundler                                                            |
 | [#157](https://github.com/jshttp/mime-types/issues/157) | In scope — defect  | Fixed by construction: the lookup reads a path's last segment itself, so no `node:path` import reaches a browser bundle                                                                                           |
 | [#156](https://github.com/jshttp/mime-types/issues/156) | In scope — defect  | The charset claim for `application/json` is the dataset's own, pinned by the `application/json` case in `contentType.test.ts`; the examples on this page quote only tested results                                |
@@ -97,8 +97,20 @@ Pull requests the audit judged on their merits, rather than as issues:
 | [PR #33](https://github.com/jshttp/mime-types/pull/33)                                                                                                                       | Out of scope      | The "lookupAll" of #23, judged there                                                                                                                               |
 | [PR #161](https://github.com/jshttp/mime-types/pull/161)                                                                                                                     | Out of scope      | A backport into v2, as #162                                                                                                                                        |
 
+## Key files
+
+| File                                                           | Role                                                  |
+| :------------------------------------------------------------- | :---------------------------------------------------- |
+| `packages/shared/src/services/mime/lookup.ts`                  | The media type an extension or a path names           |
+| `packages/shared/src/services/mime/extension.ts`               | The extension a media type is saved under             |
+| `packages/shared/src/services/mime/contentType.ts`             | The `Content-Type` header, with the charset attached  |
+| `packages/shared/src/services/mime/charset.ts`                 | The charset a media type carries                      |
+| `packages/shared/src/services/mime/getMimeScore.ts`            | The score that ranks the types claiming one extension |
+| `packages/shared/src/services/mime/getExtensionMimeTypeMap.ts` | The one media type per extension                      |
+| `packages/shared/src/services/mime/getMimeTypeEntryMap.ts`     | The dataset's media type entries, read on first use   |
+
 ## Sources
 
 - The upstream repository, [mime-types](https://github.com/jshttp/mime-types), at 3.0.2, whose `index.js` and "mimeScore.js" the port rewrites and whose test suite the cases port from.
-- [mime-db](https://github.com/jshttp/mime-db), the dataset this package reads, at 1.54.0.
+- [mime-db](https://github.com/jshttp/mime-db), the dataset this package reads.
 - [mime-score](https://github.com/broofa/mime-score), the ranking `getMimeScore` ports, and [RFC 6838](https://www.rfc-editor.org/rfc/rfc6838), the facets it scores.

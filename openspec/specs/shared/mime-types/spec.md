@@ -1,6 +1,6 @@
 ## Purpose
 
-Extension and media type lookup in @esposter/shared, over the mime-db dataset — the rewrite of mime-types that replaced the package, with its upstream issues settled one by one.
+Extension and media type lookup in @esposter/shared, over the mime-db dataset — the rewrite of mime-types that replaces the package, with its upstream issues settled one by one.
 
 ## Requirements
 
@@ -118,7 +118,7 @@ The lookup SHALL answer from the dataset's own media types and extensions rather
 
 ### Requirement: Every upstream issue and pull request carries exactly one verdict
 
-The audit of the upstream package SHALL record exactly one verdict for every issue and pull request it reads.
+The audit of the upstream package SHALL record exactly one verdict for every issue and pull request it reads, as the dependency admission spec requires.
 
 #### Scenario: A reviewer finds the outcome of an upstream issue
 

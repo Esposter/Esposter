@@ -1,6 +1,6 @@
 ## Purpose
 
-The app's event bus, a typed emitter over an event map kept in @esposter/shared, and the audit of the eventemitter3 package it replaced.
+The app's event bus, a typed emitter over an event map kept in @esposter/shared, and the audit of the eventemitter3 package it replaces.
 
 ## Requirements
 
@@ -137,7 +137,7 @@ The emitter SHALL call each listener without binding its this to the emitter.
 
 ### Requirement: Every upstream issue and pull request carries exactly one verdict
 
-The audit of the upstream package SHALL record exactly one verdict for every issue and pull request it reads, and every in-scope defect SHALL have a regression case that names it.
+The audit of the upstream package SHALL record exactly one verdict for every issue and pull request it reads, as the dependency admission spec requires, and every in-scope defect SHALL have a regression case that names it.
 
 #### Scenario: A reviewer finds the outcome of an upstream issue
 

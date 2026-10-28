@@ -1,6 +1,6 @@
 ## Purpose
 
-checkIsDeepEqual in @esposter/shared — the structural comparison the app and azure-mock use, and the absorption of fast-deep-equal it replaced, with every upstream issue's verdict.
+checkIsDeepEqual in @esposter/shared — the structural comparison the app and azure-mock use, and the absorption of fast-deep-equal it replaces, with every upstream issue's verdict.
 
 ## Requirements
 
@@ -116,7 +116,7 @@ The comparison SHALL NOT detect a cycle, so comparing data that refers to itself
 
 ### Requirement: Every upstream issue and pull request carries exactly one verdict
 
-The audit of the upstream package SHALL record exactly one verdict for every issue and pull request it reads.
+The audit of the upstream package SHALL record exactly one verdict for every issue and pull request it reads, as the dependency admission spec requires.
 
 #### Scenario: A reviewer finds the outcome of an upstream issue
 

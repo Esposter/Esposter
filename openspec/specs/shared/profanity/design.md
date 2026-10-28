@@ -12,7 +12,7 @@ flowchart TD
   whole["Whole-word regex<br/>word boundary"]
   substring["Substring regex<br/>a profane word anywhere"]
   test["Case-insensitive test"]
-  result["True if the text contains one"]
+  result["Result"]
   input --> isString
   isString -->|no| result
   isString -->|yes| mode
@@ -83,7 +83,16 @@ The API is one function, `checkContainsProfanity(text, { isWholeWord })`. It is 
 - **Whole word is the default.** Substring matching is the known-false-positive mode, kept for callers that want it. The app's callers use the default.
 - **Known false positives in substring mode.** `arsenic` (`arse`), `password` and `class` (`ass`), `Scunthorpe` (`cunt`) and `Massachusetts` match inside a larger word. Their tests document that behaviour rather than fix it.
 
+## Key files
+
+| File                                                                    | Role                                                           |
+| :---------------------------------------------------------------------- | :------------------------------------------------------------- |
+| `packages/shared/src/services/profanity/checkContainsProfanity.ts`      | The check: a whole-word or substring regex, built once         |
+| `packages/shared/src/services/profanity/checkContainsProfanity.test.ts` | The tests of the check, named for the upstream issues they pin |
+| `packages/shared/src/services/profanity/englishProfaneWords.ts`         | The English word list, copied from the upstream package        |
+| `packages/shared/src/services/profanity/NOTICE`                         | The MIT notice for the copied word list                        |
+
 ## Sources
 
-- [2Toad/Profanity](https://github.com/2Toad/Profanity) — the upstream repository, its tests and its issue tracker.
+- [@2toad/profanity](https://github.com/2Toad/Profanity) — the upstream repository, its tests and its issue tracker.
 - `packages/shared/src/services/profanity/NOTICE` — the MIT notice for the copied word list.

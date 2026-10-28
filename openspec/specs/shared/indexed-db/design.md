@@ -23,11 +23,11 @@ A transaction carries its mode in its type. A `readonly` transaction's store has
 ```mermaid
 flowchart TD
   caller["Caller<br/>typed by its schema"]
-  open["openDatabase<br/>indexedDB read at call time"]
-  upgrade["upgradeneeded<br/>upgrade callback, aborts if it throws"]
-  database["wrapDatabase<br/>typed methods over the native database"]
-  transaction["transaction<br/>done settles on complete or abort"]
-  request["requestToPromise<br/>success resolves, error rejects"]
+  open["openDatabase"]
+  upgrade["upgradeneeded"]
+  database["wrapDatabase"]
+  transaction["transaction"]
+  request["requestToPromise"]
   caller --> open
   open -->|version changes| upgrade
   upgrade --> database
@@ -100,7 +100,7 @@ Every `idb` issue and pull request, with its verdict. The verdict and what each 
 
 ## Sources
 
-- [idb](https://github.com/jakearchibald/idb) — the package replaced, its issues and pull requests.
+- [idb](https://github.com/jakearchibald/idb) — the package it replaces, its issues and pull requests.
 - [IndexedDB 3.0](https://www.w3.org/TR/IndexedDB/) (W3C) — the specification the request, transaction and version-change behaviour follows.
 - [IDBTransaction](https://developer.mozilla.org/en-US/docs/Web/API/IDBTransaction) (MDN) — the transaction's `complete`, `abort` and `error` events the `done` promise reads.
 - [fake-indexeddb](https://github.com/dumbmatter/fake-indexeddb) — the in-memory implementation the behaviour tests run against.

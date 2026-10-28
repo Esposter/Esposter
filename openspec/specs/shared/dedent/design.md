@@ -7,15 +7,16 @@
 ```mermaid
 flowchart TD
   input["Template or string"]
-  insertValues["Interpolate values<br/>alignValues indents them, a value is never cooked"]
-  continuations["Remove line continuations<br/>escaped newline, then its blanks"]
-  dedent["Strip the common indentation<br/>only lines with text count"]
+  insertValues["Interpolate values"]
+  continuations["Remove line continuations"]
+  dedent["Strip the common indentation"]
   trim{"trimWhitespace?"}
+  trimmed["Trim the result"]
   cook{"escapeSpecialCharacters?"}
-  cookEscapes["Cook escapes on static text<br/>after trim, so an escaped n survives it"]
+  cookEscapes["Cook escapes on static text"]
   output["Result"]
   input --> insertValues --> continuations --> dedent --> trim
-  trim -->|yes| cook
+  trim -->|yes| trimmed --> cook
   trim -->|no| cook
   cook -->|yes| cookEscapes --> output
   cook -->|no| output
@@ -37,7 +38,7 @@ flowchart TD
 
 ## Upstream
 
-Every issue and pull request in `dmnd/dedent` has one verdict. A "fixed upstream, pinned" row is a defect the upstream `1.7.2` package already passes, so the test stays as the pin; an "In scope" defect's test fails against the upstream package first.
+Every issue and pull request in `dmnd/dedent` has one verdict, and the [dependency admission](../../architecture/dependency-admission/design.md) page's triage says what each owes. A "fixed upstream, pinned" row is a defect the upstream `1.7.2` package already passes, so the test stays as the pin.
 
 | Upstream                                          | Verdict                                      | Proof                                                                              |
 | :------------------------------------------------ | :------------------------------------------- | :--------------------------------------------------------------------------------- |
@@ -153,6 +154,13 @@ Every issue and pull request in `dmnd/dedent` has one verdict. A "fixed upstream
 | [#110](https://github.com/dmnd/dedent/issues/110) | In scope — defect                            | #109 #110 #112 keeps a backslash sequence in an interpolated value as typed        |
 | [#112](https://github.com/dmnd/dedent/issues/112) | In scope — defect                            | #109 #110 #112 keeps a backslash sequence in an interpolated value as typed        |
 | [#113](https://github.com/dmnd/dedent/issues/113) | In scope — defect                            | #113 keeps a Windows-style path in an interpolated value as typed                  |
+
+## Key files
+
+| File                                           | Role                                                               |
+| :--------------------------------------------- | :----------------------------------------------------------------- |
+| `packages/shared/src/util/text/dedent.ts`      | The tag: interpolation, escapes, indentation strip and trim        |
+| `packages/shared/src/util/text/dedent.test.ts` | The tests of the tag, named for the upstream cases the table names |
 
 ## Sources
 

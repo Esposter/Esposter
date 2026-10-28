@@ -70,7 +70,7 @@ Every `msw-trpc` issue and pull request, with its verdict, graded by the [triage
 | [PR #49](https://github.com/maloguertin/msw-trpc/pull/49)                                                                                                                                                                               | In scope — feature | `createContext` sees the request; "#49 hands the resolver the context built from the request"                                                                                                                                                                                                     |
 | [PR #51](https://github.com/maloguertin/msw-trpc/pull/51)                                                                                                                                                                               | In scope — feature | `UnhandledProcedureAction.Bypass`; "#51 passes a request naming no registered procedure on when told to bypass"                                                                                                                                                                                   |
 
-Never ported: **observable subscriptions**. tRPC 11 deprecates them in favour of async generators, so a subscription resolver here returns an async iterable and nothing else.
+Never ported: **observable subscriptions**. A subscription resolver here returns an async iterable and nothing else.
 
 ## Key files
 
@@ -85,7 +85,7 @@ Never ported: **observable subscriptions**. tRPC 11 deprecates them in favour of
 
 ## Sources
 
-- [msw-trpc](https://github.com/maloguertin/msw-trpc) — the package replaced, its issues and pull requests.
+- [msw-trpc](https://github.com/maloguertin/msw-trpc) — the package it replaces, its issues and pull requests.
 - [Fetch adapter](https://trpc.io/docs/server/adapters/fetch) (tRPC) — `fetchRequestHandler`, which serves batches, method override and server-sent events.
 - [WebSockets](https://trpc.io/docs/server/websockets) (tRPC) — `applyWSSHandler`, the connection handler and the reconnect notification.
 - [Subscriptions](https://trpc.io/docs/server/subscriptions) (tRPC) — async generators as the subscription shape, observables deprecated.

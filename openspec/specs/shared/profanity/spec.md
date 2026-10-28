@@ -93,7 +93,7 @@ The check SHALL match English profane words only, and a caller needing another l
 
 ### Requirement: Every upstream issue carries exactly one verdict
 
-The audit of the upstream package SHALL record exactly one verdict for every issue it reads, and every in-scope defect SHALL have a regression case that names it.
+The audit of the upstream package SHALL record exactly one verdict for every issue it reads, as the dependency admission spec requires, and every in-scope defect SHALL have a regression case that names it.
 
 #### Scenario: A reviewer finds the outcome of an upstream issue
 

@@ -1,6 +1,6 @@
 ## Purpose
 
-The typed IndexedDB wrapper in @esposter/shared — a schema that types every store, index and key, and the absorption of idb it replaced, with every upstream issue's verdict.
+The typed IndexedDB wrapper in @esposter/shared — a schema that types every store, index and key, and the absorption of idb it replaces, with every upstream issue's verdict.
 
 ## Requirements
 
@@ -117,7 +117,7 @@ The wrapper SHALL offer opening with its upgrade, blocked, blocking and terminat
 
 ### Requirement: Every upstream issue and pull request carries exactly one verdict
 
-The audit of the upstream repository SHALL record exactly one verdict for every issue and pull request it reads.
+The audit of the upstream repository SHALL record exactly one verdict for every issue and pull request it reads, as the dependency admission spec requires.
 
 #### Scenario: A reviewer finds the outcome of an upstream issue
 

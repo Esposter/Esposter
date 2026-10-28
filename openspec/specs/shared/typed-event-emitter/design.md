@@ -2,7 +2,7 @@
 
 `TypedEventEmitter` in `packages/shared/src/models/eventEmitter/` is the emitter behind the app's game event bus. It takes an event map, an interface of event names to listener signatures, and types every `on`, `once`, `off` and `emit` against it: the event name is one of the map's keys, and the listener or the arguments are the map's own for that key. The app's bus is `new TypedEventEmitter<PhaserEvents>()` in `apps/web/app/services/phaser/phaserEventEmitter.ts`.
 
-It replaces `eventemitter3` for the app's bus, and it is the second absorption of a utility into `@esposter/shared`. Its verdicts are in the [upstream table](#upstream) below, each with the test or type test that proves it.
+It replaces `eventemitter3` for the app's bus. Its verdicts are in the [upstream table](#upstream) below, each with the test or type test that proves it.
 
 ## Surface
 

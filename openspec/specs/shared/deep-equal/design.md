@@ -21,7 +21,7 @@ flowchart TD
   start --> identity
   identity -->|yes| equal["true"]
   identity -->|no| primitive
-  primitive -->|no| sameValueZero["SameValueZero, so NaN equals NaN"]
+  primitive -->|no| sameValueZero["SameValueZero"]
   primitive -->|yes| constructor
   constructor -->|no| unequal["false"]
   constructor -->|yes| array
@@ -164,7 +164,7 @@ A pull request carries the verdict of the issue it fixes, or its own verdict whe
 ## Notes
 
 - A caller that relied on two different Sets being equal would see them unequal. None of the callers does.
-- Cyclic structures are not detected. A comparison of data with a cycle overflows the stack, as the upstream's does.
+- Cyclic structures are not detected: a comparison of one overflows the stack, as the upstream's does (#37 above).
 
 ## Key files
 

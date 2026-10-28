@@ -28,7 +28,7 @@ flowchart LR
 | `glsl`    | `false` | Adds `vite-plugin-glsl` so shader files import as strings. The plugin is an optional peer, loaded only when this is on.           |
 | `modules` | `[]`    | Extra packages whose exports register beside the installed `@tresjs/*` ones, for a package the app does not list as a dependency. |
 
-The `devtools` option of `@tresjs/nuxt` is not offered. It added a TresJS tab to the Nuxt devtools built on Nuxt UI, which pulled that library, its font package and the esbuild override that package needed into the app's install. The module carries none of them.
+The `devtools` option of `@tresjs/nuxt` is not offered. The module carries none of the Nuxt UI library, its font package or the esbuild override that its devtools tab needs.
 
 ## Upstream
 

@@ -18,11 +18,11 @@ flowchart LR
   stable -->|no| text["Escaped text only"]
 ```
 
-Nothing is copied from the upstream source. The policy is the one our two call sites state, the parser is the standard's, and the escaping is written for the output this renderer produces.
+Nothing is copied from the upstream source. The policy is the one the app's call sites state, the parser is the standard's, and the escaping is written for the output this renderer produces.
 
 ## The policy
 
-Only the options the two call sites pass are offered: `allowedTags`, `allowedAttributes`, `allowedClasses` (per tag, with a trailing star for a prefix), `allowedStyles` (per tag and property, with the expressions a value must match in full), and an attribute transform. Everything else is default-denied.
+Only the options the app's call sites pass are offered: `allowedTags`, `allowedAttributes`, `allowedClasses` (per tag, with a trailing star for a prefix), `allowedStyles` (per tag and property, with the expressions a value must match in full), and an attribute transform. Everything else is default-denied.
 
 - **Tags.** The default list is the upstream's current list. `img` is not in it, so an image needs a caller that names it. Script, style, textarea, option, noscript, title, xmp, noembed, noframes, iframe and plaintext are never rendered, whatever a caller allows, because their content is code or raw text.
 - **Attributes.** A link keeps `href`, `name` and `target`, and every link is written with `rel="noopener noreferrer nofollow"` and `target="_blank"`. A table, a cell and a header keep only `style`, and a style survives only where a rule names its property.
@@ -514,8 +514,18 @@ DOMPurify's advisories are not this package's, but the watch below reads them, a
 The watch is a test that reads the advisory feed when the suite runs and fails on an advisory published after the day the sanitiser recorded. It is not a scheduled job, which the repository does not run, and not an addition to the outdated report, which the admission keeps to version drift.
 
 - **Where.** `packages/shared/src/services/sanitizeHtml/sanitizeHtml.advisoryWatch.test.ts`. It asks GitHub's advisories API for `sanitize-html` and `dompurify`, and counts an advisory as published after the recorded day from the next day's first moment. It is a shared package test rather than a scripts workspace test because the date it reads is the sanitiser's own record.
-- **The date.** `SANITIZER_ADVISORY_WATCH_SINCE` in `packages/shared/src/services/sanitizeHtml/constants.ts`, `2026-10-11` at the absorption.
+- **The date.** `SANITIZER_ADVISORY_WATCH_SINCE` in `packages/shared/src/services/sanitizeHtml/constants.ts` holds `2026-10-23`.
 - **What surfaces it.** A new advisory fails the test in the next CI run, and that red is a session's work: port the fix and pin it with a regression test that names the advisory, then move the date to the day the port landed. A feed that cannot be read also fails the test, so an outage cannot pass the watch. `GITHUB_TOKEN`, when set in CI, is not sent by this test: the feed is read anonymously, which the advisories API allows at its low anonymous limit.
+
+## Key files
+
+| File                                                                           | Role                                                                                                    |
+| :----------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
+| `packages/shared/src/services/sanitizeHtml/constants.ts`                       | The default tag and attribute lists, the non-text tags, `MAX_NESTING_DEPTH` and the advisory watch date |
+| `packages/shared/src/services/sanitizeHtml/sanitizeHtml.upstream.test.ts`      | The ported upstream suite                                                                               |
+| `packages/shared/src/services/sanitizeHtml/sanitizeHtml.advisories.test.ts`    | One case per pinned upstream issue or advisory                                                          |
+| `packages/shared/src/services/sanitizeHtml/sanitizeHtml.advisoryWatch.test.ts` | The advisory watch                                                                                      |
+| `packages/shared/src/test/domPurifyVectors.json`                               | The DOMPurify attack vectors                                                                            |
 
 ## Security review
 
