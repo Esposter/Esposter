@@ -109,8 +109,8 @@ export const ColumnStatisticsDefinitionMap = {
   }),
   [ColumnStatisticName.UniqueCount]: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number, ColumnType.String, ColumnType.Date],
-    compute: ({ columnType, nonNullNumbers, nonNullStrings }) =>
-      columnType === ColumnType.Number ? new Set(nonNullNumbers).size : new Set(nonNullStrings).size,
+    compute: ({ columnType, nonNullNumbers, stringCountMap }) =>
+      columnType === ColumnType.Number ? new Set(nonNullNumbers).size : stringCountMap.size,
     format: formatOptional,
     key: ColumnStatisticName.UniqueCount,
     title: "Unique",
