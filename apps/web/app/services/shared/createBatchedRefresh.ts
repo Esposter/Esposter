@@ -4,7 +4,6 @@ import { createExponentialBackoff, getResultAsync, getSynchronizedFunction } fro
 
 // A server that stays down is not asked forever: past this many retries in a row the keys stay dirty until the next mark
 const MAX_RETRIES = 5;
-
 // Re-reads the keys marked as changed, one run at a time. A key marked while a run is in flight is taken by the run
 // Owed after it, so a change is read once however many marks land during a run, and no two reads of the same keys
 // Overlap — the one to finish last is always the newest. A run that fails puts its keys back and schedules one more

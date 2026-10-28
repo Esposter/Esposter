@@ -9,7 +9,6 @@ import { takeOne } from "@esposter/shared";
 
 // The key a series' column is read from, by its position, so a category sharing a series' name cannot overwrite it
 const getSeriesKey = (index: number) => `series${index}`;
-
 // The drawn values as a dataset: one row per category with a column per series, or one row for a card.
 // Each column is keyed by its position, and its title is what the file prints
 export const createDrawnDataset = (

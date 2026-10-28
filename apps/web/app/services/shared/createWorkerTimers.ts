@@ -7,7 +7,6 @@ interface PendingTimer {
   callback: () => void;
   isInterval: boolean;
 }
-
 // The page side of the timer worker: ids start at 1 as the spec requires, a call to clear an id that is not pending
 // Does nothing as the spec does, and a timeout is forgotten as it fires
 export const createWorkerTimers = (worker: Pick<Worker, "addEventListener" | "postMessage">) => {

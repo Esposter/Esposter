@@ -13,7 +13,6 @@ import { createStaticVNode, createTextVNode } from "vue";
 
 const checkIsElement = (node: HtmlNode): node is HtmlElement => typeof node !== "string" && "tag" in node;
 const checkIsRawNode = (node: HtmlNode): node is HtmlRawNode => typeof node !== "string" && !checkIsElement(node);
-
 // Renders a webpage's document as the canvas's VNodes, folding its nodes through the same registry and render the published
 // Page uses, so the canvas shows the layout the page has. Each node's root element carries its id in the canvas only, so an
 // Overlay can find the node's box, and no script runs there, since the raw type's markup is inserted as inner HTML

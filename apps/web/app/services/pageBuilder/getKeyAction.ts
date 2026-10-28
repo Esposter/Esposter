@@ -27,7 +27,6 @@ const checkIsControlTarget = (target: EventTarget | null) =>
   checkIsElementTarget(target) && target.closest("button, a[href]") !== null;
 const checkMatchesModifier = (required: boolean | undefined, held: boolean) =>
   required === undefined || required === held;
-
 // The action the key pressed takes in the scope's handler, or none when the key is not one the handler takes. Keys inside a
 // Text field are never taken, so Delete and the arrows keep their own meaning there
 export const getKeyAction = (event: KeyboardEvent, scope: KeyScope): KeyAction | undefined => {

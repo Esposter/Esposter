@@ -28,7 +28,6 @@ export const exportDashboardVisualCsv = (visual: Visual, dataset: Dataset) => {
   const drawnQuery = shape === VisualDatasetShape.Labels ? { ...query, series: [takeOne(query.series)] } : query;
   const drawn = computeDatasetVisualPropsData(drawnVisualType, dataset, drawnQuery);
   if (!drawn || !checkIsAxisVisualPropsData(drawn)) return;
-
   // A capped read still downloads, since the rows read are the file, but the alert says they are not every row
   const truncation = getDatasetTruncation(dataset);
   if (truncation) {

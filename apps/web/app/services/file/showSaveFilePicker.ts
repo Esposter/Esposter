@@ -13,7 +13,6 @@ const downloadBlob = (blob: Blob, filename: string) => {
     URL.revokeObjectURL(url);
   }, 0);
 };
-
 // The File System Access save picker where the browser has it. Where it does not, the written file is downloaded
 // Once its writable closes, and an aborted writable downloads nothing
 export const showSaveFilePicker = (options?: SaveFilePickerOptions): Promise<SaveFilePickerHandle> => {

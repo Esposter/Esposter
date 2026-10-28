@@ -23,7 +23,6 @@ const CANVAS_STYLE_PROPERTY_MAP: Readonly<Record<string, string>> = Object.freez
   "line-height": "lineHeight",
   padding: "padding",
 });
-
 // The design canvas's view of an email: each node drawn as the element it becomes, by its type's drawing in the map.
 // Every attribute is the one the MJML cascade resolves for it.
 export const renderEmailCanvasVNodes = (kind: EmailKind, document: EmailDocument, width: number): VNode[] => {
@@ -40,7 +39,6 @@ export const renderEmailCanvasVNodes = (kind: EmailKind, document: EmailDocument
     );
     const context: EmailCanvasContext = { attribute, childNodes: Object.values(slots).flat(), isStacked, kind, style };
     const drawing = EmailCanvasDrawingMap[node.type](node as never, context);
-
     // Each drawn node's root element carries the node's id, so the canvas can outline it on hover and select it on click
     return cloneVNode(drawing, { "data-node-id": node.props.id });
   });

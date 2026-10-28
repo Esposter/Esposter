@@ -11,7 +11,6 @@ export interface StyleInheritance {
   from: string;
   value: string;
 }
-
 // The value a field inherits when it sets none at its breakpoint and state: the nearest one the cascade applies there.
 // A hover rule has a class and a pseudo-class, which outweighs every default rule whatever its breakpoint, so every
 // Hover in the cascade comes before any default, and the defaults follow in the order their breakpoints win

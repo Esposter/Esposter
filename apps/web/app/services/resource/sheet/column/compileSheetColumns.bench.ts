@@ -72,7 +72,6 @@ const rows1k = generateBenchRows(1000);
 const rows10k = generateBenchRows(10000);
 const rowIdIndexMap100 = new Map(rows100.map((row, index) => [row.id, index]));
 const rowIdIndexMap1k = new Map(rows1k.map((row, index) => [row.id, index]));
-
 // One pass compiles the sheet, binds it to the rows and reads each listed column's cell for every row
 const readPass = (rows: Row[], readColumns: Column[]) => {
   const readCell = compileSheetColumns(columns)(rows);

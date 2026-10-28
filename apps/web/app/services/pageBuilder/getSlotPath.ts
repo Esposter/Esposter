@@ -7,7 +7,6 @@ import { parseJsonPointer } from "@esposter/shared";
 // Root down to the slot's owning node, joined with " › "
 export const getSlotPath: PageBuilderHelper<string, [slotPointer: string]> = (kind, document, slotPointer) => {
   if (slotPointer === "/content") return "The page";
-
   // A node's pointer is its slot's pointer plus one index, so the owning node sits two segments before the slot
   // And each node on the way down is three segments after the one before it
   const ownerSegments = parseJsonPointer(slotPointer).slice(0, -2);

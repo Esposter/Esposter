@@ -26,7 +26,6 @@ const getClipboardNodesSchema = <
 
 export const serializeClipboardNodes = ({ editor, nodes }: { editor: PageBuilderEditor; nodes: BlockNode[] }) =>
   JSON.stringify({ editor, marker: CLIPBOARD_MARKER, nodes });
-
 // The editor and nodes clipboard text was copied as, or none when the text is not page builder nodes or is malformed
 export const parseClipboardNodes = <
   TNode extends BlockNode,

@@ -5,7 +5,6 @@ import type { StyleState } from "#shared/models/pageBuilder/StyleState";
 
 // Whether a record holds no entries, which a state or a breakpoint is once a reset has emptied it
 const checkIsEmpty = (record: object) => Object.keys(record).length === 0;
-
 // The style with one property set at a breakpoint and state. An empty value removes the override, so the property
 // Inherits again, and every other property at that breakpoint and state is left as it was. A state or a breakpoint a
 // Reset empties is dropped with it, so no empty object is left in the style
