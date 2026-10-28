@@ -1,4 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { PACKAGE_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { runCommand } from "#src/services/timing/runCommand";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -26,7 +26,7 @@ await runCommand(
     run: ({ args }) => {
       const { platform } = process;
       const packageJson = parseMachineJson<Record<string, unknown>>(
-        readFileSync(join(REPOSITORY_ROOT, "package.json"), "utf8"),
+        readFileSync(join(REPOSITORY_ROOT, PACKAGE_JSON_FILENAME), "utf8"),
       );
       const command = (packageJson[CROSS_OS_PROPERTY] as Record<string, Partial<Record<string, string>>>)[
         args.script
