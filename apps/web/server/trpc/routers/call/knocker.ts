@@ -23,9 +23,7 @@ export const knockerRouter = router({
     .mutation<void>(async ({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
       await requireCallDoorkeeper(ctx.db, ctx.getSessionPayload, callSessionId, "admit");
 
-      const knockerMap = callKnockerMap.get(callSessionId);
-      if (!knockerMap?.has(knockerSessionId)) return;
-      knockerMap.delete(knockerSessionId);
+      if (!callKnockerMap.get(callSessionId)?.delete(knockerSessionId)) return;
       getOrCreate(callAdmittedParticipantMap, callSessionId, () => new Set<string>()).add(knockerSessionId);
 
       callEventEmitter.emit("knockerAdmitted", { callSessionId, knockerSessionId });
@@ -35,9 +33,7 @@ export const knockerRouter = router({
     .mutation<void>(async ({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
       await requireCallDoorkeeper(ctx.db, ctx.getSessionPayload, callSessionId, "dismiss");
 
-      const knockerMap = callKnockerMap.get(callSessionId);
-      if (!knockerMap?.has(knockerSessionId)) return;
-      knockerMap.delete(knockerSessionId);
+      if (!callKnockerMap.get(callSessionId)?.delete(knockerSessionId)) return;
 
       callEventEmitter.emit("knockerDismissed", { callSessionId, knockerSessionId });
     }),
