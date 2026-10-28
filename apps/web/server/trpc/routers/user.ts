@@ -209,28 +209,24 @@ export const userRouter = router({
     .input(userStatusIdsInputSchema)
     .query<SetNonNullable<UserStatusInMessage, "status">[]>(async ({ ctx, input }) => {
       const foundUserStatuses = await ctx.db.query.userStatusesInMessage.findMany({ where: { userId: { in: input } } });
-      const resultUserStatuses: SetNonNullable<UserStatusInMessage, "status">[] = [];
       const statusMap = new Map(foundUserStatuses.map((userStatus) => [userStatus.userId, userStatus]));
 
-      for (const userId of input) {
+      return input.map((userId): SetNonNullable<UserStatusInMessage, "status"> => {
         const foundStatus = statusMap.get(userId);
-        if (foundStatus) resultUserStatuses.push({ ...foundStatus, status: getDetectedUserStatus(foundStatus) });
-        else
-          // A user with no status row is treated as online: a row is inserted the moment they go offline, so
-          // Its absence is the only state left
-          resultUserStatuses.push({
-            createdAt: new Date(),
-            deletedAt: null,
-            expiresAt: null,
-            isConnected: true,
-            message: "",
-            status: UserStatus.Online,
-            updatedAt: new Date(),
-            userId,
-          });
-      }
-
-      return resultUserStatuses;
+        if (foundStatus) return { ...foundStatus, status: getDetectedUserStatus(foundStatus) };
+        // A user with no status row is treated as online: a row is inserted the moment they go offline, so
+        // Its absence is the only state left
+        return {
+          createdAt: new Date(),
+          deletedAt: null,
+          expiresAt: null,
+          isConnected: true,
+          message: "",
+          status: UserStatus.Online,
+          updatedAt: new Date(),
+          userId,
+        };
+      });
     }),
   // Public profile identity — projects only the allowlisted columns so private fields (email) never
   // Leave the database, and runs unauthenticated on the rate-limited procedure
