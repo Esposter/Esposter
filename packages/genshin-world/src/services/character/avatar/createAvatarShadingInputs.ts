@@ -138,7 +138,8 @@ export const createAvatarShadingInputs = (
     specularMultiplier: nameFloatMap.get("_SpecMulti"),
   };
   // A key left undefined would override the shading's default with nothing, so only the keys the material holds stay
-  return Object.fromEntries(
-    Object.entries(inputs).filter(([, value]) => value !== undefined),
-  ) as Partial<CharacterShadingInputs>;
+  const shadingInputs: Partial<CharacterShadingInputs> = {};
+  for (const key of Object.keys(inputs) as (keyof CharacterShadingInputs)[])
+    if (inputs[key] !== undefined) Object.assign(shadingInputs, { [key]: inputs[key] });
+  return shadingInputs;
 };
