@@ -1,4 +1,4 @@
-import type { GameDataPublication } from "#src/models/gameData/GameDataPublication";
+import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { ExcelLocalizationRow } from "#src/models/genshinAssets/archive/ExcelLocalizationRow";
 
 import { LOCALIZATION_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";

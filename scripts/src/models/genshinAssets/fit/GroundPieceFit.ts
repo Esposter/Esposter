@@ -1,4 +1,4 @@
-import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
 // A piece's fit: its notes, the record it returns only when its bar holds its gate, and the samples its gate is read on
 export interface GroundPieceFit {

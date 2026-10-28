@@ -1,4 +1,4 @@
-import { GameDataTarget } from "#src/models/gameData/GameDataTarget";
+import { GameDataTarget } from "#src/models/shared/GameDataTarget";
 import { GameDataTargetBlobServiceUrlMap } from "#src/services/gameData/GameDataTargetBlobServiceUrlMap";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { AzureContainer } from "@esposter/db-schema";

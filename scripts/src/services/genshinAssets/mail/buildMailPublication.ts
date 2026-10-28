@@ -1,4 +1,4 @@
-import type { GameDataPublication } from "#src/models/gameData/GameDataPublication";
+import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { ExcelBirthdayMailRow } from "#src/models/genshinAssets/mail/ExcelBirthdayMailRow";
 import type { ExcelMailRow } from "#src/models/genshinAssets/mail/ExcelMailRow";
 

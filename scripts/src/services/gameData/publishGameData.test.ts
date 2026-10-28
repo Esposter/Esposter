@@ -1,10 +1,10 @@
-import type { GameDataPublication } from "#src/models/gameData/GameDataPublication";
+import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { GameDataPublishResult } from "#src/models/gameData/GameDataPublishResult";
 import type { ContainerClient } from "@azure/storage-blob";
 import type { GameDataLock } from "genshin-world";
 
 import { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutcome";
-import { GameDataTarget } from "#src/models/gameData/GameDataTarget";
+import { GameDataTarget } from "#src/models/shared/GameDataTarget";
 import { DAY_MS } from "#src/services/gameData/constants";
 import { formatGameDataLock } from "#src/services/gameData/formatGameDataLock";
 import { getGameDataBlobName } from "#src/services/gameData/getGameDataBlobName";

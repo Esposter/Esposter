@@ -1,4 +1,4 @@
-import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
 export interface RegionGroundFit {
   isQualified: boolean;

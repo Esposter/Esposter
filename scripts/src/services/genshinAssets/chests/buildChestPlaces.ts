@@ -1,4 +1,4 @@
-import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
 import { ChestKindLabelIdMap } from "#src/services/genshinAssets/chests/ChestKindLabelIdMap";
 import { ChestWikiCountMap } from "#src/services/genshinAssets/chests/ChestWikiCountMap";

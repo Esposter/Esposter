@@ -1,4 +1,4 @@
-import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
 import { FROSTBEARING_TREE_LABEL_ID } from "#src/services/genshinAssets/offerings/constants";
 import { buildFittedMapPointSlices } from "#src/services/genshinAssets/points/buildFittedMapPointSlices";

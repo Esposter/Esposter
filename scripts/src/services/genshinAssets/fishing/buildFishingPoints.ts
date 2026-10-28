@@ -1,4 +1,4 @@
-import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { FishingPointPlace } from "genshin-world";
 
 import { FISHING_POINT_KIND, FISHING_POINT_LABEL_ID } from "#src/services/genshinAssets/fishing/constants";

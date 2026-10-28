@@ -1,4 +1,4 @@
-import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
 // Several builds as one: their notes in order, and every record each publishes under its key
 export const mergeGameDataBuilds = (builds: readonly GameDataBuild[]): GameDataBuild => ({

@@ -1,6 +1,6 @@
-import type { GameDataPublication } from "#src/models/gameData/GameDataPublication";
+import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { GameDataScope } from "#src/models/gameData/GameDataScope";
-import type { GameDataTarget } from "#src/models/gameData/GameDataTarget";
+import type { GameDataTarget } from "#src/models/shared/GameDataTarget";
 import type { ContainerClient } from "@azure/storage-blob";
 import type { GameDataLock } from "genshin-world";
 

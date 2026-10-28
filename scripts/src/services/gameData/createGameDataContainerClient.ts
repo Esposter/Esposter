@@ -1,4 +1,4 @@
-import type { GameDataTarget } from "#src/models/gameData/GameDataTarget";
+import type { GameDataTarget } from "#src/models/shared/GameDataTarget";
 import type { ContainerClient } from "@azure/storage-blob";
 
 import { GameDataTargetBlobServiceUrlMap } from "#src/services/gameData/GameDataTargetBlobServiceUrlMap";

@@ -1,4 +1,4 @@
-import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { ExcelTriggerRow } from "#src/models/genshinAssets/sceneGroups/ExcelTriggerRow";
 import type { SceneGroupMember } from "genshin-world";
 

@@ -1,9 +1,9 @@
-import type { GameDataPublication } from "#src/models/gameData/GameDataPublication";
+import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { GameDataScope } from "#src/models/gameData/GameDataScope";
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
 import { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutcome";
-import { GameDataTarget } from "#src/models/gameData/GameDataTarget";
+import { GameDataTarget } from "#src/models/shared/GameDataTarget";
 import { commitGameDataLock } from "#src/services/gameData/commitGameDataLock";
 import { createGameDataContainerClient } from "#src/services/gameData/createGameDataContainerClient";
 import { publishGameData } from "#src/services/gameData/publishGameData";

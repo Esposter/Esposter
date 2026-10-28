@@ -4,7 +4,7 @@ import type { PublishGameDataOptions } from "#src/models/gameData/PublishGameDat
 import type { ContainerClient } from "@azure/storage-blob";
 
 import { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutcome";
-import { GameDataTarget } from "#src/models/gameData/GameDataTarget";
+import { GameDataTarget } from "#src/models/shared/GameDataTarget";
 import { formatGameDataLock } from "#src/services/gameData/formatGameDataLock";
 import { mergeGameDataLock } from "#src/services/gameData/mergeGameDataLock";
 import { planGameDataPublication } from "#src/services/gameData/planGameDataPublication";

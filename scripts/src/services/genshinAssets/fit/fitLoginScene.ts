@@ -1,4 +1,4 @@
-import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { ExportedMesh } from "#src/models/genshinAssets/shared/ExportedMesh";
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";

@@ -1,4 +1,4 @@
-import { GameDataTarget } from "#src/models/gameData/GameDataTarget";
+import { GameDataTarget } from "#src/models/shared/GameDataTarget";
 
 // Each account's blob endpoint, the one an app reads its game data from under the same container
 export const GameDataTargetBlobServiceUrlMap: Readonly<Record<GameDataTarget, string>> = {

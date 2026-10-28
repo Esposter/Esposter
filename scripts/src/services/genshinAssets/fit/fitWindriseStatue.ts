@@ -1,4 +1,4 @@
-import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { Vector } from "#src/models/shared/Vector";
 import type { StatuePart } from "genshin-engine";
 

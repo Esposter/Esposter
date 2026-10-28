@@ -1,4 +1,4 @@
-import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { MapPointPlace } from "#src/models/genshinAssets/points/MapPointPlace";
 import type { GameDataset } from "genshin-world";
 

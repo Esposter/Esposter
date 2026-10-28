@@ -1,4 +1,4 @@
-import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { PaletteColour } from "#src/models/genshinAssets/palette/PaletteColour";
 import type { PaletteRegion } from "#src/models/genshinAssets/palette/PaletteRegion";
 

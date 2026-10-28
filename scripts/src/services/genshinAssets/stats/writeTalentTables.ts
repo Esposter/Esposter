@@ -1,4 +1,4 @@
-import type { GameDataPublication } from "#src/models/gameData/GameDataPublication";
+import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { TalentTables } from "#src/models/genshinAssets/stats/TalentTables";
 
 import { TALENT_MULTIPLIER_GENERATED_DIRECTORY } from "#src/services/genshinAssets/stats/constants";

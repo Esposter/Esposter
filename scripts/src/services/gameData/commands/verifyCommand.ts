@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { GameDataTarget } from "#src/models/gameData/GameDataTarget";
+import { GameDataTarget } from "#src/models/shared/GameDataTarget";
 import { GameDataTargetBlobServiceUrlMap } from "#src/services/gameData/GameDataTargetBlobServiceUrlMap";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { verifyGameData } from "#src/services/gameData/verifyGameData";

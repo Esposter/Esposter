@@ -1,6 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
-import { GameDataTarget } from "#src/models/gameData/GameDataTarget";
+import { GameDataTarget } from "#src/models/shared/GameDataTarget";
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { createGameDataContainerClient } from "#src/services/gameData/createGameDataContainerClient";
 import { pruneGameData } from "#src/services/gameData/pruneGameData";

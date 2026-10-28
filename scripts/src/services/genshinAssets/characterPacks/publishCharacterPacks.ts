@@ -1,6 +1,6 @@
 import type { CharacterPackFile } from "#src/models/genshinAssets/characterPacks/CharacterPackFile";
 
-import { GameDataTarget } from "#src/models/gameData/GameDataTarget";
+import { GameDataTarget } from "#src/models/shared/GameDataTarget";
 import { MAX_CONCURRENT_BLOB_UPLOADS } from "#src/services/gameData/constants";
 import { createGameDataContainerClient } from "#src/services/gameData/createGameDataContainerClient";
 import { settleAll } from "@esposter/shared";

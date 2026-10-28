@@ -1,4 +1,4 @@
-import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { DerivedAssetFit } from "#src/models/genshinAssets/fit/DerivedAssetFit";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";

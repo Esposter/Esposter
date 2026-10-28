@@ -1,4 +1,4 @@
-import type { GameDataPublication } from "#src/models/gameData/GameDataPublication";
+import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { SkillGlyphs } from "genshin-world";
 
 import { SkillGlyphTonesMap } from "#src/services/genshinAssets/skillGlyphs/constants";
