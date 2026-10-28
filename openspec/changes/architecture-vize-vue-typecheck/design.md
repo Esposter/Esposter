@@ -99,12 +99,92 @@ Found while running the mapper on the repo. Each has its status against the upst
 
 Status: a possible origin, not confirmed. Checked against the installed `vize@0.602.0` and upstream `main`.
 
-- **Observed.** A template arrow passed to a non-generic child's function-typed prop has no contextual type in the virtual code, so `TS7006` (and `TS7053` when the parameter is indexed) is reported with no source location. The repo's `tsrs` typecheck runs the same mapper and reports it at `packages/genshin-world/src/components/Menu/Screen/Index.vue` and `packages/genshin-world/src/components/World/Session/Index.vue` once the annotations are removed. With the annotations, `tsrs` passes. `vue-tsc` 6.0.3 accepts the same code, so the source is not at fault.
-- **Possible origin (upstream `main`).** The mapped check is typed `__VizeResolvedProp<resolved, selected, 'name', F>` (`crates/vize_canon/src/virtual_ts/expressions/component_props.rs`). For a child without `__vizeResolveProps`, the resolver collapses to `(props: any) => {}`, so the lookup falls through to `F`, the child's per-prop alias. An inline callback's alias is wrapped in `__VizeCallableProp`, the guard from the `#3446` fix (`crates/vize_canon/src/virtual_ts/scope/component_prop_checker.rs`), which turns an `unknown` alias into `(...args: any[]) => any`.
-- **Gap.** Read this way, the guard should already cover this shape. One of these holds, not yet settled: the installed `0.602.0` build differs from `main`; the failing alias is not wrapped; or the error comes from a copy not yet read. The installed native binary carries the same helper text, which makes a build difference less likely.
-- **Ruled out.** The stall was the mapper's bare `node` spawn, now patched, and is separate from the reported error. A standalone repro with a plain non-generic child and the same callback shape did not fail on `0.602.0`, so the trigger is in the app. How the real children are imported is not yet checked.
-- **Next check.** `vize check --show-virtual-ts` on the two components, to read the virtual line that carries the `any`.
-- **Ideas, not decided.** File the callback case upstream by hand, with the two components as the reproduction, linking `#11023` and `#3446` as related. The content-mapper patch (`node.exe`, path `../../node_modules/vize/bin/vize`) needs a `# @TODO:` marker before it is committed.
+- **Observed.** A template arrow passed to a child's function-typed prop has no contextual type in the virtual code, so `TS7006` (and `TS7053` when the parameter is indexed) is reported with no source location. The repo's `tsrs` typecheck reports it at `packages/genshin-world/src/components/Menu/Screen/Index.vue` and `packages/genshin-world/src/components/World/Session/Index.vue` once the annotations are removed. With the annotations, `tsrs` passes. `vue-tsc` 6.0.3 accepts the same code, so the source is not at fault.
+- **Reproduces with `tsrs`, not with `vize check`.** The sample below fails under `tsrs`, with or without `--fast`, while `vize check` (which runs Corsa) reports nothing. The difference is in the checker, not in the code.
+- **Where it lands.** The error sits on the `"checkIsBuilt": (kind) => …` line of the unmapped inference copies: the emit-inference call and the resolved-props object. Both carry a `@ts-ignore` above that line. A bare `@ts-ignore` suppresses the same error in standalone probes under both checkers, and the helper types give the right contextual type in isolation, so neither explains the difference yet.
+- **Possible origin (upstream `main`).** The mapped check is typed `__VizeResolvedProp<resolved, selected, 'name', F>`. For a child without `__vizeResolveProps` the resolver is `(props: any) => {}`, so the lookup falls through to `F`, the child's `__VizeCallableProp` alias (`crates/vize_canon/src/virtual_ts/scope/component_prop_checker.rs`), which should carry the real prop type.
+- **Next check.** Compare the virtual text tsrs builds with `vize check --show-virtual-ts` on the sample, since tsrs has no dump flag. Whichever copy differs is the origin.
+- **Ideas, not decided.** File the tsrs-versus-Corsa difference upstream by hand, using the sample, and link `#11023` and `#3446` as related. The content-mapper patch (`node.exe`, path `../../node_modules/vize/bin/vize`) needs a `# @TODO:` marker before it is committed.
+
+### Sample repro
+
+Put these files in one folder:
+
+`kind.ts`:
+
+```ts
+export enum Kind {
+  World = "world",
+  Menu = "menu",
+  Talk = "talk",
+  Blessing = "blessing",
+}
+
+export const UNTITLED_KINDS = [Kind.World, Kind.Talk] as const;
+
+export type TitledKind = Exclude<Kind, (typeof UNTITLED_KINDS)[number]>;
+```
+
+`Foo.vue`:
+
+```vue
+<script setup lang="ts">
+import type { TitledKind } from "./kind";
+
+interface Props {
+  checkIsBuilt: (kind: TitledKind) => boolean;
+}
+
+const { checkIsBuilt } = defineProps<Props>();
+const emit = defineEmits<{ quit: [] }>();
+</script>
+
+<template>
+  <button :disabled="!checkIsBuilt('menu' as TitledKind)" @click="emit('quit')">menu</button>
+</template>
+```
+
+`parent.vue`:
+
+```vue
+<script setup lang="ts">
+import type { VNode } from "vue";
+import type { TitledKind } from "./kind";
+
+import Foo from "./Foo.vue";
+
+const emit = defineEmits<{ quit: [] }>();
+const slots = defineSlots<Partial<Record<TitledKind, () => VNode>>>();
+</script>
+
+<template>
+  <Foo :check-is-built="(kind) => Boolean(slots[kind])" @quit="emit('quit')" />
+</template>
+```
+
+`tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ESNext", "DOM"],
+    "types": [],
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "allowArbitraryExtensions": true
+  },
+  "contentMappers": [{ "package": "vize", "extensions": [".vue"] }],
+  "include": ["*.ts", "*.vue"]
+}
+```
+
+Run `tsrs --runExternalCode --noEmit -p tsconfig.json` from that folder. Expected: `parent.vue` reports TS7006 on `kind` and TS7053 on `slots[kind]`. `vize check --no-config --tsconfig tsconfig.json parent.vue Foo.vue` on the same files reports nothing.
+
+The mapper runs only where `vize` resolves from the project folder, because the repo patches its `exec` to `../../node_modules/vize/bin/vize`. The sample therefore needs a `node_modules` two levels up, which is how it was run here, through a junction. The same files also reproduce inside `packages/genshin-world` when placed in a temporary folder under `src/components` and run through `pnpm typecheck`.
 
 _Generated by Claude Haiku 5.5 (`claude-haiku-5-5`) with Claude Code. Not reviewed by a maintainer; verify each claim before acting on it._
 
