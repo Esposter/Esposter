@@ -1,7 +1,7 @@
 import type { ParityReferenceBase } from "#src/models/genshinParity/shared/ParityReferenceBase";
 
-import { writeCaptureFrame } from "#src/services/genshinParity/shared/writeCaptureFrame";
 import { CAPTURES_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { writeCaptureFrame } from "#src/services/genshinParity/shared/writeCaptureFrame";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
