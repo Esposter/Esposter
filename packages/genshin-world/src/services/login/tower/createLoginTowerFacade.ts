@@ -2,8 +2,8 @@ import type { LoginTowerAtlas } from "#src/models/login/LoginTowerAtlas";
 import type { LoginTowerFacade } from "#src/models/login/LoginTowerFacade";
 import type { LoginTowers } from "#src/models/login/LoginTowers";
 
-import { createShadeCanvasTexture } from "#src/services/login/scene/createShadeCanvasTexture";
-import { getHalfShadeStyle } from "#src/services/login/scene/getHalfShadeStyle";
+import { createShadeCanvasTexture } from "#src/services/login/shared/createShadeCanvasTexture";
+import { getHalfShadeStyle } from "#src/services/login/shared/getHalfShadeStyle";
 import {
   LOGIN_FACADE_ATTRIBUTE,
   LOGIN_FACADE_CUT_ATTRIBUTE,

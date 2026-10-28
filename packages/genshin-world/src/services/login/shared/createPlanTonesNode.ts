@@ -2,8 +2,8 @@ import type { PlanCanvasOptions } from "#src/models/scene/PlanCanvasOptions";
 import type { PlanTones } from "#src/models/scene/PlanTones";
 import type { Node } from "three/webgpu";
 
-import { createPlanCanvasNode } from "#src/services/login/scene/createPlanCanvasNode";
-import { getHalfShadeStyle } from "#src/services/login/scene/getHalfShadeStyle";
+import { createPlanCanvasNode } from "#src/services/login/shared/createPlanCanvasNode";
+import { getHalfShadeStyle } from "#src/services/login/shared/getHalfShadeStyle";
 import { addSmoothLoop } from "genshin-engine";
 import { mix, vec3 } from "three/tsl";
 

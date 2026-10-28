@@ -1,7 +1,7 @@
 import type { PlanCanvasNode } from "#src/models/scene/PlanCanvasNode";
 import type { PlanCanvasOptions } from "#src/models/scene/PlanCanvasOptions";
 
-import { createShadeCanvasTexture } from "#src/services/login/scene/createShadeCanvasTexture";
+import { createShadeCanvasTexture } from "#src/services/login/shared/createShadeCanvasTexture";
 import { RepeatWrapping } from "three";
 import { normalGeometry, positionGeometry, step, texture, vec2 } from "three/tsl";
 

@@ -40,7 +40,7 @@ stateDiagram-v2
 | `packages/genshin-world/src/services/login/door/getLoginDoorPosition.ts`    | Where the door stands on the walkway's far end                                 |
 | `packages/genshin-world/src/services/login/door/constants.ts`               | The door's lift height and the click's rush                                    |
 | `scripts/src/services/genshinAssets/fit/fitRigidPieces.ts`                  | A rigidly skinned mesh split into its bones' pieces, each posed through a clip |
-| `packages/genshin-world/src/services/login/scene/createPlanTonesNode.ts`    | A part painted in the tones its texture was read in, over its plan             |
+| `packages/genshin-world/src/services/login/shared/createPlanTonesNode.ts`   | A part painted in the tones its texture was read in, over its plan             |
 
 ## Open
 

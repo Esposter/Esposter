@@ -2,8 +2,8 @@ import type { LoginPaving } from "#src/models/login/LoginPaving";
 import type { LoginPavingData } from "#src/models/login/LoginPavingData";
 
 import { SceneAxis } from "#src/models/scene/SceneAxis";
-import { createPlanCanvasNode } from "#src/services/login/scene/createPlanCanvasNode";
-import { createPlanTonesNode } from "#src/services/login/scene/createPlanTonesNode";
+import { createPlanCanvasNode } from "#src/services/login/shared/createPlanCanvasNode";
+import { createPlanTonesNode } from "#src/services/login/shared/createPlanTonesNode";
 import { LOGIN_PAVING_PIXELS_PER_METRE } from "#src/services/login/walkway/constants";
 import { addSmoothLoop, MAX_BYTE } from "genshin-engine";
 import { mix, normalView, transformNormalToView, vec3 } from "three/tsl";
