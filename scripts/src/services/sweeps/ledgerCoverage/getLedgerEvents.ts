@@ -3,6 +3,7 @@ import type { LedgerEvent } from "#src/models/sweeps/ledgerCoverage/LedgerEvent"
 import { LedgerEventType, LedgerEventTypes } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
 import { getGitRecords } from "#src/services/shared/getGitRecords";
 import { TRAILER_VALUE_SEPARATOR } from "#src/services/sweeps/ledgerCoverage/constants";
+import { normalizeLedgerUnit } from "#src/services/sweeps/ledgerCoverage/normalizeLedgerUnit";
 
 const TRAILER_REGEX = new RegExp(String.raw`^(?<type>${LedgerEventTypes.join("|")}):(?<value>.*)$`, "gmu");
 const CO_AUTHOR_MODEL_REGEX = /^Co-Authored-By: Claude (?<model>[^(<]+?) *[(<]/imu;
@@ -16,7 +17,7 @@ export const getLedgerEvents = (log: string): LedgerEvent[] =>
       const type = LedgerEventTypes.find((candidate) => candidate === groups?.type);
       const [ledger = "", unit] = (groups?.value ?? "").trim().split(TRAILER_VALUE_SEPARATOR);
       return type !== undefined && ledger !== "" && (type === LedgerEventType.Reopens || unit !== undefined)
-        ? { date, ledger, model, type, unit: unit?.trim() }
+        ? { date, ledger, model, type, unit: unit === undefined ? undefined : normalizeLedgerUnit(unit) }
         : undefined;
     }).filter((event) => event !== undefined);
   });

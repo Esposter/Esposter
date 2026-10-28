@@ -1,4 +1,4 @@
-// A trailer value is `<ledger> | <unit>`, the unit being the row's first cell verbatim
+// A trailer value is `<ledger> | <unit>`, the unit being the row's first cell with its backticks dropped
 export const TRAILER_VALUE_SEPARATOR = " | ";
 export const OPEN_CELL = "—";
 // A dated `Swept` cell reads `<date> · <model>`, the model being the one the sweep commit was co-authored by

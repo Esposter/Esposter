@@ -3,6 +3,7 @@ import type { LedgerEvent } from "#src/models/sweeps/ledgerCoverage/LedgerEvent"
 
 import { LedgerEventType } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
 import { OPEN_CELL, SWEPT_CELL_SEPARATOR } from "#src/services/sweeps/ledgerCoverage/constants";
+import { normalizeLedgerUnit } from "#src/services/sweeps/ledgerCoverage/normalizeLedgerUnit";
 
 const ROW_REGEX = /^\|(?<unitCell>[^|]*)\|(?<sweptCell>[^|]*)\|(?<rest>.*)$/u;
 const SWEPT_CELL_REGEX = new RegExp(
@@ -27,7 +28,7 @@ export const applyLedgerEvents = (text: string, ledger: string, events: LedgerEv
     if (!groups) return line;
 
     const { rest = "", sweptCell = "", unitCell = "" } = groups;
-    const unit = unitCell.trim();
+    const unit = normalizeLedgerUnit(unitCell);
     const cell = sweptCell.trim();
     const sweptGroups = SWEPT_CELL_REGEX.exec(cell)?.groups;
     if (cell !== OPEN_CELL && !sweptGroups) return line;

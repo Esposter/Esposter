@@ -1,19 +1,27 @@
 import type { LedgerEvent } from "#src/models/sweeps/ledgerCoverage/LedgerEvent";
 
 import { LedgerEventType } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
+import { FIELD_SEPARATOR, RECORD_SEPARATOR } from "#src/services/shared/constants";
 import { applyLedgerEvents } from "#src/services/sweeps/ledgerCoverage/applyLedgerEvents";
-import { OPEN_CELL, SWEPT_CELL_SEPARATOR } from "#src/services/sweeps/ledgerCoverage/constants";
+import {
+  OPEN_CELL,
+  SWEPT_CELL_SEPARATOR,
+  TRAILER_VALUE_SEPARATOR,
+} from "#src/services/sweeps/ledgerCoverage/constants";
+import { getLedgerEvents } from "#src/services/sweeps/ledgerCoverage/getLedgerEvents";
 import { describe, expect, test } from "vitest";
 
 describe(applyLedgerEvents, () => {
   const ledger = "a/b";
   const unit = "`c`";
+  // A trailer's unit as getLedgerEvents hands it over, with the backticks already removed
+  const bareUnit = "c";
   const earlier = new Date(0).toISOString().slice(0, 10);
   const later = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")).toISOString().slice(0, 10);
-  const getText = (swept: string) =>
+  const getText = (swept: string, rowUnit = unit) =>
     `| Unit   | Swept      | Notes |
 | ------ | ---------- | ----- |
-| ${unit}   | ${swept.padEnd(10)} |       |
+| ${rowUnit}   | ${swept.padEnd(10)} |       |
 `;
   const getEvent = (type: LedgerEventType, date: string, eventUnit?: string, model = ""): LedgerEvent => ({
     date,
@@ -22,11 +30,15 @@ describe(applyLedgerEvents, () => {
     type,
     unit: eventUnit,
   });
+  const getTrailerEvents = (trailerUnit: string) =>
+    getLedgerEvents(
+      `${earlier}${FIELD_SEPARATOR}${LedgerEventType.Ledger}: ${ledger}${TRAILER_VALUE_SEPARATOR}${trailerUnit}${RECORD_SEPARATOR}`,
+    );
 
   test("dates an open row from its sweep trailer", () => {
     expect.hasAssertions();
 
-    const event = getEvent(LedgerEventType.Ledger, earlier, unit);
+    const event = getEvent(LedgerEventType.Ledger, earlier, bareUnit);
 
     expect(applyLedgerEvents(getText(OPEN_CELL), ledger, [event])).toStrictEqual({
       matched: [event],
@@ -38,11 +50,33 @@ describe(applyLedgerEvents, () => {
     expect.hasAssertions();
 
     const model = "d";
-    const event = getEvent(LedgerEventType.Ledger, earlier, unit, model);
+    const event = getEvent(LedgerEventType.Ledger, earlier, bareUnit, model);
 
     expect(applyLedgerEvents(getText(OPEN_CELL), ledger, [event])).toStrictEqual({
       matched: [event],
       text: getText(`${earlier}${SWEPT_CELL_SEPARATOR}${model}`),
+    });
+  });
+
+  test("dates a backticked row from a bare trailer unit", () => {
+    expect.hasAssertions();
+
+    const events = getTrailerEvents("c");
+
+    expect(applyLedgerEvents(getText(OPEN_CELL), ledger, events)).toStrictEqual({
+      matched: events,
+      text: getText(earlier),
+    });
+  });
+
+  test("dates a bare row from a backticked trailer unit", () => {
+    expect.hasAssertions();
+
+    const events = getTrailerEvents(unit);
+
+    expect(applyLedgerEvents(getText(OPEN_CELL, bareUnit), ledger, events)).toStrictEqual({
+      matched: events,
+      text: getText(earlier, bareUnit),
     });
   });
 
@@ -51,7 +85,7 @@ describe(applyLedgerEvents, () => {
     expect.hasAssertions();
 
     const model = "d";
-    const event = getEvent(LedgerEventType.Ledger, earlier, unit, model);
+    const event = getEvent(LedgerEventType.Ledger, earlier, bareUnit, model);
 
     expect(applyLedgerEvents(getText(earlier), ledger, [event])).toStrictEqual({
       matched: [event],
@@ -62,7 +96,7 @@ describe(applyLedgerEvents, () => {
   test("never lowers a date the file already holds", () => {
     expect.hasAssertions();
 
-    const event = getEvent(LedgerEventType.Ledger, earlier, unit);
+    const event = getEvent(LedgerEventType.Ledger, earlier, bareUnit);
 
     expect(applyLedgerEvents(getText(later), ledger, [event])).toStrictEqual({
       matched: [event],
@@ -108,7 +142,7 @@ describe(applyLedgerEvents, () => {
   test("dates a row swept again after a reopen on the same day", () => {
     expect.hasAssertions();
 
-    const events = [getEvent(LedgerEventType.Reopens, later), getEvent(LedgerEventType.Ledger, later, unit)];
+    const events = [getEvent(LedgerEventType.Reopens, later), getEvent(LedgerEventType.Ledger, later, bareUnit)];
 
     expect(applyLedgerEvents(getText(earlier), ledger, events)).toStrictEqual({
       matched: events,
@@ -120,7 +154,7 @@ describe(applyLedgerEvents, () => {
   test("leaves a sweep trailer naming no row out of the matched events", () => {
     expect.hasAssertions();
 
-    const event = getEvent(LedgerEventType.Ledger, earlier, "`d`");
+    const event = getEvent(LedgerEventType.Ledger, earlier, "d");
 
     expect(applyLedgerEvents(getText(OPEN_CELL), ledger, [event])).toStrictEqual({
       matched: [],
@@ -131,7 +165,7 @@ describe(applyLedgerEvents, () => {
   test("leaves another ledger's events alone", () => {
     expect.hasAssertions();
 
-    const event = { ...getEvent(LedgerEventType.Ledger, earlier, unit), ledger: "x" };
+    const event = { ...getEvent(LedgerEventType.Ledger, earlier, bareUnit), ledger: "x" };
 
     expect(applyLedgerEvents(getText(OPEN_CELL), ledger, [event])).toStrictEqual({
       matched: [],

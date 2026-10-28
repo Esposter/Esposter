@@ -12,7 +12,7 @@ describe(getLedgerEvents, () => {
     expect.hasAssertions();
 
     expect(getLedgerEvents(getRecord(`${LedgerEventType.Ledger}: a/b${TRAILER_VALUE_SEPARATOR}\`c\`\n`))).toStrictEqual(
-      [{ date, ledger: "a/b", model: "", type: LedgerEventType.Ledger, unit: "`c`" }],
+      [{ date, ledger: "a/b", model: "", type: LedgerEventType.Ledger, unit: "c" }],
     );
   });
 
@@ -30,8 +30,8 @@ describe(getLedgerEvents, () => {
     const body = `${LedgerEventType.Ledger}: a${TRAILER_VALUE_SEPARATOR}\`b\`\n${LedgerEventType.Ledger}: a${TRAILER_VALUE_SEPARATOR}\`c\`\n`;
 
     expect(getLedgerEvents(getRecord(body))).toStrictEqual([
-      { date, ledger: "a", model: "", type: LedgerEventType.Ledger, unit: "`b`" },
-      { date, ledger: "a", model: "", type: LedgerEventType.Ledger, unit: "`c`" },
+      { date, ledger: "a", model: "", type: LedgerEventType.Ledger, unit: "b" },
+      { date, ledger: "a", model: "", type: LedgerEventType.Ledger, unit: "c" },
     ]);
   });
 
@@ -45,7 +45,7 @@ Co-Authored-By: Claude ${model} (d) <e>
 `;
 
     expect(getLedgerEvents(getRecord(body))).toStrictEqual([
-      { date, ledger: "b", model, type: LedgerEventType.Ledger, unit: "`c`" },
+      { date, ledger: "b", model, type: LedgerEventType.Ledger, unit: "c" },
     ]);
   });
 
