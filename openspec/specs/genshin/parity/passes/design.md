@@ -8,15 +8,15 @@ flowchart TD
   I --> K{What is the piece?}
   K -->|"interface"| UI{"Interface: rect tree and clips, over the reference's frame"}
   UI -->|off| UI
-  K -->|"3D"| L{"Layout: the arrangement's ratios hold, each family lands"}
+  K -->|"3D"| L{"Layout"}
   L -->|off| L
-  L -->|holds| C{"Camera: pose's reprojection, overlay's edges"}
+  L -->|holds| C{"Camera"}
   C -->|off| C
-  C -->|holds| S{"Shape and surface: each stand-in against its exports"}
+  C -->|holds| S{"Shape and surface"}
   S -->|off| S
-  S -->|holds| M{"Motion: clips decoded, the glide and paths read"}
+  S -->|holds| M{"Motion"}
   M -->|off| M
-  M -->|holds| G{"Light and air off the recording"}
+  M -->|holds| G{"Light and air"}
   G -->|off| G
   G -->|holds| N{"Sound: music by listen, effects by their fitted bands"}
   N -->|off| N

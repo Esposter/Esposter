@@ -7,7 +7,7 @@ The Genshin area recreates the game's own screens, so "does it look right" has a
 ```mermaid
 flowchart TD
   WIKI[Wiki images and animations] --> FETCH[fetch / frames]
-  GAME[The installed game: the user plays, the tool records] --> CAP[still / record]
+  GAME[The installed game] --> CAP[still / record]
   CAP --> FRAMES[frames: fixed-rate stills and a contact sheet]
   FETCH --> REF[(References, outside the repository)]
   FRAMES --> REF

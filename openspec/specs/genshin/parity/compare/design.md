@@ -6,7 +6,7 @@
 
 - **A reference scores its own pixels.** Its `region` is the part scored, its `mask` the rectangles inside the region that count, and its `silhouettes` the glyphs inside it whose strokes alone count, so a map's name scores its letters and never the painted terrain between them. Each glyph is split from its ground in the reference's own pixels, every pixel going to the nearer of the glyph's colour, read off its strokes, and the ground's colour, the median of the region's pixels outside every silhouette (`computeGroundColour`, read once per reference by `readSilhouetteInks`, then `splitGlyph`) (`scripts/src/services/genshinParity/shared/computeGroundColour.ts`, `scripts/src/services/genshinParity/reference/readSilhouetteInks.ts`, `scripts/src/services/genshinParity/shared/splitGlyph.ts`). Splitting from the colour at a box's corners, as `trace` splits a mark on a plain ground, would take a map's water for ink, since water stands further from the terrain than a white name does. A box whose glyph covers more than half of it would take that glyph's ink for ground under the whole-box median, and under the median of its border ring too (measured on the committed Jueyun label: most of its box near the glyph's colour, and most of its ring; see Open), so the ground is the terrain between the glyphs. The gate is re-measured by `genshin:parity compare` against frames, not by this page.
 
-- **FLIP is the approval number.** NVIDIA's standard dynamic range FLIP is ported as it stands (`scoreFlip`): contrast-sensitivity filtering in YCxCz at the viewing distance's pixels per degree, the HyAB distance in Hunt-adjusted CIELab, and the luminance's edges and points, each pixel's error the colour difference raised to one less the feature difference. Its test holds it to NVIDIA's own evaluator on FLIP's example pair (`scripts/src/services/genshinParity/shared/scoreFlip.ts`, `scripts/src/services/genshinParity/shared/scoreFlip.test.ts`). `compare` reports it beside the mean, read at the structure's width as on a full screen (`scripts/src/services/genshinParity/reference/compareScreen.ts`). With `--witness`, `compare` also scores each layer apart (`scoreLayers`): a family's pixels in the witness's part target, and the sky where no part is, each with its own shape, tone, detail and mean FLIP, so a change is judged where it lands (`scripts/src/services/genshinParity/reference/scoreLayers.ts`). `rank` then prices each term of the frame's error, each stand-in against the exports among them (`scripts/src/services/genshinParity/commands/rankCommand.ts`).
+- **The approval measure is the one a reference records.** The mean difference is the default (`DEFAULT_APPROVAL`, `scripts/src/services/genshinParity/shared/constants.ts`); FLIP applies where a reference records it. NVIDIA's standard dynamic range FLIP is ported as it stands (`scoreFlip`): contrast-sensitivity filtering in YCxCz at the viewing distance's pixels per degree, the HyAB distance in Hunt-adjusted CIELab, and the luminance's edges and points, each pixel's error the colour difference raised to one less the feature difference. Its test holds it to NVIDIA's own evaluator on FLIP's example pair (`scripts/src/services/genshinParity/shared/scoreFlip.ts`, `scripts/src/services/genshinParity/shared/scoreFlip.test.ts`). `compare` reports it beside the mean, read at the structure's width as on a full screen (`scripts/src/services/genshinParity/reference/compareScreen.ts`). With `--witness`, `compare` also scores each layer apart (`scoreLayers`): a family's pixels in the witness's part target, and the sky where no part is, each with its own shape, tone, detail and mean FLIP, so a change is judged where it lands (`scripts/src/services/genshinParity/reference/scoreLayers.ts`). `rank` then prices each term of the frame's error, each stand-in against the exports among them (`scripts/src/services/genshinParity/commands/rankCommand.ts`).
 
 - **The scores are committed, as a bench's are.** Every `compare` rewrites its reference's row of `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`, beside the map, and `compare --all` rewrites every row it can measure (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`, `scripts/src/services/genshinParity/reference/mergeParityScores.ts`). A reference whose images are not on disk yet keeps its row, a pending screen's row names its reason, and one whose comparison throws is reported as `failed` while the run goes on (`scripts/src/services/genshinParity/reference/mergeParityScores.ts`, `scripts/src/services/genshinParity/commands/compareCommand.ts`). A change's diff then shows what it moved on every screen, and the map's test holds every reference to a screen the page shoots (`scripts/src/services/genshinParity/shared/ParityReferenceMap.test.ts`). A scene's reference also rewrites its rows of the report's layers table, so a stand-in drawn away from the game shows on its own row even where the frame's score barely moves (`scripts/src/services/genshinParity/reference/mergeParityScores.ts`).
 
@@ -14,11 +14,11 @@
 
 ```mermaid
 flowchart TD
-  REF{"Reference images on disk?"} -->|yes| CMP["compare: shoot and score"]
-  REF -->|no| KEEP["Row kept as the report last had it"]
-  CMP --> MERGE["mergeParityScores: rewrite the reference's row"]
-  MERGE --> SNAP["ParityReferenceMap.snapshot.md: committed row"]
-  SNAP --> DIFF["Diff: what a change moved on each screen"]
+  REF{"Reference images on disk?"} -->|yes| CMP["compare"]
+  REF -->|no| KEEP["Row kept"]
+  CMP --> MERGE["mergeParityScores"]
+  MERGE --> SNAP["ParityReferenceMap.snapshot.md"]
+  SNAP --> DIFF["Diff"]
 ```
 
 ## Key files
@@ -38,4 +38,4 @@ flowchart TD
 ## Open
 
 - [ ] **The Jueyun label's box and ring split** — no source yet: no measurement record for the Jueyun label is in the repository, so the split stands as the page's own.
-- [ ] **A title logo approved without a reference came out nearly twice the size** — no source yet: no commit, snapshot or report records that approval or its size.
+- [ ] **A title logo approved without a reference would come out nearly twice the size** — no source yet: no commit, snapshot or report records that approval or its size.

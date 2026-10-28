@@ -12,10 +12,10 @@ A row stands where the exports lay it; only its phase along the glide is the ref
 
 ```mermaid
 flowchart TD
-  FRAME["Settled frame of the witness's parts"] --> GB["G-buffer targets read back one call each"]
-  GB --> PT["Part target: the reference's segmentation at this pose"]
-  PT --> REFINE["Pose refinement reads the part target alone"]
-  PT --> OVERLAY["overlay draws the families' boundaries over the reference"]
+  FRAME["Settled frame"] --> GB["G-buffer targets"]
+  GB --> PT["Part target"]
+  PT --> REFINE["Pose refinement"]
+  PT --> OVERLAY["overlay"]
 ```
 
 ## Key files
@@ -30,6 +30,6 @@ flowchart TD
 
 ## Open
 
-- [ ] **A capital's exports ran the shooting tool past several gigabytes until the browser's connection dropped** — no source yet: no run log or commit records that failure.
+- [ ] **A capital's exports run the shooting tool past several gigabytes until the browser's connection drops** — no source yet: no run log or commit records that failure.
 - [ ] **Parts in one frame share one camera, with a barely fixed axis taken from a part that fixes it** — no source yet: the hand-off of a barely fixed axis from one part to another, which no step names; `scripts/src/services/genshinParity/witness/solveReferencePose.ts` takes its held axes only from the command's `--hold` flag (`scripts/src/services/genshinParity/commands/poseCommand.ts`).
-- [ ] **Correlating the ground frame to frame and placing a one-row template were tried and failed** — no source yet: no commit or note records those trials.
+- [ ] **Correlating the ground frame to frame and placing a one-row template both fail as a pace source** — no source yet: no commit or note records those trials.

@@ -10,9 +10,10 @@ Marks and logos are traced rather than copied, so a screen ships only shapes der
 
 ```mermaid
 flowchart TD
-  WIKI["Wiki standalone render of the mark, where one exists"] --> TRACE["traceImage at full resolution, ink split from paper"]
-  TRACE --> MASK["traceMask: specks cleared, every path kept"]
-  MASK --> COMPACT["compactSvgPath: shortest form, same points"]
+  WIKI["Wiki standalone render"] --> SPLIT["Ink split from paper"]
+  SPLIT --> SPECKS["Specks cleared"]
+  SPECKS --> TRACE["Paths traced"]
+  TRACE --> COMPACT["Shortest form"]
   COMPACT --> COMP["Component draws the path"]
 ```
 

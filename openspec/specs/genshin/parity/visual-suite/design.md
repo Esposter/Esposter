@@ -10,10 +10,10 @@ The visual suite holds approved screens to their own last images.
 
 ```mermaid
 flowchart TD
-  CMP{"Compare under the screen's bar?"} -->|no| REF["Refusal names its reason, writes no image"]
-  CMP -->|yes| IMG["approve writes the screen's image beside its component"]
-  IMG --> SUITE["Suite run with -u for that one screen alone"]
-  SUITE --> HELD["Screen held by the visual suite"]
+  CMP{"Compare under the screen's bar?"} -->|no| REF["Refusal"]
+  CMP -->|yes| IMG["approve"]
+  IMG --> SUITE["Suite run"]
+  SUITE --> HELD["Held by the suite"]
 ```
 
 - **The variant separator has one source.** The visual suites join a screen's name to its fixture's variant with the interface's `FIXTURE_VARIANT_SEPARATOR` (`packages/genshin-interface/src/services/constants.ts`), and `scripts` reads that same constant for `approve` through a workspace dependency on `genshin-interface`, via its pure `./constants` export, since its root imports Vue components that the scripts runner cannot load.

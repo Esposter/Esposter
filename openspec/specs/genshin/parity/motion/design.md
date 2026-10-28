@@ -6,11 +6,11 @@ A recording is sampled to find its events, then each event is matched at its own
 
 ```mermaid
 flowchart TD
-  REC["Recording sampled as frames at its rate"] --> LUMA["luma: one region's darkness over both sets of frames"]
-  OURS["Our screen held at its start"] --> PROPS["props: animations finish, then motionProps applied"]
-  PROPS --> FILM["film: faked clock, one frame at a time"]
+  REC["Recording frames"] --> LUMA["luma"]
+  OURS["Our screen"] --> PROPS["props"]
+  PROPS --> FILM["film"]
   FILM --> LUMA
-  FILM --> SHEET["Stills and contact sheet beside the recording"]
+  FILM --> SHEET["Contact sheet"]
   REC --> SHEET
 ```
 
