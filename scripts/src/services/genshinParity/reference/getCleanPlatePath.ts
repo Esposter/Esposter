@@ -13,7 +13,7 @@ import sharp from "sharp";
 // Interface is gone from them, so a render that draws nothing scores their own error rather than the interface's, and
 // Every piece drawn is scored against what is really there. It is cached beside the reference, keyed by the reference's
 // Hash and the regions, so a changed reference or region is filled again. A region covering the whole frame has no
-// Border to fill from, so it gets no plate and the caller keeps the reference as its backdrop
+// Border to fill from, so it gets no plate and the caller keeps its source image as its backdrop
 export const getCleanPlatePath = async (
   referenceId: string,
   referencePath: string,
@@ -21,7 +21,7 @@ export const getCleanPlatePath = async (
   { height, width }: { height: number; width: number },
 ): Promise<string | undefined> => {
   if (regions.some((region) => region.x === 0 && region.y === 0 && region.width >= width && region.height >= height)) {
-    console.log(`${referenceId} covers the whole frame, so it has no border to fill from and keeps the reference`);
+    console.log(`${referenceId} covers the whole frame, so it has no border to fill from and keeps its source`);
     return undefined;
   }
   const digest = createHash("sha256")

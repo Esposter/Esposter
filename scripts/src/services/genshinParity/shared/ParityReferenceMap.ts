@@ -17,6 +17,17 @@ const MENU_SETTINGS_TOP_PLATE = [
   { height: 50, width: 254, x: 108, y: 200 },
 ];
 
+// The interface the overview clip's frame draws over its world and the still does not show: the minimap and the icons
+// Along the top, the party down the right, the chat, the health bar and the skill, each filled from the world round it
+const QUEST_SCREEN_BACKDROP_PLATE = [
+  { height: 240, width: 290, x: 0, y: 0 },
+  { height: 110, width: 520, x: 1400, y: 0 },
+  { height: 470, width: 350, x: 1570, y: 200 },
+  { height: 220, width: 470, x: 0, y: 860 },
+  { height: 45, width: 400, x: 730, y: 990 },
+  { height: 200, width: 280, x: 1640, y: 880 },
+];
+
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
   // The English PC client's character screen on the Artifacts tab at 21:9, the same recording at 157.5 seconds, the tab settled, scored over its own scene with the interface it shows filled from round it
@@ -759,16 +770,29 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: 'File:"People of the Springs".png',
   },
   "publisher-splash": { capture: "session-2.mp4", screen: "SplashPublisher", seconds: 1 },
-  // The English PC client's quest screen listing every quest in progress, the wiki's screenshot of it at 1080 high
-  "quest-screen": { screen: "QuestScreen", wikiTitle: "File:Quest Screen.png" },
+  // The English PC client's quest screen listing every quest in progress, the wiki's screenshot of it at 1080 high. The
+  // World behind it is the overview clip's frame at 0.9 seconds, drawn as the recording shows it: the plate draws no
+  // Blur, so none is fitted to the still's blurred world
+  "quest-screen": {
+    isBackdrop: true,
+    plate: QUEST_SCREEN_BACKDROP_PLATE,
+    plateCapture: { capture: "yt-2_e7S_J9yAA-quest-overview.mp4", seconds: 0.9 },
+    screen: "QuestScreen",
+    wikiTitle: "File:Quest Screen.png",
+  },
   // The same still's details column on the right, the title, journal, objective and description, clear of the rewards
   "quest-screen-details": {
+    isBackdrop: true,
+    plateCapture: { capture: "yt-2_e7S_J9yAA-quest-overview.mp4", seconds: 0.9 },
     region: { height: 680, width: 899, x: 877, y: 100 },
     screen: "QuestScreen",
     wikiTitle: "File:Quest Screen.png",
   },
   // The same still's band across the top, the tabs, the banner and the close button, clear of the blurred world
   "quest-screen-header": {
+    isBackdrop: true,
+    plate: QUEST_SCREEN_BACKDROP_PLATE,
+    plateCapture: { capture: "yt-2_e7S_J9yAA-quest-overview.mp4", seconds: 0.9 },
     region: { height: 95, width: 1920, x: 0, y: 0 },
     screen: "QuestScreen",
     wikiTitle: "File:Quest Screen.png",

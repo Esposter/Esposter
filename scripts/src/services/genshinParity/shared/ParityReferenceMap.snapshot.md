@@ -64,9 +64,9 @@ committed.
 | `paimon-menu` | `MenuPaimon` | 5.16% | 0.904 | 3.48% | 0.2170 |
 | `people-of-the-springs-location` | `WorldScreen` | 25.06% | 0.223 | 21.49% | 0.7945 |
 | `publisher-splash` | `SplashPublisher` | 0.07% | 1.000 | 0.01% | 0.0036 |
-| `quest-screen` | `QuestScreen` | 44.36% | 0.406 | 40.91% | 0.8054 |
-| `quest-screen-details` | `QuestScreen` | 49.84% | 0.835 | 48.29% | 0.8746 |
-| `quest-screen-header` | `QuestScreen` | 41.97% | 0.999 | 40.41% | 0.8306 |
+| `quest-screen` | `QuestScreen` | 18.27% | 0.582 | 15.57% | 0.5297 |
+| `quest-screen-details` | `QuestScreen` | 21.59% | 0.874 | 19.97% | 0.5689 |
+| `quest-screen-header` | `QuestScreen` | 9.04% | 0.928 | 8.26% | 0.3522 |
 | `reputation-screen` | `ReputationScreen` | 2.10% | 0.877 | 1.39% | 0.1458 |
 | `settings-audio-rows` | `MenuSettings` | 1.01% | 0.995 | 0.38% | 0.0745 |
 | `settings-graphics` | `MenuSettings` | 1.59% | 0.996 | 1.26% | 0.1020 |
