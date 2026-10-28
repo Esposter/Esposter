@@ -20,7 +20,7 @@ describe("agent-console-server", () => {
     expect.hasAssertions();
 
     expect(getFileSizeReport(resolve(distDirectory, "index.d.ts"))).toMatchInlineSnapshot(
-      `"index.d.ts: 36.30 KB (37172 bytes)"`,
+      `"index.d.ts: 36.32 KB (37192 bytes)"`,
     );
     expect(getFileSizeReport(resolve(distDirectory, "contracts.d.ts"))).toMatchInlineSnapshot(
       `"contracts.d.ts: 9.57 KB (9795 bytes)"`,
