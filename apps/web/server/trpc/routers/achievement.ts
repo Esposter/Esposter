@@ -60,16 +60,19 @@ export const achievementRouter = router({
   // The share of registered users who have unlocked each achievement, as a percentage. Every definition is keyed, so
   // One nobody has earned reads 0 rather than being absent
   readAchievementRarities: standardRateLimitedProcedure.query<Record<AchievementName, number>>(async ({ ctx }) => {
-    const { totalUsers } = takeOne(await ctx.db.select({ totalUsers: count() }).from(usersInAuth));
-    const unlockCounts = await ctx.db
-      .select({ achievementName: achievementsInAchievement.name, unlockCount: count() })
-      .from(userAchievementsInAchievement)
-      .innerJoin(
-        achievementsInAchievement,
-        eq(achievementsInAchievement.id, userAchievementsInAchievement.achievementId),
-      )
-      .where(isNotNull(userAchievementsInAchievement.unlockedAt))
-      .groupBy(achievementsInAchievement.name);
+    const [totalUserRows, unlockCounts] = await Promise.all([
+      ctx.db.select({ totalUsers: count() }).from(usersInAuth),
+      ctx.db
+        .select({ achievementName: achievementsInAchievement.name, unlockCount: count() })
+        .from(userAchievementsInAchievement)
+        .innerJoin(
+          achievementsInAchievement,
+          eq(achievementsInAchievement.id, userAchievementsInAchievement.achievementId),
+        )
+        .where(isNotNull(userAchievementsInAchievement.unlockedAt))
+        .groupBy(achievementsInAchievement.name),
+    ]);
+    const { totalUsers } = takeOne(totalUserRows);
     const unlockCountMap = new Map(
       unlockCounts.map(({ achievementName, unlockCount }) => [achievementName, unlockCount]),
     );

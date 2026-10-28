@@ -34,11 +34,12 @@ export const webhookRouter = router({
     RateLimiterType.Slow,
   ).mutation<WebhookInMessage>(({ ctx, input: { name, roomId } }) =>
     ctx.db.transaction(async (tx) => {
+      const webhookContext = JSON.stringify({ name, roomId });
       const webhookCount = takeOne(
         await tx.select({ count: count() }).from(webhooksInMessage).where(eq(webhooksInMessage.roomId, roomId)),
       ).count;
       if (webhookCount >= WEBHOOK_MAX_LENGTH)
-        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Webhook, JSON.stringify({ name, roomId }));
+        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Webhook, webhookContext);
 
       const newAppUser = requireMutation(
         (await tx.insert(appUsersInMessage).values({ name }).returning())[0],
@@ -63,7 +64,7 @@ export const webhookRouter = router({
         )[0],
         Operation.Create,
         DatabaseEntityType.Webhook,
-        JSON.stringify({ name, roomId }),
+        webhookContext,
       );
     }),
   ),
