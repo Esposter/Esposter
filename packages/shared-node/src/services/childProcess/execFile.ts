@@ -14,5 +14,9 @@ export const execFile = ((file: string, ...parameters: unknown[]) =>
 // Lose, leaving `promisify(execFile)` resolving stdout alone; the wrapper carries it over, the window hidden there too
 Object.defineProperty(execFile, promisify.custom, {
   value: (file: string, ...parameters: unknown[]) =>
-    promisify(execFileNode as (...nodeParameters: unknown[]) => void)(file, ...withHiddenWindow(parameters)),
+    (
+      promisify(execFileNode as (...nodeParameters: unknown[]) => void) as (
+        ...promisedParameters: unknown[]
+      ) => Promise<unknown>
+    )(file, ...withHiddenWindow(parameters)),
 });
