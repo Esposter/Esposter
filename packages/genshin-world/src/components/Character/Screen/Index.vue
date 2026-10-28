@@ -638,7 +638,7 @@ const isActivateDisabled = computed(
       @material="(id, delta) => changeEnhanceMaterial(id, delta)"
     />
     <span class="grid" />
-    <p class="training-guide">{{ gameText[GameTextKey.TrainingGuide] }}</p>
+    <p v-if="tab === CharacterMenuTab.Attributes" class="training-guide">{{ gameText[GameTextKey.TrainingGuide] }}</p>
     <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">×</button>
     <slot :character-id />
   </GameScreen>
@@ -654,7 +654,17 @@ const isActivateDisabled = computed(
   width: calc(var(--unit) * 56);
   height: calc(var(--unit) * 56);
   border-radius: 50%;
-  background: rgb(236 229 216 / 0.3);
+  background-color: #ece5d8;
+  background-image:
+    linear-gradient(#3b4255, #3b4255), linear-gradient(#3b4255, #3b4255), linear-gradient(#3b4255, #3b4255),
+    linear-gradient(#3b4255, #3b4255);
+  background-position:
+    30% 30%,
+    70% 30%,
+    30% 70%,
+    70% 70%;
+  background-repeat: no-repeat;
+  background-size: 20% 20%;
 }
 
 .training-guide {

@@ -7,13 +7,13 @@ committed.
 
 | Reference | Screen | Mean difference | Shape | Tone | FLIP |
 | :-------- | :----- | --------------: | ----: | ---: | ---: |
-| `character-artifacts` | `CharacterScreen` | 3.17% | 0.775 | 1.61% | 0.1377 |
+| `character-artifacts` | `CharacterScreen` | 3.19% | 0.798 | 1.49% | 0.1375 |
 | `character-artifacts-tabs` | `CharacterScreen` | 0.88% | 0.976 | 0.32% | 0.0474 |
 | `character-attributes` | `CharacterScreen` | 2.57% | 0.806 | 1.06% | 0.0950 |
 | `character-attributes-panel` | `CharacterScreen` | 4.95% | 0.607 | 2.78% | 0.1793 |
 | `character-attributes-tabs` | `CharacterScreen` | 0.97% | 0.985 | 0.34% | 0.0441 |
 | `character-attributes-top` | `CharacterScreen` | 9.51% | 0.744 | 3.60% | 0.3601 |
-| `character-constellation` | `CharacterScreen` | 2.22% | 0.857 | 1.25% | 0.0787 |
+| `character-constellation` | `CharacterScreen` | 2.10% | 0.869 | 1.09% | 0.0768 |
 | `character-constellation-tabs` | `CharacterScreen` | 1.31% | 0.980 | 0.44% | 0.0483 |
 | `character-talents` | `CharacterScreen` | 1.96% | 0.866 | 0.79% | 0.0831 |
 | `character-talents-tabs` | `CharacterScreen` | 0.89% | 0.978 | 0.28% | 0.0466 |
