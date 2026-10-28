@@ -49,6 +49,39 @@ describe(evaluateGoConstants, () => {
     ]).toStrictEqual([undefined, undefined, undefined, undefined]);
   });
 
+  test("gives a char field whose writes all name one qualified tag that tag, and none when they name two", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "sayu.go",
+        source: [
+          "package sayu",
+          "",
+          "type char struct {",
+          "\t*tmpl.Character",
+          "\teAbsorbTag attacks.ICDTag",
+          "\tqTag       attacks.ICDTag",
+          "}",
+          "",
+          "func (c *char) Skill() {",
+          "\tc.eAbsorbTag = attacks.ICDTagNone",
+          "\tc.eAbsorbTag = attacks.ICDTagNone",
+          "\tc.qTag = attacks.ICDTagNone",
+          "\tc.qTag = attacks.ICDTagBloomDamage",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    const constantMap = evaluateGoConstants(sources);
+
+    expect([constantMap.get("c.eAbsorbTag")?.value, constantMap.get("c.qTag")?.value]).toStrictEqual([
+      "attacks.ICDTagNone",
+      undefined,
+    ]);
+  });
+
   test("reads Xiangling's attack.go as gcsim writes it, the frames her init sets one strike at a time", () => {
     expect.hasAssertions();
 

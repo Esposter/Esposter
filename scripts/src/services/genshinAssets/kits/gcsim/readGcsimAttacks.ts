@@ -25,6 +25,7 @@ import { readIterationAt } from "#src/services/genshinAssets/kits/gcsim/readIter
 import { readReturnedFunction } from "#src/services/genshinAssets/kits/gcsim/readReturnedFunction";
 import { readVariableName } from "#src/services/genshinAssets/kits/gcsim/readVariableName";
 import { resolveGoAlias } from "#src/services/genshinAssets/kits/gcsim/resolveGoAlias";
+import { resolveStringConstant } from "#src/services/genshinAssets/kits/gcsim/resolveStringConstant";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
 // The field an if on a constant loop's variable may set on a copy, by its gcsim name: the poise its hit deals in that
@@ -44,6 +45,9 @@ export const readGcsimAttacks = (
   config: GcsimConfig,
 ): GcsimAttack[] => {
   const resolveName = (name: string) => constantMap.get(name)?.value;
+  // A tag a `c.` field names is the tag the character's package writes it, and any other name is gcsim's own literal
+  const resolveCooldownTag = (name: string | undefined) =>
+    name === undefined ? undefined : resolveStringConstant(constantMap, name);
   return sources.flatMap(({ path: file, source }) => {
     const tokens = tokenizeGo(source);
     const namedFunctions = readGoNamedFunctions(tokens);
@@ -145,7 +149,7 @@ export const readGcsimAttacks = (
           element: getName(fieldMap.get("Element")?.expression),
           fieldLineMap: Object.fromEntries(Array.from(fieldMap, ([key, { line }]) => [key, line])),
           file,
-          internalCooldownTag: getName(fieldMap.get("ICDTag")?.expression),
+          internalCooldownTag: resolveCooldownTag(getName(fieldMap.get("ICDTag")?.expression)),
           line: token.line,
           poiseDamage,
           poiseDamageVariable:

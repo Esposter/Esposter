@@ -34,7 +34,12 @@ export const readGcsimCharacter = (folder: string, fileMap: ReadonlyMap<string, 
   const config = readGcsimConfig(configSource);
   return {
     animationFrameNameMap: readGcsimAnimationFrameNames(goSources),
-    attacks: readGcsimAttacks(goSources, constantMap, config),
+    // An attack whose cooldown tag is neither none nor a qualified tag takes it at runtime, as Sayu's absorb hit takes the
+    // element she absorbed or a parameter passes it in, so no one tag is its own and it is no static kit hit
+    attacks: readGcsimAttacks(goSources, constantMap, config).filter(
+      ({ internalCooldownTag }) =>
+        internalCooldownTag === undefined || internalCooldownTag.startsWith("attacks.ICDTag"),
+    ),
     config,
     configFile,
     constantMap,

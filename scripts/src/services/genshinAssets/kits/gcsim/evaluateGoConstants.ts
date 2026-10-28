@@ -161,12 +161,13 @@ export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, G
     target[lastIndex] = value;
     if (indexValues.length === 1 && constant.file === file) constant.elementLines[lastIndex] = line;
   }
-  // A field of the package's own `char` struct written once, by a literal `=`, is that constant, cited at the write
-  // Any other write, an increment, an `op=`, a second write or a non-literal one, gives it none
+  // A field of the package's own `char` struct whose writes are all one literal `=` is that constant, cited at its first
+  // write. Any other write, an increment, an `op=`, a non-literal one, or two writes that differ, gives it none
   // A field the struct does not declare, the embedded template's, is never resolved
   for (const [field, writes] of fieldWriteMap) {
     const [only] = writes;
-    if (!charFieldSet.has(field) || writes.length !== 1 || only?.value === undefined) continue;
+    if (!charFieldSet.has(field) || only?.value === undefined || writes.some(({ value }) => value !== only.value))
+      continue;
     constantMap.set(`c.${field}`, { elementLines: {}, file: only.file, line: only.line, value: only.value });
   }
   return constantMap;

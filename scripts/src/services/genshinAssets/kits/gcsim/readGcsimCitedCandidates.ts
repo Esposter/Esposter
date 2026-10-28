@@ -13,6 +13,7 @@ import { readCitedValue } from "#src/services/genshinAssets/kits/gcsim/readCited
 import { readConstructorIndex } from "#src/services/genshinAssets/kits/gcsim/readConstructorIndex";
 import { readGcsimFieldIdentifier } from "#src/services/genshinAssets/kits/gcsim/readGcsimFieldIdentifier";
 import { readNormalCounter } from "#src/services/genshinAssets/kits/gcsim/readNormalCounter";
+import { resolveStringConstant } from "#src/services/genshinAssets/kits/gcsim/resolveStringConstant";
 import { toGcsimAttackTag } from "#src/services/genshinAssets/kits/gcsim/toGcsimAttackTag";
 import { toGcsimElement } from "#src/services/genshinAssets/kits/gcsim/toGcsimElement";
 import { toGcsimInternalCooldownTag } from "#src/services/genshinAssets/kits/gcsim/toGcsimInternalCooldownTag";
@@ -68,7 +69,8 @@ export const readGcsimCitedCandidates = (
     const namedField = NamedFieldCitationMap[field];
     if (namedField !== undefined) {
       const identifier = readGcsimFieldIdentifier(lines[entry.line - 1] ?? "", namedField.field);
-      const namedValue = identifier === undefined ? undefined : namedField.toValue(identifier);
+      const namedValue =
+        identifier === undefined ? undefined : namedField.toValue(resolveStringConstant(gcsim.constantMap, identifier));
       if (namedValue !== undefined)
         addKitCandidate(candidateMap, path, {
           provenance: { file, line: entry.line, source: KitSource.Gcsim },
