@@ -8,7 +8,7 @@ A question about the work in progress, such as what a function the agent just wr
 flowchart TD
   K["Ctrl and the semicolon key in the console, with a session open"] --> OPEN["Drawer opens, store holds the question"]
   OPEN -->|"first question"| FORK["Fork command, isSideChat, at the session's latest message"]
-  FORK --> HOST["Host opens the fork: plan mode, persistSession false"]
+  FORK --> HOST[Host opens the fork in plan mode]
   HOST -->|"onSessionOpen with the flag"| HELD["Store keeps the fork's id and host"]
   HELD --> ASK["Held question sent to the fork, then each later question"]
   ASK --> ANSWER["Answers stream into the drawer only"]

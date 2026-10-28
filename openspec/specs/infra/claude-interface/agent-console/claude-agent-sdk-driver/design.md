@@ -7,7 +7,7 @@ The driver runs the [agent console](../README.md)'s sessions through `@anthropic
 ```mermaid
 flowchart TD
   Open[Create, resume, fork or rewind] --> History{Resuming?}
-  History -->|yes| Replay[Read the transcript up to the message named, and map it as history]
+  History -->|yes| Replay[Transcript read to the named message]
   History -->|no| Query
   Replay --> Query[One query, fed by an input queue that stays open across turns]
   Query --> Map[Every SDK message through the session's one mapper]

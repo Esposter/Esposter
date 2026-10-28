@@ -7,7 +7,7 @@ One page works the sessions of several hosts at once ([agent console](../../../.
 ```mermaid
 flowchart TD
   S[Sessions tab] --> L[Connect this computer]
-  S --> M["Add a machine: its https address and the code its host prints"]
+  S --> M[Add a machine]
   L --> P[Pair, as device pairing does]
   M --> P
   P --> C[One connection per host, kept in local storage]
@@ -20,7 +20,7 @@ flowchart TD
 - **A machine is added from the sessions tab**, never the first screen, which stays one path for the least technical reader ([simplest reader first](../../../../architecture/simplest-reader/design.md)). The reader starts the host there, from the [host installer](../host-installer/design.md) or the command, and enters two things: its address and the one-time code its window prints beside the link. An `https://` address, as a machine behind its own certificate is usually given, is read as its `wss://` socket (`toHostAddress`). A page on `https` may open a plain socket only to its own computer, so the address has to be encrypted end to end. The host itself serves a plain `ws://` socket on its port, and neither the command nor the installer puts a certificate in front of it — `--hostname 0.0.0.0` opens it to the network but encrypts nothing. The `https` address comes from what the reader runs in front of it: `tailscale serve`, which gives the machine's `ts.net` name its certificate, a reverse proxy with a certificate of its own, or an SSH forward, which makes the host loopback again. The pairing is the same exchange as a printed link's, so the reader never copies a credential.
 - **Sessions are listed under the host that runs them.** Each session the page holds carries its connection's id (`ConnectionSessionSummary`), a host's list replacing only its own sessions. The sessions tab groups them by host, each group headed by its name, its status, **Start the host** or **Reconnect**, and **Remove**. A command about a session goes to the host holding it. A new session starts on the host the reader picks, asked only when more than one is reached.
 - **A remote host's sessions stay inside it.** A host listening beyond the loopback runs its sessions through the Agent SDK in its own process, with no [session window](../session-windows/design.md), since nobody sits at its desktop to see one. Its sessions are stopped from the page.
-- **A remote host proves itself through its certificate and its key.** The page checks its signature against the key it was given at pairing. The port the host signed is checked only for an address on this computer: a remote host is reached through its own certificate, often behind a proxy on another port, so there the signature alone proves it.
+- **A remote host proves itself through its certificate and its key.** The page checks its signature against the key it was given at pairing. A remote host is proved by its signature alone, as [device pairing](../device-pairing/design.md) sets out.
 
 ## What is deliberately not in it
 

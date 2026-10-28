@@ -11,8 +11,8 @@ It has two halves. The **host**, `agent-console-server`, runs on the machine wit
 ```mermaid
 flowchart LR
   subgraph Browser
-    P[The agent console page] --> C[Connection store: one socket, reconnects on its own]
-    C --> S[Session store: one event log per session]
+    P[The agent console page] --> C[Connection store]
+    C --> S[Session store]
     S --> W[Genshin world and its console]
     W -->|commands| C
   end
