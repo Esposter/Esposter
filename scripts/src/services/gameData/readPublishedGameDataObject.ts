@@ -1,5 +1,6 @@
 import { getGameDataObjectUrl } from "#src/services/gameData/getGameDataObjectUrl";
-import { fetchOk, fetchResponse } from "#src/services/shared/fetchOk";
+import { fetchOk } from "#src/services/shared/fetchOk";
+import { fetchResponse } from "#src/services/shared/fetchResponse";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { CONTENT_CACHE_DIRECTORY, readContentAddressedObject } from "@esposter/shared-node/cache";
