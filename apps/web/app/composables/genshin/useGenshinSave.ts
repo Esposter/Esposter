@@ -103,7 +103,8 @@ export const useGenshinSave = async () => {
     }
 
     isStartRetrying.value = true;
-    await waitForStartRetry(getGenshinStartRetryDelayMs(attempt));
+    const genshinStartRetryDelayMs = getGenshinStartRetryDelayMs(attempt);
+    await waitForStartRetry(genshinStartRetryDelayMs);
     return startUntilStarted(startSessionId, attempt + 1);
   };
   const retryStart = () => {

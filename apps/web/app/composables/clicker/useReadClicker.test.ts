@@ -21,7 +21,7 @@ const writeGuestSave = (clicker: Clicker) => {
 };
 
 describe(useReadClicker, () => {
-  const hourMs = 60 * 60 * 1000;
+  const hourMs = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
   let wrapper: undefined | VueWrapper;
   const mountReadClicker = async () => {
     wrapper = await mountSuspended(

@@ -47,7 +47,7 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     containerValue.appendChild(renderer.domElement);
 
     const scene = new Scene();
-    const camera = new PerspectiveCamera(55, width / height, 1, 20000);
+    const camera = new PerspectiveCamera(55, width / height, 1, 20_000);
     camera.position.set(30, 30, 100);
 
     const renderPipeline = new RenderPipeline(renderer);
@@ -60,7 +60,7 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     renderPipeline.outputNode = scenePassColor.add(bloomPass);
 
     const sun = new Vector3();
-    const waterGeometry = new PlaneGeometry(10000, 10000);
+    const waterGeometry = new PlaneGeometry(10_000, 10_000);
     const textureLoader = new TextureLoader();
     const waterNormals = textureLoader.load(waterNormalsUrl);
     waterNormals.wrapS = waterNormals.wrapT = RepeatWrapping;
@@ -75,7 +75,7 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     scene.add(water);
 
     const sky = new SkyMesh();
-    sky.scale.setScalar(10000);
+    sky.scale.setScalar(10_000);
     scene.add(sky);
     sky.turbidity.value = 10;
     sky.rayleigh.value = 2;
