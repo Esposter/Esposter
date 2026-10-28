@@ -30,6 +30,8 @@ const rows = computed<TableRow[]>(() =>
     values: data.series.map((series) => Number(takeOne(series.data, index))),
   })),
 );
+// A series' column and its totals cell are the same key, so the total lands under the column it sums
+const getSeriesColumnKey = (index: number) => `series${index}`;
 const columns = computed<UiDataTableColumn<TableRow, string>[]>(() => [
   {
     compare: (first, second) => first.category.localeCompare(second.category),
@@ -40,7 +42,7 @@ const columns = computed<UiDataTableColumn<TableRow, string>[]>(() => [
   ...data.series.map((series, index) => ({
     compare: (first: TableRow, second: TableRow) => takeOne(first.values, index) - takeOne(second.values, index),
     getValue: ({ values }: TableRow) => NUMBER_FORMATTER.format(takeOne(values, index)),
-    key: `series${index}`,
+    key: getSeriesColumnKey(index),
     title: `${series.name}`,
   })),
 ]);
@@ -55,7 +57,7 @@ const columnKeyTotalMap = computed(
         if (aggregation !== DatasetAggregationType.Count && aggregation !== DatasetAggregationType.Sum) return [];
 
         const total = rows.value.reduce((sum, row) => sum + takeOne(row.values, index), 0);
-        return [[`series${index}`, NUMBER_FORMATTER.format(total)]];
+        return [[getSeriesColumnKey(index), NUMBER_FORMATTER.format(total)]];
       }),
     ]),
 );
