@@ -23,7 +23,6 @@ export const useAccountCharacterPacks = () => {
   const session = authClient.useSession();
   const isSignedIn = computed(() => Boolean(session.value.data));
   const { data, refresh } = useQuery(() => $trpc.genshin.readCharacterPacks.query(), { isLazy: true });
-  // oxlint-disable-next-line typescript/no-floating-promises -- the refresh reports its own failure through its query's error
   watchImmediate(isSignedIn, (signedIn) => (signedIn ? refresh() : undefined));
   const accountCharacterPacks = computed<AccountCharacterPackRecord[] | undefined>(() =>
     isSignedIn.value ? data.value : undefined,

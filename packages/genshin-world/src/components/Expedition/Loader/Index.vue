@@ -71,7 +71,6 @@ const pinPositions = computed(
 );
 
 onMounted(() => {
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(() =>
     Promise.all([
       readMondstadtExpeditionPlaces(gameDataBaseUrl),

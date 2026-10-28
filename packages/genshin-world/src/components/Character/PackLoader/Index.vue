@@ -45,7 +45,6 @@ const pickCharacterPacks = (input: HTMLInputElement | null) => {
   isChoosing.value = false;
   isPending.value = true;
   errorMessages.value = [];
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject
   getResultAsync(async () => {
     const { failures: unreadFailures, pickedCharacterPacks } = input.webkitdirectory
       ? { failures: [], pickedCharacterPacks: readCharacterPackFolders(files) }

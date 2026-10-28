@@ -11,7 +11,6 @@ interface Props {
 const { characterPackReader } = defineProps<Props>();
 const terms = ref("");
 const isFailed = ref(false);
-// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject
 readCharacterTerms(characterPackReader).match(
   (text) => {
     terms.value = text;

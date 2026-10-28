@@ -263,7 +263,6 @@ const cloudLayer = createCloudLayerUniforms(sky.cloudLayer, cloudLayerTextureMap
 let isCloudLayerSynthesized = false;
 // A failure is thrown on unhandled, where the browser logs it and the parity page, whose scene would otherwise never be
 // Ready, fails with it
-// oxlint-disable-next-line typescript/no-floating-promises -- the setup has nothing to await it, and its one rejection is the failure thrown on
 getResultAsync(() => synthesizeCloudLayerTextures(cloudLayerTextures, cloudLayerTextureMap)).match(
   () => {
     isCloudLayerSynthesized = true;

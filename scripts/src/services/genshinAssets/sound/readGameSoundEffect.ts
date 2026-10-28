@@ -16,9 +16,7 @@ export const readGameSoundEffect = async (
 ): Promise<[Float32Array, Float32Array]> => {
   const ids = new Set(sounds.map(({ id }) => id));
   const idChannelsMap = new Map<number, [Float32Array, Float32Array]>();
-  // oxlint-disable-next-line no-await-in-loop -- each sound is read as it is decoded
   for await (const { id, path } of decodeGameSounds(pattern, (soundId) => ids.has(soundId), SOUND_DIRECTORY))
-    // oxlint-disable-next-line no-await-in-loop -- as above
     idChannelsMap.set(id, await readStereoSamples(path, SOUND_SAMPLE_RATE));
   const mixVolumes = await readGameMixVolumes((_id, { sourceIds }) => sourceIds.some((sourceId) => ids.has(sourceId)));
   const placed = sounds.map(({ id, offsetSeconds }) => {

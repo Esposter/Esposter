@@ -274,7 +274,6 @@ const setFrustum = createFrustumSetter();
 let isReady = false;
 // The terrain's first settled tiles, measured from its mount to the frame it is ready
 const { promise: isTerrainReady, resolve: resolveTerrainReady } = Promise.withResolvers<void>();
-// oxlint-disable-next-line typescript/no-floating-promises -- the measure resolves with the terrain's ready, and nothing waits on it
 measureLoadStep("terrain", isTerrainReady);
 // Each frame the quadtree is walked from the eye's world position, what is missing is asked for, and the tiles to
 // Draw are shown in place of last frame's. It is walked twice: in the view, for what is asked for first and what makes

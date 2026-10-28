@@ -18,7 +18,6 @@ const { data: consumers } = useQuery(async () => {
   const idSet = new Set(ids);
   const idConsumerMap = new Map<ResourceInResource["id"], LinkedResource>();
   for (const chunkIds of chunk(ids, READ_RESOURCE_CONSUMERS_IDS_MAX_LENGTH))
-    // oxlint-disable-next-line no-await-in-loop -- A chunk read in the same tick would join one batch, and one URL
     for (const consumer of await $trpc.resource.readResourceConsumers.query({ ids: chunkIds }))
       // A chunk leaves out only its own ids, so one deleted in another chunk is left out here, and one using several
       // Of the ids is named once

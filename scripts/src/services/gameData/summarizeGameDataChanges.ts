@@ -31,7 +31,6 @@ export const summarizeGameDataChanges = async (
 ): Promise<string[]> => {
   const recordJsonMap = new Map(records.map(({ hash, json }) => [hash, json]));
   // A hash the next lock names is one this publication planned, or one the current lock already published
-  // oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- the caller names the type the record holds
   const readNext = <T>(hash: string): Promise<T> => {
     const json = recordJsonMap.get(hash);
     return json === undefined ? readPublishedGameDataObject<T>(hash) : Promise.resolve(parseMachineJson<T>(json));

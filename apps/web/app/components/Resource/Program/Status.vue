@@ -22,7 +22,6 @@ const { data: surveyContent, refresh: refreshSurveyContent } = useQuery(
 );
 const isAnonymousSurvey = computed(() => surveyContent.value?.settings.responseMode === SurveyResponseMode.Anonymous);
 // A participant is keyed by the key column's value, which the program dedupes on
-// oxlint-disable-next-line oxc/no-map-spread -- each item is a new object, never a read row mutated in place
 const items = computed(() => statusRows.value.map((row) => ({ ...row, id: row.keyValue })));
 const itemsPerPage = ref(DATA_TABLE_ITEMS_PER_PAGE_OPTIONS[0]);
 const page = ref(1);

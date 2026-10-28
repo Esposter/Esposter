@@ -7,7 +7,6 @@ const ENTRY_CONCURRENCY = 8;
 // The named entries of an index another step published, or every entry it holds, read through the lock on disk as
 // `readPublishedGameData` reads a record: the index object once, then each entry's record, a few at a time so a long
 // List never floods the account. Unchecked, as that read is: the caller names what an entry holds, or parses it
-// oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- the caller names the type an entry holds
 export const readPublishedGameDataEntries = async <T>(
   indexKey: string,
   ids?: readonly string[],

@@ -9,9 +9,7 @@ import { join } from "node:path";
 export const getManifest = async (parityDirectory: string, folders: string[]): Promise<Manifest> => {
   const manifest: Manifest = {};
   for (const folder of folders)
-    if (checkIsDirectory(join(parityDirectory, folder)))
-      // oxlint-disable-next-line no-await-in-loop -- Folders are digested one after another, as the walk is
-      await digestDirectory(parityDirectory, folder, manifest);
+    if (checkIsDirectory(join(parityDirectory, folder))) await digestDirectory(parityDirectory, folder, manifest);
 
   return manifest;
 };

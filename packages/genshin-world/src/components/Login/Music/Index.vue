@@ -45,7 +45,6 @@ onMounted(() => {
     player = createMusicPlayer(context, music, recordingBufferMap, musicBus);
     player.start();
   };
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and the mount has nothing to await it
   getResultAsync(() => loadMusicRecordings(context, music, musicRecordingBaseUrl)).match(start, (error) => {
     console.error(error);
     start(new Map());

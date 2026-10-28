@@ -6,7 +6,6 @@ import { NavigationRoute, registerRoute } from "workbox-routing";
 
 // The build replaces `__WB_MANIFEST` with the precache list, and the home page joins it, so an offline
 // Navigation to any route is answered by the app shell
-// oxlint-disable-next-line no-underscore-dangle -- the build injects this name, and workbox reads it by it
 declare let self: ServiceWorkerGlobalScope & { __WB_MANIFEST: PrecacheEntry[] };
 
 cleanupOutdatedCaches();

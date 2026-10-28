@@ -22,7 +22,6 @@ export const solosCommand: SubCommandsDef[string] = defineCommand({
       voiceReleases,
       voiceTunings,
     } of readLoginMusicSources()) {
-      // oxlint-disable-next-line no-await-in-loop -- one source's voices are scored at a time
       const voiceSolosList = await scoreSampledSolos(
         catalogue,
         voiceNotesList,

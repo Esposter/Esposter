@@ -90,7 +90,6 @@ export const parseMusicHierarchy = (objects: readonly SoundBankObject[]): MusicH
             childCount: data.readUInt32LE(itemOffset + 8),
             loopCount: data.readInt16LE(itemOffset + 16),
             segmentId: data.readUInt32LE(itemOffset),
-            // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the code is stored as the bank holds it, since MusicPlaylistType lists only the codes the tooling has read and a throw would abort every bank with an unread item
             type: data.readInt32LE(itemOffset + 12),
           };
         });

@@ -67,11 +67,9 @@ export const createLoginTowerFacade = (towers: LoginTowers, atlas: LoginTowerAtl
       for (const { loops, shade } of layers) {
         const path = toPath(loops);
         shadeContext.fillStyle = getHalfShadeStyle(shade);
-        // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
         shadeContext.fill(path, "evenodd");
       }
       maskContext.fillStyle = "#000";
-      // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
       maskContext.fill(toPath(holes), "evenodd");
       // The lathe opens over each recess, whose own box stands behind it
       maskContext.fill(

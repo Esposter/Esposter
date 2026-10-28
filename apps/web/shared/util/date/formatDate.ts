@@ -1,5 +1,3 @@
-import type { DateToken } from "#shared/util/date/DateToken";
-
 import { DATE_TOKEN_REGEX } from "#shared/util/date/constants";
 import { checkIsDateToken } from "#shared/util/date/DateToken";
 import { DateTokenFormatterMap } from "#shared/util/date/DateTokenFormatterMap";

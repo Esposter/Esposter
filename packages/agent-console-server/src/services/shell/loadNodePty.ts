@@ -13,7 +13,6 @@ export const loadNodePty = (): Promise<typeof NodePty> => {
   if (!isSea()) return import("node-pty");
   const installDirectory = getHostInstallDirectory();
   return Promise.resolve(
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the installed copy is the one this build embedded
     createRequire(join(installDirectory, "package.json"))(
       join(installDirectory, NODE_PTY_DIRECTORY_NAME),
     ) as typeof NodePty,

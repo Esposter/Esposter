@@ -70,7 +70,6 @@ const answerTile = async (request: TerrainTileRequest, terrainWorkerContext: Ter
   }
   const { coarseColors, coarseNormals, coarsePositions, colors, normals, plantColors, plantMatrices, positions } =
     outcome.value;
-  // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a Worker's postMessage takes no origin
   self.postMessage(outcome.value, {
     transfer: [
       coarseColors.buffer,

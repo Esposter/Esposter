@@ -23,7 +23,6 @@ export const createUserDataArchive = (): UserDataArchive => {
     for await (const chunk of chunks) {
       // A blob is read without an encoding, so its chunks are bytes; a string only reaches here from a text stream
       entry.push(typeof chunk === "string" ? new TextEncoder().encode(chunk) : chunk, false);
-      // oxlint-disable-next-line no-await-in-loop -- Backpressure: each chunk is pushed before the next is read
       await waitForDrain();
     }
     entry.push(new Uint8Array(), true);

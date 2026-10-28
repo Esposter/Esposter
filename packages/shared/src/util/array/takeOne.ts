@@ -1,4 +1,3 @@
-/* oxlint-disable typescript/no-useless-default-assignment -- the rule reads this implementation signature, where `index` is required, rather than the array overload that makes it optional; the default is what a single-argument call indexes by */
 import type { TakeOne } from "#src/models/shared/TakeOne";
 
 // Workaround for noUncheckedIndexedAccess

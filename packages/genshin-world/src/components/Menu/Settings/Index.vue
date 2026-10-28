@@ -57,7 +57,6 @@ watchImmediate(
       return;
     }
 
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject
     getResultAsync(() => GameTextLoaderMap[newLanguage]()).match(
       (loadedGameText) => {
         if (settings.value.language === newLanguage) chosenGameText.value = loadedGameText;

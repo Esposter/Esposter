@@ -22,23 +22,18 @@ export const readGameMusicChroma = async (): Promise<Map<number, Chroma>> => {
       .filter(({ ext }) => ext === ".bin")
       .map(({ name }) => Number(name)),
   );
-  // oxlint-disable-next-line no-await-in-loop -- one sound's WAV is read and deleted before the next is decoded
   for await (const { id, path } of decodeGameSounds(
     MUSIC_PACKAGE_PATTERN,
     (soundId) => !held.has(soundId),
     DECODE_DIRECTORY,
   )) {
-    // oxlint-disable-next-line no-await-in-loop -- as above
     const { classes, loudness } = computeChroma(
       computeChromaSpectrogram(await readAudioSamples(path, CHROMA_SAMPLE_RATE), CHROMA_SAMPLE_RATE),
     );
     // Written beside its name and renamed onto it, so a write cut short is never read as a whole sound's chroma
     const partialPath = join(CHROMA_DIRECTORY, `${id}.bin.partial`);
-    // oxlint-disable-next-line no-await-in-loop -- as above
     await writeFile(partialPath, Buffer.concat([Buffer.from(classes.buffer), Buffer.from(loudness.buffer)]));
-    // oxlint-disable-next-line no-await-in-loop -- as above
     await rename(partialPath, join(CHROMA_DIRECTORY, `${id}.bin`));
-    // oxlint-disable-next-line no-await-in-loop -- as above
     await rm(path);
     held.add(id);
   }

@@ -41,7 +41,6 @@ export const instrumentsCommand: SubCommandsDef[string] = defineCommand({
     } of readLoginMusicSources()) {
       const render = renders.find(({ id }) => id === segmentId);
       if (!render) continue;
-      // oxlint-disable-next-line no-await-in-loop -- one source's voices are solved at a time
       const { baseline, solutions } = await solveSampledVoices(
         catalogue,
         voiceNotesList,

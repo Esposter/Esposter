@@ -38,7 +38,6 @@ const tableColumns = computed<UiDataTableColumn<SurveyResponseRecord & { id: str
   { isSortable: false, key: "actions", title: "" },
 ]);
 // A response is keyed by its row key, which the table reads its rows by
-// oxlint-disable-next-line oxc/no-map-spread -- each item is a new object, never a read row mutated in place
 const items = computed(() => records.value?.rows.map((row) => ({ ...row, id: row.rowKey })) ?? []);
 const itemsPerPage = ref(DATA_TABLE_ITEMS_PER_PAGE_OPTIONS[0]);
 const page = ref(1);

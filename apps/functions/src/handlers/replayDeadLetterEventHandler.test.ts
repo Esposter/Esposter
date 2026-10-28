@@ -33,7 +33,6 @@ const readContainer = () => {
 
 describe(replayDeadLetterEventHandler, () => {
   const blobName = "";
-  // oxlint-disable-next-line unicorn/consistent-function-scoping -- a default parameter value is not counted as a capture, but blobName is one
   const seedBlob = async (content: string, name: string = blobName) => {
     const containerClient = await getContainerClient(AzureContainer.DeadLetter);
     await containerClient.getBlockBlobClient(name).upload(content, content.length);

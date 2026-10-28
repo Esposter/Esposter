@@ -9,7 +9,6 @@ export const runConsoleListAgent = (shellPid: number): void => {
   const installDirectory = getHostInstallDirectory();
   const { getConsoleProcessList } = createRequire(join(installDirectory, "package.json"))(
     join(installDirectory, NODE_PTY_DIRECTORY_NAME, "prebuilds", "win32-x64", "conpty_console_list.node"),
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the addon node-pty's own agent loads, with the one export it calls
   ) as { getConsoleProcessList: (pid: number) => number[] };
   process.send?.({ consoleProcessList: getConsoleProcessList(shellPid) });
 };

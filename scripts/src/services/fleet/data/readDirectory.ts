@@ -33,9 +33,7 @@ export const readDirectory = async (absoluteDirectory: string): Promise<Director
     if (entry.isDirectory()) contents.directories.push(entry.name);
     else if (entry.isFile()) {
       batch.push(entry);
-      if (batch.length === STAT_CONCURRENCY)
-        // oxlint-disable-next-line no-await-in-loop -- A batch is flushed before the next one fills, so the stats never stack
-        await flush();
+      if (batch.length === STAT_CONCURRENCY) await flush();
     }
 
   await flush();

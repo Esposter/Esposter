@@ -27,7 +27,6 @@ interface Props {
 const { avatarId, friendshipExp, gameDataBaseUrl, gameText, language, nameText } = defineProps<Props>();
 const entries = ref<CharacterMenuProfileEntry[]>([]);
 const namecardName = ref("");
-// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
 getResultAsync(() => readCharacterProfile(gameDataBaseUrl, avatarId, language, friendshipExp)).match(
   ({ friendshipLevel, namecardNameTextId, profileText }) => {
     entries.value = toCharacterProfileEntries(

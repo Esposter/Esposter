@@ -48,7 +48,6 @@ const timeOfDay = getLoginTimeOfDay(Temporal.Now.plainTimeISO());
 // Fails is logged and the white stays
 const titleLogoPath = shallowRef("");
 const loginData = shallowRef<LoginData>();
-// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
 getResultAsync(() =>
   measureLoadStep("opening", readTitleLogoPath(gameDataBaseUrl, GameLanguageTitleLogoMap[language])),
 ).match(
@@ -59,7 +58,6 @@ getResultAsync(() =>
     console.error(error);
   },
 );
-// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
 getResultAsync(() => measureLoadStep("opening", readLoginData(gameDataBaseUrl))).match(
   (newLoginData) => {
     loginData.value = newLoginData;

@@ -8,7 +8,6 @@ export interface Commission {
 
 export interface CommissionTask {
   id: string;
-  // oxlint-disable-next-line literal-union/no-string-literal-union -- The engine's own task statuses, as its task tools spell them
   status: "completed" | "in_progress" | "pending";
   subject: string;
 }

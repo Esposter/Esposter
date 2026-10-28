@@ -50,7 +50,6 @@ const createSessionDuel = async (): Promise<GcgDuel> => {
   return newDuel;
 };
 // A duel that fails to load leaves to the world, since nothing is drawn without one and only the duel's own end closes it
-// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
 getResultAsync(createSessionDuel).match(
   (newDuel) => {
     duel.value = newDuel;
@@ -60,7 +59,6 @@ getResultAsync(createSessionDuel).match(
     emit("leave", false);
   },
 );
-// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
 getResultAsync(() => GcgTextLoaderMap[language](gameDataBaseUrl)).match(
   (newTextMap) => {
     textMap.value = newTextMap;
