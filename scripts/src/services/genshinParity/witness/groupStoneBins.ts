@@ -5,7 +5,7 @@ import type { Matrix3 } from "three";
 
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { MIN_BIN_COUNT } from "#src/services/genshinParity/witness/constants";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { toSceneColor } from "genshin-engine";
 import { Color } from "three";
 
@@ -14,9 +14,9 @@ import { Color } from "three";
 // Balance's inverse, since the curve is steep near white and a pixel there taken back alone stands for a scene colour
 // Many times its neighbours'. Bins too sparse to read are dropped, and with none left there is nothing to solve
 export const groupStoneBins = (samples: readonly StoneLightSample[], whiteBalance: Matrix3): StoneBin[] => {
-  const sampleBinMap = Map.groupBy(samples, ({ bin, part }) => `${part}/${bin}`);
+  const binSampleMap = Map.groupBy(samples, ({ bin, part }) => `${part}${ID_SEPARATOR}${bin}`);
   const inverseWhiteBalance = whiteBalance.clone().invert();
-  const bins = [...sampleBinMap.values()]
+  const bins = [...binSampleMap.values()]
     .filter((binSamples) => binSamples.length >= MIN_BIN_COUNT)
     .map((binSamples) => {
       const displayColor = CHANNELS.map(
@@ -29,7 +29,7 @@ export const groupStoneBins = (samples: readonly StoneLightSample[], whiteBalanc
     throw new InvalidOperationError(
       Operation.Read,
       "bins",
-      `none of ${sampleBinMap.size} holds ${MIN_BIN_COUNT} pixels`,
+      `none of ${binSampleMap.size} holds ${MIN_BIN_COUNT} pixels`,
     );
   return bins;
 };

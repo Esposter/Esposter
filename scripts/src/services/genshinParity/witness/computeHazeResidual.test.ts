@@ -3,6 +3,7 @@ import type { Vector } from "#src/models/shared/Vector";
 
 import { computeHazeResidual } from "#src/services/genshinParity/witness/computeHazeResidual";
 import { MIN_BIN_COUNT } from "#src/services/genshinParity/witness/constants";
+import { ID_SEPARATOR } from "@esposter/shared";
 import { toneMapGenshin } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
@@ -31,7 +32,7 @@ describe(computeHazeResidual, () => {
           ) as Vector;
           return Array.from({ length: MIN_BIN_COUNT }, (): StoneLightSample => ({
             albedo,
-            bin: `${lightBinIndex}/${depth}`,
+            bin: `${lightBinIndex}${ID_SEPARATOR}${depth}`,
             display: toneMapGenshin(sceneColor),
             emission: [0, 0, 0],
             harmonics: [],

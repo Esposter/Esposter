@@ -32,8 +32,10 @@ export const readReferenceLandmarks = async (
   for (const name of landmarkNames ?? [])
     if (!(name in referenceLandmarks))
       throw new InvalidOperationError(Operation.Read, name, `not a landmark of ${referenceId}`);
-  const seen = Object.entries(referenceLandmarks).filter(([name]) => !landmarkNames || landmarkNames.includes(name));
-  const definitions = seen.map(([name]) => {
+  const landmarkEntries = Object.entries(referenceLandmarks).filter(
+    ([name]) => !landmarkNames || landmarkNames.includes(name),
+  );
+  const definitions = landmarkEntries.map(([name]) => {
     const landmark = DerivedAssetLandmarkMap[witness][name];
     if (!landmark) throw new InvalidOperationError(Operation.Read, name, `not a landmark of ${witness}`);
     return landmark;
@@ -48,7 +50,7 @@ export const readReferenceLandmarks = async (
     (landmarks) => (Reflect.get(window, "computeWitnessPoints") as (landmarks: unknown) => Vector[])(landmarks),
     definitions,
   );
-  const correspondences = seen.map(([, pixel], index) => {
+  const correspondences = landmarkEntries.map(([, pixel], index) => {
     const definition = definitions[index];
     return {
       isEdge: definition?.isEdge,
@@ -57,5 +59,11 @@ export const readReferenceLandmarks = async (
       point: points[index] ?? [0, 0, 0],
     };
   });
-  return { correspondences, given: seen.map(([, pixel]) => pixel), height, names: seen.map(([name]) => name), width };
+  return {
+    correspondences,
+    given: landmarkEntries.map(([, pixel]) => pixel),
+    height,
+    names: landmarkEntries.map(([name]) => name),
+    width,
+  };
 };

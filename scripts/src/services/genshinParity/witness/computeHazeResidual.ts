@@ -6,6 +6,7 @@ import { RIDGE } from "#src/services/genshinParity/witness/constants";
 import { groupStoneBins } from "#src/services/genshinParity/witness/groupStoneBins";
 import { solveNonNegativeSystem } from "#src/services/recreation/solve/solveNonNegativeSystem";
 import { toSrgb } from "#src/services/shared/toSrgb";
+import { ID_SEPARATOR } from "@esposter/shared";
 import { toneMapGenshin } from "genshin-engine";
 import { Matrix3, Vector3 } from "three";
 
@@ -22,7 +23,7 @@ export const computeHazeResidual = (
   whiteBalance: Matrix3 = new Matrix3(),
 ): number => {
   const bins = groupStoneBins(samples, whiteBalance);
-  const lightBins = [...new Set(samples.map(({ lightBin, part }) => `${part}/${lightBin}`))];
+  const lightBins = [...new Set(samples.map(({ lightBin, part }) => `${part}${ID_SEPARATOR}${lightBin}`))];
   const lightBinIndexMap = new Map(lightBins.map((lightBin, index) => [lightBin, index]));
   const hazeUnknown = lightBins.length;
   const unknownCount = hazeUnknown + 2;
@@ -34,7 +35,7 @@ export const computeHazeResidual = (
       let glow = 0;
       for (const { albedo, emission, lightBin, occlusion, opacity, part, scatter } of binSamples) {
         const through = occlusion * (1 - opacity);
-        const unknown = lightBinIndexMap.get(`${part}/${lightBin}`) ?? 0;
+        const unknown = lightBinIndexMap.get(`${part}${ID_SEPARATOR}${lightBin}`) ?? 0;
         row[unknown] = (row[unknown] ?? 0) + albedo[channel] * through;
         row[hazeUnknown] = (row[hazeUnknown] ?? 0) + opacity * (1 - scatter);
         row[hazeUnknown + 1] = (row[hazeUnknown + 1] ?? 0) + opacity * scatter;

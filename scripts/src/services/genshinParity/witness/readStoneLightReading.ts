@@ -17,6 +17,7 @@ import { STONE_LIGHT_DEPTH_BANDS } from "#src/services/genshinParity/sky/constan
 import { getPixelDisplayColor } from "#src/services/genshinParity/sky/getPixelDisplayColor";
 import { STONE_HEIGHT_BANDS } from "#src/services/genshinParity/witness/constants";
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
+import { ID_SEPARATOR } from "@esposter/shared";
 import { computeStoneHarmonics, computeStoneRampCoordinate, STONE_HARMONIC_COUNT } from "genshin-engine";
 import sharp from "sharp";
 import { Matrix3, Matrix4, Vector3 } from "three";
@@ -101,12 +102,12 @@ export const readStoneLightReading = async (
         point: point.toArray(),
         sample: {
           albedo: [albedo[pixel * 4] ?? 0, albedo[pixel * 4 + 1] ?? 0, albedo[pixel * 4 + 2] ?? 0],
-          bin: `${band}/${heightBand}/${rampBin}/${upwardBin}`,
+          bin: `${band}${ID_SEPARATOR}${heightBand}${ID_SEPARATOR}${rampBin}${ID_SEPARATOR}${upwardBin}`,
           display: getPixelDisplayColor(referenceShot, pixel),
           emission: [emission[pixel * 4] ?? 0, emission[pixel * 4 + 1] ?? 0, emission[pixel * 4 + 2] ?? 0],
           harmonics,
           height: point.y,
-          lightBin: `${rampBin}/${upwardBin}`,
+          lightBin: `${rampBin}${ID_SEPARATOR}${upwardBin}`,
           occlusion: occlusion[pixel * 4] ?? 1,
           opacity: 0,
           part: part[pixel * 4] ?? 0,

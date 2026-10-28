@@ -8,7 +8,7 @@ import { readLuminance } from "#src/services/genshinParity/witness/readLuminance
 import { BYTE } from "#src/services/shared/constants";
 import { toLinear } from "#src/services/shared/toLinear";
 import { toSrgb } from "#src/services/shared/toSrgb";
-import { getOrCreate } from "@esposter/shared";
+import { getOrCreate, ID_SEPARATOR } from "@esposter/shared";
 import sharp from "sharp";
 
 // The edges each binning splits by: depth in metres, the cosine to the light, how far a face turns up and height in
@@ -136,15 +136,15 @@ export const readLightCeilings = async ({
         (normal[pixel * 4 + 2] ?? 0) * direction[2],
     );
   const getShading = (pixel: number): string =>
-    `${part[pixel * 4 + 1]}/${countPassed(DEPTH_EDGES, depth[pixel * 4] ?? 0)}/${getFacing(pixel)}/${countPassed(UPWARD_EDGES, normal[pixel * 4 + 1] ?? 0)}`;
+    `${part[pixel * 4 + 1]}${ID_SEPARATOR}${countPassed(DEPTH_EDGES, depth[pixel * 4] ?? 0)}${ID_SEPARATOR}${getFacing(pixel)}${ID_SEPARATOR}${countPassed(UPWARD_EDGES, normal[pixel * 4 + 1] ?? 0)}`;
   const [blurredReference, blurredExports] = [blurParts(reference), blurParts(exports)];
   const corrections: [string, Float32Array][] = [
     ["by depth, facing and how far a face turns up", correctByBins(getShading)],
     [
       "by depth, facing, how far a face turns up and height",
-      correctByBins((pixel) => `${getShading(pixel)}/${countPassed(HEIGHT_EDGES, heights[pixel] ?? 0)}`),
+      correctByBins((pixel) => `${getShading(pixel)}${ID_SEPARATOR}${countPassed(HEIGHT_EDGES, heights[pixel] ?? 0)}`),
     ],
-    ["by each part and its facing", correctByBins((pixel) => `${part[pixel * 4]}/${getFacing(pixel)}`)],
+    ["by each part and its facing", correctByBins((pixel) => `${part[pixel * 4]}${ID_SEPARATOR}${getFacing(pixel)}`)],
     [
       `smooth over ${FIELD_RADIUS} pixels`,
       applyGains((pixel, channel) => {
