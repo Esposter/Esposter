@@ -86,7 +86,7 @@ From Constellation 2, each Skyward Sonnet hit SHALL cut the Anemo RES and Physic
 
 ### Requirement: Storm of Defiance from Constellation 6
 
-From Constellation 6, each Stormeye tick SHALL cut the Anemo RES and Physical RES of each enemy it strikes by a further 20% for 10 seconds, the two adding up.
+From Constellation 6, each Stormeye tick SHALL cut the Anemo RES of each enemy it strikes by a further 20% for 10 seconds, the two adding up.
 
 #### Scenario: Two cuts add up
 
