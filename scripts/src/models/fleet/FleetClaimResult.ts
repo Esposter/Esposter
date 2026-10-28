@@ -1,5 +1,5 @@
 import type { ClaimAttempt } from "#src/models/fleet/ClaimAttempt";
-import type { ClaimedRef } from "#src/models/fleet/ClaimedRef";
+import type { ClaimedRef } from "#src/models/shared/ClaimedRef";
 
 export interface FleetClaimResult {
   attempt: ClaimAttempt;

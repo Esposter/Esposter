@@ -1,6 +1,6 @@
 import type { ClaimMessage } from "#src/models/fleet/ClaimMessage";
 
-import { ClaimStatus } from "#src/models/fleet/ClaimStatus";
+import { ClaimStatus } from "#src/models/shared/ClaimStatus";
 import { STALE_MILLISECONDS } from "#src/services/fleet/constants";
 import { getClaimStatus } from "#src/services/fleet/getClaimStatus";
 import { describe, expect, test } from "vitest";

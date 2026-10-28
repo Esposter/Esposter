@@ -1,8 +1,8 @@
-import type { ClaimedRef } from "#src/models/fleet/ClaimedRef";
+import type { ClaimedRef } from "#src/models/shared/ClaimedRef";
 import type { HoldFile } from "#src/models/resume/HoldFile";
 import type { ResumeItem } from "#src/models/resume/ResumeItem";
 
-import { ClaimStatus } from "#src/models/fleet/ClaimStatus";
+import { ClaimStatus } from "#src/models/shared/ClaimStatus";
 import { formatClaimHolder } from "#src/services/fleet/formatClaimHolder";
 import { getClaimStatus } from "#src/services/fleet/getClaimStatus";
 import { HOLD_DIED_ACTION, STALE_CLAIM_ACTION } from "#src/services/resume/constants";

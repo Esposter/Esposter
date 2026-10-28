@@ -1,4 +1,4 @@
-import type { ClaimedRef } from "#src/models/fleet/ClaimedRef";
+import type { ClaimedRef } from "#src/models/shared/ClaimedRef";
 
 import { getHoldFilePath } from "#src/services/fleet/getHoldFilePath";
 import { getHoldItems } from "#src/services/resume/getHoldItems";

@@ -1,8 +1,8 @@
-import type { ClaimedRef } from "#src/models/fleet/ClaimedRef";
+import type { ClaimedRef } from "#src/models/shared/ClaimedRef";
 import type { FleetEntry } from "#src/models/fleet/FleetEntry";
 import type { MachineProfile } from "#src/models/fleet/MachineProfile";
 
-import { ClaimStatus } from "#src/models/fleet/ClaimStatus";
+import { ClaimStatus } from "#src/models/shared/ClaimStatus";
 import { checkTouchesOverlap } from "#src/services/fleet/checkTouchesOverlap";
 import { ALL_AREAS } from "#src/services/fleet/constants";
 import { getClaimStatus } from "#src/services/fleet/getClaimStatus";

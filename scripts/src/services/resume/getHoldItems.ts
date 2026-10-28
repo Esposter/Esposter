@@ -1,4 +1,4 @@
-import type { ClaimedRef } from "#src/models/fleet/ClaimedRef";
+import type { ClaimedRef } from "#src/models/shared/ClaimedRef";
 import type { HoldFile } from "#src/models/resume/HoldFile";
 import type { ResumeItem } from "#src/models/resume/ResumeItem";
 

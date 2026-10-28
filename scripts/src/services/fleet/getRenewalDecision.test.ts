@@ -1,4 +1,4 @@
-import type { ClaimedRef } from "#src/models/fleet/ClaimedRef";
+import type { ClaimedRef } from "#src/models/shared/ClaimedRef";
 
 import { RenewalDecision } from "#src/models/fleet/RenewalDecision";
 import { getRenewalDecision } from "#src/services/fleet/getRenewalDecision";

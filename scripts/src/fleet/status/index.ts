@@ -1,4 +1,4 @@
-import { ClaimStatus } from "#src/models/fleet/ClaimStatus";
+import { ClaimStatus } from "#src/models/shared/ClaimStatus";
 import { formatClaimHolder } from "#src/services/fleet/formatClaimHolder";
 import { formatFleetTable } from "#src/services/fleet/formatFleetTable";
 import { formatMachineLoad } from "#src/services/fleet/formatMachineLoad";

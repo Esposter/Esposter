@@ -1,4 +1,4 @@
-import type { ClaimedRef } from "#src/models/fleet/ClaimedRef";
+import type { ClaimedRef } from "#src/models/shared/ClaimedRef";
 import type { FleetEntry } from "#src/models/fleet/FleetEntry";
 import type { MachineProfile } from "#src/models/fleet/MachineProfile";
 

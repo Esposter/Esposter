@@ -1,4 +1,4 @@
-import type { ClaimedRef } from "#src/models/fleet/ClaimedRef";
+import type { ClaimedRef } from "#src/models/shared/ClaimedRef";
 
 import { CLAIM_REF_PREFIX, FLEET_LOCAL_CLAIM_PREFIX } from "#src/services/fleet/constants";
 import { parseClaimMessage } from "#src/services/fleet/parseClaimMessage";

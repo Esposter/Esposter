@@ -1,4 +1,4 @@
-import type { ClaimedRef } from "#src/models/fleet/ClaimedRef";
+import type { ClaimedRef } from "#src/models/shared/ClaimedRef";
 
 import { ClaimDecision } from "#src/models/fleet/ClaimDecision";
 import { STALE_MILLISECONDS } from "#src/services/fleet/constants";

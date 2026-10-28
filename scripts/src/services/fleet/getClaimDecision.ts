@@ -1,8 +1,8 @@
-import type { ClaimedRef } from "#src/models/fleet/ClaimedRef";
+import type { ClaimedRef } from "#src/models/shared/ClaimedRef";
 import type { ClaimHolder } from "#src/models/fleet/ClaimHolder";
 
 import { ClaimDecision } from "#src/models/fleet/ClaimDecision";
-import { ClaimStatus } from "#src/models/fleet/ClaimStatus";
+import { ClaimStatus } from "#src/models/shared/ClaimStatus";
 import { checkIsHeldBy } from "#src/services/fleet/checkIsHeldBy";
 import { getClaimStatus } from "#src/services/fleet/getClaimStatus";
 

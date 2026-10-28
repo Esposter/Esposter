@@ -1,6 +1,6 @@
 import type { ClaimMessage } from "#src/models/fleet/ClaimMessage";
 
-import { ClaimStatus } from "#src/models/fleet/ClaimStatus";
+import { ClaimStatus } from "#src/models/shared/ClaimStatus";
 import { STALE_MILLISECONDS } from "#src/services/fleet/constants";
 
 // A missed claim is never stale, since the coordinator decides it; otherwise a claim unrenewed for longer than the stale
