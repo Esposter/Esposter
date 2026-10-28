@@ -65,7 +65,15 @@ const view = () => {
     <MessageModelFileRenderer :file :is-preview :thumbnail-url="fileUrl?.thumbnailUrl" :url />
     <div
       v-if="file.isSpoiler && !isSpoilerRevealed && isViewable"
-      class="text-white bg-black/60 flex pointer-events-none items-center inset-0 justify-center absolute backdrop-blur-md"
+      text-white
+      bg="black/60"
+      flex
+      pointer-events-none
+      items-center
+      inset-0
+      justify-center
+      absolute
+      backdrop-blur-md
     >
       SPOILER
     </div>

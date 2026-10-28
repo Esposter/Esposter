@@ -20,11 +20,11 @@ const toggleSpoiler = (event: Event) => {
 </script>
 
 <template>
-  <div flex flex-col gap-y-1>
+  <div flex flex-col gap-1>
     <slot name="prepend" />
     <!-- The default slot is the inline editor, which replaces the rendered text while a message is being edited -->
     <slot>
-      <div v-if="!EMPTY_TEXT_REGEX.test(messageHtml) || message.isEdited" flex gap-x-1 items-end>
+      <div v-if="!EMPTY_TEXT_REGEX.test(messageHtml) || message.isEdited" flex gap-1 items-end>
         <div
           v-if="!EMPTY_TEXT_REGEX.test(messageHtml)"
           class="rich-text-content"

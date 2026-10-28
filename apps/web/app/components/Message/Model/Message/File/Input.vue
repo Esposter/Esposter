@@ -23,7 +23,16 @@ const progressPercentage = computed(() => uploadFileUrl.progress * 100);
       <MessageModelFileRenderer :class="{ 'blur-sm': file.isSpoiler }" :file :url="uploadFileUrl.url" is-preview />
       <div
         v-if="file.isSpoiler"
-        class="text-white text-center bg-black/60 flex pointer-events-none items-center inset-0 justify-center absolute backdrop-blur-sm"
+        text-white
+        text-center
+        bg="black/60"
+        flex
+        pointer-events-none
+        items-center
+        inset-0
+        justify-center
+        absolute
+        backdrop-blur-sm
       >
         SPOILER
       </div>
