@@ -15,7 +15,12 @@ export const readViewerConfiguration = (): undefined | ViewerConfiguration => {
   if (!content) return undefined;
 
   const { address, modelId, motions } = parseJsonObject(content);
-  if (typeof address !== "string" || !checkIsViewerAddress(address)) return undefined;
-  if (typeof modelId !== "number" || !checkIsModelId(modelId)) return undefined;
-  return { address, modelId, motions: readMotions(motions) };
+  if (
+    typeof address !== "string" ||
+    !checkIsViewerAddress(address) ||
+    typeof modelId !== "number" ||
+    !checkIsModelId(modelId)
+  )
+    return undefined;
+  else return { address, modelId, motions: readMotions(motions) };
 };

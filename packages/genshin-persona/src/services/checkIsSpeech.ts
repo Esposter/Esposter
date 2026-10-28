@@ -8,6 +8,6 @@ import { getFrameEnergiesDb } from "#src/services/getFrameEnergiesDb";
 // A vocoder run wrong by its provider returns a constant near-silence that fails both, and throws nothing
 export const checkIsSpeech = (clip: PcmClip): boolean => {
   const energiesDb = getFrameEnergiesDb(clip);
-  if (!checkIsAudible(energiesDb)) return false;
-  return Math.min(...energiesDb) <= Math.max(...energiesDb) - SPEECH_FLOOR_DB;
+  if (checkIsAudible(energiesDb)) return Math.min(...energiesDb) <= Math.max(...energiesDb) - SPEECH_FLOOR_DB;
+  else return false;
 };

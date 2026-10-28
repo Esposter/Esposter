@@ -11,12 +11,23 @@ import { parseJsonObject } from "#src/services/parseJsonObject";
 export const parseVoiceRequest = (line: string): undefined | VoiceRequest => {
   const { index, isFinal, language, lines, messageId, name, stem, turnId, type, volume } = parseJsonObject(line);
   if (type === VoiceRequestType.Stop) return { type };
-  if (type !== VoiceRequestType.Speak && type !== VoiceRequestType.Warm) return undefined;
-  if (typeof language !== "string" || !checkIsVoiceLanguage(language)) return undefined;
-  if (typeof name !== "string" || typeof stem !== "string") return undefined;
-  if (typeof turnId !== "string" || typeof messageId !== "string" || typeof isFinal !== "boolean") return undefined;
-  if (typeof index !== "number" || !Number.isInteger(index) || index < 0) return undefined;
-  if (!Array.isArray(lines) || !lines.every((item) => typeof item === "string")) return undefined;
-  if (typeof volume !== "number" || !checkIsVolume(String(volume))) return undefined;
+  if (
+    (type !== VoiceRequestType.Speak && type !== VoiceRequestType.Warm) ||
+    typeof language !== "string" ||
+    !checkIsVoiceLanguage(language) ||
+    typeof name !== "string" ||
+    typeof stem !== "string" ||
+    typeof turnId !== "string" ||
+    typeof messageId !== "string" ||
+    typeof isFinal !== "boolean" ||
+    typeof index !== "number" ||
+    !Number.isInteger(index) ||
+    index < 0 ||
+    !Array.isArray(lines) ||
+    !lines.every((item) => typeof item === "string") ||
+    typeof volume !== "number" ||
+    !checkIsVolume(String(volume))
+  )
+    return undefined;
   else return { index, isFinal, language, lines, messageId, name, stem, turnId, type, volume };
 };
