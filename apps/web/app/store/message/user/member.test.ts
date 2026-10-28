@@ -115,13 +115,13 @@ describe(useMemberStore, () => {
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {
       onFailureLogged();
     });
-    let hasGroupReadFailed = false;
+    let isGroupReadFailed = false;
     getMemberCountsRef(roomId).value.memberCount = 2;
     getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 2, roleId: role.id }];
     trpcMsw.room.readMembersCount.query(() => 1);
     trpcMsw.room.readMemberCountsByTopRole.query(() => {
-      if (hasGroupReadFailed) return [{ count: 1, roleId: role.id }];
-      hasGroupReadFailed = true;
+      if (isGroupReadFailed) return [{ count: 1, roleId: role.id }];
+      isGroupReadFailed = true;
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     storeDeleteMember(roomId, member.id);
