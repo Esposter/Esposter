@@ -2,1608 +2,1608 @@
 
 `scripts/`, `.agents/`, the app's root configuration and `content/`.
 
-| Unit                                                                                      | Swept                  | Notes    |
-| ----------------------------------------------------------------------------------------- | ---------------------- | -------- |
-| `scripts/src/animeStudio`                                                                 | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/benchTypes`                                                                  | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/ci`                                                                          | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/citations`                                                                   | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/crossOS`                                                                     | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/dependencies`                                                                | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/dependencyGraph`                                                             | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/fleet`                                                                       | 2026-10-25 · Haiku 5.5 | 7 files  |
-| `scripts/src/gameData`                                                                    | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/genshinAssets`                                                               | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/genshinParity`                                                               | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/genshinText`                                                                 | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/identifiers`                                                                 | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/machine`                                                                     | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/models/benchTypes`                                                           | —                      | 6 files  |
-| `scripts/src/models/ci`                                                                   | —                      | 1 file   |
-| `scripts/src/models/citations`                                                            | —                      | 2 files  |
-| `scripts/src/models/dependencies`                                                         | —                      | 14 files |
-| `scripts/src/models/dependencyAdmission`                                                  | —                      | 1 file   |
-| `scripts/src/models/dependencyGraph`                                                      | —                      | 6 files  |
-| `scripts/src/models/fleet`                                                                | —                      |          |
-| `scripts/src/models/gameData`                                                             | —                      | 13 files |
-| `scripts/src/models/genshinAssets/achievements`                                           | —                      | 2 files  |
-| `scripts/src/models/genshinAssets/adventureRank`                                          | —                      | 3 files  |
-| `scripts/src/models/genshinAssets/archive`                                                | —                      | 18 files |
-| `scripts/src/models/genshinAssets/avatar`                                                 | —                      | 12 files |
-| `scripts/src/models/genshinAssets/camera`                                                 | —                      | 3 files  |
-| `scripts/src/models/genshinAssets/commissions`                                            | —                      |          |
-| `scripts/src/models/genshinAssets/cooking`                                                | —                      | 5 files  |
-| `scripts/src/models/genshinAssets/crafting`                                               | —                      | 5 files  |
-| `scripts/src/models/genshinAssets/domains`                                                | —                      |          |
-| `scripts/src/models/genshinAssets/enemies`                                                | —                      |          |
-| `scripts/src/models/genshinAssets/expeditions`                                            | —                      | 6 files  |
-| `scripts/src/models/genshinAssets/exploration`                                            | —                      |          |
-| `scripts/src/models/genshinAssets/fishing`                                                | —                      | 9 files  |
-| `scripts/src/models/genshinAssets/fit`                                                    | —                      |          |
-| `scripts/src/models/genshinAssets/forging`                                                | —                      | 2 files  |
-| `scripts/src/models/genshinAssets/friendship`                                             | —                      | 4 files  |
-| `scripts/src/models/genshinAssets/gadgets`                                                | —                      |          |
-| `scripts/src/models/genshinAssets/gathering`                                              | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/gcg`                                                    | —                      |          |
-| `scripts/src/models/genshinAssets/home`                                                   | —                      | 8 files  |
-| `scripts/src/models/genshinAssets/imaginarium`                                            | —                      |          |
-| `scripts/src/models/genshinAssets/interface`                                              | —                      | 5 files  |
-| `scripts/src/models/genshinAssets/items`                                                  | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/kits/KitCandidate.ts`                                   | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/kits/KitCandidateSources.ts`                            | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/kits/KitOverlay.ts`                                     | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/kits/KitOverlayEntry.ts`                                | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/models/genshinAssets/kits/KitProvisionalCause.ts`                            | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/kits/KitRule.ts`                                        | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/kits/KitSource.ts`                                      | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/kits/KitSources.ts`                                     | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/kits/KitValueSource.ts`                                 | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/kits/NamedHitCall.ts`                                   | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/kits/NamedHitCandidateMap.ts`                           | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/kits/build`                                             | —                      | 4 files  |
-| `scripts/src/models/genshinAssets/kits/gcsim`                                             | —                      |          |
-| `scripts/src/models/genshinAssets/kits/tables`                                            | —                      | 6 files  |
-| `scripts/src/models/genshinAssets/kits/wiki`                                              | —                      |          |
-| `scripts/src/models/genshinAssets/leyLine`                                                | —                      |          |
-| `scripts/src/models/genshinAssets/locomotion`                                             | —                      | 4 files  |
-| `scripts/src/models/genshinAssets/lua`                                                    | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/mail`                                                   | —                      | 2 files  |
-| `scripts/src/models/genshinAssets/materialSources`                                        | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/materials`                                              | —                      | 14 files |
-| `scripts/src/models/genshinAssets/music`                                                  | —                      | 24 files |
-| `scripts/src/models/genshinAssets/offerings`                                              | —                      | 3 files  |
-| `scripts/src/models/genshinAssets/palette`                                                | —                      |          |
-| `scripts/src/models/genshinAssets/points`                                                 | —                      | 12 files |
-| `scripts/src/models/genshinAssets/profile`                                                | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/models/genshinAssets/puzzles`                                                | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/reputation`                                             | —                      | 7 files  |
-| `scripts/src/models/genshinAssets/residents`                                              | —                      | 3 files  |
-| `scripts/src/models/genshinAssets/rewards`                                                | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/scene`                                                  | —                      | 13 files |
-| `scripts/src/models/genshinAssets/sceneGroups`                                            | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/sceneNpcBorn`                                           | —                      | 2 files  |
-| `scripts/src/models/genshinAssets/shared`                                                 | 2026-10-25 · Haiku 5.5 | 39 files |
-| `scripts/src/models/genshinAssets/shops`                                                  | —                      |          |
-| `scripts/src/models/genshinAssets/skillGlyphs`                                            | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/sound`                                                  | —                      | 4 files  |
-| `scripts/src/models/genshinAssets/spiralAbyss`                                            | —                      | 5 files  |
-| `scripts/src/models/genshinAssets/stats`                                                  | —                      |          |
-| `scripts/src/models/genshinAssets/statues`                                                | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/models/genshinAssets/timings`                                                | —                      | 3 files  |
-| `scripts/src/models/genshinAssets/tips`                                                   | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/transPoints`                                            | —                      | 4 files  |
-| `scripts/src/models/genshinAssets/trials`                                                 | —                      | 7 files  |
-| `scripts/src/models/genshinAssets/wish`                                                   | —                      |          |
-| `scripts/src/models/genshinAssets/witness`                                                | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/world`                                                  | —                      | 26 files |
-| `scripts/src/models/genshinParity/CrossingBudget.ts`                                      | —                      | 1 file   |
-| `scripts/src/models/genshinParity/LoadBudget.ts`                                          | —                      | 1 file   |
-| `scripts/src/models/genshinParity/ScreenCrossing.ts`                                      | —                      | 1 file   |
-| `scripts/src/models/genshinParity/WholeScreenImage.ts`                                    | —                      | 1 file   |
-| `scripts/src/models/genshinParity/WikiImagesResponse.ts`                                  | —                      | 1 file   |
-| `scripts/src/models/genshinParity/display`                                                | —                      | 1 file   |
-| `scripts/src/models/genshinParity/music`                                                  | —                      | 10 files |
-| `scripts/src/models/genshinParity/page`                                                   | —                      | 3 files  |
-| `scripts/src/models/genshinParity/passes`                                                 | —                      | 9 files  |
-| `scripts/src/models/genshinParity/reference`                                              | —                      | 7 files  |
-| `scripts/src/models/genshinParity/shared`                                                 | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/models/genshinParity/sky`                                                    | —                      | 10 files |
-| `scripts/src/models/genshinParity/sound`                                                  | —                      | 1 file   |
-| `scripts/src/models/genshinParity/witness`                                                | —                      | 17 files |
-| `scripts/src/models/genshinText`                                                          | —                      |          |
-| `scripts/src/models/identifiers`                                                          | —                      | 2 files  |
-| `scripts/src/models/machine`                                                              | —                      |          |
-| `scripts/src/models/outdatedDependencies`                                                 | —                      | 22 files |
-| `scripts/src/models/oxlint`                                                               | —                      |          |
-| `scripts/src/models/package`                                                              | —                      | 2 files  |
-| `scripts/src/models/producerStamp`                                                        | —                      | 2 files  |
-| `scripts/src/models/proposals`                                                            | —                      | 5 files  |
-| `scripts/src/models/recreation`                                                           | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/models/resume`                                                               | —                      | 3 files  |
-| `scripts/src/models/review`                                                               | —                      | 24 files |
-| `scripts/src/models/semver`                                                               | —                      | 6 files  |
-| `scripts/src/models/shared`                                                               | —                      |          |
-| `scripts/src/models/skills`                                                               | —                      | 3 files  |
-| `scripts/src/models/sweeps`                                                               | 2026-10-25 · Haiku 5.5 | 25 files |
-| `scripts/src/models/timing`                                                               | —                      | 2 files  |
-| `scripts/src/models/triage`                                                               | —                      | 3 files  |
-| `scripts/src/models/updateNode`                                                           | —                      | 1 file   |
-| `scripts/src/models/usage`                                                                | —                      | 6 files  |
-| `scripts/src/models/voiceMatch`                                                           | —                      | 4 files  |
-| `scripts/src/outdatedDependencies`                                                        | —                      | 1 file   |
-| `scripts/src/oxlint`                                                                      | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/package`                                                                     | —                      | 1 file   |
-| `scripts/src/proposals`                                                                   | —                      | 1 file   |
-| `scripts/src/recreation`                                                                  | —                      | 1 file   |
-| `scripts/src/refreshLockfile`                                                             | —                      | 2 files  |
-| `scripts/src/resume`                                                                      | —                      | 1 file   |
-| `scripts/src/review`                                                                      | —                      | 1 file   |
-| `scripts/src/reviewFix`                                                                   | —                      | 1 file   |
-| `scripts/src/reviewSettle`                                                                | —                      | 1 file   |
-| `scripts/src/services/benchTypes`                                                         | —                      | 17 files |
-| `scripts/src/services/ci`                                                                 | —                      | 6 files  |
-| `scripts/src/services/citations`                                                          | 2026-10-25 · Haiku 5.5 | 14 files |
-| `scripts/src/services/dependencies`                                                       | —                      | 51 files |
-| `scripts/src/services/dependencyAdmission`                                                | —                      | 7 files  |
-| `scripts/src/services/dependencyGraph`                                                    | 2026-10-25 · Haiku 5.5 | 22 files |
-| `scripts/src/services/fleet/checkIsHeldBy.ts`                                             | —                      | 1 file   |
-| `scripts/src/services/fleet/checkTouchesOverlap.test.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/fleet/checkTouchesOverlap.ts`                                       | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/fleet/claimFleetEntry.ts`                                           | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/fleet/claimFleetEntryHere.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/fleet/claimNextFleetEntry.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/fleet/constants.ts`                                                 | —                      | 1 file   |
-| `scripts/src/services/fleet/createFleetCommit.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/fleet/createFleetWorker.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/fleet/data`                                                         | 2026-10-25 · Haiku 5.5 | 43 files |
-| `scripts/src/services/fleet/filterFleetEntries.test.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/fleet/filterFleetEntries.ts`                                        | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/fleet/formatClaimHolder.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/fleet/formatFleetTable.test.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/fleet/formatFleetTable.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/fleet/formatMachineLoad.test.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/fleet/formatMachineLoad.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/fleet/formatPushed.test.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/fleet/formatPushed.ts`                                              | —                      | 1 file   |
-| `scripts/src/services/fleet/getClaimDecision.test.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/fleet/getClaimDecision.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/fleet/getClaimStatus.test.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/fleet/getClaimStatus.ts`                                            | —                      | 1 file   |
-| `scripts/src/services/fleet/getHoldFilePath.ts`                                           | —                      | 1 file   |
-| `scripts/src/services/fleet/getOperatingSystemCapability.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/fleet/getOperatingSystemCapability.ts`                              | —                      | 1 file   |
-| `scripts/src/services/fleet/getRenewalDecision.test.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/fleet/getRenewalDecision.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/fleet/holdFleetEntry.ts`                                            | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/fleet/mergeMachineProfile.test.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/fleet/mergeMachineProfile.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/fleet/missFleetEntry.ts`                                            | —                      | 1 file   |
-| `scripts/src/services/fleet/parseClaimMessage.test.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/fleet/parseClaimMessage.ts`                                         | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/fleet/parseComputeQueue.test.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/fleet/parseComputeQueue.ts`                                         | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/fleet/parseComputeQueueItem.test.ts`                                | —                      | 1 file   |
-| `scripts/src/services/fleet/parseComputeQueueItem.ts`                                     | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/fleet/parseForEachRefLine.test.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/fleet/parseForEachRefLine.ts`                                       | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/fleet/parseHardwareAccelerations.test.ts`                           | —                      | 1 file   |
-| `scripts/src/services/fleet/parseHardwareAccelerations.ts`                                | —                      | 1 file   |
-| `scripts/src/services/fleet/parseKeyFilePaths.test.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/fleet/parseKeyFilePaths.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/fleet/parseLsRemoteSha.test.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/fleet/parseLsRemoteSha.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/fleet/parseMachineHeartbeat.test.ts`                                | —                      | 1 file   |
-| `scripts/src/services/fleet/parseMachineHeartbeat.ts`                                     | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/fleet/parseMachineProfile.test.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/fleet/parseMachineProfile.ts`                                       | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/fleet/parseProposalMetadata.test.ts`                                | —                      | 1 file   |
-| `scripts/src/services/fleet/parseProposalMetadata.ts`                                     | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/fleet/pushFleetRef.test.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/fleet/pushFleetRef.ts`                                              | —                      | 1 file   |
-| `scripts/src/services/fleet/pushMachineHeartbeat.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/fleet/readClaimedRefs.ts`                                           | —                      | 1 file   |
-| `scripts/src/services/fleet/readComputeQueue.test.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/fleet/readComputeQueue.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/fleet/readDetectedCapabilities.ts`                                  | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/fleet/readFleetEntries.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/fleet/readFleetRefLines.ts`                                         | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/fleet/readMachineHeartbeats.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/fleet/readMachineProfile.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/fleet/readMachineSample.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/fleet/readProposalEntries.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/fleet/readQueueFiles.test.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/fleet/readQueueFiles.ts`                                            | —                      | 1 file   |
-| `scripts/src/services/fleet/readRemoteSha.ts`                                             | —                      | 1 file   |
-| `scripts/src/services/fleet/releaseFleetEntry.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/fleet/removeHoldFile.ts`                                            | —                      | 1 file   |
-| `scripts/src/services/fleet/requireFleetWorker.test.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/fleet/requireFleetWorker.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/fleet/runFleetRefGit.ts`                                            | —                      | 1 file   |
-| `scripts/src/services/fleet/selectTakeableEntries.test.ts`                                | —                      | 1 file   |
-| `scripts/src/services/fleet/selectTakeableEntries.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/fleet/writeHoldFile.ts`                                             | —                      | 1 file   |
-| `scripts/src/services/fleet/writeMachineProfile.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/gameData`                                                           | —                      | 42 files |
-| `scripts/src/services/genshinAssets/achievements`                                         | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/services/genshinAssets/adventureRank`                                        | —                      | 3 files  |
-| `scripts/src/services/genshinAssets/archive`                                              | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/services/genshinAssets/avatar`                                               | —                      | 36 files |
-| `scripts/src/services/genshinAssets/blocks`                                               | —                      | 28 files |
-| `scripts/src/services/genshinAssets/camera`                                               | —                      | 4 files  |
-| `scripts/src/services/genshinAssets/camps`                                                | —                      | 8 files  |
-| `scripts/src/services/genshinAssets/chests`                                               | —                      | 3 files  |
-| `scripts/src/services/genshinAssets/commands/achievementsCommand.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/archiveCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/assetIndexCommand.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/avatarCommand.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/behavioursCommand.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/cameraCommand.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/characterTrialsCommand.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/chestsCommand.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/cityAreasCommand.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/clearanceCommand.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/clipsCommand.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/commissionsCommand.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/cookingCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/craftingCommand.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/domainLevelsCommand.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/domainsCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/enemiesCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/enemyCampsCommand.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/expeditionsCommand.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/explorationCommand.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/extractCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/findNodes.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/fishingCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/fitCommand.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/forgingCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/friendshipCommand.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/gadgetsCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/gatheringCommand.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/gcgCommand.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/homeCommand.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/imaginariumCommand.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/interfaceCommand.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/inventoryCommand.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/itemsCommand.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/kitsCommand.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/leyLineCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/locomotionCommand.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/mailCommand.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/mailCommand.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/mapCommand.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/materialSourcesCommand.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/measureCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/miningOutcropsCommand.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/musicCommand.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/namecardsCommand.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/oculiCommand.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/offeringsCommand.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/outcropPlacesCommand.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/paletteCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/playlistCommand.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/pointsCommand.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/pointsFitCommand.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/profileCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/pruneNode.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/puzzlesCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/rankCommand.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/reputationCommand.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/residentsCommand.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/sceneGroupsCommand.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/sceneNpcBornCommand.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/sceneScriptsCommand.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/shadersCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/shopsCommand.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/shrineKeySourcesCommand.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/skillGlyphsCommand.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/soundsCommand.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/spiralAbyssCommand.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/statsCommand.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/statuesCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/timingsCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/tipsCommand.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/transPointsCommand.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/treeCommand.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/waypointsCommand.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/wildlifeCommand.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/wishScheduleCommand.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commands/witnessCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commissions`                                          | 2026-10-25 · Haiku 5.5 | 6 files  |
-| `scripts/src/services/genshinAssets/cooking`                                              | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/services/genshinAssets/crafting`                                             | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/services/genshinAssets/domains`                                              | —                      | 27 files |
-| `scripts/src/services/genshinAssets/enemies`                                              | 2026-10-25 · Haiku 5.5 | 5 files  |
-| `scripts/src/services/genshinAssets/expeditions`                                          | —                      | 13 files |
-| `scripts/src/services/genshinAssets/exploration`                                          | —                      | 5 files  |
-| `scripts/src/services/genshinAssets/fishing`                                              | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap.ts`              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/RegionCapitalMap.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/TerrainSplatKindGroundLayerMap.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/averageSurfaceDetails.test.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/averageSurfaceDetails.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/blurWithinTags.test.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/blurWithinTags.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/checkHasOutline.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/checkIsInsideRegionOutlines.test.ts`              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/checkIsInsideRegionOutlines.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/checkIsSelectedBy.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/checkIsTerrainSplatKind.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/classifyFacadeCells.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/clusterCardCentres.test.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/clusterCardCentres.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/clusterColours.test.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/clusterColours.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/clusterVectors.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/composeLatheAxisPoint.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeCellMean.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeConvexHull.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeCorrelation.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeFeatureOffsets.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeGradient.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeGreatest.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeGroundBounds.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeGroundBounds.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeGroundLayerField.test.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeGroundLayerField.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeLagDifference.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeLeast.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeLoopArea.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeMeanAngle.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeMeanValue.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeMisses.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeMxPerlinNoise.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeNormalField.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computePartSurfaces.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computePartSurfaces.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computePrincipalAxes.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeRayRadius.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeRiverCourses.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeRiverCourses.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeSquaredDistance.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeSurfaceError.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeSurfaceTones.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeSurfaceTones.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeTerrainDetail.test.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeTerrainDetail.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeTextureDetail.test.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeTextureDetail.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeTextureMean.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeTotalWeight.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeTriangleArea.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeUvTexels.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeVectorMean.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeVertexNormals.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeWaterfallSheet.test.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeWaterfallSheet.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeWeightedColour.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/computeWeightedMean.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/constants.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/countPoints.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/coverTriangles.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/createInterfaceRectsFit.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/createNearestColourReader.test.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/createNearestColourReader.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/createRegionFit.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/createSegmentShapes.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fade.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fillEmptySectors.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fillGapSectors.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/findAreaId.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/findCellComponents.test.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/findCellComponents.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/findCellRectangles.test.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/findCellRectangles.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/findNearestEdgePoint.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/findNearestSample.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/findOakPlacement.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/findOpenLoops.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitAlbedo.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitAreaOutlines.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitBlades.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitCloudLayerDome.test.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitCloudLayerDome.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitCloudLayerTextures.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitCloudSprites.test.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitCloudSprites.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitFootprintOutline.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitFootprintOutline.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitGaussianHills.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitGaussianHills.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitGroundLayerColours.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitGroundLayerField.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitGroundPiece.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitGroundPieces.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitInteractiveMap.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitInterfaceClips.test.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitInterfaceClips.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitInterfaceRects.test.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitInterfaceRects.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitLatheProfile.test.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitLatheProfile.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitLoginClouds.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitLoginDoor.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitLoginHulls.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitLoginMusic.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitLoginPaving.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitLoginScene.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitLoginStone.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitLoginTowerFacades.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitLoginTowers.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitLoginWalkway.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitPavingStoneShape.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitPavingStoneShape.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitPlanTones.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitRadialProfile.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitRadialProfile.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitRegionCamps.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitRegionCapitals.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitRegionGroundPieces.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitRegionOutcrops.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitReliefLayers.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitRigidPieces.test.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitRigidPieces.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitRiverCourses.test.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitRiverCourses.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitSilhouette.test.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitSilhouette.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitSkyGradient.test.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitSkyGradient.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitSlopeHeight.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitSoundEffect.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitSpectralNoiseChannel.test.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitSpectralNoiseChannel.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitSpectrumAmplitudes.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitStatueComponent.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitStatueStack.test.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitStatueStack.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitSurfaceColours.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitTerrainCliffs.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitTerrainCliffs.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitTerrainPlateaus.test.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitTerrainPlateaus.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitTerrainResidual.test.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitTerrainResidual.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitTerrainResidualFade.test.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitTerrainResidualFade.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitTerrainRidges.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitTerrainRidges.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitTitleLogos.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitVisualHull.test.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitVisualHull.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitWaterfallSheets.test.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitWaterfallSheets.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitWindriseOak.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitWindrisePaving.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitWindrisePlants.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitWindriseScene.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitWindriseStatue.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/foldPlanRepeats.test.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/foldPlanRepeats.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/getBox.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/getCorrelationLength.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/getMean.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/getStandardDeviation.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/getTexel.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/hashLatticePoint.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/joinMeshVertices.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/mapTerrainResidualGrid.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/mergeFacadeBands.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/mergeFacadeBands.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/mixFinal.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/placeTerrainFeatures.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/rasterizeTopFaces.test.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/rasterizeTopFaces.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readChannels.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readCutTexture.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readFaceSamples.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readGroundFootprints.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readGroundLayerCells.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readGroundPieceAreas.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readGroundSource.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readLevelOfDetailParts.test.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readLevelOfDetailParts.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readLoginDoorPieces.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readMeshInThree.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readOptionalTexture.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readPair.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readRegionAreas.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readRegionGroundFits.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readRegionLandmarks.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readRelativeLuminance.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readSurface.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readTexture.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readTowerProfiles.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readWindrisePlantPlacements.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/readWitnessWorldMeshes.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/rotateLeft.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/roundFitted.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/roundInstrument.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/roundPair.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/roundStack.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/roundStatue.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/runFits.test.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/runFits.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/sampleFacadeGrid.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/sampleFacadeGrid.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/sampleFaceUvs.test.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/sampleFaceUvs.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/sampleMeshSurface.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/sampleSurfaceTexture.test.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/sampleSurfaceTexture.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/sampleUnitNoise.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/seedClusterMeans.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/selectBarSamples.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/shiftSubpath.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/simplifyPath.test.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/simplifyPath.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/smoothTerrainGrid.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/splitGroundPiece.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/splitMeshComponents.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/splitMeshComponents.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/splitSubpaths.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/sumBandPowers.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/sumWeights.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/tintTexture.test.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/tintTexture.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toCellKey.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toCrossSection.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toDistance.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toEdgeKey.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toFaceEdges.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toGroundPiece.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toLevels.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toMatrix.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toNodeSpan.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toOutcropPlaces.test.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toOutcropPlaces.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toPaintKey.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toPaths.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toPoint.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toProfile.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toProperty.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toRadialSector.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toRecordTubes.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toRegionPlace.test.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toRegionPlace.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toShade.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toStackMesh.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toTexel.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/toWorldVertices.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/traceCellLoops.test.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/traceCellLoops.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/traceCoveredGrid.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/traceSkeleton.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/traceTubeCentrelines.test.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/traceTubeCentrelines.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/withDetail.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/withPartDetails.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/writeRegionKey.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/forging`                                              | —                      | 6 files  |
-| `scripts/src/services/genshinAssets/friendship`                                           | —                      | 6 files  |
-| `scripts/src/services/genshinAssets/gadgets`                                              | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/services/genshinAssets/gathering`                                            | 2026-10-25 · Haiku 5.5 | 4 files  |
-| `scripts/src/services/genshinAssets/gcg`                                                  | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/services/genshinAssets/home`                                                 | —                      | 10 files |
-| `scripts/src/services/genshinAssets/imaginarium`                                          | —                      |          |
-| `scripts/src/services/genshinAssets/interface`                                            | —                      | 18 files |
-| `scripts/src/services/genshinAssets/items`                                                | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/services/genshinAssets/kits/buildKitPublication.test.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/buildKitPublication.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/buildKitRecordWithDonors.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/candidates`                                      | —                      | 13 files |
-| `scripts/src/services/genshinAssets/kits/checkIsGcsimValueGiven.test.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/checkIsGcsimValueGiven.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/compareKits.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/compareQueuedDelays.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/constants.test.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/constants.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimAttackTagLunarReactionTypeMap.ts`     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimAttackTagMap.test.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimAttackTagMap.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimCharacterMappingMap.ts`               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimElementMap.test.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimElementMap.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimFolderSubfoldersMap.ts`               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimInternalCooldownTagMap.test.ts`       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimInternalCooldownTagMap.ts`            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap.ts`         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addFallbackPlungeCandidates.ts`            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimBladeRollerCandidates.ts`          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackCandidates.test.ts`   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackCandidates.ts`        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackVariantCandidates.ts` | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimCloudCandidates.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimFieryPassionCandidates.ts`         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimFrameListCandidates.test.ts`       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimFrameListCandidates.ts`            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimHitmarkHits.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimLoopShotCandidates.ts`             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimMoondewCleanseCandidates.test.ts`  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimMoondewCleanseCandidates.ts`       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimNamedConstantCandidates.ts`        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimNormalAttackCandidates.ts`         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimPlungeCandidates.ts`               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimQueuedHits.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimShellCandidates.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimSkillAndBurstCandidates.ts`        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimSkillHoldCandidates.ts`            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/checkGcsimConfigs.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/checkIsGoFloat.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/checkIsGoFloatLiteral.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/checkIsLandingOrdered.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/constants.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/countTabs.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/createBoxReach.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/createCircleReach.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/createFanReach.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter.test.ts`     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter.ts`          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/createGcsimPlungeFallbackWriter.ts`        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/createGoScope.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/createTargetedHitArea.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoConstants.test.ts`               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoConstants.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoExpression.test.ts`              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoExpression.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoNumber.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/findClosing.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimConstant.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimFolder.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimHitbox.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimStanceNormalAttack.ts`            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimVariableHitbox.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/findQueuedAttacks.test.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/findQueuedAttacks.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/fixtures`                                  | —                      | 13 files |
-| `scripts/src/services/genshinAssets/kits/gcsim/getFallbackPlungeKitCandidates.test.ts`    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/getFallbackPlungeKitCandidates.ts`         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates.test.ts`             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/getGcsimLandingFrames.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/getGcsimNamedHitCandidates.test.ts`        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/getGcsimNamedHitCandidates.ts`             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits.test.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/getGoRootName.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/joinGcsimTalentArray.test.ts`              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/joinGcsimTalentArray.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/joinGcsimVariableTalentArray.ts`           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/parseGcsimYaml.test.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/parseGcsimYaml.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/parseGoExpression.test.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/parseGoExpression.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readConstantLoop.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimAnimationFrameNames.test.ts`      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimAnimationFrameNames.ts`           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimAttacks.test.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimAttacks.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimCharacter.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimCitedArea.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates.test.ts`          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates.ts`               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimConfig.test.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimConfig.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimEnclosingLoop.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimFieldIdentifier.ts`               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimFileConstant.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimHoldCooldowns.test.ts`            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimHoldCooldowns.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimHoldHitmarks.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimLineExpressionStarts.ts`          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimLineValues.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimMainCharacters.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimQueueDelay.test.ts`               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimQueueDelay.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks.test.ts`            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTableRows.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/substituteGoTableCells.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/substituteGoTableCells.test.ts`            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTagCharacters.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTalentArrays.test.ts`             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTalentArrays.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTalentParameter.ts`               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTalentParameters.test.ts`         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTalentParameters.ts`              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTravels.test.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTravels.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGoAliases.test.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGoAliases.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGoBranchAt.test.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGoBranchAt.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGoConstantLoops.test.ts`               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGoConstantLoops.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGoEnclosingBodyStart.ts`               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGoEnclosingFunction.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGoHitbox.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGoLocalSlice.test.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGoLocalSlice.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGoMethodCallSites.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGoNamedFunctions.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGoNumber.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readGoNumberToken.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readHitmarkSpread.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readLessIndentedLines.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readNamedFunction.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readParameterNames.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readRangeLoop.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readReturnedFunction.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readSliceRangeLoop.test.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readSliceRangeLoop.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/readVisibleBindingValue.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/resolveGoLocals.test.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/resolveGoLocals.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/selectGcsimGenderConstants.ts`             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/skipGoBrackets.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/sumOptionalDelays.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/toGcsimArea.test.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/toGcsimArea.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/toGcsimAttackTag.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/toGcsimElement.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/toGcsimFolderName.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/toGcsimInternalCooldownTag.ts`             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/toGoNumberValue.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/toGoNumbers.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/gcsim/tokenizeGo.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/getKitBagPaths.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/getTalentTargetingArea.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/readKitInputs.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/readKitOverlay.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/readNamedHitKey.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/readOverlayConstellations.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/kits/record`                                          | —                      | 32 files |
-| `scripts/src/services/genshinAssets/kits/tables`                                          | —                      | 7 files  |
-| `scripts/src/services/genshinAssets/kits/wiki`                                            | —                      |          |
-| `scripts/src/services/genshinAssets/leyLine`                                              | —                      | 5 files  |
-| `scripts/src/services/genshinAssets/locomotion`                                           | —                      | 5 files  |
-| `scripts/src/services/genshinAssets/lua`                                                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/mail`                                                 | —                      | 3 files  |
-| `scripts/src/services/genshinAssets/materialSources`                                      | —                      | 3 files  |
-| `scripts/src/services/genshinAssets/materials`                                            | —                      | 42 files |
-| `scripts/src/services/genshinAssets/measure`                                              | —                      | 4 files  |
-| `scripts/src/services/genshinAssets/miningOutcrops`                                       | —                      | 2 files  |
-| `scripts/src/services/genshinAssets/music`                                                | —                      | 61 files |
-| `scripts/src/services/genshinAssets/namecards`                                            | 2026-10-25 · Haiku 5.5 | 9 files  |
-| `scripts/src/services/genshinAssets/oculi`                                                | —                      | 2 files  |
-| `scripts/src/services/genshinAssets/offerings`                                            | 2026-10-25 · Haiku 5.5 | 10 files |
-| `scripts/src/services/genshinAssets/palette`                                              | 2026-10-25 · Haiku 5.5 | 7 files  |
-| `scripts/src/services/genshinAssets/points`                                               | —                      | 26 files |
-| `scripts/src/services/genshinAssets/profile`                                              | —                      | 8 files  |
-| `scripts/src/services/genshinAssets/puzzles`                                              | 2026-10-25 · Haiku 5.5 | 10 files |
-| `scripts/src/services/genshinAssets/reputation`                                           | —                      |          |
-| `scripts/src/services/genshinAssets/residents`                                            | —                      | 17 files |
-| `scripts/src/services/genshinAssets/rewards`                                              | —                      | 6 files  |
-| `scripts/src/services/genshinAssets/scene`                                                | —                      | 40 files |
-| `scripts/src/services/genshinAssets/sceneGroups`                                          | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/services/genshinAssets/sceneNpcBorn`                                         | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.test.ts`              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/applySpawns.test.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/applySpawns.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/checkAnimeStudioParity.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/checkIsDerivedAssetComponent.ts`               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/checkIsRegionGroundFitted.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/checkParityBlock.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/composeAssetPlacements.test.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/composeAssetPlacements.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/composeWorldMatrices.test.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/composeWorldMatrices.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/computePartialBinRanges.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/constants.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/copySpawns.test.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/copySpawns.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/countFiles.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/createBlockOffsetFileFinder.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/createSceneObject.test.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/createSubtreeCollector.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/exportBlockBySource.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/exportClipBlocks.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/findNearest.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/findRootObject.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/fitInstrument.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/fitInstrument.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/fitMusicSource.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/fitMusicVoices.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/fitVoiceNoises.test.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/fitVoiceNoises.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/formatNumbers.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/formatTree.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/getAssetPathKey.test.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/getAssetPathKey.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/getComponentDirectory.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/getMonoBehaviourFieldsOffset.ts`               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/getNamedRawArgs.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/getPathDigest.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/getPathHash.test.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/getPathHash.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/getPerformanceCoreCount.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/groupSceneChildren.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/nameMeshPlacements.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/parseDerivedAssetComponent.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readAll.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readAssetBlocks.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readAssetNames.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readComponentClips.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readComponentLayout.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readComponentMaterials.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readComponentPlacements.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readExportedClips.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readGameVersion.test.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readGameVersion.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readIndexedNames.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readMaterialKeywords.test.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readMaterialKeywords.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readMaterialValues.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readMusicSourceNotes.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readObjMesh.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readObjectNames.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readPublishedRegionGround.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readRegionGroundFiles.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readRegionLandmarkSources.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readSceneLayout.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readShaderColorNames.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readWorldBaseGrounds.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readWorldData.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readWorldGroundHeight.test.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/readWorldGroundHeight.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/resolveObjectPointer.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/reviveSourcePathId.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/roundMusic.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/selectFinestLevels.test.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/selectFinestLevels.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/splitVoicesByRegister.test.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/splitVoicesByRegister.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toDecibels.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toDiffusePath.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toFrequency.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toGameObjectComponentsMap.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toGameObjectTransformIdMap.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toGroupKey.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toHeightOffset.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toLandmarkArrival.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toMaterialTextures.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toMaterialValues.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toMaterialValues.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toObjectKey.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toOpenWorldLevelOneAreaIdsByName.ts`           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toPointers.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toRegionAxesPlace.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toRegionAxesPosition.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toRightHanded.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toRightHandedRotation.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toSceneObjects.test.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/toSceneObjects.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/writeWorldData.test.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shared/writeWorldData.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shops`                                                | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/services/genshinAssets/skillGlyphs`                                          | —                      | 7 files  |
-| `scripts/src/services/genshinAssets/sound`                                                | —                      | 15 files |
-| `scripts/src/services/genshinAssets/spiralAbyss`                                          | —                      | 16 files |
-| `scripts/src/services/genshinAssets/stats`                                                | —                      | 37 files |
-| `scripts/src/services/genshinAssets/statues`                                              | —                      | 4 files  |
-| `scripts/src/services/genshinAssets/timings`                                              | —                      | 3 files  |
-| `scripts/src/services/genshinAssets/tips`                                                 | —                      | 5 files  |
-| `scripts/src/services/genshinAssets/transPoints`                                          | —                      | 4 files  |
-| `scripts/src/services/genshinAssets/trials`                                               | —                      | 12 files |
-| `scripts/src/services/genshinAssets/wildlife`                                             | —                      | 2 files  |
-| `scripts/src/services/genshinAssets/wish`                                                 | —                      | 10 files |
-| `scripts/src/services/genshinAssets/witness`                                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/buildCityAreas.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/checkIsArchitectureName.test.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/checkIsArchitectureName.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/checkIsInArchitectureView.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/checkIsPlantName.test.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/checkIsPlantName.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/computeExtentGap.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/constants.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/createTerrainHeightSampler.test.ts`             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/createTerrainHeightSampler.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/deriveCapitalWorld.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/ensureAssetPathIndex.test.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/ensureAssetPathIndex.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/exportTerrainTiles.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/exportWorld.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/exportWorldStreams.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/extractCityAreas.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/extractWorld.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/formatTerrainObj.test.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/formatTerrainObj.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getBoxTiles.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getCapitalTiles.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getCityStreamName.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getCoveredTiles.test.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getCoveredTiles.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getDependantFiles.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getDependantFiles.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getOutlineTiles.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getPathHashKey.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getPathHashKey.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getPrefabNames.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getPrefabNames.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getPrefabPathCandidates.test.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getPrefabPathCandidates.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getPrefabStemVariants.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getStreamBlobName.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getStreamBlobName.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getTerrainTileNames.test.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getTerrainTileNames.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getWorldRoots.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getWorldTileName.test.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/getWorldTileName.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/matchPrefabPathKeys.test.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/matchPrefabPathKeys.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/parseLodInfoMap.test.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/parseLodInfoMap.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/parseStreamingIndex.test.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/parseStreamingIndex.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/parseStreamingPlacements.test.ts`               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/parseStreamingPlacements.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/parseTerrainHeights.test.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/parseTerrainHeights.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/parseTerrainSplat.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/parseTerrainSplat.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/parseTerrainTileName.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/placeWorldPrefabs.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/placeWorldPrefabs.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readAssetPathNames.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readCapitalWorldPlace.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readCityAreaCandidates.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readCityAreaFile.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readCityAreas.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readDerivedPathNames.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readLodPathHashes.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readPrefabBlocks.test.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readPrefabBlocks.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readScenePointsOfKind.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readStreamPlacements.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readTerrainSplats.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readTerrainTileFiles.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readWorldOptions.test.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readWorldOptions.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readWorldOrigin.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readWorldPlacements.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readWorldTerrainHeight.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/readWorldWaterLevel.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/resolvePrefabRoot.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/resolvePrefabRoot.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/selectArchitectureInView.test.ts`               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/selectArchitectureInView.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/selectCapitalCityArea.test.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/selectCapitalCityArea.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/selectCapitalPlacements.test.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/selectCapitalPlacements.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/selectCityAreasInView.test.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/selectCityAreasInView.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/selectLostArchitectureInView.test.ts`           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/selectLostArchitectureInView.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/toCapitalWorldPlace.test.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/toCapitalWorldPlace.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/toCityArea.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/toDumpedVector.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/toPointExtent.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/world/toWorldQuaternion.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/commands`                                             | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/services/genshinParity/display`                                              | —                      | 13 files |
-| `scripts/src/services/genshinParity/game`                                                 | —                      | 3 files  |
-| `scripts/src/services/genshinParity/image`                                                | —                      | 6 files  |
-| `scripts/src/services/genshinParity/load`                                                 | —                      | 7 files  |
-| `scripts/src/services/genshinParity/music`                                                | —                      |          |
-| `scripts/src/services/genshinParity/page`                                                 | —                      | 8 files  |
-| `scripts/src/services/genshinParity/passes/ParityPassMeasureMap.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/carryLossToPlan.test.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/carryLossToPlan.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/checkIsReadingHeld.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/checkIsRecordedDifferently.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/closeFamilyMask.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/compareFamilyColour.test.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/compareFamilyColour.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/compareFamilyEnvelope.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/compareFamilyTargets.test.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/compareFamilyTargets.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/computeEnvelopeRadius.test.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/computeEnvelopeRadius.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/computeFamilyEnvelope.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/computeLayoutFrameMeasure.test.ts`             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/computeLayoutFrameMeasure.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/computeMaskHoles.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/computeNormalAngle.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/computeProjectedGaps.test.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/computeProjectedGaps.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/computeStatisticalStructure.test.ts`           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/computeStatisticalStructure.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/computeStructureError.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/computeSurfaceBend.test.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/computeSurfaceBend.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/constants.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/findMovedFrozenPass.test.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/findMovedFrozenPass.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/formatPassValue.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/formatReadingValue.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/getComponentReferenceIds.test.ts`              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/getComponentReferenceIds.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/getCurrentBuildReferenceIds.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/getParityPassesPath.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/getRowPass.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/measureAtmosphere.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/measureAudio.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/measureCamera.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/measureCamera.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/measureDisplay.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/measureEachReference.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/measureEnvelope.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/measureFamilyTargets.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/measureGlow.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/measureInventory.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/measureLayout.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/measureLight.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/measureMotion.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/measureShape.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/measureSurface.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/openComponentWitnessPage.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/readFamilyMask.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/readParityPassRows.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/readTargetFamily.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/readTargetLightness.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/runParityPasses.test.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/runParityPasses.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/shiftTargetAcross.test.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/shiftTargetAcross.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/snapshots`                                     | —                      | 10 files |
-| `scripts/src/services/genshinParity/passes/solveReferenceCamera.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/toParityPassRows.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/toShapeReading.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/writeParityPasses.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/writeShapeDiff.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/writeStructureDiff.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/passes/writeSurfaceDiff.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/reference`                                            | —                      | 41 files |
-| `scripts/src/services/genshinParity/shared/ParityMusicScores.snapshot.md`                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`                | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/ParityReferenceMap.test.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/accumulateNormalEquations.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/blurGrey.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/blurLines.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/checkImplicit.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/checkIsGameRunning.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/clamp.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/compactSvgPath.test.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/compactSvgPath.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/computeGroundColour.test.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/computeGroundColour.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/computePixelPoint.test.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/computePixelPoint.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/constants.test.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/constants.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/countDecimals.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/createFeatureFilter.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/createSpatialFilters.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/decodeTarget.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/describeBuilds.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/describeCategories.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/describeFrame.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/describeFunction.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/describeGpuFrames.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/describePasses.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/fetchReferences.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/formatCrossing.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/formatFigure.ts`                               | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/genshinParity/shared/formatLoadMeter.test.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/formatLoadMeter.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/formatMeasures.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/formatNumber.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/formatRow.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/formatWholeScreenLines.test.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/formatWholeScreenLines.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/fromPageCamera.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getCaptureUrl.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getCaptureUrl.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getCategory.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getCharacterScreenPlate.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getFrameCount.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getGameDataFigure.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getGaussian.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getGaussianSqrt.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getHyab.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getLetter.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getPath.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getQueuedMs.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getRequestsFigure.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getScale.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getWholeScreenImages.test.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getWholeScreenImages.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getWholeScreenSavePath.test.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/getWholeScreenSavePath.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/hookRenderer.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/measureKind.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/measureSceneKinds.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/measureStalls.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/measureState.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/measureStates.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/needsSpace.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/openParityPage.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/openSurfaceStatisticsPage.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/openWitnessPage.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/orbit.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/parseSvgPath.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readAudioSamples.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readCaptureRow.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readFlipErrorMap.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readPageFunction.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readPassUseMap.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readPrograms.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readReferenceGbuffer.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readRgb.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readSobelGradients.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readStereoSamples.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readStructureEdges.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readWholeScreenImages.test.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readWholeScreenImages.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readWitnessFamilies.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readWitnessGbuffer.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readWitnessPartTarget.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readWitnessTargets.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/readWitnessTargetsInCall.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/removeMaskSpecks.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/removeMaskSpecks.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/renderTokens.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/resolveSource.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/resolveWikiFiles.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/roundHundredths.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/roundMs.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/saveWholeScreenImages.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/scoreFlip.test.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/scoreFlip.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/setKindHidden.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/setPageWitnessView.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/shootScreen.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/splitGlyph.test.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/splitGlyph.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/startCpuProfile.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/sumMs.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/summarizeCpuWindow.test.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/summarizeCpuWindow.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/summarizeGpuTrace.test.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/summarizeGpuTrace.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/summarizeSceneKinds.test.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/summarizeSceneKinds.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/summarizeStallState.test.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/summarizeStallState.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/toHuntLab.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/toNumber.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/toPageCamera.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/toRelative.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/traceGpuPassesScript.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/traceGpuScript.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/traceImage.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/traceKindsScript.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/traceMask.test.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/traceMask.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/traceNodesScript.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/waitFrames.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/walk.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/withReferencePage.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/writeCaptureFrame.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/writeReferenceFrame.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/writeSideBySide.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/xyzToLinear.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/xyzToYcxcz.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/ycxczToXyz.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/sky`                                                  | —                      | 44 files |
-| `scripts/src/services/genshinParity/sound`                                                | —                      |          |
-| `scripts/src/services/genshinParity/witness/computeCost.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/computeDistanceTransform.test.ts`             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/computeDistanceTransform.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/computeEdgeDistance.test.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/computeEdgeDistance.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/computeHazeResidual.test.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/computeHazeResidual.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/computeLabelSimilarity.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/computeLinearPose.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/computeMaskedMean.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/computeReadingsResidual.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/computeReprojectionErrors.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/computeSkyLobeHarmonics.test.ts`              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/computeSkyLobeHarmonics.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/computeStoneSampleColor.test.ts`              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/computeStoneSampleColor.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/constants.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/countPassed.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/countSetPixels.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/decodeFloat32.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/encodeFloat32.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/findCrossings.test.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/findCrossings.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/findFamilyBoundaries.test.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/findFamilyBoundaries.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/findShadowEdges.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/findShadowEdges.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/findSmallestEigenvector.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/gcd.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/getColor.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/getFamilyColor.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/getPoseBar.test.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/getPoseBar.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/getSkyGridDirections.test.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/getSkyGridDirections.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/groupStoneBins.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/halve.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/labelWitnessParts.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/measureGlide.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/projectWitnessPoint.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/rankReferenceGains.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/readFamilyBoundaries.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/readFamilyEdgeDistances.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/readGrey.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/readLightCeilings.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/readLuminance.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/readMaskMean.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/readReferenceLandmarks.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/readReferenceStoneSamples.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/readStandInGains.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/readStoneColourDistance.test.ts`              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/readStoneColourDistance.ts`                   | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/readStoneLightReading.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/readWitnessPlan.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/refineCameraPose.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/replaceReferenceCameraPose.test.ts`           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/replaceReferenceCameraPose.ts`                | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/scoreLabelSimilarity.test.ts`                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/scoreLabelSimilarity.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/shootWitnessFamilies.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/snapToCorner.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/snapToCorner.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/solveCameraPose.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/solveCameraPose.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/solveReferenceHaze.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/solveReferencePose.ts`                        | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/solveReferenceScroll.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/solveReferenceShadows.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/solveReferenceStoneLight.ts`                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/solveStoneLight.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/solveStoneLight.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/toAngles.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/toHaze.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/toLogOdds.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/toLuminance.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/toSunDirection.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/trackCamera.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/writeOverlay.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/writeStoneRampWeights.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinParity/witness/writeWitnessGbuffer.ts`                       | —                      | 1 file   |
-| `scripts/src/services/genshinText/DumpedQuestKindMap.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinText/OpeningParentTitleMap.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinText/QuestContentObjectiveMap.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinText/buildGcgText.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/genshinText/buildNames.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/genshinText/buildQuestChapters.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinText/buildQuests.test.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinText/buildQuests.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/genshinText/buildStandingTalks.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinText/buildTextChunks.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/genshinText/collectNameTextIds.test.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinText/collectNameTextIds.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinText/commands`                                               | —                      | 9 files  |
-| `scripts/src/services/genshinText/constants.ts`                                           | —                      | 1 file   |
-| `scripts/src/services/genshinText/countConditioned.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinText/decodeGameText.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/genshinText/decodeTextMap.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinText/downloadDumpFile.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinText/exportSdkText.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinText/fetchDump.test.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/genshinText/fetchDump.ts`                                           | —                      | 1 file   |
-| `scripts/src/services/genshinText/fetchRemoteFiles.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinText/fillDumpDefaults.test.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinText/fillDumpDefaults.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinText/findGameText.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/genshinText/getCharacterLinesLoaderMapSource.ts`                    | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/genshinText/getDefaultValue.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/genshinText/getGameTextHash.test.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinText/getGameTextHash.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/genshinText/getGameTextLoaderMapSource.ts`                          | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/genshinText/getHighHalfWord.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/genshinText/getHighWord.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/genshinText/getInterfaceGameText.test.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinText/getInterfaceGameText.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinText/getKind.ts`                                             | —                      | 1 file   |
-| `scripts/src/services/genshinText/getLowHalfWord.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/genshinText/getLowWord.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/genshinText/getPersonaModuleSource.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinText/getPersonaModuleSource.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinText/getPlainGameText.test.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinText/getPlainGameText.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinText/getTalkTextIds.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/genshinText/getVoiceLines.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinText/checkHasCondition.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/genshinText/listCarriedQuestBinaryFiles.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinText/listDumpFiles.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinText/listHeldBinaryFiles.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinText/listRemoteDirectory.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinText/mapNpcStandingTalkIds.test.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinText/mapNpcStandingTalkIds.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinText/mix64.ts`                                               | —                      | 1 file   |
-| `scripts/src/services/genshinText/readCarriedMainQuestId.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinText/readCarriedQuestBinaryPaths.test.ts`                    | —                      | 1 file   |
-| `scripts/src/services/genshinText/readCarriedQuestBinaryPaths.ts`                         | —                      | 1 file   |
-| `scripts/src/services/genshinText/readCarriedQuestRewards.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinText/readDialogTable.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/genshinText/readExcelTable.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/genshinText/readGitHubHeaders.test.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinText/readGitHubHeaders.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/genshinText/readGivingObjectives.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinText/readManualTextMap.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/genshinText/readNameTextIds.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/genshinText/readOpeningParentQuestIds.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/genshinText/readOpeningParentQuestIds.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinText/readParentQuestIds.test.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinText/readParentQuestIds.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinText/readQuestBanType.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/genshinText/readQuestConditions.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinText/readQuestGuideNpcId.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinText/readQuestMaps.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinText/readQuestSteps.test.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinText/readQuestSteps.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/genshinText/readReputationRequestQuest.test.ts`                     | —                      | 1 file   |
-| `scripts/src/services/genshinText/readReputationRequestQuest.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinText/readSdkText.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/genshinText/readTalk.test.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinText/readTalk.ts`                                            | —                      | 1 file   |
-| `scripts/src/services/genshinText/readTalkConfigs.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/genshinText/readTalkTables.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/genshinText/readTextMap.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/genshinText/readTitleQuestIds.test.ts`                              | —                      | 1 file   |
-| `scripts/src/services/genshinText/readTitleQuestIds.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/genshinText/readVoiceLineFetters.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinText/renameDumpKeys.test.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinText/renameDumpKeys.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/genshinText/rotateLeft.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/genshinText/selectDumpFiles.test.ts`                                | —                      | 1 file   |
-| `scripts/src/services/genshinText/selectDumpFiles.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/genshinText/skipWordlessTalkLines.test.ts`                          | —                      | 1 file   |
-| `scripts/src/services/genshinText/skipWordlessTalkLines.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinText/toConstObject.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinText/toDataFileKey.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinText/toQuestChapter.test.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/genshinText/toQuestChapter.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/genshinText/toQuestRewardItems.test.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinText/toQuestRewardItems.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinText/walkJsonFiles.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinText/writeGameText.test.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/genshinText/writeGameText.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/identifiers`                                                        | 2026-10-25 · Haiku 5.5 | 5 files  |
-| `scripts/src/services/jev`                                                                | —                      | 2 files  |
-| `scripts/src/services/machine`                                                            | —                      | 45 files |
-| `scripts/src/services/openspec`                                                           | —                      |          |
-| `scripts/src/services/outdatedDependencies/distTag`                                       | —                      | 4 files  |
-| `scripts/src/services/outdatedDependencies/docker`                                        | —                      | 4 files  |
-| `scripts/src/services/outdatedDependencies/getDependencyType.test.ts`                     | —                      | 1 file   |
-| `scripts/src/services/outdatedDependencies/getDependencyType.ts`                          | —                      | 1 file   |
-| `scripts/src/services/outdatedDependencies/getMismatches.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/outdatedDependencies/getMismatches.ts`                              | —                      | 1 file   |
-| `scripts/src/services/outdatedDependencies/getRegistryPackageName.ts`                     | —                      | 1 file   |
-| `scripts/src/services/outdatedDependencies/getSpecifierBase.test.ts`                      | —                      | 1 file   |
-| `scripts/src/services/outdatedDependencies/getSpecifierBase.ts`                           | —                      | 1 file   |
-| `scripts/src/services/outdatedDependencies/getVersionChangeLevel.test.ts`                 | —                      | 1 file   |
-| `scripts/src/services/outdatedDependencies/getVersionChangeLevel.ts`                      | —                      | 1 file   |
-| `scripts/src/services/outdatedDependencies/githubActions`                                 | —                      | 5 files  |
-| `scripts/src/services/outdatedDependencies/lock`                                          | —                      | 10 files |
-| `scripts/src/services/outdatedDependencies/manifest`                                      | —                      | 5 files  |
-| `scripts/src/services/outdatedDependencies/npm`                                           | —                      | 5 files  |
-| `scripts/src/services/outdatedDependencies/parseAliasSpecifier.test.ts`                   | —                      | 1 file   |
-| `scripts/src/services/outdatedDependencies/parseAliasSpecifier.ts`                        | —                      | 1 file   |
-| `scripts/src/services/outdatedDependencies/pnpm`                                          | —                      | 12 files |
-| `scripts/src/services/outdatedDependencies/print`                                         | —                      | 19 files |
-| `scripts/src/services/outdatedDependencies/reference`                                     | —                      | 2 files  |
-| `scripts/src/services/outdatedDependencies/registry`                                      | —                      | 10 files |
-| `scripts/src/services/outdatedDependencies/renovate`                                      | —                      | 8 files  |
-| `scripts/src/services/outdatedDependencies/tag`                                           | —                      | 4 files  |
-| `scripts/src/services/outdatedDependencies/workspace`                                     | —                      | 6 files  |
-| `scripts/src/services/oxlint/comments`                                                    | —                      | 5 files  |
-| `scripts/src/services/oxlint/errorAlert`                                                  | —                      | 2 files  |
-| `scripts/src/services/oxlint/errorHandling`                                               | —                      | 2 files  |
-| `scripts/src/services/oxlint/literalUnion`                                                | —                      | 3 files  |
-| `scripts/src/services/oxlint/naming`                                                      | —                      | 5 files  |
-| `scripts/src/services/oxlint/passThroughHelper`                                           | —                      | 8 files  |
-| `scripts/src/services/oxlint/persistThenNotify`                                           | —                      | 15 files |
-| `scripts/src/services/oxlint/piniaStore`                                                  | —                      | 2 files  |
-| `scripts/src/services/oxlint/propsInterface`                                              | —                      | 4 files  |
-| `scripts/src/services/oxlint/routing`                                                     | —                      | 4 files  |
-| `scripts/src/services/oxlint/setupScope`                                                  | —                      | 3 files  |
-| `scripts/src/services/oxlint/shared`                                                      | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/oxlint/templateRef`                                                 | —                      | 2 files  |
-| `scripts/src/services/oxlint/testValues`                                                  | —                      | 4 files  |
-| `scripts/src/services/oxlint/testing`                                                     | —                      | 3 files  |
-| `scripts/src/services/oxlint/trpcProcedure`                                               | —                      | 11 files |
-| `scripts/src/services/package`                                                            | —                      | 21 files |
-| `scripts/src/services/producerStamp`                                                      | —                      | 8 files  |
-| `scripts/src/services/proposals`                                                          | 2026-10-25 · Haiku 5.5 | 17 files |
-| `scripts/src/services/recreation/animeStudio`                                             | —                      | 19 files |
-| `scripts/src/services/recreation/commands`                                                | —                      | 4 files  |
-| `scripts/src/services/recreation/image`                                                   | —                      | 8 files  |
-| `scripts/src/services/recreation/lua`                                                     | —                      | 27 files |
-| `scripts/src/services/recreation/signal`                                                  | —                      | 5 files  |
-| `scripts/src/services/recreation/solve`                                                   | —                      | 5 files  |
-| `scripts/src/services/recreation/statistics`                                              | —                      | 6 files  |
-| `scripts/src/services/recreation/video`                                                   | —                      | 15 files |
-| `scripts/src/services/resume`                                                             | —                      | 26 files |
-| `scripts/src/services/review/checkIsBacklogOwed.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/review/checkIsExcludedPath.test.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/review/checkIsExcludedPath.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/review/checkIsHeldByLiveRun.test.ts`                                | —                      | 1 file   |
-| `scripts/src/services/review/checkIsHeldByLiveRun.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/review/checkIsSettlementComplete.ts`                                | —                      | 1 file   |
-| `scripts/src/services/review/checkIsUnreadableDiff.test.ts`                               | —                      | 1 file   |
-| `scripts/src/services/review/checkIsUnreadableDiff.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/review/constants.ts`                                                | —                      | 1 file   |
-| `scripts/src/services/review/cutBatchDiff.test.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/review/cutBatchDiff.ts`                                             | —                      | 1 file   |
-| `scripts/src/services/review/dispatchReview.ts`                                           | —                      | 1 file   |
-| `scripts/src/services/review/formatReviewWindow.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/review/getFixJobName.ts`                                            | —                      | 1 file   |
-| `scripts/src/services/review/getFixerPrompt.ts`                                           | —                      | 1 file   |
-| `scripts/src/services/review/getLastJsonObject.test.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/review/getLastJsonObject.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/review/getNewlyPassedWindowIndices.test.ts`                         | —                      | 1 file   |
-| `scripts/src/services/review/getNewlyPassedWindowIndices.ts`                              | —                      | 1 file   |
-| `scripts/src/services/review/getPassedWindowCount.test.ts`                                | —                      | 1 file   |
-| `scripts/src/services/review/getPassedWindowCount.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/review/getReviewWindowStatus.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/review/getReviewerPrompt.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/review/getRunJobs.ts`                                               | —                      | 1 file   |
-| `scripts/src/services/review/getSessionFailure.test.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/review/getSessionFailure.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/review/getSettlerPrompt.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/review/getWindowCommitCount.test.ts`                                | —                      | 1 file   |
-| `scripts/src/services/review/getWindowCommitCount.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/review/git`                                                         | —                      | 8 files  |
-| `scripts/src/services/review/globToRegex.test.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/review/globToRegex.ts`                                              | —                      | 1 file   |
-| `scripts/src/services/review/issues`                                                      | —                      | 11 files |
-| `scripts/src/services/review/listReviewIssues.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/review/packBatches.test.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/review/packBatches.ts`                                              | —                      | 1 file   |
-| `scripts/src/services/review/parseReviewAnswer.test.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/review/parseReviewAnswer.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/review/readBatchDiff.ts`                                            | —                      | 1 file   |
-| `scripts/src/services/review/readCommitFiles.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/review/readOwedShas.test.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/review/readOwedShas.ts`                                             | —                      | 1 file   |
-| `scripts/src/services/review/readRangeDiff.ts`                                            | —                      | 1 file   |
-| `scripts/src/services/review/readReviewFiles.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/review/readReviewIssueFindings.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/review/readReviewWindows.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/review/resolveDispositions.test.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/review/resolveDispositions.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/review/reviewBatch.ts`                                              | —                      | 1 file   |
-| `scripts/src/services/review/reviewWindows.ts`                                            | —                      | 1 file   |
-| `scripts/src/services/review/runFixer.ts`                                                 | —                      | 1 file   |
-| `scripts/src/services/review/runReview.ts`                                                | —                      | 1 file   |
-| `scripts/src/services/review/runReviewFix.ts`                                             | —                      | 1 file   |
-| `scripts/src/services/review/runReviewSettle.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/review/runSession.ts`                                               | —                      | 1 file   |
-| `scripts/src/services/review/runSettler.ts`                                               | —                      | 1 file   |
-| `scripts/src/services/review/splitRangeDiff.test.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/review/splitRangeDiff.ts`                                           | —                      | 1 file   |
-| `scripts/src/services/review/splitReviewCommits.test.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/review/splitReviewCommits.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/review/writeFixIssues.ts`                                           | —                      | 1 file   |
-| `scripts/src/services/review/writeReviewIssueFindings.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/review/writeReviewSummary.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/semver`                                                             | —                      | 23 files |
-| `scripts/src/services/shared/at.ts`                                                       | —                      | 1 file   |
-| `scripts/src/services/shared/blurMasked.ts`                                               | —                      | 1 file   |
-| `scripts/src/services/shared/checkIsAncestor.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/shared/checkIsGitHubNumber.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/shared/checkIsInstant.ts`                                           | —                      | 1 file   |
-| `scripts/src/services/shared/checkIsNotFound.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/shared/checkIsProcessRunning.test.ts`                               | —                      | 1 file   |
-| `scripts/src/services/shared/checkIsProcessRunning.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/shared/compareVersionBase.test.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/shared/compareVersionBase.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/shared/computeDetailStatistics.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/shared/computeSymmetricEigen.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/shared/constants.test.ts`                                           | —                      | 1 file   |
-| `scripts/src/services/shared/constants.ts`                                                | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/shared/fetchJson.ts`                                                | —                      | 1 file   |
-| `scripts/src/services/shared/fetchOk.ts`                                                  | —                      | 1 file   |
-| `scripts/src/services/shared/fetchRegistry.ts`                                            | —                      | 1 file   |
-| `scripts/src/services/shared/findExecutable.ts`                                           | —                      | 1 file   |
-| `scripts/src/services/shared/findRepositoryRoot.ts`                                       | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/shared/fixtureConstants.test.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/shared/forEachConcurrently.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/shared/formatAge.test.ts`                                           | —                      | 1 file   |
-| `scripts/src/services/shared/formatAge.ts`                                                | —                      | 1 file   |
-| `scripts/src/services/shared/getGitEnv.ts`                                                | —                      | 1 file   |
-| `scripts/src/services/shared/getGitRecords.ts`                                            | —                      | 1 file   |
-| `scripts/src/services/shared/getNonEmptyLines.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/shared/getPackageJsonPaths.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/shared/getPercentile.test.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/shared/getPercentile.ts`                                            | —                      | 1 file   |
-| `scripts/src/services/shared/getVersionParts.test.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/shared/getVersionParts.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/shared/installPinnedTool.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/shared/mapCollectingFailures.test.ts`                               | —                      | 1 file   |
-| `scripts/src/services/shared/mapCollectingFailures.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/shared/parseMachineJson.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/shared/parseNames.test.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/shared/parseNames.ts`                                               | —                      | 1 file   |
-| `scripts/src/services/shared/parseNumbers.test.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/shared/parseNumbers.ts`                                             | —                      | 1 file   |
-| `scripts/src/services/shared/publishFile.test.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/shared/publishFile.ts`                                              | —                      | 1 file   |
-| `scripts/src/services/shared/readCrlfStoredPaths.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/shared/readDeletedPaths.test.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/shared/readDeletedPaths.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/shared/readLatestVersion.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/shared/readManifestFiles.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/shared/readNuxtModulePackagePaths.ts`                               | —                      | 1 file   |
-| `scripts/src/services/shared/readWorkspacePackageDirectories.ts`                          | —                      | 1 file   |
-| `scripts/src/services/shared/readWorkspacePackages.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/shared/resolvePinnedTool.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/shared/runGh.ts`                                                    | —                      | 1 file   |
-| `scripts/src/services/shared/runGit.test.ts`                                              | —                      | 1 file   |
-| `scripts/src/services/shared/runGit.ts`                                                   | —                      | 1 file   |
-| `scripts/src/services/shared/set.ts`                                                      | —                      | 1 file   |
-| `scripts/src/services/shared/setupFixtureRepository.test.ts`                              | —                      | 1 file   |
-| `scripts/src/services/shared/spawnNuxtModuleEntryLoad.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/shared/spawnPnpm.ts`                                                | —                      | 1 file   |
-| `scripts/src/services/shared/stripToFixedPoint.test.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/shared/stripToFixedPoint.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/shared/throwCollectedFailures.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/shared/toByte.ts`                                                   | —                      | 1 file   |
-| `scripts/src/services/shared/toF.ts`                                                      | —                      | 1 file   |
-| `scripts/src/services/shared/toLab.ts`                                                    | —                      | 1 file   |
-| `scripts/src/services/shared/toLinear.ts`                                                 | —                      | 1 file   |
-| `scripts/src/services/shared/toSrgb.ts`                                                   | —                      | 1 file   |
-| `scripts/src/services/shared/toXyz.ts`                                                    | —                      | 1 file   |
-| `scripts/src/services/shared/writeCacheFile.test.ts`                                      | —                      | 1 file   |
-| `scripts/src/services/shared/writeCacheFile.ts`                                           | —                      | 1 file   |
-| `scripts/src/services/shared/writeJsonFile.test.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/shared/writeJsonFile.ts`                                            | —                      | 1 file   |
-| `scripts/src/services/skills`                                                             | 2026-10-25 · Haiku 5.5 | 11 files |
-| `scripts/src/services/sweeps/constantScope`                                               | —                      |          |
-| `scripts/src/services/sweeps/constants.ts`                                                | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/sweeps/controlCharacters`                                           | 2026-10-25 · Haiku 5.5 | 3 files  |
-| `scripts/src/services/sweeps/duplicateCode`                                               | 2026-10-25 · Haiku 5.5 | 31 files |
-| `scripts/src/services/sweeps/duplicateProse`                                              | —                      | 20 files |
-| `scripts/src/services/sweeps/fileOrganization`                                            | —                      | 12 files |
-| `scripts/src/services/sweeps/gcsimLinks`                                                  | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/services/sweeps/getDescendants.ts`                                           | —                      | 1 file   |
-| `scripts/src/services/sweeps/ledgerCoverage`                                              | —                      | 11 files |
-| `scripts/src/services/sweeps/readSweepFilePaths.bench.json`                               | —                      | 1 file   |
-| `scripts/src/services/sweeps/readSweepFilePaths.bench.md`                                 | —                      | 1 file   |
-| `scripts/src/services/sweeps/readSweepFilePaths.bench.ts`                                 | —                      | 1 file   |
-| `scripts/src/services/sweeps/readSweepFilePaths.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/sweeps/readVendoredSkillNames.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/sweeps/repeatedListItems`                                           | —                      | 2 files  |
-| `scripts/src/services/sweeps/runOnBullets`                                                | —                      | 3 files  |
-| `scripts/src/services/sweeps/sharedExportConsumers`                                       | —                      | 11 files |
-| `scripts/src/services/sweeps/skillDocs`                                                   | —                      | 28 files |
-| `scripts/src/services/sweeps/staleNames`                                                  | —                      | 24 files |
-| `scripts/src/services/sweeps/todos`                                                       | 2026-10-25 · Haiku 5.5 | 5 files  |
-| `scripts/src/services/sweeps/unterminatedResults`                                         | —                      | 9 files  |
-| `scripts/src/services/timing`                                                             | —                      | 7 files  |
-| `scripts/src/services/triage`                                                             | —                      | 3 files  |
-| `scripts/src/services/updateNode`                                                         | 2026-10-25 · Haiku 5.5 | 15 files |
-| `scripts/src/services/usage`                                                              | —                      | 21 files |
-| `scripts/src/services/voiceMatch`                                                         | —                      | 16 files |
-| `scripts/src/services/workspace`                                                          | —                      | 2 files  |
-| `scripts/src/services/worktree`                                                           | —                      | 12 files |
-| `scripts/src/skills`                                                                      | —                      | 1 file   |
-| `scripts/src/sweeps`                                                                      | 2026-10-25 · Haiku 5.5 | 9 files  |
-| `scripts/src/triage`                                                                      | —                      | 1 file   |
-| `scripts/src/updateNode`                                                                  | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/usage`                                                                       | —                      | 1 file   |
-| `scripts/src/voiceMatch`                                                                  | —                      | 4 files  |
-| `scripts/src/workspace`                                                                   | 2026-10-25 · Haiku 5.5 |          |
-| `scripts/src/worktree`                                                                    | —                      | 1 file   |
+| Unit                                                                                      | Swept                  | Notes |
+| ----------------------------------------------------------------------------------------- | ---------------------- | ----- |
+| `scripts/src/animeStudio`                                                                 | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/benchTypes`                                                                  | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/ci`                                                                          | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/citations`                                                                   | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/crossOS`                                                                     | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/dependencies`                                                                | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/dependencyGraph`                                                             | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/fleet`                                                                       | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/gameData`                                                                    | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/genshinAssets`                                                               | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/genshinParity`                                                               | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/genshinText`                                                                 | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/identifiers`                                                                 | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/machine`                                                                     | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/models/benchTypes`                                                           | —                      |       |
+| `scripts/src/models/ci`                                                                   | —                      |       |
+| `scripts/src/models/citations`                                                            | —                      |       |
+| `scripts/src/models/dependencies`                                                         | —                      |       |
+| `scripts/src/models/dependencyAdmission`                                                  | —                      |       |
+| `scripts/src/models/dependencyGraph`                                                      | —                      |       |
+| `scripts/src/models/fleet`                                                                | —                      |       |
+| `scripts/src/models/gameData`                                                             | —                      |       |
+| `scripts/src/models/genshinAssets/achievements`                                           | —                      |       |
+| `scripts/src/models/genshinAssets/adventureRank`                                          | —                      |       |
+| `scripts/src/models/genshinAssets/archive`                                                | —                      |       |
+| `scripts/src/models/genshinAssets/avatar`                                                 | —                      |       |
+| `scripts/src/models/genshinAssets/camera`                                                 | —                      |       |
+| `scripts/src/models/genshinAssets/commissions`                                            | —                      |       |
+| `scripts/src/models/genshinAssets/cooking`                                                | —                      |       |
+| `scripts/src/models/genshinAssets/crafting`                                               | —                      |       |
+| `scripts/src/models/genshinAssets/domains`                                                | —                      |       |
+| `scripts/src/models/genshinAssets/enemies`                                                | —                      |       |
+| `scripts/src/models/genshinAssets/expeditions`                                            | —                      |       |
+| `scripts/src/models/genshinAssets/exploration`                                            | —                      |       |
+| `scripts/src/models/genshinAssets/fishing`                                                | —                      |       |
+| `scripts/src/models/genshinAssets/fit`                                                    | —                      |       |
+| `scripts/src/models/genshinAssets/forging`                                                | —                      |       |
+| `scripts/src/models/genshinAssets/friendship`                                             | —                      |       |
+| `scripts/src/models/genshinAssets/gadgets`                                                | —                      |       |
+| `scripts/src/models/genshinAssets/gathering`                                              | —                      |       |
+| `scripts/src/models/genshinAssets/gcg`                                                    | —                      |       |
+| `scripts/src/models/genshinAssets/home`                                                   | —                      |       |
+| `scripts/src/models/genshinAssets/imaginarium`                                            | —                      |       |
+| `scripts/src/models/genshinAssets/interface`                                              | —                      |       |
+| `scripts/src/models/genshinAssets/items`                                                  | —                      |       |
+| `scripts/src/models/genshinAssets/kits/KitCandidate.ts`                                   | —                      |       |
+| `scripts/src/models/genshinAssets/kits/KitCandidateSources.ts`                            | —                      |       |
+| `scripts/src/models/genshinAssets/kits/KitOverlay.ts`                                     | —                      |       |
+| `scripts/src/models/genshinAssets/kits/KitOverlayEntry.ts`                                | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/models/genshinAssets/kits/KitProvisionalCause.ts`                            | —                      |       |
+| `scripts/src/models/genshinAssets/kits/KitRule.ts`                                        | —                      |       |
+| `scripts/src/models/genshinAssets/kits/KitSource.ts`                                      | —                      |       |
+| `scripts/src/models/genshinAssets/kits/KitSources.ts`                                     | —                      |       |
+| `scripts/src/models/genshinAssets/kits/KitValueSource.ts`                                 | —                      |       |
+| `scripts/src/models/genshinAssets/kits/NamedHitCall.ts`                                   | —                      |       |
+| `scripts/src/models/genshinAssets/kits/NamedHitCandidateMap.ts`                           | —                      |       |
+| `scripts/src/models/genshinAssets/kits/build`                                             | —                      |       |
+| `scripts/src/models/genshinAssets/kits/gcsim`                                             | —                      |       |
+| `scripts/src/models/genshinAssets/kits/tables`                                            | —                      |       |
+| `scripts/src/models/genshinAssets/kits/wiki`                                              | —                      |       |
+| `scripts/src/models/genshinAssets/leyLine`                                                | —                      |       |
+| `scripts/src/models/genshinAssets/locomotion`                                             | —                      |       |
+| `scripts/src/models/genshinAssets/lua`                                                    | —                      |       |
+| `scripts/src/models/genshinAssets/mail`                                                   | —                      |       |
+| `scripts/src/models/genshinAssets/materialSources`                                        | —                      |       |
+| `scripts/src/models/genshinAssets/materials`                                              | —                      |       |
+| `scripts/src/models/genshinAssets/music`                                                  | —                      |       |
+| `scripts/src/models/genshinAssets/offerings`                                              | —                      |       |
+| `scripts/src/models/genshinAssets/palette`                                                | —                      |       |
+| `scripts/src/models/genshinAssets/points`                                                 | —                      |       |
+| `scripts/src/models/genshinAssets/profile`                                                | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/models/genshinAssets/puzzles`                                                | —                      |       |
+| `scripts/src/models/genshinAssets/reputation`                                             | —                      |       |
+| `scripts/src/models/genshinAssets/residents`                                              | —                      |       |
+| `scripts/src/models/genshinAssets/rewards`                                                | —                      |       |
+| `scripts/src/models/genshinAssets/scene`                                                  | —                      |       |
+| `scripts/src/models/genshinAssets/sceneGroups`                                            | —                      |       |
+| `scripts/src/models/genshinAssets/sceneNpcBorn`                                           | —                      |       |
+| `scripts/src/models/genshinAssets/shared`                                                 | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/models/genshinAssets/shops`                                                  | —                      |       |
+| `scripts/src/models/genshinAssets/skillGlyphs`                                            | —                      |       |
+| `scripts/src/models/genshinAssets/sound`                                                  | —                      |       |
+| `scripts/src/models/genshinAssets/spiralAbyss`                                            | —                      |       |
+| `scripts/src/models/genshinAssets/stats`                                                  | —                      |       |
+| `scripts/src/models/genshinAssets/statues`                                                | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/models/genshinAssets/timings`                                                | —                      |       |
+| `scripts/src/models/genshinAssets/tips`                                                   | —                      |       |
+| `scripts/src/models/genshinAssets/transPoints`                                            | —                      |       |
+| `scripts/src/models/genshinAssets/trials`                                                 | —                      |       |
+| `scripts/src/models/genshinAssets/wish`                                                   | —                      |       |
+| `scripts/src/models/genshinAssets/witness`                                                | —                      |       |
+| `scripts/src/models/genshinAssets/world`                                                  | —                      |       |
+| `scripts/src/models/genshinParity/CrossingBudget.ts`                                      | —                      |       |
+| `scripts/src/models/genshinParity/LoadBudget.ts`                                          | —                      |       |
+| `scripts/src/models/genshinParity/ScreenCrossing.ts`                                      | —                      |       |
+| `scripts/src/models/genshinParity/WholeScreenImage.ts`                                    | —                      |       |
+| `scripts/src/models/genshinParity/WikiImagesResponse.ts`                                  | —                      |       |
+| `scripts/src/models/genshinParity/display`                                                | —                      |       |
+| `scripts/src/models/genshinParity/music`                                                  | —                      |       |
+| `scripts/src/models/genshinParity/page`                                                   | —                      |       |
+| `scripts/src/models/genshinParity/passes`                                                 | —                      |       |
+| `scripts/src/models/genshinParity/reference`                                              | —                      |       |
+| `scripts/src/models/genshinParity/shared`                                                 | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/models/genshinParity/sky`                                                    | —                      |       |
+| `scripts/src/models/genshinParity/sound`                                                  | —                      |       |
+| `scripts/src/models/genshinParity/witness`                                                | —                      |       |
+| `scripts/src/models/genshinText`                                                          | —                      |       |
+| `scripts/src/models/identifiers`                                                          | —                      |       |
+| `scripts/src/models/machine`                                                              | —                      |       |
+| `scripts/src/models/outdatedDependencies`                                                 | —                      |       |
+| `scripts/src/models/oxlint`                                                               | —                      |       |
+| `scripts/src/models/package`                                                              | —                      |       |
+| `scripts/src/models/producerStamp`                                                        | —                      |       |
+| `scripts/src/models/proposals`                                                            | —                      |       |
+| `scripts/src/models/recreation`                                                           | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/models/resume`                                                               | —                      |       |
+| `scripts/src/models/review`                                                               | —                      |       |
+| `scripts/src/models/semver`                                                               | —                      |       |
+| `scripts/src/models/shared`                                                               | —                      |       |
+| `scripts/src/models/skills`                                                               | —                      |       |
+| `scripts/src/models/sweeps`                                                               | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/models/timing`                                                               | —                      |       |
+| `scripts/src/models/triage`                                                               | —                      |       |
+| `scripts/src/models/updateNode`                                                           | —                      |       |
+| `scripts/src/models/usage`                                                                | —                      |       |
+| `scripts/src/models/voiceMatch`                                                           | —                      |       |
+| `scripts/src/outdatedDependencies`                                                        | —                      |       |
+| `scripts/src/oxlint`                                                                      | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/package`                                                                     | —                      |       |
+| `scripts/src/proposals`                                                                   | —                      |       |
+| `scripts/src/recreation`                                                                  | —                      |       |
+| `scripts/src/refreshLockfile`                                                             | —                      |       |
+| `scripts/src/resume`                                                                      | —                      |       |
+| `scripts/src/review`                                                                      | —                      |       |
+| `scripts/src/reviewFix`                                                                   | —                      |       |
+| `scripts/src/reviewSettle`                                                                | —                      |       |
+| `scripts/src/services/benchTypes`                                                         | —                      |       |
+| `scripts/src/services/ci`                                                                 | —                      |       |
+| `scripts/src/services/citations`                                                          | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/dependencies`                                                       | —                      |       |
+| `scripts/src/services/dependencyAdmission`                                                | —                      |       |
+| `scripts/src/services/dependencyGraph`                                                    | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/fleet/checkIsHeldBy.ts`                                             | —                      |       |
+| `scripts/src/services/fleet/checkTouchesOverlap.test.ts`                                  | —                      |       |
+| `scripts/src/services/fleet/checkTouchesOverlap.ts`                                       | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/fleet/claimFleetEntry.ts`                                           | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/fleet/claimFleetEntryHere.ts`                                       | —                      |       |
+| `scripts/src/services/fleet/claimNextFleetEntry.ts`                                       | —                      |       |
+| `scripts/src/services/fleet/constants.ts`                                                 | —                      |       |
+| `scripts/src/services/fleet/createFleetCommit.ts`                                         | —                      |       |
+| `scripts/src/services/fleet/createFleetWorker.ts`                                         | —                      |       |
+| `scripts/src/services/fleet/data`                                                         | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/fleet/filterFleetEntries.test.ts`                                   | —                      |       |
+| `scripts/src/services/fleet/filterFleetEntries.ts`                                        | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/fleet/formatClaimHolder.ts`                                         | —                      |       |
+| `scripts/src/services/fleet/formatFleetTable.test.ts`                                     | —                      |       |
+| `scripts/src/services/fleet/formatFleetTable.ts`                                          | —                      |       |
+| `scripts/src/services/fleet/formatMachineLoad.test.ts`                                    | —                      |       |
+| `scripts/src/services/fleet/formatMachineLoad.ts`                                         | —                      |       |
+| `scripts/src/services/fleet/formatPushed.test.ts`                                         | —                      |       |
+| `scripts/src/services/fleet/formatPushed.ts`                                              | —                      |       |
+| `scripts/src/services/fleet/getClaimDecision.test.ts`                                     | —                      |       |
+| `scripts/src/services/fleet/getClaimDecision.ts`                                          | —                      |       |
+| `scripts/src/services/fleet/getClaimStatus.test.ts`                                       | —                      |       |
+| `scripts/src/services/fleet/getClaimStatus.ts`                                            | —                      |       |
+| `scripts/src/services/fleet/getHoldFilePath.ts`                                           | —                      |       |
+| `scripts/src/services/fleet/getOperatingSystemCapability.test.ts`                         | —                      |       |
+| `scripts/src/services/fleet/getOperatingSystemCapability.ts`                              | —                      |       |
+| `scripts/src/services/fleet/getRenewalDecision.test.ts`                                   | —                      |       |
+| `scripts/src/services/fleet/getRenewalDecision.ts`                                        | —                      |       |
+| `scripts/src/services/fleet/holdFleetEntry.ts`                                            | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/fleet/mergeMachineProfile.test.ts`                                  | —                      |       |
+| `scripts/src/services/fleet/mergeMachineProfile.ts`                                       | —                      |       |
+| `scripts/src/services/fleet/missFleetEntry.ts`                                            | —                      |       |
+| `scripts/src/services/fleet/parseClaimMessage.test.ts`                                    | —                      |       |
+| `scripts/src/services/fleet/parseClaimMessage.ts`                                         | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/fleet/parseComputeQueue.test.ts`                                    | —                      |       |
+| `scripts/src/services/fleet/parseComputeQueue.ts`                                         | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/fleet/parseComputeQueueItem.test.ts`                                | —                      |       |
+| `scripts/src/services/fleet/parseComputeQueueItem.ts`                                     | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/fleet/parseForEachRefLine.test.ts`                                  | —                      |       |
+| `scripts/src/services/fleet/parseForEachRefLine.ts`                                       | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/fleet/parseHardwareAccelerations.test.ts`                           | —                      |       |
+| `scripts/src/services/fleet/parseHardwareAccelerations.ts`                                | —                      |       |
+| `scripts/src/services/fleet/parseKeyFilePaths.test.ts`                                    | —                      |       |
+| `scripts/src/services/fleet/parseKeyFilePaths.ts`                                         | —                      |       |
+| `scripts/src/services/fleet/parseLsRemoteSha.test.ts`                                     | —                      |       |
+| `scripts/src/services/fleet/parseLsRemoteSha.ts`                                          | —                      |       |
+| `scripts/src/services/fleet/parseMachineHeartbeat.test.ts`                                | —                      |       |
+| `scripts/src/services/fleet/parseMachineHeartbeat.ts`                                     | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/fleet/parseMachineProfile.test.ts`                                  | —                      |       |
+| `scripts/src/services/fleet/parseMachineProfile.ts`                                       | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/fleet/parseProposalMetadata.test.ts`                                | —                      |       |
+| `scripts/src/services/fleet/parseProposalMetadata.ts`                                     | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/fleet/pushFleetRef.test.ts`                                         | —                      |       |
+| `scripts/src/services/fleet/pushFleetRef.ts`                                              | —                      |       |
+| `scripts/src/services/fleet/pushMachineHeartbeat.ts`                                      | —                      |       |
+| `scripts/src/services/fleet/readClaimedRefs.ts`                                           | —                      |       |
+| `scripts/src/services/fleet/readComputeQueue.test.ts`                                     | —                      |       |
+| `scripts/src/services/fleet/readComputeQueue.ts`                                          | —                      |       |
+| `scripts/src/services/fleet/readDetectedCapabilities.ts`                                  | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/fleet/readFleetEntries.ts`                                          | —                      |       |
+| `scripts/src/services/fleet/readFleetRefLines.ts`                                         | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/fleet/readMachineHeartbeats.ts`                                     | —                      |       |
+| `scripts/src/services/fleet/readMachineProfile.ts`                                        | —                      |       |
+| `scripts/src/services/fleet/readMachineSample.ts`                                         | —                      |       |
+| `scripts/src/services/fleet/readProposalEntries.ts`                                       | —                      |       |
+| `scripts/src/services/fleet/readQueueFiles.test.ts`                                       | —                      |       |
+| `scripts/src/services/fleet/readQueueFiles.ts`                                            | —                      |       |
+| `scripts/src/services/fleet/readRemoteSha.ts`                                             | —                      |       |
+| `scripts/src/services/fleet/releaseFleetEntry.ts`                                         | —                      |       |
+| `scripts/src/services/fleet/removeHoldFile.ts`                                            | —                      |       |
+| `scripts/src/services/fleet/requireFleetWorker.test.ts`                                   | —                      |       |
+| `scripts/src/services/fleet/requireFleetWorker.ts`                                        | —                      |       |
+| `scripts/src/services/fleet/runFleetRefGit.ts`                                            | —                      |       |
+| `scripts/src/services/fleet/selectTakeableEntries.test.ts`                                | —                      |       |
+| `scripts/src/services/fleet/selectTakeableEntries.ts`                                     | —                      |       |
+| `scripts/src/services/fleet/writeHoldFile.ts`                                             | —                      |       |
+| `scripts/src/services/fleet/writeMachineProfile.ts`                                       | —                      |       |
+| `scripts/src/services/gameData`                                                           | —                      |       |
+| `scripts/src/services/genshinAssets/achievements`                                         | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/adventureRank`                                        | —                      |       |
+| `scripts/src/services/genshinAssets/archive`                                              | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/avatar`                                               | —                      |       |
+| `scripts/src/services/genshinAssets/blocks`                                               | —                      |       |
+| `scripts/src/services/genshinAssets/camera`                                               | —                      |       |
+| `scripts/src/services/genshinAssets/camps`                                                | —                      |       |
+| `scripts/src/services/genshinAssets/chests`                                               | —                      |       |
+| `scripts/src/services/genshinAssets/commands/achievementsCommand.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/commands/archiveCommand.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/commands/assetIndexCommand.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/commands/avatarCommand.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/commands/behavioursCommand.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/commands/cameraCommand.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/commands/characterTrialsCommand.ts`                   | —                      |       |
+| `scripts/src/services/genshinAssets/commands/chestsCommand.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/commands/cityAreasCommand.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/commands/clearanceCommand.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/commands/clipsCommand.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/commands/commissionsCommand.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/commands/cookingCommand.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/commands/craftingCommand.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/commands/domainLevelsCommand.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/commands/domainsCommand.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/commands/enemiesCommand.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/commands/enemyCampsCommand.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/commands/expeditionsCommand.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/commands/explorationCommand.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/commands/extractCommand.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/commands/findNodes.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/commands/fishingCommand.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/commands/fitCommand.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/commands/forgingCommand.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/commands/friendshipCommand.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/commands/gadgetsCommand.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/commands/gatheringCommand.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/commands/gcgCommand.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/commands/homeCommand.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/commands/imaginariumCommand.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/commands/interfaceCommand.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/commands/inventoryCommand.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/commands/itemsCommand.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/commands/kitsCommand.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/commands/leyLineCommand.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/commands/locomotionCommand.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/commands/mailCommand.test.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/commands/mailCommand.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/commands/mapCommand.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/commands/materialSourcesCommand.ts`                   | —                      |       |
+| `scripts/src/services/genshinAssets/commands/measureCommand.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/commands/miningOutcropsCommand.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/commands/musicCommand.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/commands/namecardsCommand.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/commands/oculiCommand.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/commands/offeringsCommand.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/commands/outcropPlacesCommand.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/commands/paletteCommand.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/commands/playlistCommand.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/commands/pointsCommand.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/commands/pointsFitCommand.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/commands/profileCommand.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/commands/pruneNode.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/commands/puzzlesCommand.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/commands/rankCommand.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/commands/reputationCommand.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/commands/residentsCommand.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/commands/sceneGroupsCommand.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/commands/sceneNpcBornCommand.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/commands/sceneScriptsCommand.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/commands/shadersCommand.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/commands/shopsCommand.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/commands/shrineKeySourcesCommand.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/commands/skillGlyphsCommand.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/commands/soundsCommand.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/commands/spiralAbyssCommand.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/commands/statsCommand.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/commands/statuesCommand.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/commands/timingsCommand.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/commands/tipsCommand.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/commands/transPointsCommand.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/commands/treeCommand.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/commands/waypointsCommand.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/commands/wildlifeCommand.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/commands/wishScheduleCommand.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/commands/witnessCommand.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/commissions`                                          | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/cooking`                                              | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/crafting`                                             | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/domains`                                              | —                      |       |
+| `scripts/src/services/genshinAssets/enemies`                                              | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/expeditions`                                          | —                      |       |
+| `scripts/src/services/genshinAssets/exploration`                                          | —                      |       |
+| `scripts/src/services/genshinAssets/fishing`                                              | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap.ts`              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/RegionCapitalMap.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/TerrainSplatKindGroundLayerMap.ts`                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/averageSurfaceDetails.test.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/fit/averageSurfaceDetails.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/fit/blurWithinTags.test.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/blurWithinTags.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/checkHasOutline.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/checkIsInsideRegionOutlines.test.ts`              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/checkIsInsideRegionOutlines.ts`                   | —                      |       |
+| `scripts/src/services/genshinAssets/fit/checkIsSelectedBy.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/checkIsTerrainSplatKind.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/fit/classifyFacadeCells.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/clusterCardCentres.test.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/fit/clusterCardCentres.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/clusterColours.test.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/clusterColours.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/clusterVectors.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/composeLatheAxisPoint.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeCellMean.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeConvexHull.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeCorrelation.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeFeatureOffsets.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeGradient.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeGreatest.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeGroundBounds.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeGroundBounds.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeGroundLayerField.test.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeGroundLayerField.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeLagDifference.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeLeast.ts`                                  | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeLoopArea.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeMeanAngle.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeMeanValue.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeMisses.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeMxPerlinNoise.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeNormalField.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computePartSurfaces.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computePartSurfaces.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computePrincipalAxes.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeRayRadius.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeRiverCourses.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeRiverCourses.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeSquaredDistance.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeSurfaceError.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeSurfaceTones.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeSurfaceTones.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeTerrainDetail.test.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeTerrainDetail.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeTextureDetail.test.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeTextureDetail.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeTextureMean.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeTotalWeight.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeTriangleArea.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeUvTexels.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeVectorMean.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeVertexNormals.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeWaterfallSheet.test.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeWaterfallSheet.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeWeightedColour.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/fit/computeWeightedMean.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/constants.ts`                                     | —                      |       |
+| `scripts/src/services/genshinAssets/fit/countPoints.ts`                                   | —                      |       |
+| `scripts/src/services/genshinAssets/fit/coverTriangles.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/createInterfaceRectsFit.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/fit/createNearestColourReader.test.ts`                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/createNearestColourReader.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/fit/createRegionFit.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/createSegmentShapes.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fade.ts`                                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fillEmptySectors.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fillGapSectors.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/findAreaId.ts`                                    | —                      |       |
+| `scripts/src/services/genshinAssets/fit/findCellComponents.test.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/fit/findCellComponents.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/findCellRectangles.test.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/fit/findCellRectangles.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/findNearestEdgePoint.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/findNearestSample.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/findOakPlacement.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/findOpenLoops.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitAlbedo.ts`                                     | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitAreaOutlines.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitBlades.ts`                                     | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitCloudLayerDome.test.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitCloudLayerDome.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitCloudLayerTextures.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitCloudSprites.test.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitCloudSprites.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitFootprintOutline.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitFootprintOutline.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitGaussianHills.test.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitGaussianHills.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitGroundLayerColours.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitGroundLayerField.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitGroundPiece.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitGroundPieces.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitInteractiveMap.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitInterfaceClips.test.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitInterfaceClips.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitInterfaceRects.test.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitInterfaceRects.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitLatheProfile.test.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitLatheProfile.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitLoginClouds.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitLoginDoor.ts`                                  | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitLoginHulls.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitLoginMusic.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitLoginPaving.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitLoginScene.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitLoginStone.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitLoginTowerFacades.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitLoginTowers.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitLoginWalkway.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitPavingStoneShape.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitPavingStoneShape.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitPlanTones.ts`                                  | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitRadialProfile.test.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitRadialProfile.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitRegionCamps.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitRegionCapitals.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitRegionGroundPieces.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitRegionOutcrops.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitReliefLayers.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitRigidPieces.test.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitRigidPieces.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitRiverCourses.test.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitRiverCourses.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitSilhouette.test.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitSilhouette.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitSkyGradient.test.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitSkyGradient.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitSlopeHeight.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitSoundEffect.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitSpectralNoiseChannel.test.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitSpectralNoiseChannel.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitSpectrumAmplitudes.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitStatueComponent.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitStatueStack.test.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitStatueStack.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitSurfaceColours.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitTerrainCliffs.test.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitTerrainCliffs.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitTerrainPlateaus.test.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitTerrainPlateaus.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitTerrainResidual.test.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitTerrainResidual.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitTerrainResidualFade.test.ts`                   | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitTerrainResidualFade.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitTerrainRidges.test.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitTerrainRidges.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitTitleLogos.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitVisualHull.test.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitVisualHull.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitWaterfallSheets.test.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitWaterfallSheets.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitWindriseOak.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitWindrisePaving.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitWindrisePlants.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitWindriseScene.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/fitWindriseStatue.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/foldPlanRepeats.test.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/foldPlanRepeats.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/getBox.ts`                                        | —                      |       |
+| `scripts/src/services/genshinAssets/fit/getCorrelationLength.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/getMean.ts`                                       | —                      |       |
+| `scripts/src/services/genshinAssets/fit/getStandardDeviation.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/getTexel.ts`                                      | —                      |       |
+| `scripts/src/services/genshinAssets/fit/hashLatticePoint.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/joinMeshVertices.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/mapTerrainResidualGrid.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/fit/mergeFacadeBands.test.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/fit/mergeFacadeBands.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/mixFinal.ts`                                      | —                      |       |
+| `scripts/src/services/genshinAssets/fit/placeTerrainFeatures.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/rasterizeTopFaces.test.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/fit/rasterizeTopFaces.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readChannels.ts`                                  | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readCutTexture.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readFaceSamples.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readGroundFootprints.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readGroundLayerCells.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readGroundPieceAreas.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readGroundSource.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readLevelOfDetailParts.test.ts`                   | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readLevelOfDetailParts.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readLoginDoorPieces.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readMeshInThree.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readOptionalTexture.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readPair.ts`                                      | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readRegionAreas.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readRegionGroundFits.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readRegionLandmarks.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readRelativeLuminance.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readSurface.ts`                                   | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readTexture.ts`                                   | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readTowerProfiles.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readWindrisePlantPlacements.ts`                   | —                      |       |
+| `scripts/src/services/genshinAssets/fit/readWitnessWorldMeshes.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/fit/rotateLeft.ts`                                    | —                      |       |
+| `scripts/src/services/genshinAssets/fit/roundFitted.ts`                                   | —                      |       |
+| `scripts/src/services/genshinAssets/fit/roundInstrument.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/roundPair.ts`                                     | —                      |       |
+| `scripts/src/services/genshinAssets/fit/roundStack.ts`                                    | —                      |       |
+| `scripts/src/services/genshinAssets/fit/roundStatue.ts`                                   | —                      |       |
+| `scripts/src/services/genshinAssets/fit/runFits.test.ts`                                  | —                      |       |
+| `scripts/src/services/genshinAssets/fit/runFits.ts`                                       | —                      |       |
+| `scripts/src/services/genshinAssets/fit/sampleFacadeGrid.test.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/fit/sampleFacadeGrid.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/sampleFaceUvs.test.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/sampleFaceUvs.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/fit/sampleMeshSurface.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/sampleSurfaceTexture.test.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/fit/sampleSurfaceTexture.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/sampleUnitNoise.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/seedClusterMeans.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/selectBarSamples.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/shiftSubpath.ts`                                  | —                      |       |
+| `scripts/src/services/genshinAssets/fit/simplifyPath.test.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/simplifyPath.ts`                                  | —                      |       |
+| `scripts/src/services/genshinAssets/fit/smoothTerrainGrid.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/fit/splitGroundPiece.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/splitMeshComponents.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/fit/splitMeshComponents.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/splitSubpaths.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/fit/sumBandPowers.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/fit/sumWeights.ts`                                    | —                      |       |
+| `scripts/src/services/genshinAssets/fit/tintTexture.test.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/tintTexture.ts`                                   | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toCellKey.ts`                                     | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toCrossSection.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toDistance.ts`                                    | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toEdgeKey.ts`                                     | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toFaceEdges.ts`                                   | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toGroundPiece.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toLevels.ts`                                      | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toMatrix.ts`                                      | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toNodeSpan.ts`                                    | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toOutcropPlaces.test.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toOutcropPlaces.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toPaintKey.ts`                                    | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toPaths.ts`                                       | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toPoint.ts`                                       | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toProfile.ts`                                     | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toProperty.ts`                                    | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toRadialSector.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toRecordTubes.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toRegionPlace.test.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toRegionPlace.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toShade.ts`                                       | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toStackMesh.ts`                                   | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toTexel.ts`                                       | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/toWorldVertices.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/traceCellLoops.test.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/fit/traceCellLoops.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/fit/traceCoveredGrid.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/fit/traceSkeleton.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/fit/traceTubeCentrelines.test.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/fit/traceTubeCentrelines.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/fit/withDetail.ts`                                    | —                      |       |
+| `scripts/src/services/genshinAssets/fit/withPartDetails.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/fit/writeRegionKey.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/forging`                                              | —                      |       |
+| `scripts/src/services/genshinAssets/friendship`                                           | —                      |       |
+| `scripts/src/services/genshinAssets/gadgets`                                              | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/gathering`                                            | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/gcg`                                                  | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/home`                                                 | —                      |       |
+| `scripts/src/services/genshinAssets/imaginarium`                                          | —                      |       |
+| `scripts/src/services/genshinAssets/interface`                                            | —                      |       |
+| `scripts/src/services/genshinAssets/items`                                                | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/kits/buildKitPublication.test.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/kits/buildKitPublication.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/kits/buildKitRecordWithDonors.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/kits/candidates`                                      | —                      |       |
+| `scripts/src/services/genshinAssets/kits/checkIsGcsimValueGiven.test.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/kits/checkIsGcsimValueGiven.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/kits/compareKits.ts`                                  | —                      |       |
+| `scripts/src/services/genshinAssets/kits/compareQueuedDelays.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/kits/constants.test.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/kits/constants.ts`                                    | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimAttackTagLunarReactionTypeMap.ts`     | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimAttackTagMap.test.ts`                 | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimAttackTagMap.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimCharacterMappingMap.ts`               | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimElementMap.test.ts`                   | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimElementMap.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimFolderSubfoldersMap.ts`               | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimInternalCooldownTagMap.test.ts`       | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimInternalCooldownTagMap.ts`            | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap.ts`         | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addFallbackPlungeCandidates.ts`            | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimBladeRollerCandidates.ts`          | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackCandidates.test.ts`   | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackCandidates.ts`        | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackVariantCandidates.ts` | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimCloudCandidates.ts`                | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimFieryPassionCandidates.ts`         | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimFrameListCandidates.test.ts`       | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimFrameListCandidates.ts`            | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimHitmarkHits.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimLoopShotCandidates.ts`             | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimMoondewCleanseCandidates.test.ts`  | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimMoondewCleanseCandidates.ts`       | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimNamedConstantCandidates.ts`        | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimNormalAttackCandidates.ts`         | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimPlungeCandidates.ts`               | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimQueuedHits.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimShellCandidates.ts`                | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimSkillAndBurstCandidates.ts`        | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimSkillHoldCandidates.ts`            | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/checkGcsimConfigs.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/checkIsGoFloat.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/checkIsGoFloatLiteral.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation.ts`                   | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/checkIsLandingOrdered.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/constants.test.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/countTabs.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/createBoxReach.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/createCircleReach.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/createFanReach.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter.test.ts`     | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter.ts`          | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/createGcsimPlungeFallbackWriter.ts`        | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/createGoScope.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/createTargetedHitArea.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoConstants.test.ts`               | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoConstants.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoExpression.test.ts`              | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoExpression.ts`                   | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoNumber.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findClosing.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimConstant.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimFolder.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimHitbox.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimStanceNormalAttack.ts`            | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimVariableHitbox.ts`                | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findQueuedAttacks.test.ts`                 | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findQueuedAttacks.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/fixtures`                                  | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/getFallbackPlungeKitCandidates.test.ts`    | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/getFallbackPlungeKitCandidates.ts`         | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates.test.ts`             | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/getGcsimLandingFrames.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/getGcsimNamedHitCandidates.test.ts`        | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/getGcsimNamedHitCandidates.ts`             | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits.test.ts`                | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/getGoRootName.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/joinGcsimTalentArray.test.ts`              | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/joinGcsimTalentArray.ts`                   | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/joinGcsimVariableTalentArray.ts`           | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/parseGcsimYaml.test.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/parseGcsimYaml.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/parseGoExpression.test.ts`                 | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/parseGoExpression.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readConstantLoop.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimAnimationFrameNames.test.ts`      | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimAnimationFrameNames.ts`           | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimAttacks.test.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimAttacks.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimCharacter.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimCitedArea.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates.test.ts`          | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates.ts`               | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimConfig.test.ts`                   | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimConfig.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimEnclosingLoop.ts`                 | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimFieldIdentifier.ts`               | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimFileConstant.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimHoldCooldowns.test.ts`            | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimHoldCooldowns.ts`                 | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimHoldHitmarks.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimLineExpressionStarts.ts`          | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimLineValues.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimMainCharacters.ts`                | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimQueueDelay.test.ts`               | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimQueueDelay.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks.test.ts`            | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks.ts`                 | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTableRows.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/substituteGoTableCells.ts`                 | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/substituteGoTableCells.test.ts`            | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTagCharacters.ts`                 | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTalentArrays.test.ts`             | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTalentArrays.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTalentParameter.ts`               | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTalentParameters.test.ts`         | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTalentParameters.ts`              | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTravels.test.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGcsimTravels.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGoAliases.test.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGoAliases.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGoBranchAt.test.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGoBranchAt.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGoConstantLoops.test.ts`               | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGoConstantLoops.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGoEnclosingBodyStart.ts`               | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGoEnclosingFunction.ts`                | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGoHitbox.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGoLocalSlice.test.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGoLocalSlice.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGoMethodCallSites.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGoNamedFunctions.ts`                   | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGoNumber.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readGoNumberToken.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readHitmarkSpread.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readLessIndentedLines.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readNamedFunction.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readParameterNames.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readRangeLoop.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readReturnedFunction.ts`                   | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readSliceRangeLoop.test.ts`                | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readSliceRangeLoop.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/readVisibleBindingValue.ts`                | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/resolveGoLocals.test.ts`                   | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/resolveGoLocals.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/selectGcsimGenderConstants.ts`             | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/skipGoBrackets.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/sumOptionalDelays.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/toGcsimArea.test.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/toGcsimArea.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/toGcsimAttackTag.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/toGcsimElement.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/toGcsimFolderName.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/toGcsimInternalCooldownTag.ts`             | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/toGoNumberValue.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/toGoNumbers.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/tokenizeGo.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/kits/getKitBagPaths.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/kits/getTalentTargetingArea.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/kits/readKitInputs.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/kits/readKitOverlay.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/kits/readNamedHitKey.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/kits/readOverlayConstellations.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/kits/record`                                          | —                      |       |
+| `scripts/src/services/genshinAssets/kits/tables`                                          | —                      |       |
+| `scripts/src/services/genshinAssets/kits/wiki`                                            | —                      |       |
+| `scripts/src/services/genshinAssets/leyLine`                                              | —                      |       |
+| `scripts/src/services/genshinAssets/locomotion`                                           | —                      |       |
+| `scripts/src/services/genshinAssets/lua`                                                  | —                      |       |
+| `scripts/src/services/genshinAssets/mail`                                                 | —                      |       |
+| `scripts/src/services/genshinAssets/materialSources`                                      | —                      |       |
+| `scripts/src/services/genshinAssets/materials`                                            | —                      |       |
+| `scripts/src/services/genshinAssets/measure`                                              | —                      |       |
+| `scripts/src/services/genshinAssets/miningOutcrops`                                       | —                      |       |
+| `scripts/src/services/genshinAssets/music`                                                | —                      |       |
+| `scripts/src/services/genshinAssets/namecards`                                            | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/oculi`                                                | —                      |       |
+| `scripts/src/services/genshinAssets/offerings`                                            | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/palette`                                              | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/points`                                               | —                      |       |
+| `scripts/src/services/genshinAssets/profile`                                              | —                      |       |
+| `scripts/src/services/genshinAssets/puzzles`                                              | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/reputation`                                           | —                      |       |
+| `scripts/src/services/genshinAssets/residents`                                            | —                      |       |
+| `scripts/src/services/genshinAssets/rewards`                                              | —                      |       |
+| `scripts/src/services/genshinAssets/scene`                                                | —                      |       |
+| `scripts/src/services/genshinAssets/sceneGroups`                                          | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/sceneNpcBorn`                                         | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.test.ts`              | —                      |       |
+| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`                   | —                      |       |
+| `scripts/src/services/genshinAssets/shared/applySpawns.test.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/shared/applySpawns.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/shared/checkAnimeStudioParity.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/shared/checkIsDerivedAssetComponent.ts`               | —                      |       |
+| `scripts/src/services/genshinAssets/shared/checkIsRegionGroundFitted.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/shared/checkParityBlock.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/shared/composeAssetPlacements.test.ts`                | —                      |       |
+| `scripts/src/services/genshinAssets/shared/composeAssetPlacements.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/shared/composeWorldMatrices.test.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/shared/composeWorldMatrices.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/shared/computePartialBinRanges.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/shared/constants.ts`                                  | —                      |       |
+| `scripts/src/services/genshinAssets/shared/copySpawns.test.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/shared/copySpawns.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/shared/countFiles.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/shared/createBlockOffsetFileFinder.ts`                | —                      |       |
+| `scripts/src/services/genshinAssets/shared/createSceneObject.test.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/shared/createSubtreeCollector.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/shared/exportBlockBySource.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/shared/exportClipBlocks.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/shared/findNearest.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/shared/findRootObject.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/shared/fitInstrument.test.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/shared/fitInstrument.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/shared/fitMusicSource.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/shared/fitMusicVoices.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/shared/fitVoiceNoises.test.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/shared/fitVoiceNoises.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/shared/formatNumbers.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/shared/formatTree.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/shared/getAssetPathKey.test.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/shared/getAssetPathKey.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/shared/getComponentDirectory.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/shared/getMonoBehaviourFieldsOffset.ts`               | —                      |       |
+| `scripts/src/services/genshinAssets/shared/getNamedRawArgs.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/shared/getPathDigest.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/shared/getPathHash.test.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/shared/getPathHash.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/shared/getPerformanceCoreCount.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/shared/groupSceneChildren.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/shared/nameMeshPlacements.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/shared/parseDerivedAssetComponent.ts`                 | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readAll.ts`                                    | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readAssetBlocks.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readAssetNames.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readComponentClips.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readComponentLayout.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readComponentMaterials.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readComponentPlacements.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readExportedClips.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readGameVersion.test.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readGameVersion.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readIndexedNames.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readMaterialKeywords.test.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readMaterialKeywords.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readMaterialValues.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readMusicSourceNotes.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readObjMesh.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readObjectNames.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readPublishedRegionGround.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readRegionGroundFiles.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readRegionLandmarkSources.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readSceneLayout.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readShaderColorNames.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readWorldBaseGrounds.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readWorldData.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readWorldGroundHeight.test.ts`                 | —                      |       |
+| `scripts/src/services/genshinAssets/shared/readWorldGroundHeight.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/shared/resolveObjectPointer.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/shared/reviveSourcePathId.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/shared/roundMusic.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/shared/selectFinestLevels.test.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/shared/selectFinestLevels.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/shared/splitVoicesByRegister.test.ts`                 | —                      |       |
+| `scripts/src/services/genshinAssets/shared/splitVoicesByRegister.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toDecibels.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toDiffusePath.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toFrequency.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toGameObjectComponentsMap.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toGameObjectTransformIdMap.ts`                 | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toGroupKey.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toHeightOffset.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toLandmarkArrival.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toMaterialTextures.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toMaterialValues.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toMaterialValues.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toObjectKey.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toOpenWorldLevelOneAreaIdsByName.ts`           | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toPointers.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toRegionAxesPlace.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toRegionAxesPosition.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toRightHanded.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toRightHandedRotation.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toSceneObjects.test.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/shared/toSceneObjects.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/shared/writeWorldData.test.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/shared/writeWorldData.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/shops`                                                | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinAssets/skillGlyphs`                                          | —                      |       |
+| `scripts/src/services/genshinAssets/sound`                                                | —                      |       |
+| `scripts/src/services/genshinAssets/spiralAbyss`                                          | —                      |       |
+| `scripts/src/services/genshinAssets/stats`                                                | —                      |       |
+| `scripts/src/services/genshinAssets/statues`                                              | —                      |       |
+| `scripts/src/services/genshinAssets/timings`                                              | —                      |       |
+| `scripts/src/services/genshinAssets/tips`                                                 | —                      |       |
+| `scripts/src/services/genshinAssets/transPoints`                                          | —                      |       |
+| `scripts/src/services/genshinAssets/trials`                                               | —                      |       |
+| `scripts/src/services/genshinAssets/wildlife`                                             | —                      |       |
+| `scripts/src/services/genshinAssets/wish`                                                 | —                      |       |
+| `scripts/src/services/genshinAssets/witness`                                              | —                      |       |
+| `scripts/src/services/genshinAssets/world/buildCityAreas.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/world/checkIsArchitectureName.test.ts`                | —                      |       |
+| `scripts/src/services/genshinAssets/world/checkIsArchitectureName.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/world/checkIsInArchitectureView.ts`                   | —                      |       |
+| `scripts/src/services/genshinAssets/world/checkIsPlantName.test.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/world/checkIsPlantName.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/world/computeExtentGap.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/world/constants.ts`                                   | —                      |       |
+| `scripts/src/services/genshinAssets/world/createTerrainHeightSampler.test.ts`             | —                      |       |
+| `scripts/src/services/genshinAssets/world/createTerrainHeightSampler.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/world/deriveCapitalWorld.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/world/ensureAssetPathIndex.test.ts`                   | —                      |       |
+| `scripts/src/services/genshinAssets/world/ensureAssetPathIndex.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/world/exportTerrainTiles.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/world/exportWorld.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/world/exportWorldStreams.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/world/extractCityAreas.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/world/extractWorld.ts`                                | —                      |       |
+| `scripts/src/services/genshinAssets/world/formatTerrainObj.test.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/world/formatTerrainObj.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/world/getBoxTiles.ts`                                 | —                      |       |
+| `scripts/src/services/genshinAssets/world/getCapitalTiles.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/world/getCityStreamName.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/world/getCoveredTiles.test.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/world/getCoveredTiles.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/world/getDependantFiles.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/world/getDependantFiles.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/world/getOutlineTiles.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/world/getPathHashKey.test.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/world/getPathHashKey.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/world/getPrefabNames.test.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/world/getPrefabNames.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/world/getPrefabPathCandidates.test.ts`                | —                      |       |
+| `scripts/src/services/genshinAssets/world/getPrefabPathCandidates.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/world/getPrefabStemVariants.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/world/getStreamBlobName.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/world/getStreamBlobName.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/world/getTerrainTileNames.test.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/world/getTerrainTileNames.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/world/getWorldRoots.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/world/getWorldTileName.test.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/world/getWorldTileName.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/world/matchPrefabPathKeys.test.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/world/matchPrefabPathKeys.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/world/parseLodInfoMap.test.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/world/parseLodInfoMap.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/world/parseStreamingIndex.test.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/world/parseStreamingIndex.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/world/parseStreamingPlacements.test.ts`               | —                      |       |
+| `scripts/src/services/genshinAssets/world/parseStreamingPlacements.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/world/parseTerrainHeights.test.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/world/parseTerrainHeights.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/world/parseTerrainSplat.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/world/parseTerrainSplat.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/world/parseTerrainTileName.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/world/placeWorldPrefabs.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/world/placeWorldPrefabs.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/world/readAssetPathNames.ts`                          | —                      |       |
+| `scripts/src/services/genshinAssets/world/readCapitalWorldPlace.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/world/readCityAreaCandidates.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/world/readCityAreaFile.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/world/readCityAreas.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/world/readDerivedPathNames.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/world/readLodPathHashes.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/world/readPrefabBlocks.test.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/world/readPrefabBlocks.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/world/readScenePointsOfKind.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/world/readStreamPlacements.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/world/readTerrainSplats.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/world/readTerrainTileFiles.ts`                        | —                      |       |
+| `scripts/src/services/genshinAssets/world/readWorldOptions.test.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/world/readWorldOptions.ts`                            | —                      |       |
+| `scripts/src/services/genshinAssets/world/readWorldOrigin.ts`                             | —                      |       |
+| `scripts/src/services/genshinAssets/world/readWorldPlacements.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/world/readWorldTerrainHeight.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/world/readWorldWaterLevel.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/world/resolvePrefabRoot.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinAssets/world/resolvePrefabRoot.ts`                           | —                      |       |
+| `scripts/src/services/genshinAssets/world/selectArchitectureInView.test.ts`               | —                      |       |
+| `scripts/src/services/genshinAssets/world/selectArchitectureInView.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/world/selectCapitalCityArea.test.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/world/selectCapitalCityArea.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/world/selectCapitalPlacements.test.ts`                | —                      |       |
+| `scripts/src/services/genshinAssets/world/selectCapitalPlacements.ts`                     | —                      |       |
+| `scripts/src/services/genshinAssets/world/selectCityAreasInView.test.ts`                  | —                      |       |
+| `scripts/src/services/genshinAssets/world/selectCityAreasInView.ts`                       | —                      |       |
+| `scripts/src/services/genshinAssets/world/selectLostArchitectureInView.test.ts`           | —                      |       |
+| `scripts/src/services/genshinAssets/world/selectLostArchitectureInView.ts`                | —                      |       |
+| `scripts/src/services/genshinAssets/world/toCapitalWorldPlace.test.ts`                    | —                      |       |
+| `scripts/src/services/genshinAssets/world/toCapitalWorldPlace.ts`                         | —                      |       |
+| `scripts/src/services/genshinAssets/world/toCityArea.ts`                                  | —                      |       |
+| `scripts/src/services/genshinAssets/world/toDumpedVector.ts`                              | —                      |       |
+| `scripts/src/services/genshinAssets/world/toPointExtent.ts`                               | —                      |       |
+| `scripts/src/services/genshinAssets/world/toWorldQuaternion.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/commands`                                             | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinParity/display`                                              | —                      |       |
+| `scripts/src/services/genshinParity/game`                                                 | —                      |       |
+| `scripts/src/services/genshinParity/image`                                                | —                      |       |
+| `scripts/src/services/genshinParity/load`                                                 | —                      |       |
+| `scripts/src/services/genshinParity/music`                                                | —                      |       |
+| `scripts/src/services/genshinParity/page`                                                 | —                      |       |
+| `scripts/src/services/genshinParity/passes/ParityPassMeasureMap.ts`                       | —                      |       |
+| `scripts/src/services/genshinParity/passes/carryLossToPlan.test.ts`                       | —                      |       |
+| `scripts/src/services/genshinParity/passes/carryLossToPlan.ts`                            | —                      |       |
+| `scripts/src/services/genshinParity/passes/checkIsReadingHeld.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/passes/checkIsRecordedDifferently.ts`                 | —                      |       |
+| `scripts/src/services/genshinParity/passes/closeFamilyMask.ts`                            | —                      |       |
+| `scripts/src/services/genshinParity/passes/compareFamilyColour.test.ts`                   | —                      |       |
+| `scripts/src/services/genshinParity/passes/compareFamilyColour.ts`                        | —                      |       |
+| `scripts/src/services/genshinParity/passes/compareFamilyEnvelope.ts`                      | —                      |       |
+| `scripts/src/services/genshinParity/passes/compareFamilyTargets.test.ts`                  | —                      |       |
+| `scripts/src/services/genshinParity/passes/compareFamilyTargets.ts`                       | —                      |       |
+| `scripts/src/services/genshinParity/passes/computeEnvelopeRadius.test.ts`                 | —                      |       |
+| `scripts/src/services/genshinParity/passes/computeEnvelopeRadius.ts`                      | —                      |       |
+| `scripts/src/services/genshinParity/passes/computeFamilyEnvelope.ts`                      | —                      |       |
+| `scripts/src/services/genshinParity/passes/computeLayoutFrameMeasure.test.ts`             | —                      |       |
+| `scripts/src/services/genshinParity/passes/computeLayoutFrameMeasure.ts`                  | —                      |       |
+| `scripts/src/services/genshinParity/passes/computeMaskHoles.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/passes/computeNormalAngle.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/passes/computeProjectedGaps.test.ts`                  | —                      |       |
+| `scripts/src/services/genshinParity/passes/computeProjectedGaps.ts`                       | —                      |       |
+| `scripts/src/services/genshinParity/passes/computeStatisticalStructure.test.ts`           | —                      |       |
+| `scripts/src/services/genshinParity/passes/computeStatisticalStructure.ts`                | —                      |       |
+| `scripts/src/services/genshinParity/passes/computeStructureError.ts`                      | —                      |       |
+| `scripts/src/services/genshinParity/passes/computeSurfaceBend.test.ts`                    | —                      |       |
+| `scripts/src/services/genshinParity/passes/computeSurfaceBend.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/passes/constants.ts`                                  | —                      |       |
+| `scripts/src/services/genshinParity/passes/findMovedFrozenPass.test.ts`                   | —                      |       |
+| `scripts/src/services/genshinParity/passes/findMovedFrozenPass.ts`                        | —                      |       |
+| `scripts/src/services/genshinParity/passes/formatPassValue.ts`                            | —                      |       |
+| `scripts/src/services/genshinParity/passes/formatReadingValue.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/passes/getComponentReferenceIds.test.ts`              | —                      |       |
+| `scripts/src/services/genshinParity/passes/getComponentReferenceIds.ts`                   | —                      |       |
+| `scripts/src/services/genshinParity/passes/getCurrentBuildReferenceIds.ts`                | —                      |       |
+| `scripts/src/services/genshinParity/passes/getParityPassesPath.ts`                        | —                      |       |
+| `scripts/src/services/genshinParity/passes/getRowPass.ts`                                 | —                      |       |
+| `scripts/src/services/genshinParity/passes/measureAtmosphere.ts`                          | —                      |       |
+| `scripts/src/services/genshinParity/passes/measureAudio.ts`                               | —                      |       |
+| `scripts/src/services/genshinParity/passes/measureCamera.test.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/passes/measureCamera.ts`                              | —                      |       |
+| `scripts/src/services/genshinParity/passes/measureDisplay.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/passes/measureEachReference.ts`                       | —                      |       |
+| `scripts/src/services/genshinParity/passes/measureEnvelope.ts`                            | —                      |       |
+| `scripts/src/services/genshinParity/passes/measureFamilyTargets.ts`                       | —                      |       |
+| `scripts/src/services/genshinParity/passes/measureGlow.ts`                                | —                      |       |
+| `scripts/src/services/genshinParity/passes/measureInventory.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/passes/measureLayout.ts`                              | —                      |       |
+| `scripts/src/services/genshinParity/passes/measureLight.ts`                               | —                      |       |
+| `scripts/src/services/genshinParity/passes/measureMotion.ts`                              | —                      |       |
+| `scripts/src/services/genshinParity/passes/measureShape.ts`                               | —                      |       |
+| `scripts/src/services/genshinParity/passes/measureSurface.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/passes/openComponentWitnessPage.ts`                   | —                      |       |
+| `scripts/src/services/genshinParity/passes/readFamilyMask.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/passes/readParityPassRows.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/passes/readTargetFamily.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/passes/readTargetLightness.ts`                        | —                      |       |
+| `scripts/src/services/genshinParity/passes/runParityPasses.test.ts`                       | —                      |       |
+| `scripts/src/services/genshinParity/passes/runParityPasses.ts`                            | —                      |       |
+| `scripts/src/services/genshinParity/passes/shiftTargetAcross.test.ts`                     | —                      |       |
+| `scripts/src/services/genshinParity/passes/shiftTargetAcross.ts`                          | —                      |       |
+| `scripts/src/services/genshinParity/passes/snapshots`                                     | —                      |       |
+| `scripts/src/services/genshinParity/passes/solveReferenceCamera.ts`                       | —                      |       |
+| `scripts/src/services/genshinParity/passes/toParityPassRows.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/passes/toShapeReading.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/passes/writeParityPasses.ts`                          | —                      |       |
+| `scripts/src/services/genshinParity/passes/writeShapeDiff.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/passes/writeStructureDiff.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/passes/writeSurfaceDiff.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/reference`                                            | —                      |       |
+| `scripts/src/services/genshinParity/shared/ParityMusicScores.snapshot.md`                 | —                      |       |
+| `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`                | —                      |       |
+| `scripts/src/services/genshinParity/shared/ParityReferenceMap.test.ts`                    | —                      |       |
+| `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/shared/accumulateNormalEquations.ts`                  | —                      |       |
+| `scripts/src/services/genshinParity/shared/blurGrey.ts`                                   | —                      |       |
+| `scripts/src/services/genshinParity/shared/blurLines.ts`                                  | —                      |       |
+| `scripts/src/services/genshinParity/shared/checkImplicit.ts`                              | —                      |       |
+| `scripts/src/services/genshinParity/shared/checkIsGameRunning.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/shared/clamp.ts`                                      | —                      |       |
+| `scripts/src/services/genshinParity/shared/compactSvgPath.test.ts`                        | —                      |       |
+| `scripts/src/services/genshinParity/shared/compactSvgPath.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/shared/computeGroundColour.test.ts`                   | —                      |       |
+| `scripts/src/services/genshinParity/shared/computeGroundColour.ts`                        | —                      |       |
+| `scripts/src/services/genshinParity/shared/computePixelPoint.test.ts`                     | —                      |       |
+| `scripts/src/services/genshinParity/shared/computePixelPoint.ts`                          | —                      |       |
+| `scripts/src/services/genshinParity/shared/constants.test.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/shared/constants.ts`                                  | —                      |       |
+| `scripts/src/services/genshinParity/shared/countDecimals.ts`                              | —                      |       |
+| `scripts/src/services/genshinParity/shared/createFeatureFilter.ts`                        | —                      |       |
+| `scripts/src/services/genshinParity/shared/createSpatialFilters.ts`                       | —                      |       |
+| `scripts/src/services/genshinParity/shared/decodeTarget.ts`                               | —                      |       |
+| `scripts/src/services/genshinParity/shared/describeBuilds.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/shared/describeCategories.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/shared/describeFrame.ts`                              | —                      |       |
+| `scripts/src/services/genshinParity/shared/describeFunction.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/shared/describeGpuFrames.ts`                          | —                      |       |
+| `scripts/src/services/genshinParity/shared/describePasses.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/shared/fetchReferences.ts`                            | —                      |       |
+| `scripts/src/services/genshinParity/shared/formatCrossing.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/shared/formatFigure.ts`                               | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinParity/shared/formatLoadMeter.test.ts`                       | —                      |       |
+| `scripts/src/services/genshinParity/shared/formatLoadMeter.ts`                            | —                      |       |
+| `scripts/src/services/genshinParity/shared/formatMeasures.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/shared/formatNumber.ts`                               | —                      |       |
+| `scripts/src/services/genshinParity/shared/formatRow.ts`                                  | —                      |       |
+| `scripts/src/services/genshinParity/shared/formatWholeScreenLines.test.ts`                | —                      |       |
+| `scripts/src/services/genshinParity/shared/formatWholeScreenLines.ts`                     | —                      |       |
+| `scripts/src/services/genshinParity/shared/fromPageCamera.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/shared/getCaptureUrl.test.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/shared/getCaptureUrl.ts`                              | —                      |       |
+| `scripts/src/services/genshinParity/shared/getCategory.ts`                                | —                      |       |
+| `scripts/src/services/genshinParity/shared/getCharacterScreenPlate.ts`                    | —                      |       |
+| `scripts/src/services/genshinParity/shared/getFrameCount.ts`                              | —                      |       |
+| `scripts/src/services/genshinParity/shared/getGameDataFigure.ts`                          | —                      |       |
+| `scripts/src/services/genshinParity/shared/getGaussian.ts`                                | —                      |       |
+| `scripts/src/services/genshinParity/shared/getGaussianSqrt.ts`                            | —                      |       |
+| `scripts/src/services/genshinParity/shared/getHyab.ts`                                    | —                      |       |
+| `scripts/src/services/genshinParity/shared/getLetter.ts`                                  | —                      |       |
+| `scripts/src/services/genshinParity/shared/getPath.ts`                                    | —                      |       |
+| `scripts/src/services/genshinParity/shared/getQueuedMs.ts`                                | —                      |       |
+| `scripts/src/services/genshinParity/shared/getRequestsFigure.ts`                          | —                      |       |
+| `scripts/src/services/genshinParity/shared/getScale.ts`                                   | —                      |       |
+| `scripts/src/services/genshinParity/shared/getWholeScreenImages.test.ts`                  | —                      |       |
+| `scripts/src/services/genshinParity/shared/getWholeScreenImages.ts`                       | —                      |       |
+| `scripts/src/services/genshinParity/shared/getWholeScreenSavePath.test.ts`                | —                      |       |
+| `scripts/src/services/genshinParity/shared/getWholeScreenSavePath.ts`                     | —                      |       |
+| `scripts/src/services/genshinParity/shared/hookRenderer.ts`                               | —                      |       |
+| `scripts/src/services/genshinParity/shared/measureKind.ts`                                | —                      |       |
+| `scripts/src/services/genshinParity/shared/measureSceneKinds.ts`                          | —                      |       |
+| `scripts/src/services/genshinParity/shared/measureStalls.ts`                              | —                      |       |
+| `scripts/src/services/genshinParity/shared/measureState.ts`                               | —                      |       |
+| `scripts/src/services/genshinParity/shared/measureStates.ts`                              | —                      |       |
+| `scripts/src/services/genshinParity/shared/needsSpace.ts`                                 | —                      |       |
+| `scripts/src/services/genshinParity/shared/openParityPage.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/shared/openSurfaceStatisticsPage.ts`                  | —                      |       |
+| `scripts/src/services/genshinParity/shared/openWitnessPage.ts`                            | —                      |       |
+| `scripts/src/services/genshinParity/shared/orbit.ts`                                      | —                      |       |
+| `scripts/src/services/genshinParity/shared/parseSvgPath.ts`                               | —                      |       |
+| `scripts/src/services/genshinParity/shared/readAudioSamples.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/shared/readCaptureRow.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/shared/readFlipErrorMap.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/shared/readPageFunction.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/shared/readPassUseMap.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/shared/readPrograms.ts`                               | —                      |       |
+| `scripts/src/services/genshinParity/shared/readReferenceGbuffer.ts`                       | —                      |       |
+| `scripts/src/services/genshinParity/shared/readRgb.ts`                                    | —                      |       |
+| `scripts/src/services/genshinParity/shared/readSobelGradients.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/shared/readStereoSamples.ts`                          | —                      |       |
+| `scripts/src/services/genshinParity/shared/readStructureEdges.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/shared/readWholeScreenImages.test.ts`                 | —                      |       |
+| `scripts/src/services/genshinParity/shared/readWholeScreenImages.ts`                      | —                      |       |
+| `scripts/src/services/genshinParity/shared/readWitnessFamilies.ts`                        | —                      |       |
+| `scripts/src/services/genshinParity/shared/readWitnessGbuffer.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/shared/readWitnessPartTarget.ts`                      | —                      |       |
+| `scripts/src/services/genshinParity/shared/readWitnessTargets.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/shared/readWitnessTargetsInCall.ts`                   | —                      |       |
+| `scripts/src/services/genshinParity/shared/removeMaskSpecks.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinParity/shared/removeMaskSpecks.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/shared/renderTokens.ts`                               | —                      |       |
+| `scripts/src/services/genshinParity/shared/resolveSource.ts`                              | —                      |       |
+| `scripts/src/services/genshinParity/shared/resolveWikiFiles.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/shared/roundHundredths.ts`                            | —                      |       |
+| `scripts/src/services/genshinParity/shared/roundMs.ts`                                    | —                      |       |
+| `scripts/src/services/genshinParity/shared/saveWholeScreenImages.ts`                      | —                      |       |
+| `scripts/src/services/genshinParity/shared/scoreFlip.test.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/shared/scoreFlip.ts`                                  | —                      |       |
+| `scripts/src/services/genshinParity/shared/setKindHidden.ts`                              | —                      |       |
+| `scripts/src/services/genshinParity/shared/setPageWitnessView.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/shared/shootScreen.ts`                                | —                      |       |
+| `scripts/src/services/genshinParity/shared/splitGlyph.test.ts`                            | —                      |       |
+| `scripts/src/services/genshinParity/shared/splitGlyph.ts`                                 | —                      |       |
+| `scripts/src/services/genshinParity/shared/startCpuProfile.ts`                            | —                      |       |
+| `scripts/src/services/genshinParity/shared/sumMs.ts`                                      | —                      |       |
+| `scripts/src/services/genshinParity/shared/summarizeCpuWindow.test.ts`                    | —                      |       |
+| `scripts/src/services/genshinParity/shared/summarizeCpuWindow.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/shared/summarizeGpuTrace.test.ts`                     | —                      |       |
+| `scripts/src/services/genshinParity/shared/summarizeGpuTrace.ts`                          | —                      |       |
+| `scripts/src/services/genshinParity/shared/summarizeSceneKinds.test.ts`                   | —                      |       |
+| `scripts/src/services/genshinParity/shared/summarizeSceneKinds.ts`                        | —                      |       |
+| `scripts/src/services/genshinParity/shared/summarizeStallState.test.ts`                   | —                      |       |
+| `scripts/src/services/genshinParity/shared/summarizeStallState.ts`                        | —                      |       |
+| `scripts/src/services/genshinParity/shared/toHuntLab.ts`                                  | —                      |       |
+| `scripts/src/services/genshinParity/shared/toNumber.ts`                                   | —                      |       |
+| `scripts/src/services/genshinParity/shared/toPageCamera.ts`                               | —                      |       |
+| `scripts/src/services/genshinParity/shared/toRelative.ts`                                 | —                      |       |
+| `scripts/src/services/genshinParity/shared/traceGpuPassesScript.ts`                       | —                      |       |
+| `scripts/src/services/genshinParity/shared/traceGpuScript.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/shared/traceImage.ts`                                 | —                      |       |
+| `scripts/src/services/genshinParity/shared/traceKindsScript.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/shared/traceMask.test.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/shared/traceMask.ts`                                  | —                      |       |
+| `scripts/src/services/genshinParity/shared/traceNodesScript.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/shared/waitFrames.ts`                                 | —                      |       |
+| `scripts/src/services/genshinParity/shared/walk.ts`                                       | —                      |       |
+| `scripts/src/services/genshinParity/shared/withReferencePage.ts`                          | —                      |       |
+| `scripts/src/services/genshinParity/shared/writeCaptureFrame.ts`                          | —                      |       |
+| `scripts/src/services/genshinParity/shared/writeReferenceFrame.ts`                        | —                      |       |
+| `scripts/src/services/genshinParity/shared/writeSideBySide.ts`                            | —                      |       |
+| `scripts/src/services/genshinParity/shared/xyzToLinear.ts`                                | —                      |       |
+| `scripts/src/services/genshinParity/shared/xyzToYcxcz.ts`                                 | —                      |       |
+| `scripts/src/services/genshinParity/shared/ycxczToXyz.ts`                                 | —                      |       |
+| `scripts/src/services/genshinParity/sky`                                                  | —                      |       |
+| `scripts/src/services/genshinParity/sound`                                                | —                      |       |
+| `scripts/src/services/genshinParity/witness/computeCost.ts`                               | —                      |       |
+| `scripts/src/services/genshinParity/witness/computeDistanceTransform.test.ts`             | —                      |       |
+| `scripts/src/services/genshinParity/witness/computeDistanceTransform.ts`                  | —                      |       |
+| `scripts/src/services/genshinParity/witness/computeEdgeDistance.test.ts`                  | —                      |       |
+| `scripts/src/services/genshinParity/witness/computeEdgeDistance.ts`                       | —                      |       |
+| `scripts/src/services/genshinParity/witness/computeHazeResidual.test.ts`                  | —                      |       |
+| `scripts/src/services/genshinParity/witness/computeHazeResidual.ts`                       | —                      |       |
+| `scripts/src/services/genshinParity/witness/computeLabelSimilarity.ts`                    | —                      |       |
+| `scripts/src/services/genshinParity/witness/computeLinearPose.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/witness/computeMaskedMean.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/witness/computeReadingsResidual.ts`                   | —                      |       |
+| `scripts/src/services/genshinParity/witness/computeReprojectionErrors.ts`                 | —                      |       |
+| `scripts/src/services/genshinParity/witness/computeSkyLobeHarmonics.test.ts`              | —                      |       |
+| `scripts/src/services/genshinParity/witness/computeSkyLobeHarmonics.ts`                   | —                      |       |
+| `scripts/src/services/genshinParity/witness/computeStoneSampleColor.test.ts`              | —                      |       |
+| `scripts/src/services/genshinParity/witness/computeStoneSampleColor.ts`                   | —                      |       |
+| `scripts/src/services/genshinParity/witness/constants.ts`                                 | —                      |       |
+| `scripts/src/services/genshinParity/witness/countPassed.ts`                               | —                      |       |
+| `scripts/src/services/genshinParity/witness/countSetPixels.ts`                            | —                      |       |
+| `scripts/src/services/genshinParity/witness/decodeFloat32.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/witness/encodeFloat32.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/witness/findCrossings.test.ts`                        | —                      |       |
+| `scripts/src/services/genshinParity/witness/findCrossings.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/witness/findFamilyBoundaries.test.ts`                 | —                      |       |
+| `scripts/src/services/genshinParity/witness/findFamilyBoundaries.ts`                      | —                      |       |
+| `scripts/src/services/genshinParity/witness/findShadowEdges.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinParity/witness/findShadowEdges.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/witness/findSmallestEigenvector.ts`                   | —                      |       |
+| `scripts/src/services/genshinParity/witness/gcd.ts`                                       | —                      |       |
+| `scripts/src/services/genshinParity/witness/getColor.ts`                                  | —                      |       |
+| `scripts/src/services/genshinParity/witness/getFamilyColor.ts`                            | —                      |       |
+| `scripts/src/services/genshinParity/witness/getPoseBar.test.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/witness/getPoseBar.ts`                                | —                      |       |
+| `scripts/src/services/genshinParity/witness/getSkyGridDirections.test.ts`                 | —                      |       |
+| `scripts/src/services/genshinParity/witness/getSkyGridDirections.ts`                      | —                      |       |
+| `scripts/src/services/genshinParity/witness/groupStoneBins.ts`                            | —                      |       |
+| `scripts/src/services/genshinParity/witness/halve.ts`                                     | —                      |       |
+| `scripts/src/services/genshinParity/witness/labelWitnessParts.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/witness/measureGlide.ts`                              | —                      |       |
+| `scripts/src/services/genshinParity/witness/projectWitnessPoint.ts`                       | —                      |       |
+| `scripts/src/services/genshinParity/witness/rankReferenceGains.ts`                        | —                      |       |
+| `scripts/src/services/genshinParity/witness/readFamilyBoundaries.ts`                      | —                      |       |
+| `scripts/src/services/genshinParity/witness/readFamilyEdgeDistances.ts`                   | —                      |       |
+| `scripts/src/services/genshinParity/witness/readGrey.ts`                                  | —                      |       |
+| `scripts/src/services/genshinParity/witness/readLightCeilings.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/witness/readLuminance.ts`                             | —                      |       |
+| `scripts/src/services/genshinParity/witness/readMaskMean.ts`                              | —                      |       |
+| `scripts/src/services/genshinParity/witness/readReferenceLandmarks.ts`                    | —                      |       |
+| `scripts/src/services/genshinParity/witness/readReferenceStoneSamples.ts`                 | —                      |       |
+| `scripts/src/services/genshinParity/witness/readStandInGains.ts`                          | —                      |       |
+| `scripts/src/services/genshinParity/witness/readStoneColourDistance.test.ts`              | —                      |       |
+| `scripts/src/services/genshinParity/witness/readStoneColourDistance.ts`                   | —                      |       |
+| `scripts/src/services/genshinParity/witness/readStoneLightReading.ts`                     | —                      |       |
+| `scripts/src/services/genshinParity/witness/readWitnessPlan.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/witness/refineCameraPose.ts`                          | —                      |       |
+| `scripts/src/services/genshinParity/witness/replaceReferenceCameraPose.test.ts`           | —                      |       |
+| `scripts/src/services/genshinParity/witness/replaceReferenceCameraPose.ts`                | —                      |       |
+| `scripts/src/services/genshinParity/witness/scoreLabelSimilarity.test.ts`                 | —                      |       |
+| `scripts/src/services/genshinParity/witness/scoreLabelSimilarity.ts`                      | —                      |       |
+| `scripts/src/services/genshinParity/witness/shootWitnessFamilies.ts`                      | —                      |       |
+| `scripts/src/services/genshinParity/witness/snapToCorner.test.ts`                         | —                      |       |
+| `scripts/src/services/genshinParity/witness/snapToCorner.ts`                              | —                      |       |
+| `scripts/src/services/genshinParity/witness/solveCameraPose.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinParity/witness/solveCameraPose.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/witness/solveReferenceHaze.ts`                        | —                      |       |
+| `scripts/src/services/genshinParity/witness/solveReferencePose.ts`                        | —                      |       |
+| `scripts/src/services/genshinParity/witness/solveReferenceScroll.ts`                      | —                      |       |
+| `scripts/src/services/genshinParity/witness/solveReferenceShadows.ts`                     | —                      |       |
+| `scripts/src/services/genshinParity/witness/solveReferenceStoneLight.ts`                  | —                      |       |
+| `scripts/src/services/genshinParity/witness/solveStoneLight.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinParity/witness/solveStoneLight.ts`                           | —                      |       |
+| `scripts/src/services/genshinParity/witness/toAngles.ts`                                  | —                      |       |
+| `scripts/src/services/genshinParity/witness/toHaze.ts`                                    | —                      |       |
+| `scripts/src/services/genshinParity/witness/toLogOdds.ts`                                 | —                      |       |
+| `scripts/src/services/genshinParity/witness/toLuminance.ts`                               | —                      |       |
+| `scripts/src/services/genshinParity/witness/toSunDirection.ts`                            | —                      |       |
+| `scripts/src/services/genshinParity/witness/trackCamera.ts`                               | —                      |       |
+| `scripts/src/services/genshinParity/witness/writeOverlay.ts`                              | —                      |       |
+| `scripts/src/services/genshinParity/witness/writeStoneRampWeights.ts`                     | —                      |       |
+| `scripts/src/services/genshinParity/witness/writeWitnessGbuffer.ts`                       | —                      |       |
+| `scripts/src/services/genshinText/DumpedQuestKindMap.ts`                                  | —                      |       |
+| `scripts/src/services/genshinText/OpeningParentTitleMap.ts`                               | —                      |       |
+| `scripts/src/services/genshinText/QuestContentObjectiveMap.ts`                            | —                      |       |
+| `scripts/src/services/genshinText/buildGcgText.ts`                                        | —                      |       |
+| `scripts/src/services/genshinText/buildNames.ts`                                          | —                      |       |
+| `scripts/src/services/genshinText/buildQuestChapters.ts`                                  | —                      |       |
+| `scripts/src/services/genshinText/buildQuests.test.ts`                                    | —                      |       |
+| `scripts/src/services/genshinText/buildQuests.ts`                                         | —                      |       |
+| `scripts/src/services/genshinText/buildStandingTalks.ts`                                  | —                      |       |
+| `scripts/src/services/genshinText/buildTextChunks.ts`                                     | —                      |       |
+| `scripts/src/services/genshinText/collectNameTextIds.test.ts`                             | —                      |       |
+| `scripts/src/services/genshinText/collectNameTextIds.ts`                                  | —                      |       |
+| `scripts/src/services/genshinText/commands`                                               | —                      |       |
+| `scripts/src/services/genshinText/constants.ts`                                           | —                      |       |
+| `scripts/src/services/genshinText/countConditioned.ts`                                    | —                      |       |
+| `scripts/src/services/genshinText/decodeGameText.ts`                                      | —                      |       |
+| `scripts/src/services/genshinText/decodeTextMap.ts`                                       | —                      |       |
+| `scripts/src/services/genshinText/downloadDumpFile.ts`                                    | —                      |       |
+| `scripts/src/services/genshinText/exportSdkText.ts`                                       | —                      |       |
+| `scripts/src/services/genshinText/fetchDump.test.ts`                                      | —                      |       |
+| `scripts/src/services/genshinText/fetchDump.ts`                                           | —                      |       |
+| `scripts/src/services/genshinText/fetchRemoteFiles.ts`                                    | —                      |       |
+| `scripts/src/services/genshinText/fillDumpDefaults.test.ts`                               | —                      |       |
+| `scripts/src/services/genshinText/fillDumpDefaults.ts`                                    | —                      |       |
+| `scripts/src/services/genshinText/findGameText.ts`                                        | —                      |       |
+| `scripts/src/services/genshinText/getCharacterLinesLoaderMapSource.ts`                    | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinText/getDefaultValue.ts`                                     | —                      |       |
+| `scripts/src/services/genshinText/getGameTextHash.test.ts`                                | —                      |       |
+| `scripts/src/services/genshinText/getGameTextHash.ts`                                     | —                      |       |
+| `scripts/src/services/genshinText/getGameTextLoaderMapSource.ts`                          | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/genshinText/getHighHalfWord.ts`                                     | —                      |       |
+| `scripts/src/services/genshinText/getHighWord.ts`                                         | —                      |       |
+| `scripts/src/services/genshinText/getInterfaceGameText.test.ts`                           | —                      |       |
+| `scripts/src/services/genshinText/getInterfaceGameText.ts`                                | —                      |       |
+| `scripts/src/services/genshinText/getKind.ts`                                             | —                      |       |
+| `scripts/src/services/genshinText/getLowHalfWord.ts`                                      | —                      |       |
+| `scripts/src/services/genshinText/getLowWord.ts`                                          | —                      |       |
+| `scripts/src/services/genshinText/getPersonaModuleSource.test.ts`                         | —                      |       |
+| `scripts/src/services/genshinText/getPersonaModuleSource.ts`                              | —                      |       |
+| `scripts/src/services/genshinText/getPlainGameText.test.ts`                               | —                      |       |
+| `scripts/src/services/genshinText/getPlainGameText.ts`                                    | —                      |       |
+| `scripts/src/services/genshinText/getTalkTextIds.ts`                                      | —                      |       |
+| `scripts/src/services/genshinText/getVoiceLines.ts`                                       | —                      |       |
+| `scripts/src/services/genshinText/checkHasCondition.ts`                                   | —                      |       |
+| `scripts/src/services/genshinText/listCarriedQuestBinaryFiles.ts`                         | —                      |       |
+| `scripts/src/services/genshinText/listDumpFiles.ts`                                       | —                      |       |
+| `scripts/src/services/genshinText/listHeldBinaryFiles.ts`                                 | —                      |       |
+| `scripts/src/services/genshinText/listRemoteDirectory.ts`                                 | —                      |       |
+| `scripts/src/services/genshinText/mapNpcStandingTalkIds.test.ts`                          | —                      |       |
+| `scripts/src/services/genshinText/mapNpcStandingTalkIds.ts`                               | —                      |       |
+| `scripts/src/services/genshinText/mix64.ts`                                               | —                      |       |
+| `scripts/src/services/genshinText/readCarriedMainQuestId.ts`                              | —                      |       |
+| `scripts/src/services/genshinText/readCarriedQuestBinaryPaths.test.ts`                    | —                      |       |
+| `scripts/src/services/genshinText/readCarriedQuestBinaryPaths.ts`                         | —                      |       |
+| `scripts/src/services/genshinText/readCarriedQuestRewards.ts`                             | —                      |       |
+| `scripts/src/services/genshinText/readDialogTable.ts`                                     | —                      |       |
+| `scripts/src/services/genshinText/readExcelTable.ts`                                      | —                      |       |
+| `scripts/src/services/genshinText/readGitHubHeaders.test.ts`                              | —                      |       |
+| `scripts/src/services/genshinText/readGitHubHeaders.ts`                                   | —                      |       |
+| `scripts/src/services/genshinText/readGivingObjectives.ts`                                | —                      |       |
+| `scripts/src/services/genshinText/readManualTextMap.ts`                                   | —                      |       |
+| `scripts/src/services/genshinText/readNameTextIds.ts`                                     | —                      |       |
+| `scripts/src/services/genshinText/readOpeningParentQuestIds.test.ts`                      | —                      |       |
+| `scripts/src/services/genshinText/readOpeningParentQuestIds.ts`                           | —                      |       |
+| `scripts/src/services/genshinText/readParentQuestIds.test.ts`                             | —                      |       |
+| `scripts/src/services/genshinText/readParentQuestIds.ts`                                  | —                      |       |
+| `scripts/src/services/genshinText/readQuestBanType.ts`                                    | —                      |       |
+| `scripts/src/services/genshinText/readQuestConditions.ts`                                 | —                      |       |
+| `scripts/src/services/genshinText/readQuestGuideNpcId.ts`                                 | —                      |       |
+| `scripts/src/services/genshinText/readQuestMaps.ts`                                       | —                      |       |
+| `scripts/src/services/genshinText/readQuestSteps.test.ts`                                 | —                      |       |
+| `scripts/src/services/genshinText/readQuestSteps.ts`                                      | —                      |       |
+| `scripts/src/services/genshinText/readReputationRequestQuest.test.ts`                     | —                      |       |
+| `scripts/src/services/genshinText/readReputationRequestQuest.ts`                          | —                      |       |
+| `scripts/src/services/genshinText/readSdkText.ts`                                         | —                      |       |
+| `scripts/src/services/genshinText/readTalk.test.ts`                                       | —                      |       |
+| `scripts/src/services/genshinText/readTalk.ts`                                            | —                      |       |
+| `scripts/src/services/genshinText/readTalkConfigs.ts`                                     | —                      |       |
+| `scripts/src/services/genshinText/readTalkTables.ts`                                      | —                      |       |
+| `scripts/src/services/genshinText/readTextMap.ts`                                         | —                      |       |
+| `scripts/src/services/genshinText/readTitleQuestIds.test.ts`                              | —                      |       |
+| `scripts/src/services/genshinText/readTitleQuestIds.ts`                                   | —                      |       |
+| `scripts/src/services/genshinText/readVoiceLineFetters.ts`                                | —                      |       |
+| `scripts/src/services/genshinText/renameDumpKeys.test.ts`                                 | —                      |       |
+| `scripts/src/services/genshinText/renameDumpKeys.ts`                                      | —                      |       |
+| `scripts/src/services/genshinText/rotateLeft.ts`                                          | —                      |       |
+| `scripts/src/services/genshinText/selectDumpFiles.test.ts`                                | —                      |       |
+| `scripts/src/services/genshinText/selectDumpFiles.ts`                                     | —                      |       |
+| `scripts/src/services/genshinText/skipWordlessTalkLines.test.ts`                          | —                      |       |
+| `scripts/src/services/genshinText/skipWordlessTalkLines.ts`                               | —                      |       |
+| `scripts/src/services/genshinText/toConstObject.ts`                                       | —                      |       |
+| `scripts/src/services/genshinText/toDataFileKey.ts`                                       | —                      |       |
+| `scripts/src/services/genshinText/toQuestChapter.test.ts`                                 | —                      |       |
+| `scripts/src/services/genshinText/toQuestChapter.ts`                                      | —                      |       |
+| `scripts/src/services/genshinText/toQuestRewardItems.test.ts`                             | —                      |       |
+| `scripts/src/services/genshinText/toQuestRewardItems.ts`                                  | —                      |       |
+| `scripts/src/services/genshinText/walkJsonFiles.ts`                                       | —                      |       |
+| `scripts/src/services/genshinText/writeGameText.test.ts`                                  | —                      |       |
+| `scripts/src/services/genshinText/writeGameText.ts`                                       | —                      |       |
+| `scripts/src/services/identifiers`                                                        | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/jev`                                                                | —                      |       |
+| `scripts/src/services/machine`                                                            | —                      |       |
+| `scripts/src/services/openspec`                                                           | —                      |       |
+| `scripts/src/services/outdatedDependencies/distTag`                                       | —                      |       |
+| `scripts/src/services/outdatedDependencies/docker`                                        | —                      |       |
+| `scripts/src/services/outdatedDependencies/getDependencyType.test.ts`                     | —                      |       |
+| `scripts/src/services/outdatedDependencies/getDependencyType.ts`                          | —                      |       |
+| `scripts/src/services/outdatedDependencies/getMismatches.test.ts`                         | —                      |       |
+| `scripts/src/services/outdatedDependencies/getMismatches.ts`                              | —                      |       |
+| `scripts/src/services/outdatedDependencies/getRegistryPackageName.ts`                     | —                      |       |
+| `scripts/src/services/outdatedDependencies/getSpecifierBase.test.ts`                      | —                      |       |
+| `scripts/src/services/outdatedDependencies/getSpecifierBase.ts`                           | —                      |       |
+| `scripts/src/services/outdatedDependencies/getVersionChangeLevel.test.ts`                 | —                      |       |
+| `scripts/src/services/outdatedDependencies/getVersionChangeLevel.ts`                      | —                      |       |
+| `scripts/src/services/outdatedDependencies/githubActions`                                 | —                      |       |
+| `scripts/src/services/outdatedDependencies/lock`                                          | —                      |       |
+| `scripts/src/services/outdatedDependencies/manifest`                                      | —                      |       |
+| `scripts/src/services/outdatedDependencies/npm`                                           | —                      |       |
+| `scripts/src/services/outdatedDependencies/parseAliasSpecifier.test.ts`                   | —                      |       |
+| `scripts/src/services/outdatedDependencies/parseAliasSpecifier.ts`                        | —                      |       |
+| `scripts/src/services/outdatedDependencies/pnpm`                                          | —                      |       |
+| `scripts/src/services/outdatedDependencies/print`                                         | —                      |       |
+| `scripts/src/services/outdatedDependencies/reference`                                     | —                      |       |
+| `scripts/src/services/outdatedDependencies/registry`                                      | —                      |       |
+| `scripts/src/services/outdatedDependencies/renovate`                                      | —                      |       |
+| `scripts/src/services/outdatedDependencies/tag`                                           | —                      |       |
+| `scripts/src/services/outdatedDependencies/workspace`                                     | —                      |       |
+| `scripts/src/services/oxlint/comments`                                                    | —                      |       |
+| `scripts/src/services/oxlint/errorAlert`                                                  | —                      |       |
+| `scripts/src/services/oxlint/errorHandling`                                               | —                      |       |
+| `scripts/src/services/oxlint/literalUnion`                                                | —                      |       |
+| `scripts/src/services/oxlint/naming`                                                      | —                      |       |
+| `scripts/src/services/oxlint/passThroughHelper`                                           | —                      |       |
+| `scripts/src/services/oxlint/persistThenNotify`                                           | —                      |       |
+| `scripts/src/services/oxlint/piniaStore`                                                  | —                      |       |
+| `scripts/src/services/oxlint/propsInterface`                                              | —                      |       |
+| `scripts/src/services/oxlint/routing`                                                     | —                      |       |
+| `scripts/src/services/oxlint/setupScope`                                                  | —                      |       |
+| `scripts/src/services/oxlint/shared`                                                      | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/oxlint/templateRef`                                                 | —                      |       |
+| `scripts/src/services/oxlint/testValues`                                                  | —                      |       |
+| `scripts/src/services/oxlint/testing`                                                     | —                      |       |
+| `scripts/src/services/oxlint/trpcProcedure`                                               | —                      |       |
+| `scripts/src/services/package`                                                            | —                      |       |
+| `scripts/src/services/producerStamp`                                                      | —                      |       |
+| `scripts/src/services/proposals`                                                          | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/recreation/animeStudio`                                             | —                      |       |
+| `scripts/src/services/recreation/commands`                                                | —                      |       |
+| `scripts/src/services/recreation/image`                                                   | —                      |       |
+| `scripts/src/services/recreation/lua`                                                     | —                      |       |
+| `scripts/src/services/recreation/signal`                                                  | —                      |       |
+| `scripts/src/services/recreation/solve`                                                   | —                      |       |
+| `scripts/src/services/recreation/statistics`                                              | —                      |       |
+| `scripts/src/services/recreation/video`                                                   | —                      |       |
+| `scripts/src/services/resume`                                                             | —                      |       |
+| `scripts/src/services/review/checkIsBacklogOwed.ts`                                       | —                      |       |
+| `scripts/src/services/review/checkIsExcludedPath.test.ts`                                 | —                      |       |
+| `scripts/src/services/review/checkIsExcludedPath.ts`                                      | —                      |       |
+| `scripts/src/services/review/checkIsHeldByLiveRun.test.ts`                                | —                      |       |
+| `scripts/src/services/review/checkIsHeldByLiveRun.ts`                                     | —                      |       |
+| `scripts/src/services/review/checkIsSettlementComplete.ts`                                | —                      |       |
+| `scripts/src/services/review/checkIsUnreadableDiff.test.ts`                               | —                      |       |
+| `scripts/src/services/review/checkIsUnreadableDiff.ts`                                    | —                      |       |
+| `scripts/src/services/review/constants.ts`                                                | —                      |       |
+| `scripts/src/services/review/cutBatchDiff.test.ts`                                        | —                      |       |
+| `scripts/src/services/review/cutBatchDiff.ts`                                             | —                      |       |
+| `scripts/src/services/review/dispatchReview.ts`                                           | —                      |       |
+| `scripts/src/services/review/formatReviewWindow.ts`                                       | —                      |       |
+| `scripts/src/services/review/getFixJobName.ts`                                            | —                      |       |
+| `scripts/src/services/review/getFixerPrompt.ts`                                           | —                      |       |
+| `scripts/src/services/review/getLastJsonObject.test.ts`                                   | —                      |       |
+| `scripts/src/services/review/getLastJsonObject.ts`                                        | —                      |       |
+| `scripts/src/services/review/getNewlyPassedWindowIndices.test.ts`                         | —                      |       |
+| `scripts/src/services/review/getNewlyPassedWindowIndices.ts`                              | —                      |       |
+| `scripts/src/services/review/getPassedWindowCount.test.ts`                                | —                      |       |
+| `scripts/src/services/review/getPassedWindowCount.ts`                                     | —                      |       |
+| `scripts/src/services/review/getReviewWindowStatus.ts`                                    | —                      |       |
+| `scripts/src/services/review/getReviewerPrompt.ts`                                        | —                      |       |
+| `scripts/src/services/review/getRunJobs.ts`                                               | —                      |       |
+| `scripts/src/services/review/getSessionFailure.test.ts`                                   | —                      |       |
+| `scripts/src/services/review/getSessionFailure.ts`                                        | —                      |       |
+| `scripts/src/services/review/getSettlerPrompt.ts`                                         | —                      |       |
+| `scripts/src/services/review/getWindowCommitCount.test.ts`                                | —                      |       |
+| `scripts/src/services/review/getWindowCommitCount.ts`                                     | —                      |       |
+| `scripts/src/services/review/git`                                                         | —                      |       |
+| `scripts/src/services/review/globToRegex.test.ts`                                         | —                      |       |
+| `scripts/src/services/review/globToRegex.ts`                                              | —                      |       |
+| `scripts/src/services/review/issues`                                                      | —                      |       |
+| `scripts/src/services/review/listReviewIssues.ts`                                         | —                      |       |
+| `scripts/src/services/review/packBatches.test.ts`                                         | —                      |       |
+| `scripts/src/services/review/packBatches.ts`                                              | —                      |       |
+| `scripts/src/services/review/parseReviewAnswer.test.ts`                                   | —                      |       |
+| `scripts/src/services/review/parseReviewAnswer.ts`                                        | —                      |       |
+| `scripts/src/services/review/readBatchDiff.ts`                                            | —                      |       |
+| `scripts/src/services/review/readCommitFiles.ts`                                          | —                      |       |
+| `scripts/src/services/review/readOwedShas.test.ts`                                        | —                      |       |
+| `scripts/src/services/review/readOwedShas.ts`                                             | —                      |       |
+| `scripts/src/services/review/readRangeDiff.ts`                                            | —                      |       |
+| `scripts/src/services/review/readReviewFiles.ts`                                          | —                      |       |
+| `scripts/src/services/review/readReviewIssueFindings.ts`                                  | —                      |       |
+| `scripts/src/services/review/readReviewWindows.ts`                                        | —                      |       |
+| `scripts/src/services/review/resolveDispositions.test.ts`                                 | —                      |       |
+| `scripts/src/services/review/resolveDispositions.ts`                                      | —                      |       |
+| `scripts/src/services/review/reviewBatch.ts`                                              | —                      |       |
+| `scripts/src/services/review/reviewWindows.ts`                                            | —                      |       |
+| `scripts/src/services/review/runFixer.ts`                                                 | —                      |       |
+| `scripts/src/services/review/runReview.ts`                                                | —                      |       |
+| `scripts/src/services/review/runReviewFix.ts`                                             | —                      |       |
+| `scripts/src/services/review/runReviewSettle.ts`                                          | —                      |       |
+| `scripts/src/services/review/runSession.ts`                                               | —                      |       |
+| `scripts/src/services/review/runSettler.ts`                                               | —                      |       |
+| `scripts/src/services/review/splitRangeDiff.test.ts`                                      | —                      |       |
+| `scripts/src/services/review/splitRangeDiff.ts`                                           | —                      |       |
+| `scripts/src/services/review/splitReviewCommits.test.ts`                                  | —                      |       |
+| `scripts/src/services/review/splitReviewCommits.ts`                                       | —                      |       |
+| `scripts/src/services/review/writeFixIssues.ts`                                           | —                      |       |
+| `scripts/src/services/review/writeReviewIssueFindings.ts`                                 | —                      |       |
+| `scripts/src/services/review/writeReviewSummary.ts`                                       | —                      |       |
+| `scripts/src/services/semver`                                                             | —                      |       |
+| `scripts/src/services/shared/at.ts`                                                       | —                      |       |
+| `scripts/src/services/shared/blurMasked.ts`                                               | —                      |       |
+| `scripts/src/services/shared/checkIsAncestor.ts`                                          | —                      |       |
+| `scripts/src/services/shared/checkIsGitHubNumber.ts`                                      | —                      |       |
+| `scripts/src/services/shared/checkIsInstant.ts`                                           | —                      |       |
+| `scripts/src/services/shared/checkIsNotFound.ts`                                          | —                      |       |
+| `scripts/src/services/shared/checkIsProcessRunning.test.ts`                               | —                      |       |
+| `scripts/src/services/shared/checkIsProcessRunning.ts`                                    | —                      |       |
+| `scripts/src/services/shared/compareVersionBase.test.ts`                                  | —                      |       |
+| `scripts/src/services/shared/compareVersionBase.ts`                                       | —                      |       |
+| `scripts/src/services/shared/computeDetailStatistics.ts`                                  | —                      |       |
+| `scripts/src/services/shared/computeSymmetricEigen.ts`                                    | —                      |       |
+| `scripts/src/services/shared/constants.test.ts`                                           | —                      |       |
+| `scripts/src/services/shared/constants.ts`                                                | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/shared/fetchJson.ts`                                                | —                      |       |
+| `scripts/src/services/shared/fetchOk.ts`                                                  | —                      |       |
+| `scripts/src/services/shared/fetchRegistry.ts`                                            | —                      |       |
+| `scripts/src/services/shared/findExecutable.ts`                                           | —                      |       |
+| `scripts/src/services/shared/findRepositoryRoot.ts`                                       | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/shared/fixtureConstants.test.ts`                                    | —                      |       |
+| `scripts/src/services/shared/forEachConcurrently.ts`                                      | —                      |       |
+| `scripts/src/services/shared/formatAge.test.ts`                                           | —                      |       |
+| `scripts/src/services/shared/formatAge.ts`                                                | —                      |       |
+| `scripts/src/services/shared/getGitEnv.ts`                                                | —                      |       |
+| `scripts/src/services/shared/getGitRecords.ts`                                            | —                      |       |
+| `scripts/src/services/shared/getNonEmptyLines.ts`                                         | —                      |       |
+| `scripts/src/services/shared/getPackageJsonPaths.ts`                                      | —                      |       |
+| `scripts/src/services/shared/getPercentile.test.ts`                                       | —                      |       |
+| `scripts/src/services/shared/getPercentile.ts`                                            | —                      |       |
+| `scripts/src/services/shared/getVersionParts.test.ts`                                     | —                      |       |
+| `scripts/src/services/shared/getVersionParts.ts`                                          | —                      |       |
+| `scripts/src/services/shared/installPinnedTool.ts`                                        | —                      |       |
+| `scripts/src/services/shared/mapCollectingFailures.test.ts`                               | —                      |       |
+| `scripts/src/services/shared/mapCollectingFailures.ts`                                    | —                      |       |
+| `scripts/src/services/shared/parseMachineJson.ts`                                         | —                      |       |
+| `scripts/src/services/shared/parseNames.test.ts`                                          | —                      |       |
+| `scripts/src/services/shared/parseNames.ts`                                               | —                      |       |
+| `scripts/src/services/shared/parseNumbers.test.ts`                                        | —                      |       |
+| `scripts/src/services/shared/parseNumbers.ts`                                             | —                      |       |
+| `scripts/src/services/shared/publishFile.test.ts`                                         | —                      |       |
+| `scripts/src/services/shared/publishFile.ts`                                              | —                      |       |
+| `scripts/src/services/shared/readCrlfStoredPaths.ts`                                      | —                      |       |
+| `scripts/src/services/shared/readDeletedPaths.test.ts`                                    | —                      |       |
+| `scripts/src/services/shared/readDeletedPaths.ts`                                         | —                      |       |
+| `scripts/src/services/shared/readLatestVersion.ts`                                        | —                      |       |
+| `scripts/src/services/shared/readManifestFiles.ts`                                        | —                      |       |
+| `scripts/src/services/shared/readNuxtModulePackagePaths.ts`                               | —                      |       |
+| `scripts/src/services/shared/readWorkspacePackageDirectories.ts`                          | —                      |       |
+| `scripts/src/services/shared/readWorkspacePackages.ts`                                    | —                      |       |
+| `scripts/src/services/shared/resolvePinnedTool.ts`                                        | —                      |       |
+| `scripts/src/services/shared/runGh.ts`                                                    | —                      |       |
+| `scripts/src/services/shared/runGit.test.ts`                                              | —                      |       |
+| `scripts/src/services/shared/runGit.ts`                                                   | —                      |       |
+| `scripts/src/services/shared/set.ts`                                                      | —                      |       |
+| `scripts/src/services/shared/setupFixtureRepository.test.ts`                              | —                      |       |
+| `scripts/src/services/shared/spawnNuxtModuleEntryLoad.ts`                                 | —                      |       |
+| `scripts/src/services/shared/spawnPnpm.ts`                                                | —                      |       |
+| `scripts/src/services/shared/stripToFixedPoint.test.ts`                                   | —                      |       |
+| `scripts/src/services/shared/stripToFixedPoint.ts`                                        | —                      |       |
+| `scripts/src/services/shared/throwCollectedFailures.ts`                                   | —                      |       |
+| `scripts/src/services/shared/toByte.ts`                                                   | —                      |       |
+| `scripts/src/services/shared/toF.ts`                                                      | —                      |       |
+| `scripts/src/services/shared/toLab.ts`                                                    | —                      |       |
+| `scripts/src/services/shared/toLinear.ts`                                                 | —                      |       |
+| `scripts/src/services/shared/toSrgb.ts`                                                   | —                      |       |
+| `scripts/src/services/shared/toXyz.ts`                                                    | —                      |       |
+| `scripts/src/services/shared/writeCacheFile.test.ts`                                      | —                      |       |
+| `scripts/src/services/shared/writeCacheFile.ts`                                           | —                      |       |
+| `scripts/src/services/shared/writeJsonFile.test.ts`                                       | —                      |       |
+| `scripts/src/services/shared/writeJsonFile.ts`                                            | —                      |       |
+| `scripts/src/services/skills`                                                             | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/sweeps/constantScope`                                               | —                      |       |
+| `scripts/src/services/sweeps/constants.ts`                                                | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/sweeps/controlCharacters`                                           | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/sweeps/duplicateCode`                                               | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/sweeps/duplicateProse`                                              | —                      |       |
+| `scripts/src/services/sweeps/fileOrganization`                                            | —                      |       |
+| `scripts/src/services/sweeps/gcsimLinks`                                                  | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/sweeps/getDescendants.ts`                                           | —                      |       |
+| `scripts/src/services/sweeps/ledgerCoverage`                                              | —                      |       |
+| `scripts/src/services/sweeps/readSweepFilePaths.bench.json`                               | —                      |       |
+| `scripts/src/services/sweeps/readSweepFilePaths.bench.md`                                 | —                      |       |
+| `scripts/src/services/sweeps/readSweepFilePaths.bench.ts`                                 | —                      |       |
+| `scripts/src/services/sweeps/readSweepFilePaths.ts`                                       | —                      |       |
+| `scripts/src/services/sweeps/readVendoredSkillNames.ts`                                   | —                      |       |
+| `scripts/src/services/sweeps/repeatedListItems`                                           | —                      |       |
+| `scripts/src/services/sweeps/runOnBullets`                                                | —                      |       |
+| `scripts/src/services/sweeps/sharedExportConsumers`                                       | —                      |       |
+| `scripts/src/services/sweeps/skillDocs`                                                   | —                      |       |
+| `scripts/src/services/sweeps/staleNames`                                                  | —                      |       |
+| `scripts/src/services/sweeps/todos`                                                       | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/sweeps/unterminatedResults`                                         | —                      |       |
+| `scripts/src/services/timing`                                                             | —                      |       |
+| `scripts/src/services/triage`                                                             | —                      |       |
+| `scripts/src/services/updateNode`                                                         | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/services/usage`                                                              | —                      |       |
+| `scripts/src/services/voiceMatch`                                                         | —                      |       |
+| `scripts/src/services/workspace`                                                          | —                      |       |
+| `scripts/src/services/worktree`                                                           | —                      |       |
+| `scripts/src/skills`                                                                      | —                      |       |
+| `scripts/src/sweeps`                                                                      | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/triage`                                                                      | —                      |       |
+| `scripts/src/updateNode`                                                                  | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/usage`                                                                       | —                      |       |
+| `scripts/src/voiceMatch`                                                                  | —                      |       |
+| `scripts/src/workspace`                                                                   | 2026-10-25 · Haiku 5.5 |       |
+| `scripts/src/worktree`                                                                    | —                      |       |
