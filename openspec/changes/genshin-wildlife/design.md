@@ -1,6 +1,6 @@
 # Wildlife
 
-The game's world is lived in by animals: birds that scatter, boars that charge, crystalflies to catch and cats on the roofs. They give the meat, fowl and materials cooking and crafting spend, and fill in the archive's living beings. They are a kind of [enemies](../../specs/genshin/enemies/design.md)' camp with an AI of their own, standing where the [spawned places](../genshin-spawned-places/design.md) fit them. The fleeing birds and beasts of Mondstadt are built, as the [as-built page](../../specs/genshin/wildlife/design.md) describes; what follows is what is still to come.
+The game's world is lived in by animals: birds that scatter, boars that charge, crystalflies to catch and cats on the roofs. They give the meat, fowl and materials cooking and crafting spend, and fill in the archive's living beings. They are a kind of [enemies](../../specs/genshin/enemies/design.md)' camp with an AI of their own, standing where the [spawned places](../genshin-spawned-places/design.md) fit them. The fleeing birds and beasts of Mondstadt are built, as the [as-built page](../../specs/genshin/wildlife/design.md) describes; the parts still to come are marked in the order below.
 
 ## Decisions
 
@@ -34,7 +34,7 @@ stateDiagram-v2
 
 ## Scope and order
 
-**Still to come, in order:**
+**The new files, then the order, with what is built:**
 
 ```text
 packages/genshin-world/src/services/wildlife/
@@ -42,13 +42,13 @@ packages/genshin-world/src/services/wildlife/
 └── WildlifeKindDropMap.ts
 ```
 
-1. **What a struck bird or beast gives.**
+1. **What a struck bird or beast gives.** Built.
    - `WildlifeKindDropMap.ts`: each `WildlifeKind` to its `DroppedItem`, as the Decisions give them.
    - `WildlifeState` gains `Struck`, and `strikeWildlife.ts` sets an animal not yet struck to it and returns its drop, or nothing for one already struck; `stepWildlife` leaves a struck animal where it fell.
    - Tests: `strikeWildlife.test.ts` (a Crimson Fox gives two Raw Meat once, and nothing when struck again) and a case in `stepWildlife.test.ts` (a struck animal in reach does not flee).
-2. **The strike reaching the animals.** The animals move from `components/World/Wildlife/Index.vue`'s own list into the session's combat, beside `useWorldCombat`'s `enemyMap`, so the strike loop in `services/kit/strikeKitEnemies.ts` tests each against `checkIsInAttackArea` as it does an enemy and calls `strikeWildlife`, dropping what it gives as an enemy's drops are; the Wildlife component steps and draws the list it is given, as the Enemies component does, and skips a struck one.
-3. **Material sources, picked up.**
-4. **Boars, and the wildlife that fights back.**
+2. **The strike reaching the animals.** Built: the strike loop calls `strikeKitWildlife` (`services/kit/strikeKitEnemies.ts`). The animals move from `components/World/Wildlife/Index.vue`'s own list into the session's combat, beside `useWorldCombat`'s `enemyMap`, so the strike loop in `services/kit/strikeKitEnemies.ts` tests each against `checkIsInAttackArea` as it does an enemy and calls `strikeWildlife`, dropping what it gives as an enemy's drops are; the Wildlife component steps and draws the list it is given, as the Enemies component does, and skips a struck one.
+3. **Material sources, picked up.** Built: `pickUpMaterialSource` is called from `useWorldPickups`.
+4. **Boars, and the wildlife that fights back.** Boars are built (`chargePartyMember`, called from `useWorldCombat`); the fighting back waits on Sumeru's region.
 5. **Pets**, deferred until the map carries their labels (see the Decisions), and each region's own animals when its region lands.
 
 ## Data and measures

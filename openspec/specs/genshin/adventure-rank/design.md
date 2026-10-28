@@ -72,7 +72,7 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 
 ## Still open
 
-- [ ] **Adventure EXP from the sources not built** — no source yet: the sources' own pages, which add their EXP through `gainWorldAdventureExp`, the composable's gain, which takes the completed main quests along; until a page calls it, its EXP is not gained.
+- [ ] **Adventure EXP from the sources not built** — no source yet: the sources' own pages, which add their EXP through `gainWorldAdventureExp`, the composable's gain, which takes the completed main quests along. The chests, the map's rewards, the offerings, the statues and the trounce blossoms call it (`packages/genshin-world/src/composables/useWorldAdventureRank.ts`); a source whose page does not call it gives no EXP.
 - [ ] **The Paimon menu's rank gates for systems not built** — no source yet: the wiki's Game System Unlocks page, which is not on disk and gives the rank each system not built opens at; its page takes those ranks in `ScreenKindOpenRankMap`, and an entry whose system is not built stays disabled.
 - [ ] **Friends opens at Adventure Rank 2** — no source yet: an open-state row naming Friends at rank 2; the rank-2 rows (ids 30, 37 and 2101 of `{data-root}/genshin-parity/text/ExcelBinOutput/OpenStateConfigData.json`) gate player level 2 and name no system.
 - [ ] **EXP past rank 60 pays ten Mora for each point** — no source yet: a game source for the rate, since the game's text converts the EXP to Mora (text 365981086) with no rate and the wiki's Adventure Rank page is not in the cache; the code applies it (`packages/genshin-world/src/services/adventureRank/gainAdventureExp.ts`).

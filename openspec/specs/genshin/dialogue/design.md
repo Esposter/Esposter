@@ -101,18 +101,18 @@ The five are judged over their clean plate, the reference frame with its scored 
 
 | Reference                  | Plate, component blurred | Plate, softened shot | Bare render |
 | :------------------------- | :----------------------- | :------------------- | :---------- |
-| `dialogue-choices-line`    | 8.66%, FLIP 0.2807       | 9.22%, FLIP 0.2912   | 9.64%       |
-| `dialogue-choices-replies` | 15.08%, FLIP 0.4770      | 14.34%, FLIP 0.4678  | 17.80%      |
-| `dialogue-choices-speaker` | 8.38%, FLIP 0.3228       | 7.79%, FLIP 0.3167   | 12.60%      |
-| `dialogue-line`            | 10.47%, FLIP 0.3740      | 10.80%, FLIP 0.3844  | 11.65%      |
-| `dialogue-paimon-line`     | 9.73%, FLIP 0.3121       | 9.98%, FLIP 0.3151   | 11.86%      |
+| `dialogue-choices-line`    | 8.66%, FLIP 0.2807       | 8.99%, FLIP 0.2757   | 9.64%       |
+| `dialogue-choices-replies` | 15.08%, FLIP 0.4770      | 14.36%, FLIP 0.4588  | 17.80%      |
+| `dialogue-choices-speaker` | 8.38%, FLIP 0.3228       | 7.83%, FLIP 0.3161   | 12.60%      |
+| `dialogue-line`            | 10.47%, FLIP 0.3740      | 10.56%, FLIP 0.3701  | 11.65%      |
+| `dialogue-paimon-line`     | 9.73%, FLIP 0.3121       | 10.24%, FLIP 0.3025   | 11.86%      |
 
-The softened column is each reference's row in the parity snapshot (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`), except `dialogue-choices-replies`, which the snapshot holds at 14.36% and FLIP 0.4588 (open below).
+The softened column is each reference's row in the parity snapshot (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`).
 
-Every state beats its bare render, by 0.4 to 4.8 points, which is not yet the roadmap's 2% bar. What moved each figure:
+Every state beats its bare render, by 0.65 to 4.77 points, which is not yet the roadmap's 2% bar. What moved each figure:
 
 - **Position.** The line's first ascender lands on the reference's row, 591 of 720 for Sara's lines. The speaker's role line, `Waitress, Good Hunter`, sits between the name and the line and is drawn from the talk line's `speakerRoleTextId`. Paimon's line has no role, so its line sits a role's height higher, as the frame shows: scored at the role's place it was 21.93%, and at the frame's place 9.73%. The margin under the name is 13.5 units (`packages/genshin-interface/src/components/DialogueScreen/Index.vue`), so the line sits 30 units under the name with a role and 13.5 without.
-- **Size and letter spacing.** The line is 26 units with 2.3 units of letter spacing (`packages/genshin-interface/src/components/DialogueScreen/Index.vue`), where it was 32 units. Its x-height and ascender then match the recording's, and its width matches within four pixels.
+- **Size and letter spacing.** The line is 26 units with 2.35 units of letter spacing (`packages/genshin-interface/src/components/DialogueScreen/Index.vue`), where it was 32 units. Its x-height and ascender then match the recording's, and its width matches within four pixels.
 - **Softness.** The recording is soft and the game's face is not Signika, so a glyph a pixel off its place scores twice. The component is drawn crisp, and the comparison blurs our shot by the recording's own measured blur (`{data-root}/genshin-parity/captures/yt-nWBqOXWZuFg.mp4`, sigma 0.641, see the toolbox's Softness). A component blurred to the recording scored `dialogue-line` 0.33 points better (10.47%), but that blur is the video's and not the game's, so it is not shipped.
 - **Colour.** The line stays white, the recording's peak. A paler white scored lower only by making up for the blur, so it was refused.
 - **Band.** The band's gradient stays removed. Restored at 0.3 and 0.5, it scored worse on the three line states and on Paimon's line (`dialogue-line` 11.96% and 13.61%), and better only on the speaker.
@@ -180,7 +180,6 @@ The reveal is timed off three lines of `{data-root}/genshin-parity/captures/yt-9
 
 - [ ] **The reveal is 30 milliseconds a character, at the PlayStation client's rate** — no source yet: the recording's character timing (1.79 to 1.81 frames a character at 60 frames a second, in `{data-root}/genshin-parity/captures/yt-9I7XyJ2Z5RI-dialogue-npc-60.mp4`) was not re-measured here.
 - [ ] **The blurred-plate and bare-render columns of the Parity table** — no source yet: the parity snapshot holds only the softened column, and no run of the blurred or bare-render shots is committed.
-- [ ] **`dialogue-choices-replies` at 14.34% and FLIP 0.4678 on the softened shot** — contradicted by `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`: it holds 14.36% and FLIP 0.4588 for this reference.
 - [ ] **The Parity trials for the line's place, the band's gradient and the pill's nudge** — no source yet: no committed run of these trials sits beside the snapshot.
 - [ ] **The recording's blur is sigma 0.641** — no source yet: the softness measure of `{data-root}/genshin-parity/captures/yt-nWBqOXWZuFg.mp4` is not committed.
 - [ ] **The reply pill is 0.22 of black, the best of 0.15 to 0.45** — no source yet: `packages/genshin-interface/src/components/DialogueScreen/Index.vue` holds no 0.22 darkness, and the sweep is not committed.
@@ -192,5 +191,5 @@ The reveal is timed off three lines of `{data-root}/genshin-parity/captures/yt-9
 - [ ] **F and Space are the game's Pick Up/Interact and Jump keys** — no source yet: the wiki's Controls page, named in Sources, is not in the wiki cache.
 - [ ] **A reply's speaker is the Traveler, named with the game's own title for them** — no source yet: the wiki's NPC page, named in Sources, is not in the wiki cache, and the game's title for the Traveler is not yet looked up in `{data-root}/genshin-parity/text/TextMap/TextMapEN.json`.
 - [ ] **The margin under the name is 13.5 units, so the line sits 30 units under the name with a role and 13.5 without** — no source yet: the dialogue recording named in Sources (`nWBqOXWZuFg`), not yet measured for the margin.
-- [ ] **The line is 26 units with 2.3 units of letter spacing, and its x-height, ascender and width match the recording's** — no source yet: the dialogue recording named in Sources (`nWBqOXWZuFg`), not yet measured for the line's size and spacing.
+- [ ] **The line is 26 units with 2.35 units of letter spacing, and its x-height, ascender and width match the recording's** — no source yet: the dialogue recording named in Sources (`nWBqOXWZuFg`), not yet measured for the line's size and spacing.
 - [ ] **The speaker's name is gold `#ffc700`, and the replies are dark pills 45 high and 15 apart, the first at 1275 by 698 of 1920 by 1080** — no source yet: the dialogue recording named in Sources (`nWBqOXWZuFg`), not yet measured for the name's colour and the reply pills.
