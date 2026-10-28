@@ -1,4 +1,4 @@
-import type { CitingPage } from "#src/models/citations/CitingPage";
+import type { CitingPage } from "#src/models/shared/CitingPage";
 
 import { getDuplicateProse } from "#src/services/sweeps/duplicateProse/getDuplicateProse";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";

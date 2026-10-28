@@ -1,4 +1,4 @@
-import type { CitingPage } from "#src/models/citations/CitingPage";
+import type { CitingPage } from "#src/models/shared/CitingPage";
 import type { RestatedPointerFinding } from "#src/models/sweeps/duplicateProse/RestatedPointerFinding";
 
 import { checkIsPathRun } from "#src/services/sweeps/duplicateProse/checkIsPathRun";

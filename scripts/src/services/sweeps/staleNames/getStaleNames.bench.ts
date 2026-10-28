@@ -1,4 +1,4 @@
-import type { CitingPage } from "#src/models/citations/CitingPage";
+import type { CitingPage } from "#src/models/shared/CitingPage";
 
 import { getStaleNames } from "#src/services/sweeps/staleNames/getStaleNames";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";

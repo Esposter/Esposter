@@ -1,4 +1,4 @@
-import type { CitingPage } from "#src/models/citations/CitingPage";
+import type { CitingPage } from "#src/models/shared/CitingPage";
 import type { DuplicateProseFinding } from "#src/models/sweeps/duplicateProse/DuplicateProseFinding";
 
 import { checkIsOneOwner } from "#src/services/sweeps/duplicateProse/checkIsOneOwner";

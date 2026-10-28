@@ -1,4 +1,4 @@
-import type { CitingPage } from "#src/models/citations/CitingPage";
+import type { CitingPage } from "#src/models/shared/CitingPage";
 import type { StaleNameFinding } from "#src/models/sweeps/staleNames/StaleNameFinding";
 
 import { getBacktickedTokens } from "#src/services/citations/getBacktickedTokens";

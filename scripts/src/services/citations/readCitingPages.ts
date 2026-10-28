@@ -1,4 +1,4 @@
-import type { CitingPage } from "#src/models/citations/CitingPage";
+import type { CitingPage } from "#src/models/shared/CitingPage";
 
 import { getCitingText } from "#src/services/citations/getCitingText";
 import { readCitingPaths } from "#src/services/citations/readCitingPaths";
