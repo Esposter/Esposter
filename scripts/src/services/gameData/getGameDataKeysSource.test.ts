@@ -17,7 +17,7 @@ describe(getGameDataKeysSource, () => {
     expect(source).toContain(`export type GameDataKeyOf<D extends keyof typeof GameDataKeys>`);
   });
 
-  test("keeps a segment named after an Object.prototype member as a key of its own, quoting __proto__", () => {
+  test("keeps a segment named after an Object.prototype member as a key of its own, computing __proto__ so it is an own property", () => {
     expect.hasAssertions();
 
     const source = getGameDataKeysSource({
@@ -26,8 +26,7 @@ describe(getGameDataKeysSource, () => {
     });
 
     expect(source).toContain(`a: {\n    constructor: "a/constructor",\n    toString: "a/toString",\n  },`);
-    expect(source).toContain(`"__proto__": "__proto__",`);
-    expect(Object).not.toHaveProperty("self");
+    expect(source).toContain(`["__proto__"]: "__proto__",`);
   });
 
   test("reports a key whose self slot a literal self segment already holds, in either insertion order", () => {
@@ -42,12 +41,28 @@ describe(getGameDataKeysSource, () => {
         ]),
       }),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Push, name: a, is listed twice in the lock]`,
+      `[InvalidOperationError: Invalid operation: Push, name: a, shares its self slot with a segment named self in the lock]`,
     );
     expect(() =>
       getGameDataKeysSource({ indexes: {}, objects: { a: HASH, "a/self": HASH } }),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Push, name: a/self, is listed twice in the lock]`,
+      `[InvalidOperationError: Invalid operation: Push, name: a/self, shares its self slot with a segment named self in the lock]`,
+    );
+  });
+
+  test("reports a key whose self slot a literal self segment's branch holds, not as listed twice", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      getGameDataKeysSource({
+        indexes: {},
+        objects: Object.fromEntries([
+          ["a/self/x", HASH],
+          ["a", HASH],
+        ]),
+      }),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Push, name: a, shares its self slot with a segment named self in the lock]`,
     );
   });
 });

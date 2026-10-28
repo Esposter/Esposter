@@ -24,6 +24,8 @@ const descend = (node: KeyTree, segment: string): KeyTree => {
   return child;
 };
 
+// A key's own slot is `self`, so a key that is also a prefix of another key can only hold one of them.
+// Keys are unique, which leaves a literal `self` segment as the one collision: it takes the slot the prefixed key's own name needs
 const insertKey = (tree: KeyTree, key: string): void => {
   const segments = key.split("/");
   const leaf = segments.pop() ?? key;
@@ -31,13 +33,15 @@ const insertKey = (tree: KeyTree, key: string): void => {
   const entry = parent[leaf];
   if (entry === undefined) parent[leaf] = key;
   else if (typeof entry === "string" || entry.self !== undefined)
-    throw new InvalidOperationError(Operation.Push, key, "is listed twice in the lock");
+    throw new InvalidOperationError(Operation.Push, key, "shares its self slot with a segment named self in the lock");
   else entry.self = key;
 };
 
-// `__proto__` is quoted too: as a bare object-literal key it sets the prototype instead of naming a property
-const renderName = (name: string): string =>
-  IDENTIFIER_REGEX.test(name) && name !== "__proto__" ? name : JSON.stringify(name);
+// `__proto__` is a computed key: as a bare or quoted object-literal key it sets the prototype instead of naming a property
+const renderName = (name: string): string => {
+  if (name === "__proto__") return `["__proto__"]`;
+  return IDENTIFIER_REGEX.test(name) ? name : JSON.stringify(name);
+};
 
 const renderTree = (tree: KeyTree, indentation: string): string =>
   Object.entries(tree)
