@@ -15,12 +15,19 @@ The game's static datasets SHALL be stored as records each named by the hash of 
 - **THEN** no second copy is written
 - **AND** an object already present under its name is accepted as the state asked for rather than as an error
 
-#### Scenario: A rerun with unchanged data makes no request
+#### Scenario: A dry rerun with unchanged data makes no request
 
 - **GIVEN** the lock already names the hash of every record of a dataset
-- **WHEN** its builder runs again
+- **WHEN** its builder runs again as a dry run
 - **THEN** the builder reports the data as unchanged
 - **AND** no request is made to storage
+
+#### Scenario: A real rerun lists each account before it stores
+
+- **GIVEN** the lock already names the hash of every record of a dataset
+- **WHEN** its builder runs again as a real publish
+- **THEN** each account is listed
+- **AND** only the blobs an account lacks are stored
 
 ### Requirement: The published lock is the only switch to new data
 
