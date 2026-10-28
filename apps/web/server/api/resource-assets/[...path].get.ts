@@ -16,7 +16,7 @@ import { parseResourceAssetPath } from "#shared/services/resource/parseResourceA
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { generateReadSasUrl } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
-import { getResultAsync, lookup, noop } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 import { createError, defineEventHandler, getRequestIP, sendRedirect } from "nuxt/server";
 
 // Serves the stable asset urls content embeds (/api/resource-assets/{blobName}) by authorizing the caller
@@ -55,8 +55,11 @@ export default defineEventHandler(async (event) => {
     throw createError({ status: userId ? 404 : 401 });
   // No existence probe — Azure itself 404s a missing blob when the redirect is followed
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+  // The blob's content type is the uploader's and its name carries no extension, so a navigation to the asset would
+  // render whatever the uploader sent on the blob origin. An attachment downloads on navigation, and an <img> or
+  // <video> still embeds it, since those ignore Content-Disposition
   const sasUrl = await generateReadSasUrl(containerClient.getBlockBlobClient(blobName), {
-    contentType: lookup(blobName) || undefined,
+    contentDisposition: "attachment",
     expiresOn: new Date(Date.now() + RESOURCE_ASSET_SAS_DURATION_MS),
   });
   event.res.headers.set("Cache-Control", `private, max-age=${RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS}`);

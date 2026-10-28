@@ -2,6 +2,7 @@ import type { ContainerClient } from "@azure/storage-blob";
 import type { FileEntity } from "@esposter/db-schema";
 
 import { generateReadSasUrl } from "#src/services/azure/container/generateReadSasUrl";
+import { getAttachmentContentDisposition } from "#src/services/azure/container/getAttachmentContentDisposition";
 import { getFileBlobNames } from "#src/services/azure/container/getFileBlobNames";
 
 export const generateDownloadFileSasUrls = (
@@ -14,7 +15,7 @@ export const generateDownloadFileSasUrls = (
       const { blobName } = getFileBlobNames(prefix, id, filename);
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       return generateReadSasUrl(blockBlobClient, {
-        contentDisposition: `attachment; filename="${filename}"`,
+        contentDisposition: getAttachmentContentDisposition(filename),
         contentType: mimetype,
       });
     }),
