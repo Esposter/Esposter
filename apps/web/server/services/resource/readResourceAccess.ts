@@ -20,6 +20,6 @@ export const readResourceAccess = async (
   const publication = await db.query.resourcePublicationsInResource.findFirst({
     where: { resourceId: { eq: resourceId } },
   });
-  if (!publication) return { isOwned: false };
-  return { isOwned: false, publishVersion: publication.publishVersion };
+  if (publication) return { isOwned: false, publishVersion: publication.publishVersion };
+  else return { isOwned: false };
 };
