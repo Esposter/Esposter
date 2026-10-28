@@ -15,18 +15,18 @@ The single Azure-portal-like UI for every resource: one list, one resource page 
 
 ## Routes
 
-| Route                               | Page                                                | Purpose                                                                                                   |
-| ----------------------------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `/resource-explorer`                | `pages/resource-explorer/index.vue` (auth)          | Home — search + quick-create + recent resources                                                           |
-| `/resource-explorer/all`            | `pages/resource-explorer/all.vue` (auth)            | full list (all types, search)                                                                             |
-| `/resource-explorer/favorites`      | `pages/resource-explorer/favorites.vue` (auth)      | the same list over starred resources ([service menu](../resource-service-menu/design.md))                 |
-| `/resource-explorer/recents`        | `pages/resource-explorer/recents.vue` (auth)        | the same list over opened resources, newest open first                                                    |
-| `/resource-explorer/tags`           | `pages/resource-explorer/tags.vue` (auth)           | tag names + resource counts, linking into `/all` pre-filtered                                             |
-| `/resource-explorer/recycle-bin`    | `pages/resource-explorer/recycle-bin.vue` (auth)    | soft-deleted resources — restore or purge ([recycle bin](../recycle-bin/design.md))                       |
-| `/resource-explorer/create`         | `pages/resource-explorer/create/index.vue` (auth)   | create gallery — type picker (marketplace)                                                                |
-| `/resource-explorer/create/[type]`  | `pages/resource-explorer/create/[type].vue` (auth)  | per-type create form (name + initial settings) → `/resource-explorer/[id]`                                |
-| `/resource-explorer/[id]/[[blade]]` | `pages/resource-explorer/[id]/[[blade]].vue` (auth) | resource page; omitted blade = Overview; blade validated in route middleware                              |
-| `/view/[type]/[id]`                 | `pages/view/[type]/[id].vue` (public)               | published view, dispatched via `ViewComponentMap` ([publishing](../../architecture/publishing/design.md)) |
+| Route                               | Page                                                             | Purpose                                                                                                   |
+| ----------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `/resource-explorer`                | `apps/web/app/pages/resource-explorer/index.vue` (auth)          | Home — search + quick-create + recent resources                                                           |
+| `/resource-explorer/all`            | `apps/web/app/pages/resource-explorer/all.vue` (auth)            | full list (all types, search)                                                                             |
+| `/resource-explorer/favorites`      | `apps/web/app/pages/resource-explorer/favorites.vue` (auth)      | the same list over starred resources ([service menu](../resource-service-menu/design.md))                 |
+| `/resource-explorer/recents`        | `apps/web/app/pages/resource-explorer/recents.vue` (auth)        | the same list over opened resources, newest open first                                                    |
+| `/resource-explorer/tags`           | `apps/web/app/pages/resource-explorer/tags.vue` (auth)           | tag names + resource counts, linking into `/all` pre-filtered                                             |
+| `/resource-explorer/recycle-bin`    | `apps/web/app/pages/resource-explorer/recycle-bin.vue` (auth)    | soft-deleted resources — restore or purge ([recycle bin](../recycle-bin/design.md))                       |
+| `/resource-explorer/create`         | `apps/web/app/pages/resource-explorer/create/index.vue` (auth)   | create gallery — type picker (marketplace)                                                                |
+| `/resource-explorer/create/[type]`  | `apps/web/app/pages/resource-explorer/create/[type].vue` (auth)  | per-type create form (name + initial settings) → `/resource-explorer/[id]`                                |
+| `/resource-explorer/[id]/[[blade]]` | `apps/web/app/pages/resource-explorer/[id]/[[blade]].vue` (auth) | resource page; omitted blade = Overview; blade validated in route middleware                              |
+| `/view/[type]/[id]`                 | `apps/web/app/pages/view/[type]/[id].vue` (public)               | published view, dispatched via `ViewComponentMap` ([publishing](../../architecture/publishing/design.md)) |
 
 `all`, `favorites`, `recents`, `tags`, `recycle-bin` and `create` are static segments so they win over the dynamic `[id]` sibling. Blades are path segments (not query params) so they deep-link. Email invite blocks link the public respondent page via `RoutePath.View(ResourceType.Survey, id)`. The launcher's `ProductGroups` has one **Resource Explorer** entry landing on Home, rather than one entry per editor.
 
@@ -66,7 +66,7 @@ The Azure-portal landing. Not a table — a dashboard of entry points across the
 
 ## All resources — `/resource-explorer/all`
 
-`pages/resource-explorer/all.vue` renders the `resource` layout with `title="All"` above `ResourceListView` — a `UiDataTable` over `resource.readResources` (cross-type, owner, offset-paginated). `/favorites` and `/recents` are the same three lines with a different `source` prop, so everything below describes them too ([service menu](../resource-service-menu/design.md)):
+`apps/web/app/pages/resource-explorer/all.vue` renders the `resource` layout with `title="All"` above `ResourceListView` — a `UiDataTable` over `resource.readResources` (cross-type, owner, offset-paginated). `/favorites` and `/recents` are the same three lines with a different `source` prop, so everything below describes them too ([service menu](../resource-service-menu/design.md)):
 
 - Columns: favorite (the star), type (icon + label from `ResourceDefinitionMap`), name, createdAt, updatedAt, lastAccessedAt (hidden by default), and a trailing actions `⋮`. The chooser offers every column except the pinned ones — name for every source, plus the column the source is ordered by, which is what puts **Last Accessed** permanently on `/recents` (`useResourceListColumns`). Publish status is deliberately **not** a list column — it is a capability surfaced per-resource on the Overview blade and as an opt-in filter pill.
 - Toolbar (workbench only): the search across the row's width, the summary and group-by-type toggles, the column chooser, an overflow menu of Export CSV, Refresh and the recycle bin, and a **close ✕** (`closeTo` → Home) — **not** a Create button. Create lives on Home; `/all` is a layer you close back to Home.
@@ -150,26 +150,26 @@ stateDiagram-v2
 
 ## Key files
 
-| File                                                      | Role                                                                                                       |
-| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `app/pages/resource-explorer/[id]/[[blade]].vue`          | resource page shell: loads `useResourceStore`, 404-guards id + blade, clears the store on unmount          |
-| `app/layouts/resource.vue`                                | the page header: trail and storage meter, the title row, the page's tabs                                   |
-| `app/components/Resource/Explorer/Index.vue`              | the blade body — the outlet, the version history panel, and what a type mounts for the resource's lifetime |
-| `app/components/Resource/List/View.vue`                   | a `UiDataTable` over `resource.readResources` — the workbench, parameterised by `source`                   |
-| `app/components/Resource/ServiceMenu.vue`                 | the area's menu, opened from Home's `☰` as a drawer                                                       |
-| `app/components/Resource/Blade/Header.vue`                | the title row: the resource in its slot, save state, the one action, the star, the overflow and ✕          |
-| `app/services/resource/getResourceBladeDefinitions.ts`    | which blades a type has, in nav order — read by the tabs and the route guard                               |
-| `app/components/Resource/Blade/Navigation.vue`            | the blade tabs from `getResourceBladeDefinitions`                                                          |
-| `app/components/Resource/Blade/Outlet.vue`                | Overview vs inline editor vs type blade on the active slug                                                 |
-| `app/components/Resource/Overview.vue`                    | generic Overview blade (Essentials + type summary slot)                                                    |
-| `app/services/resource/ResourceBladeDefinitionMap.ts`     | type → its own blade definitions                                                                           |
-| `app/services/resource/ResourceEditorComponentMap.ts`     | type → inline Editor-blade component                                                                       |
-| `app/services/resource/ResourceDialogsComponentMap.ts`    | type → the dialogs more than one blade or a command opens                                                  |
-| `app/composables/resource/useResourceSaveSubscribable.ts` | the open resource's save subscription, run by the explorer whatever its type                               |
-| `app/services/resource/PortableFormatMap.ts`              | portable type → formats (Import/Export)                                                                    |
-| `app/services/resource/ViewComponentMap.ts`               | publishable type → public view renderer                                                                    |
-| `app/store/resource/index.ts`                             | the blade's own state — row + publication + typed content + save/capability actions                        |
-| `app/composables/resource/useResourceRouter.ts`           | a type to its own procedures, through its name — the whole client dispatch                                 |
+| File                                                               | Role                                                                                                       |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `apps/web/app/pages/resource-explorer/[id]/[[blade]].vue`          | resource page shell: loads `useResourceStore`, 404-guards id + blade, clears the store on unmount          |
+| `apps/web/app/layouts/resource.vue`                                | the page header: trail and storage meter, the title row, the page's tabs                                   |
+| `apps/web/app/components/Resource/Explorer/Index.vue`              | the blade body — the outlet, the version history panel, and what a type mounts for the resource's lifetime |
+| `apps/web/app/components/Resource/List/View.vue`                   | a `UiDataTable` over `resource.readResources` — the workbench, parameterised by `source`                   |
+| `apps/web/app/components/Resource/ServiceMenu.vue`                 | the area's menu, opened from Home's `☰` as a drawer                                                       |
+| `apps/web/app/components/Resource/Blade/Header.vue`                | the title row: the resource in its slot, save state, the one action, the star, the overflow and ✕          |
+| `apps/web/app/services/resource/getResourceBladeDefinitions.ts`    | which blades a type has, in nav order — read by the tabs and the route guard                               |
+| `apps/web/app/components/Resource/Blade/Navigation.vue`            | the blade tabs from `getResourceBladeDefinitions`                                                          |
+| `apps/web/app/components/Resource/Blade/Outlet.vue`                | Overview vs inline editor vs type blade on the active slug                                                 |
+| `apps/web/app/components/Resource/Overview.vue`                    | generic Overview blade (Essentials + type summary slot)                                                    |
+| `apps/web/app/services/resource/ResourceBladeDefinitionMap.ts`     | type → its own blade definitions                                                                           |
+| `apps/web/app/services/resource/ResourceEditorComponentMap.ts`     | type → inline Editor-blade component                                                                       |
+| `apps/web/app/services/resource/ResourceDialogsComponentMap.ts`    | type → the dialogs more than one blade or a command opens                                                  |
+| `apps/web/app/composables/resource/useResourceSaveSubscribable.ts` | the open resource's save subscription, run by the explorer whatever its type                               |
+| `apps/web/app/services/resource/PortableFormatMap.ts`              | portable type → formats (Import/Export)                                                                    |
+| `apps/web/app/services/resource/ViewComponentMap.ts`               | publishable type → public view renderer                                                                    |
+| `apps/web/app/store/resource/index.ts`                             | the blade's own state — row + publication + typed content + save/capability actions                        |
+| `apps/web/app/composables/resource/useResourceRouter.ts`           | a type to its own procedures, through its name — the whole client dispatch                                 |
 
 ## Notes
 
