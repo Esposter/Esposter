@@ -1,5 +1,5 @@
 import type { Catalogue } from "#src/models/genshinAssets/fit/Catalogue";
-import type { GroundPieceArea } from "#src/models/genshinAssets/fit/GroundPieceArea";
+import type { GroundPieceArea } from "#src/models/genshinAssets/shared/GroundPieceArea";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
 import { CATALOGUE_PATH } from "#src/services/genshinAssets/shared/constants";

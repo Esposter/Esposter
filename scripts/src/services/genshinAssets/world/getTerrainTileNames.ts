@@ -1,4 +1,4 @@
-import type { GroundPieceArea } from "#src/models/genshinAssets/fit/GroundPieceArea";
+import type { GroundPieceArea } from "#src/models/genshinAssets/shared/GroundPieceArea";
 import type { TerrainTile } from "#src/models/genshinAssets/world/TerrainTile";
 import type { WorldOrigin } from "#src/models/genshinAssets/world/WorldOrigin";
 

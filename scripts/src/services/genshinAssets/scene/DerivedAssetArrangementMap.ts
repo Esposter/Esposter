@@ -1,4 +1,4 @@
-import type { TowerPlacement } from "#src/models/genshinAssets/fit/TowerPlacement";
+import type { TowerPlacement } from "#src/models/genshinAssets/shared/TowerPlacement";
 import type { ArrangementFamily } from "#src/models/genshinAssets/scene/ArrangementFamily";
 import type { ArrangementRatio } from "#src/models/genshinAssets/scene/ArrangementRatio";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";

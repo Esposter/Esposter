@@ -1,4 +1,4 @@
-import type { TowerPlacement } from "#src/models/genshinAssets/fit/TowerPlacement";
+import type { TowerPlacement } from "#src/models/genshinAssets/shared/TowerPlacement";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 
 import { composeLatheAxisPoint } from "#src/services/genshinAssets/fit/composeLatheAxisPoint";

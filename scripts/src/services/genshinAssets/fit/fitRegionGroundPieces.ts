@@ -1,5 +1,5 @@
 import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
-import type { GroundPieceArea } from "#src/models/genshinAssets/fit/GroundPieceArea";
+import type { GroundPieceArea } from "#src/models/genshinAssets/shared/GroundPieceArea";
 import type { RegionGroundFit } from "#src/models/genshinAssets/fit/RegionGroundFit";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 

@@ -1,4 +1,4 @@
-import type { GroundPieceArea } from "#src/models/genshinAssets/fit/GroundPieceArea";
+import type { GroundPieceArea } from "#src/models/genshinAssets/shared/GroundPieceArea";
 
 import { getTerrainTileNames } from "#src/services/genshinAssets/world/getTerrainTileNames";
 import { describe, expect, test } from "vitest";
