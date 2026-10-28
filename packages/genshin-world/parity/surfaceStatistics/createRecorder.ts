@@ -8,21 +8,8 @@ import {
   SURFACE_STATISTICS_WORKGROUP_SIZE,
 } from "#parity/surfaceStatistics/constants";
 import { createParameterBuffer } from "#parity/surfaceStatistics/createParameterBuffer";
+import { getParameters } from "#parity/surfaceStatistics/getParameters";
 import { getSurfaceStatisticsPipelines } from "#parity/surfaceStatistics/getSurfaceStatisticsPipelines";
-
-// The uniform's fields a pass does not read are left at zero
-const getParameters = (overrides: Partial<SurfaceStatisticsParameters>): SurfaceStatisticsParameters => ({
-  count: 0,
-  direction: 0,
-  height: 0,
-  label: 0,
-  mean: 0,
-  mode: 0,
-  outputOffset: 0,
-  radius: 0,
-  width: 0,
-  ...overrides,
-});
 
 // Every pass a statistic takes, recorded onto one encoder, each with its own uniform so no write waits on a pass
 export const createRecorder = (device: GPUDevice, encoder: GPUCommandEncoder) => {

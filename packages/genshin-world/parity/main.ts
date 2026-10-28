@@ -11,6 +11,8 @@ import { getSceneFog } from "#parity/getSceneFog";
 import { getScenePieces } from "#parity/getScenePieces";
 import { getSceneSky } from "#parity/getSceneSky";
 import { getSceneWhiteBalance } from "#parity/getSceneWhiteBalance";
+import { holdAnimations } from "#parity/holdAnimations";
+import { recordError } from "#parity/recordError";
 import { renderMusic } from "#parity/renderMusic";
 import { screens } from "#parity/screens";
 import { setSceneCloudColors } from "#parity/setSceneCloudColors";
@@ -45,13 +47,6 @@ import { checkIsGameLanguage, GameTextLoaderMap } from "genshin-text";
 // `witnessComponents` entry `&witnessComponent=<name>` names, failing on a name it lacks. A tool sets the screen's props
 // As it runs, to play a motion at known moments, benches a scene's frames or its load from a moment on, and renders a
 // Segment of the Login's music to score it
-const holdAnimations = (): void => {
-  // Reading the animations resolves the styles that start them, and a held one stays listed once it would have ended
-  for (const animation of window.document.getAnimations()) animation.pause();
-};
-const recordError = (error: unknown): void => {
-  window.document.body.dataset.parityError = error instanceof Error ? error.message : String(error);
-};
 window.addEventListener("error", ({ error }) => {
   recordError(error);
 });

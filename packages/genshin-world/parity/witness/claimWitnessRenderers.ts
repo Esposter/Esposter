@@ -2,8 +2,8 @@ import type { WitnessClaim } from "#parity/models/witness/WitnessClaim";
 import type { WitnessClaims } from "#parity/models/witness/WitnessClaims";
 import type { ScenePlacement } from "genshin-engine";
 
-const findClaim = (claims: readonly [string, RegExp][], renderer: string): string | undefined =>
-  claims.find(([, regex]) => regex.test(renderer))?.[0];
+import { findClaim } from "#parity/witness/findClaim";
+
 // Each renderer of a scene's exports, once however many placements draw it, with what of the scene claims it: the
 // Inventory pass's measure, which holds once nothing goes unclaimed. It reads the placements' names alone, so the host
 // Hands them over without the page loading a mesh
