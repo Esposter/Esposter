@@ -275,7 +275,7 @@ overrides:
   # own 0.140, 0.153, 0.154 or 0.155 copy, and `nuxt-nightly` split into peer variants that each declare a separate `NuxtApp`.
   # One forced copy keeps a single `nuxt-nightly`; remove once Nuxt pins `oxc-parser` so its peers stop resolving loose
   oxc-parser: "catalog:"
-  vite: ^8.3.5
+  vite: "catalog:"
   # @TODO: no upstream issue — phaser4-rex-plugins 4.2.0 still declares i18next-http-backend `^3.0.5`, below the patched 4.0.2
   # of GHSA-xvq9-wjp8-hwqf, so this override holds it on 4.x: drop it once rexrainbow/phaser3-rex-notes declares a patched range
   phaser4-rex-plugins>i18next-http-backend: ^4.0.6
