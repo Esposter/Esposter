@@ -331,14 +331,14 @@ export const createAlhaithamKitBehaviour = ({
   const createSkillBehaviour = (mirrorSeconds: number): KitActionBehaviour => ({
     hits: [{ additiveBaseDamageBonus: (striker) => elementalMasteryMultiplier(striker, skillElementalMasteryShare) }],
     onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-      scheduleKitTask(kitEffectState, combatant.characterId, mirrorSeconds, (tick) =>
+      scheduleKitTask(kitEffectState, combatant.characterId, mirrorSeconds, (tick) => {
         gainMirrors(
           tick.kitEffectState,
           body,
           combatant,
           getSkillMirrorGain(tick.kitEffectState.effects, combatant.characterId),
-        ),
-      );
+        );
+      });
     },
   });
 

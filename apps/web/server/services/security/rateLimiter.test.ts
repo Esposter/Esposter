@@ -28,7 +28,7 @@ describe("nuxt-security-module rateLimiter", () => {
         rateLimiter: { intervalInMilliseconds: INTERVAL_IN_MILLISECONDS, tokensPerInterval: TOKENS_PER_INTERVAL },
       },
     });
-    routeRulesPlugin({
+    await routeRulesPlugin({
       hooks: {
         callHook: () => Promise.resolve(),
         hook: (_name: string, handler: () => Promise<void>) => {

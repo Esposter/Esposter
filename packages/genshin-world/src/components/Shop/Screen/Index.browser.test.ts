@@ -59,7 +59,7 @@ describe("shopScreen", () => {
   test("tubby's depot opens on its first tab", async () => {
     expect.hasAssertions();
 
-    render(
+    await render(
       defineComponent({
         setup: () => () =>
           h(ShopScreen, {

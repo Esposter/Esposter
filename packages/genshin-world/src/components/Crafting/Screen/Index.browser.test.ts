@@ -13,7 +13,7 @@ describe("craftingScreen", () => {
     expect.hasAssertions();
 
     const onClose = vi.fn<() => void>();
-    render(CraftingScreenContainer, {
+    await render(CraftingScreenContainer, {
       props: {
         adventureRank: MYSTIC_OFFERING_ADVENTURE_RANK,
         artifactDropTables: { artifactMainAffixPools: [], artifactRarityDataMap: new Map(), reliquarySets: [] },

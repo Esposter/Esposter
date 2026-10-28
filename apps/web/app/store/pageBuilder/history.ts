@@ -7,15 +7,7 @@ import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "@/services/pageBuilder/constants"
 import { getRecordedHistory } from "@/services/pageBuilder/getRecordedHistory";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { ResourceType } from "@esposter/db-schema";
-import {
-  createHistory,
-  getResult,
-  InvalidOperationError,
-  noop,
-  Operation,
-  redoHistory,
-  undoHistory,
-} from "@esposter/shared";
+import { createHistory, getResult, InvalidOperationError, Operation, redoHistory, undoHistory } from "@esposter/shared";
 import { applyBlockEdit } from "headless-block-editor";
 
 // The edit a document's operations leave, carrying the document's own type and kind so its commit holds it the same way
@@ -76,9 +68,9 @@ export const usePageBuilderHistoryStore = defineStore("pageBuilder/history", () 
     operations: JsonPatchOperation[],
     history: History<PageBuilderHistoryEntry>,
   ) => {
-    applyOperations(resourceId, operations)
-      .map((held) => commitEdit(resourceId, held, history))
-      .match(noop, console.error);
+    applyOperations(resourceId, operations).match((held) => {
+      commitEdit(resourceId, held, history);
+    }, console.error);
   };
   const applyEdit = (resourceId: string, operations: JsonPatchOperation[], label: string, interactionId?: string) =>
     applyOperations(resourceId, operations).map(({ inverses, ...held }) => {

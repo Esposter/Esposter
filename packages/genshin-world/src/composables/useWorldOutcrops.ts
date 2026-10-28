@@ -91,6 +91,7 @@ export const useWorldOutcrops = ({
   const kindRules = shallowRef<OutcropKindRule[]>([]);
   const regionKey: `leyLine/regions/${string}` = `leyLine/regions/${RegionIdCityIdMap[OUTCROP_REGION_ID]}`;
   if (checkIsGameDataKey(regionKey))
+    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and setup has nothing to await it
     getResultAsync(() => readOutcropRegion(gameDataBaseUrl, regionKey)).match(
       ({ kinds }) => {
         kindRules.value = kinds;

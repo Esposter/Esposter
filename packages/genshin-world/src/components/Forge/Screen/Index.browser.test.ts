@@ -13,7 +13,7 @@ describe("forgeScreen", () => {
   test("the forge screen labels its actions in the game's words", async () => {
     expect.hasAssertions();
 
-    render(ForgeScreenContainer, { props });
+    await render(ForgeScreenContainer, { props });
 
     await expect
       .element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.ForgeMaterialsTab], { exact: true }))
@@ -25,7 +25,7 @@ describe("forgeScreen", () => {
   test("an order past the daily cap shows the refusal words", async () => {
     expect.hasAssertions();
 
-    render(ForgeScreenContainer, { props: { ...props, ...variants.refused } });
+    await render(ForgeScreenContainer, { props: { ...props, ...variants.refused } });
 
     await expect
       .element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.ForgeEnhancementOreRefusal], { exact: true }))
@@ -46,7 +46,7 @@ describe("forgeScreen", () => {
       targetId: String(FORGED_WEAPON_RARITY),
     };
     const onAchievementEvents = vi.fn<(achievementEvents: AchievementEvent[]) => void>();
-    render(ForgeScreenContainer, { props: { ...props, ...variants.weaponsDone, onAchievementEvents } });
+    await render(ForgeScreenContainer, { props: { ...props, ...variants.weaponsDone, onAchievementEvents } });
 
     await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.ForgeObtain] }).click();
 
@@ -59,7 +59,7 @@ describe("forgeScreen", () => {
     expect.hasAssertions();
 
     const onAchievementEvents = vi.fn<(achievementEvents: AchievementEvent[]) => void>();
-    render(ForgeScreenContainer, { props: { ...props, ...variants.oresDone, onAchievementEvents } });
+    await render(ForgeScreenContainer, { props: { ...props, ...variants.oresDone, onAchievementEvents } });
 
     await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.ForgeObtain] }).click();
 

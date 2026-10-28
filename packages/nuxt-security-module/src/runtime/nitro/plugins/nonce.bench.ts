@@ -16,10 +16,10 @@ import { describe, test } from "vitest";
 describe(nonce, () => {
   test("a rendered page's nonce and SRI attributes", async ({ bench }) => {
     const app = createNitroApp();
-    createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
+    await createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
     await app.nitroApp.hooks.callHook("request", createPageEvent());
-    nonce(app.nitroApp);
-    createSubresourceIntegrityPlugin(PAGE_SRI_HASHES)(app.nitroApp);
+    await nonce(app.nitroApp);
+    await createSubresourceIntegrityPlugin(PAGE_SRI_HASHES)(app.nitroApp);
 
     await bench.compare(
       bench("native — a page's markup copied", () => createPageHtml()),

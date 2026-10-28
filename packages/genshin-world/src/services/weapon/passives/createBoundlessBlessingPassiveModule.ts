@@ -47,7 +47,7 @@ export const createBoundlessBlessingPassiveModule = (params: number[]): PassiveM
           {
             id: BOUNDLESS_BLESSING_CLOCK_ID,
             nextTickSeconds: BOUNDLESS_BLESSING_INTERVAL_SECONDS,
-            onTick: (tickContext) =>
+            onTick: (tickContext) => {
               addPassiveStack(tickContext.kitEffectState, characterId, {
                 id: BOUNDLESS_BLESSING_ID,
                 maximumStacks: BOUNDLESS_BLESSING_MAXIMUM_STACKS,
@@ -56,7 +56,8 @@ export const createBoundlessBlessingPassiveModule = (params: number[]): PassiveM
                   attribute,
                 })),
                 seconds: Number.POSITIVE_INFINITY,
-              }),
+              });
+            },
             secondsRemaining: Number.POSITIVE_INFINITY,
             tickIntervalSeconds: BOUNDLESS_BLESSING_INTERVAL_SECONDS,
           },

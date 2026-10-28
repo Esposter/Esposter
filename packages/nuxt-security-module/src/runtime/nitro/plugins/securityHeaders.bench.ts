@@ -16,10 +16,10 @@ import { describe, test } from "vitest";
 describe(securityHeaders, () => {
   test("a page's response", async ({ bench }) => {
     const app = createNitroApp();
-    createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
+    await createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
     await app.nitroApp.hooks.callHook("request", createPageEvent());
-    nonce(app.nitroApp);
-    securityHeaders(app.nitroApp);
+    await nonce(app.nitroApp);
+    await securityHeaders(app.nitroApp);
 
     await bench.compare(
       bench("native — serializing the page's headers", () => serializeSecurityHeaders(PAGE_HEADERS)),

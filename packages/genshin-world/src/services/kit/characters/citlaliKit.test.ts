@@ -156,7 +156,9 @@ describe(createCitlaliKitBehaviour, () => {
       { x: 0, z: 0 },
       {
         nextTickSeconds: 100,
-        onEvent: (event) => heard.push(event),
+        onEvent: (event) => {
+          heard.push(event);
+        },
         onTick: () => {},
         secondsRemaining: 10,
         tickIntervalSeconds: 1,

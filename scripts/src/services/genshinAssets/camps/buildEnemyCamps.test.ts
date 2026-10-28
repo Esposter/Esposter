@@ -1,7 +1,6 @@
-import type { EnemyKindId } from "genshin-world";
-
 import { buildEnemyCamps } from "#src/services/genshinAssets/camps/buildEnemyCamps";
 import { CAMP_LEVEL } from "#src/services/genshinAssets/camps/constants";
+import { EnemyKindId } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 // A stand-in for findAreaAt: the west of x = 50 is one area, the east another, and past z = 100 no area holds the point
@@ -11,8 +10,8 @@ const areaIdAt = (x: number, z: number): string | undefined => {
 };
 
 describe("buildEnemyCamps", () => {
-  const firstKind = 21010101 as EnemyKindId;
-  const secondKind = 21010401 as EnemyKindId;
+  const firstKind = EnemyKindId.HilichurlFighter;
+  const secondKind = EnemyKindId.HilichurlShooter;
 
   test("a camp's enemies take their family's kind and an estimated level", () => {
     expect.hasAssertions();

@@ -62,5 +62,9 @@ export const createVaresaKitBehaviour = (): KitBehaviour => ({
     onStart: fillNightsoulPoints,
   },
   plunges: { high: { onStart: gainNightsoulPlungePoints }, low: { onStart: gainNightsoulPlungePoints } },
-  skill: { onStart: (context) => generateKitNightsoulPoints(context, NIGHTSOUL_SKILL_POINTS, NIGHTSOUL_MAXIMUM) },
+  skill: {
+    onStart: (context) => {
+      generateKitNightsoulPoints(context, NIGHTSOUL_SKILL_POINTS, NIGHTSOUL_MAXIMUM);
+    },
+  },
 });

@@ -6,10 +6,10 @@ import { render } from "vitest-browser-vue";
 describe(QuestScreen, () => {
   // A series whose title has no words in the game's text, holding the quest the screen opens on: its journal is drawn
   // Empty, not left out, and nothing fails for want of a word
-  test("a chapter with no words shows an empty journal", () => {
+  test("a chapter with no words shows an empty journal", async () => {
     expect.hasAssertions();
 
-    render(QuestScreen, {
+    await render(QuestScreen, {
       props: {
         ...props,
         questChapters: [

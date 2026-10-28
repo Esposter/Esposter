@@ -17,7 +17,7 @@ describe("expeditionLoader", () => {
     const logged = new Promise<unknown>((resolve) => {
       vi.spyOn(console, "error").mockImplementation(resolve);
     });
-    render(ExpeditionLoader, {
+    await render(ExpeditionLoader, {
       props: {
         adventureRank: 1,
         characterPassiveGroupIdMap: new Map(),

@@ -135,8 +135,10 @@ describe(openDatabase, () => {
         const store = upgradeDatabase.createObjectStore("users", { keyPath: "id" });
         store.createIndex("name", "name", { unique: true });
         upgradeTransactions.push(transaction);
+        // oxlint-disable-next-line typescript/no-floating-promises -- the first put succeeds before the second aborts the transaction, so its promise cannot reject and the upgrade has nothing to await it
         store.put({ id: 1, name: "a" });
         // The second name fails its request, which aborts the transaction, so its rejection is handled as it is made
+        // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and the upgrade has nothing to await it
         getResultAsync(() => store.put({ id: 2, name: "a" })).match(noop, console.error);
       },
     });

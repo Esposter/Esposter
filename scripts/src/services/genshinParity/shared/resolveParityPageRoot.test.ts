@@ -17,7 +17,9 @@ describe(resolveParityPageRoot, () => {
   // Serves `body` on a free port, and returns the port
   const serve = (body: string): Promise<number> =>
     new Promise((resolve) => {
-      const server = createServer((_request, response) => response.end(body));
+      const server = createServer((_request, response) => {
+        response.end(body);
+      });
       servers.push(server);
       server.listen(0, () => {
         const address = server.address();

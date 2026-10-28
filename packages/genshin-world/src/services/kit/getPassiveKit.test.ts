@@ -41,7 +41,9 @@ describe(getPassiveKit, () => {
     const steps: string[] = [];
     const steppingKit = { ...KIT, onStep: () => steps.push("kit") };
     const steppingModule: PassiveModule = {
-      onStep: (_context, { characterId }, stepSeconds) => steps.push(`module ${characterId} ${stepSeconds}`),
+      onStep: (_context, { characterId }, stepSeconds) => {
+        steps.push(`module ${characterId} ${stepSeconds}`);
+      },
     };
     getPassiveKit(steppingKit, [steppingModule]).onStep?.(context, combatant, 0.5);
 

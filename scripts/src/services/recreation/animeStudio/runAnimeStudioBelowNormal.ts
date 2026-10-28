@@ -27,7 +27,9 @@ export const runAnimeStudioBelowNormal = async (args: string[], options: AnimeSt
     if (process.platform !== "darwin" && child.pid !== undefined)
       setPriority(child.pid, constants.priority.PRIORITY_BELOW_NORMAL);
     const errorChunks: Buffer[] = [];
-    child.stderr.on("data", (chunk: Buffer) => errorChunks.push(chunk));
+    child.stderr.on("data", (chunk: Buffer) => {
+      errorChunks.push(chunk);
+    });
     child.on("error", reject);
     child.on("close", (status) => {
       if (status === 0) resolve();

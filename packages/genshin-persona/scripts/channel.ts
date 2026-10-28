@@ -75,7 +75,9 @@ const handleEvents = (request: IncomingMessage, response: ServerResponse) => {
   response.writeHead(200, { "cache-control": "no-cache", "content-type": "text/event-stream" });
   response.write(": open\n\n");
   replyStreams.add(response);
-  request.on("close", () => replyStreams.delete(response));
+  request.on("close", () => {
+    replyStreams.delete(response);
+  });
 };
 
 const http = createServer((request, response) => {

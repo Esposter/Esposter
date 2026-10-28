@@ -33,7 +33,7 @@ describe("wishScreen", () => {
     const character = featuredCharacterOf();
     const trial: Trial = { characterId: character.id, level: 85, trialId: 1022 };
     const onTrial = vi.fn<(trial: Trial) => void>();
-    render(WishScreen, { attrs: { onTrial }, props: { ...props, trials: [trial], wishHistory: [] } });
+    await render(WishScreen, { attrs: { onTrial }, props: { ...props, trials: [trial], wishHistory: [] } });
 
     await page.getByRole("button", { exact: true, name: props.gameText[GameTextKey.WishGoToTrial] }).click();
 
@@ -44,7 +44,7 @@ describe("wishScreen", () => {
     expect.hasAssertions();
 
     const character = featuredCharacterOf();
-    render(WishScreen, { props: { ...props, trials: [], wishHistory: [] } });
+    await render(WishScreen, { props: { ...props, trials: [], wishHistory: [] } });
 
     // The card names the featured character once the banner is shown, so the button's absence is checked on a drawn screen
     await expect.element(page.getByText(character.name, { exact: true })).toBeVisible();

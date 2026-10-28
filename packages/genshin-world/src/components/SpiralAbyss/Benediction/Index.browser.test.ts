@@ -10,7 +10,7 @@ describe("spiralAbyssBenediction", () => {
     expect.hasAssertions();
 
     const onChoose = vi.fn<(towerBuffId: number) => void>();
-    render(SpiralAbyssBenediction, { attrs: { onChoose }, props });
+    await render(SpiralAbyssBenediction, { attrs: { onChoose }, props });
     const names = props.choices.map(({ descriptionTextHash }) => props.nameText[String(descriptionTextHash)]);
     await Promise.all(
       names.map(async (name) => {

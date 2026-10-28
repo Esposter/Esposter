@@ -12,7 +12,7 @@ describe("craftingStrongbox", () => {
   test("the offering takes no more artifacts than its strongbox needs", async () => {
     expect.hasAssertions();
 
-    render(CraftingStrongbox, {
+    await render(CraftingStrongbox, {
       props: {
         ...props,
         inventory: {

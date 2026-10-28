@@ -8,15 +8,15 @@ describe("hudScreen", () => {
   test("a character trial's countdown shows the seconds its clock has left", async () => {
     expect.hasAssertions();
 
-    render(HudScreen, { props: { ...props, trialSecondsRemaining: 299 } });
+    await render(HudScreen, { props: { ...props, trialSecondsRemaining: 299 } });
 
     await expect.element(page.getByText("4:59", { exact: true })).toBeVisible();
   });
 
-  test("the world shows no countdown outside a trial", () => {
+  test("the world shows no countdown outside a trial", async () => {
     expect.hasAssertions();
 
-    render(HudScreen, { props });
+    await render(HudScreen, { props });
 
     expect(page.getByText(/^\d+:\d{2}$/u).query()).toBeNull();
   });

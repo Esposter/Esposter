@@ -10,7 +10,7 @@ import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { useUserStore } from "@/store/message/user";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export const useMemberStore = defineStore("message/user/member", () => {
   const { $trpc } = useNuxtApp();
@@ -58,8 +58,9 @@ export const useMemberStore = defineStore("message/user/member", () => {
       }),
     );
   });
-  const refreshMemberCountsInBackground = (roomId: string) =>
-    getResultAsync(() => refreshMemberCounts([roomId])).match(noop, console.error);
+  const refreshMemberCountsInBackground = getSynchronizedFunction((roomId: string) =>
+    getResultAsync(() => refreshMemberCounts([roomId])).match(noop, console.error),
+  );
   // Every role-membership write re-reads its room's totals, so a leave, a role change, and a committed optimistic write
   // Reach them through the same path. The room is the one the write happened in, not necessarily the one open
   // On Screen — a role assigned from a profile card in one room while another is open belongs to that room's totals

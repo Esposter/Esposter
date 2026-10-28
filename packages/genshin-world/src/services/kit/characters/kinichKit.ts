@@ -111,10 +111,11 @@ export const createKinichKitBehaviour = ({
   });
   return {
     burst: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState, random }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState, random }) => {
         castKitSummon(kitEffectState, body, combatant, createDragonBreathHits(random), {
           attackTag: AttackTag.ElementalBurst,
-        }),
+        });
+      },
     },
     skill: {
       // In the blessing the press is the Scalespiker Cannon, not built, so it does nothing there

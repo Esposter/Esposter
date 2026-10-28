@@ -59,8 +59,9 @@ export const createLynetteKitBehaviour = ({ readHit, readSeconds }: KitRecordRea
         const box = createAheadBody(body, BOGGLECAT_BOX_OFFSET_METRES);
         castKitField(kitEffectState, combatant.characterId, box.position, {
           nextTickSeconds: bogglecatFirstTickSeconds,
-          onTick: ({ kitEffectState: tickKitEffectState }) =>
-            castKitSummon(tickKitEffectState, box, combatant, [bogglecatTick], { attackTag: AttackTag.ElementalBurst }),
+          onTick: ({ kitEffectState: tickKitEffectState }) => {
+            castKitSummon(tickKitEffectState, box, combatant, [bogglecatTick], { attackTag: AttackTag.ElementalBurst });
+          },
           secondsRemaining: bogglecatBoxSeconds,
           tickIntervalSeconds: bogglecatTickIntervalSeconds,
         });

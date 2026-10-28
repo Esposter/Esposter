@@ -126,14 +126,15 @@ export const createBennettKitBehaviour = ({ readParameter, readSeconds }: KitRec
     };
   return {
     burst: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         castKitField(kitEffectState, combatant.characterId, body.position, {
           nextTickSeconds: fieldFirstTickSeconds,
           onTick: createFieldTick(combatant),
           radius: BENNETT_FIELD_RADIUS,
           secondsRemaining: fieldSeconds + fieldStartSeconds,
           tickIntervalSeconds: BENNETT_FIELD_TICK_INTERVAL_SECONDS,
-        }),
+        });
+      },
     },
     getPassiveBonuses,
     getSkillCooldownMultiplier,

@@ -146,14 +146,15 @@ export const createAyatoKitBehaviour = ({
     const gardenOfPurity = castKitField(kitEffectState, combatant.characterId, position, {
       isFollowing: true,
       nextTickSeconds: bloomwaterBladeFirstTickSeconds,
-      onTick: ({ kitEffectState: tickKitEffectState }) =>
+      onTick: ({ kitEffectState: tickKitEffectState }) => {
         castKitSummon(
           tickKitEffectState,
           { facing, height, position: gardenOfPurity.centre },
           combatant,
           [bloomwaterBlade],
           { attackTag: AttackTag.ElementalBurst },
-        ),
+        );
+      },
       secondsRemaining: bloomwaterBladeFirstTickSeconds + gardenOfPuritySeconds,
       tickIntervalSeconds: bloomwaterBladeIntervalSeconds,
     });

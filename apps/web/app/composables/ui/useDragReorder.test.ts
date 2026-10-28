@@ -498,9 +498,10 @@ describe(useDragReorder, () => {
 
     const { getRow, getRowCenter, getRows, onReorder, order } = mountRows(values);
     // The new order lands a microtask on, as an optimistic store's write does, after the release has returned
-    onReorder.mockImplementation(async (newValues) => {
-      await Promise.resolve();
-      order.value = newValues;
+    onReorder.mockImplementation((newValues) => {
+      queueMicrotask(() => {
+        order.value = newValues;
+      });
     });
     const row = getRow("a");
     const center = getRowCenter("a");

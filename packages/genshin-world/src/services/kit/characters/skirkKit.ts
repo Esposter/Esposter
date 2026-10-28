@@ -23,9 +23,9 @@ export const createSkirkKitBehaviour = ({ readSeconds, readStance }: KitRecordRe
   return {
     skill: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
-        scheduleKitTask(kitEffectState, combatant.characterId, skillDelaySeconds, ({ kitEffectState: tickState }) =>
-          enterKitStance(tickState, combatant, sevenPhaseFlash, sevenPhaseFlashSeconds, { isEndedOnSwap: true }),
-        );
+        scheduleKitTask(kitEffectState, combatant.characterId, skillDelaySeconds, ({ kitEffectState: tickState }) => {
+          enterKitStance(tickState, combatant, sevenPhaseFlash, sevenPhaseFlashSeconds, { isEndedOnSwap: true });
+        });
       },
     },
   };

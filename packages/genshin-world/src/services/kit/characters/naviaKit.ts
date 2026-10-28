@@ -203,8 +203,9 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
   return {
     burst: {
       hits: [cannonHitBehaviour],
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        castKitSummon(kitEffectState, body, combatant, cannonHits, { attackTag: AttackTag.ElementalBurst }),
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+        castKitSummon(kitEffectState, body, combatant, cannonHits, { attackTag: AttackTag.ElementalBurst });
+      },
     },
     getPassiveBonuses: (combatant, _healthShare, deployedCombatants) => {
       const stacks = Math.min(

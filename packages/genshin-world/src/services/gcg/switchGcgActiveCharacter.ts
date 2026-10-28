@@ -3,4 +3,6 @@ import { createGcgActiveCharacterSwitch } from "#src/services/gcg/createGcgActiv
 
 // The switch every combat, card and effect switch takes, the damage its hooks deal dealt by applyGcgDamage
 export const switchGcgActiveCharacter: ReturnType<typeof createGcgActiveCharacterSwitch> =
-  createGcgActiveCharacterSwitch(applyGcgDamage);
+  createGcgActiveCharacterSwitch((duel, sourceSideIndex, damage, rule) => {
+    applyGcgDamage(duel, sourceSideIndex, damage, rule);
+  });

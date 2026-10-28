@@ -6,10 +6,10 @@ import { describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
 
 describe("characterScene", () => {
-  test("the chosen character stands in the middle over its element's background", () => {
+  test("the chosen character stands in the middle over its element's background", async () => {
     expect.hasAssertions();
 
-    render(CharacterScene, { props: { element: Element.Pyro, tab: CharacterMenuTab.Attributes } });
+    await render(CharacterScene, { props: { element: Element.Pyro, tab: CharacterMenuTab.Attributes } });
     const scene = document.querySelector<HTMLElement>(".scene");
 
     expect(scene?.style.getPropertyValue("--nebula-centre")).toBe(ElementNebulaMap[Element.Pyro].centre);

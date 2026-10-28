@@ -275,8 +275,9 @@ export const createMonaKitBehaviour = ({ kit, readHits }: KitRecordReader): KitB
     },
     // The phantom is cast where Mona stands, its hits the summon's, and lasts until its explosion
     skill: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        castKitSummon(kitEffectState, body, combatant, mirrorReflectionHits, { attackTag: AttackTag.ElementalSkill }),
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+        castKitSummon(kitEffectState, body, combatant, mirrorReflectionHits, { attackTag: AttackTag.ElementalSkill });
+      },
     },
   };
 };

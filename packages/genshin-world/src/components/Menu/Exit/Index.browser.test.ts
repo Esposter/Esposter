@@ -9,7 +9,7 @@ describe("menuExit", () => {
   test("the prompt opens over the menu at the game's scale", async () => {
     expect.hasAssertions();
 
-    render(MenuExit, { props });
+    await render(MenuExit, { props });
 
     await expect
       .element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.QuitConfirmQuestion], { exact: true }))
@@ -33,7 +33,7 @@ describe("menuExit", () => {
 
     const onClose = vi.fn<() => void>();
     const onQuit = vi.fn<() => void>();
-    render(MenuExit, { attrs: { onClose, onQuit }, props });
+    await render(MenuExit, { attrs: { onClose, onQuit }, props });
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Cancel] }).click();
 
     expect(onClose).toHaveBeenCalledExactlyOnceWith();
@@ -45,7 +45,7 @@ describe("menuExit", () => {
 
     const onClose = vi.fn<() => void>();
     const onQuit = vi.fn<() => void>();
-    render(MenuExit, { attrs: { onClose, onQuit }, props });
+    await render(MenuExit, { attrs: { onClose, onQuit }, props });
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Confirm] }).click();
 
     expect(onQuit).toHaveBeenCalledExactlyOnceWith();

@@ -8,4 +8,4 @@ export const VoiceDeviceSettingsKeyMap = {
   [MediaDeviceKind.Videoinput]: "cameraDeviceId",
 } as const satisfies Record<MediaDeviceKind, string>;
 
-export const VoiceDeviceKinds = Object.keys(VoiceDeviceSettingsKeyMap) as MediaDeviceKind[];
+export const VoiceDeviceKinds = Object.values(MediaDeviceKind);

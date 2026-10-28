@@ -64,16 +64,18 @@ export const createLyneyKitBehaviour = ({ readHitFields, readSeconds }: KitRecor
   };
   return {
     burst: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         castKitSummon(kitEffectState, body, combatant, [miracleParadePyrotechnicStrike], {
           attackTag: AttackTag.ChargedAttack,
-        }),
+        });
+      },
     },
     chargedAttack: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         castKitSummon(kitEffectState, body, combatant, [propArrowPyrotechnicStrike], {
           attackTag: AttackTag.ChargedAttack,
-        }),
+        });
+      },
     },
     getStrikeDamageBonus: ({ combatant }, enemy) => getAscension4DamageBonus(combatant, enemy),
   };

@@ -28,6 +28,7 @@ export const slideDrag = (context: DragReorderContext, currentPress: Press, drag
     }
     item.style.transition = REORDER_SLIDE_TRANSITION;
     item.style.translate = "";
+    // oxlint-disable-next-line typescript/no-floating-promises -- releaseRowTransition clears the row once its animations settle, and a drag's slide has nothing to await it
     releaseRowTransition(context, item);
   }
 };

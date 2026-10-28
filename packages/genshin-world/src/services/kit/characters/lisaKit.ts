@@ -66,11 +66,12 @@ export const createLisaKitBehaviour = ({ readHits, readSeconds }: KitRecordReade
   let holdRegeneratedEnergy = 0;
   return {
     burst: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         castKitSummon(kitEffectState, body, combatant, discharges, {
           attackTag: AttackTag.ElementalBurst,
           secondsRemaining: lightningRoseSeconds,
-        }),
+        });
+      },
     },
     // A1: each enemy a charged attack hits gains a stack of Conductive
     chargedAttack: {

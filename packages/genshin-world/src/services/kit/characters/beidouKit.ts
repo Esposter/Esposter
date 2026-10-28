@@ -106,14 +106,15 @@ export const createBeidouKitBehaviour = ({
     // The Thunderbeast's Targe stands from the cast for the group's seconds as a summon that follows the body on the
     // Field, whoever it is, as the wiki's notes give it
     burst: {
-      onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         castKitSummon(
           kitEffectState,
           { facing, height, position },
           combatant,
           combatant.constellationCount >= BANE_OF_EVIL_CONSTELLATION ? baneOfEvilTicks : [],
           { isFollowing: true, secondsRemaining: targeSeconds },
-        ),
+        );
+      },
     },
     chargedAttack: { hits: kit.chargedAttack.hits.map(() => ({ onStrike: castDischarge })) },
     getNormalAttackExtraHit: ({ activeCombatant, kitEffectState }, hit) =>

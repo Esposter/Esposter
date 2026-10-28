@@ -10,7 +10,7 @@ describe("characterPackLoader", () => {
 
     const key = "a";
     const terms = "b";
-    render(CharacterPackLoader, {
+    await render(CharacterPackLoader, {
       props: {
         characterId: 1,
         characterPackReader: { key, readFile: () => Promise.resolve(new Blob([terms])) },

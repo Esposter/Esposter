@@ -132,7 +132,9 @@ const createCountedAttack = (healBehaviour: KitHitBehaviour, hitCount: number): 
         countAttack(context, combatant.characterId);
       },
     })),
-    onStart: () => hasCountedList.fill(false),
+    onStart: () => {
+      hasCountedList.fill(false);
+    },
   };
 };
 

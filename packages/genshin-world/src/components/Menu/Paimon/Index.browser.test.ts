@@ -16,7 +16,7 @@ describe("menuPaimon", () => {
     expect.hasAssertions();
 
     const onOpen = vi.fn<(screenKind: ScreenKind) => void>();
-    render(MenuPaimon, { attrs: { onOpen }, props });
+    await render(MenuPaimon, { attrs: { onOpen }, props });
     await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Settings] }).click();
 
     expect(onOpen).toHaveBeenCalledExactlyOnceWith(ScreenKind.Settings);
@@ -31,7 +31,7 @@ describe("menuPaimon", () => {
       props: { alt: { required: true, type: String }, src: { required: true, type: String } },
       setup: (componentProps) => () => h("img", { alt: componentProps.alt, src: componentProps.src }),
     });
-    render(MenuPaimon, {
+    await render(MenuPaimon, {
       global: { stubs: { NuxtImg: NuxtImgStub } },
       props: { ...props, accountAvatarUrl: "https://example.com/avatar.png", accountName: "Aether" },
     });
@@ -45,7 +45,7 @@ describe("menuPaimon", () => {
   test("a signed-out reader sees the default name", async () => {
     expect.hasAssertions();
 
-    render(MenuPaimon, { props });
+    await render(MenuPaimon, { props });
 
     await expect
       .element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.PlayerDefaultName], { exact: true }))
@@ -55,7 +55,7 @@ describe("menuPaimon", () => {
   test("a profile field appears once its system is built", async () => {
     expect.hasAssertions();
 
-    render(MenuPaimon, { props });
+    await render(MenuPaimon, { props });
 
     await expect.element(page.getByText(String(props.adventureRank), { exact: true })).toBeInTheDocument();
     await expect.element(page.getByText(String(props.worldLevel), { exact: true })).toBeInTheDocument();
@@ -64,7 +64,7 @@ describe("menuPaimon", () => {
   test("a profile field stays out until its system is built", async () => {
     expect.hasAssertions();
 
-    render(MenuPaimon, { props });
+    await render(MenuPaimon, { props });
 
     await expect.element(page.getByText(/^\d{6,}$/u)).not.toBeInTheDocument();
   });
@@ -72,7 +72,7 @@ describe("menuPaimon", () => {
   test("community and Feedback show as disabled entries", async () => {
     expect.hasAssertions();
 
-    render(MenuPaimon, { props });
+    await render(MenuPaimon, { props });
 
     await expect
       .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Community] }))
@@ -85,7 +85,7 @@ describe("menuPaimon", () => {
   test("version Highlights and Survey show as disabled entries", async () => {
     expect.hasAssertions();
 
-    render(MenuPaimon, { props });
+    await render(MenuPaimon, { props });
 
     await expect
       .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.VersionHighlights] }))
@@ -98,7 +98,7 @@ describe("menuPaimon", () => {
   test("training Guide is absent from the contents", async () => {
     expect.hasAssertions();
 
-    render(MenuPaimon, { props });
+    await render(MenuPaimon, { props });
 
     await expect
       .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.TrainingGuide] }))
@@ -109,7 +109,7 @@ describe("menuPaimon", () => {
     expect.hasAssertions();
 
     const onOpen = vi.fn<(screenKind: ScreenKind) => void>();
-    render(MenuPaimon, { attrs: { onOpen }, props });
+    await render(MenuPaimon, { attrs: { onOpen }, props });
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Time] }).click();
 
     expect(onOpen).toHaveBeenCalledExactlyOnceWith(ScreenKind.Time);
@@ -118,7 +118,7 @@ describe("menuPaimon", () => {
   test("choosing Quit Game opens the quit prompt", async () => {
     expect.hasAssertions();
 
-    render(MenuPaimon, { props });
+    await render(MenuPaimon, { props });
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.QuitGame] }).click();
 
     await expect
@@ -137,7 +137,7 @@ describe("menuPaimon", () => {
     expect.hasAssertions();
 
     const onSetBirthday = vi.fn<(birthday: TravelerBirthdaySave) => void>();
-    render(MenuPaimon, { attrs: { onSetBirthday }, props });
+    await render(MenuPaimon, { attrs: { onSetBirthday }, props });
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.BirthdaySet] }).click();
     // The month list comes before the day list, so the first October is the month
     await page.getByRole("button", { exact: true, name: "10" }).first().click();
@@ -153,7 +153,7 @@ describe("menuPaimon", () => {
   test("tab from the birthday dialog never reaches the menu behind it", async () => {
     expect.hasAssertions();
 
-    render(MenuPaimon, { props });
+    await render(MenuPaimon, { props });
     const menu = document.querySelector(".menu");
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.BirthdaySet] }).click();
 
@@ -172,7 +172,7 @@ describe("menuPaimon", () => {
 
     const namecard = { itemId: 1, name: "Aether" };
     const namecards = [namecard];
-    render(MenuPaimon, { props: { ...props, namecardItemId: namecard.itemId, namecards } });
+    await render(MenuPaimon, { props: { ...props, namecardItemId: namecard.itemId, namecards } });
     const menu = document.querySelector(".menu");
     await page.getByRole("button", { exact: true, name: namecard.name }).click();
 
@@ -187,7 +187,7 @@ describe("menuPaimon", () => {
   test("a birthday already set shows its date and no button to set it", async () => {
     expect.hasAssertions();
 
-    render(MenuPaimon, { props: { ...props, travelerBirthday: { day: 13, month: 10 } } });
+    await render(MenuPaimon, { props: { ...props, travelerBirthday: { day: 13, month: 10 } } });
 
     await expect.element(page.getByText("10/13", { exact: true })).toBeInTheDocument();
     await expect

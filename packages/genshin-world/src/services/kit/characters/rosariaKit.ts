@@ -106,10 +106,11 @@ export const createRosariaKitBehaviour = ({ kit, readHit, readParameter }: KitRe
         const field = castKitField(kitEffectState, combatant.characterId, position, {
           id: RITES_FIELD_ID,
           nextTickSeconds: ritesLanceHit.hitmarkSeconds + RITES_TICK_INTERVAL_SECONDS,
-          onTick: ({ kitEffectState: tickEffectState }) =>
+          onTick: ({ kitEffectState: tickEffectState }) => {
             castKitSummon(tickEffectState, { facing, height, position: field.centre }, combatant, [ritesTickHit], {
               attackTag: AttackTag.ElementalBurst,
-            }),
+            });
+          },
           radius: ritesTickHit.hitArea.radius,
           secondsRemaining:
             ritesFieldSeconds +

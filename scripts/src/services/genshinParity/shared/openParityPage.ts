@@ -13,6 +13,7 @@ import {
   WITNESS_PATH_PREFIX,
 } from "#src/services/genshinParity/shared/constants";
 import { resolveParityPageRoot } from "#src/services/genshinParity/shared/resolveParityPageRoot";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { existsSync } from "node:fs";
@@ -114,7 +115,7 @@ export const openParityPage = async ({
         // A page that draws only some meshes is served the placements of those alone: the city's others only slow it
         if (path === WITNESS_LAYOUT_PATH && witnessMeshes) {
           const meshes = new Set(witnessMeshes);
-          const layout = JSON.parse(await readFile(filePath, "utf8")) as { placements: { mesh: string }[] };
+          const layout = parseMachineJson<{ placements: { mesh: string }[] }>(await readFile(filePath, "utf8"));
           layout.placements = layout.placements.filter(({ mesh }) => meshes.has(mesh));
           return route.fulfill({ body: JSON.stringify(layout), contentType: "application/json" });
         }

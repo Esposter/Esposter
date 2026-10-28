@@ -15,7 +15,7 @@ describe("spiralAbyssEntry", () => {
   test("a Moon Spire chamber shows its period's blessing", async () => {
     expect.hasAssertions();
 
-    render(SpiralAbyssEntry, { props });
+    await render(SpiralAbyssEntry, { props });
 
     await expect.element(page.getByText(nameTextOf(props.blessing.nameTextHash))).toBeVisible();
     await expect.element(page.getByText(nameTextOf(props.blessing.descriptionTextHash))).toBeVisible();
@@ -25,7 +25,7 @@ describe("spiralAbyssEntry", () => {
     expect.hasAssertions();
 
     const onChoose = vi.fn<(floorId: number, chamberId: number) => void>();
-    render(SpiralAbyssEntry, { attrs: { onChoose }, props });
+    await render(SpiralAbyssEntry, { attrs: { onChoose }, props });
     await page.getByRole("button", { exact: true, name: String(takeOne(props.floors).index) }).click();
     await page
       .getByRole("button", { exact: true, name: String(takeOne(takeOne(props.floors).chambers, 1).index) })

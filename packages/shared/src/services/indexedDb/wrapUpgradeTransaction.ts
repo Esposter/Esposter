@@ -5,6 +5,7 @@ import type { DatabaseTransaction } from "#src/models/indexedDb/DatabaseTransact
 import { getResultAsync } from "#src/services/error/getResultAsync";
 import { getTransactionDone } from "#src/services/indexedDb/getTransactionDone";
 import { getTransactionObjectStore } from "#src/services/indexedDb/getTransactionObjectStore";
+import { getSynchronizedFunction } from "#src/util/function/getSynchronizedFunction";
 import { noop } from "#src/util/function/noop";
 
 // An upgrade's outcome is the open request's, and a failed upgrade rejects that. So `done` is made before the upgrade
@@ -15,9 +16,12 @@ export const wrapUpgradeTransaction = <TSchema extends DatabaseSchema>(
   transaction: IDBTransaction,
 ): DatabaseTransaction<TSchema, DatabaseStoreName<TSchema>, "versionchange"> => {
   const done = getTransactionDone(transaction);
-  getResultAsync(() => done).match(noop, (error) => {
-    if (transaction.error) console.error(error);
-  });
+  const logUpgradeFailure = getSynchronizedFunction(() =>
+    getResultAsync(() => done).match(noop, (error) => {
+      if (transaction.error) console.error(error);
+    }),
+  );
+  logUpgradeFailure();
 
   return {
     get done() {

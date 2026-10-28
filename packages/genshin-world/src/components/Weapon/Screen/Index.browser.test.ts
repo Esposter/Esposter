@@ -58,12 +58,12 @@ describe("weaponScreen", () => {
     expect.hasAssertions();
 
     const gameText = await GameTextLoaderMap[GameLanguage.German]();
-    render(WeaponScreenContainer, { props: { ...props, gameText } });
+    await render(WeaponScreenContainer, { props: { ...props, gameText } });
 
     await expect.element(page.getByText(gameText[GameTextKey.WeaponEnhance], { exact: true }).first()).toBeVisible();
     await expect.element(page.getByText(gameText[GameTextKey.WeaponRefine], { exact: true }).first()).toBeVisible();
 
-    render(WeaponScreenContainer, { props: { ...props, ...variants.atCap, gameText } });
+    await render(WeaponScreenContainer, { props: { ...props, ...variants.atCap, gameText } });
 
     await expect.element(page.getByText(gameText[GameTextKey.WeaponAscend], { exact: true }).first()).toBeVisible();
   });
@@ -74,7 +74,7 @@ describe("weaponScreen", () => {
 
     const onUpdateInventory = vi.fn<(inventory: Inventory) => void>();
     const onUpdateWallet = vi.fn<(wallet: Wallet) => void>();
-    render(WeaponScreenContainer, {
+    await render(WeaponScreenContainer, {
       props: {
         ...props,
         "onUpdate:inventory": onUpdateInventory,
@@ -95,7 +95,7 @@ describe("weaponScreen", () => {
 
     const onUpdateInventory = vi.fn<(inventory: Inventory) => void>();
     const onUpdateWallet = vi.fn<(wallet: Wallet) => void>();
-    render(WeaponScreenContainer, {
+    await render(WeaponScreenContainer, {
       props: { ...props, "onUpdate:inventory": onUpdateInventory, "onUpdate:wallet": onUpdateWallet },
     });
 
@@ -116,13 +116,13 @@ describe("weaponScreen", () => {
   test("ascend is offered only at the level cap", async () => {
     expect.hasAssertions();
 
-    render(WeaponScreenContainer, { props });
+    await render(WeaponScreenContainer, { props });
 
     await expect
       .element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.WeaponAscend], { exact: true }))
       .not.toBeInTheDocument();
 
-    render(WeaponScreenContainer, { props: { ...props, ...variants.atCap } });
+    await render(WeaponScreenContainer, { props: { ...props, ...variants.atCap } });
 
     await expect
       .element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.WeaponAscend], { exact: true }).first())
@@ -135,7 +135,7 @@ describe("weaponScreen", () => {
 
     const onUpdateInventory = vi.fn<(inventory: Inventory) => void>();
     const onUpdateWallet = vi.fn<(wallet: Wallet) => void>();
-    render(WeaponScreenContainer, {
+    await render(WeaponScreenContainer, {
       props: {
         ...props,
         ...variants.ascend,
@@ -165,7 +165,7 @@ describe("weaponScreen", () => {
 
     const onUpdateInventory = vi.fn<(inventory: Inventory) => void>();
     const onUpdateWallet = vi.fn<(wallet: Wallet) => void>();
-    render(WeaponScreenContainer, {
+    await render(WeaponScreenContainer, {
       props: {
         ...props,
         ...variants.ascend,
@@ -186,7 +186,7 @@ describe("weaponScreen", () => {
 
     const onUpdateInventory = vi.fn<(inventory: Inventory) => void>();
     const onUpdateWallet = vi.fn<(wallet: Wallet) => void>();
-    render(WeaponScreenContainer, {
+    await render(WeaponScreenContainer, {
       props: {
         ...props,
         ...variants.refine,
@@ -212,7 +212,7 @@ describe("weaponScreen", () => {
   test("refine is not offered at rank five", async () => {
     expect.hasAssertions();
 
-    render(WeaponScreenContainer, { props: { ...props, ...variants.rankFive } });
+    await render(WeaponScreenContainer, { props: { ...props, ...variants.rankFive } });
 
     await expect
       .element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.WeaponRefine], { exact: true }))
@@ -223,7 +223,7 @@ describe("weaponScreen", () => {
   test("refine is not offered for a two-star weapon", async () => {
     expect.hasAssertions();
 
-    render(WeaponScreenContainer, { props: { ...props, ...variants.twoStar } });
+    await render(WeaponScreenContainer, { props: { ...props, ...variants.twoStar } });
 
     await expect
       .element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.WeaponRefine], { exact: true }))

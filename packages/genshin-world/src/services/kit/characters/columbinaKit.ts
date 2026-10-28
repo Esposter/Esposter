@@ -351,14 +351,15 @@ export const createColumbinaKitBehaviour = ({
         accrueGravity(gravity, stepSeconds, getGravityRate(combatant));
         if (getTotalGravity(gravity) >= GRAVITY_MAX) fireGravityRipple(context, combatant, gravity, true);
       },
-      onTick: (tickContext) =>
+      onTick: (tickContext) => {
         castKitSummon(
           tickContext.kitEffectState,
           createKitBody(field.centre),
           combatant,
           [getSkillDotHit(tickContext)],
           { attackTag: AttackTag.ElementalSkill },
-        ),
+        );
+      },
       secondsRemaining: skillDurationSeconds,
       tickIntervalSeconds: skillDotIntervalSeconds,
     });

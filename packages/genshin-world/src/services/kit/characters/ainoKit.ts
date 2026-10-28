@@ -127,14 +127,15 @@ export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSecond
           id: BURST_FIELD_ID,
           isFollowing: true,
           nextTickSeconds: burstFirstTickSeconds,
-          onTick: ({ kitEffectState: tickKitEffectState }) =>
+          onTick: ({ kitEffectState: tickKitEffectState }) => {
             castKitSummon(
               tickKitEffectState,
               { facing, height, position: burstField.centre },
               combatant,
               [isAscendantBurst ? ascendantWaterBall : waterBall],
               { attackTag: AttackTag.ElementalBurst },
-            ),
+            );
+          },
           radius: burstRadius,
           secondsRemaining: burstFirstTickSeconds + burstSeconds,
           tickIntervalSeconds: isAscendantBurst ? ASCENSION_1_WATER_BALL_INTERVAL_SECONDS : burstTickIntervalSeconds,

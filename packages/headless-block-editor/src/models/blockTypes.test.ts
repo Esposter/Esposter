@@ -14,6 +14,7 @@ import { z } from "zod";
 
 const children = (
   node: HeadingNode | ListNode | SectionNode,
+  // oxlint-disable-next-line typescript/no-generated-empty-object-type -- a node with no slots takes `{}`, which the port returns for it
 ): ReturnType<BlockChildren<HeadingNode | ListNode | SectionNode>> =>
   node.type === "section" ? { children: node.props.children } : {};
 

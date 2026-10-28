@@ -22,8 +22,12 @@ export const runAnimeStudioAsync = (args: string[], options: AnimeStudioOptions)
     });
     const stdoutChunks: Buffer[] = [];
     const stderrChunks: Buffer[] = [];
-    child.stdout.on("data", (chunk: Buffer) => stdoutChunks.push(chunk));
-    child.stderr.on("data", (chunk: Buffer) => stderrChunks.push(chunk));
+    child.stdout.on("data", (chunk: Buffer) => {
+      stdoutChunks.push(chunk);
+    });
+    child.stderr.on("data", (chunk: Buffer) => {
+      stderrChunks.push(chunk);
+    });
     child.on("error", reject);
     child.on("close", (status) => {
       const stdout = Buffer.concat(stdoutChunks).toString("utf8");

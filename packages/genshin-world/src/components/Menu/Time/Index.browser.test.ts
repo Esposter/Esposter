@@ -11,7 +11,7 @@ describe("menuTime", () => {
     expect.hasAssertions();
 
     const onConfirm = vi.fn<(minutes: number) => void>();
-    render(MenuTime, { attrs: { onConfirm }, props });
+    await render(MenuTime, { attrs: { onConfirm }, props });
     await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.TimeConfirm] }).click();
 
     expect(onConfirm).toHaveBeenCalledExactlyOnceWith(630);
@@ -23,7 +23,7 @@ describe("menuTime", () => {
 
     const onClose = vi.fn<() => void>();
     const onConfirm = vi.fn<(minutes: number) => void>();
-    render(MenuTime, { attrs: { onClose, onConfirm }, props });
+    await render(MenuTime, { attrs: { onClose, onConfirm }, props });
     await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Back] }).click();
 
     expect(onClose).toHaveBeenCalledExactlyOnceWith();

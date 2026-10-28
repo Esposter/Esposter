@@ -246,8 +246,10 @@ export const useGenshinSave = async () => {
       retryStart();
       leave();
     });
-    // oxlint-disable-next-line typescript/no-floating-promises -- persist settles every failure itself, so the promise it returns cannot reject and nothing waits on it
-    useIntervalFn(persist, AUTOSAVE_INTERVAL_MS);
+    useIntervalFn(() => {
+      // oxlint-disable-next-line typescript/no-floating-promises -- persist settles every failure itself, so the promise it returns cannot reject and nothing waits on it
+      persist();
+    }, AUTOSAVE_INTERVAL_MS);
     useEventListener(
       () => window.document,
       "visibilitychange",

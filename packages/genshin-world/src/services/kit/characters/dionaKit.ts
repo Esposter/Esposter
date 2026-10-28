@@ -162,7 +162,17 @@ export const createDionaKitBehaviour = ({ kit, readHits, readParameter }: KitRec
       )
         gainPartyMemberEnergy(party, combatant, SIGNATURE_MIX_CONSTELLATION_ENERGY);
     },
-    skill: { onStart: (context) => castShield(context, context.activeCombatant, 1) },
-    skillHolds: [{ onStart: (context) => castShield(context, context.activeCombatant, holdShieldMultiplier) }],
+    skill: {
+      onStart: (context) => {
+        castShield(context, context.activeCombatant, 1);
+      },
+    },
+    skillHolds: [
+      {
+        onStart: (context) => {
+          castShield(context, context.activeCombatant, holdShieldMultiplier);
+        },
+      },
+    ],
   };
 };

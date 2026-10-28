@@ -16,6 +16,7 @@ registerRoute(new NavigationRoute(createHandlerBoundToURL("/")));
 
 // The update prompt in the tab asks a waiting worker to take over, and the reload follows the new worker taking control
 self.addEventListener("message", (event) => {
+  // oxlint-disable-next-line typescript/no-floating-promises -- skipWaiting resolves and cannot reject, and a message listener has nothing to await it
   if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
 });
 

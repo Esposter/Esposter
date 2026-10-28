@@ -29,7 +29,7 @@ describe("menuSettings", () => {
   test("the language list holds fifteen languages", async () => {
     expect.hasAssertions();
 
-    render(SettingsHost);
+    await render(SettingsHost);
     await page.getByRole("tab", { name: ENGLISH_GAME_TEXT[GameTextKey.SettingsLanguage] }).click();
     await page.getByRole("button", { expanded: false }).click();
 
@@ -41,7 +41,7 @@ describe("menuSettings", () => {
   test("choosing a language changes the screen's labels", async () => {
     expect.hasAssertions();
 
-    render(SettingsHost);
+    await render(SettingsHost);
     await page.getByRole("tab", { name: ENGLISH_GAME_TEXT[GameTextKey.SettingsLanguage] }).click();
     await page.getByRole("button", { expanded: false }).click();
     await page.getByRole("option", { name: getLanguageDisplayName(GameLanguage.German, GameLanguage.German) }).click();
@@ -54,7 +54,7 @@ describe("menuSettings", () => {
   test("a row the world does not back is drawn disabled", async () => {
     expect.hasAssertions();
 
-    render(MenuSettings, { props });
+    await render(MenuSettings, { props });
     const fps = page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.SettingsFps] });
 
     await expect.element(fps).toBeDisabled();
@@ -66,7 +66,7 @@ describe("menuSettings", () => {
   test("the default camera distance steps from the keyboard", async () => {
     expect.hasAssertions();
 
-    render(SettingsHost);
+    await render(SettingsHost);
     await page.getByRole("tab", { name: ENGLISH_GAME_TEXT[GameTextKey.SettingsControls] }).click();
     const distance = page.getByRole("slider", { name: ENGLISH_GAME_TEXT[GameTextKey.SettingsDefaultCameraDistance] });
 
@@ -80,7 +80,7 @@ describe("menuSettings", () => {
   test("the Y-axis reset switch flips between Off and On", async () => {
     expect.hasAssertions();
 
-    render(SettingsHost);
+    await render(SettingsHost);
     await page.getByRole("tab", { name: ENGLISH_GAME_TEXT[GameTextKey.SettingsControls] }).click();
     const yAxisReset = page.getByRole("button", {
       exact: true,
@@ -96,7 +96,7 @@ describe("menuSettings", () => {
   test("the horizontal and vertical sensitivities step from the keyboard", async () => {
     expect.hasAssertions();
 
-    render(SettingsHost);
+    await render(SettingsHost);
     await page.getByRole("tab", { name: ENGLISH_GAME_TEXT[GameTextKey.SettingsControls] }).click();
     const horizontal = page.getByRole("slider", {
       exact: true,
@@ -121,7 +121,7 @@ describe("menuSettings", () => {
   test("the master, music and sound effects volumes step down from the keyboard", async () => {
     expect.hasAssertions();
 
-    render(SettingsHost);
+    await render(SettingsHost);
     await page.getByRole("tab", { name: ENGLISH_GAME_TEXT[GameTextKey.SettingsAudio] }).click();
     const master = page.getByRole("slider", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.SettingsVolume] });
     const music = page.getByRole("slider", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.SettingsMusicVolume] });
@@ -143,7 +143,7 @@ describe("menuSettings", () => {
   test("the graphics quality row lists its tiers and shows the one chosen", async () => {
     expect.hasAssertions();
 
-    render(SettingsHost);
+    await render(SettingsHost);
     await page.getByRole("tab", { name: ENGLISH_GAME_TEXT[GameTextKey.SettingsGraphics] }).click();
     const quality = page.getByRole("button", {
       exact: true,

@@ -21,7 +21,12 @@ export const useResourceSaveSubscribable = (type: ResourceType) => {
       return getUnsubscribe(
         getResourceRouter(type).onSaveResourceContent.subscribe(
           { id },
-          { onData: (save) => getResultAsync(() => storeSaveResourceContent(save)).match(noop, console.error) },
+          {
+            onData: (save) => {
+              // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and a subscription callback has nothing to await it
+              getResultAsync(() => storeSaveResourceContent(save)).match(noop, console.error);
+            },
+          },
         ),
       );
     },

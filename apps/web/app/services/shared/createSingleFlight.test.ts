@@ -23,11 +23,10 @@ describe(createSingleFlight, () => {
     const flush = createSingleFlight(run);
 
     const flushing = flush();
-    flush();
-    flush();
-    flush();
+    const joining = [flush(), flush(), flush()];
     firstRun.resolve();
     await flushing;
+    await Promise.all(joining);
 
     expect(run).toHaveBeenCalledTimes(2);
   });

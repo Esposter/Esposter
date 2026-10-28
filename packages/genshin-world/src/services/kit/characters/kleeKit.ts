@@ -175,8 +175,9 @@ export const createKleeKitBehaviour = ({
     getChargedAttackStaminaMultiplier: ({ kitEffectState }) =>
       checkHasKitStatus(kitEffectState.effects, KLEE_CHARACTER_ID, EXPLOSIVE_SPARK_ID) ? 0 : 1,
     normalAttacks: bombs.map((bomb): KitActionBehaviour => ({
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        castKitSummon(kitEffectState, body, combatant, [bomb], { attackTag: AttackTag.NormalAttack }),
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+        castKitSummon(kitEffectState, body, combatant, [bomb], { attackTag: AttackTag.NormalAttack });
+      },
     })),
     // From four constellations her leaving the field while her sparks stand, which the swap has just ended, sets off
     // Sparkly Explosion where they stood, priced as she cast the burst. From Ascension 4 a CRIT hit of her charged attack's
@@ -210,8 +211,9 @@ export const createKleeKitBehaviour = ({
     },
     // The bounces and mines land from a summon cast where Klee stands as the skill starts
     skill: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        castKitSummon(kitEffectState, body, combatant, jumpyDumptyHits, { attackTag: AttackTag.ElementalSkill }),
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+        castKitSummon(kitEffectState, body, combatant, jumpyDumptyHits, { attackTag: AttackTag.ElementalSkill });
+      },
     },
   };
 };

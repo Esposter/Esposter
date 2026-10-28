@@ -24,6 +24,7 @@ export const useUserToRoomSubscribables = () => {
           onData: (userToRoom) => {
             setMyUserToRoom(userToRoom.roomId, userToRoom);
             // A display name is a server row, so the room's copy of this member is re-read rather than written here
+            // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and a subscription callback has nothing to await it
             getResultAsync(async () => {
               const members = await $trpc.room.readMembersByIds.query({
                 roomId: userToRoom.roomId,

@@ -19,7 +19,7 @@ describe(MenuInputResolver, () => {
     expect(isHandled).toBe(true);
   });
 
-  test("looks the store up only when input is handled, not at construction", () => {
+  test("looks the store up only when input is handled, not at construction", async () => {
     expect.hasAssertions();
 
     const useMenuStore = vi.fn<() => { onPlayerInput: () => boolean }>(() => ({ onPlayerInput: () => false }));
@@ -27,7 +27,7 @@ describe(MenuInputResolver, () => {
 
     expect(useMenuStore).not.toHaveBeenCalled();
 
-    resolver.handleInput(scene, PlayerSpecialInput.Cancel);
+    await resolver.handleInput(scene, PlayerSpecialInput.Cancel);
 
     expect(useMenuStore).toHaveBeenCalledExactlyOnceWith();
   });

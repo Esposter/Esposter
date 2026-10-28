@@ -3,7 +3,7 @@ import { AchievementName } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe("achievementDefinitionMap", () => {
-  const achievementDefinitionNames = new Set(Object.keys(AchievementDefinitionMap) as AchievementName[]);
+  const achievementDefinitionNames = new Set(Object.keys(AchievementDefinitionMap));
   // Re-derived here rather than exported beside the enum, because this assertion is the one reader of the set
   const achievementNames = new Set(Object.values(AchievementName));
 

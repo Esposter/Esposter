@@ -185,7 +185,9 @@ export const createCandaceKitBehaviour = ({
     },
     skill: {
       hits: [heronsSanctumHit],
-      onStart: (context) => castShield(context, context.activeCombatant, tapHitmarkSeconds),
+      onStart: (context) => {
+        castShield(context, context.activeCombatant, tapHitmarkSeconds);
+      },
     },
     skillHolds: [
       {

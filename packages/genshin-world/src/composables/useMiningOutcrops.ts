@@ -48,6 +48,7 @@ export const useMiningOutcrops = ({
     for (const regionId of ids) {
       if (requestedRegionIds.has(regionId)) continue;
       requestedRegionIds.add(regionId);
+      // oxlint-disable-next-line typescript/no-floating-promises -- the match's two handlers terminate the result, so the promise it returns cannot reject
       getResultAsync(() => readMiningOutcropPlaces(gameDataBaseUrl, regionId)).match(
         (places) => {
           placesMap.value = new Map([...placesMap.value, [regionId, places]]);

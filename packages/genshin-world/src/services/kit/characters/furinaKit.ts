@@ -509,9 +509,9 @@ export const createFurinaKitBehaviour = ({
     // Take over from the ones out
     chargedAttack: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-        scheduleKitTask(kitEffectState, combatant.characterId, arkheSwitchSeconds, (tick) =>
-          switchArkhe(tick, combatant, body.position),
-        );
+        scheduleKitTask(kitEffectState, combatant.characterId, arkheSwitchSeconds, (tick) => {
+          switchArkhe(tick, combatant, body.position);
+        });
       },
     },
     normalAttacks: [strike, strike, strike, strike],

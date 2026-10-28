@@ -23,7 +23,7 @@ export class PmxReader {
     this.#view = new DataView(buffer);
     const globalCount = this.readUint8();
     const globalsEnd = this.#offset + globalCount;
-    const textEncoding: PmxTextEncoding = this.readUint8();
+    const textEncoding = this.readUint8();
     this.#textDecoder = new TextDecoder(textEncoding === PmxTextEncoding.Utf8 ? "utf8" : "utf-16le");
     this.additionalVectorCount = this.readUint8();
     this.vertexIndexSize = this.readUint8();

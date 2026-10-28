@@ -21,7 +21,9 @@ export const manifestCommand: SubCommandsDef[string] = defineCommand({
     (
       await getResultAsync(() => getManifest(args.directory || getParityDirectory(), resolveFolders(args.folders)))
     ).match(
-      (manifest) => console.info(JSON.stringify(manifest)),
+      (manifest) => {
+        console.info(JSON.stringify(manifest));
+      },
       (error) => {
         throw new InvalidOperationError(Operation.Read, "manifest", error.message);
       },

@@ -9,8 +9,8 @@ describe(hidePoweredBy, () => {
     expect.hasAssertions();
 
     const app = createNitroApp();
-    createRouteRulesPlugin({ "/**": { ...PAGE_ROUTE_RULES["/**"], hidePoweredBy: true } })(app.nitroApp);
-    hidePoweredBy(app.nitroApp);
+    await createRouteRulesPlugin({ "/**": { ...PAGE_ROUTE_RULES["/**"], hidePoweredBy: true } })(app.nitroApp);
+    await hidePoweredBy(app.nitroApp);
 
     const event = new H3Event(new Request(new URL(PAGE_PATHNAME, "http://localhost")));
     await app.nitroApp.hooks.callHook("request", event);

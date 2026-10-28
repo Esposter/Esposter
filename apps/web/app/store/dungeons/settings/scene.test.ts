@@ -58,7 +58,7 @@ describe(useSettingsSceneStore, () => {
     expect(saveDungeons).not.toHaveBeenCalled();
   });
 
-  test("left and right step through a row's values, saving each one they land on", () => {
+  test("left and right step through a row's values, saving each one they land on", async () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
@@ -66,22 +66,22 @@ describe(useSettingsSceneStore, () => {
     const { onPlayerInput, restSettingsCursor } = settingsSceneStore;
     settingsStore.settings[SettingsOption["Text Speed"]] = TextSpeedSetting.Mid;
     restSettingsCursor();
-    onPlayerInput(scene, Direction.RIGHT, Direction.RIGHT, 0);
+    await onPlayerInput(scene, Direction.RIGHT, Direction.RIGHT, 0);
 
     expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Fast);
     // Past the last value, right changes nothing and saves nothing
-    onPlayerInput(scene, Direction.RIGHT, Direction.RIGHT, 0);
+    await onPlayerInput(scene, Direction.RIGHT, Direction.RIGHT, 0);
 
     expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Fast);
-    onPlayerInput(scene, Direction.LEFT, Direction.LEFT, 0);
-    onPlayerInput(scene, Direction.LEFT, Direction.LEFT, 0);
+    await onPlayerInput(scene, Direction.LEFT, Direction.LEFT, 0);
+    await onPlayerInput(scene, Direction.LEFT, Direction.LEFT, 0);
 
     expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Slow);
     // Mid to Fast, Fast to Mid, Mid to Slow: the edge press is not one of the three
     expect(saveDungeons).toHaveBeenCalledTimes(3);
   });
 
-  test("up and down rest on each row's saved value and save nothing", () => {
+  test("up and down rest on each row's saved value and save nothing", async () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
@@ -89,7 +89,7 @@ describe(useSettingsSceneStore, () => {
     const { onPlayerInput, restSettingsCursor } = settingsSceneStore;
     settingsStore.settings[SettingsOption.Animations] = AnimationsSetting.Off;
     restSettingsCursor();
-    onPlayerInput(scene, Direction.DOWN, Direction.DOWN, 0);
+    await onPlayerInput(scene, Direction.DOWN, Direction.DOWN, 0);
 
     const animationsRow = getRowPosition(SettingsOption.Animations);
     expect(SettingsOptionGrid.position.value).toStrictEqual({

@@ -127,7 +127,9 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
         // The field recasts the shield at each refresh, from wherever the body stands, so its radius reaches every body
         castKitField(kitEffectState, combatant.characterId, body.position, {
           nextTickSeconds: firstRefreshSeconds,
-          onTick: (tick) => castShield(tick, combatant, shieldSeconds),
+          onTick: (tick) => {
+            castShield(tick, combatant, shieldSeconds);
+          },
           secondsRemaining: refreshFieldSeconds,
           tickIntervalSeconds: refreshIntervalSeconds,
         });

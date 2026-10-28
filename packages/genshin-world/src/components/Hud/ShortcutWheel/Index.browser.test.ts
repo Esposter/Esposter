@@ -13,7 +13,7 @@ describe("shortcutWheel", () => {
   test("should draw each default entry as an option", async () => {
     expect.hasAssertions();
 
-    render(ShortcutWheel, {
+    await render(ShortcutWheel, {
       props: { directionCount: ShortcutWheelDirectionCount.Eight, gameText: ENGLISH_GAME_TEXT },
     });
 
@@ -30,7 +30,7 @@ describe("shortcutWheel", () => {
   test("should select the picked entry alone", async () => {
     expect.hasAssertions();
 
-    render(ShortcutWheel, {
+    await render(ShortcutWheel, {
       props: { directionCount: ShortcutWheelDirectionCount.Eight, gameText: ENGLISH_GAME_TEXT, pickedIndex: 0 },
     });
 

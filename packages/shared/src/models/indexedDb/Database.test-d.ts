@@ -69,12 +69,12 @@ describe("database type", () => {
     expectTypeOf(database.delete("users", IDBKeyRange.only(1))).toEqualTypeOf<Promise<void>>();
   });
 
-  test("put takes the store's value and rejects a value of another store", () => {
+  test("put takes the store's value and rejects a value of another store", async () => {
     expect.hasAssertions();
 
     expectTypeOf(database.put("users", { id: 1, name: "a" })).toEqualTypeOf<Promise<number>>();
     // @ts-expect-error -- a message is not a user
-    database.put("users", { roomId: "a" });
+    await database.put("users", { roomId: "a" });
   });
 
   test("rejects a store name the schema does not declare", () => {

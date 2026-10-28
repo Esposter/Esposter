@@ -44,5 +44,10 @@ export const startParityServer = async (isDev: boolean): Promise<ParityServer> =
       fail(new InvalidOperationError(Operation.Create, origin, `its server exited with ${code}`));
     });
   });
-  return { origin, stop: () => server.kill() };
+  return {
+    origin,
+    stop: () => {
+      server.kill();
+    },
+  };
 };

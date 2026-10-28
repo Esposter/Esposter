@@ -32,7 +32,7 @@ describe("dialogueTalk", () => {
       startLineId: "line",
     };
     const travelerTitle = fillLinePlaceholders(ENGLISH_GAME_TEXT[GameTextKey.Traveler], "", LOGIN_TRAVELER_GENDER);
-    render(DialogueTalk, {
+    await render(DialogueTalk, {
       props: {
         gameText: ENGLISH_GAME_TEXT,
         startProgress: { isRevealed: true, lineId: "line" },
@@ -67,7 +67,7 @@ describe("dialogueTalk", () => {
       startLineId: "line",
     };
     const onBegin = vi.fn<(talkId: string) => void>();
-    render(DialogueTalk, {
+    await render(DialogueTalk, {
       props: {
         gameText: ENGLISH_GAME_TEXT,
         offers: [{ icon: DialogueChoiceIcon.Quest, talkId: "quest", textId: "title" }],
@@ -112,7 +112,7 @@ describe("dialogueTalk", () => {
       npcIds: [],
       startLineId: "first",
     };
-    render(DialogueTalk, {
+    await render(DialogueTalk, {
       props: {
         gameText: ENGLISH_GAME_TEXT,
         offers: [{ icon: DialogueChoiceIcon.Quest, talkId: "quest", textId: "title" }],
