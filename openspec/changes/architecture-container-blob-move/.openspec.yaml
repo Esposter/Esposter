@@ -1,5 +1,0 @@
-schema: spec-driven
-created: 2026-10-28
-affected_areas: [architecture]
-x-model: claude-haiku-5-5
-skip_specs: true
