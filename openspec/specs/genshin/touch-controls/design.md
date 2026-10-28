@@ -32,7 +32,7 @@ flowchart LR
 | `packages/genshin-world/src/components/Hud/Stick/Index.vue`             | The stick, in its area of the game's tree                          |
 | `packages/genshin-world/src/components/Hud/Touch/Index.vue`             | The look's drag under every piece                                  |
 | `packages/genshin-world/src/components/Hud/Actions/Index.vue`           | The attack, aim, jump and sprint buttons                           |
-| `packages/genshin-world/src/services/hud/constants.ts`                  | The stick's head at rest, and the look's turn for a pixel          |
+| `packages/genshin-world/src/services/hud/constants.ts`                  | The look's turn for a pixel of a drag                              |
 | `packages/genshin-world/src/services/hud/TouchStickShapePositionMap.ts` | The stick's group centre for each recorded screen shape            |
 | `packages/genshin-world/src/services/hud/getTouchStickShape.ts`         | The recorded shape nearest a window's aspect ratio                 |
 | `packages/genshin-engine/src/input/createInput.ts`                      | `press`, `release`, `setTouchStick` and `turn`, read with the rest |

@@ -25,7 +25,7 @@ stateDiagram-v2
 - **One screen at a time.** Over a screen, every other screen's shortcut waits; the Paimon menu's entries are the one way from a screen to another, and they replace the menu with the screen chosen (`packages/genshin-world/src/services/screen/getNextScreenKind.ts`).
 - **A talk stays open.** Over a talk, every key waits, Escape and a pad's Start among them; only the talk's own end sets the world back (`packages/genshin-world/src/services/screen/getNextScreenKind.ts`). A talk is begun from the world by F on a resident, as the [dialogue](../dialogue/design.md) page describes.
 
-The rule is read only while the world is shown (`packages/genshin-world/src/services/screen/getNextScreenKind.ts`), so nothing opens under the opening that covers it.
+The rule is read only while the world is shown (`packages/genshin-world/src/components/World/Session/Index.vue`, which calls it only while the world is not paused), so nothing opens under the opening that covers it.
 
 ## What a screen does to the world
 
@@ -37,7 +37,7 @@ The rule is read only while the world is shown (`packages/genshin-world/src/serv
 | `isHudHidden`       | the heads-up display is hidden                                                        |
 | `isPointerReleased` | the pointer's lock is let go, for the screen's own cursor                             |
 
-Every menu answers true to all three (`packages/genshin-world/src/services/screen/constants.ts`, `MENU_SCREEN_BEHAVIOUR`), as the game's single-player menus pause its simulation and its time while its music and particles carry on. Photo mode and a talk hold nothing: their clock runs with the HUD hidden, photo mode's camera orbits the character and its pointer still turns it, while a talk lets the pointer go for its replies. The world in play answers false to all three.
+Every menu answers true to all three (`packages/genshin-world/src/services/screen/constants.ts`, `MENU_SCREEN_BEHAVIOUR`), as the game's single-player menus pause its simulation and its time while its music and particles carry on. The fishing point holds the world alone, keeping its HUD and its pointer (`packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`). Photo mode and a talk hold nothing: their clock runs with the HUD hidden, photo mode's camera orbits the character and its pointer still turns it, while a talk lets the pointer go for its replies. The world in play answers false to all three.
 
 - **Held.** Under any screen but the world, the character on the field and its body neither step, photo mode's and a talk's included. Only photo mode's follow camera still looks, orbiting the held body; a menu's and a talk's stand where they are. Only a menu holds the world's fixed-step loops, so Windrise's clock and its clouds stand still under a menu and run on under a talk and in photo mode. Drawing goes on, so the world stays behind the screen (`packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`). This is a different thing from the world screen's `isPaused`, which stops drawing altogether while the opening covers the world.
 - **Pointer.** A screen that lets the pointer go releases the lock when it opens. Closing it does not take the lock back, since the browser grants one only to a click; a click on the world takes it, as it did the first time (`packages/genshin-world/src/components/World/Session/Index.vue`, the pointer release a screen asks for).
@@ -52,7 +52,7 @@ Every menu answers true to all three (`packages/genshin-world/src/services/scree
 - a built screen, which is a slot of `MenuScreen` named by its kind, filled by the world screen with what that screen needs and closed by setting the world back;
 - or, for a screen nobody has built yet, a placeholder: its title in the game's words (`ScreenKindGameTextKeyMap`) over a veil, and a way back (`packages/genshin-world/src/components/Menu/Placeholder/Index.vue`). Every shortcut therefore opens something, and closes it again, before its screen exists.
 
-Each one is a dialog that takes focus as it opens, so the keyboard reaches it without a pointer (`packages/genshin-world/src/components/Menu/Screen/Index.vue`).
+The Paimon menu and a placeholder are dialogs that take focus as they open, so the keyboard reaches them without a pointer (`packages/genshin-world/src/components/Menu/Paimon/Index.vue`, `packages/genshin-world/src/components/Menu/Placeholder/Index.vue`).
 
 A talk is none of these: `MenuScreen` draws nothing for it, and the world screen mounts the talk's host over the world while the talk is open ([dialogue](../dialogue/design.md)).
 

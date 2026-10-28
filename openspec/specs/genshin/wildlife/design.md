@@ -12,7 +12,7 @@ flowchart TD
   L -->|"no"| UG["Left out, as the chests are"]
   L -->|"yes"| T["Carried into the game's coordinates by the fit's transform, then into its region's axes"]
   T --> S["One slice per region, published to the wildlife dataset of the hosted game data"]
-  S --> V["Windrise's scene parses Mondstadt's slice and stands each animal at its place"]
+  S --> V["The world screen reads Mondstadt's slice, and Windrise stands each animal at its place"]
   V --> F{"The character within the escape radius?"}
   F -->|"yes: run straight away"| F
   F -->|"no, once the escape time has passed"| I["Stands idle at its place"]
@@ -26,7 +26,7 @@ Its ground-layer and mapped-region checks are `scripts/src/services/genshinAsset
 
 ## The flight
 
-`stepWildlife` runs on the enemies' fixed step, a sixtieth of a second (`packages/genshin-world/src/services/wildlife/constants.ts`, `WILDLIFE_STEP_SECONDS`). An idle animal with the character within its escape radius starts running straight away from it at the flight speed (`packages/genshin-world/src/services/wildlife/stepWildlife.ts`). A running one keeps running for the escape time, then stands idle, or runs again if the character is still in reach (`packages/genshin-world/src/services/wildlife/stepWildlife.ts`). A character that is gone leaves a running animal running on its last heading until its time is up, and then standing idle (`packages/genshin-world/src/services/wildlife/stepWildlife.ts`).
+`stepWildlife` runs on the Wildlife component's own fixed step, a sixtieth of a second (`packages/genshin-world/src/components/World/Wildlife/Index.vue`; `WILDLIFE_STEP_SECONDS` in `packages/genshin-world/src/services/wildlife/constants.ts`). An idle animal with the character within its escape radius starts running straight away from it at the flight speed (`packages/genshin-world/src/services/wildlife/stepWildlife.ts`). A running one keeps running for the escape time, then stands idle, or runs again if the character is still in reach (`packages/genshin-world/src/services/wildlife/stepWildlife.ts`). A character that is gone leaves a running animal running on its last heading until its time is up, and then standing idle (`packages/genshin-world/src/services/wildlife/stepWildlife.ts`).
 
 The numbers are provisional, each marked in `packages/genshin-world/src/services/wildlife/constants.ts`:
 
@@ -64,8 +64,6 @@ Every animal of the slice exists from the scene's load (`packages/genshin-world/
 
 ## Open
 
-- [ ] **Nothing is struck, dropped or picked up yet** — contradicted by `packages/genshin-world/src/services/kit/strikeKitEnemies.ts`: strikes drop animals by kind; the owner defers wildlife drops.
-- [ ] **The fleeing-kind check admits only White Pigeon, Crimson Fox or Squirrel** — contradicted by `scripts/src/services/genshinAssets/wildlife/buildWildlifePlaces.ts`: it maps every `WildlifeKind` to its label, Boar included.
 - [ ] **The archive files each kind as an animal or aviary monster** — no source yet: the dump's Monster and Gadget rows were not matched to the kinds' names.
 - [ ] **No table gives a flight's speed** — no source yet: only the environment table's keys were read, not every table's.
 - [ ] **Mondstadt's slice holds about a hundred animals, and the other regions hold the same kinds where their labels are marked** — no source yet: the published slices are in hosted storage, not the local dump, so neither count was checked.

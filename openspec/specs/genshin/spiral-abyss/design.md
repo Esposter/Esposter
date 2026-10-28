@@ -1,6 +1,6 @@
 # Spiral Abyss
 
-The Spiral Abyss's rules over the game's tower tables: which floors and chambers exist, how a chamber is cleared against its clock and its monolith, how many stars a clear earns and keeps, which floor opens next, which rewards a clear gives once, and which period of the Abyssal Moon Spire runs now (the tables are in `{data-root}/genshin-parity/text/ExcelBinOutput/`: `TowerFloorExcelConfigData.json`, `TowerLevelExcelConfigData.json`, `TowerRewardExcelConfigData.json` and `TowerScheduleExcelConfigData.json`). This page is the first build of the [Spiral Abyss](../../../changes/genshin-spiral-abyss/design.md) proposal. The chambers' enemies and scenes, the screen that enters them, the wormhole at Cape Oath and the blessings stay in the proposal.
+The Spiral Abyss's rules over the game's tower tables: which floors and chambers exist, how a chamber is cleared against its clock and its monolith, how many stars a clear earns and keeps, which floor opens next, which rewards a clear gives once, and which period of the Abyssal Moon Spire runs now (the tables are in `{data-root}/genshin-parity/text/ExcelBinOutput/`: `TowerFloorExcelConfigData.json`, `TowerLevelExcelConfigData.json`, `TowerRewardExcelConfigData.json` and `TowerScheduleExcelConfigData.json`). This page is the first build of the [Spiral Abyss](../../../changes/genshin-spiral-abyss/design.md) proposal. The chambers' scenes, the wormhole at Cape Oath and the blessings' effects beyond the Stardread Moon's stay in the proposal, as Not built yet lists.
 
 ## How it works
 
@@ -70,11 +70,9 @@ flowchart TD
 
 ## Not built yet
 
-- **The chambers' enemies and scenes.** Each half's wave is the table's list for that half, placed as camps of the chamber's scene, which is not derived. A caller reports a half defeated until then.
-- **The screen and the chamber's end.** Nothing enters a chamber or returns from one, and a chamber's cleared health and energy are not carried into the next chamber's start.
-- **The wormhole at Cape Oath.** It waits on Musk Reef's scene being derived.
-- **The blessings.** The Moon Spire's blessing is named only by a text hash and an icon, its effect is not in the tables, and the wiki could not be read. The Corridor's blessing choices are not settled by the proposal, so none is read.
-- **The rewards' items.** A clear returns reward ids, and nothing resolves them to items in the wallet.
+- **The chambers' scenes.** Each half's wave is the table's list for that half, spawned as a camp beside the entrance, not in the chamber's own scene, which is not derived (`packages/genshin-world/src/services/spiralAbyss/createAbyssArena.ts`). Each defeat of that camp counts toward its half (`packages/genshin-world/src/composables/useWorldSpiralAbyss.ts`).
+- **The wormhole at Cape Oath.** The entrance stands at the centre of Cape Oath's outline, provisionally, until the wormhole's own place is read from the game's scene export (`packages/genshin-world/src/services/spiralAbyss/constants.ts`). It waits on Musk Reef's scene being derived.
+- **The blessings beyond the Stardread Moon.** The Moon Spire's blessing is named only by a text hash and an icon, its effect is not in the tables, and the wiki could not be read. Only the Stardread Moon has a module (`packages/genshin-world/src/services/spiralAbyss/blessings/stardreadBlessing.ts`), so a reaction under another period's blessing leaves the state as it was (`packages/genshin-world/src/services/spiralAbyss/applyAbyssBlessingReaction.ts`).
 
 ## Notes
 
@@ -94,6 +92,4 @@ flowchart TD
 - [ ] **The combine and forge tables match the dump byte for byte** — no source yet: no copy of the AnimeGameData tables is in the checkout to compare against.
 - [ ] **A two-team chamber can have no second wave in the table, as the monolith chambers have none** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/TowerLevelExcelConfigData.json`: 20 of 43 monolith levels hold a second wave.
 - [ ] **The Moon Spire floors' reward columns differ from the reward table for some floors** — no source yet: the floor-to-group mapping for Moon Spire floors is not checked.
-- [ ] **The close time is not read** — contradicted by `scripts/src/services/genshinAssets/spiralAbyss/toAbyssPeriod.test.ts`: it asserts each period's closesAt.
 - [ ] **The dump's schedule ends with the period that began on 2026-06-16** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/TowerScheduleExcelConfigData.json`: its highest scheduleId, 124, begins 2026-10-16.
-- [ ] **Nothing calls the readers yet** — contradicted by `packages/genshin-world/src/components/World/Session/Index.vue`: it calls useWorldSpiralAbyss, which calls all three.

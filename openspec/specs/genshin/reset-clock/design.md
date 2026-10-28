@@ -57,7 +57,7 @@ flowchart TD
 | `packages/genshin-world/src/services/spiralAbyss/findAbyssPeriodAt.ts`                  | The Moon Spire period that began latest, read in the server's zone                                         |
 | `packages/genshin-world/src/services/spiralAbyss/pickAbyssBenedictionList.ts`           | The Moon Spire blessing list's day, counted from the game epoch on the server's clock                      |
 | `packages/genshin-world/src/services/shared/findLatestBegun.ts`                         | The latest season begun before a moment, read in the server's zone                                         |
-| `packages/genshin-world/src/services/gathering/computeGatheringRespawn.ts`              | The gathering midnight, read in the server's zone                                                          |
+| `packages/genshin-world/src/services/gathering/computeGatheringRespawn.ts`              | The next daily reset after a daily point's pick                                                            |
 | `packages/genshin-world/src/composables/useWorldFishing.ts`                             | The fishing day's hours, read in the server's zone                                                         |
 | `packages/genshin-world/src/composables/useWorldCommissions.ts`                         | The commissions' moment, from the world clock                                                              |
 | `packages/genshin-world/src/components/World/Enemies/Index.vue`                         | The enemies' defeats, jumps and claims on the world clock, each respawn checked by `checkIsEnemyRespawned` |
@@ -68,10 +68,10 @@ flowchart TD
 
 ## Notes
 
-- The Enemies component reads `getWorldNow` (`packages/genshin-world/src/components/World/Enemies/Index.vue:66`), the world clock, which Session passes through Windrise. Each respawn is checked against the same clock, so no moment is read from the device.
+- The Enemies component reads `getWorldNow` (`packages/genshin-world/src/components/World/Enemies/Index.vue:70`), the world clock, which Session passes through Windrise. Each respawn is checked against the same clock, so no moment is read from the device.
 - A computed that reads the clock takes `worldNow`, a ref Session sets from `getWorldNow` once each `WORLD_CLOCK_INTERVAL_MS` (`packages/genshin-world/src/components/World/Session/Index.vue`), so a reset or a regeneration that passes with no write reaches it within the minute. A function that runs on a click reads `getWorldNow` at the moment it runs, and re-checks a row a computed showed before it acts on the row.
-- `checkIsDomainKindOpenOnDay` and `checkIsDomainLevelOpen` take the moment checked, not a date, and read its game day from the reset clock. `checkIsDomainLevelOpen` has no caller outside its tests, since nothing enters a domain yet ([domains](../domains/design.md)).
-- Gathering's overworld ingredients respawn at the server's midnight, a separate moment and not a reset, so it stays in the gathering rules, outside this module.
+- `checkIsDomainKindOpenOnDay` and `checkIsDomainLevelOpen` take the moment checked, not a date, and read its game day from the reset clock. `checkIsDomainLevelOpen` is called by `useWorldDomains` when a level is entered (`packages/genshin-world/src/composables/useWorldDomains.ts:263`) and by `computeDomainLevelRows` (`packages/genshin-world/src/services/domains/computeDomainLevelRows.ts:21`) ([domains](../domains/design.md)).
+- Gathering's daily points respawn at the next daily reset after the pick, through `computeNextDailyReset` (`packages/genshin-world/src/services/gathering/computeGatheringRespawn.ts:12`), so they read this module's reset.
 
 ## Open
 
