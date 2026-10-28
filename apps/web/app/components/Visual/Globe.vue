@@ -103,7 +103,6 @@ const renderGlobe = async () => {
   controls.autoRotate = false;
   controls.minPolarAngle = Math.PI / 3.5;
   controls.maxPolarAngle = Math.PI - Math.PI / 3;
-
   // eslint-disable-next-line no-restricted-syntax -- three-globe is multi-megabyte and loads when the globe mounts, so the about page's route chunk does not carry it
   const ThreeGlobe = (await import("three-globe")).default;
   if (isUnmounted) return;

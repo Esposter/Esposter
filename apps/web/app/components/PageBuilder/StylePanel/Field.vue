@@ -18,7 +18,6 @@ interface Props {
   // The property the value sets, which the browser checks the value against as it is typed
   property: StyleProperty;
 }
-
 // The saved value. A draft the check refuses stays in the field, unsaved, and the saved value is left as it was
 const modelValue = defineModel<string>({ required: true });
 const { label, placeholder, property } = defineProps<Props>();

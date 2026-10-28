@@ -43,7 +43,6 @@ const { focus, focusedId, onKeydown } = useRovingFocus(
 const typeahead = useTypeahead();
 const { announce, announcement, getKeyedOrder } = useReorder();
 const getDragReorderProps = useDragReorder();
-
 // Rows sharing a group sit together under its heading, in the order they come
 const groups = computed(() => {
   const rowGroups: { group?: string; items: ExtendedListItem[] }[] = [];

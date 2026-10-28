@@ -77,7 +77,6 @@ const { dropTarget, isDragging, startMergeFieldDrag, startPaletteDrag } = usePag
 const canvas = useTemplateRef("canvas");
 // The canvas is mounted only once the page has content, so a palette drag on an empty page finds no frame and stays a click
 const getFrameGeometry = () => canvas.value?.getFrameGeometry();
-
 // Enter edits the selected node in place when it is a text node, and does nothing for any other node
 const startTextEdit = () => {
   const currentDocument = getPageDocument();
@@ -113,7 +112,6 @@ const editorKeyCommands: Partial<Record<KeyAction, () => void>> = {
 const handleEditorKeydown = (event: KeyboardEvent) => {
   const action = getKeyAction(event, KeyScope.Editor);
   if (!action) return;
-
   // Starting a text edit leaves Enter's default alone, while every other command the key takes prevents it
   if (action !== KeyAction.StartTextEdit) event.preventDefault();
   editorKeyCommands[action]?.();

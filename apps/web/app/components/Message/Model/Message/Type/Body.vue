@@ -10,7 +10,6 @@ interface Props extends Pick<MessageComponentProps, "isPreview" | "message"> {
 
 defineSlots<{ default?: () => VNode; prepend?: () => VNode }>();
 const { isPreview = false, message, messageHtml } = defineProps<Props>();
-
 // A click, Enter or Space on a spoiler reveals it, and again hides it. The attribute lives on the rendered
 // Element only, so a re-render of the message clears it
 const toggleSpoiler = (event: Event) => {

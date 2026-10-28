@@ -5,7 +5,6 @@ interface Props {
   // Whether the form's fields pass their rules, which the Save answer waits on
   isValid: boolean;
 }
-
 // The footer of a dialog that wraps a form: Cancel closes it, and Save submits the form it sits in
 const isOpen = defineModel<boolean>({ required: true });
 defineProps<Props>();

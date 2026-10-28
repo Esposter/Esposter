@@ -33,7 +33,6 @@ const { insert } = usePageBuilderInsert(kind, getDocument, () => resourceId, ann
 const mergeFieldColumns = useMergeFieldColumns(() => resourceId);
 const insertMergeField = (columnName: string) =>
   insert(MjmlNodeType.Text, (id) => createMergeFieldNode(columnName, id));
-
 // A press starts a drag only where a frame can take the block or the column, so a press that has no frame stays a click
 const hasFrame = () => getFrameGeometry?.() !== undefined;
 const startDrag = (type: BlockNode["type"], event: PointerEvent) => {

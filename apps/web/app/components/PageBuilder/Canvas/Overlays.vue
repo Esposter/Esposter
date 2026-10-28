@@ -41,7 +41,6 @@ const toBoxStyle = ({ height, left, top, width }: OverlayBox) => ({
 // The drop indicator's box as the style that places it over the layer, whichever of its two kinds draws it
 const dropIndicatorStyle = computed(() => (dropIndicator.value ? toBoxStyle(dropIndicator.value.box) : undefined));
 let pendingFrame = 0;
-
 // The box of a node's element inside the layer, or none when the node has no element in the frame
 const getNodeBox = (nodeId: string | undefined): OverlayBox | undefined => {
   if (!nodeId || !layer.value) return undefined;
@@ -68,7 +67,6 @@ const getSlotOwnerBox = (
 const getDropIndicator = (): DropIndicator | undefined => {
   const open = pageOpen.value;
   if (!dropTarget || !open) return undefined;
-
   // The shell reads a document of either kind through the kind any of them assigns to, so the pair is typed as that
   const document: AnyPageBuilderDocument = open.document;
   const kind: AnyPageBuilderKind = open.kind;

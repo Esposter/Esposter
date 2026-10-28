@@ -17,7 +17,6 @@ interface Props {
 }
 
 const { id } = defineProps<Props>();
-
 // The survey renders only once mounted, so its components register on the client alone
 if (!checkIsServer()) registerSurveyPlugin(useNuxtApp().vueApp);
 const { $trpc } = useNuxtApp();

@@ -22,7 +22,7 @@ describe("messageModelMemberActionDialogShell", () => {
       setActivePinia(createPinia());
     });
 
-    // Happy-dom does not apply autofocus, so the attribute is what holds the focus: Dialog.vue leaves the dialog
+    // `happy-dom` does not apply autofocus, so the attribute is what holds the focus: Dialog.vue leaves the dialog
     // Unfocused for a control that asks for it, and the browser then focuses Cancel rather than the submit
     test("asks for Cancel's focus, so a keypress right away does not submit", async () => {
       expect.hasAssertions();
