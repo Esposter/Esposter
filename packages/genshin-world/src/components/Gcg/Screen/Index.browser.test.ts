@@ -34,9 +34,9 @@ describe("gcgScreen", () => {
     nameTextId: TOSS_UP_NAME_TEXT_ID,
   };
 
-  const renderScreenWithTossUp = (onPlayCard: (...args: unknown[]) => void) => {
+  const renderScreenWithTossUp = async (onPlayCard: (...args: unknown[]) => void) => {
     const [playerSide, opponentSide] = duel.sides;
-    render(GcgScreen, {
+    await render(GcgScreen, {
       props: {
         ...screenFixtureProps,
         duel: {
@@ -56,7 +56,7 @@ describe("gcgScreen", () => {
     expect.hasAssertions();
 
     const onPlayCard = vi.fn<(...args: unknown[]) => void>();
-    renderScreenWithTossUp(onPlayCard);
+    await renderScreenWithTossUp(onPlayCard);
 
     clickDie(0);
     await page.getByRole("button", { name: /Toss-Up/u }).click();
@@ -74,7 +74,7 @@ describe("gcgScreen", () => {
     expect.hasAssertions();
 
     const onPlayCard = vi.fn<(...args: unknown[]) => void>();
-    renderScreenWithTossUp(onPlayCard);
+    await renderScreenWithTossUp(onPlayCard);
 
     clickDie(0);
     await page.getByRole("button", { name: /Toss-Up/u }).click();
@@ -87,7 +87,7 @@ describe("gcgScreen", () => {
     expect.hasAssertions();
 
     const onLeave = vi.fn<(won: boolean) => void>();
-    render(GcgScreen, {
+    await render(GcgScreen, {
       props: {
         ...screenFixtureProps,
         duel: { ...duel, phase: GcgPhase.Ended, winnerSideIndex: GCG_PLAYER_SIDE_INDEX },
@@ -103,7 +103,7 @@ describe("gcgScreen", () => {
     expect.hasAssertions();
 
     const onLeave = vi.fn<(won: boolean) => void>();
-    render(GcgScreen, {
+    await render(GcgScreen, {
       props: {
         ...screenFixtureProps,
         duel: { ...duel, phase: GcgPhase.Ended, winnerSideIndex: GCG_OPPONENT_SIDE_INDEX },

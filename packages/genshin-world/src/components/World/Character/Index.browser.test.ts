@@ -28,7 +28,7 @@ const createFieldKitContext = (): KitContext => {
 };
 
 // The character mounted in a canvas with a camera behind it, its body read back after the frames it steps through
-const renderCharacter = (isMoveHeld?: true): Object3D => {
+const renderCharacter = async (isMoveHeld?: true): Promise<Object3D> => {
   const body = new Object3D();
   const inputState: InputState = {
     heldActions: new Set(),
@@ -40,7 +40,7 @@ const renderCharacter = (isMoveHeld?: true): Object3D => {
     pressedActions: new Set(),
     zoomSteps: 0,
   };
-  render(
+  await render(
     defineComponent({
       setup: () => () =>
         h(
@@ -76,7 +76,7 @@ describe("worldCharacter", () => {
   test("holding Tab stops the character walking", async () => {
     expect.hasAssertions();
 
-    const body = renderCharacter(true);
+    const body = await renderCharacter(true);
     await sleep(WALK_MS);
     const start = body.position.clone();
     await sleep(WALK_MS);
@@ -88,7 +88,7 @@ describe("worldCharacter", () => {
   test("walks under the same move while no wheel is open", async () => {
     expect.hasAssertions();
 
-    const body = renderCharacter();
+    const body = await renderCharacter();
     await sleep(WALK_MS);
     const start = body.position.clone();
     await sleep(WALK_MS);

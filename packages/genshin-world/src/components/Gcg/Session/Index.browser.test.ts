@@ -27,7 +27,7 @@ describe("gcgSession", () => {
 
     const game: GcgGame = { enemyDeckId: 1, gamePlayerDeckId: 2, playerDeckId: 2 };
     vi.mocked(readGcgGame).mockResolvedValueOnce(game);
-    render(GcgSession, {
+    await render(GcgSession, {
       props: {
         gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
         gameId: 12,
@@ -50,18 +50,19 @@ describe("gcgSession", () => {
 
     vi.spyOn(console, "error").mockImplementation(() => {});
     const onLeave = vi.fn<() => void>();
-    await new Promise<void>((resolve) => {
+    const left = new Promise<void>((resolve) => {
       onLeave.mockImplementation(resolve);
-      render(GcgSession, {
-        props: {
-          gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
-          gameId: -1,
-          gameText: ENGLISH_GAME_TEXT,
-          language: GameLanguage.English,
-          onLeave,
-        },
-      });
     });
+    await render(GcgSession, {
+      props: {
+        gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
+        gameId: -1,
+        gameText: ENGLISH_GAME_TEXT,
+        language: GameLanguage.English,
+        onLeave,
+      },
+    });
+    await left;
 
     expect(onLeave).toHaveBeenCalledTimes(1);
   });
