@@ -16,9 +16,9 @@ export const useInitializeGameObjectEvents = () => {
       .filter((key) => checkIsEvent(key))
       .map((key) => getEventName(key)),
   );
-  const gameObjectEvents = Object.keys(GameObjectEventMap)
-    .filter((key): key is keyof typeof GameObjectEventMap => Object.hasOwn(GameObjectEventMap, key))
-    .filter((key) => events.has(key));
+  const gameObjectEvents = Object.keys(GameObjectEventMap).filter((key): key is keyof typeof GameObjectEventMap =>
+    events.has(key),
+  );
   const eventStopHandles: (() => void)[] = [];
   const initializeGameObjectEvents = <TEmitsOptions extends Record<string, unknown[]>>(
     gameObject: GameObjects.GameObject,
