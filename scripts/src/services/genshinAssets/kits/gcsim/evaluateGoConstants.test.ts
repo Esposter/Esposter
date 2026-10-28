@@ -4,6 +4,28 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
+const sourceWithBurstRadiusWrites = (first: string, second: string) => [
+  {
+    path: "bloom.go",
+    source: [
+      "package bloom",
+      "",
+      "type char struct {",
+      "\t*tmpl.Character",
+      "\tburstRadius float64",
+      "}",
+      "",
+      "func (c *char) Skill() {",
+      `\tc.burstRadius = ${first}`,
+      "}",
+      "",
+      "func (c *char) Burst() {",
+      `\tc.burstRadius = ${second}`,
+      "}",
+    ].join("\n"),
+  },
+];
+
 describe(evaluateGoConstants, () => {
   test("gives a char field its one literal write, and none for a field the package's struct does not declare, a field written twice or one scaled by op=", () => {
     expect.hasAssertions();
@@ -115,6 +137,15 @@ describe(evaluateGoConstants, () => {
       { float: 2 },
       "attacks.ICDTagBloomDamage",
     ]);
+  });
+
+  test("gives a char field written a bare integer and a whole-valued float no constant, whichever is written first", () => {
+    expect.hasAssertions();
+
+    expect([
+      evaluateGoConstants(sourceWithBurstRadiusWrites("2", "2.0")).get("c.burstRadius"),
+      evaluateGoConstants(sourceWithBurstRadiusWrites("2.0", "2")).get("c.burstRadius"),
+    ]).toStrictEqual([undefined, undefined]);
   });
 
   test("reads Xiangling's attack.go as gcsim writes it, the frames her init sets one strike at a time", () => {
