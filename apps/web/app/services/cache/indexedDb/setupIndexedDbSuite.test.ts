@@ -4,11 +4,7 @@ import { afterEach, describe } from "vitest";
 
 // The shared indexedDb fixture: the canonical message triple (message3 shares message1's partition) and the
 // Per-test database reset.
-export const setupIndexedDbSuite = (): {
-  message1: StandardMessageEntity;
-  message2: StandardMessageEntity;
-  message3: StandardMessageEntity;
-} => {
+export const setupIndexedDbSuite = () => {
   const message1 = new StandardMessageEntity({
     partitionKey: crypto.randomUUID(),
     rowKey: getReverseTickedTimestamp(),
