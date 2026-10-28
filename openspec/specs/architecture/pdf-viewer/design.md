@@ -48,7 +48,7 @@ flowchart TD
 
 ## Notes
 
-The `fullscreen` permissions grant stays in `apps/web/configuration/security.ts`, although the viewer has no fullscreen control: the call view's stage calls `requestFullscreen` on its own element, and that grant is its. The renderer's folders are served under the base URLs `apps/web/app/services/pdf/constants.ts` names once.
+The `fullscreen` permissions grant stays in `apps/web/configuration/security.ts`, although the viewer has no fullscreen control: the call view's stage calls `requestFullscreen` on its own element, and that grant is its.
 
 ## Sources
 
