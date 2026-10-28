@@ -14,7 +14,7 @@ import { summarizeSceneKinds } from "#src/services/genshinParity/shared/summariz
 // Timestamp queries, the GPU's own time on the passes encoded in those frames; then each kind of the scene's objects
 // Priced on each pass, where the run hid them in turn
 export const summarizeGpuTrace = (trace: GpuTrace, states: TracedState[]): string[] => {
-  const frameIndexOf = new Map(trace.times.map((time, index) => [time, index]));
+  const timeFrameIndexMap = new Map(trace.times.map((time, index) => [time, index]));
   const lines: string[] = trace.passes ? [] : ["the adapter has no timestamp queries, so no pass is timed on the GPU"];
   const statePassesList = states.map(({ frames }) => {
     const firstTime = frames[0]?.time ?? 0;
@@ -46,7 +46,8 @@ export const summarizeGpuTrace = (trace: GpuTrace, states: TracedState[]): strin
       ? gaps.toSorted((firstGap, secondGap) => secondGap.gapMs - firstGap.gapMs).slice(0, 1)
       : gaps.filter(({ gapMs }) => gapMs > SLOW_FRAME_MS);
     lines.push(`${name}: ${stalled.length} frame(s) traced`);
-    for (const { gapMs, time } of stalled) lines.push(...describeFrame(time, gapMs, trace, frameIndexOf, offsetMs));
+    for (const { gapMs, time } of stalled)
+      lines.push(...describeFrame(time, gapMs, trace, timeFrameIndexMap, offsetMs));
   }
   if (trace.kinds && trace.passes) lines.push(...summarizeSceneKinds(trace.passes, trace.times, trace.kinds));
 

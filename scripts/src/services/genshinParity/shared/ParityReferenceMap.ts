@@ -482,7 +482,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
         IntertwinedFate: 0,
         MasterlessStardust: 0,
         MasterlessStarglitter: 0,
-        Mora: 6031059,
+        Mora: 6_031_059,
         Primogem: 1399,
       },
     },

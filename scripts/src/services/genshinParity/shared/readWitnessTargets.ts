@@ -20,8 +20,8 @@ export const readWitnessTargets = async (
   const targets: Partial<Record<WitnessTargetName, Float32Array>> = {};
   for (const name of names) {
     // oxlint-disable-next-line no-await-in-loop -- one target is drawn and read back before the next is drawn into it
-    const { targets: read } = await readWitnessTargetsInCall(page, [name], isScene, lightDirection);
-    Object.assign(targets, read);
+    const { targets: callTargets } = await readWitnessTargetsInCall(page, [name], isScene, lightDirection);
+    Object.assign(targets, callTargets);
   }
   return { families, height, parts, targets, width };
 };

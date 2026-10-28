@@ -180,7 +180,7 @@ export const CLOUD_BRIGHTNESS_RATIO = 1.4;
 // A recording's or a sound's pitch classes are read at 12 kHz, mono, in frames of 4096 samples a tenth of a second
 // Apart, over 60 Hz to 2.5 kHz, where a mix's notes carry their pitch; a frame quieter than a fiftieth of the loudest
 // Is left out of a match, and a match compares twenty seconds of a recording at a time
-export const CHROMA_SAMPLE_RATE = 12000;
+export const CHROMA_SAMPLE_RATE = 12_000;
 export const CHROMA_FRAME_LENGTH = 4096;
 export const CHROMA_HOP_LENGTH = 1200;
 export const CHROMA_MIN_FREQUENCY = 60;
@@ -189,7 +189,7 @@ export const CHROMA_QUIET_SHARE = 0.02;
 export const CHROMA_MATCH_SECONDS = 20;
 // Music is scored at 22.05 kHz, where its octave bands from 63 Hz to 8 kHz all fit, each band's level in decibels read
 // In the pitch classes' own frames, a level more than 60 dB under the game's loudest in that band read as that floor
-export const LISTEN_SAMPLE_RATE = 22050;
+export const LISTEN_SAMPLE_RATE = 22_050;
 export const LISTEN_BAND_CENTRES: number[] = [63, 125, 250, 500, 1000, 2000, 4000, 8000];
 export const LISTEN_FLOOR_DECIBELS = 60;
 // The energy a music band's level is read from, zero: an exact silence is minus infinity, which the game's floor clamps

@@ -25,7 +25,7 @@ export const parseSvgPath = (d: string, scale: number = getScale(d)): SvgPath =>
   const skipSeparators = () => {
     while (index < d.length && SEPARATOR_REGEX.test(d.charAt(index))) index++;
   };
-  const isEnd = () => {
+  const checkIsEnd = () => {
     skipSeparators();
     return index >= d.length;
   };
@@ -52,7 +52,7 @@ export const parseSvgPath = (d: string, scale: number = getScale(d)): SvgPath =>
     return relative ? [x + pointX, y + pointY] : [pointX, pointY];
   };
 
-  while (!isEnd()) {
+  while (!checkIsEnd()) {
     if (COMMAND_REGEX.test(d.charAt(index))) {
       command = d.charAt(index);
       index++;

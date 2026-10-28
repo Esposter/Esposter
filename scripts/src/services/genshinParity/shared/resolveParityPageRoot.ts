@@ -8,7 +8,7 @@ import { fetchOk } from "#src/services/shared/fetchOk";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 
 // Whether the parity page answers at a root, told apart by its title from whatever else serves on the same port
-const isParityPage = (root: string): Promise<boolean> =>
+const checkIsParityPage = (root: string): Promise<boolean> =>
   getResultAsync(async () => {
     const response = await fetchOk(root, { timeoutMs: PARITY_PROBE_TIMEOUT_MS });
     return (await response.text()).includes(PARITY_PAGE_TITLE);
@@ -27,7 +27,7 @@ export const resolveParityPageRoot = async (
   for (let port = firstPort; port < firstPort + PARITY_PORT_COUNT; port++) {
     const root = `http://localhost:${port}/parity/`;
     // oxlint-disable-next-line no-await-in-loop -- the first port that answers is the page, so each probe waits on the last
-    if (await isParityPage(root)) return root;
+    if (await checkIsParityPage(root)) return root;
   }
   throw new InvalidOperationError(
     Operation.Read,

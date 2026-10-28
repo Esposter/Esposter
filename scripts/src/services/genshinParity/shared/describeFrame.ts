@@ -17,10 +17,10 @@ export const describeFrame = (
   time: number,
   gapMs: number,
   trace: GpuTrace,
-  frameIndexOf: Map<number, number>,
+  timeFrameIndexMap: Map<number, number>,
   offsetMs: number,
 ): string[] => {
-  const frameIndex = frameIndexOf.get(time) ?? -1;
+  const frameIndex = timeFrameIndexMap.get(time) ?? -1;
   const calls = trace.calls.filter((call) => call.frame === frameIndex);
   const totalMs = calls.reduce((total, call) => total + call.duration, 0);
   const listed = calls

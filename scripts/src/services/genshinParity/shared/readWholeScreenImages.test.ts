@@ -23,14 +23,14 @@ describe(readWholeScreenImages, () => {
         },
       },
     ];
-    const fetch = vi.spyOn(globalThis, "fetch");
-    for (const response of responses) fetch.mockResolvedValueOnce(Response.json(response));
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    for (const response of responses) fetchSpy.mockResolvedValueOnce(Response.json(response));
 
     await expect(readWholeScreenImages("a")).resolves.toStrictEqual([
       { height: 1730, title: "File:Handbook.png", url: "https://wiki/handbook", width: 3130 },
       { height: 1440, title: "File:Menu.png", url: "https://wiki/menu", width: 2560 },
     ]);
-    expect(fetch.mock.calls[1]?.[0]).toContain(`&${new URLSearchParams(continuation)}`);
+    expect(fetchSpy.mock.calls[1]?.[0]).toContain(`&${new URLSearchParams(continuation)}`);
   });
 
   test("fails on a batch the API answers with an error, rather than returning the batches before it", async () => {
@@ -40,8 +40,8 @@ describe(readWholeScreenImages, () => {
       { continue: { gimcontinue: "2|Menu.png" }, query: { pages: { 1: { title: "File:Handbook.png" } } } },
       { error: { code: "badcontinue", info: "Invalid continue param." } },
     ];
-    const fetch = vi.spyOn(globalThis, "fetch");
-    for (const response of responses) fetch.mockResolvedValueOnce(Response.json(response));
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    for (const response of responses) fetchSpy.mockResolvedValueOnce(Response.json(response));
 
     await expect(readWholeScreenImages("a")).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: a, badcontinue: Invalid continue param.]`,

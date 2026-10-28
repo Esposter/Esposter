@@ -44,7 +44,7 @@ export const formatLoadMeter = (
   const rows = figures.map((figure) => formatRow(figure));
   const crossingMeter = crossing ? formatCrossing(crossing, budget?.crossing) : { isOver: false, lines: [] };
   const kinds = Object.entries(bench.kindCounts)
-    .toSorted(([, first], [, second]) => second - first)
+    .toSorted(([, firstCount], [, secondCount]) => secondCount - firstCount)
     .map(([kind, count]) => `${count} ${kind}`)
     .join(", ");
   return {

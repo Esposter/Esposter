@@ -17,7 +17,8 @@ export const measureStates = async (page: Page): Promise<(TracedState & { state:
   await page.waitForTimeout(PAUSE_MS);
   const secondOrbit = await measureState(page, "second orbit", () => orbit(page, ORBIT_MS));
   await page.waitForTimeout(PAUSE_MS);
-  const walked = await measureState(page, `walk ${WALK_MS / 1000} s`, () => walk(page, WALK_MS));
+  const walkSeconds = Temporal.Duration.from({ milliseconds: WALK_MS }).total("seconds");
+  const walked = await measureState(page, `walk ${walkSeconds} s`, () => walk(page, WALK_MS));
 
   return [coldOrbit, secondOrbit, walked];
 };
