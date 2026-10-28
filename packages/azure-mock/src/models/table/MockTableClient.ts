@@ -77,8 +77,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     rowKey: string,
   ): Promise<GetTableEntityResponse<TableEntityResult<T>>> {
     const key = this.#getCompositeKey(partitionKey, rowKey);
-    const entity = this.table.get(key) as (T & { etag?: string }) | undefined;
-    if (!entity) throw new MockRestError("The specified resource does not exist.", 404);
+    const entity = this.#getExistingEntity<T>(key);
     // The stored etag is served so a subsequent conditional update can match against the version read
     return Promise.resolve({ ...entity, etag: entity.etag ?? this.#getEtag() });
   }
@@ -200,8 +199,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
 
   #applyDelete(partitionKey: string, rowKey: string, etag?: string): void {
     const key = this.#getCompositeKey(partitionKey, rowKey);
-    const existingEntity = this.table.get(key);
-    if (!existingEntity) throw new MockRestError("The specified resource does not exist.", 404);
+    const existingEntity = this.#getExistingEntity(key);
 
     this.#assertEtag(existingEntity.etag, etag);
     this.table.delete(key);
@@ -209,8 +207,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
 
   #applyUpdate<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge", etag?: string): void {
     const key = this.#getCompositeKey(entity.partitionKey, entity.rowKey);
-    const existingEntity = this.table.get(key);
-    if (!existingEntity) throw new MockRestError("The specified resource does not exist.", 404);
+    const existingEntity = this.#getExistingEntity(key);
 
     this.#assertEtag(existingEntity.etag, etag);
     this.#writeEntity(key, entity, mode, existingEntity);
@@ -221,7 +218,12 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     const existingEntity = this.table.get(key);
     this.#writeEntity(key, entity, mode, existingEntity);
   }
-
+  // Every operation on a row that must already exist reads it here, so each reports the same 404 the service does
+  #getExistingEntity<T extends object = TableEntity>(key: string): T & { etag?: string } {
+    const entity = this.table.get(key) as (T & { etag?: string }) | undefined;
+    if (!entity) throw new MockRestError("The specified resource does not exist.", 404);
+    return entity;
+  }
   // A conditional write only lands when the caller saw the current version — the real service's
   // Optimistic-concurrency contract ("*" is the wildcard that always matches), for a delete as for an update
   #assertEtag(existingEtag: unknown, etag?: string): void {
