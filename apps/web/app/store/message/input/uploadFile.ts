@@ -2,11 +2,11 @@ import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
 import type { FileEntity } from "@esposter/db-schema";
 
+import { MessageHook } from "@/models/message/MessageHook";
 import { getComposerKey } from "@/services/message/composer/getComposerKey";
 import { SPOILER_FILENAME_PREFIX } from "@/services/message/file/constants";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { getResultAsync, noop } from "@esposter/shared";
-import { MessageHook } from "@/models/message/MessageHook";
 
 export const useUploadFileStore = defineStore("message/input/uploadFile", () => {
   const { $trpc } = useNuxtApp();

@@ -4,6 +4,7 @@ import type { Router } from "vue-router";
 
 import { getMockSession } from "#server/trpc/context.test";
 import { MimeType } from "#shared/models/file/MimeType";
+import { MessageHook } from "@/models/message/MessageHook";
 import { useSession } from "@/services/auth/authClient.test";
 import { SPOILER_FILENAME_PREFIX } from "@/services/message/file/constants";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
@@ -16,7 +17,6 @@ import { createMessageEntity, getReverseTickedTimestamp, MessageType } from "@es
 import { Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { MessageHook } from "@/models/message/MessageHook";
 
 interface MockSessionValue {
   data?: { user: { id: string } };

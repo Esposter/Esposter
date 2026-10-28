@@ -1,4 +1,3 @@
-import { ResourceType, ResourceTypes } from "@esposter/db-schema";
 import type { JSONSchema } from "zod/v4/core";
 
 import { checkIsUnwritableJsonSchema } from "#server/services/mcp/checkIsUnwritableJsonSchema";
@@ -7,6 +6,7 @@ import { getReferencedJsonSchema } from "#server/services/mcp/getReferencedJsonS
 import { WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/constants";
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { ResourceType, ResourceTypes } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 

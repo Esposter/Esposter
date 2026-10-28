@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { MediaDeviceKind } from "@/models/message/room/call/MediaDeviceKind";
 import type { UiStatus } from "@/models/ui/UiStatus";
 
+import { MediaDeviceKind } from "@/models/message/room/call/MediaDeviceKind";
 import { MediaDeviceKindMetadataMap } from "@/services/message/room/call/MediaDeviceKindMetadataMap";
 import { ConnectionQualityMetadataMap } from "@/services/message/room/liveKit/ConnectionQualityMetadataMap";
 import { ConnectionStateMetadataMap } from "@/services/message/room/liveKit/ConnectionStateMetadataMap";

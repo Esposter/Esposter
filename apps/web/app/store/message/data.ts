@@ -8,6 +8,7 @@ import type { MessageEntity, StandardCreateMessageInput } from "@esposter/db-sch
 import type { Editor } from "@tiptap/core";
 
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
+import { MessageHook } from "@/models/message/MessageHook";
 import { authClient } from "@/services/auth/authClient";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
@@ -18,7 +19,6 @@ import { useRoomStore } from "@/store/message/room";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { AzureEntityType, createMessageEntity } from "@esposter/db-schema";
 import { getResultAsync, Operation } from "@esposter/shared";
-import { MessageHook } from "@/models/message/MessageHook";
 
 export const useDataStore = defineStore("message/data", () => {
   const session = authClient.useSession();

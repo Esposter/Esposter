@@ -1,14 +1,14 @@
+import { ZigArchitecture } from "#shared/models/zstd/ZigArchitecture";
+import { ZigPlatform } from "#shared/models/zstd/ZigPlatform";
 import { ZIG_INDEX_URL, ZIG_VERSION } from "@@/scripts/zstd/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { z } from "zod";
-import { ZigArchitecture } from "#shared/models/zstd/ZigArchitecture";
-import { ZigPlatform } from "#shared/models/zstd/ZigPlatform";
 
 const zigReleaseSchema = z.object({ shasum: z.string(), tarball: z.url() });
 // Zig names a platform architecture-first and in its own words, which node spells differently
 const ZigArchitectureMap: Partial<Record<NodeJS.Architecture, string>> = {
+  [ZigArchitecture.Amd64]: "x86_64",
   [ZigArchitecture.Arm64]: "aarch64",
-  [ZigArchitecture.X64]: "x86_64",
 };
 const ZigPlatformMap: Partial<Record<NodeJS.Platform, string>> = {
   [ZigPlatform.Darwin]: "macos",

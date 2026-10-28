@@ -5,9 +5,9 @@ import type { MessageEntity } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 import type { Promisable } from "type-fest";
 
+import { MessageHook } from "@/models/message/MessageHook";
 import { createHookRegistry } from "@/services/shared/createHookRegistry";
 import { Operation } from "@esposter/shared";
-import { MessageHook } from "@/models/message/MessageHook";
 
 export const MessageHookMap = {
   // Runs once the server has accepted the send: the attachments `ResetSend` was holding are dropped for good.
@@ -17,9 +17,6 @@ export const MessageHookMap = {
   // Commit runs behind the send, and an attachment the user added while it was in flight belongs to their next
   // Message — released here, it leaves the composer with no grant left to reclaim its blob
   [MessageHook.CommitSend]: createHookRegistry<(target: ComposerTarget, fileIds: string[]) => Promisable<void>>(),
-  [Operation.Create]: createHookRegistry<(message: MessageEntity) => Promisable<void>>(),
-  [Operation.Delete]: createHookRegistry<(input: DeleteMessageInput) => Promisable<void>>(),
-  [Operation.Update]: createHookRegistry<(input: MessageEvents["updateMessage"][0][0]) => Promisable<void>>(),
   // Runs once the optimistic bubble is in the list: the editor and the reply target clear, and the attachments
   // This send took leave the composer. They leave here rather than at the commit because the composer keeps
   // Accepting Enter for the whole round trip, and one that still offers them posts a second message naming the
@@ -33,4 +30,7 @@ export const MessageHookMap = {
   // The composer's attachments were handed back — a send the server rejected. They never left the store, so
   // Their grants are intact and the user retries with the files already uploaded instead of re-picking them
   [MessageHook.RollbackSend]: createHookRegistry<(target: ComposerTarget, fileIds: string[]) => Promisable<void>>(),
+  [Operation.Create]: createHookRegistry<(message: MessageEntity) => Promisable<void>>(),
+  [Operation.Delete]: createHookRegistry<(input: DeleteMessageInput) => Promisable<void>>(),
+  [Operation.Update]: createHookRegistry<(input: MessageEvents["updateMessage"][0][0]) => Promisable<void>>(),
 };

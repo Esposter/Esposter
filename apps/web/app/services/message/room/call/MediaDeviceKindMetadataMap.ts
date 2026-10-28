@@ -1,5 +1,6 @@
 // @unocss-include
 import type { MediaDeviceKindMetadata } from "@/models/message/room/call/MediaDeviceKindMetadata";
+
 import { MediaDeviceKind } from "@/models/message/room/call/MediaDeviceKind";
 
 // How the call surfaces name and draw each device kind — the settings menus, the health readout and the device

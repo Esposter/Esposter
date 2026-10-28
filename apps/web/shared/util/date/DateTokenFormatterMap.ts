@@ -1,3 +1,4 @@
+import { OrdinalSuffix } from "#shared/models/util/date/OrdinalSuffix";
 import {
   EN_US_LONG_MONTH_FORMATTER,
   EN_US_LONG_WEEKDAY_FORMATTER,
@@ -6,7 +7,6 @@ import {
   EN_US_SHORT_WEEKDAY_FORMATTER,
 } from "#shared/services/intl/constants";
 import { DateToken } from "#shared/util/date/DateToken";
-import { OrdinalSuffix } from "#shared/models/util/date/OrdinalSuffix";
 
 const PADDED_LENGTH = 2;
 const YEAR_LENGTH = 4;

@@ -1,10 +1,10 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { MessageHook } from "@/models/message/MessageHook";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { Operation } from "@esposter/shared";
-import { MessageHook } from "@/models/message/MessageHook";
 
 export const useReplyStore = defineStore("message/input/reply", () => {
   const roomStore = useRoomStore();
