@@ -229,7 +229,7 @@ catalog:
   three: ^0.186.1
   three-globe: ^2.45.6
   three-mesh-bvh: ^0.9.16
-  tsdown: ^0.23.2
+  tsdown: ^0.23.3
   tsrs: ^0.20.0-ts7.1.0-beta
   type-fest: ^5.10.0
   typescript: 6.0.3
