@@ -59,7 +59,7 @@ The start and summary lines a call writes go into the thread rather than the roo
 
 Opening a thread replaces whatever the right drawer was showing. Split view keeps that pane — the member list, a search's results — pinned beside the thread in the same drawer, which then renders at twice its width; both halves share the drawer's resize handle and breakpoint behaviour, where a second drawer would need its own of each and could be dragged out of agreement. Closing the thread closes the split and leaves the pinned pane showing.
 
-`/messages/:roomId/thread/:rowKey` is the thread's own route: it renders the room exactly as the message route does and opens the pane on the thread the url names. That is what makes a thread linkable at all, and it is what **Open in new window** opens — a full app on that thread, rather than a copy of the pane that would have to re-derive every store it reads. The open runs on mounted rather than in setup, because the layout is the page's own child and decides the drawer state for the breakpoint first.
+`/messages/:id/thread/:rowKey` is the thread's own route: it renders the room exactly as the message route does and opens the pane on the thread the url names. That is what makes a thread linkable at all, and it is what **Open in new window** opens — a full app on that thread, rather than a copy of the pane that would have to re-derive every store it reads. The open runs on mounted rather than in setup, because the layout is the page's own child and decides the drawer state for the breakpoint first.
 
 ## Key files
 

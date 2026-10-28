@@ -54,7 +54,7 @@ Collapsing parameter mode back to text (Escape, or Backspace in an empty command
 /CommandType parameterName1|value1 parameterName2|value2 trailingMessage
 ```
 
-`ID_SEPARATOR` (`|`) separates a parameter name from its value; parameters are space-separated; the last parameter's value is greedy; re-parsing uses prefix matching per parameter in definition order. The `RichTextEditor` remounts with the formatted text and focuses at the end.
+`ID_SEPARATOR`, declared in `packages/shared/src/util/id/constants.ts`, separates a parameter name from its value; parameters are space-separated; the last parameter's value is greedy; re-parsing uses prefix matching per parameter in definition order. The `RichTextEditor` remounts with the formatted text and focuses at the end.
 
 ## Key files
 
