@@ -1,6 +1,6 @@
 ## Purpose
 
-The dishes and processings of the game's cooking are rules over the game's own tables, and a campfire's lit state follows the elements and the weather. This page is the first build of the cooking proposal, covering its recipes, cooking by hand, proficiency, Auto Cook, specialties, processing and campfires. The stove opens the cooking and processing screens in the world session, and what a dish does once eaten is the inventory's.
+The dishes and processings of the game's cooking are rules over the game's own tables, and a campfire's lit state follows the elements and the weather. This page covers the cooking's recipes, cooking by hand, proficiency, Auto Cook, specialties, processing and campfires. The stove opens the cooking and processing screens in the world session, and the inventory routes a food's use to `eatDish`.
 
 ## Requirements
 

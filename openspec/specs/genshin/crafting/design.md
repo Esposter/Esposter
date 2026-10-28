@@ -70,7 +70,7 @@ A recipe the table shows from the start is open from the start. One it hides is 
 | `packages/genshin-world/src/models/crafting/CraftingSave.ts`                      | The save's crafting slice: the learned recipes and each recipe's crafted count                                                     |
 | `packages/genshin-world/src/components/Crafting/Screen/Index.vue`                 | The bench's screen: the open recipes, the crafter, the count and the craft, and the Mystic Offering's panel once its tab is picked |
 | `packages/genshin-interface/src/components/CraftingScreen/Index.vue`              | The bench's 2D screen over the recipe tabs, the recipe list, the crafter pick and the craft                                        |
-| `scripts/src/services/genshinAssets/items/buildItems.ts`                          | The item table's rows, now with every crafting recipe's materials and result                                                       |
+| `scripts/src/services/genshinAssets/items/buildItems.ts`                          | The item table's rows, the crafting items among them                                                                               |
 | `scripts/src/services/genshinAssets/crafting/buildCraftingBenchPlaces.ts`         | The bench's place in its region's axes, published as `craftingBenchPlaces/mondstadt`                                               |
 | `scripts/src/services/genshinAssets/crafting/toCraftingKeeperPlace.ts`            | The keeper's place beside the bench, moved along x by the reckoned offset                                                          |
 | `scripts/src/services/genshinAssets/crafting/findCraftingBenchMember.ts`          | The bench's NPC member of its scene group record, found by its group and NPC ids                                                   |
@@ -100,7 +100,7 @@ A recipe the table shows from the start is open from the start. One it hides is 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `CombineExcelConfigData`, each craft's materials, Mora, rank and result, and `MaterialExcelConfigData`, whose instructions' uses name the recipes they open.
 - [Condensed Resin](https://genshin-impact.fandom.com/wiki/Condensed_Resin), Genshin Impact Wiki: the 60 resin a craft takes and the five a player can hold, the figures the proposal settles its decisions from.
 - `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`, the game's text 953962629, which says no more than 5 Condensed Resin can be held; grounds the requirement "Condensed Resin stops at the five a player can hold".
-- `{data-root}/genshin-parity/text/ExcelBinOutput/CombineExcelConfigData.json`, where 21 rows of combine type five name a Mora cost of 300, 900 or 2700; grounds the requirement "A conversion turns one material into another with its catalyst".
+- `{data-root}/genshin-parity/text/ExcelBinOutput/CombineExcelConfigData.json`, where some rows of combine type five name a Mora cost of 300, 900 or 2700; grounds the requirement "A conversion turns one material into another with its catalyst".
 - [scene group record](../scene-groups/design.md), which places the bench's Craft member; grounds the requirement "The crafting bench stands at its city's recorded place" and scenario "Mondstadt's bench stands at its recorded place".
 
 ## Open

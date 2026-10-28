@@ -21,7 +21,7 @@ The book is scored whole-frame against `handbook-experience`, the wiki's screens
 
 ## Notes
 
-- **The Experience page is measured; the other tabs' pages are not.** Its sizes, places and colours are read off the wiki's screenshot `{data-root}/genshin-parity/references/handbook-experience.png`, which `ParityReferenceMap` names in `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`: the rows are cards 242 tall at the pitch `COMMISSION_STEP` declares, the tiles take the rarity's colours `{data-root}/genshin-parity/references/handbook-experience.png`, and the tabs' labels shrink to the tab as the game's do, by an estimate from the label's length that holds for the English client's six. The open tab's look, standing 17 further out with a green edge, is the interaction states' work and not drawn.
+- **The Experience page is measured; the other tabs' pages are not.** The rows are cards 242 tall at the pitch `COMMISSION_STEP` declares, and the tabs' labels shrink to the tab as the game's do, by an estimate from the label's length that holds for the English client's six. The open tab's look, standing 17 further out with a green edge, is the interaction states' work and not drawn.
 - **Each tab's pages come with their feature.** The commissions with the daily commissions, the domains and enemies with combat and the enemies' spawns, the guide with the quests it recommends, and the experience and embattle chapters with Adventure Rank and character ascension.
 
 ## Sources

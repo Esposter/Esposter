@@ -10,7 +10,7 @@ flowchart TD
   Z -->|"delicious"| DE["Delicious, a proficiency added up to the maximum"]
   Z -->|"regular"| RE["Regular"]
   Z -->|"neither"| SU["Suspicious"]
-  A["Auto Cook: proficiency full, ingredients in the bag"] --> N["Up to 99, all Delicious"]
+  A["Auto Cook: proficiency full, ingredients in the bag"] --> N["Up to 99 (COOKING_BATCH_LIMIT), all Delicious"]
   DE --> S{"The character's special dish at its chance?"}
   RE --> S
   SU --> S
@@ -25,7 +25,6 @@ flowchart TD
   U --> C{"Done by now, and room in the bag?"}
   C -->|"yes"| IN["Results into the bag"]
   C -->|"no"| WQ["Waits in the queue"]
-  E["An element or rain"] --> L{"Pyro lights a campfire, the other elements and rain put it out"}
 ```
 
 ## The recipes
@@ -85,7 +84,7 @@ The quality weights the table gives each dish are all the Delicious weight in th
 
 ## Notes
 
-- **The zones are provisional.** `readCookingZones` reads a recipe's zone parameters as the centre and the width of the regular zone along the bar, and the delicious zone takes a provisional share of that width. Which parameter lays out which zone is measured off a recording of the cooking screen, owed on the roadmap. The indicator's speed is provisional, from one clip, and a second recording owes whether the pointer swings back or loops.
+- `readCookingZones` reads a recipe's zone parameters as the centre and the width of the regular zone along the bar, and the delicious zone takes a provisional share of that width. Which parameter lays out which zone is measured off a recording of the cooking screen, owed on the roadmap. The indicator's speed is provisional, from one clip, and a second recording owes whether the pointer swings back or loops.
 - **The special dish's order is read, not confirmed.** The chances are matched to the qualities in the order the table lists the results, the order its food qualities confirm. No public source confirms it, so a recording owed on the roadmap does.
 - **Most processings are closed.** Most are not known from the start, and the table names no instruction that teaches them, all of them in one group (`{data-root}/genshin-parity/text/ExcelBinOutput/CompoundExcelConfigData.json`: most of its `COMPOUND_COOK` rows are not default-unlocked, all with `groupID` 3, and no field of a row names an instruction). They stay closed until that source is read.
 - **Processing, talents and the save.** The stove's second row, `COOKING_PROCESSING_INTERACTABLE_ID`, opens the processing screen, which queues the processings known from the start and collects their done units while it is open (`packages/genshin-world/src/services/cooking/computeCookingStoveInteractables.ts`; `packages/genshin-world/src/components/Cooking/Processing/Index.vue`). A cook's talent is read by the character's id and drawn for each dish (`packages/genshin-world/src/composables/useWorldCooking.ts`). Cooking progress, the learned recipes and each dish's proficiency, and the processing queues are in the save's cooking slice. The stove opens on the first recipe the cook knows from the start, provisional until the game's recipe list is built.

@@ -261,7 +261,7 @@ The bench SHALL hold each conversion of the game's conversion sections as a reci
 
 #### Scenario: the disassembly rows are not recipes
 
-- **GIVEN** a row of combine type eleven, which disassembles a mechanical fish into drops
+- **GIVEN** a row of combine type eleven, which disassembles into drops
 - **WHEN** the recipe build runs
 - **THEN** the row is left out of the bench's recipes
 
