@@ -3,6 +3,7 @@ import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
+import { NamedFieldCitation } from "#src/models/genshinAssets/kits/gcsim/NamedFieldCitation";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { GCSIM_CHARACTERS_PATH } from "#src/services/genshinAssets/kits/constants";
@@ -19,7 +20,6 @@ import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 import { Attribute } from "genshin-world";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { NamedFieldCitation } from "#src/models/genshinAssets/kits/gcsim/NamedFieldCitation";
 
 // A named field of a kit record, by its last key, with the gcsim field its citing line names and the kit value that
 // Field's identifier gives, through the same mapping the writer maps a hit's values by

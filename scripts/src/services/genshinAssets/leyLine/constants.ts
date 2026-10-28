@@ -1,5 +1,5 @@
-import { OutcropKind } from "genshin-world";
 import { LeyLineRefreshKind } from "#src/models/genshinAssets/leyLine/LeyLineRefreshKind";
+import { OutcropKind } from "genshin-world";
 
 // The blossom refresh types of the two ley line kinds: a Revelation refreshes Character EXP materials, a Wealth Mora
 export const LeyLineRefreshKindMap: Readonly<Record<string, OutcropKind>> = {

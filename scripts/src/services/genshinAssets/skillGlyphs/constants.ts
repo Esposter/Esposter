@@ -1,7 +1,7 @@
 import type { GlyphTones } from "#src/models/genshinAssets/skillGlyphs/GlyphTones";
-import { SkillGlyphTones } from "genshin-world";
 
 import { WORLD_GENERATED_DIRECTORY } from "#src/services/genshinAssets/stats/constants";
+import { SkillGlyphTones } from "genshin-world";
 import { join } from "node:path";
 
 // The folder of the committed loader map whose entries read each character's icons from the hosted index

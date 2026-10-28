@@ -1,5 +1,5 @@
-import { KitPlunge } from "genshin-world";
 import { WikiTitlePath } from "#src/models/genshinAssets/kits/wiki/WikiTitlePath";
+import { KitPlunge } from "genshin-world";
 
 const NORMAL_ATTACK_TITLE_REGEX = /^Normal Attack (?<strike>\d+)(?:-Hit)?(?: (?<hit>[A-Z]))?$/u;
 const CHARGED_ATTACK_TITLE_REGEX =

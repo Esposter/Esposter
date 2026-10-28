@@ -2,9 +2,9 @@ import type { TreeArtifactRow } from "#src/models/genshinAssets/domains/TreeArti
 import type { TreeCountRow } from "#src/models/genshinAssets/domains/TreeCountRow";
 import type { ScenePointExemplar } from "#src/models/genshinAssets/world/ScenePointExemplar";
 
+import { DungeonEntryTypeDomainKind } from "#src/models/genshinAssets/domains/DungeonEntryTypeDomainKind";
 import { SCENE_POINT_CATEGORY, SCENE_POINT_FILE } from "#src/services/genshinAssets/shared/constants";
 import { DomainKind, GameDataset, SUNDAY_DAY_OF_WEEK } from "genshin-world";
-import { DungeonEntryTypeDomainKind } from "#src/models/genshinAssets/domains/DungeonEntryTypeDomainKind";
 
 // The game's dungeon entry table in the dump, read by its name
 export const DUNGEON_ENTRY_TABLE_NAME = "DungeonEntryExcelConfigData";

@@ -1,7 +1,7 @@
 export enum BinaryOperatorPrecedence {
+  Add = "+",
+  Divide = "/",
   Modulo = "%",
   Multiply = "*",
-  Add = "+",
   Subtract = "-",
-  Divide = "/",
 }

@@ -1,5 +1,5 @@
-import { ExplorationKind } from "genshin-world";
 import { ExploreEventKind } from "#src/models/genshinAssets/exploration/ExploreEventKind";
+import { ExplorationKind } from "genshin-world";
 
 // The event types the exploration progress counts, each as its kind. The types the table also lists, gathered items and
 // A force entered, are not among the kinds the progress is read from, so they are left out

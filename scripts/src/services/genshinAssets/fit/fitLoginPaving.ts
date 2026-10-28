@@ -3,6 +3,7 @@ import type { PlanTones } from "#src/models/genshinAssets/fit/PlanTones";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { Vector } from "#src/models/shared/Vector";
 
+import { LoginStoneFamilyMaterialRegex } from "#src/models/genshinAssets/fit/LoginStoneFamilyMaterialRegex";
 import { blurWithinTags } from "#src/services/genshinAssets/fit/blurWithinTags";
 import { fitAlbedo } from "#src/services/genshinAssets/fit/fitAlbedo";
 import { fitPlanTones } from "#src/services/genshinAssets/fit/fitPlanTones";
@@ -24,7 +25,6 @@ import { toLinear } from "#src/services/shared/toLinear";
 import { join } from "node:path";
 import sharp from "sharp";
 import { Color } from "three";
-import { LoginStoneFamilyMaterialRegex } from "#src/models/genshinAssets/fit/LoginStoneFamilyMaterialRegex";
 
 // The materials whose stone is set with pockets, the side lanes' and the wings'
 const POCKET_MATERIALS = new Set(["LoginScene_Bridge01", "LoginScene_Bridge02"]);

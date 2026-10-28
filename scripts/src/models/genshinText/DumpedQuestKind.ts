@@ -1,7 +1,7 @@
 export enum DumpedQuestKind {
   ArchonQuest = "AQ",
-  EventQuest = "EQ",
   CommissionQuest = "IQ",
+  EventQuest = "EQ",
   StoryQuest = "LQ",
   WorldQuest = "WQ",
 }

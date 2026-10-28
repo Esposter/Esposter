@@ -5,6 +5,7 @@ import type { TowerSlab } from "#src/models/genshinAssets/fit/TowerSlab";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { Vector } from "#src/models/shared/Vector";
 
+import { LoginStoneFamilyMaterialRegex } from "#src/models/genshinAssets/fit/LoginStoneFamilyMaterialRegex";
 import { classifyFacadeCells } from "#src/services/genshinAssets/fit/classifyFacadeCells";
 import { computeCellMean } from "#src/services/genshinAssets/fit/computeCellMean";
 import { findCellComponents } from "#src/services/genshinAssets/fit/findCellComponents";
@@ -40,7 +41,6 @@ import { computeUpperMedian } from "#src/services/recreation/statistics/computeU
 import { toLinear } from "#src/services/shared/toLinear";
 import { join } from "node:path";
 import { Color } from "three";
-import { LoginStoneFamilyMaterialRegex } from "#src/models/genshinAssets/fit/LoginStoneFamilyMaterialRegex";
 
 // Each login tower's surface as the game paints and carves it, read off its finest mesh unrolled round its own axis,
 // The way the scene's lathe stands it: each cell of the unrolled surface keeps the face standing farthest out over it,

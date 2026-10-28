@@ -3,9 +3,8 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const readWorkflowFiles = (): { path: string; content: string }[] =>
-  [...readdirSync(join(REPOSITORY_ROOT, ".github"), { recursive: true })]
-    .map(String)
+const readWorkflowFiles = (): { content: string; path: string }[] =>
+  Array.from(readdirSync(join(REPOSITORY_ROOT, ".github"), { recursive: true }), String)
     .filter((path) => /\.ya?ml$/u.test(path))
     .map((path) => ({ content: readFileSync(join(REPOSITORY_ROOT, ".github", path), "utf8"), path }));
 

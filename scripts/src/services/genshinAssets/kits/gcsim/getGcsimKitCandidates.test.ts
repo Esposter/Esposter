@@ -6,6 +6,7 @@ import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
+import { GcsimElement } from "#src/models/genshinAssets/kits/gcsim/GcsimElement";
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
@@ -26,7 +27,6 @@ import { CombatTalent, Element, InternalCooldownTag, SKILL_TARGETING_AREA, Weapo
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
-import { GcsimElement } from "#src/models/genshinAssets/kits/gcsim/GcsimElement";
 
 const toConstant = (value: GoValue) => ({ elementLines: {}, file: "skill.go", line: 1, value });
 const plungeConstant = (value: GoValue, line: number) => ({ elementLines: {}, file: "plunge.go", line, value });

@@ -1,4 +1,5 @@
 import type { ExcelRoleCombatDifficultyRow } from "#src/models/genshinAssets/imaginarium/ExcelRoleCombatDifficultyRow";
+
 import { ExcelRoleCombatDifficultyRowFieldDumpKey } from "#src/models/genshinAssets/imaginarium/ExcelRoleCombatDifficultyRowFieldDumpKey";
 
 // Each field of a difficulty row under the key the 7.1 dump holds it at, the scrambled keys named by their evidence

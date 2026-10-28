@@ -1,9 +1,9 @@
 import type { WishEventPage } from "#src/models/genshinAssets/wish/WishEventPage";
 
+import { WikiTypeWishEventKind } from "#src/models/genshinAssets/wish/WikiTypeWishEventKind";
 import { WishEventKind } from "#src/models/genshinAssets/wish/WishEventKind";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { sliceWikiTemplate } from "genshin-persona/src/services/sliceWikiTemplate.ts";
-import { WikiTypeWishEventKind } from "#src/models/genshinAssets/wish/WikiTypeWishEventKind";
 
 const TEMPLATE_START = "{{Wish\n";
 const POOL_TEMPLATE_START = "{{Wish Pool\n";

@@ -1,9 +1,9 @@
+import { AssociationRegionId } from "#src/models/genshinAssets/stats/AssociationRegionId";
+import { QualityTypeRarity } from "#src/models/genshinAssets/stats/QualityTypeRarity";
 import { AVATAR_TALENT_DIRECTORY, GAME_TEXT_DIRECTORY } from "#src/services/genshinText/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { ArtifactSlot, DestroyRule, Element, WeaponType } from "genshin-world";
 import { join } from "node:path";
-import { QualityTypeRarity } from "#src/models/genshinAssets/stats/QualityTypeRarity";
-import { AssociationRegionId } from "#src/models/genshinAssets/stats/AssociationRegionId";
 
 // The world package's generated folder, which holds the committed loader maps
 export const WORLD_GENERATED_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world", "src", "generated");

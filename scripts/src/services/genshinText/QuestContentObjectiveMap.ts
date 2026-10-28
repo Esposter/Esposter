@@ -1,7 +1,7 @@
 import type { QuestContentObjective } from "#src/models/genshinText/QuestContentObjective";
 
-import { QuestObjectiveKind } from "genshin-world";
 import { QuestContentCondition } from "#src/models/genshinText/QuestContentCondition";
+import { QuestObjectiveKind } from "genshin-world";
 
 // The condition types a quest step finishes on that ask something of the Traveler, by the dump's own code: reaching a
 // Place's trigger or a room, a talk ended, a waypoint unlocked (its point the second parameter, after its scene), a

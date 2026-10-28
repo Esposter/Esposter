@@ -1,5 +1,6 @@
 import type { WikiTalentPage } from "#src/models/genshinAssets/kits/wiki/WikiTalentPage";
 
+import { InfoboxTypeCombatTalent } from "#src/models/genshinAssets/kits/wiki/InfoboxTypeCombatTalent";
 import { WIKI_API_URL } from "#src/services/genshinAssets/kits/constants";
 import { parseAdvancedProperties } from "#src/services/genshinAssets/kits/wiki/parseAdvancedProperties";
 import { fetchOk } from "#src/services/shared/fetchOk";
@@ -8,7 +9,6 @@ import { CombatTalent } from "genshin-world";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { z } from "zod";
-import { InfoboxTypeCombatTalent } from "#src/models/genshinAssets/kits/wiki/InfoboxTypeCombatTalent";
 
 const INFOBOX_TYPE_REGEX = /\|\s*type\s*=\s*(?<type>[^\n|]+)/u;
 const InfoboxTypeCombatTalentMap: Partial<Record<string, CombatTalent>> = {
