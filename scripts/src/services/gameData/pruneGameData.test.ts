@@ -47,6 +47,17 @@ describe(pruneGameData, () => {
     );
   });
 
+  test("keeps an old blob outside the game data datasets", async () => {
+    expect.hasAssertions();
+
+    await containerClient.getBlockBlobClient("characterPacks/10000006/model.pmx").upload(Buffer.from("{}"), 2);
+    vi.setSystemTime(100 * DAY_MS);
+    const result = await pruneGameData({ containerClient, isDryRun: false, liveObjects: [], now: 100 * DAY_MS });
+
+    expect(result).toStrictEqual({ candidateCount: 0, deletedCount: 0, keptCount: 0 });
+    expect([...(MockContainerDatabase.get("dev")?.keys() ?? [])]).toStrictEqual(["characterPacks/10000006/model.pmx"]);
+  });
+
   test("lists what it would delete without deleting it", async () => {
     expect.hasAssertions();
 
