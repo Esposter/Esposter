@@ -3,7 +3,7 @@ import { GameDataTargetBlobServiceUrlMap } from "#src/services/gameData/GameData
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { AzureContainer } from "@esposter/db-schema";
 import { GameDataset } from "genshin-world";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 // The lock is the one committed file that names every published object, and the only one a publish rewrites
 export const GAME_DATA_LOCK_PATH: string = join(
@@ -16,6 +16,9 @@ export const GAME_DATA_LOCK_PATH: string = join(
 );
 // The lock's path from the repository root, as git names it
 export const GAME_DATA_LOCK_REPOSITORY_PATH = "packages/genshin-world/src/generated/gameDataLock.json";
+// The nested keys a publish writes beside the lock, which code imports in place of the lock's own key strings
+export const GAME_DATA_KEYS_FILE_NAME = "gameDataKeys.ts";
+export const GAME_DATA_KEYS_PATH: string = join(dirname(GAME_DATA_LOCK_PATH), GAME_DATA_KEYS_FILE_NAME);
 export const DAY_MS: number = Temporal.Duration.from({ hours: 24 }).total("milliseconds");
 // An object a lock no longer names is kept this long, so a revert within this window still resolves it
 export const GAME_DATA_RETENTION_MS: number = 90 * DAY_MS;
