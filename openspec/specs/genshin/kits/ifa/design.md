@@ -60,5 +60,3 @@ Ifa's kit is built around the Nightsoul Blessing. Her skill's press enters the b
 - `{data-root}/cache/gcsim-v2.47.2/internal/characters/ifa/burst.go` line 57: grounds scenario "Casting the burst strikes the primary target".
 - `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, group 11339 index 3: grounds scenario "Casting the burst strikes the primary target".
 - `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, group 11339 index 2: grounds scenario "Casting the burst strikes the primary target".
-
-## Open

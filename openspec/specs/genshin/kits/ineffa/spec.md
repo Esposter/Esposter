@@ -196,5 +196,3 @@ From Constellation 1, each shield Ineffa casts SHALL give the party a Lunar-Char
 - **GIVEN** Ineffa has no constellation
 - **WHEN** she casts a shield
 - **THEN** no reaction gains the bonus
-
-## Open

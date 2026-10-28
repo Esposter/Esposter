@@ -62,5 +62,3 @@ Kachina's skill SHALL play its 48-frame animation and SHALL deal no hit yet.
 - **WHEN** the player presses the skill
 - **THEN** its 48-frame animation plays
 - **AND** no hit lands
-
-## Open

@@ -154,5 +154,3 @@ Illuga's hit timings and areas SHALL stay provisional until a recording of his a
 - **GIVEN** a recording of Illuga's attacks exists
 - **WHEN** its timings and areas are compared with the kit's
 - **THEN** the timings and areas stay provisional until the comparison settles them
-
-## Open
