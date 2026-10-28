@@ -34,32 +34,33 @@ export const useEmailStyle = (resourceId: MaybeRefOrGetter<string>) => {
     return node && { node, pointer, rootAttributes: document.root.props.attributes };
   });
   const fields = computed(() => {
-    const current = target.value;
-    const definition = current && getBlockTypeDefinition(emailRegistry, current.node.type);
-    if (!current || !definition) return [];
+    const selectedTarget = target.value;
+    const definition = selectedTarget && getBlockTypeDefinition(emailRegistry, selectedTarget.node.type);
+    if (!selectedTarget || !definition) return [];
 
     return getMjmlAttributeFields(definition).map(({ name, type }): EmailStyleField => {
-      const own = getBlockPropValue(current.node.props, name);
+      const own = getBlockPropValue(selectedTarget.node.props, name);
       const isSet = typeof own === "string";
       return {
         isSet,
         name,
-        placeholder: getEmailAttributeValue(current.node, name, current.rootAttributes) ?? "",
+        placeholder: getEmailAttributeValue(selectedTarget.node, name, selectedTarget.rootAttributes) ?? "",
         type,
         value: isSet ? own : "",
       };
     });
   });
   const setField = (attribute: string, value: string) => {
-    const current = target.value;
+    const selectedTarget = target.value;
     // Clearing a field the node never set has nothing to remove, so it records no edit
-    if (!current || (value === "" && getBlockPropValue(current.node.props, attribute) === undefined)) return;
+    if (!selectedTarget || (value === "" && getBlockPropValue(selectedTarget.node.props, attribute) === undefined))
+      return;
 
     applyEdit(
       toValue(resourceId),
-      [getEmailAttributeOperation(current.pointer, attribute, value)],
+      [getEmailAttributeOperation(selectedTarget.pointer, attribute, value)],
       value === "" ? "Reset style" : "Edit style",
-      value === "" ? undefined : `email-style:${current.node.props.id}:${attribute}`,
+      value === "" ? undefined : `email-style:${selectedTarget.node.props.id}:${attribute}`,
     ).match(noop, console.error);
   };
 
