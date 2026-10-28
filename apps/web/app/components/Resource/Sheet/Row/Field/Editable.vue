@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { EditableColumnValue } from "#shared/models/resource/sheet/column/EditableColumnValue";
-import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
+import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";
@@ -36,7 +36,9 @@ const submitEdit = getSynchronizedFunction(async () => {
   clearFocus();
   if (editedValue.value === (takeOne(item.data, column.name) ?? null)) return;
   await updateRow(
-    Object.assign(structuredClone(toRawDeep(item)), { data: { ...item.data, [column.name]: editedValue.value } }),
+    new Row(
+      Object.assign(structuredClone(toRawDeep(item)), { data: { ...item.data, [column.name]: editedValue.value } }),
+    ),
   );
 });
 
