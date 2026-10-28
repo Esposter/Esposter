@@ -46,7 +46,7 @@ What goes with GrapesJS: Backbone, underscore, `backbone-undo`, CodeMirror 5, th
 
 ## What the editors use today
 
-The editors reach GrapesJS through a small surface, which is what makes the replacement's scope countable. Fifteen files imported it at 8c1648f7, none of them a plugin module. The table describes that surface before the webpage editor left GrapesJS in 8c1648f7, so its webpage rows are history and its email rows still hold.
+The editors reach GrapesJS through a small surface, which is what makes the replacement's scope countable. Fifteen files imported it at 8c1648f7, none of them a plugin module. The table describes that surface as it stood at 8c1648f7, before the webpage editor left GrapesJS in that commit. Its webpage rows are history, and so are its email rows, since the cutover removed GrapesJS from the email editor; the Replaced by column is what the code does now.
 
 | GrapesJS module                   | What the app uses it for                                                                                            | Replaced by                                      |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
