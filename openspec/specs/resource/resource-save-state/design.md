@@ -21,7 +21,7 @@ flowchart TD
   DOOR -.->|"clears"| ARMED
   DOOR -.->|"in flight"| PENDING(["checkIsSaveContentPending"])
   DOOR -.->|"rejected as stale"| STALE(["isContentStale"])
-  DOOR -.->|"rejected otherwise"| FAILED(["hasSaveContentFailed"])
+  DOOR -.->|"rejected otherwise"| FAILED(["isSaveContentFailed"])
 
   ARMED --> STATE{{"saveState"}}
   PENDING --> STATE
@@ -61,7 +61,7 @@ It is also never derived by comparing the content against what was persisted, th
 
 `Failed` exists for the same reason: a notification is a one-shot the owner dismisses, and the fact that their work is not durable outlives it.
 
-**A document too large to hold is refused before it is sent.** `saveContent` sizes the serialization it already made for the dirty check, and one over `MAX_RESOURCE_CONTENT_SIZE` raises an error notification naming its size and the limit and sets `hasSaveContentFailed`, with no request made — the server would refuse it only after the whole upload. So the resource reads `Not saved` until a save that fits lands, which is the owner's cue to cut the document down. A document under that limit but too large for one request body is still saved: as a delta against the stored bytes when this client holds them, and staged through Blob Storage otherwise ([file uploads](../../architecture/file-uploads/design.md)).
+**A document too large to hold is refused before it is sent.** `saveContent` sizes the serialization it already made for the dirty check, and one over `MAX_RESOURCE_CONTENT_SIZE` raises an error notification naming its size and the limit and sets `isSaveContentFailed`, with no request made — the server would refuse it only after the whole upload. So the resource reads `Not saved` until a save that fits lands, which is the owner's cue to cut the document down. A document under that limit but too large for one request body is still saved: as a delta against the stored bytes when this client holds them, and staged through Blob Storage otherwise ([file uploads](../../architecture/file-uploads/design.md)).
 
 ## Where it sits
 

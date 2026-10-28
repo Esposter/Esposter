@@ -101,7 +101,7 @@ export const useResourceStore = defineStore("resource", () => {
   const heldSave = ref<ResourceSave>();
   // Whether the last content write was rejected for any other reason. Its notification is a one-shot the owner
   // Dismisses; this is what keeps saying so afterwards, because a failed save leaves work only in the tab
-  const hasSaveContentFailed = ref(false);
+  const isSaveContentFailed = ref(false);
   // The resource an edit the debounce is holding was made on, until a write of that resource takes it. A flag rather
   // Than a count of armed debounces: a save writes the whole content blob, so one write cleans every edit waiting on
   // This resource however many watchers observed them — a count would claim two pending saves where there is one. Set
@@ -125,7 +125,7 @@ export const useResourceStore = defineStore("resource", () => {
     // This resource saving work that belongs to another
     else if (checkIsSaveContentPending(currentResourceId.value) || hasUnwrittenContent.value)
       return ResourceSaveState.Saving;
-    else if (hasSaveContentFailed.value) return ResourceSaveState.Failed;
+    else if (isSaveContentFailed.value) return ResourceSaveState.Failed;
     else return ResourceSaveState.Saved;
   });
   const readResource = async () => {
@@ -154,7 +154,7 @@ export const useResourceStore = defineStore("resource", () => {
         // Carries is by definition what is written
         isContentStale.value = false;
         heldSave.value = undefined;
-        hasSaveContentFailed.value = false;
+        isSaveContentFailed.value = false;
       },
       () => {
         isPending.value = false;
@@ -175,7 +175,7 @@ export const useResourceStore = defineStore("resource", () => {
     contentBaseline = undefined;
     isContentStale.value = false;
     heldSave.value = undefined;
-    hasSaveContentFailed.value = false;
+    isSaveContentFailed.value = false;
     unwrittenContentResourceId.value = "";
   };
   // This resource's content was replaced underneath whatever blade is open — a restore is the one write that
@@ -305,7 +305,7 @@ export const useResourceStore = defineStore("resource", () => {
     // May hold is refused here rather than sent — the server would refuse it after the whole upload
     const contentBytes = new TextEncoder().encode(contentJson);
     if (contentBytes.byteLength > MAX_RESOURCE_CONTENT_SIZE) {
-      hasSaveContentFailed.value = true;
+      isSaveContentFailed.value = true;
       createNotification({
         severity: NotificationSeverity.Error,
         title: `"${resourceValue.name}" is ${getFileSize(contentBytes.byteLength)}, over the ${getFileSize(MAX_RESOURCE_CONTENT_SIZE)} a resource can hold — it was not saved`,
@@ -365,7 +365,7 @@ export const useResourceStore = defineStore("resource", () => {
               title: `"${resourceValue.name}" was modified elsewhere — refresh to load the latest`,
             });
           } else {
-            if (getActiveResource(resourceValue.id)) hasSaveContentFailed.value = true;
+            if (getActiveResource(resourceValue.id)) isSaveContentFailed.value = true;
             createErrorNotification(error);
           }
         },
@@ -377,7 +377,7 @@ export const useResourceStore = defineStore("resource", () => {
             updatedAt: newResource.updatedAt,
           });
           persistedContentJson = contentJson;
-          hasSaveContentFailed.value = false;
+          isSaveContentFailed.value = false;
         },
       },
     );
