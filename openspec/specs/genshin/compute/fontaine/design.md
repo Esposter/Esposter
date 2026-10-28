@@ -2,8 +2,6 @@
 
 ## Queue
 
-## Waiting
-
 - [ ] `[cpu]` {fontaine-landmarks-meshes} needs game-exports — **Fontaine: the landmarks' meshes named from the extraction.** Reads `{data-root}/genshin-parity/extracted/fontaine/` and the landmarks of `court-of-fontaine-location` in `ParityReferenceMap` (their pixels), read off the extracted meshes' names and positions near each landmark, and written as the fontaine entries of `DerivedAssetLandmarkMap` (each a `mesh` and its `share`). Waits on the Court's own buildings being named and rooted: the layout dumps name its clock tower "Area_Fd_Build_FDC_Zhonglou_01" and 35 pieces of "Area_Fd_Build_FDC_POI_Zongzhan_", whose meshes the name pattern now exports, the export holds no arch or bridge near the Court, and its 85-metre towers ("Area_Fd_Build_FDC_Talou_A_01_Lod0") stand on several instances that no pose yet tells apart. Until then `DerivedAssetLandmarkMap[fontaine]` stays empty `scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts`.
 - [ ] `[page]` {court-of-fontaine-location-camera-landmarks} needs game-exports, parity-page — **court-of-fontaine-location: the camera solved on its landmarks and written.** `pnpm -C scripts genshin:parity pose court-of-fontaine-location --witness fontaine --write`. Reads the reference, the witness, the six landmarks in its `ParityReferenceMap` entry and their shares in `DerivedAssetLandmarkMap[fontaine]`. Writes `cameraPose` as the [compute bars](../README.md#bars) set out, and a pose image outside the repository. — waits on the landmark shares, which the landmarks' meshes item fills.
 - [ ] `[page]` {fontaine-layout-exports} needs game-exports, parity-page — **Fontaine: the layout against the exports at the reference's camera.** `pnpm -C scripts genshin:parity passes fontaine --pass Layout`. Reads the placements in the witness, the scene's camera from `court-of-fontaine-location`'s `cameraPose`. Writes `scripts/src/services/genshinParity/passes/snapshots/fontaine.snapshot.md`. Bar: the Layout bars of [compute](../README.md#bars). — waits on `court-of-fontaine-location-camera-landmarks` for the camera it reads.
@@ -15,6 +13,8 @@
 - [ ] `[page]` {fontaine-light} needs game-exports, parity-page — **Fontaine: the light pass.** `pnpm -C scripts genshin:parity passes fontaine --pass Light`. Reads the solved direction above, the lit stone's colour over the reference and its glow over the reference's frame. Writes `scripts/src/services/genshinParity/passes/snapshots/fontaine.snapshot.md`. Bar: the Light bars of [compute](../README.md#bars). Waits on `court-of-fontaine-location-sun-direction`.
 - [ ] `[page]` {fontaine-atmosphere} needs game-exports, parity-page — **Fontaine: the atmosphere pass.** `pnpm -C scripts genshin:parity passes fontaine --pass Atmosphere`. Reads the reference's sky and clouds at its camera, and the outline's weather for its hour (a call on which weather). Writes `scripts/src/services/genshinParity/passes/snapshots/fontaine.snapshot.md`. Bar: the Atmosphere bars of [compute](../README.md#bars).
 - [ ] `[page]` {court-of-fontaine-location-score} needs game-exports, parity-page — **court-of-fontaine-location: the frame's score.** `pnpm -C scripts genshin:parity compare court-of-fontaine-location`. Reads the reference and the page's screen at the reference's size. Writes its row of `ParityReferenceMap.snapshot.md` and the reference, ours and difference images. Bar: none numeric; reported, not gated: the passes above carry the bars, and the frame is checked by eye.
+
+## Waiting
 
 ## Open
 

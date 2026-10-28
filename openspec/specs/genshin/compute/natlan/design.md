@@ -2,8 +2,6 @@
 
 ## Queue
 
-## Waiting
-
 - [ ] `[page]` {people-of-the-springs-location-camera-landmarks} needs game-exports, parity-page — **people-of-the-springs-location: the camera solved on its landmarks and written.** `pnpm -C scripts genshin:parity pose people-of-the-springs-location --witness natlan --write`. Reads `{data-root}/genshin-parity/references/people-of-the-springs-location.png`, its seven landmarks in `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts` (read by eye off 4x crops, rigid architecture: the spire's apex and cap, the hall's two roof tips and platform corner, a terrace's stair top, a walkway post's foot) and their shares in `DerivedAssetLandmarkMap`. Seven landmarks solve the pose without `--start`. Writes `cameraPose` as the [compute bars](../README.md#bars) set out. — waits on a mesh the extraction holds for each landmark, and on the witness.
 - [ ] `[page]` {natlan-layout-exports} needs game-exports, parity-page — **natlan: the layout against the exports at the reference's camera.** `pnpm -C scripts genshin:parity passes natlan --pass Layout`. Reads the placements in the witness, the scene's camera from people-of-the-springs-location's `cameraPose`. Writes `scripts/src/services/genshinParity/passes/snapshots/natlan.snapshot.md`. Bar: the Layout bars of [compute](../README.md#bars). — waits on `people-of-the-springs-location-camera-landmarks` for the camera it reads.
 - [ ] `[page]` {natlan-camera} needs game-exports, parity-page — **natlan: the camera pass.** `pnpm -C scripts genshin:parity passes natlan --pass Camera`. Reads people-of-the-springs-location's landmarks on the frozen layout and its `cameraPose`. Writes `scripts/src/services/genshinParity/passes/snapshots/natlan.snapshot.md`. Bar: root mean square 2 px (`FRAME_GATE_PIXELS`). Waits on `people-of-the-springs-location-camera-landmarks`.
@@ -14,6 +12,8 @@
 - [ ] `[page]` {natlan-light} needs game-exports, parity-page — **natlan: the light pass.** `pnpm -C scripts genshin:parity passes natlan --pass Light`. Reads the solved direction above, the lit stone's colour over the reference and its glow over the reference's frame. Writes `scripts/src/services/genshinParity/passes/snapshots/natlan.snapshot.md`. Bar: the Light bars of [compute](../README.md#bars). Waits on `people-of-the-springs-location-sun-direction`.
 - [ ] `[page]` {natlan-atmosphere} needs game-exports, parity-page — **natlan: the atmosphere pass.** `pnpm -C scripts genshin:parity passes natlan --pass Atmosphere`. Reads the reference's sky and clouds at its camera, and the outline's weather for its hour. Writes `scripts/src/services/genshinParity/passes/snapshots/natlan.snapshot.md`. Bar: the Atmosphere bars of [compute](../README.md#bars). — waits on which weather the reference's hour is drawn in (a call).
 - [ ] `[page]` {people-of-the-springs-location-score} needs game-exports, parity-page — **people-of-the-springs-location: the frame's score.** `pnpm -C scripts genshin:parity compare people-of-the-springs-location`. Reads, writes and bars as the [compute bars](../README.md#bars) set out.
+
+## Waiting
 
 ## Open
 

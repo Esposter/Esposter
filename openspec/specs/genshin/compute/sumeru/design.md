@@ -2,8 +2,6 @@
 
 ## Queue
 
-## Waiting
-
 - [ ] `[page]` {sumeru-city-location-camera-landmarks} needs game-exports, parity-page — **sumeru-city-location: the camera solved on its landmarks and written.** `pnpm -C scripts genshin:parity pose sumeru-city-location --witness sumeru --write`. Reads the reference, the witness, the nine landmarks in its `ParityReferenceMap` entry and their shares in `DerivedAssetLandmarkMap[sumeru]`. Writes and bars as the [compute bars](../README.md#bars) set out. — waits on the landmark shares, which the landmarks' meshes item fills.
 - [ ] `[page]` {sumeru-layout-exports} needs game-exports, parity-page — **Sumeru: the layout against the exports at the reference's camera.** `pnpm -C scripts genshin:parity passes sumeru --pass Layout`. Reads the placements in the witness, the scene's camera from sumeru-city-location's `cameraPose`. Writes `scripts/src/services/genshinParity/passes/snapshots/sumeru.snapshot.md`. Bar: the Layout bars of [compute](../README.md#bars). — waits on `sumeru-city-location-camera-landmarks` for the camera it reads.
 - [ ] `[page]` {sumeru-camera} needs game-exports, parity-page — **Sumeru: the camera pass.** `pnpm -C scripts genshin:parity passes sumeru --pass Camera`. Reads sumeru-city-location's landmarks on the frozen layout and its `cameraPose`. Writes `scripts/src/services/genshinParity/passes/snapshots/sumeru.snapshot.md`. Bar: root mean square 2 px (`FRAME_GATE_PIXELS`). Waits on `sumeru-city-location-camera-landmarks`.
@@ -14,6 +12,8 @@
 - [ ] `[page]` {sumeru-light} needs game-exports, parity-page — **Sumeru: the light pass.** `pnpm -C scripts genshin:parity passes sumeru --pass Light`. Reads the solved direction above, the lit stone's colour over the reference and its glow over the reference's frame. Writes `scripts/src/services/genshinParity/passes/snapshots/sumeru.snapshot.md`. Bar: the Light bars of [compute](../README.md#bars). Waits on `sumeru-city-location-sun-direction`.
 - [ ] `[page]` {sumeru-atmosphere} needs game-exports, parity-page — **Sumeru: the atmosphere pass.** `pnpm -C scripts genshin:parity passes sumeru --pass Atmosphere`. Reads the reference's sky and clouds at its camera, and the outline's weather for its hour (a call on which weather). Writes `scripts/src/services/genshinParity/passes/snapshots/sumeru.snapshot.md`. Bar: the Atmosphere bars of [compute](../README.md#bars).
 - [ ] `[page]` {sumeru-city-location-score} needs game-exports, parity-page — **sumeru-city-location: the frame's score.** `pnpm -C scripts genshin:parity compare sumeru-city-location`. Reads the reference and the page's screen at the reference's size. Writes its row of `ParityReferenceMap.snapshot.md` and the reference, ours and difference images. Bar: none numeric; reported, not gated: the passes above carry the bars, and the frame is checked by eye.
+
+## Waiting
 
 ## Open
 
