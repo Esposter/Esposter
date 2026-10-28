@@ -41,7 +41,7 @@ const hasActions = computed(() => Boolean(confirmLabel || slots["prepend-actions
     <!-- Held through the dialog's leave, so it rises out with what it showed rather than as an empty frame -->
     <Transition :duration="DIALOG_BODY_TRANSITION_DURATION">
       <div v-if="isOpen" contents>
-        <div v-if="$slots.default" p-3 flex flex-1 flex-col gap-y-4 min-h-0 of-y-auto>
+        <div v-if="$slots.default" p-3 flex flex-1 flex-col gap-4 min-h-0 of-y-auto>
           <slot />
         </div>
         <footer v-if="hasActions" p-3 flex gap-2 items-center>

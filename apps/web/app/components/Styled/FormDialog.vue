@@ -36,7 +36,7 @@ defineExpose({ isValid });
     :title
     :="$attrs"
   >
-    <UiForm :id="formId" v-model:is-valid="isValid" flex flex-col gap-y-4 @submit="answer(submit, isOptimistic)">
+    <UiForm :id="formId" v-model:is-valid="isValid" flex flex-col gap-4 @submit="answer(submit, isOptimistic)">
       <slot />
     </UiForm>
     <!-- Guarded, not forwarded outright: the shell reads the presence of these slots to decide whether there is an
