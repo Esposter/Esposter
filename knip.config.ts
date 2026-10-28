@@ -65,6 +65,8 @@ const knipConfiguration: KnipConfig = {
     "packages/genshin-interface": {
       entry: ["src/index.ts", "src/**/*.reference.ts", "src/**/*.visual.ts"],
       ignore: ["**/auto-imports.d.ts"],
+      // The declaration build hands `.vue` declarations to vue-tsc by name (`dts.tsc.vue`), so nothing imports it
+      ignoreDependencies: ["vue-tsc"],
     },
     "packages/genshin-mods": { entry: ["src/register.ts"], ignoreDependencies: ["claude-code"] },
     "packages/genshin-persona": {
@@ -82,6 +84,8 @@ const knipConfiguration: KnipConfig = {
     "packages/genshin-world": {
       entry: ["parity/*.visual.ts", "src/index.ts", "src/**/*.reference.ts", "src/workers/*.ts"],
       ignore: ["**/auto-imports.d.ts"],
+      // The declaration build hands `.vue` declarations to vue-tsc by name (`dts.tsc.vue`), so nothing imports it
+      ignoreDependencies: ["vue-tsc"],
     },
     // A type bench is run by `pnpm bench:types` and imported by nothing, as its fixture is imported by the benches alone
     "packages/headless-block-editor": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
@@ -103,6 +107,8 @@ const knipConfiguration: KnipConfig = {
       ignoreDependencies: ["vite-plugin-glsl"],
     },
     "packages/trpc-nuxt-module": { entry: ["test/fixture/nuxt.config.ts"] },
+    // The declaration build hands `.vue` declarations to vue-tsc by name (`dts.tsc.vue`), so nothing imports it
+    "packages/vue-phaserjs": { ignoreDependencies: ["vue-tsc"] },
     scripts: {
       // Every command is launched by path through `vpx` (`scripts/package.json`), which knip does not trace, so each
       // Command entry and the shell wrapper's slot gate are named here

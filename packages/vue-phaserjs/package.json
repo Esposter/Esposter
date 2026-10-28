@@ -61,7 +61,8 @@
     "@esposter/configuration": "workspace:*",
     "@vue/test-utils": "catalog:",
     "tsdown": "catalog:",
-    "type-fest": "catalog:"
+    "type-fest": "catalog:",
+    "vue-tsc": "catalog:"
   },
   "peerDependencies": {
     "@esposter/shared": "workspace:*",

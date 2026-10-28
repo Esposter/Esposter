@@ -77,7 +77,8 @@
     "tsdown": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
-    "vitest-browser-vue": "catalog:"
+    "vitest-browser-vue": "catalog:",
+    "vue-tsc": "catalog:"
   },
   "peerDependencies": {
     "vue": "catalog:"
