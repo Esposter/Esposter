@@ -29,7 +29,7 @@ flowchart TD
 
 - **Per square, linear in the candidates.** Each candidate costs one accept call and a check of at most twenty-five cells, so the cost follows the candidates thrown, not the plants kept (`packages/genshin-engine/src/vegetation/computeScatterPoints.ts`).
 - **Nothing is stored between squares.** Each square's grid is built and dropped with the call (`packages/genshin-engine/src/vegetation/computeScatterPoints.ts`).
-- **A draw for each finest tile drawn.** Tens of them round the eye, each a few dozen flowers.
+- **A draw for each finest tile drawn.** Each tile's flowers are one instanced draw, as the flower bullets above give.
 
 ## Key files
 

@@ -68,10 +68,10 @@ flowchart TD
 
 ## Notes
 
-- The Enemies component reads `getWorldNow` (`packages/genshin-world/src/components/World/Enemies/Index.vue:70`), the world clock, which Session passes through Windrise. Each respawn is checked against the same clock, so no moment is read from the device.
+- Each enemy respawn is checked against the world clock, so no moment is read from the device.
 - A computed that reads the clock takes `worldNow`, a ref Session sets from `getWorldNow` once each `WORLD_CLOCK_INTERVAL_MS` (`packages/genshin-world/src/components/World/Session/Index.vue`), so a reset or a regeneration that passes with no write reaches it within the minute. A function that runs on a click reads `getWorldNow` at the moment it runs, and re-checks a row a computed showed before it acts on the row.
 - `checkIsDomainKindOpenOnDay` and `checkIsDomainLevelOpen` take the moment checked, not a date, and read its game day from the reset clock. `checkIsDomainLevelOpen` is called by `useWorldDomains` when a level is entered (`packages/genshin-world/src/composables/useWorldDomains.ts:263`) and by `computeDomainLevelRows` (`packages/genshin-world/src/services/domains/computeDomainLevelRows.ts:21`) ([domains](../domains/design.md)).
-- Gathering's daily points respawn at the next daily reset after the pick, through `computeNextDailyReset` (`packages/genshin-world/src/services/gathering/computeGatheringRespawn.ts:12`), so they read this module's reset.
+- Gathering's daily points read this module's reset through `computeNextDailyReset` (`packages/genshin-world/src/services/gathering/computeGatheringRespawn.ts:12`), respawning at the next daily reset after the pick.
 
 ## Open
 

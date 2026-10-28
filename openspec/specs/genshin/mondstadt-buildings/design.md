@@ -5,9 +5,9 @@ A Mondstadt house is generated from its parameters by `createMondstadtBuildingGe
 ```mermaid
 flowchart TD
   OP[MondstadtBuildingOptions] --> GF[Stone ground floor and chimney]
-  OP --> ST[Each storey: plaster box, overhanging by the jetty]
+  OP --> ST[Storey]
   ST --> TF[Timber corner posts and top beams, standing proud of the plaster]
-  OP --> RF[Gable prism from the top storey's eaves, plus dormers at each slope's middle]
+  OP --> RF[Gable roof and dormers]
   GF --> OUT[MondstadtBuildingGeometries]
   TF --> OUT
   RF --> OUT

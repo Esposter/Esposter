@@ -1,6 +1,6 @@
 ## Purpose
 
-The open world's scene group record, each group's NPCs, viewpoints and quest triggers by group id beside the scene's building points, every member and place naming the source that filled it, and what only the server's group scripts hold left out (`scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`).
+The open world's scene group record, each group's NPCs, viewpoints and quest triggers by group id beside the scene's building points, every member and place naming the source that filled it, and what only the server's group scripts hold left out.
 
 ## Requirements
 

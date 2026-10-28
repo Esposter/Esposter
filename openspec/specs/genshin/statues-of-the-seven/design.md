@@ -1,6 +1,6 @@
 # Statues of The Seven
 
-In the game a region's statues stand for its Archon and level together as Oculi are offered to them. This page is what is built of [Statues of The Seven](../../../changes/genshin-statues-of-the-seven/design.md): a region's levels and what each pays, the maximum stamina they raise, and the Statue's Blessing's pool with its two ways of healing. Their rules are pure functions, as the [offering systems](../offering-systems/design.md) page's are. The world now holds each region's levels, the Oculi found and the pool, and the Worship Statue offers and claims through them (`packages/genshin-world/src/composables/useWorldStatues.ts`), while the stamina maximum stays at its start.
+In the game a region's statues stand for its Archon and level together as Oculi are offered to them. This page is what is built of [Statues of The Seven](../../../changes/genshin-statues-of-the-seven/design.md): a region's levels and what each pays, the maximum stamina they raise, and the Statue's Blessing's pool with its two ways of healing. Their rules are pure functions, as the [offering systems](../offering-systems/design.md) page's are. The world holds each region's levels, the Oculi found and the pool, and the Worship Statue offers and claims through them (`packages/genshin-world/src/composables/useWorldStatues.ts`), while the stamina maximum stays at its start.
 
 ## How it works
 
@@ -14,8 +14,8 @@ flowchart TD
   NEXT -->|"no"| WAIT["Held toward the next level"]
   LEVEL --> PAY["Its stamina counted, its rewards waiting for a claim"]
   PAY --> CLAIM["A claim pays the next reached level's rewards once"]
-  PAY --> MAX["computeMaximumStamina: the start plus every region's reached levels, at most 240"]
-  POOL["Restorative Power: 1% back every 15 seconds (RESTORATIVE_POWER_REFILL_SECONDS)"] --> CLICK["A click heals a member a tenth of its Max HP"]
+  PAY --> MAX[computeMaximumStamina]
+  POOL[Restorative Power refill] --> CLICK["A click heals a member a tenth of its Max HP"]
   POOL --> AUTO["Auto-recover: the fallen revived at 35%, the hurt healed to the threshold"]
 ```
 
@@ -47,7 +47,7 @@ flowchart TD
 
 ## Notes
 
-- **Partly wired.** The auto-recover setting is not yet its state, and the character component still passes the start maximum.
+- **Partly wired.** The auto-recover setting is not yet its state, and the character component passes the start maximum, a gap the spec's requirement on the world's wiring owns.
 - **Oculi wait on the spawned places.** Oculi are not in the world's data, and their places come from the spawned places' fit ([spawned places](../../../changes/genshin-spawned-places/design.md)).
 
 ## Sources

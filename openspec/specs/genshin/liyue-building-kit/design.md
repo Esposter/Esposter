@@ -12,7 +12,7 @@ flowchart TD
   COL --> LAC[Lacquer]
   BAY --> LAT[Openwork: a rail at the sill and the head, a bar every cell]
   LAT --> LAC
-  OP --> TIER[Roof tier i: eave scaled by the tier's fraction, rising from the wall top plus i tier heights]
+  OP --> TIER[Roof tier i]
   TIER --> ROOF[Roof: shell from eave to flat top, upturned corners, a finial on each top corner]
   TER --> STONE[Stone geometry]
 ```
@@ -45,6 +45,6 @@ The palette's hues are the ones the game's Liyue reads as: ochre and grey rock, 
 - [ ] **The palette's hues are the ones the game's Liyue reads as** — no source yet: the hues are the first reading, and none has been measured against `{data-root}/genshin-parity/references/liyue-harbor-location.png`.
 - [ ] **The eave corners lift by the curl, and the shell rises steep at the eave and levels toward the top** — no source yet: no roof edge is measured from a Liyue reference, and `packages/genshin-world/src/services/liyue/createLiyueRoofTierGeometry.test.ts` checks only the rise to a flat top.
 - [ ] **Each bay's lattice has a rail at its sill and at its head, with bars standing flat to the wall** — no source yet: no test or reference checks the lattice.
-- [ ] **The export's buildings family is `Area_Ly_Build_` and `Area_LY_Build_`, with its terrain tiles as the ground** — no source yet: `{data-root}/genshin-parity/extracted/maps/index.tsv` names both families (1,913 meshes, 145 materials and 194 textures), but holds no `BigWorldTerrain_` mesh, and no row ties a building to a tile.
+- [ ] **The export's buildings family is `Area_Ly_Build_` and `Area_LY_Build_`, with its terrain tiles as the ground** — no source yet: `{data-root}/genshin-parity/extracted/maps/index.tsv` names both families, but holds no `BigWorldTerrain_` mesh, and no row ties a building to a tile.
 - [ ] **The harbour's other meshes are claimed undrawn by kind (`LiyueUndrawnMeshRegexMap`)** — contradicted by `{data-root}/genshin-parity/extracted/maps/index.tsv`: six "Area_Ly_Unique_BigTree_" meshes match no kind in the map.
 - [ ] **the bay width is 3 metres** — no source yet: the Liyue building export in `{data-root}/genshin-parity/extracted/liyue/`, not yet measured for the bay width.

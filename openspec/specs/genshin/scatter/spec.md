@@ -1,6 +1,6 @@
 ## Purpose
 
-The plants no record places, the small flowers among a region's grass, scattered over each finest terrain tile by seeded dart throwing in the terrain's worker. Each candidate point is kept only where the ground is grass above the water and no kept plant stands closer than the spacing, so the same tile always grows the same flowers, drawn as one instanced draw a tile that shows and goes with it (`packages/genshin-engine/src/vegetation/computeScatterPoints.ts`, `packages/genshin-world/src/workers/terrainTile.worker.ts`, `packages/genshin-world/src/components/World/Terrain/Index.vue`).
+The plants no record places, the small flowers among a region's grass, scattered over each finest terrain tile by seeded dart throwing in the terrain's worker. Each candidate point is kept only where the ground is grass above the water and no kept plant stands closer than the spacing, so the same tile always grows the same flowers, drawn as one instanced draw a tile that shows and goes with it.
 
 ## Requirements
 

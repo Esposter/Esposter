@@ -34,7 +34,7 @@ flowchart TD
 
 ## Notes
 
-- **No torch landmark yet.** A Kresnik's Torch is built as a kit nothing draws, and its landmark, with its warm light, is specified in [the Snezhnaya proposal](../../../changes/genshin-snezhnaya/proposal.md) (`packages/genshin-world/src/services/snezhnaya/createKresnikTorchGeometry.ts`).
+- **No torch landmark yet.** Its landmark, with its warm light, is specified in [the Snezhnaya proposal](../../../changes/genshin-snezhnaya/proposal.md) (`packages/genshin-world/src/services/snezhnaya/createKresnikTorchGeometry.ts`).
 - **Palette and light are not set.** The stone, flame and the nation's shade colours are not chosen, and the torch's light does not reach the scene, since a point light is not one of the lighting model's shared uniforms.
 
 ## Sources

@@ -1,6 +1,6 @@
 ## Purpose
 
-The rules of a Statue of The Seven past being a jump, built and tested but not yet on a screen. Mondstadt's levels read from the game's level-up table with their rewards and stamina (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/CityLevelupConfigData.json`), the Oculi offered to level them, the maximum stamina they raise to 240 at most, and the Statue's Blessing's pool with its click heal and auto-recover.
+The rules of a Statue of The Seven past being a jump, built and tested, and held by the world screen, which keeps the stamina maximum at its start. Mondstadt's levels read from the game's level-up table with their rewards and stamina (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/CityLevelupConfigData.json`), the Oculi offered to level them, the maximum stamina they raise to 240 at most, and the Statue's Blessing's pool with its click heal and auto-recover.
 
 ## Requirements
 

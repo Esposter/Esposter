@@ -6,7 +6,7 @@ The game places most of what stands in its open world through scene groups, each
 
 ```mermaid
 flowchart TD
-  BIRTHS["Hosted NPC births"] -->|"each birth"| NPC["NPC member, placed, turned, with its suites"]
+  BIRTHS["Hosted NPC births"] -->|"each birth"| NPC["NPC member"]
   CODEX["Viewpoint codex, open-world rows"] --> MATCH{"English name on exactly one map point?"}
   INFO["Official map's Viewpoint points and their text"] --> MATCH
   MATCH -->|"yes, on the ground"| PLACED["Gadget member, placed through the map's fit"]
@@ -49,7 +49,7 @@ An NPC birth's own `configId` is the NPC's id, so it becomes the member's object
 
 - **A candidate holds the name as whole words.** Both texts are lowercased, their apostrophes dropped (the codex writes "Islands" where the map writes "Island's"), and every other run of punctuation read as a space, so "Shut" is not found inside "Shutter" (`scripts/src/services/genshinAssets/sceneGroups/matchViewpointPoints.ts`).
 - **Points are taken by elimination.** A viewpoint left with one candidate that no other viewpoint with one candidate shares takes it; the point is then struck from every other viewpoint's candidates, and the round repeats. A name written inside a longer one, as "The Mausoleum of King Deshret" is in a point naming "Aaru's Shut" there, is settled once the longer one takes its own point (`scripts/src/services/genshinAssets/sceneGroups/matchViewpointPoints.ts`).
-- **What stays ambiguous is left unplaced.** A viewpoint whose name is on several points, or which shares its only point, keeps no place, and so does one whose point lies on a layer under the ground, whose floor the place cannot hold (`scripts/src/services/genshinAssets/sceneGroups/matchViewpointPoints.ts`; `scripts/src/services/genshinAssets/sceneGroups/readViewpointMembers.ts`). The publish's notes count those left out, a handful of the codex's open-world rows.
+- **What stays ambiguous is left unplaced.** A viewpoint whose name is on several points, or which shares its only point, keeps no place, and so does one whose point lies on a layer under the ground, whose floor the place cannot hold (`scripts/src/services/genshinAssets/sceneGroups/matchViewpointPoints.ts`; `scripts/src/services/genshinAssets/sceneGroups/readViewpointMembers.ts`). The publish's notes count those left out.
 
 ## What the record leaves out
 
@@ -59,7 +59,7 @@ Every field below is held only by the group scripts, which are the server's and 
 - **A puzzle's mechanisms and a chest's gadget.** The only gadgets are the viewpoints (`scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`).
 - **A trigger's region.** A trigger member names its group but has no place (`scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`). A quest's go-to step is placed instead by its own location guide, which names a dummy point the client's scene3_dummy_points.lua holds ([quests](../quests/design.md)).
 - **The suites that move a resident by the hour.** The births give each NPC one spot, so no resident has a night spot.
-- **The NPCs the births leave out.** The cities' service keepers among them: Hertha, Wagner, Katheryne, Sara and Timaeus each have no birth (`{data-root}/genshin-dump-backup-6.6/BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json`: 1005 births, each with its spot, suites and config id, none for an NPC of these five names in `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/NpcExcelConfigData.json`), so the record places their services' building points but not them.
+- **The NPCs the births leave out.** The cities' service keepers among them: Hertha, Wagner, Katheryne, Sara and Timaeus each have no birth (`{data-root}/genshin-dump-backup-6.6/BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json`: each birth has its spot, suites and config id, none for an NPC of these five names in `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/NpcExcelConfigData.json`), so the record places their services' building points but not them.
 - **Nod-Krai's NPC placements.** `packages/genshin-world/src/data/regions/nod-krai.json` keeps its one resident, `lempo-isle` (id 7086), and the [resident schedules](../../../changes/genshin-resident-schedules/proposal.md) change waits on the rest (see Open).
 
 ## Key files

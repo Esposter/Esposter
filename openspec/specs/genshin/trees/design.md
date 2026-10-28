@@ -51,7 +51,7 @@ flowchart TD
 
 ## What it costs to run
 
-- **A tree's wood is built once, with its mesh** (`packages/genshin-world/src/components/World/Landmark/Tree/Index.vue`). Its cost follows its tubes' sections and sides, and the oak's hundred or so tubes make a few tens of thousands of vertices (`computeTreeTubes.bench.md`).
+- **A tree's wood is built once, with its mesh** (`packages/genshin-world/src/components/World/Landmark/Tree/Index.vue`). Its cost follows its tubes' sections and sides.
 - **One bake a tree, two small renders, once.** The targets are a few hundred texels on their longer side (`packages/genshin-engine/src/vegetation/constants.ts`, `IMPOSTOR_RESOLUTION` of 256).
 - **A far tree is two triangles.** Its card's cost is a few texture reads a pixel; its mesh is not drawn at all past the band (`packages/genshin-engine/src/nodes/createImpostorMaterial.ts`, `packages/genshin-world/src/components/World/Landmark/Tree/Index.vue`).
 - **A tree decides its detail from one distance a frame**, on the main thread (`packages/genshin-world/src/components/World/Landmark/Tree/Index.vue`).
