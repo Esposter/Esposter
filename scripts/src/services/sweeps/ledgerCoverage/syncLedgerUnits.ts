@@ -1,5 +1,5 @@
 import { OPEN_CELL } from "#src/services/sweeps/ledgerCoverage/constants";
-import { getSortKey } from "#src/services/sweeps/ledgerCoverage/getSortKey";
+import { normalizeLedgerUnit } from "#src/services/sweeps/ledgerCoverage/normalizeLedgerUnit";
 
 const ROW_REGEX = /^\|(?<unitCell>[^|]*)\|/u;
 const SEPARATOR_REGEX = /^\|\s*-+\s*\|/u;
@@ -20,8 +20,10 @@ export const syncLedgerUnits = (text: string, units: string[]): string => {
   const bodyEnd = lines.findIndex((line, index) => index > separatorIndex && !ROW_REGEX.test(line));
   const body = lines.slice(separatorIndex + 1, bodyEnd === -1 ? undefined : bodyEnd);
   const rows = new Map(body.map((line) => [(ROW_REGEX.exec(line)?.groups?.unitCell ?? "").trim(), line]));
+  // The cell is backticked, and the backtick sorts after a hyphen — so the order is the bare name's, where a
+  // Name precedes its own prefix-extensions the way a directory listing reads
   const synced = units
-    .toSorted((firstUnit, secondUnit) => (getSortKey(firstUnit) < getSortKey(secondUnit) ? -1 : 1))
+    .toSorted((firstUnit, secondUnit) => (normalizeLedgerUnit(firstUnit) < normalizeLedgerUnit(secondUnit) ? -1 : 1))
     .map((unit) => {
       const row = rows.get(unit);
       if (row) return row;
