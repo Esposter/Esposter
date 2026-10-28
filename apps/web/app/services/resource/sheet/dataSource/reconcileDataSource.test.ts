@@ -16,7 +16,7 @@ describe(reconcileDataSource, () => {
 
     const previousDataSource = datasetToDataSource(dataset, DataSourceType.Csv, "");
     const dataSource = datasetToDataSource(
-      { ...dataset, rows: [{ " ": " " }, { " ": "a" }, { " ": " " }] },
+      { ...dataset, rows: [{ " ": " " }, { " ": "" }, { " ": " " }] },
       DataSourceType.Csv,
       "",
     );
