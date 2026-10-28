@@ -35,7 +35,8 @@ export const emailRouter = router({
   generateEmailHtml: getOwnerProcedure(ResourceType.Email, resourceIdInputSchema, "id")
     .meta({ humanOnly: "The personalised export a person sends, which nothing recalls once it is sent" })
     .query<{ datasetReference?: DatasetReference; html: string }>(async ({ input: { id } }) => {
-      const content = await requireEntity(readResourceContent(emailEditorSchema, id), DatabaseEntityType.Resource, id);
+      const resourceContent = readResourceContent(emailEditorSchema, id);
+      const content = await requireEntity(resourceContent, DatabaseEntityType.Resource, id);
 
       return (await compileEmailContent(content)).match(
         (html) => ({ datasetReference: content.datasetReference, html }),

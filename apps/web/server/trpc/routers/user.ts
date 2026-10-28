@@ -292,7 +292,10 @@ export const userRouter = router({
         },
       );
       return insertedDataExport;
-    } else return requireEntity(readActiveDataExport(ctx), DatabaseEntityType.DataExport, userId);
+    } else {
+      const activeDataExport = readActiveDataExport(ctx);
+      return requireEntity(activeDataExport, DatabaseEntityType.DataExport, userId);
+    }
   }),
   updateUser: standardAuthedProcedure
     .input(updateUserInputSchema)

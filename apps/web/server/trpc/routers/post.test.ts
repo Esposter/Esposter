@@ -440,7 +440,9 @@ describe("postRouter", () => {
     const [firstId, secondId, thirdId] = await createReplies(newPost.id);
     await setReplyColumns(firstId, { createdAt: new Date(0) });
     await setReplyColumns(secondId, { createdAt: new Date(ONE_SECOND) });
-    await setReplyColumns(thirdId, { createdAt: new Date(ONE_SECOND * 2) });
+    await setReplyColumns(thirdId, {
+      createdAt: new Date(Temporal.Duration.from({ seconds: 2 }).total("milliseconds")),
+    });
     const { items } = await postCaller.readPosts({ parentId: newPost.id, sortBy: NEW_SORT_BY });
 
     expect(items.map(({ id }) => id)).toStrictEqual([thirdId, secondId, firstId]);
@@ -453,7 +455,9 @@ describe("postRouter", () => {
     const [firstId, secondId, thirdId] = await createReplies(newPost.id);
     await setReplyColumns(firstId, { createdAt: new Date(0) });
     await setReplyColumns(secondId, { createdAt: new Date(ONE_SECOND) });
-    await setReplyColumns(thirdId, { createdAt: new Date(ONE_SECOND * 2) });
+    await setReplyColumns(thirdId, {
+      createdAt: new Date(Temporal.Duration.from({ seconds: 2 }).total("milliseconds")),
+    });
     const { items } = await postCaller.readPosts({ parentId: newPost.id, sortBy: OLD_SORT_BY });
 
     expect(items.map(({ id }) => id)).toStrictEqual([firstId, secondId, thirdId]);
@@ -466,7 +470,9 @@ describe("postRouter", () => {
     const [firstId, secondId, thirdId] = await createReplies(newPost.id);
     await setReplyColumns(firstId, { createdAt: new Date(0) });
     await setReplyColumns(secondId, { createdAt: new Date(ONE_SECOND) });
-    await setReplyColumns(thirdId, { createdAt: new Date(ONE_SECOND * 2) });
+    await setReplyColumns(thirdId, {
+      createdAt: new Date(Temporal.Duration.from({ seconds: 2 }).total("milliseconds")),
+    });
     const firstPage = await postCaller.readPosts({ limit: 2, parentId: newPost.id, sortBy: OLD_SORT_BY });
     const secondPage = await postCaller.readPosts({
       cursor: firstPage.nextCursor,
