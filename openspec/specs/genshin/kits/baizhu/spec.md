@@ -6,7 +6,7 @@ Baizhu's kit as built, with his strikes, charged attack, plunges, Universal Diag
 
 ### Requirement: Baizhu's plunges land on Bennett's plunge timings
 
-Baizhu's collision, low plunge and high plunge SHALL land on the timings and poise of Bennett's plunges, with his own multipliers.
+Baizhu's collision, low plunge and high plunge SHALL land on the timings of Bennett's plunges, with his own multipliers and the wiki's poise for the low and high plunges.
 
 #### Scenario: The plunges land on Bennett's timings
 

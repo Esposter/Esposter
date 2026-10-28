@@ -8,7 +8,7 @@ Alyosha's kit is its record and one behaviour module, `createAlyoshaKitBehaviour
 - **Alyosha's plunges take Bennett's hitmarks, as [a borrowed plunge](../README.md) does, and their areas and collision are the record's own.** Her low and high plunges strike at 36 and 38 frames, as Bennett's do (`{data-root}/cache/gcsim-v2.47.2/internal/characters/bennett/plunge.go:21` and `:22`), but her areas are 4 and 6 metres where Bennett's are 3 and 5 (`{data-root}/cache/gcsim-v2.47.2/internal/characters/bennett/plunge.go:28` and `:33`), so the areas are not Bennett's. The plunges' frames are open, as the last entry under Open says.
 - **Her burst has no hit yet, as `NamedHitList`.** Hunter's Advance's field and Tugarin hits are spawned by her module by name, and that module is not built, so the burst's hits list is empty until it is (the record's `burst.hits.length`, `NamedHitList` at 0).
 - **Her frames are read from her clips, as the [kits README](../README.md) states, except her plunges.** Her strikes read `Attack_01` to `Attack_04`, her charged attack ExtraAttack, her tap ElementalArt_NoCharge_Attack and her burst `ElementalBurst`. Her plunges' clips, FallingAttack_Strike and FallingAttack_Strike_AS, hold no animation events, so their frames are open.
-- **Her strikes and charged attack are Physical, and her tap is Electro.** Candace's charged attack is Physical (`{data-root}/cache/gcsim-v2.47.2/internal/characters/candace/charge.go:35`), and the wiki's Thunderbolt Strike page gives its tap as Electro DMG (`{data-root}/cache/genshin-wiki/Category_Alyosha_Talents.json`, the Tapping text, "AoE Electro DMG"), which the record's `Electric` names.
+- **Her charged attack is Physical, as Candace's is, and her tap is Electro.** Candace's charged attack is Physical (`{data-root}/cache/gcsim-v2.47.2/internal/characters/candace/charge.go:35`), and the wiki's Thunderbolt Strike page gives its tap as Electro DMG (`{data-root}/cache/genshin-wiki/Category_Alyosha_Talents.json`, the Tapping text, "AoE Electro DMG"), which the record's `Electric` names.
 
 ## Not built
 
@@ -32,6 +32,6 @@ Alyosha's kit is its record and one behaviour module, `createAlyoshaKitBehaviour
 
 ## Open
 
-- [ ] **Her strikes and charged attack are Physical** — no source yet: the wiki's Skirmishing Spear and Charged Attack rows name no element, and the dump's skill rows for her strikes are not read here.
+- [ ] **Her strikes are Physical** — no source yet: the wiki's Skirmishing Spear rows name no element, and the dump's skill rows for her strikes are not read here.
 - [ ] **Her low and high plunges strike at 36 and 38 frames, with areas of 4 and 6 metres** — no source yet: the wiki gives her plunges' damage and poise but no frames or areas, and her two plunge clips (`{data-root}/genshin-parity/extracted/timings/06537046/AnimationClip/Ani_Avatar_Boy_Pole_Alyosha_FallingAttack_Strike.json` and `{data-root}/genshin-parity/extracted/timings/02050112/AnimationClip/Ani_Avatar_Boy_Pole_Alyosha_FallingAttack_Strike_AS.json`) hold no animation events.
 - [ ] **The frames of her strikes, charged attack, tap and plunges come from her own clips** — no source yet: her clips are on disk under `{data-root}/genshin-parity/extracted/timings/`, but the two plunge clips hold no animation events, so no hitmark frame is read from them here.

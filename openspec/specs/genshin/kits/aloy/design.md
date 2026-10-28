@@ -1,12 +1,14 @@
 # Aloy
 
-Aloy's kit is its record and one behaviour module, `createAloyKitBehaviour`, avatar 10000062 (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarExcelConfigData.json`, named Aloy in `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`): four strikes, a fully charged shot, a collision and two plunges (`{data-root}/cache/genshin-wiki/Category_Aloy_Talents.json`, Rapid Fire), and Freeze Bomb (the same file, Frozen Wilds) with its six Chillwater Bomblets, as the same page's Gameplay Notes give them (`{data-root}/cache/genshin-wiki/Category_Aloy_Talents.json`), each of which adds a coil stack, four of them giving Cryo infusion for Rushing Ice's ten seconds (the same file, Frozen Wilds). Her multipliers are read from proud skill groups 6231, 6232 and 6239 (`packages/genshin-world/src/services/kit/characters/aloyKit.ts`); the skill's cooldown, and the burst's cooldown and energy cost, are read from the same groups. Freeze Bomb's circle, the bomblets' and Prophecies of Dawn's are priced by [the hitbox offset rule](../README.md) (`packages/genshin-world/src/services/kit/characters/aloyKit.ts`). Her coil stacks are not cleared 30 seconds after she leaves the field, since a kit's status holds no field state. Her Ascension 1 and Ascension 4 passives are built as Rushing Ice's ATK and Cryo DMG Bonus (`{data-root}/cache/gcsim-v2.47.2/internal/characters/aloy/asc.go`, lines 9 and 31 to 32). Her constellations are not built, and the reason the kit's code gives is open, see [not built](#not-built). Her Coil and Rushing Ice normal attack bonuses are not built, as a normal attack's damage bonus has no hook in the kit yet (gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/aloy/skill.go:161` to `:163` gives the Rushing Ice bonus). Her poise is the wiki's (`{data-root}/cache/genshin-wiki/Category_Aloy_Talents.json`).
+Aloy's kit is its record and one behaviour module, `createAloyKitBehaviour`, avatar 10000062 (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarExcelConfigData.json`, named Aloy in `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`): four strikes, a fully charged shot, a collision and two plunges (`{data-root}/cache/genshin-wiki/Category_Aloy_Talents.json`, Rapid Fire), and Freeze Bomb (the same file, Frozen Wilds) with its six Chillwater Bomblets, as the same page's Gameplay Notes give them (`{data-root}/cache/genshin-wiki/Category_Aloy_Talents.json`), each of which adds a coil stack, four of them giving Cryo infusion for Rushing Ice's ten seconds (the same file, Frozen Wilds). Her multipliers are read from proud skill groups 6231, 6232 and 6239 (`packages/genshin-world/src/services/kit/characters/aloyKit.ts`); the skill's cooldown, and the burst's cooldown and energy cost, are read from the same groups. Freeze Bomb's circle, the bomblets' and Prophecies of Dawn's are priced by [the hitbox offset rule](../README.md) (`packages/genshin-world/src/services/kit/characters/aloyKit.ts`). The clearing of her coil stacks after she leaves the field is not built, see [not built](#not-built). Her Ascension 1 and Ascension 4 passives are built as Rushing Ice's ATK and Cryo DMG Bonus (`{data-root}/cache/gcsim-v2.47.2/internal/characters/aloy/asc.go`, lines 9 and 31 to 32). Her constellations are not built, and the reason the kit's code gives is open, see [not built](#not-built). Her Coil and Rushing Ice normal attack bonuses are not built, as a normal attack's damage bonus has no hook in the kit yet (gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/aloy/skill.go:161` to `:163` gives the Rushing Ice bonus). Her poise is the wiki's (`{data-root}/cache/genshin-wiki/Category_Aloy_Talents.json`).
 
 ```mermaid
 flowchart LR
   BOMB["Freeze Bomb"] -->|"its bomblets"| BOMBLETS["Chillwater Bomblets"]
   BOMBLETS -->|"each adds a coil stack"| COILS["coil stacks"]
-  COILS -->|"four stacks"| INFUSE["Cryo infusion"]
+  COILS --> STACKS{"four stacks"}
+  STACKS -->|"yes"| INFUSE["Cryo infusion"]
+  STACKS -->|"no"| NONE["no infusion"]
 ```
 
 ## Decisions
@@ -18,6 +20,7 @@ flowchart LR
 
 ## Not built
 
+- **Her coil stacks are not cleared 30 seconds after she leaves the field.** A kit's status holds no field state, so the clearing is not built.
 - **The constellations are not built, and the reason is open.** The kit's code says the game cannot activate them, but the dump's talents `621` to `626` carry no parameters, and the cached wiki holds no constellation text, so no source confirms the reason.
 - **The Coil and Rushing Ice normal attack bonuses are not built.** gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/aloy/skill.go:161` to `:163` gives the Rushing Ice bonus at the skill's level, and the kit has no normal attack damage bonus to hold it.
 

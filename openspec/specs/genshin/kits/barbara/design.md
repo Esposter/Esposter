@@ -9,7 +9,9 @@ Barbara's kit is its record and one behaviour module, `createBarbaraKitBehaviour
 ```mermaid
 flowchart LR
   LOOP["Melody Loop field"] -->|"each tick, on the character on the field"| HEAL["heal"]
-  STRIKE["Barbara's strike or charged attack"] -->|"party heal, once per strike"| HEAL
+  STRIKE["Barbara's strike or charged attack"] --> STANDS{"Melody Loop stands"}
+  STANDS -->|"yes, once per strike"| HEAL
+  STANDS -->|"no"| NONE["no heal"]
   PARTICLE["particle collected"] -->|"Encore lengthens the loop"| LOOP
 ```
 

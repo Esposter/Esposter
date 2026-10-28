@@ -5,13 +5,21 @@ Alhaitham's kit is its record and one behaviour module, `createAlhaithamKitBehav
 ## Decisions
 
 - **The Mirrors are a status for their count and a field for their decay.** A status holds the Mirrors as its stacks, and a field, unbounded and ticking every 233 frames, takes one away each tick until none is left. A new run's first Mirror or an overflow past three moves that one field back to its first tick, as gcsim's decay chain is superseded by the one that starts after it (`{data-root}/cache/gcsim-v2.47.2/internal/characters/alhaitham/skill.go:134` to `:169`, with the three-Mirror cap at `{data-root}/cache/gcsim-v2.47.2/internal/characters/alhaitham/skill.go:150`). The field never restarts as an effect, so it is moved rather than added (`packages/genshin-world/src/services/kit/characters/alhaithamKit.ts`).
+
+```mermaid
+flowchart LR
+  MIRROR["a Mirror is made"] -->|"adds a stack to the status"| STACKS["status stacks"]
+  STACKS -->|"decay field tick takes one away"| TICK["decay-field tick"]
+  MIRROR -->|"first Mirror or overflow past three"| MOVE["decay field moves to its first tick"]
+```
+
 - **The Dendro infusion is held while the Mirrors are.** It is the infusion of his normal attacks, charged attack and plunges, which the status and the infusion are both set to end on a swap or on the burst (`packages/genshin-world/src/services/kit/characters/alhaithamKit.ts`, `{data-root}/cache/gcsim-v2.47.2/internal/characters/alhaitham/alhaitham.go:59` to `:67`).
 - **A Projection Attack triggers on each hit that strikes an enemy.** A normal attack, charged attack or plunge's `onStrike` runs it, and Ascension 1 makes a Mirror first from a charged attack or plunge, as gcsim's A1 callback does (`{data-root}/cache/gcsim-v2.47.2/internal/characters/alhaitham/asc.go:15`), so the count the projection reads includes it (`packages/genshin-world/src/services/kit/characters/alhaithamKit.ts`). Its own 1.6-second cooldown is a status, as gcsim's projection ICD of 96 frames gives it (`{data-root}/cache/gcsim-v2.47.2/internal/characters/alhaitham/skill.go:281`), and its hits carry the elemental skill's internal cooldown tag, as gcsim's art tag does (`{data-root}/cache/gcsim-v2.47.2/internal/characters/alhaitham/skill.go:248`), since the tag set has no tag of its own for it.
 
 ```mermaid
 flowchart LR
   HIT["a hit on an enemy"] --> PROJ["Projection Attack"]
-  A1["Ascension 1 Mirror, from a charged attack or plunge"] -->|"counted by the projection"| PROJ
+  A1["Ascension 1 Mirror<br/>from a charged attack or plunge"] -->|"counted by the projection"| PROJ
   PROJ -->|"1.6-second cooldown status"| CD["projection cooldown"]
   PROJ -->|"Constellation 1 cuts it"| UNIV["Universality's running cooldown"]
 ```

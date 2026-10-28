@@ -6,12 +6,21 @@ Beidou's kit is its record and one behaviour module, `createBeidouKitBehaviour`,
 
 - **Beidou's areas are priced with their offsets, and her box's far corner.** gcsim centres her first strike's 270-degree fan half a metre ahead and her third's circle and fourth's 270-degree fan a metre ahead, so each reach is 2.5 and 3 metres, as [the kits README](../README.md) prices them (`{data-root}/cache/gcsim-v2.47.2/internal/characters/beidou/attack.go` lines 19 to 21). It spawns her second's box on its near edge at the body and her fifth's half a metre behind, and both reach 2.5 metres ahead, so each is priced at 2.69 metres, as [the kits README](../README.md) sets out for boxes.
 - **Tidecaller plays as its press, its shield standing until its hit.** gcsim models the skill as one press: an Electro shield of the group's 14.4% of her Max HP plus 1386 is set as it starts (`{data-root}/cache/gcsim-v2.47.2/internal/characters/beidou/skill.go` line 75) and stands until its hit at 23 frames (`{data-root}/cache/gcsim-v2.47.2/internal/characters/beidou/skill.go` line 22, line 77), which lands 2U of Electro with 100 poise (the wiki's Tidecaller Base DMG row, with its advanced properties in `{data-root}/cache/genshin-wiki/Category_Beidou_Talents.json`), blunt, reaching 6 metres (`{data-root}/cache/gcsim-v2.47.2/internal/characters/beidou/skill.go` line 18). The hold is not built: a skill with holds starts on its release and nothing runs while it is held, so no shield could stand through the hold, and its bonus of 160% for each of up to two hits taken counts strikes landing on Beidou, which reach the team's shields and never the kit. Retribution, which grants the greatest bonus, and Lightning Storm, which follows it, wait on the hold. Its Electro on Beidou as it activates has no place to sit, and its particles are not built.
+
+```mermaid
+flowchart LR
+  PRESS["Tidecaller press"] -->|"sets the Electro shield"| SHIELD["Electro shield"]
+  SHIELD -->|"stands until its hit"| HIT["Tidecaller's hit"]
+```
+
 - **The Thunderbeast's Targe is a summon that follows the body on the field.** It stands for the burst group's 15 seconds from Stormbreaker's cast, as gcsim's burst status does (`{data-root}/cache/gcsim-v2.47.2/internal/characters/beidou/burst.go` line 54), where the body on the field stands, whoever that is, as the wiki's notes give it (`{data-root}/cache/genshin-wiki/Category_Beidou_Talents.json`). Its DMG reduction of 20% is not built, though an enemy's strike reads a buff of `Attribute.DamageReduction` on the member on the field, nor is its interruption resistance, which has nothing to act on. The Targe should end as Beidou falls, the wiki's Stormbreaker utility `Effects End Character Fallen` (`{data-root}/cache/genshin-wiki/Category_Beidou_Talents.json`), but it does not, as no effect reads a downed member.
 - **The Targe's discharge is cast by Beidou's own strikes and charged attack.** While the Targe stands, each of her strikes and charged attack casts a summon where she stands the moment it lands on an enemy, which lands the burst group's 96% as 1U of Electro under the Elemental Burst internal cooldown with 50 poise (the wiki's Stormbreaker Lightning DMG row, in `{data-root}/cache/genshin-wiki/Category_Beidou_Talents.json`), a frame past the strike (`{data-root}/cache/gcsim-v2.47.2/internal/characters/beidou/burst.go` line 143), and stands a second from the strike: a strike landing within that second of another discharge casts none, the wiki's one discharge a second. A strike that reaches no enemy casts none, since the cast hangs on the hit's per-enemy strike and no enemy means no strike. gcsim chains it from the enemy struck to a random other within 8 metres (`{data-root}/cache/gcsim-v2.47.2/internal/characters/beidou/burst.go` line 163), three hits or five from Upon the Turbulent Sea, the Thunder Arises (`{data-root}/cache/gcsim-v2.47.2/internal/characters/beidou/burst.go` lines 155 to 160), which an area can neither pick nor count, so one discharge lands on each enemy its hit's reach holds, as Razor's Soul Companion does, and that constellation is not built. The wiki says a discharge arises when the attack hits (`{data-root}/cache/genshin-wiki/Category_Beidou_Talents.json`). The wiki's discharge from every member's normal and charged attacks is not built either: the wiki sets it off as their hits land, and the strike loop where another member's hits land gives no kit a hook. It is priced as it lands, not as the burst snapshots it, as Condensed Pyronado's summon is.
 
 ```mermaid
 flowchart LR
-  STRIKE["Beidou's strike or charged attack hits an enemy"] --> GATE{"discharge within the last second"}
+  STRIKE["Beidou's strike or charged attack hits an enemy"] --> TARGE{"Thunderbeast's Targe stands"}
+  TARGE -->|"no"| NONE["no discharge"]
+  TARGE -->|"yes"| GATE{"discharge within the last second"}
   GATE -->|"no"| SUMMON["discharge summon where she stands"]
   GATE -->|"yes"| NONE["no discharge"]
   SUMMON -->|"lands on each enemy in reach"| HIT["Electro hit"]
@@ -46,4 +55,5 @@ flowchart LR
 ## Open
 
 - [ ] **The Targe does not end as Beidou falls** — contradicted by `{data-root}/cache/genshin-wiki/Category_Beidou_Talents.json`: Stormbreaker lists "Effects End Character Fallen" as a utility.
+- [ ] **The built discharge lands even when the strike misses, against the spec's discharge scenario** — contradicted by `{data-root}/cache/genshin-wiki/Category_Beidou_Talents.json`: discharges arise when Normal and Charged Attacks hit.
 - [ ] **Stunning Revenge counts HP lost to a drown or a wildlife's charge, and applies to her charged attack** — no source yet: the cached Beidou page gives Stunning Revenge no text.

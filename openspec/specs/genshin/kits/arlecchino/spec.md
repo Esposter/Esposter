@@ -121,7 +121,3 @@ The Constellation 6 bonus SHALL start at most once every 15 seconds.
 - **GIVEN** the bonus started less than 15 seconds ago
 - **WHEN** Arlecchino uses All Is Ash again
 - **THEN** the bonus is not restarted, and runs out 20 seconds after it first started
-
-## Open
-
-Nothing open.

@@ -1,6 +1,6 @@
 ## Purpose
 
-Barbara's kit as built: her strikes, charged attack and plunges, Let the Show Begin's droplets, the Melody Loop and Shining Miracle's heal, with the burst's heal on off-field members, her Ascension 4 Encore and Constellation 6's revive built, and her other passives and Constellations 1, 2 and 4 built, with the loop's Wet left unbuilt.
+Barbara's kit as built: her strikes, charged attack and plunges, Let the Show Begin's droplets, the Melody Loop and Shining Miracle's heal, her Ascension 4 Encore and Constellation 6's revive built, and her other passives and Constellations 1, 2 and 4 built, with the loop's Wet and the burst's heal on off-field members left unbuilt.
 
 ## Requirements
 

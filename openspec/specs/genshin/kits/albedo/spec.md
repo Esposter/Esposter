@@ -65,13 +65,13 @@ From Constellation 2, each Transient Blossom SHALL add a stack of Fatal Reckonin
 #### Scenario: Tectonic Tide adds the stacks to its Fatal Blossoms
 
 - **GIVEN** Albedo has four stacks of Fatal Reckoning
-- **WHEN** she casts Rite of Progeniture: Tectonic Tide
-- **THEN** each Fatal Blossom deals 120% of her DEF as flat damage more
+- **WHEN** he casts Rite of Progeniture: Tectonic Tide
+- **THEN** each Fatal Blossom deals 120% of his DEF as flat damage more
 
 #### Scenario: Tectonic Tide consumes the stacks
 
 - **GIVEN** Tectonic Tide has consumed Fatal Reckoning's stacks
-- **WHEN** she casts it again without a new Transient Blossom
+- **WHEN** he casts it again without a new Transient Blossom
 - **THEN** its Fatal Blossoms deal no Fatal Reckoning damage
 
 #### Scenario: Below Constellation 2 nothing accumulates

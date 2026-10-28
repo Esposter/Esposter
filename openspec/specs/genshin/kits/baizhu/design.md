@@ -12,12 +12,21 @@ Not built yet: Universal Diagnosis's bounces to the next nearby enemy and its he
 
 ```mermaid
 flowchart LR
-  SPLICE["Splice strikes an enemy"] -->|"once for that Splice"| SHIELD["Seamless Shield"]
+  SPLICE["Splice strikes an enemy"] --> ONCE{"this Splice has made no shield yet"}
+  ONCE -->|"yes"| SHIELD["Seamless Shield"]
+  ONCE -->|"no"| NONE["no shield"]
   SHIELD -->|"a recast explodes it"| VEIN["Spiritvein"]
   VEIN -->|"Constellation 6 adds Max HP"| MAXHP["Max HP share"]
 ```
 
 - **Constellation 2's Splice is queued on the enemy its active member struck.** gcsim's `c2` (`{data-root}/cache/gcsim-v2.47.2/internal/characters/baizhu/cons.go:25`) subscribes to each enemy's damage and queues the Splice when the active character dealt it (`{data-root}/cache/gcsim-v2.47.2/internal/characters/baizhu/cons.go:30`), once every five seconds through a status on Baizhu (`{data-root}/cache/gcsim-v2.47.2/internal/characters/baizhu/cons.go:72` and `{data-root}/cache/gcsim-v2.47.2/internal/characters/baizhu/cons.go:33`), as the kit's `onKitEvent` does on each `DamageTaken` event whose striker is the active member. The Splice is a Dendro hit (`{data-root}/cache/gcsim-v2.47.2/internal/characters/baizhu/cons.go:43`) of 2.5 talent multiplier (`{data-root}/cache/gcsim-v2.47.2/internal/characters/baizhu/cons.go:45`), dealt as Elemental Skill DMG (`{data-root}/cache/gcsim-v2.47.2/internal/characters/baizhu/cons.go:23`), from the dump's Constellation 2 row (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`, paramList 2.5 and 5.0), with a circle of 0.6 metres about its target, as gcsim's `NewCircleHitOnTarget` gives it (`{data-root}/cache/gcsim-v2.47.2/internal/characters/baizhu/cons.go:55`). Under the [kits README](../README.md#targeting)'s rule for a strike with a target, the Splice does not reach the enemies within 0.6 metres of it, a gap the Aino Constellation 2 design records too. Its heal is not built: the Sprite's normal healing is not in the record, though gcsim gives it as 20% of the skill's heal (`{data-root}/cache/gcsim-v2.47.2/internal/characters/baizhu/cons.go:67`) and the dump's talent `822` (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`) holds the 0.2. gcsim reuses the skill's first hitmark for the Splice, a TODO in its source (`{data-root}/cache/gcsim-v2.47.2/internal/characters/baizhu/cons.go:52`, `:57`), which a passive's hit does not price.
+
+```mermaid
+flowchart LR
+  STRIKE["active member damages an enemy"] --> GATE{"no Splice in the last five seconds"}
+  GATE -->|"yes"| SPLICE["Splice queued on that enemy"]
+  SPLICE -->|"Dendro hit on its target"| HIT["Splice hit"]
+```
 
 ## Key files
 
