@@ -1,5 +1,5 @@
 import { getGameDataObjectUrl } from "#src/services/gameData/getGameDataObjectUrl";
-import { fetchOk } from "#src/services/shared/fetchOk";
+import { fetchOk, fetchResponse } from "#src/services/shared/fetchOk";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { CONTENT_CACHE_DIRECTORY, readContentAddressedObject } from "@esposter/shared-node/cache";
@@ -22,7 +22,7 @@ export const readPublishedGameDataObject = async <T>(dataset: string, hash: stri
 export const readPublishedGameDataObjectIfStored = async <T>(dataset: string, hash: string): Promise<T | undefined> => {
   if (existsSync(join(CONTENT_CACHE_DIRECTORY, hash))) return readPublishedGameDataObject<T>(dataset, hash);
   const url = getGameDataObjectUrl(dataset, hash);
-  const response = await fetch(url);
+  const response = await fetchResponse(url);
   if (response.status === 404) return undefined;
   if (!response.ok) throw new InvalidOperationError(Operation.Read, url, `responds ${response.status}`);
   const bytes = Buffer.from(await response.arrayBuffer());
