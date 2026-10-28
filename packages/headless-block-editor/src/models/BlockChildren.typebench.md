@@ -8,7 +8,7 @@ Compiler: `typescript@6.0.3-bridge.19.tsgo.7.0.2`
 
 | case                      | types | instantiations |
 | ------------------------- | ----- | -------------- |
-| PortReturnForSection      | 7     | 30             |
-| PortReturnOverUnion       | 0     | 6              |
+| PortReturnForSection      | 11    | 30             |
+| PortReturnOverUnion       | 6     | 7              |
 | RecordPortReturnOverUnion | 5     | 7              |
 | SlotsOfUnion              | 1     | 18             |
