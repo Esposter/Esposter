@@ -1,0 +1,29 @@
+# Container blob move
+
+## Why
+
+The storage rename in `870c0c4ce9` retires `app-assets`, `dungeons-assets`, `private-user-assets` and `data-exports`, and its commit message and the [azure services](../../specs/architecture/azure-services/design.md) design say their blobs move to the new names. No code in the range moves them, and no backfill ships. Until a move runs, the new read paths find nothing: `apps/web/server/trpc/routers/dungeons.ts` reads a dungeon save at `user-assets/{userId}/save.json`, so a player's saved progress reads as empty; the call background and the logo read from containers that are empty; and the export link reads an archive that is not there.
+
+The move is not a copy. The hosted game data is also re-shaped: it is written as one `<dataset>/<hash>.json` object per record, not as the single `genshin/data/` tree it was under `app-assets`, so the game data is republished rather than copied.
+
+## What changes
+
+- The owner confirms whether an out-of-band copy already ran against production. If one ran, the mapping below is verified and no copy runs again.
+- If none ran, the blobs are copied to their new names by a scratchpad backfill, run under the `backfills` skill, dry then for real on dev and then prod, and verified by listing each container.
+- The hosted game data is republished by `genshin:data` into `public-genshin-assets` under its datasets, under the `genshin-data` skill.
+- The old containers are deleted by the infra follow-up once the move is verified, as the azure services design already says.
+
+## Mapping
+
+| Old container         | Blob                        | New container and name                                      |
+| :-------------------- | :-------------------------- | :---------------------------------------------------------- |
+| `app-assets`          | the logo                    | `public-app-assets`                                         |
+| `app-assets`          | `genshin/data/**`           | `public-genshin-assets/<dataset>/<hash>.json`, by republish |
+| `dungeons-assets`     | Phaser file pack            | `public-dungeons-assets`                                    |
+| `dungeons-assets`     | `{userId}/save.json`        | `user-assets/{userId}/save.json`                            |
+| `private-user-assets` | `{userId}/CallBackground/*` | `user-assets/{userId}/CallBackground/*`                     |
+| `data-exports`        | `{dataExportId}.zip`        | `user-assets/exports/{dataExportId}.zip`                    |
+
+## Out of scope
+
+Changing the mapping. The names are settled by the storage rename, and this change moves blobs to them without renaming anything again.
