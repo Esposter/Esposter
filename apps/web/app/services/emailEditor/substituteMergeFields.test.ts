@@ -61,6 +61,12 @@ describe(substituteMergeFields, () => {
     expect(substituteMergeFields("{{P&L}}", { "P&L": "a" })).toBe("{{P&L}}");
   });
 
+  test("substitutes a column whose name ends in a brace, matched whole rather than cut at its first closing braces", () => {
+    expect.hasAssertions();
+
+    expect(substituteMergeFields("{{x}}}", { "x}": "v" })).toBe("v");
+  });
+
   test("leaves merge fields without a matching column", () => {
     expect.hasAssertions();
 
