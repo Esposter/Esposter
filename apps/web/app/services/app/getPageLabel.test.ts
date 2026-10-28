@@ -16,7 +16,7 @@ describe(getPageLabel, () => {
   test("falls back to the recorded title, then the path", () => {
     expect.hasAssertions();
 
-    expect(getPageLabel(path, "title")).toBe("title");
+    expect(getPageLabel(path, " ")).toBe(" ");
     expect(getPageLabel(path, "")).toBe(path);
   });
 });
