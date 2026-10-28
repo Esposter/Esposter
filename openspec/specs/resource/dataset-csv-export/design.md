@@ -15,7 +15,7 @@ Portable moves a resource's _content_, a survey's model rather than its answers,
 
 ## What it does
 
-- **One command.** The resource page's overflow menu shows **Export CSV** for every type that declares `datasetProvider` and not `portable`, read off `ResourceDefinitionMap` by `checkHasCapability`. Nothing is added per type.
+- **One command.** The resource page's overflow menu shows **Export CSV** for every type that declares `datasetProvider` and not `portable`, read off `ResourceDefinitionMap` by `checkHasCapability`.
 - **One read.** The command runs `dataset.readDataset` for the open resource and writes its columns and rows. A dataset over the row cap exports what was read and says so in an alert, rather than implying the file is complete ([dataset row-cap warning](../dataset-row-cap-warning/design.md)). The file is named after the resource.
 - **Columns read the way a person reads them.** `DatasetColumn` carries an optional `title`, the header a file prints in place of the column's `name`. The survey dataset sets it to each question's title, so the file reads "How did you hear about us?" rather than `question3`.
 - **Survey columns lead with context.** A survey dataset's first column is its submission time, and in an Identified survey the respondent follows it. A checkbox question's answers join into one cell separated by `; `. These columns are available to a Dashboard binding as well.
