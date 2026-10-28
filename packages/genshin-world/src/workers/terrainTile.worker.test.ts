@@ -21,9 +21,12 @@ const regionGrounds = await Promise.all(
 );
 
 describe("terrainTile.worker", () => {
-  const addEventListener =
-    vi.fn<(type: string, listener: (event: MessageEvent<TerrainWorkerMessage>) => Promise<void> | void) => void>();
   const postMessage = vi.fn<(message: PlantedTerrainTile, options: StructuredSerializeOptions) => void>();
+  // The worker sets its message handler as `self.onmessage`, read off the stubbed global the test gives it
+  const worker: {
+    onmessage?: (event: MessageEvent<TerrainWorkerMessage>) => Promise<void> | void;
+    postMessage: typeof postMessage;
+  } = { postMessage };
   const tileMessage: TerrainWorkerMessage = {
     kind: TerrainWorkerMessageKind.Tile,
     request: { cellsPerSide: 1, finestTileSize: 1, key: getTerrainTileKey(0, 0, 0) },
@@ -33,12 +36,12 @@ describe("terrainTile.worker", () => {
     kind: TerrainWorkerMessageKind.Load,
   };
   const receive = async (message: TerrainWorkerMessage): Promise<void> => {
-    assert.exists(addEventListener.mock.lastCall);
-    await addEventListener.mock.lastCall[1](new MessageEvent("message", { data: message }));
+    assert.exists(worker.onmessage);
+    await worker.onmessage(new MessageEvent("message", { data: message }));
   };
 
   beforeEach(async () => {
-    vi.stubGlobal("self", { addEventListener, postMessage });
+    vi.stubGlobal("self", worker);
     // Imported afresh for each test, so each starts a worker with no ground loaded
     vi.resetModules();
     await import("#src/workers/terrainTile.worker");
