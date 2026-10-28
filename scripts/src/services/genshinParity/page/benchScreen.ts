@@ -41,7 +41,7 @@ export const benchScreen = async ({
       );
       console.log(
         Object.entries(bench.kindCounts)
-          .toSorted(([, first], [, second]) => second - first)
+          .toSorted(([, firstCount], [, secondCount]) => secondCount - firstCount)
           .map(([kind, count]) => `${count} ${kind}`)
           .join(", "),
       );
