@@ -39,9 +39,12 @@ import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetName
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
 import { toLinear } from "#src/services/shared/toLinear";
+import { settleAll } from "@esposter/shared";
 import { join } from "node:path";
 import { Color } from "three";
 
+// Towers read at a time, since each one's mesh is tens of thousands of vertices and every mesh held at once is too much
+const TOWER_READ_CONCURRENCY = 2;
 // Each login tower's surface as the game paints and carves it, read off its finest mesh unrolled round its own axis,
 // The way the scene's lathe stands it: each cell of the unrolled surface keeps the face standing farthest out over it,
 // Its material's diffuse colour and metal there, and how far in from its band's wall it stands. What the lathe
@@ -65,9 +68,9 @@ export const fitLoginTowerFacades = async (
     ),
   );
   const stone: Vector = [stoneColor.r, stoneColor.g, stoneColor.b];
-  // Each tower's textures and mesh are read together, every tower at once, and its facade is worked out from them after
-  const towerReads = await Promise.all(
-    Array.from(meshPathMap, async ([tower, meshPath]) => {
+  // Each tower's textures and mesh are read together, a pool of towers at a time, and its facade is worked out from them after
+  const towerReads = await settleAll(
+    Array.from(meshPathMap, ([tower, meshPath]) => async () => {
       const placement = partPlacements.find(({ mesh, part }) => part === tower && meshPath.endsWith(`${mesh}.obj`));
       const materialNames = (placement?.materials ?? []).map((pathId) => pathIdNameMap.get(pathId) ?? "");
       const materialTextures = await Promise.all(
@@ -78,6 +81,7 @@ export const fitLoginTowerFacades = async (
       );
       return { materialTextures, mesh: await readObjMesh(meshPath), tower };
     }),
+    TOWER_READ_CONCURRENCY,
   );
   const facades: Record<string, TowerFacade> = {};
   for (const {

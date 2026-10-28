@@ -18,10 +18,13 @@ import {
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
+import { settleAll } from "@esposter/shared";
 import { join } from "node:path";
 
 // A piece's tops read from above on a centimetre grid
 const TOP_CELL_SIZE = 0.01;
+// Pieces read a pool at a time, so every walkway placement's mesh is never held in memory at once
+const WALKWAY_READ_CONCURRENCY = 4;
 // The walkway as the slabs it is laid from, each piece's outline seen from above and the height its stone stands at,
 // The one most of its tops stand at seen from above, and what stands raised over that stone, its curbs and its lanes'
 // Borders a centimetre or three high, each traced from above as loops at its own height. Every piece rises into place
@@ -33,11 +36,15 @@ export const fitLoginWalkway = async (
 ): Promise<{ bottom: number; pieces: LoginWalkwayPiece[]; top: number }> => {
   const heightCountMap = new Map<number, number>();
   const pieces: LoginWalkwayPiece[] = [];
-  const placedMeshes = await Promise.all(
+  const placedMeshes = await settleAll(
     placements
       .filter(({ mesh }) => WALKWAY_MESH_REGEX.test(mesh))
       .toSorted((firstPlacement, secondPlacement) => firstPlacement.mesh.localeCompare(secondPlacement.mesh))
-      .map(async (placement) => ({ obj: await readObjMesh(join(meshDirectory, `${placement.mesh}.obj`)), placement })),
+      .map((placement) => async () => ({
+        obj: await readObjMesh(join(meshDirectory, `${placement.mesh}.obj`)),
+        placement,
+      })),
+    WALKWAY_READ_CONCURRENCY,
   );
   for (const {
     obj: { faces, vertices },
