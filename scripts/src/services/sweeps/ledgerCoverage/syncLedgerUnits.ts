@@ -23,8 +23,9 @@ export const syncLedgerUnits = (text: string, units: string[]): string => {
   // The cell is backticked, and the backtick sorts after a hyphen — so the order is the bare name's, where a
   // Name precedes its own prefix-extensions the way a directory listing reads
   const synced = units
-    .toSorted((firstUnit, secondUnit) => (normalizeLedgerUnit(firstUnit) < normalizeLedgerUnit(secondUnit) ? -1 : 1))
-    .map((unit) => {
+    .map((unit) => ({ key: normalizeLedgerUnit(unit), unit }))
+    .toSorted((first, second) => (first.key < second.key ? -1 : 1))
+    .map(({ unit }) => {
       const row = rows.get(unit);
       if (row) return row;
       const cells = [unit, OPEN_CELL, ...widths.slice(2).map(() => "")];
