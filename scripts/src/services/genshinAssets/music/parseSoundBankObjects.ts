@@ -1,7 +1,10 @@
 import type { SoundBankObject } from "#src/models/genshinAssets/music/SoundBankObject";
-import type { SoundBankObjectType } from "#src/models/genshinAssets/music/SoundBankObjectType";
+
+import { SoundBankObjectType } from "#src/models/genshinAssets/music/SoundBankObjectType";
 
 const HIERARCHY_CHUNK = "HIRC";
+const checkIsSoundBankObjectType = (type: number): type is SoundBankObjectType =>
+  (Object.values(SoundBankObjectType) as number[]).includes(type);
 // A sound bank's objects of the kinds given: its chunks are a tag and a size each, and its hierarchy chunk a count of
 // Objects, each a type byte, a size and an id, its fields after them
 export const parseSoundBankObjects = (bank: Buffer, types: ReadonlySet<SoundBankObjectType>): SoundBankObject[] => {
@@ -12,7 +15,7 @@ export const parseSoundBankObjects = (bank: Buffer, types: ReadonlySet<SoundBank
     for (let index = 0; index < bank.readUInt32LE(offset + 8); index++) {
       const type = bank.readUInt8(objectOffset);
       const size = bank.readUInt32LE(objectOffset + 1);
-      if (types.has(type))
+      if (checkIsSoundBankObjectType(type) && types.has(type))
         objects.push({
           data: bank.subarray(objectOffset + 9, objectOffset + 5 + size),
           id: bank.readUInt32LE(objectOffset + 5),

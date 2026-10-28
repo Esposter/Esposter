@@ -78,18 +78,28 @@ const EmptyGridEngine = function () {};
 // Reaches its grid-engine exports through a module needs only those, so they are registered once here rather than per file
 vi.mock(import("grid-engine"), () => ({
   Direction: {
+    // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the stub restates grid-engine's Direction as strings, because importing the real enum loads Phaser, which touches window
     DOWN: "down",
+    // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the stub restates grid-engine's Direction as strings, because importing the real enum loads Phaser, which touches window
     DOWN_LEFT: "down-left",
+    // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the stub restates grid-engine's Direction as strings, because importing the real enum loads Phaser, which touches window
     DOWN_RIGHT: "down-right",
+    // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the stub restates grid-engine's Direction as strings, because importing the real enum loads Phaser, which touches window
     LEFT: "left",
+    // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the stub restates grid-engine's Direction as strings, because importing the real enum loads Phaser, which touches window
     NONE: "none",
+    // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the stub restates grid-engine's Direction as strings, because importing the real enum loads Phaser, which touches window
     RIGHT: "right",
+    // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the stub restates grid-engine's Direction as strings, because importing the real enum loads Phaser, which touches window
     UP: "up",
+    // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the stub restates grid-engine's Direction as strings, because importing the real enum loads Phaser, which touches window
     UP_LEFT: "up-left",
+    // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the stub restates grid-engine's Direction as strings, because importing the real enum loads Phaser, which touches window
     UP_RIGHT: "up-right",
   } as typeof import("grid-engine").Direction,
   // eslint-disable-next-line no-restricted-syntax -- an empty constructor shares no members with the real one, so no single cast is accepted; the dungeon page passes it to Phaser only as a plugin
   GridEngine: EmptyGridEngine as unknown as typeof import("grid-engine").GridEngine,
+  // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the stub restates grid-engine's NumberOfDirections as numbers, because importing the real enum loads Phaser, which touches window
   NumberOfDirections: { EIGHT: 8, FOUR: 4 } as typeof import("grid-engine").NumberOfDirections,
 }));
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- the stubbed `useRuntimeConfig` returns a fraction of the config, which the typed `import()` form holds to the real return type

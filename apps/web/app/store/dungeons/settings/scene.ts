@@ -14,12 +14,21 @@ import { useDungeonsStore } from "@/store/dungeons";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
-import { exhaustiveGuard, getResultAsync, noop } from "@esposter/shared";
+import { exhaustiveGuard, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { clamp } from "@vueuse/core";
 import { Direction } from "grid-engine";
 
 // A row with only its name has no value cells: Volume and Theme Mode have their own controls, Close has no value
 const checkHasValueCells = (rowIndex: number) => SettingsOptionGrid.getColumnSize(rowIndex) > 1;
+const SETTINGS_OPTION_SET = new Set<unknown>(Object.values(SettingsOption));
+const checkIsSettingsOption = (value: unknown): value is SettingsOption => SETTINGS_OPTION_SET.has(value);
+// Column 0 holds each row's option name, so its value is an option; the grid's cell type is wider than that
+const getSettingsOption = (rowIndex: number): SettingsOption => {
+  const value = SettingsOptionGrid.getValue({ x: 0, y: rowIndex });
+  if (checkIsSettingsOption(value)) return value;
+
+  throw new InvalidOperationError(Operation.Read, getSettingsOption.name, `row index: ${rowIndex}`);
+};
 
 export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () => {
   const dungeonsStore = useDungeonsStore();
@@ -30,16 +39,14 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const { checkIsUpdateVolume, updateVolume } = volumeStore;
   const colorPickerStore = useColorPickerStore();
   const { updateThemeModeSetting } = colorPickerStore;
-  const selectedSettingsOption = computed(
-    () => SettingsOptionGrid.getValue({ x: 0, y: SettingsOptionGrid.position.value.y }) as SettingsOption,
-  );
+  const selectedSettingsOption = computed(() => getSettingsOption(SettingsOptionGrid.position.value.y));
   const infoText = computed(() => InfoContainerTextMap[selectedSettingsOption.value]);
   // A row with value cells rests on the cell holding its current setting, so the cursor's column always shows the value.
   // A row without them rests on its name
   const getRestingPosition = (rowIndex: number): Position => {
     if (!checkHasValueCells(rowIndex)) return { x: 0, y: rowIndex };
 
-    const option = SettingsOptionGrid.getValue({ x: 0, y: rowIndex }) as SettingsOption;
+    const option = getSettingsOption(rowIndex);
     const restingX = SettingsOptionGrid.getPositionX(
       settingsStore.settings[option as keyof typeof settingsStore.settings] as typeof SettingsOptionGrid.value,
       rowIndex,

@@ -21,6 +21,7 @@ const PmxMorphKindOffsetSizeMap: Record<
   [PmxMorphKind.Material]: ({ materialIndexSize }) => materialIndexSize + 113,
   [PmxMorphKind.Uv]: ({ vertexIndexSize }) => vertexIndexSize + 16,
 };
+const checkIsPmxMorphKind = (value: number): value is PmxMorphKind => value in PmxMorphKind;
 // A PMX file's morphs, each kept in its place so a group morph's members index the whole list. A vertex morph's offsets
 // And a group morph's members are read; any other kind's offsets are passed over by their size
 export const parsePmxMorphs = (reader: PmxReader): PmxMorph[] =>
@@ -29,7 +30,8 @@ export const parsePmxMorphs = (reader: PmxReader): PmxMorph[] =>
     reader.readText();
     // The panel MMD lists it under
     reader.readUint8();
-    const kind: PmxMorphKind = reader.readUint8();
+    const kind = reader.readUint8();
+    if (!checkIsPmxMorphKind(kind)) throw new RangeError(`Unknown PMX morph kind ${kind}`);
     const offsetCount = reader.readInt32();
     if (kind === PmxMorphKind.Group) {
       const indices = new Uint32Array(offsetCount);

@@ -23,3 +23,6 @@ export enum DateToken {
 }
 
 export const DateTokens = Object.values(DateToken);
+
+const DATE_TOKEN_SET = new Set<string>(DateTokens);
+export const checkIsDateToken = (token: string): token is DateToken => DATE_TOKEN_SET.has(token);

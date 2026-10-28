@@ -14,6 +14,8 @@ import characterEmojiRecordMap from "unicode-emoji-json/data-by-emoji.json";
 // Talking, which no build-time filter can know — if a box is ever reported, the answer is runtime canvas
 // Measurement, not a hardcoded version.
 // Source: https://github.com/muan/unicode-emoji-json, generated from https://unicode.org/Public/emoji
+const checkIsEmojiGroup = (group: string): group is EmojiGroup => EMOJI_GROUP_VALUES.has(group);
+
 export const createEmojiIndex = (): EmojiIndex => {
   const characterEmojiMap = new Map<string, Emoji>();
   const groupEmojisMap = new Map<EmojiGroup, Emoji[]>(EmojiGroups.map((group) => [group, []]));
@@ -23,9 +25,9 @@ export const createEmojiIndex = (): EmojiIndex => {
     // A group the enum does not list has no tab to render under. Nothing is filtered today — the dataset ships
     // Exactly these nine, keeping its skin-tone modifiers in a separate file — so this is the guard that makes
     // A tenth group appearing upstream a missing tab rather than an unreachable category
-    if (!EMOJI_GROUP_VALUES.has(record.group)) continue;
+    if (!checkIsEmojiGroup(record.group)) continue;
 
-    const group = record.group as EmojiGroup;
+    const group = record.group;
     const emoji: Emoji = {
       character,
       group,

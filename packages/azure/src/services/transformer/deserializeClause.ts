@@ -1,10 +1,13 @@
-import type { BinaryOperator } from "#src/models/shared/BinaryOperator";
 import type { Clause } from "#src/models/shared/Clause";
 
+import { BinaryOperator } from "#src/models/shared/BinaryOperator";
 import { deserializeKey } from "#src/services/table/deserializeKey";
 import { CLAUSE_REGEX } from "#src/services/transformer/constants";
 import { deserializeValue } from "#src/services/transformer/deserializeValue";
 import { normalizeString, NotFoundError } from "@esposter/shared";
+
+const checkIsBinaryOperator = (value: string): value is BinaryOperator =>
+  Object.values<string>(BinaryOperator).includes(value);
 
 export const deserializeClause = (
   serializedClause: string,
@@ -16,11 +19,8 @@ export const deserializeClause = (
   // `value`, because a collection-emptiness clause carries none
   const groups = match.groups as Record<"key" | "not" | "operator" | "value", string> | undefined;
   if (!groups) throw new NotFoundError(deserializeClause.name, normalizedClause);
-  return {
-    key: deserializeKey(groups.key),
-    not: Boolean(groups.not),
-    // The clause regex matches its operator in any case, and the enum holds it in lower case
-    operator: groups.operator.toLowerCase() as BinaryOperator,
-    value: deserializeValue(groups.value),
-  };
+  // The clause regex matches its operator in any case, and the enum holds it in lower case
+  const operator = groups.operator.toLowerCase();
+  if (!checkIsBinaryOperator(operator)) throw new NotFoundError(deserializeClause.name, normalizedClause);
+  return { key: deserializeKey(groups.key), not: Boolean(groups.not), operator, value: deserializeValue(groups.value) };
 };

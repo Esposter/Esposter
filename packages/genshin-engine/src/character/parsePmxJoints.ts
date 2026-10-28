@@ -1,14 +1,17 @@
 import type { PmxJoint } from "#src/models/character/PmxJoint";
-import type { PmxJointKind } from "#src/models/character/PmxJointKind";
 import type { PmxReader } from "#src/models/character/PmxReader";
 
+import { PmxJointKind } from "#src/models/character/PmxJointKind";
+
+const checkIsPmxJointKind = (value: number): value is PmxJointKind => value in PmxJointKind;
 // A PMX file's joints, mirrored into three's space. Mirroring turns a range round as well as a place: a translation's
 // Least and most along z become its most and least negated, and a rotation's about x and y likewise
 export const parsePmxJoints = (reader: PmxReader): PmxJoint[] =>
   Array.from({ length: reader.readInt32() }, () => {
     const name = reader.readText();
     reader.readText();
-    const kind: PmxJointKind = reader.readUint8();
+    const kind = reader.readUint8();
+    if (!checkIsPmxJointKind(kind)) throw new RangeError(`Unknown PMX joint kind ${kind}`);
     const firstRigidBodyIndex = reader.readRigidBodyIndex();
     const secondRigidBodyIndex = reader.readRigidBodyIndex();
     const position = reader.readMirroredVector3();

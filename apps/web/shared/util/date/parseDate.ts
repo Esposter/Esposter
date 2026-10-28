@@ -1,5 +1,5 @@
 import { DATE_TOKEN_REGEX } from "#shared/util/date/constants";
-import { DateToken } from "#shared/util/date/DateToken";
+import { checkIsDateToken, DateToken } from "#shared/util/date/DateToken";
 import { DateTokenPatternMap } from "#shared/util/date/DateTokenPatternMap";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -13,11 +13,12 @@ export const parseDate = (value: string, format: string): Date | undefined => {
   let pattern = "";
   let literalIndex = 0;
   for (const match of format.matchAll(DATE_TOKEN_REGEX)) {
-    const token = match[0] as DateToken;
-    const tokenPattern = DateTokenPatternMap[token];
-    if (tokenPattern === undefined)
+    const token = match[0];
+    // The tokenizer matches only the enum's members, so a token that is not one has no pattern either
+    if (!checkIsDateToken(token) || DateTokenPatternMap[token] === undefined)
       throw new InvalidOperationError(Operation.Read, parseDate.name, `"${format}" is a display-only format`);
-    pattern += RegExp.escape(format.slice(literalIndex, match.index)) + tokenPattern;
+
+    pattern += RegExp.escape(format.slice(literalIndex, match.index)) + DateTokenPatternMap[token];
     tokens.push(token);
     literalIndex = match.index + token.length;
   }

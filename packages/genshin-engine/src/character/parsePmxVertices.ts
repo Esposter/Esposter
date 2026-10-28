@@ -10,6 +10,7 @@ const PmxWeightDeformBoneCountMap: Record<PmxWeightDeform, number> = {
   [PmxWeightDeform.Spherical]: 2,
   [PmxWeightDeform.TwoBones]: 2,
 };
+const checkIsPmxWeightDeform = (value: number): value is PmxWeightDeform => value in PmxWeightDeform;
 // A PMX file's vertices, each bound to up to four bones: one bone takes all of its weight, two share it by the first
 // One's weight and four by their own. Three's skinning blends linearly, so a spherical blend is read as its two bones'
 // Linear one, its centre and reference points passed over, and a dual quaternion blend as its four bones' linear one. A
@@ -34,7 +35,8 @@ export const parsePmxVertices = (reader: PmxReader): PmxVertices => {
       reader.skip(reader.additionalVectorCount * 16 - 8);
     }
     const skinOffset = vertex * 4;
-    const weightDeform: PmxWeightDeform = reader.readUint8();
+    const weightDeform = reader.readUint8();
+    if (!checkIsPmxWeightDeform(weightDeform)) throw new RangeError(`Unknown PMX weight deform ${weightDeform}`);
     const boneCount = PmxWeightDeformBoneCountMap[weightDeform];
     for (let slot = 0; slot < boneCount; slot++) skinIndices[skinOffset + slot] = Math.max(reader.readBoneIndex(), 0);
     if (boneCount === 1) skinWeights[skinOffset] = 1;
