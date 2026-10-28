@@ -49,7 +49,7 @@ flowchart LR
 ## Open
 
 - [ ] **The pet's story is one of the stories listed** — no source yet: the row that is the pet's story, since no English story title in `{data-root}/genshin-parity/text/ExcelBinOutput/FetterStoryExcelConfigData.json` names a pet and Jean's row 4207 is a daily schedule.
-- [ ] **The Profile tab's reference frame is a frame of the English client's profile page** — no source yet: the cited frame file `yt-2I_vWTyHqHg-profile-2s.png`, which is not under `{data-root}/genshin-parity/references/`, and the cached clip `{data-root}/genshin-parity/captures/yt-2IPBviDPFB8.mp4` carries another video id.
+- [ ] **The Profile tab's reference frame is a frame of the English client's profile page** — no source yet: the frame file `yt-2I_vWTyHqHg-profile-2s.png`, which is not under `{data-root}/genshin-parity/references/`, and the cached clip `{data-root}/genshin-parity/captures/yt-2IPBviDPFB8.mp4` carries another video id.
 - [ ] **Yae Miko has no namecard** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`: a namecard item named for her exists (id 210112).
 - [ ] **Xinyan has no namecard** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`: a namecard item named for her exists ("UI_NameCardPic_Xinyan", id 210045).
 - [ ] **Momoka has no namecard** — no source yet: the item her level-10 Friendship reward gives (reward 241067 of `{data-root}/genshin-parity/text/ExcelBinOutput/FetterCharacterCardExcelConfigData.json`), since no material has that id.
