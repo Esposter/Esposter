@@ -7,7 +7,7 @@ import { createUser } from "#src/services/message/createUser.test";
 import { createMockDb } from "@esposter/db-mock";
 import { AzureContainer, FileEntity, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe(cloneFiles, () => {
   let db: Database;
@@ -30,6 +30,10 @@ describe(cloneFiles, () => {
   afterEach(async () => {
     await db.delete(storageLedgerInStorage);
     await db.update(usersInAuth).set({ storageBytesUsed: 0 });
+  });
+
+  afterAll(async () => {
+    await db.delete(usersInAuth);
   });
 
   const setupContainerClient = (rejectSource = "") => {

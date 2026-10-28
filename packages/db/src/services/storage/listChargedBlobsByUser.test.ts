@@ -4,7 +4,7 @@ import { createUser } from "#src/services/message/createUser.test";
 import { listChargedBlobsByUser } from "#src/services/storage/listChargedBlobsByUser";
 import { createMockDb } from "@esposter/db-mock";
 import { AzureContainer, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe(listChargedBlobsByUser, () => {
   let db: Database;
@@ -30,6 +30,10 @@ describe(listChargedBlobsByUser, () => {
 
   afterEach(async () => {
     await db.delete(storageLedgerInStorage);
+  });
+
+  afterAll(async () => {
+    await db.delete(usersInAuth);
   });
 
   test("returns the user's charged blobs grouped by container, and no other user's", async () => {
