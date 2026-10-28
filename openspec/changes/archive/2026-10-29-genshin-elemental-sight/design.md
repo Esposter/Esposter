@@ -1,12 +1,12 @@
 # Elemental Sight
 
-The range, the mute, the white and element-coloured highlights, the enemies' colours and names, and the trails toward the Seelies' courts are built, as [Elemental Sight](../../specs/genshin/elemental-sight/design.md) describes. The trails toward a bounty's target and a quest's clue are built too, the clue once its go-to place is in the region data.
+The range, the mute, the white and element-coloured highlights, the enemies' colours and names, and the trails toward the Seelies' courts are built, as [Elemental Sight](../../../specs/genshin/elemental-sight/design.md) describes. The trails toward a bounty's target and a quest's clue are built too, the clue once its go-to place is in the region data.
 
 ## Decisions
 
-- **Trails lead somewhere.** A [reputation](../genshin-reputation/design.md) bounty's target, a Seelie's court ([puzzles](../genshin-puzzles/design.md)) and a quest's or a hidden objective's clue leave an elemental trail that the sight draws from where the player stands toward its end.
+- **Trails lead somewhere.** A [reputation](../../genshin-reputation/design.md) bounty's target, a Seelie's court ([puzzles](../../genshin-puzzles/design.md)) and a quest's or a hidden objective's clue leave an elemental trail that the sight draws from where the player stands toward its end.
 - **Each trail comes with the page that leaves it.** A trail is drawn when the page that places its end is built, so none is drawn for an end nothing places yet.
-- **A trail is a ground ribbon, white, cut at the reach.** It runs on the ground from the character's current position toward its end, redrawn each step as the character moves, as the game draws it, and not from where the sight was turned on. It is sampled at `SIGHT_TRAIL_STEP` metres' spacing on the world's height, and is drawn in the sight's lit scene as the stand-ins are, so the mute leaves it bright. White is the colour of what no element affects ([Elemental Sight](../../specs/genshin/elemental-sight/design.md)). Its width and fade are provisional constants until the owed `elemental-sight.mkv` measures them.
+- **A trail is a ground ribbon, white, cut at the reach.** It runs on the ground from the character's current position toward its end, redrawn each step as the character moves, as the game draws it, and not from where the sight was turned on. It is sampled at `SIGHT_TRAIL_STEP` metres' spacing on the world's height, and is drawn in the sight's lit scene as the stand-ins are, so the mute leaves it bright. White is the colour of what no element affects ([Elemental Sight](../../../specs/genshin/elemental-sight/design.md)). Its width and fade are provisional constants until the owed `elemental-sight.mkv` measures them.
 
 ## How it works
 
@@ -19,12 +19,12 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** the Seelies' trails are built and recorded in the [as-built page](../../specs/genshin/elemental-sight/design.md). A bounty's trail is drawn while its target stands, and a quest's clue is drawn toward once its go-to place is in the region data.
+**Today:** the Seelies' trails are built and recorded in the [as-built page](../../../specs/genshin/elemental-sight/design.md). A bounty's trail is drawn while its target stands, and a quest's clue is drawn toward once its go-to place is in the region data.
 
 **This adds, each with its page:**
 
-1. **Reputation's bounties**, once [Reputation](../genshin-reputation/design.md) places each bounty's target, from the wiki's bounty locations, marked provisional where they give none.
-2. **Quests' clues**, once the [quests](../genshin-quests/design.md) page places the go-to places its carried quests name. A trail runs to each of those places that is placed in the region data, and to none that is not.
+1. **Reputation's bounties**, once [Reputation](../../genshin-reputation/design.md) places each bounty's target, from the wiki's bounty locations, marked provisional where they give none.
+2. **Quests' clues**, once the [quests](../../genshin-quests/design.md) page places the go-to places its carried quests name. A trail runs to each of those places that is placed in the region data, and to none that is not.
 
 ## Data and measures
 
