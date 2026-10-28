@@ -47,13 +47,13 @@ describe(MockBlockBlobClient, () => {
     expect.hasAssertions();
 
     const client = getClient();
-    const { etag: firstEtag } = await client.upload("first", 5);
+    const { etag: firstEtag } = await client.upload("a", 1);
     const firstDownload = await client.download();
-    const { etag: secondEtag } = await client.upload("second", 6);
+    const { etag: secondEtag } = await client.upload(" ", 1);
     const secondDownload = await client.download();
 
-    expect([firstDownload.etag, await readDownloadBody(firstDownload)]).toStrictEqual([firstEtag, "first"]);
-    expect([secondDownload.etag, await readDownloadBody(secondDownload)]).toStrictEqual([secondEtag, "second"]);
+    expect([firstDownload.etag, await readDownloadBody(firstDownload)]).toStrictEqual([firstEtag, "a"]);
+    expect([secondDownload.etag, await readDownloadBody(secondDownload)]).toStrictEqual([secondEtag, " "]);
   });
 
   // A seeded blob reports the seeded etag, so a caller that read one can claim it exactly once: the write mints a
