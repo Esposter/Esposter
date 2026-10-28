@@ -33,7 +33,7 @@
     "#src/*": "./src/*.ts",
     "#src/*.json": "./src/*.json",
     "#src/*.vue": "./src/*.vue",
-    "#src/*?worker": "./src/*.ts?worker"
+    "#src/workers/terrainTile.worker?worker": "./src/workers/terrainTile.worker.ts?worker"
   },
   "exports": {
     ".": {
