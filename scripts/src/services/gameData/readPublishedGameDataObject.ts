@@ -1,5 +1,4 @@
-import { GAME_DATA_DEV_BASE_URL } from "#src/services/gameData/constants";
-import { getGameDataBlobName } from "#src/services/gameData/getGameDataBlobName";
+import { getGameDataObjectUrl } from "#src/services/gameData/getGameDataObjectUrl";
 import { fetchOk } from "#src/services/shared/fetchOk";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -13,10 +12,7 @@ import { join } from "node:path";
 export const readPublishedGameDataObject = async <T>(dataset: string, hash: string): Promise<T> => {
   const bytes = await readContentAddressedObject(
     hash,
-    async () =>
-      new Uint8Array(
-        await (await fetchOk(`${GAME_DATA_DEV_BASE_URL}/${getGameDataBlobName(dataset, hash)}`)).arrayBuffer(),
-      ),
+    async () => new Uint8Array(await (await fetchOk(getGameDataObjectUrl(dataset, hash))).arrayBuffer()),
   );
   return parseMachineJson<T>(bytes.toString("utf8"));
 };
@@ -25,7 +21,7 @@ export const readPublishedGameDataObject = async <T>(dataset: string, hash: stri
 // lacks as new rather than failing on it. A cached object is read as the cache serves it; a fetched one is verified and cached
 export const readPublishedGameDataObjectIfStored = async <T>(dataset: string, hash: string): Promise<T | undefined> => {
   if (existsSync(join(CONTENT_CACHE_DIRECTORY, hash))) return readPublishedGameDataObject<T>(dataset, hash);
-  const url = `${GAME_DATA_DEV_BASE_URL}/${getGameDataBlobName(dataset, hash)}`;
+  const url = getGameDataObjectUrl(dataset, hash);
   const response = await fetch(url);
   if (response.status === 404) return undefined;
   if (!response.ok) throw new InvalidOperationError(Operation.Read, url, `responds ${response.status}`);
