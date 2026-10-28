@@ -10,9 +10,8 @@ const getHorizontalDropIndex = (childRects: (OverlayBox | undefined)[], pointer:
   const line = childRects[lineStart];
   if (line === undefined) return childRects.length;
   // A taller child on the line can put the pointer past a shorter one's bottom, so the line starts at its first child
-  const firstOnLine = childRects.findIndex((rect) => rect !== undefined && checkIsSameLine(rect, line));
   const lineChildren = childRects.flatMap((rect, index) =>
-    rect !== undefined && index >= firstOnLine && checkIsSameLine(rect, line) ? [{ index, rect }] : [],
+    rect !== undefined && checkIsSameLine(rect, line) ? [{ index, rect }] : [],
   );
   const crossed = lineChildren.find(({ rect }) => pointer.x < rect.left + rect.width / 2);
   return crossed?.index ?? (lineChildren.at(-1)?.index ?? lineStart) + 1;

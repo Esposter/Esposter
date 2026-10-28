@@ -5,9 +5,10 @@ import type { JsonPatchOperation } from "@esposter/shared";
 export const checkIsSameDisjointPaths = (operations: JsonPatchOperation[], otherOperations: JsonPatchOperation[]) => {
   const paths = new Set(operations.map(({ path }) => path));
   const otherPaths = new Set(otherOperations.map(({ path }) => path));
+  const pathList = [...paths];
   return (
     paths.size === otherPaths.size &&
-    [...paths].every((path) => otherPaths.has(path)) &&
-    [...paths].every((path) => ![...paths].some((otherPath) => otherPath.startsWith(`${path}/`)))
+    pathList.every((path) => otherPaths.has(path)) &&
+    pathList.every((path) => !pathList.some((otherPath) => otherPath.startsWith(`${path}/`)))
   );
 };

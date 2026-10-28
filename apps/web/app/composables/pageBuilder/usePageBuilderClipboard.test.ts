@@ -15,7 +15,7 @@ import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/pageBuilder/refuseClipboardPaste"), async (importOriginal) => {
   const { refuseClipboardPaste: original } = await importOriginal();
@@ -70,13 +70,16 @@ describe(usePageBuilderClipboard, () => {
   // A type name no webpage node holds, written over a copied text node's tag in the clipboard text
   const UNKNOWN_NODE_TYPE = "UnknownNodeType";
 
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
   afterEach(() => {
     vi.unstubAllGlobals();
   });
 
   test("a node pasted into another webpage appears as a copy", async () => {
     expect.hasAssertions();
-    setActivePinia(createPinia());
     stubClipboard();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
@@ -105,7 +108,6 @@ describe(usePageBuilderClipboard, () => {
 
   test("pasting a webpage node into an email is refused", async () => {
     expect.hasAssertions();
-    setActivePinia(createPinia());
     stubClipboard();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
@@ -128,7 +130,6 @@ describe(usePageBuilderClipboard, () => {
 
   test("empty clipboard text is announced as a block that cannot go here on paste", async () => {
     expect.hasAssertions();
-    setActivePinia(createPinia());
     stubClipboard();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const targetId = openResource([]);
@@ -141,7 +142,6 @@ describe(usePageBuilderClipboard, () => {
 
   test("a clipboard node of a type no webpage holds is announced as a block that cannot go here on paste", async () => {
     expect.hasAssertions();
-    setActivePinia(createPinia());
     const clipboard = stubClipboard();
     clipboard.text = serializeClipboardNodes({
       editor: PageBuilderEditor.Webpage,
@@ -158,7 +158,6 @@ describe(usePageBuilderClipboard, () => {
 
   test("cut deletes the node it copied when the selection moves while the clipboard write waits", async () => {
     expect.hasAssertions();
-    setActivePinia(createPinia());
     const writeGate = Promise.withResolvers<void>();
     vi.stubGlobal("navigator", { clipboard: { writeText: () => writeGate.promise } });
     const otherNodeId = "other-text-node-id";
@@ -182,7 +181,6 @@ describe(usePageBuilderClipboard, () => {
 
   test("cut announces nothing when the node is deleted while the clipboard write waits", async () => {
     expect.hasAssertions();
-    setActivePinia(createPinia());
     const writeGate = Promise.withResolvers<void>();
     vi.stubGlobal("navigator", { clipboard: { writeText: () => writeGate.promise } });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
@@ -206,7 +204,6 @@ describe(usePageBuilderClipboard, () => {
 
   test("copy with a denied clipboard changes nothing", async () => {
     expect.hasAssertions();
-    setActivePinia(createPinia());
     vi.stubGlobal("navigator", { clipboard: { writeText: () => Promise.reject(new Error("denied")) } });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();

@@ -37,10 +37,7 @@ export const parseClipboardNodes = <
   text: string,
 ) => {
   // oxlint-disable-next-line no-restricted-properties -- a node's text can look like an ISO datetime, which reviving would turn into a Date
-  const clipboardValue = getResult<unknown>(() => JSON.parse(text)).match(
-    (value) => value,
-    () => undefined,
-  );
+  const clipboardValue = getResult<unknown>(() => JSON.parse(text)).unwrapOr(undefined);
 
   const result = getClipboardNodesSchema(kind).safeParse(clipboardValue);
   return result.success ? { editor: result.data.editor, nodes: result.data.nodes } : undefined;

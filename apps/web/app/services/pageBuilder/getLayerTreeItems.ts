@@ -1,20 +1,11 @@
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { PageBuilderHelper } from "@/models/pageBuilder/PageBuilderHelper";
 import type { UiTreeItem } from "@/models/ui/UiTreeItem";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 
 import { getBlockLayerRows, getBlockNode } from "headless-block-editor";
 
 // The layers tree's items: each row is a child of the nearest earlier row one depth up, labelled by its type's title.
 // A row whose node or title cannot be read is skipped
-export const getLayerTreeItems = <
-  TNode extends BlockNode,
-  TRoot extends BlockRootProps,
-  TDefinition extends BlockTypeDefinition<TNode>,
-  TDocument extends BlockDocument<TNode, TRoot>,
->(
-  kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,
-  document: TDocument,
-): UiTreeItem[] => {
+export const getLayerTreeItems: PageBuilderHelper<UiTreeItem[], []> = (kind, document) => {
   const roots: UiTreeItem[] = [];
   // The open ancestors of the row being placed, the deepest last
   const ancestors: { depth: number; item: UiTreeItem }[] = [];

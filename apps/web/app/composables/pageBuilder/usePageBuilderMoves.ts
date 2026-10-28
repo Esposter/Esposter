@@ -14,7 +14,7 @@ import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
 import { getSlotPath } from "@/services/pageBuilder/getSlotPath";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
-import { parseArrayIndex, parseJsonPointer, readJsonValue, toJsonPointer } from "@esposter/shared";
+import { parseArrayIndex, parseJsonPointer, readJsonValue } from "@esposter/shared";
 import {
   duplicateBlockNode,
   getAcceptingSlotPointers,
@@ -93,7 +93,7 @@ export const usePageBuilderMoves = <
     const title = getNodeTitle(movedKind, document, segments);
     if (!title || !Array.isArray(siblings) || index === undefined) return;
 
-    const path = getSlotPath(movedKind, document, toJsonPointer(slotSegments));
+    const path = getSlotPath(movedKind, document, getNodeSlotPointer(nodePointer));
     announce(`Moved ${title} to position ${index + 1} of ${siblings.length} in ${path}`);
   };
   // Applies the operations a move makes to the selected node, and keeps that node selected once the edit lands

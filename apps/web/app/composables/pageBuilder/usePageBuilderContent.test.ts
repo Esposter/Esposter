@@ -1,5 +1,5 @@
-import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ID, TEST_LABEL, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { usePageBuilderContent } from "@/composables/pageBuilder/usePageBuilderContent";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
@@ -19,7 +19,7 @@ describe(usePageBuilderContent, () => {
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
+      content: [createButton(TEST_ID)],
       root: TEST_ROOT,
     });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();

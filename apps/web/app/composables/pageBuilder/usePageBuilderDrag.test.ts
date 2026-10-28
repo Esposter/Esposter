@@ -17,7 +17,7 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { MjmlNodeType } from "mjml-blocks";
 import { createPinia, setActivePinia } from "pinia";
-import { describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const createText = (id: string): TextNode => ({
   props: { content: TEST_TEXT_CONTENT, id },
@@ -41,8 +41,11 @@ describe("usePageBuilderDrag", () => {
     hoveredNodeId,
     scale: 1,
   });
-  const setup = (document: WebpageDocument) => {
+  beforeEach(() => {
     setActivePinia(createPinia());
+  });
+
+  const setup = (document: WebpageDocument) => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(RESOURCE_ID, webpageKind, document);
@@ -79,7 +82,6 @@ describe("usePageBuilderDrag", () => {
 
   test("dragging a column into a text inserts a merge field", () => {
     expect.hasAssertions();
-    setActivePinia(createPinia());
     const COLUMN_NAME = "first_name";
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const EMAIL_TEXT_DOCUMENT: MjmlDocument = {
@@ -159,7 +161,6 @@ describe("usePageBuilderDrag", () => {
 
   test("a drag does not also click the control it is released on", () => {
     expect.hasAssertions();
-    setActivePinia(createPinia());
     const { startMergeFieldDrag } = usePageBuilderDrag(
       emailKind,
       () => undefined,

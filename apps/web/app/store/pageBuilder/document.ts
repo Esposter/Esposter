@@ -66,7 +66,7 @@ export const usePageBuilderDocumentStore = defineStore("pageBuilder/document", (
       },
     });
   const setMergeFieldColumns = (resourceId: string, columnNames: string[]) => {
-    getMergeFieldColumnsRef(resourceId).value = columnNames;
+    mergeFieldColumnsMap.value.set(resourceId, columnNames);
   };
   return {
     documentMap,

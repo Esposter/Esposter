@@ -4,6 +4,7 @@ import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { usePageBuilderStyle } from "@/composables/pageBuilder/usePageBuilderStyle";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
@@ -26,7 +27,7 @@ describe(usePageBuilderStyle, () => {
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [
         { props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL, style }, type: WebpageNodeType.Button },
-        { props: { href: TEST_URL, id: TEST_OTHER_ID, label: TEST_LABEL }, type: WebpageNodeType.Button },
+        createButton(TEST_OTHER_ID),
       ],
       root: TEST_ROOT,
     });
@@ -45,7 +46,7 @@ describe(usePageBuilderStyle, () => {
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
+      content: [createButton(TEST_ID)],
       root: TEST_ROOT,
     });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
@@ -68,7 +69,7 @@ describe(usePageBuilderStyle, () => {
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
+      content: [createButton(TEST_ID)],
       root: TEST_ROOT,
     });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
@@ -86,7 +87,7 @@ describe(usePageBuilderStyle, () => {
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
+      content: [createButton(TEST_ID)],
       root: TEST_ROOT,
     });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();

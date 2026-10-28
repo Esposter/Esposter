@@ -4,5 +4,5 @@ export const checkIsHorizontalFlow = (element: Element | null | undefined): bool
   if (!element) return false;
 
   const style = getComputedStyle(element);
-  return (style.display === "flex" || style.display === "inline-flex") && style.flexDirection.startsWith("row");
+  return ["flex", "inline-flex"].includes(style.display) && style.flexDirection.startsWith("row");
 };
