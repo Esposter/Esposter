@@ -1091,7 +1091,8 @@ describe("messageRouter", () => {
     });
     assert(sasEntity);
     setMessageAssetBlob(sasEntity.id);
-    await reportStoredUpload(getBlobName(`${roomId}/${sasEntity.id}`, filename));
+    const blobName = getBlobName(`${roomId}/${sasEntity.id}`, filename);
+    await reportStoredUpload(blobName);
     const newMessage = await messageCaller.createMessage({
       files: [{ filename, id: sasEntity.id, mimetype, size }],
       roomId,
@@ -1115,7 +1116,8 @@ describe("messageRouter", () => {
       roomId,
     });
     assert(sasEntity);
-    await reportStoredUpload(getBlobName(`${roomId}/${sasEntity.id}`, filename));
+    const blobName = getBlobName(`${roomId}/${sasEntity.id}`, filename);
+    await reportStoredUpload(blobName);
     await expect(readStorageBytesUsed()).resolves.toBe(bytesBeforeUpload + size);
 
     await messageCaller.deleteUploadFiles({ files: [{ filename, id: sasEntity.id, token: sasEntity.token }], roomId });
@@ -1135,7 +1137,8 @@ describe("messageRouter", () => {
     });
     assert(sasEntity);
     setMessageAssetBlob(sasEntity.id);
-    await reportStoredUpload(getBlobName(`${roomId}/${sasEntity.id}`, filename));
+    const blobName = getBlobName(`${roomId}/${sasEntity.id}`, filename);
+    await reportStoredUpload(blobName);
     await expect(readStorageBytesUsed()).resolves.toBe(bytesBeforeUpload + size);
 
     await roomCaller.deleteRoom(roomId);

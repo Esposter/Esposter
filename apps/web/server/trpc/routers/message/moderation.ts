@@ -253,14 +253,14 @@ export const moderationRouter = router({
     const bannedByUsers = alias(usersInAuth, "bannedByUsers");
     const bannedByMemberships = alias(usersToRoomsInMessage, "bannedByMemberships");
     const userMemberships = alias(usersToRoomsInMessage, "userMemberships");
-    const bannerColumns = {
+    const bannedByUserColumns = {
       ...getPublicUserColumns(bannedByUsers),
       displayName: getDisplayNameExpression(bannedByMemberships, bannedByUsers),
     };
     const bans = await ctx.db
       .select({
         ...getColumns(bansInMessage),
-        bannedByUser: bannerColumns,
+        bannedByUser: bannedByUserColumns,
         user: {
           ...getPublicUserColumns(usersInAuth),
           displayName: getDisplayNameExpression(userMemberships, usersInAuth),
