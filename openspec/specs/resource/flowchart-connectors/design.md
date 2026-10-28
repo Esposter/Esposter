@@ -19,7 +19,7 @@ flowchart LR
 - **Edge model.** `GraphEdge` carries `label` and `markerEnd`, and `graphEdgeSchema` validates both. The label is capped at the same ceiling a node's label is.
 - **Drawing.** Every path type is rendered by one labelled edge component (`apps/web/app/components/FlowchartEditor/Edge/Index.vue`), which draws the path with Vue Flow's own path function for its type (`EdgePathMap`) and places the label at that path's midpoint.
 - **Editing.** Double clicking the path or the label opens an input; Enter or leaving the input writes the label back, and an Enter that confirms an input method's composition does not.
-- **Panel.** `FlowchartEditor/Panel/Index.vue` shows one panel for a single selected node or, when no node is selected, a single selected edge. The edge's content (`Panel/EdgeContent.vue`) holds the label and a path toggle with three choices: Curved, Right-angled and Straight.
+- **Panel.** `FlowchartEditor/Panel/Index.vue` shows one panel for a single selected node or, when no node is selected, a single selected edge. The edge's content (`Panel/EdgeContent.vue`) holds the label and a path toggle.
 - **Published view.** A published flowchart draws its labels and arrowheads from the stored edges with Vue Flow's built-in edges, so the published view has no edge code of its own.
 
 ## Decisions
