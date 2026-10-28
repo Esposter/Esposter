@@ -4,7 +4,7 @@ Diona's kit is its record and one behaviour module, `createDionaKitBehaviour`, a
 
 ## Decisions
 
-- **Diona's shields are set as the press starts, and her paws reach 5 metres.** gcsim sets a shield as each paw lands and prices a paw as a circle of radius 0.5 on the primary target (`{data-root}/cache/gcsim-v2.47.2/internal/characters/diona/skill.go:165-169`); an area does not hold a target, so the paws reach as the targeting does, the record's `skill.hits.1.area` giving the 5-metre reach. Each paw's poise and the hold threshold are open (see Provisional constants).
+- **Diona's shields are set as the press starts, and her paws reach 5 metres.** gcsim sets a shield as each paw lands and prices a paw as a circle of radius 0.5 on the primary target (`{data-root}/cache/gcsim-v2.47.2/internal/characters/diona/skill.go:165-169`); an area does not hold a target, so the paws reach as [framework decisions](../README.md#framework-decisions) gives a skill's reach on a target, the record's `skill.hits.1.area` giving the 5-metre reach. Each paw's poise and the hold threshold are open (see Provisional constants).
 
 - **Signature Mix's field stands where Diona cast it.** gcsim centres its ticks on the primary target (`{data-root}/cache/gcsim-v2.47.2/internal/characters/diona/burst.go:41`), which the [framework decisions](../README.md#framework-decisions) price at the targeting reach plus the ticks' radius, 21.5. The ticks keep gcsim's 6.5 round the field instead (`{data-root}/cache/gcsim-v2.47.2/internal/characters/diona/burst.go:41`), held as `DiffersFromSource`, as they are a summon from the cast.
 

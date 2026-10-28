@@ -1,6 +1,6 @@
 ## Purpose
 
-Escoffier's kit as built: her three normal attacks, charged attack, low, high and collision plunges, Low-Temperature Cooking with its Frosty Parfait ticks and Surging Blade, Scoring Cuts with its heal, and Rehab Diet from Ascension 1. Her Cryo RES shred and her constellations wait on their hooks.
+Escoffier's kit as built: her three normal attacks, charged attack, low, high and collision plunges, Low-Temperature Cooking with its Frosty Parfait ticks and Surging Blade, Scoring Cuts with its heal, and Rehab Diet from Ascension 1. Her Cryo and Hydro RES shred from Ascension 4 is built, as is her Constellation 1, and her Constellations 2, 4 and 6 wait on their hooks.
 
 ## Requirements
 

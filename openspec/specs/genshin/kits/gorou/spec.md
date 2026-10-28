@@ -1,6 +1,6 @@
 ## Purpose
 
-Gorou's kit as built: his strikes, fully charged shot and plunges, Inuzaka All-Round Defense and its General's War Banner, and Juuga with its following field and Crystal Collapse, with his constellations left unbuilt.
+Gorou's kit as built: his strikes, fully charged shot and plunges, Inuzaka All-Round Defense and its General's War Banner, and Juuga with its following field and Crystal Collapse, with Constellations 1, 4 and 6 built and Constellation 2 left unbuilt.
 
 ## Requirements
 

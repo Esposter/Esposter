@@ -12,6 +12,14 @@ Not yet built: Continuous Healing and Energy Regeneration, which the burst's own
 - **The After-Sales Service Round lands from the skill's spot.** Its two hits are the skill's own, at 72 and 85 frames, past its 44-frame animation (`{data-root}/cache/gcsim-v2.47.2/internal/characters/dori/skill.go:22`), where gcsim queues them off the first hit's landing, which is the same moment as the skill's 26-frame hitmark: `skillRelease` 16 (`{data-root}/cache/gcsim-v2.47.2/internal/characters/dori/skill.go:15`) plus the default travel of 10 (`{data-root}/cache/gcsim-v2.47.2/internal/characters/dori/skill.go:30`), at `{data-root}/cache/gcsim-v2.47.2/internal/characters/dori/skill.go:66`. Counted from that hitmark, its rounds are 46 and 59 frames (`{data-root}/cache/gcsim-v2.47.2/internal/characters/dori/skill.go:19`, "skillSalesHitmarks"), so 72 and 85.
 - **Constellation 1's extra round is cast from the skill's spot as the press starts.** gcsim's "skillSalesHitmarks" (`{data-root}/cache/gcsim-v2.47.2/internal/characters/dori/skill.go:19`) gives a third round the same 59 frames past the skill's hitmark as its second, so it lands at the second round's 85 frames after the press (`{data-root}/cache/gcsim-v2.47.2/internal/characters/dori/cons.go:14`). The kit summons the skill's last hit there, with the body as the skill's own rounds are (`packages/genshin-world/src/services/kit/characters/doriKit.ts`).
 
+```mermaid
+flowchart LR
+  PRESS["Troubleshooter Shot press"] --> HIT["Hitmark at 26 frames"]
+  HIT -->|"+46 frames"| ROUND1["After-Sales round at 72 frames"]
+  HIT -->|"+59 frames"| ROUND2["After-Sales round at 85 frames"]
+  HIT -->|"+59 frames"| EXTRA["Constellation 1 round at 85 frames"]
+```
+
 ## Provisional constants
 
 - **The charged attack's spin timing and both circles are unsourced.** The record holds the spin at 0 frames and the final at 300, against the claymore rule's 30 and 60 frames and 72 of animation (`scripts/src/services/genshinAssets/kits/constants.ts:92-93`), which the overlay names as the source they differ from (`DiffersFromSource`); the cached wiki does not name Dori's weapon type, so that classification is the overlay's. The 0 frames has no source, and the radius of 2 metres on both circles is marked `Unsourced`. Both wait on a recording.
