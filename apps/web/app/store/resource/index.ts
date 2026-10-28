@@ -147,7 +147,7 @@ export const useResourceStore = defineStore("resource", () => {
         // Applied then, the page for the resource on screen would load, edit and save the one it left
         if (getRouteParam(currentRoute.value.params, "id") !== id) return;
 
-        if (resource.value?.id !== id) opening = Symbol("opening");
+        if (!getActiveResource(id)) opening = Symbol("opening");
         resource.value = newResource;
         publication.value = newPublication ?? undefined;
         // A fresh read carries the current contentVersion, so saving is meaningful again, and the row it
