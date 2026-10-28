@@ -1,6 +1,6 @@
 ## Purpose
 
-Charlotte's kit as built, with her three strikes, charged attack and Spiritbreath Thorn, plunges, Framing's press and its Snappy Silhouette marks, and Still Photo's cast heal and Kamera, with Constellations 1, 2 and 4 built on the press and her own heals, and her hold, passives and Constellation 6 not built. The sources of its numbers and behaviour are cited inline on the [design page](design.md).
+Charlotte's kit as built, with her three strikes, charged attack and Spiritbreath Thorn, plunges, Framing's press and its Snappy Silhouette marks, and Still Photo's cast heal and Kamera, with Constellations 1, 2 and 4 built on the press and her own heals, and her hold, Ascension 1 and Constellation 6 not built. The sources of its numbers and behaviour are cited inline on the [design page](design.md).
 
 ## Requirements
 
@@ -18,7 +18,7 @@ Charlotte's normal attacks SHALL be three Cryo strikes, a charged attack, a coll
 
 - **GIVEN** Charlotte is the character on the field
 - **WHEN** the player performs her charged attack
-- **THEN** Spiritbreath Thorn strikes 30 frames after the charged attack's hit, in a circle of radius 2.5 metres round the target's position at that moment
+- **THEN** Spiritbreath Thorn strikes 30 frames after the charged attack's hit, in a circle of radius 2.5 metres round the target's position when the charged attack started
 
 #### Scenario: Spiritbreath Thorn goes on cooldown when it strikes
 

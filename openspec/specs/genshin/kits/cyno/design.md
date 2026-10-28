@@ -46,4 +46,4 @@ flowchart LR
 
 ## Open
 
-- [ ] **Judication's field ticks every 234 frames after its first tick** — contradicted by `{data-root}/cache/genshin-wiki/Category_Cyno_Talents.json`: Featherfall Judgment's Endseer stance "occurs every 4s".
+- [ ] **Which interval the game gives Judication's field ticks** — gcsim gives 234 frames after its first tick, and the wiki's Featherfall Judgment says the Endseer stance "occurs every 4s" (`{data-root}/cache/genshin-wiki/Category_Cyno_Talents.json`).

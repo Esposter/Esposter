@@ -226,7 +226,7 @@ While the party holds Dew, Moondew Cleanse SHALL cost no stamina.
 
 ### Requirement: Moondew Cleanse's hits ignore all of each enemy's DEF
 
-Moondew Cleanse SHALL strike three Lunar-Bloom hits that ignore all of each enemy's DEF.
+Moondew Cleanse SHALL strike three Dendro hits that ignore all of each enemy's DEF.
 
 #### Scenario: Moondew Cleanse's Lunar-Bloom hits ignore all of each enemy's DEF
 

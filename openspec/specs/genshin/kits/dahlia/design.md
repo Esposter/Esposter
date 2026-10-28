@@ -17,13 +17,12 @@ The team's attack-speed attribute, `NormalAttackSpeed`, is buffed by Jean's kit,
 flowchart LR
   A["Normal attack by the member on the field hits an enemy"] --> B["Benison stack gained"]
   B --> C["Shield absorbs a hit and its health reaches zero"]
-  C --> D["A stack is spent to cast the shield again"]
 ```
 
 ## Decisions
 
 - **The shield is a task's.** gcsim places Radiant Psalter's shield 31 frames in (`{data-root}/cache/gcsim-v2.47.2/internal/characters/dahlia/burst.go:20`, the shield's initial delay, and the task at `{data-root}/cache/gcsim-v2.47.2/internal/characters/dahlia/burst.go:88`), so the burst sets a task that runs then; the shield reads her Max HP as it runs, as the table's share of Max HP plus a flat HP (`{data-root}/cache/gcsim-v2.47.2/internal/characters/dahlia/shield.go:55`). It lasts the 12 seconds Favonian Favor holds, from its placement (`{data-root}/cache/gcsim-v2.47.2/internal/characters/dahlia/burst.go:74`, 12 seconds plus the Constellation 4 bonus).
-- **The hold's threshold is provisional.** gcsim takes Immersive Ordinance's hold as its own variant but gives no threshold for it, so the kit uses the 0.5 seconds the other holds use. The roadmap's manual verification has the question.
+- **The hold's threshold is provisional.** gcsim takes Immersive Ordinance's hold as its own variant but gives no threshold for it, so the kit takes the framework's default half second (`UNMEASURED_HOLD_SECONDS`), as the kits README's Framework decisions give it. The roadmap's manual verification has the question.
 - **The plunges are borrowed.** Dahlia has no gcsim plunge file (the dahlia package holds none, and the wiki's collision, low and high poise rows are 25, 100 and 150, `{data-root}/cache/genshin-wiki/Category_Dahlia_Talents.json`, Advanced Properties), so her three plunges borrow Mizuki's timings, as [how a kit is read](../README.md#how-a-kit-is-read) gives, and the wiki's poise above is what they take. The roadmap's manual verification has the question.
 - **Normal attacks and the charged attack take the wiki's poise.** gcsim gives her normal attacks and charged attack none (`{data-root}/cache/gcsim-v2.47.2/internal/characters/dahlia/`, where no file names a poise), so the kit takes the wiki's rows (`{data-root}/cache/genshin-wiki/Category_Dahlia_Talents.json`, Advanced Properties): 45.6 for the first strike, 42 for the second, 27.6 for each hit of the third and 68.7 for the fourth, and 60 for each of the charged attack's two hits.
 

@@ -7,9 +7,11 @@ Candace's kit is its record and one behaviour module, `createCandaceKitBehaviour
 ```mermaid
 flowchart LR
   A["Wagtail's Tide's initial hit"] --> B["Prayer of the Crimson Crown stands nine seconds"]
-  B --> C["Each swap while the Prayer stands"]
-  C --> D["Wave round the body, three at most per burst"]
-  D --> E["Wave hits a circle of radius 3.5 metres round the body"]
+  B --> C{"Swap while the Prayer stands"}
+  C -->|"no"| E["No wave"]
+  C -->|"yes"| F{"Fewer than three waves this burst"}
+  F -->|"yes"| D["Wave round the body"]
+  F -->|"no"| E
 ```
 
 ## Decisions

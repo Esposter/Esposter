@@ -22,7 +22,7 @@ Chasca's normal attacks SHALL be four attacks, the third of which hits twice and
 
 ### Requirement: Fully-charged Aimed Shot
 
-Chasca's fully-charged Aimed Shot SHALL land an Anemo hit at 86 frames of its 96-frame animation and SHALL cost no stamina.
+Chasca's fully-charged Aimed Shot SHALL land an Anemo hit at 86 frames of its 96-frame animation and SHALL cost no stamina, a provisional value until a game source settles it.
 
 #### Scenario: Fully charging the Aimed Shot lands its hit
 

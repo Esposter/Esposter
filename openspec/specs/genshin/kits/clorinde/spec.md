@@ -1,6 +1,6 @@
 ## Purpose
 
-Clorinde's kit as built, with her five strikes, her charged attack, Last Lightfall's five strikes and her plunges, and what is left of Hunter's Vigil's Night Vigil stance, her Bond of Life and her constellations, the sixth's crit buff included (`packages/genshin-world/src/services/kit/characters/clorindeKit.ts`, which leaves Constellations 1, 2 and 4 unbuilt).
+Clorinde's kit as built, with her five strikes, her charged attack, Last Lightfall's five strikes and her plunges, and what is left of Hunter's Vigil's Night Vigil stance, her Bond of Life and her constellations, the sixth's crit buff included, with Constellations 1, 2 and 4 not built.
 
 ## Requirements
 

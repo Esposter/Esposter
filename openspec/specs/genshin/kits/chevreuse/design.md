@@ -7,9 +7,9 @@ Chevreuse's kit is its record and one behaviour module, `createChevreuseKitBehav
 ```mermaid
 flowchart LR
   A["Any member's Overloaded reaction on an enemy"] --> B["Overcharged status on Chevreuse with no end"]
-  B --> C["Next hold casts the Overcharged Ball"]
-  C --> D["Ball's start spends the status"]
-  D --> E["The hold after it is a plain one"]
+  B --> C{"Next hold"}
+  C -->|"ball armed"| D["Overcharged Ball, whose start spends the status"]
+  C -->|"not armed"| E["Plain hold"]
 ```
 
 ## Decisions
@@ -25,7 +25,7 @@ flowchart LR
 
 ## Not built
 
-- **Her skill's heal is waiting on a timed party heal.** Short-Range Rapid Interdiction Fire heals the active character every 2 seconds for 12 seconds from her Max HP and a flat amount (`{data-root}/cache/gcsim-v2.47.2/internal/characters/chevreuse/skill.go` lines 24, 197 and 205), which a kit has no hook for over time. It waits on that hook.
+- **Her skill's heal is not built.** Short-Range Rapid Interdiction Fire heals the active character every 2 seconds for 12 seconds from her Max HP and a flat amount (`{data-root}/cache/gcsim-v2.47.2/internal/characters/chevreuse/skill.go` lines 24, 197 and 205). A periodic task runs a heal over time on the character's clock, aimed at whichever character is active at each tick, as Jahoda's heals are (`packages/genshin-world/src/services/kit/characters/jahodaKit.ts`).
 - **Surging Blade is waiting on a conditional follow-up hit.** Each press or hold that hits anything sets off a circle of radius 2 round the target after a delay, once per 10 seconds (`{data-root}/cache/gcsim-v2.47.2/internal/characters/chevreuse/skill.go` lines 173 and 189), and a hit that fires only when an earlier one landed, under the character's own cooldown, has no hook yet.
 - **Her first ascension passive is waiting on the party-composition hook.** Coordinated Tactics applies only when the deployed team is all Pyro and Electro with at least one of each (`{data-root}/cache/gcsim-v2.47.2/internal/characters/chevreuse/asc.go` lines 13-33), which the kit cannot read as party composition yet, and it adds the Overloaded reaction's Pyro and Electro RES cut of 40% for 6 seconds to the enemies it hits (`{data-root}/cache/gcsim-v2.47.2/internal/characters/chevreuse/asc.go` lines 16-17 and 48-56). Her first constellation's energy on an Overloaded reaction by a member with that status waits on the same hook (`{data-root}/cache/gcsim-v2.47.2/internal/characters/chevreuse/cons.go` line 22). Her dash's stamina cut is not built.
 - **Her constellations 1, 2 and 6 are not built.** The first's energy on an Overloaded reaction waits on the party-composition hook, the second's chain explosions after a hold (`{data-root}/cache/gcsim-v2.47.2/internal/characters/chevreuse/cons.go` lines 78-106, two circles of radius 3 at 1.5 metres either side of the target), the sixth's team heal and its stacked elemental damage bonus (`{data-root}/cache/gcsim-v2.47.2/internal/characters/chevreuse/cons.go` line 156, 8 seconds; `{data-root}/cache/gcsim-v2.47.2/internal/characters/chevreuse/skill.go` line 211) wait on the hooks above, and the constellations that raise talent levels are the [talents](../../talents/design.md) page's.

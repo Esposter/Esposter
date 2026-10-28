@@ -1,6 +1,6 @@
 ## Purpose
 
-Chongyun's kit as built: his strikes, charged attack and plunges, Spirit Blade Chonghua's Layered Frost field with its infusion, and Cloud-Parting Star with its blades and constellations, with the particles left unbuilt. The sources of its numbers are cited inline on the [design page](design.md), which also lists what is open: the charged attack's timings, the blades' reaches and Frozen Skies' energy.
+Chongyun's kit as built: his strikes, charged attack and plunges, Spirit Blade Chonghua's Layered Frost field with its infusion, and Cloud-Parting Star with its blades and constellations, with the particles left unbuilt. The sources of its numbers are cited inline on the [design page](design.md), which also lists what is open: the charged attack's timings, the blades' reaches, Frozen Skies' energy and Atmospheric Revolution's cut.
 
 ## Requirements
 
@@ -116,7 +116,7 @@ From constellation 1, Ice Unleashed SHALL add blades; from constellation 2, Atmo
 
 - **GIVEN** Chongyun is at constellation 4 and stands on the field
 - **WHEN** one of his hits strikes an enemy with Cryo on it
-- **THEN** Chongyun gains 1 energy
+- **THEN** Chongyun gains 1 energy, at most once every 2 seconds
 
 #### Scenario: Constellation 6 adds a fourth Rally blade
 
@@ -126,5 +126,5 @@ From constellation 1, Ice Unleashed SHALL add blades; from constellation 2, Atmo
 
 ## Open
 
-- [ ] **Atmospheric Revolution's cut applies to casts within the Frost Field** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/chongyun/skill.go`: a 15% cut to the wielder's skill, burst and special-skill cooldowns while infused.
-- [ ] **Chongyun gains 1 energy from a Cryo hit at constellation 4** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/chongyun/cons.go`: AddEnergy 2 behind a 2-second cooldown.
+- [ ] **Which cooldown cut Atmospheric Revolution gets** — the English text cuts casts within the Frost Field, and gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/chongyun/skill.go` cuts the wielder's skill, burst and special-skill cooldowns by 15% while infused.
+- [ ] **Which energy Frozen Skies gives at constellation 4** — the English text gives 1, and gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/chongyun/cons.go` gives 2 behind a 2-second cooldown.
