@@ -4,7 +4,6 @@ export enum ResourceUpdatedFilter {
   Last24Hours = "Last 24 hours",
   Last30Days = "Last 30 days",
 }
-
 // The presets in the order the dropdown lists them, chronological with Custom last
 // Keyed by preset so a new one fails the typecheck until it names its place rather than being left out of the dropdown
 const ResourceUpdatedFilterOrder: Record<ResourceUpdatedFilter, number> = {

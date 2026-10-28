@@ -5,7 +5,6 @@ export enum VoiceSettingsSection {
   InputSensitivity = "Input Sensitivity",
   JoinSettings = "Join Settings",
 }
-
 // The sections in the order the settings render them, which the enum's own order no longer carries
 // Keyed by section so a new section fails the typecheck until it names its place rather than being left out of the nav
 const VoiceSettingsSectionOrder: Record<VoiceSettingsSection, number> = {

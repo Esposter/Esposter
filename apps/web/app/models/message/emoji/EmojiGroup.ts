@@ -11,7 +11,6 @@ export enum EmojiGroup {
   Symbols = "Symbols",
   TravelAndPlaces = "Travel & Places",
 }
-
 // The category rail and the grid render in CLDR's order, Smileys first and Flags last
 // So the order is declared here, not read off the enum's own declaration order, and keyed by group so a new group
 // Fails the typecheck until it names its place rather than being left out of the rail
