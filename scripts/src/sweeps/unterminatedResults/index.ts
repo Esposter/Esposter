@@ -26,6 +26,6 @@ const maskOutsideScript = (text: string): string => {
 // (`.agents/ledgers/error-handling.md`).
 for (const path of readSweepFilePaths("*.ts", "*.vue").filter((filePath) => checkIsInScope(filePath))) {
   const text = readFileSync(resolve(REPOSITORY_ROOT, path), "utf8");
-  for (const { after, line } of getUnterminatedResults(path.endsWith(".vue") ? maskOutsideScript(text) : text))
-    console.info(`${path}:${line}  after: ${after}`);
+  const scannedText = path.endsWith(".vue") ? maskOutsideScript(text) : text;
+  for (const { after, line } of getUnterminatedResults(scannedText)) console.info(`${path}:${line}  after: ${after}`);
 }

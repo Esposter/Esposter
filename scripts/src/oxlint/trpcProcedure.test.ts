@@ -5,9 +5,9 @@ describe("trpcProcedure", () => {
   const BAD_REQUEST = "BAD_REQUEST";
   const CODE_KEY = "code";
   const ERROR_CLASS = "TRPCError";
-  const GUARD_A = "InvalidOperationError";
-  const GUARD_B = "NotFoundError";
-  const GUARD_C = "ForbiddenError";
+  const INVALID_OPERATION_ERROR = "InvalidOperationError";
+  const NOT_FOUND_ERROR = "NotFoundError";
+  const FORBIDDEN_ERROR = "ForbiddenError";
   const MESSAGE_KEY = "message";
   const MUTATE = "mutate";
   const MUTATION = "mutation";
@@ -54,17 +54,17 @@ describe("trpcProcedure", () => {
     // `no-hand-rolled-error` — a constructor already pairs each code with its message.
     {
       name: "handRollsInvalidOperation",
-      source: `export const a = () => { throw new ${ERROR_CLASS}({ ${CODE_KEY}: "${BAD_REQUEST}", ${MESSAGE_KEY}: new ${GUARD_A}(o, n, c).${MESSAGE_KEY} }); };`,
+      source: `export const a = () => { throw new ${ERROR_CLASS}({ ${CODE_KEY}: "${BAD_REQUEST}", ${MESSAGE_KEY}: new ${INVALID_OPERATION_ERROR}(o, n, c).${MESSAGE_KEY} }); };`,
       violations: 1,
     },
     {
       name: "handRollsNotFound",
-      source: `export const a = () => { throw new ${ERROR_CLASS}({ ${CODE_KEY}: "a", ${MESSAGE_KEY}: new ${GUARD_B}(n, i).${MESSAGE_KEY} }); };`,
+      source: `export const a = () => { throw new ${ERROR_CLASS}({ ${CODE_KEY}: "a", ${MESSAGE_KEY}: new ${NOT_FOUND_ERROR}(n, i).${MESSAGE_KEY} }); };`,
       violations: 1,
     },
     {
       name: "handRollsForbidden",
-      source: `export const a = () => { throw new ${ERROR_CLASS}({ ${CODE_KEY}: "a", ${MESSAGE_KEY}: new ${GUARD_C}(r).${MESSAGE_KEY} }); };`,
+      source: `export const a = () => { throw new ${ERROR_CLASS}({ ${CODE_KEY}: "a", ${MESSAGE_KEY}: new ${FORBIDDEN_ERROR}(r).${MESSAGE_KEY} }); };`,
       violations: 1,
     },
     // A BAD_REQUEST with no message reaches the client as an empty rejection.
@@ -106,14 +106,14 @@ describe("trpcProcedure", () => {
     // Hand-rolling is decidable wherever it sits — a spread before it changes nothing about what it says.
     {
       name: "handRollsAfterSpread",
-      source: `export const a = () => { throw new ${ERROR_CLASS}({ ...a, ${CODE_KEY}: "a", ${MESSAGE_KEY}: new ${GUARD_B}(n, i).${MESSAGE_KEY} }); };`,
+      source: `export const a = () => { throw new ${ERROR_CLASS}({ ...a, ${CODE_KEY}: "a", ${MESSAGE_KEY}: new ${NOT_FOUND_ERROR}(n, i).${MESSAGE_KEY} }); };`,
       violations: 1,
     },
     // A spread after the hand-rolled message may override what the object ends up carrying, and the rule still
     // Reports it: constructing an error to steal its message is the finding, whatever the object resolves to.
     {
       name: "handRollsBeforeSpread",
-      source: `export const a = () => { throw new ${ERROR_CLASS}({ ${CODE_KEY}: "a", ${MESSAGE_KEY}: new ${GUARD_B}(n, i).${MESSAGE_KEY}, ...a }); };`,
+      source: `export const a = () => { throw new ${ERROR_CLASS}({ ${CODE_KEY}: "a", ${MESSAGE_KEY}: new ${NOT_FOUND_ERROR}(n, i).${MESSAGE_KEY}, ...a }); };`,
       violations: 1,
     },
     // An error class the repo has no guard constructor for is not reported — there is nothing to point at.
