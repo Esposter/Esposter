@@ -11,7 +11,7 @@ The account surface: signing in at `/login` (Google, GitHub, or Facebook — see
 - **Public profile** — every user has a public page at `/user/[id]` showing their identity, achievement showcase, and posts. See [public profile](public-profile/design.md).
 - **Sessions** — every active session listed at `/user/settings`, revocable one at a time or all but the current one, with push subscriptions and live connections going with the session. See [session and device management](session-device-management/design.md).
 - **Account deletion** — the Delete account card signs the person out everywhere and starts a sweep that removes the account and the content it owns, with the user row last. See [account deletion](account-deletion/design.md).
-- **Data export** — the Download my data card builds a zip of every row attributable to the person, served through a short-lived read-only link, and kept for seven days. See [data export](data-export/design.md).
+- **Data export** — the Download my data card builds a zip of the person's own data, without credentials or other people's records, served through a short-lived read-only link, and kept for seven days. See [data export](data-export/design.md).
 - Message-scoped user state (presence/status, voice settings, per-room personas) is esbabbler's, not this page's — see [profiles and presence](../esbabbler/profiles-and-presence/design.md) and [settings](../esbabbler/settings/design.md).
 
 ## Procedures

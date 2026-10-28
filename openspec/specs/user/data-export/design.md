@@ -45,7 +45,7 @@ The stores this reads are the ones in the [user data inventory](../../architectu
 
 ## Not included
 
-- **Other people's content and counts.** Their messages and data, their posts and comments, the like and comment counts on the person's posts, and the ranking, which orders posts by others' activity. The rooms the person has left, whose messages and reactions are not indexed to them: membership is the only index from a person to a room, which is the same limit the deletion names.
+- **Other people's content and counts.** Their messages and data, their posts and comments, the like and comment counts on the person's posts, and the ranking, which orders posts by others' activity. The rooms the person has left, whose messages and reactions are not indexed to them, as [account deletion](../account-deletion/design.md) states.
 - **Other people's records.** Another member's membership, roles and permissions in a room the person owns, and another person's reaction on a message the person also reacted to.
 - **Resource version history.** Every saved version of a resource beyond its working copy, which is included. The resource's activity logs, which record other people's use of the resource.
 - **Derived files.** Thumbnails, which are derived from the original attachment the archive holds.

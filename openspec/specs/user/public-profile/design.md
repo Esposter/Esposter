@@ -8,7 +8,7 @@ The page is public — it renders for signed-out visitors on the rate-limited pr
 
 - **Identity** comes from `user.readUser(id)`, whose Drizzle query projects only the allowlisted columns (name, image, biography). The private `email` column is never part of the projection, so it cannot leave the database regardless of what the client asks for. The same projection is `PublicUser` everywhere one user is shown another: post authors, friends and search results, room members, direct-message participants, bans, invites and the realtime events that carry a user all read `PublicUserColumns`, so an email or a storage account never reaches anyone but its owner.
 - **Achievements** reuse `achievement.readUserAchievements(id)`, which is already public and takes any user id. The page merges each row with its static, client-side definition — the viewer-masked map `achievement.readAchievementMap` returns needs a session, which this page deliberately does not require — to show total unlocked points and the most recent unlocks, rendered with the achievement gallery's grid item.
-- **Posts** reuse the home feed's machinery: the same cursor-paginated `post.readPosts`, now accepting an optional `userId` filter, feeding the same post card and infinite-scroll waypoint. Only top-level posts appear (`parentId IS NULL`) — comments are excluded.
+- **Posts** reuse the home feed's machinery: the same cursor-paginated `post.readPosts`, accepting an optional `userId` filter, feeding the same post card and infinite-scroll waypoint. Only top-level posts appear (`parentId IS NULL`) — comments are excluded.
 
 Author name and avatar on post and comment cards are `NuxtLink`s to the profile. Messaging surfaces deliberately keep their own member-profile popovers — room identity is not global identity.
 
@@ -25,10 +25,10 @@ The `userId` filter composes with the existing clauses on `readPosts`: the `pare
 
 ## Procedures
 
-| Procedure        | Auth                  | Input       | Purpose                                                  |
-| ---------------- | --------------------- | ----------- | -------------------------------------------------------- |
-| `user.readUser`  | public (rate-limited) | user id     | identity fields (name, image, biography) for the header  |
-| `post.readPosts` | public (rate-limited) | `+ userId?` | existing feed read, now filterable to one author's posts |
+| Procedure        | Auth                  | Input       | Purpose                                                 |
+| ---------------- | --------------------- | ----------- | ------------------------------------------------------- |
+| `user.readUser`  | public (rate-limited) | user id     | identity fields (name, image, biography) for the header |
+| `post.readPosts` | public (rate-limited) | `+ userId?` | existing feed read, filterable to one author's posts    |
 
 ## Key files
 
@@ -47,5 +47,5 @@ Paths relative to `apps/web`.
 
 ## Notes
 
-- There is no "member since" line: the `users` table carries no `createdAt` column to render one from.
-- A stream of context-free comments reads as noise. Revisit with a tab if it is asked for.
+- There is no "member since" line.
+- A stream of context-free comments reads as noise, so the profile lists top-level posts only.

@@ -1,6 +1,6 @@
 # Feed Block Filtering
 
-Blocking someone hides their posts and comments from everything you read. The `blocks(blockerId, blockedId)` rows that already gate friend requests and direct messages also filter the posts surface, keeping the one promise blocking makes.
+Blocking someone hides their posts and comments from the feeds and comment threads you read. The `blocks(blockerId, blockedId)` rows that already gate friend requests and direct messages also filter the posts surface, keeping the one promise blocking makes.
 
 ## How it works
 

@@ -6,7 +6,7 @@ One person, one account, several sign-in buttons. Sign-in is [OAuth-only](../../
 
 better-auth resolves an incoming provider account against the existing `users` row with the same email. It attaches the new account to that user only when two claims both hold: the provider says the address it returned is verified, and the stored user row is itself verified. When either fails the sign-in is **refused** — it does not fork into a second person, because the lookup found the existing row by email either way. The user is sent back with `?error=account_not_linked` and nothing is written.
 
-`server/auth.ts` writes the whole `account.accountLinking` block out explicitly. Every value equals the library default, so nothing about the flow above is Esposter-specific — they are recorded because they are the security posture of sign-in, and a posture nobody chose is one a minor version is free to move.
+`server/auth.ts` writes the `account.accountLinking` block out explicitly, except `requireLocalEmailVerified`, which it leaves on better-auth's default. Every value written equals the library default, so nothing about the flow above is Esposter-specific — they are recorded because they are the security posture of sign-in, and a posture nobody chose is one a minor version is free to move.
 
 The consequential entry is `trustedProviders`, which holds **Facebook and nothing else**. Naming a provider there accepts its email claim as ownership proof and skips the verified-email check, so the entry is a real grant and not a formality — it is earned here by _why_ Facebook's claim arrives unverified. Facebook confirms an address at registration; what it does not do is expose `email_verified` on the Graph profile better-auth reads, and better-auth reads an absent field as `false`. The claim is therefore unverified because the field is missing, not because the address is unproven, and the alternative is a provider that can sign a person in and then never join the account it belongs to (see below). Google and GitHub report the claim, so listing them would buy nothing and is not done.
 
@@ -60,7 +60,7 @@ Unlinking additionally demands a **fresh** session — better-auth measures fres
 
 ## Out of scope
 
-Merging two user rows that already exist. This prevents the split going forward, it does not repair one that happened: merging means reassigning rooms, memberships, roles, posts, achievements and messages across a user id and picking a winner for every profile field. That is a separate design with its own destructive-confirmation story, worth writing only if real users report the split.
+Merging two user rows that already exist. This prevents the split going forward, it does not repair one that happened: merging means reassigning rooms, memberships, roles, posts, achievements and messages across a user id and picking a winner for every profile field. That is a separate design with its own destructive-confirmation story, and none is written.
 
 ## Key files
 

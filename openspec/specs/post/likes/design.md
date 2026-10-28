@@ -12,10 +12,10 @@ flowchart TD
   pick -->|"the same value"| deleteLike["like.deleteLike — likeCount −= value"]
   createLike --> txn
   updateLike --> txn
-  deleteLike --> txn["one transaction — the likes row, likeCount, and the recomputed ranking"]
+  deleteLike --> txn["one transaction"]
   txn --> row[("posts row")]
   txn --> patch["useLikeStore<br/>then usePostCountStore"]
-  row -->|"getViewerPostRelations — the caller's own like row, never the list"| viewer["every read carries viewerLike"]
+  row -->|"getViewerPostRelations — the caller's own like row, never the list"| viewer["post read with viewerLike"]
   viewer --> arrows
 ```
 

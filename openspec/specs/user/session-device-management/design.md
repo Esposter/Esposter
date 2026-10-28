@@ -48,7 +48,7 @@ Losing the row costs nothing, which is what makes the cascade cheap rather than 
 
 Writing a subscription requires its session to exist as a row. The test mock for `auth.api.getSession` writes the row it fabricates, as sign-in does, so the suite exercises the same invariant production does.
 
-One genuine schema fix travels with this: `sessions.userId` cascades on the user row, like every other row a user owns, so deleting a user who still holds a session removes it.
+`sessions.userId` cascades on the user row, like every other row a user owns, so deleting a user who still holds a session removes it.
 
 **Live connections are closed explicitly**, because a Web PubSub client access url outlives the session that minted it. Web PubSub identifies a connection by _device_ — `userId⟂sessionId`, see `generateWebPubSubClientAccessUrl` — so `closeUserConnections` addresses exactly one session's connections. It is best-effort in full, the service client included: the revoke has already landed by then, so a hub that cannot be reached costs a connection living until it drops on its own, rather than a revoke reported as failed.
 
@@ -83,4 +83,4 @@ No admin-facing counterpart. An operator terminating another user's sessions is 
 | `apps/web/server/services/auth/getDeviceLabel.ts`                               | the stored user agent → a readable device label  |
 | `apps/web/app/store/user/sessionDialog.ts`                                      | the singleton revoke target                      |
 | `packages/db-schema/src/schema/notification/pushSubscriptionsInNotification.ts` | `sessionId`, cascading on the session row        |
-| `packages/db-schema/src/schema/auth/sessionsInAuth.ts`                          | the session rows, now cascading on the user      |
+| `packages/db-schema/src/schema/auth/sessionsInAuth.ts`                          | the session rows, cascading on the user          |

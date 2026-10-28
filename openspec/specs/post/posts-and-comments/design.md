@@ -7,11 +7,11 @@ One `posts` table carries both: a post is a root row (required title, `parentId 
 ```mermaid
 flowchart TD
   ROW["a posts row"] --> PARENT{"parentId"}
-  PARENT -->|"null"| POST["post — title required, depth 0"]
-  PARENT -->|"set"| COMMENT["comment — description only, depth parent plus 1"]
-  POST --> GUARD["updatePost, deletePost — ownedBy plus a parentId IS NULL check"]
-  COMMENT --> GUARDC["updateComment, deleteComment — ownedBy plus a parentId IS NOT NULL check"]
-  GUARD --> CASCADE["cascades to comments"]
+  PARENT -->|"null"| POST["post"]
+  PARENT -->|"set"| COMMENT["comment"]
+  POST --> GUARD["post ownership guard"]
+  COMMENT --> GUARDC["comment ownership guard"]
+  GUARD --> CASCADE["comment cascade"]
   POST --> SHARED["shared posts table"]
   COMMENT --> SHARED
 ```

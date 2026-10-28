@@ -11,7 +11,7 @@ flowchart LR
   waypoint[StyledWaypoint at list end] -->|readMorePosts + cursor| store
   store --> proc[post.readPosts<br/>cursor pagination + viewer block filter]
   proc --> pg[(posts, parentId IS NULL)]
-  mutation[likes / comments] -->|transactional| counters[likeCount, commentCount, ranking]
+  mutation[likes / comments] -->|transactional| counters[counter columns]
   counters --> pg
 ```
 
@@ -58,5 +58,5 @@ Paths relative to `apps/web`.
 
 ## Notes
 
-- Casual scale doesn't need "top this week" partitioning yet; revisit if the feed ages badly.
+- Casual scale doesn't need "top this week" partitioning; Top is all-time.
 - Every post ships at most the viewer's own like row (`viewerLike`) — see [likes](../likes/design.md) for the viewer-scoped read contract.
