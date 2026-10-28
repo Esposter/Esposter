@@ -32,7 +32,8 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
       writeAffectedCells(dataSource, this.#affectedCells, () => NULL_STRATEGY_NA_VALUE);
     else {
       this.#shiftAffectedRowSizes(dataSource, -1);
-      dataSource.rows = dataSource.rows.filter(({ id }) => !this.#affectedRows.some(({ row }) => row.id === id));
+      const affectedRowIds = new Set(this.#affectedRows.map(({ row }) => row.id));
+      dataSource.rows = dataSource.rows.filter(({ id }) => !affectedRowIds.has(id));
     }
   }
 
