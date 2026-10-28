@@ -44,7 +44,7 @@ flowchart LR
 
 - `{data-root}/genshin-parity/references/hud-world-keys.png` and `{data-root}/genshin-parity/references/hud-stamina-climb.png` — the English PC client's world HUD at 1080 high, the [HUD](../hud/design.md)'s references, which show the ring over olive ground and over a flat sky.
 - The Chinese client's play [as the character controller cites it](../character-controller/design.md), its minimap over open sea from 488 to 496 seconds, where the fan, the ring, the fill and the N are each read on a flat ground.
-- `{data-root}/genshin-parity/captures/oculus-minimap.mkv` — walking in on an Anemoculus in Mondstadt from its far side until the minimap marks it, and the moment its sound plays, 30 seconds at most; the distance at which the mark shows and the sound's start are read from it. The sound's start is read by the [audio pass](../sound-effects/design.md). The distance at which the mark shows stays on the recording. On the wiki and YouTube, none found.
+- `{data-root}/genshin-parity/captures/oculus-minimap.mkv` — walking in on an Anemoculus in Mondstadt from its far side until the minimap marks it, and the moment its sound plays, 30 seconds at most; the distance at which the mark shows and the sound's start are read from it. The sound's start is read by the [audio pass](../sound-effects/design.md). The distance at which the mark shows stays on the recording. On the wiki and YouTube, none found (searched 2026-10-11).
 
 ## Open
 

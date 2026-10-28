@@ -170,7 +170,7 @@ Every speed, height and threshold is a body type's, since how far a character sp
 
 ## Reference
 
-- `world-movement.mkv` — run, sprint, a jump, a glide off a height, a climb, a swim, the stamina meter in view. Partly found: https://www.youtube.com/watch?v=kyXg-Hx3Xlo (`{data-root}/genshin-parity/captures/yt-kyXg-Hx3Xlo-glide-compare.mp4`) times a glide against a sprint along one street, and https://www.bilibili.com/video/av251752644 (`{data-root}/genshin-parity/captures/bili-av251752644-stamina.mp4`) times or counts every action's stamina against a full pool; the run, the jump and the fall are the body's own clips' ([character controller](design.md)); still sought: a glide off a known height over a known distance, a plunge, a step and a slope walked, and a body treading still water with the meter in view.
+- `world-movement.mkv` — run, sprint, a jump, a glide off a height, a climb, a swim, the stamina meter in view. Partly found 2026-10-11: https://www.youtube.com/watch?v=kyXg-Hx3Xlo (`{data-root}/genshin-parity/captures/yt-kyXg-Hx3Xlo-glide-compare.mp4`) times a glide against a sprint along one street, and https://www.bilibili.com/video/av251752644 (`{data-root}/genshin-parity/captures/bili-av251752644-stamina.mp4`) times or counts every action's stamina against a full pool; the run, the jump and the fall are the body's own clips' ([character controller](design.md)); still sought: a glide off a known height over a known distance, a plunge, a step and a slope walked, and a body treading still water with the meter in view.
 
 ## Open
 

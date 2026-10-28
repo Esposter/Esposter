@@ -61,7 +61,7 @@ flowchart TD
 
 ## Reference
 
-- `world-map.mkv` — the map opened on M over the character's own area, the zoom slider pressed in and out to its ends, a waypoint chosen on the map and Teleport pressed on the panel it opens, 30 seconds at most. Partly found: https://www.youtube.com/watch?v=gN1IURjDuWo covering 0–30 s (`{data-root}/genshin-parity/captures/yt-gN1IURjDuWo-world-map.mp4`); found, the panel open on a chosen waypoint, a PC clip in the Indonesian client: https://www.youtube.com/watch?v=Mhw53PsdhKI (`{data-root}/genshin-parity/captures/yt-Mhw53PsdhKI-waypoint.webm`, about 120–135 s), showing the panel's sidebar and its Teleport button; still sought: Teleport pressed on it, and the zoom slider's ends on the English PC map.
+- `world-map.mkv` — the map opened on M over the character's own area, the zoom slider pressed in and out to its ends, a waypoint chosen on the map and Teleport pressed on the panel it opens, 30 seconds at most. Partly found 2026-10-11: https://www.youtube.com/watch?v=gN1IURjDuWo covering 0–30 s (`{data-root}/genshin-parity/captures/yt-gN1IURjDuWo-world-map.mp4`); found, the panel open on a chosen waypoint, a PC clip in the Indonesian client: https://www.youtube.com/watch?v=Mhw53PsdhKI (`{data-root}/genshin-parity/captures/yt-Mhw53PsdhKI-waypoint.webm`, about 120–135 s), showing the panel's sidebar and its Teleport button; still sought: Teleport pressed on it, and the zoom slider's ends on the English PC map.
 
 ## Open
 

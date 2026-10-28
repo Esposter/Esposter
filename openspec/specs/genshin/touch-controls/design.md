@@ -52,7 +52,7 @@ flowchart LR
 
 - `hud-world-pickup.png` (`{data-root}/genshin-parity/references/hud-world-pickup.png`) — the mobile client's play screen from a public recording, the [HUD](../hud/design.md)'s reference, which shows the stick at rest.
 - The held stick, measured on three public recordings of the mobile client: [d9ZWM3cAlf0](https://www.youtube.com/watch?v=d9ZWM3cAlf0) (16:9, 6.1, 33 held frames), [HqQob991B8Q](https://www.youtube.com/watch?v=HqQob991B8Q) (19.5:9, 9 held and 5 at rest) and [quYgZtHhIa4](https://www.youtube.com/watch?v=quYgZtHhIa4) (20:9, 17 held), none showing the thumb itself.
-- `mobile-touch.png` — a recording of a drag of the mobile client's look (`{data-root}/genshin-parity/captures/mobile-touch.png`). On the wiki and YouTube, none found.
+- `mobile-touch.png` — a recording of a drag of the mobile client's look (`{data-root}/genshin-parity/captures/mobile-touch.png`). On the wiki and YouTube, none found (searched 2026-10-11).
 
 ## Open
 
