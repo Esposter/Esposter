@@ -756,10 +756,9 @@ describe(createResourceProcedures, () => {
     });
 
     const blobName = `${getFilesDirectoryName(newResource.id)}/${hash}`;
+    const blobUrl = getBlobUrl(AzureContainer.ResourceAssets, blobName);
 
-    expect(sasEntities).toStrictEqual([
-      { id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(getBlobUrl(AzureContainer.ResourceAssets, blobName)) },
-    ]);
+    expect(sasEntities).toStrictEqual([{ id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(blobUrl) }]);
   });
 
   test("fails generate upload file sas entities with wrong user", async () => {
