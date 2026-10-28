@@ -2,7 +2,7 @@ import type { DependencyScore } from "#src/models/dependencies/score/DependencyS
 import type { DependencyScoreReport } from "#src/models/dependencies/score/DependencyScoreReport";
 import type { InstalledPackage } from "#src/models/dependencies/score/InstalledPackage";
 import type { Packument } from "#src/models/dependencies/score/Packument";
-import type { RegistryCheckError } from "#src/models/outdatedDependencies/shared/RegistryCheckError";
+import type { RegistryCheckError } from "#src/models/shared/RegistryCheckError";
 
 import { ScoreSort } from "#src/models/dependencies/score/ScoreSort";
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
