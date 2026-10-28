@@ -13,6 +13,10 @@ The blobs are copied to their new names, and the old ones are left in place. The
 - The hosted game data is republished by `genshin:data` into `public-genshin-assets` under its datasets, under the `genshin-data` skill.
 - The old containers are deleted by the owner once the move is verified, as the azure services design says.
 
+## Sequencing question
+
+`870c0c4ce9` already removed the four retired containers, and their grants, from the infra program. The change's gate, that the program no longer names them, therefore holds before any blob moves or 3.1 passes, so it cannot gate the deletion. What the removal does on its own is narrower than the commit message's wording suggests: the old container declarations were protected, so Pulumi refuses to delete them while that protection stands in state, and no workflow runs `pulumi up`. The deletion needs the owner's `infra:up` with the protection lifted. The owner decides how the containers stay in the program until 3.2 (task 1.3), and this change records that choice here before any deletion runs.
+
 ## Mapping
 
 | Old container         | Blob                        | New container and name                                      |
