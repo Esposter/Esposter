@@ -11,5 +11,6 @@ export const deleteAccountSessions = async (ctx: AuthedContext): Promise<void> =
   const { user } = ctx.getSessionPayload;
   const sessions = await readActiveSessions(ctx.db, user.id);
   await Promise.all(sessions.map(({ token }) => auth.api.revokeSession({ body: { token }, headers: ctx.headers })));
+  // Closed only once the revokes have landed: a connection closed first could reconnect on a session not yet revoked
   await Promise.all(sessions.map(({ id }) => closeDeviceConnections({ sessionId: id, userId: user.id })));
 };
