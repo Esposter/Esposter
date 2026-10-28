@@ -8,7 +8,9 @@ import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
+import { GCSIM_COOLDOWN_TAG_PREFIX } from "#src/services/genshinAssets/kits/constants";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
+import { checkIsSameGoValue } from "#src/services/genshinAssets/kits/gcsim/checkIsSameGoValue";
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluateGoNumber";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
@@ -129,7 +131,8 @@ export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, G
   const resolveName = (name: string): GoValue | undefined => {
     if (valueMap.has(name)) return valueMap.get(name);
     const declaration = declarationMap.get(name);
-    if (declaration === undefined) return undefined;
+    // A qualified cooldown tag is its own value, as a `c.` field's write of one is, so a local bound to it is that tag
+    if (declaration === undefined) return name.startsWith(GCSIM_COOLDOWN_TAG_PREFIX) ? name : undefined;
     // Marked first, so a name its own value reaches reads as having none
     valueMap.set(name, undefined);
     const { iota } = declaration;
@@ -166,7 +169,11 @@ export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, G
   // A field the struct does not declare, the embedded template's, is never resolved
   for (const [field, writes] of fieldWriteMap) {
     const [only] = writes;
-    if (!charFieldSet.has(field) || only?.value === undefined || writes.some(({ value }) => value !== only.value))
+    if (
+      !charFieldSet.has(field) ||
+      only?.value === undefined ||
+      writes.some(({ value }) => !checkIsSameGoValue(value, only.value))
+    )
       continue;
     constantMap.set(`c.${field}`, { elementLines: {}, file: only.file, line: only.line, value: only.value });
   }

@@ -82,6 +82,41 @@ describe(evaluateGoConstants, () => {
     ]);
   });
 
+  test("gives a char field written the same whole-valued float in two places that float, and a local bound to a qualified tag that tag", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "bloom.go",
+        source: [
+          "package bloom",
+          "",
+          "type char struct {",
+          "\t*tmpl.Character",
+          "\tburstRadius float64",
+          "}",
+          "",
+          "const tag = attacks.ICDTagBloomDamage",
+          "",
+          "func (c *char) Skill() {",
+          "\tc.burstRadius = 2.0",
+          "}",
+          "",
+          "func (c *char) Burst() {",
+          "\tc.burstRadius = 2.0",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    const constantMap = evaluateGoConstants(sources);
+
+    expect([constantMap.get("c.burstRadius")?.value, constantMap.get("tag")?.value]).toStrictEqual([
+      { float: 2 },
+      "attacks.ICDTagBloomDamage",
+    ]);
+  });
+
   test("reads Xiangling's attack.go as gcsim writes it, the frames her init sets one strike at a time", () => {
     expect.hasAssertions();
 

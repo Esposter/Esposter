@@ -4,13 +4,12 @@ import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
+import { GCSIM_COOLDOWN_TAG_PREFIX } from "#src/services/genshinAssets/kits/constants";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { toGoNumberValue } from "#src/services/genshinAssets/kits/gcsim/toGoNumberValue";
 
 const ARITHMETIC_OPERATORS = new Set(["%", "&", "*", "+", "-", "/", "<", ">", "^", "|"]);
-// The qualified names gcsim's internal cooldown tags are written as, `attacks.ICDTagNone` among them
-const COOLDOWN_TAG_PREFIX = "attacks.ICDTag";
 
 // Each write to a field of `c` in a file: a literal `=` gives its value, an increment or `op=` gives none, and a read like
 // `c.field == 2` is no write at all
@@ -36,7 +35,7 @@ export const readFieldWrites = (
       if (!isLiteral) value = undefined;
       else if (expression.kind === GoExpressionKind.Number)
         value = toGoNumberValue(expression.value, expression.isFloat);
-      else if (expression.kind === GoExpressionKind.Identifier && expression.name.startsWith(COOLDOWN_TAG_PREFIX))
+      else if (expression.kind === GoExpressionKind.Identifier && expression.name.startsWith(GCSIM_COOLDOWN_TAG_PREFIX))
         value = expression.name;
       writes.push({ file, line, value });
     } else if (

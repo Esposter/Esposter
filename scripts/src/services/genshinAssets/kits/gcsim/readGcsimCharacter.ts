@@ -1,7 +1,7 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
 
-import { GCSIM_CONFIG_FILE } from "#src/services/genshinAssets/kits/constants";
+import { GCSIM_CONFIG_FILE, GCSIM_COOLDOWN_TAG_PREFIX } from "#src/services/genshinAssets/kits/constants";
 import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/evaluateGoConstants";
 import { readGcsimAnimationFrameNames } from "#src/services/genshinAssets/kits/gcsim/readGcsimAnimationFrameNames";
 import { readGcsimAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimAttacks";
@@ -38,7 +38,7 @@ export const readGcsimCharacter = (folder: string, fileMap: ReadonlyMap<string, 
     // element she absorbed or a parameter passes it in, so no one tag is its own and it is no static kit hit
     attacks: readGcsimAttacks(goSources, constantMap, config).filter(
       ({ internalCooldownTag }) =>
-        internalCooldownTag === undefined || internalCooldownTag.startsWith("attacks.ICDTag"),
+        internalCooldownTag === undefined || internalCooldownTag.startsWith(GCSIM_COOLDOWN_TAG_PREFIX),
     ),
     config,
     configFile,

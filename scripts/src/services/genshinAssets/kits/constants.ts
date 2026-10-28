@@ -71,6 +71,8 @@ export const GCSIM_ELEMENTLESS_ELEMENTS: ReadonlySet<string> = new Set(["attribu
 export const GCSIM_DURABILITY_PER_GAUGE = 25;
 // The seconds a hold must be held with no table or wiki figure for it, Bennett's first Charge Level's
 export const UNMEASURED_HOLD_SECONDS = 0.5;
+// The qualified names gcsim's internal cooldown tags are written as, `attacks.ICDTagNone` among them
+export const GCSIM_COOLDOWN_TAG_PREFIX = "attacks.ICDTag";
 export const GCSIM_NO_INTERNAL_COOLDOWN_TAG = "attacks.ICDTagNone";
 // The character whose gcsim plunge areas a kit with no plunge file of its own borrows
 export const GCSIM_PLUNGE_FALLBACK_FOLDER = "bennett";
