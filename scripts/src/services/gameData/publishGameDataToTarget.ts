@@ -5,6 +5,7 @@ import type { ContainerClient } from "@azure/storage-blob";
 import { GAME_DATA_REUSE_WINDOW_MS, MAX_CONCURRENT_BLOB_UPLOADS } from "#src/services/gameData/constants";
 import { getGameDataBlobName } from "#src/services/gameData/getGameDataBlobName";
 import { storeGameDataRecord } from "#src/services/gameData/storeGameDataRecord";
+import { toGameDataBlobNames } from "#src/services/gameData/toGameDataBlobNames";
 import { listBlobItems } from "@esposter/db";
 import { settleAll } from "@esposter/shared";
 
@@ -19,7 +20,7 @@ export const publishGameDataToTarget = async (
 ): Promise<number> => {
   const listedBlobItems = await listBlobItems(containerClient, "");
   const lastModifiedMap = new Map(listedBlobItems.map(({ lastModified, name }) => [name, lastModified] as const));
-  const reachableBlobNames = new Set(reachableObjects.map(({ dataset, hash }) => getGameDataBlobName(dataset, hash)));
+  const reachableBlobNames = toGameDataBlobNames(reachableObjects);
   const now = Date.now();
   const writes = records
     .map((record) => ({ blobName: getGameDataBlobName(record.dataset, record.hash), record }))

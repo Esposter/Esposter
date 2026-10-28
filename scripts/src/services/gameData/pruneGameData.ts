@@ -2,7 +2,7 @@ import type { GameDataPruneResult } from "#src/models/gameData/GameDataPruneResu
 import type { PruneGameDataOptions } from "#src/models/gameData/PruneGameDataOptions";
 
 import { GAME_DATA_RETENTION_MS } from "#src/services/gameData/constants";
-import { getGameDataBlobName } from "#src/services/gameData/getGameDataBlobName";
+import { toGameDataBlobNames } from "#src/services/gameData/toGameDataBlobNames";
 import { deleteBlobs, listBlobItems } from "@esposter/db";
 
 // Deletes what no live lock reaches and what is older than retention. The batch carries the cutoff as its condition: an
@@ -14,7 +14,7 @@ export const pruneGameData = async ({
   liveObjects,
   now,
 }: PruneGameDataOptions): Promise<GameDataPruneResult> => {
-  const liveBlobNames = new Set(liveObjects.map(({ dataset, hash }) => getGameDataBlobName(dataset, hash)));
+  const liveBlobNames = toGameDataBlobNames(liveObjects);
   const cutoff = new Date(now - GAME_DATA_RETENTION_MS);
   const candidateNames = (await listBlobItems(containerClient, ""))
     .filter(({ lastModified, name }) => !liveBlobNames.has(name) && lastModified < cutoff)
