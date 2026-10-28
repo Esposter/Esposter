@@ -103,10 +103,7 @@ describe(purgeSurveyResources, () => {
     takeOne(await mockDb.insert(resourcesInResource).values({ createdAt, name, type, userId }).returning());
 
   const inviteNodeId = "invite";
-  const createInvite = (type: string, surveyId: string) => ({
-    props: { id: inviteNodeId, label: "Survey", surveyId },
-    type,
-  });
+  const createInvite = (type: string, surveyId: string) => ({ props: { id: inviteNodeId, label: "", surveyId }, type });
 
   test("a purge removes a survey's blob directory, response partition, storage ledger entries and row, and broadcasts the owner whose bytes it released", async () => {
     expect.hasAssertions();
@@ -149,7 +146,7 @@ describe(purgeSurveyResources, () => {
     const failingSurvey = await insertResource(ResourceType.Survey, earlierDate);
     await insertResource(ResourceType.Survey, laterDate);
     vi.spyOn(MockTableClient.prototype, "listEntities").mockImplementationOnce(() => {
-      throw new Error("The response partition is unreachable");
+      throw new Error(" ");
     });
 
     await purgeSurveyResources(context);
@@ -200,7 +197,7 @@ describe(purgeSurveyResources, () => {
       { sourceId: program.id, targetId: purgedSurvey.id, type: ResourceLinkType.Survey },
     ]);
     vi.spyOn(MockTableClient.prototype, "listEntities").mockImplementationOnce(() => {
-      throw new Error("The response partition is unreachable");
+      throw new Error(" ");
     });
 
     await purgeSurveyResources(context);
@@ -234,7 +231,7 @@ describe(purgeSurveyResources, () => {
     await mockDb
       .insert(resourceLinksInResource)
       .values({ sourceId: webpage.id, targetId: purgedSurvey.id, type: ResourceLinkType.Survey });
-    vi.spyOn(MockBlockBlobClient.prototype, "upload").mockRejectedValueOnce(new Error("The content write failed"));
+    vi.spyOn(MockBlockBlobClient.prototype, "upload").mockRejectedValueOnce(new Error(" "));
 
     await purgeSurveyResources(context);
 

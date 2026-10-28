@@ -78,9 +78,9 @@ describe(exportUserDataHandler, () => {
     // The message attaches a file whose blob was never written, so reading that entry fails
     await createMessage(await getTableClient(AzureTable.Messages), await getTableClient(AzureTable.MessagesAscending), {
       files: [
-        { filename: name, hasThumbnail: false, id: crypto.randomUUID(), isSpoiler: false, mimetype: name, size: 0 },
+        { filename, hasThumbnail: false, id: crypto.randomUUID(), isSpoiler: false, mimetype: "mimetype", size: 0 },
       ],
-      message: name,
+      message: "message",
       roomId: room.id,
       type: MessageType.Message,
       userId,

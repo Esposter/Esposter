@@ -13,6 +13,7 @@ import {
   AzureContainer,
   AzureTable,
   createMessageEntity,
+  getUserProfileImageBlobName,
   MessageType,
   resourcesInResource,
   ResourceType,
@@ -112,7 +113,7 @@ describe(deleteAccountHandler, () => {
       createMessageEntity({ message: "message", roomId: memberRoom.id, type: MessageType.Message, userId }),
     );
     await seedBlob(AzureContainer.ResourceAssets, getContentBlobName(ownedResource.id));
-    await seedBlob(AzureContainer.PublicUserAssets, `${userId}/ProfileImage`);
+    await seedBlob(AzureContainer.PublicUserAssets, getUserProfileImageBlobName(userId));
     await seedBlob(AzureContainer.MessageAssets, `${ownedRoom.id}/${fileId}`);
     await seedBlob(AzureContainer.MessageAssets, `${memberRoom.id}/${fileId}`);
     await mockDb

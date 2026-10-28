@@ -26,6 +26,8 @@ import {
   AzureContainer,
   AzureTable,
   getReverseTickedTimestamp,
+  getSaveBlobName,
+  getUserProfileImageBlobName,
   MessageMetadataType,
   MessageType,
   ProgramParticipantEntity,
@@ -255,11 +257,11 @@ describe(deleteAccountHandler, () => {
     );
 
     // The account's own blob directories, and the shared character-pack file it shares with other accounts
-    await seedBlob(AzureContainer.PublicUserAssets, `${userId}/ProfileImage`);
+    await seedBlob(AzureContainer.PublicUserAssets, getUserProfileImageBlobName(userId));
     await seedBlob(AzureContainer.UserAssets, `${userId}/CallBackground/0`);
-    await writeJsonBlob(await getContainerClient(AzureContainer.GenshinAssets), `${userId}/save.json`, content);
-    await seedBlob(AzureContainer.ClickerAssets, `${userId}/save.json`);
-    await seedBlob(AzureContainer.UserAssets, `${userId}/save.json`);
+    await writeJsonBlob(await getContainerClient(AzureContainer.GenshinAssets), getSaveBlobName(userId), content);
+    await seedBlob(AzureContainer.ClickerAssets, getSaveBlobName(userId));
+    await seedBlob(AzureContainer.UserAssets, getSaveBlobName(userId));
     await seedBlob(AzureContainer.GenshinAssets, `${getCharacterPackStagingPrefix(userId)}${hash}`);
     await seedBlob(AzureContainer.GenshinAssets, `character-packs/files/${sharedPackHash}`);
 

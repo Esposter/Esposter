@@ -30,6 +30,7 @@ import {
   friendsInSocial,
   getReverseTickedTimestamp,
   getRoomEmojiBlobName,
+  getSaveBlobName,
   getUserProfileImageBlobName,
   likesInPost,
   MessageMetadataType,
@@ -90,14 +91,12 @@ const getContextNames = (contexts: unknown[]): string[] =>
 
 describe(buildUserDataArchive, () => {
   const attachmentBytes = new Uint8Array([255]);
-  const callId = "callsession1";
   const content = JSON.stringify({});
   const description = "description";
   const emojiTag = "emojiTag";
-  const filename = "name";
+  const filename = "filename";
   const message = "a";
   const name = "name";
-  const otherCallId = "callsession2";
   const otherMessage = "b";
   const path = "path";
   const title = "title";
@@ -171,7 +170,7 @@ describe(buildUserDataArchive, () => {
     // The account's own stores: a save, a profile image, an owned resource with a working copy and asset, and a
     // Moderation record naming the person as its target
     const savesContainerClient = await getContainerClient(AzureContainer.GenshinAssets);
-    await writeJsonBlob(savesContainerClient, `${userId}/save.json`, content);
+    await writeJsonBlob(savesContainerClient, getSaveBlobName(userId), content);
     const publicContainerClient = await getContainerClient(AzureContainer.PublicUserAssets);
     await publicContainerClient
       .getBlockBlobClient(getUserProfileImageBlobName(userId))
@@ -594,9 +593,14 @@ describe(buildUserDataArchive, () => {
     // A room holds one call per thread, so the other person's call is in a room of their own
     const otherRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     const call = takeOne(
-      await mockDb.insert(callSessionsInMessage).values({ id: callId, roomId: room.id, userId }).returning(),
+      await mockDb
+        .insert(callSessionsInMessage)
+        .values({ id: crypto.randomUUID(), roomId: room.id, userId })
+        .returning(),
     );
-    await mockDb.insert(callSessionsInMessage).values({ id: otherCallId, roomId: otherRoom.id, userId: otherUserId });
+    await mockDb
+      .insert(callSessionsInMessage)
+      .values({ id: crypto.randomUUID(), roomId: otherRoom.id, userId: otherUserId });
 
     await buildUserDataArchive(userId, blobName);
     const entries = readArchiveEntries(blobName);
