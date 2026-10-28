@@ -36,13 +36,19 @@ const PACKAGE_REWRITTEN_PATTERNS = [
   // The atomic write the manifest rewrite goes through, which Windows reads back before the rename
   "_tmp_*",
   "src/components/index.ts",
-  // The generated sources a build hook writes, such as db-schema's registry and genshin-world's kit map
-  "src/generated/**",
   "src/index.ts",
   // A tool's own cache, which a build writes into the package's `node_modules` and nothing reads back as an input
   "node_modules/.cache/**",
   // The parity page's production build, written into the world package by `build:parity`
   "parity-build/**",
+];
+
+// The generated sources a package's own build hook rewrites: db-schema's registry and genshin-world's kit map
+// Only the package build excludes them, since the parity page reads the kit map and the committed game-data lock beside it
+const BUILD_HOOK_GENERATED_PATTERNS = [
+  "src/generated/characterKitMap/**",
+  "src/generated/relations.ts",
+  "src/generated/schema.ts",
 ];
 
 // Each package with a build script is a task of its own, run in its directory and ordered after the builds of the
@@ -91,7 +97,7 @@ const readPackageBuildTasks = () => {
             { auto: true },
             ...PNPM_STATE_PATTERNS,
             // Resolved from the workspace root, as the task belongs to it rather than to the package its `cwd` names
-            ...PACKAGE_REWRITTEN_PATTERNS.map((pattern) => ({
+            ...[...PACKAGE_REWRITTEN_PATTERNS, ...BUILD_HOOK_GENERATED_PATTERNS].map((pattern) => ({
               base: "workspace",
               pattern: `!${PACKAGES_DIRECTORY}/${directory}/${pattern}`,
             })),
