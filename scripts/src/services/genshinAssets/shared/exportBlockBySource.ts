@@ -9,6 +9,7 @@ import {
   SOURCE_EXPORT_SUFFIX,
 } from "#src/services/genshinAssets/shared/constants";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
+import { settleAll } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { readdir, rename, rm } from "node:fs/promises";
 import { basename, join } from "node:path";
@@ -26,10 +27,10 @@ export const exportBlockBySource = async (
   { isUnparsed = false }: { isUnparsed?: boolean } = {},
 ): Promise<void> => {
   const blockName = basename(block, ".blk");
-  // Each type's export runs synchronously as its body starts, so the exports still run in type order.
-  // Each type's files are moved once AnimeStudio has written them
-  await Promise.all(
-    types.map(async (type) => {
+  // Each type's export runs to completion, and its files are moved once AnimeStudio has written them, before the next
+  // Type starts; a failed type stops the rest before they export, as a loop over the types would
+  await settleAll(
+    types.map((type) => async () => {
       const typeDirectory = join(directory, blockName, type);
       runAnimeStudio(
         [
@@ -52,5 +53,6 @@ export const exportBlockBySource = async (
       );
       await rm(sourceDirectory, { recursive: true });
     }),
+    1,
   );
 };
