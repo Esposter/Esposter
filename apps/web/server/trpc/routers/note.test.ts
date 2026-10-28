@@ -39,14 +39,11 @@ describe("noteRouter", () => {
     });
 
     const blobName = `${getFilesDirectoryName(newResource.id)}/${hash}`;
+    const blobUrl = getBlobUrl(AzureContainer.ResourceAssets, blobName);
     const expiresOn = new Date(WRITE_SAS_DURATION_MS);
 
     expect(sasEntities).toStrictEqual([
-      {
-        id: hash,
-        isHeld: false,
-        sasUrl: getMockSasUrl(getBlobUrl(AzureContainer.ResourceAssets, blobName), "w", "b", expiresOn),
-      },
+      { id: hash, isHeld: false, sasUrl: getMockSasUrl(blobUrl, "w", "b", expiresOn) },
     ]);
   });
 

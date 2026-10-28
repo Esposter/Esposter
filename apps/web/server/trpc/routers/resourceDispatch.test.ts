@@ -89,10 +89,9 @@ describe("resourceDispatchRouter", () => {
       id: webpageResource.id,
     });
     const blobName = `${getFilesDirectoryName(webpageResource.id)}/${hash}`;
+    const blobUrl = getBlobUrl(AzureContainer.ResourceAssets, blobName);
 
-    expect(sasEntities).toStrictEqual([
-      { id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(getBlobUrl(AzureContainer.ResourceAssets, blobName)) },
-    ]);
+    expect(sasEntities).toStrictEqual([{ id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(blobUrl) }]);
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(blobName)).not.toBe(true);
   });
 
@@ -109,8 +108,10 @@ describe("resourceDispatchRouter", () => {
         id: webpageResource.id,
       });
 
+    const blobUrl = getBlobUrl(AzureContainer.ResourceAssets, blobName);
+
     await expect(requestUploadAddress()).resolves.toStrictEqual([
-      { id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(getBlobUrl(AzureContainer.ResourceAssets, blobName)) },
+      { id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(blobUrl) },
     ]);
     // The agent's shell sends the bytes inside the address's hour, and the blob lands under the file's hash
     vi.setSystemTime(WRITE_SAS_DURATION_MS / 2);
