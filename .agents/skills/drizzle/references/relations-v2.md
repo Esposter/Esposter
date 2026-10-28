@@ -76,11 +76,14 @@ orderBy: (table, { asc }) => [asc(table.position)]
 
 ## `with:` eager loading workaround
 
-Because of drizzle-orm issue 695 (https://github.com/drizzle-team/drizzle-orm/issues/695), eager-loaded relation shapes must be a constant object exported from the relation file. Define `XxxWithRelations` types inline right after the constant. Consumers import both from `@esposter/db-schema`:
+Because of drizzle-orm issue 695 (https://github.com/drizzle-team/drizzle-orm/issues/695), eager-loaded relation shapes must be a constant object exported from the relation file. The constant carries `// @TODO:` with that link and is deleted once the issue lands. The `XxxWithRelations` type is written in its model file under `models/`, and consumers import both from `@esposter/db-schema`:
 
 ```ts
-// foosInAppRelation.ts
+// relations/foo/fooInAppRelation.ts
+// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
 export const FooInAppRelations = { bar: true } as const;
+
+// models/foo/FooInAppWithRelations.ts
 export type FooInAppWithRelations = FooInApp & { bar: BarInApp };
 
 // In the router

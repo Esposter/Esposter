@@ -45,17 +45,17 @@ The server is the only writer of `likeCount`. The client reads it back with `pos
 
 Paths are `apps/web`-relative; a `packages/` path is repo-relative.
 
-| File                                                           | Role                                                               |
-| -------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `packages/db-schema/src/schema/post/likesInPost.ts`            | table + ±1 check                                                   |
-| `packages/db-schema/src/relations/post/postsInPostRelation.ts` | `PostInPostWithRelations` + `viewerLike`                           |
-| `server/trpc/routers/like.ts`                                  | transactional mutations                                            |
-| `server/services/post/getViewerPostRelations.ts`               | viewer-filtered likes fetch strategy                               |
-| `server/services/post/getPostWithViewerLike.ts`                | maps the fetched row to `viewerLike`                               |
-| `app/components/Post/VoteButton.vue`                           | one arrow: its toggle and its write                                |
-| `app/composables/post/useLikeOperations.ts`                    | optimistic vote patching, which calls the count re-read            |
-| `app/store/post/count.ts`                                      | the one owner of the post count re-read, and its fan-out to copies |
-| `app/store/post/like.ts`                                       | the one like store, over every list                                |
+| File                                                            | Role                                                               |
+| --------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `packages/db-schema/src/schema/post/likesInPost.ts`             | table + ±1 check                                                   |
+| `packages/db-schema/src/models/post/PostInPostWithRelations.ts` | `PostInPostWithRelations` + `viewerLike`                           |
+| `server/trpc/routers/like.ts`                                   | transactional mutations                                            |
+| `server/services/post/getViewerPostRelations.ts`                | viewer-filtered likes fetch strategy                               |
+| `server/services/post/getPostWithViewerLike.ts`                 | maps the fetched row to `viewerLike`                               |
+| `app/components/Post/VoteButton.vue`                            | one arrow: its toggle and its write                                |
+| `app/composables/post/useLikeOperations.ts`                     | optimistic vote patching, which calls the count re-read            |
+| `app/store/post/count.ts`                                       | the one owner of the post count re-read, and its fan-out to copies |
+| `app/store/post/like.ts`                                        | the one like store, over every list                                |
 
 ## Notes
 
