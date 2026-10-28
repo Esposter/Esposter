@@ -4,7 +4,7 @@ Keys carry scopes, reads are marked read-only and an agent's writes name their k
 
 ## The keys made before scopes
 
-Every key created before scopes was made for the follow-ups, the only tools there were. Each holds no permissions, which the endpoint reads as no scope, so a drain that worked yesterday is refused every tool until its owner makes a new key. A backfill gives each existing key the `FollowUps` scope and nothing else. The keys live in `auth.apiKeys` in Postgres, which a session cannot reach in production, so the backfill is a data migration applied at startup — an `UPDATE` of every key whose permissions are null to `{"mcp":["FollowUps"]}` — rather than a script run as the `backfills` skill runs one.
+Every key created before scopes was made for the follow-ups, the only tools there were. Each was made with no permissions, which the endpoint reads as no scope, so a drain run on one would be refused every tool. A backfill gives each existing key the `FollowUps` scope and nothing else. The keys live in `auth.apiKeys` in Postgres, which a session cannot reach in production, so the backfill is a data migration applied at startup — an `UPDATE` of every key whose permissions are null to `{"mcp":["FollowUps"]}` — rather than a script run as the `backfills` skill runs one.
 
 ## The owner's alone
 
