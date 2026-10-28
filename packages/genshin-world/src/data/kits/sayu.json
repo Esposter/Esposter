@@ -73,11 +73,11 @@
   "skillHolds.length": { "cause": "DiffersFromSource", "value": 11 },
   "skillHolds.0.action.hits.length": { "cause": "Unsourced", "value": 2 },
   "skillHolds.0.action.hits.0.area": {
-    "cause": "Unsourced",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
   "skillHolds.0.action.hits.0.element": { "cause": "Unsourced", "value": "Wind" },
-  "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 18 },
+  "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 18 },
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5332 } },
   "skillHolds.0.action.hits.1.element": { "cause": "Unsourced", "value": "Wind" },
   "skillHolds.0.action.hits.1.hitmarkFrames": { "file": "skill.go", "line": 27, "source": "Gcsim", "value": 48 },
