@@ -24,7 +24,7 @@ Fontaine is built into the world in build order, from the Court of Fontaine to t
 - `openspec/changes/genshin-trees-and-scatter/`: the vegetation and scatter the region is built on.
 - `openspec/changes/genshin-weather/`: the weather the region is built on.
 - `openspec/changes/genshin-recreation-passes/`: each scene is rebuilt in its recreation passes.
-- The Court's camera pose, which waits on the genshin-landmark-closure unit and its asset-map change on the PC, since the clock tower and the station have no OBJ exports yet.
+- The Court's camera pose, which waits on the genshin-landmark-closure unit and its asset-map change on the PC, since the station has no OBJ exports yet.
 
 ## Impact
 
