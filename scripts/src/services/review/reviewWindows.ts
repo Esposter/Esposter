@@ -44,7 +44,8 @@ export const reviewWindows = async (
     () =>
       forEachConcurrently(jobs, REVIEW_RUNNER_SESSION_CAP, async ({ batchIndex, files, windowIndex }) => {
         const { base, end } = takeOne(windows, windowIndex);
-        // The directory's throw is caught as a rejection, which only an async call makes of it
+        // The directory's throw is caught as an error: getResultAsync awaits its callback inside its own try, so a
+        // Synchronous throw from the callback lands in the same Err as a rejection
         const outcome: ReviewBatchOutcome =
           Date.now() >= deadline
             ? { isUnreached: true }
