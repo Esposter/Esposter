@@ -2,7 +2,7 @@ import type { ReviewFinding } from "#src/models/review/ReviewFinding";
 
 import { REVIEW_COMMIT_INSTRUCTION, REVIEW_SESSION_CHECKS } from "#src/services/review/constants";
 
-export interface FixerPromptInput {
+interface FixerPromptInput {
   base: string;
   end: string;
   findings: ReviewFinding[];

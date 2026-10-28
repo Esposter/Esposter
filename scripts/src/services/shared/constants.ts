@@ -39,7 +39,7 @@ export const MILLISECONDS_PER_MINUTE: number = SECONDS_PER_MINUTE * 1000;
 // `pnpm`'s lockfile, at the repository root. Named here because three unrelated scripts address it — the lockfile conflict
 // Resolver, the outdated report parses it, its benchmark reads it — and a literal repeated per
 // Consumer is one rename away from a script that reads a file that no longer exists.
-export const LOCKFILE = "pnpm-lock.yaml";
+const LOCKFILE = "pnpm-lock.yaml";
 // The empty tree, the same in every repository: a commit pointing at it carries its message alone, and as an attribute
 // Source it reads no `.gitattributes`, so git writes and reads bytes as they are
 export const EMPTY_TREE_SHA = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
@@ -75,7 +75,7 @@ export const ANSI_ESCAPE_REGEX: RegExp = /\u001B\[[\d;]*m/gu;
 // Prints the GraphQL error its `pr comment`, `pr create`, `issue create` and `issue close --comment` meet. GitHub states
 // No wait for it in any header
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
-export const GITHUB_CONTENT_CREATION_LIMIT_REGEX: RegExp = /GraphQL: was submitted too quickly\b/u;
+const GITHUB_CONTENT_CREATION_LIMIT_REGEX: RegExp = /GraphQL: was submitted too quickly\b/u;
 // GitHub refusing a request for its rate, in the exact wording each tool gives it: a 429 as `gh` prints it — `(HTTP 429)`,
 // A bare `gh: HTTP 429`, or `HTTP 429: …` ending on the request's URL — or as `git` over HTTPS does, a 403's own
 // Sentence, primary (`API rate limit exceeded for …`, GraphQL's `already exceeded`) or secondary (`You have exceeded a
@@ -83,7 +83,7 @@ export const GITHUB_CONTENT_CREATION_LIMIT_REGEX: RegExp = /GraphQL: was submitt
 // Content-creation limit (`GITHUB_CONTENT_CREATION_LIMIT_REGEX`). So a commit subject naming a limit, quoted in a git
 // Error, is not one; how long it lasts is GitHub's to state
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
-export const GITHUB_RATE_LIMIT_REGEX: RegExp = new RegExp(
+const GITHUB_RATE_LIMIT_REGEX: RegExp = new RegExp(
   String.raw`\(HTTP 429\)|^gh: HTTP 429$|HTTP 429\b.*\(https:\/\/\S+\)$|The requested URL returned error: 429\b|(?:^|gh: |GraphQL: |HTTP 403: |HttpError: )(?:API rate limit (?:already )?exceeded for |You have exceeded a secondary rate limit)|${GITHUB_CONTENT_CREATION_LIMIT_REGEX.source}`,
   "mu",
 );

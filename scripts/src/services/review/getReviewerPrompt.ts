@@ -1,6 +1,6 @@
 import { REVIEW_DIFF_CHARACTER_LIMIT, REVIEW_DIFF_LINE_LIMIT } from "#src/services/review/constants";
 
-export interface ReviewerPromptInput {
+interface ReviewerPromptInput {
   base: string;
   diff: string;
   end: string;

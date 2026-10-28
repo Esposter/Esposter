@@ -118,7 +118,7 @@ export const VIDEO_EXTENSIONS: ReadonlySet<string> = new Set([".mkv", ".mov", ".
 export const COMPARISON_HEIGHT = 540;
 // The mean difference, in percent, a shot must score under its reference to be approved: one percent is the 99%
 // Likeness the screens are held to. A reference that records its own approval keeps that bar instead
-export const APPROVAL_MEAN_DIFFERENCE_BAR = 1;
+const APPROVAL_MEAN_DIFFERENCE_BAR = 1;
 // The approval a screen gets when its reference records none
 export const DEFAULT_APPROVAL: ParityApproval = {
   bar: APPROVAL_MEAN_DIFFERENCE_BAR,

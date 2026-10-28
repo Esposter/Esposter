@@ -13,7 +13,7 @@ export const GCG_STANDARD_RULE_ID = 2;
 // Stage list: https://genshin-impact.fandom.com/wiki/Genius_Invokation_TCG/Stage, whose Adventure Challenges in Sumeru and
 // Duels in Inazuma sections name them.
 // The other challengers' games wait for their decks, since a game whose enemy deck has no slice is refused
-export const GCG_CHALLENGER_DUEL_GAME_IDS: number[] = [1011, 1012, 1083, 1104, 1105, 13105];
+const GCG_CHALLENGER_DUEL_GAME_IDS: number[] = [1011, 1012, 1083, 1104, 1105, 13105];
 // The residents' seats' duels and the challengers' duels, each game once, since game 1104 is both a seat's and a
 // Challenger's duel
 export const GCG_DUEL_GAME_IDS: number[] = [

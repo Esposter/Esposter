@@ -8,7 +8,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 
-export interface ClientBundleReading {
+interface ClientBundleReading {
   ageMilliseconds: number;
   report: ClientBundleReport;
 }

@@ -13,7 +13,7 @@ export interface SearchCandidate {
   url: string;
 }
 
-export interface SearchChapter {
+interface SearchChapter {
   startSeconds: number;
   title: string;
 }

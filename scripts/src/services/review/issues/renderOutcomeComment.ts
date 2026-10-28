@@ -1,4 +1,4 @@
-export interface OutcomeRow {
+interface OutcomeRow {
   finding: string;
   outcome: string;
   reason: string;

@@ -28,7 +28,7 @@ import { MAIN_BRANCH, QUEUE_BRANCH, REMOTE_MAIN_REF, REMOTE_QUEUE_REF } from "#s
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, InvalidOperationError, noop, Operation, takeOne } from "@esposter/shared";
 
-export interface ReviewRunInput extends DryRunOptions {
+interface ReviewRunInput extends DryRunOptions {
   findingsDirectory: string;
   from: string;
   to: string;

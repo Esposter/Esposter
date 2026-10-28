@@ -2,14 +2,14 @@ import type { ReviewFinding } from "#src/models/review/ReviewFinding";
 
 import { formatReviewFinding } from "#src/services/review/issues/formatReviewFinding";
 
-export interface ReviewIssueBodyInput {
+interface ReviewIssueBodyInput {
   base: string;
   end: string;
   items: ReviewIssueBodyItem[];
   runId: string;
 }
 
-export interface ReviewIssueBodyItem {
+interface ReviewIssueBodyItem {
   finding: ReviewFinding;
   // The reason a fixer left the finding open, which the rewritten body states beside its trigger
   reason?: string;
