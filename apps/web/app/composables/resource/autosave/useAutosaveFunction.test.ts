@@ -30,6 +30,9 @@ describe(useAutosaveFunction, () => {
   });
   const resourceId = crypto.randomUUID();
   const otherResourceId = crypto.randomUUID();
+  const hostRoute = "/autosave-host/:id";
+  const hostPath = `/autosave-host/${resourceId}`;
+  const otherHostPath = `/autosave-host/${otherResourceId}`;
   const mountAutosave = async () => {
     wrapper = await mountSuspended(autosaveHost);
     // Mounting resets the route, so the resource the edit is made on is named once the blade is up
@@ -130,14 +133,13 @@ describe(useAutosaveFunction, () => {
   test("writes the held edit before navigating away from its resource", async () => {
     expect.hasAssertions();
 
-    const hostPath = `/autosave-host/${resourceId}`;
     const elsewherePath = "/autosave-elsewhere";
     let pathAtSave: string | undefined;
     save.mockImplementation(() => {
       pathAtSave = router.currentRoute.value.path;
       return Promise.resolve();
     });
-    router.addRoute({ component: autosaveHost, path: "/autosave-host/:id" });
+    router.addRoute({ component: autosaveHost, path: hostRoute });
     router.addRoute({ component: defineComponent({ render: () => h("div") }), path: elsewherePath });
     await mountSuspended(defineComponent({ render: () => h(RouterView) }), { route: hostPath });
     autosave();
@@ -153,16 +155,15 @@ describe(useAutosaveFunction, () => {
   test("writes the held edit before changing the resource id within the same route", async () => {
     expect.hasAssertions();
 
-    const hostPath = `/autosave-host/${resourceId}`;
     let pathAtSave: string | undefined;
     save.mockImplementation(() => {
       pathAtSave = router.currentRoute.value.path;
       return Promise.resolve();
     });
-    router.addRoute({ component: autosaveHost, path: "/autosave-host/:id" });
+    router.addRoute({ component: autosaveHost, path: hostRoute });
     await mountSuspended(defineComponent({ render: () => h(RouterView) }), { route: hostPath });
     autosave();
-    await navigateTo(`/autosave-host/${otherResourceId}`, { replace: true });
+    await navigateTo(otherHostPath, { replace: true });
 
     expect(save).toHaveBeenCalledExactlyOnceWith();
     expect(pathAtSave).toBe(hostPath);
@@ -173,7 +174,6 @@ describe(useAutosaveFunction, () => {
   test("writes an edit made while the leaving write is in flight", async () => {
     expect.hasAssertions();
 
-    const hostPath = `/autosave-host/${resourceId}`;
     let isTyping = true;
     save.mockImplementation(() => {
       if (isTyping) {
@@ -182,10 +182,10 @@ describe(useAutosaveFunction, () => {
       }
       return Promise.resolve();
     });
-    router.addRoute({ component: autosaveHost, path: "/autosave-host/:id" });
+    router.addRoute({ component: autosaveHost, path: hostRoute });
     await mountSuspended(defineComponent({ render: () => h(RouterView) }), { route: hostPath });
     autosave();
-    await navigateTo(`/autosave-host/${otherResourceId}`, { replace: true });
+    await navigateTo(otherHostPath, { replace: true });
 
     expect(save).toHaveBeenCalledTimes(2);
   });
