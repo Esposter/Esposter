@@ -34,22 +34,23 @@ export const insertMergeFieldAt = <
   if (!content.success) return false;
 
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
-  const { applyEdit } = pageBuilderHistoryStore;
-  return applyEdit(
-    resourceId,
-    [
-      {
-        op: JsonPatchOperationType.Replace,
-        path: `${nodePointer}/props/content`,
-        value: appendMergeFieldToText(content.data, columnName),
+  return pageBuilderHistoryStore
+    .applyEdit(
+      resourceId,
+      [
+        {
+          op: JsonPatchOperationType.Replace,
+          path: `${nodePointer}/props/content`,
+          value: appendMergeFieldToText(content.data, columnName),
+        },
+      ],
+      "Insert merge field",
+    )
+    .match(
+      () => true,
+      (error) => {
+        console.error(error);
+        return false;
       },
-    ],
-    "Insert merge field",
-  ).match(
-    () => true,
-    (error) => {
-      console.error(error);
-      return false;
-    },
-  );
+    );
 };

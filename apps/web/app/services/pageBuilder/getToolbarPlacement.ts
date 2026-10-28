@@ -15,5 +15,5 @@ export const getToolbarPlacement = (box: OverlayBox, frame: FramePlacement) => {
   const aboveTop = top - TOOLBAR_HEIGHT;
   if (aboveTop >= frame.top) return { left, top: aboveTop };
   // A node running past the frame's bottom edge keeps its toolbar inside the frame, over the node's last rows
-  return { left, top: Math.min(bottom, frameBottom - TOOLBAR_HEIGHT) };
+  else return { left, top: Math.min(bottom, frameBottom - TOOLBAR_HEIGHT) };
 };
