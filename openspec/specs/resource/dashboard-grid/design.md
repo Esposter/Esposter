@@ -4,7 +4,7 @@ The dashboard's visuals sit on a grid the app binds to `vue-grid-layout-headless
 
 ## How it works
 
-The editor and the published view both render through one component, `apps/web/app/components/Dashboard/Grid.vue`, which calls the package's `useGridLayout` with the visuals' saved cells, the column count and the row height, and draws what it returns. Each visual is a tile at its geometry. The saved layout is first fitted to the columns on screen and compacted, so a narrower screen reflows without overlap and nothing is written.
+The editor and the published view both render through one component, `apps/web/app/components/Dashboard/Grid.vue`, which calls the package's `useGridLayout` with the visuals' saved cells, the column count and the row height, and draws what it returns. Each visual is a tile at its geometry. The saved layout is first fitted to the columns on screen and compacted, so a narrower screen reflows without overlap.
 
 A press on a tile starts a gesture in the package, and a move past the start distance becomes a drag. While the gesture runs the package holds the layout the gesture would leave, and the grid draws only a placeholder where the visual will land, so the store is not touched. On release the package commits the cells that changed, once, and the editor writes each change into the visual store. A cancelled pointer discards the gesture.
 
@@ -49,5 +49,5 @@ The package the grid is built on is [grid layout](../../vue-grid-layout-headless
 
 ## Sources
 
-- [Pointer Events, W3C](https://www.w3.org/TR/pointerevents/): pointer capture, the pointer cancel path, and `touch-action`, which the editor's tiles set and the published view leaves unset.
-- [grid-layout-plus#26, qmhc](https://github.com/qmhc/grid-layout-plus/issues/26): the report that the library injected its CSS from JavaScript, where a build cannot prefix, transpile or minify it, the ground for rejecting runtime CSS here.
+- [Pointer Events, W3C](https://www.w3.org/TR/pointerevents/): pointer capture, the pointer cancel path, and `touch-action`.
+- [grid-layout-plus#26, qmhc](https://github.com/qmhc/grid-layout-plus/issues/26): the report that the library injected its CSS from JavaScript.
