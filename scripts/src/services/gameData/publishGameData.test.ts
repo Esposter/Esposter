@@ -7,9 +7,10 @@ import { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutc
 import { GameDataTarget } from "#src/models/gameData/GameDataTarget";
 import { DAY_MS } from "#src/services/gameData/constants";
 import { formatGameDataLock } from "#src/services/gameData/formatGameDataLock";
+import { getGameDataBlobName } from "#src/services/gameData/getGameDataBlobName";
 import { planGameDataPublication } from "#src/services/gameData/planGameDataPublication";
 import { publishGameData } from "#src/services/gameData/publishGameData";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerClient, MockContainerDatabase } from "azure-mock";
 import { GameDataset } from "genshin-world";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -68,7 +69,7 @@ describe(publishGameData, () => {
     expect(MockContainerDatabase.get(GameDataTarget.Prod)?.size).toBe(4);
   });
 
-  test("stores nothing when the lock already names the publication", async () => {
+  test("stores nothing an account already holds when the lock already names the publication", async () => {
     expect.hasAssertions();
 
     const containerClientMap = createContainerClientMap();
@@ -77,8 +78,35 @@ describe(publishGameData, () => {
     );
     const rerun = await publishGameData({ containerClientMap, currentLock, publication, scopes });
 
-    expect(rerun).toStrictEqual({ outcome: GameDataPublishOutcome.Unchanged });
+    expect(rerun).toStrictEqual({
+      outcome: GameDataPublishOutcome.Published,
+      plannedLock: currentLock,
+      storedObjectCount: 4,
+      uploadedCountMap: { [GameDataTarget.Dev]: 0, [GameDataTarget.Prod]: 0 },
+    });
     expect(MockContainerDatabase.get(GameDataTarget.Dev)?.size).toBe(4);
+  });
+
+  test("stores a blob an account lost although the lock still names it", async () => {
+    expect.hasAssertions();
+
+    const containerClientMap = createContainerClientMap();
+    const currentLock = getPlannedLock(
+      await publishGameData({ containerClientMap, currentLock: emptyLock, publication, scopes }),
+    );
+    const record = takeOne(planGameDataPublication(publication).records);
+    const prodBlobs = MockContainerDatabase.get(GameDataTarget.Prod);
+    prodBlobs?.delete(getGameDataBlobName(record.dataset, record.hash));
+
+    const rerun = await publishGameData({ containerClientMap, currentLock, publication, scopes });
+
+    expect(rerun).toStrictEqual({
+      outcome: GameDataPublishOutcome.Published,
+      plannedLock: currentLock,
+      storedObjectCount: 4,
+      uploadedCountMap: { [GameDataTarget.Dev]: 0, [GameDataTarget.Prod]: 1 },
+    });
+    expect(MockContainerDatabase.get(GameDataTarget.Prod)?.size).toBe(4);
   });
 
   // A record that changes is one new object, and its index is the only other object a lock change needs

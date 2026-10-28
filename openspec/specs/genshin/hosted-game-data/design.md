@@ -140,7 +140,7 @@ A step in `scripts` reads what another step published through the lock on disk, 
 
 ## Updating
 
-A rerun of any builder is how a dataset changes. The builder hashes every record and merges them onto the lock: the scope's keys are dropped and the publication's laid over the rest (`scripts/src/services/gameData/mergeGameDataLock.ts`). If the lock already names every hash, it reports `unchanged, no request made` and needs no credential (`scripts/src/services/gameData/publishGameDataStep.ts`). Otherwise it lists each account, reuses any object the lock reaches or that was written within 45 days, uploads the rest at zstd level 12 in waves of 100, create-only, and writes the lock once both accounts hold everything (`scripts/src/services/gameData/constants.ts`, `MAX_CONCURRENT_BLOB_UPLOADS`; `packages/shared/src/services/zstd/constants.ts`, `DEFAULT_COMPRESSION_LEVEL` 12; `scripts/src/services/gameData/storeGameDataRecord.ts`).
+A rerun of any builder is how a dataset changes. The builder hashes every record and merges them onto the lock: the scope's keys are dropped and the publication's laid over the rest (`scripts/src/services/gameData/mergeGameDataLock.ts`). A dry run stops at the plan and needs no credential, and its `unchanged, no request made` note compares the lock alone (`scripts/src/services/gameData/publishGameDataStep.ts`). A real publish always lists each account, since the lock can name a blob an account has lost, reuses any object the lock reaches or that was written within 45 days, and uploads the rest at zstd level 12 in waves of 100, create-only, and writes the lock once both accounts hold everything (`scripts/src/services/gameData/constants.ts`, `MAX_CONCURRENT_BLOB_UPLOADS`; `packages/shared/src/services/zstd/constants.ts`, `DEFAULT_COMPRESSION_LEVEL` 12; `scripts/src/services/gameData/storeGameDataRecord.ts`).
 
 - **A dataset scope**: a `genshin:assets` or `genshin:text` builder rebuilds its whole dataset from the dump.
 - **A key scope**: `genshin:assets fit <component>` publishes each record it fits under its own key (`scripts/src/services/genshinAssets/commands/fitCommand.ts`), so `--only plants` replaces `windrise/plants` alone and `fit <region> --only ground` replaces that region's `ground/<region>/<area>` pieces alone. The parity loops publish the one record they refit after each run, with no dry run: `genshin:parity notes`, `expression` and `instruments` publish `login/music`, and `calibrate --write` publishes `login/stoneLight`. `genshin:data authored` publishes each authored file under its own key (`scripts/src/services/gameData/commands/authoredCommand.ts`), so it keeps the grounds the fits publish beside its own, and the rest of `login`, which the fits own.
@@ -151,9 +151,9 @@ Nothing a browser reads changes until the lock does: the lock commit is the swit
 flowchart TD
   Dataset["a genshin:assets or genshin:text builder: a dataset scope"] --> Plan
   Key["a fit's --only, a parity loop, genshin:data authored's files: a key scope"] --> Plan
-  Plan["hash every record, merge onto the lock: the scope's keys dropped, the rest kept"] --> Same{"the lock already names every hash?"}
-  Same -->|yes| Skip["unchanged, no request made"]
-  Same -->|no| Reach["list each account, reuse what the lock reaches or was written within 45 days"]
+  Plan["hash every record, merge onto the lock: the scope's keys dropped, the rest kept"] --> Dry{"a dry run?"}
+  Dry -->|yes| Skip["plan only: no account is listed, no request made"]
+  Dry -->|no| Reach["list each account, reuse what the lock reaches or was written within 45 days"]
   Reach --> Upload["zstd 12 once, waves of 100: create-only, or rewrite a stale copy"]
   Upload --> Write["write the lock once both accounts hold everything"]
   Write --> Commit["commit the lock"]
