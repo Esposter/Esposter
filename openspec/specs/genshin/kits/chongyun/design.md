@@ -7,7 +7,7 @@ Chongyun's kit is its record and one behaviour module, `createChongyunKitBehavio
 ```mermaid
 flowchart LR
   A["Layered Frost field stands"] --> B["Wielder on the field infused with Cryo each second"]
-  A --> C["Swap infuses the character coming on"]
+  A --> C["Swap infuses the character coming on, if melee"]
   B -.->|"modifies"| D["Steady Breathing adds Normal ATK SPD on the infusion"]
 ```
 

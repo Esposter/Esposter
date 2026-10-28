@@ -166,7 +166,7 @@ The test run SHALL fail when a security advisory for the upstream sanitiser or f
 
 ### Requirement: Every upstream issue and advisory carries exactly one verdict
 
-The audit of the upstream sanitiser SHALL record exactly one verdict for every issue, pull request and advisory it reads, as the dependency admission spec requires, and every in-scope defect SHALL have a regression case that names it.
+The audit of the upstream sanitiser SHALL record exactly one verdict for every issue, pull request and advisory it reads, and every in-scope defect SHALL have a regression case that names it.
 
 #### Scenario: A reviewer finds the outcome of an upstream advisory
 

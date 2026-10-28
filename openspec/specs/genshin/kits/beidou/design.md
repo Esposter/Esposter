@@ -55,5 +55,4 @@ flowchart LR
 ## Open
 
 - [ ] **The Targe does not end as Beidou falls** — contradicted by `{data-root}/cache/genshin-wiki/Category_Beidou_Talents.json`: Stormbreaker lists "Effects End Character Fallen" as a utility.
-- [ ] **The built discharge lands even when the strike misses, against the spec's discharge scenario** — contradicted by `{data-root}/cache/genshin-wiki/Category_Beidou_Talents.json`: discharges arise when Normal and Charged Attacks hit.
 - [ ] **Stunning Revenge counts HP lost to a drown or a wildlife's charge, and applies to her charged attack** — no source yet: the cached Beidou page gives Stunning Revenge no text.

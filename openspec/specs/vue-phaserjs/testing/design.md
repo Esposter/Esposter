@@ -36,4 +36,4 @@ The fixture boots one game per suite (`beforeAll`) and destroys it in `afterAll`
 
 ## Notes
 
-- Asset loading (`onPreload` / `scene.load.*`) fails in headless mode without real files, so preload tests stub textures via `scene.textures.addBase64()` and do not assert on assets the headless game cannot load ([testing spec](spec.md)).
+- Asset loading (`onPreload` / `scene.load.*`) fails in headless mode without real files, so preload tests either skip asset assertions or stub the textures they need ([testing spec](spec.md)).

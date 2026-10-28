@@ -306,7 +306,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 
 ## Notes
 
-- A leftover aura is taxed and decays as an attack of the gauge left would ([Auras](#auras)), since the sources give no rate for it.
+- A leftover aura from an attack is taxed and decays as an attack of the gauge left would ([Auras](#auras)), since the sources give no rate for it; a self aura is the exception and is untaxed.
 - **A Freeze over a Freeze keeps the larger.** Frozen triggered again over a Freeze keeps the larger gauge at the Freeze's growing rate. A new Freeze starts at 0.4U a second.
 - **No Frozen duration is extended.** Mona's Constellation 1 names a Frozen 15% longer, but the wiki's notes find it has no effect on Frozen's duration, contrary to its description ([Prophecy of Submersion](https://genshin-impact.fandom.com/wiki/Prophecy_of_Submersion)), and gcsim leaves it out as bugged (`{data-root}/cache/gcsim-v2.47.2/internal/characters/mona/cons.go:39`). No other source extends a Frozen, so the Frozen gauge's decay has no hook to lengthen it.
 - **A Moondrift's place is gcsim's guess.** gcsim leaves the three a metre out from the enemy at even bearings and marks the place a guess; it matters only to whether three stand within 20 metres of the character on the field. The kit keeps the three even bearings at a metre: gcsim gives no measured placement, so the even spacing is the least-biased choice until a recording says otherwise. The roadmap's manual verification has the question.

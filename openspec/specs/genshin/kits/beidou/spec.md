@@ -91,7 +91,7 @@ While the Thunderbeast's Targe stands, Beidou's strikes and charged attack SHALL
 - **GIVEN** the Targe stands and a discharge has not been cast in the last second
 - **WHEN** one of Beidou's strikes or her charged attack starts its hit
 - **THEN** a discharge of 1 unit of Electro lands on each enemy inside the strike's reach
-- **AND** the discharge lands when the strike hits (the built discharge lands on a miss too, see the [design's Open list](design.md#open))
+- **AND** the discharge lands when the strike hits
 
 #### Scenario: A second hit within a second casts no discharge
 

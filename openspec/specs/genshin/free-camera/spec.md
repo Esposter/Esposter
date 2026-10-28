@@ -76,12 +76,12 @@ The first connected gamepad's left stick SHALL move the free camera and its righ
 
 ### Requirement: Touch moves and looks under the thumbs
 
-On a touch screen a stick under the left thumb SHALL move the camera, a drag anywhere else on the screen SHALL turn the look, and a button SHALL rise.
+On a touch screen a stick under the left thumb SHALL move the camera, a drag on the screen outside the stick and the HUD's pieces SHALL turn the look, and a button SHALL rise.
 
 #### Scenario: Left thumb stick moves and right drag looks
 
 - **GIVEN** a touch screen is in use
-- **WHEN** the player moves a stick under the left thumb and drags anywhere else on the screen
+- **WHEN** the player moves a stick under the left thumb and drags on the screen outside the stick and the HUD's pieces
 - **THEN** the camera moves with the stick and turns with the drag
 
 #### Scenario: Touch button rises

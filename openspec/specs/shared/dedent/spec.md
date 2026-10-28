@@ -156,7 +156,7 @@ The template tag SHALL return a new tag with the given options merged over the c
 
 ### Requirement: Every upstream issue carries exactly one verdict
 
-The audit of the upstream package SHALL record exactly one verdict for every issue and pull request it reads, as the dependency admission spec requires.
+The audit of the upstream package SHALL record exactly one verdict for every issue and pull request it reads.
 
 #### Scenario: A reviewer finds the outcome of an upstream issue
 

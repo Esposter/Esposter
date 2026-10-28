@@ -17,7 +17,7 @@ flowchart TD
   REF{"Reference images on disk?"} -->|yes| CMP["compare"]
   REF -->|no| KEEP["Row kept"]
   CMP --> MERGE["mergeParityScores"]
-  MERGE --> SNAP["ParityReferenceMap.snapshot.md"]
+  MERGE -->|"not a witness"| SNAP["ParityReferenceMap.snapshot.md"]
   SNAP --> DIFF["Diff"]
 ```
 

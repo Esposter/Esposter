@@ -8,7 +8,7 @@
 flowchart TD
   input["Template or string"]
   insertValues["Interpolate values"]
-  continuations["Remove line continuations"]
+  continuations["Remove line continuations, when escaping"]
   dedent["Strip the common indentation"]
   trim{"trimWhitespace?"}
   trimmed["Trim the result"]

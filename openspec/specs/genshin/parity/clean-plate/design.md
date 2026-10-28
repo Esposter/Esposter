@@ -6,11 +6,13 @@ An interface drawn over a scene is compared over the scene's own colour, not ove
 
 ```mermaid
 flowchart TD
-  REF["Reference with a backdrop"] --> FULL{"Region covers the whole frame?"}
-  FULL -->|no| FILL["Harmonic fill"]
-  FULL -->|yes| NAMED{"Names pieces to fill?"}
-  NAMED -->|yes| PIECES["Pieces filled"]
-  NAMED -->|no| FRAME["Frame kept"]
+  REF["Reference with a backdrop"] --> NAMED{"Names pieces to fill?"}
+  NAMED -->|no| FULL{"Region covers the whole frame?"}
+  NAMED -->|yes| PFULL{"A piece covers the whole frame?"}
+  FULL -->|no| FILL["Harmonic fill of the region"]
+  FULL -->|yes| FRAME["Frame kept"]
+  PFULL -->|no| PIECES["Pieces filled"]
+  PFULL -->|yes| FRAME
   FILL --> PLATE["Clean plate"]
   PIECES --> PLATE
   FRAME --> PLATE

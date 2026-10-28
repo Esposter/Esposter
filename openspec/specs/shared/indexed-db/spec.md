@@ -117,7 +117,7 @@ The wrapper SHALL offer opening with its upgrade, blocked, blocking and terminat
 
 ### Requirement: Every upstream issue and pull request carries exactly one verdict
 
-The audit of the upstream repository SHALL record exactly one verdict for every issue and pull request it reads, as the dependency admission spec requires.
+The audit of the upstream repository SHALL record exactly one verdict for every issue and pull request it reads.
 
 #### Scenario: A reviewer finds the outcome of an upstream issue
 
