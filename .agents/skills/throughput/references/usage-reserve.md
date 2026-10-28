@@ -10,10 +10,9 @@ The plan's usage is spent by the session and its agents, while a compute-queue r
 
 A window's end past its maintenance line is spent, not saved: the five-hour window's unused end is lost at its reset, and the weekly one's is the margin that lets the work in flight land before the wind-down. `haiku` stretches either furthest, because limits weigh a token by its family. From a window's maintenance tier, entered at its line or by spending ahead of an even pace, until it resets, the session:
 
-1. Starts no new feature, design or proposal.
-2. Spends the rest of the window on `haiku` agents for cleanup: fixes the findings of a code review of the window's own recent commits; drains an open sweep ledger (the `sweeps` skill); brings the docs and skills in line with the code changed this window (the Key-files sweep in `AGENTS.md`'s finishing steps); fixes CI's typecheck and lint reds; and lands the refactors, simplifications and optimisations the compute queue's runs surfaced.
-3. Writes a finding that needs judgement down as a follow-up (the `follow-ups` plugin's capture skill), not decided on `haiku`.
-4. Keeps the compute queue's runners going.
+1. Spends the rest of the window on `haiku` agents for cleanup: fixes the findings of a code review of the window's own recent commits; drains an open sweep ledger (the `sweeps` skill); brings the docs and skills in line with the code changed this window (the Key-files sweep in `AGENTS.md`'s finishing steps); fixes CI's typecheck and lint reds; and lands the refactors, simplifications and optimisations the compute queue's runs surfaced.
+2. Writes a finding that needs judgement down as a follow-up (the `follow-ups` plugin's capture skill), not decided on `haiku`.
+3. Keeps the compute queue's runners going.
 
 ## Wind-down
 
