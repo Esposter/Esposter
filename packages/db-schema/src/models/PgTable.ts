@@ -1,4 +1,4 @@
-import type { createMetadataSchema } from "#src/metadataSchema";
+import type { createMetadataSchema } from "#src/createMetadataSchema";
 import type {
   AnyPgColumnBuilder,
   PgBuildColumns,

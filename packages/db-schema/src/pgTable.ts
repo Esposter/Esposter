@@ -6,7 +6,7 @@ import type {
   PgTableExtraConfigValue,
 } from "drizzle-orm/pg-core";
 
-import { createMetadataSchema } from "#src/metadataSchema";
+import { createMetadataSchema } from "#src/createMetadataSchema";
 import { camelCase } from "drizzle-orm/pg-core";
 
 export const pgTable: PgTable = <
