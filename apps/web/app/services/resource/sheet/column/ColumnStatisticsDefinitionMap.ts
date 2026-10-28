@@ -76,7 +76,7 @@ export const ColumnStatisticsDefinitionMap = {
     applicableColumnTypes: [ColumnType.Boolean, ColumnType.Date, ColumnType.Number, ColumnType.String],
     compute: ({ nullCount, values }) =>
       values.length === 0 ? undefined : Math.round((nullCount / values.length) * 1000) / 10,
-    format: (value) => (value === undefined ? "—" : `${value}%`),
+    format: (value) => (value === undefined ? formatOptional(value) : `${value}%`),
     key: ColumnStatisticName.NullPercentage,
     title: "Null %",
   }),
