@@ -56,7 +56,7 @@ flowchart TD
 
 The world screen keeps the player's characters and their party. A new player's is the Traveler alone, made by `createCharacter` once the roster arrives, at level 1 with the weapon the game gives them ([character attributes](../character-attributes/design.md)). Once a frame, in play with no screen over the world, the first party key pressed is passed to `switchPartyMember` at the canvas clock's elapsed seconds, so a screen over the world holds the keys as it holds the rest of play.
 
-The character on the field fights through its kit, which prices every character's hits from its attributes with the Traveler's kit until the kits run gives each its own ([combat](../combat/design.md)). An enemy's strike, past the team's shields, and a drowning take HP from the party, and a team that has all fallen opens the game over screen, whose Revive brings it back at 35% and jumps it to the nearest unlocked teleport waypoint, or leaves it where it fell when none is unlocked. A domain's challenge does not revive its team yet: no domain calls `reviveParty`.
+The character on the field fights through its kit, which prices every character's hits from its attributes with the Traveler's kit until the kits run gives each its own ([combat](../combat/design.md)). An enemy's strike, past the team's shields, and a drowning take HP from the party, and a team that has all fallen opens the game over screen, whose Revive brings it back at 35% and jumps it to the nearest unlocked teleport waypoint, or leaves it where it fell when none is unlocked. A domain's challenge revives its team at once, without the game over screen, through `reviveFallenParty` in `packages/genshin-world/src/composables/useWorldCombat.ts`, which calls `reviveParty`.
 
 ## Key files
 
@@ -139,7 +139,6 @@ The character on the field fights through its kit, which prices every character'
 - [ ] **The kit bench put a large share of its time in the party's writes** — no source yet: no bench output that records the share is cited.
 - [ ] **`getActiveCharacterId` returns the deployed team's member at the active index** — no source yet: no test holds it.
 - [ ] **The world screen makes the Traveler from the roster at level 1 with its weapon, and switches on the first party key once a frame** — no source yet: no test holds the world screen's party wiring.
-- [ ] **A domain's challenge revives its team without the screen** — no source yet: no domain-challenge revive call was located in `packages/genshin-world/src/services/party/` or `packages/genshin-world/src/composables/useWorldDomains.ts`.
 - [ ] **An enemy's strike that lands on a taunt is the taunt's to take, as the game does** — no source yet: `packages/genshin-world/src/composables/useWorldCombat.ts` (`strikeParty`) sends a taunted strike to the taunt and every other strike to the character on the field through the team's shields, but no game text or wiki page checks the taunt's targeting.
 - [ ] **A drowning takes every member's energy** — no source yet: a recording of a drowning, not yet captured.
 - [ ] **Only the character on the field takes an enemy's strike** — no source yet: no test holds it, and the wiki's Party page is not cached.
