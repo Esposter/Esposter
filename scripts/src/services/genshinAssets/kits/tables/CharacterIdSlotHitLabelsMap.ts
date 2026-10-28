@@ -195,6 +195,9 @@ export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
       },
     },
   ],
+  // Aino. Her Water Ball reads its multiplier from her burst's label, which gcsim's join does not reach, since her burst's
+  // Cooldown tag is a tuple return the reader does not resolve, so the attack is left out of the kit
+  [10_000_121, { values: { "hits.waterBall.multiplier": { combatTalent: BURST, label: "Water Ball DMG" } } }],
   // Nefer
   [
     10_000_122,
@@ -223,9 +226,6 @@ export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
       },
     },
   ],
-  // Aino. Her Water Ball reads its multiplier from her burst's label, which gcsim's join does not reach, since her burst's
-  // Cooldown tag is a tuple return the reader does not resolve, so the attack is left out of the kit
-  [10_000_121, { values: { "hits.waterBall.multiplier": { combatTalent: BURST, label: "Water Ball DMG" } } }],
   // Jahoda. Her robot's strike reads its multiplier from her burst's label, which gcsim's join does not reach
   [
     10_000_124,
