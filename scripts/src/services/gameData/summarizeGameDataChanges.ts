@@ -2,7 +2,7 @@ import type { GameDataRecord } from "#src/models/gameData/GameDataRecord";
 import type { GameDataLock } from "genshin-world";
 
 import { countGameDataPathChanges } from "#src/services/gameData/countGameDataPathChanges";
-import { readPublishedGameDataObject } from "#src/services/gameData/readPublishedGameDataObject";
+import { readPublishedGameDataObjectIfStored } from "#src/services/gameData/readPublishedGameDataObject";
 import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 
@@ -31,10 +31,10 @@ export const summarizeGameDataChanges = async (
 ): Promise<string[]> => {
   const recordJsonMap = new Map(records.map(({ hash, json }) => [hash, json]));
   // A hash the next lock names under a dataset is one this publication planned, or one the current lock published
-  const readNext = <T>(dataset: string, hash: string): Promise<T> => {
+  const readNext = <T>(dataset: string, hash: string): Promise<T | undefined> => {
     const json = recordJsonMap.get(hash);
     return json === undefined
-      ? readPublishedGameDataObject<T>(dataset, hash)
+      ? readPublishedGameDataObjectIfStored<T>(dataset, hash)
       : Promise.resolve(parseMachineJson<T>(json));
   };
   const objectDiff = diffEntries(currentLock.objects, nextLock.objects);
@@ -43,10 +43,10 @@ export const summarizeGameDataChanges = async (
   const entryDiffs = await Promise.all(
     indexDiff.changes.map(async ({ afterHash, beforeHash, name }) => {
       const [beforeEntries, afterEntries] = await Promise.all([
-        readPublishedGameDataObject<Record<string, string>>(name, beforeHash),
+        readPublishedGameDataObjectIfStored<Record<string, string>>(name, beforeHash),
         readNext<Record<string, string>>(name, afterHash),
       ]);
-      return { dataset: name, entryDiff: diffEntries(beforeEntries, afterEntries), prefix: `${name}/*` };
+      return { dataset: name, entryDiff: diffEntries(beforeEntries ?? {}, afterEntries ?? {}), prefix: `${name}/*` };
     }),
   );
   const comparisons = [
@@ -59,7 +59,7 @@ export const summarizeGameDataChanges = async (
   // An index can hold thousands of changed entries, so the published side is fetched a few objects at a time
   await forEachConcurrently(comparisons, COMPARISON_CONCURRENCY, async ({ change, dataset, prefix }) => {
     const [before, after] = await Promise.all([
-      readPublishedGameDataObject<unknown>(dataset, change.beforeHash),
+      readPublishedGameDataObjectIfStored<unknown>(dataset, change.beforeHash),
       readNext<unknown>(dataset, change.afterHash),
     ]);
     const pathCountMap = new Map<string, number>();
