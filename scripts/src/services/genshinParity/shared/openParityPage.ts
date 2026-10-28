@@ -16,6 +16,7 @@ import { resolveParityPageRoot } from "#src/services/genshinParity/shared/resolv
 import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { existsSync } from "node:fs";
+import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { chromium } from "playwright";
 
@@ -47,6 +48,7 @@ export const openParityPage = async ({
   screen,
   width,
   witness,
+  witnessMeshes,
 }: ParityPageOptions): Promise<{ close: () => Promise<void>; page: Page }> => {
   // Unlimited, a frame is drawn as soon as the last is, so a frame's time is what drawing it costs rather than the
   // Display's refresh
@@ -96,7 +98,7 @@ export const openParityPage = async ({
       : "";
     if (witness) {
       const { assets, root } = getComponentDirectory(witness);
-      await page.route(`**${WITNESS_PATH_PREFIX}**`, (route) => {
+      await page.route(`**${WITNESS_PATH_PREFIX}**`, async (route) => {
         const path = decodeURIComponent(new URL(route.request().url()).pathname.slice(WITNESS_PATH_PREFIX.length));
         const filePath = path === WITNESS_LAYOUT_PATH ? join(root, WITNESS_LAYOUT_FILE_NAME) : join(assets, path);
         // An export not on disk is answered as missing: the page fails loading it, and whatever failure follows is thrown
@@ -104,6 +106,13 @@ export const openParityPage = async ({
         if (!existsSync(filePath)) {
           missingFiles.push(filePath);
           return route.fulfill({ status: 404 });
+        }
+        // A page that draws only some meshes is served the placements of those alone: the city's others only slow it
+        if (path === WITNESS_LAYOUT_PATH && witnessMeshes) {
+          const meshes = new Set(witnessMeshes);
+          const layout = JSON.parse(await readFile(filePath, "utf8")) as { placements: { mesh: string }[] };
+          layout.placements = layout.placements.filter(({ mesh }) => meshes.has(mesh));
+          return route.fulfill({ body: JSON.stringify(layout), contentType: "application/json" });
         }
         return route.fulfill({ path: filePath });
       });

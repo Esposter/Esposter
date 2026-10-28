@@ -1,6 +1,7 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
-import { PARITY_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { getLandmarkMeshes } from "#src/services/genshinAssets/witness/getLandmarkMeshes";
+import { PARITY_DIRECTORY, REFERENCES_DIRECTORY, STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { projectWitnessPoint } from "#src/services/genshinParity/witness/projectWitnessPoint";
@@ -45,7 +46,12 @@ export const solveReferencePose = async (
   rms: number;
 }> => {
   await fetchReferences();
-  const { close, height: pageHeight, image, page } = await openWitnessPage(referenceId, witness);
+  const {
+    close,
+    height: pageHeight,
+    image,
+    page,
+  } = await openWitnessPage(referenceId, witness, STRUCTURE_WIDTH, getLandmarkMeshes(witness));
   return withFinalizerAsync(
     async () => {
       const { correspondences, given, height, names, width } = await readReferenceLandmarks(

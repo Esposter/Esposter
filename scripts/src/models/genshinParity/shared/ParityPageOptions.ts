@@ -21,4 +21,6 @@ export interface ParityPageOptions {
   width: number;
   // A component whose exports the page draws in place of the scene's own parts, served to it from the exports
   witness?: DerivedAssetComponent;
+  // The only meshes the witness's placements keep, for a page that draws a few of a component's parts and no more
+  witnessMeshes?: readonly string[];
 }

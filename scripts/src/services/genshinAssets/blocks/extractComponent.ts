@@ -21,7 +21,7 @@ import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLay
 import { resolveObjectPointer } from "#src/services/genshinAssets/shared/resolveObjectPointer";
 import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
 import { toMaterialTextures } from "#src/services/genshinAssets/shared/toMaterialTextures";
-import { DerivedAssetLandmarkMap } from "#src/services/genshinAssets/witness/DerivedAssetLandmarkMap";
+import { getLandmarkMeshes } from "#src/services/genshinAssets/witness/getLandmarkMeshes";
 import { WORLD_JSON_NAME } from "#src/services/genshinAssets/world/constants";
 import { deriveCapitalWorld } from "#src/services/genshinAssets/world/deriveCapitalWorld";
 import { exportWorld } from "#src/services/genshinAssets/world/exportWorld";
@@ -46,7 +46,7 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
   const options = DerivedAssetComponentMap[component];
   const { roots: componentRoots, spawns = [] } = options;
   // A landmark's mesh is exported by its name too, so `pose` finds it where no pointer reaches it
-  const landmarkMeshes = Object.values(DerivedAssetLandmarkMap[component]).map(({ mesh }) => mesh);
+  const landmarkMeshes = getLandmarkMeshes(component);
   const landmarkPattern = landmarkMeshes.length > 0 ? `^(${landmarkMeshes.join("|")})$` : "";
   const namePattern = [options.namePattern, landmarkPattern]
     .filter(Boolean)

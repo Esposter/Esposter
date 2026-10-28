@@ -17,6 +17,8 @@ export const openWitnessPage = async (
   referenceId: string,
   witness: DerivedAssetComponent,
   width: number = STRUCTURE_WIDTH,
+  // The only meshes the witness keeps, for a page that draws a few of a component's parts (`ParityPageOptions`)
+  witnessMeshes?: readonly string[],
 ): Promise<{
   checkIsScored: (pixel: number, width: number) => boolean;
   close: () => Promise<void>;
@@ -36,6 +38,7 @@ export const openWitnessPage = async (
     screen: reference.screen,
     width,
     witness,
+    witnessMeshes,
   });
   const { region } = reference;
   const checkIsScored = (pixel: number, targetWidth: number): boolean => {
