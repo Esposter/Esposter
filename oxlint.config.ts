@@ -2,9 +2,6 @@ import type { OxlintConfig } from "oxlint";
 
 import { defineConfig } from "oxlint";
 
-// The costliest type-aware rules, off in every run: switched to "error" for an occasional pass, the oxlint ledger's
-// Row, then back. See openspec/specs/architecture/lint-toolchain/design.md#what-the-type-aware-pass-costs
-const COSTLY_TYPE_AWARE_SEVERITY = "off";
 // The Tiled tileset `.tsx` files are XML, not code. ESLint's ignores import this glob too,
 // So the two passes never ignore different trees.
 export const TILESET_IGNORE_PATTERN = "**/assets/dungeons/tilesets/**/*.tsx";
@@ -442,15 +439,11 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "typescript/explicit-function-return-type": "off",
     "typescript/explicit-member-accessibility": ["error", { accessibility: "no-public" }],
     "typescript/explicit-module-boundary-types": "off",
-    "typescript/no-confusing-void-expression": COSTLY_TYPE_AWARE_SEVERITY,
     "typescript/no-deprecated": "error",
     "typescript/no-dynamic-delete": "off",
     "typescript/no-empty-interface": "off",
     "typescript/no-empty-object-type": ["error", { allowInterfaces: "with-single-extends" }],
-    "typescript/no-floating-promises": COSTLY_TYPE_AWARE_SEVERITY,
-    "typescript/no-generated-empty-object-type": COSTLY_TYPE_AWARE_SEVERITY,
     "typescript/no-invalid-void-type": "off",
-    "typescript/no-misused-promises": COSTLY_TYPE_AWARE_SEVERITY,
     "typescript/no-redundant-type-constituents": "off",
     "typescript/no-restricted-types": [
       "error",
@@ -473,7 +466,6 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "typescript/promise-function-async": "off",
     "typescript/restrict-plus-operands": "off",
     "typescript/strict-boolean-expressions": "off",
-    "typescript/strict-void-return": COSTLY_TYPE_AWARE_SEVERITY,
     "typescript/switch-exhaustiveness-check": ["error", { considerDefaultExhaustiveForUnions: true }],
     "typescript/unbound-method": "off",
     "unicorn/filename-case": "off",

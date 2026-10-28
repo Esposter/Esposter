@@ -55,29 +55,22 @@ A ban SHALL be written in the first mechanism that a planted violation shows can
 - **THEN** the ban goes silent
 - **AND** the ban must be written in the fast pass's configuration to stay in force
 
-### Requirement: The five costliest type-aware rules run on a periodic pass
+### Requirement: The five costliest type-aware rules run in routine lint
 
-The five costliest type-aware rules SHALL NOT run in routine lint and SHALL run on a periodic pass that fixes what they report.
+The five costliest type-aware rules SHALL run in routine lint, and what they report SHALL fail it.
 
 #### Scenario: Routine lint
 
 - **GIVEN** a change to lint
 - **WHEN** routine lint runs
-- **THEN** the five costliest type-aware rules do not run
+- **THEN** the five costliest type-aware rules run
+- **AND** each one reports at `error`
 
-#### Scenario: The periodic pass
+#### Scenario: An unhandled promise
 
-- **GIVEN** the periodic pass is due
-- **WHEN** it runs
-- **THEN** the five rules are enabled
-- **AND** what they report is fixed
-- **AND** the rules are turned off again
-
-#### Scenario: An unhandled promise between periodic passes
-
-- **GIVEN** an unhandled promise committed between periodic passes
+- **GIVEN** an unhandled promise committed
 - **WHEN** routine lint runs
-- **THEN** the promise is not reported
+- **THEN** the promise is reported
 
 ### Requirement: A deprecated library call fails lint on every run
 
