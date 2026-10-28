@@ -1,6 +1,6 @@
 ## Purpose
 
-Every issue and pull request on Baroshem/nuxt-security, open and closed, with its verdict from the dependency admission triage, before nuxt-security-module writes any code. The audit records each upstream item's verdict and its severity, and each defect is reproduced before it is treated as ours to fix.
+Every issue and pull request on Baroshem/nuxt-security, open and closed, with its verdict from the dependency admission triage, and each verdict on record when nuxt-security-module writes code. The audit records each upstream item's verdict and its severity, and each defect is reproduced before it is treated as ours to fix.
 
 ## Requirements
 

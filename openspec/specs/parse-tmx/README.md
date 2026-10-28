@@ -49,7 +49,7 @@ The elements the reader models are the map, its `editorsettings` and `export`, t
 
 ## Upstream
 
-Every issue of the upstream [tmx-map-parser](https://github.com/praghus/tmx-map-parser) repository, open and closed, graded by the [dependency admission triage](../architecture/dependency-admission/design.md). The repository has three issues, and its pull requests are dependency updates, which the catalog owns.
+Every issue of the upstream [tmx-map-parser](https://github.com/praghus/tmx-map-parser) repository, open and closed, graded by the [dependency admission triage](../architecture/dependency-admission/design.md). The repository's few issues each have a row below, and its pull requests are dependency updates, which the catalog owns.
 
 | Upstream                                                                                | Verdict            | Proof                                                                                                                                                                                                                                                            |
 | --------------------------------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

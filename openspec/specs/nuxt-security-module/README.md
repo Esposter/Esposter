@@ -23,13 +23,13 @@ What is decided against is in [rejected](../../rejected/nuxt-security-module/), 
 
 Each hot path is a benchmark beside its source, and each has a committed report of its means: the nonce, the headers, the route rules and the page rewrite in `src/runtime/nitro/plugins/` and `src/runtime/services/`, and the server chain in `src/runtime/server/middleware/`. The comparison with the upstream 2.6.0 ran once on the same host, over the same page of about sixty sections, with each path compared by its median. The figures are ratios and magnitudes, with the upstream's time over ours:
 
-- **Applying the headers to a response** is about 6 times faster: a few microseconds against about 40. Upstream rebuilds each request's rules and writes its headers through its own helpers, where ours reads rules resolved once.
+- **Applying the headers to a response** is about 6 times faster: a few microseconds against tens of microseconds. Upstream rebuilds each request's rules and writes its headers through its own helpers, where ours reads rules resolved once.
 - **Rewriting a rendered page with its nonce and SRI attributes** is about 20 to 30 times faster. This is the largest gap, since upstream's two rewrites run as regular expressions over each section after masking its quoted attributes, and ours scan each tag once.
-- **Resolving a request's route rules** is about 5 times faster: a few microseconds against about 18. Upstream builds its router and clones its route table for every request. Ours matches a table built once at startup and merges the matched rules only for the event.
+- **Resolving a request's route rules** is about 5 times faster: a few microseconds against tens of microseconds. Upstream builds its router and clones its route table for every request. Ours matches a table built once at startup and merges the matched rules only for the event.
 - **Generating the nonce** is the same on both sides, a few microseconds each. The module does not claim a gain here.
 - **The whole server chain** is about 7 times faster under both configurations. The chain is the handlers each module registers for a request to a page path, measured in `src/runtime/server/middleware/serverChain.bench.ts` with the app's options and with a minimal configuration that keeps only the request size limit. Upstream registers its server middlewares whatever the config says, and each one runs on every request, looks up the route's rules and returns early when its feature is off. Ours registers a handler only when its option is on, so a disabled feature costs nothing per request. The minimal configuration is the one that shows it: upstream's five handlers still run, and ours runs one.
 
-The chain figures are medians of three one-off runs of the same harness on one host, at 2000 iterations after warm-up, both sides reading `serverChain.fixture.ts`. Upstream's median is the upstream 2.6.0 handlers with its own defaults laid under the same options, so its default XSS validator runs under the app's options, as it would for an app that does not set it off. The ratio spans about 4 to 11 across the three runs under the app's options, and about 6.5 to 7.4 under the minimal one. The committed bench reports means and gates them; it does not record the medians.
+The chain figures are medians of three one-off runs of the same harness on one host, at 2000 iterations after warm-up, both sides reading `serverChain.fixture.ts`. Upstream's median is the upstream 2.6.0 handlers with its own defaults laid under the same options, so its default XSS validator runs under the app's options, as it would for an app that does not set it off. The ratio varies widely across the three runs under the app's options, and sits near seven under the minimal one. The committed bench reports means and gates them; it does not record the medians.
 
 Not comparable, or not measured:
 
@@ -44,7 +44,16 @@ Every option of upstream 2.6.0 has exactly one verdict below: ported under our n
 
 The table is generated from `services/optionParity.ts`, against the upstream option names in `services/upstreamModuleOptions.ts`, which are read from the 2.6.0 `ModuleOptions` and `SecurityHeaders` declarations. The option parity test fails when an upstream option has no row or has two, so a newer upstream option shows up as a missing row when the names are read again.
 
-Most rows are ported under upstream's own default. A changed default's note names the source it rests on, and the two rows with no port give their reasons. Every option without a port has its reason, so this pass ported nothing new.
+```mermaid
+flowchart LR
+  decl["Upstream 2.6.0 declarations"] --> names["upstreamModuleOptions.ts"]
+  names --> parity["optionParity.ts"]
+  parity --> table["The option parity table"]
+  names --> test["optionParity.test.ts"]
+  parity --> test
+```
+
+Most rows are ported under upstream's own default. A changed default's note names the source it rests on, and the two rows with no port give their reasons. Every option without a port has its reason.
 
 | Upstream option                         | Verdict                 | Ours                                    | Note                                                                                                                                                                                                                                                                                                              |
 | :-------------------------------------- | :---------------------- | :-------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

@@ -10,11 +10,11 @@ The email editor's canvas, preview and fields belong to the [email editor](../re
 
 ```mermaid
 flowchart LR
-  DOC["a block document the registry's schema accepted"] --> FOLD["renderBlockNodes: each node after its slots"]
+  DOC["Block document"] --> FOLD["renderBlockNodes: each node after its slots"]
   FOLD --> NODE["each type's render"]
   NODE --> JSON["MJML's JSON form, the head from the root's props"]
   JSON --> COMPILE["the consumer's compile: mjml2html, strict validation"]
-  JSON --> SERIAL["serializeMjml: MJML source, every element closed by its own tag"]
+  JSON --> SERIAL["serializeMjml<br/>MJML source"]
   SOURCE["MJML source"] --> PARSE["node-html-parser: block text kept raw, attributes decoded"]
   PARSE --> MAP["readMjmlRoot"]
   MAP --> SCHEMA{"the registry's document schema"}

@@ -1,12 +1,12 @@
 # nuxt-security upstream audit
 
-This is the audit [nuxt-security-module](../README.md) owes before its code: every issue and pull request on [nuxt-security](https://github.com/Baroshem/nuxt-security), open and closed, and graded by the [dependency admission](../../architecture/dependency-admission/design.md) triage. The verdicts are the audit's record. Each defect's regression test lands with the code in the next phase, named after its issue, and must fail against the upstream package before it passes against ours.
+This is the audit [nuxt-security-module](../README.md) owes before its code: every issue and pull request on [nuxt-security](https://github.com/Baroshem/nuxt-security), open and closed, and graded by the [dependency admission](../../architecture/dependency-admission/design.md) triage. The verdicts are the audit's record. Each defect's regression test lands with the code, named after its issue, and must fail against the upstream package before it passes against ours.
 
 ## How it was read
 
-The upstream repository holds 716 items: 334 issues and 382 pull requests. Every one was read from its body and its comments, which the tracker's API returns in full. A first pass classified each item from its own text and comments, and every security-relevant verdict was then checked against the installed copy of the module. Where a verdict rests on the thread alone, the evidence says `unverified` and the phase that reproduces it is named in the defect list below.
+The upstream repository holds several hundred items, a little over half of them pull requests. Every one was read from its body and its comments, which the tracker's API returns in full. A first pass classified each item from its own text and comments, and every security-relevant verdict was then checked against the installed copy of the module. Where a verdict rests on the thread alone, the evidence says `unverified` and the phase that reproduces it is named in the defect list below.
 
-Security severity follows the [security](../../architecture/security/README.md) lens: `high` is a bypass or a leak an attacker can use, `medium` is a protection that is wrong or a header that misbehaves for real users, `low` is cosmetic or hardening, and `none` is anything the lens does not reach.
+Security severity is graded as [the spec](spec.md) requires.
 
 ## Counts
 
@@ -15,7 +15,7 @@ Security severity follows the [security](../../architecture/security/README.md) 
 | Issues        |   334 |     73 |              6 |            22 |           84 |            139 |    10 |        — |
 | Pull requests |   382 |      — |              — |             — |            — |              1 |    31 |      350 |
 
-Across the whole tracker, 13 items carry a high security severity and 92 a medium one, whatever their kind. Pull requests are read as the issue they close, so a fix counts once against its issue, not again as a PR-FIX row where the thread links the two.
+Across the whole tracker, about a dozen items carry a high security severity and close to a hundred a medium one, whatever their kind. Pull requests are read as the issue they close, so a fix counts once against its issue, not again as a PR-FIX row where the thread links the two.
 
 ## What our configuration triggers
 
@@ -766,14 +766,21 @@ The table below is generated from the audit's record, one row per item, newest f
 
 - **XSS validator (#147, #364, #400, #472, #613, #616, #720).** Not built. Its filter rejects ordinary text a message carries, and passes a script once `escapeHtml` is off. The measurement is recorded in a comment in `apps/web/configuration/security.ts`. Rich text is sanitised at its Zod boundary instead.
 - **CSRF (#150, #167, #203, #477, #583).** Rebuilt rather than depending on `nuxt-csurf`. Its defects sit in the csurf runtime (Node `crypto` imports that break serverless builds, a client composable, cookie handling on hosts), which a dependency would carry. The module sets a random token in a cookie on safe requests and refuses a state-changing request whose header does not repeat it, the double submit cookie that the [OWASP CSRF Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html) describes.
-- **Feature requests (49 issues).** Each was triaged against one bar: a security best practice a Nuxt app reasonably needs (OWASP, MDN or W3C), cheap, and fitting the module's shape. None met it as new work: 22 are already built (`ALREADY-BUILT`), and 27 are out of scope or over-engineering, with the reason on each row.
+- **Feature requests (several dozen issues).** Each was triaged against one bar: a security best practice a Nuxt app reasonably needs (OWASP, MDN or W3C), cheap, and fitting the module's shape. None met it as new work: about two dozen are already built (`ALREADY-BUILT`), and a similar number are out of scope or over-engineering, with the reason on each row.
 - **Rate limiter per-route and client-IP header features (#392, #643).** Route rules carry a `rateLimiter` option, so a route's limit is set where the route is. A custom client-IP header is not built, as a client-written header is the spoofing defect #196 names.
+
+## Key files
+
+| File                                                    | Role                                                                           |
+| :------------------------------------------------------ | :----------------------------------------------------------------------------- |
+| `apps/web/configuration/security.ts`                    | The module's options, with the XSS validator measurement recorded in a comment |
+| `apps/web/server/services/security/rateLimiter.test.ts` | The rate limiter driven through a real h3 handler                              |
 
 ## Fail-first results
 
 Each regression test named after an issue was run against the installed upstream, nuxt-security 2.6.0, before it was accepted as a reproduction. A test that passes on the upstream code does not reproduce its defect, so each one takes one of three outcomes.
 
-- **Fixed upstream** (#118, #194, #214, #395, #432, #647). The upstream code the test drives already returns what the test pins, so no defect remains in 2.6.0. #118's probe calls upstream's "defaultSecurityConfig" in `dist/defaultConfig.mjs` with the dev server URL, as `dist/module.mjs` does, and the origin it returns is the server's, not a wildcard. The upstream install is not kept, so the probe cannot rerun. The module's counterpart, `getDefaultModuleOptions`, sets the same origin from the same dev server URL. #194 was fixed by PR 195, #214 by PR 212, #432 by PR 429 in the 2.0 major, and #647 by PR 649 in 2.4.0. The five serializer probes ran against the header serializer in `dist/utils/headers.mjs`, and all five pass; their tests are behaviour tests now, with the issue number out of the title. #395 ran against `generateHash` in `dist/utils/crypto.mjs`.
+- **Fixed upstream** (#118, #194, #214, #395, #432, #647). The upstream code the test drives already returns what the test pins, so no defect remains in 2.6.0. #118's probe calls upstream's "defaultSecurityConfig" in `dist/defaultConfig.mjs` with the dev server URL, as `dist/module.mjs` does, and the origin it returns is the server's, not a wildcard. The upstream install is not kept, so the probe cannot rerun. The module's counterpart, `getDefaultModuleOptions`, sets the same origin from the same dev server URL. #194 was fixed by PR 195, #214 by PR 212, #432 by PR 429 in the 2.0 major, and #647 by PR 649 in 2.4.0. The five serializer probes ran against the header serializer in `dist/utils/headers.mjs`, and all five pass; their tests are behaviour tests, titled without the issue number. #395 ran against `generateHash` in `dist/utils/crypto.mjs`.
 - **Needs app** (#587, #83, #196, #178, #329, #444, #326, #393, #586, #594, #667, #407, #413, #602, #230, #266). The defect sits in a Nitro plugin or middleware that closes over its own state, so a unit probe cannot reach it. For #587 the upstream plugin removes a `false` header only when it equals the route-rule value, a branch the serializer never reaches. A throwaway vitest drive that aliased `nitropack/runtime` and `h3` could not resolve the upstream's `nitropack` import, and the drive was removed. Each of these stays on the module's own tests, as the driven-through-the-harness outcome below records.
 - **Does not reproduce.** None.
 - **Driven through the app's harness.** `apps/web/server/services/security/rateLimiter.test.ts` drives the module's rate limiter through a real h3 handler: #83 and #196 pass against nuxt-security-module, so a forwarded address does not move the key. The rest of the needs-app set runs the Nuxt renderer's `render:route` and `render:html` hooks or a Nuxt build, which the app's Vitest harness does not run. They stay on the module's unit tests. The owner decided not to run them against the upstream, since the module's own regression tests, run against the package the app ships, are the check ([rejected](../../../rejected/nuxt-security-module/upstream-regression-harness/design.md)).

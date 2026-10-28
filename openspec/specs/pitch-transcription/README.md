@@ -15,7 +15,7 @@ flowchart TD
   windows["prepareAudioWindows<br/>overlapping two-second windows"]
   model["The network, one window at a time<br/>its outputs disposed once read"]
   readings["readModel's readings<br/>frames, onsets, contours"]
-  notes["createNotes<br/>onset peaks held while their energy lasts,<br/>then the melodia trick"]
+  notes["createNotes<br/>onset peaks, then the melodia trick"]
   bends["addPitchBends<br/>each frame's offset in contour bins"]
   seconds["convertNotesToSeconds"]
   midi["writeMidi<br/>a MIDI file's bytes"]
@@ -85,14 +85,14 @@ The MIDI writer is a rewrite of [Tone.js's MIDI library](https://github.com/Tone
 
 ## Key files
 
-| File                                                         | Role                                                         |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `packages/pitch-transcription/src/services/readModel.ts`     | The network over a recording, a window at a time             |
-| `packages/pitch-transcription/src/services/createNotes.ts`   | The readings turned into notes                               |
-| `packages/pitch-transcription/src/services/addPitchBends.ts` | Each note's bend per frame                                   |
-| `packages/pitch-transcription/src/services/writeMidi.ts`     | Notes as MIDI bytes                                          |
-| `packages/pitch-transcription/src/notes.ts`                  | The entry without ONNX Runtime                               |
-| `packages/pitch-transcription/model`                         | The trained model, its ONNX export unmodified, with `NOTICE` |
+| File                                                         | Role                                                                                               |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| `packages/pitch-transcription/src/services/readModel.ts`     | The network over a recording, a window at a time                                                   |
+| `packages/pitch-transcription/src/services/createNotes.ts`   | The readings turned into notes                                                                     |
+| `packages/pitch-transcription/src/services/addPitchBends.ts` | Each note's bend per frame                                                                         |
+| `packages/pitch-transcription/src/services/writeMidi.ts`     | Notes as MIDI bytes                                                                                |
+| `packages/pitch-transcription/src/notes.ts`                  | The entry without ONNX Runtime                                                                     |
+| `packages/pitch-transcription/model`                         | The trained model, its ONNX export unmodified. Its notice is `packages/pitch-transcription/NOTICE` |
 
 ## Sources
 
