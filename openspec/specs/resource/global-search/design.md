@@ -1,6 +1,6 @@
 # Global Search
 
-Azure-portal-faithful search over the Resource Explorer: an as-you-type search grouped into Resources / Services / Pages, which is the [command palette](../../architecture/command-palette/design.md)'s scope while the explorer home page (`pages/resource-explorer/index.vue`) is open, so `Ctrl+K` there searches resources. Home leads with a button drawn as the field it opens (portal landing parity), as the docs' search is, rather than a second search of its own. No new backend — the Resources group rides `resource.readResources`, which matches a resource by its name or by one of its tags and ranks the name matches first.
+Azure-portal-faithful search over the Resource Explorer: an as-you-type search grouped into Resources / Services / Pages, which is the [command palette](../../architecture/command-palette/design.md)'s scope while the explorer home page (`pages/resource-explorer/index.vue`) is open, so `Ctrl+K` there searches resources. Home leads with a button drawn as the field it opens (portal landing parity), as the docs' search is, rather than a second search of its own. No new backend — the Resources group rides `resource.readResources`.
 
 ## How it works
 
@@ -39,7 +39,7 @@ With a query set the scope shows three groups plus a last row:
 ## Keyboard
 
 - The palette's own keyboard contract walks the rows: it highlights the first whenever the list changes, so `Enter` takes the best match, and the arrows walk the rest.
-- `useResourceCommands`, called by the explorer home page, registers the same search as the palette's scope — the rows as palette commands, each service's Create sub-action as a row of its own, and See all as the last — and the Azure `G`-chords as commands: `G /` opens the palette on resources, `G A` goes to `/resource-explorer/all`, and `G N` opens the [notifications](../notifications/design.md) panel. Picking a row remembers the query as a recent search.
+- `useResourceCommands`, called by the explorer home page, registers the same search as the palette's scope — the rows as palette commands, each service's Create sub-action as a row of its own, and See all as the last — and the Azure `G`-chords as commands: `G /` opens the palette on resources, `G A` goes to `/resource-explorer/all`, and `G N` opens the [notifications](../notifications/design.md) panel.
 - The chords are bound through the command registry, so they never fire in a field, and `Shift+?` lists them in the app's one shortcuts dialog while the page is open.
 
 ## Relevance
