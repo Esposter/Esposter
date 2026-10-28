@@ -1,3 +1,4 @@
+import type { MockResponse } from "#src/models/shared/MockResponse";
 import type { MapValue } from "#src/util/types/MapValue";
 import type {
   DequeuedMessageItem,
@@ -126,10 +127,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
       dequeueCount: 0,
       ...getMockQueueMessageItem(text),
     }));
-    return Promise.resolve({
-      _response: { ...createMockResponse(200, this.url), bodyAsText: "", parsedBody: peekedMessageItems },
-      peekedMessageItems,
-    });
+    return Promise.resolve({ _response: this.#createResponse(peekedMessageItems), peekedMessageItems });
   }
 
   receiveMessages(_options?: QueueReceiveMessageOptions): Promise<QueueReceiveMessageResponse> {
@@ -144,10 +142,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
         popReceipt: crypto.randomUUID(),
       }),
     );
-    return Promise.resolve({
-      _response: { ...createMockResponse(200, this.url), bodyAsText: "", parsedBody: receivedMessageItems },
-      receivedMessageItems,
-    });
+    return Promise.resolve({ _response: this.#createResponse(receivedMessageItems), receivedMessageItems });
   }
 
   sendMessage(messageText: string, _options?: QueueSendMessageOptions): Promise<QueueSendMessageResponse> {
@@ -162,10 +157,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
       popReceipt: crypto.randomUUID(),
     };
     const enqueuedMessages = [enqueuedMessage];
-    return Promise.resolve({
-      _response: { ...createMockResponse(200, this.url), bodyAsText: "", parsedBody: enqueuedMessages },
-      ...enqueuedMessage,
-    });
+    return Promise.resolve({ _response: this.#createResponse(enqueuedMessages), ...enqueuedMessage });
   }
 
   setAccessPolicy(_identifiers?: SignedIdentifier[]): Promise<QueueSetAccessPolicyResponse> {
@@ -178,5 +170,9 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
 
   updateMessage(): Promise<QueueUpdateMessageResponse> {
     throw new NotImplementedError(this.updateMessage.name);
+  }
+
+  #createResponse<T>(parsedBody: T): MockResponse & { bodyAsText: string; parsedBody: T } {
+    return { ...createMockResponse(200, this.url), bodyAsText: "", parsedBody };
   }
 }

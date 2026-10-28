@@ -18,6 +18,7 @@ import type { Except } from "type-fest";
 import { MockBlobClient } from "#src/models/container/MockBlobClient";
 import { MockRestError } from "#src/models/shared/MockRestError";
 import { NotImplementedError } from "#src/models/shared/NotImplementedError";
+import { CONDITION_NOT_MET_MESSAGE } from "#src/services/constants";
 import { bodyToBuffer } from "#src/services/container/bodyToBuffer";
 import { readMockBlobDates } from "#src/services/container/readMockBlobDates";
 import { storeMockBlobMetadata } from "#src/services/container/storeMockBlobMetadata";
@@ -70,7 +71,7 @@ export class MockBlockBlobClient extends MockBlobClient implements Except<BlockB
       options.conditions.ifMatch !==
         (this.container.has(this.name) ? readMockBlobDates(this.containerName, this.name).etag : undefined)
     )
-      throw new MockRestError("The condition specified using HTTP conditional header(s) is not met.", 412);
+      throw new MockRestError(CONDITION_NOT_MET_MESSAGE, 412);
     storeMockBlobWrite(this.containerName, this.name, this.container.has(this.name));
     // Replaced rather than merged, so an upload naming none clears what the previous write set
     storeMockBlobMetadata(this.containerName, this.name, options?.metadata);
