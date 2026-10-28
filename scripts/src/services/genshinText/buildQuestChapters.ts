@@ -25,11 +25,11 @@ export const buildQuestChapters = (): QuestChapter[] => {
   const chapterMap = new Map(
     readExcelTable<DumpedChapter>(CHAPTER_TABLE_NAME).map((chapter) => [chapter.id, chapter] as const),
   );
-  const cityNameMap = new Map(
+  const cityIdNameMap = new Map(
     readExcelTable<DumpedCity>(CITY_TABLE_NAME).map((city) => [city.cityId, city.cityNameTextMapHash] as const),
   );
   const mainQuests = readExcelTable<DumpedMainQuest>(MAIN_QUEST_TABLE_NAME);
-  const rankMap = new Map(
+  const itemIdRankLevelMap = new Map(
     readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME).map(({ id, rankLevel }) => [id, rankLevel] as const),
   );
   const rewardMap = readRewardMap();
@@ -37,7 +37,7 @@ export const buildQuestChapters = (): QuestChapter[] => {
   return CARRIED_CHAPTER_IDS.map((chapterId) => {
     const chapter = chapterMap.get(chapterId);
     if (!chapter) throw new InvalidOperationError(Operation.Read, CHAPTER_TABLE_NAME, `has no chapter ${chapterId}`);
-    const cityNameTextMapHash = cityNameMap.get(chapter.cityId);
+    const cityNameTextMapHash = cityIdNameMap.get(chapter.cityId);
     if (cityNameTextMapHash === undefined)
       throw new InvalidOperationError(Operation.Read, CITY_TABLE_NAME, `has no city ${chapter.cityId}`);
     const chapterQuests = mainQuests
@@ -53,7 +53,7 @@ export const buildQuestChapters = (): QuestChapter[] => {
       );
     const rewards: QuestReward[] = toQuestRewardItems(chapterQuests.at(-1)?.rewardIdList ?? [], rewardMap).map(
       ({ count, itemId }) => {
-        const rarity = rankMap.get(itemId);
+        const rarity = itemIdRankLevelMap.get(itemId);
         if (rarity === undefined)
           throw new InvalidOperationError(Operation.Read, MATERIAL_TABLE_NAME, `has no item ${itemId}`);
         return { count, itemId, rarity };

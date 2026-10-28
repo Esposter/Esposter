@@ -47,9 +47,9 @@ export const readQuestSteps = (
       .toSorted((firstOrder, secondOrder) => Number(firstOrder) - Number(secondOrder))
       .every((order, index) => order === index + 1),
   );
-  const readTextHash = (subQuest: Record<string, unknown>) =>
+  const getTextHash = (subQuest: Record<string, unknown>) =>
     Object.values(subQuest).find((value): value is number => typeof value === "number" && checkIsText(value));
-  const readFinishConditions = (subQuest: Record<string, unknown>) =>
+  const getFinishConditions = (subQuest: Record<string, unknown>) =>
     readQuestConditions(finishKey ? subQuest[finishKey] : []);
   const sortedSubQuests = subQuests.toSorted((firstSubQuest, secondSubQuest) =>
     orderKey ? Number(firstSubQuest[orderKey]) - Number(secondSubQuest[orderKey]) : 0,
@@ -63,8 +63,8 @@ export const readQuestSteps = (
     return false;
   };
   const offerTalkIds =
-    firstSubQuest && readTextHash(firstSubQuest) === undefined
-      ? readFinishConditions(firstSubQuest).flatMap(({ parameters, type }) => {
+    firstSubQuest && getTextHash(firstSubQuest) === undefined
+      ? getFinishConditions(firstSubQuest).flatMap(({ parameters, type }) => {
           const questContentObjective = QuestContentObjectiveMap[type];
           if (questContentObjective?.kind !== QuestObjectiveKind.TalkTo) return [];
           const talkId = String(parameters[questContentObjective.targetIndex] ?? "");
@@ -78,9 +78,9 @@ export const readQuestSteps = (
     const id =
       numbers.find((value) => value !== questId && Math.floor(value / 100) === questId) ??
       numbers.find((value) => value === questId);
-    const textHash = readTextHash(subQuest);
+    const textHash = getTextHash(subQuest);
     if (id === undefined || textHash === undefined) return [];
-    const objectives = readFinishConditions(subQuest).flatMap(({ parameters, type }) => {
+    const objectives = getFinishConditions(subQuest).flatMap(({ parameters, type }) => {
       const questContentObjective = QuestContentObjectiveMap[type];
       if (!questContentObjective) return [];
       const { kind, targetIndex } = questContentObjective;

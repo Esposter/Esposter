@@ -65,12 +65,12 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
     subQuestMap,
   );
   const carriedQuestIds = new Set<string>(QuestIds);
-  const rewardsByQuest = readCarriedQuestRewards(mainQuestMap, subQuestMap);
+  const questIdRewardsMap = readCarriedQuestRewards(mainQuestMap, subQuestMap);
   const talkTables = await readTalkTables();
   const mainQuestIds = new Set(mainQuestMap.keys());
   const subIdMainIdMap = new Map(Array.from(subQuestMap, ([subId, subQuest]) => [subId, subQuest.mainId] as const));
   const buildQuest = (questId: QuestId): Quest => {
-    const rewards = rewardsByQuest.get(questId) ?? [];
+    const rewards = questIdRewardsMap.get(questId) ?? [];
     if (ReputationRequestQuestIds.includes(questId)) {
       const subQuest = subQuestMap.get(Number(questId));
       const giving = givingMap.get(Number(questId));

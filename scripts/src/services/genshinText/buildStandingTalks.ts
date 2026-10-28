@@ -38,14 +38,14 @@ export const buildStandingTalks = async (): Promise<GameDataBuild> => {
       .map(({ talkId }) => Number(talkId)),
   );
   const englishTextMap = readTextMap(GameLanguage.English);
-  const readTalks = (talkIds: Iterable<number>): Talk[] =>
+  const getTalks = (talkIds: Iterable<number>): Talk[] =>
     [...talkIds].flatMap((talkId): Talk[] => {
       const talk = skipWordlessTalkLines(readTalk(talkId, talkTables), (textId) => Boolean(englishTextMap.get(textId)));
       return talk ? [talk] : [];
     });
-  const talks = readTalks(standingTalkIds);
+  const talks = getTalks(standingTalkIds);
   const favourTalkIds = new Set(readHomeFavourRows().flatMap(({ talkID }) => (talkID ? [talkID] : [])));
-  const favourTalks = readTalks(favourTalkIds);
+  const favourTalks = getTalks(favourTalkIds);
   const textIds = new Set([...talks, ...favourTalks].flatMap((talk) => getTalkTextIds(talk)));
   textIds.delete("");
   const { notes, objects } = buildTextChunks(GameDataset.StandingTalkText, [...textIds].toSorted());

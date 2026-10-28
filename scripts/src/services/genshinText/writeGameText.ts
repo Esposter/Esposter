@@ -39,13 +39,13 @@ export const writeGameText = ({ isDryRun }: DryRunOptions): string[] => {
     ids.filter((id) => !englishSdkText.has(id)).map((id) => [id, getGameTextHash(id, manualTextMap)]),
   );
   const idFettersMap = readVoiceLineFetters();
-  const genshinDb = readGenshinDb();
-  const unvoicedCharacters = genshinDb
+  const genshinDatabase = readGenshinDb();
+  const unvoicedCharacters = genshinDatabase
     .characters("names", { matchCategories: true })
-    .filter((name) => !genshinDb.voiceovers(name)?.friendLines.length)
+    .filter((name) => !genshinDatabase.voiceovers(name)?.friendLines.length)
     .toSorted()
     .flatMap((name) => {
-      const id = genshinDb.characters(name)?.id;
+      const id = genshinDatabase.characters(name)?.id;
       if (id === undefined) {
         notes.push(`${name} has no id in the data package; its lines are skipped`);
         return [];
