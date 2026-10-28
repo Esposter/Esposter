@@ -65,10 +65,11 @@ describe(exportUserDataHandler, () => {
     mockDb = await createMockDb();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     vi.restoreAllMocks();
     MockContainerDatabase.clear();
     MockTableDatabase.clear();
+    await mockDb.delete(usersInAuth);
   });
 
   test("builds a requested export into an archive holding each entry the design lists, and marks it ready", async () => {

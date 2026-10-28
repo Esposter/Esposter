@@ -180,9 +180,7 @@ describe(processScheduledMessageJobHandler, () => {
   test("requeues when job is visible before runAt", async () => {
     expect.hasAssertions();
 
-    const job = await insertJob(reminderPayload, {
-      runAt: new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
-    });
+    const job = await insertJob(reminderPayload, { runAt: new Date(Date.now() + 1) });
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
     const requeuedJob = await getJob(job.id);
