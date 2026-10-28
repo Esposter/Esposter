@@ -1,6 +1,6 @@
 # Elemental Sight
 
-The range, the mute, the white and element-coloured highlights, the enemies' colours and names, and the trails toward the Seelies' courts are built, as [Elemental Sight](../../specs/genshin/elemental-sight/design.md) describes. What is left is the trails toward a bounty's target and a quest's clue, which the pages that place those ends draw the sight toward.
+The range, the mute, the white and element-coloured highlights, the enemies' colours and names, and the trails toward the Seelies' courts are built, as [Elemental Sight](../../specs/genshin/elemental-sight/design.md) describes. The trails toward a bounty's target and a quest's clue are built too, the clue once its go-to place is in the region data.
 
 ## Decisions
 
@@ -19,7 +19,7 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** the Seelies' trails are built and recorded in the [as-built page](../../specs/genshin/elemental-sight/design.md). A quest's clue is not placed in the world yet, so no trail is drawn toward it; a bounty's trail is drawn while its target stands.
+**Today:** the Seelies' trails are built and recorded in the [as-built page](../../specs/genshin/elemental-sight/design.md). A bounty's trail is drawn while its target stands, and a quest's clue is drawn toward once its go-to place is in the region data.
 
 **This adds, each with its page:**
 

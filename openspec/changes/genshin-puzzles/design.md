@@ -38,7 +38,7 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** the [as-built page](../../specs/genshin/puzzles/README.md) records what stands, and nothing is yet placed, drawn, struck or solved.
+**Today:** the [as-built page](../../specs/genshin/puzzles/README.md) records what stands. The monuments, the Seelies and the Time Trial Challenges are placed and stepped in the world (`useWorldPuzzles`), and the world's hits strike the monuments; the shrines are placed and opened with a key (`useWorldShrines`). Nothing is drawn by `components/World/Puzzles/Index.vue` yet.
 
 **This adds, in order:**
 

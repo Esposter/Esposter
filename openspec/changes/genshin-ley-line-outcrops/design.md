@@ -34,7 +34,7 @@ stateDiagram-v2
 
 ## Scope and order
 
-**Today:** no outcrop is placed, so enemies stand in camps placed by region data, nothing spawns them on a touch, and nothing gives Character EXP materials.
+**Today:** the outcrops run in the world: each daily reset draws the open places, a touch starts the camp's fight, and a claim pays through the resin prompt (`useWorldOutcrops`).
 
 **This adds, in order:**
 

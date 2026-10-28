@@ -23,7 +23,7 @@
 
 ## 6. Size ceiling
 
-- [ ] 6.1 Cut the world's entry to a lower size ceiling. The gate is the entry's measured size as it stands, 2,284,676 bytes, held by the snapshot in `packages/genshin-world/src/index.test.ts`, so a regression fails that test. Verify: the snapshot holds the cut's size once the cut lands. Blocked: a cut to a lower ceiling is a separate open item, not decided here, so this box stays open for it; measuring a cut needs a build.
+- [ ] 6.1 Cut the world's entry to a lower size ceiling. The gate is the entry's measured size as it stands, 2,292,637 bytes, held by the snapshot in `packages/genshin-world/src/index.test.ts`, so a regression fails that test. Verify: the snapshot holds the cut's size once the cut lands. Blocked: a cut to a lower ceiling is a separate open item, not decided here, so this box stays open for it; measuring a cut needs a build.
 
 ## 7. Decisions
 
@@ -32,7 +32,7 @@
 - [x] 7.3 Decide the value model for Go's float division in the kit reader: options are a float flag carried through parsed literals, conversions and the value type, or leaving the constant evaluator as it is; decides nothing here. Verify: the choice is written into the design before the reader changes.
 - [x] 7.4 Decide whether a character task queued with its delay as an argument, `QueueCharTask(fn, delay)`, has that delay read into the kit's timing, which makes the queue callee set one the kit reader and the task reader share; options are reading it or keeping the enemy-only reader as it is, decides nothing here. Verify: the choice is written into the design before the reader changes, and the callee set moves only with it.
 - [ ] 7.5 Decide whether a kit's `spec.md` and `design.md` each keep an Open list, as the genshin kit pages do now, or the spec keeps the gap list and the design only the built facts; options are the two named, decides nothing here, and it spans every kit page that carries both. Verify: the choice is written into `openspec/specs/genshin/kits/beidou/` and the design before any kit page's Open list changes.
-- [ ] 7.6 Settle how a spec cites the game-data cache: the root is named by the one `{data-root}/` placeholder, which `.agents/skills/openspec/references/repo-owned-facts.md` ("Machine roots") gives both home-folder spellings of the root, since `{data-root}` names the root and is never a path (`openspec/specs/architecture/machine-efficiency/design.md`). The kit records cite it in two home-folder spellings, Durin's one and Clorinde's, Citlali's and Ganyu's the other, so the rule already decides the spelling and nothing here is open; the sweep of the 200-odd files under `openspec/` is a ledger's. Verify: no spec names the root by a home-folder spelling once that ledger's sweep runs.
+- [ ] 7.6 Settle how a spec cites the game-data cache: the root is named by the one `{data-root}/` placeholder, which `.agents/skills/openspec/references/repo-owned-facts.md` ("Machine roots") gives both home-folder spellings of the root, since `{data-root}` names the root and is never a path (`openspec/specs/architecture/machine-efficiency/design.md`). The kit records cite it in two home-folder spellings, Durin's one and Clorinde's, Citlali's and Ganyu's the other, so the rule already decides the spelling and nothing here is open; the sweep of the files under `openspec/` is a ledger's. Verify: no spec names the root by a home-folder spelling once that ledger's sweep runs.
 
 ## 8. Beidou's kit against its scenarios
 

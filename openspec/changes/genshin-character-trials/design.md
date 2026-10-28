@@ -21,7 +21,7 @@ A banner matches a trial when its featured five-star character id is the trial's
 
 ## Data model
 
-The trial rows come from five 7.1 tables. `TrialAvatar` maps a trial id to a character id and a level. `TrialAvatarActivityData` holds each trial stage: its trial id, its dungeon, its party of trial ids and its first-clear reward. `TrialAvatarTemplate` gives the reliquaries and the talent level by level bracket, and `TrialReliquary` gives each reliquary's main stat and sub-stats. `TrialAvatarActivity` and `ActivityTrialAvatar` tie stages to schedules, which the banners do not yet use.
+The trial rows come from 7.1 tables. `TrialAvatar` maps a trial id to a character id and a level. `TrialAvatarActivityData` holds each trial stage: its trial id, its dungeon, its party of trial ids and its first-clear reward. `TrialAvatarTemplate` gives the reliquaries and the talent level by level bracket, and `TrialReliquary` gives each reliquary's main stat and sub-stats. `TrialAvatarActivity` and `ActivityTrialAvatar` tie stages to schedules, which the banners do not yet use.
 
 ## Key files
 
@@ -48,9 +48,9 @@ The trial rows come from five 7.1 tables. `TrialAvatar` maps a trial id to a cha
 - A trial's arena has no enemies, so the design's clear, "every enemy defeated", is vacuously true the moment it starts. The arena instead ends when its clock runs out, and that end is the clear: `TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS`, 300 seconds, neither sourced from the wiki nor the dump. PROVISIONAL until the design names the timer or the objective.
 - The trial takes the player's roster for its fight: its party member alone, with a kit read at the trial's talents and no constellations, replaces the characters, the party and the kits, and the roster is given back when the arena ends, by the clock or by a party down. The jump is to the stand-in arena east of where the player stands, as a domain's arena is placed, which is PROVISIONAL until the trial's scene is read. The pose the player was at when the trial was entered is kept with the arena, and the trial's end, by the clock or a party down, jumps the player back to it.
 - The trial's clock shows on the HUD as a countdown in minutes and seconds, read from the arena's elapsed time and rounded up so the last second shows until the clock runs out. Its place at the top of the screen is PROVISIONAL until the HUD's tree has a rect for it.
-- The trial button is labelled with `GameTextKey.WishGoToTrial`, which holds the game's own "Go to Trial" (`UI_REUNIONV2_GOTO_AVARTARTRIAL`), the words the game gives the entry to an avatar trial. The Wish screen's own words for its trial button are not in the dump: its gacha ids name no trial, so "Go to Trial" is the closest the game's text gives (PROVISIONAL). The key's values are written by the main session's `genshin:text write`; until then the key has no text in the generated chunks.
+- The trial button is labelled with `GameTextKey.WishGoToTrial`, which holds the game's own "Go to Trial" (`UI_REUNIONV2_GOTO_AVARTARTRIAL`), the words the game gives the entry to an avatar trial. The Wish screen's own words for its trial button are not in the dump: its gacha ids name no trial, so "Go to Trial" is the closest the game's text gives (PROVISIONAL). The key's values are written by the main session's `genshin:text write`, and the generated English chunk holds "Go to Trial" for it.
 - While a trial holds the roster, the save keeps the roster the player held before it, so the trial's party member is never saved in place of the player's characters.
-- The first-clear reward is claimed once and saved with the save, so the save gains a key and the stored saves owe a backfill when it lands.
+- The first-clear reward is claimed once and saved with the save, so the save holds that key, and the stored saves owe a backfill.
 
 ## Sources
 

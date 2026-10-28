@@ -41,7 +41,7 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** the opening rules are built, as the [domains page](../../specs/genshin/domains/design.md) records. Nothing enters a domain, and nothing gives a domain's materials.
+**Today:** the opening rules are built, as the [domains page](../../specs/genshin/domains/design.md) records. A domain is entered from its entrance and its Petrified Tree is claimed with resin, on the stand-in arena (see Blocked).
 
 **This adds, in order:**
 
