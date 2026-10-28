@@ -1,4 +1,4 @@
-import type { PathRename } from "#src/models/citations/PathRename";
+import type { PathRename } from "#src/models/citations/sync/PathRename";
 
 import { getAppRelative } from "#src/services/citations/sync/getAppRelative";
 

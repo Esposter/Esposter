@@ -1,4 +1,4 @@
-import type { PathRename } from "#src/models/citations/PathRename";
+import type { PathRename } from "#src/models/citations/sync/PathRename";
 
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { getOrCreate } from "@esposter/shared";
