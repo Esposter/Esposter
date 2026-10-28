@@ -1,6 +1,6 @@
 # Fleet
 
-Machines pull work; nothing pushes it to them. Each machine keeps a profile saying what it is and which areas it is lent, each unit of work names the capabilities it needs, and a claim is a git ref on origin saying which machine works a unit. The coordinator writes the entries and settles the calls it is asked for. It never assigns work by message, never reads a report from each machine, and never names a machine in a rule, so adding a machine costs the coordinator nothing. The procedure an agent follows (commands, lanes, worktrees, the game-data copy) is the throughput skill's `references/fleet.md`; this page is the design those rules serve.
+Machines pull work; nothing pushes it to them. Each machine keeps a profile saying what it is and which areas it is lent, each unit of work names the capabilities it needs, and a claim is a git ref on origin saying which machine works a unit. The coordinator writes the entries and settles the calls it is asked for. It never assigns work by message, never reads a report from each machine, and never names a machine in a rule, so adding a machine costs the coordinator nothing. The procedure an agent follows (commands, lanes, worktrees, the game-data copy) is `.agents/skills/throughput/references/fleet.md`; this page is the design those rules serve.
 
 ## How the pieces fit
 
@@ -61,13 +61,13 @@ An entry is taken when the machine has its needs, its area is lent, it is not wa
 
 ## Load is read, not reported
 
-A machine's watcher pushes `refs/machines/<id>` every ten minutes: a parentless commit carrying the machine's latest sample of CPU, GPU, free memory and platform, and the last commit the machine landed on `ai/queue`, as its sha and author date, read from git rather than kept in a file. A push that fails, or stalls past the same bound, is one logged line, and the watcher keeps sampling and pushes again at the next interval. The coordinator's status command fetches every claim and heartbeat and prints each machine's last sample, what it last landed and each claim's holder and age. It reads a fixed number of refs regardless of how many machines there are, which is what keeps its cost flat as the fleet grows.
+A machine's watcher pushes `refs/machines/<id>` every ten minutes: a parentless commit carrying the machine's latest sample of CPU, GPU, free memory and platform, and the last commit the machine landed on `ai/queue`, as its sha and author date, read from git rather than kept in a file. A push that fails, or stalls past the same bound, is one logged line, and the watcher keeps sampling and pushes again at the next interval. The coordinator's status command fetches every claim and heartbeat and prints each machine's last sample, what it last landed and each claim's holder and age. It makes one fetch per family of refs however many machines there are, which is what keeps its calls to origin flat as the fleet grows.
 
 An agent lands its commits on `ai/queue` with its own loop, the explicit action [no polling](../no-polling/design.md) names as the trigger. The landed commit shows in its machine's heartbeat, so one machine sees another's progress from the heartbeat, with no message.
 
 ## Game data is never shared through a service
 
-No export or recording is ever committed, published or sent to a hosted service. A machine's first route to the game data is the game itself, downloaded from HoYoverse's official CDN and extracted locally, so it needs no other machine. A copy between machines on the local network is the faster route, and it runs only over SSH, authenticated and encrypted. A machine off the network gets its game exports the same way, from the CDN, so until it holds them it takes only the entries that need no game data. The copy's procedure and the folders it moves are the throughput skill's `references/fleet.md`.
+No export or recording is ever committed, published or sent to a hosted service. A machine's first route to the game data is the game itself, downloaded from HoYoverse's official CDN and extracted locally, so it needs no other machine. A copy between machines on the local network is the faster route, and it runs only over SSH, authenticated and encrypted. A machine off the network gets its game exports the same way, from the CDN, so until it holds them it takes only the entries that need no game data. The copy's procedure and the folders it moves are `.agents/skills/throughput/references/fleet.md`.
 
 ## Key files
 
