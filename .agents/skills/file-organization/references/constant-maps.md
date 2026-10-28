@@ -14,7 +14,7 @@ the service that builds its entries, which inverts the layering.
 
 **Exception**: when consumers need optional interface fields visible after enum lookup (e.g. `Item.isDanger` on a map where some entries omit it), annotate explicitly — `const MapName: Record<Enum, Interface> = { ... }` — which widens lookup results to the shared interface while still enforcing every enum key.
 
-**Keys are enum members, never literal names.** A map whose keys are one enum's members is keyed `[Enum.Member]: …`, and the `enum-map/no-literal-map-key` lint rule (`scripts/src/services/oxlint/enumMap`) fails a `…Map` declaration that writes a literal key instead. Two cases are exempt: a map typed over an open set of keys (`Record<string, …>`, or `Partial`, `Readonly` or `Required` around it, on the annotation or on an `as` or `satisfies`), and numeric keys, which are a dataset's ids that no enum names. A closed set of string keys that is not an enum yet is an enum first.
+**Keys are enum members, never literal names** — `[Enum.Member]: …`, which `enum-map/no-literal-map-key` (`scripts/src/services/oxlint/enumMap`) enforces; a closed set of string keys that is not an enum yet is an enum first.
 
 **Under `isolatedDeclarations`, an exported map is annotated.** `as const satisfies` cannot be inferred for an export, so in a package with declarations on, the annotation carries the key set: `export const FooMap: Record<Enum, Value> = { ... }`, as `SinColorMap` does in `packages/genshin-mods/src/services/sins/SinColorMap.ts`.
 
