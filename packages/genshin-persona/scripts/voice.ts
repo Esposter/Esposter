@@ -115,7 +115,7 @@ const speak = async (request: SpeechRequest, player: AudioPlayer | undefined, ch
     if (playerFailure) writeVoiceLog(`the player did not play: ${playerFailure}`);
   };
   let playback: Promise<void> = Promise.resolve();
-  let status = VoiceStatus.Ok;
+  let status: VoiceStatus = VoiceStatus.Ok;
   for (const line of request.lines) {
     // oxlint-disable-next-line no-await-in-loop -- One device: lines synthesize and play back one after another
     const clip = await synthesizer.synthesize(line, speaker);

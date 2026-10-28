@@ -13,12 +13,12 @@ export const execFile = ((file: string, ...parameters: unknown[]) =>
 // Node's own promisified form resolves `{ stdout, stderr }` through `promisify.custom`, which a plain wrapper would
 // Lose, leaving `promisify(execFile)` resolving stdout alone; the wrapper carries it over, the window hidden there too
 Object.defineProperty(execFile, promisify.custom, {
-  value: (file: string, ...parameters: unknown[]) =>
-    (
-      promisify(execFileNode as (...nodeParameters: unknown[]) => void) as (
-        ...promisedParameters: unknown[]
-      ) => Promise<unknown>
-    )(file, ...withHiddenWindow(parameters)),
+  value: (file: string, ...parameters: unknown[]) => {
+    const promisifiedNode: (...promisedParameters: unknown[]) => Promise<unknown> = promisify(
+      execFileNode as (...nodeParameters: unknown[]) => void,
+    );
+    return promisifiedNode(file, ...withHiddenWindow(parameters));
+  },
 });
 // oxlint-disable-next-line typescript/strict-void-return -- promisify reads execFile's callback overload, whose void return the rule mistakes for this call's context
 export const execFileAsync: typeof execFileNodeType.__promisify__ = promisify(execFile);

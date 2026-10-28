@@ -67,9 +67,9 @@ describe(execFile, () => {
     const output = { stderr: "", stdout: file };
     nodePromisified.mockResolvedValueOnce(output);
 
-    const promisifiedExecFile = promisify(execFile as (...parameters: unknown[]) => void) as (
-      ...promisedParameters: unknown[]
-    ) => Promise<unknown>;
+    const promisifiedExecFile: (...promisedParameters: unknown[]) => Promise<unknown> = promisify(
+      execFile as (...parameters: unknown[]) => void,
+    );
 
     await expect(promisifiedExecFile(file, args)).resolves.toStrictEqual(output);
     expect(nodePromisified).toHaveBeenCalledExactlyOnceWith(file, args, { windowsHide: true });
