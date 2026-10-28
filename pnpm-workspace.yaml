@@ -228,7 +228,7 @@ catalog:
   temporal-polyfill: ^1.0.6
   three: ^0.186.1
   three-globe: ^2.45.6
-  three-mesh-bvh: ^0.9.16
+  three-mesh-bvh: ^0.9.17
   tsdown: ^0.23.2
   tsrs: ^0.20.0-ts7.1.0-beta
   type-fest: ^5.10.0
