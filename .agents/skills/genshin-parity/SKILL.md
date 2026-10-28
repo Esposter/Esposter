@@ -47,6 +47,7 @@ Each direction's full statement, with the pointers it carries, is `references/se
 - **Numbers before looking:** run `pnpm -C scripts genshin:parity compare <reference>` and read the mean and the grid; zoom only on a cell that stands out (`references/compare.md`).
 - **An agent approves a screen's image with `genshin:parity approve` once its compare is clean against a stored reference, and fetches a missing reference first** — `references/approval.md`.
 - **A screen's load is held to its budget by the load bench**, `pnpm -C scripts genshin:parity load <screen>` (`openspec/specs/genshin/load-budget/design.md`).
+- **A landmark or area missing from the extract is looked up in the dump before it is called missing** — its name is searched in `extracted/maps/index.tsv` first, and a mesh the index holds is a name-pattern gap (`references/data-sources.md`).
 
 ## Reference pages
 
@@ -59,7 +60,7 @@ Each direction's full statement, with the pointers it carries, is `references/se
 - `references/sound.md` — when a sound effect of the game is found, fitted, played or timed: the audio pass beside the music.
 - `references/compute-queue.md` — when a long run is owed with no judgement left in it, or when running one: the compute queue's pages and how a runner takes an item.
 - `references/music.md` — when recreating a piece of the game's music, or changing its fit, its player or `listen`.
-- `references/data-sources.md` — when a table is missing from the dump, a dump field is obfuscated, or a fit or loop publishes its record.
+- `references/data-sources.md` — when a table is missing from the dump, a landmark or area is missing from the extract, a dump field is obfuscated, or a fit or loop publishes its record.
 - `references/components.md` — when adding a component, its fixture, or its reference index.
 - `references/approval.md` — when approving a screen's images or citing a reference for one.
 - `references/deriving.md` — when deriving a screen, a surface or a scene in passes.
