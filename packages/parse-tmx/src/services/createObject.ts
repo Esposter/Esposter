@@ -26,5 +26,5 @@ export const createObject = (attributes: TMXAttributes): TMXObjectParsed => {
   const { gid, ...object } = readTmxAttributes(attributes, objectAttributeKindMap);
   const shaped: TMXObjectParsed = { ...object, shape: Shape.Rectangle };
   if (gid === undefined) return shaped;
-  return gid ? { ...shaped, flips: parseFlips(gid), gid: parseTileId(gid) } : { ...shaped, gid };
+  else return gid ? { ...shaped, flips: parseFlips(gid), gid: parseTileId(gid) } : { ...shaped, gid };
 };

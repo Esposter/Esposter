@@ -41,8 +41,8 @@ export const openTmxRoot = (name: string, attributes: TMXAttributes, context: TM
       return { tag, target: map, text: "" };
     }
     case TMXTagName.Tileset:
-      if (attributes.source !== undefined) return undefined;
-      return { tag, target: createEmbeddedTileset(attributes), text: "" };
+      if (attributes.source === undefined) return { tag, target: createEmbeddedTileset(attributes), text: "" };
+      else return undefined;
     default:
       throw new InvalidOperationError(Operation.Read, openTmxRoot.name, `${name} is not a map or a tileset`);
   }

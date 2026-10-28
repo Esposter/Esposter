@@ -26,14 +26,14 @@ export const openTmxLayerChild = (
 
   switch (tag) {
     case TMXTagName.Data:
-      if (parent.tag !== TMXTagName.Layer) return undefined;
-      return openTileData(parent.target, attributes, context);
+      if (parent.tag === TMXTagName.Layer) return openTileData(parent.target, attributes, context);
+      else return undefined;
     case TMXTagName.Group:
     case TMXTagName.ImageLayer:
     case TMXTagName.Layer:
     case TMXTagName.Objectgroup:
-      if (parent.tag !== TMXTagName.Group) return undefined;
-      return openTmxLayer(parent.target.layers, tag, attributes);
+      if (parent.tag === TMXTagName.Group) return openTmxLayer(parent.target.layers, tag, attributes);
+      else return undefined;
     case TMXTagName.Image:
       if (parent.tag !== TMXTagName.ImageLayer) return undefined;
       parent.target.image = createTmxImage(attributes);
