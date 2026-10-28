@@ -22,7 +22,7 @@ self.addEventListener(
   }),
 );
 
-// https://github.com/vite-pwa/docs/issues/132 — the push handler lives here, typed, rather than in an
+// The push handler lives here, typed, rather than in an
 // `importScripts` file
 self.addEventListener("push", (event) => {
   if (!event.data) return;

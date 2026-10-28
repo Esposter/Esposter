@@ -48,7 +48,7 @@ const activeCategoryTitle = computed({
   },
 });
 // Search replaces the grid wholesale while a query is running. The rail stays live rather than being disabled
-// By it — picking a category clears the query, which is the upstream bug that makes the two mutually exclusive
+// By it: picking a category clears the query, so the grid and the search never show at once
 const emojis = computed(() =>
   searchQuery.value ? searchEmojis(searchQuery.value, customEmojis) : activeCategory.value.emojis,
 );

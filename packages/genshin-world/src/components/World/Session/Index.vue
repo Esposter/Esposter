@@ -1624,9 +1624,9 @@ const cameraRotation = computed(() =>
 // The world on its own canvas: the camera circling Windrise's oak, and the scene it looks at. It is ready once the
 // Scene has the ground and the landmarks of its first view, which keep loading while the world is paused. A world that
 // Cannot start, where neither WebGPU nor WebGL 2 is available, is ready all the same, so a host waiting on it moves on
-// @TODO: no upstream issue — TresJS draws only while it owes a frame, and always mode owes one only once it has drawn,
-// So a canvas switched from manual, having drawn the frame it was owed, never draws again. The uncovered world is owed
-// One while the canvas is still manual, before its props change
+// @TODO: https://github.com/Tresjs/tres/issues/1487 — TresJS draws only while it owes a frame, and always mode owes one
+// Only once it has drawn, so a canvas switched from manual, having drawn the frame it was owed, never draws again. The
+// Uncovered world is owed one while the canvas is still manual, before its props change
 watch(
   () => isPaused,
   (newIsPaused) => {
