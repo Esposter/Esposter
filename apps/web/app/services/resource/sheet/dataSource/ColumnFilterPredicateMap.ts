@@ -19,9 +19,12 @@ export const ColumnFilterPredicateMap = {
     if (cellValue === null) return false;
 
     const numberValue = Number(cellValue);
-    if (Number.isNaN(numberValue)) return false;
-    else if (filter.minimum !== "" && numberValue < Number(filter.minimum)) return false;
-    else if (filter.maximum !== "" && numberValue > Number(filter.maximum)) return false;
+    if (
+      Number.isNaN(numberValue) ||
+      (filter.minimum !== "" && numberValue < Number(filter.minimum)) ||
+      (filter.maximum !== "" && numberValue > Number(filter.maximum))
+    )
+      return false;
     else return true;
   },
   [ColumnType.String]: checkIsMatchingStringCell,
