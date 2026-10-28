@@ -25,11 +25,11 @@ export const findCellRectangles = (
       const key = columns.join("/");
       const values = run.map((cell) => getValue(cell)).toSorted((firstValue, secondValue) => firstValue - secondValue);
       const value = values[Math.floor(values.length / 2)] ?? 0;
-      const open = openRectangleMap.get(key);
-      if (open?.rows[1] === row && Math.abs(value - open.value) <= tolerance) {
-        open.cells.push(...run);
-        open.rows[1] = row + 1;
-        nextOpenRectangleMap.set(key, open);
+      const openRectangle = openRectangleMap.get(key);
+      if (openRectangle?.rows[1] === row && Math.abs(value - openRectangle.value) <= tolerance) {
+        openRectangle.cells.push(...run);
+        openRectangle.rows[1] = row + 1;
+        nextOpenRectangleMap.set(key, openRectangle);
       } else {
         const rectangle = { cells: [...run], columns, rows: [row, row + 1] as [number, number], value };
         rectangles.push(rectangle);

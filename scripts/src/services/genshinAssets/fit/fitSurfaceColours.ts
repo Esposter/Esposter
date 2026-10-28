@@ -63,15 +63,15 @@ export const fitSurfaceColours = async <Family extends string>(
       ...materialValues.flatMap((material) => Object.values(material.textures).map(({ pathId }) => pathId)),
     ]),
   );
-  const textures = new Map<string, Promise<Texture>>();
+  const pathTextureMap = new Map<string, Promise<Texture>>();
   const getTexture = (path: string): Promise<Texture> => {
-    const texture = textures.get(path) ?? readTexture(path);
-    textures.set(path, texture);
+    const texture = pathTextureMap.get(path) ?? readTexture(path);
+    pathTextureMap.set(path, texture);
     return texture;
   };
   // The exported diffuse texture a placed material draws with, if it was exported, tinted by the material's main colour
   // As the witness draws it, so a family reads the colour its exports show rather than its texture's own
-  const materialDiffuses = new Map<string, Promise<Texture | undefined>>();
+  const materialPathDiffuseMap = new Map<string, Promise<Texture | undefined>>();
   const readDiffuse = async (materialPathId: string): Promise<Texture | undefined> => {
     const material = materialMap.get(pathIdNameMap.get(materialPathId) ?? "");
     const path = toDiffusePath(textureDirectory, material, pathIdNameMap);
@@ -80,8 +80,8 @@ export const fitSurfaceColours = async <Family extends string>(
     return tintTexture(await getTexture(path), [red, green, blue]);
   };
   const getDiffuse = (materialPathId: string): Promise<Texture | undefined> => {
-    const diffuse = materialDiffuses.get(materialPathId) ?? readDiffuse(materialPathId);
-    materialDiffuses.set(materialPathId, diffuse);
+    const diffuse = materialPathDiffuseMap.get(materialPathId) ?? readDiffuse(materialPathId);
+    materialPathDiffuseMap.set(materialPathId, diffuse);
     return diffuse;
   };
   // A placed mesh is one part, named by its mesh, since a material can span parts: the statue's stone levels all draw one

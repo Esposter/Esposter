@@ -16,45 +16,46 @@ export const traceSkeleton = (
   levelStep: number,
 ): SkeletonNode[] => {
   const edgeVerticesMap = new Map<string, [number, number]>();
-  const neighbourMap = new Map<number, number[]>();
+  const vertexNeighbourMap = new Map<number, number[]>();
   for (const [first, second] of toFaceEdges(pieceFaces)) {
     const key = toEdgeKey(first, second);
     if (edgeVerticesMap.has(key)) continue;
     edgeVerticesMap.set(key, [first, second]);
-    neighbourMap.set(first, [...(neighbourMap.get(first) ?? []), second]);
-    neighbourMap.set(second, [...(neighbourMap.get(second) ?? []), first]);
+    vertexNeighbourMap.set(first, [...(vertexNeighbourMap.get(first) ?? []), second]);
+    vertexNeighbourMap.set(second, [...(vertexNeighbourMap.get(second) ?? []), first]);
   }
-  const pieceVertices = [...neighbourMap.keys()];
-  const readVertex = (vertex: number): Vector => vertices[vertex] ?? [0, 0, 0];
+  const pieceVertices = [...vertexNeighbourMap.keys()];
+  const getVertex = (vertex: number): Vector => vertices[vertex] ?? [0, 0, 0];
   // Dijkstra from every start vertex at once, along the piece's edges
-  const distanceMap = new Map(pieceVertices.map((vertex) => [vertex, Infinity]));
-  for (const vertex of startVertices) distanceMap.set(vertex, 0);
+  const vertexDistanceMap = new Map(pieceVertices.map((vertex) => [vertex, Infinity]));
+  for (const vertex of startVertices) vertexDistanceMap.set(vertex, 0);
   const unsettled = new Set(pieceVertices);
   while (unsettled.size > 0) {
     let nearest = -1;
     for (const vertex of unsettled)
-      if (nearest === -1 || (distanceMap.get(vertex) ?? 0) < (distanceMap.get(nearest) ?? 0)) nearest = vertex;
+      if (nearest === -1 || (vertexDistanceMap.get(vertex) ?? 0) < (vertexDistanceMap.get(nearest) ?? 0))
+        nearest = vertex;
     unsettled.delete(nearest);
-    const nearestDistance = distanceMap.get(nearest) ?? 0;
-    for (const neighbour of neighbourMap.get(nearest) ?? []) {
-      const distance = nearestDistance + toDistance(readVertex(nearest), readVertex(neighbour));
-      if (distance < (distanceMap.get(neighbour) ?? 0)) distanceMap.set(neighbour, distance);
+    const nearestDistance = vertexDistanceMap.get(nearest) ?? 0;
+    for (const neighbour of vertexNeighbourMap.get(nearest) ?? []) {
+      const distance = nearestDistance + toDistance(getVertex(nearest), getVertex(neighbour));
+      if (distance < (vertexDistanceMap.get(neighbour) ?? 0)) vertexDistanceMap.set(neighbour, distance);
     }
   }
-  const readDistance = (vertex: number): number => distanceMap.get(vertex) ?? 0;
+  const getDistance = (vertex: number): number => vertexDistanceMap.get(vertex) ?? 0;
   const nodes: SkeletonNode[] = [
-    { ...toCrossSection(startVertices.map((vertex) => readVertex(vertex))), farVertices: [...startVertices], level: 0 },
+    { ...toCrossSection(startVertices.map((vertex) => getVertex(vertex))), farVertices: [...startVertices], level: 0 },
   ];
-  const maxDistance = Math.max(...pieceVertices.map((vertex) => readDistance(vertex)));
+  const maxDistance = Math.max(...pieceVertices.map((vertex) => getDistance(vertex)));
   let previousLevel = [0];
   for (let level = 1; level * levelStep < maxDistance; level++) {
     const cut = level * levelStep;
-    const checkIsPast = (vertex: number): boolean => readDistance(vertex) >= cut;
+    const checkIsPast = (vertex: number): boolean => getDistance(vertex) >= cut;
     // Each face the level crosses joins the two edges it cuts into one loop
-    const loopParents = new Map<string, string>();
+    const edgeKeyParentMap = new Map<string, string>();
     const findLoop = (key: string): string => {
       let loop = key;
-      while (loopParents.get(loop) !== loop) loop = loopParents.get(loop) ?? loop;
+      while (edgeKeyParentMap.get(loop) !== loop) loop = edgeKeyParentMap.get(loop) ?? loop;
       return loop;
     };
     for (const face of pieceFaces) {
@@ -62,11 +63,11 @@ export const traceSkeleton = (
         const second = face[(corner + 1) % 3] ?? first;
         return checkIsPast(first) === checkIsPast(second) ? [] : [toEdgeKey(first, second)];
       });
-      for (const key of cutKeys) if (!loopParents.has(key)) loopParents.set(key, key);
+      for (const key of cutKeys) if (!edgeKeyParentMap.has(key)) edgeKeyParentMap.set(key, key);
       const [firstKey, ...otherKeys] = cutKeys;
-      if (firstKey) for (const key of otherKeys) loopParents.set(findLoop(key), findLoop(firstKey));
+      if (firstKey) for (const key of otherKeys) edgeKeyParentMap.set(findLoop(key), findLoop(firstKey));
     }
-    const loopKeysMap = Map.groupBy(loopParents.keys(), (key) => findLoop(key));
+    const loopKeysMap = Map.groupBy(edgeKeyParentMap.keys(), (key) => findLoop(key));
     const levelNodes: number[] = [];
     for (const keys of loopKeysMap.values()) {
       const edges = keys.flatMap((key) => {
@@ -74,8 +75,8 @@ export const traceSkeleton = (
         return edge ? [edge] : [];
       });
       const points = edges.map(([first, second]): Vector => {
-        const share = (cut - readDistance(first)) / (readDistance(second) - readDistance(first));
-        const [firstPoint, secondPoint] = [readVertex(first), readVertex(second)];
+        const share = (cut - getDistance(first)) / (getDistance(second) - getDistance(first));
+        const [firstPoint, secondPoint] = [getVertex(first), getVertex(second)];
         return [
           firstPoint[0] + (secondPoint[0] - firstPoint[0]) * share,
           firstPoint[1] + (secondPoint[1] - firstPoint[1]) * share,
@@ -106,12 +107,12 @@ export const traceSkeleton = (
     const cut = level * levelStep;
     const reached = new Set(farVertices);
     for (const vertex of reached)
-      for (const neighbour of neighbourMap.get(vertex) ?? [])
-        if (readDistance(neighbour) >= cut) reached.add(neighbour);
+      for (const neighbour of vertexNeighbourMap.get(vertex) ?? [])
+        if (getDistance(neighbour) >= cut) reached.add(neighbour);
     const tip = [...reached].reduce((farthest, vertex) =>
-      readDistance(vertex) > readDistance(farthest) ? vertex : farthest,
+      getDistance(vertex) > getDistance(farthest) ? vertex : farthest,
     );
-    nodes.push({ centre: readVertex(tip), farVertices: [], level: level + 1, parent: leaf, radius: 0 });
+    nodes.push({ centre: getVertex(tip), farVertices: [], level: level + 1, parent: leaf, radius: 0 });
   }
   return nodes;
 };

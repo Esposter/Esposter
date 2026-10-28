@@ -28,10 +28,10 @@ export const traceTubeCentrelines = (
       return [joined[first] ?? first, joined[second] ?? second, joined[third] ?? third];
     }),
   );
-  const readHeight = (vertex: number): number => vertices[vertex]?.[1] ?? 0;
-  const readLowest = (pieceFaces: readonly Vector[]): number =>
-    Math.min(...pieceFaces.flat().map((vertex) => readHeight(vertex)));
-  const pieceLowests = pieces.map((pieceFaces) => readLowest(pieceFaces));
+  const getHeight = (vertex: number): number => vertices[vertex]?.[1] ?? 0;
+  const computeLowest = (pieceFaces: readonly Vector[]): number =>
+    Math.min(...pieceFaces.flat().map((vertex) => getHeight(vertex)));
+  const pieceLowests = pieces.map((pieceFaces) => computeLowest(pieceFaces));
   const trunkPiece = hasTrunk ? pieceLowests.indexOf(Math.min(...pieceLowests)) : -1;
   return pieces.flatMap((pieceFaces, piece) => {
     const loops = findOpenLoops(vertices, pieceFaces);
@@ -43,7 +43,7 @@ export const traceTubeCentrelines = (
     let startVertices: number[];
     if (piece === trunkPiece) {
       const lowest = pieceLowests[piece] ?? 0;
-      startVertices = pieceVertices.filter((vertex) => readHeight(vertex) <= lowest + levelStep);
+      startVertices = pieceVertices.filter((vertex) => getHeight(vertex) <= lowest + levelStep);
     } else if (widestLoop) startVertices = widestLoop.vertices;
     else
       startVertices = [

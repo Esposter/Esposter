@@ -177,13 +177,13 @@ export const fitLoginPaving = async (
   );
   // Each cell's stone read over its neighbours of its own material, past the speckle the texture paints it with
   const blurred = blurWithinTags(grey, tags, { height, radius: POCKET_BLUR_CELLS, width });
-  const isPocket = new Uint8Array(width * height);
+  const pocketMask = new Uint8Array(width * height);
   const pockets = materialNames.flatMap((material, tag) => {
     if (!POCKET_MATERIALS.has(material)) return [];
     const cells = Array.from({ length: width * height }, (_value, cell) => cell).filter((cell) => tags[cell] === tag);
     const threshold = computeOtsuThreshold(cells.map((cell) => blurred[cell] ?? 0));
     const pocketCells = cells.filter((cell) => (blurred[cell] ?? 0) < threshold);
-    for (const cell of pocketCells) isPocket[cell] = 1;
+    for (const cell of pocketCells) pocketMask[cell] = 1;
     return traceCells(pocketCells);
   });
   const normals = await Promise.all(
@@ -222,7 +222,7 @@ export const fitLoginPaving = async (
       for (let columnOffset = -RIM_REACH_CELLS; columnOffset <= RIM_REACH_CELLS; columnOffset++) {
         const [nearColumn, nearRow] = [column + columnOffset, row + rowOffset];
         if (nearColumn < 0 || nearRow < 0 || nearColumn >= width || nearRow >= height) continue;
-        if (isPocket[nearRow * width + nearColumn]) pocketCount++;
+        if (pocketMask[nearRow * width + nearColumn]) pocketCount++;
         else laneCount++;
       }
     return pocketCount > 0 && laneCount > 0;

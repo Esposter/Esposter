@@ -36,7 +36,7 @@ import { join } from "node:path";
 // The sky's cloud layer's material, and the settings of our cloud layer its floats set, by the property each is read
 // From
 const CLOUD_LAYER_MATERIAL = "Enviro_Cloud_Layer_Mat";
-const CLOUD_LAYER_MATERIAL_SETTING_MAP = {
+const CLOUD_LAYER_MATERIAL_SETTING_PROPERTY_MAP = {
   curlAmplitude: "_CloudCurlAmplitude",
   curlSpeed: "_CloudCurlSpeed",
   curlTiling: "_CloudCurlTiling",
@@ -109,7 +109,10 @@ export const fitLoginScene = async (only: readonly string[], options: DryRunOpti
       const { dome, residual } = fitCloudLayerDome(parseMachineJson<ExportedMesh>(cloudDome));
       const floats = materials.find(({ name }) => name === CLOUD_LAYER_MATERIAL)?.floats ?? {};
       const cloudLayerMaterial = Object.fromEntries(
-        Object.entries(CLOUD_LAYER_MATERIAL_SETTING_MAP).map(([setting, property]) => [setting, floats[property] ?? 0]),
+        Object.entries(CLOUD_LAYER_MATERIAL_SETTING_PROPERTY_MAP).map(([setting, property]) => [
+          setting,
+          floats[property] ?? 0,
+        ]),
       );
       return {
         notes: [`the cloud layer's dome drawn from its profiles stands ${residual.toFixed(4)} off its own projections`],

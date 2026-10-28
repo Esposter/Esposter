@@ -23,11 +23,11 @@ export const readSurface = (
   const faceSamples = readFaceSamples(mesh, world, diffuses, part, checkKept);
   const diffuseReadMap = new Map<Texture, { area: number; texels: number; weight: number }>();
   for (const { area, diffuse, samples, texels } of faceSamples) {
-    const read = diffuseReadMap.get(diffuse) ?? { area: 0, texels: 0, weight: 0 };
+    const diffuseRead = diffuseReadMap.get(diffuse) ?? { area: 0, texels: 0, weight: 0 };
     diffuseReadMap.set(diffuse, {
-      area: read.area + area,
-      texels: read.texels + texels,
-      weight: read.weight + sumWeights(samples),
+      area: diffuseRead.area + area,
+      texels: diffuseRead.texels + texels,
+      weight: diffuseRead.weight + sumWeights(samples),
     });
   }
   const details = [...diffuseReadMap].flatMap(([diffuse, { area, texels, weight }]) => {

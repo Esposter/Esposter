@@ -7,11 +7,11 @@ import { computeSurfaceTones } from "#src/services/genshinAssets/fit/computeSurf
 // `computeSurfaceTones` fits them. A sample of no part (a terrain tile's base map) and one of no weight count for nothing,
 // So a part with no weight to fit is absent rather than fitted to nothing
 export const computePartSurfaces = (samples: readonly SurfaceSample[]): Record<string, FittedSurface> => {
-  const partGroups = Object.groupBy(
+  const partSamplesMap = Object.groupBy(
     samples.filter(({ part, weight }) => part !== "" && weight > 0),
     ({ part }) => part,
   );
   return Object.fromEntries(
-    Object.entries(partGroups).map(([part, members]) => [part, computeSurfaceTones(members ?? [])]),
+    Object.entries(partSamplesMap).map(([part, members]) => [part, computeSurfaceTones(members ?? [])]),
   );
 };

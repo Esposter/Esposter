@@ -141,7 +141,7 @@ export const fitLoginTowerFacades = async (
     // The wall's profile up the tower, row by row the median radius its faces stand at, at the row's middle,
     // Simplified into the sloped runs a moulding's roll and a cornice's overhang are, each a frustum of the lathe: what
     // Sinks in from the profile is a recess and what stands out from it a column
-    const rowRadiiMap = Map.groupBy(
+    const rowCellsMap = Map.groupBy(
       [...tags.keys()].filter((cell) => (tags[cell] ?? -1) >= 0),
       (cell) => toRow(cell),
     );
@@ -149,7 +149,7 @@ export const fitLoginTowerFacades = async (
     let rowRadius = 0;
     for (let row = 0; row < height; row++) {
       // A row the tower stands open all round keeps the wall below it
-      rowRadius = computeUpperMedian((rowRadiiMap.get(row) ?? []).map((cell) => heights[cell] ?? 0)) || rowRadius;
+      rowRadius = computeUpperMedian((rowCellsMap.get(row) ?? []).map((cell) => heights[cell] ?? 0)) || rowRadius;
       if (row === 0) points.push([rowRadius, 0]);
       points.push([rowRadius, (row + 0.5) * TOWER_FACADE_CELL_SIZE]);
     }
@@ -197,11 +197,11 @@ export const fitLoginTowerFacades = async (
     const { face } = paintCells;
     const bandRows = Math.max(1, Math.round(TOWER_BAND_HEIGHT / paint.cellSize));
     const toBand = (cell: number): number => Math.floor(Math.floor(cell / paint.width) / bandRows);
-    const faceBandMap = Map.groupBy(face, (cell) => toBand(cell));
+    const faceBandCellsMap = Map.groupBy(face, (cell) => toBand(cell));
     // The face's tone band by band up the height, a band merged into the one below while its tone holds
     const unmergedBands: TowerFacade["bands"] = [];
     for (let band = 0; band < Math.ceil(paint.height / bandRows); band++) {
-      const bandCells = faceBandMap.get(band);
+      const bandCells = faceBandCellsMap.get(band);
       if (!bandCells) continue;
       unmergedBands.push({
         from: roundFitted(band * bandRows * paint.cellSize),
@@ -216,7 +216,7 @@ export const fitLoginTowerFacades = async (
       return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
     };
     const bandLuminanceMap = new Map(
-      Array.from(faceBandMap, ([band, bandCells]) => [
+      Array.from(faceBandCellsMap, ([band, bandCells]) => [
         band,
         bandCells.reduce((sum, cell) => sum + getLuminance(cell), 0) / bandCells.length,
       ]),

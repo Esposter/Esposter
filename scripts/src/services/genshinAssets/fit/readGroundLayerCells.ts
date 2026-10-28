@@ -16,11 +16,11 @@ import { GroundLayer } from "genshin-engine";
 // Run as thin lines along the roads its base maps show. A kind no tile was read holding is an error rather than a guess
 export const readGroundLayerCells = async (component: DerivedAssetComponent): Promise<GroundLayerCellTile[]> => {
   const tiles = await readTerrainSplats(component);
-  const names = await readAssetNames(
+  const diffusePathIdNameMap = await readAssetNames(
     new Set(tiles.flatMap(({ splat }) => splat.layers.map(({ diffusePathId }) => diffusePathId))),
   );
   const toGroundLayer = ({ diffusePathId, kind }: TerrainSplatLayer, tile: string): GroundLayer => {
-    if (names.get(diffusePathId) === TERRAIN_PATH_DIFFUSE) return GroundLayer.Path;
+    if (diffusePathIdNameMap.get(diffusePathId) === TERRAIN_PATH_DIFFUSE) return GroundLayer.Path;
     if (!checkIsTerrainSplatKind(kind))
       throw new InvalidOperationError(Operation.Read, tile, `paints a layer of kind ${kind}, which no ground layer is`);
     return TerrainSplatKindGroundLayerMap[kind];

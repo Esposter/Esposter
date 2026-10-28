@@ -24,7 +24,7 @@ export const fitGroundLayerColours = async (
   terrainRadius: number,
 ): Promise<Partial<Record<GroundLayer, string>>> => {
   const textureDirectory = join(getComponentDirectory(component).assets, AssetType.Texture2D);
-  const samples = new Map<GroundLayer, SurfaceSample[]>();
+  const layerSamplesMap = new Map<GroundLayer, SurfaceSample[]>();
   for (const { cells, column, name, resolution, row } of tiles) {
     const baseMap = join(textureDirectory, `${name}${TERRAIN_BASE_MAP_SUFFIX}.png`);
     if (!existsSync(baseMap)) continue;
@@ -50,10 +50,12 @@ export const fitGroundLayerColours = async (
       const count = counts[cell] ?? 0;
       if (count === 0) continue;
       const colour = [0, 1, 2].map((channel) => (sums[cell * 3 + channel] ?? 0) / count) as Vector;
-      const layerSamples = samples.get(layer) ?? [];
+      const layerSamples = layerSamplesMap.get(layer) ?? [];
       layerSamples.push({ colour, part: "", weight: count });
-      samples.set(layer, layerSamples);
+      layerSamplesMap.set(layer, layerSamples);
     }
   }
-  return Object.fromEntries(Array.from(samples, ([layer, members]) => [layer, computeSurfaceTones(members, 1).color]));
+  return Object.fromEntries(
+    Array.from(layerSamplesMap, ([layer, members]) => [layer, computeSurfaceTones(members, 1).color]),
+  );
 };

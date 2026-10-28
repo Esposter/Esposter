@@ -26,7 +26,7 @@ export const readWindrisePlantPlacements = async (): Promise<{
     Promise.all(world.streams.map((stream) => readStreamPlacements(DerivedAssetComponent.Windrise, stream))),
   ]);
   const placements = streamPlacements.flat();
-  const prefabNames = getPrefabNames(placements, pathNames);
+  const prefabIdNameMap = getPrefabNames(placements, pathNames);
   const originPrefabIds = new Set(
     world.streams.flatMap(({ prefabs }) =>
       prefabs.filter(({ prefab }) => prefab.pathId === world.origin.pathId).map(({ prefabId }) => prefabId),
@@ -35,14 +35,14 @@ export const readWindrisePlantPlacements = async (): Promise<{
   const [originX, , originZ] = origin;
   const checkIsPlantPlacement = ({ position: [x, , z], prefabId }: WorldPlacement): boolean =>
     !originPrefabIds.has(prefabId) &&
-    checkIsPlantName(prefabNames.get(prefabId) || "") &&
+    checkIsPlantName(prefabIdNameMap.get(prefabId) || "") &&
     Math.hypot(x - originX, z - originZ) <= GROUND_RADIUS;
   const plantPlacements = placements.filter((placement) => checkIsPlantPlacement(placement));
   return {
     origin,
     plants: Array.from(
       Map.groupBy(plantPlacements, ({ prefabId }) => prefabId),
-      ([prefabId, places]) => ({ name: prefabNames.get(prefabId) || "", places }),
+      ([prefabId, places]) => ({ name: prefabIdNameMap.get(prefabId) || "", places }),
     ),
   };
 };

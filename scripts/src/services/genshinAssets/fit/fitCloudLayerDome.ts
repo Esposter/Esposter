@@ -30,7 +30,7 @@ export const fitCloudLayerDome = ({
   residual: number;
 } => {
   const vertexCount = m_Vertices.length / 3;
-  const rings = new Map<
+  const heightRingMap = new Map<
     string,
     { elevations: number[]; normalElevations: number[]; vertices: number[]; wisps: number[] }
   >();
@@ -39,7 +39,7 @@ export const fitCloudLayerDome = ({
     const radius = Math.hypot(x, z);
     if (radius < APEX_RADIUS) continue;
     const [normalX = 0, normalY = 0, normalZ = 0] = m_Normals.slice(vertex * 3, vertex * 3 + 3);
-    const ring = getOrCreate(rings, y.toFixed(RING_DECIMALS), () => ({
+    const ring = getOrCreate(heightRingMap, y.toFixed(RING_DECIMALS), () => ({
       elevations: [],
       normalElevations: [],
       vertices: [],
@@ -51,7 +51,7 @@ export const fitCloudLayerDome = ({
     ring.normalElevations.push(MathUtils.radToDeg(Math.atan2(normalY, -(normalX * x + normalZ * z) / radius)));
     ring.wisps.push(readPair(m_UV0, vertex, "m_UV0")[1]);
   }
-  const sortedRings = [...rings.values()].toSorted(
+  const sortedRings = [...heightRingMap.values()].toSorted(
     (firstRing, secondRing) => computeMean(firstRing.elevations) - computeMean(secondRing.elevations),
   );
   const [horizon] = sortedRings;
