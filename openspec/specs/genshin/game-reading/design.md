@@ -37,7 +37,7 @@ This page links them and does not restate them.
 - **A table is read only at the install's build, and its revision is measured before it is trusted.**
   - The install's build is the one its own files name (`game_version`, `scripts/src/services/genshinAssets/shared/readGameVersion.ts`), and the community dump's tables are fetched from the branch at that build (`.agents/skills/genshin-parity/references/data-sources.md`).
   - A dump holds tables of several builds at once, so a table's size is compared with each branch's copy before its rows are used ([data sources](../../../../.agents/skills/genshin-parity/references/data-sources.md), `.agents/skills/genshin-parity/references/data-sources.md`).
-  - _Rejected: taking the dump's name for its revision._ On 2026-10-18 most of the dump matched the 6.6 branch while the install was 7.1.0 (`{data-root}/genshin-parity/game/config.ini`).
+  - _Rejected: taking the dump's name for its revision._ Most of the dump matched the 6.6 branch while the install was 7.1.0 (`{data-root}/genshin-parity/game/config.ini`).
 - **A value's role is a candidate until a field name confirms it.**
   - A scrambled object with no type data gives its values offsets and shapes only, so a role such as fog density or sun intensity is written as a candidate, and its page lists it as open.
   - _Rejected: naming a value from how it moves over the day alone._ A curve that rises at dusk could be a light, a blend or a fog, and a fit assigns it whichever the rest of the frame allows.
@@ -53,7 +53,7 @@ This page links them and does not restate them.
 ```mermaid
 flowchart TD
   Q[A question about the game] --> S{Which source holds it?}
-  S -->|"a shape, a place, a surface"| E["the install's blocks: extract, inventory, witness, avatar"]
+  S -->|"a shape, a place, a surface"| E["the install's blocks"]
   S -->|"how it is shaded"| SH["its shader's programs: shaders"]
   S -->|"a table's rows"| T["the community dump at the install's revision"]
   S -->|"a string"| X["the install's text maps: genshin:text decode"]
@@ -61,7 +61,7 @@ flowchart TD
   S -->|"a motion, a sound"| C["clips, timings, playlist, sounds"]
   S -->|"nothing the files hold"| M["public captures, measured"]
   E & SH & T & X & B & C & M --> R["recorded where the feature is owned"]
-  R --> O["ours: a TSL node, a fitted record, a table reader, a rule"]
+  R --> O["ours, committed as code or data"]
   O --> G["gated: its test, the witness's pass, compare"]
 ```
 
@@ -153,7 +153,7 @@ The PC runs no SSH server, so a transfer between the two runs from the PC to the
 - [ ] **What ships takes its defaults from public references or a derivation** — no source yet: the shipped defaults and the references or derivations they come from are not listed in the repository.
 - [ ] **The witness layout gives a material's floats and colours** — no source yet: the witness layout's reader is repo code, which is not game evidence, and no game material file is read against the claim.
 - [ ] **The PC runs no SSH server, and its transfers run by `ai:fleet:data push`** — no source yet: the PC's SSH server state, which no record keeps.
-- [ ] **On 2026-10-18 most of the dump matched the 6.6 branch** — no source yet: that day's size comparison of the dump's tables against each branch is kept in neither the repository nor the cache.
+- [ ] **Most of the dump matched the 6.6 branch** — no source yet: the size comparison of the dump's tables against each branch is kept in neither the repository nor the cache.
 - [ ] **The Windows PC holds its own install** — no source yet: the PC's install is not on this machine, and no record of it is in the repository.
 - [ ] **The parity page, the witness and the passes run on both machines** — no source yet: which machine holds the `parity-page` capability is not recorded in the repository.
 - [ ] **The client holds no scene group script** — no source yet: no listing of the client's script files is kept to show that none is a scene group script.

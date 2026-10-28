@@ -234,11 +234,10 @@ Paths relative to the repository root.
 
 ## Notes
 
-- The read is a start: there is no separate read procedure `apps/web/server/trpc/routers/genshin.ts`, so opening the game is always a lease, and a second tab that opens the game takes it from the first.
+- The read is a start: there is no separate read procedure `apps/web/server/trpc/routers/genshin.ts`.
 - The start's own write can fail its precondition when two starts race `apps/web/server/services/genshin/writeGenshinSaveEnvelope.ts`, as when the game opens in two tabs at once. The one that lost gets the same CONFLICT a replaced save does, and the start is retried like any failed start: the page's loading screen waits for it, and the browser's copy never stands in for the account's.
-- A save under its session's ETag costs one write `apps/web/server/services/genshin/saveGenshin.ts`. A refused one costs one read and the envelope's parse, after the request body is validated by the procedure's input schema.
+- The request body is validated by the procedure's input schema before the write, and a refused one costs one read and the envelope's parse.
 - At a full bag, most of the client's time goes to the transformer's walk of the save, not to the JSON it produces, so the request body task in `saveGenshin.bench.md`, not its stringify, is the number a client speedup has to move.
-- Stored saves need the characters backfill (the backfills skill) before the schema reads them, since the characters slice has no default.
 
 ## Open
 
