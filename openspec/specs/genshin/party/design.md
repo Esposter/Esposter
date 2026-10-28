@@ -56,7 +56,7 @@ flowchart TD
 
 The world screen keeps the player's characters and their party. A new player's is the Traveler alone, made by `createCharacter` once the roster arrives, at level 1 with the weapon the game gives them ([character attributes](../character-attributes/design.md)). Once a frame, in play with no screen over the world, the first party key pressed is passed to `switchPartyMember` at the canvas clock's elapsed seconds, so a screen over the world holds the keys as it holds the rest of play.
 
-The character on the field fights through its kit, which prices every character's hits from its attributes with the Traveler's kit until the kits run gives each its own ([combat](../combat/design.md)). An enemy's strike, past the team's shields, and a drowning take HP from the party, and a team that has all fallen opens the game over screen, whose Revive brings it back at 35% and jumps it to the nearest unlocked teleport waypoint, or leaves it where it fell when none is unlocked. A domain's challenge revives its team without the screen, as the domain's rule gives.
+The character on the field fights through its kit, which prices every character's hits from its attributes with the Traveler's kit until the kits run gives each its own ([combat](../combat/design.md)). An enemy's strike, past the team's shields, and a drowning take HP from the party, and a team that has all fallen opens the game over screen, whose Revive brings it back at 35% and jumps it to the nearest unlocked teleport waypoint, or leaves it where it fell when none is unlocked. A domain's challenge does not revive its team yet: no domain calls `reviveParty`.
 
 ## Key files
 

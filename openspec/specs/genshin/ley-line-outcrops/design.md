@@ -1,6 +1,6 @@
 # Ley line outcrops
 
-The rules a region's two ley line blossoms follow, read from the game's tables by `genshin:assets outcrops`: when each kind opens, where it starts after the daily reset, and where a claimed one moves on to. A kind is the Blossom of Revelation, which gives Character EXP materials, or the Blossom of Wealth, which gives Mora. Nothing places them in the world yet, so no outcrop is touched or fought, and no claim is offered: the places wait on [spawned places](../../../changes/genshin-spawned-places/design.md), the enemies on the wiki's table, and the rewards on a table the dump does not hold.
+The rules a region's two ley line blossoms follow, read from the game's tables by `genshin:assets outcrops`: when each kind opens, where it starts after the daily reset, and where a claimed one moves on to. A kind is the Blossom of Revelation, which gives Character EXP materials, or the Blossom of Wealth, which gives Mora. The world draws them each day over the fitted places in each region's data. A touch starts a camp of provisional enemies at a place, and a claim on F is offered once the camp is down.
 
 ## How it works
 
@@ -19,7 +19,7 @@ flowchart TD
 - **Sections kept, read by no rule yet.** A region's sections are kept in the data in their order, so the dump's place chain can be joined to the fitted places by position once the scene-group export lands (`{data-root}/genshin-parity/text/ExcelBinOutput/BlossomSectionOrderExcelConfigData.json`, `scripts/src/services/genshinAssets/leyLine/toLeyLineRegions.ts`). No draw reads them yet.
 - **Started at a drawn fitted place.** Each kind starts at a fitted place drawn at random from those no kind before it holds, with the day's seeded random. A kind with no place left starts none (`packages/genshin-world/src/services/leyLine/computeDailyOutcrops.ts`, `packages/genshin-world/src/services/leyLine/drawPlaceIds.ts`).
 - **Moved on to the nearest place.** A claimed outcrop moves to the nearest fitted place of its region but its own and not the one the other kind stands at, where it waits; where none is free it stays claimed. Provisional until the dump's place chain is joined to the fitted places by position.
-- **The daily reset is 04:00.** The refresh rows' `refreshTime` is 04:00 in the game's day, the reset every kind starts over at (`{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, `refreshTime` on rows 1 to 4). The random stream a reset draws from is the caller's, and nothing wires the reset yet.
+- **The daily reset is 04:00.** The refresh rows' `refreshTime` is 04:00 in the game's day, the reset every kind starts over at (`{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, `refreshTime` on rows 1 to 4). The random stream a reset draws from is the caller's, and `useWorldOutcrops` draws again once the day it last drew is over (`checkIsDailyResetDayCurrent`).
 - **Settled calls on the rest of the table.** The rank each city's "BlossomOpenExcelConfigData" row gives gates nothing a kind opens by, so it is not read. Each ley kind's "BlossomChestExcelConfigData" resin is 20, the price Original Resin already charges (`{data-root}/genshin-parity/text/ExcelBinOutput/BlossomChestExcelConfigData.json`, rows 1 and 2). The groups' refresh type numbers are not read, since the dump holds no enum naming them: a kind's draw ranges over every place of its region's sections.
 
 ## Data
@@ -29,11 +29,10 @@ flowchart TD
 
 ## Not built yet
 
-- **Touching, fighting and claiming in play.** Mondstadt's outcrops stand at the official map's few dozen Ley Line Blossom points, written into its region data as outcrop places, as the [spawned places](../../../changes/genshin-spawned-places/design.md) page sets out. A touch spawns the camp its place holds, and an outcrop with no camp spawns none. No source pairs a wiki location with a map point, so no place has a camp yet. The daily draw still starts over the dump's places, not these, so no outcrop is in play. The enemies per place come from the wiki's table, which is not in the dump, and the claim's F prompt is built but not wired.
-- **The claims' rewards.** Not read yet: each refresh row lists its reward previews, one a World Level, which name them, as the [proposal](../../../changes/genshin-ley-line-outcrops/design.md) sets out.
+- **The camps are provisional.** A touch spawns a camp of `OUTCROP_CAMP_SIZE` members, drawn from `OUTCROP_CAMP_ENEMY_KIND_IDS`, at the place (`packages/genshin-world/src/services/leyLine/createOutcropCamp.ts`). The enemies per place come from the wiki's table, which is not in the dump.
+- **The claims' items.** A claim pays its World Level's row of the refresh row's reward previews (`packages/genshin-world/src/services/leyLine/computeOutcropClaimRewards.ts`), and the names of those items are open (see Open).
 - **Fontaine, Natlan and Snezhnaya.** Their kinds are read, but their sections are not in the dump's section order table, so no outcrop is drawn there.
 - **Nod-Krai.** The refresh rows name no kind for it.
-- **The states and the reset.** The transitions from waiting through fighting and cleared to claimed, and the reset that starts each kind over, are the proposal's still.
 
 ## Key files
 
