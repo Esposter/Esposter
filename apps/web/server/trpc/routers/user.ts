@@ -112,7 +112,7 @@ export const userRouter = router({
       // Background - so there is nothing to unwind here and no cleanup pass to schedule
       await publishBlobPrefixDeletion(
         userId,
-        AzureContainer.PrivateUserAssets,
+        AzureContainer.UserAssets,
         getCallBackgroundBlobName(userId, slot),
         new Date(),
       ).match(noop, console.error);
@@ -128,7 +128,7 @@ export const userRouter = router({
           JSON.stringify({ mimetype, size }),
         );
 
-      const containerClient = await useContainerClient(AzureContainer.PrivateUserAssets);
+      const containerClient = await useContainerClient(AzureContainer.UserAssets);
       // No listing stands between the request and the target: the slot is already bounded by its schema, and a
       // Count read here could only ever be out of date - a delete is reclaimed by a worker, so a slot freed a
       // Moment ago would still read as taken and refuse the replacement the user just made room for
@@ -175,7 +175,7 @@ export const userRouter = router({
   }),
   readCallBackgrounds: standardAuthedProcedure.query<CallBackground[]>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
-    const containerClient = await useContainerClient(AzureContainer.PrivateUserAssets);
+    const containerClient = await useContainerClient(AzureContainer.UserAssets);
     const callBackgroundBlobs = await readCallBackgroundBlobs(containerClient, userId);
     // Partitioned in one pass rather than filtered twice, so the cap is applied to each slot exactly once
     const servableCallBackgroundBlobs: CallBackgroundBlob[] = [];
@@ -186,7 +186,7 @@ export const userRouter = router({
     // A slot that came back over the cap is dropped from what the picker receives and reclaimed through the
     // Same event every other blob delete goes through. Best-effort: a dropped publish only leaves a slot
     // Occupied by a blob nothing will ever hand out
-    await publishBlobDeletion(userId, AzureContainer.PrivateUserAssets, unservableBlobNames).match(noop, console.error);
+    await publishBlobDeletion(userId, AzureContainer.UserAssets, unservableBlobNames).match(noop, console.error);
     return Promise.all(
       servableCallBackgroundBlobs.map(async ({ name, slot }) => ({
         sasUrl: await generateReadSasUrl(containerClient.getBlockBlobClient(name)),

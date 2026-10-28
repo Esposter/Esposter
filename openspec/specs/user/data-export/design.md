@@ -70,7 +70,7 @@ sequenceDiagram
   participant DB as Postgres
   participant EG as Event Grid
   participant Handler as exportUserData handler
-  participant Blob as DataExports container
+  participant Blob as UserAssets container
   Person->>Web: Request export
   Web->>DB: insert queued row, unless one is active
   Web->>EG: ExportUserData for the export

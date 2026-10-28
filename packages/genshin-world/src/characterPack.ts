@@ -11,4 +11,3 @@ export {
 export { decodeCharacterTerms } from "#src/services/character/decodeCharacterTerms";
 export { readCharacterNames } from "#src/services/character/readCharacterNames";
 export { resolveCharacterPackTextures } from "#src/services/character/resolveCharacterPackTextures";
-export { GAME_DATA_BLOB_PATH } from "#src/services/data/constants";

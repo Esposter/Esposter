@@ -4,12 +4,12 @@ import { verifyGameData } from "#src/services/gameData/verifyGameData";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(verifyGameData, () => {
-  const baseUrl = "https://account.example/app-assets";
-  // Each record is named by the hash of its own compact JSON, as the account stores it
-  const createStoredRecord = (value: unknown) => {
+  const baseUrl = "https://account.example/public-genshin-assets";
+  // Each record is named by the hash of its own compact JSON, and stored under the dataset it is published under
+  const createStoredRecord = (dataset: string, value: unknown) => {
     const json = JSON.stringify(value);
     const hash = getGameDataHash(json);
-    return { hash, json, url: `${baseUrl}/${getGameDataBlobName(hash)}` };
+    return { hash, json, url: `${baseUrl}/${getGameDataBlobName(dataset, hash)}` };
   };
 
   afterEach(() => {
@@ -19,10 +19,10 @@ describe(verifyGameData, () => {
   test("fetches each object the lock reaches once and counts the distinct ones", async () => {
     expect.hasAssertions();
 
-    const entry = createStoredRecord({ name: "a" });
-    // One record is both an object of the lock and an entry of its index, so it must be fetched once
-    const shared = createStoredRecord([1, 2]);
-    const index = createStoredRecord({ "10000002": entry.hash, "10000003": shared.hash });
+    const entry = createStoredRecord("profile/English", { name: "a" });
+    const shared = createStoredRecord("stats/weapons", [1, 2]);
+    // Two entries of the index name one record, so it must be fetched once
+    const index = createStoredRecord("profile/English", { "10000002": entry.hash, "10000003": entry.hash });
     const storedRecords = [entry, shared, index];
     const fetch = vi
       .spyOn(globalThis, "fetch")

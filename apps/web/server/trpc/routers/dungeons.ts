@@ -6,6 +6,6 @@ import { Dungeons } from "#shared/models/dungeons/data/Dungeons";
 import { AzureContainer } from "@esposter/db-schema";
 
 export const dungeonsRouter = router({
-  readDungeons: createReadBlobStateProcedure(AzureContainer.DungeonsAssets, Dungeons),
-  saveDungeons: createSaveBlobStateProcedure(AzureContainer.DungeonsAssets, saveDungeonsInputSchema),
+  readDungeons: createReadBlobStateProcedure(AzureContainer.UserAssets, Dungeons),
+  saveDungeons: createSaveBlobStateProcedure(AzureContainer.UserAssets, saveDungeonsInputSchema),
 });

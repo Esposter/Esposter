@@ -16,7 +16,7 @@ import formatterConfiguration from "../../../../../oxfmt.config.ts";
 export const createFilePack = async () => {
   if (existsSync(".env")) process.loadEnvFile();
   const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING);
-  const containerClient = blobServiceClient.getContainerClient(AzureContainer.DungeonsAssets);
+  const containerClient = blobServiceClient.getContainerClient(AzureContainer.PublicDungeonsAssets);
   const files: Types.Loader.FileConfig[] = [];
   const fileKeys = new Set<string>();
   const enumName = "FileKey";

@@ -2,7 +2,7 @@ import { GameDataTarget } from "#src/models/gameData/GameDataTarget";
 import { GameDataTargetBlobServiceUrlMap } from "#src/services/gameData/GameDataTargetBlobServiceUrlMap";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { AzureContainer } from "@esposter/db-schema";
-import { GAME_DATA_BLOB_PATH, GameDataset } from "genshin-world";
+import { GameDataset } from "genshin-world";
 import { join } from "node:path";
 
 // The lock is the one committed file that names every published object, and the only one a publish rewrites
@@ -28,7 +28,7 @@ export const MAX_CONCURRENT_BLOB_UPLOADS = 100;
 export const MAX_CONCURRENT_VERIFY_FETCHES = 16;
 // Where a step reads what another step published: the dev account, which holds every object the lock names as prod does
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
-export const GAME_DATA_DEV_BASE_URL: string = `${GameDataTargetBlobServiceUrlMap[GameDataTarget.Dev]}/${AzureContainer.AppAssets}/${GAME_DATA_BLOB_PATH}`;
+export const GAME_DATA_DEV_BASE_URL: string = `${GameDataTargetBlobServiceUrlMap[GameDataTarget.Dev]}/${AzureContainer.PublicGenshinAssets}`;
 // The catalogue's record, which `genshin:data authored` publishes and `fitAreaOutlines` publishes outlined
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const CATALOGUE_KEY: string = `${GameDataset.Catalogue}/catalogue`;

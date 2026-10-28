@@ -8,5 +8,5 @@ export const readPublishedGameDataIndex = async (indexKey: string): Promise<Reco
   const indexHash = indexes[indexKey];
   if (indexHash === undefined)
     throw new InvalidOperationError(Operation.Read, indexKey, "is not in the game data lock");
-  return readPublishedGameDataObject<Record<string, string>>(indexHash);
+  return readPublishedGameDataObject<Record<string, string>>(indexKey, indexHash);
 };

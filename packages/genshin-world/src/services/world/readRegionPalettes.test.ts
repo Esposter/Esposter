@@ -13,8 +13,10 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 // A palette's hex colour as the number a material is coloured with
 const parseHexColour = (hex: string): number => Number.parseInt(hex.slice(1), 16);
 // The Mondstadt palette the mirror holds, as the publish wrote it
-const readMondstadtPalette = async (): Promise<{ stone: { hex: string }; timber: { hex: string } }> =>
-  jsonDateParse(await readMirroredGameDataObject(takeOne(gameDataLock.objects, "regions/mondstadt/palette")));
+const readMondstadtPalette = async (): Promise<{ stone: { hex: string }; timber: { hex: string } }> => {
+  const key = "regions/mondstadt/palette";
+  return jsonDateParse(await readMirroredGameDataObject(key, takeOne(gameDataLock.objects, key)));
+};
 
 describe(readRegionPalettes, () => {
   afterEach(() => {

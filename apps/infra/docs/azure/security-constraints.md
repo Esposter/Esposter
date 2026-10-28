@@ -20,7 +20,7 @@ Migration path: move to managed identity or user delegation SAS if the app gains
 
 `allowBlobPublicAccess` stays enabled.
 
-`AppAssets`, `DungeonsAssets`, and `PublicUserAssets` are intentionally public for anonymous asset delivery. See `packages/db-schema/src/services/azure/container/AzureContainerPropertiesMap.ts`.
+`PublicAppAssets`, `PublicDungeonsAssets`, `PublicGenshinAssets`, and `PublicUserAssets` are intentionally public for anonymous asset delivery. A container is private unless its name starts with `public-`, and per-user data never goes in a public container. See `packages/db-schema/src/services/azure/container/AzureContainerPropertiesMap.ts`.
 
 Migration path: move public assets behind signed URLs, CDN, or app-mediated delivery before disabling account-level public access.
 
@@ -61,10 +61,10 @@ Migration path: identify all source networks, add private endpoints or access re
 
 ## Keyless Game-Data Publisher
 
-The hosted game data is written to the `app-assets` container under `genshin/data/` on each account, and that publish authenticates without a key. `DefaultAzureCredential` resolves to the owner's `az login` on their workstation, so neither a shared key nor a connection string sits on any disk.
+The hosted game data is written to the `public-genshin-assets` container on each account as `<dataset>/<hash>.json`, one object per record, and that publish authenticates without a key. `DefaultAzureCredential` resolves to the owner's `az login` on their workstation, so neither a shared key nor a connection string sits on any disk.
 
-The owner's principal holds a Storage Blob Data Contributor grant scoped to the `app-assets` container on `devstesposter001` and on `prodstesposter001`, declared in `src/azure/resources/Microsoft.Authorization/roleAssignments/jimmyChenDevstesposter001AppAssetsStorageBlobDataContributor.ts` and its prod twin. The grant itself stops at the container. It is not the principal's only path to the account's data: the same principal is subscription Owner, which can list the account's keys, and Shared Key access stays enabled (see Storage Shared Key Access), so with a key it can write any container. The Owner role carries no blob data actions, which is why the keyless publish needs the grant as a separate declaration.
+The owner's principal holds a Storage Blob Data Contributor grant on each `public-*` container and on `user-assets`, on `devstesposter001` and on `prodstesposter001`, declared as `jimmyChen{Dev,Prod}stesposter001{Container}StorageBlobDataContributor` in `apps/infra/src/azure/resources/Microsoft.Authorization/roleAssignments/`. Each grant stops at its container. It is not the principal's only path to the account's data: the same principal is subscription Owner, which can list the account's keys, and Shared Key access stays enabled (see Storage Shared Key Access), so with a key it can write any container. The Owner role carries no blob data actions, which is why the keyless publish needs the grant as a separate declaration.
 
-This path differs from the connection-string exception at the top of this page. That exception exists because Railway has no identity to present to Azure. The publisher runs on a workstation that already holds an Azure login, so it needs no key at all. Reads stay anonymous, because `app-assets` is public for blob reads (see Storage Blob Public Access).
+This path differs from the connection-string exception at the top of this page. That exception exists because Railway has no identity to present to Azure. The publisher runs on a workstation that already holds an Azure login, so it needs no key at all. Reads stay anonymous, because `public-genshin-assets` is public for blob reads (see Storage Blob Public Access).
 
 Migration path: not applicable, since no key exists to migrate away from. A second maintainer who publishes needs a grant of their own on each container, declared the same way.

@@ -21,7 +21,7 @@ export const readPublishedGameDataEntries = async <T>(
         const entryHash = entryHashMap[id];
         if (entryHash === undefined)
           throw new InvalidOperationError(Operation.Read, `${indexKey}/${id}`, "has no entry");
-        entryMap.set(id, await readPublishedGameDataObject<T>(entryHash));
+        entryMap.set(id, await readPublishedGameDataObject<T>(indexKey, entryHash));
       }),
     );
   return entryMap;

@@ -62,13 +62,13 @@ describe(deleteAccountChargedBlobs, () => {
     const chargedBackgroundBlobName = `${userId}/CallBackground/0`;
     const otherMessageBlobName = `${roomId}/${crypto.randomUUID()}`;
     await seedChargedBlob(userId, AzureContainer.MessageAssets, chargedMessageBlobName);
-    await seedChargedBlob(userId, AzureContainer.PrivateUserAssets, chargedBackgroundBlobName);
+    await seedChargedBlob(userId, AzureContainer.UserAssets, chargedBackgroundBlobName);
     await seedChargedBlob(otherUserId, AzureContainer.MessageAssets, otherMessageBlobName);
 
     await deleteAccountChargedBlobs(context, userId);
 
     expect(readBlobNames(AzureContainer.MessageAssets)).toStrictEqual([otherMessageBlobName]);
-    expect(readBlobNames(AzureContainer.PrivateUserAssets)).toStrictEqual([]);
+    expect(readBlobNames(AzureContainer.UserAssets)).toStrictEqual([]);
     await expect(
       mockDb
         .select({ blobName: storageLedgerInStorage.blobName, userId: storageLedgerInStorage.userId })

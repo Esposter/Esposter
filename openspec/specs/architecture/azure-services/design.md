@@ -21,19 +21,22 @@ Not every EventGrid handler consumes an event this app published. `ReconcileStor
 
 ## Blob Storage containers
 
-Container names live in the `AzureContainer` enum (`packages/db-schema/src/models/azure/container/AzureContainer.ts`):
+Container names live in the `AzureContainer` enum (`packages/db-schema/src/models/azure/container/AzureContainer.ts`). Every container is private unless its name starts with `public-`: a public container serves each blob to anyone holding its URL, so it holds only content that is public by design, and per-user data never goes in one.
 
-| Container (`AzureContainer`) | Contents                                                                                                                                                |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AppAssets`                  | App-owned static assets, and the published game data under `genshin/data/` ([hosted game data](../../genshin/hosted-game-data/design.md))               |
-| `ClickerAssets`              | Clicker game save state (`{userId}/save`)                                                                                                               |
-| `DataExports`                | Data export archives, one blob per export id, deleted seven days after last write by a lifecycle rule                                                   |
-| `DeadLetter`                 | Event Grid dead-letter payloads plus their `archived/` and `quarantine/` copies → [Event Grid dead-letter](../../infra/eventgrid-dead-letter/design.md) |
-| `DungeonsAssets`             | Dungeons game save state (`{userId}/save`)                                                                                                              |
-| `MessageAssets`              | Message file attachments (`{roomId}/{fileId}\|{filename}`). Lifecycle policy tiers blobs Cool@30d → Cold@90d to cut storage cost                        |
-| `PrivateUserAssets`          | Per-user private blobs                                                                                                                                  |
-| `PublicUserAssets`           | User profile images (`{userId}/ProfileImage`), room profile images (`rooms/{roomId}/ProfileImage/{uuid}`)                                               |
-| `ResourceAssets`             | Resource content blobs, publish snapshots, and type-owned files → [resources](../resource/design.md)                                                    |
+| Container (`AzureContainer`) | Access  | Contents                                                                                                                                                                                         |
+| ---------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `PublicGenshinAssets`        | public  | The published game data, one `<hash>.json` per object under its dataset key, `<dataset>/<hash>.json`, named by the game data lock ([hosted game data](../../genshin/hosted-game-data/design.md)) |
+| `PublicAppAssets`            | public  | App-owned static assets, such as the logo                                                                                                                                                        |
+| `PublicDungeonsAssets`       | public  | The Phaser file pack's audio, font and image blobs                                                                                                                                               |
+| `PublicUserAssets`           | public  | User profile images (`{userId}/ProfileImage`), room profile images (`rooms/{roomId}/ProfileImage/{uuid}`)                                                                                        |
+| `UserAssets`                 | private | Per-user private blobs: dungeons save state (`{userId}/save.json`), call backgrounds, data export archives (`exports/{exportId}.zip`)                                                            |
+| `GenshinAssets`              | private | Per-account Genshin data: save state (`{userId}/save.json`) and the player's own uploaded character pack copies                                                                                  |
+| `ClickerAssets`              | private | Clicker game save state (`{userId}/save.json`)                                                                                                                                                   |
+| `DeadLetter`                 | private | Event Grid dead-letter payloads plus their `archived/` and `quarantine/` copies → [Event Grid dead-letter](../../infra/eventgrid-dead-letter/design.md)                                          |
+| `MessageAssets`              | private | Message file attachments (`{roomId}/{fileId}\|{filename}`). Lifecycle policy tiers blobs Cool@30d → Cold@90d to cut storage cost                                                                 |
+| `ResourceAssets`             | private | Resource content blobs, publish snapshots, and type-owned files → [resources](../resource/design.md)                                                                                             |
+
+Character packs are in no public container, because their terms forbid redistribution ([hosting the official character packs](../../../rejected/genshin/hosting-official-character-packs/design.md)). The containers `AppAssets`, `DungeonsAssets` and `PrivateUserAssets` are retired: their blobs moved to the names above, and the old containers are deleted by the owner once the move is verified.
 
 ## Table Storage tables
 

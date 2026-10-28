@@ -39,7 +39,7 @@ describe("name text loader map", () => {
     const lockedObjects = await Promise.all(
       Object.entries(gameDataLock.objects)
         .filter(([key]) => !TEXT_DATASETS.has(takeOne(key.split("/"), 0)))
-        .map(([, hash]) => readGameDataObject(GAME_DATA_LOCAL_BASE_URL, hash)),
+        .map(([key, hash]) => readGameDataObject(GAME_DATA_LOCAL_BASE_URL, key, hash)),
     );
     const authoredObjects = Object.entries(authoredDataFiles)
       .filter(([path]) => !lockedKeys.has(path.replace(/^.*\/data\//u, "").replace(/\.json$/u, "")))

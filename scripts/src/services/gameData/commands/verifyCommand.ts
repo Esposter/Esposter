@@ -16,7 +16,7 @@ export const verifyCommand: SubCommandsDef[string] = defineCommand({
   run: async () => {
     const lock = await readGameDataLock();
     for (const target of Object.values(GameDataTarget)) {
-      const baseUrl = `${GameDataTargetBlobServiceUrlMap[target]}/${AzureContainer.AppAssets}`;
+      const baseUrl = `${GameDataTargetBlobServiceUrlMap[target]}/${AzureContainer.PublicGenshinAssets}`;
       // oxlint-disable-next-line no-await-in-loop -- The accounts are checked one after the other, so a failure names one
       const checkedCount = await verifyGameData(baseUrl, lock);
       console.log(`${target}: ${checkedCount} objects verified`);

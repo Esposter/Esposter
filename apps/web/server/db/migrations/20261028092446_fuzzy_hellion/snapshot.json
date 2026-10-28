@@ -1,0 +1,54 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "6a396064-6460-4124-a7b3-04ee2551da57",
+  "prevIds": [
+    "a1fcdb84-b7a8-4abc-b95e-f67c3fa696cf"
+  ],
+  "footprints": [
+    {
+      "statementType": "recreate_enum",
+      "statementTarget": [
+        "enum",
+        "storage",
+        "azureContainer"
+      ],
+      "writes": [
+        "s|enum|storage.azureContainer",
+        "n|enum|storage.azureContainer",
+        "e|enum|storage.azureContainer",
+        "n|type|storage.azureContainer",
+        "s|colprop|storage.storageLedger.containerName.type",
+        "s|colprop|storage.storageLedger.containerName.default"
+      ],
+      "reads": [
+        "n|sch|storage",
+        "n|tbl|storage.storageLedger",
+        "n|sch|storage",
+        "n|col|storage.storageLedger.containerName"
+      ],
+      "sqlHash": "751118ccecda2955"
+    }
+  ],
+  "deltas": [
+    {
+      "op": "alter",
+      "key": "enums\u0000[\"storage\",\"azureContainer\"]",
+      "set": {
+        "values": [
+          "clicker-assets",
+          "deadletter",
+          "genshin-assets",
+          "message-assets",
+          "public-app-assets",
+          "public-dungeons-assets",
+          "public-genshin-assets",
+          "public-user-assets",
+          "resource-assets",
+          "user-assets"
+        ]
+      }
+    }
+  ]
+}

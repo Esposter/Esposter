@@ -18,7 +18,7 @@ describe(readWeeklyBossDomains, () => {
 
     await expect(readWeeklyBossDomains("weekly-boss-domains-read")).resolves.toStrictEqual(weeklyBossDomains);
     expect(fetch.mock.calls.map(([url]) => url)).toStrictEqual([
-      `weekly-boss-domains-read/${gameDataLock.objects["domains/weeklyBosses"]}.json`,
+      `weekly-boss-domains-read/domains/weeklyBosses/${gameDataLock.objects["domains/weeklyBosses"]}.json`,
     ]);
   });
 });

@@ -126,7 +126,7 @@ describe(exportUserDataHandler, () => {
     await exportUserDataHandler(context, { dataExportId });
     await exportUserDataHandler(context, { dataExportId });
 
-    expect(readBlobNames(AzureContainer.DataExports)).toStrictEqual([getDataExportBlobName(dataExportId)]);
+    expect(readBlobNames(AzureContainer.UserAssets)).toStrictEqual([getDataExportBlobName(dataExportId)]);
     expect((await readExportRow(dataExportId)).status).toBe(DataExportStatus.Ready);
   });
 });

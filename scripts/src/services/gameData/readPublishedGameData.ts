@@ -9,5 +9,5 @@ export const readPublishedGameData = async <T>(key: string): Promise<T> => {
   const { objects } = await readGameDataLock();
   const hash = objects[key];
   if (hash === undefined) throw new InvalidOperationError(Operation.Read, key, "is not in the game data lock");
-  return readPublishedGameDataObject<T>(hash);
+  return readPublishedGameDataObject<T>(key, hash);
 };

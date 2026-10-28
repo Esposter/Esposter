@@ -11,6 +11,6 @@ export const DATA_EXPORT_RETENTION = Temporal.Duration.from({ hours: 7 * 24 });
 // The game containers that hold a person's save, keyed by the game name the archive's saves entry is named after
 export const SAVE_GAME_CONTAINERS = {
   clicker: AzureContainer.ClickerAssets,
-  dungeons: AzureContainer.DungeonsAssets,
+  dungeons: AzureContainer.UserAssets,
   genshin: AzureContainer.GenshinAssets,
 } as const satisfies Record<string, AzureContainer>;

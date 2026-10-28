@@ -32,7 +32,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 // So the upload never commits a truncated archive, and the write's own error is the one reported. A failed upload is
 // Rethrown as it is; the writes then wait on a stream nothing drains, which holds nothing more
 export const buildUserDataArchive = async (userId: UserInAuth["id"], blobName: string): Promise<void> => {
-  const containerClient = await getContainerClient(AzureContainer.DataExports);
+  const containerClient = await getContainerClient(AzureContainer.UserAssets);
   const archive = createUserDataArchive();
   const failArchive = (error: Error): never => {
     archive.output.destroy();

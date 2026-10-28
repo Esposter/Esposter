@@ -1,3 +1,4 @@
+import { GAME_DATA_MIRROR_SOURCE_URL } from "#scripts/gameData/mirror/constants";
 import { downloadGameDataObject } from "#scripts/gameData/mirror/downloadGameDataObject";
 import { fillGameDataMirror } from "#scripts/gameData/mirror/fillGameDataMirror";
 import { createHash } from "node:crypto";
@@ -43,5 +44,18 @@ describe(fillGameDataMirror, () => {
       ),
     ).resolves.toBe(3);
     expect((await readdir(mirrorDirectory)).toSorted()).toStrictEqual([...jsonMap.keys()].toSorted());
+    // Each object is fetched from the path its dataset stores it under, and an entry under its index's key
+    expect(
+      vi
+        .mocked(downloadGameDataObject)
+        .mock.calls.map(([url]) => url)
+        .toSorted(),
+    ).toStrictEqual(
+      [
+        `${GAME_DATA_MIRROR_SOURCE_URL}/index/${getHash(indexJson)}.json`,
+        `${GAME_DATA_MIRROR_SOURCE_URL}/index/${getHash(entryJson)}.json`,
+        `${GAME_DATA_MIRROR_SOURCE_URL}/object/${getHash(objectJson)}.json`,
+      ].toSorted(),
+    );
   });
 });

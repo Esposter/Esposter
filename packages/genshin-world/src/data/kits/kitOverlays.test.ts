@@ -26,7 +26,7 @@ describe("kitOverlays", () => {
     assert.exists(kitIndexHash);
     const [characters, kitIndex] = await Promise.all([
       readGameData(GAME_DATA_LOCAL_BASE_URL, "stats/characters", z.array(characterDataSchema)),
-      readGameDataObject(GAME_DATA_LOCAL_BASE_URL, kitIndexHash),
+      readGameDataObject(GAME_DATA_LOCAL_BASE_URL, "kits", kitIndexHash),
     ]);
     const kitCharacterIds = Object.keys(gameDataIndexSchema.parse(kitIndex));
     const overlayNameCharacterIdMap = new Map(

@@ -9,5 +9,5 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 export const readGameData = async <T>(gameDataBaseUrl: string, key: GameDataKey, schema: z.ZodType<T>): Promise<T> => {
   const hash: string | undefined = gameDataLock.objects[key];
   if (hash === undefined) throw new InvalidOperationError(Operation.Read, key, "is not in the game data lock");
-  return schema.parse(await readGameDataObject(gameDataBaseUrl, hash));
+  return schema.parse(await readGameDataObject(gameDataBaseUrl, key, hash));
 };

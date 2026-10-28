@@ -5,7 +5,7 @@ import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { createGameDataContainerClient } from "#src/services/gameData/createGameDataContainerClient";
 import { pruneGameData } from "#src/services/gameData/pruneGameData";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
-import { readGameDataReachableHashes } from "#src/services/gameData/readGameDataReachableHashes";
+import { readGameDataReachableObjects } from "#src/services/gameData/readGameDataReachableObjects";
 import { readLiveGameDataLocks } from "#src/services/gameData/readLiveGameDataLocks";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult } from "@esposter/shared";
@@ -32,9 +32,9 @@ export const pruneCommand: SubCommandsDef[string] = defineCommand({
     for (const target of Object.values(GameDataTarget)) {
       const containerClient = createGameDataContainerClient(target);
       // oxlint-disable-next-line no-await-in-loop -- The accounts are pruned one after the other, so a failure names one
-      const liveHashes = await readGameDataReachableHashes(containerClient, locks);
+      const liveObjects = await readGameDataReachableObjects(containerClient, locks);
       // oxlint-disable-next-line no-await-in-loop -- As above
-      const result = await pruneGameData({ containerClient, isDryRun: args["dry-run"], liveHashes, now: Date.now() });
+      const result = await pruneGameData({ containerClient, isDryRun: args["dry-run"], liveObjects, now: Date.now() });
       console.log(
         `${target}: ${result.candidateCount} past retention, ${result.deletedCount} deleted, ${result.keptCount} kept by a write since the listing`,
       );

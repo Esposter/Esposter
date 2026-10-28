@@ -52,7 +52,7 @@ const getCallBackgroundErrorMessage = (context: string) =>
   new InvalidOperationError(Operation.Create, DatabaseEntityType.CallBackground, context).message;
 const seedSlots = (userId: string, slots: number[], slotSize: number) => {
   MockContainerDatabase.set(
-    AzureContainer.PrivateUserAssets,
+    AzureContainer.UserAssets,
     new Map(slots.map((slot) => [getCallBackgroundBlobName(userId, slot), Buffer.alloc(slotSize)])),
   );
 };
@@ -73,7 +73,7 @@ describe("userRouter", () => {
   const updatedMessage = "updatedMessage";
   const userId = getMockSession().user.id;
   const getCallBackgroundUrl = (slot: number) =>
-    `${MOCK_BLOB_BASE_URL}/${AzureContainer.PrivateUserAssets}/${getCallBackgroundBlobName(userId, slot)}`;
+    `${MOCK_BLOB_BASE_URL}/${AzureContainer.UserAssets}/${getCallBackgroundBlobName(userId, slot)}`;
   // A second session the caller holds, and a revoke that deletes its row the way better-auth would
   const holdOtherSession = async () => {
     const otherSession = createMockSession(userId);
@@ -436,7 +436,7 @@ describe("userRouter", () => {
     expect.hasAssertions();
 
     MockContainerDatabase.set(
-      AzureContainer.PrivateUserAssets,
+      AzureContainer.UserAssets,
       new Map([[`${getCallBackgroundPrefix(userId)}${slotName}`, Buffer.alloc(size)]]),
     );
     const callBackgrounds = await caller.readCallBackgrounds();
@@ -458,7 +458,7 @@ describe("userRouter", () => {
     expect(callBackgrounds).toStrictEqual([]);
     expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
       blobNames: [getCallBackgroundBlobName(userId, 0)],
-      containerName: AzureContainer.PrivateUserAssets,
+      containerName: AzureContainer.UserAssets,
     });
   });
 
@@ -508,7 +508,7 @@ describe("userRouter", () => {
 
     // The bound is what stops a redelivered delete taking the image that replaced the one it named
     expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
-      containerName: AzureContainer.PrivateUserAssets,
+      containerName: AzureContainer.UserAssets,
       createdBefore: new Date(0),
       prefix: getCallBackgroundBlobName(userId, 0),
     });
@@ -596,7 +596,7 @@ describe("userRouter", () => {
 
     expect(link).toBe(
       getMockSasUrl(
-        `${MOCK_BLOB_BASE_URL}/${AzureContainer.DataExports}/${blobName}`,
+        `${MOCK_BLOB_BASE_URL}/${AzureContainer.UserAssets}/${blobName}`,
         "r",
         "b",
         new Date(DATA_EXPORT_LINK_DURATION_MS),

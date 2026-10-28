@@ -9,12 +9,9 @@ import { AzureContainer } from "@esposter/db-schema";
 export const deleteAccountBlobDirectories = async (userId: UserInAuth["id"]): Promise<void> => {
   const genshinAssetsClient = await getContainerClient(AzureContainer.GenshinAssets);
   const userContainerClients = await Promise.all(
-    [
-      AzureContainer.PublicUserAssets,
-      AzureContainer.PrivateUserAssets,
-      AzureContainer.ClickerAssets,
-      AzureContainer.DungeonsAssets,
-    ].map((containerName) => getContainerClient(containerName)),
+    [AzureContainer.PublicUserAssets, AzureContainer.UserAssets, AzureContainer.ClickerAssets].map((containerName) =>
+      getContainerClient(containerName),
+    ),
   );
   await Promise.all([
     deleteUserDirectories([genshinAssetsClient, ...userContainerClients], userId),

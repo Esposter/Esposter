@@ -4,7 +4,6 @@ import type { PruneGameDataOptions } from "#src/models/gameData/PruneGameDataOpt
 import { GAME_DATA_RETENTION_MS } from "#src/services/gameData/constants";
 import { getGameDataBlobName } from "#src/services/gameData/getGameDataBlobName";
 import { deleteBlobs, listBlobItems } from "@esposter/db";
-import { GAME_DATA_BLOB_PATH } from "genshin-world";
 
 // Deletes what no live lock reaches and what is older than retention. The batch carries the cutoff as its condition: an
 // Object a publish rewrote after the listing was modified past it and is refused, so it is kept, which closes the race
@@ -12,12 +11,12 @@ import { GAME_DATA_BLOB_PATH } from "genshin-world";
 export const pruneGameData = async ({
   containerClient,
   isDryRun,
-  liveHashes,
+  liveObjects,
   now,
 }: PruneGameDataOptions): Promise<GameDataPruneResult> => {
-  const liveBlobNames = new Set(Array.from(liveHashes, getGameDataBlobName));
+  const liveBlobNames = new Set(liveObjects.map(({ dataset, hash }) => getGameDataBlobName(dataset, hash)));
   const cutoff = new Date(now - GAME_DATA_RETENTION_MS);
-  const candidateNames = (await listBlobItems(containerClient, `${GAME_DATA_BLOB_PATH}/`))
+  const candidateNames = (await listBlobItems(containerClient, ""))
     .filter(({ lastModified, name }) => !liveBlobNames.has(name) && lastModified < cutoff)
     .map(({ name }) => name);
   if (isDryRun) return { candidateCount: candidateNames.length, deletedCount: 0, keptCount: 0 };

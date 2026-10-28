@@ -9,7 +9,7 @@ import { formatGameDataLock } from "#src/services/gameData/formatGameDataLock";
 import { mergeGameDataLock } from "#src/services/gameData/mergeGameDataLock";
 import { planGameDataPublication } from "#src/services/gameData/planGameDataPublication";
 import { publishGameDataToTarget } from "#src/services/gameData/publishGameDataToTarget";
-import { readGameDataReachableHashes } from "#src/services/gameData/readGameDataReachableHashes";
+import { readGameDataReachableObjects } from "#src/services/gameData/readGameDataReachableObjects";
 import { compressZstd } from "@esposter/db";
 import { DEFAULT_COMPRESSION_LEVEL, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
@@ -48,8 +48,8 @@ export const publishGameData = async ({
     return compressedJson;
   };
   const publishAccount = async (containerClient: ContainerClient) => {
-    const reachableHashes = await readGameDataReachableHashes(containerClient, [currentLock]);
-    return publishGameDataToTarget(containerClient, plan.records, reachableHashes, getCompressedJson);
+    const reachableObjects = await readGameDataReachableObjects(containerClient, [currentLock]);
+    return publishGameDataToTarget(containerClient, plan.records, reachableObjects, getCompressedJson);
   };
   const [devCount, prodCount] = await Promise.all([
     publishAccount(containerClientMap[GameDataTarget.Dev]),

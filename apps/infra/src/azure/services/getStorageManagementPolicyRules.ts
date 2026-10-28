@@ -39,7 +39,7 @@ export const getStorageManagementPolicyRules = (
   {
     definition: {
       actions: { baseBlob: { delete: { daysAfterModificationGreaterThan: 7 } } },
-      filters: { blobTypes: ["blockBlob"], prefixMatch: [AzureContainer.DataExports] },
+      filters: { blobTypes: ["blockBlob"], prefixMatch: [`${AzureContainer.UserAssets}/exports/`] },
     },
     enabled: true,
     name: "DeleteDataExports",

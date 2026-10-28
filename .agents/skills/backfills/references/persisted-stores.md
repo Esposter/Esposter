@@ -2,12 +2,12 @@
 
 Read when locating which store, blob and writer hold a persisted document that a schema change touches, or when a rewrite must keep a blob's encoding.
 
-| Store                               | Blobs                                                                                                      | Written by                                |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| `resource-assets`                   | `{resourceId}/content.json` — every resource's working copy, a Blueprint's captured entries inside its own | `saveResourceContent`                     |
-| `clicker-assets`, `dungeons-assets` | `{userId}/save.json`                                                                                       | `createSaveBlobStateProcedure`            |
-| `genshin-assets`                    | `{userId}/save.json`                                                                                       | `saveGenshin`, `writeGenshinSaveEnvelope` |
-| `resource-assets`                   | `{resourceId}/objects/{hash}` — version snapshots, content-addressed keyframes and deltas                  | `writeSnapshotVersion`                    |
+| Store                           | Blobs                                                                                                      | Written by                                |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `resource-assets`               | `{resourceId}/content.json` — every resource's working copy, a Blueprint's captured entries inside its own | `saveResourceContent`                     |
+| `clicker-assets`, `user-assets` | `{userId}/save.json`                                                                                       | `createSaveBlobStateProcedure`            |
+| `genshin-assets`                | `{userId}/save.json`                                                                                       | `saveGenshin`, `writeGenshinSaveEnvelope` |
+| `resource-assets`               | `{resourceId}/objects/{hash}` — version snapshots, content-addressed keyframes and deltas                  | `writeSnapshotVersion`                    |
 
 Every JSON blob is one zstd frame (`writeJsonBlob`): level `JSON_BLOB_COMPRESSION_LEVEL`, window `MAX_CONTENT_ENCODING_WINDOW_LOG`, served as `Content-Encoding: zstd`. A rewrite keeps all three.
 

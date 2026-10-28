@@ -74,7 +74,7 @@ vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/ser
 vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
 
 const readArchiveEntries = (blobName: string) => {
-  const archiveBytes = MockContainerDatabase.get(AzureContainer.DataExports)?.get(blobName);
+  const archiveBytes = MockContainerDatabase.get(AzureContainer.UserAssets)?.get(blobName);
   assert.exists(archiveBytes);
   return unzipSync(archiveBytes);
 };

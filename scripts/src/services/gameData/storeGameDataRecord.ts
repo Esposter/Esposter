@@ -15,7 +15,7 @@ export const storeGameDataRecord = (
   isCreateOnly: boolean,
 ): Promise<boolean> =>
   getResultAsync(() =>
-    uploadCompressedJson(containerClient, getGameDataBlobName(record.hash), compressedJson, {
+    uploadCompressedJson(containerClient, getGameDataBlobName(record.dataset, record.hash), compressedJson, {
       cacheControl: GAME_DATA_CACHE_CONTROL,
       conditions: isCreateOnly ? { ifNoneMatch: "*" } : undefined,
     }),

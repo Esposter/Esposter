@@ -256,10 +256,10 @@ describe(deleteAccountHandler, () => {
 
     // The account's own blob directories, and the shared character-pack file it shares with other accounts
     await seedBlob(AzureContainer.PublicUserAssets, `${userId}/ProfileImage`);
-    await seedBlob(AzureContainer.PrivateUserAssets, `${userId}/CallBackground/0`);
+    await seedBlob(AzureContainer.UserAssets, `${userId}/CallBackground/0`);
     await writeJsonBlob(await getContainerClient(AzureContainer.GenshinAssets), `${userId}/save.json`, content);
     await seedBlob(AzureContainer.ClickerAssets, `${userId}/save.json`);
-    await seedBlob(AzureContainer.DungeonsAssets, `${userId}/save.json`);
+    await seedBlob(AzureContainer.UserAssets, `${userId}/save.json`);
     await seedBlob(AzureContainer.GenshinAssets, `${getCharacterPackStagingPrefix(userId)}${hash}`);
     await seedBlob(AzureContainer.GenshinAssets, `character-packs/files/${sharedPackHash}`);
 
@@ -332,10 +332,9 @@ describe(deleteAccountHandler, () => {
 
     // The account's blob prefixes in every container the inventory keys to it
     expect(readBlobNamesUnder(AzureContainer.PublicUserAssets, `${userId}/`)).toStrictEqual([]);
-    expect(readBlobNamesUnder(AzureContainer.PrivateUserAssets, `${userId}/`)).toStrictEqual([]);
+    expect(readBlobNamesUnder(AzureContainer.UserAssets, `${userId}/`)).toStrictEqual([]);
     expect(readBlobNamesUnder(AzureContainer.GenshinAssets, `${userId}/`)).toStrictEqual([]);
     expect(readBlobNamesUnder(AzureContainer.ClickerAssets, `${userId}/`)).toStrictEqual([]);
-    expect(readBlobNamesUnder(AzureContainer.DungeonsAssets, `${userId}/`)).toStrictEqual([]);
     expect(readBlobNamesUnder(AzureContainer.GenshinAssets, getCharacterPackStagingPrefix(userId))).toStrictEqual([]);
 
     // Kept: the shared character-pack file, the moderation record that names the account, and the account's activity on

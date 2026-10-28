@@ -15,6 +15,6 @@ export const deleteAccountDataExportArchives = async (userId: UserInAuth["id"]):
     .from(dataExportsInUser)
     .where(eq(dataExportsInUser.userId, userId));
   const blobNames = dataExportRows.map(({ blobName }) => blobName).filter((blobName) => blobName !== null);
-  const containerClient = await getContainerClient(AzureContainer.DataExports);
+  const containerClient = await getContainerClient(AzureContainer.UserAssets);
   await deleteBlobs(containerClient, blobNames);
 };

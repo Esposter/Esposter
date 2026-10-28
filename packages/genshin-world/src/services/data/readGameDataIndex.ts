@@ -14,5 +14,5 @@ export const readGameDataIndex = async (
   const indexHash: string | undefined = gameDataLock.indexes[indexKey];
   if (indexHash === undefined)
     throw new InvalidOperationError(Operation.Read, indexKey, "is not in the game data lock");
-  return gameDataIndexSchema.parse(await readGameDataObject(gameDataBaseUrl, indexHash));
+  return gameDataIndexSchema.parse(await readGameDataObject(gameDataBaseUrl, indexKey, indexHash));
 };

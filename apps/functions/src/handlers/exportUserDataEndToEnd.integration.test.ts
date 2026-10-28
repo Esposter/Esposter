@@ -126,7 +126,7 @@ describe(exportUserDataHandler, () => {
 
     // The account's profile image, a call background, its save, and a moderation record naming it as the target
     await seedBlob(AzureContainer.PublicUserAssets, getUserProfileImageBlobName(userId));
-    await seedBlob(AzureContainer.PrivateUserAssets, `${userId}/CallBackground/0`);
+    await seedBlob(AzureContainer.UserAssets, `${userId}/CallBackground/0`);
     await writeJsonBlob(await getContainerClient(AzureContainer.GenshinAssets), getSaveBlobName(userId), content);
     await writeModerationLogEntry(await getTableClient(AzureTable.ModerationLog), {
       actorUserId: otherUserId,
@@ -147,9 +147,7 @@ describe(exportUserDataHandler, () => {
         .from(dataExportsInUser)
         .where(eq(dataExportsInUser.id, dataExportId)),
     );
-    const archiveBytes = MockContainerDatabase.get(AzureContainer.DataExports)?.get(
-      getDataExportBlobName(dataExportId),
-    );
+    const archiveBytes = MockContainerDatabase.get(AzureContainer.UserAssets)?.get(getDataExportBlobName(dataExportId));
     assert.exists(archiveBytes);
     const entries = unzipSync(archiveBytes);
 

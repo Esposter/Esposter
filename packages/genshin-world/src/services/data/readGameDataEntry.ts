@@ -17,5 +17,5 @@ export const readGameDataEntry = async <T>(
   const hash = index[entryId];
   if (hash === undefined)
     throw new InvalidOperationError(Operation.Read, `${indexKey}/${entryId}`, "is not in its index");
-  return schema.parse(await readGameDataObject(gameDataBaseUrl, hash));
+  return schema.parse(await readGameDataObject(gameDataBaseUrl, indexKey, hash));
 };

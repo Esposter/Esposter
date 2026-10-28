@@ -14,15 +14,15 @@ export const writeImageEntries = async (archive: UserDataArchive, userId: UserIn
   if (await publicContainerClient.getBlobClient(profileImageBlobName).exists())
     await writeBlobEntry(archive, "images/ProfileImage", publicContainerClient, profileImageBlobName);
 
-  const privateContainerClient = await getContainerClient(AzureContainer.PrivateUserAssets);
+  const userContainerClient = await getContainerClient(AzureContainer.UserAssets);
   const callBackgroundPrefix = `${userId}/CallBackground/`;
-  const callBackgroundBlobNames = await listBlobNames(privateContainerClient, callBackgroundPrefix);
+  const callBackgroundBlobNames = await listBlobNames(userContainerClient, callBackgroundPrefix);
   for (const blobName of callBackgroundBlobNames)
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one background at a time, streamed as it is read
     await writeBlobEntry(
       archive,
       `images/CallBackground/${blobName.slice(callBackgroundPrefix.length)}`,
-      privateContainerClient,
+      userContainerClient,
       blobName,
     );
 };

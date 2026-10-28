@@ -56,13 +56,13 @@ describe(deleteAccountDataExportArchives, () => {
         userId: otherUserId,
       },
     ]);
-    await seedBlob(AzureContainer.DataExports, getDataExportBlobName(dataExportId));
-    await seedBlob(AzureContainer.DataExports, getDataExportBlobName(secondDataExportId));
-    await seedBlob(AzureContainer.DataExports, getDataExportBlobName(otherDataExportId));
+    await seedBlob(AzureContainer.UserAssets, getDataExportBlobName(dataExportId));
+    await seedBlob(AzureContainer.UserAssets, getDataExportBlobName(secondDataExportId));
+    await seedBlob(AzureContainer.UserAssets, getDataExportBlobName(otherDataExportId));
 
     await deleteAccountDataExportArchives(userId);
 
-    expect(readBlobNames(AzureContainer.DataExports)).toStrictEqual([getDataExportBlobName(otherDataExportId)]);
+    expect(readBlobNames(AzureContainer.UserAssets)).toStrictEqual([getDataExportBlobName(otherDataExportId)]);
   });
 
   test("a row whose archive is already gone does not fail the sweep, and the archive it still holds is removed", async () => {
@@ -81,10 +81,10 @@ describe(deleteAccountDataExportArchives, () => {
       },
       { blobName: getDataExportBlobName(dataExportId), id: dataExportId, status: DataExportStatus.Ready, userId },
     ]);
-    await seedBlob(AzureContainer.DataExports, getDataExportBlobName(dataExportId));
+    await seedBlob(AzureContainer.UserAssets, getDataExportBlobName(dataExportId));
 
     await deleteAccountDataExportArchives(userId);
 
-    expect(readBlobNames(AzureContainer.DataExports)).toStrictEqual([]);
+    expect(readBlobNames(AzureContainer.UserAssets)).toStrictEqual([]);
   });
 });

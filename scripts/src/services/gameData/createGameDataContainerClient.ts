@@ -10,5 +10,5 @@ import { AzureContainer } from "@esposter/db-schema";
 // Use it, since the container is public and every object is fetched anonymously
 export const createGameDataContainerClient = (target: GameDataTarget): ContainerClient =>
   new BlobServiceClient(GameDataTargetBlobServiceUrlMap[target], new DefaultAzureCredential()).getContainerClient(
-    AzureContainer.AppAssets,
+    AzureContainer.PublicGenshinAssets,
   );

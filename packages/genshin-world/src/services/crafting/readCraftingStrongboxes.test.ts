@@ -64,7 +64,7 @@ describe(readCraftingStrongboxes, () => {
 
     await expect(readCraftingStrongboxes("crafting-strongboxes-read")).resolves.toStrictEqual([strongbox]);
     expect(fetch.mock.calls.map(([url]) => url)).toStrictEqual([
-      `crafting-strongboxes-read/${gameDataLock.objects["crafting/strongboxes"]}.json`,
+      `crafting-strongboxes-read/crafting/strongboxes/${gameDataLock.objects["crafting/strongboxes"]}.json`,
     ]);
   });
 });

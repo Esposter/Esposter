@@ -13,7 +13,7 @@ export const getDataExportLink = async ({ blobName, expiresAt, id, status }: Dat
   if (status !== DataExportStatus.Ready || !blobName || !expiresAt || expiresAt <= new Date())
     throw getInvalidOperationError(Operation.Read, DatabaseEntityType.DataExport, id);
 
-  const containerClient = await useContainerClient(AzureContainer.DataExports);
+  const containerClient = await useContainerClient(AzureContainer.UserAssets);
   return generateReadSasUrl(containerClient.getBlockBlobClient(blobName), {
     expiresOn: new Date(Date.now() + DATA_EXPORT_LINK_DURATION_MS),
   });

@@ -1,3 +1,4 @@
+import type { GameDataObjectRef } from "#src/models/gameData/GameDataObjectRef";
 import type { GameDataRecord } from "#src/models/gameData/GameDataRecord";
 import type { ContainerClient } from "@azure/storage-blob";
 
@@ -6,7 +7,6 @@ import { getGameDataBlobName } from "#src/services/gameData/getGameDataBlobName"
 import { storeGameDataRecord } from "#src/services/gameData/storeGameDataRecord";
 import { listBlobItems } from "@esposter/db";
 import { settleAll } from "@esposter/shared";
-import { GAME_DATA_BLOB_PATH } from "genshin-world";
 
 // Stores what one account does not hold yet, and returns how many objects it wrote. A stored object is reused as it is
 // When the current lock reaches it or it is young, and otherwise rewritten with the same bytes, which restarts its age so
@@ -14,21 +14,23 @@ import { GAME_DATA_BLOB_PATH } from "genshin-world";
 export const publishGameDataToTarget = async (
   containerClient: ContainerClient,
   records: GameDataRecord[],
-  reachableHashes: Set<string>,
+  reachableObjects: GameDataObjectRef[],
   getCompressedJson: (record: GameDataRecord) => Promise<Buffer>,
 ): Promise<number> => {
-  const listedBlobItems = await listBlobItems(containerClient, `${GAME_DATA_BLOB_PATH}/`);
+  const listedBlobItems = await listBlobItems(containerClient, "");
   const lastModifiedMap = new Map(listedBlobItems.map(({ lastModified, name }) => [name, lastModified] as const));
+  const reachableBlobNames = new Set(reachableObjects.map(({ dataset, hash }) => getGameDataBlobName(dataset, hash)));
   const now = Date.now();
   const writes = records
-    .filter((record) => {
-      const lastModified = lastModifiedMap.get(getGameDataBlobName(record.hash));
+    .map((record) => ({ blobName: getGameDataBlobName(record.dataset, record.hash), record }))
+    .filter(({ blobName }) => {
+      const lastModified = lastModifiedMap.get(blobName);
       return (
         lastModified === undefined ||
-        !(reachableHashes.has(record.hash) || now - lastModified.getTime() < GAME_DATA_REUSE_WINDOW_MS)
+        !(reachableBlobNames.has(blobName) || now - lastModified.getTime() < GAME_DATA_REUSE_WINDOW_MS)
       );
     })
-    .map((record) => ({ isCreateOnly: !lastModifiedMap.has(getGameDataBlobName(record.hash)), record }));
+    .map(({ blobName, record }) => ({ isCreateOnly: !lastModifiedMap.has(blobName), record }));
   const writeRecord = async ({ isCreateOnly, record }: (typeof writes)[number]) =>
     storeGameDataRecord(containerClient, record, await getCompressedJson(record), isCreateOnly);
   const leafWrites = writes.filter(({ record }) => !record.isIndex);

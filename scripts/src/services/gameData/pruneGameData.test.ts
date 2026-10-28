@@ -7,6 +7,7 @@ import { MockContainerClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(pruneGameData, () => {
+  const dataset = "stats/weapons";
   const liveHash = "a".repeat(64);
   const oldHash = "b".repeat(64);
   const youngHash = "c".repeat(64);
@@ -14,7 +15,7 @@ describe(pruneGameData, () => {
 
   // Each object is written at the instant the clock stands at, so the test moves the clock to age them
   const writeObject = (hash: string) =>
-    containerClient.getBlockBlobClient(getGameDataBlobName(hash)).upload(Buffer.from("{}"), 2);
+    containerClient.getBlockBlobClient(getGameDataBlobName(dataset, hash)).upload(Buffer.from("{}"), 2);
 
   beforeEach(() => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
@@ -36,13 +37,13 @@ describe(pruneGameData, () => {
     const result = await pruneGameData({
       containerClient,
       isDryRun: false,
-      liveHashes: new Set([liveHash]),
+      liveObjects: [{ dataset, hash: liveHash }],
       now: 100 * DAY_MS,
     });
 
     expect(result).toStrictEqual({ candidateCount: 1, deletedCount: 1, keptCount: 0 });
     expect([...(MockContainerDatabase.get("dev")?.keys() ?? [])].toSorted()).toStrictEqual(
-      [getGameDataBlobName(liveHash), getGameDataBlobName(youngHash)].toSorted(),
+      [getGameDataBlobName(dataset, liveHash), getGameDataBlobName(dataset, youngHash)].toSorted(),
     );
   });
 
@@ -50,7 +51,7 @@ describe(pruneGameData, () => {
     expect.hasAssertions();
 
     await writeObject(oldHash);
-    const result = await pruneGameData({ containerClient, isDryRun: true, liveHashes: new Set(), now: 100 * DAY_MS });
+    const result = await pruneGameData({ containerClient, isDryRun: true, liveObjects: [], now: 100 * DAY_MS });
 
     expect(result).toStrictEqual({ candidateCount: 1, deletedCount: 0, keptCount: 0 });
     expect(MockContainerDatabase.get("dev")?.size).toBe(1);
