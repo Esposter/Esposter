@@ -17,6 +17,7 @@ const { isFailed, isPasswordRequested, isPasswordWrong, pdfDocument, submitPassw
   source,
 });
 const isAnyFailed = computed(() => isFailed.value || isRendererFailed.value);
+const thumbnailStyle = computed(() => (isPreview ? { maxHeight: PREVIEW_MAX_HEIGHT } : { cursor: "pointer" }));
 
 watch(
   () => url,
@@ -29,7 +30,7 @@ watch(
 <template>
   <!-- A preview opens its message, so only the attachment in a message is pressed to open the viewer -->
   <PdfThumbnail
-    :style="isPreview ? { maxHeight: PREVIEW_MAX_HEIGHT } : { cursor: 'pointer' }"
+    :style="thumbnailStyle"
     :aria-label="isPreview ? undefined : `View ${file.filename}`"
     :is-failed="isAnyFailed"
     :pdf-document
