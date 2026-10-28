@@ -55,6 +55,7 @@ const seedQueuedExport = async (userId: string) => {
 
 describe(exportUserDataHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
+  const filename = "filename";
   const name = "name";
 
   beforeAll(async () => {
