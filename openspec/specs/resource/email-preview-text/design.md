@@ -1,6 +1,6 @@
 # Email Preview Text
 
-An email's preview text — the preheader — is the line an inbox shows beside the subject before the email is opened. Without one, "email clients will pull in the first part of your message by default", as Mailchimp puts it: in the default template, "My Company". MJML already has the element, `mj-preview` inside `mj-head`, which compiles to a hidden block at the top of the body. The [page builder](../page-builder/README.md) writes it as one prop of the email's root, so the line is set in the root's form and never placed on the canvas.
+An email's preview text — the preheader — is the line an inbox shows beside the subject before the email is opened. Without one, "email clients will pull in the first part of your message by default", as Mailchimp puts it: in the default template, "My Company". MJML already has the element, `mj-preview` inside `mj-head`, which compiles to a hidden block at the top of the body. The [page builder](../page-builder/README.md) writes it as one prop of the email's root, so the line is never placed on the canvas.
 
 ## How it works
 
