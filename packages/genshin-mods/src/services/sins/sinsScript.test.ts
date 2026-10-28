@@ -2,9 +2,10 @@
 import type { AddressInfo } from "node:net";
 
 // oxlint-disable-next-line no-restricted-imports -- A mod has no shared-node dependency, so this test's own spawn passes windowsHide, as the other plugins' helpers do
+import type { Server } from "node:http";
+
 import { spawn } from "node:child_process";
 import { mkdtempSync } from "node:fs";
-import type { Server } from "node:http";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";

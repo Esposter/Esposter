@@ -1,5 +1,4 @@
 import { SIN_NAMES, SinName } from "../../models/SinName";
-
 import { SIN_CRITERIA } from "./constants";
 
 // The question each sin asks Jev about a prompt, held beside the one call that asks them all

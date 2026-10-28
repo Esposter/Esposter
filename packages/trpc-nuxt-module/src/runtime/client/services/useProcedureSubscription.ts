@@ -4,10 +4,10 @@ import type { TRPCClientError, TRPCResolverDef, TRPCUntypedClient } from "@trpc/
 import type { AnyTRPCRouter } from "@trpc/server";
 import type { MaybeRefOrGetter } from "vue";
 
+import { ConnectionStateSubscriptionStatus } from "#src/runtime/client/models/ConnectionStateSubscriptionStatus";
 import { SubscriptionStatus } from "#src/runtime/client/models/SubscriptionStatus";
 import { checkIsServer } from "@esposter/shared";
 import { getCurrentScope, onScopeDispose, shallowRef, toValue, watch } from "vue";
-import { ConnectionStateSubscriptionStatus } from "#src/runtime/client/models/ConnectionStateSubscriptionStatus";
 
 type ConnectionState = Parameters<
   NonNullable<UseSubscriptionOptions<TRPCResolverDef>["onConnectionStateChange"]>

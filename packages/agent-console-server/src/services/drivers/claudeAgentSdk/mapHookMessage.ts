@@ -5,9 +5,9 @@ import type {
   SDKHookStartedMessage,
 } from "@anthropic-ai/claude-agent-sdk";
 
+import { SdkHookPhase } from "#src/models/drivers/claudeAgentSdk/SdkHookPhase";
 import { AgentEventType } from "#src/models/event/AgentEventType";
 import { HookPhase } from "#src/models/event/HookPhase";
-import { SdkHookPhase } from "#src/models/drivers/claudeAgentSdk/SdkHookPhase";
 
 const HookPhaseMap = {
   [SdkHookPhase.HookProgress]: HookPhase.Progress,

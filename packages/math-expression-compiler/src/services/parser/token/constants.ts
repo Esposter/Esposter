@@ -10,7 +10,7 @@ const SYMBOLIC_BINARY_SYMBOLS_OF_ONE = SYMBOLIC_BINARY_SYMBOLS.filter((symbol) =
 // Read as mathjs reads them: the symbols of three, two and one character, longest first.
 // The words that are operators rather than names are delimiters too
 export const DELIMITERS_OF_THREE: ReadonlySet<string> = new Set(SYMBOLIC_BINARY_SYMBOLS_OF_THREE);
-export const DELIMITERS_OF_TWO: ReadonlySet<string> = new Set([...SYMBOLIC_BINARY_SYMBOLS_OF_TWO, "??", ".^"]);
+export const DELIMITERS_OF_TWO: ReadonlySet<string> = new Set([...SYMBOLIC_BINARY_SYMBOLS_OF_TWO, ".^", "??"]);
 export const DELIMITERS_OF_ONE: ReadonlySet<string> = new Set([
   ...SYMBOLIC_BINARY_SYMBOLS_OF_ONE,
   "!",

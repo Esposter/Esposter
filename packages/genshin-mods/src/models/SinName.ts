@@ -1,11 +1,11 @@
 export enum SinName {
-  Pride = "pride",
-  Greed = "greed",
-  Wrath = "wrath",
   Envy = "envy",
-  Lust = "lust",
   Gluttony = "gluttony",
+  Greed = "greed",
+  Lust = "lust",
+  Pride = "pride",
   Sloth = "sloth",
+  Wrath = "wrath",
 }
 
 // The seven sins, in the order the pane draws them. Each is one `score` question Jev answers about a prompt

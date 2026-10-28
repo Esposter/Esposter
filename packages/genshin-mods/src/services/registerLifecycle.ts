@@ -3,8 +3,8 @@ import type { EngineInterface, On } from "claude-code";
 import { atom, read, update } from "claude-code";
 
 import type { EnabledMods } from "../../types";
-import { SinStatusKind } from "../models/SinStatusKind";
 
+import { SinStatusKind } from "../models/SinStatusKind";
 import {
   CACHE_WARNING_MS,
   MACHINE_WATCHER_RETRY_MILLISECONDS,

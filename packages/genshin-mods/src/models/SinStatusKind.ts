@@ -2,7 +2,7 @@
 export enum SinStatusKind {
   Answered = "answered",
   Failed = "failed",
-  NoKey = "no-key",
   NodeTooOld = "node-too-old",
+  NoKey = "no-key",
   Unchecked = "unchecked",
 }

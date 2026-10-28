@@ -1,8 +1,8 @@
 import { describe, expect, test } from "vitest";
 
-import { SIN_HISTORY_LENGTH } from "./constants";
 import { SIN_NAMES } from "../../models/SinName";
 import { appendSinEvidence } from "./appendSinEvidence";
+import { SIN_HISTORY_LENGTH } from "./constants";
 
 describe(appendSinEvidence, () => {
   const answers = Object.fromEntries(SIN_NAMES.map((name) => [name, { confidence: 1, score: 2 }]));

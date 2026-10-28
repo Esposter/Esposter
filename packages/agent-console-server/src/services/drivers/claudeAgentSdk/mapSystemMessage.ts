@@ -6,13 +6,13 @@ import type {
   SDKThinkingTokensMessage,
 } from "@anthropic-ai/claude-agent-sdk";
 
+import { SdkSessionState } from "#src/models/drivers/claudeAgentSdk/SdkSessionState";
 import { AgentEventType } from "#src/models/event/AgentEventType";
 import { CompactionTrigger } from "#src/models/event/CompactionTrigger";
 import { SessionState } from "#src/models/session/SessionState";
 import { mapHookMessage } from "#src/services/drivers/claudeAgentSdk/mapHookMessage";
 import { mapTaskMessage } from "#src/services/drivers/claudeAgentSdk/mapTaskMessage";
 import { toUnknownEvent } from "#src/services/drivers/claudeAgentSdk/toUnknownEvent";
-import { SdkSessionState } from "#src/models/drivers/claudeAgentSdk/SdkSessionState";
 
 const SessionStateMap = {
   [SdkSessionState.Idle]: SessionState.Idle,

@@ -1,5 +1,6 @@
-import { SinStatusKind } from "../models/SinStatusKind";
 import type { PluginState } from "claude-code";
+
+import { SinStatusKind } from "../models/SinStatusKind";
 
 // Every state value's initial, read by each file's atoms: the engine traces a state reference only to an atom made in
 // The file that uses it, so each file makes its own and this is the one place their initials are written

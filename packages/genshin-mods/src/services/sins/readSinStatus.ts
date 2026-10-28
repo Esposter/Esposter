@@ -3,8 +3,8 @@ import type { EngineInterface } from "claude-code";
 import { atom, read } from "claude-code";
 
 import type { SinStatus } from "../../../types";
-import { SinStatusKind } from "../../models/SinStatusKind";
 
+import { SinStatusKind } from "../../models/SinStatusKind";
 import { InitialState } from "../InitialState";
 import { readTypeSafeKey } from "./readTypeSafeKey";
 

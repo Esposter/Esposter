@@ -1,10 +1,10 @@
-import { TaskStatus } from "../../models/TaskStatus";
 import type { EngineInterface, On, RenderElement, RenderInput } from "claude-code";
 
 import { atom, read, update } from "claude-code";
 
 import type { EnabledMods } from "../../../types";
 
+import { TaskStatus } from "../../models/TaskStatus";
 import { ACCENT_COLOR, HANDOFF_QUESTION, MAX_SHOWN_TASKS, WARM_QUESTION } from "../constants";
 import { InitialState } from "../InitialState";
 import { getResinFigures } from "../resin/getResinFigures";

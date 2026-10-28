@@ -1,4 +1,5 @@
 import type { EnabledMods } from "../../types";
+
 import { ModName } from "../models/ModName";
 
 // Each mod's command, `/<name> [on|off]`, as the menu describes it

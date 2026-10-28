@@ -6,10 +6,10 @@ import type {
   SDKTaskUpdatedMessage,
 } from "@anthropic-ai/claude-agent-sdk";
 
+import { SdkSubagentStatus } from "#src/models/drivers/claudeAgentSdk/SdkSubagentStatus";
 import { AgentEventType } from "#src/models/event/AgentEventType";
 import { SubagentStatus } from "#src/models/event/SubagentStatus";
 import { exhaustiveGuard } from "@esposter/shared";
-import { SdkSubagentStatus } from "#src/models/drivers/claudeAgentSdk/SdkSubagentStatus";
 
 const SubagentStatusMap = {
   [SdkSubagentStatus.Completed]: SubagentStatus.Completed,
