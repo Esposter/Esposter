@@ -10,7 +10,6 @@
 | `scripts/src/services/shared`, `dependencyGraph`, `updateNode`                                                                                                      | 2026-10-05 · Opus 5.5 |       |
 | `scripts/src/models`                                                                                                                                                | 2026-10-05 · Opus 5.5 |       |
 | `scripts/src/workspace`                                                                                                                                             | 2026-10-05 · Opus 5.5 |       |
-| `scripts/src` — the entrypoints                                                                                                                                     | 2026-10-05 · Opus 5.5 |       |
 | `scripts/src/outdatedDependencies`                                                                                                                                  | 2026-10-05 · Opus 5.5 |       |
 | `scripts/src/oxlint`                                                                                                                                                | 2026-10-05 · Opus 5.5 |       |
 | `scripts/src/updateNode`                                                                                                                                            | 2026-10-05 · Opus 5.5 |       |
