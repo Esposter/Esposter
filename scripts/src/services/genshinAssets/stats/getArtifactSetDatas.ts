@@ -2,6 +2,7 @@ import type { ExcelEquipAffixRow } from "#src/models/genshinAssets/stats/ExcelEq
 import type { ExcelReliquarySetRow } from "#src/models/genshinAssets/stats/ExcelReliquarySetRow";
 import type { ArtifactSetData } from "genshin-world";
 
+import { EQUIP_AFFIX_TABLE_NAME, RELIQUARY_SET_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeLines";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { artifactSetDataSchema } from "genshin-world";
@@ -11,8 +12,8 @@ import { artifactSetDataSchema } from "genshin-world";
 // What its set's module reads. Its description's text hash is the one the names record holds, and empty where the affix
 // Has none
 export const getArtifactSetDatas = (notes: string[]): ArtifactSetData[] => {
-  const affixIdRowsMap = Map.groupBy(readExcelTable<ExcelEquipAffixRow>("EquipAffixExcelConfigData"), ({ id }) => id);
-  return readExcelTable<ExcelReliquarySetRow>("ReliquarySetExcelConfigData").flatMap(
+  const affixIdRowsMap = Map.groupBy(readExcelTable<ExcelEquipAffixRow>(EQUIP_AFFIX_TABLE_NAME), ({ id }) => id);
+  return readExcelTable<ExcelReliquarySetRow>(RELIQUARY_SET_TABLE_NAME).flatMap(
     ({ equipAffixId, setId, setNeedNum }) => {
       const affixRows = equipAffixId === 0 ? undefined : affixIdRowsMap.get(equipAffixId);
       if (!affixRows) return [];
