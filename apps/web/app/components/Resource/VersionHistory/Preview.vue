@@ -24,8 +24,7 @@ const snapshotVersion = computed(() => parseSnapshotVersionId(snapshotVersionId)
 // Matches its own route param — a type with no renderer previews nothing, and its rows never offer to
 const viewComponent = computed(() => {
   const { type } = resource;
-  if (checkHasCapability(type, "publishable")) return ViewComponentMap[type];
-  else return undefined;
+  return checkHasCapability(type, "publishable") ? ViewComponentMap[type] : undefined;
 });
 // The public renderer reads the published channel by version, so it can only be handed a published version — a
 // Revision's number would render whichever published snapshot happens to share it, and the two channels number

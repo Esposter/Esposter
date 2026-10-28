@@ -23,6 +23,7 @@ const versionHistoryStore = useVersionHistoryStore();
 const { restoringSnapshotVersionId } = storeToRefs(versionHistoryStore);
 const { previewSnapshot, previewSnapshotVersionId } = useVersionHistoryRoute();
 const snapshotVersionId = computed(() => getSnapshotVersionId(snapshotVersion));
+const isHighlighted = computed(() => previewSnapshotVersionId.value === snapshotVersionId.value);
 // Only a published snapshot has a rendered form of its own — the public renderer its type already registers.
 // A revision is a point to return to, and reconstituting one into a read-only render of every type is a
 // Surface that does not exist yet, so its row restores rather than previews
@@ -45,8 +46,8 @@ const subtitle = computed(() =>
     <component
       :is="isPreviewable ? 'button' : 'div'"
       :class="{ 'cursor-default': !isPreviewable }"
-      :aria-current="previewSnapshotVersionId === snapshotVersionId || undefined"
-      :data-highlighted="previewSnapshotVersionId === snapshotVersionId || undefined"
+      :aria-current="isHighlighted || undefined"
+      :data-highlighted="isHighlighted || undefined"
       :type="isPreviewable ? 'button' : undefined"
       ui-item
       flex-1

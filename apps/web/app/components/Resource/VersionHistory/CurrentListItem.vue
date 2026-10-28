@@ -9,13 +9,14 @@ interface Props {
 
 const { resource } = defineProps<Props>();
 const { previewSnapshotVersionId, stopPreviewingSnapshot } = useVersionHistoryRoute();
+const isHighlighted = computed(() => !previewSnapshotVersionId.value);
 </script>
 
 <template>
   <li>
     <button
-      :aria-current="!previewSnapshotVersionId || undefined"
-      :data-highlighted="!previewSnapshotVersionId || undefined"
+      :aria-current="isHighlighted || undefined"
+      :data-highlighted="isHighlighted || undefined"
       type="button"
       ui-item
       @click="stopPreviewingSnapshot()"
