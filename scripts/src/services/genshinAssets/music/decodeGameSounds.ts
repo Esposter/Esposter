@@ -12,7 +12,7 @@ import { join } from "node:path";
 // Next is decoded; a sound already decoded there is yielded as it is
 export const decodeGameSounds = async function* (
   pattern: string,
-  filter: (id: number) => boolean,
+  checkIsKept: (id: number) => boolean,
   directory: string,
 ): AsyncGenerator<{ id: number; path: string }> {
   await mkdir(directory, { recursive: true });
@@ -26,7 +26,7 @@ export const decodeGameSounds = async function* (
       for (const { id, offset, size } of parseSoundBankSounds(await readFileRange(file, path, bank.offset, bank.size)))
         entries.push({ id, offset: bank.offset + offset, size });
     for (const { id, offset, size } of entries) {
-      if (!filter(id)) continue;
+      if (!checkIsKept(id)) continue;
       const wavePath = join(directory, `${id}.wav`);
       if (!existsSync(wavePath)) {
         // oxlint-disable-next-line no-await-in-loop -- a package's sounds are read in turn from its one handle

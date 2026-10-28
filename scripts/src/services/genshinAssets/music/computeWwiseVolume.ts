@@ -26,7 +26,7 @@ export const computeWwiseVolume = (
     if (!object) throw new InvalidOperationError(Operation.Read, String(nodeId), "in no sound bank");
     return parseWwiseNode(object);
   };
-  const getVolume = ({ curves, properties }: WwiseNode): number => {
+  const computeVolume = ({ curves, properties }: WwiseNode): number => {
     let volume = 0;
     for (const property of VOLUME_PROPERTIES) volume += properties.get(property) ?? 0;
     for (const curve of curves) {
@@ -46,14 +46,14 @@ export const computeWwiseVolume = (
   let busId = 0;
   for (let nodeId = id; nodeId !== 0;) {
     const node = getNode(nodeId);
-    volume += getVolume(node);
+    volume += computeVolume(node);
     busId ||= node.busId;
     nodeId = node.parentId;
   }
   if (busId === 0) throw new InvalidOperationError(Operation.Read, String(id), "sends to no bus");
   for (let nodeId = busId; nodeId !== 0;) {
     const bus = getNode(nodeId);
-    volume += getVolume(bus);
+    volume += computeVolume(bus);
     nodeId = bus.parentId;
   }
   return volume;
