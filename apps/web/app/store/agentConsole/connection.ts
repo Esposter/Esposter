@@ -28,7 +28,14 @@ import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { useAgentConsoleShellStore } from "@/store/agentConsole/shell";
 import { useAgentConsoleSideChatStore } from "@/store/agentConsole/sideChat";
 import { useAlertStore } from "@/store/alert";
-import { exhaustiveGuard, getOrCreate, getResult, getResultAsync, noop } from "@esposter/shared";
+import {
+  exhaustiveGuard,
+  getOrCreate,
+  getResult,
+  getResultAsync,
+  getSynchronizedFunction,
+  noop,
+} from "@esposter/shared";
 import {
   CommandType,
   HandshakeMessageType,
@@ -254,56 +261,58 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
             ),
           );
         });
-        // oxlint-disable-next-line typescript/no-misused-promises, typescript/strict-void-return -- a socket ignores what its listener returns, and the listener logs its own failure
-        socket.addEventListener("message", async (event) => {
-          await getResultAsync(async () => {
-            // oxlint-disable-next-line no-restricted-properties -- the server message schema validates the payload and coerces its dates, the pair openspec/specs/architecture/serialization/README.md names
-            const serverMessage = serverMessageSchema.parse(JSON.parse(String(event.data)));
-            if (isAdmitted) {
-              receive(connectionId, serverMessage);
-              return;
-            }
+        socket.addEventListener(
+          "message",
+          getSynchronizedFunction(async (event: MessageEvent) => {
+            await getResultAsync(async () => {
+              // oxlint-disable-next-line no-restricted-properties -- the server message schema validates the payload and coerces its dates, the pair openspec/specs/architecture/serialization/README.md names
+              const serverMessage = serverMessageSchema.parse(JSON.parse(String(event.data)));
+              if (isAdmitted) {
+                receive(connectionId, serverMessage);
+                return;
+              }
 
-            if (serverMessage.type === ServerMessageType.Paired && connectionPairing) {
-              const { credential, deviceId, publicKey } = serverMessage;
-              const pairedConnection: Connection = { address, credential, deviceId, id: connectionId, publicKey };
-              connections.value = connection
-                ? connections.value.map((oldConnection) =>
-                    oldConnection.id === connectionId ? pairedConnection : oldConnection,
-                  )
-                : [...connections.value, pairedConnection];
-              pairing.value = undefined;
-              isAdmitted = true;
-              markConnected(connectionId);
-            } else if (serverMessage.type === ServerMessageType.Proof && connection)
-              await getResultAsync(() =>
-                checkIsHostProofValid(connection.publicKey, serverMessage.port, nonce, serverMessage.signature),
-              ).match(
-                (isValid) => {
-                  // On this computer another program can hold a port beside the host's and relay the challenge to
-                  // It, so the port the host signed must be the one the page reached. A remote host is reached
-                  // Through its own certificate, often on a port its proxy forwards from, so its signature alone
-                  // Proves it
-                  if (!isValid || (!getRemoteHostname(address) && serverMessage.port !== getPort(address))) {
+              if (serverMessage.type === ServerMessageType.Paired && connectionPairing) {
+                const { credential, deviceId, publicKey } = serverMessage;
+                const pairedConnection: Connection = { address, credential, deviceId, id: connectionId, publicKey };
+                connections.value = connection
+                  ? connections.value.map((oldConnection) =>
+                      oldConnection.id === connectionId ? pairedConnection : oldConnection,
+                    )
+                  : [...connections.value, pairedConnection];
+                pairing.value = undefined;
+                isAdmitted = true;
+                markConnected(connectionId);
+              } else if (serverMessage.type === ServerMessageType.Proof && connection)
+                await getResultAsync(() =>
+                  checkIsHostProofValid(connection.publicKey, serverMessage.port, nonce, serverMessage.signature),
+                ).match(
+                  (isValid) => {
+                    // On this computer another program can hold a port beside the host's and relay the challenge to
+                    // It, so the port the host signed must be the one the page reached. A remote host is reached
+                    // Through its own certificate, often on a port its proxy forwards from, so its signature alone
+                    // Proves it
+                    if (!isValid || (!getRemoteHostname(address) && serverMessage.port !== getPort(address))) {
+                      socket.close();
+                      return;
+                    }
+
+                    isHostProven = true;
+                    socket.send(
+                      JSON.stringify({ credential: connection.credential, type: HandshakeMessageType.Authenticate }),
+                    );
+                  },
+                  () => {
                     socket.close();
-                    return;
-                  }
-
-                  isHostProven = true;
-                  socket.send(
-                    JSON.stringify({ credential: connection.credential, type: HandshakeMessageType.Authenticate }),
-                  );
-                },
-                () => {
-                  socket.close();
-                },
-              );
-            else if (serverMessage.type === ServerMessageType.Authenticated && isHostProven) {
-              isAdmitted = true;
-              markConnected(connectionId);
-            }
-          }).match(noop, console.error);
-        });
+                  },
+                );
+              else if (serverMessage.type === ServerMessageType.Authenticated && isHostProven) {
+                isAdmitted = true;
+                markConnected(connectionId);
+              }
+            }).match(noop, console.error);
+          }),
+        );
         socket.addEventListener("close", (event) => {
           // A socket this store already replaced — a re-pair — or a host stopped on purpose closing is not the
           // Connection going down

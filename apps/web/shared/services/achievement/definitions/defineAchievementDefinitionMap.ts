@@ -13,8 +13,6 @@ export const defineAchievementDefinitionMap = <
   definitionMap: TDefinitionMap,
 ) =>
   Object.fromEntries(
-    // Category is assigned last so an entry carrying one cannot outrank the map's. Object.assign rather than a
-    // Spread because the entry value is generic, and TypeScript rejects spreading it (TS2698)
-    // oxlint-disable-next-line prefer-object-spread -- TypeScript rejects spreading a generic value (TS2698)
-    Object.entries(definitionMap).map(([name, definition]) => [name, Object.assign({}, definition, { category })]),
+    // Category is spread last so an entry carrying one cannot outrank the map's
+    Object.entries(definitionMap).map(([name, definition]) => [name, { ...definition, category }]),
   ) as { [P in keyof TDefinitionMap]: TDefinitionMap[P] & { category: TCategory } };

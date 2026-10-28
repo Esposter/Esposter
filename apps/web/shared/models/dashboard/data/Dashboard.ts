@@ -16,6 +16,7 @@ export class Dashboard extends AItemEntity {
   }
 }
 
+// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the visual enums are the same declarations Visual.ts:28 names (VisualType.ts:4, chart/type/ChartType.ts:8); the rule flags a zod object nested in an array even on an exact enum match
 export const dashboardSchema = z.object({
   ...aItemEntitySchema.shape,
   visuals: createUniqueArraySchema(visualSchema, "id").max(MAX_RESOURCE_CONTENT_SIZE),

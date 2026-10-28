@@ -11,6 +11,7 @@ export interface SheetResource {
   settings: SheetSettings;
 }
 
+// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the enums are the same declarations the nested dataSourceSchema names (DataSource.ts:19); the rule flags a zod object nested in an object even on an exact enum match
 export const sheetResourceSchema = z.object({
   data: dataSourceSchema,
   settings: sheetSettingsSchema,

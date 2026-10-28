@@ -79,6 +79,7 @@ export const usePageBuilderHistoryStore = defineStore("pageBuilder/history", () 
         held,
         getRecordedHistory(getHistory(resourceId), { interactionId, inverses, label, operations }),
       );
+      return undefined;
     });
   const clearHistory = (resourceId: string) => {
     setHistory(resourceId, emptyHistory);

@@ -48,7 +48,6 @@ useHead({ bodyAttrs: { "data-todo-list-printing": "" } });
                 {{ step.completedAt ? "●" : "○" }} {{ step.name }}
               </li>
             </ul>
-            <!-- eslint-disable-next-line vue/no-v-html -- the notes are the editor's sanitized HTML -->
             <div v-if="isNotesPrinted && !EMPTY_TEXT_REGEX.test(notes)" class="rich-text-content" v-html="notes" />
           </li>
         </ul>

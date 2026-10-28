@@ -8,15 +8,14 @@ defineSlots<{ default: () => VNode }>();
   </Transition>
 </template>
 
-<!-- eslint-disable-next-line vue/enforce-style-attribute -- transition classes land on slotted (often teleported) content, which scoped/:slotted attributes cannot reach -->
-<style>
-.fade-enter-active,
-.fade-leave-active {
+<style scoped>
+:global(.fade-enter-active),
+:global(.fade-leave-active) {
   transition: opacity var(--ui-motion-medium);
 }
 
-.fade-enter-from,
-.fade-leave-to {
+:global(.fade-enter-from),
+:global(.fade-leave-to) {
   opacity: 0;
 }
 </style>

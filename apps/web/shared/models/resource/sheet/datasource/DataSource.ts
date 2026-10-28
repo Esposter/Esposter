@@ -16,6 +16,7 @@ export interface DataSource {
   rows: Row[];
 }
 
+// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- ColumnType, DataSourceType (DataSourceType.ts:3) and DatasetProviderType (Metadata.ts:1) are the same declarations on both sides; the rule flags a zod object nested in an array even on an exact enum match
 export const dataSourceSchema = z.object({
   columns: createUniqueArraySchema(columnSchema, "id").max(MAX_RESOURCE_CONTENT_SIZE),
   metadata: metadataSchema,

@@ -1,6 +1,6 @@
 import { BATCHED_REFRESH_BASE_DELAY_MS, BATCHED_REFRESH_MAX_DELAY_MS } from "@/services/shared/constants";
 import { createSingleFlight } from "@/services/shared/createSingleFlight";
-import { createExponentialBackoff, getResultAsync } from "@esposter/shared";
+import { createExponentialBackoff, getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 
 // A server that stays down is not asked forever: past this many retries in a row the keys stay dirty until the next mark
 const MAX_RETRIES = 5;
@@ -30,9 +30,7 @@ export const createBatchedRefresh = <TKey>(refresh: (keys: TKey[]) => Promise<vo
 
         retryCount += 1;
         // The backoff sleeps before the run it starts, so the retry is scheduled at once and paced by it
-        setTimeout(async () => {
-          await flush();
-        }, 0);
+        setTimeout(getSynchronizedFunction(flush), 0);
       },
     );
   });

@@ -1,4 +1,3 @@
-/* eslint-disable perfectionist/sort-objects -- follows `FilterType`'s own order */
 import { FilterType } from "@esposter/db-schema";
 
 // Named once each, because several filter types share a picker — three dates and two user pickers would
@@ -7,16 +6,16 @@ const UserPicker = defineAsyncComponent(() => import("@/components/Message/Right
 const DatePicker = defineAsyncComponent(() => import("@/components/Message/RightSideBar/Search/Filter/DatePicker.vue"));
 
 export const SearchFilterComponentMap = {
+  [FilterType.After]: DatePicker,
   [FilterType.AuthorType]: defineAsyncComponent(
     () => import("@/components/Message/RightSideBar/Search/Filter/AuthorTypePicker.vue"),
   ),
-  [FilterType.From]: UserPicker,
-  [FilterType.In]: defineAsyncComponent(() => import("@/components/Message/RightSideBar/Search/Filter/RoomPicker.vue")),
-  [FilterType.Mentions]: UserPicker,
-  [FilterType.Has]: defineAsyncComponent(() => import("@/components/Message/RightSideBar/Search/Filter/HasPicker.vue")),
   [FilterType.Before]: DatePicker,
   [FilterType.During]: DatePicker,
-  [FilterType.After]: DatePicker,
+  [FilterType.From]: UserPicker,
+  [FilterType.Has]: defineAsyncComponent(() => import("@/components/Message/RightSideBar/Search/Filter/HasPicker.vue")),
+  [FilterType.In]: defineAsyncComponent(() => import("@/components/Message/RightSideBar/Search/Filter/RoomPicker.vue")),
+  [FilterType.Mentions]: UserPicker,
   [FilterType.Pinned]: defineAsyncComponent(
     () => import("@/components/Message/RightSideBar/Search/Filter/PinPicker.vue"),
   ),

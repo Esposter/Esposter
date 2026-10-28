@@ -31,10 +31,12 @@ const highlightFirst = () => {
   if (commands.length > 0) first();
   else clear();
 };
+const highlightedIndex = computed(() => commands.findIndex(({ id }) => id === highlightedId.value));
+// The highlighted option's element, which the field names as its active descendant while focus stays in it
+const highlightedOptionId = computed(() => (highlightedIndex.value === -1 ? "" : getOptionId(highlightedIndex.value)));
 const clickHighlighted = () => {
-  const index = commands.findIndex(({ id }) => id === highlightedId.value);
-  if (index === -1) return;
-  window.document.getElementById(getOptionId(index))?.click();
+  if (highlightedIndex.value === -1) return;
+  window.document.getElementById(getOptionId(highlightedIndex.value))?.click();
 };
 // Once its rows are drawn: an option that is not in the document yet cannot be highlighted
 onMounted(() => {
@@ -57,6 +59,7 @@ watch(
       <input
         ref="field"
         v-model="query"
+        :aria-activedescendant="highlightedOptionId"
         :aria-controls="listboxId"
         :aria-label="label"
         aria-autocomplete="list"
@@ -78,7 +81,6 @@ watch(
     <div :id="listboxId" :aria-label="label" role="listbox" pb-2 flex flex-col of-y-auto>
       <template v-for="(command, index) of commands" :key="command.id">
         <div v-if="checkIsGroupStart(index)" role="presentation" text-sm text-muted px-3 pt-2>{{ command.group }}</div>
-        <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- focus stays in the field, which names the highlighted option as its active descendant -->
         <component
           :is="command.to ? NuxtInvisibleLink : 'div'"
           :id="getOptionId(index)"

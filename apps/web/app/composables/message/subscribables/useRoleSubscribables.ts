@@ -2,6 +2,7 @@ import { authClient } from "@/services/auth/authClient";
 import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
+import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export const useRoleSubscribables = () => {
   const { $trpc } = useNuxtApp();
@@ -18,6 +19,9 @@ export const useRoleSubscribables = () => {
     setRoles,
   } = roleStore;
   const session = authClient.useSession();
+  const readMyPermissionsInBackground = getSynchronizedFunction((roomId: string) =>
+    getResultAsync(() => readMyPermissions({ roomIds: [roomId] })).match(noop, console.error),
+  );
 
   useOnlineSubscribable(currentRoomId, (roomId) => {
     if (!roomId) return undefined;
@@ -79,7 +83,7 @@ export const useRoleSubscribables = () => {
             setMemberPermissionOverride(eventRoomId, userId, { allow, deny });
             // A member's own bitfield is what every permission gate reads, so their change re-reads it rather than
             // Recomputing it here from the roles the client may not hold in full
-            if (userId === session.value.data?.user.id) readMyPermissions({ roomIds: [eventRoomId] });
+            if (userId === session.value.data?.user.id) readMyPermissionsInBackground(eventRoomId);
           },
         },
       ),

@@ -12,5 +12,6 @@ export const clickerRouter = router({
   readBuildingMap: standardRateLimitedProcedure.query<typeof BuildingMap>(() => BuildingMap),
   readClicker: createReadBlobStateProcedure(AzureContainer.ClickerAssets, ClickerSave),
   readUpgradeMap: standardRateLimitedProcedure.query<typeof UpgradeMap>(() => UpgradeMap),
+  // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- BuildingId, ClickerType, CursorUpgradeId and GrandmaUpgradeId are the same declarations the ClickerSave schema names (ClickerSave.ts:7); the rule flags a nested zod shape even on an exact enum match
   saveClicker: createSaveBlobStateProcedure(AzureContainer.ClickerAssets, saveClickerInputSchema),
 });

@@ -384,9 +384,9 @@ describe("postRouter", () => {
   test("paginates tied sort values without skipping", async () => {
     expect.hasAssertions();
 
-    const newPostIds: string[] = [];
-    // oxlint-disable-next-line no-await-in-loop -- Order is the contract: posts land in the order the tie-break reads
-    for (let i = 0; i < 3; i++) newPostIds.push((await postCaller.createPost({ title })).id);
+    const newPostIds = await Promise.all(
+      Array.from({ length: 3 }, async () => (await postCaller.createPost({ title })).id),
+    );
     const firstPage = await postCaller.readPosts({ limit: 2, sortBy });
     const secondPage = await postCaller.readPosts({ cursor: firstPage.nextCursor, limit: 2, sortBy });
 
@@ -395,14 +395,14 @@ describe("postRouter", () => {
     );
   });
 
-  // Replies are written in one order and then given the columns each sort reads, so every sort reads a different
+  // Replies are created together and then given the columns each sort reads, so every sort reads a different
   // Order from the one creation left
   const ONE_SECOND = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
-  // Three replies, in the order they are written, so each is known to exist by its position
+  // Three replies, so each is known to exist by its position
   const createReplies = async (parentId: string) => {
-    const replyIds: string[] = [];
-    // oxlint-disable-next-line no-await-in-loop -- Order is the contract: replies land in the order they are written
-    for (let i = 0; i < 3; i++) replyIds.push((await postCaller.createComment({ description, parentId })).comment.id);
+    const replyIds = await Promise.all(
+      Array.from({ length: 3 }, async () => (await postCaller.createComment({ description, parentId })).comment.id),
+    );
     return [takeOne(replyIds, 0), takeOne(replyIds, 1), takeOne(replyIds, 2)] as const;
   };
   const setReplyColumns = (id: string, columns: Partial<Pick<PostInPost, "createdAt" | "likeCount" | "ranking">>) =>

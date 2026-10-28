@@ -13,7 +13,7 @@ interface Props {
 }
 
 const modelValue = defineModel<string>({ default: "" });
-const { isFocused, isRequired, name } = defineProps<Props>();
+const { autofocus, isFocused, isRequired, name } = defineProps<Props>();
 const emit = defineEmits<{
   blur: [];
   delete: [];
@@ -31,7 +31,7 @@ const isError = computed(() => {
   return Boolean(parameterError && parameterError.messages.length > 0);
 });
 
-useFocusWhenActive(input, () => isFocused);
+useFocusWhenActive(input, () => Boolean(isFocused || autofocus));
 </script>
 
 <template>
@@ -39,8 +39,6 @@ useFocusWhenActive(input, () => isFocused);
     Is tinted as a failing field is, and a focused one as a focused field is -->
   <div class="chip" :data-invalid="isError || undefined" inline-flex items-center of-hidden ui-field>
     <span :class="{ 'text-error': isError }" text-sm py-1 pl-2 pr-1>{{ name }}</span>
-    <!-- eslint-disable vuejs-accessibility/no-autofocus -- Focus follows the parameter the user just added, the
-      same deliberate move a dialog makes on open; without it the chip renders unfocused mid-typing. -->
     <input
       ref="input"
       v-model="modelValue"
@@ -50,7 +48,6 @@ useFocusWhenActive(input, () => isFocused);
       outline-none
       bg-transparent
       field-sizing-content
-      :autofocus
       @focus="emit('focus')"
       @blur="emit('blur')"
       @update:model-value="
@@ -78,7 +75,6 @@ useFocusWhenActive(input, () => isFocused);
         }
       "
     />
-    <!-- eslint-enable vuejs-accessibility/no-autofocus -->
   </div>
 </template>
 

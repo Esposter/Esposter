@@ -25,6 +25,7 @@ export class Visual extends AItemEntity implements ItemEntityType<VisualType>, L
   }
 }
 
+// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- VisualType (VisualType.ts:4) and the chart enums (chart/type/ChartType.ts:8) are the same declarations on both sides; the rule flags a nested zod shape even on an exact enum match
 export const visualSchema = z.object({
   ...aItemEntitySchema.shape,
   ...createItemEntityTypeSchema(visualTypeSchema).shape,

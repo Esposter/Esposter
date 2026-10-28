@@ -5,6 +5,7 @@ import { battleStateMachine } from "@/services/dungeons/scene/battle/battleState
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { prettify } from "@/util/text/prettify";
+import { getSynchronizedFunction } from "@esposter/shared";
 import { sleepScene } from "vue-phaserjs";
 
 // A monster sent out to the field, whether it came from the party or replaced the one out: its tween, its "Go" line,
@@ -21,7 +22,7 @@ export const createMonsterAppearState = <TStateName extends StateName.BringOutMo
     const { activeMonster } = storeToRefs(battlePlayerStore);
 
     await useMonsterAppearTween(false);
-    useMonsterInfoContainerAppearTween(false);
+    getSynchronizedFunction(() => useMonsterInfoContainerAppearTween(false))();
     await showMessageNoInputRequired(scene, `Go ${prettify(activeMonster.value.key)}!`);
     await sleepScene(scene, Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
     await battleStateMachine.setState(nextStateName);

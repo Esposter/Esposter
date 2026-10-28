@@ -19,6 +19,7 @@ export interface Dataset {
   totalRows?: number;
 }
 
+// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- ColumnType is the same declaration on both sides (DatasetColumnType.ts:4, :6); the rule flags a zod object nested in an array even on an exact enum match
 export const datasetSchema = z.object({
   // A row is keyed by column name, so two columns sharing one cannot both be read - the uniqueness the array
   // Declares is the one the row shape already depends on

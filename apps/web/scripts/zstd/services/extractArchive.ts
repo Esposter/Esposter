@@ -1,9 +1,13 @@
 import { execFile } from "@esposter/shared-node/child-process";
 import { join } from "node:path";
-import { promisify } from "node:util";
 
-// oxlint-disable-next-line typescript/strict-void-return -- promisify reads execFile's callback overload, whose void return the rule mistakes for this call's context
-const execFileAsync = promisify(execFile);
+const execFileAsync = (file: string, args: string[]) =>
+  new Promise<void>((resolve, reject) => {
+    execFile(file, args, (error: Error | null) => {
+      if (error) reject(error);
+      else resolve();
+    });
+  });
 // Every platform ships a `tar` that reads its own Zig archive and the zstd tarball — bsdtar on Windows and macOS
 // Takes a zip as well. On Windows it is named by path, because Git's GNU tar shadows it on a developer's PATH and
 // Reads neither a drive letter nor a zip

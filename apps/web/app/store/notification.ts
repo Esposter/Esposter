@@ -5,6 +5,10 @@ import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
 import { DatabaseEntityType, NotificationSeverity } from "@esposter/db-schema";
 import { checkIsServer } from "@esposter/shared";
 
+// A read row is the row itself; an unread one is copied with it marked read, so each row a read changes is a new row
+const markRead = <T extends { isRead: boolean }>(notification: T): T =>
+  notification.isRead ? notification : { ...notification, isRead: true };
+
 // The bell renders two kinds of notification and owns the difference between them. A **delivered** one is a row
 // The server wrote for this user — it reached every device that was subscribed, it survives the reload, and it is
 // Paged in like any other list. A **local** one is feedback about what this tab just did: a mutation error, a save
@@ -162,10 +166,7 @@ export const useNotificationStore = defineStore("notification", () => {
   };
   const markAllAsRead = async () => {
     // Copy-on-write is the point: the array and every changed row are replaced so the computed re-evaluates
-    // oxlint-disable-next-line no-map-spread -- its fix is in-place mutation of rows the computed above hands out; it fires here and not on the identical map below only because this one assigns back to the array it read
-    localNotifications.value = localNotifications.value.map((notification) =>
-      notification.isRead ? notification : { ...notification, isRead: true },
-    );
+    localNotifications.value = localNotifications.value.map((notification) => markRead(notification));
     // The statement marks every unread row read, on the loaded pages and beyond them, so the total it clears is
     // The server's one — which is also the only thing that says there is anything to clear at all
     if (unreadDeliveredCount.value === 0) return;
@@ -174,9 +175,7 @@ export const useNotificationStore = defineStore("notification", () => {
       applyOptimistic: () => {
         const previousNotifications = deliveredNotifications.value;
         const previousUnreadDeliveredCount = unreadDeliveredCount.value;
-        deliveredNotifications.value = previousNotifications.map((notification) =>
-          notification.isRead ? notification : { ...notification, isRead: true },
-        );
+        deliveredNotifications.value = previousNotifications.map((notification) => markRead(notification));
         unreadDeliveredCount.value = 0;
         return () => {
           deliveredNotifications.value = previousNotifications;

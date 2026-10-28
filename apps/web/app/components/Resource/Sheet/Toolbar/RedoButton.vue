@@ -24,7 +24,6 @@ const tooltipHtml = useHistoryTooltipHtml(redoDescription, "Redo", "Ctrl+Shift+Z
       </UiButton>
     </template>
     <template #content>
-      <!-- eslint-disable-next-line vue/no-v-html -- sanitized markdown of the command's description -->
       <div v-html="tooltipHtml" />
     </template>
   </UiTooltip>

@@ -16,12 +16,9 @@ import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, mergeGenshinSave } from "genshin
 import { z } from "zod";
 
 const clearGuestSave = () => {
-  getResult(
-    // eslint-disable-next-line no-restricted-syntax -- the offline save system's writer half, kept beside the reader above
-    () => {
-      window.localStorage.removeItem(LocalStorageKey.GenshinSave);
-    },
-  ).match(noop, console.error);
+  getResult(() => {
+    window.localStorage.removeItem(LocalStorageKey.GenshinSave);
+  }).match(noop, console.error);
 };
 // The save the Genshin page plays, loaded before the world is made. Signed in, it is the account's blob under the lease
 // The start took, and the page waits on its loading screen until that start takes; signed out, it is this browser's copy.

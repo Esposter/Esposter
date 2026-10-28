@@ -5,6 +5,7 @@ import { battleStateMachine } from "@/services/dungeons/scene/battle/battleState
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { prettify } from "@/util/text/prettify";
+import { getSynchronizedFunction } from "@esposter/shared";
 
 export const PreBattleInfo: State<StateName.PreBattleInfo> = {
   name: StateName.PreBattleInfo,
@@ -15,7 +16,8 @@ export const PreBattleInfo: State<StateName.PreBattleInfo> = {
     const { activeMonster } = storeToRefs(enemyStore);
 
     await useMonsterAppearTween(true);
-    useMonsterInfoContainerAppearTween(true);
+    // The info container slides in while the message shows, so the messages do not wait on it
+    getSynchronizedFunction(() => useMonsterInfoContainerAppearTween(true))();
     await showMessages(scene, [`A wild ${prettify(activeMonster.value.key)} has appeared!`]);
     await battleStateMachine.setState(StateName.BringOutMonster);
   },

@@ -1,10 +1,16 @@
-/* eslint-disable perfectionist/sort-enums -- declaration order is the order the sections render */
 export enum VoiceSettingsSection {
   Devices = "Devices",
+  InputMode = "Input Mode",
   InputProfile = "Input Profile",
   InputSensitivity = "Input Sensitivity",
-  InputMode = "Input Mode",
   JoinSettings = "Join Settings",
 }
 
-export const VoiceSettingsSections = Object.values(VoiceSettingsSection);
+// The sections in the order the settings render them, which the enum's own order no longer carries
+export const VoiceSettingsSections = [
+  VoiceSettingsSection.Devices,
+  VoiceSettingsSection.InputProfile,
+  VoiceSettingsSection.InputSensitivity,
+  VoiceSettingsSection.InputMode,
+  VoiceSettingsSection.JoinSettings,
+];

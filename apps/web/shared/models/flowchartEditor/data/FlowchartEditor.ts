@@ -19,6 +19,7 @@ export class FlowchartEditor extends AItemEntity {
   }
 }
 
+// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- ConnectionLineType and MarkerType come from @vue-flow/core on both sides (GraphEdge.ts:6); the rule flags a zod object nested in an array even on an exact enum match
 export const flowchartEditorSchema = z.object({
   ...aItemEntitySchema.shape,
   edges: createUniqueArraySchema(graphEdgeSchema, "id").max(MAX_RESOURCE_CONTENT_SIZE),

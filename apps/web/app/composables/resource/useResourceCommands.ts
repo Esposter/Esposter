@@ -51,35 +51,30 @@ export const useResourceCommands = () => {
   ]);
   useCommandScope({
     checkIsPending: () => isPending.value,
-    commands: () => [
-      // oxlint-disable-next-line oxc/no-map-spread -- each command is a new object, never a result mutated in place
-      ...items.value.flatMap(({ createTo, group, icon, id, subtitle, title, to }): UiCommand[] => [
-        { description: subtitle, group, icon, id, title, to },
+    commands: () => {
+      const itemCommands = items.value.flatMap(({ createTo, group, icon, id, subtitle, title, to }): UiCommand[] => {
+        const commands: UiCommand[] = [{ description: subtitle, group, icon, id, title, to }];
         // A service can be created from its search result as well as opened
-        ...(createTo
-          ? [
-              {
-                group,
-                id: `${id}${ID_SEPARATOR}create`,
-                meaning: UiIconMeaning.Create,
-                title: `Create ${title}`,
-                to: createTo,
-              },
-            ]
-          : []),
-      ]),
-      ...(searchQuery.value
-        ? [
-            {
-              group: ResourceListSourceSearchTitleMap[ResourceListSource.All],
-              id: "see-all",
-              meaning: UiIconMeaning.Next,
-              title: `See all results for "${searchQuery.value}"`,
-              to: { path: RoutePath.ResourceExplorerAll, query: { search: searchQuery.value } },
-            },
-          ]
-        : []),
-    ],
+        if (createTo)
+          commands.push({
+            group,
+            id: `${id}${ID_SEPARATOR}create`,
+            meaning: UiIconMeaning.Create,
+            title: `Create ${title}`,
+            to: createTo,
+          });
+        return commands;
+      });
+      if (searchQuery.value)
+        itemCommands.push({
+          group: ResourceListSourceSearchTitleMap[ResourceListSource.All],
+          id: "see-all",
+          meaning: UiIconMeaning.Next,
+          title: `See all results for "${searchQuery.value}"`,
+          to: { path: RoutePath.ResourceExplorerAll, query: { search: searchQuery.value } },
+        });
+      return itemCommands;
+    },
     onSelect: () => {
       addRecentSearch(searchQuery.value);
     },

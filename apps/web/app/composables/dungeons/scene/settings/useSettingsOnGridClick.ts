@@ -5,7 +5,7 @@ import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInpu
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export const useSettingsOnGridClick = (position: MaybeRefOrGetter<Position>) => {
   const controlsStore = useControlsStore();
@@ -19,7 +19,9 @@ export const useSettingsOnGridClick = (position: MaybeRefOrGetter<Position>) => 
       if (SettingsOptionGrid.value === SettingsOption.Close) controls.value.setInput(PlayerSpecialInput.Confirm);
     },
     onMove: (positionValue) => {
-      getResultAsync(() => selectSettingsPosition(positionValue)).match(noop, console.error);
+      getSynchronizedFunction(() =>
+        getResultAsync(() => selectSettingsPosition(positionValue)).match(noop, console.error),
+      )();
     },
   });
 };

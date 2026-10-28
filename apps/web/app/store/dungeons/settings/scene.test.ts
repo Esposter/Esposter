@@ -5,6 +5,7 @@ import { getInitialSettings } from "#shared/models/dungeons/data/settings/Settin
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { TextSpeedSetting } from "#shared/models/dungeons/data/settings/TextSpeedSetting";
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
+import type { useDungeonsStore } from "@/store/dungeons";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 import { NotFoundError } from "@esposter/shared";
@@ -16,12 +17,16 @@ const { saveDungeons } = vi.hoisted(() => ({ saveDungeons: vi.fn<() => void>() }
 
 // The dungeons store imports Phaser, which cannot initialise under the test environment. Only its state and its save
 // Are read here, so the fake keeps the real save shape and records each save
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
-vi.mock("@/store/dungeons", async () => {
+vi.mock(import("@/store/dungeons"), async () => {
   const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
   const { reactive } = await import("vue");
   const dungeons = reactive(new Dungeons());
-  return { useDungeonsStore: () => ({ dungeons, fadeSwitchToScene: vi.fn<() => void>(), saveDungeons }) };
+  return {
+    useDungeonsStore: () =>
+      ({ dungeons, fadeSwitchToScene: vi.fn<() => void>(), saveDungeons }) as unknown as ReturnType<
+        typeof useDungeonsStore
+      >,
+  };
 });
 
 const getRowPosition = (settingsOption: SettingsOption) => {

@@ -1,6 +1,7 @@
 import type { PushNotificationPayload } from "@esposter/db-schema";
 import type { PrecacheEntry } from "workbox-precaching";
 
+import { getSynchronizedFunction } from "@esposter/shared";
 import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from "workbox-precaching";
 import { NavigationRoute, registerRoute } from "workbox-routing";
 
@@ -14,10 +15,12 @@ precacheAndRoute([...self.__WB_MANIFEST, { revision: null, url: "/" }]);
 registerRoute(new NavigationRoute(createHandlerBoundToURL("/")));
 
 // The update prompt in the tab asks a waiting worker to take over, and the reload follows the new worker taking control
-self.addEventListener("message", (event) => {
-  // oxlint-disable-next-line typescript/no-floating-promises -- skipWaiting resolves and cannot reject, and a message listener has nothing to await it
-  if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
-});
+self.addEventListener(
+  "message",
+  getSynchronizedFunction(async (event: ExtendableMessageEvent) => {
+    if (event.data?.type === "SKIP_WAITING") await self.skipWaiting();
+  }),
+);
 
 // https://github.com/vite-pwa/docs/issues/132 — the push handler lives here, typed, rather than in an
 // `importScripts` file

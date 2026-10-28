@@ -21,6 +21,7 @@ export class ComputedColumn extends AColumn<ColumnType.Computed> {
   }
 }
 
+// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- ColumnType and ColumnTransformationType (transformation/ColumnTransformationType.ts:1) are the same declarations on both sides; the rule flags a nested zod shape even on an exact enum match
 export const computedColumnSchema = z.object({
   ...createAColumnSchema(z.literal(ColumnType.Computed)).shape,
   transformation: columnTransformationSchema,
