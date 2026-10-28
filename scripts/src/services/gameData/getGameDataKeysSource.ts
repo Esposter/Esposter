@@ -10,12 +10,16 @@ interface KeyTree {
 
 const IDENTIFIER_REGEX = /^[A-Za-z_$][\w$]*$/u;
 
+// A node has no prototype, so a segment such as `constructor` or `__proto__` is a key of its own rather than an inherited member
+const newNode = (): KeyTree => Object.create(null) as KeyTree;
+
 // The node a segment leads to, made if it is not there yet.
 // A key that also prefixes other keys moves under `self`, since one node cannot be both a string and a branch.
 const descend = (node: KeyTree, segment: string): KeyTree => {
   const entry = node[segment];
   if (entry !== undefined && typeof entry !== "string") return entry;
-  const child: KeyTree = typeof entry === "string" ? { self: entry } : {};
+  const child = newNode();
+  if (typeof entry === "string") child.self = entry;
   node[segment] = child;
   return child;
 };
@@ -26,12 +30,14 @@ const insertKey = (tree: KeyTree, key: string): void => {
   const parent = segments.reduce((node, segment) => descend(node, segment), tree);
   const entry = parent[leaf];
   if (entry === undefined) parent[leaf] = key;
-  else if (typeof entry === "string")
+  else if (typeof entry === "string" || entry.self !== undefined)
     throw new InvalidOperationError(Operation.Push, key, "is listed twice in the lock");
   else entry.self = key;
 };
 
-const renderName = (name: string): string => (IDENTIFIER_REGEX.test(name) ? name : JSON.stringify(name));
+// `__proto__` is quoted too: as a bare object-literal key it sets the prototype instead of naming a property
+const renderName = (name: string): string =>
+  IDENTIFIER_REGEX.test(name) && name !== "__proto__" ? name : JSON.stringify(name);
 
 const renderTree = (tree: KeyTree, indentation: string): string =>
   Object.entries(tree)
@@ -44,7 +50,7 @@ const renderTree = (tree: KeyTree, indentation: string): string =>
     .join("\n");
 
 const renderConstant = (name: string, keys: string[]): string => {
-  const tree: KeyTree = {};
+  const tree = newNode();
   for (const key of keys) insertKey(tree, key);
   return `export const ${name} = {\n${renderTree(tree, "  ")}\n} as const;`;
 };
