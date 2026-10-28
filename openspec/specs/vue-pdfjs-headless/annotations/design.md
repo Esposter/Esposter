@@ -8,6 +8,15 @@
 - **XFDF** is read and written by `readXfdf` and `writeXfdf`, which the package exports from its barrel, framework-free and renderer-free. It carries free texts only.
 - **The download** `usePdfViewer` returns saves through the renderer once the storage holds an entry or a watermark is set. The watermark is stored for that save alone.
 
+```mermaid
+flowchart TD
+  drawn["Editor drawn or form filled"] --> storage["Renderer annotation storage"]
+  xfdf["XFDF import, after its page check"] --> storage
+  watermark["Watermark, stored for one save"] --> storage
+  storage -->|"once it holds an entry or a watermark"| save["saveDocument"]
+  save --> bytes["Download bytes"]
+```
+
 ## What the renderer saves
 
 These are pdf.js behaviours at the version the workspace catalog pins, probed in Node with its legacy build, because the storage's rules belong to the renderer and not to the package:
@@ -61,6 +70,6 @@ packages/vue-pdfjs-headless/src/models/                           PdfAnnotationC
 
 ## Sources
 
-- [mozilla/pdf.js — `src/display/api.js`](https://github.com/mozilla/pdf.js/blob/master/src/display/api.js): the document's `annotationStorage` and `saveDocument`.
-- [mozilla/pdf.js — `web/pdf_viewer.js`](https://github.com/mozilla/pdf.js/blob/master/web/pdf_viewer.js): the viewer's annotation mode, forms included, and its annotation editor modes.
+- [pdf.js API](https://github.com/mozilla/pdf.js/blob/master/src/display/api.js): the document's `annotationStorage` and `saveDocument`.
+- [pdf.js viewer](https://github.com/mozilla/pdf.js/blob/master/web/pdf_viewer.js): the viewer's annotation mode, forms included, and its annotation editor modes.
 - [ISO 19444-1, XML Forms Data Format](https://www.iso.org/standard/74272.html): the XML format for a PDF's annotations and form data.

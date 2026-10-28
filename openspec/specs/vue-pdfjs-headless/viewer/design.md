@@ -18,6 +18,14 @@ The viewer wraps the renderer's `PDFViewer`, together with its link service and 
 - **A new document starts from the first page.** The renderer resets its page and rotation without an event, so `usePdfViewer` resets them with the match state when a document is applied.
 - **Disposing ends the viewer's listeners.** The renderer gets one abort signal per viewer, and the viewer's own listeners share it. Disposing clears the document, then aborts the signal.
 
+```mermaid
+flowchart LR
+  renderer["Renderer viewer"] -->|"events"| refs["Viewer refs"]
+  controls["Consumer controls"] -->|"find and zoom"| renderer
+  renderer -->|"each page drawn"| overlays["Page overlays"]
+  controls -->|"print"| sheets["Print image container"]
+```
+
 ## Decisions
 
 - **State and actions instead of components.** A styled viewer inside the package was rejected, because a toolbar with the package's own markup would have to be overridden by every consumer.
@@ -41,5 +49,5 @@ The viewer wraps the renderer's `PDFViewer`, together with its link service and 
 
 ## Sources
 
-- [mozilla/pdf.js, `web/pdf_viewer.js`](https://github.com/mozilla/pdf.js/blob/master/web/pdf_viewer.js): where the renderer's page container and its event bus are defined.
+- [pdf.js viewer](https://github.com/mozilla/pdf.js/blob/master/web/pdf_viewer.js): where the renderer's page container and its event bus are defined.
 - [PDF.js API](https://mozilla.github.io/pdf.js/api/draft/module-pdfjsLib.html): the page viewport and its point conversion.

@@ -12,7 +12,7 @@ The app's own use of the package is the [PDF viewer](../architecture/pdf-viewer/
 
 ## Upstream
 
-Both wrappers' trackers get one verdict per issue, open or closed, read with its comments. `vue-pdf-viewer`'s source is closed, so its tracker is the only evidence for it, and its features are answered by the viewer's decisions. A feature the dialog does not draw yet keeps its in-scope verdict, which judges the viewer rather than one consumer of it, and its row links the capability building it. The page drawing's in-scope defects carry tests in the package: #52 in the scale function's suite and #20 in the page composable's. #28 and #261 are fixed upstream by the wrapper's own verdict, so no test here proves an open defect. The five worker-syntax rows in `vue-pdf-embed` (#125, #266, #277, #283, #291) are answered by the [document](document/design.md) capability, which takes the renderer's legacy build from its consumer.
+Both wrappers' trackers get one verdict per issue, open or closed, read with its comments. `vue-pdf-viewer`'s source is closed, so its tracker is the only evidence for it, and its features are answered by the viewer's decisions. A feature the dialog does not draw yet keeps its in-scope verdict, which judges the viewer rather than one consumer of it, and its row links the capability building it. The page drawing's in-scope defects carry tests in the package: #52 in the scale function's suite and #20 in the page composable's. #28 and #261 are fixed upstream by the wrapper's own verdict, so no test here proves an open defect. The worker-syntax rows in `vue-pdf-embed` (#125, #266, #277, #283, #291) are answered by the [document](document/design.md) capability, which takes the renderer's legacy build from its consumer.
 
 ### vue-pdf-embed
 

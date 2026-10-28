@@ -16,8 +16,10 @@ flowchart TD
   press -->|"a nested grid's root is nearer, or another pointer holds the gesture"| ignored["ignored"]
   gesture -->|"pointerup before the start distance"| click["a click, nothing written"]
   gesture -->|"pointermove past the start distance"| captured["pointer captured, then each move"]
-  captured --> cell["getGestureCell, then the collision mode, then compaction"]
-  cell --> preview["preview held in the grid"]
+  captured --> cell["getGestureCell"]
+  cell --> collide["collision mode"]
+  collide --> compact["compaction"]
+  compact --> preview["preview held in the grid"]
   preview -->|"pointerup over this grid, or a resize"| commit["one commit of the changed cells"]
   preview -->|"pointerup over another mounted grid"| handoff["the grid under the pointer accepts the item"]
   handoff -->|"accepted"| transferred["removal committed here, addition committed there"]
@@ -46,13 +48,13 @@ flowchart TD
 
 ## Notes
 
-- The package draws no per-edge handles. It builds every edge's resize, and a consumer binds the handles it chooses to draw.
+- The package draws no per-edge handles; [How it works](#how-it-works) gives the press each one takes. It builds every edge's resize, and a consumer binds the handles it chooses to draw.
 - A drag over another grid shows no preview in that grid until the release. The source grid's tile follows the pointer, and the target grid commits the addition on release, so the target's cells are not drawn as the item moves across it.
 - A release with the pointer outside the browser's viewport hits no element, so it finds no grid and the drag is dropped.
 - A press whose release happens outside the grid never reaches the grid's release. A move with no button held ends the gesture, so a press released elsewhere does not start a drag when the pointer comes back.
 - `startExternalDrag` has no drag threshold, so a click on a palette entry drops it at the click point. A consumer that wants a palette entry to need a drag gives it its own threshold before calling it.
 - `startExternalDrag` ends its listeners on either a release or a cancel of its pointer. A cancelled press is discarded without accepting, and the next press's release is the one that drops the entry.
-- The package's main entry is a barrel by design, and its bundle is measured by its size snapshot.
+- The package's main entry is a barrel by design, and its bundle is measured by its size snapshot, which the `build` skill owns.
 
 ## Key files
 

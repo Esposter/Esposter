@@ -1,6 +1,6 @@
 # vue-phaserjs
 
-`packages/vue-phaserjs` (npm `vue-phaserjs`) integrates the Phaser 4 game engine with Vue 3. Instead of imperatively creating and mutating Phaser game objects, you compose a game from Vue components: mount a `<Sprite>` and a sprite appears in the scene, change a reactive property and the live game object updates, unmount the component and the object is destroyed.
+`packages/vue-phaserjs` (npm `vue-phaserjs`) integrates the Phaser game engine with Vue. Instead of imperatively creating and mutating Phaser game objects, you compose a game from Vue components: mount a `<Sprite>` and a sprite appears in the scene, change a reactive property and the live game object updates, unmount the component and the object is destroyed.
 
 ## Key concepts
 

@@ -44,4 +44,4 @@ flowchart TD
 ## Sources
 
 - [PDF.js API](https://mozilla.github.io/pdf.js/api/draft/module-pdfjsLib.html): the parameters of `getDocument`, with range requests, streaming and automatic fetching among its options.
-- [mozilla/pdf.js, `src/display/api.js`](https://github.com/mozilla/pdf.js/blob/master/src/display/api.js): where the loading task's `onPassword` and `onProgress` are defined, which the API page leaves out.
+- [pdf.js loading task source](https://github.com/mozilla/pdf.js/blob/master/src/display/api.js): where the loading task's `onPassword` and `onProgress` are defined, which the API page leaves out.

@@ -1,6 +1,6 @@
 # Testing
 
-All vue-phaserjs tests run against a real headless Phaser game (`type: Phaser.HEADLESS`) rather than mocks. Testing SetterMaps or stores in isolation with mock objects provides little signal — the real signal comes from mounting a component against an actual scene and asserting that Phaser state changed correctly. SetterMap behaviour is covered once, generically, in the `useInitializeGameObject` tests ("SetterMap applied on init", "Reactive setter update"); it is not repeated per setter.
+All vue-phaserjs tests run against a real headless Phaser game (`type: Phaser.HEADLESS`) rather than mocks. Testing SetterMaps or stores in isolation with mock objects provides little signal — the real signal comes from mounting a component against an actual scene and asserting that Phaser state changed correctly. SetterMap behaviour is covered once, generically, in the `useInitializeGameObject` tests ("applies the initial configuration via the SetterMap to the game object on init", "calls the Phaser setter and reflects the new value when a configuration property changes"); it is not repeated per setter.
 
 ## How it works
 
@@ -10,9 +10,9 @@ happy-dom does not provide enough DOM API for Phaser out of the box, so a global
 flowchart LR
   vitest["Vitest<br/>(happy-dom environment)"] -->|global setup| canvas["setupCanvas.ts<br/>canvas 2D context stubs"]
   canvas --> game["headlessGame fixture<br/>boots Phaser.HEADLESS in beforeAll"]
-  game -->|"startTestScene(key)"| scene["Test scene<br/>(lifecycle listeners wired before boot)"]
+  game -->|"startTestScene(key)"| scene["Test scene"]
   scene -->|mount with SceneKey injection + seeded usePhaserStore| component["Component under test"]
-  component -->|"stepScene(scene, n)"| assert["Assert real Phaser state<br/>(display list, setters, events)"]
+  component -->|"stepScene(scene, n)"| assert["Assert real Phaser state"]
 ```
 
 The fixture boots one game per suite (`beforeAll`) and destroys it in `afterAll`. `startTestScene(key)` adds a scene without auto-start so ready/shutdown listeners are in place before the scene boots, then hands back the live scene for mounting components inside the injection context the library expects.
@@ -36,4 +36,4 @@ The fixture boots one game per suite (`beforeAll`) and destroys it in `afterAll`
 
 ## Notes
 
-- Asset loading (`onPreload` / `scene.load.*`) fails in headless mode without real files — preload tests either skip asset assertions or stub textures via `scene.textures.addBase64()`.
+- Asset loading (`onPreload` / `scene.load.*`) fails in headless mode without real files, so preload tests stub textures via `scene.textures.addBase64()` and do not assert on assets the headless game cannot load ([testing spec](spec.md)).
