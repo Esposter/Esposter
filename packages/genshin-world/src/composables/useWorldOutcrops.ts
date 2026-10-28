@@ -91,16 +91,16 @@ export const useWorldOutcrops = ({
   const kindRules = shallowRef<OutcropKindRule[]>([]);
   const regionKey: `leyLine/regions/${string}` = `leyLine/regions/${RegionIdCityIdMap[OUTCROP_REGION_ID]}`;
   if (checkIsGameDataKey(regionKey))
-    getSynchronizedFunction(async () => {
-      await getResultAsync(() => readOutcropRegion(gameDataBaseUrl, regionKey)).match(
+    getSynchronizedFunction(() =>
+      getResultAsync(() => readOutcropRegion(gameDataBaseUrl, regionKey)).match(
         ({ kinds }) => {
           kindRules.value = kinds;
         },
         (error) => {
           console.error(error);
         },
-      );
-    })();
+      ),
+    )();
   // The camp each touched outcrop spawned, by its place, which is in the world only while its outcrop is fighting
   const fightCamps = shallowRef<ReadonlyMap<number, EnemyCamp>>(new Map());
   const outcropCamps = computed(() =>

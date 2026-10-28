@@ -44,8 +44,8 @@ export const useWorldAchievements = ({
   watch(screenKind, (newScreenKind) => {
     if ((newScreenKind !== ScreenKind.Achievements && newScreenKind !== ScreenKind.PaimonMenu) || achievementData.value)
       return;
-    getSynchronizedFunction(async () => {
-      await getResultAsync(async () => {
+    getSynchronizedFunction(() =>
+      getResultAsync(async () => {
         const [{ achievements, categories }, textMap] = await Promise.all([
           readAchievements(gameDataBaseUrl),
           AchievementTextLoaderMap[language](gameDataBaseUrl),
@@ -58,8 +58,8 @@ export const useWorldAchievements = ({
         (error) => {
           console.error(error);
         },
-      );
-    })();
+      ),
+    )();
   });
   const advanceAchievementsWith = (achievementEvents: AchievementEvent[]) => {
     if (achievementEvents.length === 0) return;

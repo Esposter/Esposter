@@ -11,8 +11,8 @@ import { shallowRef } from "vue";
 export const useGatheringPoints = (gameDataBaseUrl: string) => {
   const gatheringItems = shallowRef<GatheringItem[]>([]);
   const gatheringPlaces = shallowRef<GatheringPlace[]>([]);
-  getSynchronizedFunction(async () => {
-    await getResultAsync(() =>
+  getSynchronizedFunction(() =>
+    getResultAsync(() =>
       Promise.all([readMondstadtGatheringPlaces(gameDataBaseUrl), readGatheringItems(gameDataBaseUrl)]),
     ).match(
       ([places, items]) => {
@@ -22,7 +22,7 @@ export const useGatheringPoints = (gameDataBaseUrl: string) => {
       (error) => {
         console.error(error);
       },
-    );
-  })();
+    ),
+  )();
   return { gatheringItems, gatheringPlaces };
 };

@@ -87,29 +87,29 @@ export const useWorldMap = ({
   );
   // Mondstadt's Reputation, read as the world opens: its levels, and the exploration thresholds a statue's unlock can pass
   const mondstadtReputation = shallowRef<ReputationCity>();
-  getSynchronizedFunction(async () => {
-    await getResultAsync(() => readMondstadtReputation(gameDataBaseUrl)).match(
+  getSynchronizedFunction(() =>
+    getResultAsync(() => readMondstadtReputation(gameDataBaseUrl)).match(
       (reputationCity) => {
         mondstadtReputation.value = reputationCity;
       },
       (error) => {
         console.error(error);
       },
-    );
-  })();
+    ),
+  )();
   // The transport points the open world's unlock table lists, read as the world opens. One a quest step names stays hidden
   // From the map and the prompt list until that step is reached
   const transPointUnlocks = shallowRef<TransPointUnlock[]>([]);
-  getSynchronizedFunction(async () => {
-    await getResultAsync(() => readOpenWorldTransPointUnlocks(gameDataBaseUrl)).match(
+  getSynchronizedFunction(() =>
+    getResultAsync(() => readOpenWorldTransPointUnlocks(gameDataBaseUrl)).match(
       (unlocks) => {
         transPointUnlocks.value = unlocks;
       },
       (error) => {
         console.error(error);
       },
-    );
-  })();
+    ),
+  )();
   const hiddenTransPointIds = computed(() =>
     computeHiddenTransPointIds(
       transPointUnlocks.value.map(({ pointId }) => pointId),

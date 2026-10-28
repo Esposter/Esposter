@@ -67,8 +67,8 @@ export const useWorldFishing = ({
   const rods = shallowRef<FishRod[]>([]);
   const proficiencyMap = shallowRef<ReadonlyMap<number, FishProficient>>(new Map());
   const rewardMap = shallowRef<ReadonlyMap<number, FishReward>>(new Map());
-  getSynchronizedFunction(async () => {
-    await getResultAsync(() =>
+  getSynchronizedFunction(() =>
+    getResultAsync(() =>
       Promise.all([
         readFishingPoints(gameDataBaseUrl),
         readFishingPools(gameDataBaseUrl),
@@ -91,8 +91,8 @@ export const useWorldFishing = ({
       (error) => {
         console.error(error);
       },
-    );
-  })();
+    ),
+  )();
   // The Serenitea Pot is held in the bag, and the quest that unlocks fishing is finished once it is carried. A quest not
   // Carried leaves the gate to the Pot alone
   const isFishingOpen = computed(() => {

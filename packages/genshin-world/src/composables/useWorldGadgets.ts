@@ -22,16 +22,16 @@ export const useWorldGadgets = ({
   inventory: Ref<Inventory>;
 }) => {
   const gadgetRows = shallowRef<GadgetRow[]>([]);
-  getSynchronizedFunction(async () => {
-    await getResultAsync(() => readGadgetRows(gameDataBaseUrl)).match(
+  getSynchronizedFunction(() =>
+    getResultAsync(() => readGadgetRows(gameDataBaseUrl)).match(
       (rows) => {
         gadgetRows.value = rows;
       },
       (error) => {
         console.error(error);
       },
-    );
-  })();
+    ),
+  )();
   const cooldownGroupReadyAtMap = shallowRef<CooldownGroupReadyAtMap>(new Map());
   const equippedGadget = computed(() => gadgetRows.value.find(({ id }) => id === inventory.value.equippedGadgetItemId));
   // Z uses the equipped gadget at `now`, which starts its group's cooldown when it is used. The gadget used is returned,

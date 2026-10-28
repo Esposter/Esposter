@@ -171,16 +171,16 @@ export const useWorldDomains = ({
   const openDomain = (landmark: DomainEntranceLandmark) => {
     domainEntrance.value = landmark;
     domainSchedule.value = undefined;
-    getSynchronizedFunction(async () => {
-      await getResultAsync(() => readDomainSchedule(landmark)).match(
+    getSynchronizedFunction(() =>
+      getResultAsync(() => readDomainSchedule(landmark)).match(
         (schedule) => {
           if (domainEntrance.value?.id === landmark.id) domainSchedule.value = schedule;
         },
         (error) => {
           console.error(error);
         },
-      );
-    })();
+      ),
+    )();
   };
 
   const domainArena = shallowRef<DomainArena>();
