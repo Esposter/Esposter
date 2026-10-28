@@ -7,7 +7,7 @@ Framing's press is a Cryo box 4 metres wide and 8 long from the body (gcsim `{da
 Not built yet:
 
 - **Framing's hold and Focused Impression.** Its hit falls a held duration after the press, and a skill's hold levels are fixed, so it waits on a hold whose hitmark follows the seconds held (gcsim `skill.go` line 108 sets the hitmark to the hold plus a 111-frame constant, declared at line 47).
-- **Ascension 1**, which cuts the press's cooldown by 2 seconds when an enemy marked by Focused Impression dies (gcsim `asc.go` lines 19-34 gates it on that hold mark, not on the press's), waits on an enemy-death kit event and on the hold.
+- **Ascension 1**, which cuts the press's cooldown by 2 seconds when an enemy marked by Focused Impression dies (gcsim `asc.go` lines 19-34 gates it on that hold mark, not on the press's), waits on the hold; the enemy-death kit event it also waited on is built as `KitEventKind.EnemyDefeated`.
 - **Ascension 4's Healing Bonus and Cryo DMG Bonus by region are built.** Each other member from Fontaine adds 5% Healing Bonus to Charlotte, and each other member from outside it adds 5% Cryo DMG Bonus, from the deployed combatants and their `regionId`, as gcsim v2.47.2 (MIT) `{data-root}/cache/gcsim-v2.47.2/internal/characters/charlotte/asc.go` lines 40-66 give them, which read each member's zone where this page reads its region (`packages/genshin-world/src/services/kit/characters/charlotteKit.ts`). The `regionId` is the catalogue region the character's association names.
 - **Constellation 6**, the summation strike and heal on hold-marked enemies, waits on Focused Impression's mark (gcsim `cons.go` line 122 gates it on that mark).
 
