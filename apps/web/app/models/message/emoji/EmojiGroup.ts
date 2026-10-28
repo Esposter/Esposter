@@ -13,15 +13,19 @@ export enum EmojiGroup {
 }
 
 // The category rail and the grid render in CLDR's order, Smileys first and Flags last
-// So the order is declared here, not read off the enum's own declaration order
-export const EmojiGroups = [
-  EmojiGroup.SmileysAndEmotion,
-  EmojiGroup.PeopleAndBody,
-  EmojiGroup.AnimalsAndNature,
-  EmojiGroup.FoodAndDrink,
-  EmojiGroup.TravelAndPlaces,
-  EmojiGroup.Activities,
-  EmojiGroup.Objects,
-  EmojiGroup.Symbols,
-  EmojiGroup.Flags,
-];
+// So the order is declared here, not read off the enum's own declaration order, and keyed by group so a new group
+// Fails the typecheck until it names its place rather than being left out of the rail
+const EmojiGroupOrder: Record<EmojiGroup, number> = {
+  [EmojiGroup.Activities]: 5,
+  [EmojiGroup.AnimalsAndNature]: 2,
+  [EmojiGroup.Flags]: 8,
+  [EmojiGroup.FoodAndDrink]: 3,
+  [EmojiGroup.Objects]: 6,
+  [EmojiGroup.PeopleAndBody]: 1,
+  [EmojiGroup.SmileysAndEmotion]: 0,
+  [EmojiGroup.Symbols]: 7,
+  [EmojiGroup.TravelAndPlaces]: 4,
+};
+export const EmojiGroups = Object.values(EmojiGroup).toSorted(
+  (firstGroup, secondGroup) => EmojiGroupOrder[firstGroup] - EmojiGroupOrder[secondGroup],
+);

@@ -7,10 +7,14 @@ export enum VoiceSettingsSection {
 }
 
 // The sections in the order the settings render them, which the enum's own order no longer carries
-export const VoiceSettingsSections = [
-  VoiceSettingsSection.Devices,
-  VoiceSettingsSection.InputProfile,
-  VoiceSettingsSection.InputSensitivity,
-  VoiceSettingsSection.InputMode,
-  VoiceSettingsSection.JoinSettings,
-];
+// Keyed by section so a new section fails the typecheck until it names its place rather than being left out of the nav
+const VoiceSettingsSectionOrder: Record<VoiceSettingsSection, number> = {
+  [VoiceSettingsSection.Devices]: 0,
+  [VoiceSettingsSection.InputMode]: 3,
+  [VoiceSettingsSection.InputProfile]: 1,
+  [VoiceSettingsSection.InputSensitivity]: 2,
+  [VoiceSettingsSection.JoinSettings]: 4,
+};
+export const VoiceSettingsSections = Object.values(VoiceSettingsSection).toSorted(
+  (firstSection, secondSection) => VoiceSettingsSectionOrder[firstSection] - VoiceSettingsSectionOrder[secondSection],
+);
