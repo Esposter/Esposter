@@ -6,6 +6,7 @@ import { assetIndexCommand } from "#src/services/genshinAssets/commands/assetInd
 import { avatarCommand } from "#src/services/genshinAssets/commands/avatarCommand";
 import { behavioursCommand } from "#src/services/genshinAssets/commands/behavioursCommand";
 import { cameraCommand } from "#src/services/genshinAssets/commands/cameraCommand";
+import { characterPacksCommand } from "#src/services/genshinAssets/commands/characterPacksCommand";
 import { characterTrialsCommand } from "#src/services/genshinAssets/commands/characterTrialsCommand";
 import { chestsCommand } from "#src/services/genshinAssets/commands/chestsCommand";
 import { cityAreasCommand } from "#src/services/genshinAssets/commands/cityAreasCommand";
@@ -116,6 +117,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     stats: statsCommand,
     "skill-glyphs": skillGlyphsCommand,
     kits: kitsCommand,
+    "character-packs": characterPacksCommand,
     enemies: enemiesCommand,
     items: itemsCommand,
     outcrops: leyLineCommand,
