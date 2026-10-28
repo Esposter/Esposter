@@ -30,7 +30,7 @@ The timer purges per resource rather than as one batch, so one poisoned resource
 
 ## Data model
 
-`resources.deletedAt` is a nullable timestamp — null is live. It costs no migration: `metadataSchema` already gives every table `createdAt`, `updatedAt` and `deletedAt`, so soft delete rides a column the table already has.
+`resources.deletedAt` is a nullable timestamp — null is live. It costs no migration: `createMetadataSchema` already gives every table `createdAt`, `updatedAt` and `deletedAt`, so soft delete rides a column the table already has.
 
 `RECYCLE_BIN_RETENTION_MS` (30 days) lives in `@esposter/db-schema` — browser-safe, so both the app UI (the retention column, the delete dialogs) and the purge timer can import the one value from the same source. The retention column says how long is left in words beside a meter of the window used, the storage meter's blocks filling towards the purge and turning to the warning colour past `RETENTION_WARNING_PERCENTAGE` (nine days left) and the danger colour past `RETENTION_ERROR_PERCENTAGE` (three).
 
