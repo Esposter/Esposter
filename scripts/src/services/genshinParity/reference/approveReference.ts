@@ -22,8 +22,8 @@ const VISUAL_SUITE_FILE = "parity/screens.visual.ts";
 
 // Approves a screen's image: its compare against the stored reference must score under the bar, and only then is the
 // Visual suite run with `-u` for that one screen (its base image, or the variant's named by `variant`). A reference
-// Missing from disk is fetched first, and any refusal throws before the image is written. A variant is approved against
-// The reference it is given, so that reference must be the variant's own state, which the reference map does not record
+// Missing from disk is fetched first, and any refusal throws before the image is written. The compare judges the state
+// The map records for the reference, so only an image of that same state can be approved from its score
 export const approveReference = async (referenceId: string, variant?: string): Promise<void> => {
   const reference = ParityReferenceMap[referenceId];
   if (!reference)
@@ -34,9 +34,14 @@ export const approveReference = async (referenceId: string, variant?: string): P
     );
   await fetchReferences();
   const hasReference = existsSync(join(REFERENCES_DIRECTORY, `${referenceId}.png`));
-  // A region compare judges only the region it names, and a reference with props of its own judges another state than
-  // The base image draws. Neither is compared: a variant's reference is the variant's state, which only its caller knows
-  const isWholeScreen = reference.region === undefined && (variant !== undefined || reference.props === undefined);
+  // A region compare judges only the region it names. The compare also judges the props and variant the map records, so
+  // An approval is judged by it only when it approves that same state: a base image over a reference in other props, or
+  // A variant the map does not record, is refused rather than scored against another state's reference
+  const isRecordedState =
+    variant === undefined
+      ? reference.props === undefined && reference.variant === undefined
+      : variant === reference.variant;
+  const isWholeScreen = reference.region === undefined && isRecordedState;
   const score = hasReference && isWholeScreen ? await readScore(referenceId) : undefined;
   // The committed report takes the compare's row whether or not it clears the bar, as `compare` writes it
   if (score) await writeParityScores({ [referenceId]: score });
