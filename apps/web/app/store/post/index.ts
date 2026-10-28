@@ -84,7 +84,6 @@ export const usePostStore = defineStore("post", () => {
       },
     });
   };
-
   // The feed's own copies take the counts the server returns, so a vote or a reply on a post's page reaches its card here
   postCountHooks.register((postCounts) => {
     applyPostCounts(items.value, postCounts);

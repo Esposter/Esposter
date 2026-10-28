@@ -50,7 +50,6 @@ export const useCommentStore = defineStore("post/comment", () => {
     };
     deleteLoadedBranch(parentId);
   };
-
   // Every loaded branch is read again under the new order, from its first page, so none keeps the rows the old order read
   const setCommentSortType = (sortType: PostSortType) => {
     commentSortType.value = sortType;

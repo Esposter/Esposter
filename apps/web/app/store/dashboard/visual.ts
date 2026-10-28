@@ -52,7 +52,6 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
       createAlert("The visual was removed, so the edit was not saved", "error");
       return false;
     }
-
     // Cloned because updateVisual assigns onto the live visual
     const snapshot = structuredClone(toRawDeep(previousVisual));
     updateDashboardVisual(editedVisual);

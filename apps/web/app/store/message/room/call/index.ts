@@ -307,7 +307,6 @@ export const useCallStore = defineStore("message/room/call", () => {
       if (newIsScreenSharing) mediaStore.isPoppedOut = true;
     }).match(noop, console.error);
   };
-
   // The room is checked first, so an admin action taken in a room whose call the user is not in never reaches the
   // Call they are in: a force mute from there would otherwise mark them muted while their microphone stays live
   const registerCallAdminActionHook = (adminActionType: AdminActionType, handler: () => Promise<void>) =>

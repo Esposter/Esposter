@@ -112,7 +112,6 @@ export const useRoleStore = defineStore("message/room/role", () => {
       getMemberRoles(roomId, userId).filter(({ id }) => id !== roleId),
     );
   };
-
   // A member's override, keyed by user id within the room. A member with no row is absent, which reads as both
   // Bitfields zero — the roles alone — so the map only ever holds the members an override actually changes
   const {

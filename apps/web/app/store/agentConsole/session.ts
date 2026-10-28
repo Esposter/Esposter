@@ -36,7 +36,6 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
   const themeStyle = computed(() =>
     Object.fromEntries(Object.entries(themeContext.value.palette).map(([token, value]) => [`--ui-${token}`, value])),
   );
-
   // A host's list replaces only that host's sessions, so every other host's stay as they were
   const storeSessions = (connectionId: string, newSessions: SessionSummary[]) => {
     sessions.value = [

@@ -179,8 +179,7 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
   };
   // Keyed by the composer the send was for AND by the ids that send persisted, like every other write here: the
   // Hold and the commit both run behind the send, so by the time either fires the composer can already hold an
-  // Attachment the user picked for their NEXT message. Acting on everything it holds now would take that one
-  // With it.
+  // Attachment the user picked for their NEXT message. Acting on everything it holds now would take that one with it.
   // The attachments leave the composer at the bubble and are dropped for good only once the server accepts —
   // Removal is not a discard, since a persisted message now references those blobs, and the upload grants are
   // The only thing that can ever name them again. Dropped at the bubble, a send the server then rejects

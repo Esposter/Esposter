@@ -8,7 +8,6 @@ import { checkIsServer } from "@esposter/shared";
 // A read row is the row itself; an unread one is copied with it marked read, so each row a read changes is a new row
 const markRead = <T extends { isRead: boolean }>(notification: T): T =>
   notification.isRead ? notification : { ...notification, isRead: true };
-
 // The bell renders two kinds of notification and owns the difference between them. A **delivered** one is a row
 // The server wrote for this user — it reached every device that was subscribed, it survives the reload, and it is
 // Paged in like any other list. A **local** one is feedback about what this tab just did: a mutation error, a save

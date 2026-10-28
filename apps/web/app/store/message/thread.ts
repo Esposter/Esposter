@@ -19,7 +19,6 @@ export const useThreadStore = defineStore("message/thread", () => {
   const messageLayoutStore = useMessageLayoutStore();
   const threadFollowStore = useThreadFollowStore();
   const { readFollowedThreads } = threadFollowStore;
-
   // The read is handed in rather than written here, as a room's page read is handed to its data store: what a reply
   // Renders besides itself is read through the file store, which reads this one back
   const openThread = async (

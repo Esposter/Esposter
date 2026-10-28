@@ -210,7 +210,6 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
   const disconnect = () => {
     for (const connectionId of connectionSocketMap.keys()) disconnectOne(connectionId);
   };
-
   // What the page shows of a host leaves with it. With no host left, the console closes on the first screen
   const unpair = (connectionId?: string) => {
     const removedConnectionIds = connectionId === undefined ? connections.value.map(({ id }) => id) : [connectionId];
@@ -227,7 +226,6 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     agentConsolePanelStore.isConsoleOpen = false;
     agentConsolePanelStore.isPauseMenuOpen = false;
   };
-
   // A pairing that can no longer succeed leaves the page as it was before it: on the host it re-paired, if any
   const endPairing = (connectionId: string, message: string) => {
     pairing.value = undefined;
@@ -363,19 +361,16 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
       },
     );
   };
-
   // Every paired host, on load
   const connect = () => {
     for (const { id } of connections.value) connectOne(id);
   };
-
   // Asked for after a host was stopped: the attempt reads as connecting, and a host still not there reads as down and
   // Is retried like any other
   const reconnect = (connectionId: string) => {
     getStatusRef(connectionId).value = ConnectionStatus.Connecting;
     connectOne(connectionId);
   };
-
   // A host already paired at the same address is paired again in place, keeping its sessions where they were
   const beginPairing = (address: string, code: string, isOpenedByPage: boolean) => {
     const connectionId =
@@ -392,7 +387,6 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     getStatusRef(connectionId).value = ConnectionStatus.Connecting;
     connectOne(connectionId);
   };
-
   // One button connects this computer: the page makes a one-time code and opens the host with it through the link
   // Scheme, after the browser asks the reader, then presents the same code to the host it started
   const connectThisComputer = () => {
@@ -400,18 +394,15 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     beginPairing(LOCAL_HOST_ADDRESS, code, true);
     window.location.assign(`${HOST_SCHEME}://pair?${new URLSearchParams({ [PAIRING_CODE_PARAMETER]: code })}`);
   };
-
   // A host elsewhere: the address and the one-time code it printed, from its link or typed into the sessions tab
   const pairLinkedHost = (address: string, code: string) => {
     beginPairing(address, code, false);
   };
-
   // This computer's host, stopped or not answering, started again through the link scheme with no code
   const startHost = (connectionId: string) => {
     window.location.assign(`${HOST_SCHEME}://start`);
     reconnect(connectionId);
   };
-
   // The host a session is on: the one the sessions list names, or a side chat's, which the list leaves out
   const getSessionConnectionId = (sessionId: string) =>
     agentConsoleSessionStore.sessions.find(({ id }) => id === sessionId)?.connectionId ??
@@ -457,7 +448,6 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     webSocket.send(JSON.stringify({ ...command, id: commandId }));
     return true;
   };
-
   // The side chat's fork is open. It becomes the drawer's session when the drawer is open and has none, and the
   // Question held while it opened is asked of it first. Any other fork — one the drawer closed before it opened, or a
   // Second one — is closed on the host, since nothing shows it
@@ -475,14 +465,12 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     agentConsoleSideChatStore.pendingQuestion = undefined;
     sendCommand(toPromptCommand(sessionId, pendingQuestion.text, pendingQuestion.attachments));
   };
-
   // The side chat's first question forks the session at its latest message and is asked of the fork once it has opened;
   // Every question after that is asked of the fork, which holds the conversation it was forked from. Returns whether the
   // Question was taken, so a question refused — the fork still opening, or no host reached — is kept by the reader
   const askSideChat = (text: string, attachments: Attachment[]) => {
     if (agentConsoleSideChatStore.sideChatSessionId)
       return sendCommand(toPromptCommand(agentConsoleSideChatStore.sideChatSessionId, text, attachments));
-
     // The fork is still opening, and its question is the one asked when it has
     if (agentConsoleSideChatStore.pendingQuestion) return false;
 
@@ -496,7 +484,6 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     if (!isForkSent) agentConsoleSideChatStore.pendingQuestion = undefined;
     return isForkSent;
   };
-
   // Ask Claude's line goes to the session the reader picked, or starts a new one in its folder, and the line is held
   // Until that session opens. Returns whether the line was sent, so a line refused while no host is reached is kept
   const askAssistant = (line: AssistantLine, connectionId?: string) => {
@@ -508,7 +495,6 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     if (!isSessionSent) assistantLineCommandIds.delete(commandId);
     return isSessionSent;
   };
-
   // Closing the drawer closes its fork on the host and discards its answers, which were never in the main conversation.
   // A fork still opening is left to storeSideChatOpened, which closes it as it arrives
   const closeSideChat = () => {

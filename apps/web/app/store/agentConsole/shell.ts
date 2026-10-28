@@ -11,7 +11,6 @@ export const useAgentConsoleShellStore = defineStore("agentConsole/shell", () =>
   const currentShellId = ref("");
   const shellOutputMap = new Map<string, string>();
   const shellListenerMap = new Map<string, ShellListener>();
-
   // A shell the page already holds is being replayed after a reconnect, from the start of what the host kept, so what
   // The page had of it is dropped rather than shown twice
   const storeShellOpened = (shell: Shell) => {

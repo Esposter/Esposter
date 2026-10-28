@@ -14,14 +14,12 @@ export interface OpenEmailDocument {
 }
 
 export type OpenPageBuilderDocument = OpenEmailDocument | OpenWebpageDocument;
-
 // A webpage held beside the kind it was opened as, which the shell reads the document through
 export interface OpenWebpageDocument {
   document: WebpageDocument;
   kind: WebpageKind;
   type: ResourceType.Webpage;
 }
-
 // The open documents of the page builder, each held under its resource, so two resources open at once keep their own.
 // A document is loaded and saved through the functions its caller passes, so nothing here reads a store of its own
 export const usePageBuilderDocumentStore = defineStore("pageBuilder/document", () => {

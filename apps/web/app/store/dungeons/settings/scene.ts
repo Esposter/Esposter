@@ -97,7 +97,6 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     SettingsOptionGrid.position.value = { x, y };
     await saveSelectedValue();
   };
-
   // The saved values may have loaded after the cursor last moved, so the scene rests the cursor on them when it opens
   const restSettingsCursor = () => {
     SettingsOptionGrid.position.value = getRestingPosition(SettingsOptionGrid.position.value.y);

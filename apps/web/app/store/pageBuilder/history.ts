@@ -14,7 +14,6 @@ import { applyBlockEdit } from "headless-block-editor";
 const toOpenEdit = <TOpen extends OpenPageBuilderDocument, TEdit>(open: TOpen, edit: TEdit) => ({ ...open, ...edit });
 const applyToOpenDocument = <TOpen extends OpenPageBuilderDocument>(open: TOpen, operations: JsonPatchOperation[]) =>
   applyBlockEdit(open.kind.documentSchema, open.document, operations).map((edit) => toOpenEdit(open, edit));
-
 // Each open resource's undo and redo over its document in the page builder's document store. An edit is recorded with
 // The inverses that undo it, and an edit in the same interaction that overwrites the values the newest entry overwrote
 // Merges into that entry, so a drag of a value is one entry. A webpage and an email are edited and undone the same way
