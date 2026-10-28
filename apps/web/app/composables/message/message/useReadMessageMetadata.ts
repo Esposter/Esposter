@@ -21,7 +21,6 @@ export const useReadMessageMetadata = () => {
     for (const message of messages)
       if (message.type === MessageType.Webhook) webhookMessages.push(message);
       else standardMessages.push(message);
-
     // A reactor is named by its member row, so the reactors of the emojis read are read as members too
     const readReactorMembers = async () => {
       const emojis = await readEmojis(
