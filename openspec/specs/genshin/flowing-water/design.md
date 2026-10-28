@@ -10,9 +10,7 @@ flowchart TD
   COURSE --> BEND["Each point's turn over its length, times the river's width"]
   BEND -->|outer bank only| FOAMV["Bend foam per vertex"]
   FOAMV --> MAT
-  LIP["A waterfall's lip, across and drop"] --> SHEET["Sheet: a quad hung from the lip down to the pool"]
   RIB --> MAT["Water material, with a flow carried downstream"]
-  SHEET --> STREAK["Waterfall material: streaks falling with v"]
   FLOW["Flow: a direction and a speed, zero for still water"] --> MAT
   DEPTH["Depth to the floor: shores and rocks"] --> MAT
 ```

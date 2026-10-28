@@ -74,7 +74,6 @@ Animals SHALL carry no drops and offer no material sources yet, and striking one
 ## Open
 
 - [ ] **Striking, drops and material sources wait on the proposal's later steps** — contradicted by `packages/genshin-world/src/services/kit/strikeKitEnemies.ts`: the code strikes animals, gives drops and picks up material sources.
-- [ ] **An animal that does not flee is not placed** — contradicted by `scripts/src/services/genshinAssets/wildlife/buildWildlifePlaces.ts`: the Boar charges rather than flees, and is placed.
 - [ ] **An animal under the ground is left out** — no source yet: an animal point marked below the ground in `{data-root}/genshin-parity/references/interactive-map/points.json`, which the scenario's given needs and which that file does not hold on another layer.
 - [ ] **Animals carry no drops or material sources, and striking one has no effect** — contradicted by `packages/genshin-world/src/services/kit/strikeKitEnemies.ts`: it strikes animals; their drops are deferred by the owner.
 - [ ] **Mondstadt's slice holds about a hundred animals** — no source yet: the published Mondstadt slice, which is in hosted storage and not on disk, is not counted against the map's animal points in `{data-root}/genshin-parity/references/interactive-map/points.json`.

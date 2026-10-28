@@ -1,6 +1,6 @@
 # Sky and time
 
-Genshin's landscapes are as much sky as ground. The dawn is apricot (`{data-root}/genshin-parity/captures/login-dawn.mkv`, a frame at 2 s, is apricot on the horizon under blue), the afternoon a high clear blue, the dusk indigo and gold (`{data-root}/genshin-parity/captures/world-weather-turn.dusk.mkv`, a frame at 2 s, shows apricot and gold cloud edges), and the night deep blue under a large moon, and the whole world is lit to match. So the sky is the one source of every colour the [rendering style](../rendering-style/design.md)'s materials, fog and post chain read: a region describes its day as a handful of keyframes, and the clock moves the world through them.
+Genshin's landscapes are as much sky as ground. The dawn is apricot (`{data-root}/genshin-parity/captures/login-dawn.mkv` is apricot on the horizon under blue), the afternoon a high clear blue, the dusk indigo and gold (`{data-root}/genshin-parity/captures/world-weather-turn.dusk.mkv` shows apricot and gold cloud edges), and the night deep blue under a large moon, and the whole world is lit to match. So the sky is the one source of every colour the [rendering style](../rendering-style/design.md)'s materials, fog and post chain read: a region describes its day as a handful of keyframes, and the clock moves the world through them.
 
 ## How it works
 
@@ -16,7 +16,7 @@ flowchart TD
   S --> W[Written into what the sky lights]
   SL --> W
   ML --> W
-  W --> LU[Light: direction, colour, strength; the cascades follow it]
+  W --> LU[Light, which the cascades follow]
   W --> HU[Hemisphere: sky and ground colours]
   W --> MU[Materials' rim, fog colour, god rays' colour]
   W --> SU[Sky uniforms: gradient, discs, stars, clouds]

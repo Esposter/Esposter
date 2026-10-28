@@ -18,7 +18,7 @@ The world's weather SHALL be the weather of the area the camera stands in, and S
 
 - **GIVEN** the camera stands in an area with several weathers
 - **WHEN** the area's change interval passes
-- **THEN** the weather turns to the next one of the area's weathers (the 300-second interval)
+- **THEN** the weather turns to the next one of the area's weathers (the 300-second interval, `AREA_WEATHER_CHANGE_SECONDS`)
 
 #### Scenario: Place no area holds
 
