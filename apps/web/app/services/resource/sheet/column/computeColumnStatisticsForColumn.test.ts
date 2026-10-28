@@ -159,7 +159,7 @@ describe(computeColumnStatisticsForColumn, () => {
         mostFrequentValue: epochDate,
         nullCount: 1,
         nullPercentage: 25,
-        topFrequencies: [["1970-01", 3]],
+        topFrequencies: [[epochDate.slice(0, 7), 3]],
         uniqueCount: 2,
       }),
     );
