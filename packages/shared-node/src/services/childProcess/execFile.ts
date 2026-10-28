@@ -20,3 +20,5 @@ Object.defineProperty(execFile, promisify.custom, {
       ) => Promise<unknown>
     )(file, ...withHiddenWindow(parameters)),
 });
+// oxlint-disable-next-line typescript/strict-void-return -- promisify reads execFile's callback overload, whose void return the rule mistakes for this call's context
+export const execFileAsync: typeof execFileNodeType.__promisify__ = promisify(execFile);

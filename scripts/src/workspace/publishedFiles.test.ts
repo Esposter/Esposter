@@ -2,15 +2,13 @@ import { PNPM_ARGS, PNPM_FILE, REPOSITORY_ROOT } from "#src/services/shared/cons
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { NON_SOURCE_SUFFIXES } from "@esposter/configuration";
-import { execFile } from "@esposter/shared-node/child-process";
+import { execFileAsync } from "@esposter/shared-node/child-process";
 import { join } from "node:path";
-import { promisify } from "node:util";
 import { describe, expect, test } from "vitest";
 
 // `pnpm pack` reads the same `files` the release's `npm-packlist` does, and is the packer the repo already runs
 const readPackedPaths = async (packageDirectory: string): Promise<string[]> => {
-  // oxlint-disable-next-line typescript/strict-void-return -- promisify settles through the callback and never reads execFile's ChildProcess return, and a void wrapper would lose the promisify.custom that resolves { stdout } (packages/shared-node/src/services/childProcess/execFile.ts:13-15)
-  const { stdout } = await promisify(execFile)(PNPM_FILE, [...PNPM_ARGS, "pack", "--dry-run", "--json"], {
+  const { stdout } = await execFileAsync(PNPM_FILE, [...PNPM_ARGS, "pack", "--dry-run", "--json"], {
     cwd: join(REPOSITORY_ROOT, packageDirectory),
     encoding: "utf8",
   });

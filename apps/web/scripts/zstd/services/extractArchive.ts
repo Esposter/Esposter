@@ -1,13 +1,6 @@
-import { execFile } from "@esposter/shared-node/child-process";
+import { execFileAsync } from "@esposter/shared-node/child-process";
 import { join } from "node:path";
 
-const execFileAsync = (file: string, args: string[]) =>
-  new Promise<void>((resolve, reject) => {
-    execFile(file, args, (error: Error | null) => {
-      if (error) reject(error);
-      else resolve();
-    });
-  });
 // Every platform ships a `tar` that reads its own Zig archive and the zstd tarball — bsdtar on Windows and macOS
 // Takes a zip as well. On Windows it is named by path, because Git's GNU tar shadows it on a developer's PATH and
 // Reads neither a drive letter nor a zip
