@@ -41,7 +41,7 @@ export const layoutTopic: ReferenceTopic = {
     },
     {
       method:
-        "The world behind the screen, the 6.3 clip's world 0.9 seconds in against its quest screen 2.8 seconds in, the world blurred and fitted as screen = k · world + b band by band, clear of the screen's own pieces and the world's HUD",
+        "The world behind the screen, the 6.3 clip's world 0.9 seconds in against its quest screen 2.8 seconds in, the world blurred and fitted as screen = k · world + b band by band, clear of the screen's own pieces and the world's HUD; the fit is a measurement only, and the page draws the frame as captured, its interface pieces filled from their surroundings, with no blur or colour fit added",
       outcome: InvestigationOutcome.Found,
       result:
         "The screen keeps about 0.65 of the blurred world and adds a wash that brightens down the screen, b 0.15 at 340 high, 0.25 at 660, 0.30 at 820 and 0.35 at 980, each band's error under 0.02",
@@ -50,7 +50,7 @@ export const layoutTopic: ReferenceTopic = {
       method: "Drawing that blur and wash on the screen itself",
       outcome: InvestigationOutcome.Rejected,
       result:
-        "The parity page has no world behind the screen, as the settings screen's pass has it, so the screen draws no scrim and the still is compared whole with its world counted as what the page cannot draw",
+        "The page draws the frame as captured behind the screen, its interface pieces filled from their surroundings and no blur, wash or scrim added, so the screen draws no scrim of its own; the list's scroll and the game's dark veil over the world are the causes the still differs by",
     },
     {
       method: "The screen's own words in the installed client's English text map",
