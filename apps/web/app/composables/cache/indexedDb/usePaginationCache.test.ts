@@ -74,7 +74,7 @@ describe.each<PaginationCacheVariant>([
   // Keyed like the store the harness stands in for, so a read for one partition landing after a switch is
   // Visible as rows in the wrong slice rather than hidden behind a single shared list
   const sliceMap = new Map<string, TestSlice>();
-  const getTestSlice = (key: string): TestSlice => {
+  const getTestSlice = (key: string) => {
     const existingSlice = sliceMap.get(key);
     if (existingSlice) return existingSlice;
 

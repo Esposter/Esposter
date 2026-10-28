@@ -12,7 +12,7 @@ interface Counter {
   updatedAt: Date;
 }
 
-const createCounter = (): Counter => ({ count: 0, updatedAt: new Date() });
+const createCounter = () => ({ count: 0, updatedAt: new Date() });
 
 // A conflict is the server refusing a save sent under an etag the save no longer carries
 const createConflictError = () =>
