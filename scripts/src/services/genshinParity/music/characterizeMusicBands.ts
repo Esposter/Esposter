@@ -41,7 +41,7 @@ export const characterizeMusicBands = (
   const checkIsAttack = (frame: number): boolean =>
     (totals[frame] ?? 0) > BANDS_ONSET_RISE * (totals[frame - 1] ?? Infinity);
   // Each loud frame's bins a partial holds of a note sounding at its centre
-  const partialMasks = new Map(
+  const framePartialMaskMap = new Map(
     loudFrames.map((frame) => {
       const seconds = getFrameSeconds(frame, sampleRate);
       const mask = new Uint8Array(binCount);
@@ -55,15 +55,15 @@ export const characterizeMusicBands = (
   return LISTEN_BAND_CENTRES.map((centre) => {
     const [low, high] = computeBandBins(centre, sampleRate, frameLength, binCount);
     const bins = Array.from({ length: high - low + 1 }, (_value, index) => low + index);
-    const bandPowers = new Map(
+    const frameBandPowerMap = new Map(
       loudFrames.map((frame) => [frame, sum(bins.map((bin) => getPower(frame, bin)))] as const),
     );
     const meanOf = (frames: number[]): number =>
-      sum(frames.map((frame) => bandPowers.get(frame) ?? 0)) / Math.max(frames.length, 1);
-    const bandTotal = sum(bandPowers.values());
+      sum(frames.map((frame) => frameBandPowerMap.get(frame) ?? 0)) / Math.max(frames.length, 1);
+    const bandTotal = sum(frameBandPowerMap.values());
     const partialTotal = sum(
       loudFrames.map((frame) => {
-        const mask = partialMasks.get(frame);
+        const mask = framePartialMaskMap.get(frame);
         return sum(bins.map((bin) => (mask?.[bin] ? getPower(frame, bin) : 0)));
       }),
     );

@@ -15,7 +15,7 @@ export const fitBandGain = ({ floor, game, ours }: BandLevels): { distance: numb
     if (!Number.isFinite(level)) continue;
     turns.push([floor - level, -1], [target - level, 2]);
   }
-  const sortedTurns = turns.toSorted(([first], [second]) => first - second);
+  const sortedTurns = turns.toSorted(([firstPosition], [secondPosition]) => firstPosition - secondPosition);
   const frameCount = Math.max(ours.length, 1);
   let [position] = sortedTurns[0] ?? [0];
   let best = { distance: total / frameCount, gain: position };
