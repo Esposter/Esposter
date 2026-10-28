@@ -18,4 +18,25 @@ describe("richTextEditor", () => {
 
     expect(destroy).toHaveBeenCalledExactlyOnceWith();
   });
+
+  test("shows a placeholder set after mount", async () => {
+    expect.hasAssertions();
+
+    const component = await mountSuspended(RichTextEditor, { props: { limit: 0, modelValue: "", placeholder: "a" } });
+    await component.setProps({ placeholder: "b" });
+
+    expect(component.find("[data-placeholder]").attributes("data-placeholder")).toBe("b");
+  });
+
+  test("rejects an insert past a limit set after mount", async () => {
+    expect.hasAssertions();
+
+    const setOptions = vi.spyOn(Editor.prototype, "setOptions");
+    const component = await mountSuspended(RichTextEditor, { props: { limit: 0, modelValue: "a" } });
+    await component.setProps({ limit: 1 });
+    const editor = setOptions.mock.contexts.at(-1) as Editor;
+    editor.view.dispatch(editor.state.tr.insertText("b"));
+
+    expect(editor.getText()).toBe("a");
+  });
 });

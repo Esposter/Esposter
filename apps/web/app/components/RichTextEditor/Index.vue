@@ -27,11 +27,28 @@ const modelValue = defineModel<string>({ required: true });
 const { autofocus = false, extensions, height = "auto", limit, placeholder = "Text (optional)" } = defineProps<Props>();
 const emit = defineEmits<{ paste: Parameters<NonNullable<FileHandlePluginOptions["onPaste"]>> }>();
 const linkCursorStyle = ref<CSSProperties["cursor"]>("text");
+// CharacterCount copies its options into the plugin it builds, so a limit given at mount stays the limit. Its plugin is
+// built here with the limit read through a getter, which follows the prop after mount
+const characterCount = CharacterCount.extend({
+  addProseMirrorPlugins() {
+    return (
+      CharacterCount.config.addProseMirrorPlugins?.call({
+        ...this,
+        options: {
+          ...this.options,
+          get limit() {
+            return limit;
+          },
+        },
+      }) ?? []
+    );
+  },
+}).configure({ limit });
 const editor = useEditor({
   autofocus,
   content: modelValue.value,
   extensions: [
-    CharacterCount.configure({ limit }),
+    characterCount,
     // Only onPaste is wired — onDrop is deliberately omitted so file drops fall through to the document-level
     // Dropzone in MessageModelMessageFileDropzoneBackground (useDropZone), which owns drop-to-upload for the whole
     // Room.
@@ -45,16 +62,15 @@ const editor = useEditor({
     modelValue.value = updatedEditor.getHTML();
   },
 });
-// https://github.com/ueberdosis/tiptap/issues/1044
-watch([() => placeholder, () => limit], ([newPlaceholder, newLimit]) => {
-  if (!editor.value) return;
+// The placeholder is a function that reads the prop, so a new one needs only a view update, which setOptions triggers
+watch(
+  () => placeholder,
+  () => {
+    if (!editor.value) return;
 
-  for (const { name, options } of editor.value.extensionManager.extensions)
-    if (name === Placeholder.name) options.placeholder = newPlaceholder;
-    else if (name === CharacterCount.name) options.limit = newLimit;
-
-  editor.value.setOptions();
-});
+    editor.value.setOptions();
+  },
+);
 </script>
 
 <template>
