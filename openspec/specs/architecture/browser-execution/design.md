@@ -29,7 +29,7 @@ A store that needs a `Map` or a class instance passes a `serializer` rather than
 
 Some reads are genuinely not state: the offline save system reads one JSON blob once and hands it to a class constructor. Those live inside a client-only phase — `onMounted`, or `useReadData`, whose unauthenticated branch is `onMounted` for exactly this reason — and the module carries no guard of its own, because the phase already decided.
 
-`window.localStorage` is a `no-restricted-syntax` error, so this is enforced rather than remembered. The offline save system is the standing exception and disables the rule on the line, with its reason: the key is a parameter there, so no ref can own it. Tests need no exemption either, because a test addresses the global bare (`localStorage.clear()`): the `window.` prefix the rule requires of `app/` source would be a `ReferenceError` in a Node-environment test.
+`window.localStorage` is a `no-restricted-syntax` error, so this is enforced rather than remembered. The offline save system is the standing exception and disables the rule on the line, with its reason: the key is a parameter there, so no ref can own it. Tests need no exemption either, because a test addresses the global bare (`localStorage.clear()`): the `window.` prefix the rule bans in `app/` source would be a `ReferenceError` in a Node-environment test.
 
 ## Module scope is the one position a rule can see
 
