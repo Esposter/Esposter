@@ -9,7 +9,7 @@ import { Direction } from "grid-engine";
 import { z } from "zod";
 
 // The respawn's direction is the shared mirror of grid-engine's, so it is checked into the engine's own enum before the emit
-const respawnDirectionSchema = z.enum(Direction);
+const respawnDirectionSchema = z.enum(Direction) satisfies z.ZodType<Direction>;
 
 export const useWorldPlayerStore = defineStore("dungeons/world/player", () => {
   const playerStore = usePlayerStore();

@@ -48,6 +48,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
 
     const option = getSettingsOption(rowIndex);
     const restingX = SettingsOptionGrid.getPositionX(
+      // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the option is a runtime name, so its setting is the union of every setting's type, wider than the grid's value union that the lookup needs
       settingsStore.settings[option as keyof typeof settingsStore.settings] as typeof SettingsOptionGrid.value,
       rowIndex,
     );
@@ -61,6 +62,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
 
     await setSettings(
       selectedSettingsOption.value,
+      // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- setSettings is generic over the option, but the grid's value is the union of every cell's value, so no type relates the two without the assertion
       SettingsOptionGrid.value as (typeof settingsStore.settings)[keyof typeof settingsStore.settings],
     );
   };

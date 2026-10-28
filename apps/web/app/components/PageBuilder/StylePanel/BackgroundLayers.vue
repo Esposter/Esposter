@@ -42,7 +42,9 @@ const addLayer = () => {
         property="background-image"
         @update:model-value="(value) => setLayer(index, value)"
       />
+      <!-- eslint-disable vue/no-restricted-syntax -- removes a layer from the unsaved page draft, which the page builder's undo history restores -->
       <UiButton @click="removeLayer(index)">Remove</UiButton>
+      <!-- eslint-enable vue/no-restricted-syntax -->
     </div>
     <UiButton @click="addLayer()">Add a layer</UiButton>
   </div>

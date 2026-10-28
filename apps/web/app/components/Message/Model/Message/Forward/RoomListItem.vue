@@ -11,7 +11,6 @@ const { room } = defineProps<Props>();
 const forwardStore = useForwardStore();
 const { roomIds } = storeToRefs(forwardStore);
 const roomName = useRoomName(() => room.id);
-const checkboxId = useId();
 const isSelected = computed({
   get: () => roomIds.value.includes(room.id),
   set: (value) => {
@@ -22,10 +21,11 @@ const isSelected = computed({
 
 <!-- The whole row names its checkbox, so a press anywhere on the room picks it -->
 <template>
-  <label ui-item :for="checkboxId">
+  <!-- eslint-disable-next-line vuejs-accessibility/label-has-for -- the checkbox inside is the control this label names -->
+  <label ui-item>
     <UiItemContent :image="room.image ?? ''" :title="roomName">
       <template #append>
-        <UiCheckbox :id="checkboxId" v-model="isSelected" :label="`Forward to ${roomName}`" />
+        <UiCheckbox v-model="isSelected" :label="`Forward to ${roomName}`" />
       </template>
     </UiItemContent>
   </label>

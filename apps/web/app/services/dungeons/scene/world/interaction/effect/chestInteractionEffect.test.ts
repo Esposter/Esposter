@@ -4,15 +4,13 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { ChestObjectProperty } from "#shared/generated/tiled/propertyTypes/class/ChestObjectProperty";
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
+import { Direction } from "#shared/models/dungeons/data/player/Direction";
 import { Save } from "#shared/models/dungeons/data/Save";
 import { Chest } from "#shared/models/dungeons/data/world/Chest";
 import { getItem } from "#shared/services/dungeons/item/getItem";
 import { getPositionId } from "@/services/dungeons/direction/getPositionId";
 import { chestInteractionEffect } from "@/services/dungeons/scene/world/interaction/effect/chestInteractionEffect";
-import type { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { useDungeonsStore } from "@/store/dungeons";
-import type { useWorldDialogStore } from "@/store/dungeons/world/dialog";
-import { Direction } from "grid-engine";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -20,22 +18,23 @@ const { showMessages } = vi.hoisted(() => ({ showMessages: vi.fn<() => Promise<v
 
 // The dungeons store imports Phaser, which cannot initialise under the test environment. Only its save is read here, so
 // The fake keeps the real save shape and holds one save for every reader
-vi.mock(import("@/store/dungeons"), async () => {
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
+vi.mock("@/store/dungeons", async () => {
   const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
   const { Save: DungeonsSave } = await import("#shared/models/dungeons/data/Save");
   const { reactive } = await import("vue");
   const dungeonsStore = reactive({ dungeons: new Dungeons(), save: new DungeonsSave() });
-  return { useDungeonsStore: () => dungeonsStore as unknown as ReturnType<typeof useDungeonsStore> };
+  return { useDungeonsStore: () => dungeonsStore };
 });
 
 // The dialog is UI over the scene, so only the messages it is asked to show are recorded
-vi.mock(import("@/store/dungeons/world/dialog"), () => ({
-  useWorldDialogStore: () => ({ showMessages }) as unknown as ReturnType<typeof useWorldDialogStore>,
-}));
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed store has members this test never reads
+vi.mock("@/store/dungeons/world/dialog", () => ({ useWorldDialogStore: () => ({ showMessages }) }));
 
 // Sound plays through Phaser's scene, which is not run here
-vi.mock(import("@/services/dungeons/sound/getDungeonsSoundEffect"), () => ({
-  getDungeonsSoundEffect: () => ({ play: () => undefined }) as unknown as ReturnType<typeof getDungeonsSoundEffect>,
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed sound has members this test never reads
+vi.mock("@/services/dungeons/sound/getDungeonsSoundEffect", () => ({
+  getDungeonsSoundEffect: () => ({ play: () => undefined }),
 }));
 
 const getChestObject = (x: number, y: number): Types.Tilemaps.TiledObject & { x: number; y: number } => ({

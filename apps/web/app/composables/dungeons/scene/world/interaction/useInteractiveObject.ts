@@ -2,6 +2,7 @@ import type { InteractableDirectionMap } from "@/models/dungeons/direction/Inter
 import type { Position } from "grid-engine";
 
 import { DEFAULT_INTERACTABLE_DIRECTION_MAP } from "@/services/dungeons/direction/constants";
+import { DirectionToGridDirectionMap } from "@/services/dungeons/direction/DirectionToGridDirectionMap";
 import { checkIsInteractiveObjectPosition } from "@/services/dungeons/scene/world/interaction/checkIsInteractiveObjectPosition";
 import { usePlayerStore } from "@/store/dungeons/player";
 
@@ -13,6 +14,11 @@ export const useInteractiveObject = <T extends Position>(
   const playerStore = usePlayerStore();
   const { player } = storeToRefs(playerStore);
   return objects.find((object) =>
-    checkIsInteractiveObjectPosition(player.value.position, player.value.direction, object, interactableDirectionMap),
+    checkIsInteractiveObjectPosition(
+      player.value.position,
+      DirectionToGridDirectionMap[player.value.direction],
+      object,
+      interactableDirectionMap,
+    ),
   );
 };

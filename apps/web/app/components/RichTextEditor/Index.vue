@@ -27,8 +27,8 @@ const modelValue = defineModel<string>({ required: true });
 const { autofocus = false, extensions, height = "auto", limit, placeholder = "Text (optional)" } = defineProps<Props>();
 const emit = defineEmits<{ paste: Parameters<NonNullable<FileHandlePluginOptions["onPaste"]>> }>();
 const linkCursorStyle = ref<CSSProperties["cursor"]>("text");
-// CharacterCount copies its options into the plugin it builds, so a limit given at mount stays the limit. Its plugin is
-// built here with the limit read through a getter, which follows the prop after mount
+// CharacterCount copies its options into the plugin it builds, so a limit given at mount stays the limit.
+// Its plugin is built here with the limit read through a getter, which follows the prop after mount
 const characterCount = CharacterCount.extend({
   addProseMirrorPlugins() {
     return (

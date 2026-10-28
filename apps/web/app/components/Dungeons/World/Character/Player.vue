@@ -3,6 +3,8 @@ import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
 import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
 import { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
+import { DirectionToGridDirectionMap } from "@/services/dungeons/direction/DirectionToGridDirectionMap";
+import { GridDirectionToDirectionMap } from "@/services/dungeons/direction/GridDirectionToDirectionMap";
 import { PlayerWalkingAnimationMapping } from "@/services/dungeons/scene/world/constants";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
@@ -19,8 +21,14 @@ const playerStore = usePlayerStore();
 const { player } = storeToRefs(playerStore);
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { isPlayerFainted } = storeToRefs(monsterPartySceneStore);
+const playerGridDirection = computed({
+  get: () => DirectionToGridDirectionMap[player.value.direction],
+  set: (direction) => {
+    if (direction) player.value.direction = GridDirectionToDirectionMap[direction];
+  },
+});
 const playerWalkingDirection = computed(() =>
-  player.value.direction === Direction.NONE ? Direction.DOWN : player.value.direction,
+  playerGridDirection.value === Direction.NONE ? Direction.DOWN : playerGridDirection.value,
 );
 const worldPlayerStore = useWorldPlayerStore();
 const { healParty, respawn } = worldPlayerStore;
@@ -60,7 +68,7 @@ usePhaserListener("playerTeleport", (position, direction) => {
   onNextTick((scene) => {
     // Let grid engine set the position; teleporting before the tilemap is initialized then surfaces as an error.
     scene.gridEngine.setPosition(CharacterId.Player, position);
-    if (direction) player.value.direction = direction;
+    if (direction) playerGridDirection.value = direction;
     frame.value = PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing;
   }, sceneKey);
 });
@@ -77,7 +85,7 @@ onShutdown((scene) => {
     :id="CharacterId.Player"
     :key="tilemapKey"
     v-model:position="player.position"
-    v-model:direction="player.direction"
+    v-model:direction="playerGridDirection"
     :sprite-configuration="{ texture: SpritesheetKey.Character, frame }"
     :walking-animation-mapping="PlayerWalkingAnimationMapping"
     :on-movement-started="

@@ -17,6 +17,7 @@ import { z } from "zod";
 
 const clearGuestSave = () => {
   getResult(() => {
+    // eslint-disable-next-line no-restricted-syntax -- the offline save system's writer half, kept beside the reader above
     window.localStorage.removeItem(LocalStorageKey.GenshinSave);
   }).match(noop, console.error);
 };

@@ -1,5 +1,6 @@
+import type { Direction } from "#shared/models/dungeons/data/player/Direction";
 import type { Inventory } from "#shared/models/dungeons/data/player/Inventory";
-import type { Direction, Position } from "grid-engine";
+import type { Position } from "grid-engine";
 
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";

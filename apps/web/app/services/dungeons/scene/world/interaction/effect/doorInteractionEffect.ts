@@ -4,6 +4,7 @@ import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
 import { ObjectgroupName } from "#shared/generated/tiled/layers/ObjectgroupName";
 import { TeleportObjectProperty } from "#shared/generated/tiled/propertyTypes/class/TeleportObjectProperty";
 import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
+import { DirectionToGridDirectionMap } from "@/services/dungeons/direction/DirectionToGridDirectionMap";
 import { getPositionAfterDirectionMovement } from "@/services/dungeons/direction/getPositionAfterDirectionMovement";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
@@ -44,7 +45,10 @@ export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
 
       const playerStore = usePlayerStore();
       const { player } = storeToRefs(playerStore);
-      phaserEventEmitter.emit("playerTeleport", getPositionAfterDirectionMovement({ x, y }, player.value.direction));
+      phaserEventEmitter.emit(
+        "playerTeleport",
+        getPositionAfterDirectionMovement({ x, y }, DirectionToGridDirectionMap[player.value.direction]),
+      );
     }
 
     fadeIn(scene);

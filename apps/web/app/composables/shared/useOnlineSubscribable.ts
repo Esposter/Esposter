@@ -18,7 +18,8 @@ export function useOnlineSubscribable<TSource>(
 ): void;
 export function useOnlineSubscribable(
   source: MultiWatchSources | WatchSource,
-  callback: (value: unknown) => Promisable<(() => Promisable<void>) | undefined>,
+  // oxlint-disable-next-line typescript/no-explicit-any -- the implementation signature behind the overloads, which carry the types
+  callback: (value: any) => Promisable<(() => Promisable<void>) | undefined>,
   context?: OnlineSubscribableContext,
 ) {
   const instance = context?.instance ?? getCurrentInstance();

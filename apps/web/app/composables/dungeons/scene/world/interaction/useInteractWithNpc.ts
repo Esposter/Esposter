@@ -1,5 +1,6 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { DirectionToGridDirectionMap } from "@/services/dungeons/direction/DirectionToGridDirectionMap";
 import { getOppositeDirection } from "@/services/dungeons/direction/getOppositeDirection";
 import { applyNpcEffects } from "@/services/dungeons/scene/world/applyNpcEffects";
 import { usePlayerStore } from "@/store/dungeons/player";
@@ -16,7 +17,7 @@ export const useInteractWithNpc = async (scene: SceneWithPlugins): Promise<boole
   const npc = items.value.find((npcItem) => useInteractiveObject([takeOne(npcItem.path, npcItem.pathIndex)]));
   if (!npc) return false;
 
-  scene.gridEngine.turnTowards(npc.id, getOppositeDirection(player.value.direction));
+  scene.gridEngine.turnTowards(npc.id, getOppositeDirection(DirectionToGridDirectionMap[player.value.direction]));
   await applyNpcEffects(scene, npc);
   return true;
 };
