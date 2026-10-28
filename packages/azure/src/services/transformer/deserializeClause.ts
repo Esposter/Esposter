@@ -19,7 +19,8 @@ export const deserializeClause = (
   // `value`, because a collection-emptiness clause carries none
   const groups = match.groups as Record<"key" | "not" | "operator" | "value", string> | undefined;
   if (!groups) throw new NotFoundError(deserializeClause.name, normalizedClause);
-  // The clause regex matches its operator in any case, and the enum holds it in lower case
+  // The clause regex builds its operator group from BinaryOperators and matches it in any case, so this throw is
+  // Unreachable: the lower-cased group is always a member, and the check only narrows the type
   const operator = groups.operator.toLowerCase();
   if (!checkIsBinaryOperator(operator)) throw new NotFoundError(deserializeClause.name, normalizedClause);
   return { key: deserializeKey(groups.key), not: Boolean(groups.not), operator, value: deserializeValue(groups.value) };
