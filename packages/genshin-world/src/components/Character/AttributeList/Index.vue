@@ -147,7 +147,10 @@ const detailGroups = computed(() =>
   line-height: calc(var(--unit) * 36);
 }
 
+/* Lifted 10 units off its measured place, the reference's bar lying that far above it on the frame */
 .experience {
+  position: relative;
+  top: calc(var(--unit) * -10);
   width: 100%;
   height: calc(var(--unit) * 3);
   background: #4fc3d9;
@@ -155,12 +158,17 @@ const detailGroups = computed(() =>
 
 /* Provisional until the button's place and colour are measured off the frame */
 .details {
+  display: block;
+  width: 100%;
+  height: calc(var(--unit) * 40);
   padding: 0;
   border: 0;
-  background: none;
+  border-radius: calc(var(--unit) * 6);
+  background: rgb(255 255 255 / 0.15);
   color: inherit;
   font: inherit;
-  text-decoration: underline;
+  line-height: calc(var(--unit) * 40);
+  text-align: center;
   cursor: pointer;
 }
 

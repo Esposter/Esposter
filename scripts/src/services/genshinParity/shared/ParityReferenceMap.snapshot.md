@@ -9,10 +9,10 @@ committed.
 | :-------- | :----- | --------------: | ----: | ---: | ---: |
 | `character-artifacts` | `CharacterScreen` | 3.09% | 0.816 | 1.41% | 0.1341 |
 | `character-artifacts-tabs` | `CharacterScreen` | 0.88% | 0.976 | 0.32% | 0.0474 |
-| `character-attributes` | `CharacterScreen` | 2.57% | 0.806 | 1.06% | 0.0950 |
-| `character-attributes-panel` | `CharacterScreen` | 4.95% | 0.607 | 2.78% | 0.1793 |
+| `character-attributes` | `CharacterScreen` | 2.06% | 0.902 | 0.90% | 0.0795 |
+| `character-attributes-panel` | `CharacterScreen` | 4.23% | 0.682 | 2.41% | 0.1634 |
 | `character-attributes-tabs` | `CharacterScreen` | 0.97% | 0.985 | 0.34% | 0.0441 |
-| `character-attributes-top` | `CharacterScreen` | 9.51% | 0.744 | 3.60% | 0.3601 |
+| `character-attributes-top` | `CharacterScreen` | 9.51% | 0.755 | 3.55% | 0.3603 |
 | `character-constellation` | `CharacterScreen` | 2.10% | 0.869 | 1.09% | 0.0768 |
 | `character-constellation-tabs` | `CharacterScreen` | 1.31% | 0.980 | 0.44% | 0.0483 |
 | `character-talents` | `CharacterScreen` | 1.96% | 0.866 | 0.79% | 0.0831 |
