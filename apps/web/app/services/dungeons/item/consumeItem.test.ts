@@ -9,6 +9,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { ref } from "vue";
 
 // The player store reads the dungeons store, which imports Phaser. Only its inventory is read here, so the fake holds one
+// Player for every reader
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
 vi.mock("@/store/dungeons/player", async () => {
   const { reactive } = await import("vue");
