@@ -37,7 +37,7 @@ x-touches:
     "packages/genshin-world/src/services/save/**",
     "packages/genshin-world/src/services/map/findAreaAt.ts",
     "scripts/src/models/genshinAssets/gadgets/**",
-    "scripts/src/models/genshinAssets/gathering/GatherRow.ts",
+    "scripts/src/models/genshinAssets/shared/GatherRow.ts",
     "scripts/src/services/genshinAssets/gadgets/**",
     "scripts/src/services/genshinAssets/gathering/readGatheringItems.test.ts",
     "scripts/src/services/genshinAssets/items/**",
