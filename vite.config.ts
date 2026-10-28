@@ -36,6 +36,8 @@ const PACKAGE_REWRITTEN_PATTERNS = [
   // The atomic write the manifest rewrite goes through, which Windows reads back before the rename
   "_tmp_*",
   "src/components/index.ts",
+  // The generated sources a build hook writes, such as db-schema's registry and genshin-world's kit map
+  "src/generated/**",
   "src/index.ts",
   // A tool's own cache, which a build writes into the package's `node_modules` and nothing reads back as an input
   "node_modules/.cache/**",
