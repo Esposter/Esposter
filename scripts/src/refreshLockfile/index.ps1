@@ -52,7 +52,7 @@ $processMap.Values |
     $commandLine = $_.CommandLine
     $_.Name -eq "node.exe" -and $commandLine -and
     ($commandLine.IndexOf("$workspacePath\", [System.StringComparison]::OrdinalIgnoreCase) -ge 0 -or
-      $commandLine.IndexOf("$workspacePath/", [System.StringComparison]::OrdinalIgnoreCase) -ge 0) -and
+      $commandLine.IndexOf("$($workspacePath.Replace('\', '/'))/", [System.StringComparison]::OrdinalIgnoreCase) -ge 0) -and
     -not (& $checkIsInNestedWorktree $commandLine) -and
     -not $ancestors.Contains([int]$_.ProcessId)
   } |
