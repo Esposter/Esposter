@@ -95,8 +95,7 @@ export const useProgramStatus = () => {
       );
       return;
     }
-    const { surveyId } = programResource.value;
-    const surveyPath = RoutePath.View(ResourceType.Survey, surveyId);
+    const surveyPath = RoutePath.View(ResourceType.Survey, programResource.value.surveyId);
     const filename = getProgramInviteFilename(resource.value?.name ?? "", scope);
     const count = exportPersonalizedHtml(filename, createProgramInviteFiles(emailHtml, surveyPath, invites));
     createNotification({

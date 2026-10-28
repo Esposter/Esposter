@@ -52,7 +52,7 @@ export const useResourceCommands = () => {
   useCommandScope({
     checkIsPending: () => isPending.value,
     commands: () => {
-      const itemCommands = items.value.flatMap(({ createTo, group, icon, id, subtitle, title, to }): UiCommand[] => {
+      const itemCommands = items.value.flatMap(({ createTo, group, icon, id, subtitle, title, to }) => {
         const commands: UiCommand[] = [{ description: subtitle, group, icon, id, title, to }];
         // A service can be created from its search result as well as opened
         if (createTo)
