@@ -22,9 +22,6 @@ export const SIN_PRIOR = 1;
 // The evidence kept per sin: past this the discount has taken the rest, under a tenth of a percent
 export const SIN_HISTORY_LENGTH = 300;
 
-// The trend is the score over the half-life's own window
-export const SIN_TREND_LENGTH: number = SIN_HALF_LIFE_PROMPTS;
-
 // The bar's width in cells, the solid run to the score and the tinted run to the score plus its spread
 export const SIN_BAR_WIDTH = 24;
 
