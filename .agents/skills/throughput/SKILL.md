@@ -24,6 +24,18 @@ Time and effort are the limit, so every resource the session holds works at once
 - **A report frees its slot, and the session takes the next entry first.** When an agent reports, the session runs `pnpm ai:fleet:next` and launches a `haiku` agent on what it claims before anything else, so a finished agent's slot is refilled at once (`references/fleet.md`).
 - **A turn ends when nothing is ready**, or every ready unit waits on the user; its report lists what is still running, what lands next, and the one batch of asks.
 
+## Decide, don't ask
+
+The user judges results, not method. A choice the repo's skills or specs already answer, or one with a recommended option, is taken by the session: it carries on with that option, records the choice where the owning skill or spec says to (the commit body, or the skill's own text), and names it in the report so the user can redirect. A method that fails is refined in the skill that owns it, and the result is reported.
+
+Asking first is for the short user-only list, and nothing else:
+
+- a fact only the user holds: an address, a key, a password, or a permission they have not granted (SSH access to another machine is the owner's call per machine, `references/game-data.md`);
+- a recording, a look at the game, or any act only the user's eyes or hands can do;
+- a delete, overwrite or publish outside the repo that cannot be regenerated, or a transfer of game files to a machine the owner has not set up.
+
+An ask is one line, sent at the end of a reply with the default already taken. It never holds a unit that does not depend on its answer.
+
 ## The usage reserve
 
 Each usage window keeps part of its end for the compute queue's runners, and what the session does at each of the window's lines is `references/usage-reserve.md`.

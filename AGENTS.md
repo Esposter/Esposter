@@ -110,7 +110,7 @@ Every feature is described under `openspec/`, and where its folder lives says wh
 | Static files — bundled under `app/assets`, or fixed under `public`           | `openspec/specs/architecture/static-assets/design.md`       |
 | Enforcing a rule — construction, primitive, lint, test, then prose           | `openspec/specs/architecture/enforcement-ladder/design.md`  |
 
-Everything else is a skill: read the skill listing and load the ones the files at hand hit. The `code-review` skill's routing table is the same map, keyed by file glob.
+Deciding without asking — the recommended option is taken, and only the user-only list is asked about — is the `throughput` skill's "Decide, don't ask" section. Everything else is a skill: read the skill listing and load the ones the files at hand hit. The `code-review` skill's routing table is the same map, keyed by file glob.
 
 ## Agent configuration
 
