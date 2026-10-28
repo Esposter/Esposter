@@ -4,9 +4,9 @@ Every workspace package outside `apps/web`.
 
 | Unit                         | Swept                  | Notes                                                  |
 | ---------------------------- | ---------------------- | ------------------------------------------------------ |
-| `azure-functions`            | 2026-10-26             | every `mockDb` stays — hoisted factory, see the README |
-| `azure`, `azure-mock`        | 2026-10-25 · Haiku 5.5 |                                                        |
-| `db`, `db-schema`, `db-mock` | 2026-10-25 · Haiku 5.5 |                                                        |
+| `azure-functions`            | 2026-10-29 · Haiku 5.5 | every `mockDb` stays — hoisted factory, see the README |
+| `azure`, `azure-mock`        | 2026-10-29 · Haiku 5.5 |                                                        |
+| `db`, `db-schema`, `db-mock` | 2026-10-29 · Haiku 5.5 |                                                        |
 | `shared`, `shared-node`      | 2026-10-25 · Haiku 5.5 |                                                        |
 | `parse-tmx`                  | 2026-10-25 · Haiku 5.5 |                                                        |
 | `vue-phaserjs`               | 2026-10-25 · Haiku 5.5 |                                                        |

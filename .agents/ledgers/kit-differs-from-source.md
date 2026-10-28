@@ -100,8 +100,8 @@ grep -n -i 'poise\|cooldown\|gauge\|area\|element' openspec/specs/genshin/kits/<
 | `sayu`               | —                      |                    |
 | `sethos`             | 2026-10-19 · Haiku 5.5 |                    |
 | `shenhe`             | 2026-10-19 · Haiku 5.5 |                    |
-| `shikanoin-heizou`   | —                      | design is `heizou` |
-| `sigewinne`          | —                      |                    |
+| `shikanoin-heizou`   | 2026-10-29 · Haiku 5.5 | design is `heizou` |
+| `sigewinne`          | 2026-10-29 · Haiku 5.5 |                    |
 | `skirk`              | 2026-10-19 · Haiku 5.5 |                    |
 | `sucrose`            | 2026-10-19 · Haiku 5.5 |                    |
 | `tartaglia`          | 2026-10-19 · Haiku 5.5 |                    |
@@ -113,19 +113,19 @@ grep -n -i 'poise\|cooldown\|gauge\|area\|element' openspec/specs/genshin/kits/<
 | `venti`              | 2026-10-19 · Haiku 5.5 |                    |
 | `vesna`              | 2026-10-19 · Haiku 5.5 |                    |
 | `vodyanitsa`         | 2026-10-19 · Haiku 5.5 |                    |
-| `wanderer`           | —                      |                    |
+| `wanderer`           | 2026-10-29 · Haiku 5.5 |                    |
 | `wriothesley`        | 2026-10-26 · Haiku 5.5 |                    |
 | `xiangling`          | 2026-10-19 · Haiku 5.5 |                    |
 | `xianyun`            | 2026-10-19 · Haiku 5.5 |                    |
 | `xiao`               | 2026-10-19 · Haiku 5.5 |                    |
 | `xilonen`            | 2026-10-19 · Haiku 5.5 |                    |
 | `xingqiu`            | 2026-10-19 · Haiku 5.5 |                    |
-| `xinyan`             | —                      |                    |
+| `xinyan`             | 2026-10-29 · Haiku 5.5 |                    |
 | `yae-miko`           | 2026-10-19 · Haiku 5.5 |                    |
 | `yanfei`             | 2026-10-19 · Haiku 5.5 |                    |
-| `yaoyao`             | —                      |                    |
+| `yaoyao`             | 2026-10-29 · Haiku 5.5 |                    |
 | `yelan`              | 2026-10-19 · Opus 5.5  |                    |
-| `yoimiya`            | —                      |                    |
+| `yoimiya`            | 2026-10-29 · Haiku 5.5 |                    |
 | `yumemizuki-mizuki`  | 2026-10-19 · Haiku 5.5 | design is `mizuki` |
 | `yun-jin`            | 2026-10-19 · Haiku 5.5 |                    |
 | `zhongli`            | 2026-10-19 · Haiku 5.5 |                    |

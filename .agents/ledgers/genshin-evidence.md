@@ -25,18 +25,18 @@ Each Genshin design page's claims cited to game code or a reference snapshot, or
 | `openspec/specs/genshin/crafting/design.md`                            | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/achievements/design.md`                        | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/chests/design.md`                              | 2026-10-26 · Haiku 5.5 |       |
-| `openspec/specs/genshin/scene-derivation/design.md`                    | —                      |       |
+| `openspec/specs/genshin/scene-derivation/design.md`                    | 2026-10-29 · Haiku 5.5 |       |
 | `openspec/specs/genshin/wish/design.md`                                | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/commissions/design.md`                         | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/companionship/design.md`                       | 2026-10-26 · Haiku 5.5 |       |
-| `openspec/specs/genshin/party/design.md`                               | —                      |       |
-| `openspec/specs/genshin/rendering-style/design.md`                     | —                      |       |
-| `openspec/specs/genshin/adventure-rank/design.md`                      | —                      |       |
+| `openspec/specs/genshin/party/design.md`                               | 2026-10-29 · Haiku 5.5 |       |
+| `openspec/specs/genshin/rendering-style/design.md`                     | 2026-10-29 · Haiku 5.5 |       |
+| `openspec/specs/genshin/adventure-rank/design.md`                      | 2026-10-29 · Haiku 5.5 |       |
 | `openspec/specs/genshin/character-controller/design.md`                | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/hud/design.md`                                 | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/expeditions/design.md`                         | 2026-10-26 · Haiku 5.5 |       |
-| `openspec/specs/genshin/load-budget/design.md`                         | —                      |       |
-| `openspec/specs/genshin/music/voices/design.md`                        | —                      |       |
+| `openspec/specs/genshin/load-budget/design.md`                         | 2026-10-29 · Haiku 5.5 |       |
+| `openspec/specs/genshin/music/voices/design.md`                        | 2026-10-29 · Haiku 5.5 |       |
 | `openspec/specs/genshin/parity/passes/design.md`                       | —                      |       |
 | `openspec/specs/genshin/gathering/design.md`                           | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/interface-library/design.md`                   | 2026-10-26 · Haiku 5.5 |       |
