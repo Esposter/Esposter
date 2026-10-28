@@ -1,5 +1,5 @@
+import type { GameDataIndexKey } from "#src/generated/gameDataKeys";
 import type { GameDataIndex } from "#src/models/data/GameDataIndex";
-import type { GameDataIndexKey } from "#src/models/data/GameDataIndexKey";
 
 import { gameDataIndexSchema } from "#src/models/data/GameDataIndex";
 import { gameDataLock } from "#src/services/data/gameDataLock";

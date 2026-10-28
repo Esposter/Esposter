@@ -1,5 +1,5 @@
+import type { GameDataKey } from "#src/generated/gameDataKeys";
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
-import type { GameDataKey } from "#src/models/data/GameDataKey";
 
 import { commissionSliceSchema } from "#src/models/commission/CommissionSlice";
 import { readGameData } from "#src/services/data/readGameData";

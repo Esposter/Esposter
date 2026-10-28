@@ -1,4 +1,4 @@
-import type { GameDataKey } from "#src/models/data/GameDataKey";
+import type { GameDataKey } from "#src/generated/gameDataKeys";
 
 // The moment a good that never refreshes counts its purchases from, before any of them
 export const SHOP_NEVER_REFRESHED_AT = Temporal.Instant.fromEpochMilliseconds(0);

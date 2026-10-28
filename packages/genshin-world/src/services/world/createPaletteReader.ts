@@ -1,4 +1,4 @@
-import type { GameDataKey } from "#src/models/data/GameDataKey";
+import type { GameDataKey } from "#src/generated/gameDataKeys";
 
 import { readGameData } from "#src/services/data/readGameData";
 import { z } from "zod";

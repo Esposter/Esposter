@@ -1,4 +1,4 @@
-import type { GameDataKey } from "#src/models/data/GameDataKey";
+import type { GameDataKey } from "#src/generated/gameDataKeys";
 
 import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
 import { gameDataLock } from "#src/services/data/gameDataLock";

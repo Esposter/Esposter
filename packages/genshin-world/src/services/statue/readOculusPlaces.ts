@@ -1,4 +1,4 @@
-import type { GameDataKey } from "#src/models/data/GameDataKey";
+import type { GameDataKey } from "#src/generated/gameDataKeys";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 
 import { oculusPlaceSchema } from "#src/models/oculus/OculusPlace";

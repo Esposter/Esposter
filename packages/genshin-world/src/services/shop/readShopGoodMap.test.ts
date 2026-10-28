@@ -1,4 +1,4 @@
-import type { GameDataKey } from "#src/models/data/GameDataKey";
+import type { GameDataKey } from "#src/generated/gameDataKeys";
 import type { ShopGood } from "#src/models/shop/ShopGood";
 
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
