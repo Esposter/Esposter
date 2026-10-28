@@ -36,5 +36,5 @@ flowchart LR
 ## Notes
 
 - There is no upload path, so the [`AZURE_MAX_PAGE_SIZE`-row dataset cap](../dataset-row-cap-warning/design.md) applies here unchanged.
-- **Only Sheet opts in.** This is a per-type branch on the create form, which is the "type-specific initial settings" affordance the form already reserved — not a new framework. If more types ever want rich create forms, that is the [create wizard tabs](../../../deferred/resource/create-wizard-tabs/design.md) revisit trigger.
+- **Only Sheet opts in.** This is a per-type branch on the create form, which is the "type-specific initial settings" affordance the form already reserved. If more types ever want rich create forms, that is the [create wizard tabs](../../../deferred/resource/create-wizard-tabs/design.md) revisit trigger.
 - The Home quick-create tile and the gallery tile for Sheet lead to this same form; the drop zone is simply on it.
