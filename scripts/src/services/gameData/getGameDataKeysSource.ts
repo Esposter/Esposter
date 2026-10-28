@@ -24,7 +24,6 @@ const descend = (node: KeyTree, segment: string): KeyTree => {
   return child;
 };
 
-// A key's own slot is `self`, so a key that is also a prefix of another key can only hold one of them.
 // Keys are unique, which leaves a literal `self` segment as the one collision: it takes the slot the prefixed key's own name needs
 const insertKey = (tree: KeyTree, key: string): void => {
   const segments = key.split("/");
@@ -44,7 +43,7 @@ const renderName = (name: string): string => {
 };
 
 const renderTree = (tree: KeyTree, indentation: string): string =>
-  Object.entries(tree)
+  Object.entries<KeyTree | string>(tree)
     .toSorted(([left], [right]) => compareNaturally(left, right))
     .map(([name, value]) =>
       typeof value === "string"
