@@ -357,6 +357,64 @@ A cook's cooking talent SHALL add one more dish of the recipe when its chance dr
 - **WHEN** a draw would double the dish being cooked
 - **THEN** the cook is refused, because the room check counts the extra dish
 
+### Requirement: The cooking progress is kept in the save
+
+The dishes learned, each dish's proficiency and each processing's queue SHALL be kept in the save, so they load and save with the rest of the player's game.
+
+#### Scenario: The save keeps the learned dishes, the proficiencies and the processing queues
+
+- **GIVEN** a player has learned a dish, reached a proficiency in another and queued a processing
+- **WHEN** the save is written and read back
+- **THEN** the learned dish, the proficiency and the queue are the same as before
+
+### Requirement: Two copies of the cooking progress merge, each queue from the account's copy
+
+When two copies of a save are merged, each dish SHALL keep the account's proficiency, the learned dishes SHALL union, and each processing queue SHALL be the account's copy.
+
+#### Scenario: A dish keeps the account's proficiency
+
+- **GIVEN** the account's copy has a dish's proficiency at three and the guest's at five
+- **WHEN** the copies are merged
+- **THEN** the dish's proficiency is three
+
+#### Scenario: The learned dishes of both copies union
+
+- **GIVEN** one copy has learned one dish and the other a different one
+- **WHEN** the copies are merged
+- **THEN** both dishes are learned
+
+#### Scenario: A processing queue is the account's copy
+
+- **GIVEN** one copy's queue for a processing started later than the other's
+- **WHEN** the copies are merged
+- **THEN** the account's queue is kept, and the guest's is not
+
+### Requirement: The stove lists the dishes the cook knows
+
+The stove SHALL list the dishes the cook knows: those known from the start and those learned from an instruction.
+
+#### Scenario: The stove lists the dishes known from the start and the learned ones
+
+- **GIVEN** a dish known from the start and a dish learned from an instruction, and a third dish neither known nor learned
+- **WHEN** the stove's dishes are listed
+- **THEN** the first two are listed and the third is not
+
+### Requirement: Auto Cook is offered at full proficiency
+
+Auto Cook SHALL be offered on the cooking screen once a dish's proficiency is full.
+
+#### Scenario: Auto Cook is offered at full proficiency
+
+- **GIVEN** a dish whose proficiency is at its maximum
+- **WHEN** the cooking screen is shown for it
+- **THEN** Auto Cook is offered
+
+#### Scenario: Auto Cook is not offered before full proficiency
+
+- **GIVEN** a dish whose proficiency is below its maximum
+- **WHEN** the cooking screen is shown for it
+- **THEN** Auto Cook is not offered
+
 ## Open
 
 - [ ] **Auto Cook makes up to 99 dishes** — no source yet: a batch limit in the game's data or text, since `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/CookRecipeExcelConfigData.json` and `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/CookBonusExcelConfigData.json` hold none, the English text's Auto Cook line (key `1879414003`) names none, and no cooking wiki page is cached.
