@@ -23,7 +23,7 @@ flowchart TD
 ## Provisional constants
 
 - **Her plunges land 0.4 seconds after they start.** No cached source gives Yoimiya's plunge timing, and her directory in gcsim has no `plunge.go`, so the value stays open until a source gives it.
-- **A hit with no element field counts as Pyro for Constellation 2.** gcsim's check reads the element field alone (`cons.go` line 49) and has no fallback, so the kit's `??` in `yoimiyaKit.ts` line 124 is the kit's own reading.
+- **A hit with no element field counts as Pyro for Constellation 2.** gcsim's check reads the element field alone (`cons.go` line 49) and has no fallback, so the kit's `??` in `yoimiyaKit.ts` line 125 is the kit's own reading.
 
 ## Key files
 
