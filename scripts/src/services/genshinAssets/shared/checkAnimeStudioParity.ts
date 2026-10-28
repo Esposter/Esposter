@@ -13,11 +13,11 @@ import { join } from "node:path";
 // The parity acceptance test, run on the staged CLI: each reference block in the table is exported and compared.
 // The game's blocks are read from its install, so when they are absent the check fails.
 // It is skipped only with --skip-parity, which prints the reason.
-export const checkAnimeStudioParity = (cliPath: string, directory: string, skipParity: boolean): void => {
+export const checkAnimeStudioParity = (cliPath: string, directory: string, isParitySkipped: boolean): void => {
   const absentBlocks = PARITY_REFERENCE_BLOCKS.filter(({ block }) => !existsSync(join(GAME_BLOCKS_DIRECTORY, block)));
   if (absentBlocks.length > 0) {
     const reason = `the game's blocks are absent under ${GAME_BLOCKS_DIRECTORY} (${absentBlocks.map(({ block }) => block).join(", ")})`;
-    if (skipParity) {
+    if (isParitySkipped) {
       console.log(`Parity check skipped: ${reason}.`);
       return;
     }
@@ -28,6 +28,7 @@ export const checkAnimeStudioParity = (cliPath: string, directory: string, skipP
     );
   }
   assertAnimeStudioReady({ ...GENSHIN_ANIMESTUDIO_OPTIONS, executablePath: cliPath });
-  for (const { block, types } of PARITY_REFERENCE_BLOCKS) checkParityBlock(cliPath, block, types, directory);
+  for (const { block, types: expectedTypeCountMap } of PARITY_REFERENCE_BLOCKS)
+    checkParityBlock(cliPath, block, expectedTypeCountMap, directory);
   rmSync(join(directory, PARITY_DIRECTORY_NAME), { force: true, recursive: true });
 };

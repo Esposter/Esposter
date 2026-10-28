@@ -80,7 +80,7 @@ export const readSceneLayout = async (layoutDirectory: string): Promise<SceneLay
         if (!objectNameMap.has(toObjectKey(file, gameObjectId)))
           objectNameMap.set(toObjectKey(file, gameObjectId), name);
       objects.push(...fileObjects);
-      const setDrawing = (gameObjectId: string, mesh: DumpedPointer, materials: ObjectPointer[]): void => {
+      const setGameObjectDrawing = (gameObjectId: string, mesh: DumpedPointer, materials: ObjectPointer[]): void => {
         gameObjectDrawingMap.set(toObjectKey(file, gameObjectId), {
           materials: materials.map(({ pathId }) => pathId),
           // A skinned mesh in another file is named by its path ID alone, which the asset index names
@@ -89,9 +89,9 @@ export const readSceneLayout = async (layoutDirectory: string): Promise<SceneLay
         });
       };
       for (const { m_GameObject, m_Mesh } of meshFilters)
-        setDrawing(m_GameObject.m_PathID, m_Mesh, gameObjectMaterialsMap.get(m_GameObject.m_PathID) ?? []);
+        setGameObjectDrawing(m_GameObject.m_PathID, m_Mesh, gameObjectMaterialsMap.get(m_GameObject.m_PathID) ?? []);
       for (const { m_GameObject, m_Materials, m_Mesh } of skinnedMeshRenderers)
-        setDrawing(m_GameObject.m_PathID, m_Mesh, toPointers(m_Materials));
+        setGameObjectDrawing(m_GameObject.m_PathID, m_Mesh, toPointers(m_Materials));
     }
   return { gameObjectDrawingMap, objectNameMap, objects };
 };

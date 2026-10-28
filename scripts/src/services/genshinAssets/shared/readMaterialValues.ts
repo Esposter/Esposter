@@ -21,11 +21,11 @@ export const readMaterialValues = async (
       material: parseMachineJson<ExportedMaterial>(await readFile(jsonPath, "utf8"), reviveSourcePathId),
     })),
   );
-  const shaderColorNamesMap = await readShaderColorNames(
+  const shaderPathIdColorNamesMap = await readShaderColorNames(
     new Set(materials.map(({ material }) => material.m_Shader.m_PathID)),
   );
   return materials.map(({ keywords, material }) => {
-    const shaderColorNames = shaderColorNamesMap.get(material.m_Shader.m_PathID);
+    const shaderColorNames = shaderPathIdColorNamesMap.get(material.m_Shader.m_PathID);
     if (!shaderColorNames)
       throw new InvalidOperationError(
         Operation.Read,

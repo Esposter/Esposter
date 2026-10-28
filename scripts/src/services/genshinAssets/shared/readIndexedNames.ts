@@ -10,10 +10,10 @@ export const readIndexedNames = async (
   predicate: (asset: IndexedAsset) => boolean,
   toKey: (asset: IndexedAsset) => string | undefined,
 ): Promise<Map<string, string>> => {
-  const names = new Map<string, string>();
+  const keyNameMap = new Map<string, string>();
   for (const asset of await readIndexedAssets(predicate, GENSHIN_ANIMESTUDIO_OPTIONS)) {
     const key = toKey(asset);
-    if (key !== undefined) names.set(key, asset.name);
+    if (key !== undefined) keyNameMap.set(key, asset.name);
   }
-  return names;
+  return keyNameMap;
 };

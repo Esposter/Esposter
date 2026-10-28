@@ -16,11 +16,11 @@ import { dirname, join, parse } from "node:path";
 export const checkParityBlock = (
   cliPath: string,
   block: string,
-  types: Record<string, number>,
+  expectedTypeCountMap: Record<string, number>,
   directory: string,
 ): void => {
   const mismatches: string[] = [];
-  const typeCounts: Record<string, number> = {};
+  const typeCountMap: Record<string, number> = {};
   for (const [type, exportArguments] of Object.entries(PARITY_TYPE_EXPORT_ARGUMENTS)) {
     const outputDirectory = join(directory, PARITY_DIRECTORY_NAME, parse(block).name, type);
     rmSync(outputDirectory, { force: true, recursive: true });
@@ -51,11 +51,11 @@ export const checkParityBlock = (
       );
     mismatches.push(...readAnimeStudioExceptions(`${stdout}\n${stderr}`).slice(0, 5));
     const typeDirectory = join(outputDirectory, type);
-    typeCounts[type] = existsSync(typeDirectory) ? countFiles(typeDirectory) : 0;
-    if (typeCounts[type] !== (types[type] ?? 0))
-      mismatches.push(`${type} ${typeCounts[type]}, Windows ${types[type] ?? 0}`);
+    typeCountMap[type] = existsSync(typeDirectory) ? countFiles(typeDirectory) : 0;
+    if (typeCountMap[type] !== (expectedTypeCountMap[type] ?? 0))
+      mismatches.push(`${type} ${typeCountMap[type]}, Windows ${expectedTypeCountMap[type] ?? 0}`);
   }
   if (mismatches.length > 0)
     throw new InvalidOperationError(Operation.Create, block, `does not match Windows: ${mismatches.join("; ")}`);
-  console.log(`${block}: ${JSON.stringify(typeCounts)}, matches Windows`);
+  console.log(`${block}: ${JSON.stringify(typeCountMap)}, matches Windows`);
 };
