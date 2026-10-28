@@ -4,6 +4,7 @@ import { useEventGridPublisherClient } from "#server/composables/azure/eventGrid
 import { on } from "#server/services/events/on";
 import { friendEventEmitter } from "#server/services/friend/events/friendEventEmitter";
 import { getFriendshipId } from "#server/services/friend/getFriendshipId";
+import { getReceivedFriendRequestWhere } from "#server/services/friend/getReceivedFriendRequestWhere";
 import { readUserPair } from "#server/services/friend/readUserPair";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -19,7 +20,6 @@ import {
   publishNotification,
 } from "@esposter/db-schema";
 import { getResultAsync, noop, Operation } from "@esposter/shared";
-import { and, eq } from "drizzle-orm";
 
 export const friendRequestRouter = router({
   acceptFriendRequest: standardAuthedProcedure
@@ -35,7 +35,7 @@ export const friendRequestRouter = router({
           await ctx.db.transaction(async (tx) => {
             const [deletedFriendRequest] = await tx
               .delete(friendRequestsInSocial)
-              .where(and(eq(friendRequestsInSocial.id, friendshipId), eq(friendRequestsInSocial.receiverId, userId)))
+              .where(getReceivedFriendRequestWhere(friendshipId, userId))
               .returning();
             if (deletedFriendRequest)
               return tx.insert(friendsInSocial).values({ id: friendshipId, receiverId: userId, senderId }).returning();
@@ -62,7 +62,7 @@ export const friendRequestRouter = router({
         (
           await ctx.db
             .delete(friendRequestsInSocial)
-            .where(and(eq(friendRequestsInSocial.id, friendshipId), eq(friendRequestsInSocial.receiverId, userId)))
+            .where(getReceivedFriendRequestWhere(friendshipId, userId))
             .returning()
         )[0],
         Operation.Delete,
