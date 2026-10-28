@@ -31,7 +31,7 @@ import { computeHiddenTransPointIds } from "#src/services/transPoint/computeHidd
 import { computeLandmarkPointId } from "#src/services/transPoint/computeLandmarkPointId";
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { readOpenWorldTransPointUnlocks } from "#src/services/transPoint/readOpenWorldTransPointUnlocks";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction, InvalidOperationError, Operation } from "@esposter/shared";
 import { computed, shallowRef, watch } from "vue";
 
 // The landmarks the world holds and the ones the player has unlocked, the first unlock of each paid, and the pose a jump
@@ -87,27 +87,29 @@ export const useWorldMap = ({
   );
   // Mondstadt's Reputation, read as the world opens: its levels, and the exploration thresholds a statue's unlock can pass
   const mondstadtReputation = shallowRef<ReputationCity>();
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readMondstadtReputation(gameDataBaseUrl)).match(
-    (reputationCity) => {
-      mondstadtReputation.value = reputationCity;
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
+  getSynchronizedFunction(async () => {
+    await getResultAsync(() => readMondstadtReputation(gameDataBaseUrl)).match(
+      (reputationCity) => {
+        mondstadtReputation.value = reputationCity;
+      },
+      (error) => {
+        console.error(error);
+      },
+    );
+  })();
   // The transport points the open world's unlock table lists, read as the world opens. One a quest step names stays hidden
   // From the map and the prompt list until that step is reached
   const transPointUnlocks = shallowRef<TransPointUnlock[]>([]);
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readOpenWorldTransPointUnlocks(gameDataBaseUrl)).match(
-    (unlocks) => {
-      transPointUnlocks.value = unlocks;
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
+  getSynchronizedFunction(async () => {
+    await getResultAsync(() => readOpenWorldTransPointUnlocks(gameDataBaseUrl)).match(
+      (unlocks) => {
+        transPointUnlocks.value = unlocks;
+      },
+      (error) => {
+        console.error(error);
+      },
+    );
+  })();
   const hiddenTransPointIds = computed(() =>
     computeHiddenTransPointIds(
       transPointUnlocks.value.map(({ pointId }) => pointId),
@@ -133,11 +135,10 @@ export const useWorldMap = ({
 
   // The Primogems and Adventure EXP a statue or a waypoint pays on its first unlock, from the open world's transport points
   // By its scene point. A domain entrance has no point, so pays nothing
-  const payFirstUnlockReward = (landmarkId: string) => {
+  const payFirstUnlockReward = getSynchronizedFunction(async (landmarkId: string) => {
     const pointId = computeLandmarkPointId(landmarkId);
     if (pointId === undefined) return;
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(() => readOpenWorldTransPointRewards(gameDataBaseUrl)).match(
+    await getResultAsync(() => readOpenWorldTransPointRewards(gameDataBaseUrl)).match(
       (rewards) => {
         const reward = rewards.find((transPointReward) => transPointReward.pointId === pointId);
         if (!reward) return;
@@ -148,7 +149,7 @@ export const useWorldMap = ({
         console.error(error);
       },
     );
-  };
+  });
   // The unlocked landmarks and the recorded doings whose exploration thresholds are paid: the saved ones, which paid when
   // They were made, and the ones the settle below has counted. An unlock or a doing made before every read has landed
   // Waits outside these sets

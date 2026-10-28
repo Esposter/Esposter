@@ -20,7 +20,10 @@ import { kitStanceRecordSchema } from "#src/models/kit/record/KitStanceRecord";
 import { kitStellarJubileeRecordSchema } from "#src/models/kit/record/KitStellarJubileeRecord";
 import { z } from "zod";
 
-const createNamedSchema = <T extends z.ZodType>(schema: T) => z.record(z.string(), z.union([schema, z.array(schema)]));
+const createNamedSchema = <T extends z.ZodType>(
+  schema: T,
+): z.ZodRecord<z.ZodString, z.ZodUnion<readonly [T, z.ZodArray<T>]>> =>
+  z.record(z.string(), z.union([schema, z.array(schema)]));
 
 // A character's kit as values, published as the `kits` index by avatar id: each action's frames, targeting and hits,
 // The skill's and burst's cooldowns, cost, charges and holds, and the charged attack's stamina. Beside them, by the name

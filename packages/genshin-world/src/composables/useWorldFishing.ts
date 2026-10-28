@@ -32,7 +32,7 @@ import { startFishingCast } from "#src/services/fishing/startFishingCast";
 import { stepFishingCast } from "#src/services/fishing/stepFishingCast";
 import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
 import { GAME_TIME_ZONE } from "#src/services/time/constants";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
 // The fishing of the world: the points in reach and whether fishing is open at them, the one cast held while a point is
@@ -67,31 +67,32 @@ export const useWorldFishing = ({
   const rods = shallowRef<FishRod[]>([]);
   const proficiencyMap = shallowRef<ReadonlyMap<number, FishProficient>>(new Map());
   const rewardMap = shallowRef<ReadonlyMap<number, FishReward>>(new Map());
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() =>
-    Promise.all([
-      readFishingPoints(gameDataBaseUrl),
-      readFishingPools(gameDataBaseUrl),
-      readFish(gameDataBaseUrl),
-      readFishBaits(gameDataBaseUrl),
-      readFishRods(gameDataBaseUrl),
-      readFishProficiencies(gameDataBaseUrl),
-      readFishRewards(gameDataBaseUrl),
-    ]),
-  ).match(
-    ([points, regionPools, fishes, fishBaits, fishRods, proficiencies, rewards]) => {
-      fishingPoints.value = points;
-      pools.value = regionPools;
-      fishMap.value = new Map(fishes.map((fish) => [fish.id, fish]));
-      baits.value = fishBaits;
-      rods.value = fishRods;
-      proficiencyMap.value = new Map(proficiencies.map((proficiency) => [proficiency.id, proficiency]));
-      rewardMap.value = new Map(rewards.map((reward) => [reward.rewardId, reward]));
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
+  getSynchronizedFunction(async () => {
+    await getResultAsync(() =>
+      Promise.all([
+        readFishingPoints(gameDataBaseUrl),
+        readFishingPools(gameDataBaseUrl),
+        readFish(gameDataBaseUrl),
+        readFishBaits(gameDataBaseUrl),
+        readFishRods(gameDataBaseUrl),
+        readFishProficiencies(gameDataBaseUrl),
+        readFishRewards(gameDataBaseUrl),
+      ]),
+    ).match(
+      ([points, regionPools, fishes, fishBaits, fishRods, proficiencies, rewards]) => {
+        fishingPoints.value = points;
+        pools.value = regionPools;
+        fishMap.value = new Map(fishes.map((fish) => [fish.id, fish]));
+        baits.value = fishBaits;
+        rods.value = fishRods;
+        proficiencyMap.value = new Map(proficiencies.map((proficiency) => [proficiency.id, proficiency]));
+        rewardMap.value = new Map(rewards.map((reward) => [reward.rewardId, reward]));
+      },
+      (error) => {
+        console.error(error);
+      },
+    );
+  })();
   // The Serenitea Pot is held in the bag, and the quest that unlocks fishing is finished once it is carried. A quest not
   // Carried leaves the gate to the Pot alone
   const isFishingOpen = computed(() => {

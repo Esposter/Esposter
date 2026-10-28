@@ -49,7 +49,7 @@ import { reviveParty } from "#src/services/party/reviveParty";
 import { chargePartyMember } from "#src/services/wildlife/chargePartyMember";
 import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction, InvalidOperationError, Operation } from "@esposter/shared";
 import { useTimeoutFn } from "@vueuse/core";
 import { createSeededRandom, createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { computed, shallowReactive, shallowRef, watch } from "vue";
@@ -127,17 +127,18 @@ export const useWorldCombat = ({
           ] as const,
       ),
     );
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(() => readCharacterKits(gameDataBaseUrl, characterTalentLevelMap)).match(
-      (newCharacterIdKitMap) => {
-        // A kit already built is kept over one a read overlapping it built again, since a kit in play holds its state
-        characterIdKitMap.value = new Map([...newCharacterIdKitMap, ...characterIdKitMap.value]);
-      },
-      (error) => {
-        console.error(error);
-        retryCharacterKits();
-      },
-    );
+    getSynchronizedFunction(() =>
+      getResultAsync(() => readCharacterKits(gameDataBaseUrl, characterTalentLevelMap)).match(
+        (newCharacterIdKitMap) => {
+          // A kit already built is kept over one a read overlapping it built again, since a kit in play holds its state
+          characterIdKitMap.value = new Map([...newCharacterIdKitMap, ...characterIdKitMap.value]);
+        },
+        (error) => {
+          console.error(error);
+          retryCharacterKits();
+        },
+      ),
+    )();
   };
   watch(deployedCharacterIds, readUnloadedCharacterKits);
   // How the character on the field moves, its body type's

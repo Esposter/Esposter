@@ -6,7 +6,13 @@ import { storedCharacterPackSchema } from "#src/models/character/StoredCharacter
 import { CHARACTER_PACK_INDEX_PATH } from "#src/services/character/constants";
 import { getCharacterPackFilePath } from "#src/services/character/getCharacterPackFilePath";
 import { listStoredCharacterPacks } from "#src/services/character/listStoredCharacterPacks";
-import { createUniqueArraySchema, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import {
+  createUniqueArraySchema,
+  getResultAsync,
+  InvalidOperationError,
+  jsonDateParse,
+  Operation,
+} from "@esposter/shared";
 
 // Where a kept pack's files lie: under its character's id, then its hash
 const getPackPath = ({ characterId, packHash }: StoredCharacterPack): string[] => [String(characterId), packHash];
@@ -31,8 +37,7 @@ export const createCharacterPackStore = (storage: CharacterPackStorage): Charact
       const indexBlob = await storage.read([CHARACTER_PACK_INDEX_PATH]);
       if (indexBlob === undefined) return [];
       const indexText = await indexBlob.text();
-      // oxlint-disable-next-line no-restricted-properties -- the index's schema parses what it holds
-      return storedCharacterPacksSchema.parse(JSON.parse(indexText));
+      return storedCharacterPacksSchema.parse(jsonDateParse(indexText));
     })
       .orTee(console.error)
       .unwrapOr(undefined);

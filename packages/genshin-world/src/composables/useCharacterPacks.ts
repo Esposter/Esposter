@@ -7,7 +7,7 @@ import { useCharacterPackIds } from "#src/composables/useCharacterPackIds";
 import { cacheAccountCharacterPack } from "#src/services/character/cacheAccountCharacterPack";
 import { chooseCharacterPackReader } from "#src/services/character/chooseCharacterPackReader";
 import { openCharacterPackStore } from "#src/services/character/openCharacterPackStore";
-import { getResultAsync, ID_SEPARATOR, noop } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction, ID_SEPARATOR, noop } from "@esposter/shared";
 import { watchImmediate } from "@vueuse/core";
 
 // The characters' packs the world draws from: the ones the browser keeps, which a player loads and removes on the
@@ -50,14 +50,15 @@ export const useCharacterPacks = ({
     setStoredCharacterPacks(await change(await characterPackStorePromise));
   };
   // The store is set before its index is read, so a read that fails still leaves the packs kept from here on drawn
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(async () => {
-    const store = await characterPackStorePromise;
-    characterPackStore.value = store;
-    setStoredCharacterPacks(await store.readIndex());
-  }).match(noop, (error) => {
-    console.error(error);
-  });
+  getSynchronizedFunction(async () => {
+    await getResultAsync(async () => {
+      const store = await characterPackStorePromise;
+      characterPackStore.value = store;
+      setStoredCharacterPacks(await store.readIndex());
+    }).match(noop, (error) => {
+      console.error(error);
+    });
+  })();
   const getCharacterPackReader = (characterId: number) =>
     chooseCharacterPackReader(characterId, {
       accountCharacterPacks: getAccountCharacterPacks(),
@@ -82,20 +83,22 @@ export const useCharacterPacks = ({
         characterIdPackHashMap.value.get(characterId) !== accountCharacterPack.packHash,
     );
   });
-  watchImmediate([uncachedActiveAccountCharacterPack, isStoredIndexRead], ([accountCharacterPack, isIndexRead]) => {
-    if (!accountCharacterPack || !accountFileBaseUrl || !isIndexRead) return;
-    const key = [accountCharacterPack.characterId, accountCharacterPack.packHash].join(ID_SEPARATOR);
-    if (cachedAccountCharacterPackKeys.has(key)) return;
-    cachedAccountCharacterPackKeys.add(key);
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject
-    getResultAsync(async () => {
-      const characterPack = await cacheAccountCharacterPack(accountFileBaseUrl, accountCharacterPack);
-      return changeStoredCharacterPacks((store) => store.put(characterPack));
-    }).match(noop, (error) => {
-      cachedAccountCharacterPackKeys.delete(key);
-      console.error(error);
-    });
-  });
+  watchImmediate(
+    [uncachedActiveAccountCharacterPack, isStoredIndexRead],
+    async ([accountCharacterPack, isIndexRead]) => {
+      if (!accountCharacterPack || !accountFileBaseUrl || !isIndexRead) return;
+      const key = [accountCharacterPack.characterId, accountCharacterPack.packHash].join(ID_SEPARATOR);
+      if (cachedAccountCharacterPackKeys.has(key)) return;
+      cachedAccountCharacterPackKeys.add(key);
+      await getResultAsync(async () => {
+        const characterPack = await cacheAccountCharacterPack(accountFileBaseUrl, accountCharacterPack);
+        return changeStoredCharacterPacks((store) => store.put(characterPack));
+      }).match(noop, (error) => {
+        cachedAccountCharacterPackKeys.delete(key);
+        console.error(error);
+      });
+    },
+  );
   return {
     activeCharacterPackReader,
     characterIdPackHashMap,

@@ -15,7 +15,7 @@ import { offerStatueOculi } from "#src/services/statue/offerStatueOculi";
 import { readStatueLevels } from "#src/services/statue/readStatueLevels";
 import { resonateRegion } from "#src/services/statue/resonateRegion";
 import { toStatueRegionProgress, toStatueRegionProgressSave } from "#src/services/statue/statueRegionProgress";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 
 // The statues' state the world holds: each region's level, the level its rewards are claimed through and the Oculi held,
 // And the Oculi found. A touch collects an Oculus and holds it in its region, a resonance starts its region at level one,
@@ -63,33 +63,36 @@ export const useWorldStatues = ({
   };
   // The levels a region's statues take, handed to the caller once they have arrived, so the Worship Statue opens with its
   // Screen showing each level and its rewards, and a resonance reads them before it acts
-  const readRegionLevels = (regionId: string, onRead: (levels: StatueLevel[]) => void) =>
+  const readRegionLevels = getSynchronizedFunction((regionId: string, onRead: (levels: StatueLevel[]) => void) =>
     getResultAsync(() => readRegionStatueLevels(regionId)).match(onRead, (error) => {
       console.error(error);
-    });
+    }),
+  );
   // Touching an Oculus collects it once, holding it in its region, and gives its Adventure EXP
   // A touch that lands while an Oculus's levels are still arriving waits for them, rather than reading them again
   const collectingOculusIds = new Set<string>();
-  const collectOculus = (regionId: string, source: Pick<WorldDrop, "id" | "position">) => {
-    if (collectingOculusIds.has(source.id)) return;
-    collectingOculusIds.add(source.id);
-    getResultAsync(() => readRegionStatueLevels(regionId)).match(
-      (levels) => {
-        collectingOculusIds.delete(source.id);
-        const progress = getRegionProgress(regionId);
-        const isNewlyFound = !foundOculusIds.value.has(source.id);
-        const found = findOculus(foundOculusIds.value, source.id, toStatueRegionProgress(progress, levels));
-        foundOculusIds.value = found.foundOculusIds;
-        if (isNewlyFound && found.foundOculusIds.has(source.id)) events.emit("oculusFound");
-        gainWorldAdventureExp(found.adventureExp);
-        setRegionProgress(regionId, toStatueRegionProgressSave(found.progress, progress.claimedLevel));
-      },
-      (error) => {
-        collectingOculusIds.delete(source.id);
-        console.error(error);
-      },
-    );
-  };
+  const collectOculus = getSynchronizedFunction(
+    async (regionId: string, source: Pick<WorldDrop, "id" | "position">) => {
+      if (collectingOculusIds.has(source.id)) return;
+      collectingOculusIds.add(source.id);
+      await getResultAsync(() => readRegionStatueLevels(regionId)).match(
+        (levels) => {
+          collectingOculusIds.delete(source.id);
+          const progress = getRegionProgress(regionId);
+          const isNewlyFound = !foundOculusIds.value.has(source.id);
+          const found = findOculus(foundOculusIds.value, source.id, toStatueRegionProgress(progress, levels));
+          foundOculusIds.value = found.foundOculusIds;
+          if (isNewlyFound && found.foundOculusIds.has(source.id)) events.emit("oculusFound");
+          gainWorldAdventureExp(found.adventureExp);
+          setRegionProgress(regionId, toStatueRegionProgressSave(found.progress, progress.claimedLevel));
+        },
+        (error) => {
+          collectingOculusIds.delete(source.id);
+          console.error(error);
+        },
+      );
+    },
+  );
   // A resonance with a statue starts its region at level one. Level one is reached, its rewards waiting to be claimed
   const resonateStatue = (landmarkId: string) => {
     const regionId = getStatueRegionId(landmarkId);

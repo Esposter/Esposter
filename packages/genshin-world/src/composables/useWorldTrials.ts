@@ -25,7 +25,7 @@ import { claimTrialStageReward } from "#src/services/trial/claimTrialStageReward
 import { TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS } from "#src/services/trial/constants";
 import { createTrialCharacter } from "#src/services/trial/createTrialCharacter";
 import { readCharacterTrials } from "#src/services/trial/readCharacterTrials";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
 // The character trials on the world: their tables read once, a trial entered in place of the player's roster with its party
@@ -77,15 +77,16 @@ export const useWorldTrials = ({
       ? Math.ceil((TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS - trialArena.value.elapsedMilliseconds) / 1000)
       : undefined,
   );
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readCharacterTrials(gameDataBaseUrl)).match(
-    (tables) => {
-      trialTables.value = tables;
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
+  getSynchronizedFunction(() =>
+    getResultAsync(() => readCharacterTrials(gameDataBaseUrl)).match(
+      (tables) => {
+        trialTables.value = tables;
+      },
+      (error) => {
+        console.error(error);
+      },
+    ),
+  )();
 
   // The trials the banners can offer, each as the character it tries, the level it fights at and its trial id
   const trials = computed<Trial[]>(() =>

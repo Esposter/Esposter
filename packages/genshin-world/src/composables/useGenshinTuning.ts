@@ -38,6 +38,7 @@ export const useGenshinTuning = ({
   };
   let isActive = true;
 
+  // oxlint-disable-next-line typescript/no-misused-promises, typescript/strict-void-return -- Vue awaits a lifecycle hook's returned promise and routes its rejection to the app's error handler, so the async hook keeps an inspector failure reported
   onMounted(async () => {
     const pipeline = await until(postPipeline).toBeTruthy();
     // A browser driven by automation gets no inspector, as `createGenshinRenderer` gives it none

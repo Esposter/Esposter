@@ -8,7 +8,7 @@ import { getGadgetCooldownSeconds } from "#src/services/gadget/getGadgetCooldown
 import { quickUseGadget } from "#src/services/gadget/quickUseGadget";
 import { readGadgetRows } from "#src/services/gadget/readGadgetRows";
 import { stepQuickUseHeldSeconds } from "#src/services/gadget/stepQuickUseHeldSeconds";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
 // The widget config's gadgets, fetched by their key as the world opens, and the gadget equipped to the quick-use slot,
@@ -22,15 +22,16 @@ export const useWorldGadgets = ({
   inventory: Ref<Inventory>;
 }) => {
   const gadgetRows = shallowRef<GadgetRow[]>([]);
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readGadgetRows(gameDataBaseUrl)).match(
-    (rows) => {
-      gadgetRows.value = rows;
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
+  getSynchronizedFunction(async () => {
+    await getResultAsync(() => readGadgetRows(gameDataBaseUrl)).match(
+      (rows) => {
+        gadgetRows.value = rows;
+      },
+      (error) => {
+        console.error(error);
+      },
+    );
+  })();
   const cooldownGroupReadyAtMap = shallowRef<CooldownGroupReadyAtMap>(new Map());
   const equippedGadget = computed(() => gadgetRows.value.find(({ id }) => id === inventory.value.equippedGadgetItemId));
   // Z uses the equipped gadget at `now`, which starts its group's cooldown when it is used. The gadget used is returned,

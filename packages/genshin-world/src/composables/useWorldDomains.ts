@@ -56,7 +56,7 @@ import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItem
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
 import { grantRewardItems } from "#src/services/reward/grantRewardItems";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
 // The arena a domain's level is entered into: its stand-in beside the entrance, the level it runs, and the reward items its
@@ -171,15 +171,16 @@ export const useWorldDomains = ({
   const openDomain = (landmark: DomainEntranceLandmark) => {
     domainEntrance.value = landmark;
     domainSchedule.value = undefined;
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(() => readDomainSchedule(landmark)).match(
-      (schedule) => {
-        if (domainEntrance.value?.id === landmark.id) domainSchedule.value = schedule;
-      },
-      (error) => {
-        console.error(error);
-      },
-    );
+    getSynchronizedFunction(async () => {
+      await getResultAsync(() => readDomainSchedule(landmark)).match(
+        (schedule) => {
+          if (domainEntrance.value?.id === landmark.id) domainSchedule.value = schedule;
+        },
+        (error) => {
+          console.error(error);
+        },
+      );
+    })();
   };
 
   const domainArena = shallowRef<DomainArena>();

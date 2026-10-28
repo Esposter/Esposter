@@ -38,7 +38,7 @@ import { refillOriginalResinWithFragileResin } from "#src/services/originalResin
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { drawRewardItems } from "#src/services/reward/drawRewardItems";
 import { checkIsDailyResetDayCurrent } from "#src/services/time/checkIsDailyResetDayCurrent";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
 // The ley line outcrops standing in the region: a daily reset draws each open kind's blossom to a fitted place. A
@@ -91,15 +91,16 @@ export const useWorldOutcrops = ({
   const kindRules = shallowRef<OutcropKindRule[]>([]);
   const regionKey: `leyLine/regions/${string}` = `leyLine/regions/${RegionIdCityIdMap[OUTCROP_REGION_ID]}`;
   if (checkIsGameDataKey(regionKey))
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and setup has nothing to await it
-    getResultAsync(() => readOutcropRegion(gameDataBaseUrl, regionKey)).match(
-      ({ kinds }) => {
-        kindRules.value = kinds;
-      },
-      (error) => {
-        console.error(error);
-      },
-    );
+    getSynchronizedFunction(async () => {
+      await getResultAsync(() => readOutcropRegion(gameDataBaseUrl, regionKey)).match(
+        ({ kinds }) => {
+          kindRules.value = kinds;
+        },
+        (error) => {
+          console.error(error);
+        },
+      );
+    })();
   // The camp each touched outcrop spawned, by its place, which is in the world only while its outcrop is fighting
   const fightCamps = shallowRef<ReadonlyMap<number, EnemyCamp>>(new Map());
   const outcropCamps = computed(() =>

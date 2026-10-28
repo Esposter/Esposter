@@ -12,7 +12,7 @@ import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { AchievementTextLoaderMap } from "#src/services/achievement/AchievementTextLoaderMap";
 import { advanceAchievements } from "#src/services/achievement/advanceAchievements";
 import { readAchievements } from "#src/services/achievement/readAchievements";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 
 // The achievements, their categories and their words in the reader's language, read the first time the Achievements
 // Screen opens rather than with the world. A finished step or quest moves the achievements whatever screen is open, and
@@ -44,21 +44,22 @@ export const useWorldAchievements = ({
   watch(screenKind, (newScreenKind) => {
     if ((newScreenKind !== ScreenKind.Achievements && newScreenKind !== ScreenKind.PaimonMenu) || achievementData.value)
       return;
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(async () => {
-      const [{ achievements, categories }, textMap] = await Promise.all([
-        readAchievements(gameDataBaseUrl),
-        AchievementTextLoaderMap[language](gameDataBaseUrl),
-      ]);
-      return { achievements, categories, textMap };
-    }).match(
-      (newAchievementData) => {
-        achievementData.value = newAchievementData;
-      },
-      (error) => {
-        console.error(error);
-      },
-    );
+    getSynchronizedFunction(async () => {
+      await getResultAsync(async () => {
+        const [{ achievements, categories }, textMap] = await Promise.all([
+          readAchievements(gameDataBaseUrl),
+          AchievementTextLoaderMap[language](gameDataBaseUrl),
+        ]);
+        return { achievements, categories, textMap };
+      }).match(
+        (newAchievementData) => {
+          achievementData.value = newAchievementData;
+        },
+        (error) => {
+          console.error(error);
+        },
+      );
+    })();
   });
   const advanceAchievementsWith = (achievementEvents: AchievementEvent[]) => {
     if (achievementEvents.length === 0) return;

@@ -44,20 +44,23 @@ export const useMiningOutcrops = ({
   const minedAtMap = shallowRef(new Map(savedMinedOutcrops.map(({ id, minedAt }) => [id, minedAt] as const)));
   const brokenShareMap = shallowRef(new Map<string, number>());
   const standingMiningOutcrops = shallowRef<GatheringPlace[]>([]);
-  watchImmediate(regionIds, (ids) => {
+  watchImmediate(regionIds, async (ids) => {
+    const requests: Promise<void>[] = [];
     for (const regionId of ids) {
       if (requestedRegionIds.has(regionId)) continue;
       requestedRegionIds.add(regionId);
-      // oxlint-disable-next-line typescript/no-floating-promises -- the match's two handlers terminate the result, so the promise it returns cannot reject
-      getResultAsync(() => readMiningOutcropPlaces(gameDataBaseUrl, regionId)).match(
-        (places) => {
-          placesMap.value = new Map([...placesMap.value, [regionId, places]]);
-        },
-        (error) => {
-          console.error(error);
-        },
+      requests.push(
+        getResultAsync(() => readMiningOutcropPlaces(gameDataBaseUrl, regionId)).match(
+          (places) => {
+            placesMap.value = new Map([...placesMap.value, [regionId, places]]);
+          },
+          (error) => {
+            console.error(error);
+          },
+        ),
       );
     }
+    await Promise.all(requests);
   });
   // A region without a draw for the day's reset draws now, at that reset, from the places it has
   const drawDayMiningOutcrops = (now: Temporal.Instant, random: () => number) => {

@@ -31,7 +31,7 @@ import { readTravelLogEntries } from "#src/services/archive/readTravelLogEntries
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readSceneGroups } from "#src/services/sceneGroup/readSceneGroups";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { z } from "zod";
 
 // The Archive's entries, the volumes it reads and the defeats it counts. Its entries are read once the quest it opens after
@@ -75,14 +75,13 @@ export const useWorldArchive = ({
   });
   // A volume the Archive's Books section opens has its text read from the hosted game data in the reader's language,
   // When it opens
-  const readBook = (bookId: number) => {
+  const readBook = async (bookId: number) => {
     if (!archiveData.value) return;
     const { sectionEntriesMap, textMap } = archiveData.value;
     const book = sectionEntriesMap[ArchiveSection.Books].find(({ id }) => id === bookId);
     if (!book) return;
     loadingBookId = bookId;
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(() =>
+    await getResultAsync(() =>
       readGameDataEntry(gameDataBaseUrl, `${GameDataset.BookBody}/${language}`, String(book.bodyId), z.string()),
     ).match(
       (body) => {
@@ -110,31 +109,33 @@ export const useWorldArchive = ({
     );
   };
   const isArchiveUnlocked = computed(() => finishedMainQuestIds.value.has(ARCHIVE_UNLOCK_QUEST_ID));
-  watch(isArchiveUnlocked, (newIsArchiveUnlocked) => {
-    if (!newIsArchiveUnlocked || archiveData.value) return;
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(async () => {
-      const [sectionEntriesMap, textMap, sceneGroups] = await Promise.all([
-        readArchiveEntries(gameDataBaseUrl),
-        ArchiveTextLoaderMap[language](gameDataBaseUrl),
-        readSceneGroups(gameDataBaseUrl),
-      ]);
-      return {
-        placeMap: getViewpointPlaces(sceneGroups, sectionEntriesMap[ArchiveSection.Geography]),
-        sectionEntriesMap,
-        textMap,
-      };
-    }).match(
-      ({ placeMap, sectionEntriesMap, textMap }) => {
-        archiveData.value = { sectionEntriesMap, textMap };
-        viewpointPlaceMap.value = placeMap;
-        openHeldArtifactSets(inventory.value.items);
-      },
-      (error) => {
-        console.error(error);
-      },
-    );
-  });
+  watch(
+    isArchiveUnlocked,
+    getSynchronizedFunction(async (newIsArchiveUnlocked) => {
+      if (!newIsArchiveUnlocked || archiveData.value) return;
+      await getResultAsync(async () => {
+        const [sectionEntriesMap, textMap, sceneGroups] = await Promise.all([
+          readArchiveEntries(gameDataBaseUrl),
+          ArchiveTextLoaderMap[language](gameDataBaseUrl),
+          readSceneGroups(gameDataBaseUrl),
+        ]);
+        return {
+          placeMap: getViewpointPlaces(sceneGroups, sectionEntriesMap[ArchiveSection.Geography]),
+          sectionEntriesMap,
+          textMap,
+        };
+      }).match(
+        ({ placeMap, sectionEntriesMap, textMap }) => {
+          archiveData.value = { sectionEntriesMap, textMap };
+          viewpointPlaceMap.value = placeMap;
+          openHeldArtifactSets(inventory.value.items);
+        },
+        (error) => {
+          console.error(error);
+        },
+      );
+    }),
+  );
   // The Travel Log entries of the main quests finished are opened as each one finishes, read off the Archive's table when
   // First needed, since the Archive's own screen may not have been opened
   events.on("parentQuestFinish", () => {

@@ -11,8 +11,7 @@ export const IN_FAMILY_KEY = "inFamily";
 // Blurs them away, so our shade canvases and the witness's textures alike are read so
 export const SCENE_TEXTURE_ANISOTROPY = 8;
 // A submesh of an exported mesh is its own OBJ group, named after the mesh with its index appended
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
-export const SUBMESH_INDEX_REGEX: RegExp = /_(?<index>\d+)$/u;
+export const SUBMESH_INDEX_REGEX = /_(?<index>\d+)$/u;
 // The foliage shader the game's leaf cards draw with, by the name the witness layout gives it (an unnamed shader's
 // Path ID). Its `_Cutoff` clips the card's texture alpha; no other shader in the exports reads it
 export const LEAF_SHADER = "Shader #9134712319877186229";

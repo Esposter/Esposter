@@ -34,17 +34,18 @@ describe("generated character kit behaviour map", () => {
       import.meta.glob<Record<string, unknown>>("/src/services/kit/characters/*Kit.ts", { eager: true }),
     );
 
-    for (const kitModule of kitModules) {
-      const idName = Object.keys(kitModule).find((name) => name.endsWith(CHARACTER_ID_SUFFIX));
-      const createName = Object.keys(kitModule).find(
-        (name) => name.startsWith(CREATE_KIT_PREFIX) && name.endsWith(CREATE_KIT_SUFFIX),
-      );
-      const characterId = idName ? kitModule[idName] : undefined;
-      expect(characterId).toBeTypeOf("number");
-      // oxlint-disable-next-line no-await-in-loop -- each module is already loaded by the glob, so the loads cost nothing to serialise
-      await expect(CharacterIdCreateKitBehaviourMap[Number(characterId)]?.()).resolves.toBe(
-        createName ? kitModule[createName] : undefined,
-      );
-    }
+    await Promise.all(
+      kitModules.map(async (kitModule) => {
+        const idName = Object.keys(kitModule).find((name) => name.endsWith(CHARACTER_ID_SUFFIX));
+        const createName = Object.keys(kitModule).find(
+          (name) => name.startsWith(CREATE_KIT_PREFIX) && name.endsWith(CREATE_KIT_SUFFIX),
+        );
+        const characterId = idName ? kitModule[idName] : undefined;
+        expect(characterId).toBeTypeOf("number");
+        await expect(CharacterIdCreateKitBehaviourMap[Number(characterId)]?.()).resolves.toBe(
+          createName ? kitModule[createName] : undefined,
+        );
+      }),
+    );
   });
 });
