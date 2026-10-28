@@ -1,5 +1,5 @@
 import type { ExcelDungeonRow } from "#src/models/genshinAssets/domains/ExcelDungeonRow";
-import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
+import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/shared/ExcelRewardPreviewRow";
 
 import { REWARD_PREVIEW_TABLE_NAME } from "#src/services/genshinAssets/domains/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";

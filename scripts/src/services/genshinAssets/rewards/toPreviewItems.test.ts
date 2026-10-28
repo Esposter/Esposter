@@ -1,4 +1,4 @@
-import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
+import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/shared/ExcelRewardPreviewRow";
 
 import { toPreviewItems } from "#src/services/genshinAssets/rewards/toPreviewItems";
 import { describe, expect, test } from "vitest";

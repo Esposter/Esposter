@@ -1,4 +1,4 @@
-import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
+import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/shared/ExcelRewardPreviewRow";
 import type { RewardItem } from "genshin-world";
 
 import { parseRewardCount } from "#src/services/genshinAssets/expeditions/parseRewardCount";

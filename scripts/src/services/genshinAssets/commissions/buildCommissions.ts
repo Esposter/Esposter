@@ -2,7 +2,7 @@ import type { ExcelCityTaskOpenRow } from "#src/models/genshinAssets/commissions
 import type { ExcelDailyTaskLevelRow } from "#src/models/genshinAssets/commissions/ExcelDailyTaskLevelRow";
 import type { ExcelDailyTaskRewardRow } from "#src/models/genshinAssets/commissions/ExcelDailyTaskRewardRow";
 import type { ExcelDailyTaskRow } from "#src/models/genshinAssets/commissions/ExcelDailyTaskRow";
-import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
+import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/shared/ExcelRewardPreviewRow";
 import type { RewardItem } from "genshin-world";
 
 import { checkLevelBands } from "#src/services/genshinAssets/commissions/checkLevelBands";

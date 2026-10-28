@@ -1,5 +1,5 @@
 import type { ExcelExpeditionDataRow } from "#src/models/genshinAssets/expeditions/ExcelExpeditionDataRow";
-import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
+import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/shared/ExcelRewardPreviewRow";
 
 import { toExpeditionPlaceRow } from "#src/services/genshinAssets/expeditions/toExpeditionPlaceRow";
 import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";

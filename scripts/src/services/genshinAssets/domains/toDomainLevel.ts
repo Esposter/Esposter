@@ -1,5 +1,5 @@
 import type { ExcelDungeonRow } from "#src/models/genshinAssets/domains/ExcelDungeonRow";
-import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
+import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/shared/ExcelRewardPreviewRow";
 import type { DomainLevel, RewardItem, TreeArtifact } from "genshin-world";
 
 import { getPreview } from "#src/services/genshinAssets/domains/getPreview";
