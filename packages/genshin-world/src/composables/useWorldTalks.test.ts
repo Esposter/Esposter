@@ -21,6 +21,36 @@ vi.mock(import("#src/services/gcg/readGcgLevels"));
 vi.mock(import("#src/services/resident/readStandingTalks"));
 vi.mock(import("#src/services/resident/StandingTalkTextLoaderMap"));
 
+// Mondstadt's residents as its region file seats them, read with the real card game levels, at an Adventure Rank with
+// The tutorial finished
+const useMondstadtTalks = async (adventureRank: number) => {
+  const { readGcgLevels: readRealGcgLevels } = await vi.importActual<{ readGcgLevels: typeof readGcgLevels }>(
+    "#src/services/gcg/readGcgLevels",
+  );
+  vi.mocked(readGcgLevels).mockResolvedValue(await readRealGcgLevels(GAME_DATA_LOCAL_BASE_URL));
+  vi.mocked(readStandingTalks).mockResolvedValue([]);
+  const { residents } = regionDataSchema.parse(
+    jsonDateParse(await readFile(join(import.meta.dirname, "../data/regions/mondstadt.json"), "utf8")),
+  );
+  const talks = useWorldTalks({
+    gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
+    getAdventureRank: () => adventureRank,
+    getCardGameExp: () => 0,
+    getCompletedMainQuestIds: () => new Set([GCG_TUTORIAL_QUEST_ID]),
+    getGroundHeight: () => 0,
+    getResidents: () => residents,
+    getResidentSpot: () => undefined,
+    language: GameLanguage.English,
+    nameText: {},
+    questProgressMap: shallowRef(new Map<string, QuestProgress>()),
+    questsInProgress: computed<Quest[]>(() => []),
+    questsOffered: computed<Quest[]>(() => []),
+    questTextMap: shallowRef<Record<string, string>>({}),
+  });
+  await flushReads();
+  return talks;
+};
+
 describe(useWorldTalks, () => {
   const DUEL_GAME_ID = 1;
   const OPENING_LEVEL = 2;
@@ -72,36 +102,6 @@ describe(useWorldTalks, () => {
   // The Adventure Rank the game opens the card game's duels at
   const DUEL_ADVENTURE_RANK = 32;
 
-  // Mondstadt's residents as its region file seats them, read with the real card game levels, at an Adventure Rank with
-  // The tutorial finished
-  const useMondstadtTalks = async (adventureRank: number) => {
-    const { readGcgLevels: readRealGcgLevels } = await vi.importActual<{ readGcgLevels: typeof readGcgLevels }>(
-      "#src/services/gcg/readGcgLevels",
-    );
-    vi.mocked(readGcgLevels).mockResolvedValue(await readRealGcgLevels(GAME_DATA_LOCAL_BASE_URL));
-    vi.mocked(readStandingTalks).mockResolvedValue([]);
-    const { residents } = regionDataSchema.parse(
-      jsonDateParse(await readFile(join(import.meta.dirname, "../data/regions/mondstadt.json"), "utf8")),
-    );
-    const talks = useWorldTalks({
-      gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
-      getAdventureRank: () => adventureRank,
-      getCardGameExp: () => 0,
-      getCompletedMainQuestIds: () => new Set([GCG_TUTORIAL_QUEST_ID]),
-      getGroundHeight: () => 0,
-      getResidents: () => residents,
-      getResidentSpot: () => undefined,
-      language: GameLanguage.English,
-      nameText: {},
-      questProgressMap: shallowRef(new Map<string, QuestProgress>()),
-      questsInProgress: computed<Quest[]>(() => []),
-      questsOffered: computed<Quest[]>(() => []),
-      questTextMap: shallowRef<Record<string, string>>({}),
-    });
-    await flushReads();
-    return talks;
-  };
-
   test("a game opens once the Player Level reaches its level", async () => {
     expect.hasAssertions();
 
@@ -120,7 +120,7 @@ describe(useWorldTalks, () => {
     expect(talks.getTalkDuelGameId(TALK_ID)).toBeUndefined();
   });
 
-  test("Marjorie's and Ellin's duels are not offered below Adventure Rank 32", async () => {
+  test("marjorie's and ellin's duels are not offered below adventure rank 32", async () => {
     expect.hasAssertions();
 
     const talks = await useMondstadtTalks(DUEL_ADVENTURE_RANK - 1);
@@ -131,7 +131,7 @@ describe(useWorldTalks, () => {
     ]);
   });
 
-  test("Marjorie's and Ellin's duels are offered from Adventure Rank 32", async () => {
+  test("marjorie's and ellin's duels are offered from adventure rank 32", async () => {
     expect.hasAssertions();
 
     const talks = await useMondstadtTalks(DUEL_ADVENTURE_RANK);
