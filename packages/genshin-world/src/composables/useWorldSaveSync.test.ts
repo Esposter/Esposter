@@ -40,7 +40,7 @@ describe(useWorldSaveSync, () => {
     const characterCopyCountMap = shallowRef(savedState.characterCopyCountMap);
     const emitSave = vi.fn<(save: GenshinSave) => void>();
     const scope = effectScope();
-    scope.run(() =>
+    scope.run(() => {
       useWorldSaveSync({
         emitSave,
         getSaveState: () => ({
@@ -48,8 +48,8 @@ describe(useWorldSaveSync, () => {
           characterCopyCountMap: characterCopyCountMap.value,
           characters: characters.value,
         }),
-      }),
-    );
+      });
+    });
     // The session hands its roster back as the world holds it, which the sync writes on the change
     characters.value = [...characters.value];
     scope.stop();

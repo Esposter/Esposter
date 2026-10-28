@@ -90,16 +90,24 @@ const sortRows = (rows: Row[], rowIdIndexMap: Map<string, number>, readCell: She
 describe("compileSheetColumns", () => {
   test("a pass over 1000 rows", async ({ bench }) => {
     await bench.compare(
-      bench("every cell", () => readPass(rows1k, columns)),
-      bench("stored cells", () => readPass(rows1k, storedColumns)),
+      bench("every cell", () => {
+        readPass(rows1k, columns);
+      }),
+      bench("stored cells", () => {
+        readPass(rows1k, storedColumns);
+      }),
       BENCHMARK_RUN_OPTIONS,
     );
   });
 
   test("a pass over 10000 rows", async ({ bench }) => {
     await bench.compare(
-      bench("every cell", () => readPass(rows10k, columns)),
-      bench("stored cells", () => readPass(rows10k, storedColumns)),
+      bench("every cell", () => {
+        readPass(rows10k, columns);
+      }),
+      bench("stored cells", () => {
+        readPass(rows10k, storedColumns);
+      }),
       BENCHMARK_RUN_OPTIONS,
     );
   });

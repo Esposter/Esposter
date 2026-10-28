@@ -39,7 +39,7 @@ const createWearer = (): Combatant => ({
 
 describe(createLongNightsOathSetModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  const hitEnemy = (striker: Combatant, attackTag: AttackTag, context: ReturnType<typeof createKitTestContext>) =>
+  const hitEnemy = (striker: Combatant, attackTag: AttackTag, context: ReturnType<typeof createKitTestContext>) => {
     emitKitEvent(
       {
         attackTag,
@@ -52,6 +52,7 @@ describe(createLongNightsOathSetModule, () => {
       },
       context,
     );
+  };
   // The DMG Bonus a Plunging Attack of the wearer's adds as it stands, against the enemy
   const getPlungeBonus = (wearer: Combatant, kitEffectState: KitEffectState) =>
     wearer.kit.getStrikeDamageBonus?.(

@@ -56,8 +56,9 @@ describe(createSilkenMoonsSerenadeSetModule, () => {
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });
     // A hit the striker lands on the enemy, dealt as the element given, if it deals one
-    const hit = (striker: Combatant, element: Element | undefined) =>
+    const hit = (striker: Combatant, element: Element | undefined) => {
       emitKitEvent({ element, enemy, kind: KitEventKind.EnemyHit, striker }, context);
+    };
     // The DMG Bonus the whole deployed team's hooks add to a reaction the given member makes
     const teamReactionDamageBonus = (combatant: Combatant, reactionType: ReactionType) =>
       getDeployedReactionBonuses({ combatant, element: undefined, enemy, reactionType }, context).damageBonus;

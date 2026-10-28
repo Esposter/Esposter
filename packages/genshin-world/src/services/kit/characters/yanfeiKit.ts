@@ -115,13 +115,16 @@ export const createYanfeiKitBehaviour = ({ readHits, readParameter, readSeconds 
   const chargedAttackHits = readHits("scarletSealChargedAttacks");
   // A strike's seal is gained as it lands on an enemy, one for each enemy struck, capped at the most Yanfei holds
   const strikeHit: KitHitBehaviour = {
-    onStrike: ({ kitEffectState }, { combatant }) => gainSeals(kitEffectState, combatant, 1),
+    onStrike: ({ kitEffectState }, { combatant }) => {
+      gainSeals(kitEffectState, combatant, 1);
+    },
   };
   // The charged attacks' hits that may still set off Blazing Eye, each one until its first CRIT hit
   const blazingEyeArmedHits = new WeakSet<KitHit>();
   const fullSealsHit: KitHitBehaviour = {
-    onStrike: ({ kitEffectState }, { combatant }) =>
-      setSeals(kitEffectState, combatant.characterId, getMaximumSeals(combatant)),
+    onStrike: ({ kitEffectState }, { combatant }) => {
+      setSeals(kitEffectState, combatant.characterId, getMaximumSeals(combatant));
+    },
   };
   return {
     // Done Deal's hit gives the full seals, and its seconds add one each second while it stands, on a field the whole
@@ -136,7 +139,9 @@ export const createYanfeiKitBehaviour = ({ readHits, readParameter, readSeconds 
         });
         castKitField(kitEffectState, combatant.characterId, body.position, {
           nextTickSeconds: BURST_SEAL_INTERVAL_SECONDS,
-          onTick: ({ kitEffectState: tickEffectState }) => gainSeals(tickEffectState, combatant, 1),
+          onTick: ({ kitEffectState: tickEffectState }) => {
+            gainSeals(tickEffectState, combatant, 1);
+          },
           secondsRemaining: BURST_SECONDS,
           tickIntervalSeconds: BURST_SEAL_INTERVAL_SECONDS,
         });

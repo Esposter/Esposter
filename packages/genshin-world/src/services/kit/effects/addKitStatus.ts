@@ -8,4 +8,6 @@ export const addKitStatus = (
   kitEffectState: KitEffectState,
   characterId: number,
   status: Except<KitStatus, "characterId" | "kind">,
-): void => addKitEffect(kitEffectState, { characterId, kind: "status", ...status });
+): void => {
+  addKitEffect(kitEffectState, { characterId, kind: "status", ...status });
+};

@@ -48,7 +48,7 @@ export const createDahliaKitBehaviour = ({ readParameter, readSeconds }: KitReco
       // Radiant Psalter's shield comes its frames in and holds the Favonian Favor's seconds. It is a task, since a shield
       // Is placed when the task runs, and the shield then reads the caster's Max HP as it stands then
       // The Favonian Favor starts with it, and its Benison stacks start from none, as gcsim starts them there
-      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         scheduleKitTask(kitEffectState, combatant.characterId, shieldSeconds, (tick) => {
           const favonianFavorDuration =
             favonianFavorSeconds +
@@ -78,7 +78,8 @@ export const createDahliaKitBehaviour = ({ readParameter, readSeconds }: KitReco
             secondsRemaining: favonianFavorDuration,
             stacks: 0,
           });
-        }),
+        });
+      },
     },
     // A normal attack hit by the active member counts toward a Benison stack while Favonian Favor holds
     // Each stack gained returns Constellation 1's Energy

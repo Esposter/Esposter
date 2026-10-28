@@ -42,7 +42,7 @@ const getBonuses = (wearer: Combatant, kitEffectState: KitEffectState) => {
 describe(createNymphsDreamSetModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   // An enemy the given combatant's attack of the given kind hits, as the kit sends it
-  const hitEnemy = (striker: Combatant, attackTag: AttackTag, context: ReturnType<typeof createKitTestContext>) =>
+  const hitEnemy = (striker: Combatant, attackTag: AttackTag, context: ReturnType<typeof createKitTestContext>) => {
     emitKitEvent(
       {
         attackTag,
@@ -55,6 +55,7 @@ describe(createNymphsDreamSetModule, () => {
       },
       context,
     );
+  };
 
   test("each hit the wearer's attack lands on an enemy adds a stack, and one, two and three or more stacks raise ATK and Hydro DMG by their tier", () => {
     expect.hasAssertions();

@@ -95,7 +95,13 @@ export const useWorldTrounceBlossoms = ({
     lastTeleportAt.value = getWorldNow();
   });
   // The blossoms and the last teleport are the save's, so a change to either is a grant the host saves
-  watch([trounceBlossoms, lastTeleportAt], () => emitGrant(), { flush: "pre" });
+  watch(
+    [trounceBlossoms, lastTeleportAt],
+    () => {
+      emitGrant();
+    },
+    { flush: "pre" },
+  );
   // The blossom of a respawned boss is gone, since it was either claimed or left behind by a teleport
   const forgetTrounceBlossom = (spawnKey: string) => {
     trounceBlossoms.value = withoutMapEntry(trounceBlossoms.value, spawnKey);

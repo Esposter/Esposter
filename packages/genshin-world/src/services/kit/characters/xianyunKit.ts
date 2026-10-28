@@ -49,12 +49,13 @@ const countSkyladderPresses = (kitEffectState: KitEffectState, characterId: numb
   countKitResource(kitEffectState.effects, characterId, XIANYUN_SKYLADDER_STATE_ID);
 
 // A press of Skyladder sets the state for its own length, holding the presses made in it, one at a time
-const startSkyladderPress = (kitEffectState: KitEffectState, characterId: number, press: number): void =>
+const startSkyladderPress = (kitEffectState: KitEffectState, characterId: number, press: number): void => {
   addKitStatus(kitEffectState, characterId, {
     id: XIANYUN_SKYLADDER_STATE_ID,
     secondsRemaining: toKitSeconds(takeOne(SKYLADDER_STATE_FRAMES, press - 1)),
     stacks: press,
   });
+};
 
 // Constellation 4: a Driftcloud Wave's hit heals the active character by a share of Xianyun's ATK for the presses it was
 // Made after, once every five seconds
@@ -145,12 +146,14 @@ export const createXianyunKitBehaviour = (): KitBehaviour => ({
   // Skyladder's second and third presses, each in the state the press before it set, counting up to three
   skillChain: [
     {
-      onStart: ({ activeCombatant, kitEffectState }) =>
-        startSkyladderPress(kitEffectState, activeCombatant.characterId, 2),
+      onStart: ({ activeCombatant, kitEffectState }) => {
+        startSkyladderPress(kitEffectState, activeCombatant.characterId, 2);
+      },
     },
     {
-      onStart: ({ activeCombatant, kitEffectState }) =>
-        startSkyladderPress(kitEffectState, activeCombatant.characterId, 3),
+      onStart: ({ activeCombatant, kitEffectState }) => {
+        startSkyladderPress(kitEffectState, activeCombatant.characterId, 3);
+      },
     },
   ],
 });

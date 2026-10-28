@@ -18,5 +18,7 @@ export const createCritEnergyPassiveModule = (params: number[]): PassiveModule =
       event.kind === KitEventKind.DamageTaken &&
       event.striker.characterId === combatant.characterId &&
       event.isCritical,
-    (context, combatant) => gainPartyMemberEnergy(context.party, combatant, CRIT_ENERGY),
+    (context, combatant) => {
+      gainPartyMemberEnergy(context.party, combatant, CRIT_ENERGY);
+    },
   );

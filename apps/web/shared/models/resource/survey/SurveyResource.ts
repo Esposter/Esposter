@@ -27,7 +27,9 @@ const surveyModelSchema = z
         if (surveyModel === null || typeof surveyModel !== "object" || Array.isArray(surveyModel))
           ctx.addIssue({ code: "custom", message: "Survey model must be a JSON object" });
       },
-      (error) => ctx.addIssue({ code: "custom", message: error.message }),
+      (error) => {
+        ctx.addIssue({ code: "custom", message: error.message });
+      },
     );
   });
 

@@ -10,7 +10,7 @@ import { describe } from "vitest";
 // A hit the striker lands on the enemy, which triggers the given reactions on it, as a gadget's if it is one
 export const createReactionTrigger =
   (enemy: Enemy, context: KitContext) =>
-  (striker: Combatant, reactionTypes: ReactionType[], isGadget?: true): void =>
+  (striker: Combatant, reactionTypes: ReactionType[], isGadget?: true): void => {
     emitKitEvent(
       {
         enemy,
@@ -21,5 +21,6 @@ export const createReactionTrigger =
       },
       context,
     );
+  };
 
 describe.todo("createReactionTrigger");

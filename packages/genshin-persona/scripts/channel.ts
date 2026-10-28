@@ -61,7 +61,10 @@ const handleSay = (request: IncomingMessage, response: ServerResponse) => {
   });
   request.on("end", () => {
     const line = readChannelLine(body);
-    if (line === undefined) return writeEnded(response, 400);
+    if (line === undefined) {
+      writeEnded(response, 400);
+      return;
+    }
 
     mcp.notification({ method: "notifications/claude/channel", params: { content: line, meta: { sender: "desk" } } });
     writeEnded(response, 204);
@@ -78,15 +81,23 @@ const handleEvents = (request: IncomingMessage, response: ServerResponse) => {
 const http = createServer((request, response) => {
   const url = new URL(request.url ?? "/", "http://127.0.0.1");
   const [, presentedToken = "", route = ""] = url.pathname.split("/");
-  if (!checkIsChannelRequestAllowed(request.socket.remoteAddress, presentedToken, token))
-    return writeEnded(response, 404);
+  if (!checkIsChannelRequestAllowed(request.socket.remoteAddress, presentedToken, token)) {
+    writeEnded(response, 404);
+    return;
+  }
 
   if (route === "" && request.method === "GET") {
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" }).end(createChannelPage());
     return;
   }
-  if (route === "events" && request.method === "GET") return handleEvents(request, response);
-  if (route === "say" && request.method === "POST") return handleSay(request, response);
+  if (route === "events" && request.method === "GET") {
+    handleEvents(request, response);
+    return;
+  }
+  if (route === "say" && request.method === "POST") {
+    handleSay(request, response);
+    return;
+  }
   writeEnded(response, 404);
 });
 

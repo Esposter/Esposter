@@ -54,7 +54,7 @@ export const createDehyaKitBehaviour = (): KitBehaviour => ({
     const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
     changeKitMemberHealth(context, combatant, characterId, STALWART_AND_TRUE_INITIAL_HEAL_SHARE * maxHealth);
     for (const tick of Array.from({ length: STALWART_AND_TRUE_TICK_COUNT }, (_value, index) => index + 1))
-      scheduleKitTask(kitEffectState, characterId, tick * STALWART_AND_TRUE_TICK_INTERVAL_SECONDS, (tickContext) =>
+      scheduleKitTask(kitEffectState, characterId, tick * STALWART_AND_TRUE_TICK_INTERVAL_SECONDS, (tickContext) => {
         changeKitMemberHealth(
           tickContext,
           combatant,
@@ -66,7 +66,7 @@ export const createDehyaKitBehaviour = (): KitBehaviour => ({
               tickContext.party,
               tickContext.characterIdCombatantMap,
             ),
-        ),
-      );
+        );
+      });
   },
 });

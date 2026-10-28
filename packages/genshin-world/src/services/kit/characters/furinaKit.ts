@@ -213,7 +213,9 @@ const castFollowingField = (
       id,
       isFollowing: true,
       nextTickSeconds: delaySeconds + initialTickSeconds,
-      onTick: (tick) => onTick(tick, field),
+      onTick: (tick) => {
+        onTick(tick, field);
+      },
       secondsRemaining,
       tickIntervalSeconds: intervalSeconds,
     },
@@ -319,7 +321,9 @@ export const createFurinaKitBehaviour = ({
         multiplier * (1 + SALON_DAMAGE_BONUS_PER_DRAINED_MEMBER * drainedCount),
       ),
       damageBonus: getSalonDamageBonus(combatant, combatantMaxHealth),
-      onStrike: (context, strike) => gainConstellation4Energy(context, strike.combatant),
+      onStrike: (context, strike) => {
+        gainConstellation4Energy(context, strike.combatant);
+      },
     };
     castKitSummon(tick.kitEffectState, createKitBody(target.position), combatant, [hit], {
       attackTag: AttackTag.ElementalSkill,
@@ -335,7 +339,7 @@ export const createFurinaKitBehaviour = ({
     centre: GroundPoint,
     delaySeconds: number,
     secondsRemaining: number,
-  ): void =>
+  ): void => {
     castFollowingField(kitEffectState, combatant, centre, {
       delaySeconds,
       id: `${SALON_MEMBER_FIELD_ID_PREFIX}${index}`,
@@ -346,6 +350,7 @@ export const createFurinaKitBehaviour = ({
       },
       secondsRemaining,
     });
+  };
 
   const castSinger = (
     context: KitContext,
@@ -455,12 +460,12 @@ export const createFurinaKitBehaviour = ({
     let delaySeconds = fanfareGainDelaySeconds;
     if (debounce && debounce.secondsRemaining > 0) delaySeconds = debounce.secondsRemaining;
     else
-      scheduleKitTask(kitEffectState, characterId, fanfareDebounceStartSeconds, (tick) =>
+      scheduleKitTask(kitEffectState, characterId, fanfareDebounceStartSeconds, (tick) => {
         addKitStatus(tick.kitEffectState, characterId, {
           id: FANFARE_DEBOUNCE_STATUS_ID,
           secondsRemaining: fanfareDebounceSeconds,
-        }),
-      );
+        });
+      });
     scheduleKitTask(kitEffectState, characterId, delaySeconds, (tick) => {
       const fanfareStatus = findKitStatus(tick.kitEffectState.effects, characterId, FANFARE_STATUS_ID);
       if (fanfareStatus && fanfareStatus.secondsRemaining > 0)
@@ -503,10 +508,11 @@ export const createFurinaKitBehaviour = ({
     // The charged attack turns her Arkhe a frame after its hit, and while Salon Solitaire lasts the other Arkhe's summons
     // Take over from the ones out
     chargedAttack: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         scheduleKitTask(kitEffectState, combatant.characterId, arkheSwitchSeconds, (tick) =>
           switchArkhe(tick, combatant, body.position),
-        ),
+        );
+      },
     },
     normalAttacks: [strike, strike, strike, strike],
     // Each change to a member's HP feeds the Fanfare and may start Endless Waltz

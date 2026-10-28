@@ -22,10 +22,11 @@ export const createSkirkKitBehaviour = ({ readSeconds, readStance }: KitRecordRe
   const sevenPhaseFlash = readStance("sevenPhaseFlash");
   return {
     skill: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         scheduleKitTask(kitEffectState, combatant.characterId, skillDelaySeconds, ({ kitEffectState: tickState }) =>
           enterKitStance(tickState, combatant, sevenPhaseFlash, sevenPhaseFlashSeconds, { isEndedOnSwap: true }),
-        ),
+        );
+      },
     },
   };
 };

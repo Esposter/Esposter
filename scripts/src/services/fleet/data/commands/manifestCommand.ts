@@ -17,7 +17,7 @@ export const manifestCommand: SubCommandsDef[string] = defineCommand({
     folders: { default: DATA_FOLDERS.join(","), description: "The comma-separated folders to digest", type: "string" },
   },
   meta: { description: "Print the directory digests of the game data as JSON", name: "manifest" },
-  run: async ({ args }) =>
+  run: async ({ args }) => {
     (
       await getResultAsync(() => getManifest(args.directory || getParityDirectory(), resolveFolders(args.folders)))
     ).match(
@@ -25,5 +25,6 @@ export const manifestCommand: SubCommandsDef[string] = defineCommand({
       (error) => {
         throw new InvalidOperationError(Operation.Read, "manifest", error.message);
       },
-    ),
+    );
+  },
 });

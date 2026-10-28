@@ -74,7 +74,9 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
           // So a capped read hands the decision to the Editor blade's confirm instead of exporting
           if (getDatasetTruncation(dataset)) setPendingDataset(resourceId, dataset);
           else exportRows(resourceId, html, dataset.rows);
-        }).match(noop, (error) => createErrorAlert(error, getDatasetErrorMessage(error)));
+        }).match(noop, (error) => {
+          createErrorAlert(error, getDatasetErrorMessage(error));
+        });
       },
       icon: "i-mdi:language-html5",
       label: "Personalized HTML",
@@ -160,9 +162,11 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
           createAlert("Open the webpage before exporting its HTML", "warning");
           return Promise.resolve();
         }
-        getResult(() => exportWebpageHtml(resourceValue.name, document, window.location.origin)).match(noop, (error) =>
-          createErrorAlert(error),
-        );
+        getResult(() => {
+          exportWebpageHtml(resourceValue.name, document, window.location.origin);
+        }).match(noop, (error) => {
+          createErrorAlert(error);
+        });
         return Promise.resolve();
       },
       icon: "i-mdi:language-html5",

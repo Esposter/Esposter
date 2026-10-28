@@ -185,7 +185,7 @@ const scheduleProjection = (
   event: KitEnemyHitEvent,
   talentMultiplier: number,
   hitbox: KitHitbox,
-): void =>
+): void => {
   scheduleKitTask(kitEffectState, nicole.characterId, toKitSeconds(PROJECTION_FRAMES), (tick) => {
     // The Hexerei projection bonus, gcsim's hexereiOnProjection: three times her attack when she and the projected character are
     // Hexerei and two or more Hexerei are deployed
@@ -215,6 +215,7 @@ const scheduleProjection = (
       tick,
     );
   });
+};
 
 // Starts the ticker of the second constellation for an upgraded character, which each 0.3 seconds lowers its element's RES by a
 // Quarter on each enemy within 10 metres of the team, gcsim's c2Ticker. A newer upgrade of the character replaces its ticker,
@@ -348,7 +349,9 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
           context.kitEffectState,
           combatant.characterId,
           checkIsKitHexerei(characterId) ? 0 : ASCENSION_1_SWAP_SECONDS,
-          (tick) => upgradeAscensionBuff(tick, combatant, characterId),
+          (tick) => {
+            upgradeAscensionBuff(tick, combatant, characterId);
+          },
           { id: ASCENSION_1_SWAP_ID },
         );
         return;

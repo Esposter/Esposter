@@ -81,7 +81,9 @@ describe(useGridLayout, () => {
                   "div",
                   {
                     class: "tile",
-                    onPointerdown: (event: PointerEvent) => startGesture(event, item),
+                    onPointerdown: (event: PointerEvent) => {
+                      startGesture(event, item);
+                    },
                     style: getStyle(geometry),
                   },
                   [
@@ -115,8 +117,12 @@ describe(useGridLayout, () => {
   const mountPalette = (item: Pick<GridItem, "h" | "id" | "w">) => {
     const palette = document.createElement("div");
     document.body.append(palette);
-    onTestFinished(() => palette.remove());
-    palette.addEventListener("pointerdown", (event) => startExternalDrag(event, item));
+    onTestFinished(() => {
+      palette.remove();
+    });
+    palette.addEventListener("pointerdown", (event) => {
+      startExternalDrag(event, item);
+    });
     return (type: string, point: { clientX: number; clientY: number }) =>
       palette.dispatchEvent(new PointerEvent(type, { bubbles: true, pointerId, ...point }));
   };
@@ -137,7 +143,9 @@ describe(useGridLayout, () => {
         disconnect() {}
         observe(target: Element) {
           const entries = [{ contentRect: { height: 0, width: gridWidth }, target }] as ResizeObserverEntry[];
-          queueMicrotask(() => this.#callback(entries, this));
+          queueMicrotask(() => {
+            this.#callback(entries, this);
+          });
         }
         unobserve() {}
       },
@@ -594,7 +602,9 @@ describe(useGridLayout, () => {
             inner.tiles.value.map(({ geometry, item }) =>
               h("div", {
                 class: "inner-tile",
-                onPointerdown: (event: PointerEvent) => inner.startGesture(event, item),
+                onPointerdown: (event: PointerEvent) => {
+                  inner.startGesture(event, item);
+                },
                 style: getStyle(geometry),
               }),
             ),
@@ -627,7 +637,9 @@ describe(useGridLayout, () => {
                   "div",
                   {
                     class: "outer-tile",
-                    onPointerdown: (event: PointerEvent) => outer.startGesture(event, item),
+                    onPointerdown: (event: PointerEvent) => {
+                      outer.startGesture(event, item);
+                    },
                     style: getStyle(geometry),
                   },
                   [h(InnerGrid)],

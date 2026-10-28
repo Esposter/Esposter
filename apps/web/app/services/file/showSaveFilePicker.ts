@@ -9,7 +9,9 @@ const downloadBlob = (blob: Blob, filename: string) => {
   link.click();
   link.remove();
   // Revoked after the click has been handed to the browser, since revoking it at once can cancel the download
-  setTimeout(() => URL.revokeObjectURL(url), 0);
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 0);
 };
 
 // The File System Access save picker where the browser has it. Where it does not, the written file is downloaded

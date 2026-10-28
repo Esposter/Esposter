@@ -8,7 +8,9 @@ describe(checkAcceptedType, () => {
 
     const { error } = z
       .string()
-      .superRefine((type, context) => checkAcceptedType(context, type, ["section", "heading"], []))
+      .superRefine((type, context) => {
+        checkAcceptedType(context, type, ["section", "heading"], []);
+      })
       .safeParse("list");
 
     expect(error?.issues.map(({ message }) => message)).toStrictEqual(["type must be one of section, heading"]);

@@ -14,7 +14,9 @@ const createViewer = (currentScale: number) => ({ currentScale }) as PdfJsViewer
 const mountGesture = (viewer: PdfJsViewer) => {
   const container = window.document.createElement("div");
   const scope = effectScope();
-  scope.run(() => usePdfZoomGesture({ container, getViewer: () => viewer }));
+  scope.run(() => {
+    usePdfZoomGesture({ container, getViewer: () => viewer });
+  });
 
   return { container, scope };
 };
@@ -91,7 +93,9 @@ describe(usePdfZoomGesture, () => {
     const viewer = createViewer(1);
     const container = shallowRef<HTMLDivElement | undefined>();
     const scope = effectScope();
-    scope.run(() => usePdfZoomGesture({ container, getViewer: () => viewer }));
+    scope.run(() => {
+      usePdfZoomGesture({ container, getViewer: () => viewer });
+    });
     const element = window.document.createElement("div");
     container.value = element;
     await nextTick();

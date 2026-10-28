@@ -22,11 +22,12 @@ export const getRuleKitCandidates = (
   element: Element | undefined,
 ): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
-  const add = (path: string, value: unknown, rule: KitRule, cause?: KitProvisionalCause) =>
+  const add = (path: string, value: unknown, rule: KitRule, cause?: KitProvisionalCause) => {
     addKitCandidate(candidateMap, path, {
       provenance: { ...(cause && { cause }), rule, source: KitSource.Rule },
       value,
     });
+  };
   const readLength = (path: string) => {
     const length = valueMap.get(`${path}.${KIT_LENGTH_KEY}`);
     return typeof length === "number" ? length : 0;

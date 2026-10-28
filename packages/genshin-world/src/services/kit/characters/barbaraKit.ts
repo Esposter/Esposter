@@ -125,9 +125,9 @@ export const createBarbaraKitBehaviour = ({ readHits, readParameter, readSeconds
         const burstHeal =
           burstFlatHeal +
           burstHealthShare * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
-        scheduleKitTask(kitEffectState, combatant.characterId, shiningMiracleHealSeconds, (tick) =>
-          changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, burstHeal),
-        );
+        scheduleKitTask(kitEffectState, combatant.characterId, shiningMiracleHealSeconds, (tick) => {
+          changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, burstHeal);
+        });
       },
     },
     // Constellation 4: each opponent her charged attack strikes regenerates Energy for her, up to five per attack

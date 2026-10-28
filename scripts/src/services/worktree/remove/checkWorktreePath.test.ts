@@ -5,7 +5,9 @@ describe(checkWorktreePath, () => {
   test("refuses a relative path, naming that it resolves against the working directory", () => {
     expect.hasAssertions();
 
-    expect(() => checkWorktreePath(".agents/worktrees/settle-1")).toThrowErrorMatchingInlineSnapshot(
+    expect(() => {
+      checkWorktreePath(".agents/worktrees/settle-1");
+    }).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Delete, name: .agents/worktrees/settle-1, a relative path resolves against the working directory; give the worktree's full path]`,
     );
   });
@@ -13,6 +15,8 @@ describe(checkWorktreePath, () => {
   test("accepts a full path", () => {
     expect.hasAssertions();
 
-    expect(() => checkWorktreePath("/main/.agents/worktrees/settle-1")).not.toThrow();
+    expect(() => {
+      checkWorktreePath("/main/.agents/worktrees/settle-1");
+    }).not.toThrow();
   });
 });

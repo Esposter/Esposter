@@ -194,9 +194,9 @@ export const createXingqiuKitBehaviour = ({
       },
     );
     if (swordCount < HENCE_CALL_THEM_MY_OWN_VERSES_SWORD_COUNT) return;
-    scheduleKitTask(kitEffectState, combatant.characterId, swordHit.hitmarkSeconds, ({ party }) =>
-      gainPartyMemberEnergy(party, combatant, HENCE_CALL_THEM_MY_OWN_VERSES_ENERGY),
-    );
+    scheduleKitTask(kitEffectState, combatant.characterId, swordHit.hitmarkSeconds, ({ party }) => {
+      gainPartyMemberEnergy(party, combatant, HENCE_CALL_THEM_MY_OWN_VERSES_ENERGY);
+    });
   };
   // Casts a wave from the character's Raincutter where the character on the field stands, if Raincutter stands
   const castRaincutterWave = (context: KitContext, characterId: number): void => {
@@ -234,8 +234,13 @@ export const createXingqiuKitBehaviour = ({
     onKitEvent: (event, context, combatant) => {
       if (event.kind !== KitEventKind.NormalAttackStarted) return;
       if (event.isFirstStrike)
-        scheduleKitTask(context.kitEffectState, combatant.characterId, RAINCUTTER_FIRST_STRIKE_DELAY_SECONDS, (tick) =>
-          castRaincutterWave(tick, combatant.characterId),
+        scheduleKitTask(
+          context.kitEffectState,
+          combatant.characterId,
+          RAINCUTTER_FIRST_STRIKE_DELAY_SECONDS,
+          (tick) => {
+            castRaincutterWave(tick, combatant.characterId);
+          },
         );
       else castRaincutterWave(context, combatant.characterId);
     },

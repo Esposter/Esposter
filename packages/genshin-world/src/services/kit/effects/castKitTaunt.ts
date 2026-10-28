@@ -13,7 +13,7 @@ export const castKitTaunt = (
   { facing, height, position }: KitBody,
   combatant: Combatant,
   { explosion, health, secondsRemaining }: Except<KitTaunt, "body" | "combatant" | "kind">,
-): void =>
+): void => {
   addKitEffect(kitEffectState, {
     body: { facing, height, position: { x: position.x, z: position.z } },
     combatant,
@@ -22,3 +22,4 @@ export const castKitTaunt = (
     kind: "taunt",
     secondsRemaining,
   });
+};

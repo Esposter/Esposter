@@ -45,7 +45,9 @@ export const createPrimordialJadeRegaliaPassiveModule = (params: number[]): Pass
         kitEffectState,
         characterId,
         toKitSeconds(PRIMORDIAL_JADE_REGALIA_ENERGY_FRAMES),
-        (tick) => gainPartyMemberEnergy(tick.party, combatant, energy),
+        (tick) => {
+          gainPartyMemberEnergy(tick.party, combatant, energy);
+        },
         { id: PRIMORDIAL_JADE_REGALIA_ENERGY_TASK_ID },
       );
     },

@@ -164,7 +164,7 @@ export const createIneffaKitBehaviour = ({
   const burstHit = takeOne(kit.elementalBurst.hits);
   const burstBirgittaSpawnSeconds = burstHit.hitmarkSeconds;
   // The shield her skill and Constellation 2's burst place, priced from her ATK as the task that places it runs
-  const scheduleShield = (kitEffectState: KitEffectState, combatant: Combatant, seconds: number): void =>
+  const scheduleShield = (kitEffectState: KitEffectState, combatant: Combatant, seconds: number): void => {
     scheduleKitTask(kitEffectState, combatant.characterId, seconds, (tick) =>
       castKitShield(tick, combatant.characterId, {
         element: Element.Electro,
@@ -172,6 +172,7 @@ export const createIneffaKitBehaviour = ({
         secondsRemaining: shieldSeconds,
       }),
     );
+  };
   // The Punishment Edit, a Lunar-Charged hit on the mark's enemy at the burst's area's height, its radius 6
   const punishmentEditHit: KitHit = {
     element: Element.Electro,

@@ -119,23 +119,27 @@ export const usePageBuilderMoves = <
       if (moved) announceMove(moved.kind, moved.document, moved.nodePointer);
     }, console.error);
   };
-  const moveDown = () =>
+  const moveDown = () => {
     moveSelected("Move block", (selectedKind, document, nodePointer) =>
       getSiblingMoveOperations(selectedKind, document, nodePointer, 1),
     );
-  const moveUp = () =>
+  };
+  const moveUp = () => {
     moveSelected("Move block", (selectedKind, document, nodePointer) =>
       getSiblingMoveOperations(selectedKind, document, nodePointer, -1),
     );
-  const moveRight = () =>
+  };
+  const moveRight = () => {
     moveSelected("Move block", (selectedKind, document, nodePointer) =>
       moveIntoPreviousSibling(document, selectedKind.registry, selectedKind.children, nodePointer),
     );
-  const moveLeft = () =>
+  };
+  const moveLeft = () => {
     moveSelected("Move block", (selectedKind, document, nodePointer) =>
       moveOutAfterParent(document, selectedKind.registry, selectedKind.children, nodePointer),
     );
-  const moveTo = (slotPointer: string) =>
+  };
+  const moveTo = (slotPointer: string) => {
     moveSelected("Move to", (selectedKind, document, nodePointer) => {
       const children = readJsonValue(document, parseJsonPointer(slotPointer));
       const nodeSlotPointer = getNodeSlotPointer(nodePointer);
@@ -150,6 +154,7 @@ export const usePageBuilderMoves = <
         childCount,
       );
     });
+  };
   // Each slot that accepts the selected node, named by its path, so Move to is one search rather than a chain of Alt presses
   const moveToScope: UiCommandScope = {
     commands: () => {
@@ -165,7 +170,9 @@ export const usePageBuilderMoves = <
         group: PAGE_BUILDER_COMMAND_GROUP,
         id: `page-builder-move-to${slotPointer}`,
         meaning: UiIconMeaning.ArrowRight,
-        run: () => moveTo(slotPointer),
+        run: () => {
+          moveTo(slotPointer);
+        },
         title: getSlotPath(selection.kind, selection.document, slotPointer),
       }));
     },

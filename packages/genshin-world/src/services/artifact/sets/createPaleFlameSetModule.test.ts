@@ -40,7 +40,7 @@ const getBonuses = (wearer: Combatant, kitEffectState: KitEffectState) => {
 describe(createPaleFlameSetModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   // An enemy the given combatant's attack of the given kind hits, as the kit sends it
-  const hitEnemy = (striker: Combatant, attackTag: AttackTag, context: ReturnType<typeof createKitTestContext>) =>
+  const hitEnemy = (striker: Combatant, attackTag: AttackTag, context: ReturnType<typeof createKitTestContext>) => {
     emitKitEvent(
       {
         attackTag,
@@ -53,6 +53,7 @@ describe(createPaleFlameSetModule, () => {
       },
       context,
     );
+  };
 
   test("each Elemental Skill hit the wearer lands adds a stack of 9% ATK, two at most, and two stacks add 25% Physical DMG", () => {
     expect.hasAssertions();

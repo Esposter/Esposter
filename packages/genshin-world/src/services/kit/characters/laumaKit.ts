@@ -180,9 +180,9 @@ const giveThreadsOfLifeHeal = (context: KitContext, combatant: Combatant): void 
   )
     return;
   const health = elementalMasteryMultiplier(combatant, CONSTELLATION_1_HEAL_ELEMENTAL_MASTERY_SHARE);
-  scheduleKitTask(kitEffectState, characterId, CONSTELLATION_1_HEAL_DELAY_SECONDS, (tick) =>
-    changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, health),
-  );
+  scheduleKitTask(kitEffectState, characterId, CONSTELLATION_1_HEAL_DELAY_SECONDS, (tick) => {
+    changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, health);
+  });
 };
 
 // A Sanctuary tick's strike gives its striker the energy, unless the cooldown from the last one has not run out

@@ -92,11 +92,12 @@ export const createYoimiyaKitBehaviour = ({
   return {
     // The burst readies Aurous Blaze for the first enemy its hit strikes
     burst: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         addKitStatus(kitEffectState, combatant.characterId, {
           id: AUROUS_BLAZE_PENDING_STATUS_ID,
           secondsRemaining: kit.elementalBurst.seconds,
-        }),
+        });
+      },
     },
     // The burst's hit marks the first enemy it strikes with Aurous Blaze, and a hit another member deals a marked enemy
     // As a kind of attack off its cooldown sets off the explosion on it
@@ -175,8 +176,9 @@ export const createYoimiyaKitBehaviour = ({
     },
     // Niwabi Fire-Dance is a stance for the table's seconds whose normal attacks are the Blazing Arrows
     skill: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        enterKitStance(kitEffectState, combatant, niwabiFireDance, niwabiFireDanceSeconds, { isEndedOnSwap: true }),
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+        enterKitStance(kitEffectState, combatant, niwabiFireDance, niwabiFireDanceSeconds, { isEndedOnSwap: true });
+      },
     },
   };
 };

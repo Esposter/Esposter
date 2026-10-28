@@ -160,8 +160,9 @@ export const createAyatoKitBehaviour = ({
   };
   return {
     burst: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        castGardenOfPurity(kitEffectState, body, combatant),
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+        castGardenOfPurity(kitEffectState, body, combatant);
+      },
     },
     // Constellation 1 raises each of his normal attacks against an enemy at half its HP or less, Shunsuiken's included
     getStrikeDamageBonus: ({ attackTag, combatant }, enemy) =>
@@ -192,13 +193,13 @@ export const createAyatoKitBehaviour = ({
             stacks: ASCENSION_1_CAST_STACKS,
           });
           // The water illusion's explosion sets the stacks to the most
-          scheduleKitTask(kitEffectState, characterId, illusionSeconds, ({ kitEffectState: effectState }) =>
+          scheduleKitTask(kitEffectState, characterId, illusionSeconds, ({ kitEffectState: effectState }) => {
             addKitStatus(effectState, characterId, {
               id: NAMISEN_STATUS_ID,
               secondsRemaining: HELD_UNTIL_SWAP_SECONDS,
               stacks: getNamisenStacksMax(combatant),
-            }),
-          );
+            });
+          });
         }
         if (combatant.constellationCount >= CONSTELLATION_6)
           addKitStatus(kitEffectState, characterId, {

@@ -16,7 +16,7 @@ export const vite: NuxtConfig["vite"] = {
       "three/examples/jsm/inspector/Inspector.js",
     ],
     // JSON Forms' Ajv is CommonJS and the schema forms only load in a dialog, so it is named through its importer, whose
-    // own copy it is
+    // Own copy it is
     include: ["@jsonforms/core > ajv", "@jsonforms/core > ajv-formats"],
   },
   // Yaml's Node export is CommonJS, which the ESM Vite SSR runner cannot evaluate; use its equivalent ESM build.

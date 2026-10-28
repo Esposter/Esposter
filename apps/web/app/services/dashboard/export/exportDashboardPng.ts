@@ -15,5 +15,7 @@ export const exportDashboardPng = async (name: string) => {
     await window.document.fonts.ready;
     const png = await captureFlowchart(grid, FlowchartExportFormat.Png);
     downloadFile(`${name}.png`, png, MimeType.Png);
-  }).match(noop, () => createAlert("Couldn't export this dashboard", "error"));
+  }).match(noop, () => {
+    createAlert("Couldn't export this dashboard", "error");
+  });
 };

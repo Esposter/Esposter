@@ -27,12 +27,13 @@ const OCEAN_HUED_CLAM_FOAM_RADIUS = 6;
 const getGatheredHp = (kitEffectState: KitEffectState, characterId: number): number =>
   findKitStatus(kitEffectState.effects, characterId, OCEAN_HUED_CLAM_GATHERED_HP_ID)?.stacks ?? 0;
 
-const setGatheredHp = (kitEffectState: KitEffectState, characterId: number, gatheredHp: number): void =>
+const setGatheredHp = (kitEffectState: KitEffectState, characterId: number, gatheredHp: number): void => {
   addKitStatus(kitEffectState, characterId, {
     id: OCEAN_HUED_CLAM_GATHERED_HP_ID,
     secondsRemaining: Number.POSITIVE_INFINITY,
     stacks: gatheredHp,
   });
+};
 
 const findSeaDyedFoam = (effects: readonly KitEffect[]): KitField | undefined =>
   effects.find((effect): effect is KitField => effect.kind === "field" && effect.id === OCEAN_HUED_CLAM_FOAM_ID);

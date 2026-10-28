@@ -46,13 +46,14 @@ const addCryoStacks = (
   characterId: number,
   stacks: number,
   secondsRemaining: number,
-): void =>
+): void => {
   buffKitMember(kitEffectState, characterId, {
     amount: Math.min(stacks, ASCENSION_4_MAX_STACKS) * ASCENSION_4_CRYO_SHARE_PER_STACK,
     attribute: Attribute.CryoDamageBonus,
     secondsRemaining,
     source: ASCENSION_4_SOURCE,
   });
+};
 
 // Aloy's behaviour: each of Freeze Bomb's six Chillwater Bomblets adds a coil stack as it strikes, and four coil stacks
 // Give Cryo infusion for the table's seconds of Rushing Ice. From Ascension 1, Rushing Ice raises the ATK of the deployed
@@ -105,9 +106,9 @@ export const createAloyKitBehaviour = ({ readSeconds }: KitRecordReader): KitBeh
     addCryoStacks(kitEffectState, combatant.characterId, 1, rushingIceSeconds);
     // Each second adds a stack, the buff restarting with it to end with Rushing Ice
     for (let second = 1; second < ASCENSION_4_MAX_STACKS; second++)
-      scheduleKitTask(kitEffectState, combatant.characterId, second, ({ kitEffectState: tickKitEffectState }) =>
-        addCryoStacks(tickKitEffectState, combatant.characterId, second + 1, rushingIceSeconds - second),
-      );
+      scheduleKitTask(kitEffectState, combatant.characterId, second, ({ kitEffectState: tickKitEffectState }) => {
+        addCryoStacks(tickKitEffectState, combatant.characterId, second + 1, rushingIceSeconds - second);
+      });
   };
   // Freeze Bomb's own hit, then its Chillwater Bomblets
   return {

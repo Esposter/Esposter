@@ -377,7 +377,9 @@ describe(createDilucKitBehaviour, () => {
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const presses = [DILUC_KIT.elementalSkill, ...(DILUC_KIT.elementalSkillChain?.followUps ?? [])];
     const press = (index: number) => presses[index]?.onStart?.(context);
-    const wait = (seconds: number) => stepKitEffects(seconds, context);
+    const wait = (seconds: number) => {
+      stepKitEffects(seconds, context);
+    };
     const getBonus = (attackTag: AttackTag) =>
       DILUC_KIT.getStrikeDamageBonus?.(
         { attackTag, body: context.body, combatant, hit: takeOne(takeOne(DILUC_KIT.normalAttacks).hits) },
@@ -454,7 +456,9 @@ describe(createDilucKitBehaviour, () => {
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const press = () => DILUC_KIT.elementalSkill.onStart?.(context);
     const attack = (index: number) => DILUC_KIT.normalAttacks[index]?.onStart?.(context);
-    const wait = (seconds: number) => stepKitEffects(seconds, context);
+    const wait = (seconds: number) => {
+      stepKitEffects(seconds, context);
+    };
     const getBonus = (attackTag: AttackTag) =>
       DILUC_KIT.getStrikeDamageBonus?.(
         { attackTag, body: context.body, combatant, hit: takeOne(takeOne(DILUC_KIT.normalAttacks).hits) },

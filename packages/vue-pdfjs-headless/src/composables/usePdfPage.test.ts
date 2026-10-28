@@ -17,7 +17,9 @@ const createDocument = (page: PDFPageProxy): PDFDocumentProxy =>
 const mountPage = async (page: PDFPageProxy) => {
   const canvas = window.document.createElement("canvas");
   const scope = effectScope();
-  scope.run(() => usePdfPage({ canvas, pageNumber: 1, pdfDocument: createDocument(page) }));
+  scope.run(() => {
+    usePdfPage({ canvas, pageNumber: 1, pdfDocument: createDocument(page) });
+  });
   await flushPromises();
 
   return { canvas, scope };
@@ -95,15 +97,15 @@ describe(usePdfPage, () => {
     vi.stubGlobal("devicePixelRatio", 1);
     const canvas = shallowRef(window.document.createElement("canvas"));
     const scope = effectScope();
-    scope.run(() =>
+    scope.run(() => {
       usePdfPage({
         canvas,
         pageNumber: 1,
         pdfDocument: createDocument(
           createPage(vi.fn<PDFPageProxy["render"]>(() => createRenderTask(new Promise(() => {})))),
         ),
-      }),
-    );
+      });
+    });
     await flushPromises();
     reportWidth(400);
     const replacement = window.document.createElement("canvas");
@@ -168,7 +170,9 @@ describe(usePdfPage, () => {
     const pageNumber = shallowRef(1);
     const canvas = window.document.createElement("canvas");
     const scope = effectScope();
-    scope.run(() => usePdfPage({ canvas, pageNumber, pdfDocument }));
+    scope.run(() => {
+      usePdfPage({ canvas, pageNumber, pdfDocument });
+    });
     reportWidth(400);
     pageNumber.value = 2;
     await flushPromises();
@@ -186,15 +190,15 @@ describe(usePdfPage, () => {
     const cancel = vi.fn<RenderTask["cancel"]>();
     const canvas = shallowRef<HTMLCanvasElement | undefined>(window.document.createElement("canvas"));
     const scope = effectScope();
-    scope.run(() =>
+    scope.run(() => {
       usePdfPage({
         canvas,
         pageNumber: 1,
         pdfDocument: createDocument(
           createPage(vi.fn<PDFPageProxy["render"]>(() => createRenderTask(new Promise(() => {}), cancel))),
         ),
-      }),
-    );
+      });
+    });
     await flushPromises();
     reportWidth(400);
     canvas.value = undefined;

@@ -38,13 +38,17 @@ const getDropTargetAt = <
   });
 };
 
-const stopClick = (clickEvent: MouseEvent) => clickEvent.stopPropagation();
+const stopClick = (clickEvent: MouseEvent) => {
+  clickEvent.stopPropagation();
+};
 
 // A release can land on the control the press started on, and the browser clicks that control. The click that follows a
 // Drag is stopped before it reaches the control, and the stop is dropped once the release's click has been dispatched
 const swallowNextClick = () => {
   window.addEventListener("click", stopClick, { capture: true, once: true });
-  setTimeout(() => window.removeEventListener("click", stopClick, { capture: true }), 0);
+  setTimeout(() => {
+    window.removeEventListener("click", stopClick, { capture: true });
+  }, 0);
 };
 
 // A palette block or a merge field dragged to the point under the pointer. The drop indicator's target is held here for the
@@ -109,7 +113,7 @@ export const usePageBuilderDrag = <
     type: TNode["type"],
     event: PointerEvent,
     getFrameGeometry: () => FrameGeometry | undefined,
-  ) =>
+  ) => {
     trackDrag(
       event,
       (point) => {
@@ -130,13 +134,14 @@ export const usePageBuilderDrag = <
           announce(`Inserted ${title}`);
       },
     );
+  };
 
   // A merge field released over a text is appended to it, and the release over no text, or outside the frame, appends nothing
   const startMergeFieldDrag = (
     columnName: string,
     event: PointerEvent,
     getFrameGeometry: () => FrameGeometry | undefined,
-  ) =>
+  ) => {
     trackDrag(event, noop, (point) => {
       const geometry = getFrameGeometry();
       const document = getDocument();
@@ -152,6 +157,7 @@ export const usePageBuilderDrag = <
       );
       if (inserted) announce(`Inserted merge field ${columnName}`);
     });
+  };
 
   return { dropTarget, isDragging, startMergeFieldDrag, startPaletteDrag };
 };

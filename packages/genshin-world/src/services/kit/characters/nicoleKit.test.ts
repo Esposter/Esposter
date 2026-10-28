@@ -94,8 +94,9 @@ const getBuffs = (context: KitContext, characterId: number): KitBuff[] =>
     (effect): effect is KitBuff => effect.kind === "buff" && effect.characterId === characterId,
   );
 
-const emitSwap = (context: KitContext, characterId: number, previousCharacterId: number): void =>
+const emitSwap = (context: KitContext, characterId: number, previousCharacterId: number): void => {
   emitKitEvent({ characterId, kind: KitEventKind.CharacterSwapped, previousCharacterId }, context);
+};
 
 // The enemy hits a striker lands on an enemy, one after another, each reported to the team's kits
 const emitEnemyHits = (

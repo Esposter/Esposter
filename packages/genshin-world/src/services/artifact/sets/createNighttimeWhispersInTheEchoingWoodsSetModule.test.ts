@@ -22,8 +22,9 @@ import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const useSkill = (context: KitContext) =>
+const useSkill = (context: KitContext) => {
   emitKitEvent({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed }, context);
+};
 // A Crystallize shield the other member's reaction left, picked up by the team, lasting the given seconds
 const pickUpCrystallizeShield = (context: KitContext, secondsRemaining = 15) =>
   castKitShield(context, OTHER_CHARACTER_ID, { health: 1, isCrystallize: true, secondsRemaining });

@@ -48,7 +48,7 @@ describe(createManyOathsOfDawnAndDuskPassiveModule, () => {
     const strike: KitStrike = { attackTag, body: context.body, combatant: wielder, hit: TRAVELER_KIT.plungeCollision };
     return wielder.kit.getStrikeDamageBonus?.(strike, enemy, context.party, context.kitEffectState.effects) ?? 0;
   };
-  const triggerLunarCrystallize = (context: KitContext) =>
+  const triggerLunarCrystallize = (context: KitContext) => {
     emitKitEvent(
       {
         enemy,
@@ -58,6 +58,7 @@ describe(createManyOathsOfDawnAndDuskPassiveModule, () => {
       },
       context,
     );
+  };
 
   test.each([
     [1, 0.18],

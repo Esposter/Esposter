@@ -69,7 +69,9 @@ export const readDuplicateCodeFindings = (): DuplicateCodeFinding[] => {
 
   const report = withFinalizer(
     () => jsonDateParse<JscpdReport>(readFileSync(join(outputDirectory, "jscpd-report.json"), "utf8")),
-    () => rmSync(outputDirectory, { force: true, recursive: true }),
+    () => {
+      rmSync(outputDirectory, { force: true, recursive: true });
+    },
   );
   const clones: DuplicateCodeClone[] = report.duplicates.map(({ firstFile, secondFile }) => ({
     duplicationA: toDuplicateCodeFragment(firstFile),

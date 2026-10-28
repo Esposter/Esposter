@@ -88,9 +88,9 @@ export const createVentiKitBehaviour = ({ readHits, readParameter, readSeconds }
         });
         if (combatant.ascension < STORMEYE_PASSIVE_ASCENSION) return;
         const passiveSeconds = stormeyeStartSeconds + stormeyeSeconds;
-        scheduleKitTask(kitEffectState, combatant.characterId, passiveSeconds, ({ party }) =>
-          gainPartyMemberEnergy(party, combatant, STORMEYE_PASSIVE_ENERGY),
-        );
+        scheduleKitTask(kitEffectState, combatant.characterId, passiveSeconds, ({ party }) => {
+          gainPartyMemberEnergy(party, combatant, STORMEYE_PASSIVE_ENERGY);
+        });
       },
     },
     // From one constellation, the shot's start casts Splitting Gales' arrows, landing with it from where Venti stands

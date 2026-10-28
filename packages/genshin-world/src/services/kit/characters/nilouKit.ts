@@ -167,7 +167,7 @@ export const createNilouKitBehaviour = ({
     normalAttacks: KitAction[],
     elementalSkill: KitAction,
     secondsRemaining: number,
-  ): void =>
+  ): void => {
     enterKitStance(
       kitEffectState,
       combatant,
@@ -181,16 +181,18 @@ export const createNilouKitBehaviour = ({
       secondsRemaining,
       { isEndedOnSwap: true },
     );
+  };
 
   // Lunar Prayer replaces the sword dance's normal attacks for its seconds, and the dance is cast again as the skill
-  const enterLunarPrayer = (kitEffectState: KitEffectState, combatant: Combatant): void =>
+  const enterLunarPrayer = (kitEffectState: KitEffectState, combatant: Combatant): void => {
     enterNilouStance(kitEffectState, combatant, swordDance, kit.elementalSkill, LUNAR_PRAYER_SECONDS);
+  };
 
   // The Pirouette's sword dance, whose third step ends Pirouette as it lands, handing the team Lunar Prayer
   const pirouetteSwordDance = swordDance.with(LUMINOUS_ILLUSION_STEP, {
     ...luminousIllusion,
     hits: [pirouetteLuminousIllusionHit],
-    onStart: ({ activeCombatant, kitEffectState }) =>
+    onStart: ({ activeCombatant, kitEffectState }) => {
       scheduleKitTask(
         kitEffectState,
         activeCombatant.characterId,
@@ -207,7 +209,8 @@ export const createNilouKitBehaviour = ({
             });
         },
         { id: PIROUETTE_END_TASK_ID },
-      ),
+      );
+    },
   });
 
   return {
@@ -278,8 +281,9 @@ export const createNilouKitBehaviour = ({
     // Within it is blocked by the cooldown the cast set, as a stance's skill press is not exempted from one, so the
     // Whirling Steps are reachable only once it has run out
     skill: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        enterNilouStance(kitEffectState, combatant, pirouetteSwordDance, whirlingSteps, PIROUETTE_SECONDS),
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+        enterNilouStance(kitEffectState, combatant, pirouetteSwordDance, whirlingSteps, PIROUETTE_SECONDS);
+      },
     },
   };
 };

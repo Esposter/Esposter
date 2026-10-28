@@ -63,8 +63,9 @@ export const createChascaKitBehaviour = ({ readHit, readSecondsList }: KitRecord
         castKitSummon(kitEffectState, body, activeCombatant, shells, { attackTag: AttackTag.ElementalBurst });
       },
     },
-    onSprint: (context, kitState, stepSeconds) =>
-      drainKitSprintNightsoulPoints(context, kitState, stepSeconds, NIGHTSOUL_SPRINT_DRAIN),
+    onSprint: (context, kitState, stepSeconds) => {
+      drainKitSprintNightsoulPoints(context, kitState, stepSeconds, NIGHTSOUL_SPRINT_DRAIN);
+    },
     onStep: ({ kitEffectState, party }, { characterId }, stepSeconds) => {
       if (checkHasKitStatus(kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID))
         changeKitSkillCooldown(party, characterId, stepSeconds);

@@ -106,9 +106,13 @@ export const useWorldCombat = ({
   const characterIdKitMap = shallowRef(startingCharacterIdKitMap);
   const deployedCharacterIds = computed(() => getDeployedCharacterIds(party));
   // A failed read is read again a wait later, as a team that does not change starts no other
-  const { start: retryCharacterKits } = useTimeoutFn(() => readUnloadedCharacterKits(), DATA_FETCH_RETRY_MS, {
-    immediate: false,
-  });
+  const { start: retryCharacterKits } = useTimeoutFn(
+    () => {
+      readUnloadedCharacterKits();
+    },
+    DATA_FETCH_RETRY_MS,
+    { immediate: false },
+  );
   const readUnloadedCharacterKits = () => {
     const unloadedCharacters = characters.value.filter(
       ({ id }) => deployedCharacterIds.value.includes(id) && !characterIdKitMap.value.has(id),
@@ -206,8 +210,9 @@ export const useWorldCombat = ({
     oreStrikes: [],
     outbox: [],
     party,
-    placeWildlifeDrops: (wildlife, droppedItems) =>
-      placeWorldDrops({ id: wildlife.id, position: wildlife.position }, droppedItems),
+    placeWildlifeDrops: (wildlife, droppedItems) => {
+      placeWorldDrops({ id: wildlife.id, position: wildlife.position }, droppedItems);
+    },
     random: createSeededRandom(WORLD_RANDOM_SEED),
     reactionTriggers: [],
     stamina,

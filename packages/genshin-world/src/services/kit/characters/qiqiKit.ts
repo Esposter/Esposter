@@ -125,9 +125,9 @@ export const createQiqiKitBehaviour = ({
           )
         )
           return;
-        scheduleKitTask(kitEffectState, characterId, 0, ({ party }) =>
-          reviveParty(party, RITE_OF_RESURRECTION_HEALTH_SHARE),
-        );
+        scheduleKitTask(kitEffectState, characterId, 0, ({ party }) => {
+          reviveParty(party, RITE_OF_RESURRECTION_HEALTH_SHARE);
+        });
       },
     },
     chargedAttack: { hits: kit.chargedAttack.hits.map(() => regenerationOnHit) },
@@ -205,13 +205,14 @@ export const createQiqiKitBehaviour = ({
         });
         castKitField(kitEffectState, combatant.characterId, body.position, {
           nextTickSeconds: heraldHitmarkSeconds,
-          onTick: (tick) =>
+          onTick: (tick) => {
             changeKitMemberHealth(
               tick,
               combatant,
               tick.activeCombatant.characterId,
               regenerationHealth + regenerationAttackShare * combatant.attributes.attack,
-            ),
+            );
+          },
           secondsRemaining: skillSeconds,
           tickIntervalSeconds: REGENERATION_TICK_SECONDS,
         });

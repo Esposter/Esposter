@@ -139,7 +139,9 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const ooyoroi = castKitSummon(kitEffectState, body, combatant, [], {
-          onNormalAttackStart: (context) => setOffFieryCollapse(ooyoroi, context),
+          onNormalAttackStart: (context) => {
+            setOffFieryCollapse(ooyoroi, context);
+          },
           secondsRemaining:
             combatant.constellationCount >= CONSTELLATION_2
               ? ooyoroiSeconds + CONSTELLATION_2_OOYOROI_EXTRA_SECONDS
@@ -160,8 +162,9 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
     getStrikeDamageBonus: (strike, _enemy, _party, effects) =>
       getConstellation6DamageBonus(strike.combatant.characterId, strike, effects),
     // Constellation 4's energy goes to Thoma when its delay runs out
-    onKitEvent: (event, context, combatant) =>
-      collectDelayedKitEnergy(event, context, combatant, CONSTELLATION_4_ENERGY_STATUS_ID),
+    onKitEvent: (event, context, combatant) => {
+      collectDelayedKitEnergy(event, context, combatant, CONSTELLATION_4_ENERGY_STATUS_ID);
+    },
     // Blazing Blessing sets its shield as it starts, from Thoma's Max HP and the table's share and flat HP, for its
     // Seconds. It also infuses his own attacks with Pyro for the infusion's seconds
     skill: {

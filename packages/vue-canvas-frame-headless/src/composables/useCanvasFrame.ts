@@ -45,7 +45,9 @@ export const useCanvasFrame = ({
     const paneElement = pane.value;
     if (!paneElement) return;
     updatePaneSize(paneElement);
-    resizeObserver = new ResizeObserver(() => updatePaneSize(paneElement));
+    resizeObserver = new ResizeObserver(() => {
+      updatePaneSize(paneElement);
+    });
     resizeObserver.observe(paneElement);
   });
   onScopeDispose(() => resizeObserver?.disconnect());
@@ -80,7 +82,9 @@ export const useCanvasFrame = ({
     cancelAnimationFrame(styleFrame);
     styleFrame = requestAnimationFrame(() => styleSheet?.replaceSync(cssText));
   });
-  onScopeDispose(() => cancelAnimationFrame(styleFrame));
+  onScopeDispose(() => {
+    cancelAnimationFrame(styleFrame);
+  });
 
   return { frameBody, frameStyle, loaded };
 };

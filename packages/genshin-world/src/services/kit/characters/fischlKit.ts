@@ -116,15 +116,15 @@ export const createFischlKitBehaviour = ({ readHit, readHitFields, readSeconds }
         });
         if (combatant.constellationCount < HER_PILGRIMAGE_OF_BLEAK_CONSTELLATION) return;
         castKitSummon(kitEffectState, body, combatant, [herPilgrimageOfBleak], { attackTag: AttackTag.ElementalBurst });
-        scheduleKitTask(kitEffectState, combatant.characterId, herPilgrimageOfBleakHealSeconds, (tick) =>
+        scheduleKitTask(kitEffectState, combatant.characterId, herPilgrimageOfBleakHealSeconds, (tick) => {
           changeKitMemberHealth(
             tick,
             combatant,
             combatant.characterId,
             HER_PILGRIMAGE_OF_BLEAK_HEALTH_SHARE *
               getKitMaxHealth(combatant, tick.kitEffectState.effects, tick.party, tick.characterIdCombatantMap),
-          ),
-        );
+          );
+        });
       },
     },
     onKitEvent: (event, { activeCombatant, body, kitEffectState }, combatant) => {
@@ -191,12 +191,13 @@ export const createFischlKitBehaviour = ({ readHit, readHitFields, readSeconds }
     },
     // Oz spawns from the press, lands its summon's hit and attacks from its first tick
     skill: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         castOz(kitEffectState, body, combatant, {
           firstTickSeconds: ozFirstTickSeconds,
           hits: [combatant.constellationCount >= DEVOURER_OF_ALL_SINS_CONSTELLATION ? devourerOfAllSins : ozSummon],
           spawnSeconds: ozSpawnSeconds,
-        }),
+        });
+      },
     },
   };
 };

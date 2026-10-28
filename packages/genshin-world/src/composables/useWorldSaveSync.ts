@@ -14,5 +14,11 @@ export const useWorldSaveSync = ({
   getSaveState: () => GenshinSaveState;
 }) => {
   const gameSave = computed(() => toGenshinSave(getSaveState()));
-  watch(gameSave, (newGameSave) => emitSave(newGameSave), { flush: "sync" });
+  watch(
+    gameSave,
+    (newGameSave) => {
+      emitSave(newGameSave);
+    },
+    { flush: "sync" },
+  );
 };

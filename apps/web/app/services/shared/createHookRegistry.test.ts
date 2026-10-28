@@ -72,7 +72,9 @@ describe(createHookRegistry, () => {
     vi.stubGlobal("window", {});
     const registry = createHookRegistry<() => void>();
     let unregisterFirst = noop;
-    const firstHook = vi.fn<() => void>(() => unregisterFirst());
+    const firstHook = vi.fn<() => void>(() => {
+      unregisterFirst();
+    });
     const secondHook = vi.fn<() => void>();
     unregisterFirst = registry.register(firstHook);
     registry.register(secondHook);

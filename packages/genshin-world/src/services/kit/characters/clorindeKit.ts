@@ -43,8 +43,9 @@ export const createClorindeKitBehaviour = ({
   const swiftHuntBondOfLifeGain = readParameter("swiftHuntBondOfLifeGain");
   const swiftHuntNormalShots = readHits("swiftHuntNormalShot");
   const swiftHuntPiercingShots = readHits("swiftHuntPiercingShot", {
-    onStrike: (context, strike) =>
-      grantPartyMemberBondOfLife(context.party, strike.combatant.characterId, swiftHuntBondOfLifeGain),
+    onStrike: (context, strike) => {
+      grantPartyMemberBondOfLife(context.party, strike.combatant.characterId, swiftHuntBondOfLifeGain);
+    },
   });
   const impaleTheNightFullHits = readHits("impaleTheNightFullBondOfLife");
   const impaleTheNightLowHit = readHit("impaleTheNightLowBondOfLife");

@@ -122,13 +122,14 @@ export const createAmberKitBehaviour = ({
     getSkillCooldownMultiplier: ({ activeCombatant }) =>
       activeCombatant.constellationCount >= CONSTELLATION_4 ? CONSTELLATION_4_SKILL_COOLDOWN_MULTIPLIER : 1,
     skill: {
-      onStart: ({ activeCombatant: combatant, body, characterIdCombatantMap, kitEffectState, party }) =>
+      onStart: ({ activeCombatant: combatant, body, characterIdCombatantMap, kitEffectState, party }) => {
         castKitTaunt(kitEffectState, body, combatant, {
           explosion: bunnyExplosion,
           health:
             bunnyMaxHealthShare * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap),
           secondsRemaining: bunnySeconds,
-        }),
+        });
+      },
     },
   };
 };

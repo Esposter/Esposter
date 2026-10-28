@@ -26,9 +26,9 @@ await runCommand(
       name: "genshin:animestudio:build",
     },
     async run({ args }) {
-      const cliPath = await buildAnimeStudio(args.directory, (stagedCliPath, outputDirectory) =>
-        checkAnimeStudioParity(stagedCliPath, outputDirectory, args.skipParity),
-      );
+      const cliPath = await buildAnimeStudio(args.directory, (stagedCliPath, outputDirectory) => {
+        checkAnimeStudioParity(stagedCliPath, outputDirectory, args.skipParity);
+      });
       console.log(`\nCLI published: ${cliPath}\nSet GENSHIN_ANIMESTUDIO_CLI to it.`);
     },
   }),

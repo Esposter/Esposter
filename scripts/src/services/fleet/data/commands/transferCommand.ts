@@ -38,7 +38,7 @@ export const createTransferCommand = (direction: TransferDirection, description:
       },
     },
     meta: { description, name: direction.toLowerCase() },
-    run: async ({ args }) =>
+    run: async ({ args }) => {
       (
         await getResultAsync(async () => {
           const peer = await readPeer(args.peer);
@@ -58,5 +58,6 @@ export const createTransferCommand = (direction: TransferDirection, description:
           args.peer,
           error.message,
         );
-      }),
+      });
+    },
   });

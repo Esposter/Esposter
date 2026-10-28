@@ -151,8 +151,9 @@ export const computeLabelSimilarity = async ({
         );
         recorder.combine(shotBuffer, buffers.coverage, buffers.coverage, buffers.second, count, CombineMode.Product);
       }
-      const blur = (source: GPUBuffer, destination: GPUBuffer): void =>
+      const blur = (source: GPUBuffer, destination: GPUBuffer): void => {
         recorder.blur(source, destination, buffers.temporary, weightBuffer, levelWidth, levelHeight, WINDOW_RADIUS);
+      };
       // A product of two planes over the coverage, the quotient each pixel's share of the blur's coverage
       const productOverCoverage = (first: GPUBuffer, second: GPUBuffer, output: GPUBuffer): void => {
         recorder.combine(first, second, second, buffers.scratch, count, CombineMode.Product);

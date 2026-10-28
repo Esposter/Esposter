@@ -20,8 +20,9 @@ export const createWandererKitBehaviour = ({ readSeconds, readStance }: KitRecor
   const windfavored = readStance("windfavored");
   return {
     skill: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        enterKitStance(kitEffectState, combatant, windfavored, windfavoredSeconds),
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+        enterKitStance(kitEffectState, combatant, windfavored, windfavoredSeconds);
+      },
     },
   };
 };

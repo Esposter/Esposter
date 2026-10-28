@@ -140,7 +140,9 @@ export const createCandaceKitBehaviour = ({
         castKitField(kitEffectState, characterId, body.position, {
           id: PRAYER_FIELD_ID,
           nextTickSeconds: burstHitmarkSeconds,
-          onTick: ({ activeCombatant, kitEffectState: tickEffectState }) => infuse(tickEffectState, activeCombatant),
+          onTick: ({ activeCombatant, kitEffectState: tickEffectState }) => {
+            infuse(tickEffectState, activeCombatant);
+          },
           secondsRemaining: prayerSeconds,
           tickIntervalSeconds: prayerTickSeconds,
         });

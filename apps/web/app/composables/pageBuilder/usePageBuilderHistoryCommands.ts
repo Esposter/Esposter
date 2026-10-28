@@ -20,9 +20,13 @@ export const usePageBuilderHistoryCommands = (resourceId: MaybeRefOrGetter<strin
     return getHistoryCommands({
       group: PAGE_BUILDER_COMMAND_GROUP,
       idPrefix: "page-builder",
-      redo: () => redo(id),
+      redo: () => {
+        redo(id);
+      },
       redoTitle: getTitle("Redo", redoLabel),
-      undo: () => undo(id),
+      undo: () => {
+        undo(id);
+      },
       undoTitle: getTitle("Undo", undoLabel),
     });
   });

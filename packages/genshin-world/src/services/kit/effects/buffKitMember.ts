@@ -8,4 +8,6 @@ export const buffKitMember = (
   kitEffectState: KitEffectState,
   characterId: number,
   buff: Except<KitBuff, "characterId" | "kind">,
-): void => addKitEffect(kitEffectState, { characterId, kind: "buff", ...buff });
+): void => {
+  addKitEffect(kitEffectState, { characterId, kind: "buff", ...buff });
+};

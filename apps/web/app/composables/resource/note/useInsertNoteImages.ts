@@ -22,7 +22,9 @@ export const useInsertNoteImages = () => {
     for (const uploadResult of uploadResults)
       uploadResult.match(
         (src) => chain.setImage({ src }),
-        (error) => createErrorAlert(error),
+        (error) => {
+          createErrorAlert(error);
+        },
       );
     chain.run();
   };

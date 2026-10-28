@@ -7,13 +7,17 @@ export const rasterizeFlowchartSvg = async (svg: Blob, width: number, height: nu
   const loadedImage = await withFinalizerAsync(
     () =>
       new Promise<HTMLImageElement>((resolve, reject) => {
-        image.onload = () => resolve(image);
+        image.onload = () => {
+          resolve(image);
+        };
         image.onerror = () => {
           reject(new InvalidOperationError(Operation.Read, rasterizeFlowchartSvg.name, "Could not load exported SVG"));
         };
         image.src = svgUrl;
       }),
-    () => URL.revokeObjectURL(svgUrl),
+    () => {
+      URL.revokeObjectURL(svgUrl);
+    },
   );
   const scale = window.devicePixelRatio * 2;
   const canvas = window.document.createElement("canvas");

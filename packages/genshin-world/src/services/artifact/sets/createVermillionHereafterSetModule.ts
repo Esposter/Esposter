@@ -19,7 +19,7 @@ const VERMILLION_HEREAFTER_INCREASE_ID = "vermillionHereafterIncrease";
 const VERMILLION_HEREAFTER_COOLDOWN_ID = "vermillionHereafterCooldown";
 
 // Drops the wearer's Nascent Light and the increases it holds, as a swap off the field or a burst that dispels it does
-const clearNascentLight = (kitEffectState: KitEffectState, characterId: number): void =>
+const clearNascentLight = (kitEffectState: KitEffectState, characterId: number): void => {
   removeKitEffects(
     kitEffectState,
     (effect) =>
@@ -28,6 +28,7 @@ const clearNascentLight = (kitEffectState: KitEffectState, characterId: number):
         effect.id === VERMILLION_HEREAFTER_NASCENT_LIGHT_ID) ||
       checkIsKitHoldId(effect, characterId, VERMILLION_HEREAFTER_INCREASE_ID),
   );
+};
 
 // Vermillion Hereafter. Its four-piece bonus gives its wearer Nascent Light on casting an Elemental Burst, which raises its
 // ATK by the second param for the first param's seconds. Each HP decrease of the wearer's while it stands adds the third param

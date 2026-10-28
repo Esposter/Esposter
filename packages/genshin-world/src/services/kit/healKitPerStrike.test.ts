@@ -56,12 +56,13 @@ describe(healKitPerStrike, () => {
     const context = createKitTestContext(combatant);
     damagePartyMember(context.party, combatant.characterId, 0.5);
     const strike: KitStrike = { body: context.body, combatant, hit: takeOne(TRAVELER_KIT.elementalSkill.hits) };
-    const heal = () =>
+    const heal = () => {
       healKitPerStrike(context, strike, {
         health: HEAL_HEALTH_SHARE * MAX_HEALTH,
         maximumHeals: MAXIMUM_HEALS,
         resourceId: RESOURCE_ID,
       });
+    };
     for (let index = 0; index < MAXIMUM_HEALS; index++) heal();
 
     spendKitResource(context.kitEffectState, combatant.characterId, RESOURCE_ID);

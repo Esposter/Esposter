@@ -185,8 +185,9 @@ export const createChongyunKitBehaviour = ({
           {
             id: FROST_FIELD_ID,
             nextTickSeconds: skillHitmarkSeconds,
-            onTick: ({ activeCombatant, kitEffectState: tickEffectState }) =>
-              infuse(tickEffectState, combatant, activeCombatant),
+            onTick: ({ activeCombatant, kitEffectState: tickEffectState }) => {
+              infuse(tickEffectState, combatant, activeCombatant);
+            },
             radius: FIELD_RADIUS,
             secondsRemaining: fieldSeconds,
             tickIntervalSeconds: FIELD_TICK_SECONDS,

@@ -62,8 +62,9 @@ describe(createGildedDreamsSetModule, () => {
   ];
   const characterIdCombatantMap = new Map(members.map((member) => [member.characterId, member]));
   // A reaction a member's strike set off on the enemy, as the team's kits hear it
-  const triggerReaction = (striker: Combatant, context: ReturnType<typeof createKitTestContext>) =>
+  const triggerReaction = (striker: Combatant, context: ReturnType<typeof createKitTestContext>) => {
     emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions: [], striker }, context);
+  };
 
   test("a reaction gives the wearer ATK +14% for each other member of its element and Elemental Mastery +50 for each member of another element, for eight seconds, from off the field too", () => {
     expect.hasAssertions();

@@ -52,7 +52,7 @@ describe(createSongOfDaysPastSetModule, () => {
     ]);
     const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });
     // A heal of the given share of the wearer's Max HP by the given member, as the party records it
-    const heal = (healthShare: number, sourceCharacterId: number) =>
+    const heal = (healthShare: number, sourceCharacterId: number) => {
       emitKitEvent(
         {
           bondOfLifeShare: 0,
@@ -65,8 +65,11 @@ describe(createSongOfDaysPastSetModule, () => {
         },
         context,
       );
+    };
     // The step of the team's effects, each expired effect sent as the step ends it
-    const stepSeconds = (seconds: number) => stepKitSecondsSendingExpiries(context, seconds);
+    const stepSeconds = (seconds: number) => {
+      stepKitSecondsSendingExpiries(context, seconds);
+    };
     // The flat base damage a strike by the given member adds as it is priced, read from the hook that prices it: the
     // Wearer's own hook for its own strike, and the party hook it lends the others
     const priceStrike = (striker: Combatant, attackTag: AttackTag) => {

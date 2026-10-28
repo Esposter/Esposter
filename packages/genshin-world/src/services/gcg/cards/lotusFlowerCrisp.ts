@@ -16,6 +16,7 @@ export const lotusFlowerCrisp: GcgCardModule = {
     zoneCard.usages -= 1;
     return Math.max(0, value - DAMAGE_REDUCTION);
   },
-  play: (context, targetIndex) =>
-    addGcgZoneCardToCharacter(context, targetIndex, LOTUS_FLOWER_CRISP_ID, lotusFlowerCrisp),
+  play: (context, targetIndex) => {
+    addGcgZoneCardToCharacter(context, targetIndex, LOTUS_FLOWER_CRISP_ID, lotusFlowerCrisp);
+  },
 };

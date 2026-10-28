@@ -172,11 +172,15 @@ export const createKeqingKitBehaviour = ({ kit }: KitRecordReader): KitBehaviour
     },
     chargedAttack: {
       hits: kit.chargedAttack.hits.map(() => ({ onStrike: addConstellation2Particle })),
-      onStart: (context) => addConstellation6Bonus(context, "charge"),
+      onStart: (context) => {
+        addConstellation6Bonus(context, "charge");
+      },
     },
     normalAttacks: kit.normalAttacks.map((normalAttack) => ({
       hits: normalAttack.hits.map(() => ({ onStrike: addConstellation2Particle })),
-      onStart: (context: KitContext) => addConstellation6Bonus(context, "attack"),
+      onStart: (context: KitContext) => {
+        addConstellation6Bonus(context, "attack");
+      },
     })),
     onKitEvent: (event, context, combatant) => {
       const { kitEffectState } = context;
@@ -207,7 +211,11 @@ export const createKeqingKitBehaviour = ({ kit }: KitRecordReader): KitBehaviour
             source: "keqing-constellation-4",
           });
     },
-    skill: { onStart: (context) => addConstellation6Bonus(context, "skill") },
+    skill: {
+      onStart: (context) => {
+        addConstellation6Bonus(context, "skill");
+      },
+    },
     skillChain: [
       {
         onStart: (context) => {

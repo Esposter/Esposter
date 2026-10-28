@@ -29,12 +29,13 @@ export const createManyOathsOfDawnAndDuskPassiveModule = (params: number[]): Pas
   const damageBonusPerSeal = takeOne(params, 0);
   const sealSeconds = takeOne(params, 1);
   const lunarCrystallizeCooldownSeconds = takeOne(params, 2);
-  const gainSeal = (kitEffectState: KitEffectState, characterId: number) =>
+  const gainSeal = (kitEffectState: KitEffectState, characterId: number) => {
     addKitStatus(kitEffectState, characterId, {
       id: SEAL_ID,
       secondsRemaining: sealSeconds,
       stacks: Math.min(countKitStatusStacks(kitEffectState.effects, characterId, SEAL_ID) + 1, MAXIMUM_SEAL_COUNT),
     });
+  };
   return {
     getStrikeDamageBonus: ({ attackTag, combatant }, _enemy, _party, effects) =>
       attackTag === AttackTag.ElementalSkill
@@ -56,12 +57,12 @@ export const createManyOathsOfDawnAndDuskPassiveModule = (params: number[]): Pas
         !checkIsKitStatusActive(kitEffectState.effects, characterId, SEAL_WINDOW_ID)
       ) {
         addKitStatus(kitEffectState, characterId, { id: SEAL_WINDOW_ID, secondsRemaining: SEAL_WINDOW_SECONDS });
-        scheduleKitTask(kitEffectState, characterId, SEAL_WINDOW_SECONDS, (context) =>
+        scheduleKitTask(kitEffectState, characterId, SEAL_WINDOW_SECONDS, (context) => {
           removeKitEffects(
             context.kitEffectState,
             (effect) => effect.kind === "status" && effect.characterId === characterId && effect.id === SEAL_ID,
-          ),
-        );
+          );
+        });
       }
     },
   };

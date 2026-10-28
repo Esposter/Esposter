@@ -346,11 +346,12 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
     gainPartyMemberEnergy(party, combatant, CONSTELLATION_1_ENERGY);
   },
   skill: {
-    onStart: ({ activeCombatant, kitEffectState }) =>
+    onStart: ({ activeCombatant, kitEffectState }) => {
       enterKitNightsoulBlessing(kitEffectState, activeCombatant.characterId, {
         nightsoulRate: NIGHTSOUL_RATE,
         points: NIGHTSOUL_POINTS,
         secondsRemaining: NIGHTSOUL_BLESSING_SECONDS,
-      }),
+      });
+    },
   },
 });

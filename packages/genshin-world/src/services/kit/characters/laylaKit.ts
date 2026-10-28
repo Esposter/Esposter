@@ -163,22 +163,22 @@ export const createLaylaKitBehaviour = ({
       id: LAYLA_SHOOTING_STARS_ID,
       secondsRemaining: Number.POSITIVE_INFINITY,
     });
-    scheduleKitTask(kitEffectState, LAYLA_CHARACTER_ID, SHOOTING_STAR_SEARCH_SECONDS, (context) =>
-      searchForShootingStar(context, combatant),
-    );
+    scheduleKitTask(kitEffectState, LAYLA_CHARACTER_ID, SHOOTING_STAR_SEARCH_SECONDS, (context) => {
+      searchForShootingStar(context, combatant);
+    });
   };
 
   // The search before the first Shooting Star: one found is fired at after 0.5 seconds, none is searched for again
   const searchForShootingStar = (context: KitContext, combatant: Combatant) => {
     const target = findShootingStarTarget(context);
     if (target)
-      scheduleKitTask(context.kitEffectState, LAYLA_CHARACTER_ID, SHOOTING_STAR_FIRST_SECONDS, (tickContext) =>
-        fireShootingStar(tickContext, combatant, target),
-      );
+      scheduleKitTask(context.kitEffectState, LAYLA_CHARACTER_ID, SHOOTING_STAR_FIRST_SECONDS, (tickContext) => {
+        fireShootingStar(tickContext, combatant, target);
+      });
     else
-      scheduleKitTask(context.kitEffectState, LAYLA_CHARACTER_ID, SHOOTING_STAR_SEARCH_SECONDS, (tickContext) =>
-        searchForShootingStar(tickContext, combatant),
-      );
+      scheduleKitTask(context.kitEffectState, LAYLA_CHARACTER_ID, SHOOTING_STAR_SEARCH_SECONDS, (tickContext) => {
+        searchForShootingStar(tickContext, combatant);
+      });
   };
 
   // One Shooting Star, fired at the closest enemy in reach, or at the last one fired at when none is in reach. It spends a
@@ -201,9 +201,9 @@ export const createLaylaKitBehaviour = ({
     spendKitResource(kitEffectState, LAYLA_CHARACTER_ID, LAYLA_NIGHT_STARS_ID);
     if (stars > 1) {
       gainKitResource(kitEffectState, LAYLA_CHARACTER_ID, LAYLA_NIGHT_STARS_ID, stars - 1, NIGHT_STARS_MAXIMUM);
-      scheduleKitTask(kitEffectState, LAYLA_CHARACTER_ID, SHOOTING_STAR_INTERVAL_SECONDS, (tickContext) =>
-        fireShootingStar(tickContext, combatant, target),
-      );
+      scheduleKitTask(kitEffectState, LAYLA_CHARACTER_ID, SHOOTING_STAR_INTERVAL_SECONDS, (tickContext) => {
+        fireShootingStar(tickContext, combatant, target);
+      });
       return;
     }
     spendKitResource(kitEffectState, LAYLA_CHARACTER_ID, LAYLA_SHOOTING_STARS_ID);
@@ -324,13 +324,13 @@ export const createLaylaKitBehaviour = ({
       ) {
         // Once a holder's Normal or Charged Attack lands, its Dawn Star ends 0.05 seconds on, as gcsim queues it
         const { characterId } = event.striker;
-        scheduleKitTask(kitEffectState, LAYLA_CHARACTER_ID, CONSTELLATION_4_REMOVAL_SECONDS, (tick) =>
+        scheduleKitTask(kitEffectState, LAYLA_CHARACTER_ID, CONSTELLATION_4_REMOVAL_SECONDS, (tick) => {
           removeKitEffects(
             tick.kitEffectState,
             (effect) =>
               effect.kind === "status" && effect.characterId === characterId && effect.id === LAYLA_DAWN_STAR_ID,
-          ),
-        );
+          );
+        });
       }
     },
     skill: {

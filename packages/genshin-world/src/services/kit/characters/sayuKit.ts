@@ -105,9 +105,9 @@ export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }:
         const { attack } = combatant.attributes;
         const initialHeal = burstInitialHealFlat + attack * burstInitialHealAttackShare;
         const tickHeal = burstTickHealFlat + attack * burstTickHealAttackShare + getConstellation6TickHeal(combatant);
-        scheduleKitTask(kitEffectState, combatant.characterId, 0, (tick) =>
-          changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, initialHeal),
-        );
+        scheduleKitTask(kitEffectState, combatant.characterId, 0, (tick) => {
+          changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, initialHeal);
+        });
         castKitSummon(
           kitEffectState,
           body,

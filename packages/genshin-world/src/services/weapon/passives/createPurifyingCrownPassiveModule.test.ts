@@ -24,8 +24,9 @@ import { describe, expect, test } from "vitest";
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
-const useSkill = (context: KitContext) =>
+const useSkill = (context: KitContext) => {
   emitKitEvent({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed }, context);
+};
 const castShield = (context: KitContext) =>
   castKitShield(context, TRAVELER_CHARACTER_ID, { health: 1, secondsRemaining: 10 });
 

@@ -109,7 +109,9 @@ export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRec
         castKitField(kitEffectState, combatant.characterId, position, {
           id: DEPTH_CLARION_DICE_ID,
           nextTickSeconds: burstHitmarkSeconds + EXQUISITE_THROW_WAVE_SECONDS,
-          onTick: (tickContext) => castExquisiteThrowVolley(tickContext, { facing, height, position }, combatant),
+          onTick: (tickContext) => {
+            castExquisiteThrowVolley(tickContext, { facing, height, position }, combatant);
+          },
           secondsRemaining: burstHitmarkSeconds + depthClarionDiceSeconds + FIELD_LINGER_SECONDS,
           tickIntervalSeconds: EXQUISITE_THROW_WAVE_SECONDS,
         });

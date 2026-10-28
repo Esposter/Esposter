@@ -50,7 +50,9 @@ export const readSerializedSubProgram = (cursor: BinaryCursor): SerializedSubPro
   skipAlignedParameters(cursor, VECTOR_OR_MATRIX_PARAMETER_BYTES, PARAMETER_FLAG_BYTES);
   skipAlignedParameters(cursor, TEXTURE_PARAMETER_BYTES, PARAMETER_FLAG_BYTES);
   skipWordList(cursor, BUFFER_BINDING_BYTES);
-  cursor.list(() => skipConstantBuffer(cursor));
+  cursor.list(() => {
+    skipConstantBuffer(cursor);
+  });
   skipWordList(cursor, BUFFER_BINDING_BYTES);
   skipWordList(cursor, UAV_BYTES);
   skipWordList(cursor, SAMPLER_BYTES);

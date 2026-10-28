@@ -14,7 +14,7 @@ const BOUNDLESS_BLESSING_INTERVAL_SECONDS = 4;
 const BOUNDLESS_BLESSING_MAXIMUM_STACKS = 4;
 
 // Drops the stacks, their buffs and the clock that adds them from the wielder, which a swap off the field or a fall does
-const clearBoundlessBlessing = (kitEffectState: KitEffectState, characterId: number): void =>
+const clearBoundlessBlessing = (kitEffectState: KitEffectState, characterId: number): void => {
   removeKitEffects(
     kitEffectState,
     (effect) =>
@@ -22,6 +22,7 @@ const clearBoundlessBlessing = (kitEffectState: KitEffectState, characterId: num
       (effect.kind === "status" && effect.characterId === characterId && effect.id === BOUNDLESS_BLESSING_ID) ||
       (effect.kind === "buff" && effect.characterId === characterId && effect.source === BOUNDLESS_BLESSING_ID),
   );
+};
 
 // Boundless Blessing at its rank: its Movement SPD is a passive bonus on the wielder. While the wielder is on the field, every
 // Four seconds it gains a stack of the rank's Elemental DMG Bonus on each element, up to four, and the stacks clear when it

@@ -12,6 +12,8 @@ describe(assertEditorScriptsWithinBudget, () => {
     const editorScriptBytes = z
       .record(z.string(), z.number())
       .parse(parseMachineJson(readFileSync(join(import.meta.dirname, "editorScriptBytes.json"), "utf8")));
-    expect(() => assertEditorScriptsWithinBudget(editorScriptBytes)).not.toThrow();
+    expect(() => {
+      assertEditorScriptsWithinBudget(editorScriptBytes);
+    }).not.toThrow();
   });
 });

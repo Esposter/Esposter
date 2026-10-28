@@ -141,7 +141,7 @@ describe(createNightOfTheSkysUnveilingSetModule, () => {
       [TRAVELER_CHARACTER_ID, firstWearer],
     ]);
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    const triggerWhileActive = (striker: Combatant, characterIds: number[]) =>
+    const triggerWhileActive = (striker: Combatant, characterIds: number[]) => {
       emitKitEvent(
         {
           enemy,
@@ -151,6 +151,7 @@ describe(createNightOfTheSkysUnveilingSetModule, () => {
         },
         createKitTestContext(striker, { characterIdCombatantMap, kitEffectState, party: createParty(characterIds) }),
       );
+    };
     // Each wearer triggers while it is the active character, so each gains the effect
     triggerWhileActive(firstWearer, [TRAVELER_CHARACTER_ID, THIRD_CHARACTER_ID]);
     triggerWhileActive(secondWearer, [THIRD_CHARACTER_ID, TRAVELER_CHARACTER_ID]);

@@ -16,8 +16,9 @@ export const northernSmokedChicken: GcgCardModule = {
   onCostPaid: (_context, subject, zoneCard) => {
     if (subject.skill?.kind === GcgSkillKind.NormalAttack) zoneCard.usages = 0;
   },
-  play: (context, targetIndex) =>
-    addGcgZoneCardToCharacter(context, targetIndex, NORTHERN_SMOKED_CHICKEN_ID, northernSmokedChicken),
+  play: (context, targetIndex) => {
+    addGcgZoneCardToCharacter(context, targetIndex, NORTHERN_SMOKED_CHICKEN_ID, northernSmokedChicken);
+  },
   reduceCost: (context, subject) =>
     checkIsGcgActiveHolder(context) &&
     subject.skill?.kind === GcgSkillKind.NormalAttack &&

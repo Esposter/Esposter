@@ -119,7 +119,7 @@ export const createTartagliaKitBehaviour = ({
   const [lightOfObliterationHit] = meleeStanceActions.elementalBurst.hits;
   // Riptide on an enemy for its seconds, 8 longer from Ascension 1, ticking Hydrospout from four constellations. A
   // Refresh keeps the schedule its ticks already hold
-  const applyRiptide = (enemy: Enemy, { ascension, constellationCount }: Combatant): void =>
+  const applyRiptide = (enemy: Enemy, { ascension, constellationCount }: Combatant): void => {
     addEnemyStatus(enemy, {
       damageTakenBonus: 0,
       id: RIPTIDE_STATUS_ID,
@@ -129,6 +129,7 @@ export const createTartagliaKitBehaviour = ({
         tickIntervalSeconds: HYDROSPOUT_INTERVAL_SECONDS,
       }),
     });
+  };
   return {
     // Flash of Havoc lands on the enemy the body turned to, or round the body with none, and gives energy back
     burst: {
@@ -140,9 +141,9 @@ export const createTartagliaKitBehaviour = ({
           [flashOfHavocHit],
           { attackTag: AttackTag.ElementalBurst },
         );
-        scheduleKitTask(kitEffectState, combatant.characterId, flashOfHavocEnergySeconds, ({ party }) =>
-          gainPartyMemberEnergy(party, combatant, flashOfHavocEnergy),
-        );
+        scheduleKitTask(kitEffectState, combatant.characterId, flashOfHavocEnergySeconds, ({ party }) => {
+          gainPartyMemberEnergy(party, combatant, flashOfHavocEnergy);
+        });
       },
     },
     // The end of the Melee Stance, which leaving the field brings, sets the skill's cooldown by the whole seconds it
@@ -240,8 +241,9 @@ export const createTartagliaKitBehaviour = ({
     },
     // The stance change's hit lands round the body, and the Melee Stance holds from the press
     skill: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        enterKitStance(kitEffectState, combatant, meleeStanceActions, stanceSeconds, { isEndedOnSwap: true }),
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+        enterKitStance(kitEffectState, combatant, meleeStanceActions, stanceSeconds, { isEndedOnSwap: true });
+      },
     },
   };
 };

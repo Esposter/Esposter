@@ -29,8 +29,9 @@ export const createKavehKitBehaviour = ({ readSeconds, readStance }: KitRecordRe
   const paintedDomeSeconds = readSeconds("paintedDome");
   return {
     burst: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        enterKitStance(kitEffectState, combatant, paintedDome, paintedDomeSeconds, { isEndedOnSwap: true }),
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+        enterKitStance(kitEffectState, combatant, paintedDome, paintedDomeSeconds, { isEndedOnSwap: true });
+      },
     },
     // Constellation 2, Grace of Royal Roads: his Normal Attack SPD is raised while Painted Dome holds him
     getNormalAttackSpeedBonus: ({ activeCombatant, kitEffectState }) =>

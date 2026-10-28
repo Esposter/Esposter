@@ -122,7 +122,7 @@ export const createDionaKitBehaviour = ({ kit, readHits, readParameter }: KitRec
         castKitField(kitEffectState, combatant.characterId, body.position, {
           id: SIGNATURE_MIX_FIELD_ID,
           nextTickSeconds: signatureMixHitmarkSeconds + SIGNATURE_MIX_TICK_SECONDS,
-          onTick: (tick) =>
+          onTick: (tick) => {
             changeKitMemberHealth(
               tick,
               combatant,
@@ -130,7 +130,8 @@ export const createDionaKitBehaviour = ({ kit, readHits, readParameter }: KitRec
               signatureMixHealMaxHealthShare *
                 getKitMaxHealth(combatant, tick.kitEffectState.effects, tick.party, tick.characterIdCombatantMap) +
                 signatureMixHealFlatHealth,
-            ),
+            );
+          },
           radius: SIGNATURE_MIX_FIELD_RADIUS,
           secondsRemaining: signatureMixSeconds,
           tickIntervalSeconds: SIGNATURE_MIX_TICK_SECONDS,

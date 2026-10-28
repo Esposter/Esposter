@@ -53,10 +53,11 @@ export const ARLECCHINO_CHARACTER_ID = 10_000_096;
 // Constellation 6's added DMG to Balemoon Rising needs Bond of Life's percentage, which the kit does not hold
 export const createArlecchinoKitBehaviour = (): KitBehaviour => ({
   burst: {
-    onStart: ({ activeCombatant: combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, kitEffectState }) => {
       scheduleKitTask(kitEffectState, combatant.characterId, toKitSeconds(BURST_SKILL_RESET_FRAMES), ({ party }) => {
         getPartyMember(party, combatant.characterId).skillCooldownSeconds = 0;
-      }),
+      });
+    },
   },
   getPassiveBonuses: () => [{ amount: PYRO_DAMAGE_BONUS, attribute: Attribute.PyroDamageBonus }],
   getStrikeCriticalDamageBonus: (strike, _enemy, _party, effects) =>

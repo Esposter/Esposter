@@ -23,7 +23,9 @@ describe(securityHeaders, () => {
 
     await bench.compare(
       bench("native — serializing the page's headers", () => serializeSecurityHeaders(PAGE_HEADERS)),
-      bench("headers applied to a response", () => app.run("render:route", {}, { event: createPageEvent() })),
+      bench("headers applied to a response", () => {
+        app.run("render:route", {}, { event: createPageEvent() });
+      }),
       { ...BENCHMARK_RUN_OPTIONS, iterations: 500, warmupIterations: 50 },
     );
   });

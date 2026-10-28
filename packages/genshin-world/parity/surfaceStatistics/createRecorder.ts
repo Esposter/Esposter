@@ -54,8 +54,9 @@ export const createRecorder = (device: GPUDevice, encoder: GPUCommandEncoder) =>
     pipeline: GPUComputePipeline,
     bindings: [number, GPUBuffer][],
     parameters: SurfaceStatisticsParameters,
-  ): void =>
+  ): void => {
     dispatch(pipeline, bindings, parameters, [Math.ceil(parameters.count / SURFACE_STATISTICS_WORKGROUP_SIZE), 1]);
+  };
   return {
     // A Gaussian blur of a buffer, one axis then the other, through the temporary buffer
     blur: (
@@ -102,7 +103,7 @@ export const createRecorder = (device: GPUDevice, encoder: GPUCommandEncoder) =>
       mode: CombineMode,
       mean = 0,
       label = 0,
-    ): void =>
+    ): void => {
       dispatchPerPixel(
         pipelines.combine,
         [
@@ -112,9 +113,10 @@ export const createRecorder = (device: GPUDevice, encoder: GPUCommandEncoder) =>
           [6, output],
         ],
         getParameters({ count, label, mean, mode }),
-      ),
+      );
+    },
     // Each output pixel is the mean of a two by two block of the source, which is `width` pixels wide
-    halve: (source: GPUBuffer, destination: GPUBuffer, width: number, count: number): void =>
+    halve: (source: GPUBuffer, destination: GPUBuffer, width: number, count: number): void => {
       dispatchPerPixel(
         pipelines.halve,
         [
@@ -122,10 +124,11 @@ export const createRecorder = (device: GPUDevice, encoder: GPUCommandEncoder) =>
           [6, destination],
         ],
         getParameters({ count, width }),
-      ),
+      );
+    },
     parameterBuffers,
     // A sum over the buffer's first `count` elements, its partial for each workgroup at the slot's offset
-    reduce: (input: GPUBuffer, partials: GPUBuffer, count: number, slot: number): void =>
+    reduce: (input: GPUBuffer, partials: GPUBuffer, count: number, slot: number): void => {
       dispatch(
         pipelines.reduce,
         [
@@ -134,7 +137,8 @@ export const createRecorder = (device: GPUDevice, encoder: GPUCommandEncoder) =>
         ],
         getParameters({ count, outputOffset: slot * SURFACE_STATISTICS_PARTIAL_COUNT }),
         [SURFACE_STATISTICS_PARTIAL_COUNT, 1],
-      ),
+      );
+    },
     // One pixel's similarity term for a label's window, read from its coverage and blurred planes
     similarity: (
       planes: {
@@ -149,7 +153,7 @@ export const createRecorder = (device: GPUDevice, encoder: GPUCommandEncoder) =>
       output: GPUBuffer,
       count: number,
       isCoarsest: boolean,
-    ): void =>
+    ): void => {
       dispatchPerPixel(
         pipelines.similarity,
         [
@@ -163,6 +167,7 @@ export const createRecorder = (device: GPUDevice, encoder: GPUCommandEncoder) =>
           [17, output],
         ],
         getParameters({ count, mode: isCoarsest ? 1 : 0 }),
-      ),
+      );
+    },
   };
 };

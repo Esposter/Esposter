@@ -30,7 +30,9 @@ const noteSchema = getSchema(getNoteExtensions());
 // A note's ProseMirror document, refused when the writing kit cannot build it, so a node it does not load never reaches
 // A renderer. A text node of a webpage holds the same document, so both read this one schema
 export const noteDocumentSchema = jsonContentSchema.superRefine((doc, context) => {
-  getResult(() => noteSchema.nodeFromJSON(doc).check()).match(noop, (error) =>
-    context.addIssue({ code: "custom", message: error.message, path: [] }),
-  );
+  getResult(() => {
+    noteSchema.nodeFromJSON(doc).check();
+  }).match(noop, (error) => {
+    context.addIssue({ code: "custom", message: error.message, path: [] });
+  });
 });

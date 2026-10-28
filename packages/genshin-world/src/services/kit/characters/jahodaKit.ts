@@ -92,8 +92,9 @@ const readFlaskElement = (kitEffectState: KitEffectState, characterId: number): 
   );
 
 // Ends the Meowballs still running, as gcsim's Skill and drain end their ticks
-const removeMeowballs = (kitEffectState: KitEffectState): void =>
+const removeMeowballs = (kitEffectState: KitEffectState): void => {
   removeKitEffects(kitEffectState, (effect) => effect.kind === "field" && effect.id === MEOWBALL_FIELD_ID);
+};
 
 // The deployed member with the lowest share of its health that still stands, as gcsim's lowest-HP pick finds it
 const findLowestHealthCharacterId = (party: Party): number | undefined => {
@@ -287,7 +288,9 @@ export const createJahodaKitBehaviour = ({
     castKitField(kitEffectState, characterId, position, {
       id: DRAIN_FIELD_ID,
       nextTickSeconds: pursuitSeconds,
-      onTick: (tickContext) => drainFlask(tickContext, { facing, height, position }, combatant, filledPressHit),
+      onTick: (tickContext) => {
+        drainFlask(tickContext, { facing, height, position }, combatant, filledPressHit);
+      },
       secondsRemaining: pursuitSeconds + PURSUIT_TICK_EXTRA_SECONDS,
       tickIntervalSeconds: pursuitSeconds,
     });
@@ -367,6 +370,12 @@ export const createJahodaKitBehaviour = ({
     skill: { onStart: startPursuit },
     // The second press drains the flask at once, its hit a summon cast where the body stands, since the hit depends on the
     // Gauge
-    skillChain: [{ onStart: (context) => drainFlask(context, context.body, context.activeCombatant, filledPressHit) }],
+    skillChain: [
+      {
+        onStart: (context) => {
+          drainFlask(context, context.body, context.activeCombatant, filledPressHit);
+        },
+      },
+    ],
   };
 };

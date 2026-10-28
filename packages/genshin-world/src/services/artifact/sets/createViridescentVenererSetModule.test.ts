@@ -53,7 +53,9 @@ const createTeam = (characterIds: number[]) => {
   const trigger = (
     striker: Combatant,
     reactions: { element?: Element; reactionType: StellarReactionType | TransformativeReactionType }[],
-  ) => emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker }, context);
+  ) => {
+    emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker }, context);
+  };
   return { enemy, other, reactionDamageBonus, trigger, wearer };
 };
 

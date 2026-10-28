@@ -138,13 +138,14 @@ export const createKokomiKitBehaviour = ({
       const centre = createAheadBody(body, SKILL_CENTRE_METRES).position;
       castKitField(kitEffectState, combatant.characterId, centre, {
         nextTickSeconds: bakeKurageFirstTickSeconds,
-        onTick: (tick) =>
+        onTick: (tick) => {
           changeKitMemberHealth(
             tick,
             combatant,
             tick.activeCombatant.characterId,
             bakeKurageHealShare * maxHealth + bakeKurageFlatHeal,
-          ),
+          );
+        },
         radius: SKILL_RADIUS,
         secondsRemaining: SKILL_DURATION_SECONDS,
         tickIntervalSeconds: bakeKurageTickIntervalSeconds,

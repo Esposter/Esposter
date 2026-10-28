@@ -48,11 +48,12 @@ describe("resourceProgramStatus", () => {
   const statusRow: ProgramStatusRow = { addedAt: new Date(0), isResponded: true, keyValue };
   const keyColumn = "keyColumn";
   const surveyId = crypto.randomUUID();
-  const setSurveyMode = (responseMode: SurveyResponseMode) =>
+  const setSurveyMode = (responseMode: SurveyResponseMode) => {
     trpcMsw.survey.readResourceContent.query(() => ({
       model: "",
       settings: surveySettingsSchema.parse({ responseMode }),
     }));
+  };
 
   beforeEach(async () => {
     // The blade reads its id off the resource page's route, which the auth middleware guards

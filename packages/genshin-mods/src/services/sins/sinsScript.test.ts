@@ -24,7 +24,9 @@ const runScript = (payload: object, key: string, script = SINS_SCRIPT) =>
     child.stdout.on("data", (chunk: Buffer) => {
       stdout += chunk.toString();
     });
-    child.on("close", () => resolve(stdout));
+    child.on("close", () => {
+      resolve(stdout);
+    });
     child.stdin.end(JSON.stringify({ ...payload, key }));
   });
 
@@ -50,7 +52,9 @@ describe("sinsScript", () => {
   afterEach(async () => {
     status = 200;
     await new Promise<void>((resolve) => {
-      server.close(() => resolve());
+      server.close(() => {
+        resolve();
+      });
     });
   });
 

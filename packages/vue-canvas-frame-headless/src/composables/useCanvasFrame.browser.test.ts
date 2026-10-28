@@ -52,7 +52,9 @@ describe(useCanvasFrame, () => {
       props,
       slots: slotContent ? { default: slotContent } : undefined,
     });
-    onTestFinished(() => wrapper.unmount());
+    onTestFinished(() => {
+      wrapper.unmount();
+    });
     return wrapper;
   };
 

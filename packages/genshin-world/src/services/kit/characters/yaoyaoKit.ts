@@ -147,14 +147,15 @@ const startA4Heal = (context: KitContext, combatant: Combatant): void => {
     {
       id: A4_HEAL_ID,
       nextTickSeconds: A4_INTERVAL_SECONDS,
-      onTick: (tick) =>
+      onTick: (tick) => {
         changeKitMemberHealth(
           tick,
           combatant,
           tick.activeCombatant.characterId,
           A4_HEAL_MAX_HEALTH_SHARE *
             getKitMaxHealth(combatant, tick.kitEffectState.effects, tick.party, tick.characterIdCombatantMap),
-        ),
+        );
+      },
       secondsRemaining: A4_SECONDS,
       tickIntervalSeconds: A4_INTERVAL_SECONDS,
     },
@@ -232,9 +233,9 @@ const throwMegaRadish = (context: KitContext, combatant: Combatant, target: Grou
     context.characterIdCombatantMap,
   );
   const healing = C6_HEAL_MAX_HEALTH_SHARE * maxHealth;
-  landRadish(context, combatant, target, hit, (tick) =>
-    changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, healing),
-  );
+  landRadish(context, combatant, target, hit, (tick) => {
+    changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, healing);
+  });
 };
 
 // Ascension 1's radish lands on a random enemy within the circle round Yaoyao, healing as a burst radish does, and none is

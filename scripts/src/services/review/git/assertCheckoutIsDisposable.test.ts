@@ -15,7 +15,9 @@ describe(assertCheckoutIsDisposable, () => {
     commitFile(PATH, "base");
     publish(QUEUE_BRANCH, "HEAD");
 
-    expect(() => assertCheckoutIsDisposable(getCwd())).not.toThrow();
+    expect(() => {
+      assertCheckoutIsDisposable(getCwd());
+    }).not.toThrow();
   });
 
   test("refuses a checkout holding an edit", () => {
@@ -25,7 +27,9 @@ describe(assertCheckoutIsDisposable, () => {
     publish(QUEUE_BRANCH, "HEAD");
     writeFileSync(join(getCwd(), PATH), "edit");
 
-    expect(() => assertCheckoutIsDisposable(getCwd())).toThrowErrorMatchingInlineSnapshot(`
+    expect(() => {
+      assertCheckoutIsDisposable(getCwd());
+    }).toThrowErrorMatchingInlineSnapshot(`
       [InvalidOperationError: Invalid operation: Delete, name: assertCheckoutIsDisposable, The review resets this checkout to the queue's tip, which would discard:
       M README.md
       Run it from a checkout of its own.]
@@ -39,7 +43,9 @@ describe(assertCheckoutIsDisposable, () => {
     publish(QUEUE_BRANCH, "HEAD");
     commitFile(PATH, "unpushed");
 
-    expect(() => assertCheckoutIsDisposable(getCwd())).toThrowErrorMatchingInlineSnapshot(`
+    expect(() => {
+      assertCheckoutIsDisposable(getCwd());
+    }).toThrowErrorMatchingInlineSnapshot(`
       [InvalidOperationError: Invalid operation: Delete, name: assertCheckoutIsDisposable, The review resets this checkout to the queue's tip, which would discard:
       6251999 README.md
       Run it from a checkout of its own.]

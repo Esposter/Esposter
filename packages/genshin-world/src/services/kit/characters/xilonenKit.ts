@@ -47,8 +47,9 @@ const CONSTELLATION_4_ATTACK_TAGS = new Set<AttackTag>([
 ]);
 
 // Removes the Blade Roller stance the Blessing entered, which ends with the Blessing however the Blessing ends
-const removeBladeRollerStance = (kitEffectState: KitEffectState, characterId: number): void =>
+const removeBladeRollerStance = (kitEffectState: KitEffectState, characterId: number): void => {
   removeKitEffects(kitEffectState, (effect) => effect.kind === "stance" && effect.characterId === characterId);
+};
 
 // Leaves the Blessing and the Blade Roller stance with it, as gcsim's exit does
 const exitNightsoulBlessing = (kitEffectState: KitEffectState, characterId: number): void => {
@@ -136,13 +137,14 @@ export const createXilonenKitBehaviour = ({ readStance }: KitRecordReader): KitB
       )
         spendConstellation4Stack(kitEffectState.effects, event.striker.characterId);
     },
-    onSprint: (context, kitState, stepSeconds) =>
+    onSprint: (context, kitState, stepSeconds) => {
       drainKitSprintNightsoulPoints(
         context,
         kitState,
         stepSeconds,
         NIGHTSOUL_SPRINT_DRAIN * getNightsoulConsumptionMultiplier(context.activeCombatant),
-      ),
+      );
+    },
     skill: {
       onStart: ({ activeCombatant, kitEffectState, party }) => {
         const { characterId } = activeCombatant;

@@ -13,7 +13,7 @@ export const chargePartyMember = (
   combatant: Combatant,
   kitEffectState: KitEffectState,
   characterIdCombatantMap: ReadonlyMap<number, Combatant>,
-): void =>
+): void => {
   hitPartyMember(
     party,
     combatant,
@@ -21,3 +21,4 @@ export const chargePartyMember = (
     characterIdCombatantMap,
     WILDLIFE_CHARGE_DAMAGE * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap),
   );
+};

@@ -17,5 +17,7 @@ export const createComposedPassiveModule = (params: number[]): PassiveModule =>
       event.kind === KitEventKind.DamageTaken &&
       event.striker.characterId === combatant.characterId &&
       event.attackTag === AttackTag.ElementalSkill,
-    (context, combatant) => endPartyMemberSkillCooldown(context.party, combatant.characterId),
+    (context, combatant) => {
+      endPartyMemberSkillCooldown(context.party, combatant.characterId);
+    },
   );

@@ -72,8 +72,9 @@ export const createFlinsKitBehaviour = ({ readParameter, readStance }: KitRecord
       gainPartyMemberEnergy(party, combatant, CONSTELLATION_1_ENERGY);
     },
     skill: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        enterKitStance(kitEffectState, combatant, manifestFlame, manifestFlameSeconds, { isEndedOnSwap: true }),
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+        enterKitStance(kitEffectState, combatant, manifestFlame, manifestFlameSeconds, { isEndedOnSwap: true });
+      },
     },
   };
 };

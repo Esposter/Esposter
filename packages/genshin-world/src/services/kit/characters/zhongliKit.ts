@@ -176,9 +176,9 @@ export const createZhongliKitBehaviour = ({
               attackTag: AttackTag.ElementalSkill,
               secondsRemaining: holdSteleSeconds,
             });
-          scheduleKitTask(kitEffectState, combatant.characterId, holdHitmarkSeconds, (tick) =>
-            castJadeShield(tick, { facing, height, position }, combatant),
-          );
+          scheduleKitTask(kitEffectState, combatant.characterId, holdHitmarkSeconds, (tick) => {
+            castJadeShield(tick, { facing, height, position }, combatant);
+          });
         },
       },
     ],

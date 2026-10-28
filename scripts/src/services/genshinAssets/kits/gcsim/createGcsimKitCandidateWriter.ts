@@ -32,11 +32,12 @@ export const createGcsimKitCandidateWriter = (
   defaultCause?: KitProvisionalCause,
 ): GcsimKitCandidateWriter => {
   const toFile = (name: string, from = folder) => `${GCSIM_CHARACTERS_PATH}/${from}/${name}`;
-  const add = (path: string, value: unknown, file: string, line: number, cause = defaultCause) =>
+  const add = (path: string, value: unknown, file: string, line: number, cause = defaultCause) => {
     addKitCandidate(candidateMap, path, {
       provenance: { ...(cause && { cause }), file, line: Math.max(line, 1), source: KitSource.Gcsim },
       value,
     });
+  };
   return {
     add,
     // A slot's frames are one set, or a list of them one for each of its states, a list of lists for a slot with a list of
@@ -140,11 +141,12 @@ export const createGcsimKitCandidateWriter = (
         add(`${path}.poiseDamage`, attack.poiseDamage, fieldFile, fieldLine("PoiseDMG"));
       else if (poiseDamage !== undefined) add(`${path}.poiseDamage`, poiseDamage.value, fieldFile, poiseDamage.line);
     },
-    addNoActionFileRule: (path, value) =>
+    addNoActionFileRule: (path, value) => {
       addKitCandidate(candidateMap, path, {
         provenance: { cause: KitProvisionalCause.NoActionFile, rule: KitRule.NoActionFile, source: KitSource.Rule },
         value,
-      }),
+      });
+    },
     toFile,
   };
 };

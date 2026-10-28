@@ -63,12 +63,13 @@ export const createHeizouKitBehaviour = ({ kit, readHit }: KitRecordReader): Kit
   const createIrisHit = (element: Element): KitHit => ({ ...iris, element });
   return {
     burst: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         addKitStatus(kitEffectState, combatant.characterId, {
           id: IRIS_TAG_STATUS_ID,
           secondsRemaining: kit.elementalBurst.seconds,
           stacks: 0,
-        }),
+        });
+      },
     },
     // Each enemy the aura check strikes, up to 4 a cast, is tagged, and one holding an aura the Iris takes has an Iris
     // Cast where it stands, in the first of the four elements it holds

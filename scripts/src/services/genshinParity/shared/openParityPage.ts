@@ -83,12 +83,16 @@ export const openParityPage = async ({
   return getResultAsync(async () => {
     const page = await context.newPage();
     // A page error is printed as it happens, so a failure the screen logs and carries on past reaches the terminal too
-    page.on("pageerror", (error) => console.error(`parity page: ${String(error)}`));
+    page.on("pageerror", (error) => {
+      console.error(`parity page: ${String(error)}`);
+    });
     page.on("console", (message) => {
       // oxlint-disable-next-line typescript/no-floating-promises -- the report's own result is an error it has already printed
       if (message.type() === "error") reportConsoleError(message);
     });
-    await page.addInitScript((size) => performance.setResourceTimingBufferSize(size), RESOURCE_TIMING_BUFFER_SIZE);
+    await page.addInitScript((size) => {
+      performance.setResourceTimingBufferSize(size);
+    }, RESOURCE_TIMING_BUFFER_SIZE);
     const motionQuery = motion ? `&motion=${motion}` : "";
     const propsQuery = props ? `&props=${encodeURIComponent(JSON.stringify(props))}` : "";
     const backdropQuery = backdropPath ? `&backdrop=${PARITY_BACKDROP_FILE}` : "";

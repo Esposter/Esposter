@@ -232,12 +232,13 @@ export const createJeanKitBehaviour = ({
         variant: {
           checkIsActive: ({ activeCombatant: combatant }) =>
             combatant.constellationCount >= SPIRALING_TEMPEST_CONSTELLATION,
-          onStart: ({ activeCombatant: combatant, kitEffectState }) =>
+          onStart: ({ activeCombatant: combatant, kitEffectState }) => {
             buffKitMember(kitEffectState, combatant.characterId, {
               amount: SPIRALING_TEMPEST_DAMAGE_BONUS,
               attribute: Attribute.AnemoDamageBonus,
               secondsRemaining: kit.elementalSkill.seconds,
-            }),
+            });
+          },
         },
       },
     ],

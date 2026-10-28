@@ -27,7 +27,9 @@ describe("dashboardGrid", () => {
         disconnect() {}
         observe() {
           const entries = [{ contentRect: { height: 0, width: gridWidth } }] as ResizeObserverEntry[];
-          queueMicrotask(() => this.#callback(entries, this));
+          queueMicrotask(() => {
+            this.#callback(entries, this);
+          });
         }
         unobserve() {}
       },

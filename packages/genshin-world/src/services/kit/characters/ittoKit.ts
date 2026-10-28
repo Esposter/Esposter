@@ -130,7 +130,7 @@ export const createIttoKitBehaviour = ({
   // Itto's stance while he holds stacks, whose charged attack is the Arataki Kesagiri for them at no stamina, held
   // Until a charged attack starts it. The Arataki Kesagiri slashes are Charged Attack DMG, gcsim's AttackTagExtra in
   // Itto/charge.go's ChargeAttack
-  const addKesagiriStance = (kitEffectState: KitEffectState, combatant: Combatant, stacks: number): void =>
+  const addKesagiriStance = (kitEffectState: KitEffectState, combatant: Combatant, stacks: number): void => {
     enterKitStance(
       kitEffectState,
       combatant,
@@ -143,6 +143,7 @@ export const createIttoKitBehaviour = ({
       },
       Number.POSITIVE_INFINITY,
     );
+  };
   // Adds stacks of Superlative Superstrength, up to 5, and readies the Arataki Kesagiri for them, unless one is
   // Playing, whose end readies it
   const gainSuperstrength = (kitEffectState: KitEffectState, combatant: Combatant, gained: number): void => {
@@ -185,9 +186,9 @@ export const createIttoKitBehaviour = ({
           scheduleKitTask(kitEffectState, combatant.characterId, toKitSeconds(CONSTELLATION_1_CAST_FRAMES), (tick) => {
             gainSuperstrength(tick.kitEffectState, combatant, 2);
             for (const frames of CONSTELLATION_1_TIMER_FRAMES)
-              scheduleKitTask(tick.kitEffectState, combatant.characterId, toKitSeconds(frames), (timer) =>
-                gainSuperstrength(timer.kitEffectState, combatant, 1),
-              );
+              scheduleKitTask(tick.kitEffectState, combatant.characterId, toKitSeconds(frames), (timer) => {
+                gainSuperstrength(timer.kitEffectState, combatant, 1);
+              });
           });
         if (combatant.constellationCount >= CONSTELLATION_2) {
           const geoMemberCount = Math.min(

@@ -16,5 +16,7 @@ export const jueyunGuoba: GcgCardModule = {
     zoneCard.usages = 0;
     return { ...damage, value: damage.value + 1 };
   },
-  play: (context, targetIndex) => addGcgZoneCardToCharacter(context, targetIndex, JUEYUN_GUOBA_ID, jueyunGuoba),
+  play: (context, targetIndex) => {
+    addGcgZoneCardToCharacter(context, targetIndex, JUEYUN_GUOBA_ID, jueyunGuoba);
+  },
 };

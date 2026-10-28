@@ -29,5 +29,7 @@ export const exportDatasetCsv = async (resource: ResourceInResource) => {
       createDatasetCsv(dataset),
       DataSourceConfigurationMap[DataSourceType.Csv].mimeType,
     );
-  }).match(noop, (error) => createErrorAlert(error, getDatasetErrorMessage(error)));
+  }).match(noop, (error) => {
+    createErrorAlert(error, getDatasetErrorMessage(error));
+  });
 };

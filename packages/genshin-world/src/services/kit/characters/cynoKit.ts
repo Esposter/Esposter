@@ -90,8 +90,9 @@ const getPactswornNormalAttackBonus = createElementalMasteryShareBonus(
 const getDuststalkerBoltBonus = createElementalMasteryShareBonus(ELEMENTAL_MASTERY_SHARE_ASCENSION_4_BOLT);
 
 // Day of the Jackal's stacks are set to four at the burst and raised by four at each Judication, to eight at most
-const addDayOfTheJackal = (kitEffectState: KitEffectState, characterId: number, stacks: number): void =>
+const addDayOfTheJackal = (kitEffectState: KitEffectState, characterId: number, stacks: number): void => {
   addKitStatus(kitEffectState, characterId, { id: C6_STATUS_ID, secondsRemaining: C6_SECONDS, stacks });
+};
 
 // The Judication field a character holds
 const findJudicationField = (effects: readonly KitEffect[], characterId: number): KitField | undefined =>

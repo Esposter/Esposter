@@ -31,7 +31,9 @@ export const useCommentStore = defineStore("post/comment", () => {
     return comments;
   });
   // The thread's copies take the counts the server returns, so a reply here reaches the post and the replies it sits under
-  postCountHooks.register((postCounts) => applyPostCounts(allComments.value, postCounts));
+  postCountHooks.register((postCounts) => {
+    applyPostCounts(allComments.value, postCounts);
+  });
   // Only branches that already exist are descended into: asking the map for one that does not creates it, so a
   // Walk over the rows themselves would leave an empty partition behind for every reply it passed
   const deleteBranch = (parentId: string) => {

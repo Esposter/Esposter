@@ -11,7 +11,9 @@ import { linkSync, mkdirSync, readFileSync, renameSync, rmSync, statSync, writeF
 
 // Create-only, so of two starters exactly one gets the file, however close together they start
 const createLock = (path: string): boolean =>
-  getResult(() => writeFileSync(path, `${process.pid}`, { flag: "wx" })).match(
+  getResult(() => {
+    writeFileSync(path, `${process.pid}`, { flag: "wx" });
+  }).match(
     () => true,
     (error) => {
       if ("code" in error && error.code === "EEXIST") return false;
@@ -41,7 +43,9 @@ const checkIsLockHeld = (path: string): boolean => {
 
 // Moves the lock aside, which is false when there was no lock at the path to move
 const moveLockAside = (path: string, movedPath: string): boolean =>
-  getResult(() => renameSync(path, movedPath)).match(
+  getResult(() => {
+    renameSync(path, movedPath);
+  }).match(
     () => true,
     (error) => {
       if (checkIsNotFound(error)) return false;
@@ -51,7 +55,9 @@ const moveLockAside = (path: string, movedPath: string): boolean =>
 
 // Puts a moved lock back under its path, unless another starter has created one there since it was moved
 const restoreLock = (movedPath: string, path: string) => {
-  getResult(() => linkSync(movedPath, path)).match(noop, (error) => {
+  getResult(() => {
+    linkSync(movedPath, path);
+  }).match(noop, (error) => {
     if (!("code" in error && error.code === "EEXIST")) throw error;
   });
   rmSync(movedPath, { force: true });

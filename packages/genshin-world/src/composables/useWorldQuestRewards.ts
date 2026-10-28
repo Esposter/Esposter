@@ -48,6 +48,8 @@ export const useWorldQuestRewards = ({
       setCharacters(gainCharacterExp(characters.value, getDeployedCharacterIds(), granted.characterExp, getMaxLevel));
     if (granted.adventureExp > 0) gainAdventureExp(granted.adventureExp);
   };
-  events.on("finishQuest", ({ rewards }) => grantRewards(rewards));
+  events.on("finishQuest", ({ rewards }) => {
+    grantRewards(rewards);
+  });
   return { grantRewards };
 };

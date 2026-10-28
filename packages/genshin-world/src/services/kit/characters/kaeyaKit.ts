@@ -101,8 +101,13 @@ export const createKaeyaKitBehaviour = ({ kit, readHits, readSeconds }: KitRecor
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         // Constellation 6 regenerates 15 Energy 52 frames after the cast, as gcsim's burst.go gives it
         if (combatant.constellationCount >= CONSTELLATION_6)
-          scheduleKitTask(kitEffectState, combatant.characterId, toKitSeconds(CONSTELLATION_6_ENERGY_FRAMES), (tick) =>
-            gainPartyMemberEnergy(tick.party, combatant, CONSTELLATION_6_ENERGY),
+          scheduleKitTask(
+            kitEffectState,
+            combatant.characterId,
+            toKitSeconds(CONSTELLATION_6_ENERGY_FRAMES),
+            (tick) => {
+              gainPartyMemberEnergy(tick.party, combatant, CONSTELLATION_6_ENERGY);
+            },
           );
         // A recast replaces the Glacial Waltz standing, as gcsim's one burst does, so its icicles stop with it
         removeKitEffects(

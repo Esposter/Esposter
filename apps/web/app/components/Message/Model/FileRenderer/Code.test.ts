@@ -100,8 +100,15 @@ describe("messageModelFileRendererCode", () => {
     const { promise: leaveStarted, resolve: onLeaveStarted } = Promise.withResolvers<() => void>();
     const host = defineComponent({
       render: () =>
-        h(Transition, { css: false, onLeave: (_element, done) => onLeaveStarted(done) }, () =>
-          isShown.value ? h(MessageModelFileRendererCode, props) : null,
+        h(
+          Transition,
+          {
+            css: false,
+            onLeave: (_element, done) => {
+              onLeaveStarted(done);
+            },
+          },
+          () => (isShown.value ? h(MessageModelFileRendererCode, props) : null),
         ),
     });
 

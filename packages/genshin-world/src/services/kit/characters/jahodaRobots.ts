@@ -78,7 +78,9 @@ export const startJahodaRobots = (
             intervalSeconds: settings.strikeIntervalSeconds,
             untilSeconds: burstSeconds - absorbSeconds,
           },
-          (strikeContext) => strikeNearest(strikeContext, combatant, element, settings),
+          (strikeContext) => {
+            strikeNearest(strikeContext, combatant, element, settings);
+          },
         );
       },
     );

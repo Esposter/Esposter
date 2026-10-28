@@ -43,8 +43,9 @@ const createNormalAttackStrike = (combatant: Combatant): KitStrike => ({
   combatant,
   hit: KIT.plungeCollision,
 });
-const landNormalAttack = (context: ReturnType<typeof createKitTestContext>) =>
+const landNormalAttack = (context: ReturnType<typeof createKitTestContext>) => {
   emitKitEvent({ action: takeOne(KIT.normalAttacks, 0), kind: KitEventKind.NormalAttackLanded }, context);
+};
 
 describe(createEchoesOfAnOfferingSetModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");

@@ -92,7 +92,7 @@ export const createRazorKitBehaviour = ({
     return sigilBuff === undefined ? 0 : Math.round(sigilBuff.amount / sigilEnergyRecharge);
   };
   // Gives Razor an Electro Sigil, up to three, restarting the seconds of those he holds
-  const addElectroSigil = (characterId: number, kitEffectState: KitEffectState): void =>
+  const addElectroSigil = (characterId: number, kitEffectState: KitEffectState): void => {
     buffKitMember(kitEffectState, characterId, {
       amount:
         sigilEnergyRecharge *
@@ -101,9 +101,14 @@ export const createRazorKitBehaviour = ({
       secondsRemaining: sigilSeconds,
       source: ELECTRO_SIGIL_SOURCE,
     });
+  };
   // Clears Razor's Electro Sigils at a hitmark, each giving him its energy up to what his burst costs, on the step the
   // Hitmark falls in
-  const scheduleElectroSigilClear = (kitEffectState: KitEffectState, owner: Combatant, hitmarkSeconds: number): void =>
+  const scheduleElectroSigilClear = (
+    kitEffectState: KitEffectState,
+    owner: Combatant,
+    hitmarkSeconds: number,
+  ): void => {
     scheduleKitTask(kitEffectState, owner.characterId, hitmarkSeconds, ({ kitEffectState: tickEffectState, party }) => {
       const sigilCount = getElectroSigilCount(owner.characterId, tickEffectState.effects);
       if (sigilCount === 0) return;
@@ -111,6 +116,7 @@ export const createRazorKitBehaviour = ({
       partyMember.energy = Math.min(owner.kit.burstEnergyCost, partyMember.energy + sigilEnergy * sigilCount);
       removeKitEffects(tickEffectState, (effect) => checkIsRazorBuff(effect, owner.characterId, ELECTRO_SIGIL_SOURCE));
     });
+  };
   // Lightning Fang's Wolf Within, cast from the burst's hit for its seconds while Razor stays on the field. Its first
   // Tick, at the hit, resets his skill's cooldown from Ascension 1 and gives him the Electro RES bonus that marks it
   // Standing, and leaving the field ends both through the swap's kit event
@@ -207,14 +213,16 @@ export const createRazorKitBehaviour = ({
     // The press gains its Electro Sigil as it starts, and each enemy it strikes takes Bite's DEF cut from Constellation 4
     skill: {
       hits: [{ enemyStatus: getBiteStatus }],
-      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        addElectroSigil(combatant.characterId, kitEffectState),
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+        addElectroSigil(combatant.characterId, kitEffectState);
+      },
     },
     // The hold clears the sigils into energy at its hit
     skillHolds: [
       {
-        onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-          scheduleElectroSigilClear(kitEffectState, combatant, holdHitmarkSeconds),
+        onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+          scheduleElectroSigilClear(kitEffectState, combatant, holdHitmarkSeconds);
+        },
       },
     ],
   };

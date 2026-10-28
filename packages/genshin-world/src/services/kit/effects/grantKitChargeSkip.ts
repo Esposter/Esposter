@@ -8,4 +8,6 @@ export const grantKitChargeSkip = (
   kitEffectState: KitEffectState,
   characterId: number,
   secondsRemaining: number,
-): void => addKitStatus(kitEffectState, characterId, { id: KIT_CHARGE_SKIP_ID, secondsRemaining });
+): void => {
+  addKitStatus(kitEffectState, characterId, { id: KIT_CHARGE_SKIP_ID, secondsRemaining });
+};

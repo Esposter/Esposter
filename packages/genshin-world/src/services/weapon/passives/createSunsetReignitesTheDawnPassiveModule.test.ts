@@ -19,8 +19,9 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createWiel
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enterBlessing = (context: KitContext) =>
+const enterBlessing = (context: KitContext) => {
   enterKitNightsoulBlessing(context.kitEffectState, TRAVELER_CHARACTER_ID, { points: 0, secondsRemaining: 100 });
+};
 
 describe(createSunsetReignitesTheDawnPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");

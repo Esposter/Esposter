@@ -132,13 +132,14 @@ export const createEscoffierKitBehaviour = ({
         castKitField(kitEffectState, combatant.characterId, body.position, {
           id: BURST_HEAL_FIELD_ID,
           nextTickSeconds: burstHealSeconds,
-          onTick: (tick) =>
+          onTick: (tick) => {
             changeKitMemberHealth(
               tick,
               combatant,
               tick.activeCombatant.characterId,
               burstHealFlat + burstHealAttackShare * combatant.attributes.attack,
-            ),
+            );
+          },
           radius: burstRadius,
           secondsRemaining: burstHealSeconds + 0.5,
           // A second past the one tick, so no second tick falls within the field
@@ -149,13 +150,14 @@ export const createEscoffierKitBehaviour = ({
         castKitField(kitEffectState, combatant.characterId, body.position, {
           id: REHAB_DIET_FIELD_ID,
           nextTickSeconds: rehabDietFirstTickSeconds,
-          onTick: (tick) =>
+          onTick: (tick) => {
             changeKitMemberHealth(
               tick,
               combatant,
               tick.activeCombatant.characterId,
               REHAB_DIET_SCALING * combatant.attributes.attack,
-            ),
+            );
+          },
           radius: burstRadius,
           secondsRemaining: rehabDietLastTickSeconds + 0.5,
           tickIntervalSeconds: rehabDietIntervalSeconds,

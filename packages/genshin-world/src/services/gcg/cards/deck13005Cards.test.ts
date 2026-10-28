@@ -265,7 +265,9 @@ describe("kamisato Art: Senho", () => {
   test("it triggers twice per Round, so a third switch in the Round gives no further bonus", () => {
     expect.hasAssertions();
     const duel = createAyakaDuel();
-    const switchTo = (characterIndex: number) => switchGcgActiveCharacter(duel, 0, characterIndex);
+    const switchTo = (characterIndex: number) => {
+      switchGcgActiveCharacter(duel, 0, characterIndex);
+    };
 
     switchTo(1);
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
@@ -285,7 +287,9 @@ describe("kamisato Art: Senho", () => {
   test("a second switch to her in the Round refreshes the infusion she holds rather than adding one", () => {
     expect.hasAssertions();
     const duel = createAyakaDuel();
-    const switchTo = (characterIndex: number) => switchGcgActiveCharacter(duel, 0, characterIndex);
+    const switchTo = (characterIndex: number) => {
+      switchGcgActiveCharacter(duel, 0, characterIndex);
+    };
 
     switchTo(1);
     // The infusion's rounds are spent, so only the refresh brings them back

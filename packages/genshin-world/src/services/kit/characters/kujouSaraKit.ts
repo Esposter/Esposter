@@ -148,8 +148,9 @@ export const createKujouSaraKitBehaviour = ({ readHit, readHits, readParameter }
           },
         },
       ],
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        castStormclusters(kitEffectState, body, combatant),
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+        castStormclusters(kitEffectState, body, combatant);
+      },
     },
     chargedAttack: {
       hits: [{ onStrike: addAtkBonus }],

@@ -11,6 +11,8 @@ export const createGcgTenguJuuraiSummon = ({ damage, usages }: { damage: number;
   createGcgEndPhaseDamageSummon({
     damage,
     damageType: Element.Electro,
-    onEndPhase: ({ duel, sideIndex }) => applyGcgCrowfeatherCover(takeOne(duel.sides, sideIndex)),
+    onEndPhase: ({ duel, sideIndex }) => {
+      applyGcgCrowfeatherCover(takeOne(duel.sides, sideIndex));
+    },
     usages,
   });

@@ -46,13 +46,14 @@ const getBonuses = (wearer: Combatant, kitEffectState: KitEffectState) => {
   return { defense: sumOf(Attribute.DefensePercent), geo: sumOf(Attribute.GeoDamageBonus) };
 };
 
-const swapOff = (wearer: Combatant, context: KitContext, to = OTHER_CHARACTER_ID) =>
+const swapOff = (wearer: Combatant, context: KitContext, to = OTHER_CHARACTER_ID) => {
   emitKitEvent(createCharacterSwapped(to, wearer.characterId), context);
+};
 
 describe(createHuskOfOpulentDreamsSetModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   // A hit the given combatant deals of the given element, as the kit sends it
-  const hitEnemy = (striker: Combatant, element: Element, context: KitContext) =>
+  const hitEnemy = (striker: Combatant, element: Element, context: KitContext) => {
     emitKitEvent(
       {
         enemy,
@@ -64,6 +65,7 @@ describe(createHuskOfOpulentDreamsSetModule, () => {
       },
       context,
     );
+  };
 
   test("each Geo hit the wearer lands on the field adds a stack of 6% DEF and Geo DMG, up to four", () => {
     expect.hasAssertions();

@@ -24,8 +24,9 @@ describe(useUploadResourceFile, () => {
   const fileId = crypto.randomUUID();
   const sasUrl = "sasUrl";
 
-  const generateUploadFileSasEntities = () =>
+  const generateUploadFileSasEntities = () => {
     trpcMsw.webpage.generateUploadFileSasEntities.query(() => [{ id: fileId, isHeld: false, sasUrl }]);
+  };
 
   // The commit is refused with 412 when the bytes are already stored at this address, which is the same address
   // The upload would have reported, so the file reads as uploaded there

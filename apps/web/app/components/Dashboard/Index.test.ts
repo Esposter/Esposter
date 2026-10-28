@@ -37,7 +37,9 @@ describe("dashboardIndex", () => {
         disconnect() {}
         observe(target: Element) {
           const entries = [{ contentRect: { height: 0, width: gridWidth }, target }] as ResizeObserverEntry[];
-          queueMicrotask(() => this.#callback(entries, this));
+          queueMicrotask(() => {
+            this.#callback(entries, this);
+          });
         }
         unobserve() {}
       },

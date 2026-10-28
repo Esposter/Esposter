@@ -113,12 +113,13 @@ const countTeamElement = (
   );
 
 // Starts a cast of All Schemes to Know, restarting the count of the marks it gives
-const startSkillCast = ({ activeCombatant, kitEffectState }: KitContext) =>
+const startSkillCast = ({ activeCombatant, kitEffectState }: KitContext) => {
   addKitStatus(kitEffectState, activeCombatant.characterId, {
     id: SEEDS_OF_SKANDHA_CAST_STATUS_ID,
     secondsRemaining: SEEDS_OF_SKANDHA_CAST_SECONDS,
     stacks: 0,
   });
+};
 
 // Marks an enemy a press or a full hold strikes while the cast has marks left to give, each strike counting, marked or not
 const markEnemy = ({ kitEffectState }: KitContext, { combatant }: KitStrike, enemy?: Enemy): void => {
@@ -207,11 +208,12 @@ export const createNahidaKitBehaviour = ({
           });
         castKitField(kitEffectState, characterId, createAheadBody(body, ILLUSORY_HEART_OFFSET_METRES).position, {
           nextTickSeconds: illusoryHeartFirstTickSeconds,
-          onTick: (tickContext) =>
+          onTick: (tickContext) => {
             addKitStatus(tickContext.kitEffectState, characterId, {
               id: ILLUSORY_HEART_WINDOW_STATUS_ID,
               secondsRemaining: ILLUSORY_HEART_WINDOW_SECONDS,
-            }),
+            });
+          },
           radius: illusoryHeartRadius,
           secondsRemaining: illusoryHeartStartSeconds + illusoryHeartSeconds + extensionSeconds,
           tickIntervalSeconds: illusoryHeartTickSeconds,

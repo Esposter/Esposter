@@ -23,8 +23,9 @@ const MAXIMUM_STACKS = 4;
 const getStacks = (effects: readonly KitEffect[], characterId: number): number =>
   findKitStatus(effects, characterId, HUSK_STACKS_ID)?.stacks ?? 0;
 
-const setStacks = (kitEffectState: KitEffectState, characterId: number, stacks: number): void =>
+const setStacks = (kitEffectState: KitEffectState, characterId: number, stacks: number): void => {
   addKitStatus(kitEffectState, characterId, { id: HUSK_STACKS_ID, secondsRemaining: Number.POSITIVE_INFINITY, stacks });
+};
 
 // Husk of Opulent Dreams. Its four-piece bonus gives its wearer a Curiosity stack, up to four, each raising DEF and Geo DMG by the
 // Third and fourth params. A stack comes on each Geo hit the wearer lands while it is the active character, no more than once every

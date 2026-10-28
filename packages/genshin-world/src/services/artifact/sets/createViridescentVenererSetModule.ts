@@ -28,13 +28,14 @@ export const createViridescentVenererSetModule = (bonus: ArtifactSetBonus): Pass
     [StellarReactionType.StellarSwirl, stellarSwirlDamageBonus],
     [TransformativeReactionType.Swirl, swirlDamageBonus],
   ]);
-  const reduceResistance = (enemy: Enemy, element: Element): void =>
+  const reduceResistance = (enemy: Enemy, element: Element): void => {
     addEnemyStatus(enemy, {
       damageTakenBonus: 0,
       id: `${VIRIDESCENT_VENERER_RES_ID}${ID_SEPARATOR}${element}`,
       resistanceReduction: { [element]: resistanceReduction },
       secondsRemaining: resistanceSeconds,
     });
+  };
   return {
     getPartyReactionBonus: (member, reaction) =>
       getOwnReactionDamageBonus(member, reaction, reactionTypeDamageBonusMap),

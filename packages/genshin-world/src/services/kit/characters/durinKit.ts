@@ -101,8 +101,9 @@ export const createDurinKitBehaviour = ({
     },
     // Tap E starts the window's stance, and the chain plays the white recast whatever the cooldown Tap E set
     skill: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        enterKitStance(kitEffectState, combatant, recastWindow, windowSeconds),
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+        enterKitStance(kitEffectState, combatant, recastWindow, windowSeconds);
+      },
     },
     // Confirmation of Purity ends Denial of Darkness's black status
     skillChain: [

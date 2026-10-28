@@ -61,8 +61,9 @@ const createSturdyEnemy = (): Enemy => {
   enemy.health = 1_000_000_000;
   return enemy;
 };
-const strikeEnemy = (context: KitContext, combatant: Combatant, hit: KitHit, enemy: Enemy): void =>
+const strikeEnemy = (context: KitContext, combatant: Combatant, hit: KitHit, enemy: Enemy): void => {
   strikeKitEnemies([{ body: context.body, combatant, hit, target: enemy }], context);
+};
 
 describe(createBeidouKitBehaviour, () => {
   const OTHER_CHARACTER_ID = 10_000_049;
@@ -124,7 +125,9 @@ describe(createBeidouKitBehaviour, () => {
       enemyTables,
       kitEffectState,
     });
-    const strike = (hit: KitHit) => strikeEnemy(context, combatant, hit, enemy);
+    const strike = (hit: KitHit) => {
+      strikeEnemy(context, combatant, hit, enemy);
+    };
     const firstStrike = takeOne(takeOne(BEIDOU_KIT.normalAttacks).hits);
     const chargedAttackHit = takeOne(BEIDOU_KIT.chargedAttack.hits);
     BEIDOU_KIT.elementalBurst.onStart?.(context);

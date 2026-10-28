@@ -25,7 +25,9 @@ describe(createPackage, () => {
   const FIXTURE_PATHS = [AGENTS_FILE, APP_MODULES_FILE, LERNA_FILE, QUALITY_LEDGER_FILE, README_FILE];
   const createFixtureRoot = (): string => {
     const root = mkdtempSync(join(tmpdir(), "package-new-"));
-    onTestFinished(() => rmSync(root, { force: true, recursive: true }));
+    onTestFinished(() => {
+      rmSync(root, { force: true, recursive: true });
+    });
     for (const path of FIXTURE_PATHS) {
       mkdirSync(dirname(join(root, path)), { recursive: true });
       copyFileSync(join(REPOSITORY_ROOT, path), join(root, path));

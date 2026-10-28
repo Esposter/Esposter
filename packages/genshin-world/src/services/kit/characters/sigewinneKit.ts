@@ -72,7 +72,9 @@ export const createSigewinneKitBehaviour = ({ kit, readHits }: KitRecordReader):
   return {
     burst: {
       hits: kit.elementalBurst.hits.map(() => ({ enemyStatus: getConstellation2Status })),
-      onStart: (context) => castBubblyShield(context, context.activeCombatant, kit.elementalBurst.seconds),
+      onStart: (context) => {
+        castBubblyShield(context, context.activeCombatant, kit.elementalBurst.seconds);
+      },
     },
     skill: {
       onStart: (context) => {

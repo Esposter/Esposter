@@ -51,7 +51,9 @@ const createTeam = (characterIds: number[]) => {
     wearer.kit.getPartyReactionBonus?.(wearer, { combatant, element: undefined, enemy, reactionType }, context)
       ?.damageBonus ?? 0;
   // The member uses its Elemental Skill, as the team's events send it
-  const useSkill = (characterId: number) => emitKitEvent({ characterId, kind: KitEventKind.SkillUsed }, context);
+  const useSkill = (characterId: number) => {
+    emitKitEvent({ characterId, kind: KitEventKind.SkillUsed }, context);
+  };
   return { context, other, reactionDamageBonus, useSkill, wearer };
 };
 

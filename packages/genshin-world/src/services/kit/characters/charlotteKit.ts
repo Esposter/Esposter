@@ -152,20 +152,21 @@ export const createCharlotteKitBehaviour = ({
         const castCentre = createAheadBody(body, BURST_OFFSET_METRES).position;
         castKitSummon(kitEffectState, body, combatant, kameraHits, { attackTag: AttackTag.ElementalBurst });
         // The cast heal reaches the whole deployed team wherever it stands, whatever the burst strikes
-        scheduleKitTask(kitEffectState, characterId, burstHitmarkSeconds, (tick) =>
-          healTeam(tick, combatant, stillPhotoFlatHealth, stillPhotoAttackShare),
-        );
+        scheduleKitTask(kitEffectState, characterId, burstHitmarkSeconds, (tick) => {
+          healTeam(tick, combatant, stillPhotoFlatHealth, stillPhotoAttackShare);
+        });
         // Each Kamera tick heals the character on the field while it stands in the circle the burst was cast at
         for (const { hitmarkSeconds } of kameraHits)
           castKitField(kitEffectState, characterId, castCentre, {
             nextTickSeconds: hitmarkSeconds,
-            onTick: (tick) =>
+            onTick: (tick) => {
               changeKitMemberHealth(
                 tick,
                 combatant,
                 tick.activeCombatant.characterId,
                 kameraFlatHealth + kameraAttackShare * combatant.attributes.attack,
-              ),
+              );
+            },
             radius: BURST_HEAL_RADIUS,
             secondsRemaining: hitmarkSeconds + SUMMON_LINGER_SECONDS,
             tickIntervalSeconds: 1,
@@ -225,7 +226,9 @@ export const createCharlotteKitBehaviour = ({
             intervalSeconds: CONSTELLATION_1_INTERVAL_SECONDS,
             untilSeconds: CONSTELLATION_1_SECONDS,
           },
-          (tick) => changeKitMemberHealth(tick, combatant, healedCharacterId, healAmount),
+          (tick) => {
+            changeKitMemberHealth(tick, combatant, healedCharacterId, healAmount);
+          },
         );
         return;
       }

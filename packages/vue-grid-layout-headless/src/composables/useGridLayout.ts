@@ -92,7 +92,9 @@ export const useGridLayout = <T extends GridItem>(
   };
   // A gesture previews the layout it began on, so a layout replaced under it — a reload, a restore, another column
   // Count — ends the gesture rather than letting its release write cells the new layout never had
-  watch(layout, () => resetGesture());
+  watch(layout, () => {
+    resetGesture();
+  });
 
   // A press starts a gesture, which becomes a drag only past the start distance, so a press that barely moves stays a click
   const startGesture = (event: PointerEvent, item: T, edge?: ResizeEdge) => {

@@ -316,17 +316,21 @@ export const createAlhaithamKitBehaviour = ({
     });
   };
   const strikeHitBehaviour: KitHitBehaviour = {
-    onStrike: (context, strike) => triggerProjection(context, strike, false),
+    onStrike: (context, strike) => {
+      triggerProjection(context, strike, false);
+    },
   };
   const mirrorSourceHitBehaviour: KitHitBehaviour = {
-    onStrike: (context, strike) => triggerProjection(context, strike, true),
+    onStrike: (context, strike) => {
+      triggerProjection(context, strike, true);
+    },
   };
 
   // The tap's and the hold's hit, with their share of his Elemental Mastery, and the Mirrors each makes its own seconds
   // After the cast
   const createSkillBehaviour = (mirrorSeconds: number): KitActionBehaviour => ({
     hits: [{ additiveBaseDamageBonus: (striker) => elementalMasteryMultiplier(striker, skillElementalMasteryShare) }],
-    onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
       scheduleKitTask(kitEffectState, combatant.characterId, mirrorSeconds, (tick) =>
         gainMirrors(
           tick.kitEffectState,
@@ -334,7 +338,8 @@ export const createAlhaithamKitBehaviour = ({
           combatant,
           getSkillMirrorGain(tick.kitEffectState.effects, combatant.characterId),
         ),
-      ),
+      );
+    },
   });
 
   return {

@@ -18,8 +18,9 @@ const checkIsKingsSquireCost = (subject: GcgCostSubject): boolean =>
 // Spends 2 fewer Elemental Dice
 export const kingsSquire: GcgCardModule = {
   ...createGcgWeaponCard("BOW"),
-  play: ({ duel, sideIndex }) =>
-    placeGcgZoneCard(takeOne(duel.sides, sideIndex).onstages, KINGS_SQUIRE_IN_EFFECT_ID, kingsSquireInEffect),
+  play: ({ duel, sideIndex }) => {
+    placeGcgZoneCard(takeOne(duel.sides, sideIndex).onstages, KINGS_SQUIRE_IN_EFFECT_ID, kingsSquireInEffect);
+  },
 };
 
 // King's Squire (In Effect): the next Talent card or Elemental Skill of the Round spends 2 fewer Elemental Dice, for one usage

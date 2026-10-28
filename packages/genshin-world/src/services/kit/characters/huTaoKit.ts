@@ -87,13 +87,14 @@ const resetSpiritSootherHeals = ({ activeCombatant, kitEffectState }: KitContext
   spendKitResource(kitEffectState, activeCombatant.characterId, SPIRIT_SOOTHER_HEAL_RESOURCE);
 };
 // Constellation 6's CRIT Rate on Hu Tao, for 10 seconds
-const buffConstellation6CriticalRate = (kitEffectState: KitEffectState, characterId: number): void =>
+const buffConstellation6CriticalRate = (kitEffectState: KitEffectState, characterId: number): void => {
   buffKitMember(kitEffectState, characterId, {
     amount: CONSTELLATION_6_CRITICAL_RATE,
     attribute: Attribute.CriticalRate,
     secondsRemaining: CONSTELLATION_6_SECONDS,
     source: CONSTELLATION_6_SOURCE,
   });
+};
 // Constellation 6's once-a-minute cooldown, which a refused fall and a drain to a quarter of her HP or under both start
 const startConstellation6Cooldown = (kitEffectState: KitEffectState, characterId: number): boolean =>
   startKitCooldown(kitEffectState, characterId, CONSTELLATION_6_COOLDOWN_STATUS_ID, CONSTELLATION_6_COOLDOWN_SECONDS);

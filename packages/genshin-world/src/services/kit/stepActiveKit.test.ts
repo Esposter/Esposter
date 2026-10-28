@@ -490,8 +490,18 @@ describe(stepActiveKit, () => {
   });
 
   test.each<[string, (context: KitContext, enemy: Enemy) => void]>([
-    ["dies", (_context, enemy) => setEnemyState(enemy, EnemyState.Dead)],
-    ["leaves the world", (context) => context.enemyMap.clear()],
+    [
+      "dies",
+      (_context, enemy) => {
+        setEnemyState(enemy, EnemyState.Dead);
+      },
+    ],
+    [
+      "leaves the world",
+      (context) => {
+        context.enemyMap.clear();
+      },
+    ],
   ])("a primary target that %s is let go", (_title, leave) => {
     expect.hasAssertions();
     const context = createStrikeContext([createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);

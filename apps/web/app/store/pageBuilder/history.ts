@@ -75,18 +75,19 @@ export const usePageBuilderHistoryStore = defineStore("pageBuilder/history", () 
     resourceId: string,
     operations: JsonPatchOperation[],
     history: History<PageBuilderHistoryEntry>,
-  ) =>
+  ) => {
     applyOperations(resourceId, operations)
       .map((held) => commitEdit(resourceId, held, history))
       .match(noop, console.error);
+  };
   const applyEdit = (resourceId: string, operations: JsonPatchOperation[], label: string, interactionId?: string) =>
-    applyOperations(resourceId, operations).map(({ inverses, ...held }) =>
+    applyOperations(resourceId, operations).map(({ inverses, ...held }) => {
       commitEdit(
         resourceId,
         held,
         getRecordedHistory(getHistory(resourceId), { interactionId, inverses, label, operations }),
-      ),
-    );
+      );
+    });
   const clearHistory = (resourceId: string) => {
     setHistory(resourceId, emptyHistory);
   };

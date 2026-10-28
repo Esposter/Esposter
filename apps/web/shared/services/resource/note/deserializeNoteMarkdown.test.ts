@@ -80,7 +80,9 @@ describe(deserializeNoteMarkdown, () => {
       ],
       type: "doc",
     });
-    expect(() => noteSchema.nodeFromJSON(imported).check()).not.toThrow();
+    expect(() => {
+      noteSchema.nodeFromJSON(imported).check();
+    }).not.toThrow();
   });
 
   // A link to a scheme that can run a script is read as its text, so the note never holds a link the webpage refuses

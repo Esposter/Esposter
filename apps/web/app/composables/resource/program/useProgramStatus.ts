@@ -116,7 +116,9 @@ export const useProgramStatus = () => {
       return;
     }
     await getResultAsync(() => $trpc.program.readProgramInvites.query({ id: id.value, scope })).match(
-      (programInvites) => exportInviteFiles(scope, programInvites),
+      (programInvites) => {
+        exportInviteFiles(scope, programInvites);
+      },
       createErrorNotification,
     );
   };
