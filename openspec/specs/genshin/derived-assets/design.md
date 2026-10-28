@@ -7,13 +7,13 @@ Nothing the game draws ships. Every shape, colour and glyph the deployed recreat
 ```mermaid
 flowchart TD
   P[A part to build] --> I{Is it the 2D interface?}
-  I -->|yes| S[Screenshots and recordings: the wiki, public videos, the user's own recording]
+  I -->|yes| S[Screenshots and recordings]
   S --> T[trace, measure, luma]
   T --> C1[A component, compared over the recording's own frame]
   I -->|"no: the world"| G{Does the game hold it as an asset: a mesh, a texture, a material?}
   G -->|yes| X[AnimeStudio exports it locally, the game closed, into the references folder]
   X --> F[A transform fits our kit's parameters to the export]
-  F --> C2[Our kit builds it; compare scores it against the captures]
+  F --> C2["Build it with our kit, then score it against the captures"]
   G -->|"no: light, haze, motion"| S
 ```
 
@@ -23,7 +23,7 @@ flowchart TD
 
 ## The pipeline
 
-`pnpm -C scripts genshin:assets <step>` runs AnimeStudio's command-line tool (by default the CLI `genshin:animestudio:build` publishes on macOS, or on Windows under an AnimeStudio folder in Downloads; `GENSHIN_ANIMESTUDIO_CLI` names a CLI kept elsewhere) over the installed game's blocks, with the game closed. On macOS every AnimeStudio run starts under the utility QoS clamp (`taskpolicy -c utility`) `scripts/src/services/machine/getUtilityClampedCommand.ts`, so a sweep of the blocks yields to the foreground apps; on Windows `city-areas` runs it at below-normal priority and the other steps at normal priority. Each step reads what the one before it wrote:
+`pnpm -C scripts genshin:assets <step>` runs AnimeStudio's command-line tool (the default CLI on each platform, and the `GENSHIN_ANIMESTUDIO_CLI` override, are set out in [AnimeStudio on macOS](animestudio-macos/design.md)) over the installed game's blocks, with the game closed. On macOS every AnimeStudio run starts under the utility QoS clamp (`taskpolicy -c utility`) `scripts/src/services/machine/getUtilityClampedCommand.ts`, so a sweep of the blocks yields to the foreground apps; on Windows `city-areas` runs it at below-normal priority and the other steps at normal priority. Each step reads what the one before it wrote:
 
 ```mermaid
 flowchart LR
@@ -33,11 +33,11 @@ flowchart LR
   E --> I["inventory component: inventory.md"]
   S --> I
   E -->|"witness component"| W["witness.json: the exports laid out for the witness render"]
-  E -->|"avatar component"| AV["avatar.json and avatar.bin: the game's model, rigged and skinned"]
-  M -->|"interface component: AnimeStudio"| U["interface.json: the screen's RectTransform tree"]
-  A[The game's Wwise packages] -->|"playlist component: vgmstream"| P["music: the playlist in order, its sources decoded"]
+  E -->|"avatar component"| AV["avatar.json and avatar.bin"]
+  M -->|"interface component: AnimeStudio"| U["interface.json"]
+  A[The game's Wwise packages] -->|"playlist component: vgmstream"| P["music"]
   P -->|"fit component"| D
-  E -->|"fit component: no game files"| D["the hosted game data: our kits' parameters, a record a key"]
+  E -->|"fit component: no game files"| D["the hosted game data"]
   D --> K[The scene builds them with the engine's kits]
 ```
 

@@ -54,7 +54,7 @@ The fitted scale SHALL stay within a few hundredths of one, so that one unit of 
 - **GIVEN** the fit has converged on the matched points
 - **WHEN** its turn and scale are read
 - **THEN** the turn is a quarter turn mirrored, minus ninety degrees
-- **AND** the scale is within a few hundredths of one (1.00017)
+- **AND** the scale is within a few hundredths of one
 
 ### Requirement: Report checks each region's Oculi against its reference count
 
@@ -64,14 +64,14 @@ The fit report SHALL list each region in turn, Mondstadt first, with its matched
 
 - **GIVEN** the fit has run
 - **WHEN** the report is printed
-- **THEN** Mondstadt is listed first with about fifty matched statues and waypoints (51)
+- **THEN** Mondstadt is listed first with about fifty matched statues and waypoints
 - **AND** its Anemoculi count is compared with sixty-six (see Open)
 
 #### Scenario: Shortfall kept as it stands
 
 - **GIVEN** a region's count of Oculi is below its reference count
 - **WHEN** the report is printed
-- **THEN** the shortfall is printed as it stands (Fontaine 225, Natlan 249, Nod-Krai 197)
+- **THEN** the shortfall is printed as it stands
 - **AND** no Oculus is added to fill it
 
 #### Scenario: Snezhnaya with no matched points
