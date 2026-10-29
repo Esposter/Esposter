@@ -88,7 +88,7 @@ committed.
 | `quest-screen-details` | `QuestScreen` | 21.34% | 0.929 | 19.93% | 0.5645 |
 | `quest-screen-header` | `QuestScreen` | 9.04% | 0.928 | 8.26% | 0.3522 |
 | `quest-screen-list` | `QuestScreen` | 8.75% | 0.821 | 7.13% | 0.3252 |
-| `reputation-screen` | `ReputationScreen` | 2.10% | 0.877 | 1.39% | 0.1458 |
+| `reputation-screen` | `ReputationScreen` | 2.00% | 0.876 | 1.40% | 0.1434 |
 | `settings-audio-rows` | `MenuSettings` | 1.01% | 0.995 | 0.38% | 0.0745 |
 | `settings-graphics` | `MenuSettings` | 1.59% | 0.996 | 1.26% | 0.1020 |
 | `settings-graphics-rows` | `MenuSettings` | 1.07% | 0.998 | 0.40% | 0.0888 |

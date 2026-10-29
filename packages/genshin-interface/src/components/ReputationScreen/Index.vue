@@ -100,8 +100,34 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   font-weight: 600;
 }
 
+/* The head: the title on two lines 250 wide past the emblem's place, the way back a 58 circle at the corner */
 .head {
-  color: #ece5d8;
+  position: absolute;
+  top: calc(var(--unit) * 19);
+  left: calc(var(--unit) * 137);
+  right: calc(var(--unit) * 48);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #f1e6c6;
+}
+
+.title {
+  width: calc(var(--unit) * 250);
+  margin: 0;
+  font-size: calc(var(--unit) * 24);
+  line-height: calc(var(--unit) * 27);
+}
+
+.back {
+  width: calc(var(--unit) * 58);
+  height: calc(var(--unit) * 58);
+  border: calc(var(--unit) * 4) solid rgb(128 128 128 / 0.7);
+  border-radius: 50%;
+  background: #ece8df;
+  color: #33333a;
+  font: inherit;
+  font-size: calc(var(--unit) * 30);
 }
 
 .detail {
@@ -228,7 +254,7 @@ const emit = defineEmits<{ accept: []; close: [] }>();
 
 .badge-number {
   top: calc(var(--unit) * 49.5);
-  font-size: calc(var(--unit) * 45);
+  font-size: calc(var(--unit) * 41);
 }
 
 .hidden-label {
@@ -255,10 +281,11 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   height: calc(var(--unit) * 76);
 }
 
-/* The unlock line, wrapped at 320 and set centred on the row, behind its info mark 12 to the left */
+/* The unlock line, wrapped at 320 and set centred on the row two units lower, as the clip's lines sit; its info mark
+   stands 41 to the left of the line */
 .unlock {
   position: absolute;
-  top: 50%;
+  top: calc(50% + var(--unit) * 2);
   left: calc(var(--unit) * 528);
   width: calc(var(--unit) * 320);
   font-size: calc(var(--unit) * 27);
@@ -270,9 +297,9 @@ const emit = defineEmits<{ accept: []; close: [] }>();
 .unlock::before {
   position: absolute;
   top: 50%;
-  left: calc(var(--unit) * -45);
-  width: calc(var(--unit) * 31);
-  height: calc(var(--unit) * 31);
+  left: calc(var(--unit) * -41);
+  width: calc(var(--unit) * 25);
+  height: calc(var(--unit) * 25);
   border: calc(var(--unit) * 1) solid #d4cfc8;
   border-radius: 50%;
   background: #fbfaf4;
@@ -280,7 +307,7 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   content: "i";
   font-size: calc(var(--unit) * 20);
   letter-spacing: 0;
-  line-height: calc(var(--unit) * 31);
+  line-height: calc(var(--unit) * 25);
   text-align: center;
   translate: 0 -50%;
 }
@@ -311,5 +338,3 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   font-size: calc(var(--unit) * 31);
 }
 </style>
-
-<style scoped src="../../styles/partyReputation.css"></style>
