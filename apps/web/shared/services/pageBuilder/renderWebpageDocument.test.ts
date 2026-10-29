@@ -153,6 +153,20 @@ describe(renderWebpageDocument, () => {
     `);
   });
 
+  test("a language tag that closes its attribute is written escaped rather than as markup", () => {
+    expect.hasAssertions();
+
+    // A quote ends the attribute and the tag after it opens a script, which escapeAttribute keeps out of the page
+    const html = renderWebpageDocument(
+      { content: [], root: { props: { lang: `${TEST_LANG}"><script>alert(1)</script>`, tokens: {} } } },
+      TEST_CONTEXT,
+    );
+
+    expect(html.slice(0, html.indexOf("<head>"))).toBe(
+      '<!doctype html><html lang="en&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;">',
+    );
+  });
+
   test("every node of a 2,000-node document renders, in document order", () => {
     expect.hasAssertions();
 
