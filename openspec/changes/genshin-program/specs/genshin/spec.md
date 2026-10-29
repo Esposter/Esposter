@@ -22,17 +22,6 @@ The agent console's Claude sessions SHALL remain reachable and usable while the 
 - **THEN** the session remains reachable from the console
 - **AND** its messages continue to arrive
 
-### Requirement: The recreation is labelled as an unofficial fan work
-
-The Genshin world's pages SHALL label the recreation as an unofficial, non-commercial fan work that does not present itself as HoYoverse's.
-
-#### Scenario: The world's page carries the fan-made label
-
-- **GIVEN** the reader opens the Genshin world's page
-- **WHEN** the page loads
-- **THEN** the page states that the recreation is an unofficial, non-commercial fan work
-- **AND** the page does not claim to be HoYoverse's product
-
 ### Requirement: The app serves no game asset
 
 The app SHALL serve no model, texture, sound or image file taken from the game, and its geometry and textures SHALL be generated from parameters and procedural nodes.

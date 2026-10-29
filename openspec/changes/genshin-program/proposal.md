@@ -10,7 +10,6 @@ Build the Genshin recreation as the agent console's world: an explorable contine
 
 - **BREAKING:** the Genshin world replaces the agent console's voxel world at `/genshin` outright, and no voxel option is kept.
 - The console's Claude sessions keep working over the Genshin world.
-- The recreation is labelled on its own pages as an unofficial, non-commercial fan work, and does not present itself as HoYoverse's.
 - The app ships no game model, texture, sound or image file; its geometry, textures and shaders are authored in the repository, and its game-derived data reaches it only through the hosted game data.
 - Characters are drawn only from an official HoYoverse model the reader holds, never from a copy the app hosts.
 - Each frame's acceptance is its perceptual score against its game references.
