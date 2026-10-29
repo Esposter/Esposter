@@ -18,7 +18,6 @@ import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWi
 import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
 import { computeLabelSimilarity } from "#src/services/genshinParity/witness/computeLabelSimilarity";
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
-import sharp from "sharp";
 
 // The glow, read where the light pass reads the frame: at each current build's reference under the scene's pose for it,
 // The pixels of each family the exports' materials add a glow over their lit colour to (their emission, cut where the
@@ -41,7 +40,7 @@ export const measureGlow = async (component: DerivedAssetComponent): Promise<Par
       // The stand-in as the scene lights it, its exports hidden, under the same camera
       const oursShot = await shootWitnessFamilies(page, [], { height, width });
       const referenceShot = await readRawRgb(image, width, height);
-      const oursFrame = await sharp(oursShot).removeAlpha().raw().toBuffer();
+      const oursFrame = await readRawRgb(oursShot, width, height);
       const pixelCount = width * height;
       const glowPart = new Float32Array(part.length);
       for (let pixel = 0; pixel < pixelCount; pixel++) {
