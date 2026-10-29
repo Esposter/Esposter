@@ -393,7 +393,7 @@ onMounted(() => {
   font-weight: 600;
   text-anchor: middle;
   dominant-baseline: middle;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.07em;
 }
 
 .area-progress {
