@@ -1,6 +1,6 @@
 # Forging
 
-The [forging](../../specs/genshin/forging/design.md) page holds the recipes, queues, orders, daily cap and forging talents. What is left is what a player sees: the blacksmith's place and the forge screen's wiring to the forge state.
+The [forging](../../specs/genshin/forging/design.md) page holds the recipes, queues, orders, daily cap and forging talents. What is left is what a player sees: the screen's measured look and its opening from the blacksmith's point in the world.
 
 ## Decisions
 
@@ -14,7 +14,7 @@ The [forging](../../specs/genshin/forging/design.md) page holds the recipes, que
 
 ## Scope and order
 
-**Still to build, in order:**
+**Built, in order:**
 
 1. **The blacksmith's place.** Reads Mondstadt's `Blacksmith` building point from the hosted `sceneGroups/scene3` record; the screen is reached from the blacksmith's point in the world, as the bench is.
 2. **The screen's wiring component.** The forge screen's container in `genshin-world`, as the crafting bench's is: the recipe and queue cells from the forge state, and each queue's Obtain through `obtainForgeOrder`, which already gains the Adventure EXP at the Adventure Rank. Its words are the forge page's own, under the manual ids `find --id "^UI_FORGE_PAGE_"` lists: `UI_FORGE_PAGE_OK_BUTTON` (Start), `UI_FORGE_PAGE_FORMULA_BUTTON` (Materials), `UI_FORGE_PAGE_ITEM_GET` (Obtained), the queue's `UI_FORGE_PAGE_QUEUE_*` and the rest.
