@@ -63,6 +63,10 @@ partition's rows (the IndexedDB pagination caches, above all) takes the same sha
 
 `isLoaded` is keyed like the rows it describes and lives and dies with them, because an empty list is either "not loaded yet" or "loaded and genuinely empty" and only the load knows which. Held anywhere shorter-lived — a local in whichever composable asks — it starts fresh under a list that did not, and answers for a partition it never watched load.
 
+## Full rows, not `Partial<T>`
+
+A store map that needs fields for entities other than the current user's, a nickname for every room member say, widens the endpoint to return those members' full rows, so the map holds the whole entity. A `Partial<T>` value makes every write a merge and every read a guess about which fields are present.
+
 ## `createOperationData`
 
 Use it **wherever the item type satisfies `ToData<AEntity>`** — it generates typed CRUD (`createXxx`, `updateXxx`, `deleteXxx`, `pushXxxs`, `unshiftXxxs`) for an entity list ref. `Foo` satisfies this (`id`, `createdAt`, `updatedAt`, `deletedAt` from `pgTable`).
