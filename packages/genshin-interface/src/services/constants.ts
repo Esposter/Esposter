@@ -125,11 +125,10 @@ export const GAME_LIT_GOLD_LABEL = "#d6cdb8";
 // the role and its curls take it whole, and the role's rule takes it at 0.28 alpha
 export const GAME_DIALOGUE_GOLD = "#ffc700";
 // The cooking bar is the top half of an ellipse on the 1920 by 1080 stage, running from its left end to its right end:
-// Its centre and its two radii
+// Its centre and its horizontal radius
 export const COOKING_ARC_CENTRE_X = 960;
 export const COOKING_ARC_CENTRE_Y = 832;
 export const COOKING_ARC_RADIUS_X = 435;
-export const COOKING_ARC_RADIUS_Y = 120;
 // A mismatch over this share of an image is listed after the cases, one percent being the 99% likeness the screens are held to
 export const MISMATCH_RATIO_BAR = 0.01;
 // The matcher's message for a shot that differs from its image, then the pixels that differ and their ratio
