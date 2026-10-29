@@ -49,6 +49,7 @@ describe("usePageBuilderInsert", () => {
     insert(WebpageNodeType.Text);
 
     const content = pageBuilderDocumentStore.getDocument(resourceId)?.content ?? [];
+
     expect(content.map(({ props, type }) => [props.id, type])).toStrictEqual([
       [TEST_ID, WebpageNodeType.Button],
       [insertedId, WebpageNodeType.Text],

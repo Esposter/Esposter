@@ -27,6 +27,7 @@ describe("pageBuilderEmailPreview", () => {
     await flushPromises();
 
     const frame = wrapper.find<HTMLIFrameElement>("iframe");
+
     expect(frame.attributes("srcdoc")).toBe(html);
     expect(frame.element.style.width).toBe(`${DEVICE_WIDTH_MAP[PageBuilderDevice.Mobile]}px`);
     wrapper.unmount();
@@ -43,6 +44,7 @@ describe("pageBuilderEmailPreview", () => {
     await flushPromises();
 
     const alert = wrapper.find('[role="alert"]');
+
     expect(alert.text()).toBe(message);
     expect(wrapper.element.firstElementChild).toBe(alert.element);
     wrapper.unmount();

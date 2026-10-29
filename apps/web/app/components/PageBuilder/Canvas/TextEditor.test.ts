@@ -142,6 +142,7 @@ describe("pageBuilderCanvasTextEditor", () => {
 
     expect(richTextSuggestionStore.suggestion?.props.items).toStrictEqual(["first_name", "last_name"]);
     richTextSuggestionStore.suggestion?.props.command("last_name");
+
     expect(editor.getText()).toBe(`${TEST_ID} {{last_name}}`);
     component.unmount();
   });

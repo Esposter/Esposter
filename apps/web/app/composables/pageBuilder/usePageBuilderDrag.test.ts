@@ -203,6 +203,7 @@ describe(usePageBuilderDrag, () => {
 
     const insertedId = pageBuilderCanvasStore.getSelectedNodeId(RESOURCE_ID);
     const document = pageBuilderDocumentStore.getDocument(RESOURCE_ID);
+
     expect(document && getSlotChildIds(webpageKind, document, COLUMN_SLOT)).toStrictEqual([
       TEXT_ONE,
       insertedId,
@@ -241,10 +242,13 @@ describe(usePageBuilderDrag, () => {
 
     startPaletteDrag(WebpageNodeType.Text, pointerAt("pointerdown", 0, 0), () => createGeometry());
     window.dispatchEvent(pointerAt("pointermove", 1, 1));
+
     expect(isDragging.value).toBe(false);
     window.dispatchEvent(pointerAt("pointermove", 100, 30));
+
     expect(isDragging.value).toBe(true);
     window.dispatchEvent(pointerAt("pointerup", 100, 30));
+
     expect(isDragging.value).toBe(false);
   });
 

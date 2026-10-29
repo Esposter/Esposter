@@ -99,6 +99,7 @@ describe(usePageBuilderClipboard, () => {
     ).pasteSelected();
 
     const pastedNode = pageBuilderDocumentStore.getDocument(targetId)?.content[0];
+
     expect(pastedNode).toStrictEqual({
       props: { content: TEST_TEXT_CONTENT, id: pastedNode?.props.id },
       type: WebpageNodeType.Text,
