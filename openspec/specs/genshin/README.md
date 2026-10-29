@@ -134,10 +134,10 @@ What is still to build is the [Genshin proposal](../../changes/genshin-program/d
 
 ## Shipped
 
-- The engine as a package of single-purpose modules under the world package, each module added by the page that first needs it.
-- The rendering style, in the Windrise scene, replacing the console's voxel world.
+- The engine as a package of single-purpose modules, each module added by the page that first needs it.
+- The rendering style, in the Windrise scene.
 - The sky and the game's day over it.
-- The terrain, streamed and morphing, in place of Windrise's one fixed heightfield.
+- The terrain, streamed and morphing.
 - Still water, first in the lake east of Windrise.
 - The wind, and grass generated around the camera.
 - The world map's catalogue, and Mondstadt's landmarks loaded by reach.
@@ -170,14 +170,14 @@ What is still to build is the [Genshin proposal](../../changes/genshin-program/d
 - Commissions: every region's daily tasks dealt from the areas reached and claimed for their rank's reward, the handbook tab and the kept day not yet built.
 - The official map's fleeing birds and beasts, White Pigeon, Crimson Fox and Squirrel, stood in Windrise's scene and running from the character in reach, on provisional flight numbers, with no strike, drop or pick-up yet.
 - Fishing's points fitted by region, its fish, rods and pools read from the game's tables, and its rules for a stock's day and night and refill, a draw, a lure's reaction and the reel's tension, with casts made from the points on its screen.
-- Hosted game data, first phase: the character profiles and book bodies published to Blob storage by a keyless publisher and read on the Profile tab and in the book reader, so the package no longer bundles their generated JSON.
-- Hosted game data, second phase: every other bundled dataset published to Blob storage and read at the world's gate, taking the `genshin-world` dist from about 20 MB to about 2 MB.
-- The load budget: each screen's load steps measured and held to a budget by `genshin:parity load`, and the world's load cut to what its first frame reads, its ready on the production build more than halved.
-- The kit framework: each character's kit a hosted record read from gcsim's last MIT release, the wiki and the game's own tables, joined to a behaviour module over the shared primitives and loaded only for the party, the modules down to about a third of their lines and the kit tree to no duplicate code.
+- Hosted game data, first phase: the character profiles and book bodies published to Blob storage by a keyless publisher and read on the Profile tab and in the book reader, so the package bundles none of their generated JSON.
+- Hosted game data, second phase: every other bundled dataset published to Blob storage and read at the world's gate, which keeps the `genshin-world` dist to about 2 MB.
+- The load budget: each screen's load steps measured and held to a budget by `genshin:parity load`, and the world's load limited to what its first frame reads.
+- The kit framework: each character's kit a hosted record read from gcsim's last MIT release, the wiki and the game's own tables, joined to a behaviour module over the shared primitives and loaded only for the party, and the kit tree with no duplicate code.
 - Save data's roster: the characters a player holds, with their copies and Companionship EXP, kept through a reload, and a guest's characters merged with the account's by the further copy of each.
 - Exploring: Teleport Waypoints paired with the scene's transport points and written into Mondstadt's data, each jump landing at the game's own arrival place.
 - Adventurer's four-piece: a chest opened in the world restores its wearer 6% of its Max HP each second for five seconds, the set's bonus in combat built as a module that answers the chest's event.
-- The world's one reset clock: the daily, weekly and monthly resets read at the server's 04:00 in UTC+8, and the game day counted from the daily reset, in place of each system's own zone and constants.
+- The world's one reset clock: the daily, weekly and monthly resets read at the server's 04:00 in UTC+8, and the game day counted from the daily reset.
 - The Mystic Offering at the Crafting Bench from Adventure Rank 45: three unlocked five-star artifacts from the bag become a strongbox that rolls a random piece of the set the player chose, with the piece's odds and the batch of thirty-nine not yet built.
 
 ## Key files
