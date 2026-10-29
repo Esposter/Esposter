@@ -87,8 +87,5 @@ describe("forgeScreen", () => {
 
     expect(onUpdateRecipeId).toHaveBeenCalledExactlyOnceWith(weaponRecipe.id);
     expect(onUpdateAmount).toHaveBeenCalledExactlyOnceWith(weaponRecipe.queueSize);
-
-    expect(onUpdateRecipeId).toHaveBeenCalledExactlyOnceWith(weaponRecipe.id);
-    expect(onUpdateAmount).toHaveBeenCalledExactlyOnceWith(weaponRecipe.queueSize);
   });
 });
