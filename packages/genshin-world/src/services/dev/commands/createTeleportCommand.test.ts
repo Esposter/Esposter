@@ -2,6 +2,7 @@ import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 
 import { createTeleportCommand } from "#src/services/dev/commands/createTeleportCommand";
 import { DEV_CATALOGUE, DEV_LANDMARK } from "#src/services/dev/constants.test";
+import { runDevCommand } from "#src/services/dev/runDevCommand";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { describe, expect, test, vi } from "vitest";
 
@@ -30,6 +31,21 @@ describe(createTeleportCommand, () => {
 
     expect({ result }).toStrictEqual({ result: { ok: true, value: "120 4 -30" } });
     expect(jumpTo).toHaveBeenCalledExactlyOnceWith({ heightOffset: 4, point: { x: 120, z: -30 }, yaw: 0 });
+  });
+
+  test("reads a line's words in the order its arguments are written, so a named place and coordinates both land", () => {
+    expect.hasAssertions();
+
+    const jumpTo = vi.fn<(pose: WorldJumpPose) => void>();
+    const command = createTeleportCommand({ catalogue: DEV_CATALOGUE, getLandmarks: () => [DEV_LANDMARK], jumpTo });
+    const named = runDevCommand(command, ["Windrise"]);
+    const coordinates = runDevCommand(command, ["120", "4", "-30"]);
+
+    expect({ coordinates, named }).toStrictEqual({
+      coordinates: { ok: true, value: "120 4 -30" },
+      named: { ok: true, value: "Windrise" },
+    });
+    expect(jumpTo).toHaveBeenLastCalledWith({ heightOffset: 4, point: { x: 120, z: -30 }, yaw: 0 });
   });
 
   test("refuses coordinates that are incomplete or not numbers, and jumps nowhere", () => {
