@@ -1,0 +1,982 @@
+{
+  "gameVersion": "7.1.0",
+  "records": [],
+  "recordings": [],
+  "references": [
+    {
+      "attribution": { "recording": "session-2.mp4", "second": 157.5 },
+      "bytes": 1717824,
+      "capturedAt": "2026-10-08T14:33:00.742Z",
+      "cleanPlate": {
+        "bytes": 1105658,
+        "digest": "198829ab7fe695d0",
+        "height": 1440,
+        "sha256": "53fb93307013bc1178d0fd38d22e1b200c86cf1d6fcc39835c6c42a9cad69dec",
+        "width": 3440
+      },
+      "height": 1440,
+      "id": "character-artifacts",
+      "kind": "recording-frame",
+      "sha256": "d92f19e73248f2556cc2ee3f6871b62174ce7e364ef207eacf28e5f30335179c",
+      "source": "session-2.mp4 at 157.5s",
+      "sourceFormat": "png",
+      "width": 3440
+    },
+    {
+      "attribution": { "recording": "session-2.mp4", "second": 157.5 },
+      "bytes": 1717824,
+      "capturedAt": "2026-10-08T14:38:10.566Z",
+      "cleanPlate": {
+        "bytes": 1105658,
+        "digest": "198829ab7fe695d0",
+        "height": 1440,
+        "sha256": "53fb93307013bc1178d0fd38d22e1b200c86cf1d6fcc39835c6c42a9cad69dec",
+        "width": 3440
+      },
+      "height": 1440,
+      "id": "character-artifacts-tabs",
+      "kind": "recording-frame",
+      "sha256": "d92f19e73248f2556cc2ee3f6871b62174ce7e364ef207eacf28e5f30335179c",
+      "source": "session-2.mp4 at 157.5s",
+      "sourceFormat": "png",
+      "width": 3440
+    },
+    {
+      "attribution": { "recording": "session-2.mp4", "second": 155 },
+      "bytes": 859788,
+      "capturedAt": "2026-10-08T08:03:54.235Z",
+      "cleanPlate": {
+        "bytes": 535288,
+        "digest": "89d879f6ff8b610c",
+        "height": 1440,
+        "sha256": "504825e40c17cbbe3979162930a5ae7410ce72c84505a6306f0c7ec178b01ff1",
+        "width": 3440
+      },
+      "height": 1440,
+      "id": "character-attributes",
+      "kind": "recording-frame",
+      "sha256": "6e56c6138243e3cdcbbd3f8ef266c6eed5da0fc6ff2fb924bd024d2773393421",
+      "source": "session-2.mp4 at 155s",
+      "sourceFormat": "png",
+      "width": 3440
+    },
+    {
+      "attribution": { "recording": "session-2.mp4", "second": 155 },
+      "bytes": 859788,
+      "capturedAt": "2026-10-08T08:06:16.411Z",
+      "cleanPlate": {
+        "bytes": 535288,
+        "digest": "89d879f6ff8b610c",
+        "height": 1440,
+        "sha256": "504825e40c17cbbe3979162930a5ae7410ce72c84505a6306f0c7ec178b01ff1",
+        "width": 3440
+      },
+      "height": 1440,
+      "id": "character-attributes-panel",
+      "kind": "recording-frame",
+      "sha256": "6e56c6138243e3cdcbbd3f8ef266c6eed5da0fc6ff2fb924bd024d2773393421",
+      "source": "session-2.mp4 at 155s",
+      "sourceFormat": "png",
+      "width": 3440
+    },
+    {
+      "attribution": { "recording": "session-2.mp4", "second": 155 },
+      "bytes": 859788,
+      "capturedAt": "2026-10-08T08:06:16.413Z",
+      "cleanPlate": {
+        "bytes": 535288,
+        "digest": "89d879f6ff8b610c",
+        "height": 1440,
+        "sha256": "504825e40c17cbbe3979162930a5ae7410ce72c84505a6306f0c7ec178b01ff1",
+        "width": 3440
+      },
+      "height": 1440,
+      "id": "character-attributes-tabs",
+      "kind": "recording-frame",
+      "sha256": "6e56c6138243e3cdcbbd3f8ef266c6eed5da0fc6ff2fb924bd024d2773393421",
+      "source": "session-2.mp4 at 155s",
+      "sourceFormat": "png",
+      "width": 3440
+    },
+    {
+      "attribution": { "recording": "session-2.mp4", "second": 155 },
+      "bytes": 859788,
+      "capturedAt": "2026-10-08T08:06:16.408Z",
+      "cleanPlate": {
+        "bytes": 535288,
+        "digest": "89d879f6ff8b610c",
+        "height": 1440,
+        "sha256": "504825e40c17cbbe3979162930a5ae7410ce72c84505a6306f0c7ec178b01ff1",
+        "width": 3440
+      },
+      "height": 1440,
+      "id": "character-attributes-top",
+      "kind": "recording-frame",
+      "sha256": "6e56c6138243e3cdcbbd3f8ef266c6eed5da0fc6ff2fb924bd024d2773393421",
+      "source": "session-2.mp4 at 155s",
+      "sourceFormat": "png",
+      "width": 3440
+    },
+    {
+      "attribution": { "recording": "session-2.mp4", "second": 158.3 },
+      "bytes": 1360812,
+      "capturedAt": "2026-10-08T14:33:00.763Z",
+      "cleanPlate": {
+        "bytes": 925868,
+        "digest": "29df8bdb29f51682",
+        "height": 1440,
+        "sha256": "2ef812bf741ec2c8c62a6f469519204b4ae236b5c97f70152fbda7756e8e66dc",
+        "width": 3440
+      },
+      "height": 1440,
+      "id": "character-constellation",
+      "kind": "recording-frame",
+      "sha256": "037723255e55d1165e819cd68281fcfa32fc0e1ff99d594c779a178e013e4112",
+      "source": "session-2.mp4 at 158.3s",
+      "sourceFormat": "png",
+      "width": 3440
+    },
+    {
+      "attribution": { "recording": "session-2.mp4", "second": 158.3 },
+      "bytes": 1360812,
+      "capturedAt": "2026-10-08T14:38:10.569Z",
+      "cleanPlate": {
+        "bytes": 925868,
+        "digest": "29df8bdb29f51682",
+        "height": 1440,
+        "sha256": "2ef812bf741ec2c8c62a6f469519204b4ae236b5c97f70152fbda7756e8e66dc",
+        "width": 3440
+      },
+      "height": 1440,
+      "id": "character-constellation-tabs",
+      "kind": "recording-frame",
+      "sha256": "037723255e55d1165e819cd68281fcfa32fc0e1ff99d594c779a178e013e4112",
+      "source": "session-2.mp4 at 158.3s",
+      "sourceFormat": "png",
+      "width": 3440
+    },
+    {
+      "attribution": { "recording": "session-2.mp4", "second": 159 },
+      "bytes": 1294768,
+      "capturedAt": "2026-10-08T13:46:57.013Z",
+      "cleanPlate": {
+        "bytes": 903650,
+        "digest": "68c43de0c784d546",
+        "height": 1440,
+        "sha256": "b660b109d1dbacfa49da345a741e6eaac9889580fcfb8f45f0c817d7ab0b4e8d",
+        "width": 3440
+      },
+      "height": 1440,
+      "id": "character-talents",
+      "kind": "recording-frame",
+      "sha256": "daf4949335525819df084d4407970e915cc3abde2b32722ea3d9f155ef1506bc",
+      "source": "session-2.mp4 at 159s",
+      "sourceFormat": "png",
+      "width": 3440
+    },
+    {
+      "attribution": { "recording": "session-2.mp4", "second": 159 },
+      "bytes": 1294768,
+      "capturedAt": "2026-10-08T13:46:57.019Z",
+      "cleanPlate": {
+        "bytes": 903650,
+        "digest": "68c43de0c784d546",
+        "height": 1440,
+        "sha256": "b660b109d1dbacfa49da345a741e6eaac9889580fcfb8f45f0c817d7ab0b4e8d",
+        "width": 3440
+      },
+      "height": 1440,
+      "id": "character-talents-tabs",
+      "kind": "recording-frame",
+      "sha256": "daf4949335525819df084d4407970e915cc3abde2b32722ea3d9f155ef1506bc",
+      "source": "session-2.mp4 at 159s",
+      "sourceFormat": "png",
+      "width": 3440
+    },
+    {
+      "attribution": { "recording": "session-2.mp4", "second": 156 },
+      "bytes": 1513312,
+      "capturedAt": "2026-10-08T13:46:56.859Z",
+      "cleanPlate": {
+        "bytes": 1011226,
+        "digest": "883960070af3cd81",
+        "height": 1440,
+        "sha256": "9c9b96e02d921a28ea5a26d6ce44b6fd173f2e242ba2eb2557b4fb4623ca218e",
+        "width": 3440
+      },
+      "height": 1440,
+      "id": "character-weapons",
+      "kind": "recording-frame",
+      "sha256": "021951788df6eb37b7ebf6ead2f340959a61b72462608e46385fa43fbd0f0bff",
+      "source": "session-2.mp4 at 156s",
+      "sourceFormat": "png",
+      "width": 3440
+    },
+    {
+      "attribution": { "recording": "session-2.mp4", "second": 156 },
+      "bytes": 1513312,
+      "capturedAt": "2026-10-08T13:46:56.832Z",
+      "cleanPlate": {
+        "bytes": 1011226,
+        "digest": "883960070af3cd81",
+        "height": 1440,
+        "sha256": "9c9b96e02d921a28ea5a26d6ce44b6fd173f2e242ba2eb2557b4fb4623ca218e",
+        "width": 3440
+      },
+      "height": 1440,
+      "id": "character-weapons-tabs",
+      "kind": "recording-frame",
+      "sha256": "021951788df6eb37b7ebf6ead2f340959a61b72462608e46385fa43fbd0f0bff",
+      "source": "session-2.mp4 at 156s",
+      "sourceFormat": "png",
+      "width": 3440
+    },
+    {
+      "attribution": {
+        "wikiTitle": "File:Court of Fontaine.png",
+        "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3ACourt_of_Fontaine.png"
+      },
+      "bytes": 5010200,
+      "capturedAt": "2026-10-08T07:37:36.057Z",
+      "height": 2160,
+      "id": "court-of-fontaine-location",
+      "kind": "wiki",
+      "sha256": "c05a8561921204d4650d0545436d83f5b578961632971a0598d0b97c47e9ebf5",
+      "sourceFormat": "png",
+      "width": 3840
+    },
+    {
+      "attribution": { "recording": "yt-nWBqOXWZuFg.mp4", "second": 19, "videoId": "nWBqOXWZuFg" },
+      "bytes": 411900,
+      "capturedAt": "2026-10-08T13:28:45.138Z",
+      "cleanPlate": {
+        "bytes": 410190,
+        "digest": "72521c167fdc01c2",
+        "height": 720,
+        "sha256": "960b7f9dbd4f6504caf91ce9a4d11c762988496ce6e96a431c4f53d11402c1ad",
+        "width": 1280
+      },
+      "height": 720,
+      "id": "dialogue-choices-line",
+      "kind": "recording-frame",
+      "sha256": "ce5a18dbbb7c6d9b092b61e23f89f357a30ad84bd17dc34e1d6c054d12e22607",
+      "source": "yt-nWBqOXWZuFg.mp4 at 19s",
+      "sourceFormat": "png",
+      "width": 1280
+    },
+    {
+      "attribution": { "recording": "yt-nWBqOXWZuFg.mp4", "second": 19, "videoId": "nWBqOXWZuFg" },
+      "bytes": 411900,
+      "capturedAt": "2026-10-08T13:28:55.738Z",
+      "cleanPlate": {
+        "bytes": 405596,
+        "digest": "0540a7377b927558",
+        "height": 720,
+        "sha256": "40ec2d20b59ce429e914b52ec97c697219e3e2734f14970bce5c754a13fb9eb0",
+        "width": 1280
+      },
+      "height": 720,
+      "id": "dialogue-choices-replies",
+      "kind": "recording-frame",
+      "sha256": "ce5a18dbbb7c6d9b092b61e23f89f357a30ad84bd17dc34e1d6c054d12e22607",
+      "source": "yt-nWBqOXWZuFg.mp4 at 19s",
+      "sourceFormat": "png",
+      "width": 1280
+    },
+    {
+      "attribution": { "recording": "yt-nWBqOXWZuFg.mp4", "second": 19, "videoId": "nWBqOXWZuFg" },
+      "bytes": 411900,
+      "capturedAt": "2026-10-08T13:28:52.848Z",
+      "cleanPlate": {
+        "bytes": 411142,
+        "digest": "51522e6d2532fd6b",
+        "height": 720,
+        "sha256": "6ae29412141e682787c03f80d8c1ce9ba1b755b69b424403ada6baa848c6e576",
+        "width": 1280
+      },
+      "height": 720,
+      "id": "dialogue-choices-speaker",
+      "kind": "recording-frame",
+      "sha256": "ce5a18dbbb7c6d9b092b61e23f89f357a30ad84bd17dc34e1d6c054d12e22607",
+      "source": "yt-nWBqOXWZuFg.mp4 at 19s",
+      "sourceFormat": "png",
+      "width": 1280
+    },
+    {
+      "attribution": { "recording": "yt-nWBqOXWZuFg.mp4", "second": 23, "videoId": "nWBqOXWZuFg" },
+      "bytes": 423694,
+      "capturedAt": "2026-10-08T13:28:55.736Z",
+      "cleanPlate": {
+        "bytes": 410266,
+        "digest": "829c0981e28214eb",
+        "height": 720,
+        "sha256": "53321a30bb2622fdb0e49eeae160449898d9bfd4f1e396d40a279c00e55930c3",
+        "width": 1280
+      },
+      "height": 720,
+      "id": "dialogue-line",
+      "kind": "recording-frame",
+      "sha256": "3886cd2fd334326b44b61d1bbd1b19da5736c6789ea23d11701d184d8067f0d9",
+      "source": "yt-nWBqOXWZuFg.mp4 at 23s",
+      "sourceFormat": "png",
+      "width": 1280
+    },
+    {
+      "attribution": { "recording": "yt-nWBqOXWZuFg.mp4", "second": 29, "videoId": "nWBqOXWZuFg" },
+      "bytes": 397392,
+      "capturedAt": "2026-10-08T13:28:55.738Z",
+      "cleanPlate": {
+        "bytes": 395426,
+        "digest": "3fc664dcbc24e7dd",
+        "height": 720,
+        "sha256": "a71388b6b543fcbd8a7b709a6199251dbc667071794ac8e1e08d38a5a7ee42a8",
+        "width": 1280
+      },
+      "height": 720,
+      "id": "dialogue-paimon-line",
+      "kind": "recording-frame",
+      "sha256": "8e438a123b61a437aaa865dc788e29573d1972cad3b2b2d6dcde753fe8f88690",
+      "source": "yt-nWBqOXWZuFg.mp4 at 29s",
+      "sourceFormat": "png",
+      "width": 1280
+    },
+    {
+      "attribution": {
+        "wikiTitle": "File:Everfrozen Earth.png",
+        "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3AEverfrozen_Earth.png"
+      },
+      "bytes": 1047396,
+      "capturedAt": "2026-10-08T07:37:18.144Z",
+      "height": 1080,
+      "id": "everfrozen-earth-location",
+      "kind": "wiki",
+      "sha256": "0d8c73fbec4f289d29c08538aa2b24f39af64e39f80e3126bef9feaeb58cfaba",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "yt-kIDee7nyD0w-menu-quit-prompt.mp4", "second": 26.75, "videoId": "kIDee7nyD0w" },
+      "bytes": 164026,
+      "capturedAt": "2026-10-08T23:49:50.443Z",
+      "height": 1080,
+      "id": "exit-prompt",
+      "kind": "recording-frame",
+      "sha256": "9db7da89b8d78024c353c7ebb5dd4726b3fc1f94dae9e3df8adacf719bc2dbb4",
+      "source": "yt-kIDee7nyD0w-menu-quit-prompt.mp4 at 26.75s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": {
+        "wikiTitle": "File:Adventurer Handbook Experience.png",
+        "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3AAdventurer_Handbook_Experience.png"
+      },
+      "bytes": 1306148,
+      "capturedAt": "2026-10-08T05:52:37.255Z",
+      "height": 1730,
+      "id": "handbook-experience",
+      "kind": "wiki",
+      "sha256": "29518ee84fbf12bdeeaaaa802e9890d8e159714bc29989e3a6cfcc95b72f1b98",
+      "sourceFormat": "png",
+      "width": 3130
+    },
+    {
+      "attribution": { "recording": "yt-sQNqMfmfkZU.mp4", "second": 8, "videoId": "sQNqMfmfkZU" },
+      "bytes": 363208,
+      "capturedAt": "2026-10-02T00:53:52.448Z",
+      "height": 1080,
+      "id": "health-notice",
+      "kind": "recording-frame",
+      "sha256": "aa80f0bdbcea9d5f3300a7f4e035869472da777c75cff3562735ddbfbed892da",
+      "source": "yt-sQNqMfmfkZU.mp4 at 8s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "session-2.mp4", "second": 12.5 },
+      "bytes": 170852,
+      "capturedAt": "2026-10-09T08:16:39.062Z",
+      "height": 1080,
+      "id": "health-notice-japanese",
+      "kind": "recording-frame",
+      "language": "ja",
+      "sha256": "72c9ce78179544f5a91635a32f707a1c682385e151562e8d317369436d05d75e",
+      "source": "session-2.mp4 at 12.5s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "bili-av532052219.mp4", "second": 9.5 },
+      "bytes": 221728,
+      "capturedAt": "2026-10-08T05:52:57.893Z",
+      "height": 1080,
+      "id": "health-notice-mainland",
+      "kind": "recording-frame",
+      "sha256": "7bf0ae0abd507fbe88147419a21c0120693457511a8f260ff90dbcd3faa75da3",
+      "source": "bili-av532052219.mp4 at 9.5s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "world-pickup.mkv", "second": 20 },
+      "bytes": 831578,
+      "capturedAt": "2026-10-18T07:09:14.123Z",
+      "cleanPlate": {
+        "bytes": 828492,
+        "digest": "07f7d34e24796cde",
+        "height": 1080,
+        "sha256": "b24137a34c5758828614b2c38d988f902b8c9daf5e6d5ac7434b1891c0f6785a",
+        "width": 1920
+      },
+      "height": 1080,
+      "id": "hud-paimon-button",
+      "kind": "recording-frame",
+      "sha256": "045c9a8826dcec5646c0e585d6a906e376743f909b2304a8394f7f6d889d3674",
+      "source": "world-pickup.mkv at 20s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "world-pickup.mkv", "second": 20 },
+      "bytes": 831578,
+      "capturedAt": "2026-10-11T04:56:40.273Z",
+      "cleanPlate": {
+        "bytes": 830412,
+        "digest": "75c73259a29aa80a",
+        "height": 1080,
+        "sha256": "4efd15fe86c38f3e34238cd16f51375ca7ce2aaabcec35fe79b64f5a4048cd1f",
+        "width": 1920
+      },
+      "height": 1080,
+      "id": "hud-world-keys",
+      "kind": "recording-frame",
+      "sha256": "045c9a8826dcec5646c0e585d6a906e376743f909b2304a8394f7f6d889d3674",
+      "source": "world-pickup.mkv at 20s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "world-pickup.mkv", "second": 70 },
+      "bytes": 779734,
+      "capturedAt": "2026-10-08T08:00:48.747Z",
+      "cleanPlate": {
+        "bytes": 647262,
+        "digest": "a622850ff0cd839f",
+        "height": 934,
+        "sha256": "8a8a4a200a54f4b300a112406f876a887b37ae43ae8726b19471d7b81377db01",
+        "width": 1920
+      },
+      "height": 934,
+      "id": "hud-world-pickup",
+      "kind": "recording-frame",
+      "sha256": "1eae6cb67331afd49b39d7af6dca4435a9bb61eea1880773cd53b2ac96680e81",
+      "source": "world-pickup.mkv at 70s, cropped to 1920x935 from 0,72",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": {
+        "wikiTitle": "File:Inazuma City.png",
+        "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3AInazuma_City.png"
+      },
+      "bytes": 4242804,
+      "capturedAt": "2026-10-08T07:36:55.258Z",
+      "height": 2304,
+      "id": "inazuma-city-location",
+      "kind": "wiki",
+      "sha256": "b9339bb283b70cc5cddd0d7430c64b619202191a9b3f14c2d7b8ec4c5c2eb1ac",
+      "sourceFormat": "png",
+      "width": 4096
+    },
+    {
+      "attribution": { "recording": "world-pickup.mkv", "second": 9 },
+      "bytes": 1468462,
+      "capturedAt": "2026-10-08T08:01:34.362Z",
+      "cleanPlate": {
+        "bytes": 1456888,
+        "digest": "dfcde7a72ef6e547",
+        "height": 1080,
+        "sha256": "6e1e9227b8091951c1e5f07f1d72dfeb29d75429a38ee818012ad36d8220c4c4",
+        "width": 1920
+      },
+      "height": 1080,
+      "id": "interaction-prompts-pickup",
+      "kind": "recording-frame",
+      "sha256": "14184e628b6aa07d8022c3e5d7b4ef72c765976094caf7d4ec505a8945e35063",
+      "source": "world-pickup.mkv at 9s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "yt-_agTJviXj7s-bag.mp4", "second": 58, "videoId": "_agTJviXj7s" },
+      "bytes": 720442,
+      "capturedAt": "2026-10-08T08:09:15.517Z",
+      "cleanPlate": {
+        "bytes": 708730,
+        "digest": "b61bf58ad9abb515",
+        "height": 1080,
+        "sha256": "b9f7cf3d0fdb635d3387655674c2558b13fe712bc69ffa48b06078e4eeac1897",
+        "width": 1920
+      },
+      "height": 1080,
+      "id": "inventory-food",
+      "kind": "recording-frame",
+      "sha256": "6977bac30f731e8210d5a3ed1f77660b4d61ddfc7b8f29d8c6f821097c6229f8",
+      "source": "yt-_agTJviXj7s-bag.mp4 at 58s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "yt-_agTJviXj7s-bag.mp4", "second": 30, "videoId": "_agTJviXj7s" },
+      "bytes": 880478,
+      "capturedAt": "2026-10-08T07:06:24.023Z",
+      "cleanPlate": {
+        "bytes": 412238,
+        "digest": "0c6414f0dbc719f4",
+        "height": 1080,
+        "sha256": "c8f407f6e03ad0ddae4abcce58aeda3e6f186c54311a8578696f5662ca5088b8",
+        "width": 1920
+      },
+      "height": 1080,
+      "id": "inventory-weapons",
+      "kind": "recording-frame",
+      "sha256": "65ea984304ee465ff81a9540d26e2ff02228bb5da8f02c1f28010218fb01f22d",
+      "source": "yt-_agTJviXj7s-bag.mp4 at 30s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": {
+        "wikiTitle": "File:Liyue Harbor.png",
+        "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3ALiyue_Harbor.png"
+      },
+      "bytes": 7242430,
+      "capturedAt": "2026-10-08T07:40:53.517Z",
+      "height": 2304,
+      "id": "liyue-harbor-location",
+      "kind": "wiki",
+      "sha256": "46e7c854eeb6fb63e8932d97f95a8b9f86d438034c7a0e947784c489647665ac",
+      "sourceFormat": "png",
+      "width": 4096
+    },
+    {
+      "attribution": {
+        "wikiTitle": "File:Loading Screen Startup.png",
+        "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3ALoading_Screen_Startup.png"
+      },
+      "bytes": 11450,
+      "capturedAt": "2026-09-29T11:41:22.062Z",
+      "height": 1440,
+      "id": "loading-startup",
+      "kind": "wiki",
+      "sha256": "bb1aa9d66a830c44000098d115877962f8338c202c9dee36138079cac48a60ff",
+      "sourceFormat": "png",
+      "width": 2560
+    },
+    {
+      "attribution": { "recording": "yt-sQNqMfmfkZU.mp4", "second": 18, "videoId": "sQNqMfmfkZU" },
+      "bytes": 610646,
+      "capturedAt": "2026-10-02T00:04:55.813Z",
+      "height": 1080,
+      "id": "login-dawn-title",
+      "kind": "recording-frame",
+      "sha256": "892e882caf4acc11a469d8a89b73c0489f8bac92929af22a75759235e4d9ea8f",
+      "source": "yt-sQNqMfmfkZU.mp4 at 18s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "yt-7kK6HqVfASk.mp4", "second": 8, "videoId": "7kK6HqVfASk" },
+      "bytes": 644742,
+      "capturedAt": "2026-10-02T00:51:05.123Z",
+      "height": 1080,
+      "id": "login-day-title",
+      "kind": "recording-frame",
+      "sha256": "bf17ad6a100b88d504504caa05b2cece77b5fbab59594551acd030d529c58822",
+      "source": "yt-7kK6HqVfASk.mp4 at 8s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": {
+        "wikiTitle": "File:Login Menu Door and Platform.png",
+        "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3ALogin_Menu_Door_and_Platform.png"
+      },
+      "bytes": 1122940,
+      "capturedAt": "2026-09-29T13:05:43.018Z",
+      "height": 1536,
+      "id": "login-door",
+      "kind": "wiki",
+      "sha256": "c819b23971ef62c4a5bb8b9fa3c2f1a61e1a8182e90085d1d3653756d0ccfc7a",
+      "sourceFormat": "png",
+      "width": 2048
+    },
+    {
+      "attribution": { "recording": "yt-rBnfA4pXw6U.mp4", "second": 14, "videoId": "rBnfA4pXw6U" },
+      "bytes": 902492,
+      "capturedAt": "2026-09-30T11:15:26.118Z",
+      "height": 1080,
+      "id": "login-door-recording",
+      "kind": "recording-frame",
+      "sha256": "8fcaf621b3b5436f6f12717406923596b435489acdb527c36a4eacbe8d2a3fe6",
+      "source": "yt-rBnfA4pXw6U.mp4 at 14s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "session-2.mp4", "second": 35.9 },
+      "bytes": 1758164,
+      "capturedAt": "2026-10-07T01:34:25.188Z",
+      "height": 1440,
+      "id": "login-door-session",
+      "kind": "recording-frame",
+      "sha256": "26c8658c3cfe59ba3465840ece6ed2087cb99328e222d6dc90f3051ced55cdc6",
+      "source": "session-2.mp4 at 35.9s",
+      "sourceFormat": "png",
+      "width": 3440
+    },
+    {
+      "attribution": { "recording": "yt-rBnfA4pXw6U.mp4", "second": 14, "videoId": "rBnfA4pXw6U" },
+      "bytes": 902492,
+      "capturedAt": "2026-09-30T01:11:56.872Z",
+      "height": 1080,
+      "id": "login-interface-door",
+      "kind": "recording-frame",
+      "sha256": "8fcaf621b3b5436f6f12717406923596b435489acdb527c36a4eacbe8d2a3fe6",
+      "source": "yt-rBnfA4pXw6U.mp4 at 14s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "bili-av532052219.mp4", "second": 15.5 },
+      "bytes": 667504,
+      "capturedAt": "2026-10-09T01:31:06.209Z",
+      "height": 1080,
+      "id": "login-interface-door-mainland",
+      "kind": "recording-frame",
+      "sha256": "3f9ebc213857cd8ff55aad215c0a8775f1ff86e7d33f1a392e8129ef859b1dd9",
+      "source": "bili-av532052219.mp4 at 15.5s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "yt-rBnfA4pXw6U.mp4", "second": 5, "videoId": "rBnfA4pXw6U" },
+      "bytes": 889530,
+      "capturedAt": "2026-09-30T01:11:56.869Z",
+      "height": 1080,
+      "id": "login-interface-loading",
+      "kind": "recording-frame",
+      "sha256": "34be1bacb86663ba05ab12c28f3ce1ad54ee137a6a9c309ed6f9de0eaf7583e4",
+      "source": "yt-rBnfA4pXw6U.mp4 at 5s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "bili-av532052219.mp4", "second": 12.5 },
+      "bytes": 709386,
+      "capturedAt": "2026-10-01T15:00:18.839Z",
+      "cleanPlate": {
+        "bytes": 701850,
+        "digest": "cfc4cbabb6809f88",
+        "height": 1080,
+        "sha256": "5b61103ae4289e7da3ee47b8a58ae7c8f3635e7e3ee20233f52425fe4234f376",
+        "width": 1920
+      },
+      "height": 1080,
+      "id": "login-interface-mainland-rating",
+      "kind": "recording-frame",
+      "sha256": "5ad147ea5f70346b9c03595b1610fd94b21c143c900df697ca28d8dd3e87cd72",
+      "source": "bili-av532052219.mp4 at 12.5s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "yt-rBnfA4pXw6U.mp4", "second": 0.5, "videoId": "rBnfA4pXw6U" },
+      "bytes": 887394,
+      "capturedAt": "2026-09-30T01:11:56.871Z",
+      "height": 1080,
+      "id": "login-interface-title",
+      "kind": "recording-frame",
+      "sha256": "f919e5b957ca6cee6a2207ce83156a416a8f19987e60bde7bae9216176011ca6",
+      "source": "yt-rBnfA4pXw6U.mp4 at 0.5s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "yt-PnqNza4qWzs.mp4", "second": 12, "videoId": "PnqNza4qWzs" },
+      "bytes": 636842,
+      "capturedAt": "2026-10-02T00:04:11.653Z",
+      "height": 1080,
+      "id": "login-night-title",
+      "kind": "recording-frame",
+      "sha256": "30603d9155abb6f4ca8e464ef8b2d97c68c754fd9948a75ac47f6da8202c4f77",
+      "source": "yt-PnqNza4qWzs.mp4 at 12s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": {
+        "wikiTitle": "File:Map Stardust in Jueyun.png",
+        "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3AMap_Stardust_in_Jueyun.png"
+      },
+      "bytes": 1583778,
+      "capturedAt": "2026-10-08T07:00:18.169Z",
+      "height": 1080,
+      "id": "map-overlay-jueyun",
+      "kind": "wiki",
+      "sha256": "34e4d22e8d854110b6a527e7f23ec3ae553429e716825b4fd7ed033782b09561",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": {
+        "wikiTitle": "File:Mondstadt City.png",
+        "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3AMondstadt_City.png"
+      },
+      "bytes": 7315020,
+      "capturedAt": "2026-10-08T07:36:55.351Z",
+      "height": 2304,
+      "id": "mondstadt-city-location",
+      "kind": "wiki",
+      "sha256": "4122a4d8057595a6cc0567938598a854b2559dd344a252fc297e0d5db8d9b88d",
+      "sourceFormat": "png",
+      "width": 4096
+    },
+    {
+      "attribution": {
+        "wikiTitle": "File:Nasha Town.png",
+        "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3ANasha_Town.png"
+      },
+      "bytes": 2750616,
+      "capturedAt": "2026-10-08T07:36:55.227Z",
+      "height": 1440,
+      "id": "nasha-town-location",
+      "kind": "wiki",
+      "sha256": "66be21e80e031b1b200f65dbe5157879348eca6bbe4330ddb574cb4ce34980e3",
+      "sourceFormat": "png",
+      "width": 2560
+    },
+    {
+      "attribution": { "recording": "yt-jHr2bERjkYc-logout-tech4gamers.mp4", "second": 25, "videoId": "jHr2bERjkYc" },
+      "bytes": 2460984,
+      "capturedAt": "2026-09-29T11:41:22.289Z",
+      "height": 1440,
+      "id": "paimon-menu",
+      "kind": "recording-frame",
+      "sha256": "be9a6fce8fa4bf1cc11bd36973e2afd5910fd106531e93ce532f8c000c99fe0d",
+      "source": "yt-jHr2bERjkYc-logout-tech4gamers.mp4 at 25s",
+      "sourceFormat": "png",
+      "width": 2560
+    },
+    {
+      "attribution": {
+        "wikiTitle": "File:\"People of the Springs\".png",
+        "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3A%22People_of_the_Springs%22.png"
+      },
+      "bytes": 2667416,
+      "capturedAt": "2026-10-08T07:37:49.308Z",
+      "height": 1600,
+      "id": "people-of-the-springs-location",
+      "kind": "wiki",
+      "sha256": "40f70257b63cf6816a6ceb7d31d491279c75ef16a64c53fa882ec02b203d5c1a",
+      "sourceFormat": "png",
+      "width": 2560
+    },
+    {
+      "attribution": { "recording": "session-2.mp4", "second": 1 },
+      "bytes": 44360,
+      "capturedAt": "2026-09-30T01:11:56.896Z",
+      "height": 1440,
+      "id": "publisher-splash",
+      "kind": "recording-frame",
+      "sha256": "7d244b32f20314989c7bb7985acdccda02da62735f9876a7821d91c32a7a37cd",
+      "source": "session-2.mp4 at 1s",
+      "sourceFormat": "png",
+      "width": 3440
+    },
+    {
+      "attribution": {
+        "wikiTitle": "File:Quest Screen.png",
+        "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3AQuest_Screen.png"
+      },
+      "bytes": 635098,
+      "capturedAt": "2026-10-08T05:52:38.368Z",
+      "height": 1080,
+      "id": "quest-screen",
+      "kind": "wiki",
+      "sha256": "0eb7ed001de95d89d992e128e04b161a03c203bca0a95c913c5d505e562d85c6",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": {
+        "wikiTitle": "File:Quest Screen.png",
+        "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3AQuest_Screen.png"
+      },
+      "bytes": 635098,
+      "capturedAt": "2026-10-11T05:20:43.036Z",
+      "height": 1080,
+      "id": "quest-screen-details",
+      "kind": "wiki",
+      "sha256": "0eb7ed001de95d89d992e128e04b161a03c203bca0a95c913c5d505e562d85c6",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": {
+        "wikiTitle": "File:Quest Screen.png",
+        "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3AQuest_Screen.png"
+      },
+      "bytes": 635098,
+      "capturedAt": "2026-10-11T05:20:43.036Z",
+      "height": 1080,
+      "id": "quest-screen-header",
+      "kind": "wiki",
+      "sha256": "0eb7ed001de95d89d992e128e04b161a03c203bca0a95c913c5d505e562d85c6",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": {
+        "wikiTitle": "File:Quest Screen.png",
+        "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3AQuest_Screen.png"
+      },
+      "bytes": 635098,
+      "capturedAt": "2026-10-11T05:20:43.035Z",
+      "height": 1080,
+      "id": "quest-screen-list",
+      "kind": "wiki",
+      "sha256": "0eb7ed001de95d89d992e128e04b161a03c203bca0a95c913c5d505e562d85c6",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "yt-5EmJX_RyuY8-menu-settings.mp4", "second": 178, "videoId": "5EmJX_RyuY8" },
+      "bytes": 308064,
+      "capturedAt": "2026-10-11T05:00:21.809Z",
+      "cleanPlate": {
+        "bytes": 256090,
+        "digest": "0fdadb95316944c2",
+        "height": 1080,
+        "sha256": "205165b3d446c179d4bae072974a45c4aa346179460db9554a373d5000993e59",
+        "width": 1920
+      },
+      "height": 1080,
+      "id": "settings-audio-rows",
+      "kind": "recording-frame",
+      "sha256": "c0f4ddd506f6e1e89f9f0370164c2d67df5fb10ca0d4db556d2c119159475104",
+      "source": "yt-5EmJX_RyuY8-menu-settings.mp4 at 178s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": {
+        "wikiTitle": "File:Login Menu Settings.png",
+        "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3ALogin_Menu_Settings.png"
+      },
+      "bytes": 377402,
+      "capturedAt": "2026-10-08T07:24:05.918Z",
+      "cleanPlate": {
+        "bytes": 356262,
+        "digest": "2da94387ce78a2aa",
+        "height": 1050,
+        "sha256": "46732bb006fd3b9c5c90d0ff77e4acc0c88a92c5d9bc02d4a4bceca30f3e13c0",
+        "width": 1680
+      },
+      "height": 1050,
+      "id": "settings-graphics",
+      "kind": "wiki",
+      "sha256": "830de06ad4e07d26442f157d1405e32a75660dfb00c701ce163712f716a3e058",
+      "sourceFormat": "png",
+      "width": 1680
+    },
+    {
+      "attribution": { "recording": "yt-5EmJX_RyuY8-menu-settings.mp4", "second": 144.5, "videoId": "5EmJX_RyuY8" },
+      "bytes": 355252,
+      "capturedAt": "2026-10-11T05:00:21.809Z",
+      "cleanPlate": {
+        "bytes": 301904,
+        "digest": "b0327318d1b8c5db",
+        "height": 1080,
+        "sha256": "d4e87b9d891c7af1ea0d65a223c8be51b1fdbd64ab39b218fc98366f155f5a52",
+        "width": 1920
+      },
+      "height": 1080,
+      "id": "settings-graphics-rows",
+      "kind": "recording-frame",
+      "sha256": "9d8d67b83de02ffaf25b0bc5ce12c47eaf5d4b6cbcf0d66a5ded44bacdb09ba7",
+      "source": "yt-5EmJX_RyuY8-menu-settings.mp4 at 144.5s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": {
+        "wikiTitle": "File:Sumeru City.png",
+        "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3ASumeru_City.png"
+      },
+      "bytes": 1413244,
+      "capturedAt": "2026-10-08T07:38:42.448Z",
+      "height": 1080,
+      "id": "sumeru-city-location",
+      "kind": "wiki",
+      "sha256": "989a9aebb90543a7eec198dd228203a4af63abc939cc218e96f71e2f3255a0c6",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "yt-sQNqMfmfkZU.mp4", "second": 5, "videoId": "sQNqMfmfkZU" },
+      "bytes": 30732,
+      "capturedAt": "2026-10-02T00:59:20.659Z",
+      "height": 1080,
+      "id": "title-splash",
+      "kind": "recording-frame",
+      "sha256": "9b38e228563a0fbdfbda55ca0be4193757d5ec30d926c6dc1925d1abfa7603df",
+      "source": "yt-sQNqMfmfkZU.mp4 at 5s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "bili-av532052219.mp4", "second": 5 },
+      "bytes": 87670,
+      "capturedAt": "2026-10-01T14:49:24.598Z",
+      "height": 1080,
+      "id": "title-splash-mainland",
+      "kind": "recording-frame",
+      "sha256": "61d6a1a414de290c93d117744a0372c5c68664d472d1f3930c9490c296fb2243",
+      "source": "bili-av532052219.mp4 at 5s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "yt-zPDi6WBJW9Y.mp4", "second": 360, "videoId": "zPDi6WBJW9Y" },
+      "bytes": 1165646,
+      "capturedAt": "2026-10-06T11:17:12.659Z",
+      "height": 1080,
+      "id": "windrise-statue-day",
+      "kind": "recording-frame",
+      "sha256": "59017774e4eb9d16e2268f891db8701b6ae10c1bc5471a4b1c65a0dc9ae4e21d",
+      "source": "yt-zPDi6WBJW9Y.mp4 at 360s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "yt-uhCW3MZTgL8.mp4", "second": 78, "videoId": "uhCW3MZTgL8" },
+      "bytes": 942032,
+      "capturedAt": "2026-10-12T21:44:50.314Z",
+      "cleanPlate": {
+        "bytes": 432596,
+        "digest": "70466700d55b7b27",
+        "height": 1080,
+        "sha256": "be794a9f31ffc1a7ce329a73b551dab68c87af29f8b97b21f8b587925d43eef0",
+        "width": 1920
+      },
+      "height": 1080,
+      "id": "wish-screen",
+      "kind": "recording-frame",
+      "sha256": "d0c1515fd147c0c33684e0152ec9e02b827af201526fabb8d260a769de0515f9",
+      "source": "yt-uhCW3MZTgL8.mp4 at 78s",
+      "sourceFormat": "png",
+      "width": 1920
+    }
+  ]
+}
