@@ -18,9 +18,10 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFile } from "node:fs/promises";
 
-// Every open-world level-two area the game outlines, as a label at its outline's mean in the catalogue's axes, round the
-// same origin the outlines are. A level-two area the table files no row for, or the polygon file holds no outline for,
-// has no label. Its record is written under `mapLabels/subareas`, and its names are published with the names
+// Every open-world level-two area the game outlines gets a label at its outline's mean in the catalogue's axes.
+// The labels are rounded to the same origin the outlines are.
+// A level-two area the table files no row for, or the polygon file holds no outline for, has no label.
+// Its record is written under `mapLabels/subareas`, and its names are published with the names
 export const fitMapLabels = async (): Promise<GameDataBuild> => {
   const [polygonsJson, origin] = await Promise.all([
     readFile(WORLD_AREA_POLYGONS_PATH, "utf8"),
@@ -29,12 +30,13 @@ export const fitMapLabels = async (): Promise<GameDataBuild> => {
   const levelTwoRows = readExcelTable<WorldArea>(WORLD_AREAS_TABLE_NAME).filter(
     ({ areaType, sceneID }) => sceneID === OPEN_WORLD_SCENE_ID && areaType === WorldAreaType.Level2,
   );
-  const rowsByLevelTwoId = new Map(levelTwoRows.map((row) => [row.areaID2, row]));
+  const levelTwoRowMap = new Map(levelTwoRows.map((row) => [row.areaID2, row]));
   const { level1Areas } = parseMachineJson<WorldAreaPolygonFile>(polygonsJson);
   const labels: MapLabel[] = level1Areas.flatMap(({ level2Areas = [] }) =>
     level2Areas.flatMap(({ id2, polygonData }) => {
-      const row = rowsByLevelTwoId.get(id2);
-      return row ? [toMapLabel(row, toCatalogueOutline(polygonData, origin))] : [];
+      const row = levelTwoRowMap.get(id2);
+      const outline = toCatalogueOutline(polygonData, origin);
+      return row && outline.length > 0 ? [toMapLabel(row, outline)] : [];
     }),
   );
   return {
