@@ -12,3 +12,6 @@ export const LOOK_WATER_GROUP = "Look/Water";
 export const LOOK_GRADE_GROUP = "Look/Grade";
 export const LOOK_GOD_RAYS_GROUP = "Look/God rays";
 export const LOOK_BLOOM_GROUP = "Look/Bloom";
+// The ranges the look's controls span, in steps of a hundredth: a fraction from none to all, and a strength from none to two
+export const TUNING_UNIT_RANGE = { max: 1, min: 0, step: 0.01 };
+export const TUNING_DOUBLE_UNIT_RANGE = { max: 2, min: 0, step: 0.01 };

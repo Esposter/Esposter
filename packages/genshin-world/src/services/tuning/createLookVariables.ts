@@ -15,6 +15,8 @@ import {
   LOOK_SKY_GROUP,
   LOOK_WATER_GROUP,
   LOOK_WIND_GROUP,
+  TUNING_DOUBLE_UNIT_RANGE,
+  TUNING_UNIT_RANGE,
 } from "#src/services/tuning/constants";
 import { createColourVariable } from "#src/services/tuning/createColourVariable";
 import { createNumberVariable } from "#src/services/tuning/createNumberVariable";
@@ -40,7 +42,7 @@ export const createLookVariables = (
   }: Except<GenshinTuningOptions, "devRegistry" | "getRenderer" | "isTemporalAntialiasingOn" | "postPipeline" | "sun">,
   { bloomNode, godraysNode }: Pick<PostPipeline, "bloomNode" | "godraysNode">,
 ): DevVariable[] => {
-  const ramp = { ...rampOptions };
+  const ramp = structuredClone(rampOptions);
   const grade = structuredClone(gradeOptions);
   const writeRamp = () => {
     const rampValues = computeRampValues(ramp);
@@ -72,12 +74,12 @@ export const createLookVariables = (
         createNumberVariable(godraysNode.density, "value", {
           group: LOOK_GOD_RAYS_GROUP,
           name: "god rays density",
-          range: { max: 1, min: 0, step: 0.01 },
+          range: TUNING_UNIT_RANGE,
         }),
         createNumberVariable(godraysNode.maxDensity, "value", {
           group: LOOK_GOD_RAYS_GROUP,
           name: "god rays max density",
-          range: { max: 1, min: 0, step: 0.01 },
+          range: TUNING_UNIT_RANGE,
         }),
         createNumberVariable(godraysNode.distanceAttenuation, "value", {
           group: LOOK_GOD_RAYS_GROUP,
@@ -92,17 +94,17 @@ export const createLookVariables = (
         createNumberVariable(bloomNode.strength, "value", {
           group: LOOK_BLOOM_GROUP,
           name: "bloom strength",
-          range: { max: 2, min: 0, step: 0.01 },
+          range: TUNING_DOUBLE_UNIT_RANGE,
         }),
         createNumberVariable(bloomNode.radius, "value", {
           group: LOOK_BLOOM_GROUP,
           name: "bloom radius",
-          range: { max: 1, min: 0, step: 0.01 },
+          range: TUNING_UNIT_RANGE,
         }),
         createNumberVariable(bloomNode.threshold, "value", {
           group: LOOK_BLOOM_GROUP,
           name: "bloom threshold",
-          range: { max: 1, min: 0, step: 0.01 },
+          range: TUNING_UNIT_RANGE,
         }),
       ]
     : [];
@@ -122,17 +124,17 @@ export const createLookVariables = (
     createNumberVariable(skyUniforms.cloudCoverage, "value", {
       group: LOOK_SKY_GROUP,
       name: "cloud coverage",
-      range: { max: 1, min: 0, step: 0.01 },
+      range: TUNING_UNIT_RANGE,
     }),
     createNumberVariable(windUniforms.strength, "value", {
       group: LOOK_WIND_GROUP,
       name: "wind strength",
-      range: { max: 2, min: 0, step: 0.01 },
+      range: TUNING_DOUBLE_UNIT_RANGE,
     }),
     createNumberVariable(windUniforms.gustStrength, "value", {
       group: LOOK_WIND_GROUP,
       name: "wind gust strength",
-      range: { max: 2, min: 0, step: 0.01 },
+      range: TUNING_DOUBLE_UNIT_RANGE,
     }),
     createNumberVariable(windUniforms.gustWidth, "value", {
       group: LOOK_WIND_GROUP,
@@ -148,7 +150,7 @@ export const createLookVariables = (
       group: LOOK_RAMP_GROUP,
       name: "ramp terminator",
       onChange: writeRamp,
-      range: { max: 1, min: 0, step: 0.01 },
+      range: TUNING_UNIT_RANGE,
     }),
     createNumberVariable(ramp, "softness", {
       group: LOOK_RAMP_GROUP,
@@ -159,7 +161,7 @@ export const createLookVariables = (
     createNumberVariable(lightUniforms.rimStrength, "value", {
       group: LOOK_RIM_GROUP,
       name: "rim strength",
-      range: { max: 2, min: 0, step: 0.01 },
+      range: TUNING_DOUBLE_UNIT_RANGE,
     }),
     createColourVariable(lightUniforms.rimColor, { group: LOOK_RIM_GROUP, name: "rim colour" }),
     createNumberVariable(postUniforms.outlineThickness, "value", {
@@ -214,7 +216,7 @@ export const createLookVariables = (
     createNumberVariable(waterUniforms.causticStrength, "value", {
       group: LOOK_WATER_GROUP,
       name: "water caustics",
-      range: { max: 2, min: 0, step: 0.01 },
+      range: TUNING_DOUBLE_UNIT_RANGE,
     }),
     createColourVariable(waterUniforms.underwaterFogColor, {
       group: LOOK_WATER_GROUP,
@@ -228,7 +230,7 @@ export const createLookVariables = (
     createNumberVariable(postUniforms.gradeIntensity, "value", {
       group: LOOK_GRADE_GROUP,
       name: "grade intensity",
-      range: { max: 1, min: 0, step: 0.01 },
+      range: TUNING_UNIT_RANGE,
     }),
     createNumberVariable(grade, "contrast", {
       group: LOOK_GRADE_GROUP,
@@ -240,7 +242,7 @@ export const createLookVariables = (
       group: LOOK_GRADE_GROUP,
       name: "grade saturation",
       onChange: writeGrade,
-      range: { max: 2, min: 0, step: 0.01 },
+      range: TUNING_DOUBLE_UNIT_RANGE,
     }),
     ...tintVariables,
     ...godraysVariables,
