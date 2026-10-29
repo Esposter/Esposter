@@ -2,12 +2,11 @@
 import type { GameText } from "genshin-text";
 
 import ScreenHeader from "#src/components/Menu/ScreenHeader/Index.vue";
-import { ScreenHeaderMark } from "#src/models/menu/ScreenHeaderMark";
 import { TIME_DIAL_ORNAMENT_POSITIONS } from "#src/services/menu/constants";
 import { getTimeTargetMinutes } from "#src/services/menu/getTimeTargetMinutes";
 import { stepTimeDialAdvance } from "#src/services/menu/stepTimeDialAdvance";
 import { MINUTES_PER_DAY } from "genshin-engine";
-import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { CloseButtonMark, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -68,12 +67,7 @@ onMounted(() => {
        the world's clock to that hour. The dial and the column are placed from the English PC client's screen (1080 high,
        a reference pixel a unit). "Current Time" and "Today" have no game text key yet, so they are not drawn -->
   <GameScreen class="menu-time" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Time]">
-    <ScreenHeader
-      :game-text
-      :mark="ScreenHeaderMark.TracedCross"
-      :title="gameText[GameTextKey.Time]"
-      @close="emit('close')"
-    />
+    <ScreenHeader :game-text :mark="CloseButtonMark.Cross" :title="gameText[GameTextKey.Time]" @close="emit('close')" />
     <div
       ref="dial"
       class="dial"

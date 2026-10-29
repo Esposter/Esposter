@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import type { CloseButtonMark } from "#src/models/CloseButtonMark";
 
-import { CloseButtonGlyphMap } from "#src/services/CloseButtonGlyphMap";
+import { CloseButtonMarkGlyphMap } from "#src/services/CloseButtonMarkGlyphMap";
 
 interface Props {
-  // What the button does, for a screen reader, since it shows its content alone
+  // What the button does, for a screen reader, since it shows its own glyph alone
   label: string;
-  // The glyph it draws over its disc, its content alone when absent
-  mark?: CloseButtonMark;
+  // The glyph it draws over its disc
+  mark: CloseButtonMark;
 }
 
 defineProps<Props>();
-defineSlots<{ default: () => unknown }>();
 </script>
 
 <template>
@@ -19,10 +18,9 @@ defineSlots<{ default: () => unknown }>();
        it, and the mark its glyph draws over them in the same units. The ring is an inset shadow, not a border, so the
        mark's box is the disc's -->
   <button class="close-button" :aria-label="label" type="button">
-    <svg v-if="mark" class="mark" :viewBox="CloseButtonGlyphMap[mark].viewBox" aria-hidden="true">
-      <path :d="CloseButtonGlyphMap[mark].path" />
+    <svg class="mark" :viewBox="CloseButtonMarkGlyphMap[mark].viewBox" aria-hidden="true">
+      <path :d="CloseButtonMarkGlyphMap[mark].path" />
     </svg>
-    <slot />
   </button>
 </template>
 

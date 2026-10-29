@@ -9,12 +9,14 @@ import type { WishPurchase } from "#src/models/WishPurchase";
 import type { WishResultCell } from "#src/models/WishResultCell";
 import type { WishSet } from "#src/models/WishSet";
 
+import CloseButton from "#src/components/CloseButton/Index.vue";
 import GameButton from "#src/components/GameButton/Index.vue";
 import RarityStars from "#src/components/RarityStars/Index.vue";
 import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
 import WishDetails from "#src/components/WishDetails/Index.vue";
 import WishHistory from "#src/components/WishHistory/Index.vue";
 import WishPath from "#src/components/WishPath/Index.vue";
+import { CloseButtonMark } from "#src/models/CloseButtonMark";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 import { computed, ref } from "vue";
 
@@ -135,9 +137,7 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
         <span class="currency-count">{{ quantity }}</span>
       </li>
     </ul>
-    <GameButton class="back" :aria-label="backLabel" :kind="GameButtonKind.Plain" tip="" @click="emit('close')"
-      >✕</GameButton
-    >
+    <CloseButton class="close" :label="backLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
     <section v-if="bannerLabelText && fiveStarNotice" class="card">
       <p class="tag">{{ bannerLabelText }}</p>
       <p v-if="bannerCard" class="card-title">
@@ -330,23 +330,15 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
   justify-content: center;
 }
 
-.back {
-  position: absolute;
-  top: calc(var(--unit) * 17);
-  left: calc(var(--unit) * 1814);
-  width: calc(var(--unit) * 56);
-  height: calc(var(--unit) * 56);
-  border-radius: 50%;
+.close {
   background: #f2f2f4;
   color: #343744;
-  font-size: calc(var(--unit) * 40);
-  font-weight: 700;
 }
 
 /* The sparkle the game marks its Wish and its banner's rate-up with, a four-point star in its own colour */
 .sparkle {
   position: absolute;
-  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+  clip-path: var(--sparkle-clip-path);
 }
 
 .star {

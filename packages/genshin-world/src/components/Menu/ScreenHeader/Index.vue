@@ -2,28 +2,21 @@
 import type { GameText } from "genshin-text";
 import type { VNode } from "vue";
 
-import { ScreenHeaderMark } from "#src/models/menu/ScreenHeaderMark";
 import { CloseButton, CloseButtonMark } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
-  // The glyph the close disc draws, a cross unless the screen's reference shows another
-  mark?: ScreenHeaderMark;
+  // The glyph the close disc draws, the traced cross unless the screen's reference shows another
+  mark?: CloseButtonMark;
   // The screen's title in the reader's language
   title: string;
 }
 
-const { mark = ScreenHeaderMark.Cross } = defineProps<Props>();
+const { mark = CloseButtonMark.Cross } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 defineSlots<{ tabs?: () => VNode }>();
-
-// The glyph the close button draws for each mark, the cross left to the button's own text when the mark has none
-const CLOSE_MARK_MAP: Partial<Record<ScreenHeaderMark, CloseButtonMark>> = {
-  [ScreenHeaderMark.Back]: CloseButtonMark.Back,
-  [ScreenHeaderMark.TracedCross]: CloseButtonMark.Cross,
-};
 </script>
 
 <template>
@@ -32,9 +25,7 @@ const CLOSE_MARK_MAP: Partial<Record<ScreenHeaderMark, CloseButtonMark>> = {
        focus order, the WAI-ARIA order for a dialog's header -->
   <p class="title">{{ title }}</p>
   <slot name="tabs" />
-  <CloseButton class="close" :label="gameText[GameTextKey.Back]" :mark="CLOSE_MARK_MAP[mark]" @click="emit('close')">
-    <template v-if="mark === ScreenHeaderMark.Cross">×</template>
-  </CloseButton>
+  <CloseButton class="close" :label="gameText[GameTextKey.Back]" :mark @click="emit('close')" />
 </template>
 
 <style scoped>

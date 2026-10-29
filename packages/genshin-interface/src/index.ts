@@ -62,7 +62,7 @@ export * from "./models/WishResultCell.ts";
 export * from "./models/WishSet.ts";
 export * from "./models/WorshipLevelState.ts";
 export * from "./save.ts";
-export * from "./services/CloseButtonGlyphMap.ts";
+export * from "./services/CloseButtonMarkGlyphMap.ts";
 export * from "./services/computeRectOffsets.ts";
 export * from "./services/constants.ts";
 export * from "./services/createVisualComparisonRecord.ts";

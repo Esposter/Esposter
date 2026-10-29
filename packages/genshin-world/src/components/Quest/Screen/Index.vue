@@ -8,7 +8,6 @@ import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import MenuListScreen from "#src/components/Menu/ListScreen/Index.vue";
 import QuestRow from "#src/components/Quest/Row/Index.vue";
 import { useListScreenTabStep } from "#src/composables/useListScreenTabStep";
-import { ScreenHeaderMark } from "#src/models/menu/ScreenHeaderMark";
 import { QuestCategory } from "#src/models/quest/QuestCategory";
 import { QuestGlyph } from "#src/models/quest/QuestGlyph";
 import { LIST_SCREEN_WIDTH } from "#src/services/menu/constants";
@@ -22,7 +21,7 @@ import { QuestKindCategoryMap } from "#src/services/quest/QuestKindCategoryMap";
 import { checkIsActionKey } from "#src/services/shared/checkIsActionKey";
 import { useEventListener } from "@vueuse/core";
 import { InputAction } from "genshin-engine";
-import { ORNAMENT_END_PATH } from "genshin-interface";
+import { CloseButtonMark, ORNAMENT_END_PATH } from "genshin-interface";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
@@ -129,13 +128,7 @@ useEventListener("keydown", (event) => {
        over the Quest Overview button and the one navigating to it. The world behind it is blurred and washed as the
        game lays it over the world. Not drawn: the region's art on a series' row and the journal's emblem, the reward
        items' art, and the UID -->
-  <MenuListScreen
-    is-world-blurred
-    :game-text
-    :mark="ScreenHeaderMark.TracedCross"
-    :title="listTitle"
-    @close="emit('close')"
-  >
+  <MenuListScreen is-world-blurred :game-text :mark="CloseButtonMark.Cross" :title="listTitle" @close="emit('close')">
     <template #icon>
       <MenuGlyph class="banner" :glyph="QuestGlyphMap[QuestGlyph.Banner]" />
     </template>
