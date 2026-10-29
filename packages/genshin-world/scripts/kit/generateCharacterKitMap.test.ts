@@ -1,3 +1,4 @@
+import { KIT_MODULE_DIRECTORY } from "#scripts/kit/constants";
 import { generateCharacterKitMap } from "#scripts/kit/generateCharacterKitMap";
 import { mkdir, mkdtemp, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -21,7 +22,7 @@ describe(generateCharacterKitMap, () => {
     const generatedDirectory = join(packageDirectory, "src", "generated", "characterKitMap");
     await mkdir(generatedDirectory, { recursive: true });
     await writeFile(join(generatedDirectory, "CharacterIdCreateKitMap.ts"), "");
-    await mkdir(join(packageDirectory, "src", "services", "kit", "characters"), { recursive: true });
+    await mkdir(join(packageDirectory, "src", KIT_MODULE_DIRECTORY), { recursive: true });
     generateCharacterKitMap(packageDirectory);
 
     await expect(readdir(generatedDirectory)).resolves.toStrictEqual(["CharacterIdCreateKitBehaviourMap.ts"]);
