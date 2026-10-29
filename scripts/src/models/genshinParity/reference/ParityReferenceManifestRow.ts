@@ -39,5 +39,5 @@ export const parityReferenceManifestRowSchema: z.ZodType<ParityReferenceManifest
     plate: parityReferenceManifestImageSchema.optional(),
     sha256: z.string().regex(/^[\da-f]{64}$/u),
     source: z.string().min(1).optional(),
-    sourceFormat: z.string().regex(/^[a-z]+$/u),
+    sourceFormat: z.string().regex(/^[\da-z]+$/u),
   });

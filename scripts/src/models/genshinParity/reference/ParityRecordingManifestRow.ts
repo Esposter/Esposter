@@ -22,5 +22,5 @@ export const parityRecordingManifestRowSchema: z.ZodType<ParityRecordingManifest
   range: z.object({ end: z.number().nonnegative(), start: z.number().nonnegative() }).optional(),
   sha256: z.string().regex(/^[\da-f]{64}$/u),
   source: z.string().min(1),
-  sourceFormat: z.string().regex(/^[a-z]+$/u),
+  sourceFormat: z.string().regex(/^[\da-z]+$/u),
 });

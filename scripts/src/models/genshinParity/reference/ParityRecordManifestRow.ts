@@ -12,5 +12,5 @@ export const parityRecordManifestRowSchema: z.ZodType<ParityRecordManifestRow> =
   bytes: z.int().positive(),
   path: z.string().regex(/^[^\\/][^\\]*$/u),
   sha256: z.string().regex(/^[\da-f]{64}$/u),
-  sourceFormat: z.string().regex(/^[a-z]+$/u),
+  sourceFormat: z.string().regex(/^[\da-z]+$/u),
 });
