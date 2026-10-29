@@ -1,12 +1,6 @@
-import type { ReviewFinding } from "#src/models/review/ReviewFinding";
+import type { FixerPromptInput } from "#src/models/review/FixerPromptInput";
 
 import { REVIEW_COMMIT_INSTRUCTION, REVIEW_SESSION_CHECKS } from "#src/services/review/constants";
-
-interface FixerPromptInput {
-  base: string;
-  end: string;
-  findings: ReviewFinding[];
-}
 
 // The fixer's prompt, its text verbatim from the review spec. Each finding is handed over with its index, since the
 // Fixer answers by index.
