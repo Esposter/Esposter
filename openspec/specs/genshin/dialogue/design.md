@@ -101,11 +101,11 @@ The five are judged over their clean plate, the reference frame with its scored 
 
 | Reference                  | Plate, component blurred | Plate, softened shot | Bare render |
 | :------------------------- | :----------------------- | :------------------- | :---------- |
-| `dialogue-choices-line`    | 8.66%, FLIP 0.2807       | snapshot row        | 9.64%       |
-| `dialogue-choices-replies` | 15.08%, FLIP 0.4770      | snapshot row        | 17.80%      |
-| `dialogue-choices-speaker` | 8.38%, FLIP 0.3228       | snapshot row        | 12.60%      |
-| `dialogue-line`            | 10.47%, FLIP 0.3740      | snapshot row        | 11.65%      |
-| `dialogue-paimon-line`     | 9.73%, FLIP 0.3121       | snapshot row        | 11.86%      |
+| `dialogue-choices-line`    | 8.66%, FLIP 0.2807       | snapshot row         | 9.64%       |
+| `dialogue-choices-replies` | 15.08%, FLIP 0.4770      | snapshot row         | 17.80%      |
+| `dialogue-choices-speaker` | 8.38%, FLIP 0.3228       | snapshot row         | 12.60%      |
+| `dialogue-line`            | 10.47%, FLIP 0.3740      | snapshot row         | 11.65%      |
+| `dialogue-paimon-line`     | 9.73%, FLIP 0.3121       | snapshot row         | 11.86%      |
 
 The softened column is each reference's row in the parity snapshot (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`).
 
@@ -191,6 +191,6 @@ The reveal is timed off three lines of `{data-root}/genshin-parity/captures/yt-9
 - [ ] **The reply marks are named as the wiki's transcripts name the game's marks** — no source yet: the wiki's Template:DIcon page, named in Sources, is not in the wiki cache.
 - [ ] **F and Space are the game's Pick Up/Interact and Jump keys** — no source yet: the wiki's Controls page, named in Sources, is not in the wiki cache.
 - [ ] **A reply's speaker is the Traveler, named with the game's own title for them** — no source yet: the wiki's NPC page, named in Sources, is not in the wiki cache, and the game's title for the Traveler is not yet looked up in `{data-root}/genshin-parity/text/TextMap/TextMapEN.json`.
-- [ ] **The margin under the name with no role is 13.5 units** — no source yet: the dialogue recording named in Sources (`nWBqOXWZuFg`), not yet measured for a speaker without a role.
+- [ ] **The margin under the name is 13.5 units, so the line sits 30 units under the name with a role and 13.5 without** — no source yet: the dialogue recording named in Sources (`nWBqOXWZuFg`), not yet measured for the margin with a role or without one.
 - [ ] **The line is 26 units with 2.35 units of letter spacing, and its x-height, ascender and width match the recording's** — no source yet: the dialogue recording named in Sources (`nWBqOXWZuFg`), not yet measured for the line's size and spacing.
 - [ ] **The speaker's name is gold `#ffc700`, and the replies are dark pills 45 high and 15 apart, the first at 1275 by 698 of 1920 by 1080** — no source yet: the dialogue recording named in Sources (`nWBqOXWZuFg`), not yet measured for the name's colour and the reply pills.
