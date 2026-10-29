@@ -1,7 +1,6 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
-import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { queueCooldownHit } from "#src/services/weapon/passives/queueCooldownHit";
+import { createCooldownHitPassiveModule } from "#src/services/weapon/passives/createCooldownHitPassiveModule";
 import { takeOne } from "@esposter/shared";
 
 const GASH_COOLDOWN_ID = "gashCooldown";
@@ -12,23 +11,12 @@ export const createGashPassiveModule = (params: number[]): PassiveModule => {
   const chance = takeOne(params, 0);
   const talentMultiplier = takeOne(params, 1);
   const cooldownSeconds = takeOne(params, 2);
-  return {
-    onKitEvent: (event, context, combatant) => {
-      if (
-        event.kind !== KitEventKind.DamageTaken ||
-        event.striker.characterId !== combatant.characterId ||
-        event.attackTag === undefined ||
-        context.random() >= chance
-      )
-        return;
-      queueCooldownHit(
-        context,
-        combatant,
-        GASH_COOLDOWN_ID,
-        cooldownSeconds,
-        { hitArea: event.hit.hitArea, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier },
-        event.enemy,
-      );
-    },
-  };
+  return createCooldownHitPassiveModule({
+    buildHit: (event) => ({ hitArea: event.hit.hitArea, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier }),
+    chance,
+    checkIsProcAttack: (attackTag) => attackTag !== undefined,
+    cooldownId: GASH_COOLDOWN_ID,
+    cooldownSeconds,
+    getTarget: (event) => event.enemy,
+  });
 };
