@@ -19,6 +19,10 @@ The opposite failure, building the same mechanism again for every case, is the w
 
 A helper whose body is one expression with no logic, invariant or default only renames a construct, and is inlined; the counter-test is drift — a condition a site could write half of and still compile is a rule, and earns a name (`references/syntax-extraction.md`).
 
+## A hand-rolled copy of tooling a dependency already provides — owned here
+
+A cache, a runner, a dependency order, a concurrency limit or a filter that an installed tool already provides is used as that tool documents it, and a hand-rolled one is deleted. Before designing any of them, the installed tool's own docs are read for the feature.
+
 ## The catalogue
 
 | Shape                                                                                               | The owner                                                                                                                                      |
