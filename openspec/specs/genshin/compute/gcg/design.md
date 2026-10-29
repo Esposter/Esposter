@@ -10,4 +10,4 @@ Nothing here.
 
 ## Open
 
-- [ ] **Blocked: the recording is not on disk** — contradicted by {data-root}/genshin-parity/captures/gcg-yt-tvboQ_ZWO_I-400-410.mp4: the recording file is present.
+- [x] **Blocked: the recording is not on disk** — corrected: `{data-root}/genshin-parity/captures/gcg-yt-tvboQ_ZWO_I-400-410.mp4` is on disk (3.3 MB, checked with `ls`).
