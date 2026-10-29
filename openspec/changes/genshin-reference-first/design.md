@@ -39,7 +39,8 @@ The order itself is not testable from the repository, since git does not record 
 | `packages/genshin-world/parity/screens.ts`                             | Collects the fixtures, and holds the pending list this change adds |
 | `packages/genshin-world/parity/screens.test.ts`                        | The coverage test, beside `screens.ts`                             |
 | `packages/genshin-world/parity/screens.visual.ts`                      | The screen suite, whose variant loop is the one shared shape       |
-| `scripts/src/models/genshinParity/shared/ParityReference.ts`           | The entry model, which gains the `variant` field                   |
+| `scripts/src/models/genshinParity/shared/ParityReferenceBase.ts`       | Declares the optional `variant` field, which one entry sets today  |
+| `scripts/src/models/genshinParity/shared/ParityReference.ts`           | The entry model, which composes the base and adds no field         |
 | `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`      | The reference entries, one per subscreen                           |
 | `scripts/src/services/genshinParity/shared/ParityReferenceMap.test.ts` | Fixture to reference, and now variant to entry                     |
 | `scripts/src/services/genshinParity/reference/approveReference.ts`     | Writes the approved image, which loses its platform segment        |

@@ -6,7 +6,7 @@
 ## 2. Subscreen coverage
 
 - [ ] 2.1 Write the subscreen test first in `scripts/src/services/genshinParity/shared/ParityReferenceMap.test.ts`, asserting that every fixture variant has an entry naming it, and watch it fail on the login's dusk variant, which has none. Verify: the test named after the scenario "Variant with no entry", seen failing.
-- [ ] 2.2 Add a `variant` field to the reference entry model in `scripts/src/models/genshinParity/shared/ParityReference.ts`, set on every entry for a variant, and make the test match on it. Verify: typecheck passes, and the test named after "Variant borrowing its base's reference" fails on a variant whose only entry is its base's.
+- [ ] 2.2 Use the `variant` field that `scripts/src/models/genshinParity/shared/ParityReferenceBase.ts` already declares (the entry model in `ParityReference.ts` composes it, and `title-splash-mainland` is its one live use), set it on every entry for a variant, and make the test match on it. Verify: typecheck passes, and the test named after "Variant borrowing its base's reference" fails on a variant whose only entry is its base's.
 - [ ] 2.3 Record a reference, or a pending entry with its reason, for each variant that lacks one, starting with the login's dusk. Verify: the subscreen test passes, and every fixture variant names an entry of its own.
 - [ ] 2.4 Convert each subscreen that now has a reference from pending to recorded in the same change. Verify: `ParityReferenceMap.test.ts` passes for the screen, and the pending entries left are exactly those whose reason names a source the owner has to supply.
 
