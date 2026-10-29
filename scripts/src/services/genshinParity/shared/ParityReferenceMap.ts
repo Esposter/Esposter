@@ -31,6 +31,15 @@ const QUEST_SCREEN_BACKDROP_PLATE = [
 const CHARACTER_TABS_REGION = { height: 800, width: 900, x: 120, y: 180 };
 // A weapon screen's whole frame above the recorder's UID, scored by the three weapon entries
 const WEAPON_SCREEN_REGION = { height: 838, width: 1920, x: 0, y: 0 };
+// The weapon screen's header rows and the weapon's portrait frame, which every weapon entry draws over the same place
+const WEAPON_SCREEN_TOP_PLATE = [
+  { height: 66, width: 62, x: 120, y: 16 },
+  { height: 40, width: 262, x: 212, y: 28 },
+  { height: 46, width: 244, x: 1278, y: 24 },
+  { height: 46, width: 166, x: 1538, y: 24 },
+  { height: 66, width: 66, x: 1738, y: 16 },
+  { height: 180, width: 300, x: 126, y: 136 },
+];
 // A forge's Queues tab in full above the recorder's UID, scored by its two Queues entries
 const FORGE_QUEUES_REGION = { height: 860, width: 1920, x: 0, y: 0 };
 // The Queues tab's pieces filled from round them, so the blurred scene behind is scored and the game's own pieces are not: the title,
@@ -1144,12 +1153,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "weapon-screen": {
     isBackdrop: true,
     plate: [
-      { height: 66, width: 62, x: 120, y: 16 },
-      { height: 40, width: 262, x: 212, y: 28 },
-      { height: 46, width: 244, x: 1278, y: 24 },
-      { height: 46, width: 166, x: 1538, y: 24 },
-      { height: 66, width: 66, x: 1738, y: 16 },
-      { height: 180, width: 300, x: 126, y: 136 },
+      ...WEAPON_SCREEN_TOP_PLATE,
       { height: 66, width: 706, x: 1098, y: 110 },
       { height: 116, width: 706, x: 1098, y: 212 },
       { height: 14, width: 738, x: 1086, y: 186 },
@@ -1178,12 +1182,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "weapon-screen-ascend": {
     isBackdrop: true,
     plate: [
-      { height: 66, width: 62, x: 120, y: 16 },
-      { height: 40, width: 262, x: 212, y: 28 },
-      { height: 46, width: 244, x: 1278, y: 24 },
-      { height: 46, width: 166, x: 1538, y: 24 },
-      { height: 66, width: 66, x: 1738, y: 16 },
-      { height: 180, width: 300, x: 126, y: 136 },
+      ...WEAPON_SCREEN_TOP_PLATE,
       { height: 40, width: 470, x: 1230, y: 150 },
       { height: 36, width: 552, x: 1186, y: 102 },
       { height: 110, width: 706, x: 1098, y: 222 },
@@ -1216,12 +1215,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "weapon-screen-refine": {
     isBackdrop: true,
     plate: [
-      { height: 66, width: 62, x: 120, y: 16 },
-      { height: 40, width: 262, x: 212, y: 28 },
-      { height: 46, width: 244, x: 1278, y: 24 },
-      { height: 46, width: 166, x: 1538, y: 24 },
-      { height: 66, width: 66, x: 1738, y: 16 },
-      { height: 180, width: 300, x: 126, y: 136 },
+      ...WEAPON_SCREEN_TOP_PLATE,
       { height: 44, width: 250, x: 1330, y: 96 },
       { height: 30, width: 290, x: 1306, y: 146 },
       { height: 14, width: 738, x: 1086, y: 178 },
