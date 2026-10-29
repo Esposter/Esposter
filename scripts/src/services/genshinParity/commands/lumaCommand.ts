@@ -7,7 +7,7 @@ import { defineCommand } from "citty";
 export const lumaCommand: SubCommandsDef[string] = defineCommand({
   args: { ...regionArgs },
   meta: {
-    description: "One region's darkness across the images or frame folders given after it, as a curve",
+    description: "One region's darkness across the images or frame folders given after it, a row per image to plot",
     name: "luma",
   },
   run: ({ args }) =>
