@@ -5,7 +5,7 @@ import { describe, expect, test } from "vitest";
 describe(setViewEntryToken, () => {
   const visualId = crypto.randomUUID();
   const otherEntry = `${crypto.randomUUID()}${DASHBOARD_VIEW_SEPARATOR} `;
-  const token = "token";
+  const token = "b";
 
   test("replaces this visual's entry and leaves every other visual's alone", () => {
     expect.hasAssertions();

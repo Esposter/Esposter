@@ -7,8 +7,8 @@ import { setVisualType } from "@/services/dashboard/setVisualType";
 import { describe, expect, test } from "vitest";
 
 const createDataset = () => ({
-  query: { series: [{ aggregation: DatasetAggregationType.Count, column: "value" }], xColumn: "label" },
-  reference: { id: "00000000-0000-4000-8000-000000000000", type: DatasetProviderType.Sheet },
+  query: { series: [{ aggregation: DatasetAggregationType.Count, column: "column" }], xColumn: "xColumn" },
+  reference: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
 });
 
 describe(setVisualType, () => {

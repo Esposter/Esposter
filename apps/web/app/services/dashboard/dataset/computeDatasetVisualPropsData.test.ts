@@ -9,6 +9,7 @@ import { describe, expect, test } from "vitest";
 describe(computeDatasetVisualPropsData, () => {
   const category = "a";
   const dataset: Dataset = { columns: [], rows: [{ x: category }] };
+  const otherCategory = "b";
   const query: DatasetQuery = { series: [{ aggregation: DatasetAggregationType.Count, column: "x" }], xColumn: "x" };
 
   // A treemap draws `{ x, y }` points and has no category axis, so categories on an axis would draw nothing
@@ -31,7 +32,6 @@ describe(computeDatasetVisualPropsData, () => {
   test("a card counts every response in its dataset", () => {
     expect.hasAssertions();
 
-    const otherCategory = "b";
     const cardDataset: Dataset = { columns: [], rows: [{ x: category }, { x: otherCategory }] };
 
     expect(computeDatasetVisualPropsData(VisualType.Card, cardDataset, query)).toStrictEqual({
@@ -43,7 +43,6 @@ describe(computeDatasetVisualPropsData, () => {
   test("a table beside a bar chart shows the bars' exact values", () => {
     expect.hasAssertions();
 
-    const otherCategory = "b";
     const tableDataset: Dataset = { columns: [], rows: [{ x: category }, { x: category }, { x: otherCategory }] };
 
     expect(computeDatasetVisualPropsData(VisualType.Table, tableDataset, query)).toStrictEqual(
