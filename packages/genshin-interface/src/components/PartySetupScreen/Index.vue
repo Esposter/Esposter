@@ -3,6 +3,7 @@ import type { PartySetupSlot } from "#src/models/PartySetupSlot";
 
 import CloseButton from "#src/components/CloseButton/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
+import { computed } from "vue";
 
 interface Props {
   // The words of the buttons in the reader's language
@@ -35,6 +36,11 @@ const {
   title,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; configureTeam: []; deploy: []; next: []; previous: []; quickSetup: [] }>();
+// The two arrows step the team either way: one arrow's markup, drawn once, and the next arrow mirrors it by its class
+const steps = computed(() => [
+  { label: previousLabel, name: "previous" as const },
+  { label: nextLabel, name: "next" as const },
+]);
 </script>
 
 <template>
@@ -69,7 +75,14 @@ const emit = defineEmits<{ close: []; configureTeam: []; deploy: []; next: []; p
       <CloseButton class="close" :label="backLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
     </header>
     <section class="team">
-      <button class="step previous" :aria-label="previousLabel" type="button" @click="emit('previous')">
+      <button
+        v-for="step of steps"
+        :key="step.name"
+        :class="['step', step.name]"
+        :aria-label="step.label"
+        type="button"
+        @click="step.name === 'previous' ? emit('previous') : emit('next')"
+      >
         <svg viewBox="54 514 40 52" aria-hidden="true">
           <path class="chevron" d="M58.5 540 80.5 520.5v7l-10.5 12.5 10.5 12.5v8z" />
           <path class="ornament" d="M71 540 81 530l9 10-9 10z" />
@@ -95,12 +108,6 @@ const emit = defineEmits<{ close: []; configureTeam: []; deploy: []; next: []; p
           <span v-else class="plus" aria-hidden="true">+</span>
         </li>
       </ol>
-      <button class="step next" :aria-label="nextLabel" type="button" @click="emit('next')">
-        <svg viewBox="54 514 40 52" aria-hidden="true">
-          <path class="chevron" d="M58.5 540 80.5 520.5v7l-10.5 12.5 10.5 12.5v8z" />
-          <path class="ornament" d="M71 540 81 530l9 10-9 10z" />
-        </svg>
-      </button>
     </section>
     <footer class="foot">
       <button class="configure" :aria-label="configureTeamLabel" type="button" @click="emit('configureTeam')" />
