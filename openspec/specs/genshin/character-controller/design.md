@@ -129,7 +129,6 @@ Every speed, height and threshold is a body type's, since how far a character sp
 | `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`                 | the steps, and the share of a step a frame has come into                                        |
 | `packages/genshin-world/src/components/World/Character/Index.vue`               | the wiring: steps, the kit's presses, the drawn body's blend, the follow camera, a jump's place |
 | `packages/genshin-world/src/services/kit/stepActiveKit.ts`                      | the kit's step: the body turned to its target, and its strikes                                  |
-| `packages/genshin-world/src/components/World/CharacterPlaceholder/Index.vue`    | the body's capsule, drawn where no character's model is                                         |
 | `packages/genshin-world/src/services/world/locomotion/BodyTypeLocomotionMap.ts` | each body type's numbers                                                                        |
 | `packages/genshin-world/src/services/world/locomotion/constants.ts`             | the best estimates every type shares, where nothing of the game holds the number                |
 | `packages/genshin-world/src/components/World/Character/Locomotion.reference.ts` | each reading of the body's numbers, with its source and outcome                                 |

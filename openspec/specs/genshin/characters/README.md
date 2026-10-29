@@ -1,62 +1,61 @@
 # Characters
 
-A character is drawn from the official MMD model pack HoYoverse publishes for it. The app publishes each official pack to the public game data container, under the owner's stated permission from HoYoverse ([published packs](published-packs/design.md)), but the world does not read those published packs yet: a browser draws a character from a copy its reader holds. Every pack's bundled terms still say not to redistribute it (`{data-root}/character-packs/extracted/10000006/丽莎/使用规则.txt`, and the same term in the other extracted packs' files), so each pack's terms folder is published beside its model. No `.pmx` is committed to the repository, and `apps/web/modules/serveGenshinExtractions.ts` serves the extracted packs from disk, only under `nuxt dev`. A pack reaches the world only from a copy its reader holds, and a character with no such copy is drawn as its body's capsule, with no request for a pack.
+A character is drawn from the official MMD model pack HoYoverse publishes for it. The app publishes each official pack to the public game data container, under the owner's stated permission from HoYoverse ([published packs](published-packs/design.md)), and the world downloads them into the browser as it opens and draws each character from its own pack, with no stand-in. Every pack's bundled terms still say not to redistribute it (`{data-root}/character-packs/extracted/10000006/丽莎/使用规则.txt`, and the same term in the other extracted packs' files), so each pack's terms folder is published beside its model. No `.pmx` is committed to the repository. The engine reads the model itself ([reading a PMX](pmx-reader/design.md)), and the world draws it ([drawing it](drawing/design.md)) (`packages/genshin-engine/src/character/createPmxMesh.ts`, `packages/genshin-world/src/components/Character/Model/Index.vue`). Lumine's own shading, as the game draws it, is recorded in [Lumine's shading](shading/design.md).
 
-The copies are a player's own download, read in their browser and kept there, then kept with their account and read back on any device they sign in on ([a player's own pack](player-packs/design.md)) (`packages/genshin-world/src/composables/useCharacterPacks.ts`, `apps/web/server/services/genshin/accountCharacterPack/readAccountCharacterPackFile.ts`), and, under `nuxt dev` only, the developer's extracted packs served from disk ([development packs](development-packs/design.md)) (`apps/web/modules/serveGenshinExtractions.ts`). The account's copy is readable by its owner alone (`apps/web/server/services/genshin/accountCharacterPack/readAccountCharacterPackFile.ts`, which reads the account's own manifest by `userId`). The engine reads the model itself ([reading a PMX](pmx-reader/design.md)), and the world draws it ([drawing it](drawing/design.md)) (`packages/genshin-engine/src/character/createPmxMesh.ts`, `packages/genshin-world/src/components/Character/Model/Index.vue`). Lumine's own shading, as the game draws it, is recorded in [Lumine's shading](shading/design.md).
+## The pack's files
 
-## The pack's layout
+The packs are one folder per character, named by its id in the game's data, each file published under `characterPacks/<id>/<path>` beside the pack's own `manifest.json`. The hosted index record lists each avatar with its name and each file's path, bytes and sha256, so the world plans its download and names its files from the index alone (`packages/genshin-world/src/models/character/CharacterPackIndex.ts`, `packages/genshin-world/src/services/character/readCharacterPackIndex.ts`).
 
-Both copies answer one layout, so the world asks for the same files whichever it reads:
+A pack keeps the file names its folder gave them, and the world finds its parts by the pack's own rules:
 
-- **One folder per character, named by its id in the game's data**, under the base URL the app hands the world (`GENSHIN_CHARACTER_PACK_BASE_URL`, `/data/genshin/characters`, in `apps/web/shared/services/genshin/constants.ts`). Beside the folders, `index.json` (`CHARACTER_PACK_INDEX_PATH`) lists the ids the host holds a pack for (`apps/web/shared/services/genshin/constants.ts`, `packages/genshin-world/src/services/character/constants.ts`).
-- **Each folder serves `model.pmx`**, the character's model whatever its own file is called; `terms.txt`, the terms bundled with it, as UTF-8 (the reader decodes UTF-16 by its byte-order mark, then UTF-8, then legacy encodings, per `packages/genshin-world/src/models/character/CharacterTermsEncoding.ts`); and the textures at the paths the model names them by, relative to it.
-- **`readCharacterPackFile` reads every file through `getCharacterPackFileUrl`**, so the three kinds share one path (`packages/genshin-world/src/services/character/readCharacterPackFile.ts`, `packages/genshin-world/src/services/character/getCharacterPackFileUrl.ts`). Its timed fetch and status check are `readFileResponse`, which the account's own file reader calls too; a 404 is the one status a caller names as absent, and only `readCharacterPackFile` names it (`packages/genshin-world/src/services/shared/readFileResponse.ts`; `packages/genshin-world/src/services/character/readCharacterPackFile.ts`; `packages/genshin-world/src/services/character/readAccountCharacterPackFile.ts`, which calls it without a status). `getCharacterPackFilePath` cuts that path from a model's own spelling: it reads MMD's backslashes as slashes, drops an empty or `.` part and resolves a `..` against the folder before it. A path that climbs out of the pack is kept, so its texture is reported missing. Each part is encoded on its own, since a model's paths hold letters of any script (`packages/genshin-world/src/services/character/getCharacterPackFilePath.ts`, `packages/genshin-world/src/services/character/getCharacterPackFileUrl.ts`).
+- **The model** is the folder's one `.pmx`, or of several the one named as its character, the names read from the game's text (`packages/genshin-world/src/services/character/chooseCharacterPackModel.ts`).
+- **The terms** are the text file whose name holds the earliest of the terms' names (`packages/genshin-world/src/services/character/chooseCharacterTermsFile.ts`), decoded as the file's own encoding reads (`packages/genshin-world/src/services/character/decodeCharacterTerms.ts`).
+- **The textures** are the paths the model names them by, relative to the model's folder, cut to the path a pack keeps each file under (`packages/genshin-world/src/services/character/getCharacterPackFilePath.ts`), matched without regard to case or Unicode form (`packages/genshin-world/src/services/character/resolveCharacterPackTextures.ts`).
 
-## How the world picks a reader
+## How the world reads a pack
 
-`useCharacterPacks` reads the index of the packs the browser keeps as the world opens. `useCharacterPackIds` reads the host's index once. `chooseCharacterPackReader` then reads a character's pack from the browser's copy where it keeps one, else from the account's copy, else from the host's where the host's index lists the character. A character none of them lists is drawn as the body's capsule (`packages/genshin-world/src/services/character/chooseCharacterPackReader.ts`, `packages/genshin-world/src/composables/useCharacterPacks.ts`, `packages/genshin-world/src/composables/useCharacterPackIds.ts`). The account's copy is cached in the browser the first time it is read, so it is read once per device (`packages/genshin-world/src/composables/useCharacterPacks.ts`, `packages/genshin-world/src/services/character/cacheAccountCharacterPack.ts`).
+The opening downloads the packs when it mounts. Each file is kept in the browser's Cache Storage under its url with the first sixteen hex characters of its sha256 as a version, so a republished file is a key of its own and the older copy is no longer read. A file gets three attempts, and the world mounts only once every file is held (`packages/genshin-world/src/composables/useCharacterPackPreload.ts`, `packages/genshin-world/src/services/character/planCharacterPackDownload.ts`, `packages/genshin-world/src/services/character/downloadCharacterPackFiles.ts`).
+
+The world's gate reads one reader per avatar from that cache, each choosing its model and its terms by the rules above (`packages/genshin-world/src/services/character/readCharacterPackReaders.ts`, `packages/genshin-world/src/services/character/createCharacterPackReader.ts`). The character on the field is drawn from the reader of its own id, and a character the index lists no pack for is drawn from the Traveler's (`packages/genshin-world/src/services/character/getCharacterPackReader.ts`, `packages/genshin-world/src/components/World/Windrise/Index.vue`).
 
 ```mermaid
 flowchart LR
-  KEPT{"the browser keeps a pack for the character?"} -->|yes| STORE["CharacterPackStore: its files under its id and hash"]
-  KEPT -->|no| ACCOUNT{"the signed-in account keeps one?"}
-  ACCOUNT -->|yes| CACHE["the account's files, cached into the browser store on first read"]
-  ACCOUNT -->|no| BASE{"the app hands the world a packs address?"}
-  BASE -->|"no: a build, the parity page"| NONE["no request: the body's capsule"]
-  BASE -->|"yes: nuxt dev"| INDEX["index.json, read once: the ids the host holds a pack for"]
-  INDEX -->|"the character is not listed"| NONE
-  INDEX -->|listed| HOST["the host's {id}/ files"]
-  STORE --> MODELFILE["model.pmx"]
-  CACHE --> STORE
-  HOST --> MODELFILE
+  OPEN["the opening mounts"] --> PLAN["the index, planned against the cache"]
+  PLAN --> FETCH["each missing file, three attempts, into the cache"]
+  FETCH --> HELD["every file held: the world mounts"]
+  HELD --> GATE["one reader per avatar, from the cache"]
+  GATE --> DRAW{"a reader for the character?"}
+  DRAW -->|"the index lists it"| OWN["its own model"]
+  DRAW -->|"it does not"| TRAVELER["the Traveler's model"]
 ```
 
-With no address, or an index that fails to load (which is logged), the host has none. A model that fails to read is logged and emitted, and the body's capsule is drawn in its place (`packages/genshin-world/src/composables/useCharacterPackIds.ts` for the index's log; `packages/genshin-world/src/components/Character/Model/Index.vue` for the model's log and emit). A texture the release does not ship is logged once, and its material drawn untextured (`packages/genshin-world/src/services/character/readCharacterMesh.ts`).
+A model that fails to read is logged by the model component and draws nothing for the character. A texture the release does not ship is logged once, and its material drawn untextured (`packages/genshin-world/src/services/character/readCharacterMesh.ts`).
 
 ## Decisions
 
-- **The world holds no account of where packs live.** It takes the packs' address from the app and reads any host laid out the same way (`apps/web/app/components/Genshin/World.vue` hands the address; `packages/genshin-world/src/characterPack.ts` holds the rules). The rules that read an official release's folder are the world package's, with no Node import, so the browser applies them to a player's release as the development server applies them to a folder on its disk (`packages/genshin-world/src/characterPack.ts`).
-- **An index lists the packs a host holds, read once.** Without it the world could tell an absent pack from a failed one only by asking for its model, and a character without a pack would cost a request (`packages/genshin-world/src/composables/useCharacterPackIds.ts`).
+- **The index is the one list of the packs.** The world reads it through the game data's lock like every other dataset, so the packs a build draws are the packs the publish wrote (`packages/genshin-world/src/services/character/readCharacterPackIndex.ts`).
 - **A pack is drawn whole or not at all.** (`packages/genshin-world/src/services/shared/readFileResponse.ts` throws on a failed file.) Only the textures a material draws with are read (`packages/genshin-world/src/services/character/resolveCharacterPackTextures.ts`, which matches only the textures a model names). A texture the release does not hold draws its material untextured, since the release itself lacks it; a file the pack lists that fails to arrive fails the whole model, so a character never draws partly.
-- **The terms are shown from whichever copy draws the model (`packages/genshin-world/src/components/Character/Terms/Index.vue`, which reads `readCharacterTerms` from the chosen reader).** They carry the credit the release asks for, so the terms of a development pack and of a player's pack appear the same way.
+- **No stand-in is drawn for a character.** A character whose model is not held draws nothing, and the world does not mount until every pack is held, so the case is a model that fails to parse alone.
+- **The terms are shown from the model's own pack** (`packages/genshin-world/src/components/Character/Terms/Index.vue`, which reads `readCharacterTerms` from the reader of the character the Character screen shows). They carry the credit the release asks for, so each pack's terms appear the same way.
 
 ## Key files
 
-| File                                                                                    | Role                                                                                                               |
-| :-------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------- |
-| `apps/web/shared/services/genshin/constants.ts`                                         | `GENSHIN_CHARACTER_PACK_BASE_URL`, where the world reads the packs from                                            |
-| `apps/web/app/components/Genshin/World.vue`                                             | Hands the world the packs' address in development alone                                                            |
-| `apps/web/server/services/genshin/accountCharacterPack/readAccountCharacterPackFile.ts` | One file of the signed-in player's kept packs, by hash, else none                                                  |
-| `packages/genshin-world/src/characterPack.ts`                                           | The rules and readers the app's server imports, with none of the world's components                                |
-| `packages/genshin-world/src/composables/useCharacterPacks.ts`                           | The browser's kept packs and the host's, the reader of the character on the field                                  |
-| `packages/genshin-world/src/composables/useCharacterPackIds.ts`                         | The ids the host's index lists, read once                                                                          |
-| `packages/genshin-world/src/services/character/chooseCharacterPackReader.ts`            | A character's pack read from the browser's copy, else the host's, else none                                        |
-| `packages/genshin-world/src/services/character/readCharacterPackFile.ts`                | Reads any file of a host's pack by its path                                                                        |
-| `packages/genshin-world/src/services/shared/readFileResponse.ts`                        | A host's file fetched under a timeout, its status checked and the status a caller names as absent resolved to none |
-| `packages/genshin-world/src/services/character/getCharacterPackFileUrl.ts`              | Where a file of a pack is served, by the character's id and the file's path                                        |
-| `packages/genshin-world/src/services/character/getCharacterPackFilePath.ts`             | A model's path cut into the path a pack serves the file at                                                         |
-| `packages/genshin-world/src/services/character/readCharacterTerms.ts`                   | A pack's terms, as a Result                                                                                        |
-| `packages/genshin-world/src/services/character/constants.ts`                            | A pack's index and file names, the store's names, the terms' encodings, and a read's wait                          |
+| File                                                                           | Role                                                                                                        |
+| :----------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/characterPacks/buildCharacterPackIndex.ts` | Builds the index record from the packs' manifests                                                           |
+| `packages/genshin-world/src/models/character/CharacterPackIndex.ts`            | The index record's model and schema                                                                         |
+| `packages/genshin-world/src/services/character/readCharacterPackIndex.ts`      | Reads the index through the hosted game data                                                                |
+| `packages/genshin-world/src/services/character/planCharacterPackDownload.ts`   | The files and bytes the cache lacks                                                                         |
+| `packages/genshin-world/src/services/character/downloadCharacterPackFiles.ts`  | Fetches the missing files with progress and retries into the cache                                          |
+| `packages/genshin-world/src/composables/useCharacterPackPreload.ts`            | The preload's state: bytes loaded, bytes pending, failure and retry, and the report that the packs are held |
+| `packages/genshin-world/src/services/character/readCharacterPackReaders.ts`    | One reader per avatar, read from the cache when the world opens                                             |
+| `packages/genshin-world/src/services/character/createCharacterPackReader.ts`   | A pack's reader: its model, its terms and its textures, each by the pack's own rules                        |
+| `packages/genshin-world/src/services/character/getCharacterPackReader.ts`      | The reader of a character, or the Traveler's where the index lists none                                     |
+| `packages/genshin-world/src/services/shared/readFileResponse.ts`               | A host's file fetched under a timeout, its status checked                                                   |
+| `packages/genshin-world/src/services/character/getCharacterPackCacheUrl.ts`    | A file's url as the cache keeps it, with its hash as the version                                            |
+| `packages/genshin-world/src/services/character/getCharacterPackFilePath.ts`    | A model's path cut into the path a pack keeps the file at                                                   |
+| `packages/genshin-world/src/services/character/readCharacterTerms.ts`          | A pack's terms, decoded, as a Result                                                                        |
+| `packages/genshin-world/src/services/character/constants.ts`                   | A pack's cache, file and index names, the terms' encodings, and a read's wait                               |
 
 ## Notes
 

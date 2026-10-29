@@ -23,9 +23,14 @@ flowchart LR
 
 Both accounts upload in parallel, and each file replaces the account's copy under the same name.
 
+## The world reads the packs
+
+The index record `characterPacks/index` lists each avatar with its name and each file's path, bytes and sha256, and the world reads it through the game data's lock like every dataset (`packages/genshin-world/src/services/character/readCharacterPackIndex.ts`). The opening downloads each file the browser's Cache Storage lacks, keyed by its url with the first sixteen hex characters of its sha256, so a republished file is fetched again, and the world mounts once every file is held (`packages/genshin-world/src/composables/useCharacterPackPreload.ts`).
+
+The world reads each pack by its own names. Its model is the folder's one `.pmx`, or of several the one its character is named by, its terms the file the terms rules find, and its textures the paths the model names beside its folder (`packages/genshin-world/src/services/character/createCharacterPackReader.ts`). A character the index lists no pack for draws the Traveler's pack (`packages/genshin-world/src/services/character/getCharacterPackReader.ts`). The character screen shows the terms of the character it shows (`packages/genshin-world/src/components/Character/Terms/Index.vue`).
+
 ## Not built
 
-- The world does not read the published packs yet. `GENSHIN_CHARACTER_PACK_BASE_URL` still names the development server alone, and pointing the world at `characterPacks/` is a later change.
 - An upload does not compare content first, so an unchanged file uploads again on a rerun.
 - A file a pack drops is not unpublished: a rerun replaces only the names the packs still hold.
 
@@ -37,6 +42,8 @@ Both accounts upload in parallel, and each file replaces the account's copy unde
 | `scripts/src/services/genshinAssets/characterPacks/readCharacterPackFiles.ts` | Every file of every avatar folder, named by its blob name                |
 | `scripts/src/services/genshinAssets/characterPacks/publishCharacterPacks.ts`  | Uploads every file to both accounts under its name                       |
 | `scripts/src/services/genshinAssets/characterPacks/constants.ts`              | The packs' default folder and the blob prefix they publish under         |
+| `packages/genshin-world/src/services/character/readCharacterPackReaders.ts`   | Each avatar's reader, read from the cache when the world opens           |
+| `packages/genshin-world/src/services/character/createCharacterPackReader.ts`  | A pack's model, terms and textures, each found by the pack's own names   |
 | `scripts/src/models/genshinAssets/characterPacks/CharacterPackFile.ts`        | One file read from disk, with its blob name and size                     |
 | `scripts/src/services/gameData/createGameDataContainerClient.ts`              | The container client for each account, shared with the game data publish |
 

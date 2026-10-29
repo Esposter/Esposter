@@ -51,7 +51,6 @@ Each UI component held to its reference: whether it is needed, and whether its r
 | `packages/genshin-world/src/components/Archive/Screen`                 | —     | —     |
 | `packages/genshin-world/src/components/Character/AttributeList`        | —     | —     |
 | `packages/genshin-world/src/components/Character/Model`                | —     | —     |
-| `packages/genshin-world/src/components/Character/PackLoader`           | —     | —     |
 | `packages/genshin-world/src/components/Character/Profile`              | —     | —     |
 | `packages/genshin-world/src/components/Character/Scene`                | —     | —     |
 | `packages/genshin-world/src/components/Character/Screen`               | —     | —     |
@@ -142,7 +141,6 @@ Each UI component held to its reference: whether it is needed, and whether its r
 | `packages/genshin-world/src/components/Weapon/Screen`                  | —     | —     |
 | `packages/genshin-world/src/components/Wish/Screen`                    | —     | —     |
 | `packages/genshin-world/src/components/World/Character`                | —     | —     |
-| `packages/genshin-world/src/components/World/CharacterPlaceholder`     | —     | —     |
 | `packages/genshin-world/src/components/World/Enemies`                  | —     | —     |
 | `packages/genshin-world/src/components/World/EnemyNameTags`            | —     | —     |
 | `packages/genshin-world/src/components/World/FreeCamera`               | —     | —     |
