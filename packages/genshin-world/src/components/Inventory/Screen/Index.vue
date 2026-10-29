@@ -42,6 +42,10 @@ interface Props {
   gameText: GameText;
   // The tab the bag opens on
   initialCategory: ItemCategory;
+  // The entry the detail panel opens on, by its id, the tab's first entry while none is named
+  initialSelectedId?: string;
+  // The sort the bag opens on, by level or by quality as the tab's sort offers them
+  initialSort?: InventorySort;
   // The dish each instruction item teaches, by the item's id, which an instruction's Use is offered from
   instructionRecipeMap: ReadonlyMap<number, CookingRecipe>;
   inventory: Inventory;
@@ -58,6 +62,8 @@ const {
   gadgetRows,
   gameText,
   initialCategory,
+  initialSelectedId = "",
+  initialSort = InventorySort.Level,
   instructionRecipeMap,
   inventory,
   materialDataMap,
@@ -71,7 +77,7 @@ const emit = defineEmits<{
   use: [entryId: number];
 }>();
 const category = ref(initialCategory);
-const selectedId = ref("");
+const selectedId = ref(initialSelectedId);
 const isDestroying = ref(false);
 const isConfirming = ref(false);
 // The entries ticked for a destroy, by id, across the bag's tabs until the mode is left
@@ -80,7 +86,7 @@ const chosenIds = ref<string[]>([]);
 const equipableGadgetIds = computed(
   () => new Set(gadgetRows.filter(({ isEquipable }) => isEquipable).map(({ id }) => id)),
 );
-const sort = ref(InventorySort.Level);
+const sort = ref(initialSort);
 const isDescending = ref(true);
 const tabLabels = computed(() =>
   Object.fromEntries(

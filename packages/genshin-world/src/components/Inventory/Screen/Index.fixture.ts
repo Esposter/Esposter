@@ -4,28 +4,43 @@ import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
-import { ItemCategory } from "genshin-interface";
+import { InventorySort, ItemCategory } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
-// The weapons' tab of the English client at 1080 high, holding 1,347 four-star weapons at level 20, the tab's room
-// Counted beside its name (`Weapons 1347/2000`), as the recording of the account tour shows it
+// The weapons' tab of the English client at 1080 high, holding 1,347 weapons, the tab's room counted beside its name
+// (`Weapons 1347/2000`), sorted by quality as the recording of the account tour shows it. Its first four-star weapons are
+// The Eye of Perception the detail panel opens on at level 50 and another at 50, then two at 40, then six five-star ones
 const WEAPON_COUNT = 1347;
 const WEAPON_LEVEL = 20;
 const WEAPON_RARITY = 4;
-// The first entry is the one the detail panel shows, the Eye of Perception at level 50 as the recording's selected one is
-const weapons: InventoryItem[] = Array.from({ length: WEAPON_COUNT }, (_value, index) => ({
-  definition: {
-    category: ItemCategory.Weapon,
+const SHOWN_WEAPONS: { level: number; rarity: number }[] = [
+  { level: 50, rarity: 4 },
+  { level: 50, rarity: 4 },
+  { level: 40, rarity: 4 },
+  { level: 40, rarity: 4 },
+  { level: 20, rarity: 5 },
+  { level: 20, rarity: 5 },
+  { level: 20, rarity: 5 },
+  { level: 20, rarity: 5 },
+  { level: 20, rarity: 5 },
+  { level: 1, rarity: 5 },
+];
+const weapons: InventoryItem[] = Array.from({ length: WEAPON_COUNT }, (_value, index) => {
+  const shown = SHOWN_WEAPONS.at(index);
+  return {
+    definition: {
+      category: ItemCategory.Weapon,
+      id: index,
+      name: index === 0 ? "Eye of Perception" : `Weapon ${index + 1}`,
+      rank: index,
+      rarity: shown?.rarity ?? WEAPON_RARITY,
+      stackLimit: 1,
+    },
     id: index,
-    name: index === 0 ? "Eye of Perception" : `Weapon ${index + 1}`,
-    rank: index,
-    rarity: WEAPON_RARITY,
-    stackLimit: 1,
-  },
-  id: index,
-  level: index === 0 ? 50 : WEAPON_LEVEL,
-  quantity: 1,
-}));
+    level: shown?.level ?? WEAPON_LEVEL,
+    quantity: 1,
+  };
+});
 
 export const props = {
   // The weapons hold no cooking instruction and the cook has learned nothing, so the bag's Use check reads no dish
@@ -34,6 +49,8 @@ export const props = {
   gadgetRows: [],
   gameText: ENGLISH_GAME_TEXT,
   initialCategory: ItemCategory.Weapon,
+  initialSelectedId: "0",
+  initialSort: InventorySort.Quality,
   instructionRecipeMap: new Map(),
   inventory: { items: weapons, nextId: WEAPON_COUNT },
   materialDataMap: await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL),

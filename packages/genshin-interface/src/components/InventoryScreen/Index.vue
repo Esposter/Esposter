@@ -355,7 +355,24 @@ watch(
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: rgb(255 255 255 / 0.14);
+  background: #ece3d8;
+}
+
+.back::before,
+.back::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--unit) * 28);
+  height: calc(var(--unit) * 4);
+  border-radius: calc(var(--unit) * 2);
+  background: #3b4255;
+  content: "";
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.back::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .grid {
@@ -379,12 +396,12 @@ watch(
   padding: 0;
   border: none;
   border-radius: calc(var(--unit) * 8);
-  background: #6b6396;
+  background: #8670ae;
   font: inherit;
 }
 
 .cell[data-rarity="5"] {
-  background: #9d672b;
+  background: #ab6d2b;
 }
 
 .cell[aria-pressed="true"] {
@@ -397,16 +414,18 @@ watch(
 
 .caption {
   width: 100%;
-  padding: calc(var(--unit) * 4) 0;
+  height: calc(var(--unit) * 28);
   border-radius: 0 0 calc(var(--unit) * 8) calc(var(--unit) * 8);
-  background: rgb(0 0 0 / 0.35);
-  color: #ece3d8;
-  font-size: calc(var(--unit) * 17);
+  background: #e5e3dd;
+  color: #45434c;
+  font-size: calc(var(--unit) * 22);
+  font-weight: 600;
+  line-height: calc(var(--unit) * 28);
   text-align: center;
 }
 
 .detail {
-  --detail-head-color: #655c83;
+  --detail-head-color: #79669f;
 
   position: absolute;
   top: calc(var(--unit) * 114);
@@ -420,7 +439,7 @@ watch(
     var(--detail-head-color) calc(var(--unit) * 286),
     #ece3d8 calc(var(--unit) * 286),
     #ece3d8 calc(var(--unit) * 786),
-    #ffebbf calc(var(--unit) * 786)
+    #fde5b9 calc(var(--unit) * 786)
   );
   color: #3b4255;
 }
@@ -441,7 +460,7 @@ watch(
 }
 
 .detail-caption {
-  margin: calc(var(--unit) * 230) 0 0;
+  margin: calc(var(--unit) * 258) 0 0;
   padding: 0 calc(var(--unit) * 28);
   font-size: calc(var(--unit) * 20);
   font-weight: 600;
@@ -476,14 +495,38 @@ watch(
 }
 
 .trash {
-  top: calc(var(--unit) * 988);
-  left: calc(var(--unit) * 47);
-  width: calc(var(--unit) * 58);
-  height: calc(var(--unit) * 58);
+  top: calc(var(--unit) * 995);
+  left: calc(var(--unit) * 50);
+  background: #ece3d8;
 }
 
 .trash[aria-pressed="true"] {
   background: #a154de;
+}
+
+.trash::before,
+.trash::after {
+  position: absolute;
+  content: "";
+}
+
+.trash::before {
+  top: calc(var(--unit) * 6);
+  left: calc(var(--unit) * 13);
+  width: calc(var(--unit) * 24);
+  height: calc(var(--unit) * 4);
+  border-radius: calc(var(--unit) * 2);
+  background: #3b4255;
+}
+
+.trash::after {
+  top: calc(var(--unit) * 13);
+  left: calc(var(--unit) * 16);
+  width: calc(var(--unit) * 18);
+  height: calc(var(--unit) * 22);
+  box-sizing: border-box;
+  border: calc(var(--unit) * 3) solid #3b4255;
+  border-top: none;
 }
 
 /* The destroy mode's foot and dialog are placed in the game's 1080-high units by the recording, not yet measured, so
@@ -628,42 +671,74 @@ watch(
   transform: translateY(-50%);
 }
 
-/* The figures are the game's cap height, 30 units, and the top-up plus overhangs the pill's end */
+/* The pills sit at the game's left edges, 40 units apart, their figures 25 units high in the game's face. The Primogem and Mora
+   marks are drawn in the game's colours until the glyph pass traces them from the game's own icons */
 .currencies {
   position: absolute;
-  top: calc(var(--unit) * 1002);
-  left: calc(var(--unit) * 140);
+  top: calc(var(--unit) * 1001);
+  left: calc(var(--unit) * 135);
   display: flex;
-  gap: calc(var(--unit) * 43);
-  font-size: calc(var(--unit) * 30);
+  gap: calc(var(--unit) * 40);
+  font-size: calc(var(--unit) * 25);
   font-weight: 600;
 }
 
 .currency {
   display: flex;
   align-items: center;
-  gap: calc(var(--unit) * 12);
+  gap: calc(var(--unit) * 11);
   height: calc(var(--unit) * 35);
   padding: 0 calc(var(--unit) * 14);
   border-radius: calc(var(--unit) * 18);
-  background: rgb(38 42 56 / 0.5);
+  background: rgb(40 45 55 / 0.5);
 }
 
-/* Provisional: the Primogem and Mora marks and the top-up plus, until the glyph pass traces them from the game's own icons */
 .currency-icon {
-  width: calc(var(--unit) * 26);
-  height: calc(var(--unit) * 26);
-  border-radius: 50%;
-  background: #d8e4f0;
+  width: calc(var(--unit) * 27);
+  height: calc(var(--unit) * 27);
 }
 
+.currency[data-currency="Primogem"] .currency-icon {
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  background: linear-gradient(160deg, #d9f0ff, #7fb8ff 50%, #d6b3ff);
+}
+
+.currency[data-currency="Mora"] .currency-icon {
+  width: calc(var(--unit) * 28);
+  height: calc(var(--unit) * 28);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff1a8, #e0a52c 55%, #a86f1a);
+}
+
+/* The top-up is a light disc with its plus, which overhangs the pill's end by a unit */
 .top-up {
-  width: calc(var(--unit) * 31);
-  height: calc(var(--unit) * 31);
-  margin-left: calc(var(--unit) * 1);
-  margin-right: calc(var(--unit) * -14);
+  position: relative;
+  width: calc(var(--unit) * 30);
+  height: calc(var(--unit) * 30);
+  margin-left: calc(var(--unit) * 21);
+  margin-right: calc(var(--unit) * -13);
   border-radius: 50%;
   background: #ece3d8;
+}
+
+.top-up::before,
+.top-up::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: #3b4255;
+  content: "";
+  transform: translate(-50%, -50%);
+}
+
+.top-up::before {
+  width: calc(var(--unit) * 16);
+  height: calc(var(--unit) * 3);
+}
+
+.top-up::after {
+  width: calc(var(--unit) * 3);
+  height: calc(var(--unit) * 16);
 }
 
 .currency-name {
