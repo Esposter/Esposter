@@ -43,7 +43,7 @@ const teamName = computed(() => teamNameAt(teamIndex.value));
 const slots = computed<PartySetupSlot[]>(() => {
   if (!team.value) return [];
   return getPartyTeamSlots(team.value, characters, characterDataMap, nameText, travelerName).map((slot) => ({
-    elementMarkPath: slot.element === undefined ? undefined : ElementMarkPathMap[slot.element],
+    elementMarkPath: slot.element === undefined ? "" : ElementMarkPathMap[slot.element],
     levelText: slot.level ? fillGameTextValues(gameText[GameTextKey.LevelFormat], slot.level) : "",
     name: slot.name,
   }));

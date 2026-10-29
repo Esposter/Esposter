@@ -39,8 +39,8 @@ interface Props {
   moraCost: number;
   // The Mora label the cost is shown under
   moraLabel: string;
-  // The notice shown over the picker while the artifact is already at its top level, undefined while it is not
-  notice?: string;
+  // The notice shown over the picker while the artifact is already at its top level, empty while it is not
+  notice: string;
   // The picker's title, the action it enhances the artifact for
   title: string;
 }

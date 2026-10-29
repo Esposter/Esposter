@@ -13,6 +13,7 @@ export const props = {
   materials: [{ count: 3, id: "105002", name: "Sanctifying Unction", selectedCount: 1 }],
   moraCost: 2600,
   moraLabel: "Mora",
+  notice: "",
   title: "Enhance",
 };
 

@@ -442,7 +442,7 @@ const isEnhanceMaxed = computed(() => {
     artifact.level >= getArtifactRarityData(statTables.artifactRarityDataMap, artifact.rarity).maxLevel
   );
 });
-const enhanceNotice = computed(() => (isEnhanceMaxed.value ? gameText[GameTextKey.ArtifactLevelMax] : undefined));
+const enhanceNotice = computed(() => (isEnhanceMaxed.value ? gameText[GameTextKey.ArtifactLevelMax] : ""));
 // Confirm waits on something chosen, Mora enough to pay for it, and an artifact still short of its top level
 const isEnhanceConfirmDisabled = computed(
   () => enhanceMoraCost.value === 0 || enhanceMoraCost.value > wallet.value[Currency.Mora] || isEnhanceMaxed.value,
