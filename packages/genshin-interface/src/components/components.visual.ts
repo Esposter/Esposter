@@ -11,7 +11,7 @@ import { page } from "vitest/browser";
 
 // Every component folder's `Index.vue` with an `Index.fixture.ts` beside it, drawn alone at the middle of a game screen
 // On a mid grey the game's pale and dark pieces both read against, shot to its own box and held to its own last
-// Approved image, `Index.<platform>.png` in the same folder, and each variant to one of its own named after it.
+// Approved image, `Index.png` in the same folder, and each variant to one of its own named after it.
 // An image is approved only through a reference (`genshin:parity approve`), and none names an interface component yet
 const components = import.meta.glob<Component>("./*/Index.vue", { eager: true, import: "default" });
 const fixtures = import.meta.glob<ComponentFixture>("./*/Index.fixture.ts", { eager: true });

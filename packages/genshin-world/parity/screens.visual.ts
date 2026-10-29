@@ -6,7 +6,7 @@ import { describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
-// Each screen against its own last approved image, `Index.<platform>.png` in its own folder beside its `Index.vue` and
+// Each screen against its own last approved image, `Index.png` in its own folder beside its `Index.vue` and
 // `Index.fixture.ts`, and each of its fixture's variants against one of its own named after it, a moving screen held
 // Still by its fixture's `stillProps`; `genshin:parity approve` writes an image once its compare clears the bar
 const IMAGE_NAME = "Index";

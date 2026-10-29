@@ -12,8 +12,7 @@ export const getVitestBrowserConfiguration = (viewport: {
   enabled: true,
   expect: {
     toMatchScreenshot: {
-      resolveScreenshotPath: ({ arg, ext, platform, root }) =>
-        join(root, "src", "components", `${arg}.${platform}${ext}`),
+      resolveScreenshotPath: ({ arg, ext, root }) => join(root, "src", "components", `${arg}${ext}`),
     },
   },
   headless: true,
