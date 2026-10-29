@@ -20,7 +20,7 @@ Migration path: move to managed identity or user delegation SAS if the app gains
 
 `allowBlobPublicAccess` stays enabled.
 
-`PublicAppAssets`, `PublicDungeonsAssets`, `PublicGenshinAssets`, and `PublicUserAssets` are intentionally public for anonymous asset delivery. A container is private unless its name starts with `public-`, and per-user data never goes in a public container. See `packages/db-schema/src/services/azure/container/AzureContainerPropertiesMap.ts`.
+`PublicAppAssets`, `PublicDungeonsAssets`, `PublicGenshinAssets`, and `PublicUserAssets` are intentionally public for anonymous asset delivery. A container is private unless its name starts with `public-`. Per-user private data (dungeon saves, export archives) never goes in a public container; a profile image is the one per-user blob that does, by design (`openspec/specs/esbabbler/profiles-and-presence/design.md`). See `packages/db-schema/src/services/azure/container/AzureContainerPropertiesMap.ts`.
 
 Migration path: move public assets behind signed URLs, CDN, or app-mediated delivery before disabling account-level public access.
 
