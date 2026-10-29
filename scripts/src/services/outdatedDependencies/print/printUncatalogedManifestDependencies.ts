@@ -1,5 +1,5 @@
-import type { ColorPalette } from "#src/models/outdatedDependencies/print/ColorPalette";
 import type { ManifestDependency } from "#src/models/outdatedDependencies/shared/ManifestDependency";
+import type { ColorPalette } from "#src/models/shared/ColorPalette";
 
 import { getDependencyType } from "#src/services/outdatedDependencies/getDependencyType";
 import { printTable } from "#src/services/outdatedDependencies/print/printTable";

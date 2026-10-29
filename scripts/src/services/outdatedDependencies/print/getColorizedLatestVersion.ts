@@ -1,4 +1,4 @@
-import type { ColorPalette } from "#src/models/outdatedDependencies/print/ColorPalette";
+import type { ColorPalette } from "#src/models/shared/ColorPalette";
 
 import { VersionChangeLevel } from "#src/models/outdatedDependencies/shared/VersionChangeLevel";
 import { getVersionChangeLevel } from "#src/services/outdatedDependencies/getVersionChangeLevel";

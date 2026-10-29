@@ -1,5 +1,5 @@
-import type { ColorPalette } from "#src/models/outdatedDependencies/print/ColorPalette";
 import type { UnpinnedReference } from "#src/models/outdatedDependencies/shared/UnpinnedReference";
+import type { ColorPalette } from "#src/models/shared/ColorPalette";
 
 import { printTable } from "#src/services/outdatedDependencies/print/printTable";
 

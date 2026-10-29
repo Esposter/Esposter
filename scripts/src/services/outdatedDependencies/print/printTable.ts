@@ -1,4 +1,4 @@
-import type { ColorPalette } from "#src/models/outdatedDependencies/print/ColorPalette";
+import type { ColorPalette } from "#src/models/shared/ColorPalette";
 
 import { createTableBorder } from "#src/services/outdatedDependencies/print/createTableBorder";
 import { getVisibleLength } from "#src/services/outdatedDependencies/print/getVisibleLength";

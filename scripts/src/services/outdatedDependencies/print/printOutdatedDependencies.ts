@@ -1,5 +1,5 @@
-import type { ColorPalette } from "#src/models/outdatedDependencies/print/ColorPalette";
 import type { OutdatedDependency } from "#src/models/outdatedDependencies/shared/OutdatedDependency";
+import type { ColorPalette } from "#src/models/shared/ColorPalette";
 
 import { getColorizedLatestVersion } from "#src/services/outdatedDependencies/print/getColorizedLatestVersion";
 import { printTable } from "#src/services/outdatedDependencies/print/printTable";

@@ -1,4 +1,4 @@
-import type { AliasSpecifier } from "#src/models/outdatedDependencies/shared/AliasSpecifier";
+import type { AliasSpecifier } from "#src/models/outdatedDependencies/AliasSpecifier";
 
 const ALIAS_SPECIFIER_REGEX = /^npm:(?<packageName>@?[^@]+)(?:@(?<range>.+))?$/u;
 // An alias naming no range, `npm:<target>`, installs from the target's `latest`

@@ -1,5 +1,5 @@
 import type { DependencyScore } from "#src/models/dependencies/score/DependencyScore";
-import type { ColorPalette } from "#src/models/outdatedDependencies/print/ColorPalette";
+import type { ColorPalette } from "#src/models/shared/ColorPalette";
 
 import { TOP_BUNDLE_COUNT } from "#src/services/dependencies/score/constants";
 import { formatBytes } from "#src/services/dependencies/score/formatBytes";
