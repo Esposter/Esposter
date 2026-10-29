@@ -10,7 +10,13 @@ import { authClient } from "@/services/auth/authClient";
 import { GENSHIN_QUALITY_TIER } from "@/services/genshin/constants";
 import { GENSHIN_DEV_COMMAND_GROUP, GENSHIN_DEV_STATS_GROUP } from "@/services/genshin/dev/constants";
 import { RoutePath } from "@esposter/shared";
-import { createDevRegistry, createStatCommand, DevVariableKind, exposeDevRegistry, WorldScreen } from "genshin-world";
+import {
+  createBooleanVariable,
+  createDevRegistry,
+  createStatCommand,
+  exposeDevRegistry,
+  WorldScreen,
+} from "genshin-world";
 import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
 
 interface Props {
@@ -70,15 +76,14 @@ if (devRegistry)
         }),
       ],
       variables: [
-        {
+        createBooleanVariable({
           get: () => isStatShown.value,
           group: GENSHIN_DEV_STATS_GROUP,
-          kind: DevVariableKind.Boolean,
           name: "stat",
-          set: (value) => {
-            isStatShown.value = value === true;
+          set: (isShown) => {
+            isStatShown.value = isShown;
           },
-        },
+        }),
       ],
     }),
   );
