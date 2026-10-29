@@ -26,11 +26,11 @@ Each world run SHALL name the recording or game data it reads and the bar it mus
 
 The output of a world run SHALL be written outside the repository.
 
-#### Scenario: A frame run completes
+#### Scenario: A still run completes
 
-- **GIVEN** the thunderstorm recording and the frame command
+- **GIVEN** a world screen and the `shoot` command
 - **WHEN** the run finishes
-- **THEN** its stills and contact sheet are written to the local parity folder
+- **THEN** its stills are written to the local parity folder's `shots` folder
 - **AND** no output is added to the repository
 
 ### Requirement: Reference sources record where and when they were found
