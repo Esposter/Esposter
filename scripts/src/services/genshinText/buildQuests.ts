@@ -66,7 +66,7 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
   );
   const carriedQuestIds = new Set<string>(QuestIds);
   const questIdRewardsMap = readCarriedQuestRewards(mainQuestMap, subQuestMap);
-  const talkTables = await readTalkTables();
+  const talkTables = await readTalkTables(englishTextMap);
   const mainQuestIds = new Set(mainQuestMap.keys());
   const subIdMainIdMap = new Map(Array.from(subQuestMap, ([subId, subQuest]) => [subId, subQuest.mainId] as const));
   const buildQuest = (questId: QuestId): Quest => {

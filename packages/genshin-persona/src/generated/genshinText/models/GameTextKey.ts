@@ -304,6 +304,8 @@ export const GameTextKey = {
   ExpeditionCharacterSelection: "UI_AVATAR_SELECT_PS4",
   // The expedition screen's words: the claim of a returned expedition, its recall, its send and its limit
   ExpeditionClaim: "UI_ACTIVITY_EXPEDITION_RECEIVE_REWARD",
+  // The expedition's duration in hours, "{0} hour(s)"
+  ExpeditionDurationHours: "UI_ACTIVITY_EXPEDITION_TIME_NEED",
   ExpeditionExploring: "UI_EXPLORE_EXPLORING",
   ExpeditionLimit: "UI_EXPLORE_LINELEFT",
   ExpeditionNoBonus: "COOKING_QTE_NO_BONUS_DESC",
@@ -657,6 +659,8 @@ export const GameTextKey = {
   RedBerryshroom: "1096616044",
   // The Remarkable Chest, the kind found in a few regions and rewarding blueprints, as the game names it
   RemarkableChest: "26276094",
+  // The mark of a Reputation level the player has reached, worded as the game words a finished donation, "Completed"
+  ReputationLevelReached: "REPUTATION_DONATION_DEMAND_FINISH",
   // The features a Reputation level unlocks, each worded as the reward page's unlock line, by its function's name
   ReputationMondstadtMerchantDiscounts: "1610612645",
   ReputationMondstadtOutcropSearch: "1452900101",
@@ -755,7 +759,7 @@ export const GameTextKey = {
   SettingsVolume: "UI_SETTING_AUDIO_CONFIG",
   SettingsVolumetricFog: "UI_SETTING_GRAPHICS_VOLUMETRIC_FOG",
   SettingsVSync: "UI_SETTING_GRAPHICS_VSYNC",
-  // The Sheer Cold gauge's name, which the bar across the screen's top is labelled with, and the subzero climate's
+  // The Sheer Cold gauge's name, which the bar across the screen's top is labelled with, and the subzero climate's name
   SheerCold: "694190546",
   Shop: "UI_STC_GAMEENTRYPAGE_SHOP",
   // The Left Today, Left This Week and Left This Month lines a shop's good shows, its count filled in

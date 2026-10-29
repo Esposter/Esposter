@@ -29,7 +29,8 @@ export const buildStandingTalks = async (): Promise<GameDataBuild> => {
           .residents ?? [],
     ),
   );
-  const talkTables = await readTalkTables();
+  const englishTextMap = readTextMap(GameLanguage.English);
+  const talkTables = await readTalkTables(englishTextMap);
   const npcStandingTalkIdMap = mapNpcStandingTalkIds(talkTables.talkConfigMap.values());
   const standingTalkIds = new Set(
     regionResidents
@@ -37,7 +38,6 @@ export const buildStandingTalks = async (): Promise<GameDataBuild> => {
       .filter(({ id, talkId }) => npcStandingTalkIdMap.get(Number(id)) === Number(talkId))
       .map(({ talkId }) => Number(talkId)),
   );
-  const englishTextMap = readTextMap(GameLanguage.English);
   const getTalks = (talkIds: Iterable<number>): Talk[] =>
     [...talkIds].flatMap((talkId): Talk[] => {
       const talk = skipWordlessTalkLines(readTalk(talkId, talkTables), (textId) => Boolean(englishTextMap.get(textId)));

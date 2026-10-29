@@ -57,11 +57,11 @@ export const TextMapChunkRangeMap: Record<string, { first: number; last: number 
   TextMap: { first: 512, last: 1023 },
   TextMap_Medium: { first: 0, last: 511 },
 };
-// The bit a text map's key and a table's hash for the same string differ in: AnimeGameData's Dialog table files about half
-// Its rows' hashes with bit 9 flipped from the key the text map holds the text under (708 of the 776 quest lines the
-// Quests build found no text for were there), and the text is the same string, so a hash is looked up as it stands and
-// Then with this bit flipped
-export const TEXT_MAP_KEY_VARIANT_MASK = 512;
+// The bit a dialog row's text hash and the English text map's key for the same line differ in: AnimeGameData's Dialog table,
+// Which a refetch leaves as it is (its sha is the remote's), files about half its rows' hashes with bit 9 flipped (99,894 of
+// Its 203,908 rows resolve as filed, about 100,000 only with the bit flipped, 4,031 neither way). It is the one table read
+// So: the other tables resolve as filed once the dump is fresh, so a hash outside the Dialog table is never flipped
+export const DIALOG_TEXT_HASH_VARIANT_MASK = 512;
 // The TextMap's obfuscation as the owomocha devkit (MIT, github.com/owomocha/genshin-7.0-local-re-devkit) decodes it for
 // 7.0.0: the entry count is masked by an addend and an XOR; each entry's key and length are the low and high halves of
 // A 64-bit mixer's output, keyed by the entry's index and by the key; and each body is the bytes of its length, padded

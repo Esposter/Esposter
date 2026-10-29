@@ -303,6 +303,8 @@ export enum GameTextKey {
   ExpeditionCharacterSelection = "UI_AVATAR_SELECT_PS4",
   // The expedition screen's words: the claim of a returned expedition, its recall, its send and its limit
   ExpeditionClaim = "UI_ACTIVITY_EXPEDITION_RECEIVE_REWARD",
+  // The expedition's duration in hours, "{0} hour(s)"
+  ExpeditionDurationHours = "UI_ACTIVITY_EXPEDITION_TIME_NEED",
   ExpeditionExploring = "UI_EXPLORE_EXPLORING",
   ExpeditionLimit = "UI_EXPLORE_LINELEFT",
   ExpeditionNoBonus = "COOKING_QTE_NO_BONUS_DESC",
@@ -656,6 +658,8 @@ export enum GameTextKey {
   RedBerryshroom = "1096616044",
   // The Remarkable Chest, the kind found in a few regions and rewarding blueprints, as the game names it
   RemarkableChest = "26276094",
+  // The mark of a Reputation level the player has reached, worded as the game words a finished donation, "Completed"
+  ReputationLevelReached = "REPUTATION_DONATION_DEMAND_FINISH",
   // The features a Reputation level unlocks, each worded as the reward page's unlock line, by its function's name
   ReputationMondstadtMerchantDiscounts = "1610612645",
   ReputationMondstadtOutcropSearch = "1452900101",
