@@ -9,14 +9,14 @@ The [weapon enhancement](../../specs/genshin/weapon-enhancement/design.md) page 
 - **The bag gives what the actions spend.** The ores and the refinement material are picked from the bag's stacks and taken out through `takeInventoryItems`, which refuses a stack that holds too few. Fodder weapons and copies are bag entries, each picked by its entry id and taken out through `takeInventoryEntry`.
 - **Ascend is offered at the cap.** The screen offers Ascend only while the weapon is at its phase's level cap. The Adventure Rank gate stays with `ascendWeapon`, so the screen and the rule cannot disagree about it.
 - **Refine is not offered where it cannot apply.** One- and two-star weapons and a weapon at rank five show no Refine; the service keeps the same limits as its own refusal.
-- **The passive waits on the kits.** A weapon's passive name and per-rank descriptions are the weapon enhancement's requirement, and the screen shows them once its layout is measured, the list being withdrawn until then. What a passive does acts through the [character kits](../genshin-character-kits/design.md), so its effect waits on them.
-- **The passive's descriptions are the game's words per rank.** Each rank's description is published as its own literal text (a damage bonus against opponents affected by Hydro or Cryo, 12% at rank one and 15% at rank two), so the screen draws them filled with no formatter. The record's `passiveRankParams` give the same values, which the screen test checks.
+- **The passive waits on the kits.** A weapon's passive name and per-rank descriptions are the weapon enhancement's requirement, and the screen draws them on its Refine tab, the held rank and the next one. What a passive does acts through the [character kits](../genshin-character-kits/design.md), so its effect waits on them.
+- **The passive's descriptions are the game's words per rank.** Each rank's description is published as its own literal text (a damage bonus against opponents affected by Hydro or Cryo, 12% at rank one and 15% at rank two), so the screen draws them filled with no formatter. The record's `passiveRankParams` give the same values, which no test checks yet.
 - **The words are the game's.** Enhance, Ascend and Refine take their labels from the game text by their text ids, never written into the component.
 - **Measured look.** The frames are measured from the reference clip under Reference, at the three frames it names. The sizes are read by eye off the frame, so the placement is provisional until the parity compare runs.
 - **The EXP rules are the wiki's.** Ore EXP (400, 2,000 and 10,000), 10 EXP per Mora and the 80% returned from a fodder are read from the wiki's Weapon EXP page (`api.php?action=parse&page=Weapon_EXP&prop=wikitext`). Its fodder base EXP by star (600, 1,200, 1,800, 50,000 and 300,000) differs from the published `baseExp` the model reads; the model keeps the table's value, and the difference is open.
 - **Provisional: an ore the bag cannot take is dropped.** An Enhance returns the EXP past the cap as ores, and `addInventoryItem` reports what does not fit; the screen does not yet show that overflow.
 - **A copy adds its own rank.** Refine with a copy picked adds the copy's refinement rank and takes the copy out of the bag. With none picked it adds one rank for the refinement material. A copy is a bag weapon of the same id, never a wielded one.
-- **Provisional: refusals are logged, with no Mora preview.** A refused action goes to `console.error` and changes nothing. The Mora an Enhance would cost is not previewed yet, an open follow-up.
+- **Provisional: refusals are logged.** A refused action goes to `console.error` and changes nothing. The Required line previews the Mora the open tab's action would take: an Enhance's or a Refine's, nothing where that action is refused, and an Ascend's next phase price.
 
 ## How it works
 
@@ -44,7 +44,7 @@ packages/genshin-interface/src/components/WeaponMenu/Index.vue
 1. **The screen, opened on a held weapon.** The screen shows the weapon's name, rarity, level, EXP towards the next level, phase and rank, with the three action labels.
 2. **Enhance, Ascend and Refine**, each calling its service, in the order the spec's requirements state.
 3. **The frame's look**, placed by its measured rects and compared with the reference clip.
-4. **Each passive, shown** on the screen, its name and each rank's description beneath the ores with the held rank marked. The list is withdrawn for now, since it overlapped the fodder row, and returns once the layout beneath the fodder grid is measured against the game reference. Its effect follows the kits.
+4. **Each passive, shown** on the Refine tab, its name and the held rank's and the next rank's descriptions with the held rank marked, beneath the refinement level line. Its effect follows the kits.
 
 ## Key files
 
@@ -63,4 +63,4 @@ packages/genshin-interface/src/components/WeaponMenu/Index.vue
 
 ## Reference
 
-The screen's reference is the English PC client's weapon-levelling clip `jXrYcFHiVnI` ("Ver7.1 Event Weapon Silver Light Upgrading Lv1 - 90", 115 seconds, 1920 by 864 pixels). The clip and its frames live outside the repository in `{data-root}/genshin-parity/captures/` and `{data-root}/genshin-parity/references/weapon-screen/`, and none is committed. The measured frames are 2 seconds (the Enhance tab at level one), 53 seconds (the level cap, "Max level reached") and 92 seconds (the Refine tab). The Ascend tab appears around 52 to 56 seconds and is not yet measured at full resolution.
+The screen's reference is the English PC client's weapon-levelling clip `jXrYcFHiVnI` ("Ver7.1 Event Weapon Silver Light Upgrading Lv1 - 90", 115 seconds, 1920 by 864 pixels). The clip and its frames live outside the repository in `{data-root}/genshin-parity/captures/` and `{data-root}/genshin-parity/references/weapon-screen/`, and none is committed. The frames the parity map scores are `weapon-screen` (the Enhance tab at level one), `weapon-screen-ascend` (the Ascend tab) and `weapon-screen-refine` (the Refine tab), each from `weapon-levelling.mkv` at the moment its map entry names (`scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`). The level cap has no whole-screen frame, since the recording zooms over that state (`weapon-screen-at-cap`, pending).

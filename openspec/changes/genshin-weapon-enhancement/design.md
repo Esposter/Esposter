@@ -138,7 +138,7 @@ packages/genshin-world/src/models/weapon/WeaponData.ts
 | `scripts/src/services/genshinAssets/stats/getWeaponDatas.ts`                           | Reads the affix table into each weapon's passive rows                                             |
 | `scripts/src/services/genshinText/constants.ts`                                        | Names the passive's name and rank text ids among the names `genshin:text names` publishes         |
 | `packages/genshin-world/src/services/weapon/getWeaponPassive.ts`                       | The passive's name and each rank's description, the held rank marked                              |
-| `packages/genshin-world/src/components/Weapon/Screen/Index.vue`                        | Lists the passive beneath the panel's ores; its place is provisional and unmeasured               |
+| `packages/genshin-world/src/components/Weapon/Screen/Index.vue`                        | Lists the passive on the Refine tab; its place is provisional and unmeasured                      |
 | `scripts/src/services/genshinAssets/stats/toWeaponPassive.ts`                          | Carries each rank's `addProps` as attribute lines beside its numbers                              |
 | `packages/genshin-world/src/services/weapon/getWeaponPassiveAttributeLines.ts`         | A weapon's passive lines at the held rank, read into the character's attribute lines              |
 | `packages/genshin-world/src/services/weapon/getWeaponPassiveKit.ts`                    | The passive's module, read at the held rank, composed beside the kit's own passives and its sets' |
