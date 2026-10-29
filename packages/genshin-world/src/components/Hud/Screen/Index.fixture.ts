@@ -79,6 +79,7 @@ export const props = {
   questMark: { distance: 1540, height: QUEST_MARK_MIN_HEIGHT },
   questProgress: { objectiveCounts: [], stepIndex: 0 },
   questTextMap: { albedo: "Look for Albedo", albedoStep: "" },
+  quickSwapOpen: false,
   trackedQuest: {
     descriptionTextId: "albedo",
     id: ALBEDO_QUEST_ID,

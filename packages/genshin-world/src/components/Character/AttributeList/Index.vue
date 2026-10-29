@@ -12,16 +12,16 @@ import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-te
 
 interface Props {
   // The Adventure Rank, Mora and materials the character's next phase takes, each held against what it takes, none at its last phase
-  ascendRows?: { label: string; value: string }[];
+  ascendRows: { label: string; value: string }[];
   character: Character;
   // The game's words in the reader's language
   gameText: GameText;
   // Whether the character can ascend now, at its level cap with the Adventure Rank, Mora and materials its next phase takes
-  isAscendable?: boolean;
+  isAscendable: boolean;
   // Whether the character can be raised a level with its Character EXP materials now
-  isLevelUpable?: boolean;
+  isLevelUpable: boolean;
   // Whether the character sits at a cap a Masterless Stella Fortuna lifts, with the items to do it
-  isLiftable?: boolean;
+  isLiftable: boolean;
   // The party's stamina, which the tab shows with every character's own attributes
   maxStamina: number;
   // The character's name in the reader's language, which the panel's top names it by
@@ -29,20 +29,20 @@ interface Props {
   // The game's tables the character's level cap and attributes are read from
   statTables: StatTables;
   // The bonuses the Traveler holds from the elements it resonated with, given to the Traveler alone
-  travelerBonusLines?: AttributeLine[];
+  travelerBonusLines: AttributeLine[];
 }
 
 const {
   ascendRows,
   character,
   gameText,
-  isAscendable = false,
-  isLevelUpable = false,
-  isLiftable = false,
+  isAscendable,
+  isLevelUpable,
+  isLiftable,
   maxStamina,
   name,
   statTables,
-  travelerBonusLines = [],
+  travelerBonusLines,
 } = defineProps<Props>();
 const emit = defineEmits<{ ascend: []; levelUp: []; lift: [] }>();
 const characterData = computed(() => statTables.characterDataMap.get(character.id));
@@ -112,13 +112,13 @@ const detailGroups = computed(() =>
     <button type="button" class="details" :disabled="!isLiftable" @click="emit('lift')">
       {{ gameText[GameTextKey.AscensionLimit] }}
     </button>
-    <dl v-if="ascendRows" class="rows">
+    <dl v-if="ascendRows.length" class="rows">
       <div v-for="{ label, value } of ascendRows" :key="label" class="row">
         <dt>{{ label }}</dt>
         <dd class="value">{{ value }}</dd>
       </div>
     </dl>
-    <button v-if="ascendRows" type="button" class="details" :disabled="!isAscendable" @click="emit('ascend')">
+    <button v-if="ascendRows.length" type="button" class="details" :disabled="!isAscendable" @click="emit('ascend')">
       {{ gameText[GameTextKey.CharacterAscend] }}
     </button>
     <section v-for="{ rows: groupRows, title } of detailGroups" :key="title">

@@ -9,7 +9,7 @@ interface Props {
   energy: number;
   hp: number;
   // Whether a click on it does something for the player at this moment
-  isChoosable?: boolean;
+  isChoosable: boolean;
   // The character's name in the reader's language
   maxEnergy: number;
   name: string;

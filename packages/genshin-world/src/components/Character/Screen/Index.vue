@@ -96,7 +96,7 @@ interface Props {
   // The tab the screen opens on, Attributes as the game's C opens it
   initialTab: CharacterMenuTab;
   // Whether the device's main pointer is a finger, which the menu's keys are not drawn for
-  isTouch?: boolean;
+  isTouch: boolean;
   // The reader's game language, whose text the Profile tab shows
   language?: GameLanguage;
   // The game's material table by item id, which the materials a talent's next level takes are named from
@@ -112,7 +112,7 @@ interface Props {
   // The game's talent upgrades by proud skill group, which each combat talent's next level is read from
   talentUpgradeMap: TalentUpgradeMap;
   // The bonuses the Traveler holds from the elements it resonated with, once Welkin Moon's Homecoming is done
-  travelerBonusLines?: AttributeLine[];
+  travelerBonusLines: AttributeLine[];
   // The element the Traveler holds from the statue it resonated with last, none before any resonance
   travelerElement?: Element;
 }
@@ -132,7 +132,7 @@ const {
   gameDataBaseUrl,
   gameText,
   initialTab,
-  isTouch = false,
+  isTouch,
   language = GameLanguage.English,
   materialDataMap,
   maxStamina,
@@ -140,7 +140,7 @@ const {
   reliquarySets,
   statTables,
   talentUpgradeMap,
-  travelerBonusLines = [],
+  travelerBonusLines,
   travelerElement,
 } = defineProps<Props>();
 // The player's characters, across the screen's top in the order given, a character's activated constellation and a
@@ -326,7 +326,7 @@ const isLiftable = computed(() => {
 const ascendRows = computed(() => {
   const phases = character.value && statTables.characterDataMap.get(character.value.id)?.ascensionPhases;
   const nextPhase = character.value && phases && getNextAscensionPhase(phases, character.value.ascension);
-  if (nextPhase?.coinCost === undefined || nextPhase.requiredPlayerLevel === undefined) return undefined;
+  if (nextPhase?.coinCost === undefined || nextPhase.requiredPlayerLevel === undefined) return [];
   return [
     { label: gameText[GameTextKey.AdventureRank], value: `${adventureRank}/${nextPhase.requiredPlayerLevel}` },
     { label: gameText[GameTextKey.Mora], value: `${wallet.value[Currency.Mora]}/${nextPhase.coinCost}` },

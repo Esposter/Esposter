@@ -157,12 +157,14 @@ export const props = {
   gameText: ENGLISH_GAME_TEXT,
   initialTab: CharacterMenuTab.Attributes,
   inventory: EMPTY_INVENTORY,
+  isTouch: false,
   materialDataMap,
   maxStamina: STAMINA,
   nameText: englishNameText,
   reliquarySets,
   statTables,
   talentUpgradeMap,
+  travelerBonusLines: [],
   wallet: EMPTY_WALLET,
 };
 

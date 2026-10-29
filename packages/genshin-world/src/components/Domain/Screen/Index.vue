@@ -18,10 +18,11 @@ interface Props {
 const { gameText, isInDomain, levels } = defineProps<Props>();
 const emit = defineEmits<{ close: []; enter: [dungeonId: number]; leave: [] }>();
 // The line a level's state shows in place of its entry button: the rank it asks for, or that it is closed today
-const getStateText = ({ requiredRank, state }: DomainLevelRow): string | undefined => {
+const getStateText = ({ requiredRank, state }: DomainLevelRow): string => {
   if (state === DomainLevelState.RankRequired)
     return fillGameTextValues(gameText[GameTextKey.AvailableAtAdventureRank], requiredRank);
   if (state === DomainLevelState.Closed) return gameText[GameTextKey.Closed];
+  return "";
 };
 </script>
 

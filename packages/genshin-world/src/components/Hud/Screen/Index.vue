@@ -70,7 +70,7 @@ interface Props {
   // The quests' own words in the reader's language, by the game's text id
   questTextMap: Readonly<Record<string, string>>;
   // Whether Z is held long enough to open the quick swap, which the menu is drawn for over the world's centre
-  quickSwapOpen?: boolean;
+  quickSwapOpen: boolean;
   // The quest on the tracker under the minimap, none while no quest is tracked
   trackedQuest?: Quest;
   // The name the player chose for the Traveler, which the party shows in place of the game's own, empty while none is

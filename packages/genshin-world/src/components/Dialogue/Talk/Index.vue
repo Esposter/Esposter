@@ -27,9 +27,9 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   // Whether the resident offers a duel of the card game with the reply it opens with, once that opening line is whole
-  isDuelOffered?: boolean;
+  isDuelOffered: boolean;
   // The quest talks the opening line offers as replies once it is whole, each with its quest's mark
-  offers?: TalkOffer[];
+  offers: TalkOffer[];
   // Where the talk is held when it opens, on any of its lines and written out whole or not; its first line unwritten
   // When absent. The parity page holds a state the reference shows this way, the reveal's clock not running
   startProgress?: TalkProgress;
@@ -38,7 +38,7 @@ interface Props {
   textMap: Readonly<Record<string, string>>;
 }
 
-const { gameText, isDuelOffered, offers = [], startProgress, talk, textMap } = defineProps<Props>();
+const { gameText, isDuelOffered, offers, startProgress, talk, textMap } = defineProps<Props>();
 const emit = defineEmits<{ begin: [talkId: string]; duel: []; end: [] }>();
 const progress = ref<TalkProgress>(startProgress ?? { isRevealed: false, lineId: talk.startLineId });
 const isAutoPlaying = ref(false);

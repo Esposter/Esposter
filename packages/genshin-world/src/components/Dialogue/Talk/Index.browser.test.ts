@@ -33,6 +33,8 @@ describe("dialogueTalk", () => {
     await render(DialogueTalk, {
       props: {
         gameText: ENGLISH_GAME_TEXT,
+        isDuelOffered: false,
+        offers: [],
         startProgress: { isRevealed: true, lineId: "line" },
         talk,
         textMap: { line: "{NICKNAME}, {M#he}{F#she} said.", sara: "Sara" },
@@ -52,6 +54,7 @@ describe("dialogueTalk", () => {
     await render(DialogueTalk, {
       props: {
         gameText: ENGLISH_GAME_TEXT,
+        isDuelOffered: false,
         offers: [{ icon: DialogueChoiceIcon.Quest, talkId: "quest", textId: "title" }],
         onBegin,
         startProgress: { isRevealed: true, lineId: "line" },
@@ -81,6 +84,7 @@ describe("dialogueTalk", () => {
     await render(DialogueTalk, {
       props: {
         gameText: ENGLISH_GAME_TEXT,
+        isDuelOffered: false,
         offers: [{ icon: DialogueChoiceIcon.Quest, talkId: "quest", textId: "title" }],
         startProgress: { isRevealed: true, lineId: "first" },
         talk: twoLineTalk,

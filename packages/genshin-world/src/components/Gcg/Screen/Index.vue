@@ -176,6 +176,7 @@ const playRerollChoice = () => {
         :class="{ active: index === opponentSide.activeIndex }"
         :energy="character.energy"
         :hp="character.hp"
+        :is-choosable="false"
         :max-energy="character.character.maxEnergy"
         :name="textMap[character.character.nameTextId] ?? ''"
         :shield="character.shield"

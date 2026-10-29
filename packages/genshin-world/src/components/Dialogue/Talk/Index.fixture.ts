@@ -71,6 +71,8 @@ const TEXT_MAP: Record<string, string> = {
 
 export const props = {
   gameText: ENGLISH_GAME_TEXT,
+  isDuelOffered: false,
+  offers: [],
   startProgress: { isRevealed: true, lineId: "ah-finally" },
   talk: TALK,
   textMap: TEXT_MAP,

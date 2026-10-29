@@ -2,7 +2,7 @@
 interface Props {
   // The dice the card costs to play, the energy it takes left out
   diceCount: number;
-  isSelected?: boolean;
+  isSelected: boolean;
   // The card's name in the reader's language
   name: string;
 }

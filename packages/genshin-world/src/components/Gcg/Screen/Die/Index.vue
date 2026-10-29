@@ -5,7 +5,7 @@ import type { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 interface Props {
   // The face the die shows: one of the seven elements, or Omni
   face: Element | GcgDieFace;
-  isSelected?: boolean;
+  isSelected: boolean;
 }
 
 const { face, isSelected } = defineProps<Props>();
