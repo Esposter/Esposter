@@ -13,8 +13,8 @@ const readMainCheckoutRoot = (environment: SetupEnvironment): string | undefined
   return status === 0 && stdout !== null ? dirname(stdout.trim()) : undefined;
 };
 
-// Claude's memory folder for the main checkout, where the owner's memory lives whichever checkout the command runs in. It is
-// Reported by its file count as it is, and never moved, copied or linked
+// Claude's memory folder for the main checkout, where the owner's memory lives whichever checkout the command runs in.
+// It is reported by its file count as it is, and never moved, copied or linked
 export const readMemoryRow = (environment: SetupEnvironment): SetupRow => {
   const mainCheckoutRoot = readMainCheckoutRoot(environment);
   if (mainCheckoutRoot === undefined)
