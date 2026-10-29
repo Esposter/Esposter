@@ -1,4 +1,5 @@
 import { regionDataPlugin } from "#parity/regionDataPlugin";
+import { terrainWorkerAlias } from "#parity/terrainWorkerAlias";
 import { gameDataMirrorPlugin } from "#scripts/gameData/mirror/gameDataMirrorPlugin";
 import { dynamicJsonImportPlugin, getVuePlugins, SOURCE_CONDITION } from "@esposter/configuration";
 import { templateCompilerOptions } from "@tresjs/core";
@@ -12,7 +13,7 @@ import { defaultClientConditions, defineConfig } from "vite";
 export default defineConfig({
   build: { rolldownOptions: { input: resolve(import.meta.dirname, "index.html") } },
   plugins: [...getVuePlugins(templateCompilerOptions), dynamicJsonImportPlugin, gameDataMirrorPlugin, regionDataPlugin],
-  resolve: { conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
+  resolve: { alias: terrainWorkerAlias, conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
   root: dirname(import.meta.dirname),
   // The shared checkout serves on 3011, and a busy port is taken by the next one up, which the commands find by probing
   // From their first port (`resolveParityPageRoot`). A checkout other than the shared one names its first port through
