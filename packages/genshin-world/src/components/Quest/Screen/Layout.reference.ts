@@ -24,7 +24,7 @@ export const layoutTopic: ReferenceTopic = {
         "Each line's ink width off the still against the stand-in face's at the same capitals, the face letter-spaced out to the still's width (interface.md): the details' title, journal, objective and first description line measured by eye at 1:1 against the fixture's render",
       outcome: InvestigationOutcome.Adopted,
       result:
-        "The title spaced 2 units, the journal 1, the objective 1.4 and the description 0.6. The description's measure is 860 units, not the 899 its box holds, so its first line breaks after Graeae as the still does: at 899 it broke after so. A description at 0.8 moved the detail's mean the wrong way, so it stays at 0.6. A title at 2.5 lowered the mean but lost shape, so it stays at 2",
+        "The title spaced 2.17 units, the journal 1.15 and set 63 in from the right, the objective 1.4 and the description 0.96. The description's measure is 880 units, not the 899 its box holds, so its first line breaks after Graeae as the still does: at 899 it broke after so, and at 860 the same 0.96 spacing wraps Graeae onto the next line. With these spacings the details' mean falls from 21.34 to 20.96. A title at 2.5 lowered the mean but lost shape, so it stays near 2",
     },
     {
       method:

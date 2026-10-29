@@ -450,7 +450,7 @@ useEventListener("keydown", (event) => {
   left: calc(var(--unit) * 1);
   color: #ede8e0;
   font-size: calc(var(--unit) * 35);
-  letter-spacing: calc(var(--unit) * 2);
+  letter-spacing: calc(var(--unit) * 2.17);
   line-height: calc(var(--unit) * 35);
   white-space: nowrap;
 }
@@ -463,10 +463,10 @@ useEventListener("keydown", (event) => {
 .journal {
   position: absolute;
   top: calc(var(--unit) * 172.8);
-  right: calc(var(--unit) * 65);
+  right: calc(var(--unit) * 63);
   color: #d1be9a;
   font-size: calc(var(--unit) * 26);
-  letter-spacing: calc(var(--unit) * 1);
+  letter-spacing: calc(var(--unit) * 1.15);
   line-height: calc(var(--unit) * 26);
   white-space: nowrap;
 }
@@ -522,10 +522,10 @@ useEventListener("keydown", (event) => {
   position: absolute;
   top: calc(var(--unit) * 313.7);
   left: calc(var(--unit) * 1);
-  width: calc(var(--unit) * 860);
+  width: calc(var(--unit) * 880);
   color: #ede7df;
   font-size: calc(var(--unit) * 27);
-  letter-spacing: calc(var(--unit) * 0.6);
+  letter-spacing: calc(var(--unit) * 0.96);
   line-height: calc(var(--unit) * 30);
 }
 
