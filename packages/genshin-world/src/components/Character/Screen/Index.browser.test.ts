@@ -1,8 +1,13 @@
+import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
+
 import { props, twoSetsProps } from "#src/components/Character/Screen/Index.fixture";
 import CharacterScreenContainer from "#src/components/Character/Screen/Index.vue";
+import CharacterTerms from "#src/components/Character/Terms/Index.vue";
+import { CHARACTER_TERMS_PATH } from "#src/services/character/constants";
 import { describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
 import { render } from "vitest-browser-vue";
+import { h } from "vue";
 
 describe("characterScreen", () => {
   // Its frame is wider than 16:9, so the window it is drawn in must hold the rightmost of its pieces
@@ -25,5 +30,28 @@ describe("characterScreen", () => {
 
     await expect.element(page.getByText("Scroll of the Hero of Cinder City", { exact: true })).toBeVisible();
     await expect.element(page.getByText("Gilded Dreams", { exact: true })).toBeVisible();
+  });
+
+  // The world mounts the terms in the screen's slot, which the screen passes the character it shows: the terms are the
+  // Pack's, read from the reader of that character
+  test("the terms of the shown character's pack come from its reader", async () => {
+    expect.hasAssertions();
+
+    const termsText = "The model's terms, shown as the pack bundles them.";
+    const characterPackReader: CharacterPackReader = {
+      characterId: props.activeCharacterId,
+      key: "",
+      readFile: (path) => Promise.resolve(path === CHARACTER_TERMS_PATH ? new Blob([termsText]) : undefined),
+    };
+
+    await render(CharacterScreenContainer, {
+      props,
+      slots: {
+        default: ({ characterId }: { characterId: number }) =>
+          h(CharacterTerms, { characterId, characterPackReaders: new Map([[characterId, characterPackReader]]) }),
+      },
+    });
+
+    await expect.element(page.getByText(termsText, { exact: true })).toBeVisible();
   });
 });
