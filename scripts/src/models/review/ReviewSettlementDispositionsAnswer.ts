@@ -1,12 +1,7 @@
+import type { ReviewSettlementDisposition } from "#src/models/review/ReviewSettlementDisposition";
+
 import { ReviewSettlementOutcome } from "#src/models/review/ReviewSettlementOutcome";
 import { z } from "zod";
-
-// One finding's settlement, by the finding's index in the issue's body, from zero
-export interface ReviewSettlementDisposition {
-  index: number;
-  outcome: ReviewSettlementOutcome;
-  reason: string;
-}
 
 // A settler's whole answer: the object its prompt asks it to end on
 export interface ReviewSettlementDispositionsAnswer {

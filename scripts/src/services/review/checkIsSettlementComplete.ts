@@ -1,4 +1,4 @@
-import type { ReviewSettlementDisposition } from "#src/models/review/ReviewSettlementDispositionsAnswer";
+import type { ReviewSettlementDisposition } from "#src/models/review/ReviewSettlementDisposition";
 
 // Whether a settler answered every finding of the issue, each by an index the issue holds, so no finding is left unsettled
 export const checkIsSettlementComplete = (findingCount: number, dispositions: ReviewSettlementDisposition[]): boolean =>

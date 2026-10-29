@@ -1,5 +1,5 @@
 import type { ReviewIssue } from "#src/models/review/ReviewIssue";
-import type { ReviewSettlementDisposition } from "#src/models/review/ReviewSettlementDispositionsAnswer";
+import type { ReviewSettlementDisposition } from "#src/models/review/ReviewSettlementDisposition";
 
 import { ReviewSessionLimitedError } from "#src/models/review/ReviewSessionLimitedError";
 import { ReviewSettlementOutcome } from "#src/models/review/ReviewSettlementOutcome";
