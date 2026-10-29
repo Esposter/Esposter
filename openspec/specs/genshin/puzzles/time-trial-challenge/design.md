@@ -28,3 +28,4 @@ stateDiagram-v2
 ## Open
 
 - [ ] **The map gives no limit or target count per challenge** — no source yet: the official map's point data is not among the caches read, so the absence is unchecked.
+- [ ] **The recording shows a challenge started at its marker and filmed to its end, with its clock in view, and the limit is read from it** — no source yet: `{data-root}/genshin-parity/captures/yt-B_l5b_KXt-o-time-trial-limit.mp4` exists, and `packages/genshin-world/src/services/puzzle/constants.ts` cites its banner for the 45 seconds, but no frame of the recording was opened to see the banner, the clock or the end.
