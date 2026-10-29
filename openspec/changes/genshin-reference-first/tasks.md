@@ -19,14 +19,14 @@
 
 ## 3. One image per subscreen
 
-- [x] 3.1 Write `packages/configuration/src/services/getVitestBrowserConfiguration.test.ts` first, beside the resolver, asserting that a subscreen's approved image resolves to `Index.png` with no platform segment, and watch it fail on the current resolver. Verify: the test titled "names a screenshot with no segment for %s", for the scenarios "Image name on a Windows machine" and "Image name on a macOS machine", seen failing.
+- [x] 3.1 Write `packages/configuration/src/services/getVitestBrowserConfiguration.test.ts` first, beside the resolver, asserting that a subscreen's approved image resolves to `Index.png` with no platform segment, and watch it fail on the current resolver. Verify: the test titled "names a screenshot the same on Windows as on macOS", for the scenarios "Image name on a Windows machine" and "Image name on a macOS machine", seen failing.
 - [x] 3.2 Drop the platform from `getVitestBrowserConfiguration.ts`, and make `approveReference.ts` write `Index.png` and `Index-<variant>.png`. Verify: the resolver test passes, and `approveReference` writes a file with no platform segment in its test.
 - [x] 3.3 Rename the 36 platform-suffixed images, keeping the win32 file where a screen has both. Verify: `git ls-files | grep -E "\.(win32|darwin)\.png$"` prints nothing.
 - [x] 3.4 Update the comments in `components.visual.ts` and `screens.visual.ts` that name `Index.<platform>.png`. Verify: `git grep -F "<platform>"` prints nothing outside this change.
 
 ## 4. The procedure
 
-- [ ] 4.1 Put the order into the genshin-parity skill's rules and `references/approval.md`: reference, fixture, component, compare, approve, suite. Verify: the skill's rules name the order, and the parity README's flowchart draws the reference before the screen.
+- [x] 4.1 Put the order into the genshin-parity skill's rules and `references/approval.md`: reference, fixture, component, compare, approve, suite. Verify: the skill's rules name the order, and the parity README's flowchart draws the reference before the screen.
 
 ## Gate
 
