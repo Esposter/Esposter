@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's pause menu, opened over the world by Escape or a pad's Start, with its contents and side bar in the game's own order, the entries of screens not yet built drawn disabled, and the quit prompt and World Level dialog it opens (`packages/genshin-world/src/components/Menu/Paimon/Index.vue`, `packages/genshin-world/src/components/Menu/Exit/Index.vue`, `packages/genshin-world/src/components/Menu/WorldLevelDialog/Index.vue`).
+The game's pause menu, opened over the world by Escape or a pad's Start, with its contents and side bar in the game's own order, the entries of screens not yet built drawn disabled and the entries of systems not yet open left out, and the quit prompt and World Level dialog it opens (`packages/genshin-world/src/components/Menu/Paimon/Index.vue`, `packages/genshin-world/src/components/Menu/Exit/Index.vue`, `packages/genshin-world/src/components/Menu/WorldLevelDialog/Index.vue`).
 
 ## Requirements
 
@@ -37,17 +37,30 @@ The Paimon menu SHALL list its side bar from Back to Quit Game and its contents 
 - **THEN** the side bar runs from Back to Quit Game in the game's order
 - **AND** the contents follow the game's order, labelled with the game's own words
 - **AND** Community, Version Highlights, Feedback and Survey are drawn disabled at the foot of the contents, as the frame draws them (`paimon-menu`)
-- **AND** entries the frame does not draw are left out: Shop, Wish, Battle Pass, Co-Op Mode, Events, Adventurer Handbook and the Training Guide
+- **AND** the Training Guide is not among the contents
 
-### Requirement: Entries whose screen is not built are drawn disabled
+### Requirement: Entries follow their system's open state
 
-The Paimon menu SHALL draw each entry whose screen is not built as disabled, and SHALL open the entry's screen once that screen is built.
+The Paimon menu SHALL draw an entry only once its system is open, at the Adventure Rank the player holds and with the main quests its system opens after finished, and SHALL draw an open entry whose screen is not built as disabled.
 
-#### Scenario: Entry whose screen is not built
+#### Scenario: Entry whose system is not open
 
-- **GIVEN** an entry whose screen the world has not built
+- **GIVEN** an entry whose system is not open at the player's rank or quests
+- **WHEN** the Paimon menu opens
+- **THEN** that entry is not drawn
+
+#### Scenario: Entry whose system is open but whose screen is not built
+
+- **GIVEN** an entry whose system is open and whose screen the world has not built
 - **WHEN** the Paimon menu opens
 - **THEN** that entry is drawn disabled
+
+#### Scenario: A locked account's contents
+
+- **GIVEN** the player is at Adventure Rank 2 with quests 2010001, 35001 and 20505 not finished
+- **WHEN** the Paimon menu opens
+- **THEN** the contents drawn are Party Setup, Friends, Achievements, Archive, Character Archive, Character, Inventory, Quests and Map, in that order
+- **AND** Shop, Wish, Battle Pass, Co-Op Mode, Events and Adventurer Handbook are not drawn (`paimon-menu`'s design, for the hidden contents, which is unverified against a locked account)
 
 #### Scenario: Entry whose screen is built
 
@@ -185,3 +198,4 @@ The Settings screen SHALL list its tabs down the left in the game's order and dr
 
 - [ ] **Single-player pauses everything except particles and music** — no source yet: no game data or snapshot checked holds the single-player pause; `MENU_SCREEN_BEHAVIOUR` holds the world with no particle or music carve-out.
 - [ ] **The Paimon menu opens over the world from Escape or Start, and the quit prompt and World Level dialog open from it** — no source yet: the Paimon Menu wiki page, which the wiki cache at `{data-root}/cache/genshin-wiki/` does not hold (it holds only the talent categories and the cached talent pages).
+- [ ] **A locked account's menu does not draw the contents its system has not opened** — no source yet: a recording of a locked account's Paimon menu. The frame at Adventure Rank 2 is the only witness, and the install's `OpenStateConfigData` has no field that says hidden or drawn.

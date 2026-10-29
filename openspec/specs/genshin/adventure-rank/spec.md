@@ -194,19 +194,25 @@ The game SHALL keep each claimed rank reward with the player's progress across r
 
 ### Requirement: System Rank Gates
 
-The Paimon menu SHALL keep a system's entry disabled until the player reaches the rank that opens that system.
+The Paimon menu SHALL not draw a system's entry until the player reaches the rank that opens that system and has finished the main quests it opens after.
 
-#### Scenario: a system's entry stays disabled below its rank
+#### Scenario: a system's entry is not drawn below its rank
 
 - **GIVEN** a system that opens at a rank above the player's
 - **WHEN** the player opens the Paimon menu
-- **THEN** that system's entry is disabled
+- **THEN** that system's entry is not drawn
 
-#### Scenario: a system's entry enables at its rank
+#### Scenario: a system's entry is drawn at its rank
 
-- **GIVEN** a system that opens at a rank the player has reached
+- **GIVEN** a system that opens at a rank the player has reached, and whose quests the player has finished
 - **WHEN** the player opens the Paimon menu
-- **THEN** that system's entry is enabled
+- **THEN** that system's entry is drawn
+
+#### Scenario: a system's entry waits on its quest
+
+- **GIVEN** a system that opens after a main quest the player has not finished
+- **WHEN** the player opens the Paimon menu
+- **THEN** that system's entry is not drawn
 
 ## Open
 
