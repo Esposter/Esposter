@@ -188,19 +188,25 @@ const getAdjacentSection = (step: number): ArchiveSection =>
 </template>
 
 <style scoped>
-/* The title sets a point larger than the shared header's, as the Archive's breadcrumb is set in its still at 1920 by 1080 */
+/* The title sets a point larger than the shared header's, as the Archive's breadcrumb is set in its still at 1920 by 1080, and its
+   gold is outlined in black as the game outlines its text */
 :deep(.title) {
   font-size: calc(var(--unit) * 28.8);
+  text-shadow:
+    calc(var(--unit) * 1) 0 #000,
+    calc(var(--unit) * -1) 0 #000,
+    0 calc(var(--unit) * 1) #000,
+    0 calc(var(--unit) * -1) #000;
 }
 
-/* The dark header the title and the counter sit on, a gradient measured down the still's top 95 pixels across the full width */
+/* The dark header the title and the counter sit on, measured across the still's top 95 pixels, darker to the right */
 .header {
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
   height: calc(var(--unit) * 95);
-  background: linear-gradient(#0c0f21, #24263f);
+  background: linear-gradient(to right, #14182d, #0c1124);
 }
 
 /* Its marks are measured off the Archive's still at 1920 by 1080, one of its pixels a unit. The grid's top and side padding keep a
@@ -260,7 +266,7 @@ const getAdjacentSection = (step: number): ArchiveSection =>
   padding: 0 calc(var(--unit) * 4);
   background: #e5e4dd;
   color: #2b2f3a;
-  font-size: calc(var(--unit) * 19.5);
+  font-size: calc(var(--unit) * 17.5);
   font-weight: 600;
   line-height: calc(var(--unit) * 15);
   text-align: center;
@@ -269,14 +275,14 @@ const getAdjacentSection = (step: number): ArchiveSection =>
   justify-content: center;
 }
 
-/* A two-line name is set at the game's cap height and letter-spaced to its width, as a single line is */
+/* A two-line name is set at the game's cap height, letter-spaced to its width */
 .name[data-two-lines] {
   font-size: calc(var(--unit) * 16);
   line-height: calc(var(--unit) * 14);
-  letter-spacing: calc(var(--unit) * 1.6);
+  letter-spacing: calc(var(--unit) * 1.1);
 }
 
-/* The game's face is wider than Signika at one cap height, so a single line is letter-spaced out to its width */
+/* Set under the game's cap height, as its face is wider than Signika there, so a single line is letter-spaced to its width */
 .name:not([data-two-lines]) .label {
   letter-spacing: calc(var(--unit) * 1.6);
   white-space: nowrap;
@@ -345,6 +351,7 @@ const getAdjacentSection = (step: number): ArchiveSection =>
   left: calc(var(--unit) * -6);
 }
 
+/* The counter's gold is outlined in black, as the game outlines its text */
 .counter {
   position: absolute;
   top: calc(var(--unit) * 31);
@@ -355,6 +362,11 @@ const getAdjacentSection = (step: number): ArchiveSection =>
   font-weight: 600;
   line-height: calc(var(--unit) * 30);
   letter-spacing: calc(var(--unit) * 0.4);
+  text-shadow:
+    calc(var(--unit) * 1) 0 #000,
+    calc(var(--unit) * -1) 0 #000,
+    0 calc(var(--unit) * 1) #000,
+    0 calc(var(--unit) * -1) #000;
   white-space: nowrap;
 }
 
@@ -368,9 +380,10 @@ const getAdjacentSection = (step: number): ArchiveSection =>
   right: calc(var(--unit) * 115);
   margin: 0;
   color: #d5c08f;
-  font-size: calc(var(--unit) * 46);
+  font-size: calc(var(--unit) * 42);
   font-weight: 600;
   line-height: calc(var(--unit) * 52);
+  letter-spacing: calc(var(--unit) * 1.6);
   white-space: nowrap;
 }
 
