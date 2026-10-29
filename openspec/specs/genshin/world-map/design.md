@@ -66,7 +66,7 @@ flowchart TD
 ## Open
 
 - [ ] **Names are facts: the catalogue's names come from the wiki, and no shape comes from a map's imagery** — no source yet: the wiki's Area page is not in `{data-root}/cache/genshin-wiki/`, and no region's shape was checked against imagery.
-- [ ] **The game's file holds no polygon for Nod-Krai's areas** — no source yet: `{data-root}/genshin-parity/text/BinOutput/Scene/WorldArea/scene3_worldArea.json` was not searched for Nod-Krai's area names.
+- [x] **The game's file holds no polygon for Nod-Krai's areas** — checked 2026-10-29: `{data-root}/genshin-parity/text/BinOutput/Scene/WorldArea/scene3_worldArea.json` holds none for Nod-Krai's areas, nor for Snezhnaya's, and no other world-area file on the community's `main` does either ([capitals](../compute/capitals/design.md)).
 - [ ] **Windrise is a subarea of Galesong Hill in Mondstadt** — no source yet: the wiki's Area page, named in Sources, is not on disk.
 - [ ] **Enkanomiya, the Chasm's underground mines and the Sea of Bygone Eras are layers that carry their own terrain, sky and water** — no source yet: the terrain, sky and water in the wiki's Map page, which is not on disk.
 - [ ] **A subarea takes the kind of ground the game's area table files it under, so the game's cities are marked as the game marks them** — no source yet: the wiki's Area page, named in Sources, is not in the wiki cache; the dump's `WorldAreaConfigData.json` (`{data-root}/genshin-parity/text/ExcelBinOutput/WorldAreaConfigData.json`) holds a `terrainType` on several hundred rows, several dozen of them `AREA_TERRAIN_CITY`, which the catalogue's cities are not yet matched to.
