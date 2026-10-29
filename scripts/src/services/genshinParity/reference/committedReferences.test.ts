@@ -68,7 +68,8 @@ describe("committedReferences", () => {
     ];
     const problems = await Promise.all(
       expected.map(async ({ id, path, sha256 }) => {
-        if (sha256 === undefined || !existsSync(path)) return undefined;
+        if (!existsSync(path)) return undefined;
+        if (sha256 === undefined) return `${id}: ${toRepositoryPath(path)} has no manifest row`;
         return (await sha256File(path)) === sha256
           ? undefined
           : `${id}: ${toRepositoryPath(path)} differs from its manifest row`;
