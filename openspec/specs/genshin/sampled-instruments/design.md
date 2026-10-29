@@ -69,3 +69,6 @@ flowchart TD
 - [ ] **The login's music plays the right notes** — no source yet: no listening-score report for the login piece is kept in `{data-root}/genshin-parity/`, and `{data-root}/genshin-parity/extracted/music/chroma/` holds the game's frames without a score.
 - [ ] **The game's sound is an orchestra recorded in a hall** — no source yet: nothing in the cached wiki or the parity folders describes the login music's instrumentation.
 - [ ] **The libraries are CC0, and each instrument is sampled as the Rules describe** — no source yet: their licence files and sampling notes are not kept locally, only the hashed sample downloads in the shared cache.
+- [ ] **Opus at 128 kbit/s variable bit rate is about transparent for stereo music** — no source yet: the Xiph recommended-settings page in Sources was not fetched here, and the 64k setting is the page's own choice.
+- [ ] **Opus in Ogg is decoded by every current engine, Safari since 18.4** — no source yet: the browser-support page in Sources was not fetched here.
+- [ ] **The synthesizer is a static form of the harmonic-plus-noise model in DDSP** — no source yet: the DDSP paper in Sources was not fetched here, so the comparison is the page's own.
