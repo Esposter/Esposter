@@ -59,5 +59,6 @@ export const fetchReferences = async (): Promise<void> => {
       return path;
     }),
   );
-  for (const line of [...lines, ...missingPlates]) console.log(line);
+  // On stderr: `compare` calls this on every run, and its stdout is one JSON line per comparison
+  for (const line of [...lines, ...missingPlates]) console.error(line);
 };

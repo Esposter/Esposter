@@ -48,6 +48,5 @@ export const shootScreen = async ({
     },
     () => close(),
   );
-  for (const path of paths) console.log(path);
   return paths;
 };

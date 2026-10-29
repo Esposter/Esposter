@@ -20,12 +20,14 @@ export const shootCommand: SubCommandsDef[string] = defineCommand({
     description: "The parity page's screen at a size, its motion held at each time in milliseconds given after it",
     name: "shoot",
   },
-  run: ({ args }) =>
-    shootScreen({
+  run: async ({ args }) => {
+    const paths = await shootScreen({
       height: Number(args.height),
       motion: args.motion,
       screen: args.screen,
       timesMs: args._.slice(3).map(Number),
       width: Number(args.width),
-    }),
+    });
+    for (const path of paths) console.log(path);
+  },
 });
