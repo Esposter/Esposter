@@ -4,6 +4,8 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 
 // Reads are memoized by the object's URL, so each test names its own base URL
 describe(readCraftingStrongboxes, () => {
+  const strongboxesKey = "crafting/strongboxes";
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -64,7 +66,7 @@ describe(readCraftingStrongboxes, () => {
 
     await expect(readCraftingStrongboxes("crafting-strongboxes-read")).resolves.toStrictEqual([strongbox]);
     expect(fetch.mock.calls.map(([url]) => url)).toStrictEqual([
-      `crafting-strongboxes-read/crafting/strongboxes/${gameDataLock.objects["crafting/strongboxes"]}.json`,
+      `crafting-strongboxes-read/${strongboxesKey}/${gameDataLock.objects[strongboxesKey]}.json`,
     ]);
   });
 });

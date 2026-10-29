@@ -5,6 +5,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(readWeeklyBossDomains, () => {
   const level = { dungeonId: 2020, enemyLevel: 39, recommendedRank: 25 };
+  const weeklyBossesKey = "domains/weeklyBosses";
 
   afterEach(() => {
     vi.restoreAllMocks();
@@ -18,7 +19,7 @@ describe(readWeeklyBossDomains, () => {
 
     await expect(readWeeklyBossDomains("weekly-boss-domains-read")).resolves.toStrictEqual(weeklyBossDomains);
     expect(fetch.mock.calls.map(([url]) => url)).toStrictEqual([
-      `weekly-boss-domains-read/domains/weeklyBosses/${gameDataLock.objects["domains/weeklyBosses"]}.json`,
+      `weekly-boss-domains-read/${weeklyBossesKey}/${gameDataLock.objects[weeklyBossesKey]}.json`,
     ]);
   });
 });
