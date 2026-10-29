@@ -114,10 +114,11 @@ export const GAME_SMOOTHSTEP_EASING = "cubic-bezier(0.333, 0, 0.667, 1)";
 // Plain button, so no recording gives a row's tint: these are the jump list's hover tint, and a press a step stronger
 export const GAME_ROW_HOVER = "rgb(255 255 255 / 0.2)";
 export const GAME_ROW_PRESS = "rgb(255 255 255 / 0.3)";
-// The dialogue reply's pill, a fifth black over the scene at rest, measured off the English client's dialogue choices
-// (the reply frame the dialogue page is placed by). Its hover and press are Provisional: no recording shows a reply under
+// The dialogue reply's pill, a black of 0.26 over the scene at rest, fitted to the English client's dialogue choices
+// (the reply frame the dialogue page is placed by): the alpha that minimises the mean difference over the pills' pixels
+// of `dialogue-choices-replies`. Its hover and press are Provisional: no recording shows a reply under
 // The pointer, so they are the look a lit reply took before the kind, a white pill with its words slate
-export const GAME_REPLY_REST = "rgb(0 0 0 / 0.22)";
+export const GAME_REPLY_REST = "rgb(0 0 0 / 0.26)";
 export const GAME_REPLY_HOVER = "rgb(255 255 255 / 0.85)";
 export const GAME_REPLY_HOVER_INK = "#3b4255";
 // The weapon screen's Ascend pill, lit gold, and its label faded over the gold, read off its reference (`weapon-screen-ascend`)

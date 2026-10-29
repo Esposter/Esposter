@@ -14,18 +14,18 @@ committed.
 | `character-attributes-panel`           | `CharacterScreen`           |                                                                          3.68% | 0.859 |  1.88% | 0.1547 |
 | `character-attributes-tabs`            | `CharacterScreen`           |                                                                          0.97% | 0.985 |  0.34% | 0.0441 |
 | `character-attributes-top`             | `CharacterScreen`           |                                                                          8.09% | 0.836 |  2.22% | 0.3151 |
-| `character-constellation`              | `CharacterScreen`           |                                                                          1.97% | 0.895 |  0.91% | 0.0771 |
+| `character-constellation`              | `CharacterScreen`           |                                                                          1.91% | 0.904 |  0.88% | 0.0752 |
 | `character-constellation-tabs`         | `CharacterScreen`           |                                                                          1.31% | 0.979 |  0.44% | 0.0478 |
-| `character-talents`                    | `CharacterScreen`           |                                                                          1.82% | 0.903 |  0.66% | 0.0798 |
+| `character-talents`                    | `CharacterScreen`           |                                                                          1.75% | 0.905 |  0.60% | 0.0782 |
 | `character-talents-tabs`               | `CharacterScreen`           |                                                                          0.89% | 0.978 |  0.28% | 0.0466 |
-| `character-weapons`                    | `CharacterScreen`           |                                                                          2.47% | 0.889 |  1.37% | 0.1063 |
+| `character-weapons`                    | `CharacterScreen`           |                                                                          2.47% | 0.907 |  1.33% | 0.1049 |
 | `character-weapons-tabs`               | `CharacterScreen`           |                                                                          0.89% | 0.976 |  0.30% | 0.0453 |
 | `cooking-screen`                       | `CookingScreen`             |                                                                          1.17% | 0.938 |  0.53% | 0.0540 |
 | `court-of-fontaine-location`           | `WorldScreen`               |                                                                         21.07% | 0.208 | 16.61% | 0.6768 |
 | `crafting-strongbox`                   | `CraftingStrongbox`         |                                       pending: no screenshot of the screen yet |       |        |        |
 | `crafting-table`                       | `CraftingScreen`            |                                          pending: its recording is not on disk |       |        |        |
 | `dialogue-choices-line`                | `DialogueTalk`              |                                                                          8.99% | 0.924 |  2.15% | 0.2757 |
-| `dialogue-choices-replies`             | `DialogueTalk`              |                                                                         13.45% | 0.814 |  8.33% | 0.4455 |
+| `dialogue-choices-replies`             | `DialogueTalk`              |                                                                         13.39% | 0.813 |  8.23% | 0.4423 |
 | `dialogue-choices-speaker`             | `DialogueTalk`              |                                                                          6.37% | 0.798 |  4.63% | 0.2878 |
 | `dialogue-line`                        | `DialogueTalk`              |                                                                         10.61% | 0.982 |  2.29% | 0.3704 |
 | `dialogue-paimon-line`                 | `DialogueTalk`              |                                                                          9.67% | 0.949 |  3.35% | 0.2930 |
