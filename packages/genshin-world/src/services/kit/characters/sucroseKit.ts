@@ -54,9 +54,9 @@ export const SUCROSE_CHARACTER_ID = 10_000_043;
 
 const CONSTELLATION_1 = 1;
 // Measured: gcsim v2.47.2 (MIT) sucrose/cons.go, Alchemania: every seventh normal or charged attack that strikes an enemy
-// Cuts Astable's cooldown by 1 to 7 seconds, as the wiki and gcsim's comment say. gcsim's code draws whole seconds from 1
-// To 6, which this does not follow: the cut is drawn from the world's random source as a fraction of a second, as gcsim's
-// Comment says a change can be. The kit counts an attack at its first hit's hitmark whether or not it struck anything,
+// Cuts Astable's cooldown by 1 to 7 seconds, the kit's own range: the cached wiki page gives no range text to check it
+// Against. gcsim's code draws whole seconds from 1 to 6, which this does not follow: the cut is drawn from the world's
+// Random source as a fraction of a second. The kit counts an attack at its first hit's hitmark whether or not it struck anything,
 // Which is the kit's NormalAttackLanded and ChargedAttackLanded, where gcsim counts only the attacks that strike
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sucrose/cons.go
 const CONSTELLATION_4 = 4;
