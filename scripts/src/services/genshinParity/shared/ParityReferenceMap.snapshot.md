@@ -31,7 +31,7 @@ committed.
 | `dialogue-paimon-line`                 | `DialogueTalk`              |                                                                          9.75% | 0.947 |  2.97% | 0.3121 |
 | `everfrozen-earth-location`            | `WorldScreen`               |                                                                         20.61% | 0.234 | 19.75% | 0.6327 |
 | `exit-prompt`                          | `MenuExit`                  |                                                                          1.59% | 0.999 |  1.24% | 0.1205 |
-| `expedition-screen`                    | `ExpeditionScreen`          |                                                                          1.61% | 0.923 |  0.47% | 0.0695 |
+| `expedition-screen`                    | `ExpeditionScreen`          |                                                                          1.56% | 0.934 |  0.44% | 0.0672 |
 | `fishing-screen`                       | `FishingScreen`             |                                                                          0.08% | 0.998 |  0.04% | 0.0041 |
 | `forge-screen`                         | `ForgeScreen`               |                                                                          3.67% | 0.776 |  1.84% | 0.1541 |
 | `forge-screen-ores-done`               | `ForgeScreen`               |                                                                          2.96% | 0.837 |  1.70% | 0.1389 |

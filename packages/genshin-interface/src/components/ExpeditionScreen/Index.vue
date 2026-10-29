@@ -65,8 +65,9 @@ const pick = (characterId: number) => {
        across the head with the expedition limit and the way out, the nations down the left, the places as pins over the
        map, and the picked place's panel on the right with its rewards, its durations and the button that acts on it. The
        map is drawn over the world and is the game's art, which does not ship, so the screen is transparent there; the
-       panel's picture is drawn as a plain sheet, and the pin's brackets as a square outline -->
+       panel's picture is drawn as a plain sheet, and the picked pin's brackets as four corners -->
   <div class="expedition-screen">
+    <span class="emblem" aria-hidden="true" />
     <ScreenTitle class="heading">{{ title }}</ScreenTitle>
     <p class="limit">{{ limitLabel }}</p>
     <CloseButton class="close" :label="closeLabel" @click="emit('close')" />
@@ -134,20 +135,55 @@ const pick = (characterId: number) => {
   font-weight: 600;
 }
 
+/* The way-out emblem in the head is a white map pin over an open book, both drawn in plain shapes at the reference's place */
+.emblem {
+  position: absolute;
+  top: calc(var(--unit) * 22);
+  left: calc(var(--unit) * 55);
+  width: calc(var(--unit) * 43);
+  height: calc(var(--unit) * 50);
+}
+
+.emblem::before {
+  position: absolute;
+  top: calc(var(--unit) * 2);
+  left: calc(var(--unit) * 8);
+  width: calc(var(--unit) * 26);
+  height: calc(var(--unit) * 26);
+  border-radius: 50% 50% 50% 0;
+  background: #f4f2ee;
+  content: "";
+  transform: rotate(-45deg);
+}
+
+.emblem::after {
+  position: absolute;
+  top: calc(var(--unit) * 25);
+  left: 0;
+  width: calc(var(--unit) * 43);
+  height: calc(var(--unit) * 24);
+  background: #f4f2ee;
+  clip-path: polygon(0 35%, 46% 15%, 50% 30%, 54% 15%, 100% 35%, 100% 100%, 54% 80%, 50% 95%, 46% 80%, 0 100%);
+  content: "";
+}
+
 /* The title is the game's head line at 28 pixels, set in the game's place for it */
 .heading {
   font-size: calc(var(--unit) * 28);
 }
 
+/* The limit's cap height is the game's, and its face sets narrower, so the letters are spaced out to the game's line width */
 .limit {
   position: absolute;
   top: calc(var(--unit) * 33);
   right: calc(var(--unit) * 162);
   margin: 0;
+  color: #f7f4ee;
   font-size: calc(var(--unit) * 24);
+  letter-spacing: calc(var(--unit) * 1.5);
 }
 
-/* The way out is a disc 58 across with a grey ring, its cross two bars of the ink's colour, measured from the reference */
+/* The way out is a disc 58 across with a grey ring, its cross two bars of 37 by 8 in the ink's colour, measured from the reference */
 .close {
   border: calc(var(--unit) * 6) solid #757274;
   background: #eee9e8;
@@ -159,8 +195,8 @@ const pick = (characterId: number) => {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: calc(var(--unit) * 31);
-  height: calc(var(--unit) * 6);
+  width: calc(var(--unit) * 37);
+  height: calc(var(--unit) * 8);
   background: currentcolor;
   content: "";
   transform: translate(-50%, -50%) rotate(45deg);
@@ -172,7 +208,7 @@ const pick = (characterId: number) => {
 
 .nations {
   position: absolute;
-  top: calc(var(--unit) * 142);
+  top: calc(var(--unit) * 136);
   left: calc(var(--unit) * 70);
   display: flex;
   flex-direction: column;
@@ -208,6 +244,16 @@ const pick = (characterId: number) => {
   transform: rotate(45deg);
 }
 
+/* The picked nation's diamond is hollow, 18 across with a stroke of 3, drawn over its label's left edge */
+.nation[aria-pressed="true"] .marker {
+  width: calc(var(--unit) * 18);
+  height: calc(var(--unit) * 18);
+  margin-left: calc(var(--unit) * -4);
+  border: calc(var(--unit) * 3) solid currentcolor;
+  background: none;
+  box-sizing: border-box;
+}
+
 .alert {
   display: inline-flex;
   width: calc(var(--unit) * 20);
@@ -220,7 +266,7 @@ const pick = (characterId: number) => {
   font-size: calc(var(--unit) * 16);
 }
 
-/* Each pin is a circle 80 across standing on its place, its point under it, the picked one outlined as the game brackets it */
+/* Each pin is a white disc 86 across with a grey rim standing on its place, its point under it, the picked one bracketed at its corners */
 .pins {
   position: absolute;
   inset: 0;
@@ -237,28 +283,30 @@ const pick = (characterId: number) => {
 
 .pin {
   position: absolute;
-  top: calc(var(--unit) * -40);
-  left: calc(var(--unit) * -40);
-  width: calc(var(--unit) * 80);
-  height: calc(var(--unit) * 80);
+  top: calc(var(--unit) * -43);
+  left: calc(var(--unit) * -43);
+  width: calc(var(--unit) * 86);
+  height: calc(var(--unit) * 86);
   padding: 0;
-  border: calc(var(--unit) * 4) solid #dcd5c4;
+  border: calc(var(--unit) * 3) solid #8e9197;
   border-radius: 50%;
-  background: #f7f4ec;
+  background: #f1f1f3;
   color: #6f6a58;
   font: inherit;
   font-size: calc(var(--unit) * 48);
   line-height: calc(var(--unit) * 72);
-  box-shadow: 0 calc(var(--unit) * 4) calc(var(--unit) * 8) rgb(0 0 0 / 0.3);
+  box-shadow:
+    inset 0 0 0 calc(var(--unit) * 4) #fbfbfb,
+    0 calc(var(--unit) * 4) calc(var(--unit) * 8) rgb(0 0 0 / 0.3);
 }
 
-/* The plus is two bars of 36 by 7 in the game's grey, centred on the pin */
+/* The plus is two bars of 40 by 7 in the game's grey, centred on the pin */
 .plus {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: calc(var(--unit) * 36);
-  height: calc(var(--unit) * 36);
+  width: calc(var(--unit) * 40);
+  height: calc(var(--unit) * 40);
   background:
     linear-gradient(#9c9ea2, #9c9ea2) center / 100% calc(var(--unit) * 7) no-repeat,
     linear-gradient(#9c9ea2, #9c9ea2) center / calc(var(--unit) * 7) 100% no-repeat;
@@ -283,15 +331,32 @@ const pick = (characterId: number) => {
   position: absolute;
   top: 100%;
   left: 50%;
-  border: calc(var(--unit) * 10) solid transparent;
-  border-top-color: #dcd5c4;
+  width: 0;
+  height: 0;
+  border: solid transparent;
+  border-width: calc(var(--unit) * 17) calc(var(--unit) * 10) 0;
+  border-top-color: #c4c7cc;
   content: "";
   transform: translateX(-50%);
 }
 
-.pin[aria-pressed="true"] {
-  outline: calc(var(--unit) * 3) solid #fff;
-  outline-offset: calc(var(--unit) * 22);
+/* The picked pin's brackets: four corners of 26 by 4 units, on a box 125 by 119 round the pin */
+.pin[aria-pressed="true"]::before {
+  position: absolute;
+  top: calc(var(--unit) * -12);
+  left: calc(var(--unit) * -19);
+  width: calc(var(--unit) * 125);
+  height: calc(var(--unit) * 119);
+  background:
+    linear-gradient(#fff, #fff) left top / calc(var(--unit) * 26) calc(var(--unit) * 4) no-repeat,
+    linear-gradient(#fff, #fff) left top / calc(var(--unit) * 4) calc(var(--unit) * 26) no-repeat,
+    linear-gradient(#fff, #fff) right top / calc(var(--unit) * 26) calc(var(--unit) * 4) no-repeat,
+    linear-gradient(#fff, #fff) right top / calc(var(--unit) * 4) calc(var(--unit) * 26) no-repeat,
+    linear-gradient(#fff, #fff) left bottom / calc(var(--unit) * 26) calc(var(--unit) * 4) no-repeat,
+    linear-gradient(#fff, #fff) left bottom / calc(var(--unit) * 4) calc(var(--unit) * 26) no-repeat,
+    linear-gradient(#fff, #fff) right bottom / calc(var(--unit) * 26) calc(var(--unit) * 4) no-repeat,
+    linear-gradient(#fff, #fff) right bottom / calc(var(--unit) * 4) calc(var(--unit) * 26) no-repeat;
+  content: "";
 }
 
 /* The panel at 1445 from the left and 120 from the top, 432 wide and 598 high, its children placed from its corner */
@@ -307,6 +372,7 @@ const pick = (characterId: number) => {
   box-shadow: 0 0 calc(var(--unit) * 12) rgb(0 0 0 / 0.35);
 }
 
+/* The name's cap height is 21 and its baseline 36 below the panel's top, so it is set at 28 and spaced out to the reference's width */
 .detail-name {
   position: absolute;
   top: 0;
@@ -314,8 +380,9 @@ const pick = (characterId: number) => {
   height: calc(var(--unit) * 52);
   margin: 0;
   color: #d8c8a0;
-  font-size: calc(var(--unit) * 24);
-  line-height: calc(var(--unit) * 52);
+  font-size: calc(var(--unit) * 28);
+  letter-spacing: calc(var(--unit) * 1.8);
+  line-height: calc(var(--unit) * 60);
 }
 
 .detail::before {
@@ -325,6 +392,17 @@ const pick = (characterId: number) => {
   left: 0;
   height: calc(var(--unit) * 52);
   background: #3e4656;
+  content: "";
+}
+
+/* The rule under the description is a hairline 20 in from each side of the panel, at 379 below its top */
+.detail::after {
+  position: absolute;
+  top: calc(var(--unit) * 379);
+  right: calc(var(--unit) * 20);
+  left: calc(var(--unit) * 20);
+  height: calc(var(--unit) * 1);
+  background: #b9b2a4;
   content: "";
 }
 
@@ -478,7 +556,7 @@ const pick = (characterId: number) => {
   display: flex;
   height: calc(var(--unit) * 69);
   margin: 0;
-  padding: 0 calc(var(--unit) * 25) 0 calc(var(--unit) * 20);
+  padding: 0 calc(var(--unit) * 23) 0 calc(var(--unit) * 25);
   background: #8f8f91;
   list-style: none;
 }

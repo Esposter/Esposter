@@ -353,8 +353,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   // The expedition screen at 1080 high from the public clip (yt-fxIjhlV3vUA), 26 seconds in: Mondstadt's map with six
   // Places pinned and Wolvendom picked, its Expedition Limit across the head, its rewards and durations down the right.
-  // Scored over the screen above the recorder's UID, which the clip draws at its bottom right corner. The reward panel and
-  // Its action button are drawn opaque by the page over the backdrop, so the reference's pixels under them are covered
+  // Scored over the whole screen above the recorder's UID, which the clip draws at its bottom right corner. No mask is named,
+  // So every pixel counts, the plate rectangles too: each plate is the backdrop's fill under a piece the page draws, and that
+  // Piece is scored against the reference's own pixels there. The reward panel and its action button count the same way
   "expedition-screen": {
     isBackdrop: true,
     plate: [
