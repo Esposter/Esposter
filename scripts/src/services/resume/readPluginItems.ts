@@ -1,3 +1,6 @@
+import type { InstalledPlugins } from "#src/models/resume/InstalledPlugins";
+import type { Marketplace } from "#src/models/resume/Marketplace";
+import type { ProjectSettings } from "#src/models/resume/ProjectSettings";
 import type { ResumeItem } from "#src/models/resume/ResumeItem";
 
 import { getPluginItems } from "#src/services/resume/getPluginItems";
@@ -6,19 +9,6 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-
-interface InstalledPlugins {
-  plugins: Record<string, unknown>;
-}
-
-interface Marketplace {
-  name: string;
-  plugins: { name: string }[];
-}
-
-interface ProjectSettings {
-  enabledPlugins?: Record<string, boolean>;
-}
 
 export const readPluginItems = (): ResumeItem[] => {
   const marketplace = parseMachineJson<Marketplace>(
