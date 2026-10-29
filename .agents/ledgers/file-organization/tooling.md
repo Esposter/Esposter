@@ -18,14 +18,14 @@
 | `scripts/src/genshinText`                                                                 | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/identifiers`                                                                 | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/machine`                                                                     | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/models/benchTypes`                                                           | —                       |       |
-| `scripts/src/models/ci`                                                                   | —                       |       |
+| `scripts/src/models/benchTypes`                                                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/ci`                                                                   | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/citations`                                                            | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/models/dependencies`                                                         | —                       |       |
-| `scripts/src/models/dependencyAdmission`                                                  | —                       |       |
+| `scripts/src/models/dependencies`                                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/dependencyAdmission`                                                  | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/dependencyGraph`                                                      | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/models/fleet`                                                                | —                       |       |
-| `scripts/src/models/gameData`                                                             | —                       |       |
+| `scripts/src/models/fleet`                                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/gameData`                                                             | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/achievements`                                           | —                       |       |
 | `scripts/src/models/genshinAssets/adventureRank`                                          | —                       |       |
 | `scripts/src/models/genshinAssets/archive`                                                | —                       |       |
@@ -51,7 +51,7 @@
 | `scripts/src/models/genshinAssets/kits/KitCandidateSources.ts`                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/shared/KitOverlay.ts`                                                 | —                       |       |
 | `scripts/src/models/genshinAssets/kits/KitOverlayEntry.ts`                                | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/models/shared/KitProvisionalCause.ts`                                        | —                       |       |
+| `scripts/src/models/shared/KitProvisionalCause.ts`                                        | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/kits/KitRule.ts`                                        | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/kits/KitSource.ts`                                      | —                       |       |
 | `scripts/src/models/genshinAssets/kits/KitSources.ts`                                     | —                       |       |
@@ -109,16 +109,16 @@
 | `scripts/src/models/genshinParity/sound`                                                  | —                       |       |
 | `scripts/src/models/genshinParity/witness`                                                | —                       |       |
 | `scripts/src/models/genshinText`                                                          | —                       |       |
-| `scripts/src/models/identifiers`                                                          | —                       |       |
-| `scripts/src/models/machine`                                                              | —                       |       |
+| `scripts/src/models/identifiers`                                                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/machine`                                                              | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/outdatedDependencies`                                                 | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/oxlint`                                                               | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/models/package`                                                              | —                       |       |
-| `scripts/src/models/producerStamp`                                                        | —                       |       |
-| `scripts/src/models/proposals`                                                            | —                       |       |
+| `scripts/src/models/package`                                                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/producerStamp`                                                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/proposals`                                                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/recreation`                                                           | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/models/resume`                                                               | —                       |       |
-| `scripts/src/models/review`                                                               | —                       |       |
+| `scripts/src/models/resume`                                                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/review`                                                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/semver`                                                               | —                       |       |
 | `scripts/src/models/shared`                                                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/skills`                                                               | —                       |       |
@@ -1083,7 +1083,7 @@
 | `scripts/src/services/genshinParity/shared/computePixelPoint.test.ts`                     | —                       |       |
 | `scripts/src/services/genshinParity/shared/computePixelPoint.ts`                          | —                       |       |
 | `scripts/src/services/genshinParity/shared/constants.test.ts`                             | —                       |       |
-| `scripts/src/services/genshinParity/shared/constants.ts`                                  | —                       |       |
+| `scripts/src/services/genshinParity/shared/constants.ts`                                  | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinParity/shared/countDecimals.ts`                              | —                       |       |
 | `scripts/src/services/genshinParity/shared/createFeatureFilter.ts`                        | —                       |       |
 | `scripts/src/services/genshinParity/shared/createSpatialFilters.ts`                       | —                       |       |
@@ -1094,7 +1094,7 @@
 | `scripts/src/services/genshinParity/shared/describeFunction.ts`                           | —                       |       |
 | `scripts/src/services/genshinParity/shared/describeGpuFrames.ts`                          | —                       |       |
 | `scripts/src/services/genshinParity/shared/describePasses.ts`                             | —                       |       |
-| `scripts/src/services/genshinParity/shared/fetchReferences.ts`                            | —                       |       |
+| `scripts/src/services/genshinParity/shared/fetchReferences.ts`                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinParity/shared/formatCrossing.ts`                             | —                       |       |
 | `scripts/src/services/genshinParity/shared/formatFigure.ts`                               | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/genshinParity/shared/formatLoadMeter.test.ts`                       | —                       |       |
