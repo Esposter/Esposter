@@ -101,11 +101,11 @@ The five are judged over their clean plate, the reference frame with its scored 
 
 | Reference                  | Plate, softened shot | Bare render |
 | :------------------------- | :------------------- | :---------- |
-| `dialogue-choices-line`    | snapshot row         | 9.64%       |
-| `dialogue-choices-replies` | snapshot row         | 17.80%      |
-| `dialogue-choices-speaker` | snapshot row         | 12.60%      |
-| `dialogue-line`            | snapshot row         | 11.65%      |
-| `dialogue-paimon-line`     | snapshot row         | 11.86%      |
+| `dialogue-choices-line`    | 9.09%                | 9.64%       |
+| `dialogue-choices-replies` | 14.22%               | 17.80%      |
+| `dialogue-choices-speaker` | 6.37%                | 12.60%      |
+| `dialogue-line`            | 10.49%               | 11.65%      |
+| `dialogue-paimon-line`     | 9.75%                | 11.86%      |
 
 The softened column is each reference's row in the parity snapshot (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`).
 
