@@ -31,20 +31,28 @@ Mount `WorldScreen`, which brings its own canvas, and pass in only what your bun
 <script setup lang="ts">
 import { WorldScreen } from "genshin-world";
 import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
+import { QualityTier } from "genshin-engine";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 import "genshin-interface/style.css";
 import "genshin-world/style.css";
+
+const isDevelopment = import.meta.env.DEV;
+const qualityTier = QualityTier.High;
 </script>
 
 <template>
   <WorldScreen
+    account-avatar-url="https://your-host.example/avatar.png"
     :create-terrain-worker="() => new TerrainTileWorker()"
     :game-text="ENGLISH_GAME_TEXT"
+    :is-paused="false"
     :is-tuning="isDevelopment"
     :language="GameLanguage.English"
-    :quality-tier
+    :quality-tier="qualityTier"
+    :server-clock-offset-ms="0"
     game-data-base-url="https://your-host.example/game-data"
     region-data-base-url="genshin"
+    scene-export-base-url="https://your-host.example/scene-exports"
   />
 </template>
 ```
