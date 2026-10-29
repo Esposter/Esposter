@@ -120,6 +120,7 @@ The cost is the settler's and the fixer's sessions on the same subscription as t
 - **Renovate targets `ai/queue` and merges by pull request.** Its bumps enter through the queue like a session's commits, so they are reviewed like any other change instead of landing on `main` unread.
 - **A review pass improves what is there and adds no capability.** The boundary is drawn by what a change does, never by its size, because the review exists for one end: a codebase of better quality in less, non-duplicated code. While a pass runs — the workflow's or `pnpm ai:review` by hand — a session lands anything that serves that end over code already on `ai/queue`: a finding's fix, a refactor, a duplicate hoisted into a shared package, an architectural simplification, however many files it touches. What waits is new capability — a fleet entry, a proposal unit, a roadmap item, the roadmap line a shipped feature retires — because each fix lands behind every commit already on `ai/queue`, and `main` reaches the fix only once the review has read what landed before it, so a feature landed mid-pass is one more thing between `main` and the pass's end. Feature work resumes once `main` has caught up.
 - **Reviewers are read-only, in a worktree at the window's end.** A reviewer reads the code exactly as it will be on `main`, cannot change it, and cannot reach GitHub.
+- **A gate that can hold forever is dropped rather than made to wait.** A later step repairs what it would have held, so an intermediate red, even on `main`, is transient.
 - **The script does every push, issue and summary under its own token.** The session gets nothing but its own Claude credential, so a finding's text, which came from code under review, cannot direct a push or an issue.
 
 ## Constants
@@ -200,3 +201,5 @@ A review does not gate on CI. A window's review completes and `main` moves, what
 ## Notes
 
 - There is no pull request to comment on, so a finding lives in the run's summary and, from then on, in its issue until a settlement closes it.
+- The collector's token is the session account's `gh` token, held as the `REVIEW_COLLECTOR_TOKEN` secret. A personal access token or a GitHub App is never substituted for it.
+- Shipping a fix to the review's scripts: a settle job already running keeps the code it loaded, so every run whose settle job is in progress and whose head predates the fix is cancelled, and a queued settle job that also predates the fix is cancelled in turn. `git merge-base --is-ancestor <fix> <head>` tells which.
