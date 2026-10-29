@@ -9,3 +9,7 @@ export const PERCENT = 100;
 // The frame times the stats overlay's median covers, and how many frames pass between two of its readings
 export const FRAME_STATS_HISTORY_LENGTH = 60;
 export const FRAME_STATS_INTERVAL = 10;
+// The most of one item a `give` line gives at once
+export const MAX_DEV_GIVE_COUNT = 999_999;
+// The most names a refused name lists as the nearest it is
+export const MAX_DEV_NAME_SUGGESTION_COUNT = 5;
