@@ -1,6 +1,6 @@
 export * from "./azure/constants/ApplicationTagName.ts";
-export * from "./azure/constants/ApplicationTagValue.ts";
 export * from "./azure/constants/ApplicationTags.ts";
+export * from "./azure/constants/ApplicationTagValue.ts";
 export * from "./azure/constants/AzureAppServiceApiReference.ts";
 export * from "./azure/constants/AzureAppServiceManagedApiId.ts";
 export * from "./azure/constants/AzureAustraliaEastDisplayLocation.ts";
@@ -27,8 +27,8 @@ export * from "./azure/constants/AzureStorageTableDataReaderRoleDefinitionId.ts"
 export * from "./azure/constants/AzureSubscriptionId.ts";
 export * from "./azure/constants/AzureWebsiteContributorRoleDefinitionId.ts";
 export * from "./azure/constants/DeploymentPrincipalId.ts";
-export * from "./azure/constants/DevEventSubscriptionGuardTargets.ts";
 export * from "./azure/constants/DevelopDeploymentOrigin.ts";
+export * from "./azure/constants/DevEventSubscriptionGuardTargets.ts";
 export * from "./azure/constants/JimmyChenPrincipalId.ts";
 export * from "./azure/constants/ProdEventSubscriptionGuardTargets.ts";
 export * from "./azure/models/ApiConnectionAction.ts";
