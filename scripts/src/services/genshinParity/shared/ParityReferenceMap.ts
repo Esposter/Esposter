@@ -7,7 +7,6 @@ import { getCharacterScreenPlate } from "#src/services/genshinParity/shared/getC
 // The two settings entries are scored from the same recording, against the same mean-difference bar, over a backdrop
 const MENU_SETTINGS_REFERENCE = {
   approval: { bar: 2, measure: ParityApprovalMeasure.MeanDifference },
-  capture: "yt-5EmJX_RyuY8-menu-settings.mp4",
   isBackdrop: true,
 } as const;
 // The settings backdrop's header rows and the first two rows of its menu, which both entries draw over the same place
@@ -32,117 +31,109 @@ const QUEST_SCREEN_BACKDROP_PLATE = [
 export const ParityReferenceMap: Record<string, ParityReference> = {
   // The English PC client's character screen on the Artifacts tab at 21:9, the same recording at 157.5 seconds, the tab settled, scored over its own scene with the interface it shows filled from round it
   "character-artifacts": {
-    capture: "session-2.mp4",
     isBackdrop: true,
     plate: getCharacterScreenPlate("Artifacts"),
     props: { initialTab: "Artifacts" },
     screen: "CharacterScreen",
-    seconds: 157.5,
+    source: "session-2.mp4 at 157.5s",
+    variant: "artifacts",
   },
   // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Artifacts tab open
   "character-artifacts-tabs": {
-    capture: "session-2.mp4",
     isBackdrop: true,
     plate: getCharacterScreenPlate("Artifacts"),
     props: { initialTab: "Artifacts" },
     region: { height: 800, width: 900, x: 120, y: 180 },
     screen: "CharacterScreen",
-    seconds: 157.5,
+    source: "session-2.mp4 at 157.5s",
   },
   // The English PC client's character screen on Xilonen's Attributes tab at 21:9, from the user's own recording of the
   // Current build (session-2.mp4 at 155 seconds, the interface settled: at 154.4 its closed tabs are still fading in)
   "character-attributes": {
-    capture: "session-2.mp4",
     isBackdrop: true,
     plate: getCharacterScreenPlate("Attributes"),
     screen: "CharacterScreen",
-    seconds: 155,
+    source: "session-2.mp4 at 155s",
   },
   // The frame's panel down the right: the name, the level, the bar and the five base rows
   "character-attributes-panel": {
-    capture: "session-2.mp4",
     isBackdrop: true,
     plate: getCharacterScreenPlate("Attributes"),
     region: { height: 620, width: 640, x: 2800, y: 180 },
     screen: "CharacterScreen",
-    seconds: 155,
+    source: "session-2.mp4 at 155s",
   },
   // The frame's tab column, its words and their diamonds, clear of the scene's light
   "character-attributes-tabs": {
-    capture: "session-2.mp4",
     isBackdrop: true,
     plate: getCharacterScreenPlate("Attributes"),
     region: { height: 800, width: 900, x: 120, y: 180 },
     screen: "CharacterScreen",
-    seconds: 155,
+    source: "session-2.mp4 at 155s",
   },
   // The same frame's band across the top, the name, the portraits and the Geo emblem, clear of the scene
   "character-attributes-top": {
-    capture: "session-2.mp4",
     isBackdrop: true,
     plate: getCharacterScreenPlate("Attributes"),
     region: { height: 135, width: 3440, x: 0, y: 0 },
     screen: "CharacterScreen",
-    seconds: 155,
+    source: "session-2.mp4 at 155s",
   },
   // The English PC client's character screen on the Constellation tab at 21:9, the same recording at 158.3 seconds, the tab settled (158 seconds still fades its node list in), scored over its own scene with the interface it shows filled from round it
   "character-constellation": {
-    capture: "session-2.mp4",
     isBackdrop: true,
     plate: getCharacterScreenPlate("Constellation"),
     props: { initialTab: "Constellation" },
     screen: "CharacterScreen",
-    seconds: 158.3,
+    source: "session-2.mp4 at 158.3s",
+    variant: "constellation",
   },
   // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Constellation tab open
   "character-constellation-tabs": {
-    capture: "session-2.mp4",
     isBackdrop: true,
     plate: getCharacterScreenPlate("Constellation"),
     props: { initialTab: "Constellation" },
     region: { height: 800, width: 900, x: 120, y: 180 },
     screen: "CharacterScreen",
-    seconds: 158.3,
+    source: "session-2.mp4 at 158.3s",
   },
   // The English PC client's character screen on the Talents tab at 21:9, the same recording at 159 seconds, the tab settled, scored over its own scene with the interface it shows filled from round it
   "character-talents": {
-    capture: "session-2.mp4",
     isBackdrop: true,
     plate: getCharacterScreenPlate("Talents"),
     props: { initialTab: "Talents" },
     screen: "CharacterScreen",
-    seconds: 159,
+    source: "session-2.mp4 at 159s",
+    variant: "talents",
   },
   // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Talents tab open
   "character-talents-tabs": {
-    capture: "session-2.mp4",
     isBackdrop: true,
     plate: getCharacterScreenPlate("Talents"),
     props: { initialTab: "Talents" },
     region: { height: 800, width: 900, x: 120, y: 180 },
     screen: "CharacterScreen",
-    seconds: 159,
+    source: "session-2.mp4 at 159s",
   },
   // The English PC client's character screen on the Weapons tab at 21:9, the same recording at 156 seconds, the tab settled, scored over its own scene with the interface it shows filled from round it
   "character-weapons": {
-    capture: "session-2.mp4",
     isBackdrop: true,
     plate: getCharacterScreenPlate("Weapons"),
     props: { initialTab: "Weapons" },
     screen: "CharacterScreen",
-    seconds: 156,
+    source: "session-2.mp4 at 156s",
+    variant: "weapons",
   },
   // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Weapons tab open
   "character-weapons-tabs": {
-    capture: "session-2.mp4",
     isBackdrop: true,
     plate: getCharacterScreenPlate("Weapons"),
     props: { initialTab: "Weapons" },
     region: { height: 800, width: 900, x: 120, y: 180 },
     screen: "CharacterScreen",
-    seconds: 156,
+    source: "session-2.mp4 at 156s",
   },
-  "cooking-screen": { pending: "no recording of the screen yet", screen: "CookingScreen" },
+  "cooking-screen": { pending: "no screenshot of the screen yet", screen: "CookingScreen" },
   // The Court of Fontaine from the wiki's location image at 4K, by day with the sun high. Its landmarks are rigid stone
   // And steel read off 4x crops: the arch's two feet, the bridge's two springs and the drum tower's roof corners
   "court-of-fontaine-location": {
@@ -160,13 +151,12 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Court of Fontaine.png",
   },
-  "crafting-strongbox": { pending: "no recording of the screen yet", screen: "CraftingStrongbox" },
+  "crafting-strongbox": { pending: "no screenshot of the screen yet", screen: "CraftingStrongbox" },
   // The crafting table's Craft screen at 1080 high from a public video (yt-qQILsaJKlsI), about 40 seconds in: Condensed
   // Resin picked, Crafting Performed 1 and Diluc as the crafter. No frame shows the spot with the screen closed, so no
   // Plate: the mask scores the opaque panels (the recipe grid, the title and the details, the materials band and the
   // Close), clear of the scene's glass and the streamer's overlay in the corner
   "crafting-table": {
-    capture: "yt-qQILsaJKlsI-crafting-table.mp4",
     mask: [
       { height: 850, width: 585, x: 60, y: 115 },
       { height: 90, width: 310, x: 1150, y: 115 },
@@ -177,53 +167,48 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       { height: 40, width: 170, x: 1615, y: 25 },
       { height: 75, width: 250, x: 820, y: 20 },
     ],
+    pending: "its recording is not on disk",
     screen: "CraftingScreen",
-    seconds: 39.5,
   },
   // The English PC client's dialogue at 720 high from the public recording, about 19 seconds in: Sara's line with the
   // Traveler's two replies on offer, scored apart as the speaker's name, the line and the replies. Each is drawn over the
   // Frame's clean plate, its scored region filled from its surroundings (`getCleanPlatePath`)
   "dialogue-choices-line": {
-    capture: "yt-nWBqOXWZuFg.mp4",
     isBackdrop: true,
     props: { startProgress: { isRevealed: true, lineId: "ah-finally" } },
     region: { height: 28, width: 320, x: 480, y: 586 },
     screen: "DialogueTalk",
-    seconds: 19,
+    source: "yt-nWBqOXWZuFg.mp4 at 19s",
   },
   "dialogue-choices-replies": {
-    capture: "yt-nWBqOXWZuFg.mp4",
     isBackdrop: true,
     props: { startProgress: { isRevealed: true, lineId: "ah-finally" } },
     region: { height: 74, width: 250, x: 850, y: 463 },
     screen: "DialogueTalk",
-    seconds: 19,
+    source: "yt-nWBqOXWZuFg.mp4 at 19s",
   },
   "dialogue-choices-speaker": {
-    capture: "yt-nWBqOXWZuFg.mp4",
     isBackdrop: true,
     props: { startProgress: { isRevealed: true, lineId: "ah-finally" } },
     region: { height: 24, width: 80, x: 600, y: 546 },
     screen: "DialogueTalk",
-    seconds: 19,
+    source: "yt-nWBqOXWZuFg.mp4 at 19s",
   },
   // The same talk's line with no replies on offer, about 23 seconds in, its speaker's role line under the name left out
   "dialogue-line": {
-    capture: "yt-nWBqOXWZuFg.mp4",
     isBackdrop: true,
     props: { startProgress: { isRevealed: true, lineId: "knights-of-favonius" } },
     region: { height: 50, width: 800, x: 240, y: 586 },
     screen: "DialogueTalk",
-    seconds: 23,
+    source: "yt-nWBqOXWZuFg.mp4 at 23s",
   },
   // Paimon's line about 29 seconds in, from the same recording
   "dialogue-paimon-line": {
-    capture: "yt-nWBqOXWZuFg.mp4",
     isBackdrop: true,
     props: { startProgress: { isRevealed: true, lineId: "so-it-is-jean" } },
     region: { height: 30, width: 420, x: 430, y: 582 },
     screen: "DialogueTalk",
-    seconds: 29,
+    source: "yt-nWBqOXWZuFg.mp4 at 29s",
   },
   // Everfrozen Earth from the wiki's location image at 1080 high: Snezhnograd on its plateau seen from a railway
   // Viaduct, at night under the stars, its spires read by eye at the reference's pixels. The Genshin logo in the
@@ -250,25 +235,22 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The dialog's whole panel, 960 by 606 from (480, 237) in that frame. The tutorial's red arrow lies inside the panel above
   // Confirm, an overlay the game does not draw, so the score counts its pixels as a difference
   "exit-prompt": {
-    capture: "yt-jHr2bERjkYc-logout-tech4gamers.mp4",
     region: { height: 606, width: 960, x: 480, y: 237 },
     screen: "MenuExit",
-    seconds: 30,
+    source: "yt-jHr2bERjkYc-logout-tech4gamers.mp4 at 30s",
   },
   // The expedition screen at 1080 high from the public clip (yt-fxIjhlV3vUA), 26 seconds in: Mondstadt's map with six
   // Places pinned and Wolvendom picked, its Expedition Limit across the head, its rewards and durations down the right.
   // Scored over the screen above the recorder's UID, which the clip draws at its bottom right corner
   "expedition-screen": {
-    capture: "yt-fxIjhlV3vUA-expedition-screen.mp4",
     region: { height: 1050, width: 1920, x: 0, y: 0 },
     screen: "ExpeditionScreen",
-    seconds: 26,
+    source: "yt-fxIjhlV3vUA-expedition-screen.mp4 at 26s",
   },
   // The English PC client's forge on the Materials tab with an Enhancement Ore at amount five, at 32 seconds of the public
   // Recording of the forge, letterboxed to its 886 high frame: scored whole over its blurred scene, the game's own pieces
   // (the tabs, the recipe list, the item and its amount, the Materials box, the foot) filled from round them
   "forge-screen": {
-    capture: "yt-AVnbm8fESr0-forge-screen.mp4",
     isBackdrop: true,
     plate: [
       { height: 75, width: 300, x: 120, y: 10 },
@@ -284,40 +266,49 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       { height: 28, width: 275, x: 1645, y: 858 },
     ],
     screen: "ForgeScreen",
-    seconds: 32,
+    source: "yt-AVnbm8fESr0-forge-screen.mp4 at 32s",
+  },
+  "forge-screen-ores-done": {
+    pending: "no screenshot of this variant yet",
+    screen: "ForgeScreen",
+    variant: "oresDone",
+  },
+  "forge-screen-queues": { pending: "no screenshot of this variant yet", screen: "ForgeScreen", variant: "queues" },
+  "forge-screen-refused": { pending: "no screenshot of this variant yet", screen: "ForgeScreen", variant: "refused" },
+  "forge-screen-weapons-done": {
+    pending: "no screenshot of this variant yet",
+    screen: "ForgeScreen",
+    variant: "weaponsDone",
   },
   // The public frame of the card game's duel board at 1080 high from the English PC client, cut from 400 seconds of a
   // Walkthrough, the frame at 407 seconds in the Action Phase: both sides' characters, the dice column and the hand. A
   // Video's frame, so its art is not drawn and only its tints, words and places are scored
-  "gcg-duel-board": { capture: "gcg-yt-tvboQ_ZWO_I-400-410.mp4", screen: "GcgScreen", seconds: 7 },
+  "gcg-duel-board": { screen: "GcgScreen", source: "gcg-yt-tvboQ_ZWO_I-400-410.mp4 at 7s" },
   // The English PC client's Adventurer Handbook open at its experience, the wiki's screenshot, against which the
   // Book's tabs are placed while its pages wait on what they track
   "handbook-experience": { screen: "HandbookScreen", wikiTitle: "File:Adventurer Handbook Experience.png" },
   // The English PC client's notice, from the 2023 recording of its launch at 1080p, in the current build's wording
-  "health-notice": { capture: "yt-sQNqMfmfkZU.mp4", screen: "SplashHealthNotice", seconds: 8 },
+  "health-notice": { screen: "SplashHealthNotice", source: "yt-sQNqMfmfkZU.mp4 at 8s" },
   // The Japanese PC client's notice whole at 30 seconds of the public recording of its launch (the PC watermark top left and the
   // Recorder's icons bottom right sit outside the region scored)
   "health-notice-japanese": {
-    capture: "yt-57d2PwbOdr0-opening-japanese.mp4",
+    pending: "its recording is not on disk",
     props: { language: "Japanese" },
     region: { height: 480, width: 1520, x: 200, y: 300 },
     screen: "SplashHealthNotice",
-    seconds: 30,
   },
   // Mainland China's notice in its own words, from the public recording of an older build's launch its splash is taken
   // From, held from about 7 to 12 seconds
   "health-notice-mainland": {
-    capture: "bili-av532052219.mp4",
     props: { language: "ChineseSimplified" },
     screen: "SplashHealthNotice",
-    seconds: 9.5,
+    source: "bili-av532052219.mp4 at 9.5s",
   },
   // The English PC client's Paimon button at 1080 high, from the same public recording at 20 seconds, its emblem's place
   // And fill measured over the corner. The minimap's disc takes the emblem's right half, so only the rectangles left of
   // And above it are scored, and the rest of that frame's HUD is left out of the region
   // Its plate is the emblem's own box, so the backdrop around it is the recording's own pixels, not a fill
   "hud-paimon-button": {
-    capture: "world-pickup.mkv",
     isBackdrop: true,
     mask: [
       { height: 100, width: 66, x: 0, y: 0 },
@@ -327,7 +318,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     props: { isTouch: false },
     region: { height: 100, width: 110, x: 0, y: 0 },
     screen: "HudScreen",
-    seconds: 20,
+    source: "world-pickup.mkv at 20s",
   },
   // The English PC client's stamina meter at 1080 high, from a public tutorial's climb at 48 seconds (this clip's 30),
   // Three tenths of a pool of about 214 left in yellow under its drained track, which the pool's two cuts cross, on the
@@ -336,20 +327,18 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Region
   // Its plate is the meter's own arc, so the sky around it is the recording's own pixels, not a fill
   "hud-stamina-climb": {
-    capture: "yt-hRR2yoP3uY0-world-stamina.mp4",
     isBackdrop: true,
     plate: [{ height: 105, width: 28, x: 1064, y: 449 }],
     props: { frame: { pivotX: 0.5095, pivotY: 0.4642, seconds: 0, stamina: 64 }, isTouch: false, maxStamina: 214 },
     region: { height: 140, width: 65, x: 1040, y: 430 },
     screen: "HudScreen",
-    seconds: 30,
+    source: "yt-hRR2yoP3uY0-world-stamina.mp4 at 30s",
   },
   // The English PC client's skill and burst at 1080 high, from the same public recording at 20 seconds, before it moves
   // To the phone: Chongyun on the field with his burst charged, scored over the keys' corner clear of the gadget above
   // And the UID below. Only the field member's figures change, so the rest of the frame's HUD is left out of the region
   // Its plate is the keys' discs and caps, so the scene around them is the recording's own pixels, not a fill
   "hud-world-keys": {
-    capture: "world-pickup.mkv",
     isBackdrop: true,
     plate: [
       { height: 75, width: 75, x: 14, y: 46 },
@@ -376,7 +365,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     },
     region: { height: 148, width: 250, x: 1640, y: 905 },
     screen: "HudScreen",
-    seconds: 20,
+    source: "world-pickup.mkv at 20s",
   },
   // The English mobile client's world HUD from the public recording of a session at 70 seconds, played on a phone, its
   // Black letterbox bars cropped away and its subtitles left out of the region scored. The HUD is drawn over the
@@ -384,8 +373,6 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Only shows the overlay)
   // Its plate is the HUD's pieces alone, so the scene between them is the recording's own pixels
   "hud-world-pickup": {
-    capture: "world-pickup.mkv",
-    crop: { height: 935, width: 1920, x: 0, y: 72 },
     isBackdrop: true,
     plate: [
       { height: 240, width: 300, x: 100, y: 10 },
@@ -402,7 +389,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     ],
     region: { height: 880, width: 1920, x: 0, y: 0 },
     screen: "HudScreen",
-    seconds: 70,
+    source: "world-pickup.mkv at 70s, cropped to 1920x935 from 0,72",
   },
   // Inazuma City from the wiki's 4K location image, a daytime haze with its sun's minute unread (noon provisionally).
   // Its build is not stated, so it is read as current and a red camera pass reopens it. Its landmarks are rigid
@@ -434,7 +421,6 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Plate fills the cap and each pill from the grass around it, so the grass between them stays the frame's own and only
   // The list's pieces can differ
   "interaction-prompts-jueyun-chili": {
-    capture: "yt-UBNImta_dWs-prompt-scroll.mp4",
     isBackdrop: true,
     plate: [
       { height: 38, width: 58, x: 1096, y: 592 },
@@ -456,23 +442,21 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     },
     region: { height: 220, width: 400, x: 1095, y: 430 },
     screen: "InteractionPromptList",
-    seconds: 23,
+    source: "yt-UBNImta_dWs-prompt-scroll.mp4 at 23s",
   },
   // The English PC client's pickup at 1080 high: three drops in reach, the first row selected with its F cap, from a public
   // Tutorial's recording at 9 seconds with no caption over it, the cap held on that row from 7 to 13 seconds. Drawn behind the prompt list, so only the list's own
   // Pieces can differ, and the scene the list's pills show through is the game's own; the streamer's camera sits outside
   // The region
   "interaction-prompts-pickup": {
-    capture: "world-pickup.mkv",
     isBackdrop: true,
     region: { height: 220, width: 370, x: 1095, y: 430 },
     screen: "InteractionPromptList",
-    seconds: 9,
+    source: "world-pickup.mkv at 9s",
   },
   // The food tab of the bag, from the same account tour's recording of the English PC client 58 seconds in: the foot's
   // Primogems and Mora where the sort's dropdown stands on an equipment tab, drawn behind the bag so only its foot can differ
   "inventory-food": {
-    capture: "yt-_agTJviXj7s-bag.mp4",
     isBackdrop: true,
     props: {
       initialCategory: "Food",
@@ -488,17 +472,16 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     },
     region: { height: 120, width: 700, x: 0, y: 960 },
     screen: "InventoryScreen",
-    seconds: 58,
+    source: "yt-_agTJviXj7s-bag.mp4 at 58s",
   },
   // The weapons' tab of the bag at 1080 high, from a public account tour's recording of the English PC client, its frame
   // At 30 seconds into the clip, drawn behind the bag so only the bag can differ. The streamer's camera at the top left
   // And the recording's UID at the bottom right sit outside the region
   "inventory-weapons": {
-    capture: "yt-_agTJviXj7s-bag.mp4",
     isBackdrop: true,
     region: { height: 1048, width: 1270, x: 650, y: 0 },
     screen: "InventoryScreen",
-    seconds: 30,
+    source: "yt-_agTJviXj7s-bag.mp4 at 30s",
   },
   // The wiki's 4096 by 2304 location image of Liyue Harbor, a daytime view of the harbour's stepped quay under the sea of
   // Clouds. Its landmarks are rigid architecture read by eye at the image's pixels off 4x crops: the plinth corners of the
@@ -522,22 +505,22 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The title at dawn, day and night: frames of public recordings of older builds of the PC client idling on it with no
   // Interface, drawn at the current build's camera, each at the moment of the glide's loop its towers and walkway stand at
   "login-dawn-title": {
-    capture: "yt-sQNqMfmfkZU.mp4",
     component: DerivedAssetComponent.Login,
     isOtherBuild: true,
     props: { heldScrolled: 132, isInterfaceHidden: true, stage: "Title", timeOfDay: "Dawn" },
     screen: "LoginScreen",
-    seconds: 18,
+    source: "yt-sQNqMfmfkZU.mp4 at 18s",
+    variant: "dawn",
   },
   // Its recording masks the frame's top and bottom 50 rows black, so only the rows between are scored
   "login-day-title": {
-    capture: "yt-7kK6HqVfASk.mp4",
     component: DerivedAssetComponent.Login,
     isOtherBuild: true,
     props: { heldScrolled: 118, isInterfaceHidden: true, stage: "Title", timeOfDay: "Day" },
     region: { height: 980, width: 1920, x: 0, y: 50 },
     screen: "LoginScreen",
-    seconds: 8,
+    source: "yt-7kK6HqVfASk.mp4 at 8s",
+    variant: "day",
   },
   // The door from the flight's last pose, on the phone build at 4:3 under the day sky, scored over the door and its
   // Dais alone, since its interface and its narrower frame differ from the computer's, and drawn at a phone's tier
@@ -552,7 +535,6 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The door from the flight's last pose on an older build's PC client at 16:9, the English recording's frame at the
   // Door, scored over the scene above the prompt and clear of the corner buttons
   "login-door-recording": {
-    capture: "yt-rBnfA4pXw6U.mp4",
     component: DerivedAssetComponent.Login,
     isOtherBuild: true,
     // Read off the recording: the dais's front feet on the walkway's top, the arch's apex, and the walkway's wings at
@@ -572,71 +554,78 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     props: { isInterfaceHidden: true, stage: "Door", timeOfDay: "Dusk" },
     region: { height: 960, width: 1560, x: 180, y: 0 },
     screen: "LoginScreen",
-    seconds: 14,
+    source: "yt-rBnfA4pXw6U.mp4 at 14s",
   },
   // The door at night on the current build (7.1) at 21.5:9, this machine's own recording of the client, its last frame
   // Before the prompt, the camera still easing toward its rest; scored clear of the corner buttons and the build string
   "login-door-session": {
-    capture: "session-2.mp4",
     component: DerivedAssetComponent.Login,
     // Read off the frame: the arch's apex and the dais's front feet on the walkway's top
     landmarks: { doorApex: [1717, 575], doorFootLeft: [1585, 1028], doorFootRight: [1855, 1028] },
     props: { heldScrolled: 320, isInterfaceHidden: true, stage: "Door", timeOfDay: "Night" },
     region: { height: 1300, width: 3100, x: 0, y: 0 },
     screen: "LoginScreen",
-    seconds: 35.9,
+    source: "session-2.mp4 at 35.9s",
+  },
+  "login-interface-arriving": {
+    pending: "no screenshot of this variant yet",
+    screen: "LoginInterface",
+    variant: "arriving",
   },
   // The login screen's interface over the English recording's own frames of it, at 1080 high: its title, its status as
   // Data loads, and its prompt at the door. The recording is of an older build, whose title shows a repair button and
   // Whose build string differs, so those two stay apart from ours, which are the current build's
   "login-interface-door": {
-    capture: "yt-rBnfA4pXw6U.mp4",
     isBackdrop: true,
     props: { isWelcomeShown: false, stage: "Door" },
     screen: "LoginInterface",
-    seconds: 14,
+    source: "yt-rBnfA4pXw6U.mp4 at 14s",
+    variant: "door",
   },
   // Mainland China's interface at the door with its prompt, over the launch recording's own frame at 15.5 seconds, the
   // First frame the prompt stands whole on the 12 to 17 second stills, scored over the whole frame, its rating included
   "login-interface-door-mainland": {
-    capture: "bili-av532052219.mp4",
     isBackdrop: true,
     props: { isWelcomeShown: false, language: "ChineseSimplified", stage: "Door" },
     screen: "LoginInterface",
-    seconds: 15.5,
+    source: "bili-av532052219.mp4 at 15.5s",
   },
   "login-interface-loading": {
-    capture: "yt-rBnfA4pXw6U.mp4",
     isBackdrop: true,
     props: { isWelcomeShown: false, progress: 0.2797, stage: "Preparing", statusStep: "LoadingData" },
     screen: "LoginInterface",
-    seconds: 5,
+    source: "yt-rBnfA4pXw6U.mp4 at 5s",
+    variant: "loadingData",
+  },
+  "login-interface-loading-game": {
+    pending: "no screenshot of this variant yet",
+    screen: "LoginInterface",
+    variant: "loadingGame",
   },
   // Mainland China's interface over its launch recording's own frame at 1080 high, the door not yet formed, scored over
   // Its age rating alone: the recording is of an older build, whose build string sits apart from the current one's
   "login-interface-mainland-rating": {
-    capture: "bili-av532052219.mp4",
     isBackdrop: true,
     props: { isDoorWaiting: true, isWelcomeShown: false, language: "ChineseSimplified", stage: "Door" },
     region: { height: 150, width: 150, x: 1740, y: 30 },
     screen: "LoginInterface",
-    seconds: 12.5,
+    source: "bili-av532052219.mp4 at 12.5s",
+    variant: "mainland",
   },
   "login-interface-title": {
-    capture: "yt-rBnfA4pXw6U.mp4",
     isBackdrop: true,
     props: { isWelcomeShown: false, playerName: "br****nd@gmail.com", stage: "Title" },
     screen: "LoginInterface",
-    seconds: 0.5,
+    source: "yt-rBnfA4pXw6U.mp4 at 0.5s",
   },
   "login-night-title": {
-    capture: "yt-PnqNza4qWzs.mp4",
     component: DerivedAssetComponent.Login,
     isOtherBuild: true,
     props: { heldScrolled: 135, isInterfaceHidden: true, stage: "Title", timeOfDay: "Night" },
     screen: "LoginScreen",
-    seconds: 12,
+    source: "yt-PnqNza4qWzs.mp4 at 12s",
   },
+  "login-screen-dusk": { pending: "no screenshot of this variant yet", screen: "LoginScreen", variant: "dusk" },
   // The English PC client's map zoomed out over Galesong Hill at 99% (yt-kgW2IgWKukg at 4.6 seconds, 1080p and 60 frames a
   // Second, one chest before the area reads 100%). Its label, the name and the progress line under it, scored over the
   // Glyphs' silhouettes alone, the terrain between their strokes left out. The game places a label from map data the
@@ -644,7 +633,6 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Area holds one doing at the still's progress; the comparison reads the label's type and its line's place, not where
   // The map writes it
   "map-overlay-galesong": {
-    capture: "yt-kgW2IgWKukg-exploration-steps.mp4",
     props: {
       camera: { x: -99.42, yaw: 0, z: 636.36 },
       explorationAreas: [
@@ -663,12 +651,12 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     },
     region: { height: 84, width: 296, x: 596, y: 336 },
     screen: "MapOverlay",
-    seconds: 4.6,
     silhouettes: [
       { height: 48, ink: [228, 233, 227], width: 136, x: 610, y: 338 },
       { height: 48, ink: [232, 236, 233], width: 102, x: 774, y: 338 },
       { height: 24, ink: [232, 236, 223], width: 290, x: 598, y: 392 },
     ],
+    source: "yt-kgW2IgWKukg-exploration-steps.mp4 at 4.6s",
   },
   // The English PC client's map on M over Jueyun Karst, the wiki's full-screen 1080p screenshot. Scored over its interface
   // Layer alone, the terrain the game paints masked out: the pointer, the close button and the zoom slider whole, and the
@@ -692,17 +680,36 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     ],
     wikiTitle: "File:Map Stardust in Jueyun.png",
   },
+  "menu-exit-hover": { pending: "no screenshot of this variant yet", screen: "MenuExit", variant: "hover" },
+  "menu-exit-pressed": { pending: "no screenshot of this variant yet", screen: "MenuExit", variant: "pressed" },
+  "menu-paimon-disabled": { pending: "no screenshot of this variant yet", screen: "MenuPaimon", variant: "disabled" },
+  "menu-paimon-hover": { pending: "no screenshot of this variant yet", screen: "MenuPaimon", variant: "hover" },
+  "menu-paimon-pressed": { pending: "no screenshot of this variant yet", screen: "MenuPaimon", variant: "pressed" },
   // The English PC client's Time screen at 1080 high from a public recording (yt-a4_J84iMqR0), ten seconds in: the clock
   // At 03:52 and the dial turned to 18:00 Today, drawn over the world it dims. The fixture's hand rests half an hour on, so
   // The compare differs at the hand and the target hour until the screen takes a dialled advance
   "menu-time": {
-    capture: "yt-a4_J84iMqR0-time.mp4",
     isBackdrop: true,
     props: { clockMinutes: 232 },
     screen: "MenuTime",
-    seconds: 10,
+    source: "yt-a4_J84iMqR0-time.mp4 at 10s",
   },
-  "menu-world-level-prompt": { pending: "no recording of the screen yet", screen: "MenuWorldLevelPrompt" },
+  "menu-world-level-prompt": { pending: "no screenshot of the screen yet", screen: "MenuWorldLevelPrompt" },
+  "menu-world-level-prompt-hover": {
+    pending: "no screenshot of this variant yet",
+    screen: "MenuWorldLevelPrompt",
+    variant: "hover",
+  },
+  "menu-world-level-prompt-pressed": {
+    pending: "no screenshot of this variant yet",
+    screen: "MenuWorldLevelPrompt",
+    variant: "pressed",
+  },
+  "menu-world-level-prompt-revert": {
+    pending: "no screenshot of this variant yet",
+    screen: "MenuWorldLevelPrompt",
+    variant: "revert",
+  },
   // The English PC client's Mondstadt city from the wiki's 4K location image of 2024, in daylight (short shadows, a clear
   // Sky; the sun's minute waits on its shadows' edges). Its six landmarks are the corners of the two west and east towers'
   // Parapets and the gate tower's front corners, read by eye at 4x crops of the image's pixels
@@ -744,10 +751,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Seconds in) with no screen open, its account at Adventure Rank 2. Scored over the side bar and the panel above their
   // Translucent feet, where the world shows through; the recording's pillarbox, logo and UID lie outside the region
   "paimon-menu": {
-    capture: "yt-jHr2bERjkYc-logout-tech4gamers.mp4",
     region: { height: 1080, width: 810, x: 150, y: 0 },
     screen: "MenuPaimon",
-    seconds: 25,
+    source: "yt-jHr2bERjkYc-logout-tech4gamers.mp4 at 25s",
   },
   // The People of the Springs from the wiki's location image at 2560 wide, a daytime view of the Natlan capital's hall,
   // Spire and walkway, whose build is not stated (a 2024 upload). Its landmarks are rigid architecture read by eye off
@@ -769,21 +775,21 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: 'File:"People of the Springs".png',
   },
-  "publisher-splash": { capture: "session-2.mp4", screen: "SplashPublisher", seconds: 1 },
+  "publisher-splash": { screen: "SplashPublisher", source: "session-2.mp4 at 1s" },
   // The English PC client's quest screen listing every quest in progress, the wiki's screenshot of it at 1080 high. The
   // World behind it is the overview clip's frame at 0.9 seconds, drawn as the recording shows it: the plate draws no
   // Blur, so none is fitted to the still's blurred world
   "quest-screen": {
     isBackdrop: true,
     plate: QUEST_SCREEN_BACKDROP_PLATE,
-    plateCapture: { capture: "yt-2_e7S_J9yAA-quest-overview.mp4", seconds: 0.9 },
+    plateSource: "yt-2_e7S_J9yAA-quest-overview.mp4 at 0.9s",
     screen: "QuestScreen",
     wikiTitle: "File:Quest Screen.png",
   },
   // The same still's details column on the right, the title, journal, objective and description, clear of the rewards
   "quest-screen-details": {
     isBackdrop: true,
-    plateCapture: { capture: "yt-2_e7S_J9yAA-quest-overview.mp4", seconds: 0.9 },
+    plateSource: "yt-2_e7S_J9yAA-quest-overview.mp4 at 0.9s",
     region: { height: 680, width: 899, x: 877, y: 100 },
     screen: "QuestScreen",
     wikiTitle: "File:Quest Screen.png",
@@ -792,7 +798,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "quest-screen-header": {
     isBackdrop: true,
     plate: QUEST_SCREEN_BACKDROP_PLATE,
-    plateCapture: { capture: "yt-2_e7S_J9yAA-quest-overview.mp4", seconds: 0.9 },
+    plateSource: "yt-2_e7S_J9yAA-quest-overview.mp4 at 0.9s",
     region: { height: 95, width: 1920, x: 0, y: 0 },
     screen: "QuestScreen",
     wikiTitle: "File:Quest Screen.png",
@@ -807,10 +813,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Level list down the right at level 3, the levels' rewards and each one's achieved mark, clear of the clip's own
   // Recording timer and its UID. Scored over the list's panel only, since the nation's art on the left is not drawn yet
   "reputation-screen": {
-    capture: "yt-1SqmdXbIhLs-reputation-guide.mp4",
     region: { height: 872, width: 1220, x: 652, y: 145 },
     screen: "ReputationScreen",
-    seconds: 18,
+    source: "yt-1SqmdXbIhLs-reputation-guide.mp4 at 18s",
   },
   // The English PC client's settings opened in the world at 1920 wide, on the Audio tab, its four volumes and its other
   // Settings, scored whole like the Graphics tab's below. The pointer rests on Output Settings, lit under it, while
@@ -842,7 +847,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     pointer: [1000, 663],
     props: { tab: "Audio" },
     screen: "MenuSettings",
-    seconds: 178,
+    source: "yt-5EmJX_RyuY8-menu-settings.mp4 at 178s",
   },
   // The English PC client's settings on its Graphics tab at 1680 wide, from the wiki's screenshot of the login's, scored
   // Over its header band alone, whose veil is drawn over the band filled from the blurred backdrop below it; the login's
@@ -885,10 +890,17 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       { height: 914, width: 22, x: 1810, y: 114 },
     ],
     screen: "MenuSettings",
-    seconds: 144.5,
+    source: "yt-5EmJX_RyuY8-menu-settings.mp4 at 144.5s",
   },
-  "spiral-abyss-benediction": { pending: "no recording of the screen yet", screen: "SpiralAbyssBenediction" },
-  "spiral-abyss-entry": { pending: "no recording of the screen yet", screen: "SpiralAbyssEntry" },
+  "spiral-abyss-benediction": { pending: "no screenshot of the screen yet", screen: "SpiralAbyssBenediction" },
+  "spiral-abyss-entry": { pending: "no screenshot of the screen yet", screen: "SpiralAbyssEntry" },
+  "splash-title-chinese-traditional": {
+    pending: "no screenshot of this variant yet",
+    screen: "SplashTitle",
+    variant: "chineseTraditional",
+  },
+  "splash-title-japanese": { pending: "no screenshot of this variant yet", screen: "SplashTitle", variant: "japanese" },
+  "splash-title-korean": { pending: "no screenshot of this variant yet", screen: "SplashTitle", variant: "korean" },
   // Sumeru City from the wiki's location image of 2022, the only Sumeru City shot found: daylight with a clear sky and
   // Short shadows, so a provisional noon until the shadows solve reads its sun. Its landmarks are the terrace's spire
   // And the green-domed minaret's rigid edges, read at the image's pixels; its build is checked against the export once
@@ -912,22 +924,33 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: "File:Sumeru City.png",
   },
   // The English PC client's splash, from the 2023 recording of its launch at 1080p, held from 4.5 to 5.75 seconds
-  "title-splash": { capture: "yt-sQNqMfmfkZU.mp4", screen: "SplashTitle", seconds: 5 },
+  "title-splash": { screen: "SplashTitle", source: "yt-sQNqMfmfkZU.mp4 at 5s" },
   // Mainland China's splash, its 原神 logo with its licence under it, from a public recording of an older build's launch
   // At 1080p, drawn on full white where the current PC client's white is a step under it
   "title-splash-mainland": {
-    capture: "bili-av532052219.mp4",
     props: { language: "ChineseSimplified" },
     screen: "SplashTitle",
-    seconds: 5,
+    source: "bili-av532052219.mp4 at 5s",
     variant: "chineseSimplified",
   },
-  "weapon-screen": { pending: "no recording of the screen yet", screen: "WeaponScreen" },
+  "weapon-screen": { pending: "no screenshot of the screen yet", screen: "WeaponScreen" },
+  "weapon-screen-ascend": { pending: "no screenshot of this variant yet", screen: "WeaponScreen", variant: "ascend" },
+  "weapon-screen-at-cap": { pending: "no screenshot of this variant yet", screen: "WeaponScreen", variant: "atCap" },
+  "weapon-screen-rank-five": {
+    pending: "no screenshot of this variant yet",
+    screen: "WeaponScreen",
+    variant: "rankFive",
+  },
+  "weapon-screen-refine": { pending: "no screenshot of this variant yet", screen: "WeaponScreen", variant: "refine" },
+  "weapon-screen-two-star": {
+    pending: "no screenshot of this variant yet",
+    screen: "WeaponScreen",
+    variant: "twoStar",
+  },
   // The statue under the oak by day, from the 2026 recording's fixed camera east of it, a game minute a real second
   // From about six in the morning, an hour still to be read off its sun; its camera is solved from its landmarks and
   // Refined on the statue's outline
   "windrise-statue-day": {
-    capture: "yt-zPDi6WBJW9Y.mp4",
     component: DerivedAssetComponent.Windrise,
     landmarks: {
       dishBrimLeft: [785, 617],
@@ -947,13 +970,12 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       heldMinutes: 720,
     },
     screen: "WorldScreen",
-    seconds: 360,
+    source: "yt-zPDi6WBJW9Y.mp4 at 360s",
   },
   // The English PC client's wish screen on the Character Event banner, Born of Ocean Swell open, at 78 seconds of the public
   // 1080p recording, once its banner has settled: scored whole over its sky, the game's pieces (the tab row, the currency,
   // The banner card, the Shop, Details and History row and the wish buttons) filled from round them
   "wish-screen": {
-    capture: "yt-uhCW3MZTgL8.mp4",
     isBackdrop: true,
     plate: [
       { height: 95, width: 560, x: 675, y: 0 },
@@ -969,16 +991,20 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       { height: 95, width: 200, x: 0, y: 0 },
     ],
     screen: "WishScreen",
-    seconds: 78,
+    source: "yt-uhCW3MZTgL8.mp4 at 78s",
   },
   // The English PC client's World Level dialog at 1080 high from a public tutorial's recording, its frame at 5 seconds,
   // The dialog open over the dimmed menu. Scored over the dialog's frame, which is opaque. The recording is an older
   // Build's, whose help text reads World Level 5 and "reduce" where the current text map reads 3 and "decrease"
   "world-level-dialog": {
-    capture: "world-level-dialog-2024.mkv",
     region: { height: 716, width: 1078, x: 421, y: 182 },
     screen: "MenuWorldLevelDialog",
-    seconds: 5,
+    source: "world-level-dialog-2024.mkv at 5s",
   },
-  "world-realm-placement-editor": { pending: "no recording of the screen yet", screen: "WorldRealmPlacementEditor" },
+  "world-realm-placement-editor": { pending: "no screenshot of the screen yet", screen: "WorldRealmPlacementEditor" },
+  "world-realm-placement-editor-at-load": {
+    pending: "no screenshot of this variant yet",
+    screen: "WorldRealmPlacementEditor",
+    variant: "atLoad",
+  },
 };

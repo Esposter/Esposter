@@ -12,12 +12,8 @@ import { coverCommand } from "#src/services/genshinParity/commands/coverCommand"
 import { decayCommand } from "#src/services/genshinParity/commands/decayCommand";
 import { expressionCommand } from "#src/services/genshinParity/commands/expressionCommand";
 import { fetchCommand } from "#src/services/genshinParity/commands/fetchCommand";
-import { filmCommand } from "#src/services/genshinParity/commands/filmCommand";
 import { fogCommand } from "#src/services/genshinParity/commands/fogCommand";
-import { frameCommand } from "#src/services/genshinParity/commands/frameCommand";
-import { framesCommand } from "#src/services/genshinParity/commands/framesCommand";
 import { gbufferCommand } from "#src/services/genshinParity/commands/gbufferCommand";
-import { glideCommand } from "#src/services/genshinParity/commands/glideCommand";
 import { instrumentsCommand } from "#src/services/genshinParity/commands/instrumentsCommand";
 import { launchCommand } from "#src/services/genshinParity/commands/launchCommand";
 import { layerCommand } from "#src/services/genshinParity/commands/layerCommand";
@@ -45,7 +41,6 @@ import { solosCommand } from "#src/services/genshinParity/commands/solosCommand"
 import { stallsCommand } from "#src/services/genshinParity/commands/stallsCommand";
 import { stillCommand } from "#src/services/genshinParity/commands/stillCommand";
 import { traceCommand } from "#src/services/genshinParity/commands/traceCommand";
-import { trackCommand } from "#src/services/genshinParity/commands/trackCommand";
 import { viewCommand } from "#src/services/genshinParity/commands/viewCommand";
 import { zoomCommand } from "#src/services/genshinParity/commands/zoomCommand";
 import { defineCommand } from "citty";
@@ -72,8 +67,6 @@ export const genshinParityCommand: CommandDef = defineCommand({
     lost: lostCommand,
     scroll: scrollCommand,
     parts: partsCommand,
-    track: trackCommand,
-    glide: glideCommand,
     shoot: shootCommand,
     stalls: stallsCommand,
     bands: bandsCommand,
@@ -88,9 +81,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     listen: listenCommand,
     noise: noiseCommand,
     notes: notesCommand,
-    film: filmCommand,
     view: viewCommand,
-    frames: framesCommand,
     measure: measureCommand,
     luma: lumaCommand,
     zoom: zoomCommand,
@@ -101,6 +92,5 @@ export const genshinParityCommand: CommandDef = defineCommand({
     rank: rankCommand,
     record: recordCommand,
     screens: screensCommand,
-    frame: frameCommand,
   },
 });

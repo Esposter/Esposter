@@ -4,11 +4,10 @@ import type { ParityScore } from "#src/models/genshinParity/reference/ParityScor
 
 import { computeUnderBlackShare } from "#src/services/genshinParity/display/computeUnderBlackShare";
 import { formatUnderBlackShare } from "#src/services/genshinParity/display/formatUnderBlackShare";
-import { getCaptureSoftness } from "#src/services/genshinParity/reference/getCaptureSoftness";
 import { getCeiling } from "#src/services/genshinParity/reference/getCeiling";
 import { getCleanPlatePath } from "#src/services/genshinParity/reference/getCleanPlatePath";
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
-import { getPlateSourcePath } from "#src/services/genshinParity/reference/getPlateSourcePath";
+import { getReferenceSoftness } from "#src/services/genshinParity/reference/getReferenceSoftness";
 import { readScoredMask } from "#src/services/genshinParity/reference/readScoredMask";
 import { readSilhouetteInks } from "#src/services/genshinParity/reference/readSilhouetteInks";
 import { scoreLayers } from "#src/services/genshinParity/reference/scoreLayers";
@@ -58,13 +57,15 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
   const region = reference.region ?? { height, width, x: 0, y: 0 };
   // A backdrop is the reference with its interface's pieces, its region unless it names them, filled from their
   // Surroundings, so the game's interface is not drawn behind ours; one with no border to fill from keeps the reference
-  // A plate's pixels come from the reference, or from a frame of its recording when the reference names one
-  const platePath = await getPlateSourcePath(referenceId, referencePath, reference.plateCapture);
+  // A plate's pixels come from the reference, or from the screenshot beside it that the world a screen is laid over was
+  // Sampled into
+  const plateScreenshotPath = join(REFERENCES_DIRECTORY, `${referenceId}.plate.png`);
+  const platePath = existsSync(plateScreenshotPath) ? plateScreenshotPath : referencePath;
   const backdropPath = reference.isBackdrop
     ? ((await getCleanPlatePath(referenceId, platePath, reference.plate ?? [region], { height, width })) ?? platePath)
     : undefined;
-  // A recording softens what it shows, so our shot is softened by its capture's own measured blur before it is scored
-  const softness = reference.capture === undefined ? undefined : await getCaptureSoftness(reference.capture);
+  // A recording softens what it shows, so our shot is softened by its screenshot's own measured blur before it is scored
+  const softness = reference.source === undefined ? undefined : await getReferenceSoftness(referenceId);
   const [shotPath = ""] = await shootScreen({
     backdropPath,
     height,

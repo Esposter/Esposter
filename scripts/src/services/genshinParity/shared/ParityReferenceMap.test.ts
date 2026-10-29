@@ -43,4 +43,37 @@ describe("parityReferenceMap", () => {
 
     expect([...referencedScreens].filter((screen) => !screens.has(screen))).toStrictEqual([]);
   });
+
+  test("names no recording to read", () => {
+    expect.hasAssertions();
+
+    const recordingEntries = Object.values(ParityReferenceMap).filter(
+      (entry) => "capture" in entry || "seconds" in entry || "plateCapture" in entry,
+    );
+
+    expect(recordingEntries).toStrictEqual([]);
+  });
+
+  test("names a reference for every subscreen", () => {
+    expect.hasAssertions();
+
+    // A fixture's `variants` object, from its opening line to the closing brace at the start of a line, and the keys
+    // Two spaces in, which are its top-level variants
+    const VARIANTS_REGEX = /^export const variants = \{\n(?<body>[\s\S]*?)^\};/mu;
+    const VARIANT_KEY_REGEX = /^ {2}(?<variant>\w+):/gmu;
+    const subscreens = fixturePaths.flatMap((path) => {
+      const screen = toScreen(path);
+      const body = VARIANTS_REGEX.exec(readFileSync(path, "utf8"))?.groups?.body ?? "";
+
+      return [...body.matchAll(VARIANT_KEY_REGEX)].map(({ groups }) => ({ screen, variant: groups?.variant }));
+    });
+    const referencedEntries = Object.values(ParityReferenceMap);
+
+    expect(
+      subscreens.filter(
+        ({ screen, variant }) =>
+          !referencedEntries.some((entry) => entry.screen === screen && entry.variant === variant),
+      ),
+    ).toStrictEqual([]);
+  });
 });

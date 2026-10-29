@@ -112,8 +112,6 @@ export const RECORD_ENCODING: string[] = [
   "-qp_p",
   "12",
 ];
-// What ffmpeg samples; everything else is an image sharp reads, animated or not
-export const VIDEO_EXTENSIONS: ReadonlySet<string> = new Set([".mkv", ".mov", ".mp4", ".webm"]);
 // Each image of a comparison is drawn this high, side by side
 export const COMPARISON_HEIGHT = 540;
 // The mean difference, in percent, a shot must score under its reference to be approved: one percent is the 99%

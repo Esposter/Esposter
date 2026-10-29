@@ -1,6 +1,5 @@
-import { CAPTURES_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
-import { writeCaptureFrame } from "#src/services/genshinParity/shared/writeCaptureFrame";
 import { readWikiFile } from "genshin-persona/src/services/readWikiFile.ts";
 import { readWikiFileUrls } from "genshin-persona/src/services/readWikiFileUrls.ts";
 import { existsSync } from "node:fs";
@@ -8,27 +7,21 @@ import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 
-// Every reference not yet held, saved as PNG whatever the wiki serves it as (it answers images in WebP), or taken as
-// One lossless frame of its recording, so each reads the same everywhere after; one line a reference, the path or why
-// It is missing
+// Every wiki reference not yet held, saved as PNG whatever the wiki serves it as (it answers images in WebP), so each
+// Reads the same everywhere after; one line a reference, the path or why it is missing. A screenshot sampled from a
+// Recording is saved there by a person, so one that is absent is named with where it is sampled from
 export const fetchReferences = async (): Promise<void> => {
   await mkdir(REFERENCES_DIRECTORY, { recursive: true });
-  // A pending screen names no reference to fetch, so it is never asked of the wiki or the recordings
+  // A pending screen names no reference to fetch, so it is never asked of the wiki
   const missing = Object.entries(ParityReferenceMap).filter(
     ([id, { pending }]) => pending === undefined && !existsSync(join(REFERENCES_DIRECTORY, `${id}.png`)),
   );
   const wikiTitles = missing.flatMap(([, { wikiTitle }]) => (wikiTitle === undefined ? [] : [wikiTitle]));
   const urls = wikiTitles.length > 0 ? await readWikiFileUrls(wikiTitles) : new Map<string, string>();
   const lines = await Promise.all(
-    missing.map(async ([id, { capture, crop, placement, seconds, wikiTitle }]) => {
+    missing.map(async ([id, { placement, source, wikiTitle }]) => {
       const path = join(REFERENCES_DIRECTORY, `${id}.png`);
-      if (capture !== undefined) {
-        const capturePath = join(CAPTURES_DIRECTORY, capture);
-        if (!existsSync(capturePath)) return `${id}: no recording at ${capturePath}`;
-        const filter = crop ? ["-vf", `crop=${crop.width}:${crop.height}:${crop.x}:${crop.y}`] : [];
-        await writeCaptureFrame(capturePath, seconds, path, filter);
-        return path;
-      }
+      if (source !== undefined) return `${id}: no screenshot at ${path}, sampled from ${source}`;
       const url = wikiTitle === undefined ? undefined : urls.get(wikiTitle);
       const file = url ? await readWikiFile(url) : undefined;
       if (!file) return `${id}: not on the wiki as ${wikiTitle}`;

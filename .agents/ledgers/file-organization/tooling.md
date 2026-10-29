@@ -1135,7 +1135,6 @@
 | `scripts/src/services/genshinParity/shared/orbit.ts`                                      | —                      |       |
 | `scripts/src/services/genshinParity/shared/parseSvgPath.ts`                               | —                      |       |
 | `scripts/src/services/genshinParity/shared/readAudioSamples.ts`                           | —                      |       |
-| `scripts/src/services/genshinParity/shared/readCaptureRow.ts`                             | —                      |       |
 | `scripts/src/services/genshinParity/shared/readFlipErrorMap.ts`                           | —                      |       |
 | `scripts/src/services/genshinParity/shared/readPageFunction.ts`                           | —                      |       |
 | `scripts/src/services/genshinParity/shared/readPassUseMap.ts`                             | —                      |       |
@@ -1191,8 +1190,6 @@
 | `scripts/src/services/genshinParity/shared/waitFrames.ts`                                 | —                      |       |
 | `scripts/src/services/genshinParity/shared/walk.ts`                                       | —                      |       |
 | `scripts/src/services/genshinParity/shared/withReferencePage.ts`                          | —                      |       |
-| `scripts/src/services/genshinParity/shared/writeCaptureFrame.ts`                          | —                      |       |
-| `scripts/src/services/genshinParity/shared/writeReferenceFrame.ts`                        | —                      |       |
 | `scripts/src/services/genshinParity/shared/writeSideBySide.ts`                            | —                      |       |
 | `scripts/src/services/genshinParity/shared/xyzToLinear.ts`                                | —                      |       |
 | `scripts/src/services/genshinParity/shared/xyzToYcxcz.ts`                                 | —                      |       |
@@ -1237,7 +1234,6 @@
 | `scripts/src/services/genshinParity/witness/groupStoneBins.ts`                            | —                      |       |
 | `scripts/src/services/genshinParity/witness/halve.ts`                                     | —                      |       |
 | `scripts/src/services/genshinParity/witness/labelWitnessParts.ts`                         | —                      |       |
-| `scripts/src/services/genshinParity/witness/measureGlide.ts`                              | —                      |       |
 | `scripts/src/services/genshinParity/witness/projectWitnessPoint.ts`                       | —                      |       |
 | `scripts/src/services/genshinParity/witness/rankReferenceGains.ts`                        | —                      |       |
 | `scripts/src/services/genshinParity/witness/readFamilyBoundaries.ts`                      | —                      |       |
@@ -1275,7 +1271,6 @@
 | `scripts/src/services/genshinParity/witness/toLogOdds.ts`                                 | —                      |       |
 | `scripts/src/services/genshinParity/witness/toLuminance.ts`                               | —                      |       |
 | `scripts/src/services/genshinParity/witness/toSunDirection.ts`                            | —                      |       |
-| `scripts/src/services/genshinParity/witness/trackCamera.ts`                               | —                      |       |
 | `scripts/src/services/genshinParity/witness/writeOverlay.ts`                              | —                      |       |
 | `scripts/src/services/genshinParity/witness/writeStoneRampWeights.ts`                     | —                      |       |
 | `scripts/src/services/genshinParity/witness/writeWitnessGbuffer.ts`                       | —                      |       |
