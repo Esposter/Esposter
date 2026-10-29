@@ -8,7 +8,7 @@ The Paimon menu's Quit Game opens an exit prompt that works but is drawn at a pr
 
 The exit prompt opened from Quit Game is drawn as the current build draws it: the question "Are you sure you want to quit?" over the dimmed menu, with two choices, at the game's own scale.
 
-- The prompt is drawn at the scale of the game's own exit prompt, taken from a 2026 recording, instead of a provisional scale.
+- The prompt is drawn at the scale of the game's own exit prompt, taken from a recording, instead of a provisional scale.
 - It offers Cancel and Confirm: Cancel closes it back to the menu, and Confirm leaves for the app's home.
 
 ## Capabilities

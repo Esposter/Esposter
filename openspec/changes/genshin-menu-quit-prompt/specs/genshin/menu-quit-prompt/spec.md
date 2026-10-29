@@ -9,7 +9,7 @@ The exit prompt SHALL be drawn at the scale of the game's own exit prompt, so th
 - **GIVEN** the Paimon menu is open in the world
 - **WHEN** the player chooses Quit Game
 - **THEN** the exit prompt opens over the menu, which stays visible behind it, dimmed
-- **AND** its panel is 910 by 576 of the game's 1080 high pixels, centred, with each choice 370 by 63 pixels, Cancel 66 pixels in from the panel's left and Confirm 475 in, as the English PC client's prompt draws it in the 2026 recording `yt-kIDee7nyD0w` at 29 seconds
+- **AND** its panel is 910 by 576 of the game's 1080 high pixels, centred, with each choice 370 by 63 pixels, Cancel 66 pixels in from the panel's left and Confirm 475 in, as the English PC client's prompt draws it in the recording `yt-kIDee7nyD0w` at 29 seconds
 
 ### Requirement: Exit prompt offers Cancel and Confirm
 
