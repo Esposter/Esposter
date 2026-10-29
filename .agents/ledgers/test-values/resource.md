@@ -2,12 +2,12 @@
 
 The resource explorer, the sheet editor, and the other content editors.
 
-| Unit                                                                                                                                                        | Swept                 | Notes                     |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | ------------------------- |
-| `services/resource/sheet/column`                                                                                                                            | 2026-10-05 · Opus 5.5 | the transformation suites |
-| `services/resource/sheet` — `commands`, `csv`, `dataSource`, `json`, `xlsx` and the root                                                                    | 2026-10-05 · Opus 5.5 |                           |
-| `composables/resource/sheet/commands`                                                                                                                       | 2026-10-05 · Opus 5.5 | one suite per command     |
-| `composables/resource/sheet` — the rest, `composables/resource/autosave`                                                                                    | 2026-10-05 · Opus 5.5 |                           |
-| `services/resource/{list,search}` and the root, `composables/resource/list` and the root                                                                    | 2026-10-05 · Opus 5.5 |                           |
-| `store/resource`, `components/Resource`                                                                                                                     | 2026-10-05 · Opus 5.5 |                           |
-| `dashboard`, `dataset`, `flowchartEditor`, `emailEditor`, `webpageEditor`, `pageBuilder`, `survey` — their `components`, `store`, `composables`, `services` | —                     |                           |
+| Unit                                                                                                                                                        | Swept                  | Notes                     |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------- |
+| `services/resource/sheet/column`                                                                                                                            | 2026-10-29 · Haiku 5.5 | the transformation suites |
+| `services/resource/sheet` — `commands`, `csv`, `dataSource`, `json`, `xlsx` and the root                                                                    | 2026-10-29 · Haiku 5.5 |                           |
+| `composables/resource/sheet/commands`                                                                                                                       | 2026-10-29 · Haiku 5.5 | one suite per command     |
+| `composables/resource/sheet` — the rest, `composables/resource/autosave`                                                                                    | 2026-10-29 · Haiku 5.5 |                           |
+| `services/resource/{list,search}` and the root, `composables/resource/list` and the root                                                                    | 2026-10-05 · Opus 5.5  |                           |
+| `store/resource`, `components/Resource`                                                                                                                     | 2026-10-05 · Opus 5.5  |                           |
+| `dashboard`, `dataset`, `flowchartEditor`, `emailEditor`, `webpageEditor`, `pageBuilder`, `survey` — their `components`, `store`, `composables`, `services` | —                      |                           |

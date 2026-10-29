@@ -15,14 +15,14 @@ Every workspace package outside `apps/web`.
 | `agent-console-server`                               | 2026-10-26             |                                                                    |
 | `genshin-persona`                                    | 2026-10-26             | its mocks are hoisted factories, typed off the source              |
 | `genshin-engine`                                     | 2026-10-26             |                                                                    |
-| `genshin-world/parity`                               | —                      |                                                                    |
-| `genshin-world/scripts`                              | —                      |                                                                    |
-| `genshin-world/src`                                  | —                      | its own files only; each subfolder is a row of its own             |
-| `genshin-world/src/components`                       | —                      |                                                                    |
-| `genshin-world/src/composables`                      | —                      |                                                                    |
-| `genshin-world/src/data`                             | —                      |                                                                    |
-| `genshin-world/src/models`                           | —                      |                                                                    |
-| `genshin-world/src/services`                         | —                      | its own files only; each subfolder is a row of its own             |
+| `genshin-world/parity`                               | 2026-10-29 · Haiku 5.5 |                                                                    |
+| `genshin-world/scripts`                              | 2026-10-29 · Haiku 5.5 |                                                                    |
+| `genshin-world/src`                                  | 2026-10-29 · Haiku 5.5 | its own files only; each subfolder is a row of its own             |
+| `genshin-world/src/components`                       | 2026-10-29 · Haiku 5.5 |                                                                    |
+| `genshin-world/src/composables`                      | 2026-10-29 · Haiku 5.5 |                                                                    |
+| `genshin-world/src/data`                             | 2026-10-29 · Haiku 5.5 |                                                                    |
+| `genshin-world/src/models`                           | 2026-10-29 · Haiku 5.5 |                                                                    |
+| `genshin-world/src/services`                         | 2026-10-29 · Haiku 5.5 | its own files only; each subfolder is a row of its own             |
 | `genshin-world/src/services/achievement`             | —                      |                                                                    |
 | `genshin-world/src/services/adventureRank`           | —                      |                                                                    |
 | `genshin-world/src/services/archive`                 | —                      |                                                                    |

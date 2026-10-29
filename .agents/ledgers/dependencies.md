@@ -155,6 +155,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `mlly`                                  | —                     | Keep — tooling   | the static export reader the module lists a package's exports with, never importing it                 |
 | `mocked-exports`                        | —                     | Keep — hold      | Nitro 3 resolves it from the app (`@TODO` in the catalog)                                              |
 | `msw`                                   | —                     | Keep — tooling   | request mocking                                                                                        |
+| `natural-orderby`                       | —                     |                  |                                                                                                        |
 | `neverthrow`                            | —                     | Keep — framework | the `Result` the error-handling convention is built on                                                 |
 | `nitro`                                 | —                     | Keep — framework | the server framework                                                                                   |
 | `node-html-parser`                      | 2026-10-18 · Opus 5.5 | Keep — engine    | HTML parsing with CSS selectors in the app, the server and the functions; parse5 has none              |
