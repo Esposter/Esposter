@@ -24,7 +24,7 @@ Kachina's charged attack and plunges SHALL stay provisionally timed until a reco
 
 - **GIVEN** Kachina has at least 25 stamina
 - **WHEN** the player holds the attack button to charge
-- **THEN** the charged attack plays for 102 frames and hits 24 frames in
+- **THEN** the charged attack plays for 102 frames, provisionally, and hits 24 frames in
 - **AND** 25 stamina is spent
 
 #### Scenario: Plunges hit at 45 and 46 frames
