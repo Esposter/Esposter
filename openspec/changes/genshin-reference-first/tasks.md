@@ -6,6 +6,7 @@
 - [x] 0.4 Remove the in-repository recording path from the parity tooling, so that no repository code reads a recording: the `frame`, `frames`, `film`, `glide` and `track` commands go with the readers behind them. Sampling stays outside the repository, as a step a person runs. Verify: the parity tests pass without it, and no file under `scripts/src/services/genshinParity` reads a recording.
 - [ ] 0.5 Decide whether a reference's `source` may name the recording and second it was sampled from. The design keeps `source` as provenance, so a person can sample it again, and 53 entries carry one, while the references delta says the repository SHALL NOT name a recording or a second of one. Either the delta's wording exempts `source` as provenance and says so in one place, or the design drops the recording and second from `source` and the 53 entries name only the screenshot. Verify: the references delta and `design.md` state the same rule, and `ParityReference.ts` and the reference map follow it.
 - [ ] 0.6 Decide whether a reference may be a wiki file. The references delta allows one, while the visual-suite delta says a reference SHALL be a screenshot the parity folder holds. Either the 17 wiki-titled entries get held screenshots, which is new work this list does not cover, or the rule changes and the references delta keeps it. Then keep one owner for the rule: the references delta or the visual-suite delta, not both. Verify: the two deltas state the same rule in one place, and each wiki-titled entry either has a held screenshot or is named pending.
+- [ ] 0.7 Reconcile the references delta with the spec of record. Its REMOVED requirement, "Reference images are kept outside the repository", is no longer in `openspec/specs/genshin/parity/references/spec.md`, which now holds "Reference images are committed as lossless WebP", and the record gains "A reference is read from its committed file" and "Committed reference files match their manifest rows", which the delta does not carry. Rewrite the delta so REMOVED names only a requirement the record holds and ADDED carries what this change still adds, before archive merges it. Verify: each REMOVED title is a `### Requirement:` of the spec of record, found by grep.
 
 ## 1. Screen coverage
 
@@ -29,6 +30,11 @@
 ## 4. The procedure
 
 - [x] 4.1 Put the order into the genshin-parity skill's rules and `references/approval.md`: reference, fixture, component, compare, approve, suite. Verify: the skill's rules name the order, and the parity README's flowchart draws the reference before the screen.
+
+## 5. Reference placement and reads
+
+- [ ] 5.1 Decide whether a map edit that adds a second whole-screen reference to a fixture variant migrates the committed file of the reference it moves, or refuses the edit. `scripts/src/services/genshinParity/reference/planReferenceFiles.ts` moves the first reference from `Index.reference.webp` beside its snapshot to `<id>.webp` in the flat folder, and nothing moves the file, so on a checkout without a scratch copy the reference is reported missing and its file is never written. Verify: a test covers the chosen behaviour on a checkout with only the committed file.
+- [ ] 5.2 Decide whether the reference plan is read once per run or per call. `scripts/src/services/genshinParity/shared/getReferencePath.ts` re-plans every reference through `readReferenceFiles`, a recursive read of the fixture tree, once per reference in the `compare --all` loop, and each reader of a reference does the same. Threading a plan through the commands changes every caller's signature, and memoising changes what a process sees after a pack writes files. Verify: `compare --all` reads the fixture tree once per run, or this task names why the per-call read stays.
 
 ## Gate
 
