@@ -733,6 +733,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Whose build string differs, so those two stay apart from ours, which are the current build's
   "login-interface-door": {
     isBackdrop: true,
+    plate: [{ height: 44, width: 1720, x: 100, y: 998 }],
     props: { isWelcomeShown: false, stage: "Door" },
     screen: "LoginInterface",
     source: "yt-rBnfA4pXw6U.mp4 at 14s",

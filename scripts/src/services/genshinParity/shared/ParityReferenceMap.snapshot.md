@@ -59,7 +59,7 @@ committed.
 | `login-door-recording`                 | `LoginScreen`               |                                                                         16.44% | 0.366 | 11.47% | 0.5796 |
 | `login-door-session`                   | `LoginScreen`               |                                                                         12.25% | 0.417 |  8.41% | 0.4567 |
 | `login-interface-arriving`             | `LoginInterface`            |                                     pending: no screenshot of this variant yet |       |        |        |
-| `login-interface-door`                 | `LoginInterface`            |                                                                          0.76% | 0.986 |  0.44% | 0.0461 |
+| `login-interface-door`                 | `LoginInterface`            |                                                                          0.46% | 0.992 |  0.20% | 0.0381 |
 | `login-interface-door-mainland`        | `LoginInterface`            |                                                                          0.57% | 0.975 |  0.38% | 0.0288 |
 | `login-interface-loading`              | `LoginInterface`            |                                                                          0.28% | 0.994 |  0.13% | 0.0250 |
 | `login-interface-loading-game`         | `LoginInterface`            |                                     pending: no screenshot of this variant yet |       |        |        |
