@@ -1838,9 +1838,9 @@ useWorldSaveSync({
             );
             autoRecoverDwell = autoRecoverStep.dwell;
             if (autoRecoverStep.isDue)
-              restorativePower = autoRecoverParty(
+              restorativePower.value = autoRecoverParty(
                 party,
-                regenerateRestorativePower(restorativePower, resonatedRegionIds.length, getWorldNow()),
+                regenerateRestorativePower(restorativePower.value, resonatedRegionIds.value.length, getWorldNow()),
                 autoRecoverSetting.thresholdPercent / AUTO_RECOVER_THRESHOLD_MAXIMUM_PERCENT,
                 (characterId) => getMemberMaxHealth(characterId) ?? 0,
               );
