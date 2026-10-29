@@ -23,3 +23,7 @@
 
 - [x] 5.1 Give the Traveler the element of each statue resonated with, and a bonus for each element. Verify: tests named after the scenarios 'the Traveler takes the element of the statue it resonates with' and 'each element resonated with adds a bonus', seen failing first.
 - [x] 5.2 List the voice-over lines on the Profile tab once the character model's terms are in place. Verify: a test named after the scenario 'the Profile tab lists the character's voice-over lines', seen failing first.
+
+## 6. Sub-stat caption
+
+- [ ] 6.1 Share the weapon's sub-stat caption between the character screen and the weapon screen. Both derive it the same way: `getSecondaryAttribute`, then `AttributeLabelGameTextKeyMap`, then `gameText`, with an empty caption for a weapon that grows no sub-stat (`packages/genshin-world/src/components/Character/Screen/Index.vue` and `packages/genshin-world/src/components/Weapon/Screen/Index.vue`). The duplicate is three lines, so it is low value on its own. Decide where the lookup lives: the map sits under `services/character`, while the weapon lookup is weapon-side. Then move the lookup into that one home and have both components call it. Verify: a test that mounts both screens on one weapon and asserts the same caption, seen failing first.
