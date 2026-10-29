@@ -185,9 +185,7 @@ const applyGcgReactionEffects = (
     1 - sourceSideIndex,
     hit,
     reaction,
-    createGcgActiveCharacterSwitch((...parameters) => {
-      applyGcgDamage(...parameters);
-    }),
+    createGcgActiveCharacterSwitch(applyGcgDamage),
   );
 };
 
