@@ -42,6 +42,14 @@ export const GAME_WHITE = "#fdfdfd";
 export const GAME_CREAM = "#ece5d8";
 export const GAME_INK = "#3b4354";
 export const GAME_GOLD = "#d3bc8e";
+// The world the game blurs behind a full-screen menu: a blur of 16 units, with the screen keeping 0.65 of the blurred
+// World, measured off the Quest screen's still (`Quest/Screen/Layout.reference.ts`)
+export const GAME_BACKDROP_BLUR = "calc(var(--unit) * 16)";
+export const GAME_BACKDROP_KEEP = 0.65;
+// The wash the game adds over it as light, brightening down the screen: 0.15 of white at 340 units down, 0.25 at 660,
+// 0.30 at 820 and 0.35 at 980, each band's fit under 0.02, the first and last held beyond them
+export const GAME_BACKDROP_WASH =
+  "linear-gradient(rgb(38 38 38) calc(var(--unit) * 340), rgb(64 64 64) calc(var(--unit) * 660), rgb(77 77 77) calc(var(--unit) * 820), rgb(89 89 89) calc(var(--unit) * 980))";
 // The game's pointer, a four pointed star with its point at the upper left: a white and a cream facet either side of
 // Its diagonal, and a gold star within it lit from its inner corner, traced from the wiki's render of its tutorial
 // On a 64 unit square with its point at the origin. It is 25 pixels across on a 1080 high screen, where the game

@@ -124,10 +124,10 @@ useEventListener("keydown", (event) => {
        (`File:Quest Screen.png`, its places in `Layout.reference.ts`): the banner and the list's title, the tabs along
        the top, every quest in progress listed down the left under its kind's heading and a series' quests under the
        series' row, and the selected quest's title, place, journal, objective, description and rewards on the right,
-       over the Quest Overview button and the one navigating to it. The game lays it over the world, blurred, which the
-       parity page has no copy of. Not drawn: the region's art on a series' row and the journal's emblem, the reward
+       over the Quest Overview button and the one navigating to it. The world behind it is blurred and washed as the
+       game lays it over the world. Not drawn: the region's art on a series' row and the journal's emblem, the reward
        items' art, the list's scroll bar and the UID -->
-  <MenuListScreen :game-text :title="listTitle" @close="emit('close')">
+  <MenuListScreen is-world-blurred :game-text :title="listTitle" @close="emit('close')">
     <template #icon>
       <MenuGlyph class="banner" :glyph="QuestGlyphMap[QuestGlyph.Banner]" />
     </template>

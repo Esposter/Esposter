@@ -11,6 +11,8 @@ interface Props {
   gameText: GameText;
   // The screen's title in the reader's language
   title: string;
+  // Whether the world behind the screen is blurred and washed, which the screen opts into
+  isWorldBlurred?: boolean;
 }
 
 defineProps<Props>();
@@ -23,7 +25,8 @@ defineSlots<{ detail: () => VNode; icon?: () => VNode; list: () => VNode; tabs?:
        The title and the close mark sit across the top on a translucent band, with the Q and E keys either side of its
        tabs, which each screen steps with `useListScreenTabStep`. A screen's
        own icon before the title and its own tabs, if it has any, along the band beside them -->
-  <GameScreen class="list-screen">
+  <GameScreen class="list-screen" :is-world-blurred="isWorldBlurred">
+    <span class="band" />
     <slot name="icon" />
     <ScreenHeader :game-text :title @close="emit('close')">
       <template #tabs>
@@ -46,14 +49,13 @@ defineSlots<{ detail: () => VNode; icon?: () => VNode; list: () => VNode; tabs?:
 
 /* The band across the top, the world darkened under it as the quest screen's still has it: its fill fitted against
    The world just under its edge, over the still's width clear of the tabs */
-.list-screen::before {
+.band {
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
   height: calc(var(--unit) * 95);
   background: rgb(30 29 45 / 0.4);
-  content: "";
 }
 
 .key {

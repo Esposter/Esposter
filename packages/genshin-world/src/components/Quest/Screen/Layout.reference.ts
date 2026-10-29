@@ -54,10 +54,11 @@ export const layoutTopic: ReferenceTopic = {
         "The screen keeps about 0.65 of the blurred world and adds a wash that brightens down the screen, b 0.15 at 340 high, 0.25 at 660, 0.30 at 820 and 0.35 at 980, each band's error under 0.02",
     },
     {
-      method: "Drawing that blur and wash on the screen itself",
-      outcome: InvestigationOutcome.Rejected,
+      method:
+        "Drawing that blur and wash on the screen itself, as a backdrop-filter layer in GameScreen behind the screen's own pieces, the list's top band drawn over it",
+      outcome: InvestigationOutcome.Adopted,
       result:
-        "The page draws the frame as captured behind the screen, its interface pieces filled from their surroundings and no blur, wash or scrim added, so the screen draws no scrim of its own; the list's scroll and the game's dark veil over the world are the causes the still differs by",
+        "The layer blurs the world with a 16 unit blur and keeps 0.65 of it, the wash added as light down the screen. Measured on the parity page: quest-screen 16.84 to 9.97 mean, shape 0.707 to 0.852, FLIP 0.4953 to 0.3620; -details 20.96 to 13.97, -header 9.04 to 7.68, -list 8.75 to 6.19, with shape and FLIP better on all four. The blur radius moves the mean by under 0.2 between 10 and 24 units. The page's plate is the world the layer blurs, and the layer reproduces 0.65 times the plate plus the wash to within a few levels per band. The plate is darker than the still's world on the strip 340 high, so the remaining gap is the plate's, not the layer's",
     },
     {
       method: "The screen's own words in the installed client's English text map",
@@ -80,7 +81,7 @@ export const layoutTopic: ReferenceTopic = {
     "The rewards' caption's line, which the install's text map does not hold, so it is not drawn",
     "Whether a world quest in no series lists before or after the series, which the still does not show",
     "The art not drawn: the region's on a series' row, the journal's emblem and each reward's item",
-    "The world's blur and wash behind the screen, and the list's scroll bar and arrows",
+    "The list's scroll bar and arrows",
     "The screen's RectTransforms from the client's blocks, which would place the pieces from the game's own tree rather than by measure",
   ],
 };

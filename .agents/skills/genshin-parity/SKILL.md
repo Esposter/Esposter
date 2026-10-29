@@ -39,7 +39,7 @@ Each direction's full statement, with the pointers it carries, is `references/se
 - **Taking a note's level and decay at the frame the voice's median attack predicts** — the first piece then decays too little and loses pitch agreement.
 - **A decay per octave of overtones on the synthesizer** — the fit reads the overtones dying faster, yet playing it moves no score.
 - **Holding the first piece's pitch with the catalogue's recordings** — solved for pitch alone, none reaches the synthesizer's agreement.
-- **Softening a component to match a recording's blur** — the game draws its text crisp, so `compare` softens our shot by the sigma measured on its reference screenshot instead.
+- **Softening a component to match a recording's blur** — the game draws its text crisp, so `compare` softens our shot by the sigma measured on its reference screenshot instead. The world behind a full-screen menu is the overturned exception: `GameScreen`'s `isWorldBlurred` blurs and washes it, never the menu (`references/settled-directions.md`).
 - **Pausing the compute queue along with other work** — only the user stops the queue; a feature lane's stop never does.
 - **Keeping noise levels past `MUSIC_DECIMALS`** — it moves the listening score by hundredths of a decibel.
 - **Gating an image on its compare, or on a reference** — every screen and variant gets an image written by `approve`, since an image is a snapshot of the render and not a judgement of the game; the score is a report (`references/approval.md`).

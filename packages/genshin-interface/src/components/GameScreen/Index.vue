@@ -2,6 +2,9 @@
 import type { InteractionState } from "#src/models/InteractionState";
 
 import {
+  GAME_BACKDROP_BLUR,
+  GAME_BACKDROP_KEEP,
+  GAME_BACKDROP_WASH,
   GAME_CANVAS_INSET,
   GAME_CANVAS_UNIT,
   GAME_CURSOR,
@@ -19,6 +22,9 @@ interface Props {
   // Whether the screen is the mobile client's, a quarter larger, in place of what the window's pointer says, which a
   // Fixture sets to shoot the touch layout on a desktop
   isTouch?: boolean;
+  // Whether the world behind the screen is blurred and washed as the game blurs it behind a full-screen menu, the screen's
+  // Own pieces never blurred. Off unless a screen opts in, so every other screen draws what is behind it as it is
+  isWorldBlurred?: boolean;
 }
 
 const { interactionState, isTouch } = defineProps<Props>();
@@ -33,8 +39,15 @@ const style = computed(() =>
        of its interface's 1600 by 900 canvas, both times `--interface-scale`, the mobile client's on a touch screen,
        `--canvas-inset` how far the canvas stands in from
        Each side and `--white` the white its opening is drawn on, in the game's face and pointer. Each resolves where a
-       Child uses it, against this container -->
-  <div class="game-screen" :data-interaction-state="interactionState" :style><slot /></div>
+       Child uses it, against this container. A screen that opts in draws the world behind it blurred under its own
+       Pieces, the blur taking what is painted behind this root and the wash added over it as light -->
+  <div class="game-screen" :data-interaction-state="interactionState" :style>
+    <div v-if="isWorldBlurred" class="world-backdrop">
+      <div class="world-blur" />
+      <div class="world-wash" />
+    </div>
+    <slot />
+  </div>
 </template>
 
 <style scoped>
@@ -44,6 +57,9 @@ const style = computed(() =>
   --canvas-unit: v-bind(GAME_CANVAS_UNIT);
   --unit: v-bind(GAME_UNIT);
   --white: v-bind(GAME_WHITE);
+  --backdrop-blur: v-bind(GAME_BACKDROP_BLUR);
+  --backdrop-keep: v-bind(GAME_BACKDROP_KEEP);
+  --backdrop-wash: v-bind(GAME_BACKDROP_WASH);
   position: absolute;
   inset: 0;
   overflow: hidden;
@@ -57,5 +73,25 @@ const style = computed(() =>
   .game-screen {
     --interface-scale: v-bind(MOBILE_INTERFACE_SCALE);
   }
+}
+
+.world-backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+/* The world behind the root, blurred and darkened to the share of it the game's screen keeps */
+.world-blur {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(var(--backdrop-blur)) brightness(var(--backdrop-keep));
+}
+
+/* The wash added to the blurred world as light, so it brightens down the screen rather than covering it */
+.world-wash {
+  position: absolute;
+  inset: 0;
+  background: var(--backdrop-wash);
+  mix-blend-mode: plus-lighter;
 }
 </style>

@@ -85,10 +85,10 @@ committed.
 | `party-screen`                         | `PartyScreen`               |                                                                          4.45% | 0.304 |  2.68% | 0.1628 |
 | `people-of-the-springs-location`       | `WorldScreen`               |                                                                         25.06% | 0.223 | 21.49% | 0.7945 |
 | `publisher-splash`                     | `SplashPublisher`           |                                                                          0.07% | 1.000 |  0.01% | 0.0036 |
-| `quest-screen`                         | `QuestScreen`               |                                                                         16.84% | 0.707 | 15.12% | 0.4953 |
-| `quest-screen-details`                 | `QuestScreen`               |                                                                         20.96% | 0.937 | 19.92% | 0.5587 |
-| `quest-screen-header`                  | `QuestScreen`               |                                                                          9.04% | 0.928 |  8.26% | 0.3522 |
-| `quest-screen-list`                    | `QuestScreen`               |                                                                          8.75% | 0.821 |  7.13% | 0.3252 |
+| `quest-screen`                         | `QuestScreen`               |                                                                          9.97% | 0.852 |  8.23% | 0.3620 |
+| `quest-screen-details`                 | `QuestScreen`               |                                                                         13.97% | 0.946 | 12.85% | 0.4368 |
+| `quest-screen-header`                  | `QuestScreen`               |                                                                          7.68% | 0.996 |  6.75% | 0.3086 |
+| `quest-screen-list`                    | `QuestScreen`               |                                                                          6.19% | 0.892 |  4.70% | 0.2657 |
 | `reputation-screen`                    | `ReputationScreen`          |                                                                          1.99% | 0.875 |  1.39% | 0.1429 |
 | `settings-audio-rows`                  | `MenuSettings`              |                                                                          1.01% | 0.995 |  0.38% | 0.0745 |
 | `settings-graphics`                    | `MenuSettings`              |                                                                          1.59% | 0.996 |  1.26% | 0.1020 |
