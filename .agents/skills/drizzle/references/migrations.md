@@ -19,6 +19,10 @@ pnpm db:up    # upgrades snapshot metadata to a newer drizzle-kit format, never 
 - **Rename the generated codename folder** descriptively, keeping drizzle's timestamp prefix, then rerun `db:gen` — it must report `No schema changes, nothing to migrate`.
 - Generation surfaces real drift a hand-written chain silently missed — e.g. enum values present in schema + code but never migrated. Verify against the live DB (`select enum_range(null::my_enum)`) before assuming a surprising diff is wrong.
 
+## One generation at a time
+
+Two `db:gen` runs in parallel descend from the same parent snapshot and fork the chain, so when several sessions work at once, one generates at a time.
+
 ## Renames — hint them, never hand-patch the drop
 
 A rename is indistinguishable from a delete-plus-create in a schema diff, so drizzle-kit refuses to guess: it exits 2 and prints, per ambiguous entity, the two hint objects it would accept. Answer with `rename` and it emits `ALTER … RENAME`, which is metadata-only and keeps the data. This is strictly better than letting it generate a drop/recreate and rewriting the SQL afterwards — the SQL is right the first time and `snapshot.json` needs no thought.
