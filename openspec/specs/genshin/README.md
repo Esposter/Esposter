@@ -155,7 +155,7 @@ What is still to build is the [Genshin proposal](../../changes/genshin-program/d
 - Combat's rules as pure, tested functions: auras and reactions, the damage formula, internal cooldown, shields and energy.
 - The party switched on 1 to 4, the character screen on C, and a character's attributes summed from the game's own tables.
 - An artifact rolled by the game's pools and the wiki's weights, enhanced with Artifact EXP at a Mora a point, its fodder and its locks as the game keeps them.
-- The F prompts' rules, the bag and its wallet on B, and the wish's published rules with its screen on F3, offering the standard and beginners' wishes from their pools.
+- The F prompts' rules, the bag and its wallet on B, and the wish's published rules with its screen on F3, offering the standard and beginners' wishes and each event banner the schedule has open from their pools, and a banner's trial where its featured character has one.
 - Original Resin: its count regenerating while the page is closed, its refills from Primogems at the game's daily prices, a claim's price and Adventure EXP, and its counter on the map's top bar.
 - Ley line outcrops: each region's Revelation and Wealth read from the game's tables, their openings by rank and nation, a drawn start and the move along their places, the touch, the camp and the F claim, with the camps' enemies provisional.
 - Mining outcrops and investigation spots: the rank that opens the outcrops, their 04:00 respawn after a mining, and the daily cap of a hundred investigations, as pure rules, with the outcrops drawn in Windrise, and the spots' places, draw and rewards unbuilt.
