@@ -10,7 +10,7 @@ import { readManifestFile } from "#src/services/genshinParity/reference/readMani
 import { writeManifestFile } from "#src/services/genshinParity/reference/writeManifestFile";
 import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { InvalidOperationError, Operation, settleAll } from "@esposter/shared";
-import { basename, isAbsolute, relative, resolve } from "node:path";
+import { basename, isAbsolute, relative, resolve, sep } from "node:path";
 
 // Stores the files a recording or record pack names, each streamed from its own path and uploaded to the accounts that lack
 // it, then records each in its manifest section. A record's path is kept relative to the parity folder it is restored into
@@ -24,7 +24,8 @@ export const packManifestPaths = async (
     paths.map((path) => async () => {
       const absolutePath = resolve(path);
       const relativePath = relative(PARITY_DIRECTORY, absolutePath);
-      if (kind === ReferencePackKind.Record && (isAbsolute(relativePath) || relativePath.startsWith("..")))
+      const climbsOut = relativePath === ".." || relativePath.startsWith(`..${sep}`);
+      if (kind === ReferencePackKind.Record && (isAbsolute(relativePath) || climbsOut))
         throw new InvalidOperationError(
           Operation.Read,
           path,
