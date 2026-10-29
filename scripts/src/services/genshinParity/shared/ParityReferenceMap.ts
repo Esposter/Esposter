@@ -90,6 +90,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       { height: 29, width: 115, x: 529, y: 881 },
       { height: 29, width: 115, x: 658, y: 881 },
       { height: 36, width: 272, x: 144, y: 30 },
+      { height: 40, width: 330, x: 1455, y: 28 },
+      { height: 58, width: 58, x: 1814, y: 19 },
       { height: 49, width: 18, x: 140, y: 995 },
       { height: 49, width: 466, x: 262, y: 995 },
       { height: 44, width: 203, x: 1600, y: 842 },

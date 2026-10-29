@@ -347,13 +347,14 @@ const getAdjacentSection = (step: number): ArchiveSection =>
 
 .counter {
   position: absolute;
-  top: calc(var(--unit) * 32);
-  right: calc(var(--unit) * 136);
+  top: calc(var(--unit) * 31);
+  right: calc(var(--unit) * 140);
   margin: 0;
   color: #d3c79f;
-  font-size: calc(var(--unit) * 23);
+  font-size: calc(var(--unit) * 26);
   font-weight: 600;
-  line-height: calc(var(--unit) * 26);
+  line-height: calc(var(--unit) * 30);
+  letter-spacing: calc(var(--unit) * 0.4);
   white-space: nowrap;
 }
 
