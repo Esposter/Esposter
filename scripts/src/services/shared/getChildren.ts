@@ -1,9 +1,7 @@
 import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
 
+import { checkIsSyntaxNode } from "#src/services/shared/checkIsSyntaxNode";
 import { visitorKeys } from "oxc-parser";
-
-const checkIsSyntaxNode = (value: unknown): value is SyntaxNode =>
-  typeof value === "object" && value !== null && "type" in value && "start" in value;
 
 // The node's children in source order, read through the parser's visitor keys
 export const getChildren = (node: SyntaxNode): SyntaxNode[] => {
