@@ -748,7 +748,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   "login-interface-loading": {
     isBackdrop: true,
-    props: { isWelcomeShown: false, progress: 0.2797, stage: "Preparing", statusStep: "LoadingData" },
+    props: { isWelcomeShown: false, progress: 0.2373, stage: "Preparing", statusStep: "LoadingData" },
     screen: "LoginInterface",
     source: "yt-rBnfA4pXw6U.mp4 at 5s",
     variant: "loadingData",
