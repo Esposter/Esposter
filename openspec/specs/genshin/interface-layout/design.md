@@ -16,11 +16,11 @@ flowchart LR
 - **A scaled piece scales about its pivot.** A rect whose scale is not one takes it as a CSS `scale` with its origin at the pivot, as Unity scales a RectTransform, so a piece pivoted at a corner keeps that corner where the tree places it. Whether the minimap's `GrpMap` is pivoted at a corner is open below.
 - **A layout group's children are left out.** A `GridLayoutGroup` places its children at run time, so their rects read zero; the fit keeps the group's own rect and drops everything under it (`scripts/src/services/genshinAssets/fit/fitInterfaceRects.test.ts`), and the group's stacking and spacing are scoped CSS on its `GameRect`, measured off a recording.
 - **What the tree cannot hold is measured inside the piece holding it.** A prefab the page loads at run time, such as the door's prompt in `BtnPressStart`, has no rect in the page's block, and a script that resizes a piece at run time (the age rating's layout adaptor) makes its rect a container only. Each is measured on a recording and written as CSS inside the `GameRect` it loads into, so it still rides with its parent. A line of text is set by the game's text component at run time, so its place inside its rect is measured too.
-- **The game's clips play on the same tree.** Each `GameRect` a clip moves carries its path under the clips' root as its `data-clip-target`, so a fade the game plays on a parent fades everything the markup nests in it, as the door's prompt fades with `Center/SwitchServer`.
+- **The game's clips play on the same tree.** Each `GameRect` a clip moves carries its path under the clips' root as its `data-clip-target`, so a fade the game plays on a parent fades everything the markup nests in it, as the door's prompt fades with `Center/SwitchServer` (the login clips `Ani_LoginMainPage_FadeIn` and `Ani_LoginMainPage_FadeOut` in `{data-root}/genshin-parity/extracted/login/clips/clips.json` each carry a curve on that path). The tag's name appears in `packages/genshin-interface/src/services/playInterfaceClip.ts`, `packages/genshin-world/src/models/login/LoginInterfaceClipTarget.ts` and `packages/genshin-world/src/components/Login/Interface/Index.vue`.
 
 ## Notes
 
-- **The prompt's measure is written from its parent's box**, `calc(var(--unit) * 38 - var(--canvas-unit) * 128)` from a container standing 128 canvas units in (`packages/genshin-world/src/components/Login/Interface/Index.vue`, the `bottom` rule). The measure stays the one taken off the recording, and the parent's term keeps it where the recording shows on any window.
+- **The prompt's measure is written from its parent's box**, `calc(var(--unit) * 38 - var(--canvas-unit) * 128)` from a container standing 128 canvas units in (`packages/genshin-world/src/components/Login/Interface/Index.vue`, the `bottom` rule at line 415, with the 128 canvas units at line 409). The measure stays the one taken off the recording, and the parent's term keeps it where the recording shows on any window.
 
 ## Key files
 
@@ -40,7 +40,7 @@ flowchart LR
 - [ ] **A scaled piece keeps its pivot corner where the tree places it** — no source yet: the export holds `GrpMap`'s scale of 0.6 but no pivot, and no test holds the scale origin.
 - [ ] **A `GridLayoutGroup`'s children read zero rects and are spaced as the recording shows** — no source yet: the children's rects are not checked against a recording, and the recording is not named.
 - [ ] **A prefab or text line the tree cannot hold is measured on a recording** — no source yet: the recordings for `BtnPressStart` and the age rating's layout adaptor are not named, and no test holds their measures.
-- [ ] **A clip-moved `GameRect` carries its clip path as `data-clip-target`, and the door's prompt fades with `Center/SwitchServer`** — no source yet: no test holds `data-clip-target`, and no clip in the extracted set names `Center/SwitchServer`.
+- [ ] **A clip-moved `GameRect` carries its clip path as `data-clip-target`** — no source yet: no test holds `data-clip-target`, and no run of the page was read to show the tag on a rendered piece.
 - [ ] **The prompt's 38-unit measure is taken off a recording** — no source yet: the recording is not named.
 
 ## Sources
