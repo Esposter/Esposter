@@ -2,10 +2,7 @@ import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/De
 import type { ManifestFile } from "#src/models/shared/ManifestFile";
 
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
-
-// `<name>@<version>` with an optional `+sha512.<hex>` suffix corepack verifies the download against, which is no
-// Part of the version the registry is asked about
-const PACKAGE_MANAGER_REGEX = /^(?<packageName>[^@]+)@(?<version>[^+]+)/u;
+import { PACKAGE_MANAGER_REGEX } from "#src/services/shared/constants";
 
 export const getPackageManagerEntries = (manifests: ManifestFile[]): DependencyEntry[] =>
   manifests.flatMap(({ manifest: { packageManager } }) => {

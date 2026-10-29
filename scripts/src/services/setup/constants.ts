@@ -76,8 +76,6 @@ export const SETUP_LOGINS: readonly SetupLogin[] = [
   { login: "pulumi login", name: "pulumi", probe: { args: ["whoami"], file: "pulumi" } },
 ];
 
-// `pnpm`'s `packageManager` pin, `pnpm@<version>` with the optional `+sha512` suffix corepack verifies the download against
-export const PACKAGE_MANAGER_VERSION_REGEX: RegExp = /^[^@]+@(?<version>[^+]+)/u;
 export const HOOKS_PATH_KEY = "core.hooksPath";
 export const HOOKS_PATH = ".githooks";
 // The file pnpm writes into the root's `node_modules` once an install has finished
