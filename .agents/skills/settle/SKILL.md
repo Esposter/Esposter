@@ -7,6 +7,6 @@ description: Apply when the `/settle` command is run, or when the open `review` 
 
 `/settle` runs the procedure in the `review-queue` skill (`.agents/skills/review-queue/references/local-settle.md`).
 The main session decides every verdict; haiku subagents make the edits.
-This never pushes `main`, which moves only through the review's fast-forward.
+This never pushes `main`, which moves through the review's fast-forward or the owner's sync to main.
 Any issue left open stays with the review's settle job.
 `/settle` runs the procedure for every open review issue.
