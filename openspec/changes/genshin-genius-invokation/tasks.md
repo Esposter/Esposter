@@ -21,3 +21,7 @@
 ## 5. The round limit
 
 - [ ] 5.1 Move the concession in `endGcgRound` to the point the game's own text gives, instead of the close of the fifteenth round's end phase. Verify: a test named after the scenario "A duel with no winner concedes once Round 15 begins", written first and seen failing, replaces the end-phase test in `declareGcgRoundEnd.test.ts`. The timing is a rules decision the main session takes before the code moves; until then the rules spec keeps the end-phase timing and its Open records the mismatch.
+
+## 6. Screen-reader names on the board
+
+- [ ] 6.1 Decide what a screen reader announces for a character card and a hand card on the duel board. Both `aria-label`s are the bare name, so the HP, energy, shield on a character and the dice cost on a card are dropped from the accessible name (`packages/genshin-world/src/components/Gcg/Screen/Character/Index.vue` and `packages/genshin-world/src/components/Gcg/Screen/Card/Index.vue`). The decision is the wording: whether the name carries those numbers, and the words that label them, which the reader's language must hold. Verify: a test named after the scenario "A character's name is read with its HP, energy and shield" and one named after "A card's name is read with its dice cost", written first and seen failing, once the wording is chosen and the two components' style comments are updated to say so.
