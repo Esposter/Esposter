@@ -11,7 +11,7 @@ description: Apply when reviewing, re-scoring, or updating SCORE.md. Esposter re
 
 Every score review updates all three in the same commit:
 
-1. **`SCORE.md`** — the `Last reviewed` date, the `Nuxt compatibilityDate` mirrored in the header line, the overall total, each area score/note, and the per-area sections.
+1. **`SCORE.md`** — the `Nuxt compatibilityDate` mirrored in the header line, the overall total, each area score/note, and the per-area sections.
 2. **`README.md`** — the `[badge-score]` shields URL (`score-<total>%2F100-<color>`). The number must equal SCORE.md's overall.
 3. **`apps/web/configuration/compatibilityDate.ts`** — bumped to the review date.
 

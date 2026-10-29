@@ -1,6 +1,6 @@
 # Esposter — Repository Score
 
-> Last reviewed: 2026-10-05 · Nuxt `compatibilityDate`: `2026-10-05` · Overall: **94 / 100**
+> Nuxt `compatibilityDate`: `2026-10-05` · Overall: **94 / 100**
 
 | Area                 | Score   | Notes                                                                         |
 | -------------------- | ------- | ----------------------------------------------------------------------------- |
