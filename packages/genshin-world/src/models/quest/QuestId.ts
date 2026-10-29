@@ -4,6 +4,7 @@
 export enum QuestId {
   BirdsEyeView = "352",
   CandidatureAnalysis = "11019",
+  EndingNoteSub39604 = "39604",
   ForegoneConclusion = "11026",
   InazumaOpening = "7280801",
   LiyueOpening = "2211102",
@@ -108,6 +109,7 @@ export const QuestIds: readonly QuestId[] = [
   QuestId.SevenStarSelection,
   QuestId.CandidatureAnalysis,
   QuestId.ForegoneConclusion,
+  QuestId.EndingNoteSub39604,
   QuestId.NewHorizonsOfAdventure,
   QuestId.LiyueOpening,
   QuestId.InazumaOpening,

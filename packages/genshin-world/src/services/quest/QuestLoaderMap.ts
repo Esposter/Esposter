@@ -9,6 +9,7 @@ import { z } from "zod";
 export const QuestLoaderMap: Record<QuestId, (gameDataBaseUrl: string) => Promise<unknown>> = {
   [QuestIdValues.BirdsEyeView]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/352", z.unknown()),
   [QuestIdValues.CandidatureAnalysis]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/11019", z.unknown()),
+  [QuestIdValues.EndingNoteSub39604]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/39604", z.unknown()),
   [QuestIdValues.ForegoneConclusion]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/11026", z.unknown()),
   [QuestIdValues.InazumaOpening]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/7280801", z.unknown()),
   [QuestIdValues.LiyueOpening]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/2211102", z.unknown()),
