@@ -281,6 +281,8 @@ export const GameTextKey = {
   DomainLeavePrompt: "UI_STC_Intee_DungeonExit",
   // The title of a domain's entry screen
   DomainTitle: "4043227537",
+  // The line the startup loading screen shows under its bar while the files download, with the download's size beside it
+  DownloadingResources: "1323480176",
   Dracolite: "2859410932",
   // The Electro Crystal node the map marks under Inventory / Materials, named as its gathering point names it
   ElectroCrystal: "2189505020",
@@ -669,10 +671,14 @@ export const GameTextKey = {
   // The button that takes a request the keeper offers, worded as the Reputation page's request shows it
   ReputationRequestAccept: "REPUTATION_REQUEST_BUTTON_1",
   ReputationReward: "REPUTATION_CITY_REWARD",
+  // The line the loading screen shows when a file fails to download after its attempts, above its retry button
+  ResourceDownloadFailed: "3595641979",
   // The notice a furnishing shows when the realm's area already holds its count of furnishings
   RetHomeFurnitureArrangeLimit: "RetHomeFurnitureArrangeLimit",
   // The notice a furnishing shows when the realm's area would pass its load
   RetHomeFurnitureExceedLimit: "RetHomeFurnitureExceedLimit",
+  // The button that tries a failed download again, worded as the game's own plain retry
+  Retry: "319352974",
   // The game over screen's button that revives the team at the nearest teleport waypoint
   Revive: "UI_STC_World_Revive",
   RomaritimeFlower: "3918052700",
