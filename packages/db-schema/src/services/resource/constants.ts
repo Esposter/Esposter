@@ -1,6 +1,6 @@
 // The blob-name directory segment for a resource's binary assets. A snapshot channel's segment is its own
-// `SnapshotChannel` value rather than a constant restating it. The web app and the data export both name the directory
-// Through this one value
+// `SnapshotChannel` value rather than a constant restating it.
+// The web app and the data export both name the directory through this one value.
 export const FILES_DIRECTORY_SEGMENT = "files";
 export const MAX_TAG_NAME_LENGTH = 128;
 export const MAX_TAG_VALUE_LENGTH = 256;
