@@ -6,8 +6,8 @@ import { readCachedReference } from "#src/services/genshinParity/reference/readC
 import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
 import { sha256File } from "#src/services/genshinParity/reference/sha256File";
 import { REFERENCE_SCRATCH_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { writePartialThenMove } from "#src/services/shared/writePartialThenMove";
 import { existsSync } from "node:fs";
-import { rename } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 
@@ -26,11 +26,10 @@ export const getCleanPlatePath = async (
   const platePath = join(REFERENCE_SCRATCH_DIRECTORY, `${referenceId}.plate-${digest}.png`);
   if (existsSync(platePath)) return platePath;
   const plate = await fillCleanPlate(referencePath, regions, { height, width });
-  // Written beside its name and renamed onto it, so a write cut short is never taken for a cached plate
-  const partialPath = `${platePath}.partial`;
-  await sharp(plate, { raw: { channels: 4, height, width } })
+  // Written whole and renamed onto its name, so a write cut short is never taken for a cached plate
+  const png = await sharp(plate, { raw: { channels: 4, height, width } })
     .png()
-    .toFile(partialPath);
-  await rename(partialPath, platePath);
+    .toBuffer();
+  await writePartialThenMove(platePath, png);
   return platePath;
 };
