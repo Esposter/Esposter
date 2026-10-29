@@ -101,14 +101,14 @@ const lineParts = computed(() => {
   line-height: 1;
 }
 
-/* The role under the name in the recording's smaller gold; its slot is the line's offset between a speaker with one and
-   one without, so the line keeps its place either way */
+/* The role under the name in the recording's smaller gold, its cap height and width read off the English client's
+   recording at 720 high (`dialogue-choices-line`) */
 .role {
   margin: 0;
   color: #ffc700;
-  font-size: calc(var(--unit) * 13);
+  font-size: calc(var(--unit) * 20);
   font-weight: 600;
-  line-height: calc(var(--unit) * 16.5);
+  line-height: calc(var(--unit) * 28);
 }
 
 /* The letter-space is the one that keeps the line's width closest to the game's; the face's own letter widths are
@@ -122,6 +122,12 @@ const lineParts = computed(() => {
   letter-spacing: calc(var(--unit) * 2.35);
   line-height: calc(var(--unit) * 32);
   text-align: center;
+}
+
+/* The role's box is 28 units, so the line under one takes a 2-unit gap: the two hold the 30-unit place the line has
+   under a role, which is where the English client's recording puts it */
+.role + .line {
+  margin-top: calc(var(--unit) * 2);
 }
 
 .unrevealed {
