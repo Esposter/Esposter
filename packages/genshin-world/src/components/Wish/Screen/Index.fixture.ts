@@ -23,8 +23,9 @@ const pityMap = {
   [BannerKind.Beginners]: { ...INITIAL_WISH_PITY, wishCount: BEGINNERS_WISH_LIMIT },
 };
 
-// The clock held inside the window of Born of Ocean Swell the recording shows
-const heldNow = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 450_408 });
+// The clock held in Born of Ocean Swell's window as the recording shows it: six days, twelve hours and fifteen minutes
+// Before the window closes at 2021-06-08 06:59:59 UTC, so the screen counts down the time the recording shows
+const heldNow = Temporal.Instant.from("2021-06-01T18:44:59Z");
 
 export const props = {
   characterCopyCountMap: new Map<number, number>(),

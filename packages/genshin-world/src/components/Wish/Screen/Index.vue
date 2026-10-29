@@ -37,7 +37,7 @@ import { getWishCost } from "#src/services/wish/getWishCost";
 import { makeWishes } from "#src/services/wish/makeWishes";
 import { sortWishResults } from "#src/services/wish/sortWishResults";
 import { toWishHistoryCells } from "#src/services/wish/toWishHistoryCells";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, MILLISECONDS_PER_SECOND, Operation } from "@esposter/shared";
 import { BannerKind, BannerKinds, GameScreen, WishScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
@@ -202,6 +202,23 @@ const bannerCard = computed(() =>
       }
     : undefined,
 );
+// The five-star notice a card gives: the character one on a character event, the weapon one on a weapon event
+const fiveStarNotice = computed(() => {
+  if (bannerKind.value === BannerKind.CharacterEvent) return gameText[GameTextKey.WishFiveStarCharacterNotice];
+  return bannerKind.value === BannerKind.WeaponEvent ? gameText[GameTextKey.WishFiveStarWeaponNotice] : "";
+});
+// The seconds the open event banner's window has left by the screen's clock, "undefined" on a banner with no window
+const timeRemaining = computed(() => {
+  const event = wishSchedule.find(({ id }) => id === bannerId.value);
+  return event ? Math.max(0, Math.floor((event.endTime - now.epochMilliseconds) / MILLISECONDS_PER_SECOND)) : undefined;
+});
+const timeRemainingWords = computed(() => ({
+  day: gameText[GameTextKey.WishTimeRemainingDays],
+  format: gameText[GameTextKey.WishTimeRemainingFormat],
+  hour: gameText[GameTextKey.WishTimeRemainingHours],
+  label: gameText[GameTextKey.WishTimeRemaining],
+  minute: gameText[GameTextKey.WishTimeRemainingMinutes],
+}));
 const toPoolCells = (items: WishItem[], isFeatured: boolean) =>
   items.map(({ id, name, rarity }) => ({ id, isFeatured, name, rarity }));
 // What the open banner can draw, the highest rarity first and its featured items first of each rarity
@@ -281,6 +298,7 @@ const wish = (count: number) => {
       :currencies
       :details-label="gameText[GameTextKey.WishDetails]"
       :fate-points
+      :five-star-notice="fiveStarNotice"
       :history="historyCells"
       :history-label="gameText[GameTextKey.WishHistory]"
       :path-label="isWeaponWish ? gameText[GameTextKey.WishEpitomizedPath] : ''"
@@ -290,6 +308,8 @@ const wish = (count: number) => {
       :results
       :shop-label="gameText[GameTextKey.Shop]"
       :sets
+      :time-remaining="timeRemaining"
+      :time-remaining-words="timeRemainingWords"
       :title="gameText[GameTextKey.Wish]"
       :trial-label
       @buy="buyFate()"

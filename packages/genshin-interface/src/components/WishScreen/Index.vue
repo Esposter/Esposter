@@ -32,6 +32,8 @@ interface Props {
   detailsLabel: string;
   // The Epitomized Path's Fate Points as the game words and colours them, "[]" on every banner but the weapon wish's
   fatePoints: TextSegment[];
+  // The five-star notice the open event banner's card gives, in the reader's language, "" on a banner with no card
+  fiveStarNotice: string;
   // The draws the History popup lists, the newest first
   history: WishHistoryCell[];
   // The History button's words
@@ -52,6 +54,10 @@ interface Props {
   sets: WishSet[];
   // The Shop button's words
   shopLabel: string;
+  // The seconds the open event banner has left in its window, "undefined" on a banner with no window
+  timeRemaining?: number;
+  // The Time Remaining label and the three units' words, each counted by its "{0}", the format joining the three
+  timeRemainingWords: { day: string; format: string; hour: string; label: string; minute: string };
   title: string;
   // The trial button's words in the reader's language, "" on a banner with no trial
   trialLabel: string;
@@ -65,6 +71,7 @@ const {
   currencies,
   detailsLabel,
   fatePoints,
+  fiveStarNotice,
   history,
   historyLabel,
   pathLabel,
@@ -74,6 +81,8 @@ const {
   results,
   sets,
   shopLabel,
+  timeRemaining,
+  timeRemainingWords,
   title,
   trialLabel,
 } = defineProps<Props>();
@@ -86,6 +95,20 @@ const getLabelText = (label: TextSegment[]) => label.map(({ text }) => text).joi
 const bannerLabelText = computed(() => {
   const openBanner = banners.find(({ id }) => id === bannerId.value);
   return openBanner && getLabelText(openBanner.label);
+});
+const SECONDS_PER_DAY = 86_400;
+const SECONDS_PER_HOUR = 3600;
+const SECONDS_PER_MINUTE = 60;
+// The seconds left as the game's three parts, each counted in its unit's words, and the three joined by the format
+const timeRemainingText = computed(() => {
+  if (timeRemaining === undefined) return "";
+  const days = Math.floor(timeRemaining / SECONDS_PER_DAY);
+  const hours = Math.floor((timeRemaining % SECONDS_PER_DAY) / SECONDS_PER_HOUR);
+  const minutes = Math.floor((timeRemaining % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
+  return timeRemainingWords.format
+    .replace("{0}", timeRemainingWords.day.replace("{0}", String(days)))
+    .replace("{1}", timeRemainingWords.hour.replace("{0}", String(hours)))
+    .replace("{2}", timeRemainingWords.minute.replace("{0}", String(minutes)));
 });
 </script>
 
@@ -119,14 +142,17 @@ const bannerLabelText = computed(() => {
     <GameButton class="back" :aria-label="backLabel" :kind="GameButtonKind.Plain" tip="" @click="emit('close')"
       >✕</GameButton
     >
-    <section v-if="bannerCard && bannerLabelText" class="card">
+    <section v-if="bannerLabelText && fiveStarNotice" class="card">
       <p class="tag">{{ bannerLabelText }}</p>
-      <p class="card-title">
+      <p v-if="bannerCard" class="card-title">
         <span v-for="({ color, text }, index) of bannerCard.title" :key="index" :style="{ color }">{{ text }}</span>
       </p>
       <p class="probability">{{ probabilityLabel }}</p>
-      <p class="rate-up">{{ bannerCard.rateUp }}</p>
-      <div v-if="featuredCell" class="featured">
+      <p v-if="bannerCard" class="rate-up">{{ bannerCard.rateUp }}</p>
+      <p class="notice">{{ fiveStarNotice }}</p>
+      <p v-if="timeRemaining !== undefined" class="time-label">{{ timeRemainingWords.label }}</p>
+      <p v-if="timeRemaining !== undefined" class="time-duration">{{ timeRemainingText }}</p>
+      <div v-if="bannerCard && featuredCell" class="featured">
         <p class="featured-name">{{ featuredCell.name }}</p>
         <p class="featured-stars"><RarityStars :rarity="featuredCell.rarity" /></p>
         <p class="featured-title">{{ bannerCard.featuredTitle }}</p>
@@ -347,6 +373,39 @@ const bannerLabelText = computed(() => {
   font-size: calc(var(--unit) * 28);
   letter-spacing: calc(var(--unit) * 0.15);
   line-height: calc(var(--unit) * 28.5);
+}
+
+.notice {
+  position: absolute;
+  top: calc(var(--unit) * 601);
+  left: calc(var(--unit) * 377);
+  width: calc(var(--unit) * 465);
+  margin: 0;
+  color: #3e3c3d;
+  font-size: calc(var(--unit) * 26);
+  letter-spacing: calc(var(--unit) * 1.6);
+  line-height: calc(var(--unit) * 28.8);
+}
+
+.time-label,
+.time-duration {
+  position: absolute;
+  left: calc(var(--unit) * 380);
+  margin: 0;
+  color: #3e3c3d;
+  font-size: calc(var(--unit) * 26);
+  line-height: calc(var(--unit) * 28);
+}
+
+.time-label {
+  top: calc(var(--unit) * 771);
+  font-weight: 600;
+  letter-spacing: calc(var(--unit) * 1.45);
+}
+
+.time-duration {
+  top: calc(var(--unit) * 810);
+  letter-spacing: calc(var(--unit) * 0.8);
 }
 
 .featured {

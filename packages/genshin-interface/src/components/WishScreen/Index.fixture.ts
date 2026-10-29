@@ -24,6 +24,8 @@ export const props = {
   ],
   detailsLabel: "Details",
   fatePoints: FATE_POINTS,
+  fiveStarNotice:
+    "5-star event-exclusive weapons can only be obtained in the specified wish during the specified time period(s). View Details for more.",
   history: [
     { bannerLabel: "Character Event Wish", name: "Sample Character", rarity: 5, time: "2026-10-18T14:02" },
     { bannerLabel: "Standard Wish", name: "Sample Weapon", rarity: 3, time: "2026-10-17T09:30" },
@@ -39,6 +41,15 @@ export const props = {
     { cost: "Intertwined Fate ×10", count: 10, isAffordable: false, label: "Wish ×10" },
   ],
   shopLabel: "Shop",
+  // Six days, twelve hours and fifteen minutes, the reference's time left
+  timeRemaining: 562_500,
+  timeRemainingWords: {
+    day: "{0} day(s)",
+    format: "{0} {1} {2}",
+    hour: "{0} hour(s)",
+    label: "Time Remaining",
+    minute: "{0} minute(s)",
+  },
   title: "Wish",
   trialLabel: "",
 };
@@ -50,6 +61,8 @@ export const variants = {
       title: [{ color: "#35AACCFF", text: "Born of" }, { text: " Ocean Swell" }],
     },
     bannerId: "character-event",
+    fiveStarNotice:
+      "5-star event-exclusive characters can only be obtained in the specified wish during the specified time period(s). View Details for more.",
     pool: [
       { id: 10_000_051, isFeatured: true, name: "Eula", rarity: 5 },
       { id: 10_000_052, isFeatured: false, name: "Diluc", rarity: 5 },
