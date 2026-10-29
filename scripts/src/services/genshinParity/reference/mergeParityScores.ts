@@ -77,11 +77,11 @@ export const mergeParityScores = (
     }),
   );
   const isFullRun = run === ParityReportRun.Full;
-  const isPending = (referenceId: string): boolean => references[referenceId]?.pending !== undefined;
+  const checkIsPending = (referenceId: string): boolean => references[referenceId]?.pending !== undefined;
   // A pending screen's row is the map's own statement, so only the full run writes it, and a subset run leaves it as it was
   const order = isFullRun
     ? referenceIds.filter(
-        (referenceId) => scores[referenceId] !== undefined || isPending(referenceId) || rowMap.has(referenceId),
+        (referenceId) => scores[referenceId] !== undefined || checkIsPending(referenceId) || rowMap.has(referenceId),
       )
     : placeNewIds(
         [...rowMap.keys()].filter((key) => !key.includes(LAYER_SEPARATOR)),
@@ -101,7 +101,7 @@ export const mergeParityScores = (
   const layerRows = order.flatMap((referenceId) => {
     const score = scores[referenceId];
     if (score) return score.layers.map((layer) => toLayerRow(`${referenceId}${LAYER_SEPARATOR}${layer.name}`, layer));
-    if (isFullRun && isPending(referenceId)) return [];
+    if (isFullRun && checkIsPending(referenceId)) return [];
     return [...rowMap].flatMap(([key, line]) => (key.startsWith(`${referenceId}${LAYER_SEPARATOR}`) ? [line] : []));
   });
   const layerLines = layerRows.length > 0 ? [...LAYER_HEADER, ...layerRows] : [];
