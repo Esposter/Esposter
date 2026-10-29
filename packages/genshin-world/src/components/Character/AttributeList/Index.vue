@@ -185,11 +185,10 @@ const detailGroups = computed(() =>
   background: #38dae5;
 }
 
-/* The two pills share their word's font, its centring and the pointer; each sets its own size, fill and colour */
+/* The two pills share their centring and the pointer; each sets its own size, fill and colour */
 .details,
 .lift {
   padding: 0;
-  font: inherit;
   text-align: center;
   cursor: pointer;
 }
@@ -197,6 +196,7 @@ const detailGroups = computed(() =>
 /* The game's outlined pill, a hairline round a faint lightening, its word in the cream the frame's words are */
 .details {
   display: block;
+  font: inherit;
   width: 100%;
   height: calc(var(--unit) * 40);
   margin-top: calc(var(--unit) * 17.5);
@@ -223,7 +223,8 @@ const detailGroups = computed(() =>
 }
 
 /* The game's cream pill at the foot of the frame, 68 units in from the panel's left edge and 859 down from its top, read
-   off the reference's pixels at 1080 high; its word is the panel's dark slate */
+   off the reference's pixels at 1080 high; its word is the panel's dark slate, and its size and weight are the cream pill
+   sheet's, so it inherits only the family */
 .lift {
   position: absolute;
   top: calc(var(--unit) * 859);
@@ -234,6 +235,7 @@ const detailGroups = computed(() =>
   border: 0;
   background: #ded5c4;
   color: #3e404d;
+  font-family: inherit;
   line-height: calc(var(--unit) * 49);
 }
 
