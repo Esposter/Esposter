@@ -3,18 +3,9 @@ import type { ReviewIssueFindings } from "#src/models/review/ReviewIssueFindings
 
 import { REVIEW_ISSUE_FINDING_CAP, REVIEW_ISSUE_LABEL } from "#src/services/review/constants";
 import { chunkReviewFindings } from "#src/services/review/issues/chunkReviewFindings";
+import { getIssueNumber } from "#src/services/review/issues/getIssueNumber";
 import { renderReviewIssueBody } from "#src/services/review/issues/renderReviewIssueBody";
 import { runGhWithBody } from "#src/services/review/issues/runGhWithBody";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-
-// `gh issue create` prints the new issue's URL, whose last segment is its number
-const getIssueNumber = (url: string): number => {
-  const issue = Number(url.slice(url.lastIndexOf("/") + 1));
-  if (!Number.isInteger(issue) || issue <= 0)
-    throw new InvalidOperationError(Operation.Create, "review issue", `gh printed no issue number: ${url}`);
-
-  return issue;
-};
 
 // Opens the issues a window's findings are owed in, one per chunk of at most `REVIEW_ISSUE_FINDING_CAP` findings, and
 // Returns each one's findings file content. The run ID is the workflow's, so the settle job can tell a live run's issue.

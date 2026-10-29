@@ -1,4 +1,4 @@
-import { renderOutcomeTable } from "#src/services/review/issues/renderOutcomeComment";
+import { renderOutcomeTable } from "#src/services/review/issues/renderOutcomeTable";
 import { describe, expect, test } from "vitest";
 
 describe(renderOutcomeTable, () => {

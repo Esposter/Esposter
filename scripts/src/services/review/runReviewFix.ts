@@ -5,7 +5,8 @@ import { ReviewSessionLimitedError } from "#src/models/review/ReviewSessionLimit
 import { fetchRemote } from "#src/services/review/git/fetchRemote";
 import { landCommits } from "#src/services/review/git/landCommits";
 import { formatReviewFinding } from "#src/services/review/issues/formatReviewFinding";
-import { renderOutcomeComment, renderOutcomeTable } from "#src/services/review/issues/renderOutcomeComment";
+import { renderOutcomeComment } from "#src/services/review/issues/renderOutcomeComment";
+import { renderOutcomeTable } from "#src/services/review/issues/renderOutcomeTable";
 import { renderReviewIssueBody } from "#src/services/review/issues/renderReviewIssueBody";
 import { runGhWithBody } from "#src/services/review/issues/runGhWithBody";
 import { resolveDispositions } from "#src/services/review/resolveDispositions";

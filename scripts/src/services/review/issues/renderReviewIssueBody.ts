@@ -1,19 +1,6 @@
-import type { ReviewFinding } from "#src/models/review/ReviewFinding";
+import type { ReviewIssueBodyInput } from "#src/models/review/ReviewIssueBodyInput";
 
 import { formatReviewFinding } from "#src/services/review/issues/formatReviewFinding";
-
-interface ReviewIssueBodyInput {
-  base: string;
-  end: string;
-  items: ReviewIssueBodyItem[];
-  runId: string;
-}
-
-interface ReviewIssueBodyItem {
-  finding: ReviewFinding;
-  // The reason a fixer left the finding open, which the rewritten body states beside its trigger
-  reason?: string;
-}
 
 // The body every review issue carries, from its findings in the order given. The fixer rewrites a body through this same
 // Function, so the run line and the findings keep one shape the settle job can read.
