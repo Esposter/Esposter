@@ -168,7 +168,7 @@ const switchSlot = () => {
           <span class="key" aria-hidden="true">R</span>
           {{ fastEquipLabel }}
         </GameButton>
-        <GameButton class="button" :kind="GameButtonKind.Pill" tip="" @click="switchSlot">
+        <GameButton class="button" :kind="GameButtonKind.Pill" tip="" @click="switchSlot()">
           <span class="key" aria-hidden="true">F</span>
           {{ switchLabel }}
         </GameButton>
