@@ -19,6 +19,8 @@ export const MAX_STYLE_VALUE_LENGTH = 200;
 // The most characters a node's id may hold, and each of its text props: a label, a text, alt text or a title
 export const MAX_NODE_ID_LENGTH = 64;
 export const MAX_NODE_TEXT_LENGTH = 2000;
+// The characters a node's id may hold, the ones a CSS class name takes, so an id cannot close the <style> element its class sits in
+export const NODE_ID_REGEX = /^[\w-]+$/u;
 // The most characters a custom HTML block's markup, an address, and a webpage's language tag may hold
 export const MAX_NODE_HTML_LENGTH = 100_000;
 export const MAX_URL_LENGTH = 2048;

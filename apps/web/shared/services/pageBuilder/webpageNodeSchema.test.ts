@@ -2,6 +2,7 @@ import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { webpageNodeSchema } from "#shared/services/pageBuilder/webpageNodeSchema";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
@@ -76,6 +77,23 @@ describe("webpageNodeSchema", () => {
         type: WebpageNodeType.Video,
       },
     ]);
+
+    expect(result.success).toBe(true);
+  });
+
+  test("an id that closes the published stylesheet is refused", () => {
+    expect.hasAssertions();
+
+    // The id names the node's class inside the published <style>, so this one closes it and opens a script
+    const result = webpageNodeSchema.safeParse(createButton("x}</style><script>"));
+
+    expect(result.success).toBe(false);
+  });
+
+  test("a UUID id is accepted, the form a minted node id takes", () => {
+    expect.hasAssertions();
+
+    const result = webpageNodeSchema.safeParse(createButton(crypto.randomUUID()));
 
     expect(result.success).toBe(true);
   });
