@@ -145,7 +145,7 @@ watch(
         >
           <!-- The white the page fades up out of as it arrives and into as it enters, which only the clips draw; its
                Scale overhangs the page, so the page's own, down to 0.96 as it fades in, never uncovers the screen's
-               Edge -->
+               edge -->
           <GameRect
             class="white-screen"
             :parent="backgroundRect"
@@ -266,8 +266,8 @@ watch(
 <style scoped>
 /* Each piece placed by the game's RectTransform inside its parent's (`GameRect`), and what the tree cannot hold
    Measured from the English client's login screen at 1080 high: a line of text's place in its rect, a prefab loaded at
-   Run time from the rect it loads into, and the corner buttons' spacing and the welcome card from the 1440 high
-   Recording of the current build. Only the buttons take a click, which they keep from the screen */
+   run time from the rect it loads into, and the corner buttons' spacing and the welcome card from the 1440 high
+   recording of the current build. Only the buttons take a click, which they keep from the screen */
 .login-interface {
   color: #fff;
   pointer-events: none;
@@ -315,7 +315,7 @@ watch(
 
 /* Mainland China's age rating, measured off its launch recording (`bili-av532052219`, 1080 high): a white card of 84 by
    110 units, 65 in from the screen's right and 52 down, its edges read at their sub-pixel places (overhanging the
-   Badge's box by 0.8 and 0.2 units, hence `overflow: visible`), and a blue panel inset 6.3 and 7.5 over a white band
+   badge's box by 0.8 and 0.2 units, hence `overflow: visible`), and a blue panel inset 6.3 and 7.5 over a white band
    naming it. Its button's layout adaptor sizes it at run time, so the badge is placed from the corner its rect stands
    40 canvas units in from */
 .age-rating {
@@ -406,8 +406,8 @@ watch(
 
 /* The prompt's band 38 units over the screen's foot on the 1080 high recording, across the screen less 100 units a
    Side: it is a prefab the page loads at run time into BtnPressStart, whose box stands 128 canvas units in from each
-   Side of the canvas, so its place is measured from that box. Once the door has formed, the prompt fades in and the
-   Corner buttons appear, each after its delay in the recording */
+   side of the canvas, so its place is measured from that box. Once the door has formed, the prompt fades in and the
+   corner buttons appear, each after its delay in the recording */
 .prompt {
   position: absolute;
   right: calc(var(--unit) * 100 - var(--canvas-unit) * 128);

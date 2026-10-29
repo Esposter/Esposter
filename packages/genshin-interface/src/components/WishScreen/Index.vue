@@ -92,10 +92,10 @@ const bannerLabelText = computed(() => {
 <template>
   <!-- The wish, the F3 key's: the banners across the head with the counts and the way back beside them, the open banner's
        card over the screen with its promoted five-star, its ×1 and ×10 with their costs, and the Shop, Details and History
-       Row under the card. Details opens the banner's pool over the screen, and over it all what the Last wishes drew, a card
-       Each with its stars, until a click goes on. Provisional: every place, size and colour here waits on the wish's passes
-       Against a recording of the English Client at 1080 high, and the banner card's art and the banners' tabs' portraits
-       Are the plate's, which cannot ship -->
+       row under the card. Details opens the banner's pool over the screen, and over it all what the Last wishes drew, a card
+       each with its stars, until a click goes on. Provisional: every place, size and colour here waits on the wish's passes
+       against a recording of the English Client at 1080 high, and the banner card's art and the banners' tabs' portraits
+       are the plate's, which cannot ship -->
   <div class="wish-screen">
     <ScreenTitle role="heading" aria-level="1">{{ title }}</ScreenTitle>
     <ul class="banners">

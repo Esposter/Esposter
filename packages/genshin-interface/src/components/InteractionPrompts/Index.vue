@@ -84,8 +84,8 @@ const selectionDuration = `${INTERACTION_HOVER_MS}ms`;
 
 /* The pointer from the cap into the pill: a white triangle 10.5 by 19 at 44.5 units from the cap's left edge, on every
    Row and shown on the selected one. A move of the selection is read off the English client's scrolled pickup at 60
-   Frames a second: the cap jumps rows within a frame, while the pointer and the selected rim cross-fade from the old
-   Row to the new over three, the 0.05 seconds the game's controllers fade into a state over */
+   frames a second: the cap jumps rows within a frame, while the pointer and the selected rim cross-fade from the old
+   row to the new over three, the 0.05 seconds the game's controllers fade into a state over */
 .key::after {
   position: absolute;
   top: calc(var(--unit) * 7);
@@ -132,7 +132,7 @@ const selectionDuration = `${INTERACTION_HOVER_MS}ms`;
 
 /* The pill's ground, measured off the English client's pickup over plain grass at 1080 high: slate rounded at the left,
    With a light rim 2 units thick 2.5 inside its edge, opaque for 78 units and fading out evenly to nothing at its end,
-   So it has no right end of its own. The selected row's rim is brighter */
+   so it has no right end of its own. The selected row's rim is brighter */
 .pill::before {
   position: absolute;
   inset: 0;

@@ -71,7 +71,7 @@ watch(
   </GameRect>
   <!-- The marks over it in `GrpMap`'s rect, as the tree places them: the N at the top of the rim, which never turns,
        The view's fan turned the way the camera looks, and the character's arrow at the centre turned the way it faces,
-       Each turned the other way about the vertical than three turns it, since the map looks down on the ground -->
+       each turned the other way about the vertical than three turns it, since the map looks down on the ground -->
   <GameRect #default="{ rect: marksRect }" :parent :rect="interfaceRects[HudInterfaceRectName.MapMarks]">
     <GameRect #default="{ rect: southRect }" :parent="marksRect" :rect="interfaceRects[HudInterfaceRectName.SouthMark]">
       <GameRect :parent="southRect" :rect="interfaceRects[HudInterfaceRectName.SouthImage]">

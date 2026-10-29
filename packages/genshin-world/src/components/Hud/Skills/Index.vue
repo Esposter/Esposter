@@ -70,9 +70,9 @@ onUnmounted(() => {
 <template>
   <!-- The skill and burst buttons at the bottom right. A cooldown darkens its button by the share left and counts its
        Seconds down to a tenth, each carries its icon, and the burst fills with its energy from the foot in its element's
-       Colour, its icon dim until the whole disc is in that colour once full. The keys' layout caps each with its key.
+       colour, its icon dim until the whole disc is in that colour once full. The keys' layout caps each with its key.
        Pressing and holding one holds its key, as the touch controls hold theirs, and Enter or Space holds a focused one's,
-       Stopped before the world's own keys hear them -->
+       stopped before the world's own keys hear them -->
   <div class="skills" :class="isTouch ? 'touch' : 'keys'">
     <button
       class="skill"
@@ -216,7 +216,7 @@ onUnmounted(() => {
 
 /* The gadget's disc and its key cap stand above the burst's, measured from the same edge as the burst's cap, in the
    Keys' recording: the disc about 72 across centred 250 up, its cap 30 by 25 at 190 up. The 2026 PC clip's countdown
-   Centres 3 up from that centre, and its medallion sits 5.5 left and 6 up of it, which the disc's icon will take */
+   centres 3 up from that centre, and its medallion sits 5.5 left and 6 up of it, which the disc's icon will take */
 .gadget-key {
   bottom: calc(var(--unit) * 190);
   right: calc(var(--unit) * 86.5);
@@ -241,10 +241,10 @@ onUnmounted(() => {
 
 /* The touch layout's skill and burst as `hud-world-pickup` shows them, each a disc as the action buttons' are, measured
    In that recording's pixels from the right edge and the foot of `GrpActionBtn` at 864 / 934 units a pixel, as the
-   Action buttons are: the skill's of radius 61 centred 466.9 in and 129 up, and the burst's of radius 44.5 at 613.4 in
-   And 93.5 up. Each icon's
-   Square is 1.355 of the skill's disc and 1.048 of the burst's, Skyward Sonnet's 84 by 90 pixel mark being 65 by 70 of
-   Its icon's 128 and Wind's Grand Ode's inner circle 37.5 pixels across against its icon's 51.5 */
+   action buttons are: the skill's of radius 61 centred 466.9 in and 129 up, and the burst's of radius 44.5 at 613.4 in
+   and 93.5 up. Each icon's
+   square is 1.355 of the skill's disc and 1.048 of the burst's, Skyward Sonnet's 84 by 90 pixel mark being 65 by 70 of
+   its icon's 128 and Wind's Grand Ode's inner circle 37.5 pixels across against its icon's 51.5 */
 .touch .skill {
   --glyph-size: calc(var(--unit) * 112.9 * 1.355);
 

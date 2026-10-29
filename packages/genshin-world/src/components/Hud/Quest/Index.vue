@@ -32,7 +32,7 @@ const step = computed(() => quest.steps[questProgress?.stepIndex ?? 0]);
 <template>
   <!-- The HUD's quest tracker: the quest's title, the navigated objective's distance under it, named higher or lower
        With an arrow where it stands well above or below the character, and its step's line with how far its counted
-       Objective has come. Pressing it navigates to the quest, as V does -->
+       objective has come. Pressing it navigates to the quest, as V does -->
   <button class="quest-tracker" type="button" @click="tapActionKey(input, InputAction.QuestNavigation)">
     <span class="title">{{ textMap[quest.titleTextId] }}</span>
     <span v-if="mark" class="mark">
@@ -85,9 +85,9 @@ const step = computed(() => quest.steps[questProgress?.stepIndex ?? 0]);
 
 /* The navigated objective's line as the PC part of `world-pickup.mkv` shows it at 20 seconds and 1080 high, "Higher
    1523m": its letters 12 high to their capitals, so a size of 17.6 in the stand-in font, whose capitals are 0.683 of its
-   Size, in the brightest yellow of their pixels, after a white arrowhead 14 wide and 9 high, notched at its foot, 6 before
-   The word and level with the title's start. The phone's frame at 70 seconds reads the same. Provisional: its place under
-   The title, with the tracker's */
+   size, in the brightest yellow of their pixels, after a white arrowhead 14 wide and 9 high, notched at its foot, 6 before
+   the word and level with the title's start. The phone's frame at 70 seconds reads the same. Provisional: its place under
+   the title, with the tracker's */
 .mark {
   display: flex;
   margin-top: calc(var(--unit) * -13);

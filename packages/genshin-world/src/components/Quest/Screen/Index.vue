@@ -116,11 +116,11 @@ useEventListener("keydown", (event) => {
 <template>
   <!-- The game's quest screen, which J opens, as the English client's still at 1920 by 1080 lays it out
        (`File:Quest Screen.png`, its places in `Layout.reference.ts`): the banner and the list's title, the tabs along
-       The top, every quest in progress listed down the left under its kind's heading and a series' quests under the
-       Series' row, and the selected quest's title, place, journal, objective, description and rewards on the right,
-       Over the Quest Overview button and the one navigating to it. The game lays it over the world, blurred, which the
-       Parity page has no copy of. Not drawn: the region's art on a series' row and the journal's emblem, the reward
-       Items' art, the rewards' caption, the list's scroll bar and the UID -->
+       the top, every quest in progress listed down the left under its kind's heading and a series' quests under the
+       series' row, and the selected quest's title, place, journal, objective, description and rewards on the right,
+       over the Quest Overview button and the one navigating to it. The game lays it over the world, blurred, which the
+       parity page has no copy of. Not drawn: the region's art on a series' row and the journal's emblem, the reward
+       items' art, the rewards' caption, the list's scroll bar and the UID -->
   <MenuListScreen :game-text :title="listTitle" @close="emit('close')">
     <template #icon>
       <MenuGlyph class="banner" :glyph="QuestGlyphMap[QuestGlyph.Banner]" />

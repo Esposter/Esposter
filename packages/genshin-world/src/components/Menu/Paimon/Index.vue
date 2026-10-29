@@ -134,8 +134,8 @@ onBeforeUnmount(() => {
 <template>
   <!-- The game's pause menu, laid out in the reference's own pixels: its side bar down the left, of Back, the side bar's
        Screens and Quit Game, the profile card over the panel's entries in the game's four columns, and the world drawn
-       Past the panel, where Paimon floats. Every entry the game has is here in its order: one whose screen is not built
-       Yet is drawn disabled, and the links out to web pages are drawn disabled whole -->
+       past the panel, where Paimon floats. Every entry the game has is here in its order: one whose screen is not built
+       yet is drawn disabled, and the links out to web pages are drawn disabled whole -->
   <GameScreen
     :class="{ closing: isClosing }"
     class="paimon-menu"
@@ -284,7 +284,7 @@ onBeforeUnmount(() => {
 <style scoped>
 /* Provisional where the game is not yet fitted: the card's stars, the avatar's art and the glass of the side bar's and
    the panel's translucent feet wait on the English PC client's menu measured at 1080 high. Every place is in the
-   Reference's own pixels, a unit being 1.333 of them, so a menu is drawn as the reference is at any window's size */
+   reference's own pixels, a unit being 1.333 of them, so a menu is drawn as the reference is at any window's size */
 .paimon-menu {
   --reference-pixel: calc(var(--unit) * 0.75);
   color: #ece5d7;

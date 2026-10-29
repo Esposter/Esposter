@@ -116,7 +116,7 @@ const emit = defineEmits<{ map: []; menu: [] }>();
   <!-- The heads-up display over the world: only the pieces the world backs, each in its place. The Paimon button and
        the minimap in the top left with the quest tracker under them, the shortcuts in the top right, the party down the
        right, the member on the field's health at the bottom's middle, the skill and burst at the bottom right, the
-       Stamina meter where it places itself, the Sheer Cold gauge across the top, and on a touch screen the stick at the
+       stamina meter where it places itself, the Sheer Cold gauge across the top, and on a touch screen the stick at the
        bottom left, the touch layout's Action buttons beside the skill and burst and the look's drag under them all.
        Everything between the pieces lets the pointer through to the world, and a press on a piece stays the piece's,
        never reaching the world's input as an attack -->
