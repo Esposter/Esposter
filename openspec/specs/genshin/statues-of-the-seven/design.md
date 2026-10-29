@@ -47,7 +47,7 @@ flowchart TD
 
 ## Notes
 
-- **Partly wired.** The auto-recover setting is not yet its state, and the character component passes the start maximum, a gap the spec's requirement on the world's wiring owns.
+- **Partly wired.** The auto-recover setting is the session's, set on the Blessing and read by the stand by a statue, and the character component still passes the start maximum, a gap the spec's requirement on the world's wiring owns.
 - **Oculi wait on the spawned places.** Oculi are not in the world's data, and their places come from the spawned places' fit ([spawned places](../../../changes/genshin-spawned-places/design.md)).
 
 ## Sources

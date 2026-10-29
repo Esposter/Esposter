@@ -11,4 +11,4 @@ x-touches:
     "packages/genshin-world/src/components/Statue/**",
     "packages/genshin-interface/src/components/BlessingScreen/**",
   ]
-x-waiting: "statue-blessing.mkv, for the Blessing and Worship Statue screens' layouts, which stay provisional until a recording shows them"
+x-waiting: "statue-blessing.mkv, for the Blessing and Worship Statue screens' layouts, and the game's auto-recover steps and switch words. The threshold's ten-percent steps, its fifty-percent start and the switch's wiki words are provisional until it records them; the layouts stay provisional with them"

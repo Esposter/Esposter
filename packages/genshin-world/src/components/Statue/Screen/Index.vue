@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Party } from "#src/models/party/Party";
+import type { AutoRecoverSetting } from "#src/models/statue/AutoRecoverSetting";
 import type { RestorativePower } from "#src/models/statue/RestorativePower";
 import type { GameText } from "genshin-text";
 
@@ -8,8 +9,12 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { RESTORATIVE_POWER_PER_STATUE } from "#src/services/statue/constants";
 import { healPartyMemberWithPower } from "#src/services/statue/healPartyMemberWithPower";
 import { regenerateRestorativePower } from "#src/services/statue/regenerateRestorativePower";
+import { stepAutoRecoverThreshold } from "#src/services/statue/stepAutoRecoverThreshold";
 import { BlessingScreen, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
+
+// Provisional: the switch's words are the wiki's, since no game text key for them is in the dump, until one is keyed
+const AUTO_RECOVER_TITLE = "Auto-recover when nearby";
 
 interface Props {
   // The game's words in the reader's language
@@ -30,8 +35,19 @@ const { gameText, getMaxHealth, getName, getNow, party, statueCount } = definePr
 const emit = defineEmits<{ close: []; worship: [] }>();
 // The Restorative Power as the save's moment left it, refilled to now before the screen shows it or spends it
 const power = defineModel<RestorativePower>("power", { required: true });
+// Auto-recover's switch and threshold, which the screen sets and the Session's stand by a statue reads
+const autoRecover = defineModel<AutoRecoverSetting>("autoRecover", { required: true });
 
 const regeneratePower = () => regenerateRestorativePower(power.value, statueCount, getNow());
+const toggleAutoRecover = () => {
+  autoRecover.value = { ...autoRecover.value, isOn: !autoRecover.value.isOn };
+};
+const stepThreshold = (direction: 1 | -1) => {
+  autoRecover.value = {
+    ...autoRecover.value,
+    thresholdPercent: stepAutoRecoverThreshold(autoRecover.value.thresholdPercent, direction),
+  };
+};
 // The deployed team's members, each with the share of its Max HP it holds
 const getMembers = () =>
   getDeployedCharacterIds(party).map((id) => ({
@@ -47,13 +63,18 @@ const heal = (characterId: number) => {
 <template>
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.StatueBlessing]">
     <BlessingScreen
+      :auto-recover-title="AUTO_RECOVER_TITLE"
+      :is-auto-recover-on="autoRecover.isOn"
       :members="getMembers()"
       :pool-amount="regeneratePower().amount"
       :pool-maximum="statueCount * RESTORATIVE_POWER_PER_STATUE"
+      :threshold-percent="autoRecover.thresholdPercent"
       :title="gameText[GameTextKey.StatueBlessing]"
       :worship-title="gameText[GameTextKey.StatueWorship]"
       @close="emit('close')"
       @heal="(characterId) => heal(characterId)"
+      @step-threshold="stepThreshold"
+      @toggle-auto-recover="toggleAutoRecover"
       @worship="emit('worship')"
     />
   </GameScreen>

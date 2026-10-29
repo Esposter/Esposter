@@ -7,6 +7,13 @@ export const RESTORATIVE_POWER_REFILL_SHARE = 0.01;
 export const RESTORATIVE_POWER_REFILL_SECONDS = 15;
 // The share of a character's Max HP one click on the Blessing heals it by
 export const BLESSING_HEAL_HEALTH_SHARE = 0.1;
+// The seconds a character stands by a statue's base before auto-recover runs, the wiki's two
+export const AUTO_RECOVER_DWELL_SECONDS = 2;
+// Provisional: the threshold's percentage of a member's Max HP, the steps the screen's control moves it by, its largest
+// And the one it starts at, until statue-blessing.mkv records the game's steps. The step is the share one click heals
+export const AUTO_RECOVER_THRESHOLD_STEP_PERCENT = 10;
+export const AUTO_RECOVER_THRESHOLD_MAXIMUM_PERCENT = 100;
+export const AUTO_RECOVER_THRESHOLD_DEFAULT_PERCENT = 50;
 // The Adventure Rank EXP each Oculus gives when it is collected, as the wiki's Adventure EXP page states it
 export const OCULUS_ADVENTURE_EXP = 60;
 // The distance an Oculus is touched from to be found, and the distance one shows on the minimap from, both provisional

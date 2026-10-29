@@ -22,6 +22,8 @@ import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { ShortcutWheelStep } from "#src/models/shortcutWheel/ShortcutWheelStep";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
+import type { AutoRecoverDwell } from "#src/models/statue/AutoRecoverDwell";
+import type { AutoRecoverSetting } from "#src/models/statue/AutoRecoverSetting";
 import type { RestorativePower } from "#src/models/statue/RestorativePower";
 import type { StatueLevel } from "#src/models/statue/StatueLevel";
 import type { Trial } from "#src/models/trial/Trial";
@@ -202,9 +204,13 @@ import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { VendorShopTypeMap } from "#src/services/shop/VendorShopTypeMap";
 import { getShortcutWheelStep } from "#src/services/shortcutWheel/getShortcutWheelStep";
 import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
+import { advanceAutoRecoverDwell } from "#src/services/statue/advanceAutoRecoverDwell";
+import { autoRecoverParty } from "#src/services/statue/autoRecoverParty";
 import { computeStatueInteractables } from "#src/services/statue/computeStatueInteractables";
 import { computeTravelerElement } from "#src/services/statue/computeTravelerElement";
 import {
+  AUTO_RECOVER_THRESHOLD_DEFAULT_PERCENT,
+  AUTO_RECOVER_THRESHOLD_MAXIMUM_PERCENT,
   OCULUS_MINIMAP_DISTANCE,
   OCULUS_REGION_ID,
   OCULUS_TOUCH_RADIUS,
@@ -215,6 +221,7 @@ import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionId
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { getTravelerElementBonusLines } from "#src/services/statue/getTravelerElementBonusLines";
 import { readOculusPlaces } from "#src/services/statue/readOculusPlaces";
+import { regenerateRestorativePower } from "#src/services/statue/regenerateRestorativePower";
 import { WORLD_CLOCK_INTERVAL_MS } from "#src/services/time/constants";
 import { getServerNow } from "#src/services/time/getServerNow";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
@@ -731,6 +738,13 @@ const restorativePower = shallowRef<RestorativePower>({
   amount: RESTORATIVE_POWER_PER_STATUE * resonatedRegionIds.value.length,
   changedAt: getWorldNow(),
 });
+// Auto-recover as the Blessing sets it, off at its starting threshold, and the stand by a statue's base it runs after its
+// Dwell. Kept for the session as the pool is, since the save holds neither
+const autoRecoverSetting = shallowRef<AutoRecoverSetting>({
+  isOn: false,
+  thresholdPercent: AUTO_RECOVER_THRESHOLD_DEFAULT_PERCENT,
+});
+let autoRecoverDwell: AutoRecoverDwell = { isRecovered: false, seconds: 0 };
 const travelerElement = computed(() => computeTravelerElement(resonatedRegionIds.value));
 const travelerBonusLines = computed(() =>
   getTravelerElementBonusLines(resonatedRegionIds.value, finishedMainQuestIds.value.has(TRAVELER_BONUS_QUEST_ID)),
@@ -1819,6 +1833,24 @@ useWorldSaveSync({
             const interactable = readInteraction(inputState, context.delta);
             const touchedOculus = findTouchedOculus();
             if (touchedOculus) collectOculus(OCULUS_REGION_ID, touchedOculus);
+            // Auto-recover runs once a stand by a statue's base reaches its dwell, with the switch on
+            const isNearStatue = interactionPrompts.interactables.some(
+              ({ id, kind }) =>
+                kind === InteractionKind.Activate && unlockedLandmarkIds.has(id) && getStatueRegionId(id) !== undefined,
+            );
+            const autoRecoverStep = advanceAutoRecoverDwell(
+              autoRecoverDwell,
+              isNearStatue && autoRecoverSetting.isOn,
+              context.delta,
+            );
+            autoRecoverDwell = autoRecoverStep.dwell;
+            if (autoRecoverStep.isDue)
+              restorativePower = autoRecoverParty(
+                party,
+                regenerateRestorativePower(restorativePower, resonatedRegionIds.length, getWorldNow()),
+                autoRecoverSetting.thresholdPercent / AUTO_RECOVER_THRESHOLD_MAXIMUM_PERCENT,
+                (characterId) => getMemberMaxHealth(characterId) ?? 0,
+              );
             const worldDrop = worldDrops.find(({ id }) => id === interactable?.id);
             const materialSource = materialSources.find(({ id }) => id === interactable?.id);
             const frostbearingTreePlace = frostbearingTreePlaces.find(({ id }) => id === interactable?.id);
@@ -2474,6 +2506,7 @@ useWorldSaveSync({
     />
     <StatueScreen
       v-if="screenKind === ScreenKind.Blessing"
+      v-model:auto-recover="autoRecoverSetting"
       v-model:power="restorativePower"
       :game-text
       :get-max-health="(characterId) => getMemberMaxHealth(characterId) ?? 0"
