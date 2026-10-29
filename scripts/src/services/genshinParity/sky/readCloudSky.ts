@@ -2,13 +2,13 @@ import type { Page } from "playwright";
 
 import { blurGrey } from "#src/services/genshinParity/shared/blurGrey";
 import { CLOUD_ELEVATION_BANDS, LUMINANCE } from "#src/services/genshinParity/shared/constants";
+import { readRawRgb } from "#src/services/genshinParity/shared/readRawRgb";
 import { readWitnessPartTarget } from "#src/services/genshinParity/shared/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { fitClearSky } from "#src/services/genshinParity/sky/fitClearSky";
 import { computeOtsuThreshold } from "#src/services/recreation/statistics/computeOtsuThreshold";
 import { BYTE } from "#src/services/shared/constants";
 import { toLinear } from "#src/services/shared/toLinear";
-import sharp from "sharp";
 import { Matrix4, Vector3, Vector4 } from "three";
 
 // A cloud stands at least this many times as bright as its own sky's clear sky there, read over the sky blurred by
@@ -106,7 +106,7 @@ export const readCloudSky = async (
         return cloudCount / Math.max(skyCount, 1);
       }),
     readLuminance: async (input) => {
-      const data = await sharp(input).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
+      const data = await readRawRgb(input, width, height);
       return Float32Array.from({ length: width * height }, (_value, pixel) =>
         LUMINANCE.reduce((sum, weight, channel) => sum + weight * toLinear((data[pixel * 3 + channel] ?? 0) / BYTE), 0),
       );

@@ -9,6 +9,7 @@ import { computePixelPoint } from "#src/services/genshinParity/shared/computePix
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { readPageFunction } from "#src/services/genshinParity/shared/readPageFunction";
+import { readRawRgb } from "#src/services/genshinParity/shared/readRawRgb";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { withReferencePage } from "#src/services/genshinParity/shared/withReferencePage";
@@ -20,7 +21,6 @@ import { solveFogColors } from "#src/services/genshinParity/sky/solveFogColors";
 import { toDisplayHex } from "#src/services/genshinParity/sky/toDisplayHex";
 import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
 import { getOrCreate } from "@esposter/shared";
-import sharp from "sharp";
 import { Matrix4, Vector3 } from "three";
 
 // The densities the refinement brackets, and how many golden-section steps narrow it, each a fixed share of the last
@@ -61,12 +61,8 @@ export const solveReferenceFog = async (
     }>(page, "getSceneSky");
     const fog = await readPageFunction<SceneFog>(page, "getSceneFog");
     await setPageWitnessView(page, { isAlone: true });
-    const litShot = await sharp(await page.screenshot())
-      .resize(width, height, { fit: "fill" })
-      .removeAlpha()
-      .raw()
-      .toBuffer();
-    const referenceShot = await sharp(image).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
+    const litShot = await readRawRgb(await page.screenshot(), width, height);
+    const referenceShot = await readRawRgb(image, width, height);
     const matrixWorld = new Matrix4().fromArray(sky.matrixWorld);
     const projectionMatrixInverse = new Matrix4().fromArray(sky.projectionMatrixInverse);
     const eye = new Vector3().setFromMatrixPosition(matrixWorld).toArray();

@@ -10,6 +10,7 @@ import { ATMOSPHERE_SPLIT_BLOCK_SIZES } from "#src/services/genshinParity/passes
 import { solveReferenceCamera } from "#src/services/genshinParity/passes/solveReferenceCamera";
 import { LUMINANCE } from "#src/services/genshinParity/shared/constants";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
+import { readRawRgb } from "#src/services/genshinParity/shared/readRawRgb";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
@@ -20,7 +21,6 @@ import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
 import { toMeanLab } from "#src/services/genshinParity/sky/toMeanLab";
 import { BYTE } from "#src/services/shared/constants";
 import { toLinear } from "#src/services/shared/toLinear";
-import sharp from "sharp";
 
 // A witness page's reference and the scene's sky beside it as statistics blind to where their clouds stand
 // (`SkyStatistics`), since the game scatters its clouds and drifts its cloud layer, so no score by pixels judges ours:
@@ -66,7 +66,7 @@ export const readSkyComparison = async (
   const readStatistics = async (
     input: Buffer,
   ): Promise<{ clouds: Uint8Array; readRegion: (region: Uint8Array) => SkyStatistics }> => {
-    const data = await sharp(input).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
+    const data = await readRawRgb(input, width, height);
     const linear = Float32Array.from(data, (value) => toLinear(value / BYTE));
     const luminance = Float32Array.from({ length: width * height }, (_value, pixel) =>
       LUMINANCE.reduce((sum, weight, channel) => sum + weight * (linear[pixel * 3 + channel] ?? 0), 0),

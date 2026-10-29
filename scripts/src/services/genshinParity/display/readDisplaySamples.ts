@@ -6,13 +6,13 @@ import { DISPLAY_WIDTH } from "#src/services/genshinParity/passes/constants";
 import { solveReferenceCamera } from "#src/services/genshinParity/passes/solveReferenceCamera";
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
+import { readRawRgb } from "#src/services/genshinParity/shared/readRawRgb";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
 import { checkIsPartInterior } from "#src/services/genshinParity/sky/checkIsPartInterior";
 import { getPixelDisplayColor } from "#src/services/genshinParity/sky/getPixelDisplayColor";
 import { withFinalizerAsync } from "@esposter/shared";
-import sharp from "sharp";
 
 const TARGET_NAMES = [WitnessTargetName.Albedo, WitnessTargetName.Depth, WitnessTargetName.Part];
 // A pixel is read where little haze lies over it, its albedo dark in no channel and its colour shown short of white in
@@ -38,7 +38,7 @@ export const readDisplaySamples = async (
     () => close(),
   );
   const { albedo = new Float32Array(), depth = new Float32Array(), part = new Float32Array() } = targets;
-  const shot = await sharp(image).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
+  const shot = await readRawRgb(image, width, height);
   const samples: DisplaySample[] = [];
   for (let pixel = 0; pixel < width * height; pixel++) {
     if (!checkIsPartInterior(part, width, height, pixel) || !checkIsScored(pixel, width)) continue;

@@ -5,12 +5,12 @@ import type { Vector } from "#src/models/shared/Vector";
 
 import { getToneSlope } from "#src/services/genshinParity/display/getToneSlope";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
+import { readRawRgb } from "#src/services/genshinParity/shared/readRawRgb";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { SAMPLE_STRIDE } from "#src/services/genshinParity/sky/constants";
 import { getPixelSceneColor } from "#src/services/genshinParity/sky/getPixelSceneColor";
 import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
 import { withFinalizerAsync } from "@esposter/shared";
-import sharp from "sharp";
 import { Matrix4, Vector3, Vector4 } from "three";
 
 // The least a ray looks up to be read as sky, clear of the cloud sea and the haze over the horizon
@@ -39,7 +39,7 @@ export const readSky = async (referenceId: string, witness: DerivedAssetComponen
       );
       const projectionInverse = new Matrix4().fromArray(sky.projectionMatrixInverse);
       const world = new Matrix4().fromArray(sky.matrixWorld);
-      const data = await sharp(image).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
+      const data = await readRawRgb(image, width, height);
       const pixels: SkyReading["pixels"] = [];
       for (let y = 0; y < height; y += SAMPLE_STRIDE)
         for (let x = 0; x < width; x += SAMPLE_STRIDE) {
@@ -61,11 +61,7 @@ export const readSky = async (referenceId: string, witness: DerivedAssetComponen
         Object.fromEntries(bands.map((band) => [band, 0])),
       );
       await setPageWitnessView(page, { families: [] });
-      const ourShot = await sharp(await page.screenshot())
-        .resize(width, height, { fit: "fill" })
-        .removeAlpha()
-        .raw()
-        .toBuffer();
+      const ourShot = await readRawRgb(await page.screenshot(), width, height);
       return {
         data,
         height,

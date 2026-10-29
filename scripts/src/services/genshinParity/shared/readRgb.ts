@@ -1,11 +1,7 @@
+import { readRawRgb } from "#src/services/genshinParity/shared/readRawRgb";
 import { BYTE } from "#src/services/shared/constants";
-import sharp from "sharp";
 
 export const readRgb = async (input: Buffer, width: number, height: number): Promise<Float32Array> => {
-  const { data } = await sharp(input)
-    .resize(width, height, { fit: "fill" })
-    .removeAlpha()
-    .raw()
-    .toBuffer({ resolveWithObject: true });
+  const data = await readRawRgb(input, width, height);
   return Float32Array.from(data, (value) => value / BYTE);
 };

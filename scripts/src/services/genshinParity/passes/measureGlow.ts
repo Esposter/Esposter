@@ -12,6 +12,7 @@ import { shiftTargetAcross } from "#src/services/genshinParity/passes/shiftTarge
 import { solveReferenceCamera } from "#src/services/genshinParity/passes/solveReferenceCamera";
 import { toColourTarget } from "#src/services/genshinParity/passes/toColourTarget";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
+import { readRawRgb } from "#src/services/genshinParity/shared/readRawRgb";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
@@ -39,7 +40,7 @@ export const measureGlow = async (component: DerivedAssetComponent): Promise<Par
       } = await readWitnessTargets(page, [WitnessTargetName.Emission, WitnessTargetName.Part]);
       // The stand-in as the scene lights it, its exports hidden, under the same camera
       const oursShot = await shootWitnessFamilies(page, [], { height, width });
-      const referenceShot = await sharp(image).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
+      const referenceShot = await readRawRgb(image, width, height);
       const oursFrame = await sharp(oursShot).removeAlpha().raw().toBuffer();
       const pixelCount = width * height;
       const glowPart = new Float32Array(part.length);
