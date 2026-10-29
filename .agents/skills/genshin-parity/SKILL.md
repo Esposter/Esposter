@@ -14,6 +14,7 @@ Each direction's full statement, with the pointers it carries, is `references/se
 - **Committing a reference's bytes** — a reference's image is stored once, by its hash, in the public game-data container and never enters git; the committed manifest names it, and a change that adds one runs `references pack` and commits the manifest row with its snapshot and score row (`references/settled-directions.md`).
 - **Asking the user to record what is published** — a search (wiki, installed game, community dump, public video) comes first, and a value nothing published shows is estimated, never recorded on request.
 - **Waiting on the user for a recording, or asking for one** — users do not record for this workflow; a value comes from a still, a public clip or an extracted animation, else a provisional estimate ships.
+- **Getting past a wiki file host's challenge with header tricks or browser impersonation** — a wiki file is fetched over `node:https` with the wiki's Referer, which the host serves; its edge answers Node's `fetch` to the same request with a challenge page, and no further header or user agent is added to get past it.
 - **Reading leaked server data, or looking in the client for group scripts** — the community's group scripts come from an unlicensed leak, and the client holds no group script at all.
 - **Sending input to the game** — the tool records the game and the user plays, since injected input is botting under the game's terms.
 - **Rendering a screen through Nuxt to check it** — the parity page renders a screen on plain Vite, and a Nuxt build per check is too slow.
@@ -67,6 +68,6 @@ Each direction's full statement, with the pointers it carries, is `references/se
 - `references/approval.md` — when approving a screen's images or citing a reference for one.
 - `references/redesign-wave.md` — when several screens are redrawn at once by agents on worktrees of their own, or one such agent is briefed: the loop, the keep rule, the new-screen and shared-piece passes, and the limits.
 - `references/deriving.md` — when deriving a screen, a surface or a scene in passes.
-- `references/parity-page.md` — when a command renders the world, a frame stalls, or the parity page is served.
+- `references/parity-page.md` — when a command renders the world, a frame stalls, the parity page is served, or the visual suite runs in a fresh worktree.
 - `references/tools-and-estimates.md` — when a loop has not converged, a tool is built or pruned, or a value is estimated.
 - `references/compare.md` — when a screen's `compare` score is judged against its target, or its snapshot row is rewritten.
