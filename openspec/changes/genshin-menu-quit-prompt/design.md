@@ -41,7 +41,7 @@ flowchart TD
 | File                                                                    | Role after the change                                                                                                   |
 | :---------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------- |
 | `packages/genshin-world/src/components/Menu/Exit/Index.vue`             | The prompt: the question, Cancel and Confirm over the dimmed menu, at the frame's measurements                          |
-| `packages/genshin-world/src/components/Menu/Exit/Index.browser.test.ts` | The prompt's scale and its two choices' outcomes, unrun in this worktree                                                |
+| `packages/genshin-world/src/components/Menu/Exit/Index.browser.test.ts` | The prompt's question on screen and its two choices' outcomes, unrun in this worktree                                   |
 | `packages/genshin-world/src/components/Menu/Paimon/Index.vue`           | Hosts the prompt inside the menu's screen, the menu inert while it shows, and refocuses Quit Game when Cancel closes it |
 | `packages/genshin-world/src/models/menu/MenuPromptIcon.ts`              | The prompts' icons, now the World Level dialog's only                                                                   |
 | `packages/genshin-world/src/services/menu/MenuPromptGlyphMap.ts`        | The World Level dialog's lowering icon, traced                                                                          |
