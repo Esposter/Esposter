@@ -93,7 +93,7 @@ const map = useTemplateRef("map");
 const zoomTrack = useTemplateRef("zoomTrack");
 // The drawn metres across the map's width, which the wheel and the slider change from the page's zoom, and the offset the
 // Map is dragged to from the player
-const metres = defineModel<number>("zoom", { required: true });
+const metres = defineModel<number>("metres", { required: true });
 const pan = ref({ x: 0, z: 0 });
 // The catalogue point the view is centred on, the player's own point until the map is dragged off it
 const centre = computed(() => ({ x: camera.x + pan.value.x, z: camera.z + pan.value.z }));

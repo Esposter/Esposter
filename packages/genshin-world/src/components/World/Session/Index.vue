@@ -2204,7 +2204,7 @@ useWorldSaveSync({
     >
       <template #[ScreenKind.Map]>
         <MapOverlay
-          v-model:zoom="mapZoom"
+          v-model:metres="mapZoom"
           :camera="mapCamera"
           :catalogue
           :exploration-areas
