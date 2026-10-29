@@ -180,7 +180,6 @@ const detailGroups = computed(() =>
   background: #4fc3d9;
 }
 
-/* Provisional until the button's place and colour are measured off the frame */
 /* The game's outlined pill, a hairline round a faint lightening, its word in the cream the frame's words are */
 .details {
   display: block;
