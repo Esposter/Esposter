@@ -32,7 +32,7 @@ flowchart TD
 | Caches: the download cache, softness and plate files, shots, comparisons, the bundler's pre-bundled copy, installs | disk                                                                                                                                     | each one's command, on first use                         |
 | The game install                                                                                                   | the machine that plays it, and nowhere else                                                                                              | the game's own launcher; published data stands in for it |
 
-A folder outside the repository that is not a cache is a defect. `~/Esposter/genshin-parity` is the standing example: its references, recordings and text dumps lived only there until the references were committed; the [download cache](../download-cache/design.md) is the model for what a disk-only folder may be, since every object in it is named by its own hash and rebuilt by asking again.
+A folder outside the repository that is not a cache is a defect. `{data-root}/genshin-parity` is the standing example: its references, recordings and text dumps lived only there until the references were committed; the [download cache](../download-cache/design.md) is the model for what a disk-only folder may be, since every object in it is named by its own hash and rebuilt by asking again.
 
 ## What decides the home
 
@@ -65,7 +65,7 @@ The rule is prose until something can fail on it, and each row below says what d
 
 ## Open
 
-The Mac's disk holds `~/Esposter` at 169 GB, of which the install is 126 GB. These findings have not yet been given a home:
+The Mac's disk holds `{data-root}` at 169 GB, of which the install is 126 GB. These findings have not yet been given a home:
 
 - **The references.** The folder holds 1,637 files and 653 MB, of which only what a reference-map entry or a design names is a reference: 106 entries, 85 with a file and 21 pending. The pack publishes those to the public container under the lock and writes the manifest; the rest of the folder is softness and plate caches, Talent icons nothing reads, and the install-derived name cards (`namecards/`, 167 MB), which belong to the game data lock. 257 files named `.png` are WebP, so a manifest row takes its type from the bytes. The PC builds the command, and the Mac runs it once for the references only it holds.
 - **The recordings.** 155 videos, 6.3 GB. The 123 public ones need a committed manifest of video id, seconds and hash, since the clip tool prints only the path. The 22 user recordings (2.1 GB, `session-2.mp4` alone 1.4 GB, 21 of the map's 68 sources) cannot be fetched again and go to the public container under the lock, as do seven recordings no file, entry or design names. The frames cut from them (12.5 GB) are a cache whose writer was removed; the recipe is in the genshin-parity skill's `motion.md`.

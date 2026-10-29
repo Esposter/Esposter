@@ -15,7 +15,7 @@
 
 The macOS default is this published CLI, so setting `GENSHIN_ANIMESTUDIO_CLI` to the printed path is needed only for a CLI kept elsewhere (the Windows default is an `AnimeStudio.CLI.exe` in an `AnimeStudio` folder under Downloads, `scripts/src/services/genshinAssets/shared/constants.ts`) `scripts/src/services/genshinAssets/shared/constants.ts`.
 
-**Windows AnimeStudio CLI:** the build is macOS only: it publishes for `osx-arm64` and builds ACL with clang, so no command here produces the Windows CLI. That CLI, `AnimeStudio.CLI.exe` with its `Maps` folder, is unpacked by hand under `~/Downloads/AnimeStudio`, and it stays the Windows default because the build's output is a macOS binary. Set `GENSHIN_ANIMESTUDIO_CLI` to name a CLI kept anywhere else, on either platform. The build's source is the pinned commit plus the Oodle patch above, so a fresh machine builds the same source as the working clone; no command builds the Windows binary.
+**Windows AnimeStudio CLI:** the build is macOS only: it publishes for `osx-arm64` and builds ACL with clang, so no command here produces the Windows CLI. That CLI, `AnimeStudio.CLI.exe` with its `Maps` folder, is unpacked by hand under `{home}/Downloads/AnimeStudio`, and it stays the Windows default because the build's output is a macOS binary. Set `GENSHIN_ANIMESTUDIO_CLI` to name a CLI kept anywhere else, on either platform. The build's source is the pinned commit plus the Oodle patch above, so a fresh machine builds the same source as the working clone; no command builds the Windows binary.
 
 ```mermaid
 flowchart TD

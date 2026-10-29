@@ -284,7 +284,7 @@ Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/de
 
 ### Spotlight on macOS
 
-The parity data lives in `~/Esposter/genshin-parity` unless `GENSHIN_PARITY_DIRECTORY` names another folder. Create `~/Esposter.noindex` as the data folder and make `~/Esposter` a symlink to it: macOS never indexes a `*.noindex` folder and Spotlight follows no symlink, so every `~/Esposter/...` path still resolves, and a real `~/Esposter` folder must not be created beside the link. Then add `node_modules` and the pnpm store (`~/Library/pnpm/store`) under System Settings → Spotlight → Search Privacy, which can only be done by hand. The reason is in the [machine efficiency](openspec/specs/architecture/machine-efficiency/design.md) design.
+The parity data lives in `{data-root}/genshin-parity` unless `GENSHIN_PARITY_DIRECTORY` names another folder. Create `{data-root}.noindex` as the data folder and make `{data-root}` a symlink to it: macOS never indexes a `*.noindex` folder and Spotlight follows no symlink, so every `{data-root}/...` path still resolves, and a real `{data-root}` folder must not be created beside the link. Then add `node_modules` and the pnpm store (`{home}/Library/pnpm/store`) under System Settings → Spotlight → Search Privacy, which can only be done by hand. The reason is in the [machine efficiency](openspec/specs/architecture/machine-efficiency/design.md) design.
 
 ### Development Server
 
