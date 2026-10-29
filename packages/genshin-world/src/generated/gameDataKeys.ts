@@ -504,6 +504,7 @@ export const GameDataKeys = {
     },
   },
   standingTalks: {
+    favours: "standingTalks/favours",
     residents: "standingTalks/residents",
   },
   standingTalkText: {
