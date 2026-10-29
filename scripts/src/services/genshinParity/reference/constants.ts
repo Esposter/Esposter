@@ -24,14 +24,17 @@ export const DEFAULT_APPROVAL: ParityApproval = Object.freeze({
   measure: ParityApprovalMeasure.MeanDifference,
 } satisfies ParityApproval);
 
+// The name the report and its map share, before the extension each is written under
+const PARITY_SCORES_NAME = "ParityReferenceMap";
 // The committed report of every reference's last scores, beside the map naming them
-export const PARITY_SCORES_PATH: string = join(PARITY_SHARED_DIRECTORY, "ParityReferenceMap.snapshot.md");
+export const PARITY_SCORES_PATH: string = join(PARITY_SHARED_DIRECTORY, `${PARITY_SCORES_NAME}.snapshot.md`);
 // The report is formatted under the markdown name the formatter does not skip, since a snapshot is written verbatim. The
 // Path is repository-relative, as the formatter reads its ignores from it, and a worktree's own path sits under
 // `.agents/worktrees`, which the config ignores
-export const PARITY_SCORES_FORMAT_PATH: string = relative(REPOSITORY_ROOT, PARITY_SCORES_PATH)
-  .replace(/\.snapshot\.md$/u, ".md")
-  .replaceAll("\\", "/");
+export const PARITY_SCORES_FORMAT_PATH: string = relative(
+  REPOSITORY_ROOT,
+  join(PARITY_SHARED_DIRECTORY, `${PARITY_SCORES_NAME}.md`),
+).replaceAll("\\", "/");
 
 // The conversion a frame is cut with, its colour tags set to unknown so a browser does not colour-manage the cut
 export const RECORDING_FRAME_FILTER =
