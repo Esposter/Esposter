@@ -24,6 +24,8 @@ flowchart TD
 
 - **Read before searching.** A component's `Index.reference.ts`, the topic files beside it, and the [game data formats](../../game-data-formats/design.md) page's shortcuts come first; a search whose answer is recorded is not run again.
 
+- **A reference's source is checked against its frame.** `genshin:parity verify` cuts each recorded reference's named frame and fails a reference that differs from it past tolerance, so a repointed `source` cannot name a picture its file does not show (`scripts/src/services/genshinParity/reference/verifyReferences.ts`).
+
 ## Key files
 
 | File                                                              | Role                                                                         |
