@@ -23,6 +23,7 @@ import {
 } from "#src/services/recreation/animeStudio/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { CACHE_ROOT } from "@esposter/shared-node/cache";
+import { GameDataset } from "genshin-world";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 
@@ -301,6 +302,8 @@ export const WORLD_AREA_POLYGONS_PATH: string = join(
   SCENE_WORLD_AREA_DIRECTORY,
   SCENE_WORLD_AREA_FILE_NAME,
 );
+// The key the open world's subarea labels are published under, one record of every level-two area's name and label point
+export const MAP_LABELS_KEY: string = `${GameDataset.MapLabels}/subareas`;
 export const SCENE_POINT_AREA_FIELD = "EABBCMGNLEL";
 // The open world's scene, whose groups, points, NPC births and transport points the world is placed from
 export const OPEN_WORLD_SCENE_ID = 3;

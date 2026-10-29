@@ -6,6 +6,7 @@ import { fitAreaOutlines } from "#src/services/genshinAssets/fit/fitAreaOutlines
 import { fitGroundLayerColours } from "#src/services/genshinAssets/fit/fitGroundLayerColours";
 import { fitGroundLayerField } from "#src/services/genshinAssets/fit/fitGroundLayerField";
 import { fitGroundPieces } from "#src/services/genshinAssets/fit/fitGroundPieces";
+import { fitMapLabels } from "#src/services/genshinAssets/fit/fitMapLabels";
 import { fitRegionCapitals } from "#src/services/genshinAssets/fit/fitRegionCapitals";
 import { fitRegionLandmarks } from "#src/services/genshinAssets/fit/fitRegionLandmarks";
 import { fitSurfaceColours } from "#src/services/genshinAssets/fit/fitSurfaceColours";
@@ -37,6 +38,8 @@ export const fitWindriseScene = (only: readonly string[], options: DryRunOptions
     {
       // Every area's outline in the catalogue is drawn round the oak's foot too, as the capitals are placed
       catalogue: fitAreaOutlines,
+      // Each open-world subarea's label, at the mean of its outline round the origin the outlines use
+      mapLabels: fitMapLabels,
       ground: async () => {
         const source = await readGroundSource(DerivedAssetComponent.Windrise);
         return (
