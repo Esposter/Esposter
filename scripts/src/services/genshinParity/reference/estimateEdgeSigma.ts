@@ -1,4 +1,5 @@
 import { findCrossing } from "#src/services/genshinParity/reference/findCrossing";
+import { getEdgeLevels } from "#src/services/genshinParity/reference/getEdgeLevels";
 
 // The 10% to 90% spread of a Gaussian edge is its sigma times twice the standard normal's 90% quantile
 const SPREAD_PER_SIGMA = 2 * 1.2815515655446004;
@@ -12,9 +13,7 @@ export const estimateEdgeSigma = (profile: readonly number[]): number | undefine
   const low = Math.min(...profile);
   const range = Math.max(...profile) - low;
   if (range === 0) return undefined;
-  const first = profile[0] ?? 0;
-  const last = profile.at(-1) ?? 0;
-  const levels = profile.map((value) => (last >= first ? (value - low) / range : (range - (value - low)) / range));
+  const levels = getEdgeLevels(profile, low, range);
   const lower = findCrossing(levels, LOWER_LEVEL);
   const upper = findCrossing(levels, UPPER_LEVEL);
   if (lower === undefined || upper === undefined || upper <= lower) return undefined;
