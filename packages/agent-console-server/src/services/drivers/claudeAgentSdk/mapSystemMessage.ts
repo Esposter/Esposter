@@ -43,12 +43,12 @@ export const mapSystemMessage = (
           type: AgentEventType.Compaction,
         },
       ];
+    case "local_command_output":
+      return [{ content: message.content, createdAt, id: message.uuid, type: AgentEventType.CommandOutput }];
     case SdkHookPhase.HookProgress:
     case SdkHookPhase.HookResponse:
     case SdkHookPhase.HookStarted:
       return [mapHookMessage(message, createdAt)];
-    case "local_command_output":
-      return [{ content: message.content, createdAt, id: message.uuid, type: AgentEventType.CommandOutput }];
     case "session_state_changed":
       return [
         { createdAt, id: message.uuid, state: SessionStateMap[message.state], type: AgentEventType.SessionState },
