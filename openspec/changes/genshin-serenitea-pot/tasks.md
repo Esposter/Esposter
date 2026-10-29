@@ -25,7 +25,7 @@
 
 ## 5. Gardens and companions' earnings
 
-- [ ] 5.1 Grow a garden's seeds and hold a pond's fish over real time. Verify: a test named after the scenario 'A garden's seeds grow over real time'. Built: `plantHomeSeed` over the saved plantings, and the growth rule. Not yet: the plots (the layout export), the realm runtime calling it, and the pond's fish (the fish rule export).
+- [ ] 5.1 Grow a garden's seeds and hold a pond's fish over real time. Verify: a test named after the scenario 'A garden's seeds grow over real time'. Built: `plantHomeSeed` over the saved plantings, and the growth rule. The pond's fish rule is settled, provisional: a pond holds up to the wiki's five fish, with no growth until a rate is read (the design's pond bullet). Not yet: the plots (the layout export), the realm runtime calling it, and the pond limit with the home record's zero load for fish, which lets a fish be placed at all.
 - [x] 5.2 Accrue Companionship EXP to each companion living in the realm. Verify: a test named after the scenario 'A companion living in the realm earns Companionship EXP'.
 
 ## 6. Save
