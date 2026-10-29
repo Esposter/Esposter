@@ -19,8 +19,11 @@ interface Props {
   materialsBoxLabel: string;
   // The Materials tab's label
   materialsLabel: string;
-  // The Obtain button of a finished queue, and the Start button of the Materials tab, in the game's words
+  // The Obtain button of a queue with units ready, in the game's words
   obtainLabel: string;
+  // The queue the Queues tab's detail shows, the first holding an order: its id, its time left in words, its units done
+  // In words, its share of the unit being forged, and whether a unit is ready to obtain
+  queueDetail?: { forgedLabel: string; id: number; isObtainable: boolean; progress: number; timeLabel: string };
   // The forge queues, each open one or locked until its Adventure Rank
   queues: ForgeQueueCell[];
   // The Forge Queues tab's label with its open queues, the game's "Forge Queues (1/3)"
@@ -52,6 +55,7 @@ const {
   materialsBoxLabel,
   materialsLabel,
   obtainLabel,
+  queueDetail,
   queues,
   queuesLabel,
   recipes,
@@ -69,8 +73,8 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
 <template>
   <!-- The forge, the blacksmith's screen: its two tabs across the head with the coins and the way out, the recipes on the
        left with the chosen one's amount and cost beside them, or the queues each holding an order that forges over real
-       time and is obtained when it is done. Provisional: every place, size and colour here waits on the forge screen's
-       passes against the public clip of the Wagner forge (references/forge-screen) and the owed order-queue recording -->
+       time, with the picked queue's time left, units done and Obtain beside them. The forging ring is drawn at the moment
+       the reference shows, not animated -->
   <TwoColumnScreen class="forge-screen">
     <header class="head">
       <p class="title" role="heading" aria-level="1">{{ title }}</p>
@@ -85,23 +89,37 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
       <p class="coins">{{ coins }}</p>
       <button class="close" :aria-label="closeLabel" type="button" @click="emit('close')">×</button>
     </header>
-    <template v-if="tab === ForgeTab.Materials">
-      <ul class="recipes">
-        <li v-for="recipe of recipes" :key="recipe.id">
-          <button
-            class="recipe"
-            :aria-pressed="recipe.id === recipeId"
-            :disabled="!recipe.isOpen"
-            type="button"
-            @click="recipeId = recipe.id"
-          >
-            <span class="recipe-tile" aria-hidden="true" />
-            <span class="recipe-name">{{ recipe.name }}</span>
-            <span class="recipe-time">{{ recipe.forgeTimeLabel }}</span>
-          </button>
-        </li>
-      </ul>
-      <div class="detail">
+    <ul v-if="tab === ForgeTab.Materials" class="recipes">
+      <li v-for="recipe of recipes" :key="recipe.id">
+        <button
+          class="recipe"
+          :aria-pressed="recipe.id === recipeId"
+          :disabled="!recipe.isOpen"
+          type="button"
+          @click="recipeId = recipe.id"
+        >
+          <span class="recipe-tile" aria-hidden="true" />
+          <span class="recipe-name">{{ recipe.name }}</span>
+          <span class="recipe-time">{{ recipe.forgeTimeLabel }}</span>
+        </button>
+      </li>
+    </ul>
+    <ul v-else class="queues">
+      <li
+        v-for="queue of queues"
+        :key="queue.id"
+        :class="{ selected: queue.id === queueDetail?.id }"
+        class="queue"
+        :data-state="queue.state"
+      >
+        <span aria-hidden="true" class="queue-tile" />
+        <span class="queue-name">{{ queue.name }}</span>
+        <span class="queue-progress">{{ queue.progressLabel }}</span>
+        <span class="queue-time">{{ queue.timeLabel }}</span>
+      </li>
+    </ul>
+    <div class="detail">
+      <template v-if="tab === ForgeTab.Materials">
         <input
           v-model.number="amount"
           :aria-label="amountLabel"
@@ -111,44 +129,40 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
           type="range"
         />
         <p class="total-time">{{ totalTimeLabel }}</p>
-        <div class="item-icon">
-          <span class="item-count">{{ yieldCount }}</span>
-        </div>
         <p class="amount-label">{{ amountLabel }}</p>
         <span aria-hidden="true" class="amount-step amount-minus">−</span>
         <span class="amount-end amount-min">1</span>
         <span class="amount-end amount-max">{{ amountMaximum }}</span>
         <span aria-hidden="true" class="amount-step amount-plus">+</span>
-        <section class="materials-box">
-          <header class="materials-head">
-            <p class="materials-title">{{ materialsBoxLabel }}</p>
-            <p class="support-title">{{ supportLabel }}</p>
-          </header>
-          <span class="slot slot-first" />
-          <span class="slot slot-second" />
-          <span class="slot slot-third" />
-          <span class="support-portrait" />
-        </section>
         <p class="required">{{ requiredCoins }}</p>
-        <button v-if="!refusalLabel" class="start" type="button" @click="emit('start')">{{ startLabel }}</button>
+        <button v-if="!refusalLabel" class="action" type="button" @click="emit('start')">{{ startLabel }}</button>
         <p v-else class="refusal">{{ refusalLabel }}</p>
-      </div>
-    </template>
-    <ul v-else class="queues">
-      <li v-for="queue of queues" :key="queue.id" class="queue" :data-state="queue.state">
-        <span class="queue-name">{{ queue.name }}</span>
-        <span class="queue-progress">{{ queue.progressLabel }}</span>
-        <span class="queue-time">{{ queue.timeLabel }}</span>
-        <button
-          v-if="queue.state === ForgeQueueState.Complete"
-          class="obtain"
-          type="button"
-          @click="emit('obtain', queue.id)"
-        >
+      </template>
+      <template v-else-if="queueDetail">
+        <p class="detail-time">{{ queueDetail.timeLabel }}</p>
+        <span aria-hidden="true" class="detail-ring" />
+        <p class="detail-forged">{{ queueDetail.forgedLabel }}</p>
+        <span class="detail-track">
+          <span class="detail-fill" :style="{ width: `${queueDetail.progress * 100}%` }" />
+        </span>
+        <button v-if="queueDetail.isObtainable" class="action" type="button" @click="emit('obtain', queueDetail.id)">
           {{ obtainLabel }}
         </button>
-      </li>
-    </ul>
+      </template>
+      <div class="item-icon">
+        <span class="item-count">{{ yieldCount }}</span>
+      </div>
+      <section class="materials-box">
+        <header class="materials-head">
+          <p class="materials-title">{{ materialsBoxLabel }}</p>
+          <p class="support-title">{{ supportLabel }}</p>
+        </header>
+        <span class="slot slot-first" />
+        <span class="slot slot-second" />
+        <span class="slot slot-third" />
+        <span class="support-portrait" />
+      </section>
+    </div>
   </TwoColumnScreen>
 </template>
 
@@ -213,14 +227,13 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   position: absolute;
   top: calc(var(--unit) * 252);
   left: calc(var(--unit) * 134);
+  width: calc(var(--unit) * 750);
   margin: 0;
   padding: 0;
   list-style: none;
 }
-.recipes {
-  width: calc(var(--unit) * 750);
-}
-.recipes li + li {
+.recipes li + li,
+.queues li + li {
   margin-top: calc(var(--unit) * 9.7);
 }
 .recipe {
@@ -257,6 +270,67 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   left: calc(var(--unit) * 151);
   font-size: calc(var(--unit) * 29);
   line-height: 1;
+}
+.queue {
+  position: relative;
+  height: calc(var(--unit) * 114.6);
+  background: rgb(20 28 38 / 0.55);
+  color: #ece5d8;
+}
+.queues li:first-child {
+  height: calc(var(--unit) * 123);
+}
+.queue.selected {
+  outline: calc(var(--unit) * 2) solid #ffffff;
+  outline-offset: calc(var(--unit) * -2);
+  background: #ece5d8;
+  color: #3b3b3b;
+}
+.recipe-tile,
+.queue-tile {
+  position: absolute;
+  top: calc(var(--unit) * 9.8);
+  left: calc(var(--unit) * 14.6);
+  width: calc(var(--unit) * 107.3);
+  height: calc(var(--unit) * 107.3);
+  background: #3a4556;
+}
+.queue[data-state="Idle"] .queue-tile {
+  background: none;
+}
+.queue[data-state="Idle"] .queue-tile::before {
+  content: "+";
+  display: block;
+  font-size: calc(var(--unit) * 60);
+  line-height: calc(var(--unit) * 107.3);
+  text-align: center;
+}
+.queue[data-state="Locked"] .queue-tile {
+  background: rgb(0 0 0 / 0.35);
+}
+.queue-name,
+.queue-progress,
+.queue-time {
+  position: absolute;
+  top: calc(var(--unit) * 64);
+  left: calc(var(--unit) * 152);
+  font-size: calc(var(--unit) * 29);
+  line-height: 1;
+  white-space: nowrap;
+}
+.queue-name {
+  top: calc(var(--unit) * 14);
+  font-size: calc(var(--unit) * 35);
+}
+.queue[data-state="Forging"] .queue-progress {
+  color: #f0a53a;
+}
+.queue[data-state="Complete"] .queue-progress {
+  color: #8fd14f;
+}
+.queue[data-state="Idle"] .queue-progress,
+.queue[data-state="Locked"] .queue-time {
+  top: calc(var(--unit) * 40);
 }
 .detail {
   position: absolute;
@@ -300,7 +374,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   line-height: 1;
   text-align: right;
 }
-.start {
+.action {
   top: calc(var(--unit) * 963);
   left: calc(var(--unit) * 1883);
   width: calc(var(--unit) * 277);
@@ -311,10 +385,41 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   color: #3b3b3b;
   font-size: calc(var(--unit) * 29);
 }
-.queues {
-  width: calc(var(--unit) * 1600);
+.detail-ring {
+  top: calc(var(--unit) * 205);
+  left: calc(var(--unit) * 1320);
+  width: calc(var(--unit) * 540);
+  height: calc(var(--unit) * 350);
+  border: calc(var(--unit) * 14) solid rgb(240 160 50 / 0.85);
+  border-radius: 50%;
+  box-shadow: 0 0 calc(var(--unit) * 30) rgb(255 150 40 / 0.5);
 }
-
+.detail-time,
+.detail-forged {
+  left: calc(var(--unit) * 1590);
+  translate: -50% 0;
+  font-size: calc(var(--unit) * 27);
+  line-height: 1;
+  white-space: nowrap;
+}
+.detail-time {
+  top: calc(var(--unit) * 149);
+}
+.detail-forged {
+  top: calc(var(--unit) * 566);
+}
+.detail-track {
+  top: calc(var(--unit) * 620);
+  left: calc(var(--unit) * 1225);
+  width: calc(var(--unit) * 731);
+  height: calc(var(--unit) * 12);
+  background: rgb(255 255 255 / 0.2);
+}
+.detail-fill {
+  display: block;
+  height: 100%;
+  background: #f0a53a;
+}
 .item-icon {
   position: absolute;
   top: calc(var(--unit) * 265.7);
@@ -401,14 +506,6 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   background: #8d7a5c;
 }
 
-.recipe-tile {
-  position: absolute;
-  top: calc(var(--unit) * 9.8);
-  left: calc(var(--unit) * 14.6);
-  width: calc(var(--unit) * 107.3);
-  height: calc(var(--unit) * 107.3);
-  background: #3a4556;
-}
 .amount-end {
   top: calc(var(--unit) * 614.4);
   translate: -50% -50%;

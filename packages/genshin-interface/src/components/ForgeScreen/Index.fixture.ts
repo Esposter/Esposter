@@ -12,14 +12,15 @@ export const props = {
   materialsBoxLabel: "Materials",
   materialsLabel: "Materials",
   obtainLabel: "Obtain",
+  queueDetail: {
+    forgedLabel: "Forged: 4/5",
+    id: 1,
+    isObtainable: true,
+    progress: 1 / 3,
+    timeLabel: "Time Remaining: 2s",
+  },
   queues: [
-    {
-      id: 1,
-      name: "Enhancement Ore",
-      progressLabel: "Forging",
-      state: ForgeQueueState.Forging,
-      timeLabel: "Time Remaining: 2s",
-    },
+    { id: 1, name: "Enhancement Ore", progressLabel: "Forging", state: ForgeQueueState.Forging, timeLabel: "" },
     { id: 2, name: "", progressLabel: "", state: ForgeQueueState.Idle, timeLabel: "" },
     { id: 3, name: "", progressLabel: "", state: ForgeQueueState.Locked, timeLabel: "Unlocked at Adventure Rank 15" },
   ],

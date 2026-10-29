@@ -97,7 +97,7 @@ const refusalLabel = computed(() =>
 const queueSlots = computed(() => computeForgeQueueSlots(progress.value.orders, adventureRank, now));
 // Each queue's words in the reader's language, from the order it holds in the forge state
 const queueCells = computed<ForgeQueueCell[]>(() =>
-  queueSlots.value.map(({ forged, id, recipeId: queueRecipeId, remainingSeconds, state, unlockRank }) => {
+  queueSlots.value.map(({ forged, id, recipeId: queueRecipeId, state, unlockRank }) => {
     const name = queueRecipeId === undefined ? "" : (recipeNameMap.value.get(queueRecipeId) ?? "");
     switch (state) {
       case ForgeQueueState.Complete: {
@@ -110,13 +110,7 @@ const queueCells = computed<ForgeQueueCell[]>(() =>
         };
       }
       case ForgeQueueState.Forging: {
-        return {
-          id,
-          name,
-          progressLabel: gameText[GameTextKey.ForgeQueueForging],
-          state,
-          timeLabel: fillGameTextValues(gameText[GameTextKey.ForgeTimeRemaining], formatForgeTime(remainingSeconds)),
-        };
+        return { id, name, progressLabel: gameText[GameTextKey.ForgeQueueForging], state, timeLabel: "" };
       }
       case ForgeQueueState.Idle: {
         return { id, name: "", progressLabel: gameText[GameTextKey.ForgeQueueIdle], state, timeLabel: "" };
@@ -133,6 +127,26 @@ const queueCells = computed<ForgeQueueCell[]>(() =>
     }
   }),
 );
+// The queue the Queues tab's detail shows, the first holding an order: its units done and its time left, and the share of
+// The unit being forged, which a complete queue shows full
+const queueDetail = computed(() => {
+  const slot = queueSlots.value.find(
+    ({ state }) => state === ForgeQueueState.Forging || state === ForgeQueueState.Complete,
+  );
+  const order = progress.value.orders.find(({ queueId }) => queueId === slot?.id);
+  if (!slot || !order) return;
+  const isComplete = slot.state === ForgeQueueState.Complete;
+  const elapsedSeconds = now.since(order.startedAt).total({ unit: "second" });
+  return {
+    forgedLabel: fillGameTextValues(gameText[GameTextKey.ForgeQueueProgress], `${slot.forged}/${order.count}`),
+    id: slot.id,
+    isObtainable: slot.forged > 0,
+    progress: isComplete ? 1 : (elapsedSeconds - slot.forged * order.unitSeconds) / order.unitSeconds,
+    timeLabel: isComplete
+      ? ""
+      : fillGameTextValues(gameText[GameTextKey.ForgeTimeRemaining], formatForgeTime(slot.remainingSeconds)),
+  };
+});
 // Starts the picked order in a free queue, its materials, Mora and talents taken, and leaves the forge as it was where the
 // Forge refuses it
 const start = () => {
@@ -209,6 +223,7 @@ const obtain = (queueId: number) => {
       :materials-box-label="gameText[GameTextKey.ForgeMaterials]"
       :materials-label="gameText[GameTextKey.ForgeMaterialsTab]"
       :obtain-label="gameText[GameTextKey.ForgeObtain]"
+      :queue-detail="queueDetail"
       :queues="queueCells"
       :queues-label="
         fillGameTextValues(

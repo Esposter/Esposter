@@ -37,12 +37,16 @@ const definitions = new Map<number, ItemDefinition>(
 // The moment the queues are read at, and the game day it falls on, which the forge points counted today are kept under
 const now = Temporal.Instant.fromEpochMilliseconds(0);
 const gameDay = computeGameDay(now);
-// The Enhancement Ore queue forging with its second unit half done, and the Adventure Rank that opens the third queue
+// The Enhancement Ore queue forging its fifth unit, four done and two seconds left in it, and the Adventure Rank that opens
+// The third queue
+const UNIT_SECONDS = 3;
 const progress: ForgeProgress = {
   forgedPoints: 0,
   forgedPointsDay: gameDay,
   learnedRecipeIds: [],
-  orders: [{ count: 5, queueId: 1, recipeId: 11_001, startedAt: now.subtract({ seconds: 6 }), unitSeconds: 3 }],
+  orders: [
+    { count: 5, queueId: 1, recipeId: 11_001, startedAt: now.subtract({ seconds: 13 }), unitSeconds: UNIT_SECONDS },
+  ],
 };
 
 // A four-star weapon the forge yields, and a three-star weapon the bag already holds, whose entry the order's weapons are
@@ -71,12 +75,20 @@ const heldWeaponEntry: InventoryItem = {
   quantity: 1,
   refinement: 1,
 };
-// A two-unit order of the recipe, both units done by `now`, in the Forge Queues tab above a bag holding the weapon
-const createDoneOrderVariant = (recipeId: number) => ({
+// An order of `count` units of the recipe, every unit done by `now`, in the Forge Queues tab above a bag holding the weapon
+const createDoneOrderVariant = (recipeId: number, count: number) => ({
   inventory: { items: [heldWeaponEntry], nextId: 1, quickSwapItemIds: [] },
   progress: {
     ...progress,
-    orders: [{ count: 2, queueId: 1, recipeId, startedAt: now.subtract({ seconds: 6 }), unitSeconds: 3 }],
+    orders: [
+      {
+        count,
+        queueId: 1,
+        recipeId,
+        startedAt: now.subtract({ seconds: count * UNIT_SECONDS }),
+        unitSeconds: UNIT_SECONDS,
+      },
+    ],
   },
   tab: ForgeTab.Queues,
 });
@@ -104,11 +116,11 @@ export const props = {
 // The Forge Queues tab, and the day's forge points spent to the cap, which refuses the Enhancement Ore in place of Start,
 // And the Queues tab holding a finished order of the first ore's recipe or of the four-star weapon's
 export const variants = {
-  oresDone: createDoneOrderVariant(takeOne(recipes, 0).id),
+  oresDone: createDoneOrderVariant(takeOne(recipes, 0).id, 5),
   queues: { tab: ForgeTab.Queues },
   refused: { progress: { ...progress, forgedPoints: FORGE_DAILY_POINT_CAP } },
   weaponsDone: {
-    ...createDoneOrderVariant(weaponRecipe.id),
+    ...createDoneOrderVariant(weaponRecipe.id, 2),
     recipes: [...recipes, weaponRecipe],
     weapons: new Map([[forgedWeaponData.id, { ...forgedWeaponData, name: "" }]]),
   },
