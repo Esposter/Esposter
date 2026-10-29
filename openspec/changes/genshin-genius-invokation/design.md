@@ -72,4 +72,4 @@ The card game's rules engine is built, so [Genius Invokation TCG](../../specs/ge
 
 ## Reference
 
-- `gcg-swirl-spread.mkv` — a duel's Swirl on a team whose other characters hold an aura, 15 seconds at most; whether its spread applies the aura's element and reacts is read from it, where the engine settles it as damage only ([Genius Invokation TCG](../../specs/genshin/genius-invokation/README.md)). On the wiki and YouTube, none found (searched 2026-10-11).
+- `gcg-swirl-spread.mkv` — a duel's Swirl on a team whose other characters hold an aura, 15 seconds at most; whether its spread applies the aura's element and reacts is read from it, where the engine settles it as damage only ([Genius Invokation TCG](../../specs/genshin/genius-invokation/README.md)). On the wiki and YouTube, none found.
