@@ -21,7 +21,7 @@
     },
     {
       "bytes": 193920287,
-      "path": "extracted\\maps\\gi_map.bin",
+      "path": "extracted/maps/gi_map.bin",
       "sha256": "257722a28bd505eba91a0489f1b066f03b734cd9a636dbf31236f3d06b7ddd85",
       "sourceFormat": "bin"
     },
