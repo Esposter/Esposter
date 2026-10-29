@@ -385,7 +385,6 @@ export * from "./post/toneMapGenshin.ts";
 export * from "./post/toneMapGenshinNode.ts";
 export * from "./post/toSceneColor.ts";
 export * from "./random/createSeededRandom.ts";
-export * from "./renderer/attachInspector.ts";
 export * from "./renderer/constants.ts";
 export * from "./renderer/createGenshinRenderer.ts";
 export * from "./renderer/createInstancedMesh.ts";

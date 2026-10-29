@@ -263,6 +263,7 @@ const {
   craftingRecipes,
   craftingStrongboxes,
   createTerrainWorker,
+  devRegistry,
   domainChallengeLevels,
   enemyTables,
   frostbearingTreeLevels,
@@ -2036,6 +2037,7 @@ useWorldSaveSync({
         :get-anti-cold-ratio
         :character-pack-reader="activeCharacterPackReader"
         :create-terrain-worker
+        :dev-registry="devRegistry"
         :kit-effect-state="kitContext.kitEffectState"
         :elemental-sight
         :enemy-map="kitContext.enemyMap"
@@ -2051,7 +2053,6 @@ useWorldSaveSync({
         :interactables
         :outcrop-camps="fightingCamps"
         :is-paused
-        :is-tuning="Boolean(isTuning)"
         :landmark-collider
         :origin
         :quality-tier="worldQualityTier"

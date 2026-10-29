@@ -1,3 +1,4 @@
+import type { DevRegistry } from "#src/models/dev/DevRegistry";
 import type {
   FogUniforms,
   GameClock,
@@ -14,6 +15,7 @@ import type { Data3DTexture, DataTexture } from "three";
 import type { Ref } from "vue";
 
 export interface GenshinTuningOptions {
+  devRegistry: DevRegistry;
   fogUniforms: FogUniforms;
   gameClock: GameClock;
   gradeLutTexture: Data3DTexture;

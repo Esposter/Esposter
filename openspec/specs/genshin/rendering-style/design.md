@@ -74,7 +74,7 @@ Each `QualityTier` sets what the frame spends (`QualityTierSettingsMap`): the sh
 
 ### The tuning panel
 
-In a Vite development build, `createGenshinRenderer` puts three's inspector on every renderer it makes (`attachInspector`), so every scene, the login's walkway as much as the world, is profiled and walked without asking for it. A browser driven by automation, as the parity page's shots and the visual suite are, gets none, since the panel would cover and slow what it measures, and a production build drops the branch, so it never loads the inspector (`packages/genshin-engine/src/renderer/createGenshinRenderer.ts`, `packages/genshin-engine/src/renderer/attachInspector.ts`). On the world, `useGenshinTuning` adds a **Look** group to that inspector over the ramp, the rim, the outline, the fog and the grade, and the god rays and bloom when the scene draws them. A slider writes the uniform, or regenerates the texture it drives, at once, so the look is tuned against reference screenshots rather than guessed. Nothing is saved: a value that looks right is copied into the region's constants (`packages/genshin-world/src/composables/useGenshinTuning.ts`).
+In a Vite development build, `useGenshinTuning` registers the look's uniforms with the development registry as variables in a **Look** group once the post pipeline is drawn, so the developer panel's Look tab sets them at once (`packages/genshin-world/src/composables/useGenshinTuning.ts`, `packages/genshin-world/src/services/tuning/createLookVariables.ts`). A browser driven by automation registers them too and mounts no panel, since a panel would cover and slow what it measures; a production build makes no registry, so it carries none of them. A slider writes the uniform, or regenerates the texture it drives, at once, so the look is tuned against reference screenshots rather than guessed. Nothing is saved: a value that looks right is copied into the region's constants.
 
 ## What it costs to run
 
@@ -107,7 +107,7 @@ In a Vite development build, `createGenshinRenderer` puts three's inspector on e
 | `packages/genshin-engine/src/post/createHeightFogNode.ts`               | The height fog integrated along each pixel's ray                                             |
 | `packages/genshin-engine/src/renderer/constants.ts`                     | The tone curve's contrast and exposure, and the none every canvas passes                     |
 | `packages/genshin-engine/src/post/toneMapGenshinNode.ts`                | The game's tone curve, which the post pipeline ends on                                       |
-| `packages/genshin-engine/src/renderer/attachInspector.ts`               | Three's inspector on a renderer, shared by whatever asks for it                              |
+| `packages/genshin-world/src/services/tuning/createLookVariables.ts`     | The look's uniforms as development variables, in the panel's Look tab                        |
 | `packages/genshin-engine/src/post/toSceneColor.ts`                      | A measured display colour as the scene colour the tone curve shows as it                     |
 | `packages/genshin-engine/src/post/computeWhiteBalance.ts`               | The white balance the frame passes through before the tone curve                             |
 | `packages/genshin-engine/src/post/computeGradeLut.ts`                   | A region's grade as a cube of display colours                                                |

@@ -278,4 +278,4 @@ In a development build the look SHALL be tunable live from a panel, and a produc
 
 - **GIVEN** a browser driven by automation loads the world
 - **WHEN** the frame is captured
-- **THEN** no inspector panel covers the frame
+- **THEN** no development panel covers the frame

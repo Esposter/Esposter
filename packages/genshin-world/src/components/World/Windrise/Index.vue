@@ -3,6 +3,7 @@ import type { WorldLevelRow } from "#src/models/adventureRank/WorldLevelRow";
 import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
+import type { DevRegistry } from "#src/models/dev/DevRegistry";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
@@ -145,6 +146,8 @@ interface Props {
   // Capsule where it has none or its model fails to load
   characterPackReader?: CharacterPackReader;
   createTerrainWorker: () => Worker;
+  // The development registry the look registers its variables with, given in development alone
+  devRegistry?: DevRegistry;
   // The sight the screen turns on and off, which the world spreads its range by and lights its things under, none where
   // No screen holds one
   elementalSight?: ElementalSight;
@@ -175,8 +178,6 @@ interface Props {
   isHeld: boolean;
   // Whether the world is paused under a cover, its canvas drawing only the frames it is asked for
   isPaused: boolean;
-  // Whether the development tuning panel is shown, which the app decides
-  isTuning: boolean;
   // The effects on the team, whose live taunts the enemies strike instead of the character within their aggro range
   kitEffectState: KitEffectState;
   // What the character's body and the camera collide with, which the landmarks are given to as they arrive
@@ -224,6 +225,7 @@ const {
   characterLocomotion,
   characterPackReader,
   createTerrainWorker,
+  devRegistry,
   elementalSight,
   enemyMap,
   enemyRespawnMap,
@@ -239,7 +241,6 @@ const {
   interactables,
   isHeld,
   isPaused,
-  isTuning,
   kitEffectState,
   landmarkCollider,
   lastTeleportAt,
@@ -477,8 +478,9 @@ whenever(
   },
   { once: true },
 );
-if (isTuning)
+if (devRegistry)
   useGenshinTuning({
+    devRegistry,
     fogUniforms,
     gameClock,
     gradeLutTexture,

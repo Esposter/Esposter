@@ -1,5 +1,6 @@
 import type { AccountCharacterPack } from "#src/models/character/AccountCharacterPack";
 import type { CharacterPack } from "#src/models/character/CharacterPack";
+import type { DevRegistry } from "#src/models/dev/DevRegistry";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { WorldCameraPose } from "#src/models/world/WorldCameraPose";
 import type { QualityTier } from "genshin-engine";
@@ -22,13 +23,15 @@ export interface WorldScreenProps {
   createTerrainWorker: () => Worker;
   // Where the host serves the game's own tables and words, each object fetched by the hash the lock names
   gameDataBaseUrl: string;
+  // The development registry the host makes in development alone, which the world's commands and variables register with
+  devRegistry?: DevRegistry;
   // The game's words in the reader's language
   gameText: GameText;
   // The game's minute of the day the clock is held at, as a reference of the game's shows it
   heldMinutes?: number;
   // Whether something covers the world, which then keeps loading but draws no frames until it is shown
   isPaused: boolean;
-  // Whether the development tuning panel is shown, which the host decides
+  // Whether development offers the free camera in photo mode, which the host decides
   isTuning: boolean;
   // Keeps a pack for the account and drops one from it, given while the player is signed in
   keepAccountCharacterPack?: (characterPack: CharacterPack) => Promise<void>;
