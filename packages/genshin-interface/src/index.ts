@@ -1,4 +1,6 @@
 export * from "./components/index.ts";
+export * from "./models/ArtifactSlotStats.ts";
+export * from "./models/ArtifactStatLine.ts";
 export * from "./models/BannerKind.ts";
 export * from "./models/CanvasRect.ts";
 export * from "./models/CharacterMenuEntry.ts";

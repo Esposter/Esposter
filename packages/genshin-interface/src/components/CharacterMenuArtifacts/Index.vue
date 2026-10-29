@@ -1,28 +1,12 @@
 <script setup lang="ts">
+import type { ArtifactSlotStats } from "#src/models/ArtifactSlotStats";
+import type { ArtifactStatLine } from "#src/models/ArtifactStatLine";
+
 import CharacterMenuButtons from "#src/components/CharacterMenuButtons/Index.vue";
 import GameButton from "#src/components/GameButton/Index.vue";
 import ToastNotice from "#src/components/ToastNotice/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 import { computed, ref } from "vue";
-
-// A worn artifact's stats: its main stat with its value, its minor affixes, and whether it is locked
-interface ArtifactSlotStats {
-  isLocked: boolean;
-  mainStat: ArtifactStatLine;
-  subStats: ArtifactStatLine[];
-}
-
-// One line of an artifact's stats: the attribute's name in the game and its value
-interface ArtifactStatLine {
-  label: string;
-  value: string;
-}
-
-// One attribute total the worn artifacts add, as the game names it and writes it
-interface ArtifactTotalLine {
-  label: string;
-  value: string;
-}
 
 interface Props {
   // The pill that opens the picked piece's stats and its actions in place of the totals and the set bonus
@@ -54,7 +38,7 @@ interface Props {
   // The Switch button's label, which moves the picked slot on to the next one
   switchLabel: string;
   // The attribute totals the worn artifacts add, each as the game writes it
-  totals: ArtifactTotalLine[];
+  totals: ArtifactStatLine[];
   // The Unequip button's label, shown in the details while the picked slot holds a worn artifact
   unequipLabel: string;
   // The Unlock button's label, shown in the details while the picked worn artifact is locked
