@@ -1115,6 +1115,7 @@
 | `scripts/src/services/genshinParity/shared/getLetter.ts`                                  | —                       |       |
 | `scripts/src/services/genshinParity/shared/getPath.ts`                                    | —                       |       |
 | `scripts/src/services/genshinParity/shared/getQueuedMs.ts`                                | —                       |       |
+| `scripts/src/services/genshinParity/shared/getReferencePath.ts`                           | —                       |       |
 | `scripts/src/services/genshinParity/shared/getRequestsFigure.ts`                          | —                       |       |
 | `scripts/src/services/genshinParity/shared/getScale.ts`                                   | —                       |       |
 | `scripts/src/services/genshinParity/shared/getWholeScreenImages.test.ts`                  | —                       |       |

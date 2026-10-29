@@ -1,4 +1,5 @@
 import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { readWikiFile } from "genshin-persona/src/services/readWikiFile.ts";
 import { readWikiFileUrls } from "genshin-persona/src/services/readWikiFileUrls.ts";
@@ -14,7 +15,7 @@ export const fetchReferences = async (): Promise<void> => {
   await mkdir(REFERENCES_DIRECTORY, { recursive: true });
   // A pending screen names no reference to fetch, so it is never asked of the wiki
   const missing = Object.entries(ParityReferenceMap).filter(
-    ([id, { pending }]) => pending === undefined && !existsSync(join(REFERENCES_DIRECTORY, `${id}.png`)),
+    ([id, { pending }]) => pending === undefined && !existsSync(getReferencePath(id)),
   );
   const wikiTitles = missing.flatMap(([, { wikiTitle }]) => (wikiTitle === undefined ? [] : [wikiTitle]));
   const urls = wikiTitles.length > 0 ? await readWikiFileUrls(wikiTitles) : new Map<string, string>();
@@ -26,7 +27,7 @@ export const fetchReferences = async (): Promise<void> => {
   });
   const lines = await Promise.all(
     missing.map(async ([id, { placement, source, wikiTitle }]) => {
-      const path = join(REFERENCES_DIRECTORY, `${id}.png`);
+      const path = getReferencePath(id);
       if (source !== undefined) return `${id}: no screenshot at ${path}, sampled from ${source}`;
       const url = wikiTitle === undefined ? undefined : urls.get(wikiTitle);
       const file = url ? await readWikiFile(url) : undefined;
