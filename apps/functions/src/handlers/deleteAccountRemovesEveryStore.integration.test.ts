@@ -109,7 +109,6 @@ describe(deleteAccountHandler, () => {
     const userId = crypto.randomUUID();
     const otherUserId = crypto.randomUUID();
     const hash = crypto.randomUUID();
-    const sharedPackHash = crypto.randomUUID();
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     await mockDb
       .insert(accountsInAuth)
@@ -255,13 +254,12 @@ describe(deleteAccountHandler, () => {
       }),
     );
 
-    // The account's own blob directories, and the shared character-pack file it shares with other accounts
+    // The account's own blob directories
     await seedBlob(AzureContainer.PublicUserAssets, getUserProfileImageBlobName(userId));
     await seedBlob(AzureContainer.UserAssets, `${userId}/CallBackground/0`);
     await writeJsonBlob(await getContainerClient(AzureContainer.GenshinAssets), getSaveBlobName(userId), content);
     await seedBlob(AzureContainer.ClickerAssets, getSaveBlobName(userId));
     await seedBlob(AzureContainer.UserAssets, getSaveBlobName(userId));
-    await seedBlob(AzureContainer.GenshinAssets, `character-packs/files/${sharedPackHash}`);
 
     const otherUserRowBefore = await mockDb.select().from(usersInAuth).where(eq(usersInAuth.id, otherUserId));
     // Each seeded row is present before the deletion, so the empty checks below cannot pass vacuously
@@ -336,11 +334,7 @@ describe(deleteAccountHandler, () => {
     expect(readBlobNamesUnder(AzureContainer.GenshinAssets, `${userId}/`)).toStrictEqual([]);
     expect(readBlobNamesUnder(AzureContainer.ClickerAssets, `${userId}/`)).toStrictEqual([]);
 
-    // Kept: the shared character-pack file, the moderation record that names the account, and the account's activity on
-    // A resource it does not own
-    expect(readBlobNamesUnder(AzureContainer.GenshinAssets, "character-packs/files/")).toStrictEqual([
-      `character-packs/files/${sharedPackHash}`,
-    ]);
+    // Kept: the moderation record that names the account, and the account's activity on a resource it does not own
     expect(
       readPartitionEntities(AzureTable.ModerationLog, memberRoom.id).map(({ targetUserId }) => targetUserId),
     ).toStrictEqual([userId]);

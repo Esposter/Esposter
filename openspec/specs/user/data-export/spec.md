@@ -60,7 +60,7 @@ A download link SHALL be issued only to the owner of a ready, unexpired export, 
 
 ### Requirement: The export states what it does not include
 
-The settings page SHALL say that the archive omits other people's data, shared character-pack files and messages in rooms the person has left, before the request is made.
+The settings page SHALL say that the archive omits other people's data and messages in rooms the person has left, before the request is made.
 
 #### Scenario: The request names what is left out
 

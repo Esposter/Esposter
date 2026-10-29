@@ -49,7 +49,7 @@ The stores this reads are the ones in the [user data inventory](../../architectu
 - **Other people's records.** Another member's membership, roles and permissions in a room the person owns, and another person's reaction on a message the person also reacted to.
 - **Resource version history.** Every saved version of a resource beyond its working copy, which is included. The resource's activity logs, which record other people's use of the resource.
 - **Derived files.** Thumbnails, which are derived from the original attachment the archive holds.
-- **Shared data and the storage ledger.** The shared character-pack files, which have no owner to attribute them to, and the storage ledger, which is accounting rather than the person's data.
+- **The storage ledger.** It is accounting rather than the person's data.
 - **Moderation notes the person wrote.** A note is a moderator's words about a target, which are the target's content, and a note is not an action. The actions the person took are written in `moderation-actions.json`.
 - **Moderation actions in rooms the person does not own.** The room's owner keeps the record of what was done in it, and an action in another person's room is their record, not the person's.
 - **Sessions and tokens.** Sessions, API keys, every token in `accounts`, each webhook's token, each room invite's code and each call's join id. Each is a bearer credential, which opens the thing it names to whoever presents it. The deletion removes the sessions, keys and account tokens with the user row, and a webhook, an invite and a call with the room that owns it.

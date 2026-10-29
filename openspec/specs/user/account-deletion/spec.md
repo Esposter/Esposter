@@ -96,13 +96,13 @@ The deletion SHALL remove every blob under the account's prefix in the public an
 
 ### Requirement: The deletion states what it does not remove
 
-The deletion SHALL NOT remove the shared character-pack files, moderation records in other people's rooms that name the account, or resource activity records on resources the account does not own, and the settings page SHALL say so before the person confirms.
+The deletion SHALL NOT remove moderation records in other people's rooms that name the account, or resource activity records on resources the account does not own, and the settings page SHALL say so before the person confirms.
 
 #### Scenario: The confirmation names what is kept
 
 - **GIVEN** a signed-in person about to delete their account
 - **WHEN** the confirmation opens
-- **THEN** it says that shared character-pack files, moderation records in other people's rooms that name the person, and activity on other people's resources are kept
+- **THEN** it says that moderation records in other people's rooms that name the person, and activity on other people's resources are kept
 
 ### Requirement: The accounts foreign key cascades on the user row
 

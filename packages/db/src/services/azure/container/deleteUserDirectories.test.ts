@@ -16,7 +16,6 @@ describe(deleteUserDirectories, () => {
 
     const userId = crypto.randomUUID();
     const otherUserId = crypto.randomUUID();
-    const sha256 = crypto.randomUUID();
     const publicUserAssetsClient = createContainerClient(AzureContainer.PublicUserAssets);
     const userAssetsClient = createContainerClient(AzureContainer.UserAssets);
     const genshinAssetsClient = createContainerClient(AzureContainer.GenshinAssets);
@@ -26,8 +25,7 @@ describe(deleteUserDirectories, () => {
       getUserProfileImageBlobName(otherUserId),
     ]);
     await uploadBlobs(userAssetsClient, [`${userId}/CallBackground/0`]);
-    // The shared character-pack files are keyed by hash across accounts, so the sweep never reaches them
-    await uploadBlobs(genshinAssetsClient, [getSaveBlobName(userId), `character-packs/files/${sha256}`]);
+    await uploadBlobs(genshinAssetsClient, [getSaveBlobName(userId)]);
 
     await deleteUserDirectories([publicUserAssetsClient, userAssetsClient, genshinAssetsClient], userId);
 
@@ -35,7 +33,7 @@ describe(deleteUserDirectories, () => {
       getUserProfileImageBlobName(otherUserId),
     ]);
     await expect(listBlobNames(userAssetsClient, "")).resolves.toStrictEqual([]);
-    await expect(listBlobNames(genshinAssetsClient, "")).resolves.toStrictEqual([`character-packs/files/${sha256}`]);
+    await expect(listBlobNames(genshinAssetsClient, "")).resolves.toStrictEqual([]);
   });
 
   // The sweep is a teardown that must converge when it re-runs after an interrupted attempt, so a prefix an earlier

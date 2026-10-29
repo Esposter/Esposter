@@ -12,6 +12,6 @@ export const DataExportOmittedItems = [
   },
   { meaning: UiIconMeaning.Version, title: "Earlier versions of your resources, and their activity logs" },
   { meaning: UiIconMeaning.Image, title: "Thumbnails, which are made again from the attachments the archive holds" },
-  { meaning: UiIconMeaning.Storage, title: "Shared character-pack files, their staging files and the storage ledger" },
+  { meaning: UiIconMeaning.Storage, title: "The storage ledger" },
   { meaning: UiIconMeaning.Lock, title: "Sessions, API keys and sign-in tokens" },
 ] as const;
