@@ -18,7 +18,7 @@ export const createDevRegistry = (): DevRegistry => {
   const scenarios = new Map<string, DevScenario>();
   const variables = new Map<string, DevVariable>();
   const listeners = new Set<() => void>();
-  let renderer: DevHandle["renderer"];
+  let renderers: NonNullable<DevHandle["renderer"]>[] = [];
   const SET_USAGE = "set <name> <value>";
 
   const notify = () => {
@@ -66,11 +66,14 @@ export const createDevRegistry = (): DevRegistry => {
 
     for (const scenario of handleScenarios) scenarios.set(scenario.name, scenario);
     for (const variable of handle.variables) variables.set(variable.name, variable);
-    if (handle.renderer) renderer = handle.renderer;
+    if (handle.renderer) renderers.push(handle.renderer);
     notify();
 
     return () => {
-      if (handle.renderer && renderer === handle.renderer) renderer = undefined;
+      if (handle.renderer) {
+        const index = renderers.lastIndexOf(handle.renderer);
+        if (index !== -1) renderers = renderers.toSpliced(index, 1);
+      }
 
       for (const command of handle.commands) {
         if (commands.get(command.name) === command) {
@@ -92,7 +95,7 @@ export const createDevRegistry = (): DevRegistry => {
   };
 
   return {
-    getRenderer: () => renderer?.(),
+    getRenderer: () => renderers.at(-1)?.(),
     getScenarios: () => Array.from(scenarios.values()),
     getVariables: () => Array.from(variables.values()),
     register,

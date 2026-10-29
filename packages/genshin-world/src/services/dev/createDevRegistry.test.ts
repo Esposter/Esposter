@@ -208,4 +208,18 @@ describe(createDevRegistry, () => {
 
     expect({ after: registry.getRenderer(), registered }).toStrictEqual({ after: undefined, registered: renderer });
   });
+
+  test("disposing the newest renderer falls back to the one registered before it", () => {
+    expect.hasAssertions();
+
+    const earlier = { info: { render: { calls: 1, triangles: 1 } } };
+    const later = { info: { render: { calls: 2, triangles: 2 } } };
+    const registry = createDevRegistry();
+    registry.register({ commands: [], renderer: () => earlier, variables: [] });
+    const disposeLater = registry.register({ commands: [], renderer: () => later, variables: [] });
+
+    disposeLater();
+
+    expect(registry.getRenderer()).toBe(earlier);
+  });
 });
