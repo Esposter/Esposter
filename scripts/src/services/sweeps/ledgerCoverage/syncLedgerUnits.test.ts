@@ -48,4 +48,10 @@ describe(syncLedgerUnits, () => {
 
     expect(syncLedgerUnits("a\n", ["`a`"])).toBe("a\n");
   });
+
+  test("keeps a bare row's cells for a backticked unit", () => {
+    expect.hasAssertions();
+
+    expect(syncLedgerUnits(`${header}${getRow("a", date)}`, ["`a`"])).toBe(`${header}${getRow("a", date)}`);
+  });
 });

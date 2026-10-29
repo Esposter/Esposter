@@ -27,6 +27,14 @@ describe(getSweptKitsHoldingUnclassified, () => {
     ]);
   });
 
+  test("names a dated row written without its backticks", () => {
+    expect.hasAssertions();
+
+    expect(getSweptKitsHoldingUnclassified(`${header}| a | ${date} | |\n`, () => unclassifiedOverlay)).toStrictEqual([
+      "a",
+    ]);
+  });
+
   test("passes a dated row whose entries all have a cause or a source", () => {
     expect.hasAssertions();
 

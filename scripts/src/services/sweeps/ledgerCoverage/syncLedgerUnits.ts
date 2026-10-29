@@ -19,14 +19,14 @@ export const syncLedgerUnits = (text: string, units: string[]): string => {
     .map(({ length }) => length - CELL_PADDING);
   const bodyEnd = lines.findIndex((line, index) => index > separatorIndex && !ROW_REGEX.test(line));
   const body = lines.slice(separatorIndex + 1, bodyEnd === -1 ? undefined : bodyEnd);
-  const rows = new Map(body.map((line) => [(ROW_REGEX.exec(line)?.groups?.unitCell ?? "").trim(), line]));
+  const rows = new Map(body.map((line) => [normalizeLedgerUnit(ROW_REGEX.exec(line)?.groups?.unitCell ?? ""), line]));
   // The cell is backticked, and the backtick sorts after a hyphen — so the order is the bare name's, where a
   // Name precedes its own prefix-extensions the way a directory listing reads
   const synced = units
     .map((unit) => ({ key: normalizeLedgerUnit(unit), unit }))
     .toSorted((first, second) => (first.key < second.key ? -1 : 1))
-    .map(({ unit }) => {
-      const row = rows.get(unit);
+    .map(({ key, unit }) => {
+      const row = rows.get(key);
       if (row) return row;
       const cells = [unit, OPEN_CELL, ...widths.slice(2).map(() => "")];
       return `| ${cells.map((cell, index) => cell.padEnd(widths[index] ?? 0)).join(" | ")} |`;
