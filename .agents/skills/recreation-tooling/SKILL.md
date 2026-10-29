@@ -35,6 +35,8 @@ A recreation converges in a round or two when every unknown in it can be answere
 - **A tool is kept while it moves the benchmark** and deleted when superseded, in the same change that supersedes it (the `genshin-parity` skill's `references/tools-and-estimates.md`, "A tool earns its place by the benchmark").
 - **A domain's toolbox page maps each unknown to its tool**, and a tool that ships updates its row in the same commit, so the next session reads the map instead of rediscovering it.
 - **The generic tools live in `scripts/src/services/recreation/`, behind the `recreation` CLI (`pnpm recreation <command>`)**, so a second domain reaches the tool a first one built rather than building its own.
+- **A game engine is a source of ideas, never rebuilt.** Its editors, scene trees, inspectors and profilers are not reproduced; every tool here serves re-creating the reference, and a tool is built only when the recreation needs its answer.
+- **A tool prints compact structured output** — one JSON object per call, never an image or a dump — and its design is trimmed to what a feature check or a parity measure needs now, before any agent builds it.
 
 ## Reference pages
 
