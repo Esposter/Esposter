@@ -33,7 +33,7 @@ The order itself is not testable from the repository, since git does not record 
 - The UI drift and the platform split are the owner's observation from the parity loop, with the 36 approved images and the per-platform resolver in `packages/configuration/src/services/getVitestBrowserConfiguration.ts`.
 - The 25 `Screen` folders and the 10 without a fixture were counted from the tree on 2026-10-29.
 - The subscreen gap was checked on the tree: the login screen fixture declares dawn, day and dusk variants, the map has entries for dawn, day and night on the title, and none for dusk. The map test matches on screen names alone.
-- The recording dependence was counted on the reference map on 2026-10-30: 56 entries are built from a recording, 16 from a wiki still, and 7 are pending. The 56 are re-referenced by sampling labelled screenshots from their recordings, outside the repository. The wiki's pages return HTTP 402 to this session, so the recordings are the source for the stills as well.
+- The recording dependence was counted on the reference map on 2026-10-30: 55 entries are built from a recording, 17 from a wiki still (three of which draw their plate from a recording), and 7 are pending. The 55 are re-referenced by sampling labelled screenshots from their recordings, outside the repository. The wiki's pages return HTTP 402 to this session, so the recordings are the source for the stills as well.
 - The same-shape check for interface components already exists in `packages/genshin-interface/src/components/components.visual.ts`, but it runs only in the browser suite, which CI does not run. It is not a gate, and moving it to a `.test.ts` is a follow-up, not part of this change.
 
 ## Key files

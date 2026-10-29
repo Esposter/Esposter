@@ -12,7 +12,7 @@ The check that exists matches references by screen name, so a screen's subscreen
 - Every `Screen` folder is either referenced (a fixture and a reference entry) or named pending in the list beside `screens.ts`. None is silently absent.
 - Every subscreen, the base state and each fixture variant, names a reference of its own, or a pending entry stating why it has none. No subscreen borrows another's reference.
 - A subscreen's approved image is written only once its own compare clears the bar.
-- The repository holds screenshots and compares only them. The 56 entries built from recordings are re-referenced from labelled screenshots sampled outside the repository, and the recording fields and the in-repo frame path leave the code. Transitions are built once in a shared mechanism and checked by the state tests, not compared frame by frame.
+- The repository holds screenshots and compares only them. The 55 entries built from recordings are re-referenced from labelled screenshots sampled outside the repository, and the recording fields and the in-repo frame path leave the code. Transitions are built once in a shared mechanism and checked by the state tests, not compared frame by frame.
 - The order a screen is built in is fixed: reference, then fixture, then component, then compare, then approve, then the visual suite.
 
 ## Capabilities
