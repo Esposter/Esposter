@@ -63,6 +63,16 @@ export const CHARACTER_PACK_MODEL_NAME_LANGUAGES: readonly GameLanguage[] = [
 // A file of a host's pack, its model and each of its textures running to megabytes, is abandoned past this so a stalled
 // Request cannot leave a character loading for good
 export const CHARACTER_PACK_FETCH_TIMEOUT_MS = 60_000;
+// The folder the published packs sit in under the hosted game data, and the cache their files are kept in, each under
+// Its url with the leading characters of its hash as a version, so a republished file is a key of its own
+export const CHARACTER_PACKS_FOLDER = "characterPacks";
+export const CHARACTER_PACK_CACHE_NAME = "genshin-character-pack-files";
+export const CHARACTER_PACK_VERSION_LENGTH = 16;
+// The files fetched at once, and the attempts each gets, with the wait before each retry growing from the base to the max
+export const CHARACTER_PACK_DOWNLOAD_CONCURRENCY = 6;
+export const CHARACTER_PACK_DOWNLOAD_ATTEMPTS = 3;
+export const CHARACTER_PACK_RETRY_BASE_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
+export const CHARACTER_PACK_RETRY_MAX_MS = Temporal.Duration.from({ seconds: 4 }).total("milliseconds");
 // The Traveler the world plays, the female twin, as the login's Traveler is
 export const TRAVELER_CHARACTER_ID = 10_000_007;
 // MMD's unit in metres as its community reckons it, eight centimetres, held by every character whose game model is not
