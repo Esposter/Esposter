@@ -47,7 +47,8 @@ import { checkIsGameLanguage, GameTextLoaderMap } from "genshin-text";
 // Place of its own parts, from the layout the shooting browser serves there, claimed by the fixture's
 // `witnessComponents` entry `&witnessComponent=<name>` names, failing on a name it lacks. A tool sets the screen's props
 // As it runs, to play a motion at known moments, benches a scene's frames or its load from a moment on, and renders a
-// Segment of the Login's music to score it
+// Segment of the Login's music to score it. `&windowLeft=<px>` mounts the screen's box that many pixels from the left edge,
+// As a frame that pillarboxes the game window draws it, 1920 pixels wide
 window.addEventListener("error", ({ error }) => {
   recordError(error);
 });
