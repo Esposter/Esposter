@@ -188,15 +188,9 @@ const getAdjacentSection = (step: number): ArchiveSection =>
 </template>
 
 <style scoped>
-/* The title sets a point larger than the shared header's, as the Archive's breadcrumb is set in its still at 1920 by 1080, and its
-   gold is outlined in black as the game outlines its text */
+/* The title sets a point larger than the shared header's, as the Archive's breadcrumb is set in its still at 1920 by 1080 */
 :deep(.title) {
   font-size: calc(var(--unit) * 28.8);
-  text-shadow:
-    calc(var(--unit) * 1) 0 #000,
-    calc(var(--unit) * -1) 0 #000,
-    0 calc(var(--unit) * 1) #000,
-    0 calc(var(--unit) * -1) #000;
 }
 
 /* The dark header the title and the counter sit on, measured across the still's top 95 pixels, darker to the right */
