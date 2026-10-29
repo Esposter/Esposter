@@ -29,7 +29,7 @@ Every value a test writes is the least one that tells apart what the test reads;
 ## Canonical values
 
 - **Strings** `""`, then `" "`; `"a"` only where a space trims away. **Numbers** `0`, `0.1`, `-1`. **Booleans** as the pair `true`/`false`, and `"true"`/`"false"` where the code under test reads a string and coerces it.
-- **Ids**: the nonexistent one is `"-1"`, a real one `crypto.randomUUID()`. **Entity fields** take the field's name as the value.
+- **Ids**: the nonexistent one is `"-1"`, or a fresh `crypto.randomUUID()` where the input is uuid-typed and `"-1"` would fail validation first; a real one `crypto.randomUUID()`. **Entity fields** take the field's name as the value.
 - **Paths** are `TEST_FILENAME` from the nearest `constants.test.ts` (`fixtureConstants.test.ts` under `scripts/`); **a mock's error** is `new Error(" ")`; **a value a parser reads by shape** stays whole with its skipped parts canonical.
 - Each kind in full, with the exceptions: `references/canonical-values.md`.
 
