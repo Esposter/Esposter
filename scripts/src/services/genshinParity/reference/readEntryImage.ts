@@ -10,24 +10,26 @@ import { readFile, stat } from "node:fs/promises";
 // held one is a collision, since two different images cannot claim one id
 export const readEntryImage = async (
   scratchPath: string,
-  existing: ParityReferenceManifestImage | undefined,
+  held: ParityReferenceManifestImage | undefined,
   committedPath: string,
 ): Promise<ReferenceEntryImage | undefined> => {
   if (!existsSync(scratchPath)) {
-    if (existing === undefined || !existsSync(committedPath)) return undefined;
-    return { bytesBefore: 0, image: existing, isNew: false, read: async () => readFile(committedPath) };
+    if (held === undefined || !existsSync(committedPath)) return undefined;
+    return { bytesBefore: 0, image: held, isNew: false, read: async () => readFile(committedPath) };
   }
   const packed = await packScratchImage(scratchPath);
   const { mtime } = await stat(scratchPath);
-  const isCollision = existing !== undefined && existing.sha256 !== packed.image.sha256;
+  const isCollision = held !== undefined && held.sha256 !== packed.image.sha256;
+  // A held image already committed under its hash is not written again, so a pack that changed nothing writes nothing
+  const isCommitted = held?.sha256 === packed.image.sha256 && existsSync(committedPath);
   return {
     bytesBefore: packed.sourceBytes,
     capturedAt: mtime,
-    collision: isCollision ? { committed: existing.sha256, ours: packed.image.sha256 } : undefined,
+    collision: isCollision ? { committed: held.sha256, ours: packed.image.sha256 } : undefined,
     image: packed.image,
-    isNew: existing === undefined,
+    isNew: held === undefined,
     read: async () => packed.data,
     sourceFormat: packed.sourceFormat,
-    stored: packed.data,
+    stored: isCommitted ? undefined : packed.data,
   };
 };
