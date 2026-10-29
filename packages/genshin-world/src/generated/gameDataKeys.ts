@@ -56,6 +56,9 @@ export const GameDataKeys = {
   catalogue: {
     catalogue: "catalogue/catalogue",
   },
+  characterPackIndex: {
+    index: "characterPackIndex/index",
+  },
   characterTrials: {
     avatars: "characterTrials/avatars",
     builds: "characterTrials/builds",

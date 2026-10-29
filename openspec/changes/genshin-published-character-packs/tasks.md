@@ -2,7 +2,7 @@
 
 - [x] 1.1 Build the index record from the packs' manifests and publish it as a game data record beside the files. Verify: a test named after the scenario 'Index lists each avatar's files' in `buildCharacterPackIndex.test.ts`, seen failing first.
 - [x] 1.2 Report the index's avatar count and total bytes in a dry run, with no request to either account. Verify: a test named after the scenario 'Dry run reports the index and writes nothing', and `pnpm -C scripts genshin:assets character-packs --dry-run` printing `13 avatars` and `84982707` bytes.
-- [ ] 1.3 Publish to both accounts and verify the lock (run by the main session, which holds the credentials). Verify: `pnpm -C scripts genshin:data verify` passes on both accounts and `gameDataLock.json` carries the index key.
+- [x] 1.3 Publish to both accounts and verify the lock (run by the main session, which holds the credentials). Verify: `pnpm -C scripts genshin:data verify` passes on both accounts and `gameDataLock.json` carries the index key.
 
 ## 2. Game text
 
