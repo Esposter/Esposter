@@ -38,6 +38,7 @@ spawnSync("pnpm", ["install"], { stdio: "inherit" });
 | `BENCHMARK_RUN_OPTIONS` (`/bench`)                                              | Run options every `bench.compare` passes, fixing the iteration count                                                          |
 | `BenchmarkMarkdownReporter` (default export, `/reporter`)                       | Vitest reporter — writes `Foo.bench.md` + `Foo.bench.json` beside `Foo.bench.ts`                                              |
 | `spawn`, `spawnSync`, `execFile`, `execFileSync`, `execSync` (`/child-process`) | Node's own child-process functions, each forcing `windowsHide: true` so a console child never opens a window of its own       |
+| `execFileAsync` (`/child-process`)                                              | The promisified `execFile`, with the same window flag, resolving `{ stdout, stderr }`                                         |
 | `CACHE_ROOT`, `readContentAddressedObject` (`/cache`)                           | The download cache folder every checkout shares, and a read-through cache for objects named by the hex SHA-256 of their bytes |
 
 ## <a name="license">⚖️ License</a>
