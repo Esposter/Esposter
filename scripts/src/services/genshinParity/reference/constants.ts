@@ -50,6 +50,12 @@ export const SHORT_HASH_LENGTH = 8;
 export const RECORDING_SOURCE_REGEX: RegExp =
   /^(\S+) at (\d+(?:\.\d+)?)s(?:, cropped to (\d+)x(\d+) from (\d+),(\d+))?$/u;
 
+// A public recording's file name as the clip tool and the capture step write it, `yt-<id>-<name>.<ext>` or `bili-<id>-<name>.<ext>`:
+// a YouTube id is eleven characters, and the yt prefix refuses a Bilibili id, which the clip tool writes under it for a
+// Bilibili URL. A Bilibili id is `av` and its digits or `BV` and its characters
+export const YOUTUBE_RECORDING_NAME_REGEX: RegExp = /^yt-(?!av\d+-)([\w-]{11})-([\w-]+)\.[\da-z]+$/u;
+export const BILIBILI_RECORDING_NAME_REGEX: RegExp = /^bili-(av\d+|BV[\dA-Za-z]+)-([\w-]+)\.[\da-z]+$/u;
+
 // The language a reference's id names it in, by the word its id carries, as its language tag
 export const REFERENCE_ID_LANGUAGE_TAGS: Readonly<Record<string, string>> = {
   english: "en",

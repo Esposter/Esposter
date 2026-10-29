@@ -34,6 +34,7 @@ import { poseCommand } from "#src/services/genshinParity/commands/poseCommand";
 import { probeCommand } from "#src/services/genshinParity/commands/probeCommand";
 import { rankCommand } from "#src/services/genshinParity/commands/rankCommand";
 import { recordCommand } from "#src/services/genshinParity/commands/recordCommand";
+import { recordingsCommand } from "#src/services/genshinParity/commands/recordingsCommand";
 import { referencesCommand } from "#src/services/genshinParity/commands/referencesCommand";
 import { screensCommand } from "#src/services/genshinParity/commands/screensCommand";
 import { scrollCommand } from "#src/services/genshinParity/commands/scrollCommand";
@@ -99,6 +100,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     fixtures: fixturesCommand,
     probe: probeCommand,
     verify: verifyCommand,
+    recordings: recordingsCommand,
     references: referencesCommand,
   },
 });
