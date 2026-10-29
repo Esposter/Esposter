@@ -24,14 +24,18 @@ const confirmButton = useTemplateRef("confirmButton");
 const advance = ref(0);
 let pointerAngle: number | undefined;
 const targetMinutes = computed(() => getTimeTargetMinutes(clockMinutes, advance.value));
-// The hand stands at the top of the dial at midnight and turns clockwise through the day to the target's minute
-const handStyle = computed(() => ({ transform: `rotate(${(targetMinutes.value / MINUTES_PER_DAY) * 360}deg)` }));
-const targetTime = computed(() => {
-  const minutes = Math.floor(targetMinutes.value);
-  return Temporal.PlainTime.from({ hour: Math.floor(minutes / 60), minute: minutes % 60 }).toString({
+// The dial turns the day as the game draws it: noon at the top, midnight at the bottom, clockwise through the day
+const toDialAngle = (minutes: number): number => ((minutes / MINUTES_PER_DAY) * 360 + 180) % 360;
+const currentAngle = computed(() => toDialAngle(clockMinutes));
+const targetAngle = computed(() => toDialAngle(targetMinutes.value));
+const formatMinutes = (minutes: number): string => {
+  const wholeMinutes = Math.floor(minutes);
+  return Temporal.PlainTime.from({ hour: Math.floor(wholeMinutes / 60), minute: wholeMinutes % 60 }).toString({
     smallestUnit: "minute",
   });
-});
+};
+const clockTime = computed(() => formatMinutes(clockMinutes));
+const targetTime = computed(() => formatMinutes(targetMinutes.value));
 // The pointer's angle about the dial's centre, which a drag steps the advance by as it turns round the dial
 const getPointerAngle = (event: PointerEvent, element: HTMLElement): number => {
   const { height, left, top, width } = element.getBoundingClientRect();
@@ -58,9 +62,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- The Time screen the Paimon menu's side bar opens: its title and the cross that closes it, a dial the pointer turns
-       to dial the advance, the hour the dial points at and Confirm, which sets the world's clock to that hour. Each
-       Place is provisional until the English PC client's own screen is fitted to the reference -->
+  <!-- The Time screen the Paimon menu's side bar opens: its title and the cross that closes it, the clock's dial on the
+       right of the screen and, in the middle, the clock's time and the hour the dial points at, then Confirm, which sets
+       the world's clock to that hour. The dial and the column are placed from the English PC client's screen (1080 high,
+       a reference pixel a unit). "Current Time" and "Today" have no game text key yet, so they are not drawn -->
   <GameScreen class="menu-time" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Time]">
     <ScreenHeader
       :game-text
@@ -76,11 +81,59 @@ onMounted(() => {
       @pointerup="onDialPointerUp()"
       @pointercancel="onDialPointerUp()"
     >
-      <span class="hand" :style="handStyle" />
-      <span class="hub" />
+      <svg class="face" viewBox="-230 -230 460 460" aria-hidden="true">
+        <defs>
+          <linearGradient id="menu-time-arc" x1="-122" x2="122" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#e9d96a" />
+            <stop offset="0.5" stop-color="#f7edc0" />
+            <stop offset="0.85" stop-color="#f4a77a" />
+            <stop offset="1" stop-color="#e2584a" />
+          </linearGradient>
+        </defs>
+        <circle class="frame" r="195" />
+        <circle class="centre" r="118" />
+        <circle class="ticks" r="126" />
+        <path class="arc" d="M -122 0 A 122 122 0 0 1 122 0" stroke="url(#menu-time-arc)" />
+        <path class="arc" d="M -86.3 86.3 A 122 122 0 0 1 -117.8 31.6" stroke="#3fd0a0" />
+        <circle class="badge" cx="0" cy="-200" r="30" />
+        <circle cx="0" cy="-200" r="14" fill="#c9cacd" />
+        <circle class="badge" cx="0" cy="200" r="30" />
+        <circle cx="0" cy="200" r="15" fill="#8ccfff" />
+        <circle cx="7" cy="196" r="13" fill="#262b40" />
+        <circle class="badge" cx="-200" cy="0" r="30" />
+        <path d="M -216 0 A 16 16 0 0 1 -184 0 Z" fill="#feffaa" />
+        <circle class="badge" cx="200" cy="0" r="30" />
+        <path d="M 188 0 A 12 12 0 0 1 212 0 Z" fill="#919397" />
+        <circle class="marker" cx="0" cy="-138" r="9" fill="#ebe3d7" />
+        <circle class="marker" cx="0" cy="138" r="9" fill="none" stroke-width="2" />
+        <circle class="marker" cx="-138" cy="0" r="9" />
+        <path d="M -147 0 A 9 9 0 0 1 -129 0 Z" fill="#ebe3d7" />
+        <circle class="marker" cx="138" cy="0" r="9" />
+        <path d="M 129 0 A 9 9 0 0 1 147 0 Z" fill="#ebe3d7" />
+        <g :transform="`rotate(${currentAngle})`">
+          <path class="hand current" d="M 0 10 V -86" />
+        </g>
+        <g :transform="`rotate(${targetAngle})`">
+          <path class="hand" d="M 0 10 V -98" />
+          <polygon points="-9,-96 0,-118 9,-96" fill="#efe9dc" />
+        </g>
+        <circle class="hub" r="17" />
+        <circle r="5" fill="#efe9dc" />
+      </svg>
     </div>
+    <svg class="ornament top" viewBox="0 0 70 24" aria-hidden="true">
+      <path d="M 2 18 L 22 8 L 29 12 M 68 18 L 48 8 L 41 12" fill="none" />
+      <path d="M 35 2 L 41 12 L 35 22 L 29 12 Z" fill="#c6b794" />
+    </svg>
+    <p class="clock-time">{{ clockTime }}</p>
+    <span class="caret first" />
     <p class="wait-until">{{ gameText[GameTextKey.TimeWaitUntil] }}</p>
+    <span class="caret second" />
     <p class="hour">{{ targetTime }}</p>
+    <svg class="ornament bottom" viewBox="0 0 70 24" aria-hidden="true">
+      <path d="M 2 18 L 22 8 L 29 12 M 68 18 L 48 8 L 41 12" fill="none" />
+      <path d="M 35 2 L 41 12 L 35 22 L 29 12 Z" fill="#c6b794" />
+    </svg>
     <GameButton
       ref="confirmButton"
       class="confirm"
@@ -94,66 +147,145 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* Provisional: the dial, its hand and the labels are placed in the reference's own pixels, one of its pixels a unit,
-   Once the English PC client's Time screen has been fitted to it */
 .menu-time {
   --reference-pixel: var(--unit);
   color: #ece5d8;
 }
 
+/* The dial's centre at 445 reference pixels right of the screen's middle, 505 down, its ring and badges within 460 */
 .dial {
   position: absolute;
-  top: calc(var(--reference-pixel) * 430);
-  left: 50%;
-  width: calc(var(--reference-pixel) * 360);
-  height: calc(var(--reference-pixel) * 360);
-  border: calc(var(--reference-pixel) * 6) solid #ece5d8;
-  border-radius: 50%;
-  background: rgb(20 24 36 / 0.6);
+  top: calc(var(--reference-pixel) * 505);
+  left: calc(50% + var(--reference-pixel) * 445);
+  width: calc(var(--reference-pixel) * 460);
+  height: calc(var(--reference-pixel) * 460);
   cursor: grab;
   touch-action: none;
   translate: -50% -50%;
 }
 
+.face {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.frame {
+  fill: none;
+  stroke: rgb(200 190 150 / 0.3);
+  stroke-width: 2;
+}
+
+.centre {
+  fill: #120e12;
+  fill-opacity: 0.8;
+}
+
+.ticks {
+  fill: none;
+  stroke: #d9d3c4;
+  stroke-dasharray: 0 33;
+  stroke-linecap: round;
+  stroke-width: 3;
+}
+
+.arc {
+  fill: none;
+  stroke-width: 6;
+}
+
+.badge {
+  fill: #23283a;
+  stroke: #5d5b52;
+  stroke-width: 2;
+}
+
+.marker {
+  fill: #1d2230;
+  stroke: #ebe3d7;
+  stroke-width: 2;
+}
+
 .hand {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: calc(var(--reference-pixel) * 8);
-  height: 50%;
-  background: #ffefc0;
-  transform-origin: 50% 100%;
-  translate: -50% 0;
+  fill: none;
+  stroke: #efe9dc;
+  stroke-linecap: round;
+  stroke-width: 6;
+}
+
+.hand.current {
+  stroke-width: 5;
 }
 
 .hub {
+  fill: #1a1d27;
+  stroke: #efe9dc;
+  stroke-width: 4;
+}
+
+.ornament {
   position: absolute;
-  top: 50%;
   left: 50%;
-  width: calc(var(--reference-pixel) * 24);
+  width: calc(var(--reference-pixel) * 70);
   height: calc(var(--reference-pixel) * 24);
-  border-radius: 50%;
-  background: #ffefc0;
+  stroke: #c6b794;
+  stroke-width: 1.6;
   translate: -50% -50%;
 }
 
-.wait-until {
+.ornament.top {
+  top: calc(var(--reference-pixel) * 337);
+}
+
+.ornament.bottom {
+  top: calc(var(--reference-pixel) * 645);
+}
+
+.clock-time,
+.wait-until,
+.hour {
   position: absolute;
-  top: calc(var(--reference-pixel) * 760);
   left: 50%;
   margin: 0;
-  font-size: calc(var(--reference-pixel) * 26);
-  translate: -50% 0;
+  font-weight: 600;
+  white-space: nowrap;
+  translate: -50% -50%;
+}
+
+.clock-time {
+  top: calc(var(--reference-pixel) * 450);
+  color: #f3efe6;
+  font-size: calc(var(--reference-pixel) * 28);
+}
+
+.wait-until {
+  top: calc(var(--reference-pixel) * 507);
+  color: #c9b994;
+  font-size: calc(var(--reference-pixel) * 19);
 }
 
 .hour {
+  top: calc(var(--reference-pixel) * 570);
+  color: #f3efe6;
+  font-size: calc(var(--reference-pixel) * 28);
+}
+
+.caret {
   position: absolute;
-  top: calc(var(--reference-pixel) * 800);
   left: 50%;
-  margin: 0;
-  font-size: calc(var(--reference-pixel) * 48);
-  font-weight: 600;
-  translate: -50% 0;
+  width: 0;
+  height: 0;
+  border-top: calc(var(--reference-pixel) * 5) solid #8f8f8f;
+  border-inline: calc(var(--reference-pixel) * 4) solid transparent;
+  translate: -50% -50%;
+}
+
+.caret.first {
+  top: calc(var(--reference-pixel) * 476);
+}
+
+.caret.second {
+  top: calc(var(--reference-pixel) * 539);
 }
 
 .confirm {
