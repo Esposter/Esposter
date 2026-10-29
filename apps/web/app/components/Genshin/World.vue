@@ -46,11 +46,14 @@ const devRegistry = IS_DEVELOPMENT ? createDevRegistry() : undefined;
 // The save the world last wrote, which the developer's save commands read. A change they make is handed back to the page
 // As the world's own save and applied by a reload, since a running world reads its save once, when it starts
 const latestSave = shallowRef(save);
+const saveWorld = (newSave: GenshinSave) => {
+  latestSave.value = newSave;
+  emit("save", newSave);
+};
 if (devRegistry)
   useGenshinDevSaveCommands({
     applySave: (newSave) => {
-      latestSave.value = newSave;
-      emit("save", newSave);
+      saveWorld(newSave);
       window.location.reload();
     },
     devRegistry,
@@ -126,7 +129,7 @@ onMounted(() => {
     :account-avatar-url="session.data?.user.image ?? ''"
     :account-name="session.data?.user.name"
     :create-terrain-worker="() => new TerrainTileWorker()"
-    :dev-registry="devRegistry"
+    :dev-registry
     :game-data-base-url="getGenshinGameDataBaseUrl(containerBaseUrl)"
     :game-text
     :is-paused
@@ -140,12 +143,7 @@ onMounted(() => {
     @grant="emit('grant')"
     @quit="navigateTo(RoutePath.Index)"
     @ready="emit('ready')"
-    @save="
-      (newSave) => {
-        latestSave = newSave;
-        emit('save', newSave);
-      }
-    "
+    @save="(newSave) => saveWorld(newSave)"
   />
   <template v-if="devRegistry && isDevSurfaceShown">
     <GenshinDevConsole v-model="isDevConsoleOpen" :registry="devRegistry" />
