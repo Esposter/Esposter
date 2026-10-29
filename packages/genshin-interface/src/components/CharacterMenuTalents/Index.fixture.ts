@@ -3,7 +3,6 @@
 export const props = {
   costs: [[], [], []],
   isUpgradeDisabled: [true, true, true],
-  isUpgradeShown: [false, false, false],
   levelTexts: ["Lv. 10", "Lv. 13", "Lv. 13"],
   phases: ["", "", ""],
   reasons: ["", "", ""],
@@ -16,7 +15,6 @@ export const variants = {
   rising: {
     costs: [["Mora ×60000"], [], []],
     isUpgradeDisabled: [false, true, true],
-    isUpgradeShown: [true, false, false],
     levelTexts: ["Lv. 9", "Lv. 13", "Lv. 13"],
     phases: ["Requires Character Ascension Phase 4", "", ""],
     reasons: ["", "", ""],

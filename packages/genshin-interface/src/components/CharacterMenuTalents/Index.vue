@@ -7,8 +7,6 @@ interface Props {
   costs: string[][];
   // Whether each talent's Upgrade is disabled, which it is while the talent cannot rise
   isUpgradeDisabled: boolean[];
-  // Whether each talent's Upgrade is drawn, which it is not at the talent's last level, where the game draws none
-  isUpgradeShown: boolean[];
   // Each combat talent's level as the reader's language writes it, in the order the game lists them: the normal attack,
   // the Elemental Skill and the Elemental Burst
   levelTexts: string[];
@@ -20,7 +18,7 @@ interface Props {
   upgradeLabel: string;
 }
 
-const { costs, isUpgradeDisabled, isUpgradeShown, levelTexts, phases, reasons, upgradeLabel } = defineProps<Props>();
+const { costs, isUpgradeDisabled, levelTexts, phases, reasons, upgradeLabel } = defineProps<Props>();
 const emit = defineEmits<{ upgrade: [index: number] }>();
 </script>
 
@@ -40,7 +38,7 @@ const emit = defineEmits<{ upgrade: [index: number] }>();
           <span v-if="reasons[index]" class="reason">{{ reasons[index] }}</span>
         </div>
         <GameButton
-          v-if="isUpgradeShown[index]"
+          v-if="phases[index]"
           class="upgrade"
           :disabled="isUpgradeDisabled[index]"
           :kind="GameButtonKind.Reply"

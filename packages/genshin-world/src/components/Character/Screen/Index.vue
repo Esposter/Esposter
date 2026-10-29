@@ -302,7 +302,6 @@ const talentPanel = computed(() => {
     ),
     // A talent at its last level draws no Upgrade and names no reason, the game showing neither
     isUpgradeDisabled: rows.map(({ refusal }) => refusal !== undefined),
-    isUpgradeShown: rows.map(({ refusal }) => refusal !== TalentUpgradeRefusal.LastLevel),
     levelTexts: rows.map(({ level }) => fillGameTextValues(gameText[GameTextKey.LevelFormat], level)),
     phases: rows.map(({ upgrade }) =>
       upgrade ? fillGameTextValues(gameText[GameTextKey.TalentPhaseRequired], upgrade.phase) : "",
