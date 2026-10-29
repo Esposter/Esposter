@@ -107,6 +107,7 @@ const getMaxLevel = (target: Weapon) =>
   getWeaponData(target.id).ascensionPhases[target.ascension]?.maxLevel ?? target.level;
 const getLevelText = (level: number, maxLevel: number) =>
   fillGameTextValues(gameText[GameTextKey.LevelFormat], `${level}/${maxLevel}`);
+const getRankText = (refinement: number) => fillGameTextValues(gameText[GameTextKey.WeaponRefinementRank], refinement);
 const maxLevel = computed(() => getMaxLevel(weapon.value));
 const nextMaxLevel = computed(
   () => weaponData.value.ascensionPhases[weapon.value.ascension + 1]?.maxLevel ?? maxLevel.value,
@@ -121,18 +122,13 @@ const experienceText = computed(() => (isAtCap.value ? "" : `${weapon.value.expe
 const name = computed(() => nameText[weaponData.value.nameTextId] || "");
 // The weapon's kind in the reader's language, the word its header puts before the slash
 const kind = computed(() => gameText[WeaponTypeNameGameTextKeyMap[weaponData.value.weaponType]]);
-const rankText = computed(() =>
-  fillGameTextValues(gameText[GameTextKey.WeaponRefinementRank], weapon.value.refinement),
-);
+const rankText = computed(() => getRankText(weapon.value.refinement));
 // The passive's name, and the two rows the game's panel lists: the held rank, then the one above it, named by its rank
 const passive = computed(() => getWeaponPassive(weaponData.value, weapon.value.refinement, nameText));
 const passiveRows = computed(() =>
   (passive.value?.rows ?? [])
     .slice(weapon.value.refinement - 1, weapon.value.refinement + 1)
-    .map((row, index) => ({
-      ...row,
-      rankText: fillGameTextValues(gameText[GameTextKey.WeaponRefinementRank], weapon.value.refinement + index),
-    })),
+    .map((row, index) => ({ ...row, rankText: getRankText(weapon.value.refinement + index) })),
 );
 // The ores the player picks for the next enhancement, each count taken from the bag when it is enhanced
 const pickedOres = ref<ItemCount[]>([]);
@@ -876,20 +872,14 @@ const nextPhaseCosts = computed(() =>
 
 /* Refine's header: the rank the weapon holds, centred over its panel; the ornaments either side of it are not drawn */
 .refinement {
-  position: absolute;
   top: calc(var(--reference-pixel) * 98);
-  left: calc(var(--reference-pixel) * 1097);
-  width: calc(var(--reference-pixel) * 706);
-  margin: 0;
   color: #f6f0f9;
   font-size: calc(var(--reference-pixel) * 42);
-  font-weight: 600;
-  line-height: 1;
-  text-align: center;
 }
 
-/* The gold words the game sets over the panels: the Enhance panel's consumed count and the Refine tab's level */
+/* The words the game sets over the panels: the Enhance panel's consumed count, the Refine header's rank, the Refine tab's level and the passive's name */
 .consumed,
+.refinement,
 .refinement-level,
 .passive-name {
   position: absolute;
