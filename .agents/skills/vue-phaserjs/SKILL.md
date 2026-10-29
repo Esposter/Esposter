@@ -14,13 +14,14 @@ description: Apply when writing Phaser game objects, stores that hold them, or v
 
 ## Components
 
-Every game object component follows the same 4-file pattern, split across four trees — which is the whole inventory rule: what exists is whatever `src/components/` holds, and adding one means adding all four files.
+Every game object component follows the same 5-file pattern, split across five trees — which is the whole inventory rule: what exists is whatever `src/components/` holds, and adding one means adding all five files.
 
 | File                         | Path                                              |
 | ---------------------------- | ------------------------------------------------- |
 | `{Name}.vue`                 | `packages/vue-phaserjs/src/components/`           |
 | `{Name}Configuration.ts`     | `packages/vue-phaserjs/src/models/configuration/` |
 | `{Name}EventEmitsOptions.ts` | `packages/vue-phaserjs/src/models/emit/`          |
+| `{Name}Setter.ts`            | `packages/vue-phaserjs/src/models/setterMap/`     |
 | `{Name}SetterMap.ts`         | `packages/vue-phaserjs/src/services/setterMap/`   |
 
 `<Game>` mounts the Phaser game and hosts `<Scene>`; every shape component extends `ShapeConfiguration`. One naming trap: the component is `<Nineslice>` with a lowercase `s` — `<NineSlice>` resolves to nothing.
