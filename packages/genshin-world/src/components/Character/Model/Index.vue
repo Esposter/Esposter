@@ -19,8 +19,8 @@ const { characterId, characterPackReader, lightUniforms, rampTexture } = defineP
 const emit = defineEmits<{ error: [] }>();
 const mesh = shallowRef<SkinnedMesh<BufferGeometry, ToonNodeMaterial[]>>();
 let isUnmounted = false;
-// The character's model from its pack, drawn once it has all arrived. A failure is logged and emitted, leaving what holds
-// The model to draw something in its place, and a model arriving after its character has gone is released at once
+// The character's model from its pack, drawn once it has all arrived. A failure is logged and emitted, and nothing is drawn
+// In its place, and a model arriving after its character has gone is released at once
 readCharacterMesh(characterPackReader, { characterId, lightUniforms, rampTexture }).match(
   (characterMesh) => {
     if (isUnmounted) disposeCharacterMesh(characterMesh);

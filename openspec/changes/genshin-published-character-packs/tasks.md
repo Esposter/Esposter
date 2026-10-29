@@ -26,6 +26,7 @@
 - [x] 5.1 Draw the player's character from the reader in `Windrise` and load the Traveler for a save naming a character outside the index. Verify: tests named after the scenarios 'Held pack draws the character's model' and 'Character outside the index loads the Traveler', seen failing first.
 - [x] 5.2 Delete the character capsule and its constant, and stop the loading when a pack is missing. Verify: `git grep CharacterPlaceholder` finds nothing and a test named after the scenario 'Missing pack stops the loading and draws no capsule' passes.
 - [ ] 5.3 Show the pack's terms beside the character on the Character screen from the reader, then delete `PackLoader`. Message the Mac session before touching the Character folder. Verify: the Character screen's fixture renders the terms from a stubbed reader and `git grep PackLoader` finds nothing.
+- [ ] 5.4 Decide what the world draws, or whether the loading stops, when a held model fails to read in `Character/Model`. The capsule was removed, so such a character is now invisible on the field with nothing logged beyond the console error. Verify: a test named after the chosen scenario, seen failing first.
 
 ## 6. Delete the three routes
 
