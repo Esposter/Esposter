@@ -18,6 +18,6 @@ export const fixturesCommand: SubCommandsDef[string] = defineCommand({
   run: async () => {
     const report = existsSync(PARITY_SCORES_PATH) ? await readFile(PARITY_SCORES_PATH, "utf8") : "";
     const rows = await listFixtureScreens(COMPONENTS_DIRECTORY, ParityReferenceMap, getReportMeans(report));
-    console.log(JSON.stringify(rows));
+    for (const row of rows) console.log(JSON.stringify(row));
   },
 });
