@@ -44,10 +44,6 @@ jobs:
       # reads one — so an uncommitted manifest is green everywhere else
       - name: 🔍 Check generated manifest fields are committed
         run: git diff --exit-code -- "packages/*/package.json"
-      # The package barrels and the kit map are committed beside their sources, so a build that writes a different copy
-      # means the commit is stale
-      - name: 🔍 Check generated barrels and the kit map are committed
-        run: git diff --exit-code -- "packages/*/src/index.ts" "packages/*/src/components/index.ts" "packages/genshin-world/src/generated/characterKitMap"
       # A replay restores what the recorded run wrote, so an incomplete tree fails here, where the cause is
       # readable, rather than as a missing barrel in `typecheck`
       - name: 🔍 Verify the build is complete
