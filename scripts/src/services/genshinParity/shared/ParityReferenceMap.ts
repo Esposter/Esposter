@@ -379,7 +379,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     ],
     region: { height: 1050, width: 1920, x: 0, y: 0 },
     screen: "FishingScreen",
-    source: "fishing-reel.mkv at 52.5s",
+    source: "yt-iKr-nF1P7xQ-fishing-reel.mkv at 52.5s",
   },
   // The English PC client's forge on the Materials tab with an Enhancement Ore at amount five, at 32 seconds of the public
   // Recording of the forge, letterboxed to its 886 high frame: scored whole over its blurred scene, the game's own pieces
@@ -772,7 +772,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   // The English PC client's title scene at dusk at 1080 high, 3 seconds in, settled (the same frame as the public dusk clip at 3
   // Seconds). The power button, the publisher's icon and the build string sit at the corners
-  "login-screen-dusk": { screen: "LoginScreen", source: "login-dusk.mkv at 3s", variant: "dusk" },
+  "login-screen-dusk": { screen: "LoginScreen", source: "yt-mMf727q-0w0-login-dusk.mkv at 3s", variant: "dusk" },
   // The English PC client's map zoomed out over Galesong Hill at 99% (yt-kgW2IgWKukg at 4.6 seconds, 1080p and 60 frames a
   // Second, one chest before the area reads 100%). Its label, the name and the progress line under it, scored over the
   // Glyphs' silhouettes alone, the terrain between their strokes left out. The game places a label from map data the
@@ -1175,7 +1175,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     ],
     region: WEAPON_SCREEN_REGION,
     screen: "WeaponScreen",
-    source: "weapon-levelling.mkv at 1.93s",
+    source: "yt-jXrYcFHiVnI-weapon-levelling.mkv at 1.93s",
   },
   // The Ascend tab from the same recording at 12.9 seconds: Lv. 20 of 20 to 20 of 40 with the ascension materials and the button lit. The
   // Required line shows a struck-through 5000 the recording applies, so the compare differs there
@@ -1201,7 +1201,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     ],
     region: WEAPON_SCREEN_REGION,
     screen: "WeaponScreen",
-    source: "weapon-levelling.mkv at 12.9s",
+    source: "yt-jXrYcFHiVnI-weapon-levelling.mkv at 12.9s",
     variant: "ascend",
   },
   "weapon-screen-at-cap": {
@@ -1236,7 +1236,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     ],
     region: WEAPON_SCREEN_REGION,
     screen: "WeaponScreen",
-    source: "weapon-levelling.mkv at 91s",
+    source: "yt-jXrYcFHiVnI-weapon-levelling.mkv at 91s",
     variant: "refine",
   },
   "weapon-screen-two-star": { pending: NO_VARIANT_SCREENSHOT, screen: "WeaponScreen", variant: "twoStar" },
@@ -1292,7 +1292,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "world-level-dialog": {
     region: { height: 716, width: 1078, x: 421, y: 182 },
     screen: "MenuWorldLevelDialog",
-    source: "world-level-dialog-2024.mkv at 5s",
+    source: "yt-P13s7kSmVOE-world-level-dialog-2024.mkv at 5s",
   },
   "world-realm-placement-editor": { pending: NO_SCREEN_SCREENSHOT, screen: "WorldRealmPlacementEditor" },
   "world-realm-placement-editor-at-load": {

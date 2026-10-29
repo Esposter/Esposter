@@ -37,6 +37,14 @@
     },
     {
       "attribution": {},
+      "bytes": 163418585,
+      "name": "bili-av251752644-stamina.mp4",
+      "sha256": "6c0ba68af802306681c9422483f8fb7d77a1dd5950e5317edbba0a1d37fc9c72",
+      "source": "https://www.bilibili.com/video/av251752644",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
       "bytes": 3036203,
       "name": "book-reader.mkv",
       "sha256": "ea9eee41d0f0bca04befae6946e68719c1e1b2c03ff0e99d260f050150b72b9a",
@@ -205,10 +213,74 @@
     },
     {
       "attribution": {},
+      "bytes": 12758677,
+      "name": "yt--N3I_kD0NJw-mid.webm",
+      "sha256": "a5af7d4d399cc643f7482aab405dfa5f1455ec052d06d89c92a6652acd1f8fab",
+      "source": "https://www.youtube.com/watch?v=-N3I_kD0NJw",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 10683698,
+      "name": "yt--N3I_kD0NJw-open.webm",
+      "sha256": "0c7d52bc78cbdd32654186ab0cbcd20c7d4b37d453cf134976106c07f21a981a",
+      "source": "https://www.youtube.com/watch?v=-N3I_kD0NJw",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 5658052,
+      "name": "yt--N3I_kD0NJw-scan-0_60.webm",
+      "sha256": "24e2b0b0c9184bfc0392dea99f67aa755cb96cc5379494da2acfeb189f7695d2",
+      "source": "https://www.youtube.com/watch?v=-N3I_kD0NJw",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 4592911,
+      "name": "yt--N3I_kD0NJw-scan-60_111.webm",
+      "sha256": "e144cb277ad281d32aa84eb46eced018d003c95e6cd3772ad52ab3ab6639a54e",
+      "source": "https://www.youtube.com/watch?v=-N3I_kD0NJw",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 1680852,
+      "name": "yt--nip9Dz-aNM-shop-paimons-bargains.mp4",
+      "sha256": "20ece76e4509f4e9a98ea8f8714636b2273f96a39d217aa76e2fc56e6f4cb8d8",
+      "source": "https://www.youtube.com/watch?v=-nip9Dz-aNM",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 33545243,
+      "name": "yt-1SqmdXbIhLs-reputation-guide.mp4",
+      "sha256": "bf818ffb27dfafd83b2f54b74765b7654c64cbe1fbd3b8b5d568da00b7b26335",
+      "source": "https://www.youtube.com/watch?v=1SqmdXbIhLs",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
       "bytes": 48865769,
       "name": "yt-2I_vWTyHqHg-profile.mp4",
       "sha256": "64c2df2787196df2293050cf4508e41f3574e7ab0fd1854068c71a353b9130b0",
       "source": "https://www.youtube.com/watch?v=2I_vWTyHqHg",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 19689854,
+      "name": "yt-2_e7S_J9yAA-quest-overview.mp4",
+      "sha256": "7ee977109d82b9711a2691b66a6d5b87b6497775aae7866b32b34912858a4185",
+      "source": "https://www.youtube.com/watch?v=2_e7S_J9yAA",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 11139049,
+      "name": "yt-4VkVOwpPgwE-settings-controls.mp4",
+      "sha256": "756f1386246b8d35f8d5918f0d501b9e273447aa6b619048eba3bbb196753fe7",
+      "source": "https://www.youtube.com/watch?v=4VkVOwpPgwE",
       "sourceFormat": "mp4"
     },
     {
@@ -237,6 +309,22 @@
     },
     {
       "attribution": {},
+      "bytes": 29723988,
+      "name": "yt-6CY2RwKc_TE-ore-fast-methods.mp4",
+      "sha256": "a4d02fb0c120622058b98358a4cac8df4d43dd35f14a1ecd7c6863d1a5c54c39",
+      "source": "https://www.youtube.com/watch?v=6CY2RwKc_TE",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 10118618,
+      "name": "yt-73MIt1DK8kc-world-teleport.mp4",
+      "sha256": "9ceafe09e42d5bec095100bb5108bef041322608dbf602895b6c59cbd33275bb",
+      "source": "https://www.youtube.com/watch?v=73MIt1DK8kc",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
       "bytes": 3150756,
       "name": "yt-7kK6HqVfASk-audio.webm",
       "sha256": "33683ec3a383df2b59c61548389aaff7cb95781f16ea74f479a7f6b8dcad4f10",
@@ -253,6 +341,30 @@
     },
     {
       "attribution": {},
+      "bytes": 5844028,
+      "name": "yt-9I7XyJ2Z5RI-dialogue-npc-60.mp4",
+      "sha256": "dd9a78c57c978637a9340d833e9ffc70a7528f518bd8672b8afac2a9c43eef9d",
+      "source": "https://www.youtube.com/watch?v=9I7XyJ2Z5RI",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 26778670,
+      "name": "yt-9MzwdBrvdHc-razor-claw-and-thunder.mp4",
+      "sha256": "c7269de07c6145b802ab7a28f1da384bd0e937e410e19ce278f05c9699c1395f",
+      "source": "https://www.youtube.com/watch?v=9MzwdBrvdHc",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 4450508,
+      "name": "yt-9Z4XW4mvTuY-weapon-levelling.mp4",
+      "sha256": "30c67f0685b13895395ddd631ae032df548963a06bb7337236ee9cadb527cdb6",
+      "source": "https://www.youtube.com/watch?v=9Z4XW4mvTuY",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
       "bytes": 27929219,
       "name": "yt-ALtheg0XaWg-sheer-cold-javathecup.mp4",
       "sha256": "edee55f2f2c567777421e60f2467139ad2d53671a8784dc3b30a95513f883584",
@@ -261,10 +373,194 @@
     },
     {
       "attribution": {},
+      "bytes": 15165520,
+      "name": "yt-AVnbm8fESr0-forge-screen.mp4",
+      "sha256": "d4991324e40afa1d6bfcb479c28ef0dd846e4ea33eaa8630a94bc9fa8e4079a3",
+      "source": "https://www.youtube.com/watch?v=AVnbm8fESr0",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 28159145,
+      "name": "yt-B_l5b_KXt-o-time-trial-limit.mp4",
+      "sha256": "c6e20891c8a71954d7043c60ac5329751111e2b5e131e0c8e26c936b353d691d",
+      "source": "https://www.youtube.com/watch?v=B_l5b_KXt-o",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 1131090,
+      "name": "yt-D-iWDjSOL-s-login-dawn.mp4",
+      "sha256": "3084aa87fa2eecef24df15c2b58e52892227ac93a193d9a2183a21fbed190cc8",
+      "source": "https://www.youtube.com/watch?v=D-iWDjSOL-s",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 29390852,
+      "name": "yt-DFiHJ5crUzQ-revive.mkv",
+      "sha256": "6f4cadde943cbd648d255579652eb509c12fab35bdb15d74b5f9c9bd1dfbe60b",
+      "source": "https://www.youtube.com/watch?v=DFiHJ5crUzQ",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 109294974,
+      "name": "yt-EWYe-MYjmqU-ore-zhongli.mp4",
+      "sha256": "40244d4d0600cf0917d9d41b2f2eeb06dd9ae3523d29574ca58fd722bb5e3a65",
+      "source": "https://www.youtube.com/watch?v=EWYe-MYjmqU",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 15637778,
+      "name": "yt-EjM664vUGr8-ore-overload.mp4",
+      "sha256": "9de76ab4777b1daca5513ceb628d0f7c287386043ff90f2b4d2724859a3d9921",
+      "source": "https://www.youtube.com/watch?v=EjM664vUGr8",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
       "bytes": 23019065,
       "name": "yt-HFxhJB_N4Nk-opening-korean.mp4",
       "sha256": "cc2c94d18601175a1baf69faf394253489e890d7ffb953388b9a190212e6b459",
       "source": "https://www.youtube.com/watch?v=HFxhJB_N4Nk",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 103516625,
+      "name": "yt-Hrzawd-4WVk-ore-no-claymore.mp4",
+      "sha256": "3c6e369ac20139806db5e0f60aa786a9fde2c5ba21fbe86f3285361fec533ac0",
+      "source": "https://www.youtube.com/watch?v=Hrzawd-4WVk",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 105903873,
+      "name": "yt-HxZlSSq1RLE-ore-plunge.mp4",
+      "sha256": "ee4fc949de01d5a1f8bbebc5895f8715ca0d0dc13a9901a65af0df146dbf5ed4",
+      "source": "https://www.youtube.com/watch?v=HxZlSSq1RLE",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 6778099,
+      "name": "yt-INdms7vWMc4-ore-claymore-beidou.mp4",
+      "sha256": "271dace9fc749c81d52378d478733078956fedf3d9015def6ae695b3006bc76a",
+      "source": "https://www.youtube.com/watch?v=INdms7vWMc4",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 39723228,
+      "name": "yt-IegFADn-Lmk-menu-paimon.mp4",
+      "sha256": "9e9c411022bf886f544f7502f9adceefe90cdd322fdde1ef1252c248c69b8ed3",
+      "source": "https://www.youtube.com/watch?v=IegFADn-Lmk",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 10538894,
+      "name": "yt-JeWZtXJ7cfM-exploration-steps.mp4",
+      "sha256": "de2411ebc9b8b7e463a25f0488a1d058e81535c3d71baec2e9c93b03a092c0a1",
+      "source": "https://www.youtube.com/watch?v=JeWZtXJ7cfM",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 53128329,
+      "name": "yt-KmdAOhbZdAw-quickswap-yamato.mp4",
+      "sha256": "fcd2938a0622ea0af3fbc310d37a558041022b4a4fa5b548f526641fe3a3ccdc",
+      "source": "https://www.youtube.com/watch?v=KmdAOhbZdAw",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 37734099,
+      "name": "yt-LC-zMeFIBX4-ore-claymore-razor.mp4",
+      "sha256": "b1347339e2cb6d4816d745be0be93f7b4ff3d185552aaa74fcf1ada24c660d02",
+      "source": "https://www.youtube.com/watch?v=LC-zMeFIBX4",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 15168152,
+      "name": "yt-LOWsffckhpQ-ore-zhongli-pillar.mp4",
+      "sha256": "73f165905004ddbaa9c1b9e7d1ee4de4dd8bd3d30c613fa6ef373f6304fd552f",
+      "source": "https://www.youtube.com/watch?v=LOWsffckhpQ",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 6929986,
+      "name": "yt-Mhw53PsdhKI-scan-0_60.webm",
+      "sha256": "7cdc4ff3525979ca58979186b590d67b454828e8bf5b9570b9b47badd031c14b",
+      "source": "https://www.youtube.com/watch?v=Mhw53PsdhKI",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 6559240,
+      "name": "yt-Mhw53PsdhKI-scan-120_180.webm",
+      "sha256": "8fc1b1e2b0771b8cd7fc1992805b00b5f1c519c2a76afc158aab7a405079f9f7",
+      "source": "https://www.youtube.com/watch?v=Mhw53PsdhKI",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 8927775,
+      "name": "yt-Mhw53PsdhKI-scan-180_253.webm",
+      "sha256": "6afd9855f0acad61b734cb43cc106369d8a1e973746209dcac955d5c4054aa48",
+      "source": "https://www.youtube.com/watch?v=Mhw53PsdhKI",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 6344909,
+      "name": "yt-Mhw53PsdhKI-scan-60_120.webm",
+      "sha256": "0bcbf42ce9856055f58d6237f78b7b8bd464f6e1775a4c8b13a2e2e88007488f",
+      "source": "https://www.youtube.com/watch?v=Mhw53PsdhKI",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 10035821,
+      "name": "yt-Mhw53PsdhKI-waypoint.webm",
+      "sha256": "b992960a5a6723f1f906802d477d803a069bd0176e156b6c9bfbff5bded357e9",
+      "source": "https://www.youtube.com/watch?v=Mhw53PsdhKI",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 5223549,
+      "name": "yt-MjM6WR-9ijs-world-weather-turn.mp4",
+      "sha256": "0993a5a254249c3420b49a9dc07982e37e44bfd65030bfeaf719ae4496cecd2b",
+      "source": "https://www.youtube.com/watch?v=MjM6WR-9ijs",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 38652233,
+      "name": "yt-Osaylns8nyk-spiral-abyss-chamber.mp4",
+      "sha256": "006757b54d709454c7e90c1c0c5935ba67c20d5f2cbd5d1a2342a4e6abdc2c11",
+      "source": "https://www.youtube.com/watch?v=Osaylns8nyk",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 50843044,
+      "name": "yt-P13s7kSmVOE-world-level-dialog-2024.mkv",
+      "sha256": "683a4dceb4e81ffa01975424ae3524e8563061bdcef72f321e9d1febede40a7a",
+      "source": "https://www.youtube.com/watch?v=P13s7kSmVOE",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 5931958,
+      "name": "yt-P13s7kSmVOE-world-level-dialog-2024.mp4",
+      "sha256": "45c4dcbc66bc301f15a359a9fa66e973b2ff1d71605a25650f5fe7513a782643",
+      "source": "https://www.youtube.com/watch?v=P13s7kSmVOE",
       "sourceFormat": "mp4"
     },
     {
@@ -285,6 +581,78 @@
     },
     {
       "attribution": {},
+      "bytes": 8921452,
+      "name": "yt-Rv2hJiZcoyY-ore-claymore-noelle.mp4",
+      "sha256": "42a99a243b1a1904f40b9971672b92c87b37139f1992c250356307d0dfa0ef16",
+      "source": "https://www.youtube.com/watch?v=Rv2hJiZcoyY",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 15342337,
+      "name": "yt-TVYVfIQ-XO4-login-day.mp4",
+      "sha256": "7d6e9359b1db62e262876d3f76d467da887b615c23fdc9ab32850a566203b233",
+      "source": "https://www.youtube.com/watch?v=TVYVfIQ-XO4",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 14518821,
+      "name": "yt-UBNImta_dWs-prompt-scroll.mp4",
+      "sha256": "49568f36c328bcfd0a8928c99d2b62bdd0ba89008e5d1b62d8d33a12abb4f8d1",
+      "source": "https://www.youtube.com/watch?v=UBNImta_dWs",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 19330637,
+      "name": "yt-UVCdkuNpmf4-world-teleport.mp4",
+      "sha256": "35db2b4e24de3ff21fafde62985e39b23555147636ffdbf77beb87d7ed20d380",
+      "source": "https://www.youtube.com/watch?v=UVCdkuNpmf4",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 137149592,
+      "name": "yt-VlRNdhoeXTk-ore-strike.mp4",
+      "sha256": "581bbca670ff87400b8c89ee885995c56b80da31c912dcf1ce68f2d6bb0bb67f",
+      "source": "https://www.youtube.com/watch?v=VlRNdhoeXTk",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 20786276,
+      "name": "yt-W72S0n-fVXg-forge-snezhnaya.mp4",
+      "sha256": "4a3f96d60ade4c08107c6fc2b6ae599f85055fd6240c133bf1c654e7ea69bada",
+      "source": "https://www.youtube.com/watch?v=W72S0n-fVXg",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 28837244,
+      "name": "yt-Y1JClvDETcU-ore-crystal-easier.mp4",
+      "sha256": "3da3d7d5966eee30e8d5e948396c539b33cc5f843d73d428517eea4f16a61e5e",
+      "source": "https://www.youtube.com/watch?v=Y1JClvDETcU",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 3899469,
+      "name": "yt-ZGsragloQxU-world-level-dialog-2025-4k.mp4",
+      "sha256": "06733957e0bd555ac52392119a9d92d1ef4c7252eccbdd7aeadfdec0019396a2",
+      "source": "https://www.youtube.com/watch?v=ZGsragloQxU",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 4839444,
+      "name": "yt-ZGsragloQxU-world-level-dialog-2025-search.mp4",
+      "sha256": "24b2805710add10c7db4d8ff6055ae7a4facc28cc251fd3a44b997aac0ad9547",
+      "source": "https://www.youtube.com/watch?v=ZGsragloQxU",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
       "bytes": 10964883,
       "name": "yt-ZGsragloQxU-world-level-lower-2025.mp4",
       "sha256": "5d85e28cf89aab2b49b9af6a65260da778a8f3ca07a388898bcf3455d3329f8d",
@@ -293,10 +661,290 @@
     },
     {
       "attribution": {},
+      "bytes": 14949867,
+      "name": "yt-ZHMWTiHB5uU-compass-kaizu.mp4",
+      "sha256": "565daa864d7814cd1e66619f88337bfb8e97f9447394536c3185239cd514cd1b",
+      "source": "https://www.youtube.com/watch?v=ZHMWTiHB5uU",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
       "bytes": 24440563,
       "name": "yt-_agTJviXj7s-bag.mp4",
       "sha256": "fa87c86f8281c5c77f412a99e0b2590452e821a63e21161a7e26eaa66af75d54",
       "source": "https://www.youtube.com/watch?v=_agTJviXj7s",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 14843104,
+      "name": "yt-_d3TQI7UBL4-gadget-cooldown-pause.mp4",
+      "sha256": "fa4b5e7a6d7083040d5f6bdd175bfd2240ab0a730c3a2caa7a885512ff4e7089",
+      "source": "https://www.youtube.com/watch?v=_d3TQI7UBL4",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 37864251,
+      "name": "yt-a4_J84iMqR0-time.mp4",
+      "sha256": "500c7e9577cea73c92a386f5736a5b993cdb02adc2503cbb2b470fee26a3ae15",
+      "source": "https://www.youtube.com/watch?v=a4_J84iMqR0",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 8981872,
+      "name": "yt-aJq1MnTPtZ4-paimons-bargains-purchase.mp4",
+      "sha256": "d79670900c11f95d384cbe080a2df00dc66a8c93d1ca36a1bda04c5b47de23d9",
+      "source": "https://www.youtube.com/watch?v=aJq1MnTPtZ4",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 10952631,
+      "name": "yt-aJq1MnTPtZ4-paimons-bargains-reset.mp4",
+      "sha256": "4ca4052fb5bb69234e9632ff76de4e282d9ac2dfc091285add2bd05b9d753c83",
+      "source": "https://www.youtube.com/watch?v=aJq1MnTPtZ4",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 6172645,
+      "name": "yt-asw7VW5QM1g-logout.mp4",
+      "sha256": "f6400a6bfe526a82340eeba67c33a28a451dd766ea4d5f45dec4bad688df1c93",
+      "source": "https://www.youtube.com/watch?v=asw7VW5QM1g",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 12098889,
+      "name": "yt-ay49p0gLFT8-waypoint-pointer.mp4",
+      "sha256": "e0b907c01635f82dfed9bb24102c1f9a6b2673d6959f929ff6a32efe8904f6b0",
+      "source": "https://www.youtube.com/watch?v=ay49p0gLFT8",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 26252525,
+      "name": "yt-b6YZXYBegKA-statue-blessing.mp4",
+      "sha256": "48fc474048306017b5ee016f08d1b90fc70673b7cfed2ff1e34666f04f7d94e0",
+      "source": "https://www.youtube.com/watch?v=b6YZXYBegKA",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 34021415,
+      "name": "yt-fEbf_tOV1t4-cooking-sticky-honey-roast.mp4",
+      "sha256": "d6ceb72811da096e8d1d906c08b948b9441e4cfc517ebfae599b851631896411",
+      "source": "https://www.youtube.com/watch?v=fEbf_tOV1t4",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 40895408,
+      "name": "yt-fxIjhlV3vUA-expedition-screen.mp4",
+      "sha256": "17e58691d54edcc9563ead27728e617c89cf192531aadaaddd72a4f882165565",
+      "source": "https://www.youtube.com/watch?v=fxIjhlV3vUA",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 33390605,
+      "name": "yt-gFmdG_0s5L0-wish-ten.mp4",
+      "sha256": "def2e19e8bd9d7791b54be2c7018ccb21bfca6fb0ee6263abbc3bdf9dd1d5ac7",
+      "source": "https://www.youtube.com/watch?v=gFmdG_0s5L0",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 17167771,
+      "name": "yt-gN1IURjDuWo-world-map.mp4",
+      "sha256": "42cae358a5af483ec6c4cf7e16117336ed2e92ef719e3145906971c0be76a8ea",
+      "source": "https://www.youtube.com/watch?v=gN1IURjDuWo",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 22434098,
+      "name": "yt-greLeGJE-Jg-party-setup.mp4",
+      "sha256": "b7d613b8b5587b691989ea447a6f8d702fa15c3e0f2cdd2930116ad82c32b9a7",
+      "source": "https://www.youtube.com/watch?v=greLeGJE-Jg",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 17106153,
+      "name": "yt-hRNYlusJqwA-map-panel.webm",
+      "sha256": "981872570620d8937c0aa1c8f6e5aaae19527be936a859960ada15defab67e0e",
+      "source": "https://www.youtube.com/watch?v=hRNYlusJqwA",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 6025704,
+      "name": "yt-hRNYlusJqwA-scan-0_60.webm",
+      "sha256": "820ab5630f1a418bce6be3750b848e5e4cedcf3036c741c119941aebf865984c",
+      "source": "https://www.youtube.com/watch?v=hRNYlusJqwA",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 7040802,
+      "name": "yt-hRNYlusJqwA-scan-120_180.webm",
+      "sha256": "c753db3178427b85b34e48beaaab972f0c01d21ee87cd6b107378cf8e22e3f9d",
+      "source": "https://www.youtube.com/watch?v=hRNYlusJqwA",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 5964659,
+      "name": "yt-hRNYlusJqwA-scan-180_247.webm",
+      "sha256": "3e4d62ec150503e6166d30fb6f1b6851ade86accef547593d5423ce1b5b05f92",
+      "source": "https://www.youtube.com/watch?v=hRNYlusJqwA",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 8092877,
+      "name": "yt-hRNYlusJqwA-scan-60_120.webm",
+      "sha256": "5643ce6311fb3d794d4f382847702f4f306db236aab6a7ab74a4f33c68d09207",
+      "source": "https://www.youtube.com/watch?v=hRNYlusJqwA",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 11916023,
+      "name": "yt-hRNYlusJqwA-statue-activate.webm",
+      "sha256": "b5b0bf0252c7ae7cc3c50688a460a19bd7e95b79356b6ffcd21d0d88f0607d2d",
+      "source": "https://www.youtube.com/watch?v=hRNYlusJqwA",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 19511106,
+      "name": "yt-hRNYlusJqwA-waypoint-prompt.webm",
+      "sha256": "8003d29005a59867544d031f2ce20ba07f4e83160059383d989d68c719955651",
+      "source": "https://www.youtube.com/watch?v=hRNYlusJqwA",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 29286269,
+      "name": "yt-hRR2yoP3uY0-world-stamina.mp4",
+      "sha256": "aa85e75f9ac49e83409ac63b8d22baf830b15abc5b134b63d307ce1d8f3f007f",
+      "source": "https://www.youtube.com/watch?v=hRR2yoP3uY0",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 49031753,
+      "name": "yt-hggobgJsbVc-nodkrai-oculus.mp4",
+      "sha256": "67a2b3d73c635a61aac21045a86d321e5d594bf9a705918b5f18174854da2ca0",
+      "source": "https://www.youtube.com/watch?v=hggobgJsbVc",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 18228549,
+      "name": "yt-iBLyVE6ORvU-0-40.mp4",
+      "sha256": "70902ce95d405098e9a910da560f3e5e820d80799bbbd70a465640e53fd21e31",
+      "source": "https://www.youtube.com/watch?v=iBLyVE6ORvU",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 27832114,
+      "name": "yt-iKr-nF1P7xQ-fishing-reel.mkv",
+      "sha256": "7b56f07635cd777fbb082c15ff4b6ff40c45532b578093cb62ca51714fd0d02c",
+      "source": "https://www.youtube.com/watch?v=iKr-nF1P7xQ",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 22479293,
+      "name": "yt-igW050DMb4A-0-40.mp4",
+      "sha256": "7cac30e85a2dda5a8ff95367072941fb3ecd1b50b345db54535be0e9e20a6f5f",
+      "source": "https://www.youtube.com/watch?v=igW050DMb4A",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 16592062,
+      "name": "yt-j5ggVp4ffyc-chest-dig.mp4",
+      "sha256": "61b19b9201700883b2b542774754f7b09f88fb85c338d8ff1a873e64ea7f953b",
+      "source": "https://www.youtube.com/watch?v=j5ggVp4ffyc",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 13289834,
+      "name": "yt-jHr2bERjkYc-logout-tech4gamers.mp4",
+      "sha256": "c37ac582ca670829ba2aa3eed891a2f69a5e2047d396c196a973914a5bf4beac",
+      "source": "https://www.youtube.com/watch?v=jHr2bERjkYc",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 44100013,
+      "name": "yt-jXrYcFHiVnI-weapon-levelling.mkv",
+      "sha256": "9cb7096a2d766e236b0bfbbe9b0d0e492d2d74a379a1e5f84937e324358ace98",
+      "source": "https://www.youtube.com/watch?v=jXrYcFHiVnI",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 17994489,
+      "name": "yt-kIDee7nyD0w-menu-quit-prompt.mp4",
+      "sha256": "a73fcdffbbab90bf05dd259387aeba57182a2fea7ae52ee3255ecdcb05f1425e",
+      "source": "https://www.youtube.com/watch?v=kIDee7nyD0w",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 23584975,
+      "name": "yt-k_FKK0qcYHw-0-40.mp4",
+      "sha256": "ef1f909465a86727a9b899822c412cac472f72f55dc1e9f875de6388bea8727b",
+      "source": "https://www.youtube.com/watch?v=k_FKK0qcYHw",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 8097618,
+      "name": "yt-kgW2IgWKukg-exploration-steps.mp4",
+      "sha256": "9e530d7e7a0982f2d22509d42f86ff163c24d942a3f9a72a3fd26f583204c763",
+      "source": "https://www.youtube.com/watch?v=kgW2IgWKukg",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 11341576,
+      "name": "yt-kyXg-Hx3Xlo-glide-compare.mp4",
+      "sha256": "4bf49ec145c515e84a14976e2b1c7f6a413e91060ef91bc122b4c7401df8d49c",
+      "source": "https://www.youtube.com/watch?v=kyXg-Hx3Xlo",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 119989402,
+      "name": "yt-lu9L2erqHx8-ore-burst-eula.mp4",
+      "sha256": "f04bc92bba6ff060ce031147458c14f7551fc9f6fbcae663eef944e4b4fbd72c",
+      "source": "https://www.youtube.com/watch?v=lu9L2erqHx8",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 13997686,
+      "name": "yt-mMf727q-0w0-login-dusk.mkv",
+      "sha256": "6057c64a8db3b0298281da4c6e6882e32ef4f5ea07cb7f5c45c2727af0d9b8f3",
+      "source": "https://www.youtube.com/watch?v=mMf727q-0w0",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 14021014,
+      "name": "yt-mMf727q-0w0-login-dusk.mp4",
+      "sha256": "3137fc59e98690b044f6dcc2f054183698b3c1018e8f7ce58c3456950fa2f82e",
+      "source": "https://www.youtube.com/watch?v=mMf727q-0w0",
       "sourceFormat": "mp4"
     },
     {
@@ -314,6 +962,46 @@
       "sha256": "7aa3eb36669a39ecacbf22c83f66a451c9c534379ebd6380bba8fea31a29cb56",
       "source": "https://www.youtube.com/watch?v=rBnfA4pXw6U",
       "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 20111332,
+      "name": "yt-sN0MlNE-ByM-seelie-led-home.mp4",
+      "sha256": "06b65fbffe1bc1434ab8b0af83a19a1b592069bef21541a54472347943663170",
+      "source": "https://www.youtube.com/watch?v=sN0MlNE-ByM",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 5888131,
+      "name": "yt-uGtyP02Ie2Q-0-40.mp4",
+      "sha256": "0c385700fe1943c0cddbdfdcd53c8e9785526b648e8e1c75638f72f2c0f4a666",
+      "source": "https://www.youtube.com/watch?v=uGtyP02Ie2Q",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 32006127,
+      "name": "yt-uqSKcf-vgV4-world-thunderstorm.mp4",
+      "sha256": "2ecf01fcb4d2a522d114c4e9c955a7ca12ebc01026e60626eedd07e23867e33c",
+      "source": "https://www.youtube.com/watch?v=uqSKcf-vgV4",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 16632600,
+      "name": "yt-v3lvpT09qOw-statue-resonance.mp4",
+      "sha256": "a20aa1941d90e696438347b5e825ba157893037ed1ba5f3c38ce3098d95cd3c2",
+      "source": "https://www.youtube.com/watch?v=v3lvpT09qOw",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 16606486,
+      "name": "yt-x_vRlUlTm8A-commissions.mp4",
+      "sha256": "178d8f81c586e35be4e76afa345a6623812106d4c425a470e7bb6ca04c0508b8",
+      "source": "https://www.youtube.com/watch?v=x_vRlUlTm8A",
+      "sourceFormat": "mp4"
     }
   ],
   "references": [
@@ -742,7 +1430,7 @@
       "width": 1920
     },
     {
-      "attribution": { "recording": "fishing-reel.mkv", "second": 52.5 },
+      "attribution": { "recording": "yt-iKr-nF1P7xQ-fishing-reel.mkv", "second": 52.5, "videoId": "iKr-nF1P7xQ" },
       "bytes": 701392,
       "capturedAt": "2026-10-29T04:12:08.295Z",
       "cleanPlate": {
@@ -756,7 +1444,7 @@
       "id": "fishing-screen",
       "kind": "recording-frame",
       "sha256": "fcb181531ca3b27a561b21b85bcf6829af5ac23ce85717f98e03999875f378a9",
-      "source": "fishing-reel.mkv at 52.5s",
+      "source": "yt-iKr-nF1P7xQ-fishing-reel.mkv at 52.5s",
       "sourceFormat": "png",
       "width": 1920
     },
@@ -1216,14 +1904,14 @@
       "width": 1920
     },
     {
-      "attribution": { "recording": "login-dusk.mkv", "second": 3 },
+      "attribution": { "recording": "yt-mMf727q-0w0-login-dusk.mkv", "second": 3, "videoId": "mMf727q-0w0" },
       "bytes": 854720,
       "capturedAt": "2026-10-29T04:06:35.177Z",
       "height": 1080,
       "id": "login-screen-dusk",
       "kind": "recording-frame",
       "sha256": "f3e9e9d1f35804362e7cb8954a375289887e5a6fbad04d8a2410b9d5f86bcbd3",
-      "source": "login-dusk.mkv at 3s",
+      "source": "yt-mMf727q-0w0-login-dusk.mkv at 3s",
       "sourceFormat": "png",
       "width": 1920
     },
@@ -1624,7 +2312,7 @@
       "width": 1920
     },
     {
-      "attribution": { "recording": "weapon-levelling.mkv", "second": 1.93 },
+      "attribution": { "recording": "yt-jXrYcFHiVnI-weapon-levelling.mkv", "second": 1.93, "videoId": "jXrYcFHiVnI" },
       "bytes": 453716,
       "capturedAt": "2026-10-29T04:09:34.662Z",
       "cleanPlate": {
@@ -1638,12 +2326,12 @@
       "id": "weapon-screen",
       "kind": "recording-frame",
       "sha256": "5014517be8be5dd116db350ea69cf4b3e6dd2a1d622db4644714a6fe9d845e1f",
-      "source": "weapon-levelling.mkv at 1.93s",
+      "source": "yt-jXrYcFHiVnI-weapon-levelling.mkv at 1.93s",
       "sourceFormat": "png",
       "width": 1920
     },
     {
-      "attribution": { "recording": "weapon-levelling.mkv", "second": 12.9 },
+      "attribution": { "recording": "yt-jXrYcFHiVnI-weapon-levelling.mkv", "second": 12.9, "videoId": "jXrYcFHiVnI" },
       "bytes": 375166,
       "capturedAt": "2026-10-29T04:07:36.835Z",
       "cleanPlate": {
@@ -1657,12 +2345,12 @@
       "id": "weapon-screen-ascend",
       "kind": "recording-frame",
       "sha256": "c858112f82a68305eb6b5bcaac631304f0c199d9717de05a85f6d2e290a7e4e0",
-      "source": "weapon-levelling.mkv at 12.9s",
+      "source": "yt-jXrYcFHiVnI-weapon-levelling.mkv at 12.9s",
       "sourceFormat": "png",
       "width": 1920
     },
     {
-      "attribution": { "recording": "weapon-levelling.mkv", "second": 91 },
+      "attribution": { "recording": "yt-jXrYcFHiVnI-weapon-levelling.mkv", "second": 91, "videoId": "jXrYcFHiVnI" },
       "bytes": 457240,
       "capturedAt": "2026-10-29T04:07:36.842Z",
       "cleanPlate": {
@@ -1676,7 +2364,7 @@
       "id": "weapon-screen-refine",
       "kind": "recording-frame",
       "sha256": "94085852a8671e22e9c5e67513f4c0b254c57ee7aea8ea371f645ee83af60c76",
-      "source": "weapon-levelling.mkv at 91s",
+      "source": "yt-jXrYcFHiVnI-weapon-levelling.mkv at 91s",
       "sourceFormat": "png",
       "width": 1920
     },
@@ -1712,14 +2400,18 @@
       "width": 1920
     },
     {
-      "attribution": { "recording": "world-level-dialog-2024.mkv", "second": 5 },
+      "attribution": {
+        "recording": "yt-P13s7kSmVOE-world-level-dialog-2024.mkv",
+        "second": 5,
+        "videoId": "P13s7kSmVOE"
+      },
       "bytes": 784058,
       "capturedAt": "2026-10-09T19:44:16.803Z",
       "height": 1080,
       "id": "world-level-dialog",
       "kind": "recording-frame",
       "sha256": "daf2c902c06893501a9f18ba82f5810250ecbda4ef2326216c16db09c6bc4415",
-      "source": "world-level-dialog-2024.mkv at 5s",
+      "source": "yt-P13s7kSmVOE-world-level-dialog-2024.mkv at 5s",
       "sourceFormat": "png",
       "width": 1920
     }
