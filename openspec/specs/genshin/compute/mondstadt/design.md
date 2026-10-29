@@ -17,10 +17,6 @@
 
 ## Sources
 
-- `scripts/src/services/genshinParity/passes/constants.ts:31` (`FRAME_GATE_PIXELS = 2`), the 2 px bar the Sun, Camera and Layout items gate on.
-- `scripts/src/services/genshinParity/passes/constants.ts:81` and `scripts/src/services/genshinParity/passes/getParityPassesPath.ts:8`: the `passes/snapshots` folder and `${component}.snapshot.md` writer every pass item names.
-- `scripts/src/services/genshinParity/commands/passesCommand.ts:33` (`passes`), `compareCommand.ts:53` (`compare`), `shadowsCommand.ts:17` (`shadows`), `poseCommand.ts:53` (`pose`), with `poseCommand.ts:38` (`witness`), `:44` (`write`) and `:75` (the write into the reference map): the verbs and flags the items name.
-- `scripts/src/services/genshinParity/witness/solveReferenceShadows.ts:192` and `scripts/src/services/genshinParity/witness/solveReferencePose.ts:76`: the `shadows` and `pose` output folders.
 - `{data-root}/genshin-parity/references/mondstadt-city-location.png`, present on the Mac: the reference the Sun, Camera and Score items read.
 - `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts:881-892`: the `mondstadt-city-location` entry, its six `landmarks` (`eastTowerTopLeft` through `westTowerTopRight`), and the provisional `heldMinutes: 720` at `:892`, commented at `:891`.
 - `scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts:91` (`[DerivedAssetComponent.Mondstadt]: {}`): the empty map the Camera item's landmarks read.
@@ -28,12 +24,9 @@
 - `{data-root}/genshin-parity/extracted/mondstadt/layout/` holds `Area_MdBuild_Tower01_Lod0`, `Area_MdBuild_Tower02_Lod0` and `Stages_Build_BeaconTower01` as JSON game objects (listed by name, no OBJ), and `{data-root}/genshin-parity/extracted/mondstadt/assets/Mesh/` holds `Area_MdBuild_Gate02_Lod0.json` and `.obj`, checked on the Mac.
 - `packages/genshin-world/src/services/mondstadt/constants.ts:16-17`: the house's plaster and roof, provisional and sRGB, which the Surface item cites as still in constants.
 - `scripts/src/services/genshinParity/shared/constants.ts:42` (`PARITY_DEFAULT_PORT = 3011`): the port the parity page the pose run waits on is served from.
-- `scripts/src/services/genshinParity/passes/measureDisplay.ts:17-18`, `measureLight.ts:16-17` and `:23`, `measureLayout.ts:4`, `measureSurface.ts:36`, `measureAtmosphere.ts:6-7`: the reads the pass items name, in each module's own header.
-- `packages/genshin-engine/src/atmosphere/computeSunDirection.ts:8`: the function the held minute is read through on a hit.
 
 ## Open
 
 - [ ] **The four candidate meshes are the ones the landmark export draws** — no source yet: the three layout objects are JSON under `layout/` with no OBJ under `assets/Mesh`, and only `Area_MdBuild_Gate02_Lod0` has an OBJ there. `getLandmarkMeshes` names the meshes the export takes by name, and no source read shows the export drawing a JSON layout object. What would settle it is the export's output for `Area_MdBuild_Tower01_Lod0`, `Area_MdBuild_Tower02_Lod0` and `Stages_Build_BeaconTower01`.
-- [ ] **The display pass reads the post profile's grading and bloom** — no source yet: `measureDisplay.ts` names the exports' parts and the tone curve's contrast and nothing else, and no file under `passes/`, `display/` or `sky/` names bloom or a grade. What would settle it is the Display pass's read list in code, or a reader that names the grade and bloom it compares.
-- [ ] **The shape pass reads our capital's kit parts through `BuildingKitPartsMap`** — no source yet: `BuildingKitPartsMap.ts` (its Mondstadt entry at `packages/genshin-world/src/services/world/BuildingKitPartsMap.ts:53`) has consumers only in `packages/genshin-world/src/index.ts` and the `Landmark/Building/Index.vue` component, and none in `scripts/src/services/genshinParity/` or `packages/genshin-world/parity/`. What would settle it is the parity code path that draws the kit parts at the reference's camera.
+- [ ] **Mondstadt's display and shape passes wait on two facts no source reads yet** — the post profile's grading and bloom, and the kit parts through `BuildingKitPartsMap`; both are recorded once in [compute's Open](../README.md#open).
 - [ ] **mondstadt-city-location: the pose and shadow images the solves write** — no source yet, as [Inazuma's open items](../inazuma/design.md) record for the same two outputs.

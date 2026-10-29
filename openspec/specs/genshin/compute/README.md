@@ -49,3 +49,22 @@ The bars the region passes and the area pages' pass items share, each gate named
 - **Atmosphere**: the sky's statistics within the spread of the reference's own sky halves, and its clear sky within 2.3 DeltaE (`COLOUR_GATE`).
 - **Display**: the shipped contrast's excess within 0.1 (`DISPLAY_CONTRAST_GATE`).
 - **Frame score** (not gated): a location's frame reads the reference and the screen at the reference's size, writes its row of the parity snapshot and the reference, ours and difference images, and is reported, not gated: the passes above carry the bars, and the frame is checked by eye.
+
+## Sources
+
+The citations the region pages share: the bar's constant, the passes folder and its writer, the command lines, the solve folders, the pass modules' headers and the sun's reader. Each region page keeps the citations its own items read.
+
+- `scripts/src/services/genshinParity/passes/constants.ts:31` (`FRAME_GATE_PIXELS = 2`), the 2 px bar the Sun, Camera and Layout items gate on.
+- `scripts/src/services/genshinParity/shared/constants.ts:9` (`PARITY_DIRECTORY`), the folder the pose and shadow runs write under, which grounds the output paths.
+- `scripts/src/services/genshinParity/passes/constants.ts:81` (`PARITY_PASSES_DIRECTORY`, `passes/snapshots`) and `scripts/src/services/genshinParity/passes/getParityPassesPath.ts:8` (`${component}.snapshot.md`), the file every pass item writes.
+- `scripts/src/services/genshinParity/commands/passesCommand.ts:33` (`passes`, its `pass` argument at `:23`), `compareCommand.ts:53` (`compare`), `shadowsCommand.ts:17` (`shadows`, its `witness` at `:12`) and `poseCommand.ts:53` (`pose`, its `witness` at `:38`, its `write` at `:44` and `:75`, which writes the pose into the reference map through `replaceReferenceCameraPose`): the command lines the items name.
+- `scripts/src/services/genshinParity/witness/solveReferenceShadows.ts:192` (writes `PARITY_DIRECTORY/shadows`) and `scripts/src/services/genshinParity/witness/solveReferencePose.ts:76` (writes `pose`): the `shadows` and `pose` output folders.
+- `scripts/src/services/genshinParity/passes/measureDisplay.ts:17-18`, `measureLight.ts:16-17` and `:23`, `measureLayout.ts:4,24`, `measureSurface.ts:36` and `measureAtmosphere.ts:6-7`: the reads the pass items name, in each module's own header.
+- `packages/genshin-engine/src/atmosphere/computeSunDirection.ts:8` (`computeSunDirection(minutes, tilt, sunDirection)`), the function the held minute is read through on a hit.
+
+## Open
+
+The unbuilt facts more than one region's passes depend on. Each is recorded once here, and a region page points at it rather than restating it.
+
+- [ ] **The display pass reads the post profile's grading and bloom** — no source yet: `measureDisplay.ts` names the exports' parts and the tone curve's contrast and nothing else, and no file under `passes/`, `display/` or `sky/` in `scripts/src/services/genshinParity/` reads the bloom or the grade as a value it compares (`sky/readSky.ts:23` names a grade only as one way a sky could be drawn otherwise); the bloom and grade the engine's post pipeline holds (`packages/genshin-engine/src/post/createPostPipeline.ts`) are not read by it as far as its header says. What would settle it is the Display pass's read list in code, or a reader that names the grade and bloom it compares.
+- [ ] **The shape pass reads our capital's kit parts through `BuildingKitPartsMap`** — no source yet: `packages/genshin-world/src/services/world/BuildingKitPartsMap.ts` (its Mondstadt entry at `:53`) has consumers only in `packages/genshin-world/src/index.ts` and the `Landmark/Building/Index.vue` component, and none in `scripts/src/services/genshinParity/` or `packages/genshin-world/parity/`. What would settle it is the parity code path that draws the kit parts at the reference's camera.
