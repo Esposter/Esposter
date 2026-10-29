@@ -42,3 +42,4 @@ flowchart TD
 
 - [ ] **Her strikes deal no poise** — contradicted by `{data-root}/cache/genshin-wiki/Category_Raiden_Shogun_Talents.json`: its poise rows give 36.88 to 120 per strike.
 - [ ] **Resolve clears on a drown or a jump** — no source yet: gcsim keeps the stacks on a swap, and the cache says nothing on drowns or jumps.
+- [ ] **The Eye's Elemental Burst DMG Bonus raises only her own burst hits** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/raiden/skill.go` lines 57 to 60, which add it for each character in the party, and by the Skill text in `{data-root}/cache/genshin-wiki/Category_Raiden_Shogun_Talents.json`, which says "Characters who gain the Eye of Stormy Judgment will have their Elemental Burst DMG increased".
