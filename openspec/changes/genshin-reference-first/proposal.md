@@ -19,6 +19,7 @@ The check that exists matches references by screen name, so a screen's subscreen
 
 - **genshin/parity/screens** (modified): every `Screen` folder is covered or named pending, and every subscreen names a reference of its own.
 - **genshin/parity/visual-suite** (modified): approved images carry no platform segment, and a subscreen's image is approved only once its own compare clears.
+- **genshin/parity/references** (modified): a reference is a screenshot the repository holds or a wiki file, never a recording frame named by its second.
 
 ## Impact
 

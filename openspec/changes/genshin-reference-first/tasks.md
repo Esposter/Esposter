@@ -32,4 +32,4 @@
 
 The change is archived only when the pending list is empty and every pending entry is gone. Until then it stays open, because the wiki's pages for several screens return HTTP 402 to this session, so those references need the owner's screenshots or a browser capture.
 
-Archiving this change rewrites `openspec/specs/genshin/parity/visual-suite/design.md`, which names the platform image, as built.
+Archiving this change rewrites `openspec/specs/genshin/parity/visual-suite/design.md`, which names the platform image, as built, and `openspec/specs/genshin/parity/references/design.md` and `spec.md`, which name a recording frame as a reference, as built.
