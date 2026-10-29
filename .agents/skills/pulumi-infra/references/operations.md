@@ -12,6 +12,8 @@ Run in order from `apps/infra/`, always before `infra:preview` or `infra:up`:
 
 `infra:preview` and `infra:up` both run `pnpm build` themselves — never run `pnpm build` separately first.
 
+On the Windows PC the Pulumi binaries sit directly in `C:\Program Files (x86)\Pulumi`, with no `bin` folder, and Git Bash's PATH does not reach them. Put that folder first for the command — `PATH="/c/Program Files (x86)/Pulumi:$PATH" pnpm infra:preview` — and never install a second copy.
+
 ## Rules around an apply
 
 - Never use `pulumi up --skip-preview`.
