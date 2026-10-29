@@ -36,3 +36,6 @@ flowchart TD
 - [ ] **The tracer starts from the wiki's standalone render where one exists** — no source yet: no standalone render for a traced mark is cited in the repository or the wiki cache.
 - [ ] **Nothing from the game ships except traced shapes** — no source yet: the game's own files for the publisher's letters and ring, since the Commons SVG paths in `packages/genshin-world/src/services/splash/constants.ts` lines 54 to 57 are not the game's files and neither confirm nor contradict the claim.
 - [ ] **A trace adds a third to a half of the absolute form's bytes** — no source yet: no size comparison of a trace in both forms is recorded.
+- [ ] **Nothing from the game ships except shapes derived this way, a choice made so the screens match exactly** — no source yet: no comparison of a shipped traced mark against its screen is recorded, so the matching is the page's own reading.
+- [ ] **The path the trace writes is the one the component draws** — no source yet: the component that draws a traced path was not read against the trace's output here.
+- [ ] **A vector's paths drawn directly cannot chip an edge** — no source yet: no render of a drawn vector beside a traced one is kept to compare the edges.
