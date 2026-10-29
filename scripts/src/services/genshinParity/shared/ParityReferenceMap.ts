@@ -899,11 +899,13 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // at 1920 by 1080 with the recording's pillarbox around the game window and no screen open. The logo and the UID at the
   // Frame's bottom right lie outside the region; the panel's own UID, name and avatar lie inside it. The account is at
   // Adventure Rank 2, and every tile the frame draws reads open. Scored over the side bar and the panel, their translucent
-  // Feet where the world shows through included
+  // Feet where the world shows through included. The game window is the 1620 pixels between the pillarbox, so the menu stands
+  // At its left edge, 150 in
   "paimon-menu": {
     region: { height: 1080, width: 810, x: 150, y: 0 },
     screen: "MenuPaimon",
     source: "yt-jHr2bERjkYc-logout-tech4gamers.mp4 at 25s",
+    windowLeft: 150,
   },
   // The English PC client's Party Setup at 1080 high from a public recording (yt-greLeGJE-Jg-party-setup.mp4), about 38 seconds
   // In: Party 1 deployed with Venti, Xiangling, Raiden Shogun and Alhaitham, each at Lv. 90. The members stand in the game's own

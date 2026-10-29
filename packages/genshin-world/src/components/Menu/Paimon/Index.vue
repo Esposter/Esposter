@@ -300,21 +300,17 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-/* The reference is the 2026 frame at 25 seconds, 1920 by 1080, with the game's window pillarboxed 150 pixels in, so the menu
-   stands from that window's left edge. Its layout is in the frame's own pixels, a unit being one, and its icons are traced from
+/* The reference is the 2026 frame at 25 seconds, 1920 by 1080, with the game's window pillarboxed 150 pixels in; the page places
+   the menu at that window's left edge, so its layout is in the frame's own pixels, a unit being one, and its icons are traced from
    the still, each of whose pixels the frame draws at 0.79 of one, so an icon's box reads `--reference-pixel` */
 .paimon-menu {
   --reference-pixel: calc(var(--unit) * 0.79);
   color: #ece5d7;
 }
 
-/* The menu's own pieces, placed from its window's left edge, as the frame's own pieces are */
+/* The menu's own pieces, placed against the screen as if the wrapper that makes them inert under the dialog were not there */
 .menu {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: calc(var(--unit) * 150);
+  display: contents;
 }
 
 /* The opening fades the side bar in and the panel in once PAIMON_MENU_PANEL_DELAY_MS has passed; closing runs the same

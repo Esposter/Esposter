@@ -66,4 +66,15 @@ describe("parityReferenceMap", () => {
       ),
     ).toStrictEqual([]);
   });
+
+  test("scores no region left of its window's edge", () => {
+    expect.hasAssertions();
+
+    // The screen is placed at the window's left edge, so a region reaching left of it scores the pillarbox the page leaves bare
+    const leftOfWindow = Object.entries(ParityReferenceMap)
+      .filter(([, { region, windowLeft }]) => region !== undefined && windowLeft !== undefined && region.x < windowLeft)
+      .map(([id]) => id);
+
+    expect(leftOfWindow).toStrictEqual([]);
+  });
 });

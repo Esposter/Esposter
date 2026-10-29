@@ -81,6 +81,9 @@ if (screen && root) {
   const { language } = props;
   if ("gameText" in props && typeof language === "string" && checkIsGameLanguage(language))
     props.gameText = await GameTextLoaderMap[language]();
+  // A frame that pillarboxes the game window draws the screen from that window's left edge: its usual 1920 by 1080 canvas,
+  // At a unit of one, as the game draws its interface at the window's height. The frame clips what overflows its right
+  const windowLeft = searchParameters.get("windowLeft");
   const backdrop = searchParameters.get("backdrop");
   // Drawn pixel for pixel, since it is scaled by the page's device ratio alone, so it matches its reference exactly
   if (backdrop)
@@ -124,7 +127,16 @@ if (screen && root) {
       provide(SceneContextKey, sceneContext);
       if (witness) provide(SceneWitnessKey, witness);
       /* oxlint-enable no-restricted-globals */
-      return () => h(component, { ...props, ...readyProps });
+      return () => {
+        const screenNode = h(component, { ...props, ...readyProps });
+        return windowLeft === null
+          ? screenNode
+          : h(
+              "div",
+              { style: { height: "100%", left: `${windowLeft}px`, position: "absolute", top: 0, width: "1920px" } },
+              screenNode,
+            );
+      };
     },
   });
   // A component's failure Vue would only log, recorded like any other

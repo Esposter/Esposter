@@ -90,6 +90,7 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
     screen: reference.screen,
     variant: reference.variant,
     width,
+    windowLeft: reference.windowLeft,
     witness,
   });
   const extract = { height: region.height, left: region.x, top: region.y, width: region.width };

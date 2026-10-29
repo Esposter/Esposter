@@ -42,6 +42,10 @@ export interface ParityReferenceBase {
   // The part a comparison scores, in the reference's own pixels, so the world behind a menu never counts against it;
   // The whole frame when absent
   region?: ImageRegion;
+  // The left edge, in the reference's own pixels, of the game window a pillarboxed frame draws the screen in. The page
+  // Places the screen's 1920 by 1080 canvas there at a unit of one, as the game draws its interface at the window's height,
+  // Overflowing to the right and clipped by the frame, so the screen carries no offset of its own
+  windowLeft?: number;
   // The parity page's screen that recreates it, by its component's name
   screen: string;
   // The glyphs within the region whose strokes alone a comparison scores, beside the mask's rectangles: each split from
