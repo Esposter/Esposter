@@ -99,13 +99,13 @@ Registered, not yet within the bar. Five references are cut from the English PC 
 
 The five are judged over their clean plate, the reference frame with its scored region filled from its surroundings (`isBackdrop`, see Parity above), so the overlay is scored against what the world shows there. The bare render is that plate with nothing drawn on it, so a state beats its bare render only by drawing the dialogue closer than the plate already is.
 
-| Reference                  | Plate, component blurred | Plate, softened shot | Bare render |
-| :------------------------- | :----------------------- | :------------------- | :---------- |
-| `dialogue-choices-line`    | 8.66%, FLIP 0.2807       | snapshot row         | 9.64%       |
-| `dialogue-choices-replies` | 15.08%, FLIP 0.4770      | snapshot row         | 17.80%      |
-| `dialogue-choices-speaker` | 8.38%, FLIP 0.3228       | snapshot row         | 12.60%      |
-| `dialogue-line`            | 10.47%, FLIP 0.3740      | snapshot row         | 11.65%      |
-| `dialogue-paimon-line`     | 9.73%, FLIP 0.3121       | snapshot row         | 11.86%      |
+| Reference                  | Plate, softened shot | Bare render |
+| :------------------------- | :------------------- | :---------- |
+| `dialogue-choices-line`    | snapshot row         | 9.64%       |
+| `dialogue-choices-replies` | snapshot row         | 17.80%      |
+| `dialogue-choices-speaker` | snapshot row         | 12.60%      |
+| `dialogue-line`            | snapshot row         | 11.65%      |
+| `dialogue-paimon-line`     | snapshot row         | 11.86%      |
 
 The softened column is each reference's row in the parity snapshot (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`).
 
@@ -114,7 +114,7 @@ Every state beats its bare render by the margin its snapshot row sets against th
 - **Position.** The line's first ascender lands on the reference's row, 591 of 720 for Sara's lines. The speaker's role line, `Waitress, Good Hunter`, sits between the name and the line and is drawn from the talk line's `speakerRoleTextId`. Paimon's line has no role, so its line sits a role's height higher, as the frame shows: scored at the role's place it was 21.93%, and at the frame's place 9.73%. The margin under the name is 13.5 units (`packages/genshin-interface/src/components/DialogueScreen/Index.vue`), so the line sits 30 units under the name with a role and 13.5 without.
 - **The role's gold rule and curls.** The role sits on a gold rule 1263 units wide through its middle, 3 units thick at `rgb(255 199 0 / 0.28)`, with a gold curl either side of the words. The curl is its own shape, not the silver divider's diamond, so it is `ROLE_FLOURISH_PATH` (`packages/genshin-interface/src/services/constants.ts`), traced from the recording's left curl and mirrored for the right. Every dialogue id's scored region stops above the role row, so `compare` does not see the rule or the curls: they are checked by measuring the shot's rule and curls against the reference's rows.
 - **Size and letter spacing.** The line is 26 units with 2.35 units of letter spacing (`packages/genshin-interface/src/components/DialogueScreen/Index.vue`), where it was 32 units. Its x-height and ascender then match the recording's, and its width matches within four pixels.
-- **Softness.** The recording is soft and the game's face is not Signika, so a glyph a pixel off its place scores twice. The component is drawn crisp, and the comparison blurs our shot by the recording's own measured blur (`{data-root}/genshin-parity/captures/yt-nWBqOXWZuFg.mp4`, sigma 0.641, see the toolbox's Softness). A component blurred to the recording scored `dialogue-line` 0.33 points better (10.47%), but that blur is the video's and not the game's, so it is not shipped. The Signika substitute is the [interface library](../interface-library/design.md)'s.
+- **Softness.** The recording is soft and the game's face is not Signika, so a glyph a pixel off its place scores twice. The component is drawn crisp, and the comparison blurs our shot by the recording's own measured blur (`{data-root}/genshin-parity/captures/yt-nWBqOXWZuFg.mp4`, sigma 0.641, see the toolbox's Softness). A component blurred to the recording scores better, but that blur is the video's and not the game's, so it is not shipped. The Signika substitute is the [interface library](../interface-library/design.md)'s.
 - **Colour.** The line stays white, the recording's peak. A paler white scored lower only by making up for the blur, so it was refused.
 - **Band.** The band's gradient stays removed. Restored at 0.3 and 0.5, it scored worse on the three line states and on Paimon's line (`dialogue-line` 11.96% and 13.61%), and better only on the speaker.
 - **Replies.** The pill's darkness is 0.22 of black, the best of 0.15 to 0.45 swept against the plate. The text starts 48 units in, past the mark's place, and moving the first pill up three pixels scored worse (23.78% against 22.03%), so its top stays where it was.
