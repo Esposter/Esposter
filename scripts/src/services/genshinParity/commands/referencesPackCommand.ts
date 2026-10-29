@@ -5,7 +5,7 @@ import { createReferenceObjectTargets } from "#src/services/genshinParity/refere
 import { formatCollisionBlock } from "#src/services/genshinParity/reference/formatCollisionBlock";
 import { formatMebibytes } from "#src/services/genshinParity/reference/formatMebibytes";
 import { formatPackTable } from "#src/services/genshinParity/reference/formatPackTable";
-import { packManifestPaths } from "#src/services/genshinParity/reference/packManifestPaths";
+import { packRecordPaths } from "#src/services/genshinParity/reference/packRecordPaths";
 import { packReferences } from "#src/services/genshinParity/reference/packReferences";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
@@ -20,7 +20,7 @@ export const referencesPackCommand: SubCommandsDef[string] = defineCommand({
     kind: {
       default: ReferencePackKind.Reference,
       description:
-        "reference packs the screenshots the map names; recording and record store the files given as paths, a record kept in the parity folder",
+        "reference packs the screenshots the map names; record stores the files given as paths, kept in the parity folder",
       options: Object.values(ReferencePackKind),
       type: "enum",
     },
@@ -38,7 +38,7 @@ export const referencesPackCommand: SubCommandsDef[string] = defineCommand({
   },
   meta: {
     description:
-      "Pack and store the references the map names, or with --kind recording or record the files given as paths, and merge their rows into the manifest",
+      "Pack and store the references the map names, or with --kind record the files given as paths, and merge their rows into the manifest",
     name: "pack",
   },
   run: async ({ args }) => {
@@ -62,7 +62,7 @@ export const referencesPackCommand: SubCommandsDef[string] = defineCommand({
       if (outcome.skipped.length > 0) console.log(formatCollisionBlock(outcome.skipped));
       return;
     }
-    // Collisions are a reference's, so the flags are refused for a recording or a record rather than ignored
+    // Collisions are a reference's, so the flags are refused for a record rather than ignored
     if (args.replace !== undefined || args["skip-colliding"])
       throw new InvalidOperationError(
         Operation.Read,
@@ -71,8 +71,8 @@ export const referencesPackCommand: SubCommandsDef[string] = defineCommand({
       );
     if (paths.length === 0)
       throw new InvalidOperationError(Operation.Read, args.kind, "needs at least one path to pack");
-    const { packed, uploads } = await packManifestPaths(args.kind, paths, isDryRun, createReferenceObjectTargets());
-    for (const { bytes, name } of packed) console.log(`${name}  ${formatMebibytes(bytes)}`);
+    const { packed, uploads } = await packRecordPaths(paths, isDryRun, createReferenceObjectTargets());
+    for (const { bytes, path } of packed) console.log(`${path}  ${formatMebibytes(bytes)}`);
     console.log(
       `${packed.length} ${args.kind} files, ${uploads} uploads${isDryRun ? " (dry run, nothing stored)" : ""}`,
     );

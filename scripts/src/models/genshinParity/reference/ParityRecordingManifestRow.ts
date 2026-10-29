@@ -3,8 +3,8 @@ import type { ParityReferenceAttribution } from "#src/models/genshinParity/refer
 import { parityReferenceAttributionSchema } from "#src/models/genshinParity/reference/ParityReferenceAttribution";
 import { z } from "zod";
 
-// A recording file: a user's capture or a public clip, named by its file name. `source` is its public url, or
-// `user recording` when no public one exists, and `range` the seconds a clip was cut from
+// A public recording in the captures folder, named by its file name. `source` is its public url, and `range` the seconds
+// a clip was cut from. Its bytes are never hosted: a restore fetches it again from `source` by the clip command it prints
 export interface ParityRecordingManifestRow {
   attribution: ParityReferenceAttribution;
   bytes: number;

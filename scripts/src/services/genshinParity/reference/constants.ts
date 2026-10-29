@@ -81,8 +81,6 @@ export const REFERENCE_OBJECT_EXTENSION = "webp";
 export const REFERENCE_OBJECT_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total(
   "milliseconds",
 );
-// The source a recording file is given when no public url names it, as a user's own capture is
-export const USER_RECORDING_SOURCE = "user recording";
 // The leading bytes each sniffed format is recognised by: a hex signature found at its offset in the file
 export const FILE_SIGNATURES: readonly { extension: string; hex: string; offset: number }[] = [
   { extension: "png", hex: "89504e47", offset: 0 },
