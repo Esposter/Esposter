@@ -217,6 +217,16 @@ const getAdjacentSection = (step: number): ArchiveSection =>
   font-size: calc(var(--unit) * 28.8);
 }
 
+/* The title's and the counter's gold is outlined in black, as the game outlines its text */
+:deep(.title),
+.counter {
+  text-shadow:
+    calc(var(--unit) * 1) 0 #000,
+    calc(var(--unit) * -1) 0 #000,
+    0 calc(var(--unit) * 1) #000,
+    0 calc(var(--unit) * -1) #000;
+}
+
 /* The dark header the title and the counter sit on, measured across the still's top 95 pixels, darker to the right */
 .header {
   position: absolute;
@@ -404,7 +414,6 @@ const getAdjacentSection = (step: number): ArchiveSection =>
   left: calc(var(--unit) * -6);
 }
 
-/* The counter's gold is outlined in black, as the game outlines its text */
 .counter {
   position: absolute;
   top: calc(var(--unit) * 31);
@@ -415,11 +424,6 @@ const getAdjacentSection = (step: number): ArchiveSection =>
   font-weight: 600;
   line-height: calc(var(--unit) * 30);
   letter-spacing: calc(var(--unit) * 0.4);
-  text-shadow:
-    calc(var(--unit) * 1) 0 #000,
-    calc(var(--unit) * -1) 0 #000,
-    0 calc(var(--unit) * 1) #000,
-    0 calc(var(--unit) * -1) #000;
   white-space: nowrap;
 }
 
