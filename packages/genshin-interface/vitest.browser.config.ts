@@ -1,5 +1,5 @@
-import { getVitestBrowserConfiguration, getVuePlugins, SOURCE_CONDITION } from "@esposter/configuration";
 import { APPROVE_ENVIRONMENT_VARIABLE } from "#src/services/constants";
+import { getVitestBrowserConfiguration, getVuePlugins, SOURCE_CONDITION } from "@esposter/configuration";
 import { defaultClientConditions } from "vite";
 import { defineConfig } from "vitest/config";
 
