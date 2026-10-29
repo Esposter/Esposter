@@ -28,3 +28,4 @@ flowchart TD
 - [ ] **The self check's margin** — no source yet: a recorded run that states the residual, since `calibrateCommand.ts` prints the error and its scale but sets no threshold for `--self`.
 - [ ] **The self check finds the haze's blend, the rim's glow, the grade and the bloom** — no source yet: no commit, snapshot or report records those finds.
 - [ ] **The cloud sea keeps the colours measured where it shows them** — no source yet: a recorded measure of the cloud-sea colours, since `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts` (`cloudLitColor`, `cloudShadeColor`) fixes them per sky state.
+- [ ] **Left free, the lights cancel one another, a fading light goes red below none, and each tower takes a colour rising through its height** — no source yet: no solve run without these constraints is kept, so the reason is the page's own reading of it.
