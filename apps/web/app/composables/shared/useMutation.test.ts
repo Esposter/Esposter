@@ -276,8 +276,6 @@ describe(useMutation, () => {
     await expect(inFlightRead).resolves.toStrictEqual({ error, status: MutationStatus.Failed });
   });
 
-  // The superseded read applies no state and runs no callback, so a caller that joined it would resolve holding
-  // Nothing — an empty list beside a populated one, which is the outcome isExclusive exists to prevent
   test("issues its own exclusive read rather than joining one a later read superseded", async () => {
     expect.hasAssertions();
 
@@ -294,8 +292,6 @@ describe(useMutation, () => {
     expect(onSuccess.mock.calls).toStrictEqual([["replacement"], ["joined"]]);
   });
 
-  // A superseded read's cleanup owns only the entry it registered itself — dropping the one a later exclusive
-  // Read put there sends the next caller to a duplicate request instead of the call already in flight
   test("leaves a newer exclusive read joinable once the one it superseded settles", async () => {
     expect.hasAssertions();
 

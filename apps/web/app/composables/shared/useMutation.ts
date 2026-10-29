@@ -13,20 +13,11 @@ interface MutationOptions<TResult> extends QueryOptions<TResult> {
   // Dropped once the write has landed: a rejected or rolled-back write changed nothing, so it invalidates
   // Nothing. Writes only — a read has no reason to invalidate anything, which is why this is not on QueryOptions
   invalidates?: CacheTag[];
-  // Latest-wins instead of queueing, for a control that fires per keystroke or per drag frame where the
-  // Earlier call's value is already replaced on screen by the later one, so losing it costs nothing
   isSupersede?: true;
 }
 
 interface QueryOptions<TResult> {
-  // Single-flight per target: while a call with the same key is in flight, a second one issues no request of
-  // Its own. A read joins that call and resolves with its outcome, because its caller wanted the data and a
-  // Caller handed nothing renders empty beside a populated one. A write is dropped, because its caller wanted
-  // The effect and the effect is already on its way
   isExclusive?: true;
-  // The identity of the operation's target, always explicit (like a Pinia store id): the entity id or
-  // Natural composite for per-entity operations, a stable name for a singleton target,
-  // Or a per-call Symbol(description) for independent creates with no natural key
   key: PropertyKey;
   onError?: (error: Error) => Promisable<void>;
   onSuccess?: (result: TResult) => Promisable<void>;
@@ -38,14 +29,13 @@ export const useMutation = () => {
   // Which call is the latest for a target. Only supersede-mode operations take a number here — every read,
   // And the writes that opt in; a queued write is the latest for its target by the time it runs
   const keyCallIdMap = new Map<PropertyKey, number>();
-  // The tail of each target's write queue, so two writes to one target run one after the other
   const keyQueueMap = new Map<PropertyKey, Promise<void>>();
   // The in-flight outcome of each target's exclusive read, so a second caller for data already on its way
   // Awaits that response instead of issuing a duplicate request
   const keySharedQueryMap = new Map<PropertyKey, Promise<MutationOutcome<never>>>();
   const keyPendingCountMap = ref(new Map<PropertyKey, number>());
   const isPending = computed(() => keyPendingCountMap.value.size > 0);
-  // Per-key pending for per-item surfaces (a table row's own button), same getter idiom as getRoles(roomId)
+  // Per-key pending for per-item surfaces (a table row's own button)
   const checkIsPending = (key: PropertyKey) => keyPendingCountMap.value.has(key);
   const getCheckIsStale = (key: PropertyKey) => {
     const id = (keyCallIdMap.get(key) ?? 0) + 1;
@@ -107,8 +97,6 @@ export const useMutation = () => {
     // A stale response applies no state and runs no callback, and a later caller joining it would resolve
     // Holding nothing. It issues its own read instead
     keySharedQueryMap.delete(key);
-    // The finalizer guarantees pending bookkeeping unwinds even when a callback throws,
-    // So a thrown callback can never strand the key as permanently pending
     const outcome = withFinalizerAsync(
       () => settleOperation(query, { checkIsStale, isSilentWhenStale: true, onError, onSuccess }),
       () => {

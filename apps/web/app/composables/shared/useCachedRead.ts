@@ -4,11 +4,6 @@ import { DEFAULT_CACHE_KEY } from "@/services/cache/constants";
 import { useCacheStore } from "@/store/cache";
 
 interface CachedReadOptions<TResult> {
-  // Whether an invalidation re-reads at once or only drops the entry, declared once per cache instead of
-  // Judged at every call site that invalidates it. A cache whose surface is mounted when its tag changes has
-  // To be right on screen immediately (favorites — its stars render in the very table a delete is issued
-  // From); every other cache would spend a round trip on data nothing is showing, so it re-reads when
-  // Something next mounts. Only for a session-scoped cache, whose single entry exists from cold
   isRefetchOnInvalidate?: true;
   onError?: (error: Error) => void;
   // The caller owns what the response writes: one read can populate two maps, or a data ref and an error ref
@@ -73,6 +68,5 @@ export const useCachedRead = <TResult>(
         (invalidatedKeys.length > 0 ? invalidatedKeys : [DEFAULT_CACHE_KEY]).map((key) => executeRead(key)),
       );
     });
-  // The instance reads one cache, so the primitive's pending state is this cache's loading flag
   return { isPending, read, refetch, supersede };
 };

@@ -29,7 +29,6 @@ describe(useSaveRichTextEdit, () => {
     expect(edited.value).toBe(original);
   });
 
-  // Editing away the last character is the delete gesture, so an emptied editor must not save an empty body
   test("hands an emptied editor to delete mode instead of updating", async () => {
     expect.hasAssertions();
 
@@ -56,7 +55,6 @@ describe(useSaveRichTextEdit, () => {
     expect(emit).toHaveBeenCalledExactlyOnceWith("update:update-mode", false);
   });
 
-  // The finalizer runs on every path, so a rejected write still closes the editor and reverts to the server's copy
   test("leaves edit mode and reverts when the update fails", async () => {
     expect.hasAssertions();
 

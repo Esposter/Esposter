@@ -54,7 +54,7 @@ export const useSave = <TState extends SavedMetadata, T extends SavedMetadata = 
     saveItemMetadata(value);
     let isSuccessful = false;
     if (session.value.data && auth) {
-      // This composable persists a single state, so its saves supersede one another under a stable key
+      // This composable persists a single state, so its saves queue behind one another under a stable key
       const outcome = await executeSaveMutation(() => auth.save(value, etag), {
         key: "save",
         // Another session wrote the save since it was read, so the page reloads and takes the server's copy

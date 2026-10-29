@@ -10,8 +10,6 @@ describe(useCachedRead, () => {
   const result = "result";
   const createQuery = () => vi.fn<(cacheKey: string) => Promise<string>>(() => Promise.resolve(result));
 
-  // The gate is the caching layer and isExclusive is the concurrency one: concurrent first callers join one
-  // Request, and every caller after it landed issues nothing at all
   test("reads once across concurrent and repeat callers", async () => {
     expect.hasAssertions();
 
@@ -25,7 +23,6 @@ describe(useCachedRead, () => {
     expect(onSuccess).toHaveBeenCalledExactlyOnceWith(result, "");
   });
 
-  // Caching a failure as "loaded" would leave the surface empty for the whole session, with its Retry a no-op
   test("leaves the entry unloaded when the read fails", async () => {
     expect.hasAssertions();
 
@@ -63,8 +60,6 @@ describe(useCachedRead, () => {
     expect(query.mock.calls).toStrictEqual([[key], [otherKey]]);
   });
 
-  // The store race this exists for: a subscription is established before the first read is issued, so a value
-  // Pushed in between is newer than the read already on its way, and the read must not write the older one back
   test("drops a read a supersede overtook", async () => {
     expect.hasAssertions();
 
@@ -79,8 +74,6 @@ describe(useCachedRead, () => {
     expect(onSuccess).not.toHaveBeenCalled();
   });
 
-  // The pushed value is the entry, so re-reading it on the next mount would spend a round trip to be told what
-  // The caller already holds
   test("counts the entry loaded once superseded", async () => {
     expect.hasAssertions();
 
@@ -92,8 +85,6 @@ describe(useCachedRead, () => {
     expect(query).not.toHaveBeenCalled();
   });
 
-  // A superseded read answers `Stale`, so a later caller joining it would resolve holding nothing — an entry
-  // The invalidation just dropped would stay empty behind a read that issued no request of its own
   test("issues a new read rather than joining the one it superseded", async () => {
     expect.hasAssertions();
 
@@ -131,7 +122,6 @@ describe(useCachedRead, () => {
     expect(query).toHaveBeenCalledTimes(2);
   });
 
-  // The per-cache declaration of eager versus lazy, made once instead of at every call site that invalidates
   test("re-reads immediately when the cache refetches on invalidation", async () => {
     expect.hasAssertions();
 
@@ -149,8 +139,6 @@ describe(useCachedRead, () => {
     expect(query).toHaveBeenCalledTimes(2);
   });
 
-  // A session cache's single entry exists whether or not anything has read it, so the surface mounting after
-  // The write finds the new set instead of being the thing that discovers it changed
   test("re-reads a refetching cache that nothing has read yet", async () => {
     expect.hasAssertions();
 

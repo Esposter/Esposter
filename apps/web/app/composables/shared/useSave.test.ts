@@ -62,7 +62,6 @@ describe(useSave, () => {
     expect(save).toHaveBeenCalledExactlyOnceWith({ ...loaded, count: 6 }, "read");
   });
 
-  // Another session wrote the save first, so this page's copy is stale and reloading takes the server's
   test("reloads the page when the save is refused as a conflict", async () => {
     expect.hasAssertions();
 

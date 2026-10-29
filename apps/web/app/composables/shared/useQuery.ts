@@ -40,7 +40,5 @@ export const useQuery = <TResult>(
   };
   // Fetch on setup without blocking it — no Suspense boundary, unlike a top-level awaited query
   if (!isLazy) getSynchronizedFunction(refresh)();
-  // The instance reads one target, so the primitive's pending state is this read's loading flag — a consumer
-  // Rendering a spinner takes it from here rather than keeping an isLoading ref of its own
   return { data, error, isPending, refresh };
 };
