@@ -2,11 +2,11 @@
 import { ORNAMENT_END_PATH, ORNAMENT_MIDDLE_PATH } from "#src/services/constants";
 
 interface Props {
+  // A rule the game draws with its ends but no diamond at its middle, as the weapon screen's header and footer rules are
+  isMiddleHidden?: boolean;
   // The share of the silver the piece is drawn at: the game's hairline is opaque on a light screen and translucent over
   // a dark scene, so a screen over a scene passes the share its hairline reads at
   opacity?: number;
-  // A rule the game draws with its ends but no diamond at its middle, as the weapon screen's header and footer rules are
-  isMiddleHidden?: boolean;
 }
 
 const { isMiddleHidden = false, opacity = 1 } = defineProps<Props>();
