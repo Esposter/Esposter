@@ -1,0 +1,1 @@
+export const DEFAULT_NAVBAR_LINK_COUNT = 2;

@@ -1,0 +1,191 @@
+diff --git a/.agents/ledgers/dependencies.md b/.agents/ledgers/dependencies.md
+index d5c3300082..46381fd30a 100644
+--- a/.agents/ledgers/dependencies.md
++++ b/.agents/ledgers/dependencies.md
+@@ -82,6 +82,8 @@ # Dependencies
+ | `@trpc/server`                          | —                     | Keep — framework  | the API layer                                                                                          |
+ | `@tsdown/css`                           | —                     | Keep — tooling    | tsdown's CSS handling                                                                                  |
+ | `@types/js-beautify`                    | —                     | Keep — types      | declarations for `js-beautify`                                                                         |
++| `@types/mjml`                           | —                     | Keep — types      | declarations for `mjml`                                                                                |
++| `@types/mjml-core`                      | —                     | Keep — types      | declarations for `mjml-core`                                                                           |
+ | `@types/node`                           | —                     | Keep — types      | declarations for `node`                                                                                |
+ | `@types/sax`                            | —                     | Keep — types      | declarations for `sax`                                                                                 |
+ | `@types/three`                          | —                     | Keep — types      | declarations for `three`                                                                               |
+@@ -168,6 +170,8 @@ # Dependencies
+ | `mermaid`                               | —                     | Keep — engine     | the diagram engine                                                                                     |
+ | `mime-db`                               | —                     | Keep — data       | the IANA-derived dataset our `@esposter/shared` lookup reads, which changes without us                 |
+ | `minisearch`                            | —                     | Keep — engine     | the search index                                                                                       |
++| `mjml`                                  | —                     | Keep — engine     | the email engine, compiled on the server                                                               |
++| `mjml-core`                             | —                     | Keep — engine     | `mjml`'s own core, read by the test holding each email type's defaults to its components' defaults    |
+ | `mocked-exports`                        | —                     | Keep — hold       | Nitro 3 resolves it from the app (`@TODO` in the catalog)                                              |
+ | `msw`                                   | —                     | Keep — tooling    | request mocking                                                                                        |
+ | `neverthrow`                            | —                     | Keep — framework  | the `Result` the error-handling convention is built on                                                 |
+diff --git a/apps/web/app/services/emailEditor/createEmailSurveyInviteBlocks.test.ts b/apps/web/app/services/emailEditor/createEmailSurveyInviteBlocks.test.ts
+index 8bf0e41065..1fb86c3f05 100644
+--- a/apps/web/app/services/emailEditor/createEmailSurveyInviteBlocks.test.ts
++++ b/apps/web/app/services/emailEditor/createEmailSurveyInviteBlocks.test.ts
+@@ -1,7 +1,7 @@
+ // @vitest-environment happy-dom
+ import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+ import { createEmailSurveyInviteBlocks } from "@/services/emailEditor/createEmailSurveyInviteBlocks";
+-import { SURVEY_INVITE_BUTTON_COLOR } from "@/services/grapesjs/constants";
++import { SURVEY_INVITE_COLOR } from "#shared/services/pageBuilder/constants";
+ import { ResourceType } from "@esposter/db-schema";
+ import { RoutePath } from "@esposter/shared";
+ import { describe, expect, test } from "vitest";
+@@ -18,7 +18,7 @@ describe(createEmailSurveyInviteBlocks, () => {
+ 
+     expect(blocks).toStrictEqual([
+       {
+-        content: `<mj-button background-color="${SURVEY_INVITE_BUTTON_COLOR}" href="${window.location.origin}${RoutePath.View(ResourceType.Survey, id)}">${name}</mj-button>`,
++        content: `<mj-button background-color="${SURVEY_INVITE_COLOR}" href="${window.location.origin}${RoutePath.View(ResourceType.Survey, id)}">${name}</mj-button>`,
+         id: `survey-invite-${id}`,
+         label: name,
+       },
+diff --git a/apps/web/app/services/emailEditor/createEmailSurveyInviteBlocks.ts b/apps/web/app/services/emailEditor/createEmailSurveyInviteBlocks.ts
+index 56f33ef986..4a04c5b629 100644
+--- a/apps/web/app/services/emailEditor/createEmailSurveyInviteBlocks.ts
++++ b/apps/web/app/services/emailEditor/createEmailSurveyInviteBlocks.ts
+@@ -1,6 +1,6 @@
+ import type { ResourceInResource } from "@esposter/db-schema";
+ 
+-import { SURVEY_INVITE_BUTTON_COLOR } from "@/services/grapesjs/constants";
++import { SURVEY_INVITE_COLOR } from "#shared/services/pageBuilder/constants";
+ import { createSurveyInviteBlocks } from "@/services/grapesjs/createSurveyInviteBlocks";
+ 
+ // The email canvas is MJML, so the invite button is an mj-button
+@@ -8,5 +8,5 @@ export const createEmailSurveyInviteBlocks = (surveys: ResourceInResource[]) =>
+   createSurveyInviteBlocks(
+     surveys,
+     ({ label, url }) =>
+-      `<mj-button background-color="${SURVEY_INVITE_BUTTON_COLOR}" href="${url}">${label}</mj-button>`,
++      `<mj-button background-color="${SURVEY_INVITE_COLOR}" href="${url}">${label}</mj-button>`,
+   );
+diff --git a/apps/web/app/services/grapesjs/constants.ts b/apps/web/app/services/grapesjs/constants.ts
+index ea965bfd90..6223d2fcc8 100644
+--- a/apps/web/app/services/grapesjs/constants.ts
++++ b/apps/web/app/services/grapesjs/constants.ts
+@@ -2,4 +2,3 @@ export const GRAPES_JS_EDITOR_CONTAINER_ID = "grapes-js-editor";
+ 
+ export const SURVEY_INVITE_BLOCK_CATEGORY = "Survey invites";
+ 
+-export const SURVEY_INVITE_BUTTON_COLOR = "#F63A4D";
+diff --git a/apps/web/app/services/webpageEditor/createWebpageSurveyInviteBlocks.test.ts b/apps/web/app/services/webpageEditor/createWebpageSurveyInviteBlocks.test.ts
+index 5ef984dbfd..afa344c5cf 100644
+--- a/apps/web/app/services/webpageEditor/createWebpageSurveyInviteBlocks.test.ts
++++ b/apps/web/app/services/webpageEditor/createWebpageSurveyInviteBlocks.test.ts
+@@ -1,6 +1,6 @@
+ // @vitest-environment happy-dom
+ import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+-import { SURVEY_INVITE_BUTTON_COLOR } from "@/services/grapesjs/constants";
++import { SURVEY_INVITE_COLOR } from "#shared/services/pageBuilder/constants";
+ import { createWebpageSurveyInviteBlocks } from "@/services/webpageEditor/createWebpageSurveyInviteBlocks";
+ import { ResourceType } from "@esposter/db-schema";
+ import { RoutePath } from "@esposter/shared";
+@@ -18,7 +18,7 @@ describe(createWebpageSurveyInviteBlocks, () => {
+ 
+     expect(blocks).toStrictEqual([
+       {
+-        content: `<a href="${window.location.origin}${RoutePath.View(ResourceType.Survey, id)}" style="background-color: ${SURVEY_INVITE_BUTTON_COLOR}">${name}</a>`,
++        content: `<a href="${window.location.origin}${RoutePath.View(ResourceType.Survey, id)}" style="background-color: ${SURVEY_INVITE_COLOR}">${name}</a>`,
+         id: `survey-invite-${id}`,
+         label: name,
+       },
+diff --git a/apps/web/app/services/webpageEditor/createWebpageSurveyInviteBlocks.ts b/apps/web/app/services/webpageEditor/createWebpageSurveyInviteBlocks.ts
+index adee167f0e..ff0f07de7c 100644
+--- a/apps/web/app/services/webpageEditor/createWebpageSurveyInviteBlocks.ts
++++ b/apps/web/app/services/webpageEditor/createWebpageSurveyInviteBlocks.ts
+@@ -1,6 +1,6 @@
+ import type { ResourceInResource } from "@esposter/db-schema";
+ 
+-import { SURVEY_INVITE_BUTTON_COLOR } from "@/services/grapesjs/constants";
++import { SURVEY_INVITE_COLOR } from "#shared/services/pageBuilder/constants";
+ import { createSurveyInviteBlocks } from "@/services/grapesjs/createSurveyInviteBlocks";
+ 
+ // The webpage canvas is plain HTML, so the invite is an anchor carrying the one style the page's own sheet
+@@ -8,5 +8,5 @@ import { createSurveyInviteBlocks } from "@/services/grapesjs/createSurveyInvite
+ export const createWebpageSurveyInviteBlocks = (surveys: ResourceInResource[]) =>
+   createSurveyInviteBlocks(
+     surveys,
+-    ({ label, url }) => `<a href="${url}" style="background-color: ${SURVEY_INVITE_BUTTON_COLOR}">${label}</a>`,
++    ({ label, url }) => `<a href="${url}" style="background-color: ${SURVEY_INVITE_COLOR}">${label}</a>`,
+   );
+diff --git a/apps/web/configuration/nitro.ts b/apps/web/configuration/nitro.ts
+index 525615c307..96da804ffe 100644
+--- a/apps/web/configuration/nitro.ts
++++ b/apps/web/configuration/nitro.ts
+@@ -71,4 +71,7 @@ export const nitro: NuxtConfig["nitro"] = {
+       dir: dirname(createRequire(import.meta.url).resolve("temporal-polyfill")),
+     },
+   ],
++  // MJML's core reads a config file from the working directory as it loads and requires the components it names by
++  // A path built at runtime, which a bundle cannot follow, so it stays a traced dependency as it is in development
++  traceDeps: ["mjml"],
+ };
+diff --git a/apps/web/package.json b/apps/web/package.json
+index 819ebc9d0f..38f3de2d18 100644
+--- a/apps/web/package.json
++++ b/apps/web/package.json
+@@ -150,6 +150,7 @@
+     "mathjs": "catalog:",
+     "mermaid": "catalog:",
+     "minisearch": "catalog:",
++    "mjml": "catalog:",
+     "node-html-parser": "catalog:",
+     "parse-tmx": "workspace:*",
+     "pdfjs-dist": "catalog:",
+@@ -198,6 +199,8 @@
+     "@pinia/nuxt": "catalog:",
+     "@takumi-rs/core": "catalog:",
+     "@types/js-beautify": "catalog:",
++    "@types/mjml": "catalog:",
++    "@types/mjml-core": "catalog:",
+     "@types/three": "catalog:",
+     "@types/web-push": "catalog:",
+     "@unocss/nuxt": "catalog:",
+@@ -210,6 +213,7 @@
+     "citty": "catalog:",
+     "fake-indexeddb": "catalog:",
+     "happy-dom": "catalog:",
++    "mjml-core": "catalog:",
+     "mocked-exports": "catalog:",
+     "msw": "catalog:",
+     "nitro": "catalog:",
+diff --git a/apps/web/shared/models/resource/note/NoteResource.ts b/apps/web/shared/models/resource/note/NoteResource.ts
+index 9cd3c087cc..255969c522 100644
+--- a/apps/web/shared/models/resource/note/NoteResource.ts
++++ b/apps/web/shared/models/resource/note/NoteResource.ts
+@@ -10,7 +10,7 @@ export interface NoteResource {
+ }
+ // A ProseMirror node: type + optional attrs/marks/text and recursive children. looseObject keeps any extra
+ // Node fields a future Tiptap extension emits, so a valid document never fails the content-schema parse.
+-const jsonContentSchema: z.ZodType<JSONContent> = z.lazy(() =>
++export const jsonContentSchema: z.ZodType<JSONContent> = z.lazy(() =>
+   z.looseObject({
+     attrs: z.record(z.string().max(MAX_RESOURCE_CONTENT_SIZE), z.unknown()).optional(),
+     content: z.array(jsonContentSchema).max(MAX_RESOURCE_CONTENT_SIZE).optional(),
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+index fcc7c75377..b178c4cf34 100644
+Binary files a/pnpm-lock.yaml and b/pnpm-lock.yaml differ
+diff --git a/pnpm-workspace.yaml b/pnpm-workspace.yaml
+index 15dfe823c8..df0f05e379 100644
+--- a/pnpm-workspace.yaml
++++ b/pnpm-workspace.yaml
+@@ -114,6 +114,8 @@ catalog:
+   "@trpc/server": ^11.19.0
+   "@tsdown/css": ^0.23.1
+   "@types/js-beautify": ^1.14.3
++  "@types/mjml": ^5.0.0
++  "@types/mjml-core": ^5.1.0
+   "@types/node": ^26.6.5
+   "@types/sax": ^1.2.7
+   "@types/three": ^0.186.0
+@@ -202,6 +204,8 @@ catalog:
+   mermaid: ^12.1.0
+   mime-db: ^1.54.0
+   minisearch: ^7.2.0
++  mjml: ^5.4.1
++  mjml-core: ^5.4.1
+   # @TODO: no upstream issue — `@nuxt/nitro-server` aliases `bufferutil` to the bare `mocked-exports/proxy`, its own
+   # Dependency, which Nitro 3 resolves from the app rather than from Nuxt (nuxt/nuxt)
+   mocked-exports: ^0.1.1
