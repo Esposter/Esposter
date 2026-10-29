@@ -39,3 +39,4 @@ flowchart TD
 
 - [ ] **The Jueyun label's box and ring split** — no source yet: no measurement record for the Jueyun label is in the repository, so the split stands as the page's own.
 - [ ] **A title logo sized without a reference would come out nearly twice the size** — no source yet: no commit, snapshot or report records that size.
+- [ ] **Splitting from the colour at a box's corners would take a map's water for ink, since water stands further from the terrain than a white name does** — no source yet: no comparison of the corner split on a water region is kept.
