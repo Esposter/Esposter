@@ -66,6 +66,6 @@ flowchart LR
 
 ## Sources
 
-- The map of the three routes, the model reader and the startup progress, from the session of 2026-10-29's read of `packages/genshin-world/src/services/character`, `apps/web/server/services/genshin` and `apps/web/app/components/Genshin/Index.vue`.
+- The map of the three routes, the model reader and the startup progress, from the session's read of `packages/genshin-world/src/services/character`, `apps/web/server/services/genshin` and `apps/web/app/components/Genshin/Index.vue`.
 - The game's own download words, ids 1323480176, 3202095352, 378928540 and 3595641979 in the dump's English text map.
-- The owner's statement of 2026-10-28 that HoYoverse permits redistributing the packs, and their request of 2026-10-29 to remove the capsule and download the assets in the loading screen with the size shown.
+- The owner's statement that HoYoverse permits redistributing the packs, and their request to remove the capsule and download the assets in the loading screen with the size shown.
