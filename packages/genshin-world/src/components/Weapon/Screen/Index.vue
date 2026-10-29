@@ -461,7 +461,7 @@ const nextPhaseCosts = computed(() =>
           </div>
         </div>
       </template>
-      <template v-else>
+      <template v-if="openTab === WeaponMenuTab.Refine">
         <div class="divider refine-divider"><OrnamentDivider is-middle-hidden :opacity="DIVIDER_OPACITY" /></div>
         <p class="refinement-level">{{ gameText[GameTextKey.WeaponRefinementLevel] }}</p>
         <p class="passive-name">
