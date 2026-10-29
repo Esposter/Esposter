@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The official character packs are published to the public game data container, each file under its avatar id, so a browser can read a character's model from the app's storage.
+The official character packs are published to the public game data container, each file under its avatar id, so a browser can read a character's model from the public container.
 
 ## Requirements
 
