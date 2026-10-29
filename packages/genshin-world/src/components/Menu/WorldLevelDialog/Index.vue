@@ -216,7 +216,7 @@ onMounted(() => {
 }
 
 .corner-glyph {
-  color: #ffefc0;
+  color: #fdeab1;
 }
 
 .title {
@@ -231,11 +231,13 @@ onMounted(() => {
   letter-spacing: 0.1em;
   line-height: 1;
   text-align: center;
+  /* The trailing letter-space sits after the last letter, which pulls the centred ink left by half of it */
+  text-indent: 0.1em;
 }
 
 .close {
   position: absolute;
-  top: calc(var(--unit) * 24);
+  top: calc(var(--unit) * 25);
   left: calc(var(--unit) * 988);
   width: calc(var(--unit) * 44);
   height: calc(var(--unit) * 42);
@@ -271,10 +273,10 @@ onMounted(() => {
 .info {
   margin: 0 0 auto;
   padding-bottom: calc(var(--unit) * 23.5);
-  color: #e0e6ea;
-  font-size: calc(var(--unit) * 29.3);
+  color: #e3e4e6;
+  font-size: calc(var(--unit) * 28);
   font-weight: 600;
-  letter-spacing: 0.036em;
+  letter-spacing: 0.057em;
   line-height: calc(var(--unit) * 32);
   white-space: pre-line;
 }
@@ -304,11 +306,11 @@ onMounted(() => {
 }
 
 .caret.up {
-  top: calc(var(--unit) * 97);
+  top: calc(var(--unit) * 98);
 }
 
 .caret.down {
-  top: calc(var(--unit) * 571.5);
+  top: calc(var(--unit) * 569.5);
 }
 
 .adjust {

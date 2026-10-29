@@ -14,7 +14,7 @@ export const MenuDialogGlyphMap: Readonly<Record<MenuDialogIcon, MenuIconGlyph>>
     ],
     width: 44,
     x: 988,
-    y: 24,
+    y: 25,
   },
   // The top left ornament, its bright gold over x 415 to 443 and y 175 to 203, standing out of the frame's corner
   [MenuDialogIcon.Corner]: {
