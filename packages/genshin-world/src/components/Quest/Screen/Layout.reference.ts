@@ -21,6 +21,13 @@ export const layoutTopic: ReferenceTopic = {
     },
     {
       method:
+        "Each line's ink width off the still against the stand-in face's at the same capitals, the face letter-spaced out to the still's width (interface.md): the details' title, journal, objective and first description line measured by eye at 1:1 against the fixture's render",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The title spaced 2 units, the journal 1, the objective 1.4 and the description 0.6. The description's first line still breaks after so, where the still breaks after Graeae, and a description at 0.8 moved the detail's mean the wrong way, so it stays at 0.6. A title at 2.5 lowered the mean but lost shape, so it stays at 2",
+    },
+    {
+      method:
         "Each translucent fill fitted against the world beside it, per channel as fill = alpha · colour + (1 − alpha) · world, over hundreds of columns: the rows against the gaps between them, the series' row against the world over it, the band against the world under its edge",
       outcome: InvestigationOutcome.Found,
       result:

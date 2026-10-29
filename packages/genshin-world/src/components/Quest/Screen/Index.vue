@@ -423,13 +423,14 @@ useEventListener("keydown", (event) => {
   font-weight: 600;
 }
 
-/* Its capitals' tops at 128.5 */
+/* Its capitals' tops at 128.5, spaced out to the still's line width */
 .detail-title {
   position: absolute;
   top: calc(var(--unit) * 123.6);
   left: calc(var(--unit) * 1);
   color: #ede8e0;
   font-size: calc(var(--unit) * 35);
+  letter-spacing: calc(var(--unit) * 2);
   line-height: calc(var(--unit) * 35);
   white-space: nowrap;
 }
@@ -445,6 +446,7 @@ useEventListener("keydown", (event) => {
   right: calc(var(--unit) * 65);
   color: #d1be9a;
   font-size: calc(var(--unit) * 26);
+  letter-spacing: calc(var(--unit) * 1);
   line-height: calc(var(--unit) * 26);
   white-space: nowrap;
 }
@@ -486,6 +488,7 @@ useEventListener("keydown", (event) => {
   background: rgb(0 0 0 / 0.1);
   color: #ece7e1;
   font-size: calc(var(--unit) * 26);
+  letter-spacing: calc(var(--unit) * 1.4);
   line-height: calc(var(--unit) * 26);
   justify-content: space-between;
 }
@@ -502,6 +505,7 @@ useEventListener("keydown", (event) => {
   width: calc(var(--unit) * 899);
   color: #ede7df;
   font-size: calc(var(--unit) * 27);
+  letter-spacing: calc(var(--unit) * 0.6);
   line-height: calc(var(--unit) * 30);
 }
 
