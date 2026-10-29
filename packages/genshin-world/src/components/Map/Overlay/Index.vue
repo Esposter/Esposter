@@ -267,10 +267,10 @@ onMounted(() => {
     >
       <rect class="zoom-track" x="23" y="43" width="10" height="194" rx="5" />
       <path class="zoom-stop" d="M 28 16.5 L 39.5 28 L 28 39.5 L 16.5 28 Z" />
-      <path class="zoom-sign" d="M 28 22 V 34 M 22 28 H 34" />
+      <path class="zoom-sign" d="M 28 20 V 36 M 20 28 H 36" />
       <path class="zoom-stop" d="M 28 110.5 L 40.5 123 L 28 135.5 L 15.5 123 Z" />
       <path class="zoom-stop" d="M 28 241.5 L 39.5 253 L 28 264.5 L 16.5 253 Z" />
-      <path class="zoom-sign" d="M 22 253 H 34" />
+      <path class="zoom-sign" d="M 20 253 H 36" />
       <path class="zoom-thumb" d="M 0 -7 L 4 0 L 0 7 L -4 0 Z" :transform="`translate(28 ${zoomThumbY})`" />
     </svg>
     <ul class="progress-list">
