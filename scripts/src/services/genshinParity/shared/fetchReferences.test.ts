@@ -14,7 +14,7 @@ vi.mock(import("#src/services/genshinParity/reference/readReferenceManifest"), (
 }));
 // One reference with a source and no wiki title, so it is named missing without any fetch
 vi.mock(import("#src/services/genshinParity/shared/ParityReferenceMap"), () => ({
-  ParityReferenceMap: { "-1": { source: " " } },
+  ParityReferenceMap: { "-1": { screen: "ArchiveScreen", source: " " } },
 }));
 
 describe(fetchReferences, () => {

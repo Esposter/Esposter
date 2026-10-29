@@ -34,7 +34,11 @@ describe(planReferenceEntry, () => {
     width: SIZE,
   };
   const FILLED_CLEAN_PLATE = { bytes: SIZE, digest: "6".repeat(64), height: SIZE, sha256: "7".repeat(64), width: SIZE };
-  const REFERENCE: ParityReference = { plateSource: "plate frame at 2s", source: "main frame at 1s" };
+  const REFERENCE: ParityReference = {
+    plateSource: "plate frame at 2s",
+    screen: "ArchiveScreen",
+    source: "main frame at 1s",
+  };
   const createEntry = (image: typeof MAIN_IMAGE): ReferenceEntryImage => ({
     bytesBefore: 0,
     capturedAt: CAPTURED_AT,
