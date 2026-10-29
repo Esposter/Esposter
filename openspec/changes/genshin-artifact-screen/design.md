@@ -79,7 +79,7 @@ What works today and what this change adds:
   so the names builder collects them with no list change. A bonus whose words the names do not hold reads as an empty
   effect, and the block says none is active only while none is.
 - **The stats lay out provisionally under the details pill.** The Details list's row pitch from the registered frame
-  sets each row at 36 units, and the stats' five rows push the set bonus block down from 227 to 420 units. The registered
+  sets each row at 35.6 units, and the picked slot's stats take the place of the totals and the set bonus block beneath the pill. The registered
   frame shows no picked piece's stats, and the wiki's `File:Sanctifying Unction Artifact Interface.png` (page 56896,
   read through api.php, provisional) is behind a bot challenge the sandbox cannot pass, so the place is estimated and the
   parity measurement refines it.

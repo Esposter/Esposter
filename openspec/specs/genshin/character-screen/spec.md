@@ -100,12 +100,12 @@ The Weapons panel SHALL show the chosen character's own weapon.
 
 The Artifacts panel SHALL show the chosen character's own worn artifacts.
 
-#### Scenario: Artifacts panel shows the five slots in order
+#### Scenario: Artifacts panel steps through the five slots in order
 
 - **GIVEN** the Artifacts tab is open
 - **WHEN** the panel is read
-- **THEN** the five slots are listed in the game's order
-- **AND** each shows whether an artifact is worn in it
+- **THEN** the five slots are reached in the game's order, Switch moving the picked one on
+- **AND** the picked slot shows whether an artifact is worn in it
 
 ### Requirement: Constellation panel shows the character's own record
 
