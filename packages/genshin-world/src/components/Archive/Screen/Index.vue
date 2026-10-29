@@ -55,7 +55,7 @@ const selectedEntryId = ref<number>();
 const selectedEntry = computed(
   () => selectedEntries.value.find(({ id }) => id === selectedEntryId.value) ?? selectedEntries.value[0],
 );
-// An entry opens once its thing is first met, so a section's count is how many of its entries have
+// An entry opens once its thing is first met, so a section's count is how many of its entries have opened
 const checkIsEntryOpened = (entryId: number): boolean => progressMap.get(selectedSection.value)?.has(entryId) ?? false;
 // A locked entry reads "?" in place of its name until it opens
 const getEntryName = (entry: ArchiveEntry): string =>
