@@ -16,7 +16,7 @@ flowchart LR
 
 ## Provisional constants
 
-- **The Prop Arrow's strike at 387 frames and the burst's at 563 are `Unsourced`.** gcsim gives each hat's duration (238 frames for the Prop Arrow, `{data-root}/cache/gcsim-v2.47.2/internal/characters/lyney/aimed.go` line 29; 245 for the burst, `{data-root}/cache/gcsim-v2.47.2/internal/characters/lyney/aimed.go` line 30) and the 36-frame travel (`{data-root}/cache/gcsim-v2.47.2/internal/characters/lyney/lyney.go` line 49), but no literal places the hat's creation, so the sums 387 and 563 are the record's, not derived here.
+- **The Prop Arrow's strike at 387 frames and the burst's at 563 are gcsim's sums, which the record marks `Unsourced`.** The Prop Arrow's hat is placed at its release, `aimedPropRelease` 103, plus the shot's `travel`, which defaults to 10 (`{data-root}/cache/gcsim-v2.47.2/internal/characters/lyney/aimed.go` lines 23, 121, 145, 167 and 169). It lasts 238 frames (`aimed.go` line 29), and its Pyrotechnic Strike fires on expiry, 36 frames later (`{data-root}/cache/gcsim-v2.47.2/internal/characters/lyney/grinmalkinhat.go` lines 51 and 67 to 80, and `{data-root}/cache/gcsim-v2.47.2/internal/characters/lyney/lyney.go` line 49): 103 + 10 + 238 + 36 = 387. The burst's hat is placed by `explosiveFirework`, queued at `burstStart` 100 plus `burstDuration` 182 (`{data-root}/cache/gcsim-v2.47.2/internal/characters/lyney/burst.go` lines 18, 21, 37 to 42 and 117, with `explosiveFirework` at line 83), lasts 245 frames (`aimed.go` line 30), and strikes after the same 36: 100 + 182 + 245 + 36 = 563. The record's `Unsourced` marks on `frames.propArrowPyrotechnicStrikeHitmark` and `frames.miracleParadePyrotechnicStrikeHitmark` are out of date; this pass does not change the record.
 - **Lyney's plunges have no record keys.** See Provisional above; their timings stay the design's until `lyney.json` carries them.
 
 ## Decisions
@@ -39,5 +39,3 @@ flowchart LR
 ## Open
 
 - [ ] **Lyney's plunges are physical or Pyro** — no source yet: gcsim's folder has no plunge file to give their element.
-- [ ] **The 387-frame Prop Arrow strike** — provisional: the record marks the 387 Unsourced.
-- [ ] **The 563-frame Miracle Parade strike** — provisional: the record marks the 563 Unsourced.
