@@ -1,14 +1,11 @@
 <script setup lang="ts">
-defineSlots<{ default?: () => unknown }>();
+defineSlots<{ default: () => unknown }>();
 </script>
 
 <template>
   <!-- The two buttons beneath a character menu's panel, the game's pills, each the panel's half less the gap between them -->
   <div class="buttons">
-    <slot>
-      <span class="button" />
-      <span class="button" />
-    </slot>
+    <slot />
   </div>
 </template>
 
@@ -20,12 +17,5 @@ defineSlots<{ default?: () => unknown }>();
   left: 0;
   display: flex;
   gap: calc(var(--unit) * 23);
-}
-
-.button {
-  flex: 1;
-  height: calc(var(--unit) * 52);
-  border-radius: calc(var(--unit) * 26);
-  background: rgb(236 229 216 / 0.85);
 }
 </style>
