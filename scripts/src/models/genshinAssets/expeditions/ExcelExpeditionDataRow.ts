@@ -5,6 +5,7 @@ import type { ExcelExpeditionDuration } from "#src/models/genshinAssets/expediti
 // Durations it offers with what each brings
 export interface ExcelExpeditionDataRow {
   cityId: number;
+  descriptionTextMapHash: number;
   id: number;
   MOOEHHLEOOB: ExcelExpeditionCondition[];
   nameTextMapHash: number;

@@ -15,6 +15,7 @@ describe(sendExpedition, () => {
   const HOURS = 4;
   const EXPEDITION_LIMIT = 2;
   const place: ExpeditionPlace = {
+    descriptionTextId: "",
     durations: [{ hours: HOURS, items: [] }],
     id: PLACE_ID,
     nameTextId: GameTextKey.Windrise,

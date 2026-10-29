@@ -10,6 +10,7 @@ describe(checkIsExpeditionPlaceOpen, () => {
   const STATUE_POINT_ID = 4;
   const QUEST_ID = "39604";
   const place: ExpeditionPlace = {
+    descriptionTextId: "",
     durations: [],
     id: 102,
     nameTextId: GameTextKey.Windrise,

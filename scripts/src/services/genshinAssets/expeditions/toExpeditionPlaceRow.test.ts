@@ -9,6 +9,7 @@ import { describe, expect, test } from "vitest";
 describe(toExpeditionPlaceRow, () => {
   const PLACE_ID = 101;
   const NAME_TEXT_HASH = 2_498_537_973;
+  const DESCRIPTION_TEXT_HASH = 2_883_968_591;
   const RANK_LEVEL = 14;
   const STATUE_POINT_ID = 7;
   const REWARD_PREVIEW_ID = 1011;
@@ -28,6 +29,7 @@ describe(toExpeditionPlaceRow, () => {
   ]);
   const row: ExcelExpeditionDataRow = {
     cityId: 1,
+    descriptionTextMapHash: DESCRIPTION_TEXT_HASH,
     id: PLACE_ID,
     MOOEHHLEOOB: [
       { AOCOBPPBOOL: RANK_LEVEL, OLDPDBIPNHD: 0, type: "EXP_OPEN_COND_LEVEL" },
@@ -41,6 +43,7 @@ describe(toExpeditionPlaceRow, () => {
   test("should read the rank, statue and durations of a place with its reward preview's items", () => {
     expect.hasAssertions();
     expect(toExpeditionPlaceRow(row, previews, ExpeditionRegion.Mondstadt)).toStrictEqual({
+      descriptionTextId: String(DESCRIPTION_TEXT_HASH),
       durations: [{ hours: HOURS, items: [{ itemId: ITEM_ID, maxCount: 5, minCount: 4 }] }],
       id: PLACE_ID,
       nameTextId: String(NAME_TEXT_HASH),

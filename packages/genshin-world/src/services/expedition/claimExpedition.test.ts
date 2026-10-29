@@ -25,6 +25,7 @@ describe(claimExpedition, () => {
   const MORA_COUNT = 625;
   const IRON_CHUNK_ITEM_ID = 101_001;
   const place: ExpeditionPlace = {
+    descriptionTextId: "",
     durations: [{ hours: HOURS, items: [{ itemId: MORA_ITEM_ID, maxCount: MORA_COUNT, minCount: MORA_COUNT }] }],
     id: PLACE_ID,
     nameTextId: GameTextKey.StormterrorsLair,

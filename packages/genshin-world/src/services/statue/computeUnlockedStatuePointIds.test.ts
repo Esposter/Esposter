@@ -10,6 +10,7 @@ describe(computeUnlockedStatuePointIds, () => {
   const RANK_LEVEL = 14;
   const STATUE_POINT_ID = 4;
   const place = {
+    descriptionTextId: "",
     durations: [],
     id: 102,
     nameTextId: GameTextKey.Windrise,

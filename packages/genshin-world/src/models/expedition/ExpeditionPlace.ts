@@ -6,9 +6,11 @@ import { GameTextKey } from "genshin-text";
 import { z } from "zod";
 
 // A place an expedition is sent to, as the generated slice holds it: its id in the game's tables, the key of its name in
-// The game text, the Adventure Rank it opens at, the scene point of the Statue that must be resonated with (zero for
-// None), the quest that must be finished (empty for none), the region it is in, and each duration it offers
+// The game text, the id of its description in the world's own text, the Adventure Rank it opens at, the scene point of the
+// Statue that must be resonated with (zero for None), the quest that must be finished (empty for none), the region it is
+// In, and each duration it offers
 export interface ExpeditionPlace {
+  descriptionTextId: string;
   durations: ExpeditionDuration[];
   id: number;
   nameTextId: GameTextKey;
@@ -19,6 +21,7 @@ export interface ExpeditionPlace {
 }
 
 export const expeditionPlaceSchema = z.object({
+  descriptionTextId: z.string().nonempty(),
   durations: z.array(expeditionDurationSchema),
   id: z.int().positive(),
   nameTextId: z.enum(GameTextKey) satisfies z.ZodType<GameTextKey>,

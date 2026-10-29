@@ -36,6 +36,7 @@ export const toExpeditionPlaceRow = (
     else throw new InvalidOperationError(Operation.Read, String(row.id), `has a condition of kind ${type}`);
   }
   return {
+    descriptionTextId: String(row.descriptionTextMapHash),
     durations: row.PLLAFKOKDDE.map((duration) => {
       const rewardPreview = rewardPreviews.get(duration.rewardPreview);
       if (!rewardPreview)
