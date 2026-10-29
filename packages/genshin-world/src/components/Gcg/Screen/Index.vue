@@ -418,6 +418,7 @@ const playRerollChoice = () => {
 }
 
 .skill {
+  position: relative;
   width: calc(var(--unit) * 94);
   height: calc(var(--unit) * 94);
   border: calc(var(--unit) * 4) solid #6e5238;
