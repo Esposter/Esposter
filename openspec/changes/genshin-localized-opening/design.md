@@ -15,7 +15,7 @@ flowchart LR
 - **Recordings are the references.** A public recording of each client's opening, found before any of the game is recorded by hand, gives the logo, its place and how the screens differ, the way the English and Japanese recordings already do ([parity](../../specs/genshin/parity/README.md)).
 - **A layout differs only where a recording shows it.** Every language reuses the English measures unless its own recording differs, and the visual suite gains an image only for a language that does.
 - **The opening already knows the language.** It takes the reader's language for the title splash, so a screen whose layout differs reads the same prop.
-- **A localized reference is compared in its client's words.** A reference naming a `language` in its props has the parity page load that language's text for the screen ([parity](../../specs/genshin/parity/README.md)). The mainland's health notice, 7 to 12 seconds into its launch recording (`captures/bili-av532052219.mp4`, its logo at 3 to 6 seconds and its door at 12 to 17), is the reference `health-notice-mainland`, already compared in its own words (its row in the parity reference snapshot).
+- **A localized reference is compared in its client's words.** A reference naming a `language` in its props has the parity page load that language's text for the screen ([parity](../../specs/genshin/parity/README.md)). The mainland's health notice, 7 to 12 seconds into its launch recording (`captures/bili-av532052219-mainland-launch.mp4`, its logo at 3 to 6 seconds and its door at 12 to 17), is the reference `health-notice-mainland`, already compared in its own words (its row in the parity reference snapshot).
 
 ## Scope
 
