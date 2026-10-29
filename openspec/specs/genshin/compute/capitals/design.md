@@ -9,3 +9,7 @@
 ## Sources
 
 - the community dump, `BinOutput/Scene/WorldArea/scene3_worldArea.json`, holding the game's own polygon for each area: the availability the outline waits on (grounds Requirement: The capital areas of Nod-Krai and Snezhnaya).
+
+## Open
+
+- [ ] **The community dump holds each capital area's polygon in `BinOutput/Scene/WorldArea/scene3_worldArea.json`** — no source yet: no `scene3_worldArea.json` or other `*worldArea*` file is under `{data-root}`, so the dump the Sources bullet names was not opened.
