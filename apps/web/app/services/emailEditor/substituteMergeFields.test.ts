@@ -28,7 +28,7 @@ describe(substituteMergeFields, () => {
     expect.hasAssertions();
 
     expect(substituteMergeFields(`{{${columnName}}}`, { [columnName]: "$&" })).toBe("$&amp;");
-    expect(substituteMergeFields(`{{${columnName}}}`, { [columnName]: "Save $$" })).toBe("Save $$");
+    expect(substituteMergeFields(`{{${columnName}}}`, { [columnName]: "$$" })).toBe("$$");
   });
 
   test("does not expand a token that a value contains", () => {
