@@ -1,6 +1,6 @@
 # Component reference
 
-Each UI component held to its reference: whether it is needed, and whether its render matches the game's still it is judged against. Verdicts are the owner's or the main session's, recorded from the facts gathered for each unit; a unit is `—` until a verdict is written.
+Each UI component held to its reference: whether it is needed, and whether its render matches the game's still it is judged against. Verdicts are the owner's or the main session's, recorded from the facts gathered for each unit and written in its Notes; `Swept` is `—` until a sweep commit's trailer dates the unit.
 
 | Unit                                                                   | Swept | Notes |
 | ---------------------------------------------------------------------- | ----- | ----- |
