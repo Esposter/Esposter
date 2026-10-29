@@ -5,6 +5,7 @@ x-model: claude-haiku-5-5
 x-touches:
   [
     "packages/genshin-world/parity/**",
+    "scripts/src/models/genshinParity/**",
     "scripts/src/services/genshinParity/**",
     "packages/configuration/src/services/getVitestBrowserConfiguration*.ts",
     "packages/genshin-world/src/components/**/Index.fixture.ts",
