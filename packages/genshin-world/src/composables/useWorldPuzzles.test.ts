@@ -21,6 +21,17 @@ const createSeelie = (id: string): Seelie => ({
   unfollowedSeconds: 0,
 });
 
+const createPuzzles = (overrides: Partial<Parameters<typeof useWorldPuzzles>[0]> = {}) =>
+  useWorldPuzzles({
+    monumentPlaces: [],
+    savedSettledSeelieIds: new Set(),
+    savedSolvedPuzzleIds: new Set(),
+    seelies: [],
+    shrinePlaces: [],
+    timeTrialPlaces: [],
+    ...overrides,
+  });
+
 describe(useWorldPuzzles, () => {
   const MONUMENT_ID = "monument";
   const MONUMENT_PLACE: PuzzlePlace = {
@@ -50,13 +61,9 @@ describe(useWorldPuzzles, () => {
   test("a Seelie the save names as settled starts settled at its court", () => {
     expect.hasAssertions();
 
-    const { settledSeelieIds } = useWorldPuzzles({
-      monumentPlaces: [],
+    const { settledSeelieIds } = createPuzzles({
       savedSettledSeelieIds: new Set([SETTLED_SEELIE_ID]),
-      savedSolvedPuzzleIds: new Set(),
       seelies: [createSeelie(SETTLED_SEELIE_ID), createSeelie(RESTING_SEELIE_ID)],
-      shrinePlaces: [],
-      timeTrialPlaces: [],
     });
 
     expect([...settledSeelieIds.value]).toStrictEqual([SETTLED_SEELIE_ID]);
@@ -65,49 +72,30 @@ describe(useWorldPuzzles, () => {
   test("a resting Seelie the character stands by is led on the step", () => {
     expect.hasAssertions();
 
-    const { puzzleSeelies, stepWorldPuzzles } = useWorldPuzzles({
-      monumentPlaces: [],
-      savedSettledSeelieIds: new Set(),
-      savedSolvedPuzzleIds: new Set(),
-      seelies: [createSeelie(RESTING_SEELIE_ID)],
-      shrinePlaces: [],
-      timeTrialPlaces: [],
-    });
+    const { puzzleSeelies, stepWorldPuzzles } = createPuzzles({ seelies: [createSeelie(RESTING_SEELIE_ID)] });
     stepWorldPuzzles(1, { x: SEELIE_FOLLOW_DISTANCE, z: 0 });
 
-    expect(puzzleSeelies[0]?.state).toBe(SeelieState.Led);
+    expect(puzzleSeelies.map(({ state }) => state)).toStrictEqual([SeelieState.Led]);
   });
 
   test("a time trial challenge starts once the character reaches its marker", () => {
     expect.hasAssertions();
 
-    const { stepWorldPuzzles, timeTrialMarkers } = useWorldPuzzles({
-      monumentPlaces: [],
-      savedSettledSeelieIds: new Set(),
-      savedSolvedPuzzleIds: new Set(),
-      seelies: [],
-      shrinePlaces: [],
-      timeTrialPlaces: [timeTrialPlace],
-    });
+    const { stepWorldPuzzles, timeTrialMarkers } = createPuzzles({ timeTrialPlaces: [timeTrialPlace] });
     stepWorldPuzzles(0, { x: TIME_TRIAL_MARKER_REACH_DISTANCE + 1, z: 0 });
-    const idleState = timeTrialMarkers[0]?.challenge.state;
+    const idleStates = timeTrialMarkers.map(({ challenge }) => challenge.state);
     stepWorldPuzzles(0, { x: TIME_TRIAL_MARKER_REACH_DISTANCE, z: 0 });
 
-    expect({ idleState, state: timeTrialMarkers[0]?.challenge.state }).toStrictEqual({
-      idleState: TimeTrialChallengeState.Idle,
-      state: TimeTrialChallengeState.Running,
+    expect({ idleStates, states: timeTrialMarkers.map(({ challenge }) => challenge.state) }).toStrictEqual({
+      idleStates: [TimeTrialChallengeState.Idle],
+      states: [TimeTrialChallengeState.Running],
     });
   });
 
   test("a challenge solved in play joins the solved puzzle ids", () => {
     expect.hasAssertions();
 
-    const { solvedPuzzleIds, stepWorldPuzzles, timeTrialMarkers } = useWorldPuzzles({
-      monumentPlaces: [],
-      savedSettledSeelieIds: new Set(),
-      savedSolvedPuzzleIds: new Set(),
-      seelies: [],
-      shrinePlaces: [],
+    const { solvedPuzzleIds, stepWorldPuzzles, timeTrialMarkers } = createPuzzles({
       timeTrialPlaces: [timeTrialPlace],
     });
     stepWorldPuzzles(0, timeTrialPlace.position);
@@ -119,33 +107,22 @@ describe(useWorldPuzzles, () => {
   test("a solved puzzle is kept solved after a reload", () => {
     expect.hasAssertions();
 
-    const { solvedPuzzleIds, stepWorldPuzzles, timeTrialMarkers } = useWorldPuzzles({
-      monumentPlaces: [],
-      savedSettledSeelieIds: new Set(),
+    const { solvedPuzzleIds, stepWorldPuzzles, timeTrialMarkers } = createPuzzles({
       savedSolvedPuzzleIds: new Set([TIME_TRIAL_ID]),
-      seelies: [],
-      shrinePlaces: [],
       timeTrialPlaces: [timeTrialPlace],
     });
     stepWorldPuzzles(1, timeTrialPlace.position);
 
-    expect({ solvedPuzzleIds: [...solvedPuzzleIds.value], state: timeTrialMarkers[0]?.challenge.state }).toStrictEqual({
-      solvedPuzzleIds: [TIME_TRIAL_ID],
-      state: TimeTrialChallengeState.Solved,
-    });
+    expect({
+      solvedPuzzleIds: [...solvedPuzzleIds.value],
+      states: timeTrialMarkers.map(({ challenge }) => challenge.state),
+    }).toStrictEqual({ solvedPuzzleIds: [TIME_TRIAL_ID], states: [TimeTrialChallengeState.Solved] });
   });
 
   test("a strike of its element lights a monument", () => {
     expect.hasAssertions();
 
-    const { monumentMarkers, strikeWorldPuzzles } = useWorldPuzzles({
-      monumentPlaces: [MONUMENT_PLACE],
-      savedSettledSeelieIds: new Set(),
-      savedSolvedPuzzleIds: new Set(),
-      seelies: [],
-      shrinePlaces: [],
-      timeTrialPlaces: [],
-    });
+    const { monumentMarkers, strikeWorldPuzzles } = createPuzzles({ monumentPlaces: [MONUMENT_PLACE] });
     strikeWorldPuzzles(STRIKING_BODY, PYRO_HIT);
 
     expect(monumentMarkers.map(({ puzzle }) => puzzle.monuments.map(({ isLit }) => isLit))).toStrictEqual([[true]]);
@@ -154,14 +131,7 @@ describe(useWorldPuzzles, () => {
   test("a strike of another element does not light a monument", () => {
     expect.hasAssertions();
 
-    const { monumentMarkers, strikeWorldPuzzles } = useWorldPuzzles({
-      monumentPlaces: [MONUMENT_PLACE],
-      savedSettledSeelieIds: new Set(),
-      savedSolvedPuzzleIds: new Set(),
-      seelies: [],
-      shrinePlaces: [],
-      timeTrialPlaces: [],
-    });
+    const { monumentMarkers, strikeWorldPuzzles } = createPuzzles({ monumentPlaces: [MONUMENT_PLACE] });
     strikeWorldPuzzles(STRIKING_BODY, HYDRO_HIT);
 
     expect(monumentMarkers.map(({ puzzle }) => puzzle.monuments.map(({ isLit }) => isLit))).toStrictEqual([[false]]);
@@ -170,38 +140,29 @@ describe(useWorldPuzzles, () => {
   test("a shrine the save names as opened is kept open", () => {
     expect.hasAssertions();
 
-    const { shrineMarkers, solvedPuzzleIds } = useWorldPuzzles({
-      monumentPlaces: [],
-      savedSettledSeelieIds: new Set(),
+    const { shrineMarkers, solvedPuzzleIds } = createPuzzles({
       savedSolvedPuzzleIds: new Set([SHRINE_ID]),
-      seelies: [],
       shrinePlaces: [shrinePlace],
-      timeTrialPlaces: [],
     });
 
-    expect({ isOpen: shrineMarkers[0]?.shrine.isOpen, solvedPuzzleIds: [...solvedPuzzleIds.value] }).toStrictEqual({
-      isOpen: true,
-      solvedPuzzleIds: [SHRINE_ID],
-    });
+    expect({
+      isOpen: shrineMarkers.map(({ shrine }) => shrine.isOpen),
+      solvedPuzzleIds: [...solvedPuzzleIds.value],
+    }).toStrictEqual({ isOpen: [true], solvedPuzzleIds: [SHRINE_ID] });
   });
 
   test("finishing every target in time spawns the chest", () => {
     expect.hasAssertions();
 
-    const { puzzleChestPlaces, stepWorldPuzzles, strikeWorldPuzzles, timeTrialMarkers } = useWorldPuzzles({
-      monumentPlaces: [],
-      savedSettledSeelieIds: new Set(),
-      savedSolvedPuzzleIds: new Set(),
-      seelies: [],
-      shrinePlaces: [],
+    const { puzzleChestPlaces, stepWorldPuzzles, strikeWorldPuzzles, timeTrialMarkers } = createPuzzles({
       timeTrialPlaces: [timeTrialPlace],
     });
     stepWorldPuzzles(0, { x: TIME_TRIAL_MARKER_REACH_DISTANCE, z: 0 });
     strikeWorldPuzzles(STRIKING_BODY, PYRO_HIT);
 
-    expect({ chests: puzzleChestPlaces.value.length, state: timeTrialMarkers[0]?.challenge.state }).toStrictEqual({
-      chests: 1,
-      state: TimeTrialChallengeState.Solved,
-    });
+    expect({
+      chests: puzzleChestPlaces.value.length,
+      states: timeTrialMarkers.map(({ challenge }) => challenge.state),
+    }).toStrictEqual({ chests: 1, states: [TimeTrialChallengeState.Solved] });
   });
 });

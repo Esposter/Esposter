@@ -135,55 +135,7 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
   return { domains, events, jumpTo };
 };
 
-describe("stepDomainChallenge", () => {
-  const domainEntrance = createDomainEntrance();
-
-  test("a broken shield moves Stormterror's fight on, and each phase's transition attack is returned as it ends", async () => {
-    expect.hasAssertions();
-
-    const { domains, events } = createDomains();
-    // The quick challenge reads the weekly schedule, then enters the tier the rank of 40 reaches and starts
-    // The fight there
-    await expect(domains.quickChallengeDomain(domainEntrance, 40, true)).resolves.toBe(true);
-    const campId = domains.domainCamps.value[0]?.id ?? "";
-    const step = () => domains.stepDomainChallenge({ deltaMilliseconds: 1000, isPartyDown: false, isPlaying: true });
-
-    expect(step()).toStrictEqual([]);
-    events.emit("shieldBreak", createBrokenBoss(campId));
-    // Phase 1 allows one shield break, so the first break ends it and its transition attack starts
-    expect(step()).toStrictEqual([STORMTERROR_FINALE_ATTACK]);
-    // Phase 2 allows three breaks in total, so the second break is the second of the three and moves nothing
-    events.emit("shieldBreak", createBrokenBoss(campId));
-    expect(step()).toStrictEqual([]);
-    events.emit("shieldBreak", createBrokenBoss(campId));
-    expect(step()).toStrictEqual([STORMTERROR_FINALE_ATTACK]);
-  });
-});
-
-describe("entering and leaving a domain", () => {
-  const domainEntrance = createDomainEntrance();
-
-  test("entering a domain fades into its scene", async () => {
-    expect.hasAssertions();
-
-    const { domains, jumpTo } = createDomains();
-    await expect(domains.quickChallengeDomain(domainEntrance, 40, true)).resolves.toBe(true);
-    expect(jumpTo).toHaveBeenCalledTimes(1);
-    expect(jumpTo).toHaveBeenLastCalledWith(computeDomainScenePose(domainEntrance.arrival));
-  });
-
-  test("leaving a domain fades back to its entrance", async () => {
-    expect.hasAssertions();
-
-    const { domains, jumpTo } = createDomains();
-    await domains.quickChallengeDomain(domainEntrance, 40, true);
-    domains.leaveDomain();
-    expect(domains.domainArena.value).toBeUndefined();
-    expect(jumpTo).toHaveBeenLastCalledWith(computeJumpPose(domainEntrance));
-  });
-});
-
-describe("a domain level's day", () => {
+describe(useWorldDomains, () => {
   const domainEntrance = createDomainEntrance();
   // A Domain of Forgery open on Mondays, and on Sundays like every one
   const forgeryEntrance: DomainEntranceLandmark = { ...domainEntrance, domainKind: DomainKind.Forgery, entryId: 2 };
@@ -213,6 +165,45 @@ describe("a domain level's day", () => {
     await flushReads();
     return domains;
   };
+
+  test("a broken shield moves Stormterror's fight on, and each phase's transition attack is returned as it ends", async () => {
+    expect.hasAssertions();
+
+    const { domains, events } = createDomains();
+    // The quick challenge reads the weekly schedule, then enters the tier the rank of 40 reaches and starts
+    // The fight there
+    await expect(domains.quickChallengeDomain(domainEntrance, 40, true)).resolves.toBe(true);
+    const campId = domains.domainCamps.value[0]?.id || "";
+    const step = () => domains.stepDomainChallenge({ deltaMilliseconds: 1000, isPartyDown: false, isPlaying: true });
+
+    expect(step()).toStrictEqual([]);
+    events.emit("shieldBreak", createBrokenBoss(campId));
+    // Phase 1 allows one shield break, so the first break ends it and its transition attack starts
+    expect(step()).toStrictEqual([STORMTERROR_FINALE_ATTACK]);
+    // Phase 2 allows three breaks in total, so the second break is the second of the three and moves nothing
+    events.emit("shieldBreak", createBrokenBoss(campId));
+    expect(step()).toStrictEqual([]);
+    events.emit("shieldBreak", createBrokenBoss(campId));
+    expect(step()).toStrictEqual([STORMTERROR_FINALE_ATTACK]);
+  });
+
+  test("entering a domain fades into its scene", async () => {
+    expect.hasAssertions();
+
+    const { domains, jumpTo } = createDomains();
+    await expect(domains.quickChallengeDomain(domainEntrance, 40, true)).resolves.toBe(true);
+    expect(jumpTo).toHaveBeenCalledExactlyOnceWith(computeDomainScenePose(domainEntrance.arrival));
+  });
+
+  test("leaving a domain fades back to its entrance", async () => {
+    expect.hasAssertions();
+
+    const { domains, jumpTo } = createDomains();
+    await domains.quickChallengeDomain(domainEntrance, 40, true);
+    domains.leaveDomain();
+    expect(domains.domainArena.value).toBeUndefined();
+    expect(jumpTo).toHaveBeenLastCalledWith(computeJumpPose(domainEntrance));
+  });
 
   test("its row closes when the game day turns on a day it is not open", async () => {
     expect.hasAssertions();

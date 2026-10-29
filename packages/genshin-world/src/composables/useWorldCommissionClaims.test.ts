@@ -89,6 +89,7 @@ describe(useWorldCommissionClaims, () => {
     isBonusClaimed: false,
   });
   const pointsOf = (halfPoints: number): EncounterPoints => ({ earnedOn: NOW, halfPoints });
+  const baseClaims = { halfPoints: 0, longTermHalfPoints: 0, resin: 0 };
   const createClaims = ({
     clock = createWorldClock(NOW),
     day,
@@ -154,10 +155,8 @@ describe(useWorldCommissionClaims, () => {
   test("should claim a finished commission free, routing its Mora into the wallet and recording the claim", () => {
     expect.hasAssertions();
     const { claims, commissionDay, encounterPoints, wallet } = createClaims({
+      ...baseClaims,
       day: dayWith(FINISH_PROGRESS),
-      halfPoints: 0,
-      longTermHalfPoints: 0,
-      resin: 0,
     });
 
     claims.claimCommission(commission.id);
@@ -170,7 +169,7 @@ describe(useWorldCommissionClaims, () => {
   test("should refuse an unfinished claim with no whole point held, leaving the day and the wallet as they were", () => {
     expect.hasAssertions();
     const day = dayWith(FINISH_PROGRESS - 1);
-    const { claims, commissionDay, wallet } = createClaims({ day, halfPoints: 1, longTermHalfPoints: 0, resin: 0 });
+    const { claims, commissionDay, wallet } = createClaims({ ...baseClaims, day, halfPoints: 1 });
 
     claims.claimCommission(commission.id);
 
@@ -181,12 +180,7 @@ describe(useWorldCommissionClaims, () => {
   test("should refuse a claim while the friendship levels are unread, leaving the day and the wallet as they were", () => {
     expect.hasAssertions();
     const day = dayWith(FINISH_PROGRESS);
-    const { claims, commissionDay, friendshipLevels, setCharacters, wallet } = createClaims({
-      day,
-      halfPoints: 0,
-      longTermHalfPoints: 0,
-      resin: 0,
-    });
+    const { claims, commissionDay, friendshipLevels, setCharacters, wallet } = createClaims({ ...baseClaims, day });
     friendshipLevels.value = undefined;
 
     claims.claimCommission(commission.id);
@@ -199,8 +193,8 @@ describe(useWorldCommissionClaims, () => {
   test("should convert a long-term point for thirty Original Resin, where the daily points are a whole point short", () => {
     expect.hasAssertions();
     const { claims, encounterPoints, longTermEncounterPoints, wallet } = createClaims({
+      ...baseClaims,
       day: dayWith(0),
-      halfPoints: 0,
       longTermHalfPoints: 2,
       resin: LONG_TERM_RESIN_COST,
     });
@@ -218,8 +212,8 @@ describe(useWorldCommissionClaims, () => {
     const clock = createWorldClock(NOW);
     const { claims } = createClaims({
       clock,
+      ...baseClaims,
       day: dayWith(0),
-      halfPoints: 0,
       longTermHalfPoints: 2,
       resin: LONG_TERM_RESIN_COST - 1,
     });
@@ -232,12 +226,7 @@ describe(useWorldCommissionClaims, () => {
 
   test("should refuse Katheryne's bonus until the day's four commissions are claimed", () => {
     expect.hasAssertions();
-    const { claims, commissionDay, wallet } = createClaims({
-      day: dayWith(FINISH_PROGRESS),
-      halfPoints: 0,
-      longTermHalfPoints: 0,
-      resin: 0,
-    });
+    const { claims, commissionDay, wallet } = createClaims({ ...baseClaims, day: dayWith(FINISH_PROGRESS) });
     claims.claimKatheryneBonus();
     expect(wallet.value[Currency.Mora]).toBe(STARTING_MORA);
     expect(commissionDay.value.isBonusClaimed).toBe(false);
@@ -246,10 +235,8 @@ describe(useWorldCommissionClaims, () => {
   test("should pay Katheryne's bonus once the day's four are claimed, into the wallet, and record it once", () => {
     expect.hasAssertions();
     const { claims, commissionDay, wallet } = createClaims({
+      ...baseClaims,
       day: { ...dayWith(FINISH_PROGRESS), claimedCommissionIds: [1, 2, 3, 4] },
-      halfPoints: 0,
-      longTermHalfPoints: 0,
-      resin: 0,
     });
     claims.claimKatheryneBonus();
     expect(wallet.value[Currency.Mora]).toBe(STARTING_MORA + BONUS_MORA);

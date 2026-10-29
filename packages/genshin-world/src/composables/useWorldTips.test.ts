@@ -56,7 +56,7 @@ describe(useWorldTips, () => {
     events.emit("finishQuest", quest(QUEST_ID), PROGRESS, PROGRESS);
     expect(showingTip.value).toStrictEqual(tip(1));
     expect(shownTipIds.value.has(1)).toBe(true);
-    expect(tipShown).toHaveBeenCalledWith(tip(1));
+    expect(tipShown).toHaveBeenCalledExactlyOnceWith(tip(1));
   });
 
   test("a tip the save has shown is not shown again", () => {

@@ -40,30 +40,31 @@ const createChests = (puzzleChestPlaces: Parameters<typeof useWorldChests>[0]["p
   };
 };
 
-describe("useWorldChests", () => {
+describe(useWorldChests, () => {
   const SEELIE_ID = "settled";
   const SEELIE_CHEST_ID = `seelie-chest-${SEELIE_ID}`;
+  const puzzleOptions: Parameters<typeof useWorldPuzzles>[0] = {
+    monumentPlaces: [],
+    savedSettledSeelieIds: new Set([SEELIE_ID]),
+    savedSolvedPuzzleIds: new Set(),
+    seelies: [
+      {
+        court: { x: 10, z: 0 },
+        id: SEELIE_ID,
+        progress: 0,
+        start: { x: 0, z: 0 },
+        state: SeelieState.Resting,
+        unfollowedSeconds: 0,
+      },
+    ],
+    shrinePlaces: [],
+    timeTrialPlaces: [],
+  };
 
   test("a Seelie's chest is offered once it settles", () => {
     expect.hasAssertions();
 
-    const { puzzleChestPlaces } = useWorldPuzzles({
-      monumentPlaces: [],
-      savedSettledSeelieIds: new Set([SEELIE_ID]),
-      savedSolvedPuzzleIds: new Set(),
-      seelies: [
-        {
-          court: { x: 10, z: 0 },
-          id: SEELIE_ID,
-          progress: 0,
-          start: { x: 0, z: 0 },
-          state: SeelieState.Resting,
-          unfollowedSeconds: 0,
-        },
-      ],
-      shrinePlaces: [],
-      timeTrialPlaces: [],
-    });
+    const { puzzleChestPlaces } = useWorldPuzzles(puzzleOptions);
     const { chestInteractables } = createChests(puzzleChestPlaces);
 
     expect(chestInteractables.value.map(({ id }) => id)).toStrictEqual([SEELIE_CHEST_ID]);
@@ -72,23 +73,7 @@ describe("useWorldChests", () => {
   test("a Seelie's chest is kept opened by its own id", () => {
     expect.hasAssertions();
 
-    const { puzzleChestPlaces } = useWorldPuzzles({
-      monumentPlaces: [],
-      savedSettledSeelieIds: new Set([SEELIE_ID]),
-      savedSolvedPuzzleIds: new Set(),
-      seelies: [
-        {
-          court: { x: 10, z: 0 },
-          id: SEELIE_ID,
-          progress: 0,
-          start: { x: 0, z: 0 },
-          state: SeelieState.Resting,
-          unfollowedSeconds: 0,
-        },
-      ],
-      shrinePlaces: [],
-      timeTrialPlaces: [],
-    });
+    const { puzzleChestPlaces } = useWorldPuzzles(puzzleOptions);
     const { chestInteractables, openChestById, openedChestIds } = createChests(puzzleChestPlaces);
     openChestById(SEELIE_CHEST_ID, () => 0);
 

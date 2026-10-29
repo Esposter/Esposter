@@ -103,12 +103,12 @@ describe(useWorldShrines, () => {
 
     expect({
       interactables: shrineInteractables.value,
-      isOpen: shrineMarkers[0]?.shrine.isOpen,
+      isOpen: shrineMarkers.map(({ shrine }) => shrine.isOpen),
       items: inventory.value.items.map(({ definition, quantity }) => ({ id: definition.id, quantity })),
       setInventoryCalls: setInventory.mock.calls.length,
     }).toStrictEqual({
       interactables: [],
-      isOpen: true,
+      isOpen: [true],
       items: [{ id: KEY_ITEM_ID, quantity: 1 }],
       setInventoryCalls: 1,
     });
@@ -125,9 +125,9 @@ describe(useWorldShrines, () => {
 
     expect({
       interactables: shrineInteractables.value,
-      isOpen: shrineMarkers[0]?.shrine.isOpen,
+      isOpen: shrineMarkers.map(({ shrine }) => shrine.isOpen),
       items: inventory.value.items.map(({ definition, quantity }) => ({ id: definition.id, quantity })),
-    }).toStrictEqual({ interactables: [], isOpen: false, items: [{ id: OTHER_KEY_ITEM_ID, quantity: 1 }] });
+    }).toStrictEqual({ interactables: [], isOpen: [false], items: [{ id: OTHER_KEY_ITEM_ID, quantity: 1 }] });
     expect(setInventory).not.toHaveBeenCalled();
   });
 });

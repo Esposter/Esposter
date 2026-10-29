@@ -22,7 +22,7 @@ import { createParty } from "#src/services/party/createParty";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { takeOne } from "@esposter/shared";
 import { ItemCategory } from "genshin-interface";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 import { ref } from "vue";
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
@@ -38,7 +38,7 @@ const createCharacter = (id: number): Character => ({
   weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
 });
 
-describe("useWorldOutcrops", () => {
+describe(useWorldOutcrops, () => {
   const CHARACTER_ID = 1;
   const BENCHED_CHARACTER_ID = 2;
   const FRIENDSHIP_LEVELS: FriendshipLevels = [
@@ -58,6 +58,7 @@ describe("useWorldOutcrops", () => {
     },
   ];
   const epoch = Temporal.Instant.fromEpochMilliseconds(0);
+  const clearedOutcrop = { kind: OutcropKind.Revelation, placeId: 1, stage: OutcropStage.Cleared };
 
   // A region's outcrops, with a held wallet of resin enough for two claims at a ley line, and the setters writing back
   const createOutcrops = (resin = BlossomClaimResinMap[BlossomKind.LeyLine] * 2) => {
@@ -123,7 +124,8 @@ describe("useWorldOutcrops", () => {
 
     const { adventureExp, outcrops, wallet } = createOutcrops();
     outcrops.openOutcropClaim(1, epoch);
-    outcrops.chooseOutcropClaim(takeOne(outcrops.claimPrompt.value?.offers ?? [], 0), epoch, 0, () => 0);
+    assert.exists(outcrops.claimPrompt.value);
+    outcrops.chooseOutcropClaim(takeOne(outcrops.claimPrompt.value.offers, 0), epoch, 0, () => 0);
 
     expect(wallet.value[Currency.OriginalResin]).toBe(BlossomClaimResinMap[BlossomKind.LeyLine]);
     expect(wallet.value[Currency.Mora]).toBe(EMPTY_WALLET[Currency.Mora] + 100);
@@ -138,7 +140,8 @@ describe("useWorldOutcrops", () => {
 
     const { characters, outcrops } = createOutcrops();
     outcrops.openOutcropClaim(1, epoch);
-    const offer = takeOne(outcrops.claimPrompt.value?.offers ?? [], 0);
+    assert.exists(outcrops.claimPrompt.value);
+    const offer = takeOne(outcrops.claimPrompt.value.offers, 0);
     outcrops.chooseOutcropClaim(offer, epoch, 0, () => 0);
 
     expect(characters.value.map(({ friendshipExp, id }) => ({ friendshipExp, id }))).toStrictEqual([
@@ -153,7 +156,8 @@ describe("useWorldOutcrops", () => {
     const { characters, friendshipLevels, outcrops, wallet } = createOutcrops();
     friendshipLevels.value = undefined;
     outcrops.openOutcropClaim(1, epoch);
-    outcrops.chooseOutcropClaim(takeOne(outcrops.claimPrompt.value?.offers ?? [], 0), epoch, 0, () => 0);
+    assert.exists(outcrops.claimPrompt.value);
+    outcrops.chooseOutcropClaim(takeOne(outcrops.claimPrompt.value.offers, 0), epoch, 0, () => 0);
 
     expect(outcrops.claimPrompt.value).toBeDefined();
     expect(wallet.value[Currency.OriginalResin]).toBe(BlossomClaimResinMap[BlossomKind.LeyLine] * 2);
@@ -200,9 +204,7 @@ describe("useWorldOutcrops", () => {
 
     expect(outcrops.claimPrompt.value).toBeUndefined();
     expect(wallet.value[Currency.Mora]).toBe(EMPTY_WALLET[Currency.Mora]);
-    expect(outcrops.outcrops.value).toStrictEqual([
-      { kind: OutcropKind.Revelation, placeId: 1, stage: OutcropStage.Cleared },
-    ]);
+    expect(outcrops.outcrops.value).toStrictEqual([clearedOutcrop]);
   });
 
   test("a claim without enough resin is refused", () => {
@@ -220,9 +222,7 @@ describe("useWorldOutcrops", () => {
 
     const { outcrops } = createOutcrops();
     outcrops.drawDayOutcrops(epoch.add({ hours: 1 }), () => 0);
-    expect(outcrops.outcrops.value).toStrictEqual([
-      { kind: OutcropKind.Revelation, placeId: 1, stage: OutcropStage.Cleared },
-    ]);
+    expect(outcrops.outcrops.value).toStrictEqual([clearedOutcrop]);
 
     outcrops.drawDayOutcrops(epoch.add({ hours: 24 }), () => 0);
     expect(outcrops.outcrops.value).toStrictEqual([
@@ -236,8 +236,6 @@ describe("useWorldOutcrops", () => {
     const { outcrops } = createOutcrops();
     outcrops.kindRules.value = [];
     outcrops.drawDayOutcrops(epoch.add({ hours: 24 }), () => 0);
-    expect(outcrops.outcrops.value).toStrictEqual([
-      { kind: OutcropKind.Revelation, placeId: 1, stage: OutcropStage.Cleared },
-    ]);
+    expect(outcrops.outcrops.value).toStrictEqual([clearedOutcrop]);
   });
 });

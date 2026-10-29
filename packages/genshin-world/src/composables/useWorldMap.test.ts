@@ -93,6 +93,13 @@ describe(useWorldMap, () => {
   const requestQuest = createQuest(REQUEST_QUEST_ID);
   const reputationQuest = createQuest(REPUTATION_QUEST_ID);
   const requestFinishedProgress: QuestProgress = { objectiveCounts: [], stepIndex: 1 };
+  const epoch = Temporal.Instant.fromEpochMilliseconds(0);
+  const startedProgress: QuestProgress = { objectiveCounts: [0], stepIndex: 0 };
+  const rewardedReputation = { exp: REWARD_EXP, level: 1 };
+  const rewardedWallet = { ...EMPTY_WALLET, [Currency.Mora]: REWARD_MORA };
+  const requestedReputation = { exp: REQUEST_EXP, level: 1 };
+  const requestedWallet = { ...EMPTY_WALLET, [Currency.Mora]: REQUEST_MORA };
+  const startingReputation = { exp: 0, level: 1 };
   const NEXT_LEVEL_EXP = 1000;
   const TRANS_POINT_ID = 9;
   const TRANS_POINT_ADVENTURE_EXP = 20;
@@ -210,7 +217,7 @@ describe(useWorldMap, () => {
         events,
         gainWorldAdventureExp,
         gameDataBaseUrl: "game-data",
-        getWorldNow: () => Temporal.Now.instant(),
+        getWorldNow: () => epoch,
         placedDoings,
         questStepTargets,
         recordedDoingIds,
@@ -237,8 +244,8 @@ describe(useWorldMap, () => {
 
     activateLandmark(statue.id);
 
-    expect(reputation.value).toStrictEqual({ exp: REWARD_EXP, level: 1 });
-    expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REWARD_MORA });
+    expect(reputation.value).toStrictEqual(rewardedReputation);
+    expect(wallet.value).toStrictEqual(rewardedWallet);
   });
 
   test("a passed threshold does not pay again", async () => {
@@ -251,8 +258,8 @@ describe(useWorldMap, () => {
     activateLandmark(statue.id);
     activateLandmark(statue.id);
 
-    expect(reputation.value).toStrictEqual({ exp: REWARD_EXP, level: 1 });
-    expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REWARD_MORA });
+    expect(reputation.value).toStrictEqual(rewardedReputation);
+    expect(wallet.value).toStrictEqual(rewardedWallet);
   });
 
   test("a finished request pays its reward once", async () => {
@@ -261,30 +268,29 @@ describe(useWorldMap, () => {
     const { events, reputation, wallet } = createWorldMap();
     await waitForReads();
 
-    events.emit("finishQuest", requestQuest, { objectiveCounts: [0], stepIndex: 0 }, requestFinishedProgress);
+    events.emit("finishQuest", requestQuest, startedProgress, requestFinishedProgress);
     events.emit("finishQuest", requestQuest, requestFinishedProgress, requestFinishedProgress);
 
-    expect(reputation.value).toStrictEqual({ exp: REQUEST_EXP, level: 1 });
-    expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REQUEST_MORA });
+    expect(reputation.value).toStrictEqual(requestedReputation);
+    expect(wallet.value).toStrictEqual(requestedWallet);
   });
 
   test("a request taken before the week's limit pays past it", async () => {
     expect.hasAssertions();
 
-    const now = Temporal.Now.instant();
     const { events, reputation, wallet } = createWorldMap(
       undefined,
       undefined,
       undefined,
-      Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => now),
+      Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => epoch),
     );
     await waitForReads();
 
-    events.emit("finishQuest", requestQuest, { objectiveCounts: [0], stepIndex: 0 }, requestFinishedProgress);
+    events.emit("finishQuest", requestQuest, startedProgress, requestFinishedProgress);
     events.emit("finishQuest", requestQuest, requestFinishedProgress, requestFinishedProgress);
 
-    expect(reputation.value).toStrictEqual({ exp: REQUEST_EXP, level: 1 });
-    expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REQUEST_MORA });
+    expect(reputation.value).toStrictEqual(requestedReputation);
+    expect(wallet.value).toStrictEqual(requestedWallet);
   });
 
   test("a finished reputation quest pays its reward once", async () => {
@@ -293,7 +299,7 @@ describe(useWorldMap, () => {
     const { events, reputation, wallet } = createWorldMap();
     await waitForReads();
 
-    events.emit("finishQuest", reputationQuest, { objectiveCounts: [0], stepIndex: 0 }, requestFinishedProgress);
+    events.emit("finishQuest", reputationQuest, startedProgress, requestFinishedProgress);
     events.emit("finishQuest", reputationQuest, requestFinishedProgress, requestFinishedProgress);
 
     expect(reputation.value).toStrictEqual({ exp: REPUTATION_QUEST_EXP, level: 1 });
@@ -309,7 +315,7 @@ describe(useWorldMap, () => {
     await waitForReads();
     const parentQuest = createQuest(REPUTATION_PARENT_ID);
 
-    events.emit("finishQuest", parentQuest, { objectiveCounts: [0], stepIndex: 0 }, requestFinishedProgress);
+    events.emit("finishQuest", parentQuest, startedProgress, requestFinishedProgress);
     events.emit("finishQuest", parentQuest, requestFinishedProgress, requestFinishedProgress);
 
     expect(reputation.value).toStrictEqual({ exp: REPUTATION_PARENT_EXP, level: 1 });
@@ -325,14 +331,14 @@ describe(useWorldMap, () => {
     const { events, reputation, wallet } = createWorldMap();
     await waitForReads();
 
-    events.emit("finishQuest", requestQuest, { objectiveCounts: [0], stepIndex: 0 }, requestFinishedProgress);
-    expect(reputation.value).toStrictEqual({ exp: 0, level: 1 });
+    events.emit("finishQuest", requestQuest, startedProgress, requestFinishedProgress);
+    expect(reputation.value).toStrictEqual(startingReputation);
 
     reputationRead.resolve(reputationCity);
     await waitForReads();
 
-    expect(reputation.value).toStrictEqual({ exp: REQUEST_EXP, level: 1 });
-    expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REQUEST_MORA });
+    expect(reputation.value).toStrictEqual(requestedReputation);
+    expect(wallet.value).toStrictEqual(requestedWallet);
   });
 
   test("an unlock before the reads settle pays its threshold once", async () => {
@@ -354,8 +360,8 @@ describe(useWorldMap, () => {
     reputationRead.resolve(reputationCity);
     await waitForReads();
 
-    expect(reputation.value).toStrictEqual({ exp: REWARD_EXP, level: 1 });
-    expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REWARD_MORA });
+    expect(reputation.value).toStrictEqual(rewardedReputation);
+    expect(wallet.value).toStrictEqual(rewardedWallet);
   });
 
   test("an unlock made before the reads land is paid once they land", async () => {
@@ -368,13 +374,13 @@ describe(useWorldMap, () => {
     await waitForReads();
 
     activateLandmark(statue.id);
-    expect(reputation.value).toStrictEqual({ exp: 0, level: 1 });
+    expect(reputation.value).toStrictEqual(startingReputation);
 
     reputationRead.resolve(reputationCity);
     await waitForReads();
 
-    expect(reputation.value).toStrictEqual({ exp: REWARD_EXP, level: 1 });
-    expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REWARD_MORA });
+    expect(reputation.value).toStrictEqual(rewardedReputation);
+    expect(wallet.value).toStrictEqual(rewardedWallet);
   });
 
   test("an unlocked waypoint is never pointed to", async () => {
@@ -543,8 +549,7 @@ describe(useWorldMap, () => {
     activateLandmark(domainEntrance.id);
     activateLandmark(domainEntrance.id);
 
-    expect(domainEntryUnlocked).toHaveBeenCalledTimes(1);
-    expect(domainEntryUnlocked).toHaveBeenCalledWith(domainEntrance.entryId);
+    expect(domainEntryUnlocked).toHaveBeenCalledExactlyOnceWith(domainEntrance.entryId);
   });
 
   test("the first unlock of a waypoint emits no domain entry", async () => {

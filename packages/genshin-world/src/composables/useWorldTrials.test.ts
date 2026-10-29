@@ -95,6 +95,7 @@ describe(useWorldTrials, () => {
   test("a trial's timer runs out and its first clear pays the reward once", async () => {
     expect.hasAssertions();
     const setWallet = vi.fn<(wallet: Wallet) => void>();
+    const reward = { ...EMPTY_WALLET, [Currency.Primogem]: PRIMOGEM_COUNT };
     const { enterTrial, stepTrial, trialArena, trialClaimedStageIds, trials } = setUpTrials({ setWallet });
     await flushReads();
     expect(trials.value).toHaveLength(1);
@@ -105,12 +106,11 @@ describe(useWorldTrials, () => {
     stepTrial(TIMED_OUT_STEP);
     expect(trialArena.value).toBeUndefined();
     expect(trialClaimedStageIds.value).toStrictEqual(new Set([STAGE_ID]));
-    expect(setWallet).toHaveBeenCalledTimes(1);
-    expect(setWallet).toHaveBeenCalledWith({ ...EMPTY_WALLET, [Currency.Primogem]: PRIMOGEM_COUNT });
+    expect(setWallet).toHaveBeenCalledExactlyOnceWith(reward);
 
     await enterTrial(trial, RETURN_POSE);
     stepTrial(TIMED_OUT_STEP);
-    expect(setWallet).toHaveBeenCalledTimes(1);
+    expect(setWallet).toHaveBeenCalledExactlyOnceWith(reward);
   });
 
   test("a trial takes the player's roster for its fight, and the roster is given back when it ends", async () => {

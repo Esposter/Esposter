@@ -54,8 +54,8 @@ describe(useWorldSaveSync, () => {
     characters.value = [...characters.value];
     scope.stop();
 
-    const [emittedSave] = emitSave.mock.lastCall ?? [];
-    assert.exists(emittedSave);
+    assert.exists(emitSave.mock.lastCall);
+    const [emittedSave] = emitSave.mock.lastCall;
     expect(readGenshinSave(emittedSave, {}, new Map(), new Map(), new Map())).toStrictEqual(savedState);
   });
 });

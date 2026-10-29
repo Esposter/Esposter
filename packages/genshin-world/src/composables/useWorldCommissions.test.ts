@@ -48,6 +48,13 @@ describe(useWorldCommissions, () => {
   const todayReset = Temporal.Instant.fromEpochMilliseconds(0).subtract({ hours: GAME_DAY_START_HOUR });
   const afterReset = todayReset.add({ hours: 1 });
   const nextReset = todayReset.add({ hours: 24 });
+  const baseCommissions = {
+    finishedMainQuestIds: computed(() => new Set<number>()),
+    gameDataBaseUrl: "",
+    questTargetIds: computed<string[]>(() => []),
+    rank: computed(() => RANK),
+    savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION },
+  };
 
   // The commissions composable as a load of the save reads it an hour past the daily reset, holding the given Encounter Points
   const useAfterReset = (
@@ -56,12 +63,9 @@ describe(useWorldCommissions, () => {
     { getWorldNow, worldNow } = createWorldClock(afterReset),
   ) =>
     useWorldCommissions({
+      ...baseCommissions,
       events,
-      finishedMainQuestIds: computed(() => new Set<number>()),
-      gameDataBaseUrl: "",
       getWorldNow,
-      questTargetIds: computed<string[]>(() => []),
-      rank: computed(() => RANK),
       savedCommissionDay: {
         claimedCommissionIds: [],
         dealtAt: todayReset,
@@ -69,7 +73,6 @@ describe(useWorldCommissions, () => {
         isBonusClaimed: false,
       },
       savedEncounterPoints,
-      savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION },
       worldNow,
     });
 
@@ -78,11 +81,9 @@ describe(useWorldCommissions, () => {
     const { getWorldNow, worldNow } = createWorldClock(afterReset);
     vi.mocked(readCommissionSlices).mockResolvedValue([createSlice()]);
     return useWorldCommissions({
+      ...baseCommissions,
       events: createWorldEvents(),
-      finishedMainQuestIds: computed(() => new Set<number>()),
-      gameDataBaseUrl: "",
       getWorldNow,
-      questTargetIds: computed<string[]>(() => []),
       rank: computed(() => rank),
       savedCommissionDay: {
         claimedCommissionIds: [],
@@ -91,7 +92,6 @@ describe(useWorldCommissions, () => {
         isBonusClaimed: false,
       },
       savedEncounterPoints: { earnedOn: todayReset, halfPoints: 2 },
-      savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION },
       worldNow,
     });
   };
@@ -101,12 +101,9 @@ describe(useWorldCommissions, () => {
     const { getWorldNow, worldNow } = createWorldClock(afterReset);
     vi.mocked(readCommissionSlices).mockResolvedValue([createSlice()]);
     const { commissionDay } = useWorldCommissions({
+      ...baseCommissions,
       events: createWorldEvents(),
-      finishedMainQuestIds: computed(() => new Set<number>()),
-      gameDataBaseUrl: "",
       getWorldNow,
-      questTargetIds: computed<string[]>(() => []),
-      rank: computed(() => RANK),
       savedCommissionDay: {
         claimedCommissionIds: [1],
         dealtAt: todayReset.subtract({ minutes: 1 }),

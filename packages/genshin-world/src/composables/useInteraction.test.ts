@@ -46,8 +46,8 @@ describe(useInteraction, () => {
     const { readInteraction } = useInteraction(() => [drop], new Object3D());
     const heldInput = { ...idleInput, heldActions: new Set([InputAction.Interact]) };
 
-    expect(readInteraction(heldInput, INTERACTION_HELD_REPEAT_SECONDS - 0.05)).toBeUndefined();
-    expect(readInteraction(heldInput, INTERACTION_HELD_REPEAT_SECONDS - 0.05)).toStrictEqual(drop);
+    expect(readInteraction(heldInput, INTERACTION_HELD_REPEAT_SECONDS - 0.1)).toBeUndefined();
+    expect(readInteraction(heldInput, INTERACTION_HELD_REPEAT_SECONDS - 0.1)).toStrictEqual(drop);
   });
 
   test("the wheel steps the rows while more than one shows, and its notches are spent", () => {
@@ -69,10 +69,11 @@ describe(useInteraction, () => {
     let interactables = [drop];
     const { interactionPrompts, readInteraction } = useInteraction(() => interactables, new Object3D());
     readInteraction(idleInput, 0);
-    interactables = [{ ...drop, name: "Slime Condensate" }];
+    const renamed: Interactable = { ...drop, name: "Slime Condensate" };
+    interactables = [renamed];
     readInteraction(idleInput, 0);
 
-    expect(interactionPrompts.value.interactables[0]?.name).toBe("Slime Condensate");
+    expect(interactionPrompts.value.interactables).toStrictEqual([renamed]);
   });
 
   test("the wheel is left to the camera with one row", () => {

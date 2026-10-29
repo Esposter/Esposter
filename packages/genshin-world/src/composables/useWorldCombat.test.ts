@@ -21,27 +21,30 @@ import { shallowRef } from "vue";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+const createCombat = (overrides: Partial<Parameters<typeof useWorldCombat>[0]> = {}) =>
+  useWorldCombat({
+    characterIdConstellationsMap: shallowRef(new Map()),
+    enemyTables,
+    events: createWorldEvents(),
+    gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
+    onPartyDown: () => {},
+    onPartyRevived: () => {},
+    partyBonusLines: shallowRef([]),
+    placeWorldDrops: () => {},
+    savedCharacters: [],
+    savedParty: createParty([TRAVELER_CHARACTER_ID]),
+    startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
+    statTables,
+    travelerBonusLines: shallowRef([]),
+    travelerElement: shallowRef<Element>(),
+    wildlifePlaces: [],
+    ...overrides,
+  });
 
 describe(useWorldCombat, () => {
   test("a new player starts with the Traveler alone", () => {
     expect.hasAssertions();
-    const { characters } = useWorldCombat({
-      characterIdConstellationsMap: shallowRef(new Map()),
-      enemyTables,
-      events: createWorldEvents(),
-      gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
-      onPartyDown: () => {},
-      onPartyRevived: () => {},
-      partyBonusLines: shallowRef([]),
-      placeWorldDrops: () => {},
-      savedCharacters: [],
-      savedParty: createParty([TRAVELER_CHARACTER_ID]),
-      startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
-      statTables,
-      travelerBonusLines: shallowRef([]),
-      travelerElement: shallowRef<Element>(),
-      wildlifePlaces: [],
-    });
+    const { characters } = createCombat();
 
     expect(characters.value).toStrictEqual([createCharacter(TRAVELER_CHARACTER_ID, statTables.characterDataMap)]);
   });
@@ -49,23 +52,7 @@ describe(useWorldCombat, () => {
   test("a chest opened in the world reaches the combat", () => {
     expect.hasAssertions();
     const events = createWorldEvents();
-    const { kitContext } = useWorldCombat({
-      characterIdConstellationsMap: shallowRef(new Map()),
-      enemyTables,
-      events,
-      gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
-      onPartyDown: () => {},
-      onPartyRevived: () => {},
-      partyBonusLines: shallowRef([]),
-      placeWorldDrops: () => {},
-      savedCharacters: [],
-      savedParty: createParty([TRAVELER_CHARACTER_ID]),
-      startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
-      statTables,
-      travelerBonusLines: shallowRef([]),
-      travelerElement: shallowRef<Element>(),
-      wildlifePlaces: [],
-    });
+    const { kitContext } = createCombat({ events });
     events.emit("chestOpened");
 
     expect(kitContext.outbox).toStrictEqual([{ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.ChestOpened }]);
@@ -80,22 +67,11 @@ describe(useWorldCombat, () => {
         .slice(0, 3)
         .map(([characterId]) => characterId),
     ];
-    const { kitContext } = useWorldCombat({
-      characterIdConstellationsMap: shallowRef(new Map()),
-      enemyTables,
-      events: createWorldEvents(),
-      gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
-      onPartyDown: () => {},
-      onPartyRevived: () => {},
-      partyBonusLines: shallowRef([]),
-      placeWorldDrops: () => {},
+    const { kitContext } = createCombat({
       savedCharacters: characterIds.map((characterId) => createCharacter(characterId, statTables.characterDataMap)),
       savedParty: createParty(characterIds),
       startingCharacterIdKitMap: new Map(characterIds.map((characterId) => [characterId, TRAVELER_KIT])),
-      statTables,
-      travelerBonusLines: shallowRef([]),
       travelerElement: shallowRef(Element.Anemo),
-      wildlifePlaces: [],
     });
     const amount = 1;
     kitContext.stamina.spend(amount);
@@ -105,23 +81,7 @@ describe(useWorldCombat, () => {
 
   test("a buff that raises Max HP shows on the HUD and lapses off it, with no party member written", () => {
     expect.hasAssertions();
-    const { hudMember, kitContext } = useWorldCombat({
-      characterIdConstellationsMap: shallowRef(new Map()),
-      enemyTables,
-      events: createWorldEvents(),
-      gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
-      onPartyDown: () => {},
-      onPartyRevived: () => {},
-      partyBonusLines: shallowRef([]),
-      placeWorldDrops: () => {},
-      savedCharacters: [],
-      savedParty: createParty([TRAVELER_CHARACTER_ID]),
-      startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
-      statTables,
-      travelerBonusLines: shallowRef([]),
-      travelerElement: shallowRef<Element>(),
-      wildlifePlaces: [],
-    });
+    const { hudMember, kitContext } = createCombat();
     const unbuffedMaxHealth = hudMember.value?.maxHealth;
     assert(unbuffedMaxHealth !== undefined);
     const BUFF_AMOUNT = 1;
@@ -142,31 +102,15 @@ describe(useWorldCombat, () => {
     expect.hasAssertions();
     const onPartyDown = vi.fn<() => void>();
     const onPartyRevived = vi.fn<() => void>();
-    const { party, respawnParty, reviveFallenParty } = useWorldCombat({
-      characterIdConstellationsMap: shallowRef(new Map()),
-      enemyTables,
-      events: createWorldEvents(),
-      gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
-      onPartyDown,
-      onPartyRevived,
-      partyBonusLines: shallowRef([]),
-      placeWorldDrops: () => {},
-      savedCharacters: [],
-      savedParty: createParty([TRAVELER_CHARACTER_ID]),
-      startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
-      statTables,
-      travelerBonusLines: shallowRef([]),
-      travelerElement: shallowRef<Element>(),
-      wildlifePlaces: [],
-    });
+    const { party, respawnParty, reviveFallenParty } = createCombat({ onPartyDown, onPartyRevived });
     getPartyMember(party, TRAVELER_CHARACTER_ID).healthShare = 0;
     respawnParty();
 
-    expect(onPartyDown).toHaveBeenCalledTimes(1);
+    expect(onPartyDown).toHaveBeenCalledExactlyOnceWith();
     expect(onPartyRevived).not.toHaveBeenCalled();
     reviveFallenParty();
 
-    expect(onPartyRevived).toHaveBeenCalledTimes(1);
+    expect(onPartyRevived).toHaveBeenCalledExactlyOnceWith();
     expect(getPartyMember(party, TRAVELER_CHARACTER_ID).healthShare).toBe(REVIVE_HEALTH_SHARE);
   });
 });

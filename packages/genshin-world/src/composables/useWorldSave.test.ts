@@ -67,8 +67,9 @@ describe(useWorldSave, () => {
     const worldSave = scope.run(() =>
       useWorldSave({ emitGrant: vi.fn<() => void>(), events: createWorldEvents(), savedState: cookingSavedState }),
     );
+    assert.exists(worldSave);
 
-    expect(worldSave?.cookingProgress.value).toStrictEqual({ learnedRecipeIds: [1], proficiencies: { 1: 2 } });
+    expect(worldSave.cookingProgress.value).toStrictEqual({ learnedRecipeIds: [1], proficiencies: { 1: 2 } });
     scope.stop();
   });
 

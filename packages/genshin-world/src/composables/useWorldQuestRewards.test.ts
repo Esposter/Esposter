@@ -11,6 +11,7 @@ import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { MaterialType } from "#src/models/inventory/MaterialType";
 import { QuestKind } from "#src/models/quest/QuestKind";
+import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
 import { CHARACTER_EXP_ITEM_ID, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { describe, expect, test, vi } from "vitest";
@@ -20,7 +21,6 @@ describe(useWorldQuestRewards, () => {
   // A made-up item and quest, since no record is copied into a test. Its rewards are Mora, a made-up item, Adventure
   // EXP and the Character EXP one level at level one takes
   const ITEM_ID = 900_001;
-  const ADVENTURE_EXP_ITEM_ID = 102;
   const MAX_LEVEL = 20;
   const MATERIAL_DATA: MaterialData = {
     id: ITEM_ID,

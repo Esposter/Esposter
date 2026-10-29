@@ -17,6 +17,7 @@ describe(useWorldAdventureRank, () => {
   const ascensionQuestIds = new Set([25_001, 25_005, 25_009, 25_011]);
   const maxAdventureExp = computeAdventureExpAtRank(adventureRankTables.levels, MAX_ADVENTURE_RANK);
   const GAIN = 100;
+  const noFinishedMainQuestIds = new Set<number>();
 
   const createAdventureRank = (
     savedAdventureExp: number,
@@ -29,7 +30,7 @@ describe(useWorldAdventureRank, () => {
       adventureRankTables,
       events,
       finishedMainQuestIds: computed(() => questIds.value),
-      getWorldNow: () => Temporal.Now.instant(),
+      getWorldNow: () => Temporal.Instant.fromEpochMilliseconds(0),
       savedAdventureExp,
       savedAdventureRankRewardsClaimed: [],
       savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
@@ -50,7 +51,7 @@ describe(useWorldAdventureRank, () => {
   test("a gain of 375 from none reaches rank 2", () => {
     expect.hasAssertions();
 
-    const { adventureRank } = createAdventureRank(0, new Set());
+    const { adventureRank } = createAdventureRank(0, noFinishedMainQuestIds);
     adventureRank.gainWorldAdventureExp(375);
 
     expect(adventureRank.adventureExp.value).toBe(375);
@@ -60,7 +61,7 @@ describe(useWorldAdventureRank, () => {
   test("a gain past the World Level 1 hold leaves the rank at 25 while its ascension quest is not done", () => {
     expect.hasAssertions();
 
-    const { adventureRank } = createAdventureRank(maxAdventureExp, new Set());
+    const { adventureRank } = createAdventureRank(maxAdventureExp, noFinishedMainQuestIds);
     adventureRank.gainWorldAdventureExp(GAIN);
 
     expect(adventureRank.rank.value).toBe(25);
@@ -82,7 +83,11 @@ describe(useWorldAdventureRank, () => {
     const events = createWorldEvents();
     const worldLevelUps = vi.fn<(worldLevel: number) => void>();
     events.on("worldLevelUp", worldLevelUps);
-    const { adventureRank, setFinishedMainQuestIds } = createAdventureRank(maxAdventureExp, new Set(), events);
+    const { adventureRank, setFinishedMainQuestIds } = createAdventureRank(
+      maxAdventureExp,
+      noFinishedMainQuestIds,
+      events,
+    );
     const startingWorldLevel = adventureRank.worldLevel.value;
     setFinishedMainQuestIds(ascensionQuestIds);
     await nextTick();

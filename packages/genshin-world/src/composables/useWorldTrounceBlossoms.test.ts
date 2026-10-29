@@ -72,6 +72,13 @@ describe(useWorldTrounceBlossoms, () => {
   const savedState = readGenshinSave(EMPTY_GENSHIN_SAVE, {}, new Map(), new Map(), new Map());
   const maxAdventureExp = computeAdventureExpAtRank(adventureRankTables.levels, MAX_ADVENTURE_RANK);
   const ascensionQuestIds = new Set([25_001, 25_005, 25_009, 25_011]);
+  const createTrounceSave = () => ({ lastTeleportAt: undefined, trounceBlossoms: new Map() });
+  const createNormalBoss = (): TrounceBlossom => ({
+    claimedAts: [],
+    kind: BlossomKind.NormalBoss,
+    place: { x: 1, z: 2 },
+    uniqueDropId: UNIQUE_DROP_ID,
+  });
 
   // A kind only a Spiral Abyss chamber fights is outside the enum, so its traits are its family's defaults, not an
   // Entry of the traits map, and its defeat must still reach the listeners after the blossom's
@@ -94,7 +101,7 @@ describe(useWorldTrounceBlossoms, () => {
       materialDataMap: new Map(),
       nameText: {},
       party: createParty([TRAVELER_CHARACTER_ID]),
-      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
+      savedState: createTrounceSave(),
       setInventory: () => {},
       setWallet: () => {},
       wallet: shallowRef(EMPTY_WALLET),
@@ -110,7 +117,7 @@ describe(useWorldTrounceBlossoms, () => {
     );
     events.emit("defeatEnemy", enemy);
 
-    expect(defeatListener).toHaveBeenCalledWith(enemy);
+    expect(defeatListener).toHaveBeenCalledExactlyOnceWith(enemy);
   });
 
   test("a weekly boss's Trounce Blossom is offered again once the weekly reset passes, with no write", () => {
@@ -130,7 +137,7 @@ describe(useWorldTrounceBlossoms, () => {
       materialDataMap: new Map(),
       nameText: {},
       party: createParty([TRAVELER_CHARACTER_ID]),
-      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
+      savedState: createTrounceSave(),
       setInventory: vi.fn<(nextInventory: Inventory) => void>(),
       setWallet: vi.fn<(nextWallet: Wallet) => void>(),
       wallet: ref(EMPTY_WALLET),
@@ -167,18 +174,13 @@ describe(useWorldTrounceBlossoms, () => {
       materialDataMap,
       nameText: { [UNIQUE_DROP_NAME_TEXT_ID]: "Test Boss Drop" },
       party: createParty([TRAVELER_CHARACTER_ID]),
-      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
+      savedState: createTrounceSave(),
       setInventory: vi.fn<(nextInventory: Inventory) => void>(),
       setWallet: vi.fn<(nextWallet: Wallet) => void>(),
       wallet: ref<Wallet>({ ...EMPTY_WALLET, [Currency.OriginalResin]: BlossomClaimResinMap[BlossomKind.NormalBoss] }),
       worldNow: ref(epoch),
     });
-    trounceBlossoms.value = new Map<string, TrounceBlossom>([
-      [
-        SPAWN_KEY,
-        { claimedAts: [], kind: BlossomKind.NormalBoss, place: { x: 1, z: 2 }, uniqueDropId: UNIQUE_DROP_ID },
-      ],
-    ]);
+    trounceBlossoms.value = new Map<string, TrounceBlossom>([[SPAWN_KEY, createNormalBoss()]]);
     await flushReads();
 
     openTrounceBlossomClaim(SPAWN_KEY, epoch);
@@ -222,7 +224,7 @@ describe(useWorldTrounceBlossoms, () => {
       materialDataMap,
       nameText: { [UNIQUE_DROP_NAME_TEXT_ID]: "Test Boss Drop" },
       party: createParty([TRAVELER_CHARACTER_ID]),
-      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
+      savedState: createTrounceSave(),
       setInventory: vi.fn<(nextInventory: Inventory) => void>(),
       setWallet: (nextWallet) => {
         wallet.value = nextWallet;
@@ -230,12 +232,7 @@ describe(useWorldTrounceBlossoms, () => {
       wallet,
       worldNow: ref(epoch),
     });
-    trounceBlossoms.value = new Map<string, TrounceBlossom>([
-      [
-        SPAWN_KEY,
-        { claimedAts: [], kind: BlossomKind.NormalBoss, place: { x: 1, z: 2 }, uniqueDropId: UNIQUE_DROP_ID },
-      ],
-    ]);
+    trounceBlossoms.value = new Map<string, TrounceBlossom>([[SPAWN_KEY, createNormalBoss()]]);
     openTrounceBlossomClaim(SPAWN_KEY, epoch);
     chooseTrounceBlossomClaim(epoch, 0, () => 0);
 
@@ -287,7 +284,7 @@ describe(useWorldTrounceBlossoms, () => {
       materialDataMap: weeklyMaterialDataMap,
       nameText: names,
       party: createParty([TRAVELER_CHARACTER_ID]),
-      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
+      savedState: createTrounceSave(),
       setInventory: (nextInventory) => {
         inventory.value = nextInventory;
       },
