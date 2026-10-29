@@ -14,7 +14,7 @@
 ## 3. Handles
 
 - [x] 3.1 Register the world's commands: `state`, `teleport` (a landmark, a region or coordinates, through the pose the map overlay's jump uses), `time`, `timescale` and `heal`; `weather`, `god` and `noclip` wait for the state they need (design, Notes). Verify: a test per command that runs it against a stubbed handle and one that calls it unmounted.
-- [ ] 3.2 Register the save's commands: `give` (items by the names the game shows, Mora, primogems), `level`, `ar` and `unlock` (waypoints, map regions). Verify: tests that each writes the same save field the game's own act writes.
+- [x] 3.2 Register the save's commands: `give` (items by the names the game shows, Mora, primogems), `level`, `ar` and `unlock` (waypoints, map regions). Verify: tests that each writes the same save field the game's own act writes.
 
 ## 4. Look and stats
 

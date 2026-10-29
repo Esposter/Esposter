@@ -44,6 +44,23 @@ const session = authClient.useSession();
 // Browser driven by automation takes it through `window.__dev` and mounts no surface, since a panel would cover the
 // Scene it shoots; a player's build has neither
 const devRegistry = IS_DEVELOPMENT ? createDevRegistry() : undefined;
+// The save the world last wrote, which the developer's save commands read. A change they make is handed back to the page
+// As the world's own save and applied by a reload, since a running world reads its save once, when it starts
+const latestSave = shallowRef(save);
+if (devRegistry)
+  useGenshinDevSaveCommands({
+    applySave: (newSave) => {
+      latestSave.value = newSave;
+      emit("save", newSave);
+      window.location.reload();
+    },
+    devRegistry,
+    gameDataBaseUrl: getGenshinGameDataBaseUrl(containerBaseUrl),
+    gameText,
+    getSave: () => latestSave.value,
+    language,
+    regionDataBaseUrl: GENSHIN_REGION_DATA_BASE_URL,
+  });
 const isDevSurfaceShown = ref(false);
 const isDevConsoleOpen = ref(false);
 const isDevPanelOpen = ref(false);
@@ -130,7 +147,12 @@ onMounted(() => {
     @grant="emit('grant')"
     @quit="navigateTo(RoutePath.Index)"
     @ready="emit('ready')"
-    @save="(newSave) => emit('save', newSave)"
+    @save="
+      (newSave) => {
+        latestSave = newSave;
+        emit('save', newSave);
+      }
+    "
   />
   <template v-if="devRegistry && isDevSurfaceShown">
     <GenshinDevConsole v-model="isDevConsoleOpen" :registry="devRegistry" />
