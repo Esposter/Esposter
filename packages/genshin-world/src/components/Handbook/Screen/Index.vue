@@ -157,7 +157,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
               class="commission-reward"
               :count
               :rarity
-              :style="{ left: `calc(var(--reference-pixel) * ${1018 + rewardIndex * 159})` }"
+              :style="{ left: `calc(var(--reference-pixel) * ${1020 + rewardIndex * 159})` }"
             />
             <svg class="commission-check" viewBox="0 0 252 228" aria-hidden="true">
               <path fill="#7fbc2c" fill-rule="evenodd" :d="CHECK_MARK_PATH" />
@@ -633,7 +633,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
 
 .commission-reward {
   position: absolute;
-  top: calc(var(--reference-pixel) * 53);
+  top: calc(var(--reference-pixel) * 50);
   width: calc(var(--reference-pixel) * 141);
   height: calc(var(--reference-pixel) * 141);
 }
@@ -701,7 +701,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
 .commission-check {
   position: absolute;
   top: calc(var(--reference-pixel) * 74);
-  left: calc(var(--reference-pixel) * 1463);
+  left: calc(var(--reference-pixel) * 1465);
   width: calc(var(--reference-pixel) * 93);
   height: calc(var(--reference-pixel) * 84);
 }
