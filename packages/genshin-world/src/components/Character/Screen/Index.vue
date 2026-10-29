@@ -227,18 +227,23 @@ const artifactSlotStats = computed(() =>
 );
 // The artifact slots' names in the game's order
 const artifactSlotNames = computed(() => ARTIFACT_SLOT_ORDER.map((slot) => gameText[ArtifactSlotGameTextKeyMap[slot]]));
-// The set bonuses the worn artifacts reach, each as its line in the game's words, and the words for none, which are
-// Shown while none is active
+// The set bonuses the worn artifacts reach, each naming the set it belongs to
 const activeArtifactSetBonuses = computed(() =>
   getActiveArtifactSetBonuses(character.value?.artifacts ?? [], statTables.artifactSetDataMap),
 );
-const setBonusLines = computed(() => getArtifactSetBonusLines(activeArtifactSetBonuses.value, gameText, nameText));
-// The name of the set the worn artifacts make, its heading's words, empty while none is active
-const setName = computed(() => {
-  const setId = activeArtifactSetBonuses.value[0]?.setId;
-  const nameTextId = reliquarySets.find(({ id }) => id === setId)?.nameTextId;
-  return nameTextId === undefined ? "" : nameText[nameTextId] || "";
-});
+// Each set the worn artifacts make, with its name and its bonuses' lines
+const artifactSetBonusGroups = computed(() =>
+  Array.from(
+    Map.groupBy(activeArtifactSetBonuses.value, ({ setId }) => setId),
+    ([setId, setBonuses]) => {
+      const nameTextId = reliquarySets.find(({ id }) => id === setId)?.nameTextId;
+      return {
+        lines: getArtifactSetBonusLines(setBonuses, gameText, nameText),
+        name: nameTextId === undefined ? "" : nameText[nameTextId] || "",
+      };
+    },
+  ),
+);
 const noSetBonusLabel = computed(() =>
   activeArtifactSetBonuses.value.length === 0 ? gameText[GameTextKey.ArtifactSetBonusNone] : "",
 );
@@ -549,8 +554,7 @@ const isActivateDisabled = computed(
         :lock-label="gameText[GameTextKey.ArtifactActionLock]"
         :no-set-bonus-label
         :set-bonus-heading="gameText[GameTextKey.ArtifactSetBonusHeading]"
-        :set-bonus-lines
-        :set-name
+        :sets="artifactSetBonusGroups"
         :slot-names="artifactSlotNames"
         :slot-stats="artifactSlotStats"
         :switch-label="gameText[GameTextKey.QuickSwapSwitch]"

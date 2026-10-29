@@ -44,16 +44,18 @@ const XILONEN_CONSTELLATION_COUNT = 6;
 // Pieces. Each main and roll is read off the game's tables at the level given: Sands and Goblet hold their Defense main at
 // +17 and +19, which with the Defense rolls on Plume and Circlet sum Xilonen's Defense to the recording's +1,398 from them
 const SCROLL_SET_ID = 15037;
+// Gilded Dreams, the second set the two-set variant wears two pieces of beside the Scroll
+const GILDED_DREAMS_SET_ID = 15026;
 const ARTIFACT_RARITY = 5;
 // The piece of the set a slot is rolled as: its five-star one that starts with four minor affixes
-const getPieceItemId = (slot: ArtifactSlot): number => {
+const getPieceItemId = (slot: ArtifactSlot, setId: number): number => {
   const piece = reliquarySets
-    .find(({ id }) => id === SCROLL_SET_ID)
+    .find(({ id }) => id === setId)
     ?.pieces.find(
       (candidate) =>
         candidate.slot === slot && candidate.rarity === ARTIFACT_RARITY && candidate.startingMinorCount === 4,
     );
-  if (!piece) throw new InvalidOperationError(Operation.Read, getPieceItemId.name, `${slot} of set ${SCROLL_SET_ID}`);
+  if (!piece) throw new InvalidOperationError(Operation.Read, getPieceItemId.name, `${slot} of set ${setId}`);
   return piece.itemId;
 };
 // A minor affix at its tier in the rarity's table, each roll worth that tier's value and the rolls summed on its one line
@@ -73,7 +75,7 @@ const createArtifact = (
 ): Artifact => ({
   experience: 0,
   isLocked: false,
-  itemId: getPieceItemId(slot),
+  itemId: getPieceItemId(slot, SCROLL_SET_ID),
   level,
   mainAffix,
   minorAffixes,
@@ -112,6 +114,18 @@ const XILONEN_ARTIFACTS: Artifact[] = [
     getMinorAffix(Attribute.EnergyRecharge, 2),
     getMinorAffix(Attribute.CriticalRate, 3),
   ]),
+];
+// The same piece rolled as one of another set, its slot and affixes kept
+const asPieceOfSet = (artifact: Artifact, setId: number): Artifact => ({
+  ...artifact,
+  itemId: getPieceItemId(artifact.slot, setId),
+  setId,
+});
+// Xilonen's Flower of Life and Plume of Death from the Scroll and her Sands and Goblet from Gilded Dreams, two pieces each
+// Of two sets, with the Circlet of Logos unworn, so both sets reach their two-piece bonus
+const TWO_SETS_ARTIFACTS: Artifact[] = [
+  ...XILONEN_ARTIFACTS.slice(0, 2),
+  ...XILONEN_ARTIFACTS.slice(2, 4).map((artifact) => asPieceOfSet(artifact, GILDED_DREAMS_SET_ID)),
 ];
 const STAMINA = 240;
 const ROSTER_IDS = [
@@ -174,4 +188,13 @@ export const variants = {
   constellation: { initialTab: CharacterMenuTab.Constellation },
   talents: { initialTab: CharacterMenuTab.Talents },
   weapons: { initialTab: CharacterMenuTab.Weapons },
+};
+
+// Xilonen on her Artifacts tab wearing two pieces each of the Scroll and of Gilded Dreams, so both sets' names draw
+export const twoSetsProps = {
+  ...props,
+  characters: roster.map((character) =>
+    character.id === XILONEN_ID ? { ...character, artifacts: TWO_SETS_ARTIFACTS } : character,
+  ),
+  initialTab: CharacterMenuTab.Artifacts,
 };

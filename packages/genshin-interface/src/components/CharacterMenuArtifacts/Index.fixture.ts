@@ -10,8 +10,7 @@ export const props = {
   noSetBonusLabel: "No Set Bonus",
   notice: "",
   setBonusHeading: "Set Bonus",
-  setBonusLines: [],
-  setName: "",
+  sets: [],
   slotNames: ["Flower of Life", "Plume of Death", "Sands of Eon", "Goblet of Eonothem", "Circlet of Logos"],
   slotStats: [undefined, undefined, undefined, undefined, undefined],
   switchLabel: "Switch",
@@ -26,15 +25,22 @@ export const props = {
 };
 
 // Her Flower of Life worn and picked, so the details offer Unequip in place of Equip, with its stats drawn under the details
-// Pill, and her five pieces of a set worn for the two- and four-piece bonuses. The totals and the piece's values are
-// Provisional samples, not the game's
+// Pill, and the two-piece bonus of the set that piece belongs to. The totals and the piece's values are provisional
+// Samples, not the game's
 export const variants = {
   // The bag is full, so the Unequip the player pressed left the piece worn. The notice is a provisional sample line,
   // Not the game's card: the Character screen passes the game's own words in
   bagFull: { notice: "The bag is full." },
+  // Two pieces each of two sets worn, so the set bonus block draws both sets' names above their bonuses, each set's lines
+  // under its own name
+  twoSets: {
+    sets: [
+      { lines: ["2-Piece Set: Attack +18%"], name: "Scroll of the Hero of Cinder City" },
+      { lines: ["2-Piece Set: Elemental Mastery +80"], name: "Gilded Dreams" },
+    ],
+  },
   worn: {
-    setBonusLines: ["2-Piece Set: Attack +18%"],
-    setName: "Scroll of the Hero of Cinder City",
+    sets: [{ lines: ["2-Piece Set: Attack +18%"], name: "Scroll of the Hero of Cinder City" }],
     slotStats: [
       {
         isLocked: false,

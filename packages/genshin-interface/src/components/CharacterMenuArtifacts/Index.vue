@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ArtifactSetBonusGroup } from "#src/models/ArtifactSetBonusGroup";
 import type { ArtifactSlotStats } from "#src/models/ArtifactSlotStats";
 import type { ArtifactStatLine } from "#src/models/ArtifactStatLine";
 
@@ -27,10 +28,8 @@ interface Props {
   notice: string;
   // The set bonus block's heading, the game's word for its bonuses
   setBonusHeading: string;
-  // Each bonus the worn artifacts' set grants, as its line in the game's words, empty while none is active
-  setBonusLines: string[];
-  // The name of the set the worn artifacts make, in the reader's language, empty while none is active
-  setName: string;
+  // Each set the worn artifacts make, its name and its bonuses' lines in the game's words, empty while none is active
+  sets: ArtifactSetBonusGroup[];
   // Each slot's name in the game's order, which the details name the picked slot by
   slotNames: string[];
   // Each slot's stats in the game's order, undefined where the character wears no artifact, shown in the details
@@ -55,8 +54,7 @@ const {
   noSetBonusLabel,
   notice,
   setBonusHeading,
-  setBonusLines,
-  setName,
+  sets,
   slotNames,
   slotStats,
   switchLabel,
@@ -112,16 +110,20 @@ const switchSlot = () => {
       </ul>
       <div class="set-bonus">
         <p class="set-bonus-heading">{{ setBonusHeading }}</p>
-        <p v-if="setName" class="set-name">{{ setName }}</p>
-        <ul v-if="setBonusLines.length > 0" class="set-bonus-lines">
-          <li v-for="line in setBonusLines" :key="line">
-            <svg class="check" viewBox="0 0 20 20" aria-hidden="true">
-              <circle cx="10" cy="10" r="10" />
-              <path d="M5.5 10.5 L8.5 13.5 L14.5 7" />
-            </svg>
-            {{ line }}
-          </li>
-        </ul>
+        <template v-if="sets.length > 0">
+          <div v-for="({ lines, name }, index) in sets" :key="index">
+            <p v-if="name" class="set-name">{{ name }}</p>
+            <ul class="set-bonus-lines">
+              <li v-for="line in lines" :key="line">
+                <svg class="check" viewBox="0 0 20 20" aria-hidden="true">
+                  <circle cx="10" cy="10" r="10" />
+                  <path d="M5.5 10.5 L8.5 13.5 L14.5 7" />
+                </svg>
+                {{ line }}
+              </li>
+            </ul>
+          </div>
+        </template>
         <p v-else class="set-bonus-lines">{{ noSetBonusLabel }}</p>
       </div>
     </template>
