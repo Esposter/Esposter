@@ -1,4 +1,6 @@
 // @vitest-environment happy-dom
+import type { DevCommand } from "genshin-world";
+
 import GenshinDevConsole from "@/components/Genshin/Dev/Console/Index.vue";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createDevRegistry } from "genshin-world";
@@ -21,19 +23,15 @@ describe("genshinDevConsole", () => {
 
     const calls: string[] = [];
     const registry = createDevRegistry();
-    registry.register({
-      commands: [
-        {
-          args: TIME_ARGUMENTS,
-          name: "time",
-          run: ({ hour }) => {
-            calls.push(`time ${hour}`);
-            return { ok: true, value: hour };
-          },
-        },
-      ],
-      variables: [],
-    });
+    const timeCommand: DevCommand<typeof TIME_ARGUMENTS> = {
+      args: TIME_ARGUMENTS,
+      name: "time",
+      run: ({ hour }) => {
+        calls.push(`time ${hour}`);
+        return { ok: true, value: hour };
+      },
+    };
+    registry.register({ commands: [timeCommand], variables: [] });
     const component = mount(GenshinDevConsole, { props: { modelValue: true, registry } });
 
     component.get("input").setValue("time 21");
@@ -49,19 +47,15 @@ describe("genshinDevConsole", () => {
 
     const calls: string[] = [];
     const registry = createDevRegistry();
-    registry.register({
-      commands: [
-        {
-          args: GIVE_ARGUMENTS,
-          name: "give",
-          run: ({ item }) => {
-            calls.push(item);
-            return { ok: true, value: item };
-          },
-        },
-      ],
-      variables: [],
-    });
+    const giveCommand: DevCommand<typeof GIVE_ARGUMENTS> = {
+      args: GIVE_ARGUMENTS,
+      name: "give",
+      run: ({ item }) => {
+        calls.push(item);
+        return { ok: true, value: item };
+      },
+    };
+    registry.register({ commands: [giveCommand], variables: [] });
     const component = mount(GenshinDevConsole, { props: { modelValue: true, registry } });
 
     component.get("input").setValue("give Mora lots");

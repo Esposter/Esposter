@@ -36,24 +36,28 @@ export const useGenshinDevSaveCommands = ({
       applySave(outcome.save);
       return { ok: true, value: outcome.value };
     };
-    return [
-      { args: giveItemArgumentsSchema, name: "give", run: (args) => takeOutcome(giveItem(getSave(), args, tables)) },
-      {
-        args: setCharacterLevelArgumentsSchema,
-        name: "level",
-        run: (args) => takeOutcome(setCharacterLevel(getSave(), args, tables)),
-      },
-      {
-        args: setAdventureRankArgumentsSchema,
-        name: "ar",
-        run: (args) => takeOutcome(setAdventureRank(getSave(), args, tables)),
-      },
-      {
-        args: unlockLandmarkArgumentsSchema,
-        name: "unlock",
-        run: (args) => takeOutcome(unlockLandmark(getSave(), args, tables)),
-      },
-    ];
+    // Each command is typed by its own schema, so its `run` takes the arguments that schema parses rather than the list's
+    const giveCommand: DevCommand<typeof giveItemArgumentsSchema> = {
+      args: giveItemArgumentsSchema,
+      name: "give",
+      run: (args) => takeOutcome(giveItem(getSave(), args, tables)),
+    };
+    const levelCommand: DevCommand<typeof setCharacterLevelArgumentsSchema> = {
+      args: setCharacterLevelArgumentsSchema,
+      name: "level",
+      run: (args) => takeOutcome(setCharacterLevel(getSave(), args, tables)),
+    };
+    const adventureRankCommand: DevCommand<typeof setAdventureRankArgumentsSchema> = {
+      args: setAdventureRankArgumentsSchema,
+      name: "ar",
+      run: (args) => takeOutcome(setAdventureRank(getSave(), args, tables)),
+    };
+    const unlockCommand: DevCommand<typeof unlockLandmarkArgumentsSchema> = {
+      args: unlockLandmarkArgumentsSchema,
+      name: "unlock",
+      run: (args) => takeOutcome(unlockLandmark(getSave(), args, tables)),
+    };
+    return [giveCommand, levelCommand, adventureRankCommand, unlockCommand];
   };
 
   // The read settles every failure itself, logging it, so the chain it returns cannot reject and nothing waits on it
