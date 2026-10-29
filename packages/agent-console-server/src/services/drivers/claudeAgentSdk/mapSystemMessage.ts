@@ -6,6 +6,7 @@ import type {
   SDKThinkingTokensMessage,
 } from "@anthropic-ai/claude-agent-sdk";
 
+import { SdkHookPhase } from "#src/models/drivers/claudeAgentSdk/SdkHookPhase";
 import { SdkSessionState } from "#src/models/drivers/claudeAgentSdk/SdkSessionState";
 import { AgentEventType } from "#src/models/event/AgentEventType";
 import { CompactionTrigger } from "#src/models/event/CompactionTrigger";
@@ -42,9 +43,9 @@ export const mapSystemMessage = (
           type: AgentEventType.Compaction,
         },
       ];
-    case "hook_progress":
-    case "hook_response":
-    case "hook_started":
+    case SdkHookPhase.HookProgress:
+    case SdkHookPhase.HookResponse:
+    case SdkHookPhase.HookStarted:
       return [mapHookMessage(message, createdAt)];
     case "local_command_output":
       return [{ content: message.content, createdAt, id: message.uuid, type: AgentEventType.CommandOutput }];
