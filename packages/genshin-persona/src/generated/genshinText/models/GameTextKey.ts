@@ -279,6 +279,8 @@ export const GameTextKey = {
   DomainLeave: "INFO_AVATAR_TRANSPORT_DUNGEON_TITLE",
   // The question the leave prompt asks before the player leaves a domain
   DomainLeavePrompt: "UI_STC_Intee_DungeonExit",
+  // The map's switch that shows only the domains, as the game's map names it
+  DomainsOnly: "UI_ABYSSUS_MAP_INFO_SWITCH",
   // The title of a domain's entry screen
   DomainTitle: "4043227537",
   // The line the startup loading screen shows under its bar while the files download, with the download's size beside it
