@@ -134,6 +134,7 @@ useEventListener("keydown", (event) => {
   <GameScreen class="dialogue-talk">
     <DialogueScreen
       :choices
+      :confirm-label="gameText[GameTextKey.Confirm]"
       :line="lineText"
       :revealed-length
       :selected-choice-id="choices[selectedChoiceIndex]?.id ?? ''"

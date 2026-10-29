@@ -10,6 +10,8 @@ import { computed } from "vue";
 interface Props {
   // The replies on offer, shown once the line is written out, none while the talk only goes on
   choices: DialogueChoice[];
+  // The word the advance key's hint reads once the line is written out with no reply on offer
+  confirmLabel: string;
   line: string;
   // How many of the line's characters are written out so far; the rest keep their place unseen, so the line never
   // Rewraps as it is written
@@ -22,8 +24,11 @@ interface Props {
   speakerRole: string;
 }
 
-const { choices, line, revealedLength, selectedChoiceId, speakerName, speakerRole } = defineProps<Props>();
+const { choices, confirmLabel, line, revealedLength, selectedChoiceId, speakerName, speakerRole } =
+  defineProps<Props>();
 const emit = defineEmits<{ advance: []; choose: [id: string] }>();
+// Whole with no reply to choose, the game marks the line as one the reader goes on from
+const isWhole = computed(() => line !== "" && choices.length === 0 && revealedLength >= [...line].length);
 // The line split where it is written out to, by character so a pair of code units is never cut
 const lineParts = computed(() => {
   const characters = [...line];
@@ -40,7 +45,7 @@ const lineParts = computed(() => {
        choices; the selected reply's look and a narration's place wait on recordings still owed -->
   <div class="dialogue-screen" @click="emit('advance')">
     <div class="band" :class="{ narration: !speakerName }" aria-live="polite">
-      <p v-if="speakerName" class="speaker">{{ speakerName }}</p>
+      <p v-if="speakerName" class="speaker" :class="{ 'no-role': !speakerRole }">{{ speakerName }}</p>
       <p v-if="speakerRole" class="role">
         {{ speakerRole }}
         <svg class="flourish" aria-hidden="true" viewBox="0 0 208 128"><path :d="ROLE_FLOURISH_PATH" /></svg>
@@ -72,6 +77,17 @@ const lineParts = computed(() => {
         </GameButton>
       </li>
     </ul>
+    <svg v-if="isWhole" class="advance" aria-hidden="true" viewBox="0 0 24 24">
+      <path class="ring" d="M12 0L24 12L12 24L0 12ZM12 4L4 12L12 20L20 12Z" fill-rule="evenodd" />
+      <path class="core" d="M12 8L16 12L12 16L8 12Z" />
+    </svg>
+    <p v-if="isWhole" class="confirm">
+      <svg class="key" aria-hidden="true" viewBox="0 0 35 35">
+        <circle class="key-ground" cx="17.5" cy="17.5" r="17" />
+        <path class="key-cross" d="M9 9L26 26M26 9L9 26" />
+      </svg>
+      {{ confirmLabel }}
+    </p>
   </div>
 </template>
 
@@ -104,12 +120,26 @@ const lineParts = computed(() => {
 }
 
 .speaker {
+  position: relative;
   margin: 0;
   color: v-bind(GAME_DIALOGUE_GOLD);
   font-size: calc(var(--unit) * 30);
   font-weight: 600;
   letter-spacing: calc(var(--unit) * 1.8);
   line-height: 1;
+}
+
+/* A speaker with no role has the gold rule under the name instead, 645 units wide and centred, its middle 5 units under
+   the name's foot, read off the English client's recording of Paimon's line (`dialogue-paimon-line`) */
+.speaker.no-role::after {
+  position: absolute;
+  top: calc(100% + var(--unit) * 3.5);
+  left: 50%;
+  width: calc(var(--unit) * 645);
+  height: calc(var(--unit) * 3);
+  background: color-mix(in srgb, v-bind(GAME_DIALOGUE_GOLD) 28%, transparent);
+  content: "";
+  translate: -50% 0;
 }
 
 /* The role under the name in the recording's smaller gold, its cap height and width read off the English client's
@@ -218,5 +248,60 @@ const lineParts = computed(() => {
   width: calc(var(--unit) * 30);
   height: calc(var(--unit) * 30);
   flex: none;
+}
+
+/* The continue mark under the line's middle: a gold diamond ring with a brighter core, 24 units across, its centre at the
+   screen's middle 1000 units down, read off the English client's recording (`dialogue-line`) */
+.advance {
+  position: absolute;
+  top: calc(var(--unit) * 988);
+  left: calc(var(--unit) * 948);
+  width: calc(var(--unit) * 24);
+  height: calc(var(--unit) * 24);
+}
+
+.ring {
+  fill: v-bind(GAME_DIALOGUE_GOLD);
+  opacity: 0.5;
+}
+
+.core {
+  fill: v-bind(GAME_DIALOGUE_GOLD);
+  opacity: 0.75;
+}
+
+/* The advance key's hint at the foot right: a 35-unit key, a dark round ground with a light rim and a blue cross, and its
+   word after 12 units, all read off the same recording */
+.confirm {
+  position: absolute;
+  top: calc(var(--unit) * 990);
+  left: calc(var(--unit) * 1659);
+  display: flex;
+  margin: 0;
+  align-items: center;
+  gap: calc(var(--unit) * 12);
+  color: #fff;
+  font-size: calc(var(--unit) * 20);
+  font-weight: 600;
+  line-height: calc(var(--unit) * 35);
+}
+
+.key {
+  width: calc(var(--unit) * 35);
+  height: calc(var(--unit) * 35);
+  flex: none;
+}
+
+.key-ground {
+  fill: rgb(0 0 0 / 0.6);
+  stroke: rgb(255 255 255 / 0.5);
+  stroke-width: 1.5;
+}
+
+.key-cross {
+  fill: none;
+  stroke: rgb(95 156 204);
+  stroke-linecap: round;
+  stroke-width: 4.5;
 }
 </style>

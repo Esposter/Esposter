@@ -9,6 +9,7 @@ export const props = {
     { icon: DialogueChoiceIcon.Talk, id: "1", text: "Is something wrong, Sara?" },
     { icon: DialogueChoiceIcon.Talk, id: "2", text: "Sorry, I already ate." },
   ],
+  confirmLabel: "Confirm",
   line: LINE,
   revealedLength: LINE.length,
   selectedChoiceId: "1",
@@ -17,5 +18,6 @@ export const props = {
 };
 export const variants = {
   narration: { choices: [], speakerName: "", speakerRole: "" },
+  noRole: { choices: [], speakerName: "Paimon", speakerRole: "" },
   revealing: { choices: [], revealedLength: Math.floor(LINE.length / 2) },
 };

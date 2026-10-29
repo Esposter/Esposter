@@ -24,11 +24,11 @@ committed.
 | `court-of-fontaine-location`           | `WorldScreen`               |                                                                         21.07% | 0.208 | 16.61% | 0.6768 |
 | `crafting-strongbox`                   | `CraftingStrongbox`         |                                       pending: no screenshot of the screen yet |       |        |        |
 | `crafting-table`                       | `CraftingScreen`            |                                          pending: its recording is not on disk |       |        |        |
-| `dialogue-choices-line`                | `DialogueTalk`              |                                                                          9.09% | 0.926 |  1.91% | 0.2909 |
+| `dialogue-choices-line`                | `DialogueTalk`              |                                                                          8.99% | 0.924 |  2.15% | 0.2757 |
 | `dialogue-choices-replies`             | `DialogueTalk`              |                                                                         13.45% | 0.814 |  8.33% | 0.4455 |
-| `dialogue-choices-speaker`             | `DialogueTalk`              |                                                                          6.37% | 0.788 |  4.38% | 0.2878 |
-| `dialogue-line`                        | `DialogueTalk`              |                                                                         10.49% | 0.984 |  2.07% | 0.3810 |
-| `dialogue-paimon-line`                 | `DialogueTalk`              |                                                                          9.75% | 0.947 |  2.97% | 0.3121 |
+| `dialogue-choices-speaker`             | `DialogueTalk`              |                                                                          6.37% | 0.798 |  4.63% | 0.2878 |
+| `dialogue-line`                        | `DialogueTalk`              |                                                                         10.61% | 0.982 |  2.29% | 0.3704 |
+| `dialogue-paimon-line`                 | `DialogueTalk`              |                                                                          9.67% | 0.949 |  3.35% | 0.2930 |
 | `everfrozen-earth-location`            | `WorldScreen`               |                                                                         20.61% | 0.234 | 19.75% | 0.6327 |
 | `exit-prompt`                          | `MenuExit`                  |                                                                          1.59% | 0.999 |  1.24% | 0.1205 |
 | `expedition-screen`                    | `ExpeditionScreen`          |                                                                          1.56% | 0.934 |  0.44% | 0.0672 |
