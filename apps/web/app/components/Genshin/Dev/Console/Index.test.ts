@@ -2,6 +2,7 @@
 import GenshinDevConsole from "@/components/Genshin/Dev/Console/Index.vue";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createDevRegistry } from "genshin-world";
+import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 import { z } from "zod";
 
@@ -9,7 +10,9 @@ describe("genshinDevConsole", () => {
   const TIME_ARGUMENTS = z.object({ hour: z.coerce.number() });
   const GIVE_ARGUMENTS = z.object({ item: z.string(), count: z.coerce.number().int().min(1) });
 
+  // The console's shortcuts register in the command store, which a plain mount has no Pinia for
   beforeEach(() => {
+    setActivePinia(createPinia());
     window.localStorage.clear();
   });
 
