@@ -16,7 +16,23 @@
 - [ ] `[page]` {natlan-surface} needs game-exports, parity-page — **natlan: the surface pass.** `pnpm -C scripts genshin:parity passes natlan --pass Surface`. Reads the exports' albedo at the reference's camera, our kit colours, and the ground family's paint. Writes `scripts/src/services/genshinParity/passes/snapshots/natlan.snapshot.md` and the surface's diffs. Bar: the Surface bars of [compute](../README.md#bars). — waits on the Shape pass.
 - [ ] `[page]` {natlan-atmosphere} needs game-exports, parity-page — **natlan: the atmosphere pass.** `pnpm -C scripts genshin:parity passes natlan --pass Atmosphere`. Reads the reference's sky and clouds at its camera, and the outline's weather for its hour. Writes `scripts/src/services/genshinParity/passes/snapshots/natlan.snapshot.md`. Bar: the Atmosphere bars of [compute](../README.md#bars). — waits on which weather the reference's hour is drawn in (a call). Waits on `people-of-the-springs-location-camera-landmarks` for the camera it reads.
 
+## Sources
+
+- `scripts/src/services/genshinParity/passes/constants.ts:31` (`FRAME_GATE_PIXELS = 2`), the 2 px bar the Sun, Camera and Layout items gate on.
+- `scripts/src/services/genshinParity/passes/constants.ts:81` and `scripts/src/services/genshinParity/passes/getParityPassesPath.ts:8`: the `passes/snapshots` folder and the `${component}.snapshot.md` writer the `natlan.snapshot.md` items name.
+- `scripts/src/services/genshinParity/commands/passesCommand.ts:33` (`passes`), `compareCommand.ts:53` (`compare`), `shadowsCommand.ts:17` (`shadows`, `witness` at `:12`), and `poseCommand.ts:53` (`pose`), with `witness` at `:38`, `write` at `:44` and `:75` (the write into the reference map), and `start` optional at `:66`: the verbs and flags the items name.
+- `scripts/src/services/genshinParity/witness/solveReferenceShadows.ts:192` and `scripts/src/services/genshinParity/witness/solveReferencePose.ts:76`: the `shadows` and `pose` output folders.
+- `{data-root}/genshin-parity/references/people-of-the-springs-location.png`, present on the Mac: the reference the Sun, Camera and Score items read.
+- `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts:956-959` (the comment: rigid architecture read by eye off 4x crops), `:960-972` (the `people-of-the-springs-location` entry, its seven `landmarks` at `:963-969`, and the provisional `heldMinutes: 720` at `:972`).
+- `scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts:92-94`: the People of the Springs' seven landmarks name no mesh and are all dropped, the reason the Camera item waits on a mesh.
+- `packages/genshin-engine/src/atmosphere/computeSunDirection.ts:8`: the function the held minute is read through on a hit.
+- `packages/genshin-world/src/services/world/readRegionPalettes.ts:40` (`createPaletteReader("regions/natlan/palette")`): the hosted palette the Surface item's kit colours come from.
+- `scripts/src/services/genshinParity/passes/measureDisplay.ts:17-18`, `measureLight.ts:16-17`, `measureLayout.ts:4`, `measureSurface.ts:36`, `measureAtmosphere.ts:6-7`: the reads the pass items name, in each module's own header.
+
 ## Open
 
 - [ ] **The solve writes its posed frame to the people-of-the-springs-location pose folder** — no source yet: the posed frame, which the solve has not yet written.
 - [ ] **The shadows solve writes its edge image outside the repository** — no source yet: the edge image, which the solve has not yet written.
+- [ ] **The display pass reads the post profile's grading and bloom** — no source yet: `measureDisplay.ts` names the exports' parts and the tone curve's contrast and nothing else, and no file under `passes/`, `display/` or `sky/` names bloom or a grade. What would settle it is the Display pass's read list in code, or a reader that names the grade and bloom it compares.
+- [ ] **The shape pass reads our capital's kit parts through `BuildingKitPartsMap`** — no source yet: `packages/genshin-world/src/services/world/BuildingKitPartsMap.ts` has consumers only in `packages/genshin-world/src/index.ts` and the `Landmark/Building/Index.vue` component, and none in `scripts/src/services/genshinParity/` or `packages/genshin-world/parity/`. What would settle it is the parity code path that draws the kit parts at the reference's camera.
+- [ ] **Seven landmarks solve the pose without `--start`** — no source yet that the solver converges from the default start on these seven: `poseCommand.ts:66` passes no start when the flag is absent, but the solver's convergence on this reference is not read. What would settle it is the pose run's output on the reference.
