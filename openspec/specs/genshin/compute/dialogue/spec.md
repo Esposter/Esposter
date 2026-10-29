@@ -6,7 +6,7 @@ The dialogue box's five states, scored over their backdrop.
 
 ### Requirement: Each of the dialogue box's five states
 
-Each of the dialogue box's five states SHALL differ from its reference by no more than the compare's bar on average per region: the mean difference of 1 percent, unless the reference's entry records another approval.
+None of the dialogue box's five states is yet within the compare's bar: each differs from its reference by more than the bar on average. Until a state's mean difference is at or below the bar, it SHALL be reported as not passing. The target and each state's score are recorded in the dialogue page's Parity section.
 
 #### Scenario: A state whose region differs by more than the bar does not pass
 
