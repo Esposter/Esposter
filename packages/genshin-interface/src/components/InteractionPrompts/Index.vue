@@ -24,8 +24,8 @@ const selectionDuration = `${INTERACTION_HOVER_MS}ms`;
   <!-- The prompts beside the character: a row for each thing in reach, its kind's icon before its name in a pill, and the
        Key's cap before the row F acts on, with the pointer that leads from it into the pill. Measured off the English
        PC client's three-row pickup at 1080 high: each pill 63 high on a 72 pitch, its left edge 59 past the cap's, the
-       cap 40 wide and 33 high, the icon 34 across. Each pill is a button of its own, as the game lets a row be pressed
-       without the key -->
+       cap 40 wide and 33 high, the icon 32 across 17 in from the pill's edge. Each pill is a button of its own, as the
+       game lets a row be pressed without the key -->
   <ul class="interaction-prompts" :class="{ touch: isTouch }">
     <li
       v-for="{ id, kind, name } of prompts"
@@ -107,14 +107,14 @@ const selectionDuration = `${INTERACTION_HOVER_MS}ms`;
   position: relative;
   isolation: isolate;
   height: 100%;
-  padding: 0 0 0 calc(var(--unit) * 12);
+  padding: 0 0 0 calc(var(--unit) * 17);
   align-items: center;
   border: none;
   background: none;
   color: inherit;
   cursor: inherit;
   font: inherit;
-  gap: calc(var(--unit) * 19);
+  gap: calc(var(--unit) * 18);
   pointer-events: auto;
   white-space: nowrap;
 }
@@ -159,8 +159,8 @@ const selectionDuration = `${INTERACTION_HOVER_MS}ms`;
 }
 
 .icon {
-  width: calc(var(--unit) * 34);
-  height: calc(var(--unit) * 34);
+  width: calc(var(--unit) * 32);
+  height: calc(var(--unit) * 32);
   flex: none;
   border-radius: 50%;
   background: rgb(255 255 255 / 0.18);

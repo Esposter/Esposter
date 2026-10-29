@@ -44,8 +44,8 @@ committed.
 | `hud-stamina-climb` | `HudScreen` | 0.62% | 0.787 | 0.75% | 0.0629 |
 | `hud-world-keys` | `HudScreen` | 2.51% | 0.963 | 1.72% | 0.1607 |
 | `hud-world-pickup` | `HudScreen` | 3.58% | 0.714 | 2.20% | 0.1451 |
-| `interaction-prompts-jueyun-chili` | `InteractionPromptList` | 5.07% | 0.949 | 1.78% | 0.2144 |
-| `interaction-prompts-pickup` | `InteractionPromptList` | 7.92% | 0.919 | 4.43% | 0.3313 |
+| `interaction-prompts-jueyun-chili` | `InteractionPromptList` | 4.82% | 0.947 | 1.79% | 0.2070 |
+| `interaction-prompts-pickup` | `InteractionPromptList` | 5.17% | 0.938 | 2.61% | 0.2241 |
 | `inventory-food` | `InventoryScreen` | 3.34% | 0.966 | 1.92% | 0.1900 |
 | `inventory-weapons` | `InventoryScreen` | 13.13% | 0.572 | 9.72% | 0.4374 |
 | `liyue-harbor-location` | `WorldScreen` | 29.33% | 0.303 | 24.45% | 0.8094 |

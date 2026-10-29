@@ -502,6 +502,12 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The region
   "interaction-prompts-pickup": {
     isBackdrop: true,
+    plate: [
+      { height: 38, width: 58, x: 1096, y: 448 },
+      { height: 68, width: 341, x: 1154, y: 433 },
+      { height: 68, width: 341, x: 1154, y: 505 },
+      { height: 68, width: 341, x: 1154, y: 577 },
+    ],
     region: { height: 220, width: 370, x: 1095, y: 430 },
     screen: "InteractionPromptList",
     source: "world-pickup.mkv at 9s",
