@@ -13,7 +13,7 @@ describe(readSetupRows, () => {
 
     const environment = createSetupEnvironment();
 
-    const rows = readSetupRows({ install: false, verify: false }, environment, "darwin");
+    const rows = readSetupRows({ install: false, verify: false }, environment);
 
     expect(environment.runVisibly).not.toHaveBeenCalled();
     expect(stepRow(rows, "dependencies")?.status).toBe(SetupStatus.NeedsYou);
@@ -25,7 +25,7 @@ describe(readSetupRows, () => {
 
     const environment = createSetupEnvironment();
 
-    const rows = readSetupRows({ install: true, verify: false }, environment, "darwin");
+    const rows = readSetupRows({ install: true, verify: false }, environment);
 
     expect(environment.runVisibly).toHaveBeenCalledWith(PNPM_FILE, [...PNPM_ARGS, "i"]);
     expect(stepRow(rows, "dependencies")?.status).toBe(SetupStatus.Done);
@@ -36,7 +36,7 @@ describe(readSetupRows, () => {
 
     const environment = createSetupEnvironment({ runVisibly: vi.fn(() => ({ status: 1, stdout: null })) });
 
-    const rows = readSetupRows({ install: false, verify: true }, environment, "darwin");
+    const rows = readSetupRows({ install: false, verify: true }, environment);
 
     expect(environment.runVisibly).toHaveBeenCalledWith(PNPM_FILE, [...PNPM_ARGS, ...DATA_VERIFY_ARGS]);
     expect(stepRow(rows, "game data lock")?.status).toBe(SetupStatus.NeedsYou);

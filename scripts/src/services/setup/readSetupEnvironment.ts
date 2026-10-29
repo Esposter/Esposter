@@ -18,6 +18,7 @@ export const readSetupEnvironment = (platform: NodeJS.Platform): SetupEnvironmen
     makeDirectory: (path) => {
       mkdirSync(path, { recursive: true });
     },
+    platform,
     readText: (path) => (existsSync(path) ? readFileSync(path, "utf8") : undefined),
     run: (file, args) => runSetupProcess(file, args, { isThroughShell, stdio: "pipe" }),
     runVisibly: (file, args) => runSetupProcess(file, args, { isThroughShell, stdio: "inherit" }),

@@ -10,6 +10,7 @@ export const createSetupEnvironment = (overrides: Partial<SetupEnvironment> = {}
   countFiles: () => undefined,
   exists: () => false,
   makeDirectory: vi.fn<(path: string) => void>(),
+  platform: "darwin",
   readText: () => undefined,
   run: () => ({ status: 1, stdout: "" }),
   runVisibly: vi.fn(() => ({ status: 0, stdout: null })),

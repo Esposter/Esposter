@@ -9,6 +9,8 @@ export interface SetupEnvironment {
   countFiles: (path: string) => number | undefined;
   exists: (path: string) => boolean;
   makeDirectory: (path: string) => void;
+  // The platform the steps check tools and Windows rows against, and the one a process is run through a shell on
+  platform: NodeJS.Platform;
   readText: (path: string) => string | undefined;
   run: (file: string, args: readonly string[]) => SetupRunResult;
   runVisibly: (file: string, args: readonly string[]) => SetupRunResult;

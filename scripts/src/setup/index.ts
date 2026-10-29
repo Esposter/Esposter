@@ -31,7 +31,6 @@ await runCommand(
       const rows = readSetupRows(
         { install: args.install, verify: args.verify },
         readSetupEnvironment(process.platform),
-        process.platform,
       );
       for (const line of formatSetupRows(rows)) console.info(line);
       console.info("for the session's own resume, then:");

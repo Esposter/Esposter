@@ -19,18 +19,14 @@ import { readWindowsRows } from "#src/services/setup/readWindowsRows";
 import { CACHE_ROOT } from "@esposter/shared-node/cache";
 
 // Every step of the new-machine setup, in the order a person takes them, one row each
-export const readSetupRows = (
-  options: SetupOptions,
-  environment: SetupEnvironment,
-  platform: NodeJS.Platform,
-): SetupRow[] => [
+export const readSetupRows = (options: SetupOptions, environment: SetupEnvironment): SetupRow[] => [
   readNodeRow(environment),
   readPackageManagerRow(environment),
   readDependenciesRow(options, environment),
   readHooksRow(environment),
-  ...SETUP_TOOLS.map((tool) => readToolRow(tool, environment, platform)),
+  ...SETUP_TOOLS.map((tool) => readToolRow(tool, environment, environment.platform)),
   ...SETUP_LOGINS.map((login) => readLoginRow(login, environment)),
-  ...readWindowsRows(environment, platform),
+  ...readWindowsRows(environment, environment.platform),
   readRootRow("parity folder", PARITY_DIRECTORY, environment),
   readRootRow("download cache", CACHE_ROOT, environment),
   readGameRow(environment),
