@@ -45,7 +45,7 @@ Each direction's full statement, with the pointers it carries, is `references/se
 
 ## Rules
 
-- **Numbers before looking:** run `pnpm -C scripts genshin:parity compare <reference>` and read the mean and the grid; zoom only on a cell that stands out (`references/compare.md`).
+- **Numbers before looking:** run `pnpm -C scripts genshin:parity compare <reference>`: its last stdout line is JSON with the score, the bar and the worst cells of the grid, each with both images' mean colour, so where the error is read there and not from the difference image. `genshin:parity probe <reference> <x> <y> <width> <height>` reads a rectangle's colour, ink and edges off both images as JSON. Zoom only on a cell or a rectangle the JSON names (`references/compare.md`).
 - **An agent writes a screen's image with `genshin:parity approve` after each change, whatever its compare scores: an image is a snapshot of the render, and the score beside it is a report** — `references/approval.md`.
 - **A new screen is built in a fixed order: its reference, its fixture, its component, `compare`, `approve`, then the visual suite** — `references/approval.md`. A reference is hunted once per component, never again to approve its image.
 - **A screen's load is held to its budget by the load bench**, `pnpm -C scripts genshin:parity load <screen>` (`openspec/specs/genshin/load-budget/design.md`).
