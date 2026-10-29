@@ -4,6 +4,7 @@ import type { ExpeditionNation } from "#src/models/ExpeditionNation";
 import type { ExpeditionPin } from "#src/models/ExpeditionPin";
 import type { ExpeditionPlaceDetail } from "#src/models/ExpeditionPlaceDetail";
 
+import CloseButton from "#src/components/CloseButton/Index.vue";
 import ItemTile from "#src/components/ItemTile/Index.vue";
 import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
 import { ExpeditionActionKind } from "#src/models/ExpeditionActionKind";
@@ -68,7 +69,7 @@ const pick = (characterId: number) => {
   <div class="expedition-screen">
     <ScreenTitle class="heading">{{ title }}</ScreenTitle>
     <p class="limit">{{ limitLabel }}</p>
-    <button class="close" :aria-label="closeLabel" type="button" @click="emit('close')"></button>
+    <CloseButton class="close" :label="closeLabel" @click="emit('close')" />
     <ul class="nations">
       <li v-for="{ hasAlert, name } of nations" :key="name">
         <button class="nation" :aria-pressed="name === nation" type="button" @click="nation = name">
@@ -148,15 +149,7 @@ const pick = (characterId: number) => {
 
 /* The way out is a disc 58 across with a grey ring, its cross two bars of the ink's colour, measured from the reference */
 .close {
-  position: absolute;
-  top: calc(var(--unit) * 19);
-  right: calc(var(--unit) * 48);
-  width: calc(var(--unit) * 58);
-  height: calc(var(--unit) * 58);
-  padding: 0;
-  box-sizing: border-box;
   border: calc(var(--unit) * 6) solid #757274;
-  border-radius: 50%;
   background: #eee9e8;
   color: #3e4251;
 }

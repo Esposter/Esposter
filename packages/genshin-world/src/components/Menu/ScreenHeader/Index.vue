@@ -4,6 +4,7 @@ import type { VNode } from "vue";
 
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import { MENU_LIST_CLOSE_GLYPH } from "#src/services/menu/constants";
+import { CloseButton } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -24,7 +25,7 @@ defineSlots<{ tabs?: () => VNode }>();
        focus order, the WAI-ARIA order for a dialog's header -->
   <p class="title">{{ title }}</p>
   <slot name="tabs" />
-  <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">×</button>
+  <CloseButton class="close" :label="gameText[GameTextKey.Back]" @click="emit('close')">×</CloseButton>
 </template>
 
 <style scoped>
@@ -51,13 +52,6 @@ defineSlots<{ tabs?: () => VNode }>();
    Of its pixels a unit */
 .close {
   --reference-pixel: var(--unit);
-  position: absolute;
-  top: calc(var(--unit) * 19);
-  right: calc(var(--unit) * 48);
-  width: calc(var(--unit) * 58);
-  height: calc(var(--unit) * 58);
-  padding: 0;
-  border-radius: 50%;
   background: #ece5d7;
   box-shadow: inset 0 0 0 calc(var(--unit) * 6) #878789;
   color: #3a4050;

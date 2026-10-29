@@ -8,6 +8,7 @@ export { default as CharacterMenuConstellation } from "./CharacterMenuConstellat
 export { default as CharacterMenuProfile } from "./CharacterMenuProfile/Index.vue";
 export { default as CharacterMenuTalents } from "./CharacterMenuTalents/Index.vue";
 export { default as CharacterMenuWeapons } from "./CharacterMenuWeapons/Index.vue";
+export { default as CloseButton } from "./CloseButton/Index.vue";
 export { default as CookingScreen } from "./CookingScreen/Index.vue";
 export { default as CraftingScreen } from "./CraftingScreen/Index.vue";
 export { default as DialogueScreen } from "./DialogueScreen/Index.vue";
