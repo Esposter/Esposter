@@ -347,7 +347,7 @@ const playRerollChoice = () => {
   height: calc(var(--unit) * 56);
   background: rgb(126 103 76 / 0.8);
   color: #f6e3a1;
-  font-size: calc(var(--unit) * 32);
+  font-size: calc(var(--unit) * 38);
   font-weight: 700;
   line-height: calc(var(--unit) * 56);
   text-align: center;
@@ -413,10 +413,10 @@ const playRerollChoice = () => {
 
 .acting {
   position: absolute;
-  bottom: calc(var(--unit) * 16);
-  left: calc(var(--unit) * 60);
+  top: calc(var(--unit) * 1024);
+  left: calc(var(--unit) * 146);
   color: #f6e3a1;
-  font-size: calc(var(--unit) * 22);
+  font-size: calc(var(--unit) * 20);
 }
 
 /* The skill coins sit 108 apart, 94 across, their costs in a token beneath each, as the frame draws them */
