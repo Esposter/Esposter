@@ -204,7 +204,7 @@ watch(
             :data-clip-target="LoginInterfaceClipTarget.RatingBadge"
           >
             <svg class="age-rating" viewBox="0 0 84 110" role="img" aria-label="12+">
-              <rect class="age-rating-white" width="84" height="110" rx="6" />
+              <rect class="age-rating-white" x="-0.8" y="-0.2" width="84.7" height="110.7" rx="6" />
               <rect x="6.3" y="7.5" width="70.7" height="79.5" rx="4" fill="#178ed0" />
               <path class="age-rating-white" :d="ageRating.age" transform="translate(9 10) scale(0.125)" />
               <text x="42" y="83" class="age-rating-white age-rating-name">CADPA</text>
@@ -318,6 +318,7 @@ watch(
    Layout adaptor sizes it at run time, so the badge is placed from the corner its rect stands 40 canvas units in from */
 .age-rating {
   position: absolute;
+  overflow: visible;
   top: calc(var(--unit) * 52 - var(--canvas-unit) * 40);
   right: calc(var(--unit) * 65 - var(--canvas-unit) * 40);
   width: calc(var(--unit) * 84);
