@@ -9,7 +9,7 @@ import { useListScreenTabStep } from "#src/composables/useListScreenTabStep";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ArchiveSectionGameTextKeyMap } from "#src/services/archive/ArchiveSectionGameTextKeyMap";
 import { ArchiveSectionOrder } from "#src/services/archive/ArchiveSectionOrder";
-import { GameScreen } from "genshin-interface";
+import { GameScreen, ItemRarityFaceGradientMap } from "genshin-interface";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
@@ -36,6 +36,7 @@ const {
   gameText,
   newEntryIds = new Set<number>(),
   progressMap,
+  rarityMap,
   sectionEntriesMap,
   textMap,
 } = defineProps<Props>();
@@ -82,6 +83,12 @@ const handleEntryClick = (entryId: number): void => {
   if (checkIsEntryReadable(entryId)) emit("readBook", entryId);
   else selectedEntryId.value = entryId;
 };
+// A four or five star weapon's tile takes its face gradient from the item tile, which owns the gradients, while the two and
+// three star tiles keep the flat tints below
+const getTileBackground = (entryId: number): string | undefined => {
+  const rarity = rarityMap?.get(entryId) ?? 0;
+  return rarity >= 4 ? ItemRarityFaceGradientMap[rarity] : undefined;
+};
 // Q, E and the arrows at the screen's edges step between the sections, held at the first and the last
 const sections = ArchiveSectionOrder;
 const selectSection = (sectionIndex: number): void => {
@@ -122,6 +129,7 @@ const getAdjacentSection = (step: number): ArchiveSection =>
         :aria-pressed="entry.id === selectedEntry?.id"
         :data-dimmed="dimmedEntryIds.has(entry.id) || undefined"
         :data-rarity="rarityMap?.get(entry.id)"
+        :style="{ background: getTileBackground(entry.id) }"
         @click="handleEntryClick(entry.id)"
       >
         <span class="name" :data-two-lines="checkIsTwoLineName(getEntryName(entry)) || undefined">

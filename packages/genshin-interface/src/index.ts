@@ -64,6 +64,7 @@ export * from "./services/constants.ts";
 export * from "./services/DialogueChoiceIconPathMap.ts";
 export * from "./services/InterfaceIconCentreMap.ts";
 export * from "./services/InterfaceIconPathMap.ts";
+export * from "./services/ItemRarityFaceGradientMap.ts";
 export * from "./services/playInterfaceClip.ts";
 export * from "./services/toCanvasRect.ts";
 export * from "./services/toCanvasRectStyle.ts";

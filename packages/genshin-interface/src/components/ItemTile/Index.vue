@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ItemRarityFaceGradientMap } from "#src/services/ItemRarityFaceGradientMap";
+
 interface Props {
   // How many of the item, on the strip across the tile's foot: a number, or the range a reward rolls as words ("4~5")
   count: number | string;
@@ -18,7 +20,7 @@ const { count, countSize = "30cqh", rarity } = defineProps<Props>();
        tiles. A count keeps the screen's size rather than the tile's, so each screen passes its own as `countSize`. A
        two star tile is not measured yet and draws bare. The item's own art is the game's and does not ship -->
   <span class="item-tile" :data-rarity="rarity">
-    <span class="face">
+    <span class="face" :style="{ background: ItemRarityFaceGradientMap[rarity] }">
       <span class="count" aria-hidden="true" :style="{ fontSize: countSize }">{{ count }}</span>
     </span>
   </span>
@@ -37,18 +39,6 @@ const { count, countSize = "30cqh", rarity } = defineProps<Props>();
   align-items: end;
   overflow: hidden;
   border-radius: 7cqw;
-}
-
-.item-tile[data-rarity="3"] .face {
-  background: linear-gradient(#79809d, #7485a6 30%, #748faf 60%, #7298b9 77%);
-}
-
-.item-tile[data-rarity="4"] .face {
-  background: linear-gradient(#7e77a2, #877aac 30%, #917db4 60%, #9c80bc 77%);
-}
-
-.item-tile[data-rarity="5"] .face {
-  background: linear-gradient(#b0804c, #ba8446 30%, #c38946 60%, #cc8d43 77%);
 }
 
 .count {
