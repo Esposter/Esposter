@@ -7,3 +7,4 @@
 ## Open
 
 - [ ] **Wish: the screen's scores before the event banner and the Details popup** — no source yet: the recorded runs of those earlier builds, which no snapshot keeps.
+- [ ] **The card's time remaining is not drawn yet, its text ids not being in the installed client's English text map** — no source yet: the text ids the card's time remaining would use are not named in the page or its code, so the absence is not read here.
