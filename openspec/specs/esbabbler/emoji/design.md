@@ -77,7 +77,7 @@ The accepted limitation: Unicode allows a different tone per person in a sequenc
 
 ## The picker
 
-`StyledEmojiPicker` is the trigger and the container it opens; everything else lives in `StyledEmojiPicker/`. The panel mounts on the first open and stays, which is what defers the index build to the first picker anyone opens, and keeps what its footer opened — a room's add-emoji dialog — alive after the panel closes behind it.
+`StyledEmojiPicker` is the trigger and the container it opens; everything else lives in `Styled/EmojiPicker/`. The panel mounts on the first open and stays, which is what defers the index build to the first picker anyone opens, and keeps what its footer opened — a room's add-emoji dialog — alive after the panel closes behind it.
 
 - **Search** replaces the grid wholesale while a query is running. The rail stays live rather than being disabled by it — picking a category clears the query.
 - **One category renders at a time, and there is no virtualisation.** The largest CLDR group is under four hundred buttons, which a grid handles without help; the repo has no virtual-scroll primitive, and adding one for a cost that does not exist would be the opposite of lean. Discord scrolls continuously across all categories, which does need virtualisation — a deliberate deferral.
