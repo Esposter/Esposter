@@ -23,5 +23,5 @@
 
 ## 5. Scenarios and convention
 
-- [ ] 5.1 Write the first scenarios for the features that already exist (a boss fight, every chest tier, night at Windrise, a full bag), one file each. Verify: each scenario runs in the dev server and its commands all report success; the owner checks them in game.
-- [ ] 5.2 Add the rule that a feature change registers its scenario, or states why it has none, to the `building-proposals` skill and to the openspec design rules. Verify: `git grep -n scenario .agents/skills/building-proposals` finds the rule and `openspec validate --strict` passes for this change.
+- [x] 5.1 Write the first scenarios for the features that already exist (a boss fight, every chest tier, night at Windrise, a full bag), one file each. Verify: `services/dev/scenarios/constants.test.ts` runs each scenario's lines through `createDevRegistry` against stubbed handles and every line reports success; the owner checks them in game.
+- [x] 5.2 Add the rule that a feature change registers its scenario, or states why it has none, to the `building-proposals` skill and to the openspec design rules. Verify: `git grep -n scenario .agents/skills/building-proposals` finds the rule and `openspec validate --strict` passes for this change.

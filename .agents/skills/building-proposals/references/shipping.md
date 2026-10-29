@@ -11,6 +11,10 @@ What a ship does to the spec tree is the `openspec` skill's lifecycle map (`refe
 - **A proposal whose Key files the build moved** is re-verified in the same change: the `finishing` audit's proposal row asks it of every change, and a build is the change most likely to owe it.
 - **A folder's last sub-spec** takes the folder's `index.md` with it.
 
+## The scenario a feature registers
+
+A feature a player reaches ships with a playtest scenario that puts the game in the state it changes: one file under `packages/genshin-world/src/services/dev/scenarios/`, named `<name>Scenario.ts`, listed in that folder's `constants.ts`. Its lines are the registry's commands, and `constants.test.ts` runs every list through the registry against stubbed handles, so a name or an argument no command takes fails there. A feature no command reaches says why in its design instead.
+
 ## An issue closes on ship
 
 A build taken from an issue ends with `gh issue close <n> --comment "<the commit and the page it shipped as>"` once its commit is pushed (`.agents/issue-tracker.md`), so the tracker never lists built work as open.

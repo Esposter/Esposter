@@ -22,6 +22,7 @@ rules:
   design:
     - Record each decision with the alternative rejected and the reason it lost.
     - Resolve anything that would change the specs or the tasks now. Open Questions are only for answers that change nothing else.
+    - A change that adds something a player reaches names the playtest scenario that shows it, or why it has none (the `building-proposals` skill, `references/shipping.md`).
   tasks:
     - "Each task states how it is verified: the test file written first and seen failing, or the command and its expected output."
     - Group by capability; order by dependency; one task fits one session.
