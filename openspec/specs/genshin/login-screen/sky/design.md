@@ -42,3 +42,8 @@ flowchart LR
 - [ ] **The solve casts the recording's tower shadows within 5.28 pixels of their edges** — no source yet: the figure is only in a code comment, and the shadows solve output is not kept.
 - [ ] **The dawn's and the dusk's suns sit just past the left edge, a little over the horizon** — no source yet: the dawn login still `{data-root}/genshin-parity/references/login-dawn-title.png`, not yet read for the sun's position.
 - [ ] **The direction the dusk's stone light uses** — no source yet: `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts` was not read for the stone light's direction against `DUSK_LIGHT_DIRECTION`.
+- [ ] **Solved on the title alone, the day's sky drew the phone door frame's patch of it worse** — no source yet: no per-frame score of a title-only solve is kept in `{data-root}/genshin-parity/comparisons/`.
+- [ ] **In scene colour alone, the day's horizon came out pure blue** — no source yet: no scene-colour solve output is kept.
+- [ ] **A free solve clamped after the fact left the sky salmon where the recording's is lavender** — no source yet: no clamped solve output or colour comparison is kept.
+- [ ] **A solve read back through a grade or bloom handed back a sky light a fifth to two times too strong** — no source yet: no read-back solve is kept.
+- [ ] **A fixed ratio read the sky's wisps and glow as cloud, and a solve reading them as sky drew a dark red halo** — no source yet: no solve over the fixed ratio is kept.
