@@ -28,7 +28,7 @@ The JSON is the report as recorded. Its file path is the module's path relative 
 
 The Markdown opens with a fixed note on how to read the tables, then an Environment section carrying the block, then one section per group. Each section is a table with the columns task, vs base, mean (ms), ±rme, p99 (ms) and samples. The vs base column divides the baseline's mean by the task's mean. The baseline is the task named by `BASELINE_TASK_NAME` when the group has one, and otherwise its fastest task. A ratio of one or more prints with two decimals, and a smaller one with two significant digits, so a much slower task keeps its precision. Columns are padded to equal width, so a generated file already has the shape the formatter would give it. Pipes in a benchmark name are escaped so the name stays in its cell.
 
-The environment block comes from `readBenchmarkEnvironment`. It holds the date, the commit from `git rev-parse --short HEAD` (or `unknown` outside a checkout), the node version, the platform, release and architecture, the CPU model with the padding some platforms add trimmed, the core count, and the memory in GiB.
+The environment block comes from `readBenchmarkEnvironment`. It holds the commit from `git rev-parse --short HEAD` (or `unknown` outside a checkout), the node version, the platform, release and architecture, the CPU model with the padding some platforms add trimmed, the core count, and the memory in GiB.
 
 ## Run options and wiring
 
