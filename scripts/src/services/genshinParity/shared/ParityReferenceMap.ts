@@ -905,9 +905,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The 16:9 map places them at 412, 524, 638, 754 and 868 when drawn at the menu's 0.79 reference pixel, so the 3:2 window
   // stands each 126 to 129 pixels higher. Quit's centre is 1024 in the frame, 55 above the bottom edge: the map has it 70 of
   // the 1440 high still's pixels from the bottom, which is the same 55 at 0.79, so Quit anchors to the bottom while the five
-  // are not, and the menu still draws Quit from its top, so it stands 58 pixels low and clipped by the frame's bottom. The game
-  // anchors that column by the window's aspect; the install's layout data (the PC is extracting it) will say how. Until then
-  // the menu draws the five where the 16:9 map has them
+  // are not, and the menu draws Quit from the bottom edge at that distance. How the game anchors the five is not known: the
+  // install's extraction did not find this menu's prefab, so the menu draws them where the 16:9 map has them
   "paimon-menu": {
     region: { height: 1080, width: 810, x: 150, y: 0 },
     screen: "MenuPaimon",
