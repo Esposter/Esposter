@@ -26,9 +26,6 @@ import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 export const isMotionOnly = true;
 export const props = {
   accountAvatarUrl: "",
-  accountCharacterPacks: [],
-  accountFileBaseUrl: "",
-  characterPackBaseUrl: "",
   createTerrainWorker: () => new TerrainTileWorker(),
   gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
   gameText: ENGLISH_GAME_TEXT,

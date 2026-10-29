@@ -25,18 +25,10 @@ export const TALENT_START_LEVELS: TalentLevels = {
   [CombatTalent.ElementalSkill]: TALENT_START_LEVEL,
   [CombatTalent.NormalAttack]: TALENT_START_LEVEL,
 };
-// The listing beside the characters' folders of the ids a host holds a pack for, so a character with none is drawn as
-// Its capsule without a request of its own, and of the packs the browser keeps
+// The listing the development server's pack route reads beside the packs' folders, which the route answers for the ids it lists
 export const CHARACTER_PACK_INDEX_PATH = "index.json";
-// Where the browser keeps the packs a player loads: the private file system's folder, or the IndexedDB database and its
-// One store, each file under its character's id and its pack's hash
-export const CHARACTER_PACK_STORE_NAME = "genshin-character-packs";
-export const CHARACTER_PACK_STORE_FILES_NAME = "files";
-export const CHARACTER_PACK_STORE_VERSION = 1;
-// The folder macOS's archiver adds to a zip for each file's resource fork, a "._" file beside the file's own name
-export const MACOS_RESOURCE_FORK_FOLDER = "__MACOSX/";
-// A pack's own files, named alike in every pack whatever its folder calls them: its model, and the terms bundled with
-// It as UTF-8. The model's textures keep the paths the model names them by
+// The names a pack's model and its terms are read under, whatever the pack calls them in its own folder. The model's
+// Textures keep the paths the model names them by
 export const CHARACTER_MODEL_PATH = "model.pmx";
 export const CHARACTER_TERMS_PATH = "terms.txt";
 // What a pack's terms file is found by in its name, the earliest preferred where several match: the Japanese terms, the

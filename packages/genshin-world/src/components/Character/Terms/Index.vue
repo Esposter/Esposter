@@ -1,24 +1,30 @@
 <script setup lang="ts">
 import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
 
+import { getCharacterPackReader } from "#src/services/character/getCharacterPackReader";
 import { readCharacterTerms } from "#src/services/character/readCharacterTerms";
 
 interface Props {
-  // Where the character's pack is read from, the browser's kept copy or the host's
-  characterPackReader: CharacterPackReader;
+  // The character the screen shows, whose pack's terms are shown beside it
+  characterId: number;
+  // The readers of the published character packs by the character each is of
+  characterPackReaders: ReadonlyMap<number, CharacterPackReader>;
 }
 
-const { characterPackReader } = defineProps<Props>();
+const { characterId, characterPackReaders } = defineProps<Props>();
 const terms = ref("");
 const isFailed = ref(false);
-readCharacterTerms(characterPackReader).match(
-  (text) => {
-    terms.value = text;
-  },
-  () => {
-    isFailed.value = true;
-  },
-);
+const characterPackReader = getCharacterPackReader(characterPackReaders, characterId);
+// A character with no reader has no pack to read its terms from, so it shows none
+if (characterPackReader)
+  readCharacterTerms(characterPackReader).match(
+    (text) => {
+      terms.value = text;
+    },
+    () => {
+      isFailed.value = true;
+    },
+  );
 </script>
 
 <template>

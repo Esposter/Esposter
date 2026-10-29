@@ -37,9 +37,9 @@ import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext
 import AchievementScreen from "#src/components/Achievement/Screen/Index.vue";
 import BookReaderScreen from "#src/components/Archive/BookReader/Index.vue";
 import ArchiveScreen from "#src/components/Archive/Screen/Index.vue";
-import CharacterPackLoader from "#src/components/Character/PackLoader/Index.vue";
 import CharacterScene from "#src/components/Character/Scene/Index.vue";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
+import CharacterTerms from "#src/components/Character/Terms/Index.vue";
 import ProcessingScreen from "#src/components/Cooking/Processing/Index.vue";
 import CookingScreen from "#src/components/Cooking/Screen/Index.vue";
 import CraftingScreen from "#src/components/Crafting/Screen/Index.vue";
@@ -77,7 +77,6 @@ import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldRealm from "#src/components/World/Realm/Index.vue";
 import TipPopup from "#src/components/World/Tip/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
-import { useCharacterPacks } from "#src/composables/useCharacterPacks";
 import { useInteraction } from "#src/composables/useInteraction";
 import { useMiningOutcrops } from "#src/composables/useMiningOutcrops";
 import { useStoredGenshinSettings } from "#src/composables/useStoredGenshinSettings";
@@ -250,15 +249,12 @@ interface Props extends WorldScreenProps, WorldTables {}
 
 const {
   accountAvatarUrl,
-  accountCharacterPacks,
-  accountFileBaseUrl,
   accountName,
   adventureRankTables,
   artifactMainAffixPools,
   artifactRarityDataMap,
   cameraPose,
   catalogue,
-  characterPackBaseUrl,
   characterPackReaders,
   characterTalentKits,
   craftingBenchPlace,
@@ -276,7 +272,6 @@ const {
   hudInterfaceRects,
   isPaused,
   isTuning,
-  keepAccountCharacterPack,
   language,
   materialDataMap,
   monumentPlaces,
@@ -286,7 +281,6 @@ const {
   regionDataBaseUrl,
   reliquaryPieceEntryMap,
   reliquarySets,
-  removeAccountCharacterPack,
   save,
   sceneExportBaseUrl,
   seelies,
@@ -949,17 +943,6 @@ const stellaFortunaNameTextIdMap = computed(() => {
   }
   return map;
 });
-// The characters' packs: the ones the browser keeps, which a player loads on the character screen, read ahead of the
-// Host's
-const { characterIdPackHashMap, getCharacterPackReader, isCharacterPackKept, keepCharacterPack, removeCharacterPack } =
-  useCharacterPacks({
-    accountFileBaseUrl,
-    characterPackBaseUrl,
-    getAccountCharacterPacks: () => accountCharacterPacks,
-    getActiveCharacterId: () => getActiveCharacterId(party),
-    keepAccountCharacterPack,
-    removeAccountCharacterPack,
-  });
 // The residents of the regions in reach, which the talks and a keeper's screen are read from
 const getResidents = () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents);
 // A won week game pays its reward once, its Player EXP into the card game's EXP and its Lucky Coins into the bag and wallet,
@@ -2360,14 +2343,9 @@ useWorldSaveSync({
             <CharacterScene :element :tab />
           </template>
           <template #default="{ characterId }">
-            <CharacterPackLoader
-              :character-id
-              :character-pack-reader="getCharacterPackReader(characterId)"
-              :game-data-base-url
-              :is-character-pack-kept="isCharacterPackKept(characterId)"
-              :keep-character-pack
-              :confirm-removal="() => removeCharacterPack(characterId)"
-            />
+            <div class="character-terms">
+              <CharacterTerms :key="characterId" :character-id :character-pack-readers="characterPackReaders" />
+            </div>
           </template>
         </CharacterScreen>
       </template>
@@ -2725,6 +2703,24 @@ useWorldSaveSync({
   position: relative;
   width: 100%;
   height: 100%;
+}
+
+/* The terms of the character's model, beside its foot, read as its release carries them */
+.character-terms {
+  position: absolute;
+  right: calc(var(--unit) * 120);
+  bottom: calc(var(--unit) * 48);
+  max-width: calc(var(--unit) * 720);
+  max-height: calc(var(--unit) * 300);
+  overflow: auto;
+  color: #ece5d8;
+  font-size: calc(var(--unit) * 22);
+}
+
+.character-terms > pre {
+  margin: 0;
+  font: inherit;
+  white-space: pre-wrap;
 }
 
 /* The shortcut wheel centred over the world, its size the shorter side of the view so it fits any window */

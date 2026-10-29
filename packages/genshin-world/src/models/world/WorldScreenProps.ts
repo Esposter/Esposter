@@ -1,5 +1,3 @@
-import type { AccountCharacterPack } from "#src/models/character/AccountCharacterPack";
-import type { CharacterPack } from "#src/models/character/CharacterPack";
 import type { DevRegistry } from "#src/models/dev/DevRegistry";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { WorldCameraPose } from "#src/models/world/WorldCameraPose";
@@ -10,16 +8,9 @@ import type { GameLanguage, GameText } from "genshin-text";
 export interface WorldScreenProps {
   // The signed-in player's avatar and name, which the Paimon menu's profile card shows, given while the player is signed in
   accountAvatarUrl: string;
-  // The player's account's packs, and where its files are served, given while the player is signed in: a pack it lists
-  // Draws its character ahead of the host's
-  accountCharacterPacks: AccountCharacterPack[];
-  accountFileBaseUrl: string;
   accountName?: string;
   // A camera held still, as a reference of the game's sees the world, in place of the one circling the oak
   cameraPose?: WorldCameraPose;
-  // Where the host serves the characters' model packs: the index of the ids it holds one for, and under each id that
-  // Pack's model, terms and textures. Without it a character is drawn only from a pack the player loaded
-  characterPackBaseUrl: string;
   createTerrainWorker: () => Worker;
   // Where the host serves the game's own tables and words, each object fetched by the hash the lock names
   gameDataBaseUrl: string;
@@ -33,14 +24,11 @@ export interface WorldScreenProps {
   isPaused: boolean;
   // Whether development offers the free camera in photo mode, which the host decides
   isTuning: boolean;
-  // Keeps a pack for the account and drops one from it, given while the player is signed in
-  keepAccountCharacterPack?: (characterPack: CharacterPack) => Promise<void>;
   // The reader's game language, whose names the world loads
   language: GameLanguage;
   qualityTier: QualityTier;
   // Where the host serves each region's data, fetched by id as the camera comes within reach
   regionDataBaseUrl: string;
-  removeAccountCharacterPack?: (characterId: number) => Promise<void>;
   // The player's save the world's systems start from, a new player's when there is none
   save?: GenshinSave;
   // Where the host serves the developer's own exports of the game's scenes: the index of the components it holds, and

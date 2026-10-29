@@ -3,7 +3,6 @@ export { default as ArchiveBookReader } from "./Archive/BookReader/Index.vue";
 export { default as ArchiveScreen } from "./Archive/Screen/Index.vue";
 export { default as CharacterAttributeList } from "./Character/AttributeList/Index.vue";
 export { default as CharacterModel } from "./Character/Model/Index.vue";
-export { default as CharacterPackLoader } from "./Character/PackLoader/Index.vue";
 export { default as CharacterProfile } from "./Character/Profile/Index.vue";
 export { default as CharacterScene } from "./Character/Scene/Index.vue";
 export { default as CharacterScreen } from "./Character/Screen/Index.vue";
