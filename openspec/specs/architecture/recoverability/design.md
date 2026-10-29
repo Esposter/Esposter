@@ -21,16 +21,16 @@ flowchart TD
   Size -->|no| Blob["Azure Blob, named by a committed lock"]
 ```
 
-| Kind | Home | Rebuilt or reached by |
-| :-- | :-- | :-- |
-| Code, specs, skills, ledgers, the committed reports | git | clone |
-| Snapshot images (our own render) and their score report | git | clone |
-| Parity references (the game's frames) with their manifest of source, attribution and hash | git, or Blob under a lock if the size report says git cannot hold them | clone, then the pack's restore |
-| Recordings a reference was cut from | a committed manifest of each public source (video id, second range, hash), so any machine fetches it again; a recording that is not public goes to Blob under a lock | the repo's clip tool |
-| Game data derived from the install (tables, text maps, extracted layouts, fitted records, authored worlds) | Blob under `packages/genshin-world/src/generated/gameDataLock.json` | the `genshin-data` skill's publish and read |
-| Raw dumps from public sources (the data repository's tables, wiki stills) | not hosted: their source and the hash or commit that was read are recorded in the lock or the manifest | fetch by that name |
-| Caches: the download cache, softness and plate files, shots, comparisons, the bundler's pre-bundled copy, installs | disk | each one's command, on first use |
-| The game install | the machine that plays it, and nowhere else | the game's own launcher; published data stands in for it |
+| Kind                                                                                                               | Home                                                                                                                                                                 | Rebuilt or reached by                                    |
+| :----------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------- |
+| Code, specs, skills, ledgers, the committed reports                                                                | git                                                                                                                                                                  | clone                                                    |
+| Snapshot images (our own render) and their score report                                                            | git                                                                                                                                                                  | clone                                                    |
+| Parity references (the game's frames) with their manifest of source, attribution and hash                          | git, or Blob under a lock if the size report says git cannot hold them                                                                                               | clone, then the pack's restore                           |
+| Recordings a reference was cut from                                                                                | a committed manifest of each public source (video id, second range, hash), so any machine fetches it again; a recording that is not public goes to Blob under a lock | the repo's clip tool                                     |
+| Game data derived from the install (tables, text maps, extracted layouts, fitted records, authored worlds)         | Blob under `packages/genshin-world/src/generated/gameDataLock.json`                                                                                                  | the `genshin-data` skill's publish and read              |
+| Raw dumps from public sources (the data repository's tables, wiki stills)                                          | not hosted: their source and the hash or commit that was read are recorded in the lock or the manifest                                                               | fetch by that name                                       |
+| Caches: the download cache, softness and plate files, shots, comparisons, the bundler's pre-bundled copy, installs | disk                                                                                                                                                                 | each one's command, on first use                         |
+| The game install                                                                                                   | the machine that plays it, and nowhere else                                                                                                                          | the game's own launcher; published data stands in for it |
 
 A folder outside the repository that is not a cache is a defect. `~/Esposter/genshin-parity` is the standing example: its references, recordings and text dumps lived only there until the references were committed; the [download cache](../download-cache/design.md) is the model for what a disk-only folder may be, since every object in it is named by its own hash and rebuilt by asking again.
 
@@ -46,13 +46,13 @@ A folder outside the repository that is not a cache is a defect. `~/Esposter/gen
 
 The rule is prose until something can fail on it, and each row below says what does today.
 
-| Fact | What fails when it is false |
-| :-- | :-- |
-| A committed reference matches its manifest hash | the reference map's test |
-| A reference is the frame its entry names | `genshin:parity verify`, run on a machine that holds the recordings |
-| Game data read at a commit matches its lock | the data readers and the lock check |
+| Fact                                             | What fails when it is false                                                 |
+| :----------------------------------------------- | :-------------------------------------------------------------------------- |
+| A committed reference matches its manifest hash  | the reference map's test                                                    |
+| A reference is the frame its entry names         | `genshin:parity verify`, run on a machine that holds the recordings         |
+| Game data read at a commit matches its lock      | the data readers and the lock check                                         |
 | An entry with a reference has the file committed | the strict half of the reference map's test, once both machines have packed |
-| A folder outside the repository is a cache | nothing yet: see Open |
+| A folder outside the repository is a cache       | nothing yet: see Open                                                       |
 
 ## Rejected
 
@@ -72,11 +72,11 @@ The rule is prose until something can fail on it, and each row below says what d
 
 ## Key files
 
-| File | Role |
-| :-- | :-- |
-| `packages/genshin-world/src/generated/gameDataLock.json` | The lock that names the Blob objects the game data reads |
-| `scripts/src/services/gameData/` | Publishing and reading the hosted game data under that lock |
-| `scripts/src/services/genshinParity/reference/` | The reference commands: fetch, approve, verify and the pack |
-| `packages/genshin-world/parity/references/` | The committed references and their manifest, once the pack lands |
-| `openspec/specs/architecture/download-cache/design.md` | The shape of a disk-only folder that is allowed: every object named by its hash |
-| `.agents/skills/genshin-data/SKILL.md` | The hosted game data's rules, the one place Blob holds derived data today |
+| File                                                     | Role                                                                                                                   |
+| :------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/generated/gameDataLock.json` | The lock that names the Blob objects the game data reads                                                               |
+| `scripts/src/services/gameData/`                         | Publishing and reading the hosted game data under that lock                                                            |
+| `scripts/src/services/genshinParity/reference/`          | The helpers the approve and verify commands call; fetch is `commands/fetchCommand.ts`, and the pack is not written yet |
+| `packages/genshin-world/parity/references/`              | The committed references and their manifest, once the pack lands                                                       |
+| `openspec/specs/architecture/download-cache/design.md`   | The shape of a disk-only folder that is allowed: every object named by its hash                                        |
+| `.agents/skills/genshin-data/SKILL.md`                   | The hosted game data's rules, the one place Blob holds derived data today                                              |
