@@ -237,7 +237,7 @@ catalog:
   unicode-emoji-json: ^0.9.0
   unocss: ^66.12.0
   unplugin-auto-import: ^21.1.0
-  unplugin-vue: ^8.0.0
+  unplugin-vue: ^8.0.1
   # @TODO: no upstream issue — Nitro 3 resolves unstorage from the app for the `kv` mounts Nuxt's storage options become,
   # Needing 2 where the app's modules install 1. Remove this dependency when Nitro takes Nuxt's own copy (nuxt/nuxt)
   unstorage: ^2.0.0-beta.0
