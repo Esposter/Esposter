@@ -6,8 +6,8 @@ import { renderConstant } from "#src/services/gameData/renderConstant";
 // `GameDataKeyOf<"shops">`, so a consumer narrows to one dataset without restating the strings
 export const getGameDataKeysSource = (lock: GameDataLock): string =>
   [
-    "// The hosted game data's keys as the lock names them, nested by the segments of each path.",
-    "// Code names a key by its segments, never by its path or its hash. Generated from gameDataLock.json on every publish.",
+    "// The lock's keys as a nested constant, each path nested by its segments. GameDataKey is the union of its leaf paths,",
+    "// which readers may use to name a key. Generated from gameDataLock.json on every publish.",
     renderConstant("GameDataKeys", Object.keys(lock.objects)),
     "",
     renderConstant("GameDataIndexKeys", Object.keys(lock.indexes)),
