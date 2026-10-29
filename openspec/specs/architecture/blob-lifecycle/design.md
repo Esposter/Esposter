@@ -18,7 +18,7 @@ flowchart TD
 - **Fixed name, overwritten in place** — one blob per slot, replaced by the next upload. Nothing accumulates, so no mutation owns a sweep.
 - **Unique name per upload** — chosen where overwrite-in-place would race (a delayed cleanup could delete a concurrent re-upload) or where snapshots must be immutable. The cost of uniqueness is that stale versions accumulate, so **both** the replace path and the parent-delete path must sweep them.
 
-Every sweep goes through `publishBlobDeletion` — the durable best-effort escalation of [persist then notify](../persist-then-notify/design.md). Inline `deleteIfExists` calls at mutation sites are banned; a parent-entity sweep lists the prefix inside the publish thunk rather than reconstructing blob names it cannot know.
+Every sweep goes through a durable publisher — `publishBlobDeletion` for a set of named blobs, `publishBlobPrefixDeletion` for a whole prefix — the best-effort escalation of [persist then notify](../persist-then-notify/design.md). Inline `deleteIfExists` calls at mutation sites are banned; a parent-entity sweep lists the prefix inside the publish thunk rather than reconstructing blob names it cannot know.
 
 ## Who may name a blob for deletion
 
