@@ -220,7 +220,7 @@ What a Windows machine needs that a clone, two logins and the install do not giv
 - **AnimeStudio** has no Windows build or fetch command: its build script is osx-arm64 only, so the Windows command line is unpacked by hand and named by `GENSHIN_ANIMESTUDIO_CLI`; the Oodle hook it needs is the committed patch under `scripts/src/services/recreation/animeStudio/patches`.
 - **`ffmpeg`** is read from `PATH` by the media-engine check; the capture encoder `h264_amf` needs an AMD GPU.
 - **Fleet** machines also need an SSH key for the peer, and `~/.esposter/peers.json` and `machine.json`, which no repository file writes.
-- **Ports** the repository binds are 3011 (the agent console host), 3000 (the app) and 7437 (the console server).
+- **Ports** the repository binds are 3011 (the genshin parity page, which `GENSHIN_PARITY_PORT` probes first), 3000 (the app) and 7437 (the agent console host).
 
 ## Environment variables
 
