@@ -163,6 +163,8 @@ export enum GameTextKey {
   // The attributes panel's level, filled with the level and its maximum, the maximum in the game's dimmer colour
   CharacterLevelWithMax = "AVATAR_LEVEL_WITH_MAX",
   CharacterProfile = "FETTER_NAME",
+  // The weapon screen's heading over what its weapon passive does
+  CharacterTalentEffect = "UI_STC_CHARACTER_PAGE_TALENT",
   CharacterTalents = "UI_STC_CHARACTERPAGE_SKILL",
   CharacterWeapons = "UI_STC_CHARACTERPAGE_WEAPON",
   Chat = "UI_CHAT_CHAT_BUTTON",
@@ -310,7 +312,7 @@ export enum GameTextKey {
   ExplorationProgress = "UI_EXPLORE_COUNT",
   ExplorationProgressComplete = "UI_EXPLORE_COUNT_MAX",
   // The Exquisite Chest, the middle tier, as the game names it
-  ExquisiteChest = "3981652399",
+  ExquisiteChest = "3981652911",
   // The feedback link, a web page the Paimon menu opens
   Feedback = "UI_STC_GAMEENTRYPAGE_FEEDBACK",
   FineEnhancementOre = "377860124",
@@ -325,14 +327,14 @@ export enum GameTextKey {
   ForgeComplete = "UI_FORGE_PAGE_FORGE_FINISH",
   // The blacksmith's words for a day's forge points spent past the cap, one for each enhancement ore, by the text id its
   // Recipe names; a recipe's own id for the same words repeats the English of these
-  ForgeEnhancementOreRefusal = "1106263200",
-  ForgeFineEnhancementOreRefusal = "1652126048",
+  ForgeEnhancementOreRefusal = "1106263712",
+  ForgeFineEnhancementOreRefusal = "1652126560",
   // The forge screen's words: a recipe's forge time, the queue button with its count, a queue's state (idle, forging,
   // Forged so far and the Adventure Rank it unlocks at), the support character's title and the total forge time
   ForgeItemTime = "UI_FORGE_PAGE_ITEM_TIME",
   ForgeMaterials = "UI_FORGE_PAGE_FOOD_ITEM_TITLE",
   ForgeMaterialsTab = "UI_FORGE_PAGE_FORMULA_BUTTON",
-  ForgeMysticEnhancementOreRefusal = "110208304",
+  ForgeMysticEnhancementOreRefusal = "110208816",
   // The forge's own text ids do not name "Obtain", so a finished queue takes the cooking screen's collect button
   ForgeObtain = "UI_COOKING_FETCH_BUTTON",
   ForgeQueueButton = "UI_FORGE_PAGE_QUEUE_BUTTON",
@@ -380,12 +382,12 @@ export enum GameTextKey {
   GlowingHornshroom = "1496527260",
   Grainfruit = "1334780260",
   // The Adventurer Handbook's Experience page: its chapter, its progress panel and its commissions, by the game's text ids
-  HandbookChapterNine = "1920411039",
-  HandbookCommissionAscendCharactersPhase5 = "1556198782",
-  HandbookCommissionAscendWeaponsPhase5 = "239841718",
-  HandbookCommissionEnhanceArtifactsLv20 = "4221402286",
-  HandbookCommissionEnhanceWeaponLv80 = "2116885982",
-  HandbookCommissionLevelUpCharacterLv80 = "4111548534",
+  HandbookChapterNine = "1920411551",
+  HandbookCommissionAscendCharactersPhase5 = "1556199294",
+  HandbookCommissionAscendWeaponsPhase5 = "239842230",
+  HandbookCommissionEnhanceArtifactsLv20 = "4221402798",
+  HandbookCommissionEnhanceWeaponLv80 = "2116886494",
+  HandbookCommissionLevelUpCharacterLv80 = "4111549046",
   // The Adventurer Handbook's tabs
   HandbookCommissions = "UI_ADVENTURE_CARD_EVENT_TITLE",
   HandbookDomains = "UI_ADVENTURE_CARD_DUNGEON_TITLE",
@@ -480,7 +482,7 @@ export enum GameTextKey {
   // Glyphs, as it does the notices, the quit and the settings the Paimon menu names alike
   LoginLogOut = "496124396",
   LoginPreparingDownload = "796445964",
-  LoginRepair = "857403427",
+  LoginRepair = "857403939",
   // The login screen's title and the label before the account's name
   LoginTitle = "3574932777",
   LoginUserLabel = "2272745789",
@@ -609,6 +611,8 @@ export enum GameTextKey {
   // The quest screen's button opening the overview of every quest
   QuestOverview = "UI_QUESTHUB_BUTTON_NAME",
   Quests = "UI_STC_GAMEENTRYPAGE_QUEST",
+  // The caption over the rewards a series of quests gives once all of it is complete, whose coloured run names what it unlocks
+  QuestSeriesRewards = "UI_SNEZHNAYA_BOOK_TASK_TIPS",
   // Provisional: the quest screen's title over its first tab, which lists every quest in progress. The text map holds
   // Several lines reading "In Progress" and none of them is named for the quest screen, so this is the plainest one
   QuestsInProgress = "UI_TEXT_DOING",
@@ -642,8 +646,8 @@ export enum GameTextKey {
   // The Remarkable Chest, the kind found in a few regions and rewarding blueprints, as the game names it
   RemarkableChest = "26276094",
   // The features a Reputation level unlocks, each worded as the reward page's unlock line, by its function's name
-  ReputationMondstadtMerchantDiscounts = "1610612133",
-  ReputationMondstadtOutcropSearch = "1452899589",
+  ReputationMondstadtMerchantDiscounts = "1610612645",
+  ReputationMondstadtOutcropSearch = "1452900101",
   ReputationNotAchieved = "UI_WISHINGPOND_OFFERING_LEVEL_UNREACH",
   // The button that takes a request the keeper offers, worded as the Reputation page's request shows it
   ReputationRequestAccept = "REPUTATION_REQUEST_BUTTON_1",
@@ -842,7 +846,21 @@ export enum GameTextKey {
   // The weapon screen's three actions, the equipment page's buttons: the weapon's level, its ascension and its refinement
   WeaponAscend = "UI_EQUIP_PAGE_STARUP_BUTTON",
   WeaponEnhance = "UI_EQUIP_PAGE_LEVELUP_BUTTON",
+  // The enhancement materials chosen so far over those the next level needs, "({0}/{1})"
+  WeaponEnhanceMaterialsConsumed = "UI_EQUIP_LEVELUP_NEED_NEW",
+  // The quick-add option choosing every material of three stars and under
+  WeaponMaterialsThreeStarAndUnder = "UI_FAST_ADD_OPTION_3",
   WeaponRefine = "UI_EQUIP_PAGE_AWAKEN_BUTTON",
+  WeaponRefinementLevel = "UI_WEAPON_AFFIX_DESC",
+  WeaponRefinementMaterial = "UI_WEAPON_AWAKEN_NEED_2",
+  // The refinement tab's label for the weapon's refinement, "Rank {0}"
+  WeaponRefinementRank = "EQUIP_AWAKEN_LEVEL_TITLE",
+  // Each kind of weapon by the game's own word for it, spelt as the tables spell the kind
+  WeaponTypeBow = "WEAPON_BOW",
+  WeaponTypeCatalyst = "WEAPON_CATALYST",
+  WeaponTypeClaymore = "WEAPON_CLAYMORE",
+  WeaponTypePolearm = "WEAPON_POLE",
+  WeaponTypeSword = "WEAPON_SWORD_ONE_HAND",
   WhisperingWoods = "2498538485",
   WhiteIronChunk = "1747175596",
   Windrise = "3796216405",

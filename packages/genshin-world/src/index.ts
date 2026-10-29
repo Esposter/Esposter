@@ -2885,6 +2885,7 @@ export * from "./services/weapon/readWeaponLevelRequiredExps.ts";
 export * from "./services/weapon/refineWeapon.ts";
 export * from "./services/weapon/setBagWeapon.ts";
 export * from "./services/weapon/WeaponPassiveNameTextIdCreateModuleMap.ts";
+export * from "./services/weapon/WeaponTypeNameGameTextKeyMap.ts";
 export * from "./services/weekly/checkIsWeeklyClaimed.ts";
 export * from "./services/weekly/countWeeklyClaims.ts";
 export * from "./services/wildlife/chargePartyMember.ts";
