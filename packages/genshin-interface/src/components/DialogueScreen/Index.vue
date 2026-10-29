@@ -27,16 +27,15 @@ interface Props {
 const { choices, confirmLabel, line, revealedLength, selectedChoiceId, speakerName, speakerRole } =
   defineProps<Props>();
 const emit = defineEmits<{ advance: []; choose: [id: string] }>();
+// The line split by character, so a pair of code units is never cut
+const characters = computed(() => [...line]);
 // Whole with no reply to choose, the game marks the line as one the reader goes on from
-const isWhole = computed(() => line !== "" && choices.length === 0 && revealedLength >= [...line].length);
-// The line split where it is written out to, by character so a pair of code units is never cut
-const lineParts = computed(() => {
-  const characters = [...line];
-  return {
-    revealed: characters.slice(0, revealedLength).join(""),
-    unrevealed: characters.slice(revealedLength).join(""),
-  };
-});
+const isWhole = computed(() => line !== "" && choices.length === 0 && revealedLength >= characters.value.length);
+// The line split where it is written out to
+const lineParts = computed(() => ({
+  revealed: characters.value.slice(0, revealedLength).join(""),
+  unrevealed: characters.value.slice(revealedLength).join(""),
+}));
 </script>
 
 <template>
