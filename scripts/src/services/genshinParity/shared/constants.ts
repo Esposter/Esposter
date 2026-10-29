@@ -4,8 +4,8 @@ import { SITE_NAME } from "@esposter/shared";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-// Everything the tool fetches, records and draws lives here, outside the repository, except the manifest of the
-// references the map names, which is committed beside the parity page
+// Everything the tool fetches, records and draws lives here, outside the repository, except the references the map names
+// and the manifest that holds their provenance, which are committed in the repository
 export const PARITY_DIRECTORY: string =
   process.env.GENSHIN_PARITY_DIRECTORY ?? join(homedir(), SITE_NAME, "genshin-parity");
 // The scratch images that are never committed: the clean plates, the softness caches, the wiki files a trace reads,

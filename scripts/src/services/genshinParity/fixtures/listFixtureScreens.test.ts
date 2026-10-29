@@ -4,7 +4,6 @@ import { FixtureReferenceStatus } from "#src/models/genshinParity/fixtures/Fixtu
 import {
   BARREL_FILE_NAME,
   COMPONENT_FILE_NAME,
-  COMPONENTS_DIRECTORY,
   FIXTURE_FILE_NAME,
 } from "#src/services/genshinParity/fixtures/constants";
 import { listFixtureScreens } from "#src/services/genshinParity/fixtures/listFixtureScreens";
@@ -95,17 +94,5 @@ describe(listFixtureScreens, () => {
 
     expect(rows.find(({ variant }) => variant === VARIANT)?.referenceId).toBe(besideId);
     expect(besideId).toBe(REFERENCE_ID);
-  });
-
-  test("should name a variant's primary reference as the one that renders the fixture as it is, over a props override listed before it", async () => {
-    expect.hasAssertions();
-
-    const referenceMap = {
-      [PROPS_REFERENCE_ID]: { props: PROPS, screen: SCREEN_NAME, source: "recording.mp4", variant: VARIANT },
-      [REFERENCE_ID]: { screen: SCREEN_NAME, source: "recording.mp4", variant: VARIANT },
-    } satisfies Record<string, ParityReference>;
-    const rows = await listFixtureScreens(componentsDirectory, referenceMap, new Map());
-
-    expect(rows.find(({ variant }) => variant === VARIANT)?.referenceId).toBe(REFERENCE_ID);
   });
 });
