@@ -141,7 +141,7 @@ watch(
 
 <template>
   <!-- The bag, the B key's: its nine tabs across the head in the game's order, the open tab's room beside the way back,
-       Its grid of four columns, the entry chosen with its detail panel, and the sort along the foot. Provisional: the
+       Its grid of seven columns, the entry chosen with its detail panel, and the sort along the foot. Provisional: the
        Tabs' icons and the grid's entries' icons wait on the glyph pass, and the sort, the wallet's place and the
        Panel's stats and footer wait on the bag's other recordings -->
   <div class="inventory-screen">
@@ -288,7 +288,7 @@ watch(
 
 <style scoped>
 /* Every place and size is in the game's 1080-high units, read off the recording of the English PC client's bag: the
-   Grid's top left at 648 by 114, its cells 124 by 152 with 23 and 24 between, and the detail panel 493 wide at 1298 */
+   Grid's top left at 207 by 114, its cells 124 by 152 with 23 and 24 between, and the detail panel 493 wide at 1298 */
 .inventory-screen {
   position: absolute;
   inset: 0;
