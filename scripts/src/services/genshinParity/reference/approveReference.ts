@@ -7,15 +7,24 @@ import { readScore } from "#src/services/genshinParity/reference/readScore";
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
 import { GENSHIN_WORLD_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
+import { listFixtureScreens } from "#src/services/genshinParity/fixtures/listFixtureScreens";
 import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
-import { APPROVE_ENVIRONMENT_VARIABLE, FIXTURE_VARIANT_SEPARATOR } from "genshin-interface/constants";
+import {
+  APPROVE_ENVIRONMENT_VARIABLE,
+  FIXTURE_VARIANT_SEPARATOR,
+  getFixtureImageName,
+} from "genshin-interface/constants";
+import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
 // The visual suite's file, whose tests are titled by their screen's name
 const VISUAL_SUITE_FILE = "parity/screens.visual.ts";
+// How many separate runs of the suite an image must come out of identically before it is written
+const APPROVE_RUN_COUNT = 3;
 
 // Writes a screen's image as a snapshot of its current render, and prints its compare's status against the bar beside it.
 // No status stops the image: a missing reference, a failed compare or a reference judging less than the whole screen is
@@ -58,13 +67,39 @@ export const approveReference = async (referenceId: string, variant?: string): P
   );
   const testName =
     variant === undefined ? reference.screen : `${reference.screen}${FIXTURE_VARIANT_SEPARATOR}${variant}`;
-  // The suite's `-u` writes only the tests the filter selects, so no other screen's image moves
-  const { status } = spawnSync(
-    PNPM_FILE,
-    // The filter is one token ending the title: pnpm hands its arguments to cmd, which splits a space and eats a caret
-    [...PNPM_ARGS, "test:visual", "--run", "-u", VISUAL_SUITE_FILE, "-t", `${testName}$`],
-    { cwd: GENSHIN_WORLD_DIRECTORY, env: { ...process.env, [APPROVE_ENVIRONMENT_VARIABLE]: "true" }, stdio: "inherit" },
+  const componentsDirectory = join(GENSHIN_WORLD_DIRECTORY, "src", "components");
+  const row = (await listFixtureScreens(componentsDirectory, ParityReferenceMap, new Map())).find(
+    ({ name, variant: rowVariant }) => name === reference.screen && rowVariant === (variant ?? ""),
   );
-  if (status !== 0) throw new InvalidOperationError(Operation.Update, testName, `the visual suite exited ${status}`);
+  if (!row) throw new InvalidOperationError(Operation.Read, testName, "no fixture variant of that name");
+  const imagePath = join(componentsDirectory, row.directory, `${getFixtureImageName(row.variant)}.png`);
+  const previousImage = existsSync(imagePath) ? readFileSync(imagePath) : undefined;
+  // Each run is its own process, and the suite takes the image as the first frame it settles on, so a render that is not
+  // Settled across runs writes a different image each time: the image is written only when every run wrote the same bytes
+  const renders: Buffer[] = [];
+  for (let run = 0; run < APPROVE_RUN_COUNT; run++) {
+    // The suite's `-u` writes only the tests the filter selects, so no other screen's image moves
+    const { status } = spawnSync(
+      PNPM_FILE,
+      // The filter is one token ending the title: pnpm hands its arguments to cmd, which splits a space and eats a caret
+      [...PNPM_ARGS, "test:visual", "--run", "-u", VISUAL_SUITE_FILE, "-t", `${testName}$`],
+      {
+        cwd: GENSHIN_WORLD_DIRECTORY,
+        env: { ...process.env, [APPROVE_ENVIRONMENT_VARIABLE]: "true" },
+        stdio: "inherit",
+      },
+    );
+    if (status !== 0) throw new InvalidOperationError(Operation.Update, testName, `the visual suite exited ${status}`);
+    renders.push(readFileSync(imagePath));
+  }
+  if (renders.some((render) => !render.equals(renders[0]))) {
+    if (previousImage === undefined) rmSync(imagePath, { force: true });
+    else writeFileSync(imagePath, previousImage);
+    throw new InvalidOperationError(
+      Operation.Update,
+      testName,
+      `its render differs between ${APPROVE_RUN_COUNT} runs of the visual suite, so no image was written (the render is not settled)`,
+    );
+  }
   console.log(`wrote the image of ${testName}`);
 };

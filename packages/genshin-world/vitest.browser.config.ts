@@ -4,6 +4,7 @@ import {
   dynamicJsonImportPlugin,
   getVitestBrowserConfiguration,
   getVuePlugins,
+  isVisualUpdate,
   SOURCE_CONDITION,
 } from "@esposter/configuration";
 import { templateCompilerOptions } from "@tresjs/core";
@@ -22,6 +23,7 @@ const browser = getVitestBrowserConfiguration(
 export default defineConfig({
   plugins: [...getVuePlugins(templateCompilerOptions), dynamicJsonImportPlugin, gameDataMirrorPlugin],
   // Its siblings from their source, as the page reads them
+  define: { IS_VISUAL_UPDATE: JSON.stringify(isVisualUpdate(APPROVE_ENVIRONMENT_VARIABLE)) },
   resolve: { alias: terrainWorkerAlias, conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
   test: {
     browser,

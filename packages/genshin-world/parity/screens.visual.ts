@@ -3,6 +3,7 @@ import { getScreenBoxStyle, SCREEN_BOX_WIDTH } from "#parity/getScreenBoxStyle";
 import { screens } from "#parity/screens";
 import { capitalize, getResultAsync } from "@esposter/shared";
 import {
+  assertSettledRender,
   createVisualComparisonRecord,
   FIXTURE_IMAGE_NAME,
   FIXTURE_VARIANT_SEPARATOR,
@@ -23,6 +24,8 @@ import { defineComponent, h } from "vue";
 const SCREEN_BACKDROP_COLOR = "#4a5560";
 // The window the box fills at its width, so the box's height is the window's and a unit is a pixel, as on the parity page
 const SCREEN_BOX_HEIGHT = 1080;
+// Set by the browser config from the run's update flag (`vitest.browser.config.ts`)
+declare const IS_VISUAL_UPDATE: boolean;
 const cases: ((typeof screens)[number] & { imageName: string; title: string })[] = [];
 for (const screen of screens.filter(({ isMotionOnly }) => !isMotionOnly)) {
   cases.push({
@@ -80,9 +83,11 @@ describe("interface screens", () => {
 
     const box = container.firstElementChild;
     assert(box);
-    await getResultAsync(() =>
-      expect.element(page.elementLocator(box)).toMatchScreenshot(`${directory}/${imageName}`),
-    ).match(
+    await getResultAsync(async () => {
+      // The update path writes what the matcher captured, so a render still changing across frames is refused before it
+      if (IS_VISUAL_UPDATE) await assertSettledRender(page.elementLocator(box), title);
+      await expect.element(page.elementLocator(box)).toMatchScreenshot(`${directory}/${imageName}`);
+    }).match(
       () => {
         visualComparison.recordWithinBar();
       },

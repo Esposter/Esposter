@@ -5,6 +5,7 @@ import "@fontsource/signika/600.css";
 import GameScreen from "#src/components/GameScreen/Index.vue";
 import { InteractionState } from "#src/models/InteractionState";
 import { FIXTURE_IMAGE_NAME, getFixtureImageName } from "#src/services/constants";
+import { assertSettledRender } from "#src/services/assertSettledRender";
 import { createVisualComparisonRecord } from "#src/services/createVisualComparisonRecord";
 import { afterAll, assert, describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -14,6 +15,8 @@ import { page } from "vitest/browser";
 // On a mid grey the game's pale and dark pieces both read against, shot to its own box and held to its own image,
 // `Index.png` in the same folder, and each variant to one of its own named after it. A mismatch is listed after the cases
 // Rather than failed, and a missing image is written by the run; a run with `-u` takes each render as its new image
+// Set by the browser config from the run's update flag (`vitest.browser.config.ts`)
+declare const IS_VISUAL_UPDATE: boolean;
 const components = import.meta.glob<Component>("./*/Index.vue", { eager: true, import: "default" });
 const fixtures = import.meta.glob<ComponentFixture>("./*/Index.fixture.ts", { eager: true });
 // The screen root and the rect a piece is placed by draw nothing of their own, so they have no image to hold
@@ -89,7 +92,11 @@ describe("genshin-interface components", () => {
 
     // The package does not depend on `@esposter/shared`, so a rejection is read from `allSettled` rather than neverthrow
     const [comparison] = await Promise.allSettled([
-      expect.element(page.elementLocator(element)).toMatchScreenshot(imageName),
+      (async () => {
+        // The update path writes what the matcher captured, so a render still changing across frames is refused before it
+        if (IS_VISUAL_UPDATE) await assertSettledRender(page.elementLocator(element), imageName);
+        await expect.element(page.elementLocator(element)).toMatchScreenshot(imageName);
+      })(),
     ]);
     if (comparison.status === "fulfilled") visualComparison.recordWithinBar();
     else visualComparison.recordFailure(comparison.reason, imageName);
