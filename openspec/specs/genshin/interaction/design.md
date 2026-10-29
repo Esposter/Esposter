@@ -53,14 +53,14 @@ flowchart TD
 The list is scored against the English PC client at 1080 high in its pickup: a public tutorial's recording at 9 seconds, drawn as its clean plate behind the list (`interaction-prompts-pickup`, `isBackdrop`), over the list's own box (`scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`, `{data-root}/genshin-parity/references/interaction-prompts-pickup.png`). Measured off that frame (see Open):
 
 - Three rows, each pill 63 high on a 72 pitch (a 9 unit gap between them), the stack's middle one unit above the screen's middle, its cap's left edge 138 right of the centre.
-- The cap 40 wide and 33 high, its pointer 8 by 15 at 45 from the cap's left, the pill 290 wide from 59 past the cap's left, its name's cap height 22 in a face of 31 with letter-spacing to the game's line width, the icon 32 across at 17 inside the pill.
+- The cap 40 wide and 33 high, its pointer 10.5 by 19 at 44.5 from the cap's left, the pill 318 wide from 59 past the cap's left (the grid's second column, which the pill's button fills, its ground opaque for 78 units and fading to nothing at that column's end), its name's cap height 22 in a face of 31 with letter-spacing to the game's line width, the icon 32 across at 17 inside the pill.
 
 Scored over the clean plate, with its name's place, its width and the icon's inset set, the list does not yet meet the two-percent bar on mean difference; the parity suite holds its scores. What is left:
 
 - **The item icons.** Three icons of 32 across are the game's own item art, which nothing ships, so a disc stands in (`packages/genshin-interface/src/components/InteractionPrompts/Index.vue`). They are the largest term in the difference grid.
 - **The pill's fill and rim.** The plate fills the game's pill from its surroundings, so the fill and the rim are scored against the scene where the game's pill was, and the rim sits a pixel off.
 
-Provisional and unmeasured: the pill's right end (290 units, since the rock behind it is not separable on the frame), its fill, the kinds' icons (Talk, Open, Read, Activate and Use have no reference), and the selection's move, which the list does not animate: in the clip's stretch at 13 seconds the cap changes row within a frame or two. The clip is a captioned tutorial with a camera inset, so it gives the first row's state but no clean scroll; the clean clips are on the [roadmap](../../../changes/genshin-roadmap/tasks.md)'s References sought list. No visual-suite image is approved, since the compare is over its bar.
+Provisional and unmeasured: the pill's right end (the column's 318 units, since its ground fades out there and the rock behind it is not separable on the frame), its fill, the kinds' icons (Talk, Open, Read, Activate and Use have no reference), and the selection's move, which the list does not animate: in the clip's stretch at 13 seconds the cap changes row within a frame or two. The clip is a captioned tutorial with a camera inset, so it gives the first row's state but no clean scroll; the clean clips are on the [roadmap](../../../changes/genshin-roadmap/tasks.md)'s References sought list. No visual-suite image is approved, since the compare is over its bar.
 
 ## Key files
 
