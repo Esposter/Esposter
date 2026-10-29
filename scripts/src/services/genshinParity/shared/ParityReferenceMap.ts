@@ -339,7 +339,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   // The expedition screen at 1080 high from the public clip (yt-fxIjhlV3vUA), 26 seconds in: Mondstadt's map with six
   // Places pinned and Wolvendom picked, its Expedition Limit across the head, its rewards and durations down the right.
-  // Scored over the screen above the recorder's UID, which the clip draws at its bottom right corner
+  // Scored over the screen above the recorder's UID, which the clip draws at its bottom right corner. The reward panel and
+  // Its action button are drawn opaque by the page over the backdrop, so the reference's pixels under them are covered
   "expedition-screen": {
     isBackdrop: true,
     plate: [
@@ -353,8 +354,6 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       { height: 105, width: 90, x: 1073, y: 410 },
       { height: 130, width: 126, x: 680, y: 470 },
       { height: 105, width: 90, x: 1130, y: 615 },
-      { height: 599, width: 432, x: 1445, y: 120 },
-      { height: 62, width: 307, x: 1570, y: 988 },
     ],
     region: { height: 1050, width: 1920, x: 0, y: 0 },
     screen: "ExpeditionScreen",

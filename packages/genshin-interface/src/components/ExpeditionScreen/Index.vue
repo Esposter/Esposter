@@ -179,7 +179,7 @@ const pick = (characterId: number) => {
 
 .nations {
   position: absolute;
-  top: calc(var(--unit) * 138);
+  top: calc(var(--unit) * 142);
   left: calc(var(--unit) * 70);
   display: flex;
   flex-direction: column;
@@ -192,13 +192,14 @@ const pick = (characterId: number) => {
 .nation {
   display: flex;
   align-items: center;
-  gap: calc(var(--unit) * 12);
+  gap: calc(var(--unit) * 34);
   padding: 0;
   border: none;
   background: none;
   color: inherit;
   font: inherit;
   font-size: calc(var(--unit) * 30);
+  letter-spacing: calc(var(--unit) * 2);
   text-shadow: 0 calc(var(--unit) * 2) calc(var(--unit) * 4) rgb(0 0 0 / 0.5);
 }
 
@@ -308,7 +309,7 @@ const pick = (characterId: number) => {
   width: calc(var(--unit) * 432);
   height: calc(var(--unit) * 598);
   margin: 0;
-  background: #e8e3d6;
+  background: #e1d9cb;
   color: #3b4255;
   box-shadow: 0 0 calc(var(--unit) * 12) rgb(0 0 0 / 0.35);
 }
@@ -330,7 +331,7 @@ const pick = (characterId: number) => {
   right: 0;
   left: 0;
   height: calc(var(--unit) * 52);
-  background: #4b5165;
+  background: #3e4656;
   content: "";
 }
 
@@ -340,7 +341,22 @@ const pick = (characterId: number) => {
   right: 0;
   left: 0;
   height: calc(var(--unit) * 158);
-  background: linear-gradient(#9fc3d3, #7ea9a0 40%, #6f8f5c 70%, #5b7650);
+  background: linear-gradient(
+    #a2aeb4,
+    #a5b5b7 9%,
+    #a4bcc4 16%,
+    #8b9897 24%,
+    #6f8488 32%,
+    #5e6c62 39%,
+    #56685f 47%,
+    #7c8a5c 54%,
+    #7c854e 62%,
+    #5a664c 70%,
+    #686e4a 77%,
+    #60644c 85%,
+    #7c7c52 92%,
+    #6a6755 98%
+  );
 }
 
 .description {
@@ -364,7 +380,9 @@ const pick = (characterId: number) => {
   top: calc(var(--unit) * 389);
   left: calc(var(--unit) * 29);
   margin: 0;
-  font-size: calc(var(--unit) * 22);
+  color: #625c5c;
+  font-size: calc(var(--unit) * 25);
+  font-weight: 600;
   line-height: calc(var(--unit) * 28);
 }
 
@@ -462,13 +480,13 @@ const pick = (characterId: number) => {
 .durations {
   position: absolute;
   top: calc(var(--unit) * 527);
-  right: 0;
-  left: 0;
+  right: calc(var(--unit) * 5);
+  left: calc(var(--unit) * 2);
   display: flex;
   height: calc(var(--unit) * 69);
   margin: 0;
-  padding: 0;
-  background: #4b5165;
+  padding: 0 calc(var(--unit) * 25) 0 calc(var(--unit) * 20);
+  background: #8f8f91;
   list-style: none;
 }
 
@@ -482,39 +500,57 @@ const pick = (characterId: number) => {
   padding: 0;
   border: none;
   background: none;
-  color: #f3eee3;
+  color: #e6e2dd;
   font: inherit;
   font-size: calc(var(--unit) * 22);
   white-space: nowrap;
 }
 
 .durations button[aria-pressed="true"] {
-  background: #6b7289;
+  background: #a5a2a0;
+  color: #f7f5f2;
 }
 
+/* The button is a cream pill 307 by 64, its disc and ring at its left, the words set in the game's dark ink */
 .action {
   position: absolute;
-  top: calc(var(--unit) * 990);
+  top: calc(var(--unit) * 988);
   left: calc(var(--unit) * 1570);
   display: flex;
-  width: calc(var(--unit) * 306);
-  height: calc(var(--unit) * 60);
+  width: calc(var(--unit) * 307);
+  height: calc(var(--unit) * 64);
   align-items: center;
-  gap: calc(var(--unit) * 12);
-  padding: 0 calc(var(--unit) * 22);
+  gap: calc(var(--unit) * 3);
+  padding: 0 0 0 calc(var(--unit) * 12);
   border: none;
-  border-radius: calc(var(--unit) * 30);
-  background: rgb(24 26 34 / 0.9);
-  color: #fff;
+  border-radius: calc(var(--unit) * 32);
+  background: #ece4d8;
+  color: #2c313d;
   font: inherit;
-  font-size: calc(var(--unit) * 26);
+  font-size: calc(var(--unit) * 30);
+  font-weight: 600;
+  letter-spacing: calc(var(--unit) * 0.6);
 }
 
+/* The disc is 42 across with a gold ring of 22 inside it, both measured from the reference's button */
 .ring {
-  width: calc(var(--unit) * 24);
-  height: calc(var(--unit) * 24);
+  position: relative;
+  width: calc(var(--unit) * 42);
+  height: calc(var(--unit) * 42);
   flex: none;
-  border: calc(var(--unit) * 4) solid #e3c77a;
   border-radius: 50%;
+  background: #2e3030;
+}
+
+.ring::before {
+  position: absolute;
+  top: calc(var(--unit) * 10);
+  left: calc(var(--unit) * 10);
+  width: calc(var(--unit) * 22);
+  height: calc(var(--unit) * 22);
+  border: calc(var(--unit) * 3) solid #f2c84e;
+  border-radius: 50%;
+  box-sizing: border-box;
+  content: "";
 }
 </style>
