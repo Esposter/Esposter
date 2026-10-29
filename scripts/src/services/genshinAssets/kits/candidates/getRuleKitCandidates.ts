@@ -1,9 +1,9 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { Element } from "genshin-world";
 
-import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { KIT_LENGTH_KEY, UNMEASURED_HOLD_SECONDS } from "#src/services/genshinAssets/kits/constants";
 import { KitPlunge, KitTargeting } from "genshin-world";

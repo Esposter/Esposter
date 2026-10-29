@@ -1,8 +1,8 @@
 import type { KitDonor } from "#src/models/genshinAssets/kits/KitDonor";
 
 import { kitDonorSchema } from "#src/models/genshinAssets/kits/KitDonor";
-import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { z } from "zod";
 
 // One value of a kit's overlay: a value no source holds with its cause, a value removed with its cause where a source

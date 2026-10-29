@@ -2,8 +2,8 @@ import type { BuiltKit } from "#src/models/genshinAssets/kits/build/BuiltKit";
 import type { KitInput } from "#src/models/genshinAssets/kits/build/KitInput";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 
-import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import {
   buildKitRecordWithDonors,
   readBuiltDonorRecordMap,

@@ -47,7 +47,6 @@
 | `scripts/src/models/genshinAssets/home`                                                   | —                      |       |
 | `scripts/src/models/genshinAssets/imaginarium`                                            | —                      |       |
 | `scripts/src/models/genshinAssets/interface`                                              | —                      |       |
-| `scripts/src/models/genshinAssets/items`                                                  | —                      |       |
 | `scripts/src/models/genshinAssets/kits/KitCandidate.ts`                                   | —                      |       |
 | `scripts/src/models/genshinAssets/kits/KitCandidateSources.ts`                            | —                      |       |
 | `scripts/src/models/shared/KitOverlay.ts`                                                 | —                      |       |

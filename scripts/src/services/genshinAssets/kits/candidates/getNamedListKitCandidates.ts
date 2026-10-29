@@ -1,9 +1,9 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
-import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { checkHasOwnSlotHit } from "#src/services/genshinAssets/kits/candidates/checkHasOwnSlotHit";
 import { KIT_HIT_MULTIPLIER_REGEX } from "#src/services/genshinAssets/kits/constants";

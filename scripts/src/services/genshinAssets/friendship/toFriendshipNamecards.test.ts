@@ -1,6 +1,6 @@
 import type { ExcelFetterCharacterCardRow } from "#src/models/genshinAssets/friendship/ExcelFetterCharacterCardRow";
-import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
+import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 
 import { toFriendshipNamecards } from "#src/services/genshinAssets/friendship/toFriendshipNamecards";
 import { describe, expect, test } from "vitest";

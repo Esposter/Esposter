@@ -2,8 +2,8 @@ import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 import type { KitRecord } from "genshin-world";
 
-import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { HIT_RECORD, RECORD, SOURCE_CANDIDATE_MAP } from "#src/services/genshinAssets/kits/constants.test";
 import { compareKitRecord } from "#src/services/genshinAssets/kits/record/compareKitRecord";
 import { KitPlunge } from "genshin-world";

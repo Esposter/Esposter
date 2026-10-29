@@ -1,5 +1,5 @@
-import type { KitOverlay } from "#src/models/shared/KitOverlay";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
+import type { KitOverlay } from "#src/models/shared/KitOverlay";
 import type { AttackArea } from "genshin-world";
 
 import { checkIsNormalAttackPath } from "#src/services/genshinAssets/kits/gcsim/checkIsNormalAttackPath";

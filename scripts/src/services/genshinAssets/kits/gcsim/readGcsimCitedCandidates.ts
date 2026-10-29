@@ -1,7 +1,7 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
-import type { KitOverlay } from "#src/models/shared/KitOverlay";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
+import type { KitOverlay } from "#src/models/shared/KitOverlay";
 
 import { NamedFieldCitation } from "#src/models/genshinAssets/kits/gcsim/NamedFieldCitation";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";

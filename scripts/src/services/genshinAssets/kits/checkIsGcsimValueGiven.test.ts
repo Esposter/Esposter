@@ -1,8 +1,8 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 
-import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { checkIsGcsimValueGiven } from "#src/services/genshinAssets/kits/checkIsGcsimValueGiven";
 import { describe, expect, test } from "vitest";
 

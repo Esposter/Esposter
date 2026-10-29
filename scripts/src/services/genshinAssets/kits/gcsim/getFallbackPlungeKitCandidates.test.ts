@@ -5,9 +5,9 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
-import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { GCSIM_CHARACTERS_PATH } from "#src/services/genshinAssets/kits/constants";
 import { createCircleReach } from "#src/services/genshinAssets/kits/gcsim/createCircleReach";
 import { getFallbackPlungeKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getFallbackPlungeKitCandidates";

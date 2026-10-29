@@ -1,7 +1,7 @@
 import type { ExcelFetterCharacterCardRow } from "#src/models/genshinAssets/friendship/ExcelFetterCharacterCardRow";
 import type { FriendshipNamecardRow } from "#src/models/genshinAssets/friendship/FriendshipNamecardRow";
-import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
+import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 
 import { FRIENDSHIP_NAMECARD_LEVEL, NAMECARD_MATERIAL_TYPE } from "#src/services/genshinAssets/friendship/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";

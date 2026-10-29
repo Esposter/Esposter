@@ -1,7 +1,7 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 
-import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { mergeKitSourceCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitSourceCandidates";
 import { describe, expect, test } from "vitest";
 

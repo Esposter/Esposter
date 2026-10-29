@@ -1,9 +1,9 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlay } from "#src/models/shared/KitOverlay";
 
-import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { flattenKitValues } from "#src/services/genshinAssets/kits/record/flattenKitValues";
 import { InvalidOperationError, Operation } from "@esposter/shared";

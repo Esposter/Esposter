@@ -1,5 +1,5 @@
-import type { KitOverlay } from "#src/models/shared/KitOverlay";
 import type { WikiTalentPage } from "#src/models/genshinAssets/kits/wiki/WikiTalentPage";
+import type { KitOverlay } from "#src/models/shared/KitOverlay";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { WIKI_FIXTURE_DIRECTORY } from "#src/services/genshinAssets/kits/wiki/constants.test";

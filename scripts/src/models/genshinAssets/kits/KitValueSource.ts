@@ -1,6 +1,6 @@
-import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { z } from "zod";
 
 // How one value of a kit's record is known: gcsim's file and line at the tag, the table's group and parameter with its

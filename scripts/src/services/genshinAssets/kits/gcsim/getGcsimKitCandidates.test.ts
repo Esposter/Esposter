@@ -10,8 +10,8 @@ import { GcsimElement } from "#src/models/genshinAssets/kits/gcsim/GcsimElement"
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
-import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import {
   GCSIM_NOELLE_FIXTURE_DIRECTORY,
   GCSIM_ROSARIA_FIXTURE_DIRECTORY,
