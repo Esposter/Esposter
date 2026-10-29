@@ -230,8 +230,8 @@ const title = computed(() =>
 .name {
   position: absolute;
   top: calc(var(--unit) * 251);
-  left: calc(var(--unit) * 18);
-  width: calc(var(--unit) * 204);
+  left: calc(var(--unit) * 23);
+  width: calc(var(--unit) * 194);
   font-size: calc(var(--unit) * 22);
   font-weight: 700;
   letter-spacing: calc(var(--unit) * 1.2);
