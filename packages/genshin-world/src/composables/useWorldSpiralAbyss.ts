@@ -143,6 +143,8 @@ export const useWorldSpiralAbyss = ({
   const abyssArenaBlessing = computed(() => abyssChamberPeriod.value?.blessing);
   const abyssFloorsOffered = computed(() => getAbyssFloorsOffered(abyssFloors.value, abyssEntrancePeriod.value));
   const abyssChoices = computed(() => abyssPendingChoice.value?.choices);
+  const abyssChoiceChamberIndex = computed(() => abyssPendingChoice.value?.chamber.index);
+  const abyssChoiceFloorIndex = computed(() => abyssPendingChoice.value?.floor.index);
   // The camp of the half in play, which the enemies spawn while the chamber runs
   const abyssCamps = computed(() => {
     const camp = abyssArena.value?.camp;
@@ -303,6 +305,8 @@ export const useWorldSpiralAbyss = ({
   return {
     abyssBlessing,
     abyssCamps,
+    abyssChoiceChamberIndex,
+    abyssChoiceFloorIndex,
     abyssChoices,
     abyssFloorsOffered,
     abyssProgressMap,

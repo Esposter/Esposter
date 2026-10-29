@@ -999,6 +999,8 @@ const shopPurchases = shallowRef<ShopPurchase[]>(savedState.shopPurchases);
 const {
   abyssBlessing,
   abyssCamps,
+  abyssChoiceChamberIndex,
+  abyssChoiceFloorIndex,
   abyssChoices,
   abyssFloorsOffered,
   abyssProgressMap,
@@ -2551,7 +2553,9 @@ useWorldSaveSync({
     />
     <SpiralAbyssBenediction
       v-if="abyssChoices"
+      :chamber="abyssChoiceChamberIndex"
       :choices="abyssChoices"
+      :floor="abyssChoiceFloorIndex"
       :game-text
       :name-text
       @choose="(towerBuffId) => chooseAbyssBenediction(towerBuffId)"
