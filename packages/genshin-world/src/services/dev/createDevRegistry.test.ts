@@ -5,7 +5,7 @@ import type { DevVariable } from "#src/models/dev/DevVariable";
 import { DevVariableKind } from "#src/models/dev/DevVariableKind";
 import { createDevRegistry } from "#src/services/dev/createDevRegistry";
 import { exposeDevRegistry } from "#src/services/dev/exposeDevRegistry";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { z } from "zod";
 
 describe(createDevRegistry, () => {
@@ -36,7 +36,7 @@ describe(createDevRegistry, () => {
     group: "Sky",
     kind: DevVariableKind.Number,
     name: "cloud coverage",
-    range: { max: 1, min: 0 },
+    range: { max: 1, min: 0, step: 0.1 },
     set: (value) => {
       state.cloudCoverage = Number(value);
     },
@@ -163,5 +163,36 @@ describe(createDevRegistry, () => {
     exposeDevRegistry(registry, target);
 
     expect(target.__dev?.run("time 21")).toStrictEqual({ ok: true, value: 21 });
+  });
+
+  test("Change signal reports a line that ran", () => {
+    expect.hasAssertions();
+
+    const listener = vi.fn<() => void>();
+    const registry = createDevRegistry();
+    registry.register({ commands: [createTimeCommand([])], variables: [] });
+    const unsubscribe = registry.subscribe(listener);
+    registry.run("time 21");
+    unsubscribe();
+    registry.run("time 22");
+
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  test("Listing shows what is mounted", () => {
+    expect.hasAssertions();
+
+    const variable = createCloudVariable({ cloudCoverage: 0 });
+    const scenario = { lines: ["time 21"], name: SCENARIO_NAME };
+    const registry = createDevRegistry();
+    const dispose = registry.register({ commands: [], scenarios: [scenario], variables: [variable] });
+
+    expect(registry.getVariables()).toStrictEqual([variable]);
+    expect(registry.getScenarios()).toStrictEqual([scenario]);
+
+    dispose();
+
+    expect(registry.getVariables()).toStrictEqual([]);
+    expect(registry.getScenarios()).toStrictEqual([]);
   });
 });

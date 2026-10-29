@@ -2,6 +2,7 @@ import type { DevCommand } from "#src/models/dev/DevCommand";
 import type { DevHandle } from "#src/models/dev/DevHandle";
 import type { DevRegistry } from "#src/models/dev/DevRegistry";
 import type { DevResult } from "#src/models/dev/DevResult";
+import type { DevScenario } from "#src/models/dev/DevScenario";
 import type { DevVariable } from "#src/models/dev/DevVariable";
 
 import { formatDevUsage } from "#src/services/dev/formatDevUsage";
@@ -14,8 +15,14 @@ import { setDevVariable } from "#src/services/dev/setDevVariable";
 export const createDevRegistry = (): DevRegistry => {
   const commands = new Map<string, DevCommand>();
   const unmountedCommands = new Map<string, DevCommand>();
+  const scenarios = new Map<string, DevScenario>();
   const variables = new Map<string, DevVariable>();
+  const listeners = new Set<() => void>();
   const SET_USAGE = "set <name> <value>";
+
+  const notify = () => {
+    for (const listener of listeners) listener();
+  };
 
   const setVariable = (words: readonly string[]): DevResult => {
     const variableName = words.slice(0, -1).join(" ");
@@ -26,7 +33,7 @@ export const createDevRegistry = (): DevRegistry => {
     return outcome.ok ? outcome : { ...outcome, usage: SET_USAGE };
   };
 
-  const run = (line: string): DevResult => {
+  const runLine = (line: string): DevResult => {
     const [name, ...words] = line.split(/\s+/u).filter((word) => word !== "");
     if (name === undefined) return { error: "empty line", ok: false, usage: "" };
     if (name === "set") return setVariable(words);
@@ -43,13 +50,22 @@ export const createDevRegistry = (): DevRegistry => {
     return { error: `unknown command ${name}; did you mean ${suggestions.join(", ")}?`, ok: false, usage: "" };
   };
 
+  const run = (line: string): DevResult => {
+    const result = runLine(line);
+    notify();
+    return result;
+  };
+
   const register = (handle: DevHandle): (() => void) => {
+    const handleScenarios = handle.scenarios ?? [];
     for (const command of handle.commands) {
       commands.set(command.name, command);
       unmountedCommands.delete(command.name);
     }
 
+    for (const scenario of handleScenarios) scenarios.set(scenario.name, scenario);
     for (const variable of handle.variables) variables.set(variable.name, variable);
+    notify();
 
     return () => {
       for (const command of handle.commands) {
@@ -59,11 +75,29 @@ export const createDevRegistry = (): DevRegistry => {
         }
       }
 
+      for (const scenario of handleScenarios) {
+        if (scenarios.get(scenario.name) === scenario) scenarios.delete(scenario.name);
+      }
+
       for (const variable of handle.variables) {
         if (variables.get(variable.name) === variable) variables.delete(variable.name);
       }
+
+      notify();
     };
   };
 
-  return { register, run, runScenario: (scenario) => runDevScenario(run, scenario) };
+  return {
+    getScenarios: () => Array.from(scenarios.values()),
+    getVariables: () => Array.from(variables.values()),
+    register,
+    run,
+    runScenario: (scenario) => runDevScenario(run, scenario),
+    subscribe: (listener) => {
+      listeners.add(listener);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+  };
 };
