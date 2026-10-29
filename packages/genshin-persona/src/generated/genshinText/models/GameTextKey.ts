@@ -40,6 +40,9 @@ export const GameTextKey = {
   ArchiveMaterials: "UI_CODEX_MATERIAL",
   ArchiveTravelLog: "UI_CODEX_QUEST",
   ArchiveTutorials: "UI_CODEX_TIPS",
+  // The counter line over the sections, "Archive entries unlocked:", and the count that follows it, "{0}" with a coloured run for the total
+  ArchiveUnlockedEntries: "UI_CODEX_COUNT_A",
+  ArchiveUnlockedEntriesCount: "UI_CODEX_COUNT_B",
   // The Artifacts tab's buttons: Enhance raises a worn artifact's level, Equip puts one on an empty slot and Unequip
   // Takes the worn one off
   ArtifactActionEnhance: "UI_EQUIP_PAGE_LEVEL_UP",
@@ -316,6 +319,8 @@ export const GameTextKey = {
   ExquisiteChest: "3981652911",
   // The feedback link, a web page the Paimon menu opens
   Feedback: "UI_STC_GAMEENTRYPAGE_FEEDBACK",
+  // The filter button's label wherever a list can be narrowed
+  Filter: "UI_BUTTON_FILTER",
   FineEnhancementOre: "377860124",
   // The prompt a fishing point offers on its entrance button, as the game names it
   Fishing: "UI_FISH_ENTRANCE_BUTTON",
@@ -551,6 +556,8 @@ export const GameTextKey = {
   MysticOfferingRequiresFiveStar: "UI_MELTING_DETAILS_TIPS_B",
   NakuWeed: "3623663804",
   Natlan: "Natlan",
+  // The badge on an entry the player has not seen yet
+  New: "UI_STC_NEW",
   NilotpalaLotus: "774700468",
   NoctilucousJade: "2726159796",
   NocturnalBlossom: "2957600892",
@@ -571,6 +578,10 @@ export const GameTextKey = {
   PartyDefaultName2: "UI_TEAM_DEFAULT_NAME2",
   PartyDefaultName3: "UI_TEAM_DEFAULT_NAME3",
   PartyDefaultName4: "UI_TEAM_DEFAULT_NAME4",
+  // The label under the party the team is currently deployed as
+  PartyDeployed: "UI_BUTTON_TEAM_ACTIVATED",
+  // The pill beside the party screen's title, naming the resonance the party's elements give
+  PartyElementalResonance: "UI_TEAM_RESONANCE_BUTTON",
   PartySetup: "UI_TEAM_TITLE",
   // The Petrified Tree a cleared domain raises, the tree the claim prompt names
   PetrifiedTree: "UI_ABYSSUS_CHEST_OPEN_TITLE",
