@@ -60,7 +60,7 @@ That check reads the dataset as it stands, so a later Unicode release can still 
 
 ## What bounds the cost
 
-Room emoji are room-owned, so they sit outside the personal [storage quota](../../resource/storage-quotas/design.md): their write target is minted without a reserve, and their bytes count against no one. Message attachments are charged to their uploader, but an emoji is not an attachment. What bounds them instead is a **per-room count cap** plus a per-file size cap, which is also Discord's model.
+Room emoji are room-owned, so they sit outside the personal [storage quota](../../resource/storage-quotas/design.md), which does not count them. Message attachments are charged to their uploader, but an emoji is not an attachment. What bounds them instead is a **per-room count cap** plus a per-file size cap, which is also Discord's model.
 
 The cap is the whole accounting story: a room's worst case is a fixed number rather than an open-ended one, with nothing to meter, no ledger row per emoji, and no usage figure for a room owner to act on. It is checked twice on purpose — once when the write target is minted, so a full room never receives one it cannot use, and again inside the transaction that inserts, which is what stops two uploads racing the last slot.
 
