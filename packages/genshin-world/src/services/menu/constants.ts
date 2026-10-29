@@ -128,3 +128,6 @@ export const GENSHIN_SETTINGS_DEFAULTS: GenshinSettings = {
 };
 // The quality tiers the Graphics Quality row lists, from the lowest to the highest, as the wiki's Graphics list orders them
 export const GRAPHICS_QUALITY_TIERS: readonly QualityTier[] = [QualityTier.Low, QualityTier.Medium, QualityTier.High];
+// The keys the list screens step between their tabs with, by their physical code, as the Q and E marks on their band show
+export const LIST_SCREEN_TAB_PREVIOUS_CODE = "KeyQ";
+export const LIST_SCREEN_TAB_NEXT_CODE = "KeyE";

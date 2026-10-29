@@ -8,9 +8,6 @@ export const QUEST_CATEGORIES: readonly QuestCategory[] = [
   QuestCategory.Commission,
   QuestCategory.World,
 ];
-// The keys the list screens step between their tabs with, by their physical code, as the Q and E marks on their band show
-export const QUEST_TAB_PREVIOUS_CODE = "KeyQ";
-export const QUEST_TAB_NEXT_CODE = "KeyE";
 // The navigation's beam rises over its objective only from this far off, in metres, as the wiki has it
 export const QUEST_BEAM_MIN_DISTANCE = 50;
 // Provisional: the beam's radius and colour, until the parity pass reads them off a recording of the English client
