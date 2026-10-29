@@ -55,7 +55,7 @@ catalog:
   "@codemirror/state": ^6.7.6
   "@dxup/nuxt": ^0.5.10
   "@dxup/unimport": ^0.1.2
-  "@electric-sql/pglite": ^0.5.12
+  "@electric-sql/pglite": ^0.5.13
   "@fission-ai/openspec": ^1.15.0
   "@eslint/core": ^1.2.1
   "@eslint/json": ^2.1.1
@@ -88,29 +88,29 @@ catalog:
   "@pinia/nuxt": ^1.0.3
   "@pulumi/azure-native": ^3.29.0
   "@pulumi/github": ^6.15.0
-  "@pulumi/pulumi": ^3.272.0
+  "@pulumi/pulumi": ^3.273.0
   "@standard-schema/spec": ^1.1.0
   "@takumi-rs/core": ^2.18.2
-  "@tiptap/core": ^3.32.0
-  "@tiptap/extension-code-block-lowlight": ^3.32.0
-  "@tiptap/extension-file-handler": ^3.32.0
-  "@tiptap/extension-image": ^3.32.0
-  "@tiptap/extension-list": ^3.32.0
-  "@tiptap/extension-table": ^3.32.0
-  "@tiptap/extension-mention": ^3.32.0
-  "@tiptap/extensions": ^3.32.0
-  "@tiptap/html": ^3.32.0
-  "@tiptap/pm": ^3.32.0
-  "@tiptap/starter-kit": ^3.32.0
-  "@tiptap/suggestion": ^3.32.0
-  "@tiptap/vue-3": ^3.32.0
+  "@tiptap/core": ^3.32.1
+  "@tiptap/extension-code-block-lowlight": ^3.32.1
+  "@tiptap/extension-file-handler": ^3.32.1
+  "@tiptap/extension-image": ^3.32.1
+  "@tiptap/extension-list": ^3.32.1
+  "@tiptap/extension-table": ^3.32.1
+  "@tiptap/extension-mention": ^3.32.1
+  "@tiptap/extensions": ^3.32.1
+  "@tiptap/html": ^3.32.1
+  "@tiptap/pm": ^3.32.1
+  "@tiptap/starter-kit": ^3.32.1
+  "@tiptap/suggestion": ^3.32.1
+  "@tiptap/vue-3": ^3.32.1
   "@tresjs/cientos": ^5.10.0
   "@tresjs/core": ^5.10.0
-  "@trpc/client": ^11.19.0
-  "@trpc/server": ^11.19.0
+  "@trpc/client": ^11.22.1
+  "@trpc/server": ^11.22.1
   "@tsdown/css": 0.23.2
   "@types/mjml": ^5.4.2
-  "@types/node": ^26.6.5
+  "@types/node": ^26.6.6
   "@types/sax": ^1.2.7
   "@types/three": ^0.186.0
   "@types/web-push": ^3.6.4
@@ -245,7 +245,7 @@ catalog:
   vite-plus: ^1.4.0
   vitest: ^5.0.5
   vitest-browser-vue: ^3.1.0
-  vize: ^0.603.0
+  vize: ^0.604.0
   vue: ^3.5.44
   vue-eslint-parser: ^10.4.1
   vue-router: ^5.4.0
