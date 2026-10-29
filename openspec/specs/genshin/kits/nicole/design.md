@@ -82,3 +82,4 @@ Her third and fifth constellations raise her skill and burst levels from the con
 ## Open
 
 - [ ] **The Hexerei set is the wiki's Hexerei Characters category** — no source yet: the cached wiki has no Hexerei Characters category page; its talent pages name only their own character as Hexerei.
+- [ ] **The burst's projections round a 21.5-metre area of the targeting zone** — no source yet: gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/burst.go` line 109 gives the burst's hit a 6.5-metre circle on the primary target, and neither `packages/genshin-world/src/data/kits/nicole.json` nor `packages/genshin-world/src/services/kit/characters/nicoleKit.ts` holds 21.5; the record that would hold it was not located.
