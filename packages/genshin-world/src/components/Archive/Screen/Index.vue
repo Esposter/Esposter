@@ -63,7 +63,7 @@ const getEntryName = (entry: ArchiveEntry): string =>
 // An open entry's description, which an entry without one (an artifact set) does not have, so its block is not drawn
 const selectedDescription = computed(() => {
   const entry = selectedEntry.value;
-  return entry?.descriptionTextId && checkIsEntryOpened(entry.id) ? textMap[entry.descriptionTextId] : undefined;
+  return entry?.descriptionTextId && checkIsEntryOpened(entry.id) ? (textMap[entry.descriptionTextId] ?? "") : "";
 });
 // The Archive's count is every section's open entries, which the game fills into its counter's first value
 const unlockedCountSegments = computed(() =>

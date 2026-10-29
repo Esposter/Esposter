@@ -11,9 +11,9 @@ interface Props {
   landmarks: Landmark[];
   // How far a landmark's mark reaches from its point, in metres, so a mark is drawn one size at any view's scale
   markRadius: number;
-  // The SVG transform that turns the catalogue's points into the view's frame, which the overlay gives and the minimap, that
-  // turns with its own group, leaves out
-  transform?: string;
+  // The SVG transform that turns the catalogue's points into the view's frame, which the overlay gives: `""` for the
+  // Minimap, whose own group only translates the drawing
+  transform: string;
 }
 
 const { catalogue, landmarks, markRadius, transform } = defineProps<Props>();
@@ -31,7 +31,7 @@ const areaOutlines = computed(() => {
 
 <template>
   <!-- The map's one drawing, which the overlay and the minimap each view: the catalogue's drawn outlines and the
-       Landmarks a jump lands at, in the catalogue's metres, turned into the view's frame by the transform it is given -->
+       landmarks a jump lands at, in the catalogue's metres, turned into the view's frame by the transform it is given -->
   <g :transform>
     <polygon v-for="{ id, points } of areaOutlines" :key="id" class="area" :points />
     <circle

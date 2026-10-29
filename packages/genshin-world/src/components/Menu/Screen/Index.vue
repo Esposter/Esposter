@@ -16,7 +16,7 @@ import { ScreenKindGameTextKeyMap } from "#src/services/screen/ScreenKindGameTex
 interface Props {
   // The signed-in account's avatar and name, which the profile card shows over the Traveler's when the player is signed in
   accountAvatarUrl?: string;
-  accountName?: string;
+  accountName: string;
   // The Adventure EXP's share of the rank's bar, and the rank and World Level the profile card shows
   adventureExpProgress: number;
   adventureRank: number;

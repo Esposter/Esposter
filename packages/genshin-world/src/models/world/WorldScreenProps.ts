@@ -8,7 +8,7 @@ import type { GameLanguage, GameText } from "genshin-text";
 export interface WorldScreenProps {
   // The signed-in player's avatar and name, which the Paimon menu's profile card shows, given while the player is signed in
   accountAvatarUrl: string;
-  accountName?: string;
+  accountName: string;
   // A camera held still, as a reference of the game's sees the world, in place of the one circling the oak
   cameraPose?: WorldCameraPose;
   createTerrainWorker: () => Worker;

@@ -32,7 +32,7 @@ interface Props {
   // The signed-in account's avatar and name, which the profile card shows in place of the Traveler's disc and the
   // Default name when the player is signed out
   accountAvatarUrl?: string;
-  accountName?: string;
+  accountName: string;
   // The Adventure EXP's share of the rank's bar, and the rank and World Level the profile card shows
   adventureExpProgress: number;
   adventureRank: number;
@@ -96,7 +96,7 @@ const openContents = computed(() =>
   PAIMON_MENU_CONTENTS.filter(({ screenKind }) => checkIsSystemOpen(screenKind, adventureRank, finishedMainQuestIds)),
 );
 // Quit is anchored from the bottom edge, as the frame anchors it: its box stands 36 of the 1440 high still's pixels above
-// The still's bottom, which puts its centre 55 units above the frame's bottom, where the frame's centre is
+// That still's bottom, each still pixel drawn at `--reference-pixel`, which puts its centre 55 units above the frame's bottom
 const quitStyle = {
   ...getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Quit]),
   bottom: "calc(var(--reference-pixel) * 36)",
@@ -215,7 +215,7 @@ onBeforeUnmount(() => {
         <div class="card" />
         <NuxtImg v-if="accountAvatarUrl" :alt="accountName" class="avatar-image" :src="accountAvatarUrl" />
         <div v-else class="avatar" />
-        <p class="name">{{ accountName ?? gameText[GameTextKey.PlayerDefaultName] }}</p>
+        <p class="name">{{ accountName || gameText[GameTextKey.PlayerDefaultName] }}</p>
         <div class="edit">
           <span v-if="alertedIcons.includes(MenuFrameIcon.Edit)" aria-hidden="true" class="alert" />
         </div>
@@ -328,7 +328,7 @@ onBeforeUnmount(() => {
 <style scoped>
 /* The reference is the 2026 frame at 25 seconds, 1920 by 1080, with the game's window pillarboxed 150 pixels in; the page places
    the menu at that window's left edge, so its layout is in the frame's own pixels, a unit being one, and its icons are traced from
-   the still, each of whose pixels the frame draws at 0.79 of one, so an icon's box reads `--reference-pixel` */
+   the 1440 high still, each of whose pixels the frame draws at 0.79 of one, so an icon's box reads `--reference-pixel` */
 .paimon-menu {
   --reference-pixel: calc(var(--unit) * 0.79);
   color: #ece5d7;

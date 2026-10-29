@@ -123,8 +123,8 @@ onMounted(() => {
 
 <template>
   <WorldScreen
-    :account-avatar-url="session.data?.user.image ?? ''"
-    :account-name="session.data?.user.name"
+    :account-avatar-url="session.data?.user.image || ''"
+    :account-name="session.data?.user.name || ''"
     :create-terrain-worker="() => new TerrainTileWorker()"
     :dev-registry
     :game-data-base-url="getGenshinGameDataBaseUrl(containerBaseUrl)"

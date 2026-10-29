@@ -56,7 +56,7 @@ watch(
         aria-hidden="true"
       >
         <g :transform="`translate(${-camera.x} ${-camera.z})`">
-          <MapDrawing :catalogue :landmarks :mark-radius="MINIMAP_RADIUS * 2 * MAP_MARK_SHARE" />
+          <MapDrawing :catalogue :landmarks :mark-radius="MINIMAP_RADIUS * 2 * MAP_MARK_SHARE" transform="" />
           <circle
             v-for="{ id, position } in nearOculusPlaces"
             :key="id"
