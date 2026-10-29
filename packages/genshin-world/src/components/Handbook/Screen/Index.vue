@@ -267,6 +267,9 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   position: relative;
   width: calc(var(--reference-pixel) * 3130);
   height: calc(var(--reference-pixel) * 1730);
+  /* The scene behind the book, blurred: lighter to the lower left, which a straight run across the frame holds
+     within a few levels */
+  background: linear-gradient(to bottom left, #768082, #878e8c);
 }
 
 .book {
