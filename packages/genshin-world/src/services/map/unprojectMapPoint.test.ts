@@ -2,9 +2,9 @@ import { projectMapPoint } from "#src/services/map/projectMapPoint";
 import { unprojectMapPoint } from "#src/services/map/unprojectMapPoint";
 import { describe, expect, test } from "vitest";
 
-const centre = { x: -1094.6, z: -2699.7 };
-
 describe(unprojectMapPoint, () => {
+  const centre = { x: -1094.6, z: -2699.7 };
+
   test("turns a place on the map back into the catalogue point it was drawn from", () => {
     expect.hasAssertions();
 

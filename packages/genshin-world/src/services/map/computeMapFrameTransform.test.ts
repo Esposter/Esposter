@@ -2,9 +2,9 @@ import { computeMapFrameTransform } from "#src/services/map/computeMapFrameTrans
 import { projectMapPoint } from "#src/services/map/projectMapPoint";
 import { describe, expect, test } from "vitest";
 
-const centre = { x: -1094.6, z: -2699.7 };
-
 describe(computeMapFrameTransform, () => {
+  const centre = { x: -1094.6, z: -2699.7 };
+
   test("places a catalogue point where projectMapPoint does", () => {
     expect.hasAssertions();
 

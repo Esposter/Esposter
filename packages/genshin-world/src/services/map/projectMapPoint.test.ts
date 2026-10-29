@@ -1,9 +1,9 @@
 import { projectMapPoint } from "#src/services/map/projectMapPoint";
 import { describe, expect, test } from "vitest";
 
-const centre = { x: -1094.6, z: -2699.7 };
-
 describe(projectMapPoint, () => {
+  const centre = { x: -1094.6, z: -2699.7 };
+
   test("places a point with more x than the centre above it, and more z to its right", () => {
     expect.hasAssertions();
 
