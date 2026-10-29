@@ -1,9 +1,5 @@
 # Fontaine
 
-## Queue
-
-- [ ] `[page]` {court-of-fontaine-location-score} needs game-exports, parity-page — **court-of-fontaine-location: the frame's score.** `pnpm -C scripts genshin:parity compare court-of-fontaine-location`. Reads the reference and the page's screen at the reference's size. Writes its row of `ParityReferenceMap.snapshot.md` and the reference, ours and difference images. Bar: none numeric; reported, not gated: the passes above carry the bars, and the frame is checked by eye.
-
 ## Waiting
 
 - [ ] `[page]` {fontaine-light} needs game-exports, parity-page — **Fontaine: the light pass.** `pnpm -C scripts genshin:parity passes fontaine --pass Light`. Reads the solved direction above, the lit stone's colour over the reference and its glow over the reference's frame. Writes `scripts/src/services/genshinParity/passes/snapshots/fontaine.snapshot.md`. Bar: the Light bars of [compute](../README.md#bars). Waits on a solved sun direction, which needs a reference frame whose shadows fall on flat receivers (the shadow image entry under Open).
@@ -18,6 +14,7 @@
 
 ## Open
 
+- [ ] **court-of-fontaine-location: the frame's score at a mean of 21.08%, not yet in its snapshot row** — no source yet: the run's figures are a mean of 21.08%, shape 0.208, tone 16.62% and FLIP 0.6769, with the worst cell at column 2, row 0 (error 33.66). Its row is not written, since `mergeParityScores`' row pattern reads only one-space rows and a subset run drops the report's padded ones (the committed report falls from 157 rows to 27). Its shot is the world at the page's default view, the Wanderer's Trail statue rather than the Court, with no characters drawn, so the score measures that view until `court-of-fontaine-location-camera-landmarks` solves the reference's camera.
 - [ ] **The Zongzhan piece count: 35 in the Waiting item, 36 in the Open item below** — no source yet: a grep of `{data-root}/genshin-parity/extracted/fontaine/` for `Area_Fd_Build_FDC_POI_Zongzhan_` followed by digits finds 36 distinct numbers, which sides with the Open item's 36; the layout dumps were counted on their own, not apart from the witness, so which count the Waiting item means is not settled.
 - [ ] **court-of-fontaine-location's pose image** — no source yet: the pose is not solved from `{data-root}/genshin-parity/references/court-of-fontaine-location.png`, which is on disk, as its camera pass above is not yet run.
 - [ ] **court-of-fontaine-location's shadow image** — no source: `pnpm -C scripts genshin:parity shadows court-of-fontaine-location --witness fontaine` finds no shadow edge on a flat receiver in `{data-root}/genshin-parity/references/court-of-fontaine-location.png`, so the sun's direction is not solved from it and the reference's held minute stays the provisional noon; a reference frame whose shadows' edges fall on flat receivers solves it.
