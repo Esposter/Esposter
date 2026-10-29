@@ -65,8 +65,7 @@ the session to fix it. A wave of agents landing one after another is watched onc
 Only to answer a red: a session whose push turned a typecheck or lint job red, a session asked to fix a failed CI
 job, runs that one check as CI runs it, to reproduce the red and prove the fix. The
 failed job's log (`gh run view <id> --log-failed`) names the package whose typecheck failed, the root's own
-included, and the reproduction is `pnpm typecheck` from that package rather than the whole repository; a lint red is
-reproduced by `vp run lint:fix` from the repo root, the one scope matching CI's
+included, and the reproduction is `pnpm typecheck` from that package rather than the whole repository; a lint red is reproduced by `vp run lint:fix` from the repo root, the scope matching CI's, and a knip or actionlint red by `vp run lint:unused` or `vp run lint:workflows`, which fix nothing
 (the `package-scripts` skill's `references/check-suite.md`). A check that writes — `lint:fix`, `pnpm format` — owns
 the files it covers until its exit line, so nothing is edited under it meanwhile. A worktree installed without the app has no `apps/web/.nuxt`, and every package's ESLint config imports `withNuxt` from the `eslint.config.mjs` Nuxt generates there, so ESLint cannot load until the shared checkout's is linked in: `ln -s "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")/apps/web/.nuxt" apps/web/.nuxt` from the worktree's root. Node resolves the generated file's relative imports from the link's real path, so they reach the shared checkout's installs. On Windows, long paths must be enabled once (see `openspec/specs/architecture/monorepo-tooling/design.md`, "Windows long paths"), or `vp lint` fails on a worktree's deep node_modules; a worktree lives at `.agents/worktrees/<lane>`.
 
