@@ -1,6 +1,6 @@
 # AI-native resources
 
-How an agent reaches the operations a person runs in a resource editor, through typed procedures derived from what each type already declares. The program that set this out is archived at [its change folder](../../../changes/archive/2026-10-25-architecture-ai-native-resources-program/design.md). Each unit below is built on its own.
+How an agent reaches the operations a person runs in a resource editor, through typed procedures derived from what each type already declares. Each unit below is built on its own.
 
 | Page                                                   | What it covers                                                                                                                                                                  |
 | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

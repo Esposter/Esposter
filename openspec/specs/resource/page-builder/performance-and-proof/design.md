@@ -2,7 +2,7 @@
 
 The targets the page builder's editors hold, and the proof of their output. The benches and output tests run; the browser proofs that compare the canvas with the published page are owed, and each is marked where it is named.
 
-The benches and the output proof run over the [canvas](../canvas/design.md) and the email editor's canvas, on the [document model](../document-model/design.md)'s nodes and the [undo layer](../undo-as-patches/design.md)'s patches. The editors' script ceiling is held by the [cutover](../../../../changes/archive/2026-10-25-resource-page-builder-cutover/design.md)'s build check.
+The benches and the output proof run over the [canvas](../canvas/design.md) and the email editor's canvas, on the [document model](../document-model/design.md)'s nodes and the [undo layer](../undo-as-patches/design.md)'s patches. The editors' script ceiling is held by the cutover's build check.
 
 ## Performance
 

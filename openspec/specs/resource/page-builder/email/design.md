@@ -29,7 +29,7 @@ The shell is one set of components and composables for both documents, so the em
 
 Two parts are not data and are chosen by kind in the shell instead: the canvas, which draws a webpage in its frame and an email in the design canvas, and the settings tab's style panel, which draws a webpage's breakpoints and states and an email's attribute fields. Everything else in the shell is shared, so the webpage's behaviour is the one behaviour both documents keep.
 
-The kind's document type is the union of the two node types the registry holds, with the webpage and email each narrowed where a composable reads its own type's props. The store keeps the document under the union, and a kind's functions take the narrowed type, so a composable that reads a webpage's `style` never reads it from an email. The shell is mounted with the email kind. The composables and children typed to a webpage are the store union's owed work, listed with the other owed items in the [change's tasks](../../../../changes/archive/2026-10-25-resource-page-builder-email/tasks.md).
+The kind's document type is the union of the two node types the registry holds, with the webpage and email each narrowed where a composable reads its own type's props. The store keeps the document under the union, and a kind's functions take the narrowed type, so a composable that reads a webpage's `style` never reads it from an email. The shell is mounted with the email kind. The composables and children typed to a webpage are the store union's owed work, listed with the other owed items in the email page builder change's tasks.
 
 ## Key files
 
@@ -53,7 +53,7 @@ The kind's document type is the union of the two node types the registry holds, 
 
 ## Decisions
 
-The owed items and their reasons are in the [change's tasks](../../../../changes/archive/2026-10-25-resource-page-builder-email/tasks.md).
+The owed items and their reasons are in the email page builder change's tasks.
 
 - **One merge-field form.** The compile writes a merge token's `&`, `<` and `>` escaped and leaves quotes as they are, so substitution matches that text escape alone. ([`substituteMergeFields.ts`](../../../../../apps/web/app/services/emailEditor/substituteMergeFields.ts)).
 - **Length hint.** The preview text's limit is `MAX_EMAIL_PREVIEW_LENGTH`, which is the schema's maximum. The schema form draws it beside the field as a count, so the hint and the enforced limit come from one constant.

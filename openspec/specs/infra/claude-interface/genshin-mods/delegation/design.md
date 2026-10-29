@@ -49,4 +49,4 @@ flowchart TD
 - The count judges a command by its first word after the leading segments, so a read reached another way (`pnpm exec cat`, a script that greps) is a reset. The guard errs toward asking less, since a note on a call that was not a lookup would be noise.
 - The count lives in the session's state and is cleared by each prompt, so a run of lookups spanning two prompts is two runs.
 - The mod has no command and no switch: it runs in every session, where the other mods are switched by their own command.
-- The launch gate went in on 2026-10-12. That day a session sent some twenty lanes to opus, then sonnet, against the `llm-delegation` skill's two tiers, while its haiku runners landed their units for a fraction of the tokens. A rule the session could read past was not enough, so the user banned every model but haiku for a subagent.
+- The launch gate exists because a session sent some twenty lanes to opus, then sonnet, against the `llm-delegation` skill's two tiers, while its haiku runners landed their units for a fraction of the tokens. A rule the session could read past was not enough, so the user banned every model but haiku for a subagent.
