@@ -2,9 +2,11 @@ import type { ParityReferenceManifestRow } from "#src/models/genshinParity/refer
 import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
 
 import { ParityReferenceKind } from "#src/models/genshinParity/reference/ParityReferenceKind";
+import { ParityReportRun } from "#src/models/genshinParity/reference/ParityReportRun";
 import { genshinParityCommand } from "#src/services/genshinParity/commands/genshinParityCommand";
 import { compareScreen } from "#src/services/genshinParity/reference/compareScreen";
 import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
+import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
 import { runCommand } from "citty";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -39,7 +41,7 @@ vi.mock(import("#src/services/genshinParity/reference/readCachedReference"), () 
   readCachedReference: vi.fn<() => Promise<string>>(() => Promise.resolve("")),
 }));
 vi.mock(import("#src/services/genshinParity/reference/writeParityScores"), () => ({
-  writeParityScores: vi.fn<() => Promise<void>>(),
+  writeParityScores: vi.fn<typeof writeParityScores>(),
 }));
 vi.mock(import("#src/services/genshinParity/shared/fetchReferences"), () => ({
   fetchReferences: vi.fn<() => Promise<void>>(),
@@ -59,6 +61,15 @@ const cell = (column: number, error: number) => ({
 });
 
 describe("compareCommand", () => {
+  const loginDoorScore = {
+    edgeScore: 0,
+    flip: 0,
+    layers: [],
+    meanDifference: 0,
+    screen: "LoginScreen",
+    toneDifference: 0,
+  };
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -91,6 +102,34 @@ describe("compareCommand", () => {
 
     expect(log).toHaveBeenLastCalledWith(
       JSON.stringify({ bar: DEFAULT_APPROVAL.bar, id: "login-door", score: 3.46, worst: [cell(1, 9), cell(2, 4)] }),
+    );
+  });
+
+  test("writes a single reference's compare as a subset run, which never drops another row", async () => {
+    expect.hasAssertions();
+
+    vi.spyOn(console, "error").mockReturnValue(undefined);
+    vi.spyOn(console, "log").mockReturnValue(undefined);
+    vi.mocked(compareScreen).mockResolvedValue({ cells: [], score: loginDoorScore });
+    await runCommand(genshinParityCommand, { rawArgs: ["compare", "login-door"] });
+
+    expect(vi.mocked(writeParityScores)).toHaveBeenLastCalledWith(
+      { "login-door": loginDoorScore },
+      ParityReportRun.Subset,
+    );
+  });
+
+  test("writes --all's compare as the full run, the one run that may drop a row", async () => {
+    expect.hasAssertions();
+
+    vi.spyOn(console, "error").mockReturnValue(undefined);
+    vi.spyOn(console, "log").mockReturnValue(undefined);
+    vi.mocked(compareScreen).mockResolvedValue({ cells: [], score: loginDoorScore });
+    await runCommand(genshinParityCommand, { rawArgs: ["compare", "--all"] });
+
+    expect(vi.mocked(writeParityScores)).toHaveBeenLastCalledWith(
+      { "login-door": loginDoorScore },
+      ParityReportRun.Full,
     );
   });
 });

@@ -1,3 +1,4 @@
+import { ParityReportRun } from "#src/models/genshinParity/reference/ParityReportRun";
 import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
 import { decideApprovalStatus } from "#src/services/genshinParity/reference/decideApprovalStatus";
 import { getApprovalValue } from "#src/services/genshinParity/reference/getApprovalValue";
@@ -38,7 +39,7 @@ export const approveReference = async (referenceId: string, variant?: string): P
   const isWholeScreen = reference.region === undefined && isRecordedState;
   const score = hasReference && isWholeScreen ? await readScore(referenceId) : undefined;
   // The committed report takes the compare's row whether or not it clears the bar, as `compare` writes it
-  if (score) await writeParityScores({ [referenceId]: score });
+  if (score) await writeParityScores({ [referenceId]: score }, ParityReportRun.Subset);
   const approval = reference.approval ?? DEFAULT_APPROVAL;
   const approvalStatus = decideApprovalStatus(hasReference, isWholeScreen, score, approval);
   const value = score === undefined ? undefined : getApprovalValue(score, approval);

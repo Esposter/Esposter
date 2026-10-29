@@ -3,6 +3,7 @@ import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { ComparisonFailureRecovery } from "#src/models/genshinParity/reference/ComparisonFailureRecovery";
+import { ParityReportRun } from "#src/models/genshinParity/reference/ParityReportRun";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { startFreshPageServer } from "#src/services/genshinParity/page/startFreshPageServer";
 import { classifyComparisonFailure } from "#src/services/genshinParity/reference/classifyComparisonFailure";
@@ -120,7 +121,8 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
       },
       () => freshPage?.stop(),
     );
-    // A witness's scores price the exports, not the scene, so the committed report keeps the scene's own
-    if (!args.witness) await writeParityScores(scores);
+    // A witness's scores price the exports, not the scene, so the committed report keeps the scene's own. Only `--all`
+    // Visits every reference, so it alone is the full run that may drop a row; a single reference's scores are a subset
+    if (!args.witness) await writeParityScores(scores, args.all ? ParityReportRun.Full : ParityReportRun.Subset);
   },
 });

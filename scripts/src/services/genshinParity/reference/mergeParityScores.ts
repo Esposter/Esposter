@@ -1,6 +1,7 @@
 import type { ParityScore } from "#src/models/genshinParity/reference/ParityScore";
 import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
 
+import { ParityReportRun } from "#src/models/genshinParity/reference/ParityReportRun";
 import { toLayerRow } from "#src/services/genshinParity/reference/toLayerRow";
 import { toPendingRow } from "#src/services/genshinParity/reference/toPendingRow";
 import { toRow } from "#src/services/genshinParity/reference/toRow";
@@ -32,14 +33,29 @@ const LAYER_HEADER = [
 // Slash
 const ROW_REGEX = /^\| `(?<key>[^`]+)` \|/u;
 const LAYER_SEPARATOR = "/";
-// The report of every reference's scores and its scene's layers from the report's lines as they were, the given ones
-// Rewritten and the rest kept as they were last scored, in the references' order, a reference not among them dropped
-// With its layers. A pending reference's row says so with its reason, in its place, and it has no layers
+
+// Each new id goes after the nearest id before it in the references' order that the report already lists, so it lands
+// Where a full run would put it
+const placeNewIds = (ids: readonly string[], newIds: readonly string[], referenceIds: readonly string[]): string[] =>
+  newIds.reduce(
+    (order, newId) => {
+      const predecessor = referenceIds.slice(0, referenceIds.indexOf(newId)).findLast((id) => order.includes(id));
+      return order.toSpliced(predecessor === undefined ? 0 : order.indexOf(predecessor) + 1, 0, newId);
+    },
+    [...ids],
+  );
+
+// The report merged from its lines as they were and the given scores, the one merge both writers (`compare` and `approve`)
+// Use. A scored reference's row and layers are rewritten, a pending screen's row names its reason and has no layers, and
+// Every other row is kept as it was. A subset run lists the rows in the report's own order, a new reference placed in the
+// References' order; a full run lists every reference in the references' order and drops the rows of a reference the map
+// No longer holds
 export const mergeParityScores = (
   lines: readonly string[],
   scores: Readonly<Record<string, ParityScore>>,
   referenceIds: readonly string[],
   references: Readonly<Record<string, ParityReference>>,
+  run: ParityReportRun,
 ): string => {
   const rowMap = new Map(
     lines.flatMap((line) => {
@@ -47,26 +63,31 @@ export const mergeParityScores = (
       return key ? [[key, line] as const] : [];
     }),
   );
-  for (const [referenceId, score] of Object.entries(scores)) {
-    rowMap.set(referenceId, toRow(referenceId, score));
-    // A reference scored again replaces every layer row it had, so a family it no longer draws leaves none behind
-    for (const key of rowMap.keys()) if (key.startsWith(`${referenceId}${LAYER_SEPARATOR}`)) rowMap.delete(key);
-    for (const layer of score.layers) {
-      const key = `${referenceId}${LAYER_SEPARATOR}${layer.name}`;
-      rowMap.set(key, toLayerRow(key, layer));
-    }
-  }
-  const rows = referenceIds.flatMap((referenceId) => {
+  const isPending = (referenceId: string): boolean => references[referenceId]?.pending !== undefined;
+  const isWritten = (referenceId: string): boolean => scores[referenceId] !== undefined || isPending(referenceId);
+  const order =
+    run === ParityReportRun.Full
+      ? referenceIds.filter((referenceId) => isWritten(referenceId) || rowMap.has(referenceId))
+      : placeNewIds(
+          [...rowMap.keys()].filter((key) => !key.includes(LAYER_SEPARATOR)),
+          referenceIds.filter((referenceId) => isWritten(referenceId) && !rowMap.has(referenceId)),
+          referenceIds,
+        );
+  const rows = order.flatMap((referenceId) => {
     const reference = references[referenceId];
     if (reference?.pending !== undefined) return [toPendingRow(referenceId, reference.screen, reference.pending)];
+    const score = scores[referenceId];
+    if (score) return [toRow(referenceId, score)];
     const row = rowMap.get(referenceId);
     return row ? [row] : [];
   });
-  const layerRows = referenceIds
-    .filter((referenceId) => references[referenceId]?.pending === undefined)
-    .flatMap((referenceId) =>
-      [...rowMap].flatMap(([key, row]) => (key.startsWith(`${referenceId}${LAYER_SEPARATOR}`) ? [row] : [])),
-    );
+  // A reference scored again replaces every layer row it had, so a family it no longer draws leaves none behind
+  const layerRows = order.flatMap((referenceId) => {
+    if (isPending(referenceId)) return [];
+    const score = scores[referenceId];
+    if (score) return score.layers.map((layer) => toLayerRow(`${referenceId}${LAYER_SEPARATOR}${layer.name}`, layer));
+    return [...rowMap].flatMap(([key, line]) => (key.startsWith(`${referenceId}${LAYER_SEPARATOR}`) ? [line] : []));
+  });
   const layerLines = layerRows.length > 0 ? [...LAYER_HEADER, ...layerRows] : [];
   return `${[...HEADER, ...rows, ...layerLines].join("\n")}\n`;
 };

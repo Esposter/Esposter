@@ -57,13 +57,26 @@ A comparison SHALL score only the region a reference names, the rectangles of it
 
 ### Requirement: Each comparison rewrites its reference's committed row
 
-Each comparison SHALL rewrite its reference's row of the committed scores, so that a change's diff shows what it moved on every screen.
+Each comparison SHALL rewrite its reference's row of the committed scores, so that a change's diff shows what it moved on every screen. A comparison of one reference SHALL rewrite only that reference's rows, and every other row SHALL stay where and as it was.
 
 #### Scenario: Scores committed
 
 - **GIVEN** a reference whose comparison has run
 - **WHEN** the committed report is read
 - **THEN** the reference's row holds the scores of that run
+
+#### Scenario: A single comparison keeps every other row
+
+- **GIVEN** a committed report holding rows for other references
+- **WHEN** one reference is compared
+- **THEN** only that reference's row and its layers change
+- **AND** every other row is kept where it was
+
+#### Scenario: The full run drops a row the map no longer holds
+
+- **GIVEN** a committed report holding a row for a reference the map no longer names
+- **WHEN** the comparisons run for all references
+- **THEN** that row is dropped
 
 #### Scenario: Comparison fails
 
