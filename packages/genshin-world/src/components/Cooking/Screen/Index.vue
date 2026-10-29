@@ -102,6 +102,7 @@ const autoCook = () => {
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.CookingTitle]">
     <CookingScreen
       :auto-cook-label="gameText[GameTextKey.CookingAutoCook]"
+      :close-label="gameText[GameTextKey.Back]"
       :dishes
       :is-auto-cookable="isAutoCookable"
       :pointer

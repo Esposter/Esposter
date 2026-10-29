@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import {
-  COOKING_ARC_CENTRE_X,
-  COOKING_ARC_CENTRE_Y,
-  COOKING_ARC_RADIUS_X,
-  COOKING_ARC_RADIUS_Y,
-} from "#src/services/constants";
+import { COOKING_ARC_CENTRE_X, COOKING_ARC_CENTRE_Y, COOKING_ARC_RADIUS_X } from "#src/services/constants";
 import { computed } from "vue";
 
 interface Props {
   // The Auto Cook button's label in the reader's language
   autoCookLabel: string;
+  // The way out of the screen, named for a screen reader in the reader's language
+  closeLabel: string;
   // The dishes the cook knows, by id and name in the reader's language, listed for the choice
   dishes: { id: number; name: string }[];
   // Whether Auto Cook is offered for the dish on the screen, once its proficiency is full
@@ -26,7 +23,8 @@ interface Props {
   zones: { delicious: [number, number]; regular: [number, number] };
 }
 
-const { autoCookLabel, dishes, isAutoCookable, pointer, selectedId, stopLabel, title, zones } = defineProps<Props>();
+const { autoCookLabel, closeLabel, dishes, isAutoCookable, pointer, selectedId, stopLabel, title, zones } =
+  defineProps<Props>();
 const emit = defineEmits<{ autoCook: []; close: []; select: [id: number]; stop: [] }>();
 // The zones lie on a band drawn inside the bar's track, whose radius is this, in the stage's units
 const ZONE_RADIUS_Y = 90;
@@ -48,11 +46,15 @@ const pointerPosition = computed(() => toArcPoint(pointer, ZONE_RADIUS_Y));
 
 <template>
   <div class="cooking-screen">
-    <svg aria-hidden="true" class="chef" viewBox="0 0 54 50">
-      <path d="M11 24 C3 23 3 11 12 11 C11 2 25 0 27 8 C30 0 44 2 42 11 C51 11 51 23 43 24 L43 41 L11 41 Z" />
+    <svg aria-hidden="true" class="chef" viewBox="3 0 48 50">
+      <path d="M11 24 C3 23 3 11 12 11 C11 2 25 0 27 8 C30 0 44 2 42 11 C51 11 51 23 43 24 L43 50 L11 50 Z" />
     </svg>
     <p class="title" role="heading" aria-level="1">{{ title }}</p>
-    <button class="close" type="button" @click="emit('close')">×</button>
+    <button :aria-label="closeLabel" class="close" type="button" @click="emit('close')">
+      <svg aria-hidden="true" class="close-mark" viewBox="0 0 40 40">
+        <path d="M9 9 L31 31 M31 9 L9 31" />
+      </svg>
+    </button>
     <ul v-if="dishes.length > 1" class="dishes">
       <li v-for="dish in dishes" :key="dish.id">
         <button
@@ -71,14 +73,21 @@ const pointerPosition = computed(() => toArcPoint(pointer, ZONE_RADIUS_Y));
           <stop offset="0" stop-color="rgb(214 52 34 / 42%)" />
           <stop offset="1" stop-color="rgb(214 52 34 / 0%)" />
         </radialGradient>
+        <!-- The pot's wall, dark at its mouth and warm where the fire lights its foot, as the recording shows it -->
+        <linearGradient id="cooking-pot" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0.35" stop-color="rgb(58 59 65)" />
+          <stop offset="0.55" stop-color="rgb(86 85 89)" />
+          <stop offset="0.85" stop-color="rgb(120 108 100)" />
+          <stop offset="1" stop-color="rgb(170 138 112)" />
+        </linearGradient>
       </defs>
       <ellipse class="heat" cx="960" cy="700" rx="100" ry="260" />
       <!-- The flame under the pot, drawn before the pot so the pot's bottom covers its top -->
       <path
         class="flame"
-        d="M800 470 C830 440 860 470 880 455 C905 430 930 470 960 445 C990 470 1020 430 1040 455 C1070 440 1100 470 1118 470 C1090 505 1050 520 1010 530 L960 540 L910 530 C870 520 830 505 800 470 Z"
+        d="M800 470 C830 440 860 470 880 455 C905 430 930 470 960 445 C990 470 1020 430 1040 455 C1070 440 1100 470 1118 470 C1090 500 1050 512 1010 520 L960 526 L910 520 C870 512 830 500 800 470 Z"
       />
-      <ellipse class="flame-core" cx="960" cy="492" rx="90" ry="16" />
+      <ellipse class="flame-core" cx="960" cy="492" rx="90" ry="14" />
       <!-- The pot, with its rim, handles, and the three ingredients in it -->
       <path class="handle" d="M716 330 L790 330 L790 352 L716 352 Z M1130 330 L1204 330 L1204 352 L1130 352 Z" />
       <path class="pot" d="M780 345 C790 440 860 492 960 496 C1060 492 1130 440 1140 345 Z" />
@@ -89,7 +98,21 @@ const pointerPosition = computed(() => toArcPoint(pointer, ZONE_RADIUS_Y));
       <rect class="jar-cap" height="16" width="46" x="937" y="304" />
       <ellipse class="meat" cx="1055" cy="356" rx="56" ry="26" />
       <!-- The bar: its track, and the regular and delicious zones on the band inside it -->
-      <path class="track" :d="toArcPath([0, 1], COOKING_ARC_RADIUS_Y)" />
+      <!-- The bar's outer arc, its inner arc, the tick dots above it and the two scrolls at its ends, measured off the recording -->
+      <path class="track" d="M525 834 A525 265 0 0 1 1395 834" />
+      <path class="inner-track" d="M690 832 A345 198 0 0 1 1230 832" />
+      <path
+        class="scroll"
+        d="M525 828 C534 810 555 810 564 822 S588 819 600 807 S630 795 642 786 S660 768 678 768 C690 768 699 750 687 744 C678 739.5 672 750 681 759 M1395 828 C1386 810 1365 810 1356 822 S1332 819 1320 807 S1290 795 1278 786 S1260 768 1242 768 C1230 768 1221 750 1233 744 C1242 739.5 1248 750 1239 759"
+      />
+      <g class="ticks">
+        <circle cx="815" cy="719" r="3" />
+        <circle cx="885" cy="708" r="3" />
+        <circle cx="960" cy="702" r="3" />
+        <circle cx="1035" cy="708" r="3" />
+        <circle cx="1105" cy="720" r="3" />
+        <circle cx="1173" cy="735" r="3" />
+      </g>
       <path class="regular" :d="toArcPath(zones.regular, ZONE_RADIUS_Y)" />
       <path class="delicious" :d="toArcPath(zones.delicious, ZONE_RADIUS_Y)" />
       <g class="pointer" :transform="`translate(${pointerPosition.x} ${pointerPosition.y}) rotate(-17)`">
@@ -128,19 +151,19 @@ const pointerPosition = computed(() => toArcPoint(pointer, ZONE_RADIUS_Y));
 }
 
 .handle {
-  fill: #7d7f88;
+  fill: #64666d;
 }
 
 .pot {
-  fill: #4a4c57;
+  fill: url(#cooking-pot);
 }
 
 .pot-rim {
-  fill: #8d9199;
+  fill: #948f88;
 }
 
 .pot-opening {
-  fill: #3b3e47;
+  fill: #3a3b41;
 }
 
 .carrot {
@@ -160,17 +183,28 @@ const pointerPosition = computed(() => toArcPoint(pointer, ZONE_RADIUS_Y));
 }
 
 .flame {
-  fill: #e8801c;
+  fill: #eea44c;
 }
 
 .flame-core {
-  fill: #ffb43c;
+  fill: #ffde96;
 }
 
-.track {
+.track,
+.inner-track,
+.scroll {
   fill: none;
-  stroke: rgb(240 236 225 / 85%);
+  stroke: rgb(250 248 236 / 95%);
+  stroke-width: 4;
+}
+
+.scroll {
+  stroke-linecap: round;
   stroke-width: 3;
+}
+
+.ticks circle {
+  fill: rgb(250 248 236);
 }
 
 .regular {
@@ -200,28 +234,37 @@ const pointerPosition = computed(() => toArcPoint(pointer, ZONE_RADIUS_Y));
 
 .title {
   position: absolute;
-  top: calc(var(--unit) * 26);
+  top: calc(var(--unit) * 33);
   left: calc(var(--unit) * 145);
   margin: 0;
   color: #e2cf9b;
-  font-size: calc(var(--unit) * 28);
+  font-size: calc(var(--unit) * 32);
   font-weight: 600;
+  letter-spacing: calc(var(--unit) * -1.8);
   line-height: 1;
 }
 
 .close {
   position: absolute;
   top: calc(var(--unit) * 20);
-  right: calc(var(--unit) * 54);
-  width: calc(var(--unit) * 57);
-  height: calc(var(--unit) * 57);
+  right: calc(var(--unit) * 53);
+  box-sizing: border-box;
+  width: calc(var(--unit) * 58);
+  height: calc(var(--unit) * 58);
   padding: 0;
-  border: 0;
+  border: calc(var(--unit) * 4.5) solid rgb(150 150 150);
   border-radius: 50%;
-  background: rgb(235 235 235 / 90%);
-  color: #2a2a2a;
-  font-size: calc(var(--unit) * 34);
-  line-height: 1;
+  background: rgb(238 236 228);
+}
+
+.close-mark {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: rgb(45 48 60);
+  stroke-linecap: round;
+  stroke-width: 3.2;
 }
 
 .dishes {
@@ -276,8 +319,9 @@ const pointerPosition = computed(() => toArcPoint(pointer, ZONE_RADIUS_Y));
   transform: translateX(-50%);
   border: 0;
   background: none;
-  color: #ece3d8;
+  color: rgb(44 40 36);
   font-size: calc(var(--unit) * 24);
+  font-weight: 700;
   line-height: 1;
 }
 
@@ -292,9 +336,8 @@ const pointerPosition = computed(() => toArcPoint(pointer, ZONE_RADIUS_Y));
 }
 
 .stop-square {
-  width: calc(var(--unit) * 40);
-  height: calc(var(--unit) * 40);
-  border-radius: calc(var(--unit) * 6);
-  background: #e8c46a;
+  width: calc(var(--unit) * 37);
+  height: calc(var(--unit) * 37);
+  border: calc(var(--unit) * 3) solid rgb(242 234 170);
 }
 </style>
