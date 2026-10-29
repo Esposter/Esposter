@@ -11,9 +11,7 @@ export const parseNameStatus = (output: string): ChangedFile[] => {
     const letter = fields[index];
     const path = fields[index + 1];
     if (letter === undefined || path === undefined) break;
-    const status =
-      [ChangeStatus.Added, ChangeStatus.Deleted, ChangeStatus.Modified].find((known) => known === letter) ??
-      ChangeStatus.Modified;
+    const status = Object.values(ChangeStatus).find((known) => known === letter) ?? ChangeStatus.Modified;
     changedFiles.push({ path, status });
   }
   return changedFiles;
