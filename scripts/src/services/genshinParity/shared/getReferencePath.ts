@@ -1,6 +1,7 @@
 import type { ReferenceFilePlan } from "#src/models/genshinParity/reference/ReferenceFilePlan";
 
 import { readReferenceFiles } from "#src/services/genshinParity/reference/readReferenceFiles";
+import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
@@ -11,7 +12,13 @@ import { relative } from "node:path";
 export const getReferencePath = async (referenceId: string): Promise<string> => {
   const plan = (await readReferenceFiles()).find(({ id }: ReferenceFilePlan) => id === referenceId);
   if (plan === undefined)
-    throw new InvalidOperationError(Operation.Read, referenceId, "is a pending reference, so it has no image to read");
+    throw new InvalidOperationError(
+      Operation.Read,
+      referenceId,
+      ParityReferenceMap[referenceId] === undefined
+        ? "is not a reference in ParityReferenceMap"
+        : "is a pending reference, so it has no image to read",
+    );
   if (!existsSync(plan.path))
     throw new InvalidOperationError(
       Operation.Read,
