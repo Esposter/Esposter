@@ -29,4 +29,4 @@ Shell primitives live in `app/components/Ui/` (the UI library) and `app/componen
 
 ## Notes
 
-- Styling follows the `styling` skill (UnoCSS attributify) and `ui-library` skill (an icon button's label is its tooltip). Header layout uses flex rows.
+- Styling follows the `styling` skill (UnoCSS attributify) and the `ui-library` skill. Header layout uses flex rows.
