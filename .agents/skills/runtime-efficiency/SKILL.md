@@ -62,6 +62,10 @@ A table nothing deletes from grows forever. The trim belongs on the write path, 
 
 State the bound as a named duration or count constant, never a literal at the call site.
 
+## A timer is the last resort
+
+A timer or a polling loop is proposed only after three questions are answered no, in order: does the underlying service already emit an event for it, can the state be a predicate evaluated at read time, and can the cleanup ride a write path that already holds the rows. Only then is a scheduled job justified, and its design says why each answer was no.
+
 ## Reference pages
 
 - `references/script-clock.md` — when a tooling script feels slow, or a whole-tree suite is added.
