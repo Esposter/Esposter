@@ -6,18 +6,18 @@ The dialogue box's five states, scored over their backdrop.
 
 ### Requirement: Each of the dialogue box's five states
 
-Each of the dialogue box's five states SHALL differ from its reference by no more than 2 percent on average per region.
+Each of the dialogue box's five states SHALL differ from its reference by no more than the compare's bar on average per region: the mean difference of 1 percent, unless the reference's entry records another approval.
 
-#### Scenario: A state whose region differs by more than 2 percent does not pass
+#### Scenario: A state whose region differs by more than the bar does not pass
 
 - **GIVEN** a dialogue state is compared against its reference
-- **WHEN** a region's mean difference is above 2 percent
+- **WHEN** a region's mean difference is above the bar
 - **THEN** that state does not pass
 
-#### Scenario: A state within 2 percent on every region passes
+#### Scenario: A state within the bar on every region passes
 
 - **GIVEN** a dialogue state is compared against its reference
-- **WHEN** every region's mean difference is at or below 2 percent
+- **WHEN** every region's mean difference is at or below the bar
 - **THEN** that state passes
 
 ### Requirement: Each dialogue state

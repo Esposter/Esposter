@@ -109,7 +109,7 @@ The five are judged over their clean plate, the reference frame with its scored 
 
 The softened column is each reference's row in the parity snapshot (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`).
 
-Every state beats its bare render by the margin its snapshot row sets against the bare column, which is not yet the roadmap's 2% bar. What moved each figure:
+Every state beats its bare render by the margin its snapshot row sets against the bare column, which is not yet the compare's bar of 1% mean difference. What moved each figure:
 
 - **Position.** The line's first ascender lands on the reference's row, 591 of 720 for Sara's lines. The speaker's role line, `Waitress, Good Hunter`, sits between the name and the line and is drawn from the talk line's `speakerRoleTextId`. Paimon's line has no role, so its line sits a role's height higher, as the frame shows: scored at the role's place it was 21.93%, and at the frame's place 9.73%. The margin under the name is 15 units (`packages/genshin-interface/src/components/DialogueScreen/Index.vue`), so the line sits 30 units under the name with a role and 15 without.
 - **The role's gold rule and curls.** The role sits on a gold rule 1263 units wide through its middle, 3 units thick at `rgb(255 199 0 / 0.28)`, with a gold curl either side of the words. The curl is its own shape, not the silver divider's diamond, so it is `ROLE_FLOURISH_PATH` (`packages/genshin-interface/src/services/constants.ts`), traced from the recording's left curl and mirrored for the right. Every dialogue id's scored region stops above the role row, so `compare` does not see the rule or the curls: they are checked by measuring the shot's rule and curls against the reference's rows.
