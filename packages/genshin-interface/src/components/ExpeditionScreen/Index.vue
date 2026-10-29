@@ -93,7 +93,7 @@ const pick = (characterId: number) => {
       <p class="rewards-label">{{ rewardsLabel }}</p>
       <ul class="rewards">
         <li v-for="({ countLabel, label, rarity }, index) of detail.rewards" :key="index">
-          <ItemTile class="item" :aria-label="label" :count="countLabel" :rarity role="img" />
+          <ItemTile class="item" :aria-label="label" :count="countLabel" count-size="26.67cqh" :rarity role="img" />
         </li>
       </ul>
       <p v-if="detail.statusLabel" class="status">{{ detail.statusLabel }}</p>
@@ -370,16 +370,17 @@ const pick = (characterId: number) => {
   top: calc(var(--unit) * 428);
   left: calc(var(--unit) * 29);
   display: flex;
-  gap: calc(var(--unit) * 15);
+  gap: calc(var(--unit) * 16);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/* A reward tile is 75 across; its count's digits have 14 pixels of ink, a font of about 20 pixels */
 .item {
   display: block;
-  width: calc(var(--unit) * 76);
-  height: calc(var(--unit) * 76);
+  width: calc(var(--unit) * 75);
+  height: calc(var(--unit) * 75);
 }
 
 .status {
