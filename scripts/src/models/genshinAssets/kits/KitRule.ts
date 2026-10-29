@@ -1,25 +1,23 @@
-import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
-
 // A builder rule that gives a value of a kit's record no source reads
 export enum KitRule {
   // A value a character borrows from the donor its overlay names, read from the donor's own record in the same build
-  BorrowedFromDonor = KitProvisionalCause.BorrowedFromDonor,
+  BorrowedFromDonor = "BorrowedFromDonor",
   // A plunge's collision strikes as the plunge falls, so its hit lands as the fall starts
   CollisionHitmark = "CollisionHitmark",
   // A burst's first hit deals the character's element, which is its energy's, as the table gives the character
   EnergyElement = "EnergyElement",
   // A talent whose hits its module spawns as a named list has no hits of its own, whatever gcsim's list gives
-  NamedHitList = KitProvisionalCause.NamedHitList,
+  NamedHitList = "NamedHitList",
   // A plunge gcsim has no file for strikes once as it lands and ends 24 frames on, and a claymore's charged attack it
   // Has no file for spins at 30 frames, deals its final blow at 60 and ends at 72
-  NoActionFile = KitProvisionalCause.NoActionFile,
+  NoActionFile = "NoActionFile",
   // A skill no source gives a hold has none
   NoHold = "NoHold",
   // A hit no source gives poise for deals none
-  NoPoiseSource = KitProvisionalCause.NoPoiseSource,
+  NoPoiseSource = "NoPoiseSource",
   // An action targets within the strike zone for the normal attack, charged attack and plunges, and the skill zone for
   // The rest
   Targeting = "Targeting",
   // A hold no source measures must be held half a second
-  UnmeasuredHold = KitProvisionalCause.UnmeasuredHold,
+  UnmeasuredHold = "UnmeasuredHold",
 }
