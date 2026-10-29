@@ -11,7 +11,7 @@ import { join } from "node:path";
 
 // Verifies every reference of a map with a recording source, each against the frame its source names, cut into one
 // Temporary folder that is removed after. A wiki reference has no recording to cut, so it is reported as not checkable;
-// A pending one, with neither a source nor a wiki title, is left out. The cuts block on FFmpeg, one at a time
+// A pending one, with neither a source nor a wiki title, is left out. The cuts block on FFmpeg, a few at a time
 export const verifyReferences = async (
   references: Record<string, ParityReference>,
   capturesDirectory: string,
