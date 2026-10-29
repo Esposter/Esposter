@@ -13,3 +13,7 @@ export const WORLD_LEVEL_COOLDOWN_CLOCK_INTERVAL_MS: number = Temporal.Duration.
 // Camp's level less this. The wiki's enemy level ranges put each World Level's lowest enemy 14 to 17 under its monster
 // Level, which a camp at level 1 or 2 gives; the name plates of enemies at World Level 1, 5 and 9 measure it
 export const SPAWN_LEVEL_REFERENCE = 18;
+// The main quests whose finishing opens a Paimon menu system, as `ScreenKindOpenQuestMap` names them
+export const WISH_UNLOCK_QUEST_ID = 2010001;
+export const CO_OP_UNLOCK_QUEST_ID = 35001;
+export const ADVENTURER_HANDBOOK_UNLOCK_QUEST_ID = 20505;

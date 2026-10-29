@@ -4,6 +4,11 @@ import { props } from "#src/components/Menu/Paimon/Index.fixture";
 import MenuPaimon from "#src/components/Menu/Paimon/Index.vue";
 import { MenuEntryIcon } from "#src/models/menu/MenuEntryIcon";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import {
+  ADVENTURER_HANDBOOK_UNLOCK_QUEST_ID,
+  CO_OP_UNLOCK_QUEST_ID,
+  WISH_UNLOCK_QUEST_ID,
+} from "#src/services/adventureRank/constants";
 import { BIRTHDAY_MONTHS } from "#src/services/profile/constants";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
@@ -15,7 +20,7 @@ describe("menuPaimon", () => {
   const birthday = { day: 13, month: 10 };
   const travelerName = "Aether";
   // The main quests the systems a quest opens wait on, all finished, as a player who has opened every system has them
-  const openedQuestIds = new Set([2010001, 35001, 20505]);
+  const openedQuestIds = new Set([WISH_UNLOCK_QUEST_ID, CO_OP_UNLOCK_QUEST_ID, ADVENTURER_HANDBOOK_UNLOCK_QUEST_ID]);
   // The labels of the contents the menu draws, in its order, read from its entries that are not links
   const getContentLabels = () =>
     [...document.querySelectorAll(".contents .entry:not(.link) .label")].map((label) => label.textContent);

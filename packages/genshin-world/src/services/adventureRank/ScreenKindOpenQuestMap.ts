@@ -1,6 +1,11 @@
 import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
 
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import {
+  ADVENTURER_HANDBOOK_UNLOCK_QUEST_ID,
+  CO_OP_UNLOCK_QUEST_ID,
+  WISH_UNLOCK_QUEST_ID,
+} from "#src/services/adventureRank/constants";
 
 // The main quests each system the Paimon menu lists is finished for, from the game's open-state table
 // (`OpenStateConfigData`): the Wish (Gacha, id 31) and the Shop (Mall, id 900) after quest 2010001, and Co-Op Mode after
@@ -9,9 +14,9 @@ import { ScreenKind } from "#src/models/screen/ScreenKind";
 // the Wish, which the game's tables gate on that quest
 // A system the map does not list has no quest to finish, so it is open from the start
 export const ScreenKindOpenQuestMap: Readonly<Partial<Record<TitledScreenKind, readonly number[]>>> = {
-  [ScreenKind.AdventurerHandbook]: [20505],
-  [ScreenKind.CoOp]: [35001],
-  [ScreenKind.Events]: [2010001],
-  [ScreenKind.PaimonsBargains]: [2010001],
-  [ScreenKind.Wish]: [2010001],
+  [ScreenKind.AdventurerHandbook]: [ADVENTURER_HANDBOOK_UNLOCK_QUEST_ID],
+  [ScreenKind.CoOp]: [CO_OP_UNLOCK_QUEST_ID],
+  [ScreenKind.Events]: [WISH_UNLOCK_QUEST_ID],
+  [ScreenKind.PaimonsBargains]: [WISH_UNLOCK_QUEST_ID],
+  [ScreenKind.Wish]: [WISH_UNLOCK_QUEST_ID],
 };
