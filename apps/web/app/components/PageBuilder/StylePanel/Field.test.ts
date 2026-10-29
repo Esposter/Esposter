@@ -5,7 +5,7 @@ import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-describe("styleField", () => {
+describe("pageBuilderStylePanelField", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 

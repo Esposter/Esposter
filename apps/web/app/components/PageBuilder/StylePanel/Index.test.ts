@@ -45,8 +45,8 @@ describe("pageBuilderStylePanel", () => {
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
       content: [
-        createTestImageNode("https://example.com/a.png", TEST_OTHER_ID),
-        createTestImageNode("https://example.com/a.png", TEST_THIRD_ID),
+        createTestImageNode(TEST_URL, TEST_OTHER_ID),
+        createTestImageNode(TEST_URL, TEST_THIRD_ID),
       ],
       root: TEST_ROOT,
     });
