@@ -96,6 +96,8 @@ const bannerLabelText = computed(() => {
   const openBanner = banners.find(({ id }) => id === bannerId.value);
   return openBanner && getLabelText(openBanner.label);
 });
+const topUpCurrencies = computed(() => currencies.filter(({ isTopUp }) => isTopUp));
+const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTopUp));
 </script>
 
 <template>
@@ -121,22 +123,14 @@ const bannerLabelText = computed(() => {
       </li>
     </ul>
     <ul class="currencies currencies-top">
-      <li
-        v-for="{ id, isTopUp, name, quantity } of currencies.filter((currency) => currency.isTopUp)"
-        :key="id"
-        class="currency"
-      >
+      <li v-for="{ id, name, quantity } of topUpCurrencies" :key="id" class="currency">
         <span class="currency-icon" role="img" :aria-label="name" />
         <span class="currency-count">{{ quantity }}</span>
-        <span v-if="isTopUp" class="top-up" aria-hidden="true">+</span>
+        <span class="top-up" aria-hidden="true">+</span>
       </li>
     </ul>
     <ul class="currencies currencies-bottom">
-      <li
-        v-for="{ id, name, quantity } of currencies.filter((currency) => !currency.isTopUp)"
-        :key="id"
-        class="currency"
-      >
+      <li v-for="{ id, name, quantity } of bottomCurrencies" :key="id" class="currency">
         <span class="currency-icon" role="img" :aria-label="name" />
         <span class="currency-count">{{ quantity }}</span>
       </li>
