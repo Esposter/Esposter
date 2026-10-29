@@ -1,13 +1,16 @@
 import type { WebpagePlaceableNode } from "#shared/models/pageBuilder/WebpagePlaceableNode";
 
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 
 // The most nodes a webpage may hold, counted across every slot, so a document cannot grow past what a render walks
 export const MAX_WEBPAGE_NODES = 2000;
-// The button colour of a survey invite. The shared folder cannot import the app's constant, so the value is held here
+// The button colour of a survey invite, drawn the same on the webpage and in the email
 export const SURVEY_INVITE_BUTTON_COLOR = "#F63A4D";
+// The semantic tags a section renders under, which its props type and its schema both take
+export const SECTION_TAGS = [HtmlTag.Div, HtmlTag.Footer, HtmlTag.Header, HtmlTag.Main, HtmlTag.Section] as const;
 
 // Every type a webpage slot may hold but a Column, which only Columns holds, and a Tab, which only Tabs holds
 export const WEBPAGE_PLACEABLE_NODE_TYPES = Object.values(WebpageNodeType).filter(

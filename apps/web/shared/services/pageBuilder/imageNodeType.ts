@@ -34,14 +34,12 @@ export const imageNodeType = {
   render: (node) => {
     const { alt, decorative, src } = node.props;
     return {
-      attributes: decorative
-        ? {
-            [HtmlAttributeName.Alt]: "",
-            [HtmlAttributeName.Class]: "image",
-            [HtmlAttributeName.Role]: "presentation",
-            [HtmlAttributeName.Src]: src,
-          }
-        : { [HtmlAttributeName.Alt]: alt, [HtmlAttributeName.Class]: "image", [HtmlAttributeName.Src]: src },
+      attributes: {
+        [HtmlAttributeName.Alt]: decorative ? "" : alt,
+        [HtmlAttributeName.Class]: "image",
+        ...(decorative ? { [HtmlAttributeName.Role]: "presentation" } : {}),
+        [HtmlAttributeName.Src]: src,
+      },
       children: [],
       tag: HtmlTag.Img,
     };

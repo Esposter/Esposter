@@ -3,6 +3,7 @@ import type { ButtonNodeProps } from "#shared/models/pageBuilder/ButtonNodeProps
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 import type { OwnProps } from "headless-block-editor";
 
+import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
@@ -23,7 +24,7 @@ export const buttonNodeType = {
   isFocusable: true,
   propsSchema: buttonPropsSchema,
   render: (node) => ({
-    attributes: { class: "button", href: node.props.href },
+    attributes: { [HtmlAttributeName.Class]: "button", [HtmlAttributeName.Href]: node.props.href },
     children: [node.props.label],
     tag: HtmlTag.A,
   }),

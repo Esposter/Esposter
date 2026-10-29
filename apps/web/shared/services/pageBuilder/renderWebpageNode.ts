@@ -50,13 +50,14 @@ export const renderWebpageNode = (
   slots: Record<string, HtmlNode[]>,
   context: RenderContext,
 ): HtmlNode => {
+  const children = slots.children ?? [];
   switch (node.type) {
     case WebpageNodeType.Button:
       return renderAs<ButtonNode>(buttonNodeType, node, {}, context);
     case WebpageNodeType.Column:
-      return renderAs<ColumnNode>(columnNodeType, node, { children: slots.children ?? [] }, context);
+      return renderAs<ColumnNode>(columnNodeType, node, { children }, context);
     case WebpageNodeType.Columns:
-      return renderAs<ColumnsNode>(columnsNodeType, node, { children: slots.children ?? [] }, context);
+      return renderAs<ColumnsNode>(columnsNodeType, node, { children }, context);
     case WebpageNodeType.Countdown:
       return renderAs<CountdownNode>(countdownNodeType, node, {}, context);
     case WebpageNodeType.CustomHtml:
@@ -64,13 +65,13 @@ export const renderWebpageNode = (
     case WebpageNodeType.Image:
       return renderAs<ImageNode>(imageNodeType, node, {}, context);
     case WebpageNodeType.Section:
-      return renderAs<SectionNode>(sectionNodeType, node, { children: slots.children ?? [] }, context);
+      return renderAs<SectionNode>(sectionNodeType, node, { children }, context);
     case WebpageNodeType.SurveyInvite:
       return renderAs<SurveyInviteNode>(surveyInviteNodeType, node, {}, context);
     case WebpageNodeType.Tab:
-      return renderAs<TabNode>(tabNodeType, node, { children: slots.children ?? [] }, context);
+      return renderAs<TabNode>(tabNodeType, node, { children }, context);
     case WebpageNodeType.Tabs:
-      return renderAs<TabsNode>(tabsNodeType, node, { children: slots.children ?? [] }, context);
+      return renderAs<TabsNode>(tabsNodeType, node, { children }, context);
     case WebpageNodeType.Text:
       return renderAs<TextNode>(textNodeType, node, {}, context);
     case WebpageNodeType.Tooltip:

@@ -145,7 +145,7 @@ const videoNodeSchema = z.object({
   type: z.literal(WebpageNodeType.Video),
 }) satisfies z.ZodType<VideoNode>;
 
-// The nodes a placeable slot accepts, each of the twelve types but Column and Tab, which only Columns and Tabs hold
+// The nodes a placeable slot accepts, each type but Column and Tab, which only Columns and Tabs hold
 // One tuple feeds both the placeable union and the webpage union, so a type added here reaches both
 const webpagePlaceableNodeOptions = [
   buttonNodeSchema,
@@ -168,7 +168,7 @@ export const webpagePlaceableNodeSchema = z.discriminatedUnion(
   createAcceptedTypesError(WEBPAGE_PLACEABLE_NODE_TYPES),
 ) satisfies z.ZodType<WebpagePlaceableNode>;
 
-// Any node a webpage holds, of whichever of its fourteen types, checked by its type tag and then by its own schema
+// Any node a webpage holds, of whichever of its types, checked by its type tag and then by its own schema
 export const webpageNodeSchema = z.discriminatedUnion(
   "type",
   [...webpagePlaceableNodeOptions, columnNodeSchema, tabNodeSchema],

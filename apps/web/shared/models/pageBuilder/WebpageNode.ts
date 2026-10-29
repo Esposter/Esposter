@@ -13,7 +13,7 @@ import type { TooltipNode } from "#shared/models/pageBuilder/TooltipNode";
 import type { TypedTextNode } from "#shared/models/pageBuilder/TypedTextNode";
 import type { VideoNode } from "#shared/models/pageBuilder/VideoNode";
 
-// Any node a webpage holds, of whichever of its fourteen types, narrowed by its type tag
+// Any node a webpage holds, of whichever of its types, narrowed by its type tag
 export type WebpageNode =
   | ButtonNode
   | ColumnNode

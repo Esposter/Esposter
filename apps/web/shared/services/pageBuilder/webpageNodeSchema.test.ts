@@ -2,13 +2,13 @@ import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { NO_SURVEY_ID } from "#shared/services/pageBuilder/constants";
 import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { webpageNodeSchema } from "#shared/services/pageBuilder/webpageNodeSchema";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
 describe("webpageNodeSchema", () => {
-  const NO_SURVEY_ID = "00000000-0000-0000-0000-000000000000";
   const STYLE = { [StyleBreakpoint.Base]: { [StyleState.Default]: { color: "#333" } } };
 
   test("a stored webpage parses under the static node schema", () => {
