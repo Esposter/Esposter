@@ -1,6 +1,6 @@
 ---
 name: skill-sweep
-description: Apply when asked to re-sweep, re-read or clean up every repo skill, the `/skill-sweep` command, or when `pnpm ai:sweep:ledger-coverage` shows open `docs/skills` rows. The whole-tree convergence run over .agents/skills, repeated until a full pass finds nothing.
+description: Apply when asked to re-sweep, re-read or clean up every repo skill, or when `pnpm ai:sweep:ledger-coverage` shows open `docs/skills` rows. The whole-tree convergence run over .agents/skills, repeated until a full pass finds nothing.
 ---
 
 # Skill Sweep — Every Skill, Until A Pass Finds Nothing

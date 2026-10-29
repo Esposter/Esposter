@@ -5,7 +5,7 @@ description: Apply when the `/settle` command is run, or when the open `review` 
 
 # Settle — the open review issues, locally
 
-`/settle` runs the procedure in the `review-queue` skill (`references/local-settle.md`).
+`/settle` runs the procedure in the `review-queue` skill (`.agents/skills/review-queue/references/local-settle.md`).
 The main session decides every verdict; haiku subagents make the edits.
 This never pushes `main`, which moves only through the review's fast-forward.
 Any issue left open stays with the review's settle job.
