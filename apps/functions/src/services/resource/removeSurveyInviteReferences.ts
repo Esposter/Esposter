@@ -129,21 +129,24 @@ export const removeSurveyInviteReferences = async (
       ),
     );
 
-  const sourceLinkEntries = [...Map.groupBy(danglingSurveyLinks, (danglingSurveyLink) => danglingSurveyLink.sourceId)];
   await settleAll(
-    sourceLinkEntries.map(([sourceId, sourceLinks]) => async () => {
-      const { contentVersion, userId } = takeOne(sourceLinks);
-      await getResultAsync(() =>
-        removeSurveyInviteReferencesFromResource(
-          context,
-          containerClient,
-          { contentVersion, id: sourceId, userId },
-          new Set(sourceLinks.map(({ targetId }) => targetId)),
-        ),
-      ).match(noop, (error) => {
-        context.error(`Failed to remove survey invites from resource ${sourceId}: `, error);
-      });
-    }),
+    Array.from(
+      Map.groupBy(danglingSurveyLinks, (danglingSurveyLink) => danglingSurveyLink.sourceId),
+      ([sourceId, sourceLinks]) =>
+        async () => {
+          const { contentVersion, userId } = takeOne(sourceLinks);
+          await getResultAsync(() =>
+            removeSurveyInviteReferencesFromResource(
+              context,
+              containerClient,
+              { contentVersion, id: sourceId, userId },
+              new Set(sourceLinks.map(({ targetId }) => targetId)),
+            ),
+          ).match(noop, (error) => {
+            context.error(`Failed to remove survey invites from resource ${sourceId}: `, error);
+          });
+        },
+    ),
     RESOURCE_REWRITE_CONCURRENCY,
   );
 };
