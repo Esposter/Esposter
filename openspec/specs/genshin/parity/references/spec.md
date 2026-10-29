@@ -10,7 +10,7 @@ A reference image SHALL be committed to the repository as a lossless WebP file: 
 
 #### Scenario: Reference committed beside its snapshot
 
-- **GIVEN** a fixture variant's reference, which is its first whole-screen entry in the map or, where it holds none whole-screen, its first entry
+- **GIVEN** a fixture variant's reference, which is the entry that renders the fixture as it is: its first whole-screen entry with no `props` override, or else its first entry with no `props` override; where every live entry overrides `props`, its first whole-screen entry, or else its first live entry
 - **WHEN** the reference is packed
 - **THEN** its file is `Index.reference.webp` or `Index-<variant>.reference.webp` in the fixture's folder, beside its snapshot
 - **AND** its sha256 is the one its manifest row names

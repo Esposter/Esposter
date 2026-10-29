@@ -19,6 +19,7 @@ describe(planReferenceFiles, () => {
   const SCREEN_DIRECTORY = "Foo/Screen";
   const VARIANT = "artifacts";
   const REGION = { height: 0, width: 0, x: 0, y: 0 };
+  const PROPS = {};
   const createFixtureRow = (variant: string): FixtureScreenRow => ({
     bar: null,
     directory: SCREEN_DIRECTORY,
@@ -92,6 +93,29 @@ describe(planReferenceFiles, () => {
 
     expect(plan.map(({ id, path }) => ({ id, path }))).toStrictEqual([
       { id: "unfixtured-reference", path: join(REFERENCE_FILES_DIRECTORY, "unfixtured-reference.webp") },
+    ]);
+  });
+
+  test("should place beside its snapshot the reference that renders the fixture as it is, over a props override listed before it", () => {
+    expect.hasAssertions();
+
+    const referenceMap = {
+      "props-reference": { props: PROPS, screen: SCREEN_NAME, source: " " },
+      "plain-reference": { screen: SCREEN_NAME, source: " " },
+    } satisfies Record<string, ParityReference>;
+    const plan = planReferenceFiles(referenceMap, [createFixtureRow("")]);
+
+    expect(plan.map(({ id, path }) => ({ id, path }))).toStrictEqual([
+      { id: "props-reference", path: join(REFERENCE_FILES_DIRECTORY, "props-reference.webp") },
+      {
+        id: "plain-reference",
+        path: join(
+          COMPONENTS_DIRECTORY,
+          "Foo",
+          "Screen",
+          `${IMAGE_NAME}${REFERENCE_IMAGE_SUFFIX}.${REFERENCE_FILE_EXTENSION}`,
+        ),
+      },
     ]);
   });
 });

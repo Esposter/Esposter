@@ -23,7 +23,9 @@ describe(listFixtureScreens, () => {
   const SCREEN_DIRECTORY = join("Foo", "Screen");
   const REFERENCE_ID = "foo-screen";
   const REGION_REFERENCE_ID = "foo-region";
+  const PROPS_REFERENCE_ID = "foo-props";
   const REGION = { height: 0, width: 0, x: 0, y: 0 };
+  const PROPS = {};
   const REPORTED_MEAN = 2.5;
   const VARIANT = "artifacts";
   let componentsDirectory = "";
@@ -96,5 +98,17 @@ describe(listFixtureScreens, () => {
 
     expect(rows.find(({ variant }) => variant === VARIANT)?.referenceId).toBe(besideId);
     expect(besideId).toBe(REFERENCE_ID);
+  });
+
+  test("should name a variant's primary reference as the one that renders the fixture as it is, over a props override listed before it", async () => {
+    expect.hasAssertions();
+
+    const referenceMap = {
+      [PROPS_REFERENCE_ID]: { props: PROPS, screen: SCREEN_NAME, source: "recording.mp4", variant: VARIANT },
+      [REFERENCE_ID]: { screen: SCREEN_NAME, source: "recording.mp4", variant: VARIANT },
+    } satisfies Record<string, ParityReference>;
+    const rows = await listFixtureScreens(componentsDirectory, referenceMap, new Map());
+
+    expect(rows.find(({ variant }) => variant === VARIANT)?.referenceId).toBe(REFERENCE_ID);
   });
 });
