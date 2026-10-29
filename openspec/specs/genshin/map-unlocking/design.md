@@ -51,7 +51,7 @@ flowchart TD
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `TransPointRewardConfigData`, each transport point's reward, and `RewardExcelConfigData`, the Adventure EXP and Primogems each reward pays.
 - `{data-root}/genshin-parity/text/ExcelBinOutput/RewardExcelConfigData.json`, rewardId 220311, grounds the requirement "First unlock pays Primogems".
 - `{data-root}/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json`, sceneId 3 pointId 4, grounds the requirement "First unlock pays Primogems".
-- `{data-root}/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json` has no row for points 1865 to 2051, the points of Mondstadt waypoints, grounding scenario "Waypoint whose point has no reward row pays nothing".
+- `{data-root}/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json` has no row for points 1865 to 2051, the points of some of Mondstadt's waypoints, grounding scenario "Waypoint whose point has no reward row pays nothing".
 
 ## Open
 
@@ -61,4 +61,3 @@ flowchart TD
 - [ ] **A statue's first activation lights its surrounding area and reveals its nearby waypoints** — no source yet: the Icy Veins Galesong Hill page is not on disk.
 - [ ] **Whether Windrise's statue is already active depends on the player's progress through the opening quest** — no source yet: the PowerPyx Let the Wind Lead page is not on disk.
 - [ ] **The wiki's first-unlock reward for a waypoint is 50 Adventure EXP and 5 Primogems** — no source yet: no Teleport Waypoint page is in `{data-root}/cache/genshin-wiki/`, so the wiki's figure is not read here; the dump's reward 220311 gives 50 `playerExp` and 5 `hcoin`, which agrees with it for the point it names.
-- [ ] **Most of Mondstadt's waypoints have a reward row, and those with points 1865 to 2051 have none** — raised: the page states both, and they cannot hold together. `{data-root}/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json` has no scene 3 row for any point from 1865 to 2051, so whichever set Mondstadt's waypoints are, the two sentences name different points; which points the waypoints hold is not read here.
