@@ -60,7 +60,22 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
   // A plate's pixels come from the reference, or from the screenshot beside it that the world a screen is laid over was
   // Sampled into
   const plateScreenshotPath = join(REFERENCES_DIRECTORY, `${referenceId}.plate.png`);
+  // An entry that names its plate's source has one to find, so a missing one stops the compare rather than scoring
+  // Against the reference's own world
+  if (reference.plateSource !== undefined && !existsSync(plateScreenshotPath))
+    throw new InvalidOperationError(
+      Operation.Read,
+      referenceId,
+      `no plate screenshot at ${plateScreenshotPath}, sampled from ${reference.plateSource}`,
+    );
   const platePath = existsSync(plateScreenshotPath) ? plateScreenshotPath : referencePath;
+  const plateMetadata = await sharp(platePath).metadata();
+  if (plateMetadata.width !== width || plateMetadata.height !== height)
+    throw new InvalidOperationError(
+      Operation.Read,
+      referenceId,
+      `its plate is ${plateMetadata.width}×${plateMetadata.height}, not the reference's ${width}×${height}`,
+    );
   const backdropPath = reference.isBackdrop
     ? ((await getCleanPlatePath(referenceId, platePath, reference.plate ?? [region], { height, width })) ?? platePath)
     : undefined;

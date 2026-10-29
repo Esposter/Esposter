@@ -18,6 +18,12 @@ export const fetchReferences = async (): Promise<void> => {
   );
   const wikiTitles = missing.flatMap(([, { wikiTitle }]) => (wikiTitle === undefined ? [] : [wikiTitle]));
   const urls = wikiTitles.length > 0 ? await readWikiFileUrls(wikiTitles) : new Map<string, string>();
+  const missingPlates = Object.entries(ParityReferenceMap).flatMap(([id, { plateSource }]) => {
+    const path = join(REFERENCES_DIRECTORY, `${id}.plate.png`);
+    return plateSource === undefined || existsSync(path)
+      ? []
+      : [`${id}: no plate screenshot at ${path}, sampled from ${plateSource}`];
+  });
   const lines = await Promise.all(
     missing.map(async ([id, { placement, source, wikiTitle }]) => {
       const path = join(REFERENCES_DIRECTORY, `${id}.png`);
@@ -41,5 +47,5 @@ export const fetchReferences = async (): Promise<void> => {
       return path;
     }),
   );
-  for (const line of lines) console.log(line);
+  for (const line of [...lines, ...missingPlates]) console.log(line);
 };

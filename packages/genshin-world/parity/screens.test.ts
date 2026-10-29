@@ -26,4 +26,16 @@ describe("screens", () => {
 
     expect(uncovered).toStrictEqual([]);
   });
+
+  test("names only screen folders that have no fixture", () => {
+    expect.hasAssertions();
+
+    const stale = pendingScreens.filter(
+      ({ directory }) =>
+        !screenDirectories.includes(normalize(directory)) ||
+        existsSync(join(COMPONENTS_DIRECTORY, directory, FIXTURE_FILE)),
+    );
+
+    expect(stale).toStrictEqual([]);
+  });
 });

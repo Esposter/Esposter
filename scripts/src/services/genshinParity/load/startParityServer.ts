@@ -2,11 +2,8 @@ import type { ParityServer } from "#src/models/genshinParity/load/ParityServer";
 
 import { getFreePort } from "#src/services/genshinParity/load/getFreePort";
 import { getParityServerArgs } from "#src/services/genshinParity/load/getParityServerArgs";
-import {
-  ANSI_ESCAPE_REGEX,
-  GENSHIN_WORLD_DIRECTORY,
-  PARITY_PREVIEW_TIMEOUT_MS,
-} from "#src/services/genshinParity/shared/constants";
+import { GENSHIN_WORLD_DIRECTORY, PARITY_PREVIEW_TIMEOUT_MS } from "#src/services/genshinParity/shared/constants";
+import { ANSI_ESCAPE_REGEX } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawn } from "@esposter/shared-node/child-process";
 

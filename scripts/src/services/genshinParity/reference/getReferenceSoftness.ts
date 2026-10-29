@@ -2,7 +2,7 @@ import { hashFile } from "#src/services/genshinParity/reference/hashFile";
 import { measureFrameSoftness } from "#src/services/genshinParity/reference/measureFrameSoftness";
 import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { existsSync } from "node:fs";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, rename, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // The Gaussian sigma of a screenshot's own blur, cached beside it under the file's hash, so a changed screenshot is
@@ -15,6 +15,9 @@ export const getReferenceSoftness = async (referenceId: string): Promise<number>
   const cachedSoftness = cachedText ? Number(cachedText) : Number.NaN;
   if (!Number.isNaN(cachedSoftness)) return cachedSoftness;
   const softness = await measureFrameSoftness(referencePath);
-  await writeFile(cachePath, String(softness));
+  // Written beside its name and renamed onto it, so a write cut short is never read back as a smaller sigma
+  const partialPath = `${cachePath}.partial`;
+  await writeFile(partialPath, String(softness));
+  await rename(partialPath, cachePath);
   return softness;
 };

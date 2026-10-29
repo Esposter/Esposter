@@ -1,5 +1,5 @@
+import { GENSHIN_WORLD_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getComponentName } from "@esposter/configuration";
 import { readdirSync, readFileSync } from "node:fs";
 import { basename, join, relative } from "node:path";
@@ -12,7 +12,7 @@ import { describe, expect, test } from "vitest";
  * and every reference to a screen that exists, so `compare --all` scores them all.
  */
 describe("parityReferenceMap", () => {
-  const COMPONENTS_DIRECTORY = join(REPOSITORY_ROOT, "packages/genshin-world/src/components");
+  const COMPONENTS_DIRECTORY = join(GENSHIN_WORLD_DIRECTORY, "src", "components");
   // Each screen is a folder holding its `Index.vue` and `Index.fixture.ts`, named by its path as the package's barrel
   // Names it
   const FIXTURE_FILE = "Index.fixture.ts";
@@ -42,16 +42,6 @@ describe("parityReferenceMap", () => {
     const screens = new Set(fixturePaths.map((path) => toScreen(path)));
 
     expect([...referencedScreens].filter((screen) => !screens.has(screen))).toStrictEqual([]);
-  });
-
-  test("names no recording to read", () => {
-    expect.hasAssertions();
-
-    const recordingEntries = Object.values(ParityReferenceMap).filter(
-      (entry) => "capture" in entry || "seconds" in entry || "plateCapture" in entry,
-    );
-
-    expect(recordingEntries).toStrictEqual([]);
   });
 
   test("names a reference for every subscreen", () => {

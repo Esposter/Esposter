@@ -1104,8 +1104,6 @@
 | `scripts/src/services/genshinParity/shared/formatWholeScreenLines.test.ts`                | —                      |       |
 | `scripts/src/services/genshinParity/shared/formatWholeScreenLines.ts`                     | —                      |       |
 | `scripts/src/services/genshinParity/shared/fromPageCamera.ts`                             | —                      |       |
-| `scripts/src/services/genshinParity/shared/getCaptureUrl.test.ts`                         | —                      |       |
-| `scripts/src/services/genshinParity/shared/getCaptureUrl.ts`                              | —                      |       |
 | `scripts/src/services/genshinParity/shared/getCategory.ts`                                | —                      |       |
 | `scripts/src/services/genshinParity/shared/getCharacterScreenPlate.ts`                    | —                      |       |
 | `scripts/src/services/genshinParity/shared/getFrameCount.ts`                              | —                      |       |
@@ -1217,8 +1215,6 @@
 | `scripts/src/services/genshinParity/witness/countSetPixels.ts`                            | —                      |       |
 | `scripts/src/services/genshinParity/witness/decodeFloat32.ts`                             | —                      |       |
 | `scripts/src/services/genshinParity/witness/encodeFloat32.ts`                             | —                      |       |
-| `scripts/src/services/genshinParity/witness/findCrossings.test.ts`                        | —                      |       |
-| `scripts/src/services/genshinParity/witness/findCrossings.ts`                             | —                      |       |
 | `scripts/src/services/genshinParity/witness/findFamilyBoundaries.test.ts`                 | —                      |       |
 | `scripts/src/services/genshinParity/witness/findFamilyBoundaries.ts`                      | —                      |       |
 | `scripts/src/services/genshinParity/witness/findShadowEdges.test.ts`                      | —                      |       |

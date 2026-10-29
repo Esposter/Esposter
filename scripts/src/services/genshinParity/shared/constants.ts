@@ -11,10 +11,8 @@ import { join } from "node:path";
 export const PARITY_DIRECTORY: string =
   process.env.GENSHIN_PARITY_DIRECTORY ?? join(homedir(), SITE_NAME, "genshin-parity");
 export const REFERENCES_DIRECTORY: string = join(PARITY_DIRECTORY, "references");
-export const FRAMES_DIRECTORY: string = join(PARITY_DIRECTORY, "frames");
 export const CAPTURES_DIRECTORY: string = join(PARITY_DIRECTORY, "captures");
 export const SHOTS_DIRECTORY: string = join(PARITY_DIRECTORY, "shots");
-export const FILMS_DIRECTORY: string = join(PARITY_DIRECTORY, "films");
 // Each run of the frame stall measure: its states' frame times, programs and their growth, as JSON
 export const STALLS_DIRECTORY: string = join(PARITY_DIRECTORY, "stalls");
 // A frame at 60 a second, the step a faked clock is moved by
@@ -40,9 +38,6 @@ export const SURFACES_DIRECTORY: string = join(PARITY_DIRECTORY, "surfaces");
 export const WHOLE_SCREEN_MIN_WIDTH = 1280;
 export const WHOLE_SCREEN_MIN_ASPECT_RATIO = 1.6;
 export const WHOLE_SCREEN_MAX_ASPECT_RATIO = 1.9;
-// A clip's file name carries its video's id, eleven characters, and a clip name of letters, digits and dashes
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
-export const YT_CAPTURE_REGEX: RegExp = /^yt-(?<videoId>[\w-]{11})(?:-|\.)/u;
 // The world package's parity page, which renders a screen without Nuxt. The shared checkout serves it on 3011, and a busy
 // Port is taken by the next one up, so a command finds the page by probing from its first port (`resolveParityPageRoot`).
 // `GENSHIN_PARITY_PORT` names a different first port, as a runner's worktree does for its own page
@@ -118,32 +113,18 @@ export const COMPARISON_HEIGHT = 540;
 // Likeness the screens are held to. A reference that records its own approval keeps that bar instead
 const APPROVAL_MEAN_DIFFERENCE_BAR = 1;
 // The approval a screen gets when its reference records none
-export const DEFAULT_APPROVAL: ParityApproval = {
+export const DEFAULT_APPROVAL: ParityApproval = Object.freeze({
   bar: APPROVAL_MEAN_DIFFERENCE_BAR,
   measure: ParityApprovalMeasure.MeanDifference,
-};
+} satisfies ParityApproval);
 // The contact sheet `frames` writes beside its frames, which is not one of them
 export const CONTACT_SHEET_NAME = "sheet.png";
+// The parity tooling's shared folder, which holds the reference map and the committed reports beside it
+const PARITY_SHARED_DIRECTORY = join(REPOSITORY_ROOT, "scripts", "src", "services", "genshinParity", "shared");
 // The map naming every reference, whose held cameras `pose --write` rewrites
-export const PARITY_REFERENCE_MAP_PATH: string = join(
-  REPOSITORY_ROOT,
-  "scripts",
-  "src",
-  "services",
-  "genshinParity",
-  "shared",
-  "ParityReferenceMap.ts",
-);
+export const PARITY_REFERENCE_MAP_PATH: string = join(PARITY_SHARED_DIRECTORY, "ParityReferenceMap.ts");
 // The committed report of every reference's last scores, beside the map naming them
-export const PARITY_SCORES_PATH: string = join(
-  REPOSITORY_ROOT,
-  "scripts",
-  "src",
-  "services",
-  "genshinParity",
-  "shared",
-  "ParityReferenceMap.snapshot.md",
-);
+export const PARITY_SCORES_PATH: string = join(PARITY_SHARED_DIRECTORY, "ParityReferenceMap.snapshot.md");
 // A scene's structure is read at this width, small enough that its texture is gone and its shapes and light remain
 export const STRUCTURE_WIDTH = 480;
 // The width the cloud tools read a sky at: wide enough that a cloud's painted edge spans several pixels
@@ -221,15 +202,7 @@ export const NOTE_SUPPORT_SPAN_SECONDS = 0.6;
 export const NOTE_SUPPORT_MIN_DECIBELS = 0;
 export const NOTE_SUPPORT_FOLDS = 6;
 // The committed report of each music segment's last `listen`
-export const PARITY_MUSIC_SCORES_PATH: string = join(
-  REPOSITORY_ROOT,
-  "scripts",
-  "src",
-  "services",
-  "genshinParity",
-  "shared",
-  "ParityMusicScores.snapshot.md",
-);
+export const PARITY_MUSIC_SCORES_PATH: string = join(PARITY_SHARED_DIRECTORY, "ParityMusicScores.snapshot.md");
 export const CHANNELS = [0, 1, 2] as const;
 // A CPU profile's clock is kept in microseconds, a millisecond being this many of them
 export const MICROSECONDS_PER_MS = 1000;
@@ -241,10 +214,6 @@ export const SOUND_SCORE_RANGE_DECIBELS = 40;
 // The power a sound's level is read from when it is silent: the smallest positive float, so a silent cell reads as the
 // Least decibels a float holds rather than minus infinity
 export const SOUND_POWER_FLOOR: number = Number.MIN_VALUE;
-// A terminal's colour and style codes, which Vite wraps the address it prints in
-// oxlint-disable-next-line typescript/no-inferrable-types, no-control-regex -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer, and the escape is the control character itself
-export const ANSI_ESCAPE_REGEX: RegExp = /\u001B\[[\d;]*m/gu;
-
 export const NUMBER_SOURCE: string = String.raw`[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?`;
 
 // The frames a range reads, and the frames left to pass before it, so the GPU has finished the frames encoded before a
