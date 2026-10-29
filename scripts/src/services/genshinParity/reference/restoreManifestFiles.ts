@@ -3,17 +3,17 @@ import type { ParityReferenceManifest } from "#src/models/genshinParity/referenc
 import { REFERENCE_PACK_CONCURRENCY, USER_RECORDING_SOURCE } from "#src/services/genshinParity/reference/constants";
 import { downloadObjectTo } from "#src/services/genshinParity/reference/downloadObjectTo";
 import { getObjectBlobName } from "#src/services/genshinParity/reference/getObjectBlobName";
+import { getRecordDestination } from "#src/services/genshinParity/reference/getRecordDestination";
 import { sha256File } from "#src/services/genshinParity/reference/sha256File";
 import { CAPTURES_DIRECTORY } from "#src/services/genshinParity/game/constants";
-import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { settleAll } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
 
 // Streams every user recording into the captures folder and every record into its place in the parity folder, each keeping
-// a copy already holding the same hash. A public recording is never uploaded, so its row is left to the public page it
-// names. Returns how many were fetched and how many were already held
+// A copy already holding the same hash. A public recording is never uploaded, so its row is left to the public page it
+// Names. Returns how many were fetched and how many were already held
 export const restoreManifestFiles = async (
   manifest: ParityReferenceManifest,
 ): Promise<{ fetched: number; held: number }> => {
@@ -26,7 +26,7 @@ export const restoreManifestFiles = async (
         sha256,
       })),
     ...manifest.records.map(({ path, sha256, sourceFormat }) => ({
-      destination: join(PARITY_DIRECTORY, path),
+      destination: getRecordDestination(path),
       extension: sourceFormat,
       sha256,
     })),

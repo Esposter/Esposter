@@ -4,6 +4,7 @@ import type { ReferencePathsOutcome } from "#src/models/genshinParity/reference/
 import { ReferencePackKind } from "#src/models/genshinParity/reference/ReferencePackKind";
 import { REFERENCE_PACK_CONCURRENCY, USER_RECORDING_SOURCE } from "#src/services/genshinParity/reference/constants";
 import { getObjectBlobName } from "#src/services/genshinParity/reference/getObjectBlobName";
+import { getRecordPath } from "#src/services/genshinParity/reference/getRecordPath";
 import { packPathObject } from "#src/services/genshinParity/reference/packPathObject";
 import { putReferenceObject } from "#src/services/genshinParity/reference/putReferenceObject";
 import { readManifestFile } from "#src/services/genshinParity/reference/readManifestFile";
@@ -13,7 +14,7 @@ import { InvalidOperationError, Operation, settleAll } from "@esposter/shared";
 import { basename, isAbsolute, relative, resolve, sep } from "node:path";
 
 // Stores the files a recording or record pack names, each streamed from its own path and uploaded to the accounts that lack
-// it, then records each in its manifest section. A record's path is kept relative to the parity folder it is restored into
+// It, then records each in its manifest section. A record's path is kept relative to the parity folder it is restored into
 export const packManifestPaths = async (
   kind: ReferencePackKind,
   paths: string[],
@@ -35,7 +36,7 @@ export const packManifestPaths = async (
       const uploads = isDryRun
         ? 0
         : await putReferenceObject(getObjectBlobName(sha256, extension), absolutePath, targets);
-      return { bytes, extension, name: basename(absolutePath), path: relativePath, sha256, uploads };
+      return { bytes, extension, name: basename(absolutePath), path: getRecordPath(relativePath), sha256, uploads };
     }),
     REFERENCE_PACK_CONCURRENCY,
   );
@@ -67,14 +68,14 @@ export const packManifestPaths = async (
           ...manifest.recordings.filter(({ name }) => !names.has(name)),
           ...files.map(({ bytes, extension, name, sha256 }) => {
             // A row a clip wrote keeps its url and range, so a pack of the same file does not lose where it came from
-            const existing = manifest.recordings.find((row) => row.name === name);
+            const committedRow = manifest.recordings.find((row) => row.name === name);
             return {
-              attribution: existing?.attribution ?? {},
+              attribution: committedRow?.attribution ?? {},
               bytes,
               name,
-              ...(existing?.range === undefined ? {} : { range: existing.range }),
+              ...(committedRow?.range === undefined ? {} : { range: committedRow.range }),
               sha256,
-              source: existing?.source ?? USER_RECORDING_SOURCE,
+              source: committedRow?.source ?? USER_RECORDING_SOURCE,
               sourceFormat: extension,
             };
           }),
