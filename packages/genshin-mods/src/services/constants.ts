@@ -5,7 +5,7 @@ export const CACHE_LIFETIME_MS: number = Temporal.Duration.from({ hours: 1 }).to
 export const CACHE_LOW_MS: number = Temporal.Duration.from({ minutes: 10 }).total("milliseconds");
 export const CACHE_WARNING_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 export const USAGE_WARNING_PERCENTAGE = 80;
-// The usage line each window's maintenance tier starts at
+// The usage line each window's maintenance line starts at
 export const FIVE_HOUR_MAINTENANCE_PERCENTAGE = 80;
 export const WEEKLY_MAINTENANCE_PERCENTAGE = 80;
 // A window under this share is never read for its pace, since an early reading projects wildly
