@@ -1,6 +1,6 @@
 ---
 name: skill-sweep
-description: Apply when asked to re-sweep, re-read or clean up every repo skill, or when `pnpm ai:sweep:ledger-coverage` shows open `docs/skills` rows. The whole-tree convergence run over .agents/skills, repeated until a full pass finds nothing.
+description: Apply when asked to re-sweep, re-read or clean up every repo skill, or when `.agents/ledgers/docs/skills.md` has open rows. The whole-tree convergence run over .agents/skills, repeated until a full pass finds nothing.
 ---
 
 # Skill Sweep — Every Skill, Until A Pass Finds Nothing
@@ -49,4 +49,4 @@ Every row is answered per skill, and "nothing owed" is an answer.
 
 ## After a clean run
 
-The ledger resweep is next: `pnpm ai:sweep:ledger-coverage` lists each ledger's open rows and the entries it could not match, and the unmatched entries are cleaned up first (the `sweeps` skill, `references/ledger-files.md`).
+The ledger resweep is next: `pnpm ai:sweep:ledger-coverage` dates each ledger's rows from the commit trailers and prints the entries it could not match. The open rows are the `—` cells in `.agents/ledgers/docs/skills.md`, and the unmatched entries are cleaned up first (the `sweeps` skill, `references/ledger-files.md`).
