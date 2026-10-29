@@ -6,7 +6,7 @@ This is not profile imagery — the profile image is user-editable separately ([
 
 ## Uploads into fixed slots — no table, no metering
 
-An upload writes to `{userId}/CallBackground/{slot}` in the private user-assets container, where the slot is an index below the cap. This is the same trick the profile image uses: the blob name is **derived, not allocated**, so the number of blobs a user can hold is bounded by construction. There is no table, no id, no ledger row and nothing to reconcile — the cost of the feature is a fixed number of images per user, and re-uploading a slot overwrites it.
+An upload writes to `{userId}/CallBackground/{slot}` in the `user-assets` container, which is private, where the slot is an index below the cap. This is the same trick the profile image uses: the blob name is **derived, not allocated**, so the number of blobs a user can hold is bounded by construction. There is no table, no id, no ledger row and nothing to reconcile — the cost of the feature is a fixed number of images per user, and re-uploading a slot overwrites it.
 
 The container is the **private** one, because the only consumer of a background is the uploader's own browser. Reads are therefore a short-lived read SAS, the same shape resource-asset reads sign ([file uploads](../../../architecture/file-uploads/design.md)), rather than a permanently public url.
 
