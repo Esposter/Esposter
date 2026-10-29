@@ -10,3 +10,7 @@
 ## 3. Re-measure
 
 - [ ] 3.1 Re-measure the prompt when the longer clip lands, without gating the build. Verify: the re-measure of the menu-quit-prompt clip writes a row for the exit prompt, queued for the user's eyes, and no build step waits on it. Blocked: the longer clip `menu-quit-prompt.mkv` is not in the captures folder yet, so there is no recording to re-measure.
+
+## 4. Shared dialog rules
+
+- [ ] 4.1 Decide whether `Menu/Exit/Index.vue` takes the dialog's structural rules (`--reference-pixel`, the absolute backdrop, the centred dialog) from `styles/menuDialog.css` rather than re-declaring them, keeping its own values for the 66% backdrop, the 910 by 576 panel and its colour. Verify: the decision is written into design.md's Known gaps, and if the sheet is imported, `genshin:parity compare` over `exit-prompt`, `menu-exit-hover` and `menu-exit-pressed` reads no worse than before the change, with the `.choice` pill rules the sheet brings kept out of Exit. Not started: the import would bring the World Level dialog's pill look into Exit, and that needs a visual parity check before the duplicate declarations go.
