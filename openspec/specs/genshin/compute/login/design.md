@@ -15,5 +15,5 @@
 
 - [ ] **Login: the stone colour at 15.1 ΔE against its gate** — no source yet: a light-pass reading of the stone's colour, which the login snapshot does not hold.
 - [ ] **Login: the 23.35 px shadow-edge gap left** — no source yet: a recorded light-pass reading of the night shadow edges, which no snapshot holds.
-- [ ] **The Japanese client's opening is read by this page** — no source yet: the Japanese opening's recording from YouTube, which is not on disk; `{data-root}/genshin-parity/captures/localized-opening-japanese.mkv` is not confirmed as that recording
+- [ ] **The Japanese client's opening is read by this page** — no source yet: the Japanese opening's recording from YouTube, which is not on disk; `{data-root}/genshin-parity/captures/localized-opening-japanese.mkv` is on disk, but is not confirmed as that recording
 - [ ] **Login: the night shadow image the light pass writes** — no source yet: a run of the light pass, since the night shadow image it writes is not on disk
