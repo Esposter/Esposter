@@ -1,6 +1,6 @@
 # Genshin evidence
 
-Find recipe: `git grep -l "no source yet" -- 'openspec/specs/genshin/*/design.md'`.
+Find recipe: `git grep -l "no source yet" -- 'openspec/specs/genshin/*/design.md'`, and a page with no `## Sources` and no reference path.
 
 | Unit                                                                   | Swept                  | Notes |
 | :--------------------------------------------------------------------- | :--------------------- | :---- |
