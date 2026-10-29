@@ -177,7 +177,7 @@ const pick = (characterId: number) => {
 
 .nations {
   position: absolute;
-  top: calc(var(--unit) * 135);
+  top: calc(var(--unit) * 138);
   left: calc(var(--unit) * 70);
   display: flex;
   flex-direction: column;
@@ -201,7 +201,7 @@ const pick = (characterId: number) => {
 }
 
 .nation[aria-pressed="true"] {
-  font-size: calc(var(--unit) * 38);
+  font-size: calc(var(--unit) * 42);
 }
 
 .marker {
