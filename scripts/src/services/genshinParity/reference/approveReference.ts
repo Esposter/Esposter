@@ -2,11 +2,12 @@ import { ParityReportRun } from "#src/models/genshinParity/reference/ParityRepor
 import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
 import { decideApprovalStatus } from "#src/services/genshinParity/reference/decideApprovalStatus";
 import { getApprovalValue } from "#src/services/genshinParity/reference/getApprovalValue";
+import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
 import { readScore } from "#src/services/genshinParity/reference/readScore";
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
 import { GENSHIN_WORLD_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
-import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
+import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -30,6 +31,9 @@ export const approveReference = async (referenceId: string, variant?: string): P
     );
   await fetchReferences();
   const hasReference = (await readReferenceManifest()).some(({ id }) => id === referenceId);
+  // A reference the manifest holds is read from its committed file, and a missing one stops the approve. It names the path
+  // To add, so no image is written against a reference it cannot read
+  if (hasReference) await getReferencePath(referenceId);
   // A region compare judges only the region it names. The compare also judges the props and variant the map records, so
   // A base image over a reference in other props, or a variant the map does not record, is judged by no compare at all
   const isRecordedState =
