@@ -46,7 +46,7 @@ The conventions a finding cites live in the domain skills; **read the window's f
 
 If you cannot construct the trigger, it is not a finding; it is a feeling about the code, and it belongs in the quality lane or nowhere. If the file you open refutes it, delete it and do not report the near-miss.
 
-The hops that settle almost everything, cheapest first: one step out to the caller or callee; the dependency's **real source in `node_modules`**, never its reputation; `git log -S <symbol>` or `git log -L <range>:<file>` for "was this guard ever here"; the written record ("The written record wins" on this page).
+The hops that settle almost everything, cheapest first: for a line in a `.vue` file, which side of `</script>` it sits on (a template reads a script ref unwrapped, so `ref` there is its value and `ref.value` is the `.value` the `vue` skill bans; a claim about a ref in a handler is read against that side); one step out to the caller or callee; the dependency's **real source in `node_modules`**, never its reputation; `git log -S <symbol>` or `git log -L <range>:<file>` for "was this guard ever here"; the written record ("The written record wins" on this page).
 
 ### Refute first
 
