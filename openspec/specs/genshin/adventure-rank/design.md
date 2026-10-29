@@ -81,32 +81,33 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 - [ ] **The dialog stays open after a change** — no source yet: neither recording shows the game after Confirm.
 - [ ] **The card's values stand right-aligned beside the info disc, as the current client draws them** — no source yet: the menu's reference is the 1.3 build's, with its values redacted.
 - [ ] **The option to lower the World Level opens after World Level 5, as the recording (`{data-root}/genshin-parity/captures/yt-P13s7kSmVOE-world-level-dialog-2024.mp4`) shows** — contradicted by `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`: text 2955635938 says the option opens after World Level 3.
+- [ ] **The Adventurer Handbook opens after quest 20505, and the Events after quest 2010001, as estimates** — no source yet: no open-state row names either quest. The Handbook's quest is tied to it by the game's text, and the Events open like the Wish, which the game's tables gate on quest 2010001.
 
 ## Key files
 
-| File                                                                                 | Its role                                                                                          |
-| :----------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
-| `scripts/src/services/genshinAssets/adventureRank/buildAdventureRankTables.ts`       | builds the rank, lock and World Level records from the dump                                       |
-| `packages/genshin-world/src/services/adventureRank/readAdventureRankTables.ts`       | the rank, lock and World Level tables, read as the world opens                                    |
-| `packages/genshin-world/src/models/adventureRank/AdventureRankTables.ts`             | each rank's EXP, each World Level's lock and its monster level                                    |
-| `packages/genshin-world/src/services/adventureRank/constants.ts`                     | the constants the rules read                                                                      |
-| `packages/genshin-world/src/composables/useWorldAdventureRank.ts`                    | the live EXP, its standing and the gain a source adds                                             |
-| `packages/genshin-world/src/services/adventureRank/computeAdventureRankStanding.ts`  | the rank, its cap and the World Level from EXP and quests                                         |
-| `packages/genshin-world/src/services/adventureRank/gainAdventureExp.ts`              | the EXP gain, its cap and the Mora past rank 60                                                   |
-| `packages/genshin-world/src/services/adventureRank/toggleWorldLevelLowering.ts`      | the lowering and its 24 hour cooldown                                                             |
-| `packages/genshin-world/src/services/adventureRank/computeAdventureRankProgress.ts`  | the EXP's share of the bar toward the next rank                                                   |
-| `packages/genshin-world/src/services/adventureRank/computeSpawnLevel.ts`             | a camp's enemy level at a World Level                                                             |
-| `packages/genshin-world/src/services/adventureRank/computeWorldLevelCooldown.ts`     | the time left before the World Level can be changed again                                         |
-| `packages/genshin-world/src/components/Menu/WorldLevelDialog/Index.vue`              | the World Level dialog: the game's help text and the button that opens the prompt                 |
-| `packages/genshin-world/src/components/Menu/Paimon/Index.vue`                        | the profile card's rank, EXP bar, World Level and its info icon                                   |
-| `packages/genshin-world/src/services/enemy/createEnemy.ts`                           | spawns an enemy at its World Level's level                                                        |
-| `packages/genshin-world/src/components/World/Enemies/Index.vue`                      | spawns the camps, and respawns them when the World Level changes                                  |
-| `packages/genshin-world/src/components/World/Session/Index.vue`                      | the World Level the world plays at, handed down to its enemies                                    |
-| `packages/genshin-world/src/components/Menu/WorldLevelPrompt/Index.vue`              | The Change World Level prompt: the two levels, the question and the tips, Cancel and Confirm      |
-| `packages/genshin-world/src/services/adventureRank/computeWorldLevelAdjustPrompt.ts` | the levels the prompt shows and whether the change lowers                                         |
-| `packages/genshin-world/src/services/adventureRank/checkIsSystemOpen.ts`             | whether a Paimon entry is open, at the rank held and with the main quests it opens after finished |
-| `packages/genshin-world/src/services/adventureRank/ScreenKindOpenRankMap.ts`         | the rank each Paimon entry the wiki gates opens at                                                |
-| `packages/genshin-world/src/services/adventureRank/ScreenKindOpenQuestMap.ts`        | the main quests each Paimon entry the open-state table gates opens after                          |
+| File                                                                                 | Its role                                                                                                                   |
+| :----------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/adventureRank/buildAdventureRankTables.ts`       | builds the rank, lock and World Level records from the dump                                                                |
+| `packages/genshin-world/src/services/adventureRank/readAdventureRankTables.ts`       | the rank, lock and World Level tables, read as the world opens                                                             |
+| `packages/genshin-world/src/models/adventureRank/AdventureRankTables.ts`             | each rank's EXP, each World Level's lock and its monster level                                                             |
+| `packages/genshin-world/src/services/adventureRank/constants.ts`                     | the constants the rules read                                                                                               |
+| `packages/genshin-world/src/composables/useWorldAdventureRank.ts`                    | the live EXP, its standing and the gain a source adds                                                                      |
+| `packages/genshin-world/src/services/adventureRank/computeAdventureRankStanding.ts`  | the rank, its cap and the World Level from EXP and quests                                                                  |
+| `packages/genshin-world/src/services/adventureRank/gainAdventureExp.ts`              | the EXP gain, its cap and the Mora past rank 60                                                                            |
+| `packages/genshin-world/src/services/adventureRank/toggleWorldLevelLowering.ts`      | the lowering and its 24 hour cooldown                                                                                      |
+| `packages/genshin-world/src/services/adventureRank/computeAdventureRankProgress.ts`  | the EXP's share of the bar toward the next rank                                                                            |
+| `packages/genshin-world/src/services/adventureRank/computeSpawnLevel.ts`             | a camp's enemy level at a World Level                                                                                      |
+| `packages/genshin-world/src/services/adventureRank/computeWorldLevelCooldown.ts`     | the time left before the World Level can be changed again                                                                  |
+| `packages/genshin-world/src/components/Menu/WorldLevelDialog/Index.vue`              | the World Level dialog: the game's help text and the button that opens the prompt                                          |
+| `packages/genshin-world/src/components/Menu/Paimon/Index.vue`                        | the profile card's rank, EXP bar, World Level and its info icon                                                            |
+| `packages/genshin-world/src/services/enemy/createEnemy.ts`                           | spawns an enemy at its World Level's level                                                                                 |
+| `packages/genshin-world/src/components/World/Enemies/Index.vue`                      | spawns the camps, and respawns them when the World Level changes                                                           |
+| `packages/genshin-world/src/components/World/Session/Index.vue`                      | the World Level the world plays at, handed down to its enemies                                                             |
+| `packages/genshin-world/src/components/Menu/WorldLevelPrompt/Index.vue`              | The Change World Level prompt: the two levels, the question and the tips, Cancel and Confirm                               |
+| `packages/genshin-world/src/services/adventureRank/computeWorldLevelAdjustPrompt.ts` | the levels the prompt shows and whether the change lowers                                                                  |
+| `packages/genshin-world/src/services/adventureRank/checkIsSystemOpen.ts`             | whether a Paimon entry is open, at the rank held and with the main quests it opens after finished                          |
+| `packages/genshin-world/src/services/adventureRank/ScreenKindOpenRankMap.ts`         | the rank each Paimon entry the wiki gates opens at                                                                         |
+| `packages/genshin-world/src/services/adventureRank/ScreenKindOpenQuestMap.ts`        | the main quests each Paimon entry opens after; the Handbook's 20505 and the Events' 2010001 are estimates (see Still open) |
 
 ## Sources
 
