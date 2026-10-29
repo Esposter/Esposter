@@ -1,3 +1,4 @@
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { checkIsOrphanPath } from "#src/services/worktree/remove/checkIsOrphanPath";
 import { checkWorktreePath } from "#src/services/worktree/remove/checkWorktreePath";
@@ -13,8 +14,9 @@ import { join, resolve } from "node:path";
 
 // Removes a linked worktree, and its branch once that has landed, or a folder under the worktrees folder that git no
 // Longer lists. Git still refuses a dirty linked worktree; on Windows the junctions and the loaded binaries are dealt
-// With first, so no deletion walks out of the worktree or stops part way on a long path
-export const removeWorktree = (path: string): void => {
+// With first, so no deletion walks out of the worktree or stops part way on a long path. The git calls that act on the
+// Repository run from `repositoryRoot`, so a removal run from inside the worktree it removes still has a checkout to ask
+export const removeWorktree = (path: string, repositoryRoot: string = REPOSITORY_ROOT): void => {
   checkWorktreePath(path);
   const worktreePath = resolve(path);
   if (!existsSync(worktreePath))
@@ -44,8 +46,8 @@ export const removeWorktree = (path: string): void => {
     else removeTree(worktreePath, trashPath);
   }
 
-  if (isLinked) runGit(["worktree", "remove", worktreePath]);
+  if (isLinked) runGit(["worktree", "remove", worktreePath], repositoryRoot);
   else rmSync(worktreePath, { force: true, recursive: true });
-  runGit(["worktree", "prune"]);
-  if (branch !== "") deleteBranch(branch);
+  runGit(["worktree", "prune"], repositoryRoot);
+  if (branch !== "") deleteBranch(branch, repositoryRoot);
 };

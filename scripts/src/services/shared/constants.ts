@@ -24,8 +24,10 @@ export const MAX_BUFFER_BYTES: number = 256 * KIBIBYTE ** 2;
 export const REPOSITORY_ROOT: string = findRepositoryRoot(import.meta.dirname);
 // The repository's own formatter, run as its binary over each JSON file a script writes. Its configuration is the root's,
 // And its ignore rule passes a file under `generated/` through as it was written, so a writer's output there is kept.
-export const OXFMT_BINARY_PATH: string = join(REPOSITORY_ROOT, "node_modules", "oxfmt", "bin", "oxfmt");
-export const OXFMT_CONFIGURATION_PATH: string = join(REPOSITORY_ROOT, "oxfmt.config.ts");
+export const OXFMT_BINARY_RELATIVE_PATH: string = join("node_modules", "oxfmt", "bin", "oxfmt");
+export const OXFMT_CONFIGURATION_FILE = "oxfmt.config.ts";
+export const OXFMT_BINARY_PATH: string = join(REPOSITORY_ROOT, OXFMT_BINARY_RELATIVE_PATH);
+export const OXFMT_CONFIGURATION_PATH: string = join(REPOSITORY_ROOT, OXFMT_CONFIGURATION_FILE);
 // Beside pnpm's own cache directories, under the install it is derived from: what the scripts keep between runs
 export const CACHE_DIRECTORY: string = join(REPOSITORY_ROOT, "node_modules", ".cache", "@esposter", "scripts");
 // The wiki answers this many titles in one imageinfo call, and this many file reads at once is as many as a run asks of
