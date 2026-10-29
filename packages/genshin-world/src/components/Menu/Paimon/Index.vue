@@ -633,7 +633,7 @@ onBeforeUnmount(() => {
 }
 
 /* The game draws the info icon the same hovered and pressed: its disc reads #eae4d6 throughout, from the pointer's
-   Arrival to the click that opens the dialog (`world-level-dialog-2024.mkv`, 0.9 to 3.0 seconds at 60 frames) */
+   Arrival to the click that opens the dialog (`yt-P13s7kSmVOE-world-level-dialog-2024.mkv`, 0.9 to 3.0 seconds at 60 frames) */
 .info {
   position: absolute;
   border-radius: 50%;

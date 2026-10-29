@@ -4,7 +4,7 @@ import { MenuDialogIcon } from "#src/models/menu/MenuDialogIcon";
 
 // Each dialog icon, traced at scale 2 from the English PC client's World Level dialog at 3840 wide (a public recording,
 // `world-level-dialog-2025.mkv` at 8 seconds) and divided down to the game's 1080 high pixels, its box placed from the
-// Dialog frame's top left as the 1080 recording (`world-level-dialog-2024.mkv` at 5 seconds) measures it
+// Dialog frame's top left as the 1080 recording (`yt-P13s7kSmVOE-world-level-dialog-2024.mkv` at 5 seconds) measures it
 export const MenuDialogGlyphMap: Readonly<Record<MenuDialogIcon, MenuIconGlyph>> = {
   // The cross's ink spans x 1414 to 1447 and y 211 to 244 of the 1080 frame, the frame's top left at (421, 182)
   [MenuDialogIcon.Close]: {

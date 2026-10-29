@@ -34,7 +34,7 @@ flowchart LR
 ## Open
 
 - [ ] **The cloud sea's frame upload is unmeasured against the three bands' writes** — no source yet: the write sizes are not measured in the repository or the parity folders.
-- [ ] **The dusk's sky is clouded about a seventh of the time the recording's is, from 8 to 15 degrees up** — no source yet: the named source does not hold this value, since the roadmap link (`openspec/changes/genshin-roadmap/tasks.md`) gives its dusk cover as a solve with no figure, and no cover solve of `{data-root}/genshin-parity/captures/login-dusk.mkv` is kept in `{data-root}/genshin-parity/references`, `plans` or `comparisons`.
+- [ ] **The dusk's sky is clouded about a seventh of the time the recording's is, from 8 to 15 degrees up** — no source yet: the named source does not hold this value, since the roadmap link (`openspec/changes/genshin-roadmap/tasks.md`) gives its dusk cover as a solve with no figure, and no cover solve of `{data-root}/genshin-parity/captures/yt-mMf727q-0w0-login-dusk.mkv` is kept in `{data-root}/genshin-parity/references`, `plans` or `comparisons`.
 - [ ] **The dusk's cloud shade is a bright pink** — no source yet: the shade's value is not read against a colour reference here.
 - [ ] **The layer draws no settings until an hour's solve beats none** — no source yet: the gate on the layer's settings was not located in the code checked here.
 - [ ] **Each band is one of the game's painted clouds, traced** — no source yet: the cloud textures in `{data-root}/genshin-parity/extracted/login/assets/Texture2D/`, not yet matched to the bands.

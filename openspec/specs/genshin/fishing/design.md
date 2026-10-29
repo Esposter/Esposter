@@ -74,4 +74,4 @@ The fish, stock, pool and rod tables are not in the community dump the repositor
 - [ ] **An emptied stock is back in full seventy-two hours on** — no source yet: no decoded fishing table holds a refill time, and the Fishing wiki page is not cached.
 - [ ] **A fish flees any lure within its flee range, and turns toward the bait it takes** — no source yet: the reaction rule is not in the decoded tables, and no recording of it is checked.
 - [ ] **A draw picks a fish by its share of the stock's weight** — no source yet: the stock table holds the weights, not the draw rule.
-- [ ] **The reel's tension holds in its zone until the fish is caught or the line breaks** — no source yet: `{data-root}/genshin-parity/captures/fishing-reel.mkv` is not yet read against the rule.
+- [ ] **The reel's tension holds in its zone until the fish is caught or the line breaks** — no source yet: `{data-root}/genshin-parity/captures/yt-iKr-nF1P7xQ-fishing-reel.mkv` is not yet read against the rule.

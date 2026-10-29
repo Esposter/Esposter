@@ -176,7 +176,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* Measured from the English PC client's dialog at 1080 high (`world-level-dialog-2024.mkv` at 5 seconds), its frame
+/* Measured from the English PC client's dialog at 1080 high (`yt-P13s7kSmVOE-world-level-dialog-2024.mkv` at 5 seconds), its frame
    Centred on the screen. Provisional where the recording does not show it: the button held through a cooldown and the
    restoring button's arrow, the lowering's turned over */
 .world-level-dialog {

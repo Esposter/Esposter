@@ -7,7 +7,7 @@ import { MenuPromptIcon } from "#src/models/menu/MenuPromptIcon";
 export const MenuPromptGlyphMap: Readonly<Record<MenuPromptIcon, MenuIconGlyph>> = {
   // The World Level dialog's red arrow, traced at scale 3 from its 3840 wide recording (`world-level-dialog-2025.mkv` at 8
   // Seconds) and divided down to the game's 1080 high pixels, placed on the disc as the 1080 recording
-  // (`world-level-dialog-2024.mkv` at 5 seconds) measures it: ink from y 818 to 839, centred on the disc's x 806
+  // (`yt-P13s7kSmVOE-world-level-dialog-2024.mkv` at 5 seconds) measures it: ink from y 818 to 839, centred on the disc's x 806
   [MenuPromptIcon.LowerWorldLevel]: {
     height: 26,
     paths: [
