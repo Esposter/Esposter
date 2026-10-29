@@ -17,8 +17,9 @@ const { count, countSize = "30cqh", rarity } = defineProps<Props>();
   <!-- An item's tile as the game's reward lists draw it, filling the box its parent gives it: the rarity's gradient lit
        from the foot, and the count in white on a darker strip across the bottom 24%, the corners rounded 7%. Measured on
        the wiki's Adventurer Handbook screenshot and the Reputation clip, which agree on the three, four and five star
-       tiles. A count keeps the screen's size rather than the tile's, so each screen passes its own as `countSize`. A
-       two star tile is not measured yet and draws bare. The item's own art is the game's and does not ship -->
+       tiles, and the Expedition clip's grey tiles, whose items the table gives no stars (rarity zero). A count keeps
+       the screen's size rather than the tile's, so each screen passes its own as `countSize`. A two star tile is not
+       measured yet and draws bare. The item's own art is the game's and does not ship -->
   <span class="item-tile" :data-rarity="rarity">
     <span class="face" :style="{ background: ItemRarityFaceGradientMap[rarity] }">
       <span class="count" aria-hidden="true" :style="{ fontSize: countSize }">{{ count }}</span>
@@ -48,6 +49,11 @@ const { count, countSize = "30cqh", rarity } = defineProps<Props>();
   font-weight: 600;
   line-height: 24cqh;
   text-align: center;
+}
+
+.item-tile[data-rarity="0"] .count,
+.item-tile[data-rarity="1"] .count {
+  background: #5e6472;
 }
 
 .item-tile[data-rarity="3"] .count {
