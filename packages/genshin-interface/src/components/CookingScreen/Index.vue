@@ -10,10 +10,10 @@ import { computed } from "vue";
 interface Props {
   // The Auto Cook button's label in the reader's language
   autoCookLabel: string;
-  // Whether Auto Cook is offered for the dish on the screen, once its proficiency is full
-  canAutoCook: boolean;
   // The dishes the cook knows, by id and name in the reader's language, listed for the choice
   dishes: { id: number; name: string }[];
+  // Whether Auto Cook is offered for the dish on the screen, once its proficiency is full
+  isAutoCookable: boolean;
   // The place of the pointer along the bar, as a fraction from its left end
   pointer: number;
   // The id of the dish on the screen, which the list marks
@@ -26,7 +26,7 @@ interface Props {
   zones: { delicious: [number, number]; regular: [number, number] };
 }
 
-const { autoCookLabel, canAutoCook, dishes, pointer, selectedId, stopLabel, title, zones } = defineProps<Props>();
+const { autoCookLabel, dishes, isAutoCookable, pointer, selectedId, stopLabel, title, zones } = defineProps<Props>();
 const emit = defineEmits<{ autoCook: []; close: []; select: [id: number]; stop: [] }>();
 // The zones lie on a band drawn inside the bar's track, whose radius is this, in the stage's units
 const ZONE_RADIUS_Y = 90;
@@ -97,7 +97,7 @@ const pointerPosition = computed(() => toArcPoint(pointer, ZONE_RADIUS_Y));
         <path d="M-6 -8 L6 -8 L5 66 L-5 66 Z" />
       </g>
     </svg>
-    <button v-if="canAutoCook" class="auto-cook" type="button" @click="emit('autoCook')">
+    <button v-if="isAutoCookable" class="auto-cook" type="button" @click="emit('autoCook')">
       {{ autoCookLabel }}
     </button>
     <button class="stop" type="button" @click="emit('stop')">
