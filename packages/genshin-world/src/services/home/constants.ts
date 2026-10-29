@@ -27,7 +27,7 @@ export const MAX_HOME_PLACEMENT_COUNT =
 // Companions' one-time rewards (233 distinct `rewardID`s of the `HOME_AVATAR_REWARD_EVENT` rows of `HomeWorldEventExcelConfigData`)
 export const MAX_HOME_COMPANION_COUNT = 8;
 export const MAX_HOME_ORDER_COUNT = 10;
-export const MAX_HOME_BLUEPRINT_COUNT = 1405;
+export const MAX_HOME_BLUEPRINT_COUNT = 1340;
 export const MAX_HOME_REWARD_CLAIM_COUNT = 233;
 // The Serenitea Pot's gadget: the material row of the widget type with id 220026, which the dump names with the name hash
 // 200477924, the English "Serenitea Pot". The gadget is the material, and the realm is entered by its use
