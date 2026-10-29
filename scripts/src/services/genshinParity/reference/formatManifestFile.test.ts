@@ -2,6 +2,9 @@ import type { ParityReferenceManifestRow } from "#src/models/genshinParity/refer
 
 import { ParityReferenceKind } from "#src/models/genshinParity/reference/ParityReferenceKind";
 import { formatManifestFile } from "#src/services/genshinParity/reference/formatManifestFile";
+import { REFERENCE_MANIFEST_PATH } from "#src/services/genshinParity/shared/constants";
+import { formatJsonFile } from "#src/services/shared/formatJsonFile";
+import { jsonDateParse } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(formatManifestFile, () => {
@@ -20,28 +23,21 @@ describe(formatManifestFile, () => {
     width: BYTES,
   });
 
-  test("leaves a header key out when the manifest does not know it", () => {
+  test("is the formatter's own output, so formatting it again changes nothing", () => {
     expect.hasAssertions();
-    expect(formatManifestFile(EMPTY).split("\n")).toStrictEqual([
-      "{",
-      '  "records": [],',
-      '  "recordings": [],',
-      '  "references": []',
-      "}",
-      "",
-    ]);
+
+    const text = formatManifestFile({ ...EMPTY, gameVersion: "7.1.0", references: [createRow("a"), createRow("b")] });
+
+    expect(formatJsonFile(REFERENCE_MANIFEST_PATH, jsonDateParse(text))).toBe(text);
   });
 
-  test("writes the known header, then one row per line in id order", () => {
+  test("sorts each section's rows, and leaves out a header key the manifest does not hold", () => {
     expect.hasAssertions();
-    const lines = formatManifestFile({
-      ...EMPTY,
-      gameVersion: "7.1.0",
-      references: [createRow("b"), createRow("a")],
-    }).split("\n");
-    expect(lines).toHaveLength(10);
-    expect(lines[1]).toBe('  "gameVersion": "7.1.0",');
-    expect(lines[5]).toContain('"id":"a"');
-    expect(lines[6]).toContain('"id":"b"');
+
+    const text = formatManifestFile({ ...EMPTY, references: [createRow("b"), createRow("a")] });
+
+    expect(text).toBe(
+      formatJsonFile(REFERENCE_MANIFEST_PATH, { ...EMPTY, references: [createRow("a"), createRow("b")] }),
+    );
   });
 });

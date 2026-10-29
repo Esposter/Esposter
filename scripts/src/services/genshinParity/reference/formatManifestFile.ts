@@ -1,40 +1,30 @@
 import type { ParityReferenceManifest } from "#src/models/genshinParity/reference/ParityReferenceManifest";
 
 import { sortObjectKeys } from "#src/services/genshinParity/reference/sortObjectKeys";
+import { REFERENCE_MANIFEST_PATH } from "#src/services/genshinParity/shared/constants";
+import { formatJsonFile } from "#src/services/shared/formatJsonFile";
 import { compareCodeUnits } from "#src/services/shared/compareCodeUnits";
 
-// One section as its JSON: a row per line, each with its keys sorted, so two machines' additions land as separate lines
-const formatSection = (name: string, rows: unknown[]): string =>
-  rows.length === 0
-    ? `  ${JSON.stringify(name)}: []`
-    : `  ${JSON.stringify(name)}: [\n${rows.map((row) => `    ${JSON.stringify(sortObjectKeys(row))}`).join(",\n")}\n  ]`;
-
-// The manifest as text: its header keys in code point order, then each section with its rows in key order. A header key
-// the manifest does not hold is left out, never written as a guess
+// The manifest as the formatter commits it: each section's rows sorted by their name and each row's keys in code point
+// Order, so two machines' additions land as the same lines. A header key the manifest does not hold is left out, never
+// Written as a guess. The formatter, not this function, decides where a row breaks, so a re-run formats to the same text
 export const formatManifestFile = ({
   animeGameDataCommit,
   gameVersion,
   records,
   recordings,
   references,
-}: ParityReferenceManifest): string => {
-  const header = [
-    ...(animeGameDataCommit === undefined ? [] : [`  "animeGameDataCommit": ${JSON.stringify(animeGameDataCommit)}`]),
-    ...(gameVersion === undefined ? [] : [`  "gameVersion": ${JSON.stringify(gameVersion)}`]),
-  ];
-  const sections = [
-    formatSection(
-      "records",
-      records.toSorted((first, second) => compareCodeUnits(first.path, second.path)),
-    ),
-    formatSection(
-      "recordings",
-      recordings.toSorted((first, second) => compareCodeUnits(first.name, second.name)),
-    ),
-    formatSection(
-      "references",
-      references.toSorted((first, second) => compareCodeUnits(first.id, second.id)),
-    ),
-  ];
-  return `{\n${[...header, ...sections].join(",\n")}\n}\n`;
-};
+}: ParityReferenceManifest): string =>
+  formatJsonFile(REFERENCE_MANIFEST_PATH, {
+    animeGameDataCommit,
+    gameVersion,
+    records: records
+      .toSorted((first, second) => compareCodeUnits(first.path, second.path))
+      .map((row) => sortObjectKeys(row)),
+    recordings: recordings
+      .toSorted((first, second) => compareCodeUnits(first.name, second.name))
+      .map((row) => sortObjectKeys(row)),
+    references: references
+      .toSorted((first, second) => compareCodeUnits(first.id, second.id))
+      .map((row) => sortObjectKeys(row)),
+  });
