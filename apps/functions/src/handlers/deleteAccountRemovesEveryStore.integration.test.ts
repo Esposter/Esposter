@@ -12,7 +12,6 @@ import {
   chargeStorageLedgerEntry,
   createEntity,
   createMessage,
-  getCharacterPackStagingPrefix,
   getContentBlobName,
   serializeEntity,
   writeJsonBlob,
@@ -262,7 +261,6 @@ describe(deleteAccountHandler, () => {
     await writeJsonBlob(await getContainerClient(AzureContainer.GenshinAssets), getSaveBlobName(userId), content);
     await seedBlob(AzureContainer.ClickerAssets, getSaveBlobName(userId));
     await seedBlob(AzureContainer.UserAssets, getSaveBlobName(userId));
-    await seedBlob(AzureContainer.GenshinAssets, `${getCharacterPackStagingPrefix(userId)}${hash}`);
     await seedBlob(AzureContainer.GenshinAssets, `character-packs/files/${sharedPackHash}`);
 
     const otherUserRowBefore = await mockDb.select().from(usersInAuth).where(eq(usersInAuth.id, otherUserId));
@@ -337,7 +335,6 @@ describe(deleteAccountHandler, () => {
     expect(readBlobNamesUnder(AzureContainer.UserAssets, `${userId}/`)).toStrictEqual([]);
     expect(readBlobNamesUnder(AzureContainer.GenshinAssets, `${userId}/`)).toStrictEqual([]);
     expect(readBlobNamesUnder(AzureContainer.ClickerAssets, `${userId}/`)).toStrictEqual([]);
-    expect(readBlobNamesUnder(AzureContainer.GenshinAssets, getCharacterPackStagingPrefix(userId))).toStrictEqual([]);
 
     // Kept: the shared character-pack file, the moderation record that names the account, and the account's activity on
     // A resource it does not own

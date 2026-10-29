@@ -86,7 +86,7 @@ Each resource the account owns SHALL be purged as the resource purge already pur
 
 ### Requirement: The account's own blob directories are removed by prefix
 
-The deletion SHALL remove every blob under the account's prefix in the public and private asset containers and in the game-save containers, and every blob under the account's character-pack staging prefix in the game-asset container.
+The deletion SHALL remove every blob under the account's prefix in the public and private asset containers and in the game-save containers.
 
 #### Scenario: A profile image and a save are removed
 

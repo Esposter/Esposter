@@ -1,7 +1,7 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
 import { getContainerClient } from "#src/services/azure/getContainerClient";
-import { deleteCharacterPackStaging, deleteUserDirectories } from "@esposter/db";
+import { deleteUserDirectories } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
 
 // The account's own directories are swept by its prefix, which lists no names. The blobs it is charged for went in the
@@ -13,8 +13,5 @@ export const deleteAccountBlobDirectories = async (userId: UserInAuth["id"]): Pr
       getContainerClient(containerName),
     ),
   );
-  await Promise.all([
-    deleteUserDirectories([genshinAssetsClient, ...userContainerClients], userId),
-    deleteCharacterPackStaging(genshinAssetsClient, userId),
-  ]);
+  await deleteUserDirectories([genshinAssetsClient, ...userContainerClients], userId);
 };

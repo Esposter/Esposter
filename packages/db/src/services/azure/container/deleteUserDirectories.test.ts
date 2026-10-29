@@ -1,6 +1,5 @@
 import { createContainerClient } from "#src/services/azure/container/createContainerClient.test";
 import { deleteUserDirectories } from "#src/services/azure/container/deleteUserDirectories";
-import { getCharacterPackStagingPrefix } from "#src/services/azure/container/getCharacterPackStagingPrefix";
 import { listBlobNames } from "#src/services/azure/container/listBlobNames";
 import { uploadBlobs } from "#src/services/azure/container/uploadBlobs.test";
 import { AzureContainer, getSaveBlobName, getUserProfileImageBlobName } from "@esposter/db-schema";
@@ -27,13 +26,8 @@ describe(deleteUserDirectories, () => {
       getUserProfileImageBlobName(otherUserId),
     ]);
     await uploadBlobs(userAssetsClient, [`${userId}/CallBackground/0`]);
-    // The shared character-pack files are keyed by hash across accounts, so the sweep never reaches them, and a staged
-    // Pack sits outside the user's prefix, so it is left for its own sweep
-    await uploadBlobs(genshinAssetsClient, [
-      getSaveBlobName(userId),
-      `${getCharacterPackStagingPrefix(userId)}keep/${sha256}`,
-      `character-packs/files/${sha256}`,
-    ]);
+    // The shared character-pack files are keyed by hash across accounts, so the sweep never reaches them
+    await uploadBlobs(genshinAssetsClient, [getSaveBlobName(userId), `character-packs/files/${sha256}`]);
 
     await deleteUserDirectories([publicUserAssetsClient, userAssetsClient, genshinAssetsClient], userId);
 
@@ -41,12 +35,7 @@ describe(deleteUserDirectories, () => {
       getUserProfileImageBlobName(otherUserId),
     ]);
     await expect(listBlobNames(userAssetsClient, "")).resolves.toStrictEqual([]);
-    const genshinAssetsBlobNames = await listBlobNames(genshinAssetsClient, "");
-
-    expect(genshinAssetsBlobNames.toSorted()).toStrictEqual([
-      `character-packs/files/${sha256}`,
-      `${getCharacterPackStagingPrefix(userId)}keep/${sha256}`,
-    ]);
+    await expect(listBlobNames(genshinAssetsClient, "")).resolves.toStrictEqual([`character-packs/files/${sha256}`]);
   });
 
   // The sweep is a teardown that must converge when it re-runs after an interrupted attempt, so a prefix an earlier

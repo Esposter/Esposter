@@ -38,7 +38,7 @@ flowchart TD
   Resources --> Messages["Messages in member rooms<br/>soft delete"]
   Messages --> Reactions["Reactions in member rooms<br/>remove or unshare"]
   Reactions --> Charged["Charged blobs<br/>from the storage ledger"]
-  Charged --> Prefixes["User blob prefixes<br/>and character-pack staging"]
+  Charged --> Prefixes["User blob prefixes"]
   Prefixes --> Exports["Export archives<br/>named by dataExports rows"]
   Exports --> User["User row<br/>deleted last"]
 ```
@@ -50,7 +50,7 @@ The order is the mechanism. The user row goes last because its cascade removes t
 3. **Messages in member rooms.** The sweep reads the memberships that remain once the owned rooms are gone. In each of those rooms it soft-deletes the account's messages through `softDeleteRoomMessagesByUser`, the same soft delete a moderation ban runs. It passes a no-op for the announcement, so an open room keeps showing the messages until it reloads.
 4. **Reactions in member rooms.** In each of those rooms, an emoji row the account reacted to is deleted when the account is its only reactor. Otherwise the account is taken out of its reactor list. Each write is conditional on the row's etag, so a row another member changed meanwhile fails the step, and the replay reads it again. The rule is `checkIsOnlyReactor` and `getUpdatedUserIds` in `packages/shared`, which the emoji router and the client store also use. No announcement goes out, so an open room shows a removed reaction on its next load.
 5. **Charged blobs.** `listChargedBlobsByUser` reads the account's rows in the storage ledger, grouped by container. `deleteStorageBlobs` removes each container's blobs through the release a blob deletion runs, which drops their ledger rows and broadcasts the storage usage change. The sweep never lists a directory to find these files.
-6. **Blob prefixes.** `deleteUserDirectories` removes everything under `{userId}/` in `GenshinAssets`, `PublicUserAssets`, `UserAssets` and `ClickerAssets`. `deleteCharacterPackStaging` removes `character-packs/staging/{userId}/` in `GenshinAssets`. Each is a prefix delete that lists no names, and an empty prefix counts as done. The clicker and user-assets containers each hold the person's `save.json` under the prefix, the clicker's and the dungeon save respectively. The shared character-pack files under `character-packs/files/` sit outside both prefixes and are kept.
+6. **Blob prefixes.** `deleteUserDirectories` removes everything under `{userId}/` in `GenshinAssets`, `PublicUserAssets`, `UserAssets` and `ClickerAssets`. It is a prefix delete that lists no names, and an empty prefix counts as done. The clicker and user-assets containers each hold the person's `save.json` under the prefix, the clicker's and the dungeon save respectively. The shared character-pack files under `character-packs/files/` sit outside the prefix and are kept.
 7. **Export archives.** `deleteAccountDataExportArchives` reads the `blobName` of each `dataExports` row the account owns. It skips a row that names no blob, which is a queued export with no archive yet, and deletes the named blobs in `UserAssets` through `deleteBlobs`. The archive is named by its export id under `exports/` and sits under no user prefix, so its row is the only way to find it. An archive an earlier attempt already removed counts as done.
 8. **User row.** The `usersInAuth` row is deleted last. Its cascade removes the `accounts` rows, the `dataExports` rows and the other rows that reference the user with a cascade. No step deletes those by hand.
 
@@ -76,7 +76,7 @@ Every step treats an already-gone target as done. A 404 from a blob delete count
 
 **The `accounts` foreign key cascades.** It cascades in the schema, because a non-cascading key would block the user row's deletion. The deletion then declares what it removes, and no step deletes accounts by hand.
 
-**Shared character-pack files stay.** They are keyed by content hash and shared across accounts, and nothing counts their references, so removing one could break another account. The user's staging prefix is removed, and the shared files are not under it.
+**Shared character-pack files stay.** They are keyed by content hash and shared across accounts, and nothing counts their references, so removing one could break another account.
 
 ## Rejected
 
@@ -112,7 +112,6 @@ Every step treats an already-gone target as done. A 404 from a blob delete count
 | `packages/db/src/services/storage/listChargedBlobsByUser.ts`                                     | Reads the account's storage ledger rows                  |
 | `packages/db/src/services/storage/deleteStorageBlobs.ts`                                         | Removes charged blobs and releases their charge          |
 | `packages/db/src/services/azure/container/deleteUserDirectories.ts`                              | The `{userId}/` prefix sweep                             |
-| `packages/db/src/services/azure/container/deleteCharacterPackStaging.ts`                         | The character-pack staging prefix sweep                  |
 | `packages/shared/src/services/message/emoji/checkIsOnlyReactor.ts`                               | The reaction rule, shared with the emoji router          |
 | `packages/shared/src/services/message/emoji/getUpdatedUserIds.ts`                                | The reaction rule, shared with the emoji router          |
 | `apps/web/server/trpc/routers/message/emoji.ts`                                                  | The emoji router, which applies the same reaction rule   |
