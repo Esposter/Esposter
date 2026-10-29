@@ -8,7 +8,7 @@ description: Apply when working on the page builder — the editor shell the web
 Rules every page-builder task needs, each owned by the page named in its line:
 
 - A publish bakes the document into the HTML a reader gets, and the view serves that baked HTML in a sandboxed frame; nothing is rendered at read time (`openspec/specs/resource/page-builder/document-model/design.md`).
-- Every URL prop passes `checkIsAllowedUrl`, and custom HTML is sanitised both when it is stored and when it is published (`openspec/specs/resource/page-builder/document-model/design.md`).
+- Every URL prop passes `checkIsAllowedUrl`, and custom HTML is sanitised where it is rendered for publish, whatever was stored (`openspec/specs/resource/page-builder/document-model/design.md`).
 - A merge field is the canonical `{{columnName}}` token from `toMergeField`, and substitution HTML-escapes the value (`openspec/specs/resource/email-personalization/design.md`).
 - The canvas and the editor take their keys from one table, read through one lookup (`openspec/specs/resource/page-builder/keyboard/design.md`).
 - Each open resource's undo and redo are JSON Patch operations, with the inverses that undo them kept beside them (`openspec/specs/resource/page-builder/undo-as-patches/design.md`).
