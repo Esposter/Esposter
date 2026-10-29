@@ -249,7 +249,7 @@ const getAdjacentSection = (step: number): ArchiveSection =>
   padding: 0 calc(var(--unit) * 4);
   background: #e5e4dd;
   color: #2b2f3a;
-  font-size: calc(var(--unit) * 18);
+  font-size: calc(var(--unit) * 19.5);
   font-weight: 600;
   line-height: calc(var(--unit) * 15);
   text-align: center;
@@ -258,17 +258,21 @@ const getAdjacentSection = (step: number): ArchiveSection =>
   justify-content: center;
 }
 
+/* A two-line name is set at the game's cap height and letter-spaced to its width, as a single line is */
 .name[data-two-lines] {
-  font-size: calc(var(--unit) * 14);
-  line-height: calc(var(--unit) * 15);
+  font-size: calc(var(--unit) * 16);
+  line-height: calc(var(--unit) * 14);
+  letter-spacing: calc(var(--unit) * 1.6);
 }
 
+/* The game's face is wider than Signika at one cap height, so a single line is letter-spaced out to its width */
 .name:not([data-two-lines]) .label {
+  letter-spacing: calc(var(--unit) * 1.6);
   white-space: nowrap;
 }
 
 .name[data-two-lines] .label {
-  max-width: calc(var(--unit) * 84);
+  max-width: calc(var(--unit) * 100);
   text-wrap: balance;
 }
 
