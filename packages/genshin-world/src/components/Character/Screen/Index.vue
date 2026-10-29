@@ -48,6 +48,7 @@ import {
   WHOLE_ATTRIBUTES,
 } from "#src/services/character/constants";
 import { ElementNameGameTextKeyMap } from "#src/services/character/ElementNameGameTextKeyMap";
+import { formatWholeNumber } from "#src/services/character/formatWholeNumber";
 import { getAscensionMaterials } from "#src/services/character/getAscensionMaterials";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { getCharacterElement } from "#src/services/character/getCharacterElement";
@@ -260,7 +261,7 @@ const artifactTotals = computed(() => {
   const bare = computeCharacterAttributes(
     getCharacterAttributeLines({ ...character.value, artifacts: [] }, statTables),
   );
-  const formatTotal = (difference: number) => `+${Math.round(difference).toLocaleString("en-US")}`;
+  const formatTotal = (difference: number) => `+${formatWholeNumber(difference)}`;
   return [
     { label: gameText[GameTextKey.AttributeMaxHealth], value: formatTotal(worn.maxHealth - bare.maxHealth) },
     { label: gameText[GameTextKey.AttributeAttack], value: formatTotal(worn.attack - bare.attack) },

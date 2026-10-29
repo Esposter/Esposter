@@ -6,6 +6,7 @@ import type { GameText } from "genshin-text";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { formatWholeNumber } from "#src/services/character/formatWholeNumber";
 import { getAttributeDetailGroups } from "#src/services/character/getAttributeDetailGroups";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
@@ -64,12 +65,12 @@ const attributes = computed(() =>
 const rows = computed(() => {
   const { attack, attributeTotalMap, defense, maxHealth } = attributes.value;
   return [
-    { label: gameText[GameTextKey.AttributeMaxHealth], value: Math.round(maxHealth).toLocaleString("en-US") },
-    { label: gameText[GameTextKey.AttributeAttack], value: Math.round(attack).toLocaleString("en-US") },
-    { label: gameText[GameTextKey.AttributeDefense], value: Math.round(defense).toLocaleString("en-US") },
+    { label: gameText[GameTextKey.AttributeMaxHealth], value: formatWholeNumber(maxHealth) },
+    { label: gameText[GameTextKey.AttributeAttack], value: formatWholeNumber(attack) },
+    { label: gameText[GameTextKey.AttributeDefense], value: formatWholeNumber(defense) },
     {
       label: gameText[GameTextKey.AttributeElementalMastery],
-      value: Math.round(attributeTotalMap[Attribute.ElementalMastery]).toLocaleString("en-US"),
+      value: formatWholeNumber(attributeTotalMap[Attribute.ElementalMastery]),
     },
     { label: gameText[GameTextKey.AttributeMaxStamina], value: `${maxStamina}` },
   ];
@@ -182,21 +183,26 @@ const detailGroups = computed(() =>
   background: #38dae5;
 }
 
+/* The two pills share their word's font, its centring and the pointer; each sets its own size, fill and colour */
+.details,
+.lift {
+  padding: 0;
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+}
+
 /* The game's outlined pill, a hairline round a faint lightening, its word in the cream the frame's words are */
 .details {
   display: block;
   width: 100%;
   height: calc(var(--unit) * 40);
   margin-top: calc(var(--unit) * 17.5);
-  padding: 0;
   border: calc(var(--unit) * 1.5) solid rgb(255 255 255 / 0.25);
   border-radius: calc(var(--unit) * 20);
   background: rgb(255 255 255 / 0.08);
   color: rgb(236 229 216);
-  font: inherit;
   line-height: calc(var(--unit) * 40);
-  text-align: center;
-  cursor: pointer;
 }
 
 /* The Friendship row under Details: its word 27 units in from the panel's edge, its lavender bar across the panel, both
@@ -223,16 +229,12 @@ const detailGroups = computed(() =>
   width: calc(var(--unit) * 266);
   height: calc(var(--unit) * 49);
   margin: 0;
-  padding: 0;
   border: 0;
   border-radius: calc(var(--unit) * 25);
   background: #ded5c4;
   color: #3e404d;
-  font: inherit;
   font-weight: 600;
   line-height: calc(var(--unit) * 49);
-  text-align: center;
-  cursor: pointer;
 }
 
 .title {

@@ -1136,6 +1136,7 @@ export * from "./services/character/downloadCharacterPackFile.ts";
 export * from "./services/character/downloadCharacterPackFiles.ts";
 export * from "./services/character/ElementNameGameTextKeyMap.ts";
 export * from "./services/character/ElementNebulaMap.ts";
+export * from "./services/character/formatWholeNumber.ts";
 export * from "./services/character/gainCharacterExp.ts";
 export * from "./services/character/getAscendableNextPhase.ts";
 export * from "./services/character/getAscensionMaterials.ts";
