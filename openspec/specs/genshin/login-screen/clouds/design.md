@@ -41,6 +41,10 @@ flowchart LR
 - [ ] **Each cloud is coloured as the game's cloud particles are** — no source yet: the particle system's colour over its life, which neither cloud material on disk holds.
 - [ ] **The day's and the dusk's colours are measured, and those ship; the day's cloud still is measured** — no source yet: the day and dusk cloud stills, not yet re-measured for the shipped colours; the still the measurement would write is not on disk.
 - [ ] **The sky's dome is ported as the game draws it** — no source yet: the `Sky_LOD0` mesh that `{data-root}/genshin-parity/extracted/login/witness.json` places with the `Enviro_Atmosphere_Layer_Mat` material (`{data-root}/genshin-parity/extracted/login/assets/Material/Enviro_Atmosphere_Layer_Mat.json`), not yet compared with the ported dome.
+- [ ] **The day's clouds read grey where the recording's are white, and the night's dark where the recording's are pale, so more of them scored those frames worse** — no source yet: no cover comparison or score for those frames is kept in `{data-root}/genshin-parity/comparisons`.
+- [ ] **The bands' heights are solved on the four hours' frames at once by `genshin:parity cover --heights`** — no source yet: the solve's output is not kept, and the heights in `LoginCloudBandMap.ts` cannot be traced to it from the repository.
+- [ ] **Writing the layer's textures into new textures drew the layer without its mipmaps** — no source yet: no render of that variant is kept.
+- [ ] **The night's colours solved on the atmosphere pass held one gate more than the shipped colours without beating them on every reading** — no source yet: no `genshin:parity layer` output for the night is kept.
 
 ## Sources
 
