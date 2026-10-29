@@ -93,6 +93,8 @@ interface Props {
   gameText: GameText;
   // The tab the screen opens on, Attributes as the game's C opens it
   initialTab: CharacterMenuTab;
+  // Whether the device's main pointer is a finger, which the menu's keys are not drawn for
+  isTouch?: boolean;
   // The reader's game language, whose text the Profile tab shows
   language?: GameLanguage;
   // The game's material table by item id, which the materials a talent's next level takes are named from
@@ -128,6 +130,7 @@ const {
   gameDataBaseUrl,
   gameText,
   initialTab,
+  isTouch = false,
   language = GameLanguage.English,
   materialDataMap,
   maxStamina,
@@ -457,6 +460,7 @@ const isActivateDisabled = computed(
       v-model:tab="tab"
       :characters="menuEntries"
       :element-mark-path
+      :is-touch
       :tab-labels
     >
       <CharacterAttributeList

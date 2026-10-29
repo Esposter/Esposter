@@ -2272,6 +2272,7 @@ useWorldSaveSync({
           :game-text
           :initial-tab="CharacterMenuTab.Attributes"
           :inventory
+          :is-touch="isTouch"
           :language
           :material-data-map
           :max-stamina="STAMINA_MAX"

@@ -10,6 +10,8 @@ interface Props {
   characters: CharacterMenuEntry[];
   // The element mark's path drawn at the name's left, the chosen character's element, none where it has none yet
   elementMarkPath?: string;
+  // Whether the device's main pointer is a finger, which has no keys for the tab keys to hint at
+  isTouch?: boolean;
   // Each tab's name in the reader's language
   tabLabels: Record<CharacterMenuTab, string>;
 }
@@ -17,7 +19,7 @@ interface Props {
 defineSlots<{ default: () => unknown }>();
 const characterId = defineModel<number>("characterId", { required: true });
 const tab = defineModel<CharacterMenuTab>("tab", { required: true });
-const { characters, elementMarkPath, tabLabels } = defineProps<Props>();
+const { characters, elementMarkPath, isTouch = false, tabLabels } = defineProps<Props>();
 const characterName = computed(() => characters.find(({ id }) => id === characterId.value)?.name ?? "");
 // The characters either side of the chosen one, the list wrapping round at its ends, which the arrows at the frame's
 // Left and right edges step to
@@ -47,8 +49,8 @@ const steps = computed(() => {
     <svg v-if="elementMarkPath" class="element" viewBox="0 0 1600 1600" aria-hidden="true">
       <path :d="elementMarkPath" />
     </svg>
-    <!-- The keys stepping through the tabs, W up and S down, beside the first -->
-    <div class="tab-keys" aria-hidden="true">
+    <!-- The keys stepping through the tabs, W up and S down, beside the first; a finger has no keys to press -->
+    <div v-if="!isTouch" class="tab-keys" aria-hidden="true">
       <kbd class="key">W</kbd>
       <kbd class="key">S</kbd>
     </div>
