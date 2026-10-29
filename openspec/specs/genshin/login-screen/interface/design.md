@@ -20,7 +20,7 @@ stateDiagram-v2
 
 ## Tests
 
-`packages/genshin-world/src/components/Login/Interface/` is shot in each stage as fixture variants (`packages/genshin-world/src/components/Login/Interface/Index.fixture.ts`) and held to its approved images (`packages/genshin-world/src/components/Login/Interface/Index.png`). Its references are the English recording's frames, over which it is compared.
+`packages/genshin-world/src/components/Login/Interface/` is shot in each stage as fixture variants (`packages/genshin-world/src/components/Login/Interface/Index.fixture.ts`) and held to its approved images (`packages/genshin-world/src/components/Login/Interface/Index.png`). Its references are the English recording's frames, and for its mainland rows the mainland launch recording's (`{data-root}/genshin-parity/captures/bili-av532052219.mp4`), over which it is compared.
 
 ## Key files
 
@@ -39,6 +39,6 @@ stateDiagram-v2
 - [ ] **The door's buttons show 0.3 seconds (`LOGIN_DOOR_BUTTONS_DELAY_MS`) after it forms, and its prompt fades in from one second (`LOGIN_DOOR_PROMPT_DELAY_MS`) over 0.3 seconds (`LOGIN_DOOR_PROMPT_FADE_MS`)** — no source yet: the login door recording still `{data-root}/genshin-parity/references/login-door-recording.png`, not yet read for the button and prompt timings.
 - [ ] **The login page's animation clips are decoded and fitted to keyframes** — no source yet: a check of the fitted keyframes against the 8 decoded clip JSONs in `{data-root}/genshin-parity/extracted/login-clips/AnimationClip/`, not yet made.
 - [ ] **The mainland client's rating shows at every stage in the top right corner, with its build string under the CNREL prefix** — no source yet: the mainland login stills `{data-root}/genshin-parity/references/login-interface-door-mainland.png` and `{data-root}/genshin-parity/references/cn-login.png`, not yet read for the rating's corner and build string.
-- [ ] **The rating's age and notice are traced from the mainland launch recording** — no source yet: the mainland launch recording, not yet located on disk; `{data-root}/genshin-parity/references/login-interface-door-mainland.png`, not yet read for the age and notice.
+- [ ] **The rating's age and notice are traced from the mainland launch recording** — no source yet: the mainland launch recording (`{data-root}/genshin-parity/captures/bili-av532052219.mp4`, compared at 12.5 seconds for the rating); `{data-root}/genshin-parity/references/login-interface-door-mainland.png`, not yet read for the age and notice.
 - [ ] **The rating's CADPA is set in a serif** — no source yet: `{data-root}/genshin-parity/references/login-interface-door-mainland.png`, not yet read for the typeface.
 - [ ] **The white is the interface's own** — no source yet: the element the white curtain clip `{data-root}/genshin-parity/extracted/login-clips/AnimationClip/Ani_LoginMainPage_WhiteCurtain.json` moves, which its curves do not name.

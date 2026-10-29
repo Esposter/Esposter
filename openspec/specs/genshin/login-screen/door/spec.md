@@ -44,7 +44,7 @@ A click SHALL open the door only once the door has formed, and a click made whil
 #### Scenario: Click after forming
 
 - **WHEN** the player clicks a formed door
-- **THEN** the door lights and the four corner buttons appear 0.3 seconds later
+- **THEN** the door lights
 
 ### Requirement: Camera rush to the door
 
@@ -84,5 +84,5 @@ The door SHALL cast no shadow onto the walkway.
 - [ ] **The door has 13 pieces, each rising from about 6 metres below and settling between 0.4 and 1.33 seconds** — no source yet: the door record is hosted, and its lift clip (`{data-root}/genshin-parity/extracted/login/clips/16000354/AnimationClip/Ani_LogginScene_Door01_Liftting.json`) is on disk but its curves are not stored as readable keys, so the piece timing is not read.
 - [ ] **The line on a piece sits on that piece's own slit** — no source yet: the game's per-piece slit was not measured, so the eye-check settles it.
 - [ ] **The camera closes 41% of its distance to the door in the first third of a second** — no source yet: the 41% and the third of a second are the repo's constants, and no game camera curve on disk is read for them.
-- [ ] **The door's lit state and the four corner buttons appear 0.3 seconds after a click on the formed door** — no source yet: the 0.3 seconds is the repo's constant, and no game timing on disk is read for it.
+- [ ] **The four corner buttons appear 0.3 seconds after the door forms, and the door's lit state ramps over 0.4 seconds from a click** — no source yet: the 0.3 and 0.4 seconds are the repo's constants, and no game timing on disk is read for them.
 - [ ] **The door casts no shadow** — no source yet: only the exported copies are set `castShadow = false`, and our door's setting was not located.
