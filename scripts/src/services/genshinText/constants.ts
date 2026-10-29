@@ -155,10 +155,10 @@ export const GameLanguageSdkFileMap: Record<GameLanguage, string> = {
   [GameLanguage.ChineseSimplified]: "zh-cn",
   [GameLanguage.ChineseTraditional]: "zh-tw",
 };
-// The AnimeGameData repository the dump's readable texts and tables are fetched from when it lacks them or holds them at
-// Another size, at its default
-// Branch: `master` is the repository's deprecated one, held at an old patch. Its directories' trees give each file's size,
-// Which is what decides whether a file held is replaced, and list every file, where the contents API stops at a thousand
+// The AnimeGameData repository the dump's readable texts and tables are fetched from when it lacks them or holds them with
+// Other content, at its default
+// Branch: `master` is the repository's deprecated one, held at an old patch. Its directories' trees give each file's git
+// Blob sha, which decides whether a file held is replaced, and list every file, where the contents API stops at a thousand
 export const ANIME_GAME_DATA_BRANCH = "main";
 // oxlint-disable-next-line typescript/no-inferrable-types -- isolated declarations need a template literal's type written
 export const ANIME_GAME_DATA_URL: string = `https://raw.githubusercontent.com/DimbreathBot/AnimeGameData/${ANIME_GAME_DATA_BRANCH}`;
