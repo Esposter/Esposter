@@ -256,7 +256,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   text-align: left;
 }
 .recipes li:first-child .recipe,
-.queues li:first-child .queue {
+.queues li:first-child.queue {
   height: calc(var(--unit) * 123);
 }
 .recipe[aria-pressed="true"],
