@@ -72,6 +72,7 @@
     "eslint-plugin-perfectionist": "catalog:",
     "eslint-plugin-pinia": "catalog:",
     "eslint-plugin-vuejs-accessibility": "catalog:",
+    "natural-orderby": "catalog:",
     "playwright": "catalog:",
     "publint": "catalog:",
     "rolldown": "catalog:",

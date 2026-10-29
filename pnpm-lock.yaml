@@ -600,6 +600,9 @@ catalogs:
     msw:
       specifier: ^3.0.3
       version: 3.0.3
+    natural-orderby:
+      specifier: ^5.0.0
+      version: 5.0.0
     neverthrow:
       specifier: ^8.2.0
       version: 8.2.0
@@ -1558,6 +1561,9 @@ importers:
       eslint-plugin-vuejs-accessibility:
         specifier: 'catalog:'
         version: 2.6.3(eslint@10.13.0(jiti@2.7.0)(supports-color@8.1.1))(globals@17.13.0)(supports-color@8.1.1)
+      natural-orderby:
+        specifier: 'catalog:'
+        version: 5.0.0
       playwright:
         specifier: 'catalog:'
         version: 1.64.1

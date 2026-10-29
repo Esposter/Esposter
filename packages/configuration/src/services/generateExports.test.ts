@@ -36,6 +36,20 @@ describe(generateExports, () => {
     );
   });
 
+  // The barrel is read in the order perfectionist's `sort-exports` checks it in, which is case-insensitive: a
+  // Code-unit sort would put `B` before `a`, and the lint rule reports that
+  test("orders the barrel case-insensitively, as the lint rule sorts it", () => {
+    expect.hasAssertions();
+
+    writeFileSync(join(sourceDirectory, `${TEST_FILENAME}.ts`), `export type A = 0;`);
+    writeFileSync(join(sourceDirectory, "B.ts"), `export type B = 0;`);
+    generateExports(packageDirectory, "typescript");
+
+    expect(readFileSync(join(sourceDirectory, "index.ts"), "utf8")).toBe(
+      `export * from "./${TEST_FILENAME}.ts";\nexport * from "./B.ts";\n`,
+    );
+  });
+
   // A package that stops generating a barrel keeps no stale one: an earlier build's would still be typechecked
   test("removes the barrels an earlier answer wrote and this one does not", () => {
     expect.hasAssertions();
