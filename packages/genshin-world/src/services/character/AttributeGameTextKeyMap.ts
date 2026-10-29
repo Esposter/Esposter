@@ -13,7 +13,7 @@ export const AttributeGameTextKeyMap: ReadonlyMap<Attribute, GameTextKey> = new 
   ...BASE_ATTRIBUTE_GAME_TEXT_KEYS,
   ...ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS,
   ...ELEMENTAL_ATTRIBUTE_GAME_TEXT_KEYS,
-  [Attribute.ElementalMastery, GameTextKey.AttributeElementalMastery],
   [Attribute.AttackPercent, GameTextKey.AttributeAttack],
+  [Attribute.ElementalMastery, GameTextKey.AttributeElementalMastery],
   [Attribute.HealthPercent, GameTextKey.AttributeMaxHealth],
 ]);

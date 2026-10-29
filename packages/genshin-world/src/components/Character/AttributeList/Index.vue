@@ -137,6 +137,7 @@ const detailGroups = computed(() =>
 </template>
 
 <style scoped src="genshin-interface/styles/creamPill.css"></style>
+
 <style scoped>
 /* Measured off the English PC client's character screen at 21:9 (references/character-attributes-session.png), in units
    from the panel's left edge: its name centred 148 from the frame's top, its level 225, its experience bar 251 and 3

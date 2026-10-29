@@ -1,5 +1,7 @@
 import { QuestCategory } from "#src/models/quest/QuestCategory";
 
+// The two ends of a rule's ornament: the left one takes no class, and the right one is the same diamond mirrored
+export const ORNAMENT_END_SIDE_CLASSES: readonly string[] = ["", "right"];
 // The quest screen's tabs after its first, which lists every quest, in the order the game draws them and its list's
 // Headings run
 export const QUEST_CATEGORIES: readonly QuestCategory[] = [

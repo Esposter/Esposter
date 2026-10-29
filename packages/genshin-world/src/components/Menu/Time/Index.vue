@@ -3,6 +3,7 @@ import type { GameText } from "genshin-text";
 
 import ScreenHeader from "#src/components/Menu/ScreenHeader/Index.vue";
 import { ScreenHeaderMark } from "#src/models/menu/ScreenHeaderMark";
+import { TIME_DIAL_ORNAMENT_POSITIONS } from "#src/services/menu/constants";
 import { getTimeTargetMinutes } from "#src/services/menu/getTimeTargetMinutes";
 import { stepTimeDialAdvance } from "#src/services/menu/stepTimeDialAdvance";
 import { MINUTES_PER_DAY } from "genshin-engine";
@@ -18,8 +19,6 @@ interface Props {
 
 const { clockMinutes, gameText } = defineProps<Props>();
 const emit = defineEmits<{ close: []; confirm: [minutes: number] }>();
-// The two ornaments the dial's frame carries, at its top and at its bottom
-const ORNAMENT_POSITIONS = ["top", "bottom"];
 const dial = useTemplateRef("dial");
 const confirmButton = useTemplateRef("confirmButton");
 // How far the pointer has dialled the advance, from none, and the angle it was at about the dial's centre while held
@@ -124,7 +123,7 @@ onMounted(() => {
       </svg>
     </div>
     <svg
-      v-for="position of ORNAMENT_POSITIONS"
+      v-for="position of TIME_DIAL_ORNAMENT_POSITIONS"
       :key="position"
       :class="['ornament', position]"
       viewBox="0 0 70 24"

@@ -12,7 +12,7 @@ import { ScreenHeaderMark } from "#src/models/menu/ScreenHeaderMark";
 import { QuestCategory } from "#src/models/quest/QuestCategory";
 import { QuestGlyph } from "#src/models/quest/QuestGlyph";
 import { LIST_SCREEN_WIDTH } from "#src/services/menu/constants";
-import { QUEST_CATEGORIES } from "#src/services/quest/constants";
+import { ORNAMENT_END_SIDE_CLASSES, QUEST_CATEGORIES } from "#src/services/quest/constants";
 import { getQuestCounter } from "#src/services/quest/getQuestCounter";
 import { QuestCategoryGameTextKeyMap } from "#src/services/quest/QuestCategoryGameTextKeyMap";
 import { QuestCategoryGlyphMap } from "#src/services/quest/QuestCategoryGlyphMap";
@@ -24,9 +24,6 @@ import { useEventListener } from "@vueuse/core";
 import { InputAction } from "genshin-engine";
 import { ORNAMENT_END_PATH } from "genshin-interface";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
-
-// The two ends of a rule's ornament: the left one takes no class, and the right one is the same diamond mirrored
-const ORNAMENT_END_SIDE_CLASSES = ["", "right"];
 
 interface Props {
   // The game's words in the reader's language

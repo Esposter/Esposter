@@ -43,6 +43,8 @@ export const PAIMON_MENU_CONTENTS: readonly PaimonMenuScreenEntry<MenuEntryIcon>
   { icon: EntryIcon.CoOp, screenKind: ScreenKind.CoOp },
 ];
 // The Time screen's advance in game minutes, at least thirty ahead and at most two days, as the game's Time option allows
+// The two ornaments the time dial's frame carries, at its top and at its bottom
+export const TIME_DIAL_ORNAMENT_POSITIONS: readonly string[] = ["top", "bottom"];
 export const TIME_MINIMUM_ADVANCE_MINUTES = 30;
 export const TIME_MAXIMUM_ADVANCE_MINUTES = 2 * MINUTES_PER_DAY;
 // The links out to web pages the menu ends with, drawn disabled, since the world opens no page of their own
@@ -86,6 +88,8 @@ export const SETTINGS_TABS: readonly SettingsTab[] = [
   Tab.Resources,
   Tab.Other,
 ];
+// The two tabs the game draws dimmer than the rest, by their identity so a reordered tab list cannot move the dimming
+export const SETTINGS_DIMMED_TABS: readonly SettingsTab[] = [Tab.Resources, Tab.Other];
 // The width of a list screen's list column in units, the rows and series panels laid across it
 export const LIST_SCREEN_WIDTH = 666;
 

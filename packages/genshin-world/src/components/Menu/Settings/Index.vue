@@ -10,7 +10,7 @@ import MenuScrollTrack from "#src/components/Menu/ScrollTrack/Index.vue";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { SettingsRowKind } from "#src/models/menu/SettingsRowKind";
 import { SettingsTab } from "#src/models/menu/SettingsTab";
-import { GRAPHICS_QUALITY_TIERS, SETTINGS_TABS } from "#src/services/menu/constants";
+import { GRAPHICS_QUALITY_TIERS, SETTINGS_DIMMED_TABS, SETTINGS_TABS } from "#src/services/menu/constants";
 import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
 import { QualityTierGameTextKeyMap } from "#src/services/menu/QualityTierGameTextKeyMap";
@@ -42,8 +42,6 @@ const settings = defineModel<GenshinSettings>("settings", { required: true });
 const tab = defineModel<SettingsTab>("tab", { default: SettingsTab.Graphics });
 const { defaultQualityTier, gameText, language } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
-// The two tabs the game draws dimmer than the rest, by their identity so a reordered tab list cannot move the dimming
-const DIMMED_TABS: readonly SettingsTab[] = [SettingsTab.Resources, SettingsTab.Other];
 const page = useTemplateRef("page");
 const content = useTemplateRef("content");
 const sections = computed(() => SettingsTabSectionsMap[tab.value] ?? []);
@@ -201,7 +199,7 @@ onMounted(() => {
         v-for="settingsTab of SETTINGS_TABS"
         :key="settingsTab"
         class="tab"
-        :class="{ dimmed: DIMMED_TABS.includes(settingsTab) }"
+        :class="{ dimmed: SETTINGS_DIMMED_TABS.includes(settingsTab) }"
         role="tab"
         tip=""
         :aria-selected="settingsTab === tab"
