@@ -362,7 +362,6 @@ useEventListener("keydown", (event) => {
 
 /* Their left 39.3 in from the row's inner edge, inside the blue bar */
 .chapter-title,
-.chapter-number,
 .chapter-region {
   position: absolute;
   left: calc(var(--unit) * 39.3);
@@ -391,7 +390,6 @@ useEventListener("keydown", (event) => {
   position: absolute;
   top: calc(var(--unit) * 44.3);
   right: calc(var(--unit) * 41);
-  left: auto;
   color: #8a8886;
   font-size: calc(var(--unit) * 23);
   line-height: calc(var(--unit) * 23);
