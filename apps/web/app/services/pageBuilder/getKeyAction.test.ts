@@ -1,4 +1,5 @@
 // @vitest-environment happy-dom
+import { TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { KeyAction } from "@/models/pageBuilder/KeyAction";
 import { KeyScope } from "@/models/pageBuilder/KeyScope";
 import { getKeyAction } from "@/services/pageBuilder/getKeyAction";
@@ -57,7 +58,7 @@ describe(getKeyAction, () => {
 
     const button = document.createElement("button");
     const link = document.createElement("a");
-    link.href = "https://example.com/";
+    link.href = TEST_URL;
     document.body.append(button, link);
 
     expect(getKeyAction(press({ key: "Enter" }), KeyScope.Editor)).toBe(KeyAction.StartTextEdit);

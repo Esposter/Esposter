@@ -2,7 +2,8 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_OTHER_ID, TEST_ROOT, TEST_THIRD_ID } from "#shared/services/pageBuilder/constants.test";
+import { TEST_SECTION_ID } from "@/services/pageBuilder/constants.test";
 import { getSlotPath } from "@/services/pageBuilder/getSlotPath";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { describe, expect, test } from "vitest";
@@ -16,15 +17,15 @@ describe(getSlotPath, () => {
             {
               props: {
                 children: [
-                  { props: { children: [], id: "k1" }, type: WebpageNodeType.Column },
-                  { props: { children: [], id: "k2" }, type: WebpageNodeType.Column },
+                  { props: { children: [], id: TEST_ID }, type: WebpageNodeType.Column },
+                  { props: { children: [], id: TEST_OTHER_ID }, type: WebpageNodeType.Column },
                 ],
-                id: "cs",
+                id: TEST_THIRD_ID,
               },
               type: WebpageNodeType.Columns,
             },
           ],
-          id: "s",
+          id: TEST_SECTION_ID,
           tag: HtmlTag.Section,
         },
         type: WebpageNodeType.Section,

@@ -5,7 +5,7 @@ import { webpageNodeTypeDefinitionMap } from "#shared/services/pageBuilder/webpa
 import { createWebpageNode } from "@/services/pageBuilder/webpageNodeDefaults";
 import { describe, expect, test } from "vitest";
 
-describe("webpageNodeDefaults", () => {
+describe(createWebpageNode, () => {
   test("every webpage type has a default that its own props schema accepts", () => {
     expect.hasAssertions();
 

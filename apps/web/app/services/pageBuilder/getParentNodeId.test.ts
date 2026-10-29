@@ -2,15 +2,15 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_OTHER_ID, TEST_ROOT, TEST_THIRD_ID } from "#shared/services/pageBuilder/constants.test";
 import { getParentNodeId } from "@/services/pageBuilder/getParentNodeId";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { describe, expect, test } from "vitest";
 
 describe(getParentNodeId, () => {
-  const TEST_CONTAINER_ID = "cs";
-  const TEST_NODE_ID = "k1";
-  const TEST_SECTION_ID = "s1";
+  const TEST_CONTAINER_ID = TEST_OTHER_ID;
+  const TEST_NODE_ID = TEST_ID;
+  const TEST_SECTION_ID = TEST_THIRD_ID;
 
   const createDocument = (): WebpageDocument => ({
     content: [
@@ -46,6 +46,6 @@ describe(getParentNodeId, () => {
   test("a node the document does not hold has no parent", () => {
     expect.hasAssertions();
 
-    expect(getParentNodeId(webpageKind, createDocument(), "missing")).toBeUndefined();
+    expect(getParentNodeId(webpageKind, createDocument(), "-1")).toBeUndefined();
   });
 });

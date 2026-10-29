@@ -2,7 +2,7 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { TEST_SECTION_ID, TEST_WEBPAGE } from "@/services/pageBuilder/constants.test";
 import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
@@ -13,7 +13,7 @@ describe(getInsertTarget, () => {
     content: [
       {
         props: {
-          children: [{ props: { children: [], id: "cs" }, type: WebpageNodeType.Columns }],
+          children: [{ props: { children: [], id: TEST_ID }, type: WebpageNodeType.Columns }],
           id: TEST_SECTION_ID,
           tag: HtmlTag.Section,
         },

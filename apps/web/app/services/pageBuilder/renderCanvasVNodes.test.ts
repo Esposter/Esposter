@@ -49,7 +49,7 @@ describe(renderCanvasVNodes, () => {
         {
           content: [
             {
-              props: { html: '<p onclick="alert(1)">Hi <b>there</b></p>', id: TEST_ID },
+              props: { html: '<p onclick="alert(1)">a <b>b</b></p>', id: TEST_ID },
               type: WebpageNodeType.CustomHtml,
             },
           ],
@@ -63,7 +63,7 @@ describe(renderCanvasVNodes, () => {
     expect(custom.props).toStrictEqual({
       class: "custom-html",
       "data-node-id": TEST_ID,
-      innerHTML: "<p>Hi <b>there</b></p>",
+      innerHTML: "<p>a <b>b</b></p>",
     });
   });
 });

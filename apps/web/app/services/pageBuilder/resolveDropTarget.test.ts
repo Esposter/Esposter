@@ -2,7 +2,7 @@ import type { TextNode } from "#shared/models/pageBuilder/TextNode";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
@@ -14,33 +14,34 @@ const createText = (id: string): TextNode => ({
 });
 
 describe(resolveDropTarget, () => {
-  const TEXT_ONE = "text-one";
-  const TEXT_TWO = "text-two";
+  const TEXT_ONE = TEST_ID;
+  const TEXT_TWO = TEST_OTHER_ID;
   const COLUMN_SLOT = "/content/0/props/children/0/props/children";
+  const COLUMNS_ID = crypto.randomUUID();
   const COLUMN_DOCUMENT: WebpageDocument = {
     content: [
       {
         props: {
           children: [
             {
-              props: { children: [createText(TEXT_ONE), createText(TEXT_TWO)], id: "column" },
+              props: { children: [createText(TEXT_ONE), createText(TEXT_TWO)], id: crypto.randomUUID() },
               type: WebpageNodeType.Column,
             },
           ],
-          id: "columns",
+          id: COLUMNS_ID,
         },
         type: WebpageNodeType.Columns,
       },
     ],
     root: TEST_ROOT,
   };
-  const LONE_COLUMN = "lone-column";
+  const LONE_COLUMN = crypto.randomUUID();
   const LONE_COLUMN_DOCUMENT: WebpageDocument = {
     content: [
       {
         props: {
           children: [{ props: { children: [createText(TEXT_ONE)], id: LONE_COLUMN }, type: WebpageNodeType.Column }],
-          id: "columns",
+          id: COLUMNS_ID,
         },
         type: WebpageNodeType.Columns,
       },
@@ -105,7 +106,7 @@ describe(resolveDropTarget, () => {
     // The pointer is in the column's top half, where a column's stacked axis would resolve the drop before it
     expect(
       resolveDropTarget(webpageKind, {
-        checkIsHorizontalOwner: (ownerId) => ownerId === "columns",
+        checkIsHorizontalOwner: (ownerId) => ownerId === COLUMNS_ID,
         document: LONE_COLUMN_DOCUMENT,
         draggedType: WebpageNodeType.Column,
         getChildRect: (nodeId) => RECTS[nodeId],

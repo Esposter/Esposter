@@ -8,6 +8,6 @@ describe(getNodePointer, () => {
     expect.hasAssertions();
 
     expect(getNodePointer(webpageKind, TEST_WEBPAGE, TEST_NESTED_TEXT_ID)).toBe("/content/0/props/children/0");
-    expect(getNodePointer(webpageKind, TEST_WEBPAGE, "unknown")).toBeUndefined();
+    expect(getNodePointer(webpageKind, TEST_WEBPAGE, "-1")).toBeUndefined();
   });
 });

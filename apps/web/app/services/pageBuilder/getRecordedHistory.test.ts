@@ -5,13 +5,13 @@ import { createHistory, JsonPatchOperationType } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(getRecordedHistory, () => {
-  const TEST_INTERACTION_ID = "drag";
+  const TEST_INTERACTION_ID = "a";
   const TEST_LIMIT = 10;
   const TEST_PATH = "/content/0/props/content";
   const createEntry = (overrides: Partial<PageBuilderHistoryEntry> = {}): PageBuilderHistoryEntry => ({
     interactionId: TEST_INTERACTION_ID,
     inverses: [{ op: JsonPatchOperationType.Replace, path: TEST_PATH, value: "before" }],
-    label: "Edit text",
+    label: "a",
     operations: [{ op: JsonPatchOperationType.Replace, path: TEST_PATH, value: "after" }],
     ...overrides,
   });
@@ -32,7 +32,7 @@ describe(getRecordedHistory, () => {
     const first = createEntry();
     const second = createEntry({
       inverses: [{ op: JsonPatchOperationType.Replace, path: TEST_PATH, value: "after" }],
-      label: "Edit text again",
+      label: "b",
       operations: [{ op: JsonPatchOperationType.Replace, path: TEST_PATH, value: "later" }],
     });
     const history = getRecordedHistory(createEmptyHistory(), first);
@@ -54,7 +54,7 @@ describe(getRecordedHistory, () => {
 
     const history = getRecordedHistory(createEmptyHistory(), createEntry());
 
-    expect(getRecordedHistory(history, createEntry({ interactionId: "other" })).past).toHaveLength(2);
+    expect(getRecordedHistory(history, createEntry({ interactionId: "b" })).past).toHaveLength(2);
   });
 
   test("an insert is never merged, since the nodes after it shift", () => {
