@@ -55,3 +55,4 @@ flowchart TD
 ## Open
 
 - [ ] **the Bounty's team check does not test for a Hydro member** — gcsim's `asc.go` lines 19 and 20 require one, and `checkIsDendroHydroTeam` in `packages/genshin-world/src/services/kit/characters/nilouKit.ts` does not.
+- [ ] **Constellation 2's Dendro half is not gated on the Bounty, as the talent's text reads** — no source yet: the cached Nilou talents file's constellation text was not located by a search for its Constellation 2 heading in this sitting, so the text the page follows is not on disk to read.
