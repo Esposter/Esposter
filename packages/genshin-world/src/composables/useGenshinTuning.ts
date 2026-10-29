@@ -3,8 +3,8 @@ import type { GenshinTuningOptions } from "#src/models/GenshinTuningOptions";
 import { createLookVariables } from "#src/services/tuning/createLookVariables";
 import { until } from "@vueuse/core";
 
-// Development's tuning look: every uniform of the look is registered with the development registry once the post pipeline
-// Is drawn, so the panel's Look tab sets it at once, and it is removed with the scene that shows it
+// Registers the look's variables with the development registry once the post pipeline is drawn, and removes them with the
+// Scene that shows it
 export const useGenshinTuning = ({ devRegistry, postPipeline, ...options }: GenshinTuningOptions) => {
   let isActive = true;
   let unregister: (() => void) | undefined;
