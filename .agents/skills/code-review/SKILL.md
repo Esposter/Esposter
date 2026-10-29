@@ -13,6 +13,7 @@ Never use the built-in `/review` command, the built-in `/simplify`, or a plugin 
 
 - **A finder and verifier fan-out run by a workflow script — rejected.** The old direction was one thread: the main session reads everything, and no agent judges a claim it did not form. Overturned: a window too wide for one reader is read by `haiku` subagents, one per batch, each returning candidates from its batch with the reviewer prompt (`scripts/src/services/review/getReviewerPrompt.ts`) and batch caps (`scripts/src/services/review/constants.ts`) of CI's review pool; the main session still judges every candidate itself, under "The trigger rule" and "Refute first", before anything is reported. A cold agent re-deriving a diff is paid per batch, not per candidate, so the main context keeps the findings and not the file dumps.
 - **Measuring candidate counts, per-lens ceilings or token estimates.** Nothing publishes them, and a prose number with no way to fail is one that fails silently and forever (`references/fixing-findings.md`, "Restated a number the code could publish").
+- **A review run over a backlog of already-merged work.** Each run costs a large share of a session's tokens and reads code that has since moved. Review what lands now; a merged path that needs a look is read directly, not by a review run over it.
 
 ## The two lanes
 
