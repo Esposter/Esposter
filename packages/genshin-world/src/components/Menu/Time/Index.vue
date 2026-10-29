@@ -121,7 +121,13 @@ onMounted(() => {
         <circle r="5" fill="#efe9dc" />
       </svg>
     </div>
-    <svg class="ornament top" viewBox="0 0 70 24" aria-hidden="true">
+    <svg
+      v-for="position in ['top', 'bottom']"
+      :key="position"
+      :class="['ornament', position]"
+      viewBox="0 0 70 24"
+      aria-hidden="true"
+    >
       <path d="M 2 18 L 22 8 L 29 12 M 68 18 L 48 8 L 41 12" fill="none" />
       <path d="M 35 2 L 41 12 L 35 22 L 29 12 Z" fill="#c6b794" />
     </svg>
@@ -130,10 +136,6 @@ onMounted(() => {
     <p class="wait-until">{{ gameText[GameTextKey.TimeWaitUntil] }}</p>
     <span class="caret second" />
     <p class="hour">{{ targetTime }}</p>
-    <svg class="ornament bottom" viewBox="0 0 70 24" aria-hidden="true">
-      <path d="M 2 18 L 22 8 L 29 12 M 68 18 L 48 8 L 41 12" fill="none" />
-      <path d="M 35 2 L 41 12 L 35 22 L 29 12 Z" fill="#c6b794" />
-    </svg>
     <GameButton
       ref="confirmButton"
       class="confirm"
