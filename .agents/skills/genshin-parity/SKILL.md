@@ -64,6 +64,7 @@ Each direction's full statement, with the pointers it carries, is `references/se
 - `references/data-sources.md` — when a table is missing from the dump, a landmark or area is missing from the extract, a dump field is obfuscated, or a fit or loop publishes its record.
 - `references/components.md` — when adding a component, its fixture, or its reference index.
 - `references/approval.md` — when approving a screen's images or citing a reference for one.
+- `references/redesign-wave.md` — when several screens are redrawn at once by agents on worktrees of their own, or one such agent is briefed: the loop, the keep rule, the new-screen and shared-piece passes, and the limits.
 - `references/deriving.md` — when deriving a screen, a surface or a scene in passes.
 - `references/parity-page.md` — when a command renders the world, a frame stalls, or the parity page is served.
 - `references/tools-and-estimates.md` — when a loop has not converged, a tool is built or pruned, or a value is estimated.
