@@ -39,7 +39,8 @@ export const VERIFY_TOLERANCE_PERCENT = 1;
 // Score reads the same as it did from the screenshot
 export const REFERENCE_WEBP_OPTIONS = { effort: 6, lossless: true } as const;
 
-// How many screenshots `references pack` encodes at once, and how many of the largest files its table names
+// How many reference objects `references pack` and `references restore` move at once, and how many of the largest files
+// the pack table names
 export const REFERENCE_PACK_CONCURRENCY = 2;
 export const REFERENCE_PACK_LARGEST_COUNT = 10;
 
