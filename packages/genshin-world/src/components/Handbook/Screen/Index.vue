@@ -82,6 +82,8 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   <GameScreen class="handbook-screen">
     <div class="frame">
       <div class="book" />
+      <div class="stack stack-left" />
+      <div class="stack stack-right" />
       <div class="pages" />
       <div
         class="tabs"
@@ -163,7 +165,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
               :style="{ left: `calc(var(--reference-pixel) * ${1020 + rewardIndex * 159})` }"
             />
             <svg class="commission-check" viewBox="0 0 252 228" aria-hidden="true">
-              <path fill="#7fbc2c" fill-rule="evenodd" :d="CHECK_MARK_PATH" />
+              <path fill-rule="evenodd" :d="CHECK_MARK_PATH" />
             </svg>
           </li>
         </ol>
@@ -193,7 +195,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
             {{ gameText[GameTextKey.ClaimRewards] }}
           </button>
           <svg v-else-if="commission.isClaimed" class="commission-check" viewBox="0 0 252 228" aria-hidden="true">
-            <path fill="#7fbc2c" fill-rule="evenodd" :d="CHECK_MARK_PATH" />
+            <path fill-rule="evenodd" :d="CHECK_MARK_PATH" />
           </svg>
         </li>
         <!-- The Encounter Points stage rewards at the foot of the tab, where the game keeps the Long-Term Encounter Points -->
@@ -240,6 +242,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
           </button>
         </li>
       </ol>
+      <div class="feather" />
       <div class="ribbon">
         <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">
           <svg viewBox="0 0 67 67" aria-hidden="true">
@@ -267,9 +270,9 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   position: relative;
   width: calc(var(--reference-pixel) * 3130);
   height: calc(var(--reference-pixel) * 1730);
-  /* The scene behind the book, blurred: lighter to the lower left, which a straight run across the frame holds
-     within a few levels */
-  background: linear-gradient(to bottom left, #768082, #878e8c);
+  /* The scene behind the book, blurred: lighter to the lower left and darker to the upper right, a straight run between
+     the measured corners, which misses the upper left by about nine levels */
+  background: linear-gradient(to bottom left, #777e7d, #909895);
 }
 
 .book {
@@ -287,6 +290,28 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
     #363330 calc(var(--reference-pixel) * 1598),
     #242221 calc(var(--reference-pixel) * 1599)
   );
+}
+
+/* The page stacks showing above the pages, between the cover's top rim and the paper */
+.stack {
+  position: absolute;
+  border-radius: calc(var(--reference-pixel) * 30) 0 0 0;
+}
+
+.stack-left {
+  top: calc(var(--reference-pixel) * 67);
+  left: calc(var(--reference-pixel) * 442);
+  width: calc(var(--reference-pixel) * 700);
+  height: calc(var(--reference-pixel) * 27);
+  background: #918466;
+}
+
+.stack-right {
+  top: calc(var(--reference-pixel) * 70);
+  left: calc(var(--reference-pixel) * 1940);
+  width: calc(var(--reference-pixel) * 960);
+  height: calc(var(--reference-pixel) * 24);
+  background: #bfb4a8;
 }
 
 .pages {
@@ -479,12 +504,12 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
 
 .panel-ring {
   position: absolute;
-  top: calc(var(--reference-pixel) * 170);
-  left: calc(var(--reference-pixel) * 219);
+  top: calc(var(--reference-pixel) * 154);
+  left: calc(var(--reference-pixel) * 200);
   display: grid;
-  width: calc(var(--reference-pixel) * 220);
-  height: calc(var(--reference-pixel) * 220);
-  border: calc(var(--reference-pixel) * 10) solid #d6c9bb;
+  width: calc(var(--reference-pixel) * 215);
+  height: calc(var(--reference-pixel) * 215);
+  border: calc(var(--reference-pixel) * 20) solid #dcd1c3;
   border-radius: 50%;
   background: #f1eae0;
   place-items: center;
@@ -492,8 +517,9 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
 
 .panel-count {
   color: #555554;
-  font-size: calc(var(--reference-pixel) * 58);
+  font-size: calc(var(--reference-pixel) * 66);
   font-weight: 700;
+  letter-spacing: calc(var(--reference-pixel) * -5);
 }
 
 .panel-bar {
@@ -553,7 +579,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   align-items: center;
   justify-content: center;
   gap: calc(var(--reference-pixel) * 24);
-  color: #826245;
+  color: #8a6b4f;
   font-size: calc(var(--reference-pixel) * 46);
   font-weight: 600;
 }
@@ -612,7 +638,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
 /* The game sets the title wider than Signika, so it is set 52 high and spaced 3 to take the game's line width */
 .commission-title {
   margin: 0;
-  color: #555453;
+  color: #5a5856;
   font-size: calc(var(--reference-pixel) * 52);
   font-weight: 600;
   letter-spacing: calc(var(--reference-pixel) * 3);
@@ -627,7 +653,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   margin: 0;
   padding: 0 calc(var(--reference-pixel) * 26);
   border-radius: calc(var(--reference-pixel) * 21.5);
-  background: rgb(255 255 255 / 0.65);
+  background: rgb(255 255 255 / 0.45);
   color: #82644a;
   font-size: calc(var(--reference-pixel) * 40);
   font-weight: 600;
@@ -707,6 +733,34 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   left: calc(var(--reference-pixel) * 1465);
   width: calc(var(--reference-pixel) * 93);
   height: calc(var(--reference-pixel) * 84);
+  fill: #7fbc2c;
+}
+
+/* The quill over the cover's right edge: its outline traced in percentages of its box, filled with its measured colours,
+   navy at the top and teal below */
+.feather {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 320);
+  left: calc(var(--reference-pixel) * 2890);
+  width: calc(var(--reference-pixel) * 190);
+  height: calc(var(--reference-pixel) * 730);
+  background: linear-gradient(#293349, #324c62 45%, #447586 78%);
+  clip-path: polygon(
+    66.8% 0.7%,
+    93.2% 11%,
+    96.8% 24.7%,
+    93.2% 41.8%,
+    86.8% 62.3%,
+    76.8% 79.5%,
+    66.8% 96.6%,
+    57.9% 100%,
+    1% 100%,
+    1% 74.4%,
+    7.9% 48.6%,
+    21.1% 22.9%,
+    34.2% 4.1%,
+    47.4% 1.4%
+  );
 }
 
 /* The slate banner over the cover's edge, its cross 67 square and 8 left of the banner's middle */
@@ -719,7 +773,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   height: calc(var(--reference-pixel) * 143);
   box-sizing: border-box;
   padding-right: calc(var(--reference-pixel) * 16);
-  background: #35495b;
+  background: #384c5f;
   place-items: center;
 }
 
