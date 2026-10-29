@@ -1,15 +1,13 @@
 import type { Database, UserInAuth } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
-import { storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
-import { eq, sql } from "drizzle-orm";
+import { adjustStorageBytesUsed } from "#src/services/storage/adjustStorageBytesUsed";
+import { storageLedgerInStorage } from "@esposter/db-schema";
 
 // The one place bytes leave `users.storageBytesUsed`. The amount is read off the ledger row being dropped
 // Rather than recomputed, which is what makes a release idempotent — the row is gone after the first pass, so
 // A redelivered deletion event or a replayed sweep decrements nothing a second time. It is also the only way
 // A blob can be attributed to an owner at all: a message asset is keyed by room, not by uploader.
-// Clamped at zero because drift can only ever be corrected downwards, and a negative total would read back as
-// A user who has more allowance than their tier grants.
 // Returns the owners whose counters moved, so a release running outside the app process — the deletion Function —
 // Can tell their meters. A release covers a set, so that is a list rather than the reconcile path's single owner.
 export const releaseStorageLedgerEntriesByWhere = (
@@ -38,10 +36,7 @@ export const releaseStorageLedgerEntriesByWhere = (
     );
     for (const [userId, releasedBytes] of releasedUserEntries)
       // oxlint-disable-next-line no-await-in-loop -- Lock order: owners are updated in sorted order so two releases cannot deadlock
-      await transaction
-        .update(usersInAuth)
-        .set({ storageBytesUsed: sql`GREATEST(0, ${usersInAuth.storageBytesUsed} - ${releasedBytes})` })
-        .where(eq(usersInAuth.id, userId));
+      await adjustStorageBytesUsed(transaction, userId, -releasedBytes);
     return releasedUserEntries.map(([userId]) => userId);
   });
 };

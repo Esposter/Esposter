@@ -88,6 +88,7 @@ export * from "./services/resource/deleteTablePartitionEntities.ts";
 export * from "./services/resource/purgeResource.ts";
 export * from "./services/room/rbac/checkHasPermission.ts";
 export * from "./services/room/rbac/getPermissions.ts";
+export * from "./services/storage/adjustStorageBytesUsed.ts";
 export * from "./services/storage/chargeAndCopyBlob.ts";
 export * from "./services/storage/chargeStorageLedgerEntry.ts";
 export * from "./services/storage/checkIsNewerSequencer.ts";

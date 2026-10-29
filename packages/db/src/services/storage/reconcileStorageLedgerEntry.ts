@@ -1,9 +1,10 @@
 import type { ReconcileStorageLedgerEntryResult } from "#src/models/storage/ReconcileStorageLedgerEntryResult";
 import type { AzureContainer, Database, StorageLedgerEntryInStorage } from "@esposter/db-schema";
 
+import { adjustStorageBytesUsed } from "#src/services/storage/adjustStorageBytesUsed";
 import { checkIsNewerSequencer } from "#src/services/storage/checkIsNewerSequencer";
-import { storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
-import { and, eq, sql } from "drizzle-orm";
+import { storageLedgerInStorage } from "@esposter/db-schema";
+import { and, eq } from "drizzle-orm";
 
 // Storage told us how many bytes actually landed, so the counter takes them. `countedBytes` is what the counter
 // Is already carrying for this blob — zero until the first reconcile — and the adjustment is the difference
@@ -25,6 +26,10 @@ export const reconcileStorageLedgerEntry = (
   sequencer?: string,
 ): Promise<ReconcileStorageLedgerEntryResult> =>
   db.transaction(async (transaction) => {
+    const storageLedgerEntryWhere = and(
+      eq(storageLedgerInStorage.containerName, containerName),
+      eq(storageLedgerInStorage.blobName, blobName),
+    );
     // Locked before the delta is read, so a concurrent reconcile of the same blob cannot read the same
     // `countedBytes` and apply its difference twice
     const [storageLedgerEntry] = await transaction
@@ -34,9 +39,7 @@ export const reconcileStorageLedgerEntry = (
         userId: storageLedgerInStorage.userId,
       })
       .from(storageLedgerInStorage)
-      .where(
-        and(eq(storageLedgerInStorage.containerName, containerName), eq(storageLedgerInStorage.blobName, blobName)),
-      )
+      .where(storageLedgerEntryWhere)
       .for("update");
     // A blob nothing reserved — a published or duplicated clone, or anything written outside the upload
     // Chokepoints. Not an error: it is simply not accounted to anyone
@@ -63,14 +66,9 @@ export const reconcileStorageLedgerEntry = (
       .update(storageLedgerInStorage)
       // A charge writes no sequencer rather than a null one, so the column keeps meaning "an event has spoken"
       .set({ countedBytes: actualBytes, reconciledAt: new Date(), ...(sequencer !== undefined && { sequencer }) })
-      .where(
-        and(eq(storageLedgerInStorage.containerName, containerName), eq(storageLedgerInStorage.blobName, blobName)),
-      );
+      .where(storageLedgerEntryWhere);
     if (actualBytes === countedBytes) return { isMatched: true };
 
-    await transaction
-      .update(usersInAuth)
-      .set({ storageBytesUsed: sql`GREATEST(0, ${usersInAuth.storageBytesUsed} + ${actualBytes - countedBytes})` })
-      .where(eq(usersInAuth.id, userId));
+    await adjustStorageBytesUsed(transaction, userId, actualBytes - countedBytes);
     return { chargedUserId: userId, isMatched: true };
   });
