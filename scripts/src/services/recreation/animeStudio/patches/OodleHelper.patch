@@ -1,0 +1,69 @@
+diff --git a/AnimeStudio/OodleHelper.cs b/AnimeStudio/OodleHelper.cs
+index e95ce9c..e9375ac 100644
+--- a/AnimeStudio/OodleHelper.cs
++++ b/AnimeStudio/OodleHelper.cs
+@@ -1,6 +1,8 @@
+-﻿using System;
++using System;
+ using System.IO;
+ using System.Runtime.InteropServices;
++using System.Security.Cryptography;
++using System.Text;
+ 
+ namespace AnimeStudio;
+ public static class OodleHelper
+@@ -8,6 +10,15 @@ public static class OodleHelper
+     [DllImport(@"AnimeStudio.Ooz.dll", CallingConvention = CallingConvention.StdCall)]
+     static extern int Ooz_Decompress(ref byte compressedBuffer, int compressedBufferSize, ref byte decompressedBuffer, int decompressedBufferSize, int fuzzSafe, int checkCRC, int verbosity, IntPtr rawBuffer, int rawBufferSize, IntPtr fpCallback, IntPtr callbackUserData, IntPtr decoderMemory, IntPtr decoderMemorySize, int threadPhase);
+ 
++    // Fingerprint hook: when ANIMESTUDIO_OODLE_LOG names a file, each decompress call appends one tab separated line
++    // (index, compressed length, requested length, written length, sha256 of the input, sha256 of the output, chunk count)
++    // and writes the sha256 of every 64-byte output chunk to <file>.chunks/<index>.txt. Unset, nothing changes.
++    const string OODLE_LOG_VARIABLE = "ANIMESTUDIO_OODLE_LOG";
++    const int FINGERPRINT_CHUNK_SIZE = 64;
++    static readonly string? fingerprintPath = Environment.GetEnvironmentVariable(OODLE_LOG_VARIABLE);
++    static readonly object fingerprintLock = new();
++    static int fingerprintCallCount;
++
+     public static int Decompress(Span<byte> compressed, Span<byte> decompressed)
+     {
+         int numWrite = -1;
+@@ -20,6 +31,36 @@ public static class OodleHelper
+             throw new IOException($"Oodle decompression error, write {numWrite} bytes but expected {decompressed.Length} bytes", e);
+         }
+ 
++        if (!string.IsNullOrEmpty(fingerprintPath))
++            Fingerprint(compressed, decompressed, numWrite);
++
+         return numWrite;
+     }
+-}
+\ No newline at end of file
++
++    static void Fingerprint(ReadOnlySpan<byte> compressed, ReadOnlySpan<byte> decompressed, int numWrite)
++    {
++        lock (fingerprintLock)
++        {
++            var chunkDirectory = fingerprintPath + ".chunks";
++            if (fingerprintCallCount == 0)
++            {
++                File.WriteAllText(fingerprintPath!, string.Empty);
++                if (Directory.Exists(chunkDirectory))
++                    Directory.Delete(chunkDirectory, true);
++                Directory.CreateDirectory(chunkDirectory);
++            }
++
++            var index = fingerprintCallCount++;
++            var output = decompressed[..Math.Max(numWrite, 0)];
++            var chunks = new StringBuilder();
++            for (var offset = 0; offset < output.Length; offset += FINGERPRINT_CHUNK_SIZE)
++                chunks.Append(Sha256(output.Slice(offset, Math.Min(FINGERPRINT_CHUNK_SIZE, output.Length - offset)))).Append('\n');
++            File.WriteAllText(Path.Combine(chunkDirectory, $"{index:D6}.txt"), chunks.ToString());
++
++            var chunkCount = (output.Length + FINGERPRINT_CHUNK_SIZE - 1) / FINGERPRINT_CHUNK_SIZE;
++            File.AppendAllText(fingerprintPath!, $"{index}\t{compressed.Length}\t{decompressed.Length}\t{numWrite}\t{Sha256(compressed)}\t{Sha256(output)}\t{chunkCount}\n");
++        }
++    }
++
++    static string Sha256(ReadOnlySpan<byte> bytes) => Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
++}

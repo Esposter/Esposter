@@ -6,6 +6,7 @@ import {
   CLI_EXECUTABLE_NAME,
   CLI_PROJECT_PATH,
   MAPS_DIRECTORY_NAME,
+  OODLE_HELPER_PATCH_PATH,
   OOZ_LIBRARY_FILE_NAME,
   PUBLISH_DIRECTORY_NAME,
   RUNTIME_IDENTIFIER,
@@ -16,6 +17,7 @@ import {
   TEXTURE2DDECODER_SHA,
   WORK_DIRECTORY_NAME,
 } from "#src/services/recreation/animeStudio/constants";
+import { isOodlePatchPending } from "#src/services/recreation/animeStudio/isOodlePatchPending";
 import { fetchOk } from "#src/services/shared/fetchOk";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
@@ -69,6 +71,19 @@ const retargetProjects = (root: string): void => {
       .replaceAll(/^[ \t]*<RuntimeIdentifier>win-x64<\/RuntimeIdentifier>\r?\n/gmu, "");
     writeFileSync(absolutePath, retargeted);
   }
+};
+
+// Whether a patch applies to a tree, forward or with the given options: `git apply --check` exits 0 only when it does
+const canApplyPatch = (directory: string, patchPath: string, ...options: string[]): boolean =>
+  spawnSync("git", ["apply", "--check", ...options, patchPath], { cwd: directory, stdio: "ignore" }).status === 0;
+
+// The Oodle patch goes into the checked-out tree unless the tree already carries it, so a rebuild over one is idempotent
+const applyOodlePatch = (directory: string): void => {
+  const isPending = isOodlePatchPending({
+    appliesForward: canApplyPatch(directory, OODLE_HELPER_PATCH_PATH),
+    appliesReverse: canApplyPatch(directory, OODLE_HELPER_PATCH_PATH, "--reverse"),
+  });
+  if (isPending) run("git", ["apply", OODLE_HELPER_PATCH_PATH], directory);
 };
 
 // Ooz copies a match eight bytes at a time, which reads unwritten bytes when the match is closer than eight bytes.
@@ -198,6 +213,7 @@ export const buildAnimeStudio = async (
     fetchSource(ANIMESTUDIO_REPOSITORY, ANIMESTUDIO_SHA, workDirectory, "AnimeStudio"),
     fetchSource(TEXTURE2DDECODER_REPOSITORY, TEXTURE2DDECODER_SHA, workDirectory, "Texture2DDecoder"),
   ]);
+  applyOodlePatch(animeStudio);
   retargetProjects(animeStudio);
   patchOozCopies(join(animeStudio, "AnimeStudio.Ooz"));
   patchOozSignedOffsets(join(animeStudio, "AnimeStudio.Ooz"));

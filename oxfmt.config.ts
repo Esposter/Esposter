@@ -11,6 +11,8 @@ const oxfmtConfiguration: OxfmtConfig = defineConfig({
     // A file snapshot is written by its test verbatim, beside what it holds
     "**/*.snapshot.*",
     "**/snapshot.json",
+    // A patch is applied byte for byte, and its context lines are exact, so a format pass never rewrites one
+    "**/*.patch",
     // Generated output is the writer's, formatted or not, and a format pass never rewrites it
     "**/generated/**",
     "CHANGELOG*.md",

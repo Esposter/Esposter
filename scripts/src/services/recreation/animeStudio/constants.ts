@@ -12,6 +12,9 @@ export const ANIMESTUDIO_SHA = "db860e1f9bf0e0314b892782304d44f3ac42c261";
 // Wrapper the CLI references as Kyaru.Texture2DDecoder, whose macOS build the NuGet package does not ship
 export const TEXTURE2DDECODER_REPOSITORY = "KiruyaMomochi/Texture2DDecoder";
 export const TEXTURE2DDECODER_SHA = "c974dbda1209a6af34cb03941fa0b999627c3623";
+// The one patch the build applies to the checked-out AnimeStudio tree: its OodleHelper.cs carries a fingerprint hook
+// behind the ANIMESTUDIO_OODLE_LOG variable, so a fresh machine builds the same source as the clone that wrote the hook
+export const OODLE_HELPER_PATCH_PATH: string = join(import.meta.dirname, "patches", "OodleHelper.patch");
 // The runtime identifier the CLI is published for, and the framework every project is retargeted to
 export const RUNTIME_IDENTIFIER = "osx-arm64";
 export const TARGET_FRAMEWORK = "net10.0";
