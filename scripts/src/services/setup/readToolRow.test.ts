@@ -15,9 +15,9 @@ describe(readToolRow, () => {
   test("a command whose output misses its pattern is the wrong version, and gets the install line", () => {
     expect.hasAssertions();
 
-    const environment = createSetupEnvironment({ run: () => ({ status: 0, stdout: "9.0.100\n" }) });
+    const environment = createSetupEnvironment({ platform: "darwin", run: () => ({ status: 0, stdout: "9.0.100\n" }) });
 
-    expect(readToolRow(dotnet, environment, "darwin")).toStrictEqual({
+    expect(readToolRow(dotnet, environment)).toStrictEqual({
       next: "brew install dotnet-sdk",
       status: SetupStatus.NeedsYou,
       step: ".NET 10",
@@ -28,12 +28,11 @@ describe(readToolRow, () => {
     expect.hasAssertions();
 
     const edge: SetupTool = { install: {}, name: "Microsoft Edge", paths: { win32: "C:\\Edge\\msedge.exe" } };
-    const environment = createSetupEnvironment({ exists: (path) => path === "C:\\Edge\\msedge.exe" });
-
-    expect(readToolRow(edge, environment, "win32")).toStrictEqual({
-      next: "",
-      status: SetupStatus.Ok,
-      step: "Microsoft Edge",
+    const environment = createSetupEnvironment({
+      exists: (path) => path === "C:\\Edge\\msedge.exe",
+      platform: "win32",
     });
+
+    expect(readToolRow(edge, environment)).toStrictEqual({ next: "", status: SetupStatus.Ok, step: "Microsoft Edge" });
   });
 });

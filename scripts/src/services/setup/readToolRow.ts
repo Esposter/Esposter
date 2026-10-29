@@ -7,9 +7,9 @@ import { getStepRow } from "#src/services/setup/getStepRow";
 import { checkIsToolPresent } from "#src/services/setup/checkIsToolPresent";
 
 // A tool's row: in place, or the line that installs it on this platform
-export const readToolRow = (tool: SetupTool, environment: SetupEnvironment, platform: NodeJS.Platform): SetupRow =>
+export const readToolRow = (tool: SetupTool, environment: SetupEnvironment): SetupRow =>
   getStepRow(
     tool.name,
-    checkIsToolPresent(tool, environment, platform),
-    getInstallLine(tool.name, tool.install, platform),
+    checkIsToolPresent(tool, environment),
+    getInstallLine(tool.name, tool.install, environment.platform),
   );

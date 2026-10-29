@@ -3,13 +3,9 @@ import type { SetupTool } from "#src/models/setup/SetupTool";
 
 // Whether a tool is installed: its command answers with output its pattern matches, when one is set, or the file it
 // leaves on this platform exists
-export const checkIsToolPresent = (
-  tool: SetupTool,
-  environment: SetupEnvironment,
-  platform: NodeJS.Platform,
-): boolean => {
+export const checkIsToolPresent = (tool: SetupTool, environment: SetupEnvironment): boolean => {
   if (!("probe" in tool)) {
-    const path = tool.paths[platform];
+    const path = tool.paths[environment.platform];
     return path !== undefined && environment.exists(path);
   }
   const { status, stdout } = environment.run(tool.probe.file, tool.probe.args);

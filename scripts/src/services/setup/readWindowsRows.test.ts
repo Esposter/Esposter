@@ -11,7 +11,7 @@ describe(readWindowsRows, () => {
   test("prints what to do for each Windows fact that is not in place", () => {
     expect.hasAssertions();
 
-    const rows = readWindowsRows(createSetupEnvironment({}), "win32");
+    const rows = readWindowsRows(createSetupEnvironment({ platform: "win32" }));
 
     expect(rows.map(({ status, step }) => [step, status])).toStrictEqual([
       ["git symlinks", SetupStatus.NeedsYou],
@@ -29,11 +29,12 @@ describe(readWindowsRows, () => {
 
     const environment = createSetupEnvironment({
       exists: () => true,
+      platform: "win32",
       readText: () => GENSHIN_PROFILE,
       run: (file) => (file === "reg" ? { status: 0, stdout: LONG_PATHS_ON } : { status: 0, stdout: "true\n" }),
     });
 
-    const rows = readWindowsRows(environment, "win32");
+    const rows = readWindowsRows(environment);
 
     expect(rows.map(({ status }) => status)).toStrictEqual([
       SetupStatus.Ok,
@@ -49,6 +50,6 @@ describe(readWindowsRows, () => {
   test("reads no Windows row on another platform", () => {
     expect.hasAssertions();
 
-    expect(readWindowsRows(createSetupEnvironment({}), "darwin")).toStrictEqual([]);
+    expect(readWindowsRows(createSetupEnvironment({ platform: "darwin" }))).toStrictEqual([]);
   });
 });

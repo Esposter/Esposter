@@ -10,8 +10,8 @@ import { readSshKeyRow } from "#src/services/setup/readSshKeyRow";
 import { readSymlinksRow } from "#src/services/setup/readSymlinksRow";
 
 // The facts only a Windows machine needs, read on Windows and nowhere else. Each is in place or printed with what to do
-export const readWindowsRows = (environment: SetupEnvironment, platform: NodeJS.Platform): SetupRow[] =>
-  platform === "win32"
+export const readWindowsRows = (environment: SetupEnvironment): SetupRow[] =>
+  environment.platform === "win32"
     ? [
         readSymlinksRow(environment),
         readLongPathsRow(environment),
