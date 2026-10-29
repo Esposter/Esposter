@@ -247,7 +247,7 @@ useEventListener("keydown", (event) => {
 }
 
 .name[data-two-lines] {
-  font-size: calc(var(--unit) * 15);
+  font-size: calc(var(--unit) * 14);
   line-height: calc(var(--unit) * 15);
 }
 
