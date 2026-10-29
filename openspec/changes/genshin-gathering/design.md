@@ -30,7 +30,7 @@ flowchart TD
 
 ## Data and measures
 
-- **Placed by the official map:** each outcrop's place is a point of the map's Magical Crystal Chunk label, the one ore the [gathering](../../specs/genshin/gathering/design.md) points leave out, published per region by `genshin:assets mining-outcrops`. The other ores are placed by the gathering page. Each investigation spot would be a point of the Investigation label, but that label holds no points on the map: its two children, Mysterious Conch and Tumbleweed, are empty in the map's point list read on 2026-10-18, so no spot can be placed from it. The [spawned places](../../specs/genshin/spawned-places/design.md) fit is one similarity over the whole map, so it carries every label's points into the game's coordinates.
+- **Placed by the official map:** each outcrop's place is a point of the map's Magical Crystal Chunk label, the one ore the [gathering](../../specs/genshin/gathering/design.md) points leave out, published per region by `genshin:assets mining-outcrops`. The other ores are placed by the gathering page. Each investigation spot would be a point of the Investigation label, but that label holds no points on the map: its two children, Mysterious Conch and Tumbleweed, are empty in the map's point list read, so no spot can be placed from it. The [spawned places](../../specs/genshin/spawned-places/design.md) fit is one similarity over the whole map, so it carries every label's points into the game's coordinates.
 - **Read from the game's tables:** the ores' categories of the official map, and the outcrops' item rows of `MaterialExcelConfigData`.
 - **Read from the wiki:** the investigation rewards ([Mining Outcrop](https://genshin-impact.fandom.com/wiki/Mining_Outcrop), [Investigation](https://genshin-impact.fandom.com/wiki/Investigation), through the persona's wiki reader).
 
@@ -48,4 +48,4 @@ flowchart TD
 
 ## Reference
 
-- `gather-pick.mkv` — a cooking ingredient and a local specialty picked with F from standing in reach, the point gone from the screen after each pick and the bag's count rising by one, 15 seconds at most; whether one press takes a point and whether a picked point is drawn again are read from it, and the respawns the wiki gives (46 hours, and the midnight after for an ingredient) are not checkable in one clip, so they wait on a longer sitting. On the wiki and YouTube, none found (searched 2026-10-11).
+- `gather-pick.mkv` — a cooking ingredient and a local specialty picked with F from standing in reach, the point gone from the screen after each pick and the bag's count rising by one, 15 seconds at most; whether one press takes a point and whether a picked point is drawn again are read from it, and the respawns the wiki gives (46 hours, and the midnight after for an ingredient) are not checkable in one clip, so they wait on a longer sitting. On the wiki and YouTube, none found.
