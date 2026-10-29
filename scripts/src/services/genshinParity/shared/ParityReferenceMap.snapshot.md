@@ -19,7 +19,7 @@ committed.
 | `character-talents-tabs` | `CharacterScreen` | 0.89% | 0.978 | 0.28% | 0.0466 |
 | `character-weapons` | `CharacterScreen` | 2.51% | 0.888 | 1.47% | 0.1066 |
 | `character-weapons-tabs` | `CharacterScreen` | 0.89% | 0.976 | 0.30% | 0.0453 |
-| `cooking-screen` | `CookingScreen` | pending: no screenshot of the screen yet | | | |
+| `cooking-screen` | `CookingScreen` | 1.21% | 0.860 | 0.58% | 0.0564 |
 | `court-of-fontaine-location` | `WorldScreen` | 31.74% | 0.202 | 27.65% | 0.8417 |
 | `crafting-strongbox` | `CraftingStrongbox` | pending: no screenshot of the screen yet | | | |
 | `crafting-table` | `CraftingScreen` | pending: its recording is not on disk | | | |

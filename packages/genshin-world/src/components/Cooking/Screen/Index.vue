@@ -21,6 +21,8 @@ interface Props {
   avatarId: number;
   // The game's words in the reader's language
   gameText: GameText;
+  // The place of the pointer held still for a shot, where the indicator does not sweep; it sweeps from the opening when none is given
+  heldPointer?: number;
   // The game's material table by item id, which each dish is defined from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items and recipes in the reader's language, by their game text ids
@@ -33,7 +35,7 @@ interface Props {
   talent?: CookingTalent;
 }
 
-const { avatarId, gameText, materialDataMap, nameText, random, recipes, talent } = defineProps<Props>();
+const { avatarId, gameText, heldPointer, materialDataMap, nameText, random, recipes, talent } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const progress = defineModel<CookingProgress>("progress", { required: true });
@@ -48,14 +50,15 @@ const selectDish = (id: number) => {
 };
 // The indicator's pointer swings from the moment the screen opens, and its place at a press is the one shown then
 const openedAt = performance.now();
-const pointer = ref(0);
+const sweptPointer = ref(0);
+const pointer = computed(() => heldPointer ?? sweptPointer.value);
 let frameId = 0;
 const sweep = () => {
-  pointer.value = getCookingPointerPosition((performance.now() - openedAt) / MILLISECONDS_PER_SECOND);
+  sweptPointer.value = getCookingPointerPosition((performance.now() - openedAt) / MILLISECONDS_PER_SECOND);
   frameId = requestAnimationFrame(sweep);
 };
 onMounted(() => {
-  frameId = requestAnimationFrame(sweep);
+  if (heldPointer === undefined) frameId = requestAnimationFrame(sweep);
 });
 onBeforeUnmount(() => {
   cancelAnimationFrame(frameId);

@@ -160,9 +160,19 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "CharacterScreen",
     source: "session-2.mp4 at 156s",
   },
-  // The English PC client's cooking arc at 720 high from a public recording, about 110 seconds in: the pot over its fire with the
-  // Pointer at 0.23 of the bar and the Stop button. The recorder's UID sits bottom right, outside the region scored
+  // The English PC client's cooking arc at 720 high from a public recording, about 110 seconds in: the pot over its fire, the arc
+  // With its zones and the spatula pointer, and the Stop button, over the blurred kitchen behind it. The plate is the interface's
+  // Own pieces, filled from round them. The recorder's UID sits bottom right, outside the region scored
   "cooking-screen": {
+    isBackdrop: true,
+    plate: [
+      { height: 56, width: 125, x: 30, y: 6 },
+      { height: 56, width: 56, x: 1197, y: 4 },
+      { height: 172, width: 342, x: 468, y: 195 },
+      { height: 240, width: 150, x: 565, y: 360 },
+      { height: 104, width: 600, x: 340, y: 462 },
+      { height: 104, width: 90, x: 595, y: 586 },
+    ],
     region: { height: 690, width: 1280, x: 0, y: 0 },
     screen: "CookingScreen",
     source: "yt-fEbf_tOV1t4-cooking-sticky-honey-roast.mp4 at 110s",
