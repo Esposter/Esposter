@@ -1,25 +1,25 @@
 ## Purpose
 
-Genshin's Archive as built. Its seven sections are the game's own codex tables, read from the dump with each entry's name in the game's text. A bag's items open their entries as they are taken in, the Archive waits on the quest it opens after, and its screen lists each section with a name or a "?" per entry. The sections whose doings are not built yet stay locked.
+Genshin's Archive as built. Its seven sections are the game's own codex tables, read from the dump with each entry's name in the game's text. A bag's items open their entries as they are taken in, the Archive waits on the quest it opens after, and its screen shows one section at a time with a name or a "?" per entry. The sections whose doings are not built yet stay locked.
 
 ## Requirements
 
-### Requirement: Seven sections listed in the game's order
+### Requirement: Seven sections in the game's order
 
-The Archive SHALL hold seven sections in the game's order and SHALL show how many of each section's entries are open.
+The Archive SHALL hold seven sections in the game's order and SHALL show how many entries are open across all of them.
 
-#### Scenario: Sections listed once the Archive is unlocked
+#### Scenario: Sections step in order once the Archive is unlocked
 
 - **GIVEN** the Archive is unlocked
 - **WHEN** the Archive screen opens
-- **THEN** its seven sections are listed as Equipment, Living Beings, Tutorials, Geography, Travel Log, Books and Materials
+- **THEN** its seven sections step in the order Equipment, Living Beings, Tutorials, Geography, Travel Log, Books and Materials
 
-#### Scenario: Section shows open entries and steps with Q and E
+#### Scenario: Counter shows open entries and Q and E step between sections
 
 - **GIVEN** the Archive screen is open
 - **WHEN** a section is selected
-- **THEN** it shows how many of its entries are open over how many it has
-- **AND** Q and E step between the sections
+- **THEN** its entries are shown in a grid, and the counter shows how many entries are open across every section
+- **AND** Q, E and the arrows at the screen's edges step between the sections
 
 ### Requirement: An entry stays locked until its thing is first met
 
@@ -62,11 +62,12 @@ An Archive entry SHALL show a question mark until the player first meets its thi
 - **WHEN** the Living Beings section is listed
 - **THEN** its entry stays locked
 
-#### Scenario: Open entries show only a name
+#### Scenario: Open entries show their name, and the picked one its description
 
 - **GIVEN** an entry is open
 - **WHEN** it is shown
-- **THEN** only its name is shown, not a description
+- **THEN** its name is shown on its tile
+- **AND** when it is the picked entry, its name is shown down the right with its description beneath, if it has one
 
 ### Requirement: A collected volume goes into the Archive rather than the bag
 
