@@ -45,7 +45,7 @@ export const reference: ComponentReference = {
       role: "The three cloud emitters' particles: atlas, curl, age dissolve, light and dark colours, rim",
     },
     dawnTitle: {
-      capture: "yt-sQNqMfmfkZU.mp4",
+      capture: "yt-sQNqMfmfkZU-splash-opening.mp4",
       kind: GameSourceKind.Capture,
       name: "Genshin Impact - Login Background. Morning. [noOST], a 2023 PC recording idling on the title with no interface",
       parityReference: "login-dawn-title",

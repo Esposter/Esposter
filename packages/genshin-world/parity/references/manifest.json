@@ -51,6 +51,14 @@
     },
     {
       "attribution": {},
+      "bytes": 1004889,
+      "name": "bili-av532052219-mainland-launch.mp4",
+      "sha256": "9877cddf9648fbe8b171f8f767d7352770cfe5c4bf640246c7718bc23e384102",
+      "source": "https://www.bilibili.com/video/av532052219",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
       "bytes": 3036203,
       "name": "book-reader.mkv",
       "sha256": "ea9eee41d0f0bca04befae6946e68719c1e1b2c03ff0e99d260f050150b72b9a",
@@ -979,6 +987,14 @@
     },
     {
       "attribution": {},
+      "bytes": 8255805,
+      "name": "yt-sQNqMfmfkZU-splash-opening.mp4",
+      "sha256": "19b7b2458ed3d5d7b0fc5f7079cc5f2f5b6c5f44aacfc3385f2b30d7f712f531",
+      "source": "https://www.youtube.com/watch?v=sQNqMfmfkZU",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
       "bytes": 5888131,
       "name": "yt-uGtyP02Ie2Q-0-40.mp4",
       "sha256": "0c385700fe1943c0cddbdfdcd53c8e9785526b648e8e1c75638f72f2c0f4a666",
@@ -1538,14 +1554,14 @@
       "width": 3130
     },
     {
-      "attribution": { "recording": "yt-sQNqMfmfkZU.mp4", "second": 8, "videoId": "sQNqMfmfkZU" },
+      "attribution": { "recording": "yt-sQNqMfmfkZU-splash-opening.mp4", "second": 8, "videoId": "sQNqMfmfkZU" },
       "bytes": 363208,
-      "capturedAt": "2026-10-02T00:53:52.448Z",
+      "capturedAt": "2026-10-02T00:53:52.000Z",
       "height": 1080,
       "id": "health-notice",
       "kind": "recording-frame",
       "sha256": "aa80f0bdbcea9d5f3300a7f4e035869472da777c75cff3562735ddbfbed892da",
-      "source": "yt-sQNqMfmfkZU.mp4 at 8s",
+      "source": "yt-sQNqMfmfkZU-splash-opening.mp4 at 8s",
       "sourceFormat": "png",
       "width": 1920
     },
@@ -1563,14 +1579,14 @@
       "width": 3440
     },
     {
-      "attribution": { "recording": "bili-av532052219.mp4", "second": 9.5 },
+      "attribution": { "recording": "bili-av532052219-mainland-launch.mp4", "second": 9.5 },
       "bytes": 221728,
-      "capturedAt": "2026-10-08T05:52:57.893Z",
+      "capturedAt": "2026-10-08T05:52:57.000Z",
       "height": 1080,
       "id": "health-notice-mainland",
       "kind": "recording-frame",
       "sha256": "7bf0ae0abd507fbe88147419a21c0120693457511a8f260ff90dbcd3faa75da3",
-      "source": "bili-av532052219.mp4 at 9.5s",
+      "source": "bili-av532052219-mainland-launch.mp4 at 9.5s",
       "sourceFormat": "png",
       "width": 1920
     },
@@ -1769,14 +1785,14 @@
       "width": 2560
     },
     {
-      "attribution": { "recording": "yt-sQNqMfmfkZU.mp4", "second": 18, "videoId": "sQNqMfmfkZU" },
+      "attribution": { "recording": "yt-sQNqMfmfkZU-splash-opening.mp4", "second": 18, "videoId": "sQNqMfmfkZU" },
       "bytes": 610646,
-      "capturedAt": "2026-10-02T00:04:55.813Z",
+      "capturedAt": "2026-10-02T00:04:55.000Z",
       "height": 1080,
       "id": "login-dawn-title",
       "kind": "recording-frame",
       "sha256": "892e882caf4acc11a469d8a89b73c0489f8bac92929af22a75759235e4d9ea8f",
-      "source": "yt-sQNqMfmfkZU.mp4 at 18s",
+      "source": "yt-sQNqMfmfkZU-splash-opening.mp4 at 18s",
       "sourceFormat": "png",
       "width": 1920
     },
@@ -1843,14 +1859,14 @@
       "width": 1920
     },
     {
-      "attribution": { "recording": "bili-av532052219.mp4", "second": 15.5 },
+      "attribution": { "recording": "bili-av532052219-mainland-launch.mp4", "second": 15.5 },
       "bytes": 667504,
-      "capturedAt": "2026-10-09T01:31:06.209Z",
+      "capturedAt": "2026-10-09T01:31:06.000Z",
       "height": 1080,
       "id": "login-interface-door-mainland",
       "kind": "recording-frame",
       "sha256": "3f9ebc213857cd8ff55aad215c0a8775f1ff86e7d33f1a392e8129ef859b1dd9",
-      "source": "bili-av532052219.mp4 at 15.5s",
+      "source": "bili-av532052219-mainland-launch.mp4 at 15.5s",
       "sourceFormat": "png",
       "width": 1920
     },
@@ -1867,9 +1883,9 @@
       "width": 1920
     },
     {
-      "attribution": { "recording": "bili-av532052219.mp4", "second": 12.5 },
+      "attribution": { "recording": "bili-av532052219-mainland-launch.mp4", "second": 12.5 },
       "bytes": 709386,
-      "capturedAt": "2026-10-01T15:00:18.839Z",
+      "capturedAt": "2026-10-01T15:00:18.000Z",
       "cleanPlate": {
         "bytes": 701850,
         "digest": "cfc4cbabb6809f88",
@@ -1881,7 +1897,7 @@
       "id": "login-interface-mainland-rating",
       "kind": "recording-frame",
       "sha256": "5ad147ea5f70346b9c03595b1610fd94b21c143c900df697ca28d8dd3e87cd72",
-      "source": "bili-av532052219.mp4 at 12.5s",
+      "source": "bili-av532052219-mainland-launch.mp4 at 12.5s",
       "sourceFormat": "png",
       "width": 1920
     },
@@ -2294,26 +2310,26 @@
       "width": 1920
     },
     {
-      "attribution": { "recording": "yt-sQNqMfmfkZU.mp4", "second": 5, "videoId": "sQNqMfmfkZU" },
+      "attribution": { "recording": "yt-sQNqMfmfkZU-splash-opening.mp4", "second": 5, "videoId": "sQNqMfmfkZU" },
       "bytes": 30732,
-      "capturedAt": "2026-10-02T00:59:20.659Z",
+      "capturedAt": "2026-10-02T00:59:20.000Z",
       "height": 1080,
       "id": "title-splash",
       "kind": "recording-frame",
       "sha256": "9b38e228563a0fbdfbda55ca0be4193757d5ec30d926c6dc1925d1abfa7603df",
-      "source": "yt-sQNqMfmfkZU.mp4 at 5s",
+      "source": "yt-sQNqMfmfkZU-splash-opening.mp4 at 5s",
       "sourceFormat": "png",
       "width": 1920
     },
     {
-      "attribution": { "recording": "bili-av532052219.mp4", "second": 5 },
+      "attribution": { "recording": "bili-av532052219-mainland-launch.mp4", "second": 5 },
       "bytes": 87670,
-      "capturedAt": "2026-10-01T14:49:24.598Z",
+      "capturedAt": "2026-10-01T14:49:24.000Z",
       "height": 1080,
       "id": "title-splash-mainland",
       "kind": "recording-frame",
       "sha256": "61d6a1a414de290c93d117744a0372c5c68664d472d1f3930c9490c296fb2243",
-      "source": "bili-av532052219.mp4 at 5s",
+      "source": "bili-av532052219-mainland-launch.mp4 at 5s",
       "sourceFormat": "png",
       "width": 1920
     },

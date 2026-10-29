@@ -432,7 +432,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Book's tabs are placed while its pages wait on what they track
   "handbook-experience": { screen: "HandbookScreen", wikiTitle: "File:Adventurer Handbook Experience.png" },
   // The English PC client's notice, from the 2023 recording of its launch at 1080p, in the current build's wording
-  "health-notice": { screen: "SplashHealthNotice", source: "yt-sQNqMfmfkZU.mp4 at 8s" },
+  "health-notice": { screen: "SplashHealthNotice", source: "yt-sQNqMfmfkZU-splash-opening.mp4 at 8s" },
   // The Japanese PC client's notice whole at 3440 by 1440 from a 21:9 capture of its launch, 12.5 seconds in, static from 11.5 to
   // 12.5. The recording has no watermark or recorder icons; the text spans x 290 to 3150 and y 480 to 965, so the region covers it
   "health-notice-japanese": {
@@ -446,7 +446,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "health-notice-mainland": {
     props: { language: "ChineseSimplified" },
     screen: "SplashHealthNotice",
-    source: "bili-av532052219.mp4 at 9.5s",
+    source: "bili-av532052219-mainland-launch.mp4 at 9.5s",
   },
   // The English PC client's Paimon button at 1080 high, from the same public recording at 20 seconds, its emblem's place
   // And fill measured over the corner. The minimap's disc takes the emblem's right half, so only the rectangles left of
@@ -662,7 +662,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     isOtherBuild: true,
     props: { heldScrolled: 132, isInterfaceHidden: true, stage: "Title", timeOfDay: "Dawn" },
     screen: "LoginScreen",
-    source: "yt-sQNqMfmfkZU.mp4 at 18s",
+    source: "yt-sQNqMfmfkZU-splash-opening.mp4 at 18s",
     variant: "dawn",
   },
   // Its recording masks the frame's top and bottom 50 rows black, so only the rows between are scored
@@ -737,7 +737,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     isBackdrop: true,
     props: { isWelcomeShown: false, language: "ChineseSimplified", stage: "Door" },
     screen: "LoginInterface",
-    source: "bili-av532052219.mp4 at 15.5s",
+    source: "bili-av532052219-mainland-launch.mp4 at 15.5s",
   },
   "login-interface-loading": {
     isBackdrop: true,
@@ -754,7 +754,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     props: { isDoorWaiting: true, isWelcomeShown: false, language: "ChineseSimplified", stage: "Door" },
     region: { height: 150, width: 150, x: 1740, y: 30 },
     screen: "LoginInterface",
-    source: "bili-av532052219.mp4 at 12.5s",
+    source: "bili-av532052219-mainland-launch.mp4 at 12.5s",
     variant: "mainland",
   },
   "login-interface-title": {
@@ -1139,13 +1139,13 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: "File:Sumeru City.png",
   },
   // The English PC client's splash, from the 2023 recording of its launch at 1080p, held from 4.5 to 5.75 seconds
-  "title-splash": { screen: "SplashTitle", source: "yt-sQNqMfmfkZU.mp4 at 5s" },
+  "title-splash": { screen: "SplashTitle", source: "yt-sQNqMfmfkZU-splash-opening.mp4 at 5s" },
   // Mainland China's splash, its 原神 logo with its licence under it, from a public recording of an older build's launch
   // At 1080p, drawn on full white where the current PC client's white is a step under it
   "title-splash-mainland": {
     props: { language: "ChineseSimplified" },
     screen: "SplashTitle",
-    source: "bili-av532052219.mp4 at 5s",
+    source: "bili-av532052219-mainland-launch.mp4 at 5s",
     variant: "chineseSimplified",
   },
   // The English PC client's Weapon screen on the Enhance tab at 1920 by 864 from a recording of levelling a five-star sword, 1.9
