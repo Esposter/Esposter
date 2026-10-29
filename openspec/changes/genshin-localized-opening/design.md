@@ -19,7 +19,7 @@ flowchart LR
 
 ## Scope
 
-- **Not in any public clip.** Searches for each client's PC launch found none: the Japanese clip shows the PC client's title only as its iPhone capture, and no Japanese PC splash or door. The Korean clip (`yt-HFxhJB_N4Nk-opening-korean.mp4`, 720 high) is the account login form for all 105 seconds. A 2020 Korean PC gameplay video (`yt-4zVvDgStMWQ`, 1080 high) opens on a title card and cuts to the world, with no splash, notice or door. So `title-splash-japanese`, `publisher-splash-japanese`, the Korean launch's stages and both clients' door stages wait on `japanese-launch.mkv` and `korean-launch.mkv` in the roadmap's References sought list.
+- **Not in any public clip.** Searches for each client's PC launch found none: the Japanese clip shows the PC client's title only as its iPhone capture, and no Japanese PC splash or door. The Korean clip (`yt-HFxhJB_N4Nk-opening-korean.mp4`, 720 high) is the account login form for all 105 seconds. An older Korean PC gameplay video (`yt-4zVvDgStMWQ`, 1080 high) opens on a title card and cuts to the world, with no splash, notice or door. So `title-splash-japanese`, `publisher-splash-japanese`, the Korean launch's stages and both clients' door stages wait on `japanese-launch.mkv` and `korean-launch.mkv` in the roadmap's References sought list.
 
 - The publisher splash where a client shows a different publisher's logo.
 - The health notice and login screen's layout where a recording shows a difference.
@@ -34,10 +34,10 @@ flowchart LR
 
 ## Reference
 
-- `japanese-launch.mkv` — the Japanese PC client launched from its launcher with the game's language set to Japanese, from the first frame of the client's window: its publisher splash, its title splash, its health notice and the door stage with its prompt in view, 30 seconds at most (the health notice is about 7 to 12 seconds in and the door about 12 to 17 in the mainland's launch, so the clip must start at the launch). The Japanese client's publisher and title splashes, and its door, are read from it, since no published PC clip shows them ([localized opening](design.md)). On the wiki and YouTube, none found (searched 2026-10-11).
-- `korean-launch.mkv` — the Korean PC client launched from its launcher with the game's language set to Korean, from the first frame of the client's window: its publisher splash, its title splash, its health notice and the door stage with its prompt in view, 30 seconds at most (starting at the launch, as for `japanese-launch.mkv`). The Korean launch's splash, notice and door are read from it, since the published Korean PC gameplay clip has no splash, notice or door ([localized opening](design.md)). On the wiki and YouTube, none found (searched 2026-10-11).
-- `opening-korean.mkv` — launch to the title, the client's language set to Korean. On the wiki and YouTube, none found (searched 2026-10-11).
+- `japanese-launch.mkv` — the Japanese PC client launched from its launcher with the game's language set to Japanese, from the first frame of the client's window: its publisher splash, its title splash, its health notice and the door stage with its prompt in view, 30 seconds at most (the health notice is about 7 to 12 seconds in and the door about 12 to 17 in the mainland's launch, so the clip must start at the launch). The Japanese client's publisher and title splashes, and its door, are read from it, since no published PC clip shows them ([localized opening](design.md)). On the wiki and YouTube, none found.
+- `korean-launch.mkv` — the Korean PC client launched from its launcher with the game's language set to Korean, from the first frame of the client's window: its publisher splash, its title splash, its health notice and the door stage with its prompt in view, 30 seconds at most (starting at the launch, as for `japanese-launch.mkv`). The Korean launch's splash, notice and door are read from it, since the published Korean PC gameplay clip has no splash, notice or door ([localized opening](design.md)). On the wiki and YouTube, none found.
+- `opening-korean.mkv` — launch to the title, the client's language set to Korean. On the wiki and YouTube, none found.
 
 ## Sources
 
-- `opening-japanese.mkv` — launch to the title, the client's language set to Japanese. Found 2026-10-11 as `captures/yt-57d2PwbOdr0-opening-japanese.mp4` (https://www.youtube.com/watch?v=57d2PwbOdr0), read by the [Japanese health notice](../../specs/genshin/compute/login/design.md) item.
+- `opening-japanese.mkv` — launch to the title, the client's language set to Japanese. Found as `captures/yt-57d2PwbOdr0-opening-japanese.mp4` (https://www.youtube.com/watch?v=57d2PwbOdr0), read by the [Japanese health notice](../../specs/genshin/compute/login/design.md) item.
