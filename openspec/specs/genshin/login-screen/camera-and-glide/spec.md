@@ -61,12 +61,12 @@ The scenery rows SHALL repeat by their own lengths, the walkway's copies 16 metr
 
 ### Requirement: Title opening point
 
-The title SHALL open about 49 metres short of the door.
+The title SHALL open about 51 metres short of the door.
 
 #### Scenario: Title opens
 
 - **WHEN** the title opens
-- **THEN** the camera is about 49 metres short of the door
+- **THEN** the camera is about 51 metres short of the door
 
 ### Requirement: Bridge passes under the walkway
 
@@ -83,5 +83,5 @@ The bridge whose deck crosses the glide's path SHALL pass under the walkway as t
 - [ ] **The login camera holds the game's pose: straight down the walkway's middle, pitched 5.69 degrees up, its eye one metre over the walkway** — no source yet: the eye's height over the risen walkway; the game's `ModelCamera` export (`{data-root}/genshin-parity/extracted/login/layout/11790361/GameObject/cab-9b66d2e2ca3cefc2caff0b85ba1e0eb1/ModelCamera.json`) gives the tilt, its rotation's z of 0.0497 being 5.69 degrees, but its position's Y of 60 is not yet tied to metres.
 - [ ] **The vertical field of view is 45 degrees at 18.5:9 or wider, and widens on a narrower screen to match 18.5:9's view across** — no source yet: the field of view, which the login's animation clips do not hold, and the widening on a narrower screen, which no file read gives.
 - [ ] **The glide moves at 3.5 metres a second while the title waits and 4.5 once the game prepares, changing over half a second** — no source yet: no report that times the pace is kept in `{data-root}/genshin-parity/`.
-- [ ] **The title opens about 49 metres short of the door** — no source yet: `computeLoginGlideTitleScrolled` takes its walkway copy length from the open 16 metres, and its result is not checked against 49 here.
+- [ ] **The title opens about 51 metres short of the door** — no source yet: `computeLoginGlideTitleScrolled` takes its walkway copy length from the open 16 metres, and its result is not checked against 51 here.
 - [ ] **The bridge across the glide's path passes under the walkway as the glide passes over it** — no source yet: the login layout's export log was empty on disk, and `{data-root}/genshin-parity/extracted/login/layout/11790361/GameObject/cab-9b66d2e2ca3cefc2caff0b85ba1e0eb1/BridgeBeginNode.json` is on disk but is a bare transform at the origin with no mesh, so no file read holds the deck that crosses the path.
