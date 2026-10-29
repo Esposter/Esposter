@@ -29,6 +29,12 @@ const QUEST_SCREEN_BACKDROP_PLATE = [
 
 // A character screen's tab column, its words and diamonds clear of the scene's light, scored by the five tab entries
 const CHARACTER_TABS_REGION = { height: 800, width: 900, x: 120, y: 180 };
+// A weapon screen's whole frame above the recorder's UID, scored by the three weapon entries
+const WEAPON_SCREEN_REGION = { height: 838, width: 1920, x: 0, y: 0 };
+// A forge's Queues tab in full above the recorder's UID, scored by its two Queues entries
+const FORGE_QUEUES_REGION = { height: 860, width: 1920, x: 0, y: 0 };
+// The quit prompt's dialog panel, scored by its hover and pressed entries
+const MENU_EXIT_PANEL_REGION = { height: 590, width: 930, x: 495, y: 245 };
 // The reasons a screen has no reference yet, each shared by every screen or variant it is pending for
 const NO_SCREEN_SCREENSHOT = "no screenshot of the screen yet";
 const NO_VARIANT_SCREENSHOT = "no screenshot of this variant yet";
@@ -284,7 +290,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The forge's Queues tab from the same clip at 50.5 seconds: the order completed, Forged 5 of 5 and Obtain shown. The recorder's UID
   // Sits bottom right, below the region scored
   "forge-screen-ores-done": {
-    region: { height: 860, width: 1920, x: 0, y: 0 },
+    region: FORGE_QUEUES_REGION,
     screen: "ForgeScreen",
     source: "yt-AVnbm8fESr0-forge-screen.mp4 at 50.5s",
     variant: "oresDone",
@@ -292,7 +298,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The forge's Queues tab at 1920 by 886 from the public clip, 48 seconds in: an Enhancement Ore order forging, four ready, Forged
   // 4 of 5. The fixture's count differs (a five-unit order here), so the compare differs at the figures until its props follow
   "forge-screen-queues": {
-    region: { height: 860, width: 1920, x: 0, y: 0 },
+    region: FORGE_QUEUES_REGION,
     screen: "ForgeScreen",
     source: "yt-AVnbm8fESr0-forge-screen.mp4 at 48s",
     variant: "queues",
@@ -696,7 +702,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The quit prompt at 1080 high from the public clip, 29 seconds in: Confirm lit under the pointer, Cancel not. The dialog's whole panel
   // Is scored; the UID at the bottom right lies outside it
   "menu-exit-hover": {
-    region: { height: 590, width: 930, x: 495, y: 245 },
+    region: MENU_EXIT_PANEL_REGION,
     screen: "MenuExit",
     source: "yt-kIDee7nyD0w-menu-quit-prompt.mp4 at 29s",
     variant: "hover",
@@ -704,7 +710,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The same prompt 1.6 seconds later with Confirm pressed: a pale fill with a gold label, held for about 0.2 seconds before the
   // White fade
   "menu-exit-pressed": {
-    region: { height: 590, width: 930, x: 495, y: 245 },
+    region: MENU_EXIT_PANEL_REGION,
     screen: "MenuExit",
     source: "yt-kIDee7nyD0w-menu-quit-prompt.mp4 at 30.6s",
     variant: "pressed",
@@ -966,15 +972,11 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   // The English PC client's Weapon screen on the Enhance tab at 1920 by 864 from a recording of levelling a five-star sword, 1.9
   // Seconds in: Lv. 1, nothing in the enhancement slots. The recorder's UID sits bottom right, below the region scored
-  "weapon-screen": {
-    region: { height: 838, width: 1920, x: 0, y: 0 },
-    screen: "WeaponScreen",
-    source: "weapon-levelling.mkv at 1.93s",
-  },
+  "weapon-screen": { region: WEAPON_SCREEN_REGION, screen: "WeaponScreen", source: "weapon-levelling.mkv at 1.93s" },
   // The Ascend tab from the same recording at 12.9 seconds: Lv. 20 of 20 to 20 of 40 with the ascension materials and the button lit. The
   // Required line shows a struck-through 5000 the recording applies, so the compare differs there
   "weapon-screen-ascend": {
-    region: { height: 838, width: 1920, x: 0, y: 0 },
+    region: WEAPON_SCREEN_REGION,
     screen: "WeaponScreen",
     source: "weapon-levelling.mkv at 12.9s",
     variant: "ascend",
@@ -988,7 +990,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The Refine tab from the same recording at 91 seconds: Rank 1 with the four refinement slots empty. The tab shows no level, so the
   // Fixture's level is not on the screen
   "weapon-screen-refine": {
-    region: { height: 838, width: 1920, x: 0, y: 0 },
+    region: WEAPON_SCREEN_REGION,
     screen: "WeaponScreen",
     source: "weapon-levelling.mkv at 91s",
     variant: "refine",
