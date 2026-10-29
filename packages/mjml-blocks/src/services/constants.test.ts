@@ -5,11 +5,13 @@ import type { MjmlRichTextAttributeValue } from "#src/models/MjmlRichTextAttribu
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
 import type { RenderMjmlDocumentOptions } from "#src/models/RenderMjmlDocumentOptions";
 import type { BlockChildren, BlockNode } from "headless-block-editor";
+import type { HTMLElement } from "node-html-parser";
 
 import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
 import { mjmlNodeChildren } from "#src/services/mjmlNodeChildren";
 import { createMjmlNodeSchema } from "#src/services/mjmlNodeSchema";
-import { describe } from "vitest";
+import { parse } from "node-html-parser";
+import { assert, describe } from "vitest";
 import { z } from "zod";
 
 // A leaf a consumer declares beside MJML's own, which a column takes as a child
@@ -76,5 +78,11 @@ export const TEST_REGISTRY: MjmlRegistry = createMjmlRegistry({
   richText: TEST_RICH_TEXT,
 });
 export const TEST_RENDER_OPTIONS: RenderMjmlDocumentOptions = { context: undefined, isStampingIds: false };
+// The element a label's content is read from, parsed the way MJML parses a button's content
+export const parseTestLabel = (content: string): HTMLElement => {
+  const [element] = parse(`<mj-button>${content}</mj-button>`, { blockTextElements: { "mj-button": true } }).children;
+  assert(element);
+  return element;
+};
 
 describe.todo("constants");

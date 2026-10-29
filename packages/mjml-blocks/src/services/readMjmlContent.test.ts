@@ -1,14 +1,10 @@
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
-import { TEST_RICH_TEXT } from "#src/services/constants.test";
+import { parseTestLabel, TEST_RICH_TEXT } from "#src/services/constants.test";
 import { readMjmlContent } from "#src/services/readMjmlContent";
-import { parse } from "node-html-parser";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
-const readLabel = (content: string): unknown => {
-  const [element] = parse(`<mj-button>${content}</mj-button>`, { blockTextElements: { "mj-button": true } }).children;
-  assert(element);
-  return readMjmlContent(element, MjmlContentKind.Label, TEST_RICH_TEXT);
-};
+const readLabel = (content: string): unknown =>
+  readMjmlContent(parseTestLabel(content), MjmlContentKind.Label, TEST_RICH_TEXT);
 
 describe(readMjmlContent, () => {
   test("reads a label holding an element as its html", () => {
