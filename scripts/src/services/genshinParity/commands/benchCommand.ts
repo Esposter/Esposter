@@ -2,6 +2,7 @@ import type { SubCommandsDef } from "citty";
 
 import { screenArgs } from "#src/services/genshinParity/commands/screenArgs";
 import { benchScreen } from "#src/services/genshinParity/page/benchScreen";
+import { parseWholeCount } from "#src/services/shared/parseWholeCount";
 import { jsonDateParse } from "@esposter/shared";
 import { defineCommand } from "citty";
 
@@ -18,7 +19,7 @@ export const benchCommand: SubCommandsDef[string] = defineCommand({
   },
   run: async ({ args }) => {
     await benchScreen({
-      frameCount: Number(args.frames),
+      frameCount: parseWholeCount(args.frames, "frames", 1),
       height: Number(args.height),
       props: args.props ? jsonDateParse<Record<string, unknown>>(args.props) : undefined,
       screen: args.screen,
