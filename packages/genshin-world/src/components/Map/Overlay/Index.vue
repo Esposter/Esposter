@@ -373,12 +373,15 @@ onMounted(() => {
   letter-spacing: 0.03em;
 }
 
+/* The slider stands on the sea at the map's left edge, which the English map draws at this near-black, read off the frame
+   beside the track */
 .zoom {
   position: absolute;
   top: calc(var(--unit) * 400);
   left: 0;
   width: calc(var(--unit) * 56);
   height: calc(var(--unit) * 270);
+  background: #121721;
   touch-action: none;
 }
 
