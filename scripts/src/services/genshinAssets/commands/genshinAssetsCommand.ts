@@ -71,6 +71,8 @@ import { timingsCommand } from "#src/services/genshinAssets/commands/timingsComm
 import { tipsCommand } from "#src/services/genshinAssets/commands/tipsCommand";
 import { transPointsCommand } from "#src/services/genshinAssets/commands/transPointsCommand";
 import { treeCommand } from "#src/services/genshinAssets/commands/treeCommand";
+import { uiFindCommand } from "#src/services/genshinAssets/commands/uiFindCommand";
+import { uiTreeCommand } from "#src/services/genshinAssets/commands/uiTreeCommand";
 import { waypointsCommand } from "#src/services/genshinAssets/commands/waypointsCommand";
 import { wildlifeCommand } from "#src/services/genshinAssets/commands/wildlifeCommand";
 import { wishScheduleCommand } from "#src/services/genshinAssets/commands/wishScheduleCommand";
@@ -89,6 +91,8 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     shaders: shadersCommand,
     inventory: inventoryCommand,
     interface: interfaceCommand,
+    "ui-find": uiFindCommand,
+    "ui-tree": uiTreeCommand,
     clips: clipsCommand,
     locomotion: locomotionCommand,
     camera: cameraCommand,

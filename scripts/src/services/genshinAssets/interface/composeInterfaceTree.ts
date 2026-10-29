@@ -1,38 +1,33 @@
-import type { DumpedInterfaceRect } from "#src/models/genshinAssets/interface/DumpedInterfaceRect";
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
+import type { UiIndexEntry } from "#src/models/genshinAssets/ui/UiIndexEntry";
 
-// A screen's interface as a tree from its root down: a RectTransform's own path ID is not in its dump, so it is found
-// Through its GameObject, whose first component it is, and each piece's children follow its own list of them. A child
-// Whose RectTransform the dump lacks is left out. Without the root, the tree is undefined
+import { orderInterfaceChildren } from "#src/services/genshinAssets/interface/orderInterfaceChildren";
+
+// A screen's interface as a tree from one of its container's entries down: each piece's children are the entries whose
+// Father it is, in the order its Transform lists them, and a piece with no Transform dump has none. The tree stops
+// `depth` levels below its root, every level unless told
 export const composeInterfaceTree = (
-  rects: readonly DumpedInterfaceRect[],
-  gameObjectTransformIdMap: ReadonlyMap<string, string>,
-  gameObjectComponentsMap: ReadonlyMap<string, string[]>,
-  rootName: string,
-): InterfaceNode | undefined => {
-  const idRectMap = new Map(
-    rects.flatMap((rect) => {
-      const transformId = gameObjectTransformIdMap.get(rect.gameObjectId);
-      return transformId ? [[transformId, rect] as const] : [];
-    }),
-  );
-  const toNode = (
-    { childIds, gameObjectId, layout, name, scale }: DumpedInterfaceRect,
-    parentPath: string,
-  ): InterfaceNode => {
-    const path = parentPath ? `${parentPath}/${name}` : name;
+  entries: readonly UiIndexEntry[],
+  root: UiIndexEntry,
+  depth: number = Infinity,
+): InterfaceNode => {
+  const childrenByFatherId = Map.groupBy(entries, ({ fatherId }) => fatherId);
+  const toNode = (entry: UiIndexEntry, remainingDepth: number): InterfaceNode => {
+    const children =
+      remainingDepth > 0 && entry.transformId
+        ? orderInterfaceChildren(childrenByFatherId.get(entry.transformId) ?? [], entry.childIds).map((child) =>
+            toNode(child, remainingDepth - 1),
+          )
+        : [];
     return {
-      ...layout,
-      children: childIds.flatMap((childId) => {
-        const child = idRectMap.get(childId);
-        return child ? [toNode(child, path)] : [];
-      }),
-      components: gameObjectComponentsMap.get(gameObjectId) ?? [],
-      name,
-      path,
-      scale,
+      ...entry.rect,
+      ...(entry.canvas ? { canvas: entry.canvas } : {}),
+      children,
+      components: entry.components,
+      name: entry.name,
+      path: [...entry.path, entry.name].join("/"),
+      scale: entry.scale,
     };
   };
-  const root = rects.find(({ name }) => name === rootName);
-  return root ? toNode(root, "") : undefined;
+  return toNode(root, depth);
 };

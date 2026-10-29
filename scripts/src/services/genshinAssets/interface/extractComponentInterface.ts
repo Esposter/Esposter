@@ -1,87 +1,31 @@
-import type { DumpedInterfaceRect } from "#src/models/genshinAssets/interface/DumpedInterfaceRect";
-import type { RectTransformDump } from "#src/models/genshinAssets/interface/RectTransformDump";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { DumpedGameObject } from "#src/models/genshinAssets/shared/DumpedGameObject";
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
 
-import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
-import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { composeInterfaceTree } from "#src/services/genshinAssets/interface/composeInterfaceTree";
-import { parseRectTransformLayout } from "#src/services/genshinAssets/interface/parseRectTransformLayout";
-import { GENSHIN_ANIMESTUDIO_OPTIONS, INSTALLED_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlocks";
-import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
-import { toGameObjectComponentsMap } from "#src/services/genshinAssets/shared/toGameObjectComponentsMap";
-import { toGameObjectTransformIdMap } from "#src/services/genshinAssets/shared/toGameObjectTransformIdMap";
-import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { readUiBlockEntries } from "#src/services/genshinAssets/ui/readUiBlockEntries";
+import { readUiBlockIndex } from "#src/services/genshinAssets/ui/readUiBlockIndex";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { readdir, readFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 
-// A screen's interface as the game lays it out, from the RectTransforms of the block holding it: the block is found
-// Through an indexed asset beside the interface (GameObjects are not in the asset index), its RectTransforms dumped as
-// JSON for their tree and raw for their layout, which share their files' numbering, and its GameObjects for the
-// Transform each is and the components it has. The tree under the interface's root is written beside the exports
+// A screen's interface as the game lays it out: the block holding it is found through an indexed asset beside it, its
+// UI index read for the root of that name, and the tree under the root composed from the root's container alone, since a
+// container is one prefab and the root's objects are the prefab's. The tree is written beside the exports
 export const extractComponentInterface = async (component: DerivedAssetComponent): Promise<InterfaceNode> => {
   const { interface: interfaceOptions } = DerivedAssetComponentMap[component];
   if (!interfaceOptions) throw new InvalidOperationError(Operation.Read, component, "names no interface");
   const [block] = await readAssetBlocks(interfaceOptions.anchorPattern);
   if (!block) throw new InvalidOperationError(Operation.Read, interfaceOptions.anchorPattern, "in no block");
-  const directory = join(getComponentDirectory(component).root, "interface");
-  await rm(directory, { force: true, recursive: true });
-  const blockPath = join(INSTALLED_BLOCKS_DIRECTORY, block);
-  runAnimeStudio(
-    [
-      blockPath,
-      join(directory, "json"),
-      "--types",
-      AssetType.RectTransform,
-      AssetType.GameObject,
-      "--export_type",
-      AnimeStudioExportType.Json,
-    ],
-    GENSHIN_ANIMESTUDIO_OPTIONS,
+  const entries = await readUiBlockEntries(await readUiBlockIndex(block));
+  const root = entries.find(({ name }) => name === interfaceOptions.root);
+  if (!root) throw new InvalidOperationError(Operation.Read, interfaceOptions.root, `not in ${block}`);
+  const tree = composeInterfaceTree(
+    entries.filter(({ container }) => container === root.container),
+    root,
   );
-  runAnimeStudio(
-    [blockPath, join(directory, "raw"), "--types", AssetType.RectTransform, "--export_type", AnimeStudioExportType.Raw],
-    GENSHIN_ANIMESTUDIO_OPTIONS,
-  );
-  const rectDirectory = join(directory, "json", AssetType.RectTransform);
-  const gameObjectDirectory = join(directory, "json", AssetType.GameObject);
-  const [rectNames, gameObjectNames] = await Promise.all([readdir(rectDirectory), readdir(gameObjectDirectory)]);
-  const rects = await Promise.all(
-    rectNames.map(async (name): Promise<DumpedInterfaceRect> => {
-      const [json, raw] = await Promise.all([
-        readFile(join(rectDirectory, name), "utf8"),
-        readFile(join(directory, "raw", AssetType.RectTransform, name.replace(/\.json$/u, ".dat"))),
-      ]);
-      const { m_Children, m_Father, m_GameObject, m_LocalScale } = parseMachineJson<RectTransformDump>(
-        json,
-        reviveSourcePathId,
-      );
-      return {
-        childIds: m_Children.map(({ m_PathID }) => m_PathID),
-        fatherId: m_Father.m_PathID,
-        gameObjectId: m_GameObject.m_PathID,
-        layout: parseRectTransformLayout(raw),
-        name: m_GameObject.Name,
-        scale: [m_LocalScale.X, m_LocalScale.Y],
-      };
-    }),
-  );
-  const gameObjects = await Promise.all(
-    gameObjectNames.map(async (name) =>
-      parseMachineJson<DumpedGameObject>(await readFile(join(gameObjectDirectory, name), "utf8"), reviveSourcePathId),
-    ),
-  );
-  const gameObjectTransformIdMap = toGameObjectTransformIdMap(gameObjects);
-  const gameObjectComponentsMap = toGameObjectComponentsMap(gameObjects);
-  const tree = composeInterfaceTree(rects, gameObjectTransformIdMap, gameObjectComponentsMap, interfaceOptions.root);
-  if (!tree) throw new InvalidOperationError(Operation.Read, interfaceOptions.root, `not in ${block}`);
-  writeJsonFile(join(directory, "interface.json"), tree);
+  writeJsonFile(join(getComponentDirectory(component).root, "interface", "interface.json"), tree);
   return tree;
 };
