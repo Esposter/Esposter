@@ -61,7 +61,8 @@ const {
 } = await useGenshinSave();
 isSaveLoadedRef = isSaveLoaded;
 // The opening's character pack download, whose bytes the bar takes its first share from while any are pending
-const opening = useTemplateRef("opening");
+// The opening's type is named, since its inferred instance reads back through the progress bound to it, which is a cycle
+const opening = useTemplateRef<InstanceType<typeof GameOpening>>("opening");
 const progress = computed(() =>
   computeLoadingProgress(
     (Number(isSaveLoaded.value) + Number(isLoaded.value) + Number(isReady.value)) / 3,
