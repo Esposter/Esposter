@@ -42,3 +42,6 @@ flowchart TD
 - [ ] **No bump tilts the light at a recess's edge, and a bump over the atlas changed no frame** — no source yet: no frame comparison of a bump over the atlas is kept in `{data-root}/genshin-parity/comparisons/`, which holds no tower snapshot, and `packages/genshin-world/src/components/Login/Scene/Towers.reference.ts` records the result without one.
 - [ ] **Columns and recesses together bring every frame's towers nearer the exports than the lathe alone** — no source yet: no per-frame score is kept.
 - [ ] **A tower the game draws only at its coarsest level is fitted from that level's own mesh, its lathe and its facade both** — no source yet: the game's record of the level of detail each tower is drawn at.
+- [ ] **Shading each tower over its own mean made every tower stand at the shared stone's tone, which lost the contrast the exports show** — no source yet: no shading comparison with the exports is kept.
+- [ ] **With no reflection of the sky to show it, metal read dark against the exports at every hour** — no source yet: no metal comparison with the exports is kept.
+- [ ] **Shallower panels and flutes, sunk in under four units, scored every frame worse as recesses** — no source yet: no per-frame score of the recess variant is kept.
