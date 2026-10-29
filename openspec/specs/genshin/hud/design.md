@@ -132,7 +132,7 @@ flowchart TD
 - [ ] **The party rows sit 71.25 units above the container's middle on the keys' layout, and the party bar ends 155 units from the right edge on mobile** — no source yet: the RectTransforms of `TeamBtnContainer` and the party bar were not matched here.
 - [ ] **Each glyph is the game's icon, traced** — no source yet: the wiki's icon renders, which the cache does not hold (it holds no File pages).
 - [ ] **The burst fills in #309d6b over grass and #47bcea over water** — no source yet: the frames at 70 and 80 seconds of `{data-root}/genshin-parity/captures/world-pickup.mkv` were not sampled here.
-- [ ] **The shortcuts open as F3, F1, B and C do** — no source yet: the wiki's Controls page is not in the cache, and `{data-root}/genshin-key-map` holds none of these bindings.
+- [ ] **The shortcuts open as F3, F1, B and C do** — no source yet: the wiki's Controls page is not in the cache, and no record of the game's own key bindings is kept.
 - [ ] **A party switch has a one-second cooldown** — no source yet: the wiki's Party page is not in the cache.
 - [ ] **Health shows the level and whole-number HP as the game writes them** — no source yet: no recording with a health bar was read here.
 - [ ] **The Paimon button and the minimap open the Paimon menu and the map, as Escape and M do** — no source yet: the wiki's Paimon Menu and Map pages are not in the cache.
