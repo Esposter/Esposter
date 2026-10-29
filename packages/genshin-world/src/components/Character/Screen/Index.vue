@@ -172,10 +172,11 @@ const characterName = computed(() => menuEntries.value.find(({ id }) => id === c
 const characterElement = computed(() =>
   getCharacterElement(characterId.value, statTables.characterDataMap, travelerElement),
 );
-// The element mark at the chosen character's name, its element's or, for the Traveler, its alignment's, none while it has none
+// The element mark at the chosen character's name, its element's or, for the Traveler, its alignment's, empty while
+// It has none
 const elementMarkPath = computed(() => {
   const element = characterElement.value;
-  return element === undefined ? undefined : ElementMarkPathMap[element];
+  return element === undefined ? "" : ElementMarkPathMap[element];
 });
 // The element's name in the reader's language, which the band sets before the chosen character's, empty if none
 const elementName = computed(() => {

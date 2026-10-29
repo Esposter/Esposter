@@ -8,6 +8,7 @@ export const props = {
   fastEquipLabel: "Fast Equip",
   lockLabel: "Lock",
   noSetBonusLabel: "No Set Bonus",
+  notice: "",
   setBonusHeading: "Set Bonus",
   setBonusLines: [],
   setName: "",

@@ -23,8 +23,8 @@ interface Props {
   lockLabel: string;
   // The words the set bonus block shows while no bonus is active
   noSetBonusLabel: string;
-  // The game's notice card shown over the panel while an action was refused, such as a full bag, undefined while none is
-  notice?: string;
+  // The game's notice card shown over the panel while an action was refused, such as a full bag, empty while none is
+  notice: string;
   // The set bonus block's heading, the game's word for its bonuses
   setBonusHeading: string;
   // Each bonus the worn artifacts' set grants, as its line in the game's words, empty while none is active

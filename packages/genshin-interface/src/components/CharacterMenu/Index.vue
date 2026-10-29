@@ -8,8 +8,8 @@ import { computed } from "vue";
 interface Props {
   // The player's characters, across the screen's top in the order given
   characters: CharacterMenuEntry[];
-  // The element mark's path drawn at the name's left, the chosen character's element, none where it has none yet
-  elementMarkPath?: string;
+  // The element mark's path drawn at the name's left, the chosen character's element, empty where it has none yet
+  elementMarkPath: string;
   // The chosen character's element in the reader's language, which the band's name is set after, empty if none
   elementName: string;
   // Whether the device's main pointer is a finger, which has no keys for the tab keys to hint at

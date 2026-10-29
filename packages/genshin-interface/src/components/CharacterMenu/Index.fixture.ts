@@ -8,6 +8,7 @@ export const props = {
     { id: 1, name: "Traveler" },
     { id: 2, name: "Xilonen" },
   ],
+  elementMarkPath: "",
   elementName: "",
   tab: CharacterMenuTab.Attributes,
   tabLabels: {
