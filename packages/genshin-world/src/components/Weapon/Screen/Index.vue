@@ -10,7 +10,12 @@ import type { GameText } from "genshin-text";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Currency } from "#src/models/inventory/Currency";
+import { AttributeGameTextKeyMap } from "#src/services/character/AttributeGameTextKeyMap";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { formatAttributeValue } from "#src/services/character/formatAttributeValue";
+import { formatWholeNumber } from "#src/services/character/formatWholeNumber";
 import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
+import { getSecondaryAttribute } from "#src/services/character/getSecondaryAttribute";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
@@ -131,27 +136,32 @@ const nextMaxLevel = computed(
 const isAtCap = computed(() => weapon.value.level >= maxLevel.value);
 // The level Enhance's header shows alone; the Ascend header writes its own level pair over the cap of each phase
 const levelText = computed(() => fillGameTextValues(gameText[GameTextKey.LevelFormat], `${weapon.value.level}`));
-// A weapon's stat at its level in a phase, each line of its growth curve and of the phase summed as the game sums them
-const getStatValue = (target: Weapon, ascension: number, attribute: Attribute) =>
-  getGrownAttributeLines(getWeaponData(target.id), weaponGrowCurveMap, target.level, ascension)
-    .filter((line) => line.attribute === attribute)
-    .reduce((sum, line) => sum + line.value, 0);
-// The base ATK at the held phase and at the next one, which the Ascend row sets side by side, and the weapon's secondary
-// Attribute, the growth's one beside its base ATK, as a percentage to one place
-const baseAttackText = computed(
-  () => `${Math.round(getStatValue(weapon.value, weapon.value.ascension, Attribute.BaseAttack))}`,
-);
-const nextBaseAttackText = computed(
-  () => `${Math.round(getStatValue(weapon.value, weapon.value.ascension + 1, Attribute.BaseAttack))}`,
-);
-const secondaryAttribute = computed(
-  () => weaponData.value.growAttributes.find(({ attribute }) => attribute !== Attribute.BaseAttack)?.attribute,
-);
+// The weapon's attribute totals at its level in a phase, each line of its growth curve and of the phase summed as the
+// Character weapon panel sums them
+const getAttributeTotals = (ascension: number) =>
+  computeCharacterAttributes(
+    getGrownAttributeLines(weaponData.value, weaponGrowCurveMap, weapon.value.level, ascension),
+  ).attributeTotalMap;
+// The base ATK at the held phase and at the next one, which the Ascend row sets side by side
+const getBaseAttackText = (ascension: number) => formatWholeNumber(getAttributeTotals(ascension)[Attribute.BaseAttack]);
+const baseAttackText = computed(() => getBaseAttackText(weapon.value.ascension));
+const nextBaseAttackText = computed(() => getBaseAttackText(weapon.value.ascension + 1));
+// The secondary attribute the weapon grows beside its base ATK, at the held phase, written whole or as a percentage by its
+// Kind; a secondary the game names no caption for (Defense %) leaves its caption undrawn
+const secondaryAttribute = computed(() => getSecondaryAttribute(weaponData.value));
 const secondaryText = computed(() =>
   secondaryAttribute.value === undefined
     ? ""
-    : `${(getStatValue(weapon.value, weapon.value.ascension, secondaryAttribute.value) * 100).toFixed(1)}%`,
+    : formatAttributeValue(
+        secondaryAttribute.value,
+        getAttributeTotals(weapon.value.ascension)[secondaryAttribute.value],
+      ),
 );
+const secondaryLabel = computed(() => {
+  const gameTextKey =
+    secondaryAttribute.value === undefined ? undefined : AttributeGameTextKeyMap.get(secondaryAttribute.value);
+  return gameTextKey === undefined ? "" : gameText[gameTextKey];
+});
 // The EXP the weapon holds towards the next level over what that level takes; a weapon at its cap has no next level
 const requiredExps = computed(() => getRarityRequiredExps(rarityRequiredExpsMap, weaponData.value.rarity));
 const requiredExp = computed(() => requiredExps.value[weapon.value.level - 1] ?? 0);
@@ -412,7 +422,7 @@ const nextPhaseCosts = computed(() =>
         <p class="consumed">{{ consumedText }}</p>
         <p class="stat base-attack">{{ gameText[GameTextKey.AttributeBaseAttack] }}</p>
         <p class="stat-value base-attack-value">{{ baseAttackText }}</p>
-        <p class="stat attack">{{ gameText[GameTextKey.AttributeAttack] }}</p>
+        <p class="stat attack">{{ secondaryLabel }}</p>
         <p class="stat-value attack-value">{{ secondaryText }}</p>
         <div class="divider enhance-divider"><OrnamentDivider is-middle-hidden :opacity="DIVIDER_OPACITY" /></div>
         <span class="stats-rule enhance-stats-rule" aria-hidden="true" />
@@ -446,7 +456,7 @@ const nextPhaseCosts = computed(() =>
         <p class="stat-value base-current">{{ baseAttackText }}</p>
         <span class="arrow" aria-hidden="true" />
         <p class="stat-value base-next">{{ nextBaseAttackText }}</p>
-        <p class="stat ascend-attack">{{ gameText[GameTextKey.AttributeAttack] }}</p>
+        <p class="stat ascend-attack">{{ secondaryLabel }}</p>
         <p class="stat-value attack-current">{{ secondaryText }}</p>
         <OrnamentDivider class="divider ascend-divider" is-middle-hidden :opacity="DIVIDER_OPACITY" />
         <span class="stats-rule ascend-stats-rule" aria-hidden="true" />

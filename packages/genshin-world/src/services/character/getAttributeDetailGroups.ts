@@ -6,8 +6,8 @@ import {
   ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS,
   BASE_ATTRIBUTE_GAME_TEXT_KEYS,
   ELEMENTAL_ATTRIBUTE_GAME_TEXT_KEYS,
-  WHOLE_ATTRIBUTES,
 } from "#src/services/character/constants";
+import { formatAttributeValue } from "#src/services/character/formatAttributeValue";
 import { GameTextKey } from "genshin-text";
 
 export interface AttributeDetailGroup {
@@ -26,9 +26,7 @@ export const getAttributeDetailGroups = (
   const toRows = (attributeGameTextKeys: readonly (readonly [Attribute, GameTextKey])[]): AttributeDetailRow[] =>
     attributeGameTextKeys.map(([attribute, gameTextKey]) => ({
       label: gameText[gameTextKey],
-      value: WHOLE_ATTRIBUTES.includes(attribute)
-        ? `${Math.round(attributeTotalMap[attribute])}`
-        : `${(attributeTotalMap[attribute] * 100).toFixed(1)}%`,
+      value: formatAttributeValue(attribute, attributeTotalMap[attribute]),
     }));
   return [
     { rows: toRows(BASE_ATTRIBUTE_GAME_TEXT_KEYS), title: gameText[GameTextKey.AttributeGroupBase] },

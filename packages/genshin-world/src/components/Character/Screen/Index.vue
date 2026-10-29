@@ -45,9 +45,9 @@ import {
   MASTERLESS_LEVEL_LIFTS,
   MASTERLESS_STELLA_FORTUNA_ID,
   TRAVELER_CHARACTER_ID,
-  WHOLE_ATTRIBUTES,
 } from "#src/services/character/constants";
 import { ElementNameGameTextKeyMap } from "#src/services/character/ElementNameGameTextKeyMap";
+import { formatAttributeValue } from "#src/services/character/formatAttributeValue";
 import { formatWholeNumber } from "#src/services/character/formatWholeNumber";
 import { getAscensionMaterials } from "#src/services/character/getAscensionMaterials";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
@@ -55,6 +55,7 @@ import { getCharacterElement } from "#src/services/character/getCharacterElement
 import { getConstellationActivationRefusal } from "#src/services/character/getConstellationActivationRefusal";
 import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
 import { getNextAscensionPhase } from "#src/services/character/getNextAscensionPhase";
+import { getSecondaryAttribute } from "#src/services/character/getSecondaryAttribute";
 import { getTalentRows } from "#src/services/character/getTalentRows";
 import { levelUpCharacter } from "#src/services/character/levelUpCharacter";
 import { liftCharacterLevel } from "#src/services/character/liftCharacterLevel";
@@ -201,15 +202,9 @@ const weaponPanel = computed(() => {
   );
   // The secondary attribute is the one the weapon grows beside its base ATK, written whole or as a percentage as the
   // Game writes it, and nothing for a weapon that grows none
-  const subStatAttribute = weaponData.growAttributes.find(
-    ({ attribute }) => attribute !== Attribute.BaseAttack,
-  )?.attribute;
+  const subStatAttribute = getSecondaryAttribute(weaponData);
   const subStatValue =
-    subStatAttribute === undefined
-      ? ""
-      : WHOLE_ATTRIBUTES.includes(subStatAttribute)
-        ? `${Math.round(attributeTotalMap[subStatAttribute])}`
-        : `${(attributeTotalMap[subStatAttribute] * 100).toFixed(1)}%`;
+    subStatAttribute === undefined ? "" : formatAttributeValue(subStatAttribute, attributeTotalMap[subStatAttribute]);
   const maxLevel = weaponData.ascensionPhases[weapon.ascension]?.maxLevel ?? weapon.level;
   return {
     ascension: weapon.ascension,
