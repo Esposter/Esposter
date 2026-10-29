@@ -21,11 +21,11 @@ const emit = defineEmits<{ select: [] }>();
 </template>
 
 <style scoped>
-/* Provisional: a card's art and frame wait on the parity pass, as the board's do */
+/* A card's frame is measured off the game's frame at 1080 high; its art is not drawn */
 .card {
   position: relative;
   flex: none;
-  width: calc(var(--unit) * 128);
+  width: calc(var(--unit) * 175);
   height: calc(var(--unit) * 200);
   padding: 0;
   border: calc(var(--unit) * 2) solid #d9c28a;

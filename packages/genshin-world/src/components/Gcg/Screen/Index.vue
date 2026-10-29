@@ -274,9 +274,9 @@ const playRerollChoice = () => {
 </template>
 
 <style scoped>
-/* Provisional: the board's places, colours and sizes wait on the parity pass against the game's frame at 1080 high */
+/* The board's places and colours are measured off the game's frame at 1080 high; its table's texture and the frame's ornament are not drawn */
 .gcg-screen {
-  background: #557274;
+  background: #627a7a;
 }
 
 .table {
@@ -324,7 +324,7 @@ const playRerollChoice = () => {
   right: 0;
   left: 0;
   height: calc(var(--unit) * 56);
-  background: rgb(125 90 54 / 0.9);
+  background: rgb(126 103 76 / 0.8);
   color: #f6e3a1;
   font-size: calc(var(--unit) * 32);
   font-weight: 700;
@@ -352,13 +352,13 @@ const playRerollChoice = () => {
 .hand {
   position: absolute;
   top: calc(var(--unit) * 975);
-  left: calc(var(--unit) * 690);
+  left: calc(var(--unit) * 694);
   display: flex;
   align-items: flex-end;
 }
 
 .hand > * + * {
-  margin-left: calc(var(--unit) * -35);
+  margin-left: calc(var(--unit) * -89);
 }
 
 .end-round {

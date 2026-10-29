@@ -41,7 +41,7 @@ const emit = defineEmits<{ select: [] }>();
 </template>
 
 <style scoped>
-/* Provisional: the card's art is not drawn, only its tint and words, until the parity pass places them */
+/* The card's art is not drawn: its tint is the mean colour of the frame's art, and only its words are the game's */
 .character {
   position: absolute;
   width: calc(var(--unit) * 164);
@@ -49,7 +49,7 @@ const emit = defineEmits<{ select: [] }>();
   padding: 0;
   border: calc(var(--unit) * 2) solid rgb(234 201 124 / 0.85);
   border-radius: calc(var(--unit) * 12);
-  background: linear-gradient(180deg, #8f8172 0%, #5e5349 100%);
+  background: linear-gradient(180deg, #8c8288 0%, #999aae 100%);
   box-shadow: 0 calc(var(--unit) * 6) calc(var(--unit) * 14) rgb(0 0 0 / 0.45);
   color: #f5ecd6;
   cursor: inherit;
