@@ -73,11 +73,11 @@ The rule is prose until something can fail on it, and each row below says what d
 
 ## Key files
 
-| File                                                     | Role                                                                                                                   |
-| :------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/generated/gameDataLock.json` | The lock that names the Blob objects the game data reads                                                               |
-| `scripts/src/services/gameData/`                         | Publishing and reading the hosted game data under that lock                                                            |
-| `scripts/src/services/genshinParity/reference/`          | The helpers the approve and verify commands call; fetch is `commands/fetchCommand.ts`, and the pack is not written yet |
-| `packages/genshin-world/parity/references/`              | The committed references and their manifest, once the pack lands                                                       |
-| `openspec/specs/architecture/download-cache/design.md`   | The shape of a disk-only folder that is allowed: every object named by its hash                                        |
-| `.agents/skills/genshin-data/SKILL.md`                   | The hosted game data's rules, the one place Blob holds derived data today                                              |
+| File                                                     | Role                                                                                                                                                      |
+| :------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/generated/gameDataLock.json` | The lock that names the Blob objects the game data reads                                                                                                  |
+| `scripts/src/services/gameData/`                         | Publishing and reading the hosted game data under that lock                                                                                               |
+| `scripts/src/services/genshinParity/reference/`          | The helpers the approve and verify commands call; fetch is `scripts/src/services/genshinParity/commands/fetchCommand.ts`, and the pack is not written yet |
+| `packages/genshin-world/parity/references/`              | The committed references and their manifest, once the pack lands                                                                                          |
+| `openspec/specs/architecture/download-cache/design.md`   | The shape of a disk-only folder that is allowed: every object named by its hash                                                                           |
+| `.agents/skills/genshin-data/SKILL.md`                   | The hosted game data's rules, the one place Blob holds derived data today                                                                                 |
