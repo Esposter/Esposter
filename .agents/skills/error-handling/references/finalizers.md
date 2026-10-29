@@ -4,7 +4,7 @@ Read when a chain has to run cleanup whichever way it resolves — choosing betw
 
 Both live in `@esposter/shared`. Both run the finalizer regardless of success/failure, then unwrap the original result (throwing on Err) — no terminal consumer needed.
 
-- **`withFinalizer`** (sync): finalizer errors are always rethrown.
+- **`withFinalizer`** (sync): finalizer errors are rethrown if the original operation succeeded, and logged via `console.error` if it failed, as `withFinalizerAsync` does.
 - **`withFinalizerAsync`** (async/sync mix): finalizer errors rethrown if the original operation succeeded; silently logged via `console.error` if it failed (preserving the original error). Both arguments are plain `() => Promisable<T>`, not `ResultAsync`.
 - For simple loading flags around a `ResultAsync`, set the flag after `await` instead — a `ResultAsync` resolves to a `Result` rather than rejecting, so no finalizer is needed.
 
