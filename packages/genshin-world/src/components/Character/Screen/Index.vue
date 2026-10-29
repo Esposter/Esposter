@@ -46,6 +46,7 @@ import {
   TRAVELER_CHARACTER_ID,
   WHOLE_ATTRIBUTES,
 } from "#src/services/character/constants";
+import { ElementNameGameTextKeyMap } from "#src/services/character/ElementNameGameTextKeyMap";
 import { getAscensionMaterials } from "#src/services/character/getAscensionMaterials";
 import { getCharacterElement } from "#src/services/character/getCharacterElement";
 import { getConstellationActivationRefusal } from "#src/services/character/getConstellationActivationRefusal";
@@ -174,6 +175,11 @@ const characterElement = computed(() =>
 const elementMarkPath = computed(() => {
   const element = characterElement.value;
   return element === undefined ? undefined : ElementMarkPathMap[element];
+});
+// The element's name in the reader's language, which the band sets before the chosen character's
+const elementName = computed(() => {
+  const element = characterElement.value;
+  return element === undefined ? undefined : gameText[ElementNameGameTextKeyMap[element]];
 });
 const tabLabels = computed(() =>
   Object.fromEntries(CharacterMenuTabs.map((menuTab) => [menuTab, gameText[CharacterMenuTabGameTextKeyMap[menuTab]]])),
@@ -460,6 +466,7 @@ const isActivateDisabled = computed(
       v-model:tab="tab"
       :characters="menuEntries"
       :element-mark-path
+      :element-name
       :is-touch
       :tab-labels
     >

@@ -7,17 +7,17 @@ committed.
 
 | Reference | Screen | Mean difference | Shape | Tone | FLIP |
 | :-------- | :----- | --------------: | ----: | ---: | ---: |
-| `character-artifacts` | `CharacterScreen` | 3.01% | 0.829 | 1.44% | 0.1319 |
+| `character-artifacts` | `CharacterScreen` | 2.97% | 0.832 | 1.34% | 0.1316 |
 | `character-artifacts-tabs` | `CharacterScreen` | 0.88% | 0.976 | 0.32% | 0.0474 |
-| `character-attributes` | `CharacterScreen` | 1.90% | 0.924 | 0.80% | 0.0749 |
-| `character-attributes-panel` | `CharacterScreen` | 3.98% | 0.766 | 2.20% | 0.1595 |
+| `character-attributes` | `CharacterScreen` | 1.89% | 0.928 | 0.80% | 0.0746 |
+| `character-attributes-panel` | `CharacterScreen` | 3.89% | 0.778 | 2.13% | 0.1585 |
 | `character-attributes-tabs` | `CharacterScreen` | 0.97% | 0.985 | 0.34% | 0.0441 |
-| `character-attributes-top` | `CharacterScreen` | 8.13% | 0.844 | 2.31% | 0.3175 |
-| `character-constellation` | `CharacterScreen` | 1.97% | 0.891 | 0.92% | 0.0772 |
+| `character-attributes-top` | `CharacterScreen` | 8.10% | 0.834 | 2.33% | 0.3166 |
+| `character-constellation` | `CharacterScreen` | 1.97% | 0.895 | 0.91% | 0.0771 |
 | `character-constellation-tabs` | `CharacterScreen` | 1.31% | 0.979 | 0.44% | 0.0478 |
-| `character-talents` | `CharacterScreen` | 1.83% | 0.900 | 0.67% | 0.0799 |
+| `character-talents` | `CharacterScreen` | 1.82% | 0.903 | 0.66% | 0.0798 |
 | `character-talents-tabs` | `CharacterScreen` | 0.89% | 0.978 | 0.28% | 0.0466 |
-| `character-weapons` | `CharacterScreen` | 2.48% | 0.887 | 1.38% | 0.1065 |
+| `character-weapons` | `CharacterScreen` | 2.47% | 0.889 | 1.37% | 0.1063 |
 | `character-weapons-tabs` | `CharacterScreen` | 0.89% | 0.976 | 0.30% | 0.0453 |
 | `cooking-screen` | `CookingScreen` | 1.21% | 0.860 | 0.58% | 0.0564 |
 | `court-of-fontaine-location` | `WorldScreen` | 31.74% | 0.202 | 27.65% | 0.8417 |

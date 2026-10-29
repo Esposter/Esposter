@@ -8,7 +8,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { getAttributeDetailGroups } from "#src/services/character/getAttributeDetailGroups";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
-import { fillGameTextValues, GameTextKey } from "genshin-text";
+import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
   // The Adventure Rank, Mora and materials the character's next phase takes, each held against what it takes, none at its last phase
@@ -46,9 +46,16 @@ const {
 } = defineProps<Props>();
 const emit = defineEmits<{ ascend: []; levelUp: []; lift: [] }>();
 const characterData = computed(() => statTables.characterDataMap.get(character.id));
-// The level as the game's format writes it, and the cap it is at beside it in the grey the game sets it in
-const levelText = computed(() => fillGameTextValues(gameText[GameTextKey.LevelFormat], `${character.level}`));
-const levelCap = computed(() => characterData.value?.ascensionPhases[character.ascension]?.maxLevel ?? "");
+// The level and the cap it is at, the cap in the dimmer colour the game's own line sets it in
+const levelSegments = computed(() =>
+  splitGameTextColors(
+    fillGameTextValues(
+      gameText[GameTextKey.CharacterLevelWithMax],
+      `${character.level}`,
+      `${characterData.value?.ascensionPhases[character.ascension]?.maxLevel ?? ""}`,
+    ),
+  ),
+);
 // The tab's attributes: the base five the panel shows first, each as the game writes it, Max HP, ATK, DEF, Elemental
 // Mastery and Max Stamina whole, then the advanced and elemental groups under them, each a percentage to one place
 const attributes = computed(() =>
@@ -87,7 +94,7 @@ const detailGroups = computed(() =>
       </svg>
     </div>
     <p class="level">
-      {{ levelText }}<span class="cap"> / {{ levelCap }}</span>
+      <span v-for="({ color, text }, index) of levelSegments" :key="index" :style="{ color }">{{ text }}</span>
     </p>
     <div class="experience" />
     <dl class="rows">
@@ -161,13 +168,9 @@ const detailGroups = computed(() =>
 
 .level {
   margin: calc(var(--unit) * 5.9) 0 0;
-  font-size: calc(var(--unit) * 30);
+  font-size: calc(var(--unit) * 27);
   font-weight: 600;
   line-height: calc(var(--unit) * 36);
-}
-
-.cap {
-  color: rgb(255 255 255 / 0.5);
 }
 
 .experience {
@@ -178,16 +181,17 @@ const detailGroups = computed(() =>
 }
 
 /* Provisional until the button's place and colour are measured off the frame */
+/* The game's outlined pill, a hairline round a faint lightening, its word in the cream the frame's words are */
 .details {
   display: block;
   width: 100%;
   height: calc(var(--unit) * 40);
   margin-top: calc(var(--unit) * 17.5);
   padding: 0;
-  border: 0;
-  border-radius: calc(var(--unit) * 6);
-  background: rgb(255 255 255 / 0.15);
-  color: inherit;
+  border: calc(var(--unit) * 1.5) solid rgb(255 255 255 / 0.25);
+  border-radius: calc(var(--unit) * 20);
+  background: rgb(255 255 255 / 0.08);
+  color: rgb(236 229 216);
   font: inherit;
   line-height: calc(var(--unit) * 40);
   text-align: center;

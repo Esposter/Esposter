@@ -10,6 +10,8 @@ interface Props {
   characters: CharacterMenuEntry[];
   // The element mark's path drawn at the name's left, the chosen character's element, none where it has none yet
   elementMarkPath?: string;
+  // The chosen character's element in the reader's language, which the band's name is set after, none where it has none
+  elementName?: string;
   // Whether the device's main pointer is a finger, which has no keys for the tab keys to hint at
   isTouch?: boolean;
   // Each tab's name in the reader's language
@@ -19,8 +21,10 @@ interface Props {
 defineSlots<{ default: () => unknown }>();
 const characterId = defineModel<number>("characterId", { required: true });
 const tab = defineModel<CharacterMenuTab>("tab", { required: true });
-const { characters, elementMarkPath, isTouch = false, tabLabels } = defineProps<Props>();
+const { characters, elementMarkPath, elementName, isTouch = false, tabLabels } = defineProps<Props>();
 const characterName = computed(() => characters.find(({ id }) => id === characterId.value)?.name ?? "");
+// The band's words: the element's name and the character's, split by the screen's own slash
+const breadcrumb = computed(() => (elementName ? `${elementName} / ${characterName.value}` : characterName.value));
 // The characters either side of the chosen one, the list wrapping round at its ends, which the arrows at the frame's
 // Left and right edges step to
 const steps = computed(() => {
@@ -45,7 +49,7 @@ const steps = computed(() => {
         </button>
       </li>
     </ul>
-    <p class="breadcrumb">{{ characterName }}</p>
+    <p class="breadcrumb">{{ breadcrumb }}</p>
     <svg v-if="elementMarkPath" class="element" viewBox="0 0 1600 1600" aria-hidden="true">
       <path
         class="frame"
