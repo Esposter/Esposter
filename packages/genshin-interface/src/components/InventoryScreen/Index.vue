@@ -178,14 +178,6 @@ watch(
         <p class="detail-name">{{ selectedCell.name }}</p>
         <p class="detail-caption">{{ selectedCell.caption }}</p>
         <button
-          v-if="selectedCell.isUsable && !isDestroying"
-          class="use"
-          type="button"
-          @click="emit('use', selectedCell.id)"
-        >
-          {{ useLabel }}
-        </button>
-        <button
           v-if="selectedCell.isLockable && !isDestroying"
           class="lock"
           type="button"
@@ -194,6 +186,15 @@ watch(
           {{ selectedCell.isLocked ? unlockLabel : lockLabel }}
         </button>
       </section>
+      <button
+        v-if="selectedCell?.isUsable && !isDestroying"
+        class="use"
+        type="button"
+        @click="emit('use', selectedCell.id)"
+      >
+        {{ useLabel }}
+      </button>
+      <span v-if="isSortable && !isDestroying" class="details" aria-hidden="true" />
       <button
         ref="trashButton"
         class="trash"
@@ -220,7 +221,6 @@ watch(
         </button>
       </section>
       <template v-else-if="isSortable">
-        <span class="filter" />
         <div class="sort">
           <select v-model="sort" class="sort-select" :aria-label="sortLabels[sort]">
             <option v-for="inventorySort of InventorySorts" :key="inventorySort" :value="inventorySort">
@@ -491,24 +491,45 @@ watch(
   font-weight: 600;
 }
 
-/* The Use button under the detail panel's caption, provisional until the bag's Use is recorded */
-.use {
+/* The bottom right pill: Use on a usable entry, and on an equipment tab the Details its page opens, drawn without its word until
+   the game's text key for it is found. Its gold ring stands at its left, as the game's controller hint does */
+.use,
+.details {
   position: absolute;
-  bottom: calc(var(--unit) * 28);
-  left: calc(var(--unit) * 28);
-  width: calc(var(--unit) * 437);
-  height: calc(var(--unit) * 52);
-  background: #a154de;
-  color: #ece3d8;
-  font-size: calc(var(--unit) * 22);
+  top: calc(var(--unit) * 987);
+  left: calc(var(--unit) * 1562);
+  width: calc(var(--unit) * 226);
+  height: calc(var(--unit) * 63);
+  box-sizing: border-box;
+  padding: 0 0 0 calc(var(--unit) * 30);
+  border: none;
+  border-radius: calc(var(--unit) * 32);
+  background: #ece3d8;
+  color: #3b4255;
+  font: inherit;
+  font-size: calc(var(--unit) * 26);
   font-weight: 600;
+  text-align: center;
+}
+
+.use::before,
+.details::before {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--unit) * 26);
+  width: calc(var(--unit) * 24);
+  height: calc(var(--unit) * 24);
+  box-sizing: border-box;
+  border: calc(var(--unit) * 5) solid #b0902c;
+  border-radius: 50%;
+  content: "";
+  transform: translateY(-50%);
 }
 
 /* The foot bar's pieces, measured off the bag's recording at 1080 high: the trash, the filter and the sort's dropdown and
    order on an equipment tab, the Primogems and Mora on the rest. The dropdown is the game's own pill, its list drawn by the
    browser until its open motion is measured */
 .trash,
-.filter,
 .order {
   position: absolute;
   width: calc(var(--unit) * 50);
@@ -647,25 +668,18 @@ watch(
   gap: calc(var(--unit) * 12);
 }
 
-.filter {
-  top: calc(var(--unit) * 992);
-  left: calc(var(--unit) * 140);
-}
-
 .order {
   top: calc(var(--unit) * 992);
-  left: calc(var(--unit) * 532);
-  width: calc(var(--unit) * 48);
-  height: calc(var(--unit) * 48);
+  left: calc(var(--unit) * 483);
   background: #ece3d8;
 }
 
 .sort {
   position: absolute;
-  top: calc(var(--unit) * 992);
-  left: calc(var(--unit) * 208);
-  width: calc(var(--unit) * 304);
-  height: calc(var(--unit) * 50);
+  top: calc(var(--unit) * 993);
+  left: calc(var(--unit) * 140);
+  width: calc(var(--unit) * 324);
+  height: calc(var(--unit) * 48);
 }
 
 .sort-select {

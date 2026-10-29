@@ -50,7 +50,7 @@ committed.
 | `interaction-prompts-jueyun-chili` | `InteractionPromptList` | 4.82% | 0.947 | 1.79% | 0.2070 |
 | `interaction-prompts-pickup` | `InteractionPromptList` | 5.17% | 0.938 | 2.61% | 0.2241 |
 | `inventory-food` | `InventoryScreen` | 3.34% | 0.966 | 1.92% | 0.1900 |
-| `inventory-weapons` | `InventoryScreen` | 10.52% | 0.578 | 7.12% | 0.3854 |
+| `inventory-weapons` | `InventoryScreen` | 10.46% | 0.592 | 7.17% | 0.3830 |
 | `liyue-harbor-location` | `WorldScreen` | 29.33% | 0.303 | 24.45% | 0.8094 |
 | `loading-startup` | `LoadingStartup` | 0.03% | 0.989 | 0.00% | 0.0013 |
 | `login-dawn-title` | `LoginScreen` | 10.30% | 0.479 | 7.30% | 0.4135 |
