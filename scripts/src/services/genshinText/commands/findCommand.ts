@@ -24,9 +24,10 @@ export const findCommand: SubCommandsDef[string] = defineCommand({
   meta: { description: "Print the id a GameTextKey takes for every English string the pattern matches", name: "find" },
   run: ({ args }) => {
     const regex = new RegExp(args.pattern, "u");
-    const isMatch = (text: string, ids: string[]) => (args.id ? ids.some((id) => regex.test(id)) : regex.test(text));
+    const checkIsMatch = (text: string, ids: string[]) =>
+      args.id ? ids.some((id) => regex.test(id)) : regex.test(text);
     const languages = getRequestedLanguages(args.languages);
-    for (const match of readGameTextMatches(isMatch, languages))
+    for (const match of readGameTextMatches(checkIsMatch, languages))
       console.log(formatGameTextMatch(match, languages, args.json));
   },
 });

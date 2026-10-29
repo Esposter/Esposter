@@ -1,7 +1,7 @@
-import { isShownGameText } from "#src/services/genshinText/isShownGameText";
+import { checkIsShownGameText } from "#src/services/genshinText/checkIsShownGameText";
 import { describe, expect, test } from "vitest";
 
-describe(isShownGameText, () => {
+describe(checkIsShownGameText, () => {
   test.each([
     ["Corridor", "Corridor", true, true],
     ["Corridor", "corridor", false, true],
@@ -12,6 +12,6 @@ describe(isShownGameText, () => {
   ])("%j against %j, exact %j, is %j", (text, shownText, isExact, expected) => {
     expect.hasAssertions();
 
-    expect(isShownGameText(text, shownText, isExact)).toBe(expected);
+    expect(checkIsShownGameText(text, shownText, isExact)).toBe(expected);
   });
 });

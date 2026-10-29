@@ -3,7 +3,7 @@ import type { SubCommandsDef } from "citty";
 import { DEFAULT_LANGUAGES_ARGUMENT, REVERSE_MATCH_LIMIT } from "#src/services/genshinText/constants";
 import { formatGameTextMatch } from "#src/services/genshinText/formatGameTextMatch";
 import { getRequestedLanguages } from "#src/services/genshinText/getRequestedLanguages";
-import { isShownGameText } from "#src/services/genshinText/isShownGameText";
+import { checkIsShownGameText } from "#src/services/genshinText/checkIsShownGameText";
 import { readGameTextMatches } from "#src/services/genshinText/readGameTextMatches";
 import { defineCommand } from "citty";
 
@@ -28,7 +28,7 @@ export const reverseCommand: SubCommandsDef[string] = defineCommand({
   },
   run: ({ args }) => {
     const languages = getRequestedLanguages(args.languages);
-    const matches = readGameTextMatches((text) => isShownGameText(text, args.shown, args.exact), languages);
+    const matches = readGameTextMatches((text) => checkIsShownGameText(text, args.shown, args.exact), languages);
     const listedMatches = matches.slice(0, REVERSE_MATCH_LIMIT);
     for (const match of listedMatches) console.log(formatGameTextMatch(match, languages, args.json));
 

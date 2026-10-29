@@ -8,11 +8,11 @@ import { GameLanguage, GameLanguageTagMap } from "genshin-text";
 // The English strings the predicate matches, each with its text in every language asked for. Each language's map is read
 // once, and only when something matched, and the English map that matching reads is the one English is filled from
 export const readGameTextMatches = (
-  isMatch: (text: string, ids: string[]) => boolean,
+  checkIsMatch: (text: string, ids: string[]) => boolean,
   languages: GameLanguage[],
 ): GameTextMatch[] => {
   const englishTextMap = readTextMap(GameLanguage.English);
-  const matches = collectGameTextMatches(englishTextMap, readManualTextMap(), isMatch);
+  const matches = collectGameTextMatches(englishTextMap, readManualTextMap(), checkIsMatch);
   if (matches.length === 0) return matches;
 
   for (const language of languages) {

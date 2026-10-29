@@ -8,7 +8,7 @@ import { GameTextKey } from "genshin-text";
 export const collectGameTextMatches = (
   englishTextMap: Map<string, string>,
   manualTextMap: Map<string, string>,
-  isMatch: (text: string, ids: string[]) => boolean,
+  checkIsMatch: (text: string, ids: string[]) => boolean,
 ): GameTextMatch[] => {
   const namesByHash = Map.groupBy(manualTextMap, ([, hash]) => hash);
   const keyMembers = new Map<string, string>(
@@ -18,7 +18,7 @@ export const collectGameTextMatches = (
   for (const [hash, text] of englishTextMap) {
     const names = (namesByHash.get(hash) ?? []).map(([name]) => name);
     const ids = names.length > 0 ? names : [hash];
-    if (isMatch(text, ids)) {
+    if (checkIsMatch(text, ids)) {
       const match: GameTextMatch = { id: hash, values: {} };
       if (names.length > 0) match.name = names.join(", ");
       const keyMember = ids.map((id) => keyMembers.get(id)).find((member) => member !== undefined);
