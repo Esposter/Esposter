@@ -39,13 +39,7 @@ Every change lands on `ai/queue` itself, in the main checkout: fast-forward `ai/
 
 1. **Fast-forwards `ai/queue` and works on it.** `git switch ai/queue && git merge --ff-only origin/ai/queue`. Only for a concurrent change: a worktree made as `llm-delegation`'s `references/running-agents.md` says, then the install of the packages it will touch, never the whole workspace. A failing `nuxt prepare` postinstall does not stop the agent: the packages still link, and the app's prepare is only the app's concern.
 2. **Commits each coherent unit by pathspec.** The touched tests run once after the sitting's last edit, in the background (the `running-checks` skill), and what they call for is its own commit behind the unit.
-3. **Lands the commits:**
-
-```bash
-for attempt in 1 2 3 4; do git pull --rebase origin ai/queue || break; git push origin HEAD:ai/queue && break; done
-```
-
-A rebase conflict stops the loop on the commit it stopped on, and the agent that made the commit settles it (`references/pull-conflicts.md`). Only a rejected push retries.
+3. **Lands the commits with `pnpm ai:land`**, which runs the precheck first (the `running-checks` skill), then pulls and pushes, retrying a push the queue moved past. A rebase conflict stops it with its paths printed and the rebase in progress, and the agent that made the commit settles it (`references/pull-conflicts.md`).
 
 4. **Removes the branch, or the worktree, once its commits have landed.** A worktree goes through `pnpm ai:worktree:remove <full path>`, which deletes its branch with it; a local branch is deleted with `git branch -d`.
 

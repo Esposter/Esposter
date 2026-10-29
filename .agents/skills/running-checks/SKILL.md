@@ -24,6 +24,10 @@ which checks a session runs and how it waits on them.
   pre-commit hook only formats, so no commit waits on a check.
 - **A Pulumi apply.** `pnpm typecheck` in `apps/infra` runs before `infra:up`, since an apply reaches Azure and CI runs after it.
 
+## Before the push: `pnpm ai:precheck`
+
+The two checks CI would run first on a push take seconds here: the formatter over each changed file, and each changed package's barrel against what its generator writes. `pnpm ai:format` fixes the files the first names, and `pnpm ai:precheck --fix` rewrites a stale barrel. `pnpm ai:land` runs the precheck itself before it pushes. Typecheck and lint stay CI's, as the settled list above says.
+
 ## The tests of what the change touched, in the background
 
 The tests are one `Bash` call with `run_in_background: true`, redirecting their output to a log file and appending

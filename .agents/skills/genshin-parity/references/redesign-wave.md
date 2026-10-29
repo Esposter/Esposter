@@ -17,7 +17,7 @@ Read when several screens are redrawn from their references at once, each by an 
 4. One change, then compare. A change is kept when the mean falls and the shape and FLIP do not worsen. One exception, for a screen with no image yet: a change that matches the reference's own pixels (a band, a panel, a colour measured) and lowers both the mean and FLIP is kept when it costs at most 0.02 of shape, because shape rewards the backdrop plate's own edges, which any such covering hides; the commit says so with the numbers.
 5. Stop when every id is under 1% with the remainder explained (antialiasing, the game's typeface), after eight compares in a row that improve nothing, or after forty compares in all (more for a shared piece, whose set of ids is larger).
 6. The tests of what was touched, once at the end. An image is written with `approve` after the last compare, whatever its score: the score is a report, and a screen above the bar is committed the same way.
-7. Commit by explicit pathspec (the changed files and the snapshot rows the compares rewrote), `refactor(genshin-world): <screen> is redrawn from its reference screenshots`, the before and after per id in the body, and land it with `git pull --rebase origin ai/queue && git push origin HEAD:ai/queue`, retried when rejected. A conflict in the snapshot table keeps both sides' rows.
+7. Commit by explicit pathspec (the changed files and the snapshot rows the compares rewrote), `refactor(genshin-world): <screen> is redrawn from its reference screenshots`, the before and after per id in the body, and land it with `pnpm ai:land`. A conflict in the snapshot table keeps both sides' rows.
 
 ## What an agent may edit
 
