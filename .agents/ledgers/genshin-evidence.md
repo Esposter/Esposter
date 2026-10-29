@@ -1,6 +1,6 @@
 # Genshin evidence
 
-Each Genshin design page's claims cited to game code or a reference snapshot, or left open with the source that would settle them. Find recipe: `grep -l "no source yet" openspec/specs/genshin/**/design.md`, and a page with no `## Sources` and no reference path.
+Find recipe: `git grep -l "no source yet" -- 'openspec/specs/genshin/*/design.md'`.
 
 | Unit                                                                   | Swept                  | Notes |
 | :--------------------------------------------------------------------- | :--------------------- | :---- |
@@ -54,6 +54,7 @@ Each Genshin design page's claims cited to game code or a reference snapshot, or
 | `openspec/specs/genshin/login-screen/light/design.md`                  | 2026-10-29 · Haiku 5.5 |       |
 | `openspec/specs/genshin/original-resin/design.md`                      | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/paimon-menu/design.md`                         | 2026-10-29 · Haiku 5.5 |       |
+| `openspec/specs/genshin/menu-settings/design.md`                       | —                      |       |
 | `openspec/specs/genshin/save-data/design.md`                           | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/terrain/design.md`                             | 2026-10-29 · Haiku 5.5 |       |
 | `openspec/specs/genshin/touch-controls/design.md`                      | 2026-10-29 · Haiku 5.5 |       |
@@ -126,6 +127,7 @@ Each Genshin design page's claims cited to game code or a reference snapshot, or
 | `openspec/specs/genshin/talents/design.md`                             | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/world-map/design.md`                           | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/characters/development-packs/design.md`        | —                      |       |
+| `openspec/specs/genshin/characters/published-packs/design.md`          | —                      |       |
 | `openspec/specs/genshin/compute/inazuma/design.md`                     | 2026-10-29 · Haiku 5.5 |       |
 | `openspec/specs/genshin/compute/quest/design.md`                       | 2026-10-29 · Haiku 5.5 |       |
 | `openspec/specs/genshin/compute/wish/design.md`                        | 2026-10-29 · Haiku 5.5 |       |
