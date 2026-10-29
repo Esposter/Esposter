@@ -1,30 +1,32 @@
 import type { ParityReferenceManifestRow } from "#src/models/genshinParity/reference/ParityReferenceManifestRow";
 
 import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
+import { REFERENCE_SCRATCH_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { getScratchPlatePath } from "#src/services/genshinParity/shared/getScratchPlatePath";
 import { getScratchReferencePath } from "#src/services/genshinParity/shared/getScratchReferencePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { readWikiFile } from "genshin-persona/src/services/readWikiFile.ts";
 import { readWikiFileUrls } from "genshin-persona/src/services/readWikiFileUrls.ts";
 import { existsSync } from "node:fs";
-import { writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import sharp from "sharp";
 
 // Fetches every wiki reference the manifest does not hold into the scratch folder, where `references pack` reads it, and
 // names each one that stays missing. A wiki file is written as the wiki serves it: its bytes are sniffed by pack, never
 // its name. A recording's frame is never fetched, so a missing one is named with its source and the scratch path to save its cut at
 export const fetchReferences = async (): Promise<void> => {
+  await mkdir(REFERENCE_SCRATCH_DIRECTORY, { recursive: true });
   const rows = await readReferenceManifest();
-  const isHeld = (id: string, plate: boolean): boolean =>
+  const checkHeld = (id: string, plate: boolean): boolean =>
     rows.some((row: ParityReferenceManifestRow) => row.id === id && (!plate || row.plate !== undefined));
   // A pending screen names no reference to fetch, so it is never asked of the wiki
   const missing = Object.entries(ParityReferenceMap).filter(
-    ([id, { pending }]) => pending === undefined && !isHeld(id, false) && !existsSync(getScratchReferencePath(id)),
+    ([id, { pending }]) => pending === undefined && !checkHeld(id, false) && !existsSync(getScratchReferencePath(id)),
   );
   const wikiTitles = missing.flatMap(([, { wikiTitle }]) => (wikiTitle === undefined ? [] : [wikiTitle]));
   const urls = wikiTitles.length > 0 ? await readWikiFileUrls(wikiTitles) : new Map<string, string>();
   const missingPlates = Object.entries(ParityReferenceMap).flatMap(([id, { plateSource }]) =>
-    plateSource === undefined || isHeld(id, true) || existsSync(getScratchPlatePath(id))
+    plateSource === undefined || checkHeld(id, true) || existsSync(getScratchPlatePath(id))
       ? []
       : [
           `${id}: no plate at ${getScratchPlatePath(id)}, sampled from ${plateSource}; run genshin:parity references pack`,
