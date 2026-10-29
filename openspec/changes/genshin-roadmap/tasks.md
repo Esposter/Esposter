@@ -4,7 +4,7 @@ Open work only, part by part of the game. What was decided against is in [deferr
 
 The compute queue's runs owed sit in [the compute folder](../../specs/genshin/compute/README.md), one page per area, and the fleet reads them from there.
 
-Genshin comes first. Until the Genshin recreation is complete, no work outside Genshin is taken on any machine, and each machine's fleet profile lends the Genshin area alone (the owner's decision, 2026-10-12). When no Genshin item is runnable, the effort goes to unblocking the waiting Genshin items, never to another area.
+Genshin comes first. Until the Genshin recreation is complete, no work outside Genshin is taken on any machine, and each machine's fleet profile lends the Genshin area alone (the owner's decision). When no Genshin item is runnable, the effort goes to unblocking the waiting Genshin items, never to another area.
 
 A screen's reference clips are replaced by the interface export once the screen's blocks are extracted: `genshin:assets interface` places its pieces and `genshin:assets clips` plays their motion, with the copied captures for the look.
 
