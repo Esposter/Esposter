@@ -2,6 +2,7 @@ import type { SubCommandsDef } from "citty";
 import type { AvatarManifest } from "genshin-world/sceneExport";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { formatMeasurement } from "#src/services/genshinAssets/commands/formatMeasurement";
 import { measureAvatarHeight } from "#src/services/genshinAssets/measure/measureAvatarHeight";
 import { measureVerticalExtent } from "#src/services/genshinAssets/measure/measureVerticalExtent";
 import { EXTRACTED_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
@@ -10,8 +11,6 @@ import { defineCommand } from "citty";
 import { parsePmx } from "genshin-engine";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-
-const format = (value: number): string => value.toFixed(4);
 
 export const measureCommand: SubCommandsDef[string] = defineCommand({
   args: {
@@ -36,8 +35,8 @@ export const measureCommand: SubCommandsDef[string] = defineCommand({
     const pmx = parsePmx(Uint8Array.from(await readFile(args.pmx)).buffer);
     const modelHeight = measureAvatarHeight(manifest, binary);
     const pmxHeight = measureVerticalExtent([pmx.vertices.positions]);
-    console.log(`model height: ${format(modelHeight)} m`);
-    console.log(`pmx height: ${format(pmxHeight)} units`);
-    console.log(`scale: ${format(modelHeight / pmxHeight)} m per unit`);
+    console.log(`model height: ${formatMeasurement(modelHeight)} m`);
+    console.log(`pmx height: ${formatMeasurement(pmxHeight)} units`);
+    console.log(`scale: ${formatMeasurement(modelHeight / pmxHeight)} m per unit`);
   },
 });

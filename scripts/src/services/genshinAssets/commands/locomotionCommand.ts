@@ -2,9 +2,8 @@ import type { SubCommandsDef } from "citty";
 
 import { readBodyHumanScale } from "#src/services/genshinAssets/locomotion/readBodyHumanScale";
 import { readLocomotionClips } from "#src/services/genshinAssets/locomotion/readLocomotionClips";
+import { formatRoundedValue } from "#src/services/genshinAssets/shared/formatRoundedValue";
 import { defineCommand } from "citty";
-
-const format = (value: number): string => String(Math.round(value * 1000) / 1000);
 
 export const locomotionCommand: SubCommandsDef[string] = defineCommand({
   args: {
@@ -21,13 +20,13 @@ export const locomotionCommand: SubCommandsDef[string] = defineCommand({
   },
   run: async ({ args }) => {
     const humanScale = await readBodyHumanScale(args.body);
-    console.log(`Human scale: ${format(humanScale)} m`);
+    console.log(`Human scale: ${formatRoundedValue(humanScale)} m`);
     for (const { averageGroundSpeed, duration, groundDistance, groundSpeed, name, rise } of await readLocomotionClips(
       args.body,
       humanScale,
     ))
       console.log(
-        `${name}: ${format(duration)} s, ${format(groundDistance)} m across at ${format(groundSpeed)} m/s (recorded ${format(averageGroundSpeed)}), rising ${format(rise)} m`,
+        `${name}: ${formatRoundedValue(duration)} s, ${formatRoundedValue(groundDistance)} m across at ${formatRoundedValue(groundSpeed)} m/s (recorded ${formatRoundedValue(averageGroundSpeed)}), rising ${formatRoundedValue(rise)} m`,
       );
   },
 });

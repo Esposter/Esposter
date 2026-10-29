@@ -1,9 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
+import { formatRoundedValue } from "#src/services/genshinAssets/shared/formatRoundedValue";
 import { readClipTimings } from "#src/services/genshinAssets/timings/readClipTimings";
 import { defineCommand } from "citty";
-
-const format = (value: number): string => String(Math.round(value * 1000) / 1000);
 
 export const timingsCommand: SubCommandsDef[string] = defineCommand({
   args: {
@@ -21,8 +20,8 @@ export const timingsCommand: SubCommandsDef[string] = defineCommand({
   },
   run: async ({ args }) => {
     for (const { duration, events, name } of await readClipTimings(args.pattern)) {
-      console.log(`${name}: ${format(duration)} s`);
-      for (const { functionName, time } of events) console.log(`  ${format(time)} s ${functionName}`);
+      console.log(`${name}: ${formatRoundedValue(duration)} s`);
+      for (const { functionName, time } of events) console.log(`  ${formatRoundedValue(time)} s ${functionName}`);
     }
   },
 });
