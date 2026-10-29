@@ -13,7 +13,7 @@ await runCommand(
       install: {
         default: false,
         description:
-          "Run pnpm i when the dependencies are not installed, and the parity references' restore when some are missing",
+          "Run pnpm i when the dependencies are not installed, and the parity records' restore when some are missing",
         type: "boolean",
       },
       verify: {

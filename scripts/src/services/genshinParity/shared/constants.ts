@@ -47,9 +47,11 @@ export const PARITY_PROBE_TIMEOUT_MS = 1000;
 export const PARITY_PAGE_TITLE = "<title>Genshin parity</title>";
 // The world package, whose parity page a load run builds for production and serves beside the dev server
 export const GENSHIN_WORLD_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world");
-// The manifest of every reference the map names: each file's hash, size, source and attribution. The bytes themselves
-// Are objects in the game-data container, named by their hash, and reach a machine through its download cache
-export const REFERENCE_MANIFEST_PATH: string = join(GENSHIN_WORLD_DIRECTORY, "parity", "references", "manifest.json");
+// The committed references' folder: each reference the map names is committed here, or beside its fixture variant's snapshot
+export const REFERENCE_FILES_DIRECTORY: string = join(GENSHIN_WORLD_DIRECTORY, "parity", "references");
+// The manifest of every reference the map names: each file's hash, size, dimensions, source and attribution, which the
+// committed files are checked against
+export const REFERENCE_MANIFEST_PATH: string = join(REFERENCE_FILES_DIRECTORY, "manifest.json");
 // The production build of the parity page: a folder inside that package, which git ignores, and the root task that builds it
 export const PARITY_BUILD_DIRECTORY_NAME = "parity-build";
 // The config the build and its preview read, relative to the package

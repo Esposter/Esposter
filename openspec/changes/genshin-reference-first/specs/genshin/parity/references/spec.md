@@ -2,7 +2,7 @@
 
 ### Requirement: Reference images are kept outside the repository
 
-**Reason**: the repository now holds the manifest naming the screenshots each screen is judged against, whose bytes are stored as objects, and no reference is a recording frame, so the requirement's rule that the repository names a recording and a second no longer holds. The replacement below keeps the rule that a reference is not committed as a recording.
+**Reason**: the repository holds the screenshots each screen is judged against, committed as lossless WebP and named by the manifest, and no reference is a recording frame, so the requirement's rule that the repository names a recording and a second no longer holds. The replacement below keeps the rule that a reference is not committed as a recording.
 
 ## ADDED Requirements
 

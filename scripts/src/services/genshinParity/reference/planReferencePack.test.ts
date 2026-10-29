@@ -28,7 +28,7 @@ describe(planReferencePack, () => {
     held: [],
     id,
     missing: [],
-    objects: [],
+    files: [],
     packed: [],
     row: isWritten ? createRow(id) : undefined,
   });

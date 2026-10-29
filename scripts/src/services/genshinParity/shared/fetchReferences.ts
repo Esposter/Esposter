@@ -1,39 +1,37 @@
-import type { ParityReferenceManifestRow } from "#src/models/genshinParity/reference/ParityReferenceManifestRow";
-
-import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
+import { readReferenceFiles } from "#src/services/genshinParity/reference/readReferenceFiles";
 import { REFERENCE_SCRATCH_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { getReferencePlateFilePath } from "#src/services/genshinParity/shared/getReferencePlateFilePath";
 import { getScratchPlatePath } from "#src/services/genshinParity/shared/getScratchPlatePath";
 import { getScratchReferencePath } from "#src/services/genshinParity/shared/getScratchReferencePath";
-import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { readWikiFile } from "genshin-persona/src/services/readWikiFile.ts";
 import { readWikiFileUrls } from "genshin-persona/src/services/readWikiFileUrls.ts";
 import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import sharp from "sharp";
 
-// Fetches every wiki reference the manifest does not hold into the scratch folder, where `references pack` reads it, and
-// names each one that stays missing. A wiki file is written as the wiki serves it: its bytes are sniffed by pack, never
-// its name. A recording's frame is never fetched, so a missing one is named with its source and the scratch path to save its cut at
+// Fetches every wiki reference not yet committed into the scratch folder, where `references pack` reads it, and names each
+// one that stays missing. A wiki file is written as the wiki serves it: its bytes are sniffed by pack, never its name. A
+// recording's frame is never fetched, so a missing one is named with its source and the scratch path to save its cut at
 export const fetchReferences = async (): Promise<void> => {
   await mkdir(REFERENCE_SCRATCH_DIRECTORY, { recursive: true });
-  const rows = await readReferenceManifest();
-  const checkHeld = (id: string, plate: boolean): boolean =>
-    rows.some((row: ParityReferenceManifestRow) => row.id === id && (!plate || row.plate !== undefined));
+  const references = await readReferenceFiles();
   // A pending screen names no reference to fetch, so it is never asked of the wiki
-  const missing = Object.entries(ParityReferenceMap).filter(
-    ([id, { pending }]) => pending === undefined && !checkHeld(id, false) && !existsSync(getScratchReferencePath(id)),
+  const missing = references.filter(({ id, path }) => !existsSync(path) && !existsSync(getScratchReferencePath(id)));
+  const wikiTitles = missing.flatMap(({ reference }) =>
+    reference.wikiTitle === undefined ? [] : [reference.wikiTitle],
   );
-  const wikiTitles = missing.flatMap(([, { wikiTitle }]) => (wikiTitle === undefined ? [] : [wikiTitle]));
   const urls = wikiTitles.length > 0 ? await readWikiFileUrls(wikiTitles) : new Map<string, string>();
-  const missingPlates = Object.entries(ParityReferenceMap).flatMap(([id, { plateSource }]) =>
-    plateSource === undefined || checkHeld(id, true) || existsSync(getScratchPlatePath(id))
+  const missingPlates = references.flatMap(({ id, reference }) =>
+    reference.plateSource === undefined ||
+    existsSync(getReferencePlateFilePath(id)) ||
+    existsSync(getScratchPlatePath(id))
       ? []
       : [
-          `${id}: no plate at ${getScratchPlatePath(id)}, sampled from ${plateSource}; run genshin:parity references pack`,
+          `${id}: no plate at ${getScratchPlatePath(id)}, sampled from ${reference.plateSource}; run genshin:parity references pack`,
         ],
   );
   const lines = await Promise.all(
-    missing.map(async ([id, reference]): Promise<string> => {
+    missing.map(async ({ id, reference }): Promise<string> => {
       const { placement, source, wikiTitle } = reference;
       if (source !== undefined)
         return `${id}: no screenshot, sampled from ${source}; save its cut at ${getScratchReferencePath(id)} and run genshin:parity references pack`;

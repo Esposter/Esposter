@@ -46,7 +46,7 @@ export const VERIFY_TOLERANCE_PERCENT = 1;
 // Score reads the same as it did from the screenshot
 export const REFERENCE_WEBP_OPTIONS = { effort: 6, lossless: true } as const;
 
-// How many reference objects `references pack` and `references restore` move at once, and how many of the largest files
+// How many files `references pack` writes and `references restore` moves at once, and how many of the largest files
 // the pack table names
 export const REFERENCE_PACK_CONCURRENCY = 2;
 export const REFERENCE_PACK_LARGEST_COUNT = 10;
@@ -75,8 +75,13 @@ export const PLATE_CACHE_REGEX: RegExp = /\.plate-[\da-f]{16}\.png$/u;
 
 // The folder the game-data container keeps every stored object in, one per hash and extension, whatever its kind
 export const REFERENCE_BLOB_FOLDER = "parityObjects";
-// Every stored reference is lossless WebP, the format `packReferenceImage` writes, so the object name ends with it
-export const REFERENCE_OBJECT_EXTENSION = "webp";
+// Every committed reference is lossless WebP, the format `packReferenceImage` writes, and its file name ends with it
+export const REFERENCE_FILE_EXTENSION = "webp";
+// A plate is committed beside its reference's file, named by its id with this suffix before the extension
+export const REFERENCE_PLATE_SUFFIX = ".plate";
+// The largest committed file the tree may hold: the largest lossless reference (`mondstadt-city-location`, 7,315,020
+// bytes) and a margin above it, so a larger file is a mistake to look at rather than a size to accept
+export const REFERENCE_FILE_MAX_BYTES = 7_500_000;
 // A stored reference runs to several megabytes, which the default request bound of ten seconds cuts short on a slow link
 export const REFERENCE_OBJECT_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total(
   "milliseconds",

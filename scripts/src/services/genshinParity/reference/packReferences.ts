@@ -1,42 +1,34 @@
-import type { ReferenceObjectTarget } from "#src/models/genshinParity/reference/ReferenceObjectTarget";
 import type { ReferencePackOptions } from "#src/models/genshinParity/reference/ReferencePackOptions";
 import type { ReferencePackOutcome } from "#src/models/genshinParity/reference/ReferencePackOutcome";
+import type { ReferenceStoredFile } from "#src/models/genshinParity/reference/ReferenceStoredFile";
 
-import {
-  REFERENCE_OBJECT_EXTENSION,
-  REFERENCE_PACK_CONCURRENCY,
-} from "#src/services/genshinParity/reference/constants";
+import { REFERENCE_PACK_CONCURRENCY } from "#src/services/genshinParity/reference/constants";
 import { countUnnamedScratchFiles } from "#src/services/genshinParity/reference/countUnnamedScratchFiles";
 import { formatCollisionBlock } from "#src/services/genshinParity/reference/formatCollisionBlock";
-import { getObjectBlobName } from "#src/services/genshinParity/reference/getObjectBlobName";
 import { planReferenceEntry } from "#src/services/genshinParity/reference/planReferenceEntry";
 import { planReferencePack } from "#src/services/genshinParity/reference/planReferencePack";
-import { putReferenceObject } from "#src/services/genshinParity/reference/putReferenceObject";
 import { readKnownGameVersion } from "#src/services/genshinParity/reference/readKnownGameVersion";
 import { readManifestFile } from "#src/services/genshinParity/reference/readManifestFile";
+import { readReferenceFiles } from "#src/services/genshinParity/reference/readReferenceFiles";
 import { writeManifestFile } from "#src/services/genshinParity/reference/writeManifestFile";
-import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
+import { writePartialThenMove } from "#src/services/shared/writePartialThenMove";
 import { InvalidOperationError, Operation, settleAll } from "@esposter/shared";
-import { CONTENT_CACHE_DIRECTORY, readContentAddressedObject } from "@esposter/shared-node/cache";
-import { join } from "node:path";
 
-// Plans every reference the map names, then stores the objects each account lacks and writes the manifest for the plans
-// `planReferencePack` keeps. A collision the options do not resolve refuses the run before anything is written. Each object
-// Is first placed in the download cache under its hash, so its upload streams from that path. Objects go up before the
-// Manifest names them. A dry run plans and reports the same outcome and stores nothing
+// Plans every reference the map names, then writes the files `planReferencePack` keeps and the manifest that names them. A
+// collision the options do not resolve refuses the run before anything is written. A dry run plans and reports the same
+// outcome and writes nothing
 export const packReferences = async (
   isDryRun: boolean,
-  targets: ReferenceObjectTarget[],
   options: ReferencePackOptions,
 ): Promise<ReferencePackOutcome> => {
   const manifest = await readManifestFile();
-  const entries = Object.entries(ParityReferenceMap).filter(([, { pending }]) => pending === undefined);
+  const references = await readReferenceFiles();
   // A replaced id's local bytes are checked against no committed row, so the bytes it packs to are its local ones and it
-  // Writes a new row; the committed row still backs the plate it keeps where its local plate is absent
+  // writes a new row; the committed row still backs the plate it keeps where its local plate is absent
   const plans = await settleAll(
-    entries.map(([id, reference]) => () => {
+    references.map(({ id, path, reference }) => () => {
       const committed = manifest.references.find((row) => row.id === id);
-      return planReferenceEntry(id, reference, options.replace.includes(id) ? undefined : committed, committed);
+      return planReferenceEntry(id, reference, path, options.replace.includes(id) ? undefined : committed, committed);
     }),
     REFERENCE_PACK_CONCURRENCY,
   );
@@ -48,24 +40,16 @@ export const packReferences = async (
       `${formatCollisionBlock(decision.blocked)}; rerun with --skip-colliding to leave them out, or --replace <ids> for those whose local bytes should win`,
     );
   const { stored } = decision;
-  // Identical bytes under two ids are one object, so each is stored once rather than raced against itself
-  const objects = [
-    ...new Map(stored.flatMap((plan) => plan.objects).map((object) => [object.sha256, object])).values(),
-  ];
-  let uploads = 0;
+  const files: ReferenceStoredFile[] = stored.flatMap(({ files }) => files);
   if (!isDryRun) {
-    const counts = await settleAll(
-      objects.map(({ bytes, sha256 }) => async () => {
-        await readContentAddressedObject(sha256, () => Promise.resolve(bytes));
-        return putReferenceObject(
-          getObjectBlobName(sha256, REFERENCE_OBJECT_EXTENSION),
-          join(CONTENT_CACHE_DIRECTORY, sha256),
-          targets,
-        );
-      }),
+    await settleAll(
+      files.map(
+        ({ bytes, path }) =>
+          () =>
+            writePartialThenMove(path, bytes),
+      ),
       REFERENCE_PACK_CONCURRENCY,
     );
-    uploads = counts.reduce((total, count) => total + count, 0);
     const rows = stored.flatMap(({ row }) => (row === undefined ? [] : [row]));
     const changedIds = new Set(rows.map(({ id }) => id));
     await writeManifestFile({
@@ -77,11 +61,10 @@ export const packReferences = async (
   return {
     held: stored.flatMap(({ held }) => held),
     missing: stored.flatMap(({ missing }) => missing),
-    objects: objects.length,
     packed: stored.flatMap(({ packed }) => packed),
     replaced: decision.replaced,
     skipped: decision.skipped,
-    unnamed: await countUnnamedScratchFiles(entries.map(([id]) => id)),
-    uploads,
+    unnamed: await countUnnamedScratchFiles(references.map(({ id }) => id)),
+    written: isDryRun ? 0 : files.length,
   };
 };

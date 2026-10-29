@@ -12,7 +12,7 @@ import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constant
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
 import { getMissingReferenceInputs } from "#src/services/genshinParity/reference/getMissingReferenceInputs";
 import { getWorstCells } from "#src/services/genshinParity/reference/getWorstCells";
-import { readCachedReference } from "#src/services/genshinParity/reference/readCachedReference";
+import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
@@ -85,7 +85,7 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
             const missing =
               row === undefined
                 ? ["reference image in the manifest"]
-                : getMissingReferenceInputs(await readCachedReference(row.sha256), witnessLayoutPath, existsSync);
+                : getMissingReferenceInputs(await getReferencePath(referenceId), witnessLayoutPath, existsSync);
             // A reference not yet measurable keeps its row as the report last had it, and the run goes on to the next
             if (missing.length > 0) {
               console.error(`not measured: ${missing.join(", ")}`);

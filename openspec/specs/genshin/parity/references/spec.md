@@ -4,23 +4,67 @@ Where a parity screen's reference images and recordings come from, how the insta
 
 ## Requirements
 
-### Requirement: Reference images are kept outside the repository
+### Requirement: Reference images are committed as lossless WebP
 
-Reference images SHALL be kept outside the repository's git history: each is stored once as an object named by its sha256 in the public game-data container, and the repository holds only the manifest naming each object by its id, hash, size, attribution and source, which is a wiki file or a `source` string naming the recording and the second it was sampled from.
+A reference image SHALL be committed to the repository as a lossless WebP file, beside its fixture variant's snapshot when it is that variant's only whole-screen reference and flat in the references folder under its id otherwise, and its manifest row SHALL name its sha256, size, dimensions, attribution and source.
 
-#### Scenario: Reference fetched
+#### Scenario: Reference committed beside its snapshot
 
-- **GIVEN** a reference a screen is judged against
-- **WHEN** the reference is fetched or recorded
-- **THEN** its bytes are stored once as an object named by their sha256, in each account that lacks it
-- **AND** the manifest names that hash, with the wiki file, or the recording and the second, that the reference comes from
+- **GIVEN** a fixture variant whose only whole-screen reference is an entry without a region
+- **WHEN** the reference is packed
+- **THEN** its file is `Index.reference.webp` or `Index-<variant>.reference.webp` in the fixture's folder, beside its snapshot
+- **AND** its sha256 is the one its manifest row names
 
-#### Scenario: Reference added or changed
+#### Scenario: Other reference committed flat
 
-- **GIVEN** a change that adds a reference or changes one
-- **WHEN** the change is committed
-- **THEN** the manifest row, the snapshot image and the score row are committed
-- **AND** the reference's bytes are not
+- **GIVEN** a reference that is a region, or one of several whole-screen references its fixture variant holds
+- **WHEN** the reference is packed
+- **THEN** its file is `<id>.webp` in the references folder beside the manifest
+
+#### Scenario: Reference fetched or recorded
+
+- **GIVEN** a reference a screen is judged against, sourced from a wiki file or a recording's frame
+- **WHEN** the reference is packed
+- **THEN** its manifest row names the wiki file, or the recording and the second, that the reference comes from
+
+### Requirement: A reference is read from its committed file
+
+A command that reads a reference SHALL read the committed file, and a reference whose file is missing SHALL stop the command with the id and the path to add.
+
+#### Scenario: Reference read by a command
+
+- **GIVEN** a map entry with a reference whose committed file is on disk
+- **WHEN** `compare`, `verify`, `approve` or a passes command reads the reference
+- **THEN** it reads the committed file, with nothing fetched
+
+#### Scenario: Reference file missing
+
+- **GIVEN** a map entry with a reference whose committed file is not on disk
+- **WHEN** a command reads the reference
+- **THEN** the command fails naming the id and the path to add
+- **AND** no comparison is scored against another image
+
+### Requirement: Committed reference files match their manifest rows
+
+Every committed reference file SHALL be named by a map entry or a manifest plate row, SHALL hash to the sha256 its row holds, and SHALL be no larger than 7,500,000 bytes.
+
+#### Scenario: Committed file differs from its row
+
+- **GIVEN** a committed reference file whose bytes hash to other than its row's sha256
+- **WHEN** the committed-references test runs
+- **THEN** the test fails naming the reference
+
+#### Scenario: Committed file named by nothing
+
+- **GIVEN** a committed WebP file that no map entry or plate row names
+- **WHEN** the committed-references test runs
+- **THEN** the test fails naming the file
+
+#### Scenario: Committed file over the ceiling
+
+- **GIVEN** a committed reference file larger than 7,500,000 bytes
+- **WHEN** the committed-references test runs
+- **THEN** the test fails naming the file
 
 ### Requirement: Published sources are searched before the game is recorded
 

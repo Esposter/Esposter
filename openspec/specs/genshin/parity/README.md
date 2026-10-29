@@ -9,7 +9,7 @@ flowchart TD
   WIKI[Wiki images and animations] --> FETCH[fetch]
   GAME[The installed game] --> CAP[still / record]
   CAP --> SAMPLE[Labelled screenshots sampled by hand, outside the repository]
-  FETCH --> REF[(References, hashed objects in the game-data container)]
+  FETCH --> REF[(References, committed as lossless WebP in the repository)]
   SAMPLE --> REF
   REF --> TRACE[trace: a mark as one SVG path, full resolution]
   TRACE --> SCREEN[Screen component and its fixture, in the world package]
@@ -41,7 +41,7 @@ The steps are the commands of `scripts/src/services/genshinParity/commands/` (`g
 
 ## Shapes come from the game's assets
 
-The interface is rebuilt from screenshots, which its overlay compare holds exactly (`scripts/src/services/genshinParity/commands/overlayCommand.ts`, see Open); a scene's towers, doors and profiles come from the installed game's files. AnimeStudio exports them with the game closed into the references folder, outside the repository like every other reference (`scripts/src/services/genshinAssets/namecards/exportNamecards.ts`, `{data-root}/genshin-parity/extracted/`), and a transform fits our own kits' parameters to them (`scripts/src/services/genshinAssets/fit/fitLoginTowers.ts`, `scripts/src/services/genshinAssets/fit/fitLoginDoor.ts` and `scripts/src/services/genshinAssets/fit/fitLatheProfile.ts`), so only numbers of ours ship ([derived assets](../derived-assets/design.md)).
+The interface is rebuilt from screenshots, which its overlay compare holds exactly (`scripts/src/services/genshinParity/commands/overlayCommand.ts`, see Open); a scene's towers, doors and profiles come from the installed game's files. AnimeStudio exports them with the game closed into `{data-root}/genshin-parity/extracted/`, outside the repository (`scripts/src/services/genshinAssets/namecards/exportNamecards.ts`), and a transform fits our own kits' parameters to them (`scripts/src/services/genshinAssets/fit/fitLoginTowers.ts`, `scripts/src/services/genshinAssets/fit/fitLoginDoor.ts` and `scripts/src/services/genshinAssets/fit/fitLatheProfile.ts`), so only numbers of ours ship ([derived assets](../derived-assets/design.md)).
 
 ## Open
 

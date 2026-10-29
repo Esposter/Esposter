@@ -11,7 +11,7 @@ The loop and why it is shaped this way are `openspec/specs/genshin/parity/README
 
 Each direction's full statement, with the pointers it carries, is `references/settled-directions.md`.
 
-- **Committing a reference's bytes** — a reference's image is stored once, by its hash, in the public game-data container and never enters git; the committed manifest names it, and a change that adds one runs `references pack` and commits the manifest row with its snapshot and score row (`references/settled-directions.md`).
+- **Committing a reference's bytes** — a reference is committed to git as lossless WebP, beside its fixture variant's snapshot or flat in `packages/genshin-world/parity/references/`; `compare` and every command that reads a reference read that file, and a missing one is an error. The manifest names each file's hash, and `references pack` writes the file and its row (`references/settled-directions.md`).
 - **Asking the user to record what is published** — a search (wiki, installed game, community dump, public video) comes first, and a value nothing published shows is estimated, never recorded on request.
 - **Waiting on the user for a recording, or asking for one** — users do not record for this workflow; a value comes from a still, a public clip or an extracted animation, else a provisional estimate ships.
 - **Getting past a wiki file host's challenge with header tricks or browser impersonation** — a wiki file is fetched over `node:https` with the wiki's Referer, which the host serves; Node's `fetch` (undici) is answered with a Cloudflare challenge even with the Referer, so no further header or user agent is added to get past it.
@@ -19,7 +19,7 @@ Each direction's full statement, with the pointers it carries, is `references/se
 - **Sending input to the game** — the tool records the game and the user plays, since injected input is botting under the game's terms.
 - **Rendering a screen through Nuxt to check it** — the parity page renders a screen on plain Vite, and a Nuxt build per check is too slow.
 - **A hand-kept list of screens** — a screen is on the page and in the suite by its `Index.fixture.ts`, never by a list.
-- **Shipping or committing anything taken from the game's files** — only the generated text slices are committed; images, audio, models, meshes and tables never are.
+- **Shipping or committing anything taken from the game's files** — only the generated text slices and the reference screenshots are committed; audio, models, meshes and tables never are.
 - **Decoding the Excel and BinOutput tables through the code metadata** — the only public decoder is pinned to an older patch, so the tables stay the community dump's.
 - **Injecting anything into the running game** — the install's offline code metadata may be read, and the running game is never touched.
 - **A `genshin-assets` package** — nothing extracted but game text is committed, so such a package would be empty; the packages stay three.

@@ -4,13 +4,12 @@ import type { ParityReference } from "#src/models/genshinParity/shared/ParityRef
 import { getComponentNames } from "#src/services/genshinParity/fixtures/getComponentNames";
 import { getFixtureScreenRow } from "#src/services/genshinParity/fixtures/getFixtureScreenRow";
 import { getFixtureVariantNames } from "#src/services/genshinParity/fixtures/getFixtureVariantNames";
+import { getFixtureImageName } from "#src/services/genshinParity/fixtures/getFixtureImageName";
 import {
   BARREL_FILE_NAME,
   COMPONENT_FILE_NAME,
   FIXTURE_FILE_NAME,
-  IMAGE_NAME,
 } from "#src/services/genshinParity/fixtures/constants";
-import { FIXTURE_VARIANT_SEPARATOR } from "genshin-interface/constants";
 import { existsSync } from "node:fs";
 import { readFile, readdir } from "node:fs/promises";
 import { basename, dirname, join, sep } from "node:path";
@@ -33,10 +32,9 @@ export const listFixtureScreens = async (
       if (name === undefined) return [];
       const variants = getFixtureVariantNames(await readFile(join(componentsDirectory, file), "utf8"));
       return ["", ...variants].map((variant) => {
-        const imageName = variant === "" ? IMAGE_NAME : `${IMAGE_NAME}${FIXTURE_VARIANT_SEPARATOR}${variant}`;
         return getFixtureScreenRow({
           directory,
-          imageExists: existsSync(join(componentsDirectory, directory, `${imageName}.png`)),
+          imageExists: existsSync(join(componentsDirectory, directory, `${getFixtureImageName(variant)}.png`)),
           name,
           referenceMap,
           reportMeans,

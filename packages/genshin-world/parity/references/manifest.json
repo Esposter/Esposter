@@ -855,13 +855,6 @@
       "attribution": { "recording": "archive-screen.mkv", "second": 19.5 },
       "bytes": 1258666,
       "capturedAt": "2026-10-29T04:12:08.287Z",
-      "cleanPlate": {
-        "bytes": 1076544,
-        "digest": "dd17f005bf418f65",
-        "height": 1080,
-        "sha256": "145140c0140ed49a6d849f46bfcb5d052cdd294f876a339f1d6a5fa7fc423dc2",
-        "width": 1920
-      },
       "height": 1080,
       "id": "archive-screen",
       "kind": "recording-frame",
@@ -874,13 +867,6 @@
       "attribution": { "recording": "session-2.mp4", "second": 157.5 },
       "bytes": 1717824,
       "capturedAt": "2026-10-08T14:33:00.742Z",
-      "cleanPlate": {
-        "bytes": 1105658,
-        "digest": "198829ab7fe695d0",
-        "height": 1440,
-        "sha256": "53fb93307013bc1178d0fd38d22e1b200c86cf1d6fcc39835c6c42a9cad69dec",
-        "width": 3440
-      },
       "height": 1440,
       "id": "character-artifacts",
       "kind": "recording-frame",
@@ -893,13 +879,6 @@
       "attribution": { "recording": "session-2.mp4", "second": 157.5 },
       "bytes": 1717824,
       "capturedAt": "2026-10-08T14:38:10.566Z",
-      "cleanPlate": {
-        "bytes": 1105658,
-        "digest": "198829ab7fe695d0",
-        "height": 1440,
-        "sha256": "53fb93307013bc1178d0fd38d22e1b200c86cf1d6fcc39835c6c42a9cad69dec",
-        "width": 3440
-      },
       "height": 1440,
       "id": "character-artifacts-tabs",
       "kind": "recording-frame",
@@ -912,13 +891,6 @@
       "attribution": { "recording": "session-2.mp4", "second": 155 },
       "bytes": 1386030,
       "capturedAt": "2026-10-11T22:02:50.300Z",
-      "cleanPlate": {
-        "bytes": 955334,
-        "digest": "4e5569eacfd04b2e",
-        "height": 1440,
-        "sha256": "fff1829eb4e3b4f6c52b69ce86f2502537bf3ed3c5a41bcf6716a1bfde0d6222",
-        "width": 3440
-      },
       "height": 1440,
       "id": "character-attributes",
       "kind": "recording-frame",
@@ -931,13 +903,6 @@
       "attribution": { "recording": "session-2.mp4", "second": 155 },
       "bytes": 1386030,
       "capturedAt": "2026-10-11T22:02:50.264Z",
-      "cleanPlate": {
-        "bytes": 955334,
-        "digest": "4e5569eacfd04b2e",
-        "height": 1440,
-        "sha256": "fff1829eb4e3b4f6c52b69ce86f2502537bf3ed3c5a41bcf6716a1bfde0d6222",
-        "width": 3440
-      },
       "height": 1440,
       "id": "character-attributes-panel",
       "kind": "recording-frame",
@@ -950,13 +915,6 @@
       "attribution": { "recording": "session-2.mp4", "second": 155 },
       "bytes": 1386030,
       "capturedAt": "2026-10-11T22:02:50.336Z",
-      "cleanPlate": {
-        "bytes": 955334,
-        "digest": "4e5569eacfd04b2e",
-        "height": 1440,
-        "sha256": "fff1829eb4e3b4f6c52b69ce86f2502537bf3ed3c5a41bcf6716a1bfde0d6222",
-        "width": 3440
-      },
       "height": 1440,
       "id": "character-attributes-tabs",
       "kind": "recording-frame",
@@ -969,13 +927,6 @@
       "attribution": { "recording": "session-2.mp4", "second": 155 },
       "bytes": 1386030,
       "capturedAt": "2026-10-11T22:02:50.241Z",
-      "cleanPlate": {
-        "bytes": 955334,
-        "digest": "4e5569eacfd04b2e",
-        "height": 1440,
-        "sha256": "fff1829eb4e3b4f6c52b69ce86f2502537bf3ed3c5a41bcf6716a1bfde0d6222",
-        "width": 3440
-      },
       "height": 1440,
       "id": "character-attributes-top",
       "kind": "recording-frame",
@@ -988,13 +939,6 @@
       "attribution": { "recording": "session-2.mp4", "second": 158.3 },
       "bytes": 1360812,
       "capturedAt": "2026-10-08T14:33:00.763Z",
-      "cleanPlate": {
-        "bytes": 925868,
-        "digest": "29df8bdb29f51682",
-        "height": 1440,
-        "sha256": "2ef812bf741ec2c8c62a6f469519204b4ae236b5c97f70152fbda7756e8e66dc",
-        "width": 3440
-      },
       "height": 1440,
       "id": "character-constellation",
       "kind": "recording-frame",
@@ -1007,13 +951,6 @@
       "attribution": { "recording": "session-2.mp4", "second": 158.3 },
       "bytes": 1360812,
       "capturedAt": "2026-10-08T14:38:10.569Z",
-      "cleanPlate": {
-        "bytes": 925868,
-        "digest": "29df8bdb29f51682",
-        "height": 1440,
-        "sha256": "2ef812bf741ec2c8c62a6f469519204b4ae236b5c97f70152fbda7756e8e66dc",
-        "width": 3440
-      },
       "height": 1440,
       "id": "character-constellation-tabs",
       "kind": "recording-frame",
@@ -1026,13 +963,6 @@
       "attribution": { "recording": "session-2.mp4", "second": 159 },
       "bytes": 1294768,
       "capturedAt": "2026-10-08T13:46:57.013Z",
-      "cleanPlate": {
-        "bytes": 903650,
-        "digest": "68c43de0c784d546",
-        "height": 1440,
-        "sha256": "b660b109d1dbacfa49da345a741e6eaac9889580fcfb8f45f0c817d7ab0b4e8d",
-        "width": 3440
-      },
       "height": 1440,
       "id": "character-talents",
       "kind": "recording-frame",
@@ -1045,13 +975,6 @@
       "attribution": { "recording": "session-2.mp4", "second": 159 },
       "bytes": 1294768,
       "capturedAt": "2026-10-08T13:46:57.019Z",
-      "cleanPlate": {
-        "bytes": 903650,
-        "digest": "68c43de0c784d546",
-        "height": 1440,
-        "sha256": "b660b109d1dbacfa49da345a741e6eaac9889580fcfb8f45f0c817d7ab0b4e8d",
-        "width": 3440
-      },
       "height": 1440,
       "id": "character-talents-tabs",
       "kind": "recording-frame",
@@ -1064,13 +987,6 @@
       "attribution": { "recording": "session-2.mp4", "second": 156 },
       "bytes": 1513312,
       "capturedAt": "2026-10-08T13:46:56.859Z",
-      "cleanPlate": {
-        "bytes": 1011226,
-        "digest": "883960070af3cd81",
-        "height": 1440,
-        "sha256": "9c9b96e02d921a28ea5a26d6ce44b6fd173f2e242ba2eb2557b4fb4623ca218e",
-        "width": 3440
-      },
       "height": 1440,
       "id": "character-weapons",
       "kind": "recording-frame",
@@ -1083,13 +999,6 @@
       "attribution": { "recording": "session-2.mp4", "second": 156 },
       "bytes": 1513312,
       "capturedAt": "2026-10-08T13:46:56.832Z",
-      "cleanPlate": {
-        "bytes": 1011226,
-        "digest": "883960070af3cd81",
-        "height": 1440,
-        "sha256": "9c9b96e02d921a28ea5a26d6ce44b6fd173f2e242ba2eb2557b4fb4623ca218e",
-        "width": 3440
-      },
       "height": 1440,
       "id": "character-weapons-tabs",
       "kind": "recording-frame",
@@ -1106,13 +1015,6 @@
       },
       "bytes": 297552,
       "capturedAt": "2026-10-29T04:00:31.932Z",
-      "cleanPlate": {
-        "bytes": 238180,
-        "digest": "4fa78b35aa4457be",
-        "height": 720,
-        "sha256": "cfe8a96d9495b115b1856dec02c864c6578cf52857a5791bdfec43f995429c36",
-        "width": 1280
-      },
       "height": 720,
       "id": "cooking-screen",
       "kind": "recording-frame",
@@ -1139,13 +1041,6 @@
       "attribution": { "recording": "yt-nWBqOXWZuFg.mp4", "second": 19, "videoId": "nWBqOXWZuFg" },
       "bytes": 411900,
       "capturedAt": "2026-10-08T13:28:45.138Z",
-      "cleanPlate": {
-        "bytes": 410190,
-        "digest": "72521c167fdc01c2",
-        "height": 720,
-        "sha256": "960b7f9dbd4f6504caf91ce9a4d11c762988496ce6e96a431c4f53d11402c1ad",
-        "width": 1280
-      },
       "height": 720,
       "id": "dialogue-choices-line",
       "kind": "recording-frame",
@@ -1158,13 +1053,6 @@
       "attribution": { "recording": "yt-nWBqOXWZuFg.mp4", "second": 19, "videoId": "nWBqOXWZuFg" },
       "bytes": 411900,
       "capturedAt": "2026-10-08T13:28:55.738Z",
-      "cleanPlate": {
-        "bytes": 405596,
-        "digest": "0540a7377b927558",
-        "height": 720,
-        "sha256": "40ec2d20b59ce429e914b52ec97c697219e3e2734f14970bce5c754a13fb9eb0",
-        "width": 1280
-      },
       "height": 720,
       "id": "dialogue-choices-replies",
       "kind": "recording-frame",
@@ -1177,13 +1065,6 @@
       "attribution": { "recording": "yt-nWBqOXWZuFg.mp4", "second": 19, "videoId": "nWBqOXWZuFg" },
       "bytes": 411900,
       "capturedAt": "2026-10-08T13:28:52.848Z",
-      "cleanPlate": {
-        "bytes": 411142,
-        "digest": "51522e6d2532fd6b",
-        "height": 720,
-        "sha256": "6ae29412141e682787c03f80d8c1ce9ba1b755b69b424403ada6baa848c6e576",
-        "width": 1280
-      },
       "height": 720,
       "id": "dialogue-choices-speaker",
       "kind": "recording-frame",
@@ -1196,13 +1077,6 @@
       "attribution": { "recording": "yt-nWBqOXWZuFg.mp4", "second": 23, "videoId": "nWBqOXWZuFg" },
       "bytes": 423694,
       "capturedAt": "2026-10-08T13:28:55.736Z",
-      "cleanPlate": {
-        "bytes": 410266,
-        "digest": "829c0981e28214eb",
-        "height": 720,
-        "sha256": "53321a30bb2622fdb0e49eeae160449898d9bfd4f1e396d40a279c00e55930c3",
-        "width": 1280
-      },
       "height": 720,
       "id": "dialogue-line",
       "kind": "recording-frame",
@@ -1215,13 +1089,6 @@
       "attribution": { "recording": "yt-nWBqOXWZuFg.mp4", "second": 29, "videoId": "nWBqOXWZuFg" },
       "bytes": 397392,
       "capturedAt": "2026-10-08T13:28:55.738Z",
-      "cleanPlate": {
-        "bytes": 395426,
-        "digest": "3fc664dcbc24e7dd",
-        "height": 720,
-        "sha256": "a71388b6b543fcbd8a7b709a6199251dbc667071794ac8e1e08d38a5a7ee42a8",
-        "width": 1280
-      },
       "height": 720,
       "id": "dialogue-paimon-line",
       "kind": "recording-frame",
@@ -1260,13 +1127,6 @@
       "attribution": { "recording": "yt-fxIjhlV3vUA-expedition-screen.mp4", "second": 26, "videoId": "fxIjhlV3vUA" },
       "bytes": 1108204,
       "capturedAt": "2026-10-25T23:52:33.584Z",
-      "cleanPlate": {
-        "bytes": 1057356,
-        "digest": "c0423d42a582730a",
-        "height": 1080,
-        "sha256": "81baef0bb7d4f7dab78a363c469a58ce6b560bab522000992901b66870b73a73",
-        "width": 1920
-      },
       "height": 1080,
       "id": "expedition-screen",
       "kind": "recording-frame",
@@ -1279,13 +1139,6 @@
       "attribution": { "recording": "yt-iKr-nF1P7xQ-fishing-reel.mkv", "second": 52.5, "videoId": "iKr-nF1P7xQ" },
       "bytes": 701392,
       "capturedAt": "2026-10-29T04:12:08.295Z",
-      "cleanPlate": {
-        "bytes": 694060,
-        "digest": "2202e1d56247d0a9",
-        "height": 1080,
-        "sha256": "a9a4107d9bc6d3647aaca332c01cfafbda8a3d8a28207c3692314021fbdac92e",
-        "width": 1920
-      },
       "height": 1080,
       "id": "fishing-screen",
       "kind": "recording-frame",
@@ -1298,13 +1151,6 @@
       "attribution": { "recording": "yt-AVnbm8fESr0-forge-screen.mp4", "second": 32, "videoId": "AVnbm8fESr0" },
       "bytes": 489400,
       "capturedAt": "2026-10-12T02:00:03.620Z",
-      "cleanPlate": {
-        "bytes": 339070,
-        "digest": "8a3ec89962c50056",
-        "height": 886,
-        "sha256": "55b2450ba44cef04e05e883b765b27c7480ee80bc40127851d79670aa75dbf2b",
-        "width": 1920
-      },
       "height": 886,
       "id": "forge-screen",
       "kind": "recording-frame",
@@ -1317,13 +1163,6 @@
       "attribution": { "recording": "yt-AVnbm8fESr0-forge-screen.mp4", "second": 50.5, "videoId": "AVnbm8fESr0" },
       "bytes": 422090,
       "capturedAt": "2026-10-29T04:00:16.389Z",
-      "cleanPlate": {
-        "bytes": 280242,
-        "digest": "12014d6b350a6bd2",
-        "height": 886,
-        "sha256": "74c4cba8277525e7dc6e0af8b1d1c1e16934372aca7f581062aeb68da801fe48",
-        "width": 1920
-      },
       "height": 886,
       "id": "forge-screen-ores-done",
       "kind": "recording-frame",
@@ -1336,13 +1175,6 @@
       "attribution": { "recording": "yt-AVnbm8fESr0-forge-screen.mp4", "second": 48, "videoId": "AVnbm8fESr0" },
       "bytes": 429096,
       "capturedAt": "2026-10-29T04:00:15.148Z",
-      "cleanPlate": {
-        "bytes": 289902,
-        "digest": "dc6af704e745b565",
-        "height": 886,
-        "sha256": "0557b7ec64b7ef464702377e33bc5bf950ff55a68f65cc3638a95b4575e22b0f",
-        "width": 1920
-      },
       "height": 886,
       "id": "forge-screen-queues",
       "kind": "recording-frame",
@@ -1418,13 +1250,6 @@
       "attribution": { "recording": "world-pickup.mkv", "second": 20 },
       "bytes": 1025804,
       "capturedAt": "2026-10-25T23:52:33.596Z",
-      "cleanPlate": {
-        "bytes": 1022264,
-        "digest": "0270944be00d9390",
-        "height": 1080,
-        "sha256": "79534df6b7b973c390716fb8a3a94ad54f1e4d4f941ec46f267f46e8c56ab5d9",
-        "width": 1920
-      },
       "height": 1080,
       "id": "hud-paimon-button",
       "kind": "recording-frame",
@@ -1437,13 +1262,6 @@
       "attribution": { "recording": "yt-hRR2yoP3uY0-world-stamina.mp4", "second": 30, "videoId": "hRR2yoP3uY0" },
       "bytes": 1022366,
       "capturedAt": "2026-10-09T22:16:26.929Z",
-      "cleanPlate": {
-        "bytes": 1021350,
-        "digest": "755413bb24f2e345",
-        "height": 1080,
-        "sha256": "f84dc07974340f4cd2eaea2e7a856f09275b847cf1c0eee318ce8758e4f09cbf",
-        "width": 1920
-      },
       "height": 1080,
       "id": "hud-stamina-climb",
       "kind": "recording-frame",
@@ -1456,13 +1274,6 @@
       "attribution": { "recording": "world-pickup.mkv", "second": 20 },
       "bytes": 1025804,
       "capturedAt": "2026-10-11T02:03:54.416Z",
-      "cleanPlate": {
-        "bytes": 1020972,
-        "digest": "41d08c84ca86bef4",
-        "height": 1080,
-        "sha256": "8bc584a1e0fa12e63871d2344f8db48c66f2539c1de44f8cae4927ed444b3b53",
-        "width": 1920
-      },
       "height": 1080,
       "id": "hud-world-keys",
       "kind": "recording-frame",
@@ -1475,13 +1286,6 @@
       "attribution": { "recording": "world-pickup.mkv", "second": 70 },
       "bytes": 779734,
       "capturedAt": "2026-10-08T08:00:48.747Z",
-      "cleanPlate": {
-        "bytes": 647262,
-        "digest": "a622850ff0cd839f",
-        "height": 934,
-        "sha256": "8a8a4a200a54f4b300a112406f876a887b37ae43ae8726b19471d7b81377db01",
-        "width": 1920
-      },
       "height": 934,
       "id": "hud-world-pickup",
       "kind": "recording-frame",
@@ -1508,13 +1312,6 @@
       "attribution": { "recording": "yt-UBNImta_dWs-prompt-scroll.mp4", "second": 23, "videoId": "UBNImta_dWs" },
       "bytes": 1400568,
       "capturedAt": "2026-10-11T22:07:51.930Z",
-      "cleanPlate": {
-        "bytes": 1370318,
-        "digest": "401837b33d0bc06f",
-        "height": 1080,
-        "sha256": "670049aa10a835235edf0cd73ec2190a28dc080c53f5fd999a6241ef8f62c717",
-        "width": 1920
-      },
       "height": 1080,
       "id": "interaction-prompts-jueyun-chili",
       "kind": "recording-frame",
@@ -1527,13 +1324,6 @@
       "attribution": { "recording": "world-pickup.mkv", "second": 9 },
       "bytes": 1468462,
       "capturedAt": "2026-10-08T08:01:34.362Z",
-      "cleanPlate": {
-        "bytes": 1456888,
-        "digest": "dfcde7a72ef6e547",
-        "height": 1080,
-        "sha256": "6e1e9227b8091951c1e5f07f1d72dfeb29d75429a38ee818012ad36d8220c4c4",
-        "width": 1920
-      },
       "height": 1080,
       "id": "interaction-prompts-pickup",
       "kind": "recording-frame",
@@ -1546,13 +1336,6 @@
       "attribution": { "recording": "yt-_agTJviXj7s-bag.mp4", "second": 58, "videoId": "_agTJviXj7s" },
       "bytes": 720442,
       "capturedAt": "2026-10-08T08:09:15.517Z",
-      "cleanPlate": {
-        "bytes": 708730,
-        "digest": "b61bf58ad9abb515",
-        "height": 1080,
-        "sha256": "b9f7cf3d0fdb635d3387655674c2558b13fe712bc69ffa48b06078e4eeac1897",
-        "width": 1920
-      },
       "height": 1080,
       "id": "inventory-food",
       "kind": "recording-frame",
@@ -1565,13 +1348,6 @@
       "attribution": { "recording": "yt-_agTJviXj7s-bag.mp4", "second": 30, "videoId": "_agTJviXj7s" },
       "bytes": 880478,
       "capturedAt": "2026-10-08T07:06:24.023Z",
-      "cleanPlate": {
-        "bytes": 412238,
-        "digest": "0c6414f0dbc719f4",
-        "height": 1080,
-        "sha256": "c8f407f6e03ad0ddae4abcce58aeda3e6f186c54311a8578696f5662ca5088b8",
-        "width": 1920
-      },
       "height": 1080,
       "id": "inventory-weapons",
       "kind": "recording-frame",
@@ -1710,13 +1486,6 @@
       "attribution": { "recording": "bili-av532052219-mainland-launch.mp4", "second": 12.5 },
       "bytes": 709386,
       "capturedAt": "2026-10-01T15:00:18.000Z",
-      "cleanPlate": {
-        "bytes": 701850,
-        "digest": "cfc4cbabb6809f88",
-        "height": 1080,
-        "sha256": "5b61103ae4289e7da3ee47b8a58ae7c8f3635e7e3ee20233f52425fe4234f376",
-        "width": 1920
-      },
       "height": 1080,
       "id": "login-interface-mainland-rating",
       "kind": "recording-frame",
@@ -1867,13 +1636,6 @@
       "attribution": { "recording": "yt-greLeGJE-Jg-party-setup.mp4", "second": 38, "videoId": "greLeGJE-Jg" },
       "bytes": 835144,
       "capturedAt": "2026-10-29T04:12:08.329Z",
-      "cleanPlate": {
-        "bytes": 539044,
-        "digest": "93445ed1e3d3d8ec",
-        "height": 1080,
-        "sha256": "5d87d01e22ed91ed2b3dc9029df2d63867c29076de5745395f8b529c87ea6f6b",
-        "width": 1920
-      },
       "height": 1080,
       "id": "party-screen",
       "kind": "recording-frame",
@@ -1915,13 +1677,6 @@
       },
       "bytes": 635098,
       "capturedAt": "2026-10-08T05:52:38.368Z",
-      "cleanPlate": {
-        "bytes": 565162,
-        "digest": "b39b90b40ffdc26a",
-        "height": 1080,
-        "sha256": "9709097fd63b2218dce9247cbdb1c12e0edfe717e5009095e043e4c6d4250b74",
-        "width": 1920
-      },
       "height": 1080,
       "id": "quest-screen",
       "kind": "wiki",
@@ -1942,13 +1697,6 @@
       },
       "bytes": 635098,
       "capturedAt": "2026-10-11T05:20:43.036Z",
-      "cleanPlate": {
-        "bytes": 630152,
-        "digest": "0c0f8a0bee8ad318",
-        "height": 1080,
-        "sha256": "7aa8be7607032e31cc38bdab48782e926302c746b517eb803679a71faac27a20",
-        "width": 1920
-      },
       "height": 1080,
       "id": "quest-screen-details",
       "kind": "wiki",
@@ -1969,13 +1717,6 @@
       },
       "bytes": 635098,
       "capturedAt": "2026-10-11T05:20:43.036Z",
-      "cleanPlate": {
-        "bytes": 565162,
-        "digest": "b39b90b40ffdc26a",
-        "height": 1080,
-        "sha256": "9709097fd63b2218dce9247cbdb1c12e0edfe717e5009095e043e4c6d4250b74",
-        "width": 1920
-      },
       "height": 1080,
       "id": "quest-screen-header",
       "kind": "wiki",
@@ -1996,13 +1737,6 @@
       },
       "bytes": 635098,
       "capturedAt": "2026-10-11T05:20:43.035Z",
-      "cleanPlate": {
-        "bytes": 565162,
-        "digest": "b39b90b40ffdc26a",
-        "height": 1080,
-        "sha256": "9709097fd63b2218dce9247cbdb1c12e0edfe717e5009095e043e4c6d4250b74",
-        "width": 1920
-      },
       "height": 1080,
       "id": "quest-screen-list",
       "kind": "wiki",
@@ -2032,13 +1766,6 @@
       "attribution": { "recording": "yt-5EmJX_RyuY8-menu-settings.mp4", "second": 178, "videoId": "5EmJX_RyuY8" },
       "bytes": 367540,
       "capturedAt": "2026-10-11T04:19:11.511Z",
-      "cleanPlate": {
-        "bytes": 274150,
-        "digest": "d34432631889caed",
-        "height": 1080,
-        "sha256": "39686a5bfa0dbeee6dd423fce7107946794d703a83e87f3d327cb5e314f76fda",
-        "width": 1920
-      },
       "height": 1080,
       "id": "settings-audio-rows",
       "kind": "recording-frame",
@@ -2054,13 +1781,6 @@
       },
       "bytes": 377402,
       "capturedAt": "2026-10-08T07:24:05.918Z",
-      "cleanPlate": {
-        "bytes": 356262,
-        "digest": "2da94387ce78a2aa",
-        "height": 1050,
-        "sha256": "46732bb006fd3b9c5c90d0ff77e4acc0c88a92c5d9bc02d4a4bceca30f3e13c0",
-        "width": 1680
-      },
       "height": 1050,
       "id": "settings-graphics",
       "kind": "wiki",
@@ -2072,13 +1792,6 @@
       "attribution": { "recording": "yt-5EmJX_RyuY8-menu-settings.mp4", "second": 144.5, "videoId": "5EmJX_RyuY8" },
       "bytes": 422272,
       "capturedAt": "2026-10-11T03:43:22.098Z",
-      "cleanPlate": {
-        "bytes": 319272,
-        "digest": "0efe9ffa3bbf04f1",
-        "height": 1080,
-        "sha256": "c4b1a3899c803a287d8af0b4b23484e61c656732b87feca5eacfcd1226b49363",
-        "width": 1920
-      },
       "height": 1080,
       "id": "settings-graphics-rows",
       "kind": "recording-frame",
@@ -2091,13 +1804,6 @@
       "attribution": { "recording": "yt-Osaylns8nyk-spiral-abyss-chamber.mp4", "second": 3, "videoId": "Osaylns8nyk" },
       "bytes": 603146,
       "capturedAt": "2026-10-29T04:03:48.012Z",
-      "cleanPlate": {
-        "bytes": 448074,
-        "digest": "a82034c7a702c4b2",
-        "height": 1080,
-        "sha256": "7b431bc1f9650b375a54942eea8dd783dad2212140382f612fd25fb1de7eb909",
-        "width": 1920
-      },
       "height": 1080,
       "id": "spiral-abyss-benediction",
       "kind": "recording-frame",
@@ -2161,13 +1867,6 @@
       "attribution": { "recording": "yt-jXrYcFHiVnI-weapon-levelling.mkv", "second": 1.93, "videoId": "jXrYcFHiVnI" },
       "bytes": 453716,
       "capturedAt": "2026-10-29T04:09:34.662Z",
-      "cleanPlate": {
-        "bytes": 276112,
-        "digest": "c4c62ccc390466c4",
-        "height": 864,
-        "sha256": "d710035bc2eade41a45ec02c8f21c27c38d4fef4e5a1ed63f0695ae3f8bdc340",
-        "width": 1920
-      },
       "height": 864,
       "id": "weapon-screen",
       "kind": "recording-frame",
@@ -2180,13 +1879,6 @@
       "attribution": { "recording": "yt-jXrYcFHiVnI-weapon-levelling.mkv", "second": 12.9, "videoId": "jXrYcFHiVnI" },
       "bytes": 375166,
       "capturedAt": "2026-10-29T04:07:36.835Z",
-      "cleanPlate": {
-        "bytes": 239034,
-        "digest": "97fb503a9d686b8c",
-        "height": 864,
-        "sha256": "3c8e7d9510453000927597f0807cc5be05d98e0bec43c0431097c2da37b49811",
-        "width": 1920
-      },
       "height": 864,
       "id": "weapon-screen-ascend",
       "kind": "recording-frame",
@@ -2199,13 +1891,6 @@
       "attribution": { "recording": "yt-jXrYcFHiVnI-weapon-levelling.mkv", "second": 91, "videoId": "jXrYcFHiVnI" },
       "bytes": 457240,
       "capturedAt": "2026-10-29T04:07:36.842Z",
-      "cleanPlate": {
-        "bytes": 263224,
-        "digest": "3f2120512f410586",
-        "height": 864,
-        "sha256": "778d7b57ea49410928a9d7a42ab758aca35c622b592d6ccf94e4852ffc28a57c",
-        "width": 1920
-      },
       "height": 864,
       "id": "weapon-screen-refine",
       "kind": "recording-frame",
@@ -2230,13 +1915,6 @@
       "attribution": { "recording": "yt-uhCW3MZTgL8.mp4", "second": 78, "videoId": "uhCW3MZTgL8" },
       "bytes": 1084258,
       "capturedAt": "2026-10-12T01:56:03.511Z",
-      "cleanPlate": {
-        "bytes": 466882,
-        "digest": "037c2ce3c9bc518f",
-        "height": 1080,
-        "sha256": "1face9f64fb24f1156f1ff7ca937f51af6dca14ad319268317d5f396685bf6d9",
-        "width": 1920
-      },
       "height": 1080,
       "id": "wish-screen",
       "kind": "recording-frame",

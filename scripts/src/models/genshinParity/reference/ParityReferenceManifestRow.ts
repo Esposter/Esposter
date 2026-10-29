@@ -1,19 +1,16 @@
 import type { ParityReferenceAttribution } from "#src/models/genshinParity/reference/ParityReferenceAttribution";
-import type { ParityReferenceManifestCleanPlate } from "#src/models/genshinParity/reference/ParityReferenceManifestCleanPlate";
 import type { ParityReferenceManifestImage } from "#src/models/genshinParity/reference/ParityReferenceManifestImage";
 
 import { parityReferenceAttributionSchema } from "#src/models/genshinParity/reference/ParityReferenceAttribution";
 import { ParityReferenceKind } from "#src/models/genshinParity/reference/ParityReferenceKind";
-import { parityReferenceManifestCleanPlateSchema } from "#src/models/genshinParity/reference/ParityReferenceManifestCleanPlate";
 import { parityReferenceManifestImageSchema } from "#src/models/genshinParity/reference/ParityReferenceManifestImage";
 import { z } from "zod";
 
-// One reference, by its id: its main image as stored, its plate screenshot and clean plate when its entry has them, and
-// what it was drawn from and when. Every stored image is named by the hash of its bytes, so identical bytes are one object
+// One reference, by its id: its committed image's hash and dimensions, its plate when its entry has one, and what it was
+// drawn from and when. The committed file is checked against the hash of its bytes, so a changed file reads as a changed row
 export interface ParityReferenceManifestRow extends ParityReferenceManifestImage {
   attribution: ParityReferenceAttribution;
   capturedAt: string;
-  cleanPlate?: ParityReferenceManifestCleanPlate;
   clientBuild?: string;
   id: string;
   kind: ParityReferenceKind;
@@ -28,7 +25,6 @@ export const parityReferenceManifestRowSchema: z.ZodType<ParityReferenceManifest
   parityReferenceManifestImageSchema.extend({
     attribution: parityReferenceAttributionSchema,
     capturedAt: z.iso.datetime(),
-    cleanPlate: parityReferenceManifestCleanPlateSchema.optional(),
     clientBuild: z.string().min(1).optional(),
     id: z.string().min(1),
     kind: z.enum(ParityReferenceKind),

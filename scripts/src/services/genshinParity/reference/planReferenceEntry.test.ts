@@ -3,37 +3,25 @@ import type { ParityReferenceManifestRow } from "#src/models/genshinParity/refer
 import type { ReferenceEntryImage } from "#src/models/genshinParity/reference/ReferenceEntryImage";
 
 import { ParityReferenceKind } from "#src/models/genshinParity/reference/ParityReferenceKind";
-import type { planCleanPlateObject as basePlanCleanPlateObject } from "#src/services/genshinParity/reference/planCleanPlateObject";
 import { planReferenceEntry } from "#src/services/genshinParity/reference/planReferenceEntry";
 import type { readEntryImage as baseReadEntryImage } from "#src/services/genshinParity/reference/readEntryImage";
 import { getScratchPlatePath } from "#src/services/genshinParity/shared/getScratchPlatePath";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-const { planCleanPlateObject, readEntryImage } = vi.hoisted(() => ({
-  planCleanPlateObject: vi.fn<typeof basePlanCleanPlateObject>(),
-  readEntryImage: vi.fn<typeof baseReadEntryImage>(),
-}));
+const { readEntryImage } = vi.hoisted(() => ({ readEntryImage: vi.fn<typeof baseReadEntryImage>() }));
 
-vi.mock(import("#src/services/genshinParity/reference/planCleanPlateObject"), () => ({ planCleanPlateObject }));
 vi.mock(import("#src/services/genshinParity/reference/readEntryImage"), () => ({ readEntryImage }));
 
 describe(planReferenceEntry, () => {
   const ID = "a";
   const SIZE = 1;
+  const MAIN_PATH = "committed/a.webp";
   const OURS = "1".repeat(64);
   const COMMITTED = "0".repeat(64);
   const CAPTURED_AT = new Date(0);
   const MAIN_IMAGE = { bytes: SIZE, height: SIZE, sha256: OURS, width: SIZE };
   const LOCAL_PLATE_IMAGE = { bytes: SIZE, height: SIZE, sha256: "2".repeat(64), width: SIZE };
   const COMMITTED_PLATE_IMAGE = { bytes: SIZE, height: SIZE, sha256: "3".repeat(64), width: SIZE };
-  const COMMITTED_CLEAN_PLATE = {
-    bytes: SIZE,
-    digest: "4".repeat(64),
-    height: SIZE,
-    sha256: "5".repeat(64),
-    width: SIZE,
-  };
-  const FILLED_CLEAN_PLATE = { bytes: SIZE, digest: "6".repeat(64), height: SIZE, sha256: "7".repeat(64), width: SIZE };
   const REFERENCE: ParityReference = {
     plateSource: "plate frame at 2s",
     screen: "ArchiveScreen",
@@ -46,12 +34,12 @@ describe(planReferenceEntry, () => {
     isNew: true,
     read: () => Promise.resolve(Buffer.alloc(0)),
     sourceFormat: "webp",
+    stored: Buffer.alloc(SIZE),
   });
   const createCommittedRow = (): ParityReferenceManifestRow => ({
     attribution: {},
     bytes: SIZE,
     capturedAt: CAPTURED_AT.toISOString(),
-    cleanPlate: COMMITTED_CLEAN_PLATE,
     height: SIZE,
     id: ID,
     kind: ParityReferenceKind.Other,
@@ -65,45 +53,43 @@ describe(planReferenceEntry, () => {
     vi.resetAllMocks();
   });
 
-  test("a replace whose local plate is present takes the clean plate filled from it", async () => {
+  test("a replace whose local plate is present takes the plate from it and writes it", async () => {
     expect.hasAssertions();
 
     const plate = createEntry(LOCAL_PLATE_IMAGE);
     readEntryImage.mockImplementation((path) =>
       Promise.resolve(path === getScratchPlatePath(ID) ? plate : createEntry(MAIN_IMAGE)),
     );
-    planCleanPlateObject.mockResolvedValue({ cleanPlate: FILLED_CLEAN_PLATE, stored: Buffer.alloc(0) });
 
-    const { row } = await planReferenceEntry(ID, REFERENCE, undefined, createCommittedRow());
+    const { files, row } = await planReferenceEntry(ID, REFERENCE, MAIN_PATH, undefined, createCommittedRow());
 
     expect(row?.plate).toStrictEqual(LOCAL_PLATE_IMAGE);
-    expect(row?.cleanPlate).toStrictEqual(FILLED_CLEAN_PLATE);
+    expect(files.map(({ path }) => path)).toStrictEqual([MAIN_PATH, expect.stringContaining(`${ID}.plate.webp`)]);
   });
 
-  test("a replace whose local plate is absent keeps the committed plate and clean plate", async () => {
+  test("a replace whose local plate is absent keeps the committed plate and writes none", async () => {
     expect.hasAssertions();
 
     readEntryImage.mockImplementation((path) =>
       Promise.resolve(path === getScratchPlatePath(ID) ? undefined : createEntry(MAIN_IMAGE)),
     );
 
-    const { row } = await planReferenceEntry(ID, REFERENCE, undefined, createCommittedRow());
+    const { files, missing, row } = await planReferenceEntry(ID, REFERENCE, MAIN_PATH, undefined, createCommittedRow());
 
-    expect(planCleanPlateObject).not.toHaveBeenCalled();
     expect(row?.plate).toStrictEqual(COMMITTED_PLATE_IMAGE);
-    expect(row?.cleanPlate).toStrictEqual(COMMITTED_CLEAN_PLATE);
+    expect(missing).toStrictEqual([expect.stringContaining(`${ID}.plate`)]);
+    expect(files.map(({ path }) => path)).toStrictEqual([MAIN_PATH]);
   });
 
-  test("a replace with no committed row and no local plate leaves no plate or clean plate", async () => {
+  test("a replace with no committed row and no local plate leaves no plate", async () => {
     expect.hasAssertions();
 
     readEntryImage.mockImplementation((path) =>
       Promise.resolve(path === getScratchPlatePath(ID) ? undefined : createEntry(MAIN_IMAGE)),
     );
 
-    const { row } = await planReferenceEntry(ID, REFERENCE, undefined, undefined);
+    const { row } = await planReferenceEntry(ID, REFERENCE, MAIN_PATH, undefined, undefined);
 
     expect(row?.plate).toBeUndefined();
-    expect(row?.cleanPlate).toBeUndefined();
   });
 });

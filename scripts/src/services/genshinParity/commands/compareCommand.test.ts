@@ -37,8 +37,8 @@ vi.mock(import("#src/services/genshinParity/reference/readReferenceManifest"), (
     ]),
   ),
 }));
-vi.mock(import("#src/services/genshinParity/reference/readCachedReference"), () => ({
-  readCachedReference: vi.fn<() => Promise<string>>(() => Promise.resolve("")),
+vi.mock(import("#src/services/genshinParity/shared/getReferencePath"), () => ({
+  getReferencePath: vi.fn<() => Promise<string>>(() => Promise.resolve("")),
 }));
 vi.mock(import("#src/services/genshinParity/reference/writeParityScores"), () => ({
   writeParityScores: vi.fn<typeof writeParityScores>(),
