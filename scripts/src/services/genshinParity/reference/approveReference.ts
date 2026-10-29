@@ -1,4 +1,5 @@
 import { ParityReportRun } from "#src/models/genshinParity/reference/ParityReportRun";
+import { listFixtureScreens } from "#src/services/genshinParity/fixtures/listFixtureScreens";
 import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
 import { decideApprovalStatus } from "#src/services/genshinParity/reference/decideApprovalStatus";
 import { getApprovalValue } from "#src/services/genshinParity/reference/getApprovalValue";
@@ -7,7 +8,6 @@ import { readScore } from "#src/services/genshinParity/reference/readScore";
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
 import { GENSHIN_WORLD_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
-import { listFixtureScreens } from "#src/services/genshinParity/fixtures/listFixtureScreens";
 import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
@@ -77,7 +77,9 @@ export const approveReference = async (referenceId: string, variant?: string): P
   // Each run is its own process, and the suite takes the image as the first frame it settles on, so a render that is not
   // Settled across runs writes a different image each time: the image is written only when every run wrote the same bytes
   const renders: Buffer[] = [];
-  for (let run = 0; run < APPROVE_RUN_COUNT; run++) {
+  // The reason a run refused the approve, once one has: a refusal from any run, including one after an earlier run has already written the image, puts the prior image back
+  let refusal: string | undefined;
+  for (let run = 0; refusal === undefined && run < APPROVE_RUN_COUNT; run++) {
     // The suite's `-u` writes only the tests the filter selects, so no other screen's image moves
     const { status } = spawnSync(
       PNPM_FILE,
@@ -89,17 +91,16 @@ export const approveReference = async (referenceId: string, variant?: string): P
         stdio: "inherit",
       },
     );
-    if (status !== 0) throw new InvalidOperationError(Operation.Update, testName, `the visual suite exited ${status}`);
-    renders.push(readFileSync(imagePath));
+    if (status === 0) renders.push(readFileSync(imagePath));
+    else refusal = `the visual suite exited ${status}`;
   }
-  if (renders.some((render) => !render.equals(renders[0]))) {
+  const [firstRender] = renders;
+  if (refusal === undefined && firstRender && renders.some((render) => !render.equals(firstRender)))
+    refusal = `its render differs between ${APPROVE_RUN_COUNT} runs of the visual suite, so no image was written (the render is not settled)`;
+  if (refusal !== undefined) {
     if (previousImage === undefined) rmSync(imagePath, { force: true });
     else writeFileSync(imagePath, previousImage);
-    throw new InvalidOperationError(
-      Operation.Update,
-      testName,
-      `its render differs between ${APPROVE_RUN_COUNT} runs of the visual suite, so no image was written (the render is not settled)`,
-    );
+    throw new InvalidOperationError(Operation.Update, testName, refusal);
   }
   console.log(`wrote the image of ${testName}`);
 };
