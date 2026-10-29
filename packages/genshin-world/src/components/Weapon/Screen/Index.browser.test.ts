@@ -50,7 +50,9 @@ describe("weaponScreen", () => {
     await expect.element(page.getByText(levelText, { exact: true })).toBeVisible();
     await expect.element(page.getByText(heldExperienceText, { exact: true })).toBeVisible();
     expect(container.querySelectorAll(".spark.lit")).toHaveLength(heldWeapon.ascension);
-    expect(container.querySelector(".refinement")?.textContent?.trim()).toBe(`${heldWeapon.refinement}`);
+    expect(container.querySelector(".refinement")?.textContent?.trim()).toBe(
+      fillGameTextValues(ENGLISH_GAME_TEXT[GameTextKey.WeaponRefinementRank], `${heldWeapon.refinement}`),
+    );
   });
 
   // The tabs the weapon screen offers in the reader's game language: Enhance, Refine, and Ascend at the level cap

@@ -13,6 +13,8 @@ interface Props {
   detailsLabel: string;
   // Whether the open tab's action is refused now, its button disabled
   isActionDisabled: boolean;
+  // The weapon's kind in the reader's language, the word the header puts before its slash
+  kind: string;
   // The weapon's name in the reader's language
   name: string;
   // The tabs offered, in the game's order, each with its label in the reader's language
@@ -21,7 +23,7 @@ interface Props {
 
 defineSlots<{ default: () => unknown }>();
 const tab = defineModel<WeaponMenuTab>("tab", { required: true });
-const { actionLabel, closeLabel, detailsLabel, isActionDisabled, name, tabs } = defineProps<Props>();
+const { actionLabel, closeLabel, detailsLabel, isActionDisabled, kind, name, tabs } = defineProps<Props>();
 const emit = defineEmits<{ action: []; close: [] }>();
 </script>
 
@@ -29,6 +31,7 @@ const emit = defineEmits<{ action: []; close: [] }>();
   <!-- The weapon screen's frame, drawn on the game's 1920 by 864 reference: the weapon's name at the top left, the tab column
        down the left with its Details row and the open tab lit, the open tab's body in the slot, and its action at the foot -->
   <div class="weapon-menu" :data-tab="tab">
+    <p class="kind">{{ kind }} /</p>
     <p class="breadcrumb">{{ name }}</p>
     <ul class="tabs">
       <li class="row">
@@ -59,16 +62,25 @@ const emit = defineEmits<{ action: []; close: [] }>();
   color: #fff;
 }
 
+/* The kind sits at the header's left, its slash after it, and the name starts where the reference sets it */
+.kind,
 .breadcrumb {
   position: absolute;
   top: calc(var(--reference-pixel) * 33);
-  left: calc(var(--reference-pixel) * 323);
   margin: 0;
   color: #e9d8a6;
   font-size: calc(var(--reference-pixel) * 28);
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;
+}
+
+.kind {
+  left: calc(var(--reference-pixel) * 216);
+}
+
+.breadcrumb {
+  left: calc(var(--reference-pixel) * 323);
 }
 
 /* The tab column's rows are 70 pixels apart, centred on 152, 222 and 292, the open one at the larger size */

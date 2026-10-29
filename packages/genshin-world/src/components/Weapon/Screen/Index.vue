@@ -20,8 +20,10 @@ import { enhanceWeapon } from "#src/services/weapon/enhanceWeapon";
 import { getBagWeapon } from "#src/services/weapon/getBagWeapon";
 import { getRarityRequiredExps } from "#src/services/weapon/getRarityRequiredExps";
 import { getWeaponActions } from "#src/services/weapon/getWeaponActions";
+import { getWeaponPassive } from "#src/services/weapon/getWeaponPassive";
 import { refineWeapon } from "#src/services/weapon/refineWeapon";
 import { setBagWeapon } from "#src/services/weapon/setBagWeapon";
+import { WeaponTypeNameGameTextKeyMap } from "#src/services/weapon/WeaponTypeNameGameTextKeyMap";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import {
   ASCENSION_PHASE_COUNT,
@@ -43,6 +45,8 @@ interface ActionState {
 const SPARK_PHASES = Array.from({ length: ASCENSION_PHASE_COUNT }, (_, index) => index + 1);
 // The slots the Enhance strip shows across its width, each an ore or fodder weapon or an empty slot waiting for one
 const ENHANCE_SLOT_COUNT = 7;
+// The materials the Enhance panel's consumed line counts its picks against, the total the game's panel shows
+const ENHANCE_MATERIAL_LIMIT = 40;
 
 interface Props {
   // The adventure rank the player holds, which an Ascend's next phase requires
@@ -115,6 +119,21 @@ const requiredExps = computed(() => getRarityRequiredExps(rarityRequiredExpsMap,
 const requiredExp = computed(() => requiredExps.value[weapon.value.level - 1] ?? 0);
 const experienceText = computed(() => (isAtCap.value ? "" : `${weapon.value.experience}/${requiredExp.value}`));
 const name = computed(() => nameText[weaponData.value.nameTextId] || "");
+// The weapon's kind in the reader's language, the word its header puts before the slash
+const kind = computed(() => gameText[WeaponTypeNameGameTextKeyMap[weaponData.value.weaponType]]);
+const rankText = computed(() =>
+  fillGameTextValues(gameText[GameTextKey.WeaponRefinementRank], weapon.value.refinement),
+);
+// The passive's name, and the two rows the game's panel lists: the held rank, then the one above it, named by its rank
+const passive = computed(() => getWeaponPassive(weaponData.value, weapon.value.refinement, nameText));
+const passiveRows = computed(() =>
+  (passive.value?.rows ?? [])
+    .slice(weapon.value.refinement - 1, weapon.value.refinement + 1)
+    .map((row, index) => ({
+      ...row,
+      rankText: fillGameTextValues(gameText[GameTextKey.WeaponRefinementRank], weapon.value.refinement + index),
+    })),
+);
 // The ores the player picks for the next enhancement, each count taken from the bag when it is enhanced
 const pickedOres = ref<ItemCount[]>([]);
 // The bag entries of the fodder weapons the player picks, and the copy the Refine tab picks, which stands in for the material
@@ -196,6 +215,17 @@ const emptyEnhanceSlotCount = computed(() =>
   Math.max(0, ENHANCE_SLOT_COUNT - oreCells.value.length - fodderCells.value.length),
 );
 const actionLabel = computed(() => tabLabels.value[openTab.value]);
+// The materials the Enhance tab holds picked, the ores' counts and the fodder weapons, which its consumed line counts
+const pickedMaterialCount = computed(
+  () => pickedOres.value.reduce((count, ore) => count + ore.count, 0) + pickedFodderIds.value.length,
+);
+const consumedText = computed(() =>
+  fillGameTextValues(
+    gameText[GameTextKey.WeaponEnhanceMaterialsConsumed],
+    pickedMaterialCount.value,
+    ENHANCE_MATERIAL_LIMIT,
+  ),
+);
 const isActionDisabled = computed(() => {
   if (openTab.value === WeaponMenuTab.Enhance)
     return pickedOres.value.length === 0 && pickedFodderIds.value.length === 0;
@@ -313,14 +343,17 @@ const nextPhaseCosts = computed(() =>
       :close-label="gameText[GameTextKey.Back]"
       :details-label="gameText[GameTextKey.CharacterDetails]"
       :is-action-disabled="isActionDisabled"
+      :kind
       :name
       :tabs="menuTabs"
       @action="act()"
       @close="emit('close')"
     >
       <span class="sr-only" role="img" :aria-label="`${weaponData.rarity}`" />
-      <p class="refinement" :class="{ 'sr-only': openTab !== WeaponMenuTab.Refine }">{{ weapon.refinement }}</p>
-      <span class="talent" aria-hidden="true" />
+      <p class="refinement" :class="{ 'sr-only': openTab !== WeaponMenuTab.Refine }">{{ rankText }}</p>
+      <span v-if="openTab !== WeaponMenuTab.Refine" class="talent" aria-hidden="true">{{
+        gameText[GameTextKey.CharacterTalentEffect]
+      }}</span>
       <p class="mora">{{ wallet[Currency.Mora] }}</p>
       <div class="divider bottom-divider"><OrnamentDivider /></div>
       <p class="required-label">{{ gameText[GameTextKey.CraftingRequired] }}</p>
@@ -328,11 +361,14 @@ const nextPhaseCosts = computed(() =>
       <template v-if="openTab === WeaponMenuTab.Enhance">
         <p class="level">{{ levelText }}</p>
         <p class="experience-text">{{ experienceText }}</p>
+        <p class="consumed">{{ consumedText }}</p>
         <p class="stat base-attack">{{ gameText[GameTextKey.AttributeBaseAttack] }}</p>
         <p class="stat attack">{{ gameText[GameTextKey.AttributeAttack] }}</p>
         <div class="divider enhance-divider"><OrnamentDivider /></div>
         <span class="pill auto-add" aria-hidden="true">{{ gameText[GameTextKey.ArtifactAutoAdd] }}</span>
-        <span class="pill filter" aria-hidden="true"><span class="caret" /></span>
+        <span class="pill filter" aria-hidden="true"
+          >{{ gameText[GameTextKey.WeaponMaterialsThreeStarAndUnder] }}<span class="caret"
+        /></span>
         <span class="sparkle-button" aria-hidden="true" />
         <div class="cells enhance-cells">
           <div v-for="ore of oreCells" :key="ore.id" class="cell">
@@ -383,6 +419,15 @@ const nextPhaseCosts = computed(() =>
       </template>
       <template v-else>
         <div class="divider refine-divider"><OrnamentDivider /></div>
+        <p class="refinement-level">{{ gameText[GameTextKey.WeaponRefinementLevel] }}</p>
+        <p class="passive-name">{{ passive?.name }}</p>
+        <div class="passive">
+          <p v-for="row of passiveRows" :key="row.rankText" class="passive-row">
+            <span v-if="!row.isHeld" class="rank-label">{{ row.rankText }}:</span>
+            {{ row.description }}
+          </p>
+        </div>
+        <p class="refine-material">{{ gameText[GameTextKey.WeaponRefinementMaterial] }}</p>
         <span class="pill auto-add refine-auto-add" aria-hidden="true">{{
           gameText[GameTextKey.ArtifactAutoAdd]
         }}</span>
@@ -427,8 +472,15 @@ const nextPhaseCosts = computed(() =>
   left: calc(var(--reference-pixel) * 1281);
   width: calc(var(--reference-pixel) * 236);
   height: calc(var(--reference-pixel) * 40);
+  text-indent: calc(var(--reference-pixel) * 51);
   border-radius: calc(var(--reference-pixel) * 20);
   background: #f5d48a;
+  color: #3d3d48;
+  font-size: calc(var(--reference-pixel) * 25);
+  font-weight: 600;
+  line-height: calc(var(--reference-pixel) * 44);
+  letter-spacing: calc(var(--reference-pixel) * 2.2);
+  white-space: nowrap;
 }
 
 .mora {
@@ -696,6 +748,10 @@ const nextPhaseCosts = computed(() =>
   top: calc(var(--reference-pixel) * 527);
   left: calc(var(--reference-pixel) * 1103);
   width: calc(var(--reference-pixel) * 458);
+  text-indent: calc(var(--reference-pixel) * 22);
+  font-size: calc(var(--reference-pixel) * 25);
+  letter-spacing: calc(var(--reference-pixel) * 1.8);
+  text-align: left;
 }
 
 /* The round cream button beside Enhance, its glyph left undrawn */
@@ -818,15 +874,85 @@ const nextPhaseCosts = computed(() =>
   text-align: center;
 }
 
-/* Refine's header: the rank's number at the title's right, its passage and its material undrawn beside it */
+/* Refine's header: the rank the weapon holds, centred over its panel; the ornaments either side of it are not drawn */
 .refinement {
   position: absolute;
-  top: calc(var(--reference-pixel) * 99);
-  left: calc(var(--reference-pixel) * 1490);
+  top: calc(var(--reference-pixel) * 98);
+  left: calc(var(--reference-pixel) * 1097);
+  width: calc(var(--reference-pixel) * 706);
   margin: 0;
   color: #f6f0f9;
   font-size: calc(var(--reference-pixel) * 42);
   font-weight: 600;
   line-height: 1;
+  text-align: center;
+}
+
+/* The gold words the game sets over the panels: the Enhance panel's consumed count and the Refine tab's level */
+.consumed,
+.refinement-level,
+.passive-name {
+  position: absolute;
+  left: calc(var(--reference-pixel) * 1097);
+  width: calc(var(--reference-pixel) * 706);
+  margin: 0;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+}
+
+.consumed {
+  top: calc(var(--reference-pixel) * 489);
+  color: #e9d29a;
+  font-size: calc(var(--reference-pixel) * 25);
+  letter-spacing: calc(var(--reference-pixel) * 1.9);
+}
+
+.refinement-level {
+  top: calc(var(--reference-pixel) * 149);
+  color: #e9d29a;
+  font-size: calc(var(--reference-pixel) * 22);
+  letter-spacing: calc(var(--reference-pixel) * 1.3);
+}
+
+.passive-name {
+  top: calc(var(--reference-pixel) * 208);
+  color: #f5f0fb;
+  font-size: calc(var(--reference-pixel) * 29);
+  letter-spacing: calc(var(--reference-pixel) * 2.2);
+}
+
+.refine-material {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 552);
+  left: calc(var(--reference-pixel) * 1104);
+  margin: 0;
+  color: #e9d29a;
+  font-size: calc(var(--reference-pixel) * 26);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: calc(var(--reference-pixel) * 1.2);
+}
+
+/* The held rank and the next rank's description, wrapped to the panel, the next rank's label in its own colour */
+.passive {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 252);
+  left: calc(var(--reference-pixel) * 1104);
+  width: calc(var(--reference-pixel) * 696);
+  color: #efe9f9;
+  font-size: calc(var(--reference-pixel) * 24);
+  font-weight: 600;
+  line-height: calc(var(--reference-pixel) * 29);
+  letter-spacing: calc(var(--reference-pixel) * 1.1);
+}
+
+.passive-row {
+  margin: 0 0 calc(var(--reference-pixel) * 16);
+  text-indent: calc(var(--reference-pixel) * 24);
+}
+
+.rank-label {
+  color: #6ad4ee;
 }
 </style>

@@ -6,6 +6,7 @@ export const props = {
   closeLabel: "Back",
   detailsLabel: "Details",
   isActionDisabled: true,
+  kind: "Sword",
   name: "Silver Light",
   tab: WeaponMenuTab.Enhance,
   tabs: [
