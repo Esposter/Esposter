@@ -37,7 +37,7 @@ The [forging](../../specs/genshin/forging/design.md) page holds the recipes, que
 
 ## Sources
 
-- [Forging](https://genshin-impact.fandom.com/wiki/Forging), Genshin Impact Wiki: the blacksmith's screen. The screen's layout is measured off a public clip of the Wagner forge, [Have an item forged at Wagner](https://www.youtube.com/watch?v=AVnbm8fESr0), kept under the captures as `yt-AVnbm8fESr0`: its frames at 32, 48 and 50.5 seconds are the entries `forge-screen`, `forge-screen-queues` and `forge-screen-ores-done`, which `compare` scores (task 2.3, settled 2026-10-29). The owed `forge-order-queue.mkv` is still wanted for the queue mechanics, which that clip does not show.
+- [Forging](https://genshin-impact.fandom.com/wiki/Forging), Genshin Impact Wiki: the blacksmith's screen. The screen's layout is measured off a public clip of the Wagner forge, [Have an item forged at Wagner](https://www.youtube.com/watch?v=AVnbm8fESr0), kept under the captures as `yt-AVnbm8fESr0`: its frames at 32, 48 and 50.5 seconds are the entries `forge-screen`, `forge-screen-queues` and `forge-screen-ores-done`, which `compare` scores, all three over the 1% tolerance (mean difference 6.51%, 3.71% and 3.49%), so the layout is not yet matched and task 2.3 stays open. The owed `forge-order-queue.mkv` is still wanted for the queue mechanics, which that clip does not show.
 
 ## Reference
 
