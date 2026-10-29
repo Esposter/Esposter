@@ -218,12 +218,6 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     const existingEntity = this.table.get(key);
     this.#writeEntity(key, entity, mode, existingEntity);
   }
-  // Every operation on a row that must already exist reads it here, so each reports the same 404 the service does
-  #getExistingEntity<T extends object = TableEntity>(key: string): T & { etag?: string } {
-    const entity = this.table.get(key) as (T & { etag?: string }) | undefined;
-    if (!entity) throw new MockRestError("The specified resource does not exist.", 404);
-    return entity;
-  }
   // A conditional write only lands when the caller saw the current version — the real service's
   // Optimistic-concurrency contract ("*" is the wildcard that always matches), for a delete as for an update
   #assertEtag(existingEtag: unknown, etag?: string): void {
@@ -239,6 +233,12 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   // Versions would make a stale conditional update falsely match
   #getEtag(): string {
     return `W/"${crypto.randomUUID()}"`;
+  }
+  // Every operation on a row that must already exist reads it here, so each reports the same 404 the service does
+  #getExistingEntity<T extends object = TableEntity>(key: string): T & { etag?: string } {
+    const entity = this.table.get(key) as (T & { etag?: string }) | undefined;
+    if (!entity) throw new MockRestError("The specified resource does not exist.", 404);
+    return entity;
   }
   #withMetadata<T extends object>(entity: T & { etag?: string }): T & { etag: string } {
     return { ...entity, etag: entity.etag ?? this.#getEtag() };
