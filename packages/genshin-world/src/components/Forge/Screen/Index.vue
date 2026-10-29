@@ -109,46 +109,25 @@ const queueSlots = computed(() => computeForgeQueueSlots(progress.value.orders, 
 const queueCells = computed<ForgeQueueCell[]>(() =>
   queueSlots.value.map(({ forged, id, recipeId: queueRecipeId, state, unlockRank }) => {
     const name = queueRecipeId === undefined ? "" : (recipeNameMap.value.get(queueRecipeId) ?? "");
+    // Each state gives its own words over this blank cell, so a state that gives none shows none
+    const cell: ForgeQueueCell = { id, name: "", progressLabel: "", readyLabel: "", state, timeLabel: "" };
     switch (state) {
-      case ForgeQueueState.Complete: {
-        return {
-          id,
-          name,
-          progressLabel: gameText[GameTextKey.ForgeQueueCompleted],
-          readyLabel: fillGameTextValues(gameText[GameTextKey.ForgeQueueReadyCount], forged),
-          state,
-          timeLabel: "",
-        };
-      }
+      case ForgeQueueState.Complete:
       case ForgeQueueState.Forging: {
+        const progressKey =
+          state === ForgeQueueState.Complete ? GameTextKey.ForgeQueueCompleted : GameTextKey.ForgeQueueForging;
         return {
-          id,
+          ...cell,
           name,
-          progressLabel: gameText[GameTextKey.ForgeQueueForging],
+          progressLabel: gameText[progressKey],
           readyLabel: fillGameTextValues(gameText[GameTextKey.ForgeQueueReadyCount], forged),
-          state,
-          timeLabel: "",
         };
       }
       case ForgeQueueState.Idle: {
-        return {
-          id,
-          name: "",
-          progressLabel: gameText[GameTextKey.ForgeQueueIdle],
-          readyLabel: "",
-          state,
-          timeLabel: "",
-        };
+        return { ...cell, progressLabel: gameText[GameTextKey.ForgeQueueIdle] };
       }
       default: {
-        return {
-          id,
-          name: "",
-          progressLabel: "",
-          readyLabel: "",
-          state,
-          timeLabel: fillGameTextValues(gameText[GameTextKey.ForgeQueueLockLevel], unlockRank),
-        };
+        return { ...cell, timeLabel: fillGameTextValues(gameText[GameTextKey.ForgeQueueLockLevel], unlockRank) };
       }
     }
   }),
