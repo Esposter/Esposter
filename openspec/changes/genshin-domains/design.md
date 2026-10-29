@@ -97,4 +97,4 @@ scripts/src/services/genshinAssets/domains/
 
 ## Reference
 
-- `domain-entry.mkv` — standing at a domain's entrance and pressing F to enter, the fade into its scene, then the fade back out when the domain is left, 30 seconds at most. The fade's durations are measured from it, as the teleport's are. Partly found 2026-10-11: https://www.youtube.com/watch?v=V7SVLH8V5RE; still sought: the fade-out when the domain is left, not clipped; the candidate was found from its title only and its timestamps are not verified.
+- `domain-entry.mkv` — standing at a domain's entrance and pressing F to enter, the fade into its scene, then the fade back out when the domain is left, 30 seconds at most. The fade's durations are measured from it, as the teleport's are. Partly found: https://www.youtube.com/watch?v=V7SVLH8V5RE; still sought: the fade-out when the domain is left, not clipped; the candidate was found from its title only and its timestamps are not verified.
