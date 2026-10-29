@@ -75,7 +75,7 @@ A screen SHALL keep only the pieces of its published record that it places by na
 - [ ] **A nested piece moves and resizes with its parent** — no source yet: no test holds the nesting, and `GameRect` has no fixture.
 - [ ] **A scaled piece keeps its pivot corner where the layout places it** — no source yet: the export holds `GrpMap`'s scale of 0.6 but no pivot, and no test holds the scale origin.
 - [ ] **A layout group's children are stacked and spaced as the recording shows** — no source yet: the recording is not named.
-- [ ] **A clip that moves a parent piece moves every piece nested in it** — no source yet: no test holds `data-clip-target`, and no clip in the extracted set names `Center/SwitchServer`.
+- [ ] **A clip that moves a parent piece moves every piece nested in it** — no source yet: no test holds `data-clip-target`, and no run of the page was read to show the tag on a rendered piece.
 - [ ] **A run-time prefab stays in its place inside its container on any window** — no source yet: no recording or test holds the prefab's place.
 - [ ] **A screen keeps only the named pieces of its record** — no source yet: no test holds the named filter; the fit test covers only the keys.
 - [ ] **Unity's anchors, pivots and size deltas map exactly onto absolute positioning with calc** — no source yet: the game's side needs a recording of the login at a second window size, which this spec does not cite.
