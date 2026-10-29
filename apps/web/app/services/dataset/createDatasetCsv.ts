@@ -2,11 +2,11 @@ import type { Dataset } from "#shared/models/dataset/Dataset";
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 
 import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
-import { escapeUntrustedCsvCell } from "@/services/resource/sheet/csv/escapeUntrustedCsvCell";
+import { escapeCsvCell } from "@/services/resource/sheet/csv/escapeCsvCell";
 
 const toCellText = (value: ColumnValue | undefined): string =>
   value === null || value === undefined ? "" : String(value);
-const escapeCell = (text: string) => escapeUntrustedCsvCell(text, CsvDelimiter.Comma);
+const escapeCell = (text: string) => escapeCsvCell(text, CsvDelimiter.Comma);
 // A file prints each column's title where it has one. Every cell is neutralised as a formula, header included, since
 // The rows can hold text an anonymous respondent typed and a spreadsheet opens the file as the owner
 export const createDatasetCsv = ({ columns, rows }: Dataset): string => {

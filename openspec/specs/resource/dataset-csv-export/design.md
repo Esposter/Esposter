@@ -19,7 +19,7 @@ Portable moves a resource's _content_, a survey's model rather than its answers,
 - **One read.** The command runs `dataset.readDataset` for the open resource and writes its columns and rows. A dataset over the row cap exports what was read and says so in an alert, rather than implying the file is complete ([dataset row-cap warning](../dataset-row-cap-warning/design.md)). The file is named after the resource.
 - **Columns read the way a person reads them.** `DatasetColumn` carries an optional `title`, the header a file prints in place of the column's `name`. The survey dataset sets it to each question's title, so the file reads "How did you hear about us?" rather than `question3`.
 - **Survey columns lead with context.** A survey dataset's first column is its submission time, and in an Identified survey the respondent follows it. A checkbox question's answers join into one cell separated by `; `. These columns are available to a Dashboard binding as well.
-- **Every cell is neutralised as a formula.** A dataset may hold text typed by anonymous respondents on a public page, opened by the owner in a spreadsheet, so the command treats all of it as untrusted. A cell starting with `=`, `+`, `-`, `@`, a tab or a line break is quoted with a tab placed before that first character, the one mitigation OWASP reports surviving an Excel save and reopen. `escapeUntrustedCsvCell` is a sibling of `escapeCsvCell` rather than a change to it, since the Sheet's own export must round-trip the owner's formulas-as-text unchanged.
+- **Every cell is neutralised as a formula.** A dataset may hold text typed by anonymous respondents on a public page, opened by the owner in a spreadsheet, so the command treats all of it as untrusted. A cell starting with `=`, `+`, `-`, `@`, a tab or a line break is quoted with a tab placed before that first character, the one mitigation OWASP reports surviving an Excel save and reopen. A cell that is a number is written as it is. `escapeCsvCell` is the one escaper every CSV the app writes goes through, the Sheet's and the resource list's export included, since a sheet holds an import's cells as well as the owner's typing.
 
 ```mermaid
 flowchart LR
@@ -47,7 +47,7 @@ The two reserved names, `submittedAt` and `respondent`, are not reserved in the 
 | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | `apps/web/app/components/Resource/Blade/Header.vue`                              | the Export CSV command for a dataset provider with no Portable export   |
 | `apps/web/app/services/dataset/exportDatasetCsv.ts`                              | reads the dataset, warns on a capped read, downloads the file           |
-| `apps/web/app/services/dataset/createDatasetCsv.ts`                              | the header and cell rows, through `escapeUntrustedCsvCell`              |
+| `apps/web/app/services/dataset/createDatasetCsv.ts`                              | the header and cell rows, through `escapeCsvCell`                       |
 | `apps/web/shared/models/dataset/DatasetColumn.ts`                                | the optional `title` a file prints as its header                        |
 | `apps/web/server/services/dataset/surveyResponses/readSurveyResponsesDataset.ts` | adds the submission time and, when Identified, the respondent           |
 | `apps/web/server/services/dataset/surveyResponses/readSurveyRespondents.ts`      | the token to `publicId` map for an Identified survey                    |

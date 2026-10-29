@@ -85,11 +85,17 @@ The export SHALL neutralise any cell beginning with a formula character, so that
 - **WHEN** the owner exports the survey
 - **THEN** the cell is written so that it opens as plain text
 
-#### Scenario: A sheet export keeps the owner's formulas
+#### Scenario: A sheet export neutralises formulas
 
 - **GIVEN** the owner exports a sheet containing text beginning with "="
 - **WHEN** the file is exported as a sheet
-- **THEN** the text is written unchanged
+- **THEN** the cell is quoted with a tab ahead of the "=", so a spreadsheet opens it as text
+
+#### Scenario: A sheet export writes a number as it is
+
+- **GIVEN** the owner exports a sheet containing the number -5
+- **WHEN** the file is exported as a sheet
+- **THEN** the cell is written as -5
 
 ### Requirement: A question named like a reserved column keeps its own column
 

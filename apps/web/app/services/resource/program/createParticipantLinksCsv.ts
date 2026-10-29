@@ -1,7 +1,7 @@
 import type { ProgramParticipant } from "#shared/models/resource/program/ProgramParticipant";
 
 import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
-import { escapeUntrustedCsvCell } from "@/services/resource/sheet/csv/escapeUntrustedCsvCell";
+import { escapeCsvCell } from "@/services/resource/sheet/csv/escapeCsvCell";
 import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
@@ -15,11 +15,11 @@ export const createParticipantLinksCsv = (
 ) => {
   const surveyUrl = `${origin}${RoutePath.View(ResourceType.Survey, surveyId)}`;
   const headerRow = [keyColumn, "Link"]
-    .map((header) => escapeUntrustedCsvCell(header, CsvDelimiter.Comma))
+    .map((header) => escapeCsvCell(header, CsvDelimiter.Comma))
     .join(CsvDelimiter.Comma);
   const dataRows = participants.map(({ keyValue, token }) => {
     const link = `${surveyUrl}?${new URLSearchParams({ t: token })}`;
-    return [keyValue, link].map((cell) => escapeUntrustedCsvCell(cell, CsvDelimiter.Comma)).join(CsvDelimiter.Comma);
+    return [keyValue, link].map((cell) => escapeCsvCell(cell, CsvDelimiter.Comma)).join(CsvDelimiter.Comma);
   });
   return [headerRow, ...dataRows].join("\n");
 };
