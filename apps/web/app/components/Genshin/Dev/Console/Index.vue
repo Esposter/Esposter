@@ -54,7 +54,7 @@ useCommands(() =>
       }
     "
   >
-    <ol max-h="[40dvh]" overflow-y-auto flex flex-col gap-1>
+    <ol max-h="[40dvh]" of-y-auto flex flex-col gap-1>
       <li v-for="(entry, index) in entries" :key="index" ui-row>
         <UiItemContent
           :title="entry.line"
