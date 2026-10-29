@@ -19,5 +19,5 @@ export const props = {
   recordedDoingIds: new Set(),
   subareaLabels: await readMapSubareaLabels(GAME_DATA_LOCAL_BASE_URL),
   wallet: EMPTY_WALLET,
-  zoom: MAP_REFERENCE_ZOOM_METRES,
+  metres: MAP_REFERENCE_ZOOM_METRES,
 };

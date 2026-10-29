@@ -804,7 +804,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       ],
       // The still shows none of the neighbouring subarea names, which the map draws only at 1512 metres and closer, so
       // its view is further out; the one label alone does not fix the zoom, so 3024 metres is provisional
-      zoom: 3024,
+      metres: 3024,
     },
     region: { height: 84, width: 296, x: 596, y: 336 },
     screen: "MapOverlay",
