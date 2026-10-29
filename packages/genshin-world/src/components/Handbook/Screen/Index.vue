@@ -589,11 +589,11 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   height: calc(var(--reference-pixel) * 242);
 }
 
-/* The title's lines 59 apart, centred on 88 down whether it takes one line or two, with the progress pill 19.5 under
-   it. The game's pill falls only 18 for a second line where this one falls 29.5, an 11.5 miss on two line rows */
+/* The title's lines 59 apart, centred on 90 down whether it takes one line or two, with the progress pill 13.5 under
+   it: exact on a one-line title, and 7.5 low on a two-line one, where the game's pill rises 22 for its second line */
 .commission-text {
   position: absolute;
-  top: calc(var(--reference-pixel) * 88);
+  top: calc(var(--reference-pixel) * 90);
   left: calc(var(--reference-pixel) * 259);
   width: calc(var(--reference-pixel) * 760);
   translate: 0 -50%;
@@ -611,7 +611,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
 
 .commission-progress {
   position: absolute;
-  top: calc(100% + var(--reference-pixel) * 19.5);
+  top: calc(100% + var(--reference-pixel) * 13.5);
   left: calc(var(--reference-pixel) * 5);
   height: calc(var(--reference-pixel) * 43);
   margin: 0;
