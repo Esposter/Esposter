@@ -1,5 +1,4 @@
 schema: spec-driven
-created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
 x-waiting: "the campfire drain (task 3.2) waits on a campfire source the repo does not yet fit (the official map's Campfire/Torch points); the bar's placement and look (task 3.4) wait on the Hud component's owner, who moves the bar to the measured place; the heat's reach (task 3.4) waits on a clip that isolates the drain's onset"

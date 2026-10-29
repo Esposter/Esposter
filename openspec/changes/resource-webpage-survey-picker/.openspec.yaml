@@ -1,5 +1,4 @@
 schema: spec-driven
-created: 2026-10-25
 affected_areas: [resource, architecture]
 x-model: claude-haiku-5-5
 x-waiting: "4.1 to 4.3 and 5.1 wait on resource-survey-form-engine task 6.1: the one-time purge deletes every stored survey and its invite references, so the picker ships after it has run in each environment"
