@@ -82,19 +82,6 @@ describe("menuPaimon", () => {
       .toBeDisabled();
   });
 
-  test("version Highlights and Survey show as disabled entries", async () => {
-    expect.hasAssertions();
-
-    await render(MenuPaimon, { props });
-
-    await expect
-      .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.VersionHighlights] }))
-      .toBeDisabled();
-    await expect
-      .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Survey] }))
-      .toBeDisabled();
-  });
-
   test("training Guide is absent from the contents", async () => {
     expect.hasAssertions();
 

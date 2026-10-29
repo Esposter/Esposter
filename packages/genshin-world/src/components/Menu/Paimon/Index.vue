@@ -366,22 +366,44 @@ onBeforeUnmount(() => {
   z-index: 1;
 }
 
+/* The panel is translucent over the world down its feet, which the page does not draw, so its colour is a gradient
+   Measured down the reference's gap columns between the tiles, top to bottom */
 .panel {
   position: absolute;
   top: 0;
   bottom: 0;
   left: calc(var(--unit) * 96);
   width: calc(var(--unit) * 672);
-  background: #ece5d7;
+  background: linear-gradient(
+    #ece5d7 33%,
+    #e7e2d4 48%,
+    #dbd6c5 62%,
+    #bcbea4 76%,
+    #b5b6a1 83%,
+    #9ea789 90%,
+    #92a17e 94%,
+    #889671
+  );
 }
 
 .card {
   position: absolute;
-  top: 0;
+  top: calc(var(--unit) * 11);
   left: calc(var(--unit) * 96);
   width: calc(var(--unit) * 672);
-  height: calc(var(--unit) * 328);
-  background: linear-gradient(#3a424f, #435366 30%, #4a6680 55%, #55799a 75%, #5e9cba 88%, #63a6c6);
+  height: calc(var(--unit) * 317);
+  background: linear-gradient(
+    #3b434e 4%,
+    #3c4555 15%,
+    #3f4d60 26%,
+    #44586a 37%,
+    #485f76 45%,
+    #4f6f8c 60%,
+    #5a809f 72%,
+    #5e95b5 86%,
+    #5fa3c1 93%,
+    #63c8d0 98%
+  );
 }
 
 /* The account's own picture fills the Traveler's disc, cropped to it */
@@ -392,13 +414,13 @@ onBeforeUnmount(() => {
 .avatar,
 .avatar-image {
   position: absolute;
-  top: calc(var(--unit) * 41);
-  left: calc(var(--unit) * 140);
-  width: calc(var(--unit) * 128);
-  height: calc(var(--unit) * 128);
-  border: calc(var(--unit) * 4) solid rgb(236 229 215 / 0.6);
+  top: calc(var(--unit) * 43);
+  left: calc(var(--unit) * 144);
+  width: calc(var(--unit) * 122);
+  height: calc(var(--unit) * 122);
+  border: calc(var(--unit) * 3) solid rgb(236 229 215 / 0.9);
   border-radius: 50%;
-  background: #dd8650;
+  background: radial-gradient(circle at 50% 45%, #f4ecd8 0%, #efe0c6 40%, #dd9a6a 75%, #d98d5c 100%);
   box-sizing: border-box;
 }
 
@@ -476,6 +498,7 @@ onBeforeUnmount(() => {
 .birthday {
   left: calc(var(--unit) * 313.5);
   font-size: calc(var(--unit) * 26);
+  letter-spacing: calc(var(--unit) * 1.4);
 }
 
 /* Provisional: the name's top and size are read beside the card's avatar, to be fitted to the whole frame by the parity
@@ -500,6 +523,7 @@ onBeforeUnmount(() => {
   left: calc(var(--unit) * 349);
   color: #dbe5ec;
   font-size: calc(var(--unit) * 19);
+  letter-spacing: calc(var(--unit) * 0.4);
 }
 
 .world-level {
@@ -589,8 +613,10 @@ onBeforeUnmount(() => {
   left: 0;
   font-size: calc(var(--unit) * 22);
   font-weight: 600;
+  letter-spacing: calc(var(--unit) * 0.4);
   line-height: 1.1;
   text-align: center;
+  color: #c8c4bb;
 }
 
 .entry:disabled:not(.link) {

@@ -35,12 +35,11 @@ export const PAIMON_MENU_CONTENTS: readonly { icon: MenuEntryIcon; screenKind: T
 // The Time screen's advance in game minutes, at least thirty ahead and at most two days, as the game's Time option allows
 export const TIME_MINIMUM_ADVANCE_MINUTES = 30;
 export const TIME_MAXIMUM_ADVANCE_MINUTES = 2 * MINUTES_PER_DAY;
-// The links out to web pages the menu ends with, drawn disabled, since the world opens no page of their own
+// The links out to web pages the menu ends with, drawn disabled, since the world opens no page of their own. The
+// Reference's build draws only these two; Version Highlights and Survey are not in its foot
 export const PAIMON_MENU_LINKS: readonly { icon: MenuEntryIcon; labelKey: GameTextKey }[] = [
   { icon: EntryIcon.Community, labelKey: GameTextKey.Community },
-  { icon: EntryIcon.VersionHighlights, labelKey: GameTextKey.VersionHighlights },
   { icon: EntryIcon.Feedback, labelKey: GameTextKey.Feedback },
-  { icon: EntryIcon.Survey, labelKey: GameTextKey.Survey },
 ];
 // The screens its side bar opens, in the game's order between its Back and its Quit Game
 export const PAIMON_MENU_SIDE_BAR: readonly { icon: MenuFrameIcon; screenKind: TitledScreenKind }[] = [

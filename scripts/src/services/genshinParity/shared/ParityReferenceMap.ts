@@ -828,7 +828,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Seconds in) with no screen open, its account at Adventure Rank 2. Scored over the side bar and the panel above their
   // Translucent feet, where the world shows through; the recording's pillarbox, logo and UID lie outside the region
   "paimon-menu": {
-    region: { height: 1080, width: 810, x: 150, y: 0 },
+    region: { height: 1440, width: 810, x: 150, y: 0 },
     screen: "MenuPaimon",
     source: "yt-jHr2bERjkYc-logout-tech4gamers.mp4 at 25s",
   },
