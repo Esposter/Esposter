@@ -40,11 +40,13 @@ export const ASSET_MAP_SHARDS_DIRECTORY: string = join(dirname(ASSET_MAP_PATH), 
 // The blocks as the game loads them, each a symlink to its hotfixed copy or its StreamingAssets one, written by the map
 // (`linkInstalledBlocks`) and the folder the map, the CAB map and every export open a block through
 export const INSTALLED_BLOCKS_DIRECTORY: string = join(dirname(ASSET_MAP_PATH), "blocks");
+// The environment variable that names AnimeStudio's command line in place of the one the build or the Windows unpack leaves
+export const ANIMESTUDIO_CLI_ENVIRONMENT_VARIABLE = "GENSHIN_ANIMESTUDIO_CLI";
 // AnimeStudio's command line (github.com/Escartem/AnimeStudio): the CLI the build publishes on macOS, which is where its
-// Map is kept, or the one unpacked under Downloads on Windows, unless `GENSHIN_ANIMESTUDIO_CLI` names another. It writes its
+// Map is kept, or the one unpacked under Downloads on Windows, unless the environment variable names another. It writes its
 // CAB map into a `Maps` folder beside its working directory, so it is run from its own folder
 export const ANIMESTUDIO_CLI_PATH: string =
-  process.env.GENSHIN_ANIMESTUDIO_CLI ??
+  process.env[ANIMESTUDIO_CLI_ENVIRONMENT_VARIABLE] ??
   (process.platform === "darwin"
     ? join(TOOLS_DIRECTORY, PUBLISH_DIRECTORY_NAME, CLI_EXECUTABLE_NAME)
     : join(homedir(), "Downloads", "AnimeStudio", "AnimeStudio.CLI.exe"));
@@ -83,7 +85,7 @@ export const GENSHIN_ANIMESTUDIO_OPTIONS: AnimeStudioOptions = {
     reason: "is running: close the game before AnimeStudio reads its blocks",
     subject: GAME_EXECUTABLE_NAME,
   },
-  executableHint: "unpack AnimeStudio there or name it in GENSHIN_ANIMESTUDIO_CLI",
+  executableHint: `unpack AnimeStudio there or name it in ${ANIMESTUDIO_CLI_ENVIRONMENT_VARIABLE}`,
   executablePath: ANIMESTUDIO_CLI_PATH,
   game: "GI",
   indexCommand: "genshin:assets map",

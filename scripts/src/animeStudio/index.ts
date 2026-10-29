@@ -1,4 +1,5 @@
 import { checkAnimeStudioParity } from "#src/services/genshinAssets/shared/checkAnimeStudioParity";
+import { ANIMESTUDIO_CLI_ENVIRONMENT_VARIABLE } from "#src/services/genshinAssets/shared/constants";
 import { buildAnimeStudio } from "#src/services/recreation/animeStudio/buildAnimeStudio";
 import { TOOLS_DIRECTORY } from "#src/services/recreation/animeStudio/constants";
 import { runCommand } from "#src/services/timing/runCommand";
@@ -21,15 +22,14 @@ await runCommand(
       },
     },
     meta: {
-      description:
-        "Build the asset CLI and its natives for macOS arm64, and print the path to set as GENSHIN_ANIMESTUDIO_CLI",
+      description: `Build the asset CLI and its natives for macOS arm64, and print the path to set as ${ANIMESTUDIO_CLI_ENVIRONMENT_VARIABLE}`,
       name: "genshin:animestudio:build",
     },
     async run({ args }) {
       const cliPath = await buildAnimeStudio(args.directory, (stagedCliPath, outputDirectory) => {
         checkAnimeStudioParity(stagedCliPath, outputDirectory, args.skipParity);
       });
-      console.log(`\nCLI published: ${cliPath}\nSet GENSHIN_ANIMESTUDIO_CLI to it.`);
+      console.log(`\nCLI published: ${cliPath}\nSet ${ANIMESTUDIO_CLI_ENVIRONMENT_VARIABLE} to it.`);
     },
   }),
 );
