@@ -1,6 +1,6 @@
 ## Purpose
 
-Motion is matched at the moments a person samples from a recording as labelled screenshots, and the repository never reads the recording.
+Motion is matched at the moments a person samples from a recording as labelled screenshots, and the comparison never reads the recording.
 
 ## Requirements
 
@@ -13,7 +13,7 @@ A moment of a screen's motion SHALL be matched against a labelled screenshot sam
 - **GIVEN** a screen with a transition and a recording of the transition
 - **WHEN** the transition is matched
 - **THEN** each moment is compared against a screenshot a person sampled at that second
-- **AND** the recording is never read by the repository
+- **AND** the recording is never read by the comparison
 
 ### Requirement: A screen's motion is held at its start and then played by its fixture
 
