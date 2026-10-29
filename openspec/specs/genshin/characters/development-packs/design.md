@@ -2,7 +2,7 @@
 
 Under `nuxt dev`, the app's module `apps/web/modules/serveGenshinExtractions.ts` registers a route at GENSHIN_CHARACTER_PACK_BASE_URL, and the app's world component hands the world that address (`apps/web/app/components/Genshin/World.vue`, `apps/web/shared/services/genshin/constants.ts`). A build registers no route, bundles neither the route's handler nor the readers it imports, and hands the world no address. The module returns before registering anything unless Nuxt runs under `nuxt dev`, since a route that refused outside development would still be bundled into the production server with the readers it imports (which returns early unless `nuxt.options.dev`). The same module registers the route the world reads the developer's own exports of the game's scenes from ([development exports](../../derived-assets/development-exports/design.md)).
 
-The route reads the folder GENSHIN_CHARACTER_PACKS_DIRECTORY names, by default `{data-root}/character-packs/extracted`. That folder holds one subfolder per character, named by its id, each an official release extracted as it shipped. serveGenshinCharacterPack answers the [pack layout](../README.md) from it. The server reaches the world's rules through the package's `genshin-world/characterPack` entry, which reaches none of its components (packages/genshin-world/src/characterPack.ts, which re-exports the pack rules, the game data's readers and the paths they use).
+The route reads the folder GENSHIN_CHARACTER_PACKS_DIRECTORY names, by default `{data-root}/character-packs/extracted`. That folder holds one subfolder per character, named by its id, each an official release extracted as it shipped. serveGenshinCharacterPack answers the [pack layout](../README.md) from it. The server reaches the world's rules through the package's "genshin-world/characterPack" entry, which reaches none of its components (packages/genshin-world/src/characterPack.ts, which re-exports the pack rules, the game data's readers and the paths they use).
 
 ```mermaid
 flowchart TD
@@ -36,3 +36,16 @@ Only a folder named by a character's id is read, and only a file the folder's ow
 
 - **The development server serves the packs, and no build holds the route.** The route is the only way a folder on the developer's disk reaches the world, so a production build carries neither it nor a request to it.
 - **A host's files are served at their character's id, read as they stand.** The developer's folder is edited in place, so each request reads it fresh, as the [player's kept packs](../player-packs/design.md) are stored under their hash instead (the service reads the folder on each request).
+
+## Open
+
+The route this page describes is deleted: commit 5f79a93d0f removed the route, its services, its env entry, its package entry and its bundle entry, as task 6.1 of `openspec/changes/genshin-published-character-packs/tasks.md` records. That change's delta for this page is REMOVED (`openspec/changes/genshin-published-character-packs/specs/genshin/characters/development-packs/spec.md`), and its task 7.1 moves the page with it, so each claim the code no longer meets is recorded here rather than rewritten.
+
+- [ ] **The module registers the pack route under `nuxt dev`** — contradicted: `apps/web/modules/serveGenshinExtractions.ts` registers only the scene export route (lines 12 to 17), and no pack route, handler or reader is left to bundle.
+- [ ] **The world component hands the world the pack address** — contradicted: `apps/web/app/components/Genshin/World.vue` names no pack address, and `apps/web/shared/services/genshin/constants.ts` holds no pack address (its scene export base is line 9).
+- [ ] **The route reads the pack folder and answers the pack layout (index, terms, model, textures, 404)** — contradicted: `apps/web/server/development/` holds only `genshinSceneExports.ts`, and the characterPack service folder under apps/web/server/services/genshin/ is gone.
+- [ ] **The server reaches the world's rules through a "genshin-world/characterPack" entry** — contradicted: `packages/genshin-world/package.json` has no such entry, and packages/genshin-world/src/characterPack.ts is deleted.
+- [ ] **The folder rules are the ones a player's extracted release is read by** — contradicted: the account's and the browser's kept-pack readers are deleted (tasks 6.2 and 6.3 of the change, both done), so no reader is shared, and the kept-pack rules of the player-packs page go with the change (task 7.1).
+- [ ] **Only a folder named by a character's id is read, a file is served only from its folder's listing, nothing is cached, and a host's files are served at their id** — contradicted: no route reads a folder any more.
+- [ ] **The Key files table** — contradicted: six of its seven files are not in the repository (genshinCharacterPacks.ts, serveGenshinCharacterPack.ts, readCharacterPackModelPath.ts, listCharacterPackIds.ts, listCharacterPackFiles.ts and the characterPack constants.ts); only the module row's file exists.
+- [ ] **The development server serves the packs** — contradicted: the route is deleted. The decision that no build holds the route holds only because the route is gone.
