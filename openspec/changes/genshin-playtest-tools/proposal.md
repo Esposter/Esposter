@@ -27,5 +27,5 @@ One developer surface that belongs to the game, in the development server only.
 ## Impact
 
 - Development only: the surface and every command are absent from a production build; a browser driven by automation registers the commands and mounts no surface.
-- The renderer's creation, the look-tuning composable and the Vite dependency-optimizer exclusion for the Inspector go.
+- The renderer's Inspector and the look-tuning composable's Inspector group go. The Vite dependency-optimizer exclusion stays for the fluid simulator page, which keeps its own Inspector.
 - Command handles are registered by the world session, the save and the look; none of those gain behaviour a player can reach.

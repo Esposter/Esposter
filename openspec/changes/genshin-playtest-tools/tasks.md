@@ -7,7 +7,7 @@
 
 ## 2. Surface
 
-- [ ] 2.1 Draw the console (backtick, history in local storage, results and errors) and take the keyboard from the controls while it is focused. Verify: component tests for 'Valid line runs and reports' and 'Bad argument runs nothing' through the console; the owner presses the key in the dev server.
+- [x] 2.1 Draw the console (backtick, history in local storage, results and errors) and take the keyboard from the controls while it is focused. Verify: component tests for 'Valid line runs and reports' and 'Bad argument runs nothing' through the console; the owner presses the key in the dev server.
 - [ ] 2.2 Draw the panel (F2): variable tabs generated from the registry, the scenarios as buttons and the stats. Verify: a fixture renders the panel with variables, scenarios and the stats; the owner's eyes judge the layout.
 - [ ] 2.3 Mount both from the host behind the development flag and mount neither in a browser driven by automation. Verify: tests named after the scenarios 'Production build offers neither' and 'Browser driven by automation registers commands and mounts no surface'; `pnpm -C apps/web build` output holds no `createDevRegistry`.
 
@@ -18,7 +18,7 @@
 
 ## 4. Look and stats
 
-- [ ] 4.1 Register the look's every uniform as variables (same groups and ranges as the Inspector's Look group), then delete `attachInspector`, its call in `createGenshinRenderer`, the group in `useGenshinTuning` and the optimizer exclusion for the Inspector. Verify: `git grep attachInspector` and `git grep jsm/inspector` find nothing, and a test named after 'Look values are in the panel'.
+- [x] 4.1 Register the look's every uniform as variables (same groups and ranges as the Inspector's Look group), then delete `attachInspector`, its call in `createGenshinRenderer` and the group in `useGenshinTuning`. The Vite optimizer exclusion stays, since the fluid simulator page, which is not a Genshin scene, keeps its own Inspector. Verify: `git grep attachInspector -- packages/genshin-world apps/web/app/components/Genshin` finds nothing, the look's values are in the panel (the test named 'Look values are in the panel' in `createLookVariables.test.ts`), and `git grep jsm/inspector -- apps/web` finds only the fluid simulator page and its exclusion.
 - [x] 4.2 Show the stats overlay and register `stat` and the pass switches the world's chain draws (temporal anti-aliasing, shadows) as variables; bloom, god rays and occlusion have no switch, as the chain draws none of them (design, Stats). Verify: tests named after 'Overlay shows the counters' and 'Toggle hides it' over a stubbed renderer info.
 
 ## 5. Scenarios and convention
