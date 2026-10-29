@@ -126,9 +126,13 @@ const detail = computed<ExpeditionPlaceDetail | undefined>(() => {
   return {
     actionKind,
     actionLabel: actionLabels[actionKind],
-    // The picked place's description is not in the expedition record, so the panel draws none until the record holds it
-    description: "",
-    durations: expedition ? [] : picked.durations.map(({ hours: durationHours }) => durationHours),
+    description: gameText[picked.descriptionTextId],
+    durations: expedition
+      ? []
+      : picked.durations.map(({ hours: durationHours }) => ({
+          hours: durationHours,
+          label: fillGameTextValues(gameText[GameTextKey.ExpeditionDurationHours], durationHours),
+        })),
     id: picked.id,
     name: gameText[picked.nameTextId],
     rewards: (duration?.items ?? []).map(({ itemId, maxCount, minCount }) => {

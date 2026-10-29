@@ -20,7 +20,12 @@ export const props = {
     actionLabel: "Select Character",
     description:
       "Deep and dark woods where hunters don't easily venture themselves, afraid of its disturbing silence. A dangerous pack of wolves established themselves in the",
-    durations: [4, 8, 12, 20],
+    durations: [
+      { hours: 4, label: "4 hour(s)" },
+      { hours: 8, label: "8 hour(s)" },
+      { hours: 12, label: "12 hour(s)" },
+      { hours: 20, label: "20 hour(s)" },
+    ],
     id: 105,
     name: "Wolvendom",
     rewards: [

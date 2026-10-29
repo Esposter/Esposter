@@ -98,8 +98,10 @@ const pick = (characterId: number) => {
       </ul>
       <p v-if="detail.statusLabel" class="status">{{ detail.statusLabel }}</p>
       <ul v-else class="durations">
-        <li v-for="duration of detail.durations" :key="duration">
-          <button :aria-pressed="duration === hours" type="button" @click="hours = duration">{{ duration }}</button>
+        <li v-for="{ hours: durationHours, label } of detail.durations" :key="durationHours">
+          <button :aria-pressed="durationHours === hours" type="button" @click="hours = durationHours">
+            {{ label }}
+          </button>
         </li>
       </ul>
     </section>
@@ -351,8 +353,9 @@ const pick = (characterId: number) => {
   padding: calc(var(--unit) * 14) calc(var(--unit) * 25) 0;
   overflow: hidden;
   box-sizing: border-box;
-  font-size: calc(var(--unit) * 21);
-  font-weight: 400;
+  color: #625c5c;
+  font-size: calc(var(--unit) * 24);
+  font-weight: 500;
   line-height: calc(var(--unit) * 26);
 }
 
@@ -481,7 +484,8 @@ const pick = (characterId: number) => {
   background: none;
   color: #f3eee3;
   font: inherit;
-  font-size: calc(var(--unit) * 26);
+  font-size: calc(var(--unit) * 22);
+  white-space: nowrap;
 }
 
 .durations button[aria-pressed="true"] {
