@@ -65,11 +65,17 @@ The rule is prose until something can fail on it, and each row below says what d
 
 ## Open
 
-- **The references.** 448 files, about 378 MB, sit on each machine's disk only; the PC's agent is building the command that publishes them to the public container under the lock and writes the manifest, and the Mac runs it once for the ones only it holds.
-- **The recordings** under the parity folder's captures are disk only; the manifest of their public sources is not written yet.
-- **The text dumps** and the other tool folders beside them need each a row in the table: a cache, a manifest or Blob.
-- **The setup command.** One command that does the new-machine steps after the login, and says what it could not (the install, a missing credential), is not written.
-- **A check for the last row above.** A listing of every path the code reads outside the repository and the caches, failing for one that is neither, could run in the session's resume report.
+What the first inventory of the Mac's disk found (2026-10-29, `~/Esposter` at 169 GB, of which the install is 126 GB) and has not yet been given its home:
+
+- **The references.** The folder holds 1,637 files and 653 MB, of which only what a reference-map entry or a design names is a reference: 106 entries, 85 with a file and 21 pending. The pack publishes those to the public container under the lock and writes the manifest; the rest of the folder is softness and plate caches, Talent icons nothing reads, and the install-derived name cards (`namecards/`, 167 MB), which belong to the game data lock. 257 files named `.png` are WebP, so a manifest row takes its type from the bytes. The PC builds the command, and the Mac runs it once for the references only it holds.
+- **The recordings.** 155 videos, 6.3 GB. The 123 public ones need a committed manifest of video id, seconds and hash, since the clip tool prints only the path. The 22 user recordings (2.1 GB, `session-2.mp4` alone 1.4 GB, 21 of the map's 68 sources) cannot be fetched again and go to the public container under the lock, as do seven recordings no file, entry or design names. The frames cut from them (12.5 GB) are a cache whose writer was removed; the recipe is in the genshin-parity skill's `motion.md`.
+- **Fitted and authored records with no copy.** `extracted/login/placements.json` (13.8 MB, no writer), `city-areas.json`, `asset-index/gi-7.1.0-derived.json` and `transfer/mondstadt-gate-walls.zip` sit on one disk, and `tools/animestudio-cli/Maps/gi_map.bin` (194 MB, a day's run) is in no lock. They publish by the same content-addressed route as the references, as records beside them.
+- **Versions nobody wrote down.** The install's version is in comments only; the text builders read the data repository's `main` with no commit recorded; the character packs' extraction manifests and the tool that wrote them are outside the repository; the lock records no size or commit per key. Each is a field the lock or the manifest should carry.
+- **The text dumps.** `text/` rebuilds from the data repository and needs the install only for the account kit and the client decode. The older 6.6 dump (1.6 GB) is held only here; the repository's fetch cannot restore it, but GitHub serves old files by hash, so a committed list of path and hash would.
+- **State that belongs to a person or a machine.** Claude's memory folder (15 files), the fleet profile and peer list, the persona's saved picks and the `.env` files have no row. Memory and the profile are small and belong in git; the secrets' sources are not documented anywhere.
+- **The setup command.** One command that does the new-machine steps after the logins is not written. The gaps it must close: the install's downloader, the AnimeStudio toolchain (dotnet, cmake, clang), `vkd3d-compiler` (its only copy is a cache folder no code reads), `ffmpeg`, `yt-dlp` and Edge, a macOS branch for `vgmstream`, and the GitHub, Claude and Pulumi logins. The parity root is restated in three files and must be set once.
+- **A check that a folder outside the repository is a cache.** A listing of every path the code reads outside the repository and the caches, failing for one that is neither, could run in the session's resume report.
+- **Unpushed work is not a home.** A local branch, a stash, a worktree's uncommitted edits and a backup tar each held work no remote had; the archived agent branches now sit under `refs/archive/` on origin, and the resume report should list any ref or worktree with commits origin lacks.
 
 ## Key files
 
