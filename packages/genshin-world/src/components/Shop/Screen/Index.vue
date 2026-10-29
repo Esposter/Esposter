@@ -74,6 +74,7 @@ const getCostName = (itemId: number): string => {
 const balances = computed<CurrencyCount[]>(() =>
   Array.from(new Set(offeredGoods.value.flatMap(({ costs }) => costs.map(({ itemId }) => itemId))), (itemId) => ({
     id: String(itemId),
+    isTopUp: false,
     name: getCostName(itemId),
     quantity: countShopCost(inventory.value, wallet.value, itemId),
   })),

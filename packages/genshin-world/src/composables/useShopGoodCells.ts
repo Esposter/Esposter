@@ -36,12 +36,11 @@ export const useShopGoodCells = ({
       return {
         costs: good.costs.map((cost) => ({ count: cost.count, name: getCostName(cost.itemId) })),
         id: good.goodsId,
-        limitLabel:
-          left === undefined || limitKey === undefined ? undefined : fillGameTextValues(gameText[limitKey], left),
+        limitLabel: left === undefined || limitKey === undefined ? "" : fillGameTextValues(gameText[limitKey], left),
         name,
         refreshLabel:
           nextRefreshTime === undefined
-            ? undefined
+            ? ""
             : fillGameTextValues(
                 gameText[GameTextKey.ShopRefresh],
                 formatShopRefreshCountdown(now.until(nextRefreshTime)),

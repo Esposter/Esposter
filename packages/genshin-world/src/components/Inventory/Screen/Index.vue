@@ -131,12 +131,12 @@ const cells = computed((): InventoryCell[] => {
     return {
       caption,
       id: String(id),
-      isDestroyable: checkIsInventoryItemDestroyable(item) || undefined,
-      isEquipable: equipableGadgetIds.value.has(item.definition.id) || undefined,
-      isLockable: item.artifact ? true : undefined,
-      isLocked: item.artifact?.isLocked || undefined,
-      isSelected: chosenIds.value.includes(String(id)) || undefined,
-      isUsable: checkIsInventoryItemUsable(item, { cookingProgress, dishUseMap, instructionRecipeMap }) || undefined,
+      isDestroyable: checkIsInventoryItemDestroyable(item),
+      isEquipable: equipableGadgetIds.value.has(item.definition.id),
+      isLockable: Boolean(item.artifact),
+      isLocked: Boolean(item.artifact?.isLocked),
+      isSelected: chosenIds.value.includes(String(id)),
+      isUsable: checkIsInventoryItemUsable(item, { cookingProgress, dishUseMap, instructionRecipeMap }),
       name,
       rarity,
     };
@@ -145,6 +145,12 @@ const cells = computed((): InventoryCell[] => {
   const currencyCells = PRECIOUS_CURRENCIES.filter((currency) => wallet[currency] > 0).map((currency) => ({
     caption: String(wallet[currency]),
     id: currency,
+    isDestroyable: false,
+    isEquipable: false,
+    isLockable: false,
+    isLocked: false,
+    isSelected: false,
+    isUsable: false,
     name: gameText[CurrencyGameTextKeyMap[currency]],
     rarity: CurrencyRarityMap[currency],
   }));
@@ -212,7 +218,7 @@ const confirmDestroy = () => {
 const currencies = computed(() =>
   INVENTORY_CURRENCIES.map((currency) => ({
     id: currency,
-    isTopUp: currency === Currency.Primogem || undefined,
+    isTopUp: currency === Currency.Primogem,
     name: gameText[CurrencyGameTextKeyMap[currency]],
     quantity: wallet[currency],
   })),
@@ -237,7 +243,7 @@ const currencies = computed(() =>
       :destroy-confirm-button-label="gameText[GameTextKey.InventoryDestroyConfirmButton]"
       :destroy-confirm-list-label="gameText[GameTextKey.InventoryDestroyConfirmList]"
       :destroy-full-label="gameText[GameTextKey.BagFull]"
-      :is-destroy-full="isDestroyFull || undefined"
+      :is-destroy-full="isDestroyFull"
       :destroy-confirm-title="gameText[GameTextKey.InventoryDestroyConfirmTitle]"
       :destroy-confirm-warning-label="gameText[GameTextKey.InventoryDestroyConfirmWarning]"
       :destroy-label="gameText[GameTextKey.InventoryDestroy]"
@@ -246,9 +252,9 @@ const currencies = computed(() =>
       :destroy-recovered-names="recoveredNames"
       :destroy-selected-label
       :destroy-tip-label="gameText[GameTextKey.InventoryDestroyTip]"
-      :is-confirming="isConfirming || undefined"
-      :is-destroying="isDestroying || undefined"
-      :is-sortable="EQUIPMENT_CATEGORIES.includes(category) || undefined"
+      :is-confirming="isConfirming"
+      :is-destroying="isDestroying"
+      :is-sortable="EQUIPMENT_CATEGORIES.includes(category)"
       :lock-label="gameText[GameTextKey.ArtifactActionLock]"
       :order-label="gameText[isDescending ? GameTextKey.SortDescending : GameTextKey.SortAscending]"
       :quick-selects

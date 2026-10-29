@@ -2,7 +2,7 @@
 export interface CurrencyCount {
   id: string;
   // Whether the player can top it up, which the foot shows as a plus beside its count
-  isTopUp?: true;
+  isTopUp: boolean;
   name: string;
   quantity: number;
 }

@@ -6,12 +6,12 @@
 export interface InventoryCell {
   caption: string;
   id: string;
-  isDestroyable?: true;
-  isEquipable?: true;
-  isLockable?: true;
-  isLocked?: true;
-  isSelected?: true;
-  isUsable?: true;
+  isDestroyable: boolean;
+  isEquipable: boolean;
+  isLockable: boolean;
+  isLocked: boolean;
+  isSelected: boolean;
+  isUsable: boolean;
   name: string;
   rarity: number;
 }

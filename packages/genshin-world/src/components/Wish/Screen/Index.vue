@@ -164,6 +164,7 @@ const buyFate = () => {
 const currencies = computed(() =>
   [Currency.Primogem, ...(bannerKind.value ? [BannerKindFateMap[bannerKind.value]] : [])].map((currency) => ({
     id: currency,
+    isTopUp: false,
     name: gameText[CurrencyGameTextKeyMap[currency]],
     quantity: wallet.value[currency],
   })),
@@ -186,7 +187,7 @@ const banner = computed(() => banners.value.find(({ id }) => id === bannerId.val
 const bannerTrial = computed(() =>
   banner.value ? findBannerTrial(trials, banner.value.featuredFiveStars) : undefined,
 );
-const trialLabel = computed(() => (bannerTrial.value ? gameText[GameTextKey.WishGoToTrial] : undefined));
+const trialLabel = computed(() => (bannerTrial.value ? gameText[GameTextKey.WishGoToTrial] : ""));
 const openTrial = () => {
   if (bannerTrial.value) emit("trial", bannerTrial.value);
 };

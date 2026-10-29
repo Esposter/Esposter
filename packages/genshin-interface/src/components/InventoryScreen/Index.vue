@@ -43,13 +43,13 @@ interface Props {
   // The destroy mode's opening line in the reader's language
   destroyTipLabel: string;
   // Whether the dialog is open over the bag
-  isConfirming?: true;
+  isConfirming: boolean;
   // Whether the chosen entries' returns do not all fit in the bag, which holds the dialog's OK off
-  isDestroyFull?: true;
+  isDestroyFull: boolean;
   // Whether the bag is in its destroy mode, where a tick chooses an entry for a destroy rather than showing it
-  isDestroying?: true;
+  isDestroying: boolean;
   // Whether the open tab offers the sort, as the weapons' and artifacts' do
-  isSortable?: true;
+  isSortable: boolean;
   // The Lock button's words, shown on an unlocked bag artifact
   lockLabel: string;
   // The sort's order in the reader's language, which a screen reader says in place of its arrow
@@ -165,7 +165,7 @@ watch(
             :aria-label="cell.name"
             :aria-pressed="isDestroying ? Boolean(cell.isSelected) : cell.id === selectedCell?.id"
             :data-rarity="cell.rarity"
-            :data-selected="cell.isSelected"
+            :data-selected="cell.isSelected || undefined"
             type="button"
             @click="isDestroying && cell.isDestroyable ? emit('choose', cell.id) : (selectedId = cell.id)"
           >
@@ -199,7 +199,7 @@ watch(
         ref="trashButton"
         class="trash"
         :aria-label="destroyLabel"
-        :aria-pressed="isDestroying"
+        :aria-pressed="isDestroying || undefined"
         type="button"
         @click="emit('toggleDestroy')"
       />

@@ -5,8 +5,8 @@ export interface ShopGoodCell {
   costs: { count: number; name: string }[];
   id: number;
   // The Left This Month, Left Today or Left This Week line, its count already filled, where the good has a limit
-  limitLabel?: string;
+  limitLabel: string;
   name: string;
   // The Refreshes in line, its countdown already filled, where the good comes back on a refresh
-  refreshLabel?: string;
+  refreshLabel: string;
 }

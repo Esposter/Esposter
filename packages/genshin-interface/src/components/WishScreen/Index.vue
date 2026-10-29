@@ -53,11 +53,11 @@ interface Props {
   // The Shop button's words
   shopLabel: string;
   title: string;
-  // The trial button's words in the reader's language, "undefined" on a banner with no trial
-  trialLabel?: string;
+  // The trial button's words in the reader's language, "" on a banner with no trial
+  trialLabel: string;
 }
 
-const bannerId = defineModel<string>("bannerId");
+const bannerId = defineModel<string>("bannerId", { default: "" });
 const {
   backLabel,
   bannerCard,
@@ -105,6 +105,7 @@ const bannerLabelText = computed(() => {
           :aria-label="getLabelText(banner.label)"
           :aria-pressed="banner.id === bannerId"
           :kind="GameButtonKind.Row"
+          tip=""
           @click="bannerId = banner.id"
         />
       </li>
@@ -115,7 +116,9 @@ const bannerLabelText = computed(() => {
         {{ quantity }}
       </li>
     </ul>
-    <GameButton class="back" :aria-label="backLabel" :kind="GameButtonKind.Plain" @click="emit('close')">✕</GameButton>
+    <GameButton class="back" :aria-label="backLabel" :kind="GameButtonKind.Plain" tip="" @click="emit('close')"
+      >✕</GameButton
+    >
     <section v-if="bannerCard && bannerLabelText" class="card">
       <p class="tag">{{ bannerLabelText }}</p>
       <p class="card-title">
@@ -130,14 +133,14 @@ const bannerLabelText = computed(() => {
       </div>
     </section>
     <div class="links">
-      <GameButton class="link" :kind="GameButtonKind.Reply">{{ shopLabel }}</GameButton>
-      <GameButton v-if="trialLabel" class="link trial" :kind="GameButtonKind.Reply" @click="emit('trial')">{{
+      <GameButton class="link" :kind="GameButtonKind.Reply" tip="">{{ shopLabel }}</GameButton>
+      <GameButton v-if="trialLabel" class="link trial" :kind="GameButtonKind.Reply" tip="" @click="emit('trial')">{{
         trialLabel
       }}</GameButton>
-      <GameButton class="link" :kind="GameButtonKind.Reply" @click="isDetailsOpen = true">{{
+      <GameButton class="link" :kind="GameButtonKind.Reply" tip="" @click="isDetailsOpen = true">{{
         detailsLabel
       }}</GameButton>
-      <GameButton class="link" :kind="GameButtonKind.Reply" @click="isHistoryOpen = true">{{
+      <GameButton class="link" :kind="GameButtonKind.Reply" tip="" @click="isHistoryOpen = true">{{
         historyLabel
       }}</GameButton>
     </div>
@@ -149,6 +152,7 @@ const bannerLabelText = computed(() => {
         class="set"
         :disabled="!isAffordable"
         :kind="GameButtonKind.Pill"
+        tip=""
         @click="emit('wish', count)"
       >
         <span class="set-label">{{ label }}</span>
@@ -160,6 +164,7 @@ const bannerLabelText = computed(() => {
         class="set"
         :disabled="!isAffordable"
         :kind="GameButtonKind.Pill"
+        tip=""
         @click="emit('buy')"
       >
         <span class="set-label">{{ label }}</span>

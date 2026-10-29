@@ -19,8 +19,8 @@ export const props = {
     { id: "standard", kind: BannerKind.Standard, label: BANNER_LABELS[BannerKind.Standard] },
   ],
   currencies: [
-    { id: "Primogem", name: "Primogem", quantity: 0 },
-    { id: "IntertwinedFate", name: "Intertwined Fate", quantity: 1 },
+    { id: "Primogem", isTopUp: false, name: "Primogem", quantity: 0 },
+    { id: "IntertwinedFate", isTopUp: false, name: "Intertwined Fate", quantity: 1 },
   ],
   detailsLabel: "Details",
   fatePoints: FATE_POINTS,
@@ -40,6 +40,7 @@ export const props = {
   ],
   shopLabel: "Shop",
   title: "Wish",
+  trialLabel: "",
 };
 export const variants = {
   characterEvent: {

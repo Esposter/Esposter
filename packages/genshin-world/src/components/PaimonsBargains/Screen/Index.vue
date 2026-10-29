@@ -118,6 +118,7 @@ const balances = computed<CurrencyCount[]>(() =>
     new Set(offers.value.flatMap(({ good }) => good.costs.map(({ itemId }) => currencyOf(itemId)))),
     (currency) => ({
       id: currency,
+      isTopUp: false,
       name: gameText[takeOne(CurrencyGameTextKeyMap, currency)],
       quantity: wallet.value[currency],
     }),
