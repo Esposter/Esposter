@@ -8,6 +8,7 @@ import type { GameText } from "genshin-text";
 import ScreenHeader from "#src/components/Menu/ScreenHeader/Index.vue";
 import { useListScreenTabStep } from "#src/composables/useListScreenTabStep";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
+import { ScreenHeaderMark } from "#src/models/menu/ScreenHeaderMark";
 import { ArchiveSectionGameTextKeyMap } from "#src/services/archive/ArchiveSectionGameTextKeyMap";
 import { ArchiveSectionOrder } from "#src/services/archive/ArchiveSectionOrder";
 import { GameScreen, ItemRarityFaceGradientMap } from "genshin-interface";
@@ -141,7 +142,7 @@ const getAdjacentSection = (step: number): ArchiveSection =>
         d="M51.5 7q3-.5 3.5 1.5l6.5 7.5 3.5 2.5q.5 3-1.5 3.5l-4.5 3.5 2.5 2.5h3l8 4 7.5 6.5 4 5q4.02 5.98 5 15l5 7-6 4q-2.49 15.51-13.5 22.5l-7 4h-8l-2-2-.5.5v4.5h3.5l2-1 2.5 1v1.5l-8 9-3 10-1.5 1.5-2.5-3.5v-3l-4-8-6-7q.5-2 3.5-1.5l3 1q2.25-.75 1.5-4.5l-.5-.5-2 2h-8l-8-5-4.5-4.5-7-12v-4l-2.5-2.5h-2l-3.5-2.5 1-2.5 3-1.5 4-7v-3l3-5v-2l9.5-10.5 6-4 7-2 1.5-1.5q.5-3-1.5-3.5l-3.5-2.5q-.5-4 2.5-4.5l7.5-6.5 1.5-2.5zm-1.5 32v7l-5 8-6 5-4 2h-4l-2 3 2 1 9 3 4 3 5 7 2 8 3 1 1-6 4-6q-1-3 2-2v-2l15-7q2 1 1-1l-1-2-7-1-3-2-9-9-2-4v-4q-1-3-5-2z"
       />
     </svg>
-    <ScreenHeader :game-text :title="sectionTitle" @close="emit('close')" />
+    <ScreenHeader :game-text :mark="ScreenHeaderMark.Back" :title="sectionTitle" @close="emit('close')" />
     <p class="counter">
       <span>{{ gameText[GameTextKey.ArchiveUnlockedEntries] }}</span>
       <span class="count"

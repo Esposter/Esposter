@@ -102,6 +102,18 @@ export const MENU_LIST_CLOSE_GLYPH: MenuIconGlyph = {
   y: -5,
 };
 
+// The list screens' back mark, a curved arrow traced at four times off the English client's archive screen at 1920 by
+// 1080 (its recording at 19.5 seconds) and drawn in the cream disc's dark, its box from the close button's top left
+export const MENU_LIST_BACK_GLYPH: MenuIconGlyph = {
+  height: 32,
+  paths: [
+    "M15.63 1.75l0.38 0.38v2.75l-0.25 0.25v2l0.88 0.88 4.5 0.25 2.75 1h1l0.5 0.5 1.75 0.75 2.13 1.88 1.25 1.75 0.75 2.25 0.75 0.75v5.38q-0.67-0.28-0.5 0.38l-0.75 1.75-2.87 3.38q-1.060.19-1.5 1l-2.75 1.25-2 0.25-0.25 0.25h-1.25q-0.37-0.25 0.25-0.5h0.5l1-1 1-0.25 1.5-1.25h0.38q-0.12-0.72 0.63-1 0.560.19 0.38-0.37l0.5-0.5 0.25-1.25 0.5-0.75q-0.17-1.04 0.25-1.5l-0.25-0.25q0.21-1.21-0.25-1.75l-2.12-2.37h-0.75l-1-0.75h-0.75l-1.25-0.5h-3.5l-1.62 0.88-0.25 1.25 0.25 0.25v2.25q0.56 0.31 0.25 1.5l-0.62 0.38-3.5-3.25-2-1.25-1.5-1.5-6.62-3.62v-0.5q0.63-0.25 0.5-0.87l0.88-0.25 1.5-1 1.25-1.25 1.5-0.75 2.88-2.37q-0.19-0.56 0.38-0.37l5-4.5z",
+  ],
+  width: 32,
+  x: 13,
+  y: 13,
+};
+
 // The levels a volume row's slider runs between, from its lowest to its highest
 export const VOLUME_LEVEL_MINIMUM = 1;
 export const VOLUME_LEVEL_MAXIMUM = 10;

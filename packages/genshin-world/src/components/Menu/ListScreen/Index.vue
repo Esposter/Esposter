@@ -3,12 +3,15 @@ import type { GameText } from "genshin-text";
 import type { VNode } from "vue";
 
 import ScreenHeader from "#src/components/Menu/ScreenHeader/Index.vue";
+import { ScreenHeaderMark } from "#src/models/menu/ScreenHeaderMark";
 import { LIST_SCREEN_WIDTH } from "#src/services/menu/constants";
 import { GameScreen } from "genshin-interface";
 
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
+  // The glyph the close mark draws, a cross unless the screen's reference shows another
+  mark?: ScreenHeaderMark;
   // The screen's title in the reader's language
   title: string;
   // Whether the world behind the screen is blurred and washed, which the screen opts into
@@ -28,7 +31,7 @@ defineSlots<{ detail: () => VNode; icon?: () => VNode; list: () => VNode; tabs?:
   <GameScreen class="list-screen" :is-world-blurred="isWorldBlurred">
     <span class="band" />
     <slot name="icon" />
-    <ScreenHeader :game-text :title @close="emit('close')">
+    <ScreenHeader :game-text :mark :title @close="emit('close')">
       <template #tabs>
         <slot name="tabs" />
       </template>

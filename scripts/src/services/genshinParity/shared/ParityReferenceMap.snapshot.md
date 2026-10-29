@@ -7,7 +7,7 @@ committed.
 
 | Reference                              | Screen                      |                                                                Mean difference | Shape |   Tone |   FLIP |
 | :------------------------------------- | :-------------------------- | -----------------------------------------------------------------------------: | ----: | -----: | -----: |
-| `archive-screen`                       | `ArchiveScreen`             |                                                                         10.10% | 0.898 |  2.18% | 0.3490 |
+| `archive-screen`                       | `ArchiveScreen`             |                                                                          9.97% | 0.899 |  2.17% | 0.3457 |
 | `character-artifacts`                  | `CharacterScreen`           |                                                                          2.88% | 0.924 |  0.90% | 0.1225 |
 | `character-artifacts-tabs`             | `CharacterScreen`           |                                                                          0.88% | 0.976 |  0.32% | 0.0474 |
 | `character-attributes`                 | `CharacterScreen`           |                                                                          1.70% | 0.966 |  0.61% | 0.0703 |
@@ -74,7 +74,7 @@ committed.
 | `menu-paimon-disabled`                 | `MenuPaimon`                |                                     pending: no screenshot of this variant yet |       |        |        |
 | `menu-paimon-hover`                    | `MenuPaimon`                |                                     pending: no screenshot of this variant yet |       |        |        |
 | `menu-paimon-pressed`                  | `MenuPaimon`                |                                     pending: no screenshot of this variant yet |       |        |        |
-| `menu-time`                            | `MenuTime`                  |                                                                          1.55% | 0.825 |  1.24% | 0.0377 |
+| `menu-time`                            | `MenuTime`                  |                                                                          1.54% | 0.825 |  1.22% | 0.0376 |
 | `menu-world-level-prompt`              | `MenuWorldLevelPrompt`      |                                       pending: no screenshot of the screen yet |       |        |        |
 | `menu-world-level-prompt-hover`        | `MenuWorldLevelPrompt`      |                                     pending: no screenshot of this variant yet |       |        |        |
 | `menu-world-level-prompt-pressed`      | `MenuWorldLevelPrompt`      |                                     pending: no screenshot of this variant yet |       |        |        |
@@ -85,9 +85,9 @@ committed.
 | `party-screen`                         | `PartyScreen`               |                                                                          4.27% | 0.366 |  2.52% | 0.1588 |
 | `people-of-the-springs-location`       | `WorldScreen`               |                                                                         25.06% | 0.223 | 21.49% | 0.7945 |
 | `publisher-splash`                     | `SplashPublisher`           |                                                                          0.07% | 1.000 |  0.01% | 0.0036 |
-| `quest-screen`                         | `QuestScreen`               |                                                                          9.97% | 0.852 |  8.23% | 0.3620 |
+| `quest-screen`                         | `QuestScreen`               |                                                                          9.96% | 0.852 |  8.21% | 0.3617 |
 | `quest-screen-details`                 | `QuestScreen`               |                                                                         13.97% | 0.946 | 12.85% | 0.4368 |
-| `quest-screen-header`                  | `QuestScreen`               |                                                                          7.68% | 0.996 |  6.75% | 0.3086 |
+| `quest-screen-header`                  | `QuestScreen`               |                                                                          7.56% | 0.999 |  6.62% | 0.3051 |
 | `quest-screen-list`                    | `QuestScreen`               |                                                                          6.18% | 0.892 |  4.70% | 0.2657 |
 | `reputation-screen`                    | `ReputationScreen`          |                                                                          1.99% | 0.875 |  1.39% | 0.1429 |
 | `settings-audio-rows`                  | `MenuSettings`              |                                                                          1.01% | 0.997 |  0.38% | 0.0742 |

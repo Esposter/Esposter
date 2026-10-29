@@ -2,6 +2,7 @@
 import type { GameText } from "genshin-text";
 
 import ScreenHeader from "#src/components/Menu/ScreenHeader/Index.vue";
+import { ScreenHeaderMark } from "#src/models/menu/ScreenHeaderMark";
 import { getTimeTargetMinutes } from "#src/services/menu/getTimeTargetMinutes";
 import { stepTimeDialAdvance } from "#src/services/menu/stepTimeDialAdvance";
 import { MINUTES_PER_DAY } from "genshin-engine";
@@ -61,7 +62,12 @@ onMounted(() => {
        to dial the advance, the hour the dial points at and Confirm, which sets the world's clock to that hour. Each
        Place is provisional until the English PC client's own screen is fitted to the reference -->
   <GameScreen class="menu-time" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Time]">
-    <ScreenHeader :game-text :title="gameText[GameTextKey.Time]" @close="emit('close')" />
+    <ScreenHeader
+      :game-text
+      :mark="ScreenHeaderMark.DoubleArrow"
+      :title="gameText[GameTextKey.Time]"
+      @close="emit('close')"
+    />
     <div
       ref="dial"
       class="dial"

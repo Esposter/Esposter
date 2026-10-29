@@ -644,6 +644,7 @@ export * from "./models/menu/MenuFrameIcon.ts";
 export * from "./models/menu/MenuIconGlyph.ts";
 export * from "./models/menu/MenuPromptIcon.ts";
 export * from "./models/menu/RangeSetting.ts";
+export * from "./models/menu/ScreenHeaderMark.ts";
 export * from "./models/menu/SettingRange.ts";
 export * from "./models/menu/SettingsRow.ts";
 export * from "./models/menu/SettingsRowKind.ts";
