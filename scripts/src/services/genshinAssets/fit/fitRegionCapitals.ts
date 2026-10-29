@@ -47,7 +47,7 @@ export const fitRegionCapitals = async ({ isDryRun }: DryRunOptions): Promise<Ga
     await Promise.all(
       Object.entries(RegionCapitalMap).map(async ([region, capital]) => {
         const { landmarkId } = capital;
-        const regionFile = join("regions", `${region}.json`);
+        const regionFile = join(GameDataset.Regions, `${region}.json`);
         const regionData = parseMachineJson<{ landmarks: { id: string }[] }>(
           await readFile(join(WORLD_DATA_DIRECTORY, regionFile), "utf8"),
         );

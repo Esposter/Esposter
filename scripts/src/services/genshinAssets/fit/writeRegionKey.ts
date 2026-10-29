@@ -4,6 +4,7 @@ import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { GameDataset } from "genshin-world";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -16,7 +17,7 @@ export const writeRegionKey = async (
   summary: string,
   { isDryRun }: DryRunOptions,
 ): Promise<string> => {
-  const regionFile = join("regions", `${component}.json`);
+  const regionFile = join(GameDataset.Regions, `${component}.json`);
   const regionData = parseMachineJson<Record<string, unknown>>(
     await readFile(join(WORLD_DATA_DIRECTORY, regionFile), "utf8"),
   );

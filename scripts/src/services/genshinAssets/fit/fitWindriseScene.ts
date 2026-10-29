@@ -65,8 +65,8 @@ export const fitWindriseScene = (only: readonly string[], options: DryRunOptions
         return { notes: [landmarksPath, ...notes], objects };
       },
       oak: fitWindriseOak,
-      paving: async () => ({ notes: [], objects: { "windrise/paving": await fitWindrisePaving() } }),
-      plants: async () => ({ notes: [], objects: { "windrise/plants": await fitWindrisePlants() } }),
+      paving: async () => ({ notes: [], objects: { [`${GameDataset.Windrise}/paving`]: await fitWindrisePaving() } }),
+      plants: async () => ({ notes: [], objects: { [`${GameDataset.Windrise}/plants`]: await fitWindrisePlants() } }),
       statue: fitWindriseStatue,
       // The surfaces record holds the families its reader parses: the grass has no mesh in the exports to read. The
       // Ground's family also holds each of its layers' colours, which the tiles' own cells class
@@ -101,8 +101,8 @@ export const fitWindriseScene = (only: readonly string[], options: DryRunOptions
             `surface detail a texel: ${detailTexels.join(", ")}`,
           ],
           objects: {
-            "windrise/ground-layers": groundLayers,
-            "windrise/surfaces": {
+            [`${GameDataset.Windrise}/ground-layers`]: groundLayers,
+            [`${GameDataset.Windrise}/surfaces`]: {
               ...surfaces,
               [WindrisePartFamily.Ground]: { ...surfaces[WindrisePartFamily.Ground], layers: groundLayerColours },
             },
@@ -114,7 +114,10 @@ export const fitWindriseScene = (only: readonly string[], options: DryRunOptions
           readWorldOrigin(DerivedAssetComponent.Windrise),
           readWorldWaterLevel(DerivedAssetComponent.Windrise),
         ]);
-        return { notes: [], objects: { "windrise/water": { level: roundFitted(waterLevel - originY) } } };
+        return {
+          notes: [],
+          objects: { [`${GameDataset.Windrise}/water`]: { level: roundFitted(waterLevel - originY) } },
+        };
       },
     },
     only,

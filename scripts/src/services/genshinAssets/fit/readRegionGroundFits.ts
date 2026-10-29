@@ -5,6 +5,7 @@ import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import { checkHasOutline } from "#src/services/genshinAssets/fit/checkHasOutline";
 import { fitRegionGroundPieces } from "#src/services/genshinAssets/fit/fitRegionGroundPieces";
 import { readRegionAreas } from "#src/services/genshinAssets/fit/readRegionAreas";
+import { GameDataset } from "genshin-world";
 
 // A region's ground in pieces, one fit per area its catalogue outlines, each named `ground/<area>` so `--only ground`
 // Runs them all and `--only ground/<area>` runs one. The Region is fitted once, whichever area is asked for, and an
@@ -19,7 +20,7 @@ export const readRegionGroundFits = async (
     areas
       .filter((area) => checkHasOutline(area))
       .map(({ id }) => [
-        `ground/${id}`,
+        `${GameDataset.Ground}/${id}`,
         async () => {
           const fit = await fitRegion();
           const build = fit.pieces.find(({ areaId }) => areaId === id)?.build ?? { notes: [], objects: {} };

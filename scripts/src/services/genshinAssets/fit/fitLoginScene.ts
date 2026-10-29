@@ -30,6 +30,7 @@ import { readComponentMaterials } from "#src/services/genshinAssets/shared/readC
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";
 import { DerivedAssetSoundEffectMap } from "#src/services/genshinAssets/sound/DerivedAssetSoundEffectMap";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { GameDataset } from "genshin-world";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -54,13 +55,16 @@ export const fitLoginScene = async (only: readonly string[], options: DryRunOpti
     // The cloud layer's textures as the statistics ours are synthesized from
     cloudLayerTextures: async () => ({
       notes: [],
-      objects: { "login/cloudLayerTextures": await fitCloudLayerTextures(textureDirectory) },
+      objects: { [`${GameDataset.Login}/cloudLayerTextures`]: await fitCloudLayerTextures(textureDirectory) },
     }),
-    clouds: async () => ({ notes: [], objects: { "login/clouds": await fitLoginClouds(textureDirectory) } }),
+    clouds: async () => ({
+      notes: [],
+      objects: { [`${GameDataset.Login}/clouds`]: await fitLoginClouds(textureDirectory) },
+    }),
     door: async () => ({
       notes: [],
       objects: {
-        "login/door": await fitLoginDoor(
+        [`${GameDataset.Login}/door`]: await fitLoginDoor(
           placements,
           await readComponentClips(DerivedAssetComponent.Login),
           meshDirectory,
@@ -68,31 +72,38 @@ export const fitLoginScene = async (only: readonly string[], options: DryRunOpti
         ),
       },
     }),
-    hulls: async () => ({ notes: [], objects: { "login/hulls": await fitLoginHulls(placements, meshDirectory) } }),
+    hulls: async () => ({
+      notes: [],
+      objects: { [`${GameDataset.Login}/hulls`]: await fitLoginHulls(placements, meshDirectory) },
+    }),
     interfaceClips: async () => ({
       notes: [],
-      objects: { "login/interfaceClips": fitInterfaceClips(await readComponentClips(DerivedAssetComponent.Login)) },
+      objects: {
+        [`${GameDataset.Login}/interfaceClips`]: fitInterfaceClips(
+          await readComponentClips(DerivedAssetComponent.Login),
+        ),
+      },
     }),
     // The interface's tree as `genshin:assets interface` exported it
     interfaceRects: async () => {
       const interfaceTree = parseMachineJson<InterfaceNode>(
         await readFile(join(directory.root, "interface", "interface.json"), "utf8"),
       );
-      return { notes: [], objects: { "login/interfaceRects": fitInterfaceRects(interfaceTree) } };
+      return { notes: [], objects: { [`${GameDataset.Login}/interfaceRects`]: fitInterfaceRects(interfaceTree) } };
     },
     music: async () => {
       const { music, report } = await fitLoginMusic();
-      return { notes: report, objects: { "login/music": music } };
+      return { notes: report, objects: { [`${GameDataset.Login}/music`]: music } };
     },
     paving: async () => ({
       notes: [],
-      objects: { "login/paving": await fitLoginPaving(placements, meshDirectory, textureDirectory) },
+      objects: { [`${GameDataset.Login}/paving`]: await fitLoginPaving(placements, meshDirectory, textureDirectory) },
     }),
     scroll: () =>
       Promise.resolve({
         notes: [],
         objects: {
-          "login/scroll": Object.fromEntries(
+          [`${GameDataset.Login}/scroll`]: Object.fromEntries(
             (DerivedAssetComponentMap[DerivedAssetComponent.Login].spawns ?? []).flatMap(({ copies, prefab }) =>
               copies ? [[prefab.name, { count: copies.count, length: Math.hypot(...copies.step) }]] : [],
             ),
@@ -116,7 +127,7 @@ export const fitLoginScene = async (only: readonly string[], options: DryRunOpti
       );
       return {
         notes: [`the cloud layer's dome drawn from its profiles stands ${residual.toFixed(4)} off its own projections`],
-        objects: { "login/sky": { cloudLayer: dome, cloudLayerMaterial, gradient } },
+        objects: { [`${GameDataset.Login}/sky`]: { cloudLayer: dome, cloudLayerMaterial, gradient } },
       };
     },
     // The sounds the login plays beside its music, each from the game's sounds matched for it
@@ -125,16 +136,22 @@ export const fitLoginScene = async (only: readonly string[], options: DryRunOpti
       for (const [name, { pattern, sounds }] of Object.entries(DerivedAssetSoundEffectMap[DerivedAssetComponent.Login]))
         // oxlint-disable-next-line no-await-in-loop -- each effect's sounds are decoded into one folder in turn
         effects[name] = await fitSoundEffect(pattern, sounds);
-      return { notes: [], objects: { "login/sounds": effects } };
+      return { notes: [], objects: { [`${GameDataset.Login}/sounds`]: effects } };
     },
     stone: async () => {
       const materials = await readComponentMaterials(DerivedAssetComponent.Login);
-      return { notes: [], objects: { "login/stone": await fitLoginStone(materials, textureDirectory) } };
+      return {
+        notes: [],
+        objects: { [`${GameDataset.Login}/stone`]: await fitLoginStone(materials, textureDirectory) },
+      };
     },
     titleLogos: async () => ({
       notes: [],
       objects: Object.fromEntries(
-        Object.entries(await fitTitleLogos(directory.root)).map(([logo, path]) => [`splash/titleLogo/${logo}`, path]),
+        Object.entries(await fitTitleLogos(directory.root)).map(([logo, path]) => [
+          `${GameDataset.Splash}/titleLogo/${logo}`,
+          path,
+        ]),
       ),
     }),
     towers: async () => {
@@ -142,11 +159,11 @@ export const fitLoginScene = async (only: readonly string[], options: DryRunOpti
         fitLoginTowers(placements, meshDirectory),
         fitLoginTowerFacades(placements, meshDirectory, textureDirectory),
       ]);
-      return { notes: [], objects: { "login/towers": { ...towers, facades } } };
+      return { notes: [], objects: { [`${GameDataset.Login}/towers`]: { ...towers, facades } } };
     },
     walkway: async () => ({
       notes: [],
-      objects: { "login/walkway": await fitLoginWalkway(placements, meshDirectory) },
+      objects: { [`${GameDataset.Login}/walkway`]: await fitLoginWalkway(placements, meshDirectory) },
     }),
   };
   return runFits(fits, only, options);

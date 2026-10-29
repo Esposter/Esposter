@@ -6,6 +6,7 @@ import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { createNearestColourReader } from "#src/services/genshinAssets/fit/createNearestColourReader";
 import { fitStatueComponent } from "#src/services/genshinAssets/fit/fitStatueComponent";
+import { readTexture } from "#src/services/genshinAssets/fit/readTexture";
 import { roundStack } from "#src/services/genshinAssets/fit/roundStack";
 import { sampleMeshSurface } from "#src/services/genshinAssets/fit/sampleMeshSurface";
 import { sampleSurfaceTexture } from "#src/services/genshinAssets/fit/sampleSurfaceTexture";
@@ -31,8 +32,8 @@ import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded"
 import { BYTE } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
+import { GameDataset } from "genshin-world";
 import { join } from "node:path";
-import sharp from "sharp";
 import { Color, SRGBColorSpace, Vector3 } from "three";
 
 // The Statue of The Seven as the statue kit's stacks in its frame, its root at the origin and unturned, so the Landmark's
@@ -77,7 +78,7 @@ export const fitWindriseStatue = async (): Promise<GameDataBuild> => {
     // oxlint-disable-next-line no-await-in-loop -- one mesh of thousands of vertices is read at a time
     const [{ faces, faceUvs, uvs, vertices: meshVertices }, texture] = await Promise.all([
       readObjMesh(join(meshDirectory, `${placement.mesh}.obj`)),
-      sharp(diffusePath).raw().toBuffer({ resolveWithObject: true }),
+      readTexture(diffusePath),
     ]);
     const vertices = meshVertices.map((vertex): Vector =>
       new Vector3(...toRightHanded(vertex)).applyMatrix4(transform).toArray(),
@@ -113,5 +114,8 @@ export const fitWindriseStatue = async (): Promise<GameDataBuild> => {
       `${placement.mesh}: ${pieces.length} pieces as ${pieces.reduce((sum, { stacks }) => sum + stacks.length, 0)} stacks, mean score ${meanScore.toFixed(2)}`,
     );
   }
-  return { notes: [...reports, `statue: ${parts.length} stacks`], objects: { "windrise/statue": { parts } } };
+  return {
+    notes: [...reports, `statue: ${parts.length} stacks`],
+    objects: { [`${GameDataset.Windrise}/statue`]: { parts } },
+  };
 };

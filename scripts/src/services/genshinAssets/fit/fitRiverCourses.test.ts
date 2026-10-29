@@ -12,11 +12,11 @@ vi.mock(import("#src/services/genshinAssets/shared/writeWorldData"), () => ({
 }));
 
 describe(fitRiverCourses, () => {
+  const river = Array.from({ length: 7 }, (_value, x) => [-1, 1].map((z) => [x, 10 - x / 2, z])).flat();
   test("writes the course of each water surface that is a river as the region's rivers, and no other placement", async () => {
     expect.hasAssertions();
 
     const placement = { position: [0, 0, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1] };
-    const river = Array.from({ length: 7 }, (_value, x) => [-1, 1].map((z) => [x, 10 - x / 2, z])).flat();
     const pond = [0, 4].flatMap((x) => [0, 4].map((z) => [x, 0, z]));
     vi.mocked(readFile)
       .mockResolvedValueOnce(
@@ -52,7 +52,6 @@ describe(fitRiverCourses, () => {
       rotation: [0, 0, 0, 1],
       scale: [1, 1, 1],
     };
-    const river = Array.from({ length: 7 }, (_value, x) => [-1, 1].map((z) => [x, 10 - x / 2, z])).flat();
     vi.mocked(readFile)
       .mockResolvedValueOnce(JSON.stringify({ placements: [placement] }))
       .mockResolvedValueOnce(JSON.stringify({ enemyCamps: [] }));

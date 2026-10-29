@@ -7,6 +7,7 @@ import { computeVectorMean } from "#src/services/genshinAssets/fit/computeVector
 import { fitAlbedo } from "#src/services/genshinAssets/fit/fitAlbedo";
 import { LoginStoneFamilyMaterialRegexMap } from "#src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { MAIN_TEXTURE_SLOT } from "#src/services/genshinAssets/shared/constants";
 import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
 import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
 import { BYTE } from "#src/services/shared/constants";
@@ -18,7 +19,6 @@ import sharp from "sharp";
 const MASK_SAMPLE_SIZE = 64;
 // The material property a mask's smoothness is scaled by, and the slots its diffuse texture and its mask fill
 const GLOSS_MAP_SCALE_KEY = "_GlossMapScale";
-const DIFFUSE_SLOT = "_MainTex";
 const MASK_SLOT = "_DetailMask";
 // The keyword a material's variant draws its rim glow under, and the property its strength is read from
 const RIM_GLOW_KEYWORD = "ENABLE_RIM_GLOW_ON";
@@ -50,7 +50,7 @@ export const fitLoginStone = async (
     Object.entries(LoginStoneFamilyMaterialRegexMap).map(async ([family, regex]) => {
       const familyMaterials = materials.filter(({ name }) => regex.test(name));
       const diffusePaths = [
-        ...new Set(familyMaterials.flatMap((material) => getTexturePath(material, DIFFUSE_SLOT) ?? [])),
+        ...new Set(familyMaterials.flatMap((material) => getTexturePath(material, MAIN_TEXTURE_SLOT) ?? [])),
       ];
       const smoothnesses = await Promise.all(
         familyMaterials.map(async (material) => {
