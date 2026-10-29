@@ -15,6 +15,10 @@ A missed case is a defect only where a required status or a shipped decision wai
 
 A cost, speed, cache hit or risk is claimed only with the measurement that settles it, and a benefit only with the reader who would act on it (`references/unmeasured-claims.md`).
 
+## A one-off gap in the process is fixed at its root or by hand — owned here
+
+When an incident exposes a gap in the review or the session process, the root cause is fixed or an existing step is simplified, and the one-off is handled by hand. A new mechanism proposed for a one-off is the argument this entry names, and it is not written.
+
 ## The catalogue
 
 | Fallacy                                                                                          | The rule and its owner                                                                                                                                                                                                                                                             |
