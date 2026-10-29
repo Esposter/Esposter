@@ -7,6 +7,7 @@ import type { ExpeditionPlaceDetail } from "#src/models/ExpeditionPlaceDetail";
 import CloseButton from "#src/components/CloseButton/Index.vue";
 import ItemTile from "#src/components/ItemTile/Index.vue";
 import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
+import { CloseButtonMark } from "#src/models/CloseButtonMark";
 import { ExpeditionActionKind } from "#src/models/ExpeditionActionKind";
 
 interface Props {
@@ -70,7 +71,7 @@ const pick = (characterId: number) => {
     <span class="emblem" aria-hidden="true" />
     <ScreenTitle class="heading">{{ title }}</ScreenTitle>
     <p class="limit">{{ limitLabel }}</p>
-    <CloseButton class="close" :label="closeLabel" @click="emit('close')" />
+    <CloseButton class="close" :label="closeLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
     <ul class="nations">
       <li v-for="{ hasAlert, name } of nations" :key="name">
         <button class="nation" :aria-pressed="name === nation" type="button" @click="nation = name">
@@ -183,27 +184,12 @@ const pick = (characterId: number) => {
   letter-spacing: calc(var(--unit) * 1.5);
 }
 
-/* The way out is a disc 58 across with a grey ring, its cross two bars of 37 by 8 in the ink's colour, measured from the reference */
+/* The way out's disc is 58 across with a grey ring, drawn inside it so the shared mark keeps the disc's box, and its cross is
+   the shared close button's mark in the ink's colour */
 .close {
-  border: calc(var(--unit) * 6) solid #757274;
+  box-shadow: inset 0 0 0 calc(var(--unit) * 6) #757274;
   background: #eee9e8;
   color: #3e4251;
-}
-
-.close::before,
-.close::after {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(var(--unit) * 37);
-  height: calc(var(--unit) * 8);
-  background: currentcolor;
-  content: "";
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.close::after {
-  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .nations {
