@@ -43,6 +43,7 @@ Pick the directive by **which linter reports the rule**, and spell the rule the 
 - Oxlint honours **both** prefixes; ESLint honours only its own. A rule that both linters run needs one directive for each, spelled for that linter.
 - Format: file-level on the first line, `/* oxlint-disable <rule> -- reason */`; line-level, `// oxlint-disable-next-line <rule> -- reason`. The reason is required: `comments/require-directive-reason` reports a script directive without one, and its template half in `packages/configuration/eslint/plugins/directives.js` reports a `<!-- eslint-disable -->` without one. A bare directive naming no rule turns both off with everything else, so it is written only into generated files the lint already ignores.
 - **A directive a better spelling removes is not a reason.** Before writing one, try the form the rule asks for — `match.groups` rather than skipping capture groups, a named field rather than a positional one; the directive is for the case where the rule is wrong about this code, never for code the rule is right about.
+- **A generated file that fails a rule is fixed in its writer, never disabled.** No directive, config override or `ignores` entry covers a generated path to get past a rule. The generator, or the code it writes, changes to produce what the rule expects, and the real output is linted to prove it.
 
 ## No type-aware rule of our own runs in either linter
 
