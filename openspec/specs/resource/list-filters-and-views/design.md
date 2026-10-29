@@ -1,6 +1,6 @@
 # List Filters & Views
 
-Azure "All resources" parity for the resource list: a filter-pill row, checkbox multi-select with bulk commands, a column chooser, group-by-type, CSV export, and a refresh button — all state deep-linkable via query params.
+Azure "All resources" parity for the resource list: a filter-pill row, checkbox multi-select with bulk commands, a column chooser, group-by-type, CSV export, and a refresh button.
 
 The workbench is one component, `ResourceListView`, and every list route renders it — `/all`, `/favorites` and `/recents` differ only by a `source` prop that supplies a filter preset and a default sort ([resource service menu](../resource-service-menu/design.md)). Everything below is therefore true of all three; `/all` is simply the source with no preset.
 
@@ -28,7 +28,7 @@ The workbench is one component, `ResourceListView`, and every list route renders
 ## Rows
 
 - **Row click**, or Enter on a focused row, opens the resource — the one affordance for it, per [resource explorer](../explorer/design.md). Every row is a stop in the tab order, so the menu key opens its context menu too.
-- **Context menu** on right-click, long press or the menu key (the [one context menu](../../architecture/context-menus/design.md)), the same command list as the row's overflow menu: Open in new tab, Copy link, Save as blueprint, Rename, Delete — the rename/delete dialogs are store-driven singletons (`useListDialogStore`). A plain **Open** command is deliberately absent, since clicking the row already does that.
+- **Context menu** on right-click, long press or the menu key (the [one context menu](../../architecture/context-menus/design.md)), the same command list as the row's overflow menu: Open in new tab, Copy link, Save as blueprint, Rename, Delete — the rename/delete dialogs are store-driven singletons (`useListDialogStore`). A plain **Open** command is deliberately absent.
 - **Export CSV**: serializes the current filtered result via `getResourcesCsv`, re-querying the same filter in page-sized chunks up to `MAX_CSV_EXPORT_ROWS` — never a single query with the full count as its limit; hitting the cap truncates the export with a warning notification. Bulk-selection export uses the selected rows.
 - **Refresh**, **Export CSV** and **Recycle bin** sit in the toolbar's overflow menu on every width; the two view toggles, the column chooser and the close ✕ stay out. Refresh re-runs `readResources` with the last options.
 - **Empty states**: filters active → "No resources match your filters" + Clear-filters action; otherwise the source's own empty state; a failed read with no rows → the error state with Try again, announced as an alert. Loading with no rows renders skeleton rows; a later read keeps the rows showing and marks the table busy.
@@ -53,7 +53,7 @@ flowchart LR
 | Procedure                                                | Auth                          | Input                                                                                       | Purpose                                              |
 | -------------------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | `resource.readResources` / `resource.readResourcesCount` | authed                        | `isPublished?`, `isFavorite?`, `isAccessed?: boolean`, `updatedAfter?/updatedBefore?: Date` | status, set and date filters via `getResourcesWhere` |
-| `resource.deleteResources`                               | authed (owner-scoped `where`) | `ids: string[]` (unique, bounded)                                                           | bulk soft delete — `deletedAt` + publication rows    |
+| `resource.deleteResources`                               | authed (owner-scoped `where`) | `ids: string[]` (unique, bounded)                                                           | bulk soft delete                                     |
 
 ## Key files
 
@@ -62,7 +62,7 @@ flowchart LR
 | `app/components/Resource/List/View.vue`                         | the workbench orchestrator: toolbar, pills, selection, table, singletons |
 | `app/services/resource/list/ResourceListSourceDefinitionMap.ts` | per-source filter preset, default sort, pinned column, empty state       |
 | `app/components/Resource/List/FilterBar.vue`                    | pill row + `+ Add filter` menu                                           |
-| `app/components/Resource/List/Selection/Toolbar.vue`            | `n selected · Delete (n) · Export CSV · Save as blueprint · Clear`       |
+| `app/components/Resource/List/Selection/Toolbar.vue`            | the selection toolbar                                                    |
 | `app/composables/resource/useResourceListFilters.ts`            | URL-synced filter state                                                  |
 | `app/composables/resource/useReadResources.ts`                  | filter input, chunked page reader for CSV export                         |
 | `app/composables/resource/list/useReadResourcesPage.ts`         | the shared paged reader: stale guard + filter-keyed count                |
