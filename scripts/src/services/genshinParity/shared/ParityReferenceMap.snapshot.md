@@ -26,9 +26,9 @@ committed.
 | `crafting-table`                       | `CraftingScreen`            |                                          pending: its recording is not on disk |       |        |        |
 | `dialogue-choices-line`                | `DialogueTalk`              |                                                                          8.99% | 0.924 |  2.15% | 0.2757 |
 | `dialogue-choices-replies`             | `DialogueTalk`              |                                                                         14.36% | 0.766 |  8.59% | 0.4588 |
-| `dialogue-choices-speaker`             | `DialogueTalk`              |                                                                          7.80% | 0.632 |  5.07% | 0.3150 |
+| `dialogue-choices-speaker`             | `DialogueTalk`              |                                                                          6.37% | 0.798 |  4.63% | 0.2878 |
 | `dialogue-line`                        | `DialogueTalk`              |                                                                         10.61% | 0.982 |  2.29% | 0.3704 |
-| `dialogue-paimon-line`                 | `DialogueTalk`              |                                                                         10.21% | 0.947 |  2.93% | 0.3029 |
+| `dialogue-paimon-line`                 | `DialogueTalk`              |                                                                          9.67% | 0.949 |  3.35% | 0.2930 |
 | `everfrozen-earth-location`            | `WorldScreen`               |                                                                         20.61% | 0.234 | 19.75% | 0.6327 |
 | `exit-prompt`                          | `MenuExit`                  |                                                                          1.59% | 0.999 |  1.24% | 0.1205 |
 | `expedition-screen`                    | `ExpeditionScreen`          |                                                                          1.61% | 0.923 |  0.47% | 0.0695 |

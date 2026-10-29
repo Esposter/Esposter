@@ -108,6 +108,7 @@ const lineParts = computed(() => {
   color: v-bind(GAME_DIALOGUE_GOLD);
   font-size: calc(var(--unit) * 30);
   font-weight: 600;
+  letter-spacing: calc(var(--unit) * 1.8);
   line-height: 1;
 }
 
@@ -157,7 +158,7 @@ const lineParts = computed(() => {
    the remaining gap */
 .line {
   max-width: calc(var(--unit) * 1200);
-  margin: calc(var(--unit) * 13.5) 0 0;
+  margin: calc(var(--unit) * 15) 0 0;
   color: #fff;
   font-size: calc(var(--unit) * 26);
   font-weight: 600;
