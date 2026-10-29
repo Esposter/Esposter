@@ -16,7 +16,7 @@ describe("menuExit", () => {
       .toBeInTheDocument();
   });
 
-  test("cancel returns to the menu", async () => {
+  test("Cancel returns to the menu", async () => {
     expect.hasAssertions();
 
     const onClose = vi.fn<() => void>();
@@ -28,7 +28,7 @@ describe("menuExit", () => {
     expect(onQuit).not.toHaveBeenCalled();
   });
 
-  test("confirm leaves for the app's home", async () => {
+  test("Confirm leaves for the app's home", async () => {
     expect.hasAssertions();
 
     const onClose = vi.fn<() => void>();

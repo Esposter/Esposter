@@ -4,7 +4,7 @@
 
 ## 2. Scale
 
-- [x] 2.1 Scale the exit prompt and its panel to the recording's frame. Verify: a test named after the scenario 'The prompt opens over the menu at the game's scale' in `Menu/Exit/Index.browser.test.ts`, written first and seen failing. The browser suite passes its three tests on the Mac's Chromium (`pnpm exec vitest run --config vitest.browser.config.ts src/components/Menu/Exit/Index.browser.test.ts`), with the Paimon menu's suite at 14 of 14.
+- [x] 2.1 Scale the exit prompt and its panel to the recording's frame. Verify: the test 'the prompt asks the quit question' in `Menu/Exit/Index.browser.test.ts` finds the prompt's question on screen, and no test asserts the scale. The browser suite passes its three tests on the Mac's Chromium (`pnpm exec vitest run --config vitest.browser.config.ts src/components/Menu/Exit/Index.browser.test.ts`), with the Paimon menu's suite at 14 of 14.
 - [x] 2.2 Draw the two choices, Cancel and Confirm, at the new scale and keep their outcomes. Verify: tests named after the scenarios 'Cancel returns to the menu' and 'Confirm leaves for the app's home' in `Menu/Exit/Index.browser.test.ts`, written first and seen failing. Passing in the same run as 2.1.
 
 ## 3. Re-measure
