@@ -1,22 +1,30 @@
 <script setup lang="ts">
-import type { GameText } from "genshin-text";
+import type { GameLanguage, GameText } from "genshin-text";
 
+import { CharacterPackPreloadStatus } from "#src/models/character/CharacterPackPreloadStatus";
 import { Elements } from "#src/models/Element";
-import { MARKS_FADE_MS, WHITE_HOLD_MS } from "#src/services/loading/constants";
+import { BYTES_PER_MEGABYTE, MARKS_FADE_MS, WHITE_HOLD_MS } from "#src/services/loading/constants";
 import { ElementMarkPathMap } from "#src/services/loading/ElementMarkPathMap";
 import { useTimeoutFn, whenever } from "@vueuse/core";
-import { GameScreen } from "genshin-interface";
-import { GameTextKey } from "genshin-text";
+import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { GameLanguageTagMap, GameTextKey } from "genshin-text";
 
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
+  // The reader's language, which writes the size of the download in its own number format
+  language: GameLanguage;
+  // The bytes of the published packs downloaded so far, and the bytes of them still to download
+  loadedBytes: number;
+  pendingBytes: number;
   // How far loading has gone, from 0 to 1
   progress: number;
+  // Where the packs' download stands: a file that failed its attempts stops the loading until the player retries
+  status: CharacterPackPreloadStatus;
 }
 
-const { gameText, progress } = defineProps<Props>();
-const emit = defineEmits<{ finish: [] }>();
+const { gameText, language, loadedBytes, pendingBytes, progress, status } = defineProps<Props>();
+const emit = defineEmits<{ finish: []; retry: [] }>();
 // The game's startup screen: the seven marks in a row on white, pale until loading reaches them, then darkened by a
 // Wipe from the left that jumps as loading does, with no easing. The lit row is the pale one again, clipped to what
 // Has loaded. The marks fade in as it starts; once loading completes they fade out, the white holds, and `finish` says
@@ -34,6 +42,14 @@ whenever(
   },
   { immediate: true, once: true },
 );
+// The download's size in megabytes, in the reader's language's own number format
+const megabyteFormat = new Intl.NumberFormat(GameLanguageTagMap[language], {
+  maximumFractionDigits: 1,
+  style: "unit",
+  unit: "megabyte",
+  unitDisplay: "short",
+});
+const formatMegabytes = (bytes: number): string => megabyteFormat.format(bytes / BYTES_PER_MEGABYTE);
 </script>
 
 <template>
@@ -56,6 +72,22 @@ whenever(
         <path :d="ElementMarkPathMap[element]" />
       </svg>
     </div>
+    <div class="notice">
+      <p v-if="status === CharacterPackPreloadStatus.Failed">
+        {{ gameText[GameTextKey.ResourceDownloadFailed] }}
+      </p>
+      <p v-else-if="status === CharacterPackPreloadStatus.Downloading && pendingBytes > 0">
+        {{ gameText[GameTextKey.DownloadingResources] }}
+        {{ formatMegabytes(loadedBytes) }} / {{ formatMegabytes(pendingBytes) }}
+      </p>
+      <GameButton
+        v-if="status === CharacterPackPreloadStatus.Failed"
+        :kind="GameButtonKind.Pill"
+        @click="emit('retry')"
+      >
+        {{ gameText[GameTextKey.Retry] }}
+      </GameButton>
+    </div>
   </GameScreen>
 </template>
 
@@ -74,6 +106,20 @@ whenever(
   translate: -50% -50%;
   /* The marks fade in as the screen starts, and out once loading completes */
   animation: marks-fade-in calc(v-bind(MARKS_FADE_MS) * 1ms) linear;
+}
+
+/* Provisional: the download's line and its retry sit centred under the marks until the game's own layout is measured */
+.notice {
+  position: absolute;
+  top: calc(50% + var(--unit) * 48);
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--unit) * 4);
+  translate: -50% 0;
+  color: #666;
+  white-space: nowrap;
 }
 
 .complete {

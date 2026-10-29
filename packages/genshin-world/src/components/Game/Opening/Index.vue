@@ -5,6 +5,7 @@ import type { GameLanguage, GameText } from "genshin-text";
 import LoadingStartup from "#src/components/Loading/Startup/Index.vue";
 import LoginScreen from "#src/components/Login/Screen/Index.vue";
 import SplashSequence from "#src/components/Splash/Sequence/Index.vue";
+import { useCharacterPackPreload } from "#src/composables/useCharacterPackPreload";
 import { OpeningPhase } from "#src/models/game/OpeningPhase";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { getLoginTimeOfDay } from "#src/services/login/getLoginTimeOfDay";
@@ -66,6 +67,10 @@ getResultAsync(() => measureLoadStep("opening", readLoginData(gameDataBaseUrl)))
     console.error(error);
   },
 );
+// The published character packs download from the moment the opening mounts, so the splashes and the login play while
+// The bytes arrive, and the startup loading screen shows them
+const { loadedBytes, pendingBytes, retry, status } = useCharacterPackPreload(gameDataBaseUrl);
+defineExpose({ loadedBytes, pendingBytes });
 </script>
 
 <template>
@@ -92,7 +97,17 @@ getResultAsync(() => measureLoadStep("opening", readLoginData(gameDataBaseUrl)))
       emit('begin');
     "
   />
-  <LoadingStartup v-else-if="phase === OpeningPhase.Loading" :game-text :progress @finish="emit('finish')" />
+  <LoadingStartup
+    v-else-if="phase === OpeningPhase.Loading"
+    :game-text
+    :language
+    :loaded-bytes="loadedBytes"
+    :pending-bytes="pendingBytes"
+    :progress
+    :status
+    @finish="emit('finish')"
+    @retry="retry()"
+  />
   <GameScreen v-else class="waiting" />
 </template>
 

@@ -1,5 +1,6 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import GameOpening from "#src/components/Game/Opening/Index.vue";
+import { CHARACTER_PACK_CACHE_NAME } from "#src/services/character/constants";
 import { MARKS_FADE_MS, WHITE_HOLD_MS } from "#src/services/loading/constants";
 import {
   LOGIN_DOOR_AFTER_LOAD_MS,
@@ -84,6 +85,30 @@ describe("gameOpening", () => {
 
     expect(container.querySelector(".splash-sequence")).toBeNull();
     expect(container.querySelector(".game-screen")).not.toBeNull();
+  });
+
+  // The published packs download from an empty cache as the opening mounts, so the index's request is already out while
+  // The splashes play, under a base of its own that no earlier test has read
+  test("begins the character pack download when it mounts", async () => {
+    expect.hasAssertions();
+
+    await caches.delete(CHARACTER_PACK_CACHE_NAME);
+    const { promise } = Promise.withResolvers<Response>();
+    const fetchSpy = vi.fn<typeof fetch>(() => promise);
+    vi.stubGlobal("fetch", fetchSpy);
+    await render(GameOpening, {
+      props: {
+        gameDataBaseUrl: "/preload",
+        gameText: ENGLISH_GAME_TEXT,
+        language: GameLanguage.English,
+        musicRecordingBaseUrl: LOGIN_MUSIC_RECORDING_DIRECTORY,
+        progress: 1,
+      },
+    });
+
+    expect(fetchSpy.mock.calls.map(([url]) => url)).toContainEqual(
+      expect.stringContaining("/preload/characterPackIndex/"),
+    );
   });
 
   // The game's opening end to end with the page already loaded, the order a console that loads quickly sees it in:

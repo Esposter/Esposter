@@ -53,6 +53,7 @@ const MENU_EXIT_PANEL_REGION = { height: 590, width: 930, x: 495, y: 245 };
 const NO_SCREEN_SCREENSHOT = "no screenshot of the screen yet";
 const NO_VARIANT_SCREENSHOT = "no screenshot of this variant yet";
 const RECORDING_NOT_ON_DISK = "its recording is not on disk";
+const NO_DOWNLOAD_STATE_SCREENSHOT = "the game's download state of the startup screen has no sampled frame";
 
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
@@ -643,6 +644,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: "File:Liyue Harbor.png",
   },
   "loading-startup": { screen: "LoadingStartup", wikiTitle: "File:Loading Screen Startup.png" },
+  "loading-startup-failed": { pending: NO_DOWNLOAD_STATE_SCREENSHOT, screen: "LoadingStartup", variant: "failed" },
+  "loading-startup-none": { pending: NO_DOWNLOAD_STATE_SCREENSHOT, screen: "LoadingStartup", variant: "none" },
   // The title at dawn, day and night: frames of public recordings of older builds of the PC client idling on it with no
   // Interface, drawn at the current build's camera, each at the moment of the glide's loop its towers and walkway stand at
   "login-dawn-title": {
