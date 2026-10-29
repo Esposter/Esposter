@@ -42,5 +42,5 @@ Both accounts upload in parallel, and each file replaces the account's copy unde
 
 ## Sources
 
-- The owner's statement in the session of 2026-10-28 that HoYoverse permits redistributing the packs. No written grant is in the repository.
+- The owner's statement that HoYoverse permits redistributing the packs. No written grant is in the repository.
 - The bundled terms, read from each release's own file: `{data-root}/character-packs/extracted/10000006/丽莎/使用规则.txt`, which names miHoYo as copyright holder, and `{data-root}/character-packs/extracted/10000030/readme【一定要看】.txt`, which names miHoYo as provider.

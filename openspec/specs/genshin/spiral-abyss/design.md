@@ -76,7 +76,7 @@ flowchart TD
 
 ## Notes
 
-- **The dump ends at a period.** The community dump's schedule ends with the period that began on 2026-10-16 (scheduleId 124), so the Moon Spire runs that period until a newer dump holds the later ones.
+- **The dump ends at a period.** The community dump's schedule ends with the period of scheduleId 124, so the Moon Spire runs that period until a newer dump holds the later ones.
 - **The readers are called from the world session.** The five readers load their slices once, when the composable is set up, and `useWorldSpiralAbyss` (`packages/genshin-world/src/composables/useWorldSpiralAbyss.ts`) calls all five from the world session's screen (`packages/genshin-world/src/components/World/Session/Index.vue`).
 
 ## Sources
@@ -92,4 +92,3 @@ flowchart TD
 - [ ] **The combine and forge tables match the dump byte for byte** — no source yet: no copy of the AnimeGameData tables is in the checkout to compare against.
 - [ ] **A two-team chamber can have no second wave in the table, as the monolith chambers have none** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/TowerLevelExcelConfigData.json`: 20 of 43 monolith levels hold a second wave.
 - [ ] **The Moon Spire floors' reward columns differ from the reward table for some floors** — no source yet: the floor-to-group mapping for Moon Spire floors is not checked.
-- [ ] **The dump's schedule ends with the period that began on 2026-06-16** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/TowerScheduleExcelConfigData.json`: its highest scheduleId, 124, begins 2026-10-16.

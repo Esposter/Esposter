@@ -95,7 +95,7 @@ flowchart TD
 
 ## Sources
 
-- Genius Invokation rule texts, the game's own, read off disk on 2026-10-26: `{data-root}/genshin-parity/text/ExcelBinOutput/GCGRuleTextDetailExcelConfigData.json`, each row's `contentTextMapHash` and `titleTextMapHash` looked up in the English text map the [dialogue page](../../dialogue/design.md) cites. Quotes below carry the row's id as `#id`, read from that text; `#1003` ("Both sides will get 8 Elemental Dice to roll.") grounds each side's eight dice a round in the spec.
+- Genius Invokation rule texts, the game's own, read off disk: `{data-root}/genshin-parity/text/ExcelBinOutput/GCGRuleTextDetailExcelConfigData.json`, each row's `contentTextMapHash` and `titleTextMapHash` looked up in the English text map the [dialogue page](../../dialogue/design.md) cites. Quotes below carry the row's id as `#id`, read from that text; `#1003` ("Both sides will get 8 Elemental Dice to roll.") grounds each side's eight dice a round in the spec.
 
 - [Genius Invokation TCG: Rules](https://genshin-impact.fandom.com/wiki/Genius_Invokation_TCG/Rules), Genshin Impact Wiki: the preparation, the round's phases, the zones, the elemental reactions and their bonuses, the piercing and the spread, and the fifteen-round limit.
 - [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the rule and element reaction tables the standard rule is written from.

@@ -10,7 +10,7 @@ Nothing here.
 
 ## Sources
 
-- `prompt-scroll.mkv` — a pile with more drops than the list has rows, the wheel run from its first row to its last and back, no caption or camera inset over the list, 20 seconds at most. Found 2026-10-11, a near one: https://www.youtube.com/watch?v=UBNImta_dWs at 0–25 s (`{data-root}/genshin-parity/captures/yt-UBNImta_dWs-prompt-scroll.mp4`), the English PC client at 1080p and 59.94 frames a second, no caption or inset: a chest's drops, the list scrolled with F's cap to its last row, Hunter's Bow, by 3.5 s and picked up from the bottom, then three Jueyun Chili rows over plain grass at 21–24 s, the pill's right end clear of the scene. It is the 2020 build, and the wheel is not run back up.
+- `prompt-scroll.mkv` — a pile with more drops than the list has rows, the wheel run from its first row to its last and back, no caption or camera inset over the list, 20 seconds at most. A near one: https://www.youtube.com/watch?v=UBNImta_dWs at 0–25 s (`{data-root}/genshin-parity/captures/yt-UBNImta_dWs-prompt-scroll.mp4`), the English PC client at 1080p and 59.94 frames a second, no caption or inset: a chest's drops, the list scrolled with F's cap to its last row, Hunter's Bow, by 3.5 s and picked up from the bottom, then three Jueyun Chili rows over plain grass at 21–24 s, the pill's right end clear of the scene. It is from another build, and the wheel is not run back up.
 
 ## Open
 

@@ -1,6 +1,6 @@
 # Reset clock
 
-Every daily, weekly and monthly reset in the world is read off one server clock, the Asia server's, UTC+8, where the daily reset is at 04:00 (`{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, row 1002, REFRESH_DAILY, its time of day), the weekly reset is Monday at 04:00 and the monthly reset is the first at 04:00 (`packages/genshin-world/src/services/time/constants.ts:2-8`; the dump's monthly shop goods change over at 04:00:01 on 2020-10-01, in `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ShopGoodsExcelConfigData.json`). One module in `packages/genshin-world/src/services/time/` owns the zone, the hour, and the weekday and day constants, and every system reads its functions rather than a copy of them.
+Every daily, weekly and monthly reset in the world is read off one server clock, the Asia server's, UTC+8, where the daily reset is at 04:00 (`{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, row 1002, REFRESH_DAILY, its time of day), the weekly reset is Monday at 04:00 and the monthly reset is the first at 04:00 (`packages/genshin-world/src/services/time/constants.ts:2-8`; the dump's monthly shop goods change over at 04:00:01 on the first of the month, in `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ShopGoodsExcelConfigData.json`). One module in `packages/genshin-world/src/services/time/` owns the zone, the hour, and the weekday and day constants, and every system reads its functions rather than a copy of them.
 
 ## How it works
 

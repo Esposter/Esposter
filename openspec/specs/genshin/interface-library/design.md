@@ -67,9 +67,9 @@ flowchart TD
 - [Tutorial System Show Cursor](https://genshin-impact.fandom.com/wiki/File:Tutorial_System_Show_Cursor.png), Genshin Impact Wiki: the pointer.
 - [GENSHIN IMPACT | CELESTIA DOOR | LOADING SCREEN](https://www.youtube.com/watch?v=rBnfA4pXw6U): the 1080 high, 60 frame recording of the English client's login screen, which every size and colour here is measured from.
 - Block 07356235, the English PC client's interface block: its button controllers' transitions into each state, and its button clips' colours, read with AnimeStudio and fitted, nothing of it kept.
-- [The Settings screen from the side bar](https://www.youtube.com/watch?v=5EmJX_RyuY8) (`{data-root}/genshin-parity/captures/yt-5EmJX_RyuY8-menu-settings.mp4`), recorded on the English PC client in 2024 at 1080 high and 60 frames a second: the side bar's settings gear at rest at 9.8 seconds, hovered at 10.5 and held down at 10.65.
+- [The Settings screen from the side bar](https://www.youtube.com/watch?v=5EmJX_RyuY8) (`{data-root}/genshin-parity/captures/yt-5EmJX_RyuY8-menu-settings.mp4`), recorded on the English PC client at 1080 high and 60 frames a second: the side bar's settings gear at rest at 9.8 seconds, hovered at 10.5 and held down at 10.65.
 - The same recording's brightness dialog from 140.5 seconds: its Confirm hovered and pressed, the cream pill's ring and gold light measured at 1080 high.
-- [Quitting from the Paimon menu](https://www.youtube.com/watch?v=kIDee7nyD0w) (`{data-root}/genshin-parity/captures/yt-kIDee7nyD0w-menu-quit-prompt.mp4`), the English PC client in 2024 at 1080 high: the side bar hovered over another green, against which the disc's colour is fitted.
+- [Quitting from the Paimon menu](https://www.youtube.com/watch?v=kIDee7nyD0w) (`{data-root}/genshin-parity/captures/yt-kIDee7nyD0w-menu-quit-prompt.mp4`), the English PC client at 1080 high: the side bar hovered over another green, against which the disc's colour is fitted.
 - `{data-root}/genshin-parity/captures/world-level-dialog-2024.mkv`, the English PC client at 1080 high and 60 frames a second: the info icon from the pointer's arrival to its click, unchanged.
 
 ## Open

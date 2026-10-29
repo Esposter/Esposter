@@ -65,7 +65,7 @@ The camera's numbers are in `packages/genshin-engine/src/camera/constants.ts`, e
 | `packages/genshin-world/src/components/World/Character/Camera.reference.ts` | every investigation of the camera's numbers, and what is open                                                                            |
 | `packages/genshin-world/src/components/World/Session/Index.vue`             | shows the cursor on Left Alt, and holds the orbit on in photo mode                                                                       |
 | `scripts/src/services/genshinAssets/camera/readCameraProfile.ts`            | the game's camera profile exported from the install and read                                                                             |
-| `scripts/src/services/genshinAssets/camera/constants.ts`                    | the global config's words, each named as the 2022 dummy scripts name it                                                                  |
+| `scripts/src/services/genshinAssets/camera/constants.ts`                    | the global config's words, each named as the dummy scripts name it                                                                       |
 
 ## Sources
 
