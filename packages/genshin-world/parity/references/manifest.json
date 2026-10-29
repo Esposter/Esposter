@@ -1,6 +1,31 @@
 {
   "gameVersion": "7.1.0",
-  "records": [],
+  "records": [
+    {
+      "bytes": 66418,
+      "path": "asset-index/gi-7.1.0-derived.json",
+      "sha256": "ea09b26a117c68c48b12e328832f1e92a31bfac5938578062c989ca8ce719a67",
+      "sourceFormat": "bin"
+    },
+    {
+      "bytes": 183058,
+      "path": "city-areas.json",
+      "sha256": "617cbb2e98ff1437bbbee3763a3a00d7fd0f30e3647200e045d1737281313425",
+      "sourceFormat": "bin"
+    },
+    {
+      "bytes": 13758769,
+      "path": "extracted/login/placements.json",
+      "sha256": "1ddc96ff8e80d3b10fc9a6320c435c9bcffc6d112916eb86b02dffe508d81cc3",
+      "sourceFormat": "bin"
+    },
+    {
+      "bytes": 5477986,
+      "path": "transfer/mondstadt-gate-walls.zip",
+      "sha256": "60c849ccdec6d33eb1b7ca6a35724ba62e76cebb7fd14299494a3601c1b1f234",
+      "sourceFormat": "zip"
+    }
+  ],
   "recordings": [
     {
       "attribution": {},
