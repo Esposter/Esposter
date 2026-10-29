@@ -12,8 +12,8 @@ import { describe, expect, test } from "vitest";
 
 describe("pageBuilderEmailPreview", () => {
   const { trpcMsw } = setupMswTrpc();
-  const html = "html";
-  const message = "message";
+  const html = "a";
+  const message = "a";
   const emailDocument: EmailDocument = { content: [], root: { props: {} } };
 
   test("preview shows the compiled email at mobile width", async () => {

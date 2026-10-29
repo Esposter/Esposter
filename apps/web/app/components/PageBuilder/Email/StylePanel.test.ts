@@ -12,7 +12,7 @@ import { MjmlNodeType } from "mjml-blocks";
 import { describe, expect, test } from "vitest";
 
 describe("pageBuilderEmailStylePanel", () => {
-  const TEXT_CONTENT = { content: [{ content: [{ text: "Hello", type: "text" }], type: "paragraph" }], type: "doc" };
+  const TEXT_CONTENT = { content: [{ content: [{ text: "a", type: "text" }], type: "paragraph" }], type: "doc" };
   const createTextDocument = (fontSize: string, rootFontSize: string): MjmlDocument => ({
     content: [
       {
@@ -89,7 +89,7 @@ describe("pageBuilderEmailStylePanel", () => {
             children: [
               {
                 props: {
-                  children: [{ props: { alt: "Logo", id: TEST_OTHER_ID, src: "" }, type: MjmlNodeType.Image }],
+                  children: [{ props: { alt: "a", id: TEST_OTHER_ID, src: "" }, type: MjmlNodeType.Image }],
                   id: TEST_THIRD_ID,
                 },
                 type: MjmlNodeType.Column,

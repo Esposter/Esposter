@@ -9,11 +9,11 @@ import { MjmlAttributeKind } from "mjml-blocks";
 import { describe, expect, test } from "vitest";
 
 describe("pageBuilderEmailStyleField", () => {
-  const FIELD_NAME = "align";
-  const ENUM_OPTION = "left";
-  const ENUM_OTHER_OPTION = "right";
-  const COLOR_VALUE = "#ffffff";
-  const BOOLEAN_NAME = "full-width";
+  const FIELD_NAME = "a";
+  const ENUM_OPTION = "a";
+  const ENUM_OTHER_OPTION = "b";
+  const COLOR_VALUE = "a";
+  const BOOLEAN_NAME = "a";
   const createField = (type: EmailStyleField["type"], overrides: Partial<EmailStyleField> = {}): EmailStyleField => ({
     isSet: false,
     name: FIELD_NAME,

@@ -12,7 +12,7 @@ vi.mock(import("@/composables/resource/useUploadResourceFile"), () => ({
 }));
 
 describe("pageBuilderEmailImageUploadField", () => {
-  const TEST_IMAGE_FILE_NAME = "photo.png";
+  const TEST_IMAGE_FILE_NAME = "a";
 
   test("a picked image uploads, and its asset url is emitted as the source", async () => {
     expect.hasAssertions();
