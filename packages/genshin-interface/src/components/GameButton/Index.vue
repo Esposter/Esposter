@@ -39,8 +39,8 @@ defineExpose({ focus: () => button.value?.focus() });
 
 <template>
   <!-- One of the game's buttons, placed by its parent, in its kind's look for each state: at rest, hovered (or focused
-       From the keyboard, which the game draws as a hover), pressed and disabled. The look is the button's own, and its content
-       Takes the colour it sets -->
+       From the keyboard, which the game draws as a hover), pressed and disabled. Only a Disc draws a disabled look: the
+       Other kinds look the same enabled or disabled. The look is the button's own, and its content Takes the colour it sets -->
   <button ref="button" class="game-button" :data-kind="kind" type="button">
     <slot />
     <span v-if="tip" class="tip">{{ tip }}</span>
@@ -191,8 +191,8 @@ defineExpose({ focus: () => button.value?.focus() });
   opacity: 1;
 }
 
-/* The cream pill, read off the game's own (block 07356235: the quit prompt's choices are its option pill, and a dialog's
-   Confirm its brighter twin), its look measured on a dialog's Confirm at 1080 high (`yt-5EmJX_RyuY8-menu-settings` from
+/* The cream pill, read off the game's own (block 07356235: a dialog's Confirm is the pill's brighter twin), its look
+   measured on a dialog's Confirm at 1080 high (`yt-5EmJX_RyuY8-menu-settings` from
    140.5 seconds). At rest its words are the game's ink, inside a 3 unit pale rim and a 3 unit darker band within it,
    The pill's own bevel read off the wiki's crop of the quit prompt, and a faint dark shadow 7 units round it. Hovered,
    A white ring lights over its edge, 1 unit outside it and 2 within, its shadow turning a faint white glow; it holds
