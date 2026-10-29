@@ -30,7 +30,9 @@ const containerBaseUrl = useContainerBaseUrl();
       :game-text="gameText.text"
       :language="gameText.language"
       :music-recording-base-url="GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL"
+      player-name=""
       :progress
+      scene-export-base-url=""
       @finish="emit('finish')"
     />
     <p role="status" lang="en" sr-only>{{ currentStep ? `${currentStep.title}…` : "Ready" }}</p>

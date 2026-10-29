@@ -16,7 +16,7 @@ import { createMusicPlayer, createSoundEffectBuffer } from "genshin-engine";
 
 interface Props {
   // The door has been clicked open, which plays its sound once
-  isDoorOpened?: true;
+  isDoorOpened: boolean;
   // The login's music as its fit and the parity loops solved it: its playlist, its instruments and its voices
   music: Music;
   // Where the music's recordings are served from, which its voices play over their synthesized notes

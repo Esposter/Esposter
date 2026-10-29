@@ -76,7 +76,9 @@ describe("gameOpening", () => {
         gameText: ENGLISH_GAME_TEXT,
         language: GameLanguage.English,
         musicRecordingBaseUrl: LOGIN_MUSIC_RECORDING_DIRECTORY,
+        playerName: "",
         progress: 1,
+        sceneExportBaseUrl: "",
       },
     });
 
@@ -103,7 +105,9 @@ describe("gameOpening", () => {
           language: GameLanguage.English,
           musicRecordingBaseUrl: LOGIN_MUSIC_RECORDING_DIRECTORY,
           onFinish,
+          playerName: "",
           progress: 1,
+          sceneExportBaseUrl: "",
         },
       });
       // The title logo's read resolves on the page's own fetch of it before the next frame, and the first splash mounts

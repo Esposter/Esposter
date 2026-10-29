@@ -135,7 +135,7 @@ interface Props {
   qualityTier: QualityTier;
   // Where the host serves the developer's own exports of the game's scenes, the login's drawn in place of ours of each
   // Family they hold, as only the development server does
-  sceneExportBaseUrl?: string;
+  sceneExportBaseUrl: string;
   // The rows the scene scrolls past the camera: the walkway's copies and the towers'
   scroll: LoginScroll;
   // The sky's gradient and its cloud layer

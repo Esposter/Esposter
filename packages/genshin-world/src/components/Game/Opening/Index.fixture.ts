@@ -19,5 +19,7 @@ export const props = {
   gameText: ENGLISH_GAME_TEXT,
   language: GameLanguage.English,
   musicRecordingBaseUrl: LOGIN_MUSIC_RECORDING_DIRECTORY,
+  playerName: "",
   progress: 3 / 7,
+  sceneExportBaseUrl: "",
 };

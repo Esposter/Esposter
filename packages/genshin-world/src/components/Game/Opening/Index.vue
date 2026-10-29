@@ -24,12 +24,12 @@ interface Props {
   // Where the login music's recordings are served from
   musicRecordingBaseUrl: string;
   // The name the login screen welcomes the player by
-  playerName?: string;
+  playerName: string;
   // How far the world's loading has gone, from 0 to 1, which the startup loading screen's marks show once the door
   // Is opened
   progress: number;
   // Where the host serves the developer's own exports of the game's scenes, which the login screen's scene is drawn from
-  sceneExportBaseUrl?: string;
+  sceneExportBaseUrl: string;
 }
 
 const { gameDataBaseUrl, gameText, language, musicRecordingBaseUrl, playerName, progress, sceneExportBaseUrl } =
@@ -79,6 +79,7 @@ getResultAsync(() => measureLoadStep("opening", readLoginData(gameDataBaseUrl)))
   <LoginScreen
     v-else-if="phase === OpeningPhase.Login && loginData"
     :game-text
+    :is-interface-hidden="false"
     :language
     :login-data
     :music-recording-base-url

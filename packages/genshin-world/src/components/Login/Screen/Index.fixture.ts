@@ -11,10 +11,13 @@ import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 // `compare`'s shape and tone against its references
 export const props = {
   gameText: ENGLISH_GAME_TEXT,
+  isInterfaceHidden: false,
   language: GameLanguage.English,
   loginData: await readLoginData(GAME_DATA_LOCAL_BASE_URL),
   musicRecordingBaseUrl: LOGIN_MUSIC_RECORDING_DIRECTORY,
+  playerName: "",
   progress: 0,
+  sceneExportBaseUrl: "",
   stage: LoginStage.Title,
   timeOfDay: LoginTimeOfDay.Night,
 };

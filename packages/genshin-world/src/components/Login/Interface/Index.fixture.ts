@@ -13,6 +13,8 @@ export const props = {
   gameText: ENGLISH_GAME_TEXT,
   interfaceClips,
   interfaceRects,
+  isDoorWaiting: false,
+  isSpinnerShown: false,
   isWelcomeShown: true,
   language: GameLanguage.English,
   playerName: "Traveler",

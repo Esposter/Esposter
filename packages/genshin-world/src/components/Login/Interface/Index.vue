@@ -46,9 +46,9 @@ interface Props {
   // Where the page's pieces stand, each fitted from the game's own RectTransform
   interfaceRects: LoginInterfaceRects;
   // Whether the door is still rising, which the door's prompt and corner buttons wait on, as the game's do
-  isDoorWaiting?: true;
-  isSpinnerShown?: boolean;
-  isWelcomeShown?: boolean;
+  isDoorWaiting: boolean;
+  isSpinnerShown: boolean;
+  isWelcomeShown: boolean;
   // The reader's language, whose client's build string and age rating the screen shows
   language: GameLanguage;
   playerName: string;

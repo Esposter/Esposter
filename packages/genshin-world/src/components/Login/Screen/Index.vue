@@ -35,21 +35,21 @@ interface Props {
   heldScrolled?: number;
   // The scene alone, as the recordings idling with no interface show it, for a reference to be scored against, and
   // Silent
-  isInterfaceHidden?: true;
+  isInterfaceHidden: boolean;
   // The reader's language, whose client's interface the screen shows
   language: GameLanguage;
   // Every record the screen is drawn from, read from the hosted game data, each handed to the part that draws it
   loginData: LoginData;
   // Where the music's recordings are served from
   musicRecordingBaseUrl: string;
-  playerName?: string;
+  playerName: string;
   // How far loading has gone, from 0 to 1, which the bar shows and the flight to the door follows, ending a fixed time
   // After it is done
   progress: number;
   // The tier the scene draws at, the client's own: the phone's draws no screen-space occlusion where the computer's does
   qualityTier?: QualityTier;
   // Where the host serves the developer's own exports of the game's scenes, which the scene draws the login's from
-  sceneExportBaseUrl?: string;
+  sceneExportBaseUrl: string;
   timeOfDay: LoginTimeOfDay;
 }
 
@@ -169,7 +169,7 @@ const onClick = (event: MouseEvent): void => {
     </TresCanvas>
     <LoginMusic
       v-if="!isInterfaceHidden"
-      :is-door-opened="stage === LoginStage.Entering || undefined"
+      :is-door-opened="stage === LoginStage.Entering"
       :music="loginData.music"
       :music-recording-base-url
       :sounds="loginData.sounds"
@@ -181,8 +181,9 @@ const onClick = (event: MouseEvent): void => {
       :interface-clips="loginData.interfaceClips"
       :interface-rects="loginData.interfaceRects"
       :language
-      :is-door-waiting="stage === LoginStage.Door && !isDoorFormed ? true : undefined"
+      :is-door-waiting="stage === LoginStage.Door && !isDoorFormed"
       :is-spinner-shown
+      :is-welcome-shown="false"
       :player-name="shownPlayerName"
       :progress="shownProgress"
       :stage
