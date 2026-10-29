@@ -12,7 +12,7 @@ export const approveCommand: SubCommandsDef[string] = defineCommand({
       type: "positional",
     },
     variant: {
-      description: "A fixture variant whose image is approved beside the screen's base image, in place of the base",
+      description: "A fixture variant whose image is written beside the screen's base image, in place of the base",
       type: "string",
     },
   },

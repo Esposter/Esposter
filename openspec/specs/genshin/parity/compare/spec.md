@@ -1,6 +1,6 @@
 ## Purpose
 
-How a screen is shot and scored against its reference: the numbers first, FLIP as the approval number, and the committed scores that show what a change moved.
+How a screen is shot and scored against its reference: the numbers first, FLIP as the number a screen's bar is set on, and the committed scores that show what a change moved.
 
 ## Requirements
 
@@ -33,14 +33,14 @@ A scene rebuilt from shapes SHALL be scored by its shape and by its tone as two 
 - **WHEN** the comparison runs
 - **THEN** each layer is scored apart with its own shape, tone, detail and mean perceptual difference
 
-### Requirement: The perceptual score is the number a screen is approved by
+### Requirement: The perceptual score is the number a screen is set against its bar by
 
-A screen SHALL be approved by its perceptual difference score, with the mean difference reported beside it.
+A screen SHALL be set against its bar by its perceptual difference score, with the mean difference reported beside it.
 
-#### Scenario: Approval judged
+#### Scenario: Bar judged
 
 - **GIVEN** a screen compared with its reference
-- **WHEN** the screen is judged for approval
+- **WHEN** the screen's status against its bar is judged
 - **THEN** the perceptual difference score is the number compared with the bar
 - **AND** the mean difference is printed beside it
 
@@ -72,9 +72,9 @@ Each comparison SHALL rewrite its reference's row of the committed scores, so th
 - **THEN** the reference's row is reported as failed
 - **AND** the run goes on
 
-### Requirement: A screen is never approved without a comparison to its reference
+### Requirement: A screen is never measured without a reference
 
-A screen SHALL NOT be approved unless it has been compared against a reference, and a test SHALL fail for any screen with a fixture that no entry of the reference map names. A screen with no reference yet MAY be named as pending, with the reason it has none, and a pending screen is unscored: `compare` scores none of it, and the committed report lists it as pending with that reason.
+A screen's measured values SHALL NOT be taken unless it has been compared against a reference, and a test SHALL fail for any screen with a fixture that no entry of the reference map names. A screen with no reference yet MAY be named as pending, with the reason it has none, and a pending screen is unscored: `compare` scores none of it, and the committed report lists it as pending with that reason.
 
 #### Scenario: Screen with no entry
 
@@ -90,11 +90,11 @@ A screen SHALL NOT be approved unless it has been compared against a reference, 
 - **AND** `compare` scores none of it
 - **AND** the committed report lists it as pending with its reason
 
-#### Scenario: Screen approved after comparison
+#### Scenario: Screen compared with its reference
 
 - **GIVEN** a screen with a reference in the same language and build
-- **WHEN** the screen is approved
-- **THEN** the approval rests on that reference's comparison
+- **WHEN** the screen is compared
+- **THEN** its status against the bar rests on that reference's comparison
 
 ### Requirement: A reference in another language is compared in its own words
 

@@ -72,7 +72,7 @@ export const SERVER_MARK_TICK_PATH =
 export const SETTINGS_RING_CENTRE = [24.05, 24.9] as const;
 export const SETTINGS_RING_RADIUS = 9.85;
 export const SETTINGS_RING_WIDTH = 1.9;
-// Joins a component's name to its fixture's variant in its approved image's name, in both packages' visual suites.
+// Joins a component's name to its fixture's variant in its image's name, in both packages' visual suites.
 // A file name, so not `ID_SEPARATOR`: a vertical bar is one of the characters Windows rejects in a path
 export const FIXTURE_VARIANT_SEPARATOR = "-";
 // The key the prompts' selected row is marked with, the game's default for Pick Up and Interact

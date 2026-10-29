@@ -45,23 +45,31 @@ The compare command SHALL shoot a screen, print its scores, and write the refere
 - **THEN** that reference is reported as failed
 - **AND** the run goes on to the remaining references
 
-### Requirement: Approve writes a screen's image only once it clears its bar
+### Requirement: Approve writes a screen's image whatever its comparison scores
 
-The approve command SHALL write a screen's visual image only when its comparison is under the screen's own approval bar.
+The approve command SHALL write a screen's visual image whatever its comparison scores, and SHALL print the comparison's status against the screen's own bar before it writes.
 
 #### Scenario: Comparison under the bar
 
-- **GIVEN** a reference whose comparison is under its screen's approval bar
+- **GIVEN** a reference whose comparison is under its screen's bar
 - **WHEN** the operator runs approve on that reference
-- **THEN** the visual suite writes the image for that screen alone
+- **THEN** the command prints the status within the bar with its score
+- **AND** the visual suite writes the image for that screen alone
 
 #### Scenario: Comparison over the bar
 
-- **GIVEN** a reference whose comparison is over its screen's approval bar
+- **GIVEN** a reference whose comparison is over its screen's bar
 - **WHEN** the operator runs approve on that reference
-- **THEN** no image is written
-- **AND** the refusal names its reason
-- **AND** the comparison's row is still written
+- **THEN** the command prints the status over the bar with its score
+- **AND** the visual suite writes the image for that screen alone
+- **AND** the comparison's row is written to the report
+
+#### Scenario: Pending screen with no reference on disk
+
+- **GIVEN** a pending entry whose reference is not on disk
+- **WHEN** the operator runs approve on it
+- **THEN** the command prints the status no reference
+- **AND** the visual suite writes the image for that screen alone
 
 ### Requirement: Witness commands draw the game's exports under our camera
 

@@ -1002,7 +1002,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The English PC client's settings opened in the world at 1920 wide, on the Audio tab, its four volumes and its other
   // Settings, scored whole like the Graphics tab's below. The pointer rests on Output Settings, lit under it, while
   // Dynamic Range keeps the rim of the row last pressed, which the page does not draw since its control is not backed.
-  // Approved by its mean difference as the Graphics tab is: with the rows' rims and shadow drawn, what FLIP still sees is
+  // Set against its bar by its mean difference as the Graphics tab is: with the rows' rims and shadow drawn, what FLIP still sees is
   // The game's typeface, which Signika stands in for along every label's edge
   "settings-audio-rows": {
     ...MENU_SETTINGS_REFERENCE,

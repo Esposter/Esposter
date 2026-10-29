@@ -35,7 +35,7 @@ The steps are the commands of `scripts/src/services/genshinParity/commands/` (`g
 - [Light](light/design.md): the stone light solved from a reference.
 - [Passes](passes/design.md): a new screen derived in passes, each with its measure.
 - [Motion](motion/design.md): motion matched at sampled moments, never by recording.
-- [Visual suite](visual-suite/design.md): approved screens held by the browser suite.
+- [Visual suite](visual-suite/design.md): screens held by the browser suite.
 - [Costs](costs/design.md): the loop's cost, the benches and the GPU reduction.
 - [Commands](commands/design.md): every `genshin:parity` command.
 

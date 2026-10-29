@@ -3,7 +3,7 @@
 // Degree, clamped in linear RGB and compared in Hunt-adjusted CIELab by the HyAB distance, compressed and remapped; the
 // Luminance's edges and points (a Gaussian's first and second derivatives) compared beside it; and each pixel's error
 // The colour difference raised to one less the feature difference. The mean of the error map is the one number a scene
-// Is approved by, 0 identical and 1 as far apart as two images can be
+// Is judged by, 0 identical and 1 as far apart as two images can be
 
 import type { Vector } from "#src/models/shared/Vector";
 

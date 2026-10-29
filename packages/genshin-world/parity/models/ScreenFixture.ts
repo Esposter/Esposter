@@ -15,7 +15,7 @@ export interface ScreenFixture {
   // Scene's glide held and drawn at a tier whose anti-aliasing does not jitter from frame to frame, so a screenshot
   // Settles where the parity page and the references keep drawing it as it moves
   stillProps?: Record<string, unknown>;
-  // Other states the screen is approved in, each its props over `props` by a name its image is kept under
+  // Other states the screen is drawn in, each its props over `props` by a name its image is kept under
   variants?: Record<string, Record<string, unknown>>;
   // For a scene, the claims on each component's exports a witness render draws in place of its parts, by the
   // Component's name: the login's own, or the world's Windrise and each capital's region

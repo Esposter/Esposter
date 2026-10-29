@@ -1,30 +1,36 @@
 # Parity visual suite
 
-The visual suite holds approved screens to their own last images.
+The visual suite holds every screen to its own image, a snapshot of its render, and reports how far a run has moved from it.
 
-- **An approved screen is held by the visual suite.** `pnpm test:visual` renders every screen and every variant from its fixture in Vitest's browser mode and matches it against its own last image, `Index.png` and `Index-<variant>.png` beside the component, as a test sits beside its code (`packages/genshin-world/package.json`, `packages/genshin-world/parity/screens.visual.ts`, `packages/genshin-world/src/components/Login/Screen/Index-dawn.png`). It is a separate config, so an ordinary test run never starts a browser (`packages/genshin-world/vitest.browser.config.ts`), and it reads the engine and the interface library from their source, so a change there shows without a build (see Open). The same config runs the tests of what only a browser can play: `Game/Opening`'s plays the whole opening, the login's flight included, and checks every handoff, so a screen skipped along the way fails a run rather than a reader's eye (`packages/genshin-world/src/components/Game/Opening/Index.browser.test.ts`). A moving screen is held still for it by its fixture's `stillProps` (`packages/genshin-world/parity/screens.visual.ts`), which the parity page and the references never read: the login scene's glide held, drawn at a tier whose anti-aliasing does not jitter, with no interface over it, an image an hour, so a light that turns a part's colour shows as an image that moved where a frame's mean score can hide it. An image is approved by `genshin:parity approve` alone, which writes it with `-u` for its one screen once that screen's compare is under the bar (`scripts/src/services/genshinParity/reference/approveReference.ts`): a first run with no image writes it and then fails, so a whole-suite run without `-u` is never how one is written.
+- **Every screen is held by the visual suite.** `pnpm test:visual` renders every screen and every variant from its fixture in Vitest's browser mode and matches it against its own image, `Index.png` and `Index-<variant>.png` beside the component, as a test sits beside its code (`packages/genshin-world/package.json`, `packages/genshin-world/parity/screens.visual.ts`, `packages/genshin-world/src/components/Login/Screen/Index-dawn.png`). It is a separate config, so an ordinary test run never starts a browser (`packages/genshin-world/vitest.browser.config.ts`), and it reads the engine and the interface library from their source, so a change there shows without a build (see Open). The same config runs the tests of what only a browser can play: `Game/Opening`'s plays the whole opening, the login's flight included, and checks every handoff, so a screen skipped along the way fails a run rather than a reader's eye (`packages/genshin-world/src/components/Game/Opening/Index.browser.test.ts`). A moving screen is held still for it by its fixture's `stillProps` (`packages/genshin-world/parity/screens.visual.ts`), which the parity page and the references never read: the login scene's glide held, drawn at a tier whose anti-aliasing does not jitter, with no interface over it, an image an hour, so a light that turns a part's colour shows as an image that moved where a frame's mean score can hide it.
 
-## Decisions
-
-- **A screen's image is written by `genshin:parity approve` (`scripts/src/services/genshinParity/reference/approveReference.ts`).** Once a screen's compare clears its bar, `approve` writes its image as the `Index.png` in its component's folder, a variant's as `Index-<variant>.png` beside it, and runs the suite's `-u` for that one screen alone. A screen with no image on disk is not held by the suite (see Open).
+- **A mismatch is reported, never failed.** A case whose render differs from its image does not fail the run. Its title and the ratio the matcher reports are collected, and the summary after the cases lists each over one percent, worst first, with the count within the bar (`packages/genshin-world/parity/screens.visual.ts`, `packages/genshin-interface/src/components/components.visual.ts`). The matcher's own message is the only public signal of a difference and of its ratio, so each suite reads that message: a missing image is counted apart, a difference is recorded, and anything else is thrown and fails the case. The matcher rounds each ratio up to a whole percent, so ties in the summary are ordered by the pixel count the same message gives.
 
 ```mermaid
 flowchart TD
-  CMP{"Compare under the screen's bar?"} -->|no| REF["Refusal"]
-  CMP -->|yes| IMG["approve"]
-  IMG --> SUITE["Suite run"]
-  SUITE --> HELD["Held by the suite"]
+  R["Render a case"] --> M{"Matcher's outcome"}
+  M -->|matches| W["Within the bar"]
+  M -->|differs| D{"Ratio over one percent?"}
+  D -->|no| W
+  D -->|yes| L["Listed after the cases, worst first"]
+  M -->|no image| N["Written beside the component, or counted apart under CI"]
+  M -->|render error or timeout| F["Fails the run"]
 ```
+
+## Decisions
+
+- **A screen's image is written by `genshin:parity approve` (`scripts/src/services/genshinParity/reference/approveReference.ts`).** `approve` prints the compare's status against the screen's bar, then writes its image as a snapshot of the current render: `Index.png` in its component's folder, a variant's as `Index-<variant>.png` beside it. It runs the suite's `-u` for that one screen alone, so the whole suite's images never move. The status never stops the write: a missing reference, a failed compare and a reference judging less than the whole screen are each printed and then written (`openspec/specs/genshin/parity/commands/design.md`).
 
 - **The variant separator has one source.** The visual suites join a screen's name to its fixture's variant with the interface's `FIXTURE_VARIANT_SEPARATOR` (`packages/genshin-interface/src/services/constants.ts`), and `scripts` reads that same constant for `approve` through a workspace dependency on `genshin-interface`, via its pure `./constants` export, since its root imports Vue components that the scripts runner cannot load.
 
 ## Key files
 
-| File                                                               | Role                                                                                                |
-| :----------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/parity/screens.visual.ts`                  | The visual suite                                                                                    |
-| `scripts/src/services/genshinParity/reference/approveReference.ts` | Approves one screen's image: the compare under the bar, then the suite's `-u` for that screen alone |
-| `scripts/src/services/genshinParity/reference/decideApproval.ts`   | The approval decision: a reference on disk, judging the whole screen, scoring under the bar         |
+| File                                                                   | Role                                                                                                        |
+| :--------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/parity/screens.visual.ts`                      | The visual suite of the screens: mismatches listed, a missing image written, the summary after the cases    |
+| `packages/genshin-interface/src/components/components.visual.ts`       | The visual suite of the interface's components, the same summary without neverthrow (no `@esposter/shared`) |
+| `scripts/src/services/genshinParity/reference/approveReference.ts`     | Writes one screen's image: prints the compare's status, then the suite's `-u` for that screen alone         |
+| `scripts/src/services/genshinParity/reference/decideApprovalStatus.ts` | The status of a compare against the bar: no reference, the whole screen not judged, no score, over, within  |
 
 ## Sources
 
@@ -33,5 +39,5 @@ flowchart TD
 ## Open
 
 - [ ] **The suite reads the engine and the interface library from their source** — no source yet: a recorded run of the suite that resolves both from source; `packages/genshin-world/vitest.browser.config.ts` (line 18) leads its `resolve.conditions` with `SOURCE_CONDITION`, but no run is kept.
-- [ ] **A screen with no image on disk is not held by the suite** — no source yet: no filter or test for a missing image was traced in `packages/genshin-world/parity/screens.visual.ts`.
+- [ ] **A size change fails its case rather than being listed** — no source yet: the matcher's dimension check returns no ratio (`Expected image dimensions to be ...`), so a case whose box changed size has nothing to list; a case whose size changed is failed until a ratio for it is recorded.
 - [ ] **The interface's `./constants` build** — owed to the build at integration.

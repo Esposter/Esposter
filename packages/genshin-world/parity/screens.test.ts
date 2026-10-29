@@ -5,7 +5,7 @@ import { describe, expect, test } from "vitest";
 
 /**
  * A screen folder is one whose `Index.vue` sits in a `Screen` folder. Each one is either shot by the parity page
- * through its fixture, or named in `pendingScreens` with the reason it has no reference yet, so a screen can never
+ * through its fixture, or named in `pendingScreens` with the reason it has no fixture yet, so a screen can never
  * reach the suite without anyone having decided that.
  */
 describe("screens", () => {
@@ -16,7 +16,7 @@ describe("screens", () => {
     .filter((path) => basename(path) === "Index.vue" && basename(dirname(path)) === "Screen")
     .map((path) => normalize(dirname(path)));
 
-  test("every screen folder is referenced or named pending", () => {
+  test("every screen folder has a fixture or is named pending", () => {
     expect.hasAssertions();
 
     const pending = new Set(pendingScreens.map(({ directory }) => normalize(directory)));

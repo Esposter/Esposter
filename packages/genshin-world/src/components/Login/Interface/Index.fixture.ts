@@ -6,7 +6,7 @@ import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
 const { ageRating, interfaceClips, interfaceRects } = await readLoginData(GAME_DATA_LOCAL_BASE_URL);
 
-// The interface alone over nothing, its title's stage with the welcome card up, and each later stage it is approved in.
+// The interface alone over nothing, its title's stage with the welcome card up, and each later stage it is drawn in.
 // A reference shoots it over the English recording's own frame, so only the interface can differ
 export const props = {
   ageRating,

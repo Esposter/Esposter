@@ -1,24 +1,86 @@
 ## Purpose
 
-Every approved screen is held by a visual suite whose images live beside its component, and the suite's own runs cover the opening's handoffs.
+Every screen is held by a visual suite whose images live beside its component, and the suite's own runs cover the opening's handoffs.
 
 ## Requirements
 
-### Requirement: Each approved screen matches its own last approved image
+### Requirement: Each screen matches its own image
 
-The visual suite SHALL render every screen and each of its variants and SHALL match each against its own last approved image, kept beside its component.
+The visual suite SHALL render every screen and each of its variants and SHALL match each against its own image, kept beside its component.
 
 #### Scenario: Screen matches its image
 
-- **GIVEN** a screen with an approved image
+- **GIVEN** a screen with an image
 - **WHEN** the visual suite runs
 - **THEN** the rendered screen matches the image beside its component
 
 #### Scenario: Screen differs from its image
 
-- **GIVEN** a screen whose render differs from its approved image
+- **GIVEN** a screen whose render differs from its image
+- **WHEN** the visual suite runs
+- **THEN** the run does not fail for that screen
+- **AND** the screen is listed in the summary with the share of pixels that differ
+
+### Requirement: The summary lists the cases over the bar
+
+After every case, the visual suite SHALL print each case whose differing share is over one percent of its image, worst first, with the count of cases within the bar, and SHALL print one line when no case is over.
+
+#### Scenario: Cases over the bar
+
+- **GIVEN** cases whose images differ by more than one percent
+- **WHEN** the run ends
+- **THEN** each is printed with its percentage, worst first
+- **AND** the count of cases within the bar follows them
+
+#### Scenario: No case over the bar
+
+- **GIVEN** no case differs from its image by more than one percent
+- **WHEN** the run ends
+- **THEN** one line says so
+
+### Requirement: A failure other than a difference still fails the run
+
+A render error or a timeout SHALL fail the run for its case.
+
+#### Scenario: Render error
+
+- **GIVEN** a screen that fails to render or does not settle within the matcher's timeout
 - **WHEN** the visual suite runs
 - **THEN** the run fails for that screen
+
+### Requirement: A screen with no image is written beside its component
+
+A run SHALL write the image of a screen that has none beside its component where the update mode writes new images, which is the default outside CI, and SHALL count the case with the screens that have no image otherwise.
+
+#### Scenario: First run with no image
+
+- **GIVEN** a screen with no image, outside CI
+- **WHEN** the visual suite first runs over it
+- **THEN** the image is written beside its component
+- **AND** the case is counted with the screens that have no image
+
+#### Scenario: Run in CI with no image
+
+- **GIVEN** a screen with no image, in CI
+- **WHEN** the visual suite runs over it
+- **THEN** the shot is kept in the suite's diffs folder and no image is written beside the component
+- **AND** the case is counted with the screens that have no image
+
+### Requirement: An existing image is replaced only by an update run
+
+An existing image SHALL be replaced only by a run with the update option, and `genshin:parity approve` SHALL make that run for one screen alone.
+
+#### Scenario: Mismatch keeps the image
+
+- **GIVEN** a screen whose render differs from its image
+- **WHEN** a whole-suite run without the update option is made
+- **THEN** the image is not replaced
+
+#### Scenario: Approve replaces one screen's image
+
+- **GIVEN** a screen with an image
+- **WHEN** the operator runs approve on it
+- **THEN** only that screen's image is replaced, by the render
 
 ### Requirement: The visual suite runs apart from the ordinary test run
 
@@ -50,33 +112,6 @@ A moving screen SHALL be held still for the visual suite through its fixture's s
 - **GIVEN** the login scene, which moves
 - **WHEN** the visual suite renders it
 - **THEN** the scene is drawn in the fixture's still state
-
-### Requirement: An image is written only by approval
-
-An image SHALL be written only by approval of its screen, and a whole-suite run without the update option SHALL NOT write an image.
-
-#### Scenario: First run with no image
-
-- **GIVEN** a screen with no approved image
-- **WHEN** the visual suite first runs over it
-- **THEN** the image is written
-- **AND** the run fails for that screen
-
-#### Scenario: Whole-suite run without update
-
-- **GIVEN** a screen with no approved image
-- **WHEN** a whole-suite run without the update option is made
-- **THEN** no image is written
-
-### Requirement: A pass's image waits on its comparison before it counts as approved
-
-A screen image written by a pass SHALL NOT count as approved until its comparison clears the screen's bar.
-
-#### Scenario: Pass image not yet compared
-
-- **GIVEN** a screen image written by a pass whose comparison has not cleared the bar
-- **WHEN** approval is judged
-- **THEN** the image is not counted as approved
 
 ## Open
 

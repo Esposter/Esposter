@@ -1,4 +1,4 @@
-// The screen folders with no fixture yet, each named with the reason it has no reference, so the coverage test reads the list
+// The screen folders with no fixture yet, each named with the reason it has no fixture, so the coverage test reads the list
 // without loading the Vue components the screen list imports
 export const pendingScreens: { directory: string; reason: string }[] = [
   { directory: "Achievement/Screen", reason: "no recording on disk opens the screen" },

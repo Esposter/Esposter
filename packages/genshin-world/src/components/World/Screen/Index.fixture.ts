@@ -21,7 +21,7 @@ import { QualityTier } from "genshin-engine";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
 // Windrise at its first hour, drawn every frame, so the visual suite's screenshot never settles on it. No reference of
-// The game's compares clean on it yet, so it is on the page to be looked at and shot, never approved. The region data is
+// The game's compares clean on it yet, so it is on the page to be looked at and shot, its score a report only. The region data is
 // Served from the parity page's public directory, which is its `src/data`
 export const isMotionOnly = true;
 export const props = {

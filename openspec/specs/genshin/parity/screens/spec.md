@@ -6,14 +6,14 @@ A screen is a component folder with its fixture, placed in its section, so the p
 
 ### Requirement: Each screen is a component folder beside its fixture in its game section
 
-Each screen SHALL be a component folder in its game section, kept beside its fixture, its browser tests and its approved images.
+Each screen SHALL be a component folder in its game section, kept beside its fixture, its browser tests and its images.
 
 #### Scenario: Screen located by its name
 
 - **GIVEN** a screen named by its path
 - **WHEN** the screen is located
 - **THEN** it sits in its section's folder
-- **AND** its fixture, its browser tests and its approved images sit beside it
+- **AND** its fixture, its browser tests and its images sit beside it
 
 ### Requirement: A screen with a fixture appears on the parity page and in the visual suite without a list
 
@@ -26,11 +26,11 @@ A screen with a fixture SHALL appear on the parity page and in the visual suite,
 - **THEN** the screen appears on both
 - **AND** no list has been edited to make it appear
 
-### Requirement: A fixture's variants are approved as states of their screen
+### Requirement: A fixture's variants are held as states of their screen
 
-A fixture's variants SHALL be approved as further states of their screen.
+A fixture's variants SHALL each be held as a further state of their screen, with an image of their own.
 
-#### Scenario: Variant approved
+#### Scenario: Variant held
 
 - **GIVEN** a screen whose fixture names variants
 - **WHEN** the visual suite runs

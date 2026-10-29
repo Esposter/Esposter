@@ -8,7 +8,7 @@ import { describe, expect, test } from "vitest";
 /**
  * A screen's image in the visual suite only holds it still; what says it matches the game is `compare` against a
  * reference. A screen with a fixture and no reference therefore reaches the suite without ever being compared, and
- * its approved image locks in whatever it draws. Every screen the suite shoots is held to having a reference here,
+ * its image locks in whatever it draws. Every screen the suite shoots is held to having a reference here,
  * and every reference to a screen that exists, so `compare --all` scores them all.
  */
 describe("parityReferenceMap", () => {
