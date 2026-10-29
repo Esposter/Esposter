@@ -103,7 +103,7 @@ watch(
 <style scoped>
 /* Provisional: the back's ring and fade, measured at 1080 high on the English PC client's world HUD and on the Chinese
    Client's over open sea. The disc is the game's terrain, a texture not drawn here, so it stands on that terrain's mean
-   colour over the reference's disc, where the overlay's ground is black. It fades out over the rim's outer sixth to a
+   colour over the reference's disc, not on the open map's MAP_GROUND. It fades out over the rim's outer sixth to a
    thin light ring */
 .minimap {
   width: 100%;
