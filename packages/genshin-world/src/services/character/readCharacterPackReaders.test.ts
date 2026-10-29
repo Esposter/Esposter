@@ -20,14 +20,14 @@ describe(readCharacterPackReaders, () => {
     const index: CharacterPackIndex = {
       avatars: [{ avatarId: 1, files: [{ bytes: 5, path: CHARACTER_MODEL_PATH, sha256: "0".repeat(64) }], name: "a" }],
     };
-    const fetch = vi.fn<typeof fetch>(async () => Response.json(index));
-    vi.stubGlobal("fetch", fetch);
+    const fetchMock = vi.fn<typeof fetch>(async () => Response.json(index));
+    vi.stubGlobal("fetch", fetchMock);
     vi.stubGlobal("caches", { open: async () => createCharacterPackCacheStub() });
 
     await readCharacterPackIndex(gameDataBaseUrl);
     const characterPackReaders = await readCharacterPackReaders(gameDataBaseUrl);
 
     expect([...characterPackReaders.keys()]).toStrictEqual([1]);
-    expect(fetch).toHaveBeenCalledOnce();
+    expect(fetchMock).toHaveBeenCalledOnce();
   });
 });
