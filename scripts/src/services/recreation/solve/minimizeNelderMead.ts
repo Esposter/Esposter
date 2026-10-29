@@ -1,11 +1,11 @@
+import { combine } from "#src/services/recreation/solve/combine";
+
 // The Nelder–Mead simplex's coefficients: reflection, expansion, contraction and shrink, as the method sets them
 const REFLECTION = 1;
 const EXPANSION = 2;
 const CONTRACTION = 0.5;
 const SHRINK = 0.5;
 
-const combine = (from: readonly number[], to: readonly number[], share: number): number[] =>
-  from.map((value, index) => value + share * ((to[index] ?? 0) - value));
 // The point of lowest cost the simplex reaches from a start, one step along each axis setting its first size, over a
 // Cost that is costly to evaluate (a render and its score) and has no gradient. Each evaluation is awaited in turn
 export const minimizeNelderMead = async (
