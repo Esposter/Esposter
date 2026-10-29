@@ -1,4 +1,4 @@
-import type { CiJob } from "#src/models/ci/CiJob";
+import type { CiCompletedRun } from "#src/models/ci/CiCompletedRun";
 
 import { FAILED_JOB_CONCLUSIONS, UNSETTLED_CONCLUSIONS } from "#src/services/ci/constants";
 import { getErrorLines } from "#src/services/ci/getErrorLines";
@@ -18,7 +18,7 @@ export const watchQueueRun = async (): Promise<"fail" | "none" | "pass"> => {
   await runToolAsync("git", ["fetch", "-q", "origin", QUEUE_BRANCH]);
   const sha = (await runToolAsync("git", ["rev-parse", `origin/${QUEUE_BRANCH}`])).trim();
   let run = selectRunToWatch(await readCommitRun(sha), await readBranchRuns());
-  let completedRun: undefined | { conclusion: string; jobs: CiJob[] };
+  let completedRun: CiCompletedRun | undefined;
   while (run) {
     // oxlint-disable-next-line no-await-in-loop -- each run is watched only once the one before it was superseded
     completedRun = await readCompletedRun(String(run.databaseId));
