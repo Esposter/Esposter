@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Props {
   // Folded into the one diamond at its middle, as the game draws a bar that is done or not yet opened
-  isFolded?: boolean;
+  isFolded: boolean;
   // How much is done, from 0 to 1
   progress: number;
 }

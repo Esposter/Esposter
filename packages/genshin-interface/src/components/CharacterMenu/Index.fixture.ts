@@ -10,6 +10,7 @@ export const props = {
   ],
   elementMarkPath: "",
   elementName: "",
+  isTouch: false,
   tab: CharacterMenuTab.Attributes,
   tabLabels: {
     [CharacterMenuTab.Artifacts]: "Artifacts",

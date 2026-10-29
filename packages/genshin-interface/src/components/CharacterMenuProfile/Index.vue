@@ -7,10 +7,10 @@ interface Props {
   // The character's stories and then its voice-overs, each in the order the game lists them, the first one open at the start
   entries: CharacterMenuProfileEntry[];
   // The name of the character's namecard once its Friendship holds it, empty until then
-  namecardName?: string;
+  namecardName: string;
 }
 
-const { entries, namecardName = "" } = defineProps<Props>();
+const { entries, namecardName } = defineProps<Props>();
 const entryIndex = ref(0);
 const selectedEntry = computed(() => entries[entryIndex.value]);
 </script>

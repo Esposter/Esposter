@@ -5,14 +5,14 @@ import { INTERACTION_HOVER_MS, INTERACTION_KEY_LABEL } from "#src/services/const
 
 interface Props {
   // Whether the rows are laid out for a touch screen, which has no key to press, so no row is the one it acts on
-  isTouch?: boolean;
+  isTouch: boolean;
   // The rows the list's window shows, nearest first
   prompts: InteractionPrompt[];
   // The row F acts on
   selectedId: string;
 }
 
-const { isTouch = false, prompts, selectedId } = defineProps<Props>();
+const { isTouch, prompts, selectedId } = defineProps<Props>();
 const emit = defineEmits<{
   // A row pressed itself, by a tap or by a click with the cursor shown, which acts on that row as F acts on the selected
   press: [id: string];
