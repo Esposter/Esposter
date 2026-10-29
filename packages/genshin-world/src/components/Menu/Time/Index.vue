@@ -64,7 +64,7 @@ onMounted(() => {
   <GameScreen class="menu-time" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Time]">
     <ScreenHeader
       :game-text
-      :mark="ScreenHeaderMark.DoubleArrow"
+      :mark="ScreenHeaderMark.TracedCross"
       :title="gameText[GameTextKey.Time]"
       @close="emit('close')"
     />

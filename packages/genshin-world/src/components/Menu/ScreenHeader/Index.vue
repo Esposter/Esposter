@@ -25,7 +25,7 @@ defineSlots<{ tabs?: () => VNode }>();
 // The glyph each mark draws in the disc, a cross being the disc's own text
 const MARK_GLYPH_MAP: Record<Exclude<ScreenHeaderMark, ScreenHeaderMark.Cross>, MenuIconGlyph> = {
   [ScreenHeaderMark.Back]: MENU_LIST_BACK_GLYPH,
-  [ScreenHeaderMark.DoubleArrow]: MENU_LIST_CLOSE_GLYPH,
+  [ScreenHeaderMark.TracedCross]: MENU_LIST_CLOSE_GLYPH,
 };
 </script>
 

@@ -132,7 +132,7 @@ useEventListener("keydown", (event) => {
   <MenuListScreen
     is-world-blurred
     :game-text
-    :mark="ScreenHeaderMark.DoubleArrow"
+    :mark="ScreenHeaderMark.TracedCross"
     :title="listTitle"
     @close="emit('close')"
   >

@@ -2,5 +2,5 @@
 export enum ScreenHeaderMark {
   Back = "Back",
   Cross = "Cross",
-  DoubleArrow = "DoubleArrow",
+  TracedCross = "TracedCross",
 }
