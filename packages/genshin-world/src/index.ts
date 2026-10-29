@@ -2989,6 +2989,7 @@ export * from "./services/world/composeHeadingMatrix.ts";
 export * from "./services/world/composePlantPlaceMatrix.ts";
 export * from "./services/world/computeShownAreaWeather.ts";
 export * from "./services/world/constants.ts";
+export * from "./services/world/createAreaNameMap.ts";
 export * from "./services/world/createCapsuleMatrixWriter.ts";
 export * from "./services/world/createFrustumSetter.ts";
 export * from "./services/world/createPaletteReader.ts";

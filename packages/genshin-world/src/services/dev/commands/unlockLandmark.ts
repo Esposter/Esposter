@@ -5,6 +5,7 @@ import type { GenshinSave } from "#src/models/save/GenshinSave";
 import { DevUnlockKind } from "#src/models/dev/DevUnlockKind";
 import { resolveDevName } from "#src/services/dev/resolveDevName";
 import { RegionIdStatueLandmarkIdMap } from "#src/services/statue/RegionIdStatueLandmarkIdMap";
+import { createAreaNameMap } from "#src/services/world/createAreaNameMap";
 import { z } from "zod";
 
 // The `unlock` line: a region or a waypoint, and the name the game shows it under
@@ -19,9 +20,7 @@ export const unlockLandmark = (
   { kind, name }: UnlockLandmarkArguments,
   tables: Pick<DevSaveTables, "catalogue" | "waypointLandmarks">,
 ): DevSaveOutcome => {
-  const areaNames = new Map(
-    tables.catalogue.regions.flatMap(({ areas }) => areas.map(({ id, name: areaName }) => [id, areaName] as const)),
-  );
+  const areaNames = createAreaNameMap(tables.catalogue);
   const regionCandidates = tables.catalogue.regions.flatMap((region) => {
     const landmarkId = RegionIdStatueLandmarkIdMap[region.id];
     return landmarkId === undefined ? [] : [{ landmarkId, name: region.name }];
