@@ -104,3 +104,5 @@ The quality weights the table gives each dish are all the Delicious weight in th
 - [ ] **The 7.1 table names the eater for every heal dish** — no source yet: the table is not in the dump, and `CookBonusExcelConfigData.json` has no target field to check it against.
 - [ ] **A dish's bonus is read for the attack, defence and critical stats** — no source yet: the mapping from a bonus to these stats was not found in the files checked.
 - [ ] **Pyro lights a campfire; Anemo, Cryo, Electro, Geo and Hydro, and rain or thunderstorms in the open, put it out; Dendro leaves it** — no source yet: a recording of the campfire under each element, not captured.
+- [ ] **The reference's screenshots show a narrower delicious zone than `DELICIOUS_ZONE_SHARE` gives** — no source yet: the screenshots are not named here, and no measurement of the zone is kept.
+- [ ] **The indicator's sweep is measured off one PC clip of the cooking screen from February 2026** — no source yet: the clip is not named here, and no reading of its frames is kept; `COOKING_POINTER_SWEEP_SECONDS` in `packages/genshin-world/src/services/cooking/constants.ts` carries the value.
