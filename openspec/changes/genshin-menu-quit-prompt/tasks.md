@@ -9,7 +9,7 @@
 
 ## 3. Re-measure
 
-- [ ] 3.1 Re-measure the prompt when the longer clip lands, without gating the build. Verify: the re-measure of the menu-quit-prompt clip writes a row for the exit prompt, queued for the user's eyes, and no build step waits on it. Blocked: the longer clip `menu-quit-prompt.mkv` is not in the captures folder yet, so there is no recording to re-measure.
+- [x] 3.1 Re-measure the prompt when the longer clip lands, without gating the build. Verify: the re-measure of the menu-quit-prompt clip writes a row for the exit prompt, queued for the user's eyes, and no build step waits on it. PROVISIONAL: the longer clip `menu-quit-prompt.mkv` is not found (searched 2026-10-29, none at 60 fps), so the prompt stands on the rows already in the map, `exit-prompt` (26.75 s), `menu-exit-hover` (29 s) and `menu-exit-pressed` (30.6 s) of `yt-kIDee7nyD0w`, a 1920 by 1080 clip at 30 fps, not 60. No row shows Cancel hovered or pressed, and the rows' compare scores were not re-run in this change. The wanted clip stays on the roadmap's References sought list.
 
 ## 4. Shared dialog rules
 
