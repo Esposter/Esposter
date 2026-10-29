@@ -465,36 +465,41 @@ useEventListener("keydown", (event) => {
   top: calc(var(--unit) * 810);
 }
 
-/* The divider's ends, the game's tapered diamond at each, its tips on the hairline's ends */
-.ornament-end {
+/* The game's tapered diamond at each end of the divider and of the footer rule, the flipped one at the right */
+.ornament-end,
+.footer-end {
   position: absolute;
+  fill: rgb(255 255 255 / 0.3);
+}
+
+.ornament-end.right,
+.footer-end.right {
+  left: auto;
+  scale: -1 1;
+}
+
+/* The divider's ends, its tips on the hairline's ends */
+.ornament-end {
   top: calc(var(--unit) * 209.5);
   left: calc(var(--unit) * -33.5);
   width: calc(var(--unit) * 30);
   height: calc(var(--unit) * 21);
-  fill: rgb(255 255 255 / 0.3);
 }
 
 .ornament-end.right {
   right: calc(var(--unit) * -32);
-  left: auto;
-  scale: -1 1;
 }
 
 /* The footer rule's ends, a little smaller than the divider's */
 .footer-end {
-  position: absolute;
   top: calc(var(--unit) * 955.5);
   left: calc(var(--unit) * 29.5);
   width: calc(var(--unit) * 24);
   height: calc(var(--unit) * 17);
-  fill: rgb(255 255 255 / 0.3);
 }
 
 .footer-end.right {
   right: calc(var(--unit) * 29.5);
-  left: auto;
-  scale: -1 1;
 }
 
 .details {
