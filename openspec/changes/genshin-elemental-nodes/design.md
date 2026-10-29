@@ -56,4 +56,4 @@ flowchart TD
 
 ## Sources
 
-- The Elemental Node page on the Genshin Impact wiki, [Elemental Node](https://genshin-impact.fandom.com/wiki/Elemental_Node), read on 2026-10-18 through its MediaWiki API (`api.php?action=parse&page=Elemental_Node&prop=wikitext`). It gives the fifteen-second pulse, the gauges and their cap, the two-pulse cooldown, the lasting gauge without decay, the 50% RES and the three element bonuses.
+- The Elemental Node page on the Genshin Impact wiki, [Elemental Node](https://genshin-impact.fandom.com/wiki/Elemental_Node), read through its MediaWiki API (`api.php?action=parse&page=Elemental_Node&prop=wikitext`). It gives the fifteen-second pulse, the gauges and their cap, the two-pulse cooldown, the lasting gauge without decay, the 50% RES and the three element bonuses.
