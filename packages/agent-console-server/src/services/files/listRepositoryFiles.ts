@@ -1,12 +1,8 @@
 import { REPOSITORY_WALK_IGNORED_NAMES } from "#src/services/files/constants";
 import { getResultAsync } from "@esposter/shared";
-import { execFile } from "@esposter/shared-node/child-process";
+import { execFileAsync } from "@esposter/shared-node/child-process";
 import { readdir } from "node:fs/promises";
 import { join, relative, sep } from "node:path";
-import { promisify } from "node:util";
-
-// oxlint-disable-next-line typescript/strict-void-return -- promisify reads execFile's callback overload, whose void return the rule mistakes for this call's context
-const execFileAsync = promisify(execFile);
 
 // Every file a repository tracks or has not yet ignored, as git lists them. Outside a repository, a walk of the
 // Directory lists the same files, minus what the walk ignores
