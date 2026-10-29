@@ -109,6 +109,7 @@ Every feature is described under `openspec/`, and where its folder lives says wh
 | Reviewing anything — lanes, scope, findings, the stop rule                   | `code-review` skill                                         |
 | Static files — bundled under `app/assets`, or fixed under `public`           | `openspec/specs/architecture/static-assets/design.md`       |
 | Enforcing a rule — construction, primitive, lint, test, then prose           | `openspec/specs/architecture/enforcement-ladder/design.md`  |
+| Where an artifact lives — the repo or Azure Blob, never one disk             | `openspec/specs/architecture/recoverability/design.md`      |
 
 Deciding without asking — the recommended option is taken, and only the user-only list is asked about — is the `throughput` skill's "Decide, don't ask" section. Everything else is a skill: read the skill listing and load the ones the files at hand hit. The `code-review` skill's routing table is the same map, keyed by file glob.
 
