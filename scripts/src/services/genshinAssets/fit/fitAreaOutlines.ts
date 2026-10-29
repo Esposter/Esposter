@@ -2,12 +2,11 @@ import type { WorldArea } from "#src/models/genshinAssets/world/WorldArea";
 import type { WorldAreaPolygonFile } from "#src/models/genshinAssets/world/WorldAreaPolygonFile";
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
-import type { GroundPoint } from "genshin-engine";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { WorldAreaType } from "#src/models/genshinAssets/world/WorldAreaType";
 import { CATALOGUE_KEY } from "#src/services/gameData/constants";
-import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { toCatalogueOutline } from "#src/services/genshinAssets/fit/toCatalogueOutline";
 import {
   CATALOGUE_FILE,
   CATALOGUE_PATH,
@@ -33,7 +32,7 @@ import { readFile } from "node:fs/promises";
 // Outline the catalogue gives it, and a subarea the table files no row for takes no outline and no terrain.
 // The catalogue is written back, as the source people edit, and is also its record, with what was outlined as the notes
 export const fitAreaOutlines = async ({ isDryRun }: DryRunOptions): Promise<GameDataBuild> => {
-  const [polygonsJson, [originX, , originZ], catalogueJson] = await Promise.all([
+  const [polygonsJson, origin, catalogueJson] = await Promise.all([
     readFile(WORLD_AREA_POLYGONS_PATH, "utf8"),
     readWorldOrigin(DerivedAssetComponent.Windrise),
     readFile(CATALOGUE_PATH, "utf8"),
@@ -44,14 +43,12 @@ export const fitAreaOutlines = async ({ isDryRun }: DryRunOptions): Promise<Game
   );
   const { level1Areas } = parseMachineJson<WorldAreaPolygonFile>(polygonsJson);
   const catalogue = catalogueSchema.parse(parseMachineJson(catalogueJson));
-  const toOutline = ({ roadPoints }: { roadPoints: readonly GroundPoint[] }): GroundPoint[] =>
-    roadPoints.map(({ x, z }) => ({ x: roundFitted(x - originX, 0), z: roundFitted(originZ - z, 0) }));
   const levelOneOutlineMap = new Map(
-    level1Areas.map(({ level1Area: { id1, polygonData } }) => [id1, toOutline(polygonData)]),
+    level1Areas.map(({ level1Area: { id1, polygonData } }) => [id1, toCatalogueOutline(polygonData, origin)]),
   );
   const levelTwoOutlineMap = new Map(
     level1Areas.flatMap(({ level2Areas = [] }) =>
-      level2Areas.map(({ id2, polygonData }) => [id2, toOutline(polygonData)] as const),
+      level2Areas.map(({ id2, polygonData }) => [id2, toCatalogueOutline(polygonData, origin)] as const),
     ),
   );
   const getName = ({ areaNameTextMapHash }: WorldArea): string | undefined => textMap.get(String(areaNameTextMapHash));
