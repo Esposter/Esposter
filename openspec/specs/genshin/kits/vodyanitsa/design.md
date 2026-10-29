@@ -38,5 +38,5 @@ flowchart TD
 
 ## Open
 
-- [ ] **Her actions run as `Attack_01` to `Attack_04`, `ExtraAttack`, `ElementalArt_Strike`, `ElementalBurst`, `FallingAttack_Strike` and `FallingAttack_Strike_AS`** — no source yet: no clip or animation file for Vodyanitsa is under `{data-root}/genshin-parity` or `{data-root}/content`, or under `{data-root}/cache/animestudio-db860e1f`, so the clips read as [Vesna's kit](../vesna/design.md#sources) reads hers were not found.
+- [ ] **Her actions run as `Attack_01` to `Attack_04`, "ExtraAttack", "ElementalArt_Strike", `ElementalBurst`, "FallingAttack_Strike" and "FallingAttack_Strike_AS"** — no source yet: no clip or animation file for Vodyanitsa is under `{data-root}/genshin-parity` or `{data-root}/content`, or under `{data-root}/cache/animestudio-db860e1f`, so the clips read as [Vesna's kit](../vesna/design.md#sources) reads hers were not found.
 - [ ] **Her skill's hit is one hit of Columbina's, and her collision's 2-metre area is Bennett's** — no source yet beyond the record's borrowed paths (`packages/genshin-world/src/data/kits/vodyanitsa.json`): Columbina's skill and Bennett's collision (`{data-root}/cache/gcsim-v2.47.2/internal/characters/bennett/plunge.go`, `plungeCollision`) were not read against the record's values.

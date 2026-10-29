@@ -8,7 +8,7 @@ Gcsim gives Mika's plunges no file, so the design takes Bennett's timings and re
 
 ## Provisional constants
 
-- **The initial heal's parameters are `Unsourced` in the record.** `parameters.initialHealFlatHealth` and `parameters.initialHealMaxHealthShare` read group 8039's indices 0 and 1, but gcsim's burst arrays give the same heal (`{data-root}/cache/gcsim-v2.47.2/internal/characters/mika/burst.go` lines 28 to 36, with the arrays at `zz_mika.dm.go` lines 232 and 250, whose first entries, 1172.0355 and 0.12168, are group 8039's indices 0 and 1 at level 1), so the causes should name gcsim.
+- **The initial heal's parameters are `Unsourced` in the record.** `parameters.initialHealFlatHealth` and `parameters.initialHealMaxHealthShare` read group 8039's indices 0 and 1, but gcsim's burst arrays give the same heal (`{data-root}/cache/gcsim-v2.47.2/internal/characters/mika/burst.go` lines 28 to 36, with the arrays at "zz_mika.dm.go" lines 232 and 250, whose first entries, 1172.0355 and 0.12168, are group 8039's indices 0 and 1 at level 1), so the causes should name gcsim.
 - **The heal's 51st frame depends on ping.** gcsim's `initialHeal` is marked so (`{data-root}/cache/gcsim-v2.47.2/internal/characters/mika/burst.go` line 15), so 51 is a measured value, not a fixed one.
 
 ## Key files

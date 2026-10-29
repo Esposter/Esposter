@@ -40,4 +40,4 @@ Wanderer's kit still lacks:
 
 ## Open
 
-- [ ] **Windfavored lasts ten seconds, the points' hundred at six frames each** — contradicted in part by gcsim's own status: `c.AddStatus(skillKey, 20*60, true)` at `{data-root}/cache/gcsim-v2.47.2/internal/characters/wanderer/skill.go` line 30 runs it for 20 seconds, while the points deplete over 10 (lines 33 to 38 and 130 to 134). Whether gcsim's buffs end once the points reach zero, and so which length the state has in the game, is not read.
+- [ ] **Windfavored lasts ten seconds, the points' hundred at six frames each** — contradicted in part by gcsim's own status: "c.AddStatus(skillKey, 20*60, true)" at `{data-root}/cache/gcsim-v2.47.2/internal/characters/wanderer/skill.go` line 30 runs it for 20 seconds, while the points deplete over 10 (lines 33 to 38 and 130 to 134). Whether gcsim's buffs end once the points reach zero, and so which length the state has in the game, is not read.
