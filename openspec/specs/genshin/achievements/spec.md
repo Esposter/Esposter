@@ -6,7 +6,7 @@ Genshin's achievements as built. Each is a counter of one doing the game's table
 
 ### Requirement: Achievements list under their categories
 
-The achievement list SHALL show every kept achievement under its category in the game's order, each with its count and the Primogems it pays (which sorts by `orderId`).
+The achievement list SHALL show every kept achievement under its category in the game's order, each with its count and the Primogems it pays.
 
 #### Scenario: Category lists its achievements in order
 
