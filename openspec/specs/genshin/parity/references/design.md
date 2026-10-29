@@ -36,3 +36,6 @@ flowchart TD
 ## Open
 
 - [ ] **A rectangle recording would take whatever is on screen when the user switches away** — no source yet: no commit, snapshot or note records that trial.
+- [ ] **Window capture arrived in FFmpeg 8, which no npm package bundles** — no source yet: no FFmpeg release note is cited, and the pinned archive's version is not read here.
+- [ ] **The game's terms count injected input as botting** — no source yet: the terms are not cited; the page's reason for recording without input rests on them.
+- [ ] **A minimised game gives no frames** — no source yet: no capture of a minimised window is recorded to show it.
