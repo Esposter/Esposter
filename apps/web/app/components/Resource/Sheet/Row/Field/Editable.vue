@@ -35,11 +35,10 @@ const submitEdit = getSynchronizedFunction(async () => {
   isSubmitted = true;
   clearFocus();
   if (editedValue.value === (takeOne(item.data, column.name) ?? null)) return;
-  await updateRow(
-    new Row(
-      Object.assign(structuredClone(toRawDeep(item)), { data: { ...item.data, [column.name]: editedValue.value } }),
-    ),
-  );
+  const editedRow = Object.assign(structuredClone(toRawDeep(item)), {
+    data: { ...item.data, [column.name]: editedValue.value },
+  });
+  await updateRow(new Row(editedRow));
 });
 
 const focusCell = (targetRowIndex: number, targetColumnName: string) => {
