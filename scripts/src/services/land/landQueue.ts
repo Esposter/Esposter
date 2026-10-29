@@ -1,5 +1,3 @@
-import { checkIsLinkedWorktree } from "#src/services/queue/checkIsLinkedWorktree";
-import { readMainCheckoutRoot } from "#src/services/queue/readMainCheckoutRoot";
 import { checkIsRebaseInProgress } from "#src/services/land/checkIsRebaseInProgress";
 import { LANDING_EXIT_STATUS, MAX_LANDING_ATTEMPTS } from "#src/services/land/constants";
 import { readRebaseConflicts } from "#src/services/land/readRebaseConflicts";
@@ -7,11 +5,14 @@ import { readRemovalLine } from "#src/services/land/readRemovalLine";
 import { verifyLanded } from "#src/services/land/verifyLanded";
 import { waitBeforeRetry } from "#src/services/land/waitBeforeRetry";
 import { runPrecheck } from "#src/services/precheck/runPrecheck";
+import { checkIsLinkedWorktree } from "#src/services/queue/checkIsLinkedWorktree";
+import { readMainCheckoutRoot } from "#src/services/queue/readMainCheckoutRoot";
 import { QUEUE_BRANCH, REMOTE_NAME, REMOTE_QUEUE_REF, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { spawnGit } from "#src/services/shared/spawnGit";
 import { removeWorktree } from "#src/services/worktree/remove/removeWorktree";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
+import { existsSync } from "node:fs";
 
 // Runs the precheck, then pulls and pushes up to the attempt limit, since another session's push can take the queue
 // Between the two. The pull replays this checkout's own commits, so a conflict stops the landing for its author to settle
@@ -65,9 +66,12 @@ export const landQueue = async (remove: boolean, skipPrecheck: boolean): Promise
     // The process leaves the worktree first, since Windows refuses to delete a folder some process has as its cwd. The
     // Commits are on the queue by now, so a removal refused is a line naming the command that retries it, not a failure
     process.chdir(mainCheckoutRoot);
-    const isRemoved = getResult(() => removeWorktree(REPOSITORY_ROOT, mainCheckoutRoot)).match(
+    // A removal can fail after the folder is gone (git refuses the branch), so the folder decides the line, not the throw
+    const isRemoved = getResult(() => {
+      removeWorktree(REPOSITORY_ROOT, mainCheckoutRoot);
+    }).match(
       () => true,
-      () => false,
+      () => !existsSync(REPOSITORY_ROOT),
     );
     console.info(readRemovalLine(REPOSITORY_ROOT, isRemoved));
   }
