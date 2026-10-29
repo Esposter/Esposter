@@ -42,10 +42,10 @@ interface Props {
   gameText: GameText;
   // The tab the bag opens on
   initialCategory: ItemCategory;
-  // The entry the detail panel opens on, by its id, the tab's first entry while none is named
-  initialSelectedId?: string;
+  // The entry the detail panel opens on, by its id, the tab's first entry while none is named ("")
+  initialSelectedId: string;
   // The sort the bag opens on, by level or by quality as the tab's sort offers them
-  initialSort?: InventorySort;
+  initialSort: InventorySort;
   // The dish each instruction item teaches, by the item's id, which an instruction's Use is offered from
   instructionRecipeMap: ReadonlyMap<number, CookingRecipe>;
   inventory: Inventory;
@@ -62,8 +62,8 @@ const {
   gadgetRows,
   gameText,
   initialCategory,
-  initialSelectedId = "",
-  initialSort = InventorySort.Level,
+  initialSelectedId,
+  initialSort,
   instructionRecipeMap,
   inventory,
   materialDataMap,

@@ -231,7 +231,7 @@ import {
   QualityTierSettingsMap,
   STAMINA_MAX,
 } from "genshin-engine";
-import { CharacterMenuTab, ForgeTab, InteractionKind, ItemCategory } from "genshin-interface";
+import { CharacterMenuTab, ForgeTab, InteractionKind, InventorySort, ItemCategory } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 import { Euler, Group, MathUtils, PCFShadowMap, Vector3 } from "three";
 import { unref } from "vue";
@@ -2314,6 +2314,8 @@ useWorldSaveSync({
           :game-text
           :gadget-rows
           :initial-category="ItemCategory.Weapon"
+          initial-selected-id=""
+          :initial-sort="InventorySort.Level"
           :instruction-recipe-map
           :inventory
           :material-data-map

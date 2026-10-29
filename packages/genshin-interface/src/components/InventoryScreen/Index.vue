@@ -221,8 +221,7 @@ watch(
       <template v-else-if="isSortable">
         <span class="filter" />
         <div class="sort">
-          <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -- the sort's caption is no game text key yet, so no name in the reader's language exists until the bag's sort recording keys it; its options name it meanwhile -->
-          <select v-model="sort" class="sort-select">
+          <select v-model="sort" class="sort-select" :aria-label="sortLabels[sort]">
             <option v-for="inventorySort of InventorySorts" :key="inventorySort" :value="inventorySort">
               {{ sortLabels[inventorySort] }}
             </option>
@@ -389,11 +388,11 @@ watch(
 .grid {
   position: absolute;
   top: calc(var(--unit) * 114);
-  left: calc(var(--unit) * 648);
-  width: calc(var(--unit) * 565);
-  height: calc(var(--unit) * 856);
+  left: calc(var(--unit) * 207);
+  width: calc(var(--unit) * 1006);
+  height: calc(var(--unit) * 846);
   display: grid;
-  grid-template-columns: repeat(4, calc(var(--unit) * 124));
+  grid-template-columns: repeat(7, calc(var(--unit) * 124));
   grid-auto-rows: calc(var(--unit) * 152);
   gap: calc(var(--unit) * 24) calc(var(--unit) * 23);
   overflow-y: auto;

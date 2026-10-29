@@ -8,22 +8,18 @@ import { InventorySort, ItemCategory } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 // The weapons' tab of the English client at 1080 high, holding 1,347 weapons, the tab's room counted beside its name
-// (`Weapons 1347/2000`), sorted by quality as the recording of the account tour shows it. Its first four-star weapons are
-// The Eye of Perception the detail panel opens on at level 50 and another at 50, then two at 40, then six five-star ones
+// (`Weapons 1347/2000`), sorted by quality as the recording of the account tour shows it: eleven five-star weapons at level 20 first, one at level 1,
+// then the four-star ones, two at level 50 of which the first is The Eye of Perception the detail panel opens on, then five at 40
 const WEAPON_COUNT = 1347;
 const WEAPON_LEVEL = 20;
 const WEAPON_RARITY = 4;
+const EYE_OF_PERCEPTION_INDEX = 12;
 const SHOWN_WEAPONS: { level: number; rarity: number }[] = [
-  { level: 50, rarity: 4 },
-  { level: 50, rarity: 4 },
-  { level: 40, rarity: 4 },
-  { level: 40, rarity: 4 },
-  { level: 20, rarity: 5 },
-  { level: 20, rarity: 5 },
-  { level: 20, rarity: 5 },
-  { level: 20, rarity: 5 },
-  { level: 20, rarity: 5 },
+  ...Array.from({ length: 11 }, () => ({ level: 20, rarity: 5 })),
   { level: 1, rarity: 5 },
+  { level: 50, rarity: 4 },
+  { level: 50, rarity: 4 },
+  ...Array.from({ length: 5 }, () => ({ level: 40, rarity: 4 })),
 ];
 const weapons: InventoryItem[] = Array.from({ length: WEAPON_COUNT }, (_value, index) => {
   const shown = SHOWN_WEAPONS.at(index);
@@ -31,7 +27,7 @@ const weapons: InventoryItem[] = Array.from({ length: WEAPON_COUNT }, (_value, i
     definition: {
       category: ItemCategory.Weapon,
       id: index,
-      name: index === 0 ? "Eye of Perception" : `Weapon ${index + 1}`,
+      name: index === EYE_OF_PERCEPTION_INDEX ? "Eye of Perception" : `Weapon ${index + 1}`,
       rank: index,
       rarity: shown?.rarity ?? WEAPON_RARITY,
       stackLimit: 1,
@@ -49,7 +45,7 @@ export const props = {
   gadgetRows: [],
   gameText: ENGLISH_GAME_TEXT,
   initialCategory: ItemCategory.Weapon,
-  initialSelectedId: "0",
+  initialSelectedId: String(EYE_OF_PERCEPTION_INDEX),
   initialSort: InventorySort.Quality,
   instructionRecipeMap: new Map(),
   inventory: { items: weapons, nextId: WEAPON_COUNT },
