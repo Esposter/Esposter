@@ -28,7 +28,7 @@ flowchart LR
 
 ## Not built
 
-- **Ascension 4's DMG and the Prayer's 20% DMG Bonus on the team's normal attacks are not built.** The hook is a party buff read by another member's normal attack, which `getPartyStrikeBonus` (`packages/genshin-world/src/models/kit/Kit.ts`) now reads, though this kit does not use it yet.
+- **Ascension 4's DMG and the Prayer's 20% DMG Bonus on the team's normal attacks are not built** (the 20% is the Prayer's `dmgbonus` in `{data-root}/cache/genshin-wiki/Category_Candace_Talents.json`, and the Ascension 4 passive's text is on the same page). The hook is a party buff read by another member's normal attack, which `getPartyStrikeBonus` (`packages/genshin-world/src/models/kit/Kit.ts`) now reads, though this kit does not use it yet.
 
 ## Key files
 
