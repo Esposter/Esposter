@@ -289,6 +289,20 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "ExpeditionScreen",
     source: "yt-fxIjhlV3vUA-expedition-screen.mp4 at 26s",
   },
+  // The English PC client's fishing reel at 1080 high from the recording, 52.5 seconds in: a hooked fish pulling, with the
+  // Reel bar across the top of the frame and its tension held inside the zone. The bar and the ring under it are filled
+  // from round them, so the page draws the reel's own pieces and the rest of the frame is scored as the game draws it,
+  // above the recorder's UID at the bottom right corner
+  "fishing-screen": {
+    isBackdrop: true,
+    plate: [
+      { height: 32, width: 520, x: 700, y: 120 },
+      { height: 58, width: 64, x: 928, y: 162 },
+    ],
+    region: { height: 1050, width: 1920, x: 0, y: 0 },
+    screen: "FishingScreen",
+    source: "fishing-reel.mkv at 52.5s",
+  },
   // The English PC client's forge on the Materials tab with an Enhancement Ore at amount five, at 32 seconds of the public
   // Recording of the forge, letterboxed to its 886 high frame: scored whole over its blurred scene, the game's own pieces
   // (the tabs, the recipe list, the item and its amount, the Materials box, the foot) filled from round them

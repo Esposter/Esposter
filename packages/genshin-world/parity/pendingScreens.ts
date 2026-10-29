@@ -8,11 +8,6 @@ export const pendingScreens: { directory: string; reason: string }[] = [
       "its reference is sampled (archive-screen.png, from archive-screen.mkv at 19.5s, the Equipment and Weapons grid); the fixture is not written yet",
   },
   { directory: "Domain/Screen", reason: "no recording on disk opens the screen" },
-  {
-    directory: "Fishing/Screen",
-    reason:
-      "its reference is sampled (fishing-screen.png, from fishing-reel.mkv at 52.5s, whose reel bar sits at the top, not the bottom); the fixture is not written yet",
-  },
   { directory: "Mail/Screen", reason: "no recording on disk opens the screen" },
   {
     directory: "Menu/Screen",
