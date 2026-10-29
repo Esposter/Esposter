@@ -42,6 +42,8 @@ const settings = defineModel<GenshinSettings>("settings", { required: true });
 const tab = defineModel<SettingsTab>("tab", { default: SettingsTab.Graphics });
 const { defaultQualityTier, gameText, language } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
+// The two tabs the game draws dimmer than the rest, by their identity so a reordered tab list cannot move the dimming
+const DIMMED_TABS: readonly SettingsTab[] = [SettingsTab.Resources, SettingsTab.Other];
 const page = useTemplateRef("page");
 const content = useTemplateRef("content");
 const sections = computed(() => SettingsTabSectionsMap[tab.value] ?? []);
@@ -199,6 +201,7 @@ onMounted(() => {
         v-for="settingsTab of SETTINGS_TABS"
         :key="settingsTab"
         class="tab"
+        :class="{ dimmed: DIMMED_TABS.includes(settingsTab) }"
         role="tab"
         tip=""
         :aria-selected="settingsTab === tab"
@@ -426,7 +429,7 @@ onMounted(() => {
 
 /* The last two tabs, Resources and Other, are dimmer than the rest: set by eye off the clip's tab column
    (`yt-5EmJX_RyuY8-menu-settings`, 1920 wide), where they are barely above the sand behind them */
-.tab:nth-child(n + 8) {
+.tab.dimmed {
   opacity: 0.5;
 }
 
