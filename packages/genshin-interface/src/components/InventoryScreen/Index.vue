@@ -349,11 +349,11 @@ watch(
 
 .capacity {
   position: absolute;
-  top: calc(var(--unit) * 30);
+  top: calc(var(--unit) * 28);
   right: calc(var(--unit) * 115);
   margin: 0;
-  color: #ece3d8;
-  font-size: calc(var(--unit) * 20);
+  color: #d8cdaa;
+  font-size: calc(var(--unit) * 23);
   font-weight: 600;
 }
 
