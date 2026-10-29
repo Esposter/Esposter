@@ -26,24 +26,24 @@
 | `scripts/src/models/dependencyGraph`                                                      | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/fleet`                                                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/gameData`                                                             | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/models/genshinAssets/achievements`                                           | —                       |       |
-| `scripts/src/models/genshinAssets/adventureRank`                                          | —                       |       |
-| `scripts/src/models/genshinAssets/archive`                                                | —                       |       |
-| `scripts/src/models/genshinAssets/avatar`                                                 | —                       |       |
-| `scripts/src/models/genshinAssets/camera`                                                 | —                       |       |
-| `scripts/src/models/genshinAssets/commissions`                                            | —                       |       |
-| `scripts/src/models/genshinAssets/cooking`                                                | —                       |       |
-| `scripts/src/models/genshinAssets/crafting`                                               | —                       |       |
-| `scripts/src/models/genshinAssets/domains`                                                | —                       |       |
-| `scripts/src/models/genshinAssets/enemies`                                                | —                       |       |
-| `scripts/src/models/genshinAssets/expeditions`                                            | —                       |       |
-| `scripts/src/models/genshinAssets/exploration`                                            | —                       |       |
-| `scripts/src/models/genshinAssets/fishing`                                                | —                       |       |
+| `scripts/src/models/genshinAssets/achievements`                                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/adventureRank`                                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/archive`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/avatar`                                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/camera`                                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/commissions`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/cooking`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/crafting`                                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/domains`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/enemies`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/expeditions`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/exploration`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/fishing`                                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/fit`                                                    | —                       |       |
-| `scripts/src/models/genshinAssets/forging`                                                | —                       |       |
-| `scripts/src/models/genshinAssets/friendship`                                             | —                       |       |
+| `scripts/src/models/genshinAssets/forging`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/friendship`                                             | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/gadgets`                                                | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/models/genshinAssets/gcg`                                                    | —                       |       |
+| `scripts/src/models/genshinAssets/gcg`                                                    | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/home`                                                   | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/imaginarium`                                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/interface`                                              | 2026-10-29 · Haiku 5.5  |       |
@@ -53,62 +53,62 @@
 | `scripts/src/models/genshinAssets/kits/KitOverlayEntry.ts`                                | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/models/shared/KitProvisionalCause.ts`                                        | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/kits/KitRule.ts`                                        | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/models/genshinAssets/kits/KitSource.ts`                                      | —                       |       |
-| `scripts/src/models/genshinAssets/kits/KitSources.ts`                                     | —                       |       |
-| `scripts/src/models/genshinAssets/kits/KitValueSource.ts`                                 | —                       |       |
-| `scripts/src/models/genshinAssets/kits/NamedHitCall.ts`                                   | —                       |       |
-| `scripts/src/models/genshinAssets/kits/NamedHitCandidateMap.ts`                           | —                       |       |
-| `scripts/src/models/genshinAssets/kits/build`                                             | —                       |       |
-| `scripts/src/models/genshinAssets/kits/gcsim`                                             | —                       |       |
-| `scripts/src/models/genshinAssets/kits/tables`                                            | —                       |       |
-| `scripts/src/models/genshinAssets/kits/wiki`                                              | —                       |       |
-| `scripts/src/models/genshinAssets/leyLine`                                                | —                       |       |
-| `scripts/src/models/genshinAssets/locomotion`                                             | —                       |       |
-| `scripts/src/models/genshinAssets/lua`                                                    | —                       |       |
-| `scripts/src/models/genshinAssets/mail`                                                   | —                       |       |
-| `scripts/src/models/genshinAssets/materialSources`                                        | —                       |       |
-| `scripts/src/models/genshinAssets/materials`                                              | —                       |       |
-| `scripts/src/models/genshinAssets/music`                                                  | —                       |       |
-| `scripts/src/models/genshinAssets/offerings`                                              | —                       |       |
-| `scripts/src/models/genshinAssets/palette`                                                | —                       |       |
-| `scripts/src/models/genshinAssets/points`                                                 | —                       |       |
+| `scripts/src/models/genshinAssets/kits/KitSource.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/kits/KitSources.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/kits/KitValueSource.ts`                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/kits/NamedHitCall.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/kits/NamedHitCandidateMap.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/kits/build`                                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/kits/gcsim`                                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/kits/tables`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/kits/wiki`                                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/leyLine`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/locomotion`                                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/lua`                                                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/mail`                                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/materialSources`                                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/materials`                                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/music`                                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/offerings`                                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/palette`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/points`                                                 | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/profile`                                                | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/models/genshinAssets/puzzles`                                                | —                       |       |
-| `scripts/src/models/genshinAssets/reputation`                                             | —                       |       |
-| `scripts/src/models/genshinAssets/residents`                                              | —                       |       |
-| `scripts/src/models/genshinAssets/rewards`                                                | —                       |       |
-| `scripts/src/models/genshinAssets/scene`                                                  | —                       |       |
-| `scripts/src/models/genshinAssets/sceneGroups`                                            | —                       |       |
-| `scripts/src/models/genshinAssets/sceneNpcBorn`                                           | —                       |       |
+| `scripts/src/models/genshinAssets/puzzles`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/reputation`                                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/residents`                                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/rewards`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/scene`                                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/sceneGroups`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/sceneNpcBorn`                                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/shared`                                                 | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/models/genshinAssets/shops`                                                  | —                       |       |
-| `scripts/src/models/genshinAssets/skillGlyphs`                                            | —                       |       |
-| `scripts/src/models/genshinAssets/sound`                                                  | —                       |       |
-| `scripts/src/models/genshinAssets/spiralAbyss`                                            | —                       |       |
-| `scripts/src/models/genshinAssets/stats`                                                  | —                       |       |
+| `scripts/src/models/genshinAssets/shops`                                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/skillGlyphs`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/sound`                                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/spiralAbyss`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/stats`                                                  | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/statues`                                                | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/models/genshinAssets/timings`                                                | —                       |       |
-| `scripts/src/models/genshinAssets/tips`                                                   | —                       |       |
-| `scripts/src/models/genshinAssets/transPoints`                                            | —                       |       |
-| `scripts/src/models/genshinAssets/trials`                                                 | —                       |       |
-| `scripts/src/models/genshinAssets/wish`                                                   | —                       |       |
-| `scripts/src/models/genshinAssets/witness`                                                | —                       |       |
-| `scripts/src/models/genshinAssets/world`                                                  | —                       |       |
-| `scripts/src/models/genshinParity/CrossingBudget.ts`                                      | —                       |       |
-| `scripts/src/models/genshinParity/LoadBudget.ts`                                          | —                       |       |
-| `scripts/src/models/genshinParity/ScreenCrossing.ts`                                      | —                       |       |
-| `scripts/src/models/genshinParity/WholeScreenImage.ts`                                    | —                       |       |
-| `scripts/src/models/genshinParity/WikiImagesResponse.ts`                                  | —                       |       |
-| `scripts/src/models/genshinParity/display`                                                | —                       |       |
-| `scripts/src/models/genshinParity/music`                                                  | —                       |       |
-| `scripts/src/models/genshinParity/page`                                                   | —                       |       |
+| `scripts/src/models/genshinAssets/timings`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/tips`                                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/transPoints`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/trials`                                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/wish`                                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/witness`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/world`                                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinParity/CrossingBudget.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinParity/LoadBudget.ts`                                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinParity/ScreenCrossing.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinParity/WholeScreenImage.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinParity/WikiImagesResponse.ts`                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinParity/display`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinParity/music`                                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinParity/page`                                                   | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinParity/passes`                                                 | —                       |       |
-| `scripts/src/models/genshinParity/reference`                                              | —                       |       |
+| `scripts/src/models/genshinParity/reference`                                              | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinParity/shared`                                                 | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/models/genshinParity/sky`                                                    | —                       |       |
-| `scripts/src/models/genshinParity/sound`                                                  | —                       |       |
-| `scripts/src/models/genshinParity/witness`                                                | —                       |       |
-| `scripts/src/models/genshinText`                                                          | —                       |       |
+| `scripts/src/models/genshinParity/sky`                                                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinParity/sound`                                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinParity/witness`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinText`                                                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/identifiers`                                                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/machine`                                                              | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/outdatedDependencies`                                                 | 2026-10-29 · Haiku 5.5  |       |
@@ -141,7 +141,7 @@
 | `scripts/src/services/benchTypes`                                                         | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/ci`                                                                 | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/citations`                                                          | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/dependencies`                                                       | —                       |       |
+| `scripts/src/services/dependencies`                                                       | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/dependencyAdmission`                                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/dependencyGraph`                                                    | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/fleet/checkIsHeldBy.ts`                                             | 2026-10-29 · Haiku 5.5  |       |
@@ -222,204 +222,204 @@
 | `scripts/src/services/fleet/selectTakeableEntries.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/fleet/writeHoldFile.ts`                                             | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/fleet/writeMachineProfile.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/gameData`                                                           | —                       |       |
+| `scripts/src/services/gameData`                                                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/achievements`                                         | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/adventureRank`                                        | —                       |       |
+| `scripts/src/services/genshinAssets/adventureRank`                                        | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/archive`                                              | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/avatar`                                               | —                       |       |
-| `scripts/src/services/genshinAssets/blocks`                                               | —                       |       |
-| `scripts/src/services/genshinAssets/camera`                                               | —                       |       |
-| `scripts/src/services/genshinAssets/camps`                                                | —                       |       |
-| `scripts/src/services/genshinAssets/chests`                                               | —                       |       |
-| `scripts/src/services/genshinAssets/commands/achievementsCommand.ts`                      | —                       |       |
-| `scripts/src/services/genshinAssets/commands/archiveCommand.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/commands/assetIndexCommand.ts`                        | —                       |       |
-| `scripts/src/services/genshinAssets/commands/avatarCommand.ts`                            | —                       |       |
-| `scripts/src/services/genshinAssets/commands/behavioursCommand.ts`                        | —                       |       |
-| `scripts/src/services/genshinAssets/commands/cameraCommand.ts`                            | —                       |       |
-| `scripts/src/services/genshinAssets/commands/characterTrialsCommand.ts`                   | —                       |       |
-| `scripts/src/services/genshinAssets/commands/chestsCommand.ts`                            | —                       |       |
-| `scripts/src/services/genshinAssets/commands/cityAreasCommand.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/commands/clearanceCommand.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/commands/clipsCommand.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/commands/commissionsCommand.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/commands/cookingCommand.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/commands/craftingCommand.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/commands/domainLevelsCommand.ts`                      | —                       |       |
-| `scripts/src/services/genshinAssets/commands/domainsCommand.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/commands/enemiesCommand.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/commands/enemyCampsCommand.ts`                        | —                       |       |
-| `scripts/src/services/genshinAssets/commands/expeditionsCommand.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/commands/explorationCommand.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/commands/extractCommand.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/commands/findNodes.ts`                                | —                       |       |
-| `scripts/src/services/genshinAssets/commands/fishingCommand.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/commands/fitCommand.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/commands/forgingCommand.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/commands/friendshipCommand.ts`                        | —                       |       |
-| `scripts/src/services/genshinAssets/commands/gadgetsCommand.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/commands/gatheringCommand.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/commands/gcgCommand.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`                     | —                       |       |
-| `scripts/src/services/genshinAssets/commands/homeCommand.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/commands/imaginariumCommand.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/commands/interfaceCommand.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/commands/inventoryCommand.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/commands/itemsCommand.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/commands/kitsCommand.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/commands/leyLineCommand.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/commands/locomotionCommand.ts`                        | —                       |       |
-| `scripts/src/services/genshinAssets/commands/mailCommand.test.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/commands/mailCommand.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/commands/mapCommand.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/commands/materialSourcesCommand.ts`                   | —                       |       |
-| `scripts/src/services/genshinAssets/commands/measureCommand.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/commands/miningOutcropsCommand.ts`                    | —                       |       |
-| `scripts/src/services/genshinAssets/commands/musicCommand.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/commands/namecardsCommand.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/commands/oculiCommand.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/commands/offeringsCommand.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/commands/outcropPlacesCommand.ts`                     | —                       |       |
-| `scripts/src/services/genshinAssets/commands/paletteCommand.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/commands/playlistCommand.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/commands/pointsCommand.ts`                            | —                       |       |
-| `scripts/src/services/genshinAssets/commands/pointsFitCommand.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/commands/profileCommand.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/commands/pruneNode.ts`                                | —                       |       |
-| `scripts/src/services/genshinAssets/commands/puzzlesCommand.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/commands/rankCommand.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/commands/reputationCommand.ts`                        | —                       |       |
-| `scripts/src/services/genshinAssets/commands/residentsCommand.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/commands/sceneGroupsCommand.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/commands/sceneNpcBornCommand.ts`                      | —                       |       |
-| `scripts/src/services/genshinAssets/commands/sceneScriptsCommand.ts`                      | —                       |       |
-| `scripts/src/services/genshinAssets/commands/shadersCommand.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/commands/shopsCommand.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/commands/shrineKeySourcesCommand.ts`                  | —                       |       |
-| `scripts/src/services/genshinAssets/commands/skillGlyphsCommand.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/commands/soundsCommand.ts`                            | —                       |       |
-| `scripts/src/services/genshinAssets/commands/spiralAbyssCommand.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/commands/statsCommand.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/commands/statuesCommand.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/commands/timingsCommand.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/commands/tipsCommand.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/commands/transPointsCommand.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/commands/treeCommand.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/commands/waypointsCommand.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/commands/wildlifeCommand.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/commands/wishScheduleCommand.ts`                      | —                       |       |
-| `scripts/src/services/genshinAssets/commands/witnessCommand.ts`                           | —                       |       |
+| `scripts/src/services/genshinAssets/avatar`                                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/blocks`                                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/camera`                                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/camps`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/chests`                                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/achievementsCommand.ts`                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/archiveCommand.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/assetIndexCommand.ts`                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/avatarCommand.ts`                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/behavioursCommand.ts`                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/cameraCommand.ts`                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/characterTrialsCommand.ts`                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/chestsCommand.ts`                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/cityAreasCommand.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/clearanceCommand.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/clipsCommand.ts`                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/commissionsCommand.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/cookingCommand.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/craftingCommand.ts`                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/domainLevelsCommand.ts`                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/domainsCommand.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/enemiesCommand.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/enemyCampsCommand.ts`                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/expeditionsCommand.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/explorationCommand.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/extractCommand.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/findNodes.ts`                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/fishingCommand.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/fitCommand.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/forgingCommand.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/friendshipCommand.ts`                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/gadgetsCommand.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/gatheringCommand.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/gcgCommand.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/homeCommand.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/imaginariumCommand.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/interfaceCommand.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/inventoryCommand.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/itemsCommand.ts`                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/kitsCommand.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/leyLineCommand.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/locomotionCommand.ts`                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/mailCommand.test.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/mailCommand.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/mapCommand.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/materialSourcesCommand.ts`                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/measureCommand.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/miningOutcropsCommand.ts`                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/musicCommand.ts`                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/namecardsCommand.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/oculiCommand.ts`                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/offeringsCommand.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/outcropPlacesCommand.ts`                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/paletteCommand.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/playlistCommand.ts`                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/pointsCommand.ts`                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/pointsFitCommand.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/profileCommand.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/pruneNode.ts`                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/puzzlesCommand.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/rankCommand.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/reputationCommand.ts`                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/residentsCommand.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/sceneGroupsCommand.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/sceneNpcBornCommand.ts`                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/sceneScriptsCommand.ts`                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/shadersCommand.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/shopsCommand.ts`                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/shrineKeySourcesCommand.ts`                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/skillGlyphsCommand.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/soundsCommand.ts`                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/spiralAbyssCommand.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/statsCommand.ts`                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/statuesCommand.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/timingsCommand.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/tipsCommand.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/transPointsCommand.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/treeCommand.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/waypointsCommand.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/wildlifeCommand.ts`                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/wishScheduleCommand.ts`                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/commands/witnessCommand.ts`                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/commissions`                                          | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/cooking`                                              | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/crafting`                                             | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/domains`                                              | —                       |       |
+| `scripts/src/services/genshinAssets/domains`                                              | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/enemies`                                              | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/expeditions`                                          | —                       |       |
-| `scripts/src/services/genshinAssets/exploration`                                          | —                       |       |
+| `scripts/src/services/genshinAssets/expeditions`                                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/exploration`                                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fishing`                                              | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts`                            | —                       |       |
-| `scripts/src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap.ts`              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/RegionCapitalMap.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/TerrainSplatKindGroundLayerMap.ts`                | —                       |       |
-| `scripts/src/services/genshinAssets/fit/averageSurfaceDetails.test.ts`                    | —                       |       |
-| `scripts/src/services/genshinAssets/fit/averageSurfaceDetails.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/fit/blurWithinTags.test.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/fit/blurWithinTags.ts`                                | —                       |       |
-| `scripts/src/services/genshinAssets/fit/checkHasOutline.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/checkIsInsideRegionOutlines.test.ts`              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/checkIsInsideRegionOutlines.ts`                   | —                       |       |
-| `scripts/src/services/genshinAssets/fit/checkIsSelectedBy.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/fit/checkIsTerrainSplatKind.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/fit/classifyFacadeCells.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/fit/clusterCardCentres.test.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/fit/clusterCardCentres.ts`                            | —                       |       |
-| `scripts/src/services/genshinAssets/fit/clusterColours.test.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/fit/clusterColours.ts`                                | —                       |       |
-| `scripts/src/services/genshinAssets/fit/clusterVectors.ts`                                | —                       |       |
-| `scripts/src/services/genshinAssets/fit/composeLatheAxisPoint.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeCellMean.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeConvexHull.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeCorrelation.ts`                            | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeFeatureOffsets.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeGradient.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeGreatest.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeGroundBounds.test.ts`                      | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeGroundBounds.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeGroundLayerField.test.ts`                  | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeGroundLayerField.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeLagDifference.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeLeast.ts`                                  | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeLoopArea.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeMeanAngle.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeMeanValue.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeMisses.ts`                                 | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeMxPerlinNoise.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeNormalField.ts`                            | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computePartSurfaces.test.ts`                      | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computePartSurfaces.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computePrincipalAxes.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeRayRadius.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeRiverCourses.test.ts`                      | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeRiverCourses.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeSquaredDistance.ts`                        | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeSurfaceError.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeSurfaceTones.test.ts`                      | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeSurfaceTones.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeTerrainDetail.test.ts`                     | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeTerrainDetail.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeTextureDetail.test.ts`                     | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeTextureDetail.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeTextureMean.ts`                            | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeTotalWeight.ts`                            | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeTriangleArea.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeUvTexels.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeVectorMean.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeVertexNormals.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeWaterfallSheet.test.ts`                    | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeWaterfallSheet.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeWeightedColour.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/fit/computeWeightedMean.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/fit/constants.ts`                                     | —                       |       |
-| `scripts/src/services/genshinAssets/fit/countPoints.ts`                                   | —                       |       |
-| `scripts/src/services/genshinAssets/fit/coverTriangles.ts`                                | —                       |       |
-| `scripts/src/services/genshinAssets/fit/createInterfaceRectsFit.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/fit/createNearestColourReader.test.ts`                | —                       |       |
-| `scripts/src/services/genshinAssets/fit/createNearestColourReader.ts`                     | —                       |       |
-| `scripts/src/services/genshinAssets/fit/createRegionFit.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/createSegmentShapes.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fade.ts`                                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fillEmptySectors.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fillGapSectors.ts`                                | —                       |       |
-| `scripts/src/services/genshinAssets/fit/findAreaId.ts`                                    | —                       |       |
-| `scripts/src/services/genshinAssets/fit/findCellComponents.test.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/fit/findCellComponents.ts`                            | —                       |       |
-| `scripts/src/services/genshinAssets/fit/findCellRectangles.test.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/fit/findCellRectangles.ts`                            | —                       |       |
-| `scripts/src/services/genshinAssets/fit/findNearestEdgePoint.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/findNearestSample.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/fit/findOakPlacement.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/findOpenLoops.ts`                                 | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitAlbedo.ts`                                     | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitAreaOutlines.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitBlades.ts`                                     | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitCloudLayerDome.test.ts`                        | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitCloudLayerDome.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitCloudLayerTextures.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitCloudSprites.test.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitCloudSprites.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitFootprintOutline.test.ts`                      | —                       |       |
+| `scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts`                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap.ts`              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/RegionCapitalMap.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/TerrainSplatKindGroundLayerMap.ts`                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/averageSurfaceDetails.test.ts`                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/averageSurfaceDetails.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/blurWithinTags.test.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/blurWithinTags.ts`                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/checkHasOutline.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/checkIsInsideRegionOutlines.test.ts`              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/checkIsInsideRegionOutlines.ts`                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/checkIsSelectedBy.ts`                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/checkIsTerrainSplatKind.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/classifyFacadeCells.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/clusterCardCentres.test.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/clusterCardCentres.ts`                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/clusterColours.test.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/clusterColours.ts`                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/clusterVectors.ts`                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/composeLatheAxisPoint.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeCellMean.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeConvexHull.ts`                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeCorrelation.ts`                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeFeatureOffsets.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeGradient.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeGreatest.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeGroundBounds.test.ts`                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeGroundBounds.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeGroundLayerField.test.ts`                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeGroundLayerField.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeLagDifference.ts`                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeLeast.ts`                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeLoopArea.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeMeanAngle.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeMeanValue.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeMisses.ts`                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeMxPerlinNoise.ts`                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeNormalField.ts`                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computePartSurfaces.test.ts`                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computePartSurfaces.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computePrincipalAxes.ts`                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeRayRadius.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeRiverCourses.test.ts`                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeRiverCourses.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeSquaredDistance.ts`                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeSurfaceError.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeSurfaceTones.test.ts`                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeSurfaceTones.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeTerrainDetail.test.ts`                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeTerrainDetail.ts`                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeTextureDetail.test.ts`                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeTextureDetail.ts`                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeTextureMean.ts`                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeTotalWeight.ts`                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeTriangleArea.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeUvTexels.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeVectorMean.ts`                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeVertexNormals.ts`                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeWaterfallSheet.test.ts`                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeWaterfallSheet.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeWeightedColour.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/computeWeightedMean.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/constants.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/countPoints.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/coverTriangles.ts`                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/createInterfaceRectsFit.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/createNearestColourReader.test.ts`                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/createNearestColourReader.ts`                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/createRegionFit.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/createSegmentShapes.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fade.ts`                                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fillEmptySectors.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fillGapSectors.ts`                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/findAreaId.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/findCellComponents.test.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/findCellComponents.ts`                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/findCellRectangles.test.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/findCellRectangles.ts`                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/findNearestEdgePoint.ts`                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/findNearestSample.ts`                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/findOakPlacement.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/findOpenLoops.ts`                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitAlbedo.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitAreaOutlines.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitBlades.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitCloudLayerDome.test.ts`                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitCloudLayerDome.ts`                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitCloudLayerTextures.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitCloudSprites.test.ts`                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitCloudSprites.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitFootprintOutline.test.ts`                      | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitFootprintOutline.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitGaussianHills.test.ts`                         | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitGaussianHills.test.ts`                         | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitGaussianHills.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitGroundLayerColours.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitGroundLayerField.ts`                           | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitGroundLayerColours.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitGroundLayerField.ts`                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitGroundPiece.ts`                                | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitGroundPieces.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitInteractiveMap.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitInterfaceClips.test.ts`                        | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitGroundPieces.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitInteractiveMap.ts`                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitInterfaceClips.test.ts`                        | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitInterfaceClips.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitInterfaceRects.test.ts`                        | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitInterfaceRects.ts`                             | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitInterfaceRects.test.ts`                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitInterfaceRects.ts`                             | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitLatheProfile.test.ts`                          | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitLatheProfile.ts`                               | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitLoginClouds.ts`                                | —                       |       |
@@ -432,236 +432,236 @@
 | `scripts/src/services/genshinAssets/fit/fitLoginTowerFacades.ts`                          | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitLoginTowers.ts`                                | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitLoginWalkway.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitPavingStoneShape.test.ts`                      | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitPavingStoneShape.ts`                           | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitPavingStoneShape.test.ts`                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitPavingStoneShape.ts`                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitPlanTones.ts`                                  | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitRadialProfile.test.ts`                         | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitRadialProfile.test.ts`                         | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRadialProfile.ts`                              | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionCamps.ts`                                | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionCapitals.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitRegionGroundPieces.ts`                         | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitRegionGroundPieces.ts`                         | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`                            | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionOutcrops.ts`                             | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts`                            | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitReliefLayers.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitRigidPieces.test.ts`                           | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitRigidPieces.test.ts`                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRigidPieces.ts`                                | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitRiverCourses.test.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitRiverCourses.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitSilhouette.test.ts`                            | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitRiverCourses.test.ts`                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitRiverCourses.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitSilhouette.test.ts`                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitSilhouette.ts`                                 | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitSkyGradient.test.ts`                           | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitSkyGradient.test.ts`                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitSkyGradient.ts`                                | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitSlopeHeight.ts`                                | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitSoundEffect.ts`                                | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitSpectralNoiseChannel.test.ts`                  | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitSoundEffect.ts`                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitSpectralNoiseChannel.test.ts`                  | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitSpectralNoiseChannel.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitSpectrumAmplitudes.ts`                         | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitSpectrumAmplitudes.ts`                         | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitStatueComponent.ts`                            | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitStatueStack.test.ts`                           | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitStatueStack.ts`                                | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitSurfaceColours.ts`                             | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitSurfaceColours.ts`                             | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitTerrainCliffs.test.ts`                         | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitTerrainCliffs.ts`                              | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitTerrainPlateaus.test.ts`                       | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitTerrainPlateaus.ts`                            | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitTerrainResidual.test.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitTerrainResidual.ts`                            | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitTerrainResidualFade.test.ts`                   | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitTerrainResidualFade.ts`                        | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitTerrainResidual.test.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitTerrainResidual.ts`                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitTerrainResidualFade.test.ts`                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitTerrainResidualFade.ts`                        | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitTerrainRidges.test.ts`                         | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitTerrainRidges.ts`                              | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitTitleLogos.ts`                                 | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitVisualHull.test.ts`                            | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitVisualHull.test.ts`                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitVisualHull.ts`                                 | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitWaterfallSheets.test.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/fit/fitWaterfallSheets.ts`                            | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitWaterfallSheets.test.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitWaterfallSheets.ts`                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitWindriseOak.ts`                                | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitWindrisePaving.ts`                             | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitWindrisePlants.ts`                             | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitWindriseScene.ts`                              | —                       |       |
 | `scripts/src/services/genshinAssets/fit/fitWindriseStatue.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/fit/foldPlanRepeats.test.ts`                          | —                       |       |
+| `scripts/src/services/genshinAssets/fit/foldPlanRepeats.test.ts`                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/foldPlanRepeats.ts`                               | —                       |       |
 | `scripts/src/services/genshinAssets/fit/getBox.ts`                                        | —                       |       |
-| `scripts/src/services/genshinAssets/fit/getCorrelationLength.ts`                          | —                       |       |
+| `scripts/src/services/genshinAssets/fit/getCorrelationLength.ts`                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/getMean.ts`                                       | —                       |       |
-| `scripts/src/services/genshinAssets/fit/getStandardDeviation.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/getTexel.ts`                                      | —                       |       |
-| `scripts/src/services/genshinAssets/fit/hashLatticePoint.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/joinMeshVertices.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/mapTerrainResidualGrid.ts`                        | —                       |       |
-| `scripts/src/services/genshinAssets/fit/mergeFacadeBands.test.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/fit/mergeFacadeBands.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/mixFinal.ts`                                      | —                       |       |
+| `scripts/src/services/genshinAssets/fit/getStandardDeviation.ts`                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/getTexel.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/hashLatticePoint.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/joinMeshVertices.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/mapTerrainResidualGrid.ts`                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/mergeFacadeBands.test.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/mergeFacadeBands.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/mixFinal.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/placeTerrainFeatures.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/rasterizeTopFaces.test.ts`                        | —                       |       |
+| `scripts/src/services/genshinAssets/fit/rasterizeTopFaces.test.ts`                        | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/rasterizeTopFaces.ts`                             | —                       |       |
 | `scripts/src/services/genshinAssets/fit/readChannels.ts`                                  | —                       |       |
 | `scripts/src/services/genshinAssets/fit/readCutTexture.ts`                                | —                       |       |
 | `scripts/src/services/genshinAssets/fit/readFaceSamples.ts`                               | —                       |       |
 | `scripts/src/services/genshinAssets/fit/readGroundFootprints.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/readGroundLayerCells.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/readGroundPieceAreas.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/readGroundSource.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/readLevelOfDetailParts.test.ts`                   | —                       |       |
+| `scripts/src/services/genshinAssets/fit/readGroundLayerCells.ts`                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/readGroundPieceAreas.ts`                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/readGroundSource.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/readLevelOfDetailParts.test.ts`                   | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/readLevelOfDetailParts.ts`                        | —                       |       |
 | `scripts/src/services/genshinAssets/fit/readLoginDoorPieces.ts`                           | —                       |       |
 | `scripts/src/services/genshinAssets/fit/readMeshInThree.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/readOptionalTexture.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/fit/readPair.ts`                                      | —                       |       |
-| `scripts/src/services/genshinAssets/fit/readRegionAreas.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/readRegionGroundFits.ts`                          | —                       |       |
+| `scripts/src/services/genshinAssets/fit/readOptionalTexture.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/readPair.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/readRegionAreas.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/readRegionGroundFits.ts`                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/readRegionLandmarks.ts`                           | —                       |       |
 | `scripts/src/services/genshinAssets/fit/readRelativeLuminance.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/fit/readSurface.ts`                                   | —                       |       |
-| `scripts/src/services/genshinAssets/fit/readTexture.ts`                                   | —                       |       |
+| `scripts/src/services/genshinAssets/fit/readSurface.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/readTexture.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/readTowerProfiles.ts`                             | —                       |       |
 | `scripts/src/services/genshinAssets/fit/readWindrisePlantPlacements.ts`                   | —                       |       |
-| `scripts/src/services/genshinAssets/fit/readWitnessWorldMeshes.ts`                        | —                       |       |
-| `scripts/src/services/genshinAssets/fit/rotateLeft.ts`                                    | —                       |       |
-| `scripts/src/services/genshinAssets/fit/roundFitted.ts`                                   | —                       |       |
-| `scripts/src/services/genshinAssets/fit/roundInstrument.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/roundPair.ts`                                     | —                       |       |
+| `scripts/src/services/genshinAssets/fit/readWitnessWorldMeshes.ts`                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/rotateLeft.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/roundFitted.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/roundInstrument.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/roundPair.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/roundStack.ts`                                    | —                       |       |
-| `scripts/src/services/genshinAssets/fit/roundStatue.ts`                                   | —                       |       |
-| `scripts/src/services/genshinAssets/fit/runFits.test.ts`                                  | —                       |       |
-| `scripts/src/services/genshinAssets/fit/runFits.ts`                                       | —                       |       |
-| `scripts/src/services/genshinAssets/fit/sampleFacadeGrid.test.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/fit/sampleFacadeGrid.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/sampleFaceUvs.test.ts`                            | —                       |       |
+| `scripts/src/services/genshinAssets/fit/roundStatue.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/runFits.test.ts`                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/runFits.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/sampleFacadeGrid.test.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/sampleFacadeGrid.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/sampleFaceUvs.test.ts`                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/sampleFaceUvs.ts`                                 | —                       |       |
-| `scripts/src/services/genshinAssets/fit/sampleMeshSurface.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/fit/sampleSurfaceTexture.test.ts`                     | —                       |       |
+| `scripts/src/services/genshinAssets/fit/sampleMeshSurface.ts`                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/sampleSurfaceTexture.test.ts`                     | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/sampleSurfaceTexture.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/sampleUnitNoise.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/seedClusterMeans.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/selectBarSamples.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/shiftSubpath.ts`                                  | —                       |       |
-| `scripts/src/services/genshinAssets/fit/simplifyPath.test.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/fit/simplifyPath.ts`                                  | —                       |       |
-| `scripts/src/services/genshinAssets/fit/smoothTerrainGrid.ts`                             | —                       |       |
-| `scripts/src/services/genshinAssets/fit/splitGroundPiece.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/splitMeshComponents.test.ts`                      | —                       |       |
-| `scripts/src/services/genshinAssets/fit/splitMeshComponents.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/fit/splitSubpaths.ts`                                 | —                       |       |
-| `scripts/src/services/genshinAssets/fit/sumBandPowers.ts`                                 | —                       |       |
-| `scripts/src/services/genshinAssets/fit/sumWeights.ts`                                    | —                       |       |
-| `scripts/src/services/genshinAssets/fit/tintTexture.test.ts`                              | —                       |       |
-| `scripts/src/services/genshinAssets/fit/tintTexture.ts`                                   | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toCellKey.ts`                                     | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toCrossSection.ts`                                | —                       |       |
+| `scripts/src/services/genshinAssets/fit/sampleUnitNoise.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/seedClusterMeans.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/selectBarSamples.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/shiftSubpath.ts`                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/simplifyPath.test.ts`                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/simplifyPath.ts`                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/smoothTerrainGrid.ts`                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/splitGroundPiece.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/splitMeshComponents.test.ts`                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/splitMeshComponents.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/splitSubpaths.ts`                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/sumBandPowers.ts`                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/sumWeights.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/tintTexture.test.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/tintTexture.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/toCellKey.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/toCrossSection.ts`                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toDistance.ts`                                    | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toEdgeKey.ts`                                     | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toFaceEdges.ts`                                   | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toGroundPiece.ts`                                 | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toLevels.ts`                                      | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toMatrix.ts`                                      | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toNodeSpan.ts`                                    | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toOutcropPlaces.test.ts`                          | —                       |       |
+| `scripts/src/services/genshinAssets/fit/toEdgeKey.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/toFaceEdges.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/toGroundPiece.ts`                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/toLevels.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/toMatrix.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/toNodeSpan.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/toOutcropPlaces.test.ts`                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toOutcropPlaces.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toPaintKey.ts`                                    | —                       |       |
+| `scripts/src/services/genshinAssets/fit/toPaintKey.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toPaths.ts`                                       | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toPoint.ts`                                       | —                       |       |
+| `scripts/src/services/genshinAssets/fit/toPoint.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toProfile.ts`                                     | —                       |       |
 | `scripts/src/services/genshinAssets/fit/toProperty.ts`                                    | —                       |       |
 | `scripts/src/services/genshinAssets/fit/toRadialSector.ts`                                | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toRecordTubes.ts`                                 | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toRegionPlace.test.ts`                            | —                       |       |
+| `scripts/src/services/genshinAssets/fit/toRecordTubes.ts`                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/toRegionPlace.test.ts`                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toRegionPlace.ts`                                 | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toShade.ts`                                       | —                       |       |
+| `scripts/src/services/genshinAssets/fit/toShade.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toStackMesh.ts`                                   | —                       |       |
 | `scripts/src/services/genshinAssets/fit/toTexel.ts`                                       | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.test.ts`                      | —                       |       |
+| `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.test.ts`                      | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`                           | —                       |       |
-| `scripts/src/services/genshinAssets/fit/toWorldVertices.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/traceCellLoops.test.ts`                           | —                       |       |
+| `scripts/src/services/genshinAssets/fit/toWorldVertices.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/traceCellLoops.test.ts`                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/traceCellLoops.ts`                                | —                       |       |
 | `scripts/src/services/genshinAssets/fit/traceCoveredGrid.ts`                              | —                       |       |
 | `scripts/src/services/genshinAssets/fit/traceSkeleton.ts`                                 | —                       |       |
-| `scripts/src/services/genshinAssets/fit/traceTubeCentrelines.test.ts`                     | —                       |       |
+| `scripts/src/services/genshinAssets/fit/traceTubeCentrelines.test.ts`                     | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/traceTubeCentrelines.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/fit/withDetail.ts`                                    | —                       |       |
-| `scripts/src/services/genshinAssets/fit/withPartDetails.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/fit/writeRegionKey.ts`                                | —                       |       |
+| `scripts/src/services/genshinAssets/fit/withDetail.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/withPartDetails.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/writeRegionKey.ts`                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/forging`                                              | —                       |       |
-| `scripts/src/services/genshinAssets/friendship`                                           | —                       |       |
+| `scripts/src/services/genshinAssets/friendship`                                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/gadgets`                                              | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/gathering`                                            | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/gcg`                                                  | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/home`                                                 | —                       |       |
-| `scripts/src/services/genshinAssets/imaginarium`                                          | —                       |       |
+| `scripts/src/services/genshinAssets/imaginarium`                                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/interface`                                            | —                       |       |
 | `scripts/src/services/genshinAssets/items`                                                | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/kits/buildKitPublication.test.ts`                     | —                       |       |
-| `scripts/src/services/genshinAssets/kits/buildKitPublication.ts`                          | —                       |       |
+| `scripts/src/services/genshinAssets/kits/buildKitPublication.test.ts`                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/buildKitPublication.ts`                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/kits/buildKitRecordWithDonors.ts`                     | —                       |       |
 | `scripts/src/services/genshinAssets/kits/candidates`                                      | —                       |       |
-| `scripts/src/services/genshinAssets/kits/checkIsGcsimValueGiven.test.ts`                  | —                       |       |
-| `scripts/src/services/genshinAssets/kits/checkIsGcsimValueGiven.ts`                       | —                       |       |
+| `scripts/src/services/genshinAssets/kits/checkIsGcsimValueGiven.test.ts`                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/checkIsGcsimValueGiven.ts`                       | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/kits/compareKits.ts`                                  | —                       |       |
-| `scripts/src/services/genshinAssets/kits/compareQueuedDelays.ts`                          | —                       |       |
-| `scripts/src/services/genshinAssets/kits/constants.test.ts`                               | —                       |       |
-| `scripts/src/services/genshinAssets/kits/constants.ts`                                    | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimAttackTagLunarReactionTypeMap.ts`     | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimAttackTagMap.test.ts`                 | —                       |       |
+| `scripts/src/services/genshinAssets/kits/compareQueuedDelays.ts`                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/constants.test.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/constants.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimAttackTagLunarReactionTypeMap.ts`     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimAttackTagMap.test.ts`                 | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/GcsimAttackTagMap.ts`                      | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimCharacterMappingMap.ts`               | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimElementMap.test.ts`                   | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimElementMap.ts`                        | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimFolderSubfoldersMap.ts`               | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimInternalCooldownTagMap.test.ts`       | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimInternalCooldownTagMap.ts`            | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap.ts`         | —                       |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimCharacterMappingMap.ts`               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimElementMap.test.ts`                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimElementMap.ts`                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimFolderSubfoldersMap.ts`               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimInternalCooldownTagMap.test.ts`       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimInternalCooldownTagMap.ts`            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap.ts`         | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/addFallbackPlungeCandidates.ts`            | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimBladeRollerCandidates.ts`          | —                       |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimBladeRollerCandidates.ts`          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackCandidates.test.ts`   | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackCandidates.ts`        | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackVariantCandidates.ts` | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimCloudCandidates.ts`                | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimFieryPassionCandidates.ts`         | —                       |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackCandidates.ts`        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackVariantCandidates.ts` | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimCloudCandidates.ts`                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimFieryPassionCandidates.ts`         | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/addGcsimFrameListCandidates.test.ts`       | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimFrameListCandidates.ts`            | —                       |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimFrameListCandidates.ts`            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/addGcsimHitmarkHits.ts`                    | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimLoopShotCandidates.ts`             | —                       |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimLoopShotCandidates.ts`             | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/addGcsimMoondewCleanseCandidates.test.ts`  | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimMoondewCleanseCandidates.ts`       | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimNamedConstantCandidates.ts`        | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimNormalAttackCandidates.ts`         | —                       |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimMoondewCleanseCandidates.ts`       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimNamedConstantCandidates.ts`        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimNormalAttackCandidates.ts`         | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/addGcsimPlungeCandidates.ts`               | —                       |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/addGcsimQueuedHits.ts`                     | —                       |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/addGcsimShellCandidates.ts`                | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimSkillAndBurstCandidates.ts`        | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimSkillHoldCandidates.ts`            | —                       |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimSkillAndBurstCandidates.ts`        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/addGcsimSkillHoldCandidates.ts`            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/checkGcsimConfigs.ts`                      | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/checkIsGoFloat.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/checkIsGoFloatLiteral.ts`                  | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation.ts`                   | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/checkIsLandingOrdered.ts`                  | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/constants.test.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/countTabs.ts`                              | —                       |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/checkIsGoFloat.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/checkIsGoFloatLiteral.ts`                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation.ts`                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/checkIsLandingOrdered.ts`                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/constants.test.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/countTabs.ts`                              | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/createBoxReach.ts`                         | —                       |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/createCircleReach.ts`                      | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/createFanReach.ts`                         | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter.test.ts`     | —                       |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/createFanReach.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter.test.ts`     | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter.ts`          | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/createGcsimPlungeFallbackWriter.ts`        | —                       |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/createGcsimPlungeFallbackWriter.ts`        | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/createGoScope.ts`                          | —                       |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/createTargetedHitArea.ts`                  | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoConstants.test.ts`               | —                       |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoConstants.test.ts`               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoConstants.ts`                    | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoExpression.test.ts`              | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoExpression.ts`                   | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoNumber.ts`                       | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/findClosing.ts`                            | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimConstant.ts`                      | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimFolder.ts`                        | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimHitbox.ts`                        | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimStanceNormalAttack.ts`            | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf.ts`                    | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimVariableHitbox.ts`                | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/findQueuedAttacks.test.ts`                 | —                       |       |
-| `scripts/src/services/genshinAssets/kits/gcsim/findQueuedAttacks.ts`                      | —                       |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoExpression.test.ts`              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoExpression.ts`                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/evaluateGoNumber.ts`                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findClosing.ts`                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimConstant.ts`                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimFolder.ts`                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimHitbox.ts`                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimStanceNormalAttack.ts`            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf.ts`                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findGcsimVariableHitbox.ts`                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findQueuedAttacks.test.ts`                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/kits/gcsim/findQueuedAttacks.ts`                      | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/fixtures`                                  | —                       |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/getFallbackPlungeKitCandidates.test.ts`    | —                       |       |
 | `scripts/src/services/genshinAssets/kits/gcsim/getFallbackPlungeKitCandidates.ts`         | —                       |       |
