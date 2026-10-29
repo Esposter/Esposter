@@ -37,10 +37,10 @@ flowchart LR
 - [ ] **The dusk's sky is clouded about a seventh of the time the recording's is, from 8 to 15 degrees up** — no source yet: the named source does not hold this value, since the roadmap link (`openspec/changes/genshin-roadmap/tasks.md`) gives its dusk cover as a solve with no figure, and no cover solve of `{data-root}/genshin-parity/captures/login-dusk.mkv` is kept in `{data-root}/genshin-parity/references`, `plans` or `comparisons`.
 - [ ] **The dusk's cloud shade is a bright pink** — no source yet: the shade's value is not read against a colour reference here.
 - [ ] **The layer draws no settings until an hour's solve beats none** — no source yet: the gate on the layer's settings was not located in the code checked here.
-- [ ] **Each band is one of the game's painted clouds, traced** — no source yet: the cloud textures in `{data-root}/genshin-parity/extracted/login-bytype-assets/Texture2D/`, not yet matched to the bands.
+- [ ] **Each band is one of the game's painted clouds, traced** — no source yet: the cloud textures in `{data-root}/genshin-parity/extracted/login/assets/Texture2D/`, not yet matched to the bands.
 - [ ] **Each cloud is coloured as the game's cloud particles are** — no source yet: the particle system's colour over its life, which neither cloud material on disk holds.
 - [ ] **The day's and the dusk's colours are measured, and those ship; the day's cloud still is measured** — no source yet: the day and dusk cloud stills, not yet re-measured for the shipped colours; the still the measurement would write is not on disk.
-- [ ] **The sky's dome is ported as the game draws it** — no source yet: the `Sky_LOD0` mesh that `{data-root}/genshin-parity/extracted/login/witness.json` places with the `Enviro_Atmosphere_Layer_Mat` material (`{data-root}/genshin-parity/extracted/login-bytype-assets/Material/Enviro_Atmosphere_Layer_Mat.json`), not yet compared with the ported dome.
+- [ ] **The sky's dome is ported as the game draws it** — no source yet: the `Sky_LOD0` mesh that `{data-root}/genshin-parity/extracted/login/witness.json` places with the `Enviro_Atmosphere_Layer_Mat` material (`{data-root}/genshin-parity/extracted/login/assets/Material/Enviro_Atmosphere_Layer_Mat.json`), not yet compared with the ported dome.
 
 ## Sources
 
