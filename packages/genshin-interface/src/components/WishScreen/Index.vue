@@ -125,7 +125,7 @@ const bannerLabelText = computed(() => {
       <p class="rate-up">{{ bannerCard.rateUp }}</p>
       <div v-if="featuredCell" class="featured">
         <p class="featured-name">{{ featuredCell.name }}</p>
-        <p><RarityStars :rarity="featuredCell.rarity" /></p>
+        <p class="featured-stars"><RarityStars :rarity="featuredCell.rarity" /></p>
         <p class="featured-title">{{ bannerCard.featuredTitle }}</p>
       </div>
     </section>
@@ -205,7 +205,6 @@ const bannerLabelText = computed(() => {
 .wish-screen {
   position: absolute;
   inset: 0;
-  background: rgb(28 32 42 / 0.92);
   color: #fff;
 }
 
@@ -220,20 +219,24 @@ const bannerLabelText = computed(() => {
 
 .banners {
   position: absolute;
-  top: 0;
+  top: calc(var(--unit) * 28);
   left: calc(var(--unit) * 678);
   display: flex;
-  gap: calc(var(--unit) * 27);
+  align-items: center;
+  gap: calc(var(--unit) * 33);
 }
 
 .banner {
-  width: calc(var(--unit) * 172);
-  height: calc(var(--unit) * 92);
-  border: calc(var(--unit) * 2) solid rgb(255 255 255 / 0.6);
+  width: calc(var(--unit) * 157);
+  height: calc(var(--unit) * 58);
+  border: calc(var(--unit) * 2) solid rgb(255 255 255 / 0.25);
+  background: rgb(84 120 172 / 0.9);
 }
 
 .banner[aria-pressed="true"] {
-  background: rgb(253 247 242 / 0.85);
+  width: calc(var(--unit) * 175);
+  height: calc(var(--unit) * 66);
+  background: #fffdea;
 }
 
 .currencies {
@@ -258,21 +261,42 @@ const bannerLabelText = computed(() => {
   font-size: calc(var(--unit) * 36);
 }
 
-/* The card is the plate's art, so only its words are drawn over it, each at the game's place on the banner */
+/* The card's art is the plate's and cannot ship, so the card is a measured panel of the reference's light field behind the
+   words its text column sits on, and its words are drawn over that, each at the game's place on the banner */
 .card {
   position: absolute;
   inset: 0;
 }
 
+.card::before,
+.card::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--unit) * 215);
+  left: calc(var(--unit) * 322);
+  width: calc(var(--unit) * 508);
+  height: calc(var(--unit) * 672);
+  background: #fffdfd;
+}
+
+.card::after {
+  top: calc(var(--unit) * 453);
+  left: calc(var(--unit) * 338);
+  width: calc(var(--unit) * 6);
+  height: calc(var(--unit) * 292);
+  background: #524c50;
+}
+
 .tag {
   position: absolute;
   top: calc(var(--unit) * 213);
-  left: calc(var(--unit) * 322);
+  left: calc(var(--unit) * 316);
   margin: 0;
-  padding: calc(var(--unit) * 4) calc(var(--unit) * 16);
+  padding: calc(var(--unit) * 2) calc(var(--unit) * 11);
   border-radius: calc(var(--unit) * 18);
   background: rgb(62 195 238);
-  font-size: calc(var(--unit) * 22);
+  font-size: calc(var(--unit) * 27);
+  line-height: calc(var(--unit) * 33);
 }
 
 .card-title {
@@ -314,16 +338,24 @@ const bannerLabelText = computed(() => {
 
 .featured-name {
   margin: 0;
-  font-size: calc(var(--unit) * 40);
+  font-size: calc(var(--unit) * 56);
+  line-height: calc(var(--unit) * 56);
+}
+
+.featured-stars {
+  margin: calc(var(--unit) * 8) 0 0;
+  font-size: calc(var(--unit) * 28);
+  line-height: calc(var(--unit) * 24);
 }
 
 .featured-title {
-  width: calc(var(--unit) * 348);
+  width: calc(var(--unit) * 356);
   box-sizing: border-box;
-  margin: calc(var(--unit) * 4) 0 0;
-  padding: 0 calc(var(--unit) * 12);
+  margin: calc(var(--unit) * 7) 0 0 calc(var(--unit) * -7);
+  padding: 0 calc(var(--unit) * 19);
   background: rgb(20 30 50 / 0.7);
-  font-size: calc(var(--unit) * 22);
+  font-size: calc(var(--unit) * 26);
+  line-height: calc(var(--unit) * 29);
 }
 
 .links {
@@ -334,9 +366,11 @@ const bannerLabelText = computed(() => {
   gap: calc(var(--unit) * 20);
 }
 
-.link {
+.links .link {
   width: calc(var(--unit) * 172);
-  height: calc(var(--unit) * 32);
+  height: calc(var(--unit) * 43);
+  background: #f6f0e9;
+  color: #36323a;
   font-size: calc(var(--unit) * 22);
 }
 
@@ -354,14 +388,17 @@ const bannerLabelText = computed(() => {
   gap: calc(var(--unit) * 33);
 }
 
-.set {
+.sets .set {
   display: flex;
   width: calc(var(--unit) * 340);
-  height: calc(var(--unit) * 72);
+  height: calc(var(--unit) * 74);
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #3b4255;
+  border: calc(var(--unit) * 3) solid #f4f0cb;
+  border-radius: calc(var(--unit) * 36);
+  background: #fff;
+  color: #9d9a9a;
   font-size: calc(var(--unit) * 22);
 }
 
