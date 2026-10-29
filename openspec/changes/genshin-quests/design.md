@@ -30,7 +30,7 @@ The commissions are dealt by [commissions](../../specs/genshin/commissions/desig
 These need the English PC client at 1080 high, published screenshots and recordings first ([parity](../../specs/genshin/parity/README.md)):
 
 - **The Adventurer Handbook**, against the wiki's screenshot of its Experience tab: the book, its tabs and its close button.
-- **The beam**, its radius and colour off a recording navigating to an objective, into `QUEST_BEAM_RADIUS` and `QUEST_BEAM_COLOR`.
+- **The beam**, its radius and colour off a recording navigating to an objective, into `QUEST_BEAM_RADIUS` and `QUEST_BEAM_COLOR`. Until then both are PROVISIONAL (task 3.1, searched 2026-10-29, none found): the colour `#ffd780` is the pale gold of the wiki's yellow beam, read through a search snippet of the Quest page, and the 0.6 metre radius has no recorded basis, since commit `8bd7ff92a6` set it without one.
 
 ## Key files
 
