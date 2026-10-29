@@ -55,6 +55,18 @@ describe("weaponScreen", () => {
     );
   });
 
+  // Its frame is wider than 16:9, so the window it is drawn in must hold the rightmost of its pieces
+  test("the weapon screen's pieces stay inside the window's width", async () => {
+    expect.hasAssertions();
+
+    const { container } = await render(WeaponScreenContainer, { props });
+
+    const rightmostEdge = Math.max(
+      ...[...container.querySelectorAll("*")].map((element) => element.getBoundingClientRect().right),
+    );
+    expect(rightmostEdge).toBeLessThanOrEqual(window.innerWidth);
+  });
+
   // The tabs the weapon screen offers in the reader's game language: Enhance, Refine, and Ascend at the level cap
   test("the action labels read in the reader's game language", async () => {
     expect.hasAssertions();

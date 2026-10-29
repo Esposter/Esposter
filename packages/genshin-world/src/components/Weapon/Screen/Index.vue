@@ -331,7 +331,7 @@ const nextPhaseCosts = computed(() =>
        ascension phases, or its refinement rank), its panel (the ores and fodder weapons, the ascension materials or the refinement
        slots), the Required line's Mora and the tab's action beneath. The weapon's rarity and refinement rank are read aloud beside
        the picture -->
-  <GameScreen role="dialog" aria-modal="true" :aria-label="name">
+  <GameScreen class="weapon-screen" role="dialog" aria-modal="true" :aria-label="name">
     <WeaponMenu
       v-model:tab="openTab"
       :action-label="actionLabel"
@@ -451,6 +451,11 @@ const nextPhaseCosts = computed(() =>
 </template>
 
 <style scoped>
+/* The still is 1920 by 864, so its frame spans 2400 units at the height's unit, the width the unit fits in a window */
+.weapon-screen {
+  --game-design-width: 2400;
+}
+
 /* Every measure is a pixel of the reference's 1920 by 864 still, through the frame's `--reference-pixel` */
 .sr-only {
   position: absolute;

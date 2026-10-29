@@ -21,6 +21,18 @@ describe("forgeScreen", () => {
     await expect.element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.ForgeStart], { exact: true })).toBeVisible();
   });
 
+  // Its frame is wider than 16:9, so the window it is drawn in must hold the rightmost of its pieces
+  test("the forge screen's pieces stay inside the window's width", async () => {
+    expect.hasAssertions();
+
+    const { container } = await render(ForgeScreenContainer, { props });
+
+    const rightmostEdge = Math.max(
+      ...[...container.querySelectorAll("*")].map((element) => element.getBoundingClientRect().right),
+    );
+    expect(rightmostEdge).toBeLessThanOrEqual(window.innerWidth);
+  });
+
   // The Enhancement Ore past the day's forge points, its refusal line in place of the Start button
   test("an order past the daily cap shows the refusal words", async () => {
     expect.hasAssertions();

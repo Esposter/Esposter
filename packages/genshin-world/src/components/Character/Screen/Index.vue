@@ -487,7 +487,7 @@ const isActivateDisabled = computed(
 <template>
   <!-- The character screen, the C key's, a dialog over the world: the player's characters, the one on the field chosen
        First, the open tab's panel for the chosen one, the Profile's aside, and the way back -->
-  <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Character]">
+  <GameScreen class="character-screen" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Character]">
     <slot name="scene" :element="characterElement" :tab />
     <CharacterMenu
       v-model:character-id="characterId"
@@ -689,6 +689,11 @@ const isActivateDisabled = computed(
 </template>
 
 <style scoped>
+/* The still is 3440 by 1440, so its frame spans 2580 units at the height's unit, the width the unit fits in a window */
+.character-screen {
+  --game-design-width: 2580;
+}
+
 /* The foot's pieces, measured off the same frame: the grid's disc centred 148 units from the left and 1006 from the top,
    and the Training Guide pill from 200 units, 49 high. Their colours are provisional */
 .grid {

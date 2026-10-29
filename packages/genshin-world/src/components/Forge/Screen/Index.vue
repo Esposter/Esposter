@@ -222,7 +222,7 @@ const obtain = (queueId: number) => {
   <!-- The forge, the blacksmith's screen: its title and two tabs across the head with the coins and the way out, the
        recipes on the left with the chosen one's amount and cost beside them, or the queues each holding an order that
        forges over real time and is obtained when it is done -->
-  <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.ForgeTitle]">
+  <GameScreen class="forge-screen" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.ForgeTitle]">
     <ForgeScreen
       v-model:amount="amount"
       :recipe-id="recipeId"
@@ -259,3 +259,10 @@ const obtain = (queueId: number) => {
     />
   </GameScreen>
 </template>
+
+<style scoped>
+/* The still is 1920 by 886, so its frame spans 2340.4 units at the height's unit, rounded up to the width the unit fits */
+.forge-screen {
+  --game-design-width: 2341;
+}
+</style>
