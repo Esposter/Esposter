@@ -85,7 +85,7 @@ The reader SHALL parse a model afresh each time it is drawn and SHALL keep no pa
 
 #### Scenario: Redrawn pack is read again
 
-- **GIVEN** a kept character pack is drawn a second time
+- **GIVEN** a character pack is drawn a second time
 - **WHEN** its model is drawn
 - **THEN** the model is read again from its files
 

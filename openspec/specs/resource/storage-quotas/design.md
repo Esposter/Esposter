@@ -127,41 +127,39 @@ Closing these needs a recompute that lists real object sizes per user. Worth doi
 
 ## Key files
 
-| File                                                                                                 | Role                                                                 |
-| ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `packages/db-schema/src/models/user/StorageTier.ts`                                                  | tier enum                                                            |
-| `packages/db-schema/src/schema/auth/usersInAuth.ts`                                                  | `storageTier` + `storageBytesUsed`                                   |
-| `packages/db-schema/src/schema/storage/storageLedgerInStorage.ts`                                    | the ledger                                                           |
-| `packages/db-schema/src/services/azure/container/getBlobSubjectPrefix.ts`                            | storage's event subject shape, read by both ends                     |
-| `packages/db-schema/src/services/azure/container/parseBlobSubject.ts`                                | subject → (container, blob name)                                     |
-| `apps/web/shared/services/storage/StorageTierQuotaMap.ts`                                            | tier → quota bytes                                                   |
-| `packages/db/src/services/storage/chargeStorageLedgerEntry.ts`                                       | ledgers and charges a server-written blob                            |
-| `packages/db/src/services/storage/chargeAndCopyBlob.ts`                                              | the charge-then-copy step a clone and a forward share                |
-| `packages/db/src/services/azure/container/cloneFiles.ts`                                             | copies a forwarded message's files, charging each copy               |
-| `packages/db/src/services/azure/container/generateUploadFileSasEntities.ts`                          | names every target, reserves the set, then signs                     |
-| `apps/web/server/services/message/file/generateReservedMessageFileSasEntities.ts`                    | the message upload chokepoint: reserve each target, then mint        |
-| `apps/web/server/trpc/routers/message/index.ts`                                                      | the message upload and the forward, each through its gate and charge |
-| `apps/web/app/composables/message/file/useUploadFiles.ts`                                            | the composer, on the mutation client, showing a refusal              |
-| `apps/web/server/services/resource/cloneContentAssets.ts`                                            | charges each clone before its copy, through `chargeAndCopyBlob`      |
-| `apps/web/server/services/resource/generateReservedResourceAssetSasEntities.ts`                      | the resource upload chokepoint — held check, mint and reserve as one |
-| `apps/web/server/services/storage/generateReservedWriteSasUrl.ts`                                    | mint and reserve one fixed write target                              |
-| `apps/web/server/services/storage/reserveStorageBytes.ts`                                            | GC expired holds, lock, gate, write or take over holds               |
-| `apps/web/server/services/resource/deleteStagingContentBlob.ts`                                      | releases a committed staged save's upload                            |
-| `apps/web/server/services/genshin/accountCharacterPack/generateAccountCharacterPackUploadSasUrls.ts` | a character pack's grant per file, held against quota                |
-| `apps/web/server/services/genshin/accountCharacterPack/keepAccountCharacterPack.ts`                  | keep releases its staged files through `deleteStorageBlobs`          |
-| `packages/db/src/services/storage/reconcileStorageLedgerEntry.ts`                                    | declared hold → charged bytes                                        |
-| `packages/db/src/services/storage/deleteStorageBlobs.ts`                                             | delete a set of blobs and release what it removed                    |
-| `apps/web/server/services/azure/webPubSub/generateWebPubSubClientAccessUrl.ts`                       | one hub's client access token, group-scoped                          |
-| `packages/db/src/services/storage/releaseStorageLedgerEntriesByWhere.ts`                             | the one place bytes leave the counter                                |
-| `apps/functions/src/handlers/reconcileStorageLedgerEntryHandler.ts`                                  | the `BlobCreated` handler                                            |
-| `apps/functions/src/services/storage/broadcastStorageUsage.ts`                                       | tells an owner's meter their counter moved                           |
-| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe007.ts`     | the subscription, filtered to resource assets                        |
-| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe008.ts`     | the subscription, filtered to message attachments                    |
-| `apps/web/server/trpc/routers/storage.ts`                                                            | `readUsage`, `onUpdateUsage`, the hub access url                     |
-| `apps/web/app/composables/storage/useStorageSubscribables.ts`                                        | both halves of the live meter                                        |
-| `apps/web/app/components/Resource/StorageMeter.vue`                                                  | the usage meter in the explorer shell                                |
-| `apps/web/app/store/storage.ts`                                                                      | the usage the meter renders, updated dynamically                     |
-| `apps/web/app/layouts/resource.vue`                                                                  | the shell that mounts it on every resource page                      |
+| File                                                                                             | Role                                                                 |
+| ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| `packages/db-schema/src/models/user/StorageTier.ts`                                              | tier enum                                                            |
+| `packages/db-schema/src/schema/auth/usersInAuth.ts`                                              | `storageTier` + `storageBytesUsed`                                   |
+| `packages/db-schema/src/schema/storage/storageLedgerInStorage.ts`                                | the ledger                                                           |
+| `packages/db-schema/src/services/azure/container/getBlobSubjectPrefix.ts`                        | storage's event subject shape, read by both ends                     |
+| `packages/db-schema/src/services/azure/container/parseBlobSubject.ts`                            | subject → (container, blob name)                                     |
+| `apps/web/shared/services/storage/StorageTierQuotaMap.ts`                                        | tier → quota bytes                                                   |
+| `packages/db/src/services/storage/chargeStorageLedgerEntry.ts`                                   | ledgers and charges a server-written blob                            |
+| `packages/db/src/services/storage/chargeAndCopyBlob.ts`                                          | the charge-then-copy step a clone and a forward share                |
+| `packages/db/src/services/azure/container/cloneFiles.ts`                                         | copies a forwarded message's files, charging each copy               |
+| `packages/db/src/services/azure/container/generateUploadFileSasEntities.ts`                      | names every target, reserves the set, then signs                     |
+| `apps/web/server/services/message/file/generateReservedMessageFileSasEntities.ts`                | the message upload chokepoint: reserve each target, then mint        |
+| `apps/web/server/trpc/routers/message/index.ts`                                                  | the message upload and the forward, each through its gate and charge |
+| `apps/web/app/composables/message/file/useUploadFiles.ts`                                        | the composer, on the mutation client, showing a refusal              |
+| `apps/web/server/services/resource/cloneContentAssets.ts`                                        | charges each clone before its copy, through `chargeAndCopyBlob`      |
+| `apps/web/server/services/resource/generateReservedResourceAssetSasEntities.ts`                  | the resource upload chokepoint — held check, mint and reserve as one |
+| `apps/web/server/services/storage/generateReservedWriteSasUrl.ts`                                | mint and reserve one fixed write target                              |
+| `apps/web/server/services/storage/reserveStorageBytes.ts`                                        | GC expired holds, lock, gate, write or take over holds               |
+| `apps/web/server/services/resource/deleteStagingContentBlob.ts`                                  | releases a committed staged save's upload                            |
+| `packages/db/src/services/storage/reconcileStorageLedgerEntry.ts`                                | declared hold → charged bytes                                        |
+| `packages/db/src/services/storage/deleteStorageBlobs.ts`                                         | delete a set of blobs and release what it removed                    |
+| `apps/web/server/services/azure/webPubSub/generateWebPubSubClientAccessUrl.ts`                   | one hub's client access token, group-scoped                          |
+| `packages/db/src/services/storage/releaseStorageLedgerEntriesByWhere.ts`                         | the one place bytes leave the counter                                |
+| `apps/functions/src/handlers/reconcileStorageLedgerEntryHandler.ts`                              | the `BlobCreated` handler                                            |
+| `apps/functions/src/services/storage/broadcastStorageUsage.ts`                                   | tells an owner's meter their counter moved                           |
+| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe007.ts` | the subscription, filtered to resource assets                        |
+| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe008.ts` | the subscription, filtered to message attachments                    |
+| `apps/web/server/trpc/routers/storage.ts`                                                        | `readUsage`, `onUpdateUsage`, the hub access url                     |
+| `apps/web/app/composables/storage/useStorageSubscribables.ts`                                    | both halves of the live meter                                        |
+| `apps/web/app/components/Resource/StorageMeter.vue`                                              | the usage meter in the explorer shell                                |
+| `apps/web/app/store/storage.ts`                                                                  | the usage the meter renders, updated dynamically                     |
+| `apps/web/app/layouts/resource.vue`                                                              | the shell that mounts it on every resource page                      |
 
 ## Notes
 

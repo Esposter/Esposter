@@ -1,8 +1,8 @@
 # Development packs
 
-Under `nuxt dev`, the app's module `apps/web/modules/serveGenshinExtractions.ts` registers a route at `GENSHIN_CHARACTER_PACK_BASE_URL`, and the app's world component hands the world that address (`apps/web/app/components/Genshin/World.vue`, `apps/web/shared/services/genshin/constants.ts`). A build registers no route, bundles neither the route's handler nor the readers it imports, and hands the world no address. The module returns before registering anything unless Nuxt runs under `nuxt dev`, since a route that refused outside development would still be bundled into the production server with the readers it imports (which returns early unless `nuxt.options.dev`). The same module registers the route the world reads the developer's own exports of the game's scenes from ([development exports](../../derived-assets/development-exports/design.md)).
+Under `nuxt dev`, the app's module `apps/web/modules/serveGenshinExtractions.ts` registers a route at GENSHIN_CHARACTER_PACK_BASE_URL, and the app's world component hands the world that address (`apps/web/app/components/Genshin/World.vue`, `apps/web/shared/services/genshin/constants.ts`). A build registers no route, bundles neither the route's handler nor the readers it imports, and hands the world no address. The module returns before registering anything unless Nuxt runs under `nuxt dev`, since a route that refused outside development would still be bundled into the production server with the readers it imports (which returns early unless `nuxt.options.dev`). The same module registers the route the world reads the developer's own exports of the game's scenes from ([development exports](../../derived-assets/development-exports/design.md)).
 
-The route reads the folder `GENSHIN_CHARACTER_PACKS_DIRECTORY` names, by default `{data-root}/character-packs/extracted`. That folder holds one subfolder per character, named by its id, each an official release extracted as it shipped. `serveGenshinCharacterPack` answers the [pack layout](../README.md) from it. The server reaches the world's rules through the package's `genshin-world/characterPack` entry, which reaches none of its components (`packages/genshin-world/src/characterPack.ts`, which re-exports the pack rules, the game data's readers and the paths they use).
+The route reads the folder GENSHIN_CHARACTER_PACKS_DIRECTORY names, by default `{data-root}/character-packs/extracted`. That folder holds one subfolder per character, named by its id, each an official release extracted as it shipped. serveGenshinCharacterPack answers the [pack layout](../README.md) from it. The server reaches the world's rules through the package's `genshin-world/characterPack` entry, which reaches none of its components (packages/genshin-world/src/characterPack.ts, which re-exports the pack rules, the game data's readers and the paths they use).
 
 ```mermaid
 flowchart TD
@@ -22,15 +22,15 @@ Only a folder named by a character's id is read, and only a file the folder's ow
 
 ## Key files
 
-| File                                                                           | Role                                                                              |
-| :----------------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
-| `apps/web/modules/serveGenshinExtractions.ts`                                  | Registers the packs' and the scene exports' routes under `nuxt dev` alone         |
-| `apps/web/server/development/genshinCharacterPacks.ts`                         | The route: the packs' directory and the game data's address handed to the service |
-| `apps/web/server/services/genshin/characterPack/serveGenshinCharacterPack.ts`  | Answers the pack layout from an extracted release's folder                        |
-| `apps/web/server/services/genshin/characterPack/readCharacterPackModelPath.ts` | The folder's model, its several models' names read from their headers             |
-| `apps/web/server/services/genshin/characterPack/listCharacterPackIds.ts`       | The index: the folders named by a character's id                                  |
-| `apps/web/server/services/genshin/characterPack/listCharacterPackFiles.ts`     | A folder's files by their paths in it                                             |
-| `apps/web/server/services/genshin/characterPack/constants.ts`                  | The packs' default directory, and the folder names read                           |
+| File                                                                         | Role                                                                              |
+| :--------------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
+| `apps/web/modules/serveGenshinExtractions.ts`                                | Registers the packs' and the scene exports' routes under `nuxt dev` alone         |
+| apps/web/server/development/genshinCharacterPacks.ts                         | The route: the packs' directory and the game data's address handed to the service |
+| apps/web/server/services/genshin/characterPack/serveGenshinCharacterPack.ts  | Answers the pack layout from an extracted release's folder                        |
+| apps/web/server/services/genshin/characterPack/readCharacterPackModelPath.ts | The folder's model, its several models' names read from their headers             |
+| apps/web/server/services/genshin/characterPack/listCharacterPackIds.ts       | The index: the folders named by a character's id                                  |
+| apps/web/server/services/genshin/characterPack/listCharacterPackFiles.ts     | A folder's files by their paths in it                                             |
+| apps/web/server/services/genshin/characterPack/constants.ts                  | The packs' default directory, and the folder names read                           |
 
 ## Decisions
 

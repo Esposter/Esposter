@@ -86,17 +86,16 @@ Every `idb` issue and pull request, with its verdict. The verdict and what each 
 
 ## Key files
 
-| File                                                                                   | Role                                                                     |
-| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `packages/shared/src/services/indexedDb/openDatabase.ts`                               | The open call: upgrade, blocked, blocking and terminated, in one promise |
-| `packages/shared/src/services/indexedDb/wrapObjectStore.ts`                            | The typed store, every method over the native one                        |
-| `packages/shared/src/services/indexedDb/getTransactionDone.ts`                         | The transaction's outcome, and the abort's own error                     |
-| `packages/shared/src/models/indexedDb/DatabaseStoreName.ts`                            | The literal-key rule that makes an undeclared store name a type error    |
-| `packages/shared/src/models/indexedDb/DatabaseIndexName.ts`                            | The index names a store declares, and the ones a union shares            |
-| `packages/shared/src/models/indexedDb/Database.test-d.ts`                              | The type tests, one per key API                                          |
-| `packages/shared/src/services/indexedDb/openDatabase.test.ts`                          | The behaviour tests, against `fake-indexeddb`                            |
-| `apps/web/app/services/cache/indexedDb/openIndexedDb.ts`                               | The app's database, its stores and their indexes                         |
-| `packages/genshin-world/src/services/character/createIndexedDbCharacterPackStorage.ts` | The character pack's file store, the untyped default                     |
+| File                                                           | Role                                                                     |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `packages/shared/src/services/indexedDb/openDatabase.ts`       | The open call: upgrade, blocked, blocking and terminated, in one promise |
+| `packages/shared/src/services/indexedDb/wrapObjectStore.ts`    | The typed store, every method over the native one                        |
+| `packages/shared/src/services/indexedDb/getTransactionDone.ts` | The transaction's outcome, and the abort's own error                     |
+| `packages/shared/src/models/indexedDb/DatabaseStoreName.ts`    | The literal-key rule that makes an undeclared store name a type error    |
+| `packages/shared/src/models/indexedDb/DatabaseIndexName.ts`    | The index names a store declares, and the ones a union shares            |
+| `packages/shared/src/models/indexedDb/Database.test-d.ts`      | The type tests, one per key API                                          |
+| `packages/shared/src/services/indexedDb/openDatabase.test.ts`  | The behaviour tests, against `fake-indexeddb`                            |
+| `apps/web/app/services/cache/indexedDb/openIndexedDb.ts`       | The app's database, its stores and their indexes                         |
 
 ## Sources
 
