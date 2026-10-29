@@ -5,16 +5,16 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { ComparisonFailureRecovery } from "#src/models/genshinParity/reference/ComparisonFailureRecovery";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { startFreshPageServer } from "#src/services/genshinParity/page/startFreshPageServer";
-import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
 import { classifyComparisonFailure } from "#src/services/genshinParity/reference/classifyComparisonFailure";
 import { compareScreen } from "#src/services/genshinParity/reference/compareScreen";
+import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
 import { getMissingReferenceInputs } from "#src/services/genshinParity/reference/getMissingReferenceInputs";
 import { getWorstCells } from "#src/services/genshinParity/reference/getWorstCells";
+import { readCachedReference } from "#src/services/genshinParity/reference/readCachedReference";
+import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
-import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
-import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { roundHundredths } from "#src/services/genshinParity/shared/roundHundredths";
 import { getResultAsync, InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
@@ -63,6 +63,8 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
       async () => {
         // Fetched first, as each comparison would fetch it, so a reference the wiki holds is measured rather than reported
         if (args.all) await fetchReferences();
+        // Read once for the run: the held check and each held reference's path come from its row
+        const manifestRows = args.all ? await readReferenceManifest() : [];
         // One screen is shot at a time, on the one parity page
         for (const referenceId of referenceIds) {
           if (args.all) console.error(`== ${referenceId}`);
@@ -79,10 +81,11 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
                 ? undefined
                 : join(getComponentDirectory(layerComponent).root, WITNESS_LAYOUT_FILE_NAME);
             // A reference the manifest does not hold has no stored image to measure, so it is named missing rather than fetched
-            const isHeld = (await readReferenceManifest()).some(({ id }) => id === referenceId);
-            const missing = isHeld
-              ? getMissingReferenceInputs(await getReferencePath(referenceId), witnessLayoutPath, existsSync)
-              : ["reference image in the manifest"];
+            const row = manifestRows.find(({ id }) => id === referenceId);
+            const missing =
+              row === undefined
+                ? ["reference image in the manifest"]
+                : getMissingReferenceInputs(await readCachedReference(row.sha256), witnessLayoutPath, existsSync);
             // A reference not yet measurable keeps its row as the report last had it, and the run goes on to the next
             if (missing.length > 0) {
               console.error(`not measured: ${missing.join(", ")}`);

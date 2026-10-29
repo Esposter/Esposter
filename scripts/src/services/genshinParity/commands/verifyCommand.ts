@@ -30,9 +30,9 @@ export const verifyCommand: SubCommandsDef[string] = defineCommand({
       .filter(({ outcome }) => outcome === VerifyOutcome.NotCheckable)
       .map(({ id }) => id);
     if (notCheckable.length > 0) console.log(`${VerifyOutcome.NotCheckable}  ${notCheckable.join(", ")}`);
-    // The manifest is checked against the map without the network: a row names an id the map names, and its plate and clean
-    // plate are the ones its entry gives. Each stored image's own hash is checked when it is fetched
-    const manifestProblems = getReferenceManifestProblems(await readReferenceManifest(), ParityReferenceMap);
+    // The manifest is checked against the map without the network. A row names an id the map names, and its plate and
+    // clean plate are the ones its entry gives. Each stored image's own hash is checked when it is fetched
+    const manifestProblems = getReferenceManifestProblems(rows, ParityReferenceMap);
     for (const problem of manifestProblems) console.log(`${VerifyOutcome.Fail}  manifest  ${problem}`);
     console.log(
       `${countOf(VerifyOutcome.Pass)} pass, ${countOf(VerifyOutcome.Fail) + manifestProblems.length} fail, ${countOf(VerifyOutcome.Skipped)} skipped`,
