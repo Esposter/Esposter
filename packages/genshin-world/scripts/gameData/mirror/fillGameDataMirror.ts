@@ -3,7 +3,7 @@ import type { GameDataLock } from "#src/models/data/GameDataLock";
 import { MAX_CONCURRENT_MIRROR_DOWNLOADS } from "#scripts/gameData/mirror/constants";
 import { readMirroredGameDataObject } from "#scripts/gameData/mirror/readMirroredGameDataObject";
 import { gameDataIndexSchema } from "#src/models/data/GameDataIndex";
-import { jsonDateParse, settleAll } from "@esposter/shared";
+import { ID_SEPARATOR, jsonDateParse, settleAll } from "@esposter/shared";
 import { CONTENT_CACHE_DIRECTORY } from "@esposter/shared-node/cache";
 
 // Every object a lock reaches, read into the mirror: each index, then its entries and the lock's own objects, so a
@@ -29,7 +29,7 @@ export const fillGameDataMirror = async (
   ).flat();
   // Each object is read once however many names reach it
   const objectRefs = [...Object.entries(lock.objects).map(([dataset, hash]) => ({ dataset, hash })), ...entryRefs];
-  const objectMap = new Map(objectRefs.map((ref) => [`${ref.dataset}/${ref.hash}`, ref] as const));
+  const objectMap = new Map(objectRefs.map((ref) => [`${ref.dataset}${ID_SEPARATOR}${ref.hash}`, ref] as const));
   await settleAll(
     Array.from(
       objectMap.values(),
