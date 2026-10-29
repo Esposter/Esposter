@@ -108,6 +108,8 @@ export enum GameTextKey {
   AvailableAtAdventureRank = "QUEST_DIALOG_DETAIL_PLAYER_LEVEL_NEED",
   // A screen's way back to the world
   Back = "VIDEO_RETREAT",
+  // The bag's button that opens an item's details
+  BagDetails = "BAG_DETAIL_BUTTON",
   BagFull = "UI_BEYOND_RUNTIME_UI_DROP_PICKTIPS_FAIL",
   BambooShoot = "4238416012",
   BattlePass = "UI_STC_GAMEENTRYPAGE_BP",
@@ -285,6 +287,8 @@ export enum GameTextKey {
   // The line the startup loading screen shows under its bar while the files download, with the download's size beside it
   DownloadingResources = "1323480176",
   Dracolite = "2859410932",
+  // The duel's counter of its battles over its waves, filled with the battle and the waves
+  DuelBattleCounter = "UI_GCG_PLAYERINFO_ADVANTURE_WAVE",
   // The Electro Crystal node the map marks under Inventory / Materials, named as its gathering point names it
   ElectroCrystal = "2189505020",
   ElectroSigil = "1061302548",
@@ -366,6 +370,8 @@ export enum GameTextKey {
   Fowl = "1695194124",
   // The claim prompt's row that restores Original Resin with a Fragile Resin, by the game's own words for it
   FragileResinRestore = "UI_GUIDE_FRAGILE_RESIN",
+  // A friend who has written no signature, shown in its place
+  FriendNoSignature = "UI_FRIEND_SIGNATURE_NONE",
   Friends = "UI_FRIEND_TITLE",
   Friendship = "3501231455",
   // The Frostbearing Tree's name on its prompt, as the game's own main-interface title says it
@@ -909,11 +915,20 @@ export enum GameTextKey {
   WishDetails = "UI_GACHA_WISH_02_DETAIL",
   WishEpitomizedPath = "UI_GACHA_WISH",
   WishFatePoint = "UI_GACHA_WISH_POINT",
+  // The notices a wish's panel shows: its 5-star event-exclusive characters and weapons can only be obtained in the wish named
+  WishFiveStarCharacterNotice = "UI_GACHA_SHOW_PANEL_DETAIL_01",
+  WishFiveStarWeaponNotice = "UI_GACHA_SHOW_PANEL_DETAIL_02",
   WishGoToTrial = "UI_REUNIONV2_GOTO_AVARTARTRIAL",
   WishHistory = "UI_GUIDE_BUTTON_HISTORY",
   WishProbabilityUp = "UI_GACHA_SHOW_PANEL_PROBABILITY_UP",
   WishRateUp = "UI_GACHA_SHOW_PANEL_DETAIL_03",
   WishStandard = "UI_GACHA_TYPE_02",
+  // The time a wish has left, its three-part format and the day, hour and minute units it counts in, with `{0}` the count
+  WishTimeRemaining = "UI_GACHA_TIME_REMAINING",
+  WishTimeRemainingDays = "UI_GACHA_TIME_REMAINING_FORMAT_DAY",
+  WishTimeRemainingFormat = "UI_GACHA_TIME_REMAINING_FORMAT",
+  WishTimeRemainingHours = "UI_GACHA_TIME_REMAINING_FORMAT_HOUR",
+  WishTimeRemainingMinutes = "UI_GACHA_TIME_REMAINING_FORMAT_MINIUT",
   WishWeaponEvent = "UI_GACHA_TYPE_04",
   WitheringPurpurbloom = "1419660612",
   Wolvendom = "3611931325",
