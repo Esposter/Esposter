@@ -12,6 +12,7 @@ The component formats after the prehydrate rewrite, in the reader's locale and t
 - **A plain date is its ISO date with `time-zone="UTC"`** — a calendar's day names no instant, and why the zone must be UTC is the standard's.
 - **A component can't live in a prop string** — a subtitle or sentence that embeds a time becomes slot content with the time in inline flow, never a template literal in script.
 - **`relative` ticks per instance, once a second** — fine for a notification list, worth a thought before a long feed of them.
+- **`Temporal` is not a template global** — a template expression that names it fails type-checking and is undefined at runtime, so a conversion goes in `<script setup>`.
 
 ## What is still a format string
 

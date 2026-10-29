@@ -9,6 +9,7 @@ description: Apply when writing or reviewing .vue files, or rendering a date or 
 - Self-closing tags for empty components/elements: `<Component />`.
 - Blank-line placement (templates, consts, returns, blocks) and comment attachment — the `formatting` skill ("Blank Lines", `references/comment-placement.md`).
 - Links, `:to`, `navigateTo`, reactive route reads, route validation, page keys and route-synced tabs — see the `routing` skill.
+- Composables under `app/composables/`, and Vue's and Pinia's own primitives (`ref`, `computed`, `watch`, `storeToRefs`), are auto-imported and never imported by hand; services, models and stores still are.
 
 ## Settled — do not re-propose
 
