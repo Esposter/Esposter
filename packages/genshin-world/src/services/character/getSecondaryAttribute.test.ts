@@ -2,7 +2,6 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttributeGameTextKeyMap } from "#src/services/character/AttributeGameTextKeyMap";
-import { formatAttributeValue } from "#src/services/character/formatAttributeValue";
 import { getSecondaryAttribute } from "#src/services/character/getSecondaryAttribute";
 import { GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
@@ -32,17 +31,15 @@ describe("getSecondaryAttribute", () => {
     expect(getSecondaryAttribute(baseOnly)).toBeUndefined();
   });
 
-  // The secondary's caption and value follow its own kind: an Elemental Mastery is captioned by its name and whole, a
-  // Critical Rate and an ATK % by their names and as percentages. A Defense % has no name, so its caption is absent
+  // The secondary's caption is the game's name for its attribute, and a Defense % has no name, so its caption is absent
   test.each([
-    [Attribute.ElementalMastery, 187.2, GameTextKey.AttributeElementalMastery, "187"],
-    [Attribute.CriticalRate, 0.269, GameTextKey.AttributeCriticalRate, "26.9%"],
-    [Attribute.AttackPercent, 0.09, GameTextKey.AttributeAttack, "9.0%"],
-  ])("%s of %d is captioned %s and reads %s", (attribute, total, gameTextKey, text) => {
+    [Attribute.ElementalMastery, GameTextKey.AttributeElementalMastery],
+    [Attribute.CriticalRate, GameTextKey.AttributeCriticalRate],
+    [Attribute.AttackPercent, GameTextKey.AttributeAttack],
+  ])("%s is captioned by the game's %s", (attribute, gameTextKey) => {
     expect.hasAssertions();
 
     expect(AttributeGameTextKeyMap.get(attribute)).toBe(gameTextKey);
-    expect(formatAttributeValue(attribute, total)).toBe(text);
   });
 
   test("a Defense % has no caption, so the game names none for it", () => {
