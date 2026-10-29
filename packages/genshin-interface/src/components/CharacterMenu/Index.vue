@@ -130,8 +130,9 @@ const steps = computed(() => {
   overflow-x: auto;
 }
 
-/* Provisional: the portraits, which the frame draws as the game's own art once an asset is settled, until then a circle
-   with the name. The chosen one's cyan underline sits 79 units below the top of its portrait */
+/* The portraits are the game's own art, which the app does not carry, so each is a disc of the art's mean tone across the
+   roster, measured off the frame's portraits, with its name on it. The chosen one's cyan underline sits 79 units below
+   the top of its portrait */
 .character {
   position: relative;
   display: grid;
@@ -141,7 +142,7 @@ const steps = computed(() => {
   padding: 0;
   border: calc(var(--unit) * 3) solid #9bbf4b;
   border-radius: 50%;
-  background: rgb(255 255 255 / 0.15);
+  background: rgb(171 154 146);
   color: inherit;
   cursor: inherit;
   font: inherit;

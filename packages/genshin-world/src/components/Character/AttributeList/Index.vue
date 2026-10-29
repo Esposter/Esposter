@@ -45,12 +45,10 @@ const {
   travelerBonusLines = [],
 } = defineProps<Props>();
 const emit = defineEmits<{ ascend: []; levelUp: []; lift: [] }>();
-const levelText = computed(() =>
-  fillGameTextValues(
-    gameText[GameTextKey.LevelFormat],
-    `${character.level}/${statTables.characterDataMap.get(character.id)?.ascensionPhases[character.ascension]?.maxLevel ?? ""}`,
-  ),
-);
+const characterData = computed(() => statTables.characterDataMap.get(character.id));
+// The level as the game's format writes it, and the cap it is at beside it in the grey the game sets it in
+const levelText = computed(() => fillGameTextValues(gameText[GameTextKey.LevelFormat], `${character.level}`));
+const levelCap = computed(() => characterData.value?.ascensionPhases[character.ascension]?.maxLevel ?? "");
 // The tab's attributes: the base five the panel shows first, each as the game writes it, Max HP, ATK, DEF, Elemental
 // Mastery and Max Stamina whole, then the advanced and elemental groups under them, each a percentage to one place
 const attributes = computed(() =>
@@ -81,7 +79,16 @@ const detailGroups = computed(() =>
        as the game shows them. Details opens its groups beneath, each under its title -->
   <div class="attribute-list">
     <p class="name">{{ name }}</p>
-    <p class="level">{{ levelText }}</p>
+    <div class="stars" aria-hidden="true">
+      <svg v-for="star in characterData?.rarity ?? 0" :key="star" viewBox="0 0 20 20">
+        <path
+          d="M10 0C10.8 7.2 12.8 9.2 20 10C12.8 10.8 10.8 12.8 10 20C9.2 12.8 7.2 10.8 0 10C7.2 9.2 9.2 7.2 10 0Z"
+        />
+      </svg>
+    </div>
+    <p class="level">
+      {{ levelText }}<span class="cap"> / {{ levelCap }}</span>
+    </p>
     <div class="experience" />
     <dl class="rows">
       <div v-for="{ label, value } of rows" :key="label" class="row">
@@ -89,7 +96,7 @@ const detailGroups = computed(() =>
         <dd class="value">{{ value }}</dd>
       </div>
     </dl>
-    <button type="button" class="details" :disabled="!isLevelUpable" @click="emit('levelUp')">
+    <button v-if="isLevelUpable" type="button" class="details" @click="emit('levelUp')">
       {{ gameText[GameTextKey.LevelUp] }}
     </button>
     <button type="button" class="details" @click="isDetailsOpen = !isDetailsOpen">
@@ -127,7 +134,6 @@ const detailGroups = computed(() =>
 .attribute-list {
   display: flex;
   flex-direction: column;
-  gap: calc(var(--unit) * 14);
   padding-top: calc(var(--unit) * 6);
   font-size: calc(var(--unit) * 26);
 }
@@ -140,19 +146,34 @@ const detailGroups = computed(() =>
   text-shadow: 0 calc(var(--unit) * 1) calc(var(--unit) * 3) rgb(0 0 0 / 0.4);
 }
 
+.stars {
+  display: flex;
+  gap: calc(var(--unit) * 6.75);
+  padding-left: calc(var(--unit) * 27.75);
+  margin-top: calc(var(--unit) * 9.6);
+}
+
+.stars svg {
+  width: calc(var(--unit) * 19.5);
+  height: calc(var(--unit) * 19.5);
+  fill: #fff;
+}
+
 .level {
-  margin: calc(var(--unit) * 24) 0 0;
+  margin: calc(var(--unit) * 5.9) 0 0;
   font-size: calc(var(--unit) * 30);
   font-weight: 600;
   line-height: calc(var(--unit) * 36);
 }
 
-/* Lifted 10 units off its measured place, the reference's bar lying that far above it on the frame */
+.cap {
+  color: rgb(255 255 255 / 0.5);
+}
+
 .experience {
-  position: relative;
-  top: calc(var(--unit) * -10);
   width: 100%;
   height: calc(var(--unit) * 3);
+  margin-top: calc(var(--unit) * 8.5);
   background: #4fc3d9;
 }
 
@@ -161,6 +182,7 @@ const detailGroups = computed(() =>
   display: block;
   width: 100%;
   height: calc(var(--unit) * 40);
+  margin-top: calc(var(--unit) * 17.5);
   padding: 0;
   border: 0;
   border-radius: calc(var(--unit) * 6);
@@ -180,6 +202,10 @@ const detailGroups = computed(() =>
 
 .rows {
   margin: calc(var(--unit) * 5) 0 0;
+}
+
+.experience + .rows {
+  margin-top: calc(var(--unit) * 26.5);
 }
 
 .row {
