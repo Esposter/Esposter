@@ -23,7 +23,7 @@ The webhook and asset limiters sit outside that map deliberately, because neithe
 
 ```mermaid
 flowchart TD
-  call["$trpc call"] --> builder["Procedure builder<br/>one of three, set by its budget"]
+  call["$trpc call"] --> builder["Procedure builder<br/>one of four, set by its budget"]
   builder -->|"getAuthedMiddleware pipes getRateLimitedMiddleware before the session check"| middleware["getRateLimitedMiddleware(type)"]
   middleware -->|"RateLimiterMap[type].consume(key)"| procedureLimiter["standardRateLimiter or slowRateLimiter"]
   webhookRoute["POST /api/webhooks/{id}/{token}"] -->|"consume(webhook id)"| webhookLimiter["webhookRateLimiter"]
@@ -42,7 +42,7 @@ Because the middleware already resolved the session, `getAuthedMiddleware.ts` si
 
 Every limiter writes to one table, so each carries its **own key prefix** and the budgets stay independent. Without one, three of the four would share a counter row per signed-in user — both procedure limiters and the asset limiter key an authed caller on the bare user id — and the slow budget would be spent out by ordinary app traffic, refusing the first slow call of the session, while one published page full of images would 429 the app around it. That is a correctness invariant rather than a nicety, so `createRateLimiter` takes `keyPrefix` as a **required** parameter: a new limiter cannot inherit a shared keyspace by omission, and `createRateLimiter.test.ts` pins that the four prefixes are distinct.
 
-Three procedure builders sit on top: `standardRateLimitedProcedure` (public, standard budget), `standardAuthedProcedure`, and `slowAuthedProcedure`. `AuthedProcedureMap.ts` maps the enum onto the latter two, and the room procedure builder `getPermissionsProcedure`, described in [RBAC](../../esbabbler/rbac/design.md), takes a `rateLimiterType` parameter defaulting to `Standard` and selects through it, so moving a room procedure onto the slow budget is a one-argument change at its declaration.
+Four procedure builders sit on top: `standardRateLimitedProcedure` (public, standard budget), `slowRateLimitedProcedure` (public, the tighter budget), `standardAuthedProcedure`, and `slowAuthedProcedure`. `AuthedProcedureMap.ts` maps the enum onto the latter two, and the room procedure builder `getPermissionsProcedure`, described in [RBAC](../../esbabbler/rbac/design.md), takes a `rateLimiterType` parameter defaulting to `Standard` and selects through it, so moving a room procedure onto the slow budget is a one-argument change at its declaration.
 
 ## Answering 429 instead of 500
 
