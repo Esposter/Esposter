@@ -11,7 +11,7 @@ import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { getReverseTickedTimestamp, MessageMetadataType } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockTableClient } from "azure-mock";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("emojiRouter", () => {
   const { createMember, getMockContext, getRoomId } = setupRoomSuite();
@@ -48,6 +48,10 @@ describe("emojiRouter", () => {
 
   beforeEach(() => {
     roomId = getRoomId();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   test("reads empty emojis", async () => {
