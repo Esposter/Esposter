@@ -91,7 +91,7 @@ export const emojiRouter = router({
     async ({ ctx, input }) => {
       const messagesMetadataClient = await useMessageEmojiMetadataClient();
       // Two members reacting at once each read the same user list, so the toggle is computed against the version it
-      // was read from and written only if that version still stands. A lost race reads again and toggles again
+      // Was read from and written only if that version still stands. A lost race reads again and toggles again
       const existingEmojiWithEtag = await requireEntity(
         getEntityWithEtag(messagesMetadataClient, MessageEmojiMetadataEntity, input.partitionKey, input.rowKey),
         MessageMetadataType.Emoji,

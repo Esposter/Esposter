@@ -18,7 +18,7 @@ const verifyGameDataObject = async (baseUrl: string, { dataset, hash }: GameData
 };
 
 // Every object the lock reaches, as one account serves it: the lock's objects, and each index and the entries it names,
-// which are stored under the index's key. Resolves to how many distinct objects were checked
+// Which are stored under the index's key. Resolves to how many distinct objects were checked
 export const verifyGameData = async (baseUrl: string, lock: GameDataLock): Promise<number> => {
   const indexRefs = toGameDataObjectRefs(lock.indexes);
   const entryRefs = (
