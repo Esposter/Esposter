@@ -1,6 +1,6 @@
 import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
 
-import { FORGED_WEAPON_RARITY, props, variants } from "#src/components/Forge/Screen/Index.fixture";
+import { FORGED_WEAPON_RARITY, props, variants, weaponRecipe } from "#src/components/Forge/Screen/Index.fixture";
 import ForgeScreenContainer from "#src/components/Forge/Screen/Index.vue";
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
@@ -64,5 +64,31 @@ describe("forgeScreen", () => {
     await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.ForgeObtain] }).click();
 
     expect(onAchievementEvents).not.toHaveBeenCalled();
+  });
+
+  // The four-star weapon's recipe queues one unit, under the five the amount holds: picking it asks the parent for that recipe
+  // And for the amount brought down to the queue
+  test("picking a recipe brings an amount past its queue down to the queue", async () => {
+    expect.hasAssertions();
+
+    const onUpdateAmount = vi.fn<(amount: number) => void>();
+    const onUpdateRecipeId = vi.fn<(recipeId: number) => void>();
+    const { container } = await render(ForgeScreenContainer, {
+      props: {
+        ...props,
+        "onUpdate:amount": onUpdateAmount,
+        "onUpdate:recipeId": onUpdateRecipeId,
+        recipes: [...props.recipes, weaponRecipe],
+      },
+    });
+
+    // The weapon's recipe is listed after the three ores' recipes
+    [...container.querySelectorAll<HTMLButtonElement>(".recipe")].at(-1)?.click();
+
+    expect(onUpdateRecipeId).toHaveBeenCalledExactlyOnceWith(weaponRecipe.id);
+    expect(onUpdateAmount).toHaveBeenCalledExactlyOnceWith(weaponRecipe.queueSize);
+
+    expect(onUpdateRecipeId).toHaveBeenCalledExactlyOnceWith(weaponRecipe.id);
+    expect(onUpdateAmount).toHaveBeenCalledExactlyOnceWith(weaponRecipe.queueSize);
   });
 });

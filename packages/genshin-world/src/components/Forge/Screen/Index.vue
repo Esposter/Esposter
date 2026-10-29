@@ -86,8 +86,11 @@ const recipeCells = computed<ForgeRecipeCell[]>(() =>
     name: getRecipeName(recipe),
   })),
 );
-const pickedRecipe = computed(() => recipes.find((recipe) => recipe.id === recipeId.value));
-const amountMaximum = computed(() => pickedRecipe.value?.queueSize ?? 1);
+const findRecipe = (id: number) => recipes.find((recipe) => recipe.id === id);
+const pickedRecipe = computed(() => findRecipe(recipeId.value));
+// The most a recipe's queue holds, the one ceiling the amount is kept under
+const getAmountMaximum = (recipe: ForgeRecipe | undefined) => recipe?.queueSize ?? 1;
+const amountMaximum = computed(() => getAmountMaximum(pickedRecipe.value));
 const requiredCoins = computed(() => (pickedRecipe.value?.mora ?? 0) * amount.value);
 const totalSeconds = computed(() => (pickedRecipe.value?.seconds ?? 0) * amount.value);
 const yieldCount = computed(() => (pickedRecipe.value ? takeOne(pickedRecipe.value.results, 0).count : 0));
@@ -170,6 +173,12 @@ const queueDetail = computed(() => {
     progress: isComplete ? 1 : (elapsedSeconds - slot.forged * order.unitSeconds) / order.unitSeconds,
   };
 });
+// Picks a recipe and brings the amount under the most the picked recipe's queue holds, read from the pick itself: the parent's
+// Recipe is still the old one until it re-renders
+const pickRecipe = (id: number) => {
+  recipeId.value = id;
+  amount.value = Math.min(amount.value, getAmountMaximum(findRecipe(id)));
+};
 // Starts the picked order in a free queue, its materials, Mora and talents taken, and leaves the forge as it was where the
 // Forge refuses it
 const start = () => {
@@ -237,7 +246,7 @@ const obtain = (queueId: number) => {
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.ForgeTitle]">
     <ForgeScreen
       v-model:amount="amount"
-      v-model:recipe-id="recipeId"
+      :recipe-id="recipeId"
       v-model:tab="tab"
       :amount-label="fillGameTextValues(gameText[GameTextKey.ForgeAmount], amount)"
       :amount-maximum
@@ -267,6 +276,7 @@ const obtain = (queueId: number) => {
       @close="emit('close')"
       @obtain="(queueId) => obtain(queueId)"
       @start="start()"
+      @update:recipe-id="pickRecipe"
     />
   </GameScreen>
 </template>

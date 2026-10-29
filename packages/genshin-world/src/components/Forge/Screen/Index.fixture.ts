@@ -60,10 +60,12 @@ const getWeaponData = (rarity: number) => {
 export const FORGED_WEAPON_RARITY = 4;
 const forgedWeaponData = getWeaponData(FORGED_WEAPON_RARITY);
 const heldWeaponData = getWeaponData(3);
-const weaponRecipe: ForgeRecipe = {
+// A weapon takes one queue at a time, so its recipe's queue holds one unit
+export const weaponRecipe: ForgeRecipe = {
   ...takeOne(recipes, 0),
   id: 12_001,
   kind: ForgeRecipeKind.Weapon,
+  queueSize: 1,
   results: [{ count: 1, itemId: forgedWeaponData.id, weight: 1 }],
 };
 // The bag's Normal Enhancement Ore, the first ore's recipe takes two of per unit: a stack at the count the frames show
