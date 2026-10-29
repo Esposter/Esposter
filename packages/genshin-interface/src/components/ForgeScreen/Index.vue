@@ -236,22 +236,29 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
 .queues li + li {
   margin-top: calc(var(--unit) * 9.7);
 }
-.recipe {
+.recipe,
+.queue {
   position: relative;
-  display: block;
-  width: 100%;
   height: calc(var(--unit) * 114.6);
-  border: none;
   background: rgb(20 28 38 / 0.55);
   color: #ece5d8;
+}
+.recipe {
+  display: block;
+  width: 100%;
+  border: none;
   text-align: left;
 }
-.recipes li:first-child .recipe {
+.recipes li:first-child .recipe,
+.queues li:first-child .queue {
   height: calc(var(--unit) * 123);
 }
-.recipe[aria-pressed="true"] {
+.recipe[aria-pressed="true"],
+.queue.selected {
   outline: calc(var(--unit) * 2) solid #ffffff;
   outline-offset: calc(var(--unit) * -2);
+}
+.recipe[aria-pressed="true"] {
   background: rgb(236 229 216 / 0.25);
 }
 .recipe:disabled {
@@ -271,18 +278,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   font-size: calc(var(--unit) * 29);
   line-height: 1;
 }
-.queue {
-  position: relative;
-  height: calc(var(--unit) * 114.6);
-  background: rgb(20 28 38 / 0.55);
-  color: #ece5d8;
-}
-.queues li:first-child {
-  height: calc(var(--unit) * 123);
-}
 .queue.selected {
-  outline: calc(var(--unit) * 2) solid #ffffff;
-  outline-offset: calc(var(--unit) * -2);
   background: #ece5d8;
   color: #3b3b3b;
 }
