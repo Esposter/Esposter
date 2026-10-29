@@ -10,8 +10,8 @@ interface Props {
   characters: CharacterMenuEntry[];
   // The element mark's path drawn at the name's left, the chosen character's element, none where it has none yet
   elementMarkPath?: string;
-  // The chosen character's element in the reader's language, which the band's name is set after, none where it has none
-  elementName?: string;
+  // The chosen character's element in the reader's language, which the band's name is set after, empty if none
+  elementName: string;
   // Whether the device's main pointer is a finger, which has no keys for the tab keys to hint at
   isTouch?: boolean;
   // Each tab's name in the reader's language

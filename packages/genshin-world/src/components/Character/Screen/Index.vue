@@ -177,10 +177,10 @@ const elementMarkPath = computed(() => {
   const element = characterElement.value;
   return element === undefined ? undefined : ElementMarkPathMap[element];
 });
-// The element's name in the reader's language, which the band sets before the chosen character's
+// The element's name in the reader's language, which the band sets before the chosen character's, empty if none
 const elementName = computed(() => {
   const element = characterElement.value;
-  return element === undefined ? undefined : gameText[ElementNameGameTextKeyMap[element]];
+  return element === undefined ? "" : gameText[ElementNameGameTextKeyMap[element]];
 });
 const tabLabels = computed(() =>
   Object.fromEntries(CharacterMenuTabs.map((menuTab) => [menuTab, gameText[CharacterMenuTabGameTextKeyMap[menuTab]]])),
