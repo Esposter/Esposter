@@ -14,7 +14,12 @@ import { MathExpressionBinaryOperatorMap } from "#src/services/parser/MathExpres
 // `(1/2) * col0`, as mathjs reads it
 export const parseDivisionBeforeProduct: MathExpressionRuleParser = (state, parse): MathExpressionNode => {
   const dividend = parse(state, MathExpressionGrammarRule.Percentage);
-  if (state.error !== null || !checkIsToken(state, "/") || !checkIsSignedNumber(dividend)) return dividend;
+  if (
+    state.error !== null ||
+    !checkIsToken(state, MathExpressionBinaryOperatorSymbol.Divide) ||
+    !checkIsSignedNumber(dividend)
+  )
+    return dividend;
 
   const snapshot = { ...state };
   getMathExpressionToken(state);
