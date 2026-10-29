@@ -1,7 +1,7 @@
 import { BARREL_FILE } from "#src/services/constants";
+import { compare } from "natural-orderby";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { compare } from "natural-orderby";
 
 // The order `perfectionist/sort-exports` checks the barrel in: it sorts each export by its `./`-prefixed source path,
 // Lowercased, through natural-orderby — the comparator the rule itself calls. A code-unit sort would put
