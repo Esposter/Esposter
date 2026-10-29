@@ -115,14 +115,14 @@ An open-world region SHALL be laid out with every object at its exact place, and
 - **WHEN** the frame is calibrated
 - **THEN** the light, haze and sky are not yet calibrated (see the open list)
 
-### Requirement: Nothing of the game's files ships in the product
+### Requirement: Nothing of the game's files is bundled into the product
 
-The product SHALL NOT commit, build, upload or deploy any file, format or data of the game, and SHALL ship only its own shaders, geometry and fitted data.
+The product SHALL NOT commit, build, upload or deploy any file, format or data of the game, except the official character packs, which SHALL be published to a public container and downloaded by the browser. Its bundle SHALL hold only its own shaders, geometry and fitted data.
 
-#### Scenario: A deployed product holds no game data
+#### Scenario: A deployed bundle holds no game data
 
 - **GIVEN** the product is built and deployed
-- **WHEN** its contents are inspected
+- **WHEN** its bundle is inspected
 - **THEN** it holds only the product's own shaders, generated geometry and fitted data
 - **AND** it holds no file or data taken from the game
 

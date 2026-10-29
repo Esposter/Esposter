@@ -15,7 +15,7 @@ const createNuxt = (isDevelopment: boolean) =>
   ({ options: { dev: isDevelopment, serverDir: "" } }) as unknown as Parameters<typeof serveGenshinExtractions>[1];
 
 describe("serveGenshinExtractions", () => {
-  test("a visitor cannot retrieve a game asset from the app", async () => {
+  test("the app's server serves no game asset", async () => {
     expect.hasAssertions();
 
     await serveGenshinExtractions({}, createNuxt(false));

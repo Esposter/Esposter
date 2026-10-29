@@ -22,15 +22,34 @@ The agent console's Claude sessions SHALL remain reachable and usable while the 
 - **THEN** the session remains reachable from the console
 - **AND** its messages continue to arrive
 
-### Requirement: The app serves no game asset
+### Requirement: The bundle ships no game asset, and game assets download once at startup
 
-The app SHALL serve no model, texture, sound or image file taken from the game, and its geometry and textures SHALL be generated from parameters and procedural nodes.
+The app's bundle and its own server SHALL ship no model, texture, sound or image file taken from the game. Game assets SHALL reach the reader only by a download from the published containers at the startup loading screen, and the world's own geometry and textures SHALL be generated from parameters and procedural nodes.
 
-#### Scenario: A visitor cannot retrieve a game asset from the app
+#### Scenario: A built bundle holds no game file
+
+- **GIVEN** the app is built for production
+- **WHEN** its bundle is inspected
+- **THEN** it holds no model, texture, sound or image file taken from the game
+
+#### Scenario: The app's server serves no game asset
 
 - **GIVEN** the app is deployed
 - **WHEN** a visitor requests the files the world draws from
-- **THEN** no file taken from the game is served
+- **THEN** the app's server serves no file taken from the game
+
+#### Scenario: The first load downloads the game's assets at the loading screen
+
+- **GIVEN** the browser keeps no game asset
+- **WHEN** the app loads
+- **THEN** the published packs and the hosted game data are downloaded at the startup loading screen
+- **AND** the download's size is shown beside its bar
+
+#### Scenario: A later load reads the cache
+
+- **GIVEN** the browser already keeps the game assets it downloaded
+- **WHEN** the app loads
+- **THEN** no game asset is downloaded again
 
 #### Scenario: The world's geometry is generated rather than loaded
 

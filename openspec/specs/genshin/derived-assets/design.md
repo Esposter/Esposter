@@ -1,6 +1,6 @@
 # Derived assets
 
-Nothing the game draws ships. Every shape, colour and glyph the deployed recreation draws is ours, measured off the game and built by our own code, and the game's own files are references like any screenshot, drawn only on a developer's own machine under `nuxt dev` `packages/genshin-world/src/services/scene/constants.ts`, its route registered only when `nuxt.options.dev` is set (`apps/web/modules/serveGenshinExtractions.ts`) ([development exports](development-exports/design.md)). This page is which reference each part is measured from, how a measurement becomes ours, and how far each component has come. The game's words are the one thing of its own carried as they are, quoted as text the way the screen shows them ([game text](../game-text/design.md)).
+Nothing the game draws is bundled. Every shape, colour and glyph the deployed recreation draws is ours, measured off the game and built by our own code, but for the characters, whose official packs a browser downloads from the published container ([published packs](../characters/published-packs/design.md)). The game's own files are references like any screenshot, drawn only on a developer's own machine under `nuxt dev` `packages/genshin-world/src/services/scene/constants.ts`, its route registered only when `nuxt.options.dev` is set (`apps/web/modules/serveGenshinExtractions.ts`) ([development exports](development-exports/design.md)). This page is which reference each part is measured from, how a measurement becomes ours, and how far each component has come. The game's words are the one thing of its own carried as they are, quoted as text the way the screen shows them ([game text](../game-text/design.md)).
 
 ## Which source a part is measured from
 
@@ -203,7 +203,7 @@ The CLI that exports the game's blocks is built on macOS by its own page, [Anime
 
 ## Open
 
-- [ ] **Nothing the game draws ships, and the exports never enter a build or deployment** — no source yet: no build or deployment check is cited that keeps the exports out of the bundle.
+- [ ] **Nothing the game draws is bundled, and the exports never enter a build or deployment** — no source yet: no build or deployment check is cited that keeps the exports out of the bundle.
 - [ ] **A DXIL program is shader model 6, with no SHDR/SHEX chunk** — no source yet: no DXIL program is among the uber listings [cited on the shading page](../characters/shading/design.md), so no DXIL header is read.
 - [ ] **`vkd3d-compiler` 2.1 disassembles every carved program, and `d3dcompiler_47` only the DXBC ones** — no source yet: the 2.1 install is at `{data-root}/cache/vkd3d/vkd3d-2.1`, but no run log records the disassembly.
 - [ ] **The walkway's parent is `BridgeBeginNode`, set by hand at the door's 0.4 scale and 5 metres down** — no source yet: a dump or code that sets the walkway's parent by hand.

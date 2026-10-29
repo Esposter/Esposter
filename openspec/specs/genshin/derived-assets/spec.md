@@ -6,9 +6,9 @@ Where each of the recreation's shapes, colours and glyphs comes from, and how it
 
 ## Requirements
 
-### Requirement: Nothing the game draws ships
+### Requirement: Nothing the game draws is bundled
 
-Every shape, colour and glyph the deployed recreation draws SHALL be built by our own code, never shipped from the game's own files.
+Every shape, colour and glyph the deployed recreation draws SHALL be built by our own code, never bundled from the game's own files. The one exception is the official character packs, which a browser downloads from the published container.
 
 #### Scenario: The deployed build holds no game export
 

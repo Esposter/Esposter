@@ -4,9 +4,9 @@ How each kind of the game's data reads once the community's asset extractor has 
 
 ## Requirements
 
-### Requirement: Game files stay local and are never shipped
+### Requirement: Game files stay local and are never bundled
 
-Game files read for derivation SHALL stay on the developer's machine, and SHALL NOT be shipped with the product or committed to the repository. The one exception is game text: its strings and dialogue SHALL be committed as the generated slices the package that reads them loads.
+Game files read for derivation SHALL stay on the developer's machine, and SHALL NOT be bundled with the product or committed to the repository. The one exception is game text: its strings and dialogue SHALL be committed as the generated slices the package that reads them loads.
 
 #### Scenario: Derived assets publish only derived values
 
