@@ -24,7 +24,7 @@ export const probeRectangle = async (
       referenceId,
       `not one of ${Object.keys(ParityReferenceMap).join(", ")}`,
     );
-  const referencePath = getReferencePath(referenceId);
+  const referencePath = await getReferencePath(referenceId);
   if (!existsSync(referencePath))
     throw new InvalidOperationError(Operation.Read, referenceId, `no reference at ${referencePath}`);
   const { height, width } = await sharp(referencePath).metadata();
