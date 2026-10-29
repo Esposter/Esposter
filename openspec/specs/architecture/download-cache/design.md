@@ -29,7 +29,7 @@ Two callers can fetch the same object at once. The later rename fails because th
 - Keying by the hash of the bytes rather than by the URL that served them is deliberate. Two sources that serve the same bytes share one copy, and the name is the integrity check, so nothing else has to be agreed between the callers.
 - A refused download leaves nothing behind. A part file exists only under its random name until the rename, so an interrupted write cannot be mistaken for a complete object.
 - Nothing in this package removes a cached object. The content folder grows until someone deletes it, and that is safe because a name only ever matches the bytes it was computed from.
-- The callers are the game data readers, `readPublishedGameDataObject` in `scripts/src/services/gameData` and `readMirroredGameDataObject` in `packages/genshin-world/scripts/gameData/mirror`. The [hosted game data](../../genshin/hosted-game-data/design.md) page owns the flow they serve. Several other scripts take `CACHE_ROOT` as the parent of their own folders.
+- The callers are the game data readers, `readPublishedGameDataObject` and `readPublishedGameDataObjectIfStored` in `scripts/src/services/gameData`, and `readMirroredGameDataObject` in `packages/genshin-world/scripts/gameData/mirror`. The [hosted game data](../../genshin/hosted-game-data/design.md) page owns the flow they serve. Several other scripts take `CACHE_ROOT` as the parent of their own folders.
 
 ## Key files
 
