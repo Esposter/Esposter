@@ -1,7 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { CAMERA_POSE_AXES, PARITY_REFERENCE_MAP_PATH } from "#src/services/genshinParity/shared/constants";
+import { PARITY_REFERENCE_MAP_PATH } from "#src/services/genshinParity/commands/constants";
+import { CAMERA_POSE_AXES } from "#src/services/genshinParity/shared/constants";
 import { getPoseBar } from "#src/services/genshinParity/witness/getPoseBar";
 import { replaceReferenceCameraPose } from "#src/services/genshinParity/witness/replaceReferenceCameraPose";
 import { solveReferencePose } from "#src/services/genshinParity/witness/solveReferencePose";

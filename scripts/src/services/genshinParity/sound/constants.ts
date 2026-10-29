@@ -1,0 +1,1 @@
+export const SOUND_SCORE_RANGE_DECIBELS = 40;

@@ -3,7 +3,7 @@ import type { Spectrogram } from "#src/models/recreation/signal/Spectrogram";
 
 import { computeBandEnergies } from "#src/services/genshinParity/music/computeBandEnergies";
 import { computeBandFloor } from "#src/services/genshinParity/music/computeBandFloor";
-import { MUSIC_ENERGY_FLOOR } from "#src/services/genshinParity/shared/constants";
+import { MUSIC_ENERGY_FLOOR } from "#src/services/genshinParity/music/constants";
 import { toDecibels } from "#src/services/genshinParity/shared/toDecibels";
 
 // Each octave band's levels in our render and the game's sound over `frames`, the frames a score reads

@@ -2,13 +2,14 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { SetLights } from "#src/models/genshinParity/witness/SetLights";
 
 import { computePixelPoint } from "#src/services/genshinParity/shared/computePixelPoint";
-import { CLOUD_BRIGHTNESS_RATIO, LUMINANCE, SKY_LAYER } from "#src/services/genshinParity/shared/constants";
+import { LUMINANCE, SKY_LAYER } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
 import { readWitnessFamilies } from "#src/services/genshinParity/shared/readWitnessFamilies";
 import { readWitnessGbuffer } from "#src/services/genshinParity/shared/readWitnessGbuffer";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import { CLOUD_BRIGHTNESS_RATIO } from "#src/services/genshinParity/witness/constants";
 import { readLightCeilings } from "#src/services/genshinParity/witness/readLightCeilings";
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
 import { BYTE } from "#src/services/shared/constants";

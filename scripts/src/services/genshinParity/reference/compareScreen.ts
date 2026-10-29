@@ -4,6 +4,7 @@ import type { ParityScore } from "#src/models/genshinParity/reference/ParityScor
 
 import { computeUnderBlackShare } from "#src/services/genshinParity/display/computeUnderBlackShare";
 import { formatUnderBlackShare } from "#src/services/genshinParity/display/formatUnderBlackShare";
+import { COMPARISON_HEIGHT } from "#src/services/genshinParity/reference/constants";
 import { getCeiling } from "#src/services/genshinParity/reference/getCeiling";
 import { getCleanPlatePath } from "#src/services/genshinParity/reference/getCleanPlatePath";
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
@@ -14,7 +15,6 @@ import { scoreLayers } from "#src/services/genshinParity/reference/scoreLayers";
 import { scoreStructure } from "#src/services/genshinParity/reference/scoreStructure";
 import { toPercent } from "#src/services/genshinParity/reference/toPercent";
 import {
-  COMPARISON_HEIGHT,
   COMPARISONS_DIRECTORY,
   REFERENCES_DIRECTORY,
   STRUCTURE_WIDTH,

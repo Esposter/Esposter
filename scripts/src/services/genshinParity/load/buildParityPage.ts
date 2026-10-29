@@ -1,4 +1,4 @@
-import { PARITY_BUILD_DIRECTORY, PARITY_BUILD_TASK } from "#src/services/genshinParity/shared/constants";
+import { PARITY_BUILD_DIRECTORY, PARITY_BUILD_TASK } from "#src/services/genshinParity/load/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { spawnPnpm } from "#src/services/shared/spawnPnpm";
 import { InvalidOperationError, Operation } from "@esposter/shared";

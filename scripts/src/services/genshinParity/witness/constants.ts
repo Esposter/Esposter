@@ -26,3 +26,18 @@ export const SKY_GRID_AZIMUTH_STEP_DEGREES = 10;
 export const SKY_GRID_ELEVATION_MINIMUM_DEGREES = 2;
 export const SKY_GRID_ELEVATION_MAXIMUM_DEGREES = 60;
 export const SKY_GRID_ELEVATION_STEP_DEGREES = 5;
+
+// The colours a preview and an overlay draw each family of a scene's parts in, by its index, distinct on any ground
+export const FAMILY_COLORS: readonly [number, number, number][] = [
+  [230, 25, 75],
+  [60, 180, 75],
+  [255, 225, 25],
+  [0, 130, 200],
+  [245, 130, 48],
+  [145, 30, 180],
+  [70, 240, 240],
+  [240, 50, 230],
+];
+
+// A sky pixel the reference shows at least this many times as bright as our clear sky is one of its clouds
+export const CLOUD_BRIGHTNESS_RATIO = 1.4;

@@ -1,6 +1,3 @@
-import type { ParityApproval } from "#src/models/genshinParity/shared/ParityApproval";
-
-import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { SITE_NAME } from "@esposter/shared";
 import { homedir } from "node:os";
@@ -11,7 +8,6 @@ import { join } from "node:path";
 export const PARITY_DIRECTORY: string =
   process.env.GENSHIN_PARITY_DIRECTORY ?? join(homedir(), SITE_NAME, "genshin-parity");
 export const REFERENCES_DIRECTORY: string = join(PARITY_DIRECTORY, "references");
-export const CAPTURES_DIRECTORY: string = join(PARITY_DIRECTORY, "captures");
 export const SHOTS_DIRECTORY: string = join(PARITY_DIRECTORY, "shots");
 // Each run of the frame stall measure: its states' frame times, programs and their growth, as JSON
 export const STALLS_DIRECTORY: string = join(PARITY_DIRECTORY, "stalls");
@@ -30,8 +26,6 @@ export const SPECK_SHARE = 0.0002;
 export const GBUFFER_DIRECTORY: string = join(PARITY_DIRECTORY, "gbuffer");
 // Each family's parts drawn from straight above, a surface's design in metres
 export const PLANS_DIRECTORY: string = join(PARITY_DIRECTORY, "plans");
-// Each reference's shape pass drawn where its readings lie, ours beside the exports
-export const SHAPES_DIRECTORY: string = join(PARITY_DIRECTORY, "shapes");
 // Each reference's surface pass drawn where its readings lie, ours beside the exports
 export const SURFACES_DIRECTORY: string = join(PARITY_DIRECTORY, "surfaces");
 // A whole-screen screenshot is at least this wide, and a 16:9 or 16:10 screen's aspect ratio sits between these two
@@ -51,15 +45,11 @@ export const PARITY_PAGE_TITLE = "<title>Genshin parity</title>";
 export const GENSHIN_WORLD_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world");
 // The production build of the parity page: a folder inside that package, which git ignores, and the root task that builds it
 export const PARITY_BUILD_DIRECTORY_NAME = "parity-build";
-export const PARITY_BUILD_DIRECTORY: string = join(GENSHIN_WORLD_DIRECTORY, PARITY_BUILD_DIRECTORY_NAME);
-export const PARITY_BUILD_TASK = "build:parity";
 // The config the build and its preview read, relative to the package
 export const PARITY_CONFIG_PATH = "parity/vite.config.ts";
 // Vite's own entry, run by node from the world package's install, so neither a shell nor a package manager stands between
 // The tool and the build
 export const VITE_BIN_PATH: string = join(GENSHIN_WORLD_DIRECTORY, "node_modules", "vite", "bin", "vite.js");
-// How long a preview server may take to announce the address it serves
-export const PARITY_PREVIEW_TIMEOUT_MS = 60_000;
 // The browser keeps this many resource timings, so a page with more requests than that drops the rest from its load bench; the
 // Parity page raises it before its first request
 export const RESOURCE_TIMING_BUFFER_SIZE = 4096;
@@ -84,47 +74,15 @@ export const GAME_EXECUTABLE_PATH: string = join(GAME_DIRECTORY, GAME_EXECUTABLE
 export const INTERFACE_HEIGHT = 1080;
 // How much a page's device ratio is lifted over its height's share of the interface's, past single precision's error
 export const DEVICE_SCALE_MARGIN = 1e-6;
-export const RECORD_FRAME_RATE = 60;
-// A session long enough for a handful of screens and their motion, and short enough to sample quickly
-export const RECORD_DEFAULT_SECONDS: number = Temporal.Duration.from({ minutes: 2 }).total("seconds");
-// Encoded on the GPU (this machine's AMD card, through AMF) so the game keeps the CPU and its timing, at a constant
-// Quantiser low enough that edges and colours measure as the game drew them. The frames are converted to BT.709
-// Limited-range YUV and labelled so first: handed the window's BGRA, AMF converts to limited range itself but labels
-// The stream full range, and every value then reads squeezed, white as 234
-export const RECORD_ENCODING: string[] = [
-  "-vf",
-  "scale=out_range=tv:out_color_matrix=bt709,format=yuv420p",
-  "-color_range",
-  "tv",
-  "-colorspace",
-  "bt709",
-  "-c:v",
-  "h264_amf",
-  "-rc",
-  "cqp",
-  "-qp_i",
-  "12",
-  "-qp_p",
-  "12",
-];
-// Each image of a comparison is drawn this high, side by side
-export const COMPARISON_HEIGHT = 540;
-// The mean difference, in percent, a shot must score under its reference to be approved: one percent is the 99%
-// Likeness the screens are held to. A reference that records its own approval keeps that bar instead
-const APPROVAL_MEAN_DIFFERENCE_BAR = 1;
-// The approval a screen gets when its reference records none
-export const DEFAULT_APPROVAL: ParityApproval = Object.freeze({
-  bar: APPROVAL_MEAN_DIFFERENCE_BAR,
-  measure: ParityApprovalMeasure.MeanDifference,
-} satisfies ParityApproval);
-// The contact sheet `frames` writes beside its frames, which is not one of them
-export const CONTACT_SHEET_NAME = "sheet.png";
 // The parity tooling's shared folder, which holds the reference map and the committed reports beside it
-const PARITY_SHARED_DIRECTORY = join(REPOSITORY_ROOT, "scripts", "src", "services", "genshinParity", "shared");
-// The map naming every reference, whose held cameras `pose --write` rewrites
-export const PARITY_REFERENCE_MAP_PATH: string = join(PARITY_SHARED_DIRECTORY, "ParityReferenceMap.ts");
-// The committed report of every reference's last scores, beside the map naming them
-export const PARITY_SCORES_PATH: string = join(PARITY_SHARED_DIRECTORY, "ParityReferenceMap.snapshot.md");
+export const PARITY_SHARED_DIRECTORY: string = join(
+  REPOSITORY_ROOT,
+  "scripts",
+  "src",
+  "services",
+  "genshinParity",
+  "shared",
+);
 // A scene's structure is read at this width, small enough that its texture is gone and its shapes and light remain
 export const STRUCTURE_WIDTH = 480;
 // The width the cloud tools read a sky at: wide enough that a cloud's painted edge spans several pixels
@@ -132,17 +90,6 @@ export const CLOUDS_WIDTH = 960;
 // The heights over the horizon, in degrees, the sky's cover is read between band by band: the cloud sea's billows and
 // The bank along the horizon low, the cumulus over the towers' crowns high
 export const CLOUD_ELEVATION_BANDS: number[] = [0, 3, 8, 15, 25, 90];
-// The colours a preview and an overlay draw each family of a scene's parts in, by its index, distinct on any ground
-export const FAMILY_COLORS: readonly [number, number, number][] = [
-  [230, 25, 75],
-  [60, 180, 75],
-  [255, 225, 25],
-  [0, 130, 200],
-  [245, 130, 48],
-  [145, 30, 180],
-  [70, 240, 240],
-  [240, 50, 230],
-];
 // A camera pose as the witness tools take it: the eye's x, y and z in three's axes, its heading and pitch in degrees,
 // And its vertical field of view in degrees
 export const CAMERA_POSE_AXES = ["x", "y", "z", "yaw", "pitch", "fov"] as const;
@@ -154,32 +101,23 @@ export const FLIP_PIXELS_PER_DEGREE: number = 0.7 * (FLIP_SCREEN_WIDTH / 0.7) * 
 export const SKY_LAYER = "sky";
 // The layer the whole frame is scored as, every pixel counted
 export const FRAME_LAYER = "frame";
-// A sky pixel the reference shows at least this many times as bright as our clear sky is one of its clouds
-export const CLOUD_BRIGHTNESS_RATIO = 1.4;
 // A recording's or a sound's pitch classes are read at 12 kHz, mono, in frames of 4096 samples a tenth of a second
 // Apart, over 60 Hz to 2.5 kHz, where a mix's notes carry their pitch; a frame quieter than a fiftieth of the loudest
 // Is left out of a match, and a match compares twenty seconds of a recording at a time
 export const CHROMA_SAMPLE_RATE = 12_000;
 export const CHROMA_FRAME_LENGTH = 4096;
 export const CHROMA_HOP_LENGTH = 1200;
-export const CHROMA_MIN_FREQUENCY = 60;
-export const CHROMA_MAX_FREQUENCY = 2500;
 export const CHROMA_QUIET_SHARE = 0.02;
 export const CHROMA_MATCH_SECONDS = 20;
 // Music is scored at 22.05 kHz, where its octave bands from 63 Hz to 8 kHz all fit, each band's level in decibels read
 // In the pitch classes' own frames, a level more than 60 dB under the game's loudest in that band read as that floor
 export const LISTEN_SAMPLE_RATE = 22_050;
 export const LISTEN_BAND_CENTRES: number[] = [63, 125, 250, 500, 1000, 2000, 4000, 8000];
-export const LISTEN_FLOOR_DECIBELS = 60;
-// The energy a music band's level is read from, zero: an exact silence is minus infinity, which the game's floor clamps
-export const MUSIC_ENERGY_FLOOR = 0;
 // The screen that plays the login's music, which the parity page renders it through
 export const LOGIN_MUSIC_SCREEN = "LoginMusic";
 // The size the parity page is opened at where nothing it draws is read: the music it renders, the claims on a scene's
 // Exports
 export const UNDRAWN_PAGE_SIZE = 360;
-// A frame whose whole power rises by half again over the last is a note's attack, where `bands` weighs a band's power
-export const BANDS_ONSET_RISE = 1.5;
 // The ages in seconds since the last note began that `decay` reads a band's gap between: the attack, its first
 // Decay, the note held, and the ring after it
 export const DECAY_AGE_BOUNDS: number[] = [
@@ -196,13 +134,6 @@ export const LISTEN_ATTACK_RISE_DECIBELS = 6;
 // Notes silenced at once, every sixth by its start, so a chord's notes are never silenced together
 export const NOTE_SUPPORT_FRAME_LENGTH = 4096;
 export const NOTE_SUPPORT_HOP_LENGTH = 512;
-export const NOTE_SUPPORT_SEMITONES = 0.3;
-export const NOTE_SUPPORT_DELAY_SECONDS = 0.04;
-export const NOTE_SUPPORT_SPAN_SECONDS = 0.6;
-export const NOTE_SUPPORT_MIN_DECIBELS = 0;
-export const NOTE_SUPPORT_FOLDS = 6;
-// The committed report of each music segment's last `listen`
-export const PARITY_MUSIC_SCORES_PATH: string = join(PARITY_SHARED_DIRECTORY, "ParityMusicScores.snapshot.md");
 export const CHANNELS = [0, 1, 2] as const;
 // A CPU profile's clock is kept in microseconds, a millisecond being this many of them
 export const MICROSECONDS_PER_MS = 1000;
@@ -210,7 +141,6 @@ export const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;
 // A sound effect is scored every 5 milliseconds at 48 kHz, finer than its fit's frames, over the cells within 40 decibels
 // Of the game's loudest
 export const SOUND_SCORE_HOP_LENGTH = 240;
-export const SOUND_SCORE_RANGE_DECIBELS = 40;
 // The power a sound's level is read from when it is silent: the smallest positive float, so a silent cell reads as the
 // Least decibels a float holds rather than minus infinity
 export const SOUND_POWER_FLOOR: number = Number.MIN_VALUE;

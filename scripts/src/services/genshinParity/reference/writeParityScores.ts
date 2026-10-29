@@ -1,7 +1,7 @@
 import type { ParityScore } from "#src/models/genshinParity/reference/ParityScore";
 
+import { PARITY_SCORES_PATH } from "#src/services/genshinParity/reference/constants";
 import { mergeParityScores } from "#src/services/genshinParity/reference/mergeParityScores";
-import { PARITY_SCORES_PATH } from "#src/services/genshinParity/shared/constants";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";

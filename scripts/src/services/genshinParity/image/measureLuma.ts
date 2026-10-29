@@ -1,4 +1,3 @@
-import { CONTACT_SHEET_NAME } from "#src/services/genshinParity/shared/constants";
 import { BYTE } from "#src/services/shared/constants";
 import { readdir, stat } from "node:fs/promises";
 import { join } from "node:path";
@@ -21,7 +20,7 @@ export const measureLuma = async (
         if (!(await stat(path)).isDirectory()) return [path];
         const names = await readdir(path);
         return names
-          .filter((name) => name.endsWith(".png") && name !== CONTACT_SHEET_NAME)
+          .filter((name) => name.endsWith(".png"))
           .toSorted()
           .map((name) => join(path, name));
       }),

@@ -6,7 +6,7 @@ import {
   NOTE_SUPPORT_DELAY_SECONDS,
   NOTE_SUPPORT_SEMITONES,
   NOTE_SUPPORT_SPAN_SECONDS,
-} from "#src/services/genshinParity/shared/constants";
+} from "#src/services/genshinParity/music/constants";
 import { computeMedian } from "#src/services/recreation/statistics/computeMedian";
 
 // How far the game's sound stands over ours at a note's fundamental, in decibels: in each frame whose centre lies

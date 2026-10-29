@@ -1,13 +1,10 @@
 import { ApprovalOutcome } from "#src/models/genshinParity/reference/ApprovalOutcome";
 import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";
+import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
 import { decideApproval } from "#src/services/genshinParity/reference/decideApproval";
 import { readScore } from "#src/services/genshinParity/reference/readScore";
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
-import {
-  DEFAULT_APPROVAL,
-  GENSHIN_WORLD_DIRECTORY,
-  REFERENCES_DIRECTORY,
-} from "#src/services/genshinParity/shared/constants";
+import { GENSHIN_WORLD_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";

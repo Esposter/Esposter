@@ -1,4 +1,5 @@
 import { ParityPass } from "#src/models/genshinParity/passes/ParityPass";
+import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { join } from "node:path";
 
@@ -89,3 +90,6 @@ export const PARITY_PASSES_DIRECTORY: string = join(
 
 // The reason a family's depth or normal is read as when ours draws none of it where the exports do
 export const NO_OVERLAP_REASON = "no overlap";
+
+// Each reference's shape pass drawn where its readings lie, ours beside the exports
+export const SHAPES_DIRECTORY: string = join(PARITY_DIRECTORY, "shapes");

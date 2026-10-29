@@ -1,7 +1,8 @@
 import type { MusicScore } from "#src/models/genshinParity/music/MusicScore";
 
+import { PARITY_MUSIC_SCORES_PATH } from "#src/services/genshinParity/music/constants";
 import { formatBand } from "#src/services/genshinParity/music/formatBand";
-import { LISTEN_BAND_CENTRES, PARITY_MUSIC_SCORES_PATH } from "#src/services/genshinParity/shared/constants";
+import { LISTEN_BAND_CENTRES } from "#src/services/genshinParity/shared/constants";
 import { writeFile } from "node:fs/promises";
 
 // The committed report of the music's last `listen`, every segment that plays anything, rewritten whole each run

@@ -1,8 +1,8 @@
 import type { Chroma } from "#src/models/genshinParity/music/Chroma";
 import type { Spectrogram } from "#src/models/recreation/signal/Spectrogram";
 
+import { CHROMA_MAX_FREQUENCY, CHROMA_MIN_FREQUENCY } from "#src/services/genshinParity/music/constants";
 import { normalizeChromaClasses } from "#src/services/genshinParity/music/normalizeChromaClasses";
-import { CHROMA_MAX_FREQUENCY, CHROMA_MIN_FREQUENCY } from "#src/services/genshinParity/shared/constants";
 
 // A signal's pitch classes frame by frame, read from its spectrogram in the pitch classes' frames
 // (`computeChromaSpectrogram`):

@@ -3,10 +3,10 @@ import type { MusicNote } from "genshin-engine";
 
 import { computePartialBinRanges } from "#src/services/genshinAssets/shared/computePartialBinRanges";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
+import { BANDS_ONSET_RISE } from "#src/services/genshinParity/music/constants";
 import { getFrameSeconds } from "#src/services/genshinParity/music/getFrameSeconds";
 import { sum } from "#src/services/genshinParity/music/sum";
 import {
-  BANDS_ONSET_RISE,
   CHROMA_FRAME_LENGTH,
   CHROMA_HOP_LENGTH,
   CHROMA_QUIET_SHARE,
