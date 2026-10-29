@@ -89,7 +89,7 @@ An object the game places many times (a ruin slab, a rock) is one object pass ho
 
 - **Each layer is scored on its own**, over its mask, with the existing `shape` and `tone` (`scripts/src/services/genshinParity/reference/compareScreen.ts`).
 - **A detail score reads what tone blurs away**: the difference in each band of spatial frequency between the reference and the shot over the layer, so a textureless stone scores a loss that its right mean colour hides (`scripts/src/services/genshinParity/reference/compareScreen.ts`).
-- **A perceptual score over the whole frame**, FLIP's, as the one number a scene is approved by once every layer's loss is within the reference's noise (`scripts/src/services/genshinParity/reference/compareScreen.ts`).
+- **The whole frame's mean difference is the measure a scene is approved by**, with FLIP's perceptual score beside it, once every layer's loss is within the reference's noise (`scripts/src/services/genshinParity/reference/compareScreen.ts`).
 
 ## The login scene
 
