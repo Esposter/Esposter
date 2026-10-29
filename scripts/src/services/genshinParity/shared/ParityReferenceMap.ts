@@ -924,6 +924,16 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The English PC client's Benediction screen at 1080 high from the public clip, 3 seconds in: Floor 1 Chamber 1 with its hint and
   // Three cards, the middle one lit at rest with the pointer on its last line. The game's own UID line sits at the bottom right
   "spiral-abyss-benediction": {
+    isBackdrop: true,
+    plate: [
+      { height: 52, width: 420, x: 750, y: 68 },
+      { height: 16, width: 1744, x: 88, y: 140 },
+      { height: 76, width: 1428, x: 246, y: 256 },
+      { height: 428, width: 276, x: 822, y: 322 },
+      { height: 406, width: 248, x: 524, y: 333 },
+      { height: 406, width: 248, x: 1148, y: 333 },
+      { height: 18, width: 1744, x: 88, y: 895 },
+    ],
     region: { height: 1040, width: 1920, x: 0, y: 0 },
     screen: "SpiralAbyssBenediction",
     source: "yt-Osaylns8nyk-spiral-abyss-chamber.mp4 at 3s",

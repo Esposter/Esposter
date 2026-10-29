@@ -9,5 +9,7 @@ export const props = {
     { descriptionTextHash: 2641986814, towerBuffId: 24, weight: 100 },
   ],
   gameText: ENGLISH_GAME_TEXT,
+  // The middle card is lit at rest, as the reference shows it under the pointer
+  litTowerBuffId: 23,
   nameText: englishNameText,
 };

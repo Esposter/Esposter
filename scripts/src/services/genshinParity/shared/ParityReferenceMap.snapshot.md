@@ -89,7 +89,7 @@ committed.
 | `settings-audio-rows` | `MenuSettings` | 1.01% | 0.995 | 0.38% | 0.0745 |
 | `settings-graphics` | `MenuSettings` | 1.59% | 0.996 | 1.26% | 0.1020 |
 | `settings-graphics-rows` | `MenuSettings` | 1.07% | 0.998 | 0.40% | 0.0888 |
-| `spiral-abyss-benediction` | `SpiralAbyssBenediction` | 71.95% | 0.002 | 72.25% | 0.8942 |
+| `spiral-abyss-benediction` | `SpiralAbyssBenediction` | 2.00% | 0.736 | 1.31% | 0.0787 |
 | `spiral-abyss-entry` | `SpiralAbyssEntry` | pending: no screenshot of the screen yet | | | |
 | `splash-title-chinese-traditional` | `SplashTitle` | pending: no screenshot of this variant yet | | | |
 | `splash-title-japanese` | `SplashTitle` | 0.16% | 1.000 | 0.39% | 0.0342 |
