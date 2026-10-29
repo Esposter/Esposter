@@ -5,9 +5,11 @@ interface Props {
   // The share of the silver the piece is drawn at: the game's hairline is opaque on a light screen and translucent over
   // a dark scene, so a screen over a scene passes the share its hairline reads at
   opacity?: number;
+  // A rule the game draws with its ends but no diamond at its middle, as the weapon screen's header and footer rules are
+  isMiddleHidden?: boolean;
 }
 
-const { opacity = 1 } = defineProps<Props>();
+const { isMiddleHidden = false, opacity = 1 } = defineProps<Props>();
 </script>
 
 <template>
@@ -15,7 +17,7 @@ const { opacity = 1 } = defineProps<Props>();
        Diamond at its middle, in the game's units from the parent's `--unit` -->
   <div class="ornament-divider" aria-hidden="true" :style="{ opacity }">
     <svg class="end" viewBox="0 0 320 224"><path :d="ORNAMENT_END_PATH" /></svg>
-    <svg class="middle" viewBox="0 0 480 320"><path :d="ORNAMENT_MIDDLE_PATH" /></svg>
+    <svg v-if="!isMiddleHidden" class="middle" viewBox="0 0 480 320"><path :d="ORNAMENT_MIDDLE_PATH" /></svg>
     <svg class="end right" viewBox="0 0 320 224"><path :d="ORNAMENT_END_PATH" /></svg>
   </div>
 </template>

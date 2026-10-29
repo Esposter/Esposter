@@ -48,7 +48,7 @@ import "genshin-interface/style.css";
 | `InterfaceClip`     | interface | One of the game's interface animation clips: a span and a track per property it moves    |
 | `InterfaceIcon`     | enum      | The glyphs the round buttons wear                                                        |
 | `LoadingSpinner`    | component | The game's wait mark, labelled for a screen reader                                       |
-| `OrnamentDivider`   | component | The game's ornamented divider: a hairline with diamonds at its ends and its middle       |
+| `OrnamentDivider`   | component | The game's divider: a hairline with diamonds at its ends, and its middle unless hidden   |
 | `playInterfaceClip` | function  | Plays a clip on a screen with Web Animations and returns the animations to await or seek |
 | `ProgressBar`       | component | The game's progress bar, filled from 0 to 1                                              |
 | `PromptBand`        | component | The band a prompt is set in across the foot of a screen                                  |

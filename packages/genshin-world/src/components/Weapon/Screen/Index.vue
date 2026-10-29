@@ -402,7 +402,7 @@ const nextPhaseCosts = computed(() =>
         gameText[GameTextKey.CharacterTalentEffect]
       }}</span>
       <p class="mora">{{ wallet[Currency.Mora] }}</p>
-      <div class="divider bottom-divider"><OrnamentDivider :opacity="DIVIDER_OPACITY" /></div>
+      <div class="divider bottom-divider"><OrnamentDivider is-middle-hidden :opacity="DIVIDER_OPACITY" /></div>
       <p class="required-label">{{ gameText[GameTextKey.CraftingRequired] }}</p>
       <p class="required-amount">{{ pendingMora }}</p>
       <template v-if="openTab === WeaponMenuTab.Enhance">
@@ -414,7 +414,7 @@ const nextPhaseCosts = computed(() =>
         <p class="stat-value base-attack-value">{{ baseAttackText }}</p>
         <p class="stat attack">{{ gameText[GameTextKey.AttributeAttack] }}</p>
         <p class="stat-value attack-value">{{ secondaryText }}</p>
-        <div class="divider enhance-divider"><OrnamentDivider :opacity="DIVIDER_OPACITY" /></div>
+        <div class="divider enhance-divider"><OrnamentDivider is-middle-hidden :opacity="DIVIDER_OPACITY" /></div>
         <span class="stats-rule enhance-stats-rule" aria-hidden="true" />
         <span class="pill auto-add" aria-hidden="true">{{ gameText[GameTextKey.ArtifactAutoAdd] }}</span>
         <span class="pill filter" aria-hidden="true"
@@ -448,7 +448,7 @@ const nextPhaseCosts = computed(() =>
         <p class="stat-value base-next">{{ nextBaseAttackText }}</p>
         <p class="stat ascend-attack">{{ gameText[GameTextKey.AttributeAttack] }}</p>
         <p class="stat-value attack-current">{{ secondaryText }}</p>
-        <OrnamentDivider class="divider ascend-divider" :opacity="DIVIDER_OPACITY" />
+        <OrnamentDivider class="divider ascend-divider" is-middle-hidden :opacity="DIVIDER_OPACITY" />
         <span class="stats-rule ascend-stats-rule" aria-hidden="true" />
         <p class="materials-title">{{ gameText[GameTextKey.CombineTypeWeaponAscension] }}</p>
         <div class="cards">
@@ -462,7 +462,7 @@ const nextPhaseCosts = computed(() =>
         </div>
       </template>
       <template v-else>
-        <div class="divider refine-divider"><OrnamentDivider :opacity="DIVIDER_OPACITY" /></div>
+        <div class="divider refine-divider"><OrnamentDivider is-middle-hidden :opacity="DIVIDER_OPACITY" /></div>
         <p class="refinement-level">{{ gameText[GameTextKey.WeaponRefinementLevel] }}</p>
         <p class="passive-name">
           <span class="bullet" aria-hidden="true" />{{ passive?.name }}<span class="bullet" aria-hidden="true" />
