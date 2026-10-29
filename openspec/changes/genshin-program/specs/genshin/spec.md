@@ -39,22 +39,22 @@ The app SHALL serve no model, texture, sound or image file taken from the game, 
 - **THEN** its geometry is generated in the app from parameters
 - **AND** its textures are procedural
 
-### Requirement: Characters are drawn only from an official model the reader holds
+### Requirement: Characters are drawn only from HoYoverse's official models, downloaded before the world shows
 
-A character SHALL be drawn only from an official HoYoverse model that the reader holds, and the app SHALL serve that model to no one but the reader who supplied it.
+A character SHALL be drawn only from an official HoYoverse model, which the startup loading screen downloads from the published packs before the world shows.
 
-#### Scenario: A reader with the official model sees the character drawn
+#### Scenario: A character is drawn from its downloaded model
 
-- **GIVEN** the reader holds an official model for a character
+- **GIVEN** the character's official model has been downloaded
 - **WHEN** the character is shown in the world
 - **THEN** the character is drawn from that model
 
-#### Scenario: A reader without the official model sees the capsule
+#### Scenario: A pack that fails to download draws no capsule
 
-- **GIVEN** the reader does not hold an official model for a character
-- **WHEN** the character is shown in the world
-- **THEN** the character is drawn as its capsule and no model is drawn, as the [built drawing spec](../../../../specs/genshin/characters/drawing/spec.md) draws a character with no pack ("No pack shows the capsule")
-- **AND** the rest of the world still works
+- **GIVEN** the character's pack could not be downloaded after its attempts
+- **WHEN** the loading stops
+- **THEN** the failure is shown
+- **AND** no capsule is drawn in its place
 
 ### Requirement: A region is laid out from the game's own terrain
 

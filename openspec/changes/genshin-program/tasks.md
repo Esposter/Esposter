@@ -19,7 +19,7 @@
 
 ## 5. The play features
 
-- [ ] 5.1 Build the character controller and its follow camera, then the HUD, then characters from the official models the reader holds, then the menu screens, then the elemental reactions, each feature when its turn comes. Verify: a test named after the scenario "A reader without the official model sees the capsule", written first and seen failing. Open: the controller is in genshin-engine's locomotion and collision, but the follow camera (4 boxes open), the HUD (3), characters (3) and the Paimon, Time and quit menus (2, 1, 1) are open in their own folders, and the named test does not exist.
+- [ ] 5.1 Build the character controller and its follow camera, then the HUD, then characters from HoYoverse's official models, which the startup loading screen downloads from the published packs, then the menu screens, then the elemental reactions, each feature when its turn comes. Verify: a test named after the scenario "A pack that fails to download draws no capsule", written first and seen failing. Open: the controller is in genshin-engine's locomotion and collision, but the follow camera (4 boxes open), the HUD (3), characters (3) and the Paimon, Time and quit menus (2, 1, 1) are open in their own folders, and the named test does not exist.
 
 ## 6. The game's systems
 
