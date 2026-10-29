@@ -6,9 +6,10 @@ import { SetupStatus } from "#src/models/setup/SetupStatus";
 import { getCachedReferencePath } from "#src/services/genshinParity/reference/getCachedReferencePath";
 import { getRecordDestination } from "#src/services/genshinParity/reference/getRecordDestination";
 import { REFERENCE_MANIFEST_PATH } from "#src/services/genshinParity/shared/constants";
-import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { REFERENCES_RESTORE_ARGS, REFERENCES_RESTORE_COMMAND } from "#src/services/setup/constants";
+import { createSetupEnvironment } from "#src/services/setup/createSetupEnvironment.test";
 import { readReferencesRow } from "#src/services/setup/readReferencesRow";
+import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { describe, expect, test, vi } from "vitest";
 
 describe(readReferencesRow, () => {
@@ -18,8 +19,8 @@ describe(readReferencesRow, () => {
   const NO_INSTALL = { install: false, verify: false };
   const INSTALL = { install: true, verify: false };
   const manifest: ParityReferenceManifest = {
-    records: [{ bytes: 1, path: RECORD_PATH, sha256: "b".repeat(64), sourceFormat: "json" }],
     recordings: [],
+    records: [{ bytes: 1, path: RECORD_PATH, sha256: "b".repeat(64), sourceFormat: "json" }],
     references: [
       {
         attribution: {},
@@ -34,14 +35,12 @@ describe(readReferencesRow, () => {
       },
     ],
   };
-  const createEnvironment = (overrides: Partial<SetupEnvironment> = {}): SetupEnvironment => ({
-    exists: () => true,
-    makeDirectory: vi.fn(),
-    readText: (path) => (path === REFERENCE_MANIFEST_PATH ? JSON.stringify(manifest) : undefined),
-    run: () => ({ status: 1, stdout: "" }),
-    runVisibly: vi.fn(() => ({ status: 0, stdout: null })),
-    ...overrides,
-  });
+  const createEnvironment = (overrides: Partial<SetupEnvironment> = {}): SetupEnvironment =>
+    createSetupEnvironment({
+      exists: () => true,
+      readText: (path) => (path === REFERENCE_MANIFEST_PATH ? JSON.stringify(manifest) : undefined),
+      ...overrides,
+    });
 
   test("is in place when every record and stored image is on disk, and an install leaves it alone", () => {
     expect.hasAssertions();
@@ -55,7 +54,7 @@ describe(readReferencesRow, () => {
   test.each([
     ["a stored image", getCachedReferencePath(REFERENCE_HASH)],
     ["a record", getRecordDestination(RECORD_PATH)],
-  ])("names the restore command when %s is missing", (_, missingPath) => {
+  ])("names the restore command when %s is missing", (_description, missingPath) => {
     expect.hasAssertions();
 
     const environment = createEnvironment({ exists: (path) => path !== missingPath });

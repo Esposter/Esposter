@@ -2,22 +2,16 @@ import type { SetupEnvironment } from "#src/models/setup/SetupEnvironment";
 
 import { SetupStatus } from "#src/models/setup/SetupStatus";
 import { CLAUDE_PROJECTS_DIRECTORY, MEMORY_FOLDER_NAME, MEMORY_NEXT } from "#src/services/setup/constants";
+import { createSetupEnvironment } from "#src/services/setup/createSetupEnvironment.test";
 import { readMemoryRow } from "#src/services/setup/readMemoryRow";
 import { join } from "node:path";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(readMemoryRow, () => {
   const MAIN_CHECKOUT_ROOT = "/Users/ada/Esposter";
   const MEMORY_DIRECTORY = join(CLAUDE_PROJECTS_DIRECTORY, "-Users-ada-Esposter", MEMORY_FOLDER_NAME);
-  const createEnvironment = (overrides: Partial<SetupEnvironment> = {}): SetupEnvironment => ({
-    countFiles: () => undefined,
-    exists: () => false,
-    makeDirectory: vi.fn(),
-    readText: () => undefined,
-    run: () => ({ status: 0, stdout: `${MAIN_CHECKOUT_ROOT}/.git\n` }),
-    runVisibly: vi.fn(() => ({ status: 0, stdout: null })),
-    ...overrides,
-  });
+  const createEnvironment = (overrides: Partial<SetupEnvironment> = {}): SetupEnvironment =>
+    createSetupEnvironment({ run: () => ({ status: 0, stdout: `${MAIN_CHECKOUT_ROOT}/.git\n` }), ...overrides });
 
   test("counts the memory folder of the main checkout, not the worktree's", () => {
     expect.hasAssertions();
