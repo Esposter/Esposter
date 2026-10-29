@@ -12,7 +12,7 @@ The design, from each module's job to the order a frame runs in, is `openspec/sp
 - **A rigid-body physics engine** (Rapier, cannon) for collision (`references/settled-directions.md`).
 - **An `ignorePatterns` entry for the engine's TSL** — `references/settled-directions.md`.
 - **Shipping assets taken from the game** — models, textures, sounds or art, extracted or converted (`references/settled-directions.md`).
-- **Hosting HoYoverse's official MMD packs** — on Blob Storage, a CDN or any public address, however content-addressed or credited (`references/settled-directions.md`).
+- **Hosting HoYoverse's official MMD packs** — the packs are published to the public container under the owner's statement that HoYoverse permits redistributing them (`openspec/specs/genshin/characters/published-packs/design.md`).
 - **The word "teyvat" in any name** — package, folder, route, page or prose (`references/settled-directions.md`).
 - **A second renderer path for WebGL** — `references/settled-directions.md`.
 
