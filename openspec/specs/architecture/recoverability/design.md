@@ -61,11 +61,11 @@ The rule is prose until something can fail on it, and each row below says what d
 - **Hosting the install or the raw game files.** The size and the licence rule it out; what other machines need from the install is its derived data, which is published.
 - **Hosting the public recordings.** They stay reachable at their public address, and a manifest with a hash proves a refetch is the same file. Hosting a copy would add a store to keep for no gain.
 - **A references folder kept outside the repository because the images are large.** Size chooses between git and Blob. It never chooses a disk.
-- **A private container for the references.** The private container holds only the players' saves. The game's frames and the recordings that cannot be fetched again go to the public container under the lock, like the rest of the game data, with the attribution in the manifest (the owner's decision, 2026-10-29, taken knowing the pictures are the game's own).
+- **A private container for the references.** The private container holds only the players' saves. The game's frames and the recordings that cannot be fetched again go to the public container under the lock, like the rest of the game data, with the attribution in the manifest (the owner's decision, taken knowing the pictures are the game's own).
 
 ## Open
 
-What the first inventory of the Mac's disk found (2026-10-29, `~/Esposter` at 169 GB, of which the install is 126 GB) and has not yet been given its home:
+The Mac's disk holds `~/Esposter` at 169 GB, of which the install is 126 GB. These findings have not yet been given a home:
 
 - **The references.** The folder holds 1,637 files and 653 MB, of which only what a reference-map entry or a design names is a reference: 106 entries, 85 with a file and 21 pending. The pack publishes those to the public container under the lock and writes the manifest; the rest of the folder is softness and plate caches, Talent icons nothing reads, and the install-derived name cards (`namecards/`, 167 MB), which belong to the game data lock. 257 files named `.png` are WebP, so a manifest row takes its type from the bytes. The PC builds the command, and the Mac runs it once for the references only it holds.
 - **The recordings.** 155 videos, 6.3 GB. The 123 public ones need a committed manifest of video id, seconds and hash, since the clip tool prints only the path. The 22 user recordings (2.1 GB, `session-2.mp4` alone 1.4 GB, 21 of the map's 68 sources) cannot be fetched again and go to the public container under the lock, as do seven recordings no file, entry or design names. The frames cut from them (12.5 GB) are a cache whose writer was removed; the recipe is in the genshin-parity skill's `motion.md`.
