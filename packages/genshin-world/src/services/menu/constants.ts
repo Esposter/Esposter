@@ -24,10 +24,10 @@ interface PaimonMenuScreenEntry<Icon> {
   screenKind: TitledScreenKind;
 }
 
-// The Paimon menu's contents in the game's order, as the 2026 frame at 25 seconds of `yt-jHr2bERjkYc` draws them. Its
-// Shop, Wish, Battle Pass, Co-Op Mode, Events and Adventurer Handbook are not in that frame, so they are not among them,
-// and neither is the Training Guide. Which of them carry a red dot is the host's state, not the menu's
+// The Paimon menu's contents in the game's order, as the English PC client's menu draws them. The Training Guide is not
+// among them, since no still of the menu the references hold shows it. Which of them carry a red dot is the host's state
 export const PAIMON_MENU_CONTENTS: readonly PaimonMenuScreenEntry<MenuEntryIcon>[] = [
+  { icon: EntryIcon.Shop, screenKind: ScreenKind.PaimonsBargains },
   { icon: EntryIcon.PartySetup, screenKind: ScreenKind.PartySetup },
   { icon: EntryIcon.Friends, screenKind: ScreenKind.Friends },
   { icon: EntryIcon.Achievements, screenKind: ScreenKind.Achievements },
@@ -37,6 +37,11 @@ export const PAIMON_MENU_CONTENTS: readonly PaimonMenuScreenEntry<MenuEntryIcon>
   { icon: EntryIcon.Inventory, screenKind: ScreenKind.Inventory },
   { icon: EntryIcon.Quests, screenKind: ScreenKind.Quests },
   { icon: EntryIcon.Map, screenKind: ScreenKind.Map },
+  { icon: EntryIcon.Events, screenKind: ScreenKind.Events },
+  { icon: EntryIcon.AdventurerHandbook, screenKind: ScreenKind.AdventurerHandbook },
+  { icon: EntryIcon.Wish, screenKind: ScreenKind.Wish },
+  { icon: EntryIcon.BattlePass, screenKind: ScreenKind.BattlePass },
+  { icon: EntryIcon.CoOp, screenKind: ScreenKind.CoOp },
 ];
 // The Time screen's advance in game minutes, at least thirty ahead and at most two days, as the game's Time option allows
 export const TIME_MINIMUM_ADVANCE_MINUTES = 30;
