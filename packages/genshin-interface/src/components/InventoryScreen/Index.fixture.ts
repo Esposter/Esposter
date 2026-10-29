@@ -48,6 +48,7 @@ export const props = {
   destroyRecoveredNames: [],
   destroySelectedLabel: "0/2 selected",
   destroyTipLabel: "Select items to destroy",
+  detailsLabel: "Details",
   isConfirming: false,
   isDescending: true,
   isDestroyFull: false,

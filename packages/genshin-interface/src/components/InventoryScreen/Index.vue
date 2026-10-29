@@ -42,6 +42,8 @@ interface Props {
   destroySelectedLabel: string;
   // The destroy mode's opening line in the reader's language
   destroyTipLabel: string;
+  // The equipment tab's pill that opens the entry's details, in the reader's language
+  detailsLabel: string;
   // Whether the dialog is open over the bag
   isConfirming: boolean;
   // Whether the chosen entries' returns do not all fit in the bag, which holds the dialog's OK off
@@ -91,6 +93,7 @@ const {
   destroyRecoveredNames,
   destroySelectedLabel,
   destroyTipLabel,
+  detailsLabel,
   isConfirming,
   isDestroyFull,
   isDestroying,
@@ -194,7 +197,7 @@ watch(
       >
         {{ useLabel }}
       </button>
-      <span v-if="isSortable && !isDestroying" class="details" aria-hidden="true" />
+      <span v-if="isSortable && !isDestroying" class="details">{{ detailsLabel }}</span>
       <button
         ref="trashButton"
         class="trash"
@@ -494,8 +497,8 @@ watch(
   font-weight: 600;
 }
 
-/* The bottom right pill: Use on a usable entry, and on an equipment tab the Details its page opens, drawn without its word until
-   the game's text key for it is found. Its gold ring stands at its left, as the game's controller hint does */
+/* The bottom right pill: Use on a usable entry, and on an equipment tab the Details its page opens. Its gold ring stands at its
+   left, as the game's controller hint does */
 .use,
 .details {
   position: absolute;
@@ -513,6 +516,12 @@ watch(
   font-size: calc(var(--unit) * 26);
   font-weight: 600;
   text-align: center;
+}
+
+/* The word's cap height is the game's 23 units, so it sets at 33 and its line stands on the pill's centre */
+.details {
+  font-size: calc(var(--unit) * 33);
+  line-height: calc(var(--unit) * 63);
 }
 
 .use::before,

@@ -252,6 +252,7 @@ const currencies = computed(() =>
       :destroy-recovered-names="recoveredNames"
       :destroy-selected-label
       :destroy-tip-label="gameText[GameTextKey.InventoryDestroyTip]"
+      :details-label="gameText[GameTextKey.BagDetails]"
       :is-confirming="isConfirming"
       :is-destroying="isDestroying"
       :is-sortable="EQUIPMENT_CATEGORIES.includes(category)"
