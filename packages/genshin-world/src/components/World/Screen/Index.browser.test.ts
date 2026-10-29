@@ -56,7 +56,7 @@ describe("worldScreen", () => {
   const holdMs = 15_000;
 
   test(
-    "is ready once the ground of its first view has arrived, and its frame holds still",
+    "is ready once the ground of its first view has arrived, unveiled, and its frame holds still",
     async () => {
       expect.hasAssertions();
 
@@ -88,7 +88,19 @@ describe("worldScreen", () => {
           0,
         ) / readyLuminances.length;
 
+      // No veil lifts the frame's darkest tones. The bound sits between two readings of the pinned frame's darkest
+      // twentieth, both measured in this test's own setup on this Mac (Metal): 0.586 with no veil, and 0.711 under a
+      // white veil at 30 per cent, the veil lifting each tone towards white in the same proportion. 0.65 is midway,
+      // 0.06 from either reading, twice the few hundredths GPU backends differ by, so the bound rests on what the veil
+      // does rather than on this machine's own number alone. Readings at 10, 20 and 50 per cent veil: 0.628, 0.669, 0.794.
+      // The bound of 0.5 this test once held measured how long the load took, since the sky runs on from the minute it
+      // is handed, so it is not used
+      const darkestTwentieth = readyLuminances.toSorted(
+        (firstLuminance, secondLuminance) => firstLuminance - secondLuminance,
+      )[Math.floor(readyLuminances.length / 20)];
+
       expect(meanDifference).toBeLessThan(0.02);
+      expect(darkestTwentieth).toBeLessThan(0.65);
     },
     timeoutMs,
   );
