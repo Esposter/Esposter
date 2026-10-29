@@ -33,8 +33,7 @@ const { bountyOffer, gameText, materialDataMap, nameText, offerTitle, progress, 
 const emit = defineEmits<{ accept: []; close: [] }>();
 const level = defineModel<number>("level", { required: true });
 // A level is achieved once the nation's Reputation has reached it, and its unlock line is the feature it opens in the
-// Game's words. Each item's slot is read aloud as its name and count; the words its achieved mark is read aloud with wait
-// On game text naming it
+// Game's words. Each item's slot is read aloud as its name and count, an achieved level's mark as the game's Completed
 const levels = computed<ReputationLevelCell[]>(() =>
   reputation.levels.map(({ functionIds, level: cellLevel, reward }) => ({
     isAchieved: cellLevel <= progress.level,
@@ -65,7 +64,7 @@ const offer = computed(() => {
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.CityReputation]">
     <ReputationScreen
       v-model:level="level"
-      achieved-label=""
+      :achieved-label="gameText[GameTextKey.ReputationLevelReached]"
       :back-label="gameText[GameTextKey.Back]"
       headline=""
       :level-label="gameText[GameTextKey.LevelShort]"
