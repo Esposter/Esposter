@@ -58,7 +58,7 @@ flowchart TD
 
 ## Open
 
-- [ ] **The 1.3 still draws Community and Feedback at the foot of the contents** — no source yet: the 2560 wide still is not in captures, and the 1920 wide `{data-root}/genshin-parity/captures/menu-paimon-current.png` draws all four links instead.
+- [ ] **The 1.3 still draws Community and Feedback at the foot of the contents** — no source yet: the 2560 wide still is not in captures, and the 1920 wide `{data-root}/genshin-parity/captures/menu-paimon-current.png` draws all four links instead; the 2026 frame at 25 seconds (`yt-jHr2bERjkYc`, the `paimon-menu` reference) draws the same two, which the screen draws.
 - [ ] **The 2026 frame at 25 seconds and its 30-second colours come from `yt-jHr2bERjkYc`** — no source yet: a reading of the frame at 25 seconds and of the colours at 30 seconds, from the recording that [Paimon's compute page](../compute/paimon/design.md) cites.
 - [ ] **The quit prompt's panel is 960 by 606 reference pixels under a 48% backdrop, its pills 390 by 67 and 70 pixels in** — no source yet: those sizes are not in `packages/genshin-world/src/components/Menu/Exit/Index.vue`, and no frame of `{data-root}/genshin-parity/captures/yt-kIDee7nyD0w-menu-quit-prompt.mp4` is measured for them.
 - [ ] **The Audio reference's pointer rests on Output Settings** — no source yet: the reference's pointer at (1000, 663) is not matched to its row in this page's sources.

@@ -12,7 +12,7 @@ export const pendingScreens: { directory: string; reason: string }[] = [
   {
     directory: "Menu/Screen",
     reason:
-      "a candidate is sampled (menu-screen.png, from session-2.mp4 at 114.5s, the Paimon menu at 21:9); it is Menu/Paimon's screen unless this folder is another, so the folder is read before a fixture",
+      "the host that mounts the Paimon menu and the screens it opens, with no look of its own: its picture is Menu/Paimon's, scored by paimon-menu (menu-screen.png, the same menu at 21:9 from session-2.mp4 at 114.5s, is a candidate for a wider-window variant of that entry)",
   },
   {
     directory: "PaimonsBargains/Screen",
