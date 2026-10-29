@@ -66,7 +66,7 @@ const openResource = (content: WebpageDocument["content"]) => {
 };
 
 describe(usePageBuilderClipboard, () => {
-  const REFUSAL_MESSAGE = "A webpage block cannot be pasted into an email";
+  const REFUSAL_MESSAGE = "a";
   // A type name no webpage node holds, written over a copied text node's tag in the clipboard text
   const UNKNOWN_NODE_TYPE = "UnknownNodeType";
 
@@ -160,7 +160,7 @@ describe(usePageBuilderClipboard, () => {
     expect.hasAssertions();
     const writeGate = Promise.withResolvers<void>();
     vi.stubGlobal("navigator", { clipboard: { writeText: () => writeGate.promise } });
-    const otherNodeId = "other-text-node-id";
+    const otherNodeId = crypto.randomUUID();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const resourceId = openResource([createTextNode(TEST_ROOT_TEXT_ID), createTextNode(otherNodeId)]);
@@ -204,7 +204,7 @@ describe(usePageBuilderClipboard, () => {
 
   test("copy with a denied clipboard changes nothing", async () => {
     expect.hasAssertions();
-    vi.stubGlobal("navigator", { clipboard: { writeText: () => Promise.reject(new Error("denied")) } });
+    vi.stubGlobal("navigator", { clipboard: { writeText: () => Promise.reject(new Error(" ")) } });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const resourceId = openResource([createTextNode(TEST_ROOT_TEXT_ID)]);

@@ -8,7 +8,7 @@ import type { WebpagePlaceableNode } from "#shared/models/pageBuilder/WebpagePla
 
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { createTestImageNode, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { createTestImageNode, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMoves";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
@@ -28,7 +28,7 @@ const createColumn = (id: string, children: WebpagePlaceableNode[]): ColumnNode 
   props: { children, id },
   type: WebpageNodeType.Column,
 });
-const createImage = (id: string): ImageNode => createTestImageNode("https://example.com/a.png", id);
+const createImage = (id: string): ImageNode => createTestImageNode(TEST_URL, id);
 
 // Section 1 holds Columns with one Column; Section 2 holds an image; the image sits in Section 2
 const createFixtureDocument = (): WebpageDocument => ({

@@ -5,11 +5,11 @@ import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 import type { MjmlDocument } from "mjml-blocks";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { usePageBuilderDrag } from "@/composables/pageBuilder/usePageBuilderDrag";
 import { toMergeField } from "@/services/emailEditor/toMergeField";
 import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
-import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
+import { TEST_SECTION_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { emailKind } from "@/services/pageBuilder/emailKind";
 import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
@@ -26,14 +26,14 @@ const createText = (id: string): TextNode => ({
 
 const pointerAt = (type: string, x: number, y: number) => new PointerEvent(type, { clientX: x, clientY: y });
 
-describe("usePageBuilderDrag", () => {
-  const TEXT_ONE = "text-one";
-  const TEXT_TWO = "text-two";
+describe(usePageBuilderDrag, () => {
+  const TEXT_ONE = TEST_ID;
+  const TEXT_TWO = TEST_OTHER_ID;
   const RECTS: Record<string, { height: number; left: number; top: number; width: number }> = {
     [TEXT_ONE]: { height: 40, left: 0, top: 0, width: 200 },
     [TEXT_TWO]: { height: 40, left: 0, top: 40, width: 200 },
   };
-  const RESOURCE_ID = "resource";
+  const RESOURCE_ID = crypto.randomUUID();
   const createGeometry = (hoveredNodeId?: string): FrameGeometry => ({
     checkIsHorizontalOwner: () => false,
     frameRect: { height: 500, left: 0, top: 0, width: 500 },
@@ -66,11 +66,11 @@ describe("usePageBuilderDrag", () => {
         props: {
           children: [
             {
-              props: { children: [createText(TEXT_ONE), createText(TEXT_TWO)], id: "column" },
+              props: { children: [createText(TEXT_ONE), createText(TEXT_TWO)], id: crypto.randomUUID() },
               type: WebpageNodeType.Column,
             },
           ],
-          id: "columns",
+          id: crypto.randomUUID(),
         },
         type: WebpageNodeType.Columns,
       },
@@ -83,6 +83,7 @@ describe("usePageBuilderDrag", () => {
   test("dragging a column into a text inserts a merge field", () => {
     expect.hasAssertions();
     const COLUMN_NAME = "first_name";
+    const columnId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const EMAIL_TEXT_DOCUMENT: MjmlDocument = {
       content: [
@@ -92,12 +93,12 @@ describe("usePageBuilderDrag", () => {
               {
                 props: {
                   children: [{ props: { content: TEST_TEXT_CONTENT, id: TEXT_ONE }, type: MjmlNodeType.Text }],
-                  id: "column",
+                  id: columnId,
                 },
                 type: MjmlNodeType.Column,
               },
             ],
-            id: "section",
+            id: TEST_SECTION_ID,
           },
           type: MjmlNodeType.Section,
         },
@@ -144,12 +145,12 @@ describe("usePageBuilderDrag", () => {
                       type: MjmlNodeType.Text,
                     },
                   ],
-                  id: "column",
+                  id: columnId,
                 },
                 type: MjmlNodeType.Column,
               },
             ],
-            id: "section",
+            id: TEST_SECTION_ID,
           },
           type: MjmlNodeType.Section,
         },
