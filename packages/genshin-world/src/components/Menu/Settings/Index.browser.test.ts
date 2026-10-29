@@ -2,8 +2,11 @@ import type { GenshinSettings } from "#src/models/menu/GenshinSettings";
 
 import { props } from "#src/components/Menu/Settings/Index.fixture";
 import MenuSettings from "#src/components/Menu/Settings/Index.vue";
-import { GENSHIN_SETTINGS_DEFAULTS, VOLUME_LEVEL_MAXIMUM } from "#src/services/menu/constants";
-import { FOLLOW_CAMERA_DEFAULT_SETTINGS } from "genshin-engine";
+import {
+  CAMERA_SENSITIVITY_RANGE,
+  GENSHIN_SETTINGS_DEFAULTS,
+  VOLUME_LEVEL_MAXIMUM,
+} from "#src/services/menu/constants";
 import { ENGLISH_GAME_TEXT, GameLanguage, GameTextKey, GameTextLoaderMap, getLanguageDisplayName } from "genshin-text";
 import { describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -113,15 +116,20 @@ describe("menuSettings", () => {
     // Each slider's starting value is awaited before its key is sent, so the key lands on the row the tab has drawn
     await expect
       .element(horizontal)
-      .toHaveAttribute("aria-valuenow", String(FOLLOW_CAMERA_DEFAULT_SETTINGS.horizontalSensitivity));
+      .toHaveAttribute("aria-valuenow", String(GENSHIN_SETTINGS_DEFAULTS.horizontalSensitivity));
     horizontal.element().dispatchEvent(new KeyboardEvent("keydown", rightArrow));
     await expect
       .element(vertical)
-      .toHaveAttribute("aria-valuenow", String(FOLLOW_CAMERA_DEFAULT_SETTINGS.verticalSensitivity));
+      .toHaveAttribute("aria-valuenow", String(GENSHIN_SETTINGS_DEFAULTS.verticalSensitivity));
     vertical.element().dispatchEvent(new KeyboardEvent("keydown", leftArrow));
 
-    await expect.element(horizontal).toHaveAttribute("aria-valuenow", "4");
-    await expect.element(vertical).toHaveAttribute("aria-valuenow", "2");
+    const { step } = CAMERA_SENSITIVITY_RANGE;
+    await expect
+      .element(horizontal)
+      .toHaveAttribute("aria-valuenow", String(GENSHIN_SETTINGS_DEFAULTS.horizontalSensitivity + step));
+    await expect
+      .element(vertical)
+      .toHaveAttribute("aria-valuenow", String(GENSHIN_SETTINGS_DEFAULTS.verticalSensitivity - step));
   });
 
   // The Master, Music and Sound Effects volumes step down a level from the maximum the device starts at
