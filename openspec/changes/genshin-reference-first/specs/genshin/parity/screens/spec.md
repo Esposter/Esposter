@@ -1,6 +1,6 @@
 ## ADDED Requirements
 
-### Requirement: Every screen folder is referenced or named pending
+### Requirement: Every screen folder has a fixture or is named pending
 
 Every component folder named `Screen` SHALL either carry a fixture with a reference entry or appear in the pending list of screens awaiting a reference.
 

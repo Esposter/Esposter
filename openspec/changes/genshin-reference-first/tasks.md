@@ -9,7 +9,7 @@
 
 ## 1. Screen coverage
 
-- [x] 1.1 Write `packages/genshin-world/parity/screens.test.ts` first, beside `screens.ts`, asserting that every `Screen/Index.vue` under `packages/genshin-world/src/components` has a fixture or a pending entry, and watch it fail on the ten screens without a fixture. Verify: the test named after the scenario "Every screen folder is referenced or named pending", seen failing.
+- [x] 1.1 Write `packages/genshin-world/parity/screens.test.ts` first, beside `screens.ts`, asserting that every `Screen/Index.vue` under `packages/genshin-world/src/components` has a fixture or a pending entry, and watch it fail on the ten screens without a fixture. Verify: the test named "every screen folder has a fixture or is named pending", seen failing.
 - [x] 1.2 Add the pending list to `packages/genshin-world/parity/pendingScreens.ts`, a module with no Vue import so the test can read it, naming each fixture-less screen with the reason it has no reference yet. Verify: the coverage test passes, and the list is exactly the folders that have neither a fixture nor an entry.
 
 ## 2. Subscreen coverage
