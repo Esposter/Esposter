@@ -333,7 +333,7 @@ watch(
    Set in a serif, whose thin strokes are too few of the recording's pixels to trace */
 .age-rating-name {
   font-family: serif;
-  font-size: 14px;
+  font-size: 15.5px;
   font-weight: 600;
   letter-spacing: 0.5px;
   text-anchor: middle;
