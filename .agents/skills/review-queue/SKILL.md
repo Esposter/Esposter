@@ -65,7 +65,7 @@ Whoever pushed a red typecheck or lint fixes it after the verify request (`AGENT
 
 ## Review issues
 
-The review opens an issue labelled `review` for each finding it owes, and the review's settle job closes it once every finding is fixed, refuted or recorded (`openspec/specs/infra/review/design.md`). A session never takes a `review` issue, and triage never applies or removes its label: it is the review's own. A session's commit that settles one of its findings does not close the issue, so no commit carries a `Closes #<number>` for it.
+The review opens an issue labelled `review` for each chunk of the findings it owes, at most `REVIEW_ISSUE_FINDING_CAP` findings to an issue, and the review's settle job closes it once every finding is fixed, refuted or recorded (`openspec/specs/infra/review/design.md`). A session never takes a `review` issue, and triage never applies or removes its label: it is the review's own. A session's commit that settles one of its findings does not close the issue, so no commit carries a `Closes #<number>` for it.
 
 A review run that goes red is a session's to read. Its step summary names the window, the issue or the settler that failed, and the next commit fixes it (`openspec/specs/architecture/engineering-loops/design.md`, "What runs next when nothing is asked", item 2).
 
