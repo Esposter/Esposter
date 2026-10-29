@@ -35,6 +35,6 @@ export const readSetupRows = (
   readRootRow("download cache", CACHE_ROOT, environment),
   readGameRow(environment),
   readDataRow(options, environment),
-  readReferencesRow(),
+  readReferencesRow(options, environment),
   readMemoryRow(environment),
 ];

@@ -90,7 +90,9 @@ export const PNPM_INSTALL_NEXT = "pnpm i, or pnpm ai:setup --install";
 export const GAME_INSTALL_NEXT =
   "only the machine that plays the game holds the install; everything derived from it is published";
 export const MEMORY_NEXT = "the owner has not yet chosen where memory lives";
-export const REFERENCES_RESTORE_NEXT = "references restore is not built yet";
+// The parity references' restore, as the arguments a spawn takes and as the command a person reads
+export const REFERENCES_RESTORE_ARGS: readonly string[] = ["-C", "scripts", "genshin:parity", "references", "restore"];
+export const REFERENCES_RESTORE_COMMAND: string = ["pnpm", ...REFERENCES_RESTORE_ARGS].join(" ");
 // Claude Code's own folder per checkout, read only to report whether it exists
 export const CLAUDE_PROJECTS_DIRECTORY: string = join(homedir(), ".claude", "projects");
 export const MEMORY_FOLDER_NAME = "memory";

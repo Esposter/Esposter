@@ -10,7 +10,12 @@ import { defineCommand } from "citty";
 await runCommand(
   defineCommand({
     args: {
-      install: { default: false, description: "Run pnpm i when the dependencies are not installed", type: "boolean" },
+      install: {
+        default: false,
+        description:
+          "Run pnpm i when the dependencies are not installed, and the parity references' restore when some are missing",
+        type: "boolean",
+      },
       verify: {
         default: false,
         description: "Verify the hosted game data's lock against the public container, which needs the network",
