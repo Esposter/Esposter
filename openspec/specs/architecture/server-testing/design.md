@@ -61,7 +61,7 @@ afterEach(() => {
 
 ### 3. `context.test.ts` — wiring hub
 
-`apps/web/server/trpc/context.test.ts` is the central test utility file. It installs the `vi.mock` for auth — the one whose factory needs this module's session state — and exports helpers consumed by every tRPC router test.
+`apps/web/server/trpc/context.test.ts` is the central test utility file. It exports the session helpers and the mock context consumed by every tRPC router test. The auth mock itself is registered once, by the shared test setup file.
 
 **Every Azure composable is mocked once in `shared/test/setup.ts`, not here.** A registration written in a helper module reaches the router path but not a suite's own direct import of the composable, while one in the setup file covers both — the hoisting rule behind that is `.agents/skills/testing/references/colocated-mocks.md`. Import the composable from its **real** path; never from its `.test` mock.
 
