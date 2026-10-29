@@ -1,8 +1,8 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
-import { readDeletedPaths } from "#src/services/shared/readDeletedPaths";
 import { runGit } from "#src/services/shared/runGit";
 import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
+import { readDeletedPaths } from "#src/services/sweeps/readDeletedPaths";
 import { readVendoredSkillNames } from "#src/services/sweeps/readVendoredSkillNames";
 
 // `--others` is load-bearing: without it a suite that is written but not yet `git add`ed is out of scope, and the

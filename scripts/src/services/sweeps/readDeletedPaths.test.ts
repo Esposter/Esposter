@@ -1,4 +1,4 @@
-import { readDeletedPaths } from "#src/services/shared/readDeletedPaths";
+import { readDeletedPaths } from "#src/services/sweeps/readDeletedPaths";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";

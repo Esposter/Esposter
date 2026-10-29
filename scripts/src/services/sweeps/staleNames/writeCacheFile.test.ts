@@ -1,4 +1,4 @@
-import { writeCacheFile } from "#src/services/shared/writeCacheFile";
+import { writeCacheFile } from "#src/services/sweeps/staleNames/writeCacheFile";
 import { mkdtempSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";

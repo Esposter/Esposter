@@ -1,8 +1,8 @@
 import type { ProducerStaleness } from "#src/models/producerStamp/ProducerStaleness";
 import type { Except } from "type-fest";
 
+import { checkIsAncestor } from "#src/services/producerStamp/checkIsAncestor";
 import { PRODUCER_STALE_WINDOW_DAYS } from "#src/services/producerStamp/constants";
-import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult } from "@esposter/shared";
 

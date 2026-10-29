@@ -1,7 +1,6 @@
 import type { SourceWordEntry } from "#src/models/sweeps/staleNames/SourceWordEntry";
 
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { writeCacheFile } from "#src/services/shared/writeCacheFile";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { addWords } from "#src/services/sweeps/staleNames/addWords";
 import { SOURCE_WORD_CACHE_PATH } from "#src/services/sweeps/staleNames/constants";
@@ -9,6 +8,7 @@ import { getComponentName } from "#src/services/sweeps/staleNames/getComponentNa
 import { readFileWords } from "#src/services/sweeps/staleNames/readFileWords";
 import { readGeneratedPatterns } from "#src/services/sweeps/staleNames/readGeneratedPatterns";
 import { readSourceWordCache } from "#src/services/sweeps/staleNames/readSourceWordCache";
+import { writeCacheFile } from "#src/services/sweeps/staleNames/writeCacheFile";
 import { globSync, readFileSync, statSync } from "node:fs";
 import { join, matchesGlob, resolve } from "node:path";
 

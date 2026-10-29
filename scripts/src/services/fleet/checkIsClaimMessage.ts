@@ -1,6 +1,6 @@
 import type { ClaimMessage } from "#src/models/fleet/ClaimMessage";
 
-import { checkIsInstant } from "#src/services/shared/checkIsInstant";
+import { checkIsInstant } from "#src/services/fleet/checkIsInstant";
 
 export const checkIsClaimMessage = (value: unknown): value is ClaimMessage =>
   typeof value === "object" &&

@@ -2,11 +2,11 @@ import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/De
 
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 import { readDockerRelease } from "#src/services/outdatedDependencies/docker/readDockerRelease";
+import { readLatestVersion } from "#src/services/outdatedDependencies/registry/readLatestVersion";
 import { readRegistryOutdatedDependencies } from "#src/services/outdatedDependencies/registry/readRegistryOutdatedDependencies";
-import { readLatestVersion } from "#src/services/shared/readLatestVersion";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/shared/readLatestVersion"), () => ({
+vi.mock(import("#src/services/outdatedDependencies/registry/readLatestVersion"), () => ({
   readLatestVersion: vi.fn<typeof readLatestVersion>(),
 }));
 vi.mock(import("#src/services/outdatedDependencies/docker/readDockerRelease"), () => ({

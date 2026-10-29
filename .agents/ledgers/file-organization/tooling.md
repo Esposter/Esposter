@@ -145,6 +145,7 @@
 | `scripts/src/services/dependencyAdmission`                                                | —                      |       |
 | `scripts/src/services/dependencyGraph`                                                    | 2026-10-25 · Haiku 5.5 |       |
 | `scripts/src/services/fleet/checkIsHeldBy.ts`                                             | —                      |       |
+| `scripts/src/services/fleet/checkIsInstant.ts`                                            | —                      |       |
 | `scripts/src/services/fleet/checkTouchesOverlap.test.ts`                                  | —                      |       |
 | `scripts/src/services/fleet/checkTouchesOverlap.ts`                                       | 2026-10-25 · Haiku 5.5 |       |
 | `scripts/src/services/fleet/claimFleetEntry.ts`                                           | 2026-10-25 · Haiku 5.5 |       |
@@ -1491,12 +1492,12 @@
 | `scripts/src/services/semver`                                                             | —                      |       |
 | `scripts/src/services/shared/at.ts`                                                       | —                      |       |
 | `scripts/src/services/shared/blurMasked.ts`                                               | —                      |       |
-| `scripts/src/services/shared/checkIsAncestor.ts`                                          | —                      |       |
-| `scripts/src/services/shared/checkIsGitHubNumber.ts`                                      | —                      |       |
-| `scripts/src/services/shared/checkIsInstant.ts`                                           | —                      |       |
 | `scripts/src/services/shared/checkIsNotFound.ts`                                          | —                      |       |
 | `scripts/src/services/shared/checkIsProcessRunning.test.ts`                               | —                      |       |
 | `scripts/src/services/shared/checkIsProcessRunning.ts`                                    | —                      |       |
+| `scripts/src/services/shared/checkIsSyntaxNode.ts`                                        | —                      |       |
+| `scripts/src/services/shared/compareCodeUnits.ts`                                         | —                      |       |
+| `scripts/src/services/shared/compareNaturally.ts`                                         | —                      |       |
 | `scripts/src/services/shared/compareVersionBase.test.ts`                                  | —                      |       |
 | `scripts/src/services/shared/compareVersionBase.ts`                                       | —                      |       |
 | `scripts/src/services/shared/computeDetailStatistics.ts`                                  | —                      |       |
@@ -1506,34 +1507,36 @@
 | `scripts/src/services/shared/fetchJson.ts`                                                | —                      |       |
 | `scripts/src/services/shared/fetchOk.ts`                                                  | —                      |       |
 | `scripts/src/services/shared/fetchRegistry.ts`                                            | —                      |       |
+| `scripts/src/services/shared/fetchResponse.ts`                                            | —                      |       |
 | `scripts/src/services/shared/findExecutable.ts`                                           | —                      |       |
 | `scripts/src/services/shared/findRepositoryRoot.ts`                                       | 2026-10-25 · Haiku 5.5 |       |
 | `scripts/src/services/shared/fixtureConstants.test.ts`                                    | —                      |       |
 | `scripts/src/services/shared/forEachConcurrently.ts`                                      | —                      |       |
 | `scripts/src/services/shared/formatAge.test.ts`                                           | —                      |       |
 | `scripts/src/services/shared/formatAge.ts`                                                | —                      |       |
+| `scripts/src/services/shared/getChildren.ts`                                              | —                      |       |
 | `scripts/src/services/shared/getGitEnv.ts`                                                | —                      |       |
 | `scripts/src/services/shared/getGitRecords.ts`                                            | —                      |       |
 | `scripts/src/services/shared/getNonEmptyLines.ts`                                         | —                      |       |
 | `scripts/src/services/shared/getPackageJsonPaths.ts`                                      | —                      |       |
 | `scripts/src/services/shared/getPercentile.test.ts`                                       | —                      |       |
 | `scripts/src/services/shared/getPercentile.ts`                                            | —                      |       |
+| `scripts/src/services/shared/getText.bench.ts`                                            | —                      |       |
 | `scripts/src/services/shared/getVersionParts.test.ts`                                     | —                      |       |
 | `scripts/src/services/shared/getVersionParts.ts`                                          | —                      |       |
 | `scripts/src/services/shared/installPinnedTool.ts`                                        | —                      |       |
 | `scripts/src/services/shared/mapCollectingFailures.test.ts`                               | —                      |       |
 | `scripts/src/services/shared/mapCollectingFailures.ts`                                    | —                      |       |
+| `scripts/src/services/shared/parents.ts`                                                  | —                      |       |
 | `scripts/src/services/shared/parseMachineJson.ts`                                         | —                      |       |
 | `scripts/src/services/shared/parseNames.test.ts`                                          | —                      |       |
 | `scripts/src/services/shared/parseNames.ts`                                               | —                      |       |
 | `scripts/src/services/shared/parseNumbers.test.ts`                                        | —                      |       |
 | `scripts/src/services/shared/parseNumbers.ts`                                             | —                      |       |
+| `scripts/src/services/shared/parseSource.ts`                                              | —                      |       |
 | `scripts/src/services/shared/publishFile.test.ts`                                         | —                      |       |
 | `scripts/src/services/shared/publishFile.ts`                                              | —                      |       |
 | `scripts/src/services/shared/readCrlfStoredPaths.ts`                                      | —                      |       |
-| `scripts/src/services/shared/readDeletedPaths.test.ts`                                    | —                      |       |
-| `scripts/src/services/shared/readDeletedPaths.ts`                                         | —                      |       |
-| `scripts/src/services/shared/readLatestVersion.ts`                                        | —                      |       |
 | `scripts/src/services/shared/readManifestFiles.ts`                                        | —                      |       |
 | `scripts/src/services/shared/readNuxtModulePackagePaths.ts`                               | —                      |       |
 | `scripts/src/services/shared/readWorkspacePackageDirectories.ts`                          | —                      |       |
@@ -1543,6 +1546,7 @@
 | `scripts/src/services/shared/runGit.test.ts`                                              | —                      |       |
 | `scripts/src/services/shared/runGit.ts`                                                   | —                      |       |
 | `scripts/src/services/shared/set.ts`                                                      | —                      |       |
+| `scripts/src/services/shared/setParent.ts`                                                | —                      |       |
 | `scripts/src/services/shared/setupFixtureRepository.test.ts`                              | —                      |       |
 | `scripts/src/services/shared/spawnNuxtModuleEntryLoad.ts`                                 | —                      |       |
 | `scripts/src/services/shared/spawnPnpm.ts`                                                | —                      |       |
@@ -1551,14 +1555,14 @@
 | `scripts/src/services/shared/throwCollectedFailures.ts`                                   | —                      |       |
 | `scripts/src/services/shared/toByte.ts`                                                   | —                      |       |
 | `scripts/src/services/shared/toF.ts`                                                      | —                      |       |
+| `scripts/src/services/shared/toHex.ts`                                                    | —                      |       |
 | `scripts/src/services/shared/toLab.ts`                                                    | —                      |       |
 | `scripts/src/services/shared/toLinear.ts`                                                 | —                      |       |
 | `scripts/src/services/shared/toSrgb.ts`                                                   | —                      |       |
 | `scripts/src/services/shared/toXyz.ts`                                                    | —                      |       |
-| `scripts/src/services/shared/writeCacheFile.test.ts`                                      | —                      |       |
-| `scripts/src/services/shared/writeCacheFile.ts`                                           | —                      |       |
 | `scripts/src/services/shared/writeJsonFile.test.ts`                                       | —                      |       |
 | `scripts/src/services/shared/writeJsonFile.ts`                                            | —                      |       |
+| `scripts/src/services/shared/writePartialThenMove.ts`                                     | —                      |       |
 | `scripts/src/services/skills`                                                             | 2026-10-25 · Haiku 5.5 |       |
 | `scripts/src/services/sweeps/constantScope`                                               | —                      |       |
 | `scripts/src/services/sweeps/constants.ts`                                                | 2026-10-25 · Haiku 5.5 |       |
@@ -1569,6 +1573,8 @@
 | `scripts/src/services/sweeps/gcsimLinks`                                                  | 2026-10-25 · Haiku 5.5 |       |
 | `scripts/src/services/sweeps/getDescendants.ts`                                           | —                      |       |
 | `scripts/src/services/sweeps/ledgerCoverage`                                              | —                      |       |
+| `scripts/src/services/sweeps/readDeletedPaths.test.ts`                                    | —                      |       |
+| `scripts/src/services/sweeps/readDeletedPaths.ts`                                         | —                      |       |
 | `scripts/src/services/sweeps/readSweepFilePaths.bench.json`                               | —                      |       |
 | `scripts/src/services/sweeps/readSweepFilePaths.bench.md`                                 | —                      |       |
 | `scripts/src/services/sweeps/readSweepFilePaths.bench.ts`                                 | —                      |       |

@@ -1,7 +1,7 @@
 import { TriageLabel } from "#src/models/triage/TriageLabel";
-import { checkIsGitHubNumber } from "#src/services/shared/checkIsGitHubNumber";
 import { runGh } from "#src/services/shared/runGh";
 import { runCommand } from "#src/services/timing/runCommand";
+import { checkIsGitHubNumber } from "#src/services/triage/checkIsGitHubNumber";
 import { readIssue } from "#src/services/triage/readIssue";
 import { readTriageLabel } from "#src/services/triage/readTriageLabel";
 import { InvalidOperationError, Operation } from "@esposter/shared";

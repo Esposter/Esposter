@@ -1,9 +1,9 @@
 import { CACHE_DIRECTORY, LOCKFILE_PATH } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { writeCacheFile } from "#src/services/shared/writeCacheFile";
 import { addWords } from "#src/services/sweeps/staleNames/addWords";
 import { readDeclarationPaths } from "#src/services/sweeps/staleNames/readDeclarationPaths";
 import { readStorePackageDirectories } from "#src/services/sweeps/staleNames/readStorePackageDirectories";
+import { writeCacheFile } from "#src/services/sweeps/staleNames/writeCacheFile";
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
