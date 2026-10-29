@@ -3,6 +3,7 @@ import { readMainCheckoutRoot } from "#src/services/queue/readMainCheckoutRoot";
 import { checkIsRebaseInProgress } from "#src/services/land/checkIsRebaseInProgress";
 import { LANDING_EXIT_STATUS, MAX_LANDING_ATTEMPTS } from "#src/services/land/constants";
 import { readRebaseConflicts } from "#src/services/land/readRebaseConflicts";
+import { readRemovalLine } from "#src/services/land/readRemovalLine";
 import { verifyLanded } from "#src/services/land/verifyLanded";
 import { waitBeforeRetry } from "#src/services/land/waitBeforeRetry";
 import { runPrecheck } from "#src/services/precheck/runPrecheck";
@@ -10,7 +11,7 @@ import { QUEUE_BRANCH, REMOTE_NAME, REMOTE_QUEUE_REF, REPOSITORY_ROOT } from "#s
 import { runGit } from "#src/services/shared/runGit";
 import { spawnGit } from "#src/services/shared/spawnGit";
 import { removeWorktree } from "#src/services/worktree/remove/removeWorktree";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 
 // Runs the precheck, then pulls and pushes up to the attempt limit, since another session's push can take the queue
 // Between the two. The pull replays this checkout's own commits, so a conflict stops the landing for its author to settle
@@ -61,10 +62,14 @@ export const landQueue = async (remove: boolean, skipPrecheck: boolean): Promise
         "the main checkout is not a worktree to remove",
       );
     const mainCheckoutRoot = readMainCheckoutRoot();
-    // The process leaves the worktree first, since Windows refuses to delete a folder some process has as its cwd
+    // The process leaves the worktree first, since Windows refuses to delete a folder some process has as its cwd. The
+    // Commits are on the queue by now, so a removal refused is a line naming the command that retries it, not a failure
     process.chdir(mainCheckoutRoot);
-    removeWorktree(REPOSITORY_ROOT, mainCheckoutRoot);
-    console.info(`removed ${REPOSITORY_ROOT}`);
+    const isRemoved = getResult(() => removeWorktree(REPOSITORY_ROOT, mainCheckoutRoot)).match(
+      () => true,
+      () => false,
+    );
+    console.info(readRemovalLine(REPOSITORY_ROOT, isRemoved));
   }
   return LANDING_EXIT_STATUS.landed;
 };
