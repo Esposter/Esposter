@@ -5,6 +5,7 @@ import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { Input } from "genshin-engine";
 import type { GameText } from "genshin-text";
 
+import { QuestKind } from "#src/models/quest/QuestKind";
 import { QUEST_MARK_MIN_HEIGHT } from "#src/services/quest/constants";
 import { getQuestCounter } from "#src/services/quest/getQuestCounter";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
@@ -34,7 +35,14 @@ const step = computed(() => quest.steps[questProgress?.stepIndex ?? 0]);
        With an arrow where it stands well above or below the character, and its step's line with how far its counted
        objective has come. Pressing it navigates to the quest, as V does -->
   <button class="quest-tracker" type="button" @click="tapActionKey(input, InputAction.QuestNavigation)">
-    <span class="title">{{ textMap[quest.titleTextId] }}</span>
+    <span class="title">
+      <svg v-if="quest.kind === QuestKind.World" class="kind" viewBox="0 0 22 27" aria-hidden="true">
+        <path d="M11 0.5 L21.5 13.5 L11 26.5 L0.5 13.5 Z" fill="none" stroke="#d9b933" stroke-width="1" />
+        <rect x="8.2" y="1.4" width="5.6" height="15.7" rx="1" fill="#f6ea00" />
+        <circle cx="11" cy="22.7" r="2.8" fill="#f6ea00" />
+      </svg>
+      {{ textMap[quest.titleTextId] }}
+    </span>
     <span v-if="mark" class="mark">
       <template v-if="Math.abs(mark.height) >= QUEST_MARK_MIN_HEIGHT">
         <svg class="arrow" :class="{ lower: mark.height < 0 }" viewBox="0 0 14 9" aria-hidden="true">
@@ -51,8 +59,8 @@ const step = computed(() => quest.steps[questProgress?.stepIndex ?? 0]);
 </template>
 
 <style scoped>
-/* Provisional: the tracker's width, type, colours and the quest kind's mark beside its title, measured off a recording
-   Of the English PC client's world HUD with a quest navigated */
+/* Provisional: the tracker's width and type, measured off a recording of the English PC client's world HUD with a quest
+   Navigated */
 .quest-tracker {
   display: flex;
   width: calc(var(--unit) * 360);
@@ -71,12 +79,25 @@ const step = computed(() => quest.steps[questProgress?.stepIndex ?? 0]);
 
 /* The title is white over a muted yellow underline the width of its words, its cap height 1.23 of the stand-in's at 22 */
 .title {
+  position: relative;
   width: fit-content;
   border-bottom: calc(var(--unit) * 2) solid rgb(255 230 120 / 0.5);
   color: #fff;
   font-size: calc(var(--unit) * 27);
   font-weight: 600;
   letter-spacing: calc(var(--unit) * 1.2);
+}
+
+/* The world quest's mark: a gold diamond outline with a yellow exclamation mark, its centre 25 units left of the title and
+   level with its capitals, measured off `hud-world-pickup` at 934 high. Only a world quest carries this mark: the other
+   kinds' marks are not measured. Provisional: the tracker's left is not a rect of the tree, so at a 16:9 window the mark
+   reaches past the screen's left edge */
+.kind {
+  position: absolute;
+  top: 0;
+  left: calc(var(--unit) * -36);
+  width: calc(var(--unit) * 22);
+  height: calc(var(--unit) * 27);
 }
 
 .step {

@@ -90,8 +90,9 @@ const rows = computed(() =>
    The PC client's rows of one, two and four members centre within a quarter pixel of one another, 71.25 canvas units
    Above `TeamBtnContainer`'s middle, on an 80 unit pitch; the mobile client's centre on its middle, on a 76 unit pitch.
    For the keys, a name 22 units high over a bar 69 by 5, 19 before the portrait, 56 across, and the slot's cap 21
-   Past it and 33 in from the container's right edge; on touch, no cap, the portrait centred 60 canvas units in and the
-   Bar 58 wide 9 before it, its left end 155 in. The field member's name and portrait stand 20 units forward.
+   Past it and 33 in from the container's right edge; on touch, no cap, the row's right padding 50 canvas units. A padding of 32
+   set each portrait and name about 18 pixels right of `hud-world-pickup` at 934 high, so 50 is fitted to that still.
+   The bar 58 wide 9 before the portrait, its left end 173 in. The field member's name and portrait stand 20 units forward.
    Provisional: the band and the pointer that mark it, the grey of a member who is down and the darkening after a
    Switch */
 .party {
@@ -150,7 +151,7 @@ const rows = computed(() =>
 }
 
 .touch .member {
-  padding-right: calc(var(--canvas-unit) * 32);
+  padding-right: calc(var(--canvas-unit) * 50);
   gap: calc(var(--canvas-unit) * 9);
 }
 
