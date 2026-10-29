@@ -21,7 +21,7 @@ The camera's wheel, ease, reset, pitch and settings follow the game's measured v
 
 ## Waiting on
 
-- `openspec/changes/genshin-menu-settings/`: the camera's settings rows, and the defaults the camera starts at.
+- `openspec/specs/genshin/menu-settings/`: the camera's settings rows, and the defaults the camera starts at.
 - The Settings Controls tab, which waits on the interface export.
 - The recordings `follow-camera.mkv` and `photo-mode-range.mkv`, which set the notch, the ease, the reset, the pitch limits and photo mode's range. Until they land those values stay provisional.
 

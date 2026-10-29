@@ -2,7 +2,7 @@
 
 ## Purpose
 
-TBD - created by archiving change genshin-menu-settings. Update Purpose after archive.
+The Settings screen as the world plays it: opened from the Paimon menu's side bar (`packages/genshin-world/src/components/Menu/Settings/Index.vue`), its rows the world backs set the graphics quality tier, the music and sound effect volumes, the game language its labels show and the follow camera's settings, all kept on this device. Every other row is drawn disabled at the value the game's recording shows.
 
 ## Requirements
 

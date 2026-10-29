@@ -21,7 +21,7 @@ Mondstadt's keeper stands in the world and gives the player ways to earn Reputat
 
 ## Waiting on
 
-- Bounties' trails are drawn by Elemental Sight, which waits on the puzzles unit: `openspec/changes/genshin-elemental-sight/` and `openspec/changes/genshin-puzzles/`.
+- Bounties' trails are drawn by Elemental Sight, which waits on the puzzles unit: `openspec/specs/genshin/elemental-sight/` and `openspec/changes/genshin-puzzles/`.
 - Discounts wait on the shops' screen: `openspec/changes/genshin-shops/`.
 - Reputation quests wait on the quest reader carrying them: `openspec/changes/genshin-quests/`.
 - Later nations, Natlan's tribes among them, wait on their regions being built: `openspec/changes/genshin-natlan/`.

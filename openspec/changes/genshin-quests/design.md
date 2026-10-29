@@ -21,7 +21,7 @@ The [quests](../../specs/genshin/quests/design.md) page holds the quest model, i
 - **A series' rewards are its last quest's.** The series' reward list is the items its last quest's reward row gives, each with the rarity its material row names. The dump does not split the series' rewards across its quests, so the last quest's row is the one read.
 - **A talk-to objective whose talk holds no lines is left out and noted.** Quest 11019's talk-to step names talk 1101955, a scripted performance (`QuestDialogue/LQ/Yelan1_11019/Q1101955`) with no dialog rows in the dump. The step is left out and noted, as a shown step that asks nothing of the Traveler is, and the talk offers no quest.
 
-3. **The clues.** The quests' objectives' places are what [Elemental Sight](../genshin-elemental-sight/design.md) draws its quest trails to, and what [companionship](../genshin-companionship/design.md)'s story waits name, once item 1 places them.
+3. **The clues.** The quests' objectives' places are what [Elemental Sight](../../specs/genshin/elemental-sight/design.md) draws its quest trails to, and what [companionship](../genshin-companionship/design.md)'s story waits name, once item 1 places them.
 
 The commissions are dealt by [commissions](../../specs/genshin/commissions/design.md), and their wiring is that proposal's. The finished quests the world level reads are [Adventure Rank](../archive/2026-10-22-genshin-adventure-rank/design.md)'s.
 
