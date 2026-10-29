@@ -79,6 +79,8 @@ export const SETTINGS_TABS: readonly SettingsTab[] = [
   Tab.Resources,
   Tab.Other,
 ];
+// The width of a list screen's list column in units, the rows and series panels laid across it
+export const LIST_SCREEN_WIDTH = 666;
 
 // The list screens' close mark: its X traced at four times off the English client's quest screen at 1920 by 1080
 // (`File:Quest Screen.png`), the cream disc's dark hole, its box from the close button's top left

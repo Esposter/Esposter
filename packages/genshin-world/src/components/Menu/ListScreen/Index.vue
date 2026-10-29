@@ -3,6 +3,7 @@ import type { GameText } from "genshin-text";
 import type { VNode } from "vue";
 
 import ScreenHeader from "#src/components/Menu/ScreenHeader/Index.vue";
+import { LIST_SCREEN_WIDTH } from "#src/services/menu/constants";
 import { GameScreen } from "genshin-interface";
 
 interface Props {
@@ -81,7 +82,7 @@ defineSlots<{ detail: () => VNode; icon?: () => VNode; list: () => VNode; tabs?:
   bottom: calc(var(--unit) * 125);
   left: calc(var(--unit) * 150);
   display: flex;
-  width: calc(var(--unit) * 666);
+  width: calc(var(--unit) * v-bind(LIST_SCREEN_WIDTH));
   flex-direction: column;
   overflow-y: auto;
   scrollbar-width: none;

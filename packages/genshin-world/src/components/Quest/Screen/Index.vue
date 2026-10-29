@@ -9,6 +9,7 @@ import MenuListScreen from "#src/components/Menu/ListScreen/Index.vue";
 import QuestRow from "#src/components/Quest/Row/Index.vue";
 import { QuestCategory } from "#src/models/quest/QuestCategory";
 import { QuestGlyph } from "#src/models/quest/QuestGlyph";
+import { LIST_SCREEN_WIDTH } from "#src/services/menu/constants";
 import { QUEST_CATEGORIES, QUEST_TAB_NEXT_CODE, QUEST_TAB_PREVIOUS_CODE } from "#src/services/quest/constants";
 import { getQuestCounter } from "#src/services/quest/getQuestCounter";
 import { QuestCategoryGameTextKeyMap } from "#src/services/quest/QuestCategoryGameTextKeyMap";
@@ -52,9 +53,9 @@ const {
 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; navigate: [questId: string] }>();
 const listElement = ref<HTMLElement>();
-// The list is 666 units wide, so its width's 666th is a unit in pixels
+// The list is a list screen's column, LIST_SCREEN_WIDTH units wide, so its pixel width over that is a unit in pixels
 onMounted(() => {
-  if (listElement.value) listElement.value.scrollTop = listScroll * (listElement.value.clientWidth / 666);
+  if (listElement.value) listElement.value.scrollTop = listScroll * (listElement.value.clientWidth / LIST_SCREEN_WIDTH);
 });
 // The tab open, none for the first, which lists every quest
 const category = ref<QuestCategory>();
