@@ -8,6 +8,7 @@ import {
   FIXTURE_IMAGE_NAME,
   FIXTURE_VARIANT_SEPARATOR,
   getFixtureImageName,
+  holdAnimations,
 } from "genshin-interface";
 import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -80,6 +81,9 @@ describe("interface screens", () => {
     );
     await window.document.fonts.ready;
     await ready;
+    // Held before the first capture, as the interface suite holds its components: a screen's mount animation is otherwise
+    // Caught mid-run by the matcher's first capture
+    holdAnimations();
 
     const box = container.firstElementChild;
     assert(box);

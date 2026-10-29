@@ -7,6 +7,7 @@ import { InteractionState } from "#src/models/InteractionState";
 import { FIXTURE_IMAGE_NAME, getFixtureImageName } from "#src/services/constants";
 import { assertSettledRender } from "#src/services/assertSettledRender";
 import { createVisualComparisonRecord } from "#src/services/createVisualComparisonRecord";
+import { holdAnimations } from "#src/services/holdAnimations";
 import { afterAll, assert, describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
@@ -38,17 +39,6 @@ for (const [path, { props, slot, variants = {} }] of Object.entries(fixtures)) {
       slot,
     });
 }
-// A running animation is held at its end, or at its start when it never ends, so each image is one frame
-const holdAnimations = (): void => {
-  for (const animation of window.document.getAnimations()) {
-    const { iterations } = animation.effect?.getComputedTiming() ?? {};
-    if (iterations === Infinity) {
-      animation.pause();
-      animation.currentTime = 0;
-    } else animation.finish();
-  }
-};
-
 describe("genshin-interface components", () => {
   const visualComparison = createVisualComparisonRecord();
 

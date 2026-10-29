@@ -68,6 +68,7 @@ export * from "./services/computeRectOffsets.ts";
 export * from "./services/constants.ts";
 export * from "./services/createVisualComparisonRecord.ts";
 export * from "./services/DialogueChoiceIconPathMap.ts";
+export * from "./services/holdAnimations.ts";
 export * from "./services/InterfaceIconCentreMap.ts";
 export * from "./services/InterfaceIconPathMap.ts";
 export * from "./services/ItemRarityFaceGradientMap.ts";
