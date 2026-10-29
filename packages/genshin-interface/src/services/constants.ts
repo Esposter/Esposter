@@ -8,8 +8,10 @@ export const ASCENSION_PHASE_COUNT = 6;
 // App through its fonts module, the parity page and the visual suite from `@fontsource/signika`
 export const GAME_FONT_FAMILY = '"HYWenHei 85W", "HYWenHei-85W", Signika, ui-sans-serif, sans-serif';
 // The game lays its interface out on a 1920 by 1080 screen scaled to fit the window's height or its width, whichever
-// Is less, and then by the client's interface scale, so a unit is that screen's pixel in the window's own container
-export const GAME_UNIT = "calc(min(100cqh / 1080, 100cqw / 1920) * var(--interface-scale))";
+// Is less, and then by the client's interface scale, so a unit is that screen's pixel in the window's own container.
+// A screen drawn from a frame wider than 16:9 sets `--game-design-width` on its own root to that frame's width in
+// Units, so the same fit holds across that width and the whole screen is in the window
+export const GAME_UNIT = "calc(min(100cqh / 1080, 100cqw / var(--game-design-width, 1920)) * var(--interface-scale))";
 // The game's interface canvas: its RectTransforms are laid out on a 1600 by 900 reference, scaled to fit the window's
 // Smaller axis as the screen is, so a canvas unit is 1.2 screen units at 1080 high (a piece 128 plus 32 canvas units
 // Up reads 192 pixels on the 1080 high recording)
