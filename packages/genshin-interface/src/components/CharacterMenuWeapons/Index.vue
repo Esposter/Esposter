@@ -234,4 +234,5 @@ const {
 </style>
 
 <style scoped src="../../styles/creamPill.css"></style>
+
 <style scoped src="../../styles/weaponStars.css"></style>
