@@ -14,7 +14,7 @@ flowchart TD
 
 ## Decisions
 
-- **Two kinds per region, read off the refresh rows.** A ley line kind is a blossom refresh whose type is `BLOSSOM_REFRESH_EXP`, the Revelation, or `BLOSSOM_REFRESH_SCOIN`, the Wealth (`{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, `scripts/src/services/genshinAssets/leyLine/constants.ts`). The rows name the city ids 1 to 8, Mondstadt to Snezhnaya in the game's order with Nod-Krai seventh, and each of those regions gets its two kinds. Dragonspine, Blitz Rush and the Blossom Island refreshes are other challenges and read no kind (`{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, rows 13 to 19).
+- **Two kinds per region, read off the refresh rows.** A ley line kind is a blossom refresh whose type is `BLOSSOM_REFRESH_EXP`, the Revelation, or `BLOSSOM_REFRESH_SCOIN`, the Wealth (`{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, `scripts/src/services/genshinAssets/leyLine/constants.ts`). The rows name the city ids 1 to 8, and each of those regions gets its two kinds; which nation each id is, city 8's included, is open (see Open). Dragonspine, Blitz Rush and the Blossom Island refreshes are other challenges and read no kind (`{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, rows 13 to 19).
 - **Opened by rank, and by a nation's area, as the table says.** Mondstadt opens Revelation at Adventure Rank 8 and Wealth at 12 (`{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, rows 2 and 1, `BLOSSOM_REFRESH_COND_PLAYER_LEVEL_EQUAL_GREATER`). Liyue's rows open both at 18 with no area condition, which differs from the wiki's 8 and 12 for Liyue: the table is read (`{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, rows 3 and 4), and the difference is a [recording owed](../../../changes/genshin-roadmap/tasks.md). Every other region opens both at 18 once a nation's area is unlocked. The table's "UNLOCK_ANY_AREA_IN_CITY" is read as that nation's Statue of The Seven activated, since a statue unlocks its area (`{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, rows 20 to 51; `scripts/src/services/genshinAssets/leyLine/constants.ts`).
 - **Sections kept, read by no rule yet.** A region's sections are kept in the data in their order, so the dump's place chain can be joined to the fitted places by position once the scene-group export lands (`{data-root}/genshin-parity/text/ExcelBinOutput/BlossomSectionOrderExcelConfigData.json`, `scripts/src/services/genshinAssets/leyLine/toLeyLineRegions.ts`). No draw reads them yet.
 - **Started at a drawn fitted place.** Each kind starts at a fitted place drawn at random from those no kind before it holds, with the day's seeded random. A kind with no place left starts none (`packages/genshin-world/src/services/leyLine/computeDailyOutcrops.ts`, `packages/genshin-world/src/services/leyLine/drawPlaceIds.ts`).
@@ -31,7 +31,8 @@ flowchart TD
 
 - **The camps are provisional.** A touch spawns a camp of `OUTCROP_CAMP_SIZE` members, drawn from `OUTCROP_CAMP_ENEMY_KIND_IDS`, at the place (`packages/genshin-world/src/services/leyLine/createOutcropCamp.ts`). The enemies per place come from the wiki's table, which is not in the dump.
 - **The claims' items.** A claim pays its World Level's row of the refresh row's reward previews (`packages/genshin-world/src/services/leyLine/computeOutcropClaimRewards.ts`), and the names of those items are open (see Open).
-- **Fontaine, Natlan, Nod-Krai and Snezhnaya.** Their kinds are read, but their sections are not in the dump's section order table, so no outcrop is drawn there.
+- **Fontaine, Natlan and Snezhnaya.** Their kinds are read, but their sections are not in the dump's section order table, so no outcrop is drawn there.
+- **Nod-Krai.** Whether any of the refresh rows is Nod-Krai's is open (see Open).
 
 ## Key files
 
@@ -64,7 +65,7 @@ flowchart TD
 - `{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, row 1, grounding scenario "Mondstadt's Wealth opens at rank 12".
 - `{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, rows 3 and 4, grounding scenario "Liyue opens both kinds at rank 18".
 - `{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, rows 20 and 21, grounding scenario "Other regions wait for a nation's area".
-- `{data-root}/genshin-parity/text/ExcelBinOutput/BlossomSectionOrderExcelConfigData.json` has no section for Fontaine, Natlan, Nod-Krai or Snezhnaya, grounding scenario "Region without sections".
+- `{data-root}/genshin-parity/text/ExcelBinOutput/BlossomSectionOrderExcelConfigData.json` has no section for Fontaine, Natlan or Snezhnaya, grounding scenario "Region without sections".
 
 ## Open
 
@@ -72,3 +73,4 @@ flowchart TD
 - [ ] **Liyue's Revelation and Wealth open at Adventure Rank 8 and 12 in the wiki** — no source yet: the Game8 guide is not in the cache.
 - [ ] **A Statue of The Seven unlocks its nation's area** — no source yet: the wiki's Statue of The Seven page, which is not in the cache.
 - [ ] **Original Resin charges 20 resin** — no source yet: the Original Resin price as a standalone cost; the one text read, key 1691155488 in `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json` ("Consume 20 Original Resin to receive the normal amount of rewards"), belongs to a challenge that no dump table holds (its hash appears only in `{data-root}/genshin-parity/text/ManualTextMapConfigData.json`).
+- [ ] **The rows name the city ids 1 to 7, Mondstadt to Snezhnaya, and Nod-Krai's rows name no kind** — raised: `{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json` rows 50 and 51 carry `cityId` 8 with both kinds and the area condition, so the table gives eight cities with kinds. City 8's name is not read here, so whether it is Nod-Krai is open.
