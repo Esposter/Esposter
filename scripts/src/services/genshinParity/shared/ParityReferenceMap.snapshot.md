@@ -38,8 +38,8 @@ committed.
 | `gcg-duel-board` | `GcgScreen` | 13.25% | 0.508 | 8.21% | 0.4544 |
 | `handbook-experience` | `HandbookScreen` | 5.28% | 0.859 | 2.95% | 0.2516 |
 | `health-notice` | `SplashHealthNotice` | 6.17% | 0.964 | 1.51% | 0.1780 |
-| `health-notice-japanese` | `SplashHealthNotice` | 11.47% | 0.583 | 4.60% | 0.3327 |
-| `health-notice-mainland` | `SplashHealthNotice` | 7.06% | 0.829 | 3.03% | 0.1974 |
+| `health-notice-japanese` | `SplashHealthNotice` | 8.38% | 0.873 | 1.54% | 0.2395 |
+| `health-notice-mainland` | `SplashHealthNotice` | 4.71% | 0.960 | 1.19% | 0.1419 |
 | `hud-paimon-button` | `HudScreen` | 1.90% | 0.936 | 4.74% | 0.1188 |
 | `hud-stamina-climb` | `HudScreen` | 0.62% | 0.787 | 0.75% | 0.0629 |
 | `hud-world-keys` | `HudScreen` | 2.51% | 0.963 | 1.72% | 0.1607 |

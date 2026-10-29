@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
 
-import { GameScreen, OrnamentDivider } from "genshin-interface";
+import { GAME_FONT_FAMILY, GameScreen, OrnamentDivider } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -12,6 +12,9 @@ interface Props {
 const { gameText } = defineProps<Props>();
 // The notice is one string in the game's text, its paragraphs a blank line apart
 const paragraphs = computed(() => gameText[GameTextKey.HealthNotice].split("\n\n"));
+// The game sets Japanese and Chinese at about three quarters of the Latin size, so the open CJK face below is tried first
+// for those characters alone; Latin characters pass it by and keep the game's face
+const fontFamily = `"GameNoticeCjk", ${GAME_FONT_FAMILY}`;
 </script>
 
 <template>
@@ -36,7 +39,19 @@ const paragraphs = computed(() => gameText[GameTextKey.HealthNotice].split("\n\n
   background: var(--white);
 }
 
+/* The first of these local CJK faces the reader has, drawn at three quarters of the size its Latin text is set at */
+@font-face {
+  font-family: "GameNoticeCjk";
+  font-weight: 600;
+  size-adjust: 75%;
+  src:
+    local("PingFangSC-Semibold"), local("HiraginoSans-W6"), local("MicrosoftYaHei-Bold"), local("NotoSansCJKjp-Bold"),
+    local("NotoSansCJKsc-Bold");
+  unicode-range: U+3000-303F, U+3040-30FF, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+}
+
 .block {
+  font-family: v-bind(fontFamily);
   display: flex;
   flex-direction: column;
   align-items: center;
