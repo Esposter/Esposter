@@ -60,10 +60,10 @@ const knipConfiguration: KnipConfig = {
         "vue-tsc",
       ],
     },
-    "packages/db-mock": { entry: ["scripts/**/*.ts", "src/index.ts"] },
+    "packages/db-mock": { entry: ["scripts/**/*.ts"] },
     "packages/follow-ups": { entry: ["scripts/**/*.ts"] },
     "packages/genshin-interface": {
-      entry: ["src/index.ts", "src/**/*.reference.ts", "src/**/*.visual.ts"],
+      entry: ["src/**/*.reference.ts", "src/**/*.visual.ts"],
       ignore: ["**/auto-imports.d.ts"],
       // The declaration build hands `.vue` declarations to vue-tsc by name (`dts.tsc.vue`), so nothing imports it
       ignoreDependencies: ["vue-tsc"],
@@ -82,13 +82,13 @@ const knipConfiguration: KnipConfig = {
       ignoreDependencies: ["claude-code"],
     },
     "packages/genshin-world": {
-      entry: ["parity/*.visual.ts", "src/index.ts", "src/**/*.reference.ts", "src/workers/*.ts"],
+      entry: ["parity/*.visual.ts", "src/**/*.reference.ts", "src/workers/*.ts"],
       ignore: ["**/auto-imports.d.ts"],
       // The declaration build hands `.vue` declarations to vue-tsc by name (`dts.tsc.vue`), so nothing imports it
       ignoreDependencies: ["vue-tsc"],
     },
     // A type bench is run by `pnpm bench:types` and imported by nothing, as its fixture is imported by the benches alone
-    "packages/headless-block-editor": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
+    "packages/headless-block-editor": { entry: ["src/**/*.typebench.ts"] },
     // The components suite loads MJML's preset through createRequire, since the preset ships no types, and knip cannot
     // Follow it
     "packages/mjml-blocks": { ignoreDependencies: ["mjml-preset-core"] },
@@ -96,7 +96,7 @@ const knipConfiguration: KnipConfig = {
       // Nitro loads these by the paths `module.ts` resolves, so nothing imports them
       entry: ["src/runtime/nitro/plugins/*.ts", "src/runtime/server/middleware/*.ts"],
     },
-    "packages/shared": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
+    "packages/shared": { entry: ["src/**/*.typebench.ts"] },
     // The benchmark reporter imports vitest's types alone, so a consumer that never benches needs no vitest: the peer is
     // Optional on purpose
     "packages/shared-node": { ignoreDependencies: ["vitest"] },
