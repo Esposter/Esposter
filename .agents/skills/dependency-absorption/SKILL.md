@@ -15,6 +15,7 @@ How an absorption is run. Whether a package should be absorbed at all — the co
 - **Recording the triage in the commit body alone.** The next reader arrives from a stranded upstream link in our code or a search, not from `git log`; the verdicts live in the package's spec (`references/package-shape.md`).
 - **Skipping the closed issues.** A closed issue is where a fix the replacement must keep, or a workaround our code still carries, is explained (`references/upstream-audit.md`).
 - **Porting the upstream's code.** A port carries its structure, its dead branches and its per-request costs into our tree. The replacement is rewritten from the ground up against the upstream's behaviour and its audit.
+- **Rewriting a maintained engine for its size or to test an architecture.** The load placement is measured and fixed first. An engine is rewritten only for a measured cost, a licence cost or an upstream defect we meet; a rewrite that would only test an architecture is a fully designed deferred page with its revisit trigger (`openspec/deferred/`).
 
 ## Rules
 
