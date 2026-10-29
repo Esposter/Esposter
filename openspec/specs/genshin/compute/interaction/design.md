@@ -14,7 +14,7 @@ Nothing here.
 
 ## Open
 
-- [ ] **Interaction: the pill's right end at a mean of 5.07%** — no source yet: a parity run or snapshot row holding 5.07%; the snapshot's `interaction-prompts-jueyun-chili` row holds 7.98%, and the CHANGELOG's 5.07% names a change, not a run.
+- [ ] **Interaction: the pill's right end at a mean of 5.07%** — no source yet: a parity run or snapshot row holding 5.07%; the snapshot's `interaction-prompts-jueyun-chili` row holds a different score, and the CHANGELOG's 5.07% names a change, not a run.
 - [x] **Interaction: the pill's score is its `interaction-prompts-jueyun-chili` row** — the snapshot holds that row, so the figures this item once quoted are no longer the record.
 - [ ] **Interaction: the item icon as a grey disc** — no source yet: a source that draws the icon, since the `InteractionPrompts` files name no grey disc.
 - [ ] **Interaction: the name's glyphs 1 to 2 pixels off the game's** — no source yet: a measured glyph offset against the game's name, which no record holds.
