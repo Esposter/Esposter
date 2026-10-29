@@ -28,7 +28,7 @@ const createFieldKitContext = (): KitContext => {
 };
 
 // The character mounted in a canvas with a camera behind it, its body read back after the frames it steps through
-const renderCharacter = async (isMoveHeld?: true): Promise<Object3D> => {
+const renderCharacter = async (isMoveHeld = false): Promise<Object3D> => {
   const body = new Object3D();
   const inputState: InputState = {
     heldActions: new Set(),
@@ -55,7 +55,9 @@ const renderCharacter = async (isMoveHeld?: true): Promise<Object3D> => {
                 getGroundHeight: () => 0,
                 grassTrail: createGrassTrail(),
                 inputState,
+                isHeld: false,
                 isMoveHeld,
+                isOrbiting: false,
                 kitContext: createFieldKitContext(),
                 landmarkCollider: createLandmarkCollider(),
                 locomotion: BodyTypeLocomotionMap[BodyType.MediumFemale],

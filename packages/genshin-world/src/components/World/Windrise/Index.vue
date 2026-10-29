@@ -172,9 +172,9 @@ interface Props {
   // The drops and the residents in the world, each a row of the prompts and drawn as a stand-in
   interactables: Interactable[];
   // Whether a screen over the world holds its clock, as the game's menus pause its time
-  isHeld?: true;
+  isHeld: boolean;
   // Whether the world is paused under a cover, its canvas drawing only the frames it is asked for
-  isPaused?: true;
+  isPaused: boolean;
   // Whether the development tuning panel is shown, which the app decides
   isTuning: boolean;
   // The effects on the team, whose live taunts the enemies strike instead of the character within their aggro range
@@ -190,7 +190,7 @@ interface Props {
   // The world coordinate the scene's origin stands on, which the screen's free camera reads the ground through
   origin: Vector3;
   // The camps of the ley line outcrops whose fights run, which the world's enemies spawn whole as each fight starts
-  outcropCamps?: EnemyCamp[];
+  outcropCamps: EnemyCamp[];
   qualityTier: QualityTier;
   // The targets the quests in progress name at their current steps, which the sight leads trails to while it is on
   questClueTargetIds: string[];
@@ -200,7 +200,7 @@ interface Props {
   regionDataBaseUrl: string;
   // Where the host serves the developer's own exports of the game's scenes, drawn in place of our stand-ins of each
   // Family they hold, as only the development server does
-  sceneExportBaseUrl?: string;
+  sceneExportBaseUrl: string;
   // The Seelies of Mondstadt, whose courts the sight leads a trail to while each rests
   seelies: Seelie[];
   // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport comes

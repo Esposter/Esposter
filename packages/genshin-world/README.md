@@ -40,7 +40,7 @@ import "genshin-world/style.css";
   <WorldScreen
     :create-terrain-worker="() => new TerrainTileWorker()"
     :game-text="ENGLISH_GAME_TEXT"
-    :is-tuning="isDevelopment || undefined"
+    :is-tuning="isDevelopment"
     :language="GameLanguage.English"
     :quality-tier
     game-data-base-url="https://your-host.example/game-data"

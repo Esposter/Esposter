@@ -64,13 +64,13 @@ interface Props {
   // The frame's input, which the world screen reads once a frame before the body moves
   inputState: InputState;
   // Whether the body holds where it stands and the follow camera lets go of the view, as a menu or photo mode holds it
-  isHeld?: true;
+  isHeld: boolean;
   // Whether the body holds still on the move while the Shortcut Wheel is open, which reads the move as its pick, and its
   // Presses still play
-  isMoveHeld?: true;
+  isMoveHeld: boolean;
   // Whether a held body still has its camera orbit it, as photo mode's does: the look turns and zooms the view round the
   // Body, which neither steps nor moves
-  isOrbiting?: true;
+  isOrbiting: boolean;
   // The world's combat state the character's kit steps in: the deployed team's party and combatants, whose HP, energy and
   // Cooldowns the kit reads and writes, the enemies it strikes and aims at, and the effects on the team, which outlive a
   // Switch as the field's buffs and infusions do, and are cleared on a drown or a jump, which the screen answers

@@ -69,16 +69,16 @@ interface Props {
   // The world's clock, the server's where it is known, against which each defeat, load and jump is read
   getWorldNow: () => Temporal.Instant;
   // Whether a screen over the world holds it, as the game's menus pause its enemies
-  isHeld?: true;
+  isHeld: boolean;
   // Whether something covers the world, which then draws no frames, so its enemies stand still as well
-  isPaused?: true;
+  isPaused: boolean;
   // The effects on the team, whose live taunts draw the enemies' strikes within their aggro range
   kitEffectState: KitEffectState;
   // The last teleport, which brings back a boss whose blossom is unclaimed, none until the player has teleported
   lastTeleportAt?: Temporal.Instant;
   lightUniforms: LightUniforms;
   // The camps of the ley line outcrops whose fights run: each spawns whole as its fight starts, and is dropped as it is won
-  outcropCamps?: EnemyCamp[];
+  outcropCamps: EnemyCamp[];
   rampTexture: DataTexture;
   regionDataMap: ReadonlyMap<string, RegionData>;
   // The scene the sight's mask is drawn from, which each enemy's stand-in is added to, lit in its element's colour
@@ -105,7 +105,7 @@ const {
   kitEffectState,
   lastTeleportAt,
   lightUniforms,
-  outcropCamps = [],
+  outcropCamps,
   rampTexture,
   regionDataMap,
   sightScene,

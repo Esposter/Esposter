@@ -22,10 +22,10 @@ export const useCharacterPacks = ({
   keepAccountCharacterPack,
   removeAccountCharacterPack,
 }: {
-  // Where the player's account serves its files, given while the player is signed in
-  accountFileBaseUrl?: string;
-  // Where the host serves the characters' packs, none in a production build
-  characterPackBaseUrl?: string;
+  // Where the player's account serves its files, empty while the player is signed out
+  accountFileBaseUrl: string;
+  // Where the host serves the characters' packs, empty in a production build
+  characterPackBaseUrl: string;
   // The player's account's packs, empty while the player is signed out or the account's are still listing
   getAccountCharacterPacks: () => readonly AccountCharacterPack[];
   // The character on the field, whose pack the world draws on the controller's body

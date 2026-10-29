@@ -12,7 +12,7 @@ import { watchImmediate } from "@vueuse/core";
 // Place of the pack's while the Traveler is the character on the field. Read once, on the first time the Traveler is, and
 // Released with the scene. With no host, or an index without it, nothing is read and the pack draws the character
 export const useCharacterAvatar = (
-  sceneExportBaseUrl: string | undefined,
+  sceneExportBaseUrl: string,
   getCharacterId: () => number,
   options: Pick<CharacterMaterialOptions, "lightUniforms" | "rampTexture">,
 ) => {

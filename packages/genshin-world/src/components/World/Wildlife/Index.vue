@@ -21,7 +21,7 @@ interface Props {
   // The world's ground at a point in its own coordinates, which each animal stands on
   getGroundHeight: (x: number, z: number) => number;
   // Whether a screen over the world holds it, as the game's menus hold its animals
-  isHeld?: true;
+  isHeld: boolean;
   lightUniforms: LightUniforms;
   rampTexture: DataTexture;
   // The point the animals run from, the character's feet, which none is given while no character stands in the world

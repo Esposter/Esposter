@@ -287,7 +287,7 @@ const {
   save,
   sceneExportBaseUrl,
   seelies,
-  serverClockOffsetMs = 0,
+  serverClockOffsetMs,
   shopIdShopGoodMap,
   shrineKeySources,
   shrinePlaces,
@@ -958,7 +958,7 @@ const {
 } = useCharacterPacks({
   accountFileBaseUrl,
   characterPackBaseUrl,
-  getAccountCharacterPacks: () => accountCharacterPacks ?? [],
+  getAccountCharacterPacks: () => accountCharacterPacks,
   getActiveCharacterId: () => getActiveCharacterId(party),
   keepAccountCharacterPack,
   removeAccountCharacterPack,
@@ -1992,9 +1992,9 @@ useWorldSaveSync({
           :get-ground-height
           :grass-trail
           :input-state
-          :is-held="screenKind !== ScreenKind.World || undefined"
-          :is-move-held="isShortcutWheelOpen || undefined"
-          :is-orbiting="(screenKind === ScreenKind.PhotoMode && !isTuning) || undefined"
+          :is-held="screenKind !== ScreenKind.World"
+          :is-move-held="isShortcutWheelOpen"
+          :is-orbiting="screenKind === ScreenKind.PhotoMode && !isTuning"
           :kit-context
           :landmark-collider
           :locomotion
@@ -2016,7 +2016,7 @@ useWorldSaveSync({
           v-if="!witness && screenKind === ScreenKind.PhotoMode && isTuning"
           :get-ground-height
           :input-state
-          :is-held="screenBehaviour.isHeld || undefined"
+          :is-held="screenBehaviour.isHeld"
           :origin
           :water-level="windriseData.water.level"
         />
@@ -2047,7 +2047,7 @@ useWorldSaveSync({
         :get-ground-height
         :get-world-now
         :held-minutes
-        :is-held="screenBehaviour.isHeld || undefined"
+        :is-held="screenBehaviour.isHeld"
         :interactables
         :outcrop-camps="fightingCamps"
         :is-paused
@@ -2165,18 +2165,22 @@ useWorldSaveSync({
         <OfferChoice
           v-if="trounceClaimPrompt"
           :cancel-label="gameText[GameTextKey.Cancel]"
+          :can-restore="false"
           :condensed-label="gameText[GameTextKey.UseCondensedResin]"
           :offers="trounceClaimPrompt.offers"
           :original-label="gameText[GameTextKey.UseOriginalResin]"
+          restore-label=""
           @choose="() => chooseTrounceBlossomClaim(getWorldNow(), worldLevel, kitContext.random)"
           @close="closeTrounceBlossomClaim()"
         />
         <OfferChoice
           v-if="domainClaimOffers"
           :cancel-label="gameText[GameTextKey.Cancel]"
+          :can-restore="false"
           :condensed-label="gameText[GameTextKey.UseCondensedResin]"
           :offers="domainClaimOffers"
           :original-label="gameText[GameTextKey.UseOriginalResin]"
+          restore-label=""
           @choose="(offer) => chooseDomainTreeClaim(offer, getWorldNow())"
           @close="closeDomainTreeClaim()"
         />
@@ -2305,6 +2309,7 @@ useWorldSaveSync({
           :game-text
           :investigation-rewards="[]"
           :is-adventure-encounters-unlocked
+          :is-reward-claimed="false"
           :long-term-encounter-points="wholeLongTermEncounterPoints"
           :name-text
           :total-count="0"

@@ -20,7 +20,7 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   // Whether something covers the world, which then keeps loading but draws no frames until it is shown
-  isPaused?: true;
+  isPaused: boolean;
   // The reader's game language, whose names the world loads
   language: GameLanguage;
   // The player's save the world starts from, and the server's clock minus this machine's, which its timers are read by
@@ -45,23 +45,23 @@ onMounted(() => {
 
 <template>
   <WorldScreen
-    :account-avatar-url="session.data?.user.image ?? undefined"
-    :account-character-packs
-    :account-file-base-url="isSignedIn ? GENSHIN_ACCOUNT_CHARACTER_PACK_FILE_BASE_URL : undefined"
+    :account-avatar-url="session.data?.user.image ?? ''"
+    :account-character-packs="accountCharacterPacks ?? []"
+    :account-file-base-url="isSignedIn ? GENSHIN_ACCOUNT_CHARACTER_PACK_FILE_BASE_URL : ''"
     :account-name="session.data?.user.name"
-    :character-pack-base-url="IS_DEVELOPMENT ? GENSHIN_CHARACTER_PACK_BASE_URL : undefined"
+    :character-pack-base-url="IS_DEVELOPMENT ? GENSHIN_CHARACTER_PACK_BASE_URL : ''"
     :create-terrain-worker="() => new TerrainTileWorker()"
     :game-data-base-url="getGenshinGameDataBaseUrl(containerBaseUrl)"
     :game-text
     :is-paused
-    :is-tuning="IS_DEVELOPMENT || undefined"
+    :is-tuning="IS_DEVELOPMENT"
     :keep-account-character-pack="isSignedIn ? keepAccountCharacterPack : undefined"
     :language
     :quality-tier="GENSHIN_QUALITY_TIER"
     :remove-account-character-pack="isSignedIn ? removeAccountCharacterPack : undefined"
     :region-data-base-url="GENSHIN_REGION_DATA_BASE_URL"
     :save
-    :scene-export-base-url="IS_DEVELOPMENT ? GENSHIN_SCENE_EXPORT_BASE_URL : undefined"
+    :scene-export-base-url="IS_DEVELOPMENT ? GENSHIN_SCENE_EXPORT_BASE_URL : ''"
     :server-clock-offset-ms
     @grant="emit('grant')"
     @quit="navigateTo(RoutePath.Index)"

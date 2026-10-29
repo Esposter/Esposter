@@ -13,7 +13,7 @@ import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 // Scene goes; one still loading when it stops being wanted is freed as it arrives. With no host, an index that fails to
 // Load or a component that fails, each logged, nothing of it is drawn and the stand-ins stay
 export const useSceneExports = (
-  sceneExportBaseUrl: string | undefined,
+  sceneExportBaseUrl: string,
   getComponents: () => readonly string[],
   componentFamilyMeshRegexMap: Readonly<Record<string, Readonly<Record<string, RegExp>>>>,
   createMaterial: WitnessMaterialFactory,

@@ -8,17 +8,17 @@ import type { GameLanguage, GameText } from "genshin-text";
 // The props the world's screen takes from its host, which it loads the game's names and tables for before it opens
 export interface WorldScreenProps {
   // The signed-in player's avatar and name, which the Paimon menu's profile card shows, given while the player is signed in
-  accountAvatarUrl?: string;
+  accountAvatarUrl: string;
   // The player's account's packs, and where its files are served, given while the player is signed in: a pack it lists
   // Draws its character ahead of the host's
-  accountCharacterPacks?: AccountCharacterPack[];
-  accountFileBaseUrl?: string;
+  accountCharacterPacks: AccountCharacterPack[];
+  accountFileBaseUrl: string;
   accountName?: string;
   // A camera held still, as a reference of the game's sees the world, in place of the one circling the oak
   cameraPose?: WorldCameraPose;
   // Where the host serves the characters' model packs: the index of the ids it holds one for, and under each id that
   // Pack's model, terms and textures. Without it a character is drawn only from a pack the player loaded
-  characterPackBaseUrl?: string;
+  characterPackBaseUrl: string;
   createTerrainWorker: () => Worker;
   // Where the host serves the game's own tables and words, each object fetched by the hash the lock names
   gameDataBaseUrl: string;
@@ -27,9 +27,9 @@ export interface WorldScreenProps {
   // The game's minute of the day the clock is held at, as a reference of the game's shows it
   heldMinutes?: number;
   // Whether something covers the world, which then keeps loading but draws no frames until it is shown
-  isPaused?: true;
+  isPaused: boolean;
   // Whether the development tuning panel is shown, which the host decides
-  isTuning?: true;
+  isTuning: boolean;
   // Keeps a pack for the account and drops one from it, given while the player is signed in
   keepAccountCharacterPack?: (characterPack: CharacterPack) => Promise<void>;
   // The reader's game language, whose names the world loads
@@ -43,7 +43,7 @@ export interface WorldScreenProps {
   // Where the host serves the developer's own exports of the game's scenes: the index of the components it holds, and
   // Under each its witness layout and the meshes and textures the layout names. Without it every scene is drawn from our
   // Own stand-ins alone, as everywhere but the development server
-  sceneExportBaseUrl?: string;
+  sceneExportBaseUrl: string;
   // The server's clock minus this machine's, which every saved timer is read against
-  serverClockOffsetMs?: number;
+  serverClockOffsetMs: number;
 }

@@ -25,12 +25,20 @@ import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 // Served from the parity page's public directory, which is its `src/data`
 export const isMotionOnly = true;
 export const props = {
+  accountAvatarUrl: "",
+  accountCharacterPacks: [],
+  accountFileBaseUrl: "",
+  characterPackBaseUrl: "",
   createTerrainWorker: () => new TerrainTileWorker(),
   gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
   gameText: ENGLISH_GAME_TEXT,
+  isPaused: false,
+  isTuning: false,
   language: GameLanguage.English,
   qualityTier: QualityTier.High,
   regionDataBaseUrl: "regions",
+  sceneExportBaseUrl: "",
+  serverClockOffsetMs: 0,
 };
 export const readyEvent = "ready";
 // Windrise's claims on its exports, and each capital's own on its region's, so no renderer of theirs falls to

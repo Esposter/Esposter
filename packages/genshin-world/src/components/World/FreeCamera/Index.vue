@@ -14,7 +14,7 @@ interface Props {
   // The frame's input, which the world screen reads once a frame before the camera moves
   inputState: InputState;
   // Whether a screen over the world holds it, which stops the camera's look and its steps where they are
-  isHeld?: true;
+  isHeld: boolean;
   // The world coordinate the scene's origin stands on, which the floating origin moves and the ground is read through
   origin: Vector3;
   // The water's level, which the camera keeps above

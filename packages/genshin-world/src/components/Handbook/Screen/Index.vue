@@ -34,7 +34,7 @@ interface Props {
   // Whether the Adventure Encounters panel is open at the player's Adventure Rank, so its stage rewards show
   isAdventureEncountersUnlocked: boolean;
   // The panel's reward footer, shown once every reward is taken
-  isRewardClaimed?: true;
+  isRewardClaimed: boolean;
   // The Long-Term Encounter Points held, as whole points, which the Commissions tab's stage rewards count
   longTermEncounterPoints: number;
   // The names the commissions' titles cite, by their name text id, in the reader's language

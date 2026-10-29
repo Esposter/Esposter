@@ -27,7 +27,7 @@ interface Props {
   // The world's ground at a point in its own coordinates, which each landmark stands on
   getGroundHeight: (x: number, z: number) => number;
   // The kinds a witness render draws in place of ours, which stay mounted, unseen
-  hiddenKinds?: LandmarkKind[];
+  hiddenKinds: LandmarkKind[];
   // The witness family each kind's landmarks stand for, marked on their groups so a witness render draws ours of it
   kindFamilyMap?: Partial<Record<LandmarkKind, string>>;
   // What the body and the camera collide with, given each landmark as it arrives
@@ -50,7 +50,7 @@ interface Props {
 
 const {
   getGroundHeight,
-  hiddenKinds = [],
+  hiddenKinds,
   kindFamilyMap = {},
   landmarkCollider,
   lightUniforms,

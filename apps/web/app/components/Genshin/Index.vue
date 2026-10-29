@@ -66,7 +66,7 @@ const emit = defineEmits<{ load: []; ready: [] }>();
       <LazyGenshinWorld
         v-if="isDoorOpened && isSaveLoaded"
         :game-text="gameText.text"
-        :is-paused="isOpeningShown || isReplaced || undefined"
+        :is-paused="isOpeningShown || isReplaced"
         :language="gameText.language"
         :save="initialSave"
         :server-clock-offset-ms
