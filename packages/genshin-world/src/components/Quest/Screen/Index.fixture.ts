@@ -26,6 +26,7 @@ const createQuest = (id: string, kind: QuestKind): Quest => ({
 // Text ids are readable names for this fixture alone, not the game's
 export const props = {
   gameText: ENGLISH_GAME_TEXT,
+  listScroll: 65,
   questChapters: [
     {
       id: "hesperides-of-love-and-hate",

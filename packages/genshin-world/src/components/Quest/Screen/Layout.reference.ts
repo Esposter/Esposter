@@ -24,7 +24,7 @@ export const layoutTopic: ReferenceTopic = {
         "Each line's ink width off the still against the stand-in face's at the same capitals, the face letter-spaced out to the still's width (interface.md): the details' title, journal, objective and first description line measured by eye at 1:1 against the fixture's render",
       outcome: InvestigationOutcome.Adopted,
       result:
-        "The title spaced 2 units, the journal 1, the objective 1.4 and the description 0.6. The description's first line still breaks after so, where the still breaks after Graeae, and a description at 0.8 moved the detail's mean the wrong way, so it stays at 0.6. A title at 2.5 lowered the mean but lost shape, so it stays at 2",
+        "The title spaced 2 units, the journal 1, the objective 1.4 and the description 0.6. The description's measure is 860 units, not the 899 its box holds, so its first line breaks after Graeae as the still does: at 899 it broke after so. A description at 0.8 moved the detail's mean the wrong way, so it stays at 0.6. A title at 2.5 lowered the mean but lost shape, so it stays at 2",
     },
     {
       method:
@@ -65,9 +65,15 @@ export const layoutTopic: ReferenceTopic = {
       result:
         "Quest Overview is UI_QUESTHUB_BUTTON_NAME, Cancel Navigation TASK_TRACK_CLEAR and each list's heading its TASK_TYPE line. In Progress and a distance's {0}m have no line named for the quest screen, so the plainest In Progress (UI_TEXT_DOING) and the Miliastra editor's metre length {0}m (UI_BEYOND_EDITOR_PROTOTYPE_LINE_METER) stand in, provisionally. The rewards' caption, Complete the quest series to unlock … and obtain rewards, is in no line the install holds",
     },
+    {
+      method:
+        "The list's rows against the still's, the first commission row's title and figures read at 4 times: the list opening at its top sits 65 lower than the still, which is scrolled down to its commissions",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The fixture opens the list 65 units down (`listScroll`), so the commissions sit where the still has them and the Commission Quests heading is cut above the list's top, as in the still",
+    },
   ],
   openQuestions: [
-    "The list's scroll: the still's list is scrolled down to its commissions (its thumb from 487 to 600 of a track from 118 to 945), which a list opening at its top cannot show, so the fixture opens with the Commission Quests heading over them and everything under it sits 65 lower than the still's",
     "Whether the commissions' heading is Commission Quests under the Commission tab's mark, as the World Quests heading is the World tab's",
     "The blue bar with a white diamond along the first quest of each series: what it marks is not known, so it is not drawn",
     "The selected row's look: the still shows no selected row, so the selected one is ringed in the game's cream",

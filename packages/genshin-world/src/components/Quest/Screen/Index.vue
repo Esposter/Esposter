@@ -30,6 +30,8 @@ interface Props {
   // How far each quest in progress's objective stands from the player, in metres, by quest id, for those with a place
   questDistanceMap: ReadonlyMap<string, number>;
   questProgressMap: ReadonlyMap<string, QuestProgress>;
+  // How far the list is scrolled down, in units, 0 with it at its top
+  listScroll?: number;
   // The quests in progress
   quests: Quest[];
   // The quests' own words in the reader's language, by the game's text id
@@ -40,6 +42,7 @@ interface Props {
 
 const {
   gameText,
+  listScroll = 0,
   questChapters = [],
   questDistanceMap,
   questProgressMap,
@@ -48,6 +51,11 @@ const {
   trackedQuestId,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; navigate: [questId: string] }>();
+const listElement = ref<HTMLElement>();
+// The list is 666 units wide, so its width's 666th is a unit in pixels
+onMounted(() => {
+  if (listElement.value) listElement.value.scrollTop = listScroll * (listElement.value.clientWidth / 666);
+});
 // The tab open, none for the first, which lists every quest
 const category = ref<QuestCategory>();
 const selectedQuestId = ref(trackedQuestId || (quests[0]?.id ?? ""));
@@ -145,7 +153,7 @@ useEventListener("keydown", (event) => {
       </div>
     </template>
     <template #list>
-      <div class="list" role="tabpanel" :aria-label="listTitle">
+      <div ref="listElement" class="list" role="tabpanel" :aria-label="listTitle">
         <section v-for="{ chapters, questCategory, rowQuests } of questGroups" :key="questCategory">
           <p class="heading" role="heading" aria-level="2">
             <svg class="heading-mark" aria-hidden="true" viewBox="0 0 60 64">
@@ -331,6 +339,16 @@ useEventListener("keydown", (event) => {
   margin-top: calc(var(--unit) * 13);
 }
 
+/* Its words spaced out to the still's line width, about 0.8 a letter over the stand-in face */
+.quest {
+  letter-spacing: calc(var(--unit) * 0.8);
+}
+
+/* Its capitals 2 lower than the row's own title, where the still's commission titles sit */
+.quest :deep(.title) {
+  top: calc(var(--unit) * 18 - 0.141em);
+}
+
 /* Provisional: the still shows no selected row, so the selected one is ringed in the game's cream */
 .quest.selected {
   box-shadow: 0 0 0 calc(var(--unit) * 2) #ece5d8;
@@ -352,20 +370,21 @@ useEventListener("keydown", (event) => {
   font-weight: 600;
 }
 
-/* Their left 46 in from the list's, inside the blue bar */
+/* Their left 39.3 in from the row's inner edge, inside the blue bar */
 .chapter-title,
 .chapter-number,
 .chapter-region {
   position: absolute;
-  left: calc(var(--unit) * 41);
+  left: calc(var(--unit) * 39.3);
   white-space: nowrap;
 }
 
-/* Its capitals' tops 17 below the row's */
+/* Its capitals' tops 17 below the row's, spaced out to the still's line width */
 .chapter-title {
   top: calc(var(--unit) * 13.05);
   color: #d0be9a;
   font-size: calc(var(--unit) * 28);
+  letter-spacing: calc(var(--unit) * 1.6);
   line-height: calc(var(--unit) * 28);
 }
 
@@ -484,7 +503,7 @@ useEventListener("keydown", (event) => {
   display: flex;
   height: calc(var(--unit) * 56);
   box-sizing: border-box;
-  padding: calc(var(--unit) * 13.8) calc(var(--unit) * 17) 0 calc(var(--unit) * 54);
+  padding: calc(var(--unit) * 15.4) calc(var(--unit) * 17) 0 calc(var(--unit) * 54);
   background: rgb(0 0 0 / 0.1);
   color: #ece7e1;
   font-size: calc(var(--unit) * 26);
@@ -502,7 +521,7 @@ useEventListener("keydown", (event) => {
   position: absolute;
   top: calc(var(--unit) * 313.7);
   left: calc(var(--unit) * 1);
-  width: calc(var(--unit) * 899);
+  width: calc(var(--unit) * 860);
   color: #ede7df;
   font-size: calc(var(--unit) * 27);
   letter-spacing: calc(var(--unit) * 0.6);
@@ -578,11 +597,12 @@ useEventListener("keydown", (event) => {
   font-size: calc(var(--unit) * 27);
 }
 
-/* Its capitals' tops 20.5 below the pill's */
+/* Its capitals' tops 20.5 below the pill's, its words spaced out to the still's width */
 .overview {
   left: calc(var(--unit) * 144);
   padding-left: calc(var(--unit) * 59);
   color: #3a414e;
+  letter-spacing: calc(var(--unit) * 1.8);
   line-height: calc(var(--unit) * 62);
   text-align: start;
 }
@@ -615,6 +635,7 @@ useEventListener("keydown", (event) => {
   left: calc(var(--unit) * 66);
   display: grid;
   width: calc(var(--unit) * 190);
+  letter-spacing: calc(var(--unit) * 1.6);
   line-height: calc(var(--unit) * 30);
   place-items: center;
   text-align: center;
