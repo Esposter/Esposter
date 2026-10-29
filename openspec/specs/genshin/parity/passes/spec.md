@@ -50,9 +50,9 @@ The passes command SHALL run each pass's measure in order and stop at the first 
 - **THEN** the motion pass is printed as not owed
 - **AND** the run goes on past it
 
-### Requirement: Exact game data outranks a value measured from a recording
+### Requirement: Exact game data outranks a value measured from a reference
 
-A derived value SHALL come from the game's own exact data before any value measured from a recording, and a recording SHALL measure only what the game's data does not hold (see Open).
+A derived value SHALL come from the game's own exact data before any value measured from a reference, so a reference measures only what the game's data does not hold (see Open).
 
 #### Scenario: Anchor from the game's data
 
@@ -61,11 +61,11 @@ A derived value SHALL come from the game's own exact data before any value measu
 - **THEN** the anchor from the game's data is used
 - **AND** the timing is not measured from the recording
 
-#### Scenario: Value only a recording holds
+#### Scenario: Value only a reference holds
 
 - **GIVEN** a camera pose the game's data does not hold
 - **WHEN** the value is derived
-- **THEN** it is read from the recording
+- **THEN** it is read from the reference
 
 ### Requirement: Every derived value cites its source
 
@@ -118,4 +118,4 @@ The pass option SHALL run the passes up to and including one named pass, and rew
 
 ## Open
 
-- [ ] **Exact game data outranks a value measured from a recording** — no source yet: no check traced the anchor and timing choice in the derivation for a rect; the rule is held in the passes design, not in code.
+- [ ] **Exact game data outranks a value measured from a reference** — no source yet: no check traced the anchor and timing choice in the derivation for a rect; the rule is held in the passes design, not in code.

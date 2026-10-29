@@ -30,27 +30,15 @@ A reference drawn behind an interface SHALL be compared over a clean plate whose
 
 ### Requirement: Translucent glass is coloured from the scene behind it
 
-Translucent glass drawn over a recording SHALL be coloured from the scene around it before the screen is scored (see Open).
+Translucent glass drawn over a reference screenshot SHALL be coloured from the scene around it before the screen is scored (see Open).
 
-#### Scenario: Prompt band over a recording
+#### Scenario: Prompt band over a reference screenshot
 
-- **GIVEN** a translucent prompt band drawn over a recording
+- **GIVEN** a translucent prompt band drawn over a reference screenshot
 - **WHEN** the screen is scored
 - **THEN** the band's colour is solved from the scene around it (see Open)
 - **AND** the opaque pieces and their placements are scored as drawn
 
-### Requirement: A capture is compared untagged
-
-A captured frame SHALL be written for comparison without the colour tags its file states, so a browser does not colour-manage it a second time and draw it darker than its file.
-
-#### Scenario: Tagged capture written untagged
-
-- **GIVEN** a capture whose file is tagged with its gamma and primaries
-- **WHEN** the frame is written for comparison
-- **THEN** the frame is untagged
-- **AND** its brightness matches the darkness of its file (see Open)
-
 ## Open
 
 - [ ] **Translucent glass's colour is solved from the scene around it** — no source yet: no solver for translucent glass was found under `scripts/src/services/genshinParity` or `scripts/src/services/recreation`.
-- [ ] **A written frame's brightness matches its file** — no source yet: no brightness comparison of a written frame against its tagged file was run.

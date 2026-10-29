@@ -103,16 +103,9 @@ The pose command SHALL solve the camera from the reference's landmarks and print
 - **WHEN** the operator runs pose with the write option
 - **THEN** the pose is not written
 
-### Requirement: Track and scroll follow a recording's motion
+### Requirement: Scroll follows a screen's state, not a recording's motion
 
-The track command SHALL solve the pose at each sampled frame of a recording, and the scroll command SHALL print how far a scene's scrolling rows stand from where the reference shows them.
-
-#### Scenario: Pose tracked through a recording
-
-- **GIVEN** a reference recording and a time window
-- **WHEN** the operator runs track over that window
-- **THEN** the pose is solved at each sampled frame
-- **AND** each pose is refined from the frame before
+The scroll command SHALL print how far a scene's scrolling rows stand from where the reference shows them.
 
 #### Scenario: Scrolling rows measured
 
@@ -156,7 +149,7 @@ The launch, still and record commands SHALL start the game, capture its window o
 
 ### Requirement: Image commands report what they read from a reference or capture
 
-The measure, zoom, luma, frames, polar and trace commands SHALL read an image, a folder of frames or a capture and report what they read.
+The measure, zoom, luma, polar and trace commands SHALL read an image, a folder of frames or a capture and report what they read.
 
 #### Scenario: Luma curve across images
 

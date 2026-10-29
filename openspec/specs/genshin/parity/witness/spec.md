@@ -106,17 +106,6 @@ A scrolling row SHALL stand where the exports lay it, with only its phase along 
 - **THEN** the row stands where the exports lay it
 - **AND** only its phase along the glide is read from the reference
 
-### Requirement: The glide's pace is read from a repeating landmark
-
-The pace of a glide SHALL be read from a repeating landmark's crossings of a column, paired with the crossing a known number of repeats later.
-
-#### Scenario: Pace read from crossings
-
-- **GIVEN** a repeating landmark crossing a column of a recording at two known repeats apart
-- **WHEN** the pace is read
-- **THEN** the pace is read over the time between the two crossings
-- **AND** each crossing's time is the recording's own frame time
-
 ## Open
 
 - [ ] **The parts in one frame share one camera, with a barely fixed axis taken from a part that fixes it** — no source yet: the shared-camera solve in `scripts/src/services/genshinParity/witness/solveCameraPose.ts` was not traced for that axis rule.

@@ -1,6 +1,6 @@
 ## 1. Recordings
 
-- [ ] 1.1 Obtain `japanese-launch.mkv` and `korean-launch.mkv` from the PC launches, each from the first frame of the client's window, and read the Japanese and Korean splashes, notices and doors from them. Verify: each recording's frames at its splash, notice and door stages are taken into the parity references, and the user confirms the recordings are the PC clients' own launches.
+- [ ] 1.1 Obtain `japanese-launch.mkv` and `korean-launch.mkv` from the PC launches, each from the first frame of the client's window, and read the Japanese and Korean splashes, notices and doors from them. Verify: the splash, notice and door stills are cut by hand and named in `ParityReferenceMap` by `source`, and the user confirms the recordings are the PC clients' own launches.
 
 ## 2. Measuring the differences
 

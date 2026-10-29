@@ -6,7 +6,7 @@ The opening already speaks the reader's language: its words come from [game text
 
 ```mermaid
 flowchart LR
-  Videos["Recordings of each client's opening<br/>Chinese, Japanese, Korean"] --> Frames["genshin:parity frames<br/>splashes, title, door"]
+  Videos["Recordings of each client's opening<br/>Chinese, Japanese, Korean"] --> Frames["Stills cut by hand from each recording"]
   Frames --> Measure["measure what differs:<br/>the publisher's logo, the text's sizes and wraps"]
   Measure --> Screens["Each screen's layout keyed by language<br/>where it differs, one layout where it does not"]
   Screens --> Visual["A visual suite image per language that differs"]

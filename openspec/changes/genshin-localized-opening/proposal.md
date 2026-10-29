@@ -23,4 +23,4 @@ The opening's publisher splash and screen layouts follow each client's language 
 
 ## Impact
 
-The publisher splash and its logo per client, the opening's screen layouts keyed by language where they differ, and the visual suite's images per language. The parity reference map that names each screen's recordings.
+The publisher splash and its logo per client, the opening's screen layouts keyed by language where they differ, and the visual suite's images per language. The parity reference map that names each screen's screenshot references.

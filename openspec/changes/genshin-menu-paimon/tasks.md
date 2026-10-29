@@ -1,6 +1,6 @@
 ## 1. The reference
 
-- [ ] 1.1 Replace the held menu reference with `menu-paimon-current.png`, the menu on the current build at 1080 high with no screen open, and read the open and close timings from `menu-paimon.mkv` once its clip lands. Verify: the menu's visual suite compares against the current-build reference, and the open and close timings are read from frames of the clip with the frames command.
+- [ ] 1.1 Replace the held menu reference with `menu-paimon-current.png`, the menu on the current build at 1080 high with no screen open, and read the open and close timings from `menu-paimon.mkv` once its clip lands. Verify: the menu's visual suite compares against the current-build reference, and the open and close timings are read by hand from the clip's frames.
 
 ## 2. Paimon beside the menu
 

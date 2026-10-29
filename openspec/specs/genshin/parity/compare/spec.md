@@ -96,15 +96,9 @@ A screen SHALL NOT be approved unless it has been compared against a reference, 
 - **WHEN** the screen is approved
 - **THEN** the approval rests on that reference's comparison
 
-### Requirement: Cropped and other-language references are compared as they show
+### Requirement: A reference in another language is compared in its own words
 
-A public video that letterboxes the game SHALL be cropped to its screen, and a reference recorded in another language SHALL give its screen that language's words.
-
-#### Scenario: Letterboxed video
-
-- **GIVEN** a public video that letterboxes the game
-- **WHEN** its reference is compared
-- **THEN** the video is cropped to the game's screen first (`crop`)
+A reference recorded in another language SHALL give its screen that language's words.
 
 #### Scenario: Reference in another language
 

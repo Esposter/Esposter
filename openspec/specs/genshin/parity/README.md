@@ -6,11 +6,11 @@ The Genshin area recreates the game's own screens, so "does it look right" has a
 
 ```mermaid
 flowchart TD
-  WIKI[Wiki images and animations] --> FETCH[fetch / frames]
+  WIKI[Wiki images and animations] --> FETCH[fetch]
   GAME[The installed game] --> CAP[still / record]
-  CAP --> FRAMES[frames: fixed-rate stills and a contact sheet]
+  CAP --> SAMPLE[Labelled screenshots sampled by hand, outside the repository]
   FETCH --> REF[(References, outside the repository)]
-  FRAMES --> REF
+  SAMPLE --> REF
   REF --> TRACE[trace: a mark as one SVG path, full resolution]
   TRACE --> SCREEN[Screen component and its fixture, in the world package]
   REF --> MEASURE[measure / zoom: colours, sizes, positions]
@@ -34,7 +34,7 @@ The steps are the commands of `scripts/src/services/genshinParity/commands/` (`g
 - [Comparison](compare/design.md): the scores, FLIP and the committed report.
 - [Light](light/design.md): the stone light solved from a reference.
 - [Passes](passes/design.md): a new screen derived in passes, each with its measure.
-- [Motion](motion/design.md): motion matched frame by frame.
+- [Motion](motion/design.md): motion matched at sampled moments, never by recording.
 - [Visual suite](visual-suite/design.md): approved screens held by the browser suite.
 - [Costs](costs/design.md): the loop's cost, the benches and the GPU reduction.
 - [Commands](commands/design.md): every `genshin:parity` command.

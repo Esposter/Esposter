@@ -22,21 +22,21 @@ Each screen and each of its variants SHALL have one approved image beside its co
 - **WHEN** the visual suite resolves its image
 - **THEN** the run fails and names the screen
 
-### Requirement: Every reference the repository compares is a screenshot it holds
+### Requirement: Every reference the parity run compares is a screenshot
 
-A reference SHALL be a screenshot of the game kept in the repository, so no comparison reads a recording.
+A reference SHALL be a screenshot of the game that the parity folder holds, so no comparison reads a recording.
 
-#### Scenario: Reference is a screenshot the repository holds
+#### Scenario: Reference is a screenshot the parity folder holds
 
-- **GIVEN** a reference entry whose image is a screenshot kept in the repository
-- **WHEN** the reference test runs
+- **GIVEN** a reference entry whose image is a screenshot held in the parity folder
+- **WHEN** the reference map is typechecked
 - **THEN** the entry is accepted
 
 #### Scenario: Reference reads a recording
 
 - **GIVEN** a reference entry that names a recording to read
-- **WHEN** the reference test runs
-- **THEN** the run fails and names the entry
+- **WHEN** the reference map is typechecked
+- **THEN** typecheck fails and names the entry
 
 ### Requirement: A subscreen's image is approved only once its own compare clears
 

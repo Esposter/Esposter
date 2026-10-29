@@ -24,7 +24,7 @@ An item missing any of these is not queued: the gap is a call, and calls are the
 
 ## The lanes
 
-- **`[page]`** covers anything that drives the parity page: `compare`, `rank`, `film`, `listen`, `calibrate` and every witness command.
+- **`[page]`** covers anything that drives the parity page: `compare`, `rank`, `listen`, `calibrate` and every witness command.
   - It renders on the GPU, and an edit to world or engine source reloads the page and kills every run on it.
   - So the lane has **one runner**, working in **one runner worktree**: `.agents/worktrees/runner`, cut from `origin/ai/queue`, installed once and reused, and fast-forwarded between items. Its parity page is served from that worktree on port 3002 (`pnpm -C packages/genshin-world parity`), and each of its `genshin:parity` commands sets `GENSHIN_PARITY_PORT=3002`, since the default names the shared checkout's page.
   - A batch's edits in the shared checkout never touch it.

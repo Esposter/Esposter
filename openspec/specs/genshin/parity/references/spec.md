@@ -6,7 +6,7 @@ Where a parity screen's reference images and recordings come from, how the insta
 
 ### Requirement: Reference images are kept outside the repository
 
-Reference images SHALL be kept outside the repository, which SHALL hold only the reference each screen is judged against, named by its wiki file or by the recording and the second it is taken at.
+Reference images SHALL be kept outside the repository, which holds only the reference each screen is judged against, named by its wiki file or by a `source` string naming the recording and the second it was sampled from.
 
 #### Scenario: Reference fetched
 

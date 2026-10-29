@@ -1,19 +1,19 @@
 ## Purpose
 
-Motion is matched frame by frame against sampled recordings, with a scene's own motion filmed on a faked clock.
+Motion is matched at the moments a person samples from a recording as labelled screenshots, and the repository never reads the recording.
 
 ## Requirements
 
-### Requirement: A recording's motion is matched frame by frame
+### Requirement: A moment of motion is matched by a screenshot
 
-A recording's events SHALL be found by sampling it at ten frames a second (see Open), and each event SHALL then be read at its full rate over its own window.
+A moment of a screen's motion SHALL be matched against a labelled screenshot sampled from the recording outside the repository, never against the recording.
 
-#### Scenario: Events found and read
+#### Scenario: Moment matched
 
-- **GIVEN** a recording with motion in it
-- **WHEN** the motion is matched
-- **THEN** the recording is first sampled at ten frames a second to find its events (see Open)
-- **AND** each event is then read at its full rate over its own window
+- **GIVEN** a screen with a transition and a recording of the transition
+- **WHEN** the transition is matched
+- **THEN** each moment is compared against a screenshot a person sampled at that second
+- **AND** the recording is never read by the repository
 
 ### Requirement: A screen's motion is held at its start and then played by its fixture
 
@@ -33,52 +33,20 @@ The parity page SHALL hold a screen's own animations at their start as it mounts
 
 ### Requirement: A fade or a wipe is judged by a curve of one region's darkness
 
-A fade's duration and a wipe's steps SHALL be read from the curve of one region's darkness across both sets of frames, not judged by eye.
+A fade's duration and a wipe's steps SHALL be read from the curve of one region's darkness across the screenshots sampled from the recording and across our shots, not judged by eye.
 
-#### Scenario: Fade compared with its recording
+#### Scenario: Fade compared with its screenshots
 
-- **GIVEN** a fade in a screen and a recording of the fade
-- **WHEN** the darkness of one region is printed across both sets of frames
+- **GIVEN** a fade in a screen and screenshots sampled from a recording of the fade
+- **WHEN** the darkness of one region is printed across both sets of images
 - **THEN** the fade's duration is read from the two curves
 
-### Requirement: A fit to a window capture is judged over the whole curve
+### Requirement: A window capture is sampled outside the repository
 
-A curve taken from window capture SHALL be judged over the whole curve, since frames skipped by capture make it jitter by a frame or two.
+A window capture SHALL be sampled into labelled screenshots outside the repository, so the repository compares only those screenshots.
 
-#### Scenario: Curve with skipped frames
+#### Scenario: Window capture sampled
 
-- **GIVEN** a curve taken from window capture, where frames were skipped
-- **WHEN** a fit is judged
-- **THEN** the fit is judged over the whole curve rather than one frame
-
-### Requirement: A scene's own motion is filmed on a faked clock
-
-A scene's motion SHALL be filmed on a clock the tool moves one frame at a time, so the screen is shot at exact moments however slowly the page draws.
-
-#### Scenario: Scene filmed at exact moments
-
-- **GIVEN** a scene whose motion runs on its frames' clock
-- **WHEN** the scene is filmed
-- **THEN** the page's clock is moved a frame at a time
-- **AND** the screen is shot at the exact moments requested
-
-### Requirement: Props are set at the moments a click or a load would set them
-
-The parity page SHALL set a screen's props at moments that play its stages as a click or a load would, and SHALL place the stills beside a recording sampled at the same rate.
-
-#### Scenario: Stages played as a click would
-
-- **GIVEN** a screen with props that change its stages
-- **WHEN** the props are set at their moments
-- **THEN** each stage is shot as a click or a load would show it
-- **AND** the stills are placed in a contact sheet beside the recording sampled at the same rate
-
-### Requirement: With the witness, a scene's motion is filmed on the game's exports
-
-When the witness is used, the scene's motion SHALL be filmed on the game's exports in place of our parts.
-
-#### Scenario: Witness film
-
-- **GIVEN** a scene filmed with the witness
-- **WHEN** the film is shot
-- **THEN** the game's exports are drawn in place of our parts
+- **GIVEN** a window capture of the game
+- **WHEN** it is compared
+- **THEN** only its sampled screenshots are compared
