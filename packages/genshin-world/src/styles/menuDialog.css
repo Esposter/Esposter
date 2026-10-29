@@ -1,6 +1,5 @@
-/* The prompt's scale is the game's own 1080 high unit, since the 2026 recording of the whole prompt fixes its pixels:
-   The dialog is 960 by 606 reference pixels, centred, and each choice sits 70 pixels in from its side of the dialog */
-.exit,
+/* The World Level prompt's scale is the game's own 1080 high unit, since the 2026 recording of the whole prompt fixes its
+   pixels: The dialog is 960 by 606 reference pixels, centred, and each choice sits 70 pixels in from its side of the dialog */
 .world-level-prompt {
   --reference-pixel: calc(var(--unit) * 1);
 }

@@ -27,13 +27,7 @@ onMounted(() => {
        confirm leaves for the login interface, the app's home, since the browser cannot close the game. The 2026 build
        draws a cream panel with gold brackets at its corners and two slate pills, each with a disc at its left: Cancel's
        blue cross and Confirm's gold ring -->
-  <GameScreen
-    class="exit"
-    role="dialog"
-    aria-modal="true"
-    :aria-label="gameText[GameTextKey.QuitConfirmQuestion]"
-    :interaction-state
-  >
+  <GameScreen class="exit" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.QuitConfirmQuestion]">
     <div class="backdrop" />
     <div class="dialog">
       <span class="bracket bracket-top-left" />
@@ -69,7 +63,7 @@ onMounted(() => {
 }
 
 /* The menu behind the prompt is drawn by the game and not by the page, so the dim is solved from the frame's own margin
-   round the panel (its mean over the 2026 frame at 29 seconds, `yt-kIDee7nyD0w`), which the page's white draws at 66% */
+   round the panel (its mean over the 2026 frame at 29 seconds, `yt-kIDee7nyD0w`), which the page's black draws at 66% */
 .exit .backdrop {
   position: absolute;
   inset: 0;
