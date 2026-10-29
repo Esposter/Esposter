@@ -205,7 +205,7 @@ watch(
           >
             <svg class="age-rating" viewBox="0 0 84 110" role="img" aria-label="12+">
               <rect class="age-rating-white" width="84" height="110" rx="6" />
-              <rect x="7" y="8" width="70" height="78" rx="4" fill="#178ed0" />
+              <rect x="6.3" y="7.5" width="70.7" height="79.5" rx="4" fill="#178ed0" />
               <path class="age-rating-white" :d="ageRating.age" transform="translate(9 10) scale(0.125)" />
               <text x="42" y="83" class="age-rating-white age-rating-name">CADPA</text>
               <path :d="ageRating.notice" transform="translate(2 87) scale(0.125)" fill="#111" />
