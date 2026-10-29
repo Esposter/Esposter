@@ -5,7 +5,7 @@ describe("waterfallSheetSchema", () => {
   test("reads a sheet whose across is a unit direction and refuses one whose across is none", () => {
     expect.hasAssertions();
 
-    const sheet = { across: { x: 0.6, y: 0, z: 0.8 }, drop: 3, lip: { x: 1, y: 2, z: 3 }, width: 4 };
+    const sheet = { across: { x: 0.6, y: 0, z: 0.8 }, drop: 0, lip: { x: 0, y: 0, z: 0 }, width: 0 };
 
     expect({
       accepted: waterfallSheetSchema.safeParse(sheet).success,

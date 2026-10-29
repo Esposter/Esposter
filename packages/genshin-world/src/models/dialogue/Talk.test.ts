@@ -3,6 +3,8 @@ import { TALK } from "#src/services/dialogue/constants.test";
 import { describe, expect, test } from "vitest";
 
 describe("talkSchema", () => {
+  const NONEXISTENT_ID = "-1";
+
   test("takes a talk naming only the lines it holds", () => {
     expect.hasAssertions();
 
@@ -15,8 +17,8 @@ describe("talkSchema", () => {
     const [firstLine, ...lines] = TALK.lines;
 
     expect([
-      talkSchema.safeParse({ ...TALK, startLineId: "missing" }).success,
-      talkSchema.safeParse({ ...TALK, lines: [{ ...firstLine, nextLineIds: ["missing"] }, ...lines] }).success,
+      talkSchema.safeParse({ ...TALK, startLineId: NONEXISTENT_ID }).success,
+      talkSchema.safeParse({ ...TALK, lines: [{ ...firstLine, nextLineIds: [NONEXISTENT_ID] }, ...lines] }).success,
     ]).toStrictEqual([false, false]);
   });
 });

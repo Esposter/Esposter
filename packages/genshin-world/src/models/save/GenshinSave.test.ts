@@ -1,5 +1,3 @@
-import type { CharacterSave } from "#src/models/character/CharacterSave";
-
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute, Attributes } from "#src/models/character/Attribute";
@@ -61,29 +59,14 @@ import { BannerKind } from "genshin-interface/save";
 import { describe, expect, test } from "vitest";
 
 describe("genshinSaveSchema", () => {
-  // A character the player holds at its least: level one, one copy, and nothing worn or wielded beyond its own weapon
-  const CHARACTER: CharacterSave = {
-    artifacts: [],
-    ascension: 0,
-    constellationCount: 0,
-    copyCount: 1,
-    id: 1,
-    level: 1,
-    stellaFortunaCount: 0,
-    talentLevels: {
-      [CombatTalent.ElementalBurst]: 1,
-      [CombatTalent.ElementalSkill]: 1,
-      [CombatTalent.NormalAttack]: 1,
-    },
-    weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
-  };
+  const baseMail = { deliveredAt: new Date(0).toISOString(), id: 1, isClaimed: false, isPinned: false, isRead: false };
+  const epoch = Temporal.Instant.fromEpochMilliseconds(0);
 
   // The ceiling is each collection's cap times its longest entry, so a save with every collection at its cap, each
   // Number at its largest and each instant at its longest, is under it and passes the refine
   test("accepts a save at every cap, each number and instant at its longest", () => {
     expect.hasAssertions();
     const maxNumber = Number.MAX_SAFE_INTEGER;
-    const epoch = Temporal.Instant.fromEpochMilliseconds(0);
     const maxInstant = epoch.add({ nanoseconds: 999_999_999 }).toString();
     // A bag of artifacts at its cap, each at its longest, since an artifact is the longest entry the bag holds
     const artifactItems = Array.from({ length: MAX_INVENTORY_ITEM_COUNT }, (_value, index) => ({
@@ -275,7 +258,7 @@ describe("genshinSaveSchema", () => {
         downCharacterIds: Array.from({ length: MAX_CHARACTER_COUNT }, (_value, index) => maxNumber - index),
         teams: Array.from({ length: PARTY_TEAM_MAX_COUNT }, () => ({
           characterIds: Array.from({ length: PARTY_TEAM_SIZE }, (_value, index) => maxNumber - index),
-          name: "x".repeat(MAX_PARTY_TEAM_NAME_LENGTH),
+          name: "a".repeat(MAX_PARTY_TEAM_NAME_LENGTH),
         })),
       },
       puzzles: {
@@ -327,7 +310,7 @@ describe("genshinSaveSchema", () => {
       },
       tips: { queued: [], shown: Array.from({ length: MAX_SHOWN_TIP_COUNT }, (_value, index) => maxNumber - index) },
       travelerBirthday: { day: 31, month: 12 },
-      travelerName: "x".repeat(MAX_TRAVELER_NAME_LENGTH),
+      travelerName: "a".repeat(MAX_TRAVELER_NAME_LENGTH),
       unlockedLandmarks: Array.from({ length: MAX_UNLOCKED_LANDMARK_COUNT }, (_value, index) =>
         String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
       ),
@@ -371,7 +354,22 @@ describe("genshinSaveSchema", () => {
     expect.hasAssertions();
     const save = {
       ...EMPTY_GENSHIN_SAVE,
-      characters: Array.from({ length: MAX_CHARACTER_COUNT + 1 }, (_value, index) => ({ ...CHARACTER, id: index + 1 })),
+      // A character held at its least: level one, one copy, and nothing worn or wielded beyond its own weapon
+      characters: Array.from({ length: MAX_CHARACTER_COUNT + 1 }, (_value, index) => ({
+        artifacts: [],
+        ascension: 0,
+        constellationCount: 0,
+        copyCount: 1,
+        id: index + 1,
+        level: 1,
+        stellaFortunaCount: 0,
+        talentLevels: {
+          [CombatTalent.ElementalBurst]: 1,
+          [CombatTalent.ElementalSkill]: 1,
+          [CombatTalent.NormalAttack]: 1,
+        },
+        weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
+      })),
     };
 
     expect(genshinSaveSchema.safeParse(save).success).toBe(false);
@@ -417,13 +415,7 @@ describe("genshinSaveSchema", () => {
     expect.hasAssertions();
     const save = {
       ...EMPTY_GENSHIN_SAVE,
-      mails: Array.from({ length: MAX_MAIL_COUNT + 1 }, (_value, index) => ({
-        deliveredAt: new Date(0).toISOString(),
-        id: index + 1,
-        isClaimed: false,
-        isPinned: false,
-        isRead: false,
-      })),
+      mails: Array.from({ length: MAX_MAIL_COUNT + 1 }, (_value, index) => ({ ...baseMail, id: index + 1 })),
     };
 
     expect(genshinSaveSchema.safeParse(save).success).toBe(false);
@@ -432,11 +424,8 @@ describe("genshinSaveSchema", () => {
   // A mail is held once per delivery, so a birthday mail delivered again on a later birthday is kept beside the copy held
   test("a mail held on two deliveries is kept", () => {
     expect.hasAssertions();
-    const mail = { deliveredAt: new Date(0).toISOString(), id: 1, isClaimed: true, isPinned: false, isRead: true };
-    const save = {
-      ...EMPTY_GENSHIN_SAVE,
-      mails: [mail, { ...mail, deliveredAt: new Date(1).toISOString(), isClaimed: false, isRead: false }],
-    };
+    const mail = { ...baseMail, isClaimed: true, isRead: true };
+    const save = { ...EMPTY_GENSHIN_SAVE, mails: [mail, { ...baseMail, deliveredAt: new Date(1).toISOString() }] };
 
     expect(genshinSaveSchema.safeParse(save).success).toBe(true);
   });
@@ -444,8 +433,7 @@ describe("genshinSaveSchema", () => {
   // A mail held twice on the same delivery is refused, since one delivery is one held mail
   test("a mail held twice on the same delivery is refused", () => {
     expect.hasAssertions();
-    const mail = { deliveredAt: new Date(0).toISOString(), id: 1, isClaimed: false, isPinned: false, isRead: false };
-    const save = { ...EMPTY_GENSHIN_SAVE, mails: [mail, { ...mail, isRead: true }] };
+    const save = { ...EMPTY_GENSHIN_SAVE, mails: [baseMail, { ...baseMail, isRead: true }] };
 
     expect(genshinSaveSchema.safeParse(save).success).toBe(false);
   });
@@ -480,7 +468,7 @@ describe("genshinSaveSchema", () => {
     expect.hasAssertions();
     const cooking = {
       learnedRecipeIds: [1, 2],
-      processingJobs: { 3: { count: 2, startedAt: Temporal.Instant.fromEpochMilliseconds(0).toString() } },
+      processingJobs: { 3: { count: 2, startedAt: epoch.toString() } },
       proficiencies: { 1: 3 },
     };
 
