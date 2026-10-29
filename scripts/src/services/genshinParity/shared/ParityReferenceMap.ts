@@ -96,9 +96,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     ],
     plate: [
       { height: 66, width: 62, x: 46, y: 16 },
-      { height: 44, width: 290, x: 138, y: 26 },
       { height: 92, width: 200, x: 860, y: 10 },
-      { height: 40, width: 330, x: 1455, y: 28 },
       { height: 788, width: 410, x: 1160, y: 262 },
       { height: 150, width: 486, x: 1386, y: 836 },
     ],

@@ -116,6 +116,7 @@ const getAdjacentSection = (step: number): ArchiveSection =>
        "New" badges, the picked entry's name and lore down the right and the filter bar under the grid. The arrows at the screen's
        edges step between the sections, as Q and E do -->
   <GameScreen class="archive-screen">
+    <span class="header" aria-hidden="true" />
     <ScreenHeader :game-text :title="sectionTitle" @close="emit('close')" />
     <p class="counter">
       <span>{{ gameText[GameTextKey.ArchiveUnlockedEntries] }}</span>
@@ -190,6 +191,16 @@ const getAdjacentSection = (step: number): ArchiveSection =>
 /* The title sets a point larger than the shared header's, as the Archive's breadcrumb is set in its still at 1920 by 1080 */
 :deep(.title) {
   font-size: calc(var(--unit) * 28.8);
+}
+
+/* The dark header the title and the counter sit on, a gradient measured down the still's top 95 pixels across the full width */
+.header {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: calc(var(--unit) * 95);
+  background: linear-gradient(#0c0f21, #24263f);
 }
 
 /* Its marks are measured off the Archive's still at 1920 by 1080, one of its pixels a unit. The grid's top and side padding keep a
