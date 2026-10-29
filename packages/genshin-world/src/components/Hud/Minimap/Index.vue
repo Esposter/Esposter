@@ -9,7 +9,7 @@ import type { GameText } from "genshin-text";
 
 import MapDrawing from "#src/components/Map/Drawing/Index.vue";
 import { HudInterfaceRectName } from "#src/models/hud/HudInterfaceRectName";
-import { MAP_GROUND, MAP_MARK_SHARE, MINIMAP_RADIUS } from "#src/services/map/constants";
+import { MAP_MARK_SHARE, MINIMAP_RADIUS } from "#src/services/map/constants";
 import { OCULUS_MARK_RADIUS_SHARE } from "#src/services/statue/constants";
 import { playOculusSound } from "#src/services/statue/playOculusSound";
 import { GameRect } from "genshin-interface";
@@ -102,8 +102,9 @@ watch(
 
 <style scoped>
 /* Provisional: the back's ring and fade, measured at 1080 high on the English PC client's world HUD and on the Chinese
-   Client's over open sea. The drawing stands on the map's ground, as the overlay's does, and fades out over the rim's
-   Outer sixth to a thin light ring */
+   Client's over open sea. The disc is the game's terrain, a texture not drawn here, so it stands on that terrain's mean
+   colour over the reference's disc, where the overlay's ground is black. It fades out over the rim's outer sixth to a
+   thin light ring */
 .minimap {
   width: 100%;
   height: 100%;
@@ -121,7 +122,7 @@ watch(
   display: block;
   width: 100%;
   height: 100%;
-  background: v-bind(MAP_GROUND);
+  background: rgb(111 135 94);
   mask-image: radial-gradient(closest-side, #000 84%, transparent 96%);
   /* The drawing's marks answer the overlay's clicks, never the minimap's, whose whole face is one button */
   pointer-events: none;

@@ -42,10 +42,10 @@ committed.
 | `health-notice` | `SplashHealthNotice` | 6.17% | 0.964 | 1.51% | 0.1780 |
 | `health-notice-japanese` | `SplashHealthNotice` | 8.38% | 0.873 | 1.54% | 0.2395 |
 | `health-notice-mainland` | `SplashHealthNotice` | 4.71% | 0.960 | 1.19% | 0.1419 |
-| `hud-paimon-button` | `HudScreen` | 1.74% | 0.916 | 4.74% | 0.1111 |
+| `hud-paimon-button` | `HudScreen` | 1.74% | 0.916 | 2.34% | 0.1111 |
 | `hud-stamina-climb` | `HudScreen` | 0.62% | 0.787 | 0.75% | 0.0629 |
 | `hud-world-keys` | `HudScreen` | 2.52% | 0.982 | 1.70% | 0.1545 |
-| `hud-world-pickup` | `HudScreen` | 3.50% | 0.753 | 2.18% | 0.1438 |
+| `hud-world-pickup` | `HudScreen` | 2.89% | 0.740 | 1.54% | 0.1350 |
 | `interaction-prompts-jueyun-chili` | `InteractionPromptList` | 4.82% | 0.947 | 1.79% | 0.2070 |
 | `interaction-prompts-pickup` | `InteractionPromptList` | 5.17% | 0.938 | 2.61% | 0.2241 |
 | `inventory-food` | `InventoryScreen` | 3.34% | 0.966 | 1.92% | 0.1900 |
