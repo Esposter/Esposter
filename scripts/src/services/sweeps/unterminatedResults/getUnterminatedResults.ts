@@ -1,6 +1,6 @@
 import type { UnterminatedResult } from "#src/models/sweeps/unterminatedResults/UnterminatedResult";
 
-import { parents } from "#src/services/shared/getParent";
+import { parents } from "#src/services/shared/parents";
 import { parseSource } from "#src/services/shared/parseSource";
 import { getDescendants } from "#src/services/sweeps/getDescendants";
 import { checkIsBindingTerminated } from "#src/services/sweeps/unterminatedResults/checkIsBindingTerminated";

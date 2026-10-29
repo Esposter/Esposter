@@ -2,7 +2,7 @@ import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
 import type { Program } from "oxc-parser";
 
 import { getChildren } from "#src/services/shared/getChildren";
-import { setParent } from "#src/services/shared/getParent";
+import { setParent } from "#src/services/shared/setParent";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { parseSync } from "oxc-parser";
 

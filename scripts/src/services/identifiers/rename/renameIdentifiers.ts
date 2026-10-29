@@ -5,7 +5,7 @@ import { checkIsName } from "#src/services/identifiers/rename/checkIsName";
 import { getAlternation } from "#src/services/identifiers/rename/getAlternation";
 import { getBoundNames } from "#src/services/identifiers/rename/getBoundNames";
 import { getChildren } from "#src/services/shared/getChildren";
-import { parents } from "#src/services/shared/getParent";
+import { parents } from "#src/services/shared/parents";
 import { parseSource } from "#src/services/shared/parseSource";
 
 // Renames every name the map holds in one TypeScript source, where the source binds it and only in code, read from

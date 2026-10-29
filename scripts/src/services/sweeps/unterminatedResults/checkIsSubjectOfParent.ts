@@ -1,6 +1,6 @@
 import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
 
-import { parents } from "#src/services/shared/getParent";
+import { parents } from "#src/services/shared/parents";
 
 // Whether `node` is the subject of the link above it: a bracket, an await, a non-null assertion, or a member or
 // Call written on it. An argument or a callback body is not, since the value leaves the expression there

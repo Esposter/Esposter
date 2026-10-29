@@ -1,6 +1,6 @@
 import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
 
-import { parents } from "#src/services/shared/getParent";
+import { parents } from "#src/services/shared/parents";
 import { checkIsSubjectOfParent } from "#src/services/sweeps/unterminatedResults/checkIsSubjectOfParent";
 import { TERMINATOR_NAMES } from "#src/services/sweeps/unterminatedResults/constants";
 

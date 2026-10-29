@@ -1,6 +1,6 @@
 import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
 
-import { parents } from "#src/services/shared/getParent";
+import { parents } from "#src/services/shared/parents";
 import { getDescendants } from "#src/services/sweeps/getDescendants";
 import { TERMINATOR_NAMES } from "#src/services/sweeps/unterminatedResults/constants";
 
