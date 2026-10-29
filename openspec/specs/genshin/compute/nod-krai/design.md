@@ -19,17 +19,11 @@
 
 ## Sources
 
-- `scripts/src/services/genshinParity/passes/constants.ts:31` (`FRAME_GATE_PIXELS = 2`), the 2 px bar the Sun, Camera and Layout items gate on.
-- `scripts/src/services/genshinParity/passes/constants.ts:81` and `scripts/src/services/genshinParity/passes/getParityPassesPath.ts:8`: the `passes/snapshots` folder and the `${component}.snapshot.md` writer the `nod-krai.snapshot.md` items name.
-- `scripts/src/services/genshinParity/commands/passesCommand.ts:33` (`passes`), `compareCommand.ts:53` (`compare`), `shadowsCommand.ts:17` (`shadows`, `witness` at `:12`), and `poseCommand.ts:53` (`pose`), with `witness` at `:38`, `write` at `:44` and `:75`: the verbs and flags the items name.
-- `scripts/src/services/genshinParity/witness/solveReferenceShadows.ts:192` and `scripts/src/services/genshinParity/witness/solveReferencePose.ts:76`: the `shadows` and `pose` output folders.
 - `{data-root}/genshin-parity/references/nasha-town-location.png`, present on the Mac: the reference the Sun, Camera and Score items read.
 - `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts:899-911`: the `nasha-town-location` entry, its seven `landmarks` at `:902-908` (the ledge struts, the plinth's front corners, the stack's collar and edges), and the provisional `heldMinutes: 720` at `:911`.
 - `scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts:101` (`[DerivedAssetComponent.NodKrai]: {}`): the empty map the landmark-mesh item writes its entries into.
-- `packages/genshin-engine/src/atmosphere/computeSunDirection.ts:8`: the function the held minute is read through on a hit.
 - `packages/genshin-world/src/services/world/readRegionPalettes.ts:41` (`createPaletteReader("regions/nod-krai/palette")`), and `packages/genshin-world/src/generated/gameDataLock.json:378`, which holds that key's hash `8d543f35b0b9bda676604d000cc3ab90f20106ef237986a10212331a46ce2022`: the palette file is `{data-root}/cache/content/8d543f35b0b9bda676604d000cc3ab90f20106ef237986a10212331a46ce2022`, present on the Mac under the lock's hash.
 - `{data-root}/genshin-parity/extracted/nod-krai/layout/08678580/GameObject/cab-102cd001cd67620a3164094cfd0d72c4/Area_Ndkl_Build_NXZ_Paota_02_Group.json`: names the prefab at `m_Name` (line 10) and lists its children by path id under `m_Children` (line 28); the children's names are not in it.
-- `scripts/src/services/genshinParity/passes/measureDisplay.ts:17-18`, `measureLight.ts:16-17`, `measureLayout.ts:4`, `measureSurface.ts:36`, `measureAtmosphere.ts:6-7`: the reads the pass items name, in each module's own header.
 
 ## Open
 

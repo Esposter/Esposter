@@ -17,9 +17,6 @@
 
 ## Sources
 
-- `scripts/src/services/genshinParity/passes/constants.ts:31` (`FRAME_GATE_PIXELS = 2`), the 2 px bar the Camera item states.
-- `scripts/src/services/genshinParity/passes/constants.ts:81` and `scripts/src/services/genshinParity/passes/getParityPassesPath.ts:8`: the `passes/snapshots` folder and the `${component}.snapshot.md` writer the `snezhnaya.snapshot.md` items name.
-- `scripts/src/services/genshinParity/commands/passesCommand.ts:33` (`passes`), `compareCommand.ts:53` (`compare`), `poseCommand.ts:53` (`pose`), with `witness` at `:38`, `write` at `:44` and `:75`: the verbs and flags the items name.
 - `scripts/src/services/genshinAssets/commands/fitCommand.ts:29` (`fit`): the verb the base-ground item names.
 - `packages/genshin-world/src/data/regions/snezhnaya.json` (its `snezhnograd` key) and `packages/genshin-world/src/data/catalogue.json`: the files the base-ground item reads, checked to exist; their contents are not read here.
 - `scripts/src/services/genshinAssets/fit/RegionCapitalMap.ts:14` (`snezhnaya: { landmarkId: "snezhnograd", position: { x: 3750, z: -10730 } }`), the hand-set centre the base-ground item names.
@@ -30,7 +27,6 @@
 - `scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts:106` (`[DerivedAssetComponent.Snezhnaya]: {}`): the empty map the camera item's landmarks read.
 - `packages/genshin-world/src/services/snezhnaya/constants.ts:3` (`SNEZHNAYA_HALL_COLOR`), the provisional kit colour the Surface item draws from.
 - `packages/genshin-world/src/services/world/readRegionPalettes.ts:18` and `:44`: Snezhnaya's kit has no palette record and no reader, so its colours are the constants above.
-- `scripts/src/services/genshinParity/passes/measureLight.ts:16-17`, `measureSurface.ts:36`, `measureAtmosphere.ts:6-7`, `measureDisplay.ts:17-18`, `measureLayout.ts:4`: the reads the pass items name, in each module's own header.
 - `openspec/specs/genshin/compute/README.md` `## Bars`, the Display item's `DISPLAY_CONTRAST_GATE` at 0.1 and the Surface and Light gates the items link.
 
 ## Open

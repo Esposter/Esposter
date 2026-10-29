@@ -17,15 +17,9 @@
 
 ## Sources
 
-- `scripts/src/services/genshinParity/passes/constants.ts:31` (`FRAME_GATE_PIXELS = 2`), the 2 px bar the Camera, Sun and Layout items gate on.
-- `scripts/src/services/genshinParity/passes/constants.ts:81` and `scripts/src/services/genshinParity/passes/getParityPassesPath.ts:8`: the `passes/snapshots` folder and the `${component}.snapshot.md` writer the `sumeru.snapshot.md` items name.
-- `scripts/src/services/genshinParity/commands/passesCommand.ts:33` (`passes`), `compareCommand.ts:53` (`compare`), `shadowsCommand.ts:17` (`shadows`, `witness` at `:12`), and `poseCommand.ts:53` (`pose`), with `witness` at `:38`, `write` at `:44` and `:75`: the verbs and flags the items name.
-- `scripts/src/services/genshinParity/witness/solveReferenceShadows.ts:192` and `scripts/src/services/genshinParity/witness/solveReferencePose.ts:76`: the `shadows` and `pose` output folders.
 - `{data-root}/genshin-parity/references/sumeru-city-location.png`, present on the Mac: the reference the Sun, Camera and Score items read.
 - `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts:1129-1143`: the `sumeru-city-location` entry, its nine `landmarks` at `:1132-1140` (the minaret's collar, dome and finial, and the spire's base, tip and wings), and the provisional `heldMinutes: 720` at `:1143`, commented at `:1142`.
 - `scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts:116-171`: the nine `mesh` and `share` entries for Sumeru's landmarks.
-- `packages/genshin-engine/src/atmosphere/computeSunDirection.ts:8`: the function the held minute is read through on a hit.
-- `scripts/src/services/genshinParity/passes/measureLight.ts:16-17`, `measureSurface.ts:36`, `measureAtmosphere.ts:6-7`, `measureDisplay.ts:17-18`, `measureLayout.ts:4`: the reads the pass items name, in each module's own header.
 
 ## Open
 

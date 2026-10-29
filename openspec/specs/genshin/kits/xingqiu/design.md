@@ -48,5 +48,5 @@ flowchart TD
 
 ## Open
 
-- [ ] **The charged attack's 20 stamina is spent as the charge starts** — no source yet: `charge.go` has no stamina line, and the spend is the core's action table, which was not read; the 20 is the table's and the wiki's "chargedStamina".
+- [ ] **The charged attack's 20 stamina is spent as the charge starts** — no source yet: see the [kits' Open](../README.md#open) for the spend; the 20 is the table's and the wiki's "chargedStamina".
 - [ ] **Weaver of Verses and Embrace of Rain raise talent levels** — no source yet: the cached wiki names both only as constellations in its Talent Notes (`cache/genshin-wiki/Category_Xingqiu_Talents.json`), and their constellation pages are not in the cache.
