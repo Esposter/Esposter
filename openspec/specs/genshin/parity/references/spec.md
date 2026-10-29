@@ -6,14 +6,21 @@ Where a parity screen's reference images and recordings come from, how the insta
 
 ### Requirement: Reference images are kept outside the repository
 
-Reference images SHALL be kept outside the repository, which holds only the reference each screen is judged against, named by its wiki file or by a `source` string naming the recording and the second it was sampled from.
+Reference images SHALL be kept outside the repository's git history: each is stored once as an object named by its sha256 in the public game-data container, and the repository holds only the manifest naming each object by its id, hash, size, attribution and source, which is a wiki file or a `source` string naming the recording and the second it was sampled from.
 
 #### Scenario: Reference fetched
 
 - **GIVEN** a reference a screen is judged against
 - **WHEN** the reference is fetched or recorded
-- **THEN** its images are kept outside the repository
-- **AND** the repository names only the wiki file, or the recording and the second, that the reference comes from
+- **THEN** its bytes are stored once as an object named by their sha256, in each account that lacks it
+- **AND** the manifest names that hash, with the wiki file, or the recording and the second, that the reference comes from
+
+#### Scenario: Reference added or changed
+
+- **GIVEN** a change that adds a reference or changes one
+- **WHEN** the change is committed
+- **THEN** the manifest row, the snapshot image and the score row are committed
+- **AND** the reference's bytes are not
 
 ### Requirement: Published sources are searched before the game is recorded
 

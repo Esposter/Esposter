@@ -9,7 +9,7 @@ flowchart TD
   WIKI[Wiki images and animations] --> FETCH[fetch]
   GAME[The installed game] --> CAP[still / record]
   CAP --> SAMPLE[Labelled screenshots sampled by hand, outside the repository]
-  FETCH --> REF[(References, outside the repository)]
+  FETCH --> REF[(References, hashed objects in the game-data container)]
   SAMPLE --> REF
   REF --> TRACE[trace: a mark as one SVG path, full resolution]
   TRACE --> SCREEN[Screen component and its fixture, in the world package]

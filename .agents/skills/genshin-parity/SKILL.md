@@ -11,7 +11,7 @@ The loop and why it is shaped this way are `openspec/specs/genshin/parity/README
 
 Each direction's full statement, with the pointers it carries, is `references/settled-directions.md`.
 
-- **Committing a reference** — the game's screenshots and recordings stay in `PARITY_DIRECTORY`, never in the repository.
+- **Committing a reference's bytes** — a reference's image is stored once, by its hash, in the public game-data container and never enters git; the committed manifest names it, and a change that adds one runs `references pack` and commits the manifest row with its snapshot and score row (`references/settled-directions.md`).
 - **Asking the user to record what is published** — a search (wiki, installed game, community dump, public video) comes first, and a value nothing published shows is estimated, never recorded on request.
 - **Waiting on the user for a recording, or asking for one** — users do not record for this workflow; a value comes from a still, a public clip or an extracted animation, else a provisional estimate ships.
 - **Reading leaked server data, or looking in the client for group scripts** — the community's group scripts come from an unlicensed leak, and the client holds no group script at all.

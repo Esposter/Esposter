@@ -27,7 +27,7 @@ Read when several screens are redrawn from their references at once, each by an 
 
 ## A screen with a reference and no fixture
 
-Its first commit is the fixture, its reference-map entry (source, region, props or variant, and a comment saying what the frame shows and what is scored) and the removal of its row from `parity/pendingScreens.ts`, landed alone; the redraw is the next commit. The fixture holds an animated state still at the instant the frame shows.
+Its first commit is the fixture, its reference-map entry (source, region, props or variant, and a comment saying what the frame shows and what is scored) and the removal of its row from `parity/pendingScreens.ts`, landed alone, with the manifest row `references pack` writes for its screenshot (`settled-directions.md`); the redraw is the next commit. The fixture holds an animated state still at the instant the frame shows.
 
 ## A shared piece
 
