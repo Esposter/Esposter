@@ -1978,6 +1978,9 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
+      '@esposter/shared-node':
+        specifier: workspace:*
+        version: link:../shared-node
       '@types/mjml':
         specifier: 'catalog:'
         version: 5.4.2

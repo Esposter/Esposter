@@ -39,6 +39,7 @@
     "access": "public"
   },
   "scripts": {
+    "bench": "vitest bench --run",
     "build": "tsdown",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
@@ -52,6 +53,7 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
+    "@esposter/shared-node": "workspace:*",
     "@types/mjml": "catalog:",
     "mjml": "catalog:",
     "mjml-preset-core": "catalog:",

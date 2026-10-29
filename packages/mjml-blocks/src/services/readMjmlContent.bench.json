@@ -1,0 +1,66 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/readMjmlContent.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.001004199999994171,
+              "name": "the same run ending in a real tag",
+              "p99": 0.00266677999998592,
+              "rme": 63.20313941442407,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.0026166999999986725,
+              "name": "a run of unclosed openings",
+              "p99": 0.005008160000001567,
+              "rme": 37.218704911910066,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "readMjmlContent > 1000 unclosed openings"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.0004961000000008654,
+              "name": "the same run ending in a real tag",
+              "p99": 0.0020439400000191203,
+              "rme": 86.87707514955751,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.009720800000005171,
+              "name": "a run of unclosed openings",
+              "p99": 0.01140474999999725,
+              "rme": 12.529038303952111,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "readMjmlContent > 10000 unclosed openings"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.00037509999999940646,
+              "name": "the same run ending in a real tag",
+              "p99": 0.000830000000006237,
+              "rme": 33.91421316075231,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.10500830000000008,
+              "name": "a run of unclosed openings",
+              "p99": 0.10922750000000349,
+              "rme": 2.0539786513556355,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "readMjmlContent > 100000 unclosed openings"
+        }
+      ]
+    }
+  ]
+}
