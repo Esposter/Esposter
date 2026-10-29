@@ -16,11 +16,11 @@
 
 ## Reference
 
-- `world-thunderstorm.mkv` — found on YouTube at https://www.youtube.com/watch?v=uqSKcf-vgV4, 21–72 s (`captures/world-thunderstorm.mkv`): Yashiori Island's perpetual storm on a fixed close shot with no HUD or music, 1080 high at 59.94 frames a second, bolts at about 3.9, 37.6 and 47.8 s.
+- `world-thunderstorm.mkv` (`captures/world-thunderstorm.mkv`): Yashiori Island's perpetual storm on a fixed close shot with no HUD or music, 1080 high at 59.94 frames a second. Its YouTube source at https://www.youtube.com/watch?v=uqSKcf-vgV4 and its 21–72 s range are raised below, not settled, and the bolts at about 3.9, 37.6 and 47.8 s are unread.
 
 ## Open
 
-- [ ] **world-thunderstorm.mkv is the YouTube clip at 21–72 s** — raised, not settled: the manifest's YouTube row is `yt-uqSKcf-vgV4-world-thunderstorm.mp4` with no seconds (`packages/genshin-world/parity/references/manifest.json:1007`), and the mkv on disk is `world-thunderstorm.dusk.mkv`, whose source is recorded as a user recording (`manifest.json:215`). Neither row holds the 21–72 s range, and the bolt times (3.9, 37.6, 47.8 s) were not read from the clip.
+- [ ] **world-thunderstorm.mkv is the YouTube clip at 21–72 s** — raised, not settled: the manifest's YouTube row is `yt-uqSKcf-vgV4-world-thunderstorm.mp4` with no seconds (`packages/genshin-world/parity/references/manifest.json:1007`), and the mkv on disk is `world-thunderstorm.dusk.mkv`, whose source is recorded as a user recording (`manifest.json:217`). Neither row holds the 21–72 s range, and the bolt times (3.9, 37.6, 47.8 s) were not read from the clip.
 - [ ] **ore-strike.mkv shows each kind's hit count** — no source yet: `ore-strike.mkv` is not under `{data-root}/genshin-parity/captures/`, so its hit counts cannot be read.
 - [ ] **world-pickup.mkv already shows the HUD** — no source yet: the clip is on disk, but no source read watched it for the HUD.
 - [ ] **The collapsed `tree` line counts the unplaced spawns** — no source yet: `scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts` and two other files name "unplaced", and none was read for the `tree` count.
