@@ -5,8 +5,10 @@ import { mapShard } from "#src/services/genshinAssets/blocks/mapShard";
 import { mergeCabMaps } from "#src/services/genshinAssets/blocks/mergeCabMaps";
 import { partitionBlockFiles } from "#src/services/genshinAssets/blocks/partitionBlockFiles";
 import { writeAssetIndex } from "#src/services/genshinAssets/blocks/writeAssetIndex";
+import { placeCabMap } from "#src/services/genshinAssets/blocks/placeCabMap";
 import { writeMergedAssetMap } from "#src/services/genshinAssets/blocks/writeMergedAssetMap";
 import {
+  ANIMESTUDIO_MAPS_DIRECTORY,
   ASSET_MAP_PATH,
   ASSET_MAP_SHARDS_DIRECTORY,
   CAB_MAP_PATH,
@@ -15,7 +17,7 @@ import {
 import { getPerformanceCoreCount } from "#src/services/genshinAssets/shared/getPerformanceCoreCount";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFile, rm, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 
 // Maps every asset in the blocks the game loads by name, type and block, which a patch or a hotfix changes and so is
 // Rebuilt once each. The blocks are linked as the game loads them (`linkInstalledBlocks`), then cut into `shardCount`
@@ -32,11 +34,12 @@ export const buildAssetMap = async (shardCount: number = getPerformanceCoreCount
   );
   if (failures.length > 0) throw new InvalidOperationError(Operation.Create, "AnimeStudio shards", failures.join("\n"));
 
-  const mapsDirectory = dirname(CAB_MAP_PATH);
+  // The CLI writes each shard's CAB map into its Maps folder, so that is where they are read and cleared from
   const cabMaps = await Promise.all(
-    indices.map((index) => readFile(join(mapsDirectory, `${getShardMapName(index)}.bin`))),
+    indices.map((index) => readFile(join(ANIMESTUDIO_MAPS_DIRECTORY, `${getShardMapName(index)}.bin`))),
   );
   await writeFile(CAB_MAP_PATH, mergeCabMaps(cabMaps, INSTALLED_BLOCKS_DIRECTORY));
+  placeCabMap();
   await writeMergedAssetMap(
     indices.map((index) => ({
       path: join(getShardDirectory(index), `${getShardMapName(index)}.json`),
@@ -46,7 +49,9 @@ export const buildAssetMap = async (shardCount: number = getPerformanceCoreCount
     ASSET_MAP_PATH,
   );
   await rm(ASSET_MAP_SHARDS_DIRECTORY, { force: true, recursive: true });
-  await Promise.all(indices.map((index) => rm(join(mapsDirectory, `${getShardMapName(index)}.bin`), { force: true })));
+  await Promise.all(
+    indices.map((index) => rm(join(ANIMESTUDIO_MAPS_DIRECTORY, `${getShardMapName(index)}.bin`), { force: true })),
+  );
   const count = await writeAssetIndex();
   console.log(`${count} assets indexed`);
 };

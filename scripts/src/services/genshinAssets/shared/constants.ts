@@ -48,8 +48,14 @@ const ANIMESTUDIO_CLI_PATH: string =
   (process.platform === "darwin"
     ? join(TOOLS_DIRECTORY, PUBLISH_DIRECTORY_NAME, CLI_EXECUTABLE_NAME)
     : join(homedir(), "Downloads", "AnimeStudio", "AnimeStudio.CLI.exe"));
-// The CAB map `map` builds there: every serialized file's block and the files it points into
-export const CAB_MAP_PATH: string = join(dirname(ANIMESTUDIO_CLI_PATH), "Maps", `${ASSET_MAP_NAME}.bin`);
+// AnimeStudio's Maps folder, beside its command line: where each shard of `map` writes its CAB map, and where the CLI reads
+// the merged one on every export
+export const ANIMESTUDIO_MAPS_DIRECTORY: string = join(dirname(ANIMESTUDIO_CLI_PATH), "Maps");
+// The CAB map `map` builds: every serialized file's block and the files it points into. It lives in the parity folder,
+// which is where every reader opens it, and `placeCabMap` copies it into the Maps folder the CLI reads
+export const CAB_MAP_PATH: string = join(EXTRACTED_DIRECTORY, "maps", `${ASSET_MAP_NAME}.bin`);
+// The copy of it in AnimeStudio's Maps folder, which the CLI reads on every export
+export const ANIMESTUDIO_CAB_MAP_PATH: string = join(ANIMESTUDIO_MAPS_DIRECTORY, `${ASSET_MAP_NAME}.bin`);
 // Where the parity check exports each reference block, beside the build and outside the repository
 export const PARITY_DIRECTORY_NAME = "animestudio-parity";
 // The types the parity check exports, one run each as the Windows reference was taken: the textures and sprites as
