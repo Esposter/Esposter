@@ -20,7 +20,7 @@ stateDiagram-v2
 
 ## Tests
 
-`packages/genshin-world/src/components/Login/Interface/` is shot in each stage as fixture variants (`packages/genshin-world/src/components/Login/Interface/Index.fixture.ts`) and held to its approved images (`packages/genshin-world/src/components/Login/Interface/Index.win32.png`). Its references are the English recording's frames, over which it is compared.
+`packages/genshin-world/src/components/Login/Interface/` is shot in each stage as fixture variants (`packages/genshin-world/src/components/Login/Interface/Index.fixture.ts`) and held to its approved images (`packages/genshin-world/src/components/Login/Interface/Index.png`). Its references are the English recording's frames, over which it is compared.
 
 ## Key files
 
