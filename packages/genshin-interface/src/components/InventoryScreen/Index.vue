@@ -169,6 +169,7 @@ watch(
             type="button"
             @click="isDestroying && cell.isDestroyable ? emit('choose', cell.id) : (selectedId = cell.id)"
           >
+            <span class="stars" aria-hidden="true">{{ "★".repeat(cell.rarity) }}</span>
             <span class="caption">{{ cell.caption }}</span>
           </button>
         </li>
@@ -399,6 +400,7 @@ watch(
 }
 
 .cell {
+  position: relative;
   display: flex;
   align-items: end;
   width: 100%;
@@ -408,6 +410,19 @@ watch(
   border-radius: calc(var(--unit) * 8);
   background: #8670ae;
   font: inherit;
+}
+
+/* The stars of the entry's rarity, gold, on the art's lower edge above the caption's band */
+.stars {
+  position: absolute;
+  right: 0;
+  bottom: calc(var(--unit) * 21);
+  left: 0;
+  color: #f5c542;
+  font-size: calc(var(--unit) * 19);
+  letter-spacing: calc(var(--unit) * 1);
+  line-height: calc(var(--unit) * 22);
+  text-align: center;
 }
 
 .cell[data-rarity="5"] {
