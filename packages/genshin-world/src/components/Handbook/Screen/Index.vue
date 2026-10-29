@@ -276,7 +276,14 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   width: calc(var(--reference-pixel) * 2676);
   height: calc(var(--reference-pixel) * 1620);
   border-radius: calc(var(--reference-pixel) * 40);
-  background: #242221;
+  /* The cover's bottom rim, below the pages: a band of paper 1573 to 1599 down from its top, then dark */
+  background: linear-gradient(
+    #242221 calc(var(--reference-pixel) * 1572),
+    #6c655e calc(var(--reference-pixel) * 1573),
+    #55524d calc(var(--reference-pixel) * 1586),
+    #363330 calc(var(--reference-pixel) * 1598),
+    #242221 calc(var(--reference-pixel) * 1599)
+  );
 }
 
 .pages {
