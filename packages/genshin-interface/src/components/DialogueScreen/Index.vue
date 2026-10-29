@@ -3,7 +3,7 @@ import type { DialogueChoice } from "#src/models/DialogueChoice";
 
 import GameButton from "#src/components/GameButton/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
-import { ROLE_FLOURISH_PATH } from "#src/services/constants";
+import { GAME_DIALOGUE_GOLD, ROLE_FLOURISH_PATH } from "#src/services/constants";
 import { DialogueChoiceIconPathMap } from "#src/services/DialogueChoiceIconPathMap";
 import { computed } from "vue";
 
@@ -103,10 +103,9 @@ const lineParts = computed(() => {
   background: #000;
 }
 
-/* The name's gold is the brightest saturated pixel of its letters in the English client's recording */
 .speaker {
   margin: 0;
-  color: #ffc700;
+  color: v-bind(GAME_DIALOGUE_GOLD);
   font-size: calc(var(--unit) * 30);
   font-weight: 600;
   line-height: 1;
@@ -119,7 +118,7 @@ const lineParts = computed(() => {
   position: relative;
   z-index: 0;
   margin: 0;
-  color: #ffc700;
+  color: v-bind(GAME_DIALOGUE_GOLD);
   font-size: calc(var(--unit) * 20);
   font-weight: 600;
   line-height: calc(var(--unit) * 28);
@@ -132,7 +131,7 @@ const lineParts = computed(() => {
   z-index: -1;
   width: calc(var(--unit) * 1263);
   height: calc(var(--unit) * 3);
-  background: rgb(255 199 0 / 0.28);
+  background: color-mix(in srgb, v-bind(GAME_DIALOGUE_GOLD) 28%, transparent);
   content: "";
   translate: -50% -50%;
 }
@@ -145,7 +144,7 @@ const lineParts = computed(() => {
   left: calc(50% + var(--unit) * -153);
   width: calc(var(--unit) * 39);
   height: calc(var(--unit) * 24);
-  fill: #ffc700;
+  fill: v-bind(GAME_DIALOGUE_GOLD);
   opacity: 0.4;
 }
 

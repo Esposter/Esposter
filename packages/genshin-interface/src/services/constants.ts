@@ -113,6 +113,9 @@ export const GAME_REPLY_HOVER_INK = "#3b4255";
 // The weapon screen's Ascend pill, lit gold, and its label faded over the gold, read off its reference (`weapon-screen-ascend`)
 export const GAME_LIT_GOLD = "#ffeab4";
 export const GAME_LIT_GOLD_LABEL = "#d6cdb8";
+// The dialogue's gold, the brightest saturated pixel of a speaker's letters in the English client's recording: the name,
+// the role and its curls take it whole, and the role's rule takes it at 0.28 alpha
+export const GAME_DIALOGUE_GOLD = "#ffc700";
 // The cooking bar is the top half of an ellipse on the 1920 by 1080 stage, running from its left end to its right end:
 // Its centre and its two radii
 export const COOKING_ARC_CENTRE_X = 960;
