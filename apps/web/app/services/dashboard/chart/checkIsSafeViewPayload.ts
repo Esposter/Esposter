@@ -3,7 +3,7 @@
 const UNSAFE_VIEW_KEYS: ReadonlySet<string> = new Set(["__proto__", "constructor", "prototype"]);
 
 export const checkIsSafeViewPayload = (value: unknown): boolean => {
-  if (Array.isArray(value)) return value.every(checkIsSafeViewPayload);
+  if (Array.isArray(value)) return value.every((item) => checkIsSafeViewPayload(item));
   if (value === null || typeof value !== "object") return true;
   return Object.entries(value).every(([key, child]) => !UNSAFE_VIEW_KEYS.has(key) && checkIsSafeViewPayload(child));
 };

@@ -5,7 +5,7 @@ describe(checkIsSafeViewPayload, () => {
   test("accepts a payload of plain objects, arrays and scalars", () => {
     expect.hasAssertions();
 
-    expect(checkIsSafeViewPayload({ v: 1, view: { zoom: [0, 10], hidden: ["a"], points: [{ x: 1, y: 2 }] } })).toBe(
+    expect(checkIsSafeViewPayload({ v: 1, view: { hidden: ["a"], points: [{ x: 1, y: 2 }], zoom: [0, 10] } })).toBe(
       true,
     );
   });
