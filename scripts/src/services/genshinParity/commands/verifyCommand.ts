@@ -12,7 +12,7 @@ import { defineCommand } from "citty";
 export const verifyCommand: SubCommandsDef[string] = defineCommand({
   meta: {
     description:
-      "Cut each recorded reference's frame from its recording and check the reference against it; exits 1 when one is over tolerance",
+      "Cut each recorded reference's frame from its recording and check the reference against it; exits 1 when a reference fails its check or the manifest has a problem",
     name: "verify",
   },
   run: async () => {

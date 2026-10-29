@@ -3,16 +3,22 @@ import type { ParityReference } from "#src/models/genshinParity/shared/ParityRef
 import { VerifyOutcome } from "#src/models/genshinParity/reference/VerifyOutcome";
 import { cutRecordingFrame } from "#src/services/genshinParity/reference/cutRecordingFrame";
 import { verifyReferences } from "#src/services/genshinParity/reference/verifyReferences";
-import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
+import { resolveFfmpeg } from "#src/services/recreation/video/resolveFfmpeg";
 import { runFfmpeg } from "#src/services/recreation/video/runFfmpeg";
+import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
+import { getResultAsync } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
-// The check runs FFmpeg on a synthetic video, so it is skipped where FFmpeg is not on the PATH
-describe.skipIf(spawnSync("ffmpeg", ["-version"]).status !== 0)(verifyReferences, () => {
+// The check runs FFmpeg on a synthetic video, so it is skipped where the FFmpeg that `runFfmpeg` resolves cannot run
+const ffmpegStatus = (await getResultAsync(resolveFfmpeg)).match(
+  (ffmpegPath) => spawnSync(ffmpegPath, ["-version"]).status,
+  () => undefined,
+);
+describe.skipIf(ffmpegStatus !== 0)(verifyReferences, () => {
   const recordingName = `${TEST_FILENAME}.mp4`;
   const recordingSource = `${recordingName} at 1s`;
   let directory: string;
