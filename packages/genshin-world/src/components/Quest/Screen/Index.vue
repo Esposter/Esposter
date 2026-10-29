@@ -25,6 +25,9 @@ import { InputAction } from "genshin-engine";
 import { ORNAMENT_END_PATH } from "genshin-interface";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
+// The two ends of a rule's ornament: the left one takes no class, and the right one is the same diamond mirrored
+const ORNAMENT_END_SIDE_CLASSES = ["", "right"];
+
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
@@ -220,8 +223,15 @@ useEventListener("keydown", (event) => {
           <span class="journal-emblem" />
         </template>
         <span class="divider" />
-        <svg class="ornament-end" viewBox="0 0 320 224"><path :d="ORNAMENT_END_PATH" /></svg>
-        <svg class="ornament-end right" viewBox="0 0 320 224"><path :d="ORNAMENT_END_PATH" /></svg>
+        <svg
+          v-for="sideClass of ORNAMENT_END_SIDE_CLASSES"
+          :key="sideClass"
+          class="ornament-end"
+          :class="sideClass"
+          viewBox="0 0 320 224"
+        >
+          <path :d="ORNAMENT_END_PATH" />
+        </svg>
         <p v-if="questStep" class="step">
           <MenuGlyph class="objective" :glyph="QuestGlyphMap[QuestGlyph.ObjectiveRing]" />
           <MenuGlyph class="objective" :glyph="QuestGlyphMap[QuestGlyph.ObjectiveCore]" />
@@ -268,8 +278,15 @@ useEventListener("keydown", (event) => {
         </button>
       </div>
       <span class="footer-line" />
-      <svg class="footer-end" viewBox="0 0 320 224"><path :d="ORNAMENT_END_PATH" /></svg>
-      <svg class="footer-end right" viewBox="0 0 320 224"><path :d="ORNAMENT_END_PATH" /></svg>
+      <svg
+        v-for="sideClass of ORNAMENT_END_SIDE_CLASSES"
+        :key="sideClass"
+        class="footer-end"
+        :class="sideClass"
+        viewBox="0 0 320 224"
+      >
+        <path :d="ORNAMENT_END_PATH" />
+      </svg>
       <!-- The overview of every quest is not built, so its button is drawn and does nothing -->
       <button class="pill overview" type="button" disabled>
         <MenuGlyph :glyph="QuestGlyphMap[QuestGlyph.Overview]" />
