@@ -1,15 +1,15 @@
 import type { AnimeStudioOptions } from "#src/models/recreation/animeStudio/AnimeStudioOptions";
-import type { ChildProcess } from "node:child_process";
+import type { spawn } from "@esposter/shared-node/child-process";
 
 import { runAnimeStudioAsync } from "#src/services/recreation/animeStudio/runAnimeStudioAsync";
 import { EventEmitter } from "node:events";
 import { describe, expect, test, vi } from "vitest";
 
-const { spawnMock } = vi.hoisted(() => ({ spawnMock: vi.fn<(...args: unknown[]) => ChildProcess>() }));
+const { spawnMock } = vi.hoisted(() => ({ spawnMock: vi.fn<typeof spawn>() }));
 
 vi.mock(import("@esposter/shared-node/child-process"), async (importOriginal) => ({
   ...(await importOriginal()),
-  spawn: spawnMock,
+  spawn: spawnMock as unknown as typeof spawn,
 }));
 vi.mock(import("#src/services/recreation/animeStudio/waitForFreeMemory"), () => ({
   waitForFreeMemory: async () => undefined,
@@ -25,7 +25,7 @@ describe(runAnimeStudioAsync, () => {
         pid: undefined,
         stderr: new EventEmitter(),
         stdout: new EventEmitter(),
-      }) as unknown as ChildProcess;
+      }) as unknown as ReturnType<typeof spawn>;
       setImmediate(() => {
         child.stdout?.emit("data", Buffer.from("[Error] System.NullReferenceException: at x"));
         child.emit("close", 0);
