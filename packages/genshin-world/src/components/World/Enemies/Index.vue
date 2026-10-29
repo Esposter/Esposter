@@ -70,6 +70,8 @@ interface Props {
   getWorldNow: () => Temporal.Instant;
   // Whether a screen over the world holds it, as the game's menus pause its enemies
   isHeld?: true;
+  // Whether something covers the world, which then draws no frames, so its enemies stand still as well
+  isPaused?: true;
   // The effects on the team, whose live taunts draw the enemies' strikes within their aggro range
   kitEffectState: KitEffectState;
   // The last teleport, which brings back a boss whose blossom is unclaimed, none until the player has teleported
@@ -99,6 +101,7 @@ const {
   getGroundHeight,
   getWorldNow,
   isHeld,
+  isPaused,
   kitEffectState,
   lastTeleportAt,
   lightUniforms,
@@ -289,7 +292,7 @@ for (let index = 0; index < ENEMY_CAPACITY; index += 1) {
 }
 
 onBeforeRender(({ delta }) => {
-  if (!isHeld) fixedStepLoop.advance(delta);
+  if (!isHeld && !isPaused) fixedStepLoop.advance(delta);
   let count = 0;
   let flashCount = 0;
   for (const { elementalState, heading, hitSeconds, position, state, traits } of enemyMap.values()) {

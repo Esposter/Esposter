@@ -618,6 +618,7 @@ onUnmounted(() => {
       :get-ground-height
       :get-world-now
       :is-held
+      :is-paused
       :last-teleport-at
       :trounce-blossoms
       :light-uniforms
