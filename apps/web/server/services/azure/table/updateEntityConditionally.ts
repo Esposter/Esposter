@@ -11,11 +11,21 @@ import { TRPCError } from "@trpc/server";
 // A read-modify-write of an entity body, made conditional on the version it was computed against. Two callers
 // Otherwise both derive their write from the same version and the later one echoes back a body that never saw the
 // Earlier change, erasing it with nothing surfaced to either caller
-export const updateEntityConditionally = async <TTableEntity extends AzureEntity, TEntity extends TTableEntity>(
+// The write it returns is the one the caller's guard computed, so a caller reads its own shape back, not a generic one
+export const updateEntityConditionally = async <
+  TTableEntity extends AzureEntity,
+  TEntity extends TTableEntity,
+  TUpdateEntity extends AzureUpdateEntity<TTableEntity>,
+>(
   tableClient: CustomTableClient<TTableEntity>,
   entityClass: Class<TEntity>,
-  { entityType, entityWithEtag, getUpdateEntity, writeEntity }: ConditionalEntityUpdateOptions<TTableEntity, TEntity>,
-): Promise<AzureUpdateEntity<TTableEntity>> => {
+  {
+    entityType,
+    entityWithEtag,
+    getUpdateEntity,
+    writeEntity,
+  }: ConditionalEntityUpdateOptions<TTableEntity, TEntity, TUpdateEntity>,
+): Promise<TUpdateEntity> => {
   // The version under write travels as one value so each attempt destructures it into its own consts — the
   // Conditional write closes over them, and a closure over a variable the loop reassigns is exactly the bug
   // Optimistic concurrency exists to avoid

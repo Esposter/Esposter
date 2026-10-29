@@ -219,7 +219,10 @@ describe("emojiRouter", () => {
     const { getEntity } = MockTableClient.prototype;
     // The second member reacts between the first member's read and its write, so the first member's write is
     // Computed against a user list that no longer stands
-    vi.spyOn(MockTableClient.prototype, "getEntity").mockImplementationOnce(async function (...args) {
+    vi.spyOn(MockTableClient.prototype, "getEntity").mockImplementationOnce(async function (
+      this: MockTableClient,
+      ...args
+    ) {
       const staleEntity = await getEntity.apply(this, args);
       await mockSessionOnce(mockContext.db, secondMember);
       await emojiCaller.updateEmoji(emojiKey);
