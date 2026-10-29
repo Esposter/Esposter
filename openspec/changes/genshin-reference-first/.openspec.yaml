@@ -4,8 +4,9 @@ affected_areas: [genshin]
 x-model: claude-haiku-5-5
 x-touches:
   [
+    "packages/genshin-world/parity/**",
     "scripts/src/services/genshinParity/**",
-    "packages/configuration/src/services/getVitestBrowserConfiguration.ts",
+    "packages/configuration/src/services/getVitestBrowserConfiguration*.ts",
     "packages/genshin-world/src/components/**/Index.fixture.ts",
     "packages/genshin-world/src/components/**/*.png",
     "packages/genshin-interface/src/components/**/*.png",
