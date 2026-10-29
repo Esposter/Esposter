@@ -1,4 +1,5 @@
 import { OPEN_CELL } from "#src/services/sweeps/ledgerCoverage/constants";
+import { EPOCH_DATE } from "#src/services/sweeps/ledgerCoverage/constants.test";
 import { syncLedgerUnits } from "#src/services/sweeps/ledgerCoverage/syncLedgerUnits";
 import { describe, expect, test } from "vitest";
 
@@ -9,7 +10,7 @@ describe(syncLedgerUnits, () => {
   const header = `| Unit   | Swept      | Notes |
 | ------ | ---------- | ----- |
 `;
-  const date = new Date(0).toISOString().slice(0, 10);
+  const date = EPOCH_DATE;
 
   test("opens a row for a unit the table lacks, in name order", () => {
     expect.hasAssertions();

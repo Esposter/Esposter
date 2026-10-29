@@ -8,6 +8,7 @@ import {
   SWEPT_CELL_SEPARATOR,
   TRAILER_VALUE_SEPARATOR,
 } from "#src/services/sweeps/ledgerCoverage/constants";
+import { EPOCH_DATE } from "#src/services/sweeps/ledgerCoverage/constants.test";
 import { getLedgerEvents } from "#src/services/sweeps/ledgerCoverage/getLedgerEvents";
 import { describe, expect, test } from "vitest";
 
@@ -16,7 +17,7 @@ describe(applyLedgerEvents, () => {
   const unit = "`c`";
   // A trailer's unit as getLedgerEvents hands it over, with the backticks already removed
   const bareUnit = "c";
-  const earlier = new Date(0).toISOString().slice(0, 10);
+  const earlier = EPOCH_DATE;
   const later = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")).toISOString().slice(0, 10);
   const getText = (swept: string, rowUnit = unit) =>
     `| Unit   | Swept      | Notes |

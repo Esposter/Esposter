@@ -1,11 +1,12 @@
 import { LedgerEventType } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
 import { FIELD_SEPARATOR, RECORD_SEPARATOR } from "#src/services/shared/constants";
 import { TRAILER_VALUE_SEPARATOR } from "#src/services/sweeps/ledgerCoverage/constants";
+import { EPOCH_DATE } from "#src/services/sweeps/ledgerCoverage/constants.test";
 import { getLedgerEvents } from "#src/services/sweeps/ledgerCoverage/getLedgerEvents";
 import { describe, expect, test } from "vitest";
 
 describe(getLedgerEvents, () => {
-  const date = new Date(0).toISOString().slice(0, 10);
+  const date = EPOCH_DATE;
   const getRecord = (body: string) => `${date}${FIELD_SEPARATOR}${body}${RECORD_SEPARATOR}`;
 
   test("reads a sweep trailer as the ledger, the unit and the commit date", () => {

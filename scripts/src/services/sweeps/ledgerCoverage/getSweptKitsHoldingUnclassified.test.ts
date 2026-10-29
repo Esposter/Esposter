@@ -3,6 +3,7 @@ import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { OPEN_CELL } from "#src/services/sweeps/ledgerCoverage/constants";
+import { EPOCH_DATE } from "#src/services/sweeps/ledgerCoverage/constants.test";
 import { getSweptKitsHoldingUnclassified } from "#src/services/sweeps/ledgerCoverage/getSweptKitsHoldingUnclassified";
 import { describe, expect, test } from "vitest";
 
@@ -12,7 +13,7 @@ describe(getSweptKitsHoldingUnclassified, () => {
   const header = `| Unit  | Swept      | Notes |
 | ----- | ---------- | ----- |
 `;
-  const date = new Date(0).toISOString().slice(0, 10);
+  const date = EPOCH_DATE;
   const unclassifiedOverlay: KitOverlay = { "a.b": { cause: KitProvisionalCause.Unclassified, value: 0 } };
   const classifiedOverlay: KitOverlay = {
     "a.b": { cause: KitProvisionalCause.Unsourced, value: 0 },
