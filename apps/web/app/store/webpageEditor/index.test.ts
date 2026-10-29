@@ -63,16 +63,15 @@ describe(useWebpageEditorStore, () => {
   test("carries the share preview across a page save", async () => {
     expect.hasAssertions();
 
-    const description = "A short share description";
-    const imageUrl = "/api/resource-assets/files/share.png";
-    content = new WebpageEditor({ description, imageUrl });
+    const description = "a";
+    content = new WebpageEditor({ description, imageUrl: TEST_URL });
     const webpageEditorStore = useWebpageEditorStore();
     const { loadContent, saveWebpage } = webpageEditorStore;
     await loadContent();
     await saveWebpage(resourceId);
 
     expect(webpageEditorStore.webpageEditor.description).toBe(description);
-    expect(webpageEditorStore.webpageEditor.imageUrl).toBe(imageUrl);
+    expect(webpageEditorStore.webpageEditor.imageUrl).toBe(TEST_URL);
   });
 
   test("skips the store echo that follows the load", async () => {
