@@ -37,14 +37,14 @@ Each Genshin design page's claims cited to game code or a reference snapshot, or
 | `openspec/specs/genshin/expeditions/design.md`                         | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/load-budget/design.md`                         | 2026-10-29 · Haiku 5.5 |       |
 | `openspec/specs/genshin/music/voices/design.md`                        | 2026-10-29 · Haiku 5.5 |       |
-| `openspec/specs/genshin/parity/passes/design.md`                       | —                      |       |
+| `openspec/specs/genshin/parity/passes/design.md`                       | 2026-10-29 · Haiku 5.5 |       |
 | `openspec/specs/genshin/gathering/design.md`                           | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/interface-library/design.md`                   | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/artifact-enhancement/design.md`                | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/artifact-strongbox/design.md`                  | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/bosses/design.md`                              | 2026-10-26 · Haiku 5.5 |       |
-| `openspec/specs/genshin/character-attributes/design.md`                | —                      |       |
-| `openspec/specs/genshin/character-profile/design.md`                   | —                      |       |
+| `openspec/specs/genshin/character-attributes/design.md`                | 2026-10-29 · Haiku 5.5 |       |
+| `openspec/specs/genshin/character-profile/design.md`                   | 2026-10-29 · Haiku 5.5 |       |
 | `openspec/specs/genshin/dialogue/design.md`                            | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/forging/design.md`                             | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/inazuma/design.md`                             | 2026-10-26 · Haiku 5.5 |       |
@@ -55,7 +55,7 @@ Each Genshin design page's claims cited to game code or a reference snapshot, or
 | `openspec/specs/genshin/original-resin/design.md`                      | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/paimon-menu/design.md`                         | —                      |       |
 | `openspec/specs/genshin/save-data/design.md`                           | 2026-10-26 · Haiku 5.5 |       |
-| `openspec/specs/genshin/terrain/design.md`                             | —                      |       |
+| `openspec/specs/genshin/terrain/design.md`                             | 2026-10-29 · Haiku 5.5 |       |
 | `openspec/specs/genshin/touch-controls/design.md`                      | —                      |       |
 | `openspec/specs/genshin/wildlife/design.md`                            | —                      |       |
 | `openspec/specs/genshin/derived-assets/animestudio-upstream/design.md` | —                      |       |

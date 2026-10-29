@@ -116,112 +116,112 @@
 | `scripts/src/models/package`                                                              | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/producerStamp`                                                        | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/proposals`                                                            | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/models/recreation`                                                           | 2026-10-25 · Haiku 5.5  |       |
+| `scripts/src/models/recreation`                                                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/resume`                                                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/review`                                                               | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/models/semver`                                                               | —                       |       |
+| `scripts/src/models/semver`                                                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/shared`                                                               | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/models/skills`                                                               | —                       |       |
+| `scripts/src/models/skills`                                                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/sweeps`                                                               | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/models/timing`                                                               | —                       |       |
+| `scripts/src/models/timing`                                                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/triage`                                                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/updateNode`                                                           | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/models/usage`                                                                | —                       |       |
+| `scripts/src/models/usage`                                                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/voiceMatch`                                                           | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/outdatedDependencies`                                                        | —                       |       |
+| `scripts/src/outdatedDependencies`                                                        | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/oxlint`                                                                      | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/package`                                                                     | —                       |       |
-| `scripts/src/proposals`                                                                   | —                       |       |
-| `scripts/src/recreation`                                                                  | —                       |       |
-| `scripts/src/refreshLockfile`                                                             | —                       |       |
-| `scripts/src/resume`                                                                      | —                       |       |
-| `scripts/src/review`                                                                      | —                       |       |
-| `scripts/src/reviewFix`                                                                   | —                       |       |
-| `scripts/src/reviewSettle`                                                                | —                       |       |
-| `scripts/src/services/benchTypes`                                                         | —                       |       |
-| `scripts/src/services/ci`                                                                 | —                       |       |
+| `scripts/src/package`                                                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/proposals`                                                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/recreation`                                                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/refreshLockfile`                                                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/resume`                                                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/review`                                                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/reviewFix`                                                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/reviewSettle`                                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/benchTypes`                                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/ci`                                                                 | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/citations`                                                          | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/dependencies`                                                       | —                       |       |
-| `scripts/src/services/dependencyAdmission`                                                | —                       |       |
+| `scripts/src/services/dependencyAdmission`                                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/dependencyGraph`                                                    | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/fleet/checkIsHeldBy.ts`                                             | —                       |       |
-| `scripts/src/services/fleet/checkIsInstant.ts`                                            | —                       |       |
-| `scripts/src/services/fleet/checkTouchesOverlap.test.ts`                                  | —                       |       |
+| `scripts/src/services/fleet/checkIsHeldBy.ts`                                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/checkIsInstant.ts`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/checkTouchesOverlap.test.ts`                                  | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/fleet/checkTouchesOverlap.ts`                                       | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/fleet/claimFleetEntry.ts`                                           | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/fleet/claimFleetEntryHere.ts`                                       | —                       |       |
-| `scripts/src/services/fleet/claimNextFleetEntry.ts`                                       | —                       |       |
-| `scripts/src/services/fleet/constants.ts`                                                 | —                       |       |
-| `scripts/src/services/fleet/createFleetCommit.ts`                                         | —                       |       |
-| `scripts/src/services/fleet/createFleetWorker.ts`                                         | —                       |       |
+| `scripts/src/services/fleet/claimFleetEntryHere.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/claimNextFleetEntry.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/constants.ts`                                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/createFleetCommit.ts`                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/createFleetWorker.ts`                                         | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/fleet/data`                                                         | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/fleet/filterFleetEntries.test.ts`                                   | —                       |       |
+| `scripts/src/services/fleet/filterFleetEntries.test.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/fleet/filterFleetEntries.ts`                                        | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/fleet/formatClaimHolder.ts`                                         | —                       |       |
-| `scripts/src/services/fleet/formatFleetTable.test.ts`                                     | —                       |       |
-| `scripts/src/services/fleet/formatFleetTable.ts`                                          | —                       |       |
-| `scripts/src/services/fleet/formatMachineLoad.test.ts`                                    | —                       |       |
-| `scripts/src/services/fleet/formatMachineLoad.ts`                                         | —                       |       |
-| `scripts/src/services/fleet/formatPushed.test.ts`                                         | —                       |       |
-| `scripts/src/services/fleet/formatPushed.ts`                                              | —                       |       |
-| `scripts/src/services/fleet/getClaimDecision.test.ts`                                     | —                       |       |
-| `scripts/src/services/fleet/getClaimDecision.ts`                                          | —                       |       |
-| `scripts/src/services/fleet/getClaimStatus.test.ts`                                       | —                       |       |
-| `scripts/src/services/fleet/getClaimStatus.ts`                                            | —                       |       |
-| `scripts/src/services/fleet/getHoldFilePath.ts`                                           | —                       |       |
-| `scripts/src/services/fleet/getOperatingSystemCapability.test.ts`                         | —                       |       |
-| `scripts/src/services/fleet/getOperatingSystemCapability.ts`                              | —                       |       |
-| `scripts/src/services/fleet/getRenewalDecision.test.ts`                                   | —                       |       |
-| `scripts/src/services/fleet/getRenewalDecision.ts`                                        | —                       |       |
+| `scripts/src/services/fleet/formatClaimHolder.ts`                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/formatFleetTable.test.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/formatFleetTable.ts`                                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/formatMachineLoad.test.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/formatMachineLoad.ts`                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/formatPushed.test.ts`                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/formatPushed.ts`                                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/getClaimDecision.test.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/getClaimDecision.ts`                                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/getClaimStatus.test.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/getClaimStatus.ts`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/getHoldFilePath.ts`                                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/getOperatingSystemCapability.test.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/getOperatingSystemCapability.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/getRenewalDecision.test.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/getRenewalDecision.ts`                                        | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/fleet/holdFleetEntry.ts`                                            | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/fleet/mergeMachineProfile.test.ts`                                  | —                       |       |
-| `scripts/src/services/fleet/mergeMachineProfile.ts`                                       | —                       |       |
-| `scripts/src/services/fleet/missFleetEntry.ts`                                            | —                       |       |
-| `scripts/src/services/fleet/parseClaimMessage.test.ts`                                    | —                       |       |
+| `scripts/src/services/fleet/mergeMachineProfile.test.ts`                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/mergeMachineProfile.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/missFleetEntry.ts`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/parseClaimMessage.test.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/fleet/parseClaimMessage.ts`                                         | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/fleet/parseComputeQueue.test.ts`                                    | —                       |       |
+| `scripts/src/services/fleet/parseComputeQueue.test.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/fleet/parseComputeQueue.ts`                                         | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/fleet/parseComputeQueueItem.test.ts`                                | —                       |       |
+| `scripts/src/services/fleet/parseComputeQueueItem.test.ts`                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/fleet/parseComputeQueueItem.ts`                                     | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/fleet/parseForEachRefLine.test.ts`                                  | —                       |       |
+| `scripts/src/services/fleet/parseForEachRefLine.test.ts`                                  | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/fleet/parseForEachRefLine.ts`                                       | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/fleet/parseHardwareAccelerations.test.ts`                           | —                       |       |
-| `scripts/src/services/fleet/parseHardwareAccelerations.ts`                                | —                       |       |
-| `scripts/src/services/fleet/parseKeyFilePaths.test.ts`                                    | —                       |       |
-| `scripts/src/services/fleet/parseKeyFilePaths.ts`                                         | —                       |       |
-| `scripts/src/services/fleet/parseLsRemoteSha.test.ts`                                     | —                       |       |
-| `scripts/src/services/fleet/parseLsRemoteSha.ts`                                          | —                       |       |
-| `scripts/src/services/fleet/parseMachineHeartbeat.test.ts`                                | —                       |       |
+| `scripts/src/services/fleet/parseHardwareAccelerations.test.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/parseHardwareAccelerations.ts`                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/parseKeyFilePaths.test.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/parseKeyFilePaths.ts`                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/parseLsRemoteSha.test.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/parseLsRemoteSha.ts`                                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/parseMachineHeartbeat.test.ts`                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/fleet/parseMachineHeartbeat.ts`                                     | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/fleet/parseMachineProfile.test.ts`                                  | —                       |       |
+| `scripts/src/services/fleet/parseMachineProfile.test.ts`                                  | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/fleet/parseMachineProfile.ts`                                       | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/fleet/parseProposalMetadata.test.ts`                                | —                       |       |
+| `scripts/src/services/fleet/parseProposalMetadata.test.ts`                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/fleet/parseProposalMetadata.ts`                                     | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/fleet/pushFleetRef.test.ts`                                         | —                       |       |
-| `scripts/src/services/fleet/pushFleetRef.ts`                                              | —                       |       |
-| `scripts/src/services/fleet/pushMachineHeartbeat.ts`                                      | —                       |       |
-| `scripts/src/services/fleet/readClaimedRefs.ts`                                           | —                       |       |
-| `scripts/src/services/fleet/readComputeQueue.test.ts`                                     | —                       |       |
-| `scripts/src/services/fleet/readComputeQueue.ts`                                          | —                       |       |
+| `scripts/src/services/fleet/pushFleetRef.test.ts`                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/pushFleetRef.ts`                                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/pushMachineHeartbeat.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/readClaimedRefs.ts`                                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/readComputeQueue.test.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/readComputeQueue.ts`                                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/fleet/readDetectedCapabilities.ts`                                  | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/fleet/readFleetEntries.ts`                                          | —                       |       |
+| `scripts/src/services/fleet/readFleetEntries.ts`                                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/fleet/readFleetRefLines.ts`                                         | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/fleet/readMachineHeartbeats.ts`                                     | —                       |       |
-| `scripts/src/services/fleet/readMachineProfile.ts`                                        | —                       |       |
-| `scripts/src/services/fleet/readMachineSample.ts`                                         | —                       |       |
-| `scripts/src/services/fleet/readProposalEntries.ts`                                       | —                       |       |
-| `scripts/src/services/fleet/readQueueFiles.test.ts`                                       | —                       |       |
-| `scripts/src/services/fleet/readQueueFiles.ts`                                            | —                       |       |
-| `scripts/src/services/fleet/readRemoteSha.ts`                                             | —                       |       |
-| `scripts/src/services/fleet/releaseFleetEntry.ts`                                         | —                       |       |
-| `scripts/src/services/fleet/removeHoldFile.ts`                                            | —                       |       |
-| `scripts/src/services/fleet/requireFleetWorker.test.ts`                                   | —                       |       |
-| `scripts/src/services/fleet/requireFleetWorker.ts`                                        | —                       |       |
-| `scripts/src/services/fleet/runFleetRefGit.ts`                                            | —                       |       |
-| `scripts/src/services/fleet/selectTakeableEntries.test.ts`                                | —                       |       |
-| `scripts/src/services/fleet/selectTakeableEntries.ts`                                     | —                       |       |
-| `scripts/src/services/fleet/writeHoldFile.ts`                                             | —                       |       |
-| `scripts/src/services/fleet/writeMachineProfile.ts`                                       | —                       |       |
+| `scripts/src/services/fleet/readMachineHeartbeats.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/readMachineProfile.ts`                                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/readMachineSample.ts`                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/readProposalEntries.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/readQueueFiles.test.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/readQueueFiles.ts`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/readRemoteSha.ts`                                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/releaseFleetEntry.ts`                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/removeHoldFile.ts`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/requireFleetWorker.test.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/requireFleetWorker.ts`                                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/runFleetRefGit.ts`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/selectTakeableEntries.test.ts`                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/selectTakeableEntries.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/writeHoldFile.ts`                                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/fleet/writeMachineProfile.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/gameData`                                                           | —                       |       |
 | `scripts/src/services/genshinAssets/achievements`                                         | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/adventureRank`                                        | —                       |       |
@@ -1375,121 +1375,121 @@
 | `scripts/src/services/jev`                                                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/machine`                                                            | —                       |       |
 | `scripts/src/services/openspec`                                                           | —                       |       |
-| `scripts/src/services/outdatedDependencies/distTag`                                       | —                       |       |
-| `scripts/src/services/outdatedDependencies/docker`                                        | —                       |       |
-| `scripts/src/services/outdatedDependencies/getDependencyType.test.ts`                     | —                       |       |
-| `scripts/src/services/outdatedDependencies/getDependencyType.ts`                          | —                       |       |
-| `scripts/src/services/outdatedDependencies/getMismatches.test.ts`                         | —                       |       |
-| `scripts/src/services/outdatedDependencies/getMismatches.ts`                              | —                       |       |
-| `scripts/src/services/outdatedDependencies/getRegistryPackageName.ts`                     | —                       |       |
-| `scripts/src/services/outdatedDependencies/getSpecifierBase.test.ts`                      | —                       |       |
-| `scripts/src/services/outdatedDependencies/getSpecifierBase.ts`                           | —                       |       |
-| `scripts/src/services/outdatedDependencies/getVersionChangeLevel.test.ts`                 | —                       |       |
-| `scripts/src/services/outdatedDependencies/getVersionChangeLevel.ts`                      | —                       |       |
-| `scripts/src/services/outdatedDependencies/githubActions`                                 | —                       |       |
-| `scripts/src/services/outdatedDependencies/lock`                                          | —                       |       |
-| `scripts/src/services/outdatedDependencies/manifest`                                      | —                       |       |
-| `scripts/src/services/outdatedDependencies/npm`                                           | —                       |       |
-| `scripts/src/services/outdatedDependencies/parseAliasSpecifier.test.ts`                   | —                       |       |
-| `scripts/src/services/outdatedDependencies/parseAliasSpecifier.ts`                        | —                       |       |
-| `scripts/src/services/outdatedDependencies/pnpm`                                          | —                       |       |
-| `scripts/src/services/outdatedDependencies/print`                                         | —                       |       |
-| `scripts/src/services/outdatedDependencies/reference`                                     | —                       |       |
-| `scripts/src/services/outdatedDependencies/registry`                                      | —                       |       |
-| `scripts/src/services/outdatedDependencies/renovate`                                      | —                       |       |
-| `scripts/src/services/outdatedDependencies/tag`                                           | —                       |       |
-| `scripts/src/services/outdatedDependencies/workspace`                                     | —                       |       |
-| `scripts/src/services/oxlint/comments`                                                    | —                       |       |
-| `scripts/src/services/oxlint/errorAlert`                                                  | —                       |       |
-| `scripts/src/services/oxlint/errorHandling`                                               | —                       |       |
-| `scripts/src/services/oxlint/literalUnion`                                                | —                       |       |
-| `scripts/src/services/oxlint/naming`                                                      | —                       |       |
-| `scripts/src/services/oxlint/passThroughHelper`                                           | —                       |       |
-| `scripts/src/services/oxlint/persistThenNotify`                                           | —                       |       |
-| `scripts/src/services/oxlint/piniaStore`                                                  | —                       |       |
-| `scripts/src/services/oxlint/propsInterface`                                              | —                       |       |
-| `scripts/src/services/oxlint/routing`                                                     | —                       |       |
-| `scripts/src/services/oxlint/setupScope`                                                  | —                       |       |
+| `scripts/src/services/outdatedDependencies/distTag`                                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/docker`                                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/getDependencyType.test.ts`                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/getDependencyType.ts`                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/getMismatches.test.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/getMismatches.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/getRegistryPackageName.ts`                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/getSpecifierBase.test.ts`                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/getSpecifierBase.ts`                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/getVersionChangeLevel.test.ts`                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/getVersionChangeLevel.ts`                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/githubActions`                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/lock`                                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/manifest`                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/npm`                                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/parseAliasSpecifier.test.ts`                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/parseAliasSpecifier.ts`                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/pnpm`                                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/print`                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/reference`                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/registry`                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/renovate`                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/tag`                                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/outdatedDependencies/workspace`                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/oxlint/comments`                                                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/oxlint/errorAlert`                                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/oxlint/errorHandling`                                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/oxlint/literalUnion`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/oxlint/naming`                                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/oxlint/passThroughHelper`                                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/oxlint/persistThenNotify`                                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/oxlint/piniaStore`                                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/oxlint/propsInterface`                                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/oxlint/routing`                                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/oxlint/setupScope`                                                  | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/oxlint/shared`                                                      | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/oxlint/templateRef`                                                 | —                       |       |
-| `scripts/src/services/oxlint/testValues`                                                  | —                       |       |
-| `scripts/src/services/oxlint/testing`                                                     | —                       |       |
-| `scripts/src/services/oxlint/trpcProcedure`                                               | —                       |       |
-| `scripts/src/services/package`                                                            | —                       |       |
-| `scripts/src/services/producerStamp`                                                      | —                       |       |
+| `scripts/src/services/oxlint/templateRef`                                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/oxlint/testValues`                                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/oxlint/testing`                                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/oxlint/trpcProcedure`                                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/package`                                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/producerStamp`                                                      | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/proposals`                                                          | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/recreation/animeStudio`                                             | —                       |       |
 | `scripts/src/services/recreation/commands`                                                | —                       |       |
 | `scripts/src/services/recreation/image`                                                   | —                       |       |
 | `scripts/src/services/recreation/lua`                                                     | —                       |       |
-| `scripts/src/services/recreation/signal`                                                  | —                       |       |
-| `scripts/src/services/recreation/solve`                                                   | —                       |       |
-| `scripts/src/services/recreation/statistics`                                              | —                       |       |
-| `scripts/src/services/recreation/video`                                                   | —                       |       |
-| `scripts/src/services/resume`                                                             | —                       |       |
-| `scripts/src/services/review/checkIsBacklogOwed.ts`                                       | —                       |       |
-| `scripts/src/services/review/checkIsExcludedPath.test.ts`                                 | —                       |       |
-| `scripts/src/services/review/checkIsExcludedPath.ts`                                      | —                       |       |
-| `scripts/src/services/review/checkIsHeldByLiveRun.test.ts`                                | —                       |       |
-| `scripts/src/services/review/checkIsHeldByLiveRun.ts`                                     | —                       |       |
-| `scripts/src/services/review/checkIsSettlementComplete.ts`                                | —                       |       |
-| `scripts/src/services/review/checkIsUnreadableDiff.test.ts`                               | —                       |       |
-| `scripts/src/services/review/checkIsUnreadableDiff.ts`                                    | —                       |       |
-| `scripts/src/services/review/constants.ts`                                                | —                       |       |
-| `scripts/src/services/review/cutBatchDiff.test.ts`                                        | —                       |       |
-| `scripts/src/services/review/cutBatchDiff.ts`                                             | —                       |       |
-| `scripts/src/services/review/dispatchReview.ts`                                           | —                       |       |
-| `scripts/src/services/review/formatReviewWindow.ts`                                       | —                       |       |
-| `scripts/src/services/review/getFixJobName.ts`                                            | —                       |       |
-| `scripts/src/services/review/getFixerPrompt.ts`                                           | —                       |       |
-| `scripts/src/services/review/getLastJsonObject.test.ts`                                   | —                       |       |
-| `scripts/src/services/review/getLastJsonObject.ts`                                        | —                       |       |
-| `scripts/src/services/review/getNewlyPassedWindowIndices.test.ts`                         | —                       |       |
-| `scripts/src/services/review/getNewlyPassedWindowIndices.ts`                              | —                       |       |
-| `scripts/src/services/review/getPassedWindowCount.test.ts`                                | —                       |       |
-| `scripts/src/services/review/getPassedWindowCount.ts`                                     | —                       |       |
-| `scripts/src/services/review/getReviewWindowStatus.ts`                                    | —                       |       |
-| `scripts/src/services/review/getReviewerPrompt.ts`                                        | —                       |       |
-| `scripts/src/services/review/getRunJobs.ts`                                               | —                       |       |
-| `scripts/src/services/review/getSessionFailure.test.ts`                                   | —                       |       |
-| `scripts/src/services/review/getSessionFailure.ts`                                        | —                       |       |
-| `scripts/src/services/review/getSettlerPrompt.ts`                                         | —                       |       |
-| `scripts/src/services/review/getWindowCommitCount.test.ts`                                | —                       |       |
-| `scripts/src/services/review/getWindowCommitCount.ts`                                     | —                       |       |
-| `scripts/src/services/review/git`                                                         | —                       |       |
-| `scripts/src/services/review/globToRegex.test.ts`                                         | —                       |       |
-| `scripts/src/services/review/globToRegex.ts`                                              | —                       |       |
-| `scripts/src/services/review/issues`                                                      | —                       |       |
-| `scripts/src/services/review/listReviewIssues.ts`                                         | —                       |       |
-| `scripts/src/services/review/packBatches.test.ts`                                         | —                       |       |
-| `scripts/src/services/review/packBatches.ts`                                              | —                       |       |
-| `scripts/src/services/review/parseReviewAnswer.test.ts`                                   | —                       |       |
-| `scripts/src/services/review/parseReviewAnswer.ts`                                        | —                       |       |
-| `scripts/src/services/review/readBatchDiff.ts`                                            | —                       |       |
-| `scripts/src/services/review/readCommitFiles.ts`                                          | —                       |       |
-| `scripts/src/services/review/readOwedShas.test.ts`                                        | —                       |       |
-| `scripts/src/services/review/readOwedShas.ts`                                             | —                       |       |
-| `scripts/src/services/review/readRangeDiff.ts`                                            | —                       |       |
-| `scripts/src/services/review/readReviewFiles.ts`                                          | —                       |       |
-| `scripts/src/services/review/readReviewIssueFindings.ts`                                  | —                       |       |
-| `scripts/src/services/review/readReviewWindows.ts`                                        | —                       |       |
-| `scripts/src/services/review/resolveDispositions.test.ts`                                 | —                       |       |
-| `scripts/src/services/review/resolveDispositions.ts`                                      | —                       |       |
-| `scripts/src/services/review/reviewBatch.ts`                                              | —                       |       |
-| `scripts/src/services/review/reviewWindows.ts`                                            | —                       |       |
-| `scripts/src/services/review/runFixer.ts`                                                 | —                       |       |
-| `scripts/src/services/review/runReview.ts`                                                | —                       |       |
-| `scripts/src/services/review/runReviewFix.ts`                                             | —                       |       |
-| `scripts/src/services/review/runReviewSettle.ts`                                          | —                       |       |
-| `scripts/src/services/review/runSession.ts`                                               | —                       |       |
-| `scripts/src/services/review/runSettler.ts`                                               | —                       |       |
-| `scripts/src/services/review/splitRangeDiff.test.ts`                                      | —                       |       |
-| `scripts/src/services/review/splitRangeDiff.ts`                                           | —                       |       |
-| `scripts/src/services/review/splitReviewCommits.test.ts`                                  | —                       |       |
-| `scripts/src/services/review/splitReviewCommits.ts`                                       | —                       |       |
-| `scripts/src/services/review/writeFixIssues.ts`                                           | —                       |       |
-| `scripts/src/services/review/writeReviewIssueFindings.ts`                                 | —                       |       |
-| `scripts/src/services/review/writeReviewSummary.ts`                                       | —                       |       |
+| `scripts/src/services/recreation/signal`                                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/recreation/solve`                                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/recreation/statistics`                                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/recreation/video`                                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/resume`                                                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/checkIsBacklogOwed.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/checkIsExcludedPath.test.ts`                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/checkIsExcludedPath.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/checkIsHeldByLiveRun.test.ts`                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/checkIsHeldByLiveRun.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/checkIsSettlementComplete.ts`                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/checkIsUnreadableDiff.test.ts`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/checkIsUnreadableDiff.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/constants.ts`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/cutBatchDiff.test.ts`                                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/cutBatchDiff.ts`                                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/dispatchReview.ts`                                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/formatReviewWindow.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/getFixJobName.ts`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/getFixerPrompt.ts`                                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/getLastJsonObject.test.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/getLastJsonObject.ts`                                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/getNewlyPassedWindowIndices.test.ts`                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/getNewlyPassedWindowIndices.ts`                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/getPassedWindowCount.test.ts`                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/getPassedWindowCount.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/getReviewWindowStatus.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/getReviewerPrompt.ts`                                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/getRunJobs.ts`                                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/getSessionFailure.test.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/getSessionFailure.ts`                                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/getSettlerPrompt.ts`                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/getWindowCommitCount.test.ts`                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/getWindowCommitCount.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/git`                                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/globToRegex.test.ts`                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/globToRegex.ts`                                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/issues`                                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/listReviewIssues.ts`                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/packBatches.test.ts`                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/packBatches.ts`                                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/parseReviewAnswer.test.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/parseReviewAnswer.ts`                                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/readBatchDiff.ts`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/readCommitFiles.ts`                                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/readOwedShas.test.ts`                                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/readOwedShas.ts`                                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/readRangeDiff.ts`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/readReviewFiles.ts`                                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/readReviewIssueFindings.ts`                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/readReviewWindows.ts`                                        | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/resolveDispositions.test.ts`                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/resolveDispositions.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/reviewBatch.ts`                                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/reviewWindows.ts`                                            | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/runFixer.ts`                                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/runReview.ts`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/runReviewFix.ts`                                             | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/runReviewSettle.ts`                                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/runSession.ts`                                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/runSettler.ts`                                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/splitRangeDiff.test.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/splitRangeDiff.ts`                                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/splitReviewCommits.test.ts`                                  | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/splitReviewCommits.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/writeFixIssues.ts`                                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/writeReviewIssueFindings.ts`                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/review/writeReviewSummary.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/semver`                                                             | —                       |       |
 | `scripts/src/services/shared/at.ts`                                                       | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/blurMasked.ts`                                               | 2026-10-29 · Haiku 5.5  |       |
@@ -1565,41 +1565,41 @@
 | `scripts/src/services/shared/writeJsonFile.ts`                                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/writePartialThenMove.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/skills`                                                             | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/sweeps/constantScope`                                               | —                       |       |
+| `scripts/src/services/sweeps/constantScope`                                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/sweeps/constants.ts`                                                | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/sweeps/controlCharacters`                                           | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/sweeps/duplicateCode`                                               | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/sweeps/duplicateProse`                                              | —                       |       |
-| `scripts/src/services/sweeps/fileOrganization`                                            | —                       |       |
+| `scripts/src/services/sweeps/duplicateProse`                                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/sweeps/fileOrganization`                                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/sweeps/gcsimLinks`                                                  | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/sweeps/getDescendants.ts`                                           | —                       |       |
-| `scripts/src/services/sweeps/ledgerCoverage`                                              | —                       |       |
-| `scripts/src/services/sweeps/readDeletedPaths.test.ts`                                    | —                       |       |
-| `scripts/src/services/sweeps/readDeletedPaths.ts`                                         | —                       |       |
-| `scripts/src/services/sweeps/readSweepFilePaths.bench.json`                               | —                       |       |
-| `scripts/src/services/sweeps/readSweepFilePaths.bench.md`                                 | —                       |       |
-| `scripts/src/services/sweeps/readSweepFilePaths.bench.ts`                                 | —                       |       |
-| `scripts/src/services/sweeps/readSweepFilePaths.ts`                                       | —                       |       |
-| `scripts/src/services/sweeps/readVendoredSkillNames.ts`                                   | —                       |       |
-| `scripts/src/services/sweeps/repeatedListItems`                                           | —                       |       |
-| `scripts/src/services/sweeps/runOnBullets`                                                | —                       |       |
-| `scripts/src/services/sweeps/sharedExportConsumers`                                       | —                       |       |
-| `scripts/src/services/sweeps/skillDocs`                                                   | —                       |       |
-| `scripts/src/services/sweeps/staleNames`                                                  | —                       |       |
+| `scripts/src/services/sweeps/getDescendants.ts`                                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/sweeps/ledgerCoverage`                                              | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/sweeps/readDeletedPaths.test.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/sweeps/readDeletedPaths.ts`                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/sweeps/readSweepFilePaths.bench.json`                               | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/sweeps/readSweepFilePaths.bench.md`                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/sweeps/readSweepFilePaths.bench.ts`                                 | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/sweeps/readSweepFilePaths.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/sweeps/readVendoredSkillNames.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/sweeps/repeatedListItems`                                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/sweeps/runOnBullets`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/sweeps/sharedExportConsumers`                                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/sweeps/skillDocs`                                                   | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/sweeps/staleNames`                                                  | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/sweeps/todos`                                                       | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/sweeps/unterminatedResults`                                         | —                       |       |
-| `scripts/src/services/timing`                                                             | —                       |       |
+| `scripts/src/services/sweeps/unterminatedResults`                                         | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/timing`                                                             | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/triage`                                                             | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/updateNode`                                                         | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/usage`                                                              | —                       |       |
+| `scripts/src/services/usage`                                                              | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/voiceMatch`                                                         | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/workspace`                                                          | —                       |       |
-| `scripts/src/services/worktree`                                                           | —                       |       |
-| `scripts/src/skills`                                                                      | —                       |       |
+| `scripts/src/services/workspace`                                                          | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/worktree`                                                           | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/skills`                                                                      | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/sweeps`                                                                      | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/triage`                                                                      | —                       |       |
+| `scripts/src/triage`                                                                      | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/updateNode`                                                                  | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/usage`                                                                       | —                       |       |
-| `scripts/src/voiceMatch`                                                                  | —                       |       |
+| `scripts/src/usage`                                                                       | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/voiceMatch`                                                                  | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/workspace`                                                                   | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/worktree`                                                                    | —                       |       |
+| `scripts/src/worktree`                                                                    | 2026-10-29 · Haiku 5.5  |       |
