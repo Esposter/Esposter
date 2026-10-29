@@ -3,7 +3,10 @@ import type { WitnessView } from "#parity/models/witness/WitnessView";
 import type { SceneContext } from "#src/models/scene/SceneContext";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 
+import "@fontsource/signika/400.css";
+import "@fontsource/signika/500.css";
 import "@fontsource/signika/600.css";
+import "@fontsource/signika/700.css";
 import { benchLoad } from "#parity/benchLoad";
 import { benchScene } from "#parity/benchScene";
 import { getSceneCamera } from "#parity/getSceneCamera";
