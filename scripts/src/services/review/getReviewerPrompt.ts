@@ -1,12 +1,6 @@
-import { REVIEW_DIFF_CHARACTER_LIMIT, REVIEW_DIFF_LINE_LIMIT } from "#src/services/review/constants";
+import type { ReviewerPromptInput } from "#src/models/review/ReviewerPromptInput";
 
-interface ReviewerPromptInput {
-  base: string;
-  diff: string;
-  end: string;
-  files: string[];
-  isDiffCut: boolean;
-}
+import { REVIEW_DIFF_CHARACTER_LIMIT, REVIEW_DIFF_LINE_LIMIT } from "#src/services/review/constants";
 
 // The reviewer's prompt, its text verbatim from the review spec. The diff is cut at `REVIEW_DIFF_LINE_LIMIT`, and a cut
 // One is followed by a note to read the file for the rest, since a reviewer that does not know it saw a fragment reports
