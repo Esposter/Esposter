@@ -5,6 +5,7 @@ import { listHeldCharacterPackUrls } from "#src/services/character/listHeldChara
 import { planCharacterPackDownload } from "#src/services/character/planCharacterPackDownload";
 import { readCharacterPackIndex } from "#src/services/character/readCharacterPackIndex";
 import { getResultAsync, noop } from "@esposter/shared";
+import { onMounted, ref } from "vue";
 
 // The download of the published character packs, started when the host mounts: the index read, the files the browser's
 // Cache lacks planned, and each of those fetched into the cache with the bytes loaded and pending that the loading
