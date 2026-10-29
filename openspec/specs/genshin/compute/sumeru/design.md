@@ -2,7 +2,7 @@
 
 ## Queue
 
-- [ ] `[page]` {sumeru-city-location-camera-landmarks} needs game-exports, parity-page — **sumeru-city-location: the camera solved on its landmarks and written.** `pnpm -C scripts genshin:parity pose sumeru-city-location --witness sumeru --write`. Reads the reference, the witness, the nine landmarks in its `ParityReferenceMap` entry and their shares in `DerivedAssetLandmarkMap[sumeru]`. Writes and bars as the [compute bars](../README.md#bars) set out. — waits on the landmark shares, which the landmarks' meshes item fills.
+- [ ] `[page]` {sumeru-city-location-camera-landmarks} needs game-exports, parity-page — **sumeru-city-location: the camera solved on its landmarks and written.** `pnpm -C scripts genshin:parity pose sumeru-city-location --witness sumeru --write`. Reads the reference, the witness, the nine landmarks in its `ParityReferenceMap` entry and their shares in `DerivedAssetLandmarkMap[sumeru]`. Writes and bars as the [compute bars](../README.md#bars) set out. Its nine landmark shares are already in `DerivedAssetLandmarkMap[sumeru]` (`scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts:116-171`), so nothing is awaited for them.
 - [ ] `[page]` {sumeru-layout-exports} needs game-exports, parity-page — **Sumeru: the layout against the exports at the reference's camera.** `pnpm -C scripts genshin:parity passes sumeru --pass Layout`. Reads the placements in the witness, the scene's camera from sumeru-city-location's `cameraPose`. Writes `scripts/src/services/genshinParity/passes/snapshots/sumeru.snapshot.md`. Bar: the Layout bars of [compute](../README.md#bars). — waits on `sumeru-city-location-camera-landmarks` for the camera it reads.
 - [ ] `[page]` {sumeru-camera} needs game-exports, parity-page — **Sumeru: the camera pass.** `pnpm -C scripts genshin:parity passes sumeru --pass Camera`. Reads sumeru-city-location's landmarks on the frozen layout and its `cameraPose`. Writes `scripts/src/services/genshinParity/passes/snapshots/sumeru.snapshot.md`. Bar: root mean square 2 px (`FRAME_GATE_PIXELS`). Waits on `sumeru-city-location-camera-landmarks`.
 - [ ] `[page]` {sumeru-shape} needs game-exports, parity-page — **Sumeru: the shape pass.** `pnpm -C scripts genshin:parity passes sumeru --pass Shape`. Reads our capital's kit parts (through `BuildingKitPartsMap`) drawn at the reference's camera beside the exports. Writes `scripts/src/services/genshinParity/passes/snapshots/sumeru.snapshot.md` and the diff images. Bar: the Shape bars of [compute](../README.md#bars).
@@ -15,7 +15,21 @@
 
 ## Waiting
 
+## Sources
+
+- `scripts/src/services/genshinParity/passes/constants.ts:31` (`FRAME_GATE_PIXELS = 2`), the 2 px bar the Camera, Sun and Layout items gate on.
+- `scripts/src/services/genshinParity/passes/constants.ts:81` and `scripts/src/services/genshinParity/passes/getParityPassesPath.ts:8`: the `passes/snapshots` folder and the `${component}.snapshot.md` writer the `sumeru.snapshot.md` items name.
+- `scripts/src/services/genshinParity/commands/passesCommand.ts:33` (`passes`), `compareCommand.ts:53` (`compare`), `shadowsCommand.ts:17` (`shadows`, `witness` at `:12`), and `poseCommand.ts:53` (`pose`), with `witness` at `:38`, `write` at `:44` and `:75`: the verbs and flags the items name.
+- `scripts/src/services/genshinParity/witness/solveReferenceShadows.ts:192` and `scripts/src/services/genshinParity/witness/solveReferencePose.ts:76`: the `shadows` and `pose` output folders.
+- `{data-root}/genshin-parity/references/sumeru-city-location.png`, present on the Mac: the reference the Sun, Camera and Score items read.
+- `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts:1129-1143`: the `sumeru-city-location` entry, its nine `landmarks` at `:1132-1140` (the minaret's collar, dome and finial, and the spire's base, tip and wings), and the provisional `heldMinutes: 720` at `:1143`, commented at `:1142`.
+- `scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts:116-171`: the nine `mesh` and `share` entries for Sumeru's landmarks.
+- `packages/genshin-engine/src/atmosphere/computeSunDirection.ts:8`: the function the held minute is read through on a hit.
+- `scripts/src/services/genshinParity/passes/measureLight.ts:16-17`, `measureSurface.ts:36`, `measureAtmosphere.ts:6-7`, `measureDisplay.ts:17-18`, `measureLayout.ts:4`: the reads the pass items name, in each module's own header.
+
 ## Open
 
 - [ ] **The sumeru-city-location camera pose image is written** — no source yet, for the reason [Liyue](../liyue/design.md) gives.
 - [ ] **The sumeru-city-location shadow image is written** — no source yet, for the reason [Liyue](../liyue/design.md) gives for its shadow image.
+- [ ] **The display pass reads the post profile's grading and bloom** — no source yet: `measureDisplay.ts` names the exports' parts and the tone curve's contrast and nothing else, and no file under `passes/`, `display/` or `sky/` names bloom or a grade. What would settle it is the Display pass's read list in code, or a reader that names the grade and bloom it compares.
+- [ ] **The shape pass reads our capital's kit parts through `BuildingKitPartsMap`** — no source yet: `packages/genshin-world/src/services/world/BuildingKitPartsMap.ts` has consumers only in `packages/genshin-world/src/index.ts` and the `Landmark/Building/Index.vue` component, and none in `scripts/src/services/genshinParity/` or `packages/genshin-world/parity/`. What would settle it is the parity code path that draws the kit parts at the reference's camera.
