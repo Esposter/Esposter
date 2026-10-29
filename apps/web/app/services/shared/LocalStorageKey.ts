@@ -21,6 +21,10 @@ export const LocalStorageKey = {
   Drafts: "drafts",
   DungeonsStore: "dungeons-store",
   EmojiSkinTone: "emoji-skin-tone",
+  // The developer console's lines and their results, kept with the browser so a reload still shows them
+  GenshinDevConsoleHistory: "genshin-dev-console-history",
+  // The developer panel's open tab, kept with the browser
+  GenshinDevPanelTab: "genshin-dev-panel-tab",
   // The Genshin save an account has not had acknowledged, kept per account with the session that held it, until it is, so a
   // Page left mid-save leaves it for the next start to adopt
   GenshinPending: (userId: string) => `genshin-pending${LOCAL_STORAGE_KEY_SEPARATOR}${userId}`,
