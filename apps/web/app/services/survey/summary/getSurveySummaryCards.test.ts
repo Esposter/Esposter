@@ -6,15 +6,15 @@ import { describe, expect, test } from "vitest";
 
 describe(getSurveySummaryCards, () => {
   const checkboxAnswers = ["a", "b"].join(CHECKBOX_ANSWER_SEPARATOR);
-  const rowKey = "rowKey";
+  const rowKey = crypto.randomUUID();
   const questions = new Model({
     elements: [
-      { choices: [{ text: "A", value: "a" }, "b"], name: "radiogroup", title: "Radiogroup", type: "radiogroup" },
-      { choices: ["a", "b"], name: "checkbox", type: "checkbox" },
-      { name: "boolean", type: "boolean" },
-      { name: "rating", rateMax: 2, type: "rating" },
-      { inputType: "number", name: "number", type: "text" },
-      { name: "text", type: "text" },
+      { choices: [{ text: "A", value: "a" }, "b"], name: "a", title: "Radiogroup", type: "radiogroup" },
+      { choices: ["a", "b"], name: "b", type: "checkbox" },
+      { name: "c", type: "boolean" },
+      { name: "d", rateMax: 2, type: "rating" },
+      { inputType: "number", name: "e", type: "text" },
+      { name: "f", type: "text" },
     ],
   }).getAllQuestions();
 
@@ -24,8 +24,8 @@ describe(getSurveySummaryCards, () => {
 
     expect(
       getSurveySummaryCards(questions, [
-        { boolean: true, checkbox: checkboxAnswers, number: 1, radiogroup: "a", rating: 1, rowKey, text: "text" },
-        { boolean: false, checkbox: "a", number: 3, radiogroup: null, rating: 2, rowKey, text: "" },
+        { a: "a", b: checkboxAnswers, c: true, d: 1, e: 1, f: "a", rowKey },
+        { a: null, b: "a", c: false, d: 2, e: 3, f: "", rowKey },
       ]),
     ).toStrictEqual([
       {
@@ -35,7 +35,7 @@ describe(getSurveySummaryCards, () => {
           { count: 1, label: "A" },
           { count: 0, label: "b" },
         ],
-        name: "radiogroup",
+        name: "a",
         title: "Radiogroup",
         type: SurveySummaryCardType.Choice,
       },
@@ -46,8 +46,8 @@ describe(getSurveySummaryCards, () => {
           { count: 2, label: "a" },
           { count: 1, label: "b" },
         ],
-        name: "checkbox",
-        title: "checkbox",
+        name: "b",
+        title: "b",
         type: SurveySummaryCardType.Choice,
       },
       {
@@ -57,8 +57,8 @@ describe(getSurveySummaryCards, () => {
           { count: 1, label: "Yes" },
           { count: 1, label: "No" },
         ],
-        name: "boolean",
-        title: "boolean",
+        name: "c",
+        title: "c",
         type: SurveySummaryCardType.Choice,
       },
       {
@@ -68,8 +68,8 @@ describe(getSurveySummaryCards, () => {
           { count: 1, label: "1" },
           { count: 1, label: "2" },
         ],
-        name: "rating",
-        title: "rating",
+        name: "d",
+        title: "d",
         type: SurveySummaryCardType.Choice,
       },
       {
@@ -77,11 +77,11 @@ describe(getSurveySummaryCards, () => {
         average: 2,
         maximum: 3,
         minimum: 1,
-        name: "number",
-        title: "number",
+        name: "e",
+        title: "e",
         type: SurveySummaryCardType.Number,
       },
-      { answeredCount: 1, answers: ["text"], name: "text", title: "text", type: SurveySummaryCardType.Text },
+      { answeredCount: 1, answers: ["a"], name: "f", title: "f", type: SurveySummaryCardType.Text },
     ]);
   });
 
@@ -90,10 +90,10 @@ describe(getSurveySummaryCards, () => {
     expect.hasAssertions();
 
     const choiceQuestions = new Model({
-      elements: [{ choices: ["Yes; definitely", "Yes"], name: "checkbox", type: "checkbox" }],
+      elements: [{ choices: ["Yes; definitely", "Yes"], name: "a", type: "checkbox" }],
     }).getAllQuestions();
 
-    expect(getSurveySummaryCards(choiceQuestions, [{ checkbox: "Yes; definitely", rowKey }])).toStrictEqual([
+    expect(getSurveySummaryCards(choiceQuestions, [{ a: "Yes; definitely", rowKey }])).toStrictEqual([
       {
         answeredCount: 1,
         average: undefined,
@@ -101,8 +101,8 @@ describe(getSurveySummaryCards, () => {
           { count: 1, label: "Yes; definitely" },
           { count: 0, label: "Yes" },
         ],
-        name: "checkbox",
-        title: "checkbox",
+        name: "a",
+        title: "a",
         type: SurveySummaryCardType.Choice,
       },
     ]);
