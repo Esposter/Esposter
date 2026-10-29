@@ -2,7 +2,7 @@
 
 Read when writing a change's `.openspec.yaml`, or a deferred or rejected idea's.
 
-`openspec new change` writes `schema`. The rest is ours: OpenSpec's own `affected_areas`, and keys of our own with an `x-` prefix, which the CLI leaves to the tools that read them. No open change carries a `created` date: the CLI treats it as optional and nothing reads it, so history is git's. A page carries no frontmatter, and no status or date fields anywhere — location carries status, git carries history.
+`openspec new change` writes `schema` and a `created` date, which is deleted: the CLI treats it as optional and nothing reads it, so no change carries a date and history is git's. The rest is ours: OpenSpec's own `affected_areas`, and keys of our own with an `x-` prefix, which the CLI leaves to the tools that read them. A page carries no frontmatter, and no status or date fields anywhere — location carries status, git carries history.
 
 ```yaml
 schema: spec-driven
