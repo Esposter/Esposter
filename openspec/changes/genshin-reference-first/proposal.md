@@ -21,4 +21,4 @@ The check that exists matches references by screen name, so a screen's subscreen
 
 ## Impact
 
-`packages/genshin-world/parity` (the screen list, its pending entries and the coverage test beside it), `scripts/src/services/genshinParity` (the subscreen test beside the reference map, and `approve`), `scripts/src/models/genshinParity` (the `variant` field on a reference entry), `packages/configuration` (the screenshot path and its test beside it), the genshin-world and genshin-interface fixtures, and the approved images. Git keeps the platform-suffixed files for anyone who wants them.
+`packages/genshin-world/parity` (the screen list, its pending entries and the coverage test beside it), `scripts/src/services/genshinParity` (the subscreen test beside the reference map, and `approve`), `scripts/src/models/genshinParity` (the base reference model, which already declares the `variant` field a subscreen's entry sets, and the entry model that composes it), `packages/configuration` (the screenshot path and its test beside it), the genshin-world and genshin-interface fixtures, and the approved images. Git keeps the platform-suffixed files for anyone who wants them.
