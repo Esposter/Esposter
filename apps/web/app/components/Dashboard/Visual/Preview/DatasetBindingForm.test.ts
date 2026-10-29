@@ -22,8 +22,8 @@ describe("dashboardVisualPreviewDatasetBindingForm", () => {
     expect.hasAssertions();
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
-    const { promise: isFirstReadReached, resolve: onFirstReadReached } = Promise.withResolvers<void>();
-    const { promise: isBoundReadReached, resolve: onBoundReadReached } = Promise.withResolvers<void>();
+    const { promise: firstReadReached, resolve: onFirstReadReached } = Promise.withResolvers<void>();
+    const { promise: boundReadReached, resolve: onBoundReadReached } = Promise.withResolvers<void>();
     const firstReference = { id: crypto.randomUUID(), type: DatasetProviderType.Sheet };
     const secondReference = { id: crypto.randomUUID(), type: DatasetProviderType.Sheet };
     let secondReferenceReadCount = 0;
@@ -46,11 +46,11 @@ describe("dashboardVisualPreviewDatasetBindingForm", () => {
     const picker = wrapper.findComponent(DatasetReferencePicker);
     picker.vm.$emit("update:modelValue", firstReference);
     picker.vm.$emit("update:modelValue", secondReference);
-    await isFirstReadReached;
+    await firstReadReached;
     await flushPromises();
     releaseRead();
     await flushPromises();
-    await isBoundReadReached;
+    await boundReadReached;
     const emittedBindings = wrapper.emitted<[undefined | VisualDatasetBinding]>("update:modelValue") ?? [];
 
     expect(emittedBindings.map(([binding]) => binding?.reference)).toStrictEqual([secondReference]);

@@ -12,10 +12,10 @@ import { useAchievementStore } from "@/store/achievement";
 const achievementStore = useAchievementStore();
 const { achievementDefinitions, statistics, userAchievements } = storeToRefs(achievementStore);
 const { $trpc } = useNuxtApp();
-const { data: achievementRarities } = useQuery(() => $trpc.achievement.readAchievementRarities.query());
+const { data: achievementNameRarityMap } = useQuery(() => $trpc.achievement.readAchievementRarities.query());
 const sort = ref(AchievementSort.Category);
 const displayAchievementDefinitions = computed(() =>
-  sortAchievementDefinitions(achievementDefinitions.value, sort.value, achievementRarities.value),
+  sortAchievementDefinitions(achievementDefinitions.value, sort.value, achievementNameRarityMap.value),
 );
 const achievementListMap = computed(() =>
   getAchievementListMap(displayAchievementDefinitions.value, userAchievements.value),
@@ -47,7 +47,7 @@ const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, AchievementStatuses, Achi
           :meaning="UiIconMeaning.Achievement"
           :title="value === AchievementStatus.Unlocked ? 'Nothing unlocked yet' : 'Every achievement unlocked'"
         />
-        <AchievementGrid v-else :="achievementListMap[value]" :achievement-rarities />
+        <AchievementGrid v-else :="achievementListMap[value]" :achievement-name-rarity-map />
       </template>
     </UiTabs>
   </section>

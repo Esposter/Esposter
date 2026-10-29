@@ -39,7 +39,7 @@ describe("dashboardVisualPreviewContainer", () => {
   test("a bound visual's tile downloads the CSV of the rows it draws", async () => {
     expect.hasAssertions();
 
-    const { promise: isReadAnswered, resolve: onReadAnswered } = Promise.withResolvers<void>();
+    const { promise: readAnswered, resolve: onReadAnswered } = Promise.withResolvers<void>();
     trpcMsw.dataset.readDataset.query(() => {
       onReadAnswered();
       return {
@@ -48,7 +48,7 @@ describe("dashboardVisualPreviewContainer", () => {
       };
     });
     const wrapper = await mountSuspended(DashboardVisualPreviewContainer, { props: { visual: createBoundVisual() } });
-    await isReadAnswered;
+    await readAnswered;
     await flushPromises();
     await wrapper.get(exportCsvLabel).trigger("click");
 
@@ -74,13 +74,13 @@ describe("dashboardVisualPreviewContainer", () => {
   test("a bound visual whose read fails offers no Export CSV", async () => {
     expect.hasAssertions();
 
-    const { promise: isReadAnswered, resolve: onReadAnswered } = Promise.withResolvers<void>();
+    const { promise: readAnswered, resolve: onReadAnswered } = Promise.withResolvers<void>();
     trpcMsw.dataset.readDataset.query(() => {
       onReadAnswered();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const wrapper = await mountSuspended(DashboardVisualPreviewContainer, { props: { visual: createBoundVisual() } });
-    await isReadAnswered;
+    await readAnswered;
     await flushPromises();
 
     expect(wrapper.findComponent(UiErrorState).exists()).toBe(true);

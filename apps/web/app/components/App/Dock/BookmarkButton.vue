@@ -29,14 +29,14 @@ const isBookmarked = computed(() => bookmarkPaths.value.has(currentRoute.value.p
     type="button"
     ui-item
     @click="
-      toggleBookmark({
-        mark: getPageMark(currentRoute.path),
-        path: currentRoute.path,
-        title: getPageLabel(
+      () => {
+        const pageMark = getPageMark(currentRoute.path);
+        const pageLabel = getPageLabel(
           currentRoute.path,
           rankedRecentPages.find(({ path }) => path === currentRoute.path)?.title ?? '',
-        ),
-      })
+        );
+        toggleBookmark({ mark: pageMark, path: currentRoute.path, title: pageLabel });
+      }
     "
   >
     <UiItemContent v-if="isBookmarked" :meaning="UiIconMeaning.Unbookmark" title="Remove bookmark" />

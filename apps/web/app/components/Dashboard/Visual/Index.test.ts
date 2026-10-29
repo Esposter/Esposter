@@ -20,7 +20,7 @@ describe("dashboardVisualIndex", () => {
     expect.hasAssertions();
 
     // The read is answered after the mount, so the test waits for the answer to be sent before it asserts on the error
-    const { promise: isReadAnswered, resolve: onReadAnswered } = Promise.withResolvers<void>();
+    const { promise: readAnswered, resolve: onReadAnswered } = Promise.withResolvers<void>();
     trpcMsw.dataset.readDataset.query(() => {
       onReadAnswered();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
@@ -33,7 +33,7 @@ describe("dashboardVisualIndex", () => {
       type: VisualType.Table,
     });
     const wrapper = await mountSuspended(DashboardVisualIndex, { props: { visual } });
-    await isReadAnswered;
+    await readAnswered;
     await flushPromises();
 
     expect(wrapper.findComponent(UiErrorState).exists()).toBe(true);

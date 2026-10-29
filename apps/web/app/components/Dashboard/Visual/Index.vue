@@ -38,9 +38,10 @@ const options = useApexOptions(
 );
 // Layered after the resolvers rather than ahead of them, because which visuals may be linked is decided by the
 // Chart type they resolve to — the same visual is an axis chart or a donut depending on its chart configuration
-const linkedOptions = computed(() =>
-  defu({ chart: getVisualLinkChartOptions(visual, options.value.chart?.type) }, options.value),
-);
+const linkedOptions = computed(() => {
+  const visualLinkChartOptions = getVisualLinkChartOptions(visual, options.value.chart?.type);
+  return defu({ chart: visualLinkChartOptions }, options.value);
+});
 const { applyView, getViewUrl } = useVisualPerspective(
   () => visual.id,
   () => chart.value?.getChart(),
@@ -80,7 +81,12 @@ const { copy } = clipboardStore;
           label="Copy link to this view"
           :meaning="UiIconMeaning.Link"
           :variant="UiButtonVariant.Quiet"
-          @click="copy(getViewUrl())"
+          @click="
+            () => {
+              const viewUrl = getViewUrl();
+              copy(viewUrl);
+            }
+          "
         />
         <!-- A snapshotted binding renders baked data, so there is nothing to refresh -->
         <UiIconButton
