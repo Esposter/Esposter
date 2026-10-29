@@ -48,3 +48,7 @@ flowchart TD
 - The game data, `{data-root}/genshin-parity/text/ExcelBinOutput/`: groups 4131, 4132 and 4139 (skill rows 10411, 10412 and 10415), with the skill's 12-second cooldown and the burst's 15 seconds and 60 energy on row 10415. Checked against gcsim's multiplier blocks: every multiplier block matches its group at every talent level.
 - The cached wiki, `{data-root}/cache/genshin-wiki/Category_Mona_Talents.json`: the plunge poise (rows 6 to 8: 5, 50 and 100), the Illusory Bubble Explosion row (poise 200, 442.4% at level 1), the Omen and bubble durations, and the Frozen talent note.
 - gcsim v2.47.2's `cons.go`, which gives the Charged Attack's reset of the stacks: grounding the requirement "Constellation 6's stack reset".
+
+## Open
+
+- [ ] **Each normal attack's last hit has a 20% chance of Constellation 2's follow-up** — contradiction: the Constellation 2 Decisions bullet states the roll unconditionally, while gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/mona/cons.go` line 120 makes the roll only while the Hexerei post-burst status is inactive (`!c.StatusIsActive(c2HexereiPostBurstCAKey) && c.Core.Rand.Float64() > .2`), so the follow-up is certain while that status holds, and the follow-up consumes the status at line 126.
