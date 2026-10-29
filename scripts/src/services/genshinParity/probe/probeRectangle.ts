@@ -3,9 +3,9 @@ import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
 import { ProbeSide } from "#src/models/genshinParity/probe/ProbeSide";
 import { readRectangleSide } from "#src/services/genshinParity/probe/readRectangleSide";
-import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { getShotPath } from "#src/services/genshinParity/shared/getShotPath";
+import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import sharp from "sharp";
@@ -25,8 +25,6 @@ export const probeRectangle = async (
       `not one of ${Object.keys(ParityReferenceMap).join(", ")}`,
     );
   const referencePath = await getReferencePath(referenceId);
-  if (!existsSync(referencePath))
-    throw new InvalidOperationError(Operation.Read, referenceId, `no reference at ${referencePath}`);
   const { height, width } = await sharp(referencePath).metadata();
   const isInside =
     [rect.x, rect.y, rect.width, rect.height].every((value) => Number.isInteger(value)) &&
