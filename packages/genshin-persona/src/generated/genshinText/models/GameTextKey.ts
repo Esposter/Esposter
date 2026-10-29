@@ -44,11 +44,14 @@ export const GameTextKey = {
   // Takes the worn one off
   ArtifactActionEnhance: "UI_EQUIP_PAGE_LEVEL_UP",
   ArtifactActionEquip: "UI_EQUIP_BUTTON",
+  // The button under the worn artifacts, named as the equipment page names it
+  ArtifactActionFastEquip: "UI_EQUIP_FAST_EQUIP",
   // The lock button's words: Lock keeps a worn or bag artifact out of fodder, and Unlock lets it be fodder again
   ArtifactActionLock: "EQUIP_LOCK_TIP_1",
   ArtifactActionUnequip: "UI_ACTIVITY_POTION_BUFF_REMOVE_BUTTON",
   ArtifactActionUnlock: "EQUIP_LOCK_TIP_2",
   ArtifactAutoAdd: "UI_FAST_ADD_BUTTON",
+  ArtifactDetails: "UI_RELIC_DETAIL",
   ArtifactInventoryFull: "BAG_FULL_EQUIPMENT_TIPS",
   ArtifactLevelMax: "EQUIP_RELIC_LEVEL_MAX",
   // The set bonus block's heading, each bonus's line with its piece count and effect, and the words it shows while no
