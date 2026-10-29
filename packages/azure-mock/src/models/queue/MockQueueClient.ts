@@ -1,4 +1,3 @@
-import type { MockResponse } from "#src/models/shared/MockResponse";
 import type { MapValue } from "#src/util/types/MapValue";
 import type {
   DequeuedMessageItem,
@@ -172,7 +171,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
     throw new NotImplementedError(this.updateMessage.name);
   }
 
-  #createResponse<T>(parsedBody: T): MockResponse & { bodyAsText: string; parsedBody: T } {
+  #createResponse<T>(parsedBody: T) {
     return { ...createMockResponse(200, this.url), bodyAsText: "", parsedBody };
   }
 }
