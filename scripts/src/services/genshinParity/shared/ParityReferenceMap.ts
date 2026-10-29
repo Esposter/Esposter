@@ -40,6 +40,11 @@ const WEAPON_SCREEN_TOP_PLATE = [
   { height: 66, width: 66, x: 1738, y: 16 },
   { height: 180, width: 300, x: 126, y: 136 },
 ];
+// The weapon screen's bottom band, drawn over the same place by the screen, ascend and refine entries: a rule
+// Across the foot, a box at its right end, and a line below the rule's left part that the screen and refine entries share
+const WEAPON_SCREEN_BOTTOM_RULE = { height: 12, width: 738, x: 1086, y: 736 };
+const WEAPON_SCREEN_BOTTOM_BOX = { height: 72, width: 296, x: 1508, y: 768 };
+const WEAPON_SCREEN_BOTTOM_LINE = { height: 38, width: 200, x: 1100, y: 786 };
 // A forge's Queues tab in full above the recorder's UID, scored by its two Queues entries
 const FORGE_QUEUES_REGION = { height: 860, width: 1920, x: 0, y: 0 };
 // The Queues tab's pieces filled from round them, so the blurred scene behind is scored and the game's own pieces are not: the title,
@@ -1161,10 +1166,10 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       { height: 56, width: 466, x: 1100, y: 524 },
       { height: 56, width: 224, x: 1580, y: 524 },
       { height: 132, width: 722, x: 1100, y: 596 },
-      { height: 38, width: 200, x: 1100, y: 786 },
-      { height: 12, width: 738, x: 1086, y: 736 },
+      WEAPON_SCREEN_BOTTOM_LINE,
+      WEAPON_SCREEN_BOTTOM_RULE,
       { height: 72, width: 72, x: 1420, y: 768 },
-      { height: 72, width: 296, x: 1508, y: 768 },
+      WEAPON_SCREEN_BOTTOM_BOX,
       { height: 96, width: 48, x: 784, y: 174 },
       { height: 170, width: 190, x: 612, y: 262 },
       { height: 92, width: 75, x: 600, y: 410 },
@@ -1190,8 +1195,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       { height: 34, width: 360, x: 1270, y: 548 },
       { height: 130, width: 350, x: 1278, y: 594 },
       { height: 38, width: 330, x: 1100, y: 786 },
-      { height: 12, width: 738, x: 1086, y: 736 },
-      { height: 72, width: 296, x: 1508, y: 768 },
+      WEAPON_SCREEN_BOTTOM_RULE,
+      WEAPON_SCREEN_BOTTOM_BOX,
       { height: 100, width: 52, x: 432, y: 148 },
       { height: 166, width: 170, x: 478, y: 262 },
       { height: 130, width: 130, x: 560, y: 420 },
@@ -1224,9 +1229,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       { height: 34, width: 366, x: 1100, y: 548 },
       { height: 58, width: 224, x: 1580, y: 534 },
       { height: 130, width: 472, x: 1218, y: 600 },
-      { height: 38, width: 200, x: 1100, y: 786 },
-      { height: 12, width: 738, x: 1086, y: 736 },
-      { height: 72, width: 296, x: 1508, y: 768 },
+      WEAPON_SCREEN_BOTTOM_LINE,
+      WEAPON_SCREEN_BOTTOM_RULE,
+      WEAPON_SCREEN_BOTTOM_BOX,
       { height: 80, width: 36, x: 566, y: 192 },
       { height: 110, width: 50, x: 572, y: 262 },
       { height: 130, width: 50, x: 604, y: 370 },
