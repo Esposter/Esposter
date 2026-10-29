@@ -52,7 +52,7 @@ flowchart TD
 
 The list is scored against the English PC client at 1080 high in its pickup: a public tutorial's recording at 9 seconds, drawn as its clean plate behind the list (`interaction-prompts-pickup`, `isBackdrop`), over the list's own box (`scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`, `{data-root}/genshin-parity/references/interaction-prompts-pickup.png`). Measured off that frame (see Open):
 
-- Three rows of 59 on a 72 pitch, the stack centred on the screen's middle, its cap's left edge 139 right of the centre.
+- Three rows of 59 on a 72 pitch, the stack's middle one unit above the screen's middle, its cap's left edge 138 right of the centre.
 - The cap 40 wide and 33 high, its pointer 8 by 15 at 45 from the cap's left, the pill 290 wide from 60 past the cap's left, its name's cap height 22 in a face of 31 with letter-spacing to the game's line width, the icon 32 across at 17 inside the pill.
 
 Scored over the clean plate, with its name's place, its width and the icon's inset set, the list does not yet meet the two-percent bar on mean difference; the parity suite holds its scores. What is left:
