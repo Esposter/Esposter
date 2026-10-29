@@ -81,7 +81,7 @@ const pick = (characterId: number) => {
     <ul class="pins">
       <li v-for="{ awayLabel, id, label, x, y } of pins" :key="id" :style="{ '--x': x, '--y': y }">
         <button class="pin" :aria-label="label" :aria-pressed="id === place" type="button" @click="place = id">
-          <span aria-hidden="true">+</span>
+          <span class="plus" aria-hidden="true" />
         </button>
         <span v-if="awayLabel" class="away">{{ awayLabel }}</span>
       </li>
@@ -254,6 +254,19 @@ const pick = (characterId: number) => {
   font-size: calc(var(--unit) * 48);
   line-height: calc(var(--unit) * 72);
   box-shadow: 0 calc(var(--unit) * 4) calc(var(--unit) * 8) rgb(0 0 0 / 0.3);
+}
+
+/* The plus is two bars of 36 by 7 in the game's grey, centred on the pin */
+.plus {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--unit) * 36);
+  height: calc(var(--unit) * 36);
+  background:
+    linear-gradient(#9c9ea2, #9c9ea2) center / 100% calc(var(--unit) * 7) no-repeat,
+    linear-gradient(#9c9ea2, #9c9ea2) center / calc(var(--unit) * 7) 100% no-repeat;
+  transform: translate(-50%, -50%);
 }
 
 /* The time left on the expedition away from a place, a dark tag above its pin */
