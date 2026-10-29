@@ -3,7 +3,10 @@ import type { ReferenceEntryPlan } from "#src/models/genshinParity/reference/Ref
 import type { ReferencePackDecision } from "#src/models/genshinParity/reference/ReferencePackDecision";
 import type { ReferencePackOptions } from "#src/models/genshinParity/reference/ReferencePackOptions";
 
+import { getReferenceFileName } from "#src/services/genshinParity/shared/getReferenceFileName";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+
+const hasScreenshot = ({ id, missing }: ReferenceEntryPlan) => !missing.includes(getReferenceFileName(id));
 
 // Decides what a pack stores from its plans and its options. A collision is one whose id is not replaced: `--skip-colliding`
 // leaves it out of the manifest and the container, and without that flag it refuses the run. An id named by `--replace`
@@ -12,7 +15,7 @@ export const planReferencePack = (
   plans: ReferenceEntryPlan[],
   { replace, skipColliding }: ReferencePackOptions,
 ): ReferencePackDecision => {
-  const unknown = replace.filter((id) => !plans.some((plan) => plan.id === id));
+  const unknown = replace.filter((id) => !plans.some((plan) => plan.id === id && hasScreenshot(plan)));
   if (unknown.length > 0)
     throw new InvalidOperationError(
       Operation.Read,

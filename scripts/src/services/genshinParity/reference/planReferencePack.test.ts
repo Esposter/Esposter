@@ -78,12 +78,20 @@ describe(planReferencePack, () => {
     });
   });
 
-  test("refuses an id to replace that the map names with no screenshot", () => {
+  test("refuses an id to replace that the map does not name", () => {
     expect.hasAssertions();
     expect(() =>
       planReferencePack([createPlan("a")], { replace: ["b"], skipColliding: false }),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: b, is not a reference the map names with a screenshot, so it has no row to replace]`,
+    );
+  });
+
+  test("refuses an id to replace that the map names with no screenshot", () => {
+    expect.hasAssertions();
+    const plans = [{ ...createPlan("a"), missing: ["a.webp"] }];
+    expect(() => planReferencePack(plans, { replace: ["a"], skipColliding: false })).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: a, is not a reference the map names with a screenshot, so it has no row to replace]`,
     );
   });
 });
