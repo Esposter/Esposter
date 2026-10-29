@@ -151,6 +151,9 @@ const setZoomAtPointer = (clientY: number) => {
   const drawingY = ((clientY - top) / height) * MAP_ZOOM_DRAWING_HEIGHT;
   metres.value = computeZoomMetresAtShare((drawingY - MAP_ZOOM_TRACK_TOP) / MAP_ZOOM_TRACK_HEIGHT);
 };
+const onMapWheel = (event: WheelEvent) => {
+  metres.value = computeWheelZoomMetres(metres.value, event.deltaY);
+};
 const onZoomPointerDown = (event: PointerEvent) => {
   isSlidingZoom = true;
   zoomTrack.value?.setPointerCapture(event.pointerId);
@@ -229,7 +232,7 @@ onMounted(() => {
       @pointerdown="(event) => onMapPointerDown(event)"
       @pointermove="(event) => onMapPointerMove(event)"
       @pointerup="onMapPointerUp()"
-      @wheel="metres = computeWheelZoomMetres(metres, $event.deltaY)"
+      @wheel="onMapWheel"
     >
       <MapDrawing
         :catalogue

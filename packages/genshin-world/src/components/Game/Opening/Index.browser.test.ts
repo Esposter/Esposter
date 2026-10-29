@@ -102,7 +102,9 @@ describe("gameOpening", () => {
         gameText: ENGLISH_GAME_TEXT,
         language: GameLanguage.English,
         musicRecordingBaseUrl: LOGIN_MUSIC_RECORDING_DIRECTORY,
+        playerName: "",
         progress: 1,
+        sceneExportBaseUrl: "",
       },
     });
 
