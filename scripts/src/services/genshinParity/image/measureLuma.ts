@@ -3,8 +3,8 @@ import { readdir, stat } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 
-// How dark one region is across a run of images, one line each: its mean darkness (0 is white) and its darkest
-// Pixel, so a fade or a fill is read as a curve over the frames of the game and the shots of ours alike. A folder
+// How dark one region is in each image of a run, one line per image: its mean darkness (0 is white) and its darkest
+// Pixel, so a fade or a fill is read across the frames of the game and the shots of ours alike. A folder
 // Stands for its frames in order, since a second of frames at 60 a second outruns Windows' command line, each labelled
 // With the path it was read from so two folders' frames stay apart
 export const measureLuma = async (
