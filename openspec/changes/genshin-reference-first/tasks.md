@@ -1,9 +1,9 @@
 ## 0. Screenshots only
 
-- [ ] 0.1 Write the reference test first in `scripts/src/services/genshinParity/shared/ParityReferenceMap.test.ts`, asserting that no entry names a recording, and watch it fail on the 57 entries built from one. Verify: the test named after the scenario "Reference names a recording", seen failing.
-- [ ] 0.2 Ask the owner for a screenshot of each recording-built reference, listed by entry name, since the wiki's pages return HTTP 402 to this session. Each entry is re-referenced from the screenshot, or named pending with its reason. Verify: no entry names a recording.
+- [ ] 0.1 Write the reference test first in `scripts/src/services/genshinParity/shared/ParityReferenceMap.test.ts`, asserting that no entry names a recording, and watch it fail on the 57 entries built from one. Verify: the test named after the scenario "Reference reads a recording", seen failing.
+- [ ] 0.2 Sample a labelled screenshot from each recording-built reference, outside the repository, one per visually different state, and add it to the repository beside its component. Each entry is re-referenced from its screenshot, or named pending with its reason. Verify: no entry reads a recording.
 - [ ] 0.3 Remove the recording fields (`capture`, `seconds`, `plateCapture`) from the reference model, once no entry uses them. Verify: typecheck passes, and the test from 0.1 passes.
-- [ ] 0.4 Remove the recording-frame path from the parity tooling that only served those entries. Verify: the parity tests pass without it, and no file under `scripts/src/services/genshinParity` names a recording command.
+- [ ] 0.4 Remove the in-repository recording path from the parity tooling, so that no repository code reads a recording. Sampling stays outside the repository, as a step a person runs. Verify: the parity tests pass without it, and no file under `scripts/src/services/genshinParity` reads a recording.
 
 ## 1. Screen coverage
 

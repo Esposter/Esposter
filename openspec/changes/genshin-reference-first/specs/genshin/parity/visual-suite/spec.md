@@ -22,19 +22,19 @@ Each screen and each of its variants SHALL have one approved image beside its co
 - **WHEN** the visual suite resolves its image
 - **THEN** the run fails and names the screen
 
-### Requirement: A reference is a screenshot, never a frame of a recording
+### Requirement: Every reference the repository compares is a screenshot it holds
 
-A reference SHALL be a screenshot of the game, so no comparison scores a frame taken from a recording.
+A reference SHALL be a screenshot of the game kept in the repository, so no comparison reads a recording.
 
-#### Scenario: Reference is a screenshot
+#### Scenario: Reference is a screenshot the repository holds
 
-- **GIVEN** a reference entry whose source is a screenshot
+- **GIVEN** a reference entry whose image is a screenshot kept in the repository
 - **WHEN** the reference test runs
 - **THEN** the entry is accepted
 
-#### Scenario: Reference names a recording
+#### Scenario: Reference reads a recording
 
-- **GIVEN** a reference entry whose source is a frame of a recording
+- **GIVEN** a reference entry that names a recording to read
 - **WHEN** the reference test runs
 - **THEN** the run fails and names the entry
 
