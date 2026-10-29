@@ -26,4 +26,4 @@ After `oxlint --fix` rewrites many files on Windows, `pnpm format` or an in-plac
 
 ## A shell started before the Node switch loses node
 
-On the Windows PC node and pnpm come from vite-plus's `bin` folder on the user PATH. A shell started on fnm's multishell PATH, from before that switch, loses node mid-session, and the pre-commit formatter then skips silently. Prefix that `bin` folder (`AppData/Local/vite-plus/bin` under `{home}`) on PATH for that shell; the path is per machine and never goes into `.githooks`.
+On the Windows PC node and pnpm come from vite-plus's `bin` folder on the user PATH. A shell started on fnm's multishell PATH, from before that switch, loses node mid-session, and the pre-commit formatter then skips silently. Prefix that `bin` folder on PATH for that shell; the path is per machine and never goes into `.githooks`.
