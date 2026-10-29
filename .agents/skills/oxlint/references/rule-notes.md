@@ -33,8 +33,7 @@ The rule proves a default can never fire from the signature it is written on —
 is the **implementation** signature, never the overloads a caller actually sees. So a parameter one overload
 declares optional, defaulted in an implementation whose own annotation makes it required, reports as a useless
 default. Deleting it is a runtime defect the types no longer describe: the single-argument call indexes by
-`undefined`. Take the file-level `/* oxlint-disable typescript/no-useless-default-assignment -- reason */`
-(`packages/shared/src/util/array/takeOne.ts`).
+`undefined`. Take the file-level `/* oxlint-disable typescript/no-useless-default-assignment -- reason */`.
 
 ## `typescript/method-signature-style` (oxlint)
 
