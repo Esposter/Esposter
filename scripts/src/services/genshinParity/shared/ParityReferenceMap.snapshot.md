@@ -44,7 +44,7 @@ committed.
 | `health-notice-mainland` | `SplashHealthNotice` | 4.71% | 0.960 | 1.19% | 0.1419 |
 | `hud-paimon-button` | `HudScreen` | 1.74% | 0.916 | 2.34% | 0.1111 |
 | `hud-stamina-climb` | `HudScreen` | 0.62% | 0.787 | 0.75% | 0.0629 |
-| `hud-world-keys` | `HudScreen` | 2.52% | 0.982 | 1.70% | 0.1545 |
+| `hud-world-keys` | `HudScreen` | 2.07% | 0.983 | 1.52% | 0.1296 |
 | `hud-world-pickup` | `HudScreen` | 2.84% | 0.757 | 1.50% | 0.1335 |
 | `interaction-prompts-jueyun-chili` | `InteractionPromptList` | 4.82% | 0.947 | 1.79% | 0.2070 |
 | `interaction-prompts-pickup` | `InteractionPromptList` | 5.17% | 0.938 | 2.61% | 0.2241 |
