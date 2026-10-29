@@ -3,6 +3,7 @@ import type { GenshinSettings } from "#src/models/menu/GenshinSettings";
 import { props } from "#src/components/Menu/Settings/Index.fixture";
 import MenuSettings from "#src/components/Menu/Settings/Index.vue";
 import {
+  CAMERA_DISTANCE_RANGE,
   CAMERA_SENSITIVITY_RANGE,
   GENSHIN_SETTINGS_DEFAULTS,
   VOLUME_LEVEL_MAXIMUM,
@@ -68,7 +69,7 @@ describe("menuSettings", () => {
   });
 
   // The Default Camera Distance row is one the world backs: an arrow key steps it by its range's step, and the row reads the
-  // New distance to one decimal place, from the 5.0 the follow camera starts at
+  // New distance to one decimal place, from the default distance the follow camera starts at
   test("the default camera distance steps from the keyboard", async () => {
     expect.hasAssertions();
 
@@ -79,7 +80,10 @@ describe("menuSettings", () => {
     await expect.element(distance).toBeInTheDocument();
     distance.element().dispatchEvent(new KeyboardEvent("keydown", rightArrow));
 
-    await expect.element(page.getByText("5.1", { exact: true })).toBeInTheDocument();
+    const { step } = CAMERA_DISTANCE_RANGE;
+    const steppedDistance = (GENSHIN_SETTINGS_DEFAULTS.defaultDistance + step).toFixed(1);
+
+    await expect.element(page.getByText(steppedDistance, { exact: true })).toBeInTheDocument();
   });
 
   // The Y-Axis Reset row is a switch: a click flips the value it shows between Off and On
