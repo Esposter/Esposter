@@ -68,22 +68,21 @@ export const useCanvasFrame = ({
   // Attached synchronously, so the load that follows the frame's insertion is never missed
   watch(
     frame,
-    (frameElement, previousFrameElement) => {
-      previousFrameElement?.removeEventListener("load", handleLoad);
+    (frameElement, _previousFrameElement, onCleanup) => {
       frameElement?.addEventListener("load", handleLoad);
+      onCleanup(() => {
+        frameElement?.removeEventListener("load", handleLoad);
+      });
     },
     { flush: "sync", immediate: true },
   );
-  onScopeDispose(() => frame.value?.removeEventListener("load", handleLoad));
 
   // The page's css is replaced at most once per animation frame, so a burst of style patches writes the sheet once
-  let styleFrame = 0;
-  watch([frameStyleSheet, () => toValue(css)], ([styleSheet, cssText]) => {
-    cancelAnimationFrame(styleFrame);
-    styleFrame = requestAnimationFrame(() => styleSheet?.replaceSync(cssText));
-  });
-  onScopeDispose(() => {
-    cancelAnimationFrame(styleFrame);
+  watch([frameStyleSheet, () => toValue(css)], ([styleSheet, cssText], _previous, onCleanup) => {
+    const styleFrame = requestAnimationFrame(() => styleSheet?.replaceSync(cssText));
+    onCleanup(() => {
+      cancelAnimationFrame(styleFrame);
+    });
   });
 
   return { frameBody, frameStyle, loaded };

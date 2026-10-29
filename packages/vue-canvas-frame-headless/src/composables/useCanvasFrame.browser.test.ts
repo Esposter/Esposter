@@ -43,6 +43,9 @@ describe(useCanvasFrame, () => {
     },
   });
 
+  // The desktop frame in a narrower pane, which most tests spread and override
+  const baseFrameProps = { paneWidth: 600, width: 992 };
+
   const mountCanvasFrame = (
     props: { css?: string; fill?: boolean; paneWidth: number; width: number },
     slotContent?: () => VNodeChild,
@@ -71,7 +74,7 @@ describe(useCanvasFrame, () => {
 
   test("a desktop frame is never narrower than its least width", async () => {
     expect.hasAssertions();
-    const frame = await settleFrame(mountCanvasFrame({ fill: true, paneWidth: 600, width: 992 }));
+    const frame = await settleFrame(mountCanvasFrame({ ...baseFrameProps, fill: true }));
     expect(frame.contentWindow?.innerWidth).toBe(992);
     expect(frame.getBoundingClientRect().width).toBeCloseTo(600, 0);
   });
@@ -85,7 +88,7 @@ describe(useCanvasFrame, () => {
   test("a page's body style does not restyle the editor", async () => {
     expect.hasAssertions();
     const frame = await settleFrame(
-      mountCanvasFrame({ css: "body { background-color: rgb(255, 0, 0) }", paneWidth: 600, width: 992 }),
+      mountCanvasFrame({ ...baseFrameProps, css: "body { background-color: rgb(255, 0, 0) }" }),
     );
     expect(frame.contentDocument && getComputedStyle(frame.contentDocument.body).backgroundColor).toBe(
       "rgb(255, 0, 0)",
@@ -96,7 +99,7 @@ describe(useCanvasFrame, () => {
   test("a script inside a custom HTML block does not run in the canvas", async () => {
     expect.hasAssertions();
     const frame = await settleFrame(
-      mountCanvasFrame({ paneWidth: 600, width: 992 }, () =>
+      mountCanvasFrame(baseFrameProps, () =>
         h("div", { innerHTML: "<p>kept</p><script>document.title = 'ran'</script>" }),
       ),
     );
@@ -107,9 +110,7 @@ describe(useCanvasFrame, () => {
   test("listeners from the host still fire inside the frame", async () => {
     expect.hasAssertions();
     const onClick = vi.fn<() => void>();
-    const frame = await settleFrame(
-      mountCanvasFrame({ paneWidth: 600, width: 992 }, () => h("button", { onClick }, "press")),
-    );
+    const frame = await settleFrame(mountCanvasFrame(baseFrameProps, () => h("button", { onClick }, "press")));
     frame.contentDocument?.querySelector("button")?.click();
     expect(onClick).toHaveBeenCalledTimes(1);
   });
