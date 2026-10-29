@@ -53,7 +53,7 @@ const {
   trackedQuestId,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; navigate: [questId: string] }>();
-const listElement = ref<HTMLElement>();
+const listElement = useTemplateRef("listElement");
 // The list is a list screen's column, LIST_SCREEN_WIDTH units wide, so its pixel width over that is a unit in pixels
 onMounted(() => {
   if (listElement.value) listElement.value.scrollTop = listScroll * (listElement.value.clientWidth / LIST_SCREEN_WIDTH);

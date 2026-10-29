@@ -70,9 +70,9 @@ const loadState = computed(() => computeHomeLoadState(shownLoad.value, area));
     <ul>
       <li v-for="{ itemId, name } in held" :key="itemId">
         <GameButton
-          tip=""
           :aria-pressed="selectedItemId === itemId"
           :kind="GameButtonKind.Row"
+          tip=""
           @click="selectedItemId = itemId"
         >
           {{ name }}
@@ -84,9 +84,9 @@ const loadState = computed(() => computeHomeLoadState(shownLoad.value, area));
     </div>
     <p v-if="notice" role="status">{{ notice }}</p>
     <GameButton
-      tip=""
       :disabled="placeable === undefined"
       :kind="GameButtonKind.Pill"
+      tip=""
       @click="placeable && emit('place', placeable)"
     >
       {{ gameText[GameTextKey.HomeDeploy] }}

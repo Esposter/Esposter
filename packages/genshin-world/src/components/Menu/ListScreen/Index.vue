@@ -22,7 +22,7 @@ defineSlots<{ detail: () => VNode; icon?: () => VNode; list: () => VNode; tabs?:
   <!-- A screen of the Paimon menu that lists its entries down the left, with the selected entry's detail on the right.
        The title and the close mark sit across the top on a translucent band, with the Q and E keys either side of its
        tabs, which each screen steps with `useListScreenTabStep`. A screen's
-       Own icon before the title and its own tabs, if it has any, along the band beside them -->
+       own icon before the title and its own tabs, if it has any, along the band beside them -->
   <GameScreen class="list-screen">
     <slot name="icon" />
     <ScreenHeader :game-text :title @close="emit('close')">
