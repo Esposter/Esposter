@@ -1,17 +1,21 @@
-import { COMPONENTS_DIRECTORY } from "#src/services/genshinParity/fixtures/constants";
+import { COMPONENTS_DIRECTORY, REFERENCE_IMAGE_SUFFIX } from "#src/services/genshinParity/fixtures/constants";
+import { getFixtureImageName } from "#src/services/genshinParity/fixtures/getFixtureImageName";
+import { listFixtureScreens } from "#src/services/genshinParity/fixtures/listFixtureScreens";
 import { REFERENCE_FILE_EXTENSION, REFERENCE_FILE_MAX_BYTES } from "#src/services/genshinParity/reference/constants";
 import { readReferenceFiles } from "#src/services/genshinParity/reference/readReferenceFiles";
 import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
 import { sha256File } from "#src/services/genshinParity/reference/sha256File";
 import { REFERENCE_FILES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { getReferencePlateFilePath } from "#src/services/genshinParity/shared/getReferencePlateFilePath";
+import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { extname, join, relative } from "node:path";
 import { describe, expect, test } from "vitest";
 
-// The committed references are read from the tree: each one the map names has its file, each file is named by an entry
-// or a manifest row, its bytes are the hash its row holds, and no file is larger than the ceiling
+// The committed references are read from the tree: each one the map names has its file, each fixture variant holding one
+// has exactly one beside its snapshot, each file is named by an entry or a manifest row, its bytes are the hash its row
+// holds, and no file is larger than the ceiling
 describe("committedReferences", () => {
   const COMMITTED_REFERENCE_SUFFIX = ".reference.webp";
   const toRepositoryPath = (path: string): string => relative(REPOSITORY_ROOT, path);
@@ -34,6 +38,27 @@ describe("committedReferences", () => {
       .map(({ id, path }) => `${id}: add its lossless WebP at ${toRepositoryPath(path)}`);
 
     expect(missing).toStrictEqual([]);
+  });
+
+  test("places one reference beside each fixture variant that holds one, and no other beside its snapshot", async () => {
+    expect.hasAssertions();
+
+    const plan = await readReferenceFiles();
+    const rows = await listFixtureScreens(COMPONENTS_DIRECTORY, ParityReferenceMap, new Map());
+    const expected = rows
+      .filter(({ name, variant }) =>
+        plan.some(({ reference }) => reference.screen === name && (reference.variant ?? "") === variant),
+      )
+      .map(({ directory, variant }) =>
+        join(
+          COMPONENTS_DIRECTORY,
+          directory,
+          `${getFixtureImageName(variant)}${REFERENCE_IMAGE_SUFFIX}.${REFERENCE_FILE_EXTENSION}`,
+        ),
+      );
+    const beside = plan.map(({ path }) => path).filter((path) => path.startsWith(COMPONENTS_DIRECTORY));
+
+    expect(beside.toSorted()).toStrictEqual(expected.toSorted());
   });
 
   test("commits no file that no entry or manifest row names", async () => {

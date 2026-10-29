@@ -9,26 +9,26 @@ import { getFlatReferenceFilePath } from "#src/services/genshinParity/shared/get
 import { ID_SEPARATOR } from "@esposter/shared";
 import { join } from "node:path";
 
-// Where each reference the map names is committed. A whole-screen reference that is the only one its fixture variant has
-// sits beside that variant's snapshot, as `Index.reference.webp` or `Index-<variant>.reference.webp`. Every other reference,
-// a region of a screen or one of several whole-screen references a variant holds, is flat in the references folder under its id
+// Where each reference the map names is committed. Each fixture variant with a reference has one of them beside its snapshot,
+// as `Index.reference.webp` or `Index-<variant>.reference.webp`: its first whole-screen reference in map order, or its first
+// reference when it holds none whole-screen. A region only says what is scored, so it never decides the place. Every other
+// reference, and every reference whose screen has no fixture, is flat in the references folder under its id
 export const planReferenceFiles = (
   referenceMap: Record<string, ParityReference>,
   fixtureRows: FixtureScreenRow[],
 ): ReferenceFilePlan[] => {
   const entries = Object.entries(referenceMap).filter(([, { pending }]) => pending === undefined);
-  const variantKey = (screen: string, variant: string): string => `${screen}${ID_SEPARATOR}${variant}`;
-  const wholeCounts = new Map<string, number>();
-  for (const [, { region, screen, variant = "" }] of entries)
-    if (region === undefined)
-      wholeCounts.set(variantKey(screen, variant), (wholeCounts.get(variantKey(screen, variant)) ?? 0) + 1);
+  const wholeScreenEntries = entries.filter(([, { region }]) => region === undefined);
+  const besideIds = new Map<string, string>();
+  for (const [id, { screen, variant = "" }] of [...wholeScreenEntries, ...entries]) {
+    const variantKey = `${screen}${ID_SEPARATOR}${variant}`;
+    if (!besideIds.has(variantKey)) besideIds.set(variantKey, id);
+  }
   return entries.map(([id, reference]) => {
-    const { region, screen, variant = "" } = reference;
+    const { screen, variant = "" } = reference;
     const fixtureRow = fixtureRows.find((row) => row.name === screen && row.variant === variant);
-    const isBeside =
-      region === undefined && fixtureRow !== undefined && wholeCounts.get(variantKey(screen, variant)) === 1;
     const path =
-      isBeside && fixtureRow !== undefined
+      fixtureRow !== undefined && besideIds.get(`${screen}${ID_SEPARATOR}${variant}`) === id
         ? join(
             COMPONENTS_DIRECTORY,
             fixtureRow.directory,

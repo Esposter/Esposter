@@ -6,18 +6,18 @@ Where a parity screen's reference images and recordings come from, how the insta
 
 ### Requirement: Reference images are committed as lossless WebP
 
-A reference image SHALL be committed to the repository as a lossless WebP file, beside its fixture variant's snapshot when it is that variant's only whole-screen reference and flat in the references folder under its id otherwise, and its manifest row SHALL name its sha256, size, dimensions, attribution and source.
+A reference image SHALL be committed to the repository as a lossless WebP file: beside its fixture variant's snapshot when it is that variant's reference, and flat in the references folder under its id otherwise. Its manifest row SHALL name its sha256, size, dimensions, attribution and source.
 
 #### Scenario: Reference committed beside its snapshot
 
-- **GIVEN** a fixture variant whose only whole-screen reference is an entry without a region
+- **GIVEN** a fixture variant's reference, which is its first whole-screen entry in the map or, where it holds none whole-screen, its first entry
 - **WHEN** the reference is packed
 - **THEN** its file is `Index.reference.webp` or `Index-<variant>.reference.webp` in the fixture's folder, beside its snapshot
 - **AND** its sha256 is the one its manifest row names
 
 #### Scenario: Other reference committed flat
 
-- **GIVEN** a reference that is a region, or one of several whole-screen references its fixture variant holds
+- **GIVEN** a reference that is not its fixture variant's reference, or whose screen has no fixture
 - **WHEN** the reference is packed
 - **THEN** its file is `<id>.webp` in the references folder beside the manifest
 

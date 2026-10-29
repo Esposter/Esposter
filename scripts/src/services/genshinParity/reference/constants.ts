@@ -80,7 +80,7 @@ export const PLATE_CACHE_REGEX: RegExp = /\.plate-[\da-f]{16}\.png$/u;
 export const REFERENCE_BLOB_FOLDER = "parityObjects";
 // Every committed reference is lossless WebP, the format `packReferenceImage` writes, and its file name ends with it
 export const REFERENCE_FILE_EXTENSION = "webp";
-// A plate is committed beside its reference's file, named by its id with this suffix before the extension
+// A plate is committed flat in the references folder, named by its id with this suffix before the extension
 export const REFERENCE_PLATE_SUFFIX = ".plate";
 // The largest committed file the tree may hold: the largest lossless reference (`mondstadt-city-location`, 7,315,020
 // bytes) and a margin above it, so a larger file is a mistake to look at rather than a size to accept
