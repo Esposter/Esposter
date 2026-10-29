@@ -3,10 +3,11 @@ import { UiScaleMode } from "#src/models/genshinAssets/ui/UiScaleMode";
 import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { join } from "node:path";
 
-// The UI index, kept beside the game's exports and never in the repository: one JSON lines file per block, and the
-// manifest holding each block's content hash and entry count
+// The UI index, kept beside the game's exports and never in the repository: one JSON lines file per block, and beside it
+// a manifest per block holding the block's content hash and entry count
 export const UI_INDEX_DIRECTORY: string = join(PARITY_DIRECTORY, "ui-index");
-export const UI_INDEX_MANIFEST_PATH: string = join(UI_INDEX_DIRECTORY, "manifest.json");
+export const UI_INDEX_EXTENSION = ".jsonl";
+export const UI_MANIFEST_EXTENSION = ".manifest.json";
 // The AnimeStudio exports a block's index is read from, kept only while the block is read: a folder per export, each
 // grouped by container
 export const UI_INDEX_EXPORT_DIRECTORY: string = join(UI_INDEX_DIRECTORY, "exports");

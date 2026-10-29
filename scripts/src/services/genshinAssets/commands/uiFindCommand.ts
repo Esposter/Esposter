@@ -1,10 +1,9 @@
 import type { SubCommandsDef } from "citty";
 
-import { getUiIndexPath } from "#src/services/genshinAssets/ui/getUiIndexPath";
 import { matchesUiName } from "#src/services/genshinAssets/ui/matchesUiName";
 import { readUiBlockIndex } from "#src/services/genshinAssets/ui/readUiBlockIndex";
 import { readUiIndexEntries } from "#src/services/genshinAssets/ui/readUiIndexEntries";
-import { readUiManifest } from "#src/services/genshinAssets/ui/readUiManifest";
+import { readUiIndexPaths } from "#src/services/genshinAssets/ui/readUiIndexPaths";
 import { resolveUiBlock } from "#src/services/genshinAssets/ui/resolveUiBlock";
 import { toUiFindResult } from "#src/services/genshinAssets/ui/toUiFindResult";
 import { parseWholeCount } from "#src/services/shared/parseWholeCount";
@@ -34,7 +33,7 @@ export const uiFindCommand: SubCommandsDef[string] = defineCommand({
     const pattern = new RegExp(args.pattern, "u");
     const indexPaths = args.block
       ? [await readUiBlockIndex(await resolveUiBlock(args.block))]
-      : Object.keys(await readUiManifest()).map((block) => getUiIndexPath(block));
+      : await readUiIndexPaths();
     let printed = 0;
     for (const indexPath of indexPaths)
       for await (const entry of readUiIndexEntries(indexPath)) {
