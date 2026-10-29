@@ -174,6 +174,12 @@ const playRerollChoice = () => {
   <GameScreen class="gcg-screen">
     <div class="table" />
     <div class="support" />
+    <div class="hud-disc record" />
+    <div class="hud-disc history" />
+    <div class="plate opponent-plate" />
+    <div class="avatar opponent-avatar" />
+    <div class="plate player-plate" />
+    <div class="avatar player-avatar" />
     <div class="row opponent-row">
       <GcgScreenCharacter
         v-for="(character, index) in opponentSide.characters"
@@ -256,7 +262,7 @@ const playRerollChoice = () => {
       {{ gameText[GameTextKey.GcgElementalTuning] }}
     </button>
     <button
-      class="concede"
+      class="hud-disc concede"
       :aria-label="gameText[GameTextKey.GcgConcede]"
       type="button"
       @click="emit('leave', false)"
@@ -295,12 +301,15 @@ const playRerollChoice = () => {
   left: 0;
   width: calc(var(--unit) * 186);
   height: calc(var(--unit) * 174);
-  background: #433f47;
+  background: #393742;
 }
 
 .table {
   position: absolute;
-  inset: calc(var(--unit) * 24);
+  top: calc(var(--unit) * 72);
+  right: calc(var(--unit) * 52);
+  bottom: calc(var(--unit) * 76);
+  left: calc(var(--unit) * 46);
   border: calc(var(--unit) * 22) solid #7d5a36;
   border-radius: calc(var(--unit) * 40);
   background: radial-gradient(
@@ -313,6 +322,53 @@ const playRerollChoice = () => {
     #435d5e 92%,
     #3e5352 100%
   );
+}
+
+/* The two name plates and their portrait discs, the portraits' art not drawn: each plate is the colour the frame holds under its name */
+.plate {
+  position: absolute;
+  border-radius: 0 calc(var(--unit) * 20) calc(var(--unit) * 20) 0;
+}
+
+.opponent-plate {
+  top: calc(var(--unit) * 22);
+  left: calc(var(--unit) * 118);
+  width: calc(var(--unit) * 248);
+  height: calc(var(--unit) * 42);
+  background: #3a5274;
+}
+
+.player-plate {
+  top: calc(var(--unit) * 982);
+  left: calc(var(--unit) * 130);
+  width: calc(var(--unit) * 236);
+  height: calc(var(--unit) * 34);
+  background: #d4a264;
+}
+
+.avatar {
+  position: absolute;
+  box-sizing: border-box;
+  width: calc(var(--unit) * 76);
+  height: calc(var(--unit) * 76);
+  border: calc(var(--unit) * 4) solid;
+  border-radius: 50%;
+}
+
+.opponent-avatar {
+  top: calc(var(--unit) * 20);
+  left: calc(var(--unit) * 54);
+  border-color: #4b7bb8;
+  background: #e6ecf2;
+}
+
+.player-avatar {
+  top: calc(var(--unit) * 987);
+  left: calc(var(--unit) * 52);
+  width: calc(var(--unit) * 80);
+  height: calc(var(--unit) * 80);
+  border-color: #c99a4a;
+  background: #ece3c8;
 }
 
 .row {
@@ -353,7 +409,7 @@ const playRerollChoice = () => {
   right: 0;
   left: 0;
   height: calc(var(--unit) * 56);
-  background: rgb(126 103 76 / 0.8);
+  background: #786453;
   color: #f6e3a1;
   font-size: calc(var(--unit) * 38);
   font-weight: 700;
@@ -379,7 +435,7 @@ const playRerollChoice = () => {
   place-items: center;
   border: calc(var(--unit) * 4) solid #e8c060;
   border-radius: 50%;
-  background: #4a3a2a;
+  background: #917254;
   color: #fff;
   font-size: calc(var(--unit) * 30);
   font-weight: 700;
@@ -503,15 +559,27 @@ const playRerollChoice = () => {
   gap: calc(var(--unit) * 16);
 }
 
-.concede {
+/* The three round buttons of the top right: the concede beside a record and a history disc the frame shows, their icons not drawn */
+.hud-disc {
   position: absolute;
-  top: calc(var(--unit) * 30);
-  right: calc(var(--unit) * 40);
+  top: calc(var(--unit) * 20);
   width: calc(var(--unit) * 56);
   height: calc(var(--unit) * 56);
   border: calc(var(--unit) * 3) solid #c99a4a;
   border-radius: 50%;
   background: #7d5a36;
+}
+
+.record {
+  left: calc(var(--unit) * 1672);
+}
+
+.history {
+  left: calc(var(--unit) * 1747);
+}
+
+.concede {
+  right: calc(var(--unit) * 26);
   cursor: inherit;
 }
 </style>
