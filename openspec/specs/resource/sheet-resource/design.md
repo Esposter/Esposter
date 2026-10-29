@@ -44,7 +44,7 @@ A Sheet resource always has a `data` section (empty `DataSource` on create) — 
 
 ## Blades
 
-- **Data** — the entire grid editor: inline editing, computed columns, statistics, clipboard, find/replace, undo/redo. Components live under `Resource/Sheet/*`; the grid's feature set is documented in the [sheet editor](../sheet/README.md) area. Its view state is the sheet's own ([sheet editor](../sheet/README.md)), and a filter is read back only for a column the sheet has.
+- **Data** — the entire grid editor: inline editing, computed columns, statistics, clipboard, find/replace, undo/redo. Components live under `Resource/Sheet/*`; the grid's feature set and its view state are documented in the [sheet editor](../sheet/README.md) area. A filter is read back only for a column the sheet has.
 - **Settings** — the file type, choosing which swaps in that format's defaults, beside that format's own parse options (delimiter etc.), editing `content.settings`; changing settings re-parses on next import, never silently rewrites data.
 
 Both blades edit sections of one blob and save through one `saveResourceContent` with one `contentVersion`.
