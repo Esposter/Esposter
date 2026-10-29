@@ -68,3 +68,4 @@ flowchart TD
 - [ ] **Vegetation: a blade a few centimetres off the drawn ground far from the eye** — no source yet: a measured offset of a blade from the drawn ground at the recapture distance, which no record holds.
 - [ ] **Vegetation: the rings fade into the ground's colour with no seam** — no source yet: a visual check of the seam on a recording, which no record holds.
 - [ ] **Vegetation: a meadow toon-shades as one surface with light rolling across it, as Genshin's grass does** — no source yet: a capture of Genshin's own grass shading, which the parity captures do not hold.
+- [ ] **Gusts roll across Mondstadt's grass in visible waves, and crowns sway and clouds drift overhead as the game shows them** — no source yet: no recording of the game's grass, crowns or clouds in motion is cited; the GDC talk in Sources grounds the field-wide wind, not this game's gusts.
