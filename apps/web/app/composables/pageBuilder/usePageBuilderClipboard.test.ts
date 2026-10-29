@@ -66,7 +66,7 @@ const openResource = (content: WebpageDocument["content"]) => {
 };
 
 describe(usePageBuilderClipboard, () => {
-  const REFUSAL_MESSAGE = "a";
+  const REFUSAL_MESSAGE = "A webpage block cannot be pasted into an email";
   // A type name no webpage node holds, written over a copied text node's tag in the clipboard text
   const UNKNOWN_NODE_TYPE = "UnknownNodeType";
 
