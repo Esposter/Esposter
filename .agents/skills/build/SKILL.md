@@ -47,7 +47,7 @@ Every line here is a direction a reader reaches for on meeting the Rules section
 - `references/gates.md` — when `deps.onlyImport`, `publint` or `attw` fails a build, or a consumer reports a module the package never referenced.
 - `references/source-exports.md` — when a specifier has to survive a sibling bundling it, or the `source` condition's reach is in question.
 - `references/tsconfig-presets.md` — when editing a `tsconfig*.json` preset, or `@esposter/configuration` itself.
-- `references/barrels.md` — when a generated `src/index.ts`, `exportsGeneration`, or the `entry` the build hook needs is in question.
+- `references/barrels.md` — when a generated `src/index.ts`, `exportsGeneration`, or the `entry` the build hook needs is in question, or a build rewrites a barrel with no export moved.
 - `references/subpaths.md` — when a package gains or loses a subpath export or entry, or a review asks why one exists.
 - `references/opt-outs.md` — when a package minifies a deploy artifact, vendors what the default externalizes, or declares an entry field a host loads by convention.
 - `references/side-effects.md` — when setting `sideEffects`, or a bundle loads and never runs a trigger (`scripts/src/workspace/sideEffects.test.ts` enforces that every package answers).
