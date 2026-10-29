@@ -2,6 +2,7 @@ import type { SubCommandsDef } from "citty";
 
 import { ReferencePackKind } from "#src/models/genshinParity/reference/ReferencePackKind";
 import { createReferenceObjectTargets } from "#src/services/genshinParity/reference/createReferenceObjectTargets";
+import { formatMebibytes } from "#src/services/genshinParity/reference/formatMebibytes";
 import { formatPackTable } from "#src/services/genshinParity/reference/formatPackTable";
 import { packManifestPaths } from "#src/services/genshinParity/reference/packManifestPaths";
 import { packReferences } from "#src/services/genshinParity/reference/packReferences";
@@ -45,7 +46,7 @@ export const referencesPackCommand: SubCommandsDef[string] = defineCommand({
     if (paths.length === 0)
       throw new InvalidOperationError(Operation.Read, args.kind, "needs at least one path to pack");
     const { packed, uploads } = await packManifestPaths(args.kind, paths, isDryRun, createReferenceObjectTargets());
-    for (const { bytes, name } of packed) console.log(`${name}  ${(bytes / 1024 ** 2).toFixed(1)} MB`);
+    for (const { bytes, name } of packed) console.log(`${name}  ${formatMebibytes(bytes)}`);
     console.log(
       `${packed.length} ${args.kind} files, ${uploads} uploads${isDryRun ? " (dry run, nothing stored)" : ""}`,
     );
