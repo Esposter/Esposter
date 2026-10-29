@@ -30,7 +30,7 @@ committed.
 | `dialogue-line` | `DialogueTalk` | 10.61% | 0.982 | 2.29% | 0.3704 |
 | `dialogue-paimon-line` | `DialogueTalk` | 10.21% | 0.947 | 2.93% | 0.3029 |
 | `everfrozen-earth-location` | `WorldScreen` | 20.61% | 0.234 | 19.75% | 0.6327 |
-| `exit-prompt` | `MenuExit` | 1.66% | 0.999 | 1.33% | 0.1210 |
+| `exit-prompt` | `MenuExit` | 1.59% | 0.999 | 1.24% | 0.1205 |
 | `expedition-screen` | `ExpeditionScreen` | 22.77% | 0.291 | 19.89% | 0.6302 |
 | `fishing-screen` | `FishingScreen` | 0.08% | 0.998 | 0.04% | 0.0041 |
 | `forge-screen` | `ForgeScreen` | 6.51% | 0.685 | 5.32% | 0.2160 |
@@ -69,8 +69,8 @@ committed.
 | `login-screen-dusk` | `LoginScreen` | 19.45% | 0.358 | 13.81% | 0.6448 |
 | `map-overlay-galesong` | `MapOverlay` | 17.65% | 0.000 | 12.94% | 0.6686 |
 | `map-overlay-jueyun` | `MapOverlay` | 65.65% | 0.163 | 38.75% | 0.8931 |
-| `menu-exit-hover` | `MenuExit` | 1.75% | 0.999 | 1.41% | 0.1238 |
-| `menu-exit-pressed` | `MenuExit` | 1.66% | 0.996 | 1.38% | 0.1234 |
+| `menu-exit-hover` | `MenuExit` | 1.69% | 0.999 | 1.32% | 0.1237 |
+| `menu-exit-pressed` | `MenuExit` | 1.59% | 0.996 | 1.29% | 0.1233 |
 | `menu-paimon-disabled` | `MenuPaimon` | pending: no screenshot of this variant yet | | | |
 | `menu-paimon-hover` | `MenuPaimon` | pending: no screenshot of this variant yet | | | |
 | `menu-paimon-pressed` | `MenuPaimon` | pending: no screenshot of this variant yet | | | |

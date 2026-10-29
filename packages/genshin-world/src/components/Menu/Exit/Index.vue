@@ -24,7 +24,7 @@ onMounted(() => {
 
 <template>
   <!-- The quit prompt that Quit Game opens over the menu, which stays behind it dimmed. Cancel sets the menu back, and
-       Confirm leaves for the login interface, the app's home, since the browser cannot close the game. The 2026 build
+       confirm leaves for the login interface, the app's home, since the browser cannot close the game. The 2026 build
        draws a cream panel with gold brackets at its corners and two slate pills, each with a disc at its left: Cancel's
        blue cross and Confirm's gold ring -->
   <GameScreen
@@ -44,11 +44,16 @@ onMounted(() => {
       <span class="rule rule-top" />
       <span class="rule rule-bottom" />
       <p class="question">{{ gameText[GameTextKey.QuitConfirmQuestion] }}</p>
-      <GameButton ref="cancelButton" class="choice cancel" :kind="GameButtonKind.Plain" @click="emit('close')">
+      <GameButton ref="cancelButton" class="choice cancel" :kind="GameButtonKind.Choice" @click="emit('close')">
         <span class="icon icon-cancel" />
         <span class="label">{{ gameText[GameTextKey.Cancel] }}</span>
       </GameButton>
-      <GameButton class="choice confirm" :kind="GameButtonKind.Plain" @click="emit('quit')">
+      <GameButton
+        class="choice confirm"
+        :data-interaction-state="interactionState"
+        :kind="GameButtonKind.Choice"
+        @click="emit('quit')"
+      >
         <span class="icon icon-confirm" />
         <span class="label">{{ gameText[GameTextKey.Confirm] }}</span>
       </GameButton>
@@ -57,17 +62,28 @@ onMounted(() => {
 </template>
 
 <style scoped>
+/* The prompt's scale is the game's own 1080 high unit, since the 2026 recording of the whole prompt fixes its pixels */
+.exit {
+  --reference-pixel: calc(var(--unit) * 1);
+}
+
 /* The menu behind the prompt is drawn by the game and not by the page, so the dim is solved from the frame's own margin
    round the panel (its mean over the 2026 frame at 29 seconds, `yt-kIDee7nyD0w`), which the page's white draws at 66% */
 .exit .backdrop {
+  position: absolute;
+  inset: 0;
   background: rgb(0 0 0 / 66%);
 }
 
 /* The panel is 910 by 576 reference pixels, centred over the menu, and its cream is the panel's colour in the 2026
    frame at 29 seconds (`yt-kIDee7nyD0w`), sampled from a clean band of it */
 .exit .dialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
   width: calc(var(--reference-pixel) * 910);
   height: calc(var(--reference-pixel) * 576);
+  transform: translate(-50%, -50%);
   background: #e4e0da;
 }
 
@@ -161,16 +177,13 @@ onMounted(() => {
   color: #4f5159;
 }
 
-/* A slate pill, 370 by 63 pixels, its label centred in the space right of its disc: Cancel 66 pixels in from the panel's
-   left, Confirm 475 in, each a mirror of the other across the panel's centre */
+/* A choice is placed 370 by 63 pixels, its top 474 down the panel: Cancel 66 pixels in from the panel's left, Confirm 475
+   in, each a mirror of the other across the panel's centre. Its look is the Choice kind's */
 .exit .choice {
+  position: absolute;
   top: calc(var(--reference-pixel) * 474);
   width: calc(var(--reference-pixel) * 370);
   height: calc(var(--reference-pixel) * 63);
-  padding: 0 0 0 calc(var(--reference-pixel) * 30);
-  border-radius: calc(infinity * 1px);
-  background: #4a5365;
-  color: #fff;
 }
 
 .exit .cancel {
@@ -189,16 +202,15 @@ onMounted(() => {
   line-height: calc(var(--reference-pixel) * 63);
 }
 
-/* Each disc is 40 pixels across, 10 in from the pill's left and centred on its height. The disc is the dark #2f3133
-   of both choices at rest, and Confirm's gold ring and Cancel's blue cross sit in it */
+/* The mark sits in the choice's disc, which the Choice kind draws: 40 pixels across, 10 in from the pill's left and centred on
+   its height */
 .icon {
   position: absolute;
-  top: calc(var(--reference-pixel) * 11);
+  top: 50%;
   left: calc(var(--reference-pixel) * 10);
   width: calc(var(--reference-pixel) * 40);
   height: calc(var(--reference-pixel) * 40);
-  border-radius: 50%;
-  background: #2f3133;
+  translate: 0 -50%;
 }
 
 /* Cancel's blue cross, two bars 22 by 5 across the disc, drawn as shapes since the icon's paths are not traced */
@@ -224,7 +236,7 @@ onMounted(() => {
   transform: rotate(-45deg);
 }
 
-/* Confirm's gold ring, 20 pixels across inside its disc, 2.5 thick */
+/* Confirm's gold ring, 20 pixels across inside its disc, 2.5 thick, pale when the choice is pressed */
 .icon-confirm::after {
   content: "";
   position: absolute;
@@ -233,35 +245,7 @@ onMounted(() => {
   border-radius: 50%;
 }
 
-/* Lit under the pointer, a choice takes a gold rim 2 pixels in and a faint gold glow outside; the fixture's hover lights
-   Confirm alone, as the game's pointer rests on it in the shot */
-.exit .choice:hover,
-.exit[data-interaction-state="Hover"] .confirm {
-  box-shadow:
-    inset 0 0 0 calc(var(--reference-pixel) * 2) #e6cf86,
-    0 0 calc(var(--reference-pixel) * 3) rgb(255 236 170 / 80%);
-}
-
-/* Pressed, the pill is a pale fill with a grey rim 2 pixels in, its disc a gold with a pale ring and its label gold. The
-   Fixture's pressed state presses Confirm alone, as the game's shot does */
-.exit .choice:active,
-.exit[data-interaction-state="Pressed"] .confirm {
-  background: #fffefa;
-  box-shadow:
-    inset 0 0 0 calc(var(--reference-pixel) * 2) #cbc5b9,
-    0 0 calc(var(--reference-pixel) * 3) rgb(255 250 225 / 70%);
-  color: #c4ab6a;
-}
-
-.exit .choice:active .icon,
-.exit[data-interaction-state="Pressed"] .confirm .icon {
-  background: #fed78c;
-}
-
-.exit .choice:active .icon-confirm::after,
-.exit[data-interaction-state="Pressed"] .confirm .icon-confirm::after {
+.exit .confirm:enabled:is(:active, [data-interaction-state="Pressed"]) .icon-confirm::after {
   border-color: #fbf08f;
 }
 </style>
-
-<style scoped src="../../../styles/menuDialog.css"></style>

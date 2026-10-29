@@ -269,6 +269,48 @@ defineExpose({ focus: () => button.value?.focus() });
   }
 }
 
+/* The quit prompt's choice: a slate pill whose dark disc sits at its left and holds the choice's mark, its label set past the
+   disc. Lit by the pointer or focus, or by its screen's state on the choice itself, with a gold rim 2 units in and a faint gold
+   glow out; pressed, a pale fill with a grey rim, its disc gold and its label gold. Its place and its words are its screen's */
+.game-button[data-kind="Choice"] {
+  padding: 0 0 0 calc(var(--unit) * 30);
+  border-radius: calc(infinity * 1px);
+  background-color: #4a5365;
+  color: #fff;
+  transition: none;
+}
+
+.game-button[data-kind="Choice"]::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: calc(var(--unit) * 10);
+  width: calc(var(--unit) * 40);
+  height: calc(var(--unit) * 40);
+  border-radius: 50%;
+  background-color: #2f3133;
+  translate: 0 -50%;
+}
+
+.game-button[data-kind="Choice"]:enabled:is(:hover, :focus-visible, [data-interaction-state="Hover"]) {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 calc(var(--unit) * 2) #e6cf86,
+    0 0 calc(var(--unit) * 3) rgb(255 236 170 / 80%);
+}
+
+.game-button[data-kind="Choice"]:enabled:is(:active, [data-interaction-state="Pressed"]) {
+  background-color: #fffefa;
+  box-shadow:
+    inset 0 0 0 calc(var(--unit) * 2) #cbc5b9,
+    0 0 calc(var(--unit) * 3) rgb(255 250 225 / 70%);
+  color: #c4ab6a;
+}
+
+.game-button[data-kind="Choice"]:enabled:is(:active, [data-interaction-state="Pressed"])::before {
+  background-color: #fed78c;
+}
+
 /* The weapon screen's Ascend, a lit gold pill with its label faded over the gold, read off its reference at 1080 high
    (`weapon-screen-ascend`), which draws no ring or bevel of its own */
 .game-button[data-kind="Gold"] {
