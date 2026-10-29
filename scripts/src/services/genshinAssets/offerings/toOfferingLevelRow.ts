@@ -1,5 +1,6 @@
 import type { ExcelOfferingLevelupRow } from "#src/models/genshinAssets/offerings/ExcelOfferingLevelupRow";
-import type { OfferingLevelReward, OfferingLevelRow } from "#src/models/genshinAssets/offerings/OfferingLevelRow";
+import type { OfferingLevelReward } from "#src/models/genshinAssets/offerings/OfferingLevelReward";
+import type { OfferingLevelRow } from "#src/models/genshinAssets/offerings/OfferingLevelRow";
 
 import { toLevelItems } from "#src/services/genshinAssets/offerings/toLevelItems";
 

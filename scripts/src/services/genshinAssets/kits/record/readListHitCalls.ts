@@ -1,5 +1,5 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
-import type { NamedHitCandidate } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
+import type { NamedHitCandidate } from "#src/models/genshinAssets/kits/NamedHitCandidate";
 import type { readSiteCallsMap } from "#src/services/genshinAssets/kits/record/readSiteCallsMap";
 
 import { checkIsLandingOrdered } from "#src/services/genshinAssets/kits/gcsim/checkIsLandingOrdered";

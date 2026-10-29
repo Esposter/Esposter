@@ -1,5 +1,5 @@
 import type { ExcelOfferingLevelupRow } from "#src/models/genshinAssets/offerings/ExcelOfferingLevelupRow";
-import type { OfferingItemCount } from "#src/models/genshinAssets/offerings/OfferingLevelRow";
+import type { OfferingItemCount } from "#src/models/genshinAssets/offerings/OfferingItemCount";
 
 import { getConsumedItems } from "#src/services/genshinAssets/offerings/getConsumedItems";
 

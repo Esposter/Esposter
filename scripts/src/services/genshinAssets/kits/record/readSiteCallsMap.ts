@@ -1,5 +1,5 @@
 import type { NamedHitCall } from "#src/models/genshinAssets/kits/NamedHitCall";
-import type { NamedHitCandidate } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
+import type { NamedHitCandidate } from "#src/models/genshinAssets/kits/NamedHitCandidate";
 
 import { compareQueuedDelays } from "#src/services/genshinAssets/kits/compareQueuedDelays";
 

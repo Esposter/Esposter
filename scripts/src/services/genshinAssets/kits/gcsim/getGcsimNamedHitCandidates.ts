@@ -2,7 +2,8 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import type { GcsimHitSource } from "#src/models/genshinAssets/kits/gcsim/GcsimHitSource";
 import type { GcsimQueuedAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimQueuedAttack";
 import type { GcsimTalentLeaf } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentLeaf";
-import type { NamedHitCandidate, NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
+import type { NamedHitCandidate } from "#src/models/genshinAssets/kits/NamedHitCandidate";
+import type { NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 import type { AttackArea } from "genshin-world";
 
