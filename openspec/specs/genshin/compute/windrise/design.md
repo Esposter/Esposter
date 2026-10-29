@@ -14,3 +14,5 @@
 
 - [ ] **Windrise: the sun solve over the red oak and statue drifting to a sun on the horizon, 32.91 px off** — no source yet: the recorded solve's output, which no snapshot keeps.
 - [ ] **Windrise: the shadow image the sun solve writes** — no source yet: the solve's output, a `windrise-statue-day.png` in a shadows folder, is not on disk, and no shadows folder exists under genshin-parity.
+- [ ] **Windrise: the oak's crown and buried roots draw no outline, so the Shape pass's outline cannot reach its floor** — no source yet: the blocked note on the oak envelope item is not traced to the oak's record (`packages/genshin-world/src/services/world/createTreeSpeciesOptionsMap.ts`, the `windrise/oak` key in `packages/genshin-world/src/generated/gameDataKeys.ts`) or to a Shape pass output.
+- [ ] **Windrise: the recording's frame at 360 seconds shows the statue's shadows the sun solve reads** — no source yet: `{data-root}/genshin-parity/captures/yt-zPDi6WBJW9Y.mp4` exists and the reference `windrise-statue-day.png` exists, but no frame of the recording was opened to check the 360-second moment.
