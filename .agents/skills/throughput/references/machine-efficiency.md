@@ -1,6 +1,6 @@
 # Machine Efficiency — Every Run Once, on the Cheapest Resource
 
-Read when a wave starts, when an agent is about to check, build, search or scan, and when the CPU is pinned while the GPU idles.
+Read when a wave starts, when an agent is about to check, build, search or scan, when the CPU is pinned while the GPU idles, and when the disk fills.
 
 A wave of agents multiplies every habit by the number of agents. A typecheck each agent runs before each commit is the same check run a dozen times over a tree that changes under all of them. So every search reads only what git tracks, every long run goes to whichever of the cores, the GPU or the video engine does it cheapest, and each check runs once, by the agent that needs it.
 
@@ -56,3 +56,11 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 
 - **Every agent runs on haiku, and the main session settles the calls** (the `llm-delegation` skill). An agent stopped part way ends on a handoff spec. The main session lifts the spec out of the agent's transcript with a script into a file the next agent reads, never by reading the transcript itself.
 - **A usage window's end belongs to the compute queue** (the usage reserve, `references/usage-reserve.md`).
+
+## Regenerable space on the Windows PC
+
+- Plugin installs an update orphaned, and the scratch folders of dead sessions under `%TEMP%\claude`, are regenerable. An orphan is deleted only when it is older than the oldest live `claude` process and no installed-plugins entry names it; a scratch folder only when its session's transcript has not been written for hours.
+- `pnpm store prune` fails with os error 32 while a process holds a store file; retry it once that process exits.
+- The WSL virtual disk keeps the space its contents freed. Compact it with `fstrim` inside the distro and `wsl --shutdown`, then diskpart, since Windows 10 Home has no `Optimize-VHD`.
+- The page file is never shrunk: the commit limit is the page file plus RAM, and a heavy run peaks against it.
+- The game's install, the parity references and the games folder are off-limits to cleanup without asking.

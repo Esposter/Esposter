@@ -44,7 +44,7 @@ The reserve guards a local plan's window. A cloud session spends the account's A
 
 ## Deep Dives
 
-- `references/machine-efficiency.md` — when a wave starts, when an agent is about to check, build, search or scan, and when the CPU is pinned while the GPU idles.
+- `references/machine-efficiency.md` — when a wave starts, when an agent is about to check, build, search or scan, when the CPU is pinned while the GPU idles, and when the disk fills.
 - `references/fleet.md` — when more than one machine works the backlog: profiles, the pulled queue, claims as refs, fleet load and sync.
 - `references/usage-reserve.md` — when a usage window reaches its maintenance or wind-down line.
 - `references/game-data.md` — when game data has to reach a machine, by download or by a copy between LAN machines.
