@@ -19,7 +19,7 @@ import { QuestKindCategoryMap } from "#src/services/quest/QuestKindCategoryMap";
 import { checkIsActionKey } from "#src/services/shared/checkIsActionKey";
 import { useEventListener } from "@vueuse/core";
 import { InputAction } from "genshin-engine";
-import { fillGameTextValues, GameTextKey } from "genshin-text";
+import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
   // The game's words in the reader's language
@@ -82,6 +82,8 @@ const questGroups = computed(() =>
 );
 const selectedQuest = computed(() => quests.find(({ id }) => id === selectedQuestId.value));
 const selectedChapter = computed(() => questChapters.find(({ questIds }) => questIds.includes(selectedQuestId.value)));
+// The caption over a series' rewards, its journal's name in the game's gold
+const rewardsCaptionSegments = computed(() => splitGameTextColors(gameText[GameTextKey.QuestSeriesRewards]));
 // The selected quest's step, and how far its first counted objective has come
 const questStep = computed(() => {
   if (!selectedQuest.value) return undefined;
@@ -120,7 +122,7 @@ useEventListener("keydown", (event) => {
        series' row, and the selected quest's title, place, journal, objective, description and rewards on the right,
        over the Quest Overview button and the one navigating to it. The game lays it over the world, blurred, which the
        parity page has no copy of. Not drawn: the region's art on a series' row and the journal's emblem, the reward
-       items' art, the rewards' caption, the list's scroll bar and the UID -->
+       items' art, the list's scroll bar and the UID -->
   <MenuListScreen :game-text :title="listTitle" @close="emit('close')">
     <template #icon>
       <MenuGlyph class="banner" :glyph="QuestGlyphMap[QuestGlyph.Banner]" />
@@ -211,6 +213,11 @@ useEventListener("keydown", (event) => {
         <p class="description">{{ textMap[selectedQuest.descriptionTextId] }}</p>
         <template v-if="selectedChapter">
           <span class="lower-divider" />
+          <p class="rewards-caption">
+            <span v-for="({ color, text }, index) of rewardsCaptionSegments" :key="index" :style="{ color }">{{
+              text
+            }}</span>
+          </p>
           <ul class="rewards">
             <li
               v-for="{ count, itemId, rarity } of selectedChapter.rewards"
@@ -426,6 +433,7 @@ useEventListener("keydown", (event) => {
 .detail-title,
 .journal,
 .step,
+.rewards-caption,
 .description {
   margin: 0;
   font-weight: 600;
@@ -522,6 +530,19 @@ useEventListener("keydown", (event) => {
   left: 0;
   width: 100%;
   background: rgb(255 255 255 / 0.06);
+}
+
+/* Its capitals' tops at 792.9, 15.6 high in the still, its line's left at the details' own. Letter-spaced a unit, the
+   stand-in face runs about 18 units past the still's line end, and the spacing that lands the end raised the mean */
+.rewards-caption {
+  position: absolute;
+  top: calc(var(--unit) * 790.8);
+  left: calc(var(--unit) * 1);
+  color: #ece7de;
+  font-size: calc(var(--unit) * 22);
+  letter-spacing: calc(var(--unit) * 1);
+  line-height: calc(var(--unit) * 22);
+  white-space: nowrap;
 }
 
 .rewards {

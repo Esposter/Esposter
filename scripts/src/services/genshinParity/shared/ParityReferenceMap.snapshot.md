@@ -85,7 +85,7 @@ committed.
 | `party-screen` | `PartyScreen` | 4.45% | 0.304 | 2.68% | 0.1628 |
 | `people-of-the-springs-location` | `WorldScreen` | 25.06% | 0.223 | 21.49% | 0.7945 |
 | `publisher-splash` | `SplashPublisher` | 0.07% | 1.000 | 0.01% | 0.0036 |
-| `quest-screen` | `QuestScreen` | 16.97% | 0.674 | 15.24% | 0.4980 |
+| `quest-screen` | `QuestScreen` | 16.94% | 0.706 | 15.12% | 0.4966 |
 | `quest-screen-details` | `QuestScreen` | 21.34% | 0.929 | 19.93% | 0.5645 |
 | `quest-screen-header` | `QuestScreen` | 9.04% | 0.928 | 8.26% | 0.3522 |
 | `quest-screen-list` | `QuestScreen` | 8.75% | 0.821 | 7.13% | 0.3252 |
