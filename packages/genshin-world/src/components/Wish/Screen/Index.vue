@@ -166,7 +166,7 @@ const buyFate = () => {
 const currencies = computed(() =>
   [Currency.Primogem, ...(bannerKind.value ? [BannerKindFateMap[bannerKind.value]] : [])].map((currency) => ({
     id: currency,
-    isTopUp: false,
+    isTopUp: currency === Currency.Primogem,
     name: gameText[CurrencyGameTextKeyMap[currency]],
     quantity: wallet.value[currency],
   })),

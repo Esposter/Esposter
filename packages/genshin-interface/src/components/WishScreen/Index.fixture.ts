@@ -19,7 +19,7 @@ export const props = {
     { id: "standard", kind: BannerKind.Standard, label: BANNER_LABELS[BannerKind.Standard] },
   ],
   currencies: [
-    { id: "Primogem", isTopUp: false, name: "Primogem", quantity: 0 },
+    { id: "Primogem", isTopUp: true, name: "Primogem", quantity: 539 },
     { id: "IntertwinedFate", isTopUp: false, name: "Intertwined Fate", quantity: 1 },
   ],
   detailsLabel: "Details",

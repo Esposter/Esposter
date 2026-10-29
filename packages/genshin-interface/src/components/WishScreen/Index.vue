@@ -106,6 +106,7 @@ const bannerLabelText = computed(() => {
        against a recording of the English Client at 1080 high, and the banner card's art and the banners' tabs' portraits
        are the plate's, which cannot ship -->
   <div class="wish-screen">
+    <span class="sparkle star" aria-hidden="true" />
     <ScreenTitle role="heading" aria-level="1">{{ title }}</ScreenTitle>
     <ul class="banners">
       <li v-for="banner of banners" :key="banner.id">
@@ -119,10 +120,25 @@ const bannerLabelText = computed(() => {
         />
       </li>
     </ul>
-    <ul class="currencies">
-      <li v-for="{ id, name, quantity } of currencies" :key="id" class="currency">
-        <span class="currency-name">{{ name }}</span>
-        {{ quantity }}
+    <ul class="currencies currencies-top">
+      <li
+        v-for="{ id, isTopUp, name, quantity } of currencies.filter((currency) => currency.isTopUp)"
+        :key="id"
+        class="currency"
+      >
+        <span class="currency-icon" role="img" :aria-label="name" />
+        <span class="currency-count">{{ quantity }}</span>
+        <span v-if="isTopUp" class="top-up" aria-hidden="true">+</span>
+      </li>
+    </ul>
+    <ul class="currencies currencies-bottom">
+      <li
+        v-for="{ id, name, quantity } of currencies.filter((currency) => !currency.isTopUp)"
+        :key="id"
+        class="currency"
+      >
+        <span class="currency-icon" role="img" :aria-label="name" />
+        <span class="currency-count">{{ quantity }}</span>
       </li>
     </ul>
     <GameButton class="back" :aria-label="backLabel" :kind="GameButtonKind.Plain" tip="" @click="emit('close')"
@@ -133,8 +149,9 @@ const bannerLabelText = computed(() => {
       <p v-if="bannerCard" class="card-title">
         <span v-for="({ color, text }, index) of bannerCard.title" :key="index" :style="{ color }">{{ text }}</span>
       </p>
+      <span v-if="bannerCard" class="rule" aria-hidden="true" />
       <p class="probability">{{ probabilityLabel }}</p>
-      <p v-if="bannerCard" class="rate-up">{{ bannerCard.rateUp }}</p>
+      <p v-if="bannerCard" class="rate-up"><span class="sparkle small" aria-hidden="true" />{{ bannerCard.rateUp }}</p>
       <p class="notice">{{ fiveStarNotice }}</p>
       <p v-if="timeRemainingText" class="time-label">{{ timeRemainingLabel }}</p>
       <p v-if="timeRemainingText" class="time-duration">{{ timeRemainingText }}</p>
@@ -262,27 +279,100 @@ const bannerLabelText = computed(() => {
   background: #fffdea;
 }
 
+/* The top-up currency sits in a translucent pill with its own plus, the banner's Fates below at the foot, each a count beside
+   its icon. The icons are the game's own art, which cannot ship, so each is a placeholder of its size */
 .currencies {
   position: absolute;
-  top: calc(var(--unit) * 30);
-  left: calc(var(--unit) * 1440);
   display: flex;
-  gap: calc(var(--unit) * 24);
-  font-size: calc(var(--unit) * 20);
+  align-items: center;
+  font-size: calc(var(--unit) * 28);
+  font-weight: 700;
 }
 
-.currency-name {
-  opacity: 0.7;
+.currencies-top {
+  top: calc(var(--unit) * 27);
+  left: calc(var(--unit) * 1487);
+}
+
+.currencies-bottom {
+  top: calc(var(--unit) * 958);
+  left: calc(var(--unit) * 68);
+  gap: calc(var(--unit) * 47);
+}
+
+.currency {
+  display: flex;
+  height: calc(var(--unit) * 36);
+  align-items: center;
+  gap: calc(var(--unit) * 15);
+}
+
+.currencies-top .currency {
+  padding: 0 calc(var(--unit) * 2) 0 calc(var(--unit) * 13);
+  border-radius: calc(var(--unit) * 18);
+  background: rgb(40 52 68 / 0.55);
+}
+
+.currency-icon {
+  width: calc(var(--unit) * 26);
+  height: calc(var(--unit) * 26);
+}
+
+.top-up {
+  display: flex;
+  width: calc(var(--unit) * 31);
+  height: calc(var(--unit) * 31);
+  margin-left: calc(var(--unit) * 14);
+  border-radius: 50%;
+  background: #fff;
+  color: #343744;
+  font-size: calc(var(--unit) * 26);
+  align-items: center;
+  justify-content: center;
 }
 
 .back {
   position: absolute;
   top: calc(var(--unit) * 17);
-  left: calc(var(--unit) * 1812);
+  left: calc(var(--unit) * 1814);
   width: calc(var(--unit) * 56);
   height: calc(var(--unit) * 56);
-  font-size: calc(var(--unit) * 72);
+  border-radius: 50%;
+  background: #f2f2f4;
+  color: #343744;
+  font-size: calc(var(--unit) * 40);
   font-weight: 700;
+}
+
+/* The sparkle the game marks its Wish and its banner's rate-up with, a four-point star in its own colour */
+.sparkle {
+  position: absolute;
+  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+}
+
+.star {
+  top: calc(var(--unit) * 22);
+  left: calc(var(--unit) * 53);
+  width: calc(var(--unit) * 49);
+  height: calc(var(--unit) * 47);
+  background: #e5ca95;
+}
+
+.sparkle.small {
+  top: calc(var(--unit) * 38);
+  left: calc(var(--unit) * 13);
+  width: calc(var(--unit) * 13);
+  height: calc(var(--unit) * 14);
+  background: #fff;
+}
+
+/* The faint dotted rule the game draws under the card's title */
+.rule {
+  position: absolute;
+  top: calc(var(--unit) * 413);
+  left: calc(var(--unit) * 380);
+  width: calc(var(--unit) * 440);
+  border-top: calc(var(--unit) * 2) dotted #d6dce4;
 }
 
 /* The card's art is the plate's and cannot ship, so the card is a measured panel of the reference's light field behind the
@@ -401,13 +491,14 @@ const bannerLabelText = computed(() => {
 }
 
 .featured-name {
-  margin: 0;
+  margin: calc(var(--unit) * 5) 0 0;
   font-size: calc(var(--unit) * 56);
   line-height: calc(var(--unit) * 56);
+  letter-spacing: calc(var(--unit) * 4);
 }
 
 .featured-stars {
-  margin: calc(var(--unit) * 8) 0 0;
+  margin: calc(var(--unit) * 3) 0 0;
   font-size: calc(var(--unit) * 28);
   line-height: calc(var(--unit) * 24);
 }
@@ -418,6 +509,7 @@ const bannerLabelText = computed(() => {
   margin: calc(var(--unit) * 7) 0 0 calc(var(--unit) * -7);
   padding: 0 calc(var(--unit) * 19);
   background: rgb(20 30 50 / 0.7);
+  color: #dfc896;
   font-size: calc(var(--unit) * 26);
   line-height: calc(var(--unit) * 29);
 }
@@ -431,8 +523,9 @@ const bannerLabelText = computed(() => {
 }
 
 .links .link {
+  box-sizing: border-box;
   width: calc(var(--unit) * 172);
-  height: calc(var(--unit) * 43);
+  height: calc(var(--unit) * 42);
   background: #f6f0e9;
   color: #36323a;
   font-size: calc(var(--unit) * 22);
