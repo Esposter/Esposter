@@ -2,6 +2,7 @@
 import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { ForgeProgress } from "#src/models/forging/ForgeProgress";
+import type { ForgeQueueSlot } from "#src/models/forging/ForgeQueueSlot";
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
@@ -105,6 +106,9 @@ const refusalLabel = computed(() =>
   pickedRecipe.value ? computeForgeRefusalLabel(pickedRecipe.value, amount.value, progress.value, now, gameText) : "",
 );
 const queueSlots = computed(() => computeForgeQueueSlots(progress.value.orders, adventureRank, now));
+// A queue holds an order while it forges, or once the order is done and waits to be obtained
+const isQueueOccupied = ({ state }: ForgeQueueSlot) =>
+  state === ForgeQueueState.Forging || state === ForgeQueueState.Complete;
 // Each queue's words in the reader's language, from the order it holds in the forge state
 const queueCells = computed<ForgeQueueCell[]>(() =>
   queueSlots.value.map(({ forged, id, recipeId: queueRecipeId, state, unlockRank }) => {
@@ -135,9 +139,7 @@ const queueCells = computed<ForgeQueueCell[]>(() =>
 // The queue the Queues tab's detail shows, the first holding an order: its units done, the words over its ring (its time
 // Left, or Complete once every unit is done) and the share of the unit being forged, which a complete queue shows full
 const queueDetail = computed(() => {
-  const slot = queueSlots.value.find(
-    ({ state }) => state === ForgeQueueState.Forging || state === ForgeQueueState.Complete,
-  );
+  const slot = queueSlots.value.find(isQueueOccupied);
   const order = progress.value.orders.find(({ queueId }) => queueId === slot?.id);
   if (!slot || !order) return;
   const isComplete = slot.state === ForgeQueueState.Complete;
@@ -240,7 +242,7 @@ const obtain = (queueId: number) => {
       :queues-label="
         fillGameTextValues(
           gameText[GameTextKey.ForgeQueueButton],
-          queueSlots.filter(({ state }) => state === ForgeQueueState.Forging).length,
+          queueSlots.filter(isQueueOccupied).length,
           queueSlots.filter(({ state }) => state !== ForgeQueueState.Locked).length,
         )
       "
