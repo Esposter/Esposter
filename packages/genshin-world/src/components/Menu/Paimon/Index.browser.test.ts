@@ -14,7 +14,6 @@ import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page, userEvent } from "vitest/browser";
-import { defineComponent, h } from "vue";
 
 describe("menuPaimon", () => {
   const birthday = { day: 13, month: 10 };
@@ -35,19 +34,12 @@ describe("menuPaimon", () => {
     expect(onOpen).toHaveBeenCalledExactlyOnceWith(ScreenKind.Settings);
   });
 
-  // The avatar is NuxtImg, which only the Nuxt app registers, so the browser suite
-  // Draws it as the plain image NuxtImg renders
+  // The avatar is NuxtImg, which only the Nuxt app registers; the browser suites draw it as the plain image it renders
+  // (`parity/setupBrowser.ts`)
   test("a signed-in reader sees the account's name and avatar", async () => {
     expect.hasAssertions();
 
-    const NuxtImgStub = defineComponent({
-      props: { alt: { required: true, type: String }, src: { required: true, type: String } },
-      setup: (componentProps) => () => h("img", { alt: componentProps.alt, src: componentProps.src }),
-    });
-    await render(MenuPaimon, {
-      global: { stubs: { NuxtImg: NuxtImgStub } },
-      props: { ...props, accountAvatarUrl: "a", accountName: travelerName },
-    });
+    await render(MenuPaimon, { props: { ...props, accountAvatarUrl: "a", accountName: travelerName } });
 
     await expect.element(page.getByText(travelerName, { exact: true })).toBeInTheDocument();
     await expect.element(page.getByRole("img", { name: travelerName })).toHaveAttribute("src", "a");

@@ -30,5 +30,7 @@ export default defineConfig({
     // The visual suite, and the screens' behaviour where only a browser runs it: the Web Animations and CSS
     // Transitions an opening hands its screens on with
     include: ["parity/*.visual.ts", "src/**/*.browser.test.ts"],
+    // Each browser test and suite mounts with the app's global components registered, as the app registers them
+    setupFiles: ["./parity/setupBrowser.ts"],
   },
 });
