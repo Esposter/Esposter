@@ -1,6 +1,6 @@
 # Flowchart image export
 
-The resource menu exports a Flowchart as a PNG or SVG named after the resource. The whole diagram is captured, even when the editor is closed or its viewport is zoomed into one corner.
+The resource menu exports a Flowchart as a PNG or SVG named after the resource. The whole diagram is captured.
 
 ## How it works
 
