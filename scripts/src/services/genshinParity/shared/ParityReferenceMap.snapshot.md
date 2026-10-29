@@ -90,9 +90,9 @@ committed.
 | `quest-screen-header`                  | `QuestScreen`               |                                                                          7.68% | 0.996 |  6.75% | 0.3086 |
 | `quest-screen-list`                    | `QuestScreen`               |                                                                          6.19% | 0.892 |  4.70% | 0.2657 |
 | `reputation-screen`                    | `ReputationScreen`          |                                                                          1.99% | 0.875 |  1.39% | 0.1429 |
-| `settings-audio-rows`                  | `MenuSettings`              |                                                                          1.01% | 0.995 |  0.38% | 0.0745 |
+| `settings-audio-rows`                  | `MenuSettings`              |                                                                          1.01% | 0.997 |  0.38% | 0.0742 |
 | `settings-graphics`                    | `MenuSettings`              |                                                                          1.59% | 0.996 |  1.26% | 0.1020 |
-| `settings-graphics-rows`               | `MenuSettings`              |                                                                          1.07% | 0.998 |  0.40% | 0.0888 |
+| `settings-graphics-rows`               | `MenuSettings`              |                                                                          1.07% | 0.998 |  0.41% | 0.0888 |
 | `spiral-abyss-benediction`             | `SpiralAbyssBenediction`    |                                                                          1.78% | 0.963 |  0.51% | 0.0719 |
 | `spiral-abyss-entry`                   | `SpiralAbyssEntry`          |                                       pending: no screenshot of the screen yet |       |        |        |
 | `splash-title-chinese-traditional`     | `SplashTitle`               |                                     pending: no screenshot of this variant yet |       |        |        |

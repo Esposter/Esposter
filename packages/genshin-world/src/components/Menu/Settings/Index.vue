@@ -392,7 +392,7 @@ onMounted(() => {
 
 .tabs {
   position: absolute;
-  top: calc(var(--unit) * 121);
+  top: calc(var(--unit) * 120);
   left: 0;
   display: flex;
   flex-direction: column;
@@ -400,7 +400,7 @@ onMounted(() => {
 
 .tab {
   position: relative;
-  height: calc(var(--unit) * 69.75);
+  height: calc(var(--unit) * 69.5);
   padding: 0 0 0 calc(var(--unit) * 144);
   border: none;
   background: none;
@@ -422,6 +422,12 @@ onMounted(() => {
   color: #edeae7;
   font-size: calc(var(--unit) * 41);
   letter-spacing: calc(var(--unit) * 2.4);
+}
+
+/* The last two tabs, Resources and Other, are dimmer than the rest: set by eye off the clip's tab column
+   (`yt-5EmJX_RyuY8-menu-settings`, 1920 wide), where they are barely above the sand behind them */
+.tab:nth-child(n + 8) {
+  opacity: 0.5;
 }
 
 /* The open tab is held selected by GameButton's row tint, which the game does not draw here: the reference's Graphics tab
@@ -616,10 +622,10 @@ onMounted(() => {
    Their sizes and places, read by eye off the clip's Audio tab at 178 seconds */
 .speaker {
   position: absolute;
-  top: calc(var(--unit) * 13);
-  left: calc(var(--unit) * 802);
-  width: calc(var(--unit) * 36);
-  height: calc(var(--unit) * 30);
+  top: calc(var(--unit) * 11.5);
+  left: calc(var(--unit) * 798);
+  width: calc(var(--unit) * 45);
+  height: calc(var(--unit) * 33);
   fill: #4b5568;
 }
 
@@ -631,13 +637,13 @@ onMounted(() => {
 
 .volume {
   position: absolute;
-  top: calc(var(--unit) * 8);
+  top: calc(var(--unit) * 11);
   left: calc(var(--unit) * 852);
-  width: calc(var(--unit) * 66);
-  height: calc(var(--unit) * 40);
+  width: calc(var(--unit) * 70);
+  height: calc(var(--unit) * 34);
   border-radius: calc(var(--unit) * 6);
   background: rgb(75 77 84 / 0.03);
-  line-height: calc(var(--unit) * 40);
+  line-height: calc(var(--unit) * 34);
   text-align: center;
 }
 
@@ -657,14 +663,14 @@ onMounted(() => {
   width: calc(var(--unit) * 19);
   height: calc(var(--unit) * 19);
   border: calc(var(--unit) * 2) solid #8f8a85;
-  background: #ffffff;
+  background: #e6e0d5;
   box-sizing: border-box;
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .scroll-caret {
   position: absolute;
-  top: calc(var(--unit) * 120);
+  top: calc(var(--unit) * 124);
   left: calc(var(--unit) * 1816.5);
   width: calc(var(--unit) * 10);
   height: calc(var(--unit) * 5);
