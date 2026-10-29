@@ -30,9 +30,9 @@ export const PARITY_SCORES_PATH: string = join(PARITY_SHARED_DIRECTORY, "ParityR
 export const RECORDING_FRAME_FILTER =
   "format=rgb24,setparams=color_primaries=unknown:color_trc=unknown:colorspace=unknown";
 
-// The largest mean difference, in percent of full scale, a reference may have from the frame its source names. Older
-// Cuts differ from their recordings by up to about 0.39%, a uniform darkening from an earlier pipeline, while a different
-// Picture scores in the tens of percent, so one percent sits well above the first and far below the second
+// The largest mean difference, in percent of full scale, a reference may have from the frame its source names. A cut of
+// that frame stays well under half a percent from it, while a different picture scores in the tens of percent, so one
+// percent admits every cut of the frame and fails any other picture
 export const VERIFY_TOLERANCE_PERCENT = 1;
 
 // The lossless WebP a reference is packed as, at the highest effort sharp offers. Its pixels decode back exactly, so every
