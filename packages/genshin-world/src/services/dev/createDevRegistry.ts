@@ -9,6 +9,7 @@ import { formatDevUsage } from "#src/services/dev/formatDevUsage";
 import { runDevCommand } from "#src/services/dev/runDevCommand";
 import { runDevScenario } from "#src/services/dev/runDevScenario";
 import { setDevVariable } from "#src/services/dev/setDevVariable";
+import { splitDevLine } from "#src/services/dev/splitDevLine";
 
 // The table an owner's handles are registered into. A disposed command moves to the unmounted table rather than leaving,
 // So a line naming it says the command is not available here instead of that it is unknown
@@ -35,7 +36,7 @@ export const createDevRegistry = (): DevRegistry => {
   };
 
   const runLine = (line: string): DevResult => {
-    const [name, ...words] = line.split(/\s+/u).filter((word) => word !== "");
+    const [name, ...words] = splitDevLine(line);
     if (name === undefined) return { error: "empty line", ok: false, usage: "" };
     if (name === "set") return setVariable(words);
 

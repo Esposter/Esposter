@@ -2,9 +2,16 @@ import type { DevCommand } from "#src/models/dev/DevCommand";
 import type { DevResult } from "#src/models/dev/DevResult";
 import type { DevVariable } from "#src/models/dev/DevVariable";
 
+import type { Catalogue } from "#src/models/world/Catalogue";
+import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
+
 import { DevVariableKind } from "#src/models/dev/DevVariableKind";
+import { WorldLayer } from "#src/models/world/WorldLayer";
+import { createTeleportCommand } from "#src/services/dev/commands/createTeleportCommand";
+import { DEV_LANDMARK } from "#src/services/dev/constants.test";
 import { createDevRegistry } from "#src/services/dev/createDevRegistry";
 import { exposeDevRegistry } from "#src/services/dev/exposeDevRegistry";
+import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { describe, expect, test, vi } from "vitest";
 import { z } from "zod";
 
@@ -221,5 +228,48 @@ describe(createDevRegistry, () => {
     disposeLater();
 
     expect(registry.getRenderer()).toBe(earlier);
+  });
+
+  test("A place of several words is one place when it is quoted, and a single word still is", () => {
+    expect.hasAssertions();
+
+    const catalogue: Catalogue = {
+      regions: [
+        {
+          areas: [
+            {
+              id: "liyue-harbor",
+              layer: WorldLayer.Surface,
+              name: "Liyue Harbor",
+              outline: [
+                { x: -100, z: -100 },
+                { x: 100, z: -100 },
+                { x: 100, z: 100 },
+                { x: -100, z: 100 },
+              ],
+              subareas: [],
+              subregion: "",
+              weathers: [],
+            },
+          ],
+          id: "liyue",
+          name: "Liyue",
+        },
+      ],
+    };
+    const landmark = { ...DEV_LANDMARK, areaId: "liyue-harbor" };
+    const jumpTo = vi.fn<(pose: WorldJumpPose) => void>();
+    const registry = createDevRegistry();
+    registry.register({
+      commands: [createTeleportCommand({ catalogue, getLandmarks: () => [landmark], jumpTo })],
+      variables: [],
+    });
+
+    expect({ quoted: registry.run('teleport "Liyue Harbor"'), single: registry.run("teleport Liyue") }).toStrictEqual({
+      quoted: { ok: true, value: "Liyue Harbor" },
+      single: { ok: true, value: "Liyue" },
+    });
+    expect(jumpTo).toHaveBeenNthCalledWith(1, computeJumpPose(landmark));
+    expect(jumpTo).toHaveBeenNthCalledWith(2, computeJumpPose(landmark));
   });
 });

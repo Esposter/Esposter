@@ -1371,6 +1371,7 @@ export * from "./services/dev/scenarios/constants.ts";
 export * from "./services/dev/scenarios/fullBagScenario.ts";
 export * from "./services/dev/scenarios/nightAtWindriseScenario.ts";
 export * from "./services/dev/setDevVariable.ts";
+export * from "./services/dev/splitDevLine.ts";
 export * from "./services/dialogue/advanceTalk.ts";
 export * from "./services/dialogue/chooseTalkLine.ts";
 export * from "./services/dialogue/constants.ts";

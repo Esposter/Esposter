@@ -11,8 +11,9 @@ import { z } from "zod";
 // from sorting these keys alphabetically, which would read a line's place from its depth
 const teleportArgs = z.object({ place: z.string(), height: z.string().optional(), depth: z.string().optional() });
 
-// `teleport <place>` jumps to the landmark the place is named after, at the pose the map's own jump lands at, and
-// `teleport <x> <height> <depth>` jumps to the coordinates given, the place being x
+// `teleport <place>` jumps to the landmark the place is named after, at the pose the map's own jump lands at. A place of
+// Several words is quoted, as in `teleport "Liyue Harbor"`, and `teleport <x> <height> <depth>` jumps to the coordinates
+// Given, the place being x
 export const createTeleportCommand = ({
   catalogue,
   getLandmarks,
