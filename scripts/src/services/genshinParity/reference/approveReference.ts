@@ -1,6 +1,6 @@
-import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";
 import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
 import { decideApprovalStatus } from "#src/services/genshinParity/reference/decideApprovalStatus";
+import { getApprovalValue } from "#src/services/genshinParity/reference/getApprovalValue";
 import { readScore } from "#src/services/genshinParity/reference/readScore";
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
 import { GENSHIN_WORLD_DIRECTORY } from "#src/services/genshinParity/shared/constants";
@@ -42,12 +42,7 @@ export const approveReference = async (referenceId: string, variant?: string): P
   if (score) await writeParityScores({ [referenceId]: score });
   const approval = reference.approval ?? DEFAULT_APPROVAL;
   const approvalStatus = decideApprovalStatus(hasReference, isWholeScreen, score, approval);
-  const value =
-    score === undefined
-      ? undefined
-      : approval.measure === ParityApprovalMeasure.Flip
-        ? score.flip
-        : score.meanDifference;
+  const value = score === undefined ? undefined : getApprovalValue(score, approval);
   const barSource =
     reference.approval === undefined
       ? "the global default, no bar recorded for this screen"

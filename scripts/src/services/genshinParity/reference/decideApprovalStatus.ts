@@ -2,7 +2,7 @@ import type { ParityScore } from "#src/models/genshinParity/reference/ParityScor
 import type { ParityApproval } from "#src/models/genshinParity/shared/ParityApproval";
 
 import { ApprovalStatus } from "#src/models/genshinParity/reference/ApprovalStatus";
-import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";
+import { getApprovalValue } from "#src/services/genshinParity/reference/getApprovalValue";
 
 // A compare's status against its bar. Only a compare against a reference on disk that judges the whole screen has a score
 // To set against the bar, on the measure the screen records; a missing reference and a failed compare have none, and a
@@ -16,6 +16,5 @@ export const decideApprovalStatus = (
   if (!hasReference) return ApprovalStatus.NoReference;
   if (!isWholeScreen) return ApprovalStatus.NotWholeScreen;
   if (!score) return ApprovalStatus.CompareFailed;
-  const value = approval.measure === ParityApprovalMeasure.Flip ? score.flip : score.meanDifference;
-  return value < approval.bar ? ApprovalStatus.WithinBar : ApprovalStatus.OverBar;
+  return getApprovalValue(score, approval) < approval.bar ? ApprovalStatus.WithinBar : ApprovalStatus.OverBar;
 };
