@@ -43,7 +43,7 @@ The console SHALL run a line as the command named first with the arguments after
 #### Scenario: Unknown name is refused
 
 - **WHEN** the owner enters a name no command has
-- **THEN** the console says the command is unknown and suggests the nearest names
+- **THEN** the console says the command is unknown and lists the names that contain it
 
 #### Scenario: Command whose state is not mounted says so
 
@@ -51,20 +51,20 @@ The console SHALL run a line as the command named first with the arguments after
 - **WHEN** the owner enters `heal`
 - **THEN** the console says the command is not available here
 
-### Requirement: Names and ids complete from the game's own data
+### Requirement: A command's result is structured and compact
 
-The console SHALL complete a command's name and, for an argument that names an item, landmark, region, enemy kind or weather, the names the game itself shows.
+A command SHALL return `ok` with a value, or `ok: false` with an error and its usage, and the value SHALL be a count, a rounded number or a name rather than a dump.
 
-#### Scenario: Partial name completes
+#### Scenario: Automation receives data
 
-- **GIVEN** the item names are loaded
-- **WHEN** the owner types `give Mor` and asks for completion
-- **THEN** the names starting with `Mor` are offered
+- **GIVEN** a browser driven by automation
+- **WHEN** it calls `window.__dev.run("state")`
+- **THEN** it receives the position, place, hour, weather, health and party as one record
 
-#### Scenario: No match offers nothing
+#### Scenario: Failure returns its usage
 
-- **WHEN** the owner asks for completion of text no name starts with
-- **THEN** no completion is offered and the line is unchanged
+- **WHEN** a command is called with an argument it refuses
+- **THEN** the result is `ok: false` with the error and the command's usage
 
 ### Requirement: A variable is one value set from either face
 
@@ -107,34 +107,19 @@ A scenario SHALL run its commands in order, show each result, and stop at the fi
 
 ### Requirement: The stats overlay reads the renderer's counters
 
-The stats overlay SHALL show the median frame time over the last sixty frames, the draw calls, the triangles, the geometries and the textures, and SHALL hide when toggled off.
+The stats overlay SHALL show the median frame time over the last sixty frames, the draw calls and the triangles, and SHALL hide when toggled off.
 
 #### Scenario: Overlay shows the counters
 
 - **GIVEN** the world is running
 - **WHEN** the owner enters `stat on`
-- **THEN** the overlay shows the frame time, draw calls, triangles, geometries and textures
+- **THEN** the overlay shows the frame time, draw calls and triangles
 
 #### Scenario: Toggle hides it
 
 - **GIVEN** the overlay is shown
 - **WHEN** the owner enters `stat off`
 - **THEN** the overlay is hidden
-
-### Requirement: A pick names the entity under the pointer
-
-An Alt-click on the world SHALL name the nearest pickable entity along the pointer's ray with its kind, id, place and state.
-
-#### Scenario: Entity under the pointer is named
-
-- **GIVEN** an enemy stands under the pointer
-- **WHEN** the owner Alt-clicks it
-- **THEN** the panel shows the enemy's kind, id, place and state
-
-#### Scenario: Nothing pickable under the pointer
-
-- **WHEN** the owner Alt-clicks open ground
-- **THEN** the panel says nothing pickable was found
 
 ### Requirement: Three's inspector is not attached
 
@@ -151,51 +136,3 @@ No scene SHALL be given three's inspector, and the look's tunable values SHALL b
 - **GIVEN** the panel is open on the Look tab
 - **WHEN** the owner changes the outline thickness
 - **THEN** the world's outline thickness changes at once
-
-### Requirement: A command's result is structured and compact
-
-A command SHALL return `ok` with a value, or `ok: false` with an error and its usage, and the value SHALL be a count, a rounded number or a name rather than a dump.
-
-#### Scenario: Automation receives data
-
-- **GIVEN** a browser driven by automation
-- **WHEN** it calls `window.__dev.run("state")`
-- **THEN** it receives the position, place, hour, weather, health, party and flags as one record
-
-#### Scenario: Failure returns its usage
-
-- **WHEN** a command is called with an argument it refuses
-- **THEN** the result is `ok: false` with the error and the command's usage
-
-### Requirement: A scenario can assert
-
-A scenario SHALL fail at an `expect` step whose condition does not hold, and SHALL name that step.
-
-#### Scenario: Holding expectation passes
-
-- **GIVEN** a scenario that gives 100 Mora and then expects 100 Mora
-- **WHEN** it runs
-- **THEN** it passes
-
-#### Scenario: Failing expectation stops the scenario
-
-- **GIVEN** a scenario that expects health above zero after `heal` and the character stays at zero
-- **WHEN** it runs
-- **THEN** it fails at the `expect` step, naming it
-- **AND** later steps do not run
-
-### Requirement: A scenario runs without a person
-
-`genshin:dev run` SHALL start the page headless, run the named scenario or line, and print its compact result with a non-zero exit when any step fails.
-
-#### Scenario: Passing scenario exits zero
-
-- **GIVEN** a scenario whose steps all pass
-- **WHEN** `genshin:dev run` is given its name
-- **THEN** it prints the compact result and exits zero
-
-#### Scenario: Failing scenario exits non-zero
-
-- **GIVEN** a scenario with a failing step
-- **WHEN** `genshin:dev run` is given its name
-- **THEN** it prints the failing step and exits non-zero

@@ -11,10 +11,9 @@ One developer surface that belongs to the game, in the development server only.
 - A typed command registry is the single source of truth: **commands** (`teleport`, `time`, `weather`, `give`, `level`, `god`, `timescale`, `scenario`...) and **variables** (a named boolean, number, colour or choice with a range and a group, such as the look's every uniform). The registry parses and runs a line, reports its result or its error, and completes names and ids.
 - Two faces over the registry: a **console** (opened by the backtick key, with history and completion) and a **panel** (opened by F2, with the variables as controls grouped in tabs and the scenarios as buttons), both drawn with the app's own interface library.
 - **Scenarios**: a named, ordered list of commands that puts the game in a state worth checking in one click, each authored beside the change it shows.
-- A **stats overlay** (frame time, draw calls, triangles, memory) and **pass toggles** (shadows, god rays, ambient occlusion, bloom, anti-aliasing), so a slow scene shows which pass costs.
-- A **pick** that names the entity under the pointer (kind, id, place, state).
+- A **stats overlay** (median frame time, draw calls, triangles) and **pass toggles** (shadows, god rays, ambient occlusion, bloom, anti-aliasing), so a slow scene shows which pass costs.
 - **BREAKING** three's Inspector is no longer attached to any scene, and its Look group moves into the panel's Look tab as variables.
-- Built for an agent first: every command returns a small structured result, a read-only family (`state`, `near`, `inventory`, `stat`, `step`) answers what a session would otherwise learn from screenshots, a scenario can assert with `expect`, and `pnpm -C scripts genshin:dev run` runs one headless, so the owner's two surfaces are callers of the same tools an agent uses.
+- Built for an agent first and no further: every command returns a small structured result, `state` answers the game's state in one record, and `window.__dev.run(line)` lets a parity run or an agent drive the same commands without a screenshot.
 - A feature change registers the scenario that shows it, or says in its design why it has none.
 
 ## Capabilities
