@@ -34,8 +34,6 @@ flowchart TD
 - [ ] **The talent table's 21-second skill duration** — no source yet: the table's row for the skill, which this pass did not read; the table's own note is the only source for the figure, and it says the 21 seconds is not the cooldown.
 - [ ] **Glacial Waltz's knockback area** — no source yet: the area of the activation knockback, which no cited source gives; its 400 poise is the wiki's (`{data-root}/cache/genshin-wiki/Category_Kaeya_Talents.json`).
 
-- [ ] **Glacial Waltz's thirteen icicles** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/kaeya/burst.go`: three icicles, with thirteen ticks in all.
-
 ## Key files
 
 | File                                                             | Role                                                                |

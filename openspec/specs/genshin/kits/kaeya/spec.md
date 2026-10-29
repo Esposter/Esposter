@@ -1,6 +1,6 @@
 ## Purpose
 
-Kaeya's kit as built: five strikes, a charged attack, Frostgnaw with its first-ascension heal, Glacial Waltz's thirteen icicles, Constellations 1, 2 and 4, and Constellation 6's Energy on the cast, with Frostgnaw's damage against Water, the activation knockback, and Constellation 6's fourth icicle not built.
+Kaeya's kit as built: five strikes, a charged attack, Frostgnaw with its first-ascension heal, Glacial Waltz's three icicles and their thirteen ticks, Constellations 1, 2 and 4, and Constellation 6's Energy on the cast, with Frostgnaw's damage against Water, the activation knockback, and Constellation 6's fourth icicle not built.
 
 ## Requirements
 
@@ -53,23 +53,23 @@ From his first ascension, each enemy Frostgnaw strikes SHALL heal Kaeya by 15% o
 - **WHEN** Frostgnaw strikes no enemy
 - **THEN** no heal is dealt
 
-### Requirement: Glacial Waltz summons thirteen icicles
+### Requirement: Glacial Waltz summons three icicles that tick thirteen times
 
-Glacial Waltz SHALL summon thirteen icicles that strike enemies on their ticks.
+Glacial Waltz SHALL summon three icicles that strike enemies on thirteen ticks in all.
 
 #### Scenario: Casting Glacial Waltz summons the icicles
 
 - **GIVEN** Kaeya is the character on the field
 - **WHEN** the player casts Glacial Waltz
-- **THEN** thirteen icicles are summoned
-- **AND** each icicle strikes enemies on its ticks
+- **THEN** three icicles are summoned
+- **AND** the icicles strike enemies on their thirteen ticks
 
 #### Scenario: Recasting Glacial Waltz replaces the one standing
 
 - **GIVEN** Glacial Waltz is standing
 - **WHEN** the player casts Glacial Waltz again
 - **THEN** the standing Glacial Waltz ends, and its icicles stop
-- **AND** thirteen icicles are summoned for the new one
+- **AND** three icicles are summoned for the new one
 
 ### Requirement: Constellation 1 CRIT Rate against Cryo-affected enemies
 
