@@ -94,4 +94,25 @@ describe(buildCharacterPackIndex, () => {
       InvalidOperationError,
     );
   });
+
+  test("a file whose content does not hash to its manifest's sha256 is refused, so the index never names other content", async () => {
+    expect.hasAssertions();
+
+    mkdirSync(join(directory, "10000006", "Texture"), { recursive: true });
+    writeFileSync(join(directory, "10000006", "Texture", "body.png"), "body");
+    writeFileSync(
+      join(directory, "10000006", "manifest.json"),
+      JSON.stringify({
+        avatarId: "10000006",
+        files: [{ bytes: 4, path: "Texture/body.png", sha256: getSha256("other") }],
+        name: "丽莎",
+      }),
+    );
+
+    await expect(
+      buildCharacterPackIndex(await readCharacterPackFiles(directory)),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: 10000006/Texture/body.png, is listed by its manifest at a sha256 its bytes do not hash to]`,
+    );
+  });
 });
