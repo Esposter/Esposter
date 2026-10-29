@@ -132,9 +132,10 @@ const sets = computed(() => {
   const kind = bannerKind.value;
   if (!kind) return [];
   return [1, TEN_WISH_COUNT].map((count) => {
-    const { currency, quantity } = getWishCost(kind, count);
+    const { quantity } = getWishCost(kind, count);
     return {
-      cost: toCountText(currency, quantity),
+      // The set's Fates are drawn as the game draws them, by their icon and count alone
+      cost: `×${quantity}`,
       count,
       isAffordable: checkIsWishSetOffered(kind, pityMap.value[kind], wallet.value, count),
       label: fillGameTextValues(gameText[GameTextKey.WishCount], count),

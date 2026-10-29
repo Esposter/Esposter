@@ -314,12 +314,13 @@ const bannerLabelText = computed(() => {
 
 .card-title {
   position: absolute;
-  top: calc(var(--unit) * 245);
+  top: calc(var(--unit) * 243);
   left: calc(var(--unit) * 374);
   width: calc(var(--unit) * 450);
   margin: 0;
   color: #3e3c3d;
-  font-size: calc(var(--unit) * 70);
+  font-size: calc(var(--unit) * 63);
+  letter-spacing: calc(var(--unit) * 4.5);
   line-height: calc(var(--unit) * 74);
 }
 
@@ -425,8 +426,8 @@ const bannerLabelText = computed(() => {
 }
 
 .cost {
-  font-size: calc(var(--unit) * 18);
-  opacity: 0.7;
+  font-size: calc(var(--unit) * 24);
+  opacity: 0.85;
 }
 
 .results {
