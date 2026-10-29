@@ -11,5 +11,6 @@ Nothing here.
 ## Open
 
 - [x] **Quest: the list sub-region's score is its `quest-screen-list` row** — the snapshot holds that row now, so the figures this item once quoted are no longer the record.
-- [x] **Quest: the still's list sitting 65 lower than a list opened at its top** — `Layout.reference.ts` records the fixture's list opening 65 units down, as the still is scrolled.
+- [x] **Quest: the still's list sitting 65 lower than a list opened at its top** — `Layout.reference.ts` records the fixture's list opening 65 units down, as the still is scrolled. Raised: the 65 is in `packages/genshin-world/src/components/Quest/Screen/Index.fixture.ts` (`listScroll: 65`, line 30, its comment at line 25), and `Layout.reference.ts` does not name the scroll.
 - [ ] **The whole-frame reference is the wiki's `File:Quest Screen.png`** — no source yet: the wiki's `File:Quest Screen.png` page is not on disk.
+- [ ] **The whole frame keeps its world blur and glass, which the page draws no copy of** — raised: `packages/genshin-world/src/components/Quest/Screen/Layout.reference.ts` (line 60, outcome Rejected) records that the page draws the frame as captured behind the screen, with no blur, wash or scrim added, which does not square with the page drawing no copy of it. No source for the claim itself is named.
