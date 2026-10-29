@@ -40,4 +40,5 @@ flowchart TD
 
 ## Open
 
-- [ ] **Hydrospout's tick every 4 seconds in the game** — contradicted by `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`: talent 334's text gives its Riptide triggers every 4s.
+- [ ] **Hydrospout's tick every 4 seconds in the game** — contradicted by `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json` and the text its talent 334 names, hash 2705924551, in `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`: the text gives its Riptide triggers every 4s.
+- [ ] **Tide Withholder and Impetuous Winds cut the stance's cooldown, and Havoc: Annihilation ends it** — no source yet: gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/tartaglia/skill.go` lines 202 to 216 give the cooldown's table and no cut, and the constellation and stance-end lines that would show the cuts were not read.
