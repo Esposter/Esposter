@@ -9,7 +9,6 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-29T08:15:48.497Z
 - Commit: d2e6a42eb7
 - Node: v26.13.0
 - OS: win32 10.0.19045 (x64)
