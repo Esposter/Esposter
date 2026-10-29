@@ -27,7 +27,7 @@ export const variants = {
   door: { isWelcomeShown: false, stage: LoginStage.Door },
   loadingData: {
     isWelcomeShown: false,
-    progress: 0.2797,
+    progress: 0.2373,
     stage: LoginStage.Preparing,
     statusStep: LoginStatusStep.LoadingData,
   },
