@@ -2,7 +2,7 @@ import { SITE_NAME } from "@esposter/shared";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-// The folders a copy takes by default; frames and tmp are never copied, since frames are rebuilt where they are used
+// The folders a copy takes by default; frames and tmp are never copied, since frames are cut by hand per motion.md
 export const DATA_FOLDERS: readonly string[] = [
   "extracted",
   "text",
