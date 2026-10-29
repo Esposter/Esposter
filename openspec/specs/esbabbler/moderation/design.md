@@ -1,6 +1,6 @@
 # Moderation
 
-One unified admin action system: every moderation operation is an `AdminActionType` executed through a single procedure, gated behind a specific `RoomPermission` bit (see [RBAC](../rbac/design.md)), hierarchy-checked with `isManageable`, logged to an append-only audit table, and delivered live to the targeted user.
+One unified admin action system: every moderation operation is an `AdminActionType` executed through a single procedure, gated behind a specific `RoomPermission` bit (see [RBAC](../rbac/design.md)), hierarchy-checked with `assertIsManageable`, logged to an append-only audit table, and delivered live to the targeted user.
 
 **One procedure, and only one.** Everything that removes, mutes, times out or warns a member goes through `executeAdminAction` — which is why the permission is looked up per action type rather than fixed by the procedure. A second route to the same effect would be a second place to hold the hierarchy check, the audit row and the departure announcement.
 
@@ -16,7 +16,7 @@ sequenceDiagram
     actor T as Targeted client
 
     Mod->>R: executeAdminAction({ roomId, targetUserId, type, durationMs? })
-    R->>R: permission gate (AdminActionPermissionMap) + isManageable
+    R->>R: permission gate (AdminActionPermissionMap) + assertIsManageable
     R->>PG: action side effects (bans row, usersToRooms delete, timeoutUntil…)
     R->>AT: append log row (type, actorId, targetId, durationMs?)
     R->>E: emit admin action
