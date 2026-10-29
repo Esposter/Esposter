@@ -280,6 +280,12 @@ pnpm i
 
 4. Add `.env` file according to `.env.example` in `apps/web` directory.
 
+5. Check what this machine still needs, the tools and logins with the command that installs or logs in to each:
+
+```bash
+pnpm ai:setup
+```
+
 Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
 ### Spotlight on macOS

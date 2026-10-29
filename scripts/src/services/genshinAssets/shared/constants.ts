@@ -43,7 +43,7 @@ export const INSTALLED_BLOCKS_DIRECTORY: string = join(dirname(ASSET_MAP_PATH), 
 // AnimeStudio's command line (github.com/Escartem/AnimeStudio): the CLI the build publishes on macOS, which is where its
 // Map is kept, or the one unpacked under Downloads on Windows, unless `GENSHIN_ANIMESTUDIO_CLI` names another. It writes its
 // CAB map into a `Maps` folder beside its working directory, so it is run from its own folder
-const ANIMESTUDIO_CLI_PATH: string =
+export const ANIMESTUDIO_CLI_PATH: string =
   process.env.GENSHIN_ANIMESTUDIO_CLI ??
   (process.platform === "darwin"
     ? join(TOOLS_DIRECTORY, PUBLISH_DIRECTORY_NAME, CLI_EXECUTABLE_NAME)

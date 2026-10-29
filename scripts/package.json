@@ -52,6 +52,7 @@
     "ai:review": "vpx src/review/index.ts",
     "ai:review:fix": "vpx src/reviewFix/index.ts",
     "ai:review:settle": "vpx src/reviewSettle/index.ts",
+    "ai:setup": "vpx src/setup/index.ts",
     "ai:skills:extract": "vpx src/skills/extract/index.ts",
     "ai:gcsim:configs": "vpx src/services/genshinAssets/kits/gcsim/checkGcsimConfigs.ts",
     "ai:sweep:constant-scope": "node src/sweeps/constantScope/index.ts",

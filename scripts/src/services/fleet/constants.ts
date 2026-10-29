@@ -33,6 +33,8 @@ export const HOLDS_DIRECTORY: string = join(homedir(), `.${SITE_NAME.toLowerCase
 export const LOCAL_HOLD_POLL_MILLISECONDS: number = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
 // The areas a machine holds when its profile is new: every area, until the user lends it fewer
 export const ALL_AREAS: readonly string[] = ["*"];
+// The one area the owner works in, which every machine is lent for until the owner decides otherwise
+export const GENSHIN_FLEET_AREA = "genshin";
 // The capabilities read off the machine itself, which every run rewrites. Any other capability in a profile was set by
 // The user, and is kept
 export const DETECTED_CAPABILITIES: readonly string[] = [

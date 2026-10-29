@@ -222,6 +222,8 @@ What a Windows machine needs that a clone, two logins and the install do not giv
 - **Fleet** machines also need an SSH key for the peer, and `~/.esposter/peers.json` and `machine.json`, which no repository file writes.
 - **Ports** the repository binds are 3011 (the genshin parity page, which `GENSHIN_PARITY_PORT` probes first), 3000 (the app) and 7437 (the agent console host).
 
+`pnpm ai:setup` checks the facts above on Windows, each in its own row, and prints what to do for one that is not in place; it installs none of them. Edge is the existing Microsoft Edge row, which every platform checks. The Railway CLI is not checked, since its deploy checks are not Genshin work, and the fleet profile is checked Genshin-only.
+
 ## Environment variables
 
 A machine's own settings for the scripts are environment variables read by the command that runs them; no repository file sets one. `apps/web/.env.example` lists the web app's variables only. Each entry names the reader that owns its default.
