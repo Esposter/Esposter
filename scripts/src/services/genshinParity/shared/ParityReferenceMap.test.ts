@@ -1,3 +1,4 @@
+import { getFixtureVariantNames } from "#src/services/genshinParity/fixtures/getFixtureVariantNames";
 import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
 import { GENSHIN_WORLD_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
@@ -48,15 +49,10 @@ describe("parityReferenceMap", () => {
   test("names a reference for every subscreen", () => {
     expect.hasAssertions();
 
-    // A fixture's `variants` object, from its opening line to the closing brace at the start of a line, and the keys
-    // Two spaces in, which are its top-level variants
-    const VARIANTS_REGEX = /^export const variants = \{\n(?<body>[\s\S]*?)^\};/mu;
-    const VARIANT_KEY_REGEX = /^ {2}(?<variant>\w+):/gmu;
     const subscreens = fixturePaths.flatMap((path) => {
       const screen = toScreen(path);
-      const body = VARIANTS_REGEX.exec(readFileSync(path, "utf8"))?.groups?.body ?? "";
 
-      return [...body.matchAll(VARIANT_KEY_REGEX)].map(({ groups }) => ({ screen, variant: groups?.variant }));
+      return getFixtureVariantNames(readFileSync(path, "utf8")).map((variant) => ({ screen, variant }));
     });
     const referencedEntries = Object.values(ParityReferenceMap);
 

@@ -1050,6 +1050,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     props: { tab: "Audio" },
     screen: "MenuSettings",
     source: "yt-5EmJX_RyuY8-menu-settings.mp4 at 178s",
+    variant: "audio",
   },
   // The English PC client's settings on its Graphics tab at 1680 wide, from the wiki's screenshot of the login's, scored
   // Over its header band alone, whose veil is drawn over the band filled from the blurred backdrop below it; the login's
@@ -1299,6 +1300,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "MenuWorldLevelDialog",
     source: "yt-P13s7kSmVOE-world-level-dialog-2024.mkv at 5s",
   },
+  "world-level-dialog-lowered": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuWorldLevelDialog", variant: "lowered" },
   "world-realm-placement-editor": { pending: NO_SCREEN_SCREENSHOT, screen: "WorldRealmPlacementEditor" },
   "world-realm-placement-editor-at-load": {
     pending: NO_VARIANT_SCREENSHOT,
