@@ -10,6 +10,7 @@ export const props = {
   name: "Peak Patrol Song",
   rarity: 5,
   refinement: 5,
+  subStatLabel: "DEF",
   subStatValue: "82.7%",
   switchLabel: "Switch",
 };

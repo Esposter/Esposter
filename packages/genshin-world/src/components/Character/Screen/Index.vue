@@ -37,6 +37,7 @@ import { toggleCharacterArtifactLock } from "#src/services/artifact/toggleCharac
 import { unequipArtifactToBag } from "#src/services/artifact/unequipArtifactToBag";
 import { activateConstellation } from "#src/services/character/activateConstellation";
 import { ascendCharacter } from "#src/services/character/ascendCharacter";
+import { AttributeLabelGameTextKeyMap } from "#src/services/character/AttributeLabelGameTextKeyMap";
 import { CharacterMenuTabGameTextKeyMap } from "#src/services/character/CharacterMenuTabGameTextKeyMap";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import {
@@ -201,8 +202,10 @@ const weaponPanel = computed(() => {
     getGrownAttributeLines(weaponData, statTables.weaponGrowCurveMap, weapon.level, weapon.ascension),
   );
   // The secondary attribute is the one the weapon grows beside its base ATK, written whole or as a percentage as the
-  // Game writes it, and nothing for a weapon that grows none
+  // Game writes it, captioned by the label the Weapon screen draws it under, and nothing for a weapon that grows none
   const subStatAttribute = getSecondaryAttribute(weaponData);
+  const subStatGameTextKey =
+    subStatAttribute === undefined ? undefined : AttributeLabelGameTextKeyMap.get(subStatAttribute);
   const subStatValue =
     subStatAttribute === undefined ? "" : formatAttributeValue(subStatAttribute, attributeTotalMap[subStatAttribute]);
   const maxLevel = weaponData.ascensionPhases[weapon.ascension]?.maxLevel ?? weapon.level;
@@ -216,6 +219,7 @@ const weaponPanel = computed(() => {
     name: nameText[weaponData.nameTextId] || "",
     rarity: weaponData.rarity,
     refinement: weapon.refinement,
+    subStatLabel: subStatGameTextKey === undefined ? "" : gameText[subStatGameTextKey],
     subStatValue,
     switchLabel: gameText[GameTextKey.QuickSwapSwitch],
   };

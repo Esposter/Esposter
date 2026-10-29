@@ -18,7 +18,7 @@ committed.
 | `character-constellation-tabs`         | `CharacterScreen`           |                                                                          1.31% | 0.979 |  0.44% | 0.0478 |
 | `character-talents`                    | `CharacterScreen`           |                                                                          1.75% | 0.905 |  0.60% | 0.0782 |
 | `character-talents-tabs`               | `CharacterScreen`           |                                                                          0.89% | 0.978 |  0.28% | 0.0466 |
-| `character-weapons`                    | `CharacterScreen`           |                                                                          2.47% | 0.907 |  1.33% | 0.1049 |
+| `character-weapons`                    | `CharacterScreen`           |                                                                          2.46% | 0.909 |  1.32% | 0.1048 |
 | `character-weapons-tabs`               | `CharacterScreen`           |                                                                          0.89% | 0.976 |  0.30% | 0.0453 |
 | `cooking-screen`                       | `CookingScreen`             |                                                                          1.17% | 0.938 |  0.53% | 0.0540 |
 | `court-of-fontaine-location`           | `WorldScreen`               |                                                                         21.07% | 0.208 | 16.61% | 0.6768 |

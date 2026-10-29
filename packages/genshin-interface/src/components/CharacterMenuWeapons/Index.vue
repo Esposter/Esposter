@@ -21,6 +21,8 @@ interface Props {
   rarity: number;
   // The weapon's refinement rank, from one to five
   refinement: number;
+  // The weapon's secondary attribute's label, the game's name for it, a percentage under its flat attribute's name
+  subStatLabel: string;
   // The weapon's secondary attribute at its level, as the game writes it
   subStatValue: string;
   // The Switch button's words, the game's name for moving the weapon to another character
@@ -37,6 +39,7 @@ const {
   name,
   rarity,
   refinement,
+  subStatLabel,
   subStatValue,
   switchLabel,
 } = defineProps<Props>();
@@ -57,6 +60,7 @@ const {
         <span class="stat-value">{{ baseAttack }}</span>
       </li>
       <li class="stat">
+        <span>{{ subStatLabel }}</span>
         <span class="stat-value">{{ subStatValue }}</span>
       </li>
     </ul>
