@@ -55,8 +55,8 @@ const buildPlantedTerrainTile = (
       : { plantColors: new Float32Array(), plantMatrices: new Float32Array() };
   return { ...terrainTile, plantColors, plantMatrices };
 };
-// The worker cannot load `@esposter/shared`, so a build that throws is read as a rejection by allSettled rather than
-// Through its getResult. A tile that fails is answered with its key, so the world releases it instead of waiting on it
+// The worker cannot load `@esposter/shared`, so a build that throws is read as a rejection by allSettled rather than through
+// its getResult. A tile that fails is answered with its key, so the world releases it instead of waiting on it
 const answerTile = async (request: TerrainTileRequest, terrainWorkerContext: TerrainWorkerContext) => {
   const [outcome] = await Promise.allSettled([
     Promise.try(() => buildPlantedTerrainTile(request, terrainWorkerContext)),
@@ -83,7 +83,7 @@ const answerTile = async (request: TerrainTileRequest, terrainWorkerContext: Ter
     ],
   });
 };
-const handleMessage = async (message: TerrainWorkerMessage): Promise<void> => {
+const handleMessage = async (message: TerrainWorkerMessage) => {
   if (message.kind === TerrainWorkerMessageKind.RegionGrounds) {
     ({ regionGrounds } = message);
     if (loadedGround) context = createContext(loadedGround);
