@@ -2,6 +2,7 @@ import type ApexCharts from "apexcharts";
 
 // Registers the feature that puts `chart.perspectives` on the instance; opt-in since v7
 import "apexcharts/features/perspectives";
+import { checkIsSafeViewPayload } from "@/services/dashboard/chart/checkIsSafeViewPayload";
 import { DASHBOARD_VIEW_QUERY_KEY } from "@/services/dashboard/chart/constants";
 import { parseViewEntry } from "@/services/dashboard/chart/parseViewEntry";
 import { setViewEntryToken } from "@/services/dashboard/chart/setViewEntryToken";
@@ -28,8 +29,10 @@ export const useVisualPerspective = (visualId: MaybeRefOrGetter<string>, getChar
     if (!entry) return;
     // A link is hand-editable and outlives the chart it was captured from, so a token that no longer decodes
     // Opens the dashboard unfiltered rather than raising something the reader can do nothing about
+    // The payload is checked before the vendor merges it: a prototype key in a hand-edited link is refused whole
     getResult(() => {
-      chart.perspectives.apply(parseViewEntry(entry).token);
+      const payload = chart.perspectives.decode(parseViewEntry(entry).token);
+      if (payload && checkIsSafeViewPayload(payload)) chart.perspectives.apply(payload);
     }).match(noop, console.error);
   };
   const getViewUrl = () => {
