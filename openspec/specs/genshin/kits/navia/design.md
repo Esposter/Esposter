@@ -46,3 +46,8 @@ flowchart TD
 - The proud skill groups 9121, 9131, 9132 and 9139 in the hosted game data: each multiplier's index, the cooldowns, the energy cost, and the Crystal Shrapnel's duration and gain cooldown, read at talent levels 1 and 10.
 - The cached Genshin wiki's `{data-root}/cache/genshin-wiki/Category_Navia_Talents.json` (the Blunt Refusal and Ceremonial Crystalshot pages): the charged attack's cyclic and final hits, and the Shrapnel's 300-second duration and refresh.
 - No YouTube or Bilibili reference snapshot for Navia is in the repo, so no claim here rests on video.
+
+## Open
+
+- [ ] **A hold with no held frames added fires its blade 104 frames in** — contradiction: the Not yet built bullet (line 16) and the Decisions bullet (line 30) give a hold's firing as 40 frames plus its held frames, while gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/navia/skill.go` line 57 sets `skillHoldCDStart` to 41, and line 128 fires at that constant plus the held frames less one (line 126). The activation value of 1 (line 58) therefore fires at 41, and its blade, queued 28 and then 36 frames later (lines 322 to 334), lands at 105, one frame after the record's 104.
+- [ ] **A Crystallize shard's Crystal Shrapnel gain is a `CrystallizeShardPickedUp` event** — contradiction: the Not yet built bullet (line 7) names a shard's pickup as that event and cites `{data-root}/cache/gcsim-v2.47.2/internal/characters/navia/skill.go` line 276, but line 276 subscribes to `event.OnShielded` and returns unless the shield is a `shield.Crystallize` (line 279); the Lunar-Crystallize subscription the same bullet cites at line 263 is `event.OnLunarCrystallize`.
