@@ -344,18 +344,25 @@ const playRerollChoice = () => {
 
 .dice-column {
   position: absolute;
-  top: calc(var(--unit) * 170);
+  top: calc(var(--unit) * 107);
   right: calc(var(--unit) * 26);
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: calc(var(--unit) * 5);
 }
 
 .dice-count {
-  align-self: center;
-  margin-bottom: calc(var(--unit) * 6);
-  color: #f6e3a1;
-  font-size: calc(var(--unit) * 24);
+  display: grid;
+  width: calc(var(--unit) * 56);
+  height: calc(var(--unit) * 56);
+  margin-bottom: calc(var(--unit) * 14);
+  place-items: center;
+  border: calc(var(--unit) * 4) solid #e8c060;
+  border-radius: 50%;
+  background: #4a3a2a;
+  color: #fff;
+  font-size: calc(var(--unit) * 30);
   font-weight: 700;
 }
 
@@ -401,25 +408,37 @@ const playRerollChoice = () => {
   font-size: calc(var(--unit) * 22);
 }
 
+/* The skill coins sit 108 apart, 94 across, their costs in a token beneath each, as the frame draws them */
 .skills {
   position: absolute;
-  top: calc(var(--unit) * 905);
-  left: calc(var(--unit) * 1556);
+  top: calc(var(--unit) * 908);
+  left: calc(var(--unit) * 1560);
   display: flex;
-  gap: calc(var(--unit) * 8);
+  gap: calc(var(--unit) * 14);
 }
 
 .skill {
-  width: calc(var(--unit) * 104);
-  height: calc(var(--unit) * 104);
-  border: calc(var(--unit) * 3) solid #c99a4a;
+  width: calc(var(--unit) * 94);
+  height: calc(var(--unit) * 94);
+  border: calc(var(--unit) * 4) solid #6e5238;
   border-radius: 50%;
-  background: #7d5a36;
+  background: #8e7154;
   color: #f6e3a1;
   cursor: inherit;
 }
 
 .skill-cost {
+  position: absolute;
+  top: calc(var(--unit) * 104);
+  left: 50%;
+  display: grid;
+  width: calc(var(--unit) * 30);
+  height: calc(var(--unit) * 30);
+  place-items: center;
+  transform: translateX(-50%);
+  border-radius: calc(var(--unit) * 6);
+  background: #7b5bb0;
+  color: #fff;
   font-size: calc(var(--unit) * 20);
   font-weight: 700;
 }

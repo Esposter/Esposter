@@ -14,25 +14,25 @@ const emit = defineEmits<{ select: [] }>();
 <template>
   <!-- A card of a side's hand, fanned along the bottom of the board by its hand's row, its dice cost in the corner. A
        chosen card lifts -->
-  <button class="card" :class="{ selected: isSelected }" type="button" @click="emit('select')">
+  <button :aria-label="name" class="card" :class="{ selected: isSelected }" type="button" @click="emit('select')">
     <span class="cost">{{ diceCount }}</span>
-    <span class="name">{{ name }}</span>
   </button>
 </template>
 
 <style scoped>
-/* A card's frame is measured off the game's frame at 1080 high; its art is not drawn */
+/* A card's frame is measured off the game's frame at 1080 high: its cream border, and its plate the mean of the hand's
+   visible art. Its cost is the game's hexagon, and its name is only the button's label */
 .card {
   position: relative;
   flex: none;
   width: calc(var(--unit) * 175);
   height: calc(var(--unit) * 200);
   padding: 0;
-  border: calc(var(--unit) * 2) solid #d9c28a;
+  border: calc(var(--unit) * 3) solid #ead7be;
   border-radius: calc(var(--unit) * 10);
-  background: linear-gradient(180deg, #f3ead2 0%, #d8c8a0 100%);
-  box-shadow: 0 calc(var(--unit) * 4) calc(var(--unit) * 10) rgb(0 0 0 / 0.4);
-  color: #2a2a2a;
+  background: #bcb7ac;
+  box-shadow: 0 calc(var(--unit) * 2) calc(var(--unit) * 6) rgb(0 0 0 / 0.35);
+  color: #fdf3f3;
   cursor: inherit;
   font: inherit;
   transition: transform 140ms;
@@ -44,26 +44,17 @@ const emit = defineEmits<{ select: [] }>();
 
 .cost {
   position: absolute;
-  top: calc(var(--unit) * 8);
-  left: calc(var(--unit) * 8);
+  top: 0;
+  left: 0;
   display: grid;
-  width: calc(var(--unit) * 30);
-  height: calc(var(--unit) * 30);
+  width: calc(var(--unit) * 46);
+  height: calc(var(--unit) * 50);
   place-items: center;
-  border-radius: 50%;
-  background: #4b6fa8;
-  color: #fff;
-  font-size: calc(var(--unit) * 20);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  background: #6b6357;
+  color: #fdf3f3;
+  font-size: calc(var(--unit) * 26);
   font-weight: 700;
-}
-
-.name {
-  position: absolute;
-  right: calc(var(--unit) * 8);
-  bottom: calc(var(--unit) * 14);
-  left: calc(var(--unit) * 8);
-  font-size: calc(var(--unit) * 18);
-  font-weight: 600;
-  text-align: center;
+  text-shadow: 0 0 calc(var(--unit) * 3) #322d1a;
 }
 </style>

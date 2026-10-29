@@ -13,27 +13,26 @@ const emit = defineEmits<{ select: [] }>();
 </script>
 
 <template>
-  <!-- A die of a side's dice: a disc in its element's colour, lifted and ringed while it is chosen to be paid or rerolled -->
+  <!-- A die of a side's dice: a hexagon in its element's colour, lifted and brightened while it is chosen to be paid or rerolled -->
   <button class="die" :class="{ selected: isSelected }" :data-face="face" type="button" @click="emit('select')" />
 </template>
 
 <style scoped>
-/* Provisional: a die's colours and size wait on the parity pass, as the board's do */
+/* A die is the game's hexagon in its element's colour, 36 by 40 at 1080 high; the frame's dice sit 45 apart */
 .die {
-  width: calc(var(--unit) * 40);
+  width: calc(var(--unit) * 36);
   height: calc(var(--unit) * 40);
   padding: 0;
-  border: calc(var(--unit) * 3) solid rgb(255 255 255 / 0.8);
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, rgb(255 255 255 / 0.55), var(--die-color) 60%);
-  box-shadow: 0 calc(var(--unit) * 2) calc(var(--unit) * 4) rgb(0 0 0 / 0.4);
+  border: none;
+  background: var(--die-color);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
   cursor: inherit;
   transition: transform 120ms;
 }
 
 .die.selected {
   transform: translateX(calc(var(--unit) * -8));
-  border-color: #f6e3a1;
+  filter: brightness(1.35);
 }
 
 .die[data-face="Pyro"],
