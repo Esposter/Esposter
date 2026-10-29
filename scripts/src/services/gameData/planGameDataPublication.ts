@@ -2,13 +2,8 @@ import type { GameDataPlan } from "#src/models/gameData/GameDataPlan";
 import type { GameDataRecord } from "#src/models/gameData/GameDataRecord";
 import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 
+import { createGameDataRecord } from "#src/services/gameData/createGameDataRecord";
 import { getGameDataBlobName } from "#src/services/gameData/getGameDataBlobName";
-import { getGameDataHash } from "#src/services/gameData/getGameDataHash";
-
-const createGameDataRecord = (dataset: string, value: unknown, isIndex: boolean): GameDataRecord => {
-  const json = JSON.stringify(value);
-  return { dataset, hash: getGameDataHash(json), isIndex, json };
-};
 
 // The lock entries a publication names and every object they reach, each record once even when several names reach
 // It. An index's entries are sorted by id before their hashes are collected, so the index object is the same whatever

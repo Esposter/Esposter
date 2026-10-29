@@ -1,6 +1,4 @@
-import type { GameDataScope } from "#src/models/gameData/GameDataScope";
-import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
+import type { PublishGameDataStepOptions } from "#src/models/gameData/PublishGameDataStepOptions";
 
 import { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutcome";
 import { GameDataTarget } from "#src/models/shared/GameDataTarget";
@@ -9,11 +7,6 @@ import { createGameDataContainerClient } from "#src/services/gameData/createGame
 import { publishGameData } from "#src/services/gameData/publishGameData";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { summarizeGameDataChanges } from "#src/services/gameData/summarizeGameDataChanges";
-
-interface PublishGameDataStepOptions extends DryRunOptions {
-  publication: GameDataPublication;
-  scopes: GameDataScope[];
-}
 
 // One generator's publish: the scopes it replaces are stored in both accounts, and the lock is committed only once both have
 // Them. A dry run stores nothing and needs no credential, and its note adds what it would change against the published

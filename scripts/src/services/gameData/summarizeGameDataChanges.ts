@@ -2,24 +2,14 @@ import type { GameDataRecord } from "#src/models/gameData/GameDataRecord";
 import type { GameDataLock } from "genshin-world";
 
 import { countGameDataPathChanges } from "#src/services/gameData/countGameDataPathChanges";
-import { readPublishedGameDataObjectIfStored } from "#src/services/gameData/readPublishedGameDataObject";
+import { diffEntries } from "#src/services/gameData/diffEntries";
+import { formatDiff } from "#src/services/gameData/formatDiff";
+import { readPublishedGameDataObjectIfStored } from "#src/services/gameData/readPublishedGameDataObjectIfStored";
 import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 
 const COMPARISON_CONCURRENCY = 16;
 const SHOWN_PATH_COUNT = 20;
-
-interface EntryChange {
-  afterHash: string;
-  beforeHash: string;
-  name: string;
-}
-
-interface EntryDiff {
-  addedCount: number;
-  changes: EntryChange[];
-  removedCount: number;
-}
 
 // What a dry run would change in what readers fetch: the keys and index entries it adds, removes or changes against the
 // Published lock, then the paths its changed records differ at, most often first, each prefixed with its key or index.
@@ -83,20 +73,3 @@ export const summarizeGameDataChanges = async (
     ...(sortedPaths.length > SHOWN_PATH_COUNT ? [`  … ${sortedPaths.length - SHOWN_PATH_COUNT} more paths`] : []),
   ];
 };
-
-// The names one side holds and the other lacks, counted, and each name both hold under another hash
-const diffEntries = (before: Record<string, string>, after: Record<string, string>): EntryDiff => {
-  const diff: EntryDiff = { addedCount: 0, changes: [], removedCount: 0 };
-  for (const name of new Set([...Object.keys(before), ...Object.keys(after)])) {
-    const beforeHash = before[name];
-    const afterHash = after[name];
-    if (beforeHash === afterHash) continue;
-    else if (beforeHash === undefined) diff.addedCount++;
-    else if (afterHash === undefined) diff.removedCount++;
-    else diff.changes.push({ afterHash, beforeHash, name });
-  }
-  return diff;
-};
-
-const formatDiff = ({ addedCount, changes, removedCount }: EntryDiff) =>
-  `+${addedCount} -${removedCount} ~${changes.length}`;

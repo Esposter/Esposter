@@ -1,8 +1,7 @@
 import type { GameDataScope } from "#src/models/gameData/GameDataScope";
 import type { GameDataLock } from "genshin-world";
 
-import { checkIsGameDataset } from "#src/services/gameData/checkIsGameDataset";
-import { takeOne } from "@esposter/shared";
+import { keepUnscopedEntries } from "#src/services/gameData/keepUnscopedEntries";
 
 // The lock a publish commits: every entry a scope names is dropped and the planned entries take their place. A dataset
 // Scope names every key under its dataset, and a key scope names that one key alone, so a fit republishing one key leaves
@@ -16,11 +15,3 @@ export const mergeGameDataLock = (
   indexes: { ...keepUnscopedEntries(currentLock.indexes, scopes), ...plannedLock.indexes },
   objects: { ...keepUnscopedEntries(currentLock.objects, scopes), ...plannedLock.objects },
 });
-
-const keepUnscopedEntries = (entries: Record<string, string>, scopes: GameDataScope[]): Record<string, string> =>
-  Object.fromEntries(
-    Object.entries(entries).filter(([key]) => {
-      const dataset = takeOne(key.split("/"));
-      return checkIsGameDataset(dataset) && !scopes.some((scope) => scope === key || scope === dataset);
-    }),
-  );
