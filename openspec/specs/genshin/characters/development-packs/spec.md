@@ -2,67 +2,73 @@
 
 ## Purpose
 
-Under nuxt dev the development server serves the developer's own extracted official packs from disk, and no build registers the route.
+Under nuxt dev the development server serves the developer's own exports of the game's scenes from disk, and no build registers the route.
 
 ## Requirements
 
-### Requirement: Packs are served only under the development server
+### Requirement: Scene exports are served only under the development server
 
-The development server SHALL serve the developer's extracted character packs only while the app runs under nuxt dev, and a production build SHALL register no route for them.
+The development server SHALL serve the developer's scene exports only while the app runs under nuxt dev, and a production build SHALL register no route for them.
 
-#### Scenario: Development server serves the packs
+#### Scenario: Development server serves the scene exports
 
 - **GIVEN** the app runs under nuxt dev
-- **WHEN** the character packs' address is requested
-- **THEN** the packs are served
+- **WHEN** a scene export is requested at the exports' address
+- **THEN** the export is served
 
-#### Scenario: Production build serves no packs
+#### Scenario: Production build serves no scene exports
 
 - **GIVEN** the app is built for production
 - **WHEN** it runs
-- **THEN** no route for the packs is registered
-- **AND** the world is handed no address to fetch packs from
+- **THEN** no route for the scene exports is registered
+- **AND** the world is handed no address to fetch scene exports from
 
-### Requirement: A character's pack is answered only from its own folder
+### Requirement: The scene export route answers only from the components its index lists
 
-The development server SHALL answer a character's pack only from the folder named by that character's id, and SHALL answer no file that the folder does not hold.
+The development server SHALL answer a scene export only from a component the export index lists, and SHALL answer not found for any file that component does not hold.
 
-#### Scenario: Index lists the characters with a folder
+#### Scenario: Index lists the components with a layout or an avatar
 
-- **GIVEN** the packs' directory holds folders named by character ids
+- **GIVEN** the exports' folder holds components with a layout or an avatar
 - **WHEN** the index is requested
-- **THEN** each of those ids is listed
+- **THEN** each of those components is listed
 
-#### Scenario: Model is served from the character's folder
+#### Scenario: A listed component's root file is served
 
-- **GIVEN** a character's folder holds a model
-- **WHEN** the model is requested
-- **THEN** the model is served
+- **GIVEN** a listed component holds the requested root file, its layout or its avatar's manifest or binary
+- **WHEN** the file is requested
+- **THEN** the file is served
 
-#### Scenario: Unknown character gets not found
+#### Scenario: A listed component's asset is served
 
-- **GIVEN** no folder is named by the requested character's id
-- **WHEN** the pack is requested
+- **GIVEN** a listed component's assets folder holds the requested mesh or texture
+- **WHEN** the file is requested
+- **THEN** the file is served
+
+#### Scenario: Unlisted component gets not found
+
+- **GIVEN** the requested component is not in the index
+- **WHEN** a file of that component is requested
 - **THEN** the request gets a not-found response
 
-#### Scenario: Missing texture gets not found
+#### Scenario: Missing file gets not found
 
-- **GIVEN** a model names a texture its folder does not hold
-- **WHEN** the texture is requested
+- **GIVEN** a listed component does not hold the requested file
+- **WHEN** the file is requested
 - **THEN** the request gets a not-found response
 
-#### Scenario: Request leaving the folder gets nothing
+#### Scenario: Request leaving the assets folder gets not found
 
-- **GIVEN** a request names a file outside the character's folder
+- **GIVEN** a request names a path that climbs out of a component's assets folder
 - **WHEN** the request is answered
-- **THEN** no file is served
+- **THEN** the request gets a not-found response
 
-### Requirement: Each request reads the pack from disk afresh
+### Requirement: Each request reads the scene export from disk afresh
 
-The development server SHALL read each pack from disk on every request, so an edited pack is served as it stands on the next request.
+The development server SHALL read each scene export from disk on every request, so an export written again is served as it stands on the next request.
 
-#### Scenario: Edited file is served on the next request
+#### Scenario: Rewritten export is served on the next request
 
-- **GIVEN** a file in a character's folder is changed on disk
+- **GIVEN** a file of a listed component is written again on disk
 - **WHEN** the next request for that file is made
-- **THEN** the changed file is served
+- **THEN** the rewritten file is served
