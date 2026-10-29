@@ -87,7 +87,8 @@ describe("dialogueTalk", () => {
         textMap: { first: "Hello.", sara: "Sara", second: "Goodbye.", title: "A Quest" },
       },
     });
-    await page.getByText("Hello.", { exact: true }).last().click();
+    // The line a person reads is the written-out copy; the screen reader's whole copy is clipped to nothing
+    await page.getByText("Hello.", { exact: true }).first().click();
 
     await expect.element(page.getByText("Goodbye.", { exact: true }).last()).toBeInTheDocument();
   });
