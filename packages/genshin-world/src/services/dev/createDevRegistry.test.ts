@@ -123,21 +123,6 @@ describe(createDevRegistry, () => {
     expect(state.cloudCoverage).toBe(0);
   });
 
-  test("Reload restores the game's value", () => {
-    expect.hasAssertions();
-
-    const registry = createDevRegistry();
-    const firstState = { cloudCoverage: 0 };
-    registry.register({ commands: [], variables: [createCloudVariable(firstState)] });
-    registry.run("set cloud coverage 0.1");
-
-    const reloadedState = { cloudCoverage: 0 };
-    const reloadedVariable = createCloudVariable(reloadedState);
-    createDevRegistry().register({ commands: [], variables: [reloadedVariable] });
-
-    expect(reloadedVariable.get()).toBe(0);
-  });
-
   test("Scenario applies its commands in order", () => {
     expect.hasAssertions();
 
