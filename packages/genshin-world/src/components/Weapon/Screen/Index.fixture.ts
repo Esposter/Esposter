@@ -26,8 +26,8 @@ const getWeaponData = (id: number) => {
   if (!data) throw new InvalidOperationError(Operation.Read, "weapon screen fixture", `weapon ${id} has no data`);
   return data;
 };
-// A five-star weapon, the weapon the screen opens on
-const WEAPON_ID = 11516;
+// A four-star sword, Silver Light, the weapon the screen opens on and the references show
+const WEAPON_ID = 11438;
 export const weaponData = getWeaponData(WEAPON_ID);
 // A two-star weapon, which the game gives no refinement costs at all
 const TWO_STAR_WEAPON_ID = 11201;
@@ -93,7 +93,7 @@ export const props = {
   nameText: englishNameText,
   rarityRequiredExpsMap,
   tab: WeaponMenuTab.Enhance,
-  wallet: { ...EMPTY_WALLET, [Currency.Mora]: 100_000 },
+  wallet: { ...EMPTY_WALLET, [Currency.Mora]: 317_846 },
   weaponDataMap,
 };
 
@@ -123,8 +123,8 @@ export const variants = {
   atCap: { inventory: atCapBag },
   // A weapon at rank five, which no Refine tab is offered for
   rankFive: { inventory: createBag({ ...openWeapon, refinement: 5 }) },
-  // The Refine tab open, with the copy in the bag to pick
-  refine: { tab: WeaponMenuTab.Refine },
+  // The Refine tab open on the weapon at its cap, which offers Ascend in place of Enhance, with the copy in the bag to pick
+  refine: { inventory: atCapBag, tab: WeaponMenuTab.Refine },
   // The two-star weapon, which no Refine tab is offered for
   twoStar: { inventory: createBag({ ...openWeapon, id: TWO_STAR_WEAPON_ID }) },
 };

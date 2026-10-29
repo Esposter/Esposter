@@ -97,11 +97,11 @@ committed.
 | `sumeru-city-location` | `WorldScreen` | 32.42% | 0.227 | 28.07% | 0.8157 |
 | `title-splash` | `SplashTitle` | 0.20% | 1.000 | 0.01% | 0.0090 |
 | `title-splash-mainland` | `SplashTitle` | 1.89% | 0.991 | 0.89% | 0.0807 |
-| `weapon-screen` | `WeaponScreen` | 72.12% | 0.211 | 66.35% | 0.9441 |
-| `weapon-screen-ascend` | `WeaponScreen` | 74.41% | 0.260 | 68.43% | 0.9562 |
+| `weapon-screen` | `WeaponScreen` | 2.49% | 0.782 | 1.44% | 0.0946 |
+| `weapon-screen-ascend` | `WeaponScreen` | 2.05% | 0.732 | 1.01% | 0.0802 |
 | `weapon-screen-at-cap` | `WeaponScreen` | pending: the recording zooms over the state, so no whole-screen frame shows it | | | |
 | `weapon-screen-rank-five` | `WeaponScreen` | pending: no screenshot of this variant yet | | | |
-| `weapon-screen-refine` | `WeaponScreen` | 72.14% | 0.156 | 65.73% | 0.9507 |
+| `weapon-screen-refine` | `WeaponScreen` | 3.38% | 0.473 | 2.34% | 0.1090 |
 | `weapon-screen-two-star` | `WeaponScreen` | pending: no screenshot of this variant yet | | | |
 | `windrise-statue-day` | `WorldScreen` | 26.73% | 0.306 | 26.74% | 0.7579 |
 | `wish-screen` | `WishScreen` | 9.75% | 0.499 | 7.07% | 0.2948 |

@@ -8,6 +8,7 @@ import type { Weapon } from "#src/models/weapon/Weapon";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { GameText } from "genshin-text";
 
+import { Currency } from "#src/models/inventory/Currency";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
@@ -22,7 +23,14 @@ import { getWeaponActions } from "#src/services/weapon/getWeaponActions";
 import { refineWeapon } from "#src/services/weapon/refineWeapon";
 import { setBagWeapon } from "#src/services/weapon/setBagWeapon";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
-import { GameScreen, ItemCategory, WeaponMenu, WeaponMenuTab } from "genshin-interface";
+import {
+  ASCENSION_PHASE_COUNT,
+  GameScreen,
+  ItemCategory,
+  OrnamentDivider,
+  WeaponMenu,
+  WeaponMenuTab,
+} from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 // The bag and the wallet an accepted action leaves behind
@@ -30,6 +38,11 @@ interface ActionState {
   inventory: Inventory;
   wallet: Wallet;
 }
+
+// The phases an ascension's sparks count from the first, each one lit once the weapon holds it
+const SPARK_PHASES = Array.from({ length: ASCENSION_PHASE_COUNT }, (_, index) => index + 1);
+// The slots the Enhance strip shows across its width, each an ore or fodder weapon or an empty slot waiting for one
+const ENHANCE_SLOT_COUNT = 7;
 
 interface Props {
   // The adventure rank the player holds, which an Ascend's next phase requires
@@ -63,16 +76,20 @@ const getWeaponData = (id: number): WeaponData => {
 // The weapon the screen opens on, read from its bag entry, where its state is kept
 const weapon = computed(() => getBagWeapon(inventory.value.items, entryId));
 const weaponData = computed(() => getWeaponData(weapon.value.id));
-// The tabs a weapon offers: Enhance always, Ascend only at its phase's cap, and Refine only where its rank can still rise
+// The tabs a weapon offers: Ascend at its phase's cap and Enhance below it, and Refine where its rank can still rise
 const getOfferedTabs = (target: Weapon): WeaponMenuTab[] => {
   const { canAscend, canRefine } = getWeaponActions(target, getWeaponData(target.id));
-  return [
-    WeaponMenuTab.Enhance,
-    ...(canAscend ? [WeaponMenuTab.Ascend] : []),
-    ...(canRefine ? [WeaponMenuTab.Refine] : []),
-  ];
+  return [canAscend ? WeaponMenuTab.Ascend : WeaponMenuTab.Enhance, ...(canRefine ? [WeaponMenuTab.Refine] : [])];
 };
 const offeredTabs = computed(() => getOfferedTabs(weapon.value));
+// The tab the body draws: the one asked for while the weapon still offers it, else the first it offers, so a weapon that
+// Levels to its cap leaves Enhance for Ascend without the parent changing the tab
+const openTab = computed({
+  get: () => (offeredTabs.value.includes(tab.value) ? tab.value : (offeredTabs.value[0] ?? WeaponMenuTab.Enhance)),
+  set: (value: WeaponMenuTab) => {
+    tab.value = value;
+  },
+});
 const tabLabels = computed((): Record<WeaponMenuTab, string> => ({
   [WeaponMenuTab.Ascend]: gameText[GameTextKey.WeaponAscend],
   [WeaponMenuTab.Enhance]: gameText[GameTextKey.WeaponEnhance],
@@ -84,18 +101,19 @@ const menuTabs = computed(() =>
 // The level a weapon reaches in its phase, and the level text the game writes over it
 const getMaxLevel = (target: Weapon) =>
   getWeaponData(target.id).ascensionPhases[target.ascension]?.maxLevel ?? target.level;
-const getLevelText = (target: Weapon) =>
-  fillGameTextValues(gameText[GameTextKey.LevelFormat], `${target.level}/${getMaxLevel(target)}`);
+const getLevelText = (level: number, maxLevel: number) =>
+  fillGameTextValues(gameText[GameTextKey.LevelFormat], `${level}/${maxLevel}`);
+const maxLevel = computed(() => getMaxLevel(weapon.value));
+const nextMaxLevel = computed(
+  () => weaponData.value.ascensionPhases[weapon.value.ascension + 1]?.maxLevel ?? maxLevel.value,
+);
+const isAtCap = computed(() => weapon.value.level >= maxLevel.value);
+const levelText = computed(() => getLevelText(weapon.value.level, maxLevel.value));
+const nextLevelText = computed(() => getLevelText(weapon.value.level, nextMaxLevel.value));
 // The EXP the weapon holds towards the next level over what that level takes; a weapon at its cap has no next level
 const requiredExps = computed(() => getRarityRequiredExps(rarityRequiredExpsMap, weaponData.value.rarity));
-const maxLevel = computed(() => getMaxLevel(weapon.value));
-const isAtCap = computed(() => weapon.value.level >= maxLevel.value);
 const requiredExp = computed(() => requiredExps.value[weapon.value.level - 1] ?? 0);
 const experienceText = computed(() => (isAtCap.value ? "" : `${weapon.value.experience}/${requiredExp.value}`));
-const experienceRatio = computed(() =>
-  isAtCap.value || requiredExp.value === 0 ? 0 : weapon.value.experience / requiredExp.value,
-);
-const levelText = computed(() => getLevelText(weapon.value));
 const name = computed(() => nameText[weaponData.value.nameTextId] || "");
 // The ores the player picks for the next enhancement, each count taken from the bag when it is enhanced
 const pickedOres = ref<ItemCount[]>([]);
@@ -131,10 +149,15 @@ const toggleFodder = (id: number) => {
 const bagWeapons = computed(() =>
   inventory.value.items.filter((item) => item.definition.category === ItemCategory.Weapon && item.id !== entryId),
 );
+// The level text a bag weapon's entry shows in its slot, at its own phase's cap
+const getEntryLevelText = (id: number) => {
+  const entry = getBagWeapon(inventory.value.items, id);
+  return getLevelText(entry.level, getMaxLevel(entry));
+};
 const fodderCells = computed(() =>
   bagWeapons.value.map((item) => ({
     id: item.id,
-    levelText: getLevelText(getBagWeapon(inventory.value.items, item.id)),
+    levelText: getEntryLevelText(item.id),
     name: item.definition.name,
     picked: pickedFodderIds.value.includes(item.id),
   })),
@@ -142,7 +165,7 @@ const fodderCells = computed(() =>
 const copyCells = computed(() =>
   bagWeapons.value
     .filter((item) => item.definition.id === weapon.value.id)
-    .map((item) => ({ id: item.id, levelText: getLevelText(getBagWeapon(inventory.value.items, item.id)) })),
+    .map((item) => ({ id: item.id, levelText: getEntryLevelText(item.id), name: item.definition.name })),
 );
 const pickCopy = (id: number) => {
   pickedCopyId.value = pickedCopyId.value === id ? undefined : id;
@@ -158,29 +181,42 @@ const refinementMaterial = computed(() => {
     name: getItemDefinition(weaponData.value.refinementMaterialId, nameText, materialDataMap).name,
   };
 });
-const actionLabel = computed(() => tabLabels.value[tab.value]);
+// The Refine tab's slots, one for each rank a weapon can still gain, each holding a picked candidate or left empty
+const refineSlotCount = computed(() => weaponData.value.refinementCosts.length);
+const emptyRefineSlotCount = computed(() =>
+  Math.max(
+    0,
+    refineSlotCount.value -
+      copyCells.value.length -
+      (refinementMaterial.value && refinementMaterial.value.count > 0 ? 1 : 0),
+  ),
+);
+// The Enhance strip's slots, the candidates first and empty slots after them up to the seven the strip shows across its width
+const emptyEnhanceSlotCount = computed(() =>
+  Math.max(0, ENHANCE_SLOT_COUNT - oreCells.value.length - fodderCells.value.length),
+);
+const actionLabel = computed(() => tabLabels.value[openTab.value]);
 const isActionDisabled = computed(() => {
-  if (tab.value === WeaponMenuTab.Enhance) return pickedOres.value.length === 0 && pickedFodderIds.value.length === 0;
+  if (openTab.value === WeaponMenuTab.Enhance)
+    return pickedOres.value.length === 0 && pickedFodderIds.value.length === 0;
   // A refinement takes the copy picked or else the material, so a weapon with neither has nothing to refine with
-  if (tab.value === WeaponMenuTab.Refine)
+  if (openTab.value === WeaponMenuTab.Refine)
     return pickedCopyId.value === undefined && (!refinementMaterial.value || refinementMaterial.value.count === 0);
   return false;
 });
-// Writes an accepted action's bag and wallet back, clears the picks it spent, and leaves the tab when the weapon no longer offers it
+// Writes an accepted action's bag and wallet back and clears the picks it spent
 const applyActionState = ({ inventory: nextInventory, wallet: nextWallet }: ActionState) => {
   inventory.value = nextInventory;
   wallet.value = nextWallet;
   pickedOres.value = [];
   pickedFodderIds.value = [];
   pickedCopyId.value = undefined;
-  if (!getOfferedTabs(getBagWeapon(nextInventory.items, entryId)).includes(tab.value))
-    tab.value = WeaponMenuTab.Enhance;
 };
 // A refusal is the rule's answer and changes nothing, so it is logged and the weapon and the bag stay as they were
 const reportRefusal = (error: Error) => console.error(error);
 // Levels the weapon with the picked ores and fodder weapons, which leave the bag, and returns the EXP past the cap as the
 // Ores it fills
-const enhance = () =>
+const enhanceAction = () =>
   getResult(() => {
     const fodders = pickedFodderIds.value.map((id) => {
       const fodder = getBagWeapon(inventory.value.items, id);
@@ -203,9 +239,9 @@ const enhance = () =>
       { ...inventory.value, items: setBagWeapon(items, entryId, enhanced.weapon) },
     );
     return { inventory: returned, wallet: enhanced.wallet };
-  }).match(applyActionState, reportRefusal);
+  });
 // Ascends the weapon from its phase's cap, its Mora and items spent once the Adventure Rank allows it
-const ascend = () =>
+const ascendAction = () =>
   getResult(() => {
     const ascended = ascendWeapon(weapon.value, weaponData.value, {
       adventureRank,
@@ -216,10 +252,10 @@ const ascend = () =>
       inventory: { ...ascended.inventory, items: setBagWeapon(ascended.inventory.items, entryId, ascended.weapon) },
       wallet: ascended.wallet,
     };
-  }).match(applyActionState, reportRefusal);
+  });
 // Refines the weapon by the rank a picked copy holds, or by one for the refinement material; the copy or the material leaves
 // The bag with the rank's Mora paid
-const refine = () =>
+const refineAction = () =>
   getResult(() => {
     const copyId = pickedCopyId.value;
     const gainedRanks = copyId === undefined ? 1 : getBagWeapon(inventory.value.items, copyId).refinement;
@@ -232,164 +268,565 @@ const refine = () =>
       inventory: { ...inventory.value, items: setBagWeapon(items, entryId, refined.weapon) },
       wallet: refined.wallet,
     };
-  }).match(applyActionState, reportRefusal);
+  });
 // The open tab's action, pressed
 const act = () => {
-  if (tab.value === WeaponMenuTab.Ascend) ascend();
-  else if (tab.value === WeaponMenuTab.Enhance) enhance();
-  else if (tab.value === WeaponMenuTab.Refine) refine();
+  if (openTab.value === WeaponMenuTab.Ascend) ascendAction().match(applyActionState, reportRefusal);
+  else if (openTab.value === WeaponMenuTab.Enhance) enhanceAction().match(applyActionState, reportRefusal);
+  else if (openTab.value === WeaponMenuTab.Refine) refineAction().match(applyActionState, reportRefusal);
 };
+// The Mora the open tab's action spends, on the Required line: an Ascend's next phase price, and for the other two the Mora
+// Their accepted action would take, nothing where it is refused
+const pendingMora = computed(() => {
+  if (openTab.value === WeaponMenuTab.Ascend)
+    return weaponData.value.ascensionPhases[weapon.value.ascension + 1]?.coinCost ?? 0;
+  const action = openTab.value === WeaponMenuTab.Refine ? refineAction : enhanceAction;
+  return action().match(
+    (next) => wallet.value[Currency.Mora] - next.wallet[Currency.Mora],
+    () => 0,
+  );
+});
+// The next phase's ascension materials, each with what the bag holds of it, and its rarity
+const nextPhaseCosts = computed(() =>
+  (weaponData.value.ascensionPhases[weapon.value.ascension + 1]?.costItems ?? []).map(({ count, id }) => {
+    const definition = getItemDefinition(id, nameText, materialDataMap);
+    return {
+      count,
+      id,
+      name: definition.name,
+      ownedCount: countInventoryItem(inventory.value.items, id),
+      rarity: definition.rarity,
+    };
+  }),
+);
 </script>
 
 <template>
-  <!-- The weapon screen, a dialog over the world: the weapon's name, rarity, level, EXP towards the next level, phase and
-       refinement rank, the open tab's panel of ores and fodder weapons or of copies and the refinement material, and the
-       tab's action beneath -->
+  <!-- The weapon screen, a dialog over the world, on the game's 1920 by 864 reference: the open tab's header (its level and EXP, its
+       ascension phases, or its refinement rank), its panel (the ores and fodder weapons, the ascension materials or the refinement
+       slots), the Required line's Mora and the tab's action beneath. The weapon's rarity and refinement rank are read aloud beside
+       the picture -->
   <GameScreen role="dialog" aria-modal="true" :aria-label="name">
     <WeaponMenu
-      v-model:tab="tab"
-      :action-label
+      v-model:tab="openTab"
+      :action-label="actionLabel"
       :close-label="gameText[GameTextKey.Back]"
-      :ascension="weapon.ascension"
-      :experience-ratio
-      :experience-text
-      :is-action-disabled
-      :level-text
+      :details-label="gameText[GameTextKey.CharacterDetails]"
+      :is-action-disabled="isActionDisabled"
       :name
-      :rarity="weaponData.rarity"
-      :refinement="weapon.refinement"
       :tabs="menuTabs"
       @action="act()"
       @close="emit('close')"
     >
-      <template v-if="tab === WeaponMenuTab.Enhance">
-        <div class="ores">
-          <div v-for="ore of oreCells" :key="ore.id" class="ore">
+      <span class="sr-only" role="img" :aria-label="`${weaponData.rarity}`" />
+      <p class="refinement" :class="{ 'sr-only': openTab !== WeaponMenuTab.Refine }">{{ weapon.refinement }}</p>
+      <span class="talent" aria-hidden="true" />
+      <p class="mora">{{ wallet[Currency.Mora] }}</p>
+      <div class="divider bottom-divider"><OrnamentDivider /></div>
+      <p class="required-label">{{ gameText[GameTextKey.CraftingRequired] }}</p>
+      <p class="required-amount">{{ pendingMora }}</p>
+      <template v-if="openTab === WeaponMenuTab.Enhance">
+        <p class="level">{{ levelText }}</p>
+        <p class="experience-text">{{ experienceText }}</p>
+        <p class="stat base-attack">{{ gameText[GameTextKey.AttributeBaseAttack] }}</p>
+        <p class="stat attack">{{ gameText[GameTextKey.AttributeAttack] }}</p>
+        <div class="divider enhance-divider"><OrnamentDivider /></div>
+        <span class="pill auto-add" aria-hidden="true">{{ gameText[GameTextKey.ArtifactAutoAdd] }}</span>
+        <span class="pill filter" aria-hidden="true"><span class="caret" /></span>
+        <span class="sparkle-button" aria-hidden="true" />
+        <div class="cells enhance-cells">
+          <div v-for="ore of oreCells" :key="ore.id" class="cell">
             <button class="pick" :disabled="ore.pickedCount >= ore.ownedCount" type="button" @click="pickOre(ore.id)">
-              <span class="ore-name">{{ ore.name }}</span>
-              <span class="ore-count">{{ ore.pickedCount }}/{{ ore.ownedCount }}</span>
+              <span class="cell-name">{{ ore.name }}</span>
+              <span class="plus" aria-hidden="true" />
+              <span class="caption" aria-hidden="true">{{ ore.pickedCount || "--" }}</span>
             </button>
-            <button class="unpick" :disabled="ore.pickedCount === 0" type="button" @click="unpickOre(ore.id)">−</button>
+            <button v-if="ore.pickedCount > 0" class="unpick" type="button" @click="unpickOre(ore.id)">−</button>
+          </div>
+          <div v-for="fodder of fodderCells" :key="fodder.id" class="cell">
+            <button class="pick" :aria-pressed="fodder.picked" type="button" @click="toggleFodder(fodder.id)">
+              <span class="cell-name">{{ fodder.name }}</span>
+              <span class="plus" aria-hidden="true" />
+              <span class="caption" aria-hidden="true">{{ fodder.levelText }}</span>
+            </button>
+          </div>
+          <div v-for="slot in emptyEnhanceSlotCount" :key="slot" class="cell">
+            <span class="plus" aria-hidden="true" />
+            <span class="caption" aria-hidden="true">--</span>
           </div>
         </div>
-        <!-- Provisional: the fodder row's place under the ores is not measured yet -->
-        <div class="fodders">
-          <button
-            v-for="fodder of fodderCells"
-            :key="fodder.id"
-            class="pick"
-            :aria-pressed="fodder.picked"
-            type="button"
-            @click="toggleFodder(fodder.id)"
-          >
-            <span class="ore-name">{{ fodder.name }}</span>
-            <span class="ore-count">{{ fodder.levelText }}</span>
-          </button>
+      </template>
+      <template v-else-if="openTab === WeaponMenuTab.Ascend">
+        <div class="sparks left-sparks">
+          <span v-for="phase in SPARK_PHASES" :key="phase" class="spark" :class="{ lit: phase <= weapon.ascension }" />
+        </div>
+        <div class="sparks right-sparks">
+          <span
+            v-for="phase in SPARK_PHASES"
+            :key="phase"
+            class="spark"
+            :class="{ lit: phase <= weapon.ascension + 1 }"
+          />
+        </div>
+        <p class="level-current">{{ levelText }}</p>
+        <p class="level-next">{{ nextLevelText }}</p>
+        <p class="stat ascend-base-attack">{{ gameText[GameTextKey.AttributeBaseAttack] }}</p>
+        <p class="stat ascend-attack">{{ gameText[GameTextKey.AttributeAttack] }}</p>
+        <OrnamentDivider class="divider ascend-divider" />
+        <p class="materials-title">{{ gameText[GameTextKey.CombineTypeWeaponAscension] }}</p>
+        <div class="cards">
+          <div v-for="cost of nextPhaseCosts" :key="cost.id" class="card" :data-rarity="cost.rarity">
+            <span class="card-name">{{ cost.name }}</span>
+            <span class="card-count">{{ cost.ownedCount }} / {{ cost.count }}</span>
+          </div>
         </div>
       </template>
-      <div v-else-if="tab === WeaponMenuTab.Refine" class="materials">
-        <button
-          v-if="refinementMaterial"
-          class="pick"
-          :aria-pressed="pickedCopyId === undefined"
-          type="button"
-          @click="pickMaterial()"
-        >
-          <span class="ore-name">{{ refinementMaterial.name }}</span>
-          <span class="ore-count">{{ refinementMaterial.count }}</span>
-        </button>
-        <button
-          v-for="copy of copyCells"
-          :key="copy.id"
-          class="pick"
-          :aria-pressed="pickedCopyId === copy.id"
-          type="button"
-          @click="pickCopy(copy.id)"
-        >
-          <span class="ore-count">{{ copy.levelText }}</span>
-        </button>
-      </div>
+      <template v-else>
+        <div class="divider refine-divider"><OrnamentDivider /></div>
+        <span class="pill auto-add refine-auto-add" aria-hidden="true">{{
+          gameText[GameTextKey.ArtifactAutoAdd]
+        }}</span>
+        <div class="cells refine-cells">
+          <div v-if="refinementMaterial && refinementMaterial.count > 0" class="cell">
+            <button class="pick" :aria-pressed="pickedCopyId === undefined" type="button" @click="pickMaterial()">
+              <span class="cell-name">{{ refinementMaterial.name }}</span>
+              <span class="plus" aria-hidden="true" />
+              <span class="caption" aria-hidden="true">{{ refinementMaterial.count }}</span>
+            </button>
+          </div>
+          <div v-for="copy of copyCells" :key="copy.id" class="cell">
+            <button class="pick" :aria-pressed="pickedCopyId === copy.id" type="button" @click="pickCopy(copy.id)">
+              <span class="cell-name">{{ copy.name }}</span>
+              <span class="plus" aria-hidden="true" />
+              <span class="caption" aria-hidden="true">{{ copy.levelText }}</span>
+            </button>
+          </div>
+          <div v-for="slot in emptyRefineSlotCount" :key="slot" class="cell">
+            <span class="plus" aria-hidden="true" />
+          </div>
+        </div>
+      </template>
     </WeaponMenu>
   </GameScreen>
 </template>
 
 <style scoped>
-/* The panel's pieces, measured off the same 7.1 Silver Light clip as the frame (captures/weapon-enhance-jXrYcFHiVnI.mp4,
-   at 2 and 92 seconds, 1920 by 864 pixels, a pixel 1.25 units): the material slots 123 units wide and 150 high on a
-   139-unit pitch from the panel's left at the slots' top. Their colours are provisional */
-.ores,
-.materials,
-.fodders {
+/* Every measure is a pixel of the reference's 1920 by 864 still, through the frame's `--reference-pixel` */
+.sr-only {
   position: absolute;
-  left: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.talent {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 27);
+  left: calc(var(--reference-pixel) * 1281);
+  width: calc(var(--reference-pixel) * 236);
+  height: calc(var(--reference-pixel) * 40);
+  border-radius: calc(var(--reference-pixel) * 20);
+  background: #f5d48a;
+}
+
+.mora {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 27);
+  left: calc(var(--reference-pixel) * 1541);
+  width: calc(var(--reference-pixel) * 161);
+  height: calc(var(--reference-pixel) * 40);
+  margin: 0;
+  padding-left: calc(var(--reference-pixel) * 57);
+  border-radius: calc(var(--reference-pixel) * 20);
+  background: rgb(20 16 50 / 0.45);
+  color: #e7e9f6;
+  font-size: calc(var(--reference-pixel) * 25);
+  font-weight: 600;
+  line-height: calc(var(--reference-pixel) * 40);
+}
+
+/* The game's hairline reads at about a fifth of the shared divider's white over the scene */
+.divider {
+  position: absolute;
+  left: calc(var(--reference-pixel) * 1086);
+  width: calc(var(--reference-pixel) * 738);
+  opacity: 0.25;
+}
+
+.bottom-divider {
+  top: calc(var(--reference-pixel) * 730);
+}
+
+.enhance-divider {
+  top: calc(var(--reference-pixel) * 180);
+}
+
+.ascend-divider {
+  top: calc(var(--reference-pixel) * 190);
+}
+
+.refine-divider {
+  top: calc(var(--reference-pixel) * 173);
+}
+
+.required-label,
+.required-amount {
+  position: absolute;
+  margin: 0;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.required-label {
+  top: calc(var(--reference-pixel) * 791);
+  left: calc(var(--reference-pixel) * 1107);
+  color: #d6cabe;
+  font-size: calc(var(--reference-pixel) * 28);
+}
+
+.required-amount {
+  top: calc(var(--reference-pixel) * 789);
+  left: calc(var(--reference-pixel) * 1275);
+  color: #eee8f5;
+  font-size: calc(var(--reference-pixel) * 24);
+}
+
+/* Enhance's header: the level in white with its EXP at the right in lilac, and the two stats' names */
+.level {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 110);
+  left: calc(var(--reference-pixel) * 1104);
+  margin: 0;
+  color: #f5effb;
+  font-size: calc(var(--reference-pixel) * 43);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.experience-text {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 124);
+  right: calc(var(--reference-pixel) * 122);
+  margin: 0;
+  color: #c9a2ee;
+  font-size: calc(var(--reference-pixel) * 24);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.stat {
+  position: absolute;
+  margin: 0;
+  color: #efe9f9;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.base-attack {
+  top: calc(var(--reference-pixel) * 218);
+  left: calc(var(--reference-pixel) * 1130);
+  font-size: calc(var(--reference-pixel) * 33);
+}
+
+.attack {
+  top: calc(var(--reference-pixel) * 292);
+  left: calc(var(--reference-pixel) * 1128);
+  font-size: calc(var(--reference-pixel) * 29);
+}
+
+/* Ascend's stat names sit lower, under its level pair, at the sizes their words set */
+.ascend-base-attack {
+  top: calc(var(--reference-pixel) * 231);
+  left: calc(var(--reference-pixel) * 1130);
+  font-size: calc(var(--reference-pixel) * 33);
+}
+
+.ascend-attack {
+  top: calc(var(--reference-pixel) * 305);
+  left: calc(var(--reference-pixel) * 1128);
+  font-size: calc(var(--reference-pixel) * 28);
+}
+
+/* Enhance's panel: a strip of slots, each a grey card over the cream band its count sits on, the ores first */
+.cells {
+  position: absolute;
   display: flex;
-  gap: calc(var(--unit) * 16);
+  overflow: hidden;
 }
 
-.ores,
-.materials {
-  top: calc(var(--unit) * 150);
+.enhance-cells {
+  top: calc(var(--reference-pixel) * 600);
+  left: calc(var(--reference-pixel) * 1104);
+  width: calc(var(--reference-pixel) * 714);
+  height: calc(var(--reference-pixel) * 122);
+  gap: calc(var(--reference-pixel) * 13);
 }
 
-.fodders {
-  top: calc(var(--unit) * 316);
-  flex-wrap: wrap;
+.refine-cells {
+  top: calc(var(--reference-pixel) * 604);
+  left: calc(var(--reference-pixel) * 1222);
+  gap: calc(var(--reference-pixel) * 18);
 }
 
-.ore {
-  display: flex;
-  width: calc(var(--unit) * 123);
-  height: calc(var(--unit) * 150);
-  flex-direction: column;
+.cell {
+  position: relative;
+  flex: none;
+  width: calc(var(--reference-pixel) * 98.5);
+  height: calc(var(--reference-pixel) * 122);
+}
+
+.refine-cells .cell {
+  width: calc(var(--reference-pixel) * 101);
 }
 
 .pick {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
+  position: absolute;
+  inset: 0;
   margin: 0;
-  padding: calc(var(--unit) * 12) calc(var(--unit) * 6);
+  padding: 0;
+  overflow: hidden;
   border: none;
-  border-radius: calc(var(--unit) * 6);
-  background: rgb(255 255 255 / 0.15);
-  color: #fff;
+  border-radius: calc(var(--reference-pixel) * 12);
+  background: linear-gradient(#6f6f7b 0 80%, #ece6e0 80% 100%);
+  color: inherit;
   cursor: inherit;
   font: inherit;
-  font-size: calc(var(--unit) * 22);
-  text-align: center;
-}
-
-.materials .pick,
-.fodders .pick {
-  flex: none;
-  width: calc(var(--unit) * 123);
-  height: calc(var(--unit) * 150);
-}
-
-.pick[aria-pressed="true"] {
-  background: rgb(255 255 255 / 0.4);
 }
 
 .pick:disabled {
-  color: rgb(255 255 255 / 0.4);
+  opacity: 0.6;
 }
 
-.ore-count {
-  color: #f0d27a;
-  font-size: calc(var(--unit) * 26);
+.pick[aria-pressed="true"] {
+  background: linear-gradient(#7c7c8a 0 80%, #f6f2ee 80% 100%);
+}
+
+/* The slot's plus, centred on the card's grey above its cream band */
+.plus {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 29);
+  left: calc(50% - var(--reference-pixel) * 20);
+  width: calc(var(--reference-pixel) * 40);
+  height: calc(var(--reference-pixel) * 40);
+}
+
+.plus::before,
+.plus::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: #d8d6de;
+  content: "";
+  translate: -50% -50%;
+}
+
+.plus::before {
+  width: calc(var(--reference-pixel) * 40);
+  height: calc(var(--reference-pixel) * 7);
+}
+
+.plus::after {
+  width: calc(var(--reference-pixel) * 7);
+  height: calc(var(--reference-pixel) * 40);
+}
+
+.caption {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 101);
+  right: 0;
+  left: 0;
+  color: #55555e;
+  font-size: calc(var(--reference-pixel) * 16);
   font-weight: 600;
+  line-height: 1;
+  text-align: center;
+}
+
+/* A slot's name is read aloud over the whole slot, its art not drawn; it is clear so only its slot is the thing clicked */
+.cell-name {
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  font-size: 1px;
 }
 
 .unpick {
-  height: calc(var(--unit) * 26);
+  position: absolute;
+  top: calc(var(--reference-pixel) * 4);
+  right: calc(var(--reference-pixel) * 4);
+  width: calc(var(--reference-pixel) * 18);
+  height: calc(var(--reference-pixel) * 18);
+  padding: 0;
   border: none;
-  background: none;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.5);
   color: #fff;
-  cursor: inherit;
   font: inherit;
-  font-size: calc(var(--unit) * 28);
+  font-size: calc(var(--reference-pixel) * 14);
+  line-height: 1;
+}
+
+/* The game's cream pills that show the ores' filter and the Auto Add button, drawn as the game draws them */
+.pill {
+  position: absolute;
+  height: calc(var(--reference-pixel) * 50);
+  border-radius: calc(var(--reference-pixel) * 25);
+  background: #ece5d6;
+  color: #3d3d48;
+  font-size: calc(var(--reference-pixel) * 27);
+  font-weight: 600;
+  line-height: calc(var(--reference-pixel) * 50);
+  text-align: center;
+}
+
+.auto-add {
+  top: calc(var(--reference-pixel) * 527);
+  left: calc(var(--reference-pixel) * 1584);
+  width: calc(var(--reference-pixel) * 216);
+  line-height: calc(var(--reference-pixel) * 44);
+}
+
+.refine-auto-add {
+  top: calc(var(--reference-pixel) * 539);
+}
+
+.filter {
+  top: calc(var(--reference-pixel) * 527);
+  left: calc(var(--reference-pixel) * 1103);
+  width: calc(var(--reference-pixel) * 458);
+}
+
+/* The round cream button beside Enhance, its glyph left undrawn */
+.sparkle-button {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 772);
+  left: calc(var(--reference-pixel) * 1424);
+  width: calc(var(--reference-pixel) * 64);
+  height: calc(var(--reference-pixel) * 64);
+  border-radius: 50%;
+  background: #ece4da;
+}
+
+.caret {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 21);
+  left: calc(var(--reference-pixel) * 424);
+  border-top: calc(var(--reference-pixel) * 9) solid #3b4354;
+  border-right: calc(var(--reference-pixel) * 7) solid transparent;
+  border-left: calc(var(--reference-pixel) * 7) solid transparent;
+}
+
+/* Ascend's header: the phases as sparks, each row of six, the left lit to the weapon's phase and the right to the next */
+.sparks {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 106);
+  display: flex;
+}
+
+.left-sparks {
+  left: calc(var(--reference-pixel) * 1191);
+  gap: calc(var(--reference-pixel) * 13);
+}
+
+.right-sparks {
+  left: calc(var(--reference-pixel) * 1499);
+  gap: calc(var(--reference-pixel) * 12.6);
+}
+
+.spark {
+  width: calc(var(--reference-pixel) * 31);
+  height: calc(var(--reference-pixel) * 31);
+  background: #9b99ad;
+  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+}
+
+.spark.lit {
+  background: #fff;
+}
+
+.level-current,
+.level-next {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 158);
+  margin: 0;
+  font-size: calc(var(--reference-pixel) * 31);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.level-current {
+  left: calc(var(--reference-pixel) * 1237);
+  color: #e6e1f2;
+}
+
+.level-next {
+  left: calc(var(--reference-pixel) * 1546);
+  color: #f2e3b5;
+}
+
+.materials-title {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 548);
+  left: calc(var(--reference-pixel) * 1276);
+  margin: 0;
+  color: #e9d29a;
+  font-size: calc(var(--reference-pixel) * 28);
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Ascend's materials: a card per ingredient, its art over a rarity's tint and its count on a cream band */
+.cards {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 597);
+  left: calc(var(--reference-pixel) * 1282);
+  display: flex;
+  gap: calc(var(--reference-pixel) * 19.25);
+}
+
+.card {
+  position: relative;
+  width: calc(var(--reference-pixel) * 100);
+  height: calc(var(--reference-pixel) * 121);
+  overflow: hidden;
+  border-radius: calc(var(--reference-pixel) * 6);
+  background: linear-gradient(#52706f, #467f71 80%, #ede6e3 80%);
+}
+
+.card[data-rarity="1"] {
+  background: linear-gradient(#5f6069, #6e6c75 80%, #ede6e3 80%);
+}
+
+.card-name {
+  position: absolute;
+  color: transparent;
+  font-size: 1px;
+}
+
+.card-count {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 98);
+  right: 0;
+  left: 0;
+  height: calc(var(--reference-pixel) * 23);
+  color: #3d3c44;
+  font-size: calc(var(--reference-pixel) * 17);
+  font-weight: 600;
+  line-height: calc(var(--reference-pixel) * 23);
+  text-align: center;
+}
+
+/* Refine's header: the rank's number at the title's right, its passage and its material undrawn beside it */
+.refinement {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 99);
+  left: calc(var(--reference-pixel) * 1490);
+  margin: 0;
+  color: #f6f0f9;
+  font-size: calc(var(--reference-pixel) * 42);
+  font-weight: 600;
   line-height: 1;
 }
 </style>

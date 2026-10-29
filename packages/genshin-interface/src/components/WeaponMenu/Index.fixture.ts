@@ -1,17 +1,12 @@
 import { WeaponMenuTab } from "#src/models/WeaponMenuTab";
 
-// The Enhance tab open on a three-star weapon at level one with no EXP yet, the three tabs the level and its phase allow
+// The Enhance tab open on a weapon below its level cap, the Details row above the three tabs the level and its phase allow
 export const props = {
   actionLabel: "Enhance",
-  ascension: 0,
   closeLabel: "Back",
-  experienceRatio: 0,
-  experienceText: "0/400",
+  detailsLabel: "Details",
   isActionDisabled: true,
-  levelText: "Lv. 1/20",
   name: "Silver Light",
-  rarity: 3,
-  refinement: 1,
   tab: WeaponMenuTab.Enhance,
   tabs: [
     { label: "Enhance", tab: WeaponMenuTab.Enhance },
@@ -20,17 +15,7 @@ export const props = {
   ],
 };
 
-// The Ascend tab on the same weapon at its phase's cap, its lit phase one further and its action enabled
-export const variants = {
-  ascend: {
-    actionLabel: "Ascend",
-    ascension: 1,
-    experienceRatio: 0,
-    experienceText: "",
-    isActionDisabled: false,
-    levelText: "Lv. 20/20",
-    tab: WeaponMenuTab.Ascend,
-  },
-};
+// The Ascend tab on the same weapon at its phase's cap, its action enabled
+export const variants = { ascend: { actionLabel: "Ascend", isActionDisabled: false, tab: WeaponMenuTab.Ascend } };
 
 export const slot = "Enhancement ores";
