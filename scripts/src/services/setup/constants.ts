@@ -98,13 +98,13 @@ export const CORE_SYMLINKS_KEY = "core.symlinks";
 export const SYMLINKS_ENABLED_VALUE = "true";
 export const SYMLINKS_NEXT =
   "git config core.symlinks true, then check the repository out again: Developer Mode or an elevated shell is needed to create the links";
-export const LONG_PATHS_KEY = String.raw`HKLM\SYSTEM\CurrentControlSet\Control\FileSystem`;
+export const LONG_PATHS_KEY: string = String.raw`HKLM\SYSTEM\CurrentControlSet\Control\FileSystem`;
 export const LONG_PATHS_VALUE_NAME = "LongPathsEnabled";
 export const LONG_PATHS_ENABLED_REGEX: RegExp = new RegExp(`${LONG_PATHS_VALUE_NAME}\\s+REG_DWORD\\s+0x1\\b`, "u");
-export const LONG_PATHS_NEXT = String.raw`from an elevated PowerShell run Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name LongPathsEnabled -Value 1, then restart the terminal`;
+export const LONG_PATHS_NEXT: string = String.raw`from an elevated PowerShell run Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name LongPathsEnabled -Value 1, then restart the terminal`;
 export const SSH_DIRECTORY: string = join(homedir(), ".ssh");
 export const SSH_PUBLIC_KEY_NAMES: readonly string[] = ["id_ed25519.pub", "id_rsa.pub"];
 export const SSH_KEY_NEXT = "ssh-keygen -t ed25519, then give its .pub to the peer";
 export const FLEET_PROFILE_COMMAND = "pnpm ai:fleet:profile";
-export const GENSHIN_ONLY_NEXT = `set its areas to ["${GENSHIN_FLEET_AREA}"], the owner's rule: no non-Genshin work until Genshin is done`;
+export const GENSHIN_ONLY_NEXT: string = `set its areas to ["${GENSHIN_FLEET_AREA}"], the owner's rule: no non-Genshin work until Genshin is done`;
 export const PEERS_NEXT = "write it by hand, since no command writes it";
