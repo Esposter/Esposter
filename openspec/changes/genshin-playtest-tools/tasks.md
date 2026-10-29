@@ -1,9 +1,9 @@
 ## 1. Registry
 
-- [ ] 1.1 Build the registry: register and remove handles, parse a line into a command and its zod-checked arguments, run it, and return `{ ok, value }` or `{ ok: false, error, usage }`. Verify: `createDevRegistry.test.ts` with tests named after the scenarios 'Valid line runs and reports', 'Bad argument runs nothing', 'Unknown name is refused', 'Command whose state is not mounted says so' and 'Failure returns its usage', seen failing first.
-- [ ] 1.2 Add variables (boolean, number, colour, choice; group, range) set through the registry, starting from the game's own value. Verify: tests named after the scenarios 'Control and console agree', 'Out of range is refused' and 'Reload restores the game's value', seen failing first.
-- [ ] 1.3 Add scenarios as ordered command lines that stop at the first failure. Verify: tests named after the scenarios 'Scenario applies its commands in order' and 'Failure stops the scenario', seen failing first.
-- [ ] 1.4 Expose the registry as `window.__dev.run(line)` in a browser driven by automation. Verify: a test named after the scenario 'Automation receives data', seen failing first.
+- [x] 1.1 Build the registry: register and remove handles, parse a line into a command and its zod-checked arguments, run it, and return `{ ok, value }` or `{ ok: false, error, usage }`. Verify: `createDevRegistry.test.ts` with tests named after the scenarios 'Valid line runs and reports', 'Bad argument runs nothing', 'Unknown name is refused', 'Command whose state is not mounted says so' and 'Failure returns its usage', seen failing first.
+- [x] 1.2 Add variables (boolean, number, colour, choice; group, range) set through the registry, starting from the game's own value. Verify: tests named after the scenarios 'Control and console agree', 'Out of range is refused' and 'Reload restores the game's value', seen failing first.
+- [x] 1.3 Add scenarios as ordered command lines that stop at the first failure. Verify: tests named after the scenarios 'Scenario applies its commands in order' and 'Failure stops the scenario', seen failing first.
+- [x] 1.4 Expose the registry as `window.__dev.run(line)` in a browser driven by automation. Verify: a test named after the scenario 'Automation receives data', seen failing first.
 
 ## 2. Surface
 
