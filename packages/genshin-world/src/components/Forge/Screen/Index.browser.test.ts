@@ -16,7 +16,7 @@ describe("forgeScreen", () => {
     await render(ForgeScreenContainer, { props });
 
     await expect
-      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.ForgeMaterialsTab], exact: true }))
+      .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.ForgeMaterialsTab] }))
       .toBeVisible();
     await expect.element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.ForgeStart], { exact: true })).toBeVisible();
   });
