@@ -99,7 +99,7 @@ const pick = (characterId: number) => {
       <p v-if="detail.statusLabel" class="status">{{ detail.statusLabel }}</p>
       <ul v-else class="durations">
         <li v-for="duration of detail.durations" :key="duration">
-          <button :aria-pressed="duration === hours" type="button" @click="hours = duration">{{ duration }}h</button>
+          <button :aria-pressed="duration === hours" type="button" @click="hours = duration">{{ duration }}</button>
         </li>
       </ul>
     </section>
