@@ -58,3 +58,8 @@ flowchart TD
 ## Notes
 
 - **The bend's foam is per vertex, not read from depth.** A depth-only bend would need the floor to rise under the outer bank, which the fitted ground does not hold where the game's own river bed does not, so the course itself carries it: two values a point, which a ribbon already spends nothing else on.
+
+## Open
+
+- [ ] **The game's river bed is not raised under a bend's outer bank, so the fitted ground does not hold it** — no source yet: the Liyue witness holds the water surfaces (`{data-root}/genshin-parity/extracted/liyue/witness.json`) and `liyue.json` holds the courses, but no source read examines the ground under the outer bank at a bend. What would settle it is a height read of the fitted ground beside a Liyue bend's surface.
+- [ ] **The falls outside the capitals have fit entries and wait on the fit run** — no source yet: `scripts/src/services/genshinAssets/fit/fitWaterfallSheets.ts:24` writes each region's `waterfalls` key, but the Mondstadt and Liyue witnesses are the only ones read for `Eff_Model_WaterFall_` meshes here. What would settle it is the fit's region list and the other regions' witnesses.
