@@ -1,4 +1,4 @@
-import type { SearchCandidate } from "#src/services/recreation/video/parseSearchCandidates";
+import type { SearchCandidate } from "#src/models/recreation/video/SearchCandidate";
 import type { SubCommandsDef } from "citty";
 
 import { VideoSite } from "#src/models/recreation/video/VideoSite";
