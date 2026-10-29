@@ -39,3 +39,5 @@ flowchart TD
 - No YouTube or Bilibili reference snapshot for Noelle is in the repo, so no claim here rests on video.
 
 ## Open
+
+- [ ] **To Be Cleaned's explosion is 2U of Geo, as the wiki's Breastplate row gives** — no source yet: the cached Noelle talents file holds a Breastplate page, but its gauge row was not located by this sitting's search, and gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/noelle/shield.go` lines 29 to 44 (the explosion's callers) give no durability.
