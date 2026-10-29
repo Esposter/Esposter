@@ -65,5 +65,5 @@ Every animal of the slice exists from the scene's load (`packages/genshin-world/
 ## Open
 
 - [ ] **The archive files each kind as an animal or aviary monster** — no source yet: the dump's Monster and Gadget rows were not matched to the kinds' names.
-- [ ] **No table gives a flight's speed** — no source yet: only the environment table's keys were read, not every table's.
+- [ ] **No table gives a flight's speed** — no source yet: the environment table's eight keys (`{data-root}/genshin-parity/text/ExcelBinOutput/EnvAnimalGatherExcelConfigData.json`) carry no speed, checked; no other table was read.
 - [ ] **Mondstadt's slice holds about a hundred animals, and the other regions hold the same kinds where their labels are marked** — no source yet: the published slices are in hosted storage, not the local dump, so neither count was checked.
