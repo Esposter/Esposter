@@ -2,6 +2,7 @@ import { COMPONENTS_DIRECTORY, REFERENCE_IMAGE_SUFFIX } from "#src/services/gens
 import { getFixtureImageName } from "#src/services/genshinParity/fixtures/getFixtureImageName";
 import { listFixtureScreens } from "#src/services/genshinParity/fixtures/listFixtureScreens";
 import { REFERENCE_FILE_EXTENSION, REFERENCE_FILE_MAX_BYTES } from "#src/services/genshinParity/reference/constants";
+import { getVariantEntries } from "#src/services/genshinParity/reference/getVariantEntries";
 import { readReferenceFiles } from "#src/services/genshinParity/reference/readReferenceFiles";
 import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
 import { sha256File } from "#src/services/genshinParity/reference/sha256File";
@@ -44,11 +45,10 @@ describe("committedReferences", () => {
     expect.hasAssertions();
 
     const plan = await readReferenceFiles();
+    const planned = Object.fromEntries(plan.map(({ id, reference }) => [id, reference]));
     const rows = await listFixtureScreens(COMPONENTS_DIRECTORY, ParityReferenceMap, new Map());
     const expected = rows
-      .filter(({ name, variant }) =>
-        plan.some(({ reference }) => reference.screen === name && (reference.variant ?? "") === variant),
-      )
+      .filter(({ name, variant }) => getVariantEntries(planned, name, variant).length > 0)
       .map(({ directory, variant }) =>
         join(
           COMPONENTS_DIRECTORY,
