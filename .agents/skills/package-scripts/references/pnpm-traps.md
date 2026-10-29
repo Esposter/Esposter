@@ -1,6 +1,6 @@
 # pnpm Traps
 
-Read when a check behind a `--filter` reports success too quickly, when passing flags through a `pnpm <script>`, when a workflow step is about to spell out a binary, or when reaching for a `run` prefix. The rules themselves are in `SKILL.md`, one line each; this page is how each one fails and the shape that avoids it.
+Read when a check behind a `--filter` reports success too quickly, when passing flags through a `pnpm <script>`, when a workflow step is about to spell out a binary, when reaching for a `run` prefix, or when a format or a node command fails on Windows. The rules themselves are in `SKILL.md`, one line each; this page is how each one fails and the shape that avoids it.
 
 ## A `--filter` that matches nothing exits 0
 
@@ -19,3 +19,11 @@ pnpm forwards the literal `--`, so trailing flags become post-`--` positionals a
 pnpm falls through to `run` for any word that is not one of its own commands, so `pnpm build`, `pnpm -C apps/web build` and `pnpm --filter "@esposter/web..." build` all run the script and the prefix says nothing. Leave it off.
 
 What the prefix _does_ decide is a name that collides with a pnpm command, and there the reading flips rather than merely getting longer. `pnpm --filter @esposter/functions deploy` in the Functions deploy workflow is pnpm's own `deploy` — it copies a pruned, production-only package tree into a directory — and spelling it `run deploy` there would look like a tidy-up and change what runs. So the prefix is not a style choice to apply evenly: check the name against pnpm's commands, use `run` only when one shadows a script, and leave it off everywhere else.
+
+## A Windows checkout's format can fail on files a fix just rewrote
+
+After `oxlint --fix` rewrites many files on Windows, `pnpm format` or an in-place write can fail for minutes with os error 1224 (a user-mapped section), though no process holds them. Format a copy and rename it over the file, which succeeds where the in-place write is refused, then confirm with `pnpm exec oxfmt --check <files>`.
+
+## A shell started before the Node switch loses node
+
+On the Windows PC node and pnpm come from vite-plus's `bin` folder on the user PATH. A shell whose PATH was set before that change loses node mid-session, and the pre-commit formatter then skips silently. Prefix `/c/Users/jimmy/AppData/Local/vite-plus/bin` on PATH for that shell; the path is per machine and never goes into `.githooks`.
