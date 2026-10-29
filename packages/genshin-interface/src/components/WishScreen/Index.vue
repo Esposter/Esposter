@@ -109,7 +109,7 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
        are the plate's, which cannot ship -->
   <div class="wish-screen">
     <span class="sparkle star" aria-hidden="true" />
-    <ScreenTitle role="heading" aria-level="1">{{ title }}</ScreenTitle>
+    <ScreenTitle class="heading" role="heading" aria-level="1">{{ title }}</ScreenTitle>
     <ul class="banners">
       <li v-for="banner of banners" :key="banner.id">
         <GameButton
@@ -234,6 +234,11 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
   position: absolute;
   inset: 0;
   color: #fff;
+}
+
+.heading {
+  font-size: calc(var(--unit) * 24);
+  letter-spacing: calc(var(--unit) * 2.7);
 }
 
 .banners,
@@ -492,15 +497,16 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
 }
 
 .featured-stars {
-  margin: calc(var(--unit) * 3) 0 0;
-  font-size: calc(var(--unit) * 28);
+  margin: calc(var(--unit) * 7) 0 0;
+  font-size: calc(var(--unit) * 22);
   line-height: calc(var(--unit) * 24);
+  letter-spacing: calc(var(--unit) * 4);
 }
 
 .featured-title {
   width: calc(var(--unit) * 356);
   box-sizing: border-box;
-  margin: calc(var(--unit) * 7) 0 0 calc(var(--unit) * -7);
+  margin: calc(var(--unit) * 3) 0 0 calc(var(--unit) * -7);
   padding: 0 calc(var(--unit) * 19);
   background: rgb(20 30 50 / 0.7);
   color: #dfc896;
