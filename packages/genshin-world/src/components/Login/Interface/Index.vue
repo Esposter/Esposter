@@ -172,7 +172,9 @@ watch(
               :parent="switchServerRect"
               :rect="interfaceRects[LoginInterfaceRectName.PressStart]"
             >
-              <PromptBand class="prompt">{{ gameText[GameTextKey.LoginBegin] }}</PromptBand>
+              <PromptBand :class="['prompt', { mainland: client === GameClient.Mainland }]">
+                {{ gameText[GameTextKey.LoginBegin] }}
+              </PromptBand>
             </GameRect>
             <GameRect
               v-if="stage === LoginStage.Title"
@@ -192,8 +194,7 @@ watch(
           >
             <!-- A heading to a screen reader, drawn as a paragraph so no host's own heading styles reach it -->
             <p class="title" role="heading" aria-level="1">{{ gameText[GameTextKey.LoginTitle] }}</p>
-            <!-- Held at 0.75 of the shared divider's silver: the approved title image draws it so, and it cannot be re-approved
-                 until the title state has a whole-frame reference -->
+            <!-- Held at 0.75 of the shared divider's silver, as the approved title image draws it -->
             <OrnamentDivider class="divider" :opacity="0.75" />
             <p class="subtitle">{{ gameText[GameTextKey.LoginBegin] }}</p>
           </GameRect>
@@ -208,8 +209,8 @@ watch(
             <svg class="age-rating" viewBox="0 0 84 110" role="img" aria-label="12+">
               <rect class="age-rating-white" x="-0.8" y="-0.2" width="84.7" height="110.7" rx="6" />
               <rect x="6.3" y="7.5" width="70.7" height="79.5" rx="4" fill="#178ed0" />
-              <path class="age-rating-white" :d="ageRating.age" transform="translate(9 10) scale(0.125)" />
-              <text x="42" y="83" class="age-rating-white age-rating-name">CADPA</text>
+              <path class="age-rating-mark" :d="ageRating.age" transform="translate(9 10) scale(0.125)" />
+              <text x="42" y="83" class="age-rating-name">CADPA</text>
               <path :d="ageRating.notice" transform="translate(2 87) scale(0.125)" fill="#111" />
             </svg>
           </GameRect>
@@ -328,18 +329,24 @@ watch(
   width: calc(var(--unit) * 84);
 }
 
-/* Its white is the recording's, a pale blue rather than full white, wherever it stands on the badge */
+/* The card's white is the recording's, a pale blue rather than full white */
 .age-rating-white {
   fill: #dfeaf5;
 }
 
+/* The age is the recording's pale cyan, the brightest pixels of its strokes at the badge's own place */
+.age-rating-mark {
+  fill: #c5ebfc;
+}
+
 /* Its age and notice are traced off the recording at eight times its size (`genshin:parity trace`); its CADPA is
-   set in a serif, whose thin strokes are too few of the recording's pixels to trace */
+   set in a serif, whose thin strokes are too few of the recording's pixels to trace, in a deeper cyan than the age */
 .age-rating-name {
   font-family: serif;
   font-size: 15.5px;
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: 0.5px;
+  fill: #9fe8fe;
   text-anchor: middle;
 }
 
@@ -416,6 +423,17 @@ watch(
   left: calc(var(--unit) * 100 - var(--canvas-unit) * 128);
   animation: door-arrive calc(v-bind(LOGIN_DOOR_PROMPT_FADE_MS) * 1ms) linear
     calc(v-bind(LOGIN_DOOR_PROMPT_DELAY_MS) * 1ms) backwards;
+}
+
+/* Mainland China's band is shorter than the English one, 37 units on the same middle line (its top at 1002 and foot at
+   1039 on the launch recording, 1080 high), and its words are 23.5 units, a CJK glyph's advance measured off that frame */
+.prompt.mainland {
+  height: calc(var(--unit) * 37);
+  bottom: calc(var(--unit) * 41 - var(--canvas-unit) * 128);
+}
+
+.prompt.mainland :deep(.text) {
+  font-size: calc(var(--unit) * 23.5);
 }
 
 .arriving {
