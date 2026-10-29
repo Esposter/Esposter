@@ -299,6 +299,7 @@ flowchart TD
 | `apps/web/app/composables/ui/`                        | The library's composables over Vuetify 0's                                                                           |
 | `apps/web/app/models/ui/UiIconMeaning.ts`             | What each library icon says                                                                                          |
 | `apps/web/app/services/ui/UiIconMap.ts`               | Each style's class for every meaning                                                                                 |
+| `apps/web/app/services/ui/LucideIconMap.ts`           | Lucide's class for every meaning, the standard and Genshin styles' icon set                                          |
 | `apps/web/app/components/Ui/Icon.vue`                 | The icon element, by meaning, decorative unless labelled                                                             |
 | `apps/web/app/models/shared/Item.ts`                  | One action a menu or a list shows, by meaning or a whole class                                                       |
 | `apps/web/app/composables/ui/useTypeahead.ts`         | The typeahead the menu, the list and the tree share                                                                  |

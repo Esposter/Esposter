@@ -2,10 +2,10 @@ import type { Drag } from "@/models/ui/Drag";
 import type { DragReorderContext } from "@/models/ui/DragReorderContext";
 import type { Press } from "@/models/ui/Press";
 
+import { getAutoscroll } from "@/services/ui/dragReorder/getAutoscroll";
 import { getDragTargetIndex } from "@/services/ui/dragReorder/getDragTargetIndex";
 import { getDragTranslate } from "@/services/ui/dragReorder/getDragTranslate";
 import { moveDragSiblings } from "@/services/ui/dragReorder/moveDragSiblings";
-import { getAutoscroll } from "@/services/ui/getAutoscroll";
 import { takeOne } from "@esposter/shared";
 
 // Moves the held row to the pointer and the rows it passes aside, then asks for the autoscroll a pointer at an edge needs

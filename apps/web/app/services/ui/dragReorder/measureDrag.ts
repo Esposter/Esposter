@@ -4,7 +4,7 @@ import type { Press } from "@/models/ui/Press";
 import { getDragOffsets } from "@/services/ui/dragReorder/getDragOffsets";
 import { getDragScale } from "@/services/ui/dragReorder/getDragScale";
 import { getDragShift } from "@/services/ui/dragReorder/getDragShift";
-import { getScrollers } from "@/services/ui/getScrollers";
+import { getScrollers } from "@/services/ui/dragReorder/getScrollers";
 import { takeOne } from "@esposter/shared";
 
 // Where each row sits as the drag starts, which the slots and the held row's travel are measured from
