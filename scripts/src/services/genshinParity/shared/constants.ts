@@ -138,12 +138,6 @@ export const CHANNELS = [0, 1, 2] as const;
 // A CPU profile's clock is kept in microseconds, a millisecond being this many of them
 export const MICROSECONDS_PER_MS = 1000;
 export const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;
-// A sound effect is scored every 5 milliseconds at 48 kHz, finer than its fit's frames, over the cells within 40 decibels
-// Of the game's loudest
-export const SOUND_SCORE_HOP_LENGTH = 240;
-// The power a sound's level is read from when it is silent: the smallest positive float, so a silent cell reads as the
-// Least decibels a float holds rather than minus infinity
-export const SOUND_POWER_FLOOR: number = Number.MIN_VALUE;
 export const NUMBER_SOURCE: string = String.raw`[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?`;
 
 // The frames a range reads, and the frames left to pass before it, so the GPU has finished the frames encoded before a

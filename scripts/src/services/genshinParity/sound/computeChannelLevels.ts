@@ -1,6 +1,6 @@
 import { computeStereoSoundBandPowers } from "#src/services/genshinAssets/sound/computeStereoSoundBandPowers";
-import { SOUND_POWER_FLOOR, SOUND_SCORE_HOP_LENGTH } from "#src/services/genshinParity/shared/constants";
 import { toDecibels } from "#src/services/genshinParity/shared/toDecibels";
+import { SOUND_POWER_FLOOR, SOUND_SCORE_HOP_LENGTH } from "#src/services/genshinParity/sound/constants";
 
 // Each channel's level in each band frame by frame, its own power and the shared one's together
 export const computeChannelLevels = (left: Float32Array, right: Float32Array): number[][][] => {
