@@ -863,8 +863,11 @@ export const GameTextKey = {
   // The quick-add option choosing every material of three stars and under
   WeaponMaterialsThreeStarAndUnder: "UI_FAST_ADD_OPTION_3",
   WeaponRefine: "UI_EQUIP_PAGE_AWAKEN_BUTTON",
+  // The held rank's row over its passive text, "·Current: {0}" with the label coloured, and the next rank's, "·Next Rank: {0}"
+  WeaponRefinementCurrent: "EQUIP_AWAKEN_AFFIX_CURRENT_DESC",
   WeaponRefinementLevel: "UI_WEAPON_AFFIX_DESC",
   WeaponRefinementMaterial: "UI_WEAPON_AWAKEN_NEED_2",
+  WeaponRefinementNext: "EQUIP_AWAKEN_AFFIX_NEXT_DESC",
   // The refinement tab's label for the weapon's refinement, "Rank {0}"
   WeaponRefinementRank: "EQUIP_AWAKEN_LEVEL_TITLE",
   // Each kind of weapon by the game's own word for it, spelt as the tables spell the kind

@@ -217,6 +217,8 @@
   "CONTROL_SPRINT_OR_SKILL3": "Lari",
   "CONTROL_TOGGLE_ATTACK_MODE": "Ganti Mode Membidik",
   "COOKING_QTE_NO_BONUS_DESC": "Karakter ini tidak memiliki buff",
+  "EQUIP_AWAKEN_AFFIX_CURRENT_DESC": "·<color=#FFFFFFFF>Efek Saat Ini:</color> {0}",
+  "EQUIP_AWAKEN_AFFIX_NEXT_DESC": "·<color=#37FFFFFF>Efek Rank Berikutnya:</color> {0}",
   "EQUIP_AWAKEN_LEVEL_TITLE": "Rank {0}",
   "EQUIP_BRACER": "Flower of Life",
   "EQUIP_DRESS": "Circlet of Logos",

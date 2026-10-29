@@ -217,6 +217,8 @@
   "CONTROL_SPRINT_OR_SKILL3": "วิ่ง",
   "CONTROL_TOGGLE_ATTACK_MODE": "สลับโหมดเล็ง",
   "COOKING_QTE_NO_BONUS_DESC": "ไม่มีโบนัสตัวละคร",
+  "EQUIP_AWAKEN_AFFIX_CURRENT_DESC": "·<color=#FFFFFFFF>ปัจจุบัน: </color>{0}",
+  "EQUIP_AWAKEN_AFFIX_NEXT_DESC": "·<color=#37FFFFFF>ระดับต่อไป: </color>{0}",
   "EQUIP_AWAKEN_LEVEL_TITLE": "ระดับ {0}",
   "EQUIP_BRACER": "Flower of Life",
   "EQUIP_DRESS": "Circlet of Logos",

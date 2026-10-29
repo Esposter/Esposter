@@ -217,6 +217,8 @@
   "CONTROL_SPRINT_OR_SKILL3": "ダッシュ",
   "CONTROL_TOGGLE_ATTACK_MODE": "照準モード切替",
   "COOKING_QTE_NO_BONUS_DESC": "このキャラはバフがありません。",
+  "EQUIP_AWAKEN_AFFIX_CURRENT_DESC": "·<color=#FFFFFFFF>現在効果：</color>{0}",
+  "EQUIP_AWAKEN_AFFIX_NEXT_DESC": "·<color=#37FFFFFF>次のランク：</color>{0}",
   "EQUIP_AWAKEN_LEVEL_TITLE": "ランク{0}",
   "EQUIP_BRACER": "生の花",
   "EQUIP_DRESS": "理の冠",

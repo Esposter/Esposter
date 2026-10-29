@@ -217,6 +217,8 @@
   "CONTROL_SPRINT_OR_SKILL3": "冲刺",
   "CONTROL_TOGGLE_ATTACK_MODE": "切换瞄准模式",
   "COOKING_QTE_NO_BONUS_DESC": "该角色暂无加成",
+  "EQUIP_AWAKEN_AFFIX_CURRENT_DESC": "·<color=#FFFFFFFF>当前效果：</color>{0}",
+  "EQUIP_AWAKEN_AFFIX_NEXT_DESC": "·<color=#37FFFFFF>下一阶效果：</color>{0}",
   "EQUIP_AWAKEN_LEVEL_TITLE": "{0}阶",
   "EQUIP_BRACER": "生之花",
   "EQUIP_DRESS": "理之冠",

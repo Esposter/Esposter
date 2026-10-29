@@ -217,6 +217,8 @@
   "CONTROL_SPRINT_OR_SKILL3": "Scatta",
   "CONTROL_TOGGLE_ATTACK_MODE": "Cambia modalità di mira",
   "COOKING_QTE_NO_BONUS_DESC": "Nessun bonus personaggio",
+  "EQUIP_AWAKEN_AFFIX_CURRENT_DESC": "· <color=#FFFFFFFF>Attuale:</color> {0}",
+  "EQUIP_AWAKEN_AFFIX_NEXT_DESC": "· <color=#37FFFFFF>Grado successivo:</color> {0}",
   "EQUIP_AWAKEN_LEVEL_TITLE": "Grado {0}",
   "EQUIP_BRACER": "Fiore della vita",
   "EQUIP_DRESS": "Corona della ragione",

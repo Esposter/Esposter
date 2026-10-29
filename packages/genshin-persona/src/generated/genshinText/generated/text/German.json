@@ -217,6 +217,8 @@
   "CONTROL_SPRINT_OR_SKILL3": "Rennen",
   "CONTROL_TOGGLE_ATTACK_MODE": "Zielmodus anwenden",
   "COOKING_QTE_NO_BONUS_DESC": "Diese Figur hat keinen Bonus.",
+  "EQUIP_AWAKEN_AFFIX_CURRENT_DESC": "· <color=#FFFFFFFF>Aktuell: </color>{0}",
+  "EQUIP_AWAKEN_AFFIX_NEXT_DESC": "· <color=#37FFFFFF>Nächster Grad: </color>{0}",
   "EQUIP_AWAKEN_LEVEL_TITLE": "Grad {0}",
   "EQUIP_BRACER": "Blume des Lebens",
   "EQUIP_DRESS": "Haarreif der Vernunft",

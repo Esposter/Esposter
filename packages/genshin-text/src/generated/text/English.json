@@ -217,6 +217,8 @@
   "CONTROL_SPRINT_OR_SKILL3": "Sprint",
   "CONTROL_TOGGLE_ATTACK_MODE": "Switch Aiming Mode",
   "COOKING_QTE_NO_BONUS_DESC": "No Character Bonus",
+  "EQUIP_AWAKEN_AFFIX_CURRENT_DESC": "·<color=#FFFFFFFF>Current:</color> {0}",
+  "EQUIP_AWAKEN_AFFIX_NEXT_DESC": "·<color=#37FFFFFF>Next Rank:</color> {0}",
   "EQUIP_AWAKEN_LEVEL_TITLE": "Rank {0}",
   "EQUIP_BRACER": "Flower of Life",
   "EQUIP_DRESS": "Circlet of Logos",

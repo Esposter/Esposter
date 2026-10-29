@@ -217,6 +217,8 @@
   "CONTROL_SPRINT_OR_SKILL3": "Sprinter",
   "CONTROL_TOGGLE_ATTACK_MODE": "Activer/désactiver le mode visée",
   "COOKING_QTE_NO_BONUS_DESC": "Pas de bonus personnage",
+  "EQUIP_AWAKEN_AFFIX_CURRENT_DESC": "· <color=#FFFFFFFF>Actuel :</color> {0}",
+  "EQUIP_AWAKEN_AFFIX_NEXT_DESC": "· <color=#37FFFFFF>Prochain rang :</color> {0}",
   "EQUIP_AWAKEN_LEVEL_TITLE": "Rang {0}",
   "EQUIP_BRACER": "Fleur de la vie",
   "EQUIP_DRESS": "Diadème de Logos",

@@ -217,6 +217,8 @@
   "CONTROL_SPRINT_OR_SKILL3": "Correr",
   "CONTROL_TOGGLE_ATTACK_MODE": "Alterar para o Modo de Mira",
   "COOKING_QTE_NO_BONUS_DESC": "Sem bônus de Personagem",
+  "EQUIP_AWAKEN_AFFIX_CURRENT_DESC": "<color=#FFFFFFFF>Atual:</color> {0}",
+  "EQUIP_AWAKEN_AFFIX_NEXT_DESC": "<color=#37FFFFFF>Próx. Rank:</color> {0}",
   "EQUIP_AWAKEN_LEVEL_TITLE": "Rank {0}",
   "EQUIP_BRACER": "Flor da Vida",
   "EQUIP_DRESS": "Tiara de Logos",

@@ -217,6 +217,8 @@
   "CONTROL_SPRINT_OR_SKILL3": "Спринт",
   "CONTROL_TOGGLE_ATTACK_MODE": "Прицельная стрельба",
   "COOKING_QTE_NO_BONUS_DESC": "Нет",
+  "EQUIP_AWAKEN_AFFIX_CURRENT_DESC": "·<color=#FFFFFFFF>Текущий ранг:</color> {0}",
+  "EQUIP_AWAKEN_AFFIX_NEXT_DESC": "·<color=#37FFFFFF>Следующий ранг:</color> {0}",
   "EQUIP_AWAKEN_LEVEL_TITLE": "Ранг {0}",
   "EQUIP_BRACER": "Цветок жизни",
   "EQUIP_DRESS": "Корона разума",
