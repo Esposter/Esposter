@@ -17,6 +17,7 @@ import CharacterAttributeList from "#src/components/Character/AttributeList/Inde
 import CharacterProfile from "#src/components/Character/Profile/Index.vue";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
+import { TalentUpgradeRefusal } from "#src/models/character/TalentUpgradeRefusal";
 import { Currency } from "#src/models/inventory/Currency";
 import { ArtifactSlotGameTextKeyMap } from "#src/services/artifact/ArtifactSlotGameTextKeyMap";
 import { ENHANCE_AUTO_ADD_MAX_RARITY } from "#src/services/artifact/constants";
@@ -63,6 +64,7 @@ import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { takeItemCounts } from "#src/services/inventory/takeItemCounts";
 import { ElementMarkPathMap } from "#src/services/loading/ElementMarkPathMap";
 import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
+import { WeaponTypeNameGameTextKeyMap } from "#src/services/weapon/WeaponTypeNameGameTextKeyMap";
 import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import {
   ArtifactEnhancePicker,
@@ -211,11 +213,15 @@ const weaponPanel = computed(() => {
   return {
     ascension: weapon.ascension,
     baseAttack: Math.round(attributeTotalMap[Attribute.BaseAttack]),
+    baseAttackLabel: gameText[GameTextKey.AttributeBaseAttack],
+    enhanceLabel: gameText[GameTextKey.WeaponEnhance],
+    kind: gameText[WeaponTypeNameGameTextKeyMap[weaponData.weaponType]],
     levelText: fillGameTextValues(gameText[GameTextKey.LevelFormat], `${weapon.level}/${maxLevel}`),
     name: nameText[weaponData.nameTextId] || "",
     rarity: weaponData.rarity,
     refinement: weapon.refinement,
     subStatValue,
+    switchLabel: gameText[GameTextKey.QuickSwapSwitch],
   };
 });
 // Each artifact slot's stats in the game's order, undefined where the character wears no artifact there
@@ -298,13 +304,17 @@ const talentPanel = computed(() => {
           ]
         : [],
     ),
+    // A talent at its last level draws no Upgrade and names no reason, the game showing neither
     isUpgradeDisabled: rows.map(({ refusal }) => refusal !== undefined),
-    levels: rows.map(({ level }) => level),
+    isUpgradeShown: rows.map(({ refusal }) => refusal !== TalentUpgradeRefusal.LastLevel),
+    levelTexts: rows.map(({ level }) => fillGameTextValues(gameText[GameTextKey.LevelFormat], level)),
     phases: rows.map(({ upgrade }) =>
       upgrade ? fillGameTextValues(gameText[GameTextKey.TalentPhaseRequired], upgrade.phase) : "",
     ),
     reasons: rows.map(({ refusal }) =>
-      refusal === undefined ? "" : gameText[TalentUpgradeRefusalGameTextKeyMap[refusal]],
+      refusal === undefined || refusal === TalentUpgradeRefusal.LastLevel
+        ? ""
+        : gameText[TalentUpgradeRefusalGameTextKeyMap[refusal]],
     ),
   };
 });

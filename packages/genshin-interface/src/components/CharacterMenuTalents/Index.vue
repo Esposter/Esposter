@@ -7,29 +7,31 @@ interface Props {
   costs: string[][];
   // Whether each talent's Upgrade is disabled, which it is while the talent cannot rise
   isUpgradeDisabled: boolean[];
-  // Each combat talent's level, in the order the game lists them: the normal attack, the Elemental Skill and the
-  // Elemental Burst
-  levels: number[];
+  // Whether each talent's Upgrade is drawn, which it is not at the talent's last level, where the game draws none
+  isUpgradeShown: boolean[];
+  // Each combat talent's level as the reader's language writes it, in the order the game lists them: the normal attack,
+  // the Elemental Skill and the Elemental Burst
+  levelTexts: string[];
   // Each talent's next level's phase, as its label, empty at its last level
   phases: string[];
-  // Why each talent cannot rise now, as its label, empty when it can
+  // Why each talent cannot rise now, as its label, empty when it can or is at its last level
   reasons: string[];
   // The Upgrade button's label, the game's word for raising a talent by one level
   upgradeLabel: string;
 }
 
-const { costs, isUpgradeDisabled, levels, phases, reasons, upgradeLabel } = defineProps<Props>();
+const { costs, isUpgradeDisabled, isUpgradeShown, levelTexts, phases, reasons, upgradeLabel } = defineProps<Props>();
 const emit = defineEmits<{ upgrade: [index: number] }>();
 </script>
 
 <template>
   <!-- The Talents tab's panel: the three combat talents down its right, each with its level, the phase and cost of its next
-       level, why it cannot rise if it cannot, and its Upgrade. The talents' names and the passives under them are not drawn
-       yet, since the game's text for them is not decoded -->
+       level, why it cannot rise if it cannot, and its Upgrade while it is drawn. The talents' names and the passives under
+       them are not drawn yet, since the game's text for them is not decoded -->
   <div class="talents">
     <ul class="talent-list">
-      <li v-for="(level, index) in levels" :key="index" class="talent">
-        <span class="level">{{ level }}</span>
+      <li v-for="(levelText, index) in levelTexts" :key="index" class="talent">
+        <span class="level">{{ levelText }}</span>
         <div class="detail">
           <span class="phase">{{ phases[index] }}</span>
           <ul class="costs">
@@ -38,6 +40,7 @@ const emit = defineEmits<{ upgrade: [index: number] }>();
           <span v-if="reasons[index]" class="reason">{{ reasons[index] }}</span>
         </div>
         <GameButton
+          v-if="isUpgradeShown[index]"
           class="upgrade"
           :disabled="isUpgradeDisabled[index]"
           :kind="GameButtonKind.Reply"
@@ -81,7 +84,9 @@ const emit = defineEmits<{ upgrade: [index: number] }>();
   gap: calc(var(--unit) * 16);
 }
 
+/* The name above the level is not drawn yet, so the level sits beneath where that name's line would be, as the frame's does */
 .level {
+  margin-top: calc(var(--unit) * 38);
   font-size: calc(var(--unit) * 26);
   font-weight: 600;
   text-shadow: 0 calc(var(--unit) * 1) calc(var(--unit) * 3) rgb(0 0 0 / 0.4);
@@ -113,8 +118,8 @@ const emit = defineEmits<{ upgrade: [index: number] }>();
 }
 
 .icon {
-  width: calc(var(--unit) * 40);
-  height: calc(var(--unit) * 40);
+  width: calc(var(--unit) * 62);
+  height: calc(var(--unit) * 62);
   border-radius: 50%;
   background: rgb(255 255 255 / 0.25);
 }

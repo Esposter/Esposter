@@ -1,11 +1,12 @@
 // Xilonen's normal attack at level 10 and her Elemental Skill and Burst at 13, as the English client's Talents tab shows
-// Them at 159 seconds, every one at its last level, so each reads why it cannot rise and its Upgrade is disabled
+// Them at 159 seconds, every one at its last level, so none draws an Upgrade and none names why it cannot rise
 export const props = {
   costs: [[], [], []],
   isUpgradeDisabled: [true, true, true],
-  levels: [10, 13, 13],
+  isUpgradeShown: [false, false, false],
+  levelTexts: ["Lv. 10", "Lv. 13", "Lv. 13"],
   phases: ["", "", ""],
-  reasons: ["Max level reached", "Max level reached", "Max level reached"],
+  reasons: ["", "", ""],
   upgradeLabel: "Level Up",
 };
 
@@ -15,8 +16,9 @@ export const variants = {
   rising: {
     costs: [["Mora ×60000"], [], []],
     isUpgradeDisabled: [false, true, true],
-    levels: [9, 13, 13],
+    isUpgradeShown: [true, false, false],
+    levelTexts: ["Lv. 9", "Lv. 13", "Lv. 13"],
     phases: ["Requires Character Ascension Phase 4", "", ""],
-    reasons: ["", "Max level reached", "Max level reached"],
+    reasons: ["", "", ""],
   },
 };

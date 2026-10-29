@@ -3,9 +3,13 @@
 export const props = {
   ascension: 6,
   baseAttack: 542,
+  baseAttackLabel: "Base ATK",
+  enhanceLabel: "Enhance",
+  kind: "Sword",
   levelText: "Lv. 90/90",
   name: "Peak Patrol Song",
   rarity: 5,
   refinement: 5,
   subStatValue: "82.7%",
+  switchLabel: "Switch",
 };

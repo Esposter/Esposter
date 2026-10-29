@@ -20,8 +20,8 @@ const nodeStyles = CONSTELLATION_NODE_PLACES.map(({ left, top }) => ({
 
 <template>
   <!-- The Constellation tab's panel: the six constellations down its right, each a ring lit once activated, and the
-       button that activates the next under them. The game's star map is its own art and its names are not decoded yet,
-       so neither is drawn -->
+       button that activates the next under them while one is left, the game drawing no button once all six are lit. The
+       game's star map is its own art and its names are not decoded yet, so neither is drawn -->
   <div class="constellations">
     <ul class="nodes">
       <li
@@ -32,7 +32,13 @@ const nodeStyles = CONSTELLATION_NODE_PLACES.map(({ left, top }) => ({
         :style="nodeStyles[index]"
       />
     </ul>
-    <button class="activate" :disabled="isActivateDisabled" type="button" @click="emit('activate')">
+    <button
+      v-if="activated.includes(false)"
+      class="activate"
+      :disabled="isActivateDisabled"
+      type="button"
+      @click="emit('activate')"
+    >
       {{ activateLabel }}
     </button>
   </div>
