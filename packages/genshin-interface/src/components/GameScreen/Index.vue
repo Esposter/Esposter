@@ -38,7 +38,8 @@ const style = computed(() =>
        Game's 1920 by 1080 screen, or of the `--game-design-width` the screen sets on this root, `--canvas-unit` a unit
        of its interface's 1600 by 900 canvas, both times `--interface-scale`, the mobile client's on a touch screen,
        `--canvas-inset` how far the canvas stands in from
-       Each side and `--white` the white its opening is drawn on, in the game's face and pointer. Each resolves where a
+       Each side, `--white` the white its opening is drawn on and `--sparkle-clip-path` the four-pointed sparkle a star
+       is clipped to, in the game's face and pointer. Each resolves where a
        Child uses it, against this container. A screen that opts in draws the world behind it blurred under its own
        Pieces, the blur taking what is painted behind this root and the wash added over it as light -->
   <div class="game-screen" :data-interaction-state="interactionState" :style>
@@ -57,6 +58,7 @@ const style = computed(() =>
   --canvas-unit: v-bind(GAME_CANVAS_UNIT);
   --unit: v-bind(GAME_UNIT);
   --white: v-bind(GAME_WHITE);
+  --sparkle-clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
   --backdrop-blur: v-bind(GAME_BACKDROP_BLUR);
   --backdrop-keep: v-bind(GAME_BACKDROP_KEEP);
   --backdrop-wash: v-bind(GAME_BACKDROP_WASH);

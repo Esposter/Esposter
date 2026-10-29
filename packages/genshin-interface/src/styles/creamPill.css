@@ -1,0 +1,9 @@
+/* The cream pill a label is set in: the game's cream at nine tenths and its ink words, with the box and place
+   left to the label that wears it */
+.cream-pill {
+  border-radius: calc(var(--unit) * 25);
+  background: rgb(236 229 216 / 0.9);
+  color: #3b4255;
+  font-size: calc(var(--unit) * 26);
+  font-weight: 600;
+}

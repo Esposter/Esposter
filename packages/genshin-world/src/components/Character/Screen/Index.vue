@@ -697,7 +697,9 @@ const isActivateDisabled = computed(
       @material="changeEnhanceMaterial"
     />
     <span class="grid" />
-    <p v-if="tab === CharacterMenuTab.Attributes" class="training-guide">{{ gameText[GameTextKey.TrainingGuide] }}</p>
+    <p v-if="tab === CharacterMenuTab.Attributes" class="training-guide cream-pill">
+      {{ gameText[GameTextKey.TrainingGuide] }}
+    </p>
     <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">×</button>
     <slot :character-id />
   </GameScreen>
@@ -737,11 +739,6 @@ const isActivateDisabled = computed(
   left: calc(var(--unit) * 200);
   margin: 0;
   padding: 0 calc(var(--unit) * 26);
-  border-radius: calc(var(--unit) * 25);
-  background: rgb(236 229 216 / 0.9);
-  color: #3b4255;
-  font-size: calc(var(--unit) * 26);
-  font-weight: 600;
   line-height: calc(var(--unit) * 49);
 }
 
@@ -764,3 +761,5 @@ const isActivateDisabled = computed(
   line-height: 1;
 }
 </style>
+
+<style scoped src="genshin-interface/styles/creamPill.css"></style>

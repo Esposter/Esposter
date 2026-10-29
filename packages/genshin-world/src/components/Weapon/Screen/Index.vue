@@ -251,13 +251,12 @@ const refinementMaterial = computed(() => {
 const isRefinementMaterialHeld = computed(() => (refinementMaterial.value?.count ?? 0) > 0);
 // The Refine tab's slots, one for each rank a weapon can still gain, each holding a picked candidate or left empty
 const refineSlotCount = computed(() => weaponData.value.refinementCosts.length);
-const emptyRefineSlotCount = computed(() =>
-  Math.max(0, refineSlotCount.value - copyCells.value.length - (isRefinementMaterialHeld.value ? 1 : 0)),
-);
-// The Enhance strip's slots, the candidates first and empty slots after them up to the seven the strip holds: the seventh is
-// Cut off at the strip's right edge, as the game's strip cuts it
-const emptyEnhanceSlotCount = computed(() =>
-  Math.max(0, ENHANCE_SLOT_COUNT - oreCells.value.length - fodderCells.value.length),
+// The slots left empty after the open tab's candidates: the Enhance strip's seven, the seventh cut off at its right edge
+// As the game's strip cuts it, and the Refine tab's rank slots that no candidate has taken
+const emptySlotCount = computed(() =>
+  openTab.value === WeaponMenuTab.Enhance
+    ? Math.max(0, ENHANCE_SLOT_COUNT - oreCells.value.length - fodderCells.value.length)
+    : Math.max(0, refineSlotCount.value - copyCells.value.length - (isRefinementMaterialHeld.value ? 1 : 0)),
 );
 const actionLabel = computed(() => tabLabels.value[openTab.value]);
 // The materials the Enhance tab holds picked, the ores' counts and the fodder weapons, which its consumed line counts
@@ -422,29 +421,6 @@ const nextPhaseCosts = computed(() =>
           >{{ gameText[GameTextKey.WeaponMaterialsThreeStarAndUnder] }}<span class="caret"
         /></span>
         <span class="sparkle-button" aria-hidden="true" />
-        <div class="cells enhance-cells">
-          <div v-for="ore of oreCells" :key="ore.id" class="cell">
-            <button class="pick" :disabled="ore.pickedCount >= ore.ownedCount" type="button" @click="pickOre(ore.id)">
-              <span class="cell-name">{{ ore.name }}</span>
-              <span class="plus" aria-hidden="true" />
-              <span class="caption" aria-hidden="true">{{ ore.pickedCount || "--" }}</span>
-            </button>
-            <button v-if="ore.pickedCount > 0" class="unpick" type="button" @click="unpickOre(ore.id)">−</button>
-          </div>
-          <div v-for="fodder of fodderCells" :key="fodder.id" class="cell">
-            <button class="pick" :aria-pressed="fodder.picked" type="button" @click="toggleFodder(fodder.id)">
-              <span class="cell-name">{{ fodder.name }}</span>
-              <span class="plus" aria-hidden="true" />
-              <span class="caption" aria-hidden="true">{{ fodder.levelText }}</span>
-            </button>
-          </div>
-          <div v-for="slot in emptyEnhanceSlotCount" :key="slot" class="cell">
-            <span class="pick" aria-hidden="true">
-              <span class="plus" />
-              <span class="caption">--</span>
-            </span>
-          </div>
-        </div>
       </template>
       <template v-else-if="openTab === WeaponMenuTab.Ascend">
         <div class="sparks left-sparks">
@@ -508,7 +484,30 @@ const nextPhaseCosts = computed(() =>
         <span class="pill auto-add refine-auto-add" aria-hidden="true">{{
           gameText[GameTextKey.ArtifactAutoAdd]
         }}</span>
-        <div class="cells refine-cells">
+      </template>
+      <div
+        v-if="openTab !== WeaponMenuTab.Ascend"
+        class="cells"
+        :class="openTab === WeaponMenuTab.Enhance ? 'enhance-cells' : 'refine-cells'"
+      >
+        <template v-if="openTab === WeaponMenuTab.Enhance">
+          <div v-for="ore of oreCells" :key="ore.id" class="cell">
+            <button class="pick" :disabled="ore.pickedCount >= ore.ownedCount" type="button" @click="pickOre(ore.id)">
+              <span class="cell-name">{{ ore.name }}</span>
+              <span class="plus" aria-hidden="true" />
+              <span class="caption" aria-hidden="true">{{ ore.pickedCount || "--" }}</span>
+            </button>
+            <button v-if="ore.pickedCount > 0" class="unpick" type="button" @click="unpickOre(ore.id)">−</button>
+          </div>
+          <div v-for="fodder of fodderCells" :key="fodder.id" class="cell">
+            <button class="pick" :aria-pressed="fodder.picked" type="button" @click="toggleFodder(fodder.id)">
+              <span class="cell-name">{{ fodder.name }}</span>
+              <span class="plus" aria-hidden="true" />
+              <span class="caption" aria-hidden="true">{{ fodder.levelText }}</span>
+            </button>
+          </div>
+        </template>
+        <template v-else>
           <div v-if="refinementMaterial && isRefinementMaterialHeld" class="cell">
             <button class="pick" :aria-pressed="pickedCopyId === undefined" type="button" @click="pickMaterial()">
               <span class="cell-name">{{ refinementMaterial.name }}</span>
@@ -523,14 +522,14 @@ const nextPhaseCosts = computed(() =>
               <span class="caption" aria-hidden="true">{{ copy.levelText }}</span>
             </button>
           </div>
-          <div v-for="slot in emptyRefineSlotCount" :key="slot" class="cell">
-            <span class="pick" aria-hidden="true">
-              <span class="plus" />
-              <span class="caption">--</span>
-            </span>
-          </div>
+        </template>
+        <div v-for="slot in emptySlotCount" :key="slot" class="cell">
+          <span class="pick" aria-hidden="true">
+            <span class="plus" />
+            <span class="caption">--</span>
+          </span>
         </div>
-      </template>
+      </div>
     </WeaponMenu>
   </GameScreen>
 </template>
@@ -622,7 +621,7 @@ const nextPhaseCosts = computed(() =>
   width: calc(var(--reference-pixel) * 9);
   height: calc(var(--reference-pixel) * 9);
   background: rgb(200 196 225 / 0.4);
-  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  clip-path: var(--sparkle-clip-path);
   content: "";
 }
 
@@ -1122,7 +1121,7 @@ const nextPhaseCosts = computed(() =>
   width: calc(var(--reference-pixel) * 10);
   height: calc(var(--reference-pixel) * 10);
   background: #e3dded;
-  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  clip-path: var(--sparkle-clip-path);
   content: "";
 }
 
@@ -1224,7 +1223,7 @@ const nextPhaseCosts = computed(() =>
   width: calc(var(--reference-pixel) * 23);
   height: calc(var(--reference-pixel) * 23);
   background: #d9d3ea;
-  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  clip-path: var(--sparkle-clip-path);
   content: "";
 }
 
@@ -1275,7 +1274,7 @@ const nextPhaseCosts = computed(() =>
 .sparkle-button::after {
   position: absolute;
   background: #35344a;
-  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  clip-path: var(--sparkle-clip-path);
   content: "";
 }
 

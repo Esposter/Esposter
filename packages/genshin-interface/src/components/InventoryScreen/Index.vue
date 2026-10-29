@@ -818,7 +818,7 @@ watch(
 .currency[data-currency="Primogem"] .currency-icon {
   width: calc(var(--unit) * 31);
   height: calc(var(--unit) * 31);
-  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  clip-path: var(--sparkle-clip-path);
   background: linear-gradient(160deg, #d9f0ff, #7fb8ff 50%, #d6b3ff);
 }
 

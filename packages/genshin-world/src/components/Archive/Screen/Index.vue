@@ -400,7 +400,7 @@ const getAdjacentSection = (step: number): ArchiveSection =>
   width: calc(var(--unit) * 12);
   height: calc(var(--unit) * 12);
   background: #fdd65a;
-  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  clip-path: var(--sparkle-clip-path);
   content: "";
 }
 

@@ -70,8 +70,8 @@ const {
     <p class="refinement">{{ refinement }}</p>
     <span class="scrollbar"><span class="thumb" /></span>
     <CharacterMenuButtons>
-      <span class="action">{{ switchLabel }}</span>
-      <span class="action">{{ enhanceLabel }}</span>
+      <span class="action cream-pill">{{ switchLabel }}</span>
+      <span class="action cream-pill">{{ enhanceLabel }}</span>
     </CharacterMenuButtons>
   </div>
 </template>
@@ -230,12 +230,8 @@ const {
   align-items: center;
   justify-content: center;
   height: calc(var(--unit) * 49);
-  border-radius: calc(var(--unit) * 25);
-  background: rgb(236 229 216 / 0.9);
-  color: #3b4255;
-  font-size: calc(var(--unit) * 26);
-  font-weight: 600;
 }
 </style>
 
+<style scoped src="../../styles/creamPill.css"></style>
 <style scoped src="../../styles/weaponStars.css"></style>
