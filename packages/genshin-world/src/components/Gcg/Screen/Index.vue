@@ -277,7 +277,7 @@ const playRerollChoice = () => {
 <style scoped>
 /* The board's places and colours are measured off the game's frame at 1080 high; its table's texture and the frame's ornament are not drawn */
 .gcg-screen {
-  background: #627a7a;
+  background: #524236;
 }
 
 /* The support zone at the left edge, a card's back whose trefoil is art: its plate is the panel's own colour */
