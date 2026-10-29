@@ -1,7 +1,5 @@
 # Products
 
-The app's smaller products — posts, the clicker, achievements, the user pages and the standalone editors.
-
 | Unit                                                                               | Swept                 | Notes                                                                             |
 | ---------------------------------------------------------------------------------- | --------------------- | --------------------------------------------------------------------------------- |
 | `app/store/clicker`, `post`, and the one-store trees                               | 2026-10-05 · Opus 5.5 | dashboard, emailEditor, flowchartEditor, webpageEditor, survey, user, achievement |

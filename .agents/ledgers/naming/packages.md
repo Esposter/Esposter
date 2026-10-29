@@ -1,7 +1,5 @@
 # Packages
 
-Every workspace package outside `apps/web` and `packages/shared`.
-
 | Unit                                                                                                                                                                                                                                 | Swept                  | Notes                                                                                                                                 |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | `packages/db-schema/src/schema`                                                                                                                                                                                                      | 2026-10-29 · Haiku 5.5 | column, table and enum member words are in scope — a rename is one forward migration; an enum column names its whole enum             |

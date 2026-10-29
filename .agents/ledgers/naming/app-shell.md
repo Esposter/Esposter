@@ -1,7 +1,5 @@
 # App Shell
 
-Everything a product mounts inside rather than owns: the chrome, the routes, and the cross-cutting service and composable layers no single feature claims.
-
 | Unit                                                                                                             | Swept                  | Notes                                                                                                                                          |
 | ---------------------------------------------------------------------------------------------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | `app/store` — the rest                                                                                           | 2026-10-14 · Haiku 5.5 | the root stores plus `achievement`, `clicker`, `dashboard`, `post`, `survey`, the editors                                                      |

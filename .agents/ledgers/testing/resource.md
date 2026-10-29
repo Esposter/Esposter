@@ -1,7 +1,5 @@
 # Resource
 
-The resource explorer, the sheet editor, and the other content editors.
-
 | Unit                                                                                                                                                        | Swept                  | Notes                     |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------- |
 | `services/resource/sheet/column`                                                                                                                            | 2026-10-25 · Haiku 5.5 | the transformation suites |

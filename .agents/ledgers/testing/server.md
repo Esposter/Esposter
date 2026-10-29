@@ -1,7 +1,5 @@
 # Server
 
-`apps/web/server` — every router, procedure builder, guard and service.
-
 | Unit                                                                                                                                 | Swept                  | Notes                         |
 | ------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- | ----------------------------- |
 | `trpc/routers/message` — `emoji`, `index`, `moderation`, `scheduledMessageJob`                                                       | 2026-10-25 · Haiku 5.5 | the widest suite in the tree  |

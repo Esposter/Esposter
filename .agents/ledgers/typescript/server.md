@@ -1,7 +1,5 @@
 # Server
 
-`apps/web/server` — routers, procedure builders, guards and services.
-
 | Unit                                                                                            | Swept                  | Notes                                   |
 | ----------------------------------------------------------------------------------------------- | ---------------------- | --------------------------------------- |
 | `server/trpc/routers/message`, `server/trpc/routers/room`                                       | 2026-10-29 · Haiku 5.5 | the widest branch sets in the app       |

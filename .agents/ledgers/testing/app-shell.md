@@ -1,8 +1,5 @@
 # App Shell
 
-Everything a product mounts inside rather than owns: the chrome, the routes, and the cross-cutting service,
-composable and store layers no single feature claims.
-
 | Unit                                                                      | Swept                  | Notes                                                    |
 | ------------------------------------------------------------------------- | ---------------------- | -------------------------------------------------------- |
 | `composables/data`                                                        | 2026-10-26             | one of the two pagination cores                          |

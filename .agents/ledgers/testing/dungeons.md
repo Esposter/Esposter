@@ -1,7 +1,5 @@
 # Dungeons
 
-The game, and the Phaser layer only it uses.
-
 | Unit                                                           | Swept                  | Notes                                |
 | -------------------------------------------------------------- | ---------------------- | ------------------------------------ |
 | `services/dungeons`, `composables/dungeons`, `store/dungeons`  | 2026-10-25 · Haiku 5.5 |                                      |

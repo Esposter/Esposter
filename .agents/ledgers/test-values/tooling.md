@@ -1,7 +1,5 @@
 # Tooling
 
-The repo's own scripts and the app's config suites — what tests the toolchain rather than a product.
-
 | Unit                  | Swept                 | Notes |
 | --------------------- | --------------------- | ----- |
 | `scripts`             | 2026-10-05 · Opus 5.5 |       |

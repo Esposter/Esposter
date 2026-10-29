@@ -1,7 +1,5 @@
 # Packages
 
-Every workspace package outside `apps/web`.
-
 | Unit                                                 | Swept                  | Notes                                                              |
 | ---------------------------------------------------- | ---------------------- | ------------------------------------------------------------------ |
 | `azure-functions`                                    | 2026-10-29 · Haiku 5.5 | every `mockDb` stays — hoisted factory, see the README             |

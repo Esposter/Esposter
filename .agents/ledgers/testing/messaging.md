@@ -1,8 +1,5 @@
 # Messaging
 
-Esbabbler — the room, its message list, and everything only they read. The server half belongs to
-[server](server.md).
-
 | Unit                                                                                         | Swept                  | Notes                             |
 | -------------------------------------------------------------------------------------------- | ---------------------- | --------------------------------- |
 | `store/message`                                                                              | 2026-10-25 · Haiku 5.5 | the widest keyed state in the app |

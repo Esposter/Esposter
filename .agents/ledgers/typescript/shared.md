@@ -1,7 +1,5 @@
 # Shared
 
-`apps/web/shared`, `app/components/Styled` and `packages/shared` — what both halves of the app read.
-
 | Unit                                                                       | Swept                 | Notes                                                                                                                  |
 | -------------------------------------------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | `shared/models/db/message`                                                 | 2026-10-05 · Opus 5.5 |                                                                                                                        |

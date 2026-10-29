@@ -1,7 +1,5 @@
 # Server
 
-`apps/web/server` — routers, procedure builders, guards and services.
-
 | Unit                                                                                                                                        | Swept                  | Notes                                                                        |
 | ------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- | ---------------------------------------------------------------------------- |
 | `server/trpc/routers` — `message`, `room`, `userToRoom`, `role`, `call`, `webhook`, `searchHistory`                                         | 2026-10-29 · Haiku 5.5 | procedure and result naming; the `trpc` skill owns the pattern               |

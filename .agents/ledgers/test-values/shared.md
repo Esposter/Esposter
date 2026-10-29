@@ -1,7 +1,5 @@
 # Shared
 
-`apps/web/shared` and the `Styled` primitives — what both halves of the app read.
-
 | Unit                                              | Swept                 | Notes             |
 | ------------------------------------------------- | --------------------- | ----------------- |
 | `shared/models`                                   | 2026-10-05 · Opus 5.5 |                   |

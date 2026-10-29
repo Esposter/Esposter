@@ -25,17 +25,17 @@ Coverage lives in the area file, never here. A pass loads this file and the one 
 names and units are [testing](../testing/)'s, so "was this area swept, for which question, and when" reads off
 one set of names across both ledgers.
 
-| Area                      | What it holds                                                                      |
-| ------------------------- | ---------------------------------------------------------------------------------- |
-| [app-shell](app-shell.md) | the chrome, the routes, and the cross-cutting service, composable and store layers |
-| [messaging](messaging.md) | Esbabbler — its components, store, composables, services and routers               |
-| [resource](resource.md)   | the resource explorer, the sheet editor and the other editors                      |
-| [products](products.md)   | the smaller products — posts, the clicker, achievements                            |
-| [dungeons](dungeons.md)   | the game                                                                           |
-| [server](server.md)       | `apps/web/server` — routers, procedure builders, guards and services               |
-| [shared](shared.md)       | `apps/web/shared` and `app/components/Styled` — what both halves of the app read   |
-| [packages](packages.md)   | every workspace package outside `apps/web`                                         |
-| [tooling](tooling.md)     | `scripts/`, `.agents/`, the app's root config suites and `content/`                |
+| Area                      | What it holds                                                                                                                                                             |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [app-shell](app-shell.md) | Everything a product mounts inside rather than owns: the chrome, the routes, and the cross-cutting service, composable and store layers no single feature claims.         |
+| [messaging](messaging.md) | Esbabbler — the room, its message list, and everything only they read. The server half belongs to [server](server.md).                                                    |
+| [resource](resource.md)   | The resource explorer, the sheet editor, and the other content editors.                                                                                                   |
+| [products](products.md)   | The app's smaller products — posts, the clicker, achievements. Each row carries a product's components with the store, composable and service files only it uses.         |
+| [dungeons](dungeons.md)   | The game, and the Phaser layer only it uses.                                                                                                                              |
+| [server](server.md)       | `apps/web/server` — every router, procedure builder, guard and service.                                                                                                   |
+| [shared](shared.md)       | `apps/web/shared` and the `Styled` primitives — what both halves of the app read.                                                                                         |
+| [packages](packages.md)   | Every workspace package outside `apps/web`.                                                                                                                               |
+| [tooling](tooling.md)     | The repo's own scripts and the app's config suites — what tests the toolchain rather than a product: `scripts/`, `.agents/`, the app's root config suites and `content/`. |
 
 ## Find recipe
 

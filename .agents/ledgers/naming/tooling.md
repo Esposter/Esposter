@@ -1,7 +1,5 @@
 # Tooling
 
-`scripts/`, `.agents/` and the app's root configuration.
-
 | Unit                                                                                                                                                                | Swept                  | Notes                                                                                                                  |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | `scripts/src/oxlint`, `scripts/src/sweeps`                                                                                                                          | 2026-10-29 · Haiku 5.5 | `args` has no long spelling a strict-mode binding may take, so it is the settled one; an ESTree field name is estree's |

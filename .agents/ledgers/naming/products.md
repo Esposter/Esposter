@@ -1,7 +1,5 @@
 # Products
 
-The app's smaller products — posts, the clicker, achievements, the user pages and the standalone editors.
-
 | Unit                                                 | Swept                  | Notes                                                                                  |
 | ---------------------------------------------------- | ---------------------- | -------------------------------------------------------------------------------------- |
 | `app/services` — `clicker`                           | 2026-10-05 · Opus 5.5  | `get*` is a lookup or a one-line formula; `compute*` is an algorithm over a collection |

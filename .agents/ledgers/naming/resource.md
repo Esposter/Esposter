@@ -1,7 +1,5 @@
 # Resource
 
-The resource explorer, the sheet editor and the other editors.
-
 | Unit                                                                                                  | Swept                  | Notes                                                                                                                                  |
 | ----------------------------------------------------------------------------------------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `app/store/resource`                                                                                  | 2026-10-29 · Haiku 5.5 | a `{key}{value}Map` is read in that order — the key's word comes first                                                                 |

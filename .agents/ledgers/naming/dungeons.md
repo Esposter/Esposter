@@ -1,7 +1,5 @@
 # Dungeons
 
-The game.
-
 | Unit                                                | Swept                 | Notes                                                                                                                                              |
 | --------------------------------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `app/store/dungeons`                                | 2026-10-05 · Opus 5.5 | a store export whose leaf name collides takes its parent's word, as the import site cannot                                                         |
