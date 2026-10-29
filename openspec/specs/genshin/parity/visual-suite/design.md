@@ -21,6 +21,8 @@ flowchart TD
 
 - **A screen's image is written by `genshin:parity approve` (`scripts/src/services/genshinParity/reference/approveReference.ts`).** `approve` prints the compare's status against the screen's bar, then writes its image as a snapshot of the current render: `Index.png` in its component's folder, a variant's as `Index-<variant>.png` beside it. It runs the suite's `-u` for that one screen alone, so the whole suite's images never move. The status never stops the write: a missing reference, a failed compare and a reference judging less than the whole screen are each printed and then written (`openspec/specs/genshin/parity/commands/design.md`).
 
+- **The suite shoots each screen in the parity page's 1920 by 1080 box on a neutral backdrop.** The box is `getScreenBoxStyle` (`packages/genshin-world/parity/getScreenBoxStyle.ts`), the viewport is set to 1920 by 1080 for the screens' cases and put back after, and the image is the box, not the browser body.
+
 - **The variant separator has one source.** The visual suites join a screen's name to its fixture's variant with the interface's `FIXTURE_VARIANT_SEPARATOR` (`packages/genshin-interface/src/services/constants.ts`), and `scripts` reads that same constant for `approve` through a workspace dependency on `genshin-interface`, via its pure `./constants` export, since its root imports Vue components that the scripts runner cannot load.
 
 ## Key files

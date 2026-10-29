@@ -2,7 +2,7 @@
 
 Read when writing a screen's image or citing a reference for one. The one-line rules are in `SKILL.md`; this page is their reasoning.
 
-- **An image is a snapshot, written for every screen and variant.** `genshin:parity approve` writes a screen's image as a snapshot of its current render, whether or not a reference exists and whether or not its compare clears the bar. The visual suite then holds the screen to that image, so a later change shows as a number in the suite's summary, not as a stop. Nothing about an image is judged, so nothing waits on a reference for one.
+- **An image is a snapshot, written for every screen and variant.** `genshin:parity approve` writes a screen's image as a snapshot of its current render, whether or not a reference exists and whether or not its compare clears the bar, and the suite shoots that render in the parity page's 1920 by 1080 box over a neutral backdrop. The visual suite then holds the screen to that image, so a later change shows as a number in the suite's summary, not as a stop. Nothing about an image is judged, so nothing waits on a reference for one.
 
 - **The score is a report.** Where a screen has a whole-screen reference on disk, `compare` and `approve` record its score in the committed report, `ParityReferenceMap.snapshot.md`, whether or not the score is under the bar. `approve` prints the score's status against the screen's bar before it writes the image: `within the bar`, `over the bar`, `no reference`, `compare failed`, or `not the whole screen`. A status is read, never a gate. The visual suites list each case over one percent of its image, worst first, after the run, and the run passes.
 

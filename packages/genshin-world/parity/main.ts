@@ -11,6 +11,7 @@ import { getSceneFog } from "#parity/getSceneFog";
 import { getScenePieces } from "#parity/getScenePieces";
 import { getSceneSky } from "#parity/getSceneSky";
 import { getSceneWhiteBalance } from "#parity/getSceneWhiteBalance";
+import { getScreenBoxStyle } from "#parity/getScreenBoxStyle";
 import { holdAnimations } from "#parity/holdAnimations";
 import { recordError } from "#parity/recordError";
 import { renderMusic } from "#parity/renderMusic";
@@ -131,11 +132,7 @@ if (screen && root) {
         const screenNode = h(component, { ...props, ...readyProps });
         return windowLeft === null
           ? screenNode
-          : h(
-              "div",
-              { style: { height: "100%", left: `${windowLeft}px`, position: "absolute", top: 0, width: "1920px" } },
-              screenNode,
-            );
+          : h("div", { style: getScreenBoxStyle(Number(windowLeft)) }, screenNode);
       };
     },
   });
