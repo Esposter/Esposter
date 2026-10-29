@@ -3,7 +3,7 @@ import type { DevCommand, DevOutcome, DevSaveOutcome, DevSaveTables } from "gens
 
 import {
   giveItem,
-  giveItemArgumentsSchema,
+  giveItemArgs,
   readDevSaveTables,
   setAdventureRank,
   setAdventureRankArgumentsSchema,
@@ -37,8 +37,8 @@ export const useGenshinDevSaveCommands = ({
       return { ok: true, value: outcome.value };
     };
     // Each command is typed by its own schema, so its `run` takes the arguments that schema parses rather than the list's
-    const giveCommand: DevCommand<typeof giveItemArgumentsSchema> = {
-      args: giveItemArgumentsSchema,
+    const giveCommand: DevCommand<typeof giveItemArgs> = {
+      args: giveItemArgs,
       name: "give",
       run: (args) => takeOutcome(giveItem(getSave(), args, tables)),
     };

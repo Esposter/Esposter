@@ -1,7 +1,10 @@
+import type { DevCommand } from "#src/models/dev/DevCommand";
+
 import { Currency } from "#src/models/inventory/Currency";
 import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { MaterialType } from "#src/models/inventory/MaterialType";
-import { giveItem } from "#src/services/dev/commands/giveItem";
+import { giveItem, giveItemArgs } from "#src/services/dev/commands/giveItem";
+import { runDevCommand } from "#src/services/dev/runDevCommand";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
@@ -11,6 +14,7 @@ describe(giveItem, () => {
   const CRYSTAL_CORE_NAME = "Crystal Core";
   const CRYSTAL_CORE_NAME_TEXT_ID = "1";
   const CRYSTAL_CORE_COUNT = 3;
+  const DEFAULT_COUNT = 1;
   const MORA_COUNT = 2;
   const MORA_NAME = ENGLISH_GAME_TEXT[GameTextKey.Mora];
   const UNKNOWN_NAME = "Zzz";
@@ -64,6 +68,25 @@ describe(giveItem, () => {
     expect(giveItem(EMPTY_GENSHIN_SAVE, { count: 1, item: UNKNOWN_NAME }, tables)).toStrictEqual({
       error: `unknown item ${UNKNOWN_NAME}`,
       ok: false,
+    });
+  });
+
+  test("a line names the item first and the count after it, and the count is one when the line gives none", () => {
+    expect.hasAssertions();
+
+    const countCommand: DevCommand<typeof giveItemArgs> = {
+      args: giveItemArgs,
+      name: "give",
+      run: ({ count, item }) => ({ ok: true, value: `${item} ${count}` }),
+    };
+
+    expect(runDevCommand(countCommand, [MORA_NAME, String(MORA_COUNT)])).toStrictEqual({
+      ok: true,
+      value: `${MORA_NAME} ${MORA_COUNT}`,
+    });
+    expect(runDevCommand(countCommand, [MORA_NAME])).toStrictEqual({
+      ok: true,
+      value: `${MORA_NAME} ${DEFAULT_COUNT}`,
     });
   });
 });

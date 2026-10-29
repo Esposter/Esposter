@@ -1,6 +1,6 @@
 import { createTeleportCommand } from "#src/services/dev/commands/createTeleportCommand";
 import { createTimeCommand } from "#src/services/dev/commands/createTimeCommand";
-import { giveItemArgumentsSchema } from "#src/services/dev/commands/giveItem";
+import { giveItemArgs } from "#src/services/dev/commands/giveItem";
 import { createDevRegistry } from "#src/services/dev/createDevRegistry";
 import { DEV_CATALOGUE } from "#src/services/dev/constants.test";
 import { DEV_SCENARIOS } from "#src/services/dev/scenarios/constants";
@@ -16,7 +16,7 @@ describe("DEV_SCENARIOS", () => {
       commands: [
         createTeleportCommand({ catalogue: DEV_CATALOGUE, getLandmarks: () => [], jumpTo: () => undefined }),
         createTimeCommand({ getGameClock: () => ({ minutes: 0, minutesPerSecond: 0 }) }),
-        { args: giveItemArgumentsSchema, name: "give", run: () => ({ ok: true, value: 0 }) },
+        { args: giveItemArgs, name: "give", run: () => ({ ok: true, value: 0 }) },
         { args: z.object({}), name: "heal", run: () => ({ ok: true, value: 0 }) },
       ],
       variables: [],

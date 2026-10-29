@@ -35,7 +35,7 @@ The console SHALL run a line as the command named first with the arguments after
 
 #### Scenario: Bad argument runs nothing
 
-- **GIVEN** the command `give` takes an item name and a count
+- **GIVEN** the command `give` takes an item name, then a count that is one when none is given
 - **WHEN** the owner enters `give Mora lots`
 - **THEN** the command does not run
 - **AND** the console shows the argument's error and the command's usage

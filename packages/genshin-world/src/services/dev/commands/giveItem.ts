@@ -15,13 +15,15 @@ import { toWallet } from "#src/services/save/toWallet";
 import { toWalletSave } from "#src/services/save/toWalletSave";
 import { z } from "zod";
 
-// The `give` line: an item by the name the game shows it under, and how many of it, one when the line gives no count
-export const giveItemArgumentsSchema = z.object({
-  count: z.coerce.number().int().min(1).max(MAX_DEV_GIVE_COUNT).default(1),
+// The `give` line: an item by the name the game shows it under, and how many of it, one when the line gives no count. A
+// Line's words are read against the keys in the order they are written, so the item comes first; the `…Args` name is what
+// Keeps `sort-objects` from sorting these keys alphabetically, which would read the count where the item is
+export const giveItemArgs = z.object({
   item: z.string().min(1),
+  count: z.coerce.number().int().min(1).max(MAX_DEV_GIVE_COUNT).default(1),
 });
 
-export type GiveItemArguments = z.infer<typeof giveItemArgumentsSchema>;
+export type GiveItemArguments = z.infer<typeof giveItemArgs>;
 
 // Gives an item the way the game's reward act gives one: a wallet currency into the wallet, any other item into the bag,
 // which refuses the whole of it when the bag cannot take all of it. The names are the ones the bag and its screens show
