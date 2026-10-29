@@ -7,6 +7,7 @@ import { EFFECT_COMPLETE_EVENT_KEY_SUFFIX } from "@/services/phaser/constants";
 import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
+import { getResultAsync, noop } from "@esposter/shared";
 import { Cameras } from "phaser";
 import { sleepScene } from "vue-phaserjs";
 
@@ -37,13 +38,16 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
     case EffectType.SceneFade: {
       const fadeDurationMs = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
       scene.cameras.main.fadeOut(fadeDurationMs);
-      scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, async () => {
-        await sleepScene(scene, fadeDurationMs);
-        scene.cameras.main.fadeIn(fadeDurationMs);
-        scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
-          onComplete();
-        });
-      });
+      // Phaser's emitter drops the promise an async listener returns, so getResultAsync logs a failure instead
+      scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () =>
+        getResultAsync(async () => {
+          await sleepScene(scene, fadeDurationMs);
+          scene.cameras.main.fadeIn(fadeDurationMs);
+          scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
+            onComplete();
+          });
+        }).match(noop, console.error),
+      );
       return;
     }
     default:

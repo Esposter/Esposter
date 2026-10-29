@@ -12,7 +12,7 @@ import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObje
 import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { NotFoundError } from "@esposter/shared";
+import { getResultAsync, noop, NotFoundError } from "@esposter/shared";
 import { Cameras } from "phaser";
 import { useCameraStore } from "vue-phaserjs";
 
@@ -31,27 +31,33 @@ export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
   const { objectLayerMap, tilemap } = storeToRefs(worldSceneStore);
   fadeOut(scene);
   getDungeonsSoundEffect(scene, SoundEffectKey.OpenDoor).play();
-  scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, async () => {
-    await switchToTilemap(teleportTargetTiledObjectProperty.value.tilemapKey);
+  // Phaser's emitter drops the promise an async listener returns, so getResultAsync logs a failed teleport instead
+  scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () =>
+    getResultAsync(async () => {
+      await switchToTilemap(teleportTargetTiledObjectProperty.value.tilemapKey);
 
-    const doorObjectLayer = objectLayerMap.value?.get(ObjectgroupName.Door);
-    if (!doorObjectLayer)
-      throw new NotFoundError(doorInteractionEffect.name, teleportTargetTiledObjectProperty.value.tilemapKey);
+      const doorObjectLayer = objectLayerMap.value?.get(ObjectgroupName.Door);
+      if (!doorObjectLayer)
+        throw new NotFoundError(doorInteractionEffect.name, teleportTargetTiledObjectProperty.value.tilemapKey);
 
-    const doorObjects = getObjects(tilemap.value, doorObjectLayer);
-    for (const { properties, x, y } of doorObjects) {
-      const idTiledObjectProperty = getTiledObjectProperty<TeleportTarget["id"]>(properties, TeleportObjectProperty.Id);
-      if (idTiledObjectProperty.value !== teleportTargetTiledObjectProperty.value.id) continue;
+      const doorObjects = getObjects(tilemap.value, doorObjectLayer);
+      for (const { properties, x, y } of doorObjects) {
+        const idTiledObjectProperty = getTiledObjectProperty<TeleportTarget["id"]>(
+          properties,
+          TeleportObjectProperty.Id,
+        );
+        if (idTiledObjectProperty.value !== teleportTargetTiledObjectProperty.value.id) continue;
 
-      const playerStore = usePlayerStore();
-      const { player } = storeToRefs(playerStore);
-      phaserEventEmitter.emit(
-        "playerTeleport",
-        getPositionAfterDirectionMovement({ x, y }, DirectionToGridDirectionMap[player.value.direction]),
-      );
-    }
+        const playerStore = usePlayerStore();
+        const { player } = storeToRefs(playerStore);
+        phaserEventEmitter.emit(
+          "playerTeleport",
+          getPositionAfterDirectionMovement({ x, y }, DirectionToGridDirectionMap[player.value.direction]),
+        );
+      }
 
-    fadeIn(scene);
-  });
+      fadeIn(scene);
+    }).match(noop, console.error),
+  );
   return true;
 };
