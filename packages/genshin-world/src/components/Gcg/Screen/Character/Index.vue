@@ -23,7 +23,7 @@ const emit = defineEmits<{ select: [] }>();
 
 <template>
   <!-- A character card on the board: its HP in the corner, its energy as pips down its right edge, its aura and shield
-       beside it and its name under them. A defeated one is greyed; the board raises the active one by its class -->
+       beside it. Its name is only the button's label. A defeated one is greyed; the board raises the active one by its class -->
   <button
     :aria-label="name"
     class="character"
