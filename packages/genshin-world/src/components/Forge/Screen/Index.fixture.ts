@@ -37,9 +37,9 @@ const definitions = new Map<number, ItemDefinition>(
 // The moment the queues are read at, and the game day it falls on, which the forge points counted today are kept under
 const now = Temporal.Instant.fromEpochMilliseconds(0);
 const gameDay = computeGameDay(now);
+const UNIT_SECONDS = 3;
 // The Enhancement Ore queue forging its fifth unit, four done and two seconds left in it, and the Adventure Rank that opens
 // The third queue
-const UNIT_SECONDS = 3;
 const progress: ForgeProgress = {
   forgedPoints: 0,
   forgedPointsDay: gameDay,
