@@ -1,4 +1,4 @@
-import type { DragReorderContext } from "@/models/ui/DragReorderContext";
+import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
 
 import { startDragPress } from "@/services/ui/dragReorder/startDragPress";
 

@@ -1,4 +1,4 @@
-import type { DragReorderContext } from "@/models/ui/DragReorderContext";
+import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
 
 import { TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
 import { autoscrollDrag } from "@/services/ui/dragReorder/autoscrollDrag";

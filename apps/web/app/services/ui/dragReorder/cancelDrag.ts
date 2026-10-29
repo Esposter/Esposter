@@ -1,5 +1,5 @@
-import type { DragReorderContext } from "@/models/ui/DragReorderContext";
-import type { Press } from "@/models/ui/Press";
+import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
+import type { Press } from "@/models/ui/dragReorder/Press";
 
 import { settleDrag } from "@/services/ui/dragReorder/settleDrag";
 

@@ -1,4 +1,4 @@
-import type { DragReorderContext } from "@/models/ui/DragReorderContext";
+import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
 
 import { DRAG_AUTOSCROLL_SPEED } from "@/services/ui/constants";
 import { getAutoscroll } from "@/services/ui/dragReorder/getAutoscroll";

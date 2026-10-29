@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UiSchemaFormRendererProps } from "@/models/ui/UiSchemaFormRendererProps";
+import type { UiSchemaFormRendererProps } from "@/models/ui/schemaForm/UiSchemaFormRendererProps";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";

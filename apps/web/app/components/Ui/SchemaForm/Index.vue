@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T">
-import type { UiSchemaFormBinding } from "@/models/ui/UiSchemaFormBinding";
-import type { UiSchemaFormConfiguration } from "@/models/ui/UiSchemaFormConfiguration";
+import type { UiSchemaFormBinding } from "@/models/ui/schemaForm/UiSchemaFormBinding";
+import type { UiSchemaFormConfiguration } from "@/models/ui/schemaForm/UiSchemaFormConfiguration";
 import type { CoreActions, Dispatch, JsonFormsCore, JsonFormsSubStates, JsonSchema } from "@jsonforms/core";
 import type { z } from "zod";
 

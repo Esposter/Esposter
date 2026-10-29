@@ -1,5 +1,5 @@
-import type { DragReorderContext } from "@/models/ui/DragReorderContext";
-import type { Press } from "@/models/ui/Press";
+import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
+import type { Press } from "@/models/ui/dragReorder/Press";
 
 import { DRAG_START_DISTANCE, LONG_PRESS_MOVE_TOLERANCE } from "@/services/ui/constants";
 import { cancelDrag } from "@/services/ui/dragReorder/cancelDrag";

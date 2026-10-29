@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UiSchemaFormRendererProps } from "@/models/ui/UiSchemaFormRendererProps";
+import type { UiSchemaFormRendererProps } from "@/models/ui/schemaForm/UiSchemaFormRendererProps";
 
 interface Props extends UiSchemaFormRendererProps {}
 // A field whose value the schema fixes — a variant's discriminant, which the variant choice sets — has nothing to edit,

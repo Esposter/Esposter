@@ -1,5 +1,5 @@
-import type { UiSchemaFormConfiguration } from "@/models/ui/UiSchemaFormConfiguration";
-import type { UiSchemaFormRendererProps } from "@/models/ui/UiSchemaFormRendererProps";
+import type { UiSchemaFormConfiguration } from "@/models/ui/schemaForm/UiSchemaFormConfiguration";
+import type { UiSchemaFormRendererProps } from "@/models/ui/schemaForm/UiSchemaFormRendererProps";
 
 import { getSchemaFormLayout } from "@/services/ui/schemaForm/getSchemaFormLayout";
 import { mapDispatchToControlProps, mapStateToControlProps } from "@jsonforms/core";

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UiSchemaFormRendererProps } from "@/models/ui/UiSchemaFormRendererProps";
+import type { UiSchemaFormRendererProps } from "@/models/ui/schemaForm/UiSchemaFormRendererProps";
 import type { UISchemaElement } from "@jsonforms/core";
 
 import { mapStateToJsonFormsRendererProps, NOT_APPLICABLE } from "@jsonforms/core";

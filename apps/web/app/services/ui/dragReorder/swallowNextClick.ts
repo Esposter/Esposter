@@ -1,4 +1,4 @@
-import type { DragReorderContext } from "@/models/ui/DragReorderContext";
+import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
 
 import { stopSwallowing } from "@/services/ui/dragReorder/stopSwallowing";
 import { swallowClick } from "@/services/ui/swallowClick";

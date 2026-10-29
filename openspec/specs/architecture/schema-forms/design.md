@@ -164,8 +164,8 @@ Every issue and pull request the audit of @jsonforms/vue selected from [the JSON
 | `apps/web/app/services/resource/link/ResourceLinkTypeSourceMap.ts` | Each link type's router, mark, empty message and unbound id                                 |
 | `apps/web/app/components/Ui/SchemaForm/Index.test.ts`              | The form's suite, mounted through the root                                                  |
 | `apps/web/app/composables/ui/useSchemaFormControl.ts`              | What every field reads: its control over the core's mapping, its layout meta and its issue  |
-| `apps/web/app/models/ui/UiSchemaFormBinding.ts`                    | The form a renderer takes: the core state it maps, and the dispatch its changes go through  |
-| `apps/web/app/models/ui/UiSchemaFormRendererProps.ts`              | What every renderer takes, the form among it                                                |
+| `apps/web/app/models/ui/schemaForm/UiSchemaFormBinding.ts`         | The form a renderer takes: the core state it maps, and the dispatch its changes go through  |
+| `apps/web/app/models/ui/schemaForm/UiSchemaFormRendererProps.ts`   | What every renderer takes, the form among it                                                |
 | `apps/web/app/services/ui/schemaForm/SchemaFormRenderers.ts`       | Which renderer draws which node, by rank                                                    |
 | `apps/web/app/services/ui/schemaForm/getSchemaFormVariantValue.ts` | The value a union switched to another variant keeps                                         |
 | `apps/web/app/services/ui/schemaForm/getSchemaFormLayout.ts`       | The layout meta read off a node, which JSON Forms' types leave out                          |

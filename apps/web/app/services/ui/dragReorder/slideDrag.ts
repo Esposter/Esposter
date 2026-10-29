@@ -1,6 +1,6 @@
-import type { Drag } from "@/models/ui/Drag";
-import type { DragReorderContext } from "@/models/ui/DragReorderContext";
-import type { Press } from "@/models/ui/Press";
+import type { Drag } from "@/models/ui/dragReorder/Drag";
+import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
+import type { Press } from "@/models/ui/dragReorder/Press";
 
 import { REORDER_SLIDE_TRANSITION } from "@/services/ui/constants";
 import { clearRowMotion } from "@/services/ui/dragReorder/clearRowMotion";

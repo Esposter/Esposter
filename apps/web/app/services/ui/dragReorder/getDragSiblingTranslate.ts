@@ -1,5 +1,5 @@
-import type { Drag } from "@/models/ui/Drag";
-import type { Press } from "@/models/ui/Press";
+import type { Drag } from "@/models/ui/dragReorder/Drag";
+import type { Press } from "@/models/ui/dragReorder/Press";
 
 // How far a row between the held row's old slot and its new one moves aside: toward the slot the held row leaves
 export const getDragSiblingTranslate = (press: Press, drag: Drag, targetIndex: number, index: number) => {

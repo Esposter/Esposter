@@ -1,4 +1,4 @@
-import type { DragReorderContext } from "@/models/ui/DragReorderContext";
+import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
 
 import { REORDER_GHOST_CLASS } from "@/services/ui/constants";
 import { endPress } from "@/services/ui/dragReorder/endPress";

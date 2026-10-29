@@ -1,4 +1,4 @@
-import type { DragReorderContext } from "@/models/ui/DragReorderContext";
+import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
 
 // The slide's transition comes off a row once it has arrived, at once under reduced motion, which runs none, and never
 // Off a row a newer drag already holds

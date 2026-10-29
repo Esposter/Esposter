@@ -1,4 +1,4 @@
-import type { UiSchemaFormBinding } from "@/models/ui/UiSchemaFormBinding";
+import type { UiSchemaFormBinding } from "@/models/ui/schemaForm/UiSchemaFormBinding";
 import type {
   ControlElement,
   JsonFormsCellRendererRegistryEntry,

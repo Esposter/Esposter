@@ -1,5 +1,5 @@
-import type { DragReorderContext } from "@/models/ui/DragReorderContext";
-import type { Press } from "@/models/ui/Press";
+import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
+import type { Press } from "@/models/ui/dragReorder/Press";
 
 // Ends a press's listeners, observer and the wait for a touch to rest, and forgets it if it is the press in progress
 export const endPress = (context: DragReorderContext, currentPress: Press) => {
