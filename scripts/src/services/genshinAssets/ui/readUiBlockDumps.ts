@@ -111,8 +111,11 @@ const readCanvases = async (directory: string): Promise<Map<string, UiCanvasScal
 };
 
 // A block's UI export read into the dumps the index joins, a folder at a time
-export const readUiBlockDumps = async (exportDirectory: string): Promise<UiBlockDumps> => ({
-  canvases: await readCanvases(join(exportDirectory, UI_CANVAS_SCALER_RAW_DIRECTORY)),
-  gameObjects: await readGameObjects(join(exportDirectory, UI_GAME_OBJECT_DIRECTORY)),
-  rectTransforms: await readRectTransforms(exportDirectory),
-});
+export const readUiBlockDumps = async (exportDirectory: string): Promise<UiBlockDumps> => {
+  const [canvases, gameObjects, rectTransforms] = await Promise.all([
+    readCanvases(join(exportDirectory, UI_CANVAS_SCALER_RAW_DIRECTORY)),
+    readGameObjects(join(exportDirectory, UI_GAME_OBJECT_DIRECTORY)),
+    readRectTransforms(exportDirectory),
+  ]);
+  return { canvases, gameObjects, rectTransforms };
+};
