@@ -5,6 +5,7 @@ import "@fontsource/signika/600.css";
 import GameScreen from "#src/components/GameScreen/Index.vue";
 import { InteractionState } from "#src/models/InteractionState";
 import { FIXTURE_VARIANT_SEPARATOR } from "#src/services/constants";
+import { createVisualComparisonRecord } from "#src/services/createVisualComparisonRecord";
 import { afterAll, assert, describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
@@ -20,13 +21,6 @@ const LAYOUT_COMPONENTS = new Set(["./GameRect/Index.vue", "./GameScreen/Index.v
 const COMPONENT_FILE = "/Index.vue";
 const IMAGE_NAME = "Index";
 const STAGE_STYLE = { background: "#6b7280", display: "grid", placeItems: "center" };
-// A mismatch over this share of an image is listed after the cases, one percent being the 99% likeness the screens are held to
-const MISMATCH_RATIO_BAR = 0.01;
-// The matcher's message for a shot that differs from its image, then the pixels that differ and their ratio
-const MISMATCH_MESSAGE = "Screenshot does not match the stored reference.";
-const MISMATCH_DETAIL_REGEX = /(?<pixels>\d+) pixels \(ratio (?<ratio>[\d.]+)\) differ/u;
-// The matcher's message for a shot with no image beside it
-const MISSING_IMAGE_MESSAGE = "No existing reference screenshot found";
 const cases: { component: Component; imageName: string; props: Record<string, unknown>; slot?: string }[] = [];
 for (const [path, { props, slot, variants = {} }] of Object.entries(fixtures)) {
   const componentPath = path.replace(/\.fixture\.ts$/u, ".vue");
@@ -54,35 +48,10 @@ const holdAnimations = (): void => {
 };
 
 describe("genshin-interface components", () => {
-  // The mismatches over the bar, each with its title, and the cases counted apart from them
-  const overBar: { pixels: number; ratio: number; title: string }[] = [];
-  let withinBarCount = 0;
-  let withoutImageCount = 0;
-
-  // A shot that differs from its image is listed in the summary, a missing image is counted apart, and any other failure
-  // (a render error, a timeout) is thrown
-  const recordComparison = (error: unknown, title: string): void => {
-    if (!(error instanceof Error)) throw error;
-    const detail = MISMATCH_DETAIL_REGEX.exec(error.message)?.groups;
-    if (error.message.includes(MISSING_IMAGE_MESSAGE)) withoutImageCount += 1;
-    else if (!detail || !error.message.includes(MISMATCH_MESSAGE)) throw error;
-    else if (Number(detail.ratio) > MISMATCH_RATIO_BAR)
-      overBar.push({ pixels: Number(detail.pixels), ratio: Number(detail.ratio), title });
-    else withinBarCount += 1;
-  };
+  const visualComparison = createVisualComparisonRecord();
 
   afterAll(() => {
-    const summary = `${withinBarCount} within the bar${withoutImageCount > 0 ? `, ${withoutImageCount} with no image beside them` : ""}.`;
-    if (overBar.length === 0) {
-      console.log(`No case over ${MISMATCH_RATIO_BAR * 100}% of its image: ${summary}`);
-      return;
-    }
-
-    // The matcher rounds each ratio up to a whole percent, so ties are ordered by the pixels that differ
-    const rows = overBar
-      .toSorted((first, second) => second.ratio - first.ratio || second.pixels - first.pixels)
-      .map(({ ratio, title }) => `  ${String(Math.round(ratio * 100)).padStart(4)}%  ${title}`);
-    console.log([`Cases over ${MISMATCH_RATIO_BAR * 100}% of their image, worst first:`, ...rows, summary].join("\n"));
+    visualComparison.report();
   });
 
   test("every component but the layout ones has a fixture", () => {
@@ -123,7 +92,7 @@ describe("genshin-interface components", () => {
     const [comparison] = await Promise.allSettled([
       expect.element(page.elementLocator(element)).toMatchScreenshot(imageName),
     ]);
-    if (comparison.status === "fulfilled") withinBarCount += 1;
-    else recordComparison(comparison.reason, imageName);
+    if (comparison.status === "fulfilled") visualComparison.recordWithinBar();
+    else visualComparison.recordFailure(comparison.reason, imageName);
   });
 });

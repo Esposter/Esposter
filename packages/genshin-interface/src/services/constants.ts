@@ -119,3 +119,11 @@ export const COOKING_ARC_CENTRE_X = 960;
 export const COOKING_ARC_CENTRE_Y = 832;
 export const COOKING_ARC_RADIUS_X = 435;
 export const COOKING_ARC_RADIUS_Y = 120;
+// A mismatch over this share of an image is listed after the cases, one percent being the 99% likeness the screens are held to
+export const MISMATCH_RATIO_BAR = 0.01;
+// The matcher's message for a shot that differs from its image, then the pixels that differ and their ratio
+export const MISMATCH_MESSAGE = "Screenshot does not match the stored reference.";
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
+export const MISMATCH_DETAIL_REGEX: RegExp = /(?<pixels>\d+) pixels \(ratio (?<ratio>[\d.]+)\) differ/u;
+// The matcher's message for a shot with no image beside it
+export const MISSING_IMAGE_MESSAGE = "No existing reference screenshot found";
