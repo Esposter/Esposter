@@ -81,7 +81,7 @@ committed.
 | `menu-world-level-prompt-revert` | `MenuWorldLevelPrompt` | pending: no screenshot of this variant yet | | | |
 | `mondstadt-city-location` | `WorldScreen` | 26.66% | 0.292 | 22.43% | 0.7549 |
 | `nasha-town-location` | `WorldScreen` | 29.69% | 0.238 | 24.60% | 0.7627 |
-| `paimon-menu` | `MenuPaimon` | 11.43% | 0.688 | 8.63% | 0.3556 |
+| `paimon-menu` | `MenuPaimon` | 3.79% | 0.915 | 2.00% | 0.2072 |
 | `party-screen` | `PartyScreen` | 4.45% | 0.304 | 2.68% | 0.1628 |
 | `people-of-the-springs-location` | `WorldScreen` | 25.06% | 0.223 | 21.49% | 0.7945 |
 | `publisher-splash` | `SplashPublisher` | 0.07% | 1.000 | 0.01% | 0.0036 |

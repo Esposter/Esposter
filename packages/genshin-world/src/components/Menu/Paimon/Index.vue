@@ -88,6 +88,10 @@ const emit = defineEmits<{
   setBirthday: [birthday: TravelerBirthdaySave];
   toggleWorldLevel: [];
 }>();
+// The contents the player's rank and quests have opened, in the game's order: a system not open yet is not drawn at all
+const openContents = computed(() =>
+  PAIMON_MENU_CONTENTS.filter(({ screenKind }) => checkIsSystemOpen(screenKind, adventureRank, finishedMainQuestIds)),
+);
 const backButton = useTemplateRef("backButton");
 const worldLevelInfoButton = useTemplateRef("worldLevelInfoButton");
 // The World Level dialog opens over the menu from the info icon beside the World Level, and closes back to it; the menu
@@ -142,8 +146,8 @@ onBeforeUnmount(() => {
 <template>
   <!-- The game's pause menu, laid out in the reference's own pixels: its side bar down the left, of Back, the side bar's
        Screens and Quit Game, the profile card over the panel's entries in the game's four columns, and the world drawn
-       past the panel, where Paimon floats. Every entry the game has is here in its order: one whose screen is not built
-       yet is drawn disabled, and the links out to web pages are drawn disabled whole -->
+       past the panel, where Paimon floats. Every entry the player's rank and quests have opened is here in its order: one
+       whose screen is not built yet is drawn disabled, and the links out to web pages are drawn disabled whole -->
   <GameScreen
     :class="{ closing: isClosing }"
     class="paimon-menu"
@@ -248,10 +252,10 @@ onBeforeUnmount(() => {
         </GameButton>
         <div class="contents">
           <GameButton
-            v-for="{ icon, screenKind } of PAIMON_MENU_CONTENTS"
+            v-for="{ icon, screenKind } of openContents"
             :key="screenKind"
             class="entry"
-            :disabled="!checkIsBuilt(screenKind) || !checkIsSystemOpen(screenKind, adventureRank, finishedMainQuestIds)"
+            :disabled="!checkIsBuilt(screenKind)"
             :kind="GameButtonKind.Row"
             @click="emit('open', screenKind)"
           >

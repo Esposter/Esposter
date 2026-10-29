@@ -14,6 +14,11 @@ import { defineComponent, h } from "vue";
 describe("menuPaimon", () => {
   const birthday = { day: 13, month: 10 };
   const travelerName = "Aether";
+  // The main quests the systems a quest opens wait on, all finished, as a player who has opened every system has them
+  const openedQuestIds = new Set([2010001, 35001, 20505]);
+  // The labels of the contents the menu draws, in its order, read from its entries that are not links
+  const getContentLabels = () =>
+    [...document.querySelectorAll(".contents .entry:not(.link) .label")].map((label) => label.textContent);
   // The side bar's Settings entry opens the Settings screen, which the world's menu names by its own screen kind
   test("settings opens from the side bar", async () => {
     expect.hasAssertions();
@@ -115,6 +120,56 @@ describe("menuPaimon", () => {
     await expect
       .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.TrainingGuide] }))
       .not.toBeInTheDocument();
+  });
+
+  // A locked account draws the frame's nine contents, the systems its rank and quests have not opened left out, not drawn
+  test("a locked account's menu draws only the contents it has opened", async () => {
+    expect.hasAssertions();
+
+    await render(MenuPaimon, { props });
+
+    expect(getContentLabels()).toStrictEqual(
+      [
+        GameTextKey.PartySetup,
+        GameTextKey.Friends,
+        GameTextKey.Achievements,
+        GameTextKey.Archive,
+        GameTextKey.CharacterArchive,
+        GameTextKey.Character,
+        GameTextKey.Inventory,
+        GameTextKey.Quests,
+        GameTextKey.Map,
+      ].map((key) => ENGLISH_GAME_TEXT[key]),
+    );
+  });
+
+  test("a player at rank 20 with the quests finished sees all fifteen contents", async () => {
+    expect.hasAssertions();
+
+    await render(MenuPaimon, { props: { ...props, adventureRank: 20, finishedMainQuestIds: openedQuestIds } });
+
+    expect(getContentLabels()).toHaveLength(15);
+    expect(getContentLabels()).toContain(ENGLISH_GAME_TEXT[GameTextKey.BattlePass]);
+  });
+
+  test("a player at rank 15 with the quests finished has no Battle Pass and no Co-Op Mode", async () => {
+    expect.hasAssertions();
+
+    await render(MenuPaimon, { props: { ...props, adventureRank: 15, finishedMainQuestIds: openedQuestIds } });
+
+    expect(getContentLabels()).toHaveLength(13);
+    expect(getContentLabels()).not.toContain(ENGLISH_GAME_TEXT[GameTextKey.BattlePass]);
+    expect(getContentLabels()).not.toContain(ENGLISH_GAME_TEXT[GameTextKey.CoOp]);
+  });
+
+  test("an open system whose screen is not built is drawn disabled", async () => {
+    expect.hasAssertions();
+
+    await render(MenuPaimon, { props: { ...props, checkIsBuilt: () => false } });
+
+    await expect
+      .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.PartySetup] }))
+      .toBeDisabled();
   });
 
   test("choosing Time opens the Time screen", async () => {
