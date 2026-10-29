@@ -24,7 +24,7 @@ interface PaimonMenuScreenEntry<Icon> {
 }
 
 // The Paimon menu's contents in the game's order, as the English PC client's menu draws them. The Training Guide is not
-// among them, since no still of the menu the references hold shows it. Which of them carry a red dot is the host's state
+// Among them, since no still of the menu the references hold shows it. Which of them carry a red dot is the host's state
 export const PAIMON_MENU_CONTENTS: readonly PaimonMenuScreenEntry<MenuEntryIcon>[] = [
   { icon: EntryIcon.Shop, screenKind: ScreenKind.PaimonsBargains },
   { icon: EntryIcon.PartySetup, screenKind: ScreenKind.PartySetup },
@@ -42,9 +42,9 @@ export const PAIMON_MENU_CONTENTS: readonly PaimonMenuScreenEntry<MenuEntryIcon>
   { icon: EntryIcon.BattlePass, screenKind: ScreenKind.BattlePass },
   { icon: EntryIcon.CoOp, screenKind: ScreenKind.CoOp },
 ];
-// The Time screen's advance in game minutes, at least thirty ahead and at most two days, as the game's Time option allows
 // The two ornaments the time dial's frame carries, at its top and at its bottom
 export const TIME_DIAL_ORNAMENT_POSITIONS: readonly string[] = ["top", "bottom"];
+// The Time screen's advance in game minutes, at least thirty ahead and at most two days, as the game's Time option allows
 export const TIME_MINIMUM_ADVANCE_MINUTES = 30;
 export const TIME_MAXIMUM_ADVANCE_MINUTES = 2 * MINUTES_PER_DAY;
 // The links out to web pages the menu ends with, drawn disabled, since the world opens no page of their own
