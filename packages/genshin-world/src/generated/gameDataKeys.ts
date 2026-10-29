@@ -362,6 +362,7 @@ export const GameDataKeys = {
     "20741": "quests/20741",
     "20743": "quests/20743",
     "22111": "quests/22111",
+    "39604": "quests/39604",
     "70102": "quests/70102",
     "70104": "quests/70104",
     "70106": "quests/70106",
