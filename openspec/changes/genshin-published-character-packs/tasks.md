@@ -10,15 +10,15 @@
 
 ## 3. Download services
 
-- [ ] 3.1 Read the index through the hosted game data with a schema that satisfies its model. Verify: a test reading the index at `GAME_DATA_LOCAL_BASE_URL` once the main session has published it, seen failing first.
-- [ ] 3.2 Plan the download as the files and bytes the browser's Cache Storage lacks, keyed by file url and sha256. Verify: tests named after the scenarios 'First visit downloads every file', 'Returning visit downloads nothing' and 'Republished file is fetched again', seen failing first.
-- [ ] 3.3 Download the planned files six at a time, streamed, reporting loaded bytes, with three attempts each. Verify: tests named after the scenarios 'Retry fetches only what is missing' and 'Failure never enters the world without the model', seen failing first.
-- [ ] 3.4 Serve a `CharacterPackReader` from the cache so `readCharacterMesh` and the terms read the held files. Verify: a test reading a model file and a terms file through the reader from a stubbed cache, seen failing first.
+- [x] 3.1 Read the index through the hosted game data with a schema that satisfies its model. Verify: a test reading the index at `GAME_DATA_LOCAL_BASE_URL` once the main session has published it, seen failing first.
+- [x] 3.2 Plan the download as the files and bytes the browser's Cache Storage lacks, keyed by file url and sha256. Verify: tests named after the scenarios 'First visit downloads every file', 'Returning visit downloads nothing' and 'Republished file is fetched again', seen failing first.
+- [x] 3.3 Download the planned files six at a time, streamed, reporting loaded bytes, with three attempts each. Verify: tests named after the scenarios 'Retry fetches only what is missing' and 'Failure never enters the world without the model', seen failing first.
+- [x] 3.4 Serve a `CharacterPackReader` from the cache so `readCharacterMesh` and the terms read the held files. Verify: a test reading a model file and a terms file through the reader from a stubbed cache, seen failing first.
 
 ## 4. Opening and loading screen
 
 - [ ] 4.1 Start the preload when the opening mounts and expose bytes loaded, bytes pending, failure and retry from a composable. Verify: a test mounting the opening with an empty cache and a fetch stub showing the preload begins at mount, seen failing first.
-- [ ] 4.2 Compose the host's bar from the bytes while any are pending and the thirds after. Verify: tests named after the scenarios 'Size shows beside the bar while bytes are pending' and 'Nothing pending shows no size' on the bar's value, seen failing first.
+- [x] 4.2 Compose the host's bar from the bytes while any are pending and the thirds after. Verify: tests named after the scenarios 'Size shows beside the bar while bytes are pending' and 'Nothing pending shows no size' on the bar's value, seen failing first.
 - [ ] 4.3 Draw the downloading line, the bytes over the bytes in the reader's language and the failure line with Retry on the startup loading screen. Verify: the screen's fixture renders with pending bytes, with none and with a failure; the owner's eyes judge the look against the game's own downloading line.
 
 ## 5. The world draws the model
