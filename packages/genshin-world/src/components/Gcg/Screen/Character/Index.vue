@@ -58,7 +58,8 @@ const emit = defineEmits<{ select: [] }>();
   transition: transform 160ms;
 }
 
-.character.choosable {
+.character.choosable:hover,
+.character.choosable:focus-visible {
   box-shadow: 0 0 0 calc(var(--unit) * 3) #f6e3a1;
 }
 
