@@ -69,7 +69,7 @@ export const weaponRecipe: ForgeRecipe = {
   results: [{ count: 1, itemId: forgedWeaponData.id, weight: 1 }],
 };
 // The bag's Normal Enhancement Ore, the first ore's recipe takes two of per unit: a stack at the count the frames show
-const oreDefinition = getItemDefinition(takeOne(recipes, 0).materials[0].id, englishNameText, materialDataMap);
+const oreDefinition = getItemDefinition(takeOne(takeOne(recipes, 0).materials, 0).id, englishNameText, materialDataMap);
 const createOreEntry = (id: number, quantity: number): InventoryItem => ({ definition: oreDefinition, id, quantity });
 const createBag = (...items: InventoryItem[]) => ({ items, nextId: items.length, quickSwapItemIds: [] });
 const heldWeaponEntry: InventoryItem = {
