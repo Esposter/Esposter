@@ -2142,6 +2142,7 @@ useWorldSaveSync({
       :adventure-exp-progress
       :adventure-rank="rank"
       :alerted-icons="[]"
+      :finished-main-quest-ids="finishedMainQuestIds"
       :game-text
       :is-world-level-adjustable
       :is-world-level-lowered="worldLevelAdjustment.isLowered"

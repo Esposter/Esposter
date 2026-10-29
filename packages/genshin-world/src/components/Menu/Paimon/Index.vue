@@ -41,6 +41,8 @@ interface Props {
   alertedIcons: (MenuEntryIcon | MenuFrameIcon)[];
   // Whether a screen is built, which its entry opens; an unbuilt one's entry is drawn disabled
   checkIsBuilt: (screenKind: TitledScreenKind) => boolean;
+  // The main quests the player has finished, which the systems a quest opens are gated on
+  finishedMainQuestIds: ReadonlySet<number>;
   // The game's words in the reader's language
   gameText: GameText;
   // A state every entry is drawn in, forced by a fixture; a reader's pointer sets it itself
@@ -67,6 +69,7 @@ const {
   adventureRank,
   alertedIcons,
   checkIsBuilt,
+  finishedMainQuestIds,
   gameText,
   interactionState,
   isWorldLevelAdjustable,
@@ -248,7 +251,7 @@ onBeforeUnmount(() => {
             v-for="{ icon, screenKind } of PAIMON_MENU_CONTENTS"
             :key="screenKind"
             class="entry"
-            :disabled="!checkIsBuilt(screenKind) || !checkIsSystemOpen(screenKind, adventureRank)"
+            :disabled="!checkIsBuilt(screenKind) || !checkIsSystemOpen(screenKind, adventureRank, finishedMainQuestIds)"
             :kind="GameButtonKind.Row"
             @click="emit('open', screenKind)"
           >

@@ -22,6 +22,7 @@ export const props = {
     MenuFrameIcon.Edit,
   ],
   checkIsBuilt: () => true,
+  finishedMainQuestIds: new Set<number>(),
   gameText: ENGLISH_GAME_TEXT,
   isWorldLevelAdjustable: false,
   isWorldLevelLowered: false,

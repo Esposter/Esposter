@@ -22,6 +22,8 @@ interface Props {
   adventureRank: number;
   // The icons of the Paimon menu that carry a red dot, which its host holds; none is []
   alertedIcons: (MenuEntryIcon | MenuFrameIcon)[];
+  // The main quests the player has finished, which the Paimon menu's entries open on
+  finishedMainQuestIds: ReadonlySet<number>;
   // The game's words in the reader's language
   gameText: GameText;
   // Whether the World Level can be lowered or restored now, and whether it is lowered
@@ -61,6 +63,7 @@ const emit = defineEmits<{
     :adventure-rank
     :alerted-icons
     :check-is-built="(titledScreenKind) => Boolean(slots[titledScreenKind])"
+    :finished-main-quest-ids
     :game-text
     :is-world-level-adjustable
     :is-world-level-lowered

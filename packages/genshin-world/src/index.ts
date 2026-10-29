@@ -953,6 +953,7 @@ export * from "./services/adventureRank/computeWorldLevelCooldown.ts";
 export * from "./services/adventureRank/constants.ts";
 export * from "./services/adventureRank/gainAdventureExp.ts";
 export * from "./services/adventureRank/readAdventureRankTables.ts";
+export * from "./services/adventureRank/ScreenKindOpenQuestMap.ts";
 export * from "./services/adventureRank/ScreenKindOpenRankMap.ts";
 export * from "./services/adventureRank/toggleWorldLevelLowering.ts";
 export * from "./services/archive/ArchiveSectionGameTextKeyMap.ts";
