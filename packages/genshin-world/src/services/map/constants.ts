@@ -23,9 +23,9 @@ export const MAP_GROUND = "#67817d";
 // Provisional: the map's marks measured off the game's map with the HUD's reference. A mark's radius is a share of the
 // Extent a view shows, so it is drawn one size at any view's scale
 export const MAP_MARK_SHARE = 0.02;
-// Provisional: the open map's disc at the reference's scale, about 13 pixels of 1080 high. The minimap keeps its own
-// Share, its view being a fraction of the open map's extent
-export const MAP_OVERLAY_MARK_SHARE = 0.0068;
+// The open map's disc at the reference's scale, about 14.5 pixels of 1080 high, its disc's radius read off the English
+// Map's pointer over Jueyun Karst. The minimap keeps its own share, its view being a fraction of the open map's extent
+export const MAP_OVERLAY_MARK_SHARE = 0.00756;
 // An area's name and its progress line, each a share of the open map's extent so they are drawn at the view's own scale.
 // Read off the English PC client's map over Galesong Hill (yt-kgW2IgWKukg at 4.6 seconds, 1080p): the name's capitals
 // 28.8 pixels high and the line's 16.0, their middles 45.9 apart, which Signika's capitals, 0.706 of its size as the page

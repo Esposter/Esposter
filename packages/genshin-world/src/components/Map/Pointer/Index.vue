@@ -18,9 +18,9 @@ const { size, x = 0, yaw = 0, z = 0 } = defineProps<Props>();
        None, and turned the other way about the vertical than three turns it, since the map looks down on the ground.
        A dark tip hangs under it -->
   <g :transform="`translate(${x} ${z}) rotate(${-MathUtils.radToDeg(yaw)}) scale(${size})`">
-    <circle class="rim" r="1.35" />
+    <circle class="rim" r="1.2" />
     <circle class="disc" r="1" />
-    <path class="cap" d="M -0.7 -1 L 0 -2.2 L 0.7 -1 Z" />
+    <path class="cap" d="M -0.7 -1 L 0 -1.8 L 0.7 -1 Z" />
     <path class="cap" d="M -0.6 1.1 L 0 2.1 L 0.6 1.1 Z" />
     <path class="tip" d="M -0.25 1.1 L 0 1.9 L 0.25 1.1 Z" />
   </g>
@@ -37,7 +37,7 @@ const { size, x = 0, yaw = 0, z = 0 } = defineProps<Props>();
 
 .disc {
   fill: #97edf2;
-  stroke: #3d96ca;
+  stroke: #61bbdf;
   stroke-width: 0.15;
   vector-effect: non-scaling-stroke;
 }
