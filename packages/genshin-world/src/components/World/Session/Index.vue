@@ -463,10 +463,6 @@ const {
   savedLongTermEncounterPoints: savedState.longTermEncounterPoints,
   worldNow,
 });
-// Each weapon's rarity by its id, which tints the Archive's weapon tiles
-const archiveRarityMap = new Map(
-  Array.from(statTables.weaponDataMap, ([id, { rarity }]): [number, number] => [id, rarity]),
-);
 // The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats
 const { archiveData, bookReading, offeredViewpoints, readBook, viewpointPlaceMap, viewViewpoint } = useWorldArchive({
   archiveKillsMap,
@@ -2202,9 +2198,9 @@ useWorldSaveSync({
           :game-text
           :kills-map="archiveKillsMap"
           :progress-map="archiveProgressMap"
-          :rarity-map="archiveRarityMap"
           :section-entries-map="archiveData.sectionEntriesMap"
           :text-map="archiveData.textMap"
+          :weapon-data-map="statTables.weaponDataMap"
           @close="screenKind = ScreenKind.World"
           @read-book="(entryId) => readBook(entryId)"
         />

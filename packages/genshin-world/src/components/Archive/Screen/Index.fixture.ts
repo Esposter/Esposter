@@ -10,7 +10,6 @@ import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 const sectionEntriesMap = await readArchiveEntries(GAME_DATA_LOCAL_BASE_URL);
 const textMap = await ArchiveTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
 const { weaponDataMap } = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
-const rarityMap = new Map([...weaponDataMap].map(([id, { rarity }]) => [id, rarity]));
 // The first forty weapons of the Equipment section are open, so the grid's rows read by name and the count reads forty
 const OPENED_ENTRY_COUNT = 40;
 const equipmentEntryIds = sectionEntriesMap[ArchiveSection.Equipment].slice(0, OPENED_ENTRY_COUNT).map(({ id }) => id);
@@ -26,7 +25,7 @@ export const props = {
   killsMap: new Map<number, number>(),
   newEntryIds,
   progressMap,
-  rarityMap,
   sectionEntriesMap,
   textMap,
+  weaponDataMap,
 };

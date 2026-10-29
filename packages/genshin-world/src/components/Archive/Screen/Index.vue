@@ -2,6 +2,7 @@
 import type { ArchiveEntry } from "#src/models/archive/ArchiveEntry";
 import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
+import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { GameText } from "genshin-text";
 
 import ScreenHeader from "#src/components/Menu/ScreenHeader/Index.vue";
@@ -15,8 +16,6 @@ import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-te
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
-  // Each weapon's rarity in stars by its entry's id, which tints its tile and sets its stars; without it every tile draws as a one-star tile
-  rarityMap?: ReadonlyMap<number, number>;
   // The defeats of each Living Being the Archive counts, by its entry's id
   killsMap: ArchiveKills;
   // The entries the player has met, by section
@@ -29,6 +28,8 @@ interface Props {
   newEntryIds?: ReadonlySet<number>;
   // The entries' names and descriptions in the reader's language, by the game's text id
   textMap: Readonly<Record<string, string>>;
+  // Each weapon's data by its entry's id: its rarity in stars tints its tile and sets the stars the tile draws
+  weaponDataMap: ReadonlyMap<number, WeaponData>;
 }
 
 const {
@@ -36,9 +37,9 @@ const {
   gameText,
   newEntryIds = new Set<number>(),
   progressMap,
-  rarityMap,
   sectionEntriesMap,
   textMap,
+  weaponDataMap,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; readBook: [entryId: number] }>();
 const selectedSection = ref<ArchiveSection>(ArchiveSection.Equipment);
@@ -83,10 +84,14 @@ const handleEntryClick = (entryId: number): void => {
   if (checkIsEntryReadable(entryId)) emit("readBook", entryId);
   else selectedEntryId.value = entryId;
 };
+// Each weapon's rarity in stars by its entry's id, derived once from the data map this screen is given
+const rarityMap = computed(
+  () => new Map(Array.from(weaponDataMap, ([id, { rarity }]): [number, number] => [id, rarity])),
+);
 // A four or five star weapon's tile takes its face gradient from the item tile, which owns the gradients, while the two and
 // three star tiles keep the flat tints below
 const getTileBackground = (entryId: number): string | undefined => {
-  const rarity = rarityMap?.get(entryId) ?? 0;
+  const rarity = rarityMap.value.get(entryId) ?? 0;
   return rarity >= 4 ? ItemRarityFaceGradientMap[rarity] : undefined;
 };
 // Q, E and the arrows at the screen's edges step between the sections, held at the first and the last
@@ -128,7 +133,7 @@ const getAdjacentSection = (step: number): ArchiveSection =>
         type="button"
         :aria-pressed="entry.id === selectedEntry?.id"
         :data-dimmed="dimmedEntryIds.has(entry.id) || undefined"
-        :data-rarity="rarityMap?.get(entry.id)"
+        :data-rarity="rarityMap.get(entry.id)"
         :style="{ background: getTileBackground(entry.id) }"
         @click="handleEntryClick(entry.id)"
       >
@@ -139,7 +144,7 @@ const getAdjacentSection = (step: number): ArchiveSection =>
           >
         </span>
         <span class="stars" aria-hidden="true"
-          ><span v-for="star in rarityMap?.get(entry.id) ?? 0" :key="star" class="star"
+          ><span v-for="star in rarityMap.get(entry.id) ?? 0" :key="star" class="star"
         /></span>
         <span v-if="newEntryIds.has(entry.id)" class="new">{{ gameText[GameTextKey.New] }}</span>
       </button>
