@@ -75,6 +75,7 @@ const emit = defineEmits<{ accept: []; close: [] }>();
               :key="index"
               class="item"
               :aria-label="label"
+              count-size="21cqh"
               :count
               :rarity
               role="img"
@@ -275,8 +276,6 @@ const emit = defineEmits<{ accept: []; close: [] }>();
 
 /* The clip's slots, 76 square, their counts at 16 */
 .item {
-  --count-size: 21cqh;
-
   width: calc(var(--unit) * 76);
   height: calc(var(--unit) * 76);
 }

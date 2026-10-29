@@ -2,23 +2,24 @@
 interface Props {
   // How many of the item, on the strip across the tile's foot: a number, or the range a reward rolls as words ("4~5")
   count: number | string;
+  // The count's font size, in the tile's own units (cqh): a screen unit set outside the tile would resolve against the tile
+  countSize?: string;
   // The item's rarity in stars, which colours the tile
   rarity: number;
 }
 
-const { count, rarity } = defineProps<Props>();
+const { count, countSize = "30cqh", rarity } = defineProps<Props>();
 </script>
 
 <template>
   <!-- An item's tile as the game's reward lists draw it, filling the box its parent gives it: the rarity's gradient lit
        from the foot, and the count in white on a darker strip across the bottom 24%, the corners rounded 7%. Measured on
        the wiki's Adventurer Handbook screenshot and the Reputation clip, which agree on the three, four and five star
-       tiles and differ only in the count's size, which a screen sets as `--count-size` since it does not follow the
-       tile's: the handbook's counts stand as high on its 188 tiles as on its 141. A one or two star tile is not measured
-       yet and draws bare. The item's own art is the game's and does not ship -->
+       tiles. A count keeps the screen's size rather than the tile's, so each screen passes its own as `countSize`. A
+       two star tile is not measured yet and draws bare. The item's own art is the game's and does not ship -->
   <span class="item-tile" :data-rarity="rarity">
     <span class="face">
-      <span class="count" aria-hidden="true">{{ count }}</span>
+      <span class="count" aria-hidden="true" :style="{ fontSize: countSize }">{{ count }}</span>
     </span>
   </span>
 </template>
@@ -54,21 +55,20 @@ const { count, rarity } = defineProps<Props>();
   width: 100%;
   height: 24cqh;
   color: #fff;
-  font-size: var(--count-size, 30cqh);
   font-weight: 600;
   line-height: 24cqh;
   text-align: center;
 }
 
 .item-tile[data-rarity="3"] .count {
-  background: #4d6680;
+  background: #52677d;
 }
 
 .item-tile[data-rarity="4"] .count {
-  background: #665d82;
+  background: #666380;
 }
 
 .item-tile[data-rarity="5"] .count {
-  background: #6b625c;
+  background: #6d645c;
 }
 </style>

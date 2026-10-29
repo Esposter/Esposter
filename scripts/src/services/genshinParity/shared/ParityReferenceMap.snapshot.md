@@ -31,6 +31,7 @@ committed.
 | `dialogue-paimon-line` | `DialogueTalk` | 10.21% | 0.947 | 2.93% | 0.3029 |
 | `everfrozen-earth-location` | `WorldScreen` | 20.61% | 0.234 | 19.75% | 0.6327 |
 | `exit-prompt` | `MenuExit` | 1.66% | 0.999 | 1.33% | 0.1210 |
+| `expedition-screen` | `ExpeditionScreen` | 22.77% | 0.291 | 19.89% | 0.6302 |
 | `fishing-screen` | `FishingScreen` | 0.08% | 0.998 | 0.04% | 0.0041 |
 | `forge-screen` | `ForgeScreen` | 6.51% | 0.685 | 5.32% | 0.2160 |
 | `forge-screen-ores-done` | `ForgeScreen` | 3.49% | 0.792 | 2.20% | 0.1556 |
@@ -38,7 +39,7 @@ committed.
 | `forge-screen-refused` | `ForgeScreen` | pending: no screenshot of this variant yet | | | |
 | `forge-screen-weapons-done` | `ForgeScreen` | pending: no screenshot of this variant yet | | | |
 | `gcg-duel-board` | `GcgScreen` | 13.25% | 0.508 | 8.21% | 0.4544 |
-| `handbook-experience` | `HandbookScreen` | 4.72% | 0.941 | 2.45% | 0.2243 |
+| `handbook-experience` | `HandbookScreen` | 4.71% | 0.940 | 2.42% | 0.2232 |
 | `health-notice` | `SplashHealthNotice` | 6.17% | 0.964 | 1.51% | 0.1780 |
 | `health-notice-japanese` | `SplashHealthNotice` | 8.38% | 0.873 | 1.54% | 0.2395 |
 | `health-notice-mainland` | `SplashHealthNotice` | 4.71% | 0.960 | 1.19% | 0.1419 |
@@ -88,7 +89,7 @@ committed.
 | `quest-screen-details` | `QuestScreen` | 21.34% | 0.929 | 19.93% | 0.5645 |
 | `quest-screen-header` | `QuestScreen` | 9.04% | 0.928 | 8.26% | 0.3522 |
 | `quest-screen-list` | `QuestScreen` | 8.75% | 0.821 | 7.13% | 0.3252 |
-| `reputation-screen` | `ReputationScreen` | 2.00% | 0.876 | 1.40% | 0.1434 |
+| `reputation-screen` | `ReputationScreen` | 1.99% | 0.875 | 1.39% | 0.1429 |
 | `settings-audio-rows` | `MenuSettings` | 1.01% | 0.995 | 0.38% | 0.0745 |
 | `settings-graphics` | `MenuSettings` | 1.59% | 0.996 | 1.26% | 0.1020 |
 | `settings-graphics-rows` | `MenuSettings` | 1.07% | 0.998 | 0.40% | 0.0888 |

@@ -126,11 +126,13 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
             <span v-for="(isLit, index) of progressSegments" :key="index" class="panel-segment" :data-lit="isLit" />
           </div>
           <p class="panel-rewards-title">{{ gameText[GameTextKey.HandbookRewards] }}</p>
+          <!-- Every count stands 42 reference pixels high, so its share of the tile is 42 over the tile's 188 or 141 -->
           <div class="panel-rewards">
             <ItemTile
               v-for="({ count, rarity }, index) of investigationRewards"
               :key="index"
               class="reward"
+              count-size="22.34cqh"
               :count
               :rarity
             />
@@ -155,6 +157,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
               v-for="({ count, rarity }, rewardIndex) of commission.rewards"
               :key="rewardIndex"
               class="commission-reward"
+              count-size="29.79cqh"
               :count
               :rarity
               :style="{ left: `calc(var(--reference-pixel) * ${1020 + rewardIndex * 159})` }"
@@ -259,11 +262,8 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   overflow: visible;
 }
 
-/* The reference frame, 3130 by 1730 reference pixels, every piece placed inside it at its measured box. Every reward
-   tile's count stands 42 high whatever the tile's size */
+/* The reference frame, 3130 by 1730 reference pixels, every piece placed inside it at its measured box */
 .frame {
-  --count-size: calc(var(--reference-pixel) * 42);
-
   position: relative;
   width: calc(var(--reference-pixel) * 3130);
   height: calc(var(--reference-pixel) * 1730);
