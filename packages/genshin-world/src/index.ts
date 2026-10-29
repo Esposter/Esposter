@@ -2276,6 +2276,7 @@ export * from "./services/liyue/LiyuePartFamilyMeshRegexMap.ts";
 export * from "./services/liyue/LiyueUndrawnMeshRegexMap.ts";
 export * from "./services/loading/computeLoadingProgress.ts";
 export * from "./services/loading/constants.ts";
+export * from "./services/loading/ElementMarkColorMap.ts";
 export * from "./services/loading/ElementMarkPathMap.ts";
 export * from "./services/loading/measureLoadStep.ts";
 export * from "./services/login/cloud/createLoginClouds.ts";
