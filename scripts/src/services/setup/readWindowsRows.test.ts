@@ -9,7 +9,6 @@ describe(readWindowsRows, () => {
     countFiles: () => undefined,
     exists: () => false,
     makeDirectory: vi.fn(),
-    mainCheckoutRoot: "/Users/ada/Esposter",
     readText: () => undefined,
     run: () => ({ status: 1, stdout: "" }),
     runVisibly: vi.fn(() => ({ status: 0, stdout: null })),

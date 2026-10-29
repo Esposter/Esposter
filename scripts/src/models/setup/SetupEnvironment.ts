@@ -7,8 +7,6 @@ export interface SetupEnvironment {
   countFiles: (path: string) => number | undefined;
   exists: (path: string) => boolean;
   makeDirectory: (path: string) => void;
-  // The root of the main checkout, which every linked worktree shares with it
-  mainCheckoutRoot: string;
   readText: (path: string) => string | undefined;
   run: (file: string, args: readonly string[]) => SetupRunResult;
   runVisibly: (file: string, args: readonly string[]) => SetupRunResult;

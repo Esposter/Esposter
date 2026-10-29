@@ -13,9 +13,8 @@ describe(readMemoryRow, () => {
     countFiles: () => undefined,
     exists: () => false,
     makeDirectory: vi.fn(),
-    mainCheckoutRoot: MAIN_CHECKOUT_ROOT,
     readText: () => undefined,
-    run: () => ({ status: 1, stdout: "" }),
+    run: () => ({ status: 0, stdout: `${MAIN_CHECKOUT_ROOT}/.git\n` }),
     runVisibly: vi.fn(() => ({ status: 0, stdout: null })),
     ...overrides,
   });
@@ -37,6 +36,16 @@ describe(readMemoryRow, () => {
 
     expect(readMemoryRow(createEnvironment())).toStrictEqual({
       next: `no folder at ${MEMORY_DIRECTORY}; ${MEMORY_NEXT}`,
+      status: SetupStatus.Info,
+      step: "memory",
+    });
+  });
+
+  test("reports no main checkout, rather than failing, when git cannot answer", () => {
+    expect.hasAssertions();
+
+    expect(readMemoryRow(createEnvironment({ run: () => ({ status: null, stdout: null }) }))).toStrictEqual({
+      next: `no main checkout to read memory from; ${MEMORY_NEXT}`,
       status: SetupStatus.Info,
       step: "memory",
     });

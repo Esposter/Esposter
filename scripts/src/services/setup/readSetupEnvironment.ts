@@ -1,6 +1,5 @@
 import type { SetupEnvironment } from "#src/models/setup/SetupEnvironment";
 
-import { readMainCheckoutRoot } from "#src/services/queue/readMainCheckoutRoot";
 import { runSetupProcess } from "#src/services/setup/runSetupProcess";
 import { existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
 
@@ -12,7 +11,6 @@ export const readSetupEnvironment = (): SetupEnvironment => ({
   makeDirectory: (path) => {
     mkdirSync(path, { recursive: true });
   },
-  mainCheckoutRoot: readMainCheckoutRoot(),
   readText: (path) => (existsSync(path) ? readFileSync(path, "utf8") : undefined),
   run: (file, args) => runSetupProcess(file, args, "pipe"),
   runVisibly: (file, args) => runSetupProcess(file, args, "inherit"),
