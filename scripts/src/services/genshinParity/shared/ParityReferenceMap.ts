@@ -47,7 +47,7 @@ const FORGE_QUEUES_PLATE = [
   { height: 70, width: 945, x: 830, y: 785 },
   { height: 28, width: 275, x: 1645, y: 858 },
 ];
-// The quit prompt's dialog panel, scored by its hover and pressed entries
+// The quit prompt's dialog panel, scored by its rest, hover and pressed entries
 const MENU_EXIT_PANEL_REGION = { height: 590, width: 930, x: 495, y: 245 };
 // The reasons a screen has no reference yet, each shared by every screen or variant it is pending for
 const NO_SCREEN_SCREENSHOT = "no screenshot of the screen yet";
@@ -1218,9 +1218,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     variant: "refine",
   },
   "weapon-screen-two-star": { pending: NO_VARIANT_SCREENSHOT, screen: "WeaponScreen", variant: "twoStar" },
-  // The statue under the oak by day, from the 2026 recording's fixed camera east of it, a game minute a real second
-  // From about six in the morning, an hour still to be read off its sun; its camera is solved from its landmarks and
-  // Refined on the statue's outline
+  // The statue under the oak by day, from the 2026 recording's fixed camera east of it, whose game clock runs a minute a
+  // Real second from about six in the morning; the entry holds the clock at 720 minutes, an hour still to be read off its
+  // Sun; its camera is solved from its landmarks and refined on the statue's outline
   "windrise-statue-day": {
     component: DerivedAssetComponent.Windrise,
     landmarks: {
