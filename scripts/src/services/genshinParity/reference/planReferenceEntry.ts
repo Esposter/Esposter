@@ -16,11 +16,14 @@ import { getScratchReferencePath } from "#src/services/genshinParity/shared/getS
 
 // One reference id's pack: its screenshot, its plate screenshot when its entry names one, and the clean plate filled from
 // the one the entry fills from. The row it ends with is the one the manifest holds with those images named by hash, and
-// it is returned only when that changed. Nothing is stored here, so a collision is known before any object is written
+// it is returned only when that changed. Nothing is stored here, so a collision is known before any object is written.
+// `existing` is the row the local bytes are checked against, which a replace leaves out; `committed` is the manifest's own
+// row, which a replace whose local plate file is absent keeps its plate and clean plate from
 export const planReferenceEntry = async (
   id: string,
   reference: ParityReference,
   existing: ParityReferenceManifestRow | undefined,
+  committed: ParityReferenceManifestRow | undefined,
 ): Promise<ReferenceEntryPlan> => {
   const mainLabel = getReferenceFileName(id);
   const plateLabel = getReferencePlateFileName(id);
@@ -54,7 +57,11 @@ export const planReferenceEntry = async (
       reference,
       main.capturedAt ?? new Date(),
     );
-  const row: ParityReferenceManifestRow = { ...base, cleanPlate: clean?.cleanPlate, plate: plate?.image };
+  const row: ParityReferenceManifestRow = {
+    ...base,
+    cleanPlate: clean?.cleanPlate ?? (isPlateMissing ? committed?.cleanPlate : undefined),
+    plate: plate?.image ?? (isPlateMissing ? committed?.plate : undefined),
+  };
   const changed =
     existing === undefined || JSON.stringify(sortObjectKeys(row)) !== JSON.stringify(sortObjectKeys(existing));
   const images: { entry: ReferenceEntryImage; file: string }[] = [

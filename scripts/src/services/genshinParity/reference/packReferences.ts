@@ -31,17 +31,13 @@ export const packReferences = async (
 ): Promise<ReferencePackOutcome> => {
   const manifest = await readManifestFile();
   const entries = Object.entries(ParityReferenceMap).filter(([, { pending }]) => pending === undefined);
-  // A replaced id is planned without its committed row, so the bytes it packs to are its local ones and it writes a new row
+  // A replaced id's local bytes are checked against no committed row, so the bytes it packs to are its local ones and it
+  // writes a new row; the committed row still backs the plate it keeps where its local plate is absent
   const plans = await settleAll(
-    entries.map(
-      ([id, reference]) =>
-        () =>
-          planReferenceEntry(
-            id,
-            reference,
-            options.replace.includes(id) ? undefined : manifest.references.find((row) => row.id === id),
-          ),
-    ),
+    entries.map(([id, reference]) => () => {
+      const committed = manifest.references.find((row) => row.id === id);
+      return planReferenceEntry(id, reference, options.replace.includes(id) ? undefined : committed, committed);
+    }),
     REFERENCE_PACK_CONCURRENCY,
   );
   const decision = planReferencePack(plans, options);
