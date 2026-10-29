@@ -53,6 +53,8 @@ interface Props {
   // The namecard the player equipped by its item id, 0 for none, and the held namecards the profile can show
   namecardItemId: number;
   namecards: ProfileNamecard[];
+  // The signature the profile shows under the name, when the profile has one
+  signature?: string;
   // The server's clock minus this machine's, which the World Level's cooldown is read against
   serverClockOffsetMs?: number;
   // The Traveler's birthday once it is set, which the row shows; until then the row offers the button that sets it
@@ -76,6 +78,7 @@ const {
   isWorldLevelLowered,
   namecardItemId,
   namecards,
+  signature,
   travelerBirthday,
   worldLevel,
   worldLevelChangedAt,
@@ -238,6 +241,9 @@ onBeforeUnmount(() => {
           @click="isWorldLevelDialogOpen = true"
         />
         <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
+        <p v-if="!equippedNamecard" class="signature">
+          {{ signature || gameText[GameTextKey.FriendNoSignature] }}
+        </p>
         <p class="birthday">{{ gameText[GameTextKey.Birthday] }}</p>
         <p v-if="travelerBirthday" class="birthday-value value">
           {{ travelerBirthday.month }}/{{ travelerBirthday.day }}
@@ -588,6 +594,18 @@ onBeforeUnmount(() => {
   position: absolute;
   top: calc(var(--unit) * 301);
   margin: 0;
+}
+
+/* The signature line under the name, at the reference's left edge and cap line; the namecard's button takes its place when a namecard is equipped */
+.signature {
+  position: absolute;
+  top: calc(var(--unit) * 105);
+  left: calc(var(--unit) * 331);
+  margin: 0;
+  color: #cdd5de;
+  font-size: calc(var(--unit) * 21);
+  letter-spacing: calc(var(--unit) * 2.4);
+  line-height: 1;
 }
 
 /* Provisional: the namecard's button takes the signature line's place, drawn when a namecard is equipped */

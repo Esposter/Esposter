@@ -264,4 +264,17 @@ describe("menuPaimon", () => {
       .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.BirthdaySet] }))
       .not.toBeInTheDocument();
   });
+
+  // The profile's signature is shown as it is, and the game's no-signature line stands in only while it holds none
+  test("a profile's signature is shown in place of the no-signature line", async () => {
+    expect.hasAssertions();
+
+    const signature = "Ask me about the tide";
+    await render(MenuPaimon, { props: { ...props, signature } });
+
+    await expect.element(page.getByText(signature, { exact: true })).toBeInTheDocument();
+    await expect
+      .element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.FriendNoSignature], { exact: true }))
+      .not.toBeInTheDocument();
+  });
 });
