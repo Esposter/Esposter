@@ -769,7 +769,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The map writes it
   "map-overlay-galesong": {
     props: {
-      camera: { x: -99.42, yaw: 0, z: 636.36 },
+      camera: { x: -451.1, yaw: 0, z: 634.67 },
       explorationAreas: [
         { areaId: "galesong-hill", doings: [{ id: "galesong-hill", kind: "Waypoint", weight: 99 }], total: 100 },
       ],
@@ -783,6 +783,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
           rotation: -1.5708,
         },
       ],
+      // The still shows none of the neighbouring subarea names, which the map draws only at 1512 metres and closer, so
+      // its view is further out; the one label alone does not fix the zoom, so 3024 metres is provisional
+      zoom: 3024,
     },
     region: { height: 84, width: 296, x: 596, y: 336 },
     screen: "MapOverlay",

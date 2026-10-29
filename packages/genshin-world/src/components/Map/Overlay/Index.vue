@@ -29,6 +29,7 @@ import {
   MAP_PROGRESS_OFFSET_SHARE,
   MAP_PROGRESS_SHARE,
   MAP_SUBAREA_LABEL_MAX_METRES,
+  MAP_SUBAREA_LABEL_OFFSETS,
   MAP_SUBAREA_LABEL_SHARE,
   MAP_ZOOM_DRAWING_HEIGHT,
   MAP_ZOOM_TRACK_HEIGHT,
@@ -187,7 +188,8 @@ const areaLabels = computed(() =>
 const subareaNames = computed(() =>
   subareaLabels.flatMap(({ nameTextId, x, z }) => {
     const name = nameText[nameTextId];
-    return name ? [{ name, ...projectMapPoint({ x, z }, centre.value) }] : [];
+    const offset = MAP_SUBAREA_LABEL_OFFSETS[nameTextId] ?? { x: 0, z: 0 };
+    return name ? [{ name, ...projectMapPoint({ x: x + offset.x, z: z + offset.z }, centre.value) }] : [];
   }),
 );
 // The place the character stands in, named at the bottom right with its progress line as the map names it: its city

@@ -39,6 +39,18 @@ export const MAP_SUBAREA_LABEL_SHARE = 0.0221;
 // The furthest zoom the subarea labels are drawn at, in metres across the map's width: the reference draws them at this
 // zoom, and no further out is measured, so the names hide when the view is further out than it
 export const MAP_SUBAREA_LABEL_MAX_METRES = 1512;
+// Where the reference sets six subarea names away from the published points, which are their outlines' means: the
+// offset in catalogue metres from each name's point to the place its ink centre stands at the reference's zoom, keyed by
+// the name's text id, measured off `map-overlay-jueyun` (Huaguang Stone Forest, Qingyun Peak, Jueyun Karst, Mt. Hulao,
+// Nantianmen and Cuijue Slope; Mt. Aozang has no published point, so it is not drawn)
+export const MAP_SUBAREA_LABEL_OFFSETS: Readonly<Record<string, { x: number; z: number }>> = {
+  "1198567662": { x: 43.1, z: -26.8 },
+  "1812998582": { x: 60.3, z: -19.5 },
+  "2598253758": { x: 19.8, z: 31.9 },
+  "3734778318": { x: -89.8, z: 25.9 },
+  "4268537278": { x: 25.7, z: -114 },
+  "455287262": { x: -59.5, z: 102.2 },
+};
 // The metres the open map shows across its width at the zoom slider's default, centred on the player: the zoom the
 // Reference's slider thumb stands at, from the subarea labels it draws (`map-overlay-jueyun`), 1920 pixels across it
 export const MAP_VIEW_METRES = 1512;
