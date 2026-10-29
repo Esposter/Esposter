@@ -1,5 +1,5 @@
 import { ARCHIVE_FOLDER, PROPOSALS_DIRECTORY } from "#src/services/proposals/constants";
-import { LEDGER_DIRECTORY, SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
+import { LEDGER_DIRECTORY } from "#src/services/sweeps/constants";
 
 export const OPENSPEC_DIRECTORY = "openspec";
 export const OPENSPEC_SPEC_FILE = "/spec.md";
@@ -17,12 +17,9 @@ export const ADDRESS_REGEX: RegExp = /https?:\/\/\S+|\]\([^)]*\)/gu;
 // A code span and a fenced block quote text rather than say it, so neither is prose: a fence opens and closes on a line of its own
 export const CODE_SPAN_REGEX: RegExp = /`[^`]*`/gu;
 export const FENCE_REGEX: RegExp = /^\s*(?:```|~~~)/u;
-// Prose whose dates are the record itself: a shipped change's archive, the ledgers' dated rows, a vendored skill's publisher prose
-export const DATED_PROSE_SKIPPED_PREFIXES: readonly string[] = [
-  `${PROPOSALS_DIRECTORY}/${ARCHIVE_FOLDER}/`,
-  `${LEDGER_DIRECTORY}/`,
-  `${SKILLS_DIRECTORY}/pnpm-`,
-  `${SKILLS_DIRECTORY}/vuetify0/`,
-];
+// An archived delta is shipped history that nothing rewrites, so neither the citation rule nor the dated-prose scan reads it
+export const ARCHIVED_DELTA_PREFIX = `${PROPOSALS_DIRECTORY}/${ARCHIVE_FOLDER}/`;
+// Prose whose dates are the record itself: a shipped change's archive and the ledgers' dated rows
+export const DATED_PROSE_SKIPPED_PREFIXES: readonly string[] = [ARCHIVED_DELTA_PREFIX, `${LEDGER_DIRECTORY}/`];
 // Each package's changelog is written from the commits at release, so its headings carry release dates that only the release writes
 export const CHANGELOG_REGEX: RegExp = /(?:^|\/)CHANGELOG\.md$/u;
