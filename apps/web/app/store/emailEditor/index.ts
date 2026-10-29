@@ -22,7 +22,7 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
     // The page builder edits the body and head the content holds, so every read hands them over, and a reload drops the
     // History of the document it replaces
     (email) => {
-      const resourceId = resourceStore.resource?.id;
+      const resourceId = resourceStore.currentResourceId;
       if (!resourceId) return;
 
       pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, { content: email.content, root: email.root });

@@ -20,7 +20,7 @@ export const useWebpageEditorStore = defineStore("webpageEditor", () => {
     // The page builder edits the tree and root the content holds, so every read hands them over, and a reload drops the
     // History of the document it replaces
     (webpage) => {
-      const resourceId = resourceStore.resource?.id;
+      const resourceId = resourceStore.currentResourceId;
       if (!resourceId) return;
 
       pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content: webpage.content, root: webpage.root });

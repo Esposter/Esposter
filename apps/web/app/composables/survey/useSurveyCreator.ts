@@ -21,7 +21,7 @@ export const useSurveyCreator = () => {
   const { loadContent, saveModel } = surveyStore;
   const importJsonFile = useImportJsonFile();
   const exportJsonFile = useExportJsonFile();
-  const getResourceId = () => resource.value?.id ?? "";
+  const getResourceId = () => resourceStore.currentResourceId;
   const deleteFile = useDeleteResourceFile(ResourceType.Survey, getResourceId);
   // Every deletion hook below is handed a url the creator may never have set — a logo that was never
   // Uploaded, an image choice left blank — so the presence check belongs with the delete, not at each hook
