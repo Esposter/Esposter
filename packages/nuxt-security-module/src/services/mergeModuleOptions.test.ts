@@ -23,6 +23,31 @@ describe(mergeModuleOptions, () => {
     expect(headers.contentSecurityPolicy).not.toHaveProperty("img-src");
   });
 
+  test("a source added beside a default 'none' replaces it, since 'none' only stands alone", () => {
+    expect.hasAssertions();
+
+    const { headers } = mergeModuleOptions(DEFAULTS, {
+      headers: {
+        ...getDefaultSecurityHeaders(false, false),
+        contentSecurityPolicy: { "script-src-attr": ["'unsafe-hashes'", "'sha256-hash'"] },
+      },
+    });
+    if (!headers || !headers.contentSecurityPolicy) assert.fail("the policy is disabled");
+
+    expect(headers.contentSecurityPolicy["script-src-attr"]).toStrictEqual(["'unsafe-hashes'", "'sha256-hash'"]);
+  });
+
+  test("a consumer's own 'none' replaces the default sources", () => {
+    expect.hasAssertions();
+
+    const { headers } = mergeModuleOptions(DEFAULTS, {
+      headers: { ...getDefaultSecurityHeaders(false, false), contentSecurityPolicy: { "font-src": ["'none'"] } },
+    });
+    if (!headers || !headers.contentSecurityPolicy) assert.fail("the policy is disabled");
+
+    expect(headers.contentSecurityPolicy["font-src"]).toStrictEqual(["'none'"]);
+  });
+
   test("an option the consumer leaves out keeps its default", () => {
     expect.hasAssertions();
 

@@ -3,6 +3,8 @@ import type { ModuleOptions } from "#src/models/ModuleOptions";
 import type { PermissionsPolicy } from "#src/models/PermissionsPolicy";
 import type { SecurityHeaders } from "#src/models/SecurityHeaders";
 
+import { NONE_SOURCE } from "#src/services/constants";
+
 // A consumer's options laid over the defaults.
 // The two policies that are lists per directive or per feature are merged additively.
 // A consumer's sources are appended to the default ones.
@@ -42,11 +44,20 @@ const mergeDirectives = (
   const merged: ContentSecurityPolicy = { ...defaults };
   for (const [directive, value] of Object.entries(overrides))
     if (value === false) delete merged[directive];
-    else if (Array.isArray(value))
-      merged[directive] = [...new Set([...(Array.isArray(merged[directive]) ? merged[directive] : []), ...value])];
+    else if (Array.isArray(value)) merged[directive] = mergeSources(merged[directive], value);
     else merged[directive] = value;
 
   return merged;
+};
+
+// `'none'` is the empty list and stands alone: a source added beside a default `'none'` replaces it, which a browser would
+// Otherwise ignore with a warning, and a consumer's own `['none']` replaces the default sources
+const mergeSources = (defaultSources: boolean | string[] | undefined, sources: string[]): string[] => {
+  if (sources.length === 1 && sources[0] === NONE_SOURCE) return sources;
+
+  const mergedSources = new Set([...(Array.isArray(defaultSources) ? defaultSources : []), ...sources]);
+  if (mergedSources.size > 1) mergedSources.delete(NONE_SOURCE);
+  return [...mergedSources];
 };
 
 const mergeFeatures = (

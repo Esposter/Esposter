@@ -1,8 +1,11 @@
 import type { NuxtConfig } from "nuxt/schema";
 
+import { createHash } from "node:crypto";
+
 import { BASE_URL } from "../app/services/desmos/constants.ts";
 import { MEDIAPIPE_TASKS_VISION_URL } from "../app/services/message/room/liveKit/constants.ts";
 import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE } from "../shared/services/app/constants.ts";
+import { NUXT_IMAGE_ERROR_HANDLER } from "./constants.ts";
 
 export const security: NuxtConfig["security"] = {
   headers: {
@@ -35,6 +38,12 @@ export const security: NuxtConfig["security"] = {
       "media-src": ["'self'", process.env.AZURE_CONTAINER_BASE_URL, "blob:"].filter((source) => source !== undefined),
       // Desmos
       "script-src": ["'unsafe-eval'"],
+      // An event handler attribute runs only when its hash is listed under 'unsafe-hashes', and the one handler allowed is
+      // `NuxtImg`'s error marker, so every other inline handler stays blocked
+      "script-src-attr": [
+        "'unsafe-hashes'",
+        `'sha256-${createHash("sha256").update(NUXT_IMAGE_ERROR_HANDLER).digest("base64")}'`,
+      ],
       "script-src-elem": [
         // Nuxt data hydration
         "'unsafe-inline'",
