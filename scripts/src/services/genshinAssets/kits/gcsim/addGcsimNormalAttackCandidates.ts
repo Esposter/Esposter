@@ -5,6 +5,7 @@ import type { GcsimStanceNormalAttack } from "#src/models/genshinAssets/kits/gcs
 
 import { GcsimMultiplierKey } from "#src/models/genshinAssets/kits/gcsim/GcsimMultiplierKey";
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
+import { KIT_LENGTH_KEY } from "#src/services/genshinAssets/kits/constants";
 import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloat";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
@@ -34,12 +35,12 @@ export const addGcsimNormalAttackCandidates = (
   const prefix = stance?.path ?? "normalAttacks";
   const stanceBoxes = stance === undefined ? undefined : findGcsimConstant(constantMap, "attackHitboxes");
   const stanceOffsets = stance === undefined ? undefined : findGcsimConstant(constantMap, "attackOffsets");
-  add(`${prefix}.length`, normalHitmarks.value.length, toFile(normalHitmarks.file), normalHitmarks.line);
+  add(`${prefix}.${KIT_LENGTH_KEY}`, normalHitmarks.value.length, toFile(normalHitmarks.file), normalHitmarks.line);
   for (const [strikeIndex, strikeHitmarks] of normalHitmarks.value.entries()) {
     const path = `${prefix}.${strikeIndex}`;
     const hitmarks = toGoNumbers(strikeHitmarks) ?? [];
     const hitmarkLine = normalHitmarks.elementLines[strikeIndex] ?? normalHitmarks.line;
-    add(`${path}.hits.length`, hitmarks.length, toFile(normalHitmarks.file), hitmarkLine);
+    add(`${path}.hits.${KIT_LENGTH_KEY}`, hitmarks.length, toFile(normalHitmarks.file), hitmarkLine);
     const strikeFrames = readStrikeFrames(normalFrames?.value, strikeIndex);
     if (
       normalFrames !== undefined &&

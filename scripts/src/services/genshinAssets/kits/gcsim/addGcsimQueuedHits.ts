@@ -3,6 +3,7 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 import type { AttackArea } from "genshin-world";
 
+import { KIT_LENGTH_KEY } from "#src/services/genshinAssets/kits/constants";
 import { checkIsSameDeclaration } from "#src/services/genshinAssets/kits/gcsim/checkIsSameDeclaration";
 import { checkIsSameHit } from "#src/services/genshinAssets/kits/gcsim/checkIsSameHit";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
@@ -49,7 +50,7 @@ export const addGcsimQueuedHits = (
   const queuedHits = fileHits.filter((hit) => checkIsSameHit(hit, firstHit));
   const hitboxes = config.abilityHitboxesMap.get(abilityName) ?? [];
   const isHitboxJoined = hitboxes.length === queuedHits.length;
-  add(`${path}.hits.length`, queuedHits.length, toFile(firstHit.file), firstHit.callLine);
+  add(`${path}.hits.${KIT_LENGTH_KEY}`, queuedHits.length, toFile(firstHit.file), firstHit.callLine);
   for (const [hitIndex, { attack, delay, file: hitFile, hitbox, line }] of queuedHits.entries())
     addHit(
       `${path}.hits.${hitIndex}`,

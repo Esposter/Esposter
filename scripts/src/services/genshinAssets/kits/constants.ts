@@ -60,6 +60,8 @@ export const WIKI_CACHE_DIRECTORY: string = join(CACHE_ROOT, "genshin-wiki");
 export const WIKI_API_URL = "https://genshin-impact.fandom.com/api.php";
 // The attack tags gcsim writes each kit slot's hits with
 export const GCSIM_CHARGED_ATTACK_TAG = "attacks.AttackTagExtra";
+// The stance path the blessing's normal attacks are written under, which the Blade Roller and the Loop Shot read
+export const GCSIM_BLESSING_NORMAL_ATTACKS_PATH = "stances.blessing.normalAttacks";
 export const GCSIM_SKILL_ATTACK_TAGS: readonly string[] = [
   "attacks.AttackTagElementalArt",
   "attacks.AttackTagElementalArtHold",

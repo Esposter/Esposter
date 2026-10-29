@@ -1,6 +1,7 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 
+import { GCSIM_BLESSING_NORMAL_ATTACKS_PATH, KIT_LENGTH_KEY } from "#src/services/genshinAssets/kits/constants";
 import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloat";
 import { createBladeRollerHitbox } from "#src/services/genshinAssets/kits/gcsim/createBladeRollerHitbox";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
@@ -9,8 +10,6 @@ import { readElement } from "#src/services/genshinAssets/kits/gcsim/readElement"
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { readPair } from "#src/services/genshinAssets/kits/gcsim/readPair";
 import { STRIKE_TARGETING_AREA } from "genshin-world";
-
-const BLADE_ROLLER_PATH = "stances.blessing.normalAttacks";
 
 // The Blade Roller that plays Xilonen's normal attacks in her blessing: each of its four strikes is one hit at its own
 // Animation and hitmark from `rollerFrames`, its area from `rollerHitboxes` and `rollerOffsets`, its poise from
@@ -27,15 +26,15 @@ export const addGcsimBladeRollerCandidates = (
   if (frameList === undefined || hitboxes === undefined || offsets === undefined || attack === undefined) return;
   if (!Array.isArray(frameList.value)) return;
   const file = toFile(frameList.file);
-  add(`${BLADE_ROLLER_PATH}.length`, frameList.value.length, file, frameList.line);
+  add(`${GCSIM_BLESSING_NORMAL_ATTACKS_PATH}.${KIT_LENGTH_KEY}`, frameList.value.length, file, frameList.line);
   for (const [strikeIndex, strike] of frameList.value.entries()) {
     if (typeof strike !== "object" || Array.isArray(strike) || checkIsGoFloat(strike)) continue;
-    const strikePath = `${BLADE_ROLLER_PATH}.${strikeIndex}`;
+    const strikePath = `${GCSIM_BLESSING_NORMAL_ATTACKS_PATH}.${strikeIndex}`;
     const strikeLine = frameList.elementLines[strikeIndex] ?? frameList.line;
     const dimensions = readPair(readElement(hitboxes.value, strikeIndex));
     const offsetY = readGoNumber(readElement(offsets.value, strikeIndex));
     const strikePoise = poise === undefined ? undefined : readGoNumber(readElement(poise.value, strikeIndex));
-    add(`${strikePath}.hits.length`, 1, file, strikeLine);
+    add(`${strikePath}.hits.${KIT_LENGTH_KEY}`, 1, file, strikeLine);
     add(`${strikePath}.animationFrames`, strike.animationFrames, file, strikeLine);
     addHit(
       `${strikePath}.hits.0`,

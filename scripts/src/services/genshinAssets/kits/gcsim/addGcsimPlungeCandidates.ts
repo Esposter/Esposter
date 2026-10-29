@@ -5,6 +5,7 @@ import {
   GCSIM_PLUNGE_COLLISION_HITBOX_NAME,
   GCSIM_PLUNGE_FILE,
   GCSIM_PLUNGE_LANDINGS,
+  KIT_LENGTH_KEY,
 } from "#src/services/genshinAssets/kits/constants";
 import { addFallbackPlungeCandidates } from "#src/services/genshinAssets/kits/gcsim/addFallbackPlungeCandidates";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
@@ -34,7 +35,7 @@ export const addGcsimPlungeCandidates = (
     const path = `plunges.${plunge}`;
     const hitbox = findGcsimHitbox(config, "plunge", hitboxName);
     const hitmark = findGcsimConstant(constantMap, `${prefix}PlungeHitmark`);
-    add(`${path}.hits.length`, 1, toFile(plungeFile), hitmark?.line ?? 1);
+    add(`${path}.hits.${KIT_LENGTH_KEY}`, 1, toFile(plungeFile), hitmark?.line ?? 1);
     addFrames(`${path}.animationFrames`, `${prefix}PlungeFrames`);
     addHit(
       `${path}.hits.0`,

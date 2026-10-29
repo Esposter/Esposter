@@ -1,6 +1,7 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 
+import { KIT_LENGTH_KEY } from "#src/services/genshinAssets/kits/constants";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { readAnimationFrames } from "#src/services/genshinAssets/kits/gcsim/readAnimationFrames";
@@ -32,7 +33,7 @@ export const addGcsimFieryPassionCandidates = (
     skillHitmarkValue !== undefined
   ) {
     add("stances.fieryPassion.skill.animationFrames", skillAnimation, toFile(skillFrames.file), skillFrames.line);
-    add("stances.fieryPassion.skill.hits.length", 1, toFile(skillHitmark.file), skillHitmark.line);
+    add(`stances.fieryPassion.skill.hits.${KIT_LENGTH_KEY}`, 1, toFile(skillHitmark.file), skillHitmark.line);
     addHit(
       "stances.fieryPassion.skill.hits.0",
       {
@@ -53,7 +54,7 @@ export const addGcsimFieryPassionCandidates = (
     burstHitmarkValue !== undefined
   ) {
     add("burstVariant.animationFrames", burstAnimation, toFile(burstFrames.file), burstFrames.line);
-    add("burstVariant.hits.length", 1, toFile(burstHitmark.file), burstHitmark.line);
+    add(`burstVariant.hits.${KIT_LENGTH_KEY}`, 1, toFile(burstHitmark.file), burstHitmark.line);
     addHit(
       "burstVariant.hits.0",
       {

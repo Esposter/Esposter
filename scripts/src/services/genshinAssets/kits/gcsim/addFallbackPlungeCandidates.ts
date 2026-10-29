@@ -2,7 +2,11 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import type { GcsimHitbox } from "#src/models/genshinAssets/kits/gcsim/GcsimHitbox";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 
-import { GCSIM_PLUNGE_COLLISION_HITBOX_NAME, GCSIM_PLUNGE_LANDINGS } from "#src/services/genshinAssets/kits/constants";
+import {
+  GCSIM_PLUNGE_COLLISION_HITBOX_NAME,
+  GCSIM_PLUNGE_LANDINGS,
+  KIT_LENGTH_KEY,
+} from "#src/services/genshinAssets/kits/constants";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { readHitmarkSpread } from "#src/services/genshinAssets/kits/gcsim/readHitmarkSpread";
@@ -34,7 +38,7 @@ export const addFallbackPlungeCandidates = (writer: GcsimKitCandidateWriter, plu
   };
   for (const [plunge, prefix, hitboxName] of GCSIM_PLUNGE_LANDINGS) {
     const path = `plunges.${plunge}`;
-    writer.addNoActionFileRule(`${path}.hits.length`, 1);
+    writer.addNoActionFileRule(`${path}.hits.${KIT_LENGTH_KEY}`, 1);
     writer.addFrames(`${path}.animationFrames`, `${prefix}PlungeFrames`);
     addFallbackHit(
       `${path}.hits.0`,

@@ -2,6 +2,7 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
+import { GCSIM_CONFIG_FILE, GCSIM_NO_INTERNAL_COOLDOWN_TAG } from "#src/services/genshinAssets/kits/constants";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
 import { CombatTalent, SKILL_TARGETING_AREA, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
@@ -23,7 +24,7 @@ describe(createGcsimKitCandidateWriter, () => {
     animationFrameNameMap: new Map(),
     attacks: [],
     config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
-    configFile: "config.yml",
+    configFile: GCSIM_CONFIG_FILE,
     constantMap: new Map(),
     filePaths: [],
     folder: "heizou",
@@ -50,7 +51,7 @@ describe(createGcsimKitCandidateWriter, () => {
           element: "attributes.NoElement",
           fieldLineMap: { Durability: 4, Element: 3 },
           file: "burst.go",
-          internalCooldownTag: "attacks.ICDTagNone",
+          internalCooldownTag: GCSIM_NO_INTERNAL_COOLDOWN_TAG,
           line: 2,
           siteLine: 2,
         },

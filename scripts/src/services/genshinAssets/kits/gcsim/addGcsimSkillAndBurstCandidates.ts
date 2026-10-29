@@ -5,6 +5,7 @@ import {
   GCSIM_BURST_ATTACK_TAGS,
   GCSIM_SKILL_ATTACK_TAGS,
   GCSIM_SKILL_PRESS_HITBOX_NAMES,
+  KIT_LENGTH_KEY,
 } from "#src/services/genshinAssets/kits/constants";
 import { addGcsimHitmarkHits } from "#src/services/genshinAssets/kits/gcsim/addGcsimHitmarkHits";
 import { addGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/addGcsimQueuedHits";
@@ -49,7 +50,7 @@ export const addGcsimSkillAndBurstCandidates = (writer: GcsimKitCandidateWriter,
     const slotAttacks = attacks.filter(({ attackTag }) => attackTag !== undefined && attackTags.includes(attackTag));
     if (slot === "burst" && hitmarks === undefined && slotAttacks.length === 0) {
       const burstFrames = findGcsimConstant(constantMap, "burstFrames");
-      if (burstFrames !== undefined) add("burst.hits.length", 0, toFile(burstFrames.file), burstFrames.line);
+      if (burstFrames !== undefined) add(`burst.hits.${KIT_LENGTH_KEY}`, 0, toFile(burstFrames.file), burstFrames.line);
       continue;
     }
     if (hitmarks === undefined) {

@@ -1,6 +1,7 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 
+import { KIT_LENGTH_KEY } from "#src/services/genshinAssets/kits/constants";
 import { checkIsChargedAttackVariantAttack } from "#src/services/genshinAssets/kits/gcsim/checkIsChargedAttackVariantAttack";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/findQueuedAttack";
@@ -20,7 +21,7 @@ export const addGcsimChargedAttackVariantCandidates = (
     (queuedAttack) => queuedAttack.delay !== undefined && findQueuedAttack(attacks, queuedAttack) === swift,
   );
   if (swiftCall?.delay === undefined) return;
-  add("chargedAttackVariant.hits.length", 1, toFile(swiftCall.file), swiftCall.delayLine);
+  add(`chargedAttackVariant.hits.${KIT_LENGTH_KEY}`, 1, toFile(swiftCall.file), swiftCall.delayLine);
   addFrames("chargedAttackVariant.animationFrames", "swiftFrames");
   addHit(
     "chargedAttackVariant.hits.0",

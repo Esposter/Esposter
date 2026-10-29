@@ -3,13 +3,13 @@ import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcs
 
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
+import { GCSIM_BLESSING_NORMAL_ATTACKS_PATH, KIT_LENGTH_KEY } from "#src/services/genshinAssets/kits/constants";
 import { addGcsimHitmarkHits } from "#src/services/genshinAssets/kits/gcsim/addGcsimHitmarkHits";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { STRIKE_TARGETING_AREA } from "genshin-world";
 
-const LOOP_SHOT_PATH = "stances.blessing.normalAttacks";
 // Each Loop Shot's animation, the frames its cancel slice is read at on its action's line (attack.go lines 57 and 65),
 // Which gcsim gives as the literal 53 inside a call rather than as a constant
 const LOOP_SHOT_ANIMATION_FRAMES = 53;
@@ -37,10 +37,10 @@ export const addGcsimLoopShotCandidates = (writer: GcsimKitCandidateWriter, gcsi
   )
     return;
   const file = toFile(hitmarks.file);
-  add(`${LOOP_SHOT_PATH}.length`, actionCountValue, file, actionCount.line);
+  add(`${GCSIM_BLESSING_NORMAL_ATTACKS_PATH}.${KIT_LENGTH_KEY}`, actionCountValue, file, actionCount.line);
   for (const [actionIndex, actionHitmarks] of hitmarks.value.entries()) {
     if (!Array.isArray(actionHitmarks)) continue;
-    const actionPath = `${LOOP_SHOT_PATH}.${actionIndex}`;
+    const actionPath = `${GCSIM_BLESSING_NORMAL_ATTACKS_PATH}.${actionIndex}`;
     add(
       `${actionPath}.animationFrames`,
       LOOP_SHOT_ANIMATION_FRAMES,

@@ -4,6 +4,7 @@ import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcs
 import type { AttackArea } from "genshin-world";
 import type { Except } from "type-fest";
 
+import { KIT_LENGTH_KEY } from "#src/services/genshinAssets/kits/constants";
 import { getGcsimLandingFrames } from "#src/services/genshinAssets/kits/gcsim/getGcsimLandingFrames";
 
 // The hits a list of hitmarks gives: its count at `${path}.hits.length`, then one hit at `${path}.hits.${index}` for
@@ -32,7 +33,7 @@ export const addGcsimHitmarkHits = (
   },
 ): void => {
   const { add, addHit, toFile } = writer;
-  add(`${path}.hits.length`, hitmarks.values.length, toFile(hitmarks.file), hitmarks.line);
+  add(`${path}.hits.${KIT_LENGTH_KEY}`, hitmarks.values.length, toFile(hitmarks.file), hitmarks.line);
   for (const [hitIndex, hitmark] of hitmarks.values.entries()) {
     if (hitmark === undefined) continue;
     addHit(

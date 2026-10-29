@@ -5,6 +5,7 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
+import { GCSIM_CONFIG_FILE, GCSIM_NO_INTERNAL_COOLDOWN_TAG } from "#src/services/genshinAssets/kits/constants";
 import { addGcsimMoondewCleanseCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimMoondewCleanseCandidates";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
 import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/createTargetedHitArea";
@@ -23,7 +24,7 @@ const createGcsim = (withMoondewCleanse: boolean): GcsimCharacter => ({
           element: "attributes.Dendro",
           fieldLineMap: { AttackTag: 94, Element: 98 },
           file: "charge.go",
-          internalCooldownTag: "attacks.ICDTagNone",
+          internalCooldownTag: GCSIM_NO_INTERNAL_COOLDOWN_TAG,
           line: 94,
           siteLine: 82,
           talentVariable: "chargeLB",
@@ -55,7 +56,7 @@ const createGcsim = (withMoondewCleanse: boolean): GcsimCharacter => ({
       },
     ],
   },
-  configFile: "config.yml",
+  configFile: GCSIM_CONFIG_FILE,
   constantMap: new Map([
     ["chargeHitmarkBloom", { elementLines: {}, file: "charge.go", line: 15, value: [50, 58, 80] }],
     ["chargeLBFrames", { elementLines: {}, file: "charge.go", line: 35, value: { animationFrames: 124 } }],

@@ -6,6 +6,7 @@ import {
   GCSIM_FRAMES_PER_SECOND,
   GCSIM_SKILL_HOLD_HITBOX_NAME,
   GCSIM_SKILL_HOLD_PREFIXES,
+  KIT_LENGTH_KEY,
 } from "#src/services/genshinAssets/kits/constants";
 import { addGcsimHitmarkHits } from "#src/services/genshinAssets/kits/gcsim/addGcsimHitmarkHits";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
@@ -42,7 +43,7 @@ export const addGcsimSkillHoldCandidates = (writer: GcsimKitCandidateWriter, gcs
     firstHold?.hitmarks ??
     findGcsimConstant(constantMap, ...GCSIM_SKILL_HOLD_PREFIXES.map((prefix) => `${prefix}Frames`));
   if (holdsConstant !== undefined)
-    add("skillHolds.length", holds.length, toFile(holdsConstant.file), holdsConstant.line);
+    add(`skillHolds.${KIT_LENGTH_KEY}`, holds.length, toFile(holdsConstant.file), holdsConstant.line);
   for (const [holdIndex, { framesName, hitmarks }] of holds.entries()) {
     const path = `skillHolds.${holdIndex}.action`;
     if (framesName !== undefined) addFrames(`${path}.animationFrames`, framesName);
@@ -74,7 +75,7 @@ export const addGcsimSkillHoldCandidates = (writer: GcsimKitCandidateWriter, gcs
   const heldCalls = holds.length === 0 ? queuedAttacks.filter(({ holdValue }) => holdValue === 1) : [];
   const [heldCall] = heldCalls;
   if (heldCalls.length === 1 && heldCall?.delay !== undefined) {
-    add("skillHolds.length", 1, toFile(heldCall.file), heldCall.delayLine);
+    add(`skillHolds.${KIT_LENGTH_KEY}`, 1, toFile(heldCall.file), heldCall.delayLine);
     addHit(
       "skillHolds.0.action.hits.0",
       { hitmark: { file: heldCall.file, line: heldCall.delayLine, value: heldCall.delay } },

@@ -4,6 +4,7 @@ import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcs
 import {
   GCSIM_AIM_CHARGE_LEVEL,
   GCSIM_CHARGED_ATTACK_TAG,
+  KIT_LENGTH_KEY,
   NO_ACTION_FILE_CLAYMORE_CHARGED_ANIMATION_FRAMES,
   NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES,
 } from "#src/services/genshinAssets/kits/constants";
@@ -53,7 +54,7 @@ export const addGcsimChargedAttackCandidates = (
       targetingArea: STRIKE_TARGETING_AREA,
     });
   } else if (aimedHitmarks !== undefined && aimedHitmark !== undefined) {
-    add("chargedAttack.hits.length", 1, toFile(aimedHitmarks.file), aimedHitmarks.line);
+    add(`chargedAttack.hits.${KIT_LENGTH_KEY}`, 1, toFile(aimedHitmarks.file), aimedHitmarks.line);
     add("chargedAttack.isAimed", true, toFile(aimedHitmarks.file), aimedHitmarks.line);
     add("chargedAttackStamina", 0, toFile(aimedHitmarks.file), aimedHitmarks.line);
     const aimedLevelFrames = Array.isArray(aimedFrames?.value) ? aimedFrames.value[GCSIM_AIM_CHARGE_LEVEL] : undefined;
@@ -100,7 +101,7 @@ export const addGcsimChargedAttackCandidates = (
     findGcsimConstant(constantMap, "chargeFrames", "aimedFrames") === undefined &&
     weaponType === WeaponType.Claymore
   ) {
-    addNoActionFileRule("chargedAttack.hits.length", NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES.length);
+    addNoActionFileRule(`chargedAttack.hits.${KIT_LENGTH_KEY}`, NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES.length);
     addNoActionFileRule("chargedAttack.animationFrames", NO_ACTION_FILE_CLAYMORE_CHARGED_ANIMATION_FRAMES);
     for (const [hitIndex, hitmark] of NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES.entries())
       addNoActionFileRule(`chargedAttack.hits.${hitIndex}.hitmarkFrames`, hitmark);

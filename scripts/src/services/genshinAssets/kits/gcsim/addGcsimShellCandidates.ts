@@ -4,7 +4,7 @@ import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcs
 
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
-import { GCSIM_DURABILITY_PER_GAUGE } from "#src/services/genshinAssets/kits/constants";
+import { GCSIM_DURABILITY_PER_GAUGE, KIT_LENGTH_KEY } from "#src/services/genshinAssets/kits/constants";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
@@ -28,7 +28,7 @@ export const addGcsimShellCandidates = (
   const galesplitting = attacks.find(({ talentVariable }) => talentVariable === "burstGalesplitting");
   const shellHitmarks = toGoNumbers(hitmarks?.value);
   if (hitmarks === undefined || galesplitting === undefined || shellHitmarks === undefined) return;
-  add("frames.shellHitmarks.length", shellHitmarks.length, toFile(hitmarks.file), hitmarks.line);
+  add(`frames.shellHitmarks.${KIT_LENGTH_KEY}`, shellHitmarks.length, toFile(hitmarks.file), hitmarks.line);
   for (const [shellIndex, hitmark] of shellHitmarks.entries())
     add(
       `frames.shellHitmarks.${shellIndex}`,

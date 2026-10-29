@@ -1,4 +1,4 @@
-import { GCSIM_CACHE_DIRECTORY } from "#src/services/genshinAssets/kits/constants";
+import { GCSIM_CACHE_DIRECTORY, GCSIM_COOLDOWN_TAG_PREFIX } from "#src/services/genshinAssets/kits/constants";
 import { GcsimInternalCooldownTagMap } from "#src/services/genshinAssets/kits/gcsim/GcsimInternalCooldownTagMap";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -16,7 +16,7 @@ describe("gcsimInternalCooldownTagMap", () => {
     ).filter((name): name is string => name !== undefined && name !== "None");
 
     expect(gcsimTags.length).toBeGreaterThan(0);
-    const unmappedTags = gcsimTags.filter((name) => !(`attacks.ICDTag${name}` in GcsimInternalCooldownTagMap));
+    const unmappedTags = gcsimTags.filter((name) => !(`${GCSIM_COOLDOWN_TAG_PREFIX}${name}` in GcsimInternalCooldownTagMap));
     expect(unmappedTags).toStrictEqual([]);
   });
 });

@@ -3,6 +3,11 @@ import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
+import {
+  GCSIM_CHARGED_ATTACK_TAG,
+  GCSIM_CONFIG_FILE,
+  GCSIM_NO_INTERNAL_COOLDOWN_TAG,
+} from "#src/services/genshinAssets/kits/constants";
 import { addGcsimChargedAttackCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackCandidates";
 import { addGcsimChargedAttackVariantCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackVariantCandidates";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
@@ -17,7 +22,7 @@ describe(addGcsimChargedAttackCandidates, () => {
     attacks: [
       {
         abil: "Charged Attack",
-        attackTag: "attacks.AttackTagExtra",
+        attackTag: GCSIM_CHARGED_ATTACK_TAG,
         durability: 25,
         element: "attributes.Physical",
         fieldLineMap: { Durability: 53, Element: 52 },
@@ -30,12 +35,12 @@ describe(addGcsimChargedAttackCandidates, () => {
       },
       {
         abil: "Swift Stormflight",
-        attackTag: "attacks.AttackTagExtra",
+        attackTag: GCSIM_CHARGED_ATTACK_TAG,
         durability: 25,
         element: "attributes.Electro",
         fieldLineMap: { Durability: 92, Element: 91, PoiseDMG: 85 },
         file: "charge.go",
-        internalCooldownTag: "attacks.ICDTagNone",
+        internalCooldownTag: GCSIM_NO_INTERNAL_COOLDOWN_TAG,
         line: 81,
         poiseDamage: 120,
         siteLine: 81,
@@ -61,7 +66,7 @@ describe(addGcsimChargedAttackCandidates, () => {
         },
       ],
     },
-    configFile: "config.yml",
+    configFile: GCSIM_CONFIG_FILE,
     constantMap: new Map([
       ["chargeHitmarks", { elementLines: {}, file: "charge.go", line: 19, value: [21] }],
       ["swiftFrames", { elementLines: {}, file: "charge.go", line: 31, value: { animationFrames: 33 } }],
