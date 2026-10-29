@@ -95,10 +95,10 @@ export const cameraTopic: ReferenceTopic = {
     },
     {
       method:
-        "genshin:parity pose login-door-recording --witness login --hold fov --refine 80 --families Door, then track",
+        "genshin:parity pose login-door-recording --witness login --hold fov --refine 80 --families Door, then the edges tracked across the frames",
       outcome: InvestigationOutcome.Adopted,
       result:
-        "The door alone: its dais's front feet (852, 777 and 1069, 777) and its arch's apex (959, 416), the field of view held at 51.2 from the widths, solve to 0.76 pixels root mean square, and five simplex steps on the door's part boundaries bring them from 0.66 to 0.25 pixels of the recording's edges at 480 wide: the eye at (-25.66, 36.71, -59.32), heading 3.16, pitch -2.04, 10.9 metres in front of the door and 2.6 above its foot. The walkway, the towers and the bridges draw no boundary from there, so in the static layout nothing else is in view of the door; track holds that pose across 13.5 to 14 seconds within a few centimetres",
+        "The door alone: its dais's front feet (852, 777 and 1069, 777) and its arch's apex (959, 416), the field of view held at 51.2 from the widths, solve to 0.76 pixels root mean square, and five simplex steps on the door's part boundaries bring them from 0.66 to 0.25 pixels of the recording's edges at 480 wide: the eye at (-25.66, 36.71, -59.32), heading 3.16, pitch -2.04, 10.9 metres in front of the door and 2.6 above its foot. The walkway, the towers and the bridges draw no boundary from there, so in the static layout nothing else is in view of the door; the edge tracking holds that pose across 13.5 to 14 seconds within a few centimetres",
     },
     {
       method:
@@ -116,7 +116,7 @@ export const cameraTopic: ReferenceTopic = {
     },
     {
       method:
-        "genshin:parity glide login-door-recording over 0 to 2.5 and 9 to 14.5 seconds, the eye 1.24 metres up, pitched 5.29 under 51.2, its held frames picking the spans that do not stall",
+        "A glide of login-door-recording over 0 to 2.5 and 9 to 14.5 seconds, the eye 1.24 metres up, pitched 5.29 under 51.2, its held frames picking the spans that do not stall",
       outcome: InvestigationOutcome.Superseded,
       result:
         "At the camera's pose each ground row is a distance, so the paving's column 6.3 to 9.5 metres ahead resampled into metres and correlated frame to frame reads the glide: 3.03 metres a second, steady to 0.06 over the title's 2.4 seconds, about 3.7 once preparing (3.5 to 3.9 between 9.75 and 11), then slowing by 0.55 a second each second, a line through its last three seconds, 1.9 by 13.75 seconds, before the click rushes on at 14.4. At 44.6 degrees the same frames read anything from 1.1 to 4 metres a second, so the title shares the door's field of view. The recording stalls from 2.7 to 9 seconds as the game loads, the frames held then jumping, so only the spans around it are read",
@@ -158,7 +158,7 @@ export const cameraTopic: ReferenceTopic = {
     },
     {
       method:
-        "genshin:parity glide login-door-recording 0 2.5 and 9.5 5 at the pose held to ModelCamera's turn: eye 1.22, pitch 5.69, field of view 51.2",
+        "A glide of login-door-recording 0 2.5 and 9.5 5 at the pose held to ModelCamera's turn: eye 1.22, pitch 5.69, field of view 51.2",
       outcome: InvestigationOutcome.Superseded,
       result:
         "Each ground row reads a little farther under the steeper pitch, so the pace reads 3.08 to 3.18 metres a second over the title (3.14), 3.68 to 4.16 once preparing between 9.5 and 11 seconds (3.9), and slows by 0.63 a second each second, a line through 11 to 13.5 seconds. The preparing pace over the title's, 1.25, stands near MonoLoginScene's two speeds' 4.5 over 3.5, 1.29, the motion pass's to name",
@@ -185,14 +185,14 @@ export const cameraTopic: ReferenceTopic = {
     },
     {
       method:
-        "genshin:parity glide login-door-session over 15 to 36 seconds at the current build's camera (eye 1, pitch 5.69, field of view 45), the column straight ahead at 1700 of 3440; then the steady spans (title 25.5 to 29, preparing 29.75 to 33) over three bands from 6.3 to 12 metres and three columns",
+        "A glide of login-door-session over 15 to 36 seconds at the current build's camera (eye 1, pitch 5.69, field of view 45), the column straight ahead at 1700 of 3440; then the steady spans (title 25.5 to 29, preparing 29.75 to 33) over three bands from 6.3 to 12 metres and three columns",
       outcome: InvestigationOutcome.DeadEnd,
       result:
         "The glide reads steady at about 3.6 metres a second over the title, about 4.5 from 29.5 seconds, back to 3.6 from 34 and slowing from 35 toward the click, so the current build's title is faster than the older recording's 3.14. But the pace grows with the band's distance (3.57, 3.89 and 4.55 over the title) and varies across columns at one distance (3.20 to 3.57), so its metre scale is off by tens of percent here, and the preparing pace over the title's scatters from 1.15 to 1.62 by band and column, the paving's repeat aliasing the faster pace; nothing names MonoLoginScene's 3.5 and 4.5 from it",
     },
     {
       method:
-        "genshin:parity track login-door-session 34.5 to 35.9 seconds at 10 frames a second on the towers', bridges' and walkway's edges with every axis but the glide's held (a scratch option), from 4.4 metres short of the door frame's solved place",
+        "A track of login-door-session 34.5 to 35.9 seconds at 10 frames a second on the towers', bridges' and walkway's edges with every axis but the glide's held (a scratch option), from 4.4 metres short of the door frame's solved place",
       outcome: InvestigationOutcome.DeadEnd,
       result:
         "The glide's axis stood still at -10.3 metres for a second and ended at -10.0, where the door frame's own solve stands it at -5.43: along the glide the edges price nearly flat, the walkway repeating every 16 metres and the towers far, so the simplex never left its start. The option was not kept",
@@ -206,7 +206,7 @@ export const cameraTopic: ReferenceTopic = {
     },
     {
       method:
-        "genshin:parity glide login-door-session 23.3 12.8 --row=1200 --columns=1290,2150 --repeat=16 --crossings=4: the wings' edges crossing the columns either side of the walkway, outside its body, each paired with the same kind's a copy later; then the glide 18 to 36 seconds for its held frames",
+        "A glide of login-door-session 23.3 12.8 --row=1200 --columns=1290,2150 --repeat=16 --crossings=4: the wings' edges crossing the columns either side of the walkway, outside its body, each paired with the same kind's a copy later; then the glide 18 to 36 seconds for its held frames",
       outcome: InvestigationOutcome.Found,
       result:
         "Each column turns dark four times a copy, twice for each wing on its side (its near face, then a groove across its top), its levels the cloud's 175, the wing's top's 155 and its face's 45, so every crossing times to a fraction of a frame whatever the camera's pose. The repeats that end before the preparing speed-up read 3.42 to 3.52 metres a second, each to 0.005, the two columns within 0.01 of each other: MonoLoginScene's 3.5, not the older recording's 3.14. A repeat from 30.48 seconds, which already brakes, reads 4.35, so the preparing pace is over it: the script's 4.5, not 3.9. Half a copy between the wings, 8.0 metres apart on either side, reads 3.82 across the speed-up from 28.4 to 30.5 seconds and 4.47 from 30.5 to 32.3, so the speed-up takes about half a second from near 29.5, faster than 0.63 a second each second. The recording holds its frames from 20.63 to about 23.2 seconds as the game loads, a new one a few times a second: repeats across it read 2.55, the stall gliding less than its time, so the glide counts each repeat's held frames. Past 32.5 the tower's shadow crosses the left column and its pairs go wrong, which the two columns' disagreement shows",

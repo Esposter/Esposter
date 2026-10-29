@@ -18,7 +18,7 @@ export const doorTopic: ReferenceTopic = {
         "The click lights the door from its middle while the camera pushes toward it, the door growing about 1.7 times in a third of a second and gathering speed, under the white",
     },
     {
-      method: "genshin:parity frames yt-rBnfA4pXw6U at 2 a second over 0 to 15 seconds",
+      method: "Frames of the yt-rBnfA4pXw6U recording at 2 a second over 0 to 15 seconds",
       outcome: InvestigationOutcome.Found,
       result:
         "The door rises at the walkway's far end as its last blocks settle, about 12 seconds in, nothing built past it, and the glide then brakes it to its pose",
