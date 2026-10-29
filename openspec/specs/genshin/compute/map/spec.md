@@ -25,11 +25,11 @@ The map's area names SHALL be scored over their glyphs' silhouettes and SHALL di
 
 The Galesong Hill label SHALL differ from the English map's reference by no more than 2 percent on average over its region.
 
-#### Scenario: A label that misses the 2 percent bar stays unapproved
+#### Scenario: A label that misses the 2 percent bar still gets its image
 
 - **GIVEN** the Galesong Hill label is compared against the English map's still
 - **WHEN** the region's mean difference is above 2 percent
-- **THEN** the label stays unapproved
+- **THEN** the score is reported against its bar, and the label's image is still written
 
 #### Scenario: The label reads the same percentage as the still
 

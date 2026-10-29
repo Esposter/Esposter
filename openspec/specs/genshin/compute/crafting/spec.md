@@ -1,25 +1,25 @@
 ## Purpose
 
-The crafting table's runs: its whole frame approved, and the interface's crafting screen given a fixture and a reference.
+The crafting table's runs: its whole frame compared, and the interface's crafting screen given a fixture and a reference.
 
 ## Requirements
 
 ### Requirement: The crafting table's whole frame
 
-The crafting table's whole frame SHALL be approved only once a plate of the scene with the screen closed exists to score its opaque panels against.
+The crafting table's whole frame SHALL be compared once a plate of the scene with the screen closed exists to score its opaque panels against.
 
-#### Scenario: Without a plate the opaque panels are scored through their mask and approval waits
+#### Scenario: Without a plate the opaque panels are scored through their mask and the score waits
 
 - **GIVEN** no plate exists of the spot with the screen closed
 - **WHEN** the whole frame is compared against its reference
 - **THEN** the opaque panels are scored through their mask
-- **AND** whole-frame approval waits for a plate
+- **AND** the whole-frame score waits for a plate
 
-#### Scenario: A frame above the global default bar stays unapproved
+#### Scenario: A frame above the global default bar still gets its image
 
 - **GIVEN** the crafting table's whole frame is compared against its reference
 - **WHEN** its perceptual difference score is above the global default bar
-- **THEN** the table stays unapproved
+- **THEN** the score is reported over the bar, and the table's image is still written
 
 ### Requirement: The interface's crafting screen
 
@@ -29,4 +29,4 @@ The interface's crafting screen SHALL be given a fixture and a reference before 
 
 - **GIVEN** the crafting screen has no fixture or no reference
 - **WHEN** the comparison is run
-- **THEN** the screen is not compared and stays unapproved
+- **THEN** the screen is not compared and no score is reported

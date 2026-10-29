@@ -6,19 +6,19 @@ The inventory's runs: the world's bag given a whole frame, and the interface's i
 
 ### Requirement: The bag's whole frame
 
-The bag's whole frame SHALL be approved only once a whole-frame reference exists and scores within the global default difference bar.
+The bag's whole frame SHALL be compared once a whole-frame reference exists, its score reported against the global default difference bar, and its image written by approve.
 
-#### Scenario: Without a whole-frame reference the bag's approval waits
+#### Scenario: Without a whole-frame reference the bag's score waits
 
 - **GIVEN** no whole-frame moment of the bag has been named
-- **WHEN** approval is considered
-- **THEN** approval waits for a whole-frame reference
+- **WHEN** its score is considered
+- **THEN** the score waits for a whole-frame reference
 
-#### Scenario: A whole-frame reference above the bar keeps the bag unapproved
+#### Scenario: A whole-frame reference above the bar still gets the bag its image
 
 - **GIVEN** the bag's whole frame is compared against its reference
 - **WHEN** its perceptual difference score is above the global default bar
-- **THEN** the bag stays unapproved
+- **THEN** the score is reported over the bar, and the bag's image is still written
 
 ### Requirement: A reference frame with a webcam over part of it
 

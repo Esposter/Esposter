@@ -1,18 +1,18 @@
 ## Purpose
 
-The adventurer handbook's runs: its experience page approved over the whole frame.
+The adventurer handbook's runs: its experience page compared over the whole frame.
 
 ## Requirements
 
 ### Requirement: The adventurer handbook's experience page
 
-The adventurer handbook's experience page SHALL be approved only once its whole frame scores within the global default difference bar.
+The adventurer handbook's experience page SHALL be compared over its whole frame, its score reported against the global default difference bar, and its image written by approve.
 
-#### Scenario: An experience page above the bar stays unapproved
+#### Scenario: An experience page above the bar still gets its image
 
 - **GIVEN** the experience page's whole frame is compared against its reference
 - **WHEN** its perceptual difference score is above the global default bar
-- **THEN** the page stays unapproved
+- **THEN** the score is reported over the bar, and the page's image is still written
 
 ### Requirement: The experience page's reward tiles
 

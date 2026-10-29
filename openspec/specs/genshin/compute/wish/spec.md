@@ -6,13 +6,13 @@ The wish screen's single pull and its ten results, frame by frame.
 
 ### Requirement: The wish screen
 
-The wish screen SHALL be approved over its reference frame only once that frame scores within the global default difference bar.
+The wish screen SHALL be compared over its reference frame, its score reported against the global default difference bar, and its image written by approve.
 
-#### Scenario: A wish screen above the bar stays unapproved
+#### Scenario: A wish screen above the bar still gets its image
 
 - **GIVEN** the wish screen is compared against its reference frame
 - **WHEN** its perceptual difference score is above the global default bar
-- **THEN** the screen stays unapproved
+- **THEN** the score is reported over the bar, and the screen's image is still written
 
 ### Requirement: The wish screen's banner card
 

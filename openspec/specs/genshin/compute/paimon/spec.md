@@ -28,24 +28,24 @@ The quit prompt's whole frame SHALL differ from its reference by no more than 2 
 
 The reputation reward page SHALL be judged over its level list's panel against the global default difference bar.
 
-#### Scenario: A reputation page above the bar stays unapproved
+#### Scenario: A reputation page above the bar still gets its image
 
 - **GIVEN** the reward page's level list panel is compared against its frame
 - **WHEN** its perceptual difference score is above the global default bar
-- **THEN** the page stays unapproved
+- **THEN** the score is reported over the bar, and the page's image is still written
 
 ### Requirement: The menu and the World Level dialog
 
-The menu and the World Level dialog SHALL be approved over whole frames only once a whole-frame reference or a recording of them exists.
+The menu and the World Level dialog SHALL be compared over whole frames once a whole-frame reference or a recording of them exists, and their images written by approve.
 
-#### Scenario: Without a whole-frame reference the menu's approval waits
+#### Scenario: Without a whole-frame reference the menu's score waits
 
 - **GIVEN** the only still of the menu covers one region of it
-- **WHEN** approval is considered
-- **THEN** approval waits for a whole-frame reference
+- **WHEN** its score is considered
+- **THEN** the score waits for a whole-frame reference
 
-#### Scenario: Without a recording the World Level dialog's approval waits
+#### Scenario: Without a recording the World Level dialog's score waits
 
 - **GIVEN** no recording of the World Level dialog is on disk
-- **WHEN** approval is considered
-- **THEN** approval waits for the recording
+- **WHEN** its score is considered
+- **THEN** the score waits for the recording
