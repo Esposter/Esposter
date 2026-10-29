@@ -73,3 +73,4 @@ Every field carries the tightest constraint its domain allows — a bare `z.numb
 - **A schema for a class-typed interface strips `toJSON` with `Except` + `ToData`** (`references/class-types.md`).
 - **Schema form schemas** — a schema a `UiSchemaForm` renders gets a separate `*Form` interface and schema, `layout` and title meta, a refinement for a cross-field rule, and its own union rules: the `ui-library` skill's `references/schema-forms.md` owns all of it.
 - **Paginated endpoint schemas** — see the `trpc` skill (`references/read-endpoints.md`).
+- **A limit is a named constant** — `.max(FOO_MAX_LENGTH)` or a `MAX_*` constant, reusing one that already holds the limit before declaring another. A literal number in a constraint is the drift the constant stops.
