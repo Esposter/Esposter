@@ -1,3 +1,4 @@
+import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { BARREL_FILE } from "@esposter/configuration";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -6,7 +7,5 @@ import { join } from "node:path";
 export const readBarrelLines = (sourceDirectory: string): string[] => {
   const barrelPath = join(sourceDirectory, BARREL_FILE);
   if (!existsSync(barrelPath)) return [];
-  return readFileSync(barrelPath, "utf8")
-    .split(/\r?\n/u)
-    .filter((line) => line !== "");
+  return getNonEmptyLines(readFileSync(barrelPath, "utf8"));
 };
