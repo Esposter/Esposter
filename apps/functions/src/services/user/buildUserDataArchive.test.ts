@@ -592,15 +592,13 @@ describe(buildUserDataArchive, () => {
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     // A room holds one call per thread, so the other person's call is in a room of their own
     const otherRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    // A call id is exactly CALL_ID_LENGTH alphanumerics, so these are twelve characters each
     const call = takeOne(
-      await mockDb
-        .insert(callSessionsInMessage)
-        .values({ id: crypto.randomUUID(), roomId: room.id, userId })
-        .returning(),
+      await mockDb.insert(callSessionsInMessage).values({ id: "callSession1", roomId: room.id, userId }).returning(),
     );
     await mockDb
       .insert(callSessionsInMessage)
-      .values({ id: crypto.randomUUID(), roomId: otherRoom.id, userId: otherUserId });
+      .values({ id: "callSession2", roomId: otherRoom.id, userId: otherUserId });
 
     await buildUserDataArchive(userId, blobName);
     const entries = readArchiveEntries(blobName);
