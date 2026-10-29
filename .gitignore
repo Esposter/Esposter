@@ -1,43 +1,32 @@
 # Dependencies
 node_modules
-
-# Pnpm artifacts
 .pnpm-store
 
-# Build Artifacts
-**/public/docs
-
-# The production build of genshin-world's parity page, which `genshin:parity load` builds and serves
-/packages/genshin-world/parity-build
-
-# Nuxt
+# Build output
+dist
+# The agent console host's Windows single executable and the Claude Code binary beside it
+dist-sea
+*.tsbuildinfo
+# Nuxt and Nitro
 .output
-.data
 .nuxt
 .nitro
 .cache
-dist
-nuxt-build.cpuprofile
-
-# The agent console host's Windows single executable and the Claude Code binary beside it
-dist-sea
-
-# Typescript build info
-*.tsbuildinfo
+.data
+# The production build of genshin-world's parity page, which `genshin:parity load` builds and serves
+/packages/genshin-world/parity-build
 
 # Testing
 coverage
 .vitest
 vitest.config.*.timestamp*
+# The program `pnpm bench:types` writes beside a type bench while it measures one case, removed after each run
+*.typebench.program.ts
 
 # Local env files
 .env
 .env.*
 !.env.example
-
-# Local db
-*.db
-*.db-journal
 
 # Azurite's local blob, queue and table data, which `pnpm dev` keeps beside apps/web
 .azurite
@@ -45,9 +34,6 @@ vitest.config.*.timestamp*
 # Logs
 logs
 *.log
-
-# Tiled
-*.tiled-session
 
 # Agent tree (`.claude` is a symlink alias to `.agents`, so it needs no entry of its own)
 scheduled_tasks.lock
@@ -57,5 +43,3 @@ scheduled_tasks.lock
 .DS_Store
 # A crashed MSYS bash (Git Bash) writes its stack trace into the working directory
 *.stackdump
-# The program `pnpm bench:types` writes beside a type bench while it measures one case, removed after each run
-*.typebench.program.ts
