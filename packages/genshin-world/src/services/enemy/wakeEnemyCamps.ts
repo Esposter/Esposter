@@ -6,11 +6,11 @@ import { setEnemyState } from "#src/services/enemy/setEnemyState";
 
 // Alerts every idle enemy whose camp has a member engaged, so a camp turns on its target together
 export const wakeEnemyCamps = (enemies: Enemy[]): void => {
+  // The camps with a member engaged, gathered in one pass so each idle enemy is a lookup rather than a scan of the list
+  const engagedCampIds = new Set(
+    enemies.filter(({ state }) => ENGAGED_ENEMY_STATES.includes(state)).map(({ campId }) => campId),
+  );
   for (const enemy of enemies) {
-    if (enemy.state !== EnemyState.Idle) continue;
-    const isCampEngaged = enemies.some(
-      ({ campId, state }) => campId === enemy.campId && ENGAGED_ENEMY_STATES.includes(state),
-    );
-    if (isCampEngaged) setEnemyState(enemy, EnemyState.Alert);
+    if (enemy.state === EnemyState.Idle && engagedCampIds.has(enemy.campId)) setEnemyState(enemy, EnemyState.Alert);
   }
 };

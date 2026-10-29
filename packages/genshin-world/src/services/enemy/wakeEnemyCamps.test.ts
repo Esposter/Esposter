@@ -25,4 +25,26 @@ describe(wakeEnemyCamps, () => {
       EnemyState.Idle,
     ]);
   });
+
+  test("alerts each camp's idle members on that camp's engaged member, and leaves an enemy already awake as it is", () => {
+    expect.hasAssertions();
+
+    const engagedFirstCamp = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const idleFirstCamp = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const engagedSecondCamp = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, " ");
+    const idleSecondCamp = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, " ");
+    const returningSecondCamp = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, " ");
+    setEnemyState(engagedFirstCamp, EnemyState.Chase);
+    setEnemyState(engagedSecondCamp, EnemyState.Windup);
+    setEnemyState(returningSecondCamp, EnemyState.Return);
+    wakeEnemyCamps([engagedFirstCamp, idleFirstCamp, engagedSecondCamp, idleSecondCamp, returningSecondCamp]);
+
+    expect([
+      engagedFirstCamp.state,
+      idleFirstCamp.state,
+      engagedSecondCamp.state,
+      idleSecondCamp.state,
+      returningSecondCamp.state,
+    ]).toStrictEqual([EnemyState.Chase, EnemyState.Alert, EnemyState.Windup, EnemyState.Alert, EnemyState.Return]);
+  });
 });

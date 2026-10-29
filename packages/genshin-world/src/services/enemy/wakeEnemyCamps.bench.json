@@ -1,0 +1,33 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/enemy/wakeEnemyCamps.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.04040999999999712,
+              "name": "wake",
+              "p99": 0.05969199999999944,
+              "rme": 19.636263431309448,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "wakeEnemyCamps > 345 enemies"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.45375999999998834,
+              "name": "wake",
+              "p99": 0.6007879999999688,
+              "rme": 13.286118550147133,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "wakeEnemyCamps > 3450 enemies"
+        }
+      ]
+    }
+  ]
+}
