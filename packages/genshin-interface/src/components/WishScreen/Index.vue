@@ -225,10 +225,16 @@ const bannerLabelText = computed(() => {
 .banners {
   position: absolute;
   top: calc(var(--unit) * 28);
-  left: calc(var(--unit) * 678);
+  left: calc(var(--unit) * 668);
   display: flex;
   align-items: center;
-  gap: calc(var(--unit) * 33);
+}
+
+/* The tabs are a fixed pitch of 194, so the open one's extra width grows from its centre and the others keep their places */
+.banners li {
+  display: flex;
+  width: calc(var(--unit) * 194);
+  justify-content: center;
 }
 
 .banner {
@@ -263,7 +269,8 @@ const bannerLabelText = computed(() => {
   left: calc(var(--unit) * 1812);
   width: calc(var(--unit) * 56);
   height: calc(var(--unit) * 56);
-  font-size: calc(var(--unit) * 36);
+  font-size: calc(var(--unit) * 72);
+  font-weight: 700;
 }
 
 /* The card's art is the plate's and cannot ship, so the card is a measured panel of the reference's light field behind the
@@ -297,17 +304,18 @@ const bannerLabelText = computed(() => {
   top: calc(var(--unit) * 213);
   left: calc(var(--unit) * 316);
   margin: 0;
-  padding: calc(var(--unit) * 2) calc(var(--unit) * 11);
+  padding: calc(var(--unit) * 2) calc(var(--unit) * 12);
   border-radius: calc(var(--unit) * 18);
   background: rgb(62 195 238);
-  font-size: calc(var(--unit) * 27);
+  font-size: calc(var(--unit) * 28);
+  letter-spacing: calc(var(--unit) * 0.4);
   line-height: calc(var(--unit) * 33);
 }
 
 .card-title {
   position: absolute;
-  top: calc(var(--unit) * 248);
-  left: calc(var(--unit) * 377);
+  top: calc(var(--unit) * 245);
+  left: calc(var(--unit) * 374);
   width: calc(var(--unit) * 450);
   margin: 0;
   color: #3e3c3d;
