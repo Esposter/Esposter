@@ -1,6 +1,6 @@
 # Menu quit prompt
 
-The [Paimon menu](../genshin-menu-paimon/design.md)'s side bar Quit Game opens an exit prompt over the menu. The current build's prompt asks "Are you sure you want to quit?" and offers two choices, Cancel and Confirm: Cancel and Confirm act as the [as-built Paimon menu](../../specs/genshin/paimon-menu/design.md) gives, and Confirm lands on the app's home, the login screen the recording shows. The prompt was first built with three choices, Continue Game, Exit to Login Interface and Exit to Desktop, from the 2024 build; this change re-specifies it to the current build. The [screens](../../specs/genshin/screens/design.md) page and the [as-built Paimon menu](../../specs/genshin/paimon-menu/design.md) record the three-choice prompt that this change replaces.
+The [Paimon menu](../genshin-menu-paimon/design.md)'s side bar Quit Game opens an exit prompt over the menu. The current build's prompt asks "Are you sure you want to quit?" and offers two choices, Cancel and Confirm: Cancel and Confirm act as the [as-built Paimon menu](../../specs/genshin/paimon-menu/design.md) gives, and Confirm lands on the app's home, the login screen the recording shows. The prompt was first built with three choices, Continue Game, Exit to Login Interface and Exit to Desktop, from the 2024 build; this change re-specifies it to the current build. The [screens](../../specs/genshin/screens/design.md) page's state diagram and the [as-built Paimon menu](../../specs/genshin/paimon-menu/design.md) already draw the two choices.
 
 ## How it works
 
@@ -13,15 +13,15 @@ flowchart TD
 
 ## Scope and order
 
-1. **The prompt's scale, from the 2026 recording.** `yt-jHr2bERjkYc` (the recording [the Paimon menu change](../genshin-menu-paimon/design.md) describes) holds the current prompt whole at 30 seconds: the side bar's Quit Game is pressed at about 27 to 28 seconds, and by 29 seconds the dialog "Are you sure you want to quit?" sits over the dimmed menu. Confirm leads to the login screen, which the recording shows from about 37 seconds. The frame at 30 seconds is cut to `references/menu-quit-prompt/exit-prompt-current.png`, never committed. The HowTo Zone clip `asw7VW5QM1g`, clipped to `captures/yt-asw7VW5QM1g-logout.mp4`, does not show the prompt: it is a captioned infographic of Settings, Account and Log Out. The `exit-prompt` row of the parity reference map names where its screenshot was sampled from in `source`: `yt-jHr2bERjkYc` at 30 seconds, with the dialog's whole panel as its region. The first reading used the box above the buttons, 415 pixels high, which cut the choices off; the region is now 606 high.
+1. **The prompt's scale, from the 2026 recording.** `yt-jHr2bERjkYc` (the recording [the Paimon menu change](../genshin-menu-paimon/design.md) describes) holds the current prompt whole at 30 seconds: the side bar's Quit Game is pressed at about 27 to 28 seconds, and by 29 seconds the dialog "Are you sure you want to quit?" sits over the dimmed menu. Confirm leads to the login screen, which the recording shows from about 37 seconds. The frame at 30 seconds is cut to `references/menu-quit-prompt/exit-prompt-current.png`, never committed. The HowTo Zone clip `asw7VW5QM1g`, clipped to `captures/yt-asw7VW5QM1g-logout.mp4`, does not show the prompt: it is a captioned infographic of Settings, Account and Log Out. The `exit-prompt` row of the parity reference map names where its screenshot was sampled from in `source`: `yt-kIDee7nyD0w` at 26.75 seconds, with the dialog's whole panel as its region. The first reading used the box above the buttons, 415 pixels high, which cut the choices off; the region is now 590 high.
 2. **The measurements.** At 1080 high the frame's pixels are the game's, so the dialog and its choices are read off the frame directly:
-   - the panel is 960 by 606, from (480, 237), so it is centred on the screen;
+   - the panel is 910 by 576 (`Exit/Index.vue`), read from the hover frame at 29 seconds of `yt-kIDee7nyD0w`, so it is centred on the screen; the 30-second frame gave 960 by 606 from (480, 237);
    - the question is centred across the panel's top, its line at about y 514 of the frame;
-   - Cancel is at (550, 735) and Confirm at (980, 735), each 390 by 67, with 40 between them and 70 in from the panel's sides;
-   - each icon is a 38 unit box 14 units in from its pill's corner, so it is centred 33 units in;
-   - the colours are sampled from clean bands of the frame: panel `#e2dfd8`, pills `#404a5e`, Cancel's cross `#2998dc`, Confirm's ring `#f7ca33`, the question's ink `#3a434b`. The frame is a YouTube capture, so each carries a few units of compression error.
-3. **The look.** The choices use the interface's Row kind, with its cream pill look replaced by the slate, since the 2026 choices are slate. The Pill kind stays the World Level dialog's, which the frame draws cream. The menu behind the prompt is dimmed under the World Level dialog's 48% backdrop; this frame's own dim is not measured against an undimmed reference, so 48% is the game's dialog backdrop, not sampled here. Each icon is drawn as shapes, a blue cross and a yellow ring, since no glyph of either is traced.
-4. **The re-measure.** `menu-quit-prompt.mkv` (3.1) re-measures the prompt at 60 frames a second, with each choice hovered and pressed, which no still of the current build holds. It does not gate the build.
+   - Cancel and Confirm are each 370 by 63, 66 and 475 pixels in from the panel's left (`Exit/Index.vue`);
+   - each icon is a 40 unit disc 10 units in from its pill's left, centred on the pill's height;
+   - the colours are sampled from clean bands of the 2026 frame at 29 seconds (`Exit/Index.vue`): panel `#e4e0da`, pills `#4a5365`, Cancel's cross `#50a5e0`, Confirm's ring `#f6cc52`, the question's ink `#4f5159`. The frame is a YouTube capture, so each carries a few units of compression error.
+3. **The look.** The choices are Plain buttons with the dialog's own slate pill and hover and pressed rules (`Exit/Index.vue`), since the 2026 choices are slate. The Pill kind stays the World Level dialog's, which the frame draws cream. The menu behind the prompt is dimmed under a 66% backdrop, solved from the mean of the frame's margin round the panel (`Exit/Index.vue`), where the World Level dialog's 48% is the shared stylesheet's. Each icon is drawn as shapes, a blue cross and a yellow ring, since no glyph of either is traced.
+4. **The re-measure.** `menu-quit-prompt.mkv` (3.1) re-measures the prompt at 60 frames a second, with each choice hovered and pressed. The public clip already gives the hover and pressed frames at 29 and 30.6 seconds (`menu-exit-hover`, `menu-exit-pressed`), so the longer clip re-measures them rather than supplying them. It does not gate the build.
 
 ## Decisions
 
@@ -30,10 +30,10 @@ flowchart TD
 
 ## Known gaps
 
-- The frame's gold corners and the faint ornament inside the panel are not drawn. The corner glyph in `MenuDialogGlyphMap` is sized for the World Level dialog's frame, so reusing it on this panel is not verified.
+- The frame's gold corners are drawn as four bracket shapes, not from the glyph, and the faint ornament inside the panel is not drawn. The corner glyph in `MenuDialogGlyphMap` is sized for the World Level dialog's frame, so reusing it on this panel is not verified.
 - The tutorial's red arrow sits inside the panel above Confirm. The region includes it, so the parity score counts its pixels as a difference.
 - The three-choice prompt's Continue Game key, `UI_LOGOUT_CONFIRM_CONTINUE_GAME`, is removed with its choice, and the Paimon browser test now expects the two choices.
-- The prompt is not scored yet: `genshin:parity compare exit-prompt` is for the main session to run.
+- The prompt is scored by three rows, `exit-prompt`, `menu-exit-hover` and `menu-exit-pressed` in `ParityReferenceMap.ts`, none approved yet.
 
 ## Key files
 

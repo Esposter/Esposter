@@ -36,7 +36,7 @@ The Paimon menu SHALL list its side bar from Back to Quit Game and its contents 
 - **WHEN** the player looks over its side bar and contents
 - **THEN** the side bar runs from Back to Quit Game in the game's order
 - **AND** the contents follow the game's order, labelled with the game's own words
-- **AND** Community and Feedback are drawn disabled at the foot of the contents, as the 2026 frame draws them
+- **AND** Community and Feedback are drawn disabled at the foot of the contents, as the still draws them
 - **AND** entries the game shows but the references do not are left out (where the Training Guide is left out)
 
 ### Requirement: Entries whose screen is not built are drawn disabled
@@ -112,7 +112,7 @@ The Paimon menu SHALL fade its side bar in on opening and draw its panel a tenth
 
 - **GIVEN** the Paimon menu is open
 - **WHEN** the player chooses Quit Game
-- **THEN** the quit prompt replaces the menu at once
+- **THEN** the quit prompt opens over the menu at once
 
 ### Requirement: Side bar buttons and entries light under the pointer
 
@@ -151,7 +151,7 @@ The profile card SHALL show the Traveler's rank and World Level, and the info ic
 
 - **GIVEN** the Traveler's birthday is not set
 - **WHEN** the profile card is shown
-- **THEN** the Birthday row shows -/- with a Set Birthday button beneath it
+- **THEN** the Birthday row shows a Set Birthday button where its date would stand
 
 ### Requirement: The World Level dialog shows its help text and lowering button
 

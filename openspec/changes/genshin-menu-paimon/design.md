@@ -45,7 +45,6 @@ New files:
 
 ```text
 packages/genshin-world/src/components/Menu/Paimon/Index.fixture.ts
-packages/genshin-world/src/components/Menu/Paimon/Index.reference.ts
 packages/genshin-world/src/components/Menu/Paimon/Index.browser.test.ts
 ```
 
@@ -59,4 +58,4 @@ The account's name and avatar reach the card through the world's props: the app'
 
 ## Reference
 
-- `menu-paimon-current.png` — the Paimon menu on the current build at 1080 high with no screen open, the frame at 25 seconds of `yt-jHr2bERjkYc` (`captures/yt-jHr2bERjkYc-logout-tech4gamers.mp4`, the frame cut to `references/menu-paimon/menu-paimon-current.png`, never committed). Found 2026-10-18: https://www.youtube.com/watch?v=jHr2bERjkYc, a Tech4Gamers logout tutorial of 56 seconds at 1920 by 1080 and 25 frames a second, dated 2026-05-15, the English PC client; the account is at Adventure Rank 2, so the contents show thirteen of the entries, and a tutorial's arrows and logo sit over the frame's edges. What the frames show beyond the reference: the menu's panel is whole in the frame at 22.52 seconds, within one 40 millisecond frame of the world at 22.48, so the 0.26 second fade the 2025 clip gives is not seen at this rate; the menu's closing is not in this clip, so `menu-paimon.mkv` stays owed for it. The frame also draws Version Highlights and Survey among the contents, which the as-built page left out for want of a still; they are drawn disabled here, as the Decisions set out.
+- `menu-paimon-current.png` — the Paimon menu on the current build at 1080 high with no screen open, the frame at 25 seconds of `yt-jHr2bERjkYc` (`captures/yt-jHr2bERjkYc-logout-tech4gamers.mp4`, the frame cut to `references/menu-paimon/menu-paimon-current.png`, never committed). Found 2026-10-18: https://www.youtube.com/watch?v=jHr2bERjkYc, a Tech4Gamers logout tutorial of 56 seconds at 1920 by 1080 and 25 frames a second, dated 2026-05-15, the English PC client; the account is at Adventure Rank 2, so the contents show thirteen of the entries, and a tutorial's arrows and logo sit over the frame's edges. What the frames show beyond the reference: the menu's panel is whole in the frame at 22.52 seconds, within one 40 millisecond frame of the world at 22.48, so the 0.26 second fade the 2025 clip gives is not seen at this rate; the menu's closing is not in this clip, so `menu-paimon.mkv` stays owed for it. The frame also draws Version Highlights and Survey among the contents, which the as-built page left out for want of a still; the built screen leaves them out as well (task 3.5).
