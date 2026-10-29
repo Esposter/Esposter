@@ -17,7 +17,8 @@ import { writeParityScores } from "#src/services/genshinParity/reference/writePa
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { roundHundredths } from "#src/services/genshinParity/shared/roundHundredths";
-import { getResultAsync, InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
+import { parseWholeCount } from "#src/services/shared/parseWholeCount";
+import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { existsSync } from "node:fs";
@@ -51,9 +52,7 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
     name: "compare",
   },
   run: async ({ args }) => {
-    const cellCount = Number(args.cells);
-    if (!Number.isInteger(cellCount) || cellCount < 1)
-      throw new InvalidOperationError(Operation.Read, "cells", `${args.cells} is not a count of at least one`);
+    const cellCount = parseWholeCount(args.cells, "cells", 1);
     const referenceIds = args.all ? Object.keys(ParityReferenceMap) : [args.reference ?? ""];
     const scores: Record<string, ParityScore> = {};
     // A page that predates a build of its packages is replaced for this run alone, and the replacement stopped when the run ends

@@ -7,7 +7,7 @@ import { readUiIndexEntries } from "#src/services/genshinAssets/ui/readUiIndexEn
 import { readUiManifest } from "#src/services/genshinAssets/ui/readUiManifest";
 import { resolveUiBlock } from "#src/services/genshinAssets/ui/resolveUiBlock";
 import { toUiFindResult } from "#src/services/genshinAssets/ui/toUiFindResult";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { parseWholeCount } from "#src/services/shared/parseWholeCount";
 import { defineCommand } from "citty";
 
 export const uiFindCommand: SubCommandsDef[string] = defineCommand({
@@ -30,9 +30,7 @@ export const uiFindCommand: SubCommandsDef[string] = defineCommand({
     name: "ui-find",
   },
   run: async ({ args }) => {
-    const limit = Number(args.limit);
-    if (!Number.isInteger(limit) || limit < 1)
-      throw new InvalidOperationError(Operation.Read, "limit", `not a count of objects: ${args.limit}`);
+    const limit = parseWholeCount(args.limit, "limit", 1);
     const pattern = new RegExp(args.pattern, "u");
     const indexPaths = args.block
       ? [await readUiBlockIndex(await resolveUiBlock(args.block))]

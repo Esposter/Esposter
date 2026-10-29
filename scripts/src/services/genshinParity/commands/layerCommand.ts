@@ -6,7 +6,8 @@ import { formatPassValue } from "#src/services/genshinParity/passes/formatPassVa
 import { formatReadingValue } from "#src/services/genshinParity/passes/formatReadingValue";
 import { solveReferenceCloudLayer } from "#src/services/genshinParity/sky/solveReferenceCloudLayer";
 import { parseNames } from "#src/services/shared/parseNames";
-import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
+import { parseWholeCount } from "#src/services/shared/parseWholeCount";
+import { jsonDateParse } from "@esposter/shared";
 import { defineCommand } from "citty";
 
 export const layerCommand: SubCommandsDef[string] = defineCommand({
@@ -43,9 +44,7 @@ export const layerCommand: SubCommandsDef[string] = defineCommand({
     name: "layer",
   },
   run: async ({ args }) => {
-    const iterationCount = Number(args.iterations);
-    if (!Number.isInteger(iterationCount) || iterationCount < 0)
-      throw new InvalidOperationError(Operation.Read, "iterations", `${args.iterations} is not a count`);
+    const iterationCount = parseWholeCount(args.iterations, "iterations", 0);
     const { measure, settings } = await solveReferenceCloudLayer(
       args.reference,
       args.witness,
