@@ -17,6 +17,8 @@ import { existsSync } from "node:fs";
 // Runs the precheck, then pulls and pushes up to the attempt limit, since another session's push can take the queue
 // Between the two. The pull replays this checkout's own commits, so a conflict stops the landing for its author to settle
 export const landQueue = async (remove: boolean, skipPrecheck: boolean): Promise<number> => {
+  if (remove && !checkIsLinkedWorktree())
+    throw new InvalidOperationError(Operation.Delete, REPOSITORY_ROOT, "the main checkout is not a worktree to remove");
   if (!skipPrecheck) {
     const report = runPrecheck(false);
     if (report.distributionMissing) {
@@ -56,12 +58,6 @@ export const landQueue = async (remove: boolean, skipPrecheck: boolean): Promise
   console.info(`landed ${runGit(["rev-parse", "--short", "HEAD"]).trim()} (${landedCount} commits)`);
 
   if (remove) {
-    if (!checkIsLinkedWorktree())
-      throw new InvalidOperationError(
-        Operation.Delete,
-        REPOSITORY_ROOT,
-        "the main checkout is not a worktree to remove",
-      );
     const mainCheckoutRoot = readMainCheckoutRoot();
     // The process leaves the worktree first, since Windows refuses to delete a folder some process has as its cwd. The
     // Commits are on the queue by now, so a removal refused is a line naming the command that retries it, not a failure
