@@ -497,9 +497,10 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "yt-UBNImta_dWs-prompt-scroll.mp4 at 23s",
   },
   // The English PC client's pickup at 1080 high: three drops in reach, the first row selected with its F cap, from a public
-  // Tutorial's recording at 9 seconds with no caption over it, the cap held on that row from 7 to 13 seconds. Drawn behind the prompt list, so only the list's own
-  // Pieces can differ, and the scene the list's pills show through is the game's own; the streamer's camera sits outside
-  // The region
+  // Tutorial's recording at 9 seconds with no caption over it, the cap held on that row from 7 to 13 seconds. Drawn behind the
+  // Prompt list, the plate fills the cap and the three pills, so the scene round them is the game's own and only the list's own
+  // Pieces can differ; the recording's camera moves after the pickup, so no clean frame of the scene exists for the pills'
+  // Glass, which is scored as drawn. The streamer's camera sits outside the region
   "interaction-prompts-pickup": {
     isBackdrop: true,
     plate: [
