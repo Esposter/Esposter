@@ -42,7 +42,7 @@ The module's `sri` is left at its default, so every script the page loads carrie
 
 ### Permissions policy
 
-`permissionsPolicy` scopes `camera`, `microphone`, `display-capture` and `fullscreen` to `self`. The first three exist for LiveKit — [voice and video](../../esbabbler/voice-video/design.md) cannot acquire tracks without them — and `fullscreen` for the PDF viewer. Scoping to `self` rather than leaving them at the module default means an embedded third-party frame cannot inherit the app's grant.
+`permissionsPolicy` scopes `camera`, `microphone`, `display-capture` and `fullscreen` to `self`, and also opens `autoplay`, `clipboard-read`, `clipboard-write` and `gamepad` to `self` for the features that call them, each named beside its entry in `configuration/security.ts`. The first three exist for LiveKit — [voice and video](../../esbabbler/voice-video/design.md) cannot acquire tracks without them — and `fullscreen` for the PDF viewer and the call view's stage. Scoping to `self` rather than leaving them at the module default means an embedded third-party frame cannot inherit the app's grant.
 
 ### Request size
 
