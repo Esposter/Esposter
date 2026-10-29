@@ -27,7 +27,7 @@ export interface ParityReferenceBase {
   // Over a scene: the world between them stays the frame's own, so every piece is scored over what lies behind it. The
   // Scored region alone when absent
   plate?: ImageRegion[];
-  // Where the screenshot `<id>.plate.png` the plate's pixels come from in place of the reference's was sampled from: the
+  // Where the screenshot `<id>.plate.webp` the plate's pixels come from in place of the reference's was sampled from: the
   // World a screen is laid over, which the still shows nothing of, as the game draws it
   plateSource?: string;
   // The pixel, in the reference's own, the recording's pointer rests at, which the shot moves the page's pointer to, so a

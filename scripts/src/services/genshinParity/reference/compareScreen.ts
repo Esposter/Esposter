@@ -8,19 +8,18 @@ import { COMPARISON_HEIGHT } from "#src/services/genshinParity/reference/constan
 import { getCeiling } from "#src/services/genshinParity/reference/getCeiling";
 import { getCellReadings } from "#src/services/genshinParity/reference/getCellReadings";
 import { getCleanPlatePath } from "#src/services/genshinParity/reference/getCleanPlatePath";
+import { getCleanPlateRegions } from "#src/services/genshinParity/reference/getCleanPlateRegions";
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
 import { getReferenceSoftness } from "#src/services/genshinParity/reference/getReferenceSoftness";
 import { readScoredMask } from "#src/services/genshinParity/reference/readScoredMask";
 import { readSilhouetteInks } from "#src/services/genshinParity/reference/readSilhouetteInks";
 import { scoreLayers } from "#src/services/genshinParity/reference/scoreLayers";
 import { scoreStructure } from "#src/services/genshinParity/reference/scoreStructure";
-import {
-  COMPARISONS_DIRECTORY,
-  REFERENCES_DIRECTORY,
-  STRUCTURE_WIDTH,
-} from "#src/services/genshinParity/shared/constants";
+import { toPercent } from "#src/services/genshinParity/reference/toPercent";
+import { COMPARISONS_DIRECTORY, STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
+import { getReferencePlatePath } from "#src/services/genshinParity/shared/getReferencePlatePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
 import { readReferenceGbuffer } from "#src/services/genshinParity/shared/readReferenceGbuffer";
@@ -55,26 +54,17 @@ export const compareScreen = async (
       `not one of ${Object.keys(ParityReferenceMap).join(", ")}`,
     );
   await fetchReferences();
-  const referencePath = getReferencePath(referenceId);
-  // FetchReferences only logs a reference the wiki lacks, so its absence is caught here rather than inside sharp
-  if (!existsSync(referencePath))
-    throw new InvalidOperationError(Operation.Read, referenceId, `no reference at ${referencePath}`);
+  // A reference the manifest does not hold is refused here, since there is no stored image to score against
+  const referencePath = await getReferencePath(referenceId);
   const { height, width } = await sharp(referencePath).metadata();
   const region = reference.region ?? { height, width, x: 0, y: 0 };
   // A backdrop is the reference with its interface's pieces, its region unless it names them, filled from their
   // Surroundings, so the game's interface is not drawn behind ours; one with no border to fill from keeps the reference
   // A plate's pixels come from the reference, or from the screenshot beside it that the world a screen is laid over was
   // Sampled into
-  const plateScreenshotPath = join(REFERENCES_DIRECTORY, `${referenceId}.plate.png`);
   // An entry that names its plate's source has one to find, so a missing one stops the compare rather than scoring
   // Against the reference's own world
-  if (reference.plateSource !== undefined && !existsSync(plateScreenshotPath))
-    throw new InvalidOperationError(
-      Operation.Read,
-      referenceId,
-      `no plate screenshot at ${plateScreenshotPath}, sampled from ${reference.plateSource}`,
-    );
-  const platePath = reference.plateSource === undefined ? referencePath : plateScreenshotPath;
+  const platePath = reference.plateSource === undefined ? referencePath : await getReferencePlatePath(referenceId);
   const plateMetadata = await sharp(platePath).metadata();
   if (plateMetadata.width !== width || plateMetadata.height !== height)
     throw new InvalidOperationError(
@@ -82,9 +72,12 @@ export const compareScreen = async (
       referenceId,
       `its plate is ${plateMetadata.width}×${plateMetadata.height}, not the reference's ${width}×${height}`,
     );
-  const backdropPath = reference.isBackdrop
-    ? ((await getCleanPlatePath(referenceId, platePath, reference.plate ?? [region], { height, width })) ?? platePath)
-    : undefined;
+  const cleanPlateRegions = getCleanPlateRegions(reference, { height, width });
+  const cleanPlatePath =
+    cleanPlateRegions === undefined
+      ? undefined
+      : await getCleanPlatePath(referenceId, platePath, cleanPlateRegions, { height, width });
+  const backdropPath = reference.isBackdrop ? (cleanPlatePath ?? platePath) : undefined;
   // A recording softens what it shows, so our shot is softened by its screenshot's own measured blur before it is scored
   const softness = reference.source === undefined ? undefined : await getReferenceSoftness(referenceId);
   const [shotPath = ""] = await shootScreen({

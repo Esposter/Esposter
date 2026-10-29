@@ -2,5 +2,5 @@
 export interface VerifyPaths {
   capturesDirectory: string;
   cutDirectory: string;
-  referencePath: (referenceId: string) => string;
+  referencePath: (referenceId: string) => Promise<string | undefined>;
 }

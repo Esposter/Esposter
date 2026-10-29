@@ -4,7 +4,7 @@ import { GameLanguage, GameLanguageTagMap } from "genshin-text";
 import { GameDataset } from "genshin-world";
 import { dirname, join } from "node:path";
 
-// The game's text kept outside the repository like every other reference and never shipped: `ExcelBinOutput/` as the
+// The game's text kept outside the repository like every other scratch file and never shipped: `ExcelBinOutput/` as the
 // AnimeGameData Repository lays it out per patch, and `TextMap/`, which `decode` writes from the installed game's own
 // Chunks. Only the strings a consumer names, which `write` reads out of it, enter a package
 export const GAME_TEXT_DIRECTORY: string = process.env.GENSHIN_TEXT_DIRECTORY ?? join(PARITY_DIRECTORY, "text");

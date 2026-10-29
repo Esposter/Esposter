@@ -21,9 +21,9 @@ export const verifyReference = async (
   reference: ParityReference,
   paths: VerifyPaths,
 ): Promise<ReferenceVerification> => {
-  const referencePath = paths.referencePath(referenceId);
-  if (!existsSync(referencePath))
-    return { id: referenceId, message: `no reference at ${referencePath}`, outcome: VerifyOutcome.Skipped };
+  const referencePath = await paths.referencePath(referenceId);
+  if (referencePath === undefined)
+    return { id: referenceId, message: "no reference in the manifest", outcome: VerifyOutcome.Skipped };
   const file = await readImageSize(referencePath);
   const outside = getOutsideRegion(reference, file);
   if (outside !== undefined)

@@ -28,10 +28,16 @@ export const openWitnessPage = async (
 }> => {
   const reference = ParityReferenceMap[referenceId];
   if (!reference) throw new InvalidOperationError(Operation.Read, referenceId, "not a reference");
-  const referencePath = getReferencePath(referenceId);
+  const referencePath = await getReferencePath(referenceId);
   const { height: referenceHeight, width: referenceWidth } = await sharp(referencePath).metadata();
   const height = Math.round((width / referenceWidth) * referenceHeight);
-  const image = await sharp(referencePath).resize(width, height).removeAlpha().png().toBuffer();
+  // A WebP reference is shrunk as it loads by default, which resamples its pixels differently from its PNG, so the
+  // Shrink is left to the resize, and the reference reads as the screenshot it was packed from
+  const image = await sharp(referencePath)
+    .resize(width, height, { fastShrinkOnLoad: false })
+    .removeAlpha()
+    .png()
+    .toBuffer();
   const { close, page } = await openParityPage({
     height,
     props: reference.props,

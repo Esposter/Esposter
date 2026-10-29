@@ -34,3 +34,44 @@ export const RECORDING_FRAME_FILTER =
 // Cuts differ from their recordings by up to about 0.39%, a uniform darkening from an earlier pipeline, while a different
 // Picture scores in the tens of percent, so one percent sits well above the first and far below the second
 export const VERIFY_TOLERANCE_PERCENT = 1;
+
+// The lossless WebP a reference is packed as, at the highest effort sharp offers. Its pixels decode back exactly, so every
+// Score reads the same as it did from the screenshot
+export const REFERENCE_WEBP_OPTIONS = { effort: 6, lossless: true } as const;
+
+// How many screenshots `references pack` encodes at once, and how many of the largest files its table names
+export const REFERENCE_PACK_CONCURRENCY = 2;
+export const REFERENCE_PACK_LARGEST_COUNT = 10;
+
+// A reference's source as the map writes it, `<file> at <N>s`, with `, cropped to WxH from X,Y` when the frame is cropped
+export const RECORDING_SOURCE_REGEX: RegExp =
+  /^(\S+) at (\d+(?:\.\d+)?)s(?:, cropped to (\d+)x(\d+) from (\d+),(\d+))?$/u;
+
+// The language a reference's id names it in, by the word its id carries, as its language tag
+export const REFERENCE_ID_LANGUAGE_TAGS: Readonly<Record<string, string>> = {
+  english: "en",
+  japanese: "ja",
+  korean: "ko",
+};
+
+// A clean plate cached in the scratch folder, named by the digest of what it is filled from
+export const PLATE_CACHE_REGEX: RegExp = /\.plate-[\da-f]{16}\.png$/u;
+
+// The folder the game-data container keeps every stored object in, one per hash and extension, whatever its kind
+export const REFERENCE_BLOB_FOLDER = "parityObjects";
+// Every stored reference is lossless WebP, the format `packReferenceImage` writes, so the object name ends with it
+export const REFERENCE_OBJECT_EXTENSION = "webp";
+// The source a recording file is given when no public url names it, as a user's own capture is
+export const USER_RECORDING_SOURCE = "user recording";
+// The leading bytes each sniffed format is recognised by: a hex signature found at its offset in the file
+export const FILE_SIGNATURES: readonly { extension: string; hex: string; offset: number }[] = [
+  { extension: "png", hex: "89504e47", offset: 0 },
+  { extension: "gif", hex: "47494638", offset: 0 },
+  { extension: "jpg", hex: "ffd8ff", offset: 0 },
+  { extension: "webp", hex: "57454250", offset: 8 },
+  { extension: "mkv", hex: "1a45dfa3", offset: 0 },
+  { extension: "mp4", hex: "66747970", offset: 4 },
+  { extension: "zip", hex: "504b0304", offset: 0 },
+];
+// How many leading bytes a sniff reads, enough for every signature above
+export const SNIFF_HEAD_LENGTH = 16;

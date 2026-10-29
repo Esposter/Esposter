@@ -1,8 +1,8 @@
 import type { ParityPlacement } from "#src/models/genshinParity/shared/ParityPlacement";
 import type { ParityReferenceBase } from "#src/models/genshinParity/shared/ParityReferenceBase";
 
-// A reference is a screenshot the parity folder holds as `<id>.png`, sampled from a recording outside the repository and
-// named by its `source`, or a wiki file fetched the same way. A screen no reference records yet is pending, with the
+// A reference is a screenshot the repository commits as `<id>.webp` beside the parity page, from a wiki file or from a
+// frame of a recording, named by its `source` (`references pack` commits a cut made in the scratch folder). A screen no reference records yet is pending, with the
 // reason it has none: it names no image, so no run scores it and the committed report lists it as pending
 export type ParityReference = ParityReferenceBase &
   (

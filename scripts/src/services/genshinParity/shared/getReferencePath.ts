@@ -1,5 +1,6 @@
-import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
-import { join } from "node:path";
+import { readCachedReference } from "#src/services/genshinParity/reference/readCachedReference";
+import { readReferenceRow } from "#src/services/genshinParity/reference/readReferenceRow";
 
-// Where a reference's screenshot is held, saved as PNG under its id
-export const getReferencePath = (referenceId: string): string => join(REFERENCES_DIRECTORY, `${referenceId}.png`);
+// Where a reference's packed image is on this machine, fetched into the download cache when it does not hold it yet
+export const getReferencePath = async (referenceId: string): Promise<string> =>
+  readCachedReference((await readReferenceRow(referenceId)).sha256);

@@ -27,7 +27,7 @@ import { GameDataset } from "genshin-world";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 
-// What the game's own files are exported into: references like every other, kept outside the repository and never
+// What the game's own files are exported into: scratch like every other, kept outside the repository and never
 // Shipped. Only the parameters `fit` writes from them, which are ours, enter a package
 export const EXTRACTED_DIRECTORY: string = join(PARITY_DIRECTORY, "extracted");
 export const ASSET_MAP_NAME = "gi_map";

@@ -12,7 +12,7 @@ import sharp from "sharp";
 
 // A depth this many metres off reads half as bright in its preview, so the near parts and the far towers both show
 const DEPTH_PREVIEW_HALF = 100;
-// One reference's witness G-buffer beside the references, outside the repository: each target as its raw floats, a
+// One reference's witness G-buffer in the parity folder, outside the repository: each target as its raw floats, a
 // Header naming each part by its identifier, and a preview to check them by, the colour shot beside the parts coloured
 // By family, the normals and the depth. Returns the preview's path
 export const writeWitnessGbuffer = async (

@@ -1,5 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
+import { recordClip } from "#src/services/genshinParity/reference/recordClip";
 import { downloadClip } from "#src/services/recreation/video/downloadClip";
 import { defineCommand } from "citty";
 
@@ -23,6 +24,8 @@ export const clipCommand: SubCommandsDef[string] = defineCommand({
   run: async ({ args }) => {
     // A clip name holds no period, so a fractional second is written with an underscore
     const name = args.name || `${args.from}-${args.to}`.replaceAll(".", "_");
-    console.log(await downloadClip(args.url, Number(args.from), Number(args.to), name, args.directory));
+    const path = await downloadClip(args.url, Number(args.from), Number(args.to), name, args.directory);
+    await recordClip(path, args.url, { end: Number(args.to), start: Number(args.from) });
+    console.log(path);
   },
 });

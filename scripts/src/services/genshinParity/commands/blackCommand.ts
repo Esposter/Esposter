@@ -25,7 +25,10 @@ export const blackCommand: SubCommandsDef[string] = defineCommand({
     await fetchReferences();
     for (const referenceId of parseNames(args.reference, "reference")) {
       // oxlint-disable-next-line no-await-in-loop -- one frame read at a time, each printed as it is read
-      const data = await sharp(getReferencePath(referenceId)).removeAlpha().raw().toBuffer();
+      const data = await sharp(await getReferencePath(referenceId))
+        .removeAlpha()
+        .raw()
+        .toBuffer();
       const underBlackShare = computeUnderBlackShare(data);
       console.log(
         `${referenceId}: ${formatUnderBlackShare(underBlackShare)} of its pixels hold a channel under ${underBlackShare.blackByte} of 255`,

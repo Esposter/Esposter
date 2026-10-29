@@ -4,11 +4,13 @@ import { SITE_NAME } from "@esposter/shared";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-// Everything the tool fetches, records and draws lives here, outside the repository: the references are
-// HoYoverse's images and are looked at, never committed
+// Everything the tool fetches, records and draws lives here, outside the repository, except the manifest of the
+// references the map names, which is committed beside the parity page
 export const PARITY_DIRECTORY: string =
   process.env.GENSHIN_PARITY_DIRECTORY ?? join(homedir(), SITE_NAME, "genshin-parity");
-export const REFERENCES_DIRECTORY: string = join(PARITY_DIRECTORY, "references");
+// The scratch images that are never committed: the clean plates, the softness caches, the wiki files a trace reads,
+// the namecards and the interactive map, and the reference files a machine has not yet packed (`references pack`)
+export const REFERENCE_SCRATCH_DIRECTORY: string = join(PARITY_DIRECTORY, "references");
 // The shots of each checkout, under its own name, so a worktree's compare never overwrites another checkout's shot
 export const SHOTS_DIRECTORY: string = join(PARITY_DIRECTORY, "shots", getWorktreeName(REPOSITORY_ROOT));
 // Each run of the frame stall measure: its states' frame times, programs and their growth, as JSON
@@ -45,6 +47,9 @@ export const PARITY_PROBE_TIMEOUT_MS = 1000;
 export const PARITY_PAGE_TITLE = "<title>Genshin parity</title>";
 // The world package, whose parity page a load run builds for production and serves beside the dev server
 export const GENSHIN_WORLD_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world");
+// The manifest of every reference the map names: each file's hash, size, source and attribution. The bytes themselves
+// Are objects in the game-data container, named by their hash, and reach a machine through its download cache
+export const REFERENCE_MANIFEST_PATH: string = join(GENSHIN_WORLD_DIRECTORY, "parity", "references", "manifest.json");
 // The production build of the parity page: a folder inside that package, which git ignores, and the root task that builds it
 export const PARITY_BUILD_DIRECTORY_NAME = "parity-build";
 // The config the build and its preview read, relative to the package

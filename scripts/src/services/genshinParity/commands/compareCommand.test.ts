@@ -1,5 +1,7 @@
 import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
+import type { ParityReferenceManifestRow } from "#src/models/genshinParity/reference/ParityReferenceManifestRow";
 
+import { ParityReferenceKind } from "#src/models/genshinParity/reference/ParityReferenceKind";
 import { genshinParityCommand } from "#src/services/genshinParity/commands/genshinParityCommand";
 import { compareScreen } from "#src/services/genshinParity/reference/compareScreen";
 import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
@@ -14,6 +16,27 @@ vi.mock(import("#src/services/genshinParity/page/startFreshPageServer"), () => (
 }));
 vi.mock(import("#src/services/genshinParity/reference/getMissingReferenceInputs"), () => ({
   getMissingReferenceInputs: vi.fn<() => string[]>(() => []),
+}));
+// The manifest holds login-door, whose image is measured from this path rather than fetched
+vi.mock(import("#src/services/genshinParity/reference/readReferenceManifest"), () => ({
+  readReferenceManifest: vi.fn<() => Promise<ParityReferenceManifestRow[]>>(() =>
+    Promise.resolve([
+      {
+        attribution: {},
+        bytes: 1,
+        capturedAt: new Date(0).toISOString(),
+        height: 1,
+        id: "login-door",
+        kind: ParityReferenceKind.Wiki,
+        sha256: "0".repeat(64),
+        sourceFormat: "webp",
+        width: 1,
+      },
+    ]),
+  ),
+}));
+vi.mock(import("#src/services/genshinParity/shared/getReferencePath"), () => ({
+  getReferencePath: vi.fn<() => Promise<string>>(() => Promise.resolve("")),
 }));
 vi.mock(import("#src/services/genshinParity/reference/writeParityScores"), () => ({
   writeParityScores: vi.fn<() => Promise<void>>(),

@@ -1,4 +1,4 @@
-import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { REFERENCE_SCRATCH_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { getPath } from "#src/services/genshinParity/shared/getPath";
 import { MAX_WIKI_TITLES_PER_QUERY, WIKI_FILE_CONCURRENCY } from "#src/services/shared/constants";
 import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
@@ -19,7 +19,7 @@ export const resolveWikiFiles = async (titles: readonly string[]): Promise<Map<s
   const urlMaps = await Promise.all(
     chunk([...missingTitles], MAX_WIKI_TITLES_PER_QUERY).map((batch) => readWikiFileUrls(batch)),
   );
-  await mkdir(REFERENCES_DIRECTORY, { recursive: true });
+  await mkdir(REFERENCE_SCRATCH_DIRECTORY, { recursive: true });
   await forEachConcurrently(
     urlMaps.flatMap((urlMap) => urlMap.entries().toArray()),
     WIKI_FILE_CONCURRENCY,

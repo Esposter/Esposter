@@ -5,13 +5,12 @@ import { readScore } from "#src/services/genshinParity/reference/readScore";
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
 import { GENSHIN_WORLD_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
-import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
+import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
 import { FIXTURE_VARIANT_SEPARATOR } from "genshin-interface/constants";
-import { existsSync } from "node:fs";
 
 // The visual suite's file, whose tests are titled by their screen's name
 const VISUAL_SUITE_FILE = "parity/screens.visual.ts";
@@ -29,7 +28,7 @@ export const approveReference = async (referenceId: string, variant?: string): P
       `not one of ${Object.keys(ParityReferenceMap).join(", ")}`,
     );
   await fetchReferences();
-  const hasReference = existsSync(getReferencePath(referenceId));
+  const hasReference = (await readReferenceManifest()).some(({ id }) => id === referenceId);
   // A region compare judges only the region it names. The compare also judges the props and variant the map records, so
   // A base image over a reference in other props, or a variant the map does not record, is judged by no compare at all
   const isRecordedState =

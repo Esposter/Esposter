@@ -23,7 +23,7 @@ export const labelWitnessParts = async (
   camera?: WitnessView["camera"],
 ): Promise<{ imagePath: string; parts: (WitnessPart & { pixel: [number, number] })[] }> => {
   await fetchReferences();
-  const referencePath = getReferencePath(referenceId);
+  const referencePath = await getReferencePath(referenceId);
   const { height, width } = await sharp(referencePath).metadata();
   const { close, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(

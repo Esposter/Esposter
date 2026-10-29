@@ -25,7 +25,7 @@ describe.skipIf(spawnSync("ffmpeg", ["-version"]).status !== 0)(verifyReferences
       join(directory, `${referenceId}.png`),
     );
   const verifyAgainst = (references: Record<string, ParityReference>) =>
-    verifyReferences(references, directory, (referenceId) => join(directory, `${referenceId}.png`));
+    verifyReferences(references, directory, async (referenceId) => join(directory, `${referenceId}.png`));
 
   beforeAll(async () => {
     directory = mkdtempSync(join(tmpdir(), "parity-verify-test-"));

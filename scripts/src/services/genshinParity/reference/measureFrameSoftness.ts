@@ -8,8 +8,8 @@ const SHARPEST_SHARE = 0.25;
 // A frame's capture blur as a Gaussian sigma in its pixels, read off its interface edges across every row and column.
 // The game draws its text and borders crisp, so only the recording's compression and scaling soften them: the median of
 // The sharpest share of the edges read is the blur the recording puts on them
-export const measureFrameSoftness = async (framePath: string): Promise<number> => {
-  const { data, info } = await sharp(framePath).greyscale().raw().toBuffer({ resolveWithObject: true });
+export const measureFrameSoftness = async (frame: Buffer): Promise<number> => {
+  const { data, info } = await sharp(frame).greyscale().raw().toBuffer({ resolveWithObject: true });
   const { height, width } = info;
   const sigmas: number[] = [];
   const row = new Float64Array(width);
@@ -23,7 +23,7 @@ export const measureFrameSoftness = async (framePath: string): Promise<number> =
     readLineSigmas(column, sigmas);
   }
   if (sigmas.length === 0)
-    throw new InvalidOperationError(Operation.Read, framePath, "no interface edge to measure the capture's blur from");
+    throw new InvalidOperationError(Operation.Read, "frame", "no interface edge to measure the capture's blur from");
   const sharpest = sigmas
     .toSorted((firstSigma, secondSigma) => firstSigma - secondSigma)
     .slice(0, Math.ceil(sigmas.length * SHARPEST_SHARE));

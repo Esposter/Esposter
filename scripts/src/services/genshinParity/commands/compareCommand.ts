@@ -13,6 +13,7 @@ import { getMissingReferenceInputs } from "#src/services/genshinParity/reference
 import { getWorstCells } from "#src/services/genshinParity/reference/getWorstCells";
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
+import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
 import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { roundHundredths } from "#src/services/genshinParity/shared/roundHundredths";
@@ -77,7 +78,11 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
               layerComponent === undefined
                 ? undefined
                 : join(getComponentDirectory(layerComponent).root, WITNESS_LAYOUT_FILE_NAME);
-            const missing = getMissingReferenceInputs(getReferencePath(referenceId), witnessLayoutPath, existsSync);
+            // A reference the manifest does not hold has no stored image to measure, so it is named missing rather than fetched
+            const isHeld = (await readReferenceManifest()).some(({ id }) => id === referenceId);
+            const missing = isHeld
+              ? getMissingReferenceInputs(await getReferencePath(referenceId), witnessLayoutPath, existsSync)
+              : ["reference image in the manifest"];
             // A reference not yet measurable keeps its row as the report last had it, and the run goes on to the next
             if (missing.length > 0) {
               console.error(`not measured: ${missing.join(", ")}`);

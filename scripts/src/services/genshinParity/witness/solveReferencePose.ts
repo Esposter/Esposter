@@ -77,7 +77,7 @@ export const solveReferencePose = async (
       await mkdir(directory, { recursive: true });
       const imagePath = join(directory, `${referenceId}.png`);
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">${markers.join("")}</svg>`;
-      await sharp(getReferencePath(referenceId))
+      await sharp(await getReferencePath(referenceId))
         .composite([{ input: Buffer.from(svg) }])
         .png()
         .toFile(imagePath);

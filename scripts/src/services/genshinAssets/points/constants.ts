@@ -1,13 +1,13 @@
-import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { REFERENCE_SCRATCH_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { join } from "node:path";
 
 // The official Teyvat Interactive Map's public API on HoYoLAB, whose main map is read in English so its labels match the
-// Wiki's names. Its label tree and point list are kept as references, outside the repository like every other
+// Wiki's names. Its label tree and point list are kept as scratch, outside the repository with the other map files
 export const INTERACTIVE_MAP_API_URL = "https://sg-public-api-static.hoyolab.com/common/map_user/ys_obc/v1/map";
 export const INTERACTIVE_MAP_ID = 2;
 export const INTERACTIVE_MAP_APP_SN = "ys_obc";
 export const INTERACTIVE_MAP_LANGUAGE = "en-us";
-export const INTERACTIVE_MAP_DIRECTORY: string = join(REFERENCES_DIRECTORY, "interactive-map");
+export const INTERACTIVE_MAP_DIRECTORY: string = join(REFERENCE_SCRATCH_DIRECTORY, "interactive-map");
 export const INTERACTIVE_MAP_TREE_PATH: string = join(INTERACTIVE_MAP_DIRECTORY, "label-tree.json");
 export const INTERACTIVE_MAP_POINTS_PATH: string = join(INTERACTIVE_MAP_DIRECTORY, "points.json");
 export const INTERACTIVE_MAP_FIT_PATH: string = join(INTERACTIVE_MAP_DIRECTORY, "fit.json");

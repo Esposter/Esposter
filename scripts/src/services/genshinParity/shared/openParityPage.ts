@@ -20,6 +20,7 @@ import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { chromium } from "playwright";
+import sharp from "sharp";
 
 // A console error printed with its first argument's message, and the URL of a resource that failed to load, since the
 // Page's text names only the error's class: a ZodError's issues are its message
@@ -100,7 +101,13 @@ export const openParityPage = async ({
     const variantQuery = variant ? `&variant=${encodeURIComponent(variant)}` : "";
     const backdropQuery = backdropPath ? `&backdrop=${PARITY_BACKDROP_FILE}` : "";
     const windowLeftQuery = windowLeft === undefined ? "" : `&windowLeft=${windowLeft}`;
-    if (backdropPath) await page.route(`**/${PARITY_BACKDROP_FILE}`, (route) => route.fulfill({ path: backdropPath }));
+    // A backdrop is served as the image its bytes are, since a cached one has no extension to read its format from
+    if (backdropPath) {
+      const { format } = await sharp(backdropPath).metadata();
+      await page.route(`**/${PARITY_BACKDROP_FILE}`, (route) =>
+        route.fulfill({ contentType: `image/${format ?? "png"}`, path: backdropPath }),
+      );
+    }
     const witnessQuery = witness
       ? `&witness=${encodeURIComponent(`${WITNESS_PATH_PREFIX}${WITNESS_LAYOUT_PATH}`)}&witnessComponent=${witness}`
       : "";

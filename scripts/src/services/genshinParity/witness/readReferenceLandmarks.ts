@@ -39,7 +39,7 @@ export const readReferenceLandmarks = async (
     if (!landmark) throw new InvalidOperationError(Operation.Read, name, `not a landmark of ${witness}`);
     return landmark;
   });
-  const { data, info } = await sharp(getReferencePath(referenceId))
+  const { data, info } = await sharp(await getReferencePath(referenceId))
     .greyscale()
     .raw()
     .toBuffer({ resolveWithObject: true });

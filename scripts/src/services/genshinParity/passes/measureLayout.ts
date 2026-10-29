@@ -47,7 +47,7 @@ export const measureLayout = async (component: DerivedAssetComponent): Promise<P
             (Reflect.get(window, "getSceneCamera") as () => NonNullable<WitnessView["camera"]>)(),
           ),
           readFamilyOffsets(referencePage),
-          sharp(getReferencePath(referenceId)).metadata(),
+          sharp(await getReferencePath(referenceId)).metadata(),
         ]);
         const pose = fromPageCamera(camera);
         return families.map(({ name, pairs, row: { count, length } }) => {

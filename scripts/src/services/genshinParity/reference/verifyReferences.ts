@@ -13,7 +13,7 @@ import { join } from "node:path";
 export const verifyReferences = async (
   references: Record<string, ParityReference>,
   capturesDirectory: string,
-  referencePath: (referenceId: string) => string,
+  referencePath: (referenceId: string) => Promise<string | undefined>,
 ): Promise<ReferenceVerification[]> => {
   const cutDirectory = await mkdtemp(join(tmpdir(), "parity-verify-"));
   try {

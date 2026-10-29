@@ -1,11 +1,12 @@
 import type { RecordingSource } from "#src/models/genshinParity/reference/RecordingSource";
 
+import { RECORDING_SOURCE_REGEX } from "#src/services/genshinParity/reference/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A reference's source, `<file> at <N>s`, with `, cropped to WxH from X,Y` when the frame is cropped: the recording's
 // File name, the second its frame is cut at, and the crop, each read off the string as the map writes it
 export const parseRecordingSource = (source: string): RecordingSource => {
-  const match = /^(\S+) at (\d+(?:\.\d+)?)s(?:, cropped to (\d+)x(\d+) from (\d+),(\d+))?$/u.exec(source);
+  const match = RECORDING_SOURCE_REGEX.exec(source);
   const [, file, second, width, height, x, y] = match ?? [];
   if (file === undefined || second === undefined)
     throw new InvalidOperationError(Operation.Read, source, "not a recording source as `<file> at <N>s`");
