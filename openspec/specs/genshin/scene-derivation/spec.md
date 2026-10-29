@@ -117,14 +117,14 @@ An open-world region SHALL be laid out with every object at its exact place, and
 
 ### Requirement: Nothing of the game's files is bundled into the product
 
-The product SHALL NOT commit, build, upload or deploy any file, format or data of the game, except the official character packs, which SHALL be published to a public container and downloaded by the browser. Its bundle SHALL hold only its own shaders, geometry and fitted data.
+The product SHALL NOT commit, build, upload or deploy any file, format or data of the game, except the game text slices ([game data formats](../game-data-formats/spec.md)), the hosted game data the world reads by key, and the official character packs, which the browser downloads from a public container. Its bundle SHALL hold only its own shaders, geometry, fitted data and game text slices.
 
-#### Scenario: A deployed bundle holds no game data
+#### Scenario: A deployed bundle holds no game data beyond the carried exceptions
 
 - **GIVEN** the product is built and deployed
 - **WHEN** its bundle is inspected
-- **THEN** it holds only the product's own shaders, generated geometry and fitted data
-- **AND** it holds no file or data taken from the game
+- **THEN** it holds only the product's own shaders, generated geometry and fitted data, and the game text slices
+- **AND** it holds no other file or data taken from the game
 
 #### Scenario: The witness render does not ship
 
