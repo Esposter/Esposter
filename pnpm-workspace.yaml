@@ -104,8 +104,8 @@ catalog:
   "@tiptap/starter-kit": ^3.32.1
   "@tiptap/suggestion": ^3.32.1
   "@tiptap/vue-3": ^3.32.1
-  "@tresjs/cientos": ^5.10.0
-  "@tresjs/core": ^5.10.0
+  "@tresjs/cientos": ^5.10.1
+  "@tresjs/core": ^5.10.1
   "@trpc/client": ^11.22.1
   "@trpc/server": ^11.22.1
   "@tsdown/css": 0.23.2
