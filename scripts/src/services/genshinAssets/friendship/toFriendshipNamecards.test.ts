@@ -2,7 +2,9 @@ import type { ExcelFetterCharacterCardRow } from "#src/models/genshinAssets/frie
 import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 
+import { NAMECARD_MATERIAL_TYPE } from "#src/services/genshinAssets/friendship/constants";
 import { toFriendshipNamecards } from "#src/services/genshinAssets/friendship/toFriendshipNamecards";
+import { MaterialType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 describe(toFriendshipNamecards, () => {
@@ -14,7 +16,7 @@ describe(toFriendshipNamecards, () => {
     foodQuality: "FOOD_QUALITY_NONE",
     id: ITEM_ID,
     itemUse: [],
-    materialType: "MATERIAL_NAMECARD",
+    materialType: NAMECARD_MATERIAL_TYPE,
     nameTextMapHash: NAME_TEXT_ID,
     rank: 0,
     rankLevel: 0,
@@ -48,7 +50,7 @@ describe(toFriendshipNamecards, () => {
 
     expect(() =>
       toFriendshipNamecards(cardRows, new Map([[REWARD_ID, REWARD_ROW]]), [
-        { ...MATERIAL_ROW, materialType: "MATERIAL_CONSUME" },
+        { ...MATERIAL_ROW, materialType: MaterialType.Consume },
       ]),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: 210003, is no namecard in the material table]`,

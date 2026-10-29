@@ -57,7 +57,7 @@ export const extractComponentInterface = async (component: DerivedAssetComponent
     rectNames.map(async (name): Promise<DumpedInterfaceRect> => {
       const [json, raw] = await Promise.all([
         readFile(join(rectDirectory, name), "utf8"),
-        readFile(join(directory, "raw", "RectTransform", name.replace(/\.json$/u, ".dat"))),
+        readFile(join(directory, "raw", AssetType.RectTransform, name.replace(/\.json$/u, ".dat"))),
       ]);
       const { m_Children, m_Father, m_GameObject, m_LocalScale } = parseMachineJson<RectTransformDump>(
         json,
