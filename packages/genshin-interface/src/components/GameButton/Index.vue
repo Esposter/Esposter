@@ -5,6 +5,8 @@ import {
   GAME_CREAM,
   GAME_GOLD,
   GAME_INK,
+  GAME_LIT_GOLD,
+  GAME_LIT_GOLD_LABEL,
   GAME_REPLY_HOVER,
   GAME_REPLY_HOVER_INK,
   GAME_REPLY_REST,
@@ -265,6 +267,14 @@ defineExpose({ focus: () => button.value?.focus() });
   from {
     background-color: rgb(241 211 142);
   }
+}
+
+/* The weapon screen's Ascend, a lit gold pill with its label faded over the gold, read off its reference at 1080 high
+   (`weapon-screen-ascend`), which draws no ring or bevel of its own */
+.game-button[data-kind="Gold"] {
+  border-radius: calc(infinity * 1px);
+  background-color: v-bind(GAME_LIT_GOLD);
+  color: v-bind(GAME_LIT_GOLD_LABEL);
 }
 
 /* The dialogue reply's pill: a fifth black over the scene at rest, its words white, and lit as a cream-white pill with slate

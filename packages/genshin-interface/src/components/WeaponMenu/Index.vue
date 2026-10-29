@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { WeaponMenuTab } from "#src/models/WeaponMenuTab";
-
 import GameButton from "#src/components/GameButton/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
+import { WeaponMenuTab } from "#src/models/WeaponMenuTab";
 
 interface Props {
   // The action the panel's button takes, in the game's words for the open tab
@@ -46,7 +45,12 @@ const emit = defineEmits<{ action: []; close: [] }>();
       </li>
     </ul>
     <slot />
-    <GameButton class="action" :disabled="isActionDisabled" :kind="GameButtonKind.Pill" @click="emit('action')">
+    <GameButton
+      class="action"
+      :disabled="isActionDisabled"
+      :kind="tab === WeaponMenuTab.Ascend ? GameButtonKind.Gold : GameButtonKind.Pill"
+      @click="emit('action')"
+    >
       {{ actionLabel }}
     </GameButton>
     <button class="close" :aria-label="closeLabel" type="button" @click="emit('close')">↶</button>
@@ -149,7 +153,6 @@ const emit = defineEmits<{ action: []; close: [] }>();
   width: calc(var(--reference-pixel) * 289);
   height: calc(var(--reference-pixel) * 65);
   padding-left: calc(var(--reference-pixel) * 34);
-  color: #3b4354;
   font-size: calc(var(--reference-pixel) * 32);
   font-weight: 600;
   line-height: 1;

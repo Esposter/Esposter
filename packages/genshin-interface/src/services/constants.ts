@@ -104,6 +104,9 @@ export const GAME_ROW_PRESS = "rgb(255 255 255 / 0.3)";
 export const GAME_REPLY_REST = "rgb(0 0 0 / 0.22)";
 export const GAME_REPLY_HOVER = "rgb(255 255 255 / 0.85)";
 export const GAME_REPLY_HOVER_INK = "#3b4255";
+// The weapon screen's Ascend pill, lit gold, and its label faded over the gold, read off its reference (`weapon-screen-ascend`)
+export const GAME_LIT_GOLD = "#ffeab4";
+export const GAME_LIT_GOLD_LABEL = "#d6cdb8";
 // The cooking bar is the top half of an ellipse on the 1920 by 1080 stage, running from its left end to its right end:
 // Its centre and its two radii
 export const COOKING_ARC_CENTRE_X = 960;

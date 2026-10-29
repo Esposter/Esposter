@@ -101,8 +101,8 @@ committed.
 | `sumeru-city-location` | `WorldScreen` | 32.42% | 0.227 | 28.07% | 0.8157 |
 | `title-splash` | `SplashTitle` | 0.20% | 1.000 | 0.01% | 0.0090 |
 | `title-splash-mainland` | `SplashTitle` | 1.89% | 0.991 | 0.89% | 0.0807 |
-| `weapon-screen` | `WeaponScreen` | 2.42% | 0.841 | 1.32% | 0.0918 |
-| `weapon-screen-ascend` | `WeaponScreen` | 2.03% | 0.755 | 0.97% | 0.0797 |
+| `weapon-screen` | `WeaponScreen` | 2.41% | 0.841 | 1.32% | 0.0917 |
+| `weapon-screen-ascend` | `WeaponScreen` | 1.98% | 0.755 | 0.96% | 0.0769 |
 | `weapon-screen-at-cap` | `WeaponScreen` | pending: the recording zooms over the state, so no whole-screen frame shows it | | | |
 | `weapon-screen-rank-five` | `WeaponScreen` | pending: no screenshot of this variant yet | | | |
 | `weapon-screen-refine` | `WeaponScreen` | 3.00% | 0.881 | 1.15% | 0.0996 |
