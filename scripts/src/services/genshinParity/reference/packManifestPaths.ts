@@ -39,6 +39,15 @@ export const packManifestPaths = async (
     }),
     REFERENCE_PACK_CONCURRENCY,
   );
+  // Two files named alike would be two rows the manifest's uniqueness check refuses on every later read, so the pack stops here
+  const keys = files.map(({ name, path }) => (kind === ReferencePackKind.Record ? path : name));
+  const duplicateKey = keys.find((key, index) => keys.indexOf(key) !== index);
+  if (duplicateKey !== undefined)
+    throw new InvalidOperationError(
+      Operation.Create,
+      duplicateKey,
+      "is named by two of the files packed, and the manifest names each one once",
+    );
   if (!isDryRun) {
     const manifest = await readManifestFile();
     if (kind === ReferencePackKind.Record) {
