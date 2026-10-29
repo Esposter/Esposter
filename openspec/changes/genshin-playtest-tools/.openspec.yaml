@@ -1,0 +1,18 @@
+schema: spec-driven
+created: 2026-10-29
+affected_areas: [genshin]
+x-model: claude-sonnet-5-5
+x-touches:
+  [
+    "packages/genshin-world/src/services/dev/**",
+    "packages/genshin-world/src/models/dev/**",
+    "packages/genshin-world/src/composables/useDev*.ts",
+    "packages/genshin-world/src/composables/useGenshinTuning.ts",
+    "packages/genshin-world/src/components/Dev/**",
+    "packages/genshin-world/src/components/World/Windrise/**",
+    "packages/genshin-world/src/components/World/Session/**",
+    "packages/genshin-engine/src/renderer/**",
+    "apps/web/app/components/Genshin/**",
+    "apps/web/configuration/vite.ts",
+    ".agents/skills/building-proposals/**",
+  ]
