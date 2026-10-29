@@ -49,7 +49,7 @@ useCommands(() =>
     right-0
     title="Developer console"
     @keydown.stop="
-      (event) => {
+      (event: KeyboardEvent) => {
         if (event.code === 'Escape') isOpen = false;
       }
     "

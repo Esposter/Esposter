@@ -17,7 +17,7 @@ interface Props {
 const isOpen = defineModel<boolean>({ required: true });
 const { registry } = defineProps<Props>();
 const readings = shallowRef<DevReading[]>([]);
-const scenarios = shallowRef<DevScenario[]>([]);
+const scenarios = shallowRef<readonly DevScenario[]>([]);
 const scenarioResult = shallowRef<DevResult>();
 const tab = useLocalStorage(LocalStorageKey.GenshinDevPanelTab, "");
 
