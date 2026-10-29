@@ -49,9 +49,6 @@ logs
 # Tiled
 *.tiled-session
 
-# VSCode local workspace
-*.code-workspace
-
 # Agent tree (`.claude` is a symlink alias to `.agents`, so it needs no entry of its own)
 scheduled_tasks.lock
 .agents/worktrees
