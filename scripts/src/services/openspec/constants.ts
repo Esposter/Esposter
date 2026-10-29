@@ -18,7 +18,7 @@ export const ADDRESS_REGEX: RegExp = /https?:\/\/\S+|\]\([^)]*\)/gu;
 export const CODE_SPAN_REGEX: RegExp = /`[^`]*`/gu;
 export const FENCE_REGEX: RegExp = /^\s*(?:```|~~~)/u;
 // An archived delta is shipped history that nothing rewrites, so neither the citation rule nor the dated-prose scan reads it
-export const ARCHIVED_DELTA_PREFIX = `${PROPOSALS_DIRECTORY}/${ARCHIVE_FOLDER}/`;
+export const ARCHIVED_DELTA_PREFIX: string = `${PROPOSALS_DIRECTORY}/${ARCHIVE_FOLDER}/`;
 // Prose whose dates are the record itself: a shipped change's archive and the ledgers' dated rows
 export const DATED_PROSE_SKIPPED_PREFIXES: readonly string[] = [ARCHIVED_DELTA_PREFIX, `${LEDGER_DIRECTORY}/`];
 // Each package's changelog is written from the commits at release, so its headings carry release dates that only the release writes
