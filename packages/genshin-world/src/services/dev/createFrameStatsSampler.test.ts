@@ -1,3 +1,4 @@
+import { FRAME_STATS_HISTORY_LENGTH } from "#src/services/dev/constants";
 import { createFrameStatsSampler } from "#src/services/dev/createFrameStatsSampler";
 import { describe, expect, test } from "vitest";
 
@@ -16,14 +17,14 @@ describe(createFrameStatsSampler, () => {
     });
   });
 
-  test("holds the last sixty frames, so an older frame no longer moves the median", () => {
+  test("holds only the last frame times, so an older frame no longer moves the median", () => {
     expect.hasAssertions();
 
     const sampler = createFrameStatsSampler();
     const info = { render: { calls: 0, triangles: 0 } };
     for (let frame = 0; frame < 10; frame++) sampler.sample(1000, info);
     let latest;
-    for (let frame = 0; frame < 60; frame++) latest = sampler.sample(10, info);
+    for (let frame = 0; frame < FRAME_STATS_HISTORY_LENGTH; frame++) latest = sampler.sample(10, info);
 
     expect(latest?.frameMilliseconds).toBe(10);
   });

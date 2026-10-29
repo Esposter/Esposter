@@ -3,7 +3,7 @@ import type { DevFrameStatsSampler } from "#src/models/dev/DevFrameStatsSampler"
 import { FRAME_STATS_HISTORY_LENGTH, FRAME_STATS_INTERVAL } from "#src/services/dev/constants";
 import { computeMedianFrameTime } from "#src/services/dev/computeMedianFrameTime";
 
-// Keeps the last sixty frame times, and on every tenth frame answers their median with the draw calls and triangles the
+// Keeps the last frame times, and on every sampled frame answers their median with the draw calls and triangles the
 // Renderer counted for the frame, so the overlay reads the counters rarely enough to cost no frame of its own
 export const createFrameStatsSampler = (): DevFrameStatsSampler => {
   const frameTimes: number[] = [];
