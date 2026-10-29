@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 
 describe(appendMergeFieldToText, () => {
   const COLUMN_NAME = "name";
-  const WORDS = "Hello";
+  const WORDS = "a";
 
   test("a token after words is set off by a space", () => {
     expect.hasAssertions();

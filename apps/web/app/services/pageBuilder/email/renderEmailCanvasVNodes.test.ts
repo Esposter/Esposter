@@ -22,8 +22,8 @@ const parseEmail = (source: string) => {
 const childrenOf = (vnode: VNode) => vnode.children as VNode[];
 const styleOf = (vnode: VNode) => vnode.props?.style as Record<string, string>;
 
-describe("renderEmailCanvasVNodes", () => {
-  const TWO_COLUMN_SOURCE = `<mjml><mj-body><mj-section><mj-column><mj-text>Hello</mj-text></mj-column><mj-column><mj-text>World</mj-text></mj-column></mj-section></mj-body></mjml>`;
+describe(renderEmailCanvasVNodes, () => {
+  const TWO_COLUMN_SOURCE = `<mjml><mj-body><mj-section><mj-column><mj-text>a</mj-text></mj-column><mj-column><mj-text>b</mj-text></mj-column></mj-section></mj-body></mjml>`;
 
   test("columns stack below the mobile breakpoint", () => {
     expect.hasAssertions();
@@ -45,7 +45,7 @@ describe("renderEmailCanvasVNodes", () => {
       renderEmailCanvasVNodes(
         emailKind,
         parseEmail(
-          `<mjml><mj-body><mj-section><mj-raw><p>Raw</p></mj-raw><mj-column><mj-text>Left</mj-text></mj-column><mj-column><mj-text>Right</mj-text></mj-column></mj-section></mj-body></mjml>`,
+          `<mjml><mj-body><mj-section><mj-raw><p>a</p></mj-raw><mj-column><mj-text>a</mj-text></mj-column><mj-column><mj-text>b</mj-text></mj-column></mj-section></mj-body></mjml>`,
         ),
         1024,
       ),
