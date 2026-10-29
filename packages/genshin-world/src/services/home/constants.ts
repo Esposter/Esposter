@@ -23,7 +23,7 @@ export const MAX_HOME_PLACEMENT_COUNT =
     HOME_INTERIOR_AREA_COUNT * HOME_INTERIOR_FURNISHING_LIMIT);
 // The most of each list a realm's progress holds, each counted from the dump: the companions a realm deploys at the top
 // Trust Rank (`deployNpcCount` of the 10 rows of `HomeworldLevelExcelConfigData`, the largest 8), the queues a Trust Rank
-// Opens (that table's 10 levels), the furnishing blueprints (the 1405 rows of `FurnitureMakeExcelConfigData`), and the
+// Opens (that table's 10 levels), the furnishing blueprints (the 1,340 rows of `FurnitureMakeExcelConfigData`), and the
 // Companions' one-time rewards (233 distinct `rewardID`s of the `HOME_AVATAR_REWARD_EVENT` rows of `HomeWorldEventExcelConfigData`)
 export const MAX_HOME_COMPANION_COUNT = 8;
 export const MAX_HOME_ORDER_COUNT = 10;

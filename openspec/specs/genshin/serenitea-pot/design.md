@@ -82,5 +82,4 @@ The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet
 ## Open
 
 - [ ] **The wiki answered HTTP 402 to this build's read** — no source yet: no fetch log of the wiki's response is in the repo or the caches.
-- [ ] **The build slot appears on every Trust Rank** — no source yet: the dump's level row does not name the field that opens each build slot; the queue count is cited to `packages/genshin-world/src/services/home/constants.ts`. Raised: contradicted by `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/HomeworldLevelExcelConfigData.json`, whose `levelFuncs` holds `UI_HOMEWORLD_LEVELFUNCTION_BUILDSLOT` once on each of its ten rows, so the field is named.
 - [ ] **Realm Currency is not in the wallet until its game text name has a key in `genshin-text`** — contradicted by `packages/genshin-world/src/services/inventory/CurrencyGameTextKeyMap.ts`: it maps RealmCurrency to its key, and the wallet holds every currency.
