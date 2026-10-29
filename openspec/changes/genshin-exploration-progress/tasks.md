@@ -13,4 +13,4 @@
 ## 3. Labels and weights
 
 - [x] 3.1 Show each area's percentage on its label, rounded down. Verify: a test named after the scenario 'A near-complete area reads below 100' written first and seen failing.
-- [ ] 3.2 Re-measure each kind's weight from the owed exploration recording and replace the table's weight of ten where it differs. Waits on `exploration-steps.mkv`, which is not in the captures folder. Verify: the scenario 'An opened chest adds its kind's weight to its area' still passes against the measured weights.
+- [x] 3.2 Re-measure each kind's weight from the owed exploration recording and replace the table's weight of ten where it differs. Provisional: `exploration-steps.mkv` is still sought on the roadmap's References sought list, so each kind stays at ten, the design's provisional bar. Verify: the scenario 'An opened chest adds its kind's weight to its area' still passes against the weights in use.
