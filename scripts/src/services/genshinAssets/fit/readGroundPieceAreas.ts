@@ -1,5 +1,5 @@
-import type { GroundPieceArea } from "#src/models/genshinAssets/shared/GroundPieceArea";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { GroundPieceArea } from "#src/models/genshinAssets/shared/GroundPieceArea";
 
 import { checkHasOutline } from "#src/services/genshinAssets/fit/checkHasOutline";
 import { readRegionAreas } from "#src/services/genshinAssets/fit/readRegionAreas";

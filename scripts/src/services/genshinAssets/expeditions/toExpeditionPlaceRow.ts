@@ -1,6 +1,6 @@
 import type { ExcelExpeditionDataRow } from "#src/models/genshinAssets/expeditions/ExcelExpeditionDataRow";
-import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/shared/ExcelRewardPreviewRow";
 import type { ExpeditionPlaceRow } from "#src/models/genshinAssets/expeditions/ExpeditionPlaceRow";
+import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/shared/ExcelRewardPreviewRow";
 import type { ExpeditionRegion } from "genshin-world";
 
 import {

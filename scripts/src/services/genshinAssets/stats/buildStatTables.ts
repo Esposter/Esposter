@@ -1,7 +1,7 @@
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { ExcelCurveRow } from "#src/models/genshinAssets/stats/ExcelCurveRow";
 import type { ExcelProudSkillRow } from "#src/models/genshinAssets/stats/ExcelProudSkillRow";
 import type { ExcelWeaponLevelRow } from "#src/models/genshinAssets/stats/ExcelWeaponLevelRow";
+import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 
 import { getArtifactExpMaterials } from "#src/services/genshinAssets/stats/getArtifactExpMaterials";
 import { getArtifactMainAffixCurves } from "#src/services/genshinAssets/stats/getArtifactMainAffixCurves";

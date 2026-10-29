@@ -1,5 +1,5 @@
-import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { DumpedSceneNpcBornFile } from "#src/models/genshinAssets/sceneNpcBorn/DumpedSceneNpcBornFile";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
 import { NPC_BORN_PATH, SCENE_NPC_BORN_KEY } from "#src/services/genshinAssets/sceneNpcBorn/constants";
 import { toSceneNpcBorn } from "#src/services/genshinAssets/sceneNpcBorn/toSceneNpcBorn";

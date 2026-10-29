@@ -1,6 +1,6 @@
-import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { toShrineKeySources } from "#src/services/genshinAssets/puzzles/toShrineKeySources";

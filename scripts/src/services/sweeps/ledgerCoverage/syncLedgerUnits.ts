@@ -24,7 +24,7 @@ export const syncLedgerUnits = (text: string, units: string[]): string => {
   // Name precedes its own prefix-extensions the way a directory listing reads
   const synced = units
     .map((unit) => ({ key: normalizeLedgerUnit(unit), unit }))
-    .toSorted((first, second) => (first.key < second.key ? -1 : 1))
+    .toSorted((firstEntry, secondEntry) => (firstEntry.key < secondEntry.key ? -1 : 1))
     .map(({ key, unit }) => {
       const row = rows.get(key);
       if (row) return row;

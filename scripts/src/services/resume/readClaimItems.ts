@@ -1,5 +1,5 @@
-import type { ClaimedRef } from "#src/models/shared/ClaimedRef";
 import type { ResumeItem } from "#src/models/resume/ResumeItem";
+import type { ClaimedRef } from "#src/models/shared/ClaimedRef";
 
 import { readRequiredMachineProfile } from "#src/services/fleet/readMachineProfile";
 import { getClaimItems } from "#src/services/resume/getClaimItems";

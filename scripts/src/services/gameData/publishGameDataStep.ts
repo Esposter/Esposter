@@ -1,6 +1,6 @@
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { GameDataScope } from "#src/models/gameData/GameDataScope";
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
+import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 
 import { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutcome";
 import { GameDataTarget } from "#src/models/shared/GameDataTarget";

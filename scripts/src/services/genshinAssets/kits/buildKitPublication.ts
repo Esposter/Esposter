@@ -1,6 +1,6 @@
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { BuiltKit } from "#src/models/genshinAssets/kits/build/BuiltKit";
 import type { KitInput } from "#src/models/genshinAssets/kits/build/KitInput";
+import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 
 import { buildKitRecordWithDonors } from "#src/services/genshinAssets/kits/buildKitRecordWithDonors";
 import { omitConstellation } from "#src/services/genshinAssets/kits/omitConstellation";

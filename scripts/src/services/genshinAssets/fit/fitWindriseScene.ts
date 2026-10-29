@@ -1,5 +1,5 @@
-import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { fitAreaOutlines } from "#src/services/genshinAssets/fit/fitAreaOutlines";

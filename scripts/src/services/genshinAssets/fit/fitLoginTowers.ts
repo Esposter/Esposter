@@ -1,5 +1,5 @@
-import type { TowerPlacement } from "#src/models/genshinAssets/shared/TowerPlacement";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
+import type { TowerPlacement } from "#src/models/genshinAssets/shared/TowerPlacement";
 
 import { composeLatheAxisPoint } from "#src/services/genshinAssets/fit/composeLatheAxisPoint";
 import { readTowerProfiles } from "#src/services/genshinAssets/fit/readTowerProfiles";

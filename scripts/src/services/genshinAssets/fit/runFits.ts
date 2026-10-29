@@ -1,5 +1,5 @@
-import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
 import { mergeGameDataBuilds } from "#src/services/gameData/mergeGameDataBuilds";
 import { checkIsSelectedBy } from "#src/services/genshinAssets/fit/checkIsSelectedBy";

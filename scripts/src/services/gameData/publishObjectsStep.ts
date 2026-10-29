@@ -1,5 +1,5 @@
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
+import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { toGameDataKeyScopes } from "#src/services/gameData/toGameDataKeyScopes";

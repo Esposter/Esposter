@@ -1,6 +1,6 @@
 import type { GameDataPlan } from "#src/models/gameData/GameDataPlan";
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { GameDataRecord } from "#src/models/gameData/GameDataRecord";
+import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 
 import { getGameDataBlobName } from "#src/services/gameData/getGameDataBlobName";
 import { getGameDataHash } from "#src/services/gameData/getGameDataHash";

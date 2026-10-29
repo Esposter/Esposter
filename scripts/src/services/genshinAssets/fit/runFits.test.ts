@@ -1,5 +1,5 @@
-import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
 import { describe, expect, test } from "vitest";

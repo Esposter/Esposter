@@ -1,7 +1,7 @@
-import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { ShrineKeySource } from "genshin-world";
 
 import { SHRINE_KEY_NAME_REGEX, SHRINE_KEY_REGIONS } from "#src/services/genshinAssets/puzzles/constants";

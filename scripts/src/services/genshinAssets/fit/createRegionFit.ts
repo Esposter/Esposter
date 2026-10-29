@@ -1,7 +1,7 @@
-import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { DerivedAssetFit } from "#src/models/genshinAssets/fit/DerivedAssetFit";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
 import { readRegionGroundFits } from "#src/services/genshinAssets/fit/readRegionGroundFits";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";

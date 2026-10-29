@@ -1,5 +1,5 @@
-import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { ExcelOfferingLevelupRow } from "#src/models/genshinAssets/offerings/ExcelOfferingLevelupRow";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
 import { OfferingKind } from "#src/models/genshinAssets/offerings/OfferingKind";
 import {

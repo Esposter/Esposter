@@ -1,6 +1,6 @@
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { ExcelBirthdayMailRow } from "#src/models/genshinAssets/mail/ExcelBirthdayMailRow";
 import type { ExcelMailRow } from "#src/models/genshinAssets/mail/ExcelMailRow";
+import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 
 import { toMails } from "#src/services/genshinAssets/mail/toMails";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";

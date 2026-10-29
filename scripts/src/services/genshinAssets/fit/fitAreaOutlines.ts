@@ -1,7 +1,7 @@
-import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { WorldArea } from "#src/models/genshinAssets/world/WorldArea";
 import type { WorldAreaPolygonFile } from "#src/models/genshinAssets/world/WorldAreaPolygonFile";
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { GroundPoint } from "genshin-engine";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";

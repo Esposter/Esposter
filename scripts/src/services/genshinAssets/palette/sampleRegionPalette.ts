@@ -1,6 +1,6 @@
-import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { PaletteColour } from "#src/models/genshinAssets/palette/PaletteColour";
 import type { PaletteRegion } from "#src/models/genshinAssets/palette/PaletteRegion";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 
 import { computeDominantColour } from "#src/services/genshinAssets/palette/computeDominantColour";
 import { matchFamilyTextures } from "#src/services/genshinAssets/palette/matchFamilyTextures";

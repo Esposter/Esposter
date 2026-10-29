@@ -1,5 +1,5 @@
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { GameDataPublishResult } from "#src/models/gameData/GameDataPublishResult";
+import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { ContainerClient } from "@azure/storage-blob";
 import type { GameDataLock } from "genshin-world";
 

@@ -1,7 +1,7 @@
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { ExcelAvatarRow } from "#src/models/genshinAssets/profile/ExcelAvatarRow";
 import type { ExcelFetterStoryRow } from "#src/models/genshinAssets/profile/ExcelFetterStoryRow";
 import type { ExcelFetterVoiceRow } from "#src/models/genshinAssets/profile/ExcelFetterVoiceRow";
+import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { ProfileText } from "genshin-world";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";

@@ -1,6 +1,6 @@
-import type { ClaimedRef } from "#src/models/shared/ClaimedRef";
 import type { HoldFile } from "#src/models/resume/HoldFile";
 import type { ResumeItem } from "#src/models/resume/ResumeItem";
+import type { ClaimedRef } from "#src/models/shared/ClaimedRef";
 
 import { ClaimStatus } from "#src/models/shared/ClaimStatus";
 import { formatClaimHolder } from "#src/services/fleet/formatClaimHolder";

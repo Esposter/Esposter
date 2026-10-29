@@ -1,5 +1,5 @@
-import type { ClaimedRef } from "#src/models/shared/ClaimedRef";
 import type { ClaimHolder } from "#src/models/fleet/ClaimHolder";
+import type { ClaimedRef } from "#src/models/shared/ClaimedRef";
 
 import { ClaimDecision } from "#src/models/fleet/ClaimDecision";
 import { ClaimStatus } from "#src/models/shared/ClaimStatus";

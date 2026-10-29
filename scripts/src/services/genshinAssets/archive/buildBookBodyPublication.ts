@@ -1,5 +1,5 @@
-import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { ExcelLocalizationRow } from "#src/models/genshinAssets/archive/ExcelLocalizationRow";
+import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 
 import { LOCALIZATION_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { readBookBody } from "#src/services/genshinAssets/archive/readBookBody";

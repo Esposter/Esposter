@@ -1,8 +1,8 @@
-import type { TowerPlacement } from "#src/models/genshinAssets/shared/TowerPlacement";
 import type { ArrangementFamily } from "#src/models/genshinAssets/scene/ArrangementFamily";
 import type { ArrangementRatio } from "#src/models/genshinAssets/scene/ArrangementRatio";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { DecodedClip } from "#src/models/genshinAssets/shared/DecodedClip";
+import type { TowerPlacement } from "#src/models/genshinAssets/shared/TowerPlacement";
 import type { Vector } from "#src/models/shared/Vector";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";

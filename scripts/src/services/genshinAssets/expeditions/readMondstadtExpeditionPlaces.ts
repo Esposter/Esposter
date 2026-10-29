@@ -1,6 +1,6 @@
 import type { ExcelExpeditionDataRow } from "#src/models/genshinAssets/expeditions/ExcelExpeditionDataRow";
-import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/shared/ExcelRewardPreviewRow";
 import type { ExpeditionPlaceRow } from "#src/models/genshinAssets/expeditions/ExpeditionPlaceRow";
+import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/shared/ExcelRewardPreviewRow";
 
 import { MONDSTADT_CITY_ID } from "#src/services/genshinAssets/expeditions/constants";
 import { toExpeditionPlaceRow } from "#src/services/genshinAssets/expeditions/toExpeditionPlaceRow";

@@ -1,6 +1,6 @@
-import type { ExcelAnimalDescribeRow } from "#src/models/genshinAssets/shared/ExcelAnimalDescribeRow";
 import type { EnvAnimalGatherRow } from "#src/models/genshinAssets/materialSources/EnvAnimalGatherRow";
 import type { InteractiveMapLabel } from "#src/models/genshinAssets/points/InteractiveMapLabel";
+import type { ExcelAnimalDescribeRow } from "#src/models/genshinAssets/shared/ExcelAnimalDescribeRow";
 
 import { ANIMAL_DESCRIBE_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import {

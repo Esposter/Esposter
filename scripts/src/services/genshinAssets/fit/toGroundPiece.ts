@@ -1,6 +1,6 @@
 import type { GroundPiece } from "#src/models/genshinAssets/fit/GroundPiece";
-import type { GroundPieceArea } from "#src/models/genshinAssets/shared/GroundPieceArea";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { GroundPieceArea } from "#src/models/genshinAssets/shared/GroundPieceArea";
 
 import { checkIsInsideRegionOutlines } from "#src/services/genshinAssets/fit/checkIsInsideRegionOutlines";
 import { getRegionGroundPieceKey } from "genshin-world";

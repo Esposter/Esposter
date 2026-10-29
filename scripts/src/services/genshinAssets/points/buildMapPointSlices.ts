@@ -1,5 +1,5 @@
-import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { MapPointPlacement } from "#src/models/genshinAssets/points/MapPointPlacement";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { GameDataset } from "genshin-world";
 
 // Each region's places as one record of the dataset, keyed by the region. A publish under the dataset's scope replaces

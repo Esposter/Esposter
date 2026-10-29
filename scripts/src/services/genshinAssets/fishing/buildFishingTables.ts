@@ -1,4 +1,3 @@
-import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { ExcelFeatureTagGroupRow } from "#src/models/genshinAssets/fishing/ExcelFeatureTagGroupRow";
 import type { ExcelFishBaitRow } from "#src/models/genshinAssets/fishing/ExcelFishBaitRow";
 import type { ExcelFishPoolRow } from "#src/models/genshinAssets/fishing/ExcelFishPoolRow";
@@ -8,6 +7,7 @@ import type { ExcelFishRodRow } from "#src/models/genshinAssets/fishing/ExcelFis
 import type { ExcelFishRow } from "#src/models/genshinAssets/fishing/ExcelFishRow";
 import type { ExcelFishSkillRow } from "#src/models/genshinAssets/fishing/ExcelFishSkillRow";
 import type { ExcelFishStockRow } from "#src/models/genshinAssets/fishing/ExcelFishStockRow";
+import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { FishingPool } from "genshin-world";
 
 import { toFish } from "#src/services/genshinAssets/fishing/toFish";
