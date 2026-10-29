@@ -4,9 +4,6 @@ export const TOWER_FLOOR_TABLE_NAME = "TowerFloorExcelConfigData";
 export const TOWER_LEVEL_TABLE_NAME = "TowerLevelExcelConfigData";
 export const TOWER_REWARD_TABLE_NAME = "TowerRewardExcelConfigData";
 export const TOWER_SCHEDULE_TABLE_NAME = "TowerScheduleExcelConfigData";
-// The offset from a Benediction's description text hash to its text's key in the English text map: all 36 rows
-// Of the tower buff table hold the hash 512 below that key, so the join adds it to the hash the row reads
-export const TOWER_BUFF_TEXT_HASH_OFFSET = 512;
 // The condition a chamber's time star reads, its second argument the seconds, and the one its monolith's health star reads,
 // Its third argument the percent
 export const TOWER_COND_LEFT_TIME = "TOWER_COND_CHALLENGE_LEFT_TIME_MORE_THAN";

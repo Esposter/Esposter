@@ -2,7 +2,6 @@ import type { ExcelTowerBuffRow } from "#src/models/genshinAssets/spiralAbyss/Ex
 
 import { TowerBuffIcon } from "#src/models/genshinAssets/spiralAbyss/TowerBuffIcon";
 import { TowerBuffLastingType } from "#src/models/genshinAssets/spiralAbyss/TowerBuffLastingType";
-import { TOWER_BUFF_TEXT_HASH_OFFSET } from "#src/services/genshinAssets/spiralAbyss/constants";
 import { toAbyssTowerBuffs } from "#src/services/genshinAssets/spiralAbyss/toAbyssTowerBuffs";
 import { describe, expect, test } from "vitest";
 
@@ -16,20 +15,11 @@ describe(toAbyssTowerBuffs, () => {
     towerBuffId: TOWER_BUFF_ID,
   });
 
-  test("each Benediction is keyed by its id and holds its description under the text map key its hash is offset to", () => {
+  test("each Benediction is keyed by its id and holds its description's text hash", () => {
     expect.hasAssertions();
 
     expect(toAbyssTowerBuffs([createRow(TowerBuffIcon.Attack, TowerBuffLastingType.Floor)])).toStrictEqual(
-      new Map([
-        [
-          TOWER_BUFF_ID,
-          {
-            descriptionTextHash: DESCRIPTION_TEXT_MAP_HASH + TOWER_BUFF_TEXT_HASH_OFFSET,
-            icon: "sword",
-            scope: "floor",
-          },
-        ],
-      ]),
+      new Map([[TOWER_BUFF_ID, { descriptionTextHash: DESCRIPTION_TEXT_MAP_HASH, icon: "sword", scope: "floor" }]]),
     );
   });
 
@@ -57,6 +47,6 @@ describe(toAbyssTowerBuffs, () => {
     const rows = [createRow(TowerBuffIcon.Life, TowerBuffLastingType.Immediate)];
     const towerBuff = toAbyssTowerBuffs(rows).get(TOWER_BUFF_ID);
 
-    expect(towerBuff).toStrictEqual({ descriptionTextHash: DESCRIPTION_TEXT_MAP_HASH + TOWER_BUFF_TEXT_HASH_OFFSET });
+    expect(towerBuff).toStrictEqual({ descriptionTextHash: DESCRIPTION_TEXT_MAP_HASH });
   });
 });
