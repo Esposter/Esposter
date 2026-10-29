@@ -40,8 +40,9 @@ flowchart LR
 - [ ] **The English trace agrees with the wiki's render to a tenth of a percent** — no source yet: no render of the English logo is in `{data-root}/cache/genshin-wiki/`.
 - [ ] **The licence's forty-unit spacing, its 400 ms fade and the splash's own hold** — no source yet: the bili recording has not been read frame by frame for these timings.
 - [ ] **The licence's second line runs narrower than the recording's** — no source yet: the licence line's width has not been measured against the recording.
-- [ ] **253 on the user's own recording** — no source yet: no still of the PC splash from the user's own recording is in `{data-root}/genshin-parity/references/`.
+- [ ] **253 on the user's own recording** — no source yet: no still of the PC splash from the user's own recording is in `{data-root}/genshin-parity/references/`. `references/title-splash.png` is cited for its background of 253 as well, but its pixel value was not read here.
 - [ ] **A Simplified Chinese reader is shown mainland China's client** — no source yet: `{data-root}/genshin-parity/references/cn-login.png`, not yet read for which client a Simplified Chinese reader sees.
+- [ ] **The global client shows the splash after the publisher's logo and before the health notice, and mainland China's opens on it with no publisher's logo** — no source yet: `{data-root}/genshin-parity/captures/yt-sQNqMfmfkZU-splash-opening.mp4` and `{data-root}/genshin-parity/captures/bili-av532052219-mainland-launch.mp4` are on disk, but their frame order was not read here.
 
 ## Sources
 
