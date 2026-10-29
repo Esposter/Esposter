@@ -37,8 +37,9 @@ export const getVitestConfiguration = (
       // Because a run spawns a worker per file and they compete for cores — the 10s default is a starvation
       // Detector rather than a hook bound, and this is the one setting that keeps a green suite green
       hookTimeout: Temporal.Duration.from({ minutes: 1 }).total("milliseconds"),
-      // The default leaves one core to the main process, which does little while the workers run, so a four-core
-      // Runner ran three workers. Every core runs one, which is the faster run on the runners the suite is timed on
+      // The default leaves one core to the main process, which does little while the workers run.
+      // On a four-core runner that meant three workers.
+      // Every core runs one, which is the faster run on the runners the suite is timed on
       maxWorkers: "100%",
       ...(projectDirectory ? { name: getVitestProjectName(projectDirectory) } : {}),
       silent: "passed-only",
