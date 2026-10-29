@@ -15,6 +15,7 @@ import { TALENT_START_LEVELS } from "#src/services/character/constants";
 import { getCharacterIdConstellationsMap } from "#src/services/character/getCharacterIdConstellationsMap";
 import { getPlayedTalentLevels } from "#src/services/character/getPlayedTalentLevels";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
+import { readCharacterPackReaders } from "#src/services/character/readCharacterPackReaders";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readTalentTables } from "#src/services/character/readTalentTables";
@@ -109,6 +110,7 @@ getResultAsync(() =>
       measureLoadStep("artifact-rarities", readArtifactRarities(props.gameDataBaseUrl)),
       measureLoadStep("tip-text", TipTextLoaderMap[props.language](props.gameDataBaseUrl)),
       measureLoadStep("tips", readTips(props.gameDataBaseUrl)),
+      measureLoadStep("character-pack-readers", readCharacterPackReaders(props.gameDataBaseUrl)),
     ]),
   ),
 ).match(
@@ -141,12 +143,14 @@ getResultAsync(() =>
     artifactRarities,
     tipText,
     tips,
+    characterPackReaders,
   ]) => {
     tables.value = {
       adventureRankTables,
       artifactMainAffixPools,
       artifactRarityDataMap: createArtifactRarityDataMap(artifactRarities),
       catalogue,
+      characterPackReaders,
       characterTalentKits: talentTables.characterTalentKits,
       craftingBenchPlace,
       craftingRecipes,

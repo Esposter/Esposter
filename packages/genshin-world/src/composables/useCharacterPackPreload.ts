@@ -8,8 +8,8 @@ import { getResultAsync, noop } from "@esposter/shared";
 
 // The download of the published character packs, started when the host mounts: the index read, the files the browser's
 // Cache lacks planned, and each of those fetched into the cache with the bytes loaded and pending that the loading
-// Screen shows. A retry plans again, so the files already held are not fetched twice
-export const useCharacterPackPreload = (gameDataBaseUrl: string) => {
+// Screen shows, and `onHeld` is called once every file is held. A retry plans again, so the files already held are not fetched twice
+export const useCharacterPackPreload = (gameDataBaseUrl: string, onHeld: () => void) => {
   const status = ref(CharacterPackPreloadStatus.Idle);
   const loadedBytes = ref(0);
   const pendingBytes = ref(0);
@@ -33,6 +33,7 @@ export const useCharacterPackPreload = (gameDataBaseUrl: string) => {
     }).match(
       () => {
         status.value = CharacterPackPreloadStatus.Ready;
+        onHeld();
       },
       (error) => {
         console.error(error);

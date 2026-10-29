@@ -26,6 +26,7 @@ export const chooseCharacterPackReader = (
   if (characterPackStore && packHash !== undefined && isKeptPackCurrent) {
     const storedCharacterPack = { characterId, packHash };
     return {
+      characterId,
       key: [characterId, packHash].join(ID_SEPARATOR),
       readFile: (path) => characterPackStore.readFile(storedCharacterPack, path),
     };
@@ -33,12 +34,14 @@ export const chooseCharacterPackReader = (
 
   if (accountFileBaseUrl && accountCharacterPack)
     return {
+      characterId,
       key: [characterId, accountCharacterPack.packHash].join(ID_SEPARATOR),
       readFile: (path) => readAccountCharacterPackFile(accountFileBaseUrl, accountCharacterPack.files, path),
     };
 
   if (characterPackBaseUrl && hostCharacterPackIds.has(characterId))
     return {
+      characterId,
       key: [characterPackBaseUrl, characterId].join(ID_SEPARATOR),
       readFile: async (path) => {
         const response = await readCharacterPackFile(

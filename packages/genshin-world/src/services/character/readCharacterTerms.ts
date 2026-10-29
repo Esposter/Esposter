@@ -1,10 +1,11 @@
 import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
 
 import { CHARACTER_TERMS_PATH } from "#src/services/character/constants";
+import { decodeCharacterTerms } from "#src/services/character/decodeCharacterTerms";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 
-// A pack's terms are the text bundled with its model, read as written since the wording differs slightly by character,
-// So the terms of each model are shown rather than a summary of them
+// A pack's terms as the text bundled with its model, decoded as the terms file's own encoding reads, so the terms are
+// shown as written, since the wording differs slightly by character
 export const readCharacterTerms = (
   characterPackReader: CharacterPackReader,
 ): ReturnType<typeof getResultAsync<string>> =>
@@ -12,5 +13,5 @@ export const readCharacterTerms = (
     const termsBlob = await characterPackReader.readFile(CHARACTER_TERMS_PATH);
     if (termsBlob === undefined)
       throw new InvalidOperationError(Operation.Read, CHARACTER_TERMS_PATH, "is no file of the pack");
-    return termsBlob.text();
+    return decodeCharacterTerms(new Uint8Array(await termsBlob.arrayBuffer())).text;
   });

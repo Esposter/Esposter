@@ -13,7 +13,7 @@ describe("characterPackLoader", () => {
     await render(CharacterPackLoader, {
       props: {
         characterId: 1,
-        characterPackReader: { key, readFile: () => Promise.resolve(new Blob([terms])) },
+        characterPackReader: { characterId: 1, key, readFile: () => Promise.resolve(new Blob([terms])) },
         confirmRemoval: noop,
         gameDataBaseUrl: "",
         isCharacterPackKept: false,

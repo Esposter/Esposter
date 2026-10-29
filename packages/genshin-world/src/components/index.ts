@@ -94,7 +94,6 @@ export { default as StatueWorship } from "./Statue/Worship/Index.vue";
 export { default as WeaponScreen } from "./Weapon/Screen/Index.vue";
 export { default as WishScreen } from "./Wish/Screen/Index.vue";
 export { default as WorldCharacter } from "./World/Character/Index.vue";
-export { default as WorldCharacterPlaceholder } from "./World/CharacterPlaceholder/Index.vue";
 export { default as WorldEnemies } from "./World/Enemies/Index.vue";
 export { default as WorldEnemyNameTags } from "./World/EnemyNameTags/Index.vue";
 export { default as WorldFreeCamera } from "./World/FreeCamera/Index.vue";

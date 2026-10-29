@@ -259,6 +259,7 @@ const {
   cameraPose,
   catalogue,
   characterPackBaseUrl,
+  characterPackReaders,
   characterTalentKits,
   craftingBenchPlace,
   craftingRecipes,
@@ -950,21 +951,15 @@ const stellaFortunaNameTextIdMap = computed(() => {
 });
 // The characters' packs: the ones the browser keeps, which a player loads on the character screen, read ahead of the
 // Host's
-const {
-  activeCharacterPackReader,
-  characterIdPackHashMap,
-  getCharacterPackReader,
-  isCharacterPackKept,
-  keepCharacterPack,
-  removeCharacterPack,
-} = useCharacterPacks({
-  accountFileBaseUrl,
-  characterPackBaseUrl,
-  getAccountCharacterPacks: () => accountCharacterPacks,
-  getActiveCharacterId: () => getActiveCharacterId(party),
-  keepAccountCharacterPack,
-  removeAccountCharacterPack,
-});
+const { characterIdPackHashMap, getCharacterPackReader, isCharacterPackKept, keepCharacterPack, removeCharacterPack } =
+  useCharacterPacks({
+    accountFileBaseUrl,
+    characterPackBaseUrl,
+    getAccountCharacterPacks: () => accountCharacterPacks,
+    getActiveCharacterId: () => getActiveCharacterId(party),
+    keepAccountCharacterPack,
+    removeAccountCharacterPack,
+  });
 // The residents of the regions in reach, which the talks and a keeper's screen are read from
 const getResidents = () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents);
 // A won week game pays its reward once, its Player EXP into the card game's EXP and its Lucky Coins into the bag and wallet,
@@ -2049,7 +2044,7 @@ useWorldSaveSync({
         :character-locomotion="locomotion"
         :get-character
         :get-anti-cold-ratio
-        :character-pack-reader="activeCharacterPackReader"
+        :character-pack-readers="characterPackReaders"
         :create-terrain-worker
         :dev-registry="devRegistry"
         :kit-effect-state="kitContext.kitEffectState"

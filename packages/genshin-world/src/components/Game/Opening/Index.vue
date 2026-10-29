@@ -35,7 +35,7 @@ interface Props {
 
 const { gameDataBaseUrl, gameText, language, musicRecordingBaseUrl, playerName, progress, sceneExportBaseUrl } =
   defineProps<Props>();
-const emit = defineEmits<{ begin: []; finish: [] }>();
+const emit = defineEmits<{ begin: []; finish: []; held: [] }>();
 // The game's opening as one sequence: its splashes on white, then the login screen under the sky of the player's
 // Hour, its title waiting for a click, its flight and its door waiting for another, then the startup loading screen,
 // Which loads the world and whose white the world cuts in from. The login screen's bar is the game's own checks,
@@ -69,7 +69,7 @@ getResultAsync(() => measureLoadStep("opening", readLoginData(gameDataBaseUrl)))
 );
 // The published character packs download from the moment the opening mounts, so the splashes and the login play while
 // The bytes arrive, and the startup loading screen shows them
-const { loadedBytes, pendingBytes, retry, status } = useCharacterPackPreload(gameDataBaseUrl);
+const { loadedBytes, pendingBytes, retry, status } = useCharacterPackPreload(gameDataBaseUrl, () => emit("held"));
 defineExpose({ loadedBytes, pendingBytes });
 </script>
 

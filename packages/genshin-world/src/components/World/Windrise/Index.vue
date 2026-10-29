@@ -34,7 +34,6 @@ import type { Object3D, Vector3 } from "three";
 
 import CharacterModel from "#src/components/Character/Model/Index.vue";
 import QuestBeam from "#src/components/Quest/Beam/Index.vue";
-import WorldCharacterPlaceholder from "#src/components/World/CharacterPlaceholder/Index.vue";
 import WorldEnemies from "#src/components/World/Enemies/Index.vue";
 import WorldFrostbearingTree from "#src/components/World/FrostbearingTree/Index.vue";
 import WorldGrass from "#src/components/World/Grass/Index.vue";
@@ -65,6 +64,7 @@ import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { StandInShape } from "#src/models/world/StandInShape";
 import { updateAvatarFaces } from "#src/services/character/avatar/updateAvatarFaces";
+import { getCharacterPackReader } from "#src/services/character/getCharacterPackReader";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { computeQuestClueTrailEnds } from "#src/services/elementalSight/computeQuestClueTrailEnds";
 import { getSightRadius } from "#src/services/elementalSight/getSightRadius";
@@ -142,9 +142,9 @@ interface Props {
   characterBody?: Object3D;
   // How the character on the field moves, whose body's capsule is drawn where it has no pack
   characterLocomotion?: Locomotion;
-  // Where the pack of the character on the field is read from, which it is drawn on the body from, or as its body's
-  // Capsule where it has none or its model fails to load
-  characterPackReader?: CharacterPackReader;
+  // The readers of the published character packs by the character each is of, from which the character on the field is
+  // drawn on the body
+  characterPackReaders: ReadonlyMap<number, CharacterPackReader>;
   createTerrainWorker: () => Worker;
   // The development registry the look registers its variables with, given in development alone
   devRegistry?: DevRegistry;
@@ -223,7 +223,7 @@ const {
   catalogue,
   characterBody,
   characterLocomotion,
-  characterPackReader,
+  characterPackReaders,
   createTerrainWorker,
   devRegistry,
   elementalSight,
@@ -416,8 +416,8 @@ const questClueTrailEnds = computed(() => computeQuestClueTrailEnds(regionDataMa
 // The ends the sight's trails lead to: the courts of the Seelies still resting, the bounties' targets standing, and the
 // Go-to places the quests' clues name
 const sightTrailEnds = computed(() => [...seelieCourts.value, ...bountyTrailEnds, ...questClueTrailEnds.value]);
-// The pack whose model failed to load, by its reader's key, drawn as its body's capsule in its place
-const failedCharacterPackKey = ref("");
+// The reader of the pack that draws the character on the field: the Traveler's for a character the index lists no pack for
+const characterPackReader = computed(() => getCharacterPackReader(characterPackReaders, activeCharacterId));
 // The tiles the terrain draws, which it writes each frame and what reads the ground compares against what it last read
 const terrainDraws = createTerrainSelection(TILE_SELECTION_CAPACITY);
 // The ground under the camera from above, which the grass redraws as the camera moves and grows on, and the rain's
@@ -712,18 +712,11 @@ onUnmounted(() => {
         receive-shadow
       />
       <CharacterModel
-        v-else-if="characterPackReader && failedCharacterPackKey !== characterPackReader.key"
+        v-else-if="characterPackReader"
         :key="characterPackReader.key"
-        :character-id="activeCharacterId"
+        :character-id="characterPackReader.characterId"
         :character-pack-reader
         :light-uniforms
-        :ramp-texture
-        @error="failedCharacterPackKey = characterPackReader?.key ?? ''"
-      />
-      <WorldCharacterPlaceholder
-        v-else-if="characterLocomotion"
-        :light-uniforms
-        :locomotion="characterLocomotion"
         :ramp-texture
       />
     </primitive>

@@ -33,7 +33,7 @@ vi.mock(import("genshin-engine"), async (importOriginal) => {
 
 describe(readCharacterMesh, () => {
   const readFile = vi.fn<(path: string) => Promise<Blob>>((path) => Promise.resolve(new Blob([path])));
-  const characterPackReader: CharacterPackReader = { key: "", readFile };
+  const characterPackReader: CharacterPackReader = { characterId: TRAVELER_CHARACTER_ID, key: "", readFile };
   const meshOptions = {
     characterId: TRAVELER_CHARACTER_ID,
     lightUniforms: createLightUniforms(),

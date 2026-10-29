@@ -1,6 +1,7 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { ArtifactMainAffixPool } from "#src/models/artifact/ArtifactMainAffixPool";
 import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
+import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
 import type { CharacterTalentKit } from "#src/models/character/CharacterTalentKit";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { TalentUpgradeMap } from "#src/models/character/TalentUpgradeMap";
@@ -38,6 +39,9 @@ export interface WorldTables {
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
   // The regions and their areas, which the map draws, the region data is fetched by and the weather is read from
   catalogue: Catalogue;
+  // The reader of each published character pack, by the id of the character it is of, which the world draws each
+  // character's model from and the Character screen its terms
+  characterPackReaders: ReadonlyMap<number, CharacterPackReader>;
   // Each character's kit as the game's tables hold it, the proud skill group of each combat talent, which the Talents tab
   // Reads a talent's upgrades by
   characterTalentKits: CharacterTalentKit[];

@@ -64,8 +64,6 @@ export const ENEMY_POSE_LENGTH = 3;
 // Stepping less than that is a moving edge the eye does not follow
 export const CASTER_REDRAW_DISTANCE = 0.25;
 export const CASTER_REDRAW_ANGLE = 0.1;
-// The colour the capsule a character's body is drawn as where no model stands on it, a pale stone the eye finds
-export const CHARACTER_PLACEHOLDER_COLOR = 0xe8e2d4;
 // The game's effect meshes and stage planes, which the undrawn maps of every city's region share under any region's code
 export const UNDRAWN_EFFECTS_MESH_REGEX = /^Eff_/u;
 export const UNDRAWN_STAGE_PLANES_MESH_REGEX = /^Stages_(?:DecalCube|Plane)_/u;

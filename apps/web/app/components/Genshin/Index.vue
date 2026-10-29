@@ -12,14 +12,17 @@ import { GameLanguageTagMap, GameTextKey } from "genshin-text";
 import { computeLoadingProgress, GameOpening } from "genshin-world";
 
 // The game as it plays: its opening at once, and once its door is opened the world loading under the startup loading
-// Screen, whose marks follow it, shown once that screen's white gives way. The world is mounted only at the door, and
-// Draws no frames while the opening covers it, though its first view's ground still streams in. Its code arriving,
+// Screen, whose marks follow it, shown once that screen's white gives way. The world is mounted only at the door and once
+// The character packs are held, and draws no frames while the opening covers it, though its first view's ground still
+// Streams in. Its code arriving,
 // The player's save being loaded, and that ground and the regions in reach of it having arrived are the three steps
 // Loading can see, since none reports any finer progress
 const isLoaded = ref(false);
 const isReady = ref(false);
 const isOpeningShown = ref(true);
 const isDoorOpened = ref(false);
+// Whether every character pack the opening downloads is held, which the world waits on, since it draws each model from them
+const isPacksHeld = ref(false);
 // A diagnostic only: while the opening shows, each step still unfinished when the warning time is up is logged by name,
 // So a stall says what it waits on. Started before the awaits below, so a save that stalls in them is timed too, and
 // Started again at the door, since the world's steps start only there and are named only once it is open. Nothing is
@@ -72,7 +75,7 @@ const emit = defineEmits<{ load: []; ready: [] }>();
   <div size-full relative of-hidden>
     <ClientOnly>
       <LazyGenshinWorld
-        v-if="isDoorOpened && isSaveLoaded"
+        v-if="isDoorOpened && isSaveLoaded && isPacksHeld"
         :game-text="gameText.text"
         :is-paused="isOpeningShown || isReplaced"
         :language="gameText.language"
@@ -130,6 +133,7 @@ const emit = defineEmits<{ load: []; ready: [] }>();
         :scene-export-base-url="IS_DEVELOPMENT ? GENSHIN_SCENE_EXPORT_BASE_URL : ''"
         @begin="isDoorOpened = true"
         @finish="isOpeningShown = false"
+        @held="isPacksHeld = true"
       />
       <!-- A progressbar is no live region, so its reaching the end is announced by nothing of its own. The world being
         Ready is said here to a screen reader alone, and only then, since the splashes and login load none of it -->
