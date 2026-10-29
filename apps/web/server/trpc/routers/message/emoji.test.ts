@@ -10,7 +10,8 @@ import { emojiRouter } from "#server/trpc/routers/message/emoji";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { getReverseTickedTimestamp, MessageMetadataType } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { MockTableClient } from "azure-mock";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("emojiRouter", () => {
   const { createMember, getMockContext, getRoomId } = setupRoomSuite();
@@ -207,5 +208,27 @@ describe("emojiRouter", () => {
     const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
 
     expect(emojis).toStrictEqual([newEmoji]);
+  });
+
+  test("two members reacting at once both keep their reaction", async () => {
+    expect.hasAssertions();
+
+    const { emojiKey, newMessage } = await setupEmoji();
+    const firstMember = await createMember();
+    const secondMember = await createMember();
+    const { getEntity } = MockTableClient.prototype;
+    // The second member reacts between the first member's read and its write, so the first member's write is
+    // Computed against a user list that no longer stands
+    vi.spyOn(MockTableClient.prototype, "getEntity").mockImplementationOnce(async function (...args) {
+      const staleEntity = await getEntity.apply(this, args);
+      await mockSessionOnce(mockContext.db, secondMember);
+      await emojiCaller.updateEmoji(emojiKey);
+      return staleEntity;
+    });
+    await mockSessionOnce(mockContext.db, firstMember);
+    await emojiCaller.updateEmoji(emojiKey);
+    const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
+
+    expect(takeOne(emojis).userIds).toStrictEqual(expect.arrayContaining([firstMember.id, secondMember.id]));
   });
 });

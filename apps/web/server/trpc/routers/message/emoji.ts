@@ -2,6 +2,7 @@ import type { Clause } from "@esposter/azure";
 
 import { useMessageEmojiMetadataClient } from "#server/composables/azure/table/useMessageEmojiMetadataClient";
 import { getDevice } from "#server/services/auth/getDevice";
+import { updateEntityConditionally } from "#server/services/azure/table/updateEntityConditionally";
 import { getEmojiMetadataClauses } from "#server/services/message/emoji/getEmojiMetadataClauses";
 import { emojiEventEmitter } from "#server/services/message/events/emojiEventEmitter";
 import { router } from "#server/trpc";
@@ -19,7 +20,7 @@ import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/Updat
 import { readMetadataInputSchema } from "#shared/models/db/message/ReadMetadataInput";
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
-import { createEntity, getEntity, getEntityWithEtag, getTopNEntities, updateEntity } from "@esposter/db";
+import { createEntity, getEntityWithEtag, getTopNEntities, updateEntity } from "@esposter/db";
 import { MessageMetadataType } from "@esposter/db-schema";
 import { checkIsOnlyReactor, getUpdatedUserIds, Operation } from "@esposter/shared";
 
@@ -89,23 +90,31 @@ export const emojiRouter = router({
   updateEmoji: getMemberProcedure(updateEmojiInputSchema, CompositeKeyPropertyNames.partitionKey).mutation<void>(
     async ({ ctx, input }) => {
       const messagesMetadataClient = await useMessageEmojiMetadataClient();
-      const existingEmoji = await requireEntity(
-        getEntity(messagesMetadataClient, MessageEmojiMetadataEntity, input.partitionKey, input.rowKey),
+      // Two members reacting at once each read the same user list, so the toggle is computed against the version it
+      // was read from and written only if that version still stands. A lost race reads again and toggles again
+      const existingEmojiWithEtag = await requireEntity(
+        getEntityWithEtag(messagesMetadataClient, MessageEmojiMetadataEntity, input.partitionKey, input.rowKey),
         MessageMetadataType.Emoji,
         JSON.stringify(input),
       );
-      if (checkIsOnlyReactor(existingEmoji.userIds, ctx.getSessionPayload.user.id))
-        throw getInvalidOperationError(Operation.Update, MessageMetadataType.Emoji, JSON.stringify(existingEmoji));
+      const updatedEmoji = await updateEntityConditionally(messagesMetadataClient, MessageEmojiMetadataEntity, {
+        entityType: MessageMetadataType.Emoji,
+        entityWithEtag: existingEmojiWithEtag,
+        getUpdateEntity: (existingEmoji) => {
+          if (checkIsOnlyReactor(existingEmoji.userIds, ctx.getSessionPayload.user.id))
+            throw getInvalidOperationError(Operation.Update, MessageMetadataType.Emoji, JSON.stringify(existingEmoji));
 
-      // The row's own message, never the one the input names: a reaction is joined or left, and merging the
-      // Caller's messageRowKey would let any member move someone else's reaction onto another message
-      const updatedEmoji = {
-        messageRowKey: existingEmoji.messageRowKey,
-        partitionKey: input.partitionKey,
-        rowKey: input.rowKey,
-        userIds: getUpdatedUserIds(existingEmoji.userIds, ctx.getSessionPayload.user.id),
-      };
-      await updateEntity(messagesMetadataClient, updatedEmoji);
+          // The row's own message, never the one the input names: a reaction is joined or left, and merging the
+          // Caller's messageRowKey would let any member move someone else's reaction onto another message
+          return {
+            messageRowKey: existingEmoji.messageRowKey,
+            partitionKey: input.partitionKey,
+            rowKey: input.rowKey,
+            userIds: getUpdatedUserIds(existingEmoji.userIds, ctx.getSessionPayload.user.id),
+          };
+        },
+        writeEntity: (entity, etag) => updateEntity(messagesMetadataClient, entity, undefined, { etag }),
+      });
       emojiEventEmitter.emit("updateEmoji", [updatedEmoji, getDevice(ctx.getSessionPayload)]);
     },
   ),
