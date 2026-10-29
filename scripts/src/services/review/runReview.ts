@@ -1,18 +1,20 @@
-import type { ReviewBatchOutcome } from "#src/models/review/ReviewBatchOutcome";
 import type { ReviewFinding } from "#src/models/review/ReviewFinding";
 import type { ReviewRange } from "#src/models/review/ReviewRange";
-import type { ReviewWindow } from "#src/models/review/ReviewWindow";
-import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
+import type { ReviewRunInput } from "#src/models/review/ReviewRunInput";
 
 import { ReviewMode } from "#src/models/review/ReviewMode";
 import { ReviewWindowStatus } from "#src/models/review/ReviewWindowStatus";
 import { checkIsBacklogOwed } from "#src/services/review/checkIsBacklogOwed";
+import { checkIsMainAncestor } from "#src/services/review/checkIsMainAncestor";
 import { REVIEW_FIX_MATRIX_CAP, REVIEW_ISSUE_LABEL, REVIEW_RUN_DEADLINE } from "#src/services/review/constants";
 import { dispatchReview } from "#src/services/review/dispatchReview";
 import { formatReviewWindow } from "#src/services/review/formatReviewWindow";
+import { getFindings } from "#src/services/review/getFindings";
+import { getMode } from "#src/services/review/getMode";
 import { getNewlyPassedWindowIndices } from "#src/services/review/getNewlyPassedWindowIndices";
 import { getPassedWindowCount } from "#src/services/review/getPassedWindowCount";
 import { getReviewWindowStatus } from "#src/services/review/getReviewWindowStatus";
+import { getWindowRow } from "#src/services/review/getWindowRow";
 import { advanceMain } from "#src/services/review/git/advanceMain";
 import { assertCheckoutIsDisposable } from "#src/services/review/git/assertCheckoutIsDisposable";
 import { checkoutQueue } from "#src/services/review/git/checkoutQueue";
@@ -26,38 +28,7 @@ import { writeReviewIssueFindings } from "#src/services/review/writeReviewIssueF
 import { writeReviewSummary } from "#src/services/review/writeReviewSummary";
 import { MAIN_BRANCH, QUEUE_BRANCH, REMOTE_MAIN_REF, REMOTE_QUEUE_REF } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
-import { getResult, InvalidOperationError, noop, Operation, takeOne } from "@esposter/shared";
-
-interface ReviewRunInput extends DryRunOptions {
-  findingsDirectory: string;
-  from: string;
-  to: string;
-}
-
-const getMode = (from: string, to: string): ReviewMode => {
-  if (from === "" && to === "") return ReviewMode.Steady;
-  if (from === "" || to === "")
-    throw new InvalidOperationError(Operation.Read, "review range", "it takes both --from and --to");
-  return ReviewMode.Range;
-};
-
-const checkIsMainAncestor = (): boolean =>
-  getResult(() => runGit(["merge-base", "--is-ancestor", REMOTE_MAIN_REF, REMOTE_QUEUE_REF])).match(
-    () => true,
-    () => false,
-  );
-
-const getFindings = (outcomes: ReviewBatchOutcome[]): ReviewFinding[] =>
-  outcomes.flatMap((outcome) => ("findings" in outcome ? outcome.findings : []));
-
-// One window as a row of the summary's table
-const getWindowRow = (
-  { base, batches, end }: ReviewWindow,
-  index: number,
-  findingCount: number,
-  status: ReviewWindowStatus,
-): string =>
-  `| ${index} | \`${base.slice(0, 12)}..${end.slice(0, 12)}\` | ${batches.length} | ${findingCount} | ${status} |`;
+import { getResult, noop, takeOne } from "@esposter/shared";
 
 // Plans every window owed, reviews all of their batches in one pool, and acts on each window as it joins the passed prefix:
 // In steady mode `main` advances to the prefix's end, then the window's findings open their issues. A window that did not
