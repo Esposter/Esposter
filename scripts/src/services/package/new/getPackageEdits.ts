@@ -10,12 +10,10 @@ import {
   README_FILE,
 } from "#src/services/package/new/constants";
 import { getPackageName } from "#src/services/package/new/getPackageName";
+import { getPathKey } from "#src/services/package/new/getPathKey";
 import { insertAfterLastMatch } from "#src/services/package/new/insertAfterLastMatch";
 import { insertBeforeMatch } from "#src/services/package/new/insertBeforeMatch";
 import { insertSortedRow } from "#src/services/package/new/insertSortedRow";
-
-// The one key every inventory row sorts on: the package's directory, which is the same in every table that names it
-const getPathKey = (line: string): string => /`(?<path>packages\/[^`]+)`/u.exec(line)?.groups?.path || "";
 
 // The edits a new package makes to the files that already list the workspace's members. Each one edits a file's text to write the row a test reads.
 // The test is named beside the edit that writes the row
