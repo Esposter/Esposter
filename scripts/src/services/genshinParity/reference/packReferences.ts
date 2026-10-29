@@ -24,7 +24,7 @@ export const packReferences = async (
   const manifest = await readManifestFile();
   const references = await readReferenceFiles();
   // A replaced id's local bytes are checked against no committed row, so the bytes it packs to are its local ones and it
-  // writes a new row; the committed row still backs the plate it keeps where its local plate is absent
+  // writes a new row; the committed row still backs the plate it reads where its local plate is absent
   const plans = await settleAll(
     references.map(({ id, path, reference }) => () => {
       const committed = manifest.references.find((row) => row.id === id);

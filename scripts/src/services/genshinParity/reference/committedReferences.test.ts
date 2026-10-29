@@ -31,12 +31,29 @@ describe("committedReferences", () => {
       .map((path) => join(COMPONENTS_DIRECTORY, path)),
   ];
 
-  test("commits a file for every reference the map names", async () => {
+  // The plate of every reference a manifest row or a map entry names one for, at the path its id gives
+  const readNamedPlates = async (): Promise<{ id: string; path: string }[]> => {
+    const rows = await readReferenceManifest();
+    const ids = new Set([
+      ...rows.filter(({ plate }) => plate !== undefined).map(({ id }) => id),
+      ...Object.entries(ParityReferenceMap)
+        .filter(([, { pending, plateSource }]) => pending === undefined && plateSource !== undefined)
+        .map(([id]) => id),
+    ]);
+    return Array.from(ids, (id) => ({ id, path: getReferencePlateFilePath(id) }));
+  };
+
+  test("commits a file for every reference the map names, and a plate for every one that names one", async () => {
     expect.hasAssertions();
 
-    const missing = (await readReferenceFiles())
-      .filter(({ path }) => !existsSync(path))
-      .map(({ id, path }) => `${id}: add its lossless WebP at ${toRepositoryPath(path)}`);
+    const missing = [
+      ...(await readReferenceFiles())
+        .filter(({ path }) => !existsSync(path))
+        .map(({ id, path }) => `${id}: add its lossless WebP at ${toRepositoryPath(path)}`),
+      ...(await readNamedPlates())
+        .filter(({ path }) => !existsSync(path))
+        .map(({ id, path }) => `${id}: add its plate's lossless WebP at ${toRepositoryPath(path)}`),
+    ];
 
     expect(missing).toStrictEqual([]);
   });
@@ -72,7 +89,7 @@ describe("committedReferences", () => {
     ]);
     const orphans = readCommittedFiles()
       .filter((path) => !named.has(path))
-      .map(toRepositoryPath);
+      .map((path) => toRepositoryPath(path));
 
     expect(orphans).toStrictEqual([]);
   });
@@ -93,7 +110,11 @@ describe("committedReferences", () => {
     ];
     const problems = await Promise.all(
       expected.map(async ({ id, path, sha256 }) => {
-        if (!existsSync(path)) return undefined;
+        // A file no row names is the existence test's to report; a file a row names must be on disk to hold the row's bytes
+        if (!existsSync(path))
+          return sha256 === undefined
+            ? undefined
+            : `${id}: ${toRepositoryPath(path)} is named by its manifest row, but absent`;
         if (sha256 === undefined) return `${id}: ${toRepositoryPath(path)} has no manifest row`;
         return (await sha256File(path)) === sha256
           ? undefined
@@ -109,7 +130,7 @@ describe("committedReferences", () => {
 
     const oversized = readCommittedFiles()
       .filter((path) => statSync(path).size > REFERENCE_FILE_MAX_BYTES)
-      .map(toRepositoryPath);
+      .map((path) => toRepositoryPath(path));
 
     expect(oversized).toStrictEqual([]);
   });

@@ -1,10 +1,10 @@
-import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
 import type { ParityReferenceManifestRow } from "#src/models/genshinParity/reference/ParityReferenceManifestRow";
 import type { ReferenceEntryImage } from "#src/models/genshinParity/reference/ReferenceEntryImage";
+import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
+import type { readEntryImage as baseReadEntryImage } from "#src/services/genshinParity/reference/readEntryImage";
 
 import { ParityReferenceKind } from "#src/models/genshinParity/reference/ParityReferenceKind";
 import { planReferenceEntry } from "#src/services/genshinParity/reference/planReferenceEntry";
-import type { readEntryImage as baseReadEntryImage } from "#src/services/genshinParity/reference/readEntryImage";
 import { getScratchPlatePath } from "#src/services/genshinParity/shared/getScratchPlatePath";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -67,18 +67,41 @@ describe(planReferenceEntry, () => {
     expect(files.map(({ path }) => path)).toStrictEqual([MAIN_PATH, expect.stringContaining(`${ID}.plate.webp`)]);
   });
 
-  test("a replace whose local plate is absent keeps the committed plate and writes none", async () => {
+  test("a replace whose local plate is absent keeps the committed plate that is on disk, and writes none", async () => {
+    expect.hasAssertions();
+
+    // The committed plate file holds the committed hash, so it is read back as the held plate rather than as a new one
+    readEntryImage.mockImplementation((path) =>
+      Promise.resolve(
+        path === getScratchPlatePath(ID)
+          ? { ...createEntry(COMMITTED_PLATE_IMAGE), isNew: false, stored: undefined }
+          : createEntry(MAIN_IMAGE),
+      ),
+    );
+
+    const { files, missing, row } = await planReferenceEntry(ID, REFERENCE, MAIN_PATH, undefined, createCommittedRow());
+
+    expect(readEntryImage).toHaveBeenCalledWith(
+      getScratchPlatePath(ID),
+      COMMITTED_PLATE_IMAGE,
+      expect.stringContaining(`${ID}.plate.webp`),
+    );
+    expect(row?.plate).toStrictEqual(COMMITTED_PLATE_IMAGE);
+    expect(missing).toStrictEqual([]);
+    expect(files.map(({ path }) => path)).toStrictEqual([MAIN_PATH]);
+  });
+
+  test("a replace whose local plate and committed plate file are both absent reports the plate missing and keeps no plate", async () => {
     expect.hasAssertions();
 
     readEntryImage.mockImplementation((path) =>
       Promise.resolve(path === getScratchPlatePath(ID) ? undefined : createEntry(MAIN_IMAGE)),
     );
 
-    const { files, missing, row } = await planReferenceEntry(ID, REFERENCE, MAIN_PATH, undefined, createCommittedRow());
+    const { missing, row } = await planReferenceEntry(ID, REFERENCE, MAIN_PATH, undefined, createCommittedRow());
 
-    expect(row?.plate).toStrictEqual(COMMITTED_PLATE_IMAGE);
+    expect(row?.plate).toBeUndefined();
     expect(missing).toStrictEqual([expect.stringContaining(`${ID}.plate`)]);
-    expect(files.map(({ path }) => path)).toStrictEqual([MAIN_PATH]);
   });
 
   test("a replace with no committed row and no local plate leaves no plate", async () => {
