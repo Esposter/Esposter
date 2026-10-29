@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import CloseButton from "#src/components/CloseButton/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
-import { COOKING_ARC_CENTRE_X, COOKING_ARC_CENTRE_Y, COOKING_ARC_RADIUS_X } from "#src/services/constants";
+import {
+  COOKING_ARC_CENTRE_X,
+  COOKING_ARC_CENTRE_Y,
+  COOKING_ARC_RADIUS_X,
+  COOKING_ZONE_RADIUS_Y,
+} from "#src/services/constants";
 import { computed } from "vue";
 
 interface Props {
@@ -28,8 +33,6 @@ interface Props {
 const { autoCookLabel, closeLabel, dishes, isAutoCookable, pointer, selectedId, stopLabel, title, zones } =
   defineProps<Props>();
 const emit = defineEmits<{ autoCook: []; close: []; select: [id: number]; stop: [] }>();
-// The zones lie on a band drawn inside the bar's track, whose radius is this, in the stage's units
-const ZONE_RADIUS_Y = 90;
 
 const toArcPoint = (fraction: number, radiusY: number) => {
   const angle = Math.PI * (1 - Math.min(1, Math.max(0, fraction)));
@@ -43,7 +46,7 @@ const toArcPath = ([start, end]: [number, number], radiusY: number) => {
   const to = toArcPoint(end, radiusY);
   return `M ${from.x} ${from.y} A ${COOKING_ARC_RADIUS_X} ${radiusY} 0 0 1 ${to.x} ${to.y}`;
 };
-const pointerPosition = computed(() => toArcPoint(pointer, ZONE_RADIUS_Y));
+const pointerPosition = computed(() => toArcPoint(pointer, COOKING_ZONE_RADIUS_Y));
 </script>
 
 <template>
@@ -111,8 +114,8 @@ const pointerPosition = computed(() => toArcPoint(pointer, ZONE_RADIUS_Y));
         <circle cx="1105" cy="720" r="3" />
         <circle cx="1173" cy="735" r="3" />
       </g>
-      <path class="regular" :d="toArcPath(zones.regular, ZONE_RADIUS_Y)" />
-      <path class="delicious" :d="toArcPath(zones.delicious, ZONE_RADIUS_Y)" />
+      <path class="regular" :d="toArcPath(zones.regular, COOKING_ZONE_RADIUS_Y)" />
+      <path class="delicious" :d="toArcPath(zones.delicious, COOKING_ZONE_RADIUS_Y)" />
       <g class="pointer" :transform="`translate(${pointerPosition.x} ${pointerPosition.y}) rotate(-17)`">
         <rect height="44" rx="14" width="36" x="-18" y="-48" />
         <path d="M-6 -8 L6 -8 L5 66 L-5 66 Z" />

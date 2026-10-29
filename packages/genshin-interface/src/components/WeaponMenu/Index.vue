@@ -2,6 +2,7 @@
 import GameButton from "#src/components/GameButton/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 import { WeaponMenuTab } from "#src/models/WeaponMenuTab";
+import { BACK_ARROW_PATH } from "#src/services/constants";
 
 interface Props {
   // The action the panel's button takes, in the game's words for the open tab
@@ -24,9 +25,6 @@ defineSlots<{ default: () => unknown }>();
 const tab = defineModel<WeaponMenuTab>("tab", { required: true });
 const { actionLabel, closeLabel, detailsLabel, isActionDisabled, kind, name, tabs } = defineProps<Props>();
 const emit = defineEmits<{ action: []; close: [] }>();
-// The way back's arrow, a bold curve with its head to the left, in a square of 30 units
-const CLOSE_ARROW_PATH =
-  "M0 12 L11 1 L11 7 C19 7 26 11 28 20 C29 25 27 28 23 30 C25 25 24 19 19 16 C16 14 14 14 11 14 L11 19 Z";
 </script>
 
 <template>
@@ -59,7 +57,7 @@ const CLOSE_ARROW_PATH =
       {{ actionLabel }}
     </GameButton>
     <button class="close" :aria-label="closeLabel" type="button" @click="emit('close')">
-      <svg class="close-arrow" viewBox="0 0 30 30" aria-hidden="true"><path :d="CLOSE_ARROW_PATH" /></svg>
+      <svg class="close-arrow" viewBox="0 0 30 30" aria-hidden="true"><path :d="BACK_ARROW_PATH" /></svg>
     </button>
   </div>
 </template>

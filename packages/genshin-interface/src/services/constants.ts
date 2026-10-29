@@ -72,6 +72,9 @@ export const ROLE_FLOURISH_PATH =
 // Mark on a 252 by 228 box: its ink spans 220 by 180 of it, from 21 across and 24 down
 export const CHECK_MARK_PATH =
   "M237.5 26q5.25-1.75 3.5 3.5l-6 11-5 5-4 7-4 4-9 14-3 3-1 3-4 4-1 3-12 17-7 12-9 11-5 9-14 19-1 3-4 4-7 12-8 10-1 3-4 4-2 5-3 3v2l-3.5 4.5-6 2-11-6-2.5-2.5-3.5-4.5-16-11-13.5-12.5q-1.25-5.75-5.5-8.5l-7-2-5-3-13-12-8-3h-6l-3-1-2.5-2.5v-2l3-6 26.5-36.5 5-3h5l5.5 4.5q-.75 2.25 1.5 1.5l16.5 17.5 1 3 13 13 5.5 9.5 7 1 18-13 12-12 21-18 10-10 8-6 19.5-18.5 2.5-3.5 12-9q10.85-12.15 24-22z";
+// The way back's arrow, a bold curve with its head to the left, in a square of 30 units
+export const BACK_ARROW_PATH =
+  "M0 12 L11 1 L11 7 C19 7 26 11 28 20 C29 25 27 28 23 30 C25 25 24 19 19 16 C16 14 14 14 11 14 L11 19 Z";
 // The server bar's mark, a cream diamond holding a dark tick, traced eight times enlarged from the English client's
 // Login screen at 1080 high, on a 46 unit square about its centre: the diamond, and the tick it holds
 export const SERVER_MARK_DIAMOND_PATH =
@@ -132,6 +135,8 @@ export const GAME_DIALOGUE_GOLD = "#ffc700";
 export const COOKING_ARC_CENTRE_X = 960;
 export const COOKING_ARC_CENTRE_Y = 832;
 export const COOKING_ARC_RADIUS_X = 435;
+// The zones lie on a band drawn inside the bar's track, whose radius is this, in the stage's units
+export const COOKING_ZONE_RADIUS_Y = 90;
 // A mismatch over this share of an image is listed after the cases, one percent being the 99% likeness the screens are held to
 export const MISMATCH_RATIO_BAR = 0.01;
 // The matcher's message for a shot that differs from its image, then the pixels that differ and their ratio
