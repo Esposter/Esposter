@@ -98,6 +98,28 @@ Animation clips from a game family whose decoder does not build on macOS SHALL b
 - **WHEN** clips are extracted on macOS
 - **THEN** no clip of that family is available
 
+### Requirement: The build applies the Oodle hook patch once to the checked-out source
+
+The build SHALL apply the Oodle hook patch to the checked-out source, and SHALL NOT apply it to a source that already carries it.
+
+#### Scenario: A checkout without the patch receives it
+
+- **GIVEN** the pinned source checked out without the patch
+- **WHEN** the build runs
+- **THEN** the patch is applied before the CLI is built
+
+#### Scenario: A checkout that already carries the patch is left as it is
+
+- **GIVEN** the pinned source checked out with the patch applied
+- **WHEN** the build runs
+- **THEN** the patch is not applied again
+
+#### Scenario: A checkout that is neither the pinned source nor the patched one fails the build
+
+- **GIVEN** a source the patch neither applies to nor reverses from
+- **WHEN** the build runs
+- **THEN** the build fails, naming the source as neither the pinned commit nor the patched one
+
 ## Open
 
 - [ ] **Steps that need a Windows-only or proprietary component do not run on Apple silicon** — no source yet: no gating code for those steps is located.

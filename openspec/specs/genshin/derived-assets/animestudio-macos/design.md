@@ -4,6 +4,7 @@
 
 - **Pinned commits:** AnimeStudio `db860e1f9bf0e0314b892782304d44f3ac42c261` (the CLI, its Ooz and ACL sources), Texture2DDecoder `c974dbda1209a6af34cb03941fa0b999627c3623` (`KiruyaMomochi/Texture2DDecoder`, the native behind the `Kyaru.Texture2DDecoder` wrapper, the one whose macOS build the NuGet package does not ship) `scripts/src/services/recreation/animeStudio/constants.ts`.
 - **Edits it applies to the clone:** every project retargets `net10.0`, and the `win-x64` runtime identifier is dropped `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts`. Ooz's match copy is replaced by one that copies a byte at a time when the match is closer than eight bytes: the defect is drafted in [AnimeStudio upstream defects](../animestudio-upstream/design.md).
+- **Oodle hook:** the build applies `scripts/src/services/recreation/animeStudio/patches/OodleHelper.patch` to the checked-out tree after checkout, unless the tree already carries it (`git apply --check --reverse`), `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts`, `scripts/src/services/recreation/animeStudio/isOodlePatchPending.ts`. The patch is the one edit the working clone at `{data-root}/tools/AnimeStudio-src` carries: a fingerprint hook behind `ANIMESTUDIO_OODLE_LOG`, which logs each Oodle decompression's sizes and digests beside the log file.
 - **Staging:** the CLI is published to a staging folder under `{data-root}/tools` first, and replaces the published `animestudio-cli` only once the parity check passes, so failures before publication begins leave the published CLI, and the `GENSHIN_ANIMESTUDIO_CLI` naming it, as they were `scripts/src/services/recreation/animeStudio/constants.ts`, `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts`.
 - **Maps:** a rebuild keeps the CAB map. AnimeStudio writes it to `Maps` beside the published CLI, so on a pass the build moves that folder into the staged CLI's before the staged folder replaces the published one `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts`. The parity runs pass no map, so the staged CLI is checked without it.
 - **Acceptance:** before the staged CLI replaces the published one, the build exports each reference block in `PARITY_REFERENCE_BLOCKS` once per type with it, into an `animestudio-parity` folder under `{data-root}/tools`, and fails unless each type's file count matches Windows AnimeStudio's on game 7.1.0 and no run names an exception `scripts/src/services/genshinAssets/shared/constants.ts` (`PARITY_REFERENCE_BLOCKS`), `scripts/src/services/genshinAssets/shared/checkParityBlock.ts`. `--skip-parity` skips the check only when the game's blocks are absent, and prints why `scripts/src/services/genshinAssets/shared/checkAnimeStudioParity.ts`.
@@ -13,6 +14,8 @@
 - **Not on arm64:** FMOD audio, FBX export and HLSL shader decompilation ("AnimeStudio.HLSLDecompiler") are Windows-only or proprietary, so `genshin:assets` steps that need them do not run here.
 
 The macOS default is this published CLI, so setting `GENSHIN_ANIMESTUDIO_CLI` to the printed path is needed only for a CLI kept elsewhere (the Windows default is an `AnimeStudio.CLI.exe` in an `AnimeStudio` folder under Downloads, `scripts/src/services/genshinAssets/shared/constants.ts`) `scripts/src/services/genshinAssets/shared/constants.ts`.
+
+**Windows AnimeStudio CLI:** the build is macOS only: it publishes for `osx-arm64` and builds ACL with clang, so no command here produces the Windows CLI. That CLI, `AnimeStudio.CLI.exe` with its `Maps` folder, is unpacked by hand under `~/Downloads/AnimeStudio`, and it stays the Windows default because the build's output is a macOS binary. Set `GENSHIN_ANIMESTUDIO_CLI` to name a CLI kept anywhere else, on either platform. The build's source is the pinned commit plus the Oodle patch above, so a fresh machine builds the same source as the working clone; no command builds the Windows binary.
 
 ```mermaid
 flowchart TD
@@ -31,6 +34,8 @@ flowchart TD
 | :------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
 | `scripts/src/animeStudio/index.ts`                                         | The macOS build command, `genshin:animestudio:build`                                                             |
 | `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts`          | Fetches the pinned sources, builds the natives, publishes the CLI and copies the dylibs under their import names |
+| `scripts/src/services/recreation/animeStudio/isOodlePatchPending.ts`       | Decides whether the Oodle patch is still to be applied to the checkout, or the checkout already carries it       |
+| `scripts/src/services/recreation/animeStudio/patches/OodleHelper.patch`    | The one patch applied to the checked-out tree: the Oodle fingerprint hook, against the pinned commit             |
 | `scripts/src/services/recreation/animeStudio/readAnimeStudioExceptions.ts` | Reads the exception lines off the CLI's output, so a run that skipped an asset does not read as clean            |
 
 ## Open
