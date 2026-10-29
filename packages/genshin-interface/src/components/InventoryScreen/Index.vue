@@ -340,7 +340,7 @@ watch(
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: rgb(255 255 255 / 0.14);
+  background: rgb(255 255 255 / 0.3);
 }
 
 .tab[aria-pressed="true"] {
