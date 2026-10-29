@@ -117,7 +117,7 @@ An open-world region SHALL be laid out with every object at its exact place, and
 
 ### Requirement: Nothing of the game's files is bundled into the product
 
-The product SHALL NOT commit, build, upload or deploy any file, format or data of the game, except the game text slices ([game data formats](../game-data-formats/spec.md)), the hosted game data the world reads by key, and the official character packs, which the browser downloads from a public container. Its bundle SHALL hold only its own shaders, geometry, fitted data and game text slices.
+The product SHALL NOT commit, build, upload or deploy any file, format or data of the game, except the game text slices ([game data formats](../game-data-formats/spec.md)), the hosted game data the world reads by key, the official character packs, which the browser downloads from a public container, and the reference screenshots committed to git ([parity references](../parity/references/spec.md)). Its bundle SHALL hold only its own shaders, geometry, fitted data and game text slices.
 
 #### Scenario: A deployed bundle holds no game data beyond the carried exceptions
 
