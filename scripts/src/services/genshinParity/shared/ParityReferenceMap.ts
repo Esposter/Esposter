@@ -900,7 +900,15 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Frame's bottom right lie outside the region; the panel's own UID, name and avatar lie inside it. The account is at
   // Adventure Rank 2, and every tile the frame draws reads open. Scored over the side bar and the panel, their translucent
   // Feet where the world shows through included. The game window is the 1620 pixels between the pillarbox, so the menu stands
-  // At its left edge, 150 in
+  // At its left edge, 150 in.
+  // The five side bar icons above Quit, each centre's y in the frame's pixels (the window is 1080 high, so a unit is a pixel),
+  // measured on the frame: Photo Mode 284, Notices 395 (its glyph with the ring it hangs from), Mail 512, Time 627, Settings 740.
+  // The 16:9 map places them at 412, 524, 638, 754 and 868 when drawn at the menu's 0.79 reference pixel, so the 3:2 window
+  // stands each 126 to 129 pixels higher. Quit's centre is 1024 in the frame, 55 above the bottom edge: the map has it 70 of
+  // the 1440 high still's pixels from the bottom, which is the same 55 at 0.79, so Quit anchors to the bottom while the five
+  // are not, and the menu still draws Quit from its top, so it stands 58 pixels low and clipped by the frame's bottom. The game
+  // anchors that column by the window's aspect; the install's layout data (the PC is extracting it) will say how. Until then
+  // the menu draws the five where the 16:9 map has them
   "paimon-menu": {
     region: { height: 1080, width: 810, x: 150, y: 0 },
     screen: "MenuPaimon",

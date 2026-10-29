@@ -183,7 +183,7 @@ onBeforeUnmount(() => {
       </GameButton>
       <GameButton
         ref="quitGameButton"
-        class="side-entry quit"
+        class="side-entry"
         :kind="GameButtonKind.Disc"
         :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Quit])"
         :tip="gameText[GameTextKey.QuitGame]"
@@ -378,15 +378,10 @@ onBeforeUnmount(() => {
   background: #ece5d7;
 }
 
-/* Above the panel, which a lit button's name reaches over. The frame's five icons above Quit sit 157 of the still's pixels higher
-   than the shared frame glyph map places them, so they are moved here; Quit is where the map has it */
+/* Above the panel, which a lit button's name reaches over */
 .side-entry {
   position: absolute;
   z-index: 1;
-}
-
-.side-entry:not(.quit) {
-  translate: 0 calc(var(--reference-pixel) * -157);
 }
 
 /* The panel is translucent over the world down its feet, which the page does not draw, so its colour is a gradient
