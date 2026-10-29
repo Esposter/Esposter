@@ -112,7 +112,7 @@ const detailGroups = computed(() =>
     </button>
     <p class="friendship">{{ gameText[GameTextKey.Friendship] }}</p>
     <div class="friendship-bar" />
-    <button type="button" class="lift" :disabled="!isLiftable" @click="emit('lift')">
+    <button type="button" class="lift cream-pill" :disabled="!isLiftable" @click="emit('lift')">
       {{ gameText[GameTextKey.AscensionLimit] }}
     </button>
     <dl v-if="ascendRows.length" class="rows">
@@ -136,6 +136,7 @@ const detailGroups = computed(() =>
   </div>
 </template>
 
+<style scoped src="genshin-interface/styles/creamPill.css"></style>
 <style scoped>
 /* Measured off the English PC client's character screen at 21:9 (references/character-attributes-session.png), in units
    from the panel's left edge: its name centred 148 from the frame's top, its level 225, its experience bar 251 and 3
@@ -230,10 +231,8 @@ const detailGroups = computed(() =>
   height: calc(var(--unit) * 49);
   margin: 0;
   border: 0;
-  border-radius: calc(var(--unit) * 25);
   background: #ded5c4;
   color: #3e404d;
-  font-weight: 600;
   line-height: calc(var(--unit) * 49);
 }
 
