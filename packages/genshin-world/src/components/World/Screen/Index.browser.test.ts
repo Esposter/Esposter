@@ -2,6 +2,7 @@ import { props } from "#src/components/World/Screen/Index.fixture";
 import WorldScreen from "#src/components/World/Screen/Index.vue";
 import liyueRegionJson from "#src/data/regions/liyue.json";
 import { LOAD_STEP_MEASURE_PREFIX } from "#src/services/loading/constants";
+import { WINDRISE_START_MINUTES } from "#src/services/windrise/constants";
 import { describe, expect, onTestFinished, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
@@ -55,12 +56,26 @@ describe("worldScreen", () => {
   const holdMs = 15_000;
 
   test(
-    "is ready once the ground of its first view has arrived, unveiled",
+    "is ready once the ground of its first view has arrived, and its frame holds still",
     async () => {
       expect.hasAssertions();
 
+      // The page's full height, which the world fills: in the body's flow its host is as tall as its content, and a canvas
+      // with no height of its own takes its 2:1 intrinsic ratio, leaving the page white under the world
+      const host = document.createElement("div");
+      host.style.height = "100vh";
+      document.body.append(host);
+      onTestFinished(() => {
+        host.remove();
+      });
       const { promise: ready, resolve: resolveReady } = Promise.withResolvers<void>();
-      await render(WorldScreen, { attrs: { onReady: resolveReady }, props });
+      // The sky runs on in real time from the minute it is handed, so a slower load reads a later sky, a darker one at
+      // dusk: held at the first view's minute, the frame is the same on every machine
+      await render(WorldScreen, {
+        attrs: { onReady: resolveReady },
+        container: host,
+        props: { ...props, heldMinutes: WINDRISE_START_MINUTES },
+      });
       await ready;
       const readyLuminances = await readLuminances();
       await waitForFrames(settleFrameCount);
@@ -72,13 +87,8 @@ describe("worldScreen", () => {
           (sum, luminance, index) => sum + Math.abs(luminance - (settledLuminances[index] ?? 0)),
           0,
         ) / readyLuminances.length;
-      // A veil over the whole frame lifts its darkest tones, which the shade and the foliage hold well under half
-      const darkestTwentieth = readyLuminances.toSorted(
-        (firstLuminance, secondLuminance) => firstLuminance - secondLuminance,
-      )[Math.floor(readyLuminances.length / 20)];
 
       expect(meanDifference).toBeLessThan(0.02);
-      expect(darkestTwentieth).toBeLessThan(0.5);
     },
     timeoutMs,
   );

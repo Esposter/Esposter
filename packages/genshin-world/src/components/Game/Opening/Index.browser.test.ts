@@ -123,7 +123,9 @@ describe("gameOpening", () => {
       expect.hasAssertions();
 
       const requestRealFrame = window.requestAnimationFrame.bind(window);
-      vi.useFakeTimers({ toFake: ["setTimeout", "requestAnimationFrame", "cancelAnimationFrame"] });
+      // The scene steps its frames by the time performance.now reads, so that clock is faked with the frame clock: left
+      // Real, a machine that draws its frames faster covers less of the faked advance and the door never forms in it
+      vi.useFakeTimers({ toFake: ["setTimeout", "requestAnimationFrame", "cancelAnimationFrame", "performance"] });
       const onFinish = vi.fn<() => void>();
       const { container } = await render(GameOpening, {
         props: {
