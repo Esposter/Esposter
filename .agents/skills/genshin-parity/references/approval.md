@@ -24,3 +24,5 @@ Read when writing a screen's image or citing a reference for one. The one-line r
 - **`genshin-interface`'s components have fixtures and images too**, shot to their own box at 1080 high, and its suite fails for a component without a fixture. Those components have no reference in the map and are not screens on the parity page, so `approve` does not write their images; their suite's run writes a missing one, and a run with `-u` takes each render as its new image.
 
 - No person writes images by hand. `approve` writes them from the render and prints the status before it does, and a run writes only what is missing.
+
+- **A bar moves only once its gap is the floor.** A screen over its bar reports the score and names the gap; while that gap is still fixable, the bar stays where it is. A looser bar is proposed only after nothing more can be cut without losing quality.
