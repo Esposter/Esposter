@@ -1,6 +1,7 @@
 import type { ParityReferenceManifest } from "#src/models/genshinParity/reference/ParityReferenceManifest";
 
 import { sortObjectKeys } from "#src/services/genshinParity/reference/sortObjectKeys";
+import { compareCodeUnits } from "#src/services/shared/compareCodeUnits";
 
 // One section as its JSON: a row per line, each with its keys sorted, so two machines' additions land as separate lines
 const formatSection = (name: string, rows: unknown[]): string =>
@@ -24,15 +25,15 @@ export const formatManifestFile = ({
   const sections = [
     formatSection(
       "records",
-      records.toSorted((first, second) => (first.path < second.path ? -1 : 1)),
+      records.toSorted((first, second) => compareCodeUnits(first.path, second.path)),
     ),
     formatSection(
       "recordings",
-      recordings.toSorted((first, second) => (first.name < second.name ? -1 : 1)),
+      recordings.toSorted((first, second) => compareCodeUnits(first.name, second.name)),
     ),
     formatSection(
       "references",
-      references.toSorted((first, second) => (first.id < second.id ? -1 : 1)),
+      references.toSorted((first, second) => compareCodeUnits(first.id, second.id)),
     ),
   ];
   return `{\n${[...header, ...sections].join(",\n")}\n}\n`;
