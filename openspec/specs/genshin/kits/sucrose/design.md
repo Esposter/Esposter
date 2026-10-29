@@ -33,4 +33,4 @@ flowchart TD
 
 ## Open
 
-- [ ] **The wiki's Alchemania range is kept as a fraction of a second** — no source yet: `{data-root}/cache/genshin-wiki/Category_Sucrose_Talents.json` names Alchemania only in the Talent Note template of Astable and of Wind Spirit Creation, with no range text in it; the wiki's Alchemania text, or a cached page that gives the range, would settle it.
+- [ ] **Alchemania's 1-to-7-second range is the kit's own, kept as a fraction of a second** — no source yet: `{data-root}/cache/genshin-wiki/Category_Sucrose_Talents.json` names Alchemania only in the Talent Note template of Astable and of Wind Spirit Creation, with no range text in it; the wiki's Alchemania text, or a cached page that gives the range, would settle it.
