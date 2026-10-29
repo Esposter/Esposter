@@ -129,7 +129,7 @@ const nextMaxLevel = computed(
   () => weaponData.value.ascensionPhases[weapon.value.ascension + 1]?.maxLevel ?? maxLevel.value,
 );
 const isAtCap = computed(() => weapon.value.level >= maxLevel.value);
-// The header's level: the level alone on Enhance, and over the cap of its phase on Ascend, with the next phase's cap beside it
+// The level Enhance's header shows alone; the Ascend header writes its own level pair over the cap of each phase
 const levelText = computed(() => fillGameTextValues(gameText[GameTextKey.LevelFormat], `${weapon.value.level}`));
 // A weapon's stat at its level in a phase, each line of its growth curve and of the phase summed as the game sums them
 const getStatValue = (target: Weapon, ascension: number, attribute: Attribute) =>
