@@ -574,7 +574,7 @@ const isActivateDisabled = computed(
         v-else-if="talentPanel && tab === CharacterMenuTab.Talents"
         :="talentPanel"
         :upgrade-label="gameText[GameTextKey.TalentLevelUp]"
-        @upgrade="(index) => upgradeTalentAt(index)"
+        @upgrade="upgradeTalentAt"
       />
       <CharacterProfile
         v-else-if="character && tab === CharacterMenuTab.Profile"
@@ -617,7 +617,7 @@ const isActivateDisabled = computed(
       :mora-label="gameText[GameTextKey.Mora]"
       :notice="enhanceNotice"
       :title="gameText[GameTextKey.ArtifactActionEnhance]"
-      @auto-add="autoAddEnhanceFodders()"
+      @auto-add="autoAddEnhanceFodders"
       @cancel="enhanceSlot = undefined"
       @confirm="
         () => {
@@ -638,8 +638,8 @@ const isActivateDisabled = computed(
           enhanceSlot = undefined;
         }
       "
-      @fodder="(id) => toggleEnhanceFodder(id)"
-      @material="(id, delta) => changeEnhanceMaterial(id, delta)"
+      @fodder="toggleEnhanceFodder"
+      @material="changeEnhanceMaterial"
     />
     <span class="grid" />
     <p v-if="tab === CharacterMenuTab.Attributes" class="training-guide">{{ gameText[GameTextKey.TrainingGuide] }}</p>

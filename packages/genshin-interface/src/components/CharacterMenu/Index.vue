@@ -47,12 +47,21 @@ const steps = computed(() => {
     </ul>
     <p class="breadcrumb">{{ characterName }}</p>
     <svg v-if="elementMarkPath" class="element" viewBox="0 0 1600 1600" aria-hidden="true">
-      <path :d="elementMarkPath" />
+      <path
+        class="frame"
+        d="M800 0 L1014 283 L1366 234 L1317 586 L1600 800 L1317 1014 L1366 1366 L1014 1317 L800 1600 L586 1317 L234 1366 L283 1014 L0 800 L283 586 L234 234 L586 283 Z"
+      />
+      <path :d="elementMarkPath" transform="translate(400 400) scale(0.5)" />
     </svg>
-    <!-- The keys stepping through the tabs, W up and S down, beside the first; a finger has no keys to press -->
+    <!-- The keys stepping through the tabs, W up and S down, beside the first; the keys stepping through the characters,
+         Q and E, either side of the row; a finger has no keys to press -->
     <div v-if="!isTouch" class="tab-keys" aria-hidden="true">
       <kbd class="key">W</kbd>
       <kbd class="key">S</kbd>
+    </div>
+    <div v-if="!isTouch" class="character-keys" aria-hidden="true">
+      <kbd class="key key-previous">Q</kbd>
+      <kbd class="key key-next">E</kbd>
     </div>
     <ul class="tabs">
       <li v-for="menuTab of CharacterMenuTabs" :key="menuTab">
@@ -94,15 +103,15 @@ const steps = computed(() => {
   color: #fff;
 }
 
-/* The band across the top, the name and the portraits on it, a veil 96 units deep that keeps 78 hundredths of the scene
-   under it all the way down, as the frame's scene measures above and below its edge */
+/* The band across the top, the name and the portraits on it, a veil 96 units deep that darkens the scene 40 hundredths
+   at its top edge and 22 hundredths at its foot, as the frame's band measures against the scene under it */
 .head {
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
   height: calc(var(--unit) * 96);
-  background: rgb(0 0 0 / 0.22);
+  background: linear-gradient(rgb(0 0 0 / 0.4), rgb(0 0 0 / 0.22));
 }
 
 .characters,
@@ -165,15 +174,19 @@ const steps = computed(() => {
   line-height: calc(var(--unit) * 36);
 }
 
-/* The element's mark just left of the name, its size and place provisional until the parity pass measures them off the
-   frame, its colour the name's */
+/* The element's emblem at the band's left: a silver star 97.5 units across, its tips on the frame's top and bottom
+   edges, with the element's mark drawn at its centre */
 .element {
   position: absolute;
-  top: calc(var(--unit) * 29);
-  left: calc(var(--unit) * 168);
-  width: calc(var(--unit) * 36);
-  height: calc(var(--unit) * 36);
+  top: 0;
+  left: calc(var(--unit) * 99.75);
+  width: calc(var(--unit) * 97.5);
+  height: calc(var(--unit) * 97.5);
   fill: #e6d6a8;
+}
+
+.element .frame {
+  fill: #d8d4cf;
 }
 
 /* The tabs down the left, measured off each tab's own frame of the recording (155 to 159 seconds): the rows on a
@@ -284,6 +297,27 @@ const steps = computed(() => {
   gap: calc(var(--unit) * 3.5);
 }
 
+.tab-keys .key {
+  width: 100%;
+  height: calc(var(--unit) * 25);
+}
+
+/* The character keys' caps 32.25 by 27 units, the Q's on the row's left and the E's over its right end */
+.character-keys .key {
+  position: absolute;
+  top: calc(var(--unit) * 34.5);
+  width: calc(var(--unit) * 32.25);
+  height: calc(var(--unit) * 27);
+}
+
+.key-previous {
+  left: calc(var(--unit) * 549);
+}
+
+.key-next {
+  left: calc(var(--unit) * 1999);
+}
+
 .tab-keys::before,
 .tab-keys::after {
   width: calc(var(--unit) * 11.25);
@@ -299,8 +333,6 @@ const steps = computed(() => {
 
 .key {
   display: grid;
-  width: 100%;
-  height: calc(var(--unit) * 25);
   border-radius: calc(var(--unit) * 3);
   background: #fdfdfd;
   color: #2b2b2b;

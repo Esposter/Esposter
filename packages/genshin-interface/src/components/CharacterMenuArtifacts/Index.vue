@@ -119,21 +119,12 @@ const isSelectedWorn = computed(() => selectedStats.value !== undefined);
         {{ enhanceLabel }}
       </GameButton>
       <GameButton
-        v-if="isSelectedWorn"
         class="button"
+        :disabled="!isSelectedWorn && equipDisabledSlots[selectedIndex]"
         :kind="GameButtonKind.Pill"
-        @click="emit('unequip', selectedIndex)"
+        @click="isSelectedWorn ? emit('unequip', selectedIndex) : emit('equip', selectedIndex)"
       >
-        {{ unequipLabel }}
-      </GameButton>
-      <GameButton
-        v-else
-        class="button"
-        :disabled="equipDisabledSlots[selectedIndex]"
-        :kind="GameButtonKind.Pill"
-        @click="emit('equip', selectedIndex)"
-      >
-        {{ equipLabel }}
+        {{ isSelectedWorn ? unequipLabel : equipLabel }}
       </GameButton>
       <GameButton v-if="selectedStats" class="button" :kind="GameButtonKind.Pill" @click="emit('lock', selectedIndex)">
         {{ selectedStats.isLocked ? unlockLabel : lockLabel }}
