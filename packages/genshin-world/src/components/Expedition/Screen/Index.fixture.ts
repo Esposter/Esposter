@@ -48,6 +48,8 @@ export const props = {
   places,
   random: createSeededRandom(WORLD_RANDOM_SEED),
   // The statues the six places name are all resonated, so every pin is open as the clip shows it
-  unlockedStatuePointIds: new Set([4, 7, 29]),
+  unlockedStatuePointIds: new Set(
+    pinnedPlaces.map(({ statuePointId }) => statuePointId).filter((statuePointId) => statuePointId !== 0),
+  ),
   wallet: { ...EMPTY_WALLET },
 };

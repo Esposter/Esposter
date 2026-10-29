@@ -205,7 +205,8 @@ const refineSlotCount = computed(() => weaponData.value.refinementCosts.length);
 const emptyRefineSlotCount = computed(() =>
   Math.max(0, refineSlotCount.value - copyCells.value.length - (isRefinementMaterialHeld.value ? 1 : 0)),
 );
-// The Enhance strip's slots, the candidates first and empty slots after them up to the seven the strip shows across its width
+// The Enhance strip's slots, the candidates first and empty slots after them up to the seven the strip holds: the seventh is
+// Cut off at the strip's right edge, as the game's strip cuts it
 const emptyEnhanceSlotCount = computed(() =>
   Math.max(0, ENHANCE_SLOT_COUNT - oreCells.value.length - fodderCells.value.length),
 );

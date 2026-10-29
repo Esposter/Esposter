@@ -440,12 +440,12 @@ const sheerCold = useSheerCold(
 );
 watch(sheerCold, (value) => emit("sheerCold", value));
 const gradeLutTexture = createGradeLutTexture(WINDRISE_GRADE_OPTIONS);
+// A developer switches TRAA off to see what its resolve costs, and the world's chain falls back to SMAA meanwhile
+const isTemporalAntialiasingOn = ref(true);
 // No god rays and no bloom: neither is measured off a reference of Windrise, and drawn as they stand they veil the
 // Whole frame, the god rays marching hundreds of metres of lit air to their most opacity and bloom lifting the whole
 // Sky past its threshold, so the frame is drawn through the haze, the grade and the tone mapping alone. No occlusion
 // Either, and the sky handed on with it as the login's is, which the parity page's tools read each pixel's ray under
-// A developer switches TRAA off to see what its resolve costs, and the world's chain falls back to SMAA meanwhile
-const isTemporalAntialiasingOn = ref(true);
 const postPipeline = usePostPipeline(
   () => qualityTier,
   {

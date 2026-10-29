@@ -9,6 +9,7 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
 import { CHONGYUN_CHARACTER_ID } from "#src/services/kit/characters/chongyunKit";
+import { MONA_CHARACTER_ID } from "#src/services/kit/characters/monaKit";
 import { VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
 import { createParty } from "#src/services/party/createParty";
 import { QUEST_MARK_MIN_HEIGHT } from "#src/services/quest/constants";
@@ -22,7 +23,7 @@ import { ENGLISH_GAME_TEXT } from "genshin-text";
 // Shows, and Venti, a bow's wielder, is on the field at Lv. 90 with 17286 of 17400 HP. Its stamina stands full, so no
 // Meter shows, and the quest tracked is the one the recording shows: its title, and its objective 1540m off and higher,
 // At the least height the line names, its own height unread
-const PARTY_CHARACTER_IDS = [10000041, 10000029, VENTI_CHARACTER_ID, TRAVELER_CHARACTER_ID];
+const PARTY_CHARACTER_IDS = [MONA_CHARACTER_ID, 10000029, VENTI_CHARACTER_ID, TRAVELER_CHARACTER_ID];
 const FIELD_MEMBER_INDEX = 2;
 const characterDataMap = new Map(
   [...(await readStatTables(GAME_DATA_LOCAL_BASE_URL)).characterDataMap].filter(([id]) =>
