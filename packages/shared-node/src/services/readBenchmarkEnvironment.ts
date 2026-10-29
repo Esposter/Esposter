@@ -14,7 +14,6 @@ const readCommit = (): string =>
 export const readBenchmarkEnvironment = (): string => {
   const cpu = cpus();
   return [
-    `- Date: ${new Date().toISOString()}`,
     `- Commit: ${readCommit()}`,
     `- Node: ${process.version}`,
     `- OS: ${platform()} ${release()} (${arch()})`,
