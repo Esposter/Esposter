@@ -209,6 +209,19 @@ Vitest runs on Windows because `apps/web/configuration/modules.ts` gives Nuxt a 
 
 Agent worktrees live under `.agents/worktrees/<name>`, inside the repo and gitignored. Windows caps paths at 260 characters unless long paths are enabled, and a worktree's `node_modules` paths exceed that, so enable them once. From an elevated PowerShell run `Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name LongPathsEnabled -Value 1`, then restart the terminal.
 
+## Windows machines
+
+What a Windows machine needs that a clone, two logins and the install do not give it:
+
+- **Git** needs `core.symlinks=true` (and Developer Mode or an elevated shell for the link): with the system default of `false`, a fresh clone turns the `.claude` alias into a text file.
+- **Long paths** are enabled once (the section above); the setting is off on a machine until someone runs it.
+- **Edge** is a hard requirement of the browser tests, as the Chromium the runner drives.
+- **The Railway CLI** is installed beside `az`, `gh` and `pulumi` for the deploy checks.
+- **AnimeStudio** has no Windows build or fetch command: its build script is osx-arm64 only, so the Windows command line is unpacked by hand and named by `GENSHIN_ANIMESTUDIO_CLI`; the Oodle hook it needs is the committed patch under `scripts/src/services/recreation/animeStudio/patches`.
+- **`ffmpeg`** is read from `PATH` by the media-engine check; the capture encoder `h264_amf` needs an AMD GPU.
+- **Fleet** machines also need an SSH key for the peer, and `~/.esposter/peers.json` and `machine.json`, which no repository file writes.
+- **Ports** the repository binds are 3011 (the agent console host), 3000 (the app) and 7437 (the console server).
+
 ## Environment variables
 
 A machine's own settings for the scripts are environment variables read by the command that runs them; no repository file sets one. `apps/web/.env.example` lists the web app's variables only. Each entry names the reader that owns its default.
