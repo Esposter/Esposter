@@ -171,7 +171,7 @@ What is still to build is the [Genshin proposal](../../changes/genshin-program/d
 - The official map's fleeing birds and beasts, White Pigeon, Crimson Fox and Squirrel, stood in Windrise's scene and running from the character in reach, on provisional flight numbers, with no strike, drop or pick-up yet.
 - Fishing's points fitted by region, its fish, rods and pools read from the game's tables, and its rules for a stock's day and night and refill, a draw, a lure's reaction and the reel's tension, with casts made from the points on its screen.
 - Hosted game data, first phase: the character profiles and book bodies published to Blob storage by a keyless publisher and read on the Profile tab and in the book reader, so the package bundles none of their generated JSON.
-- Hosted game data, second phase: every other bundled dataset published to Blob storage and read at the world's gate, which keeps the `genshin-world` dist to about 2 MB.
+- Hosted game data, second phase: every other bundled dataset published to Blob storage and read at the world's gate, which keeps the `genshin-world` dist to a few megabytes.
 - The load budget: each screen's load steps measured and held to a budget by `genshin:parity load`, and the world's load limited to what its first frame reads.
 - The kit framework: each character's kit a hosted record read from gcsim's last MIT release, the wiki and the game's own tables, joined to a behaviour module over the shared primitives and loaded only for the party, and the kit tree with no duplicate code.
 - Save data's roster: the characters a player holds, with their copies and Companionship EXP, kept through a reload, and a guest's characters merged with the account's by the further copy of each.
