@@ -16,3 +16,7 @@
 ## 4. Passive
 
 - [ ] 4.1 Show each passive on the screen once the weapon enhancement's passive data lands and the layout beneath the fodder grid is measured against the game reference, with a weapon that has none showing nothing. The list is withdrawn until then (the design's Decisions). Verify: the passive display tests that change owns pass when mounted on this screen. Blocked until that change's data task lands and the layout is measured; the passive's effect waits on the character kits. The service this task mounts, `getWeaponPassive`, has no production caller until then and is kept on purpose; if the list is dropped instead, the service and its test are deleted, which is that choice's to make here, not a cleanup.
+
+## 5. The Enhance strip
+
+- [ ] 5.1 Fit the Enhance strip to its seven slots and show the candidates past the seventh. The strip's `.enhance-cells` is 714 units wide with a 13 unit gap, and its seven `.cell`s at 98.5 units total 767.5 units, so the seventh slot is clipped at about 48 units and any fodder past it is hidden and unclickable (`packages/genshin-world/src/components/Weapon/Screen/Index.vue`). The arithmetic does not say which of the three numbers the reference measured, so the reference frame decides the cell width, the gap or the strip's width; and the overflow past seven needs a choice of scroll, paging or a second row, which the design does not make. Verify: a test named after the chosen scenario, seen failing first, with eight candidates in the bag, every one reachable. Blocked on the reference frame and that choice.
