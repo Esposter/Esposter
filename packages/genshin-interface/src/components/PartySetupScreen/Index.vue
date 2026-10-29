@@ -52,7 +52,7 @@ const emit = defineEmits<{ close: []; configureTeam: []; deploy: []; next: []; p
         </svg>
       </button>
       <ol class="slots">
-        <li v-for="(slot, index) of slots" :key="index" class="slot" :data-empty="!slot.levelText || undefined">
+        <li v-for="(slot, index) of slots" :key="index" class="slot">
           <div v-if="slot.levelText" class="plate">
             <span class="name">
               <svg v-if="slot.elementMarkPath" class="element" viewBox="0 0 1600 1600" aria-hidden="true">
