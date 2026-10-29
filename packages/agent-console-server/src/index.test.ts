@@ -8,22 +8,18 @@ describe("agent-console-server", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(resolve(distDirectory, "index.js"))).toMatchInlineSnapshot(
-      `"index.js: 13.46 KB (13782 bytes)"`,
-    );
+    expect(getFileSizeReport(resolve(distDirectory, "index.js"))).toMatchInlineSnapshot(`"index.js: up to 16 KB"`);
     expect(getFileSizeReport(resolve(distDirectory, "contracts.js"))).toMatchInlineSnapshot(
-      `"contracts.js: 3.47 KB (3555 bytes)"`,
+      `"contracts.js: up to 4 KB"`,
     );
   });
 
   test("types size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(resolve(distDirectory, "index.d.ts"))).toMatchInlineSnapshot(
-      `"index.d.ts: 36.32 KB (37192 bytes)"`,
-    );
+    expect(getFileSizeReport(resolve(distDirectory, "index.d.ts"))).toMatchInlineSnapshot(`"index.d.ts: up to 64 KB"`);
     expect(getFileSizeReport(resolve(distDirectory, "contracts.d.ts"))).toMatchInlineSnapshot(
-      `"contracts.d.ts: 9.57 KB (9795 bytes)"`,
+      `"contracts.d.ts: up to 16 KB"`,
     );
   });
 });

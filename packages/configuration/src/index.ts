@@ -14,6 +14,7 @@ export * from "./services/getBenchmarkTestConfiguration.ts";
 export * from "./services/getComponentName.ts";
 export * from "./services/getFileSizeReport.ts";
 export * from "./services/getPackagePatterns.ts";
+export * from "./services/getSizeBand.ts";
 export * from "./services/getSourceSpecifiers.ts";
 export * from "./services/getTsdownConfiguration.ts";
 export * from "./services/getTsdownConfigurationNode.ts";

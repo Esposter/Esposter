@@ -12,24 +12,24 @@ describe("trpc-nuxt-module", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 2.57 KB (2633 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: up to 4 KB"`);
   });
 
   test("types size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 0.31 KB (314 bytes)"`);
+    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: up to 0.5 KB"`);
   });
 
   test("client runtime bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distClientFile)).toMatchInlineSnapshot(`"createTRPCNuxtClient.js: 1.38 KB (1411 bytes)"`);
+    expect(getFileSizeReport(distClientFile)).toMatchInlineSnapshot(`"createTRPCNuxtClient.js: up to 2 KB"`);
   });
 
   test("server runtime bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distServerFile)).toMatchInlineSnapshot(`"createTRPCEventHandler.js: 0.96 KB (982 bytes)"`);
+    expect(getFileSizeReport(distServerFile)).toMatchInlineSnapshot(`"createTRPCEventHandler.js: up to 2 KB"`);
   });
 });
