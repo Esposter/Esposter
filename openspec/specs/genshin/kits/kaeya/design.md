@@ -27,6 +27,7 @@ flowchart TD
 ## Not built
 
 - **Constellation 6's fourth icicle is not built.** Its extra icicle sets the icicles' spacing to 120 frames over four, not three (`{data-root}/cache/gcsim-v2.47.2/internal/characters/kaeya/burst.go` lines 51 and 55, `offset := 120 / count`), and the record's icicle hits are timed for three, so they do not give it. Constellation 2 is built: each enemy defeated during Glacial Waltz extends it by 2.5 seconds, up to 15 seconds in all (`{data-root}/cache/gcsim-v2.47.2/internal/characters/kaeya/cons.go` line 39), as the kit hears `EnemyDefeated`.
+- **Glacial Waltz's three-icicle count is not built.** gcsim's burst has three icicles with thirteen ticks in all (`{data-root}/cache/gcsim-v2.47.2/internal/characters/kaeya/burst.go` lines 45 and 49). The kit carries one summon whose record holds the thirteen hits (`hits.icicle.length` is 13 in `packages/genshin-world/src/data/kits/kaeya.json`), and nothing in the kit counts the three icicles, so the spec says one summon with thirteen ticks.
 - **Glacial Waltz's activation knockback is not built.** Its 400 poise is the wiki's Glacial Waltz poise row, with no damage, and no area for it is cited, so the icicles alone are built; the area is in Open.
 
 ## Open

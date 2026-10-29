@@ -1,6 +1,6 @@
 ## Purpose
 
-Kaeya's kit as built: five strikes, a charged attack, Frostgnaw with its first-ascension heal, Glacial Waltz's three icicles and their thirteen ticks, Constellations 1, 2 and 4, and Constellation 6's Energy on the cast, with Frostgnaw's damage against Water, the activation knockback, and Constellation 6's fourth icicle not built.
+Kaeya's kit as built: five strikes, a charged attack, Frostgnaw with its first-ascension heal, Glacial Waltz's icicle summon and its thirteen ticks, Constellations 1, 2 and 4, and Constellation 6's Energy on the cast, with Frostgnaw's damage against Water, the activation knockback, and Constellation 6's fourth icicle not built.
 
 ## Requirements
 
@@ -53,15 +53,15 @@ From his first ascension, each enemy Frostgnaw strikes SHALL heal Kaeya by 15% o
 - **WHEN** Frostgnaw strikes no enemy
 - **THEN** no heal is dealt
 
-### Requirement: Glacial Waltz summons three icicles that tick thirteen times
+### Requirement: Glacial Waltz summons one icicle summon that ticks thirteen times
 
-Glacial Waltz SHALL summon three icicles that strike enemies on thirteen ticks in all.
+Glacial Waltz SHALL summon one summon whose icicles strike enemies on thirteen ticks in all. The three-icicle count is not built (see the design's Not built).
 
 #### Scenario: Casting Glacial Waltz summons the icicles
 
 - **GIVEN** Kaeya is the character on the field
 - **WHEN** the player casts Glacial Waltz
-- **THEN** three icicles are summoned
+- **THEN** one summon is placed, carrying the icicles
 - **AND** the icicles strike enemies on their thirteen ticks
 
 #### Scenario: Recasting Glacial Waltz replaces the one standing
@@ -69,7 +69,7 @@ Glacial Waltz SHALL summon three icicles that strike enemies on thirteen ticks i
 - **GIVEN** Glacial Waltz is standing
 - **WHEN** the player casts Glacial Waltz again
 - **THEN** the standing Glacial Waltz ends, and its icicles stop
-- **AND** three icicles are summoned for the new one
+- **AND** one summon is placed for the new one
 
 ### Requirement: Constellation 1 CRIT Rate against Cryo-affected enemies
 
