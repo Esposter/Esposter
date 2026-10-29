@@ -91,12 +91,14 @@ describe("pageBuilderContentPanel", () => {
     component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { href: TEST_URL, label: "Open" });
 
     const document = webpageDocumentSchema.parse(pageBuilderDocumentStore.getDocument(resourceId));
+
     expect(document.content).toStrictEqual([
       { props: { href: TEST_URL, id: TEST_ID, label: "Open" }, type: WebpageNodeType.Button },
     ]);
     const canvas = mount(
       defineComponent({ render: () => h("div", renderCanvasVNodes(webpageKind, document, TEST_CONTEXT)) }),
     );
+
     expect(canvas.text()).toBe("Open");
 
     canvas.unmount();
@@ -143,9 +145,9 @@ describe("pageBuilderContentPanel", () => {
     pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, { content: [], root: { props: {} } });
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: emailKind, resourceId } });
 
-    component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { preview: "Your order has shipped" });
+    component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { preview: "a" });
 
-    expect(pageBuilderDocumentStore.getEmailDocument(resourceId)?.root.props.preview).toBe("Your order has shipped");
+    expect(pageBuilderDocumentStore.getEmailDocument(resourceId)?.root.props.preview).toBe("a");
 
     component.unmount();
   });
@@ -167,8 +169,8 @@ describe("pageBuilderContentPanel", () => {
     expect.hasAssertions();
 
     const resourceId = crypto.randomUUID();
-    const published = createResourceListItem({ name: "Published", type: ResourceType.Survey });
-    const unpublished = createResourceListItem({ name: "Unpublished", type: ResourceType.Survey });
+    const published = createResourceListItem({ type: ResourceType.Survey });
+    const unpublished = createResourceListItem({ type: ResourceType.Survey });
     const publishedInList = { ...published, publication: createPublication(published.id) };
     const unpublishedInList = { ...unpublished, publication: null };
     trpcMsw.survey.readResources.query(({ input }) => ({
@@ -200,8 +202,8 @@ describe("pageBuilderContentPanel", () => {
     expect.hasAssertions();
 
     const resourceId = crypto.randomUUID();
-    const published = createResourceListItem({ name: "Published", type: ResourceType.Survey });
-    const unpublished = createResourceListItem({ name: "Unpublished", type: ResourceType.Survey });
+    const published = createResourceListItem({ type: ResourceType.Survey });
+    const unpublished = createResourceListItem({ type: ResourceType.Survey });
     const publishedInList = { ...published, publication: createPublication(published.id) };
     const unpublishedInList = { ...unpublished, publication: null };
     trpcMsw.survey.readResources.query(({ input }) => ({
@@ -233,7 +235,7 @@ describe("pageBuilderContentPanel", () => {
     expect.hasAssertions();
 
     const resourceId = crypto.randomUUID();
-    const survey = createResourceListItem({ name: "Surveyed", type: ResourceType.Survey });
+    const survey = createResourceListItem({ type: ResourceType.Survey });
     trpcMsw.survey.readResources.query(() => ({ hasMore: false, items: [] }));
     trpcMsw.resource.readResource.query(() => ({ ...survey, publication: null }));
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
