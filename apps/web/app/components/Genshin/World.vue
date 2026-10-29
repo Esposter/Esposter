@@ -36,9 +36,6 @@ const emit = defineEmits<{ grant: []; load: []; ready: []; save: [save: GenshinS
 const containerBaseUrl = useContainerBaseUrl();
 // The signed-in player's picture and name, which the world's profile card shows
 const session = authClient.useSession();
-// The world's screen with what only the app can hand it: the terrain worker its bundler builds, the URLs its server
-// Serves region data at, in development alone the developer's own character packs, exports of the game's scenes and
-// The developer registry; quitting the game leaves for the app's home
 // The developer registry is made in development alone, and the world's commands and variables register with it. A
 // Browser driven by automation takes it through `window.__dev` and mounts no surface, since a panel would cover the
 // Scene it shoots; a player's build has neither

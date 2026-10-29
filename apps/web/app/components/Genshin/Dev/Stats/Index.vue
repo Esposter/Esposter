@@ -2,7 +2,6 @@
 import type { DevFrameStats, DevRegistry } from "genshin-world";
 
 import { createFrameStatsSampler } from "genshin-world";
-import { useRafFn } from "@vueuse/core";
 
 interface Props {
   registry: DevRegistry;
@@ -10,7 +9,7 @@ interface Props {
 
 // The stats overlay, a frame at the top left: the median frame time, and the draw calls and triangles the renderer counted
 // For the last frame. It reads the renderer on each frame the browser draws while it is mounted, and the sampler answers
-// Stats on every tenth frame, so an overlay that is switched off, and so unmounted, costs no frame at all
+// Stats only on the frames it samples, so an overlay that is switched off, and so unmounted, costs no frame at all
 const { registry } = defineProps<Props>();
 const sampler = createFrameStatsSampler();
 const frameStats = shallowRef<DevFrameStats>();
