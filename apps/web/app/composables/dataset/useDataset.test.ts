@@ -27,7 +27,7 @@ describe(useDataset, () => {
   test("drops the previous source's dataset when the next one cannot be read", async () => {
     expect.hasAssertions();
 
-    const missingReference = { id: crypto.randomUUID(), type: DatasetProviderType.Sheet };
+    const missingReference = { id: "-1", type: DatasetProviderType.Sheet };
     trpcMsw.dataset.readDataset.query(({ input }) => {
       if (input.id === missingReference.id) throw new TRPCError({ code: "NOT_FOUND", message: " " });
       return { columns: [], rows: [] };

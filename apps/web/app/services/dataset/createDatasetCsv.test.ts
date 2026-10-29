@@ -10,13 +10,13 @@ describe(createDatasetCsv, () => {
 
     const dataset: Dataset = {
       columns: [
-        { name: "question3", title: "How did you hear about us?", type: ColumnType.String },
+        { name: "a", title: "b", type: ColumnType.String },
         { name: "rating", type: ColumnType.Number },
       ],
-      rows: [{ question3: "Friend", rating: 5 }],
+      rows: [{ a: "c", rating: 5 }],
     };
 
-    expect(createDatasetCsv(dataset)).toBe("How did you hear about us?,rating\nFriend,5");
+    expect(createDatasetCsv(dataset)).toBe("b,rating\nc,5");
   });
 
   test("writes a null cell as empty", () => {
