@@ -52,7 +52,7 @@ committed.
 | `inventory-food`                       | `InventoryScreen`           |                                                                          2.99% | 0.994 |  1.95% | 0.1850 |
 | `inventory-weapons`                    | `InventoryScreen`           |                                                                          9.79% | 0.635 |  6.39% | 0.3665 |
 | `liyue-harbor-location`                | `WorldScreen`               |                                                                         29.33% | 0.303 | 24.45% | 0.8094 |
-| `loading-startup`                      | `LoadingStartup`            |                                                                          0.03% | 0.989 |  0.00% | 0.0013 |
+| `loading-startup`                      | `LoadingStartup`            |                                                                          0.07% | 0.765 |  0.04% | 0.0027 |
 | `login-dawn-title`                     | `LoginScreen`               |                                                                         10.29% | 0.478 |  7.31% | 0.4134 |
 | `login-day-title`                      | `LoginScreen`               |                                                                         12.93% | 0.334 |  9.86% | 0.4689 |
 | `login-door`                           | `LoginScreen`               |                                                                         13.37% | 0.204 | 11.09% | 0.5029 |
@@ -66,7 +66,7 @@ committed.
 | `login-interface-mainland-rating`      | `LoginInterface`            |                                                                          3.01% | 0.992 |  2.34% | 0.1915 |
 | `login-interface-title`                | `LoginInterface`            |                                                                          0.36% | 0.996 |  0.24% | 0.0158 |
 | `login-night-title`                    | `LoginScreen`               |                                                                          9.42% | 0.369 |  7.03% | 0.3920 |
-| `login-screen-dusk`                    | `LoginScreen`               |                                                                         19.62% | 0.340 | 13.86% | 0.6498 |
+| `login-screen-dusk`                    | `LoginScreen`               |                                                                         19.47% | 0.364 | 13.94% | 0.6476 |
 | `map-overlay-galesong`                 | `MapOverlay`                |                                                                          6.51% | 0.747 | 21.89% | 0.4779 |
 | `map-overlay-jueyun`                   | `MapOverlay`                |                                                                         26.26% | 0.389 | 24.06% | 0.7516 |
 | `menu-exit-hover`                      | `MenuExit`                  |                                                                          1.69% | 0.999 |  1.32% | 0.1237 |
@@ -99,7 +99,7 @@ committed.
 | `splash-title-japanese`                | `SplashTitle`               |                                                                          0.16% | 1.000 |  0.39% | 0.0342 |
 | `splash-title-korean`                  | `SplashTitle`               |                                     pending: no screenshot of this variant yet |       |        |        |
 | `sumeru-city-location`                 | `WorldScreen`               |                                                                         32.42% | 0.227 | 28.07% | 0.8157 |
-| `title-splash`                         | `SplashTitle`               |                                                                          0.20% | 1.000 |  0.01% | 0.0090 |
+| `title-splash`                         | `SplashTitle`               |                                                                          0.20% | 1.000 |  0.01% | 0.0089 |
 | `title-splash-mainland`                | `SplashTitle`               |                                                                          1.89% | 0.991 |  0.89% | 0.0807 |
 | `weapon-screen`                        | `WeaponScreen`              |                                                                          2.00% | 0.897 |  0.94% | 0.0832 |
 | `weapon-screen-ascend`                 | `WeaponScreen`              |                                                                          1.86% | 0.827 |  0.86% | 0.0741 |
