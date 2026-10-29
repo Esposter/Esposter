@@ -24,8 +24,7 @@ the root pass carries, and when a targeted `oxlint` is still worth running, is t
 that needs the one before it to have _succeeded_, which is a build consuming what an earlier build produced; ordering
 alone is not that reason. `lint:fix` and `lint:fix:packages` are the two `&&` chains, because their fixers write the
 same files and must not run in parallel. Across workspace projects the same
-rule is `bail: false` in `pnpm-workspace.yaml`, with `build:packages` passing `--bail` back for exactly the
-build case. How a backgrounded run's result is read at all, and why the completion notification's exit code is
+rule is `bail: false` in `pnpm-workspace.yaml`. How a backgrounded run's result is read at all, and why the completion notification's exit code is
 never it, is the `running-checks` skill's (`references/reading-results.md`); an output file that comes back empty is that run not yet flushed,
 never a clean one.
 
