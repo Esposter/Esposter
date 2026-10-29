@@ -63,10 +63,9 @@ const pick = (characterId: number) => {
   <!-- The Expedition screen as the public clip shows it at 1080 high (references/expedition-screen, 26 seconds): the title
        across the head with the expedition limit and the way out, the nations down the left, the places as pins over the
        map, and the picked place's panel on the right with its rewards, its durations and the button that acts on it. The
-       map and the panel's picture are the game's art and do not ship, so they are drawn as plain sheets, and the pin's
-       brackets as a square outline; the parity compares them against the frame -->
+       map is drawn over the world and is the game's art, which does not ship, so the screen is transparent there; the
+       panel's picture is drawn as a plain sheet, and the pin's brackets as a square outline -->
   <div class="expedition-screen">
-    <div class="map" aria-hidden="true" />
     <ScreenTitle>{{ title }}</ScreenTitle>
     <p class="limit">{{ limitLabel }}</p>
     <button class="close" :aria-label="closeLabel" type="button" @click="emit('close')">×</button>
@@ -130,12 +129,6 @@ const pick = (characterId: number) => {
   overflow: hidden;
   color: #ece5d8;
   font-weight: 600;
-}
-
-.map {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 50% 45%, #e4d9c0, #b8a683 70%, #8e7f63);
 }
 
 .limit {

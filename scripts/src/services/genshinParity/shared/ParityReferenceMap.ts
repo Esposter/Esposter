@@ -341,6 +341,21 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Places pinned and Wolvendom picked, its Expedition Limit across the head, its rewards and durations down the right.
   // Scored over the screen above the recorder's UID, which the clip draws at its bottom right corner
   "expedition-screen": {
+    isBackdrop: true,
+    plate: [
+      { height: 65, width: 515, x: 50, y: 15 },
+      { height: 40, width: 260, x: 1505, y: 30 },
+      { height: 62, width: 63, x: 1812, y: 18 },
+      { height: 125, width: 280, x: 60, y: 130 },
+      { height: 105, width: 90, x: 770, y: 150 },
+      { height: 105, width: 90, x: 520, y: 365 },
+      { height: 105, width: 90, x: 1008, y: 293 },
+      { height: 105, width: 90, x: 1073, y: 410 },
+      { height: 130, width: 126, x: 680, y: 470 },
+      { height: 105, width: 90, x: 1130, y: 615 },
+      { height: 599, width: 432, x: 1445, y: 120 },
+      { height: 62, width: 307, x: 1570, y: 988 },
+    ],
     region: { height: 1050, width: 1920, x: 0, y: 0 },
     screen: "ExpeditionScreen",
     source: "yt-fxIjhlV3vUA-expedition-screen.mp4 at 26s",
