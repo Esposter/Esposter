@@ -2,7 +2,7 @@
 
 ### Requirement: The developer surface exists only in a development build
 
-The game SHALL offer its console and panel only in a development build, and SHALL register no command in a production build or in a browser driven by automation.
+The game SHALL offer its console and panel only in a development build, SHALL register no command in a production build, and SHALL mount neither surface in a browser driven by automation.
 
 #### Scenario: Development build offers the console and the panel
 
@@ -16,11 +16,11 @@ The game SHALL offer its console and panel only in a development build, and SHAL
 - **WHEN** the owner presses the backtick key or F2
 - **THEN** nothing opens and no command is registered
 
-#### Scenario: Browser driven by automation registers nothing
+#### Scenario: Browser driven by automation registers commands and mounts no surface
 
 - **GIVEN** the game runs from the development server in a browser driven by automation
 - **WHEN** the world loads
-- **THEN** no command is registered and neither surface mounts
+- **THEN** the commands are reachable through `window.__dev` and neither surface mounts
 
 ### Requirement: A console line runs a registered command
 
@@ -151,3 +151,51 @@ No scene SHALL be given three's inspector, and the look's tunable values SHALL b
 - **GIVEN** the panel is open on the Look tab
 - **WHEN** the owner changes the outline thickness
 - **THEN** the world's outline thickness changes at once
+
+### Requirement: A command's result is structured and compact
+
+A command SHALL return `ok` with a value, or `ok: false` with an error and its usage, and the value SHALL be a count, a rounded number or a name rather than a dump.
+
+#### Scenario: Automation receives data
+
+- **GIVEN** a browser driven by automation
+- **WHEN** it calls `window.__dev.run("state")`
+- **THEN** it receives the position, place, hour, weather, health, party and flags as one record
+
+#### Scenario: Failure returns its usage
+
+- **WHEN** a command is called with an argument it refuses
+- **THEN** the result is `ok: false` with the error and the command's usage
+
+### Requirement: A scenario can assert
+
+A scenario SHALL fail at an `expect` step whose condition does not hold, and SHALL name that step.
+
+#### Scenario: Holding expectation passes
+
+- **GIVEN** a scenario that gives 100 Mora and then expects 100 Mora
+- **WHEN** it runs
+- **THEN** it passes
+
+#### Scenario: Failing expectation stops the scenario
+
+- **GIVEN** a scenario that expects health above zero after `heal` and the character stays at zero
+- **WHEN** it runs
+- **THEN** it fails at the `expect` step, naming it
+- **AND** later steps do not run
+
+### Requirement: A scenario runs without a person
+
+`genshin:dev run` SHALL start the page headless, run the named scenario or line, and print its compact result with a non-zero exit when any step fails.
+
+#### Scenario: Passing scenario exits zero
+
+- **GIVEN** a scenario whose steps all pass
+- **WHEN** `genshin:dev run` is given its name
+- **THEN** it prints the compact result and exits zero
+
+#### Scenario: Failing scenario exits non-zero
+
+- **GIVEN** a scenario with a failing step
+- **WHEN** `genshin:dev run` is given its name
+- **THEN** it prints the failing step and exits non-zero

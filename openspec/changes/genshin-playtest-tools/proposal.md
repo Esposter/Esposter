@@ -14,6 +14,7 @@ One developer surface that belongs to the game, in the development server only.
 - A **stats overlay** (frame time, draw calls, triangles, memory) and **pass toggles** (shadows, god rays, ambient occlusion, bloom, anti-aliasing), so a slow scene shows which pass costs.
 - A **pick** that names the entity under the pointer (kind, id, place, state).
 - **BREAKING** three's Inspector is no longer attached to any scene, and its Look group moves into the panel's Look tab as variables.
+- Built for an agent first: every command returns a small structured result, a read-only family (`state`, `near`, `inventory`, `stat`, `step`) answers what a session would otherwise learn from screenshots, a scenario can assert with `expect`, and `pnpm -C scripts genshin:dev run` runs one headless, so the owner's two surfaces are callers of the same tools an agent uses.
 - A feature change registers the scenario that shows it, or says in its design why it has none.
 
 ## Capabilities
@@ -26,6 +27,6 @@ One developer surface that belongs to the game, in the development server only.
 
 ## Impact
 
-- Development only: the surface and every command are absent from a production build and from a browser driven by automation.
+- Development only: the surface and every command are absent from a production build; a browser driven by automation registers the commands and mounts no surface.
 - The renderer's creation, the look-tuning composable and the Vite dependency-optimizer exclusion for the Inspector go.
 - Command handles are registered by the world session, the save and the look; none of those gain behaviour a player can reach.
