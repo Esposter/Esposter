@@ -8,15 +8,15 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 
-// An avatar's entry in the index, read from the listing of its folder: its manifest's files, each checked against the
-// Bytes and sha256 the folder holds, then the manifest itself, hashed since no manifest lists its own file. A manifest
-// Naming another avatar, a file the folder lacks or holds at other bytes or other content, and a file the manifest does
-// Not list are refused, so the index and the upload, both read from this one listing, cannot disagree about what a pack holds
 const hashFile = async (localPath: string): Promise<string> =>
   createHash("sha256")
     .update(await readFile(localPath))
     .digest("hex");
 
+// An avatar's entry in the index, read from the listing of its folder: its manifest's files, each checked against the
+// Bytes and sha256 the folder holds, then the manifest itself, hashed since no manifest lists its own file. A manifest
+// Naming another avatar, a file the folder lacks or holds at other bytes or other content, and a file the manifest does
+// Not list are refused, so the index and the upload, both read from this one listing, cannot disagree about what a pack holds
 export const toCharacterPackAvatar = async (
   avatarId: string,
   files: CharacterPackFile[],
