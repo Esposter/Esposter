@@ -68,7 +68,7 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
       referenceId,
       `no plate screenshot at ${plateScreenshotPath}, sampled from ${reference.plateSource}`,
     );
-  const platePath = existsSync(plateScreenshotPath) ? plateScreenshotPath : referencePath;
+  const platePath = reference.plateSource === undefined ? referencePath : plateScreenshotPath;
   const plateMetadata = await sharp(platePath).metadata();
   if (plateMetadata.width !== width || plateMetadata.height !== height)
     throw new InvalidOperationError(
