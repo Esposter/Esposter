@@ -11,6 +11,8 @@ import { page, userEvent } from "vitest/browser";
 import { defineComponent, h } from "vue";
 
 describe("menuPaimon", () => {
+  const birthday = { day: 13, month: 10 };
+  const travelerName = "Aether";
   // The side bar's Settings entry opens the Settings screen, which the world's menu names by its own screen kind
   test("settings opens from the side bar", async () => {
     expect.hasAssertions();
@@ -33,13 +35,11 @@ describe("menuPaimon", () => {
     });
     await render(MenuPaimon, {
       global: { stubs: { NuxtImg: NuxtImgStub } },
-      props: { ...props, accountAvatarUrl: "https://example.com/avatar.png", accountName: "Aether" },
+      props: { ...props, accountAvatarUrl: "a", accountName: travelerName },
     });
 
-    await expect.element(page.getByText("Aether", { exact: true })).toBeInTheDocument();
-    await expect
-      .element(page.getByRole("img", { name: "Aether" }))
-      .toHaveAttribute("src", "https://example.com/avatar.png");
+    await expect.element(page.getByText(travelerName, { exact: true })).toBeInTheDocument();
+    await expect.element(page.getByRole("img", { name: travelerName })).toHaveAttribute("src", "a");
   });
 
   test("a signed-out reader sees the default name", async () => {
@@ -140,11 +140,14 @@ describe("menuPaimon", () => {
     await render(MenuPaimon, { attrs: { onSetBirthday }, props });
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.BirthdaySet] }).click();
     // The month list comes before the day list, so the first October is the month
-    await page.getByRole("button", { exact: true, name: "10" }).first().click();
-    await page.getByRole("button", { exact: true, name: "13" }).click();
+    await page
+      .getByRole("button", { exact: true, name: String(birthday.month) })
+      .first()
+      .click();
+    await page.getByRole("button", { exact: true, name: String(birthday.day) }).click();
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Confirm] }).click();
 
-    expect(onSetBirthday).toHaveBeenCalledExactlyOnceWith({ day: 13, month: 10 });
+    expect(onSetBirthday).toHaveBeenCalledExactlyOnceWith(birthday);
   });
 
   // The menu behind an open dialog is inert, so Tab walks the dialog's own stops and never lands on the menu's entries.
@@ -170,7 +173,7 @@ describe("menuPaimon", () => {
   test("tab from the namecard dialog never reaches the menu behind it", async () => {
     expect.hasAssertions();
 
-    const namecard = { itemId: 1, name: "Aether" };
+    const namecard = { itemId: 1, name: travelerName };
     const namecards = [namecard];
     await render(MenuPaimon, { props: { ...props, namecardItemId: namecard.itemId, namecards } });
     const menu = document.querySelector(".menu");
@@ -187,7 +190,7 @@ describe("menuPaimon", () => {
   test("a birthday already set shows its date and no button to set it", async () => {
     expect.hasAssertions();
 
-    await render(MenuPaimon, { props: { ...props, travelerBirthday: { day: 13, month: 10 } } });
+    await render(MenuPaimon, { props: { ...props, travelerBirthday: birthday } });
 
     await expect.element(page.getByText("10/13", { exact: true })).toBeInTheDocument();
     await expect

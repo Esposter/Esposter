@@ -35,7 +35,7 @@ describe("shopScreen", () => {
       { id, materialType: MaterialType.Consume, nameTextId: String(id), rank: 1, rarity: 1, stackLimit: 1 },
     ]),
   );
-  const good = (goodsId: number, itemId: number, tabId: number): ShopGood => ({
+  const createGood = (goodsId: number, itemId: number, tabId: number): ShopGood => ({
     beginTime: new Date(0).toISOString(),
     buyLimit: 0,
     costs: [{ count: 1, itemId: PRICE_ITEM_ID }],
@@ -54,6 +54,7 @@ describe("shopScreen", () => {
     primogemResinRefillCount: 0,
     primogemResinRefillDay: Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate(),
   };
+  const now = Temporal.Instant.fromEpochMilliseconds(0);
 
   // Tubby's depot opens on the first of its tabs, with that tab's goods, and a click on another tab shows its own goods
   test("tubby's depot opens on its first tab", async () => {
@@ -65,12 +66,15 @@ describe("shopScreen", () => {
           h(ShopScreen, {
             adventureRank: 60,
             gameText,
-            getWorldNow: () => Temporal.Now.instant(),
-            goods: [good(1, TREASURE_ITEM_ID, TREASURE_TAB_ID), good(2, FURNISHING_ITEM_ID, FURNISHING_TAB_ID)],
+            getWorldNow: () => now,
+            goods: [
+              createGood(1, TREASURE_ITEM_ID, TREASURE_TAB_ID),
+              createGood(2, FURNISHING_ITEM_ID, FURNISHING_TAB_ID),
+            ],
             inventory,
             materialDataMap,
             nameText,
-            now: Temporal.Now.instant(),
+            now,
             purchases: [],
             reputationLevel: 1,
             wallet,

@@ -85,6 +85,7 @@ describe("weaponScreen", () => {
 
     await page.getByText(oreName, { exact: true }).first().click();
     await page.getByText(ENGLISH_GAME_TEXT[GameTextKey.WeaponEnhance], { exact: true }).last().click();
+
     expect(onUpdateInventory).not.toHaveBeenCalled();
     expect(onUpdateWallet).not.toHaveBeenCalled();
   });
@@ -103,8 +104,9 @@ describe("weaponScreen", () => {
     await page.getByText(fodderName, { exact: true }).first().click();
     await page.getByText(ENGLISH_GAME_TEXT[GameTextKey.WeaponEnhance], { exact: true }).last().click();
 
-    expect(onUpdateInventory).toHaveBeenCalledTimes(1);
     const writtenInventory = onUpdateInventory.mock.calls[0]?.[0];
+
+    expect(onUpdateInventory).toHaveBeenCalledTimes(1);
     expect(writtenInventory?.items.some((item) => item.id === FODDER_ENTRY_ID)).toBe(false);
     expect(countInventoryItem(writtenInventory?.items ?? [], ORE_ID)).toBe(2);
     expect(getBagWeapon(writtenInventory?.items ?? [], OPEN_ENTRY_ID).level).toBeGreaterThan(1);
@@ -146,14 +148,15 @@ describe("weaponScreen", () => {
 
     await page.getByText(ENGLISH_GAME_TEXT[GameTextKey.WeaponAscend], { exact: true }).last().click();
 
+    const nextPhaseItems = weaponData.ascensionPhases[1]?.costItems ?? [];
+    const writtenItems = onUpdateInventory.mock.calls[0]?.[0].items ?? [];
+
     expect(onUpdateInventory).toHaveBeenCalledTimes(1);
     expect(getBagWeapon(onUpdateInventory.mock.calls[0]?.[0].items ?? [], OPEN_ENTRY_ID)).toStrictEqual({
       ...atCapWeapon,
       ascension: 1,
     });
-    expect(onUpdateWallet).toHaveBeenCalledWith(EMPTY_WALLET);
-    const nextPhaseItems = weaponData.ascensionPhases[1]?.costItems ?? [];
-    const writtenItems = onUpdateInventory.mock.calls[0]?.[0].items ?? [];
+    expect(onUpdateWallet).toHaveBeenCalledExactlyOnceWith(EMPTY_WALLET);
     expect(nextPhaseItems.map(({ id }) => countInventoryItem(writtenItems, id))).toStrictEqual(
       nextPhaseItems.map(() => 0),
     );
@@ -176,6 +179,7 @@ describe("weaponScreen", () => {
     });
 
     await page.getByText(ENGLISH_GAME_TEXT[GameTextKey.WeaponAscend], { exact: true }).last().click();
+
     expect(onUpdateInventory).not.toHaveBeenCalled();
     expect(onUpdateWallet).not.toHaveBeenCalled();
   });
@@ -198,11 +202,12 @@ describe("weaponScreen", () => {
     await page.getByText(copyLevelText, { exact: true }).click();
     await page.getByText(ENGLISH_GAME_TEXT[GameTextKey.WeaponRefine], { exact: true }).last().click();
 
-    expect(onUpdateInventory).toHaveBeenCalledTimes(1);
     const writtenInventory = onUpdateInventory.mock.calls[0]?.[0];
+
+    expect(onUpdateInventory).toHaveBeenCalledTimes(1);
     expect(writtenInventory?.items.some((item) => item.id === COPY_ENTRY_ID)).toBe(false);
     expect(getBagWeapon(writtenInventory?.items ?? [], OPEN_ENTRY_ID).refinement).toBe(2);
-    expect(onUpdateWallet).toHaveBeenCalledWith({
+    expect(onUpdateWallet).toHaveBeenCalledExactlyOnceWith({
       ...props.wallet,
       [Currency.Mora]: props.wallet[Currency.Mora] - (weaponData.refinementCosts[0] ?? 0),
     });

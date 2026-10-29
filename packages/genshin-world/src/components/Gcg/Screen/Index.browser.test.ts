@@ -67,7 +67,7 @@ describe("gcgScreen", () => {
     await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.GcgConfirm] }).click();
 
     const expectedChoice: GcgPlayChoice = { rerollDiceIndices: [[1, 3], [4]] };
-    expect(onPlayCard.mock.calls).toStrictEqual([[0, undefined, [0], expectedChoice]]);
+    expect(onPlayCard).toHaveBeenCalledExactlyOnceWith(0, undefined, [0], expectedChoice);
   });
 
   test("should leave Toss-Up unplayed when its choice is cancelled", async () => {
@@ -96,7 +96,7 @@ describe("gcgScreen", () => {
     });
     await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.GcgConfirm] }).click();
 
-    expect(onLeave.mock.calls).toStrictEqual([[true]]);
+    expect(onLeave).toHaveBeenCalledExactlyOnceWith(true);
   });
 
   test("should leave the ended duel with the player's loss when the opponent won", async () => {
@@ -112,6 +112,6 @@ describe("gcgScreen", () => {
     });
     await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.GcgConfirm] }).click();
 
-    expect(onLeave.mock.calls).toStrictEqual([[false]]);
+    expect(onLeave).toHaveBeenCalledExactlyOnceWith(false);
   });
 });

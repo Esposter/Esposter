@@ -26,14 +26,11 @@ describe("spiralAbyssEntry", () => {
 
     const onChoose = vi.fn<(floorId: number, chamberId: number) => void>();
     await render(SpiralAbyssEntry, { attrs: { onChoose }, props });
-    await page.getByRole("button", { exact: true, name: String(takeOne(props.floors).index) }).click();
-    await page
-      .getByRole("button", { exact: true, name: String(takeOne(takeOne(props.floors).chambers, 1).index) })
-      .click();
+    const floor = takeOne(props.floors);
+    const chamber = takeOne(floor.chambers, 1);
+    await page.getByRole("button", { exact: true, name: String(floor.index) }).click();
+    await page.getByRole("button", { exact: true, name: String(chamber.index) }).click();
 
-    expect(onChoose).toHaveBeenCalledExactlyOnceWith(
-      takeOne(props.floors).id,
-      takeOne(takeOne(props.floors).chambers, 1).id,
-    );
+    expect(onChoose).toHaveBeenCalledExactlyOnceWith(floor.id, chamber.id);
   });
 });

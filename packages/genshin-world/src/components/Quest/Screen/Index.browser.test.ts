@@ -14,13 +14,13 @@ describe(QuestScreen, () => {
         ...props,
         questChapters: [
           {
-            id: "wordless",
-            journalTextId: "wordless",
+            id: "-1",
+            journalTextId: "-1",
             numberTextId: "",
             questIds: ["an-ark-that-used-to-be-a-soul"],
             regionTextId: "snezhnaya",
             rewards: [],
-            titleTextId: "wordless",
+            titleTextId: "-1",
           },
         ],
       },

@@ -149,7 +149,7 @@ describe("gameOpening", () => {
 
       await vi.advanceTimersByTimeAsync(MARKS_FADE_MS + WHITE_HOLD_MS + flightFrameMs);
 
-      expect(onFinish).toHaveBeenCalledTimes(1);
+      expect(onFinish).toHaveBeenCalledExactlyOnceWith();
     },
     timeoutMs,
   );

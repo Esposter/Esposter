@@ -2,12 +2,14 @@ import type { HomePlacement } from "#src/models/home/HomePlacement";
 
 import { props, variants } from "#src/components/World/Realm/PlacementEditor/Index.fixture";
 import PlacementEditorContainer from "#src/components/World/Realm/PlacementEditor/Index.vue";
+import { takeOne } from "@esposter/shared";
 import { GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
 describe("placementEditor", () => {
+  const chair = takeOne(props.held);
   // A held furnishing picked and placed where the area has load to spare: the placement is emitted whole
   test("a furnishing that fits is placed where it was picked", async () => {
     expect.hasAssertions();
@@ -15,12 +17,12 @@ describe("placementEditor", () => {
     const onPlace = vi.fn<(placement: HomePlacement) => void>();
     await render(PlacementEditorContainer, { attrs: { onPlace }, props });
 
-    await page.getByText("Chair", { exact: true }).click();
+    await page.getByText(chair.name, { exact: true }).click();
     await page.getByRole("button", { name: props.gameText[GameTextKey.HomeDeploy] }).click();
 
-    expect(onPlace.mock.calls[0]?.[0]).toStrictEqual({
+    expect(onPlace).toHaveBeenCalledExactlyOnceWith({
       areaId: props.area.areaId,
-      furnishingItemId: 1001,
+      furnishingItemId: chair.itemId,
       position: props.position,
       rotation: props.rotation,
       sceneId: props.area.sceneId,
@@ -34,7 +36,7 @@ describe("placementEditor", () => {
     const onPlace = vi.fn<(placement: HomePlacement) => void>();
     await render(PlacementEditorContainer, { attrs: { onPlace }, props: { ...props, ...variants.atLoad } });
 
-    await page.getByText("Chair", { exact: true }).click();
+    await page.getByText(chair.name, { exact: true }).click();
 
     await expect.element(page.getByRole("button", { name: props.gameText[GameTextKey.HomeDeploy] })).toBeDisabled();
     await expect

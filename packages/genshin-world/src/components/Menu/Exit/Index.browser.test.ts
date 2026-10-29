@@ -22,6 +22,7 @@ describe("menuExit", () => {
     const panel = dialog.getBoundingClientRect();
     const cancelRect = cancel.getBoundingClientRect();
     const confirmRect = confirm.getBoundingClientRect();
+
     expect(cancelRect.width / panel.width).toBeCloseTo(390 / 960, 3);
     expect((cancelRect.left - panel.left) / panel.width).toBeCloseTo(70 / 960, 3);
     expect((confirmRect.left - panel.left) / panel.width).toBeCloseTo(500 / 960, 3);

@@ -10,27 +10,25 @@ import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
 describe("dialogueTalk", () => {
+  const spokenLine = {
+    kind: TalkLineKind.Spoken as const,
+    nextLineIds: [],
+    speakerRoleTextId: "",
+    speakerTextId: "sara",
+    voiceId: "",
+  };
+  const talk: Talk = {
+    id: "standing",
+    lines: [{ ...spokenLine, id: "line", textId: "line" }],
+    npcIds: [],
+    startLineId: "line",
+  };
+
   // A one-line talk whose line names the player and their twin's own word, held whole from its first frame, so what is
   // Drawn is the line the game shows: the Traveler's title as the login fills it, then the female twin's word
   test("should fill the player into the line", async () => {
     expect.hasAssertions();
 
-    const talk: Talk = {
-      id: "placeholders",
-      lines: [
-        {
-          id: "line",
-          kind: TalkLineKind.Spoken,
-          nextLineIds: [],
-          speakerRoleTextId: "",
-          speakerTextId: "sara",
-          textId: "line",
-          voiceId: "",
-        },
-      ],
-      npcIds: [],
-      startLineId: "line",
-    };
     const travelerTitle = fillLinePlaceholders(ENGLISH_GAME_TEXT[GameTextKey.Traveler], "", LOGIN_TRAVELER_GENDER);
     await render(DialogueTalk, {
       props: {
@@ -50,22 +48,6 @@ describe("dialogueTalk", () => {
   test("should begin the quest talk its opening line offers", async () => {
     expect.hasAssertions();
 
-    const talk: Talk = {
-      id: "standing",
-      lines: [
-        {
-          id: "line",
-          kind: TalkLineKind.Spoken,
-          nextLineIds: [],
-          speakerRoleTextId: "",
-          speakerTextId: "sara",
-          textId: "line",
-          voiceId: "",
-        },
-      ],
-      npcIds: [],
-      startLineId: "line",
-    };
     const onBegin = vi.fn<(talkId: string) => void>();
     await render(DialogueTalk, {
       props: {
@@ -87,27 +69,11 @@ describe("dialogueTalk", () => {
   test("should go on past the opening line's offers", async () => {
     expect.hasAssertions();
 
-    const talk: Talk = {
+    const twoLineTalk: Talk = {
       id: "standing",
       lines: [
-        {
-          id: "first",
-          kind: TalkLineKind.Spoken,
-          nextLineIds: ["second"],
-          speakerRoleTextId: "",
-          speakerTextId: "sara",
-          textId: "first",
-          voiceId: "",
-        },
-        {
-          id: "second",
-          kind: TalkLineKind.Spoken,
-          nextLineIds: [],
-          speakerRoleTextId: "",
-          speakerTextId: "sara",
-          textId: "second",
-          voiceId: "",
-        },
+        { ...spokenLine, id: "first", nextLineIds: ["second"], textId: "first" },
+        { ...spokenLine, id: "second", textId: "second" },
       ],
       npcIds: [],
       startLineId: "first",
@@ -117,7 +83,7 @@ describe("dialogueTalk", () => {
         gameText: ENGLISH_GAME_TEXT,
         offers: [{ icon: DialogueChoiceIcon.Quest, talkId: "quest", textId: "title" }],
         startProgress: { isRevealed: true, lineId: "first" },
-        talk,
+        talk: twoLineTalk,
         textMap: { first: "Hello.", sara: "Sara", second: "Goodbye.", title: "A Quest" },
       },
     });
