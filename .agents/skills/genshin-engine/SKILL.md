@@ -11,7 +11,7 @@ The design, from each module's job to the order a frame runs in, is `openspec/sp
 
 - **A rigid-body physics engine** (Rapier, cannon) for collision (`references/settled-directions.md`).
 - **An `ignorePatterns` entry for the engine's TSL** — `references/settled-directions.md`.
-- **Shipping assets taken from the game** — models, textures, sounds or art, extracted or converted (`references/settled-directions.md`).
+- **Shipping assets taken from the game** — models, textures, sounds or art, extracted or converted, except the official character packs, which are published under the owner's stated permission; the earlier direction against hosting them is rejected (`references/settled-directions.md`).
 - **The word "teyvat" in any name** — package, folder, route, page or prose (`references/settled-directions.md`).
 - **A second renderer path for WebGL** — `references/settled-directions.md`.
 
