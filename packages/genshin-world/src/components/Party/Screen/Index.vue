@@ -10,7 +10,7 @@ import { DEFAULT_PARTY_TEAM_NAME_GAME_TEXT_KEYS } from "#src/services/party/cons
 import { deployPartyTeam } from "#src/services/party/deployPartyTeam";
 import { getPartyTeamSlots } from "#src/services/party/getPartyTeamSlots";
 import { quickSetupPartyTeam } from "#src/services/party/quickSetupPartyTeam";
-import { PartySetupScreen } from "genshin-interface";
+import { GameScreen, PartySetupScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
@@ -54,24 +54,26 @@ const stepTeam = (step: number) => {
 </script>
 
 <template>
-  <PartySetupScreen
-    :back-label="gameText[GameTextKey.Back]"
-    :configure-team-label="gameText[GameTextKey.ConfigureTeam]"
-    :deploy-label="gameText[GameTextKey.Deploy]"
-    :quick-setup-label="gameText[GameTextKey.QuickSetup]"
-    :slots
-    :team-name
-    :title="gameText[GameTextKey.PartySetup]"
-    @close="emit('close')"
-    @deploy="deployPartyTeam(party, teamIndex)"
-    @next="stepTeam(1)"
-    @previous="stepTeam(-1)"
-    @quick-setup="
-      quickSetupPartyTeam(
-        party,
-        teamIndex,
-        characters.map(({ id }) => id),
-      )
-    "
-  />
+  <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.PartySetup]">
+    <PartySetupScreen
+      :back-label="gameText[GameTextKey.Back]"
+      :configure-team-label="gameText[GameTextKey.ConfigureTeam]"
+      :deploy-label="gameText[GameTextKey.Deploy]"
+      :quick-setup-label="gameText[GameTextKey.QuickSetup]"
+      :slots
+      :team-name
+      :title="gameText[GameTextKey.PartySetup]"
+      @close="emit('close')"
+      @deploy="deployPartyTeam(party, teamIndex)"
+      @next="stepTeam(1)"
+      @previous="stepTeam(-1)"
+      @quick-setup="
+        quickSetupPartyTeam(
+          party,
+          teamIndex,
+          characters.map(({ id }) => id),
+        )
+      "
+    />
+  </GameScreen>
 </template>
