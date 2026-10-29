@@ -19,6 +19,19 @@ describe(getParityServerArgs, () => {
     ]);
   });
 
+  test("should serve the dev server forced to bundle its dependencies again", () => {
+    expect.hasAssertions();
+    expect(getParityServerArgs(true, 1, true)).toStrictEqual([
+      VITE_BIN_PATH,
+      "--config",
+      PARITY_CONFIG_PATH,
+      "--port",
+      "1",
+      "--strictPort",
+      "--force",
+    ]);
+  });
+
   test("should preview the production build in its output folder", () => {
     expect.hasAssertions();
     expect(getParityServerArgs(false, 1)).toStrictEqual([

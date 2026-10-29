@@ -5,7 +5,7 @@ import { getResultAsync } from "@esposter/shared";
 
 export const readScore = async (referenceId: string): Promise<ParityScore | undefined> =>
   (await getResultAsync(() => compareScreen(referenceId))).match(
-    (score) => score,
+    ({ score }) => score,
     (error) => {
       console.log(`failed: ${error.message}`);
       return undefined;

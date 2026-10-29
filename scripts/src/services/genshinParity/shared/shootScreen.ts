@@ -2,6 +2,7 @@ import type { ShootOptions } from "#src/models/genshinParity/shared/ShootOptions
 
 import { ParityMotion } from "#src/models/genshinParity/shared/ParityMotion";
 import { SHOTS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { getShotPath } from "#src/services/genshinParity/shared/getShotPath";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
 import { withFinalizerAsync } from "@esposter/shared";
 import { mkdir } from "node:fs/promises";
@@ -24,7 +25,7 @@ export const shootScreen = async ({
       const shotPaths: string[] = [];
       if (pointer) await page.mouse.move(...pointer);
       if (timesMs.length === 0) {
-        const path = join(SHOTS_DIRECTORY, `${screen}.png`);
+        const path = getShotPath(screen);
         await page.screenshot({ animations: "disabled", path });
         shotPaths.push(path);
       }

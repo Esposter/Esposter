@@ -1,3 +1,4 @@
+import { getWorktreeName } from "#src/services/genshinParity/shared/getWorktreeName";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { SITE_NAME } from "@esposter/shared";
 import { homedir } from "node:os";
@@ -8,7 +9,8 @@ import { join } from "node:path";
 export const PARITY_DIRECTORY: string =
   process.env.GENSHIN_PARITY_DIRECTORY ?? join(homedir(), SITE_NAME, "genshin-parity");
 export const REFERENCES_DIRECTORY: string = join(PARITY_DIRECTORY, "references");
-export const SHOTS_DIRECTORY: string = join(PARITY_DIRECTORY, "shots");
+// The shots of each checkout, under its own name, so a worktree's compare never overwrites another checkout's shot
+export const SHOTS_DIRECTORY: string = join(PARITY_DIRECTORY, "shots", getWorktreeName(REPOSITORY_ROOT));
 // Each run of the frame stall measure: its states' frame times, programs and their growth, as JSON
 export const STALLS_DIRECTORY: string = join(PARITY_DIRECTORY, "stalls");
 // A frame at 60 a second, the step a faked clock is moved by

@@ -1,11 +1,12 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { ComparisonResult } from "#src/models/genshinParity/reference/ComparisonResult";
 import type { LayerScore } from "#src/models/genshinParity/reference/LayerScore";
-import type { ParityScore } from "#src/models/genshinParity/reference/ParityScore";
 
 import { computeUnderBlackShare } from "#src/services/genshinParity/display/computeUnderBlackShare";
 import { formatUnderBlackShare } from "#src/services/genshinParity/display/formatUnderBlackShare";
 import { COMPARISON_HEIGHT } from "#src/services/genshinParity/reference/constants";
 import { getCeiling } from "#src/services/genshinParity/reference/getCeiling";
+import { getCellReadings } from "#src/services/genshinParity/reference/getCellReadings";
 import { getCleanPlatePath } from "#src/services/genshinParity/reference/getCleanPlatePath";
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
 import { getReferenceSoftness } from "#src/services/genshinParity/reference/getReferenceSoftness";
@@ -13,7 +14,6 @@ import { readScoredMask } from "#src/services/genshinParity/reference/readScored
 import { readSilhouetteInks } from "#src/services/genshinParity/reference/readSilhouetteInks";
 import { scoreLayers } from "#src/services/genshinParity/reference/scoreLayers";
 import { scoreStructure } from "#src/services/genshinParity/reference/scoreStructure";
-import { toPercent } from "#src/services/genshinParity/reference/toPercent";
 import {
   COMPARISONS_DIRECTORY,
   REFERENCES_DIRECTORY,
@@ -40,8 +40,13 @@ const MIN_BLUR_SIGMA = 0.3;
 // Layer by layer over the families the witness's part target gives at the reference's view, over the region its row
 // Scores, so a family that moves away from the reference shows on its own row even where the frame's score barely
 // Moves, and the frame's layer is the row. With a witness, the scene draws that component's exports in place of its
-// Own parts and its image is kept apart from the scene's own
-export const compareScreen = async (referenceId: string, witness?: DerivedAssetComponent): Promise<ParityScore> => {
+// Own parts and its image is kept apart from the scene's own. The shot is taken on `pageRoot` when one is given, a page
+// The caller started, and on the parity page otherwise. Every line is written to stderr, so stdout holds the command's own output
+export const compareScreen = async (
+  referenceId: string,
+  witness?: DerivedAssetComponent,
+  pageRoot?: string,
+): Promise<ComparisonResult> => {
   const reference = ParityReferenceMap[referenceId];
   if (!reference)
     throw new InvalidOperationError(
@@ -85,6 +90,7 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
   const [shotPath = ""] = await shootScreen({
     backdropPath,
     height,
+    pageRoot,
     pointer: reference.pointer,
     props: reference.props,
     screen: reference.screen,
@@ -105,34 +111,35 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
     .png()
     .toBuffer();
   const { data } = await sharp(difference).greyscale().raw().toBuffer({ resolveWithObject: true });
+  // The reference's and our pixels, read once for the cells' colours and the under-the-curve black below
+  const [referenceRgb, shotRgb] = await Promise.all([
+    sharp(referenceRegion).raw().toBuffer(),
+    sharp(shotRegion).raw().toBuffer(),
+  ]);
   // The scored pixels are the reference's own rectangles and glyphs, its whole region when it names none, so a mask's
   // Leftover never counts
   const silhouetteInks = await readSilhouetteInks(referencePath, region, reference.silhouettes ?? []);
   const scoredMask = readScoredMask(reference, silhouetteInks, region, region.width, region.height);
-  const cellMeans = Array.from({ length: GRID_SIZE * GRID_SIZE }, () => ({ count: 0, sum: 0 }));
-  for (let index = 0; index < data.length; index++) {
-    if (!scoredMask[index]) continue;
-    const column = Math.min(GRID_SIZE - 1, Math.floor(((index % region.width) / region.width) * GRID_SIZE));
-    const row = Math.min(GRID_SIZE - 1, Math.floor((Math.floor(index / region.width) / region.height) * GRID_SIZE));
-    const cell = cellMeans[row * GRID_SIZE + column];
-    if (!cell) continue;
-    cell.sum += data[index] ?? 0;
-    cell.count++;
-  }
-  const total = cellMeans.reduce((sum, cell) => sum + cell.sum, 0);
-  const scoredCount = cellMeans.reduce((count, cell) => count + cell.count, 0);
-  const meanDifference = toPercent(total, scoredCount);
-  console.log(`mean difference ${meanDifference.toFixed(2)}% (0 is identical)`);
+  const { cells, meanDifference } = getCellReadings({
+    differences: data,
+    gridSize: GRID_SIZE,
+    height: region.height,
+    referenceRgb,
+    scoredMask,
+    shotRgb,
+    width: region.width,
+  });
+  console.error(`mean difference ${meanDifference.toFixed(2)}% (0 is identical)`);
   for (let row = 0; row < GRID_SIZE; row++)
-    console.log(
-      cellMeans
+    console.error(
+      cells
         .slice(row * GRID_SIZE, (row + 1) * GRID_SIZE)
-        .map(({ count, sum }) => toPercent(sum, count).toFixed(2).padStart(6))
+        .map(({ error }) => error.toFixed(2).padStart(6))
         .join(" "),
     );
   // A scene rebuilt from shapes never matches pixel for pixel, so its shape and its light are scored apart
   const { edgeScore, toneDifference } = await scoreStructure(referenceRegion, shotRegion);
-  console.log(
+  console.error(
     `shape ${edgeScore.toFixed(3)} (edges shared, 1 is identical), tone ${toneDifference.toFixed(2)}% (blurred colour)`,
   );
   // FLIP's error map read at the structure's raster, its mean taken over the scored pixels alone
@@ -146,13 +153,12 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
       flipMask.reduce((count, scored) => count + scored, 0),
       1,
     );
-  console.log(`FLIP ${flip.toFixed(4)} (perceptual, 0 is identical)`);
+  console.error(`FLIP ${flip.toFixed(4)} (perceptual, 0 is identical)`);
   // Where the reference shows channels under the tone curve's black at none, how many of ours do
-  const [referenceUnderBlack, shotUnderBlack] = await Promise.all(
-    [referenceRegion, shotRegion].map(async (input) => computeUnderBlackShare(await sharp(input).raw().toBuffer())),
-  );
-  if (referenceUnderBlack && shotUnderBlack && referenceUnderBlack.share > 0)
-    console.log(
+  const referenceUnderBlack = computeUnderBlackShare(referenceRgb);
+  const shotUnderBlack = computeUnderBlackShare(shotRgb);
+  if (referenceUnderBlack.share > 0)
+    console.error(
       `under the curve's black: reference ${formatUnderBlackShare(referenceUnderBlack)}, ours ${formatUnderBlackShare(shotUnderBlack)}`,
     );
   const layerComponent = getLayerComponent(referenceId, witness);
@@ -161,7 +167,7 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
     const { gbuffer } = await readReferenceGbuffer(referenceId, layerComponent);
     layers = await scoreLayers(referenceRegion, shotRegion, gbuffer, region, { height, width });
     for (const layer of layers.toSorted((firstLayer, secondLayer) => getCeiling(secondLayer) - getCeiling(firstLayer)))
-      console.log(
+      console.error(
         `${layer.name}: ${(layer.coverage * 100).toFixed(1)}% of the frame, colour ${layer.colour.toFixed(2)} ΔE, shape ${layer.shape.toFixed(3)}, tone ${layer.tone.toFixed(2)}%, detail ${layer.detail.toFixed(2)}%, FLIP ${layer.flip.toFixed(4)}, ceiling ${getCeiling(layer).toFixed(4)}`,
       );
   }
@@ -177,6 +183,6 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
     .composite(panels.map((input, index) => ({ input, left: index * panelWidth, top: 0 })))
     .png()
     .toFile(outputPath);
-  console.log(`reference | ours | difference: ${outputPath}`);
-  return { edgeScore, flip, layers, meanDifference, screen: reference.screen, toneDifference };
+  console.error(`reference | ours | difference: ${outputPath}`);
+  return { cells, score: { edgeScore, flip, layers, meanDifference, screen: reference.screen, toneDifference } };
 };

@@ -10,10 +10,10 @@ import { spawn } from "@esposter/shared-node/child-process";
 
 // Serves the parity page on a free port with Vite, its dev server or its preview of the production build, and resolves
 // Once it announces that address. The caller stops it with `stop` when it is done, success or not
-export const startParityServer = async (isDev: boolean): Promise<ParityServer> => {
+export const startParityServer = async (isDev: boolean, isForced?: boolean): Promise<ParityServer> => {
   const port = await getFreePort();
   const origin = `http://localhost:${port}`;
-  const server = spawn(process.execPath, getParityServerArgs(isDev, port), {
+  const server = spawn(process.execPath, getParityServerArgs(isDev, port, isForced), {
     cwd: GENSHIN_WORLD_DIRECTORY,
     stdio: ["ignore", "pipe", "inherit"],
   });
