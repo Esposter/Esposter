@@ -1120,6 +1120,7 @@ export * from "./services/character/createTalentLevelMap.ts";
 export * from "./services/character/decodeCharacterPackEntryNames.ts";
 export * from "./services/character/decodeCharacterTerms.ts";
 export * from "./services/character/disposeCharacterMesh.ts";
+export * from "./services/character/ElementNameGameTextKeyMap.ts";
 export * from "./services/character/ElementNebulaMap.ts";
 export * from "./services/character/gainCharacterExp.ts";
 export * from "./services/character/getAscendableNextPhase.ts";
