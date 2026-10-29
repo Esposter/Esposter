@@ -38,7 +38,10 @@ export const createVisualComparisonRecord = (): VisualComparisonRecord => {
 
       // The matcher rounds each ratio up to a whole percent, so ties are ordered by the pixels that differ
       const rows = overBar
-        .toSorted((first, second) => second.ratio - first.ratio || second.pixels - first.pixels)
+        .toSorted(
+          (firstMismatch, secondMismatch) =>
+            secondMismatch.ratio - firstMismatch.ratio || secondMismatch.pixels - firstMismatch.pixels,
+        )
         .map(({ ratio, title }) => `  ${String(Math.round(ratio * 100)).padStart(4)}%  ${title}`);
       console.log(
         [`Cases over ${MISMATCH_RATIO_BAR * 100}% of their image, worst first:`, ...rows, summary].join("\n"),
