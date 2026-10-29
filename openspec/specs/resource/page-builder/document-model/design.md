@@ -57,7 +57,7 @@ A cross-resource reference is a prop declared with `createResourceLinkSchema`, s
 
 Each type's contract makes its published output accessible by construction rather than by review. An Image requires its `alt` or an explicit decorative flag, which publishes as an empty `alt` with `role="presentation"`. A Video requires a title as its accessible name. Tabs publish with the tablist pattern and the arrow keys in their script. Typed text keeps its whole text in the accessible name and stands still under reduced motion. A Countdown is a timer whose live region stays off, and a Button is a real link.
 
-Every URL prop passes `checkIsAllowedUrl` in its schema, so a `javascript:` address is refused at save, including behind a leading space or another case. Custom HTML is cleaned by `sanitizeHtml` both when it is stored and again when it is published. Custom HTML is the one type whose stored markup is raw, so the sanitiser runs over it at both ends.
+Every URL prop passes `checkIsAllowedUrl` in its schema, so a `javascript:` address is refused at save, including behind a leading space or another case. Custom HTML is cleaned by `sanitizeHtml` both when it is stored and again when it is published. Custom HTML is the one type whose stored markup is raw.
 
 ## Rendering
 
@@ -69,7 +69,7 @@ A webpage renders to one document through `renderWebpageDocument`, a pure functi
 
 An email renders through the MJML blocks' `renderMjmlDocument` to MJML's JSON form, with the head from the root's props and the body from its content. The survey invite's render is an `mj-button` whose href is the survey's absolute link, and it escapes its attribute and its label the way the package's own types do.
 
-The server's compile service is `compileEmailDocument`. It renders the email to MJML's JSON form, then hands that to `mjml2html` under strict validation, so an email whose markup MJML would reject is refused with the validator's own message rather than sent. Its result is the email's HTML.
+The server's compile service is `compileEmailDocument`. It hands the rendered JSON to `mjml2html` under strict validation, so an email whose markup MJML would reject is refused with the validator's own message rather than sent. Its result is the email's HTML.
 
 ```mermaid
 flowchart TD
