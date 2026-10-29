@@ -66,7 +66,7 @@ committed.
 | `login-interface-mainland-rating` | `LoginInterface` | 3.16% | 0.991 | 2.36% | 0.1957 |
 | `login-interface-title` | `LoginInterface` | 0.36% | 0.996 | 0.24% | 0.0158 |
 | `login-night-title` | `LoginScreen` | 9.41% | 0.371 | 7.01% | 0.3913 |
-| `login-screen-dusk` | `LoginScreen` | 19.45% | 0.358 | 13.81% | 0.6448 |
+| `login-screen-dusk` | `LoginScreen` | 19.24% | 0.375 | 13.89% | 0.6446 |
 | `map-overlay-galesong` | `MapOverlay` | 17.65% | 0.000 | 12.94% | 0.6686 |
 | `map-overlay-jueyun` | `MapOverlay` | 65.65% | 0.163 | 38.75% | 0.8931 |
 | `menu-exit-hover` | `MenuExit` | 1.69% | 0.999 | 1.32% | 0.1237 |
@@ -101,11 +101,11 @@ committed.
 | `sumeru-city-location` | `WorldScreen` | 32.42% | 0.227 | 28.07% | 0.8157 |
 | `title-splash` | `SplashTitle` | 0.20% | 1.000 | 0.01% | 0.0090 |
 | `title-splash-mainland` | `SplashTitle` | 1.89% | 0.991 | 0.89% | 0.0807 |
-| `weapon-screen` | `WeaponScreen` | 2.41% | 0.841 | 1.32% | 0.0917 |
-| `weapon-screen-ascend` | `WeaponScreen` | 1.98% | 0.755 | 0.96% | 0.0769 |
+| `weapon-screen` | `WeaponScreen` | 2.41% | 0.842 | 1.32% | 0.0916 |
+| `weapon-screen-ascend` | `WeaponScreen` | 1.97% | 0.768 | 0.96% | 0.0765 |
 | `weapon-screen-at-cap` | `WeaponScreen` | pending: the recording zooms over the state, so no whole-screen frame shows it | | | |
 | `weapon-screen-rank-five` | `WeaponScreen` | pending: no screenshot of this variant yet | | | |
-| `weapon-screen-refine` | `WeaponScreen` | 3.00% | 0.881 | 1.15% | 0.0996 |
+| `weapon-screen-refine` | `WeaponScreen` | 2.98% | 0.881 | 1.15% | 0.0991 |
 | `weapon-screen-two-star` | `WeaponScreen` | pending: no screenshot of this variant yet | | | |
 | `windrise-statue-day` | `WorldScreen` | 26.73% | 0.306 | 26.74% | 0.7579 |
 | `wish-screen` | `WishScreen` | 9.75% | 0.499 | 7.07% | 0.2948 |

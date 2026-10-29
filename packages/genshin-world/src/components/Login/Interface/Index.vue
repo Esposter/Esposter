@@ -192,7 +192,9 @@ watch(
           >
             <!-- A heading to a screen reader, drawn as a paragraph so no host's own heading styles reach it -->
             <p class="title" role="heading" aria-level="1">{{ gameText[GameTextKey.LoginTitle] }}</p>
-            <OrnamentDivider class="divider" />
+            <!-- Held at 0.75 of the shared divider's silver: the approved title image draws it so, and it cannot be re-approved
+                 until the title state has a whole-frame reference -->
+            <OrnamentDivider class="divider" :opacity="0.75" />
             <p class="subtitle">{{ gameText[GameTextKey.LoginBegin] }}</p>
           </GameRect>
           <!-- Mainland China's age rating (CADPA, 12 and over), which its client keeps in the corner of every login
@@ -371,7 +373,6 @@ watch(
   top: calc(50% + var(--unit) * 17);
   left: 50%;
   width: calc(var(--unit) * 418);
-  opacity: 0.75;
   translate: -50% -50%;
 }
 

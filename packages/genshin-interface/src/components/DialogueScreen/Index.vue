@@ -3,6 +3,7 @@ import type { DialogueChoice } from "#src/models/DialogueChoice";
 
 import GameButton from "#src/components/GameButton/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
+import { ROLE_FLOURISH_PATH } from "#src/services/constants";
 import { DialogueChoiceIconPathMap } from "#src/services/DialogueChoiceIconPathMap";
 import { computed } from "vue";
 
@@ -40,7 +41,11 @@ const lineParts = computed(() => {
   <div class="dialogue-screen" @click="emit('advance')">
     <div class="band" :class="{ narration: !speakerName }" aria-live="polite">
       <p v-if="speakerName" class="speaker">{{ speakerName }}</p>
-      <p v-if="speakerRole" class="role">{{ speakerRole }}</p>
+      <p v-if="speakerRole" class="role">
+        {{ speakerRole }}
+        <svg class="flourish" aria-hidden="true" viewBox="0 0 208 128"><path :d="ROLE_FLOURISH_PATH" /></svg>
+        <svg class="flourish right" aria-hidden="true" viewBox="0 0 208 128"><path :d="ROLE_FLOURISH_PATH" /></svg>
+      </p>
       <p class="line">
         <span aria-hidden="true">{{ lineParts.revealed }}</span>
         <span class="unrevealed" aria-hidden="true">{{ lineParts.unrevealed }}</span>
@@ -102,13 +107,45 @@ const lineParts = computed(() => {
 }
 
 /* The role under the name in the recording's smaller gold, its cap height and width read off the English client's
-   recording at 720 high (`dialogue-choices-line`) */
+   recording at 720 high (`dialogue-choices-line`). Its gold rule runs the band's width through the role's middle, under
+   the words, with a gold curl either side of them, measured off the same recording (`dialogue-line`) */
 .role {
+  position: relative;
+  z-index: 0;
   margin: 0;
   color: #ffc700;
   font-size: calc(var(--unit) * 20);
   font-weight: 600;
   line-height: calc(var(--unit) * 28);
+}
+
+.role::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: -1;
+  width: calc(var(--unit) * 1263);
+  height: calc(var(--unit) * 3);
+  background: rgb(255 199 0 / 0.28);
+  content: "";
+  translate: -50% -50%;
+}
+
+/* Each curl is drawn in a 39 by 24 unit box at the rule's height: the left one's left edge 153 units left of the band's
+   middle, and the right one, its mirror, starts 115 units right of it. Read off the recording's frame */
+.flourish {
+  position: absolute;
+  top: calc(50% + var(--unit) * -12.5);
+  left: calc(50% + var(--unit) * -153);
+  width: calc(var(--unit) * 39);
+  height: calc(var(--unit) * 24);
+  fill: #ffc700;
+  opacity: 0.4;
+}
+
+.flourish.right {
+  left: calc(50% + var(--unit) * 115);
+  scale: -1 1;
 }
 
 /* The letter-space is the one that keeps the line's width closest to the game's; the face's own letter widths are

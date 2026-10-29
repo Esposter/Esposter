@@ -47,6 +47,8 @@ const SPARK_PHASES = Array.from({ length: ASCENSION_PHASE_COUNT }, (_, index) =>
 const ENHANCE_SLOT_COUNT = 7;
 // The materials the Enhance panel's consumed line counts its picks against, the total the game's panel shows
 const ENHANCE_MATERIAL_LIMIT = 40;
+// The share of the shared divider's silver the game's hairline reads at over the weapon's scene
+const DIVIDER_OPACITY = 0.16;
 
 interface Props {
   // The adventure rank the player holds, which an Ascend's next phase requires
@@ -351,7 +353,7 @@ const nextPhaseCosts = computed(() =>
         gameText[GameTextKey.CharacterTalentEffect]
       }}</span>
       <p class="mora">{{ wallet[Currency.Mora] }}</p>
-      <div class="divider bottom-divider"><OrnamentDivider /></div>
+      <div class="divider bottom-divider"><OrnamentDivider :opacity="DIVIDER_OPACITY" /></div>
       <p class="required-label">{{ gameText[GameTextKey.CraftingRequired] }}</p>
       <p class="required-amount">{{ pendingMora }}</p>
       <template v-if="openTab === WeaponMenuTab.Enhance">
@@ -360,7 +362,7 @@ const nextPhaseCosts = computed(() =>
         <p class="consumed">{{ consumedText }}</p>
         <p class="stat base-attack">{{ gameText[GameTextKey.AttributeBaseAttack] }}</p>
         <p class="stat attack">{{ gameText[GameTextKey.AttributeAttack] }}</p>
-        <div class="divider enhance-divider"><OrnamentDivider /></div>
+        <div class="divider enhance-divider"><OrnamentDivider :opacity="DIVIDER_OPACITY" /></div>
         <span class="pill auto-add" aria-hidden="true">{{ gameText[GameTextKey.ArtifactAutoAdd] }}</span>
         <span class="pill filter" aria-hidden="true"
           >{{ gameText[GameTextKey.WeaponMaterialsThreeStarAndUnder] }}<span class="caret"
@@ -404,7 +406,7 @@ const nextPhaseCosts = computed(() =>
         <p class="level-next">{{ nextLevelText }}</p>
         <p class="stat ascend-base-attack">{{ gameText[GameTextKey.AttributeBaseAttack] }}</p>
         <p class="stat ascend-attack">{{ gameText[GameTextKey.AttributeAttack] }}</p>
-        <OrnamentDivider class="divider ascend-divider" />
+        <OrnamentDivider class="divider ascend-divider" :opacity="DIVIDER_OPACITY" />
         <p class="materials-title">{{ gameText[GameTextKey.CombineTypeWeaponAscension] }}</p>
         <div class="cards">
           <div v-for="cost of nextPhaseCosts" :key="cost.id" class="card" :data-rarity="cost.rarity">
@@ -414,7 +416,7 @@ const nextPhaseCosts = computed(() =>
         </div>
       </template>
       <template v-else>
-        <div class="divider refine-divider"><OrnamentDivider /></div>
+        <div class="divider refine-divider"><OrnamentDivider :opacity="DIVIDER_OPACITY" /></div>
         <p class="refinement-level">{{ gameText[GameTextKey.WeaponRefinementLevel] }}</p>
         <p class="passive-name">{{ passive?.name }}</p>
         <div class="passive">
@@ -495,12 +497,10 @@ const nextPhaseCosts = computed(() =>
   line-height: calc(var(--reference-pixel) * 40);
 }
 
-/* The game's hairline reads at about a fifth of the shared divider's white over the scene */
 .divider {
   position: absolute;
   left: calc(var(--reference-pixel) * 1086);
   width: calc(var(--reference-pixel) * 738);
-  opacity: 0.25;
 }
 
 .bottom-divider {

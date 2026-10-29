@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import { ORNAMENT_END_PATH, ORNAMENT_MIDDLE_PATH } from "#src/services/constants";
+
+interface Props {
+  // The share of the silver the piece is drawn at: the game's hairline is opaque on a light screen and translucent over
+  // a dark scene, so a screen over a scene passes the share its hairline reads at
+  opacity?: number;
+}
+
+const { opacity = 1 } = defineProps<Props>();
 </script>
 
 <template>
   <!-- The game's divider: a hairline as wide as its parent, a tapered diamond at each end and an interlocked double
        Diamond at its middle, in the game's units from the parent's `--unit` -->
-  <div class="ornament-divider" aria-hidden="true">
+  <div class="ornament-divider" aria-hidden="true" :style="{ opacity }">
     <svg class="end" viewBox="0 0 320 224"><path :d="ORNAMENT_END_PATH" /></svg>
     <svg class="middle" viewBox="0 0 480 320"><path :d="ORNAMENT_MIDDLE_PATH" /></svg>
     <svg class="end right" viewBox="0 0 320 224"><path :d="ORNAMENT_END_PATH" /></svg>
