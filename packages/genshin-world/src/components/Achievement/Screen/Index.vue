@@ -7,9 +7,8 @@ import type { GameText } from "genshin-text";
 import MenuListScreenDetail from "#src/components/Menu/ListScreen/Detail/Index.vue";
 import MenuListScreen from "#src/components/Menu/ListScreen/Index.vue";
 import MenuListScreenTab from "#src/components/Menu/ListScreen/Tab/Index.vue";
+import { useListScreenTabStep } from "#src/composables/useListScreenTabStep";
 import { checkIsAchievementFinished } from "#src/services/achievement/checkIsAchievementFinished";
-import { QUEST_TAB_NEXT_CODE, QUEST_TAB_PREVIOUS_CODE } from "#src/services/quest/constants";
-import { useEventListener } from "@vueuse/core";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -39,13 +38,14 @@ const finishedCount = (categoryId: number): number =>
 const checkIsRevealed = (achievement: Achievement): boolean =>
   !achievement.isHidden || checkIsAchievementFinished(achievement.id, progressMap);
 // Q and E step between the categories, held at the first and the last
-useEventListener("keydown", (event) => {
-  if (event.code !== QUEST_TAB_PREVIOUS_CODE && event.code !== QUEST_TAB_NEXT_CODE) return;
-  const step = event.code === QUEST_TAB_NEXT_CODE ? 1 : -1;
-  const categoryIndex = categories.findIndex(({ id }) => id === selectedCategoryId.value);
-  const nextCategory = categories[Math.min(Math.max(categoryIndex + step, 0), categories.length - 1)];
-  if (nextCategory) selectedCategoryId.value = nextCategory.id;
-});
+useListScreenTabStep(
+  () => categories.findIndex(({ id }) => id === selectedCategoryId.value),
+  () => categories.length,
+  (categoryIndex) => {
+    const category = categories[categoryIndex];
+    if (category) selectedCategoryId.value = category.id;
+  },
+);
 </script>
 
 <template>

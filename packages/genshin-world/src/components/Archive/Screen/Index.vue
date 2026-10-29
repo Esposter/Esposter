@@ -5,11 +5,10 @@ import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { GameText } from "genshin-text";
 
 import ScreenHeader from "#src/components/Menu/ScreenHeader/Index.vue";
+import { useListScreenTabStep } from "#src/composables/useListScreenTabStep";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ArchiveSectionGameTextKeyMap } from "#src/services/archive/ArchiveSectionGameTextKeyMap";
 import { ArchiveSectionOrder } from "#src/services/archive/ArchiveSectionOrder";
-import { QUEST_TAB_NEXT_CODE, QUEST_TAB_PREVIOUS_CODE } from "#src/services/quest/constants";
-import { useEventListener } from "@vueuse/core";
 import { GameScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
@@ -85,18 +84,18 @@ const handleEntryClick = (entryId: number): void => {
 };
 // Q, E and the arrows at the screen's edges step between the sections, held at the first and the last
 const sections = ArchiveSectionOrder;
+const selectSection = (sectionIndex: number): void => {
+  const section = sections[sectionIndex];
+  if (section) selectedSection.value = section;
+};
+const getSteppedSectionIndex = useListScreenTabStep(
+  () => sections.indexOf(selectedSection.value),
+  () => sections.length,
+  selectSection,
+);
 const stepDirections = [-1, 1];
-const getAdjacentSection = (step: number): ArchiveSection => {
-  const sectionIndex = sections.indexOf(selectedSection.value);
-  return sections[Math.min(Math.max(sectionIndex + step, 0), sections.length - 1)] ?? selectedSection.value;
-};
-const stepSection = (step: number): void => {
-  selectedSection.value = getAdjacentSection(step);
-};
-useEventListener("keydown", (event) => {
-  if (event.code === QUEST_TAB_NEXT_CODE) stepSection(1);
-  else if (event.code === QUEST_TAB_PREVIOUS_CODE) stepSection(-1);
-});
+const getAdjacentSection = (step: number): ArchiveSection =>
+  sections[getSteppedSectionIndex(step)] ?? selectedSection.value;
 </script>
 
 <template>
@@ -154,7 +153,7 @@ useEventListener("keydown", (event) => {
       type="button"
       :data-step="step"
       :aria-label="gameText[ArchiveSectionGameTextKeyMap[getAdjacentSection(step)]]"
-      @click="stepSection(step)"
+      @click="selectSection(getSteppedSectionIndex(step))"
     >
       <svg viewBox="0 0 46 64">
         <polygon fill="#f2ecd9" points="30,11 7,32 30,53 30,42 20,32 30,23" />

@@ -10,6 +10,7 @@ export * from "./composables/useGatheringPoints.ts";
 export * from "./composables/useGenshinTuning.ts";
 export * from "./composables/useInteraction.ts";
 export * from "./composables/useJumpLandmarks.ts";
+export * from "./composables/useListScreenTabStep.ts";
 export * from "./composables/useMiningOutcrops.ts";
 export * from "./composables/usePostPipeline.ts";
 export * from "./composables/useRegionData.ts";

@@ -7,10 +7,11 @@ import type { GameText } from "genshin-text";
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import MenuListScreen from "#src/components/Menu/ListScreen/Index.vue";
 import QuestRow from "#src/components/Quest/Row/Index.vue";
+import { useListScreenTabStep } from "#src/composables/useListScreenTabStep";
 import { QuestCategory } from "#src/models/quest/QuestCategory";
 import { QuestGlyph } from "#src/models/quest/QuestGlyph";
 import { LIST_SCREEN_WIDTH } from "#src/services/menu/constants";
-import { QUEST_CATEGORIES, QUEST_TAB_NEXT_CODE, QUEST_TAB_PREVIOUS_CODE } from "#src/services/quest/constants";
+import { QUEST_CATEGORIES } from "#src/services/quest/constants";
 import { getQuestCounter } from "#src/services/quest/getQuestCounter";
 import { QuestCategoryGameTextKeyMap } from "#src/services/quest/QuestCategoryGameTextKeyMap";
 import { QuestCategoryGlyphMap } from "#src/services/quest/QuestCategoryGlyphMap";
@@ -104,15 +105,17 @@ const getQuestDistance = (questId: string): string => {
 const navigate = (questId: string) => {
   emit("navigate", questId === trackedQuestId ? "" : questId);
 };
-// Q and E step between the tabs, held at the first and the last, and F navigates to the selected quest or cancels it
+// Q and E step between the tabs, the first being the list of every quest, held at the first and the last
+useListScreenTabStep(
+  () => (category.value ? QUEST_CATEGORIES.indexOf(category.value) + 1 : 0),
+  () => QUEST_CATEGORIES.length + 1,
+  (tabIndex) => {
+    category.value = QUEST_CATEGORIES[tabIndex - 1];
+  },
+);
+// F navigates to the selected quest or cancels it
 useEventListener("keydown", (event) => {
-  const tabIndex = category.value ? QUEST_CATEGORIES.indexOf(category.value) + 1 : 0;
-  if (event.code === QUEST_TAB_PREVIOUS_CODE || event.code === QUEST_TAB_NEXT_CODE) {
-    const step = event.code === QUEST_TAB_NEXT_CODE ? 1 : -1;
-    const newTabIndex = Math.min(Math.max(tabIndex + step, 0), QUEST_CATEGORIES.length);
-    category.value = QUEST_CATEGORIES[newTabIndex - 1];
-  } else if (selectedQuest.value && checkIsActionKey(InputAction.Interact, event.code))
-    navigate(selectedQuest.value.id);
+  if (selectedQuest.value && checkIsActionKey(InputAction.Interact, event.code)) navigate(selectedQuest.value.id);
 });
 </script>
 
