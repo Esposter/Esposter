@@ -1,3 +1,5 @@
+import type { GradeOptions } from "genshin-engine";
+
 import { DevVariableKind } from "#src/models/dev/DevVariableKind";
 import { createDevRegistry } from "#src/services/dev/createDevRegistry";
 import { createLookVariables } from "#src/services/tuning/createLookVariables";
@@ -17,7 +19,13 @@ describe(createLookVariables, () => {
     fogUniforms: createFogUniforms(),
     gameClock: { minutes: 0, minutesPerSecond: 0 },
     gradeLutTexture: new Data3DTexture(),
-    gradeOptions: { contrast: 1, highlightTint: [0, 0, 0], saturation: 1, shadowTint: [0, 0, 0], size: 2 },
+    gradeOptions: {
+      contrast: 1,
+      highlightTint: [0, 0, 0],
+      saturation: 1,
+      shadowTint: [0, 0, 0],
+      size: 2,
+    } satisfies GradeOptions,
     lightUniforms: createLightUniforms(),
     postUniforms: createPostUniforms(),
     rampOptions: { resolution: 2, shade: 0, softness: 0.1, terminator: 0.5 },
