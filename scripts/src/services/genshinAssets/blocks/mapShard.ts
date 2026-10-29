@@ -20,6 +20,7 @@ export const mapShard = async (files: BlockFile[], index: number): Promise<void>
   await runAnimeStudioAsync(
     [blocksDirectory, directory, "--map_op", "Both", "--map_type", "JSON", "--map_name", getShardMapName(index)],
     GENSHIN_ANIMESTUDIO_OPTIONS,
+    { belowNormal: false },
   );
   console.log(`shard ${index}: ${files.length} files, ${Math.round((performance.now() - start) / 1000)} s`);
 };

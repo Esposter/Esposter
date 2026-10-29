@@ -9,7 +9,7 @@ import { CITY_AREA_EXPORTS_DIRECTORY } from "#src/services/genshinAssets/world/c
 import { parseStreamingIndex } from "#src/services/genshinAssets/world/parseStreamingIndex";
 import { parseStreamingPlacements } from "#src/services/genshinAssets/world/parseStreamingPlacements";
 import { toCityArea } from "#src/services/genshinAssets/world/toCityArea";
-import { runAnimeStudioBelowNormal } from "#src/services/recreation/animeStudio/runAnimeStudioBelowNormal";
+import { runAnimeStudioAsync } from "#src/services/recreation/animeStudio/runAnimeStudioAsync";
 import { readFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -31,9 +31,10 @@ export const extractCityAreas = async (candidates: readonly CityAreaCandidate[])
   await rm(CITY_AREA_EXPORTS_DIRECTORY, { force: true, recursive: true });
   for (const { block, names, type } of requests.values())
     // oxlint-disable-next-line no-await-in-loop -- One export at a time: each run waits for the free memory the last one left
-    await runAnimeStudioBelowNormal(
+    await runAnimeStudioAsync(
       getNamedRawArgs(block, type, [...names], CITY_AREA_EXPORTS_DIRECTORY),
       GENSHIN_ANIMESTUDIO_OPTIONS,
+      { belowNormal: true },
     );
   const areas: CityArea[] = [];
   for (const { blob, code, index } of candidates) {
