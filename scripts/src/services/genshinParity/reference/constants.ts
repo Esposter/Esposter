@@ -25,3 +25,12 @@ export const DEFAULT_APPROVAL: ParityApproval = Object.freeze({
 
 // The committed report of every reference's last scores, beside the map naming them
 export const PARITY_SCORES_PATH: string = join(PARITY_SHARED_DIRECTORY, "ParityReferenceMap.snapshot.md");
+
+// The conversion a frame is cut with, its colour tags set to unknown so a browser does not colour-manage the cut
+export const RECORDING_FRAME_FILTER =
+  "format=rgb24,setparams=color_primaries=unknown:color_trc=unknown:colorspace=unknown";
+
+// The largest mean difference, in percent of full scale, a reference may have from the frame its source names. Older
+// Cuts differ from their recordings by up to about 0.39%, a uniform darkening from an earlier pipeline, while a different
+// Picture scores in the tens of percent, so one percent sits well above the first and far below the second
+export const VERIFY_TOLERANCE_PERCENT = 1;
