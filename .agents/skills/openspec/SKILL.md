@@ -24,7 +24,7 @@ description: Apply when creating, updating or referencing any spec, design, prop
 - `openspec/changes/<area>-<slug>/` is designed and **not yet built**: `proposal.md`, `design.md`, `tasks.md` and a spec delta under `specs/<area>/<capability>/`. A program (`<area>-<name>-program/`) is the umbrella over the changes sharing its prefix.
 - `openspec/changes/<area>-roadmap/` is the area's **open work**, its `tasks.md` a checkbox backlog. Check `deferred/` and `rejected/` before adding an item or a change — never re-argue a decided idea.
 - `openspec/deferred/<area>/<idea>/` holds ideas chosen **not to build yet**, each with a revisit trigger; `openspec/rejected/<area>/<idea>/` holds ideas decided **against**. The CLI does not read either tree, so a deferred idea revived is moved into `changes/`.
-- `openspec/changes/archive/` holds shipped changes. It is history: nothing rewrites it, and the prose checks skip it.
+- `openspec/changes/archive/` holds shipped changes. It is history: nothing rewrites it, and the citation rule skips it (the scenario and run-on checks still read it).
 
 **A target the code does not meet is not a requirement.** A requirement that names a value the code does not yet carry — a poise, a multiplier, a timing — misstates the build. Check the built kit, not the hand-written module: the builder fills a value from the wiki, so a module can hold none while the kit carries it. Until it does, the requirement says the behaviour is absent ("deals no poise yet"), and the target value moves to the design's `Not built` or `Decisions`, where nothing is dropped.
 
