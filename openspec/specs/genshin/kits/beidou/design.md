@@ -32,7 +32,7 @@ flowchart LR
 
 ## Provisional constants
 
-- **Beidou's charged attack and plunges are provisional.** gcsim models neither and the wiki gives no frames, so the charged attack's slashes are priced at half a second and a second, and the charge closes at a second and a fifth, draining the table's 40 stamina a second as it plays, and its reaches are gcsim's unimplemented 3.3 and 3.5 metres. Each plunge hits from its action's start to 0.4 seconds later, reaching 1, 3 and 5 metres. Their damage is the table's; the charged attack's poise is 60 and 120, the plunges' is the wiki's 200 and 150, and the collision's is the wiki's Oceanborne 35.
+- **Beidou's charged attack and plunges are provisional.** gcsim models neither and the wiki gives no frames, so the charged attack's slashes are priced at half a second and a second, and the charge closes at a second and a fifth, draining the table's 40 stamina a second as it plays, and its reaches are gcsim's unimplemented 3.3 and 3.5 metres. Each plunge hits from its action's start to 0.4 seconds later, reaching 1, 3 and 5 metres. Their damage is the table's; the charged attack's poise is 60 and 120, the low plunge's is the wiki's 150, the high plunge's 200 is open (see [Open](#open)), and the collision's is the wiki's Oceanborne 35.
 
 ## Not built
 
@@ -56,3 +56,4 @@ flowchart LR
 
 - [ ] **The Targe does not end as Beidou falls** — contradicted by `{data-root}/cache/genshin-wiki/Category_Beidou_Talents.json`: Stormbreaker lists "Effects End Character Fallen" as a utility.
 - [ ] **Stunning Revenge counts HP lost to a drown or a wildlife's charge, and applies to her charged attack** — no source yet: the cached Beidou page gives Stunning Revenge no text.
+- [ ] **The high plunge's poise of 200** — no source yet: the cached Beidou page's advanced properties name the low plunge (150) and the collision (35) but no high plunge row, and its high plunge row gives only the damage (`{data-root}/cache/genshin-wiki/Category_Beidou_Talents.json`).
