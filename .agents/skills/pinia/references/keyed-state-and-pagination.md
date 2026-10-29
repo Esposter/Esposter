@@ -65,7 +65,7 @@ partition's rows (the IndexedDB pagination caches, above all) takes the same sha
 
 ## Full rows, not `Partial<T>`
 
-A store map that needs fields for entities other than the current user's, a nickname for every room member say, widens the endpoint to return those members' full rows, so the map holds the whole entity. A `Partial<T>` value makes every write a merge and every read a guess about which fields are present.
+When a store map needs fields its endpoint does not return, the endpoint is widened to return full rows, so the map holds the whole entity. A `Partial<T>` value makes every write a merge and every read a guess about which fields are present.
 
 ## `createOperationData`
 
