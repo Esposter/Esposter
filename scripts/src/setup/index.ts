@@ -30,7 +30,7 @@ await runCommand(
     run: ({ args }) => {
       const rows = readSetupRows(
         { install: args.install, verify: args.verify },
-        readSetupEnvironment(),
+        readSetupEnvironment(process.platform),
         process.platform,
       );
       for (const line of formatSetupRows(rows)) console.info(line);
