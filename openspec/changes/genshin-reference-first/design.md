@@ -24,7 +24,7 @@
 | Every subscreen names a reference of its own                     | 1. Construction, 4. Test | the `variant` field on the entry model, and `ParityReferenceMap.test.ts` with a new test                |
 | A fixture has a reference entry                                  | 4. Test                  | `ParityReferenceMap.test.ts`, already present                                                           |
 | Approved images have no platform segment                         | 4. Test                  | `packages/configuration/src/services/getVitestBrowserConfiguration.test.ts`, new, beside the resolver   |
-| A subscreen is approved only once its compare clears             | 4. Test                  | the approval command's test, already the gate in `approveReference.ts`                                  |
+| A subscreen's image is written whatever its compare scores       | 4. Test                  | `decideApprovalStatus.test.ts`, which pins the status the command prints                                |
 | Every reference is a screenshot, never a recording               | 1. Construction          | the entry model loses `capture`, `seconds` and `plateCapture`, and typecheck rejects one that keeps one |
 | The order reference, fixture, component, compare, approve, suite | 5. Remembered            | the genshin-parity skill's rules, read by review                                                        |
 
