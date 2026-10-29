@@ -44,10 +44,7 @@ describe("pageBuilderStylePanel", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
-      content: [
-        createTestImageNode(TEST_URL, TEST_OTHER_ID),
-        createTestImageNode(TEST_URL, TEST_THIRD_ID),
-      ],
+      content: [createTestImageNode(TEST_URL, TEST_OTHER_ID), createTestImageNode(TEST_URL, TEST_THIRD_ID)],
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);

@@ -48,10 +48,7 @@ describe(renderCanvasVNodes, () => {
         webpageKind,
         {
           content: [
-            {
-              props: { html: '<p onclick="alert(1)">a <b>b</b></p>', id: TEST_ID },
-              type: WebpageNodeType.CustomHtml,
-            },
+            { props: { html: '<p onclick="alert(1)">a <b>b</b></p>', id: TEST_ID }, type: WebpageNodeType.CustomHtml },
           ],
           root: TEST_ROOT,
         },

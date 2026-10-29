@@ -29,13 +29,13 @@ flowchart TD
 
 Measured off the reference frame at 21:9, 3440 by 1440 pixels, in units: a pixel at 1440 high is 0.75 units, so the frame is 2580 units wide. Anchored pieces are placed from the edge they ride on, as the game places them.
 
-| Piece                     | Place (units)                                                                                                          |
-| :------------------------ | :--------------------------------------------------------------------------------------------------------------------- |
-| Characters across the top | 69-unit portraits on a 96-unit pitch, the first's centre 643 from the left, centre 47 from the top                     |
-| Chosen character's name   | Left 216, centre 47 from the top                                                                                       |
+| Piece                     | Place (units)                                                                                                                                         |
+| :------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Characters across the top | 69-unit portraits on a 96-unit pitch, the first's centre 643 from the left, centre 47 from the top                                                    |
+| Chosen character's name   | Left 216, centre 47 from the top                                                                                                                      |
 | Tabs down the left        | Diamonds centred at 196.9, words at 225, 69.6-unit rows from 121 (first word centred 155.8); the open one's pill 165 from the left, 352 wide, 56 high |
-| Panel                     | Left 2057, right margin 195 (its right edge is the frame's), 330 wide, top 124                                         |
-| Way back                  | Centre 149 from the right, 49 from the top                                                                             |
+| Panel                     | Left 2057, right margin 195 (its right edge is the frame's), 330 wide, top 124                                                                        |
+| Way back                  | Centre 149 from the right, 49 from the top                                                                                                            |
 
 ## Decisions
 

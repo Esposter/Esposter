@@ -36,14 +36,14 @@ Names are non-empty through the `normalizeString` pipe; values are not. An empty
 
 ## Key files
 
-| File                                                            | Role                      |
-| --------------------------------------------------------------- | ------------------------- |
-| `packages/db-schema/src/models/resource/ResourceTags.ts`        | Schema + the three limits |
-| `packages/db-schema/src/schema/resource/resourcesInResource.ts` | `tags` column + GIN index |
-| `app/components/Resource/TagsEditorDialog.vue`                  | Name/value row editor     |
-| `app/components/Resource/List/TagFilterPill.vue`                | The `/all` Tag pill       |
+| File                                                            | Role                                       |
+| --------------------------------------------------------------- | ------------------------------------------ |
+| `packages/db-schema/src/models/resource/ResourceTags.ts`        | Schema + the three limits                  |
+| `packages/db-schema/src/schema/resource/resourcesInResource.ts` | `tags` column + GIN index                  |
+| `app/components/Resource/TagsEditorDialog.vue`                  | Name/value row editor                      |
+| `app/components/Resource/List/TagFilterPill.vue`                | The `/all` Tag pill                        |
 | `app/components/Resource/TagList.vue`                           | The `/resource-explorer/tags` route's list |
-| `app/components/Resource/Overview.vue`                          | Essentials tags row       |
+| `app/components/Resource/Overview.vue`                          | Essentials tags row                        |
 
 ## Notes
 
