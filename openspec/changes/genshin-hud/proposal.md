@@ -2,7 +2,7 @@
 
 ## Why
 
-The HUD is built with its pieces and their looks, and every piece but the quest tracker stands in its fitted place. What is left is the re-measure of the composite, which shows how the HUD sits over a recording of the open world, and the quest tracker's place, which the game's interface tree has not yet given a rect.
+The HUD is built with its pieces and their looks, and every piece but the quest tracker, the stamina meter and the Sheer Cold gauge stands in its fitted place. What is left is the re-measure of the composite, which shows how the HUD sits over a recording of the open world, and the quest tracker's place, which the game's interface tree has not yet given a rect.
 
 ## What Changes
 
