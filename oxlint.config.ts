@@ -36,7 +36,7 @@ const USE_UI_STYLE_GLOBAL = {
 };
 const FETCH_GLOBAL = {
   message:
-    "A script's request goes through `fetchOk` (`scripts/src/services/shared/fetchOk.ts`), or `fetchJson` for a JSON body, which bound it with a timeout and refuse a non-2xx answer — a bare `fetch` does neither.",
+    "A script's request goes through `fetchOk` (`scripts/src/services/shared/fetchOk.ts`), which refuses a non-2xx answer, `fetchJson` for a JSON body, or `fetchResponse` (`scripts/src/services/shared/fetchResponse.ts`) for a caller that reads a status as an answer; each bounds the request with a timeout, and a bare `fetch` does neither.",
   name: "fetch",
 };
 const RESTRICTED_GLOBALS = [
