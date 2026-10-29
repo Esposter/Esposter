@@ -510,12 +510,12 @@ onMounted(() => {
 
 .close {
   position: absolute;
-  top: calc(var(--unit) * 18);
+  top: calc(var(--unit) * 19.5);
   right: calc(var(--unit) * 49);
   display: grid;
   width: calc(var(--unit) * 57);
   height: calc(var(--unit) * 57);
-  padding: calc(var(--unit) * 9);
+  padding: calc(var(--unit) * 7);
   border: calc(var(--unit) * 5) solid #849493;
   border-radius: 50%;
   background: #ece5d7;
