@@ -20,7 +20,8 @@ export const UI_CANVAS_SCALER_RAW_DIRECTORY = "canvasScalerRaw";
 export const UI_DUPLICATE_SUFFIX_REGEX: RegExp = / \(\d+\)$/u;
 // The name of the scaler a canvas holds, and the pattern an export names only that script by
 export const UI_CANVAS_SCALER_NAME = "CanvasScaler";
-export const UI_CANVAS_SCALER_NAME_PATTERN = "^CanvasScaler$";
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a template literal would otherwise infer
+export const UI_CANVAS_SCALER_NAME_PATTERN: string = `^${UI_CANVAS_SCALER_NAME}$`;
 // Where a raw export's owner is, at the start of every component's: a pointer's 32-bit file ID, then its 64-bit path ID
 export const RAW_OWNER_PATH_ID_OFFSET = 4;
 // A canvas scaler's raw export ends with its settings, 44 bytes whose offsets run from the start of those settings: its
