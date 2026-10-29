@@ -4,6 +4,7 @@ import { computeUnderBlackShare } from "#src/services/genshinParity/display/comp
 import { formatUnderBlackShare } from "#src/services/genshinParity/display/formatUnderBlackShare";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
+import { BYTE } from "#src/services/shared/constants";
 import { parseNames } from "#src/services/shared/parseNames";
 import { defineCommand } from "citty";
 import sharp from "sharp";
@@ -31,7 +32,7 @@ export const blackCommand: SubCommandsDef[string] = defineCommand({
         .toBuffer();
       const underBlackShare = computeUnderBlackShare(data);
       console.log(
-        `${referenceId}: ${formatUnderBlackShare(underBlackShare)} of its pixels hold a channel under ${underBlackShare.blackByte} of 255`,
+        `${referenceId}: ${formatUnderBlackShare(underBlackShare)} of its pixels hold a channel under ${underBlackShare.blackByte} of ${BYTE}`,
       );
     }
   },
