@@ -64,6 +64,10 @@ export const PLATE_CACHE_REGEX: RegExp = /\.plate-[\da-f]{16}\.png$/u;
 export const REFERENCE_BLOB_FOLDER = "parityObjects";
 // Every stored reference is lossless WebP, the format `packReferenceImage` writes, so the object name ends with it
 export const REFERENCE_OBJECT_EXTENSION = "webp";
+// A stored reference runs to several megabytes, which the default request bound of ten seconds cuts short on a slow link
+export const REFERENCE_OBJECT_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total(
+  "milliseconds",
+);
 // The source a recording file is given when no public url names it, as a user's own capture is
 export const USER_RECORDING_SOURCE = "user recording";
 // The leading bytes each sniffed format is recognised by: a hex signature found at its offset in the file
