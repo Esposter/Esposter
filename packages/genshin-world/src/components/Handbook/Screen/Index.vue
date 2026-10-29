@@ -456,8 +456,8 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
 
 .panel-title {
   position: absolute;
-  top: calc(var(--reference-pixel) * 62);
-  left: 0;
+  top: calc(var(--reference-pixel) * 51);
+  left: calc(var(--reference-pixel) * -5);
   width: 100%;
   margin: 0;
   color: #81613f;
@@ -507,8 +507,8 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
 
 .panel-rewards-title {
   position: absolute;
-  top: calc(var(--reference-pixel) * 540);
-  left: 0;
+  top: calc(var(--reference-pixel) * 535);
+  left: calc(var(--reference-pixel) * -4);
   width: 100%;
   margin: 0;
   color: #866645;
