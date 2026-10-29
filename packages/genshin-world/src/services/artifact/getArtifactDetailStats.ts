@@ -4,13 +4,13 @@ import type { ArtifactMainAffixCurve } from "#src/models/artifact/ArtifactMainAf
 import type { Attribute } from "#src/models/character/Attribute";
 import type { GameText } from "genshin-text";
 
-import { ArtifactAffixGameTextKeyMap } from "#src/services/artifact/ArtifactAffixGameTextKeyMap";
 import { getArtifactMainAffixValue } from "#src/services/artifact/getArtifactMainAffixValue";
+import { AttributeLabelGameTextKeyMap } from "#src/services/character/AttributeLabelGameTextKeyMap";
 import { formatAttributeValue } from "#src/services/character/formatAttributeValue";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const getAffixLabel = (attribute: Attribute, gameText: GameText): string => {
-  const gameTextKey = ArtifactAffixGameTextKeyMap.get(attribute);
+  const gameTextKey = AttributeLabelGameTextKeyMap.get(attribute);
   if (!gameTextKey) throw new InvalidOperationError(Operation.Read, getAffixLabel.name, attribute);
   return gameText[gameTextKey];
 };

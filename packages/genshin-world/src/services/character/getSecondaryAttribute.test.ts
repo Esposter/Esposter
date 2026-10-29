@@ -1,7 +1,7 @@
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { AttributeGameTextKeyMap } from "#src/services/character/AttributeGameTextKeyMap";
+import { AttributeLabelGameTextKeyMap } from "#src/services/character/AttributeLabelGameTextKeyMap";
 import { getSecondaryAttribute } from "#src/services/character/getSecondaryAttribute";
 import { GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
@@ -31,20 +31,16 @@ describe("getSecondaryAttribute", () => {
     expect(getSecondaryAttribute(baseOnly)).toBeUndefined();
   });
 
-  // The secondary's caption is the game's name for its attribute, and a Defense % has no name, so its caption is absent
+  // The secondary's caption is the game's name for its attribute, a percentage taking its flat attribute's name, so a
+  // Defense % is captioned DEF as an artifact's Defense % affix is
   test.each([
     [Attribute.ElementalMastery, GameTextKey.AttributeElementalMastery],
     [Attribute.CriticalRate, GameTextKey.AttributeCriticalRate],
     [Attribute.AttackPercent, GameTextKey.AttributeAttack],
+    [Attribute.DefensePercent, GameTextKey.AttributeDefense],
   ])("%s is captioned by the game's %s", (attribute, gameTextKey) => {
     expect.hasAssertions();
 
-    expect(AttributeGameTextKeyMap.get(attribute)).toBe(gameTextKey);
-  });
-
-  test("a Defense % has no caption, so the game names none for it", () => {
-    expect.hasAssertions();
-
-    expect(AttributeGameTextKeyMap.get(Attribute.DefensePercent)).toBeUndefined();
+    expect(AttributeLabelGameTextKeyMap.get(attribute)).toBe(gameTextKey);
   });
 });

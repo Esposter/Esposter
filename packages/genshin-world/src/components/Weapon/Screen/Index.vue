@@ -10,7 +10,7 @@ import type { GameText } from "genshin-text";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Currency } from "#src/models/inventory/Currency";
-import { AttributeGameTextKeyMap } from "#src/services/character/AttributeGameTextKeyMap";
+import { AttributeLabelGameTextKeyMap } from "#src/services/character/AttributeLabelGameTextKeyMap";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { formatAttributeValue } from "#src/services/character/formatAttributeValue";
 import { formatWholeNumber } from "#src/services/character/formatWholeNumber";
@@ -147,7 +147,7 @@ const getBaseAttackText = (ascension: number) => formatWholeNumber(getAttributeT
 const baseAttackText = computed(() => getBaseAttackText(weapon.value.ascension));
 const nextBaseAttackText = computed(() => getBaseAttackText(weapon.value.ascension + 1));
 // The secondary attribute the weapon grows beside its base ATK, at the held phase, written whole or as a percentage by its
-// Kind; a secondary the game names no caption for (Defense %) leaves its caption undrawn
+// Kind; a secondary the label map names no caption for leaves its caption undrawn
 const secondaryAttribute = computed(() => getSecondaryAttribute(weaponData.value));
 const secondaryText = computed(() =>
   secondaryAttribute.value === undefined
@@ -159,7 +159,7 @@ const secondaryText = computed(() =>
 );
 const secondaryLabel = computed(() => {
   const gameTextKey =
-    secondaryAttribute.value === undefined ? undefined : AttributeGameTextKeyMap.get(secondaryAttribute.value);
+    secondaryAttribute.value === undefined ? undefined : AttributeLabelGameTextKeyMap.get(secondaryAttribute.value);
   return gameTextKey === undefined ? "" : gameText[gameTextKey];
 });
 // The EXP the weapon holds towards the next level over what that level takes; a weapon at its cap has no next level

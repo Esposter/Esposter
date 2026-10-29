@@ -68,17 +68,31 @@ describe(getArtifactDetailStats, () => {
     ]);
   });
 
+  // A Defense % affix is captioned DEF, the caption a weapon's Defense % secondary takes
+  test("a Defense % affix is captioned DEF", () => {
+    expect.hasAssertions();
+
+    const minorAffixes = [{ attribute: Attribute.DefensePercent, value: 0.058 }];
+    expect(
+      getArtifactDetailStats(
+        createArtifact({ mainAffix: Attribute.Health, minorAffixes }),
+        ENGLISH_GAME_TEXT,
+        artifactMainAffixCurves,
+      ).subStats,
+    ).toStrictEqual([{ label: ENGLISH_GAME_TEXT[GameTextKey.AttributeDefense], value: "+5.8%" }]);
+  });
+
   test("an attribute no artifact affix names is refused", () => {
     expect.hasAssertions();
 
     expect(() =>
       getArtifactDetailStats(
-        createArtifact({ mainAffix: Attribute.BaseHealth }),
+        createArtifact({ mainAffix: Attribute.MovementSpeed }),
         ENGLISH_GAME_TEXT,
         artifactMainAffixCurves,
       ),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: getAffixLabel, FIGHT_PROP_BASE_HP]`,
+      `[InvalidOperationError: Invalid operation: Read, name: getAffixLabel, FIGHT_PROP_MOVE_SPEED]`,
     );
   });
 });

@@ -87,9 +87,10 @@ What works today and what this change adds:
   weapon's `UI_EQUIP_PAGE_LEVELUP_BUTTON` that `WeaponEnhance` keys, since the artifact's own member should not carry the
   weapon's name. Equip is `UI_EQUIP_BUTTON`, and Unequip the one exact "Unequip" the dump holds, the potion buff's remove
   button (see Notes).
-- **A percentage affix is named by its flat attribute.** `ArtifactAffixGameTextKeyMap` labels `AttackPercent` as the flat
-  ATK, `DefensePercent` as DEF and `HealthPercent` as Max HP, since the game's own names for the percentages are not keyed
-  yet. Provisional until they are, and a percentage's value is shown with its percent sign either way.
+- **A percentage affix is named by its flat attribute.** `AttributeLabelGameTextKeyMap`, the one map the Weapon screen's
+  secondary reads too, labels `AttackPercent` as the flat ATK, `DefensePercent` as DEF and `HealthPercent` as Max HP,
+  since the game's own names for the percentages are not keyed yet. Provisional until they are, and a percentage's value
+  is shown with its percent sign either way.
 - **Enhancing refuses on the Mora in the service.** The gate is in `enhanceCharacterArtifact` rather than left to the
   caller, as `enhanceWeapon` does, so a caller that forgets the check cannot spend Mora it does not hold. The wiki's
   Enhancing section says the same: one Artifact EXP costs one Mora except when recycling a leveled artifact, which the
@@ -104,28 +105,28 @@ type `rollArtifact` returns and writes no second artifact model. The dev backfil
 
 ## Key files
 
-| File                                                                           | Role                                                                                                                             |
-| :----------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/artifact/getArtifactSetAttributeLines.ts` | The attribute sum, now over the active set bonuses                                                                               |
-| `packages/genshin-world/src/services/character/parseStatTables.ts`             | Parses the rarity and EXP tables beside the existing ones                                                                        |
-| `packages/genshin-world/src/services/character/readStatTables.ts`              | Fetches the rarity and EXP tables by their keys                                                                                  |
-| `packages/genshin-world/src/models/character/StatTables.ts`                    | Carries the rarity and EXP maps the enhancement reads                                                                            |
-| `packages/genshin-world/src/models/character/RawStatTables.ts`                 | The two tables as they are fetched                                                                                               |
-| `packages/genshin-world/src/services/artifact/enhanceArtifact.ts`              | Unchanged: the EXP, levels and affix levels a worn artifact gains                                                                |
-| `packages/genshin-world/src/services/artifact/getAutoAddFodders.ts`            | The fodder Auto Add takes: unlocked artifacts up to the star cap, lowest star first, while the EXP falls short                   |
-| `packages/genshin-world/src/services/artifact/getMaterialExperience.ts`        | The EXP the chosen enhancement ores give, each ore's EXP times its count                                                         |
-| `packages/genshin-world/src/services/artifact/getEnhancementMoraCost.ts`       | Unchanged: the Mora an enhancement costs, checked before it runs                                                                 |
-| `packages/genshin-interface/src/components/CharacterMenuArtifacts/Index.vue`   | The Artifacts panel: the slots, the picked slot's name, the stats, the set bonus block and the actions, in the shared button row |
-| `packages/genshin-text/src/models/GameTextKey.ts`                              | The panel's eleven artifact members: the five slot names, the set block's heading, line and empty words, and the actions         |
-| `packages/genshin-world/src/services/artifact/getArtifactSetBonusLines.ts`     | Each active set bonus as its line: the piece count and its effect's words filled into the game's set line                        |
-| `packages/genshin-world/src/services/artifact/getArtifactDetailStats.ts`       | The picked artifact's main stat's name and its minor affixes' lines, in the Details list's form                                  |
-| `packages/genshin-world/src/services/artifact/ArtifactAffixGameTextKeyMap.ts`  | Each attribute an artifact's affix raises, by the game's name for it, a percentage under its flat attribute's name               |
-| `packages/genshin-world/src/models/artifact/ArtifactSetBonus.ts`               | A set bonus carries its effect's text hash beside its attribute lines                                                            |
-| `scripts/src/services/genshinAssets/stats/getArtifactSetDatas.ts`              | Each bonus's effect text hash, read from its affix row at that piece count                                                       |
-| `packages/genshin-world/src/services/artifact/ArtifactSlotGameTextKeyMap.ts`   | Each artifact slot by the game's name for it, read by the character screen                                                       |
-| `packages/genshin-world/src/components/Character/Screen/Index.vue`             | The Artifacts tab's props: the labels, the slot names, the stats and the set block's lines, from the game text and the tables    |
-| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`            | The bag's add, which takes a dropped artifact in through `addInventoryArtifact`, landed on `eye` with task 6.1                   |
-| `packages/genshin-world/src/services/save/toInventorySave.ts`                  | The bag's save of an artifact entry, landed on `eye` with task 6.1                                                               |
+| File                                                                            | Role                                                                                                                             |
+| :------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/artifact/getArtifactSetAttributeLines.ts`  | The attribute sum, now over the active set bonuses                                                                               |
+| `packages/genshin-world/src/services/character/parseStatTables.ts`              | Parses the rarity and EXP tables beside the existing ones                                                                        |
+| `packages/genshin-world/src/services/character/readStatTables.ts`               | Fetches the rarity and EXP tables by their keys                                                                                  |
+| `packages/genshin-world/src/models/character/StatTables.ts`                     | Carries the rarity and EXP maps the enhancement reads                                                                            |
+| `packages/genshin-world/src/models/character/RawStatTables.ts`                  | The two tables as they are fetched                                                                                               |
+| `packages/genshin-world/src/services/artifact/enhanceArtifact.ts`               | Unchanged: the EXP, levels and affix levels a worn artifact gains                                                                |
+| `packages/genshin-world/src/services/artifact/getAutoAddFodders.ts`             | The fodder Auto Add takes: unlocked artifacts up to the star cap, lowest star first, while the EXP falls short                   |
+| `packages/genshin-world/src/services/artifact/getMaterialExperience.ts`         | The EXP the chosen enhancement ores give, each ore's EXP times its count                                                         |
+| `packages/genshin-world/src/services/artifact/getEnhancementMoraCost.ts`        | Unchanged: the Mora an enhancement costs, checked before it runs                                                                 |
+| `packages/genshin-interface/src/components/CharacterMenuArtifacts/Index.vue`    | The Artifacts panel: the slots, the picked slot's name, the stats, the set bonus block and the actions, in the shared button row |
+| `packages/genshin-text/src/models/GameTextKey.ts`                               | The panel's eleven artifact members: the five slot names, the set block's heading, line and empty words, and the actions         |
+| `packages/genshin-world/src/services/artifact/getArtifactSetBonusLines.ts`      | Each active set bonus as its line: the piece count and its effect's words filled into the game's set line                        |
+| `packages/genshin-world/src/services/artifact/getArtifactDetailStats.ts`        | The picked artifact's main stat's name and its minor affixes' lines, in the Details list's form                                  |
+| `packages/genshin-world/src/services/character/AttributeLabelGameTextKeyMap.ts` | The game's label for each attribute a list shows, an artifact's affix among them, a percentage under its flat attribute's name   |
+| `packages/genshin-world/src/models/artifact/ArtifactSetBonus.ts`                | A set bonus carries its effect's text hash beside its attribute lines                                                            |
+| `scripts/src/services/genshinAssets/stats/getArtifactSetDatas.ts`               | Each bonus's effect text hash, read from its affix row at that piece count                                                       |
+| `packages/genshin-world/src/services/artifact/ArtifactSlotGameTextKeyMap.ts`    | Each artifact slot by the game's name for it, read by the character screen                                                       |
+| `packages/genshin-world/src/components/Character/Screen/Index.vue`              | The Artifacts tab's props: the labels, the slot names, the stats and the set block's lines, from the game text and the tables    |
+| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`             | The bag's add, which takes a dropped artifact in through `addInventoryArtifact`, landed on `eye` with task 6.1                   |
+| `packages/genshin-world/src/services/save/toInventorySave.ts`                   | The bag's save of an artifact entry, landed on `eye` with task 6.1                                                               |
 
 New files, as a tree:
 
@@ -140,7 +141,6 @@ packages/genshin-world/src/
     getActiveArtifactSetBonuses.ts     (+ .test.ts)
     getArtifactSetBonusLines.ts        (+ .test.ts)
     getArtifactDetailStats.ts          (+ .test.ts)
-    ArtifactAffixGameTextKeyMap.ts
 ```
 
 ## Notes
