@@ -50,15 +50,22 @@ defineSlots<{ detail: () => VNode; icon?: () => VNode; list: () => VNode; tabs?:
   color: #fff;
 }
 
-/* The band across the top, the world darkened under it as the quest screen's still has it: its fill fitted against
-   The world just under its edge, over the still's width clear of the tabs */
+/* The band across the top, the world darkened under it as the quest screen's still has it. Its tint is not flat: it
+   darkens most at the left and fades to the right, its alpha fitted at five points across the still's top band */
 .band {
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
   height: calc(var(--unit) * 95);
-  background: rgb(30 29 45 / 0.4);
+  background: linear-gradient(
+    to right,
+    rgb(30 29 45 / 0.8),
+    rgb(30 29 45 / 0.7) 46%,
+    rgb(30 29 45 / 0.5) 73%,
+    rgb(30 29 45 / 0.2) 83%,
+    rgb(30 29 45 / 0.1)
+  );
 }
 
 .key {
@@ -67,7 +74,7 @@ defineSlots<{ detail: () => VNode; icon?: () => VNode; list: () => VNode; tabs?:
   display: grid;
   width: calc(var(--unit) * 32);
   height: calc(var(--unit) * 28);
-  background: #ece5d8;
+  background: #fdfdfd;
   color: #000;
   font-size: calc(var(--unit) * 20);
   place-items: center;

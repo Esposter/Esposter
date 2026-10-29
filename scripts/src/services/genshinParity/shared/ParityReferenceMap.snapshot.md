@@ -85,9 +85,9 @@ committed.
 | `party-screen`                         | `PartyScreen`               |                                                                          4.27% | 0.366 |  2.52% | 0.1588 |
 | `people-of-the-springs-location`       | `WorldScreen`               |                                                                         25.06% | 0.223 | 21.49% | 0.7945 |
 | `publisher-splash`                     | `SplashPublisher`           |                                                                          0.07% | 1.000 |  0.01% | 0.0036 |
-| `quest-screen`                         | `QuestScreen`               |                                                                          9.96% | 0.852 |  8.21% | 0.3617 |
+| `quest-screen`                         | `QuestScreen`               |                                                                          9.59% | 0.844 |  7.82% | 0.3511 |
 | `quest-screen-details`                 | `QuestScreen`               |                                                                         13.97% | 0.946 | 12.85% | 0.4368 |
-| `quest-screen-header`                  | `QuestScreen`               |                                                                          7.56% | 0.999 |  6.62% | 0.3051 |
+| `quest-screen-header`                  | `QuestScreen`               |                                                                          3.37% | 0.999 |  2.70% | 0.1857 |
 | `quest-screen-list`                    | `QuestScreen`               |                                                                          6.18% | 0.892 |  4.70% | 0.2657 |
 | `reputation-screen`                    | `ReputationScreen`          |                                                                          1.99% | 0.875 |  1.39% | 0.1429 |
 | `settings-audio-rows`                  | `MenuSettings`              |                                                                          1.01% | 0.997 |  0.38% | 0.0742 |
