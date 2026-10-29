@@ -33,7 +33,9 @@ const { start: startStallWarning } = useTimeoutFn(
   () => {
     if (!isOpeningShown.value) return;
     const steps: [string, boolean][] = [["save", isSaveLoadedRef?.value ?? false]];
-    if (isDoorOpened.value) steps.push(["world chunk", isLoaded.value], ["world ready", isReady.value]);
+    if (isDoorOpened.value)
+      if (isPacksHeld.value) steps.push(["world chunk", isLoaded.value], ["world ready", isReady.value]);
+      else steps.push(["character packs", false]);
     for (const [step, isStepDone] of steps)
       if (!isStepDone)
         console.warn(`The loading screen has waited ${LOADING_STALL_WARNING_SECONDS} seconds on ${step}`);
