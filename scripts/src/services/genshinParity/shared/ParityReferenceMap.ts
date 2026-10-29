@@ -859,8 +859,12 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "QuestScreen",
     wikiTitle: "File:Quest Screen.png",
   },
-  // The same still's list down the left, its quest rows and series panels, the translucent glass scored as drawn
+  // The same still's list down the left, its quest rows and series panels, the translucent glass scored as drawn over the
+  // Same world frame the whole screen is scored over
   "quest-screen-list": {
+    isBackdrop: true,
+    plate: QUEST_SCREEN_BACKDROP_PLATE,
+    plateSource: "yt-2_e7S_J9yAA-quest-overview.mp4 at 0.9s",
     region: { height: 850, width: 666, x: 150, y: 105 },
     screen: "QuestScreen",
     wikiTitle: "File:Quest Screen.png",
