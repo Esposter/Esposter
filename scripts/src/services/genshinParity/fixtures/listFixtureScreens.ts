@@ -1,17 +1,17 @@
 import type { FixtureScreenRow } from "#src/models/genshinParity/fixtures/FixtureScreenRow";
 import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
 
-import { getComponentNames } from "#src/services/genshinParity/fixtures/getComponentNames";
-import { getFixtureScreenRow } from "#src/services/genshinParity/fixtures/getFixtureScreenRow";
-import { getFixtureVariantNames } from "#src/services/genshinParity/fixtures/getFixtureVariantNames";
-import { getFixtureImageName } from "#src/services/genshinParity/fixtures/getFixtureImageName";
 import {
   BARREL_FILE_NAME,
   COMPONENT_FILE_NAME,
   FIXTURE_FILE_NAME,
 } from "#src/services/genshinParity/fixtures/constants";
+import { getComponentNames } from "#src/services/genshinParity/fixtures/getComponentNames";
+import { getFixtureScreenRow } from "#src/services/genshinParity/fixtures/getFixtureScreenRow";
+import { getFixtureVariantNames } from "#src/services/genshinParity/fixtures/getFixtureVariantNames";
+import { getFixtureImageName } from "genshin-interface/constants";
 import { existsSync } from "node:fs";
-import { readFile, readdir } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import { basename, dirname, join, sep } from "node:path";
 
 // Every fixture screen under the components folder, and each of its variants, as rows. Read from the files alone, so no

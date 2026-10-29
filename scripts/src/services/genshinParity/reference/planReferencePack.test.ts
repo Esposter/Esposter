@@ -25,10 +25,11 @@ describe(planReferencePack, () => {
   });
   const createPlan = (id: string, collisions: ReferenceCollision[] = [], isWritten = false): ReferenceEntryPlan => ({
     collisions,
+    files: [],
     held: [],
     id,
+    mainFile: `${id}.webp`,
     missing: [],
-    files: [],
     packed: [],
     row: isWritten ? createRow(id) : undefined,
   });

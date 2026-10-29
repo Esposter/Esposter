@@ -1,5 +1,4 @@
 import { COMPONENTS_DIRECTORY, REFERENCE_IMAGE_SUFFIX } from "#src/services/genshinParity/fixtures/constants";
-import { getFixtureImageName } from "#src/services/genshinParity/fixtures/getFixtureImageName";
 import { listFixtureScreens } from "#src/services/genshinParity/fixtures/listFixtureScreens";
 import { REFERENCE_FILE_EXTENSION, REFERENCE_FILE_MAX_BYTES } from "#src/services/genshinParity/reference/constants";
 import { getVariantEntries } from "#src/services/genshinParity/reference/getVariantEntries";
@@ -7,6 +6,7 @@ import { readReferenceFiles } from "#src/services/genshinParity/reference/readRe
 import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
 import { sha256File } from "#src/services/genshinParity/reference/sha256File";
 import { REFERENCE_FILES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { getFixtureReferenceFilePath } from "#src/services/genshinParity/shared/getFixtureReferenceFilePath";
 import { getReferencePlateFilePath } from "#src/services/genshinParity/shared/getReferencePlateFilePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
@@ -18,7 +18,7 @@ import { describe, expect, test } from "vitest";
 // has exactly one beside its snapshot, each file is named by an entry or a manifest row, its bytes are the hash its row
 // holds, and no file is larger than the ceiling
 describe("committedReferences", () => {
-  const COMMITTED_REFERENCE_SUFFIX = ".reference.webp";
+  const COMMITTED_REFERENCE_SUFFIX = `${REFERENCE_IMAGE_SUFFIX}.${REFERENCE_FILE_EXTENSION}`;
   const toRepositoryPath = (path: string): string => relative(REPOSITORY_ROOT, path);
   // Every committed file: the flat ones in the references folder, and the ones beside a fixture variant's snapshot
   const readCommittedFiles = (): string[] => [
@@ -66,13 +66,7 @@ describe("committedReferences", () => {
     const rows = await listFixtureScreens(COMPONENTS_DIRECTORY, ParityReferenceMap, new Map());
     const expected = rows
       .filter(({ name, variant }) => getVariantEntries(planned, name, variant).length > 0)
-      .map(({ directory, variant }) =>
-        join(
-          COMPONENTS_DIRECTORY,
-          directory,
-          `${getFixtureImageName(variant)}${REFERENCE_IMAGE_SUFFIX}.${REFERENCE_FILE_EXTENSION}`,
-        ),
-      );
+      .map(({ directory, variant }) => getFixtureReferenceFilePath(join(COMPONENTS_DIRECTORY, directory), variant));
     const beside = plan.map(({ path }) => path).filter((path) => path.startsWith(COMPONENTS_DIRECTORY));
 
     expect(beside.toSorted()).toStrictEqual(expected.toSorted());

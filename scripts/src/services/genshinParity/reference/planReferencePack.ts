@@ -3,13 +3,12 @@ import type { ReferenceEntryPlan } from "#src/models/genshinParity/reference/Ref
 import type { ReferencePackDecision } from "#src/models/genshinParity/reference/ReferencePackDecision";
 import type { ReferencePackOptions } from "#src/models/genshinParity/reference/ReferencePackOptions";
 
-import { getReferenceFileName } from "#src/services/genshinParity/shared/getReferenceFileName";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-const hasScreenshot = ({ id, missing }: ReferenceEntryPlan) => !missing.includes(getReferenceFileName(id));
+const hasScreenshot = ({ mainFile, missing }: ReferenceEntryPlan) => !missing.includes(mainFile);
 
 // Decides what a pack stores from its plans and its options. A collision is one whose id is not replaced: `--skip-colliding`
-// leaves it out of the manifest and the container, and without that flag it refuses the run. An id named by `--replace`
+// leaves it out of the manifest and the files written, and without that flag it refuses the run. An id named by `--replace`
 // takes its local bytes, so its plan is the one stored, and an id the map names with no screenshot is refused, not ignored
 export const planReferencePack = (
   plans: ReferenceEntryPlan[],

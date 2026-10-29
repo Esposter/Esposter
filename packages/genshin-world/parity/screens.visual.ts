@@ -2,7 +2,12 @@ import "@fontsource/signika/600.css";
 import { getScreenBoxStyle, SCREEN_BOX_WIDTH } from "#parity/getScreenBoxStyle";
 import { screens } from "#parity/screens";
 import { capitalize, getResultAsync } from "@esposter/shared";
-import { createVisualComparisonRecord, FIXTURE_VARIANT_SEPARATOR } from "genshin-interface";
+import {
+  createVisualComparisonRecord,
+  FIXTURE_IMAGE_NAME,
+  FIXTURE_VARIANT_SEPARATOR,
+  getFixtureImageName,
+} from "genshin-interface";
 import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
@@ -13,7 +18,6 @@ import { defineComponent, h } from "vue";
 // Mismatch is listed after the cases rather than failed, and a missing image is written; `genshin:parity approve` writes an
 // Image as a snapshot of the current render, beside the compare's score. Each is shot in the parity page's box, over a grey
 // Backdrop, as the page draws it
-const IMAGE_NAME = "Index";
 // The grey a screen is drawn over in its box: the screens are drawn pale for the game's world, which a white backdrop hides,
 // And a mid tone keeps both their light and their dark pieces visible
 const SCREEN_BACKDROP_COLOR = "#4a5560";
@@ -23,14 +27,14 @@ const cases: ((typeof screens)[number] & { imageName: string; title: string })[]
 for (const screen of screens.filter(({ isMotionOnly }) => !isMotionOnly)) {
   cases.push({
     ...screen,
-    imageName: IMAGE_NAME,
+    imageName: FIXTURE_IMAGE_NAME,
     props: { ...screen.props, ...screen.stillProps },
     title: screen.name,
   });
   for (const [variant, variantProps] of Object.entries(screen.variants ?? {}))
     cases.push({
       ...screen,
-      imageName: `${IMAGE_NAME}${FIXTURE_VARIANT_SEPARATOR}${variant}`,
+      imageName: getFixtureImageName(variant),
       props: { ...screen.props, ...variantProps, ...screen.stillProps },
       title: `${screen.name}${FIXTURE_VARIANT_SEPARATOR}${variant}`,
     });

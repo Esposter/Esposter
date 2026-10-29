@@ -8,11 +8,10 @@ import type { ParityReference } from "#src/models/genshinParity/shared/ParityRef
 import { createReferenceManifestRow } from "#src/services/genshinParity/reference/createReferenceManifestRow";
 import { readEntryImage } from "#src/services/genshinParity/reference/readEntryImage";
 import { sortObjectKeys } from "#src/services/genshinParity/reference/sortObjectKeys";
-import { getReferenceFileName } from "#src/services/genshinParity/shared/getReferenceFileName";
-import { getReferencePlateFileName } from "#src/services/genshinParity/shared/getReferencePlateFileName";
 import { getReferencePlateFilePath } from "#src/services/genshinParity/shared/getReferencePlateFilePath";
 import { getScratchPlatePath } from "#src/services/genshinParity/shared/getScratchPlatePath";
 import { getScratchReferencePath } from "#src/services/genshinParity/shared/getScratchReferencePath";
+import { basename } from "node:path";
 
 // One reference id's pack: its screenshot, and its plate screenshot when its entry names one. The row it ends with is the
 // one the manifest holds with those images' hashes, and it is returned only when that changed. The files it writes are the
@@ -28,9 +27,10 @@ export const planReferenceEntry = async (
   checkedRow: ParityReferenceManifestRow | undefined,
   committed: ParityReferenceManifestRow | undefined,
 ): Promise<ReferenceEntryPlan> => {
-  const mainLabel = getReferenceFileName(id);
-  const plateLabel = getReferencePlateFileName(id);
   const platePath = getReferencePlateFilePath(id);
+  // Each screenshot is named by the file its path is, so a variant whose primary sits beside its snapshot reads as that file
+  const mainLabel = basename(mainPath);
+  const plateLabel = basename(platePath);
   const main = await readEntryImage(getScratchReferencePath(id), checkedRow, mainPath);
   if (main === undefined)
     return {
@@ -38,6 +38,7 @@ export const planReferenceEntry = async (
       files: [],
       held: [],
       id,
+      mainFile: mainLabel,
       missing: reference.plateSource === undefined ? [mainLabel] : [mainLabel, plateLabel],
       packed: [],
     };
@@ -74,6 +75,7 @@ export const planReferenceEntry = async (
     ),
     held: images.flatMap(({ entry, file }) => (entry.isNew ? [] : [file])),
     id,
+    mainFile: mainLabel,
     missing: isPlateMissing ? [plateLabel] : [],
     packed,
     row: changed ? row : undefined,

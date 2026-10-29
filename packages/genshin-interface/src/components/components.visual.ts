@@ -4,7 +4,7 @@ import type { Component } from "vue";
 import "@fontsource/signika/600.css";
 import GameScreen from "#src/components/GameScreen/Index.vue";
 import { InteractionState } from "#src/models/InteractionState";
-import { FIXTURE_VARIANT_SEPARATOR } from "#src/services/constants";
+import { FIXTURE_IMAGE_NAME, getFixtureImageName } from "#src/services/constants";
 import { createVisualComparisonRecord } from "#src/services/createVisualComparisonRecord";
 import { afterAll, assert, describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -19,19 +19,18 @@ const fixtures = import.meta.glob<ComponentFixture>("./*/Index.fixture.ts", { ea
 // The screen root and the rect a piece is placed by draw nothing of their own, so they have no image to hold
 const LAYOUT_COMPONENTS = new Set(["./GameRect/Index.vue", "./GameScreen/Index.vue", "./TwoColumnScreen/Index.vue"]);
 const COMPONENT_FILE = "/Index.vue";
-const IMAGE_NAME = "Index";
 const STAGE_STYLE = { background: "#6b7280", display: "grid", placeItems: "center" };
 const cases: { component: Component; imageName: string; props: Record<string, unknown>; slot?: string }[] = [];
 for (const [path, { props, slot, variants = {} }] of Object.entries(fixtures)) {
   const componentPath = path.replace(/\.fixture\.ts$/u, ".vue");
   const component = components[componentPath];
   if (!component) continue;
-  const imagePath = `${componentPath.slice("./".length, -COMPONENT_FILE.length)}/${IMAGE_NAME}`;
-  cases.push({ component, imageName: imagePath, props, slot });
+  const directory = componentPath.slice("./".length, -COMPONENT_FILE.length);
+  cases.push({ component, imageName: `${directory}/${FIXTURE_IMAGE_NAME}`, props, slot });
   for (const [variant, variantProps] of Object.entries(variants))
     cases.push({
       component,
-      imageName: `${imagePath}${FIXTURE_VARIANT_SEPARATOR}${variant}`,
+      imageName: `${directory}/${getFixtureImageName(variant)}`,
       props: { ...props, ...variantProps },
       slot,
     });

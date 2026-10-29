@@ -1,12 +1,12 @@
 import type { SubCommandsDef } from "citty";
 
 import { ReferencePackKind } from "#src/models/genshinParity/reference/ReferencePackKind";
+import { createRecordObjectTargets } from "#src/services/genshinParity/reference/createRecordObjectTargets";
 import { formatCollisionBlock } from "#src/services/genshinParity/reference/formatCollisionBlock";
 import { formatMebibytes } from "#src/services/genshinParity/reference/formatMebibytes";
 import { formatPackTable } from "#src/services/genshinParity/reference/formatPackTable";
 import { packRecordPaths } from "#src/services/genshinParity/reference/packRecordPaths";
 import { packReferences } from "#src/services/genshinParity/reference/packReferences";
-import { createReferenceObjectTargets } from "#src/services/genshinParity/reference/createReferenceObjectTargets";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
@@ -68,7 +68,7 @@ export const referencesPackCommand: SubCommandsDef[string] = defineCommand({
       );
     if (paths.length === 0)
       throw new InvalidOperationError(Operation.Read, args.kind, "needs at least one path to pack");
-    const { packed, uploads } = await packRecordPaths(paths, isDryRun, createReferenceObjectTargets());
+    const { packed, uploads } = await packRecordPaths(paths, isDryRun, createRecordObjectTargets());
     for (const { bytes, path } of packed) console.log(`${path}  ${formatMebibytes(bytes)}`);
     console.log(
       `${packed.length} ${args.kind} files, ${uploads} uploads${isDryRun ? " (dry run, nothing stored)" : ""}`,

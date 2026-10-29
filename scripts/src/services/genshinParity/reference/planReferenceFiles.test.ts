@@ -2,17 +2,12 @@ import type { FixtureScreenRow } from "#src/models/genshinParity/fixtures/Fixtur
 import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
 
 import { FixtureReferenceStatus } from "#src/models/genshinParity/fixtures/FixtureReferenceStatus";
-import {
-  COMPONENTS_DIRECTORY,
-  IMAGE_NAME,
-  REFERENCE_IMAGE_SUFFIX,
-} from "#src/services/genshinParity/fixtures/constants";
-import { getFixtureImageName } from "#src/services/genshinParity/fixtures/getFixtureImageName";
-import { REFERENCE_FILE_EXTENSION } from "#src/services/genshinParity/reference/constants";
+import { COMPONENTS_DIRECTORY } from "#src/services/genshinParity/fixtures/constants";
 import { planReferenceFiles } from "#src/services/genshinParity/reference/planReferenceFiles";
 import { REFERENCE_FILES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
-import { describe, expect, test } from "vitest";
+import { getFixtureReferenceFilePath } from "#src/services/genshinParity/shared/getFixtureReferenceFilePath";
 import { join } from "node:path";
+import { describe, expect, test } from "vitest";
 
 describe(planReferenceFiles, () => {
   const SCREEN_NAME = "FooScreen";
@@ -35,23 +30,18 @@ describe(planReferenceFiles, () => {
     expect.hasAssertions();
 
     const referenceMap = {
-      "region-reference": { region: REGION, screen: SCREEN_NAME, source: " " },
       "first-whole-reference": { screen: SCREEN_NAME, source: " " },
+      "region-reference": { region: REGION, screen: SCREEN_NAME, source: " " },
       "second-whole-reference": { screen: SCREEN_NAME, source: " " },
     } satisfies Record<string, ParityReference>;
-    const plan = planReferenceFiles(referenceMap, [createFixtureRow("")]);
+    const plan = planReferenceFiles(referenceMap, [createFixtureRow("")], COMPONENTS_DIRECTORY);
 
     expect(plan.map(({ id, path }) => ({ id, path }))).toStrictEqual([
-      { id: "region-reference", path: join(REFERENCE_FILES_DIRECTORY, "region-reference.webp") },
       {
         id: "first-whole-reference",
-        path: join(
-          COMPONENTS_DIRECTORY,
-          "Foo",
-          "Screen",
-          `${IMAGE_NAME}${REFERENCE_IMAGE_SUFFIX}.${REFERENCE_FILE_EXTENSION}`,
-        ),
+        path: getFixtureReferenceFilePath(join(COMPONENTS_DIRECTORY, "Foo", "Screen"), ""),
       },
+      { id: "region-reference", path: join(REFERENCE_FILES_DIRECTORY, "region-reference.webp") },
       { id: "second-whole-reference", path: join(REFERENCE_FILES_DIRECTORY, "second-whole-reference.webp") },
     ]);
   });
@@ -60,25 +50,17 @@ describe(planReferenceFiles, () => {
     expect.hasAssertions();
 
     const referenceMap = {
-      "variant-region-reference": { region: REGION, screen: SCREEN_NAME, source: " ", variant: VARIANT },
       "other-variant-region-reference": { region: REGION, screen: SCREEN_NAME, source: " ", variant: VARIANT },
+      "variant-region-reference": { region: REGION, screen: SCREEN_NAME, source: " ", variant: VARIANT },
     } satisfies Record<string, ParityReference>;
-    const plan = planReferenceFiles(referenceMap, [createFixtureRow(VARIANT)]);
+    const plan = planReferenceFiles(referenceMap, [createFixtureRow(VARIANT)], COMPONENTS_DIRECTORY);
 
     expect(plan.map(({ id, path }) => ({ id, path }))).toStrictEqual([
       {
-        id: "variant-region-reference",
-        path: join(
-          COMPONENTS_DIRECTORY,
-          "Foo",
-          "Screen",
-          `${getFixtureImageName(VARIANT)}${REFERENCE_IMAGE_SUFFIX}.${REFERENCE_FILE_EXTENSION}`,
-        ),
-      },
-      {
         id: "other-variant-region-reference",
-        path: join(REFERENCE_FILES_DIRECTORY, "other-variant-region-reference.webp"),
+        path: getFixtureReferenceFilePath(join(COMPONENTS_DIRECTORY, "Foo", "Screen"), VARIANT),
       },
+      { id: "variant-region-reference", path: join(REFERENCE_FILES_DIRECTORY, "variant-region-reference.webp") },
     ]);
   });
 
@@ -89,33 +71,25 @@ describe(planReferenceFiles, () => {
       "pending-reference": { pending: " ", screen: SCREEN_NAME },
       "unfixtured-reference": { screen: "BarScreen", source: " " },
     } satisfies Record<string, ParityReference>;
-    const plan = planReferenceFiles(referenceMap, [createFixtureRow("")]);
+    const plan = planReferenceFiles(referenceMap, [createFixtureRow("")], COMPONENTS_DIRECTORY);
 
     expect(plan.map(({ id, path }) => ({ id, path }))).toStrictEqual([
       { id: "unfixtured-reference", path: join(REFERENCE_FILES_DIRECTORY, "unfixtured-reference.webp") },
     ]);
   });
 
-  test("should place beside its snapshot the reference that renders the fixture as it is, over a props override listed before it", () => {
+  test("should place beside its snapshot the reference that renders the fixture as it is, over a props override listed after it", () => {
     expect.hasAssertions();
 
     const referenceMap = {
-      "props-reference": { props: PROPS, screen: SCREEN_NAME, source: " " },
       "plain-reference": { screen: SCREEN_NAME, source: " " },
+      "props-reference": { props: PROPS, screen: SCREEN_NAME, source: " " },
     } satisfies Record<string, ParityReference>;
-    const plan = planReferenceFiles(referenceMap, [createFixtureRow("")]);
+    const plan = planReferenceFiles(referenceMap, [createFixtureRow("")], COMPONENTS_DIRECTORY);
 
     expect(plan.map(({ id, path }) => ({ id, path }))).toStrictEqual([
+      { id: "plain-reference", path: getFixtureReferenceFilePath(join(COMPONENTS_DIRECTORY, "Foo", "Screen"), "") },
       { id: "props-reference", path: join(REFERENCE_FILES_DIRECTORY, "props-reference.webp") },
-      {
-        id: "plain-reference",
-        path: join(
-          COMPONENTS_DIRECTORY,
-          "Foo",
-          "Screen",
-          `${IMAGE_NAME}${REFERENCE_IMAGE_SUFFIX}.${REFERENCE_FILE_EXTENSION}`,
-        ),
-      },
     ]);
   });
 });

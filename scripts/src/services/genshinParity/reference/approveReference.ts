@@ -63,7 +63,7 @@ export const approveReference = async (referenceId: string, variant?: string): P
     PNPM_FILE,
     // The filter is one token ending the title: pnpm hands its arguments to cmd, which splits a space and eats a caret
     [...PNPM_ARGS, "test:visual", "--run", "-u", VISUAL_SUITE_FILE, "-t", `${testName}$`],
-    { cwd: GENSHIN_WORLD_DIRECTORY, env: { ...process.env, [APPROVE_ENVIRONMENT_VARIABLE]: "1" }, stdio: "inherit" },
+    { cwd: GENSHIN_WORLD_DIRECTORY, env: { ...process.env, [APPROVE_ENVIRONMENT_VARIABLE]: "true" }, stdio: "inherit" },
   );
   if (status !== 0) throw new InvalidOperationError(Operation.Update, testName, `the visual suite exited ${status}`);
   console.log(`wrote the image of ${testName}`);

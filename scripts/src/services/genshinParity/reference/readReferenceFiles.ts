@@ -6,7 +6,11 @@ import { planReferenceFiles } from "#src/services/genshinParity/reference/planRe
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 
 const planFromFixtureFolders = async (): Promise<ReferenceFilePlan[]> =>
-  planReferenceFiles(ParityReferenceMap, await listFixtureScreens(COMPONENTS_DIRECTORY, ParityReferenceMap, new Map()));
+  planReferenceFiles(
+    ParityReferenceMap,
+    await listFixtureScreens(COMPONENTS_DIRECTORY, ParityReferenceMap, new Map()),
+    COMPONENTS_DIRECTORY,
+  );
 
 let referenceFiles: Promise<ReferenceFilePlan[]> | undefined;
 

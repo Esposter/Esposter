@@ -40,7 +40,7 @@ export const packReferences = async (
       `${formatCollisionBlock(decision.blocked)}; rerun with --skip-colliding to leave them out, or --replace <ids> for those whose local bytes should win`,
     );
   const { stored } = decision;
-  const files: ReferenceStoredFile[] = stored.flatMap(({ files }) => files);
+  const files: ReferenceStoredFile[] = stored.flatMap((plan) => plan.files);
   if (!isDryRun) {
     await settleAll(
       files.map(

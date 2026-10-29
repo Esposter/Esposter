@@ -1,12 +1,12 @@
-import { sha256File } from "#src/services/genshinParity/reference/sha256File";
+import type { ReadableStream } from "node:stream/web";
+
 import { GAME_DATA_DEV_BASE_URL } from "#src/services/gameData/constants";
-import { REFERENCE_OBJECT_DOWNLOAD_TIMEOUT_MS } from "#src/services/genshinParity/reference/constants";
+import { OBJECT_DOWNLOAD_TIMEOUT_MS } from "#src/services/genshinParity/reference/constants";
+import { sha256File } from "#src/services/genshinParity/reference/sha256File";
 import { fetchResponse } from "#src/services/shared/fetchResponse";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { createWriteStream } from "node:fs";
 import { rename, rm } from "node:fs/promises";
-import type { ReadableStream } from "node:stream/web";
-
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
 
@@ -14,7 +14,7 @@ import { pipeline } from "node:stream/promises";
 // Or a changed object is never kept, and a recording is never held in memory whole
 export const downloadObjectTo = async (blobName: string, destination: string, sha256: string): Promise<void> => {
   const response = await fetchResponse(`${GAME_DATA_DEV_BASE_URL}/${blobName}`, {
-    timeoutMs: REFERENCE_OBJECT_DOWNLOAD_TIMEOUT_MS,
+    timeoutMs: OBJECT_DOWNLOAD_TIMEOUT_MS,
   });
   if (!response.ok || response.body === null)
     throw new InvalidOperationError(Operation.Read, blobName, `responds ${response.status}`);

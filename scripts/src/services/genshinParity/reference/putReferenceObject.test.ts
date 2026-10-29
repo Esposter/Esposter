@@ -1,4 +1,4 @@
-import type { ReferenceObjectTarget } from "#src/models/genshinParity/reference/ReferenceObjectTarget";
+import type { RecordObjectTarget } from "#src/models/genshinParity/reference/RecordObjectTarget";
 
 import { putReferenceObject } from "#src/services/genshinParity/reference/putReferenceObject";
 import { describe, expect, test, vi } from "vitest";
@@ -7,7 +7,7 @@ describe(putReferenceObject, () => {
   const BLOB_NAME = "parityReferences/0.webp";
   const LOCAL_PATH = "0.webp";
   // A fake account that holds the names it is given, and records every upload it is asked for
-  const createTarget = (held: string[]): ReferenceObjectTarget & { uploads: string[] } => {
+  const createTarget = (held: string[]): RecordObjectTarget & { uploads: string[] } => {
     const uploads: string[] = [];
     return {
       exists: vi.fn((blobName: string) => Promise.resolve(held.includes(blobName))),

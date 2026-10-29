@@ -85,10 +85,8 @@ export const REFERENCE_PLATE_SUFFIX = ".plate";
 // The largest committed file the tree may hold: the largest lossless reference (`mondstadt-city-location`, 7,315,020
 // bytes) and a margin above it, so a larger file is a mistake to look at rather than a size to accept
 export const REFERENCE_FILE_MAX_BYTES = 7_500_000;
-// A stored reference runs to several megabytes, which the default request bound of ten seconds cuts short on a slow link
-export const REFERENCE_OBJECT_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total(
-  "milliseconds",
-);
+// A stored object runs to several megabytes, which the default request bound of ten seconds cuts short on a slow link
+export const OBJECT_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 // The leading bytes each sniffed format is recognised by: a hex signature found at its offset in the file
 export const FILE_SIGNATURES: readonly { extension: string; hex: string; offset: number }[] = [
   { extension: "png", hex: "89504e47", offset: 0 },

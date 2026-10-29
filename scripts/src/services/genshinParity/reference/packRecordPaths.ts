@@ -1,5 +1,5 @@
+import type { RecordObjectTarget } from "#src/models/genshinParity/reference/RecordObjectTarget";
 import type { RecordPathsOutcome } from "#src/models/genshinParity/reference/RecordPathsOutcome";
-import type { ReferenceObjectTarget } from "#src/models/genshinParity/reference/ReferenceObjectTarget";
 
 import { REFERENCE_PACK_CONCURRENCY } from "#src/services/genshinParity/reference/constants";
 import { getObjectBlobName } from "#src/services/genshinParity/reference/getObjectBlobName";
@@ -18,7 +18,7 @@ import { isAbsolute, relative, resolve, sep } from "node:path";
 export const packRecordPaths = async (
   paths: string[],
   isDryRun: boolean,
-  targets: ReferenceObjectTarget[],
+  targets: RecordObjectTarget[],
 ): Promise<RecordPathsOutcome> => {
   const files = await settleAll(
     paths.map((path) => async () => {
