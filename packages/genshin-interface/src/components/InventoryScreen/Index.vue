@@ -293,6 +293,17 @@ watch(
   font-size: calc(var(--unit) * 17);
 }
 
+/* The bag's head bar, a dark band across the screen's top 91 units the tabs and the way back sit in */
+.inventory-screen::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(var(--unit) * 91);
+  background: #221f2c;
+  content: "";
+}
+
 .title {
   position: absolute;
   width: 1px;
