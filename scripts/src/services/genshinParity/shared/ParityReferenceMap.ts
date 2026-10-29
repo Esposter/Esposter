@@ -436,7 +436,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       { height: 100, width: 66, x: 0, y: 0 },
       { height: 32, width: 44, x: 66, y: 0 },
     ],
-    plate: [{ height: 90, width: 90, x: 16, y: 2 }],
+    plate: [{ height: 82, width: 70, x: 25, y: 9 }],
     props: { isTouch: false },
     region: { height: 100, width: 110, x: 0, y: 0 },
     screen: "HudScreen",

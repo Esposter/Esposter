@@ -42,7 +42,7 @@ committed.
 | `health-notice` | `SplashHealthNotice` | 6.17% | 0.964 | 1.51% | 0.1780 |
 | `health-notice-japanese` | `SplashHealthNotice` | 8.38% | 0.873 | 1.54% | 0.2395 |
 | `health-notice-mainland` | `SplashHealthNotice` | 4.71% | 0.960 | 1.19% | 0.1419 |
-| `hud-paimon-button` | `HudScreen` | 1.74% | 0.916 | 2.34% | 0.1111 |
+| `hud-paimon-button` | `HudScreen` | 1.63% | 0.914 | 2.23% | 0.0940 |
 | `hud-stamina-climb` | `HudScreen` | 0.62% | 0.787 | 0.75% | 0.0629 |
 | `hud-world-keys` | `HudScreen` | 2.07% | 0.983 | 1.52% | 0.1296 |
 | `hud-world-pickup` | `HudScreen` | 2.84% | 0.757 | 1.50% | 0.1335 |
