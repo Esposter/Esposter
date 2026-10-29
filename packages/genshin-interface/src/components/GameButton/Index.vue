@@ -319,7 +319,7 @@ defineExpose({ focus: () => button.value?.focus() });
   color: v-bind(GAME_LIT_GOLD_LABEL);
 }
 
-/* The dialogue reply's pill: a black at 0.26 over the scene at rest, its words white, and lit as a cream-white pill with slate
+/* The dialogue reply's pill: the black GAME_REPLY_REST lays over the scene at rest, its words white, and lit as a cream-white pill with slate
    Words when hovered, focused or selected by its screen. Its press holds that lit look at once. Provisional past the rest, see
    The constants */
 .game-button[data-kind="Reply"] {
