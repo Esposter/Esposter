@@ -187,16 +187,6 @@ Deleting an attachment, a message with attachments or a room SHALL remove its fi
 - **WHEN** the deletion completes
 - **THEN** the room's files are removed from storage shortly after
 
-### Requirement: A room's attachments can be browsed through search
-
-Browsing a room's attachments SHALL be a search of its messages filtered to files.
-
-#### Scenario: Filtering search to files
-
-- **GIVEN** a room has messages with attachments
-- **WHEN** the reader filters the room's search to files
-- **THEN** the messages with attachments are listed
-
 ### Requirement: A PDF attachment shows its first page in the message
 
 A PDF attachment SHALL show its first page in the message row, drawn sharp at the screen's pixel density.
