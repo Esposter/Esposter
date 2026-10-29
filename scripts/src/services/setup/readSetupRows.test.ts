@@ -8,8 +8,10 @@ import { describe, expect, test, vi } from "vitest";
 
 describe(readSetupRows, () => {
   const createEnvironment = (overrides: Partial<SetupEnvironment> = {}): SetupEnvironment => ({
+    countFiles: () => undefined,
     exists: () => false,
     makeDirectory: vi.fn(),
+    mainCheckoutRoot: "/Users/ada/Esposter",
     readText: () => undefined,
     run: () => ({ status: 1, stdout: "" }),
     runVisibly: vi.fn(() => ({ status: 0, stdout: null })),
