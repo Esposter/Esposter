@@ -60,19 +60,19 @@ export const MAX_CLEARED_DOMAIN_COUNT = 64;
 // The Oculi a player finds once each, across every region the game has, so the bound is the whole map's with room to
 // Spare
 export const MAX_FOUND_OCULUS_COUNT = 4096;
-// The camps a player clears once each, bounded by the enemy camps the regions' data holds: 4795 of them, counted on 2026-10-18
+// The camps a player clears once each, bounded by the enemy camps the regions' data holds: 4795 of them
 export const MAX_CLEARED_CAMP_COUNT = 4795;
 // The mined outcrops a save holds, each once by its place: a mining prunes the ones whose respawn has come, so the save
 // Holds only the ones mined since the last reset
 export const MAX_MINED_OUTCROP_COUNT = 256;
 // The Seelies a player settles in their courts once each, so the bound is the map's 547 Seelie marks on the ground in the
-// Mapped regions, counted from the official map's point list the puzzles build places on 2026-10-18
+// Mapped regions, counted from the official map's point list the puzzles build places
 export const MAX_SETTLED_SEELIE_COUNT = 547;
 // The puzzles a player solves once each, so the bound is the map's 632 Time Trial Challenge marks and 200 Elemental
 // Monument marks on the ground in the mapped regions, counted from the same point list on the same day
 export const MAX_SOLVED_PUZZLE_COUNT = 832;
 // The goods a player holds a purchase of, one entry each, bounded by the shop goods that hold a buy limit: 5134 of the game's
-// Shop goods table on 2026-10-18, a good with no limit keeping no entry
+// Shop goods table, a good with no limit keeping no entry
 export const MAX_SHOP_PURCHASE_COUNT = 5134;
 
 // The Moon Spire periods a save keeps progress for, one cycle each beside the Corridor's, and the chambers of the longest cycle:
@@ -92,7 +92,7 @@ export const MAX_ARCHIVE_ENTRY_COUNT = 4096;
 export const MAX_ARCHIVE_KILL_COUNT = 4096;
 export const MAX_SHOWN_TIP_COUNT = 4096;
 // The enemies a player defeats in the camps with no boss among them, one entry each, bounded by the 7421 enemy members
-// The mapped regions' data holds, counted on 2026-10-18, with room to spare
+// The mapped regions' data holds, with room to spare
 export const MAX_ENEMY_RESPAWN_COUNT = 8192;
 // The bosses a player defeats and has not seen come back, one entry each, bounded by the bosses the mapped regions hold
 // With room to spare

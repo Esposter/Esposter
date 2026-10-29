@@ -1,8 +1,8 @@
 /**
  * The attributes each element of the HTML standard accepts, under `*` for the global ones, as `html-element-attributes`
  * 3.5.0 (https://github.com/wooorm/html-element-attributes) lists them. The upstream's build script crawls the WHATWG HTML
- * living standard and the HTML 4 specification, and this data is that crawl as it stood when the release was cut on
- * 2025-07-28. Its `part` and `exportparts` globals (upstream issue 12) and its `template` shadow-root attributes
+ * living standard and the HTML 4 specification, and this data is that crawl as it stood when the release was cut.
+ * Its `part` and `exportparts` globals (upstream issue 12) and its `template` shadow-root attributes
  * (upstream issue 10) carry the upstream fixes.
  *
  * (The MIT License)

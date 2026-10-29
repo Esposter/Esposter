@@ -23,7 +23,7 @@ const pityMap = {
   [BannerKind.Beginners]: { ...INITIAL_WISH_PITY, wishCount: BEGINNERS_WISH_LIMIT },
 };
 
-// The clock held at 2021-05-20 (the epoch's day 18,767), inside the window of Born of Ocean Swell the recording shows
+// The clock held inside the window of Born of Ocean Swell the recording shows
 const heldNow = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 450_408 });
 
 export const props = {

@@ -1,7 +1,7 @@
 /**
  * The tag names of the HTML standard, as `html-tag-names` 2.1.0 (https://github.com/wooorm/html-tag-names) lists
  * them. The upstream's build script crawls the WHATWG HTML living standard, and this data is that crawl as it stood when
- * the release was cut on 2023-03-24. It predates the `selectedcontent` element, so a refresh adds it.
+ * the release was cut. It predates the `selectedcontent` element, so a refresh adds it.
  *
  * (The MIT License)
  *

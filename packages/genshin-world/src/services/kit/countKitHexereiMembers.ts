@@ -1,5 +1,5 @@
 // The characters that are Hexerei, as the wiki's Hexerei Characters category lists them: Albedo, Durin, Fischl, Klee, Lohen,
-// Mona, Nicole, Prune, Razor, Sucrose, Varka and Venti, read from genshin-impact.fandom.com on 2026-10-19
+// Mona, Nicole, Prune, Razor, Sucrose, Varka and Venti, read from genshin-impact.fandom.com
 // The dump tags none of them, so the wiki is the citation for the set
 // https://genshin-impact.fandom.com/wiki/Category:Hexerei_Characters
 const HEXEREI_CHARACTER_IDS = new Set<number>([
