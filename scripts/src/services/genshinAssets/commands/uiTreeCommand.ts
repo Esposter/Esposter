@@ -1,5 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
+import { parseTreeDepth } from "#src/services/genshinAssets/commands/parseTreeDepth";
 import { composeInterfaceTree } from "#src/services/genshinAssets/interface/composeInterfaceTree";
 import { findNearestUiCanvas } from "#src/services/genshinAssets/ui/findNearestUiCanvas";
 import { getUiRootEntries } from "#src/services/genshinAssets/ui/getUiRootEntries";
@@ -35,10 +36,7 @@ export const uiTreeCommand: SubCommandsDef[string] = defineCommand({
     );
     if (entries.length === 0)
       throw new InvalidOperationError(Operation.Read, args.container, `holds no RectTransform in ${block}`);
-    const depth = args.depth === undefined ? Infinity : Number(args.depth);
-    // A depth that is no count would print no levels and read as a tree of its roots alone
-    if (args.depth !== undefined && !(Number.isInteger(depth) && depth >= 0))
-      throw new InvalidOperationError(Operation.Read, "depth", `not a whole number of levels: ${args.depth}`);
+    const depth = parseTreeDepth(args.depth);
     const roots = getUiRootEntries(entries).map((root) => composeInterfaceTree(entries, root, depth));
     const canvas = findNearestUiCanvas(roots);
     console.log(

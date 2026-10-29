@@ -3,6 +3,7 @@ import type { SubCommandsDef } from "citty";
 import { SceneTreeFlag } from "#src/models/genshinAssets/scene/SceneTreeFlag";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { findNodes } from "#src/services/genshinAssets/commands/findNodes";
+import { parseTreeDepth } from "#src/services/genshinAssets/commands/parseTreeDepth";
 import { pruneNode } from "#src/services/genshinAssets/commands/pruneNode";
 import { RegionCapitalMap } from "#src/services/genshinAssets/fit/RegionCapitalMap";
 import { composeSceneTree } from "#src/services/genshinAssets/scene/composeSceneTree";
@@ -14,7 +15,6 @@ import { ARCHITECTURE_VIEW_METRES } from "#src/services/genshinAssets/world/cons
 import { readCapitalWorldPlace } from "#src/services/genshinAssets/world/readCapitalWorldPlace";
 import { selectArchitectureInView } from "#src/services/genshinAssets/world/selectArchitectureInView";
 import { selectLostArchitectureInView } from "#src/services/genshinAssets/world/selectLostArchitectureInView";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
 export const treeCommand: SubCommandsDef[string] = defineCommand({
@@ -43,10 +43,7 @@ export const treeCommand: SubCommandsDef[string] = defineCommand({
     const tops = allTops.filter(({ object }) => !args.block || object.block === args.block);
     const { root } = args;
     const nodes = root ? tops.flatMap((top) => findNodes(top, root)) : tops;
-    const depth = args.depth === undefined ? Infinity : Number(args.depth);
-    // A depth that is no count would prune every child and pass the tops off as a flat hierarchy
-    if (args.depth !== undefined && !(Number.isInteger(depth) && depth >= 0))
-      throw new InvalidOperationError(Operation.Read, "depth", `not a whole number of levels: ${args.depth}`);
+    const depth = parseTreeDepth(args.depth);
     // Unplaced spawns are counted apart from the lost fathers they would otherwise be, and a capital's bar reads the
     // Architecture among the lost fathers in its view against the architecture the witness places there
     const unplacedSpawnCount = allTops.filter(({ flags }) => flags.includes(SceneTreeFlag.TopAtOrigin)).length;
