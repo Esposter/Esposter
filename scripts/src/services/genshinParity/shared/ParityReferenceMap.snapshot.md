@@ -7,7 +7,7 @@ committed.
 
 | Reference                              | Screen                      |                                                                Mean difference | Shape |   Tone |   FLIP |
 | :------------------------------------- | :-------------------------- | -----------------------------------------------------------------------------: | ----: | -----: | -----: |
-| `archive-screen`                       | `ArchiveScreen`             |                                                                          9.97% | 0.899 |  2.17% | 0.3457 |
+| `archive-screen`                       | `ArchiveScreen`             |                                                                          9.97% | 0.896 |  2.17% | 0.3457 |
 | `character-artifacts`                  | `CharacterScreen`           |                                                                          2.88% | 0.924 |  0.90% | 0.1225 |
 | `character-artifacts-tabs`             | `CharacterScreen`           |                                                                          0.88% | 0.976 |  0.32% | 0.0474 |
 | `character-attributes`                 | `CharacterScreen`           |                                                                          1.70% | 0.966 |  0.61% | 0.0703 |
@@ -49,7 +49,7 @@ committed.
 | `hud-world-pickup`                     | `HudScreen`                 |                                                                          2.79% | 0.769 |  1.50% | 0.1323 |
 | `interaction-prompts-jueyun-chili`     | `InteractionPromptList`     |                                                                          4.63% | 0.954 |  1.79% | 0.2034 |
 | `interaction-prompts-pickup`           | `InteractionPromptList`     |                                                                          5.07% | 0.937 |  2.64% | 0.2181 |
-| `inventory-food`                       | `InventoryScreen`           |                                                                          2.99% | 0.994 |  1.95% | 0.1850 |
+| `inventory-food`                       | `InventoryScreen`           |                                                                          3.00% | 0.994 |  1.96% | 0.1851 |
 | `inventory-weapons`                    | `InventoryScreen`           |                                                                          9.79% | 0.635 |  6.39% | 0.3665 |
 | `liyue-harbor-location`                | `WorldScreen`               |                                                                         29.33% | 0.303 | 24.45% | 0.8094 |
 | `loading-startup`                      | `LoadingStartup`            |                                                                          0.07% | 0.765 |  0.04% | 0.0027 |
@@ -102,13 +102,13 @@ committed.
 | `title-splash`                         | `SplashTitle`               |                                                                          0.20% | 1.000 |  0.01% | 0.0089 |
 | `title-splash-mainland`                | `SplashTitle`               |                                                                          1.89% | 0.991 |  0.89% | 0.0807 |
 | `weapon-screen`                        | `WeaponScreen`              |                                                                          2.00% | 0.897 |  0.94% | 0.0832 |
-| `weapon-screen-ascend`                 | `WeaponScreen`              |                                                                          1.86% | 0.827 |  0.86% | 0.0741 |
+| `weapon-screen-ascend`                 | `WeaponScreen`              |                                                                          1.86% | 0.824 |  0.85% | 0.0741 |
 | `weapon-screen-at-cap`                 | `WeaponScreen`              | pending: the recording zooms over the state, so no whole-screen frame shows it |       |        |        |
 | `weapon-screen-rank-five`              | `WeaponScreen`              |                                     pending: no screenshot of this variant yet |       |        |        |
 | `weapon-screen-refine`                 | `WeaponScreen`              |                                                                          2.40% | 0.941 |  0.59% | 0.0875 |
 | `weapon-screen-two-star`               | `WeaponScreen`              |                                     pending: no screenshot of this variant yet |       |        |        |
 | `windrise-statue-day`                  | `WorldScreen`               |                                                                         26.73% | 0.306 | 26.74% | 0.7579 |
-| `wish-screen`                          | `WishScreen`                |                                                                          9.21% | 0.626 |  6.29% | 0.2802 |
+| `wish-screen`                          | `WishScreen`                |                                                                          9.21% | 0.626 |  6.28% | 0.2803 |
 | `world-level-dialog`                   | `MenuWorldLevelDialog`      |                                                                          5.79% | 0.864 |  1.71% | 0.1923 |
 | `world-realm-placement-editor`         | `WorldRealmPlacementEditor` |                                       pending: no screenshot of the screen yet |       |        |        |
 | `world-realm-placement-editor-at-load` | `WorldRealmPlacementEditor` |                                     pending: no screenshot of this variant yet |       |        |        |

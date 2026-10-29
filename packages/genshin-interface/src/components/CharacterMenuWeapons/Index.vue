@@ -188,7 +188,7 @@ const {
 .level .spark {
   width: calc(var(--unit) * 22);
   height: calc(var(--unit) * 22);
-  clip-path: polygon(50% 0%, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0% 50%, 40% 40%);
+  clip-path: var(--sparkle-clip-path);
 }
 
 .refinement {

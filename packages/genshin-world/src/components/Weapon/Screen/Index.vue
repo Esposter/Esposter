@@ -920,7 +920,7 @@ const nextPhaseCosts = computed(() =>
   width: calc(var(--reference-pixel) * 31);
   height: calc(var(--reference-pixel) * 31);
   background: #8e8c98;
-  clip-path: polygon(50% 0, 66% 34%, 100% 50%, 66% 66%, 50% 100%, 34% 66%, 0 50%, 34% 34%);
+  clip-path: var(--sparkle-clip-path);
 }
 
 .spark.lit {

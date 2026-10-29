@@ -58,7 +58,7 @@ const style = computed(() =>
   --canvas-unit: v-bind(GAME_CANVAS_UNIT);
   --unit: v-bind(GAME_UNIT);
   --white: v-bind(GAME_WHITE);
-  --sparkle-clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  --sparkle-clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
   --backdrop-blur: v-bind(GAME_BACKDROP_BLUR);
   --backdrop-keep: v-bind(GAME_BACKDROP_KEEP);
   --backdrop-wash: v-bind(GAME_BACKDROP_WASH);
