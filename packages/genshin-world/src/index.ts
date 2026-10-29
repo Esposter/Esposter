@@ -133,6 +133,7 @@ export * from "./models/character/CharacterAttributes.ts";
 export * from "./models/character/CharacterConstellationKit.ts";
 export * from "./models/character/CharacterData.ts";
 export * from "./models/character/CharacterPack.ts";
+export * from "./models/character/CharacterPackIndex.ts";
 export * from "./models/character/CharacterPackReader.ts";
 export * from "./models/character/CharacterPackSources.ts";
 export * from "./models/character/CharacterPackStorage.ts";

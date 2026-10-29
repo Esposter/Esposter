@@ -19,6 +19,7 @@ export const readCharacterPackFiles = async (directory: string): Promise<Charact
           avatarId,
           blobName: `${CHARACTER_PACKS_BLOB_PREFIX}/${avatarId}/${path}`,
           localPath: join(avatarDirectory, path),
+          path,
           size,
         }));
       }),
