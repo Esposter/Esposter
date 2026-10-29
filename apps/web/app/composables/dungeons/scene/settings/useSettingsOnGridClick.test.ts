@@ -14,8 +14,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { saveDungeons } = vi.hoisted(() => ({ saveDungeons: vi.fn<() => void>() }));
 
-// The dungeons store imports Phaser, which cannot initialise under the test environment. Only its state and its save
-// Are read here, so the fake keeps the real save shape and records each save
+// Only the store's state and its save are read here, so the fake keeps the real save shape and records each save
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
 vi.mock("@/store/dungeons", async () => {
   const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
@@ -43,8 +42,7 @@ describe(useSettingsOnGridClick, () => {
     settingsStore.settings = getInitialSettings();
   });
 
-  // A press on the cell the cursor already holds is the second press. A value cell saves on the press that lands on it,
-  // So the cell being held means the save already happened
+  // A value cell saves on the press that lands on it, so the cell being held means the save already happened
   test("a second press on a value cell saves nothing and confirms nothing", () => {
     expect.hasAssertions();
 
