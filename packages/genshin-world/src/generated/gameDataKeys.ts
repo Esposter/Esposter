@@ -265,6 +265,9 @@ export const GameDataKeys = {
     Turkish: "mailText/Turkish",
     Vietnamese: "mailText/Vietnamese",
   },
+  mapLabels: {
+    subareas: "mapLabels/subareas",
+  },
   materialSources: {
     fontaine: "materialSources/fontaine",
     inazuma: "materialSources/inazuma",
