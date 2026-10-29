@@ -8,7 +8,7 @@ describe(formatGameTextMatch, () => {
   const ENGLISH_TAG = "en";
   const FRENCH_TAG = "fr";
 
-  test("a plain line is the name, then each language's string in the order the languages are asked for", () => {
+  test("a plain line is the name, then the GameTextKey member that takes it, then each language's string in the order the languages are asked for", () => {
     expect.hasAssertions();
 
     const match = {
@@ -19,7 +19,7 @@ describe(formatGameTextMatch, () => {
     };
 
     expect(formatGameTextMatch(match, [GameLanguage.English, GameLanguage.French], false)).toBe(
-      `${CORRIDOR_NAME}\t"Corridor"\t"Couloir"`,
+      `${CORRIDOR_NAME}\tAbyssCorridor\t"Corridor"\t"Couloir"`,
     );
   });
 
