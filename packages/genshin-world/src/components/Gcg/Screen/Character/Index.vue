@@ -25,6 +25,7 @@ const emit = defineEmits<{ select: [] }>();
   <!-- A character card on the board: its HP in the corner, its energy as pips down its right edge, its aura and shield
        beside it and its name under them. A defeated one is greyed; the board raises the active one by its class -->
   <button
+    :aria-label="name"
     class="character"
     :class="{ choosable: isChoosable, defeated: hp <= 0 }"
     type="button"
@@ -36,21 +37,21 @@ const emit = defineEmits<{ select: [] }>();
     </span>
     <span class="aura" :data-aura="aura" />
     <span v-if="shield > 0" class="shield">{{ shield }}</span>
-    <span class="name">{{ name }}</span>
   </button>
 </template>
 
 <style scoped>
-/* The card's art is not drawn: its tint is the mean colour of the frame's art, and only its words are the game's */
+/* The card's art is not drawn: its plate is the mean colour of the six cards' art in the frame, and its frame is the cream
+   border the game draws. The game shows no name on a card in this frame, so the name is only the button's label */
 .character {
   position: absolute;
-  width: calc(var(--unit) * 164);
-  height: calc(var(--unit) * 283);
+  width: calc(var(--unit) * 165);
+  height: calc(var(--unit) * 284);
   padding: 0;
-  border: calc(var(--unit) * 2) solid rgb(234 201 124 / 0.85);
-  border-radius: calc(var(--unit) * 12);
-  background: linear-gradient(180deg, #8c8288 0%, #999aae 100%);
-  box-shadow: 0 calc(var(--unit) * 6) calc(var(--unit) * 14) rgb(0 0 0 / 0.45);
+  border: calc(var(--unit) * 3) solid #e6dcc6;
+  border-radius: calc(var(--unit) * 10);
+  background: #8e8593;
+  box-shadow: 0 calc(var(--unit) * 2) calc(var(--unit) * 6) rgb(0 0 0 / 0.35);
   color: #f5ecd6;
   cursor: inherit;
   font: inherit;
@@ -67,17 +68,17 @@ const emit = defineEmits<{ select: [] }>();
 
 .hp {
   position: absolute;
-  top: calc(var(--unit) * -18);
-  left: calc(var(--unit) * -16);
+  top: calc(var(--unit) * 7);
+  left: calc(var(--unit) * -17);
   display: grid;
-  width: calc(var(--unit) * 46);
-  height: calc(var(--unit) * 46);
+  width: calc(var(--unit) * 50);
+  height: calc(var(--unit) * 50);
   place-items: center;
-  border: calc(var(--unit) * 3) solid #e8c979;
+  border: calc(var(--unit) * 3) solid #d9b061;
   border-radius: 50%;
-  background: #f8f2e2;
+  background: #f5eedd;
   color: #2a2a2a;
-  font-size: calc(var(--unit) * 26);
+  font-size: calc(var(--unit) * 30);
   font-weight: 700;
 }
 
@@ -147,15 +148,5 @@ const emit = defineEmits<{ select: [] }>();
   background: #d9c9a0;
   color: #2a2a2a;
   font-size: calc(var(--unit) * 18);
-}
-
-.name {
-  position: absolute;
-  right: 0;
-  bottom: calc(var(--unit) * 10);
-  left: 0;
-  font-size: calc(var(--unit) * 22);
-  font-weight: 600;
-  text-align: center;
 }
 </style>

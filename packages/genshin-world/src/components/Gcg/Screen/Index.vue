@@ -284,6 +284,16 @@ const playRerollChoice = () => {
   inset: calc(var(--unit) * 24);
   border: calc(var(--unit) * 22) solid #7d5a36;
   border-radius: calc(var(--unit) * 40);
+  background: radial-gradient(
+    calc(var(--unit) * 1000) calc(var(--unit) * 700) at 50% 50%,
+    #7c9c9d 0%,
+    #759392 45%,
+    #6d8b8a 56%,
+    #597474 73%,
+    #557070 80%,
+    #435d5e 92%,
+    #3e5352 100%
+  );
 }
 
 .row {
