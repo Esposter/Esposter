@@ -5,29 +5,29 @@ import { describe, expect, test } from "vitest";
 
 describe(selectDumpFiles, () => {
   const HELD_PATH = "Readable/EN/held.txt";
-  const RESIZED_PATH = "Readable/EN/resized.txt";
+  const CHANGED_PATH = "Readable/EN/changed.txt";
   const MISSING_PATH = "Readable/EN/missing.txt";
-  const SIZE = 3;
+  const SHA = "a";
   const remoteFiles: DumpFile[] = [
-    { path: HELD_PATH, size: SIZE },
-    { path: RESIZED_PATH, size: SIZE },
-    { path: MISSING_PATH, size: SIZE },
+    { path: HELD_PATH, sha: SHA },
+    { path: CHANGED_PATH, sha: SHA },
+    { path: MISSING_PATH, sha: SHA },
   ];
 
-  test("keeps a file held at its size and selects the one held at another size or not held", () => {
+  test("keeps a file held with the remote's content and selects the one held with other content or not held", () => {
     expect.hasAssertions();
 
     expect(
       selectDumpFiles(
         remoteFiles,
         new Map([
-          [HELD_PATH, SIZE],
-          [RESIZED_PATH, SIZE + 1],
+          [HELD_PATH, SHA],
+          [CHANGED_PATH, "b"],
         ]),
       ),
     ).toStrictEqual([
-      { path: RESIZED_PATH, size: SIZE },
-      { path: MISSING_PATH, size: SIZE },
+      { path: CHANGED_PATH, sha: SHA },
+      { path: MISSING_PATH, sha: SHA },
     ]);
   });
 });

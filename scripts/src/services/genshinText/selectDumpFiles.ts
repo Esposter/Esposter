@@ -1,7 +1,8 @@
 import type { DumpFile } from "#src/models/genshinText/DumpFile";
 
-// The remote files a fetch still has to download: each one whose local copy is missing or not the size the remote holds
+// The remote files a fetch still has to download: each one whose local copy is missing or holds other content. A table
+// Whose hashes changed digits keeps its size, so the content decides, never the size
 export const selectDumpFiles = (
   remoteFiles: readonly DumpFile[],
-  localSizeMap: ReadonlyMap<string, number>,
-): DumpFile[] => remoteFiles.filter(({ path, size }) => localSizeMap.get(path) !== size);
+  localShaMap: ReadonlyMap<string, string>,
+): DumpFile[] => remoteFiles.filter(({ path, sha }) => localShaMap.get(path) !== sha);

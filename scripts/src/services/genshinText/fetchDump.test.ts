@@ -1,4 +1,4 @@
-import type { Dirent, readdirSync, statSync } from "node:fs";
+import type { Dirent, readdirSync, readFileSync } from "node:fs";
 
 import {
   BIN_OUTPUT_DIRECTORY,
@@ -7,10 +7,13 @@ import {
   QUEST_BINARY_DIRECTORY_PATH,
 } from "#src/services/genshinText/constants";
 import { fetchDump } from "#src/services/genshinText/fetchDump";
+import { getGitBlobSha } from "#src/services/genshinText/getGitBlobSha";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { fetchJson } from "#src/services/shared/fetchJson";
 import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
+
+const { CONTENT } = vi.hoisted(() => ({ CONTENT: "a" }));
 
 vi.mock(import("genshin-world"), async (importOriginal) => {
   const original = await importOriginal();
@@ -36,7 +39,7 @@ vi.mock(import("node:fs"), async (importOriginal) => ({
       parentPath: join(GAME_TEXT_DIRECTORY, BIN_OUTPUT_DIRECTORY, "Quest"),
     } satisfies Dirent,
   ]) as unknown as typeof readdirSync,
-  statSync: vi.fn<() => { size: number }>(() => ({ size: 100 })) as unknown as typeof statSync,
+  readFileSync: vi.fn<() => Buffer>(() => Buffer.from(CONTENT)) as unknown as typeof readFileSync,
 }));
 
 describe(fetchDump, () => {
@@ -48,7 +51,9 @@ describe(fetchDump, () => {
     );
     vi.mocked(fetchJson).mockImplementation((url) =>
       Promise.resolve({
-        tree: url.endsWith(`:${QUEST_BINARY_DIRECTORY_PATH}`) ? [{ path: "352.json", size: 100, type: "blob" }] : [],
+        tree: url.endsWith(`:${QUEST_BINARY_DIRECTORY_PATH}`)
+          ? [{ path: "352.json", sha: getGitBlobSha(Buffer.from(CONTENT)), type: "blob" }]
+          : [],
         truncated: false,
       }),
     );

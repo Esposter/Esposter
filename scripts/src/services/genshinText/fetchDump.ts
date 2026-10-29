@@ -4,7 +4,7 @@ import { listCarriedQuestBinaryFiles } from "#src/services/genshinText/listCarri
 import { listDumpFiles } from "#src/services/genshinText/listDumpFiles";
 import { listRemoteDirectory } from "#src/services/genshinText/listRemoteDirectory";
 
-// Every readable text, table, text map and held binary the dump lacks, or holds at another size, and each binary a carried
+// Every readable text, table, text map and held binary the dump lacks, or holds with other content, and each binary a carried
 // Quest reads, fetched from AnimeGameData. Returns a note of the count fetched and the count kept
 export const fetchDump = async (): Promise<string[]> => {
   const questListing = await listRemoteDirectory(QUEST_BINARY_DIRECTORY_PATH);
