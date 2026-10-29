@@ -2,7 +2,7 @@
 
 ## Decision
 
-The owner has stated that HoYoverse permits redistributing the official character packs. The app therefore publishes each pack to the public game data container, so a browser reads a character's model from the public container. This reverses the earlier decision against hosting them, which is no longer on record. No written grant is in the repository, so the basis is the owner's statement, cited under Sources.
+The owner has stated that HoYoverse permits redistributing the official character packs. The app therefore publishes each pack to the public game data container, so a browser reads a character's model from the public container. This reverses the earlier decision against hosting them. No written grant is in the repository, so the basis is the owner's statement, cited under Sources.
 
 The packs' bundled terms still say 「请勿二次配布」, do not redistribute, and miHoYo is named as the model's copyright holder. The publish carries each pack's terms folder unchanged, so the credit and the terms reach a reader with the model. The decision rests on the owner's permission, not on those terms.
 
@@ -33,6 +33,10 @@ The world reads each pack by its own names. Its model is the folder's one `.pmx`
 
 - An upload does not compare content first, so an unchanged file uploads again on a rerun.
 - A file a pack drops is not unpublished: a rerun replaces only the names the packs still hold.
+
+## Rejected
+
+- **Hosting the official packs in the app's own storage, served to every visitor.** Each pack's bundled terms forbid redistributing it, so the app held no pack and each copy stayed one a player or a developer already had. The owner's permission overturned this, and the Decision above publishes the packs on it.
 
 ## Key files
 
