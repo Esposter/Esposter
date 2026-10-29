@@ -1,20 +1,33 @@
+import type { ReferenceEntryPath } from "#src/models/genshinParity/reference/ReferenceEntryPath";
 import type { ReferencePackOutcome } from "#src/models/genshinParity/reference/ReferencePackOutcome";
 
 import { ParityReferenceKind } from "#src/models/genshinParity/reference/ParityReferenceKind";
 import { REFERENCE_PACK_LARGEST_COUNT } from "#src/services/genshinParity/reference/constants";
 import { formatMebibytes } from "#src/services/genshinParity/reference/formatMebibytes";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { relative } from "node:path";
 
 const KINDS = [ParityReferenceKind.Wiki, ParityReferenceKind.RecordingFrame, ParityReferenceKind.Other];
 
 const sumOf = (values: number[]): number => values.reduce((total, value) => total + value, 0);
 
-// The table `references pack` prints: the counts, the sizes by kind, the largest files packed, the ids whose rows were
-// replaced, the files with no screenshot, and the scratch screenshots no entry names, left in place
+// Each file named by its id and its repository path, since a file name alone is the same for every variant of a screen
+const formatEntryPaths = (paths: ReferenceEntryPath[]): string =>
+  paths
+    .map(({ id, path }) => `${id}: ${relative(REPOSITORY_ROOT, path)}`)
+    .toSorted()
+    .join(", ") || "none";
+
+// The table `references pack` prints: the counts, the sizes by kind, the largest files packed, the ids refused for a missing
+// input, the files restored from scratch, the files with no screenshot, the ids whose rows were replaced, and the scratch
+// screenshots no entry names, left in place
 export const formatPackTable = ({
   held,
   missing,
   packed,
+  refused,
   replaced,
+  restored,
   unnamed,
   written,
 }: ReferencePackOutcome): string => {
@@ -36,14 +49,16 @@ export const formatPackTable = ({
         `  ${file.padEnd(40)}${formatMebibytes(bytesBefore).padStart(12)}${formatMebibytes(bytesAfter).padStart(12)}`,
     );
   return [
-    `files    ${packed.length} packed, ${held.length} already committed, ${missing.length} with no screenshot here`,
+    `files    ${packed.length} packed, ${held.length} already committed, ${restored.length} restored, ${missing.length} with no screenshot here`,
     `written  ${written} files in the repository`,
+    `refused  ${formatEntryPaths(refused)}`,
     `kind               files        before         after`,
     ...kindRows,
     `largest ${REFERENCE_PACK_LARGEST_COUNT} after the pack`,
     ...largest,
     `replaced ${replaced.toSorted().join(", ") || "none"}`,
-    `missing  ${missing.toSorted().join(", ") || "none"}`,
+    `restored ${formatEntryPaths(restored)}`,
+    `missing  ${formatEntryPaths(missing)}`,
     `unnamed  ${unnamed.count} scratch screenshots no entry names, left in place, ${formatMebibytes(unnamed.bytes)}`,
   ].join("\n");
 };

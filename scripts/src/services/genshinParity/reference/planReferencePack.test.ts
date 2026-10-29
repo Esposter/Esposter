@@ -3,7 +3,11 @@ import type { ReferenceCollision } from "#src/models/genshinParity/reference/Ref
 import type { ReferenceEntryPlan } from "#src/models/genshinParity/reference/ReferenceEntryPlan";
 
 import { ParityReferenceKind } from "#src/models/genshinParity/reference/ParityReferenceKind";
+import { COMPONENTS_DIRECTORY } from "#src/services/genshinParity/fixtures/constants";
 import { planReferencePack } from "#src/services/genshinParity/reference/planReferencePack";
+import { getFixtureReferenceFilePath } from "#src/services/genshinParity/shared/getFixtureReferenceFilePath";
+import { getFlatReferenceFilePath } from "#src/services/genshinParity/shared/getFlatReferenceFilePath";
+import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 describe(planReferencePack, () => {
@@ -28,9 +32,11 @@ describe(planReferencePack, () => {
     files: [],
     held: [],
     id,
-    mainFile: `${id}.webp`,
+    mainPath: getFlatReferenceFilePath(id),
     missing: [],
     packed: [],
+    refused: false,
+    restored: [],
     row: isWritten ? createRow(id) : undefined,
   });
   const createCollision = (id: string): ReferenceCollision => ({ committed: COMMITTED, id, ours: OURS });
@@ -90,7 +96,16 @@ describe(planReferencePack, () => {
 
   test("refuses an id to replace that the map names with no screenshot", () => {
     expect.hasAssertions();
-    const plans = [{ ...createPlan("a"), missing: ["a.webp"] }];
+    const plans = [{ ...createPlan("a"), missing: [getFlatReferenceFilePath("a")] }];
+    expect(() => planReferencePack(plans, { replace: ["a"], skipColliding: false })).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: a, is not a reference the map names with a screenshot, so it has no row to replace]`,
+    );
+  });
+
+  test("refuses an id to replace whose screenshot is a fixture's file, listed as missing by its planned path", () => {
+    expect.hasAssertions();
+    const mainPath = getFixtureReferenceFilePath(join(COMPONENTS_DIRECTORY, "Foo", "Screen"), "");
+    const plans = [{ ...createPlan("a"), mainPath, missing: [mainPath] }];
     expect(() => planReferencePack(plans, { replace: ["a"], skipColliding: false })).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: a, is not a reference the map names with a screenshot, so it has no row to replace]`,
     );

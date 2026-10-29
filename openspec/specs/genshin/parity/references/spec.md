@@ -27,6 +27,19 @@ A reference image SHALL be committed to the repository as a lossless WebP file: 
 - **WHEN** the reference is packed
 - **THEN** its manifest row names the wiki file, or the recording and the second, that the reference comes from
 
+#### Scenario: Reference with an input missing is refused
+
+- **GIVEN** a reference the manifest holds, or with a screenshot or plate in the scratch folder, and an input its entry needs that is not there: its screenshot, or the plate its entry names
+- **WHEN** `references pack` runs
+- **THEN** it writes nothing for that reference, neither its files nor its row, and names the missing file by its planned path
+- **AND** the run packs the other references and exits 1 at the end
+
+#### Scenario: Reference with nothing packed yet
+
+- **GIVEN** a reference with no manifest row and no file in the scratch folder
+- **WHEN** `references pack` runs
+- **THEN** it is reported as having no screenshot, and the run exits 0
+
 ### Requirement: A reference is read from its committed file
 
 A command that reads a reference SHALL read the committed file, and a reference whose file is missing SHALL stop the command with the id and the path to add.

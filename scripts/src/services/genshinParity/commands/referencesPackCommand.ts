@@ -57,6 +57,8 @@ export const referencesPackCommand: SubCommandsDef[string] = defineCommand({
       console.log(formatPackTable(outcome));
       // The colliding ids come last, as one line, where a session that reruns the pack reads them
       if (outcome.skipped.length > 0) console.log(formatCollisionBlock(outcome.skipped));
+      // An id refused for a missing input is named in the table; the others were packed, and the run exits 1 for it
+      if (outcome.refused.length > 0) process.exitCode = 1;
       return;
     }
     // Collisions are a reference's, so the flags are refused for a record rather than ignored

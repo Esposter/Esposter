@@ -5,7 +5,7 @@ import type { ReferencePackOptions } from "#src/models/genshinParity/reference/R
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-const hasScreenshot = ({ mainFile, missing }: ReferenceEntryPlan) => !missing.includes(mainFile);
+const hasScreenshot = ({ mainPath, missing }: ReferenceEntryPlan) => !missing.includes(mainPath);
 
 // Decides what a pack stores from its plans and its options. A collision is one whose id is not replaced: `--skip-colliding`
 // leaves it out of the manifest and the files written, and without that flag it refuses the run. An id named by `--replace`

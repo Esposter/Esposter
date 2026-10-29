@@ -19,7 +19,8 @@ import { basename } from "node:path";
 // absent is written from a scratch copy that holds the held hash. `checkedRow` is the row the local bytes are checked
 // against, which a replace leaves out; `committed` is the manifest's own row, whose plate a replace with no local plate
 // keeps when the committed plate on disk still holds its hash. Nothing is written here, so a collision is known before any
-// file is written
+// file is written. An id with an image missing is refused when it is started, that is the manifest holds it or a scratch
+// copy is beside it: a row would name a file that is not there, so it writes nothing and its missing files are named
 export const planReferenceEntry = async (
   id: string,
   reference: ParityReference,
@@ -28,25 +29,30 @@ export const planReferenceEntry = async (
   committed: ParityReferenceManifestRow | undefined,
 ): Promise<ReferenceEntryPlan> => {
   const platePath = getReferencePlateFilePath(id);
-  // Each screenshot is named by the file its path is, so a variant whose primary sits beside its snapshot reads as that file
-  const mainLabel = basename(mainPath);
-  const plateLabel = basename(platePath);
   const main = await readEntryImage(getScratchReferencePath(id), checkedRow, mainPath);
-  if (main === undefined)
-    return {
-      collisions: [],
-      files: [],
-      held: [],
-      id,
-      mainFile: mainLabel,
-      missing: reference.plateSource === undefined ? [mainLabel] : [mainLabel, plateLabel],
-      packed: [],
-    };
   const plate =
     reference.plateSource === undefined
       ? undefined
       : await readEntryImage(getScratchPlatePath(id), checkedRow?.plate ?? committed?.plate, platePath);
-  const isPlateMissing = reference.plateSource !== undefined && plate === undefined;
+  const collisions = [main, plate].flatMap((entry) =>
+    entry?.collision === undefined ? [] : [{ committed: entry.collision.committed, id, ours: entry.collision.ours }],
+  );
+  const missing = [
+    ...(main?.image === undefined ? [mainPath] : []),
+    ...(reference.plateSource !== undefined && plate?.image === undefined ? [platePath] : []),
+  ];
+  if (main?.image === undefined || missing.length > 0)
+    return {
+      collisions,
+      files: [],
+      held: [],
+      id,
+      mainPath,
+      missing,
+      packed: [],
+      refused: committed !== undefined || main !== undefined || plate !== undefined,
+      restored: [],
+    };
   const base =
     checkedRow ??
     createReferenceManifestRow(
@@ -59,25 +65,28 @@ export const planReferenceEntry = async (
   const row: ParityReferenceManifestRow = { ...base, plate: plate?.image };
   const changed =
     checkedRow === undefined || JSON.stringify(sortObjectKeys(row)) !== JSON.stringify(sortObjectKeys(checkedRow));
-  const images: { entry: ReferenceEntryImage; file: string; path: string }[] = [
-    { entry: main, file: mainLabel, path: mainPath },
-    ...(plate === undefined ? [] : [{ entry: plate, file: plateLabel, path: platePath }]),
+  const images: { entry: ReferenceEntryImage; path: string }[] = [
+    { entry: main, path: mainPath },
+    ...(plate === undefined ? [] : [{ entry: plate, path: platePath }]),
   ];
-  const packed: ReferencePackFile[] = images.flatMap(({ entry, file }) =>
-    entry.isNew ? [{ bytesAfter: entry.image.bytes, bytesBefore: entry.bytesBefore, file, id, kind: base.kind }] : [],
+  const packed: ReferencePackFile[] = images.flatMap(({ entry, path }) =>
+    entry.isNew && entry.image !== undefined
+      ? [{ bytesAfter: entry.image.bytes, bytesBefore: entry.bytesBefore, file: basename(path), id, kind: base.kind }]
+      : [],
   );
   return {
-    collisions: images.flatMap(({ entry }) =>
-      entry.collision === undefined ? [] : [{ committed: entry.collision.committed, id, ours: entry.collision.ours }],
-    ),
+    collisions,
     files: images.flatMap(({ entry, path }): ReferenceStoredFile[] =>
       entry.stored === undefined ? [] : [{ bytes: entry.stored, path }],
     ),
-    held: images.flatMap(({ entry, file }) => (entry.isNew ? [] : [file])),
+    // A file the pack did not write is held, and a file it wrote where the committed one was absent is restored
+    held: images.flatMap(({ entry, path }) => (entry.isNew || entry.stored !== undefined ? [] : [{ id, path }])),
     id,
-    mainFile: mainLabel,
-    missing: isPlateMissing ? [plateLabel] : [],
+    mainPath,
+    missing: [],
     packed,
+    refused: false,
+    restored: images.flatMap(({ entry, path }) => (!entry.isNew && entry.stored !== undefined ? [{ id, path }] : [])),
     row: changed ? row : undefined,
   };
 };
