@@ -5,6 +5,14 @@ import { listFixtureScreens } from "#src/services/genshinParity/fixtures/listFix
 import { planReferenceFiles } from "#src/services/genshinParity/reference/planReferenceFiles";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 
-// The committed file of every reference the map names, planned from the fixture folders and the map
-export const readReferenceFiles = async (): Promise<ReferenceFilePlan[]> =>
+const planFromFixtureFolders = async (): Promise<ReferenceFilePlan[]> =>
   planReferenceFiles(ParityReferenceMap, await listFixtureScreens(COMPONENTS_DIRECTORY, ParityReferenceMap, new Map()));
+
+let referenceFiles: Promise<ReferenceFilePlan[]> | undefined;
+
+// The committed file of every reference the map names, planned from the fixture folders and the map. Read once per process,
+// since neither changes during a command and every reference's lookup reads it: the components tree is walked once, not per reference
+export const readReferenceFiles = (): Promise<ReferenceFilePlan[]> => {
+  referenceFiles ??= planFromFixtureFolders();
+  return referenceFiles;
+};

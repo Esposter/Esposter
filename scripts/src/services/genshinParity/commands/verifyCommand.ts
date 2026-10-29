@@ -3,9 +3,9 @@ import type { SubCommandsDef } from "citty";
 import { VerifyOutcome } from "#src/models/genshinParity/reference/VerifyOutcome";
 import { CAPTURES_DIRECTORY } from "#src/services/genshinParity/game/constants";
 import { getReferenceManifestProblems } from "#src/services/genshinParity/reference/getReferenceManifestProblems";
-import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
 import { verifyReferences } from "#src/services/genshinParity/reference/verifyReferences";
+import { getPlannedReferencePath } from "#src/services/genshinParity/shared/getPlannedReferencePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { defineCommand } from "citty";
 
@@ -20,7 +20,7 @@ export const verifyCommand: SubCommandsDef[string] = defineCommand({
     // A reference the manifest does not hold is skipped, since there is no stored image to check
     const verifications = await verifyReferences(ParityReferenceMap, CAPTURES_DIRECTORY, async (referenceId) => {
       const row = rows.find(({ id }) => id === referenceId);
-      return row === undefined ? undefined : getReferencePath(referenceId);
+      return row === undefined ? undefined : getPlannedReferencePath(referenceId);
     });
     const countOf = (outcome: VerifyOutcome): number =>
       verifications.filter((verification) => verification.outcome === outcome).length;

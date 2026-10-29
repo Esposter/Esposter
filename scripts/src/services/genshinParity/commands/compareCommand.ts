@@ -12,18 +12,19 @@ import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constant
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
 import { getMissingReferenceInputs } from "#src/services/genshinParity/reference/getMissingReferenceInputs";
 import { getWorstCells } from "#src/services/genshinParity/reference/getWorstCells";
-import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
+import { getPlannedReferencePath } from "#src/services/genshinParity/shared/getPlannedReferencePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { roundHundredths } from "#src/services/genshinParity/shared/roundHundredths";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseWholeCount } from "#src/services/shared/parseWholeCount";
 import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { existsSync } from "node:fs";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 
 // The worst cells a comparison names by default, the grid's most-differing cells
 const DEFAULT_CELL_COUNT = "10";
@@ -56,6 +57,8 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
     const cellCount = parseWholeCount(args.cells, "cells", 1);
     const referenceIds = args.all ? Object.keys(ParityReferenceMap) : [args.reference ?? ""];
     const scores: Record<string, ParityScore> = {};
+    // The committed images the run found missing, each named with its path once the run has written what it measured
+    const missingImages: string[] = [];
     // A page that predates a build of its packages is replaced for this run alone, and the replacement stopped when the run ends
     const freshPage = await startFreshPageServer();
     const pageRoot = freshPage === undefined ? undefined : `${freshPage.origin}/parity/`;
@@ -82,13 +85,16 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
                 : join(getComponentDirectory(layerComponent).root, WITNESS_LAYOUT_FILE_NAME);
             // A reference the manifest does not hold has no stored image to measure, so it is named missing rather than fetched
             const row = manifestRows.find(({ id }) => id === referenceId);
+            const referencePath = row === undefined ? undefined : await getPlannedReferencePath(referenceId);
             const missing =
-              row === undefined
+              referencePath === undefined
                 ? ["reference image in the manifest"]
-                : getMissingReferenceInputs(await getReferencePath(referenceId), witnessLayoutPath, existsSync);
+                : getMissingReferenceInputs(referencePath, witnessLayoutPath, existsSync);
             // A reference not yet measurable keeps its row as the report last had it, and the run goes on to the next
             if (missing.length > 0) {
               console.error(`not measured: ${missing.join(", ")}`);
+              if (referencePath !== undefined && !existsSync(referencePath))
+                missingImages.push(relative(REPOSITORY_ROOT, referencePath));
               continue;
             }
           }
@@ -124,5 +130,8 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
     // A witness's scores price the exports, not the scene, so the committed report keeps the scene's own. Only `--all`
     // Visits every reference, so it alone is the full run that may drop a row; a single reference's scores are a subset
     if (!args.witness) await writeParityScores(scores, args.all ? ParityReportRun.Full : ParityReportRun.Subset);
+    // A missing committed image fails the run, so it is named once the scores of the others are written
+    for (const missingImage of missingImages) console.error(`missing committed image: ${missingImage}`);
+    if (missingImages.length > 0) process.exitCode = 1;
   },
 });

@@ -1,20 +1,22 @@
-import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
 import type { ReferenceVerification } from "#src/models/genshinParity/reference/ReferenceVerification";
 import type { VerifyPaths } from "#src/models/genshinParity/reference/VerifyPaths";
+import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
 
 import { VerifyOutcome } from "#src/models/genshinParity/reference/VerifyOutcome";
+import { VERIFY_TOLERANCE_PERCENT } from "#src/services/genshinParity/reference/constants";
 import { cutRecordingFrame } from "#src/services/genshinParity/reference/cutRecordingFrame";
 import { getOutsideRegion } from "#src/services/genshinParity/reference/getOutsideRegion";
 import { isWithinVerifyTolerance } from "#src/services/genshinParity/reference/isWithinVerifyTolerance";
 import { measureMeanDifference } from "#src/services/genshinParity/reference/measureMeanDifference";
 import { parseRecordingSource } from "#src/services/genshinParity/reference/parseRecordingSource";
 import { readImageSize } from "#src/services/genshinParity/reference/readImageSize";
-import { VERIFY_TOLERANCE_PERCENT } from "#src/services/genshinParity/reference/constants";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { existsSync } from "node:fs";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 
 // Checks one reference against the frame its source names: its rectangles must lie within its file, then the frame is
-// Cut from the recording and the two are measured over the reference's region. A missing file or recording is skipped
+// Cut from the recording and the two are measured over the reference's region. A missing image fails the check, and a
+// Missing recording is skipped
 export const verifyReference = async (
   referenceId: string,
   source: string,
@@ -24,6 +26,12 @@ export const verifyReference = async (
   const referencePath = await paths.referencePath(referenceId);
   if (referencePath === undefined)
     return { id: referenceId, message: "no reference in the manifest", outcome: VerifyOutcome.Skipped };
+  if (!existsSync(referencePath))
+    return {
+      id: referenceId,
+      message: `no committed image at ${relative(REPOSITORY_ROOT, referencePath)}`,
+      outcome: VerifyOutcome.Fail,
+    };
   const file = await readImageSize(referencePath);
   const outside = getOutsideRegion(reference, file);
   if (outside !== undefined)

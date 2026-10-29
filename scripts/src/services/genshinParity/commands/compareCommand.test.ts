@@ -7,7 +7,11 @@ import { genshinParityCommand } from "#src/services/genshinParity/commands/gensh
 import { compareScreen } from "#src/services/genshinParity/reference/compareScreen";
 import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
+import { REFERENCE_MANIFEST_PATH } from "#src/services/genshinParity/shared/constants";
+import { getPlannedReferencePath } from "#src/services/genshinParity/shared/getPlannedReferencePath";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runCommand } from "citty";
+import { join } from "node:path";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinParity/reference/compareScreen"), () => ({
@@ -16,8 +20,11 @@ vi.mock(import("#src/services/genshinParity/reference/compareScreen"), () => ({
 vi.mock(import("#src/services/genshinParity/page/startFreshPageServer"), () => ({
   startFreshPageServer: vi.fn<() => Promise<undefined>>(),
 }));
-vi.mock(import("#src/services/genshinParity/reference/getMissingReferenceInputs"), () => ({
-  getMissingReferenceInputs: vi.fn<() => string[]>(() => []),
+// login-door's committed image is the manifest's own file, which is on disk, so `compare --all` measures it
+vi.mock(import("#src/services/genshinParity/shared/getPlannedReferencePath"), () => ({
+  getPlannedReferencePath: vi.fn<(referenceId: string) => Promise<string>>(() =>
+    Promise.resolve(REFERENCE_MANIFEST_PATH),
+  ),
 }));
 // The manifest holds login-door, whose image is measured from this path rather than fetched
 vi.mock(import("#src/services/genshinParity/reference/readReferenceManifest"), () => ({
@@ -36,9 +43,6 @@ vi.mock(import("#src/services/genshinParity/reference/readReferenceManifest"), (
       },
     ]),
   ),
-}));
-vi.mock(import("#src/services/genshinParity/shared/getReferencePath"), () => ({
-  getReferencePath: vi.fn<() => Promise<string>>(() => Promise.resolve("")),
 }));
 vi.mock(import("#src/services/genshinParity/reference/writeParityScores"), () => ({
   writeParityScores: vi.fn<typeof writeParityScores>(),
@@ -72,6 +76,7 @@ describe("compareCommand", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    process.exitCode = undefined;
   });
 
   test("compares every scored reference and names a pending one as pending, scoring none of it", async () => {
@@ -117,6 +122,20 @@ describe("compareCommand", () => {
       { "login-door": loginDoorScore },
       ParityReportRun.Subset,
     );
+  });
+
+  test("names a committed image that is missing, writes the run's scores and fails the run, rather than aborting it", async () => {
+    expect.hasAssertions();
+
+    const error = vi.spyOn(console, "error").mockReturnValue(undefined);
+    vi.spyOn(console, "log").mockReturnValue(undefined);
+    vi.mocked(getPlannedReferencePath).mockResolvedValueOnce(join(REPOSITORY_ROOT, "missing", "login-door.webp"));
+    await runCommand(genshinParityCommand, { rawArgs: ["compare", "--all"] });
+
+    expect(vi.mocked(compareScreen)).not.toHaveBeenCalled();
+    expect(error).toHaveBeenCalledWith(`missing committed image: ${join("missing", "login-door.webp")}`);
+    expect(vi.mocked(writeParityScores)).toHaveBeenLastCalledWith({}, ParityReportRun.Full);
+    expect(process.exitCode).toBe(1);
   });
 
   test("writes --all's compare as the full run, the one run that may drop a row", async () => {
