@@ -7,6 +7,8 @@ import { Object3D } from "three";
 import { describe, expect, test } from "vitest";
 
 describe(createStateCommand, () => {
+  const getCharacterName = (characterId: number) => (characterId === 1 ? "Amber" : "Kaeya");
+
   test("answers the position, place, hour, weather, health and party as one record", () => {
     expect.hasAssertions();
 
@@ -17,7 +19,7 @@ describe(createStateCommand, () => {
     const result = createStateCommand({
       body,
       catalogue: DEV_CATALOGUE,
-      getCharacterName: (characterId) => (characterId === 1 ? "Amber" : "Kaeya"),
+      getCharacterName,
       getGameClock: () => ({ minutes: 1260, minutesPerSecond: 0 }),
       getWeather: () => WeatherKind.Clear,
       party,
@@ -36,7 +38,7 @@ describe(createStateCommand, () => {
     const result = createStateCommand({
       body: new Object3D(),
       catalogue: DEV_CATALOGUE,
-      getCharacterName: (characterId) => (characterId === 1 ? "Amber" : "Kaeya"),
+      getCharacterName,
       getGameClock: () => undefined,
       getWeather: () => undefined,
       party,
