@@ -4,20 +4,21 @@ import { MathUtils } from "three";
 interface Props {
   // How far the pointer's disc reaches from its point, in the view's metres
   size: number;
+  // The pointer's place in the view, from its projected catalogue point, in the view's metres
   x?: number;
+  y?: number;
   // The yaw the view faces, in radians, as the camera turns it
   yaw?: number;
-  z?: number;
 }
 
-const { size, x = 0, yaw = 0, z = 0 } = defineProps<Props>();
+const { size, x = 0, y = 0, yaw = 0 } = defineProps<Props>();
 </script>
 
 <template>
-  <!-- The player on the map: a disc with a white cap above it that points the way the view faces, north at a yaw of
+  <!-- The player on the map: a disc with a white cap above it that points the way the view faces, up the map at a yaw of
        None, and turned the other way about the vertical than three turns it, since the map looks down on the ground.
        A dark tip hangs under it -->
-  <g :transform="`translate(${x} ${z}) rotate(${-MathUtils.radToDeg(yaw)}) scale(${size})`">
+  <g :transform="`translate(${x} ${y}) rotate(${-MathUtils.radToDeg(yaw)}) scale(${size})`">
     <circle class="rim" r="1.2" />
     <circle class="disc" r="1" />
     <path class="cap" d="M -0.7 -1 L 0 -1.8 L 0.7 -1 Z" />

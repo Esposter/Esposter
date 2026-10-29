@@ -17,6 +17,7 @@ import { computeExploredDoingIds } from "#src/services/exploration/computeExplor
 import { computeAreaLabels } from "#src/services/map/computeAreaLabels";
 import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
+import { computeMapFrameTransform } from "#src/services/map/computeMapFrameTransform";
 import { computeWheelZoomMetres } from "#src/services/map/computeWheelZoomMetres";
 import { computeZoomMetresAtShare } from "#src/services/map/computeZoomMetresAtShare";
 import { computeZoomShare } from "#src/services/map/computeZoomShare";
@@ -36,6 +37,8 @@ import {
 import { findAreaAt } from "#src/services/map/findAreaAt";
 import { findAreaNameAt } from "#src/services/map/findAreaNameAt";
 import { findLandmarkArea } from "#src/services/map/findLandmarkArea";
+import { projectMapPoint } from "#src/services/map/projectMapPoint";
+import { unprojectMapPoint } from "#src/services/map/unprojectMapPoint";
 import { ORIGINAL_RESIN_CAP } from "#src/services/originalResin/constants";
 import { regenerateOriginalResin } from "#src/services/originalResin/regenerateOriginalResin";
 import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
@@ -91,10 +94,10 @@ const zoomTrack = useTemplateRef("zoomTrack");
 // Map is dragged to from the player
 const metres = defineModel<number>("zoom", { required: true });
 const pan = ref({ x: 0, z: 0 });
-const view = computed(() => ({
-  x: camera.x + pan.value.x - metres.value / 2,
-  z: camera.z + pan.value.z - metres.value / 2,
-}));
+// The catalogue point the view is centred on, the player's own point until the map is dragged off it
+const centre = computed(() => ({ x: camera.x + pan.value.x, z: camera.z + pan.value.z }));
+const frameTransform = computed(() => computeMapFrameTransform(centre.value));
+const playerPlace = computed(() => projectMapPoint(camera, centre.value));
 const markRadius = computed(() => metres.value * MAP_OVERLAY_MARK_SHARE);
 const zoomThumbY = computed(() => MAP_ZOOM_TRACK_TOP + computeZoomShare(metres.value) * MAP_ZOOM_TRACK_HEIGHT);
 // A press's start and last place, whether it has travelled far enough to pan, and whether the slider is being dragged.
@@ -124,10 +127,12 @@ const onMapPointerMove = (event: PointerEvent) => {
   const { height, width } = map.value.getBoundingClientRect();
   // The map is drawn over the screen's larger side, so a pixel is that many metres of the drawn width
   const metresPerPixel = metres.value / Math.max(width, height);
-  pan.value = {
-    x: pan.value.x - (event.clientX - pointer.x) * metresPerPixel,
-    z: pan.value.z - (event.clientY - pointer.y) * metresPerPixel,
-  };
+  // The view moves opposite to the pointer on the screen, so the drag's place is read back into the catalogue from the centre
+  const drag = unprojectMapPoint(
+    { x: -(event.clientX - pointer.x) * metresPerPixel, y: -(event.clientY - pointer.y) * metresPerPixel },
+    { x: 0, z: 0 },
+  );
+  pan.value = { x: pan.value.x + drag.x, z: pan.value.z + drag.z };
   pointer = { x: event.clientX, y: event.clientY };
 };
 const onMapPointerUp = () => {
@@ -175,15 +180,14 @@ const areaLabels = computed(() =>
     id,
     name,
     progressSegments: progressSegmentsMap.value.get(id) ?? [],
-    x,
-    z,
+    ...projectMapPoint({ x, z }, centre.value),
   })),
 );
 // Each subarea's name at its place, named in the reader's language; a subarea whose text the language lacks is left out
 const subareaNames = computed(() =>
   subareaLabels.flatMap(({ nameTextId, x, z }) => {
     const name = nameText[nameTextId];
-    return name ? [{ name, x, z }] : [];
+    return name ? [{ name, ...projectMapPoint({ x, z }, centre.value) }] : [];
   }),
 );
 // The place the character stands in, named at the bottom right with its progress line as the map names it: its city
@@ -215,7 +219,7 @@ onMounted(() => {
     <svg
       ref="map"
       class="map"
-      :viewBox="`${view.x} ${view.z} ${metres} ${metres}`"
+      :viewBox="`${-metres / 2} ${-metres / 2} ${metres} ${metres}`"
       preserveAspectRatio="xMidYMid slice"
       aria-hidden="true"
       @click.capture="(event) => onMapClickCapture(event)"
@@ -225,21 +229,27 @@ onMounted(() => {
       @pointerup="onMapPointerUp()"
       @wheel="metres = computeWheelZoomMetres(metres, $event.deltaY)"
     >
-      <MapDrawing :catalogue :landmarks :mark-radius @select="(landmark) => chooseLandmark(landmark)" />
+      <MapDrawing
+        :catalogue
+        :landmarks
+        :mark-radius
+        :transform="frameTransform"
+        @select="(landmark) => chooseLandmark(landmark)"
+      />
       <template v-if="metres <= MAP_SUBAREA_LABEL_MAX_METRES">
         <text
-          v-for="({ name, x, z }, index) of subareaNames"
+          v-for="({ name, x, y }, index) of subareaNames"
           :key="index"
           class="subarea-name"
           :font-size="metres * MAP_SUBAREA_LABEL_SHARE"
           :x
-          :y="z"
+          :y
         >
           {{ name }}
         </text>
       </template>
-      <template v-for="{ id, name, progressSegments, x, z } of areaLabels" :key="id">
-        <text class="area-name" :font-size="metres * MAP_LABEL_SHARE" :x :y="z">
+      <template v-for="{ id, name, progressSegments, x, y } of areaLabels" :key="id">
+        <text class="area-name" :font-size="metres * MAP_LABEL_SHARE" :x :y>
           {{ name }}
         </text>
         <text
@@ -247,12 +257,12 @@ onMounted(() => {
           class="area-progress"
           :font-size="metres * MAP_PROGRESS_SHARE"
           :x
-          :y="z + metres * MAP_PROGRESS_OFFSET_SHARE"
+          :y="y + metres * MAP_PROGRESS_OFFSET_SHARE"
         >
           <tspan v-for="({ color, text }, index) of progressSegments" :key="index" :fill="color">{{ text }}</tspan>
         </text>
       </template>
-      <MapPointer :size="markRadius" :x="camera.x" :yaw="camera.yaw" :z="camera.z" />
+      <MapPointer :size="markRadius" :x="playerPlace.x" :y="playerPlace.y" :yaw="camera.yaw" />
     </svg>
     <svg
       ref="zoomTrack"
