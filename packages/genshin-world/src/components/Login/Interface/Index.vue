@@ -316,7 +316,7 @@ watch(
 /* Mainland China's age rating, measured off its launch recording (`bili-av532052219`, 1080 high): a white card of 84 by
    110 units, 65 in from the screen's right and 52 down, its edges read at their sub-pixel places (overhanging the
    Badge's box by 0.8 and 0.2 units, hence `overflow: visible`), and a blue panel inset 6.3 and 7.5 over a white band
-   Naming it. Its button's layout adaptor sizes it at run time, so the badge is placed from the corner its rect stands
+   naming it. Its button's layout adaptor sizes it at run time, so the badge is placed from the corner its rect stands
    40 canvas units in from */
 .age-rating {
   position: absolute;
