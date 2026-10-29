@@ -20,6 +20,12 @@
       "sourceFormat": "bin"
     },
     {
+      "bytes": 193920287,
+      "path": "extracted\\maps\\gi_map.bin",
+      "sha256": "257722a28bd505eba91a0489f1b066f03b734cd9a636dbf31236f3d06b7ddd85",
+      "sourceFormat": "bin"
+    },
+    {
       "bytes": 5477986,
       "path": "transfer/mondstadt-gate-walls.zip",
       "sha256": "60c849ccdec6d33eb1b7ca6a35724ba62e76cebb7fd14299494a3601c1b1f234",
