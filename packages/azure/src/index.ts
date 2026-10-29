@@ -11,6 +11,7 @@ export * from "./services/table/constants.ts";
 export * from "./services/table/deserializeKey.ts";
 export * from "./services/table/getTableNullClause.ts";
 export * from "./services/table/serializeKey.ts";
+export * from "./services/transformer/checkIsBinaryOperator.ts";
 export * from "./services/transformer/constants.ts";
 export * from "./services/transformer/deserializeClause.ts";
 export * from "./services/transformer/deserializeValue.ts";

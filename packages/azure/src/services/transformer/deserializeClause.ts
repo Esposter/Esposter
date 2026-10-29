@@ -1,13 +1,12 @@
 import type { Clause } from "#src/models/shared/Clause";
 
-import { BinaryOperator } from "#src/models/shared/BinaryOperator";
+import type { BinaryOperator } from "#src/models/shared/BinaryOperator";
+
 import { deserializeKey } from "#src/services/table/deserializeKey";
+import { checkIsBinaryOperator } from "#src/services/transformer/checkIsBinaryOperator";
 import { CLAUSE_REGEX } from "#src/services/transformer/constants";
 import { deserializeValue } from "#src/services/transformer/deserializeValue";
 import { normalizeString, NotFoundError } from "@esposter/shared";
-
-const checkIsBinaryOperator = (value: string): value is BinaryOperator =>
-  Object.values<string>(BinaryOperator).includes(value);
 
 export const deserializeClause = (
   serializedClause: string,
@@ -19,8 +18,8 @@ export const deserializeClause = (
   // `value`, because a collection-emptiness clause carries none
   const groups = match.groups as Record<"key" | "not" | "operator" | "value", string> | undefined;
   if (!groups) throw new NotFoundError(deserializeClause.name, normalizedClause);
-  // The clause regex builds its operator group from BinaryOperators and matches it in any case, so this throw is
-  // Unreachable: the lower-cased group is always a member, and the check only narrows the type
+  // The clause regex builds its operator group from BinaryOperators and matches it in any case.
+  // So the lower-cased group is always a member: this throw is unreachable, and the check only narrows the type
   const operator = groups.operator.toLowerCase();
   if (!checkIsBinaryOperator(operator)) throw new NotFoundError(deserializeClause.name, normalizedClause);
   return { key: deserializeKey(groups.key), not: Boolean(groups.not), operator, value: deserializeValue(groups.value) };
