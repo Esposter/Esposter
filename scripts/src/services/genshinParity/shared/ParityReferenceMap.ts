@@ -895,10 +895,11 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Nasha Town.png",
   },
-  // The English PC client's Paimon menu on the current build, from a 2026 recording (`yt-jHr2bERjkYc`, 25 seconds in) cut at
-  // 2560 by 1440 with no screen open; every tile reads open though the account is at Adventure Rank 2, so the fixture's rank is
-  // 20. Scored over the top 1080 rows of the side bar and the panel, above their translucent feet where the world shows
-  // Through; the recording's pillarbox, logo and UID lie outside the region
+  // The English PC client's Paimon menu on the current build, from a 2026 recording (`yt-jHr2bERjkYc`, 25 seconds in), cut
+  // at 1920 by 1080 with the recording's pillarbox around the game window and no screen open. The logo and the UID at the
+  // Frame's bottom right lie outside the region; the panel's own UID, name and avatar lie inside it. The account is at
+  // Adventure Rank 2, and every tile the frame draws reads open. Scored over the side bar and the panel, their translucent
+  // Feet where the world shows through included
   "paimon-menu": {
     region: { height: 1080, width: 810, x: 150, y: 0 },
     screen: "MenuPaimon",
