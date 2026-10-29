@@ -1,6 +1,6 @@
 import type { BuiltKit } from "#src/models/genshinAssets/kits/build/BuiltKit";
 import type { KitInput } from "#src/models/genshinAssets/kits/build/KitInput";
-import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitOverlay } from "#src/models/shared/KitOverlay";
 
 import { readDonorRecordMap } from "#src/services/genshinAssets/kits/readDonorRecordMap";
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";

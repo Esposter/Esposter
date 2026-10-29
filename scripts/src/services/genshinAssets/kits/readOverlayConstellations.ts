@@ -1,4 +1,4 @@
-import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitOverlay } from "#src/models/shared/KitOverlay";
 
 import { kitParameterSchema } from "genshin-world";
 

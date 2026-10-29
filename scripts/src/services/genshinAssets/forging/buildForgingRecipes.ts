@@ -1,6 +1,6 @@
 import type { ExcelForgeRandomRow } from "#src/models/genshinAssets/forging/ExcelForgeRandomRow";
 import type { ExcelForgeRow } from "#src/models/genshinAssets/forging/ExcelForgeRow";
-import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 
 import {
   FORGE_RANDOM_TABLE_NAME,

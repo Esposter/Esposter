@@ -1,5 +1,5 @@
 import type { GcsimHitSource } from "#src/models/genshinAssets/kits/gcsim/GcsimHitSource";
-import type { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
+import type { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import type { AttackArea } from "genshin-world";
 
 // What a gcsim character's values reach its kit's candidates through: a value cited at a file of the character's

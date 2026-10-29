@@ -1,7 +1,7 @@
-import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitOverlay } from "#src/models/shared/KitOverlay";
 import type { KitOverlayEntry } from "#src/models/genshinAssets/kits/KitOverlayEntry";
 
-import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { GCSIM_CONFIG_FILE } from "#src/services/genshinAssets/kits/constants";
 import { TALENT_GROUP_ID_MAP } from "#src/services/genshinAssets/kits/constants.test";

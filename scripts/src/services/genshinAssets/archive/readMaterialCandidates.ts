@@ -1,6 +1,6 @@
 import type { ArchiveCandidate } from "#src/models/genshinAssets/archive/ArchiveCandidate";
 import type { ExcelMaterialCodexRow } from "#src/models/genshinAssets/archive/ExcelMaterialCodexRow";
-import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 
 import { MATERIAL_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";

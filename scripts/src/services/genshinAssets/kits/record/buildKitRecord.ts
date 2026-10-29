@@ -1,6 +1,6 @@
 import type { BuiltKit } from "#src/models/genshinAssets/kits/build/BuiltKit";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
-import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitOverlay } from "#src/models/shared/KitOverlay";
 import type { KitValueSource } from "#src/models/genshinAssets/kits/KitValueSource";
 import type { NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";

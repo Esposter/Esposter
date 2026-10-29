@@ -3,7 +3,7 @@ import type { AttackArea } from "genshin-world";
 
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
-import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { createBoxReach } from "#src/services/genshinAssets/kits/gcsim/createBoxReach";
 import { createCircleReach } from "#src/services/genshinAssets/kits/gcsim/createCircleReach";
 import { createFanReach } from "#src/services/genshinAssets/kits/gcsim/createFanReach";

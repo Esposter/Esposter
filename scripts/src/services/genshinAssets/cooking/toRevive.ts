@@ -1,4 +1,4 @@
-import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 import type { DishUse } from "genshin-world";
 
 import { REVIVE_BUFF_DESCRIPTION_REGEX } from "#src/services/genshinAssets/cooking/constants";

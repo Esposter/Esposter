@@ -1,6 +1,6 @@
 import type { ExcelAvatarFettersLevelRow } from "#src/models/genshinAssets/friendship/ExcelAvatarFettersLevelRow";
 import type { ExcelFetterCharacterCardRow } from "#src/models/genshinAssets/friendship/ExcelFetterCharacterCardRow";
-import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 
 import { toFriendshipLevels } from "#src/services/genshinAssets/friendship/toFriendshipLevels";
 import { toFriendshipNamecards } from "#src/services/genshinAssets/friendship/toFriendshipNamecards";

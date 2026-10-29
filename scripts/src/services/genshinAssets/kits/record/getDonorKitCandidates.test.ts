@@ -1,6 +1,6 @@
-import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitOverlay } from "#src/models/shared/KitOverlay";
 
-import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getDonorKitCandidates } from "#src/services/genshinAssets/kits/record/getDonorKitCandidates";

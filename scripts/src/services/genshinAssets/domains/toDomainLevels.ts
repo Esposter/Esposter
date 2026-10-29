@@ -1,7 +1,7 @@
 import type { ExcelDungeonEntryRow } from "#src/models/genshinAssets/domains/ExcelDungeonEntryRow";
 import type { ExcelDungeonLevelEntityRow } from "#src/models/genshinAssets/domains/ExcelDungeonLevelEntityRow";
 import type { ExcelDungeonRow } from "#src/models/genshinAssets/domains/ExcelDungeonRow";
-import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/shared/ExcelRewardPreviewRow";
 import type { DumpedScenePoint } from "#src/models/genshinAssets/world/DumpedScenePoint";
 import type { DomainLevel, DomainSchedule } from "genshin-world";

@@ -1,4 +1,4 @@
-import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
 import type { GameDataBuild } from "#src/models/shared/GameDataBuild";

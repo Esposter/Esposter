@@ -1,7 +1,7 @@
 import type { KitOverlayEntry } from "#src/models/genshinAssets/kits/KitOverlayEntry";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
-import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { checkIsKitValueResolvedEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueResolvedEqual";
 
 // The overlay entry a value gets on a compare: a source choice stands as the classifier gives it, and a cause the

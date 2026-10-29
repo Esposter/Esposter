@@ -1,6 +1,6 @@
 import type { MachineHeartbeat } from "#src/models/fleet/MachineHeartbeat";
 
-import { lastPushSchema } from "#src/models/fleet/LastPush";
+import { lastPushSchema } from "#src/models/shared/LastPush";
 import { checkIsInstant } from "#src/services/shared/checkIsInstant";
 
 export const checkIsHeartbeat = (value: unknown): value is MachineHeartbeat =>

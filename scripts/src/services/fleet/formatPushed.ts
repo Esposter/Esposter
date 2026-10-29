@@ -1,4 +1,4 @@
-import type { LastPush } from "#src/models/fleet/LastPush";
+import type { LastPush } from "#src/models/shared/LastPush";
 
 import { formatAge } from "#src/services/shared/formatAge";
 

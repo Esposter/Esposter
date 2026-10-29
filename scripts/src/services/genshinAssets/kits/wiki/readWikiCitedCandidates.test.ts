@@ -1,4 +1,4 @@
-import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitOverlay } from "#src/models/shared/KitOverlay";
 import type { WikiTalentPage } from "#src/models/genshinAssets/kits/wiki/WikiTalentPage";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";

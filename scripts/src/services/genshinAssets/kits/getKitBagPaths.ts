@@ -1,4 +1,4 @@
-import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitOverlay } from "#src/models/shared/KitOverlay";
 import type { KitRecord } from "genshin-world";
 
 // The names a kit's module reads from its bags, as the paths they hold at: the published record's `frames` and

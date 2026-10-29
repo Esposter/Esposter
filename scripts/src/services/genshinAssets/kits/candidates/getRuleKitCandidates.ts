@@ -1,7 +1,7 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { Element } from "genshin-world";
 
-import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";

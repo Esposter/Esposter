@@ -43,7 +43,6 @@
 | `scripts/src/models/genshinAssets/forging`                                                | —                      |       |
 | `scripts/src/models/genshinAssets/friendship`                                             | —                      |       |
 | `scripts/src/models/genshinAssets/gadgets`                                                | —                      |       |
-| `scripts/src/models/genshinAssets/gathering`                                              | —                      |       |
 | `scripts/src/models/genshinAssets/gcg`                                                    | —                      |       |
 | `scripts/src/models/genshinAssets/home`                                                   | —                      |       |
 | `scripts/src/models/genshinAssets/imaginarium`                                            | —                      |       |
@@ -51,9 +50,9 @@
 | `scripts/src/models/genshinAssets/items`                                                  | —                      |       |
 | `scripts/src/models/genshinAssets/kits/KitCandidate.ts`                                   | —                      |       |
 | `scripts/src/models/genshinAssets/kits/KitCandidateSources.ts`                            | —                      |       |
-| `scripts/src/models/genshinAssets/kits/KitOverlay.ts`                                     | —                      |       |
+| `scripts/src/models/shared/KitOverlay.ts`                                                 | —                      |       |
 | `scripts/src/models/genshinAssets/kits/KitOverlayEntry.ts`                                | 2026-10-25 · Haiku 5.5 |       |
-| `scripts/src/models/genshinAssets/kits/KitProvisionalCause.ts`                            | —                      |       |
+| `scripts/src/models/shared/KitProvisionalCause.ts`                                        | —                      |       |
 | `scripts/src/models/genshinAssets/kits/KitRule.ts`                                        | —                      |       |
 | `scripts/src/models/genshinAssets/kits/KitSource.ts`                                      | —                      |       |
 | `scripts/src/models/genshinAssets/kits/KitSources.ts`                                     | —                      |       |

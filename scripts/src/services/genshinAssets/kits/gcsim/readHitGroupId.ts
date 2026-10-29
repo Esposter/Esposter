@@ -1,4 +1,4 @@
-import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitOverlay } from "#src/models/shared/KitOverlay";
 
 import { readMultiplierGroupId } from "#src/services/genshinAssets/kits/gcsim/readMultiplierGroupId";
 

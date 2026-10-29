@@ -1,4 +1,4 @@
-import type { LastPush } from "#src/models/fleet/LastPush";
+import type { LastPush } from "#src/models/shared/LastPush";
 
 import { REMOTE_QUEUE_REF } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";

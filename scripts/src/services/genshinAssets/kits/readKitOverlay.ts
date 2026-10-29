@@ -1,6 +1,6 @@
-import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitOverlay } from "#src/models/shared/KitOverlay";
 
-import { kitOverlaySchema } from "#src/models/genshinAssets/kits/KitOverlay";
+import { kitOverlaySchema } from "#src/models/shared/KitOverlay";
 import { KIT_OVERLAY_DIRECTORY } from "#src/services/genshinAssets/kits/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { expandKitOverlay } from "genshin-world";

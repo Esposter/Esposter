@@ -1,4 +1,4 @@
-import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 import type { ExcelAvatarTalentRow } from "#src/models/genshinAssets/stats/ExcelAvatarTalentRow";
 import type { ExcelSkillDepotRow } from "#src/models/genshinAssets/stats/ExcelSkillDepotRow";
 import type { CharacterConstellationKit, Constellation, ConstellationDepot } from "genshin-world";

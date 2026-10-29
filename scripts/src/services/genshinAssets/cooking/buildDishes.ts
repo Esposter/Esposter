@@ -1,5 +1,5 @@
 import type { BuffRow } from "#src/models/genshinAssets/cooking/BuffRow";
-import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 import type { CookingRecipe } from "genshin-world";
 
 import { BUFF_TABLE_NAME } from "#src/services/genshinAssets/cooking/constants";

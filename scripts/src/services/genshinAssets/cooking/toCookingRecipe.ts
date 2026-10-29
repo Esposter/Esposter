@@ -1,6 +1,6 @@
 import type { CookBonusRow } from "#src/models/genshinAssets/cooking/CookBonusRow";
 import type { CookRecipeRow } from "#src/models/genshinAssets/cooking/CookRecipeRow";
-import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 import type { CookingRecipe, CookingSpecialty } from "genshin-world";
 
 import { COOK_BONUS_REPLACE_TYPE } from "#src/services/genshinAssets/cooking/constants";

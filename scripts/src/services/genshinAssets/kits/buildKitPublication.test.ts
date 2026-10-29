@@ -1,10 +1,10 @@
 import type { KitInput } from "#src/models/genshinAssets/kits/build/KitInput";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
-import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitOverlay } from "#src/models/shared/KitOverlay";
 import type { KitOverlayEntry } from "#src/models/genshinAssets/kits/KitOverlayEntry";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
-import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { buildKitPublication } from "#src/services/genshinAssets/kits/buildKitPublication";

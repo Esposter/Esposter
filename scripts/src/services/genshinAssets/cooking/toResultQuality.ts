@@ -1,4 +1,4 @@
-import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 import type { CookingQuality } from "genshin-world";
 
 import { FoodQualityCookingQualityMap } from "#src/services/genshinAssets/cooking/constants";

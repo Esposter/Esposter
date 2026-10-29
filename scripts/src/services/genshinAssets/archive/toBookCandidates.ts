@@ -2,7 +2,7 @@ import type { BookCandidate } from "#src/models/genshinAssets/archive/BookCandid
 import type { ExcelBooksCodexRow } from "#src/models/genshinAssets/archive/ExcelBooksCodexRow";
 import type { ExcelDocumentRow } from "#src/models/genshinAssets/archive/ExcelDocumentRow";
 import type { ExcelLocalizationRow } from "#src/models/genshinAssets/archive/ExcelLocalizationRow";
-import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 
 import { LOC_TEXT_ASSET_TYPE } from "#src/services/genshinAssets/archive/constants";
 

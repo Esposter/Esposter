@@ -1,5 +1,5 @@
 import type { ExcelCombineRow } from "#src/models/genshinAssets/crafting/ExcelCombineRow";
-import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 
 import { COMBINE_TABLE_NAME, UNLOCK_COMBINE_USE_OP } from "#src/services/genshinAssets/crafting/constants";
 import { toCraftingRecipe } from "#src/services/genshinAssets/crafting/toCraftingRecipe";

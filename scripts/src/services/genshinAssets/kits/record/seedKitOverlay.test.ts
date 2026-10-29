@@ -1,7 +1,7 @@
-import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitOverlay } from "#src/models/shared/KitOverlay";
 
-import { kitOverlaySchema } from "#src/models/genshinAssets/kits/KitOverlay";
-import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
+import { kitOverlaySchema } from "#src/models/shared/KitOverlay";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { seedKitOverlay } from "#src/services/genshinAssets/kits/record/seedKitOverlay";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";

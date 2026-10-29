@@ -1,6 +1,6 @@
 import type { KitOverlayEntry } from "#src/models/genshinAssets/kits/KitOverlayEntry";
 
-import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { keepCommittedKitCause } from "#src/services/genshinAssets/kits/record/keepCommittedKitCause";
 import { describe, expect, test } from "vitest";

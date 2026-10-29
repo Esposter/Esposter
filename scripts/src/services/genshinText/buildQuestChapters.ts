@@ -1,4 +1,4 @@
-import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 import type { DumpedChapter } from "#src/models/genshinText/DumpedChapter";
 import type { DumpedCity } from "#src/models/genshinText/DumpedCity";
 import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";

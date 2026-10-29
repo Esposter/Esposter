@@ -2,7 +2,7 @@ import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlayEntry } from "#src/models/genshinAssets/kits/KitOverlayEntry";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
-import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { checkIsKitValueResolvedEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueResolvedEqual";
 import { findSourceCandidate } from "#src/services/genshinAssets/kits/record/findSourceCandidate";

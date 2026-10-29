@@ -1,9 +1,9 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
-import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitOverlay } from "#src/models/shared/KitOverlay";
 import type { KitTableLabel } from "#src/models/genshinAssets/kits/tables/KitTableLabel";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
-import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
+import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getKitHitLabelMap } from "#src/services/genshinAssets/kits/tables/getKitHitLabelMap";
 import { CombatTalent, WeaponType } from "genshin-world";

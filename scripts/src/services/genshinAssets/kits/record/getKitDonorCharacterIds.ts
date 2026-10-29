@@ -1,4 +1,4 @@
-import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitOverlay } from "#src/models/shared/KitOverlay";
 
 // The characters an overlay borrows values from, each once, in the order its paths name them
 export const getKitDonorCharacterIds = (overlay: KitOverlay): number[] => [

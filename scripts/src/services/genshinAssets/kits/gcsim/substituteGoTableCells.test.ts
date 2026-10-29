@@ -1,4 +1,4 @@
-import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitOverlay } from "#src/models/shared/KitOverlay";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { GCSIM_CONFIG_FILE } from "#src/services/genshinAssets/kits/constants";

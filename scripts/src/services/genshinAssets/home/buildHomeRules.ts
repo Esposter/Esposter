@@ -1,7 +1,7 @@
 import type { ExcelComfortLevelRow } from "#src/models/genshinAssets/home/ExcelComfortLevelRow";
 import type { ExcelFurnitureMakeRow } from "#src/models/genshinAssets/home/ExcelFurnitureMakeRow";
 import type { ExcelHomeworldLevelRow } from "#src/models/genshinAssets/home/ExcelHomeworldLevelRow";
-import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
+import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 
 import {
   COMFORT_LEVEL_TABLE_NAME,
