@@ -10,6 +10,10 @@ import { APPROVE_ENVIRONMENT_VARIABLE } from "genshin-interface/constants";
 import { defaultClientConditions } from "vite";
 import { defineConfig } from "vitest/config";
 
+// The World fixture imports the terrain worker as Vite's `?worker` build. The package's own import map cannot name that
+// Query: an entry with it fails knip's entry check, and without one `#src/*` resolves the query as part of the file name
+const TERRAIN_WORKER_IMPORT = "#src/workers/terrainTile.worker?worker";
+
 // `genshin:parity approve` sets its variable, so its one-screen update compares exactly as the suite's own update does
 const browser = getVitestBrowserConfiguration(
   { height: 720, width: 1280 },
@@ -21,7 +25,10 @@ const browser = getVitestBrowserConfiguration(
 export default defineConfig({
   plugins: [...getVuePlugins(templateCompilerOptions), dynamicJsonImportPlugin, gameDataMirrorPlugin],
   // Its siblings from their source, as the page reads them
-  resolve: { conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
+  resolve: {
+    alias: { [TERRAIN_WORKER_IMPORT]: `${import.meta.dirname}/src/workers/terrainTile.worker.ts?worker` },
+    conditions: [SOURCE_CONDITION, ...defaultClientConditions],
+  },
   test: {
     browser,
     // The visual suite, and the screens' behaviour where only a browser runs it: the Web Animations and CSS

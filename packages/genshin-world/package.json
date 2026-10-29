@@ -32,8 +32,7 @@
     "#scripts/*": "./scripts/*.ts",
     "#src/*": "./src/*.ts",
     "#src/*.json": "./src/*.json",
-    "#src/*.vue": "./src/*.vue",
-    "#src/workers/terrainTile.worker?worker": "./src/workers/terrainTile.worker.ts?worker"
+    "#src/*.vue": "./src/*.vue"
   },
   "exports": {
     ".": {
@@ -80,9 +79,6 @@
     "test": "vitest",
     "test:visual": "vitest --config vitest.browser.config.ts",
     "typecheck": "tsrs --fast --runExternalCode"
-  },
-  "dependencies": {
-    "fflate": "catalog:"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
