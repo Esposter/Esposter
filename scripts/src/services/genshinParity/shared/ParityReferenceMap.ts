@@ -57,10 +57,13 @@ const RECORDING_NOT_ON_DISK = "its recording is not on disk";
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
   // The English PC client's Archive on its Equipment section's Weapons grid at 1080 high, from the public recording at 19.5 seconds: the
-  // First five rows of the weapons with the first one selected and the cursor resting on the fifth of the first row, forty entries
-  // Open. Its sword, the tiles' art and the unlocked "New" badges (a state the entries do not hold) are plated and not scored, as are
-  // The words the page does not draw yet (the count, the filter, the description), so the scored pixels are the name bands, the title,
-  // The filter bar and the selected name. The recorder's UID sits bottom right, below the region scored
+  // First five rows of the weapons with the first one selected and the cursor resting on the fifth of the first row, forty entries open.
+  // The page draws the header's title and counter on a dark ground of its own, each tile over a flat colour where the game draws its
+  // Picture, and each name band, the filter bar, the selected name with its lore, the close disc, the arrows and the New badges. Scored,
+  // By the mask: the name bands, the title, the counter, the close disc, the filter bar outside its funnel and label, and the selected name.
+  // Plated, filled from the still round them: the crest and the tab icons, which the page does not draw, the sword, which is game art, and
+  // The lore panel, since the still's own letters would show through the ground the page does not draw under the selected name. The tiles'
+  // Pictures, the arrows, the New badges and the description are drawn but unscored. The recorder's UID sits bottom right, below the region
   "archive-screen": {
     isBackdrop: true,
     mask: [
