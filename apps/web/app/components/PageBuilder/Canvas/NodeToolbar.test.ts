@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { createTestImageNode, TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { createTestImageNode, TEST_ID, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import PageBuilderCanvasNodeToolbar from "@/components/PageBuilder/Canvas/NodeToolbar.vue";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { TEST_NESTED_TEXT_ID, TEST_SECTION_ID, TEST_WEBPAGE } from "@/services/pageBuilder/constants.test";
@@ -16,7 +16,7 @@ describe("pageBuilderCanvasNodeToolbar", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
-      content: [createTestImageNode("https://example.com/a.png", TEST_OTHER_ID)],
+      content: [createTestImageNode(TEST_URL, TEST_OTHER_ID)],
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
@@ -48,8 +48,8 @@ describe("pageBuilderCanvasNodeToolbar", () => {
     const copyId = pageBuilderCanvasStore.getSelectedNodeId(TEST_ID);
 
     expect(pageBuilderDocumentStore.getDocument(TEST_ID)?.content).toStrictEqual([
-      createTestImageNode("https://example.com/a.png", TEST_OTHER_ID),
-      createTestImageNode("https://example.com/a.png", copyId),
+      createTestImageNode(TEST_URL, TEST_OTHER_ID),
+      createTestImageNode(TEST_URL, copyId),
     ]);
   });
 
@@ -59,7 +59,7 @@ describe("pageBuilderCanvasNodeToolbar", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
-      content: [createTestImageNode("https://example.com/a.png", TEST_OTHER_ID)],
+      content: [createTestImageNode(TEST_URL, TEST_OTHER_ID)],
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);

@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
 import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
 import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
@@ -39,14 +40,14 @@ describe("pageBuilderCanvas", () => {
       props: { announce: vi.fn<(message: string) => void>(), kind: webpageKind, resourceId: TEST_ID },
     });
 
-    expect(component.get<HTMLIFrameElement>("iframe").element.style.width).toBe("768px");
+    expect(component.get<HTMLIFrameElement>("iframe").element.style.width).toBe(`${DEVICE_WIDTH_MAP[PageBuilderDevice.Tablet]}px`);
   });
 
   test("switching to tablet draws the email at tablet width", async () => {
     expect.hasAssertions();
 
     const result = parseMjmlDocument(
-      `<mjml><mj-body><mj-section><mj-column><mj-text>Hello</mj-text></mj-column></mj-section></mj-body></mjml>`,
+      `<mjml><mj-body><mj-section><mj-column><mj-text>a</mj-text></mj-column></mj-section></mj-body></mjml>`,
       emailRegistry,
       emailBodyChildrenSchema,
       noteRichText,
@@ -63,7 +64,7 @@ describe("pageBuilderCanvas", () => {
       props: { announce: vi.fn<(message: string) => void>(), kind: emailKind, resourceId: TEST_ID },
     });
 
-    expect(component.get<HTMLIFrameElement>("iframe").element.style.width).toBe("768px");
+    expect(component.get<HTMLIFrameElement>("iframe").element.style.width).toBe(`${DEVICE_WIDTH_MAP[PageBuilderDevice.Tablet]}px`);
   });
 
   test("a page with no document draws nothing", async () => {

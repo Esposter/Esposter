@@ -40,6 +40,7 @@ describe("pageBuilderCanvasOverlays", () => {
     await nextTick();
 
     const outline = component.get<HTMLElement>("[data-outline='hover']").element;
+
     expect(outline.style.left).toBe("120px");
     expect(outline.style.top).toBe("40px");
   });
