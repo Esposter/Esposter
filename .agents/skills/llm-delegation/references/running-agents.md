@@ -16,6 +16,8 @@ The whole flow — waves, the fixer, the compute queue's runners — is `openspe
 
 Each agent in a batch works in its own worktree on `ai/queue`, set up and landed by the `review-queue` skill's loop, as the first bullet above sets out.
 
+Every independent unit of a batch is launched together, in one message, at the start, so none waits behind a sibling it does not depend on; a batch runs at most 20 agents at once. Its integration is one `haiku` integrator on the integration worktree, with the merge order and the conflict rules in its brief.
+
 A batch is earned by its prompts: every one a self-contained spec (`references/delegation-prompt.md`), and each unit runs on the family the `llm-delegation` skill's "In a session" table gives its work. The agent settles any further call that the existing code or a public source answers, writing it into the page's Decisions. Its failure mode is agents burning their budget re-reading context and never producing work, which is what a prompt that is a topic instead of a spec produces. The one spec work a batch may take is the fan-out over separate areas that the `openspec` skill (`references/area-passes.md`) allows.
 
 Plan the batch around what the agents touch:
