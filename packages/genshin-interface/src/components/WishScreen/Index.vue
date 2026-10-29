@@ -306,33 +306,38 @@ const bannerLabelText = computed(() => {
 
 .card-title {
   position: absolute;
-  top: calc(var(--unit) * 250);
+  top: calc(var(--unit) * 248);
   left: calc(var(--unit) * 377);
+  width: calc(var(--unit) * 450);
   margin: 0;
   color: #3e3c3d;
-  font-size: calc(var(--unit) * 58);
-  line-height: calc(var(--unit) * 72);
+  font-size: calc(var(--unit) * 70);
+  line-height: calc(var(--unit) * 74);
 }
 
 .probability {
   position: absolute;
-  top: calc(var(--unit) * 455);
+  top: calc(var(--unit) * 451);
   left: calc(var(--unit) * 377);
   margin: 0;
   color: #3e3c3d;
-  font-size: calc(var(--unit) * 26);
+  font-size: calc(var(--unit) * 36);
+  letter-spacing: calc(var(--unit) * 0.9);
+  line-height: calc(var(--unit) * 36);
 }
 
 .rate-up {
   position: absolute;
   top: calc(var(--unit) * 500);
   left: calc(var(--unit) * 377);
-  width: calc(var(--unit) * 462);
+  width: calc(var(--unit) * 465);
   box-sizing: border-box;
   margin: 0;
-  padding: calc(var(--unit) * 10) calc(var(--unit) * 36);
+  padding: calc(var(--unit) * 3) calc(var(--unit) * 20) 0 calc(var(--unit) * 39);
   background: rgb(62 195 238);
-  font-size: calc(var(--unit) * 20);
+  font-size: calc(var(--unit) * 28);
+  letter-spacing: calc(var(--unit) * 0.15);
+  line-height: calc(var(--unit) * 28.5);
 }
 
 .featured {
