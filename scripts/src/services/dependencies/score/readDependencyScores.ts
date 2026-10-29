@@ -1,11 +1,10 @@
 import type { DependencyScore } from "#src/models/dependencies/score/DependencyScore";
 import type { DependencyScoreReport } from "#src/models/dependencies/score/DependencyScoreReport";
 import type { InstalledPackage } from "#src/models/dependencies/score/InstalledPackage";
-import type { Packument } from "#src/models/dependencies/score/Packument";
-import type { RegistryCheckError } from "#src/models/shared/RegistryCheckError";
 
 import { ScoreSort } from "#src/models/dependencies/score/ScoreSort";
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
+import { checkIsLatestDeprecated } from "#src/services/dependencies/score/checkIsLatestDeprecated";
 import { LEDGER_PATH, NOT_IN_CLIENT_SKIP_REASON, UNJUDGED_VERDICT } from "#src/services/dependencies/score/constants";
 import { countDependencyLines } from "#src/services/dependencies/score/countDependencyLines";
 import { countModuleGraphLines } from "#src/services/dependencies/score/countModuleGraphLines";
@@ -23,45 +22,17 @@ import { readClientBundleReport } from "#src/services/dependencies/score/readCli
 import { readImportingFiles } from "#src/services/dependencies/score/readImportingFiles";
 import { readInstallCosts } from "#src/services/dependencies/score/readInstallCosts";
 import { readLedgerVerdicts } from "#src/services/dependencies/score/readLedgerVerdicts";
+import { readPackuments } from "#src/services/dependencies/score/readPackuments";
 import { readTypeShims } from "#src/services/dependencies/score/readTypeShims";
 import { getManifestDependencies } from "#src/services/outdatedDependencies/manifest/getManifestDependencies";
-import { REGISTRY_CONCURRENCY } from "#src/services/outdatedDependencies/registry/constants";
 import { getSection } from "#src/services/outdatedDependencies/workspace/getSection";
 import { parseWorkspaceEntries } from "#src/services/outdatedDependencies/workspace/parseWorkspaceEntries";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { fetchRegistry } from "#src/services/shared/fetchRegistry";
-import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { readManifestFiles } from "#src/services/shared/readManifestFiles";
 import { WORKSPACE_FILE } from "@esposter/configuration";
-import { getOrCreate, getResultAsync } from "@esposter/shared";
+import { getOrCreate } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-
-// The latest release, the one a `latest` install gets, is deprecated: a flag on the row, never a score
-const checkIsLatestDeprecated = ({ "dist-tags": distTags, versions }: Packument): boolean => {
-  const latestVersion = distTags.latest;
-  return latestVersion !== undefined && Boolean(versions[latestVersion]?.deprecated);
-};
-
-const readPackuments = async (
-  packageNames: string[],
-): Promise<{ errors: RegistryCheckError[]; packuments: Map<string, Packument> }> => {
-  const errors: RegistryCheckError[] = [];
-  const packuments = new Map<string, Packument>();
-
-  await forEachConcurrently(packageNames, REGISTRY_CONCURRENCY, async (packageName) => {
-    await getResultAsync(() => fetchRegistry<Packument>(packageName)).match(
-      (packument) => {
-        packuments.set(packageName, packument);
-      },
-      (error) => {
-        errors.push({ error: error.message, packageName });
-      },
-    );
-  });
-
-  return { errors, packuments };
-};
 
 // Every catalog entry's score, read from the catalog, the ledger, each installed copy, the registry, the tracked source
 // And the app's client bundle, sorted by the score or by the bundle cost the sort names

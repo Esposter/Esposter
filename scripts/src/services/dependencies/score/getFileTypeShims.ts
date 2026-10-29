@@ -1,6 +1,6 @@
 import { getCalledPackageNames } from "#src/services/dependencies/score/getCalledPackageNames";
+import { getImportedPackageName } from "#src/services/dependencies/score/getImportedPackageName";
 import { getNearbyPackageNames } from "#src/services/dependencies/score/getNearbyPackageNames";
-import { getImportedPackageName } from "#src/services/dependencies/score/parseImportLines";
 import { readImportLines } from "#src/services/dependencies/score/readImportLines";
 
 const DECLARE_MODULE_REGEX = /^\s*declare module "(?<specifier>[^"]+)"/u;

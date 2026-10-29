@@ -1,11 +1,7 @@
+import { getImportedPackageName } from "#src/services/dependencies/score/getImportedPackageName";
+
 // One `git grep -o -n` line is `<path>:<line>:<match>`, the match being `from "<specifier>"` or `import("<specifier>"`
 const IMPORT_LINE_REGEX = /^(?<path>[^:\n]+):\d+:.*"(?<specifier>[^"\n]+)"/gmu;
-
-// A specifier's package: its first segment, or the first two for a scoped name, so a subpath counts toward its package
-export const getImportedPackageName = (specifier: string): string => {
-  const segments = specifier.split("/");
-  return specifier.startsWith("@") ? segments.slice(0, 2).join("/") : (segments[0] ?? "");
-};
 
 // Every package's importing files, each counted once however many of its imports the file holds
 export const parseImportLines = (output: string): Map<string, Set<string>> => {

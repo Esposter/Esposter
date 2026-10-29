@@ -1,4 +1,4 @@
-import type { ClientBundleReport } from "#src/models/dependencies/score/ClientBundleReport";
+import type { ClientBundleReading } from "#src/models/dependencies/score/ClientBundleReading";
 
 import { clientBundleReportSchema } from "#src/models/dependencies/score/ClientBundleReport";
 import { CLIENT_BUNDLE_REPORT_PATH } from "#src/services/dependencies/score/constants";
@@ -7,11 +7,6 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
-
-interface ClientBundleReading {
-  ageMilliseconds: number;
-  report: ClientBundleReport;
-}
 
 // The app's client bundle report last written by `nuxt analyze`, with how long ago it was written
 export const readClientBundleReport = (): ClientBundleReading => {

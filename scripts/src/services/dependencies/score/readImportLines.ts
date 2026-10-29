@@ -1,7 +1,7 @@
 import type { ImportLine } from "#src/models/dependencies/score/ImportLine";
 
 import { getBindingNames } from "#src/services/dependencies/score/getBindingNames";
-import { getImportedPackageName } from "#src/services/dependencies/score/parseImportLines";
+import { getImportedPackageName } from "#src/services/dependencies/score/getImportedPackageName";
 
 // A single-line import with the bindings it names. A multi-line import is not read, so a call beside it is not matched.
 const IMPORT_REGEX = /^\s*import\s+(?:type\s+)?(?<bindings>.*?)\s*from\s*"(?<specifier>[^"]+)"/u;
