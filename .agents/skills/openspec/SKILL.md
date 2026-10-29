@@ -46,7 +46,7 @@ description: Apply when creating, updating or referencing any spec, design, prop
 - A decision in `design.md` names the alternative it rejected and the reason it lost. A decision that overturns a settled one names the old direction as rejected, so it cannot quietly return.
 - **One capability, change or idea per folder — never merged.** A feature starts as one capability and gains sub-capabilities only once they exist (`references/page-shapes.md`). A folder is removed only when its idea is superseded, never to tidy up — the supersession is recorded in `deferred/` or `rejected/`. Folder names are kebab-case.
 - **A list of N peer features is N capabilities plus a derived index, never one page.** The character kits are one capability each under `specs/genshin/kits/`, with the framework and the table in its `README.md`.
-- **Docs state the latest shape and carry no dates.** History is git's, so no page narrates when something was decided, measured or changed, and no change's `created:` line is written (`references/change-metadata.md`). `scripts/src/services/openspec/readDatedProse.test.ts` fails a date in any tracked Markdown doc outside the archive and ledgers.
+- **Docs state the latest shape and carry no dates.** History is git's, so no page narrates when something was decided, measured or changed, and no change's `created:` line is written (`references/change-metadata.md`). `scripts/src/services/openspec/readDatedProse.test.ts` fails a date in a doc's prose; a date quoted in a code span, fence, link or path, and the archive, ledgers, vendored skills and changelogs, are exempt.
 
 ## Format
 
