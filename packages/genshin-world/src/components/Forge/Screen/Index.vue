@@ -83,7 +83,7 @@ const recipeCells = computed<ForgeRecipeCell[]>(() =>
     forgeTimeLabel: fillGameTextValues(gameText[GameTextKey.ForgeItemTime], formatForgeTime(recipe.seconds)),
     id: recipe.id,
     isOpen: checkIsForgeRecipeOpen(recipe, progress.value, adventureRank),
-    name: getRecipeName(recipe),
+    name: recipeNameMap.value.get(recipe.id) ?? "",
   })),
 );
 const findRecipe = (id: number) => recipes.find((recipe) => recipe.id === id);
