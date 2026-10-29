@@ -1,6 +1,6 @@
 # Scene groups
 
-The game places most of what stands in its open world through scene groups, each a script of members switched on in suites. Those scripts are the server's and never in the client, so this page is the record the repository can fill from its own sources: one record keyed by group, filled field by field from the sources the repository already reads, each member and each place naming the source behind it. The residents of [resident schedules](../resident-schedules/design.md) are written from it; the [Archive's](../archive/design.md) viewpoints read it as the Archive's entries load, and the crafting bench and the stove read it on their own proposals.
+The game places most of what stands in its open world through scene groups, each a script of members switched on in suites. Those scripts are the server's, and whether the client holds any of their members is open (see Open), so this page is the record the repository can fill from its own sources: one record keyed by group, filled field by field from the sources the repository already reads, each member and each place naming the source behind it. The residents of [resident schedules](../resident-schedules/design.md) are written from it; the [Archive's](../archive/design.md) viewpoints read it as the Archive's entries load, and the crafting bench and the stove read it on their own proposals.
 
 ## How it works
 
@@ -53,7 +53,7 @@ An NPC birth's own `configId` is the NPC's id, so it becomes the member's object
 
 ## What the record leaves out
 
-Every field below is held only by the group scripts, which are the server's and never in the client ([game data formats](../game-data-formats/design.md)), so the record never fills them and nothing here guesses one from a nearby source. A unit needing one takes it from the next source on its own page: the official map's points for camps, puzzles, chests and outcrops, the quests' own location guides for a go-to, and the wiki for the keepers and the residents' hours, each an estimate marked provisional where no source gives it.
+Every field below is held by the group scripts, which the record does not read: they are the server's ([game data formats](../game-data-formats/design.md)), and whether the client's block scripts hold any group's members is open (see Open). So the record never fills them and nothing here guesses one from a nearby source. A unit needing one takes it from the next source on its own page: the official map's points for camps, puzzles, chests and outcrops, the quests' own location guides for a go-to, and the wiki for the keepers and the residents' hours, each an estimate marked provisional where no source gives it.
 
 - **A camp's monsters and their levels.** No member is a monster, so the [enemies](../enemies/design.md) keep Mondstadt's stand-in camp (`scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`, whose sources hold no monster).
 - **A puzzle's mechanisms and a chest's gadget.** The only gadgets are the viewpoints (`scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`).
