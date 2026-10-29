@@ -4,7 +4,7 @@ Members can set a per-room display name that overrides their global username wit
 
 ## The resolution rule
 
-Every member name is resolved through the one function the `esbabbler` skill names (`getRoomMemberName`), **never `user.name` or `member.name` read directly in a room context.**
+Every member name is resolved through the one function, `getRoomMemberName`, **never `user.name` or `member.name` read directly in a room context.**
 
 ```text
 WRONG   — {{ member.name }}                     (ignores the room display name)
