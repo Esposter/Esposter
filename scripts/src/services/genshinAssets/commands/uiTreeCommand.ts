@@ -1,9 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
 import { parseTreeDepth } from "#src/services/genshinAssets/commands/parseTreeDepth";
-import { composeInterfaceTree } from "#src/services/genshinAssets/interface/composeInterfaceTree";
-import { findNearestUiCanvas } from "#src/services/genshinAssets/ui/findNearestUiCanvas";
-import { getUiRootEntries } from "#src/services/genshinAssets/ui/getUiRootEntries";
+import { composeUiTrees } from "#src/services/genshinAssets/ui/composeUiTrees";
 import { readUiBlockEntries } from "#src/services/genshinAssets/ui/readUiBlockEntries";
 import { readUiBlockIndex } from "#src/services/genshinAssets/ui/readUiBlockIndex";
 import { resolveUiBlock } from "#src/services/genshinAssets/ui/resolveUiBlock";
@@ -36,9 +34,7 @@ export const uiTreeCommand: SubCommandsDef[string] = defineCommand({
     );
     if (entries.length === 0)
       throw new InvalidOperationError(Operation.Read, args.container, `holds no RectTransform in ${block}`);
-    const depth = parseTreeDepth(args.depth);
-    const roots = getUiRootEntries(entries).map((root) => composeInterfaceTree(entries, root, depth));
-    const canvas = findNearestUiCanvas(roots);
+    const { canvas, roots } = composeUiTrees(entries, parseTreeDepth(args.depth));
     console.log(
       JSON.stringify({
         block,
