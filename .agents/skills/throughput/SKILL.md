@@ -38,7 +38,7 @@ An ask is one line, sent at the end of a reply with the default already taken. I
 
 ## The usage reserve
 
-Each usage window keeps part of its end for the compute queue's runners, and what the session does at each of the window's lines is `references/usage-reserve.md`.
+Each usage window keeps part of its end for the compute queue's runners, and what the session does while a window's reserve holds is `references/usage-reserve.md`.
 
 The reserve guards a local plan's window. A cloud session spends the account's API cloud credit instead, so it keeps working to the end of its task and never stops at a window's line; the mod's gap that shows it the reserve, and what to do under that notice, is in `references/usage-reserve.md`'s Scope paragraph.
 
@@ -46,5 +46,5 @@ The reserve guards a local plan's window. A cloud session spends the account's A
 
 - `references/machine-efficiency.md` — when a wave starts, when an agent is about to check, build, search or scan, when the CPU is pinned while the GPU idles, and when the disk fills.
 - `references/fleet.md` — when more than one machine works the backlog: profiles, the pulled queue, claims as refs, fleet load and sync.
-- `references/usage-reserve.md` — when a usage window reaches its maintenance or wind-down line.
+- `references/usage-reserve.md` — when a usage window reaches its maintenance line.
 - `references/game-data.md` — when game data has to reach a machine, by download or by a copy between LAN machines.

@@ -5,7 +5,7 @@ description: Apply when a session starts or picks work back up — after a compa
 
 # Resuming — In Sync Before Anything New
 
-A session that ends mid-change — a compaction, a usage lockout, a dead agent, a machine switch — leaves its work in the tree, the queue, the fleet's claims and the processes it started. The next session starts from those, never from memory. The handoffs it reads are the ones the `throughput` skill (`references/usage-reserve.md`, "Wind-down") writes, so the two halves meet: the wind-down records every open item where a resume finds it, and the resume reads it there rather than re-deriving it.
+A session that ends mid-change — a compaction, a usage lockout, a dead agent, a machine switch — leaves its work in the tree, the queue, the fleet's claims and the processes it started. The next session starts from those, never from memory. The handoffs it reads are the ones a stopping session writes under this skill's handoff rule below, so the two halves meet: the stop records every open item where a resume finds it, and the resume reads it there rather than re-deriving it.
 
 ## Settled — do not re-propose
 
@@ -24,8 +24,8 @@ flowchart LR
   FIX --> RESUME
   CLEAN -->|yes| NEXT["pnpm ai:fleet:next, then What runs next"]
   NEXT --> WORK["work, committed and pushed per chunk"]
-  WORK -->|"a usage line, a compaction or a stop"| WIND["throughput wind-down: every open item recorded"]
-  WIND --> START
+  WORK -->|"a compaction or a stop"| HAND["handoff: every open item recorded"]
+  HAND --> START
 ```
 
 ## Rules
@@ -39,6 +39,8 @@ flowchart LR
   - the interrupted agent's transcript, read only for its first prompt and its last assistant texts, never whole.
 
   A path whose next step is written down and within reach is finished, reviewed and committed like any change. Otherwise its record is completed with what is done and what is next, and it is left for the unit that owns it.
+
+- **A session that stops or is compacted writes its handoff before it ends.** Every open item goes where the handoff order above finds it, with what it takes to resume it cold: its paths, what is done, the calls already made and the next step. Genshin work goes on its roadmap, a handoff spec into its proposal page, never only the scratchpad; anything else goes in as a follow-up through the `follow-ups` plugin's capture skill. The records written and the edit in hand are committed by pathspec and pushed, as the `review-queue` skill says.
 
 - **`pnpm-lock.yaml` changed only in resolved versions, after a local install, is a dependency update and is committed on its own** as `chore(deps)`, never restored. The forcing agents are the workspace's `autoDedupe` and the install pnpm runs on its own before a script when it finds the install outdated, which re-resolves the nightly dist-tag aliases to their newest build: tracking that build is what the aliases are for, so the move is kept. A lockfile change that follows a manifest change goes out with that change. A lockfile that conflicts on a rebase is settled as the `git` skill's `references/lockfile-merges.md` says.
 - **A stale claim of this machine's is resumed from its handoff or released.** Hold it again and carry on when the roadmap item says what is next. Otherwise release it with `--miss` naming what is left. A live claim whose hold died is held again or released, never left to go stale.

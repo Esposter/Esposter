@@ -1,6 +1,6 @@
 ## Purpose
 
-A band row of what the session is spending — time left on the prompt cache and what a cold cache would re-send, the context window, the five-hour and weekly limits, the cost so far — with one-press warm, compact and handoff, a warning before the cache goes cold, and a usage reserve that has the session clean up on cheap agents as a limit window fills, then wind down before it runs dry, and refuses at launch any agent that would spend the window on a dearer model.
+A band row of what the session is spending — time left on the prompt cache and what a cold cache would re-send, the context window, the five-hour and weekly limits, the cost so far — with one-press warm, compact and handoff, a warning before the cache goes cold, and a usage reserve that has the session clean up on cheap agents as a limit window fills, and refuses at launch any agent that would spend the window on a dearer model.
 
 ## Requirements
 
@@ -102,23 +102,17 @@ When a limit window passes its maintenance line, or is half spent ahead of an ev
 
 - **GIVEN** a window half spent while the share of its length elapsed is smaller
 - **WHEN** the measurement arrives
-- **THEN** the reserve starts early at its maintenance tier
+- **THEN** the reserve starts early, before the window reaches its maintenance line
 
-### Requirement: The session is told the reserve's tier and what it asks
+### Requirement: The session is told the window and what the reserve asks
 
-While a reserve holds, the session SHALL be told the window, the line it has passed, its reset time and the instruction of its tier.
+While a reserve holds, the session SHALL be told the window, the line it has passed, its reset time and what the reserve asks.
 
-#### Scenario: A maintenance reserve
+#### Scenario: A reserve holding
 
-- **GIVEN** a reserve at its maintenance tier
+- **GIVEN** a reserve holding
 - **WHEN** the session's instructions are read
 - **THEN** they ask for the rest of the window to be spent on cleanup agents
-
-#### Scenario: A wind-down reserve
-
-- **GIVEN** a reserve at its wind-down tier
-- **WHEN** the session's instructions are read
-- **THEN** they ask it to stop new work and have each running agent commit and hand off
 
 ### Requirement: Workflow launches are refused while a reserve holds
 
