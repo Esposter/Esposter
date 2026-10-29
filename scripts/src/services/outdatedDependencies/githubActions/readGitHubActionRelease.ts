@@ -4,8 +4,7 @@ import type { Release } from "#src/models/outdatedDependencies/shared/Release";
 import { getLatestCompatibleTag } from "#src/services/outdatedDependencies/tag/getLatestCompatibleTag";
 import { FETCH_TIMEOUT_MS, MAX_BUFFER_BYTES } from "#src/services/shared/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
-import { execFile } from "@esposter/shared-node/child-process";
-import { promisify } from "node:util";
+import { execFileAsync } from "@esposter/shared-node/child-process";
 
 const TAG_REF_REGEX = /^(?<sha>[\da-f]{40})\trefs\/tags\/(?<tag>[^^\s]+)(?<peeled>\^\{\})?$/u;
 
@@ -13,12 +12,11 @@ const TAG_REF_REGEX = /^(?<sha>[\da-f]{40})\trefs\/tags\/(?<tag>[^^\s]+)(?<peele
 // The second time peeled to the commit it tags, which is the sha a pin holds — so a peeled line overrides the tag
 // Object's. Bounded like every request a script makes, so a stalled remote is an error row rather than a hung run
 export const readGitHubActionRelease = async ({ packageName, specifier }: DependencyEntry): Promise<Release> => {
-  // oxlint-disable-next-line typescript/strict-void-return -- promisify settles through the callback and never reads execFile's ChildProcess return, and a void wrapper would lose the promisify.custom that resolves { stdout } (packages/shared-node/src/services/childProcess/execFile.ts:13-15)
-  const { stdout } = await promisify(execFile)(
-    "git",
-    ["ls-remote", "--tags", `https://github.com/${packageName}.git`],
-    { encoding: "utf8", maxBuffer: MAX_BUFFER_BYTES, timeout: FETCH_TIMEOUT_MS },
-  );
+  const { stdout } = await execFileAsync("git", ["ls-remote", "--tags", `https://github.com/${packageName}.git`], {
+    encoding: "utf8",
+    maxBuffer: MAX_BUFFER_BYTES,
+    timeout: FETCH_TIMEOUT_MS,
+  });
   const tagCommitMap = new Map<string, string>();
   for (const line of getNonEmptyLines(stdout)) {
     const groups = TAG_REF_REGEX.exec(line)?.groups;
