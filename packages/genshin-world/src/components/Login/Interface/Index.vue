@@ -332,7 +332,7 @@ watch(
 }
 
 /* Its age and notice are traced off the recording at eight times its size (`genshin:parity trace`); its CADPA is
-   Set in a serif, whose thin strokes are too few of the recording's pixels to trace */
+   set in a serif, whose thin strokes are too few of the recording's pixels to trace */
 .age-rating-name {
   font-family: serif;
   font-size: 15.5px;
