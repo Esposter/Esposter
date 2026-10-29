@@ -7,6 +7,8 @@
 
 A Claude Code plugin that gives every session a Genshin Impact character, whose spoken lines are read aloud in their own cloned voice.
 
+It is an unofficial, non-commercial fan work, not affiliated with HoYoverse.
+
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra/claude-interface/persona-plugin).
 
 ## Table of Contents
