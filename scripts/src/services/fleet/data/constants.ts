@@ -19,4 +19,3 @@ export const DEFAULT_PARITY_DIRECTORY: string = join(homedir(), SITE_NAME, "gens
 export const PEERS_FILE_PATH: string = join(homedir(), `.${SITE_NAME.toLowerCase()}`, "peers.json");
 export const SUCCESS_EXIT_CODE = 0;
 export const FAILURE_EXIT_CODE = 1;
-export const MEBIBYTE: number = 2 ** 20;

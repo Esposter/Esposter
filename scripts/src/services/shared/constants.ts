@@ -17,6 +17,8 @@ export const NPM_REGISTRY_URL = "https://registry.npmjs.org";
 // Every commit's body, a listing of every tracked file each run to megabytes, and the default buffer throws
 // ENOBUFS rather than truncating — a failure that reads as the tool being broken from the call site.
 export const MAX_BUFFER_BYTES: number = 256 * KIBIBYTE ** 2;
+// A mebibyte, as the fleet's transfer line and the parity pack table both count sizes in
+export const MEBIBYTE: number = KIBIBYTE ** 2;
 
 // Every script reads and writes against the repository rather than against `scripts/`. A `..` chain is what this
 // Was, and it is wrong the first time the file counting it moves a directory. The walk-up to the manifest survives
