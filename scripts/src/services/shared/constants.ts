@@ -2,6 +2,7 @@ import type { Vector } from "#src/models/shared/Vector";
 
 import { findRepositoryRoot } from "#src/services/shared/findRepositoryRoot";
 import { KIBIBYTE } from "@esposter/configuration";
+import { homedir } from "node:os";
 import { join } from "node:path";
 
 export const MAIN_BRANCH = "main";
@@ -98,3 +99,8 @@ export const PINNED_TOOL_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ 
 export const PACKAGE_LOCK_JSON_FILENAME = "package-lock.json";
 // The web app's directory, against the repository root
 export const APP_DIRECTORY = "apps/web";
+// Claude Code's projects folder, which `CLAUDE_CONFIG_DIR` moves off `~/.claude` as Claude Code itself reads it
+export const CLAUDE_PROJECTS_DIRECTORY: string = join(
+  process.env.CLAUDE_CONFIG_DIR ?? join(homedir(), ".claude"),
+  "projects",
+);

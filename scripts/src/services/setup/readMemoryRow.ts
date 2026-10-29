@@ -2,7 +2,7 @@ import type { SetupEnvironment } from "#src/models/setup/SetupEnvironment";
 import type { SetupRow } from "#src/models/setup/SetupRow";
 
 import { SetupStatus } from "#src/models/setup/SetupStatus";
-import { CLAUDE_PROJECTS_DIRECTORY, MEMORY_FOLDER_NAME, MEMORY_NEXT } from "#src/services/setup/constants";
+import { MEMORY_FOLDER_NAME, MEMORY_NEXT } from "#src/services/setup/constants";
 import { getClaudeProjectSlug } from "#src/services/setup/getClaudeProjectSlug";
 import { dirname, join } from "node:path";
 
@@ -19,7 +19,11 @@ export const readMemoryRow = (environment: SetupEnvironment): SetupRow => {
   const mainCheckoutRoot = readMainCheckoutRoot(environment);
   if (mainCheckoutRoot === undefined)
     return { next: `no main checkout to read memory from; ${MEMORY_NEXT}`, status: SetupStatus.Info, step: "memory" };
-  const directory = join(CLAUDE_PROJECTS_DIRECTORY, getClaudeProjectSlug(mainCheckoutRoot), MEMORY_FOLDER_NAME);
+  const directory = join(
+    environment.claudeProjectsDirectory,
+    getClaudeProjectSlug(mainCheckoutRoot),
+    MEMORY_FOLDER_NAME,
+  );
   const fileCount = environment.countFiles(directory);
   return {
     next:

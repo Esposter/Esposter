@@ -1,7 +1,3 @@
-import { homedir } from "node:os";
-import { join } from "node:path";
-
-export const PROJECTS_DIRECTORY: string = join(homedir(), ".claude", "projects");
 export const MILLISECONDS_PER_DAY: number = Temporal.Duration.from({ hours: 24 }).total("milliseconds");
 export const USAGE_FAMILIES: readonly string[] = ["opus", "sonnet", "haiku", "fable"];
 export const SYNTHETIC_MODEL = "<synthetic>";
