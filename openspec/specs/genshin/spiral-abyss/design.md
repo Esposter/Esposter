@@ -77,7 +77,7 @@ flowchart TD
 ## Notes
 
 - **The dump ends at a period.** The community dump's schedule ends with the period that began on 2026-10-16 (scheduleId 124), so the Moon Spire runs that period until a newer dump holds the later ones.
-- **The readers are called from the world session.** The three readers load their slices on demand, and `useWorldSpiralAbyss` (`packages/genshin-world/src/composables/useWorldSpiralAbyss.ts`) calls all three from the world session's screen (`packages/genshin-world/src/components/World/Session/Index.vue`).
+- **The readers are called from the world session.** The five readers load their slices once, when the composable is set up, and `useWorldSpiralAbyss` (`packages/genshin-world/src/composables/useWorldSpiralAbyss.ts`) calls all five from the world session's screen (`packages/genshin-world/src/components/World/Session/Index.vue`).
 
 ## Sources
 
