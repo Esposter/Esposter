@@ -16,7 +16,9 @@ describe("gcsimInternalCooldownTagMap", () => {
     ).filter((name): name is string => name !== undefined && name !== "None");
 
     expect(gcsimTags.length).toBeGreaterThan(0);
-    const unmappedTags = gcsimTags.filter((name) => !(`${GCSIM_COOLDOWN_TAG_PREFIX}${name}` in GcsimInternalCooldownTagMap));
+    const unmappedTags = gcsimTags.filter(
+      (name) => !(`${GCSIM_COOLDOWN_TAG_PREFIX}${name}` in GcsimInternalCooldownTagMap),
+    );
     expect(unmappedTags).toStrictEqual([]);
   });
 });
