@@ -31,8 +31,8 @@ committed.
 | `everfrozen-earth-location` | `WorldScreen` | 20.61% | 0.234 | 19.75% | 0.6327 |
 | `exit-prompt` | `MenuExit` | 8.36% | 0.909 | 33.71% | 0.2227 |
 | `forge-screen` | `ForgeScreen` | 6.52% | 0.677 | 5.33% | 0.2162 |
-| `forge-screen-ores-done` | `ForgeScreen` | 48.35% | 0.609 | 45.58% | 0.8042 |
-| `forge-screen-queues` | `ForgeScreen` | 48.29% | 0.575 | 45.72% | 0.8044 |
+| `forge-screen-ores-done` | `ForgeScreen` | 3.50% | 0.774 | 2.25% | 0.1559 |
+| `forge-screen-queues` | `ForgeScreen` | 3.71% | 0.759 | 2.35% | 0.1665 |
 | `forge-screen-refused` | `ForgeScreen` | pending: no screenshot of this variant yet | | | |
 | `forge-screen-weapons-done` | `ForgeScreen` | pending: no screenshot of this variant yet | | | |
 | `gcg-duel-board` | `GcgScreen` | 13.25% | 0.508 | 8.21% | 0.4544 |

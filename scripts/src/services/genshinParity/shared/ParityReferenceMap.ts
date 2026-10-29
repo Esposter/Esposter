@@ -33,6 +33,20 @@ const CHARACTER_TABS_REGION = { height: 800, width: 900, x: 120, y: 180 };
 const WEAPON_SCREEN_REGION = { height: 838, width: 1920, x: 0, y: 0 };
 // A forge's Queues tab in full above the recorder's UID, scored by its two Queues entries
 const FORGE_QUEUES_REGION = { height: 860, width: 1920, x: 0, y: 0 };
+// The Queues tab's pieces filled from round them, so the blurred scene behind is scored and the game's own pieces are not: the title,
+// The foot's coins and close, the tabs, the queue rows, the ring and its item, the figure and bar, the Materials box, the Obtain
+// Button and the recorder's UID
+const FORGE_QUEUES_PLATE = [
+  { height: 75, width: 300, x: 120, y: 10 },
+  { height: 70, width: 300, x: 1495, y: 15 },
+  { height: 60, width: 615, x: 110, y: 125 },
+  { height: 440, width: 620, x: 110, y: 205 },
+  { height: 370, width: 620, x: 990, y: 90 },
+  { height: 75, width: 620, x: 1000, y: 450 },
+  { height: 236, width: 934, x: 838, y: 536 },
+  { height: 70, width: 945, x: 830, y: 785 },
+  { height: 28, width: 275, x: 1645, y: 858 },
+];
 // The quit prompt's dialog panel, scored by its hover and pressed entries
 const MENU_EXIT_PANEL_REGION = { height: 590, width: 930, x: 495, y: 245 };
 // The reasons a screen has no reference yet, each shared by every screen or variant it is pending for
@@ -290,6 +304,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The forge's Queues tab from the same clip at 50.5 seconds: the order completed, Forged 5 of 5 and Obtain shown. The recorder's UID
   // Sits bottom right, below the region scored
   "forge-screen-ores-done": {
+    isBackdrop: true,
+    plate: FORGE_QUEUES_PLATE,
     region: FORGE_QUEUES_REGION,
     screen: "ForgeScreen",
     source: "yt-AVnbm8fESr0-forge-screen.mp4 at 50.5s",
@@ -298,6 +314,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The forge's Queues tab at 1920 by 886 from the public clip, 48 seconds in: an Enhancement Ore order forging, four ready, Forged
   // 4 of 5. The fixture's count differs (a five-unit order here), so the compare differs at the figures until its props follow
   "forge-screen-queues": {
+    isBackdrop: true,
+    plate: FORGE_QUEUES_PLATE,
     region: FORGE_QUEUES_REGION,
     screen: "ForgeScreen",
     source: "yt-AVnbm8fESr0-forge-screen.mp4 at 48s",
