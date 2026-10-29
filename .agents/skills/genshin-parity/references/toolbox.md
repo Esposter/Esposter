@@ -82,7 +82,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | :--------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
 | The camera's pose                  | `genshin:parity pose`: landmarks, refined on edges                                                                                          |
 | Whether our camera is the game's   | `passes`' camera: landmarks from the scene's own camera, solved along the glide alone, each held to its reference's pose bar (`getPoseBar`) |
-| The play camera's limits and radii | `genshin:assets camera`: the camera profile's global config, each word named by the 2022 dummy scripts, before any solve off screenshots    |
+| The play camera's limits and radii | `genshin:assets camera`: the camera profile's global config, each word named by the dummy scripts, before any solve off screenshots         |
 
 ### Shape and surface
 
