@@ -29,7 +29,8 @@ const levelTextOf = (level: number, maxLevel: number) =>
 
 describe("weaponScreen", () => {
   const weaponName = props.nameText[weaponData.nameTextId] ?? "";
-  const levelText = levelTextOf(1, weaponData.ascensionPhases[0]?.maxLevel ?? 1);
+  // The Enhance header names the level alone, where the Ascend header sets it over the cap
+  const levelText = fillGameTextValues(ENGLISH_GAME_TEXT[GameTextKey.LevelFormat], "1");
   // The copy in the bag sits at the level cap, whose text is the open weapon's text at the cap
   const copyLevelText = levelTextOf(atCapWeapon.level, weaponData.ascensionPhases[0]?.maxLevel ?? atCapWeapon.level);
   // The weapon the screen opens on, as its bag entry holds it, and the EXP it holds towards the level after its own

@@ -24,6 +24,9 @@ defineSlots<{ default: () => unknown }>();
 const tab = defineModel<WeaponMenuTab>("tab", { required: true });
 const { actionLabel, closeLabel, detailsLabel, isActionDisabled, kind, name, tabs } = defineProps<Props>();
 const emit = defineEmits<{ action: []; close: [] }>();
+// The way back's arrow, a bold curve with its head to the left, in a square of 30 units
+const CLOSE_ARROW_PATH =
+  "M0 12 L11 1 L11 7 C19 7 26 11 28 20 C29 25 27 28 23 30 C25 25 24 19 19 16 C16 14 14 14 11 14 L11 19 Z";
 </script>
 
 <template>
@@ -52,9 +55,12 @@ const emit = defineEmits<{ action: []; close: [] }>();
       tip=""
       @click="emit('action')"
     >
+      <span class="action-icon" :class="{ coin: tab === WeaponMenuTab.Ascend }" aria-hidden="true" />
       {{ actionLabel }}
     </GameButton>
-    <button class="close" :aria-label="closeLabel" type="button" @click="emit('close')">↶</button>
+    <button class="close" :aria-label="closeLabel" type="button" @click="emit('close')">
+      <svg class="close-arrow" viewBox="0 0 30 30" aria-hidden="true"><path :d="CLOSE_ARROW_PATH" /></svg>
+    </button>
   </div>
 </template>
 
@@ -159,6 +165,28 @@ const emit = defineEmits<{ action: []; close: [] }>();
   line-height: 1;
 }
 
+/* The action's mark at its left: the game's dark ring on Enhance and Refine, its gold coin on Ascend */
+.action-icon {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 12);
+  left: calc(var(--reference-pixel) * 11);
+  width: calc(var(--reference-pixel) * 40);
+  height: calc(var(--reference-pixel) * 40);
+  border: calc(var(--reference-pixel) * 5) solid #f5c24a;
+  border-radius: 50%;
+  background: #1d1d26;
+  box-sizing: border-box;
+}
+
+.action-icon.coin {
+  top: calc(var(--reference-pixel) * 14);
+  left: calc(var(--reference-pixel) * 19);
+  width: calc(var(--reference-pixel) * 30);
+  height: calc(var(--reference-pixel) * 30);
+  border: none;
+  background: radial-gradient(circle at 40% 35%, #fff7c8, #f7d25a 60%, #d9a53a);
+}
+
 /* The way back at the top right, its round disc light over the scene */
 .close {
   position: absolute;
@@ -168,11 +196,18 @@ const emit = defineEmits<{ action: []; close: [] }>();
   height: calc(var(--reference-pixel) * 56);
   border: none;
   border-radius: 50%;
-  background: rgb(255 255 255 / 0.35);
-  color: #fff;
+  background: #efe9dc;
+  box-shadow: 0 0 0 calc(var(--reference-pixel) * 4) rgb(200 190 235 / 0.55);
   cursor: inherit;
-  font: inherit;
-  font-size: calc(var(--reference-pixel) * 30);
-  line-height: 1;
+}
+
+/* The way back's arrow, a bold dark curve drawn from the game's own shape */
+.close-arrow {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 13);
+  left: calc(var(--reference-pixel) * 14);
+  width: calc(var(--reference-pixel) * 30);
+  height: calc(var(--reference-pixel) * 30);
+  fill: #2b3149;
 }
 </style>

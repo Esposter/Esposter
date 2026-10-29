@@ -101,11 +101,11 @@ committed.
 | `sumeru-city-location`                 | `WorldScreen`               |                                                                         32.42% | 0.227 | 28.07% | 0.8157 |
 | `title-splash`                         | `SplashTitle`               |                                                                          0.20% | 1.000 |  0.01% | 0.0090 |
 | `title-splash-mainland`                | `SplashTitle`               |                                                                          1.89% | 0.991 |  0.89% | 0.0807 |
-| `weapon-screen`                        | `WeaponScreen`              |                                                                          2.40% | 0.842 |  1.32% | 0.0915 |
-| `weapon-screen-ascend`                 | `WeaponScreen`              |                                                                          1.97% | 0.768 |  0.96% | 0.0765 |
+| `weapon-screen`                        | `WeaponScreen`              |                                                                          2.00% | 0.897 |  0.94% | 0.0832 |
+| `weapon-screen-ascend`                 | `WeaponScreen`              |                                                                          1.86% | 0.826 |  0.86% | 0.0742 |
 | `weapon-screen-at-cap`                 | `WeaponScreen`              | pending: the recording zooms over the state, so no whole-screen frame shows it |       |        |        |
 | `weapon-screen-rank-five`              | `WeaponScreen`              |                                     pending: no screenshot of this variant yet |       |        |        |
-| `weapon-screen-refine`                 | `WeaponScreen`              |                                                                          2.98% | 0.881 |  1.15% | 0.0991 |
+| `weapon-screen-refine`                 | `WeaponScreen`              |                                                                          2.40% | 0.941 |  0.59% | 0.0875 |
 | `weapon-screen-two-star`               | `WeaponScreen`              |                                     pending: no screenshot of this variant yet |       |        |        |
 | `windrise-statue-day`                  | `WorldScreen`               |                                                                         26.73% | 0.306 | 26.74% | 0.7579 |
 | `wish-screen`                          | `WishScreen`                |                                                                          9.21% | 0.626 |  6.29% | 0.2804 |

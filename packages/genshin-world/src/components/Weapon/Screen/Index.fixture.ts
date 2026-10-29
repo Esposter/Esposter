@@ -95,6 +95,7 @@ export const props = {
   tab: WeaponMenuTab.Enhance,
   wallet: { ...EMPTY_WALLET, [Currency.Mora]: 317_846 },
   weaponDataMap,
+  weaponGrowCurveMap: statTables.weaponGrowCurveMap,
 };
 
 // The bag at the cap, and the same bag with the next phase's items held, with the Mora and the Adventure Rank it requires

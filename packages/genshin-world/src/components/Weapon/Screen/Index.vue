@@ -8,7 +8,9 @@ import type { Weapon } from "#src/models/weapon/Weapon";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { GameText } from "genshin-text";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { Currency } from "#src/models/inventory/Currency";
+import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
@@ -33,7 +35,7 @@ import {
   WeaponMenu,
   WeaponMenuTab,
 } from "genshin-interface";
-import { fillGameTextValues, GameTextKey } from "genshin-text";
+import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 // The bag and the wallet an accepted action leaves behind
 interface ActionState {
@@ -49,6 +51,8 @@ const ENHANCE_SLOT_COUNT = 7;
 const ENHANCE_MATERIAL_LIMIT = 40;
 // The share of the shared divider's silver the game's hairline reads at over the weapon's scene
 const DIVIDER_OPACITY = 0.16;
+// The dot the game's Current line opens on, which each passive row draws as its bullet instead
+const CURRENT_DOT_PATTERN = /^·/u;
 
 interface Props {
   // The adventure rank the player holds, which an Ascend's next phase requires
@@ -65,13 +69,23 @@ interface Props {
   rarityRequiredExpsMap: RarityRequiredExpsMap;
   // Every weapon's game data by its id, which the open weapon, its fodder and its copies are read from
   weaponDataMap: ReadonlyMap<number, WeaponData>;
+  // The growth curves a weapon's base ATK and secondary attribute are read along, by each curve's name
+  weaponGrowCurveMap: ReadonlyMap<string, readonly number[]>;
 }
 
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const tab = defineModel<WeaponMenuTab>("tab", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
-const { adventureRank, entryId, gameText, materialDataMap, nameText, rarityRequiredExpsMap, weaponDataMap } =
-  defineProps<Props>();
+const {
+  adventureRank,
+  entryId,
+  gameText,
+  materialDataMap,
+  nameText,
+  rarityRequiredExpsMap,
+  weaponDataMap,
+  weaponGrowCurveMap,
+} = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 // A weapon's game data by its id, which every weapon the bag holds has
 const getWeaponData = (id: number): WeaponData => {
@@ -115,8 +129,29 @@ const nextMaxLevel = computed(
   () => weaponData.value.ascensionPhases[weapon.value.ascension + 1]?.maxLevel ?? maxLevel.value,
 );
 const isAtCap = computed(() => weapon.value.level >= maxLevel.value);
-const levelText = computed(() => getLevelText(weapon.value.level, maxLevel.value));
-const nextLevelText = computed(() => getLevelText(weapon.value.level, nextMaxLevel.value));
+// The header's level: the level alone on Enhance, and over the cap of its phase on Ascend, with the next phase's cap beside it
+const levelText = computed(() => fillGameTextValues(gameText[GameTextKey.LevelFormat], `${weapon.value.level}`));
+// A weapon's stat at its level in a phase, each line of its growth curve and of the phase summed as the game sums them
+const getStatValue = (target: Weapon, ascension: number, attribute: Attribute) =>
+  getGrownAttributeLines(getWeaponData(target.id), weaponGrowCurveMap, target.level, ascension)
+    .filter((line) => line.attribute === attribute)
+    .reduce((sum, line) => sum + line.value, 0);
+// The base ATK at the held phase and at the next one, which the Ascend row sets side by side, and the weapon's secondary
+// Attribute, the growth's one beside its base ATK, as a percentage to one place
+const baseAttackText = computed(
+  () => `${Math.round(getStatValue(weapon.value, weapon.value.ascension, Attribute.BaseAttack))}`,
+);
+const nextBaseAttackText = computed(
+  () => `${Math.round(getStatValue(weapon.value, weapon.value.ascension + 1, Attribute.BaseAttack))}`,
+);
+const secondaryAttribute = computed(
+  () => weaponData.value.growAttributes.find(({ attribute }) => attribute !== Attribute.BaseAttack)?.attribute,
+);
+const secondaryText = computed(() =>
+  secondaryAttribute.value === undefined
+    ? ""
+    : `${(getStatValue(weapon.value, weapon.value.ascension, secondaryAttribute.value) * 100).toFixed(1)}%`,
+);
 // The EXP the weapon holds towards the next level over what that level takes; a weapon at its cap has no next level
 const requiredExps = computed(() => getRarityRequiredExps(rarityRequiredExpsMap, weaponData.value.rarity));
 const requiredExp = computed(() => requiredExps.value[weapon.value.level - 1] ?? 0);
@@ -127,10 +162,24 @@ const kind = computed(() => gameText[WeaponTypeNameGameTextKeyMap[weaponData.val
 const rankText = computed(() => getRankText(weapon.value.refinement));
 // The passive's name, and the two rows the game's panel lists: the held rank, then the one above it, named by its rank
 const passive = computed(() => getWeaponPassive(weaponData.value, weapon.value.refinement, nameText));
+// The held rank's row is the game's Current line, its label coloured in the text, and the next rank's row is labelled by its rank.
+// Each row's dot is drawn as a bullet, so the Current line's own dot is left out of its first run
 const passiveRows = computed(() =>
   (passive.value?.rows ?? [])
     .slice(weapon.value.refinement - 1, weapon.value.refinement + 1)
-    .map((row, index) => ({ ...row, rankText: getRankText(weapon.value.refinement + index) })),
+    .map((row, index) => ({
+      currentSegments: row.isHeld
+        ? splitGameTextColors(fillGameTextValues(gameText[GameTextKey.WeaponRefinementCurrent], row.description)).map(
+            (segment, segmentIndex) => ({
+              ...segment,
+              text: segmentIndex === 0 ? segment.text.replace(CURRENT_DOT_PATTERN, "") : segment.text,
+            }),
+          )
+        : [],
+      description: row.description,
+      isHeld: row.isHeld,
+      rankText: getRankText(weapon.value.refinement + index),
+    })),
 );
 // The ores the player picks for the next enhancement, each count taken from the bag when it is enhanced
 const pickedOres = ref<ItemCount[]>([]);
@@ -346,7 +395,10 @@ const nextPhaseCosts = computed(() =>
       @close="emit('close')"
     >
       <span class="sr-only" role="img" :aria-label="`${weaponData.rarity}`" />
-      <p class="refinement" :class="{ 'sr-only': openTab !== WeaponMenuTab.Refine }">{{ rankText }}</p>
+      <p class="refinement" :class="{ 'sr-only': openTab !== WeaponMenuTab.Refine }">
+        <span class="ornament left" aria-hidden="true" />{{ rankText
+        }}<span class="ornament right" aria-hidden="true" />
+      </p>
       <span v-if="openTab !== WeaponMenuTab.Refine" class="talent" aria-hidden="true">{{
         gameText[GameTextKey.CharacterTalentEffect]
       }}</span>
@@ -357,10 +409,14 @@ const nextPhaseCosts = computed(() =>
       <template v-if="openTab === WeaponMenuTab.Enhance">
         <p class="level">{{ levelText }}</p>
         <p class="experience-text">{{ experienceText }}</p>
+        <span class="exp-track" aria-hidden="true" />
         <p class="consumed">{{ consumedText }}</p>
         <p class="stat base-attack">{{ gameText[GameTextKey.AttributeBaseAttack] }}</p>
+        <p class="stat-value base-attack-value">{{ baseAttackText }}</p>
         <p class="stat attack">{{ gameText[GameTextKey.AttributeAttack] }}</p>
+        <p class="stat-value attack-value">{{ secondaryText }}</p>
         <div class="divider enhance-divider"><OrnamentDivider :opacity="DIVIDER_OPACITY" /></div>
+        <span class="stats-rule enhance-stats-rule" aria-hidden="true" />
         <span class="pill auto-add" aria-hidden="true">{{ gameText[GameTextKey.ArtifactAutoAdd] }}</span>
         <span class="pill filter" aria-hidden="true"
           >{{ gameText[GameTextKey.WeaponMaterialsThreeStarAndUnder] }}<span class="caret"
@@ -383,8 +439,10 @@ const nextPhaseCosts = computed(() =>
             </button>
           </div>
           <div v-for="slot in emptyEnhanceSlotCount" :key="slot" class="cell">
-            <span class="plus" aria-hidden="true" />
-            <span class="caption" aria-hidden="true">--</span>
+            <span class="pick" aria-hidden="true">
+              <span class="plus" />
+              <span class="caption">--</span>
+            </span>
           </div>
         </div>
       </template>
@@ -400,15 +458,29 @@ const nextPhaseCosts = computed(() =>
             :class="{ lit: phase <= weapon.ascension + 1 }"
           />
         </div>
-        <p class="level-current">{{ levelText }}</p>
-        <p class="level-next">{{ nextLevelText }}</p>
+        <p class="level-current">
+          <span class="level-word">{{ gameText[GameTextKey.LevelShort] }}</span> {{ weapon.level }} / {{ maxLevel }}
+        </p>
+        <span class="arrow level-arrow" aria-hidden="true" />
+        <p class="level-next">
+          <span class="level-word">{{ gameText[GameTextKey.LevelShort] }}</span> {{ weapon.level }} /
+          <span class="next-max">{{ nextMaxLevel }}</span>
+        </p>
         <p class="stat ascend-base-attack">{{ gameText[GameTextKey.AttributeBaseAttack] }}</p>
+        <p class="stat-value base-current">{{ baseAttackText }}</p>
+        <span class="arrow" aria-hidden="true" />
+        <p class="stat-value base-next">{{ nextBaseAttackText }}</p>
         <p class="stat ascend-attack">{{ gameText[GameTextKey.AttributeAttack] }}</p>
+        <p class="stat-value attack-current">{{ secondaryText }}</p>
         <OrnamentDivider class="divider ascend-divider" :opacity="DIVIDER_OPACITY" />
+        <span class="stats-rule ascend-stats-rule" aria-hidden="true" />
         <p class="materials-title">{{ gameText[GameTextKey.CombineTypeWeaponAscension] }}</p>
         <div class="cards">
           <div v-for="cost of nextPhaseCosts" :key="cost.id" class="card" :data-rarity="cost.rarity">
             <span class="card-name">{{ cost.name }}</span>
+            <span class="card-stars" aria-hidden="true"
+              ><span v-for="star in cost.rarity" :key="star" class="star"
+            /></span>
             <span class="card-count">{{ cost.ownedCount }} / {{ cost.count }}</span>
           </div>
         </div>
@@ -416,13 +488,22 @@ const nextPhaseCosts = computed(() =>
       <template v-else>
         <div class="divider refine-divider"><OrnamentDivider :opacity="DIVIDER_OPACITY" /></div>
         <p class="refinement-level">{{ gameText[GameTextKey.WeaponRefinementLevel] }}</p>
-        <p class="passive-name">{{ passive?.name }}</p>
+        <p class="passive-name">
+          <span class="bullet" aria-hidden="true" />{{ passive?.name }}<span class="bullet" aria-hidden="true" />
+        </p>
         <div class="passive">
-          <p v-for="row of passiveRows" :key="row.rankText" class="passive-row">
-            <span v-if="!row.isHeld" class="rank-label">{{ row.rankText }}:</span>
-            {{ row.description }}
+          <p v-for="row of passiveRows" :key="row.rankText" class="passive-row" :class="{ held: row.isHeld }">
+            <template v-if="row.isHeld">
+              <span v-for="(segment, index) of row.currentSegments" :key="index" :style="{ color: segment.color }">{{
+                segment.text
+              }}</span>
+            </template>
+            <template v-else
+              ><span class="rank-label">{{ row.rankText }}:</span> {{ row.description }}</template
+            >
           </p>
         </div>
+        <span class="stats-rule refine-stats-rule" aria-hidden="true" />
         <p class="refine-material">{{ gameText[GameTextKey.WeaponRefinementMaterial] }}</p>
         <span class="pill auto-add refine-auto-add" aria-hidden="true">{{
           gameText[GameTextKey.ArtifactAutoAdd]
@@ -443,7 +524,10 @@ const nextPhaseCosts = computed(() =>
             </button>
           </div>
           <div v-for="slot in emptyRefineSlotCount" :key="slot" class="cell">
-            <span class="plus" aria-hidden="true" />
+            <span class="pick" aria-hidden="true">
+              <span class="plus" />
+              <span class="caption">--</span>
+            </span>
           </div>
         </div>
       </template>
@@ -493,7 +577,7 @@ const nextPhaseCosts = computed(() =>
   margin: 0;
   padding-left: calc(var(--reference-pixel) * 57);
   border-radius: calc(var(--reference-pixel) * 20);
-  background: rgb(20 16 50 / 0.45);
+  background: rgb(20 16 50 / 0.35);
   color: #e7e9f6;
   font-size: calc(var(--reference-pixel) * 25);
   font-weight: 600;
@@ -520,6 +604,38 @@ const nextPhaseCosts = computed(() =>
 
 .refine-divider {
   top: calc(var(--reference-pixel) * 173);
+}
+
+/* The rule between two stat rows: a faint hairline with a small star at its middle, which the game sets instead of a divider's ends */
+.stats-rule {
+  position: absolute;
+  left: calc(var(--reference-pixel) * 1100);
+  width: calc(var(--reference-pixel) * 705);
+  height: calc(var(--reference-pixel) * 1);
+  background: rgb(200 196 225 / 0.22);
+}
+
+.stats-rule::before {
+  position: absolute;
+  top: calc(var(--reference-pixel) * -4);
+  left: calc(50% - var(--reference-pixel) * 4);
+  width: calc(var(--reference-pixel) * 9);
+  height: calc(var(--reference-pixel) * 9);
+  background: rgb(200 196 225 / 0.4);
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  content: "";
+}
+
+.enhance-stats-rule {
+  top: calc(var(--reference-pixel) * 272);
+}
+
+.ascend-stats-rule {
+  top: calc(var(--reference-pixel) * 285);
+}
+
+.refine-stats-rule {
+  top: calc(var(--reference-pixel) * 528);
 }
 
 .required-label,
@@ -651,7 +767,7 @@ const nextPhaseCosts = computed(() =>
 }
 
 .pick[aria-pressed="true"] {
-  background: linear-gradient(#7c7c8a 0 80%, #f6f2ee 80% 100%);
+  background: linear-gradient(#6e707c 0 80%, #f6f2ee 80% 100%);
 }
 
 /* The slot's plus, centred on the card's grey above its cream band */
@@ -668,7 +784,7 @@ const nextPhaseCosts = computed(() =>
   position: absolute;
   top: 50%;
   left: 50%;
-  background: #d8d6de;
+  background: #bab9c0;
   content: "";
   translate: -50% -50%;
 }
@@ -736,6 +852,7 @@ const nextPhaseCosts = computed(() =>
   top: calc(var(--reference-pixel) * 527);
   left: calc(var(--reference-pixel) * 1584);
   width: calc(var(--reference-pixel) * 216);
+  background: #e0d6ce;
   line-height: calc(var(--reference-pixel) * 44);
 }
 
@@ -761,7 +878,7 @@ const nextPhaseCosts = computed(() =>
   width: calc(var(--reference-pixel) * 64);
   height: calc(var(--reference-pixel) * 64);
   border-radius: 50%;
-  background: #ece4da;
+  background: #e5dddd;
 }
 
 .caret {
@@ -782,19 +899,19 @@ const nextPhaseCosts = computed(() =>
 
 .left-sparks {
   left: calc(var(--reference-pixel) * 1191);
-  gap: calc(var(--reference-pixel) * 13);
+  gap: calc(var(--reference-pixel) * 10);
 }
 
 .right-sparks {
   left: calc(var(--reference-pixel) * 1499);
-  gap: calc(var(--reference-pixel) * 12.6);
+  gap: calc(var(--reference-pixel) * 10);
 }
 
 .spark {
   width: calc(var(--reference-pixel) * 31);
   height: calc(var(--reference-pixel) * 31);
-  background: #9b99ad;
-  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+  background: #8e8c98;
+  clip-path: polygon(50% 0, 66% 34%, 100% 50%, 66% 66%, 50% 100%, 34% 66%, 0 50%, 34% 34%);
 }
 
 .spark.lit {
@@ -813,12 +930,28 @@ const nextPhaseCosts = computed(() =>
 
 .level-current {
   left: calc(var(--reference-pixel) * 1237);
-  color: #e6e1f2;
+  color: #f5f0fb;
 }
 
 .level-next {
   left: calc(var(--reference-pixel) * 1546);
-  color: #f2e3b5;
+  color: #f5f0fb;
+}
+
+/* The "Lv." word sits dimmer than its numbers, and the cap the next phase reaches is the game's gold */
+.level-word {
+  color: #bdb4cd;
+}
+
+.next-max {
+  color: #f5c33b;
+}
+
+/* The arrow between the two levels, the grey shaft and head the base ATK's arrow has */
+.level-arrow {
+  top: calc(var(--reference-pixel) * 155);
+  left: calc(var(--reference-pixel) * 1437);
+  width: calc(var(--reference-pixel) * 33);
 }
 
 .materials-title {
@@ -826,7 +959,7 @@ const nextPhaseCosts = computed(() =>
   top: calc(var(--reference-pixel) * 548);
   left: calc(var(--reference-pixel) * 1276);
   margin: 0;
-  color: #e9d29a;
+  color: #dcc58e;
   font-size: calc(var(--reference-pixel) * 28);
   font-weight: 600;
   line-height: 1;
@@ -941,11 +1074,240 @@ const nextPhaseCosts = computed(() =>
 }
 
 .passive-row {
+  position: relative;
   margin: 0 0 calc(var(--reference-pixel) * 16);
   text-indent: calc(var(--reference-pixel) * 24);
 }
 
+/* Each rank's row opens on a dot, the bullet the game sets before its label */
+.passive-row::before {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 11);
+  left: calc(var(--reference-pixel) * 8);
+  width: calc(var(--reference-pixel) * 5);
+  height: calc(var(--reference-pixel) * 5);
+  border-radius: 50%;
+  background: #fff;
+  content: "";
+}
+
 .rank-label {
   color: #6ad4ee;
+}
+
+/* The dots either side of the passive's name, set in the line so the name keeps its centre */
+.bullet {
+  display: inline-block;
+  width: calc(var(--reference-pixel) * 6);
+  height: calc(var(--reference-pixel) * 6);
+  margin: 0 calc(var(--reference-pixel) * 22);
+  border-radius: 50%;
+  background: #fff;
+  vertical-align: middle;
+}
+
+/* The rank's two ornaments, a hairline with a sparkle at its end either side of the rank */
+.ornament {
+  position: absolute;
+  top: 50%;
+  width: calc(var(--reference-pixel) * 36);
+  height: calc(var(--reference-pixel) * 1);
+  background: #cfc8dc;
+  translate: 0 -50%;
+}
+
+.ornament::before {
+  position: absolute;
+  top: calc(var(--reference-pixel) * -5);
+  width: calc(var(--reference-pixel) * 10);
+  height: calc(var(--reference-pixel) * 10);
+  background: #e3dded;
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  content: "";
+}
+
+.ornament.left {
+  left: calc(var(--reference-pixel) * 235);
+}
+
+.ornament.left::before {
+  right: calc(var(--reference-pixel) * -5);
+}
+
+.ornament.right {
+  right: calc(var(--reference-pixel) * 236);
+}
+
+.ornament.right::before {
+  left: calc(var(--reference-pixel) * -5);
+}
+
+/* The stat values the rows read at their right: Enhance's base ATK and secondary attribute, and Ascend's two base ATKs either side of its arrow */
+.stat-value {
+  position: absolute;
+  width: calc(var(--reference-pixel) * 100);
+  margin: 0;
+  color: #efe9f9;
+  font-weight: 600;
+  line-height: 1;
+  text-align: right;
+}
+
+.base-attack-value {
+  top: calc(var(--reference-pixel) * 218);
+  left: calc(var(--reference-pixel) * 1700);
+  font-size: calc(var(--reference-pixel) * 33);
+}
+
+.attack-value {
+  top: calc(var(--reference-pixel) * 292);
+  left: calc(var(--reference-pixel) * 1700);
+  font-size: calc(var(--reference-pixel) * 29);
+}
+
+.base-current,
+.base-next {
+  top: calc(var(--reference-pixel) * 231);
+  font-size: calc(var(--reference-pixel) * 33);
+}
+
+.base-current {
+  left: calc(var(--reference-pixel) * 1376);
+}
+
+.base-next {
+  left: calc(var(--reference-pixel) * 1698);
+}
+
+.attack-current {
+  top: calc(var(--reference-pixel) * 305);
+  left: calc(var(--reference-pixel) * 1698);
+  font-size: calc(var(--reference-pixel) * 28);
+}
+
+/* Ascend's arrow between the two base ATKs: a grey shaft with its head */
+.arrow {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 243);
+  left: calc(var(--reference-pixel) * 1580);
+  width: calc(var(--reference-pixel) * 26);
+  height: calc(var(--reference-pixel) * 3);
+  background: #6b6479;
+}
+
+.arrow::after {
+  position: absolute;
+  top: calc(var(--reference-pixel) * -4);
+  right: 0;
+  border-top: calc(var(--reference-pixel) * 5.5) solid transparent;
+  border-bottom: calc(var(--reference-pixel) * 5.5) solid transparent;
+  border-left: calc(var(--reference-pixel) * 9) solid #6b6479;
+  content: "";
+}
+
+/* The EXP track under the level: a hairline in the game's dark red */
+.exp-track {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 165);
+  left: calc(var(--reference-pixel) * 1140);
+  width: calc(var(--reference-pixel) * 655);
+  height: calc(var(--reference-pixel) * 2);
+  background: #482864;
+}
+
+/* The marks before the stat names: a sparkle before Base ATK and a dot before the percentage */
+.base-attack::before,
+.ascend-base-attack::before {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 2);
+  left: calc(var(--reference-pixel) * -33);
+  width: calc(var(--reference-pixel) * 23);
+  height: calc(var(--reference-pixel) * 23);
+  background: #d9d3ea;
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  content: "";
+}
+
+.attack::before,
+.ascend-attack::before {
+  position: absolute;
+  left: calc(var(--reference-pixel) * -24);
+  width: calc(var(--reference-pixel) * 9);
+  height: calc(var(--reference-pixel) * 9);
+  border-radius: 50%;
+  background: #aaa3bd;
+  content: "";
+}
+
+.attack::before {
+  top: calc(var(--reference-pixel) * 8);
+}
+
+.ascend-attack::before {
+  top: calc(var(--reference-pixel) * 6);
+}
+
+/* The gold coins beside the Mora: the Required line's and the wallet's */
+.required-amount::before,
+.mora::before {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #fff7c8, #f7d25a 60%, #d9a53a);
+  content: "";
+}
+
+.required-amount::before {
+  top: calc(var(--reference-pixel) * 1);
+  left: calc(var(--reference-pixel) * -45);
+  width: calc(var(--reference-pixel) * 27);
+  height: calc(var(--reference-pixel) * 27);
+}
+
+.mora::before {
+  top: calc(var(--reference-pixel) * 5);
+  left: calc(var(--reference-pixel) * 11);
+  width: calc(var(--reference-pixel) * 30);
+  height: calc(var(--reference-pixel) * 30);
+}
+
+/* The round cream button's sparkle: a large star and a small one at its lower right */
+.sparkle-button::before,
+.sparkle-button::after {
+  position: absolute;
+  background: #35344a;
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  content: "";
+}
+
+.sparkle-button::before {
+  top: calc(var(--reference-pixel) * 14);
+  left: calc(var(--reference-pixel) * 16);
+  width: calc(var(--reference-pixel) * 34);
+  height: calc(var(--reference-pixel) * 34);
+}
+
+.sparkle-button::after {
+  top: calc(var(--reference-pixel) * 28);
+  left: calc(var(--reference-pixel) * 43);
+  width: calc(var(--reference-pixel) * 16);
+  height: calc(var(--reference-pixel) * 16);
+}
+
+/* A card's rarity: its gold stars, centred over the art above its count band */
+.card-stars {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 87);
+  right: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  gap: calc(var(--reference-pixel) * 2);
+}
+
+.star {
+  width: calc(var(--reference-pixel) * 13);
+  height: calc(var(--reference-pixel) * 13);
+  background: #f5c24a;
+  clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }
 </style>
