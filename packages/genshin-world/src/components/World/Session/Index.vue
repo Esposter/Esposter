@@ -2455,12 +2455,11 @@ useWorldSaveSync({
         }
       "
     />
-    <!-- @TODO: no upstream issue — the content mapper leaves a template callback's parameter implicitly `any` when a child prop types it, which vue-tsc infers; the annotation stays until the mapper infers it -->
     <StatueScreen
       v-if="screenKind === ScreenKind.Blessing"
       v-model:power="restorativePower"
       :game-text
-      :get-max-health="(characterId: number) => getMemberMaxHealth(characterId) ?? 0"
+      :get-max-health="(characterId) => getMemberMaxHealth(characterId) ?? 0"
       :get-name="getCharacterName"
       :get-now="getWorldNow"
       :party

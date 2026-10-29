@@ -49,14 +49,13 @@ const emit = defineEmits<{
 <template>
   <!-- The screen open over the world: the Paimon menu, a built screen its host draws, or the placeholder of one the
        World does not have yet under its title, every one closing back to the world -->
-  <!-- @TODO: no upstream issue — the content mapper leaves a template callback's parameter implicitly `any` when a child prop types it, which vue-tsc infers; the annotations stay until the mapper infers it -->
   <MenuPaimon
     v-if="screenKind === ScreenKind.PaimonMenu"
     :account-avatar-url
     :account-name
     :adventure-exp-progress
     :adventure-rank
-    :check-is-built="(titledScreenKind: TitledScreenKind) => Boolean(slots[titledScreenKind])"
+    :check-is-built="(titledScreenKind) => Boolean(slots[titledScreenKind])"
     :game-text
     :is-world-level-adjustable
     :is-world-level-lowered
@@ -67,7 +66,7 @@ const emit = defineEmits<{
     :world-level
     :world-level-changed-at
     @close="screenKind = ScreenKind.World"
-    @open="(titledScreenKind: TitledScreenKind) => (screenKind = titledScreenKind)"
+    @open="(titledScreenKind) => (screenKind = titledScreenKind)"
     @pick-namecard="(itemId) => emit('pickNamecard', itemId)"
     @quit="emit('quit')"
     @set-birthday="(birthday) => emit('setBirthday', birthday)"
