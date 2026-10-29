@@ -7,8 +7,12 @@
 export const GameTextKey = {
   // The screens the world opens are named as the Paimon menu names their entries, or as a screen titles its own page
   // The Spiral Abyss's fixed words the Abyss's screens show, named as the game's manual text map files them
+  AbyssBenedictionEffectiveChamber: "UI_TOWER_BUFF_DURATION_STAGE",
+  AbyssBenedictionEffectiveFloor: "UI_TOWER_BUFF_DURATION_FLOOR",
   AbyssBenedictionHint: "UI_TOWER_HINT_BATTLEBUFF",
   AbyssCorridor: "UI_TOWER_CORRIDOR",
+  // The title of a floor's chamber, filled with the floor and the chamber
+  AbyssFloorChamberTitle: "UI_TOWER_LEVEL_TITLE",
   AbyssMoonSpire: "UI_TOWER_SPIRAL",
   Achievements: "UI_ACHIEVEMENT_TITLE",
   // The currencies by their item names: the two Fates, Genesis Crystals, the Masterless Starglitter and Stardust
@@ -154,6 +158,8 @@ export const GameTextKey = {
   CharacterAttributes: "UI_STC_CHARACTER_PAGE_AVATAR",
   CharacterConstellation: "UI_STC_CHARACTERPAGE_TALENT",
   CharacterDetails: "UI_CHARACTER_DETAIL",
+  // The attributes panel's level, filled with the level and its maximum, the maximum in the game's dimmer colour
+  CharacterLevelWithMax: "AVATAR_LEVEL_WITH_MAX",
   CharacterProfile: "FETTER_NAME",
   CharacterTalents: "UI_STC_CHARACTERPAGE_SKILL",
   CharacterWeapons: "UI_STC_CHARACTERPAGE_WEAPON",
@@ -273,6 +279,14 @@ export const GameTextKey = {
   // The HUD's skill and burst buttons, named as the controls name their keys
   ElementalBurst: "CONTROL_SKILL5",
   ElementalSkill: "CONTROL_SKILL2",
+  // The element names as the game files them for its element tags, the plain word without the card game's colour tags
+  ElementNameAnemo: "497883907",
+  ElementNameCryo: "4267146763",
+  ElementNameDendro: "3544484771",
+  ElementNameElectro: "3010705315",
+  ElementNameGeo: "1050918667",
+  ElementNameHydro: "2763885419",
+  ElementNamePyro: "570858331",
   EmbercoreFlower: "3599966252",
   // The enemies' level on a domain's entry screen, filled with the level
   EnemyLevel: "669745132",
