@@ -21,7 +21,7 @@ A schema change that stored data no longer satisfies is finished only when the s
 - A field is renamed, re-typed or moved in such a schema.
 - Stored data is found failing its schema for any reason.
 
-A field _removed_ from a schema is not one: Zod's object parse drops the stale key, so the old documents still read.
+A field _removed_ from a plain `z.object` schema is not one: Zod's object parse drops the stale key, so the old documents still read. A `z.strictObject` rejects that key, so its removal is one like any other.
 
 ## Where persisted JSON lives
 
