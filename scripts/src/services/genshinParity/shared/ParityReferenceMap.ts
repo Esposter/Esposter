@@ -76,8 +76,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The page draws the header's title and counter on a dark ground of its own, each tile over a flat colour where the game draws its
   // Picture, and each name band, the filter bar, the selected name with its lore, the close disc, the arrows and the New badges. Scored,
   // By the mask: the name bands, the title, the counter, the close disc, the filter bar outside its funnel and label, and the selected name.
-  // Plated, filled from the still round them: the star-field sky and the sword, which is game art, and the lore panel, since the still's own
-  // Letters would show through the ground the page does not draw under the selected name. The page draws the crest, the tab discs, the book
+  // Plated, filled from the still round them: the star-field sky, the crest and the sword, which is game art, and the lore panel, since the still's own
+  // Letters would show through the ground the page does not draw under the selected name. The page draws its own crest over that plate, and the tab discs, the book
   // And the description there, which the score does not see: they are judged by eye against the still. The tiles' pictures are the game's art
   // And stay a flat colour. The arrows and the New badges are drawn and unscored. The recorder's UID sits bottom right, below the region
   "archive-screen": {
