@@ -14,6 +14,7 @@ import { MONDSTADT_EXPEDITION_PIN_LAYOUT } from "#src/services/expedition/consta
 import { readExpeditionLimitAdds } from "#src/services/expedition/readExpeditionLimitAdds";
 import { readExpeditionPassives } from "#src/services/expedition/readExpeditionPassives";
 import { readMondstadtExpeditionPlaces } from "#src/services/expedition/readMondstadtExpeditionPlaces";
+import { computeUnlockedStatuePointIds } from "#src/services/statue/computeUnlockedStatuePointIds";
 import { getResultAsync } from "@esposter/shared";
 
 interface Props {
@@ -53,7 +54,9 @@ const {
   regionStatueProgressMap,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
-const statueRegions = computed(() => Object.fromEntries(regionStatueProgressMap));
+const unlockedStatuePointIds = computed(() =>
+  computeUnlockedStatuePointIds(Object.fromEntries(regionStatueProgressMap)),
+);
 // The places and the limit's steps are read when the screen opens, and the screen is drawn once both have arrived
 const places = ref<ExpeditionPlace[]>();
 const expeditionLimitAdds = ref<ExpeditionLimitAdd[]>();
@@ -114,7 +117,7 @@ onMounted(() => {
     :pin-positions
     :places
     :random
-    :statue-regions
+    :unlocked-statue-point-ids="unlockedStatuePointIds"
     @close="emit('close')"
   />
 </template>

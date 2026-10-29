@@ -7,7 +7,6 @@ import type { ExpeditionPlace } from "#src/models/expedition/ExpeditionPlace";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
-import type { StatueProgressSave } from "#src/models/statue/StatueProgressSave";
 import type { ExpeditionCharacter, ExpeditionNation, ExpeditionPin, ExpeditionPlaceDetail } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
@@ -19,7 +18,6 @@ import { computeExpeditionPassives } from "#src/services/expedition/computeExped
 import { recallExpedition } from "#src/services/expedition/recallExpedition";
 import { sendExpedition } from "#src/services/expedition/sendExpedition";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
-import { computeUnlockedStatuePointIds } from "#src/services/statue/computeUnlockedStatuePointIds";
 import { ExpeditionActionKind, ExpeditionScreen, GameScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
@@ -48,8 +46,8 @@ interface Props {
   places: ExpeditionPlace[];
   // The world's seeded random source, which each claim's counts are drawn from
   random: () => number;
-  // The Statues of The Seven the save holds, whose resonated regions open the places their statues name
-  statueRegions: StatueProgressSave["regions"];
+  // The scene points of the Statues of The Seven the player has resonated with, which the places they open name
+  unlockedStatuePointIds: ReadonlySet<number>;
 }
 
 const expeditions = defineModel<Expedition[]>("expeditions", { required: true });
@@ -69,7 +67,7 @@ const {
   pinPositions,
   places,
   random,
-  statueRegions,
+  unlockedStatuePointIds,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const hours = defineModel<number>("hours", { default: 0 });
@@ -83,7 +81,7 @@ const context = computed<ExpeditionContext>(() => ({
   expeditionLimit: computeExpeditionLimit(adventureRank, expeditionLimitAdds),
   isCharacterDown: false,
   now,
-  unlockedStatuePointIds: computeUnlockedStatuePointIds(statueRegions),
+  unlockedStatuePointIds,
 }));
 const openPlaces = computed(() =>
   places.filter((candidate) => pinPositions.has(candidate.id) && checkIsExpeditionPlaceOpen(candidate, context.value)),

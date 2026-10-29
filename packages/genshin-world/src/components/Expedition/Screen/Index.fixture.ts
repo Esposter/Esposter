@@ -47,6 +47,7 @@ export const props = {
   place: pinnedPlaces.at(4)?.id,
   places,
   random: createSeededRandom(WORLD_RANDOM_SEED),
-  statueRegions: { mondstadt: { claimedLevel: 0, heldCount: 0, level: 1 } },
+  // The statues the six places name are all resonated, so every pin is open as the clip shows it
+  unlockedStatuePointIds: new Set([4, 7, 29]),
   wallet: { ...EMPTY_WALLET },
 };
