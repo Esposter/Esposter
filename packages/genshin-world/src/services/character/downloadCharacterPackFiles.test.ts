@@ -27,10 +27,11 @@ describe(downloadCharacterPackFiles, () => {
   };
   const fetchSpy = vi.spyOn(globalThis, "fetch");
   // The host answers the model, and fails the terms file with a server error until a test lets it through
-  let isTermsServed = false;
+  let isTermsServed: boolean;
 
   beforeEach(() => {
     vi.useFakeTimers({ now: 0 });
+    isTermsServed = false;
     fetchSpy.mockImplementation(async (url) => {
       if (url === termsUrl && !isTermsServed) return new Response(null, { status: 500 });
       return new Response(url === modelUrl ? modelText : termsText);
@@ -40,7 +41,6 @@ describe(downloadCharacterPackFiles, () => {
   afterEach(() => {
     vi.useRealTimers();
     fetchSpy.mockClear();
-    isTermsServed = false;
   });
 
   test("Retry fetches only what is missing", async () => {
