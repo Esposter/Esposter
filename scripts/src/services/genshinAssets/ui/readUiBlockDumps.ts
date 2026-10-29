@@ -1,6 +1,7 @@
 import type { RectTransformDump } from "#src/models/genshinAssets/interface/RectTransformDump";
 import type { DumpedGameObject } from "#src/models/genshinAssets/shared/DumpedGameObject";
 import type { DumpedRectTransform } from "#src/models/genshinAssets/shared/DumpedRectTransform";
+import type { UiBlockDumps } from "#src/models/genshinAssets/ui/UiBlockDumps";
 import type { UiCanvasScaler } from "#src/models/genshinAssets/ui/UiCanvasScaler";
 import type { UiRectTransformRead } from "#src/models/genshinAssets/ui/UiRectTransformRead";
 
@@ -21,14 +22,6 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
-
-// What a block's UI export holds, read a folder at a time: its GameObjects, its RectTransforms joined to their layouts,
-// and the canvas scalers by their GameObject's path ID
-export interface UiBlockDumps {
-  canvases: Map<string, UiCanvasScaler>;
-  gameObjects: DumpedGameObject[];
-  rectTransforms: UiRectTransformRead[];
-}
 
 // The containers an export folder holds, each with the names of its files, or none where the folder was never written
 const listContainers = async (directory: string): Promise<{ container: string; files: string[] }[]> => {
