@@ -94,3 +94,5 @@ flowchart TD
 - [ ] **The switch is read off a recording of a walk away from one of the game's trees** — no source yet: no capture of that walk is in `{data-root}/genshin-parity/captures/`.
 - [ ] **the oak's surface roots are the bark mesh's second submesh** — no source yet: the oak's mesh export under `{data-root}/genshin-parity/extracted/windrise/`, not yet read for its submeshes.
 - [ ] **a junction draws as the game's mesh does, with no fillet over it** — no source yet: the junction mesh in `{data-root}/genshin-parity/extracted/windrise/`, not yet compared with the drawn junction.
+- [ ] **Our solid pointed ovals draw the crown as opaque as the export's cut cards at about twice its leaf, and the shape pass's envelope reads nearest at three times** — no source yet: no opacity comparison or envelope score is kept in `{data-root}/genshin-parity/comparisons/`.
+- [ ] **Where our ground stands higher than the game's terrain it buries the roots, which half a metre's lift does not mend** — no source yet: no lift comparison at the oak's foot is kept.
