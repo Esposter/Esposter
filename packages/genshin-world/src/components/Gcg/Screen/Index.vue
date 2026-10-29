@@ -167,6 +167,7 @@ const playRerollChoice = () => {
        what the player is choosing; each choice leaves as an event for its host to play -->
   <GameScreen class="gcg-screen">
     <div class="table" />
+    <div class="support" />
     <div class="row opponent-row">
       <GcgScreenCharacter
         v-for="(character, index) in opponentSide.characters"
@@ -277,6 +278,16 @@ const playRerollChoice = () => {
 /* The board's places and colours are measured off the game's frame at 1080 high; its table's texture and the frame's ornament are not drawn */
 .gcg-screen {
   background: #627a7a;
+}
+
+/* The support zone at the left edge, a card's back whose trefoil is art: its plate is the panel's own colour */
+.support {
+  position: absolute;
+  top: calc(var(--unit) * 710);
+  left: 0;
+  width: calc(var(--unit) * 186);
+  height: calc(var(--unit) * 174);
+  background: #433f47;
 }
 
 .table {
