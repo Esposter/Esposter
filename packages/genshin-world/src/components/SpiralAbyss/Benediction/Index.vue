@@ -82,7 +82,7 @@ const title = computed(() =>
    the cards 240 wide and 397 high at 528 and 1152 either side of the centre, the lit one 1.035 times larger */
 .title {
   position: absolute;
-  top: calc(var(--unit) * 66);
+  top: calc(var(--unit) * 68);
   left: 50%;
   margin: 0;
   transform: translateX(-50%);
@@ -111,7 +111,7 @@ const title = computed(() =>
 
 .hint {
   position: absolute;
-  top: calc(var(--unit) * 261);
+  top: calc(var(--unit) * 262);
   left: 50%;
   width: calc(var(--unit) * 1440);
   margin: 0;
@@ -215,14 +215,27 @@ const title = computed(() =>
   background: #cfc5ba;
 }
 
+/* The divider's centre diamond */
+.divider::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--unit) * -2.5);
+  left: calc(var(--unit) * 117.5);
+  width: calc(var(--unit) * 4.5);
+  height: calc(var(--unit) * 4.5);
+  background: #cfc5ba;
+  transform: rotate(45deg);
+}
+
 .name {
   position: absolute;
-  top: calc(var(--unit) * 252);
+  top: calc(var(--unit) * 251);
   left: calc(var(--unit) * 18);
   width: calc(var(--unit) * 204);
   font-size: calc(var(--unit) * 22);
-  font-weight: 600;
-  line-height: calc(var(--unit) * 26.5);
+  font-weight: 700;
+  letter-spacing: calc(var(--unit) * 1.2);
+  line-height: calc(var(--unit) * 25);
   text-align: center;
 }
 
@@ -236,6 +249,7 @@ const title = computed(() =>
   border-radius: calc(var(--unit) * 4);
   font-size: calc(var(--unit) * 16);
   font-weight: 600;
+  letter-spacing: calc(var(--unit) * 1.4);
   line-height: calc(var(--unit) * 30);
   text-align: center;
   white-space: nowrap;
