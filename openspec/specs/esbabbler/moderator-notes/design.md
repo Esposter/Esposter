@@ -21,7 +21,7 @@ Azure Table `AzureTable.ModerationNotes`: `partitionKey = roomId`, `rowKey = rev
 
 ## Procedures
 
-All under `message.moderation.` (`server/trpc/routers/message/moderation.ts`), gated on `KickMembers` — the lowest "acts on members" moderation bit, consistent with warn and timeout being visible to the same audience:
+All under `message.moderation.` (`server/trpc/routers/message/moderation.ts`), gated on `KickMembers` — the lowest "acts on members" moderation bit, the same one `TimeoutUser` is gated on:
 
 | Procedure                                               | Purpose                          |
 | ------------------------------------------------------- | -------------------------------- |
