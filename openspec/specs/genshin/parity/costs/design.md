@@ -8,7 +8,7 @@ Each step takes seconds, so the loop runs as often as a test would:
 - The visual suite's first screen takes a few seconds, and each further screen a fraction of one.
 - A trace at a mark's full 1600-unit resolution takes a second or two.
 
-The startup screen's mean difference is a few hundredths of a percent; the remainder is antialiasing along the edge of the lit marks (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`, `loading-startup` at 0.03%; see Open).
+The startup screen's mean difference is small, read from its `loading-startup` row in `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`; the remainder is antialiasing along the edge of the lit marks (see Open).
 
 - **A scene's cost is benched, not guessed.** `bench` draws the screen as fast as the GPU allows rather than at the display's refresh. It prints the frame time's median and slow tenth against the main thread's busy time a frame, which tells a scene held up on the CPU from one held up on the GPU; then the renderer's passes, draw calls and triangles a frame, the objects it draws by kind, and the pipelines, geometries and textures it keeps, which grow from one bench to the next in a scene that leaks them (`scripts/src/services/genshinParity/commands/benchCommand.ts`). The page reads them from the renderer the scene hands any host that asks (`packages/genshin-world/src/services/scene/SceneContextKey.ts`). The login's cloud billboards and its walkway pieces are drawn as one instanced sprite per band and one batch for the walkway, since a mesh of its own per piece costs frame time that `bench` reports (see Open).
 
