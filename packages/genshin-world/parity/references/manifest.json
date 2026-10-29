@@ -202,6 +202,118 @@
       "sha256": "145fbfb577a0a780900225d7bd10a9b9182b6a71c1e2eb098702047b80bb40cf",
       "source": "user recording",
       "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 48865769,
+      "name": "yt-2I_vWTyHqHg-profile.mp4",
+      "sha256": "64c2df2787196df2293050cf4508e41f3574e7ab0fd1854068c71a353b9130b0",
+      "source": "https://www.youtube.com/watch?v=2I_vWTyHqHg",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 33982377,
+      "name": "yt-4zVvDgStMWQ-yt-4zVvDgStMWQ-korean-start.mp4",
+      "sha256": "162984c59e7dd891a98d3a650d8475d3568c4137a1140c6a231ce10b2b46e026",
+      "source": "https://www.youtube.com/watch?v=4zVvDgStMWQ",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 8404444,
+      "name": "yt-57d2PwbOdr0-opening-japanese.mp4",
+      "sha256": "36f8c29ebcb1814761b47699ba5f39b21b29a7ce27a17319158f1d6ba66c3835",
+      "source": "https://www.youtube.com/watch?v=57d2PwbOdr0",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 17669647,
+      "name": "yt-5EmJX_RyuY8-menu-settings.mp4",
+      "sha256": "c0270237a42a562428497640010e1d96245bbc4ba2346e6e482b76a431f9df9a",
+      "source": "https://www.youtube.com/watch?v=5EmJX_RyuY8",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 3150756,
+      "name": "yt-7kK6HqVfASk-audio.webm",
+      "sha256": "33683ec3a383df2b59c61548389aaff7cb95781f16ea74f479a7f6b8dcad4f10",
+      "source": "https://www.youtube.com/watch?v=7kK6HqVfASk",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 57754388,
+      "name": "yt-8ATRIWgsuBU-sheer-cold-sherokami.mp4",
+      "sha256": "8e4b6d2a9df79052dc0cec7e4cbe5e99a020f9eff084c8c3eba3cf10eba00241",
+      "source": "https://www.youtube.com/watch?v=8ATRIWgsuBU",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 27929219,
+      "name": "yt-ALtheg0XaWg-sheer-cold-javathecup.mp4",
+      "sha256": "edee55f2f2c567777421e60f2467139ad2d53671a8784dc3b30a95513f883584",
+      "source": "https://www.youtube.com/watch?v=ALtheg0XaWg",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 23019065,
+      "name": "yt-HFxhJB_N4Nk-opening-korean.mp4",
+      "sha256": "cc2c94d18601175a1baf69faf394253489e890d7ffb953388b9a190212e6b459",
+      "source": "https://www.youtube.com/watch?v=HFxhJB_N4Nk",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 38307883,
+      "name": "yt-P13s7kSmVOE-world-level-lower.mp4",
+      "sha256": "c30846542e68a3489bf03c8c806dd5399a6d7c8c9765df56acea29efa22073d9",
+      "source": "https://www.youtube.com/watch?v=P13s7kSmVOE",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 1931518,
+      "name": "yt-PnqNza4qWzs-audio.webm",
+      "sha256": "3f1edd21b5274e1f04f2551638ea35ecad4ffd94be75e1f994c44d92b319ba18",
+      "source": "https://www.youtube.com/watch?v=PnqNza4qWzs",
+      "sourceFormat": "mkv"
+    },
+    {
+      "attribution": {},
+      "bytes": 10964883,
+      "name": "yt-ZGsragloQxU-world-level-lower-2025.mp4",
+      "sha256": "5d85e28cf89aab2b49b9af6a65260da778a8f3ca07a388898bcf3455d3329f8d",
+      "source": "https://www.youtube.com/watch?v=ZGsragloQxU",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 24440563,
+      "name": "yt-_agTJviXj7s-bag.mp4",
+      "sha256": "fa87c86f8281c5c77f412a99e0b2590452e821a63e21161a7e26eaa66af75d54",
+      "source": "https://www.youtube.com/watch?v=_agTJviXj7s",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 21388666,
+      "name": "yt-qQILsaJKlsI-crafting-table.mp4",
+      "sha256": "aa56839e44d8cea5eeec1b180a2333c812744b32dafbb1236f8359b283c9b91f",
+      "source": "https://www.youtube.com/watch?v=qQILsaJKlsI",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 299643,
+      "name": "yt-rBnfA4pXw6U-audio.webm",
+      "sha256": "7aa3eb36669a39ecacbf22c83f66a451c9c534379ebd6380bba8fea31a29cb56",
+      "source": "https://www.youtube.com/watch?v=rBnfA4pXw6U",
+      "sourceFormat": "mkv"
     }
   ],
   "references": [
