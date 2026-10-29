@@ -115,6 +115,11 @@ export const TEXT_GAME_DATASETS: readonly string[] = [
 ];
 // How many published records a read of the names fetches at once: all of them together overrun the fetch's own timeout
 export const PUBLISHED_READ_BATCH_SIZE = 8;
+// The `--languages` value that names every language the game is written in, and the one a lookup prints English alone with
+export const ALL_LANGUAGES_ARGUMENT = "all";
+export const DEFAULT_LANGUAGES_ARGUMENT = "en";
+// How many matches a reverse lookup lists before it counts the rest instead, since a common word matches thousands
+export const REVERSE_MATCH_LIMIT = 20;
 const PERSONA_GENERATED_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-persona", "src", "generated");
 export const CHARACTER_LINES_DIRECTORY: string = join(PERSONA_GENERATED_DIRECTORY, "characterLines");
 // The persona is installed alone by a stranger's `npm ci` and so takes no workspace package; it gets a copy of the

@@ -6,6 +6,7 @@ import { findCommand } from "#src/services/genshinText/commands/findCommand";
 import { gcgTextCommand } from "#src/services/genshinText/commands/gcgTextCommand";
 import { namesCommand } from "#src/services/genshinText/commands/namesCommand";
 import { questsCommand } from "#src/services/genshinText/commands/questsCommand";
+import { reverseCommand } from "#src/services/genshinText/commands/reverseCommand";
 import { standingTalksCommand } from "#src/services/genshinText/commands/standingTalksCommand";
 import { writeCommand } from "#src/services/genshinText/commands/writeCommand";
 import { defineCommand } from "citty";
@@ -24,6 +25,7 @@ export const genshinTextCommand: CommandDef = defineCommand({
     gcg: gcgTextCommand,
     names: namesCommand,
     quests: questsCommand,
+    reverse: reverseCommand,
     "standing-talks": standingTalksCommand,
     write: writeCommand,
   },
