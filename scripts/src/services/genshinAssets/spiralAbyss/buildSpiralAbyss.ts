@@ -20,6 +20,7 @@ import { toAbyssBenedictionChoices } from "#src/services/genshinAssets/spiralAby
 import { toAbyssEnemyKinds } from "#src/services/genshinAssets/spiralAbyss/toAbyssEnemyKinds";
 import { toAbyssFloorReward } from "#src/services/genshinAssets/spiralAbyss/toAbyssFloorReward";
 import { toAbyssPeriod } from "#src/services/genshinAssets/spiralAbyss/toAbyssPeriod";
+import { toAbyssTowerBuffs } from "#src/services/genshinAssets/spiralAbyss/toAbyssTowerBuffs";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { toQuestRewardItems } from "#src/services/genshinText/toQuestRewardItems";
 import { GameDataset } from "genshin-world";
@@ -29,7 +30,8 @@ import { GameDataset } from "genshin-world";
 // Eight and each period's four among them. The rewards record holds every floor's rewards in every reward group, and the items
 // Each reward id they name pays, keyed by the reward id, so a claim gives items without reading the reward table. A period
 // Carries its blessing and the moment it closes, and the Benediction choices record holds the three lists of each chamber's
-// Level row, each choice joined to its description's text hash, keyed by its level id. The enemy kinds record names, for each
+// Level row, each choice joined to its tower buff row's description, glyph and span, keyed by its level id.
+// The enemy kinds record names, for each
 // Monster describe a chamber lists, the base variant of it, the kind it is fought as
 export const buildSpiralAbyss = (): Record<string, unknown> => {
   const levelRows = readExcelTable<ExcelTowerLevelRow>(TOWER_LEVEL_TABLE_NAME);
@@ -52,15 +54,11 @@ export const buildSpiralAbyss = (): Record<string, unknown> => {
   const periods = readExcelTable<ExcelTowerScheduleRow>(TOWER_SCHEDULE_TABLE_NAME)
     .map((row) => toAbyssPeriod(row))
     .toSorted((firstPeriod, secondPeriod) => firstPeriod.id - secondPeriod.id);
-  const descriptionTextHashes = new Map(
-    readExcelTable<ExcelTowerBuffRow>(TOWER_BUFF_TABLE_NAME).map(
-      ({ descTextMapHash, towerBuffId }): [number, number] => [towerBuffId, descTextMapHash],
-    ),
-  );
+  const towerBuffs = toAbyssTowerBuffs(readExcelTable<ExcelTowerBuffRow>(TOWER_BUFF_TABLE_NAME));
   const benedictionChoices = Object.fromEntries(
     levelRows.map(({ levelId, towerBuffConfigStrList }) => [
       levelId,
-      toAbyssBenedictionChoices(levelId, towerBuffConfigStrList, descriptionTextHashes),
+      toAbyssBenedictionChoices(levelId, towerBuffConfigStrList, towerBuffs),
     ]),
   );
   return {
