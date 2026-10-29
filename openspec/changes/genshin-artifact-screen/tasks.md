@@ -48,6 +48,13 @@ Each built task names the test it was written first in, and each test is a scena
 - [ ] 5.4 The panel's parity reference and its approval, once the reference frame is fetched and its compare is clean.
       Waits on a browser run.
 
+- [ ] 5.5 The set block's heading with two sets worn. `setName` takes the set of the first active bonus, while
+      `setBonusLines` lists the bonuses of every active set, so a mixed loadout (two pieces of each of two sets) headings
+      the lines of both with one set's name (`packages/genshin-world/src/components/Character/Screen/Index.vue`, `setName`).
+      Choose between a name over each set's own lines and a heading shown only while one set is worn, against the game's
+      reference for a mixed loadout. Verify: a test named after the chosen scenario, seen failing first. Blocked on that
+      choice and a reference frame of a mixed loadout.
+
 ## 6. The bag, the main stat and the lock
 
 - [x] 6.1 The bag's artifact entry holds a rolled, individual piece with a unique instance id. The character-screen
