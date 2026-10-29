@@ -3,6 +3,7 @@ import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { ComparisonFailureRecovery } from "#src/models/genshinParity/reference/ComparisonFailureRecovery";
+import { MissingReferenceInputKind } from "#src/models/genshinParity/reference/MissingReferenceInputKind";
 import { ParityReportRun } from "#src/models/genshinParity/reference/ParityReportRun";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { startFreshPageServer } from "#src/services/genshinParity/page/startFreshPageServer";
@@ -85,16 +86,22 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
                 : join(getComponentDirectory(layerComponent).root, WITNESS_LAYOUT_FILE_NAME);
             // A reference the manifest does not hold has no stored image to measure, so it is named missing rather than fetched
             const row = manifestRows.find(({ id }) => id === referenceId);
+            // oxlint-disable-next-line no-await-in-loop -- the reference's planned path is read as its screen is reached, one at a time
             const referencePath = row === undefined ? undefined : await getPlannedReferencePath(referenceId);
             const missing =
               referencePath === undefined
-                ? ["reference image in the manifest"]
+                ? undefined
                 : getMissingReferenceInputs(referencePath, witnessLayoutPath, existsSync);
+            const missingNames =
+              missing === undefined
+                ? ["reference image in the manifest"]
+                : missing.map(({ kind, path }) => `${kind} at ${path}`);
             // A reference not yet measurable keeps its row as the report last had it, and the run goes on to the next
-            if (missing.length > 0) {
-              console.error(`not measured: ${missing.join(", ")}`);
-              if (referencePath !== undefined && !existsSync(referencePath))
-                missingImages.push(relative(REPOSITORY_ROOT, referencePath));
+            if (missingNames.length > 0) {
+              console.error(`not measured: ${missingNames.join(", ")}`);
+              for (const { kind, path } of missing ?? [])
+                if (kind === MissingReferenceInputKind.ReferenceImage)
+                  missingImages.push(relative(REPOSITORY_ROOT, path));
               continue;
             }
           }

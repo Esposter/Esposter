@@ -1,3 +1,4 @@
+import { MissingReferenceInputKind } from "#src/models/genshinParity/reference/MissingReferenceInputKind";
 import { getMissingReferenceInputs } from "#src/services/genshinParity/reference/getMissingReferenceInputs";
 import { describe, expect, test } from "vitest";
 
@@ -23,7 +24,7 @@ describe(getMissingReferenceInputs, () => {
     expect.hasAssertions();
 
     expect(getMissingReferenceInputs(referencePath, witnessLayoutPath, onDisk(referencePath))).toStrictEqual([
-      `witness layout at ${witnessLayoutPath}`,
+      { kind: MissingReferenceInputKind.WitnessLayout, path: witnessLayoutPath },
     ]);
   });
 
@@ -31,8 +32,8 @@ describe(getMissingReferenceInputs, () => {
     expect.hasAssertions();
 
     expect(getMissingReferenceInputs(referencePath, witnessLayoutPath, onDisk())).toStrictEqual([
-      `reference image at ${referencePath}`,
-      `witness layout at ${witnessLayoutPath}`,
+      { kind: MissingReferenceInputKind.ReferenceImage, path: referencePath },
+      { kind: MissingReferenceInputKind.WitnessLayout, path: witnessLayoutPath },
     ]);
   });
 
