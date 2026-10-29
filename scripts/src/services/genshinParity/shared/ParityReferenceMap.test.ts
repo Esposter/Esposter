@@ -1,3 +1,4 @@
+import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
 import { GENSHIN_WORLD_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { getComponentName } from "@esposter/configuration";
@@ -76,5 +77,27 @@ describe("parityReferenceMap", () => {
       .map(([id]) => id);
 
     expect(leftOfWindow).toStrictEqual([]);
+  });
+
+  test("holds a manifest row for every reference the map names", async () => {
+    expect.hasAssertions();
+
+    // A pending entry names no image, so it has no row; every other one is scored from the image its row holds
+    const rowIds = new Set((await readReferenceManifest()).map(({ id }) => id));
+    const missingIds = Object.entries(ParityReferenceMap)
+      .filter(([, { pending }]) => pending === undefined)
+      .map(([id]) => id)
+      .filter((id) => !rowIds.has(id));
+
+    expect(missingIds, `no manifest row for ${missingIds.join(", ")}: run references pack`).toStrictEqual([]);
+  });
+
+  test("keeps the manifest's reference rows sorted by id", async () => {
+    expect.hasAssertions();
+
+    // Each row is written on its own line in id order, so two machines' additions merge by rebase
+    const ids = (await readReferenceManifest()).map(({ id }) => id);
+
+    expect(ids).toStrictEqual([...ids].sort());
   });
 });
