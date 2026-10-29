@@ -59,8 +59,9 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 
 ## Regenerable space on the Windows PC
 
-- Plugin installs an update orphaned, and the scratch folders of dead sessions under `%TEMP%\claude`, are regenerable. An orphan is deleted only when it is older than the oldest live `claude` process and no installed-plugins entry names it; a scratch folder only when its session's transcript has not been written for hours.
-- `pnpm store prune` fails with os error 32 while a process holds a store file; retry it once that process exits.
+- A plugin's superseded install (one copy per update under `{home}/.claude/plugins/cache/`) and the scratch folders of dead sessions under `%TEMP%\claude` are regenerable. An orphaned install is deleted only when it is older than the oldest live `claude` process and no `installed_plugins.json` entry names its path; a scratch folder only when its session's transcript has not been written for hours.
+- `pnpm store prune` fails with os error 32 while a process holds a store file; retry it once that process exits. Old pnpm store majors, the npm and pnpm caches, and Pulumi providers older than the lockfile's pins are regenerable too.
+- `Windows.edb`, Windows Search's index, never shrinks. It is reset with the WSearch service stopped and `SetupCompletedSuccessfully` set to `0` under `HKLM\SOFTWARE\Microsoft\Windows Search`.
 - The WSL virtual disk keeps the space its contents freed. Compact it with `fstrim` inside the distro and `wsl --shutdown`, then diskpart, since Windows 10 Home has no `Optimize-VHD`.
 - The page file is never shrunk: the commit limit is the page file plus RAM, and a heavy run peaks against it.
 - The game's install, the parity references and the games folder are off-limits to cleanup without asking.
