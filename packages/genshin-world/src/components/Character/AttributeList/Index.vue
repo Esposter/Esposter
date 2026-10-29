@@ -64,12 +64,12 @@ const attributes = computed(() =>
 const rows = computed(() => {
   const { attack, attributeTotalMap, defense, maxHealth } = attributes.value;
   return [
-    { label: gameText[GameTextKey.AttributeMaxHealth], value: `${Math.round(maxHealth)}` },
-    { label: gameText[GameTextKey.AttributeAttack], value: `${Math.round(attack)}` },
-    { label: gameText[GameTextKey.AttributeDefense], value: `${Math.round(defense)}` },
+    { label: gameText[GameTextKey.AttributeMaxHealth], value: Math.round(maxHealth).toLocaleString("en-US") },
+    { label: gameText[GameTextKey.AttributeAttack], value: Math.round(attack).toLocaleString("en-US") },
+    { label: gameText[GameTextKey.AttributeDefense], value: Math.round(defense).toLocaleString("en-US") },
     {
       label: gameText[GameTextKey.AttributeElementalMastery],
-      value: `${Math.round(attributeTotalMap[Attribute.ElementalMastery])}`,
+      value: Math.round(attributeTotalMap[Attribute.ElementalMastery]).toLocaleString("en-US"),
     },
     { label: gameText[GameTextKey.AttributeMaxStamina], value: `${maxStamina}` },
   ];
@@ -109,7 +109,9 @@ const detailGroups = computed(() =>
     <button type="button" class="details" @click="isDetailsOpen = !isDetailsOpen">
       {{ gameText[GameTextKey.CharacterDetails] }}
     </button>
-    <button type="button" class="details" :disabled="!isLiftable" @click="emit('lift')">
+    <p class="friendship">{{ gameText[GameTextKey.Friendship] }}</p>
+    <div class="friendship-bar" />
+    <button type="button" class="lift" :disabled="!isLiftable" @click="emit('lift')">
       {{ gameText[GameTextKey.AscensionLimit] }}
     </button>
     <dl v-if="ascendRows.length" class="rows">
@@ -136,8 +138,8 @@ const detailGroups = computed(() =>
 <style scoped>
 /* Measured off the English PC client's character screen at 21:9 (references/character-attributes-session.png), in units
    from the panel's left edge: its name centred 148 from the frame's top, its level 225, its experience bar 251 and 3
-   thick, its five base rows on a 36-unit pitch from 298, every value flush with the panel's right edge. Provisional
-   where the reference's colours are not sampled yet */
+   thick, its five base rows on a 36-unit pitch from 298, every value flush with the panel's right edge. The bar's
+   colour is #38dae5, read off the reference's column */
 .attribute-list {
   display: flex;
   flex-direction: column;
@@ -176,8 +178,8 @@ const detailGroups = computed(() =>
 .experience {
   width: 100%;
   height: calc(var(--unit) * 3);
-  margin-top: calc(var(--unit) * 8.5);
-  background: #4fc3d9;
+  margin-top: calc(var(--unit) * 10);
+  background: #38dae5;
 }
 
 /* The game's outlined pill, a hairline round a faint lightening, its word in the cream the frame's words are */
@@ -197,6 +199,42 @@ const detailGroups = computed(() =>
   cursor: pointer;
 }
 
+/* The Friendship row under Details: its word 27 units in from the panel's edge, its lavender bar across the panel, both
+   read off the reference's pixels at 1080 high. Its level is not drawn, since the panel is not given it */
+.friendship {
+  margin: calc(var(--unit) * 17) 0 0;
+  padding-left: calc(var(--unit) * 27);
+  font-size: calc(var(--unit) * 26);
+  line-height: calc(var(--unit) * 36);
+}
+
+.friendship-bar {
+  height: calc(var(--unit) * 4);
+  margin-top: calc(var(--unit) * 3.25);
+  background: #ad9ff8;
+}
+
+/* The game's cream pill at the foot of the frame, 68 units in from the panel's left edge and 859 down from its top, read
+   off the reference's pixels at 1080 high; its word is the panel's dark slate */
+.lift {
+  position: absolute;
+  top: calc(var(--unit) * 859);
+  left: calc(var(--unit) * 68);
+  width: calc(var(--unit) * 266);
+  height: calc(var(--unit) * 49);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--unit) * 25);
+  background: #ded5c4;
+  color: #3e404d;
+  font: inherit;
+  font-weight: 600;
+  line-height: calc(var(--unit) * 49);
+  text-align: center;
+  cursor: pointer;
+}
+
 .title {
   margin: 0 0 calc(var(--unit) * 8);
   font-size: calc(var(--unit) * 22);
@@ -208,7 +246,7 @@ const detailGroups = computed(() =>
 }
 
 .experience + .rows {
-  margin-top: calc(var(--unit) * 26.5);
+  margin-top: calc(var(--unit) * 28);
 }
 
 .row {

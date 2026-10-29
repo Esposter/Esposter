@@ -126,11 +126,14 @@ const steps = computed(() => {
   list-style: none;
 }
 
+/* The list's overflow clips at its padding edge, so the padding below holds the chosen portrait's underline, which sits
+   below the portrait's own 69 units */
 .characters {
   top: calc(var(--unit) * 12.5);
   left: calc(var(--unit) * 608);
   display: flex;
   gap: calc(var(--unit) * 27);
+  padding-bottom: calc(var(--unit) * 14);
   overflow-x: auto;
 }
 
@@ -164,7 +167,7 @@ const steps = computed(() => {
   left: calc(var(--unit) * -13.5);
   width: calc(var(--unit) * 96);
   height: calc(var(--unit) * 4);
-  background: #6fc9dc;
+  background: #78e2f0;
   content: "";
 }
 
@@ -187,7 +190,7 @@ const steps = computed(() => {
   left: calc(var(--unit) * 99.75);
   width: calc(var(--unit) * 97.5);
   height: calc(var(--unit) * 97.5);
-  fill: #e6d6a8;
+  fill: #e0a83c;
 }
 
 .element .frame {
