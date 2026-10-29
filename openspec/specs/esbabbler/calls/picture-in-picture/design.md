@@ -14,7 +14,7 @@ The pop-out **intent** is a single `isPoppedOut` boolean on `call/media.ts` (cle
 stateDiagram-v2
     [*] --> Docked: isInCall
     Docked --> PoppedOut: PictureInPicture/Button click
-    Docked --> PoppedOut: startScreenShare (auto, post-picker)
+    Docked --> PoppedOut: toggleScreenShare (auto, post-picker)
     PoppedOut --> Docked: expand (navigate back to call surface)
     PoppedOut --> Docked: user closes OS window (pagehide)
     PoppedOut --> [*]: leaveCall (auto-dock + close)
