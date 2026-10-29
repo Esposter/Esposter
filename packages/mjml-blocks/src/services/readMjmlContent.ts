@@ -5,8 +5,8 @@ import type { HTMLElement } from "node-html-parser";
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { exhaustiveGuard, sanitizeHtml } from "@esposter/shared";
 
-// A tag opens and closes in the content when a `<` starts a name before some `>`, which is the one `>` that ends the last tag, so the
-// Pattern runs once over the text before it: a `<[^>]*>` pattern rescans to the end from every `<` of an unclosed run
+// The content holds an element when a `<`, followed by a letter or by `/` and a letter, lies before the last `>`. The
+// Text up to that `>` is searched once, since a `<[^>]*>` pattern rescans to the end from every `<` of an unclosed run
 const checkHasElement = (html: string): boolean => {
   const lastTagEnd = html.lastIndexOf(">");
   return lastTagEnd !== -1 && /<\/?[a-z]/iu.test(html.slice(0, lastTagEnd));
