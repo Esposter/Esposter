@@ -11,8 +11,8 @@ import { AZURE_MAX_PAGE_SIZE, BinaryOperator, serializeClauses } from "@esposter
 import { deserializeEntity, getLivePartitionClauses } from "@esposter/db";
 import { StandardMessageEntity, StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 
-// The person's live messages in one room, read a page at a time. A soft-deleted message is left out, as it is for every
-// Reader of the room
+// The person's live messages in one room, read a page at a time.
+// A soft-deleted message is left out, as it is for every reader of the room.
 export const readRoomMessagesByUser = async (
   messageClient: CustomTableClient<AzureTableEntityMap[AzureTable.Messages]>,
   roomId: RoomInMessage["id"],

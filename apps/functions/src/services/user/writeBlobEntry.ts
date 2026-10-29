@@ -3,8 +3,9 @@ import type { ContainerClient } from "@azure/storage-blob";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A blob's bytes stream into its entry as they are read, so an attachment is never held whole. A missing blob fails the
-// Read, which fails the export rather than leaving its entry out of an archive that reads as complete
+// A blob's bytes stream into its entry as they are read, so an attachment is never held whole.
+// A missing blob fails the read.
+// That fails the export rather than leaving its entry out of an archive that reads as complete.
 export const writeBlobEntry = async (
   archive: UserDataArchive,
   entryName: string,

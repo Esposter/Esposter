@@ -7,8 +7,9 @@ import { readRoomMessagesByUser } from "#src/services/user/readRoomMessagesByUse
 import { writeRoomFileEntries } from "#src/services/user/writeRoomFileEntries";
 import { AzureTable } from "@esposter/db-schema";
 
-// The rooms the person is a member of, one at a time: each room's messages.json and the attachments those messages
-// Name. Membership is the only index from a person to a room, so a room they have left is not in the archive
+// The rooms the person is a member of are written one at a time.
+// Each is written as its messages.json and the attachments those messages name.
+// Membership is the only index from a person to a room, so a room they have left is not in the archive
 export const writeRoomEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const messageClient = await getTableClient(AzureTable.Messages);
   const roomIds = await getAccountMemberRoomIds(userId);

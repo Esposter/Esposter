@@ -6,8 +6,8 @@ import { writeBlobEntry } from "#src/services/user/writeBlobEntry";
 import { getFileBlobNames } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
 
-// The files the given messages attach, one at a time. Each file is named by its message room and its own id, so two
-// Files sharing a filename never share an entry
+// The files the given messages attach, one at a time.
+// Each file is named by its message room and its own id, so two files sharing a filename never share an entry
 export const writeRoomFileEntries = async (
   archive: UserDataArchive,
   roomId: RoomInMessage["id"],

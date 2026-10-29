@@ -3,9 +3,10 @@ import type { UserInAuth } from "@esposter/db-schema";
 
 import { db } from "#src/services/shared/db";
 
-// The person's friend requests in both directions and their current friends. Each other party appears by user id and
-// Display name only. A request the person sent carries the time it was sent; one they received is the sender's act, and
-// A friendship is one row for the pair, made when the receiver accepted it, so neither carries a time
+// The person's friend requests in both directions and their current friends.
+// Each other party appears by user id and display name only. A request the person sent carries the time it was sent.
+// A request they received is the sender's act, so it carries no time.
+// A friendship is one row for the pair, made when the receiver accepted it, so it carries no time.
 export const writeFriendEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const where = { OR: [{ receiverId: { eq: userId } }, { senderId: { eq: userId } }] };
   const [requests, friendships] = await Promise.all([

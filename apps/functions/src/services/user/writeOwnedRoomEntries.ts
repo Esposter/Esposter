@@ -5,9 +5,10 @@ import { db } from "#src/services/shared/db";
 import { writeRoomEmojiEntries } from "#src/services/user/writeRoomEmojiEntries";
 import { writeRoomImageEntries } from "#src/services/user/writeRoomImageEntries";
 
-// Each room the person owns as its record: its name, topic, type, settings and creation time, with its emoji by id and
-// Name. The room's members are not written, since membership is other people's record. Its images and emoji blobs
-// Follow it
+// Each room the person owns is written as its record: its name, topic, type, settings and creation time.
+// Its emoji are listed by id and name.
+// The room's members are not written, since membership is other people's record.
+// Its images and emoji blobs follow it.
 export const writeOwnedRoomEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const rooms = await db.query.roomsInMessage.findMany({
     columns: {

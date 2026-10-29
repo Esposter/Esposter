@@ -8,10 +8,11 @@ import { writeBlobEntry } from "#src/services/user/writeBlobEntry";
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
 import { AzureContainer, FILES_DIRECTORY_SEGMENT } from "@esposter/db-schema";
 
-// The resources the person owns, each as its record, its working copy, the assets its working copy embeds, its
-// Publication when it is published and the links it holds. The record is the fields the person wrote and the time
-// It was created: the hashes, sizes and revision counters are the store's bookkeeping, and no update or delete time
-// Is the person's. A resource they only work on belongs to its owner, so it is not read here
+// Each resource the person owns is written as its record, its working copy and the assets that copy embeds.
+// Its publication, when it is published, and the links it holds are written too.
+// The record is the fields the person wrote and the time it was created.
+// The hashes, sizes and revision counters are the store's bookkeeping, and no update or delete time is the person's.
+// A resource they only work on belongs to its owner, so it is not read here
 export const writeResourceEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const resources = await db.query.resourcesInResource.findMany({
     columns: { contentVersion: true, createdAt: true, id: true, name: true, tags: true, type: true },

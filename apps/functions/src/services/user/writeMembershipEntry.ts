@@ -3,10 +3,11 @@ import type { UserInAuth } from "@esposter/db-schema";
 
 import { db } from "#src/services/shared/db";
 
-// The person's memberships in rooms they do not own, each with the person's own settings there, the time they joined
-// And the time they last read the room, and the roles they hold in it. The other members of a room are not listed.
-// The mention count is derived from other people's messages, and the slowmode and timeout clocks are operational, so
-// None of them is written
+// The person's memberships in rooms they do not own, each with the person's own settings there.
+// Each also carries the time they joined, the time they last read the room, and the roles they hold in it.
+// The other members of a room are not listed.
+// The mention count is derived from other people's messages, and the slowmode and timeout clocks are operational.
+// So none of them is written
 export const writeMembershipEntry = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const ownedRooms = await db.query.roomsInMessage.findMany({
     columns: { id: true },
