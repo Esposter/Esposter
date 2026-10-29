@@ -7,7 +7,7 @@ Read when several screens are redrawn from their references at once, each by an 
 - **A worktree under `.agents/worktrees/<name>`** on a branch of its own, installed narrowly as the `throughput` skill's `references/fleet.md` says, then `pnpm exec vp run build:packages`. The agent reads, edits, runs and commits inside it and never edits the main checkout.
 - **A parity page on a port of its own**, started from the worktree: `pnpm -C packages/genshin-world exec vite --config parity/vite.config.ts --port <port> --strictPort`, and every command carries `GENSHIN_PARITY_PORT=<port>`. Pages never share a port, so no agent's edits reach another's measure. The shot file is per checkout, under the parity directory's `shots/<worktree name>` (`shots/main` for the shared checkout), so two agents comparing the same screen from their own worktrees each write their own shot and never overwrite each other's.
 - **A compare that measures an old build.** The page serves a pre-bundled copy of `genshin-interface` from `packages/genshin-world/node_modules/.vite`, and the compare reads the package's `dist`: after a pull that changed `genshin-interface`, rebuild it (`pnpm -C packages/genshin-interface build`); `compare` then measures a fresh page served with `--force` for the run, and says so on stderr, so the number is the new tree's.
-- **A generated barrel that a `tsdown` build rewrites right after a pull** is a worktree whose `packages/configuration` build is stale, not a change: `pnpm -C packages/configuration build` once, then the package's build again, and the barrel comes out as committed. A rewritten barrel is never committed.
+- **A generated barrel a build rewrites after a pull** — the `build` skill's `references/barrels.md` owns it.
 
 ## The loop
 
@@ -36,4 +36,4 @@ The protocol is to measure what a change does to every screen that mounts the pi
 ## Limits
 
 - **Memory binds before CPU.** Each agent with a page holds a headless browser and a dev server; on a 16 GB laptop four at once keep the load near the cores' count and the memory compressed. More pages than that slow every compare. Work that holds no page (review, docs, sweeps, benches, text and data) is not bound this way and runs beside them.
-- **The machine with the game install takes what needs it:** the 3D scenes, the extracted layout and the text keys. It sources words and measures from the install, so a screen's words and numbers come from there and not through another machine's hands (`../../throughput/references/game-data.md`).
+- **The machine with the game install takes what needs it:** the 3D scenes, the extracted layout and the text keys. It sources words and measures from the install, so a screen's words and numbers come from there and not through another machine's hands (the `throughput` skill's `references/game-data.md`).
