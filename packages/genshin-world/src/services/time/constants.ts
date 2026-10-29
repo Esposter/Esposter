@@ -12,3 +12,9 @@ export const DAYS_IN_WEEK = 7;
 export const WORLD_CLOCK_INTERVAL_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 // The milliseconds a day holds
 export const MILLISECONDS_IN_DAY = 86_400_000;
+// The seconds a minute holds
+export const SECONDS_PER_MINUTE = 60;
+// The seconds an hour holds
+export const SECONDS_PER_HOUR = 3600;
+// The seconds a day holds
+export const SECONDS_PER_DAY = 86_400;

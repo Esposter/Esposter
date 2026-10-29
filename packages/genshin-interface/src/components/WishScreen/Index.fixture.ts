@@ -42,14 +42,8 @@ export const props = {
   ],
   shopLabel: "Shop",
   // Six days, twelve hours and fifteen minutes, the reference's time left
-  timeRemaining: 562_500,
-  timeRemainingWords: {
-    day: "{0} day(s)",
-    format: "{0} {1} {2}",
-    hour: "{0} hour(s)",
-    label: "Time Remaining",
-    minute: "{0} minute(s)",
-  },
+  timeRemainingLabel: "Time Remaining",
+  timeRemainingText: "6 day(s) 12 hour(s) 15 minute(s)",
   title: "Wish",
   trialLabel: "",
 };

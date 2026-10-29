@@ -18,6 +18,7 @@ import { addStellaFortuna } from "#src/services/character/addStellaFortuna";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
 import { toWeaponDefinition } from "#src/services/inventory/toWeaponDefinition";
+import { SECONDS_PER_DAY, SECONDS_PER_HOUR, SECONDS_PER_MINUTE } from "#src/services/time/constants";
 import { findBannerTrial } from "#src/services/trial/findBannerTrial";
 import { appendWishHistory } from "#src/services/wish/appendWishHistory";
 import { BannerKindFateMap } from "#src/services/wish/BannerKindFateMap";
@@ -212,13 +213,19 @@ const timeRemaining = computed(() => {
   const event = wishSchedule.find(({ id }) => id === bannerId.value);
   return event ? Math.max(0, Math.floor((event.endTime - now.epochMilliseconds) / MILLISECONDS_PER_SECOND)) : undefined;
 });
-const timeRemainingWords = computed(() => ({
-  day: gameText[GameTextKey.WishTimeRemainingDays],
-  format: gameText[GameTextKey.WishTimeRemainingFormat],
-  hour: gameText[GameTextKey.WishTimeRemainingHours],
-  label: gameText[GameTextKey.WishTimeRemaining],
-  minute: gameText[GameTextKey.WishTimeRemainingMinutes],
-}));
+// The seconds left as the game's three parts, each counted in its unit's words, and the three joined by the game's format
+const timeRemainingText = computed(() => {
+  if (timeRemaining.value === undefined) return "";
+  const days = Math.floor(timeRemaining.value / SECONDS_PER_DAY);
+  const hours = Math.floor((timeRemaining.value % SECONDS_PER_DAY) / SECONDS_PER_HOUR);
+  const minutes = Math.floor((timeRemaining.value % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
+  return fillGameTextValues(
+    gameText[GameTextKey.WishTimeRemainingFormat],
+    fillGameTextValues(gameText[GameTextKey.WishTimeRemainingDays], days),
+    fillGameTextValues(gameText[GameTextKey.WishTimeRemainingHours], hours),
+    fillGameTextValues(gameText[GameTextKey.WishTimeRemainingMinutes], minutes),
+  );
+});
 const toPoolCells = (items: WishItem[], isFeatured: boolean) =>
   items.map(({ id, name, rarity }) => ({ id, isFeatured, name, rarity }));
 // What the open banner can draw, the highest rarity first and its featured items first of each rarity
@@ -308,8 +315,8 @@ const wish = (count: number) => {
       :results
       :shop-label="gameText[GameTextKey.Shop]"
       :sets
-      :time-remaining="timeRemaining"
-      :time-remaining-words="timeRemainingWords"
+      :time-remaining-label="gameText[GameTextKey.WishTimeRemaining]"
+      :time-remaining-text
       :title="gameText[GameTextKey.Wish]"
       :trial-label
       @buy="buyFate()"

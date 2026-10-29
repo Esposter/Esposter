@@ -16,10 +16,10 @@ import { checkIsForgeRecipeOpen } from "#src/services/forging/checkIsForgeRecipe
 import { computeForgeQueueSlots } from "#src/services/forging/computeForgeQueueSlots";
 import { computeForgeRefusalLabel } from "#src/services/forging/computeForgeRefusalLabel";
 import { computeForgeTalents } from "#src/services/forging/computeForgeTalents";
-import { SECONDS_PER_MINUTE } from "#src/services/forging/constants";
 import { obtainForgeOrder } from "#src/services/forging/obtainForgeOrder";
 import { startForge } from "#src/services/forging/startForge";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
+import { SECONDS_PER_MINUTE } from "#src/services/time/constants";
 import { takeOne } from "@esposter/shared";
 import { ForgeQueueState, ForgeScreen, GameScreen, ItemCategory } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";

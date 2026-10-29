@@ -54,10 +54,10 @@ interface Props {
   sets: WishSet[];
   // The Shop button's words
   shopLabel: string;
-  // The seconds the open event banner has left in its window, "undefined" on a banner with no window
-  timeRemaining?: number;
-  // The Time Remaining label and the three units' words, each counted by its "{0}", the format joining the three
-  timeRemainingWords: { day: string; format: string; hour: string; label: string; minute: string };
+  // The Time Remaining label, shown over the time left and only with it
+  timeRemainingLabel: string;
+  // The time the open event banner has left in its window, in the game's words, "" on a banner with no window
+  timeRemainingText: string;
   title: string;
   // The trial button's words in the reader's language, "" on a banner with no trial
   trialLabel: string;
@@ -81,8 +81,8 @@ const {
   results,
   sets,
   shopLabel,
-  timeRemaining,
-  timeRemainingWords,
+  timeRemainingLabel,
+  timeRemainingText,
   title,
   trialLabel,
 } = defineProps<Props>();
@@ -95,20 +95,6 @@ const getLabelText = (label: TextSegment[]) => label.map(({ text }) => text).joi
 const bannerLabelText = computed(() => {
   const openBanner = banners.find(({ id }) => id === bannerId.value);
   return openBanner && getLabelText(openBanner.label);
-});
-const SECONDS_PER_DAY = 86_400;
-const SECONDS_PER_HOUR = 3600;
-const SECONDS_PER_MINUTE = 60;
-// The seconds left as the game's three parts, each counted in its unit's words, and the three joined by the format
-const timeRemainingText = computed(() => {
-  if (timeRemaining === undefined) return "";
-  const days = Math.floor(timeRemaining / SECONDS_PER_DAY);
-  const hours = Math.floor((timeRemaining % SECONDS_PER_DAY) / SECONDS_PER_HOUR);
-  const minutes = Math.floor((timeRemaining % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
-  return timeRemainingWords.format
-    .replace("{0}", timeRemainingWords.day.replace("{0}", String(days)))
-    .replace("{1}", timeRemainingWords.hour.replace("{0}", String(hours)))
-    .replace("{2}", timeRemainingWords.minute.replace("{0}", String(minutes)));
 });
 </script>
 
@@ -150,8 +136,8 @@ const timeRemainingText = computed(() => {
       <p class="probability">{{ probabilityLabel }}</p>
       <p v-if="bannerCard" class="rate-up">{{ bannerCard.rateUp }}</p>
       <p class="notice">{{ fiveStarNotice }}</p>
-      <p v-if="timeRemaining !== undefined" class="time-label">{{ timeRemainingWords.label }}</p>
-      <p v-if="timeRemaining !== undefined" class="time-duration">{{ timeRemainingText }}</p>
+      <p v-if="timeRemainingText" class="time-label">{{ timeRemainingLabel }}</p>
+      <p v-if="timeRemainingText" class="time-duration">{{ timeRemainingText }}</p>
       <div v-if="bannerCard && featuredCell" class="featured">
         <p class="featured-name">{{ featuredCell.name }}</p>
         <p class="featured-stars"><RarityStars :rarity="featuredCell.rarity" /></p>

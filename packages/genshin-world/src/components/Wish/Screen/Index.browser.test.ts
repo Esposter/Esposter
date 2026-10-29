@@ -52,4 +52,12 @@ describe("wishScreen", () => {
       page.getByRole("button", { exact: true, name: props.gameText[GameTextKey.WishGoToTrial] }).query(),
     ).toBeNull();
   });
+
+  test("an event banner's time left is written in the game's words, each unit counted", async () => {
+    expect.hasAssertions();
+
+    await render(WishScreen, { props });
+
+    await expect.element(page.getByText("6 day(s) 12 hour(s) 15 minute(s)", { exact: true })).toBeVisible();
+  });
 });
