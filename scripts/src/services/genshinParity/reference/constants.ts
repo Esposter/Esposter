@@ -13,11 +13,11 @@ export const DIGEST_LENGTH = 16;
 // Each image of a comparison is drawn this high, side by side
 export const COMPARISON_HEIGHT = 540;
 
-// The mean difference, in percent, a shot must score under its reference to be approved: one percent is the 99%
-// Likeness the screens are held to. A reference that records its own approval keeps that bar instead
+// The mean difference, in percent, a shot must score under its reference to be within the bar: one percent is the 99%
+// Likeness the screens are held to. A reference that records its own bar keeps that bar instead
 const APPROVAL_MEAN_DIFFERENCE_BAR = 1;
 
-// The approval a screen gets when its reference records none
+// The bar a screen is set against when its reference records none
 export const DEFAULT_APPROVAL: ParityApproval = Object.freeze({
   bar: APPROVAL_MEAN_DIFFERENCE_BAR,
   measure: ParityApprovalMeasure.MeanDifference,

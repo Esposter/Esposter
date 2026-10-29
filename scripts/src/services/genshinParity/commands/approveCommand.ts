@@ -7,7 +7,7 @@ export const approveCommand: SubCommandsDef[string] = defineCommand({
   args: {
     reference: {
       description:
-        "A reference's id in ParityReferenceMap, whose screen's image is approved once its compare clears the bar",
+        "A reference's id in ParityReferenceMap, whose screen's image is written; its compare's status against the bar is printed beside it",
       required: true,
       type: "positional",
     },
@@ -18,7 +18,7 @@ export const approveCommand: SubCommandsDef[string] = defineCommand({
   },
   meta: {
     description:
-      "Approve a screen's visual image once its compare against the stored reference is under the bar, fetching the reference first when it is missing",
+      "Write a screen's visual image as a snapshot of its current render, printing its compare against the stored reference and that compare's status against the bar, fetching the reference first when it is missing",
     name: "approve",
   },
   run: ({ args }) => approveReference(args.reference, args.variant),

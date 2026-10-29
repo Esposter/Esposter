@@ -4,8 +4,8 @@ import type { ParitySilhouette } from "#src/models/genshinParity/shared/ParitySi
 import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
 export interface ParityReferenceBase {
-  // The measure and bar the screen's image is approved by, where the screen records its own; one that records none is
-  // Approved by the global FLIP bar
+  // The measure and bar the screen's compare is set against, where the screen records its own; one that records none is
+  // Set against the global default bar
   approval?: ParityApproval;
   // The component whose witness the passes judge the reference by: a screen several components share is measured by
   // Each over the references naming it alone, and a reference naming none is read by no component's passes
