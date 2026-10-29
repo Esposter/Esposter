@@ -1,6 +1,6 @@
 ## Purpose
 
-How a screen is shot and scored against its reference: the numbers first, FLIP as the number a screen's bar is set on, and the committed scores that show what a change moved.
+How a screen is shot and scored against its reference: the numbers first, the approval measure as the number a screen's bar is set on, and the committed scores that show what a change moved.
 
 ## Requirements
 
@@ -33,16 +33,16 @@ A scene rebuilt from shapes SHALL be scored by its shape and by its tone as two 
 - **WHEN** the comparison runs
 - **THEN** each layer is scored apart with its own shape, tone, detail and mean perceptual difference
 
-### Requirement: The perceptual score is the number a screen is set against its bar by
+### Requirement: The approval measure is the number a screen is set against its bar by
 
-A screen SHALL be set against its bar by its perceptual difference score, with the mean difference reported beside it.
+A screen SHALL be set against its bar by its approval measure, the mean difference unless its reference records FLIP, with both scores printed.
 
 #### Scenario: Bar judged
 
 - **GIVEN** a screen compared with its reference
 - **WHEN** the screen's status against its bar is judged
-- **THEN** the perceptual difference score is the number compared with the bar
-- **AND** the mean difference is printed beside it
+- **THEN** the score of the reference's approval measure is the number compared with the bar
+- **AND** the mean difference and FLIP are both printed
 
 ### Requirement: A reference scores only its own pixels
 
