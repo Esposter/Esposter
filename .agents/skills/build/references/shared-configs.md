@@ -6,7 +6,7 @@ Everything lives in `packages/configuration/src/`. Each export is a **factory** 
 
 A package's `tsdown.config.ts` is one factory call plus only what is genuinely specific to it. If you are about to repeat a plugin, an exclude or a `deps` entry across two packages, it belongs in `configuration` instead. Which package calls which factory is countable from the repo — never restate it here.
 
-The build script is bare `tsdown`. tsdown finds `tsdown.config.ts` by name; never pass `--config`.
+The build script is bare `tsdown`, or `tsdown` after a generator (`packages/db-schema`'s `registry:gen`). tsdown finds `tsdown.config.ts` by name; never pass `--config`.
 
 ## Compose with `mergeConfig`, never a spread
 
