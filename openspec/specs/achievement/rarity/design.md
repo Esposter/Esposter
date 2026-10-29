@@ -11,7 +11,7 @@ flowchart LR
   grid -->|"one card per definition, with its rarity"| card["GridItem.vue<br/>percentage and Rare mark"]
 ```
 
-`achievement.readAchievementRarities` counts registered users once, then runs one `GROUP BY` over the unlocked rows of `userAchievements`, joined to `achievements` for the name. Each definition's percentage is its unlock count over the user count, so every achievement is keyed in the result, and one nobody has earned reads `0`. There is no stored counter: the count runs on each page view, and an unlock never has to keep one in step.
+`achievement.readAchievementRarities` counts registered users once, and alongside it runs one `GROUP BY` over the unlocked rows of `userAchievements`, joined to `achievements` for the name. Each definition's percentage is its unlock count over the user count, so every achievement is keyed in the result, and one nobody has earned reads `0`. There is no stored counter: the count runs on each page view, and an unlock never has to keep one in step.
 
 - **Denominator** — every registered user, not the users of the product an achievement belongs to. A per-product share would need a notion of "has used the clicker" that the schema does not keep.
 - **Hidden achievements** show their rarity too, as Steam does. It says how hard an achievement is without saying what it is.
