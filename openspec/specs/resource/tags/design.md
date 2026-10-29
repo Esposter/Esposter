@@ -42,7 +42,7 @@ Names are non-empty through the `normalizeString` pipe; values are not. An empty
 | `packages/db-schema/src/schema/resource/resourcesInResource.ts` | `tags` column + GIN index |
 | `app/components/Resource/TagsEditorDialog.vue`                  | Name/value row editor     |
 | `app/components/Resource/List/TagFilterPill.vue`                | The `/all` Tag pill       |
-| `app/components/Resource/TagList.vue`                           | The `/tags` route's list  |
+| `app/components/Resource/TagList.vue`                           | The `/resource-explorer/tags` route's list |
 | `app/components/Resource/Overview.vue`                          | Essentials tags row       |
 
 ## Notes
