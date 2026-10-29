@@ -31,7 +31,7 @@ flowchart LR
 ## Rules
 
 - **`pnpm ai:resume` runs first**, before the backlog is read. It prints one row per check, each `ok` or the leftovers with their action, and exits non-zero while any row needs one. A clean report is the gate to `pnpm ai:fleet:next` and to the engineering-loops page's "What runs next when nothing is asked" (`openspec/specs/architecture/engineering-loops/design.md`).
-- **Rows are worked in the order printed.** A missing plugin is installed first, since its mods (the usage reserve, the collision guard) load only in a session started after the install. A dead hold or a worktree is cleared before the tree, so nothing still running holds a path being judged.
+- **Rows are worked in the order printed.**
 - **An uncommitted path is read before it is judged.** Its handoff is, in order:
   - the item that names it on its area's roadmap or proposal page;
   - the follow-ups;
