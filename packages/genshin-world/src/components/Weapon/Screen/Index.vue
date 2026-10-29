@@ -198,15 +198,12 @@ const refinementMaterial = computed(() => {
     name: getItemDefinition(weaponData.value.refinementMaterialId, nameText, materialDataMap).name,
   };
 });
+// Whether the bag holds the refinement material at all, which a refinement can take in place of a copy
+const isRefinementMaterialHeld = computed(() => (refinementMaterial.value?.count ?? 0) > 0);
 // The Refine tab's slots, one for each rank a weapon can still gain, each holding a picked candidate or left empty
 const refineSlotCount = computed(() => weaponData.value.refinementCosts.length);
 const emptyRefineSlotCount = computed(() =>
-  Math.max(
-    0,
-    refineSlotCount.value -
-      copyCells.value.length -
-      (refinementMaterial.value && refinementMaterial.value.count > 0 ? 1 : 0),
-  ),
+  Math.max(0, refineSlotCount.value - copyCells.value.length - (isRefinementMaterialHeld.value ? 1 : 0)),
 );
 // The Enhance strip's slots, the candidates first and empty slots after them up to the seven the strip shows across its width
 const emptyEnhanceSlotCount = computed(() =>
@@ -229,7 +226,7 @@ const isActionDisabled = computed(() => {
     return pickedOres.value.length === 0 && pickedFodderIds.value.length === 0;
   // A refinement takes the copy picked or else the material, so a weapon with neither has nothing to refine with
   if (openTab.value === WeaponMenuTab.Refine)
-    return pickedCopyId.value === undefined && (!refinementMaterial.value || refinementMaterial.value.count === 0);
+    return pickedCopyId.value === undefined && !isRefinementMaterialHeld.value;
   return false;
 });
 // Writes an accepted action's bag and wallet back and clears the picks it spent
@@ -430,7 +427,7 @@ const nextPhaseCosts = computed(() =>
           gameText[GameTextKey.ArtifactAutoAdd]
         }}</span>
         <div class="cells refine-cells">
-          <div v-if="refinementMaterial && refinementMaterial.count > 0" class="cell">
+          <div v-if="refinementMaterial && isRefinementMaterialHeld" class="cell">
             <button class="pick" :aria-pressed="pickedCopyId === undefined" type="button" @click="pickMaterial()">
               <span class="cell-name">{{ refinementMaterial.name }}</span>
               <span class="plus" aria-hidden="true" />
