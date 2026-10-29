@@ -1,5 +1,5 @@
 import { missFleetEntry } from "#src/services/fleet/missFleetEntry";
-import { readRequiredMachineProfile } from "#src/services/fleet/readMachineProfile";
+import { readRequiredMachineProfile } from "#src/services/fleet/readRequiredMachineProfile";
 import { releaseFleetEntry } from "#src/services/fleet/releaseFleetEntry";
 import { requireFleetWorker } from "#src/services/fleet/requireFleetWorker";
 import { runCommand } from "#src/services/timing/runCommand";

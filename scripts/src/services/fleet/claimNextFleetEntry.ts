@@ -6,7 +6,7 @@ import { filterFleetEntries } from "#src/services/fleet/filterFleetEntries";
 import { formatMachineLoad } from "#src/services/fleet/formatMachineLoad";
 import { readClaimedRefs } from "#src/services/fleet/readClaimedRefs";
 import { readFleetEntries } from "#src/services/fleet/readFleetEntries";
-import { readRequiredMachineProfile } from "#src/services/fleet/readMachineProfile";
+import { readRequiredMachineProfile } from "#src/services/fleet/readRequiredMachineProfile";
 import { readMachineSample } from "#src/services/fleet/readMachineSample";
 import { selectTakeableEntries } from "#src/services/fleet/selectTakeableEntries";
 

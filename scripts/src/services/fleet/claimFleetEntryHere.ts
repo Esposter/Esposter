@@ -2,7 +2,7 @@ import type { ClaimHolder } from "#src/models/fleet/ClaimHolder";
 
 import { claimFleetEntry } from "#src/services/fleet/claimFleetEntry";
 import { formatMachineLoad } from "#src/services/fleet/formatMachineLoad";
-import { readRequiredMachineProfile } from "#src/services/fleet/readMachineProfile";
+import { readRequiredMachineProfile } from "#src/services/fleet/readRequiredMachineProfile";
 import { readMachineSample } from "#src/services/fleet/readMachineSample";
 import { requireFleetWorker } from "#src/services/fleet/requireFleetWorker";
 
