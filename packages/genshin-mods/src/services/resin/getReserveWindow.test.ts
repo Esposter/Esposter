@@ -2,11 +2,9 @@ import { describe, expect, test } from "vitest";
 
 import {
   FIVE_HOUR_MAINTENANCE_PERCENTAGE,
-  FIVE_HOUR_WIND_DOWN_PERCENTAGE,
   FIVE_HOUR_WINDOW_MS,
   PACE_FLOOR_PERCENTAGE,
   WEEKLY_MAINTENANCE_PERCENTAGE,
-  WEEKLY_WIND_DOWN_PERCENTAGE,
   WEEKLY_WINDOW_MS,
 } from "../constants";
 import { getReserveWindow } from "./getReserveWindow";
@@ -30,118 +28,56 @@ describe(getReserveWindow, () => {
     ).toBeUndefined();
   });
 
-  test("names the five-hour window at its maintenance line as maintenance", () => {
+  test("names the five-hour window at its maintenance line", () => {
     expect.hasAssertions();
 
     expect(
       getReserveWindow([{ kind: "five_hour", percentUsed: FIVE_HOUR_MAINTENANCE_PERCENTAGE, resetsAt }], now),
     ).toStrictEqual({
       isAheadOfPace: false,
-      isWindDown: false,
       name: "five-hour",
       percentage: FIVE_HOUR_MAINTENANCE_PERCENTAGE,
       resetsAt,
     });
   });
 
-  test("names the five-hour window at its wind-down line as wind-down", () => {
-    expect.hasAssertions();
-
-    expect(
-      getReserveWindow([{ kind: "five_hour", percentUsed: FIVE_HOUR_WIND_DOWN_PERCENTAGE, resetsAt }], now),
-    ).toStrictEqual({
-      isAheadOfPace: false,
-      isWindDown: true,
-      name: "five-hour",
-      percentage: FIVE_HOUR_WIND_DOWN_PERCENTAGE,
-      resetsAt,
-    });
-  });
-
-  test("names the weekly window at its maintenance line as maintenance", () => {
+  test("names the weekly window at its maintenance line", () => {
     expect.hasAssertions();
 
     expect(
       getReserveWindow([{ kind: "seven_day", percentUsed: WEEKLY_MAINTENANCE_PERCENTAGE, resetsAt }], now),
-    ).toStrictEqual({
-      isAheadOfPace: false,
-      isWindDown: false,
-      name: "weekly",
-      percentage: WEEKLY_MAINTENANCE_PERCENTAGE,
-      resetsAt,
-    });
+    ).toStrictEqual({ isAheadOfPace: false, name: "weekly", percentage: WEEKLY_MAINTENANCE_PERCENTAGE, resetsAt });
   });
 
-  test("names the weekly window at its wind-down line as wind-down", () => {
-    expect.hasAssertions();
-
-    expect(
-      getReserveWindow([{ kind: "seven_day", percentUsed: WEEKLY_WIND_DOWN_PERCENTAGE, resetsAt }], now),
-    ).toStrictEqual({
-      isAheadOfPace: false,
-      isWindDown: true,
-      name: "weekly",
-      percentage: WEEKLY_WIND_DOWN_PERCENTAGE,
-      resetsAt,
-    });
-  });
-
-  test("names the weekly window when only it has passed its wind-down line", () => {
+  test("names the weekly window when only it has passed its maintenance line", () => {
     expect.hasAssertions();
 
     expect(
       getReserveWindow(
         [
           { kind: "five_hour", percentUsed: FIVE_HOUR_MAINTENANCE_PERCENTAGE - 1, resetsAt },
-          { kind: "seven_day", percentUsed: WEEKLY_WIND_DOWN_PERCENTAGE, resetsAt },
+          { kind: "seven_day", percentUsed: WEEKLY_MAINTENANCE_PERCENTAGE, resetsAt },
         ],
         now,
       ),
-    ).toStrictEqual({
-      isAheadOfPace: false,
-      isWindDown: true,
-      name: "weekly",
-      percentage: WEEKLY_WIND_DOWN_PERCENTAGE,
-      resetsAt,
-    });
+    ).toStrictEqual({ isAheadOfPace: false, name: "weekly", percentage: WEEKLY_MAINTENANCE_PERCENTAGE, resetsAt });
   });
 
-  test("names the weekly wind-down over a five-hour maintenance tier, the stricter one", () => {
+  test("names the five-hour window when both have passed their maintenance lines, though the weekly one is read first", () => {
     expect.hasAssertions();
 
     expect(
       getReserveWindow(
         [
-          { kind: "seven_day", percentUsed: WEEKLY_WIND_DOWN_PERCENTAGE, resetsAt },
+          { kind: "seven_day", percentUsed: WEEKLY_MAINTENANCE_PERCENTAGE, resetsAt },
           { kind: "five_hour", percentUsed: FIVE_HOUR_MAINTENANCE_PERCENTAGE, resetsAt },
         ],
         now,
       ),
     ).toStrictEqual({
       isAheadOfPace: false,
-      isWindDown: true,
-      name: "weekly",
-      percentage: WEEKLY_WIND_DOWN_PERCENTAGE,
-      resetsAt,
-    });
-  });
-
-  test("names the five-hour window when both are at wind-down", () => {
-    expect.hasAssertions();
-
-    expect(
-      getReserveWindow(
-        [
-          { kind: "seven_day", percentUsed: WEEKLY_WIND_DOWN_PERCENTAGE, resetsAt },
-          { kind: "five_hour", percentUsed: FIVE_HOUR_WIND_DOWN_PERCENTAGE, resetsAt },
-        ],
-        now,
-      ),
-    ).toStrictEqual({
-      isAheadOfPace: false,
-      isWindDown: true,
       name: "five-hour",
-      percentage: FIVE_HOUR_WIND_DOWN_PERCENTAGE,
+      percentage: FIVE_HOUR_MAINTENANCE_PERCENTAGE,
       resetsAt,
     });
   });
@@ -149,7 +85,9 @@ describe(getReserveWindow, () => {
   test("skips a window past the line that gives no reset time", () => {
     expect.hasAssertions();
 
-    expect(getReserveWindow([{ kind: "five_hour", percentUsed: FIVE_HOUR_WIND_DOWN_PERCENTAGE }], now)).toBeUndefined();
+    expect(
+      getReserveWindow([{ kind: "five_hour", percentUsed: FIVE_HOUR_MAINTENANCE_PERCENTAGE }], now),
+    ).toBeUndefined();
   });
 
   test("reads nothing when both windows are missing", () => {
@@ -179,7 +117,6 @@ describe(getReserveWindow, () => {
       ),
     ).toStrictEqual({
       isAheadOfPace: true,
-      isWindDown: false,
       name: "weekly",
       percentage: PACE_FLOOR_PERCENTAGE,
       resetsAt: new Date(WEEKLY_WINDOW_MS).toISOString(),
@@ -219,7 +156,6 @@ describe(getReserveWindow, () => {
       ),
     ).toStrictEqual({
       isAheadOfPace: false,
-      isWindDown: false,
       name: "five-hour",
       percentage: FIVE_HOUR_MAINTENANCE_PERCENTAGE,
       resetsAt: new Date(FIVE_HOUR_WINDOW_MS).toISOString(),

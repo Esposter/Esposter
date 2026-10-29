@@ -1,9 +1,9 @@
 import type { ReserveWindow } from "../../../types";
 
-import { MAINTENANCE_INSTRUCTION, RESERVE_INSTRUCTION } from "../constants";
+import { MAINTENANCE_INSTRUCTION } from "../constants";
 import { getReserveSummary } from "./getReserveSummary";
 
-// The system section the reserve adds: its summary and the instruction of its tier are the only parts that vary, so the
-// Text holds still for as long as the tier does
+// The system section the reserve adds: the summary is the only part that varies, with the window it names and the line
+// That window has passed, so the text holds still while neither changes
 export const reserveText = (reserveWindow: ReserveWindow): string =>
-  `${getReserveSummary(reserveWindow)}. ${reserveWindow.isWindDown ? RESERVE_INSTRUCTION : MAINTENANCE_INSTRUCTION}`;
+  `${getReserveSummary(reserveWindow)}. ${MAINTENANCE_INSTRUCTION}`;
