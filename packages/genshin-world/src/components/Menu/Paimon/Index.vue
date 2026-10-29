@@ -92,6 +92,13 @@ const emit = defineEmits<{
 const openContents = computed(() =>
   PAIMON_MENU_CONTENTS.filter(({ screenKind }) => checkIsSystemOpen(screenKind, adventureRank, finishedMainQuestIds)),
 );
+// Quit is anchored from the bottom edge, as the frame anchors it: its box stands 36 of the 1440 high still's pixels above
+// The still's bottom, which puts its centre 55 units above the frame's bottom, where the frame's centre is
+const quitStyle = {
+  ...getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Quit]),
+  bottom: "calc(var(--reference-pixel) * 36)",
+  top: "auto",
+};
 const backButton = useTemplateRef("backButton");
 const worldLevelInfoButton = useTemplateRef("worldLevelInfoButton");
 // The World Level dialog opens over the menu from the info icon beside the World Level, and closes back to it; the menu
@@ -192,7 +199,7 @@ onBeforeUnmount(() => {
         ref="quitGameButton"
         class="side-entry"
         :kind="GameButtonKind.Disc"
-        :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Quit])"
+        :style="quitStyle"
         :tip="gameText[GameTextKey.QuitGame]"
         @click="isExitPrompted = true"
       >
