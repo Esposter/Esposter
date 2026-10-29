@@ -28,7 +28,7 @@ flowchart TD
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/neuvillette), MIT: Neuvillette's strikes' hitmarks, cancel frames and reaches, the short charged attack, O Tears, I Shall Repay with its circle and Max HP share, Spiritbreath Thorn's hitmark and circle, and O Tides, I Have Returned's first hit and two Waterfalls with their hitmarks and animation.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/neuvillette), MIT: Neuvillette's strikes' hitmarks, cancel frames and reaches, the short charged attack, O Tears, I Shall Repay with its circle and Max HP share, Spiritbreath Thorn's hitmark and circle, and O Tides, I Have Returned's first hit and two Waterfalls with their hitmarks and animation, and Equitable Judgment's legal evaluation, its eight waves at 6, 28, 53, 78, 103, 128, 153 and 173 frames (`charge.go`, `chargeJudgementTick`), its drains and its droplet heals.
 - [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT: the plunges' timings and reaches, borrowed as gcsim gives Neuvillette no plunge file.
 - [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/neuvillette/cons.go), MIT: Constellation 4's droplet, its 8-metre offset, its 1.3 to 3 metre range and its 4-second interval.
 - [As Water Seeks Equilibrium](https://genshin-impact.fandom.com/wiki/As_Water_Seeks_Equilibrium), [O Tears, I Shall Repay](https://genshin-impact.fandom.com/wiki/O_Tears,_I_Shall_Repay) and [O Tides, I Have Returned](https://genshin-impact.fandom.com/wiki/O_Tides,_I_Have_Returned), Genshin Impact Wiki: the poise of his strikes, collision, plunges, Equitable Judgment's waves, skill and burst.
