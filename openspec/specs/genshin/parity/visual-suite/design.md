@@ -25,14 +25,17 @@ flowchart TD
 
 - **The variant separator has one source.** The visual suites join a screen's name to its fixture's variant with the interface's `FIXTURE_VARIANT_SEPARATOR` (`packages/genshin-interface/src/services/constants.ts`), and `scripts` reads that same constant for `approve` through a workspace dependency on `genshin-interface`, via its pure `./constants` export, since its root imports Vue components that the scripts runner cannot load.
 
+- **The two visual suites share one comparison record, exported by the interface.** Both suites tally their cases through `createVisualComparisonRecord` (`packages/genshin-interface/src/services/createVisualComparisonRecord.ts`), which `genshin-interface` exports, so genshin-world imports it like any other interface export and no test-only module is needed. Its `report` prints the summary after the cases, and a failure that is not an `Error` is thrown rather than read for a message it does not have.
+
 ## Key files
 
-| File                                                                   | Role                                                                                                        |
-| :--------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/parity/screens.visual.ts`                      | The visual suite of the screens: mismatches listed, a missing image written, the summary after the cases    |
-| `packages/genshin-interface/src/components/components.visual.ts`       | The visual suite of the interface's components, the same summary without neverthrow (no `@esposter/shared`) |
-| `scripts/src/services/genshinParity/reference/approveReference.ts`     | Writes one screen's image: prints the compare's status, then the suite's `-u` for that screen alone         |
-| `scripts/src/services/genshinParity/reference/decideApprovalStatus.ts` | The status of a compare against the bar: no reference, the whole screen not judged, no score, over, within  |
+| File                                                                      | Role                                                                                                        |
+| :------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/parity/screens.visual.ts`                         | The visual suite of the screens: mismatches listed, a missing image written, the summary after the cases    |
+| `packages/genshin-interface/src/components/components.visual.ts`          | The visual suite of the interface's components, the same summary without neverthrow (no `@esposter/shared`) |
+| `scripts/src/services/genshinParity/reference/approveReference.ts`        | Writes one screen's image: prints the compare's status, then the suite's `-u` for that screen alone         |
+| `scripts/src/services/genshinParity/reference/decideApprovalStatus.ts`    | The status of a compare against the bar: no reference, the whole screen not judged, no score, over, within  |
+| `packages/genshin-interface/src/services/createVisualComparisonRecord.ts` | The tally both visual suites keep over their cases, and the summary they print after them                   |
 
 ## Sources
 
@@ -43,4 +46,3 @@ flowchart TD
 - [ ] **The suite reads the engine and the interface library from their source** — no source yet: a recorded run of the suite that resolves both from source; `packages/genshin-world/vitest.browser.config.ts` (line 18) leads its `resolve.conditions` with `SOURCE_CONDITION`, but no run is kept.
 - [ ] **A size change fails its case rather than being listed** — no source yet: the matcher's dimension check returns no ratio (`Expected image dimensions to be ...`), so a case whose box changed size has nothing to list; a case whose size changed is failed until a ratio for it is recorded.
 - [ ] **The interface's `./constants` build** — owed to the build at integration.
-- [ ] **The two suites share one mismatch summary** — no source yet: `packages/genshin-interface/src/components/components.visual.ts` and `packages/genshin-world/parity/screens.visual.ts` repeat the bar, the matcher's message and regex, the `recordComparison` rule and the `afterAll` summary. The decision is where a shared helper lives (a test-only module the two packages import, or one of them exporting it), since genshin-world reads the interface library and a shared module must not reach a product bundle.
