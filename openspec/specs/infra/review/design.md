@@ -201,5 +201,5 @@ A review does not gate on CI. A window's review completes and `main` moves, what
 ## Notes
 
 - There is no pull request to comment on, so a finding lives in the run's summary and, from then on, in its issue until a settlement closes it.
-- The collector's token is the session account's `gh` token, held as the `REVIEW_COLLECTOR_TOKEN` secret. A personal access token or a GitHub App is never substituted for it.
-- Shipping a fix to the review's scripts: a settle job already running keeps the code it loaded, so every run whose settle job is in progress and whose head predates the fix is cancelled, and a queued settle job that also predates the fix is cancelled in turn. `git merge-base --is-ancestor <fix> <head>` tells which.
+- The collector's token, `REVIEW_COLLECTOR_TOKEN`, is the session account's `gh auth token`, kept in ESC. It also dispatches the workflow, so the workflow's own token stays read-only, and a personal access token or a GitHub App is never substituted for it.
+- Shipping a fix to the review's scripts: a settle job already running keeps the code it loaded, so every run whose settle job is in progress and whose head predates the fix is cancelled. Cancelling one lets the queued settle job start, and that one may predate the fix too, so it is checked the same way. `git merge-base --is-ancestor <fix> <head>` tells which.
