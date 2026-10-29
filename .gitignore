@@ -5,9 +5,6 @@ node_modules
 .pnpm-store
 
 # Build Artifacts
-**/src/index.ts
-**/src/generated/characterKitMap/
-**/src/components/index.ts
 **/public/docs
 
 # The production build of genshin-world's parity page, which `genshin:parity load` builds and serves
