@@ -87,7 +87,7 @@ The plugin is installed alone by a stranger's frozen `npm ci`, and every release
 | `scripts/src/services/genshinText/buildQuests.ts`                  | The world's quests, their talks and their words in every language                                              |
 | `scripts/src/services/genshinText/buildNames.ts`                   | Every `nameTextId` in the published records and the world's data files, one record of the world's per language |
 | `scripts/src/services/genshinText/buildGcgText.ts`                 | The card game's names and descriptions the deck slices name, one record per language                           |
-| `scripts/src/services/genshinText/findGameText.ts`                 | The ids of every English string a pattern matches                                                              |
+| `scripts/src/services/genshinText/readGameTextMatches.ts`          | The ids of every English string a pattern matches, the search behind `genshin:text find`                       |
 | `scripts/src/services/genshinText/decodeGameText.ts`               | Every language's text map exported from the installed client's chunks and decoded                              |
 | `scripts/src/services/genshinText/decodeTextMap.ts`                | One text map chunk decoded, ported from the owomocha devkit (MIT), refused unless consumed exactly             |
 | `scripts/src/services/genshinAssets/shared/getPathHash.ts`         | The name AnimeStudio exports an asset under, from its path                                                     |

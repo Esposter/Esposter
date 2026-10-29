@@ -53,7 +53,6 @@ flowchart LR
 | `packages/genshin-world/src/components/Game/Opening/Index.vue`                       | Starts the preload when it mounts                                   |
 | `apps/web/app/components/Genshin/Index.vue`                                          | Composes the bar from the bytes and the thirds                      |
 | `packages/genshin-world/src/components/World/Windrise/Index.vue`                     | Draws the character's model from the reader, with no capsule        |
-| `packages/genshin-world/src/components/World/CharacterPlaceholder/Index.vue`         | Deleted                                                             |
 | `apps/web/server/development/genshinCharacterPacks.ts` and its services              | Deleted                                                             |
 | `apps/web/server/services/genshin/accountCharacterPack/**` and its routes and models | Deleted                                                             |
 | `packages/genshin-world/src/components/Character/PackLoader/Index.vue`               | Deleted                                                             |

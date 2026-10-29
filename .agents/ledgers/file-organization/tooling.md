@@ -1296,7 +1296,6 @@
 | `scripts/src/services/genshinText/fetchRemoteFiles.ts`                                    | —                       |       |
 | `scripts/src/services/genshinText/fillDumpDefaults.test.ts`                               | —                       |       |
 | `scripts/src/services/genshinText/fillDumpDefaults.ts`                                    | —                       |       |
-| `scripts/src/services/genshinText/findGameText.ts`                                        | —                       |       |
 | `scripts/src/services/genshinText/getCharacterLinesLoaderMapSource.ts`                    | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/getDefaultValue.ts`                                     | —                       |       |
 | `scripts/src/services/genshinText/getGameTextHash.test.ts`                                | —                       |       |

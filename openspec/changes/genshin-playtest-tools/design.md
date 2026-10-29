@@ -41,13 +41,17 @@ flowchart LR
 | `packages/genshin-world/src/services/dev/createDevRegistry.ts`             | Registers handles, parses a line, runs it, reports                                                      |
 | `packages/genshin-world/src/models/dev/DevCommand.ts` and `DevVariable.ts` | The two registered shapes                                                                               |
 | `packages/genshin-world/src/services/dev/commands/**`                      | One command per file, grouped by the owner that registers it                                            |
-| `packages/genshin-world/src/services/dev/scenarios/**`                     | One scenario per file                                                                                   |
 | `packages/genshin-world/src/composables/useWorldDevHandles.ts`             | Registers the world's commands with the registry while the session mounts, and removes them on disposal |
 | `apps/web/app/components/Genshin/Dev/Console/Index.vue`                    | The console                                                                                             |
 | `apps/web/app/components/Genshin/Dev/Panel/Index.vue`                      | The panel: variable tabs, scenarios and stats                                                           |
 | `apps/web/app/components/Genshin/World.vue`                                | Mounts both behind the development flag                                                                 |
 | `packages/genshin-world/src/composables/useGenshinTuning.ts`               | Registers the look's variables instead of an Inspector group                                            |
-| `packages/genshin-engine/src/renderer/attachInspector.ts`                  | Deleted                                                                                                 |
+
+Scenario files are added beside the runner as the changes that show them land, one scenario per file:
+
+```text
+packages/genshin-world/src/services/dev/scenarios/
+```
 
 ## Notes
 
@@ -58,4 +62,4 @@ flowchart LR
 
 - The engines' public developer-console documentation named in the Context: Unreal's console variables and commands, the Source engine's console variables, and Minecraft's command syntax. Read from general knowledge of those pages; none was re-fetched for this design.
 - The owner's request: an easy way to play-test and check features, no more of three's Inspector, which "seems to be getting in my way more than not, and not really informative", tools that are agent-first and not wasteful, and nothing that rebuilds a game engine.
-- `packages/genshin-engine/src/renderer/attachInspector.ts`, `createGenshinRenderer.ts` and `packages/genshin-world/src/composables/useGenshinTuning.ts` for what exists today.
+- `packages/genshin-engine/src/renderer/createGenshinRenderer.ts` and `packages/genshin-world/src/composables/useGenshinTuning.ts` for what exists today.
