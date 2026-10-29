@@ -212,18 +212,18 @@ export const createEulaKitBehaviour = ({
             resistanceReduction: { [Element.Cryo]: shredResistance },
             secondsRemaining: shredSecondsPerStack * stacks,
           });
-          const icewhirls: KitHit[] = icewhirlHitmarkSecondsList.slice(0, stacks).map((hitmarkSeconds) => ({
-            element: Element.Cryo,
-            enemyStatus: shred,
-            gauge: 1,
-            hitArea: icewhirlArea,
-            hitmarkSeconds,
-            onStrike: ({ kitEffectState: strikeEffectState, random }, { combatant: striker }) => {
-              gainLightfallStack(strikeEffectState, striker, random);
-            },
-            poiseDamage: 0,
-            talentMultiplier: icewhirlMultiplier,
-          }));
+          const icewhirls: KitHit[] = icewhirlHitmarkSecondsList
+            .slice(0, stacks)
+            .map((hitmarkSeconds) => ({
+              ...lightfallStackHit,
+              element: Element.Cryo,
+              enemyStatus: shred,
+              gauge: 1,
+              hitArea: icewhirlArea,
+              hitmarkSeconds,
+              poiseDamage: 0,
+              talentMultiplier: icewhirlMultiplier,
+            }));
           castKitSummon(kitEffectState, body, combatant, icewhirls, { attackTag: AttackTag.ElementalSkill });
           // Two stacks raise a Shattered Lightfall Sword at Ascension 1, which explodes on its own once the hold has begun
           if (stacks === GRIMHEART_MAX_STACKS && combatant.ascension >= ASCENSION_1)
