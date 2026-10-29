@@ -14,5 +14,6 @@ describe(checkIsRetryablePush, () => {
     expect.hasAssertions();
 
     expect(checkIsRetryablePush("fatal: unable to access 'https://github.com/': Could not resolve host")).toBe(false);
+    expect(checkIsRetryablePush(" ! [remote rejected] HEAD -> ai/queue (pre-receive hook declined)")).toBe(false);
   });
 });
