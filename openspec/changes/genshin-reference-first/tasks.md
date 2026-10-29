@@ -1,3 +1,10 @@
+## 0. Screenshots only
+
+- [ ] 0.1 Write the reference test first in `scripts/src/services/genshinParity/shared/ParityReferenceMap.test.ts`, asserting that no entry names a recording, and watch it fail on the 57 entries built from one. Verify: the test named after the scenario "Reference names a recording", seen failing.
+- [ ] 0.2 Ask the owner for a screenshot of each recording-built reference, listed by entry name, since the wiki's pages return HTTP 402 to this session. Each entry is re-referenced from the screenshot, or named pending with its reason. Verify: no entry names a recording.
+- [ ] 0.3 Remove the recording fields (`capture`, `seconds`, `plateCapture`) from the reference model, once no entry uses them. Verify: typecheck passes, and the test from 0.1 passes.
+- [ ] 0.4 Remove the recording-frame path from the parity tooling that only served those entries. Verify: the parity tests pass without it, and no file under `scripts/src/services/genshinParity` names a recording command.
+
 ## 1. Screen coverage
 
 - [ ] 1.1 Write `packages/genshin-world/parity/screens.test.ts` first, beside `screens.ts`, asserting that every `Screen/Index.vue` under `packages/genshin-world/src/components` has a fixture or a pending entry, and watch it fail on the ten screens without a fixture. Verify: the test named after the scenario "Every screen folder is referenced or named pending", seen failing.

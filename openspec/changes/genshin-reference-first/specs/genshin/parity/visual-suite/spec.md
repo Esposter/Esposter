@@ -22,6 +22,22 @@ Each screen and each of its variants SHALL have one approved image beside its co
 - **WHEN** the visual suite resolves its image
 - **THEN** the run fails and names the screen
 
+### Requirement: A reference is a screenshot, never a frame of a recording
+
+A reference SHALL be a screenshot of the game, so no comparison scores a frame taken from a recording.
+
+#### Scenario: Reference is a screenshot
+
+- **GIVEN** a reference entry whose source is a screenshot
+- **WHEN** the reference test runs
+- **THEN** the entry is accepted
+
+#### Scenario: Reference names a recording
+
+- **GIVEN** a reference entry whose source is a frame of a recording
+- **WHEN** the reference test runs
+- **THEN** the run fails and names the entry
+
 ### Requirement: A subscreen's image is approved only once its own compare clears
 
 A subscreen's approved image SHALL be written only once its own compare clears the bar, so no subscreen holds an image it does not match.

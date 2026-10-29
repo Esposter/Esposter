@@ -10,19 +10,21 @@
 - **One image name per screen and variant, with no platform segment.** The alternative was keeping one file per platform. That is how the 36 images split: each machine approved its own, so a screen's truth depended on which machine last ran `approve`. A single name needs one render to be the truth, and the compare bar (a mean difference under 1%) absorbs the small anti-aliasing differences between machines.
 - **A pinned Linux render container was considered and deferred.** It removes cross-machine differences entirely, but needs Docker running and a second render path to maintain. It is adopted only if the compare bar fails on identical screens across two machines.
 - **When a screen has both a win32 and a darwin image, the win32 image is kept.** It is the set most approved screens already have. The darwin file stays in git history.
-- **A reference is a lossless PNG at the recording's native resolution, taken from the best recording of the screen.** The compare scores pixels, so a compressed or downscaled frame sets a bar the game never meets. The owner's own captures are preferred over a re-encoded public upload, a 1080-high recording over a 720-high one, and a frame with no overlay over one with a subtitle or a watermark. A frame is taken with `ffmpeg -ss <seconds> -frames:v 1 -pix_fmt rgb24`, which keeps every pixel the source holds.
+- **A reference is a screenshot, never a frame of a recording.** A recording costs far more to store and to compare than a still, and it is hard to handle, so the parity loop does not take one as a reference. A frame taken from a recording also carries that recording's compression and overlays, so a compare against it scores the recording rather than the game. The reference is one screenshot per visually different state, kept lean: a state that renders the same as another names its own entry and shares its image by hash, rather than shooting it again.
+- **Transitions are not compared frame by frame.** A transition is one shared mechanism, built once and checked by the state tests. Once the transitions are right, every screen that moves through them is right too, so no screen carries a recording of its own motion.
 - **The change is archived only when nothing is pending.** Several screens cannot be sourced from the wiki from this session, since its pages return HTTP 402, so the blocker is the owner's screenshots or a browser capture, not the code. The change stays open until those land.
 
 ## Enforcement by rung
 
-| Requirement                                                      | Rung                     | What holds it                                                                                         |
-| :--------------------------------------------------------------- | :----------------------- | :---------------------------------------------------------------------------------------------------- |
-| Every `Screen` folder is referenced or pending                   | 4. Test                  | `packages/genshin-world/parity/screens.test.ts`, new                                                  |
-| Every subscreen names a reference of its own                     | 1. Construction, 4. Test | the `variant` field on the entry model, and `ParityReferenceMap.test.ts` with a new test              |
-| A fixture has a reference entry                                  | 4. Test                  | `ParityReferenceMap.test.ts`, already present                                                         |
-| Approved images have no platform segment                         | 4. Test                  | `packages/configuration/src/services/getVitestBrowserConfiguration.test.ts`, new, beside the resolver |
-| A subscreen is approved only once its compare clears             | 4. Test                  | the approval command's test, already the gate in `approveReference.ts`                                |
-| The order reference, fixture, component, compare, approve, suite | 5. Remembered            | the genshin-parity skill's rules, read by review                                                      |
+| Requirement                                                      | Rung                     | What holds it                                                                                            |
+| :--------------------------------------------------------------- | :----------------------- | :------------------------------------------------------------------------------------------------------- |
+| Every `Screen` folder is referenced or pending                   | 4. Test                  | `packages/genshin-world/parity/screens.test.ts`, new                                                     |
+| Every subscreen names a reference of its own                     | 1. Construction, 4. Test | the `variant` field on the entry model, and `ParityReferenceMap.test.ts` with a new test                 |
+| A fixture has a reference entry                                  | 4. Test                  | `ParityReferenceMap.test.ts`, already present                                                            |
+| Approved images have no platform segment                         | 4. Test                  | `packages/configuration/src/services/getVitestBrowserConfiguration.test.ts`, new, beside the resolver    |
+| A subscreen is approved only once its compare clears             | 4. Test                  | the approval command's test, already the gate in `approveReference.ts`                                   |
+| A reference is a screenshot, never a recording                   | 1. Construction, 4. Test | the entry model loses `capture`, `seconds` and `plateCapture`, and a test names any entry that keeps one |
+| The order reference, fixture, component, compare, approve, suite | 5. Remembered            | the genshin-parity skill's rules, read by review                                                         |
 
 The order itself is not testable from the repository, since git does not record the sequence of edits. The coverage and reference tests make the order's outcome checkable, and the rule is kept in the skill.
 
@@ -31,6 +33,7 @@ The order itself is not testable from the repository, since git does not record 
 - The UI drift and the platform split are the owner's observation from the parity loop, with the 36 approved images and the per-platform resolver in `packages/configuration/src/services/getVitestBrowserConfiguration.ts`.
 - The 25 `Screen` folders and the 10 without a fixture were counted from the tree on 2026-10-29.
 - The subscreen gap was checked on the tree: the login screen fixture declares dawn, day and dusk variants, the map has entries for dawn, day and night on the title, and none for dusk. The map test matches on screen names alone.
+- The recording dependence was counted on the reference map on 2026-10-30: 57 of its 79 entries are built from a recording, 16 from a wiki still, and 7 are pending. Each of the 57 needs a screenshot from the owner, since the wiki's pages return HTTP 402 to this session.
 - The same-shape check for interface components already exists in `packages/genshin-interface/src/components/components.visual.ts`, but it runs only in the browser suite, which CI does not run. It is not a gate, and moving it to a `.test.ts` is a follow-up, not part of this change.
 
 ## Key files
