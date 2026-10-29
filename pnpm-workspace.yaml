@@ -62,7 +62,7 @@ catalog:
   "@fontsource/signika": ^5.3.0
   "@hpcc-js/wasm-graphviz": ^1.30.0
   "@huggingface/transformers": ^4.3.2
-  "@iconify-json/lucide": ^1.2.148
+  "@iconify-json/lucide": ^1.2.149
   "@iconify-json/mdi": ^1.2.3
   "@iconify-json/pixelarticons": ^1.2.10
   "@jsonforms/core": ^3.8.0
@@ -237,7 +237,7 @@ catalog:
   unicode-emoji-json: ^0.9.0
   unocss: ^66.12.0
   unplugin-auto-import: ^21.1.0
-  unplugin-vue: ^8.0.0
+  unplugin-vue: ^8.0.1
   # @TODO: no upstream issue — Nitro 3 resolves unstorage from the app for the `kv` mounts Nuxt's storage options become,
   # Needing 2 where the app's modules install 1. Remove this dependency when Nitro takes Nuxt's own copy (nuxt/nuxt)
   unstorage: ^2.0.0-beta.0
@@ -246,7 +246,7 @@ catalog:
   vite-plus: ^1.4.0
   vitest: ^5.0.5
   vitest-browser-vue: ^3.1.0
-  vize: ^0.604.0
+  vize: ^0.606.0
   vue: ^3.5.44
   vue-eslint-parser: ^10.4.1
   vue-router: ^5.4.0
