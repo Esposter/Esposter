@@ -140,7 +140,7 @@ interface Props {
   // What the character is drawn on, which the screen's controller moves in the world's own coordinates, so it is placed
   // Among everything in the world
   characterBody?: Object3D;
-  // How the character on the field moves, whose body's capsule is drawn where it has no pack
+  // How the character on the field moves, by the capsule and speeds of its body type
   characterLocomotion?: Locomotion;
   // The readers of the published character packs by the character each is of, from which the character on the field is
   // drawn on the body
