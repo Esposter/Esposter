@@ -83,6 +83,8 @@ const playerAction = (action: (currentDuel: GcgDuel) => unknown) => {
        leaves it, its outcome shown on the board until then -->
   <GcgScreen
     v-if="duel"
+    :battle-number="1"
+    :battle-total="1"
     :duel
     :game-text
     :player-side-index="GCG_PLAYER_SIDE_INDEX"

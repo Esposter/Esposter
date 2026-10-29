@@ -22,6 +22,9 @@ import { GameScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
+  // The battle of the challenge the duel is, from one, and how many battles the challenge plays
+  battleNumber: number;
+  battleTotal: number;
   // The duel as the engine holds it: its side the player steers and the other the opponent's
   duel: GcgDuel;
   // The game's words in the reader's language
@@ -32,7 +35,7 @@ interface Props {
   textMap: Readonly<Record<string, string>>;
 }
 
-const { duel, gameText, playerSideIndex, textMap } = defineProps<Props>();
+const { battleNumber, battleTotal, duel, gameText, playerSideIndex, textMap } = defineProps<Props>();
 const emit = defineEmits<{
   declareRoundEnd: [];
   leave: [won: boolean];
@@ -78,6 +81,9 @@ const bandTextKey = computed(() => {
   return duel.winnerSideIndex === playerSideIndex ? GameTextKey.GcgVictory : GameTextKey.GcgDefeat;
 });
 const roundLabel = computed(() => fillGameTextValues(gameText[GameTextKey.GcgRoundTitle], duel.round));
+const battleLabel = computed(() =>
+  fillGameTextValues(gameText[GameTextKey.DuelBattleCounter], battleNumber, battleTotal),
+);
 
 const toggleList = (list: number[], value: number): number[] =>
   list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
@@ -226,6 +232,7 @@ const playRerollChoice = () => {
       @click="emit('declareRoundEnd')"
     />
     <div class="round">{{ roundLabel }}</div>
+    <div class="battle">{{ battleLabel }}</div>
     <div v-if="isPlayerTurn" class="acting">{{ gameText[GameTextKey.GcgNowActing] }}</div>
     <div class="skills">
       <button
@@ -410,6 +417,18 @@ const playRerollChoice = () => {
   color: #f6e3a1;
   font-size: calc(var(--unit) * 20);
   text-align: center;
+}
+
+/* The battle counter sits under the host's name at the top left, its words cap-high at 74 and on the baseline at 87 */
+.battle {
+  position: absolute;
+  top: calc(var(--unit) * 69.5);
+  left: calc(var(--unit) * 148);
+  color: #c8d6e8;
+  font-size: calc(var(--unit) * 19);
+  font-weight: 600;
+  letter-spacing: calc(var(--unit) * -0.3);
+  line-height: calc(var(--unit) * 22);
 }
 
 .acting {

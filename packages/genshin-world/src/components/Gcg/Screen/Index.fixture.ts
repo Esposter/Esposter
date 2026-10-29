@@ -45,4 +45,11 @@ takeOne(duel.sides[1].characters, 0).hp = 6;
 takeOne(duel.sides[1].characters, 1).hp = 28;
 takeOne(duel.sides[1].characters, 2).hp = 6;
 
-export const props = { duel, gameText: ENGLISH_GAME_TEXT, playerSideIndex: 0, textMap: englishGcgText };
+export const props = {
+  battleNumber: 1,
+  battleTotal: 1,
+  duel,
+  gameText: ENGLISH_GAME_TEXT,
+  playerSideIndex: 0,
+  textMap: englishGcgText,
+};
