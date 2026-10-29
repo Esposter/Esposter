@@ -4,6 +4,8 @@ export const props = {
   backLabel: "Back",
   configureTeamLabel: "Configure Team",
   deployLabel: "Deploy",
+  nextLabel: "Party 2",
+  previousLabel: "Party 4",
   quickSetupLabel: "Quick Setup",
   slots: [
     { levelText: "Lv. 90", name: "Character 1" },

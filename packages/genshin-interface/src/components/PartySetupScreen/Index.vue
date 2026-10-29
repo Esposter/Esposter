@@ -6,6 +6,9 @@ interface Props {
   backLabel: string;
   configureTeamLabel: string;
   deployLabel: string;
+  // The party the next arrow steps to, and the one the previous arrow steps to, named in the reader's language
+  nextLabel: string;
+  previousLabel: string;
   quickSetupLabel: string;
   // The team on the screen: its name and its four slots in slot order
   slots: PartySetupSlot[];
@@ -14,7 +17,17 @@ interface Props {
   title: string;
 }
 
-const { backLabel, configureTeamLabel, deployLabel, quickSetupLabel, slots, teamName, title } = defineProps<Props>();
+const {
+  backLabel,
+  configureTeamLabel,
+  deployLabel,
+  nextLabel,
+  previousLabel,
+  quickSetupLabel,
+  slots,
+  teamName,
+  title,
+} = defineProps<Props>();
 const emit = defineEmits<{ close: []; configureTeam: []; deploy: []; next: []; previous: []; quickSetup: [] }>();
 </script>
 
@@ -33,7 +46,7 @@ const emit = defineEmits<{ close: []; configureTeam: []; deploy: []; next: []; p
       </button>
     </header>
     <section class="team">
-      <button class="step previous" type="button" @click="emit('previous')">
+      <button class="step previous" :aria-label="previousLabel" type="button" @click="emit('previous')">
         <svg viewBox="0 0 30 30" aria-hidden="true">
           <path d="M20 4 9 15l11 11" />
         </svg>
@@ -52,7 +65,7 @@ const emit = defineEmits<{ close: []; configureTeam: []; deploy: []; next: []; p
           <span v-else class="plus" aria-hidden="true">+</span>
         </li>
       </ol>
-      <button class="step next" type="button" @click="emit('next')">
+      <button class="step next" :aria-label="nextLabel" type="button" @click="emit('next')">
         <svg viewBox="0 0 30 30" aria-hidden="true">
           <path d="M10 4l11 11-11 11" />
         </svg>
