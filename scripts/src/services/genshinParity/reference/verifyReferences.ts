@@ -2,7 +2,9 @@ import type { ParityReference } from "#src/models/genshinParity/shared/ParityRef
 import type { ReferenceVerification } from "#src/models/genshinParity/reference/ReferenceVerification";
 
 import { VerifyOutcome } from "#src/models/genshinParity/reference/VerifyOutcome";
+import { REFERENCE_PACK_CONCURRENCY } from "#src/services/genshinParity/reference/constants";
 import { verifyReference } from "#src/services/genshinParity/reference/verifyReference";
+import { settleAll } from "@esposter/shared";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -17,8 +19,8 @@ export const verifyReferences = async (
 ): Promise<ReferenceVerification[]> => {
   const cutDirectory = await mkdtemp(join(tmpdir(), "parity-verify-"));
   try {
-    const verifications = await Promise.all(
-      Object.entries(references).map(async ([referenceId, reference]) => {
+    const verifications = await settleAll(
+      Object.entries(references).map(([referenceId, reference]) => async () => {
         if (reference.source === undefined)
           return reference.wikiTitle === undefined
             ? undefined
@@ -29,6 +31,7 @@ export const verifyReferences = async (
           referencePath,
         });
       }),
+      REFERENCE_PACK_CONCURRENCY,
     );
     return verifications.filter((verification) => verification !== undefined);
   } finally {
