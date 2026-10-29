@@ -1,5 +1,11 @@
 // @vitest-environment nuxt
-import { createTestImageNode, TEST_ID, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import {
+  createTestImageNode,
+  TEST_ID,
+  TEST_OTHER_ID,
+  TEST_ROOT,
+  TEST_URL,
+} from "#shared/services/pageBuilder/constants.test";
 import PageBuilderCanvasNodeToolbar from "@/components/PageBuilder/Canvas/NodeToolbar.vue";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { TEST_NESTED_TEXT_ID, TEST_SECTION_ID, TEST_WEBPAGE } from "@/services/pageBuilder/constants.test";

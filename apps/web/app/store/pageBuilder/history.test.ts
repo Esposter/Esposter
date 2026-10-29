@@ -380,7 +380,11 @@ describe(usePageBuilderHistoryStore, () => {
     applyEdit(
       resourceId,
       [
-        { op: JsonPatchOperationType.Replace, path: "/content", value: [createButton(TEST_THIRD_ID), createButton("d")] },
+        {
+          op: JsonPatchOperationType.Replace,
+          path: "/content",
+          value: [createButton(TEST_THIRD_ID), createButton("d")],
+        },
         { op: JsonPatchOperationType.Replace, path: "/content/1", value: createButton("e") },
       ],
       TEST_MOVE_LABEL,
@@ -392,7 +396,11 @@ describe(usePageBuilderHistoryStore, () => {
       resourceId,
       [
         { op: JsonPatchOperationType.Replace, path: "/content/1", value: createButton("f") },
-        { op: JsonPatchOperationType.Replace, path: "/content", value: [createButton(TEST_THIRD_ID), createButton("g")] },
+        {
+          op: JsonPatchOperationType.Replace,
+          path: "/content",
+          value: [createButton(TEST_THIRD_ID), createButton("g")],
+        },
       ],
       TEST_LABEL_LABEL,
       interactionId,
@@ -401,7 +409,10 @@ describe(usePageBuilderHistoryStore, () => {
     });
     undo(resourceId);
 
-    expect(getDocument(resourceId)).toStrictEqual({ content: [createButton(TEST_THIRD_ID), createButton("e")], root: TEST_ROOT });
+    expect(getDocument(resourceId)).toStrictEqual({
+      content: [createButton(TEST_THIRD_ID), createButton("e")],
+      root: TEST_ROOT,
+    });
 
     undo(resourceId);
 
@@ -410,7 +421,10 @@ describe(usePageBuilderHistoryStore, () => {
     redo(resourceId);
     redo(resourceId);
 
-    expect(getDocument(resourceId)).toStrictEqual({ content: [createButton(TEST_THIRD_ID), createButton("g")], root: TEST_ROOT });
+    expect(getDocument(resourceId)).toStrictEqual({
+      content: [createButton(TEST_THIRD_ID), createButton("g")],
+      root: TEST_ROOT,
+    });
   });
 
   test("a test after a replace in one interaction stays its own entry, and redo restores the replace", () => {

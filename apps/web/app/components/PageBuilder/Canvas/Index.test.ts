@@ -17,6 +17,8 @@ import { parseMjmlDocument } from "mjml-blocks";
 import { describe, expect, test, vi } from "vitest";
 
 describe("pageBuilderCanvas", () => {
+  const TABLET_WIDTH = `${DEVICE_WIDTH_MAP[PageBuilderDevice.Tablet]}px`;
+
   test("switching to tablet draws the page at tablet width", async () => {
     expect.hasAssertions();
 
@@ -40,7 +42,7 @@ describe("pageBuilderCanvas", () => {
       props: { announce: vi.fn<(message: string) => void>(), kind: webpageKind, resourceId: TEST_ID },
     });
 
-    expect(component.get<HTMLIFrameElement>("iframe").element.style.width).toBe(`${DEVICE_WIDTH_MAP[PageBuilderDevice.Tablet]}px`);
+    expect(component.get<HTMLIFrameElement>("iframe").element.style.width).toBe(TABLET_WIDTH);
   });
 
   test("switching to tablet draws the email at tablet width", async () => {
@@ -64,7 +66,7 @@ describe("pageBuilderCanvas", () => {
       props: { announce: vi.fn<(message: string) => void>(), kind: emailKind, resourceId: TEST_ID },
     });
 
-    expect(component.get<HTMLIFrameElement>("iframe").element.style.width).toBe(`${DEVICE_WIDTH_MAP[PageBuilderDevice.Tablet]}px`);
+    expect(component.get<HTMLIFrameElement>("iframe").element.style.width).toBe(TABLET_WIDTH);
   });
 
   test("a page with no document draws nothing", async () => {
