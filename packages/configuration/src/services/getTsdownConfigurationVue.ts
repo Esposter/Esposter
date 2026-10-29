@@ -31,7 +31,7 @@ export const getTsdownConfigurationVue = (vueOptions: Options = {}): UserConfig 
     // Included. Left external, the built JS would import a `.css` file that Node cannot load in a script
     deps: { alwaysBundle: [STYLESHEET_REQUEST_REGEX] },
     plugins: [
-      // @TODO: https://github.com/unplugin/unplugin-vue/issues/201
+      // @TODO: no upstream issue — a <style src> still builds only through this plugin on unplugin-vue 8.0.1, whose fix for #201 resolves the stylesheet's path but leaves its id a .css request with a query, which tsdown rejects as "Bundling CSS is no longer supported" — drop this plugin once a <style src> builds without it
       vueStyleSrcPlugin,
       AutoImport({ imports: [...VUE_AUTO_IMPORTS] }),
       Vue({ ...vueOptions, isProduction: true }),

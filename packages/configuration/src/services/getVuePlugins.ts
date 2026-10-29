@@ -13,7 +13,7 @@ import Vue from "unplugin-vue/vite";
 // `TresMesh`, depends on that. The build always compiles for production, but a test run takes `isProduction` from
 // Vite's mode, so a test compile is not a production one.
 export const getVuePlugins = (vueOptions: Options = {}): PluginOption[] => [
-  // @TODO: https://github.com/unplugin/unplugin-vue/issues/201
+  // @TODO: no upstream issue — a <style src> still builds only through this plugin on unplugin-vue 8.0.1, whose fix for #201 resolves the stylesheet's path but leaves its id a .css request with a query, which tsdown rejects as "Bundling CSS is no longer supported" — drop this plugin once a <style src> builds without it
   { ...vueStyleSrcPlugin, enforce: "pre" },
   AutoImport({ imports: [...VUE_AUTO_IMPORTS] }),
   Vue(vueOptions),
