@@ -3,9 +3,9 @@ import type { SubCommandsDef } from "citty";
 import { VerifyOutcome } from "#src/models/genshinParity/reference/VerifyOutcome";
 import { CAPTURES_DIRECTORY } from "#src/services/genshinParity/game/constants";
 import { getReferenceManifestProblems } from "#src/services/genshinParity/reference/getReferenceManifestProblems";
+import { readCachedReference } from "#src/services/genshinParity/reference/readCachedReference";
 import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
 import { verifyReferences } from "#src/services/genshinParity/reference/verifyReferences";
-import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { defineCommand } from "citty";
 
@@ -18,9 +18,10 @@ export const verifyCommand: SubCommandsDef[string] = defineCommand({
   run: async () => {
     const rows = await readReferenceManifest();
     // A reference the manifest does not hold is skipped, since there is no stored image to check
-    const verifications = await verifyReferences(ParityReferenceMap, CAPTURES_DIRECTORY, async (referenceId) =>
-      rows.some(({ id }) => id === referenceId) ? getReferencePath(referenceId) : undefined,
-    );
+    const verifications = await verifyReferences(ParityReferenceMap, CAPTURES_DIRECTORY, async (referenceId) => {
+      const row = rows.find(({ id }) => id === referenceId);
+      return row === undefined ? undefined : readCachedReference(row.sha256);
+    });
     const countOf = (outcome: VerifyOutcome): number =>
       verifications.filter((verification) => verification.outcome === outcome).length;
     for (const { id, message, outcome } of verifications)
