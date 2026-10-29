@@ -13,13 +13,13 @@
 
 ## 3. Handles
 
-- [ ] 3.1 Register the world's commands: `state`, `teleport` (a landmark, a region or coordinates, through the pose the map overlay's jump uses), `time`, `timescale`, `weather`, `god`, `heal` and `noclip`. Verify: a test per command that runs it against a stubbed handle and one that calls it unmounted.
+- [x] 3.1 Register the world's commands: `state`, `teleport` (a landmark, a region or coordinates, through the pose the map overlay's jump uses), `time`, `timescale` and `heal`; `weather`, `god` and `noclip` wait for the state they need (design, Notes). Verify: a test per command that runs it against a stubbed handle and one that calls it unmounted.
 - [ ] 3.2 Register the save's commands: `give` (items by the names the game shows, Mora, primogems), `level`, `ar` and `unlock` (waypoints, map regions). Verify: tests that each writes the same save field the game's own act writes.
 
 ## 4. Look and stats
 
 - [ ] 4.1 Register the look's every uniform as variables (same groups and ranges as the Inspector's Look group), then delete `attachInspector`, its call in `createGenshinRenderer`, the group in `useGenshinTuning` and the optimizer exclusion for the Inspector. Verify: `git grep attachInspector` and `git grep jsm/inspector` find nothing, and a test named after 'Look values are in the panel'.
-- [ ] 4.2 Show the stats overlay and register `stat` and the pass toggles (shadows, god rays, ambient occlusion, bloom, anti-aliasing) as variables. Verify: tests named after 'Overlay shows the counters' and 'Toggle hides it' over a stubbed renderer info.
+- [x] 4.2 Show the stats overlay and register `stat` and the pass switches the world's chain draws (temporal anti-aliasing, shadows) as variables; bloom, god rays and occlusion have no switch, as the chain draws none of them (design, Stats). Verify: tests named after 'Overlay shows the counters' and 'Toggle hides it' over a stubbed renderer info.
 
 ## 5. Scenarios and convention
 

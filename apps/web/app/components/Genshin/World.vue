@@ -13,9 +13,9 @@ import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { authClient } from "@/services/auth/authClient";
 import { GENSHIN_QUALITY_TIER } from "@/services/genshin/constants";
-import { GENSHIN_DEV_COMMAND_GROUP } from "@/services/genshin/dev/constants";
+import { GENSHIN_DEV_COMMAND_GROUP, GENSHIN_DEV_STATS_GROUP } from "@/services/genshin/dev/constants";
 import { RoutePath } from "@esposter/shared";
-import { createDevRegistry, exposeDevRegistry, WorldScreen } from "genshin-world";
+import { createDevRegistry, createStatCommand, DevVariableKind, exposeDevRegistry, WorldScreen } from "genshin-world";
 import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
 
 interface Props {
@@ -47,6 +47,31 @@ const devRegistry = IS_DEVELOPMENT ? createDevRegistry() : undefined;
 const isDevSurfaceShown = ref(false);
 const isDevConsoleOpen = ref(false);
 const isDevPanelOpen = ref(false);
+const isStatShown = ref(false);
+// The stats overlay's switch, which the console's `stat` command and the panel's Stats tab both set
+if (devRegistry)
+  onScopeDispose(
+    devRegistry.register({
+      commands: [
+        createStatCommand({
+          setStatShown: (isShown) => {
+            isStatShown.value = isShown;
+          },
+        }),
+      ],
+      variables: [
+        {
+          get: () => isStatShown.value,
+          group: GENSHIN_DEV_STATS_GROUP,
+          kind: DevVariableKind.Boolean,
+          name: "stat",
+          set: (value) => {
+            isStatShown.value = value === true;
+          },
+        },
+      ],
+    }),
+  );
 useCommands(() =>
   isDevSurfaceShown.value
     ? [
@@ -110,5 +135,6 @@ onMounted(() => {
   <template v-if="devRegistry && isDevSurfaceShown">
     <GenshinDevConsole v-model="isDevConsoleOpen" :registry="devRegistry" />
     <GenshinDevPanel v-model="isDevPanelOpen" :registry="devRegistry" />
+    <GenshinDevStats v-if="isStatShown" :registry="devRegistry" />
   </template>
 </template>

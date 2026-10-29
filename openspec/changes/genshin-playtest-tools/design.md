@@ -30,28 +30,28 @@ flowchart LR
 - **Typed arguments.** An argument that names an item, a landmark, a region or a weather is checked against the names the game already loaded, so `give` takes the names the owner reads in the game. A bad argument answers with the schema's message and the usage line, and the command does not run. An unknown command lists the names that contain it. Rejected: free text parsed by hand per command, and a completion UI over the ids (a typed, listed name is enough for the one owner who uses it).
 - **A scenario is an ordered list of command lines that stops at the first failure.** It is a file under `services/dev/scenarios/`, one scenario per file, named for the change that shows (`bosses-dvalin`, `chests-every-tier`). Running one applies its commands in order, shows each result, and on a failure stops and says which line. A feature change registers its scenario in the same change, or states in its design why it has none; the `building-proposals` skill carries the rule. Rejected: scenarios as saved game files (they rot with the save's shape, and a command list is read in review).
 - **The Inspector goes, and its Look group moves.** `attachInspector`, its call in `createGenshinRenderer`, the Vite optimizer exclusion for it and the group in `useGenshinTuning` are deleted; the look's uniforms register as variables in a Look tab with the same ranges, which is where the look is tuned against reference screenshots. Rejected: keeping it behind a switch (it would be the thing in the owner's way, one flag from always on).
-- **Stats are the renderer's own counters.** The overlay shows the median frame time over the last 60 frames, draw calls and triangles. The pass toggles (shadows, god rays, ambient occlusion, bloom, anti-aliasing) are variables, so the owner can see which pass a slow frame pays for. Rejected: a profiler timeline (a frame profile found the cost in one enemy function by a CPU profile, which no overlay shows).
+- **Stats are the renderer's own counters.** The overlay shows the median frame time over the last 60 frames, draw calls and triangles. The pass switches are variables for the passes the world's chain draws, so the owner can see which pass a slow frame pays for: the temporal anti-aliasing (off falls back to SMAA) and the sun's shadows. The chain draws no bloom (its `isBloomed` is off), no god rays (no god-ray light is passed) and no occlusion (its radius is zero), so those have no switch. Rejected: a profiler timeline (a frame profile found the cost in one enemy function by a CPU profile, which no overlay shows).
 - **Keys do not reach the game while the console is focused.** Opening the console takes the keyboard from the controls and gives it back on close; the panel never takes it, so the game keeps running under the panel.
 - **History and the open tab are the viewer's convenience.** They are kept in the browser's local storage, wrapped so a blocked store changes nothing else; a variable's value is not kept, so a reload starts every variable at the game's own value.
 
 ## Key files
 
-| File                                                                       | Role                                                                     |
-| :------------------------------------------------------------------------- | :----------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/dev/createDevRegistry.ts`             | Registers handles, parses a line, runs it, reports                       |
-| `packages/genshin-world/src/models/dev/DevCommand.ts` and `DevVariable.ts` | The two registered shapes                                                |
-| `packages/genshin-world/src/services/dev/commands/**`                      | One command per file, grouped by the owner that registers it             |
-| `packages/genshin-world/src/services/dev/scenarios/**`                     | One scenario per file                                                    |
-| `packages/genshin-world/src/composables/useDevHandles.ts`                  | Registers an owner's commands and variables and removes them on disposal |
-| `apps/web/app/components/Genshin/Dev/Console/Index.vue`                    | The console                                                              |
-| `apps/web/app/components/Genshin/Dev/Panel/Index.vue`                      | The panel: variable tabs, scenarios and stats                            |
-| `apps/web/app/components/Genshin/World.vue`                                | Mounts both behind the development flag                                  |
-| `packages/genshin-world/src/composables/useGenshinTuning.ts`               | Registers the look's variables instead of an Inspector group             |
-| `packages/genshin-engine/src/renderer/attachInspector.ts`                  | Deleted                                                                  |
+| File                                                                       | Role                                                                                                    |
+| :------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/dev/createDevRegistry.ts`             | Registers handles, parses a line, runs it, reports                                                      |
+| `packages/genshin-world/src/models/dev/DevCommand.ts` and `DevVariable.ts` | The two registered shapes                                                                               |
+| `packages/genshin-world/src/services/dev/commands/**`                      | One command per file, grouped by the owner that registers it                                            |
+| `packages/genshin-world/src/services/dev/scenarios/**`                     | One scenario per file                                                                                   |
+| `packages/genshin-world/src/composables/useWorldDevHandles.ts`             | Registers the world's commands with the registry while the session mounts, and removes them on disposal |
+| `apps/web/app/components/Genshin/Dev/Console/Index.vue`                    | The console                                                                                             |
+| `apps/web/app/components/Genshin/Dev/Panel/Index.vue`                      | The panel: variable tabs, scenarios and stats                                                           |
+| `apps/web/app/components/Genshin/World.vue`                                | Mounts both behind the development flag                                                                 |
+| `packages/genshin-world/src/composables/useGenshinTuning.ts`               | Registers the look's variables instead of an Inspector group                                            |
+| `packages/genshin-engine/src/renderer/attachInspector.ts`                  | Deleted                                                                                                 |
 
 ## Notes
 
-- The first commands are those the world already has the state for: `state`, `teleport` (a landmark, a region or coordinates, through the pose the map overlay's jump uses), `time`, `timescale`, `weather`, `god`, `heal` and `noclip` (the free camera's mode), and `give`, `level`, `ar` and `unlock` over the save. A command whose state does not exist yet is added by the change that builds that state, with its scenario.
+- The first world commands are those the world has the state for: `state`, `teleport` (a landmark, a region or coordinates, through the pose the map overlay's jump uses), `time`, `timescale` and `heal`. `weather` waits: the shown weather is a read-only result of the area's own chain, with no writable state to set. `god` waits: the world has no invulnerability state. `noclip` waits: the free camera moves the camera, not the character's body. The save's commands (`give`, `level`, `ar` and `unlock`) come with task 3.2. A command whose state does not exist yet is added by the change that builds that state, with its scenario.
 - Nothing here changes a rule a player meets; a command writes the same save fields the game's own acts write.
 
 ## Sources

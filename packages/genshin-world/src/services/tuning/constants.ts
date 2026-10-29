@@ -1,3 +1,6 @@
+// The panel's sections of the passes the world draws, each a group under the Passes tab
+export const PASS_POST_GROUP = "Passes/Post";
+export const PASS_SHADOWS_GROUP = "Passes/Shadows";
 // The panel's sections of the look, each a group under the Look tab
 export const LOOK_SKY_GROUP = "Look/Sky";
 export const LOOK_WIND_GROUP = "Look/Wind";

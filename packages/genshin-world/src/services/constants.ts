@@ -32,6 +32,8 @@ export const AREA_WEATHER_CHANGE_SECONDS = 300;
 export const DATA_FETCH_TIMEOUT_MS = 10_000;
 // A failed read the world repeats on its own, since nothing the player does repeats it, is read again this long after
 export const DATA_FETCH_RETRY_MS = 5000;
+// The fastest the game clock runs, in game minutes a real second, which the look's clock and the console's timescale both hold to
+export const GAME_MINUTES_PER_SECOND_MAX = 60;
 // How far the tuning panel moves a grade's tint each way, and a tint's channels by the tuple key it writes through
 export const TUNING_TINT_RANGE = 0.1;
 export const TUNING_TINT_CHANNELS = [

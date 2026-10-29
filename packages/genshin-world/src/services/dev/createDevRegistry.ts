@@ -18,6 +18,7 @@ export const createDevRegistry = (): DevRegistry => {
   const scenarios = new Map<string, DevScenario>();
   const variables = new Map<string, DevVariable>();
   const listeners = new Set<() => void>();
+  let renderer: DevHandle["renderer"];
   const SET_USAGE = "set <name> <value>";
 
   const notify = () => {
@@ -65,9 +66,12 @@ export const createDevRegistry = (): DevRegistry => {
 
     for (const scenario of handleScenarios) scenarios.set(scenario.name, scenario);
     for (const variable of handle.variables) variables.set(variable.name, variable);
+    if (handle.renderer) renderer = handle.renderer;
     notify();
 
     return () => {
+      if (handle.renderer && renderer === handle.renderer) renderer = undefined;
+
       for (const command of handle.commands) {
         if (commands.get(command.name) === command) {
           commands.delete(command.name);
@@ -88,6 +92,7 @@ export const createDevRegistry = (): DevRegistry => {
   };
 
   return {
+    getRenderer: () => renderer?.(),
     getScenarios: () => Array.from(scenarios.values()),
     getVariables: () => Array.from(variables.values()),
     register,

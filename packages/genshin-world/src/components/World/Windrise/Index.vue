@@ -107,7 +107,7 @@ import { LandmarkKindWindrisePartFamilyMap } from "#src/services/windrise/Landma
 import { createTreeSpeciesOptionsMap } from "#src/services/world/createTreeSpeciesOptionsMap";
 import { WorldSceneExportFamilyMeshRegexMap } from "#src/services/world/WorldSceneExportFamilyMeshRegexMap";
 import { getResultAsync, noop } from "@esposter/shared";
-import { useLoop, useTres } from "@tresjs/core";
+import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
 import { whenever } from "@vueuse/core";
 import {
   createFogUniforms,
@@ -350,7 +350,7 @@ const postUniforms = createPostUniforms();
 const sightScene = new Scene();
 const sightUniforms = createSightUniforms();
 const { onBeforeRender } = useLoop();
-const { advance } = useTres();
+const { advance, renderer } = useTres();
 onBeforeRender(() => {
   if (drawnCharacterAvatar.value) updateAvatarFaces(drawnCharacterAvatar.value, lightUniforms.sunDirection.value);
   sightScene.position.set(-origin.x, 0, -origin.z);
@@ -444,6 +444,8 @@ const gradeLutTexture = createGradeLutTexture(WINDRISE_GRADE_OPTIONS);
 // Whole frame, the god rays marching hundreds of metres of lit air to their most opacity and bloom lifting the whole
 // Sky past its threshold, so the frame is drawn through the haze, the grade and the tone mapping alone. No occlusion
 // Either, and the sky handed on with it as the login's is, which the parity page's tools read each pixel's ray under
+// A developer switches TRAA off to see what its resolve costs, and the world's chain falls back to SMAA meanwhile
+const isTemporalAntialiasingOn = ref(true);
 const postPipeline = usePostPipeline(
   () => qualityTier,
   {
@@ -455,6 +457,8 @@ const postPipeline = usePostPipeline(
   },
   0,
   skyUniforms,
+  undefined,
+  isTemporalAntialiasingOn,
 );
 // The world is ready once the ground of its first view and the regions in reach of it have arrived, so what shows it
 // Never shows the bare water under a ground still streaming in
@@ -483,21 +487,25 @@ if (devRegistry)
     devRegistry,
     fogUniforms,
     gameClock,
+    getRenderer: () => (isWebGPURenderer(renderer) ? renderer : undefined),
     gradeLutTexture,
     gradeOptions: WINDRISE_GRADE_OPTIONS,
+    isTemporalAntialiasingOn,
     lightUniforms,
     postPipeline,
     postUniforms,
     rampOptions: WINDRISE_RAMP_OPTIONS,
     rampTexture,
     skyUniforms,
+    sun,
     waterUniforms,
     windUniforms,
   });
 
 // The regions' data and grounds, and the spot each resident is shown at, which the world screen reads the residents
-// And the world's ground from, and the clock the Time screen sets the hour of
-defineExpose({ gameClock, regionDataMap, regionGroundMap, residentSpots });
+// And the world's ground from, and the clock the Time screen sets the hour of, and the weather the area shows, which a
+// Developer's `state` reads
+defineExpose({ areaWeather, gameClock, regionDataMap, regionGroundMap, residentSpots });
 onUnmounted(() => {
   rampTexture.dispose();
   pavingGeometry.dispose();

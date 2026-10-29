@@ -23,6 +23,8 @@ export const usePostPipeline = (
   // The sky the scene draws and its cloud layer, handed on with what it renders with
   sky?: SkyUniforms,
   cloudLayer?: CloudLayerUniforms,
+  // Whether the chain resolves with TRAA, which a developer's pass switch turns off for SMAA, the tier's own fallback
+  isTemporalAntialiasingOn: MaybeRefOrGetter<boolean> = true,
 ) => {
   const { camera, renderer, scene } = useTres();
   /* oxlint-disable no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see */
@@ -33,13 +35,21 @@ export const usePostPipeline = (
   const postPipeline = shallowRef<PostPipeline>();
 
   watchImmediate(
-    [() => camera.value, () => toValue(qualityTier), () => toValue(occlusionRadius)],
-    ([activeCamera, newQualityTier, newOcclusionRadius]) => {
+    [
+      () => camera.value,
+      () => toValue(qualityTier),
+      () => toValue(occlusionRadius),
+      () => toValue(isTemporalAntialiasingOn),
+    ],
+    ([activeCamera, newQualityTier, newOcclusionRadius, newIsTemporalAntialiasingOn]) => {
       postPipeline.value?.dispose();
       // The witness settles a view in one frame, which a temporal resolve's history and jitter cannot
-      const qualityTierSettings = witness
+      const tierSettings = witness
         ? { ...QualityTierSettingsMap[newQualityTier], antialiasingMode: AntialiasingMode.Smaa }
         : QualityTierSettingsMap[newQualityTier];
+      const qualityTierSettings = newIsTemporalAntialiasingOn
+        ? tierSettings
+        : { ...tierSettings, antialiasingMode: AntialiasingMode.Smaa };
       // The reach the frame draws, so the witness's occlusion target draws what the scene does
       const drawnOcclusionRadius = qualityTierSettings.isOcclusionEnabled ? newOcclusionRadius : 0;
       postPipeline.value =

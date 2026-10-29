@@ -195,4 +195,17 @@ describe(createDevRegistry, () => {
     expect(registry.getVariables()).toStrictEqual([]);
     expect(registry.getScenarios()).toStrictEqual([]);
   });
+
+  test("a renderer is read while the handle that holds it is registered", () => {
+    expect.hasAssertions();
+
+    const renderer = { info: { render: { calls: 0, triangles: 0 } } };
+    const registry = createDevRegistry();
+    const dispose = registry.register({ commands: [], renderer: () => renderer, variables: [] });
+    const registered = registry.getRenderer();
+
+    dispose();
+
+    expect({ after: registry.getRenderer(), registered }).toStrictEqual({ after: undefined, registered: renderer });
+  });
 });

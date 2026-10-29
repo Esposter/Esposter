@@ -3,7 +3,7 @@ import type { DevVariable } from "#src/models/dev/DevVariable";
 import type { PostPipeline } from "genshin-engine";
 import type { Except } from "type-fest";
 
-import { TUNING_TINT_CHANNELS, TUNING_TINT_RANGE } from "#src/services/constants";
+import { GAME_MINUTES_PER_SECOND_MAX, TUNING_TINT_CHANNELS, TUNING_TINT_RANGE } from "#src/services/constants";
 import {
   LOOK_BLOOM_GROUP,
   LOOK_FOG_GROUP,
@@ -37,7 +37,7 @@ export const createLookVariables = (
     skyUniforms,
     waterUniforms,
     windUniforms,
-  }: Except<GenshinTuningOptions, "devRegistry" | "postPipeline">,
+  }: Except<GenshinTuningOptions, "devRegistry" | "getRenderer" | "isTemporalAntialiasingOn" | "postPipeline" | "sun">,
   { bloomNode, godraysNode }: Pick<PostPipeline, "bloomNode" | "godraysNode">,
 ): DevVariable[] => {
   const ramp = { ...rampOptions };
@@ -117,7 +117,7 @@ export const createLookVariables = (
     createNumberVariable(gameClock, "minutesPerSecond", {
       group: LOOK_SKY_GROUP,
       name: "sky minutes per second",
-      range: { max: 60, min: 0, step: 1 },
+      range: { max: GAME_MINUTES_PER_SECOND_MAX, min: 0, step: 1 },
     }),
     createNumberVariable(skyUniforms.cloudCoverage, "value", {
       group: LOOK_SKY_GROUP,

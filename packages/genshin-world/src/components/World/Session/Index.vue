@@ -96,6 +96,7 @@ import { useWorldForging } from "#src/composables/useWorldForging";
 import { useWorldFriendship } from "#src/composables/useWorldFriendship";
 import { useWorldGadgets } from "#src/composables/useWorldGadgets";
 import { useWorldMail } from "#src/composables/useWorldMail";
+import { useWorldDevHandles } from "#src/composables/useWorldDevHandles";
 import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldOutcrops } from "#src/composables/useWorldOutcrops";
@@ -1175,6 +1176,19 @@ watch(unlockedLandmarkIds, (landmarkIds) => {
 // A character's name in the reader's language, read from the game's text by its data's name
 const getCharacterName = (characterId: number) =>
   nameText[statTables.characterDataMap.get(characterId)?.nameTextId ?? ""] || "";
+// The world's developer commands, which read and change the state this session holds, and join the registry while it is
+// Mounted; the scene's clock and weather are read through the Windrise scene
+useWorldDevHandles({
+  body: characterBody,
+  catalogue,
+  devRegistry,
+  getCharacterName,
+  getGameClock: () => windrise.value?.gameClock,
+  getLandmarks: () => jumpLandmarks.value,
+  getWeather: () => windrise.value?.areaWeather,
+  jumpTo,
+  party,
+});
 // The roster the expedition picker lists in the game's order, each named by the game's text, and the characters down,
 // Whom no expedition is sent with
 const expeditionCharacters = computed(() => characters.value.map(({ id }) => ({ id, name: getCharacterName(id) })));
