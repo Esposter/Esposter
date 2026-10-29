@@ -79,9 +79,9 @@ Each comparison SHALL rewrite its reference's row of the committed scores, so th
 - **THEN** every row is read and kept, padded or not
 - **AND** the report written is the formatter's own text
 
-#### Scenario: The full run drops a row the map no longer holds
+#### Scenario: The full run drops a row the map does not hold
 
-- **GIVEN** a committed report holding a row for a reference the map no longer names
+- **GIVEN** a committed report holding a row for a reference the map does not name
 - **WHEN** the comparisons run for all references
 - **THEN** that row is dropped
 
