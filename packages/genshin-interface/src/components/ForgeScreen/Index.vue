@@ -15,15 +15,18 @@ interface Props {
   closeLabel: string;
   // The coins the wallet holds
   coins: number;
+  // The count under the Materials box's first material, the bag's count of it over what one unit takes, the game's "28 / 2"
+  materialCountLabel: string;
   // The Materials box's heading, and the support character's, in the game's words
   materialsBoxLabel: string;
   // The Materials tab's label
   materialsLabel: string;
   // The Obtain button of a queue with units ready, in the game's words
   obtainLabel: string;
-  // The queue the Queues tab's detail shows, the first holding an order: its id, its time left in words, its units done
-  // In words, its share of the unit being forged, and whether a unit is ready to obtain
-  queueDetail?: { forgedLabel: string; id: number; isObtainable: boolean; progress: number; timeLabel: string };
+  // The queue the Queues tab's detail shows, the first holding an order: its id, the words over its ring (its time left, or
+  // Complete once every unit is done), its units done in words, its share of the unit being forged, and whether a unit is
+  // Ready to obtain
+  queueDetail?: { forgedLabel: string; headingLabel: string; id: number; isObtainable: boolean; progress: number };
   // The forge queues, each open one or locked until its Adventure Rank
   queues: ForgeQueueCell[];
   // The Forge Queues tab's label with its open queues, the game's "Forge Queues (1/3)"
@@ -52,6 +55,7 @@ const {
   amountMaximum,
   closeLabel,
   coins,
+  materialCountLabel,
   materialsBoxLabel,
   materialsLabel,
   obtainLabel,
@@ -115,6 +119,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
         <span aria-hidden="true" class="queue-tile" />
         <span class="queue-name">{{ queue.name }}</span>
         <span class="queue-progress">{{ queue.progressLabel }}</span>
+        <span class="queue-ready">{{ queue.readyLabel }}</span>
         <span class="queue-time">{{ queue.timeLabel }}</span>
       </li>
     </ul>
@@ -139,7 +144,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
         <p v-else class="refusal">{{ refusalLabel }}</p>
       </template>
       <template v-else-if="queueDetail">
-        <p class="detail-time">{{ queueDetail.timeLabel }}</p>
+        <p class="detail-heading">{{ queueDetail.headingLabel }}</p>
         <span aria-hidden="true" class="detail-ring" />
         <p class="detail-forged">{{ queueDetail.forgedLabel }}</p>
         <span class="detail-track">
@@ -160,6 +165,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
         <span class="slot slot-first" />
         <span class="slot slot-second" />
         <span class="slot slot-third" />
+        <p class="material-count">{{ materialCountLabel }}</p>
         <span class="support-portrait" />
       </section>
     </div>
@@ -324,6 +330,15 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
 .queue[data-state="Complete"] .queue-progress {
   color: #8fd14f;
 }
+.queue-ready {
+  position: absolute;
+  top: calc(var(--unit) * 64);
+  right: calc(var(--unit) * 20);
+  color: #8fd14f;
+  font-size: calc(var(--unit) * 29);
+  line-height: 1;
+  white-space: nowrap;
+}
 .queue[data-state="Idle"] .queue-progress,
 .queue[data-state="Locked"] .queue-time {
   top: calc(var(--unit) * 40);
@@ -390,7 +405,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   border-radius: 50%;
   box-shadow: 0 0 calc(var(--unit) * 30) rgb(255 150 40 / 0.5);
 }
-.detail-time,
+.detail-heading,
 .detail-forged {
   left: calc(var(--unit) * 1590);
   translate: -50% 0;
@@ -398,7 +413,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   line-height: 1;
   white-space: nowrap;
 }
-.detail-time {
+.detail-heading {
   top: calc(var(--unit) * 149);
 }
 .detail-forged {
@@ -492,6 +507,17 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
 .slot-third {
   left: calc(var(--unit) * 508.3);
   width: calc(var(--unit) * 134.1);
+}
+.material-count {
+  position: absolute;
+  top: calc(var(--unit) * 219.4);
+  left: calc(var(--unit) * 163.3);
+  width: calc(var(--unit) * 141.4);
+  margin: 0;
+  font-size: calc(var(--unit) * 26.8);
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
 }
 .support-portrait {
   position: absolute;

@@ -30,9 +30,9 @@ committed.
 | `dialogue-paimon-line` | `DialogueTalk` | 10.21% | 0.947 | 2.93% | 0.3029 |
 | `everfrozen-earth-location` | `WorldScreen` | 20.61% | 0.234 | 19.75% | 0.6327 |
 | `exit-prompt` | `MenuExit` | 1.66% | 0.999 | 1.33% | 0.1210 |
-| `forge-screen` | `ForgeScreen` | 6.52% | 0.677 | 5.33% | 0.2162 |
-| `forge-screen-ores-done` | `ForgeScreen` | 3.50% | 0.774 | 2.25% | 0.1559 |
-| `forge-screen-queues` | `ForgeScreen` | 3.71% | 0.759 | 2.35% | 0.1665 |
+| `forge-screen` | `ForgeScreen` | 6.51% | 0.685 | 5.32% | 0.2160 |
+| `forge-screen-ores-done` | `ForgeScreen` | 3.49% | 0.792 | 2.20% | 0.1556 |
+| `forge-screen-queues` | `ForgeScreen` | 3.71% | 0.767 | 2.32% | 0.1664 |
 | `forge-screen-refused` | `ForgeScreen` | pending: no screenshot of this variant yet | | | |
 | `forge-screen-weapons-done` | `ForgeScreen` | pending: no screenshot of this variant yet | | | |
 | `gcg-duel-board` | `GcgScreen` | 13.25% | 0.508 | 8.21% | 0.4544 |

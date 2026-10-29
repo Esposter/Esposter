@@ -66,6 +66,10 @@ const weaponRecipe: ForgeRecipe = {
   kind: ForgeRecipeKind.Weapon,
   results: [{ count: 1, itemId: forgedWeaponData.id, weight: 1 }],
 };
+// The bag's Normal Enhancement Ore, the first ore's recipe takes two of per unit: a stack at the count the frames show
+const oreDefinition = getItemDefinition(takeOne(recipes, 0).materials[0].id, englishNameText, materialDataMap);
+const createOreEntry = (id: number, quantity: number): InventoryItem => ({ definition: oreDefinition, id, quantity });
+const createBag = (...items: InventoryItem[]) => ({ items, nextId: items.length, quickSwapItemIds: [] });
 const heldWeaponEntry: InventoryItem = {
   ascension: 0,
   definition: toWeaponDefinition(heldWeaponData, ""),
@@ -76,8 +80,9 @@ const heldWeaponEntry: InventoryItem = {
   refinement: 1,
 };
 // An order of `count` units of the recipe, every unit done by `now`, in the Forge Queues tab above a bag holding the weapon
+// And the ore left after the order's materials were taken
 const createDoneOrderVariant = (recipeId: number, count: number) => ({
-  inventory: { items: [heldWeaponEntry], nextId: 1, quickSwapItemIds: [] },
+  inventory: createBag(heldWeaponEntry, createOreEntry(1, 28)),
   progress: {
     ...progress,
     orders: [
@@ -101,7 +106,7 @@ export const props = {
   completedMainQuestIds: new Set<string>(),
   definitions,
   gameText: ENGLISH_GAME_TEXT,
-  inventory: { items: [], nextId: 1, quickSwapItemIds: [] },
+  inventory: createBag(createOreEntry(0, 38)),
   isInRealm: false,
   now,
   partyCharacterIds: [],
@@ -117,7 +122,7 @@ export const props = {
 // And the Queues tab holding a finished order of the first ore's recipe or of the four-star weapon's
 export const variants = {
   oresDone: createDoneOrderVariant(takeOne(recipes, 0).id, 5),
-  queues: { tab: ForgeTab.Queues },
+  queues: { inventory: createBag(createOreEntry(0, 28)), tab: ForgeTab.Queues },
   refused: { progress: { ...progress, forgedPoints: FORGE_DAILY_POINT_CAP } },
   weaponsDone: {
     ...createDoneOrderVariant(weaponRecipe.id, 2),

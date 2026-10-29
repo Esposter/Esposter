@@ -19,6 +19,7 @@ import { computeForgeTalents } from "#src/services/forging/computeForgeTalents";
 import { SECONDS_PER_MINUTE } from "#src/services/forging/constants";
 import { obtainForgeOrder } from "#src/services/forging/obtainForgeOrder";
 import { startForge } from "#src/services/forging/startForge";
+import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { takeOne } from "@esposter/shared";
 import { ForgeQueueState, ForgeScreen, GameScreen, ItemCategory } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
@@ -90,6 +91,12 @@ const amountMaximum = computed(() => pickedRecipe.value?.queueSize ?? 1);
 const requiredCoins = computed(() => (pickedRecipe.value?.mora ?? 0) * amount.value);
 const totalSeconds = computed(() => (pickedRecipe.value?.seconds ?? 0) * amount.value);
 const yieldCount = computed(() => (pickedRecipe.value ? takeOne(pickedRecipe.value.results, 0).count : 0));
+// The Materials box's count under the first material the picked recipe takes: the bag's count of it over what one unit takes
+const materialCountLabel = computed(() => {
+  if (!pickedRecipe.value) return "";
+  const { count, id } = takeOne(pickedRecipe.value.materials, 0);
+  return `${countInventoryItem(inventory.value.items, id)} / ${count}`;
+});
 // The words shown in place of Start when the day's forge points would be passed by the picked order
 const refusalLabel = computed(() =>
   pickedRecipe.value ? computeForgeRefusalLabel(pickedRecipe.value, amount.value, progress.value, now, gameText) : "",
@@ -104,22 +111,38 @@ const queueCells = computed<ForgeQueueCell[]>(() =>
         return {
           id,
           name,
-          progressLabel: fillGameTextValues(gameText[GameTextKey.ForgeQueueProgress], forged),
+          progressLabel: gameText[GameTextKey.ForgeQueueCompleted],
+          readyLabel: fillGameTextValues(gameText[GameTextKey.ForgeQueueReadyCount], forged),
           state,
           timeLabel: "",
         };
       }
       case ForgeQueueState.Forging: {
-        return { id, name, progressLabel: gameText[GameTextKey.ForgeQueueForging], state, timeLabel: "" };
+        return {
+          id,
+          name,
+          progressLabel: gameText[GameTextKey.ForgeQueueForging],
+          readyLabel: fillGameTextValues(gameText[GameTextKey.ForgeQueueReadyCount], forged),
+          state,
+          timeLabel: "",
+        };
       }
       case ForgeQueueState.Idle: {
-        return { id, name: "", progressLabel: gameText[GameTextKey.ForgeQueueIdle], state, timeLabel: "" };
+        return {
+          id,
+          name: "",
+          progressLabel: gameText[GameTextKey.ForgeQueueIdle],
+          readyLabel: "",
+          state,
+          timeLabel: "",
+        };
       }
       default: {
         return {
           id,
           name: "",
           progressLabel: "",
+          readyLabel: "",
           state,
           timeLabel: fillGameTextValues(gameText[GameTextKey.ForgeQueueLockLevel], unlockRank),
         };
@@ -127,8 +150,8 @@ const queueCells = computed<ForgeQueueCell[]>(() =>
     }
   }),
 );
-// The queue the Queues tab's detail shows, the first holding an order: its units done and its time left, and the share of
-// The unit being forged, which a complete queue shows full
+// The queue the Queues tab's detail shows, the first holding an order: its units done, the words over its ring (its time
+// Left, or Complete once every unit is done) and the share of the unit being forged, which a complete queue shows full
 const queueDetail = computed(() => {
   const slot = queueSlots.value.find(
     ({ state }) => state === ForgeQueueState.Forging || state === ForgeQueueState.Complete,
@@ -139,12 +162,12 @@ const queueDetail = computed(() => {
   const elapsedSeconds = now.since(order.startedAt).total({ unit: "second" });
   return {
     forgedLabel: fillGameTextValues(gameText[GameTextKey.ForgeQueueProgress], `${slot.forged}/${order.count}`),
+    headingLabel: isComplete
+      ? gameText[GameTextKey.ForgeComplete]
+      : fillGameTextValues(gameText[GameTextKey.ForgeTimeRemaining], formatForgeTime(slot.remainingSeconds)),
     id: slot.id,
     isObtainable: slot.forged > 0,
     progress: isComplete ? 1 : (elapsedSeconds - slot.forged * order.unitSeconds) / order.unitSeconds,
-    timeLabel: isComplete
-      ? ""
-      : fillGameTextValues(gameText[GameTextKey.ForgeTimeRemaining], formatForgeTime(slot.remainingSeconds)),
   };
 });
 // Starts the picked order in a free queue, its materials, Mora and talents taken, and leaves the forge as it was where the
@@ -220,6 +243,7 @@ const obtain = (queueId: number) => {
       :amount-maximum
       :close-label="gameText[GameTextKey.Back]"
       :coins="wallet[Currency.Mora]"
+      :material-count-label
       :materials-box-label="gameText[GameTextKey.ForgeMaterials]"
       :materials-label="gameText[GameTextKey.ForgeMaterialsTab]"
       :obtain-label="gameText[GameTextKey.ForgeObtain]"

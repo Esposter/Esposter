@@ -9,20 +9,35 @@ export const props = {
   amountMaximum: 19,
   closeLabel: "Back",
   coins: 375_527,
+  materialCountLabel: "38 / 2",
   materialsBoxLabel: "Materials",
   materialsLabel: "Materials",
   obtainLabel: "Obtain",
   queueDetail: {
     forgedLabel: "Forged: 4/5",
+    headingLabel: "Time Remaining: 2s",
     id: 1,
     isObtainable: true,
     progress: 1 / 3,
-    timeLabel: "Time Remaining: 2s",
   },
   queues: [
-    { id: 1, name: "Enhancement Ore", progressLabel: "Forging", state: ForgeQueueState.Forging, timeLabel: "" },
-    { id: 2, name: "", progressLabel: "", state: ForgeQueueState.Idle, timeLabel: "" },
-    { id: 3, name: "", progressLabel: "", state: ForgeQueueState.Locked, timeLabel: "Unlocked at Adventure Rank 15" },
+    {
+      id: 1,
+      name: "Enhancement Ore",
+      progressLabel: "Forging",
+      readyLabel: "4 ready",
+      state: ForgeQueueState.Forging,
+      timeLabel: "",
+    },
+    { id: 2, name: "", progressLabel: "", readyLabel: "", state: ForgeQueueState.Idle, timeLabel: "" },
+    {
+      id: 3,
+      name: "",
+      progressLabel: "",
+      readyLabel: "",
+      state: ForgeQueueState.Locked,
+      timeLabel: "Unlocked at Adventure Rank 15",
+    },
   ],
   queuesLabel: "Forge Queues (1/3)",
   recipeId: 1,
@@ -41,6 +56,6 @@ export const props = {
   yieldCount: 1,
 };
 export const variants = {
-  queues: { tab: ForgeTab.Queues },
+  queues: { materialCountLabel: "28 / 2", tab: ForgeTab.Queues },
   refused: { refusalLabel: "Cannot forge any more Enhancement Ore today. Please wait till tomorrow." },
 };
