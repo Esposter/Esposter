@@ -8,7 +8,7 @@ The Archive is the game's record of what a player has met. It is seven sections,
 flowchart TD
   DUMP["The dump, outside the repository: the codex tables and the name tables they point at"] --> WRITE["genshin:assets archive"]
   WRITE --> SLICES["archive/books and the other sections: one record per section"]
-  WRITE --> WORDS["archiveText per language: each name in each language"]
+  WRITE --> WORDS["archiveText per language: each name, and each weapon's description, in each language"]
   BAG["A bag change: a drop picked up, a gathering point, a wish"] --> SET["setInventory in the world screen"]
   SET --> OPEN["openArchiveEntries: a weapon opens Equipment, any other item Materials"]
   PICK["A drop picked up that is a volume's material"] --> BOOK["openArchiveBook: the volume goes into the Archive, not the bag"]
@@ -78,37 +78,37 @@ The Archive screen has no parity measure. Its places follow the achievements' gr
 
 ## Key files
 
-| File                                                                           | Role                                                                                                 |
-| :----------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/archive/ArchiveSection.ts`                  | The seven sections, each the game's own codex table                                                  |
-| `packages/genshin-world/src/models/archive/ArchiveEntry.ts`                    | One entry with its table id and its name's text id, with its schema                                  |
-| `packages/genshin-world/src/models/archive/ArchiveProgress.ts`                 | The opened ids of each section                                                                       |
-| `packages/genshin-world/src/services/archive/openArchiveEntries.ts`            | Opens the entries of a bag's items                                                                   |
-| `packages/genshin-world/src/services/archive/openArchiveArtifactSets.ts`       | Opens a set's Equipment entry once the artifacts held cover every slot of its set                    |
-| `packages/genshin-world/src/services/reliquary/readReliquarySets.ts`           | Fetches the reliquary sets by key and checks their shape                                             |
-| `packages/genshin-world/src/services/archive/readArchiveEntries.ts`            | The slices of every section, fetched by their keys and checked                                       |
-| `packages/genshin-world/src/services/archive/ArchiveTextLoaderMap.ts`          | The names in each language, fetched by their key                                                     |
-| `packages/genshin-world/src/services/archive/constants.ts`                     | The main quest the Archive opens after                                                               |
-| `packages/genshin-world/src/services/archive/computeOfferedViewpoints.ts`      | The viewpoints the scene group record places, the only ones offered                                  |
-| `packages/genshin-world/src/services/archive/getViewpointPlaces.ts`            | Each viewpoint's place as its scene group record gives it                                            |
-| `packages/genshin-world/src/services/archive/computeViewpointInteractables.ts` | An offered viewpoint's prompt on the ground beneath its place                                        |
-| `packages/genshin-world/src/services/archive/openViewpointArchiveEntry.ts`     | Opens a viewpoint's Geography entry as it is viewed                                                  |
-| `packages/genshin-world/src/services/sceneGroup/readSceneGroups.ts`            | The scene group record, fetched by its key and checked                                               |
-| `packages/genshin-world/src/components/Archive/Screen/Index.vue`               | The Archive screen the Paimon menu opens                                                             |
-| `packages/genshin-world/src/components/World/Session/Index.vue`                | `setInventory`, the unlock and the names' load, the viewpoints' prompts, and the screen's slot       |
-| `scripts/src/services/genshinAssets/archive/buildArchive.ts`                   | The builder: each section's entries, as its record                                                   |
-| `scripts/src/services/genshinAssets/archive/toArchiveEntries.ts`               | A candidate kept only when its name is in the English text, in the codex's order                     |
-| `scripts/src/services/genshinAssets/archive/readLivingBeingCandidates.ts`      | The animal rows and their names                                                                      |
-| `scripts/src/services/genshinAssets/archive/buildArchiveText.ts`               | Every entry's name in every language                                                                 |
-| `scripts/src/services/genshinText/buildTextChunks.ts`                          | The builder of a per-language record, shared with the achievements', the names' and the quests' text |
-| `scripts/src/services/genshinAssets/archive/readTutorialCandidates.ts`         | The tutorial push tips, each named by its title                                                      |
-| `packages/genshin-world/src/models/archive/ArchiveKills.ts`                    | The defeats of each Living Being, by its entry's id                                                  |
-| `packages/genshin-world/src/services/archive/countArchiveDefeat.ts`            | One more defeat counted under a Living Being's entry                                                 |
-| `packages/genshin-world/src/services/archive/openArchiveEntry.ts`              | One entry of a section opened, idempotently                                                          |
-| `packages/genshin-world/src/services/archive/openArchiveBook.ts`               | A picked up volume's material opens its Books entry                                                  |
-| `packages/genshin-world/src/components/Archive/BookReader/Index.vue`           | The reader: a volume's title and its text on one page                                                |
-| `scripts/src/services/genshinAssets/archive/toBookCandidates.ts`               | The codex rows joined to their material's name and their document's body                             |
-| `scripts/src/services/genshinAssets/archive/buildBookBodyPublication.ts`       | Each volume's body in every language, one index a language, published                                |
+| File                                                                           | Role                                                                                                               |
+| :----------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/archive/ArchiveSection.ts`                  | The seven sections, each the game's own codex table                                                                |
+| `packages/genshin-world/src/models/archive/ArchiveEntry.ts`                    | One entry with its table id, its name's text id and, where its table holds one, its description's, with its schema |
+| `packages/genshin-world/src/models/archive/ArchiveProgress.ts`                 | The opened ids of each section                                                                                     |
+| `packages/genshin-world/src/services/archive/openArchiveEntries.ts`            | Opens the entries of a bag's items                                                                                 |
+| `packages/genshin-world/src/services/archive/openArchiveArtifactSets.ts`       | Opens a set's Equipment entry once the artifacts held cover every slot of its set                                  |
+| `packages/genshin-world/src/services/reliquary/readReliquarySets.ts`           | Fetches the reliquary sets by key and checks their shape                                                           |
+| `packages/genshin-world/src/services/archive/readArchiveEntries.ts`            | The slices of every section, fetched by their keys and checked                                                     |
+| `packages/genshin-world/src/services/archive/ArchiveTextLoaderMap.ts`          | The names in each language, fetched by their key                                                                   |
+| `packages/genshin-world/src/services/archive/constants.ts`                     | The main quest the Archive opens after                                                                             |
+| `packages/genshin-world/src/services/archive/computeOfferedViewpoints.ts`      | The viewpoints the scene group record places, the only ones offered                                                |
+| `packages/genshin-world/src/services/archive/getViewpointPlaces.ts`            | Each viewpoint's place as its scene group record gives it                                                          |
+| `packages/genshin-world/src/services/archive/computeViewpointInteractables.ts` | An offered viewpoint's prompt on the ground beneath its place                                                      |
+| `packages/genshin-world/src/services/archive/openViewpointArchiveEntry.ts`     | Opens a viewpoint's Geography entry as it is viewed                                                                |
+| `packages/genshin-world/src/services/sceneGroup/readSceneGroups.ts`            | The scene group record, fetched by its key and checked                                                             |
+| `packages/genshin-world/src/components/Archive/Screen/Index.vue`               | The Archive screen the Paimon menu opens                                                                           |
+| `packages/genshin-world/src/components/World/Session/Index.vue`                | `setInventory`, the unlock and the names' load, the viewpoints' prompts, and the screen's slot                     |
+| `scripts/src/services/genshinAssets/archive/buildArchive.ts`                   | The builder: each section's entries, as its record                                                                 |
+| `scripts/src/services/genshinAssets/archive/toArchiveEntries.ts`               | A candidate kept only when its name is in the English text, in the codex's order                                   |
+| `scripts/src/services/genshinAssets/archive/readLivingBeingCandidates.ts`      | The animal rows and their names                                                                                    |
+| `scripts/src/services/genshinAssets/archive/buildArchiveText.ts`               | Every entry's name in every language                                                                               |
+| `scripts/src/services/genshinText/buildTextChunks.ts`                          | The builder of a per-language record, shared with the achievements', the names' and the quests' text               |
+| `scripts/src/services/genshinAssets/archive/readTutorialCandidates.ts`         | The tutorial push tips, each named by its title                                                                    |
+| `packages/genshin-world/src/models/archive/ArchiveKills.ts`                    | The defeats of each Living Being, by its entry's id                                                                |
+| `packages/genshin-world/src/services/archive/countArchiveDefeat.ts`            | One more defeat counted under a Living Being's entry                                                               |
+| `packages/genshin-world/src/services/archive/openArchiveEntry.ts`              | One entry of a section opened, idempotently                                                                        |
+| `packages/genshin-world/src/services/archive/openArchiveBook.ts`               | A picked up volume's material opens its Books entry                                                                |
+| `packages/genshin-world/src/components/Archive/BookReader/Index.vue`           | The reader: a volume's title and its text on one page                                                              |
+| `scripts/src/services/genshinAssets/archive/toBookCandidates.ts`               | The codex rows joined to their material's name and their document's body                                           |
+| `scripts/src/services/genshinAssets/archive/buildBookBodyPublication.ts`       | Each volume's body in every language, one index a language, published                                              |
 
 ## Sources
 

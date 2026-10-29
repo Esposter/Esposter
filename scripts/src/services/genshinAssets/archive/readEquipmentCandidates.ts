@@ -15,16 +15,20 @@ import {
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 
 // The weapons and the artifact sets the Equipment section lists, each in the codex's order. A weapon is named by its
-// Weapon row, and a set by the equip affix its set row holds, which carries the set's name
+// Weapon row, which also gives its description, and a set by the equip affix its set row holds, which carries the set's
+// Name
 export const readEquipmentCandidates = (): { artifactSets: ArchiveCandidate[]; weapons: ArchiveCandidate[] } => {
-  const weaponNameTextMapHashMap = new Map(
-    readExcelTable<ExcelWeaponRow>(WEAPON_TABLE_NAME).map(({ id, nameTextMapHash }) => [id, nameTextMapHash]),
+  const weaponTextMapHashesMap = new Map(
+    readExcelTable<ExcelWeaponRow>(WEAPON_TABLE_NAME).map(({ descTextMapHash, id, nameTextMapHash }) => [
+      id,
+      { ...(descTextMapHash === undefined ? {} : { descriptionTextMapHash: descTextMapHash }), nameTextMapHash },
+    ]),
   );
   const weapons = readExcelTable<ExcelWeaponCodexRow>(WEAPON_CODEX_TABLE_NAME)
     .filter(({ isDisuse }) => !isDisuse)
     .flatMap(({ sortOrder, weaponId }) => {
-      const nameTextMapHash = weaponNameTextMapHashMap.get(weaponId);
-      return nameTextMapHash === undefined ? [] : [{ id: weaponId, nameTextMapHash, sortOrder }];
+      const textMapHashes = weaponTextMapHashesMap.get(weaponId);
+      return textMapHashes === undefined ? [] : [{ ...textMapHashes, id: weaponId, sortOrder }];
     });
   const equipAffixNameTextMapHashMap = new Map(
     readExcelTable<ExcelEquipAffixRow>(EQUIP_AFFIX_TABLE_NAME).map(({ id, nameTextMapHash }) => [id, nameTextMapHash]),
