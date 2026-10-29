@@ -23,10 +23,10 @@ describe("menuExit", () => {
     const cancelRect = cancel.getBoundingClientRect();
     const confirmRect = confirm.getBoundingClientRect();
 
-    expect(cancelRect.width / panel.width).toBeCloseTo(390 / 960, 3);
-    expect((cancelRect.left - panel.left) / panel.width).toBeCloseTo(70 / 960, 3);
-    expect((confirmRect.left - panel.left) / panel.width).toBeCloseTo(500 / 960, 3);
-    expect((cancelRect.top - panel.top) / panel.height).toBeCloseTo(498 / 606, 3);
+    expect(cancelRect.width / panel.width).toBeCloseTo(370 / 910, 3);
+    expect((cancelRect.left - panel.left) / panel.width).toBeCloseTo(66 / 910, 3);
+    expect((confirmRect.left - panel.left) / panel.width).toBeCloseTo(475 / 910, 3);
+    expect((cancelRect.top - panel.top) / panel.height).toBeCloseTo(474 / 576, 3);
   });
 
   test("cancel returns to the menu", async () => {
