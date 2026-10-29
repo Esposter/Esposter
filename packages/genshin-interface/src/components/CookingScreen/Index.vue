@@ -196,6 +196,10 @@ const pointerPosition = computed(() => toArcPoint(pointer, COOKING_ZONE_RADIUS_Y
 .scroll {
   fill: none;
   stroke: rgb(250 248 236 / 95%);
+}
+
+.track,
+.inner-track {
   stroke-width: 4;
 }
 
