@@ -16,7 +16,7 @@ import { getScratchReferencePath } from "#src/services/genshinParity/shared/getS
 
 // One reference id's pack: its screenshot, its plate screenshot when its entry names one, and the clean plate filled from
 // the one the entry fills from. The row it ends with is the one the manifest holds with those images named by hash, and
-// it is returned only when that changed. Nothing is stored here, so a conflict is known before any object is written
+// it is returned only when that changed. Nothing is stored here, so a collision is known before any object is written
 export const planReferenceEntry = async (
   id: string,
   reference: ParityReference,
@@ -25,19 +25,18 @@ export const planReferenceEntry = async (
   const mainLabel = getReferenceFileName(id);
   const plateLabel = getReferencePlateFileName(id);
   const cleanLabel = getCleanPlateFileName(id);
-  const main = await readEntryImage(mainLabel, getScratchReferencePath(id), existing);
+  const main = await readEntryImage(getScratchReferencePath(id), existing);
   if (main === undefined)
     return {
-      conflicts: [],
+      collisions: [],
       held: [],
+      id,
       missing: reference.plateSource === undefined ? [mainLabel] : [mainLabel, plateLabel],
       objects: [],
       packed: [],
     };
   const plate =
-    reference.plateSource === undefined
-      ? undefined
-      : await readEntryImage(plateLabel, getScratchPlatePath(id), existing?.plate);
+    reference.plateSource === undefined ? undefined : await readEntryImage(getScratchPlatePath(id), existing?.plate);
   // A clean plate is filled from the plate its entry names, so a missing plate leaves the entry without one rather than
   // filling it from the reference
   const cleanInput = reference.plateSource === undefined ? main : plate;
@@ -75,8 +74,11 @@ export const planReferenceEntry = async (
     ...(clean === undefined || clean.stored !== undefined ? [] : [cleanLabel]),
   ];
   return {
-    conflicts: images.flatMap(({ entry }) => (entry.conflict === undefined ? [] : [entry.conflict])),
+    collisions: images.flatMap(({ entry }) =>
+      entry.collision === undefined ? [] : [{ committed: entry.collision.committed, id, ours: entry.collision.ours }],
+    ),
     held,
+    id,
     missing: isPlateMissing ? [plateLabel] : [],
     objects: [
       ...images.flatMap(({ entry }) =>

@@ -1,7 +1,6 @@
 import type { ParityReferenceManifestImage } from "#src/models/genshinParity/reference/ParityReferenceManifestImage";
 import type { ReferenceEntryImage } from "#src/models/genshinParity/reference/ReferenceEntryImage";
 
-import { getPackConflict } from "#src/services/genshinParity/reference/getPackConflict";
 import { packScratchImage } from "#src/services/genshinParity/reference/packScratchImage";
 import { readCachedReference } from "#src/services/genshinParity/reference/readCachedReference";
 import { existsSync } from "node:fs";
@@ -9,9 +8,8 @@ import { readFile, stat } from "node:fs/promises";
 
 // One screenshot of an entry: its scratch copy packed, checked against the image the manifest holds, or the held image
 // itself when no scratch copy is beside it. Undefined when neither exists. A scratch copy packing to other bytes than the
-// held one is a conflict, since two different images cannot claim one id
+// held one is a collision, since two different images cannot claim one id
 export const readEntryImage = async (
-  label: string,
   scratchPath: string,
   existing: ParityReferenceManifestImage | undefined,
 ): Promise<ReferenceEntryImage | undefined> => {
@@ -26,10 +24,11 @@ export const readEntryImage = async (
   }
   const packed = await packScratchImage(scratchPath);
   const { mtime } = await stat(scratchPath);
+  const isCollision = existing !== undefined && existing.sha256 !== packed.image.sha256;
   return {
     bytesBefore: packed.sourceBytes,
     capturedAt: mtime,
-    conflict: existing === undefined ? undefined : getPackConflict(label, packed.image.sha256, existing.sha256),
+    collision: isCollision ? { committed: existing.sha256, ours: packed.image.sha256 } : undefined,
     image: packed.image,
     isNew: existing === undefined,
     read: async () => packed.data,

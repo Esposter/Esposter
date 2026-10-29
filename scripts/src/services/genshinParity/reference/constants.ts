@@ -43,6 +43,8 @@ export const REFERENCE_WEBP_OPTIONS = { effort: 6, lossless: true } as const;
 // the pack table names
 export const REFERENCE_PACK_CONCURRENCY = 2;
 export const REFERENCE_PACK_LARGEST_COUNT = 10;
+// How many leading hex digits of a hash a colliding id names, enough to tell two apart at a glance
+export const SHORT_HASH_LENGTH = 8;
 
 // A reference's source as the map writes it, `<file> at <N>s`, with `, cropped to WxH from X,Y` when the frame is cropped
 export const RECORDING_SOURCE_REGEX: RegExp =

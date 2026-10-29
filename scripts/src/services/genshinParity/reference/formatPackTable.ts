@@ -9,8 +9,16 @@ const KINDS = [ParityReferenceKind.Wiki, ParityReferenceKind.RecordingFrame, Par
 const sumOf = (values: number[]): number => values.reduce((total, value) => total + value, 0);
 
 // The table `references pack` prints: the counts, the sizes before and after by kind, the largest files after the pack,
-// the files with no screenshot, and the scratch screenshots no entry names, left where they are
-export const formatPackTable = ({ held, missing, objects, packed, unnamed, uploads }: ReferencePackOutcome): string => {
+// the ids whose rows were replaced, the files with no screenshot, and the scratch screenshots no entry names, left in place
+export const formatPackTable = ({
+  held,
+  missing,
+  objects,
+  packed,
+  replaced,
+  unnamed,
+  uploads,
+}: ReferencePackOutcome): string => {
   const before = sumOf(packed.map(({ bytesBefore }) => bytesBefore));
   const after = sumOf(packed.map(({ bytesAfter }) => bytesAfter));
   const share = before === 0 ? 0 : after / before;
@@ -39,6 +47,7 @@ export const formatPackTable = ({ held, missing, objects, packed, unnamed, uploa
     ...kindRows,
     `largest ${REFERENCE_PACK_LARGEST_COUNT} after the pack`,
     ...largest,
+    `replaced ${replaced.toSorted().join(", ") || "none"}`,
     `missing  ${missing.toSorted().join(", ") || "none"}`,
     `unnamed  ${unnamed.count} scratch screenshots no entry names, left in place, ${formatMebibytes(unnamed.bytes)}`,
   ].join("\n");
