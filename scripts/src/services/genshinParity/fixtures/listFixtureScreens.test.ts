@@ -4,11 +4,15 @@ import { FixtureReferenceStatus } from "#src/models/genshinParity/fixtures/Fixtu
 import {
   BARREL_FILE_NAME,
   COMPONENT_FILE_NAME,
+  COMPONENTS_DIRECTORY,
   FIXTURE_FILE_NAME,
   IMAGE_NAME,
+  REFERENCE_IMAGE_SUFFIX,
 } from "#src/services/genshinParity/fixtures/constants";
+import { getFixtureImageName } from "#src/services/genshinParity/fixtures/getFixtureImageName";
 import { listFixtureScreens } from "#src/services/genshinParity/fixtures/listFixtureScreens";
-import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
+import { DEFAULT_APPROVAL, REFERENCE_FILE_EXTENSION } from "#src/services/genshinParity/reference/constants";
+import { planReferenceFiles } from "#src/services/genshinParity/reference/planReferenceFiles";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -18,7 +22,10 @@ describe(listFixtureScreens, () => {
   const SCREEN_NAME = "FooScreen";
   const SCREEN_DIRECTORY = join("Foo", "Screen");
   const REFERENCE_ID = "foo-screen";
+  const REGION_REFERENCE_ID = "foo-region";
+  const REGION = { height: 0, width: 0, x: 0, y: 0 };
   const REPORTED_MEAN = 2.5;
+  const VARIANT = "artifacts";
   let componentsDirectory = "";
 
   beforeEach(async () => {
@@ -30,7 +37,7 @@ describe(listFixtureScreens, () => {
     );
     await writeFile(
       join(componentsDirectory, SCREEN_DIRECTORY, FIXTURE_FILE_NAME),
-      "export const variants = {\n  artifacts: {},\n};\n",
+      `export const variants = {\n  ${VARIANT}: {},\n};\n`,
     );
     await writeFile(join(componentsDirectory, SCREEN_DIRECTORY, `${IMAGE_NAME}.png`), "");
   });
@@ -67,8 +74,27 @@ describe(listFixtureScreens, () => {
         name: SCREEN_NAME,
         referenceId: "",
         referenceStatus: FixtureReferenceStatus.None,
-        variant: "artifacts",
+        variant: VARIANT,
       },
     ]);
+  });
+
+  test("should name a variant's primary reference, the one the planner places beside its snapshot, over a region listed before it", async () => {
+    expect.hasAssertions();
+
+    const referenceMap = {
+      [REGION_REFERENCE_ID]: { region: REGION, screen: SCREEN_NAME, source: "recording.mp4", variant: VARIANT },
+      [REFERENCE_ID]: { screen: SCREEN_NAME, source: "recording.mp4", variant: VARIANT },
+    } satisfies Record<string, ParityReference>;
+    const rows = await listFixtureScreens(componentsDirectory, referenceMap, new Map());
+    const besideSnapshot = join(
+      COMPONENTS_DIRECTORY,
+      SCREEN_DIRECTORY,
+      `${getFixtureImageName(VARIANT)}${REFERENCE_IMAGE_SUFFIX}.${REFERENCE_FILE_EXTENSION}`,
+    );
+    const besideId = planReferenceFiles(referenceMap, rows).find(({ path }) => path === besideSnapshot)?.id;
+
+    expect(rows.find(({ variant }) => variant === VARIANT)?.referenceId).toBe(besideId);
+    expect(besideId).toBe(REFERENCE_ID);
   });
 });

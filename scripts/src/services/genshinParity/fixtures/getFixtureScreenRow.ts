@@ -3,9 +3,11 @@ import type { ParityReference } from "#src/models/genshinParity/shared/ParityRef
 
 import { FixtureReferenceStatus } from "#src/models/genshinParity/fixtures/FixtureReferenceStatus";
 import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
+import { getPrimaryReferenceId } from "#src/services/genshinParity/reference/getPrimaryReferenceId";
+import { getVariantEntries } from "#src/services/genshinParity/reference/getVariantEntries";
 
-// One fixture screen or variant as a row, with the reference that names it: the first entry whose screen and variant it
-// Matches, its status, and its last score and bar. A reference with no approval of its own is judged against the default bar
+// One fixture screen or variant as a row, with the reference that names it: its primary reference (`getPrimaryReferenceId`),
+// its status, and its last score and bar. A reference with no approval of its own is judged against the default bar
 export const getFixtureScreenRow = ({
   directory,
   imageExists,
@@ -21,10 +23,8 @@ export const getFixtureScreenRow = ({
   reportMeans: ReadonlyMap<string, number>;
   variant: string;
 }): FixtureScreenRow => {
-  const reference = Object.entries(referenceMap).find(
-    ([, entry]) => entry.screen === name && (entry.variant ?? "") === variant,
-  );
-  const [referenceId = "", entry] = reference ?? [];
+  const referenceId = getPrimaryReferenceId(getVariantEntries(referenceMap, name, variant)) ?? "";
+  const entry = referenceMap[referenceId];
   let referenceStatus = FixtureReferenceStatus.None;
   if (entry?.pending !== undefined) referenceStatus = FixtureReferenceStatus.Pending;
   else if (entry) referenceStatus = FixtureReferenceStatus.Entry;
