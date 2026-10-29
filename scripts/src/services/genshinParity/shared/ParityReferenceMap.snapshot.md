@@ -31,14 +31,14 @@ committed.
 | `everfrozen-earth-location` | `WorldScreen` | 20.61% | 0.234 | 19.75% | 0.6327 |
 | `exit-prompt` | `MenuExit` | 8.36% | 0.909 | 33.71% | 0.2227 |
 | `forge-screen` | `ForgeScreen` | 6.72% | 0.685 | 5.60% | 0.2216 |
-| `forge-screen-ores-done` | `ForgeScreen` | pending: no screenshot of this variant yet | | | |
-| `forge-screen-queues` | `ForgeScreen` | pending: no screenshot of this variant yet | | | |
+| `forge-screen-ores-done` | `ForgeScreen` | 60.83% | 0.338 | 59.25% | 0.9221 |
+| `forge-screen-queues` | `ForgeScreen` | 60.80% | 0.329 | 59.38% | 0.9225 |
 | `forge-screen-refused` | `ForgeScreen` | pending: no screenshot of this variant yet | | | |
 | `forge-screen-weapons-done` | `ForgeScreen` | pending: no screenshot of this variant yet | | | |
 | `gcg-duel-board` | `GcgScreen` | 13.97% | 0.470 | 9.63% | 0.4658 |
 | `handbook-experience` | `HandbookScreen` | 5.28% | 0.859 | 2.95% | 0.2516 |
 | `health-notice` | `SplashHealthNotice` | 6.17% | 0.964 | 1.51% | 0.1780 |
-| `health-notice-japanese` | `SplashHealthNotice` | pending: its recording is not on disk | | | |
+| `health-notice-japanese` | `SplashHealthNotice` | 11.47% | 0.583 | 4.60% | 0.3327 |
 | `health-notice-mainland` | `SplashHealthNotice` | 7.06% | 0.829 | 3.03% | 0.1974 |
 | `hud-paimon-button` | `HudScreen` | 1.90% | 0.936 | 4.74% | 0.1188 |
 | `hud-stamina-climb` | `HudScreen` | 0.62% | 0.787 | 0.75% | 0.0629 |
@@ -63,11 +63,11 @@ committed.
 | `login-interface-mainland-rating` | `LoginInterface` | 3.85% | 0.953 | 2.62% | 0.2090 |
 | `login-interface-title` | `LoginInterface` | 0.51% | 0.997 | 0.25% | 0.0353 |
 | `login-night-title` | `LoginScreen` | 9.41% | 0.371 | 7.01% | 0.3913 |
-| `login-screen-dusk` | `LoginScreen` | pending: no screenshot of this variant yet | | | |
+| `login-screen-dusk` | `LoginScreen` | 19.45% | 0.358 | 13.81% | 0.6448 |
 | `map-overlay-galesong` | `MapOverlay` | 17.65% | 0.000 | 12.94% | 0.6686 |
 | `map-overlay-jueyun` | `MapOverlay` | 65.65% | 0.163 | 38.75% | 0.8931 |
-| `menu-exit-hover` | `MenuExit` | pending: no screenshot of this variant yet | | | |
-| `menu-exit-pressed` | `MenuExit` | pending: no screenshot of this variant yet | | | |
+| `menu-exit-hover` | `MenuExit` | 6.51% | 0.484 | 5.49% | 0.2230 |
+| `menu-exit-pressed` | `MenuExit` | 7.26% | 0.451 | 6.61% | 0.2359 |
 | `menu-paimon-disabled` | `MenuPaimon` | pending: no screenshot of this variant yet | | | |
 | `menu-paimon-hover` | `MenuPaimon` | pending: no screenshot of this variant yet | | | |
 | `menu-paimon-pressed` | `MenuPaimon` | pending: no screenshot of this variant yet | | | |
@@ -89,19 +89,19 @@ committed.
 | `settings-audio-rows` | `MenuSettings` | 1.01% | 0.995 | 0.38% | 0.0745 |
 | `settings-graphics` | `MenuSettings` | 1.59% | 0.996 | 1.26% | 0.1020 |
 | `settings-graphics-rows` | `MenuSettings` | 1.07% | 0.998 | 0.40% | 0.0888 |
-| `spiral-abyss-benediction` | `SpiralAbyssBenediction` | pending: no screenshot of the screen yet | | | |
+| `spiral-abyss-benediction` | `SpiralAbyssBenediction` | 71.95% | 0.002 | 72.25% | 0.8942 |
 | `spiral-abyss-entry` | `SpiralAbyssEntry` | pending: no screenshot of the screen yet | | | |
 | `splash-title-chinese-traditional` | `SplashTitle` | pending: no screenshot of this variant yet | | | |
-| `splash-title-japanese` | `SplashTitle` | pending: no screenshot of this variant yet | | | |
+| `splash-title-japanese` | `SplashTitle` | 0.16% | 1.000 | 0.39% | 0.0342 |
 | `splash-title-korean` | `SplashTitle` | pending: no screenshot of this variant yet | | | |
 | `sumeru-city-location` | `WorldScreen` | 32.42% | 0.227 | 28.07% | 0.8157 |
 | `title-splash` | `SplashTitle` | 0.20% | 1.000 | 0.01% | 0.0090 |
 | `title-splash-mainland` | `SplashTitle` | 1.89% | 0.991 | 0.89% | 0.0807 |
-| `weapon-screen` | `WeaponScreen` | pending: no screenshot of the screen yet | | | |
-| `weapon-screen-ascend` | `WeaponScreen` | pending: no screenshot of this variant yet | | | |
-| `weapon-screen-at-cap` | `WeaponScreen` | pending: no screenshot of this variant yet | | | |
+| `weapon-screen` | `WeaponScreen` | 72.12% | 0.211 | 66.35% | 0.9441 |
+| `weapon-screen-ascend` | `WeaponScreen` | 74.41% | 0.260 | 68.43% | 0.9562 |
+| `weapon-screen-at-cap` | `WeaponScreen` | pending: the recording zooms over the state, so no whole-screen frame shows it | | | |
 | `weapon-screen-rank-five` | `WeaponScreen` | pending: no screenshot of this variant yet | | | |
-| `weapon-screen-refine` | `WeaponScreen` | pending: no screenshot of this variant yet | | | |
+| `weapon-screen-refine` | `WeaponScreen` | 72.14% | 0.156 | 65.73% | 0.9507 |
 | `weapon-screen-two-star` | `WeaponScreen` | pending: no screenshot of this variant yet | | | |
 | `windrise-statue-day` | `WorldScreen` | 26.73% | 0.306 | 26.74% | 0.7579 |
 | `wish-screen` | `WishScreen` | 9.75% | 0.499 | 7.07% | 0.2948 |

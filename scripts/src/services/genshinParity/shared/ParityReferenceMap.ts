@@ -140,7 +140,13 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "CharacterScreen",
     source: "session-2.mp4 at 156s",
   },
-  "cooking-screen": { pending: NO_SCREEN_SCREENSHOT, screen: "CookingScreen" },
+  // The English PC client's cooking arc at 720 high from a public recording, about 110 seconds in: the pot over its fire with the
+  // Pointer at 0.23 of the bar and the Stop button. The recorder's UID sits bottom right, outside the region scored
+  "cooking-screen": {
+    region: { height: 690, width: 1280, x: 0, y: 0 },
+    screen: "CookingScreen",
+    source: "yt-fEbf_tOV1t4-cooking-sticky-honey-roast.mp4 at 110s",
+  },
   // The Court of Fontaine from the wiki's location image at 4K, by day with the sun high. Its landmarks are rigid stone
   // And steel read off 4x crops: the arch's two feet, the bridge's two springs and the drum tower's roof corners
   "court-of-fontaine-location": {
@@ -275,8 +281,22 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "ForgeScreen",
     source: "yt-AVnbm8fESr0-forge-screen.mp4 at 32s",
   },
-  "forge-screen-ores-done": { pending: NO_VARIANT_SCREENSHOT, screen: "ForgeScreen", variant: "oresDone" },
-  "forge-screen-queues": { pending: NO_VARIANT_SCREENSHOT, screen: "ForgeScreen", variant: "queues" },
+  // The forge's Queues tab from the same clip at 50.5 seconds: the order completed, Forged 5 of 5 and Obtain shown. The recorder's UID
+  // Sits bottom right, below the region scored
+  "forge-screen-ores-done": {
+    region: { height: 860, width: 1920, x: 0, y: 0 },
+    screen: "ForgeScreen",
+    source: "yt-AVnbm8fESr0-forge-screen.mp4 at 50.5s",
+    variant: "oresDone",
+  },
+  // The forge's Queues tab at 1920 by 886 from the public clip, 48 seconds in: an Enhancement Ore order forging, four ready, Forged
+  // 4 of 5. The fixture's count differs (a five-unit order here), so the compare differs at the figures until its props follow
+  "forge-screen-queues": {
+    region: { height: 860, width: 1920, x: 0, y: 0 },
+    screen: "ForgeScreen",
+    source: "yt-AVnbm8fESr0-forge-screen.mp4 at 48s",
+    variant: "queues",
+  },
   "forge-screen-refused": { pending: NO_VARIANT_SCREENSHOT, screen: "ForgeScreen", variant: "refused" },
   "forge-screen-weapons-done": { pending: NO_VARIANT_SCREENSHOT, screen: "ForgeScreen", variant: "weaponsDone" },
   // The public frame of the card game's duel board at 1080 high from the English PC client, cut from 400 seconds of a
@@ -288,13 +308,13 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "handbook-experience": { screen: "HandbookScreen", wikiTitle: "File:Adventurer Handbook Experience.png" },
   // The English PC client's notice, from the 2023 recording of its launch at 1080p, in the current build's wording
   "health-notice": { screen: "SplashHealthNotice", source: "yt-sQNqMfmfkZU.mp4 at 8s" },
-  // The Japanese PC client's notice whole at 30 seconds of the public recording of its launch (the PC watermark top left and the
-  // Recorder's icons bottom right sit outside the region scored)
+  // The Japanese PC client's notice whole at 3440 by 1440 from a 21:9 capture of its launch, 12.5 seconds in, static from 11.5 to
+  // 12.5. The recording has no watermark or recorder icons; the text spans x 290 to 3150 and y 480 to 965, so the region covers it
   "health-notice-japanese": {
-    pending: RECORDING_NOT_ON_DISK,
     props: { language: "Japanese" },
-    region: { height: 480, width: 1520, x: 200, y: 300 },
+    region: { height: 565, width: 2940, x: 250, y: 440 },
     screen: "SplashHealthNotice",
+    source: "session-2.mp4 at 12.5s",
   },
   // Mainland China's notice in its own words, from the public recording of an older build's launch its splash is taken
   // From, held from about 7 to 12 seconds
@@ -616,7 +636,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "LoginScreen",
     source: "yt-PnqNza4qWzs.mp4 at 12s",
   },
-  "login-screen-dusk": { pending: NO_VARIANT_SCREENSHOT, screen: "LoginScreen", variant: "dusk" },
+  // The English PC client's title scene at dusk at 1080 high, 3 seconds in, settled (the same frame as the public dusk clip at 3
+  // Seconds). The power button, the publisher's icon and the build string sit at the corners
+  "login-screen-dusk": { screen: "LoginScreen", source: "login-dusk.mkv at 3s", variant: "dusk" },
   // The English PC client's map zoomed out over Galesong Hill at 99% (yt-kgW2IgWKukg at 4.6 seconds, 1080p and 60 frames a
   // Second, one chest before the area reads 100%). Its label, the name and the progress line under it, scored over the
   // Glyphs' silhouettes alone, the terrain between their strokes left out. The game places a label from map data the
@@ -671,8 +693,22 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     ],
     wikiTitle: "File:Map Stardust in Jueyun.png",
   },
-  "menu-exit-hover": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuExit", variant: "hover" },
-  "menu-exit-pressed": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuExit", variant: "pressed" },
+  // The quit prompt at 1080 high from the public clip, 29 seconds in: Confirm lit under the pointer, Cancel not. The dialog's whole panel
+  // Is scored; the UID at the bottom right lies outside it
+  "menu-exit-hover": {
+    region: { height: 590, width: 930, x: 495, y: 245 },
+    screen: "MenuExit",
+    source: "yt-kIDee7nyD0w-menu-quit-prompt.mp4 at 29s",
+    variant: "hover",
+  },
+  // The same prompt 1.6 seconds later with Confirm pressed: a pale fill with a gold label, held for about 0.2 seconds before the
+  // White fade
+  "menu-exit-pressed": {
+    region: { height: 590, width: 930, x: 495, y: 245 },
+    screen: "MenuExit",
+    source: "yt-kIDee7nyD0w-menu-quit-prompt.mp4 at 30.6s",
+    variant: "pressed",
+  },
   "menu-paimon-disabled": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuPaimon", variant: "disabled" },
   "menu-paimon-hover": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuPaimon", variant: "hover" },
   "menu-paimon-pressed": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuPaimon", variant: "pressed" },
@@ -879,14 +915,22 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "MenuSettings",
     source: "yt-5EmJX_RyuY8-menu-settings.mp4 at 144.5s",
   },
-  "spiral-abyss-benediction": { pending: NO_SCREEN_SCREENSHOT, screen: "SpiralAbyssBenediction" },
+  // The English PC client's Benediction screen at 1080 high from the public clip, 3 seconds in: Floor 1 Chamber 1 with its hint and
+  // Three cards, the middle one lit at rest with the pointer on its last line. The game's own UID line sits at the bottom right
+  "spiral-abyss-benediction": {
+    region: { height: 1040, width: 1920, x: 0, y: 0 },
+    screen: "SpiralAbyssBenediction",
+    source: "yt-Osaylns8nyk-spiral-abyss-chamber.mp4 at 3s",
+  },
   "spiral-abyss-entry": { pending: NO_SCREEN_SCREENSHOT, screen: "SpiralAbyssEntry" },
   "splash-title-chinese-traditional": {
     pending: NO_VARIANT_SCREENSHOT,
     screen: "SplashTitle",
     variant: "chineseTraditional",
   },
-  "splash-title-japanese": { pending: NO_VARIANT_SCREENSHOT, screen: "SplashTitle", variant: "japanese" },
+  // The Japanese PC client's logo screen at 3440 by 1440 from a 21:9 capture of its launch, 7.5 seconds in, settled: the Japanese
+  // Logo with its Genshin line, whole on white and with no licence line
+  "splash-title-japanese": { screen: "SplashTitle", source: "session-2.mp4 at 7.5s", variant: "japanese" },
   "splash-title-korean": { pending: NO_VARIANT_SCREENSHOT, screen: "SplashTitle", variant: "korean" },
   // Sumeru City from the wiki's location image of 2022, the only Sumeru City shot found: daylight with a clear sky and
   // Short shadows, so a provisional noon until the shadows solve reads its sun. Its landmarks are the terrace's spire
@@ -920,11 +964,35 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "bili-av532052219.mp4 at 5s",
     variant: "chineseSimplified",
   },
-  "weapon-screen": { pending: NO_SCREEN_SCREENSHOT, screen: "WeaponScreen" },
-  "weapon-screen-ascend": { pending: NO_VARIANT_SCREENSHOT, screen: "WeaponScreen", variant: "ascend" },
-  "weapon-screen-at-cap": { pending: NO_VARIANT_SCREENSHOT, screen: "WeaponScreen", variant: "atCap" },
+  // The English PC client's Weapon screen on the Enhance tab at 1920 by 864 from a recording of levelling a five-star sword, 1.9
+  // Seconds in: Lv. 1, nothing in the enhancement slots. The recorder's UID sits bottom right, below the region scored
+  "weapon-screen": {
+    region: { height: 838, width: 1920, x: 0, y: 0 },
+    screen: "WeaponScreen",
+    source: "weapon-levelling.mkv at 1.93s",
+  },
+  // The Ascend tab from the same recording at 12.9 seconds: Lv. 20 of 20 to 20 of 40 with the ascension materials and the button lit. The
+  // Required line shows a struck-through 5000 the recording applies, so the compare differs there
+  "weapon-screen-ascend": {
+    region: { height: 838, width: 1920, x: 0, y: 0 },
+    screen: "WeaponScreen",
+    source: "weapon-levelling.mkv at 12.9s",
+    variant: "ascend",
+  },
+  "weapon-screen-at-cap": {
+    pending: "the recording zooms over the state, so no whole-screen frame shows it",
+    screen: "WeaponScreen",
+    variant: "atCap",
+  },
   "weapon-screen-rank-five": { pending: NO_VARIANT_SCREENSHOT, screen: "WeaponScreen", variant: "rankFive" },
-  "weapon-screen-refine": { pending: NO_VARIANT_SCREENSHOT, screen: "WeaponScreen", variant: "refine" },
+  // The Refine tab from the same recording at 91 seconds: Rank 1 with the four refinement slots empty. The tab shows no level, so the
+  // Fixture's level is not on the screen
+  "weapon-screen-refine": {
+    region: { height: 838, width: 1920, x: 0, y: 0 },
+    screen: "WeaponScreen",
+    source: "weapon-levelling.mkv at 91s",
+    variant: "refine",
+  },
   "weapon-screen-two-star": { pending: NO_VARIANT_SCREENSHOT, screen: "WeaponScreen", variant: "twoStar" },
   // The statue under the oak by day, from the 2026 recording's fixed camera east of it, a game minute a real second
   // From about six in the morning, an hour still to be read off its sun; its camera is solved from its landmarks and
