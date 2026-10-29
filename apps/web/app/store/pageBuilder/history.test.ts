@@ -5,7 +5,7 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 import type { JsonPatchOperation } from "@esposter/shared";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_OTHER_ID, TEST_ROOT, TEST_THIRD_ID } from "#shared/services/pageBuilder/constants.test";
 import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
 import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
@@ -35,7 +35,7 @@ describe(usePageBuilderHistoryStore, () => {
     root: TEST_ROOT,
   };
   const TEST_C_INSERTED_DOCUMENT: WebpageDocument = {
-    content: [createButton(TEST_ID), createButton("c"), createButton(TEST_OTHER_ID)],
+    content: [createButton(TEST_ID), createButton(TEST_THIRD_ID), createButton(TEST_OTHER_ID)],
     root: TEST_ROOT,
   };
   const TEST_MOVE_LABEL = "Move block";
@@ -136,7 +136,7 @@ describe(usePageBuilderHistoryStore, () => {
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, undo } = pageBuilderHistoryStore;
-    applyEdit(resourceId, insertAtFirstIndex("c"), TEST_MOVE_LABEL, interactionId).match(noop, (error) => {
+    applyEdit(resourceId, insertAtFirstIndex(TEST_THIRD_ID), TEST_MOVE_LABEL, interactionId).match(noop, (error) => {
       throw error;
     });
     applyEdit(resourceId, insertAtFirstIndex("d"), TEST_MOVE_LABEL, interactionId).match(noop, (error) => {
@@ -340,7 +340,7 @@ describe(usePageBuilderHistoryStore, () => {
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, redo, undo } = pageBuilderHistoryStore;
-    applyEdit(resourceId, insertAtFirstIndex("c"), TEST_MOVE_LABEL, interactionId).match(noop, (error) => {
+    applyEdit(resourceId, insertAtFirstIndex(TEST_THIRD_ID), TEST_MOVE_LABEL, interactionId).match(noop, (error) => {
       throw error;
     });
     applyEdit(
@@ -380,7 +380,7 @@ describe(usePageBuilderHistoryStore, () => {
     applyEdit(
       resourceId,
       [
-        { op: JsonPatchOperationType.Replace, path: "/content", value: [createButton("c"), createButton("d")] },
+        { op: JsonPatchOperationType.Replace, path: "/content", value: [createButton(TEST_THIRD_ID), createButton("d")] },
         { op: JsonPatchOperationType.Replace, path: "/content/1", value: createButton("e") },
       ],
       TEST_MOVE_LABEL,
@@ -392,7 +392,7 @@ describe(usePageBuilderHistoryStore, () => {
       resourceId,
       [
         { op: JsonPatchOperationType.Replace, path: "/content/1", value: createButton("f") },
-        { op: JsonPatchOperationType.Replace, path: "/content", value: [createButton("c"), createButton("g")] },
+        { op: JsonPatchOperationType.Replace, path: "/content", value: [createButton(TEST_THIRD_ID), createButton("g")] },
       ],
       TEST_LABEL_LABEL,
       interactionId,
@@ -401,7 +401,7 @@ describe(usePageBuilderHistoryStore, () => {
     });
     undo(resourceId);
 
-    expect(getDocument(resourceId)).toStrictEqual({ content: [createButton("c"), createButton("e")], root: TEST_ROOT });
+    expect(getDocument(resourceId)).toStrictEqual({ content: [createButton(TEST_THIRD_ID), createButton("e")], root: TEST_ROOT });
 
     undo(resourceId);
 
@@ -410,7 +410,7 @@ describe(usePageBuilderHistoryStore, () => {
     redo(resourceId);
     redo(resourceId);
 
-    expect(getDocument(resourceId)).toStrictEqual({ content: [createButton("c"), createButton("g")], root: TEST_ROOT });
+    expect(getDocument(resourceId)).toStrictEqual({ content: [createButton(TEST_THIRD_ID), createButton("g")], root: TEST_ROOT });
   });
 
   test("a test after a replace in one interaction stays its own entry, and redo restores the replace", () => {
@@ -449,7 +449,7 @@ describe(usePageBuilderHistoryStore, () => {
   });
 });
 
-describe("usePageBuilderHistoryStore over an email", () => {
+describe(usePageBuilderHistoryStore, () => {
   test("an email edit lands on the email, and undo restores it", () => {
     expect.hasAssertions();
 
