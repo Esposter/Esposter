@@ -2,10 +2,7 @@ import { join } from "node:path";
 import { addServerHandler } from "nuxt/kit";
 import { describe, expect, test, vi } from "vitest";
 
-import {
-  GENSHIN_CHARACTER_PACK_BASE_URL,
-  GENSHIN_SCENE_EXPORT_BASE_URL,
-} from "../shared/services/genshin/constants.ts";
+import { GENSHIN_SCENE_EXPORT_BASE_URL } from "../shared/services/genshin/constants.ts";
 import serveGenshinExtractions from "./serveGenshinExtractions.ts";
 
 vi.mock(import("nuxt/kit"), async (importOriginal) => ({
@@ -26,26 +23,15 @@ describe("serveGenshinExtractions", () => {
     expect(addServerHandler).not.toHaveBeenCalled();
   });
 
-  test("registers the packs' and the scene exports' routes under nuxt dev", async () => {
+  test("registers the scene exports' route under nuxt dev", async () => {
     expect.hasAssertions();
 
     await serveGenshinExtractions({}, createNuxt(true));
 
-    expect(vi.mocked(addServerHandler).mock.calls).toStrictEqual([
-      [
-        {
-          handler: join("development", "genshinCharacterPacks.ts"),
-          method: "get",
-          route: `${GENSHIN_CHARACTER_PACK_BASE_URL}/**`,
-        },
-      ],
-      [
-        {
-          handler: join("development", "genshinSceneExports.ts"),
-          method: "get",
-          route: `${GENSHIN_SCENE_EXPORT_BASE_URL}/**`,
-        },
-      ],
-    ]);
+    expect(addServerHandler).toHaveBeenCalledExactlyOnceWith({
+      handler: join("development", "genshinSceneExports.ts"),
+      method: "get",
+      route: `${GENSHIN_SCENE_EXPORT_BASE_URL}/**`,
+    });
   });
 });

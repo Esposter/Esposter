@@ -6,7 +6,7 @@ import { generateExports, getTsdownConfigurationVue } from "@esposter/configurat
 import { templateCompilerOptions } from "@tresjs/core";
 import { mergeConfig } from "tsdown";
 
-// `terrainTileWorker` is the terrain worker's own entry, which the app bundles as a worker, and `save`, `characterPack`
+// `terrainTileWorker` is the terrain worker's own entry, which the app bundles as a worker, and `save`
 // And `sceneExport` are the app server's, which reach none of the world's components. The parity page's shapes are what
 // The tooling in `scripts` reads back off the page, so the workspace resolves them from source under `./parity/*`, and
 // The published map, which ships no page, never carries the arm
@@ -17,7 +17,6 @@ import { mergeConfig } from "tsdown";
 const AVATAR_MODULE_DIRECTORY = "services/character/avatar";
 const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue(templateCompilerOptions), {
   entry: {
-    characterPack: "src/characterPack.ts",
     index: "src/index.ts",
     save: "src/save.ts",
     sceneExport: "src/sceneExport.ts",

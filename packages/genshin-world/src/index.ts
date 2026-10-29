@@ -1,4 +1,3 @@
-export * from "./characterPack.ts";
 export * from "./components/index.ts";
 export * from "./composables/useAreaWeather.ts";
 export * from "./composables/useCharacterAvatar.ts";

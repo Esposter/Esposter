@@ -40,10 +40,6 @@
       "source": "./src/index.ts",
       "default": "./dist/index.js"
     },
-    "./characterPack": {
-      "source": "./src/characterPack.ts",
-      "default": "./dist/characterPack.js"
-    },
     "./save": {
       "source": "./src/save.ts",
       "default": "./dist/save.js"
@@ -65,7 +61,6 @@
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
-      "./characterPack": "./dist/characterPack.js",
       "./save": "./dist/save.js",
       "./sceneExport": "./dist/sceneExport.js",
       "./terrainTileWorker": "./dist/terrainTileWorker.js",

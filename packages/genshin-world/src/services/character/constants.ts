@@ -25,8 +25,6 @@ export const TALENT_START_LEVELS: TalentLevels = {
   [CombatTalent.ElementalSkill]: TALENT_START_LEVEL,
   [CombatTalent.NormalAttack]: TALENT_START_LEVEL,
 };
-// The listing the development server's pack route reads beside the packs' folders, which the route answers for the ids it lists
-export const CHARACTER_PACK_INDEX_PATH = "index.json";
 // The names a pack's model and its terms are read under, whatever the pack calls them in its own folder. The model's
 // Textures keep the paths the model names them by
 export const CHARACTER_MODEL_PATH = "model.pmx";
