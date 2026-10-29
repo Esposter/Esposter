@@ -72,6 +72,13 @@ Each comparison SHALL rewrite its reference's row of the committed scores, so th
 - **THEN** only that reference's row and its layers change
 - **AND** every other row is kept where it was
 
+#### Scenario: A padded report keeps every row
+
+- **GIVEN** the committed report, whose table the formatter pads to its column widths
+- **WHEN** one reference is compared
+- **THEN** every row is read and kept, padded or not
+- **AND** the report written is the formatter's own text
+
 #### Scenario: The full run drops a row the map no longer holds
 
 - **GIVEN** a committed report holding a row for a reference the map no longer names

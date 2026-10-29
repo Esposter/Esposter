@@ -1,12 +1,12 @@
 import type { CreatePackageOptions } from "#src/models/package/CreatePackageOptions";
 
 import { PackageKind } from "#src/models/package/PackageKind";
-import { formatText } from "#src/services/package/new/formatText";
 import { getLernaVersion } from "#src/services/package/new/getLernaVersion";
 import { getPackageEdits } from "#src/services/package/new/getPackageEdits";
 import { getPackageFiles } from "#src/services/package/new/getPackageFiles";
 import { validatePackageName } from "#src/services/package/new/validatePackageName";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { formatText } from "#src/services/shared/formatText";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";

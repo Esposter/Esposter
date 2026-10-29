@@ -2,7 +2,8 @@ import type { ParityApproval } from "#src/models/genshinParity/shared/ParityAppr
 
 import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";
 import { PARITY_SHARED_DIRECTORY, STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
-import { join } from "node:path";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { join, relative } from "node:path";
 
 // The detail read at twice the structure's width, where a stone's carving and its courses still show
 export const DETAIL_WIDTH: number = STRUCTURE_WIDTH * 2;
@@ -25,6 +26,12 @@ export const DEFAULT_APPROVAL: ParityApproval = Object.freeze({
 
 // The committed report of every reference's last scores, beside the map naming them
 export const PARITY_SCORES_PATH: string = join(PARITY_SHARED_DIRECTORY, "ParityReferenceMap.snapshot.md");
+// The report is formatted under the markdown name the formatter does not skip, since a snapshot is written verbatim. The
+// Path is repository-relative, as the formatter reads its ignores from it, and a worktree's own path sits under
+// `.agents/worktrees`, which the config ignores
+export const PARITY_SCORES_FORMAT_PATH: string = relative(REPOSITORY_ROOT, PARITY_SCORES_PATH)
+  .replace(/\.snapshot\.md$/u, ".md")
+  .replaceAll("\\", "/");
 
 // The conversion a frame is cut with, its colour tags set to unknown so a browser does not colour-manage the cut
 export const RECORDING_FRAME_FILTER =
