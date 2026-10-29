@@ -5,21 +5,21 @@
 Coverage lives in the area file, never here. A pass loads this file, the `security` skill's checklist
 (`.agents/skills/security/references/owasp-top-10.md`), the register of verified boundaries
 (`openspec/specs/architecture/security/README.md`) and the one area it is sweeping. A flow the register
-already answers is cited from its row rather than read again. The area names and units are
+already answers is cited from its row rather than read again. The area names, units and what each area holds are
 [quality](../quality/)'s, so "was this area swept, for which question, and when" reads off one set of names across
-every promoted ledger.
+every promoted ledger, and each description is written once, there.
 
-| Area                      | What it holds                                                                                                                                                                                                                         |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [app-shell](app-shell.md) | Everything a product mounts inside rather than owns: the chrome, the routes, and the cross-cutting service and composable layers no single feature claims.                                                                            |
-| [messaging](messaging.md) | Esbabbler — its components, store, composables, services and models.                                                                                                                                                                  |
-| [resource](resource.md)   | The resource explorer, the sheet editor and the other editors.                                                                                                                                                                        |
-| [products](products.md)   | The app's smaller products — everything under `app/components` that is neither messaging nor the resource explorer. Each row carries a product's components together with the store, composable, service and page files only it uses. |
-| [dungeons](dungeons.md)   | The game is a fifth of the app's source. `components/Dungeons` splits at its sub-directories, and each row pairs a component group with the store, composable and service files that only it uses.                                    |
-| [server](server.md)       | `apps/web/server` — routers, procedure builders, guards and services.                                                                                                                                                                 |
-| [shared](shared.md)       | `apps/web/shared`, `app/components/Styled`, `packages/shared` and `packages/shared-node` — what both halves of the app read.                                                                                                          |
-| [packages](packages.md)   | Every workspace package outside `apps/web`, `packages/shared` and `packages/shared-node`. Grouped so each row is one review-sized commit.                                                                                             |
-| [tooling](tooling.md)     | The repo's own scripts and the agent tree — code no product area claims. `scripts/`, `.agents/`, the app's root configuration and `openspec/`.                                                                                        |
+| Area                      |
+| ------------------------- |
+| [app-shell](app-shell.md) |
+| [messaging](messaging.md) |
+| [resource](resource.md)   |
+| [products](products.md)   |
+| [dungeons](dungeons.md)   |
+| [server](server.md)       |
+| [shared](shared.md)       |
+| [packages](packages.md)   |
+| [tooling](tooling.md)     |
 
 Unlike most sweeps, a finding here usually changes behaviour: it closes a hole. Each one is fixed in its own commit
 with its regression test, apart from the unit's `Ledger:` trailer commit, so reverting a fix never reopens the
