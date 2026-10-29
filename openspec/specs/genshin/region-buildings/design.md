@@ -68,3 +68,7 @@ flowchart TD
 - [ ] **The disc overlap and error figures for the region grounds** — no source yet: the 2.2 km², −11 metre, 3 to 30 metre RMS and 4 metre figures are not saved in any parity or scratch file.
 - [ ] **The palettes' sampled colours** — no source yet: only the published keys are checked, not the colours each palette holds against the game's building textures.
 - [ ] **The game's map places Inazuma east of Liyue and Fontaine to its north-west** — no source yet: the map positions in `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/CityConfigData.json` are not yet read into the axis convention the page names.
+- [ ] **Nod-Krai's outlines cover more than four fifths of the 400 metres round Snezhnograd's place** — no source yet: no outline coverage count is kept; `{data-root}/genshin-parity/city-areas.json` holds 584 areas, but no count of their cover round that place is in the repository.
+- [ ] **Nasha Town's Lempo Isle is not held by the game's polygons** — no source yet: no polygon check of the Lempo Isle is kept; the area table is not matched to the outline here.
+- [ ] **Mondstadt's extraction holds none of the city's roofs** — no source yet: no extraction listing of Mondstadt's roof textures is kept.
+- [ ] **Snezhnaya's extraction holds none of the 44 `Area_Zd_Build_*` diffuse textures the asset index names** — raised: neither `{data-root}/genshin-parity/asset-index` file (`gi-2.6.0.json`, `gi-7.1.0-derived.json`) contains the string `Zd_Build`, so the index named here is not one on disk, and the count of 44 is not checked.
