@@ -1,4 +1,5 @@
 import { createUniqueArraySchema } from "@esposter/shared";
+import { characterPackFileSchema } from "genshin-world";
 import { z } from "zod";
 
 // A pack's manifest.json as the owner's extraction writes it: the avatar's id and name, where the extraction found one
@@ -12,9 +13,6 @@ export interface CharacterPackManifest {
 
 export const characterPackManifestSchema: z.ZodType<CharacterPackManifest> = z.object({
   avatarId: z.string().regex(/^\d+$/u),
-  files: createUniqueArraySchema(
-    z.object({ bytes: z.int().nonnegative(), path: z.string().min(1), sha256: z.hash("sha256") }),
-    "path",
-  ),
+  files: createUniqueArraySchema(characterPackFileSchema, "path"),
   name: z.string().min(1).nullable(),
 });

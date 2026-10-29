@@ -8,14 +8,17 @@ export interface CharacterPackIndex {
   avatars: { avatarId: number; files: { bytes: number; path: string; sha256: string }[]; name: string }[];
 }
 
+export const characterPackFileSchema = z.object({
+  bytes: z.int().nonnegative(),
+  path: z.string().min(1),
+  sha256: z.hash("sha256"),
+});
+
 export const characterPackIndexSchema = z.object({
   avatars: createUniqueArraySchema(
     z.object({
       avatarId: z.int().positive(),
-      files: createUniqueArraySchema(
-        z.object({ bytes: z.int().nonnegative(), path: z.string().min(1), sha256: z.hash("sha256") }),
-        "path",
-      ),
+      files: createUniqueArraySchema(characterPackFileSchema, "path"),
       name: z.string().min(1),
     }),
     "avatarId",
