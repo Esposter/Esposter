@@ -48,6 +48,7 @@ import {
 } from "#src/services/character/constants";
 import { ElementNameGameTextKeyMap } from "#src/services/character/ElementNameGameTextKeyMap";
 import { getAscensionMaterials } from "#src/services/character/getAscensionMaterials";
+import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { getCharacterElement } from "#src/services/character/getCharacterElement";
 import { getConstellationActivationRefusal } from "#src/services/character/getConstellationActivationRefusal";
 import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
@@ -231,9 +232,35 @@ const activeArtifactSetBonuses = computed(() =>
   getActiveArtifactSetBonuses(character.value?.artifacts ?? [], statTables.artifactSetDataMap),
 );
 const setBonusLines = computed(() => getArtifactSetBonusLines(activeArtifactSetBonuses.value, gameText, nameText));
+// The name of the set the worn artifacts make, its heading's words, empty while none is active
+const setName = computed(() => {
+  const setId = activeArtifactSetBonuses.value[0]?.setId;
+  const nameTextId = reliquarySets.find(({ id }) => id === setId)?.nameTextId;
+  return nameTextId === undefined ? "" : nameText[nameTextId] || "";
+});
 const noSetBonusLabel = computed(() =>
   activeArtifactSetBonuses.value.length === 0 ? gameText[GameTextKey.ArtifactSetBonusNone] : "",
 );
+// The attribute totals the worn artifacts add: each stat the character reaches with them less the one it reaches without
+const artifactTotals = computed(() => {
+  if (!character.value) return [];
+  const worn = computeCharacterAttributes(getCharacterAttributeLines(character.value, statTables));
+  const bare = computeCharacterAttributes(
+    getCharacterAttributeLines({ ...character.value, artifacts: [] }, statTables),
+  );
+  const formatTotal = (difference: number) => `+${Math.round(difference).toLocaleString("en-US")}`;
+  return [
+    { label: gameText[GameTextKey.AttributeMaxHealth], value: formatTotal(worn.maxHealth - bare.maxHealth) },
+    { label: gameText[GameTextKey.AttributeAttack], value: formatTotal(worn.attack - bare.attack) },
+    { label: gameText[GameTextKey.AttributeDefense], value: formatTotal(worn.defense - bare.defense) },
+    {
+      label: gameText[GameTextKey.AttributeElementalMastery],
+      value: formatTotal(
+        worn.attributeTotalMap[Attribute.ElementalMastery] - bare.attributeTotalMap[Attribute.ElementalMastery],
+      ),
+    },
+  ];
+});
 // Which of the six constellations are activated, the first the character's count of them
 const constellationsActivated = computed(() =>
   Array.from({ length: CONSTELLATION_COUNT }, (_value, index) => index < (character.value?.constellationCount ?? 0)),
@@ -512,16 +539,21 @@ const isActivateDisabled = computed(
       <CharacterMenuWeapons v-else-if="weaponPanel && tab === CharacterMenuTab.Weapons" :="weaponPanel" />
       <CharacterMenuArtifacts
         v-else-if="character && tab === CharacterMenuTab.Artifacts"
+        :artifact-details-label="gameText[GameTextKey.ArtifactDetails]"
         :enhance-label="gameText[GameTextKey.ArtifactActionEnhance]"
         :equip-disabled-slots
         :notice="artifactNotice"
         :equip-label="gameText[GameTextKey.ArtifactActionEquip]"
+        :fast-equip-label="gameText[GameTextKey.ArtifactActionFastEquip]"
         :lock-label="gameText[GameTextKey.ArtifactActionLock]"
         :no-set-bonus-label
         :set-bonus-heading="gameText[GameTextKey.ArtifactSetBonusHeading]"
         :set-bonus-lines
+        :set-name
         :slot-names="artifactSlotNames"
         :slot-stats="artifactSlotStats"
+        :switch-label="gameText[GameTextKey.QuickSwapSwitch]"
+        :totals="artifactTotals"
         :unequip-label="gameText[GameTextKey.ArtifactActionUnequip]"
         :unlock-label="gameText[GameTextKey.ArtifactActionUnlock]"
         @enhance="

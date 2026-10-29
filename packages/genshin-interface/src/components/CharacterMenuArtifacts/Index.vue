@@ -18,14 +18,24 @@ interface ArtifactStatLine {
   value: string;
 }
 
+// One attribute total the worn artifacts add, as the game names it and writes it
+interface ArtifactTotalLine {
+  label: string;
+  value: string;
+}
+
 interface Props {
-  // The Enhance button's label, the game's word for raising a worn artifact's level with its EXP
+  // The pill that opens the picked piece's stats and its actions in place of the totals and the set bonus
+  artifactDetailsLabel: string;
+  // The picked piece's Enhance button label, the game's word for raising a worn artifact's level with its EXP
   enhanceLabel: string;
-  // Per slot, whether Equip is disabled there, which it is while no artifact in the bag can be put on that slot
+  // Per slot, whether Fast Equip is disabled there, which it is while no artifact in the bag can be put on that slot
   equipDisabledSlots: boolean[];
-  // The Equip button's label, shown while the picked slot is empty
+  // The picked slot's Equip button label, shown in the details while the slot is empty
   equipLabel: string;
-  // The Lock button's label, shown while the picked worn artifact is unlocked
+  // The Fast Equip button's label, which puts a bag artifact on the picked slot
+  fastEquipLabel: string;
+  // The Lock button's label, shown in the details while the picked worn artifact is unlocked
   lockLabel: string;
   // The words the set bonus block shows while no bonus is active
   noSetBonusLabel: string;
@@ -35,27 +45,38 @@ interface Props {
   setBonusHeading: string;
   // Each bonus the worn artifacts' set grants, as its line in the game's words, empty while none is active
   setBonusLines: string[];
-  // Each slot's name in the game's order, which its disc is labelled by and the details pill shows for the picked slot
+  // The name of the set the worn artifacts make, in the reader's language, empty while none is active
+  setName: string;
+  // Each slot's name in the game's order, which the details name the picked slot by
   slotNames: string[];
-  // Each slot's stats in the game's order, undefined where the character wears no artifact, which leaves its disc unlit
+  // Each slot's stats in the game's order, undefined where the character wears no artifact, shown in the details
   slotStats: (ArtifactSlotStats | undefined)[];
-  // The Unequip button's label, shown while the picked slot holds a worn artifact
+  // The Switch button's label, which moves the picked slot on to the next one
+  switchLabel: string;
+  // The attribute totals the worn artifacts add, each as the game writes it
+  totals: ArtifactTotalLine[];
+  // The Unequip button's label, shown in the details while the picked slot holds a worn artifact
   unequipLabel: string;
-  // The Unlock button's label, shown while the picked worn artifact is locked
+  // The Unlock button's label, shown in the details while the picked worn artifact is locked
   unlockLabel: string;
 }
 
 const {
+  artifactDetailsLabel,
   enhanceLabel,
   equipDisabledSlots,
   equipLabel,
+  fastEquipLabel,
   lockLabel,
   noSetBonusLabel,
   notice,
   setBonusHeading,
   setBonusLines,
+  setName,
   slotNames,
   slotStats,
+  switchLabel,
+  totals,
   unequipLabel,
   unlockLabel,
 } = defineProps<Props>();
@@ -66,143 +87,147 @@ const emit = defineEmits<{
   lock: [index: number];
   unequip: [index: number];
 }>();
-// The slot the details, stats and buttons are for, the first until a disc is picked
+// The slot the actions are for, the first until Switch moves it on, and whether the details are open in place of the totals
 const selectedIndex = ref(0);
+const isDetailsOpen = ref(false);
 const selectedStats = computed(() => slotStats[selectedIndex.value]);
 const isSelectedWorn = computed(() => selectedStats.value !== undefined);
+const switchSlot = () => {
+  selectedIndex.value = (selectedIndex.value + 1) % slotNames.length;
+};
 </script>
 
 <template>
-  <!-- The Artifacts tab's panel: the five slots down its top, each a disc lit where the character wears an artifact and
-       picked by a click, the picked slot's name in the details pill, the picked artifact's main and sub stats under it,
-       the set bonus block below them, and the Enhance and Equip or Unequip buttons at its foot. The stats' place is
-       provisional -->
+  <!-- The Artifacts tab's panel: the worn artifacts' attribute totals down its top, the set bonus block under them, and the
+       Fast Equip and Switch buttons at its foot. Pressing Artifact Details opens the picked slot's stats in place of the totals,
+       with its Enhance, Equip or Unequip and Lock buttons at the foot in place of those two -->
   <div class="artifacts">
     <ToastNotice v-if="notice" class="notice">{{ notice }}</ToastNotice>
-    <ul class="slots">
-      <li v-for="(stats, index) in slotStats" :key="index">
-        <button
-          class="slot"
-          :aria-label="slotNames[index]"
-          :aria-pressed="index === selectedIndex"
-          :class="{ worn: stats !== undefined }"
-          type="button"
-          @click="selectedIndex = index"
-        />
-      </li>
-    </ul>
-    <div class="details">{{ slotNames[selectedIndex] }}</div>
-    <ul v-if="selectedStats" class="stats">
-      <li class="stat">
-        <span>{{ selectedStats.mainStat.label }}</span>
-        <span>{{ selectedStats.mainStat.value }}</span>
-      </li>
-      <li v-for="({ label, value }, index) in selectedStats.subStats" :key="index" class="stat">
-        <span>{{ label }}</span>
-        <span>{{ value }}</span>
-      </li>
-    </ul>
-    <div class="set-bonus">
-      <p class="set-bonus-heading">{{ setBonusHeading }}</p>
-      <ul v-if="setBonusLines.length > 0" class="set-bonus-lines">
-        <li v-for="line in setBonusLines" :key="line">{{ line }}</li>
+    <button class="details" :aria-expanded="isDetailsOpen" type="button" @click="isDetailsOpen = !isDetailsOpen">
+      {{ artifactDetailsLabel }}
+    </button>
+    <template v-if="isDetailsOpen">
+      <p class="slot-name">{{ slotNames[selectedIndex] }}</p>
+      <ul v-if="selectedStats" class="stats">
+        <li class="stat">
+          <span>{{ selectedStats.mainStat.label }}</span>
+          <span>{{ selectedStats.mainStat.value }}</span>
+        </li>
+        <li v-for="({ label, value }, index) in selectedStats.subStats" :key="index" class="stat">
+          <span>{{ label }}</span>
+          <span>{{ value }}</span>
+        </li>
       </ul>
-      <p v-else class="set-bonus-lines">{{ noSetBonusLabel }}</p>
-    </div>
+    </template>
+    <template v-else>
+      <ul class="totals">
+        <li v-for="{ label, value } in totals" :key="label" class="total">
+          <span>{{ label }}</span>
+          <span>{{ value }}</span>
+        </li>
+      </ul>
+      <div class="set-bonus">
+        <p class="set-bonus-heading">{{ setBonusHeading }}</p>
+        <p v-if="setName" class="set-name">{{ setName }}</p>
+        <ul v-if="setBonusLines.length > 0" class="set-bonus-lines">
+          <li v-for="line in setBonusLines" :key="line">
+            <svg class="check" viewBox="0 0 20 20" aria-hidden="true">
+              <circle cx="10" cy="10" r="10" />
+              <path d="M5.5 10.5 L8.5 13.5 L14.5 7" />
+            </svg>
+            {{ line }}
+          </li>
+        </ul>
+        <p v-else class="set-bonus-lines">{{ noSetBonusLabel }}</p>
+      </div>
+    </template>
     <CharacterMenuButtons>
-      <GameButton
-        class="button"
-        :disabled="!isSelectedWorn"
-        :kind="GameButtonKind.Pill"
-        @click="emit('enhance', selectedIndex)"
-      >
-        {{ enhanceLabel }}
-      </GameButton>
-      <GameButton
-        class="button"
-        :disabled="!isSelectedWorn && equipDisabledSlots[selectedIndex]"
-        :kind="GameButtonKind.Pill"
-        @click="isSelectedWorn ? emit('unequip', selectedIndex) : emit('equip', selectedIndex)"
-      >
-        {{ isSelectedWorn ? unequipLabel : equipLabel }}
-      </GameButton>
-      <GameButton v-if="selectedStats" class="button" :kind="GameButtonKind.Pill" @click="emit('lock', selectedIndex)">
-        {{ selectedStats.isLocked ? unlockLabel : lockLabel }}
-      </GameButton>
+      <template v-if="isDetailsOpen">
+        <GameButton
+          class="button"
+          :disabled="!isSelectedWorn"
+          :kind="GameButtonKind.Pill"
+          @click="emit('enhance', selectedIndex)"
+        >
+          {{ enhanceLabel }}
+        </GameButton>
+        <GameButton
+          class="button"
+          :disabled="!isSelectedWorn && equipDisabledSlots[selectedIndex]"
+          :kind="GameButtonKind.Pill"
+          @click="isSelectedWorn ? emit('unequip', selectedIndex) : emit('equip', selectedIndex)"
+        >
+          {{ isSelectedWorn ? unequipLabel : equipLabel }}
+        </GameButton>
+        <GameButton
+          v-if="selectedStats"
+          class="button"
+          :kind="GameButtonKind.Pill"
+          @click="emit('lock', selectedIndex)"
+        >
+          {{ selectedStats.isLocked ? unlockLabel : lockLabel }}
+        </GameButton>
+      </template>
+      <template v-else>
+        <GameButton
+          class="button"
+          :disabled="equipDisabledSlots[selectedIndex]"
+          :kind="GameButtonKind.Pill"
+          @click="emit('equip', selectedIndex)"
+        >
+          <span class="key" aria-hidden="true">R</span>
+          {{ fastEquipLabel }}
+        </GameButton>
+        <GameButton class="button" :kind="GameButtonKind.Pill" @click="switchSlot">
+          <span class="key" aria-hidden="true">F</span>
+          {{ switchLabel }}
+        </GameButton>
+      </template>
     </CharacterMenuButtons>
   </div>
 </template>
 
 <style scoped>
-.notice {
-  margin-bottom: calc(var(--unit) * 16);
-}
-
 /* Measured off the English PC client's Artifacts tab at 21:9, its settled frame at 157.5 seconds of session-2.mp4 (the
-   registered reference for it), in units from the panel's top: the details pill at 163, the set bonus block's bottom at
-   829 and the buttons at 859. The slots are drawn in the panel's top, which the game draws in the scene. The stats rows
-   sit under the details pill from 227, a row of 36 units each, and the set bonus block starts at 420 below them: both are
-   provisional, since the registered frame shows no picked piece's stats, so their place is not measured. Colours are
-   provisional */
+   registered reference for it), in units from the panel's top-left: the Artifact Details pill at 164 units down and 326 wide,
+   the totals' rows 35.6 apart from 0.7 down, the set bonus block from 222 down, its check discs 19.5 across, and the foot's
+   pills at 859 down, 155.6 wide and 49 high with their key badges 19.9 across at their foot's left. The panel's left edge
+   is the reference's, so the heading and the first pill sit 3 units off it (clipped by the panel), and the set bonus's
+   scrollbar lies past the panel's right edge (clipped too). Colours are provisional */
 .artifacts {
   position: absolute;
   inset: 0;
   color: #fff;
 }
 
-.slots {
+.notice {
   position: absolute;
-  top: calc(var(--unit) * 15);
+  top: calc(var(--unit) * 100);
   right: 0;
   left: 0;
-  display: flex;
-  margin: 0;
-  padding: 0;
-  gap: calc(var(--unit) * 10);
-  list-style: none;
-}
-
-.slots > li {
-  flex: 1;
-}
-
-.slot {
-  display: block;
-  width: 100%;
-  height: calc(var(--unit) * 40);
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: rgb(0 0 0 / 0.2);
-  cursor: pointer;
-}
-
-.slot.worn {
-  background: rgb(255 240 180 / 0.55);
-  box-shadow: 0 0 calc(var(--unit) * 8) rgb(255 240 180 / 0.6);
-}
-
-.slot[aria-pressed="true"] {
-  outline: calc(var(--unit) * 2) solid rgb(255 255 255 / 0.8);
-  outline-offset: calc(var(--unit) * 2);
 }
 
 .details {
   position: absolute;
-  top: calc(var(--unit) * 163);
-  right: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: calc(var(--unit) * 42);
-  border-radius: calc(var(--unit) * 21);
-  background: rgb(0 0 0 / 0.2);
+  top: calc(var(--unit) * 164);
+  left: calc(var(--unit) * 1.5);
+  width: calc(var(--unit) * 326);
+  height: calc(var(--unit) * 38);
+  padding: 0;
+  border: none;
+  border-radius: calc(var(--unit) * 19);
+  background: rgb(255 255 255 / 0.07);
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: calc(var(--unit) * 24);
+  font-weight: 500;
 }
 
+.totals,
 .stats {
   position: absolute;
-  top: calc(var(--unit) * 227);
+  top: calc(var(--unit) * 0.7);
   right: 0;
   left: 0;
   margin: 0;
@@ -210,32 +235,123 @@ const isSelectedWorn = computed(() => selectedStats.value !== undefined);
   list-style: none;
 }
 
+.stats {
+  top: calc(var(--unit) * 250);
+}
+
+.total,
 .stat {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: calc(var(--unit) * 36);
+  height: calc(var(--unit) * 35.6);
+  padding: 0 calc(var(--unit) * 2) 0 calc(var(--unit) * 28);
+  font-size: calc(var(--unit) * 26);
+  font-weight: 600;
 }
 
+.slot-name {
+  position: absolute;
+  top: calc(var(--unit) * 212);
+  right: 0;
+  left: 0;
+  margin: 0;
+  padding: 0 calc(var(--unit) * 28);
+  color: #fff;
+  font-size: calc(var(--unit) * 26);
+  font-weight: 600;
+  line-height: calc(var(--unit) * 30);
+}
+
+/* The block ends 88 units above the panel's foot, where the game's text is cut off under the pills */
 .set-bonus {
   position: absolute;
-  top: calc(var(--unit) * 420);
-  right: 0;
-  bottom: calc(var(--unit) * 80);
+  top: calc(var(--unit) * 222.4);
+  right: calc(var(--unit) * 16);
+  bottom: calc(var(--unit) * 88);
   left: 0;
-  background: rgb(0 0 0 / 0.1);
+  overflow: hidden;
+  color: #a8ff8e;
 }
 
 .set-bonus-heading,
+.set-name,
 .set-bonus-lines {
   margin: 0;
   padding: 0;
-  text-align: center;
   list-style: none;
 }
 
+/* The face is Signika, narrower than the game's at the same cap height, so each line is spaced out to the game's width */
+.set-bonus-heading {
+  font-size: calc(var(--unit) * 26);
+  font-weight: 600;
+  letter-spacing: calc(var(--unit) * 1.1);
+  line-height: calc(var(--unit) * 30);
+}
+
+.set-name {
+  margin-top: calc(var(--unit) * 14.1);
+  font-size: calc(var(--unit) * 27);
+  font-weight: 600;
+  letter-spacing: calc(var(--unit) * 1.3);
+  line-height: calc(var(--unit) * 28.9);
+}
+
+.set-bonus-lines {
+  margin-top: calc(var(--unit) * 1.9);
+  font-size: calc(var(--unit) * 23.5);
+  letter-spacing: calc(var(--unit) * 0.66);
+  line-height: calc(var(--unit) * 24.4);
+}
+
+.set-bonus-lines li {
+  position: relative;
+  padding-left: calc(var(--unit) * 21.4);
+}
+
+.check {
+  position: absolute;
+  top: calc(var(--unit) * 2.4);
+  left: 0;
+  width: calc(var(--unit) * 19.5);
+  height: calc(var(--unit) * 19.5);
+}
+
+.check circle {
+  fill: #61bf55;
+}
+
+.check path {
+  fill: none;
+  stroke: #fff;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.2;
+}
+
 .button {
+  position: relative;
+  display: grid;
   flex: 1;
-  height: calc(var(--unit) * 52);
+  height: calc(var(--unit) * 49);
+  place-items: center;
+  font-size: calc(var(--unit) * 27);
+  font-weight: 600;
+}
+
+.key {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: calc(var(--unit) * 19.9);
+  height: calc(var(--unit) * 18.75);
+  border-radius: calc(var(--unit) * 4);
+  background: #f2f0ec;
+  color: #373536;
+  font-size: calc(var(--unit) * 15);
+  font-weight: 600;
+  line-height: calc(var(--unit) * 18.75);
+  text-align: center;
 }
 </style>
