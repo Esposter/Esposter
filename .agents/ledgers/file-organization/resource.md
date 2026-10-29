@@ -1,7 +1,5 @@
 # Resource
 
-The resource explorer, the sheet editor and the other editors.
-
 | Unit                                 | Swept      | Notes                                                               |
 | ------------------------------------ | ---------- | ------------------------------------------------------------------- |
 | `app/models/resource`                | 2026-10-26 | a command class stays a model; the map beside a form union does not |

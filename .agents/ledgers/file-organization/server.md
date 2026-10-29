@@ -1,7 +1,5 @@
 # Server
 
-`apps/web/server` — routers, procedure builders, guards and services.
-
 | Unit                                                     | Swept                  | Notes                                                             |
 | -------------------------------------------------------- | ---------------------- | ----------------------------------------------------------------- |
 | `server/services`, `server/composables`, `server/models` | 2026-10-25 · Haiku 5.5 |                                                                   |

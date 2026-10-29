@@ -1,7 +1,5 @@
 # Tooling
 
-`scripts/`, `.agents/`, the app's root configuration and `content/`.
-
 | Unit                                                                                      | Swept                   | Notes |
 | ----------------------------------------------------------------------------------------- | ----------------------- | ----- |
 | `scripts/src/animeStudio`                                                                 | 2026-10-25 · Haiku 5.5  |       |

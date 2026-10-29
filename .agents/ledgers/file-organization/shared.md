@@ -1,7 +1,5 @@
 # Shared
 
-`apps/web/shared`, `app/components/Styled` and `packages/shared` — what both halves of the app read.
-
 | Unit                                                                   | Swept      | Notes                                                               |
 | ---------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------- |
 | `packages/shared`, `packages/shared-node`                              | 2026-10-26 | `getSynchronizedFunction`'s second export is the exclusion below    |

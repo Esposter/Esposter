@@ -1,7 +1,5 @@
 # Messaging
 
-Esbabbler — its components, store, composables, services and models.
-
 | Unit                                                                            | Swept                  | Notes                                                                |
 | ------------------------------------------------------------------------------- | ---------------------- | -------------------------------------------------------------------- |
 | `app/models/message`                                                            | 2026-10-25 · Haiku 5.5 | a type derived from a services map is a type-only import, not a move |

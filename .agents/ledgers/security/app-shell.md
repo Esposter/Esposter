@@ -1,7 +1,5 @@
 # App Shell
 
-Everything a product mounts inside rather than owns: the chrome, the routes, and the cross-cutting service and composable layers no single feature claims.
-
 | Unit                                                                                                                      | Swept                 | Notes |
 | ------------------------------------------------------------------------------------------------------------------------- | --------------------- | ----- |
 | `App/`, `Nuxt/`, `Fragment.vue`, `layouts/`, `App.vue`                                                                    | 2026-10-05 · Opus 5.5 |       |

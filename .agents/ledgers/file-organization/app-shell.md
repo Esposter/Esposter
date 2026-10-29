@@ -1,7 +1,5 @@
 # App Shell
 
-Everything a product mounts inside rather than owns: the chrome, the routes, and the cross-cutting service and composable layers no single feature claims.
-
 | Unit                                                                                | Swept                  | Notes                                                                                           |
 | ----------------------------------------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------- |
 | `app/services/resource` — the files at its root                                     | 2026-10-26             |                                                                                                 |

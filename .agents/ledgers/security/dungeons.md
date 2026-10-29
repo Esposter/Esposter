@@ -1,7 +1,5 @@
 # Dungeons
 
-The game is a fifth of the app's source. `components/Dungeons` splits at its sub-directories, and each row pairs a component group with the store, composable and service files that only it uses.
-
 | Unit                                                                                                | Swept                 | Notes |
 | --------------------------------------------------------------------------------------------------- | --------------------- | ----- |
 | `Dungeons/Battle`, `MonsterParty`, `MonsterDetails` + their `store/dungeons` slices                 | 2026-10-05 · Opus 5.5 |       |
