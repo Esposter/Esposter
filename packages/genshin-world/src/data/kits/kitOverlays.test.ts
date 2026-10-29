@@ -1,12 +1,10 @@
 import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { characterDataSchema } from "#src/models/character/CharacterData";
-import { gameDataIndexSchema } from "#src/models/data/GameDataIndex";
 import { kitRecordSchema } from "#src/models/kit/record/KitRecord";
-import { gameDataLock } from "#src/services/data/gameDataLock";
 import { readGameData } from "#src/services/data/readGameData";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
-import { readGameDataObject } from "#src/services/data/readGameDataObject";
+import { readGameDataIndex } from "#src/services/data/readGameDataIndex";
 import { expandKitOverlay } from "#src/services/kit/expandKitOverlay";
 import { toKebabCase } from "@esposter/shared";
 import { basename } from "node:path";
@@ -22,13 +20,11 @@ describe("kitOverlays", () => {
   test("every value a committed overlay holds, or holds absent, is its published record's at its path", async () => {
     expect.hasAssertions();
 
-    const kitIndexHash = gameDataLock.indexes.kits;
-    assert.exists(kitIndexHash);
     const [characters, kitIndex] = await Promise.all([
       readGameData(GAME_DATA_LOCAL_BASE_URL, "stats/characters", z.array(characterDataSchema)),
-      readGameDataObject(GAME_DATA_LOCAL_BASE_URL, "kits", kitIndexHash),
+      readGameDataIndex(GAME_DATA_LOCAL_BASE_URL, "kits"),
     ]);
-    const kitCharacterIds = Object.keys(gameDataIndexSchema.parse(kitIndex));
+    const kitCharacterIds = Object.keys(kitIndex);
     const overlayNameCharacterIdMap = new Map(
       characters
         .filter(({ id }) => kitCharacterIds.includes(String(id)))
