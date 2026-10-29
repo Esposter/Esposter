@@ -34,18 +34,18 @@ export const FIRST_CHARACTERS_OF_TWO: ReadonlySet<string> = new Set(
   Array.from(DELIMITERS_OF_TWO, (delimiter) => delimiter.charAt(0)),
 );
 export const NAMED_DELIMITERS: ReadonlySet<string> = new Set([
+  "in",
   MathExpressionBinaryOperatorSymbol.And,
   MathExpressionBinaryOperatorSymbol.Mod,
   MathExpressionBinaryOperatorSymbol.Or,
   MathExpressionBinaryOperatorSymbol.Xor,
-  "in",
   "not",
   "to",
 ]);
 export const DECIMAL_MARK_OPERATOR_FOLLOWERS: ReadonlySet<string> = new Set([
-  MathExpressionBinaryOperatorSymbol.Multiply,
-  MathExpressionBinaryOperatorSymbol.Divide,
   "^",
+  MathExpressionBinaryOperatorSymbol.Divide,
+  MathExpressionBinaryOperatorSymbol.Multiply,
 ]);
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const WORD_START_REGEX: RegExp = /^[\p{L}_$]$/u;
