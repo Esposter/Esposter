@@ -20,7 +20,7 @@ const { autoRecoverTitle, isAutoRecoverOn, members, poolAmount, poolMaximum, thr
 const emit = defineEmits<{
   close: [];
   heal: [characterId: number];
-  stepThreshold: [direction: 1 | -1];
+  stepThreshold: [direction: -1 | 1];
   toggleAutoRecover: [];
   worship: [];
 }>();
