@@ -35,3 +35,7 @@ Sumeru City's houses, "Area_Xm_Build_" in the game's names (`{data-root}/genshin
 | `packages/genshin-world/src/data/regions/sumeru.json`                        | Sumeru's region data: Sumeru City's terraces, at a provisional place              |
 | `packages/genshin-world/src/services/sumeru/SumeruPartFamilyMeshRegexMap.ts` | The families Sumeru City's houses and terrain tiles fall to                       |
 | `packages/genshin-world/src/services/sumeru/SumeruUndrawnMeshRegexMap.ts`    | What else Sumeru City's export holds, by kind, not drawn yet                      |
+
+## Open
+
+- [ ] **Sumeru City's terraces sit at a provisional place in `sumeru.json`** — no source yet: the building entry (`packages/genshin-world/src/data/regions/sumeru.json:26598-26606`, kit `Sumeru`, `tierCount` 3) gives the tiers, but its position is not read and the JSON carries no note marking it provisional. What would settle it is the entry's position set against the reference's city, or a note that states the placement's basis.
