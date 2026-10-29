@@ -30,3 +30,7 @@ flowchart TD
 - [Forbidden Creation - Isomer 75 / Type II](https://genshin-impact.fandom.com/wiki/Forbidden_Creation_-_Isomer_75_/_Type_II), Genshin Impact Wiki: the burst's tick poise. Cached with her other talents at `{data-root}/cache/genshin-wiki/Category_Sucrose_Talents.json`, which also gives Mollis Favonius's 20% Elemental Mastery share for 8 seconds and Alchemania's cut.
 - **Scenario "Absorbed element strikes on each Anemo tick"** (requirement _Forbidden Creation's absorbing field_): the aura is left in place, as the [combat page](../../combat/design.md#auras) gives for a same-element strike.
 - **Scenario "Ascension 4 shares Elemental Mastery"** (requirement _Ascension 1, Ascension 4 and Constellations 1, 2 and 6_): `{data-root}/cache/gcsim-v2.47.2/internal/characters/sucrose/asc.go`, lines 72 to 83, called from `{data-root}/cache/gcsim-v2.47.2/internal/characters/sucrose/skill.go` line 49 and `{data-root}/cache/gcsim-v2.47.2/internal/characters/sucrose/burst.go` line 74.
+
+## Open
+
+- [ ] **The wiki's Alchemania range is kept as a fraction of a second** — no source yet: `{data-root}/cache/genshin-wiki/Category_Sucrose_Talents.json` names Alchemania only in the Talent Note template of Astable and of Wind Spirit Creation, with no range text in it; the wiki's Alchemania text, or a cached page that gives the range, would settle it.
