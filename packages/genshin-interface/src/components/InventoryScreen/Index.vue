@@ -199,7 +199,7 @@ watch(
         ref="trashButton"
         class="trash"
         :aria-label="destroyLabel"
-        :aria-pressed="isDestroying || undefined"
+        :aria-pressed="isDestroying"
         type="button"
         @click="emit('toggleDestroy')"
       />
