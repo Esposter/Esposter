@@ -318,6 +318,8 @@ export enum GameTextKey {
   Fontaine = "Fontaine",
   // The Amount line over the forge slider, "Amount: {0}"
   ForgeAmount = "UI_FORGE_PAGE_ITEM_COUNT",
+  // The heading over a finished order's ring
+  ForgeComplete = "UI_FORGE_PAGE_FORGE_FINISH",
   // The blacksmith's words for a day's forge points spent past the cap, one for each enhancement ore, by the text id its
   // Recipe names; a recipe's own id for the same words repeats the English of these
   ForgeEnhancementOreRefusal = "1106263200",
@@ -331,13 +333,17 @@ export enum GameTextKey {
   // The forge's own text ids do not name "Obtain", so a finished queue takes the cooking screen's collect button
   ForgeObtain = "UI_COOKING_FETCH_BUTTON",
   ForgeQueueButton = "UI_FORGE_PAGE_QUEUE_BUTTON",
+  // An order row's state once it is finished
+  ForgeQueueCompleted = "UI_FORGE_PAGE_QUEUE_FINISH",
   ForgeQueueForging = "UI_FORGE_PAGE_QUEUE_UNFINISH",
   ForgeQueueIdle = "UI_FORGE_PAGE_QUEUE_FREE",
   ForgeQueueLockLevel = "UI_FORGE_PAGE_QUEUE_LOCK_LEVEL",
   ForgeQueueProgress = "UI_FORGE_PAGE_QUEUE_PROGRESS",
+  // The count beside the finished orders, filled with the count
+  ForgeQueueReadyCount = "UI_FORGE_PAGE_QUEUE_FINISH_NUM",
   ForgeStart = "UI_FORGE_PAGE_OK_BUTTON",
   ForgeSupportCharacter = "UI_FORGE_PAGE_AVATAR_TITLE",
-  ForgeTimeRemaining = "UI_FLYING_ACTIVITY_TIME_RAMAIN",
+  ForgeTimeRemaining = "UI_FORGE_PAGE_QUEUE_REMAINING_TIME",
   ForgeTitle = "UI_FORGE_PAGE_TITLE",
   ForgeTotalTime = "UI_FORGE_PAGE_NEED_TIME",
   Fowl = "1695194124",
