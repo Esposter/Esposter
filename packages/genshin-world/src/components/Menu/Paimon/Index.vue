@@ -164,7 +164,7 @@ onBeforeUnmount(() => {
       <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Back]" class="back-glyph" />
       <!-- Each side bar button is its icon's box, the icon drawn from the box's corner -->
       <GameButton
-        v-for="{ icon, screenKind } of PAIMON_MENU_SIDE_BAR"
+        v-for="{ icon, isAlerted, screenKind } of PAIMON_MENU_SIDE_BAR"
         :key="screenKind"
         class="side-entry"
         :disabled="!checkIsBuilt(screenKind)"
@@ -174,10 +174,11 @@ onBeforeUnmount(() => {
         @click="emit('open', screenKind)"
       >
         <MenuGlyph :glyph="{ ...MenuFrameGlyphMap[icon], x: 0, y: 0 }" />
+        <span v-if="isAlerted" aria-hidden="true" class="alert" />
       </GameButton>
       <GameButton
         ref="quitGameButton"
-        class="side-entry"
+        class="side-entry quit"
         :kind="GameButtonKind.Disc"
         :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Quit])"
         :tip="gameText[GameTextKey.QuitGame]"
@@ -192,7 +193,7 @@ onBeforeUnmount(() => {
         <NuxtImg v-if="accountAvatarUrl" :alt="accountName" class="avatar-image" :src="accountAvatarUrl" />
         <div v-else class="avatar" />
         <p class="name">{{ accountName ?? gameText[GameTextKey.PlayerDefaultName] }}</p>
-        <div class="edit" />
+        <div class="edit"><span aria-hidden="true" class="alert" /></div>
         <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Edit]" class="edit-glyph" />
         <p class="uid-label">{{ gameText[GameTextKey.Uid] }}</p>
         <div class="uid-pill" />
@@ -215,9 +216,17 @@ onBeforeUnmount(() => {
         />
         <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
         <p class="birthday">{{ gameText[GameTextKey.Birthday] }}</p>
-        <p v-if="travelerBirthday" class="birthday-value">{{ travelerBirthday.month }}/{{ travelerBirthday.day }}</p>
-        <GameButton v-else class="set-birthday" :kind="GameButtonKind.Plain" @click="isBirthdayDialogOpen = true">
-          {{ gameText[GameTextKey.BirthdaySet] }}
+        <p v-if="travelerBirthday" class="birthday-value value">
+          {{ travelerBirthday.month }}/{{ travelerBirthday.day }}
+        </p>
+        <GameButton
+          v-else
+          class="birthday-value value"
+          :aria-label="gameText[GameTextKey.BirthdaySet]"
+          :kind="GameButtonKind.Plain"
+          @click="isBirthdayDialogOpen = true"
+        >
+          -/-
         </GameButton>
         <GameButton
           class="namecard"
@@ -229,7 +238,7 @@ onBeforeUnmount(() => {
         </GameButton>
         <div class="contents">
           <GameButton
-            v-for="{ icon, screenKind } of PAIMON_MENU_CONTENTS"
+            v-for="{ icon, isAlerted, screenKind } of PAIMON_MENU_CONTENTS"
             :key="screenKind"
             class="entry"
             :disabled="!checkIsBuilt(screenKind) || !checkIsSystemOpen(screenKind, adventureRank)"
@@ -238,9 +247,10 @@ onBeforeUnmount(() => {
           >
             <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
             <span class="label">{{ gameText[ScreenKindGameTextKeyMap[screenKind]] }}</span>
+            <span v-if="isAlerted" aria-hidden="true" class="alert" />
           </GameButton>
           <GameButton
-            v-for="{ icon, labelKey } of PAIMON_MENU_LINKS"
+            v-for="{ icon, isAlerted, labelKey } of PAIMON_MENU_LINKS"
             :key="labelKey"
             class="entry link"
             disabled
@@ -248,6 +258,7 @@ onBeforeUnmount(() => {
           >
             <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
             <span class="label">{{ gameText[labelKey] }}</span>
+            <span v-if="isAlerted" aria-hidden="true" class="alert" />
           </GameButton>
         </div>
       </div>
@@ -282,17 +293,21 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-/* Provisional where the game is not yet fitted: the card's stars, the avatar's art and the glass of the side bar's and
-   the panel's translucent feet wait on the English PC client's menu measured at 1080 high. Every place is in the
-   reference's own pixels, a unit being 1.333 of them, so a menu is drawn as the reference is at any window's size */
+/* The reference is the 2026 frame at 25 seconds, 1920 by 1080, with the game's window pillarboxed 150 pixels in, so the menu
+   stands from that window's left edge. Its layout is in the frame's own pixels, a unit being one, and its icons are traced from
+   the still, each of whose pixels the frame draws at 0.79 of one, so an icon's box reads `--reference-pixel` */
 .paimon-menu {
-  --reference-pixel: calc(var(--unit) * 0.75);
+  --reference-pixel: calc(var(--unit) * 0.79);
   color: #ece5d7;
 }
 
-/* The menu's own pieces, placed against the screen as if the wrapper that makes them inert under the dialog were not there */
+/* The menu's own pieces, placed from its window's left edge, as the frame's own pieces are */
 .menu {
-  display: contents;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: calc(var(--unit) * 150);
 }
 
 /* The opening fades the side bar in and the panel in once PAIMON_MENU_PANEL_DELAY_MS has passed; closing runs the same
@@ -337,17 +352,17 @@ onBeforeUnmount(() => {
   top: 0;
   bottom: 0;
   left: 0;
-  width: calc(var(--unit) * 92);
-  background: linear-gradient(#4a5265, #4c5869 40%, #48545c 62%, #445451 88%);
+  width: calc(var(--unit) * 100);
+  background: linear-gradient(#3e4a5a, #4b5464 18%, #47596c 55%, #446071 74%, #426a76 93%, #3f6a75);
 }
 
 /* Provisional: no recording shows Back hovered or pressed, so it is drawn with no state of its own */
 .back {
   position: absolute;
-  top: calc(var(--unit) * 18.25);
-  left: calc(var(--unit) * 18.25);
-  width: calc(var(--unit) * 58);
-  height: calc(var(--unit) * 58);
+  top: calc(var(--unit) * 19.5);
+  left: calc(var(--unit) * 21);
+  width: calc(var(--unit) * 61);
+  height: calc(var(--unit) * 61);
   border-radius: 50%;
   background: #999a9b;
 }
@@ -355,15 +370,20 @@ onBeforeUnmount(() => {
 .back::after {
   content: "";
   position: absolute;
-  inset: calc(var(--unit) * 6);
+  inset: calc(var(--unit) * 6.3);
   border-radius: 50%;
   background: #ece5d7;
 }
 
-/* Above the panel, which a lit button's name reaches over */
+/* Above the panel, which a lit button's name reaches over. The frame's five icons above Quit sit 157 of the still's pixels higher
+   than the shared frame glyph map places them, so they are moved here; Quit is where the map has it */
 .side-entry {
   position: absolute;
   z-index: 1;
+}
+
+.side-entry:not(.quit) {
+  translate: 0 calc(var(--reference-pixel) * -157);
 }
 
 /* The panel is translucent over the world down its feet, which the page does not draw, so its colour is a gradient
@@ -372,37 +392,42 @@ onBeforeUnmount(() => {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: calc(var(--unit) * 96);
-  width: calc(var(--unit) * 672);
+  left: calc(var(--unit) * 101);
+  width: calc(var(--unit) * 708);
   background: linear-gradient(
-    #ece5d7 33%,
-    #e7e2d4 48%,
-    #dbd6c5 62%,
-    #bcbea4 76%,
-    #b5b6a1 83%,
-    #9ea789 90%,
-    #92a17e 94%,
-    #889671
+    #ece5d7 32%,
+    #e7e5d6 37%,
+    #f0e3d8 46%,
+    #eae4d6 56%,
+    #ede3d3 65%,
+    #e9e1d1 72%,
+    #dbdfd0 79%,
+    #d8ded5 84%,
+    #dadfd4 96%,
+    #d3d8cb
   );
 }
 
 .card {
   position: absolute;
-  top: calc(var(--unit) * 11);
-  left: calc(var(--unit) * 96);
-  width: calc(var(--unit) * 672);
-  height: calc(var(--unit) * 317);
+  top: calc(var(--unit) * 12);
+  left: calc(var(--unit) * 101);
+  width: calc(var(--unit) * 708);
+  height: calc(var(--unit) * 334);
   background: linear-gradient(
-    #3b434e 4%,
-    #3c4555 15%,
-    #3f4d60 26%,
-    #44586a 37%,
-    #485f76 45%,
-    #4f6f8c 60%,
-    #5a809f 72%,
-    #5e95b5 86%,
-    #5fa3c1 93%,
-    #63c8d0 98%
+    #433f4e,
+    #3b434f 8%,
+    #37414d 16%,
+    #3b4756 23%,
+    #3f5262 31%,
+    #43586c 38%,
+    #485e77 46%,
+    #4e708b 61%,
+    #4e758c 75%,
+    #557da0 84%,
+    #6696bd 92%,
+    #679fc2 98%,
+    #70a5cb
   );
 }
 
@@ -414,24 +439,30 @@ onBeforeUnmount(() => {
 .avatar,
 .avatar-image {
   position: absolute;
-  top: calc(var(--unit) * 43);
-  left: calc(var(--unit) * 144);
-  width: calc(var(--unit) * 122);
-  height: calc(var(--unit) * 122);
+  top: calc(var(--unit) * 45);
+  left: calc(var(--unit) * 151);
+  width: calc(var(--unit) * 131);
+  height: calc(var(--unit) * 131);
   border: calc(var(--unit) * 3) solid rgb(236 229 215 / 0.9);
   border-radius: 50%;
   background: radial-gradient(circle at 50% 45%, #f4ecd8 0%, #efe0c6 40%, #dd9a6a 75%, #d98d5c 100%);
   box-sizing: border-box;
 }
 
+/* The pencil's square, its red dot over the square's top right corner */
 .edit {
   position: absolute;
-  top: calc(var(--unit) * 47);
-  left: calc(var(--unit) * 703);
-  width: calc(var(--unit) * 34);
-  height: calc(var(--unit) * 34);
+  top: calc(var(--unit) * 49);
+  left: calc(var(--unit) * 741);
+  width: calc(var(--unit) * 37);
+  height: calc(var(--unit) * 37);
   border-radius: calc(var(--unit) * 4);
   background: #ece5d7;
+}
+
+.edit .alert {
+  top: calc(var(--unit) * -14);
+  left: calc(100% - var(--unit) * 10);
 }
 
 .edit-glyph {
@@ -440,23 +471,23 @@ onBeforeUnmount(() => {
 
 .uid-pill {
   position: absolute;
-  top: calc(var(--unit) * 196);
-  left: calc(var(--unit) * 112);
-  width: calc(var(--unit) * 184);
-  height: calc(var(--unit) * 28);
+  top: calc(var(--unit) * 206);
+  left: calc(var(--unit) * 120);
+  width: calc(var(--unit) * 191);
+  height: calc(var(--unit) * 29);
   border: calc(var(--unit) * 2) solid rgb(236 229 215 / 0.85);
-  border-radius: calc(var(--unit) * 14);
+  border-radius: calc(var(--unit) * 15);
   background: rgb(67 88 113 / 0.85);
   box-sizing: border-box;
 }
 
 .uid-label {
   position: absolute;
-  top: calc(var(--unit) * 199);
-  left: calc(var(--unit) * 124);
+  top: calc(var(--unit) * 209);
+  left: calc(var(--unit) * 134);
   margin: 0;
   color: #ece9e1;
-  font-size: calc(var(--unit) * 20);
+  font-size: calc(var(--unit) * 21);
   line-height: 1;
 }
 
@@ -470,15 +501,15 @@ onBeforeUnmount(() => {
 
 .copy {
   position: absolute;
-  top: calc(var(--unit) * 236);
-  left: calc(var(--unit) * 191);
+  top: calc(var(--unit) * 249);
+  left: calc(var(--unit) * 202);
   padding: 0;
   border: none;
   background: none;
   color: rgb(236 229 215 / 0.5);
   cursor: inherit;
   font: inherit;
-  font-size: calc(var(--unit) * 22);
+  font-size: calc(var(--unit) * 23);
   line-height: 1;
 }
 
@@ -496,72 +527,73 @@ onBeforeUnmount(() => {
 .rank-title,
 .world-level,
 .birthday {
-  left: calc(var(--unit) * 313.5);
-  font-size: calc(var(--unit) * 26);
-  letter-spacing: calc(var(--unit) * 1.4);
+  left: calc(var(--unit) * 330);
+  font-size: calc(var(--unit) * 27);
+  letter-spacing: calc(var(--unit) * 1.5);
 }
 
 /* Provisional: the name's top and size are read beside the card's avatar, to be fitted to the whole frame by the parity
-   Compare */
+   Compare. The frame's name is the recording's player, so the page draws the Traveler's default name in its place */
 .name {
   position: absolute;
   top: calc(var(--unit) * 52);
-  left: calc(var(--unit) * 313.5);
+  left: calc(var(--unit) * 330);
   margin: 0;
   color: #e2e8ed;
-  font-size: calc(var(--unit) * 36);
+  font-size: calc(var(--unit) * 38);
   font-weight: 600;
   line-height: 1;
 }
 
 .rank-title {
-  top: calc(var(--unit) * 166);
+  top: calc(var(--unit) * 175);
 }
 
 .exp-label {
-  top: calc(var(--unit) * 201);
-  left: calc(var(--unit) * 349);
+  top: calc(var(--unit) * 212);
+  left: calc(var(--unit) * 368);
   color: #dbe5ec;
-  font-size: calc(var(--unit) * 19);
+  font-size: calc(var(--unit) * 20);
   letter-spacing: calc(var(--unit) * 0.4);
 }
 
 .world-level {
-  top: calc(var(--unit) * 246);
+  top: calc(var(--unit) * 259);
 }
 
 .birthday {
-  top: calc(var(--unit) * 286);
+  top: calc(var(--unit) * 301);
 }
 
-/* Provisional: the birthday's date, or the button that sets it once, sits under its label until the parity compare fits it */
-.birthday-value,
-.set-birthday {
+/* The birthday's date, or the dash that sets it once: it sits on the Birthday row, its value right aligned as the rank's is */
+.birthday-value {
   position: absolute;
-  top: calc(var(--unit) * 304);
-  left: calc(var(--unit) * 313.5);
+  top: calc(var(--unit) * 301);
   margin: 0;
-  font-size: calc(var(--unit) * 20);
 }
 
-/* Provisional: the namecard's button sits under the birthday, to be fitted beside the card's avatar by the parity compare */
+/* Provisional: the namecard's button takes the signature line's place, drawn when a namecard is equipped */
 .namecard {
   position: absolute;
-  top: calc(var(--unit) * 322);
-  left: calc(var(--unit) * 313.5);
+  top: calc(var(--unit) * 105);
+  left: calc(var(--unit) * 331);
   width: calc(var(--unit) * 300);
   color: #e2e8ed;
-  font-size: calc(var(--unit) * 22);
+  font-size: calc(var(--unit) * 20);
   font-weight: 600;
   text-align: left;
 }
 
-/* The rank's and the World Level's values end where the current client's do, 17 units left of the info disc, at its
-   Cap height of 19 units (`world-level-dialog-2024.mkv` at 2 seconds) */
+/* The rank's and the Birthday's values end 33 units short of the panel's right edge, and the World Level's 18 units left of its
+   Info disc, as the frame sets them */
 .value {
-  left: calc(var(--unit) * 688);
-  font-size: calc(var(--unit) * 28);
+  left: calc(var(--unit) * 776);
+  font-size: calc(var(--unit) * 29.5);
   translate: -100% 0;
+}
+
+.world-level.value {
+  left: calc(var(--unit) * 725);
 }
 
 /* The game draws the info icon the same hovered and pressed: its disc reads #eae4d6 throughout, from the pointer's
@@ -577,9 +609,9 @@ onBeforeUnmount(() => {
 
 .exp-bar {
   position: absolute;
-  top: calc(var(--unit) * 225);
-  left: calc(var(--unit) * 350);
-  width: calc(var(--unit) * 387);
+  top: calc(var(--unit) * 237);
+  left: calc(var(--unit) * 369);
+  width: calc(var(--unit) * 408);
   height: calc(var(--unit) * 7);
   background: #334b60;
 }
@@ -589,18 +621,20 @@ onBeforeUnmount(() => {
   background: #ccfe66;
 }
 
+/* The grid of four columns, each tile 151 pixels wide and 135 high, at the frame's pitch of 164.33 by 149 */
 .contents {
   position: absolute;
-  top: calc(var(--unit) * 352.5);
-  left: calc(var(--unit) * 126);
+  top: calc(var(--unit) * 372);
+  left: calc(var(--unit) * 131);
   display: grid;
-  grid-template-columns: repeat(4, calc(var(--unit) * 143));
-  grid-auto-rows: calc(var(--unit) * 128);
-  column-gap: calc(var(--unit) * 13);
-  row-gap: calc(var(--unit) * 13.75);
+  grid-template-columns: repeat(4, calc(var(--unit) * 151));
+  grid-auto-rows: calc(var(--unit) * 135);
+  column-gap: calc(var(--unit) * 13.3);
+  row-gap: calc(var(--unit) * 14);
 }
 
 .entry {
+  position: relative;
   border-radius: calc(var(--unit) * 2);
   background: #51596b;
   color: #ece5d7;
@@ -609,14 +643,35 @@ onBeforeUnmount(() => {
 .label {
   position: absolute;
   right: 0;
-  bottom: calc(var(--unit) * 10);
+  bottom: calc(var(--unit) * 10.5);
   left: 0;
-  font-size: calc(var(--unit) * 22);
+  font-size: calc(var(--unit) * 23);
   font-weight: 600;
   letter-spacing: calc(var(--unit) * 0.4);
   line-height: 1.1;
   text-align: center;
   color: #c8c4bb;
+}
+
+/* The red dot the frame draws over an entry with news, its centre 5 units in from the top right corner and 4 down */
+.alert {
+  position: absolute;
+  top: calc(var(--unit) * -7);
+  left: calc(100% - var(--unit) * 16);
+  z-index: 1;
+  width: calc(var(--unit) * 22);
+  height: calc(var(--unit) * 22);
+  border-radius: 50%;
+  background: #e0302f;
+  color: #fff;
+  font-size: calc(var(--unit) * 16);
+  font-weight: 700;
+  line-height: calc(var(--unit) * 22);
+  text-align: center;
+}
+
+.alert::before {
+  content: "!";
 }
 
 .entry:disabled:not(.link) {

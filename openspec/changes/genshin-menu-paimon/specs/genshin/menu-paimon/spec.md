@@ -79,7 +79,7 @@ The profile card SHALL offer the Traveler's birthday to be set once, and SHALL s
 
 - **GIVEN** the Traveler's birthday is not set
 - **WHEN** the profile card is shown
-- **THEN** the Birthday row stands over a Set Birthday button
+- **THEN** the Birthday row shows the dash `-/-`, which is the button that sets the birthday
 
 #### Scenario: Confirming the dialog sets the birthday once
 

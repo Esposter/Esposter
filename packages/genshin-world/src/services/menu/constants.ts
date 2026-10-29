@@ -13,39 +13,43 @@ import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { FOLLOW_CAMERA_DEFAULT_SETTINGS, MINUTES_PER_DAY, QualityTier } from "genshin-engine";
 import { GameLanguage, GameTextKey } from "genshin-text";
 
-// The Paimon menu's contents in the game's order, as the English PC client's menu draws them. The Training Guide is
-// Not among them, since no still of the menu the references hold shows it
-export const PAIMON_MENU_CONTENTS: readonly { icon: MenuEntryIcon; screenKind: TitledScreenKind }[] = [
-  { icon: EntryIcon.Shop, screenKind: ScreenKind.PaimonsBargains },
+// The Paimon menu's contents in the game's order, as the 2026 frame at 25 seconds of `yt-jHr2bERjkYc` draws them. Its
+// Shop, Wish, Battle Pass, Co-Op Mode, Events and Adventurer Handbook are not in that frame, so they are not among them,
+// and neither is the Training Guide. A flagged entry carries the red dot the frame draws on it
+export const PAIMON_MENU_CONTENTS: readonly {
+  icon: MenuEntryIcon;
+  isAlerted?: boolean;
+  screenKind: TitledScreenKind;
+}[] = [
   { icon: EntryIcon.PartySetup, screenKind: ScreenKind.PartySetup },
   { icon: EntryIcon.Friends, screenKind: ScreenKind.Friends },
-  { icon: EntryIcon.Achievements, screenKind: ScreenKind.Achievements },
+  { icon: EntryIcon.Achievements, isAlerted: true, screenKind: ScreenKind.Achievements },
   { icon: EntryIcon.Archive, screenKind: ScreenKind.Archive },
   { icon: EntryIcon.CharacterArchive, screenKind: ScreenKind.CharacterArchive },
   { icon: EntryIcon.Character, screenKind: ScreenKind.Character },
   { icon: EntryIcon.Inventory, screenKind: ScreenKind.Inventory },
   { icon: EntryIcon.Quests, screenKind: ScreenKind.Quests },
   { icon: EntryIcon.Map, screenKind: ScreenKind.Map },
-  { icon: EntryIcon.Events, screenKind: ScreenKind.Events },
-  { icon: EntryIcon.AdventurerHandbook, screenKind: ScreenKind.AdventurerHandbook },
-  { icon: EntryIcon.Wish, screenKind: ScreenKind.Wish },
-  { icon: EntryIcon.BattlePass, screenKind: ScreenKind.BattlePass },
-  { icon: EntryIcon.CoOp, screenKind: ScreenKind.CoOp },
 ];
 // The Time screen's advance in game minutes, at least thirty ahead and at most two days, as the game's Time option allows
 export const TIME_MINIMUM_ADVANCE_MINUTES = 30;
 export const TIME_MAXIMUM_ADVANCE_MINUTES = 2 * MINUTES_PER_DAY;
-// The links out to web pages the menu ends with, drawn disabled, since the world opens no page of their own. The
-// Reference's build draws only these two; Version Highlights and Survey are not in its foot
-export const PAIMON_MENU_LINKS: readonly { icon: MenuEntryIcon; labelKey: GameTextKey }[] = [
-  { icon: EntryIcon.Community, labelKey: GameTextKey.Community },
+// The links out to web pages the menu ends with, drawn disabled, since the world opens no page of their own
+export const PAIMON_MENU_LINKS: readonly { icon: MenuEntryIcon; isAlerted?: boolean; labelKey: GameTextKey }[] = [
+  { icon: EntryIcon.Community, isAlerted: true, labelKey: GameTextKey.Community },
+  { icon: EntryIcon.VersionHighlights, isAlerted: true, labelKey: GameTextKey.VersionHighlights },
   { icon: EntryIcon.Feedback, labelKey: GameTextKey.Feedback },
+  { icon: EntryIcon.Survey, isAlerted: true, labelKey: GameTextKey.Survey },
 ];
 // The screens its side bar opens, in the game's order between its Back and its Quit Game
-export const PAIMON_MENU_SIDE_BAR: readonly { icon: MenuFrameIcon; screenKind: TitledScreenKind }[] = [
+export const PAIMON_MENU_SIDE_BAR: readonly {
+  icon: MenuFrameIcon;
+  isAlerted?: boolean;
+  screenKind: TitledScreenKind;
+}[] = [
   { icon: FrameIcon.PhotoMode, screenKind: ScreenKind.PhotoMode },
-  { icon: FrameIcon.Notices, screenKind: ScreenKind.Notices },
-  { icon: FrameIcon.Mail, screenKind: ScreenKind.Mail },
+  { icon: FrameIcon.Notices, isAlerted: true, screenKind: ScreenKind.Notices },
+  { icon: FrameIcon.Mail, isAlerted: true, screenKind: ScreenKind.Mail },
   { icon: FrameIcon.Time, screenKind: ScreenKind.Time },
   { icon: FrameIcon.Settings, screenKind: ScreenKind.Settings },
 ];
