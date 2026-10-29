@@ -22,8 +22,9 @@ const createQuest = (id: string, kind: QuestKind): Quest => ({
 // The English client's quest screen as its still at 1920 by 1080 shows it (`File:Quest Screen.png`): the In Progress
 // Tab, three commissions, and the World Quests' two Snezhnaya series with the quests the still shows of them, the world
 // Quest under the last selected and navigated to, at its first step with none of its three fragments collected. The
-// List opens at its top, where the still is scrolled down to its commissions, so only the quests it shows are held. The
-// Text ids are readable names for this fixture alone, not the game's
+// List opens 65 units down (`listScroll`), where the still is scrolled to its commissions, so the Commission Quests
+// heading sits above the list's top as in the still, and only the quests it shows are held. The Text ids are readable
+// names for this fixture alone, not the game's
 export const props = {
   gameText: ENGLISH_GAME_TEXT,
   listScroll: 65,
