@@ -370,8 +370,7 @@ const emit = defineEmits<{ close: []; configureTeam: []; deploy: []; next: []; p
   pointer-events: none;
 }
 
-.foot button,
-.foot-art {
+.foot button {
   pointer-events: auto;
 }
 
