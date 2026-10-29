@@ -4,7 +4,7 @@ The first part of [TodoList to a todo product](../README.md#shipped-log), and th
 
 ```text
 ☐  Buy the train tickets
-   📅 Tue, Sep 30, 9:00 AM
+   📅 Tue, Sep 30, 2026, 9:00 AM
    Platform 4, the 9:12 — seats in carriage B
 ```
 
