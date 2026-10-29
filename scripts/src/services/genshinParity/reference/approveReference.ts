@@ -12,7 +12,7 @@ import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityRef
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
-import { FIXTURE_VARIANT_SEPARATOR } from "genshin-interface/constants";
+import { APPROVE_ENVIRONMENT_VARIABLE, FIXTURE_VARIANT_SEPARATOR } from "genshin-interface/constants";
 
 // The visual suite's file, whose tests are titled by their screen's name
 const VISUAL_SUITE_FILE = "parity/screens.visual.ts";
@@ -63,7 +63,7 @@ export const approveReference = async (referenceId: string, variant?: string): P
     PNPM_FILE,
     // The filter is one token ending the title: pnpm hands its arguments to cmd, which splits a space and eats a caret
     [...PNPM_ARGS, "test:visual", "--run", "-u", VISUAL_SUITE_FILE, "-t", `${testName}$`],
-    { cwd: GENSHIN_WORLD_DIRECTORY, stdio: "inherit" },
+    { cwd: GENSHIN_WORLD_DIRECTORY, env: { ...process.env, [APPROVE_ENVIRONMENT_VARIABLE]: "1" }, stdio: "inherit" },
   );
   if (status !== 0) throw new InvalidOperationError(Operation.Update, testName, `the visual suite exited ${status}`);
   console.log(`wrote the image of ${testName}`);
