@@ -66,7 +66,7 @@ const lineParts = computed(() => {
           @click.stop="emit('choose', id)"
         >
           <svg class="icon" aria-hidden="true" :viewBox="DialogueChoiceIconPathMap[icon].viewBox">
-            <path :d="DialogueChoiceIconPathMap[icon].d" fill="currentColor" />
+            <path :d="DialogueChoiceIconPathMap[icon].d" fill="currentColor" fill-rule="evenodd" />
           </svg>
           {{ text }}
         </GameButton>
