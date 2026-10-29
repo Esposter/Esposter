@@ -58,12 +58,12 @@ committed.
 | `login-door-recording` | `LoginScreen` | 16.44% | 0.366 | 11.47% | 0.5796 |
 | `login-door-session` | `LoginScreen` | 12.25% | 0.417 | 8.41% | 0.4567 |
 | `login-interface-arriving` | `LoginInterface` | pending: no screenshot of this variant yet | | | |
-| `login-interface-door` | `LoginInterface` | 0.75% | 0.985 | 0.44% | 0.0459 |
-| `login-interface-door-mainland` | `LoginInterface` | 0.65% | 0.975 | 0.45% | 0.0265 |
-| `login-interface-loading` | `LoginInterface` | 0.34% | 0.995 | 0.11% | 0.0285 |
+| `login-interface-door` | `LoginInterface` | 0.76% | 0.986 | 0.44% | 0.0461 |
+| `login-interface-door-mainland` | `LoginInterface` | 0.67% | 0.975 | 0.46% | 0.0332 |
+| `login-interface-loading` | `LoginInterface` | 0.28% | 0.994 | 0.13% | 0.0251 |
 | `login-interface-loading-game` | `LoginInterface` | pending: no screenshot of this variant yet | | | |
-| `login-interface-mainland-rating` | `LoginInterface` | 3.85% | 0.953 | 2.62% | 0.2090 |
-| `login-interface-title` | `LoginInterface` | 0.51% | 0.997 | 0.25% | 0.0353 |
+| `login-interface-mainland-rating` | `LoginInterface` | 3.16% | 0.991 | 2.36% | 0.1957 |
+| `login-interface-title` | `LoginInterface` | 0.36% | 0.996 | 0.24% | 0.0158 |
 | `login-night-title` | `LoginScreen` | 9.41% | 0.371 | 7.01% | 0.3913 |
 | `login-screen-dusk` | `LoginScreen` | 19.45% | 0.358 | 13.81% | 0.6448 |
 | `map-overlay-galesong` | `MapOverlay` | 17.65% | 0.000 | 12.94% | 0.6686 |
