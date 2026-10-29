@@ -399,14 +399,14 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   fill: #b5a28b;
 }
 
-/* The arrows centred 516 apart on the title's line, the way back a 108 disc and the way on, past the last chapter, an
-   empty 78 ring with a faded chevron */
+/* The chevrons centred 525 apart on the title's line, as the reference's measure, the way back a 108 disc and the way
+   on, past the last chapter, an empty 78 ring with a faded chevron */
 .chapter-navigator {
   position: absolute;
   top: calc(var(--reference-pixel) * 140);
-  left: calc(var(--reference-pixel) * 2138);
+  left: calc(var(--reference-pixel) * 2130);
   display: grid;
-  width: calc(var(--reference-pixel) * 620);
+  width: calc(var(--reference-pixel) * 636);
   height: calc(var(--reference-pixel) * 108);
   align-items: center;
   grid-template-columns: calc(var(--reference-pixel) * 108) 1fr calc(var(--reference-pixel) * 108);
