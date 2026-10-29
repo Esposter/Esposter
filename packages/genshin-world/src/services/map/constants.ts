@@ -43,7 +43,7 @@ export const MAP_SUBAREA_LABEL_MAX_METRES = 1512;
 // offset in catalogue metres from each name's point to the place its ink centre stands at the reference's zoom, keyed by
 // the name's text id, measured off `map-overlay-jueyun` (Huaguang Stone Forest, Qingyun Peak, Jueyun Karst, Mt. Hulao,
 // Nantianmen and Cuijue Slope; Mt. Aozang has no published point, so it is not drawn)
-export const MAP_SUBAREA_LABEL_OFFSETS: Readonly<Record<string, { x: number; z: number }>> = {
+export const MAP_SUBAREA_LABEL_OFFSETS: Readonly<Partial<Record<string, { x: number; z: number }>>> = {
   "1198567662": { x: 43.1, z: -26.8 },
   "1812998582": { x: 60.3, z: -19.5 },
   "2598253758": { x: 19.8, z: 31.9 },
