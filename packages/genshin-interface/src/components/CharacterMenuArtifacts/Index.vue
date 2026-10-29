@@ -131,6 +131,7 @@ const switchSlot = () => {
           class="button"
           :disabled="!isSelectedWorn"
           :kind="GameButtonKind.Pill"
+          tip=""
           @click="emit('enhance', selectedIndex)"
         >
           {{ enhanceLabel }}
@@ -139,6 +140,7 @@ const switchSlot = () => {
           class="button"
           :disabled="!isSelectedWorn && equipDisabledSlots[selectedIndex]"
           :kind="GameButtonKind.Pill"
+          tip=""
           @click="isSelectedWorn ? emit('unequip', selectedIndex) : emit('equip', selectedIndex)"
         >
           {{ isSelectedWorn ? unequipLabel : equipLabel }}
@@ -147,6 +149,7 @@ const switchSlot = () => {
           v-if="selectedStats"
           class="button"
           :kind="GameButtonKind.Pill"
+          tip=""
           @click="emit('lock', selectedIndex)"
         >
           {{ selectedStats.isLocked ? unlockLabel : lockLabel }}
@@ -157,12 +160,13 @@ const switchSlot = () => {
           class="button"
           :disabled="equipDisabledSlots[selectedIndex]"
           :kind="GameButtonKind.Pill"
+          tip=""
           @click="emit('equip', selectedIndex)"
         >
           <span class="key" aria-hidden="true">R</span>
           {{ fastEquipLabel }}
         </GameButton>
-        <GameButton class="button" :kind="GameButtonKind.Pill" @click="switchSlot">
+        <GameButton class="button" :kind="GameButtonKind.Pill" tip="" @click="switchSlot">
           <span class="key" aria-hidden="true">F</span>
           {{ switchLabel }}
         </GameButton>

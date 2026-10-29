@@ -75,6 +75,7 @@ const confirmSegments = computed(() =>
     <ul>
       <li v-for="strongbox in strongboxes" :key="strongbox.id">
         <GameButton
+          tip=""
           :kind="GameButtonKind.Row"
           @click="
             () => {
@@ -91,6 +92,7 @@ const confirmSegments = computed(() =>
     <ul>
       <li v-for="item in candidates" :key="item.id">
         <GameButton
+          tip=""
           :kind="GameButtonKind.Row"
           :disabled="isOfferingFull && !pickedIds.includes(item.id)"
           @click="
@@ -105,17 +107,18 @@ const confirmSegments = computed(() =>
     </ul>
     <p v-if="candidates.length === 0">{{ gameText[GameTextKey.MysticOfferingRequiresFiveStar] }}</p>
     <p v-if="!isReady">{{ gameText[GameTextKey.MysticOfferingNotEnough] }}</p>
-    <GameButton :kind="GameButtonKind.Row" :disabled="!isReady" @click="isConfirming = true">
+    <GameButton tip="" :kind="GameButtonKind.Row" :disabled="!isReady" @click="isConfirming = true">
       {{ gameText[GameTextKey.MysticOfferingCreate] }}
     </GameButton>
     <template v-if="isConfirming">
       <p>
         <span v-for="({ color, text }, index) of confirmSegments" :key="index" :style="{ color }">{{ text }}</span>
       </p>
-      <GameButton :kind="GameButtonKind.Row" @click="isConfirming = false">{{
+      <GameButton tip="" :kind="GameButtonKind.Row" @click="isConfirming = false">{{
         gameText[GameTextKey.Cancel]
       }}</GameButton>
       <GameButton
+        tip=""
         :kind="GameButtonKind.Row"
         @click="
           () => {
@@ -137,6 +140,6 @@ const confirmSegments = computed(() =>
         >{{ gameText[GameTextKey.Confirm] }}</GameButton
       >
     </template>
-    <GameButton :kind="GameButtonKind.Row" @click="emit('close')">{{ gameText[GameTextKey.Back] }}</GameButton>
+    <GameButton tip="" :kind="GameButtonKind.Row" @click="emit('close')">{{ gameText[GameTextKey.Back] }}</GameButton>
   </GameScreen>
 </template>

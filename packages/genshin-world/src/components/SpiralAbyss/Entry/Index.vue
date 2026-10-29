@@ -44,11 +44,12 @@ const pickedFloorId = ref<number>();
       <p class="blessing-description">{{ nameText[String(blessing.descriptionTextHash)] }}</p>
     </div>
     <template v-for="floor in floors" :key="floor.id">
-      <GameButton :kind="GameButtonKind.Pill" @click="pickedFloorId = floor.id">{{ floor.index }}</GameButton>
+      <GameButton tip="" :kind="GameButtonKind.Pill" @click="pickedFloorId = floor.id">{{ floor.index }}</GameButton>
       <template v-if="pickedFloorId === floor.id">
         <GameButton
           v-for="chamber in floor.chambers"
           :key="chamber.id"
+          tip=""
           :kind="GameButtonKind.Pill"
           @click="emit('choose', floor.id, chamber.id)"
         >

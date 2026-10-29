@@ -56,6 +56,7 @@ const confirmBirthday = () => {
         v-for="monthChoice of BIRTHDAY_MONTHS"
         :key="monthChoice"
         class="month"
+        tip=""
         :aria-pressed="monthChoice === month"
         :kind="GameButtonKind.Row"
         @click="pickMonth(monthChoice)"
@@ -68,6 +69,7 @@ const confirmBirthday = () => {
         v-for="dayChoice of days"
         :key="dayChoice"
         class="day"
+        tip=""
         :aria-pressed="dayChoice === day"
         :kind="GameButtonKind.Row"
         @click="day = dayChoice"
@@ -80,11 +82,18 @@ const confirmBirthday = () => {
     </p>
     <p v-if="birthday" class="warning">{{ gameText[GameTextKey.BirthdayConfirmWarning] }}</p>
     <div class="actions">
-      <GameButton class="confirm-button" :disabled="!birthday" :kind="GameButtonKind.Pill" @click="confirmBirthday()">
+      <GameButton
+        class="confirm-button"
+        tip=""
+        :disabled="!birthday"
+        :kind="GameButtonKind.Pill"
+        @click="confirmBirthday()"
+      >
         {{ gameText[GameTextKey.Confirm] }}
       </GameButton>
       <GameButton
         class="close"
+        tip=""
         :aria-label="gameText[GameTextKey.Back]"
         :kind="GameButtonKind.Plain"
         @click="emit('close')"

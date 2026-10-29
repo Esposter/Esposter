@@ -5,6 +5,7 @@ import { InteractionState } from "#src/models/InteractionState";
 export const props = {
   kind: GameButtonKind.Disc,
   style: { fontSize: "calc(var(--unit) * 40)", height: "calc(var(--unit) * 65)", width: "calc(var(--unit) * 65)" },
+  tip: "",
 };
 export const slot = "✦";
 export const variants = {

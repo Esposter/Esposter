@@ -306,7 +306,12 @@ onMounted(() => {
         </button>
       </header>
       <p class="teleport-place">{{ chosenArea?.name }} - {{ chosenArea?.subregion }}</p>
-      <GameButton class="teleport" :kind="GameButtonKind.Pill" @click="emit('jump', computeJumpPose(chosenLandmark))">
+      <GameButton
+        class="teleport"
+        tip=""
+        :kind="GameButtonKind.Pill"
+        @click="emit('jump', computeJumpPose(chosenLandmark))"
+      >
         {{ gameText[GameTextKey.Teleport] }}
       </GameButton>
     </section>

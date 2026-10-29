@@ -75,7 +75,13 @@ onMounted(() => {
     </div>
     <p class="wait-until">{{ gameText[GameTextKey.TimeWaitUntil] }}</p>
     <p class="hour">{{ targetTime }}</p>
-    <GameButton ref="confirmButton" class="confirm" :kind="GameButtonKind.Pill" @click="emit('confirm', targetMinutes)">
+    <GameButton
+      ref="confirmButton"
+      class="confirm"
+      tip=""
+      :kind="GameButtonKind.Pill"
+      @click="emit('confirm', targetMinutes)"
+    >
       {{ gameText[GameTextKey.TimeConfirm] }}
     </GameButton>
   </GameScreen>

@@ -186,6 +186,7 @@ onMounted(() => {
     </p>
     <GameButton
       class="close"
+      tip=""
       :aria-label="shownGameText[GameTextKey.Back]"
       :kind="GameButtonKind.Disc"
       :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Close])"
@@ -199,6 +200,7 @@ onMounted(() => {
         :key="settingsTab"
         class="tab"
         role="tab"
+        tip=""
         :aria-selected="settingsTab === tab"
         :disabled="!SettingsTabSectionsMap[settingsTab]"
         :kind="GameButtonKind.Row"

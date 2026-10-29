@@ -176,6 +176,7 @@ onBeforeUnmount(() => {
       <GameButton
         ref="backButton"
         class="back"
+        tip=""
         :aria-label="gameText[GameTextKey.Back]"
         :kind="GameButtonKind.Plain"
         @click="closeMenu()"
@@ -230,6 +231,7 @@ onBeforeUnmount(() => {
         <GameButton
           ref="worldLevelInfoButton"
           class="info"
+          tip=""
           :aria-label="gameText[GameTextKey.WorldLevel]"
           :kind="GameButtonKind.Plain"
           :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Info])"
@@ -243,6 +245,7 @@ onBeforeUnmount(() => {
         <GameButton
           v-else
           class="birthday-value value"
+          tip=""
           :aria-label="gameText[GameTextKey.BirthdaySet]"
           :kind="GameButtonKind.Plain"
           @click="isBirthdayDialogOpen = true"
@@ -251,6 +254,7 @@ onBeforeUnmount(() => {
         </GameButton>
         <GameButton
           class="namecard"
+          tip=""
           :disabled="namecards.length === 0"
           :kind="GameButtonKind.Plain"
           @click="isNamecardDialogOpen = true"
@@ -262,6 +266,7 @@ onBeforeUnmount(() => {
             v-for="{ icon, screenKind } of openContents"
             :key="screenKind"
             class="entry"
+            tip=""
             :disabled="!checkIsBuilt(screenKind)"
             :kind="GameButtonKind.Row"
             @click="emit('open', screenKind)"
@@ -274,6 +279,7 @@ onBeforeUnmount(() => {
             v-for="{ icon, labelKey } of PAIMON_MENU_LINKS"
             :key="labelKey"
             class="entry link"
+            tip=""
             disabled
             :kind="GameButtonKind.Row"
           >

@@ -115,6 +115,7 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
     <template #tabs>
       <GameButton
         class="mailbox-tab"
+        tip=""
         :aria-pressed="!isGiftBoxTab"
         :kind="GameButtonKind.Pill"
         @click="selectTab(false)"
@@ -123,17 +124,25 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
       </GameButton>
       <GameButton
         class="gift-box-tab"
+        tip=""
         :aria-pressed="isGiftBoxTab"
         :kind="GameButtonKind.Pill"
         @click="selectTab(true)"
       >
         {{ gameText[GameTextKey.MailGiftBox] }}
       </GameButton>
-      <GameButton class="claim-all" :disabled="!hasClaimable" :kind="GameButtonKind.Pill" @click="emit('claimAll')">
+      <GameButton
+        class="claim-all"
+        tip=""
+        :disabled="!hasClaimable"
+        :kind="GameButtonKind.Pill"
+        @click="emit('claimAll')"
+      >
         {{ gameText[GameTextKey.MailClaimAll] }}
       </GameButton>
       <GameButton
         class="delete-read"
+        tip=""
         :disabled="!hasDeletableMail"
         :kind="GameButtonKind.Pill"
         @click="isConfirmingDeleteRead = true"
@@ -175,11 +184,12 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
         :aria-label="gameText[GameTextKey.MailDeleteRead]"
       >
         <p class="confirm-text">{{ gameText[GameTextKey.MailDeleteReadConfirm] }}</p>
-        <GameButton class="cancel" :kind="GameButtonKind.Pill" @click="isConfirmingDeleteRead = false">
+        <GameButton class="cancel" tip="" :kind="GameButtonKind.Pill" @click="isConfirmingDeleteRead = false">
           {{ gameText[GameTextKey.Cancel] }}
         </GameButton>
         <GameButton
           class="confirm-button"
+          tip=""
           :kind="GameButtonKind.Pill"
           @click="
             () => {
@@ -216,17 +226,19 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
         <GameButton
           v-else-if="selectedEntry.row.items.length > 0"
           class="claim"
+          tip=""
           :kind="GameButtonKind.Pill"
           @click="emit('claim', selectedEntry.mail)"
         >
           {{ gameText[GameTextKey.MailClaim] }}
         </GameButton>
-        <GameButton class="pin" :kind="GameButtonKind.Pill" @click="emit('pin', selectedEntry.mail)">
+        <GameButton class="pin" tip="" :kind="GameButtonKind.Pill" @click="emit('pin', selectedEntry.mail)">
           {{ gameText[selectedEntry.mail.isPinned ? GameTextKey.MailCancelStar : GameTextKey.MailStar] }}
         </GameButton>
         <GameButton
           v-if="checkIsGiftBoxed(selectedEntry.mail, selectedEntry.row, birthdayMailIds) && !isConfirmingDeleteGift"
           class="delete-gift"
+          tip=""
           :kind="GameButtonKind.Pill"
           @click="isConfirmingDeleteGift = true"
         >
@@ -240,11 +252,12 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
         >
           <p class="confirm-title">{{ gameText[GameTextKey.MailGiftDeleteWarningTitle] }}</p>
           <p class="confirm-text">{{ gameText[GameTextKey.MailGiftDeleteWarning] }}</p>
-          <GameButton class="cancel" :kind="GameButtonKind.Pill" @click="isConfirmingDeleteGift = false">
+          <GameButton class="cancel" tip="" :kind="GameButtonKind.Pill" @click="isConfirmingDeleteGift = false">
             {{ gameText[GameTextKey.Cancel] }}
           </GameButton>
           <GameButton
             class="confirm-button"
+            tip=""
             :kind="GameButtonKind.Pill"
             @click="
               isConfirmingDeleteGift = false;

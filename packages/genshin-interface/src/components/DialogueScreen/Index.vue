@@ -58,7 +58,13 @@ const lineParts = computed(() => {
         :key="id"
         :data-interaction-state="id === selectedChoiceId ? 'Hover' : undefined"
       >
-        <GameButton class="choice" :data-icon="icon" :kind="GameButtonKind.Reply" @click.stop="emit('choose', id)">
+        <GameButton
+          class="choice"
+          :data-icon="icon"
+          :kind="GameButtonKind.Reply"
+          tip=""
+          @click.stop="emit('choose', id)"
+        >
           <svg class="icon" aria-hidden="true" :viewBox="DialogueChoiceIconPathMap[icon].viewBox">
             <path :d="DialogueChoiceIconPathMap[icon].d" fill="currentColor" />
           </svg>

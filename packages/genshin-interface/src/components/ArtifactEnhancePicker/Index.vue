@@ -92,18 +92,23 @@ const emit = defineEmits<{
       <li v-for="{ count, id, name, selectedCount } of materials" :key="id" class="material">
         <span class="name">{{ name }}</span>
         <span class="count">{{ selectedCount }}/{{ count }}</span>
-        <GameButton :disabled="selectedCount <= 0" :kind="GameButtonKind.Pill" @click="emit('material', id, -1)">
+        <GameButton :disabled="selectedCount <= 0" :kind="GameButtonKind.Pill" tip="" @click="emit('material', id, -1)">
           -
         </GameButton>
-        <GameButton :disabled="selectedCount >= count" :kind="GameButtonKind.Pill" @click="emit('material', id, 1)">
+        <GameButton
+          :disabled="selectedCount >= count"
+          :kind="GameButtonKind.Pill"
+          tip=""
+          @click="emit('material', id, 1)"
+        >
           +
         </GameButton>
       </li>
     </ul>
     <div class="actions">
-      <GameButton :kind="GameButtonKind.Pill" @click="emit('autoAdd')">{{ autoAddLabel }}</GameButton>
-      <GameButton :kind="GameButtonKind.Pill" @click="emit('cancel')">{{ cancelLabel }}</GameButton>
-      <GameButton :disabled="isConfirmDisabled" :kind="GameButtonKind.Pill" @click="emit('confirm')">
+      <GameButton :kind="GameButtonKind.Pill" tip="" @click="emit('autoAdd')">{{ autoAddLabel }}</GameButton>
+      <GameButton :kind="GameButtonKind.Pill" tip="" @click="emit('cancel')">{{ cancelLabel }}</GameButton>
+      <GameButton :disabled="isConfirmDisabled" :kind="GameButtonKind.Pill" tip="" @click="emit('confirm')">
         {{ confirmLabel }}
       </GameButton>
     </div>

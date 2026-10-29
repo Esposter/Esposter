@@ -41,6 +41,7 @@ const emit = defineEmits<{ upgrade: [index: number] }>();
           class="upgrade"
           :disabled="isUpgradeDisabled[index]"
           :kind="GameButtonKind.Reply"
+          tip=""
           @click="emit('upgrade', index)"
         >
           {{ upgradeLabel }}

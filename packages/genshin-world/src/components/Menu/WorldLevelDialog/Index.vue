@@ -108,6 +108,7 @@ onMounted(() => {
       <p class="title" role="heading" aria-level="2">{{ gameText[GameTextKey.WorldLevel] }}</p>
       <GameButton
         class="close"
+        tip=""
         :aria-label="gameText[GameTextKey.Back]"
         :kind="GameButtonKind.Plain"
         @click="emit('close')"
@@ -148,6 +149,7 @@ onMounted(() => {
       <GameButton
         v-if="isWorldLevelAdjustable"
         class="adjust"
+        tip=""
         :disabled="isCoolingDown"
         :kind="GameButtonKind.Pill"
         @click="isAdjustPromptOpen = true"

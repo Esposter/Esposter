@@ -24,7 +24,7 @@ interface Props {
   // The game's button template it is drawn as, which decides its look in each state
   kind: GameButtonKind;
   // The name a lit Disc shows beside it, as the side bar's buttons each show theirs, which also names it for a reader
-  tip?: string;
+  tip: string;
 }
 
 const { kind, tip } = defineProps<Props>();

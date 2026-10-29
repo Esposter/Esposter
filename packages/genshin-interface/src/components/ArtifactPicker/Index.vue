@@ -34,7 +34,7 @@ const emit = defineEmits<{ choose: [id: string]; close: [] }>();
         </button>
       </li>
     </ul>
-    <GameButton class="close" :kind="GameButtonKind.Pill" @click="emit('close')">{{ closeLabel }}</GameButton>
+    <GameButton class="close" :kind="GameButtonKind.Pill" tip="" @click="emit('close')">{{ closeLabel }}</GameButton>
   </PickerShell>
 </template>
 

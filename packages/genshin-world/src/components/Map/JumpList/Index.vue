@@ -41,6 +41,7 @@ const regionJumps = computed(() =>
         v-for="{ areaName, landmark } of jumps"
         :key="landmark.id"
         class="jump"
+        tip=""
         :kind="GameButtonKind.Row"
         @click="emit('jump', landmark)"
       >

@@ -49,6 +49,7 @@ const emit = defineEmits<{ action: []; close: [] }>();
       class="action"
       :disabled="isActionDisabled"
       :kind="tab === WeaponMenuTab.Ascend ? GameButtonKind.Gold : GameButtonKind.Pill"
+      tip=""
       @click="emit('action')"
     >
       {{ actionLabel }}
