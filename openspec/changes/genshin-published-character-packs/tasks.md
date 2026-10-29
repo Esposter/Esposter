@@ -24,16 +24,16 @@
 ## 5. The world draws the model
 
 - [x] 5.1 Draw the player's character from the reader in `Windrise` and load the Traveler for a save naming a character outside the index. Verify: tests named after the scenarios 'Held pack draws the character's model' and 'Character outside the index loads the Traveler', seen failing first.
-- [ ] 5.2 Delete the character capsule and its constant, and stop the loading when a pack is missing. Verify: `git grep CharacterPlaceholder` finds nothing and a test named after the scenario 'Missing pack stops the loading and draws no capsule' passes.
+- [x] 5.2 Delete the character capsule and its constant, and stop the loading when a pack is missing. Verify: `git grep CharacterPlaceholder` finds nothing and a test named after the scenario 'Missing pack stops the loading and draws no capsule' passes.
 - [ ] 5.3 Show the pack's terms beside the character on the Character screen from the reader, then delete `PackLoader`. Message the Mac session before touching the Character folder. Verify: the Character screen's fixture renders the terms from a stubbed reader and `git grep PackLoader` finds nothing.
 
 ## 6. Delete the three routes
 
-- [ ] 6.1 Delete the development server's pack route, its services, its env entry and its bundle entry. Verify: `git grep GENSHIN_CHARACTER_PACKS_DIRECTORY` finds nothing and the web app's tests of the touched paths pass.
+- [x] 6.1 Delete the development server's pack route, its services, its env entry and its bundle entry. Verify: `git grep GENSHIN_CHARACTER_PACKS_DIRECTORY` finds nothing and the web app's tests of the touched paths pass.
 - [ ] 6.2 Delete the account's kept packs: the tRPC procedures, the API route, the models, the composable, the blob helpers and the account deletion line. Verify: `git grep -i accountCharacterPack` finds nothing and the genshin router and account deletion tests pass.
 - [ ] 6.3 Delete the browser's kept packs: the zip, folder, picked and stored readers, the stores and the character pack names helpers. Verify: `git grep readCharacterPackZip` finds nothing and `genshin-world` typechecks.
 
 ## 7. Specs and documents
 
 - [ ] 7.1 Move the published-packs, drawing, player-packs and development-packs specs with the change and update the characters README, the published-packs design (the world now reads them) and the specs of account deletion, storage quotas, blob lifecycle, user data inventory and IndexedDB that name the removed routes. The player-packs design's Key files table and prose name the modules 8f1e8f01c3 deleted (readCharacterPackZip, readCharacterPackZips, readCharacterPackFolders, readPickedCharacterPacks, readAccountCharacterPackFile, settleEachNamed, identifyCharacterPack, the stores and the loader) and the row of the composable useAccountCharacterPacks, whose file is already deleted; the moved spec names none of them, as the workspace citations and staleNames tests hold. Verify: `git grep -n "character pack"` over `openspec/specs` names only the published packs and `scripts/src/services/openspec` tests pass.
-- [ ] 7.2 Refresh the genshin-world size snapshot and fix the prune test that expects a file the publish never writes. Verify: `pnpm -C packages/genshin-world test src/index.test.ts --run` and `pnpm -C scripts test src/services/gameData/pruneGameData.test.ts --run` pass.
+- [x] 7.2 Refresh the genshin-world size snapshot and fix the prune test that expects a file the publish never writes. Verify: `pnpm -C packages/genshin-world test src/index.test.ts --run` and `pnpm -C scripts test src/services/gameData/pruneGameData.test.ts --run` pass.
