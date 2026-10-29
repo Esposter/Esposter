@@ -31,8 +31,8 @@
 ## 6. Delete the three routes
 
 - [x] 6.1 Delete the development server's pack route, its services, its env entry and its bundle entry. Verify: `git grep GENSHIN_CHARACTER_PACKS_DIRECTORY` finds nothing and the web app's tests of the touched paths pass.
-- [x] 6.2 Delete the account's kept packs: the tRPC procedures, the API route, the models, the composable, the blob helpers and the account deletion line. Verify: `git grep -i accountCharacterPack` finds nothing and the genshin router and account deletion tests pass.
-- [x] 6.3 Delete the browser's kept packs: the zip, folder, picked and stored readers, the stores and the character pack names helpers. Verify: `git grep readCharacterPackZip` finds nothing and `genshin-world` typechecks.
+- [x] 6.2 Delete the account's kept packs: the tRPC procedures, the API route, the models, the composable, the blob helpers and the account deletion line. Verify: `git grep -i accountCharacterPack -- apps packages scripts` finds nothing (the spec prose naming it is 7.1's) and the genshin router and account deletion tests pass.
+- [x] 6.3 Delete the browser's kept packs: the zip, folder, picked and stored readers, the stores and the character pack names helpers. Verify: `git grep readCharacterPackZip -- apps packages scripts` finds nothing (the spec prose naming it is 7.1's) and `genshin-world` typechecks.
 
 ## 7. Specs and documents
 
