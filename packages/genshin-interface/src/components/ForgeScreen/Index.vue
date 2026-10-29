@@ -123,6 +123,10 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
         <span class="queue-time">{{ queue.timeLabel }}</span>
       </li>
     </ul>
+    <template v-if="tab === ForgeTab.Materials">
+      <span aria-hidden="true" class="sort" />
+      <span aria-hidden="true" class="sort-toggle" />
+    </template>
     <div class="detail">
       <template v-if="tab === ForgeTab.Materials">
         <input
@@ -145,7 +149,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
       </template>
       <template v-else-if="queueDetail">
         <p class="detail-heading">{{ queueDetail.headingLabel }}</p>
-        <span aria-hidden="true" class="detail-ring" />
+        <span v-if="queueDetail.progress < 1" aria-hidden="true" class="detail-ring" />
         <p class="detail-forged">{{ queueDetail.forgedLabel }}</p>
         <span class="detail-track">
           <span class="detail-fill" :style="{ width: `${queueDetail.progress * 100}%` }" />
@@ -238,6 +242,11 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   padding: 0;
   list-style: none;
 }
+/* The recipe list scrolls: its sixth row shows only its top, above the sort control */
+.recipes {
+  height: calc(var(--unit) * 665);
+  overflow: hidden;
+}
 .recipes li + li,
 .queues li + li {
   margin-top: calc(var(--unit) * 9.7);
@@ -253,6 +262,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   display: block;
   width: 100%;
   border: none;
+  background: rgb(20 28 38 / 0.68);
   text-align: left;
 }
 .recipes li:first-child .recipe,
@@ -265,7 +275,8 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   outline-offset: calc(var(--unit) * -2);
 }
 .recipe[aria-pressed="true"] {
-  background: rgb(236 229 216 / 0.25);
+  background: #ece3d5;
+  color: #3b3b3b;
 }
 .recipe:disabled {
   opacity: 0.4;
@@ -296,6 +307,9 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   width: calc(var(--unit) * 107.3);
   height: calc(var(--unit) * 107.3);
   background: #3a4556;
+}
+.recipe-tile {
+  background: #373045;
 }
 .queue[data-state="Idle"] .queue-tile {
   background: none;
@@ -342,6 +356,26 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
 .queue[data-state="Idle"] .queue-progress,
 .queue[data-state="Locked"] .queue-time {
   top: calc(var(--unit) * 40);
+}
+/* The Materials tab's sort control: a cream pill of the list's width with its toggle beside it, its word undrawn for want of a key */
+.sort,
+.sort-toggle {
+  position: absolute;
+  background: #e0dace;
+}
+.sort {
+  top: calc(var(--unit) * 972);
+  left: calc(var(--unit) * 157);
+  width: calc(var(--unit) * 620);
+  height: calc(var(--unit) * 52);
+  border-radius: calc(var(--unit) * 26);
+}
+.sort-toggle {
+  top: calc(var(--unit) * 976);
+  left: calc(var(--unit) * 805);
+  width: calc(var(--unit) * 42);
+  height: calc(var(--unit) * 42);
+  border-radius: 50%;
 }
 .detail {
   position: absolute;
@@ -465,7 +499,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   left: calc(var(--unit) * 1025.1);
   width: calc(var(--unit) * 1130);
   height: calc(var(--unit) * 268.2);
-  background: #545d6a;
+  background: rgb(29 56 73 / 0.5);
 }
 .materials-head {
   position: absolute;
@@ -494,11 +528,11 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   top: calc(var(--unit) * 79.2);
   height: calc(var(--unit) * 170.7);
   border: calc(var(--unit) * 2.4) solid rgb(255 255 255 / 0.12);
-  background: rgb(20 28 38 / 0.25);
 }
 .slot-first {
   left: calc(var(--unit) * 163.3);
   width: calc(var(--unit) * 141.4);
+  background: #77797d;
 }
 .slot-second {
   left: calc(var(--unit) * 340.1);
@@ -525,7 +559,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   left: calc(var(--unit) * 825.2);
   width: calc(var(--unit) * 141.4);
   height: calc(var(--unit) * 170.7);
-  background: #8d7a5c;
+  background: #c2b094;
 }
 
 .amount-end {

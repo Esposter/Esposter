@@ -10,6 +10,7 @@ import { Currency } from "#src/models/inventory/Currency";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { WORLD_RANDOM_SEED } from "#src/services/constants";
+import { computeForgeWeapons } from "#src/services/forging/computeForgeWeapons";
 import { FORGE_DAILY_POINT_CAP, FORGE_ORE_ITEM_IDS } from "#src/services/forging/constants";
 import { readForgeRecipes } from "#src/services/forging/readForgeRecipes";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
@@ -25,10 +26,10 @@ import { ENGLISH_GAME_TEXT } from "genshin-text";
 const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 const { weaponDataMap } = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
-// The three enhancement ores' recipes the Materials tab lists, in the game's order
-const recipes: ForgeRecipe[] = (await readForgeRecipes(GAME_DATA_LOCAL_BASE_URL)).filter(({ id }) =>
-  [11_001, 11_002, 11_003].includes(id),
-);
+// Every recipe the Materials tab lists, in the game's order, the enhancement ores and the weapons alike
+const recipes: ForgeRecipe[] = await readForgeRecipes(GAME_DATA_LOCAL_BASE_URL);
+// The weapons the recipes yield, each named in English, as the world's forge screen reads them
+const weapons = computeForgeWeapons(recipes, weaponDataMap, englishNameText);
 const definitions = new Map<number, ItemDefinition>(
   [...FORGE_ORE_ITEM_IDS, ...recipes.flatMap(({ results }) => results.map(({ itemId }) => itemId))]
     .filter((itemId) => materialDataMap.has(itemId))
@@ -60,10 +61,10 @@ const getWeaponData = (rarity: number) => {
 export const FORGED_WEAPON_RARITY = 4;
 const forgedWeaponData = getWeaponData(FORGED_WEAPON_RARITY);
 const heldWeaponData = getWeaponData(3);
-// A weapon takes one queue at a time, so its recipe's queue holds one unit
+// A weapon takes one queue at a time, so its recipe's queue holds one unit; its id is one no game recipe holds
 export const weaponRecipe: ForgeRecipe = {
   ...takeOne(recipes, 0),
-  id: 12_001,
+  id: 99_001,
   kind: ForgeRecipeKind.Weapon,
   queueSize: 1,
   results: [{ count: 1, itemId: forgedWeaponData.id, weight: 1 }],
@@ -118,7 +119,7 @@ export const props = {
   recipes,
   tab: ForgeTab.Materials,
   wallet: { ...EMPTY_WALLET, [Currency.Mora]: 375_527 },
-  weapons: new Map(),
+  weapons,
 };
 // The Forge Queues tab, and the day's forge points spent to the cap, which refuses the Enhancement Ore in place of Start,
 // And the Queues tab holding a finished order of the first ore's recipe or of the four-star weapon's
@@ -129,6 +130,6 @@ export const variants = {
   weaponsDone: {
     ...createDoneOrderVariant(weaponRecipe.id, 2),
     recipes: [...recipes, weaponRecipe],
-    weapons: new Map([[forgedWeaponData.id, { ...forgedWeaponData, name: "" }]]),
+    weapons: new Map([...weapons, [forgedWeaponData.id, { ...forgedWeaponData, name: "" }]]),
   },
 };
