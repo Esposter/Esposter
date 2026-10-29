@@ -9,7 +9,7 @@ import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { GameLanguageTagMap, GameTextKey } from "genshin-text";
-import { GameOpening } from "genshin-world";
+import { computeLoadingProgress, GameOpening } from "genshin-world";
 
 // The game as it plays: its opening at once, and once its door is opened the world loading under the startup loading
 // Screen, whose marks follow it, shown once that screen's white gives way. The world is mounted only at the door, and
@@ -55,7 +55,15 @@ const {
   takeBack,
 } = await useGenshinSave();
 isSaveLoadedRef = isSaveLoaded;
-const progress = computed(() => (Number(isSaveLoaded.value) + Number(isLoaded.value) + Number(isReady.value)) / 3);
+// The opening's character pack download, whose bytes the bar takes its first share from while any are pending
+const opening = useTemplateRef("opening");
+const progress = computed(() =>
+  computeLoadingProgress(
+    (Number(isSaveLoaded.value) + Number(isLoaded.value) + Number(isReady.value)) / 3,
+    opening.value?.loadedBytes ?? 0,
+    opening.value?.pendingBytes ?? 0,
+  ),
+);
 // The world's loading is reported up, so a page that mounts the game, the agent console, can show its steps
 const emit = defineEmits<{ load: []; ready: [] }>();
 </script>
@@ -112,6 +120,7 @@ const emit = defineEmits<{ load: []; ready: [] }>();
     </UiDialog>
     <div v-if="isOpeningShown" :lang="GameLanguageTagMap[gameText.language]" inset-0 absolute z-1>
       <GameOpening
+        ref="opening"
         :game-data-base-url="getGenshinGameDataBaseUrl(containerBaseUrl)"
         :game-text="gameText.text"
         :language="gameText.language"
