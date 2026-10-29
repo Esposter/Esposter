@@ -32,7 +32,7 @@ committed.
 | `everfrozen-earth-location`            | `WorldScreen`               |                                                                         20.61% | 0.234 | 19.75% | 0.6327 |
 | `exit-prompt`                          | `MenuExit`                  |                                                                          1.59% | 0.999 |  1.24% | 0.1205 |
 | `expedition-screen`                    | `ExpeditionScreen`          |                                                                          1.56% | 0.934 |  0.44% | 0.0672 |
-| `fishing-screen`                       | `FishingScreen`             |                                                                          0.08% | 0.998 |  0.04% | 0.0041 |
+| `fishing-screen`                       | `FishingScreen`             |                                                                          0.05% | 0.998 |  0.03% | 0.0035 |
 | `forge-screen`                         | `ForgeScreen`               |                                                                          3.67% | 0.776 |  1.84% | 0.1541 |
 | `forge-screen-ores-done`               | `ForgeScreen`               |                                                                          2.96% | 0.837 |  1.70% | 0.1389 |
 | `forge-screen-queues`                  | `ForgeScreen`               |                                                                          3.44% | 0.771 |  1.88% | 0.1582 |
