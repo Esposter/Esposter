@@ -94,7 +94,7 @@ describe("forgeScreen", () => {
       },
     });
 
-    // The weapon's recipe is listed after the three ores' recipes
+    // The weapon's recipe is listed after the game's recipes
     [...container.querySelectorAll<HTMLButtonElement>(".recipe")].at(-1)?.click();
 
     expect(onUpdateRecipeId).toHaveBeenCalledExactlyOnceWith(weaponRecipe.id);

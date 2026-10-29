@@ -242,10 +242,12 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   padding: 0;
   list-style: none;
 }
-/* The recipe list scrolls: its sixth row shows only its top, above the sort control */
+/* The recipe list scrolls within its height, by wheel or touch, with no scrollbar drawn: its sixth row shows only
+   its top */
 .recipes {
   height: calc(var(--unit) * 665);
-  overflow: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 .recipes li + li,
 .queues li + li {
