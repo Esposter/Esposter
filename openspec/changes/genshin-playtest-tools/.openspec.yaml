@@ -8,7 +8,6 @@ x-touches:
     "packages/genshin-world/src/models/dev/**",
     "packages/genshin-world/src/composables/useDev*.ts",
     "packages/genshin-world/src/composables/useGenshinTuning.ts",
-    "packages/genshin-world/src/components/Dev/**",
     "packages/genshin-world/src/components/World/Windrise/**",
     "packages/genshin-world/src/components/World/Session/**",
     "packages/genshin-engine/src/renderer/**",
