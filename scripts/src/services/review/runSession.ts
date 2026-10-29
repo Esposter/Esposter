@@ -1,20 +1,19 @@
 import type { ReviewSessionInput } from "#src/models/review/ReviewSessionInput";
-import type { ChildProcess } from "node:child_process";
 
 import { ReviewSessionLimitedError } from "#src/models/review/ReviewSessionLimitedError";
 import { ReviewSessionRole } from "#src/models/review/ReviewSessionRole";
 import {
   CLAUDE_CODE_PACKAGE,
-  CLAUDE_EXEMPT_VARIABLE,
   REVIEWER_TOOLS,
   ReviewSessionRoleModelMap,
-  SECRET_VARIABLE_REGEX,
   USAGE_LIMIT_REGEX,
 } from "#src/services/review/constants";
+import { getSessionEnvironment } from "#src/services/review/getSessionEnvironment";
 import { getSessionFailure } from "#src/services/review/getSessionFailure";
+import { killTree } from "#src/services/review/killTree";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
-import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
-import { spawn, spawnSync } from "@esposter/shared-node/child-process";
+import { InvalidOperationError, Operation } from "@esposter/shared";
+import { spawn } from "@esposter/shared-node/child-process";
 import { once } from "node:events";
 
 // The arguments a role's session gets. A reviewer is print mode with only its read-only tools allowed, which denies every
@@ -23,30 +22,6 @@ const ReviewSessionRoleArgumentsMap: Record<ReviewSessionRole, string[]> = {
   [ReviewSessionRole.Fixer]: ["--dangerously-skip-permissions"],
   [ReviewSessionRole.Reviewer]: ["--allowedTools", ...REVIEWER_TOOLS],
   [ReviewSessionRole.Settler]: ["--dangerously-skip-permissions"],
-};
-
-// Every secret-shaped variable is dropped from the child, except the one that authenticates `claude` itself. A session
-// Reads repository text it cannot trust, and `gh` is authenticated in the parent alone.
-const getSessionEnvironment = (): NodeJS.ProcessEnv =>
-  Object.fromEntries(
-    Object.entries(process.env).filter(
-      ([key]) => key === CLAUDE_EXEMPT_VARIABLE || !SECRET_VARIABLE_REGEX.test(String(key)),
-    ),
-  );
-
-// The whole process tree the launch started, not `pnpm` alone: a session it launched can outlive `pnpm`, holding stdout open
-const killTree = (child: ChildProcess): void => {
-  console.info("the session passed its deadline, so its process tree is killed");
-  const { pid } = child;
-  if (pid === undefined) return;
-  if (process.platform === "win32") {
-    spawnSync("taskkill", ["/PID", String(pid), "/T", "/F"], { stdio: "ignore" });
-    return;
-  }
-  // The group's id is its leader's pid, negated to name the group rather than the process
-  getResult(() => process.kill(-pid, "SIGKILL")).match(noop, (error) => {
-    if (!("code" in error) || error.code !== "ESRCH") console.error(error);
-  });
 };
 
 // One headless Claude Code session: the prompt on stdin, its output returned whole for `parseReviewAnswer`. A usage limit
