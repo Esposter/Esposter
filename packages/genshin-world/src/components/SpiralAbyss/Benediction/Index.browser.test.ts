@@ -14,10 +14,10 @@ describe("spiralAbyssBenediction", () => {
     const names = props.choices.map(({ descriptionTextHash }) => props.nameText[String(descriptionTextHash)]);
     await Promise.all(
       names.map(async (name) => {
-        await expect.element(page.getByRole("button", { name })).toBeVisible();
+        await expect.element(page.getByRole("button", { exact: false, name })).toBeVisible();
       }),
     );
-    await page.getByRole("button", { name: takeOne(names, 1) }).click();
+    await page.getByRole("button", { exact: false, name: takeOne(names, 1) }).click();
 
     expect(onChoose).toHaveBeenCalledExactlyOnceWith(takeOne(props.choices, 1).towerBuffId);
   });
