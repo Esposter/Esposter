@@ -160,7 +160,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
               :style="{ left: `calc(var(--reference-pixel) * ${1018 + rewardIndex * 159})` }"
             />
             <svg class="commission-check" viewBox="0 0 252 228" aria-hidden="true">
-              <path fill="#5aa02c" fill-rule="evenodd" :d="CHECK_MARK_PATH" />
+              <path fill="#7fbc2c" fill-rule="evenodd" :d="CHECK_MARK_PATH" />
             </svg>
           </li>
         </ol>
@@ -190,7 +190,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
             {{ gameText[GameTextKey.ClaimRewards] }}
           </button>
           <svg v-else-if="commission.isClaimed" class="commission-check" viewBox="0 0 252 228" aria-hidden="true">
-            <path fill="#5aa02c" fill-rule="evenodd" :d="CHECK_MARK_PATH" />
+            <path fill="#7fbc2c" fill-rule="evenodd" :d="CHECK_MARK_PATH" />
           </svg>
         </li>
         <!-- The Encounter Points stage rewards at the foot of the tab, where the game keeps the Long-Term Encounter Points -->
@@ -276,7 +276,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   width: calc(var(--reference-pixel) * 2676);
   height: calc(var(--reference-pixel) * 1620);
   border-radius: calc(var(--reference-pixel) * 40);
-  background: #26262e;
+  background: #242221;
 }
 
 .pages {
@@ -286,7 +286,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   width: calc(var(--reference-pixel) * 2543);
   height: calc(var(--reference-pixel) * 1534);
   border-radius: calc(var(--reference-pixel) * 12);
-  background: #efe8d8;
+  background: #ede4d7;
 }
 
 .tabs {
@@ -307,42 +307,47 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   color: #f6ecdb;
   cursor: inherit;
   font: inherit;
-  font-size: min(calc(var(--reference-pixel) * 56), calc(var(--reference-pixel) * 470 / var(--label-length)));
+  font-size: min(calc(var(--reference-pixel) * 56), calc(var(--reference-pixel) * 560 / var(--label-length)));
   font-weight: 600;
   letter-spacing: calc(var(--reference-pixel) * 2.5);
 }
 
-/* The game shrinks a label to its tab's width, Commissions to 41 where the others stand 56 high. The label's length in
-   letters stands in for its width: an estimate that holds the English client's six, not a wider script's */
+/* The game shrinks a label to its tab's width. The label's length in letters stands in for its width: an estimate that holds
+   the English client's six, not a wider script's. Commissions is the one it misses, so it is set to 41 as the game draws it */
 .tab:nth-child(1) {
   top: 0;
-  background: #e3dacf;
+  left: calc(var(--reference-pixel) * -15);
+  width: calc(var(--reference-pixel) * 315);
+  padding-left: calc(var(--reference-pixel) * 22);
+  background: #e9e2d7;
+  box-shadow: inset calc(var(--reference-pixel) * 16) 0 0 #82ab59;
   color: #876649;
 }
 
 .tab:nth-child(2) {
   top: calc(var(--reference-pixel) * 199);
-  background: #503e6c;
+  background: #544470;
+  font-size: calc(var(--reference-pixel) * 41);
 }
 
 .tab:nth-child(3) {
   top: calc(var(--reference-pixel) * 402);
-  background: #2e6371;
+  background: #2d5e71;
 }
 
 .tab:nth-child(4) {
   top: calc(var(--reference-pixel) * 605);
-  background: #744538;
+  background: #6a3f35;
 }
 
 .tab:nth-child(5) {
   top: calc(var(--reference-pixel) * 807);
-  background: #87612a;
+  background: #7e5a28;
 }
 
 .tab:nth-child(6) {
   top: calc(var(--reference-pixel) * 1005);
-  background: #2c6f6d;
+  background: #2a6d6d;
 }
 
 /* The chapters' rings 96 apart on a line through their middles, each done chapter's tick in the game's own stroke
@@ -444,7 +449,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   left: calc(var(--reference-pixel) * 399);
   width: calc(var(--reference-pixel) * 665);
   height: calc(var(--reference-pixel) * 1299);
-  border: calc(var(--reference-pixel) * 3) solid #cbbf9f;
+  border: calc(var(--reference-pixel) * 3) solid #d8cbbc;
   border-radius: calc(var(--reference-pixel) * 6);
   background: #ece5db;
 }
@@ -469,9 +474,9 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   display: grid;
   width: calc(var(--reference-pixel) * 220);
   height: calc(var(--reference-pixel) * 220);
-  border: calc(var(--reference-pixel) * 10) solid #e6dccb;
+  border: calc(var(--reference-pixel) * 10) solid #d6c9bb;
   border-radius: 50%;
-  background: #fbf8f1;
+  background: #f1eae0;
   place-items: center;
 }
 
@@ -497,7 +502,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
 }
 
 .panel-segment[data-lit="true"] {
-  background: #a4c85e;
+  background: #a6d553;
 }
 
 .panel-rewards-title {
@@ -688,10 +693,10 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
 
 .commission-check {
   position: absolute;
-  top: calc(var(--reference-pixel) * 83);
-  left: calc(var(--reference-pixel) * 1467);
-  width: calc(var(--reference-pixel) * 84);
-  height: calc(var(--reference-pixel) * 76);
+  top: calc(var(--reference-pixel) * 74);
+  left: calc(var(--reference-pixel) * 1463);
+  width: calc(var(--reference-pixel) * 93);
+  height: calc(var(--reference-pixel) * 84);
 }
 
 /* The slate banner over the cover's edge, its cross 67 square and 8 left of the banner's middle */
