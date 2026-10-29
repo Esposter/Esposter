@@ -57,7 +57,7 @@ A cross-resource reference is a prop declared with `createResourceLinkSchema`, s
 
 Each type's contract makes its published output accessible by construction rather than by review. An Image requires its `alt` or an explicit decorative flag, which publishes as an empty `alt` with `role="presentation"`. A Video requires a title as its accessible name. Tabs publish with the tablist pattern and the arrow keys in their script. Typed text keeps its whole text in the accessible name and stands still under reduced motion. A Countdown is a timer whose live region stays off, and a Button is a real link.
 
-Every URL prop passes `checkIsAllowedUrl` in its schema, so a `javascript:` address is refused at save, including behind a leading space or another case. Custom HTML is cleaned by `sanitizeHtml` both when it is stored and again when it is published. Custom HTML is the one type whose stored markup is raw.
+Every URL prop passes `checkIsAllowedUrl` in its schema, so a `javascript:` address is refused at save, including behind a leading space or another case. Custom HTML is stored raw, with no cleaning at save, and `sanitizeHtml` cleans it where it is rendered for publish, so whatever was stored is cleaned on the way out. Custom HTML is the one type whose stored markup is raw.
 
 ## Rendering
 
@@ -121,7 +121,7 @@ The document store, `usePageBuilderDocumentStore`, holds each open document unde
 | `packages/shared/src/services/sanitizeHtml/escapeText.ts`                  | escapes every text node the serialiser writes                                                       |
 | `packages/shared/src/services/sanitizeHtml/escapeAttribute.ts`             | escapes every attribute value the serialiser writes                                                 |
 | `packages/shared/src/services/sanitizeHtml/checkIsAllowedUrl.ts`           | the check every URL prop's schema runs                                                              |
-| `packages/shared/src/services/sanitizeHtml/sanitizeHtml.ts`                | what the raw-HTML type stores and publishes                                                         |
+| `packages/shared/src/services/sanitizeHtml/sanitizeHtml.ts`                | what the raw-HTML type publishes its stored markup through                                          |
 
 ## Sources
 
