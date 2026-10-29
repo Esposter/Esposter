@@ -832,6 +832,28 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "MenuPaimon",
     source: "yt-jHr2bERjkYc-logout-tech4gamers.mp4 at 25s",
   },
+  // The English PC client's Party Setup at 1080 high from a public recording (yt-greLeGJE-Jg-party-setup.mp4), about 38 seconds
+  // In: Party 1 deployed with Venti, Xiangling, Raiden Shogun and Alhaitham, each at Lv. 90. The members stand in the game's own
+  // Scene, so the sky is the frame's and the members, their icons, the title, the step dots, the Elemental Resonance pill, the
+  // Close and the arrows are filled from round them. The subtitle band and the foot's buttons lie below the region
+  "party-screen": {
+    isBackdrop: true,
+    plate: [
+      { height: 60, width: 240, x: 50, y: 20 },
+      { height: 40, width: 150, x: 880, y: 25 },
+      { height: 60, width: 360, x: 1420, y: 18 },
+      { height: 68, width: 66, x: 1808, y: 14 },
+      { height: 60, width: 50, x: 50, y: 510 },
+      { height: 60, width: 50, x: 1826, y: 510 },
+      { height: 690, width: 340, x: 255, y: 250 },
+      { height: 550, width: 240, x: 675, y: 330 },
+      { height: 560, width: 190, x: 1020, y: 290 },
+      { height: 730, width: 330, x: 1240, y: 205 },
+    ],
+    region: { height: 940, width: 1920, x: 0, y: 0 },
+    screen: "PartyScreen",
+    source: "yt-greLeGJE-Jg-party-setup.mp4 at 38s",
+  },
   // The People of the Springs from the wiki's location image at 2560 wide, a daytime view of the Natlan capital's hall,
   // Spire and walkway, whose build is not stated (a 2024 upload). Its landmarks are rigid architecture read by eye off
   // 4x crops: the spire's apex and cap, the hall's two roof tips and its platform's corner, a terrace's stair top and a

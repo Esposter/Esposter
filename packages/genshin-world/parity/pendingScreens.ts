@@ -19,11 +19,6 @@ export const pendingScreens: { directory: string; reason: string }[] = [
     reason:
       "a candidate is sampled (paimons-bargains-screen.png, from yt-aJq1MnTPtZ4-paimons-bargains-reset.mp4 at 2s, the Shop hub); a webcam sits bottom right and a card is focused, so a cleaner frame is wanted",
   },
-  {
-    directory: "Party/Screen",
-    reason:
-      "its reference is sampled (party-screen.png, from yt-greLeGJE-Jg-party-setup.mp4 at 38s); a subtitle band crosses the bottom, so its region stays above y 940; the fixture is not written yet",
-  },
   { directory: "Shop/Screen", reason: "no recording on disk opens a vendor shop" },
   { directory: "Statue/Screen", reason: "no recording on disk opens the Blessing screen" },
 ];
