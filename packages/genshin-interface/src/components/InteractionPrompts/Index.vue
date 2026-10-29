@@ -70,7 +70,7 @@ const selectionDuration = `${INTERACTION_HOVER_MS}ms`;
   width: calc(var(--unit) * 40);
   height: calc(var(--unit) * 33);
   border-radius: calc(var(--unit) * 6);
-  color: #000;
+  color: #323232;
   font: inherit;
   font-size: calc(var(--unit) * 22);
   font-weight: 700;
@@ -114,7 +114,7 @@ const selectionDuration = `${INTERACTION_HOVER_MS}ms`;
   color: inherit;
   cursor: inherit;
   font: inherit;
-  gap: calc(var(--unit) * 18);
+  gap: calc(var(--unit) * 17);
   pointer-events: auto;
   white-space: nowrap;
 }
