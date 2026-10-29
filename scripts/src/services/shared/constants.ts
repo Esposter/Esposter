@@ -30,6 +30,9 @@ export const OXFMT_BINARY_RELATIVE_PATH: string = join("node_modules", "oxfmt", 
 export const OXFMT_CONFIGURATION_FILE = "oxfmt.config.ts";
 export const OXFMT_BINARY_PATH: string = join(REPOSITORY_ROOT, OXFMT_BINARY_RELATIVE_PATH);
 export const OXFMT_CONFIGURATION_PATH: string = join(REPOSITORY_ROOT, OXFMT_CONFIGURATION_FILE);
+// The formatter's answer for a file type it has no parser for. The pre-commit hook passes such a file by path, and the
+// Formatter skips it there, so the scripts skip it too rather than keep a list of the extensions it formats
+export const OXFMT_UNSUPPORTED_FILE_TYPE_MESSAGE = "Unsupported file type for stdin-filepath";
 // Beside pnpm's own cache directories, under the install it is derived from: what the scripts keep between runs
 export const CACHE_DIRECTORY: string = join(REPOSITORY_ROOT, "node_modules", ".cache", "@esposter", "scripts");
 // The wiki answers this many titles in one imageinfo call, and this many file reads at once is as many as a run asks of
