@@ -1,6 +1,5 @@
-import type { Clause } from "#src/models/shared/Clause";
-
 import type { BinaryOperator } from "#src/models/shared/BinaryOperator";
+import type { Clause } from "#src/models/shared/Clause";
 
 import { deserializeKey } from "#src/services/table/deserializeKey";
 import { checkIsBinaryOperator } from "#src/services/transformer/checkIsBinaryOperator";
