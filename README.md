@@ -276,11 +276,15 @@ vp env install
 pnpm i
 ```
 
-3. Install [PostgreSQL + PgAdmin](https://www.postgresql.org/download).
+3. Install [PostgreSQL + PgAdmin](https://www.postgresql.org/download). On macOS, `brew install postgresql@18` installs the server and `brew services start postgresql@18` keeps it running across logins and reboots. Its binaries are in `/opt/homebrew/opt/postgresql@18/bin`, which is not on `PATH` until added. The server listens on `localhost:5432`. The `esposter` database holds no data worth keeping: `pnpm dev` runs the migrations on it.
 
 4. Add `.env` file according to `.env.example` in `apps/web` directory.
 
 Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+### Spotlight on macOS
+
+The parity data lives in `~/Esposter/genshin-parity` unless `GENSHIN_PARITY_DIRECTORY` names another folder. Create `~/Esposter.noindex` as the data folder and make `~/Esposter` a symlink to it: macOS never indexes a `*.noindex` folder and Spotlight follows no symlink, so every `~/Esposter/...` path still resolves, and a real `~/Esposter` folder must not be created beside the link. Then add `node_modules` and the pnpm store (`~/Library/pnpm/store`) under System Settings → Spotlight → Search Privacy, which can only be done by hand. The reason is in the [machine efficiency](openspec/specs/architecture/machine-efficiency/design.md) design.
 
 ### Development Server
 
