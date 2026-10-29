@@ -24,22 +24,20 @@ export interface ParityReferenceManifestRow extends ParityReferenceManifestImage
   sourceFormat: string;
 }
 
-export const parityReferenceManifestRowSchema: z.ZodType<ParityReferenceManifestRow> = z.object({
-  attribution: parityReferenceAttributionSchema,
-  bytes: z.int().positive(),
-  capturedAt: z.iso.datetime(),
-  cleanPlate: parityReferenceManifestCleanPlateSchema.optional(),
-  clientBuild: z.string().min(1).optional(),
-  height: z.int().positive(),
-  id: z.string().min(1),
-  kind: z.enum(ParityReferenceKind),
-  language: z
-    .string()
-    .regex(/^[a-z]{2,3}$/u)
-    .optional(),
-  plate: parityReferenceManifestImageSchema.optional(),
-  sha256: z.string().regex(/^[\da-f]{64}$/u),
-  source: z.string().min(1).optional(),
-  sourceFormat: z.string().regex(/^[a-z]+$/u),
-  width: z.int().positive(),
-});
+export const parityReferenceManifestRowSchema: z.ZodType<ParityReferenceManifestRow> =
+  parityReferenceManifestImageSchema.extend({
+    attribution: parityReferenceAttributionSchema,
+    capturedAt: z.iso.datetime(),
+    cleanPlate: parityReferenceManifestCleanPlateSchema.optional(),
+    clientBuild: z.string().min(1).optional(),
+    id: z.string().min(1),
+    kind: z.enum(ParityReferenceKind),
+    language: z
+      .string()
+      .regex(/^[a-z]{2,3}$/u)
+      .optional(),
+    plate: parityReferenceManifestImageSchema.optional(),
+    sha256: z.string().regex(/^[\da-f]{64}$/u),
+    source: z.string().min(1).optional(),
+    sourceFormat: z.string().regex(/^[a-z]+$/u),
+  });

@@ -1,5 +1,6 @@
 import type { ParityReferenceManifestImage } from "#src/models/genshinParity/reference/ParityReferenceManifestImage";
 
+import { parityReferenceManifestImageSchema } from "#src/models/genshinParity/reference/ParityReferenceManifestImage";
 import { z } from "zod";
 
 // A reference's clean plate: the image as stored, and the digest of the screenshot and regions it was filled from, so a
@@ -8,10 +9,12 @@ export interface ParityReferenceManifestCleanPlate extends ParityReferenceManife
   digest: string;
 }
 
-export const parityReferenceManifestCleanPlateSchema: z.ZodType<ParityReferenceManifestCleanPlate> = z.object({
-  bytes: z.int().positive(),
+export const parityReferenceManifestCleanPlateSchema: z.ZodObject<{
+  bytes: z.ZodNumber;
+  digest: z.ZodString;
+  height: z.ZodNumber;
+  sha256: z.ZodString;
+  width: z.ZodNumber;
+}> = parityReferenceManifestImageSchema.extend({
   digest: z.string().regex(/^[\da-f]{16}$/u),
-  height: z.int().positive(),
-  sha256: z.string().regex(/^[\da-f]{64}$/u),
-  width: z.int().positive(),
-});
+}) satisfies z.ZodType<ParityReferenceManifestCleanPlate>;
