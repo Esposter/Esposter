@@ -20,7 +20,7 @@ committed.
 | `character-talents-tabs`               | `CharacterScreen`           |                                                                          0.89% | 0.978 |  0.28% | 0.0466 |
 | `character-weapons`                    | `CharacterScreen`           |                                                                          2.47% | 0.889 |  1.37% | 0.1063 |
 | `character-weapons-tabs`               | `CharacterScreen`           |                                                                          0.89% | 0.976 |  0.30% | 0.0453 |
-| `cooking-screen`                       | `CookingScreen`             |                                                                          1.18% | 0.938 |  0.54% | 0.0541 |
+| `cooking-screen`                       | `CookingScreen`             |                                                                          1.17% | 0.938 |  0.53% | 0.0540 |
 | `court-of-fontaine-location`           | `WorldScreen`               |                                                                         21.07% | 0.208 | 16.61% | 0.6768 |
 | `crafting-strongbox`                   | `CraftingStrongbox`         |                                       pending: no screenshot of the screen yet |       |        |        |
 | `crafting-table`                       | `CraftingScreen`            |                                          pending: its recording is not on disk |       |        |        |
@@ -82,7 +82,7 @@ committed.
 | `mondstadt-city-location`              | `WorldScreen`               |                                                                         26.66% | 0.292 | 22.43% | 0.7549 |
 | `nasha-town-location`                  | `WorldScreen`               |                                                                         29.69% | 0.238 | 24.60% | 0.7627 |
 | `paimon-menu`                          | `MenuPaimon`                |                                                                          3.73% | 0.930 |  1.92% | 0.2058 |
-| `party-screen`                         | `PartyScreen`               |                                                                          4.27% | 0.366 |  2.52% | 0.1588 |
+| `party-screen`                         | `PartyScreen`               |                                                                          4.27% | 0.366 |  2.51% | 0.1588 |
 | `people-of-the-springs-location`       | `WorldScreen`               |                                                                         25.06% | 0.223 | 21.49% | 0.7945 |
 | `publisher-splash`                     | `SplashPublisher`           |                                                                          0.07% | 1.000 |  0.01% | 0.0036 |
 | `quest-screen`                         | `QuestScreen`               |                                                                          9.59% | 0.844 |  7.82% | 0.3511 |

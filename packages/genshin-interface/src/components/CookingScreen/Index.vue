@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import CloseButton from "#src/components/CloseButton/Index.vue";
+import { CloseButtonMark } from "#src/models/CloseButtonMark";
 import { COOKING_ARC_CENTRE_X, COOKING_ARC_CENTRE_Y, COOKING_ARC_RADIUS_X } from "#src/services/constants";
 import { computed } from "vue";
 
@@ -50,11 +52,7 @@ const pointerPosition = computed(() => toArcPoint(pointer, ZONE_RADIUS_Y));
       <path d="M11 24 C3 23 3 11 12 11 C11 2 25 0 27 8 C30 0 44 2 42 11 C51 11 51 23 43 24 L43 50 L11 50 Z" />
     </svg>
     <p class="title" role="heading" aria-level="1">{{ title }}</p>
-    <button :aria-label="closeLabel" class="close" type="button" @click="emit('close')">
-      <svg aria-hidden="true" class="close-mark" viewBox="0 0 40 40">
-        <path d="M9 9 L31 31 M31 9 L9 31" />
-      </svg>
-    </button>
+    <CloseButton class="close" :label="closeLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
     <ul v-if="dishes.length > 1" class="dishes">
       <li v-for="dish in dishes" :key="dish.id">
         <button
@@ -245,26 +243,11 @@ const pointerPosition = computed(() => toArcPoint(pointer, ZONE_RADIUS_Y));
 }
 
 .close {
-  position: absolute;
   top: calc(var(--unit) * 20);
   right: calc(var(--unit) * 53);
-  box-sizing: border-box;
-  width: calc(var(--unit) * 58);
-  height: calc(var(--unit) * 58);
-  padding: 0;
-  border: calc(var(--unit) * 4.5) solid rgb(150 150 150);
-  border-radius: 50%;
   background: rgb(238 236 228);
-}
-
-.close-mark {
-  display: block;
-  width: 100%;
-  height: 100%;
-  fill: none;
-  stroke: rgb(45 48 60);
-  stroke-linecap: round;
-  stroke-width: 3.2;
+  box-shadow: inset 0 0 0 calc(var(--unit) * 4.5) rgb(150 150 150);
+  color: rgb(45 48 60);
 }
 
 .dishes {

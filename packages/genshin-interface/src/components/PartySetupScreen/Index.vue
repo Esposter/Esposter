@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { PartySetupSlot } from "#src/models/PartySetupSlot";
 
+import CloseButton from "#src/components/CloseButton/Index.vue";
+import { CloseButtonMark } from "#src/models/CloseButtonMark";
+
 interface Props {
   // The words of the buttons in the reader's language
   backLabel: string;
@@ -63,11 +66,7 @@ const emit = defineEmits<{ close: []; configureTeam: []; deploy: []; next: []; p
         />
       </svg>
       <p class="resonance-text">{{ resonanceLabel }}</p>
-      <button class="back" :aria-label="backLabel" type="button" @click="emit('close')">
-        <svg viewBox="0 0 58 58" aria-hidden="true">
-          <path d="M17.5 17.5 40.5 40.5M40.5 17.5 17.5 40.5" />
-        </svg>
-      </button>
+      <CloseButton class="close" :label="backLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
     </header>
     <section class="team">
       <button class="step previous" :aria-label="previousLabel" type="button" @click="emit('previous')">
@@ -218,26 +217,12 @@ const emit = defineEmits<{ close: []; configureTeam: []; deploy: []; next: []; p
   white-space: nowrap;
 }
 
-.back {
-  position: absolute;
+.close {
   top: calc(var(--unit) * 18.5);
   left: calc(var(--unit) * 1814);
-  box-sizing: border-box;
-  width: calc(var(--unit) * 58);
-  height: calc(var(--unit) * 58);
-  padding: 0;
-  border: calc(var(--unit) * 5) solid #80858a;
-  border-radius: 50%;
   background: #e1e2d4;
+  box-shadow: inset 0 0 0 calc(var(--unit) * 5) #80858a;
   color: #3f3e43;
-}
-
-.back svg {
-  width: 100%;
-  height: 100%;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 7.5;
 }
 
 .team {

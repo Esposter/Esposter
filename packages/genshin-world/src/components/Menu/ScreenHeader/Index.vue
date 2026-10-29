@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
-import type { MenuIconGlyph } from "#src/models/menu/MenuIconGlyph";
 import type { VNode } from "vue";
 
-import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import { ScreenHeaderMark } from "#src/models/menu/ScreenHeaderMark";
-import { MENU_LIST_BACK_GLYPH, MENU_LIST_CLOSE_GLYPH } from "#src/services/menu/constants";
-import { CloseButton } from "genshin-interface";
+import { CloseButton, CloseButtonMark } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -22,10 +19,10 @@ const { mark = ScreenHeaderMark.Cross } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 defineSlots<{ tabs?: () => VNode }>();
 
-// The glyph each mark draws in the disc, a cross being the disc's own text
-const MARK_GLYPH_MAP: Record<Exclude<ScreenHeaderMark, ScreenHeaderMark.Cross>, MenuIconGlyph> = {
-  [ScreenHeaderMark.Back]: MENU_LIST_BACK_GLYPH,
-  [ScreenHeaderMark.TracedCross]: MENU_LIST_CLOSE_GLYPH,
+// The glyph the close button draws for each mark, the cross left to the button's own text when the mark has none
+const CLOSE_MARK_MAP: Partial<Record<ScreenHeaderMark, CloseButtonMark>> = {
+  [ScreenHeaderMark.Back]: CloseButtonMark.Back,
+  [ScreenHeaderMark.TracedCross]: CloseButtonMark.Cross,
 };
 </script>
 
@@ -35,9 +32,8 @@ const MARK_GLYPH_MAP: Record<Exclude<ScreenHeaderMark, ScreenHeaderMark.Cross>, 
        focus order, the WAI-ARIA order for a dialog's header -->
   <p class="title">{{ title }}</p>
   <slot name="tabs" />
-  <CloseButton class="close" :label="gameText[GameTextKey.Back]" @click="emit('close')">
-    <MenuGlyph v-if="mark !== ScreenHeaderMark.Cross" :glyph="MARK_GLYPH_MAP[mark]" />
-    <template v-else>×</template>
+  <CloseButton class="close" :label="gameText[GameTextKey.Back]" :mark="CLOSE_MARK_MAP[mark]" @click="emit('close')">
+    <template v-if="mark === ScreenHeaderMark.Cross">×</template>
   </CloseButton>
 </template>
 
@@ -61,10 +57,8 @@ const MARK_GLYPH_MAP: Record<Exclude<ScreenHeaderMark, ScreenHeaderMark.Cross>, 
   line-height: calc(var(--unit) * 95);
 }
 
-/* A cream disc in a grey ring, its X the disc's dark hole, traced off the quest screen's still at 1920 by 1080 with one
-   Of its pixels a unit */
+/* A cream disc in a grey ring, the ring an inset shadow so the close button's mark sits in the disc's own box */
 .close {
-  --reference-pixel: var(--unit);
   background: #ece5d7;
   box-shadow: inset 0 0 0 calc(var(--unit) * 6) #878789;
   color: #3a4050;
