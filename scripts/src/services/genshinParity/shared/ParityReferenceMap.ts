@@ -273,14 +273,13 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Everfrozen Earth.png",
   },
-  // The English PC client's quit prompt on the current build at 1080 high, from a 2026 recording (`yt-jHr2bERjkYc`, 30
-  // Seconds in), the dialog over the dimmed menu: "Are you sure you want to quit?" with Cancel and Confirm. Scored over
-  // The dialog's whole panel, 960 by 606 from (480, 237) in that frame. The tutorial's red arrow lies inside the panel above
-  // Confirm, an overlay the game does not draw, so the score counts its pixels as a difference
+  // The quit prompt at rest at 1080 high from the public clip, 26.75 seconds in, once the dialog has opened and before the pointer
+  // Reaches a button: neither Cancel nor Confirm is lit. The same recording and scale as the hover and pressed entries, whose panel it
+  // Shares, so the three states are scored over the one region
   "exit-prompt": {
-    region: { height: 606, width: 960, x: 480, y: 237 },
+    region: MENU_EXIT_PANEL_REGION,
     screen: "MenuExit",
-    source: "yt-jHr2bERjkYc-logout-tech4gamers.mp4 at 30s",
+    source: "yt-kIDee7nyD0w-menu-quit-prompt.mp4 at 26.75s",
   },
   // The expedition screen at 1080 high from the public clip (yt-fxIjhlV3vUA), 26 seconds in: Mondstadt's map with six
   // Places pinned and Wolvendom picked, its Expedition Limit across the head, its rewards and durations down the right.

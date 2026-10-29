@@ -29,7 +29,7 @@ committed.
 | `dialogue-line` | `DialogueTalk` | 10.61% | 0.982 | 2.29% | 0.3704 |
 | `dialogue-paimon-line` | `DialogueTalk` | 10.21% | 0.947 | 2.93% | 0.3029 |
 | `everfrozen-earth-location` | `WorldScreen` | 20.61% | 0.234 | 19.75% | 0.6327 |
-| `exit-prompt` | `MenuExit` | 48.46% | 0.122 | 46.13% | 0.7447 |
+| `exit-prompt` | `MenuExit` | 1.66% | 0.999 | 1.33% | 0.1210 |
 | `forge-screen` | `ForgeScreen` | 6.52% | 0.677 | 5.33% | 0.2162 |
 | `forge-screen-ores-done` | `ForgeScreen` | 3.50% | 0.774 | 2.25% | 0.1559 |
 | `forge-screen-queues` | `ForgeScreen` | 3.71% | 0.759 | 2.35% | 0.1665 |
