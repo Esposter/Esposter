@@ -27,6 +27,13 @@ const QUEST_SCREEN_BACKDROP_PLATE = [
   { height: 200, width: 280, x: 1640, y: 880 },
 ];
 
+// A character screen's tab column, its words and diamonds clear of the scene's light, scored by the five tab entries
+const CHARACTER_TABS_REGION = { height: 800, width: 900, x: 120, y: 180 };
+// The reasons a screen has no reference yet, each shared by every screen or variant it is pending for
+const NO_SCREEN_SCREENSHOT = "no screenshot of the screen yet";
+const NO_VARIANT_SCREENSHOT = "no screenshot of this variant yet";
+const RECORDING_NOT_ON_DISK = "its recording is not on disk";
+
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
   // The English PC client's character screen on the Artifacts tab at 21:9, the same recording at 157.5 seconds, the tab settled, scored over its own scene with the interface it shows filled from round it
@@ -43,7 +50,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     isBackdrop: true,
     plate: getCharacterScreenPlate("Artifacts"),
     props: { initialTab: "Artifacts" },
-    region: { height: 800, width: 900, x: 120, y: 180 },
+    region: CHARACTER_TABS_REGION,
     screen: "CharacterScreen",
     source: "session-2.mp4 at 157.5s",
   },
@@ -67,7 +74,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "character-attributes-tabs": {
     isBackdrop: true,
     plate: getCharacterScreenPlate("Attributes"),
-    region: { height: 800, width: 900, x: 120, y: 180 },
+    region: CHARACTER_TABS_REGION,
     screen: "CharacterScreen",
     source: "session-2.mp4 at 155s",
   },
@@ -93,7 +100,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     isBackdrop: true,
     plate: getCharacterScreenPlate("Constellation"),
     props: { initialTab: "Constellation" },
-    region: { height: 800, width: 900, x: 120, y: 180 },
+    region: CHARACTER_TABS_REGION,
     screen: "CharacterScreen",
     source: "session-2.mp4 at 158.3s",
   },
@@ -111,7 +118,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     isBackdrop: true,
     plate: getCharacterScreenPlate("Talents"),
     props: { initialTab: "Talents" },
-    region: { height: 800, width: 900, x: 120, y: 180 },
+    region: CHARACTER_TABS_REGION,
     screen: "CharacterScreen",
     source: "session-2.mp4 at 159s",
   },
@@ -129,11 +136,11 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     isBackdrop: true,
     plate: getCharacterScreenPlate("Weapons"),
     props: { initialTab: "Weapons" },
-    region: { height: 800, width: 900, x: 120, y: 180 },
+    region: CHARACTER_TABS_REGION,
     screen: "CharacterScreen",
     source: "session-2.mp4 at 156s",
   },
-  "cooking-screen": { pending: "no screenshot of the screen yet", screen: "CookingScreen" },
+  "cooking-screen": { pending: NO_SCREEN_SCREENSHOT, screen: "CookingScreen" },
   // The Court of Fontaine from the wiki's location image at 4K, by day with the sun high. Its landmarks are rigid stone
   // And steel read off 4x crops: the arch's two feet, the bridge's two springs and the drum tower's roof corners
   "court-of-fontaine-location": {
@@ -151,7 +158,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Court of Fontaine.png",
   },
-  "crafting-strongbox": { pending: "no screenshot of the screen yet", screen: "CraftingStrongbox" },
+  "crafting-strongbox": { pending: NO_SCREEN_SCREENSHOT, screen: "CraftingStrongbox" },
   // The crafting table's Craft screen at 1080 high from a public video (yt-qQILsaJKlsI), about 40 seconds in: Condensed
   // Resin picked, Crafting Performed 1 and Diluc as the crafter. No frame shows the spot with the screen closed, so no
   // Plate: the mask scores the opaque panels (the recipe grid, the title and the details, the materials band and the
@@ -167,7 +174,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       { height: 40, width: 170, x: 1615, y: 25 },
       { height: 75, width: 250, x: 820, y: 20 },
     ],
-    pending: "its recording is not on disk",
+    pending: RECORDING_NOT_ON_DISK,
     screen: "CraftingScreen",
   },
   // The English PC client's dialogue at 720 high from the public recording, about 19 seconds in: Sara's line with the
@@ -268,18 +275,10 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "ForgeScreen",
     source: "yt-AVnbm8fESr0-forge-screen.mp4 at 32s",
   },
-  "forge-screen-ores-done": {
-    pending: "no screenshot of this variant yet",
-    screen: "ForgeScreen",
-    variant: "oresDone",
-  },
-  "forge-screen-queues": { pending: "no screenshot of this variant yet", screen: "ForgeScreen", variant: "queues" },
-  "forge-screen-refused": { pending: "no screenshot of this variant yet", screen: "ForgeScreen", variant: "refused" },
-  "forge-screen-weapons-done": {
-    pending: "no screenshot of this variant yet",
-    screen: "ForgeScreen",
-    variant: "weaponsDone",
-  },
+  "forge-screen-ores-done": { pending: NO_VARIANT_SCREENSHOT, screen: "ForgeScreen", variant: "oresDone" },
+  "forge-screen-queues": { pending: NO_VARIANT_SCREENSHOT, screen: "ForgeScreen", variant: "queues" },
+  "forge-screen-refused": { pending: NO_VARIANT_SCREENSHOT, screen: "ForgeScreen", variant: "refused" },
+  "forge-screen-weapons-done": { pending: NO_VARIANT_SCREENSHOT, screen: "ForgeScreen", variant: "weaponsDone" },
   // The public frame of the card game's duel board at 1080 high from the English PC client, cut from 400 seconds of a
   // Walkthrough, the frame at 407 seconds in the Action Phase: both sides' characters, the dice column and the hand. A
   // Video's frame, so its art is not drawn and only its tints, words and places are scored
@@ -292,7 +291,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The Japanese PC client's notice whole at 30 seconds of the public recording of its launch (the PC watermark top left and the
   // Recorder's icons bottom right sit outside the region scored)
   "health-notice-japanese": {
-    pending: "its recording is not on disk",
+    pending: RECORDING_NOT_ON_DISK,
     props: { language: "Japanese" },
     region: { height: 480, width: 1520, x: 200, y: 300 },
     screen: "SplashHealthNotice",
@@ -567,11 +566,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "LoginScreen",
     source: "session-2.mp4 at 35.9s",
   },
-  "login-interface-arriving": {
-    pending: "no screenshot of this variant yet",
-    screen: "LoginInterface",
-    variant: "arriving",
-  },
+  "login-interface-arriving": { pending: NO_VARIANT_SCREENSHOT, screen: "LoginInterface", variant: "arriving" },
   // The login screen's interface over the English recording's own frames of it, at 1080 high: its title, its status as
   // Data loads, and its prompt at the door. The recording is of an older build, whose title shows a repair button and
   // Whose build string differs, so those two stay apart from ours, which are the current build's
@@ -597,11 +592,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "yt-rBnfA4pXw6U.mp4 at 5s",
     variant: "loadingData",
   },
-  "login-interface-loading-game": {
-    pending: "no screenshot of this variant yet",
-    screen: "LoginInterface",
-    variant: "loadingGame",
-  },
+  "login-interface-loading-game": { pending: NO_VARIANT_SCREENSHOT, screen: "LoginInterface", variant: "loadingGame" },
   // Mainland China's interface over its launch recording's own frame at 1080 high, the door not yet formed, scored over
   // Its age rating alone: the recording is of an older build, whose build string sits apart from the current one's
   "login-interface-mainland-rating": {
@@ -625,7 +616,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "LoginScreen",
     source: "yt-PnqNza4qWzs.mp4 at 12s",
   },
-  "login-screen-dusk": { pending: "no screenshot of this variant yet", screen: "LoginScreen", variant: "dusk" },
+  "login-screen-dusk": { pending: NO_VARIANT_SCREENSHOT, screen: "LoginScreen", variant: "dusk" },
   // The English PC client's map zoomed out over Galesong Hill at 99% (yt-kgW2IgWKukg at 4.6 seconds, 1080p and 60 frames a
   // Second, one chest before the area reads 100%). Its label, the name and the progress line under it, scored over the
   // Glyphs' silhouettes alone, the terrain between their strokes left out. The game places a label from map data the
@@ -680,11 +671,11 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     ],
     wikiTitle: "File:Map Stardust in Jueyun.png",
   },
-  "menu-exit-hover": { pending: "no screenshot of this variant yet", screen: "MenuExit", variant: "hover" },
-  "menu-exit-pressed": { pending: "no screenshot of this variant yet", screen: "MenuExit", variant: "pressed" },
-  "menu-paimon-disabled": { pending: "no screenshot of this variant yet", screen: "MenuPaimon", variant: "disabled" },
-  "menu-paimon-hover": { pending: "no screenshot of this variant yet", screen: "MenuPaimon", variant: "hover" },
-  "menu-paimon-pressed": { pending: "no screenshot of this variant yet", screen: "MenuPaimon", variant: "pressed" },
+  "menu-exit-hover": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuExit", variant: "hover" },
+  "menu-exit-pressed": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuExit", variant: "pressed" },
+  "menu-paimon-disabled": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuPaimon", variant: "disabled" },
+  "menu-paimon-hover": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuPaimon", variant: "hover" },
+  "menu-paimon-pressed": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuPaimon", variant: "pressed" },
   // The English PC client's Time screen at 1080 high from a public recording (yt-a4_J84iMqR0), ten seconds in: the clock
   // At 03:52 and the dial turned to 18:00 Today, drawn over the world it dims. The fixture's hand rests half an hour on, so
   // The compare differs at the hand and the target hour until the screen takes a dialled advance
@@ -694,19 +685,15 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "MenuTime",
     source: "yt-a4_J84iMqR0-time.mp4 at 10s",
   },
-  "menu-world-level-prompt": { pending: "no screenshot of the screen yet", screen: "MenuWorldLevelPrompt" },
-  "menu-world-level-prompt-hover": {
-    pending: "no screenshot of this variant yet",
-    screen: "MenuWorldLevelPrompt",
-    variant: "hover",
-  },
+  "menu-world-level-prompt": { pending: NO_SCREEN_SCREENSHOT, screen: "MenuWorldLevelPrompt" },
+  "menu-world-level-prompt-hover": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuWorldLevelPrompt", variant: "hover" },
   "menu-world-level-prompt-pressed": {
-    pending: "no screenshot of this variant yet",
+    pending: NO_VARIANT_SCREENSHOT,
     screen: "MenuWorldLevelPrompt",
     variant: "pressed",
   },
   "menu-world-level-prompt-revert": {
-    pending: "no screenshot of this variant yet",
+    pending: NO_VARIANT_SCREENSHOT,
     screen: "MenuWorldLevelPrompt",
     variant: "revert",
   },
@@ -892,15 +879,15 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "MenuSettings",
     source: "yt-5EmJX_RyuY8-menu-settings.mp4 at 144.5s",
   },
-  "spiral-abyss-benediction": { pending: "no screenshot of the screen yet", screen: "SpiralAbyssBenediction" },
-  "spiral-abyss-entry": { pending: "no screenshot of the screen yet", screen: "SpiralAbyssEntry" },
+  "spiral-abyss-benediction": { pending: NO_SCREEN_SCREENSHOT, screen: "SpiralAbyssBenediction" },
+  "spiral-abyss-entry": { pending: NO_SCREEN_SCREENSHOT, screen: "SpiralAbyssEntry" },
   "splash-title-chinese-traditional": {
-    pending: "no screenshot of this variant yet",
+    pending: NO_VARIANT_SCREENSHOT,
     screen: "SplashTitle",
     variant: "chineseTraditional",
   },
-  "splash-title-japanese": { pending: "no screenshot of this variant yet", screen: "SplashTitle", variant: "japanese" },
-  "splash-title-korean": { pending: "no screenshot of this variant yet", screen: "SplashTitle", variant: "korean" },
+  "splash-title-japanese": { pending: NO_VARIANT_SCREENSHOT, screen: "SplashTitle", variant: "japanese" },
+  "splash-title-korean": { pending: NO_VARIANT_SCREENSHOT, screen: "SplashTitle", variant: "korean" },
   // Sumeru City from the wiki's location image of 2022, the only Sumeru City shot found: daylight with a clear sky and
   // Short shadows, so a provisional noon until the shadows solve reads its sun. Its landmarks are the terrace's spire
   // And the green-domed minaret's rigid edges, read at the image's pixels; its build is checked against the export once
@@ -933,20 +920,12 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "bili-av532052219.mp4 at 5s",
     variant: "chineseSimplified",
   },
-  "weapon-screen": { pending: "no screenshot of the screen yet", screen: "WeaponScreen" },
-  "weapon-screen-ascend": { pending: "no screenshot of this variant yet", screen: "WeaponScreen", variant: "ascend" },
-  "weapon-screen-at-cap": { pending: "no screenshot of this variant yet", screen: "WeaponScreen", variant: "atCap" },
-  "weapon-screen-rank-five": {
-    pending: "no screenshot of this variant yet",
-    screen: "WeaponScreen",
-    variant: "rankFive",
-  },
-  "weapon-screen-refine": { pending: "no screenshot of this variant yet", screen: "WeaponScreen", variant: "refine" },
-  "weapon-screen-two-star": {
-    pending: "no screenshot of this variant yet",
-    screen: "WeaponScreen",
-    variant: "twoStar",
-  },
+  "weapon-screen": { pending: NO_SCREEN_SCREENSHOT, screen: "WeaponScreen" },
+  "weapon-screen-ascend": { pending: NO_VARIANT_SCREENSHOT, screen: "WeaponScreen", variant: "ascend" },
+  "weapon-screen-at-cap": { pending: NO_VARIANT_SCREENSHOT, screen: "WeaponScreen", variant: "atCap" },
+  "weapon-screen-rank-five": { pending: NO_VARIANT_SCREENSHOT, screen: "WeaponScreen", variant: "rankFive" },
+  "weapon-screen-refine": { pending: NO_VARIANT_SCREENSHOT, screen: "WeaponScreen", variant: "refine" },
+  "weapon-screen-two-star": { pending: NO_VARIANT_SCREENSHOT, screen: "WeaponScreen", variant: "twoStar" },
   // The statue under the oak by day, from the 2026 recording's fixed camera east of it, a game minute a real second
   // From about six in the morning, an hour still to be read off its sun; its camera is solved from its landmarks and
   // Refined on the statue's outline
@@ -1001,9 +980,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "MenuWorldLevelDialog",
     source: "world-level-dialog-2024.mkv at 5s",
   },
-  "world-realm-placement-editor": { pending: "no screenshot of the screen yet", screen: "WorldRealmPlacementEditor" },
+  "world-realm-placement-editor": { pending: NO_SCREEN_SCREENSHOT, screen: "WorldRealmPlacementEditor" },
   "world-realm-placement-editor-at-load": {
-    pending: "no screenshot of this variant yet",
+    pending: NO_VARIANT_SCREENSHOT,
     screen: "WorldRealmPlacementEditor",
     variant: "atLoad",
   },
