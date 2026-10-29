@@ -11,7 +11,7 @@ flowchart LR
   NODE["SurveyInvite node<br/>label and surveyId"] -->|"propsSchema"| LINK["createResourceLinkSchema<br/>declared survey link"]
   LINK -->|"content schema"| INDEX["ResourceTypeGetLinkTargetsMap<br/>indexed on save"]
   NODE -->|"render"| ANCHOR["a.survey-invite<br/>href from getSurveyInviteUrl"]
-  ANCHOR --> SURVEY["/view/Survey/[surveyId]"]
+  ANCHOR --> SURVEY["/view/Survey/[id]"]
 ```
 
 - **Render** — the node renders an anchor classed `survey-invite`, its `href` the absolute survey url from `getSurveyInviteUrl(context.origin, surveyId)`. The link is absolute, against the origin the page publishes from, so it works from any page that holds it. A published page loads no stylesheet of ours, so the button's styling is the node's own `css`.
