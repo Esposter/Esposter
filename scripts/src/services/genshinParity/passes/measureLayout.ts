@@ -13,11 +13,10 @@ import { getCurrentBuildReferenceIds } from "#src/services/genshinParity/passes/
 import { openComponentWitnessPage } from "#src/services/genshinParity/passes/openComponentWitnessPage";
 import { readFamilyOffsets } from "#src/services/genshinParity/passes/readFamilyOffsets";
 import { shift } from "#src/services/genshinParity/passes/shift";
-import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fromPageCamera } from "#src/services/genshinParity/shared/fromPageCamera";
+import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { withFinalizerAsync } from "@esposter/shared";
-import { join } from "node:path";
 import sharp from "sharp";
 
 // The layout pass: each ratio its references show between parts that meet against the fitted data's, each fitted
@@ -48,7 +47,7 @@ export const measureLayout = async (component: DerivedAssetComponent): Promise<P
             (Reflect.get(window, "getSceneCamera") as () => NonNullable<WitnessView["camera"]>)(),
           ),
           readFamilyOffsets(referencePage),
-          sharp(join(REFERENCES_DIRECTORY, `${referenceId}.png`)).metadata(),
+          sharp(getReferencePath(referenceId)).metadata(),
         ]);
         const pose = fromPageCamera(camera);
         return families.map(({ name, pairs, row: { count, length } }) => {

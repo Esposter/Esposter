@@ -2,8 +2,9 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { WitnessPart } from "genshin-world/parity/models/witness/WitnessPart";
 import type { WitnessView } from "genshin-world/parity/models/witness/WitnessView";
 
-import { PARITY_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
+import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
@@ -22,7 +23,7 @@ export const labelWitnessParts = async (
   camera?: WitnessView["camera"],
 ): Promise<{ imagePath: string; parts: (WitnessPart & { pixel: [number, number] })[] }> => {
   await fetchReferences();
-  const referencePath = join(REFERENCES_DIRECTORY, `${referenceId}.png`);
+  const referencePath = getReferencePath(referenceId);
   const { height, width } = await sharp(referencePath).metadata();
   const { close, page } = await openWitnessPage(referenceId, witness);
   return withFinalizerAsync(

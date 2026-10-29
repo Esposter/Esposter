@@ -5,8 +5,9 @@ import type { Vector } from "#src/models/shared/Vector";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { SHADOW_WIDTH } from "#src/services/genshinParity/passes/constants";
-import { PARITY_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
+import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
@@ -83,7 +84,7 @@ export const solveReferenceShadows = async (
   solved?: PricedDirection;
 }> => {
   await fetchReferences();
-  const referencePath = join(REFERENCES_DIRECTORY, `${referenceId}.png`);
+  const referencePath = getReferencePath(referenceId);
   const [{ checkIsScored, close, image, page }, { width: referenceWidth }] = await Promise.all([
     openWitnessPage(referenceId, witness, SHADOW_WIDTH),
     sharp(referencePath).metadata(),

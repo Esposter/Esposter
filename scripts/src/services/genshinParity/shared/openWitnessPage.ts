@@ -1,11 +1,11 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { Page } from "playwright";
 
-import { REFERENCES_DIRECTORY, STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
+import { STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
+import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { join } from "node:path";
 import sharp from "sharp";
 
 // One reference's page for the witness tools: the parity page on the reference's screen in its own state (its props, a
@@ -28,7 +28,7 @@ export const openWitnessPage = async (
 }> => {
   const reference = ParityReferenceMap[referenceId];
   if (!reference) throw new InvalidOperationError(Operation.Read, referenceId, "not a reference");
-  const referencePath = join(REFERENCES_DIRECTORY, `${referenceId}.png`);
+  const referencePath = getReferencePath(referenceId);
   const { height: referenceHeight, width: referenceWidth } = await sharp(referencePath).metadata();
   const height = Math.round((width / referenceWidth) * referenceHeight);
   const image = await sharp(referencePath).resize(width, height).removeAlpha().png().toBuffer();

@@ -9,8 +9,8 @@ import { compareScreen } from "#src/services/genshinParity/reference/compareScre
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
 import { getMissingReferenceInputs } from "#src/services/genshinParity/reference/getMissingReferenceInputs";
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
-import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
+import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { getResultAsync } from "@esposter/shared";
 import { defineCommand } from "citty";
@@ -56,11 +56,7 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
           layerComponent === undefined
             ? undefined
             : join(getComponentDirectory(layerComponent).root, WITNESS_LAYOUT_FILE_NAME);
-        const missing = getMissingReferenceInputs(
-          join(REFERENCES_DIRECTORY, `${referenceId}.png`),
-          witnessLayoutPath,
-          existsSync,
-        );
+        const missing = getMissingReferenceInputs(getReferencePath(referenceId), witnessLayoutPath, existsSync);
         // A reference not yet measurable keeps its row as the report last had it, and the run goes on to the next
         if (missing.length > 0) {
           console.log(`not measured: ${missing.join(", ")}`);

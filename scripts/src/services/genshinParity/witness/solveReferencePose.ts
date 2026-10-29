@@ -1,8 +1,9 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
 import { getLandmarkMeshes } from "#src/services/genshinAssets/witness/getLandmarkMeshes";
-import { PARITY_DIRECTORY, REFERENCES_DIRECTORY, STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
+import { PARITY_DIRECTORY, STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
+import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { projectWitnessPoint } from "#src/services/genshinParity/witness/projectWitnessPoint";
 import { readReferenceLandmarks } from "#src/services/genshinParity/witness/readReferenceLandmarks";
@@ -76,7 +77,7 @@ export const solveReferencePose = async (
       await mkdir(directory, { recursive: true });
       const imagePath = join(directory, `${referenceId}.png`);
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">${markers.join("")}</svg>`;
-      await sharp(join(REFERENCES_DIRECTORY, `${referenceId}.png`))
+      await sharp(getReferencePath(referenceId))
         .composite([{ input: Buffer.from(svg) }])
         .png()
         .toFile(imagePath);

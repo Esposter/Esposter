@@ -20,6 +20,7 @@ import {
   STRUCTURE_WIDTH,
 } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
+import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
 import { readReferenceGbuffer } from "#src/services/genshinParity/shared/readReferenceGbuffer";
@@ -49,7 +50,7 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
       `not one of ${Object.keys(ParityReferenceMap).join(", ")}`,
     );
   await fetchReferences();
-  const referencePath = join(REFERENCES_DIRECTORY, `${referenceId}.png`);
+  const referencePath = getReferencePath(referenceId);
   // FetchReferences only logs a reference the wiki lacks, so its absence is caught here rather than inside sharp
   if (!existsSync(referencePath))
     throw new InvalidOperationError(Operation.Read, referenceId, `no reference at ${referencePath}`);

@@ -2,11 +2,10 @@ import type { SubCommandsDef } from "citty";
 
 import { computeUnderBlackShare } from "#src/services/genshinParity/display/computeUnderBlackShare";
 import { formatUnderBlackShare } from "#src/services/genshinParity/display/formatUnderBlackShare";
-import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
+import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { parseNames } from "#src/services/shared/parseNames";
 import { defineCommand } from "citty";
-import { join } from "node:path";
 import sharp from "sharp";
 
 export const blackCommand: SubCommandsDef[string] = defineCommand({
@@ -26,10 +25,7 @@ export const blackCommand: SubCommandsDef[string] = defineCommand({
     await fetchReferences();
     for (const referenceId of parseNames(args.reference, "reference")) {
       // oxlint-disable-next-line no-await-in-loop -- one frame read at a time, each printed as it is read
-      const data = await sharp(join(REFERENCES_DIRECTORY, `${referenceId}.png`))
-        .removeAlpha()
-        .raw()
-        .toBuffer();
+      const data = await sharp(getReferencePath(referenceId)).removeAlpha().raw().toBuffer();
       const underBlackShare = computeUnderBlackShare(data);
       console.log(
         `${referenceId}: ${formatUnderBlackShare(underBlackShare)} of its pixels hold a channel under ${underBlackShare.blackByte} of 255`,

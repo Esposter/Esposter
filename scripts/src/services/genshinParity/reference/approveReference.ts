@@ -4,15 +4,15 @@ import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constant
 import { decideApproval } from "#src/services/genshinParity/reference/decideApproval";
 import { readScore } from "#src/services/genshinParity/reference/readScore";
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
-import { GENSHIN_WORLD_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { GENSHIN_WORLD_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
+import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
 import { FIXTURE_VARIANT_SEPARATOR } from "genshin-interface/constants";
 import { existsSync } from "node:fs";
-import { join } from "node:path";
 
 // The visual suite's file, whose tests are titled by their screen's name
 const VISUAL_SUITE_FILE = "parity/screens.visual.ts";
@@ -30,7 +30,7 @@ export const approveReference = async (referenceId: string, variant?: string): P
       `not one of ${Object.keys(ParityReferenceMap).join(", ")}`,
     );
   await fetchReferences();
-  const hasReference = existsSync(join(REFERENCES_DIRECTORY, `${referenceId}.png`));
+  const hasReference = existsSync(getReferencePath(referenceId));
   // A region compare judges only the region it names. The compare also judges the props and variant the map records, so
   // An approval is judged by it only when it approves that same state: a base image over a reference in other props, or
   // A variant the map does not record, is refused rather than scored against another state's reference

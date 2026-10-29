@@ -4,11 +4,10 @@ import type { Vector } from "#src/models/shared/Vector";
 import type { Page } from "playwright";
 
 import { DerivedAssetLandmarkMap } from "#src/services/genshinAssets/witness/DerivedAssetLandmarkMap";
-import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { snapToCorner } from "#src/services/genshinParity/witness/snapToCorner";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { join } from "node:path";
 import sharp from "sharp";
 
 // How far, in the reference's pixels, a landmark read by eye may move to the corner it snaps to
@@ -40,7 +39,7 @@ export const readReferenceLandmarks = async (
     if (!landmark) throw new InvalidOperationError(Operation.Read, name, `not a landmark of ${witness}`);
     return landmark;
   });
-  const { data, info } = await sharp(join(REFERENCES_DIRECTORY, `${referenceId}.png`))
+  const { data, info } = await sharp(getReferencePath(referenceId))
     .greyscale()
     .raw()
     .toBuffer({ resolveWithObject: true });
