@@ -37,7 +37,7 @@ import {
 } from "#src/services/shared/constants";
 import { readManifestFiles } from "#src/services/shared/readManifestFiles";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
-import { timeCommand } from "#src/services/timing/runCommand";
+import { timeCommand } from "#src/services/timing/timeCommand";
 import { NODE_VERSION_FILENAME } from "#src/services/updateNode/constants";
 import { WORKSPACE_FILE } from "@esposter/configuration";
 import { readFileSync } from "node:fs";

@@ -1,5 +1,5 @@
 import { readSharedExportFindings } from "#src/services/sweeps/sharedExportConsumers/readSharedExportFindings";
-import { timeCommand } from "#src/services/timing/runCommand";
+import { timeCommand } from "#src/services/timing/timeCommand";
 
 timeCommand("ai:sweep:shared-export-consumers");
 

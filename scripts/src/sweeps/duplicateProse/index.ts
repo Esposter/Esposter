@@ -1,5 +1,5 @@
 import { readDuplicateProseFindings } from "#src/services/sweeps/duplicateProse/readDuplicateProseFindings";
-import { timeCommand } from "#src/services/timing/runCommand";
+import { timeCommand } from "#src/services/timing/timeCommand";
 
 timeCommand("ai:sweep:duplicate-prose");
 

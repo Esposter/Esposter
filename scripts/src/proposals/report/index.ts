@@ -4,7 +4,7 @@ import { getProductReviewPasses } from "#src/services/proposals/getProductReview
 import { getProposalShips } from "#src/services/proposals/getProposalShips";
 import { readProposalSummaries } from "#src/services/proposals/readProposalSummaries";
 import { runGit } from "#src/services/shared/runGit";
-import { timeCommand } from "#src/services/timing/runCommand";
+import { timeCommand } from "#src/services/timing/timeCommand";
 
 timeCommand("ai:proposals:report");
 

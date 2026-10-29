@@ -1,5 +1,5 @@
 import { readConstantScopeFindings } from "#src/services/sweeps/constantScope/readConstantScopeFindings";
-import { timeCommand } from "#src/services/timing/runCommand";
+import { timeCommand } from "#src/services/timing/timeCommand";
 
 timeCommand("ai:sweep:constant-scope");
 

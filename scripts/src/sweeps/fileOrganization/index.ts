@@ -1,5 +1,5 @@
 import { readFileOrganizationFindings } from "#src/services/sweeps/fileOrganization/readFileOrganizationFindings";
-import { timeCommand } from "#src/services/timing/runCommand";
+import { timeCommand } from "#src/services/timing/timeCommand";
 
 timeCommand("ai:sweep:file-organization");
 

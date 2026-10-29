@@ -9,7 +9,7 @@ import { getLedgerEvents } from "#src/services/sweeps/ledgerCoverage/getLedgerEv
 import { LedgerUnitsMap } from "#src/services/sweeps/ledgerCoverage/LedgerUnitsMap";
 import { syncLedgerUnits } from "#src/services/sweeps/ledgerCoverage/syncLedgerUnits";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
-import { timeCommand } from "#src/services/timing/runCommand";
+import { timeCommand } from "#src/services/timing/timeCommand";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 

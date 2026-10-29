@@ -1,6 +1,6 @@
 import { SkillDocsFindingTypes } from "#src/models/sweeps/skillDocs/SkillDocsFindingType";
 import { readSkillDocsFindings } from "#src/services/sweeps/skillDocs/readSkillDocsFindings";
-import { timeCommand } from "#src/services/timing/runCommand";
+import { timeCommand } from "#src/services/timing/timeCommand";
 
 timeCommand("ai:sweep:skill-docs");
 

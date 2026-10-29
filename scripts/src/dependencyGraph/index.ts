@@ -4,7 +4,7 @@ import { getWorkspaceEdges } from "#src/services/dependencyGraph/getWorkspaceEdg
 import { readPnpmProjects } from "#src/services/dependencyGraph/readPnpmProjects";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
-import { timeCommand } from "#src/services/timing/runCommand";
+import { timeCommand } from "#src/services/timing/timeCommand";
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 

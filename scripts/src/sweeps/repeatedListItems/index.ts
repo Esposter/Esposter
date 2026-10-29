@@ -1,7 +1,7 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { checkHasRepeatedListItems } from "#src/services/sweeps/repeatedListItems/checkHasRepeatedListItems";
-import { timeCommand } from "#src/services/timing/runCommand";
+import { timeCommand } from "#src/services/timing/timeCommand";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 

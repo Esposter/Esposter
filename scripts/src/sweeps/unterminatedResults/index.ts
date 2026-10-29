@@ -2,7 +2,7 @@ import { REPOSITORY_ROOT, VUE_SCRIPT_BODY_REGEX } from "#src/services/shared/con
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { checkIsInScope } from "#src/services/sweeps/unterminatedResults/checkIsInScope";
 import { getUnterminatedResults } from "#src/services/sweeps/unterminatedResults/getUnterminatedResults";
-import { timeCommand } from "#src/services/timing/runCommand";
+import { timeCommand } from "#src/services/timing/timeCommand";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
