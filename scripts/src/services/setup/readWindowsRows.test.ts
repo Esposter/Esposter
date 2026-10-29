@@ -1,11 +1,12 @@
 import { SetupStatus } from "#src/models/setup/SetupStatus";
+import { GENSHIN_FLEET_AREA } from "#src/services/fleet/constants";
 import { createSetupEnvironment } from "#src/services/setup/createSetupEnvironment.test";
 import { readWindowsRows } from "#src/services/setup/readWindowsRows";
 import { describe, expect, test } from "vitest";
 
 describe(readWindowsRows, () => {
   const LONG_PATHS_ON = "LongPathsEnabled    REG_DWORD    0x1\r\n";
-  const GENSHIN_PROFILE = JSON.stringify({ areas: ["genshin"], capabilities: ["windows"], id: "pc" });
+  const GENSHIN_PROFILE = JSON.stringify({ areas: [GENSHIN_FLEET_AREA], capabilities: ["windows"], id: "pc" });
 
   test("prints what to do for each Windows fact that is not in place", () => {
     expect.hasAssertions();
