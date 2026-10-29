@@ -66,9 +66,9 @@ const pick = (characterId: number) => {
        map is drawn over the world and is the game's art, which does not ship, so the screen is transparent there; the
        panel's picture is drawn as a plain sheet, and the pin's brackets as a square outline -->
   <div class="expedition-screen">
-    <ScreenTitle>{{ title }}</ScreenTitle>
+    <ScreenTitle class="heading">{{ title }}</ScreenTitle>
     <p class="limit">{{ limitLabel }}</p>
-    <button class="close" :aria-label="closeLabel" type="button" @click="emit('close')">×</button>
+    <button class="close" :aria-label="closeLabel" type="button" @click="emit('close')"></button>
     <ul class="nations">
       <li v-for="{ hasAlert, name } of nations" :key="name">
         <button class="nation" :aria-pressed="name === nation" type="button" @click="nation = name">
@@ -131,6 +131,11 @@ const pick = (characterId: number) => {
   font-weight: 600;
 }
 
+/* The title is the game's head line at 28 pixels, set in the game's place for it */
+.heading {
+  font-size: calc(var(--unit) * 28);
+}
+
 .limit {
   position: absolute;
   top: calc(var(--unit) * 33);
@@ -139,20 +144,35 @@ const pick = (characterId: number) => {
   font-size: calc(var(--unit) * 24);
 }
 
+/* The way out is a disc 58 across with a grey ring, its cross two bars of the ink's colour, measured from the reference */
 .close {
   position: absolute;
-  top: calc(var(--unit) * 20);
-  right: calc(var(--unit) * 50);
-  width: calc(var(--unit) * 56);
-  height: calc(var(--unit) * 56);
+  top: calc(var(--unit) * 19);
+  right: calc(var(--unit) * 48);
+  width: calc(var(--unit) * 58);
+  height: calc(var(--unit) * 58);
   padding: 0;
-  border: none;
-  border-radius: calc(var(--unit) * 10);
-  background: #f2efe6;
-  color: #3b4255;
-  font: inherit;
-  font-size: calc(var(--unit) * 36);
-  line-height: calc(var(--unit) * 56);
+  box-sizing: border-box;
+  border: calc(var(--unit) * 6) solid #757274;
+  border-radius: 50%;
+  background: #eee9e8;
+  color: #3e4251;
+}
+
+.close::before,
+.close::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--unit) * 31);
+  height: calc(var(--unit) * 6);
+  background: currentcolor;
+  content: "";
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .nations {
