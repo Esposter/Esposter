@@ -8,7 +8,14 @@ import { useResourceStore } from "@/store/resource";
 import { useSurveyStore } from "@/store/survey";
 import { useThemeModeStore } from "@/store/ui/themeMode";
 import { ResourceType } from "@esposter/db-schema";
-import { getPropertyNames, getResultAsync, getSynchronizedFunction, noop, takeOne } from "@esposter/shared";
+import {
+  getPropertyNames,
+  getResultAsync,
+  getSynchronizedFunction,
+  noop,
+  sanitizeHtml,
+  takeOne,
+} from "@esposter/shared";
 import { ImageItemValue, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
 import { DefaultDark, DefaultLight } from "survey-core/themes";
 import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
@@ -46,6 +53,14 @@ export const useSurveyCreator = () => {
   onMounted(async () => {
     await loadContent();
     const newCreator = new SurveyCreatorModel({ autoSaveEnabled: true, showThemeTab: true, showTranslationTab: true });
+    // An imported html question renders into this origin on the design surface, which the creator builds from a survey
+    // Instance of its own — so the handler attaches before the JSON is set, and every instance the creator builds, the
+    // Design surface and the preview alike, passes its markup through the sanitizer the respondent page applies
+    newCreator.onSurveyInstanceSetupHandlers.add((_creator, { survey }) => {
+      survey.onProcessHtml.add((_survey, options) => {
+        options.html = sanitizeHtml(options.html);
+      });
+    });
     const actions = getActions(newCreator, () => resource.value?.name ?? "", importJsonFile, exportJsonFile);
 
     for (const action of actions) {
