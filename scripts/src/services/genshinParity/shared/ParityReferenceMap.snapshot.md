@@ -45,7 +45,7 @@ committed.
 | `hud-paimon-button` | `HudScreen` | 1.74% | 0.916 | 2.34% | 0.1111 |
 | `hud-stamina-climb` | `HudScreen` | 0.62% | 0.787 | 0.75% | 0.0629 |
 | `hud-world-keys` | `HudScreen` | 2.52% | 0.982 | 1.70% | 0.1545 |
-| `hud-world-pickup` | `HudScreen` | 2.86% | 0.751 | 1.53% | 0.1340 |
+| `hud-world-pickup` | `HudScreen` | 2.84% | 0.757 | 1.50% | 0.1335 |
 | `interaction-prompts-jueyun-chili` | `InteractionPromptList` | 4.82% | 0.947 | 1.79% | 0.2070 |
 | `interaction-prompts-pickup` | `InteractionPromptList` | 5.17% | 0.938 | 2.61% | 0.2241 |
 | `inventory-food` | `InventoryScreen` | 3.34% | 0.966 | 1.92% | 0.1900 |

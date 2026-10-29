@@ -221,7 +221,7 @@ const emit = defineEmits<{ map: []; menu: [] }>();
    Minimap until the tree's rect for it is found */
 .quest {
   position: absolute;
-  top: calc(var(--unit) * 244);
-  left: calc(var(--canvas-inset) + var(--unit) * 8);
+  top: calc(var(--unit) * 250);
+  left: calc(var(--canvas-inset) + var(--unit) * 14);
 }
 </style>

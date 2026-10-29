@@ -69,10 +69,14 @@ const step = computed(() => quest.steps[questProgress?.stepIndex ?? 0]);
   text-shadow: 0 0 calc(var(--unit) * 4) rgb(0 0 0 / 0.6);
 }
 
+/* The title is white over a muted yellow underline the width of its words, its cap height 1.23 of the stand-in's at 22 */
 .title {
-  color: #ffe6a1;
-  font-size: calc(var(--unit) * 22);
+  width: fit-content;
+  border-bottom: calc(var(--unit) * 2) solid rgb(255 230 120 / 0.5);
+  color: #fff;
+  font-size: calc(var(--unit) * 27);
   font-weight: 600;
+  letter-spacing: calc(var(--unit) * 1.2);
 }
 
 .step {
@@ -86,6 +90,7 @@ const step = computed(() => quest.steps[questProgress?.stepIndex ?? 0]);
    The title, with the tracker's */
 .mark {
   display: flex;
+  margin-top: calc(var(--unit) * -13);
   align-items: center;
   color: #f9e14e;
   font-size: calc(var(--unit) * 17.6);
