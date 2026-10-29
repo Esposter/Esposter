@@ -33,13 +33,19 @@ export const MAP_OVERLAY_MARK_SHARE = 0.0068;
 export const MAP_LABEL_SHARE = 0.02125;
 export const MAP_PROGRESS_SHARE = 0.012;
 export const MAP_PROGRESS_OFFSET_SHARE = 0.0227;
-// Provisional: the metres the open map shows across its width at the zoom slider's default, centred on the player; not
-// Yet read off the game's zoom levels, which needs the regions' true shapes to measure against
-export const MAP_VIEW_METRES = 400;
+// A subarea's name, its capitals 30 pixels high in the reference's English map over Jueyun Karst at 1080 high, 0.706 of
+// the size the page draws them at, so the name is 0.0221 of the view's extent
+export const MAP_SUBAREA_LABEL_SHARE = 0.0221;
+// The furthest zoom the subarea labels are drawn at, in metres across the map's width: the reference draws them at this
+// zoom, and no further out is measured, so the names hide when the view is further out than it
+export const MAP_SUBAREA_LABEL_MAX_METRES = 1512;
+// The metres the open map shows across its width at the zoom slider's default, centred on the player: the zoom the
+// Reference's slider thumb stands at, from the subarea labels it draws (`map-overlay-jueyun`), 1920 pixels across it
+export const MAP_VIEW_METRES = 1512;
 // Provisional: the metres across the map's width at the slider's two ends, the closest and the furthest zoom. The range
 // Is spaced so the default sits where the reference's slider thumb does, and is read off the game's levels when measured
-export const MAP_VIEW_METRES_MIN = 100;
-export const MAP_VIEW_METRES_MAX = 2800;
+export const MAP_VIEW_METRES_MIN = 384;
+export const MAP_VIEW_METRES_MAX = 10_752;
 // Provisional: the share of the slider's track one wheel unit moves the zoom, a notch of the wheel moving it about a
 // Tenth of the track. Not yet read off the game's wheel
 export const MAP_WHEEL_ZOOM_SHARE = 0.0015;

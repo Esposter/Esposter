@@ -2,6 +2,7 @@
 import type { ExplorationArea } from "#src/models/exploration/ExplorationArea";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { MapCamera } from "#src/models/map/MapCamera";
+import type { MapSubareaLabel } from "#src/models/map/MapSubareaLabel";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
@@ -26,7 +27,8 @@ import {
   MAP_OVERLAY_MARK_SHARE,
   MAP_PROGRESS_OFFSET_SHARE,
   MAP_PROGRESS_SHARE,
-  MAP_VIEW_METRES,
+  MAP_SUBAREA_LABEL_MAX_METRES,
+  MAP_SUBAREA_LABEL_SHARE,
   MAP_ZOOM_DRAWING_HEIGHT,
   MAP_ZOOM_TRACK_HEIGHT,
   MAP_ZOOM_TRACK_TOP,
@@ -52,12 +54,27 @@ interface Props {
   now: Temporal.Instant;
   // The doings the save records as done, which an area counts alongside the statues its unlocked landmarks light
   recordedDoingIds: ReadonlySet<string>;
+  // The game's names by text id in the reader's language, which the subarea labels are named from
+  nameText: Readonly<Record<string, string>>;
+  // Each subarea's label as the open world publishes it, named by its text id and drawn while the view is no further out
+  // than MAP_SUBAREA_LABEL_MAX_METRES
+  subareaLabels: MapSubareaLabel[];
   // The wallet, whose Original Resin the top bar counts as it regenerates to the moment the map opens
   wallet: Wallet;
 }
 
-const { camera, catalogue, explorationAreas, gameText, landmarks, now, recordedDoingIds, wallet } =
-  defineProps<Props>();
+const {
+  camera,
+  catalogue,
+  explorationAreas,
+  gameText,
+  landmarks,
+  nameText,
+  now,
+  recordedDoingIds,
+  subareaLabels,
+  wallet,
+} = defineProps<Props>();
 const emit = defineEmits<{ close: []; jump: [pose: WorldJumpPose] }>();
 
 // The landmark chosen on the map or in the list, whose teleport panel names its area and jumps there on its Teleport
@@ -70,9 +87,9 @@ const chooseLandmark = (landmark: Landmark) => {
 const closeButton = useTemplateRef("closeButton");
 const map = useTemplateRef("map");
 const zoomTrack = useTemplateRef("zoomTrack");
-// The drawn metres across the map's width, which the wheel and the slider change from the default, and the offset the
+// The drawn metres across the map's width, which the wheel and the slider change from the page's zoom, and the offset the
 // Map is dragged to from the player
-const metres = ref(MAP_VIEW_METRES);
+const metres = defineModel<number>("zoom", { required: true });
 const pan = ref({ x: 0, z: 0 });
 const view = computed(() => ({
   x: camera.x + pan.value.x - metres.value / 2,
@@ -162,6 +179,13 @@ const areaLabels = computed(() =>
     z,
   })),
 );
+// Each subarea's name at its place, named in the reader's language; a subarea whose text the language lacks is left out
+const subareaNames = computed(() =>
+  subareaLabels.flatMap(({ nameTextId, x, z }) => {
+    const name = nameText[nameTextId];
+    return name ? [{ name, x, z }] : [];
+  }),
+);
 // The place the character stands in, named at the bottom right with its progress line as the map names it: its city
 // Where it stands in one, else its area, whose progress line it carries
 const regionTag = computed(() => {
@@ -202,6 +226,18 @@ onMounted(() => {
       @wheel="metres = computeWheelZoomMetres(metres, $event.deltaY)"
     >
       <MapDrawing :catalogue :landmarks :mark-radius @select="(landmark) => chooseLandmark(landmark)" />
+      <template v-if="metres <= MAP_SUBAREA_LABEL_MAX_METRES">
+        <text
+          v-for="({ name, x, z }, index) of subareaNames"
+          :key="index"
+          class="subarea-name"
+          :font-size="metres * MAP_SUBAREA_LABEL_SHARE"
+          :x
+          :y="z"
+        >
+          {{ name }}
+        </text>
+      </template>
       <template v-for="{ id, name, progressSegments, x, z } of areaLabels" :key="id">
         <text class="area-name" :font-size="metres * MAP_LABEL_SHARE" :x :y="z">
           {{ name }}
@@ -320,6 +356,16 @@ onMounted(() => {
 }
 
 .area-name {
+  letter-spacing: 0.04em;
+}
+
+/* The subarea names' white, read off the brightest ink the English map draws over Jueyun Karst, which it sets without an
+   outline, so the name is drawn alone */
+.subarea-name {
+  fill: rgb(245 255 255);
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: middle;
   letter-spacing: 0.04em;
 }
 

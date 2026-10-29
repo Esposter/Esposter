@@ -12,6 +12,7 @@ import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MapCamera } from "#src/models/map/MapCamera";
+import type { MapSubareaLabel } from "#src/models/map/MapSubareaLabel";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { QuestMark } from "#src/models/quest/QuestMark";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
@@ -169,8 +170,9 @@ import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
 import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { computeStandingPose } from "#src/services/map/computeStandingPose";
-import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
+import { MAP_VIEW_METRES, TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { findAreaAt } from "#src/services/map/findAreaAt";
+import { readMapSubareaLabels } from "#src/services/map/readMapSubareaLabels";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
 import { GENSHIN_SETTINGS_DEFAULTS } from "#src/services/menu/constants";
@@ -1527,6 +1529,20 @@ const isTouch = useMediaQuery("(pointer: coarse)");
 // The character's ground point in world metres, the yaw the view faces and the yaw the character faces, for the map and
 // The minimap, read each frame and handed on only when one moved, so a still player re-renders nothing
 const mapCamera = shallowRef<MapCamera>({ facing: 0, x: 0, yaw: 0, z: 0 });
+// The zoom the open map is at, in metres across its width, which the map's slider and wheel change and the world keeps
+// From one opening of the map to the next
+const mapZoom = shallowRef(MAP_VIEW_METRES);
+// The subarea labels the open world publishes, read as the world starts, each named by its text id in the world's names
+const subareaLabels = shallowRef<MapSubareaLabel[]>([]);
+// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+getResultAsync(() => readMapSubareaLabels(gameDataBaseUrl)).match(
+  (labels) => {
+    subareaLabels.value = labels;
+  },
+  (error) => {
+    console.error(error);
+  },
+);
 const unfoundOculusPlaces = computed(() => oculusPlaces.value.filter(({ id }) => !foundOculusIds.value.has(id)));
 const nearOculusPlaces = computed(() =>
   getNearOculusPlaces(oculusPlaces.value, foundOculusIds.value, mapCamera.value, OCULUS_MINIMAP_DISTANCE),
@@ -2159,13 +2175,16 @@ useWorldSaveSync({
     >
       <template #[ScreenKind.Map]>
         <MapOverlay
+          v-model:zoom="mapZoom"
           :camera="mapCamera"
           :catalogue
           :exploration-areas
           :game-text
           :landmarks="unlockedLandmarks"
+          :name-text="nameText"
           :recorded-doing-ids
           :now="worldNow"
+          :subarea-labels="subareaLabels"
           :wallet
           @close="screenKind = ScreenKind.World"
           @jump="
