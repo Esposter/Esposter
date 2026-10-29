@@ -19,6 +19,7 @@
 
 ## Open
 
+- [ ] **The Zongzhan piece count: 35 in the Waiting item, 36 in the Open item below** — no source yet: a grep of `{data-root}/genshin-parity/extracted/fontaine/` for `Area_Fd_Build_FDC_POI_Zongzhan_` followed by digits finds 36 distinct numbers, which sides with the Open item's 36; the layout dumps were counted on their own, not apart from the witness, so which count the Waiting item means is not settled.
 - [ ] **court-of-fontaine-location's pose image** — no source yet: the pose is not solved from `{data-root}/genshin-parity/references/court-of-fontaine-location.png`, which is on disk, as its camera pass above is not yet run.
 - [ ] **court-of-fontaine-location's shadow image** — no source yet: the shadows are not read from `{data-root}/genshin-parity/references/court-of-fontaine-location.png`, which is on disk, as its sun-direction pass above is not yet run.
 - [ ] **Fontaine: the surface pass's kit colours** — no source yet: the Fontaine palette file of the hosted game data, which is not on disk
