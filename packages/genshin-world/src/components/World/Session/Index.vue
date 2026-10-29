@@ -172,7 +172,7 @@ import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
 import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { computeStandingPose } from "#src/services/map/computeStandingPose";
-import { MAP_VIEW_METRES, TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
+import { MAP_REFERENCE_ZOOM_METRES, TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { findAreaAt } from "#src/services/map/findAreaAt";
 import { readMapSubareaLabels } from "#src/services/map/readMapSubareaLabels";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
@@ -1538,7 +1538,7 @@ const isTouch = useMediaQuery("(pointer: coarse)");
 const mapCamera = shallowRef<MapCamera>({ facing: 0, x: 0, yaw: 0, z: 0 });
 // The zoom the open map is at, in metres across its width, which the map's slider and wheel change and the world keeps
 // From one opening of the map to the next
-const mapZoom = shallowRef(MAP_VIEW_METRES);
+const mapZoom = shallowRef(MAP_REFERENCE_ZOOM_METRES);
 // The subarea labels the open world publishes, read as the world starts, each named by its text id in the world's names
 const subareaLabels = shallowRef<MapSubareaLabel[]>([]);
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it

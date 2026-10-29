@@ -28,7 +28,7 @@ import {
   MAP_OVERLAY_MARK_SHARE,
   MAP_PROGRESS_OFFSET_SHARE,
   MAP_PROGRESS_SHARE,
-  MAP_SUBAREA_LABEL_MAX_METRES,
+  MAP_REFERENCE_ZOOM_METRES,
   MAP_SUBAREA_LABEL_OFFSETS,
   MAP_SUBAREA_LABEL_SHARE,
   MAP_ZOOM_DRAWING_HEIGHT,
@@ -61,7 +61,7 @@ interface Props {
   // The game's names by text id in the reader's language, which the subarea labels are named from
   nameText: Readonly<Record<string, string>>;
   // Each subarea's label as the open world publishes it, named by its text id and drawn while the view is no further out
-  // than MAP_SUBAREA_LABEL_MAX_METRES
+  // than MAP_REFERENCE_ZOOM_METRES
   subareaLabels: MapSubareaLabel[];
   // The wallet, whose Original Resin the top bar counts as it regenerates to the moment the map opens
   wallet: Wallet;
@@ -241,7 +241,7 @@ onMounted(() => {
         :transform="frameTransform"
         @select="(landmark) => chooseLandmark(landmark)"
       />
-      <template v-if="metres <= MAP_SUBAREA_LABEL_MAX_METRES">
+      <template v-if="metres <= MAP_REFERENCE_ZOOM_METRES">
         <text
           v-for="({ name, x, y }, index) of subareaNames"
           :key="index"

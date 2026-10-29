@@ -1,5 +1,5 @@
 import { computeWheelZoomMetres } from "#src/services/map/computeWheelZoomMetres";
-import { MAP_VIEW_METRES, MAP_VIEW_METRES_MAX } from "#src/services/map/constants";
+import { MAP_REFERENCE_ZOOM_METRES, MAP_VIEW_METRES_MAX } from "#src/services/map/constants";
 import { describe, expect, test } from "vitest";
 
 describe(computeWheelZoomMetres, () => {
@@ -8,8 +8,8 @@ describe(computeWheelZoomMetres, () => {
 
     expect({
       furthest: computeWheelZoomMetres(MAP_VIEW_METRES_MAX, 1e6),
-      in: computeWheelZoomMetres(MAP_VIEW_METRES, -100) < MAP_VIEW_METRES,
-      out: computeWheelZoomMetres(MAP_VIEW_METRES, 100) > MAP_VIEW_METRES,
+      in: computeWheelZoomMetres(MAP_REFERENCE_ZOOM_METRES, -100) < MAP_REFERENCE_ZOOM_METRES,
+      out: computeWheelZoomMetres(MAP_REFERENCE_ZOOM_METRES, 100) > MAP_REFERENCE_ZOOM_METRES,
     }).toStrictEqual({ furthest: MAP_VIEW_METRES_MAX, in: true, out: true });
   });
 });

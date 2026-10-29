@@ -1,6 +1,6 @@
 import { computeZoomMetresAtShare } from "#src/services/map/computeZoomMetresAtShare";
 import { computeZoomShare } from "#src/services/map/computeZoomShare";
-import { MAP_VIEW_METRES, MAP_VIEW_METRES_MAX, MAP_VIEW_METRES_MIN } from "#src/services/map/constants";
+import { MAP_REFERENCE_ZOOM_METRES, MAP_VIEW_METRES_MAX, MAP_VIEW_METRES_MIN } from "#src/services/map/constants";
 import { describe, expect, test } from "vitest";
 
 describe(computeZoomMetresAtShare, () => {
@@ -8,9 +8,13 @@ describe(computeZoomMetresAtShare, () => {
     expect.hasAssertions();
 
     expect({
-      back: computeZoomMetresAtShare(computeZoomShare(MAP_VIEW_METRES)),
+      back: computeZoomMetresAtShare(computeZoomShare(MAP_REFERENCE_ZOOM_METRES)),
       past: computeZoomMetresAtShare(2),
       under: computeZoomMetresAtShare(-1),
-    }).toStrictEqual({ back: expect.closeTo(MAP_VIEW_METRES), past: MAP_VIEW_METRES_MAX, under: MAP_VIEW_METRES_MIN });
+    }).toStrictEqual({
+      back: expect.closeTo(MAP_REFERENCE_ZOOM_METRES),
+      past: MAP_VIEW_METRES_MAX,
+      under: MAP_VIEW_METRES_MIN,
+    });
   });
 });

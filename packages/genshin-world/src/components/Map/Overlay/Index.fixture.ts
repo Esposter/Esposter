@@ -2,7 +2,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { readMapSubareaLabels } from "#src/services/map/readMapSubareaLabels";
-import { MAP_VIEW_METRES } from "#src/services/map/constants";
+import { MAP_REFERENCE_ZOOM_METRES } from "#src/services/map/constants";
 import { readCatalogue } from "#src/services/world/readCatalogue";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
@@ -19,5 +19,5 @@ export const props = {
   recordedDoingIds: new Set(),
   subareaLabels: await readMapSubareaLabels(GAME_DATA_LOCAL_BASE_URL),
   wallet: EMPTY_WALLET,
-  zoom: MAP_VIEW_METRES,
+  zoom: MAP_REFERENCE_ZOOM_METRES,
 };
