@@ -19,8 +19,11 @@ import { join, resolve } from "node:path";
 export const removeWorktree = (path: string, repositoryRoot: string = REPOSITORY_ROOT): void => {
   checkWorktreePath(path);
   const worktreePath = resolve(path);
-  if (!existsSync(worktreePath))
+  if (!existsSync(worktreePath)) {
+    // The record of a folder already gone is pruned before the refusal, since git keeps listing it until it is
+    runGit(["worktree", "prune"], repositoryRoot);
     throw new InvalidOperationError(Operation.Delete, worktreePath, "there is no folder at this path");
+  }
   const isLinked = existsSync(join(worktreePath, GIT_FOLDER));
   if (!isLinked && !checkIsOrphanPath(worktreePath))
     throw new InvalidOperationError(
