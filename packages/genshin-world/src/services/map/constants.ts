@@ -36,9 +36,12 @@ export const MAP_PROGRESS_OFFSET_SHARE = 0.0227;
 // A subarea's name, its capitals 30 pixels high in the reference's English map over Jueyun Karst at 1080 high, 0.706 of
 // the size the page draws them at, so the name is 0.0221 of the view's extent
 export const MAP_SUBAREA_LABEL_SHARE = 0.0221;
+// The metres across the map's width at the zoom the reference draws its subarea names at, where its slider's thumb also
+// stands by default, read from the subarea labels it draws (`map-overlay-jueyun`), 1920 pixels across it
+export const MAP_REFERENCE_ZOOM_METRES = 1512;
 // The furthest zoom the subarea labels are drawn at, in metres across the map's width: the reference draws them at this
 // zoom, and no further out is measured, so the names hide when the view is further out than it
-export const MAP_SUBAREA_LABEL_MAX_METRES = 1512;
+export const MAP_SUBAREA_LABEL_MAX_METRES = MAP_REFERENCE_ZOOM_METRES;
 // Where the reference sets six subarea names away from the published points, which are their outlines' means: the
 // offset in catalogue metres from each name's point to the place its ink centre stands at the reference's zoom, keyed by
 // the name's text id, measured off `map-overlay-jueyun` (Huaguang Stone Forest, Qingyun Peak, Jueyun Karst, Mt. Hulao,
@@ -51,9 +54,8 @@ export const MAP_SUBAREA_LABEL_OFFSETS: Readonly<Partial<Record<string, { x: num
   "4268537278": { x: 25.7, z: -114 },
   "455287262": { x: -59.5, z: 102.2 },
 };
-// The metres the open map shows across its width at the zoom slider's default, centred on the player: the zoom the
-// Reference's slider thumb stands at, from the subarea labels it draws (`map-overlay-jueyun`), 1920 pixels across it
-export const MAP_VIEW_METRES = 1512;
+// The metres the open map shows across its width at the zoom slider's default, centred on the player: the reference's zoom
+export const MAP_VIEW_METRES = MAP_REFERENCE_ZOOM_METRES;
 // Provisional: the metres across the map's width at the slider's two ends, the closest and the furthest zoom. The range
 // Is spaced so the default sits where the reference's slider thumb does, and is read off the game's levels when measured
 export const MAP_VIEW_METRES_MIN = 384;
