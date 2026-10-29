@@ -16,9 +16,9 @@ export const NAVIGATION_POINTER_HIDE_DISTANCE = 40;
 export const NAVIGATION_MARK_INSET_SHARE = 0.04;
 // Provisional: the metres from the minimap's centre to its rim, not yet read off the game's minimap against the world
 export const MINIMAP_RADIUS = 120;
-// The ground the map's drawing stands on where the game paints its terrain, which is not drawn here: the English PC
-// Client's map over Jueyun Karst at 1080 high, averaged over its whole frame. The overlay and the minimap each stand it
-// Under the drawing, so the two views show the world alike
+// The ground the open map's drawing stands on where the game paints its terrain, which is not drawn here: the English PC
+// Client's map over Jueyun Karst at 1080 high, averaged over its whole frame. Only the overlay reads it; the minimap
+// Stands its disc on the terrain's own measured mean colour
 export const MAP_GROUND = "#67817d";
 // Provisional: the map's marks measured off the game's map with the HUD's reference. A mark's radius is a share of the
 // Extent a view shows, so it is drawn one size at any view's scale
