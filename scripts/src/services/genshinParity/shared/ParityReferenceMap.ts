@@ -56,6 +56,62 @@ const RECORDING_NOT_ON_DISK = "its recording is not on disk";
 
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
+  // The English PC client's Archive on its Equipment section's Weapons grid at 1080 high, from the public recording at 19.5 seconds: the
+  // First five rows of the weapons with the first one selected and the cursor resting on the fifth of the first row, forty entries
+  // Open. Its sword, the tiles' art and the unlocked "New" badges (a state the entries do not hold) are plated and not scored, as are
+  // The words the page does not draw yet (the count, the filter, the description), so the scored pixels are the name bands, the title,
+  // The filter bar and the selected name. The recorder's UID sits bottom right, below the region scored
+  "archive-screen": {
+    isBackdrop: true,
+    mask: [
+      { height: 29, width: 115, x: 140, y: 237 },
+      { height: 29, width: 115, x: 270, y: 237 },
+      { height: 29, width: 115, x: 399, y: 237 },
+      { height: 29, width: 115, x: 529, y: 237 },
+      { height: 29, width: 115, x: 658, y: 237 },
+      { height: 29, width: 115, x: 140, y: 397 },
+      { height: 29, width: 115, x: 270, y: 397 },
+      { height: 29, width: 115, x: 399, y: 397 },
+      { height: 29, width: 115, x: 529, y: 397 },
+      { height: 29, width: 115, x: 658, y: 397 },
+      { height: 29, width: 115, x: 140, y: 559 },
+      { height: 29, width: 115, x: 270, y: 559 },
+      { height: 29, width: 115, x: 399, y: 559 },
+      { height: 29, width: 115, x: 529, y: 559 },
+      { height: 29, width: 115, x: 658, y: 559 },
+      { height: 29, width: 115, x: 140, y: 720 },
+      { height: 29, width: 115, x: 270, y: 720 },
+      { height: 29, width: 115, x: 399, y: 720 },
+      { height: 29, width: 115, x: 529, y: 720 },
+      { height: 29, width: 115, x: 658, y: 720 },
+      { height: 29, width: 115, x: 140, y: 881 },
+      { height: 29, width: 115, x: 270, y: 881 },
+      { height: 29, width: 115, x: 399, y: 881 },
+      { height: 29, width: 115, x: 529, y: 881 },
+      { height: 29, width: 115, x: 658, y: 881 },
+      { height: 36, width: 272, x: 144, y: 30 },
+      { height: 49, width: 18, x: 140, y: 995 },
+      { height: 49, width: 466, x: 262, y: 995 },
+      { height: 44, width: 203, x: 1600, y: 842 },
+    ],
+    plate: [
+      { height: 66, width: 62, x: 46, y: 16 },
+      { height: 44, width: 290, x: 138, y: 26 },
+      { height: 92, width: 200, x: 860, y: 10 },
+      { height: 40, width: 330, x: 1455, y: 28 },
+      { height: 64, width: 62, x: 1812, y: 16 },
+      { height: 868, width: 660, x: 134, y: 118 },
+      { height: 60, width: 644, x: 134, y: 990 },
+      { height: 64, width: 46, x: 52, y: 508 },
+      { height: 64, width: 46, x: 1822, y: 508 },
+      { height: 788, width: 410, x: 1160, y: 262 },
+      { height: 150, width: 486, x: 1386, y: 836 },
+    ],
+    pointer: [776, 197],
+    region: { height: 1050, width: 1920, x: 0, y: 0 },
+    screen: "ArchiveScreen",
+    source: "archive-screen.mkv at 19.5s",
+  },
   // The English PC client's character screen on the Artifacts tab at 21:9, the same recording at 157.5 seconds, the tab settled, scored over its own scene with the interface it shows filled from round it
   "character-artifacts": {
     isBackdrop: true,

@@ -2,11 +2,6 @@
 // without loading the Vue components the screen list imports
 export const pendingScreens: { directory: string; reason: string }[] = [
   { directory: "Achievement/Screen", reason: "no recording on disk opens the screen" },
-  {
-    directory: "Archive/Screen",
-    reason:
-      "its reference is sampled (archive-screen.png, from archive-screen.mkv at 19.5s, the Equipment and Weapons grid); the fixture is not written yet",
-  },
   { directory: "Domain/Screen", reason: "no recording on disk opens the screen" },
   { directory: "Mail/Screen", reason: "no recording on disk opens the screen" },
   {
