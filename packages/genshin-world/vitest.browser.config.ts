@@ -10,11 +10,11 @@ import { APPROVE_ENVIRONMENT_VARIABLE } from "genshin-interface/constants";
 import { defaultClientConditions } from "vite";
 import { defineConfig } from "vitest/config";
 
-const browser = getVitestBrowserConfiguration({ height: 720, width: 1280 });
-// An approve compares every pixel exactly, so the update it runs writes the render: the default comparison passes a drift
-// Below pixelmatch's threshold, and an update only rewrites a comparison that fails
-if (process.env[APPROVE_ENVIRONMENT_VARIABLE])
-  browser.expect = { toMatchScreenshot: { ...browser.expect?.toMatchScreenshot, comparatorOptions: { threshold: 0 } } };
+// `genshin:parity approve` sets its variable, so its one-screen update compares exactly as the suite's own update does
+const browser = getVitestBrowserConfiguration(
+  { height: 720, width: 1280 },
+  { updateEnvironmentVariable: APPROVE_ENVIRONMENT_VARIABLE },
+);
 // The browser suite, apart from the default one so an ordinary run never starts a browser: every interface screen
 // Drawn in the machine's own Edge at 720 pixels high, each image kept beside its component as a test is, and the tests
 // Of what only a browser runs

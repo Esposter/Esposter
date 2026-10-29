@@ -4,19 +4,33 @@ import { playwright } from "@vitest/browser-playwright";
 import { join } from "node:path";
 
 // The browser suite's own options: the machine's Edge, headless, at the viewport its screens are drawn at, and each
-// Screenshot kept beside its component as a test is, so a member sets only what differs from one to the next
-export const getVitestBrowserConfiguration = (viewport: {
-  height: number;
-  width: number;
-}): NonNullable<NonNullable<ViteUserConfig["test"]>["browser"]> => ({
-  enabled: true,
-  expect: {
-    toMatchScreenshot: {
-      resolveScreenshotPath: ({ arg, ext, root }) => join(root, "src", "components", `${arg}${ext}`),
+// Screenshot kept beside its component as a test is, so a member sets only what differs from one to the next. An update
+// (`-u` or `--update`, or the environment variable a suite names as `updateEnvironmentVariable`) compares every pixel
+// Exactly, so the image it writes is the render: the default comparison passes a drift below pixelmatch's threshold, and
+// An update only rewrites a comparison that fails
+export const getVitestBrowserConfiguration = (
+  viewport: { height: number; width: number },
+  { updateEnvironmentVariable }: { updateEnvironmentVariable?: string } = {},
+): NonNullable<NonNullable<ViteUserConfig["test"]>["browser"]> => {
+  const browser: NonNullable<NonNullable<ViteUserConfig["test"]>["browser"]> = {
+    enabled: true,
+    expect: {
+      toMatchScreenshot: {
+        resolveScreenshotPath: ({ arg, ext, root }) => join(root, "src", "components", `${arg}${ext}`),
+      },
     },
-  },
-  headless: true,
-  instances: [{ browser: "chromium" }],
-  provider: playwright({ launchOptions: { channel: "msedge" } }),
-  viewport,
-});
+    headless: true,
+    instances: [{ browser: "chromium" }],
+    provider: playwright({ launchOptions: { channel: "msedge" } }),
+    viewport,
+  };
+  if (
+    (updateEnvironmentVariable !== undefined && process.env[updateEnvironmentVariable]) ||
+    process.argv.includes("-u") ||
+    process.argv.includes("--update")
+  )
+    browser.expect = {
+      toMatchScreenshot: { ...browser.expect?.toMatchScreenshot, comparatorOptions: { threshold: 0 } },
+    };
+  return browser;
+};
