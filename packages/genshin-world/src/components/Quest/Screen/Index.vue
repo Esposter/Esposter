@@ -21,6 +21,7 @@ import { QuestKindCategoryMap } from "#src/services/quest/QuestKindCategoryMap";
 import { checkIsActionKey } from "#src/services/shared/checkIsActionKey";
 import { useEventListener } from "@vueuse/core";
 import { InputAction } from "genshin-engine";
+import { ORNAMENT_END_PATH } from "genshin-interface";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
@@ -126,7 +127,7 @@ useEventListener("keydown", (event) => {
        series' row, and the selected quest's title, place, journal, objective, description and rewards on the right,
        over the Quest Overview button and the one navigating to it. The world behind it is blurred and washed as the
        game lays it over the world. Not drawn: the region's art on a series' row and the journal's emblem, the reward
-       items' art, the list's scroll bar and the UID -->
+       items' art, and the UID -->
   <MenuListScreen is-world-blurred :game-text :title="listTitle" @close="emit('close')">
     <template #icon>
       <MenuGlyph class="banner" :glyph="QuestGlyphMap[QuestGlyph.Banner]" />
@@ -198,6 +199,10 @@ useEventListener("keydown", (event) => {
           </template>
         </section>
       </div>
+      <span class="scroll-track" aria-hidden="true">
+        <svg class="scroll-chevron up" viewBox="0 0 10 6"><path d="M1 5 5 1 9 5" /></svg>
+        <svg class="scroll-chevron down" viewBox="0 0 10 6"><path d="M1 1 5 5 9 1" /></svg>
+      </span>
     </template>
     <template #detail>
       <div v-if="selectedQuest" class="details">
@@ -208,6 +213,8 @@ useEventListener("keydown", (event) => {
           <span class="journal-emblem" />
         </template>
         <span class="divider" />
+        <svg class="ornament-end" viewBox="0 0 320 224"><path :d="ORNAMENT_END_PATH" /></svg>
+        <svg class="ornament-end right" viewBox="0 0 320 224"><path :d="ORNAMENT_END_PATH" /></svg>
         <p v-if="questStep" class="step">
           <MenuGlyph class="objective" :glyph="QuestGlyphMap[QuestGlyph.ObjectiveRing]" />
           <MenuGlyph class="objective" :glyph="QuestGlyphMap[QuestGlyph.ObjectiveCore]" />
@@ -254,6 +261,8 @@ useEventListener("keydown", (event) => {
         </button>
       </div>
       <span class="footer-line" />
+      <svg class="footer-end" viewBox="0 0 320 224"><path :d="ORNAMENT_END_PATH" /></svg>
+      <svg class="footer-end right" viewBox="0 0 320 224"><path :d="ORNAMENT_END_PATH" /></svg>
       <!-- The overview of every quest is not built, so its button is drawn and does nothing -->
       <button class="pill overview" type="button" disabled>
         <MenuGlyph :glyph="QuestGlyphMap[QuestGlyph.Overview]" />
@@ -328,7 +337,7 @@ useEventListener("keydown", (event) => {
 .heading {
   position: relative;
   height: calc(var(--unit) * 56);
-  margin: calc(var(--unit) * 10) 0 calc(var(--unit) * 3);
+  margin: calc(var(--unit) * 12) 0 calc(var(--unit) * 1);
   padding-left: calc(var(--unit) * 46);
   color: #ede8e1;
   font-size: calc(var(--unit) * 27);
@@ -424,6 +433,68 @@ useEventListener("keydown", (event) => {
 
 .chapter-quests + .chapter {
   margin-top: calc(var(--unit) * 19);
+}
+
+/* The list's scroll bar beside its column: a light track its two chevrons end. Its thumb is not drawn: its length is the
+   Game's whole list over the shown one, which the fixture does not hold */
+.scroll-track {
+  position: absolute;
+  top: calc(var(--unit) * 127);
+  left: calc(var(--unit) * 827);
+  width: calc(var(--unit) * 5);
+  height: calc(var(--unit) * 808);
+  border-radius: calc(var(--unit) * 3);
+  background: rgb(255 255 255 / 0.12);
+}
+
+.scroll-chevron {
+  position: absolute;
+  left: calc(var(--unit) * -3);
+  width: calc(var(--unit) * 10);
+  height: calc(var(--unit) * 6);
+  fill: none;
+  stroke: rgb(255 255 255 / 0.4);
+  stroke-width: 1.2;
+}
+
+.scroll-chevron.up {
+  top: calc(var(--unit) * -10);
+}
+
+.scroll-chevron.down {
+  top: calc(var(--unit) * 810);
+}
+
+/* The divider's ends, the game's tapered diamond at each, its tips on the hairline's ends */
+.ornament-end {
+  position: absolute;
+  top: calc(var(--unit) * 209.5);
+  left: calc(var(--unit) * -33.5);
+  width: calc(var(--unit) * 30);
+  height: calc(var(--unit) * 21);
+  fill: rgb(255 255 255 / 0.3);
+}
+
+.ornament-end.right {
+  right: calc(var(--unit) * -32);
+  left: auto;
+  scale: -1 1;
+}
+
+/* The footer rule's ends, a little smaller than the divider's */
+.footer-end {
+  position: absolute;
+  top: calc(var(--unit) * 955.5);
+  left: calc(var(--unit) * 29.5);
+  width: calc(var(--unit) * 24);
+  height: calc(var(--unit) * 17);
+  fill: rgb(255 255 255 / 0.3);
+}
+
+.footer-end.right {
+  right: calc(var(--unit) * 29.5);
+  left: auto;
+  scale: -1 1;
 }
 
 .details {
