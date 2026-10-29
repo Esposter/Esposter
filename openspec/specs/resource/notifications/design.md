@@ -15,7 +15,7 @@ Both render through one `AppNotification` shape, so the panel and the toast neve
 
 `path` is the in-app route the row opens, and it is what a delivered notification carries instead of a button: the whole row is the link. `action` is the local half's affordance — an `isSingleUse` action (undo-style mutations, e.g. the delete toast's **Restore**) is consumed on success by `consumeNotificationAction`, stripping the button while keeping the entry as history, because a second fire from the panel would target state the first fire already changed. Repeatable actions (navigation links, **Copy public link**) stay clickable.
 
-Local sources (fired from `useResourceStore` and the `/all` list dialogs) are the feedback the server has no business repeating:
+Local sources, fired from `useResourceStore` and the `/all` list dialogs:
 
 - save conflict (stale `contentVersion`) → warning with **Refresh** action ([resource page parity](../resource-page-parity/design.md))
 - any mutation error → error severity with the message
