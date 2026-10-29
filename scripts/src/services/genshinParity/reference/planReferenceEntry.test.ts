@@ -3,9 +3,9 @@ import type { ParityReferenceManifestRow } from "#src/models/genshinParity/refer
 import type { ReferenceEntryImage } from "#src/models/genshinParity/reference/ReferenceEntryImage";
 
 import { ParityReferenceKind } from "#src/models/genshinParity/reference/ParityReferenceKind";
-import { planCleanPlateObject as basePlanCleanPlateObject } from "#src/services/genshinParity/reference/planCleanPlateObject";
+import type { planCleanPlateObject as basePlanCleanPlateObject } from "#src/services/genshinParity/reference/planCleanPlateObject";
 import { planReferenceEntry } from "#src/services/genshinParity/reference/planReferenceEntry";
-import { readEntryImage as baseReadEntryImage } from "#src/services/genshinParity/reference/readEntryImage";
+import type { readEntryImage as baseReadEntryImage } from "#src/services/genshinParity/reference/readEntryImage";
 import { getScratchPlatePath } from "#src/services/genshinParity/shared/getScratchPlatePath";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -40,7 +40,7 @@ describe(planReferenceEntry, () => {
     capturedAt: CAPTURED_AT,
     image,
     isNew: true,
-    read: async () => Buffer.alloc(0),
+    read: () => Promise.resolve(Buffer.alloc(0)),
     sourceFormat: "webp",
   });
   const createCommittedRow = (): ParityReferenceManifestRow => ({
@@ -65,8 +65,8 @@ describe(planReferenceEntry, () => {
     expect.hasAssertions();
 
     const plate = createEntry(LOCAL_PLATE_IMAGE);
-    readEntryImage.mockImplementation(async (path) =>
-      path === getScratchPlatePath(ID) ? plate : createEntry(MAIN_IMAGE),
+    readEntryImage.mockImplementation((path) =>
+      Promise.resolve(path === getScratchPlatePath(ID) ? plate : createEntry(MAIN_IMAGE)),
     );
     planCleanPlateObject.mockResolvedValue({ cleanPlate: FILLED_CLEAN_PLATE, stored: Buffer.alloc(0) });
 
@@ -79,8 +79,8 @@ describe(planReferenceEntry, () => {
   test("a replace whose local plate is absent keeps the committed plate and clean plate", async () => {
     expect.hasAssertions();
 
-    readEntryImage.mockImplementation(async (path) =>
-      path === getScratchPlatePath(ID) ? undefined : createEntry(MAIN_IMAGE),
+    readEntryImage.mockImplementation((path) =>
+      Promise.resolve(path === getScratchPlatePath(ID) ? undefined : createEntry(MAIN_IMAGE)),
     );
 
     const { row } = await planReferenceEntry(ID, REFERENCE, undefined, createCommittedRow());
@@ -93,8 +93,8 @@ describe(planReferenceEntry, () => {
   test("a replace with no committed row and no local plate leaves no plate or clean plate", async () => {
     expect.hasAssertions();
 
-    readEntryImage.mockImplementation(async (path) =>
-      path === getScratchPlatePath(ID) ? undefined : createEntry(MAIN_IMAGE),
+    readEntryImage.mockImplementation((path) =>
+      Promise.resolve(path === getScratchPlatePath(ID) ? undefined : createEntry(MAIN_IMAGE)),
     );
 
     const { row } = await planReferenceEntry(ID, REFERENCE, undefined, undefined);

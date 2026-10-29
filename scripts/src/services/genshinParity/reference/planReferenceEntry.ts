@@ -15,20 +15,20 @@ import { getScratchPlatePath } from "#src/services/genshinParity/shared/getScrat
 import { getScratchReferencePath } from "#src/services/genshinParity/shared/getScratchReferencePath";
 
 // One reference id's pack: its screenshot, its plate screenshot when its entry names one, and the clean plate filled from
-// the one the entry fills from. The row it ends with is the one the manifest holds with those images named by hash, and
-// it is returned only when that changed. Nothing is stored here, so a collision is known before any object is written.
-// `existing` is the row the local bytes are checked against, which a replace leaves out; `committed` is the manifest's own
-// row, which a replace whose local plate file is absent keeps its plate and clean plate from
+// The one the entry fills from. The row it ends with is the one the manifest holds with those images named by hash, and
+// It is returned only when that changed. Nothing is stored here, so a collision is known before any object is written.
+// `checkedRow` is the row the local bytes are checked against, which a replace leaves out; `committed` is the manifest's own
+// Row, which a replace whose local plate file is absent keeps its plate and clean plate from
 export const planReferenceEntry = async (
   id: string,
   reference: ParityReference,
-  existing: ParityReferenceManifestRow | undefined,
+  checkedRow: ParityReferenceManifestRow | undefined,
   committed: ParityReferenceManifestRow | undefined,
 ): Promise<ReferenceEntryPlan> => {
   const mainLabel = getReferenceFileName(id);
   const plateLabel = getReferencePlateFileName(id);
   const cleanLabel = getCleanPlateFileName(id);
-  const main = await readEntryImage(getScratchReferencePath(id), existing);
+  const main = await readEntryImage(getScratchReferencePath(id), checkedRow);
   if (main === undefined)
     return {
       collisions: [],
@@ -39,17 +39,17 @@ export const planReferenceEntry = async (
       packed: [],
     };
   const plate =
-    reference.plateSource === undefined ? undefined : await readEntryImage(getScratchPlatePath(id), existing?.plate);
+    reference.plateSource === undefined ? undefined : await readEntryImage(getScratchPlatePath(id), checkedRow?.plate);
   // A clean plate is filled from the plate its entry names, so a missing plate leaves the entry without one rather than
-  // filling it from the reference
+  // Filling it from the reference
   const cleanInput = reference.plateSource === undefined ? main : plate;
   const clean =
     cleanInput === undefined
       ? undefined
-      : await planCleanPlateObject(reference, cleanInput, main.image, existing?.cleanPlate);
+      : await planCleanPlateObject(reference, cleanInput, main.image, checkedRow?.cleanPlate);
   const isPlateMissing = reference.plateSource !== undefined && plate === undefined;
   const base =
-    existing ??
+    checkedRow ??
     createReferenceManifestRow(
       id,
       main.image,
@@ -63,7 +63,7 @@ export const planReferenceEntry = async (
     plate: plate?.image ?? (isPlateMissing ? committed?.plate : undefined),
   };
   const changed =
-    existing === undefined || JSON.stringify(sortObjectKeys(row)) !== JSON.stringify(sortObjectKeys(existing));
+    checkedRow === undefined || JSON.stringify(sortObjectKeys(row)) !== JSON.stringify(sortObjectKeys(checkedRow));
   const images: { entry: ReferenceEntryImage; file: string }[] = [
     { entry: main, file: mainLabel },
     ...(plate === undefined ? [] : [{ entry: plate, file: plateLabel }]),
