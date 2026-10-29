@@ -1,3 +1,4 @@
+import { MEBIBYTE } from "#src/services/shared/constants";
 import { KIBIBYTE } from "@esposter/configuration";
 import { SITE_NAME } from "@esposter/shared";
 import { homedir } from "node:os";
@@ -16,7 +17,7 @@ export const SAMPLE_MILLISECONDS: number = Temporal.Duration.from({ minutes: 1 }
 // A reader's command is killed past half a sample, so a hung one cannot stall the watcher, and its output may run to a
 // Busy machine's full process listing with every command line
 export const COMMAND_TIMEOUT_MILLISECONDS: number = SAMPLE_MILLISECONDS / 2;
-export const COMMAND_MAX_BUFFER_BYTES: number = 64 * KIBIBYTE ** 2;
+export const COMMAND_MAX_BUFFER_BYTES: number = 64 * MEBIBYTE;
 // A process gets swept once it has burnt more than this many CPU seconds with no parent left to read its result
 export const ORPHAN_CPU_SECONDS = 30;
 // Matched without a path and without `.exe`, so `find` and `find.exe` both count

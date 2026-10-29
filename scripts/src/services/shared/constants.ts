@@ -13,12 +13,12 @@ export const REMOTE_NAME = "origin";
 export const REMOTE_MAIN_REF: `${typeof REMOTE_NAME}/${typeof MAIN_BRANCH}` = `${REMOTE_NAME}/${MAIN_BRANCH}`;
 export const REMOTE_QUEUE_REF: `${typeof REMOTE_NAME}/${typeof QUEUE_BRANCH}` = `${REMOTE_NAME}/${QUEUE_BRANCH}`;
 export const NPM_REGISTRY_URL = "https://registry.npmjs.org";
+// A mebibyte, as the fleet's transfer line and the parity pack table both count sizes in
+export const MEBIBYTE: number = KIBIBYTE ** 2;
 // What a spawned `git` or `gh` may print: a paginated slurp of a long-lived pull request's comments, a log of
 // Every commit's body, a listing of every tracked file each run to megabytes, and the default buffer throws
 // ENOBUFS rather than truncating — a failure that reads as the tool being broken from the call site.
-export const MAX_BUFFER_BYTES: number = 256 * KIBIBYTE ** 2;
-// A mebibyte, as the fleet's transfer line and the parity pack table both count sizes in
-export const MEBIBYTE: number = KIBIBYTE ** 2;
+export const MAX_BUFFER_BYTES: number = 256 * MEBIBYTE;
 
 // Every script reads and writes against the repository rather than against `scripts/`. A `..` chain is what this
 // Was, and it is wrong the first time the file counting it moves a directory. The walk-up to the manifest survives
