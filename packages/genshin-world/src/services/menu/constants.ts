@@ -16,23 +16,21 @@ import { GameLanguage, GameTextKey } from "genshin-text";
 // A Paimon menu entry that opens a web page, labelled by its game text
 interface PaimonMenuLinkEntry {
   icon: MenuEntryIcon;
-  isAlerted?: boolean;
   labelKey: GameTextKey;
 }
 // A Paimon menu entry that opens a screen, its icon drawn from the table it sits in
 interface PaimonMenuScreenEntry<Icon> {
   icon: Icon;
-  isAlerted?: boolean;
   screenKind: TitledScreenKind;
 }
 
 // The Paimon menu's contents in the game's order, as the 2026 frame at 25 seconds of `yt-jHr2bERjkYc` draws them. Its
 // Shop, Wish, Battle Pass, Co-Op Mode, Events and Adventurer Handbook are not in that frame, so they are not among them,
-// and neither is the Training Guide. A flagged entry carries the red dot the frame draws on it
+// and neither is the Training Guide. Which of them carry a red dot is the host's state, not the menu's
 export const PAIMON_MENU_CONTENTS: readonly PaimonMenuScreenEntry<MenuEntryIcon>[] = [
   { icon: EntryIcon.PartySetup, screenKind: ScreenKind.PartySetup },
   { icon: EntryIcon.Friends, screenKind: ScreenKind.Friends },
-  { icon: EntryIcon.Achievements, isAlerted: true, screenKind: ScreenKind.Achievements },
+  { icon: EntryIcon.Achievements, screenKind: ScreenKind.Achievements },
   { icon: EntryIcon.Archive, screenKind: ScreenKind.Archive },
   { icon: EntryIcon.CharacterArchive, screenKind: ScreenKind.CharacterArchive },
   { icon: EntryIcon.Character, screenKind: ScreenKind.Character },
@@ -45,16 +43,16 @@ export const TIME_MINIMUM_ADVANCE_MINUTES = 30;
 export const TIME_MAXIMUM_ADVANCE_MINUTES = 2 * MINUTES_PER_DAY;
 // The links out to web pages the menu ends with, drawn disabled, since the world opens no page of their own
 export const PAIMON_MENU_LINKS: readonly PaimonMenuLinkEntry[] = [
-  { icon: EntryIcon.Community, isAlerted: true, labelKey: GameTextKey.Community },
-  { icon: EntryIcon.VersionHighlights, isAlerted: true, labelKey: GameTextKey.VersionHighlights },
+  { icon: EntryIcon.Community, labelKey: GameTextKey.Community },
+  { icon: EntryIcon.VersionHighlights, labelKey: GameTextKey.VersionHighlights },
   { icon: EntryIcon.Feedback, labelKey: GameTextKey.Feedback },
-  { icon: EntryIcon.Survey, isAlerted: true, labelKey: GameTextKey.Survey },
+  { icon: EntryIcon.Survey, labelKey: GameTextKey.Survey },
 ];
 // The screens its side bar opens, in the game's order between its Back and its Quit Game
 export const PAIMON_MENU_SIDE_BAR: readonly PaimonMenuScreenEntry<MenuFrameIcon>[] = [
   { icon: FrameIcon.PhotoMode, screenKind: ScreenKind.PhotoMode },
-  { icon: FrameIcon.Notices, isAlerted: true, screenKind: ScreenKind.Notices },
-  { icon: FrameIcon.Mail, isAlerted: true, screenKind: ScreenKind.Mail },
+  { icon: FrameIcon.Notices, screenKind: ScreenKind.Notices },
+  { icon: FrameIcon.Mail, screenKind: ScreenKind.Mail },
   { icon: FrameIcon.Time, screenKind: ScreenKind.Time },
   { icon: FrameIcon.Settings, screenKind: ScreenKind.Settings },
 ];

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { MenuEntryIcon } from "#src/models/menu/MenuEntryIcon";
 import type { ProfileNamecard } from "#src/models/profile/ProfileNamecard";
 import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
 import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
@@ -35,6 +36,9 @@ interface Props {
   // The Adventure EXP's share of the rank's bar, and the rank and World Level the profile card shows
   adventureExpProgress: number;
   adventureRank: number;
+  // The icons that carry a red dot, the news the player has not seen, among the entries, the links, the side bar and the
+  // Profile's pencil; none is []
+  alertedIcons: (MenuEntryIcon | MenuFrameIcon)[];
   // Whether a screen is built, which its entry opens; an unbuilt one's entry is drawn disabled
   checkIsBuilt: (screenKind: TitledScreenKind) => boolean;
   // The game's words in the reader's language
@@ -61,6 +65,7 @@ const {
   accountName,
   adventureExpProgress,
   adventureRank,
+  alertedIcons,
   checkIsBuilt,
   gameText,
   interactionState,
@@ -164,7 +169,7 @@ onBeforeUnmount(() => {
       <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Back]" class="back-glyph" />
       <!-- Each side bar button is its icon's box, the icon drawn from the box's corner -->
       <GameButton
-        v-for="{ icon, isAlerted, screenKind } of PAIMON_MENU_SIDE_BAR"
+        v-for="{ icon, screenKind } of PAIMON_MENU_SIDE_BAR"
         :key="screenKind"
         class="side-entry"
         :disabled="!checkIsBuilt(screenKind)"
@@ -174,7 +179,7 @@ onBeforeUnmount(() => {
         @click="emit('open', screenKind)"
       >
         <MenuGlyph :glyph="{ ...MenuFrameGlyphMap[icon], x: 0, y: 0 }" />
-        <span v-if="isAlerted" aria-hidden="true" class="alert" />
+        <span v-if="alertedIcons.includes(icon)" aria-hidden="true" class="alert" />
       </GameButton>
       <GameButton
         ref="quitGameButton"
@@ -193,7 +198,9 @@ onBeforeUnmount(() => {
         <NuxtImg v-if="accountAvatarUrl" :alt="accountName" class="avatar-image" :src="accountAvatarUrl" />
         <div v-else class="avatar" />
         <p class="name">{{ accountName ?? gameText[GameTextKey.PlayerDefaultName] }}</p>
-        <div class="edit"><span aria-hidden="true" class="alert" /></div>
+        <div class="edit">
+          <span v-if="alertedIcons.includes(MenuFrameIcon.Edit)" aria-hidden="true" class="alert" />
+        </div>
         <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Edit]" class="edit-glyph" />
         <p class="uid-label">{{ gameText[GameTextKey.Uid] }}</p>
         <div class="uid-pill" />
@@ -238,7 +245,7 @@ onBeforeUnmount(() => {
         </GameButton>
         <div class="contents">
           <GameButton
-            v-for="{ icon, isAlerted, screenKind } of PAIMON_MENU_CONTENTS"
+            v-for="{ icon, screenKind } of PAIMON_MENU_CONTENTS"
             :key="screenKind"
             class="entry"
             :disabled="!checkIsBuilt(screenKind) || !checkIsSystemOpen(screenKind, adventureRank)"
@@ -247,10 +254,10 @@ onBeforeUnmount(() => {
           >
             <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
             <span class="label">{{ gameText[ScreenKindGameTextKeyMap[screenKind]] }}</span>
-            <span v-if="isAlerted" aria-hidden="true" class="alert" />
+            <span v-if="alertedIcons.includes(icon)" aria-hidden="true" class="alert" />
           </GameButton>
           <GameButton
-            v-for="{ icon, isAlerted, labelKey } of PAIMON_MENU_LINKS"
+            v-for="{ icon, labelKey } of PAIMON_MENU_LINKS"
             :key="labelKey"
             class="entry link"
             disabled
@@ -258,7 +265,7 @@ onBeforeUnmount(() => {
           >
             <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
             <span class="label">{{ gameText[labelKey] }}</span>
-            <span v-if="isAlerted" aria-hidden="true" class="alert" />
+            <span v-if="alertedIcons.includes(icon)" aria-hidden="true" class="alert" />
           </GameButton>
         </div>
       </div>

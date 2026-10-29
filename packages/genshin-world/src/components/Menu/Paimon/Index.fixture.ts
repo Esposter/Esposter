@@ -1,3 +1,5 @@
+import { MenuEntryIcon } from "#src/models/menu/MenuEntryIcon";
+import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { InteractionState } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
@@ -5,9 +7,20 @@ import { ENGLISH_GAME_TEXT } from "genshin-text";
 // Being a state of their own
 // The account is at Adventure Rank 2 with 385 of its 500 Adventure EXP, a World Level of 0 and no birthday set, as the
 // Reference reads; the one rank gate its entries reach, Friends at rank 2, is open
+// The red dots are the frame's: on Achievements, the Community, Version Highlights and Survey links, the notices and mail
+// Icons, and the profile's pencil
 export const props = {
   adventureExpProgress: 0.77,
   adventureRank: 2,
+  alertedIcons: [
+    MenuEntryIcon.Achievements,
+    MenuEntryIcon.Community,
+    MenuEntryIcon.VersionHighlights,
+    MenuEntryIcon.Survey,
+    MenuFrameIcon.Notices,
+    MenuFrameIcon.Mail,
+    MenuFrameIcon.Edit,
+  ],
   checkIsBuilt: () => true,
   gameText: ENGLISH_GAME_TEXT,
   isWorldLevelAdjustable: false,

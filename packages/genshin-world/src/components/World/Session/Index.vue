@@ -2145,6 +2145,7 @@ useWorldSaveSync({
       :account-name
       :adventure-exp-progress
       :adventure-rank="rank"
+      :alerted-icons="[]"
       :game-text
       :is-world-level-adjustable
       :is-world-level-lowered="worldLevelAdjustment.isLowered"

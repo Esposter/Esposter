@@ -2,6 +2,7 @@ import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave
 
 import { props } from "#src/components/Menu/Paimon/Index.fixture";
 import MenuPaimon from "#src/components/Menu/Paimon/Index.vue";
+import { MenuEntryIcon } from "#src/models/menu/MenuEntryIcon";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { BIRTHDAY_MONTHS } from "#src/services/profile/constants";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
@@ -93,6 +94,17 @@ describe("menuPaimon", () => {
     await expect
       .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Survey] }))
       .toBeDisabled();
+  });
+
+  // The red dots are the host's state, so an entry carries one only when the host flags its icon
+  test("a red dot marks only the entries the host flags", async () => {
+    expect.hasAssertions();
+
+    await render(MenuPaimon, { props: { ...props, alertedIcons: [MenuEntryIcon.Achievements] } });
+
+    const dotOf = (name: string) => page.getByRole("button", { exact: true, name }).element().querySelector(".alert");
+    expect(dotOf(ENGLISH_GAME_TEXT[GameTextKey.Achievements])).not.toBeNull();
+    expect(dotOf(ENGLISH_GAME_TEXT[GameTextKey.Friends])).toBeNull();
   });
 
   test("training Guide is absent from the contents", async () => {

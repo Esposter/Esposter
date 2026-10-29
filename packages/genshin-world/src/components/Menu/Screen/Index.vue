@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { MenuEntryIcon } from "#src/models/menu/MenuEntryIcon";
+import type { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import type { ProfileNamecard } from "#src/models/profile/ProfileNamecard";
 import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
 import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
@@ -18,6 +20,8 @@ interface Props {
   // The Adventure EXP's share of the rank's bar, and the rank and World Level the profile card shows
   adventureExpProgress: number;
   adventureRank: number;
+  // The icons of the Paimon menu that carry a red dot, which its host holds; none is []
+  alertedIcons: (MenuEntryIcon | MenuFrameIcon)[];
   // The game's words in the reader's language
   gameText: GameText;
   // Whether the World Level can be lowered or restored now, and whether it is lowered
@@ -55,6 +59,7 @@ const emit = defineEmits<{
     :account-name
     :adventure-exp-progress
     :adventure-rank
+    :alerted-icons
     :check-is-built="(titledScreenKind) => Boolean(slots[titledScreenKind])"
     :game-text
     :is-world-level-adjustable
