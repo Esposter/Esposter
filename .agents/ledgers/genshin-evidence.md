@@ -1,6 +1,6 @@
 # Genshin evidence
 
-Find recipe: a page is open if either test holds. Test one: `git grep -l "no source yet" -- 'openspec/specs/genshin/*/design.md'`. Test two: a design with no `## Sources` section and no reference path. A pass sweeps the union of both.
+Find recipe: a page is open if either test holds. Test one: `git grep -l "no source yet" -- 'openspec/specs/genshin/*/design.md'`. Test two: a design with no `## Sources` section and no `genshin-parity/references/` path, run as `comm -23 <(git grep -L "^## Sources" -- 'openspec/specs/genshin/*/design.md' | sort) <(git grep -l "genshin-parity/references/" -- 'openspec/specs/genshin/*/design.md' | sort)`. A pass sweeps the union of both.
 
 | Unit                                                                   | Swept                  | Notes |
 | :--------------------------------------------------------------------- | :--------------------- | :---- |
