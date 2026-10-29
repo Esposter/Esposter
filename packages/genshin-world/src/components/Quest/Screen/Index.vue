@@ -339,16 +339,6 @@ useEventListener("keydown", (event) => {
   margin-top: calc(var(--unit) * 13);
 }
 
-/* Its words spaced out to the still's line width, about 0.8 a letter over the stand-in face */
-.quest {
-  letter-spacing: calc(var(--unit) * 0.8);
-}
-
-/* Its capitals 2 lower than the row's own title, where the still's commission titles sit */
-.quest :deep(.title) {
-  top: calc(var(--unit) * 18 - 0.141em);
-}
-
 /* Provisional: the still shows no selected row, so the selected one is ringed in the game's cream */
 .quest.selected {
   box-shadow: 0 0 0 calc(var(--unit) * 2) #ece5d8;

@@ -59,16 +59,18 @@ const { distance, isCommission, title } = defineProps<Props>();
   text-align: start;
 }
 
+/* Their words spaced out to the still's line width, about 0.8 a letter over the stand-in face */
 .title,
 .distance {
   position: absolute;
   left: calc(var(--unit) * 30);
+  letter-spacing: calc(var(--unit) * 0.8);
   white-space: nowrap;
 }
 
-/* Its capitals' tops 16 below the row's, a capital's top 0.141 of the size below its line's when the line is as high */
+/* Its capitals' tops 18 below the row's, a capital's top 0.141 of the size below its line's when the line is as high */
 .title {
-  top: calc(var(--unit) * 16 - 0.141em);
+  top: calc(var(--unit) * 18 - 0.141em);
   line-height: 1;
 }
 
