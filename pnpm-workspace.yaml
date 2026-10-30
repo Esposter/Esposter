@@ -165,7 +165,7 @@ catalog:
   eslint-plugin-perfectionist: ^5.13.0
   eslint-plugin-pinia: ^0.4.2
   eslint-plugin-vuejs-accessibility: ^2.6.3
-  fake-indexeddb: ^6.2.6
+  fake-indexeddb: ^6.2.7
   fflate: ^0.8.3
   grid-engine: ^2.53.0
   h3: ^2.0.8
