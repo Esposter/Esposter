@@ -13,7 +13,7 @@ committed.
 | `character-attributes`                 | `CharacterScreen`           |                                                                          1.70% | 0.966 |  0.61% | 0.0702 |
 | `character-attributes-panel`           | `CharacterScreen`           |                                                                          3.68% | 0.859 |  1.88% | 0.1547 |
 | `character-attributes-tabs`            | `CharacterScreen`           |                                                                          0.97% | 0.985 |  0.34% | 0.0441 |
-| `character-attributes-top`             | `CharacterScreen`           |                                                                          8.04% | 0.837 |  2.28% | 0.3138 |
+| `character-attributes-top`             | `CharacterScreen`           |                                                                          8.03% | 0.837 |  2.20% | 0.3136 |
 | `character-constellation`              | `CharacterScreen`           |                                                                          1.90% | 0.904 |  0.88% | 0.0751 |
 | `character-constellation-tabs`         | `CharacterScreen`           |                                                                          1.31% | 0.979 |  0.44% | 0.0478 |
 | `character-talents`                    | `CharacterScreen`           |                                                                          1.75% | 0.905 |  0.59% | 0.0781 |
