@@ -35,7 +35,7 @@ describe("menuPaimon", () => {
   });
 
   // The avatar is NuxtImg, which only the Nuxt app registers; the browser suites draw it as the plain image it renders
-  // (`parity/setupBrowser.ts`)
+  // (`parity/NuxtImgStub.ts`)
   test("a signed-in reader sees the account's name and avatar", async () => {
     expect.hasAssertions();
 
