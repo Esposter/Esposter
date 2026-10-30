@@ -124,13 +124,13 @@ const balances = computed<CurrencyCount[]>(() =>
     }),
   ),
 );
-// The name each offer is drawn under: a Fate's item, a character's name, or a weapon's name
+// The name each offer is drawn under: a Fate's currency name, a character's name, or a weapon's name
 const offerNames = computed(() =>
   offers.value.map(({ good, kind }) => ({
     good,
     name:
       kind === ShopOfferKind.Fate
-        ? getItemDefinition(good.itemId, nameText, materialDataMap).name
+        ? gameText[takeOne(CurrencyGameTextKeyMap, currencyOf(good.itemId))]
         : kind === ShopOfferKind.Character
           ? nameOfCharacter(good.itemId)
           : getWeaponDefinition(good.itemId).name,

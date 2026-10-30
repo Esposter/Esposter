@@ -84,6 +84,7 @@ committed.
 | `mondstadt-city-location`              | `WorldScreen`               |                                                                         26.66% | 0.292 | 22.43% | 0.7549 |
 | `nasha-town-location`                  | `WorldScreen`               |                                                                         29.69% | 0.238 | 24.60% | 0.7627 |
 | `paimon-menu`                          | `MenuPaimon`                |                                                                          3.73% | 0.930 |  1.92% | 0.2058 |
+| `paimons-bargains-screen`              | `PaimonsBargainsScreen`     |                                                                         36.44% | 0.246 | 33.87% | 0.7330 |
 | `party-screen`                         | `PartyScreen`               |                                                                          4.27% | 0.366 |  2.51% | 0.1588 |
 | `people-of-the-springs-location`       | `WorldScreen`               |                                                                         25.06% | 0.223 | 21.49% | 0.7945 |
 | `publisher-splash`                     | `SplashPublisher`           |                                                                          0.07% | 1.000 |  0.01% | 0.0036 |
@@ -101,6 +102,8 @@ committed.
 | `splash-title-chinese-traditional`     | `SplashTitle`               |                                     pending: no screenshot of this variant yet |       |        |        |
 | `splash-title-japanese`                | `SplashTitle`               |                                                                          0.16% | 1.000 |  0.39% | 0.0342 |
 | `splash-title-korean`                  | `SplashTitle`               |                                     pending: no screenshot of this variant yet |       |        |        |
+| `statue-blessing`                      | `StatueScreen`              |                                                                         21.97% | 0.002 | 20.26% | 0.5818 |
+| `statue-worship`                       | `StatueWorship`             |                                                                         32.09% | 0.062 | 30.43% | 0.7274 |
 | `sumeru-city-location`                 | `WorldScreen`               |                                                                         32.42% | 0.227 | 28.07% | 0.8157 |
 | `title-splash`                         | `SplashTitle`               |                                                                          0.20% | 1.000 |  0.01% | 0.0089 |
 | `title-splash-mainland`                | `SplashTitle`               |                                                                          1.89% | 0.991 |  0.89% | 0.0807 |
