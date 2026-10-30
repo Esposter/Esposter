@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* **knip:** the commands launched through vpx and the files loaded by path are named as entries ([87f0f5f](https://github.com/Esposter/Esposter/commit/87f0f5fde8c3aaa61e49fecd893944696e94838e))
+* **lint:** the findings the eight lint buckets could fix, with the rest left for their own decisions ([360085e](https://github.com/Esposter/Esposter/commit/360085e05db2e249b54851ffdba67556be107ebd))
+* **lint:** the nuxt security module's test imports and mock signatures, and the child-process test's key order, satisfy the lint rules ([1b0dca6](https://github.com/Esposter/Esposter/commit/1b0dca6027e17c142c415f84102f1128a744abf4))
+* **lint:** the oxlint autofix gives void-returning arrows block bodies, and the formatter lays them out ([9103811](https://github.com/Esposter/Esposter/commit/910381177c6a9906b3283661d4f85ec66c77c785))
+* **lint:** the shared, package and test sources satisfy the oxlint rules ([689d2e5](https://github.com/Esposter/Esposter/commit/689d2e55a3eee18570d0bbc2108ecbfce53f8171))
+* **nuxt-security-module:** remove the ssg options nothing reads ([e015e34](https://github.com/Esposter/Esposter/commit/e015e349bc2bc24c3a248116c9b16cfdcd99dd15))
+* **nuxt-security-module:** the cast's comment is written once ([aa62ded](https://github.com/Esposter/Esposter/commit/aa62dedeecb0126698cd5a92833bb9769066a145))
+* **nuxt-security-module:** the kit mock casts only addTypeTemplate, whose generic signature a Mock cannot carry ([e486905](https://github.com/Esposter/Esposter/commit/e486905da520aa752071d9f3f3e7b9808d15036d))
+* **nuxt-security-module:** the template filename constants carry their template literal types ([7181ff1](https://github.com/Esposter/Esposter/commit/7181ff194df969d636449a38060670fea9b9b971))
+* **nuxt-security-module:** the test that pins the two removed ssg options is deleted, the last reference to them ([21079f7](https://github.com/Esposter/Esposter/commit/21079f78d3d9564e2efa36bb0bed9040c04a247f)), closes [#606](https://github.com/Esposter/Esposter/issues/606) [#504](https://github.com/Esposter/Esposter/issues/504)
+* **nuxt-security-module:** the X-Powered-By header is removed from the response the framework builds, not only from the event ([6e0bc2c](https://github.com/Esposter/Esposter/commit/6e0bc2cbd2ab4b0d93d31a7b934f26d7fb59df01))
+* **security:** the image error handler NuxtImg renders is allowed by its hash, and a default 'none' yields to an added source ([14c75bb](https://github.com/Esposter/Esposter/commit/14c75bb294891107aacbbbce3b5b1e1a7a70f321)), closes [nuxt/image#1011](https://github.com/nuxt/image/issues/1011) [#1884](https://github.com/Esposter/Esposter/issues/1884)
+* **trpc-nuxt-module:** the README's handler subpath returns to the exports map, and the Nuxt-module factory takes its own excludes ([5b07f04](https://github.com/Esposter/Esposter/commit/5b07f04707d5dd1720a7e8cdb52db1824017cf01))
+
+### Features
+
+* **nuxt-security-module:** the client bundles are hashed once the public assets are copied ([d0f4339](https://github.com/Esposter/Esposter/commit/d0f4339063150ad2e90e384217142ca5591004f4))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package nuxt-security-module

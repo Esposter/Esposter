@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* **agent-console-server:** the cli is built but not exported, as the bin loads it by path ([126e6bb](https://github.com/Esposter/Esposter/commit/126e6bb67f1982e831f04c6ae398e8addb6ca103))
+* **agent-console-server:** the local_command_output case sits in the order perfectionist/sort-switch-case wants ([71ec202](https://github.com/Esposter/Esposter/commit/71ec2028e6aef3f2fef59886514714149b25fdf0))
+* **ci:** the perfectionist sort fixes CI's Lint job failed on, in four packages ([b6c2e75](https://github.com/Esposter/Esposter/commit/b6c2e75a2aadc22847ec3d6946d0dabc7162a6e1))
+* **lint:** the findings the eight lint buckets could fix, with the rest left for their own decisions ([360085e](https://github.com/Esposter/Esposter/commit/360085e05db2e249b54851ffdba67556be107ebd))
+* **lint:** the oxlint directives that suppress nothing are removed, and the unused DateToken import goes with them ([407e7cf](https://github.com/Esposter/Esposter/commit/407e7cf15219405110efdd0c977bb30cb1db1644))
+* **lint:** the scripts, functions and shared packages' findings are fixed, or kept with the constraint that holds ([def559c](https://github.com/Esposter/Esposter/commit/def559c12d5dfe372710fce37138f4d50da71b4b))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package agent-console-server

@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* **azure-mock:** a blob name decodes segment by segment, so one stray percent sign keeps the rest ([4f09bd4](https://github.com/Esposter/Esposter/commit/4f09bd4c81115c9db97cdf92d53e3ea640f92d45))
+* **azure-mock:** a mock address writes its expiry to the second, and the queue mock passes its expiry through ([9565dcb](https://github.com/Esposter/Esposter/commit/9565dcbfd5a277aca4208e47d2c8f853d7c9ad29))
+* **azure-mock:** a mock write address lapses at the expiry it is signed with, so an upload past it is refused ([88a6684](https://github.com/Esposter/Esposter/commit/88a6684832675b71f334486531dba9a03b580815))
+* **azure-mock:** mark the TS7031 workaround unfiled and wrap its TODO comment ([1a34a11](https://github.com/Esposter/Esposter/commit/1a34a1150a685bb32ad44f44ccc7a255102a5cda))
+* **lint:** oxlint and ESLint are clean again across scripts, genshin-world and the shared packages ([ed206e7](https://github.com/Esposter/Esposter/commit/ed206e7956fb13fb5f022be337bfef8e447c9e01))
+* **lint:** the oxlint pass, knip and the typecheck that failed CI's Lint and Typecheck jobs are green ([ee125bb](https://github.com/Esposter/Esposter/commit/ee125bbfa097ffc62a91be52a3ce45012caffeee)), closes [#src](https://github.com/Esposter/Esposter/issues/src)
+* **lint:** the scripts, functions and shared packages' findings are fixed, or kept with the constraint that holds ([def559c](https://github.com/Esposter/Esposter/commit/def559c12d5dfe372710fce37138f4d50da71b4b))
+* **lint:** the shared, package and test sources satisfy the oxlint rules ([689d2e5](https://github.com/Esposter/Esposter/commit/689d2e55a3eee18570d0bbc2108ecbfce53f8171))
+
+### Features
+
+* **user:** the data export archive streams into a blob and the handler records its outcome ([c2cac19](https://github.com/Esposter/Esposter/commit/c2cac19d272ef8d4d93bdfb1182b058fb48fbce1))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package azure-mock

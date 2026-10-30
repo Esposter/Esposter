@@ -1,6 +1,6 @@
 {
   "name": "vue-pdfjs-headless",
-  "version": "4.3.3",
+  "version": "4.4.0",
   "description": "Headless Vue composables over pdfjs-dist: a document's loading, a page's drawing and the viewer's state, with no styling and no renderer of its own.",
   "keywords": [
     "headless",

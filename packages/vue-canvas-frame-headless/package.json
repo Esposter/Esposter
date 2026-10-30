@@ -1,6 +1,6 @@
 {
   "name": "vue-canvas-frame-headless",
-  "version": "4.3.3",
+  "version": "4.4.0",
   "description": "A headless canvas frame: an isolated document at a width, scaled down to fit a narrower pane, with its styles adopted into it, and no styling of its own.",
   "keywords": [
     "headless",

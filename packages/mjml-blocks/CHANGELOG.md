@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* clear typecheck and lint failures left by the dependency bump ([7c27243](https://github.com/Esposter/Esposter/commit/7c272437edfa8ada715dc089f5f99ac7d31cb89d))
+* **headless-block-editor:** the document schema's input type carries the document, so a save's body is typed ([f5e1431](https://github.com/Esposter/Esposter/commit/f5e1431b34e5e775282ddd62ede09792b67d1146))
+* **lint:** the shared, package and test sources satisfy the oxlint rules ([689d2e5](https://github.com/Esposter/Esposter/commit/689d2e55a3eee18570d0bbc2108ecbfce53f8171))
+* **mjml-blocks:** a label's element check reads its text once instead of from every opening angle bracket ([e3af2a5](https://github.com/Esposter/Esposter/commit/e3af2a5bd8ed2db3fba0ab3991321987325583b8))
+* **mjml-blocks:** a unit refuses the decimal comma, which CSS reads as no length ([cdb3645](https://github.com/Esposter/Esposter/commit/cdb3645d1708c8ed5c1c6444d872d5a6529fcf2c))
+* **page-builder:** every string and array in the email and webpage inputs is bounded ([617b16c](https://github.com/Esposter/Esposter/commit/617b16c09b51e96acb0fbe9d0ea3ed1a7210ad7b))
+
+### Features
+
+* **mjml-blocks:** every definition carries the form its content panel edits, empty where the canvas and style panel edit its props, and the shell's kind requires it ([648ca9d](https://github.com/Esposter/Esposter/commit/648ca9dca9c18a05a2a33ec7a0078c895e20db21))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package mjml-blocks

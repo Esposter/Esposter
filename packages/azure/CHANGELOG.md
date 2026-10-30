@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* **azure-mock:** a blob name decodes segment by segment, so one stray percent sign keeps the rest ([4f09bd4](https://github.com/Esposter/Esposter/commit/4f09bd4c81115c9db97cdf92d53e3ea640f92d45))
+* **azure:** deserializeClause's imports are sorted as perfectionist/sort-imports wants ([d0368c2](https://github.com/Esposter/Esposter/commit/d0368c276043e9d586ea2d9e5bad0af30d108d7a))
+* **lint:** the enum findings the enum groups could fix, with the date-token guard shared once ([66515ba](https://github.com/Esposter/Esposter/commit/66515ba17bee983d06454f2b91c4a5eb46dd9f96))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package @esposter/azure

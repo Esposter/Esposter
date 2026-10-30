@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* **ci:** the perfectionist sort fixes CI's Lint job failed on, in four packages ([b6c2e75](https://github.com/Esposter/Esposter/commit/b6c2e75a2aadc22847ec3d6946d0dabc7162a6e1))
+* **ci:** the sins trend reads the half-life's own constant, since its second name was a duplicate export knip fails the Lint job on ([2566caa](https://github.com/Esposter/Esposter/commit/2566caab51062839e503306ff886ffbdeea69a6f))
+* **genshin-mods:** /sins reads the TypeSafe key the way genshin-persona does ([a5d7d4e](https://github.com/Esposter/Esposter/commit/a5d7d4e20ae4df865626ef6b9bb08c1062af45c2))
+* **genshin-mods:** a sin run that outlives a clear or resume records nothing ([01a6008](https://github.com/Esposter/Esposter/commit/01a600810afe0cf7b468a7da7bfddb8589dd66bc))
+* **genshin-mods:** the maintenance prompt no longer forbids new features, as the usage reserve reference no longer does ([150d526](https://github.com/Esposter/Esposter/commit/150d52614946b78516fc5c05e3b2962b330d1851))
+* **genshin-mods:** the sins band names the Node floor per release line, since 23.0 to 23.3 lack node:sqlite ([48ca32d](https://github.com/Esposter/Esposter/commit/48ca32d1d4c7c85676fe7f96b2c9f8fee30aab94))
+* **genshin-mods:** the sins band spaces its label and scores with a column gap ([68e3899](https://github.com/Esposter/Esposter/commit/68e3899f2bba5f68f7474d049c2cf67aaf8aa1bc))
+* **genshin-mods:** the sins band spaces its texts with trailing spaces, not a column gap ([0f1bb88](https://github.com/Esposter/Esposter/commit/0f1bb88d77eb3f6d315a57f1f3b35a990c50c199))
+* **genshin-mods:** the sins script answers node-too-old where getBuiltinModule is missing ([eb9f400](https://github.com/Esposter/Esposter/commit/eb9f40077f19d975f35d4ed72e600f3073f3145a))
+* **genshin-mods:** the sins script answers node-too-old where process.getBuiltinModule is missing ([f8015ac](https://github.com/Esposter/Esposter/commit/f8015ac3d063aac9883be290356a7e526e0d901c))
+* **genshin-mods:** the sins script closes its store in a finally, since using does not parse on Node 22.13 ([8a9269a](https://github.com/Esposter/Esposter/commit/8a9269a76942420447229117f689e73fc6d4538c))
+* **genshin-mods:** the sins script opens its store as DatabaseSync and closes it with using ([77876ce](https://github.com/Esposter/Esposter/commit/77876ce36a54985d7f1962a708587eb8827fb988))
+* **lint:** the findings the eight lint buckets could fix, with the rest left for their own decisions ([360085e](https://github.com/Esposter/Esposter/commit/360085e05db2e249b54851ffdba67556be107ebd))
+* **lint:** the oxlint autofix gives void-returning arrows block bodies, and the formatter lays them out ([9103811](https://github.com/Esposter/Esposter/commit/910381177c6a9906b3283661d4f85ec66c77c785))
+* **lint:** the oxlint directives that suppress nothing are removed, and the unused DateToken import goes with them ([407e7cf](https://github.com/Esposter/Esposter/commit/407e7cf15219405110efdd0c977bb30cb1db1644))
+* **lint:** the scripts, functions and shared packages' findings are fixed, or kept with the constraint that holds ([def559c](https://github.com/Esposter/Esposter/commit/def559c12d5dfe372710fce37138f4d50da71b4b))
+
+### Features
+
+* **genshin-mods:** /sins on refuses without a TypeSafe key, and the review's fixes land ([b3b656d](https://github.com/Esposter/Esposter/commit/b3b656d34cf28883e2b3ff9b73f72bd70c3f2433))
+* **genshin-mods:** score each prompt's seven sins with Jev, shown in a pane ([648353f](https://github.com/Esposter/Esposter/commit/648353f4a710b8dc0f11f28b1e9fabe07d6f1d77))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 ### Bug Fixes

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* **pitch-transcription:** the writeMidi and note exports carry the explicit types isolated declarations need ([28c1031](https://github.com/Esposter/Esposter/commit/28c1031d9192804e0ede2b9fc9e48e25ad58d156))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package pitch-transcription

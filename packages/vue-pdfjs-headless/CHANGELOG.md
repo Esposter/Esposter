@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* **lint:** the oxlint autofix gives void-returning arrows block bodies, and the formatter lays them out ([9103811](https://github.com/Esposter/Esposter/commit/910381177c6a9906b3283661d4f85ec66c77c785))
+* **lint:** the scripts, functions and shared packages' findings are fixed, or kept with the constraint that holds ([def559c](https://github.com/Esposter/Esposter/commit/def559c12d5dfe372710fce37138f4d50da71b4b))
+* **lint:** usePdfViewer reports a followBookmark rejection as its siblings do, and the persona speech loop types its status ([8ebcf04](https://github.com/Esposter/Esposter/commit/8ebcf0424a7e1907acc4e259f6355b8f3269a8a9))
+* **vue-pdfjs-headless:** XFDF drops the control characters XML cannot hold ([a479aea](https://github.com/Esposter/Esposter/commit/a479aea0c95636ccac36544752ef26eeaebfc0f4))
+
+### Features
+
+* **vue-pdfjs-headless:** annotations — forms kept on save, drawn annotations reported, comments listed, XFDF free texts, edited and watermarked download ([c072154](https://github.com/Esposter/Esposter/commit/c0721547fee730d5ea2c27827b9b7c1a97351da5))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package vue-pdfjs-headless

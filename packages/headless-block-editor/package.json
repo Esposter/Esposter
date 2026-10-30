@@ -1,6 +1,6 @@
 {
   "name": "headless-block-editor",
-  "version": "4.3.3",
+  "version": "4.4.0",
   "description": "A headless block editor: a typed node tree over a registry, the commands that edit it as JSON Patch operations, and navigation, with no framework or DOM. Its undo history is the bounded history of @esposter/shared.",
   "keywords": [
     "typescript"

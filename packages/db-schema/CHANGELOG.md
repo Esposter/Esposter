@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* **db-schema:** the project lists the formatter configuration its registry generator imports ([02031a1](https://github.com/Esposter/Esposter/commit/02031a1f2f63c4811463658cbc79d9424035e6b8))
+* **db-schema:** the registry generator writes its schema in the formatter's form, through the formatter's API ([9ca8007](https://github.com/Esposter/Esposter/commit/9ca8007246697aade5521cd628289e456cc125e4))
+* **db-schema:** the sanitiser runs in a one-argument transform ([2444be6](https://github.com/Esposter/Esposter/commit/2444be619df27e96252e220cac3a42336810d919))
+* **db:** the migrate script loads apps/web's env file with Node's own flag, and pnpm dev calls it without a dotenv variable ([0d3f67a](https://github.com/Esposter/Esposter/commit/0d3f67a6e83ec0df40b89e75835ad7a7090e3c59))
+* **lint:** oxlint and ESLint are clean again across scripts, genshin-world and the shared packages ([ed206e7](https://github.com/Esposter/Esposter/commit/ed206e7956fb13fb5f022be337bfef8e447c9e01))
+* **lint:** the oxlint pass, knip and the typecheck that failed CI's Lint and Typecheck jobs are green ([ee125bb](https://github.com/Esposter/Esposter/commit/ee125bbfa097ffc62a91be52a3ce45012caffeee)), closes [#src](https://github.com/Esposter/Esposter/issues/src)
+* **lint:** the scripts, functions and shared packages' findings are fixed, or kept with the constraint that holds ([def559c](https://github.com/Esposter/Esposter/commit/def559c12d5dfe372710fce37138f4d50da71b4b))
+* **lint:** the shared, package and test sources satisfy the oxlint rules ([689d2e5](https://github.com/Esposter/Esposter/commit/689d2e55a3eee18570d0bbc2108ecbfce53f8171))
+
+### Features
+
+* **db-schema:** an account is removed with its user, and a user row records its deletion request ([5e9df8f](https://github.com/Esposter/Esposter/commit/5e9df8ffe6a76bca846db93c3f2df89f72480e08))
+* **db-schema:** dataExports holds one active export per person ([c4eec65](https://github.com/Esposter/Esposter/commit/c4eec6569ffb26837e59180fc91a2e7bafafe623))
+* **db-schema:** dataExports records when each export was requested, so the latest one is the one shown ([b607bb5](https://github.com/Esposter/Esposter/commit/b607bb5162ccece7f4d2f44cc85927adb0fbca72))
+* **functions:** a profile image that lands after its account is gone deletes itself ([b81cbf4](https://github.com/Esposter/Esposter/commit/b81cbf49525af3921388b24c8a1299f337010a1d))
+* **functions:** DeleteAccount is registered as an EventGrid trigger that parses the account it names and runs the sweep ([e79d743](https://github.com/Esposter/Esposter/commit/e79d7432344542687878190fdd30c919cee0fa99))
+* **functions:** PurgeSurveyResources runs the one-time survey purge when one event is published ([b58c1ac](https://github.com/Esposter/Esposter/commit/b58c1ac991b6c7df1058362e68f7c0acc3db534f))
+* **infra:** the DataExports container, its seven-day lifecycle rule and each environment's export subscription ([8e9cc98](https://github.com/Esposter/Esposter/commit/8e9cc9809d55c494af3d0b61dcb745f0e7f92cfd))
+* **message:** a message upload is reserved against its uploader's allowance, and a forward charges each copy ([ea35a9f](https://github.com/Esposter/Esposter/commit/ea35a9fc3d40101a1539e3ab2a4563ca765073e2))
+* **user:** an export request queues once, and its owner-only link is minted for a ready export ([82c28aa](https://github.com/Esposter/Esposter/commit/82c28aa23a1bc48f27c98f8ecc2ff4ce65f0abcb))
+* **user:** the data export archive streams into a blob and the handler records its outcome ([c2cac19](https://github.com/Esposter/Esposter/commit/c2cac19d272ef8d4d93bdfb1182b058fb48fbce1))
+
+### Performance Improvements
+
+* **db-schema:** index the room-wide and author reads, bound a comment count at zero ([f02d296](https://github.com/Esposter/Esposter/commit/f02d296c58a30433acf3c12d23b3bdcf75475ae4))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package @esposter/db-schema

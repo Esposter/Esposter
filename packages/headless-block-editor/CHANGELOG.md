@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* **headless-block-editor:** the document schema's input type carries the document, so a save's body is typed ([f5e1431](https://github.com/Esposter/Esposter/commit/f5e1431b34e5e775282ddd62ede09792b67d1146))
+* **lint:** the findings the eight lint buckets could fix, with the rest left for their own decisions ([360085e](https://github.com/Esposter/Esposter/commit/360085e05db2e249b54851ffdba67556be107ebd))
+* **lint:** the oxlint autofix gives void-returning arrows block bodies, and the formatter lays them out ([9103811](https://github.com/Esposter/Esposter/commit/910381177c6a9906b3283661d4f85ec66c77c785))
+* **lint:** the scripts, functions and shared packages' findings are fixed, or kept with the constraint that holds ([def559c](https://github.com/Esposter/Esposter/commit/def559c12d5dfe372710fce37138f4d50da71b4b))
+* **lint:** the shared, package and test sources satisfy the oxlint rules ([689d2e5](https://github.com/Esposter/Esposter/commit/689d2e55a3eee18570d0bbc2108ecbfce53f8171))
+* **page-builder:** every string and array in the email and webpage inputs is bounded ([617b16c](https://github.com/Esposter/Esposter/commit/617b16c09b51e96acb0fbe9d0ea3ed1a7210ad7b))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package headless-block-editor

@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* **ci:** the unused entity-metadata helper is deleted, and configuration declares the vue types its shim imports ([61204a1](https://github.com/Esposter/Esposter/commit/61204a12ba6df5f57911ac7387e9c24840800252))
+* **configuration:** the browser suites launch Edge without GPU rasterization, so an update's captures repeat ([d165178](https://github.com/Esposter/Esposter/commit/d165178ddda65667c447b57f1abf23e03dbdc708))
+* **configuration:** the count-delta lint rule covers a role's count again and names the design doc ([4716e25](https://github.com/Esposter/Esposter/commit/4716e25a537e604e6336d91afd9c2398ca8fb435))
+* **configuration:** the factory's option order passes lint, and the bundle snapshot matches its build ([4dde208](https://github.com/Esposter/Esposter/commit/4dde2082bd19c9703cd8cef0bf60c940000a7199))
+* **configuration:** the ignores comment rewraps so each line starts a sentence ([fe077e2](https://github.com/Esposter/Esposter/commit/fe077e2cabfa0542fc151c323ed5298815731632))
+* **configuration:** the Vue build's `eager` and `vue` options move under dts.tsc ([6e82397](https://github.com/Esposter/Esposter/commit/6e82397969e6a430bfb1b343839c98dd00a2ca39))
+* **configuration:** vitest config clears mock history before each test ([906cb49](https://github.com/Esposter/Esposter/commit/906cb49c7caf5bb616e3da321a2d8bc41daa25db))
+* **configuration:** write the barrel in the order the lint rule sorts it ([f8b1f4f](https://github.com/Esposter/Esposter/commit/f8b1f4f92a8f717e4d210f8ea44e2640533e2643))
+* **configuration:** writeBarrel's imports are sorted as perfectionist/sort-imports wants ([c4f3d22](https://github.com/Esposter/Esposter/commit/c4f3d22be616b5f2d9b3ff52de499b90975f74d8))
+* **lint:** oxlint and ESLint are clean again across scripts, genshin-world and the shared packages ([ed206e7](https://github.com/Esposter/Esposter/commit/ed206e7956fb13fb5f022be337bfef8e447c9e01))
+* **lint:** the scripts, functions and shared packages' findings are fixed, or kept with the constraint that holds ([def559c](https://github.com/Esposter/Esposter/commit/def559c12d5dfe372710fce37138f4d50da71b4b))
+* **trpc-nuxt-module:** the README's handler subpath returns to the exports map, and the Nuxt-module factory takes its own excludes ([5b07f04](https://github.com/Esposter/Esposter/commit/5b07f04707d5dd1720a7e8cdb52db1824017cf01))
+* **web:** satisfy the CI lint and typecheck jobs for the dungeon and call changes ([3050ad1](https://github.com/Esposter/Esposter/commit/3050ad13d28690c62870bebd925173e3717423f5))
+
+### Features
+
+* **lint:** a server-derived count written before its mutation settles fails the oxlint pass ([cb1bfc6](https://github.com/Esposter/Esposter/commit/cb1bfc6c2e06718a11c40ee5afbd3856f5ee50a3))
+* **resource:** the editors' gzipped scripts beyond the explorer are held to 200 KiB by a test over the built chunks ([f2afe77](https://github.com/Esposter/Esposter/commit/f2afe771195fab414840dde8411d1a2c2fcdc209))
+
+### Performance Improvements
+
+* **configuration:** every core runs a Vitest worker ([5a0ad7a](https://github.com/Esposter/Esposter/commit/5a0ad7adc0cc7f73b7e97b7455b34bd27ed3f823))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package @esposter/configuration
