@@ -2,8 +2,10 @@
 import type { TextSegment } from "#src/models/TextSegment";
 import type { WishPoolCell } from "#src/models/WishPoolCell";
 
+import CloseButton from "#src/components/CloseButton/Index.vue";
 import RarityStars from "#src/components/RarityStars/Index.vue";
 import WishPath from "#src/components/WishPath/Index.vue";
+import { CloseButtonMark } from "#src/models/CloseButtonMark";
 import { computed } from "vue";
 
 interface Props {
@@ -30,7 +32,7 @@ const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rari
   <div class="wish-details" role="dialog" :aria-label="title">
     <div class="panel">
       <p class="title">{{ title }}</p>
-      <button class="close" type="button" :aria-label="closeLabel" @click="emit('close')">✕</button>
+      <CloseButton class="close" :label="closeLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
       <ul class="pool">
         <li v-for="[rarity, cells] of poolRarityCellsMap" :key="rarity" class="pool-rarity">
           <RarityStars :rarity />
