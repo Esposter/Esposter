@@ -11,7 +11,7 @@ import { useListScreenTabStep } from "#src/composables/useListScreenTabStep";
 import { QuestCategory } from "#src/models/quest/QuestCategory";
 import { QuestGlyph } from "#src/models/quest/QuestGlyph";
 import { LIST_SCREEN_WIDTH } from "#src/services/menu/constants";
-import { ORNAMENT_END_SIDE_CLASSES, QUEST_CATEGORIES } from "#src/services/quest/constants";
+import { ORNAMENT_END_SIDES, QUEST_CATEGORIES } from "#src/services/quest/constants";
 import { getQuestCounter } from "#src/services/quest/getQuestCounter";
 import { QuestCategoryGameTextKeyMap } from "#src/services/quest/QuestCategoryGameTextKeyMap";
 import { QuestCategoryGlyphMap } from "#src/services/quest/QuestCategoryGlyphMap";
@@ -213,13 +213,7 @@ useEventListener("keydown", (event) => {
           <span class="journal-emblem" />
         </template>
         <span class="divider" />
-        <svg
-          v-for="sideClass of ORNAMENT_END_SIDE_CLASSES"
-          :key="sideClass"
-          class="ornament-end"
-          :class="sideClass"
-          viewBox="0 0 320 224"
-        >
+        <svg v-for="side of ORNAMENT_END_SIDES" :key="side" class="ornament-end" :class="side" viewBox="0 0 320 224">
           <path :d="ORNAMENT_END_PATH" />
         </svg>
         <p v-if="questStep" class="step">
@@ -268,13 +262,7 @@ useEventListener("keydown", (event) => {
         </button>
       </div>
       <span class="footer-line" />
-      <svg
-        v-for="sideClass of ORNAMENT_END_SIDE_CLASSES"
-        :key="sideClass"
-        class="footer-end"
-        :class="sideClass"
-        viewBox="0 0 320 224"
-      >
+      <svg v-for="side of ORNAMENT_END_SIDES" :key="side" class="footer-end" :class="side" viewBox="0 0 320 224">
         <path :d="ORNAMENT_END_PATH" />
       </svg>
       <!-- The overview of every quest is not built, so its button is drawn and does nothing -->

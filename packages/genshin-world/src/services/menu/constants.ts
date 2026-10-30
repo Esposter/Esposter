@@ -8,6 +8,7 @@ import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
 import { MenuEntryIcon as EntryIcon } from "#src/models/menu/MenuEntryIcon";
 import { MenuFrameIcon as FrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { SettingsTab as Tab } from "#src/models/menu/SettingsTab";
+import { TimeDialOrnamentPosition } from "#src/models/menu/TimeDialOrnamentPosition";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { FOLLOW_CAMERA_DEFAULT_SETTINGS, MINUTES_PER_DAY, QualityTier } from "genshin-engine";
 import { GameLanguage, GameTextKey } from "genshin-text";
@@ -43,7 +44,10 @@ export const PAIMON_MENU_CONTENTS: readonly PaimonMenuScreenEntry<MenuEntryIcon>
   { icon: EntryIcon.CoOp, screenKind: ScreenKind.CoOp },
 ];
 // The two ornaments the time dial's frame carries, at its top and at its bottom
-export const TIME_DIAL_ORNAMENT_POSITIONS: readonly string[] = ["top", "bottom"];
+export const TIME_DIAL_ORNAMENT_POSITIONS: readonly TimeDialOrnamentPosition[] = [
+  TimeDialOrnamentPosition.Top,
+  TimeDialOrnamentPosition.Bottom,
+];
 // The Time screen's advance in game minutes, at least thirty ahead and at most two days, as the game's Time option allows
 export const TIME_MINIMUM_ADVANCE_MINUTES = 30;
 export const TIME_MAXIMUM_ADVANCE_MINUTES = 2 * MINUTES_PER_DAY;

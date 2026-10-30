@@ -1,7 +1,8 @@
+import { OrnamentEndSide } from "#src/models/quest/OrnamentEndSide";
 import { QuestCategory } from "#src/models/quest/QuestCategory";
 
-// The two ends of a rule's ornament: the left one takes no class, and the right one is the same diamond mirrored
-export const ORNAMENT_END_SIDE_CLASSES: readonly string[] = ["", "right"];
+// The two ends of a rule's ornament, in the order they are drawn
+export const ORNAMENT_END_SIDES: readonly OrnamentEndSide[] = [OrnamentEndSide.Left, OrnamentEndSide.Right];
 // The quest screen's tabs after its first, which lists every quest, in the order the game draws them and its list's
 // Headings run
 export const QUEST_CATEGORIES: readonly QuestCategory[] = [
