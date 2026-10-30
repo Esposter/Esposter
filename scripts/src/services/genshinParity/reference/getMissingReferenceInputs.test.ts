@@ -10,36 +10,50 @@ const onDisk =
 
 describe(getMissingReferenceInputs, () => {
   const referencePath = "reference.png";
+  const platePath = "plate.webp";
   const witnessLayoutPath = "witness.json";
 
-  test("names nothing missing when the reference image and its witness layout are on disk", () => {
+  test("names nothing missing when the reference image, its plate and its witness layout are on disk", () => {
     expect.hasAssertions();
 
     expect(
-      getMissingReferenceInputs(referencePath, witnessLayoutPath, onDisk(referencePath, witnessLayoutPath)),
+      getMissingReferenceInputs(
+        referencePath,
+        platePath,
+        witnessLayoutPath,
+        onDisk(referencePath, platePath, witnessLayoutPath),
+      ),
     ).toStrictEqual([]);
   });
 
   test("names the witness layout missing when the reference image is on disk", () => {
     expect.hasAssertions();
 
-    expect(getMissingReferenceInputs(referencePath, witnessLayoutPath, onDisk(referencePath))).toStrictEqual([
-      { kind: MissingReferenceInputKind.WitnessLayout, path: witnessLayoutPath },
+    expect(
+      getMissingReferenceInputs(referencePath, platePath, witnessLayoutPath, onDisk(referencePath, platePath)),
+    ).toStrictEqual([{ kind: MissingReferenceInputKind.WitnessLayout, path: witnessLayoutPath }]);
+  });
+
+  test("names the plate missing when the reference image is on disk, since a plate is a committed input like the image", () => {
+    expect.hasAssertions();
+
+    expect(getMissingReferenceInputs(referencePath, platePath, undefined, onDisk(referencePath))).toStrictEqual([
+      { kind: MissingReferenceInputKind.Plate, path: platePath },
     ]);
   });
 
   test("names both inputs missing, the reference image first", () => {
     expect.hasAssertions();
 
-    expect(getMissingReferenceInputs(referencePath, witnessLayoutPath, onDisk())).toStrictEqual([
+    expect(getMissingReferenceInputs(referencePath, undefined, witnessLayoutPath, onDisk())).toStrictEqual([
       { kind: MissingReferenceInputKind.ReferenceImage, path: referencePath },
       { kind: MissingReferenceInputKind.WitnessLayout, path: witnessLayoutPath },
     ]);
   });
 
-  test("checks no witness layout for a reference no component draws", () => {
+  test("checks no plate for a reference whose entry names no plate source, and no witness layout for one no component draws", () => {
     expect.hasAssertions();
 
-    expect(getMissingReferenceInputs(referencePath, undefined, onDisk(referencePath))).toStrictEqual([]);
+    expect(getMissingReferenceInputs(referencePath, undefined, undefined, onDisk(referencePath))).toStrictEqual([]);
   });
 });

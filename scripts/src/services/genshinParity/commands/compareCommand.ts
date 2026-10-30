@@ -17,6 +17,7 @@ import { readReferenceManifest } from "#src/services/genshinParity/reference/rea
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { getPlannedReferencePath } from "#src/services/genshinParity/shared/getPlannedReferencePath";
+import { getReferencePlateFilePath } from "#src/services/genshinParity/shared/getReferencePlateFilePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { roundHundredths } from "#src/services/genshinParity/shared/roundHundredths";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
@@ -67,8 +68,20 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
       async () => {
         // Fetched first, as each comparison would fetch it, so a reference the wiki holds is measured rather than reported
         if (args.all) await fetchReferences();
-        // Read once for the run: the held check and each held reference's path come from its row
+        // Read once for the run: the held check comes from the manifest, and each held reference's planned path is read here
+        // before the loop, so the loop awaits only its comparison. A pending screen has no reference to read
         const manifestRows = args.all ? await readReferenceManifest() : [];
+        const plannedPaths = new Map(
+          await Promise.all(
+            referenceIds
+              .filter(
+                (referenceId) =>
+                  ParityReferenceMap[referenceId]?.pending === undefined &&
+                  manifestRows.some(({ id }) => id === referenceId),
+              )
+              .map(async (referenceId) => [referenceId, await getPlannedReferencePath(referenceId)] as const),
+          ),
+        );
         // One screen is shot at a time, on the one parity page
         for (const referenceId of referenceIds) {
           if (args.all) console.error(`== ${referenceId}`);
@@ -85,13 +98,15 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
                 ? undefined
                 : join(getComponentDirectory(layerComponent).root, WITNESS_LAYOUT_FILE_NAME);
             // A reference the manifest does not hold has no stored image to measure, so it is named missing rather than fetched
-            const row = manifestRows.find(({ id }) => id === referenceId);
-            // oxlint-disable-next-line no-await-in-loop -- the reference's planned path is read as its screen is reached, one at a time
-            const referencePath = row === undefined ? undefined : await getPlannedReferencePath(referenceId);
+            const referencePath = plannedPaths.get(referenceId);
+            const platePath =
+              ParityReferenceMap[referenceId]?.plateSource === undefined
+                ? undefined
+                : getReferencePlateFilePath(referenceId);
             const missing =
               referencePath === undefined
                 ? undefined
-                : getMissingReferenceInputs(referencePath, witnessLayoutPath, existsSync);
+                : getMissingReferenceInputs(referencePath, platePath, witnessLayoutPath, existsSync);
             const missingNames =
               missing === undefined
                 ? ["reference image in the manifest"]
@@ -100,7 +115,7 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
             if (missingNames.length > 0) {
               console.error(`not measured: ${missingNames.join(", ")}`);
               for (const { kind, path } of missing ?? [])
-                if (kind === MissingReferenceInputKind.ReferenceImage)
+                if (kind === MissingReferenceInputKind.ReferenceImage || kind === MissingReferenceInputKind.Plate)
                   missingImages.push(relative(REPOSITORY_ROOT, path));
               continue;
             }
@@ -137,7 +152,7 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
     // A witness's scores price the exports, not the scene, so the committed report keeps the scene's own. Only `--all`
     // Visits every reference, so it alone is the full run that may drop a row; a single reference's scores are a subset
     if (!args.witness) await writeParityScores(scores, args.all ? ParityReportRun.Full : ParityReportRun.Subset);
-    // A missing committed image fails the run, so it is named once the scores of the others are written
+    // A missing committed image or plate fails the run, so it is named once the scores of the others are written
     for (const missingImage of missingImages) console.error(`missing committed image: ${missingImage}`);
     if (missingImages.length > 0) process.exitCode = 1;
   },

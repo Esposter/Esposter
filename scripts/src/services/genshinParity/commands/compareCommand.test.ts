@@ -9,9 +9,10 @@ import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constant
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
 import { REFERENCE_MANIFEST_PATH } from "#src/services/genshinParity/shared/constants";
 import { getPlannedReferencePath } from "#src/services/genshinParity/shared/getPlannedReferencePath";
+import { getReferencePlateFilePath } from "#src/services/genshinParity/shared/getReferencePlateFilePath";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runCommand } from "citty";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinParity/reference/compareScreen"), () => ({
@@ -41,6 +42,18 @@ vi.mock(import("#src/services/genshinParity/reference/readReferenceManifest"), (
         sourceFormat: "webp",
         width: 1,
       },
+      {
+        attribution: {},
+        bytes: 1,
+        capturedAt: new Date(0).toISOString(),
+        height: 1,
+        id: "plate-door",
+        kind: ParityReferenceKind.RecordingFrame,
+        plate: { bytes: 1, height: 1, sha256: "1".repeat(64), width: 1 },
+        sha256: "0".repeat(64),
+        sourceFormat: "webp",
+        width: 1,
+      },
     ]),
   ),
 }));
@@ -54,6 +67,7 @@ vi.mock(import("#src/services/genshinParity/shared/ParityReferenceMap"), () => (
   ParityReferenceMap: {
     "cooking-screen": { pending: "no recording yet", screen: "CookingScreen" },
     "login-door": { screen: "LoginScreen", wikiTitle: "File:Door.png" },
+    "plate-door": { plateSource: "plate frame at 2s", screen: "DoorScreen", source: "main frame at 1s" },
   } satisfies Record<string, ParityReference>,
 }));
 
@@ -150,5 +164,24 @@ describe("compareCommand", () => {
       { "login-door": loginDoorScore },
       ParityReportRun.Full,
     );
+  });
+
+  test("names a committed plate that is missing, scores the others, and fails the run", async () => {
+    expect.hasAssertions();
+
+    const error = vi.spyOn(console, "error").mockReturnValue(undefined);
+    vi.spyOn(console, "log").mockReturnValue(undefined);
+    vi.mocked(compareScreen).mockResolvedValue({ cells: [], score: loginDoorScore });
+    await runCommand(genshinParityCommand, { rawArgs: ["compare", "--all"] });
+
+    expect(vi.mocked(compareScreen).mock.calls.map(([referenceId]) => referenceId)).toStrictEqual(["login-door"]);
+    expect(error).toHaveBeenCalledWith(
+      `missing committed image: ${relative(REPOSITORY_ROOT, getReferencePlateFilePath("plate-door"))}`,
+    );
+    expect(vi.mocked(writeParityScores)).toHaveBeenLastCalledWith(
+      { "login-door": loginDoorScore },
+      ParityReportRun.Full,
+    );
+    expect(process.exitCode).toBe(1);
   });
 });
