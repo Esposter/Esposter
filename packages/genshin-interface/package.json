@@ -39,6 +39,10 @@
       "source": "./src/services/constants.ts",
       "default": "./dist/constants.js"
     },
+    "./getFixtureImageName": {
+      "source": "./src/services/getFixtureImageName.ts",
+      "default": "./dist/getFixtureImageName.js"
+    },
     "./save": {
       "source": "./src/save.ts",
       "default": "./dist/save.js"
@@ -54,6 +58,7 @@
     "exports": {
       ".": "./dist/index.js",
       "./constants": "./dist/constants.js",
+      "./getFixtureImageName": "./dist/getFixtureImageName.js",
       "./save": "./dist/save.js",
       "./package.json": "./package.json",
       "./style.css": "./dist/style.css",

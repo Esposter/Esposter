@@ -13,11 +13,8 @@ import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityRef
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
-import {
-  APPROVE_ENVIRONMENT_VARIABLE,
-  FIXTURE_VARIANT_SEPARATOR,
-  getFixtureImageName,
-} from "genshin-interface/constants";
+import { APPROVE_ENVIRONMENT_VARIABLE, FIXTURE_VARIANT_SEPARATOR } from "genshin-interface/constants";
+import { getFixtureImageName } from "genshin-interface/getFixtureImageName";
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 

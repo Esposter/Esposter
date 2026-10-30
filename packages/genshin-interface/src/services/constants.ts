@@ -88,10 +88,9 @@ export const SETTINGS_RING_WIDTH = 1.9;
 // Joins a component's name to its fixture's variant in its image's name, in both packages' visual suites.
 // A file name, so not `ID_SEPARATOR`: a vertical bar is one of the characters Windows rejects in a path
 export const FIXTURE_VARIANT_SEPARATOR = "-";
-// A fixture's image is named after the component's `Index`, and each variant's after the variant, as the visual suites and the parity scripts read them
+// A fixture's image is named after the component's `Index`, and each variant's after the variant, as the visual suites and the
+// parity scripts read them (`getFixtureImageName`)
 export const FIXTURE_IMAGE_NAME = "Index";
-export const getFixtureImageName = (variant: string): string =>
-  variant === "" ? FIXTURE_IMAGE_NAME : `${FIXTURE_IMAGE_NAME}${FIXTURE_VARIANT_SEPARATOR}${variant}`;
 // Set on the visual suite by `genshin:parity approve`, which makes its comparison exact (`vitest.browser.config.ts`)
 export const APPROVE_ENVIRONMENT_VARIABLE = "GENSHIN_PARITY_APPROVE";
 // The key the prompts' selected row is marked with, the game's default for Pick Up and Interact

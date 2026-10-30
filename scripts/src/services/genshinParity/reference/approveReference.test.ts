@@ -5,7 +5,7 @@ import { listFixtureScreens } from "#src/services/genshinParity/fixtures/listFix
 import { approveReference } from "#src/services/genshinParity/reference/approveReference";
 import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
 import { GENSHIN_WORLD_DIRECTORY } from "#src/services/genshinParity/shared/constants";
-import { getFixtureImageName } from "genshin-interface/constants";
+import { getFixtureImageName } from "genshin-interface/getFixtureImageName";
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, relative } from "node:path";

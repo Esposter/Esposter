@@ -9,7 +9,7 @@ import {
 import { getComponentNames } from "#src/services/genshinParity/fixtures/getComponentNames";
 import { getFixtureScreenRow } from "#src/services/genshinParity/fixtures/getFixtureScreenRow";
 import { getFixtureVariantNames } from "#src/services/genshinParity/fixtures/getFixtureVariantNames";
-import { getFixtureImageName } from "genshin-interface/constants";
+import { getFixtureImageName } from "genshin-interface/getFixtureImageName";
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import { basename, dirname, join, sep } from "node:path";

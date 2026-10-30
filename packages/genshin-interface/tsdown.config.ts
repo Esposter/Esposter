@@ -13,7 +13,12 @@ const DEV_STYLES_EXPORT = { source: "./src/styles/*.css", default: "./dist/style
 // Under its own name
 const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue(), {
   copy: { from: "src/styles/*.css", to: "dist/styles" },
-  entry: { constants: "src/services/constants.ts", index: "src/index.ts", save: "src/save.ts" },
+  entry: {
+    constants: "src/services/constants.ts",
+    getFixtureImageName: "src/services/getFixtureImageName.ts",
+    index: "src/index.ts",
+    save: "src/save.ts",
+  },
   exports: {
     customExports: (exports, { isPublish }) => ({
       ...exports,

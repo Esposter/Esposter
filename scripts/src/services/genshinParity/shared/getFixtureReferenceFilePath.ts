@@ -1,6 +1,6 @@
 import { REFERENCE_IMAGE_SUFFIX } from "#src/services/genshinParity/fixtures/constants";
 import { REFERENCE_FILE_EXTENSION } from "#src/services/genshinParity/reference/constants";
-import { getFixtureImageName } from "genshin-interface/constants";
+import { getFixtureImageName } from "genshin-interface/getFixtureImageName";
 import { join } from "node:path";
 
 // Where a fixture variant's primary reference is committed, beside its snapshot in the fixture's folder: `Index.reference.webp`
