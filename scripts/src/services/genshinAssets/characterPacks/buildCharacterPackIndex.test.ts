@@ -11,7 +11,12 @@ const getSha256 = (content: string): string => createHash("sha256").update(conte
 
 // An avatar's folder as the owner's extraction leaves it: each file, then the manifest listing them by path, bytes and
 // Hash. Returns the manifest's text, which the index holds the manifest file under
-const writePack = (directory: string, avatarId: string, name: null | string, files: Record<string, string>): string => {
+const writePack = (
+  directory: string,
+  avatarId: string,
+  name: string | undefined,
+  files: Record<string, string>,
+): string => {
   const avatarDirectory = join(directory, avatarId);
   for (const [path, content] of Object.entries(files)) {
     mkdirSync(dirname(join(avatarDirectory, path)), { recursive: true });
@@ -73,11 +78,11 @@ describe(buildCharacterPackIndex, () => {
     });
   });
 
-  // The extraction writes a null name for a pack it could not name, which the index keeps as an empty name
+  // The extraction omits the name of a pack it could not name, which the index keeps as an empty name
   test("an avatar whose manifest names none is indexed with an empty name", async () => {
     expect.hasAssertions();
 
-    writePack(directory, "10000026", null, { "Texture/body.png": "body" });
+    writePack(directory, "10000026", undefined, { "Texture/body.png": "body" });
 
     expect(
       (await buildCharacterPackIndex(await readCharacterPackFiles(directory))).avatars.map(({ name }) => name),
