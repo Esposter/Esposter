@@ -37,16 +37,15 @@ describe(getArtifactDetailStats, () => {
     });
   });
 
-  test("a percentage main stat is its value to one place", () => {
+  test("a percentage main stat is named and its value is to one place", () => {
     expect.hasAssertions();
 
-    expect(
-      getArtifactDetailStats(
-        createArtifact({ mainAffix: Attribute.HealthPercent }),
-        ENGLISH_GAME_TEXT,
-        artifactMainAffixCurves,
-      ).mainStat.value,
-    ).toBe("+4.7%");
+    const { mainStat } = getArtifactDetailStats(
+      createArtifact({ mainAffix: Attribute.HealthPercent }),
+      ENGLISH_GAME_TEXT,
+      artifactMainAffixCurves,
+    );
+    expect(mainStat).toStrictEqual({ label: ENGLISH_GAME_TEXT[GameTextKey.AttributeMaxHealth], value: "+4.7%" });
   });
 
   test("each minor affix is named, a flat attribute whole and a percentage to one place", () => {

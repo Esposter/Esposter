@@ -1,9 +1,7 @@
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { AttributeLabelGameTextKeyMap } from "#src/services/character/AttributeLabelGameTextKeyMap";
 import { getSecondaryAttribute } from "#src/services/character/getSecondaryAttribute";
-import { GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 
 // A weapon that grows its base ATK and the one attribute given beside it
@@ -29,18 +27,5 @@ describe("getSecondaryAttribute", () => {
     const baseOnly = { growAttributes: [{ attribute: Attribute.BaseAttack, base: 42, curve: "weaponAttack" }] };
 
     expect(getSecondaryAttribute(baseOnly)).toBeUndefined();
-  });
-
-  // The secondary's caption is the game's name for its attribute, a percentage taking its flat attribute's name, so a
-  // Defense % is captioned DEF as an artifact's Defense % affix is
-  test.each([
-    [Attribute.ElementalMastery, GameTextKey.AttributeElementalMastery],
-    [Attribute.CriticalRate, GameTextKey.AttributeCriticalRate],
-    [Attribute.AttackPercent, GameTextKey.AttributeAttack],
-    [Attribute.DefensePercent, GameTextKey.AttributeDefense],
-  ])("%s is captioned by the game's %s", (attribute, gameTextKey) => {
-    expect.hasAssertions();
-
-    expect(AttributeLabelGameTextKeyMap.get(attribute)).toBe(gameTextKey);
   });
 });
