@@ -90,7 +90,7 @@ catalog:
   "@pulumi/github": ^6.15.0
   "@pulumi/pulumi": ^3.273.0
   "@standard-schema/spec": ^1.1.0
-  "@takumi-rs/core": ^2.18.2
+  "@takumi-rs/core": ^2.19.0
   "@tiptap/core": ^3.32.1
   "@tiptap/extension-code-block-lowlight": ^3.32.1
   "@tiptap/extension-file-handler": ^3.32.1
