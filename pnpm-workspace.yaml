@@ -74,7 +74,7 @@ catalog:
   "@modelcontextprotocol/sdk": ^1.32.2
   "@nuxt/eslint": ^1.17.0
   "@nuxt/fonts": ^1.2.0
-  "@nuxt/image": ^2.2.0
+  "@nuxt/image": ^2.2.1
   # @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — back to ranges, with the Renovate rule that holds the
   # Aliases, once Nuxt 5 reaches `latest`: until then it ships only as nightly packages
   "@nuxt/kit": npm:@nuxt/kit-nightly@5x
