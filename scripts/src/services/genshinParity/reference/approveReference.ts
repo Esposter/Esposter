@@ -1,4 +1,5 @@
 import { ParityReportRun } from "#src/models/genshinParity/reference/ParityReportRun";
+import { COMPONENTS_DIRECTORY } from "#src/services/genshinParity/fixtures/constants";
 import { listFixtureScreens } from "#src/services/genshinParity/fixtures/listFixtureScreens";
 import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
 import { decideApprovalStatus } from "#src/services/genshinParity/reference/decideApprovalStatus";
@@ -64,12 +65,11 @@ export const approveReference = async (referenceId: string, variant?: string): P
   );
   const testName =
     variant === undefined ? reference.screen : `${reference.screen}${FIXTURE_VARIANT_SEPARATOR}${variant}`;
-  const componentsDirectory = join(GENSHIN_WORLD_DIRECTORY, "src", "components");
-  const row = (await listFixtureScreens(componentsDirectory, ParityReferenceMap, new Map())).find(
+  const row = (await listFixtureScreens(COMPONENTS_DIRECTORY, ParityReferenceMap, new Map())).find(
     ({ name, variant: rowVariant }) => name === reference.screen && rowVariant === (variant ?? ""),
   );
   if (!row) throw new InvalidOperationError(Operation.Read, testName, "no fixture variant of that name");
-  const imagePath = join(componentsDirectory, row.directory, `${getFixtureImageName(row.variant)}.png`);
+  const imagePath = join(COMPONENTS_DIRECTORY, row.directory, `${getFixtureImageName(row.variant)}.png`);
   const previousImage = existsSync(imagePath) ? readFileSync(imagePath) : undefined;
   // Each run is its own process, and the suite takes the image as the first frame it settles on, so a render that is not
   // Settled across runs writes a different image each time: the image is written only when every run wrote the same bytes
