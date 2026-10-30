@@ -126,7 +126,6 @@ Find recipe: a page is open if either test holds. Test one: `git grep -l "no sou
 | `openspec/specs/genshin/serenitea-pot/design.md`                       | 2026-10-29 · Haiku 5.5 |       |
 | `openspec/specs/genshin/talents/design.md`                             | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/world-map/design.md`                           | 2026-10-26 · Haiku 5.5 |       |
-| `openspec/specs/genshin/characters/development-packs/design.md`        | —                      |       |
 | `openspec/specs/genshin/characters/published-packs/design.md`          | —                      |       |
 | `openspec/specs/genshin/compute/inazuma/design.md`                     | 2026-10-29 · Haiku 5.5 |       |
 | `openspec/specs/genshin/compute/quest/design.md`                       | 2026-10-29 · Haiku 5.5 |       |
