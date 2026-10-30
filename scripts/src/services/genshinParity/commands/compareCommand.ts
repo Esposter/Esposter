@@ -1,4 +1,5 @@
 import type { ParityScore } from "#src/models/genshinParity/reference/ParityScore";
+import type { ReferenceEntryPath } from "#src/models/genshinParity/reference/ReferenceEntryPath";
 import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
@@ -59,8 +60,8 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
     const cellCount = parseWholeCount(args.cells, "cells", 1);
     const referenceIds = args.all ? Object.keys(ParityReferenceMap) : [args.reference ?? ""];
     const scores: Record<string, ParityScore> = {};
-    // The committed images the run found missing, each named with its path once the run has written what it measured
-    const missingImages: string[] = [];
+    // The committed images the run found missing, each named with its id and path once the run has written what it measured
+    const missingImages: ReferenceEntryPath[] = [];
     // A page that predates a build of its packages is replaced for this run alone, and the replacement stopped when the run ends
     const freshPage = await startFreshPageServer();
     const pageRoot = freshPage === undefined ? undefined : `${freshPage.origin}/parity/`;
@@ -116,7 +117,7 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
               console.error(`not measured: ${missingNames.join(", ")}`);
               for (const { kind, path } of missing ?? [])
                 if (kind === MissingReferenceInputKind.ReferenceImage || kind === MissingReferenceInputKind.Plate)
-                  missingImages.push(relative(REPOSITORY_ROOT, path));
+                  missingImages.push({ id: referenceId, path });
               continue;
             }
           }
@@ -153,7 +154,8 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
     // Visits every reference, so it alone is the full run that may drop a row; a single reference's scores are a subset
     if (!args.witness) await writeParityScores(scores, args.all ? ParityReportRun.Full : ParityReportRun.Subset);
     // A missing committed image or plate fails the run, so it is named once the scores of the others are written
-    for (const missingImage of missingImages) console.error(`missing committed image: ${missingImage}`);
+    for (const { id, path } of missingImages)
+      console.error(`missing committed image: ${id}: ${relative(REPOSITORY_ROOT, path)}`);
     if (missingImages.length > 0) process.exitCode = 1;
   },
 });

@@ -147,7 +147,7 @@ describe("compareCommand", () => {
     await runCommand(genshinParityCommand, { rawArgs: ["compare", "--all"] });
 
     expect(vi.mocked(compareScreen)).not.toHaveBeenCalled();
-    expect(error).toHaveBeenCalledWith(`missing committed image: ${join("missing", "login-door.webp")}`);
+    expect(error).toHaveBeenCalledWith(`missing committed image: login-door: ${join("missing", "login-door.webp")}`);
     expect(vi.mocked(writeParityScores)).toHaveBeenLastCalledWith({}, ParityReportRun.Full);
     expect(process.exitCode).toBe(1);
   });
@@ -176,7 +176,7 @@ describe("compareCommand", () => {
 
     expect(vi.mocked(compareScreen).mock.calls.map(([referenceId]) => referenceId)).toStrictEqual(["login-door"]);
     expect(error).toHaveBeenCalledWith(
-      `missing committed image: ${relative(REPOSITORY_ROOT, getReferencePlateFilePath("plate-door"))}`,
+      `missing committed image: plate-door: ${relative(REPOSITORY_ROOT, getReferencePlateFilePath("plate-door"))}`,
     );
     expect(vi.mocked(writeParityScores)).toHaveBeenLastCalledWith(
       { "login-door": loginDoorScore },

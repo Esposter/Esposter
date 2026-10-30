@@ -42,7 +42,7 @@ A reference image SHALL be committed to the repository as a lossless WebP file: 
 
 ### Requirement: A reference is read from its committed file
 
-A command that reads a reference SHALL read the committed file, and a reference whose file is missing SHALL stop the command with the id and the path to add.
+A command that reads one reference SHALL read its committed file, and a reference whose file is missing SHALL stop that command with the id and the path to add. A command over every reference, `compare --all` and `verify`, SHALL collect each missing file instead: it names each by its id and path, measures or checks the others, and exits 1 once it has finished.
 
 #### Scenario: Reference read by a command
 
@@ -53,9 +53,16 @@ A command that reads a reference SHALL read the committed file, and a reference 
 #### Scenario: Reference file missing
 
 - **GIVEN** a map entry with a reference whose committed file is not on disk
-- **WHEN** a command reads the reference
+- **WHEN** a single-id command reads the reference
 - **THEN** the command fails naming the id and the path to add
 - **AND** no comparison is scored against another image
+
+#### Scenario: Reference file missing in a run over every reference
+
+- **GIVEN** a map entry with a reference whose committed file is not on disk
+- **WHEN** `compare --all` or `verify` reaches it
+- **THEN** the run names the reference's id and the path to add, and goes on to the other references
+- **AND** `compare --all` writes the scores it has, and both exit 1 once they have finished
 
 #### Scenario: A reference's check throws
 
