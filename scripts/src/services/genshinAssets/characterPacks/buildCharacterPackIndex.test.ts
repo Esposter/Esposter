@@ -10,25 +10,22 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 const getSha256 = (content: string): string => createHash("sha256").update(content).digest("hex");
 
 // An avatar's folder as the owner's extraction leaves it: each file, then the manifest listing them by path, bytes and
-// Hash. Returns the manifest's text, which the index holds the manifest file under
+// Hash, in the order given, which is the order the index lists them in. Returns the manifest's text, which the index holds
+// The manifest file under
 const writePack = (
   directory: string,
   avatarId: string,
   name: string | undefined,
-  files: Record<string, string>,
+  files: { content: string; path: string }[],
 ): string => {
   const avatarDirectory = join(directory, avatarId);
-  for (const [path, content] of Object.entries(files)) {
+  for (const { content, path } of files) {
     mkdirSync(dirname(join(avatarDirectory, path)), { recursive: true });
     writeFileSync(join(avatarDirectory, path), content);
   }
   const manifest = JSON.stringify({
     avatarId,
-    files: Object.entries(files).map(([path, content]) => ({
-      bytes: Buffer.byteLength(content),
-      path,
-      sha256: getSha256(content),
-    })),
+    files: files.map(({ content, path }) => ({ bytes: Buffer.byteLength(content), path, sha256: getSha256(content) })),
     name,
   });
   writeFileSync(join(avatarDirectory, "manifest.json"), manifest);
@@ -49,11 +46,11 @@ describe(buildCharacterPackIndex, () => {
   test("Index lists each avatar's files", async () => {
     expect.hasAssertions();
 
-    const firstManifest = writePack(directory, "10000006", "丽莎", {
-      "Texture/body.png": "body",
-      "terms/readme.txt": "terms",
-    });
-    const secondManifest = writePack(directory, "10000007", "女主角", { "Texture/hair.png": "hair" });
+    const firstManifest = writePack(directory, "10000006", "丽莎", [
+      { content: "body", path: "Texture/body.png" },
+      { content: "terms", path: "terms/readme.txt" },
+    ]);
+    const secondManifest = writePack(directory, "10000007", "女主角", [{ content: "hair", path: "Texture/hair.png" }]);
 
     expect(await buildCharacterPackIndex(await readCharacterPackFiles(directory))).toStrictEqual({
       avatars: [
@@ -82,7 +79,7 @@ describe(buildCharacterPackIndex, () => {
   test("an avatar whose manifest names none is indexed with an empty name", async () => {
     expect.hasAssertions();
 
-    writePack(directory, "10000026", undefined, { "Texture/body.png": "body" });
+    writePack(directory, "10000026", undefined, [{ content: "body", path: "Texture/body.png" }]);
 
     expect(
       (await buildCharacterPackIndex(await readCharacterPackFiles(directory))).avatars.map(({ name }) => name),
@@ -92,7 +89,7 @@ describe(buildCharacterPackIndex, () => {
   test("a file its manifest does not list is refused, so the index never leaves out what the upload publishes", async () => {
     expect.hasAssertions();
 
-    writePack(directory, "10000006", "丽莎", { "Texture/body.png": "body" });
+    writePack(directory, "10000006", "丽莎", [{ content: "body", path: "Texture/body.png" }]);
     writeFileSync(join(directory, "10000006", "Texture", "extra.png"), "extra");
 
     await expect(buildCharacterPackIndex(await readCharacterPackFiles(directory))).rejects.toThrowError(
