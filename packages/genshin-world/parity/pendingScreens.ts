@@ -12,6 +12,5 @@ export const pendingScreens: { directory: string; reason: string }[] = [
     reason:
       "a candidate is sampled (paimons-bargains-screen.png, from yt-aJq1MnTPtZ4-paimons-bargains-reset.mp4 at 2s, the Shop hub); a webcam sits bottom right and a card is focused, so a cleaner frame is wanted",
   },
-  { directory: "Shop/Screen", reason: "no recording on disk opens a vendor shop" },
   { directory: "Statue/Screen", reason: "no recording on disk opens the Blessing screen" },
 ];

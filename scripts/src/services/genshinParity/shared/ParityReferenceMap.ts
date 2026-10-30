@@ -1146,6 +1146,14 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "MenuSettings",
     source: "yt-5EmJX_RyuY8-menu-settings.mp4 at 144.5s",
   },
+  // The English PC client's General Goods shop in Liyue at 1080 high, from a public clip at 34 seconds: the list from Salt with Salt
+  // Picked, its detail panel and the Mora count on the top bar, the Purchase button and the refresh line. The whole frame above the
+  // Game's own UID line, which the page does not draw
+  "shop-screen": {
+    region: { height: 1048, width: 1920, x: 0, y: 0 },
+    screen: "ShopScreen",
+    source: "yt-xBCvEJLZ6Ek-zafrost-general-goods-shop.mp4 at 34s",
+  },
   // The English PC client's Benediction screen at 1080 high from the public clip, 3 seconds in: Floor 1 Chamber 1 with its hint and
   // Three cards, the middle one lit at rest with the pointer on its last line. The game's own UID line sits at the bottom right
   "spiral-abyss-benediction": {
