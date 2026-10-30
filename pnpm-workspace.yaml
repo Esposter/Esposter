@@ -281,7 +281,7 @@ overrides:
   vite: "catalog:"
   # @TODO: no upstream issue — phaser4-rex-plugins 4.2.0 still declares i18next-http-backend `^3.0.5`, below the patched 4.0.2
   # of GHSA-xvq9-wjp8-hwqf, so this override holds it on 4.x: drop it once rexrainbow/phaser3-rex-notes declares a patched range
-  phaser4-rex-plugins>i18next-http-backend: ^4.0.6
+  phaser4-rex-plugins>i18next-http-backend: ^4.0.7
   # vp runs the catalog's tools rather than the exact copies vite-plus pins, so the lockfile holds one of each and
   # Renovate keeps owning their versions; its `vite`, aliased to Vite+'s own core, takes the global `vite` above.
   vite-plus>@oxlint/plugins: "catalog:"
