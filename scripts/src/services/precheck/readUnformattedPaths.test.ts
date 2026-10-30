@@ -1,8 +1,8 @@
+import { ChangeStatus } from "#src/models/queue/ChangeStatus";
 import { GENERATED_PATH, OUTSIDE_PATH } from "#src/services/format/constants.test";
 import { setupFormatterTree } from "#src/services/format/setupFormatterTree.test";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { ChangeStatus } from "#src/models/queue/ChangeStatus";
 import { readUnformattedPaths } from "#src/services/precheck/readUnformattedPaths";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { describe, expect, test } from "vitest";
 
 describe(readUnformattedPaths, () => {

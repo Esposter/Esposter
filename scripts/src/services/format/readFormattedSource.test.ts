@@ -1,6 +1,6 @@
 import { readFormattedSource } from "#src/services/format/readFormattedSource";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readMainCheckoutRoot } from "#src/services/queue/readMainCheckoutRoot";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { describe, expect, test } from "vitest";
 
 describe(readFormattedSource, () => {
