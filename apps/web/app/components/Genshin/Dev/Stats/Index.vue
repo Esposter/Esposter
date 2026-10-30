@@ -27,7 +27,7 @@ useRafFn(() => {
 </script>
 
 <template>
-  <UiFrame fixed top-0 left-0 title="Stats">
+  <UiFrame left-0 top-0 fixed title="Stats">
     <p v-if="frameStats" ui-body>
       Frame {{ frameStats.frameMilliseconds.toFixed(1) }} ms, {{ frameStats.drawCalls }} draw calls,
       {{ frameStats.triangles }} triangles

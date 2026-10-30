@@ -50,13 +50,13 @@ const sections = computed(() => {
 </script>
 
 <template>
-  <UiFrame v-if="isOpen" fixed top-0 right-0 bottom="[var(--dock-inset-block-end)]" w="[24rem]" title="Developer panel">
+  <UiFrame v-if="isOpen" right-0 top-0 fixed bottom="[var(--dock-inset-block-end)]" w="[24rem]" title="Developer panel">
     <template #actions>
       <UiButton @click="isOpen = false">Close</UiButton>
     </template>
     <UiTabs v-model="selectedTab" :items="tabItems" label="Developer panel sections" is-filling>
       <template #default="{ value: tabName }">
-        <div v-if="tabName === GENSHIN_DEV_SCENARIOS_TAB" ui-body flex flex-col gap-2>
+        <div v-if="tabName === GENSHIN_DEV_SCENARIOS_TAB" flex flex-col gap-2 ui-body>
           <UiButton
             v-for="scenario in scenarios"
             :key="scenario.name"

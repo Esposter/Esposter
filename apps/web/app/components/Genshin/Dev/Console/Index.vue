@@ -43,10 +43,10 @@ useCommands(() =>
 <template>
   <UiFrame
     v-if="isOpen"
-    fixed
     bottom="[var(--dock-inset-block-end)]"
     left="[var(--dock-inset-inline-start)]"
     right-0
+    fixed
     title="Developer console"
     @keydown.stop="
       (event: KeyboardEvent) => {
@@ -54,7 +54,7 @@ useCommands(() =>
       }
     "
   >
-    <ol max-h="[40dvh]" of-y-auto flex flex-col gap-1>
+    <ol max-h="[40dvh]" flex flex-col gap-1 of-y-auto>
       <li v-for="(entry, index) in entries" :key="index" ui-row>
         <UiItemContent
           :title="entry.line"
