@@ -35,9 +35,11 @@ jobs:
       - name: 📦 Install the workspace
         uses: ./.github/actions/install-projects
 
-      # Publishes only the versions npm lacks, through npm trusted publishing (`id-token: write`, no token)
+      # Publishes only the versions npm lacks, through npm trusted publishing (`id-token: write`, no token). Verbose, since
+      # lerna-lite logs a failed token exchange only at that level and then publishes without a token, which npm answers
+      # with a bare 404
       - name: 📢 Publish the versions npm lacks
-        run: pnpm exec lerna publish from-package --yes
+        run: pnpm exec lerna publish from-package --yes --loglevel verbose
 
   # The repo has immutable releases on, so a published release takes no further assets: the release is created as a draft
   # once the tag's versions are on npm, the host is attached to the draft, and `publish` makes it public last, once every
