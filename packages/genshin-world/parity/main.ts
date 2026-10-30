@@ -12,7 +12,7 @@ import { getScenePieces } from "#parity/getScenePieces";
 import { getSceneSky } from "#parity/getSceneSky";
 import { getSceneWhiteBalance } from "#parity/getSceneWhiteBalance";
 import { getScreenBoxStyle } from "#parity/getScreenBoxStyle";
-import { holdAnimations } from "#parity/holdAnimations";
+import { pauseAnimations } from "#parity/pauseAnimations";
 import { recordError } from "#parity/recordError";
 import { renderMusic } from "#parity/renderMusic";
 import { screens } from "#parity/screens";
@@ -202,7 +202,7 @@ if (screen && root) {
     // The families the witness draws, which the ranking hands back to the scene
     window.document.body.dataset.witnessFamilies = witness.families.value.join(",");
   }
-  if (motion === "entry") holdAnimations();
+  if (motion === "entry") pauseAnimations();
   await window.document.fonts.ready;
   await ready;
   if (motion === "props" && screen.motionProps) {
@@ -212,7 +212,7 @@ if (screen && root) {
     window.document.body.getBoundingClientRect();
     Object.assign(props, screen.motionProps);
     await nextTick();
-    holdAnimations();
+    pauseAnimations();
   }
 } else if (root)
   root.innerHTML = screens
