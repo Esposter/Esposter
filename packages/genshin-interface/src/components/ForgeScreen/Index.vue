@@ -2,7 +2,9 @@
 import type { ForgeQueueCell } from "#src/models/ForgeQueueCell";
 import type { ForgeRecipeCell } from "#src/models/ForgeRecipeCell";
 
+import CloseButton from "#src/components/CloseButton/Index.vue";
 import TwoColumnScreen from "#src/components/TwoColumnScreen/Index.vue";
+import { CloseButtonMark } from "#src/models/CloseButtonMark";
 import { ForgeQueueState } from "#src/models/ForgeQueueState";
 import { ForgeTab } from "#src/models/ForgeTab";
 
@@ -91,7 +93,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
         </button>
       </div>
       <p class="coins">{{ coins }}</p>
-      <button class="close" :aria-label="closeLabel" type="button" @click="emit('close')">×</button>
+      <CloseButton class="close" :label="closeLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
     </header>
     <ul v-if="tab === ForgeTab.Materials" class="recipes">
       <li v-for="recipe of recipes" :key="recipe.id">
@@ -200,17 +202,12 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   line-height: 1;
 }
 .close {
-  position: absolute;
   top: calc(var(--unit) * 26);
   left: calc(var(--unit) * 2122);
   width: calc(var(--unit) * 66);
   height: calc(var(--unit) * 66);
-  border: none;
-  border-radius: 50%;
   background: #ece5d8;
   color: #3b3b3b;
-  font-size: calc(var(--unit) * 36);
-  line-height: 1;
 }
 .tabs {
   position: absolute;

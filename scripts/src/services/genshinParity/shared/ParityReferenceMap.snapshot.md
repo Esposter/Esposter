@@ -33,9 +33,9 @@ committed.
 | `exit-prompt`                          | `MenuExit`                  |                                                                          1.59% | 0.999 |  1.24% | 0.1205 |
 | `expedition-screen`                    | `ExpeditionScreen`          |                                                                          1.56% | 0.934 |  0.44% | 0.0674 |
 | `fishing-screen`                       | `FishingScreen`             |                                                                          0.05% | 0.998 |  0.03% | 0.0035 |
-| `forge-screen`                         | `ForgeScreen`               |                                                                          3.67% | 0.776 |  1.84% | 0.1541 |
-| `forge-screen-ores-done`               | `ForgeScreen`               |                                                                          2.96% | 0.837 |  1.70% | 0.1389 |
-| `forge-screen-queues`                  | `ForgeScreen`               |                                                                          3.44% | 0.771 |  1.88% | 0.1582 |
+| `forge-screen`                         | `ForgeScreen`               |                                                                          3.66% | 0.776 |  1.83% | 0.1538 |
+| `forge-screen-ores-done`               | `ForgeScreen`               |                                                                          2.96% | 0.837 |  1.70% | 0.1387 |
+| `forge-screen-queues`                  | `ForgeScreen`               |                                                                          3.43% | 0.771 |  1.87% | 0.1579 |
 | `forge-screen-refused`                 | `ForgeScreen`               |                                     pending: no screenshot of this variant yet |       |        |        |
 | `forge-screen-weapons-done`            | `ForgeScreen`               |                                     pending: no screenshot of this variant yet |       |        |        |
 | `gcg-duel-board`                       | `GcgScreen`                 |                                                                          8.21% | 0.563 |  3.98% | 0.3227 |
