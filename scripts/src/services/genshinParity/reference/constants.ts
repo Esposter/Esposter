@@ -99,3 +99,11 @@ export const FILE_SIGNATURES: readonly { extension: string; hex: string; offset:
 ];
 // How many leading bytes a sniff reads, enough for every signature above
 export const SNIFF_HEAD_LENGTH = 16;
+
+// The sections the committed manifest writes, in the order its file holds them, which the formatter follows. No object
+// Literal carries that order, so the file reads the same whichever order the lint sorts a literal's keys into
+export const REFERENCE_MANIFEST_SECTIONS: readonly ["records", "recordings", "references"] = [
+  "records",
+  "recordings",
+  "references",
+];

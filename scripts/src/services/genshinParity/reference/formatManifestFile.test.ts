@@ -4,13 +4,14 @@ import { ParityReferenceKind } from "#src/models/genshinParity/reference/ParityR
 import { formatManifestFile } from "#src/services/genshinParity/reference/formatManifestFile";
 import { REFERENCE_MANIFEST_PATH } from "#src/services/genshinParity/shared/constants";
 import { formatJsonFile } from "#src/services/shared/formatJsonFile";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { jsonDateParse } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(formatManifestFile, () => {
   const BYTES = 1;
   const HASH = "0".repeat(64);
-  const EMPTY = { records: [], recordings: [], references: [] };
+  const EMPTY = { recordings: [], records: [], references: [] };
   const createRow = (id: string): ParityReferenceManifestRow => ({
     attribution: {},
     bytes: BYTES,
@@ -36,8 +37,17 @@ describe(formatManifestFile, () => {
 
     const text = formatManifestFile({ ...EMPTY, references: [createRow("b"), createRow("a")] });
 
-    expect(text).toBe(
-      formatJsonFile(REFERENCE_MANIFEST_PATH, { ...EMPTY, references: [createRow("a"), createRow("b")] }),
-    );
+    expect(text).toBe(formatManifestFile({ ...EMPTY, references: [createRow("a"), createRow("b")] }));
+    expect(Object.keys(parseMachineJson(text))).not.toContain("animeGameDataCommit");
+  });
+
+  test("writes the sections in the order the committed file holds them", () => {
+    expect.hasAssertions();
+
+    expect(Object.keys(parseMachineJson(formatManifestFile(EMPTY)))).toStrictEqual([
+      "records",
+      "recordings",
+      "references",
+    ]);
   });
 });
