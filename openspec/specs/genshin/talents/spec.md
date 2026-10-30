@@ -132,13 +132,13 @@ A combat talent SHALL rise by one level when its Upgrade is pressed and the play
 
 ### Requirement: A talent that cannot rise shows why and its Upgrade is disabled
 
-A talent that cannot rise SHALL show the reason it cannot, and its Upgrade SHALL be disabled.
+A talent that cannot rise SHALL have its Upgrade disabled, and SHALL show the reason it cannot where the game gives one.
 
 #### Scenario: A talent at its last level cannot be upgraded
 
 - **GIVEN** a talent at level ten
 - **WHEN** the player views its row
-- **THEN** the row says the talent is at its last level
+- **THEN** the row shows the level and no reason
 - **AND** its Upgrade is disabled
 
 #### Scenario: A talent past the character's phase shows the phase it needs
