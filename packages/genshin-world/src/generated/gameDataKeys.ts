@@ -1,10 +1,7 @@
 // The lock's keys as a nested constant, each path nested by its segments. GameDataKey is the union of its leaf paths,
 // which readers may use to name a key. Generated from gameDataLock.json on every publish.
 export const GameDataKeys = {
-  achievements: {
-    achievements: "achievements/achievements",
-    categories: "achievements/categories",
-  },
+  achievements: { achievements: "achievements/achievements", categories: "achievements/categories" },
   achievementText: {
     ChineseSimplified: "achievementText/ChineseSimplified",
     ChineseTraditional: "achievementText/ChineseTraditional",
@@ -53,12 +50,8 @@ export const GameDataKeys = {
     Turkish: "archiveText/Turkish",
     Vietnamese: "archiveText/Vietnamese",
   },
-  catalogue: {
-    catalogue: "catalogue/catalogue",
-  },
-  characterPackIndex: {
-    index: "characterPackIndex/index",
-  },
+  catalogue: { catalogue: "catalogue/catalogue" },
+  characterPackIndex: { index: "characterPackIndex/index" },
   characterTrials: {
     avatars: "characterTrials/avatars",
     builds: "characterTrials/builds",
@@ -92,32 +85,18 @@ export const GameDataKeys = {
     recipes: "cooking/recipes",
     talents: "cooking/talents",
   },
-  crafting: {
-    recipes: "crafting/recipes",
-    strongboxes: "crafting/strongboxes",
-  },
-  craftingBenchPlaces: {
-    mondstadt: "craftingBenchPlaces/mondstadt",
-  },
-  domainChallengeLevels: {
-    levels: "domainChallengeLevels/levels",
-  },
-  domains: {
-    weeklyBosses: "domains/weeklyBosses",
-  },
-  enemies: {
-    kinds: "enemies/kinds",
-    levelCurves: "enemies/levelCurves",
-  },
+  crafting: { recipes: "crafting/recipes", strongboxes: "crafting/strongboxes" },
+  craftingBenchPlaces: { mondstadt: "craftingBenchPlaces/mondstadt" },
+  domainChallengeLevels: { levels: "domainChallengeLevels/levels" },
+  domains: { weeklyBosses: "domains/weeklyBosses" },
+  enemies: { kinds: "enemies/kinds", levelCurves: "enemies/levelCurves" },
   expeditions: {
     bonuses: "expeditions/bonuses",
     limits: "expeditions/limits",
     mondstadt: "expeditions/mondstadt",
     passives: "expeditions/passives",
   },
-  exploration: {
-    mondstadt: "exploration/mondstadt",
-  },
+  exploration: { mondstadt: "exploration/mondstadt" },
   fishing: {
     baits: "fishing/baits",
     fish: "fishing/fish",
@@ -128,18 +107,10 @@ export const GameDataKeys = {
     rods: "fishing/rods",
     skills: "fishing/skills",
   },
-  forging: {
-    recipes: "forging/recipes",
-  },
-  friendship: {
-    friendship: "friendship/friendship",
-  },
-  frostbearingTreePlaces: {
-    mondstadt: "frostbearingTreePlaces/mondstadt",
-  },
-  gadgets: {
-    gadgets: "gadgets/gadgets",
-  },
+  forging: { recipes: "forging/recipes" },
+  friendship: { friendship: "friendship/friendship" },
+  frostbearingTreePlaces: { mondstadt: "frostbearingTreePlaces/mondstadt" },
+  gadgets: { gadgets: "gadgets/gadgets" },
   gathering: {
     fontaine: "gathering/fontaine",
     inazuma: "gathering/inazuma",
@@ -210,17 +181,9 @@ export const GameDataKeys = {
     gardens: "home/gardens",
     levels: "home/levels",
   },
-  hud: {
-    interfaceRects: "hud/interfaceRects",
-  },
-  imaginarium: {
-    difficulties: "imaginarium/difficulties",
-    seasons: "imaginarium/seasons",
-  },
-  items: {
-    materials: "items/materials",
-    reliquarySets: "items/reliquarySets",
-  },
+  hud: { interfaceRects: "hud/interfaceRects" },
+  imaginarium: { difficulties: "imaginarium/difficulties", seasons: "imaginarium/seasons" },
+  items: { materials: "items/materials", reliquarySets: "items/reliquarySets" },
   leyLine: {
     regions: {
       "1": "leyLine/regions/1",
@@ -268,9 +231,7 @@ export const GameDataKeys = {
     Turkish: "mailText/Turkish",
     Vietnamese: "mailText/Vietnamese",
   },
-  mapLabels: {
-    subareas: "mapLabels/subareas",
-  },
+  mapLabels: { subareas: "mapLabels/subareas" },
   materialSources: {
     fontaine: "materialSources/fontaine",
     inazuma: "materialSources/inazuma",
@@ -423,37 +384,17 @@ export const GameDataKeys = {
     Vietnamese: "questText/Vietnamese",
   },
   regions: {
-    fontaine: {
-      palette: "regions/fontaine/palette",
-    },
-    inazuma: {
-      palette: "regions/inazuma/palette",
-    },
-    liyue: {
-      palette: "regions/liyue/palette",
-    },
-    mondstadt: {
-      palette: "regions/mondstadt/palette",
-    },
-    natlan: {
-      palette: "regions/natlan/palette",
-    },
-    "nod-krai": {
-      palette: "regions/nod-krai/palette",
-    },
-    sumeru: {
-      palette: "regions/sumeru/palette",
-    },
+    fontaine: { palette: "regions/fontaine/palette" },
+    inazuma: { palette: "regions/inazuma/palette" },
+    liyue: { palette: "regions/liyue/palette" },
+    mondstadt: { palette: "regions/mondstadt/palette" },
+    natlan: { palette: "regions/natlan/palette" },
+    "nod-krai": { palette: "regions/nod-krai/palette" },
+    sumeru: { palette: "regions/sumeru/palette" },
   },
-  reputation: {
-    mondstadt: "reputation/mondstadt",
-  },
-  sceneGroups: {
-    scene3: "sceneGroups/scene3",
-  },
-  sceneNpcBorn: {
-    scene3: "sceneNpcBorn/scene3",
-  },
+  reputation: { mondstadt: "reputation/mondstadt" },
+  sceneGroups: { scene3: "sceneGroups/scene3" },
+  sceneNpcBorn: { scene3: "sceneNpcBorn/scene3" },
   shops: {
     fontaineFishing: "shops/fontaineFishing",
     gcgCardShop: "shops/gcgCardShop",
@@ -510,10 +451,7 @@ export const GameDataKeys = {
       Korean: "splash/titleLogo/Korean",
     },
   },
-  standingTalks: {
-    favours: "standingTalks/favours",
-    residents: "standingTalks/residents",
-  },
+  standingTalks: { favours: "standingTalks/favours", residents: "standingTalks/residents" },
   standingTalkText: {
     ChineseSimplified: "standingTalkText/ChineseSimplified",
     ChineseTraditional: "standingTalkText/ChineseTraditional",
@@ -547,10 +485,7 @@ export const GameDataKeys = {
     weaponLevelRequiredExps: "stats/weaponLevelRequiredExps",
     weapons: "stats/weapons",
   },
-  statueLevels: {
-    liyue: "statueLevels/liyue",
-    mondstadt: "statueLevels/mondstadt",
-  },
+  statueLevels: { liyue: "statueLevels/liyue", mondstadt: "statueLevels/mondstadt" },
   tips: "tips",
   tipText: {
     ChineseSimplified: "tipText/ChineseSimplified",
@@ -569,10 +504,7 @@ export const GameDataKeys = {
     Turkish: "tipText/Turkish",
     Vietnamese: "tipText/Vietnamese",
   },
-  transPoints: {
-    scene3: "transPoints/scene3",
-    unlock: "transPoints/unlock",
-  },
+  transPoints: { scene3: "transPoints/scene3", unlock: "transPoints/unlock" },
   wildlife: {
     fontaine: "wildlife/fontaine",
     inazuma: "wildlife/inazuma",
@@ -592,9 +524,7 @@ export const GameDataKeys = {
     surfaces: "windrise/surfaces",
     water: "windrise/water",
   },
-  wishSchedule: {
-    eventBanners: "wishSchedule/eventBanners",
-  },
+  wishSchedule: { eventBanners: "wishSchedule/eventBanners" },
 } as const;
 
 export const GameDataIndexKeys = {
@@ -618,9 +548,7 @@ export const GameDataIndexKeys = {
   domains: "domains",
   kits: "kits",
   kitSources: "kitSources",
-  mail: {
-    mail: "mail/mail",
-  },
+  mail: { mail: "mail/mail" },
   profile: {
     ChineseSimplified: "profile/ChineseSimplified",
     ChineseTraditional: "profile/ChineseTraditional",
