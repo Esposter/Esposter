@@ -1,5 +1,3 @@
-import type { ReferenceEntryPath } from "#src/models/genshinParity/reference/ReferenceEntryPath";
-import type { ReferenceEntryPlan } from "#src/models/genshinParity/reference/ReferenceEntryPlan";
 import type { ReferencePackOptions } from "#src/models/genshinParity/reference/ReferencePackOptions";
 import type { ReferencePackOutcome } from "#src/models/genshinParity/reference/ReferencePackOutcome";
 import type { ReferenceStoredFile } from "#src/models/genshinParity/reference/ReferenceStoredFile";
@@ -15,9 +13,6 @@ import { readReferenceFiles } from "#src/services/genshinParity/reference/readRe
 import { writeManifestFile } from "#src/services/genshinParity/reference/writeManifestFile";
 import { writePartialThenMove } from "#src/services/shared/writePartialThenMove";
 import { InvalidOperationError, Operation, settleAll } from "@esposter/shared";
-
-const toEntryPaths = ({ id, missing }: ReferenceEntryPlan): ReferenceEntryPath[] =>
-  missing.map((path) => ({ id, path }));
 
 // Plans every reference the map names, then writes the files `planReferencePack` keeps and the manifest that names them. A
 // collision the options do not resolve refuses the run before anything is written. A dry run plans and reports the same
@@ -65,9 +60,9 @@ export const packReferences = async (
   }
   return {
     held: stored.flatMap(({ held }) => held),
-    missing: stored.filter(({ refused }) => !refused).flatMap(toEntryPaths),
+    missing: stored.filter(({ refused }) => !refused).flatMap(({ missing }) => missing),
     packed: stored.flatMap(({ packed }) => packed),
-    refused: stored.filter(({ refused }) => refused).flatMap(toEntryPaths),
+    refused: stored.filter(({ refused }) => refused).flatMap(({ missing }) => missing),
     replaced: decision.replaced,
     restored: stored.flatMap(({ restored }) => restored),
     skipped: decision.skipped,

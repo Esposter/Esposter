@@ -1,5 +1,6 @@
 import type { ParityReferenceManifestRow } from "#src/models/genshinParity/reference/ParityReferenceManifestRow";
 import type { ReferenceEntryImage } from "#src/models/genshinParity/reference/ReferenceEntryImage";
+import type { ReferenceEntryPath } from "#src/models/genshinParity/reference/ReferenceEntryPath";
 import type { ReferenceEntryPlan } from "#src/models/genshinParity/reference/ReferenceEntryPlan";
 import type { ReferencePackFile } from "#src/models/genshinParity/reference/ReferencePackFile";
 import type { ReferenceStoredFile } from "#src/models/genshinParity/reference/ReferenceStoredFile";
@@ -37,9 +38,9 @@ export const planReferenceEntry = async (
   const collisions = [main, plate].flatMap((entry) =>
     entry?.collision === undefined ? [] : [{ committed: entry.collision.committed, id, ours: entry.collision.ours }],
   );
-  const missing = [
-    ...(main?.image === undefined ? [mainPath] : []),
-    ...(reference.plateSource !== undefined && plate?.image === undefined ? [platePath] : []),
+  const missing: ReferenceEntryPath[] = [
+    ...(main?.image === undefined ? [{ id, path: mainPath }] : []),
+    ...(reference.plateSource !== undefined && plate?.image === undefined ? [{ id, path: platePath }] : []),
   ];
   if (main?.image === undefined || missing.length > 0)
     return {

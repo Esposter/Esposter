@@ -108,7 +108,7 @@ describe(planReferenceEntry, () => {
 
     expect({ files, missing, packed, refused, row }).toStrictEqual({
       files: [],
-      missing: [expect.stringContaining(`${ID}.plate`)],
+      missing: [{ id: ID, path: expect.stringContaining(`${ID}.plate`) }],
       packed: [],
       refused: true,
       row: undefined,
@@ -142,7 +142,7 @@ describe(planReferenceEntry, () => {
 
     expect({ collisions, missing, refused, row }).toStrictEqual({
       collisions: [{ committed: LOCAL_PLATE_IMAGE.sha256, id: ID, ours: COMMITTED_PLATE_IMAGE.sha256 }],
-      missing: [expect.stringContaining(`${ID}.plate`)],
+      missing: [{ id: ID, path: expect.stringContaining(`${ID}.plate`) }],
       refused: true,
       row: undefined,
     });
@@ -166,7 +166,7 @@ describe(planReferenceEntry, () => {
 
     expect({ files, missing, packed, refused, row }).toStrictEqual({
       files: [],
-      missing: [expect.stringContaining(`${ID}.plate`)],
+      missing: [{ id: ID, path: expect.stringContaining(`${ID}.plate`) }],
       packed: [],
       refused: true,
       row: undefined,
@@ -181,7 +181,10 @@ describe(planReferenceEntry, () => {
     const { missing, refused } = await planReferenceEntry(ID, REFERENCE, MAIN_PATH, undefined, undefined);
 
     expect({ missing, refused }).toStrictEqual({
-      missing: [MAIN_PATH, expect.stringContaining(`${ID}.plate`)],
+      missing: [
+        { id: ID, path: MAIN_PATH },
+        { id: ID, path: expect.stringContaining(`${ID}.plate`) },
+      ],
       refused: false,
     });
   });

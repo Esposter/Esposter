@@ -15,7 +15,7 @@ export interface ReferenceEntryPlan {
   held: ReferenceEntryPath[];
   id: string;
   mainPath: string;
-  missing: string[];
+  missing: ReferenceEntryPath[];
   packed: ReferencePackFile[];
   refused: boolean;
   restored: ReferenceEntryPath[];

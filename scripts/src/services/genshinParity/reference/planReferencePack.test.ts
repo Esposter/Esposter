@@ -96,7 +96,7 @@ describe(planReferencePack, () => {
 
   test("refuses an id to replace that the map names with no screenshot", () => {
     expect.hasAssertions();
-    const plans = [{ ...createPlan("a"), missing: [getFlatReferenceFilePath("a")] }];
+    const plans = [{ ...createPlan("a"), missing: [{ id: "a", path: getFlatReferenceFilePath("a") }] }];
     expect(() => planReferencePack(plans, { replace: ["a"], skipColliding: false })).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: a, is not a reference the map names with a screenshot, so it has no row to replace]`,
     );
@@ -105,7 +105,7 @@ describe(planReferencePack, () => {
   test("refuses an id to replace whose screenshot is a fixture's file, listed as missing by its planned path", () => {
     expect.hasAssertions();
     const mainPath = getFixtureReferenceFilePath(join(COMPONENTS_DIRECTORY, "Foo", "Screen"), "");
-    const plans = [{ ...createPlan("a"), mainPath, missing: [mainPath] }];
+    const plans = [{ ...createPlan("a"), mainPath, missing: [{ id: "a", path: mainPath }] }];
     expect(() => planReferencePack(plans, { replace: ["a"], skipColliding: false })).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: a, is not a reference the map names with a screenshot, so it has no row to replace]`,
     );
