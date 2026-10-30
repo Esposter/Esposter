@@ -1,5 +1,5 @@
 import { terrainWorkerAlias } from "#parity/terrainWorkerAlias";
-import { takeOne } from "@esposter/shared";
+import { takeOne, withFinalizerAsync } from "@esposter/shared";
 import { resolve } from "node:path";
 import { createServer } from "vite";
 import { describe, expect, test } from "vitest";
@@ -17,14 +17,17 @@ describe("the parity page's vite config", () => {
       optimizeDeps: { noDiscovery: true },
       server: { hmr: false, middlewareMode: true },
     });
-    try {
-      const resolved = await server.pluginContainer.resolveId(
-        takeOne(Object.keys(terrainWorkerAlias), 0),
-        resolve(import.meta.dirname, "../src/components/World/Screen/Index.fixture.ts"),
-      );
-      expect(resolved?.id).toBe(takeOne(Object.values(terrainWorkerAlias), 0));
-    } finally {
-      await server.close();
-    }
+    await withFinalizerAsync(
+      async () => {
+        const resolved = await server.pluginContainer.resolveId(
+          takeOne(Object.keys(terrainWorkerAlias), 0),
+          resolve(import.meta.dirname, "../src/components/World/Screen/Index.fixture.ts"),
+        );
+        expect(resolved?.id).toBe(takeOne(Object.values(terrainWorkerAlias), 0));
+      },
+      async () => {
+        await server.close();
+      },
+    );
   });
 });

@@ -22,7 +22,7 @@ describe("menuPaimon", () => {
   const openedQuestIds = new Set([ADVENTURER_HANDBOOK_UNLOCK_QUEST_ID, CO_OP_UNLOCK_QUEST_ID, WISH_UNLOCK_QUEST_ID]);
   // The labels of the contents the menu draws, in its order, read from its entries that are not links
   const getContentLabels = () =>
-    [...document.querySelectorAll(".contents .entry:not(.link) .label")].map((label) => label.textContent);
+    Array.from(document.querySelectorAll(".contents .entry:not(.link) .label"), (label) => label.textContent);
   // The side bar's Settings entry opens the Settings screen, which the world's menu names by its own screen kind
   test("settings opens from the side bar", async () => {
     expect.hasAssertions();

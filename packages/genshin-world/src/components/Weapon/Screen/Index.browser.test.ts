@@ -63,7 +63,7 @@ describe("weaponScreen", () => {
     const { container } = await render(WeaponScreenContainer, { props });
 
     const rightmostEdge = Math.max(
-      ...[...container.querySelectorAll("*")].map((element) => element.getBoundingClientRect().right),
+      ...Array.from(container.querySelectorAll("*"), (element) => element.getBoundingClientRect().right),
     );
     expect(rightmostEdge).toBeLessThanOrEqual(window.innerWidth);
   });

@@ -232,7 +232,7 @@ onMounted(() => {
       @pointerdown="(event) => onMapPointerDown(event)"
       @pointermove="(event) => onMapPointerMove(event)"
       @pointerup="onMapPointerUp()"
-      @wheel="onMapWheel"
+      @wheel="(event) => onMapWheel(event)"
     >
       <MapDrawing
         :catalogue

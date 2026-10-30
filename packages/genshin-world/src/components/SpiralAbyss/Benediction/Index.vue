@@ -3,6 +3,7 @@ import type { TextChunk } from "#src/models/data/TextChunk";
 import type { AbyssBenedictionChoice } from "#src/models/spiralAbyss/AbyssBenedictionChoice";
 import type { GameText } from "genshin-text";
 
+import { SCOPE_TEXT_KEYS } from "#src/services/spiralAbyss/constants";
 import { GameScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
@@ -23,10 +24,6 @@ interface Props {
 
 const { chamber, choices, floor, gameText, litTowerBuffId, nameText } = defineProps<Props>();
 const emit = defineEmits<{ choose: [towerBuffId: number] }>();
-const SCOPE_TEXT_KEYS = {
-  chamber: GameTextKey.AbyssBenedictionEffectiveChamber,
-  floor: GameTextKey.AbyssBenedictionEffectiveFloor,
-} as const;
 const title = computed(() =>
   floor === undefined || chamber === undefined
     ? undefined

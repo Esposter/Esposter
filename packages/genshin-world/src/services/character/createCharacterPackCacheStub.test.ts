@@ -4,7 +4,7 @@ import { describe } from "vitest";
 export const createCharacterPackCacheStub = (): Pick<Cache, "keys" | "match" | "put"> => {
   const responses = new Map<string, Response>();
   return {
-    keys: async () => [...responses.keys()].map((url) => new Request(url)),
+    keys: async () => Array.from(responses.keys(), (url) => new Request(url)),
     match: async (url) => responses.get(String(url))?.clone(),
     put: async (url, response) => {
       responses.set(String(url), response);

@@ -17,7 +17,7 @@ describe("characterScreen", () => {
     const { container } = await render(CharacterScreenContainer, { props });
 
     const rightmostEdge = Math.max(
-      ...[...container.querySelectorAll("*")].map((element) => element.getBoundingClientRect().right),
+      ...Array.from(container.querySelectorAll("*"), (element) => element.getBoundingClientRect().right),
     );
     expect(rightmostEdge).toBeLessThanOrEqual(window.innerWidth);
   });

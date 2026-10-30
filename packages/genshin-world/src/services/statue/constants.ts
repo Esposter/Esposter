@@ -7,6 +7,8 @@ export const RESTORATIVE_POWER_REFILL_SHARE = 0.01;
 export const RESTORATIVE_POWER_REFILL_SECONDS = 15;
 // The share of a character's Max HP one click on the Blessing heals it by
 export const BLESSING_HEAL_HEALTH_SHARE = 0.1;
+// Provisional: the switch's words are the wiki's, since no game text key for them is in the dump, until one is keyed
+export const AUTO_RECOVER_TITLE = "Auto-recover when nearby";
 // The seconds a character stands by a statue's base before auto-recover runs, the wiki's two
 export const AUTO_RECOVER_DWELL_SECONDS = 2;
 // Provisional: the threshold's percentage of a member's Max HP, the steps the screen's control moves it by, its largest

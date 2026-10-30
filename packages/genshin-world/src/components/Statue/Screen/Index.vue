@@ -6,15 +6,12 @@ import type { GameText } from "genshin-text";
 
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { RESTORATIVE_POWER_PER_STATUE } from "#src/services/statue/constants";
+import { AUTO_RECOVER_TITLE, RESTORATIVE_POWER_PER_STATUE } from "#src/services/statue/constants";
 import { healPartyMemberWithPower } from "#src/services/statue/healPartyMemberWithPower";
 import { regenerateRestorativePower } from "#src/services/statue/regenerateRestorativePower";
 import { stepAutoRecoverThreshold } from "#src/services/statue/stepAutoRecoverThreshold";
 import { BlessingScreen, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
-
-// Provisional: the switch's words are the wiki's, since no game text key for them is in the dump, until one is keyed
-const AUTO_RECOVER_TITLE = "Auto-recover when nearby";
 
 interface Props {
   // The game's words in the reader's language
@@ -74,8 +71,8 @@ const heal = (characterId: number) => {
       :worship-title="gameText[GameTextKey.StatueWorship]"
       @close="emit('close')"
       @heal="(characterId) => heal(characterId)"
-      @step-threshold="stepThreshold"
-      @toggle-auto-recover="toggleAutoRecover"
+      @step-threshold="(direction) => stepThreshold(direction)"
+      @toggle-auto-recover="toggleAutoRecover()"
       @worship="emit('worship')"
     />
   </GameScreen>

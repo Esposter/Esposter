@@ -43,13 +43,16 @@ whenever(
   { immediate: true, once: true },
 );
 // The download's size in megabytes, in the reader's language's own number format
-const megabyteFormat = new Intl.NumberFormat(GameLanguageTagMap[language], {
-  maximumFractionDigits: 1,
-  style: "unit",
-  unit: "megabyte",
-  unitDisplay: "short",
-});
-const formatMegabytes = (bytes: number): string => megabyteFormat.format(bytes / BYTES_PER_MEGABYTE);
+const megabyteFormat = computed(
+  () =>
+    new Intl.NumberFormat(GameLanguageTagMap[language], {
+      maximumFractionDigits: 1,
+      style: "unit",
+      unit: "megabyte",
+      unitDisplay: "short",
+    }),
+);
+const formatMegabytes = (bytes: number): string => megabyteFormat.value.format(bytes / BYTES_PER_MEGABYTE);
 </script>
 
 <template>

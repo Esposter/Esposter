@@ -20,7 +20,14 @@ import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { takeInventoryEntry } from "#src/services/inventory/takeInventoryEntry";
 import { takeInventoryItems } from "#src/services/inventory/takeInventoryItems";
 import { ascendWeapon } from "#src/services/weapon/ascendWeapon";
-import { ENHANCEMENT_ORES } from "#src/services/weapon/constants";
+import {
+  CURRENT_DOT_REGEX,
+  DIVIDER_OPACITY,
+  ENHANCE_MATERIAL_LIMIT,
+  ENHANCE_SLOT_COUNT,
+  ENHANCEMENT_ORES,
+  SPARK_PHASES,
+} from "#src/services/weapon/constants";
 import { enhanceWeapon } from "#src/services/weapon/enhanceWeapon";
 import { getBagWeapon } from "#src/services/weapon/getBagWeapon";
 import { getRarityRequiredExps } from "#src/services/weapon/getRarityRequiredExps";
@@ -31,14 +38,7 @@ import { refineWeapon } from "#src/services/weapon/refineWeapon";
 import { setBagWeapon } from "#src/services/weapon/setBagWeapon";
 import { WeaponTypeNameGameTextKeyMap } from "#src/services/weapon/WeaponTypeNameGameTextKeyMap";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
-import {
-  ASCENSION_PHASE_COUNT,
-  GameScreen,
-  ItemCategory,
-  OrnamentDivider,
-  WeaponMenu,
-  WeaponMenuTab,
-} from "genshin-interface";
+import { GameScreen, ItemCategory, OrnamentDivider, WeaponMenu, WeaponMenuTab } from "genshin-interface";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 // The bag and the wallet an accepted action leaves behind
@@ -46,17 +46,6 @@ interface ActionState {
   inventory: Inventory;
   wallet: Wallet;
 }
-
-// The phases an ascension's sparks count from the first, each one lit once the weapon holds it
-const SPARK_PHASES = Array.from({ length: ASCENSION_PHASE_COUNT }, (_, index) => index + 1);
-// The slots the Enhance strip shows across its width, each an ore or fodder weapon or an empty slot waiting for one
-const ENHANCE_SLOT_COUNT = 7;
-// The materials the Enhance panel's consumed line counts its picks against, the total the game's panel shows
-const ENHANCE_MATERIAL_LIMIT = 40;
-// The share of the shared divider's silver the game's hairline reads at over the weapon's scene
-const DIVIDER_OPACITY = 0.16;
-// The dot the game's Current line opens on, which each passive row draws as its bullet instead
-const CURRENT_DOT_PATTERN = /^·/u;
 
 interface Props {
   // The adventure rank the player holds, which an Ascend's next phase requires
@@ -175,7 +164,7 @@ const passiveRows = computed(() =>
         ? splitGameTextColors(fillGameTextValues(gameText[GameTextKey.WeaponRefinementCurrent], row.description)).map(
             (segment, segmentIndex) => ({
               ...segment,
-              text: segmentIndex === 0 ? segment.text.replace(CURRENT_DOT_PATTERN, "") : segment.text,
+              text: segmentIndex === 0 ? segment.text.replace(CURRENT_DOT_REGEX, "") : segment.text,
             }),
           )
         : [],

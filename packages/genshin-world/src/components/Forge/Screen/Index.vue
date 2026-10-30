@@ -139,7 +139,7 @@ const queueCells = computed<ForgeQueueCell[]>(() =>
 // The queue the Queues tab's detail shows, the first holding an order: its units done, the words over its ring (its time
 // Left, or Complete once every unit is done) and the share of the unit being forged, which a complete queue shows full
 const queueDetail = computed(() => {
-  const slot = queueSlots.value.find(isQueueOccupied);
+  const slot = queueSlots.value.find((queueSlot) => isQueueOccupied(queueSlot));
   const order = progress.value.orders.find(({ queueId }) => queueId === slot?.id);
   if (!slot || !order) return;
   const isComplete = slot.state === ForgeQueueState.Complete;
@@ -242,7 +242,7 @@ const obtain = (queueId: number) => {
       :queues-label="
         fillGameTextValues(
           gameText[GameTextKey.ForgeQueueButton],
-          queueSlots.filter(isQueueOccupied).length,
+          queueSlots.filter((queueSlot) => isQueueOccupied(queueSlot)).length,
           queueSlots.filter(({ state }) => state !== ForgeQueueState.Locked).length,
         )
       "
@@ -257,7 +257,7 @@ const obtain = (queueId: number) => {
       @close="emit('close')"
       @obtain="(queueId) => obtain(queueId)"
       @start="start()"
-      @update:recipe-id="pickRecipe"
+      @update:recipe-id="(recipeId) => pickRecipe(recipeId)"
     />
   </GameScreen>
 </template>

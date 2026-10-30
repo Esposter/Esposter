@@ -10,6 +10,7 @@ import { useListScreenTabStep } from "#src/composables/useListScreenTabStep";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ArchiveSectionGameTextKeyMap } from "#src/services/archive/ArchiveSectionGameTextKeyMap";
 import { ArchiveSectionOrder } from "#src/services/archive/ArchiveSectionOrder";
+import { TWO_LINE_NAME_LENGTH } from "#src/services/archive/constants";
 import { CloseButtonMark, GameScreen, ItemRarityFaceGradientMap } from "genshin-interface";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
@@ -74,8 +75,6 @@ const unlockedCountSegments = computed(() =>
     ),
   ),
 );
-// A name longer than this many characters sets in two smaller lines on its tile, as the game fits a long name to its band
-const TWO_LINE_NAME_LENGTH = 12;
 const checkIsTwoLineName = (name: string): boolean => name.length > TWO_LINE_NAME_LENGTH;
 // An opened volume of the Books section is read, so only it is a button that reads; every other entry is picked
 const checkIsEntryReadable = (entryId: number): boolean =>
