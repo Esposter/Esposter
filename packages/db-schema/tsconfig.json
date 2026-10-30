@@ -1,1 +1,12 @@
-{ "extends": "../configuration/tsconfig.node.json", "compilerOptions": { "isolatedDeclarations": false } }
+{
+  "extends": "../configuration/tsconfig.node.json",
+  "compilerOptions": { "isolatedDeclarations": false },
+  "include": [
+    "../configuration/types/*.d.ts",
+    "types/*.d.ts",
+    "*.ts",
+    "scripts/**/*.ts",
+    "src/**/*.ts",
+    "../../oxfmt.config.ts"
+  ]
+}

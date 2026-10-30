@@ -1,8 +1,8 @@
-import formatterConfiguration from "../../../oxfmt.config.ts";
-
-import { format } from "oxfmt";
 import { glob, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { format } from "oxfmt";
+
+import formatterConfiguration from "../../../oxfmt.config.ts";
 
 interface RegistryEntry {
   exportNames: string[];
