@@ -91,19 +91,19 @@ catalog:
   "@pulumi/pulumi": ^3.273.0
   "@standard-schema/spec": ^1.1.0
   "@takumi-rs/core": ^2.19.0
-  "@tiptap/core": ^3.32.1
-  "@tiptap/extension-code-block-lowlight": ^3.32.1
-  "@tiptap/extension-file-handler": ^3.32.1
-  "@tiptap/extension-image": ^3.32.1
-  "@tiptap/extension-list": ^3.32.1
-  "@tiptap/extension-table": ^3.32.1
-  "@tiptap/extension-mention": ^3.32.1
-  "@tiptap/extensions": ^3.32.1
-  "@tiptap/html": ^3.32.1
-  "@tiptap/pm": ^3.32.1
-  "@tiptap/starter-kit": ^3.32.1
-  "@tiptap/suggestion": ^3.32.1
-  "@tiptap/vue-3": ^3.32.1
+  "@tiptap/core": ^3.32.2
+  "@tiptap/extension-code-block-lowlight": ^3.32.2
+  "@tiptap/extension-file-handler": ^3.32.2
+  "@tiptap/extension-image": ^3.32.2
+  "@tiptap/extension-list": ^3.32.2
+  "@tiptap/extension-table": ^3.32.2
+  "@tiptap/extension-mention": ^3.32.2
+  "@tiptap/extensions": ^3.32.2
+  "@tiptap/html": ^3.32.2
+  "@tiptap/pm": ^3.32.2
+  "@tiptap/starter-kit": ^3.32.2
+  "@tiptap/suggestion": ^3.32.2
+  "@tiptap/vue-3": ^3.32.2
   "@tresjs/cientos": ^5.10.1
   "@tresjs/core": ^5.10.1
   "@trpc/client": ^11.22.1
@@ -112,7 +112,7 @@ catalog:
   "@types/mjml": ^5.4.2
   "@types/node": ^26.6.6
   "@types/sax": ^1.2.7
-  "@types/three": ^0.186.0
+  "@types/three": ^0.187.0
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.2
   "@typesafe-ai/sdk": ^0.7.0
@@ -158,7 +158,7 @@ catalog:
   drizzle-kit: 1.0.0-rc.5
   drizzle-orm: 1.0.0-rc.5
   emojilib: ^4.0.3
-  eslint: ^10.13.0
+  eslint: ^10.14.0
   eslint-plugin-depend: ^1.5.0
   eslint-plugin-jsonc: ^3.4.2
   eslint-plugin-oxlint: ^1.90.0
@@ -193,7 +193,7 @@ catalog:
   neverthrow: ^8.2.0
   # @TODO: no upstream issue — nuxt/nuxt: Nuxt's nitro-server still hands its Vite services under `experimental.vite`, which Nitro moves to `vite` through a shim that logs a deprecation on every build: drop the warning once a `5x` Nuxt nightly hands them under `vite`
   nitro: npm:nitro-nightly@latest
-  node-html-parser: ^9.0.5
+  node-html-parser: ^9.0.6
   node-pty: ^1.1.0
   # @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — back to a range once Nuxt 5 reaches `latest`
   nuxt: npm:nuxt-nightly@5x
@@ -227,7 +227,7 @@ catalog:
   survey-creator-vue: ^3.2.3
   survey-vue3-ui: ^3.2.3
   temporal-polyfill: ^1.0.6
-  three: ^0.186.1
+  three: ^0.187.0
   three-globe: ^2.45.6
   three-mesh-bvh: ^0.9.17
   tsdown: 0.23.2
@@ -281,7 +281,7 @@ overrides:
   vite: "catalog:"
   # @TODO: no upstream issue — phaser4-rex-plugins 4.2.0 still declares i18next-http-backend `^3.0.5`, below the patched 4.0.2
   # of GHSA-xvq9-wjp8-hwqf, so this override holds it on 4.x: drop it once rexrainbow/phaser3-rex-notes declares a patched range
-  phaser4-rex-plugins>i18next-http-backend: ^4.0.6
+  phaser4-rex-plugins>i18next-http-backend: ^4.0.7
   # vp runs the catalog's tools rather than the exact copies vite-plus pins, so the lockfile holds one of each and
   # Renovate keeps owning their versions; its `vite`, aliased to Vite+'s own core, takes the global `vite` above.
   vite-plus>@oxlint/plugins: "catalog:"
