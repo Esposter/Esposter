@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { WishHistoryCell } from "#src/models/WishHistoryCell";
 
+import CloseButton from "#src/components/CloseButton/Index.vue";
 import RarityStars from "#src/components/RarityStars/Index.vue";
+import { CloseButtonMark } from "#src/models/CloseButtonMark";
 
 interface Props {
   // The way out of the popup in the reader's language
@@ -22,7 +24,7 @@ const emit = defineEmits<{ close: [] }>();
   <div class="wish-history" role="dialog" :aria-label="title">
     <div class="panel">
       <p class="title">{{ title }}</p>
-      <button class="close" type="button" :aria-label="closeLabel" @click="emit('close')">✕</button>
+      <CloseButton class="close" :label="closeLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
       <ul class="draws">
         <li v-for="({ bannerLabel, name, rarity, time }, index) of history" :key="index" class="draw">
           <span class="time">{{ time }}</span>
