@@ -91,6 +91,15 @@
     },
     {
       "attribution": {},
+      "bytes": 152587259,
+      "name": "yt-0z3OdjIBuo8-wow-completionist.mp4",
+      "range": { "end": 252, "start": 0 },
+      "sha256": "09667b0f29739dba9d34fc2adce36e0786bfea4ea9816591ad587da9040eacd6",
+      "source": "https://www.youtube.com/watch?v=0z3OdjIBuo8",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
       "bytes": 33545243,
       "name": "yt-1SqmdXbIhLs-reputation-guide.mp4",
       "sha256": "bf818ffb27dfafd83b2f54b74765b7654c64cbe1fbd3b8b5d568da00b7b26335",
@@ -1728,6 +1737,18 @@
       "width": 1920
     },
     {
+      "attribution": { "recording": "yt--nip9Dz-aNM-shop-paimons-bargains.mp4", "second": 1, "videoId": "-nip9Dz-aNM" },
+      "bytes": 857996,
+      "capturedAt": "2026-10-30T06:17:56.588Z",
+      "height": 1080,
+      "id": "paimons-bargains-screen",
+      "kind": "recording-frame",
+      "sha256": "77c7705fc31fbdac8a1f7a14ec7844b91e9ace486f98f17efd4c336c6889c9df",
+      "source": "yt--nip9Dz-aNM-shop-paimons-bargains.mp4 at 1s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
       "attribution": { "recording": "yt-greLeGJE-Jg-party-setup.mp4", "second": 38, "videoId": "greLeGJE-Jg" },
       "bytes": 835144,
       "capturedAt": "2026-10-29T04:12:08.329Z",
@@ -1935,6 +1956,30 @@
       "source": "session-2.mp4 at 7.5s",
       "sourceFormat": "png",
       "width": 3440
+    },
+    {
+      "attribution": { "recording": "yt-0z3OdjIBuo8-wow-completionist.mp4", "second": 173, "videoId": "0z3OdjIBuo8" },
+      "bytes": 548164,
+      "capturedAt": "2026-10-30T05:48:45.693Z",
+      "height": 1080,
+      "id": "statue-blessing",
+      "kind": "recording-frame",
+      "sha256": "300396b9709dfedd5ad6f7ba99919075f69c7dbba0d68ee304c475c18b843085",
+      "source": "yt-0z3OdjIBuo8-wow-completionist.mp4 at 173s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": { "recording": "yt-0z3OdjIBuo8-wow-completionist.mp4", "second": 164, "videoId": "0z3OdjIBuo8" },
+      "bytes": 880558,
+      "capturedAt": "2026-10-30T05:48:45.699Z",
+      "height": 1080,
+      "id": "statue-worship",
+      "kind": "recording-frame",
+      "sha256": "30434531adcc8ac030a52b5378d47c5798982643342928ae846446bd85584cb8",
+      "source": "yt-0z3OdjIBuo8-wow-completionist.mp4 at 164s",
+      "sourceFormat": "png",
+      "width": 1920
     },
     {
       "attribution": {

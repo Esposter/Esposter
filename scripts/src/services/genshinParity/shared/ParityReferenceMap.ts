@@ -982,6 +982,15 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     source: "yt-jHr2bERjkYc-logout-tech4gamers.mp4 at 25s",
     windowLeft: 150,
   },
+  // The Paimon's Bargains shop hub from a 2021 English PC recording (yt--nip9Dz-aNM-shop-paimons-bargains.mp4, 1080 high, at 1 second). It is a near
+  // Reference, since no cleaner English footage was found: the recording is an older build, so its tabs and cards are the 2021 layout,
+  // And its caption bar lies across the second row's foot from 795 to 940 pixels, so the region stops above it. Scored over the two
+  // Rows of cards and the tabs, the Fischl card's red label included, since the game draws it there.
+  "paimons-bargains-screen": {
+    region: { height: 790, width: 1720, x: 100, y: 0 },
+    screen: "PaimonsBargainsScreen",
+    source: "yt--nip9Dz-aNM-shop-paimons-bargains.mp4 at 1s",
+  },
   // The English PC client's Party Setup at 1080 high from a public recording (yt-greLeGJE-Jg-party-setup.mp4), about 38 seconds
   // In: Party 1 deployed with Venti, Xiangling, Raiden Shogun and Alhaitham, each at Lv. 90. The members stand in the game's own
   // Scene, so the sky is the frame's and the members, their icons, the title, the step dots, the Elemental Resonance pill, the
@@ -1181,6 +1190,22 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Logo with its Genshin line, whole on white and with no licence line
   "splash-title-japanese": { screen: "SplashTitle", source: "session-2.mp4 at 7.5s", variant: "japanese" },
   "splash-title-korean": { pending: NO_VARIANT_SCREENSHOT, screen: "SplashTitle", variant: "korean" },
+  // The Statue's Blessing screen, opened from a statue, from the WoW Quests completionist guide (yt-0z3OdjIBuo8, 2022, 1080 high at
+  // 60 frames a second) at 173 seconds: the Restorative Power at 10000 of 10000, auto-recover on at 50%. Scored over the right panel
+  // only. The member cards at the left are not scored, since the world shows through them blurred, which the component does not draw.
+  // The recording's clock and the recorder's UID lie outside the region.
+  "statue-blessing": {
+    region: { height: 1040, width: 550, x: 1370, y: 0 },
+    screen: "StatueScreen",
+    source: "yt-0z3OdjIBuo8-wow-completionist.mp4 at 173s",
+  },
+  // The Worship Statue popup of Mondstadt's statue at level 2, from the same guide at 164 seconds, with no Anemoculus held toward it.
+  // Scored over the popup's panel, which the live world on its left does not enter. The recorder's UID lies below the region.
+  "statue-worship": {
+    region: { height: 1040, width: 614, x: 1306, y: 0 },
+    screen: "StatueWorship",
+    source: "yt-0z3OdjIBuo8-wow-completionist.mp4 at 164s",
+  },
   // Sumeru City from the wiki's location image of 2022, the only Sumeru City shot found: daylight with a clear sky and
   // Short shadows, so a provisional noon until the shadows solve reads its sun. Its landmarks are the terrace's spire
   // And the green-domed minaret's rigid edges, read at the image's pixels; its build is checked against the export once
