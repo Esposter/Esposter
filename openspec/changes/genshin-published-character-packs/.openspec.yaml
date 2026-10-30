@@ -1,5 +1,6 @@
 schema: spec-driven
 affected_areas: [genshin]
+retire_capabilities: true
 x-model: claude-sonnet-5-5
 x-touches:
   [
