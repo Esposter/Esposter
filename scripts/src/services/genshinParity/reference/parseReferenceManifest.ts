@@ -7,5 +7,5 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 // record has been packed yet
 export const parseReferenceManifest = (text: string | undefined): ParityReferenceManifest =>
   text === undefined
-    ? { records: [], recordings: [], references: [] }
+    ? { recordings: [], records: [], references: [] }
     : parityReferenceManifestSchema.parse(parseMachineJson(text));

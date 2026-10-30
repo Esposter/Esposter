@@ -1,7 +1,7 @@
 import { getWorktreeName } from "#src/services/genshinParity/shared/getWorktreeName";
 import { SITE_NAME } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
 import { join } from "node:path";
+import { describe, expect, test } from "vitest";
 
 describe(getWorktreeName, () => {
   test("should name a worktree by its folder under .agents/worktrees, and the shared checkout main", () => {

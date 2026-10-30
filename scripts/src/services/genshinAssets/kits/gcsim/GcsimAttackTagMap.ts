@@ -8,7 +8,7 @@ export const GcsimAttackTagMap: Partial<Record<string, AttackTag>> = {
   "attacks.AttackTagElementalArt": AttackTag.ElementalSkill,
   "attacks.AttackTagElementalArtHold": AttackTag.ElementalSkill,
   "attacks.AttackTagElementalBurst": AttackTag.ElementalBurst,
-  [GCSIM_CHARGED_ATTACK_TAG]: AttackTag.ChargedAttack,
   "attacks.AttackTagNormal": AttackTag.NormalAttack,
   "attacks.AttackTagPlunge": AttackTag.PlungingAttack,
+  [GCSIM_CHARGED_ATTACK_TAG]: AttackTag.ChargedAttack,
 };

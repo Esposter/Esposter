@@ -1,11 +1,11 @@
 import type { PrecheckReport } from "#src/models/precheck/PrecheckReport";
 
-import { readChangedFiles } from "#src/services/queue/readChangedFiles";
-import { readMainCheckoutRoot } from "#src/services/queue/readMainCheckoutRoot";
-import { CONFIGURATION_DISTRIBUTION_PATH } from "#src/services/precheck/constants";
 import { checkBarrel } from "#src/services/precheck/checkBarrel";
+import { CONFIGURATION_DISTRIBUTION_PATH } from "#src/services/precheck/constants";
 import { readBarrelPackages } from "#src/services/precheck/readBarrelPackages";
 import { readUnformattedPaths } from "#src/services/precheck/readUnformattedPaths";
+import { readChangedFiles } from "#src/services/queue/readChangedFiles";
+import { readMainCheckoutRoot } from "#src/services/queue/readMainCheckoutRoot";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 

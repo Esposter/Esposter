@@ -2,10 +2,10 @@ import type { SetupEnvironment } from "#src/models/setup/SetupEnvironment";
 import type { SetupOptions } from "#src/models/setup/SetupOptions";
 import type { SetupRow } from "#src/models/setup/SetupRow";
 
-import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { DEPENDENCIES_MARKER_PATH, PNPM_INSTALL_NEXT } from "#src/services/setup/constants";
 import { getRunRow } from "#src/services/setup/getRunRow";
 import { getStepRow } from "#src/services/setup/getStepRow";
+import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 
 // The dependencies are installed when pnpm's marker is in place. The install runs only when asked for, since it takes minutes
 export const readDependenciesRow = (options: SetupOptions, environment: SetupEnvironment): SetupRow => {

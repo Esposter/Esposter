@@ -1,5 +1,5 @@
-import type { UiTrees } from "#src/models/genshinAssets/ui/UiTrees";
 import type { UiIndexEntry } from "#src/models/genshinAssets/ui/UiIndexEntry";
+import type { UiTrees } from "#src/models/genshinAssets/ui/UiTrees";
 
 import { composeInterfaceTree } from "#src/services/genshinAssets/interface/composeInterfaceTree";
 import { findNearestUiCanvas } from "#src/services/genshinAssets/ui/findNearestUiCanvas";

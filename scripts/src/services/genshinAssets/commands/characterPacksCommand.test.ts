@@ -2,10 +2,10 @@ import type { CharacterPackFile } from "#src/models/genshinAssets/characterPacks
 import type { CharacterPackIndex } from "genshin-world";
 
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
-import { characterPacksCommand } from "#src/services/genshinAssets/commands/characterPacksCommand";
 import { buildCharacterPackIndex } from "#src/services/genshinAssets/characterPacks/buildCharacterPackIndex";
 import { publishCharacterPacks } from "#src/services/genshinAssets/characterPacks/publishCharacterPacks";
 import { readCharacterPackFiles } from "#src/services/genshinAssets/characterPacks/readCharacterPackFiles";
+import { characterPacksCommand } from "#src/services/genshinAssets/commands/characterPacksCommand";
 import { defineCommand, runCommand } from "citty";
 import { GameDataset } from "genshin-world";
 import { afterEach, describe, expect, test, vi } from "vitest";

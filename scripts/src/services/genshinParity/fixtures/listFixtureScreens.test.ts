@@ -84,8 +84,8 @@ describe(listFixtureScreens, () => {
     expect.hasAssertions();
 
     const referenceMap = {
-      [REGION_REFERENCE_ID]: { region: REGION, screen: SCREEN_NAME, source: "recording.mp4", variant: VARIANT },
       [REFERENCE_ID]: { screen: SCREEN_NAME, source: "recording.mp4", variant: VARIANT },
+      [REGION_REFERENCE_ID]: { region: REGION, screen: SCREEN_NAME, source: "recording.mp4", variant: VARIANT },
     } satisfies Record<string, ParityReference>;
     const rows = await listFixtureScreens(componentsDirectory, referenceMap, new Map());
     const besideSnapshot = getFixtureReferenceFilePath(join(componentsDirectory, SCREEN_DIRECTORY), VARIANT);

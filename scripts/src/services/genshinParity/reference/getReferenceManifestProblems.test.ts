@@ -1,5 +1,5 @@
-import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
 import type { ParityReferenceManifestRow } from "#src/models/genshinParity/reference/ParityReferenceManifestRow";
+import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
 
 import { ParityReferenceKind } from "#src/models/genshinParity/reference/ParityReferenceKind";
 import { getReferenceManifestProblems } from "#src/services/genshinParity/reference/getReferenceManifestProblems";

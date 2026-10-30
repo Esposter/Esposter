@@ -1,7 +1,7 @@
 import type { SetupRow } from "#src/models/setup/SetupRow";
 
-import { OODLE_HELPER_PATCH_PATH } from "#src/services/recreation/animeStudio/constants";
 import { SetupStatus } from "#src/models/setup/SetupStatus";
+import { OODLE_HELPER_PATCH_PATH } from "#src/services/recreation/animeStudio/constants";
 
 // The Oodle hook the CLI needs is a committed patch, which no command applies to an unpacked build, so it is only reported
 export const readOodlePatchRow = (): SetupRow => ({

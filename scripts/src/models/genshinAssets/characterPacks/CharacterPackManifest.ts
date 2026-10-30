@@ -8,7 +8,7 @@ import { z } from "zod";
 export interface CharacterPackManifest {
   avatarId: string;
   files: { bytes: number; path: string; sha256: string }[];
-  name: string | null;
+  name: null | string;
 }
 
 export const characterPackManifestSchema: z.ZodType<CharacterPackManifest> = z.object({

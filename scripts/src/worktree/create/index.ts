@@ -1,10 +1,10 @@
 import { readMainCheckoutRoot } from "#src/services/queue/readMainCheckoutRoot";
+import { runCommand } from "#src/services/timing/runCommand";
 import { buildDistributions } from "#src/services/worktree/create/buildDistributions";
 import { createWorktree } from "#src/services/worktree/create/createWorktree";
 import { installWorktree } from "#src/services/worktree/create/installWorktree";
 import { readBuildDirectories } from "#src/services/worktree/create/readBuildDirectories";
 import { waitForMemoryGate } from "#src/services/worktree/create/waitForMemoryGate";
-import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
 // `pnpm ai:worktree:create <name> [package...]` — a worktree on ai/queue, installed for the scripts package and the packages

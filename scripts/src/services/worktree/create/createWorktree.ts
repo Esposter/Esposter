@@ -1,7 +1,7 @@
-import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
 import { QUEUE_BRANCH, REMOTE_NAME, REMOTE_QUEUE_REF } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { WORKTREE_NAME_REGEX } from "#src/services/worktree/create/constants";
+import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { join } from "node:path";
 

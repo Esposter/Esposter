@@ -4,10 +4,10 @@ import type { FixtureReferenceStatus } from "#src/models/genshinParity/fixtures/
 // Image is on disk, and the reference it is judged against with that reference's last score and bar (null when the
 // Report holds none, and when no reference names it)
 export interface FixtureScreenRow {
-  bar: number | null;
+  bar: null | number;
   directory: string;
   imageExists: boolean;
-  lastScore: number | null;
+  lastScore: null | number;
   name: string;
   referenceId: string;
   referenceStatus: FixtureReferenceStatus;

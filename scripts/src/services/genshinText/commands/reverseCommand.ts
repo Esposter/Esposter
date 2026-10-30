@@ -1,9 +1,9 @@
 import type { SubCommandsDef } from "citty";
 
+import { checkIsShownGameText } from "#src/services/genshinText/checkIsShownGameText";
 import { DEFAULT_LANGUAGES_ARGUMENT, REVERSE_MATCH_LIMIT } from "#src/services/genshinText/constants";
 import { formatGameTextMatch } from "#src/services/genshinText/formatGameTextMatch";
 import { getRequestedLanguages } from "#src/services/genshinText/getRequestedLanguages";
-import { checkIsShownGameText } from "#src/services/genshinText/checkIsShownGameText";
 import { readGameTextMatches } from "#src/services/genshinText/readGameTextMatches";
 import { defineCommand } from "citty";
 

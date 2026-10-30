@@ -3,8 +3,8 @@ import type { readReferenceFiles as baseReadReferenceFiles } from "#src/services
 import { REFERENCE_MANIFEST_PATH } from "#src/services/genshinParity/shared/constants";
 import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { afterEach, describe, expect, test, vi } from "vitest";
 import { join } from "node:path";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 const { readReferenceFiles } = vi.hoisted(() => ({ readReferenceFiles: vi.fn<typeof baseReadReferenceFiles>() }));
 

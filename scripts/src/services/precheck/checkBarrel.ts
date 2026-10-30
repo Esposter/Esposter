@@ -1,8 +1,7 @@
-import type { ExportsGeneration } from "@esposter/configuration";
 import type { BarrelCheck } from "#src/models/precheck/BarrelCheck";
 import type { BarrelLines } from "#src/models/precheck/BarrelLines";
+import type { ExportsGeneration } from "@esposter/configuration";
 
-import { BARREL_FILE, COMPONENTS_DIRECTORY } from "@esposter/configuration";
 import { SOURCE_DIRECTORY_NAME } from "#src/services/precheck/constants";
 import { generateBarrelLines } from "#src/services/precheck/generateBarrelLines";
 import { getBarrelFindings } from "#src/services/precheck/getBarrelFindings";
@@ -11,6 +10,7 @@ import { getLazyDirectories } from "#src/services/precheck/getLazyDirectories";
 import { readBarrelLines } from "#src/services/precheck/readBarrelLines";
 import { spawnGenerateExports } from "#src/services/precheck/spawnGenerateExports";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { BARREL_FILE, COMPONENTS_DIRECTORY } from "@esposter/configuration";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 

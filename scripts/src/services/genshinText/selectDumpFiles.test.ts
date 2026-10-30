@@ -21,8 +21,8 @@ describe(selectDumpFiles, () => {
       selectDumpFiles(
         remoteFiles,
         new Map([
-          [HELD_PATH, SHA],
           [CHANGED_PATH, "b"],
+          [HELD_PATH, SHA],
         ]),
       ),
     ).toStrictEqual([

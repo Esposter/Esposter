@@ -1,8 +1,8 @@
-import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { getSoftnessFileName } from "#src/services/genshinParity/reference/getSoftnessFileName";
 import { hashFile } from "#src/services/genshinParity/reference/hashFile";
 import { measureFrameSoftness } from "#src/services/genshinParity/reference/measureFrameSoftness";
 import { REFERENCE_SCRATCH_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { writePartialThenMove } from "#src/services/shared/writePartialThenMove";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";

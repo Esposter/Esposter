@@ -1,5 +1,5 @@
-import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { parseRecordingSource } from "#src/services/genshinParity/reference/parseRecordingSource";
+import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { describe, expect, test } from "vitest";
 
 describe(parseRecordingSource, () => {

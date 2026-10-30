@@ -20,9 +20,9 @@ export interface ParityPageOptions {
   screen: string;
   // The fixture's variant the page renders over its props, by its name in the fixture's `variants`
   variant?: string;
+  width: number;
   // The left edge, in the reference's pixels, of the game window the screen is placed at, for a frame that pillarboxes it
   windowLeft?: number;
-  width: number;
   // A component whose exports the page draws in place of the scene's own parts, served to it from the exports
   witness?: DerivedAssetComponent;
   // The only meshes the witness's placements keep, for a page that draws a few of a component's parts and no more

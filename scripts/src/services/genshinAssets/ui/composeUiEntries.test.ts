@@ -65,7 +65,7 @@ describe(composeUiEntries, () => {
       ]),
     );
 
-    expect(entries.map(({ name, pathId, path, transformId }) => ({ name, path, pathId, transformId }))).toStrictEqual([
+    expect(entries.map(({ name, path, pathId, transformId }) => ({ name, path, pathId, transformId }))).toStrictEqual([
       { name: "Root", path: [], pathId: "root-object", transformId: "root-transform" },
       { name: "Btn", path: ["Root"], pathId: "btn-object", transformId: "btn-transform" },
       { name: "Btn (1)", path: ["Root"], pathId: "btn-repeat-object", transformId: "btn-repeat-transform" },

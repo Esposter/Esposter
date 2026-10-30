@@ -6,8 +6,8 @@ import { filterFleetEntries } from "#src/services/fleet/filterFleetEntries";
 import { formatMachineLoad } from "#src/services/fleet/formatMachineLoad";
 import { readClaimedRefs } from "#src/services/fleet/readClaimedRefs";
 import { readFleetEntries } from "#src/services/fleet/readFleetEntries";
-import { readRequiredMachineProfile } from "#src/services/fleet/readRequiredMachineProfile";
 import { readMachineSample } from "#src/services/fleet/readMachineSample";
+import { readRequiredMachineProfile } from "#src/services/fleet/readRequiredMachineProfile";
 import { selectTakeableEntries } from "#src/services/fleet/selectTakeableEntries";
 
 // Claims the first entry this machine may take among those `lane` and `kind` filter to, for `worker`, and returns it, or

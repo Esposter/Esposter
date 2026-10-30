@@ -1,5 +1,5 @@
-import type { VideoSite } from "#src/models/recreation/video/VideoSite";
 import type { SearchCandidate } from "#src/models/recreation/video/SearchCandidate";
+import type { VideoSite } from "#src/models/recreation/video/VideoSite";
 
 import { SEARCH_MAX_BUFFER_BYTES } from "#src/services/recreation/video/constants";
 import { getSearchArguments } from "#src/services/recreation/video/getSearchArguments";

@@ -2,8 +2,8 @@ import type { ClaimHolder } from "#src/models/fleet/ClaimHolder";
 
 import { claimFleetEntry } from "#src/services/fleet/claimFleetEntry";
 import { formatMachineLoad } from "#src/services/fleet/formatMachineLoad";
-import { readRequiredMachineProfile } from "#src/services/fleet/readRequiredMachineProfile";
 import { readMachineSample } from "#src/services/fleet/readMachineSample";
+import { readRequiredMachineProfile } from "#src/services/fleet/readRequiredMachineProfile";
 import { requireFleetWorker } from "#src/services/fleet/requireFleetWorker";
 
 // Takes `entry` for the worker given on this machine, its load sampled as the claim records it, and returns the holder it

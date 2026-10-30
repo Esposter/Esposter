@@ -1,14 +1,14 @@
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
 import {
-  UI_CANVAS_SCALER_RAW_DIRECTORY,
   UI_CANVAS_SCALER_NAME_PATTERN,
+  UI_CANVAS_SCALER_RAW_DIRECTORY,
   UI_GAME_OBJECT_DIRECTORY,
   UI_RECT_TRANSFORM_DIRECTORY,
   UI_RECT_TRANSFORM_RAW_DIRECTORY,
 } from "#src/services/genshinAssets/ui/constants";
-import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { join } from "node:path";
 

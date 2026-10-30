@@ -11,8 +11,8 @@ describe(collectGameTextMatches, () => {
     expect.hasAssertions();
 
     const englishTextMap = new Map([
-      [UNNAMED_HASH, "Corridor"],
       [CORRIDOR_HASH, "Corridor"],
+      [UNNAMED_HASH, "Corridor"],
       [UNNAMED_HASH.repeat(2), "Other"],
     ]);
     const manualTextMap = new Map([[CORRIDOR_NAME, CORRIDOR_HASH]]);

@@ -11,7 +11,7 @@ const getSha256 = (content: string): string => createHash("sha256").update(conte
 
 // An avatar's folder as the owner's extraction leaves it: each file, then the manifest listing them by path, bytes and
 // Hash. Returns the manifest's text, which the index holds the manifest file under
-const writePack = (directory: string, avatarId: string, name: string | null, files: Record<string, string>): string => {
+const writePack = (directory: string, avatarId: string, name: null | string, files: Record<string, string>): string => {
   const avatarDirectory = join(directory, avatarId);
   for (const [path, content] of Object.entries(files)) {
     mkdirSync(dirname(join(avatarDirectory, path)), { recursive: true });

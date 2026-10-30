@@ -2,8 +2,8 @@ import { GATE_MEMORY_SHARE, GIBIBYTE } from "#src/services/machine/constants";
 import { readAvailableGigabytes } from "#src/services/machine/readAvailableGigabytes";
 import { checkIsMemoryGateOpen } from "#src/services/worktree/create/checkIsMemoryGateOpen";
 import { MEMORY_GATE_POLL_MILLISECONDS, MEMORY_GATE_WAIT_MILLISECONDS } from "#src/services/worktree/create/constants";
-import { setTimeout as sleep } from "node:timers/promises";
 import { totalmem } from "node:os";
+import { setTimeout as sleep } from "node:timers/promises";
 
 // Waits while the free memory is under the gate, sampled every poll, until the wait is spent. An unreadable figure keeps the
 // Gate shut. Returns the line that names the shortfall, or none once the gate is open

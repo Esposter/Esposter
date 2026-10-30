@@ -1,5 +1,5 @@
-import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
 import type { ReferenceVerification } from "#src/models/genshinParity/reference/ReferenceVerification";
+import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
 
 import { VerifyOutcome } from "#src/models/genshinParity/reference/VerifyOutcome";
 import { REFERENCE_PACK_CONCURRENCY } from "#src/services/genshinParity/reference/constants";

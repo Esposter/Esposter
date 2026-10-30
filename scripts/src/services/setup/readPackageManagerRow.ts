@@ -2,11 +2,11 @@ import type { SetupEnvironment } from "#src/models/setup/SetupEnvironment";
 import type { SetupRow } from "#src/models/setup/SetupRow";
 import type { PackageManifest } from "@esposter/configuration";
 
-import { PACKAGE_JSON_FILENAME, PNPM_ARGS, PNPM_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { VP_ENV_INSTALL_NEXT } from "#src/services/setup/constants";
 import { getPackageManagerVersion } from "#src/services/setup/getPackageManagerVersion";
 import { getStepRow } from "#src/services/setup/getStepRow";
+import { PACKAGE_JSON_FILENAME, PNPM_ARGS, PNPM_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { join } from "node:path";
 
 // The pnpm running this command against the one the root manifest's `packageManager` pins

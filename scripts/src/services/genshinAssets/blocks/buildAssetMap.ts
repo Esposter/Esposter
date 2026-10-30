@@ -4,8 +4,8 @@ import { linkInstalledBlocks } from "#src/services/genshinAssets/blocks/linkInst
 import { mapShard } from "#src/services/genshinAssets/blocks/mapShard";
 import { mergeCabMaps } from "#src/services/genshinAssets/blocks/mergeCabMaps";
 import { partitionBlockFiles } from "#src/services/genshinAssets/blocks/partitionBlockFiles";
-import { writeAssetIndex } from "#src/services/genshinAssets/blocks/writeAssetIndex";
 import { placeCabMap } from "#src/services/genshinAssets/blocks/placeCabMap";
+import { writeAssetIndex } from "#src/services/genshinAssets/blocks/writeAssetIndex";
 import { writeMergedAssetMap } from "#src/services/genshinAssets/blocks/writeMergedAssetMap";
 import {
   ANIMESTUDIO_MAPS_DIRECTORY,

@@ -5,10 +5,10 @@ import type { SetupRow } from "#src/models/setup/SetupRow";
 import { getRecordDestination } from "#src/services/genshinParity/reference/getRecordDestination";
 import { parseReferenceManifest } from "#src/services/genshinParity/reference/parseReferenceManifest";
 import { REFERENCE_MANIFEST_PATH } from "#src/services/genshinParity/shared/constants";
-import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { REFERENCES_RESTORE_ARGS, REFERENCES_RESTORE_COMMAND } from "#src/services/setup/constants";
 import { getRunRow } from "#src/services/setup/getRunRow";
 import { getStepRow } from "#src/services/setup/getStepRow";
+import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 
 // The parity records the manifest names are in place when each is in the parity folder. The references are committed, so
 // a clone holds them and they are not this row's to check: the committed references test checks their hashes. A missing

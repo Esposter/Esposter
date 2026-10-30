@@ -1,9 +1,9 @@
-import type { ParityRecordManifestRow } from "#src/models/genshinParity/reference/ParityRecordManifestRow";
 import type { ParityRecordingManifestRow } from "#src/models/genshinParity/reference/ParityRecordingManifestRow";
+import type { ParityRecordManifestRow } from "#src/models/genshinParity/reference/ParityRecordManifestRow";
 import type { ParityReferenceManifestRow } from "#src/models/genshinParity/reference/ParityReferenceManifestRow";
 
-import { parityRecordManifestRowSchema } from "#src/models/genshinParity/reference/ParityRecordManifestRow";
 import { parityRecordingManifestRowSchema } from "#src/models/genshinParity/reference/ParityRecordingManifestRow";
+import { parityRecordManifestRowSchema } from "#src/models/genshinParity/reference/ParityRecordManifestRow";
 import { parityReferenceManifestRowSchema } from "#src/models/genshinParity/reference/ParityReferenceManifestRow";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
@@ -13,8 +13,8 @@ import { z } from "zod";
 export interface ParityReferenceManifest {
   animeGameDataCommit?: string;
   gameVersion?: string;
-  records: ParityRecordManifestRow[];
   recordings: ParityRecordingManifestRow[];
+  records: ParityRecordManifestRow[];
   references: ParityReferenceManifestRow[];
 }
 
@@ -24,7 +24,7 @@ export const parityReferenceManifestSchema: z.ZodType<ParityReferenceManifest> =
     .string()
     .regex(/^\d+\.\d+\.\d+$/u)
     .optional(),
-  records: createUniqueArraySchema(parityRecordManifestRowSchema, "path"),
   recordings: createUniqueArraySchema(parityRecordingManifestRowSchema, "name"),
+  records: createUniqueArraySchema(parityRecordManifestRowSchema, "path"),
   references: createUniqueArraySchema(parityReferenceManifestRowSchema, "id"),
 });

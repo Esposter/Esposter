@@ -1,6 +1,6 @@
+import { readSetupEnvironment } from "#src/services/setup/readSetupEnvironment";
 import { MAX_BUFFER_BYTES, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
-import { readSetupEnvironment } from "#src/services/setup/readSetupEnvironment";
 import { spawnSync } from "@esposter/shared-node/child-process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";

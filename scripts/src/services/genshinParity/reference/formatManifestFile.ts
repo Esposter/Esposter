@@ -2,8 +2,8 @@ import type { ParityReferenceManifest } from "#src/models/genshinParity/referenc
 
 import { sortObjectKeys } from "#src/services/genshinParity/reference/sortObjectKeys";
 import { REFERENCE_MANIFEST_PATH } from "#src/services/genshinParity/shared/constants";
-import { formatJsonFile } from "#src/services/shared/formatJsonFile";
 import { compareCodeUnits } from "#src/services/shared/compareCodeUnits";
+import { formatJsonFile } from "#src/services/shared/formatJsonFile";
 
 // The manifest as the formatter commits it: each section's rows sorted by their name and each row's keys in code point
 // Order, so two machines' additions land as the same lines. A header key the manifest does not hold is left out, never
