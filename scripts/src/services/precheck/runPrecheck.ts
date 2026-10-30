@@ -6,6 +6,7 @@ import { readBarrelPackages } from "#src/services/precheck/readBarrelPackages";
 import { readUnformattedPaths } from "#src/services/precheck/readUnformattedPaths";
 import { readChangedFiles } from "#src/services/queue/readChangedFiles";
 import { readMainCheckoutRoot } from "#src/services/queue/readMainCheckoutRoot";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
@@ -14,7 +15,7 @@ import { join } from "node:path";
 export const runPrecheck = (fix: boolean): PrecheckReport => {
   const mainCheckoutRoot = readMainCheckoutRoot();
   const changedFiles = readChangedFiles();
-  const unformattedPaths = readUnformattedPaths(changedFiles, mainCheckoutRoot);
+  const unformattedPaths = readUnformattedPaths(changedFiles, REPOSITORY_ROOT, mainCheckoutRoot);
   const barrelPackages = readBarrelPackages(changedFiles);
   if (barrelPackages.length > 0 && !existsSync(join(mainCheckoutRoot, CONFIGURATION_DISTRIBUTION_PATH)))
     return { distributionMissing: true, findings: [], regenerated: [] };
