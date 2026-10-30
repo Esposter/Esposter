@@ -4,7 +4,7 @@ import type { ParityReference } from "#src/models/genshinParity/shared/ParityRef
 import { VerifyOutcome } from "#src/models/genshinParity/reference/VerifyOutcome";
 import { REFERENCE_PACK_CONCURRENCY } from "#src/services/genshinParity/reference/constants";
 import { verifyReference } from "#src/services/genshinParity/reference/verifyReference";
-import { settleAll } from "@esposter/shared";
+import { settleAll, withFinalizerAsync } from "@esposter/shared";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -18,23 +18,24 @@ export const verifyReferences = async (
   referencePath: (referenceId: string) => Promise<string | undefined>,
 ): Promise<ReferenceVerification[]> => {
   const cutDirectory = await mkdtemp(join(tmpdir(), "parity-verify-"));
-  try {
-    const verifications = await settleAll(
-      Object.entries(references).map(([referenceId, reference]) => async () => {
-        if (reference.source === undefined)
-          return reference.wikiTitle === undefined
-            ? undefined
-            : { id: referenceId, message: reference.wikiTitle, outcome: VerifyOutcome.NotCheckable };
-        return verifyReference(referenceId, reference.source, reference, {
-          capturesDirectory,
-          cutDirectory,
-          referencePath,
-        });
-      }),
-      REFERENCE_PACK_CONCURRENCY,
-    );
-    return verifications.filter((verification) => verification !== undefined);
-  } finally {
-    await rm(cutDirectory, { force: true, recursive: true });
-  }
+  return withFinalizerAsync(
+    async () => {
+      const verifications = await settleAll(
+        Object.entries(references).map(([referenceId, reference]) => async () => {
+          if (reference.source === undefined)
+            return reference.wikiTitle === undefined
+              ? undefined
+              : { id: referenceId, message: reference.wikiTitle, outcome: VerifyOutcome.NotCheckable };
+          return verifyReference(referenceId, reference.source, reference, {
+            capturesDirectory,
+            cutDirectory,
+            referencePath,
+          });
+        }),
+        REFERENCE_PACK_CONCURRENCY,
+      );
+      return verifications.filter((verification) => verification !== undefined);
+    },
+    () => rm(cutDirectory, { force: true, recursive: true }),
+  );
 };

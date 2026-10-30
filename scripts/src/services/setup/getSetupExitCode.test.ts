@@ -13,6 +13,6 @@ describe(getSetupExitCode, () => {
   ])("exits with the code for the statuses %j", (statuses, exitCode) => {
     expect.hasAssertions();
 
-    expect(getSetupExitCode(statuses.map(rowWith))).toBe(exitCode);
+    expect(getSetupExitCode(statuses.map((status) => rowWith(status)))).toBe(exitCode);
   });
 });

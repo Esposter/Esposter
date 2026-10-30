@@ -19,7 +19,7 @@ export const composeUiEntries = (
 ): UiIndexEntry[] => {
   const transformIdMap = toGameObjectTransformIdMap(gameObjects);
   const componentsMap = toGameObjectComponentsMap(gameObjects);
-  const namesByTransformId = new Map(
+  const transformIdNameMap = new Map(
     rectTransforms.flatMap(({ fatherId, gameObjectId, name }) => {
       const transformId = transformIdMap.get(gameObjectId);
       return transformId ? [[transformId, { fatherId, name }] as const] : [];
@@ -41,7 +41,7 @@ export const composeUiEntries = (
       container,
       fatherId,
       name,
-      path: getUiPath(fatherId, namesByTransformId),
+      path: getUiPath(fatherId, transformIdNameMap),
       pathId: gameObjectId,
       rect: layout,
       scale,

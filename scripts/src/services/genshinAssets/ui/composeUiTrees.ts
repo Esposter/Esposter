@@ -9,8 +9,9 @@ import { getUiRootEntries } from "#src/services/genshinAssets/ui/getUiRootEntrie
 // is searched in the whole trees, so a depth that cuts its piece off still names it
 export const composeUiTrees = (entries: readonly UiIndexEntry[], depth: number): UiTrees => {
   const rootEntries = getUiRootEntries(entries);
+  const canvas = findNearestUiCanvas(rootEntries.map((root) => composeInterfaceTree(entries, root)));
   return {
-    canvas: findNearestUiCanvas(rootEntries.map((root) => composeInterfaceTree(entries, root))),
+    ...(canvas ? { canvas } : {}),
     roots: rootEntries.map((root) => composeInterfaceTree(entries, root, depth)),
   };
 };

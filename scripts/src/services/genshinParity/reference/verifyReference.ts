@@ -3,10 +3,10 @@ import type { VerifyPaths } from "#src/models/genshinParity/reference/VerifyPath
 import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
 
 import { VerifyOutcome } from "#src/models/genshinParity/reference/VerifyOutcome";
+import { checkIsWithinVerifyTolerance } from "#src/services/genshinParity/reference/checkIsWithinVerifyTolerance";
 import { VERIFY_TOLERANCE_PERCENT } from "#src/services/genshinParity/reference/constants";
 import { cutRecordingFrame } from "#src/services/genshinParity/reference/cutRecordingFrame";
 import { getOutsideRegion } from "#src/services/genshinParity/reference/getOutsideRegion";
-import { isWithinVerifyTolerance } from "#src/services/genshinParity/reference/isWithinVerifyTolerance";
 import { measureMeanDifference } from "#src/services/genshinParity/reference/measureMeanDifference";
 import { parseRecordingSource } from "#src/services/genshinParity/reference/parseRecordingSource";
 import { readImageSize } from "#src/services/genshinParity/reference/readImageSize";
@@ -59,7 +59,7 @@ const checkReference = async (
   const region = reference.region ?? { height: file.height, width: file.width, x: 0, y: 0 };
   const meanDifferencePercent = await measureMeanDifference(cutPath, referencePath, region);
   const measure = `${meanDifferencePercent.toFixed(2)}% mean difference over ${region.width}×${region.height}`;
-  if (!isWithinVerifyTolerance(meanDifferencePercent))
+  if (!checkIsWithinVerifyTolerance(meanDifferencePercent))
     return {
       id: referenceId,
       message: `${measure}, over the ${VERIFY_TOLERANCE_PERCENT}% tolerance`,

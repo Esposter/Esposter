@@ -2,6 +2,6 @@ import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNo
 
 // A container's RectTransform trees, and the canvas scaler nearest their roots
 export interface UiTrees {
-  canvas: InterfaceNode | undefined;
+  canvas?: InterfaceNode;
   roots: InterfaceNode[];
 }

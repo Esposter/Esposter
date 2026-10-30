@@ -12,5 +12,5 @@ export const buildCharacterPackIndex = async (files: CharacterPackFile[]): Promi
       ([avatarId, avatarFiles]) => toCharacterPackAvatar(avatarId, avatarFiles),
     ),
   );
-  return { avatars: avatars.toSorted((first, second) => first.avatarId - second.avatarId) };
+  return { avatars: avatars.toSorted((firstAvatar, secondAvatar) => firstAvatar.avatarId - secondAvatar.avatarId) };
 };

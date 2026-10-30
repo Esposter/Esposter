@@ -1,7 +1,7 @@
 import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
 // Whether one of the regions covers the whole frame, which leaves no border for a clean plate to fill from
-export const isWholeFrameCovered = (
+export const checkIsWholeFrameCovered = (
   regions: ImageRegion[],
   { height, width }: { height: number; width: number },
 ): boolean =>

@@ -3,7 +3,7 @@
 export const downsampleByMax = (values: readonly number[], count: number): number[] => {
   if (values.length <= count) return [...values];
   const runLength = Math.ceil(values.length / count);
-  return Array.from({ length: Math.ceil(values.length / runLength) }, (_, run) =>
+  return Array.from({ length: Math.ceil(values.length / runLength) }, (_value, run) =>
     Math.max(...values.slice(run * runLength, (run + 1) * runLength)),
   );
 };

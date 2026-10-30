@@ -10,5 +10,5 @@ export const orderInterfaceChildren = (
     const index = childIds.indexOf(transformId);
     return index === -1 ? childIds.length : index;
   };
-  return children.toSorted((a, b) => rankOf(a) - rankOf(b));
+  return children.toSorted((firstChild, secondChild) => rankOf(firstChild) - rankOf(secondChild));
 };

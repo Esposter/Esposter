@@ -19,12 +19,12 @@ export const formatManifestFile = ({
     animeGameDataCommit,
     gameVersion,
     records: records
-      .toSorted((first, second) => compareCodeUnits(first.path, second.path))
+      .toSorted((firstRecord, secondRecord) => compareCodeUnits(firstRecord.path, secondRecord.path))
       .map((row) => sortObjectKeys(row)),
     recordings: recordings
-      .toSorted((first, second) => compareCodeUnits(first.name, second.name))
+      .toSorted((firstRecording, secondRecording) => compareCodeUnits(firstRecording.name, secondRecording.name))
       .map((row) => sortObjectKeys(row)),
     references: references
-      .toSorted((first, second) => compareCodeUnits(first.id, second.id))
+      .toSorted((firstReference, secondReference) => compareCodeUnits(firstReference.id, secondReference.id))
       .map((row) => sortObjectKeys(row)),
   });

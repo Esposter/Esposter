@@ -1,3 +1,4 @@
+import { checkIsOodlePatchPending } from "#src/services/recreation/animeStudio/checkIsOodlePatchPending";
 import {
   ACL_MHY_DIRECTORY,
   ACL_MHY_LIBRARY_FILE_NAME,
@@ -17,7 +18,6 @@ import {
   TEXTURE2DDECODER_SHA,
   WORK_DIRECTORY_NAME,
 } from "#src/services/recreation/animeStudio/constants";
-import { isOodlePatchPending } from "#src/services/recreation/animeStudio/isOodlePatchPending";
 import { fetchOk } from "#src/services/shared/fetchOk";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
@@ -74,14 +74,14 @@ const retargetProjects = (root: string): void => {
 };
 
 // Whether a patch applies to a tree, forward or with the given options: `git apply --check` exits 0 only when it does
-const canApplyPatch = (directory: string, patchPath: string, ...options: string[]): boolean =>
+const checkIsPatchApplicable = (directory: string, patchPath: string, ...options: string[]): boolean =>
   spawnSync("git", ["apply", "--check", ...options, patchPath], { cwd: directory, stdio: "ignore" }).status === 0;
 
 // The Oodle patch goes into the checked-out tree unless the tree already carries it, so a rebuild over one is idempotent
 const applyOodlePatch = (directory: string): void => {
-  const isPending = isOodlePatchPending({
-    appliesForward: canApplyPatch(directory, OODLE_HELPER_PATCH_PATH),
-    appliesReverse: canApplyPatch(directory, OODLE_HELPER_PATCH_PATH, "--reverse"),
+  const isPending = checkIsOodlePatchPending({
+    appliesForward: checkIsPatchApplicable(directory, OODLE_HELPER_PATCH_PATH),
+    appliesReverse: checkIsPatchApplicable(directory, OODLE_HELPER_PATCH_PATH, "--reverse"),
   });
   if (isPending) run("git", ["apply", OODLE_HELPER_PATCH_PATH], directory);
 };

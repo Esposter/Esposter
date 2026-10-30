@@ -42,7 +42,7 @@ export const formatPackTable = ({
     return row.join(" ");
   });
   const largest = packed
-    .toSorted((first, second) => second.bytesAfter - first.bytesAfter)
+    .toSorted((firstPackFile, secondPackFile) => secondPackFile.bytesAfter - firstPackFile.bytesAfter)
     .slice(0, REFERENCE_PACK_LARGEST_COUNT)
     .map(
       ({ bytesAfter, bytesBefore, file }) =>

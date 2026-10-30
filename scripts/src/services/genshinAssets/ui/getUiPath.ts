@@ -2,13 +2,13 @@
 // to name it stops the walk, so a path reaches only as far as the dumps do
 export const getUiPath = (
   fatherId: string,
-  namesByTransformId: ReadonlyMap<string, { fatherId: string; name: string }>,
+  transformIdNameMap: ReadonlyMap<string, { fatherId: string; name: string }>,
 ): string[] => {
   const names: string[] = [];
   const visitedIds = new Set<string>();
   let currentId = fatherId;
   while (currentId && !visitedIds.has(currentId)) {
-    const father = namesByTransformId.get(currentId);
+    const father = transformIdNameMap.get(currentId);
     if (!father) break;
     visitedIds.add(currentId);
     names.push(father.name);
