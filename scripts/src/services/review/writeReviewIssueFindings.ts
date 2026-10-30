@@ -1,5 +1,6 @@
 import type { ReviewIssueFindings } from "#src/models/review/ReviewIssueFindings";
 
+import { toJson } from "#src/services/shared/toJson";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -7,5 +8,5 @@ import { join } from "node:path";
 // Reads. The matrix names the same number, so each fix job finds its own issue's file.
 export const writeReviewIssueFindings = (directory: string, findings: ReviewIssueFindings): void => {
   mkdirSync(directory, { recursive: true });
-  writeFileSync(join(directory, `issue-${findings.issue}.json`), `${JSON.stringify(findings, undefined, 2)}\n`);
+  writeFileSync(join(directory, `issue-${findings.issue}.json`), toJson(findings));
 };

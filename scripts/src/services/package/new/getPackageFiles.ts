@@ -9,7 +9,7 @@ import { getPluginManifest } from "#src/services/package/new/getPluginManifest";
 import { getReadme } from "#src/services/package/new/getReadme";
 import { getTsconfig } from "#src/services/package/new/getTsconfig";
 import { getTsdownSource } from "#src/services/package/new/getTsdownSource";
-import { toJson } from "#src/services/package/new/toJson";
+import { toJson } from "#src/services/shared/toJson";
 
 // Every file a new package is created with, keyed by its repository-relative path
 export const getPackageFiles = (options: CreatePackageOptions, version: string): Map<string, string> => {

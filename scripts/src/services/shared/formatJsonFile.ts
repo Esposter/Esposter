@@ -4,6 +4,7 @@ import {
   OXFMT_CONFIGURATION_PATH,
   REPOSITORY_ROOT,
 } from "#src/services/shared/constants";
+import { toJson } from "#src/services/shared/toJson";
 import { execFileSync } from "@esposter/shared-node/child-process";
 
 // The text the repository's formatter commits for a value at a path: indented as `JSON.stringify` indents, then formatted by
@@ -13,10 +14,5 @@ export const formatJsonFile = (path: string, value: unknown): string =>
   execFileSync(
     process.execPath,
     [OXFMT_BINARY_PATH, `--config=${OXFMT_CONFIGURATION_PATH}`, `--stdin-filepath=${path}`],
-    {
-      cwd: REPOSITORY_ROOT,
-      encoding: "utf8",
-      input: `${JSON.stringify(value, undefined, 2)}\n`,
-      maxBuffer: MAX_BUFFER_BYTES,
-    },
+    { cwd: REPOSITORY_ROOT, encoding: "utf8", input: toJson(value), maxBuffer: MAX_BUFFER_BYTES },
   );

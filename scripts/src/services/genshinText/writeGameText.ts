@@ -19,6 +19,7 @@ import { readSdkText } from "#src/services/genshinText/readSdkText";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { readVoiceLineFetters } from "#src/services/genshinText/readVoiceLineFetters";
 import { formatGeneratedSource } from "#src/services/shared/formatGeneratedSource";
+import { toJson } from "#src/services/shared/toJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readGenshinDb } from "genshin-persona/src/services/readGenshinDb.ts";
 import { GameLanguage, GameLanguages, GameTextKeys } from "genshin-text";
@@ -30,8 +31,6 @@ const writeGeneratedFile = async (path: string, source: string): Promise<void> =
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, await formatGeneratedSource(path, source));
 };
-
-const getJsonSource = (value: unknown): string => `${JSON.stringify(value, undefined, 2)}\n`;
 
 // Every string `GameTextKey` names, in every language, into `genshin-text`; the lines of every character the
 // Game-data package has none for yet, in every language, into the persona; and the persona's copy of the modules
@@ -102,9 +101,9 @@ export const writeGameText = async ({ isDryRun }: DryRunOptions): Promise<string
 
   await Promise.all(
     languageOutputs.flatMap(({ characterLines, gameText, language }) => [
-      writeGeneratedFile(join(textDirectory, `${language}.json`), getJsonSource(gameText)),
-      writeGeneratedFile(join(copyTextDirectory, `${language}.json`), getJsonSource(gameText)),
-      writeGeneratedFile(join(CHARACTER_LINES_DIRECTORY, `${language}.json`), getJsonSource(characterLines)),
+      writeGeneratedFile(join(textDirectory, `${language}.json`), toJson(gameText)),
+      writeGeneratedFile(join(copyTextDirectory, `${language}.json`), toJson(gameText)),
+      writeGeneratedFile(join(CHARACTER_LINES_DIRECTORY, `${language}.json`), toJson(characterLines)),
     ]),
   );
   let voicedCount = 0;
