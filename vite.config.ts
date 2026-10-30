@@ -77,6 +77,11 @@ const readPackageBuildManifests = () =>
 
 const getBuildTaskName = (directory: string) => `build:${directory}`;
 
+// A check that reads a library through its barrel or built declarations waits for this task: a clean checkout has
+// Neither until the build writes them, and CI's jobs restore both from the package-builds artifact that build uploads
+const PACKAGES_BUILD_TASK = "build:packages";
+const dependOnPackagesBuild = <TTask extends object>(task: TTask) => ({ ...task, dependsOn: [PACKAGES_BUILD_TASK] });
+
 const readPackageBuildTasks = () => {
   const buildManifests = readPackageBuildManifests();
   const buildTaskNameMap = new Map(
@@ -175,18 +180,19 @@ const configuration: UserConfig = defineConfig({
         cache: false,
         command: "vp run lint:fix:packages:oxlint && vp run lint:fix:packages:workspace",
       },
-      "lint:oxlint": createTask("vp lint --debug=timings --format=default --disable-nested-config", []),
+      "lint:oxlint": dependOnPackagesBuild(
+        createTask("vp lint --debug=timings --format=default --disable-nested-config", []),
+      ),
       "lint:packages": {
         cache: false,
         command: 'echo "every packages lint check ran"',
         dependsOn: ["lint:packages:oxlint", "lint:packages:workspace"],
       },
-      "lint:packages:oxlint": createTask(
-        "vp lint --debug=timings --format=default --disable-nested-config packages",
-        [],
+      "lint:packages:oxlint": dependOnPackagesBuild(
+        createTask("vp lint --debug=timings --format=default --disable-nested-config packages", []),
       ),
       "lint:packages:workspace": createTask('pnpm -r --filter "./packages/*" --parallel lint', []),
-      "lint:unused": createTask("knip", []),
+      "lint:unused": dependOnPackagesBuild(createTask("knip", [])),
       "lint:workflows": createTask("actionlint -shellcheck= -pyflakes=", []),
       "lint:workspace": createTask("pnpm -r --parallel lint", []),
       typecheck: {
@@ -195,13 +201,12 @@ const configuration: UserConfig = defineConfig({
         dependsOn: ["typecheck:root", "typecheck:workspace"],
       },
       // The packages' types are read from the `dist` the build writes, so the build is ordered first
-      "typecheck:packages": {
-        ...createTask('pnpm -r --filter "./packages/*" --parallel typecheck', []),
-        dependsOn: ["build:packages"],
-      },
+      "typecheck:packages": dependOnPackagesBuild(
+        createTask('pnpm -r --filter "./packages/*" --parallel typecheck', []),
+      ),
       "typecheck:root": createTask("tsc", []),
       // Uncached: the check writes across the app's `.nuxt`, and excluding that directory would replay a stale verdict
-      "typecheck:workspace": { cache: false, command: "pnpm -r --parallel typecheck" },
+      "typecheck:workspace": dependOnPackagesBuild({ cache: false, command: "pnpm -r --parallel typecheck" }),
     },
   },
 });
