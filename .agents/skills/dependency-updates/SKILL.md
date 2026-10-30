@@ -22,6 +22,7 @@ Dependency versions live in the `catalog:` section of `pnpm-workspace.yaml` at t
 
 ## Rules
 
+- **A bump starts from the bot's own CI**: read the failed log of the dependency's Renovate branch to learn what is red and whether it is a small migration to take together with the bump, a follow-through, a failure the base already has, or a hold (`references/bumping-by-hand.md`, "First: what the bot's CI already found").
 - **A bump ahead of the bot takes Renovate's path** — `pnpm outdated:dependencies`, the catalog edit keeping its `^`, `pnpm refresh:lockfile`, and the outdated check again until it passes (`references/bumping-by-hand.md`).
 - **A major — a red row in `pnpm outdated:dependencies`, or the PR Renovate opens because it never automerges one — owes an audit whose record is the commit body**: the notes read from the tag, every breaking bullet answered by a grep, every release in between read, and the features weighed against what the repo hand-rolled in their absence (`references/major-upgrades.md`).
 - **A pnpm bump of any size is taken by the hand pass, and owes the features half of that audit in its commit body** (`references/pnpm-bumps.md`).
@@ -39,7 +40,7 @@ Dependency versions live in the `catalog:` section of `pnpm-workspace.yaml` at t
 
 ## Reference pages
 
-- `references/bumping-by-hand.md` — when taking a bump ahead of Renovate, or the first `pnpm` command dies in `postinstall`.
+- `references/bumping-by-hand.md` — when taking a bump ahead of Renovate, reading what a Renovate branch's CI found, or the first `pnpm` command dies in `postinstall`.
 - `references/major-upgrades.md` — when a red row appears in `pnpm outdated:dependencies`, or Renovate opens a major PR.
 - `references/pnpm-bumps.md` — when `packageManager` moves.
 - `references/github-actions.md` — when bumping an action to a new release.

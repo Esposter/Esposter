@@ -4,6 +4,38 @@ Read when taking a bump ahead of Renovate, by hand, from the repo root.
 
 If the very first `pnpm` command dies inside the app's `postinstall` (`nuxt prepare`, `Cannot find module '@nuxt/devtools-kit'`), that is `node_modules` drift blocking every script, not a lockfile problem: `pnpm i --force`, then `vp run build:packages`. → `openspec/specs/architecture/monorepo-tooling/design.md`
 
+## First: what the bot's CI already found
+
+Renovate has usually run the bump through every check before a person looks, so its branch's CI is the cheapest read of what a bump costs here. Read it before editing anything: a red branch is a migration to-do list written by CI, and a green one needs no hand pass at all.
+
+```bash
+# Open bump branches and the checks that are red on each
+gh pr list --state open --search "head:renovate/" --json number,title,headRefName,statusCheckRollup \
+  --jq '.[] | {n: .number, title, branch: .headRefName, red: [.statusCheckRollup[]? | select(.conclusion == "FAILURE") | .name]}'
+
+# The distinct errors of one branch's failed run, with the job and step columns stripped
+gh run list --branch <renovate-branch> --workflow CI.yaml --limit 3 --json databaseId,conclusion,createdAt
+gh run view <run-id> --log-failed | sed 's/^[^\t]*\t[^\t]*\t//' | grep -E "error TS|error:|FAIL|×" | cut -c1-260 | sort | uniq -c | sort -rn | head -30
+```
+
+The same error repeated per package is one error; count the distinct ones. Then sort the red by what it asks of the repo:
+
+- **A type or API change in our own code** (a member now declared upstream, a renamed export, a stricter signature, a modifier the compiler now demands) is a migration. When it is small and mechanical, take the bump and the migration together in one commit, since the change usually compiles only against the new version and so cannot land ahead of it. What the release changed is read from the two versions' own declaration files, packed into separate scratch directories and compared, rather than guessed from the notes:
+
+  ```bash
+  mkdir -p "$SCRATCH/old" "$SCRATCH/new"
+  (cd "$SCRATCH/old" && npm pack <package>@<installed> --silent && tar -xzf ./*.tgz)
+  (cd "$SCRATCH/new" && npm pack <package>@<target> --silent && tar -xzf ./*.tgz)
+  diff -r "$SCRATCH/old/package" "$SCRATCH/new/package" | head -80
+  ```
+
+  A workaround the new release makes redundant is deleted in that commit, with the comment that explained it (`references/bump-follow-through.md`).
+
+- **A snapshot or size check** is the follow-through, not a migration (`references/bump-follow-through.md`).
+- **A failure the base branch has too** is not this bump's: compare against the latest CI run of the default branch before reading further.
+- **A behaviour change with no replacement, or a migration too large for a bump** is a hold (`references/holding-a-dependency.md`), with the failure as the rule's `description`.
+- **Green** is a bump the bot merges unaided.
+
 A bump ahead of the bot follows the same path Renovate takes:
 
 1. **Check what's outdated and mismatched**: `pnpm outdated:dependencies`. It reads every version Renovate reaches (`references/renovate.md` lists them), so the report and the bot cover the same set, and it lists apart the rows a `renovate.json` rule holds. A held row is not taken; changing that is a rule edit, not a bump.
