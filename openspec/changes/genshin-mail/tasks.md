@@ -13,7 +13,7 @@
 
 ## 3. The Mail screen
 
-- [x] 3.1 List the held mails on the Mail screen, and show a mail's text and attachments. Built provisionally from the wiki's Mail page; the parity loop's traced layout replaces it.
+- [x] 3.1 List the held mails on the Mail screen, and show a mail's text and attachments. Redrawn from the English PC client's Mailbox frame on its own pixels, scoring 5.30% mean (shape 0.602, FLIP 0.2118) against it; what stays open is the roadmap's Mail item.
 - [ ] 3.2 Deliver mails by the game's rules. The Traveler's birthday mail, the expiry and the Gift Mail Box's keeping are built provisionally; the PC export's client scripts confirm them.
 - [x] 3.3 Name the mails' text ids in `genshin-text`. The screen's keys are added and the mail text is built per language; the main session's text write fills the English and the other languages.
 - [x] 3.4 Delete Read asks the player to confirm, then removes the read mail with nothing left to claim, and keeps pinned mail and the Gift Mail Box. Verify: the tests named 'a read mail with no attachment is deleted', 'a read mail whose attachment is claimed is deleted', 'a read mail with an unclaimed attachment is kept' and 'a read pinned mail is kept' pass (`deleteReadMails.test.ts`, run). The Mail screen browser tests for the confirm ('should delete read mail once delete read is confirmed', 'should keep read mail when delete read is cancelled') pass in the browser suite's run, with the 'UI_PLAYER_PROFILE_MAIL_DELETE' and 'UI_MAIL_DELETE_ALL_DESC' text in every language.
