@@ -45,9 +45,9 @@ const categoryPercent = (categoryId: number): number => {
 // A hidden achievement shows nothing of itself until it is finished
 const checkIsRevealed = (achievement: Achievement): boolean => !achievement.isHidden || checkIsFinished(achievement);
 // The list opens scrolled to the selected category, and follows it when Q or E steps to another
-const listElement = useTemplateRef<HTMLElement>("list");
+const list = useTemplateRef<HTMLElement>("list");
 const scrollSelectedIntoView = (): void => {
-  listElement.value?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: "nearest" });
+  list.value?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: "nearest" });
 };
 onMounted(scrollSelectedIntoView);
 watch(selectedCategoryId, scrollSelectedIntoView, { flush: "post" });

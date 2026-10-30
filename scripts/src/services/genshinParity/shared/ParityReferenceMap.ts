@@ -1191,8 +1191,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "splash-title-japanese": { screen: "SplashTitle", source: "session-2.mp4 at 7.5s", variant: "japanese" },
   "splash-title-korean": { pending: NO_VARIANT_SCREENSHOT, screen: "SplashTitle", variant: "korean" },
   // The Statue's Blessing screen, opened from a statue, from the WoW Quests completionist guide (yt-0z3OdjIBuo8, 2022, 1080 high at
-  // 60 frames a second) at 173 seconds: the Restorative Power at 10000 of 10000, auto-recover on at 50%. Scored over the right panel
-  // only. The member cards at the left are not scored, since the world shows through them blurred, which the component does not draw.
+  // 60 frames a second) at 173 seconds: the Restorative Power at 10000 of 10000, auto-recover on at 50%.
+  // Scored over the right panel only.
+  // The member cards at the left are not scored, since the world shows through them blurred, which the component does not draw.
   // The recording's clock and the recorder's UID lie outside the region.
   "statue-blessing": {
     region: { height: 1040, width: 550, x: 1370, y: 0 },
