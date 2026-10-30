@@ -802,7 +802,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Seconds). The power button, the publisher's icon and the build string sit at the corners
   "login-screen-dusk": { screen: "LoginScreen", source: "yt-mMf727q-0w0-login-dusk.mkv at 3s", variant: "dusk" },
   // The English PC client's Mailbox at 1080 high from a public tutorial (yt-sMwxCMoLYzM, 31 seconds in): the Mailbox tab open
-  // on its first mail, pinned and starred, with two more below it and the selected mail's text and its two items down the
+  // On its first mail, pinned and starred, with two more below it and the selected mail's text and its two items down the
   // Right, over the blurred world behind the window, which is pillarboxed 96 pixels each side. The plates fill the screen's
   // Own pieces from round them. The page draws the table's three mails, so the words and the dates differ from the frame's:
   // The clip's mails are the 2024 build's, which the table no longer holds. The cursor rests at the top edge, above the
