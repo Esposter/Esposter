@@ -215,7 +215,7 @@ catalog:
   rou3: ^1.0.0
   rate-limiter-flexible: ^11.2.3
   read-excel-file: ^9.3.13
-  rolldown: ^1.2.15
+  rolldown: ^1.2.16
   rollup-plugin-visualizer: ^7.1.1
   rxjs: ^7.8.2
   sax: ^1.6.1
