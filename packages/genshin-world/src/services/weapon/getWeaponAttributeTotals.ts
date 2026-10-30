@@ -4,8 +4,8 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
 
-// A weapon's attribute totals at a level in an ascension phase: each line of its growth curve and of the phase summed as
-// The character's weapon panel and the Weapon screen both sum them
+// A weapon's attribute totals at a level in an ascension phase: its grown lines, summed by attribute
+// The character's weapon panel and the Weapon screen both read them
 export const getWeaponAttributeTotals = (
   weaponData: WeaponData,
   weaponGrowCurveMap: ReadonlyMap<string, readonly number[]>,
