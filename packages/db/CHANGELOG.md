@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* **lint:** oxlint and ESLint are clean again across scripts, genshin-world and the shared packages ([ed206e7](https://github.com/Esposter/Esposter/commit/ed206e7956fb13fb5f022be337bfef8e447c9e01))
+* **lint:** the scripts, functions and shared packages' findings are fixed, or kept with the constraint that holds ([def559c](https://github.com/Esposter/Esposter/commit/def559c12d5dfe372710fce37138f4d50da71b4b))
+* **lint:** the shared, package and test sources satisfy the oxlint rules ([689d2e5](https://github.com/Esposter/Esposter/commit/689d2e55a3eee18570d0bbc2108ecbfce53f8171))
+* **security:** resource asset reads are attachments, and download filenames are RFC 5987 encoded ([e601918](https://github.com/Esposter/Esposter/commit/e6019182f45eafbd71e0d2ba77f322240014c8f1))
+
+### Features
+
+* **db:** a user's blob prefixes are swept in the containers the caller names ([312a4c6](https://github.com/Esposter/Esposter/commit/312a4c66d03af39fa4764483c62cf75cf58541ee))
+* **db:** a user's charged blobs are read from the storage ledger, grouped by container ([e8377e7](https://github.com/Esposter/Esposter/commit/e8377e74fac683a9a1d95227eda84e286768c00a))
+* **message:** a message upload is reserved against its uploader's allowance, and a forward charges each copy ([ea35a9f](https://github.com/Esposter/Esposter/commit/ea35a9fc3d40101a1539e3ab2a4563ca765073e2))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package @esposter/db

@@ -1,6 +1,6 @@
 {
   "name": "tresjs-nuxt",
-  "version": "4.3.3",
+  "version": "4.4.0",
   "description": "TresJS for Nuxt — a Nuxt module that auto-imports the TresJS core API, registers TresCanvas for client and server, and registers every installed @tresjs package's components and composables, with no devtools UI of its own.",
   "keywords": [
     "nuxt",

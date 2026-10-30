@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* bundle size ([7534bff](https://github.com/Esposter/Esposter/commit/7534bffb0c6ce1e9469c189b47113d8c074384dd))
+* **ci:** skip the Tiled tileset .tsx files in oxlint and refresh the vue-phaserjs bundle size ([0c3988f](https://github.com/Esposter/Esposter/commit/0c3988f11cc2107ec056995ca05bce7d5fa4fd74))
+* **configuration:** the Vue build's `eager` and `vue` options move under dts.tsc ([6e82397](https://github.com/Esposter/Esposter/commit/6e82397969e6a430bfb1b343839c98dd00a2ca39))
+* **genshin:** the vize-pipeline packages declare vue-tsc, which their declaration builds need ([12a30ba](https://github.com/Esposter/Esposter/commit/12a30ba544fa66138ef8d10eccc6ac181d965a1d))
+* **lint:** the enum findings the enum groups could fix, with the date-token guard shared once ([66515ba](https://github.com/Esposter/Esposter/commit/66515ba17bee983d06454f2b91c4a5eb46dd9f96))
+* **lint:** the oxlint pass, knip and the typecheck that failed CI's Lint and Typecheck jobs are green ([ee125bb](https://github.com/Esposter/Esposter/commit/ee125bbfa097ffc62a91be52a3ce45012caffeee)), closes [#src](https://github.com/Esposter/Esposter/issues/src)
+* **vue-phaserjs:** a failed scene add logs once, and a tileset's fields reuse omitUndefined ([815e628](https://github.com/Esposter/Esposter/commit/815e6285857307c3a29fabc87315dd4cf46708d0))
+* **vue-phaserjs:** satisfy the CI lint and typecheck jobs for the lifecycle and fill changes ([62faf3e](https://github.com/Esposter/Esposter/commit/62faf3e8785d3c34a8d09dc3397ca9b021022896))
+* **vue-phaserjs:** tear scenes, tilemaps and tweens down in lifecycle order ([4c38bcf](https://github.com/Esposter/Esposter/commit/4c38bcfd62c6e09ff4747a897a371c7a1a7c260e))
+* **vue-phaserjs:** the canvas mock is cast, since tsrs and vue-tsc disagree on the DOM canvas type ([9d1bb6f](https://github.com/Esposter/Esposter/commit/9d1bb6fc195f970e1ad1eff96581a99a0d0052ed))
+* **vue-phaserjs:** the event keys are narrowed by their own membership check, since Object.keys yields only own keys ([5b372ef](https://github.com/Esposter/Esposter/commit/5b372ef5a1b34b387ec15787068b8b011f01a81e))
+* **vue-phaserjs:** the setter maps pass the package's eslint, which orders their imports and keys ([ad4a8fd](https://github.com/Esposter/Esposter/commit/ad4a8fda556809d597ca7763c282132f99e07878))
+
+### Features
+
+* **vue-phaserjs:** wait for a scene's next tick, settling on its shutdown ([3785464](https://github.com/Esposter/Esposter/commit/37854641b1e8e26f418752ee4b59a439be8b1275))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package vue-phaserjs

@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* **lint:** the findings the eight lint buckets could fix, with the rest left for their own decisions ([360085e](https://github.com/Esposter/Esposter/commit/360085e05db2e249b54851ffdba67556be107ebd))
+* **lint:** the oxlint directives that suppress nothing are removed, and the unused DateToken import goes with them ([407e7cf](https://github.com/Esposter/Esposter/commit/407e7cf15219405110efdd0c977bb30cb1db1644))
+* **lint:** the scripts, functions and shared packages' findings are fixed, or kept with the constraint that holds ([def559c](https://github.com/Esposter/Esposter/commit/def559c12d5dfe372710fce37138f4d50da71b4b))
+* **post:** read counts back after an edit and a rejected delete, and prune tests that re-proved a primitive ([5a85dd7](https://github.com/Esposter/Esposter/commit/5a85dd733418fbf6f72e8be5b21d59bb4628cf84))
+* **shared:** a caller's sanitizer attributes add to a kit tag's list instead of replacing it ([87fe6db](https://github.com/Esposter/Esposter/commit/87fe6db69728fcc0861761d9fadf5311f09c41f2))
+* **shared:** the advisory watch pins the three DOMPurify advisories and moves to 2026-10-23 ([a57edc4](https://github.com/Esposter/Esposter/commit/a57edc45c8236208fb1dcefdce93b6bc091c7116))
+
+### Features
+
+* **note:** a published note shows only images from resource storage, and the sanitiser takes a caller's source rule ([e72d572](https://github.com/Esposter/Esposter/commit/e72d572e485ac87c2687168fe2b66c87ac01db01))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package @esposter/shared

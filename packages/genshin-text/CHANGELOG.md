@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* **genshin-text:** six Mondstadt expedition places are keyed by the current text map ([2a34129](https://github.com/Esposter/Esposter/commit/2a3412957a72991b820bdd06d7acca18417be7b0))
+* **genshin-text:** the text writer formats each generated file through the formatter's API, so the copies are the formatter's form ([dc83856](https://github.com/Esposter/Esposter/commit/dc838561142a5ab6eb22352d14668f41f203b7e4))
+* **genshin-world:** a quest chapter's number sits on the row's right, and three stale comments say what their code does ([51f4d1b](https://github.com/Esposter/Esposter/commit/51f4d1baedd594593437ab51b5ab9c2f9caf9ca4))
+* **scripts:** only the Dialog table's text hashes are flipped to the text map's key, and the general fallback is removed ([6a7f538](https://github.com/Esposter/Esposter/commit/6a7f5386ef3423e0a23bd891f82bfc1680d1a833))
+
+### Features
+
+* **genshin-text:** add ten game text keys for the wish, the duel, the bag and friends ([34d96fd](https://github.com/Esposter/Esposter/commit/34d96fd44745c3abcaf9d0c6dc638853dcc21029))
+* **genshin-text:** an expedition place's description is a game text key, as its name is ([67f33fa](https://github.com/Esposter/Esposter/commit/67f33fa947a27a06577e4b10bed7565e856975c7))
+* **genshin-text:** the Artifacts panel's Fast Equip and Artifact Details buttons are keys ([63ef27c](https://github.com/Esposter/Esposter/commit/63ef27c085b2d19403c11655b4b97ac617c59097))
+* **genshin-text:** the forge queue's finished-order words are keys, and the time remaining reads the forge's own id ([2a5d08f](https://github.com/Esposter/Esposter/commit/2a5d08f65e402619eaedc8399751a3e7b0bd4857))
+* **genshin-text:** the map's switch that shows only the domains is a GameTextKey ([6d8ef44](https://github.com/Esposter/Esposter/commit/6d8ef4486523a6a6ddd5334970a43ff659622594))
+* **genshin-text:** the party screen's Deployed and Elemental Resonance, the Archive's unlocked-entries counter, Filter and New ([85617c3](https://github.com/Esposter/Esposter/commit/85617c3e65747299ac8550d5c4f7b70b90a0ef5f))
+* **genshin-text:** the refinement tab's Current and Next Rank rows ([e001a3c](https://github.com/Esposter/Esposter/commit/e001a3cdd61ecc0b8a925e067745d7da5588a3de))
+* **genshin-text:** the Spiral Abyss benediction screen's tags and title, the element names and the attributes panel's level are keys ([7c578c1](https://github.com/Esposter/Esposter/commit/7c578c135e5b4fb46d6a7d77018667a2d74e0061))
+* **genshin-text:** the weapon screen's words and the weapon type names, and thirteen keys filed at an older build's hash move to the text map's key ([8c3c2a2](https://github.com/Esposter/Esposter/commit/8c3c2a2551202bc2a416793a307e505c47fa38e0))
+* **genshin:text:** the loading screen's download, failure and retry lines are game text keys ([779fb50](https://github.com/Esposter/Esposter/commit/779fb503e9855fa70f257a82cd6969f0a07bf307))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package genshin-text

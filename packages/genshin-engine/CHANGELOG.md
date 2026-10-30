@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* clear typecheck and lint failures left by the dependency bump ([7c27243](https://github.com/Esposter/Esposter/commit/7c272437edfa8ada715dc089f5f99ac7d31cb89d))
+* **lint:** the enum findings the enum groups could fix, with the date-token guard shared once ([66515ba](https://github.com/Esposter/Esposter/commit/66515ba17bee983d06454f2b91c4a5eb46dd9f96))
+* **lint:** the findings the eight lint buckets could fix, with the rest left for their own decisions ([360085e](https://github.com/Esposter/Esposter/commit/360085e05db2e249b54851ffdba67556be107ebd))
+* **lint:** the oxlint directives that suppress nothing are removed, and the unused DateToken import goes with them ([407e7cf](https://github.com/Esposter/Esposter/commit/407e7cf15219405110efdd0c977bb30cb1db1644))
+* **lint:** the oxlint pass, knip and the typecheck that failed CI's Lint and Typecheck jobs are green ([ee125bb](https://github.com/Esposter/Esposter/commit/ee125bbfa097ffc62a91be52a3ce45012caffeee)), closes [#src](https://github.com/Esposter/Esposter/issues/src)
+* **lint:** the scripts, functions and shared packages' findings are fixed, or kept with the constraint that holds ([def559c](https://github.com/Esposter/Esposter/commit/def559c12d5dfe372710fce37138f4d50da71b4b))
+
+### Features
+
+* **genshin-world:** an eruption interrupts an area's rain ([f5a4aab](https://github.com/Esposter/Esposter/commit/f5a4aab7c02fdf884ed550f7e1b482b4f2338d3a))
+* **genshin:look:** the look's uniforms are the registry's variables, and the Inspector is gone ([fc67efd](https://github.com/Esposter/Esposter/commit/fc67efdd396203acd14fae3d1c5aec79c6df2db4))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package genshin-engine

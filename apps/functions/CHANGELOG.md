@@ -3,6 +3,51 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* clear the lint and typecheck failures in the parity page, publish and archive test ([fe10375](https://github.com/Esposter/Esposter/commit/fe10375dae8878b7fc1dcd797503f16022b79fd7))
+* clear typecheck and lint failures left by the dependency bump ([7c27243](https://github.com/Esposter/Esposter/commit/7c272437edfa8ada715dc089f5f99ac7d31cb89d))
+* **functions:** account deletion removes the person's export archives before the user row ([6c94d7d](https://github.com/Esposter/Esposter/commit/6c94d7dd8757bfce369a64feaf2accb0d4182a98))
+* **functions:** the account deletion takes the account off the reactions it shares in its member rooms ([7b27f35](https://github.com/Esposter/Esposter/commit/7b27f359d5b6f3b9cd634775a9fee4fc37ca83a9))
+* **functions:** the account reaction sweep types its rowKey and writes the remaining reactors from a variable ([033e754](https://github.com/Esposter/Esposter/commit/033e754289009609e4bf404830a39e18e9641779))
+* **functions:** the bundle-size snapshot matches a fresh build ([1ed2528](https://github.com/Esposter/Esposter/commit/1ed2528158477aec449b9f7e0cc5c66caef1a342))
+* **functions:** the owned room's message index is swept with its partitions ([1b2df1b](https://github.com/Esposter/Esposter/commit/1b2df1bf7ca284d8bd3f7b53943f54b0afc699a5))
+* **functions:** the reaction helper's listed rows carry their composite keys, so the deletion typechecks ([0015054](https://github.com/Esposter/Esposter/commit/001505419d411362621b784b5ae858e790cce1ea))
+* **lint:** the oxlint directives that suppress nothing are removed, and the unused DateToken import goes with them ([407e7cf](https://github.com/Esposter/Esposter/commit/407e7cf15219405110efdd0c977bb30cb1db1644))
+* **lint:** the oxlint pass, knip and the typecheck that failed CI's Lint and Typecheck jobs are green ([ee125bb](https://github.com/Esposter/Esposter/commit/ee125bbfa097ffc62a91be52a3ce45012caffeee)), closes [#src](https://github.com/Esposter/Esposter/issues/src)
+* **lint:** the scripts and functions sources satisfy the oxlint rules ([233f50a](https://github.com/Esposter/Esposter/commit/233f50aae22312e293412e0836c39bae33eb9759))
+* **lint:** the scripts, functions and shared packages' findings are fixed, or kept with the constraint that holds ([def559c](https://github.com/Esposter/Esposter/commit/def559c12d5dfe372710fce37138f4d50da71b4b))
+* **shared:** a caller's sanitizer attributes add to a kit tag's list instead of replacing it ([87fe6db](https://github.com/Esposter/Esposter/commit/87fe6db69728fcc0861761d9fadf5311f09c41f2))
+* **user-data-export:** a resource's record holds what its owner wrote and when it was created ([722a6ad](https://github.com/Esposter/Esposter/commit/722a6ad56375ed9cf6dee4e03987a534975bde4d))
+* **user-data-export:** the account's rows drop their update and delete times, and keep a creation time only where it is the person's act ([ca78018](https://github.com/Esposter/Esposter/commit/ca78018abc2614e93abbf4bb67324722fa62c32f))
+* **user-data-export:** the end-to-end test imports the save blob name from db-schema ([701ca07](https://github.com/Esposter/Esposter/commit/701ca07d3184ec8ce085cea3c185ec8ba6a9ec1d))
+* **user-data-export:** the likes entry writes no reaction time ([12ed11d](https://github.com/Esposter/Esposter/commit/12ed11d60730b0a1e975f017025a6fc38fc7e114))
+* **user-data-export:** the link records and the calls fixture match the rows the builder writes ([dfee192](https://github.com/Esposter/Esposter/commit/dfee1920fbb062267879978996d12ef71557c90d))
+* **user-data-export:** the retention is written in hours, since an instant takes no date unit ([caee922](https://github.com/Esposter/Esposter/commit/caee9227d439f0c0fa2d8d73b17b283b8cd45861))
+
+### Features
+
+* **functions:** a profile image that lands after its account is gone deletes itself ([b81cbf4](https://github.com/Esposter/Esposter/commit/b81cbf49525af3921388b24c8a1299f337010a1d))
+* **functions:** DeleteAccount is registered as an EventGrid trigger that parses the account it names and runs the sweep ([e79d743](https://github.com/Esposter/Esposter/commit/e79d7432344542687878190fdd30c919cee0fa99))
+* **functions:** purgePreCutoverResources runs the timer's purge and counts the pre-cutover rows it leaves ([ce808bf](https://github.com/Esposter/Esposter/commit/ce808bf71ce9ee95cae243396275c91b2e77848f))
+* **functions:** PurgeSurveyResources runs the one-time survey purge when one event is published ([b58c1ac](https://github.com/Esposter/Esposter/commit/b58c1ac991b6c7df1058362e68f7c0acc3db534f))
+* **functions:** the account deletion handler sweeps each store in order and removes the user row last ([863aeab](https://github.com/Esposter/Esposter/commit/863aeab2ec8d0bc5fe8a533d78c1eb1925da816b))
+* **functions:** the one-time survey purge deletes each survey, then the invites that name a deleted one ([4857378](https://github.com/Esposter/Esposter/commit/48573782ed5c118ca52ea25f6f848bd77d652c62))
+* **message:** a message upload is reserved against its uploader's allowance, and a forward charges each copy ([ea35a9f](https://github.com/Esposter/Esposter/commit/ea35a9fc3d40101a1539e3ab2a4563ca765073e2))
+* **user-data-export:** the archive writes a published resource's publication metadata ([313750b](https://github.com/Esposter/Esposter/commit/313750b12ae8555cc17269c3b5c60b23ea57a446))
+* **user-data-export:** the archive writes an owned resource's link records as stored ([610e924](https://github.com/Esposter/Esposter/commit/610e924e61daaf9f756eb20e8107adca237b0485))
+* **user-data-export:** the archive writes the calls the person started, without their join ids ([3b5f6e4](https://github.com/Esposter/Esposter/commit/3b5f6e4905faa3dd5440fc42b7566436f75d0289))
+* **user-data-export:** the archive writes the moderation actions the person took in rooms they own ([9a541c5](https://github.com/Esposter/Esposter/commit/9a541c50132d7dba7cb8004fc621941aa151dc7b))
+* **user-data-export:** the archive writes the person's memberships in rooms they do not own, with their roles ([7c68f23](https://github.com/Esposter/Esposter/commit/7c68f2345024e077fdf18c96e830d88333eea3cd))
+* **user-data-export:** the archive writes the person's own favorites and accesses ([9fd08e8](https://github.com/Esposter/Esposter/commit/9fd08e877099ae12baed1360669d357542aca938))
+* **user-data-export:** the archive writes the person's own search queries ([2c81447](https://github.com/Esposter/Esposter/commit/2c81447794f51e73f39352a3e834f2f71cbfe16b))
+* **user-data-export:** the archive writes the person's own thread follows, unfollows included ([758fa61](https://github.com/Esposter/Esposter/commit/758fa611d0d365e39794ce5b9d0bddfb15b06e64))
+* **user-data-export:** the rows the person made carry the time they were made, as createdAt ([0ebc89e](https://github.com/Esposter/Esposter/commit/0ebc89e6341b9cc9dc79c7632bc0ff3a8c1ed10c))
+* **user:** the archive writes the person's posts, likes, friends and owned rooms ([09b72c3](https://github.com/Esposter/Esposter/commit/09b72c326a7b81a0c3ae5a3f03f9879920300ceb))
+* **user:** the data export archive streams into a blob and the handler records its outcome ([c2cac19](https://github.com/Esposter/Esposter/commit/c2cac19d272ef8d4d93bdfb1182b058fb48fbce1))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package @esposter/functions

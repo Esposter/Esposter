@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* **lint:** the findings the eight lint buckets could fix, with the rest left for their own decisions ([360085e](https://github.com/Esposter/Esposter/commit/360085e05db2e249b54851ffdba67556be107ebd))
+* **lint:** the scripts, functions and shared packages' findings are fixed, or kept with the constraint that holds ([def559c](https://github.com/Esposter/Esposter/commit/def559c12d5dfe372710fce37138f4d50da71b4b))
+* **lint:** usePdfViewer reports a followBookmark rejection as its siblings do, and the persona speech loop types its status ([8ebcf04](https://github.com/Esposter/Esposter/commit/8ebcf0424a7e1907acc4e259f6355b8f3269a8a9))
+* **shared-node:** the execFile promisified form spreads its arguments as a rest call ([71fb50e](https://github.com/Esposter/Esposter/commit/71fb50ecec829a2f8d3ed3c6860914ae4d2c6406))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package @esposter/shared-node

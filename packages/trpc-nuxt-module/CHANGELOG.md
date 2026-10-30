@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* **ci:** the perfectionist sort fixes CI's Lint job failed on, in four packages ([b6c2e75](https://github.com/Esposter/Esposter/commit/b6c2e75a2aadc22847ec3d6946d0dabc7162a6e1))
+* **trpc-nuxt-module:** the generated handler's import needs its export arm back ([9c09fb0](https://github.com/Esposter/Esposter/commit/9c09fb071ff1bf1432f725addf3b882776c71184))
+* **trpc-nuxt-module:** the README's handler subpath returns to the exports map, and the Nuxt-module factory takes its own excludes ([5b07f04](https://github.com/Esposter/Esposter/commit/5b07f04707d5dd1720a7e8cdb52db1824017cf01))
+* **trpc-nuxt-module:** the websocket handler template names its subpath as a literal ([266b5fa](https://github.com/Esposter/Esposter/commit/266b5fa9a7c29c84a166c0882272c36c38405453))
+* **trpc-nuxt-module:** the WebSocket handler's arm is out of the excludes, so the generated import resolves ([6629ff7](https://github.com/Esposter/Esposter/commit/6629ff746039a4ccb8fb6cd6dafad3252b5ff650))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package trpc-nuxt-module

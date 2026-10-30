@@ -3,6 +3,52 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* **configuration:** the Vue build's `eager` and `vue` options move under dts.tsc ([6e82397](https://github.com/Esposter/Esposter/commit/6e82397969e6a430bfb1b343839c98dd00a2ca39))
+* **genshin-interface:** a blank line separates the weapon menu's last style block from the one before it ([9656048](https://github.com/Esposter/Esposter/commit/96560482c97c451c6cdc78e134471fcd56217e13))
+* **genshin-interface:** CharacterMenu's elementName is a required string, "" for a character with no element ([666bc45](https://github.com/Esposter/Esposter/commit/666bc45016feddd77dce4176ef2baaee8e1f4e12))
+* **genshin-interface:** DialogueScreen letter-space 2.35 lowers dialogue-line to 10.56% mean difference ([1335208](https://github.com/Esposter/Esposter/commit/13352088e530e12b9211c406073feb20507488ac))
+* **genshin-interface:** ItemTile draws the grey one-star face and its count band ([7a14b99](https://github.com/Esposter/Esposter/commit/7a14b990d9b9307dcaba9ebbf1c21bff2b0c2a73)), closes [#7e7e7d](https://github.com/Esposter/Esposter/issues/7e7e7d) [#838383](https://github.com/Esposter/Esposter/issues/838383) [#909090](https://github.com/Esposter/Esposter/issues/909090) [#5e6472](https://github.com/Esposter/Esposter/issues/5e6472)
+* **genshin-interface:** OrnamentDivider's props are sorted as perfectionist/sort-interfaces wants ([16d1f24](https://github.com/Esposter/Esposter/commit/16d1f24462fd9f8114a8cfb4dfbdac42635e729d))
+* **genshin-interface:** PartySetupScreen drops the overridden .foot-art pointer-events ([1b8f23b](https://github.com/Esposter/Esposter/commit/1b8f23b16f9b6eae20d219b1bdad42ac0ba0ea6f))
+* **genshin-interface:** the Artifacts menu's F button calls its switch handler rather than naming it ([f246275](https://github.com/Esposter/Esposter/commit/f246275ab78043579dd2ac7d4240ffdc6c83b20e))
+* **genshin-interface:** the bag's comments place its grid at 207 and count its seven columns ([0de0faa](https://github.com/Esposter/Esposter/commit/0de0faa7ba0f3ab1bfbb3a14b74d54e92a46f1f0))
+* **genshin-interface:** the bag's trash toggle states its off state, aria-pressed false rather than absent ([62b8930](https://github.com/Esposter/Esposter/commit/62b893015483fcff04a3bbf09ffbfe154d4d4631))
+* **genshin-interface:** the character menu button row's fixture holds a line, since its shell has no box once its slot is required ([670d04d](https://github.com/Esposter/Esposter/commit/670d04dd303cd2d2896eabdb5fc8725d563b22c7))
+* **genshin-interface:** the cooking bar's zone radius and the weapon menu's back arrow move to services/constants.ts ([1a2b149](https://github.com/Esposter/Esposter/commit/1a2b149ca05d4d3134c79104ee442ef3c6a16036))
+* **genshin-interface:** the Crafting screen's fixture draws its recipe's materials ([6054e8a](https://github.com/Esposter/Esposter/commit/6054e8aad24737ef7d517ec6256fe5042bbc49b5))
+* **genshin-interface:** the first forge queue card takes its taller height on the card itself ([00a7d9c](https://github.com/Esposter/Esposter/commit/00a7d9c142241ba65c7d464ed768804a56726d59))
+* **genshin-interface:** the forge's recipe list scrolls past its sixth row ([b0aaa95](https://github.com/Esposter/Esposter/commit/b0aaa9532ecc56058403d5bc62f717a4f73c025f))
+* **genshin-interface:** the inventory's category glyph map has its keys in the order perfectionist/sort-objects wants ([3b737ce](https://github.com/Esposter/Esposter/commit/3b737cec357e189795c09e97919300729e74e0ee))
+* **genshin-interface:** the mismatch sort's comparator names the pair it compares ([39355bc](https://github.com/Esposter/Esposter/commit/39355bc6fe7f85f84f4f3c900027672a3a491f9b))
+* **genshin-interface:** the Pill and the disabled look name what draws them now ([40679f7](https://github.com/Esposter/Esposter/commit/40679f7893912f5bfd6f3078acf6cb8deb752fa2))
+* **genshin-interface:** the quest and story quest replies' marks keep their inner shapes ([216a41e](https://github.com/Esposter/Esposter/commit/216a41e4811453ef831d27b1d29d950ae141e3a4))
+* **genshin-interface:** the reply's speech bubble is solid, its three dots holes ([0640fb7](https://github.com/Esposter/Esposter/commit/0640fb7b4cea242c48f2fa89be25ad5811b16fac))
+* **genshin-interface:** the step threshold's direction union is sorted as perfectionist/sort-union-types wants ([5f03602](https://github.com/Esposter/Esposter/commit/5f03602f2b03d130d50f3d7c16a64ea39ca997be))
+* **genshin-interface:** the visual suite's update compares every pixel exactly ([56984a2](https://github.com/Esposter/Esposter/commit/56984a25080af7f99e9ec30ba315a22b93ce9809))
+* **genshin-interface:** vitest.browser.config.ts imports are sorted as perfectionist/sort-imports wants ([6e7df5f](https://github.com/Esposter/Esposter/commit/6e7df5fe56fe4398c838685b48fd680c1185b1a2)), closes [#src](https://github.com/Esposter/Esposter/issues/src)
+* **genshin-world:** each set the worn artifacts make shows its own name above its bonuses ([3298b96](https://github.com/Esposter/Esposter/commit/3298b9612da0f1d1fe050b3bc265d5f7121c753d))
+* **genshin-world:** Party Setup's arrows are named by the party each one steps to ([eb07188](https://github.com/Esposter/Esposter/commit/eb07188e3b874b154383e7f3d53db960b1355e8a))
+* **genshin-world:** the Archive's four and five star tiles take the item tile's face gradients ([560c313](https://github.com/Esposter/Esposter/commit/560c313742dd72f78369f3c8dacb7613e34f6f20))
+* **genshin-world:** the visual suites hold a screen's animations at rest before the capture ([d4006c0](https://github.com/Esposter/Esposter/commit/d4006c079be101c408dd9ce0baeefb28ea05f807))
+* **genshin-world:** the weapons tab's sub-stat is captioned from the label map, as the reference frame shows ([0d2580a](https://github.com/Esposter/Esposter/commit/0d2580a4687e835d58f71416d239f78f6c4ab4e0))
+* **genshin-world:** whole attributes are grouped in thousands as the game writes them ([dfdcd3a](https://github.com/Esposter/Esposter/commit/dfdcd3a4b14226e9d4033fae04698b0306477d04))
+* **genshin:parity:** approve writes the render it compares, so the Quest image is re-approved ([40e6740](https://github.com/Esposter/Esposter/commit/40e674019acae9419e74f51877051fabdc04b842))
+* **genshin:** the character screen's W and S keycaps are not drawn on a touch device ([0de0d51](https://github.com/Esposter/Esposter/commit/0de0d5182590f554eb190c9e384eaa04ff16b50f))
+* **genshin:** the vize-pipeline packages declare vue-tsc, which their declaration builds need ([12a30ba](https://github.com/Esposter/Esposter/commit/12a30ba544fa66138ef8d10eccc6ac181d965a1d))
+* **lint:** oxlint and ESLint are clean again across scripts, genshin-world and the shared packages ([ed206e7](https://github.com/Esposter/Esposter/commit/ed206e7956fb13fb5f022be337bfef8e447c9e01))
+* **lint:** the oxlint pass, knip and the typecheck that failed CI's Lint and Typecheck jobs are green ([ee125bb](https://github.com/Esposter/Esposter/commit/ee125bbfa097ffc62a91be52a3ce45012caffeee)), closes [#src](https://github.com/Esposter/Esposter/issues/src)
+
+### Features
+
+* **genshin-interface:** GameScreen blurs the world behind a menu, Quest opts in ([83aae44](https://github.com/Esposter/Esposter/commit/83aae449db36e09b679a72c1e41b2c7a2a5cb4a0))
+* **genshin-interface:** the bag's Details pill carries its game word ([356df47](https://github.com/Esposter/Esposter/commit/356df47a2ba4d0316934cd3138cb68e4fd3be217))
+* **genshin-parity:** a visual mismatch is listed after the cases rather than failed ([9c2334a](https://github.com/Esposter/Esposter/commit/9c2334aec3a8b9cbd07ea9ef1b3cbb415dd18bf0))
+* **genshin-world:** auto-recover's switch and threshold are set on the Blessing and run by a stand ([d0ac265](https://github.com/Esposter/Esposter/commit/d0ac265716f5e3bd7cb7f2b94522b147e025c001))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package genshin-interface

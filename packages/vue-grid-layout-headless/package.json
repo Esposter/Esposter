@@ -1,6 +1,6 @@
 {
   "name": "vue-grid-layout-headless",
-  "version": "4.3.3",
+  "version": "4.4.0",
   "description": "A headless grid: the placement of items on a grid of cells, and the pointer gestures that move and resize them, with no styling.",
   "keywords": [
     "dashboard",

@@ -1,6 +1,6 @@
 {
   "name": "@esposter/shared-node",
-  "version": "4.3.3",
+  "version": "4.4.0",
   "description": "Node-only shared tooling: the machine-wide download cache, hidden-window child processes, and benchmark reporting reused across packages.",
   "keywords": [
     "benchmark",

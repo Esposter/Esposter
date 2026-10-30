@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Features
+
+* **functions:** a profile image that lands after its account is gone deletes itself ([b81cbf4](https://github.com/Esposter/Esposter/commit/b81cbf49525af3921388b24c8a1299f337010a1d))
+* **infra:** the application topic delivers PurgeSurveyResources to the function in each environment ([c985211](https://github.com/Esposter/Esposter/commit/c9852113bc76ea9832a3fb71bb67772bc0d22a77))
+* **infra:** the DataExports container, its seven-day lifecycle rule and each environment's export subscription ([8e9cc98](https://github.com/Esposter/Esposter/commit/8e9cc9809d55c494af3d0b61dcb745f0e7f92cfd))
+* **infra:** the DeleteAccount event subscription, in dev and prod, beside the purge's ([80bdfe6](https://github.com/Esposter/Esposter/commit/80bdfe6b0f0573a5782dd6c0471d83742357988d))
+* **message:** a message upload is reserved against its uploader's allowance, and a forward charges each copy ([ea35a9f](https://github.com/Esposter/Esposter/commit/ea35a9fc3d40101a1539e3ab2a4563ca765073e2))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package @esposter/infra

@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
+
+### Bug Fixes
+
+* **lint:** the scripts, functions and shared packages' findings are fixed, or kept with the constraint that holds ([def559c](https://github.com/Esposter/Esposter/commit/def559c12d5dfe372710fce37138f4d50da71b4b))
+
+### Features
+
+* **db-schema:** an account is removed with its user, and a user row records its deletion request ([5e9df8f](https://github.com/Esposter/Esposter/commit/5e9df8ffe6a76bca846db93c3f2df89f72480e08))
+* **db-schema:** dataExports holds one active export per person ([c4eec65](https://github.com/Esposter/Esposter/commit/c4eec6569ffb26837e59180fc91a2e7bafafe623))
+* **db-schema:** dataExports records when each export was requested, so the latest one is the one shown ([b607bb5](https://github.com/Esposter/Esposter/commit/b607bb5162ccece7f4d2f44cc85927adb0fbca72))
+
+### Performance Improvements
+
+* **db-schema:** index the room-wide and author reads, bound a comment count at zero ([f02d296](https://github.com/Esposter/Esposter/commit/f02d296c58a30433acf3c12d23b3bdcf75475ae4))
+
 ## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
 
 **Note:** Version bump only for package @esposter/db-mock

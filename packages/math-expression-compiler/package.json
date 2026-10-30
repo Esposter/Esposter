@@ -1,6 +1,6 @@
 {
   "name": "math-expression-compiler",
-  "version": "4.3.3",
+  "version": "4.4.0",
   "description": "Math expressions compiled once into a function of plain numbers — mathjs's numeric language, held to parity with its recorded answers",
   "keywords": [
     "typescript"
