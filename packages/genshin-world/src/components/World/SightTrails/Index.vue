@@ -60,3 +60,5 @@ onUnmounted(() => {
   material.dispose();
 });
 </script>
+
+<template />
