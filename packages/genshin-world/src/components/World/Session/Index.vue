@@ -53,6 +53,7 @@ import GcgSession from "#src/components/Gcg/Session/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
 import HudNavigation from "#src/components/Hud/Navigation/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
+import HudShortcutWheel from "#src/components/Hud/ShortcutWheel/Index.vue";
 import OfferChoice from "#src/components/Interaction/OfferChoice/Index.vue";
 import InteractionPromptList from "#src/components/Interaction/PromptList/Index.vue";
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
