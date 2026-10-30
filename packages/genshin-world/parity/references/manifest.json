@@ -315,6 +315,15 @@
     },
     {
       "attribution": {},
+      "bytes": 44965735,
+      "name": "yt-KoebEnOmDWI-yt-KoebEnOmDWI-achievement-check.mp4",
+      "range": { "end": 75, "start": 0 },
+      "sha256": "ed61dfceaee1b7e79ce5880b6600dc19966179f3beaef1bae5e5ed4958293e1e",
+      "source": "https://www.youtube.com/watch?v=KoebEnOmDWI",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
       "bytes": 37734099,
       "name": "yt-LC-zMeFIBX4-ore-claymore-razor.mp4",
       "sha256": "b1347339e2cb6d4816d745be0be93f7b4ff3d185552aaa74fcf1ada24c660d02",
@@ -803,6 +812,15 @@
     },
     {
       "attribution": {},
+      "bytes": 37483611,
+      "name": "yt-sMwxCMoLYzM-yt-sMwxCMoLYzM-gift-mail-box.mp4",
+      "range": { "end": 66, "start": 0 },
+      "sha256": "b1db4e58935e04579cbd8e37511988a510315a0dd2964792340ff53e4bfd6bf0",
+      "source": "https://www.youtube.com/watch?v=sMwxCMoLYzM",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
       "bytes": 20111332,
       "name": "yt-sN0MlNE-ByM-seelie-led-home.mp4",
       "sha256": "06b65fbffe1bc1434ab8b0af83a19a1b592069bef21541a54472347943663170",
@@ -851,6 +869,22 @@
     }
   ],
   "references": [
+    {
+      "attribution": {
+        "recording": "yt-KoebEnOmDWI-yt-KoebEnOmDWI-achievement-check.mp4",
+        "second": 37,
+        "videoId": "KoebEnOmDWI"
+      },
+      "bytes": 486956,
+      "capturedAt": "2026-10-30T05:16:35.844Z",
+      "height": 1080,
+      "id": "achievement-screen",
+      "kind": "recording-frame",
+      "sha256": "99dd2a893feb286f433cf8382dbdf66cf9ce1f6caa9e8498224bbc5b104a8c68",
+      "source": "yt-KoebEnOmDWI-yt-KoebEnOmDWI-achievement-check.mp4 at 37s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
     {
       "attribution": { "recording": "archive-screen.mkv", "second": 19.5 },
       "bytes": 1258666,
@@ -1527,6 +1561,22 @@
       "kind": "recording-frame",
       "sha256": "f3e9e9d1f35804362e7cb8954a375289887e5a6fbad04d8a2410b9d5f86bcbd3",
       "source": "yt-mMf727q-0w0-login-dusk.mkv at 3s",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
+      "attribution": {
+        "recording": "yt-sMwxCMoLYzM-yt-sMwxCMoLYzM-gift-mail-box.mp4",
+        "second": 31,
+        "videoId": "sMwxCMoLYzM"
+      },
+      "bytes": 744530,
+      "capturedAt": "2026-10-30T05:16:35.847Z",
+      "height": 1080,
+      "id": "mail-screen",
+      "kind": "recording-frame",
+      "sha256": "e196dad151fdc0f53ffa85962da4cd5e7a07b9d5801d6f7fd8e7c2540a60e7bd",
+      "source": "yt-sMwxCMoLYzM-yt-sMwxCMoLYzM-gift-mail-box.mp4 at 31s",
       "sourceFormat": "png",
       "width": 1920
     },
