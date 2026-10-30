@@ -31,17 +31,20 @@ flowchart TD
 
 - **A case's animations are held at rest before its capture.** Both suites call `holdAnimations` (`packages/genshin-interface/src/services/holdAnimations.ts`) after the fixture's fonts and its ready event: each finite animation is finished and each endless one is paused at its start, so the capture is one frame of the screen. The screenshot's own pause for animations is not relied on, since it can leave running one that starts as the capture begins, such as a progress bar's opening at mount.
 
+- **A visual case fails when the console logs a warning or an error while its fixture mounts**, since a fixture whose props drifted from its component would otherwise capture a wrong render without a failure: both suites run each case through `recordConsoleWarnings` (`packages/genshin-interface/src/services/recordConsoleWarnings.ts`), which still prints every message it records.
+
 ## Key files
 
-| File                                                                      | Role                                                                                                            |
-| :------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/parity/screens.visual.ts`                         | The visual suite of the screens: mismatches listed, a missing image written, the summary after the cases        |
-| `packages/genshin-interface/src/components/components.visual.ts`          | The visual suite of the interface's components, the same summary without neverthrow (no `@esposter/shared`)     |
-| `scripts/src/services/genshinParity/reference/approveReference.ts`        | Writes one screen's image: prints the compare's status, then the suite's `-u` for that screen alone             |
-| `scripts/src/services/genshinParity/reference/decideApprovalStatus.ts`    | The status of a compare against the bar: no reference, the whole screen not judged, no score, over, within      |
-| `packages/genshin-interface/src/services/createVisualComparisonRecord.ts` | The tally both visual suites keep over their cases, and the summary they print after them                       |
-| `packages/genshin-interface/src/services/assertSettledRender.ts`          | The update path's guard: a case's render captured again across frames, failing by name when the captures differ |
-| `packages/genshin-interface/src/services/holdAnimations.ts`               | Holds each running animation at rest before a case's capture, in both suites                                    |
+| File                                                                      | Role                                                                                                                 |
+| :------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/parity/screens.visual.ts`                         | The visual suite of the screens: mismatches listed, a missing image written, the summary after the cases             |
+| `packages/genshin-interface/src/components/components.visual.ts`          | The visual suite of the interface's components, the same summary without neverthrow (no `@esposter/shared`)          |
+| `scripts/src/services/genshinParity/reference/approveReference.ts`        | Writes one screen's image: prints the compare's status, then the suite's `-u` for that screen alone                  |
+| `scripts/src/services/genshinParity/reference/decideApprovalStatus.ts`    | The status of a compare against the bar: no reference, the whole screen not judged, no score, over, within           |
+| `packages/genshin-interface/src/services/createVisualComparisonRecord.ts` | The tally both visual suites keep over their cases, and the summary they print after them                            |
+| `packages/genshin-interface/src/services/assertSettledRender.ts`          | The update path's guard: a case's render captured again across frames, failing by name when the captures differ      |
+| `packages/genshin-interface/src/services/holdAnimations.ts`               | Holds each running animation at rest before a case's capture, in both suites                                         |
+| `packages/genshin-interface/src/services/recordConsoleWarnings.ts`        | Records the warnings and errors a case's fixture logs while it mounts, and fails the case by name when there are any |
 
 ## Sources
 

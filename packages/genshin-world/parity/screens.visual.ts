@@ -9,6 +9,7 @@ import {
   FIXTURE_VARIANT_SEPARATOR,
   getFixtureImageName,
   holdAnimations,
+  recordConsoleWarnings,
 } from "genshin-interface";
 import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -64,40 +65,43 @@ describe("interface screens", () => {
   test.for(cases)("$title", async ({ component, directory, imageName, props, readyEvent, title }) => {
     expect.hasAssertions();
 
-    // The screen drawn the way the parity page draws it: in the page's box over the grey backdrop, so the image is the box
-    // And not the body around it
-    const { promise: ready, resolve: resolveReady } = Promise.withResolvers<void>();
-    const readyProps = readyEvent ? { [`on${capitalize(readyEvent)}`]: resolveReady } : {};
-    if (!readyEvent) resolveReady();
-    const { container } = await render(
-      defineComponent({
-        render: () =>
-          h(
-            "div",
-            { style: { ...getScreenBoxStyle(0), background: SCREEN_BACKDROP_COLOR } },
-            h(component, { ...props, ...readyProps }),
-          ),
-      }),
-    );
-    await window.document.fonts.ready;
-    await ready;
-    // Held before the first capture, as the interface suite holds its components: a screen's mount animation is otherwise
-    // Caught mid-run by the matcher's first capture
-    holdAnimations();
+    const warnings = await recordConsoleWarnings(async () => {
+      // The screen drawn the way the parity page draws it: in the page's box over the grey backdrop, so the image is the box
+      // And not the body around it
+      const { promise: ready, resolve: resolveReady } = Promise.withResolvers<void>();
+      const readyProps = readyEvent ? { [`on${capitalize(readyEvent)}`]: resolveReady } : {};
+      if (!readyEvent) resolveReady();
+      const { container } = await render(
+        defineComponent({
+          render: () =>
+            h(
+              "div",
+              { style: { ...getScreenBoxStyle(0), background: SCREEN_BACKDROP_COLOR } },
+              h(component, { ...props, ...readyProps }),
+            ),
+        }),
+      );
+      await window.document.fonts.ready;
+      await ready;
+      // Held before the first capture, as the interface suite holds its components: a screen's mount animation is otherwise
+      // Caught mid-run by the matcher's first capture
+      holdAnimations();
 
-    const box = container.firstElementChild;
-    assert(box);
-    await getResultAsync(async () => {
-      // The update path writes what the matcher captured, so a render still changing across frames is refused before it
-      if (IS_VISUAL_UPDATE) await assertSettledRender(page.elementLocator(box), title);
-      await expect.element(page.elementLocator(box)).toMatchScreenshot(`${directory}/${imageName}`);
-    }).match(
-      () => {
-        visualComparison.recordWithinBar();
-      },
-      (error) => {
-        visualComparison.recordFailure(error, title);
-      },
-    );
+      const box = container.firstElementChild;
+      assert(box);
+      await getResultAsync(async () => {
+        // The update path writes what the matcher captured, so a render still changing across frames is refused before it
+        if (IS_VISUAL_UPDATE) await assertSettledRender(page.elementLocator(box), title);
+        await expect.element(page.elementLocator(box)).toMatchScreenshot(`${directory}/${imageName}`);
+      }).match(
+        () => {
+          visualComparison.recordWithinBar();
+        },
+        (error) => {
+          visualComparison.recordFailure(error, title);
+        },
+      );
+    });
+    expect(warnings, "the console logged while the fixture mounted").toStrictEqual([]);
   });
 });

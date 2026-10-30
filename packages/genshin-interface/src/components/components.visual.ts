@@ -7,6 +7,7 @@ import { InteractionState } from "#src/models/InteractionState";
 import { FIXTURE_IMAGE_NAME, getFixtureImageName } from "#src/services/constants";
 import { assertSettledRender } from "#src/services/assertSettledRender";
 import { createVisualComparisonRecord } from "#src/services/createVisualComparisonRecord";
+import { recordConsoleWarnings } from "#src/services/recordConsoleWarnings";
 import { holdAnimations } from "#src/services/holdAnimations";
 import { afterAll, assert, describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -58,37 +59,40 @@ describe("genshin-interface components", () => {
   test.for(cases)("$imageName", async ({ component, imageName, props, slot }) => {
     expect.hasAssertions();
 
-    // A state the fixture forces is the stage's, which every button drawn on it takes
-    const { interactionState, ...componentProps } = props;
-    const { container } = await render(
-      defineComponent({
-        render: () =>
-          h(
-            GameScreen,
-            {
-              interactionState: Object.values(InteractionState).find((state) => state === interactionState),
-              style: STAGE_STYLE,
-            },
-            () => h(component, componentProps, slot ? () => slot : undefined),
-          ),
-      }),
-    );
-    await window.document.fonts.ready;
-    holdAnimations();
+    const warnings = await recordConsoleWarnings(async () => {
+      // A state the fixture forces is the stage's, which every button drawn on it takes
+      const { interactionState, ...componentProps } = props;
+      const { container } = await render(
+        defineComponent({
+          render: () =>
+            h(
+              GameScreen,
+              {
+                interactionState: Object.values(InteractionState).find((state) => state === interactionState),
+                style: STAGE_STYLE,
+              },
+              () => h(component, componentProps, slot ? () => slot : undefined),
+            ),
+        }),
+      );
+      await window.document.fonts.ready;
+      holdAnimations();
 
-    // The component's own box alone, so its image is the component rather than the stage around it
-    const element = container.querySelector(".game-screen")?.firstElementChild;
-    assert(element);
+      // The component's own box alone, so its image is the component rather than the stage around it
+      const element = container.querySelector(".game-screen")?.firstElementChild;
+      assert(element);
 
-    // The package does not depend on `@esposter/shared`, so a rejection is read from `allSettled` rather than neverthrow
-    const [comparison] = await Promise.allSettled([
-      (async () => {
-        // The update path writes what the matcher captured, so a render still changing across frames is refused before it
-        if (IS_VISUAL_UPDATE) await assertSettledRender(page.elementLocator(element), imageName);
-        await expect.element(page.elementLocator(element)).toMatchScreenshot(imageName);
-      })(),
-    ]);
-    if (comparison.status === "fulfilled") visualComparison.recordWithinBar();
-    else visualComparison.recordFailure(comparison.reason, imageName);
+      // The package does not depend on `@esposter/shared`, so a rejection is read from `allSettled` rather than neverthrow
+      const [comparison] = await Promise.allSettled([
+        (async () => {
+          // The update path writes what the matcher captured, so a render still changing across frames is refused before it
+          if (IS_VISUAL_UPDATE) await assertSettledRender(page.elementLocator(element), imageName);
+          await expect.element(page.elementLocator(element)).toMatchScreenshot(imageName);
+        })(),
+      ]);
+      if (comparison.status === "fulfilled") visualComparison.recordWithinBar();
+      else visualComparison.recordFailure(comparison.reason, imageName);
+    });
+    expect(warnings, "the console logged while the fixture mounted").toStrictEqual([]);
   });
 });

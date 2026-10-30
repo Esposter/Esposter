@@ -73,6 +73,7 @@ export * from "./services/InterfaceIconCentreMap.ts";
 export * from "./services/InterfaceIconPathMap.ts";
 export * from "./services/ItemRarityFaceGradientMap.ts";
 export * from "./services/playInterfaceClip.ts";
+export * from "./services/recordConsoleWarnings.ts";
 export * from "./services/toCanvasRect.ts";
 export * from "./services/toCanvasRectStyle.ts";
 export * from "./services/toInterfaceClip.ts";
