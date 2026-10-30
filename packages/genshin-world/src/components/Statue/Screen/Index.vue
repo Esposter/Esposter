@@ -42,7 +42,7 @@ const regeneratePower = () => regenerateRestorativePower(power.value, statueCoun
 const toggleAutoRecover = () => {
   autoRecover.value = { ...autoRecover.value, isOn: !autoRecover.value.isOn };
 };
-const stepThreshold = (direction: 1 | -1) => {
+const stepThreshold = (direction: -1 | 1) => {
   autoRecover.value = {
     ...autoRecover.value,
     thresholdPercent: stepAutoRecoverThreshold(autoRecover.value.thresholdPercent, direction),

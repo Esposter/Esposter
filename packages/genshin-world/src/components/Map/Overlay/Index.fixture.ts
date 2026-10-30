@@ -1,8 +1,8 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
-import { readMapSubareaLabels } from "#src/services/map/readMapSubareaLabels";
 import { MAP_REFERENCE_ZOOM_METRES } from "#src/services/map/constants";
+import { readMapSubareaLabels } from "#src/services/map/readMapSubareaLabels";
 import { readCatalogue } from "#src/services/world/readCatalogue";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
@@ -14,10 +14,10 @@ export const props = {
   explorationAreas: [],
   gameText: ENGLISH_GAME_TEXT,
   landmarks: [],
+  metres: MAP_REFERENCE_ZOOM_METRES,
   nameText: await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL),
   now: Temporal.Now.instant(),
   recordedDoingIds: new Set(),
   subareaLabels: await readMapSubareaLabels(GAME_DATA_LOCAL_BASE_URL),
   wallet: EMPTY_WALLET,
-  metres: MAP_REFERENCE_ZOOM_METRES,
 };

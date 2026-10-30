@@ -117,7 +117,7 @@ onMounted(() => {
     :pin-positions
     :places
     :random
-    :unlocked-statue-point-ids="unlockedStatuePointIds"
+    :unlocked-statue-point-ids
     @close="emit('close')"
   />
 </template>

@@ -3,8 +3,8 @@ import type { CharacterSave } from "#src/models/character/CharacterSave";
 
 import { BodyType } from "#src/models/character/BodyType";
 import { WeaponType } from "#src/models/weapon/WeaponType";
-import { setCharacterLevel } from "#src/services/dev/commands/setCharacterLevel";
 import { TALENT_START_LEVELS } from "#src/services/character/constants";
+import { setCharacterLevel } from "#src/services/dev/commands/setCharacterLevel";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { describe, expect, test } from "vitest";
 

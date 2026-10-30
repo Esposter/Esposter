@@ -1,5 +1,5 @@
-import { findTeleportLandmark } from "#src/services/dev/findTeleportLandmark";
 import { DEV_CATALOGUE, DEV_LANDMARK } from "#src/services/dev/constants.test";
+import { findTeleportLandmark } from "#src/services/dev/findTeleportLandmark";
 import { describe, expect, test } from "vitest";
 
 describe(findTeleportLandmark, () => {

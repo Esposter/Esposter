@@ -386,10 +386,10 @@ const nextPhaseCosts = computed(() =>
   <GameScreen class="weapon-screen" role="dialog" aria-modal="true" :aria-label="name">
     <WeaponMenu
       v-model:tab="openTab"
-      :action-label="actionLabel"
+      :action-label
       :close-label="gameText[GameTextKey.Back]"
       :details-label="gameText[GameTextKey.CharacterDetails]"
-      :is-action-disabled="isActionDisabled"
+      :is-action-disabled
       :kind
       :name
       :tabs="menuTabs"

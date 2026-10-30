@@ -104,7 +104,7 @@ const autoCook = () => {
       :auto-cook-label="gameText[GameTextKey.CookingAutoCook]"
       :close-label="gameText[GameTextKey.Back]"
       :dishes
-      :is-auto-cookable="isAutoCookable"
+      :is-auto-cookable
       :pointer
       :selected-id="recipe.id"
       :stop-label="gameText[GameTextKey.CookingStop]"

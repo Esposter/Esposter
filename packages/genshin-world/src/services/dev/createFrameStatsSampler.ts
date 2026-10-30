@@ -1,7 +1,7 @@
 import type { DevFrameStatsSampler } from "#src/models/dev/DevFrameStatsSampler";
 
-import { FRAME_STATS_HISTORY_LENGTH, FRAME_STATS_INTERVAL } from "#src/services/dev/constants";
 import { computeMedianFrameTime } from "#src/services/dev/computeMedianFrameTime";
+import { FRAME_STATS_HISTORY_LENGTH, FRAME_STATS_INTERVAL } from "#src/services/dev/constants";
 
 // Keeps the last frame times, and on every sampled frame answers their median with the draw calls and triangles the
 // Renderer counted for the frame, so the overlay reads the counters rarely enough to cost no frame of its own

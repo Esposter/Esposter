@@ -305,7 +305,7 @@ const wish = (count: number) => {
       :currencies
       :details-label="gameText[GameTextKey.WishDetails]"
       :fate-points
-      :five-star-notice="fiveStarNotice"
+      :five-star-notice
       :history="historyCells"
       :history-label="gameText[GameTextKey.WishHistory]"
       :path-label="isWeaponWish ? gameText[GameTextKey.WishEpitomizedPath] : ''"

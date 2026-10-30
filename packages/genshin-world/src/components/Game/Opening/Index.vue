@@ -101,8 +101,8 @@ defineExpose({ loadedBytes, pendingBytes });
     v-else-if="phase === OpeningPhase.Loading"
     :game-text
     :language
-    :loaded-bytes="loadedBytes"
-    :pending-bytes="pendingBytes"
+    :loaded-bytes
+    :pending-bytes
     :progress
     :status
     @finish="emit('finish')"

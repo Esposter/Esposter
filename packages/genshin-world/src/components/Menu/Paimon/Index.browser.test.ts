@@ -19,7 +19,7 @@ describe("menuPaimon", () => {
   const birthday = { day: 13, month: 10 };
   const travelerName = "Aether";
   // The main quests the systems a quest opens wait on, all finished, as a player who has opened every system has them
-  const openedQuestIds = new Set([WISH_UNLOCK_QUEST_ID, CO_OP_UNLOCK_QUEST_ID, ADVENTURER_HANDBOOK_UNLOCK_QUEST_ID]);
+  const openedQuestIds = new Set([ADVENTURER_HANDBOOK_UNLOCK_QUEST_ID, CO_OP_UNLOCK_QUEST_ID, WISH_UNLOCK_QUEST_ID]);
   // The labels of the contents the menu draws, in its order, read from its entries that are not links
   const getContentLabels = () =>
     [...document.querySelectorAll(".contents .entry:not(.link) .label")].map((label) => label.textContent);

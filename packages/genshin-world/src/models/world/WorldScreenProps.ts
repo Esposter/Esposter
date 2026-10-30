@@ -12,10 +12,10 @@ export interface WorldScreenProps {
   // A camera held still, as a reference of the game's sees the world, in place of the one circling the oak
   cameraPose?: WorldCameraPose;
   createTerrainWorker: () => Worker;
-  // Where the host serves the game's own tables and words, each object fetched by the hash the lock names
-  gameDataBaseUrl: string;
   // The development registry the host makes in development alone, which the world's commands and variables register with
   devRegistry?: DevRegistry;
+  // Where the host serves the game's own tables and words, each object fetched by the hash the lock names
+  gameDataBaseUrl: string;
   // The game's words in the reader's language
   gameText: GameText;
   // The game's minute of the day the clock is held at, as a reference of the game's shows it

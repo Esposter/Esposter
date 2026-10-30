@@ -1,5 +1,5 @@
-import type { GenshinTuningOptions } from "#src/models/GenshinTuningOptions";
 import type { DevVariable } from "#src/models/dev/DevVariable";
+import type { GenshinTuningOptions } from "#src/models/GenshinTuningOptions";
 
 import { LOOK_RAMP_GROUP, TUNING_UNIT_RANGE } from "#src/services/tuning/constants";
 import { createNumberVariable } from "#src/services/tuning/createNumberVariable";

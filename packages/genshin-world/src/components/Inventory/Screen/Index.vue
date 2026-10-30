@@ -243,7 +243,7 @@ const currencies = computed(() =>
       :destroy-confirm-button-label="gameText[GameTextKey.InventoryDestroyConfirmButton]"
       :destroy-confirm-list-label="gameText[GameTextKey.InventoryDestroyConfirmList]"
       :destroy-full-label="gameText[GameTextKey.BagFull]"
-      :is-destroy-full="isDestroyFull"
+      :is-destroy-full
       :destroy-confirm-title="gameText[GameTextKey.InventoryDestroyConfirmTitle]"
       :destroy-confirm-warning-label="gameText[GameTextKey.InventoryDestroyConfirmWarning]"
       :destroy-label="gameText[GameTextKey.InventoryDestroy]"
@@ -253,8 +253,8 @@ const currencies = computed(() =>
       :destroy-selected-label
       :destroy-tip-label="gameText[GameTextKey.InventoryDestroyTip]"
       :details-label="gameText[GameTextKey.BagDetails]"
-      :is-confirming="isConfirming"
-      :is-destroying="isDestroying"
+      :is-confirming
+      :is-destroying
       :is-sortable="EQUIPMENT_CATEGORIES.includes(category)"
       :lock-label="gameText[GameTextKey.ArtifactActionLock]"
       :order-label="gameText[isDescending ? GameTextKey.SortDescending : GameTextKey.SortAscending]"

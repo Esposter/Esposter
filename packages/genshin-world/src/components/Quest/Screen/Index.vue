@@ -27,14 +27,14 @@ import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-te
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
+  // How far the list is scrolled down, in units, 0 with it at its top
+  listScroll?: number;
   // The series the quests in progress belong to, each listing its quests under its own row, none while no series is
   // Carried
   questChapters?: QuestChapter[];
   // How far each quest in progress's objective stands from the player, in metres, by quest id, for those with a place
   questDistanceMap: ReadonlyMap<string, number>;
   questProgressMap: ReadonlyMap<string, QuestProgress>;
-  // How far the list is scrolled down, in units, 0 with it at its top
-  listScroll?: number;
   // The quests in progress
   quests: Quest[];
   // The quests' own words in the reader's language, by the game's text id

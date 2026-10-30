@@ -46,12 +46,12 @@ export const MAP_REFERENCE_ZOOM_METRES = 1512;
 // the name's text id, measured off `map-overlay-jueyun` (Huaguang Stone Forest, Qingyun Peak, Jueyun Karst, Mt. Hulao,
 // Nantianmen and Cuijue Slope; Mt. Aozang has no published point, so it is not drawn)
 export const MAP_SUBAREA_LABEL_OFFSETS: Readonly<Partial<Record<string, { x: number; z: number }>>> = {
+  "455287262": { x: -59.5, z: 102.2 },
   "1198567662": { x: 43.1, z: -26.8 },
   "1812998582": { x: 60.3, z: -19.5 },
   "2598253758": { x: 19.8, z: 31.9 },
   "3734778318": { x: -89.8, z: 25.9 },
   "4268537278": { x: 25.7, z: -114 },
-  "455287262": { x: -59.5, z: 102.2 },
 };
 // Provisional: the metres across the map's width at the slider's two ends, the closest and the furthest zoom. The range
 // Is spaced so the default sits where the reference's slider thumb does, and is read off the game's levels when measured

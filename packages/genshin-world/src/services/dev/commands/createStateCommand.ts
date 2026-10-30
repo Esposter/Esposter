@@ -1,6 +1,6 @@
 import type { DevCommand } from "#src/models/dev/DevCommand";
-import type { Catalogue } from "#src/models/world/Catalogue";
 import type { Party } from "#src/models/party/Party";
+import type { Catalogue } from "#src/models/world/Catalogue";
 import type { GameClock, WeatherKind } from "genshin-engine";
 import type { Object3D } from "three";
 
@@ -25,7 +25,7 @@ export const createStateCommand = ({
   catalogue: Catalogue;
   getCharacterName: (characterId: number) => string;
   getGameClock: () => GameClock | undefined;
-  getWeather: () => WeatherKind | undefined;
+  getWeather: () => undefined | WeatherKind;
   party: Party;
 }): DevCommand => ({
   args: z.object({}),

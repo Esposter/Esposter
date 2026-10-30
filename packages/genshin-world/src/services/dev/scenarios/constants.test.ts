@@ -1,8 +1,8 @@
 import { createTeleportCommand } from "#src/services/dev/commands/createTeleportCommand";
 import { createTimeCommand } from "#src/services/dev/commands/createTimeCommand";
 import { giveItemArgs } from "#src/services/dev/commands/giveItem";
-import { createDevRegistry } from "#src/services/dev/createDevRegistry";
 import { DEV_CATALOGUE } from "#src/services/dev/constants.test";
+import { createDevRegistry } from "#src/services/dev/createDevRegistry";
 import { DEV_SCENARIOS } from "#src/services/dev/scenarios/constants";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";

@@ -89,6 +89,7 @@ import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldCommissionClaims } from "#src/composables/useWorldCommissionClaims";
 import { useWorldCommissions } from "#src/composables/useWorldCommissions";
 import { useWorldCooking } from "#src/composables/useWorldCooking";
+import { useWorldDevHandles } from "#src/composables/useWorldDevHandles";
 import { useWorldDishes } from "#src/composables/useWorldDishes";
 import { useWorldDomains } from "#src/composables/useWorldDomains";
 import { useWorldFishing } from "#src/composables/useWorldFishing";
@@ -96,7 +97,6 @@ import { useWorldForging } from "#src/composables/useWorldForging";
 import { useWorldFriendship } from "#src/composables/useWorldFriendship";
 import { useWorldGadgets } from "#src/composables/useWorldGadgets";
 import { useWorldMail } from "#src/composables/useWorldMail";
-import { useWorldDevHandles } from "#src/composables/useWorldDevHandles";
 import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldOutcrops } from "#src/composables/useWorldOutcrops";
@@ -175,9 +175,9 @@ import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { computeStandingPose } from "#src/services/map/computeStandingPose";
 import { MAP_REFERENCE_ZOOM_METRES, TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { findAreaAt } from "#src/services/map/findAreaAt";
-import { readMapSubareaLabels } from "#src/services/map/readMapSubareaLabels";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
+import { readMapSubareaLabels } from "#src/services/map/readMapSubareaLabels";
 import { GENSHIN_SETTINGS_DEFAULTS } from "#src/services/menu/constants";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
@@ -2028,9 +2028,9 @@ useWorldSaveSync({
         :character-locomotion="locomotion"
         :get-character
         :get-anti-cold-ratio
-        :character-pack-readers="characterPackReaders"
+        :character-pack-readers
         :create-terrain-worker
-        :dev-registry="devRegistry"
+        :dev-registry
         :kit-effect-state="kitContext.kitEffectState"
         :elemental-sight
         :enemy-map="kitContext.enemyMap"
@@ -2188,7 +2188,7 @@ useWorldSaveSync({
       :adventure-exp-progress
       :adventure-rank="rank"
       :alerted-icons="[]"
-      :finished-main-quest-ids="finishedMainQuestIds"
+      :finished-main-quest-ids
       :game-text
       :is-world-level-adjustable
       :is-world-level-lowered="worldLevelAdjustment.isLowered"
@@ -2211,10 +2211,10 @@ useWorldSaveSync({
           :exploration-areas
           :game-text
           :landmarks="unlockedLandmarks"
-          :name-text="nameText"
+          :name-text
           :recorded-doing-ids
           :now="worldNow"
-          :subarea-labels="subareaLabels"
+          :subarea-labels
           :wallet
           @close="screenKind = ScreenKind.World"
           @jump="
@@ -2327,7 +2327,7 @@ useWorldSaveSync({
           :game-text
           :initial-tab="CharacterMenuTab.Attributes"
           :inventory
-          :is-touch="isTouch"
+          :is-touch
           :language
           :material-data-map
           :max-stamina="STAMINA_MAX"
@@ -2345,7 +2345,7 @@ useWorldSaveSync({
           </template>
           <template #default="{ characterId }">
             <div class="character-terms">
-              <CharacterTerms :key="characterId" :character-id :character-pack-readers="characterPackReaders" />
+              <CharacterTerms :key="characterId" :character-id :character-pack-readers />
             </div>
           </template>
         </CharacterScreen>

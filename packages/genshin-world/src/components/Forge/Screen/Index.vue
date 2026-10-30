@@ -227,8 +227,8 @@ const obtain = (queueId: number) => {
   <GameScreen class="forge-screen" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.ForgeTitle]">
     <ForgeScreen
       v-model:amount="amount"
-      :recipe-id="recipeId"
       v-model:tab="tab"
+      :recipe-id
       :amount-label="fillGameTextValues(gameText[GameTextKey.ForgeAmount], amount)"
       :amount-maximum
       :close-label="gameText[GameTextKey.Back]"
@@ -237,7 +237,7 @@ const obtain = (queueId: number) => {
       :materials-box-label="gameText[GameTextKey.ForgeMaterials]"
       :materials-label="gameText[GameTextKey.ForgeMaterialsTab]"
       :obtain-label="gameText[GameTextKey.ForgeObtain]"
-      :queue-detail="queueDetail"
+      :queue-detail
       :queues="queueCells"
       :queues-label="
         fillGameTextValues(

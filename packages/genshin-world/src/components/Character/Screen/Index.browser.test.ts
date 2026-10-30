@@ -5,8 +5,8 @@ import CharacterScreenContainer from "#src/components/Character/Screen/Index.vue
 import CharacterTerms from "#src/components/Character/Terms/Index.vue";
 import { CHARACTER_TERMS_PATH } from "#src/services/character/constants";
 import { describe, expect, test } from "vitest";
-import { page } from "vitest/browser";
 import { render } from "vitest-browser-vue";
+import { page } from "vitest/browser";
 import { h } from "vue";
 
 describe("characterScreen", () => {

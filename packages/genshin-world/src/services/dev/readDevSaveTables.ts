@@ -1,10 +1,10 @@
 import type { DevSaveTables } from "#src/models/dev/DevSaveTables";
 import type { GameLanguage, GameText } from "genshin-text";
 
+import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
-import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
-import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { createReliquaryPieceEntryMap } from "#src/services/reliquary/createReliquaryPieceEntryMap";
 import { readReliquarySets } from "#src/services/reliquary/readReliquarySets";

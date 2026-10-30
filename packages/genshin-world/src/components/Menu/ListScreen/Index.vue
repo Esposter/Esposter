@@ -10,12 +10,12 @@ import { GameScreen } from "genshin-interface";
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
+  // Whether the world behind the screen is blurred and washed, which the screen opts into
+  isWorldBlurred?: boolean;
   // The glyph the close mark draws, the traced cross unless the screen's reference shows another
   mark?: CloseButtonMark;
   // The screen's title in the reader's language
   title: string;
-  // Whether the world behind the screen is blurred and washed, which the screen opts into
-  isWorldBlurred?: boolean;
 }
 
 defineProps<Props>();
@@ -28,7 +28,7 @@ defineSlots<{ detail: () => VNode; icon?: () => VNode; list: () => VNode; tabs?:
        The title and the close mark sit across the top on a translucent band, with the Q and E keys either side of its
        tabs, which each screen steps with `useListScreenTabStep`. A screen's
        own icon before the title and its own tabs, if it has any, along the band beside them -->
-  <GameScreen class="list-screen" :is-world-blurred="isWorldBlurred">
+  <GameScreen class="list-screen" :is-world-blurred>
     <span class="band" />
     <slot name="icon" />
     <ScreenHeader :game-text :mark :title @close="emit('close')">

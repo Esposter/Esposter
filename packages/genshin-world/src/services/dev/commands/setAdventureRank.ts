@@ -2,8 +2,8 @@ import type { DevSaveOutcome } from "#src/models/dev/DevSaveOutcome";
 import type { DevSaveTables } from "#src/models/dev/DevSaveTables";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 
-import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
 import { computeAdventureExpAtRank } from "#src/services/adventureRank/computeAdventureExpAtRank";
+import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
 import { z } from "zod";
 
 // The `ar` line: the adventure rank to set the player to, from the first to the highest

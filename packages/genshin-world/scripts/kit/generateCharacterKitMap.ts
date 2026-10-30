@@ -28,7 +28,12 @@ export const generateCharacterKitMap = (packageDirectory: string): void => {
     .flatMap((file) => {
       const kitModule = readKitModule(charactersDirectory, file);
       return kitModule ? [kitModule] : [];
-    });
+    })
+    // Its entries are in character id order, which is the order `sort-objects` holds the map's keys to
+    .toSorted(
+      (firstKitModule, secondKitModule) =>
+        Number(firstKitModule.id.replaceAll("_", "")) - Number(secondKitModule.id.replaceAll("_", "")),
+    );
   const entries = kitModules.map(
     ({ createName, file, id }) =>
       `  ${id}: async () => (await import("#src/${KIT_MODULE_DIRECTORY}/${file.replace(/\.ts$/u, "")}")).${createName},`,

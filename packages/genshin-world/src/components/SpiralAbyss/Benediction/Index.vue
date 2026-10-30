@@ -7,10 +7,10 @@ import { GameScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
-  // The Benedictions the chamber's list offers, each with its description's text hash and its id in the buff table
-  choices: AbyssBenedictionChoice[];
   // The chamber the title names, counted from its floor's first; the title is absent until the screen is given it
   chamber?: number;
+  // The Benedictions the chamber's list offers, each with its description's text hash and its id in the buff table
+  choices: AbyssBenedictionChoice[];
   // The floor the title names; the title is absent until the screen is given it
   floor?: number;
   // The game's words in the reader's language
@@ -21,7 +21,7 @@ interface Props {
   nameText: TextChunk;
 }
 
-const { choices, chamber, floor, gameText, litTowerBuffId, nameText } = defineProps<Props>();
+const { chamber, choices, floor, gameText, litTowerBuffId, nameText } = defineProps<Props>();
 const emit = defineEmits<{ choose: [towerBuffId: number] }>();
 const SCOPE_TEXT_KEYS = {
   chamber: GameTextKey.AbyssBenedictionEffectiveChamber,

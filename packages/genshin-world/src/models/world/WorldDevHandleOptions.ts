@@ -14,7 +14,7 @@ export interface WorldDevHandleOptions {
   getCharacterName: (characterId: number) => string;
   getGameClock: () => GameClock | undefined;
   getLandmarks: () => readonly Landmark[];
-  getWeather: () => WeatherKind | undefined;
+  getWeather: () => undefined | WeatherKind;
   jumpTo: (pose: WorldJumpPose) => void;
   party: Party;
 }

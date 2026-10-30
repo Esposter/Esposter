@@ -1,7 +1,6 @@
 import type { DevCommand } from "#src/models/dev/DevCommand";
 import type { DevResult } from "#src/models/dev/DevResult";
 import type { DevVariable } from "#src/models/dev/DevVariable";
-
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 
@@ -32,7 +31,7 @@ describe(createDevRegistry, () => {
   const createGiveCommand = (calls: string[]): DevCommand<typeof GIVE_ARGUMENTS> => ({
     args: GIVE_ARGUMENTS,
     name: "give",
-    run: ({ item, count }) => {
+    run: ({ count, item }) => {
       calls.push("give");
       return { ok: true, value: `${item} ${count}` };
     },

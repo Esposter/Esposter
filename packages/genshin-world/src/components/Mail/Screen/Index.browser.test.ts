@@ -31,9 +31,9 @@ describe("mailScreen", () => {
     ],
   ]);
   const textMap = {
-    [SENDER_TEXT_ID]: "Mailing System",
-    [CONTENT_TEXT_ID]: "a",
     [BIRTHDAY_TITLE_ID]: "Best Wishes on Your Birthday",
+    [CONTENT_TEXT_ID]: "a",
+    [SENDER_TEXT_ID]: "Mailing System",
   };
   const props = {
     birthdayMailIds: new Set([BIRTHDAY_MAIL_ID]),

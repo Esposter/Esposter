@@ -54,12 +54,12 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   landmarks: Landmark[];
+  // The game's names by text id in the reader's language, which the subarea labels are named from
+  nameText: Readonly<Record<string, string>>;
   // The world's clock as the map shows it, which the Original Resin the top bar counts is read at
   now: Temporal.Instant;
   // The doings the save records as done, which an area counts alongside the statues its unlocked landmarks light
   recordedDoingIds: ReadonlySet<string>;
-  // The game's names by text id in the reader's language, which the subarea labels are named from
-  nameText: Readonly<Record<string, string>>;
   // Each subarea's label as the open world publishes it, named by its text id and drawn while the view is no further out
   // than MAP_REFERENCE_ZOOM_METRES
   subareaLabels: MapSubareaLabel[];

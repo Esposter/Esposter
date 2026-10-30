@@ -14,18 +14,18 @@ import { CloseButtonMark, GameScreen, ItemRarityFaceGradientMap } from "genshin-
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
+  // The entries drawn dimmed, by their id
+  dimmedEntryIds?: ReadonlySet<number>;
   // The game's words in the reader's language
   gameText: GameText;
   // The defeats of each Living Being the Archive counts, by its entry's id
   killsMap: ArchiveKills;
+  // The entries that wear a "New" badge, by their id
+  newEntryIds?: ReadonlySet<number>;
   // The entries the player has met, by section
   progressMap: ArchiveProgress;
   // The Archive's entries of each section, in the codex's order
   sectionEntriesMap: Readonly<Record<ArchiveSection, readonly ArchiveEntry[]>>;
-  // The entries drawn dimmed, by their id
-  dimmedEntryIds?: ReadonlySet<number>;
-  // The entries that wear a "New" badge, by their id
-  newEntryIds?: ReadonlySet<number>;
   // The entries' names and descriptions in the reader's language, by the game's text id
   textMap: Readonly<Record<string, string>>;
   // Each weapon's data by its entry's id: its rarity in stars tints its tile and sets the stars the tile draws
