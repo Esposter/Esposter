@@ -10,8 +10,7 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 const getSha256 = (content: string): string => createHash("sha256").update(content).digest("hex");
 
 // An avatar's folder as the owner's extraction leaves it: each file, then the manifest listing them by path, bytes and
-// Hash, in the order given, which is the order the index lists them in. Returns the manifest's text, which the index holds
-// The manifest file under
+// SHA-256 hash, in the order given. The index lists them in that order, and the manifest's text is returned here.
 const writePack = (
   directory: string,
   avatarId: string,
