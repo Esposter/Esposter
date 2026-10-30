@@ -8,7 +8,6 @@ import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
-import { defineComponent, h } from "vue";
 
 describe("mailScreen", () => {
   const BIRTHDAY_MAIL_ID = 35;
@@ -142,11 +141,7 @@ describe("mailScreen", () => {
   test("should show the date a mail was received", async () => {
     expect.hasAssertions();
 
-    const NuxtTimeStub = defineComponent({
-      props: { datetime: { required: true, type: String } },
-      setup: (componentProps) => () => h("time", { datetime: componentProps.datetime }),
-    });
-    await render(MailScreen, { global: { stubs: { NuxtTime: NuxtTimeStub } }, props: unclaimedMailProps });
+    await render(MailScreen, { props: unclaimedMailProps });
 
     expect(document.querySelector("time")?.getAttribute("datetime")).toBe(DELIVERED_AT);
   });
