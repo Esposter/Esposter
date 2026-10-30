@@ -40,7 +40,7 @@ catalog:
   "@azure/data-tables": ^13.3.2
   "@azure/eventgrid": ^5.12.0
   "@azure/functions": ^4.17.0
-  "@azure/identity": ^4.14.0
+  "@azure/identity": ^4.14.1
   "@azure/search-documents": ^13.0.0
   "@azure/service-bus": ^7.10.0
   "@azure/storage-blob": ^12.34.0
