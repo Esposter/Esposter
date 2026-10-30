@@ -282,7 +282,7 @@ Find recipe: a page is open if either test holds. Test one: `git grep -l "no sou
 | `openspec/specs/genshin/kits/yanfei/design.md`                         | 2026-10-30 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/yaoyao/design.md`                         | 2026-10-30 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/yelan/design.md`                          | 2026-10-30 · Haiku 5.5 |       |
-| `openspec/specs/genshin/kits/yoimiya/design.md`                        | —                      |       |
-| `openspec/specs/genshin/kits/yun-jin/design.md`                        | —                      |       |
+| `openspec/specs/genshin/kits/yoimiya/design.md`                        | 2026-10-30 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/yun-jin/design.md`                        | 2026-10-30 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/zhongli/design.md`                        | 2026-10-26 · Haiku 5.5 |       |
-| `openspec/specs/genshin/kits/zibai/design.md`                          | —                      |       |
+| `openspec/specs/genshin/kits/zibai/design.md`                          | 2026-10-30 · Haiku 5.5 |       |
