@@ -1,10 +1,14 @@
 <script setup lang="ts">
+import CloseButton from "#src/components/CloseButton/Index.vue";
+import { CloseButtonMark } from "#src/models/CloseButtonMark";
 import { WorshipLevelState } from "#src/models/WorshipLevelState";
 import { computed } from "vue";
 
 interface Props {
   // The title of the Statue's Blessing the screen switches to
   blessingTitle: string;
+  // The way out of the screen in the reader's language
+  closeLabel: string;
   // The Oculi the region holds toward its next level, which an offer reaches the levels they complete with
   heldCount: number;
   // The region's levels, each with the Oculi it takes, the rewards it pays and its state on the Worship Statue
@@ -18,7 +22,7 @@ interface Props {
   title: string;
 }
 
-const { blessingTitle, heldCount, levels, title } = defineProps<Props>();
+const { blessingTitle, closeLabel, heldCount, levels, title } = defineProps<Props>();
 const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
 // The one level a claim takes is the lowest reached and not yet claimed, since each claim takes the next level in turn
 const nextClaimableLevel = computed(() => levels.find(({ state }) => state === WorshipLevelState.Claimable)?.level);
@@ -28,7 +32,7 @@ const nextClaimableLevel = computed(() => levels.find(({ state }) => state === W
   <!-- The layout is provisional until the recording of the Worship screen shows it -->
   <div class="worship-screen">
     <h1 class="title">{{ title }}</h1>
-    <button class="close" type="button" @click="emit('close')">×</button>
+    <CloseButton class="close" :label="closeLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
     <button class="blessing" type="button" @click="emit('blessing')">{{ blessingTitle }}</button>
     <button class="held" type="button" @click="emit('offer')">{{ heldCount }}</button>
     <ol class="levels">

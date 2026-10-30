@@ -3,6 +3,7 @@ import { WorshipLevelState } from "#src/models/WorshipLevelState";
 
 export const props = {
   blessingTitle: "Sample Blessing",
+  closeLabel: "Back",
   heldCount: 2,
   levels: [
     { level: 1, oculusCount: 1, rewards: [{ count: 2, name: "Sample Ore" }], state: WorshipLevelState.Claimed },

@@ -16,11 +16,14 @@
   font-size: 2rem;
 }
 
+/* The close's disc is provisional, as its screens are: no recording shows either screen's close, so it takes the
+   Expedition's disc, the nearest close measured (the cross is the game's on every close measured) */
 .close {
-  position: absolute;
   top: 6%;
   right: 6%;
-  font-size: 2rem;
+  background: #eee9e8;
+  box-shadow: inset 0 0 0 calc(var(--unit) * 6) #757274;
+  color: #3e4251;
 }
 
 .blessing,

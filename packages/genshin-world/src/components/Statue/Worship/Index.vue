@@ -35,6 +35,7 @@ const getWorshipLevels = () =>
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.StatueWorship]">
     <WorshipScreen
       :blessing-title="gameText[GameTextKey.StatueBlessing]"
+      :close-label="gameText[GameTextKey.Back]"
       :held-count="progress.heldCount"
       :levels="getWorshipLevels()"
       :title="gameText[GameTextKey.StatueWorship]"
