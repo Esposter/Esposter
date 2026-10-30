@@ -13,14 +13,9 @@ import { spawnSync } from "@esposter/shared-node/child-process";
 export const runSetupProcess = (
   file: string,
   args: readonly string[],
-  { isThroughShell, isVisible }: SetupProcessOptions,
+  { isThroughShell, stdio }: SetupProcessOptions,
 ): SetupRunResult => {
-  const options = {
-    cwd: REPOSITORY_ROOT,
-    encoding: "utf8",
-    maxBuffer: MAX_BUFFER_BYTES,
-    stdio: isVisible ? "inherit" : "pipe",
-  } as const;
+  const options = { cwd: REPOSITORY_ROOT, encoding: "utf8", maxBuffer: MAX_BUFFER_BYTES, stdio } as const;
   const result = isThroughShell
     ? spawnSync([file, ...args].map((part) => `"${part}"`).join(" "), { ...options, shell: true })
     : spawnSync(file, args, options);

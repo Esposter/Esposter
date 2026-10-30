@@ -1,5 +1,6 @@
 import type { SetupEnvironment } from "#src/models/setup/SetupEnvironment";
 
+import { SetupProcessStdio } from "#src/models/setup/SetupProcessStdio";
 import { runSetupProcess } from "#src/services/setup/runSetupProcess";
 import { CLAUDE_PROJECTS_DIRECTORY } from "#src/services/shared/constants";
 import { getResult } from "@esposter/shared";
@@ -23,7 +24,7 @@ export const readSetupEnvironment = (platform: NodeJS.Platform): SetupEnvironmen
     platform,
     // A path that is not a file, or cannot be read as one, is absent like a missing one
     readText: (path) => getResult(() => readFileSync(path, "utf8")).unwrapOr(undefined),
-    run: (file, args) => runSetupProcess(file, args, { isThroughShell, isVisible: false }),
-    runVisibly: (file, args) => runSetupProcess(file, args, { isThroughShell, isVisible: true }),
+    run: (file, args) => runSetupProcess(file, args, { isThroughShell, stdio: SetupProcessStdio.Pipe }),
+    runVisibly: (file, args) => runSetupProcess(file, args, { isThroughShell, stdio: SetupProcessStdio.Inherit }),
   };
 };
