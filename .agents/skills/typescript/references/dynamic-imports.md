@@ -20,4 +20,7 @@ parsers `read-excel-file/browser` and `write-excel-file/browser` are reached thr
 `apps/web/app/services/resource/sheet/dataSource/DataSourceConfigurationMap.ts`, which the command bar reaches on every
 resource page, so a static import would put both parsers in that eager chunk. Each exception is a
 `// eslint-disable-next-line no-restricted-syntax -- <reason>` directly above the import, and the reason says what it
-keeps out of the eager graph (or why the import must be lazy).
+keeps out of the eager graph (or why the import must be lazy). A generated map of lazy loaders is the one place a
+directive is file-level instead: `GameTextLoaderMap` and `CharacterLinesLoaderMap` (`genshin-text`, `genshin-persona`)
+and `CharacterIdCreateKitBehaviourMap` (`genshin-world`) each carry `/* eslint-disable no-restricted-syntax -- <reason> */`
+on their first lines, emitted by their generators, since every entry of such a map is a lazy loader.

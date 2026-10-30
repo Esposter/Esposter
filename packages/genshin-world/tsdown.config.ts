@@ -27,8 +27,8 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue(te
       isPublish ? exports : { ...exports, "./parity/*": { source: "./parity/*.ts" } },
   },
   hooks: {
-    "build:prepare": ({ options: { cwd } }) => {
-      generateCharacterKitMap(cwd);
+    "build:prepare": async ({ options: { cwd } }) => {
+      await generateCharacterKitMap(cwd);
       generateExports(cwd, "vue", [KIT_MODULE_DIRECTORY, AVATAR_MODULE_DIRECTORY]);
     },
   },
