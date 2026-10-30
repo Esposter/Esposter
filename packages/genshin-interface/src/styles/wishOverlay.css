@@ -28,7 +28,7 @@
 
 /* The close is the game's flag: a gold tab with its far side notched in, the cross cream in it, measured off the Details
    popup at 1440 high (references/wish-details-1.png). The popup's own place is provisional, so the flag is set inside
-   the panel's corner as before */
+   the panel's corner */
 .close {
   position: absolute;
   top: calc(var(--unit) * 24);
