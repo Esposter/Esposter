@@ -15,6 +15,26 @@ const getRootName = (node: ESTree.Node): string | undefined => {
   return current.type === "Identifier" && current !== node ? current.name : undefined;
 };
 
+// The names a parameter binds, through a destructuring pattern, a default and a rest element
+const getBoundNames = (parameter: ESTree.Node): string[] => {
+  switch (parameter.type) {
+    case "ArrayPattern":
+      return parameter.elements.flatMap((element) => (element ? getBoundNames(element) : []));
+    case "AssignmentPattern":
+      return getBoundNames(parameter.left);
+    case "Identifier":
+      return [parameter.name];
+    case "ObjectPattern":
+      return parameter.properties.flatMap((property) =>
+        getBoundNames(property.type === "RestElement" ? property : property.value),
+      );
+    case "RestElement":
+      return getBoundNames(parameter.argument);
+    default:
+      return [];
+  }
+};
+
 // The parameters a function binds, and the element one of them is when the function is a projecting callback
 interface Scope {
   element?: string;
@@ -28,7 +48,7 @@ export const noMapMutation: Rule = defineRule({
     const scopes: Scope[] = [];
 
     const enterFunction = (node: CallbackFunction) => {
-      const names = node.params.flatMap((parameter) => (parameter.type === "Identifier" ? [parameter.name] : []));
+      const names = node.params.flatMap((parameter) => getBoundNames(parameter));
       scopes.push({ element: elementNames.get(node), names });
     };
     const exitFunction = () => {
@@ -67,6 +87,8 @@ export const noMapMutation: Rule = defineRule({
         const [parameter] = callback.params;
         if (parameter?.type === "Identifier") elementNames.set(callback, parameter.name);
       },
+      FunctionDeclaration: enterFunction,
+      "FunctionDeclaration:exit": exitFunction,
       FunctionExpression: enterFunction,
       "FunctionExpression:exit": exitFunction,
       UnaryExpression(node) {

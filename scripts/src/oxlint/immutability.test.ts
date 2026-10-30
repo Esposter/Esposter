@@ -46,6 +46,26 @@ describe("immutability", () => {
       source: `export const rows = items.map((item) => { const set = (item) => { item.a = 1; }; set(item); return { ...item }; });`,
       violations: 0,
     },
+    {
+      name: "destructuredShadowedParameter",
+      source: `export const rows = items.map((item) => { const set = ({ item }) => { item.a = 1; }; set({ item: {} }); return { ...item }; });`,
+      violations: 0,
+    },
+    {
+      name: "restShadowedParameter",
+      source: `export const rows = items.map((item) => { const set = (...item) => { item[0].a = 1; }; set({}); return { ...item }; });`,
+      violations: 0,
+    },
+    {
+      name: "nestedFunctionDeclaration",
+      source: `export const rows = items.map((item) => { function set() { item.a = 1; } set(); return item; });`,
+      violations: 1,
+    },
+    {
+      name: "shadowedFunctionDeclarationParameter",
+      source: `export const rows = items.map((item) => { function set(item) { item.a = 1; } set({}); return { ...item }; });`,
+      violations: 0,
+    },
     // A new object, a projection and a local built inside the callback never write to the element.
     { name: "spreadCopy", source: `export const rows = items.map((item) => ({ ...item, a: 1 }));`, violations: 0 },
     {
