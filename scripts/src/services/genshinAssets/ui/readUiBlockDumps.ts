@@ -40,15 +40,21 @@ const listContainers = async (directory: string): Promise<{ container: string; f
 // A null pointer names no transform, and is written as the path ID `0`, which reads as no father
 const toFatherId = (pathId: string): string => (pathId === "0" ? "" : pathId);
 
-// The layouts of one container's raw RectTransforms by their GameObject's path ID, the one their JSON dumps name
-const readLayouts = async (directory: string): Promise<Map<string, DumpedRectTransform>> => {
-  const layouts = new Map<string, DumpedRectTransform>();
-  if (!existsSync(directory)) return layouts;
+// The layouts of every container's raw RectTransforms, each keyed by its GameObject's path ID, the one their JSON dumps
+// Name, so one pool reads them all rather than one pool per container
+const readLayouts = async (rawDirectory: string): Promise<Map<string, Map<string, DumpedRectTransform>>> => {
   const raws = await settleAll(
-    (await readdir(directory)).map((file) => () => readFile(join(directory, file))),
+    (await listContainers(rawDirectory)).flatMap(({ container, files }) =>
+      files.map((file) => async () => ({ container, raw: await readFile(join(rawDirectory, container, file)) })),
+    ),
     UI_READ_CONCURRENCY,
   );
-  for (const raw of raws) layouts.set(readRawOwnerPathId(raw), parseRectTransformLayout(raw));
+  const layouts = new Map<string, Map<string, DumpedRectTransform>>();
+  for (const { container, raw } of raws) {
+    const containerLayouts = layouts.get(container) ?? new Map<string, DumpedRectTransform>();
+    containerLayouts.set(readRawOwnerPathId(raw), parseRectTransformLayout(raw));
+    layouts.set(container, containerLayouts);
+  }
   return layouts;
 };
 
@@ -88,31 +94,25 @@ const readRectTransform = async (
   };
 };
 
-const readContainerRectTransforms = async (
-  jsonDirectory: string,
-  rawDirectory: string,
-  container: string,
-  files: string[],
-): Promise<UiRectTransformRead[]> => {
-  const layouts = await readLayouts(join(rawDirectory, container));
-  return settleAll(
-    files.map((file) => () => readRectTransform(jsonDirectory, container, file, layouts)),
-    UI_READ_CONCURRENCY,
-  );
-};
-
+// The layouts are read in their own pool before any JSON dump is, so each pool bounds the reads it runs at once
+// Rather than two pools nesting, which would multiply the bound
 const readRectTransforms = async (exportDirectory: string): Promise<UiRectTransformRead[]> => {
   const jsonDirectory = join(exportDirectory, UI_RECT_TRANSFORM_DIRECTORY);
-  const rawDirectory = join(exportDirectory, UI_RECT_TRANSFORM_RAW_DIRECTORY);
-  const containerRectTransforms = await settleAll(
-    (await listContainers(jsonDirectory)).map(
-      ({ container, files }) =>
-        () =>
-          readContainerRectTransforms(jsonDirectory, rawDirectory, container, files),
+  const layouts = await readLayouts(join(exportDirectory, UI_RECT_TRANSFORM_RAW_DIRECTORY));
+  return settleAll(
+    (await listContainers(jsonDirectory)).flatMap(({ container, files }) =>
+      files.map(
+        (file) => () =>
+          readRectTransform(
+            jsonDirectory,
+            container,
+            file,
+            layouts.get(container) ?? new Map<string, DumpedRectTransform>(),
+          ),
+      ),
     ),
     UI_READ_CONCURRENCY,
   );
-  return containerRectTransforms.flat();
 };
 
 // The canvas scalers' settings by the path ID of the GameObject each holds, from the raw exports of the script.
@@ -131,11 +131,10 @@ const readCanvases = async (directory: string): Promise<Map<string, UiCanvasScal
 };
 
 // A block's UI export read into the dumps the index joins, a folder at a time
+// Each folder's pool runs to completion before the next starts, so UI_READ_CONCURRENCY bounds the whole block
 export const readUiBlockDumps = async (exportDirectory: string): Promise<UiBlockDumps> => {
-  const [canvases, gameObjects, rectTransforms] = await Promise.all([
-    readCanvases(join(exportDirectory, UI_CANVAS_SCALER_RAW_DIRECTORY)),
-    readGameObjects(join(exportDirectory, UI_GAME_OBJECT_DIRECTORY)),
-    readRectTransforms(exportDirectory),
-  ]);
+  const canvases = await readCanvases(join(exportDirectory, UI_CANVAS_SCALER_RAW_DIRECTORY));
+  const gameObjects = await readGameObjects(join(exportDirectory, UI_GAME_OBJECT_DIRECTORY));
+  const rectTransforms = await readRectTransforms(exportDirectory);
   return { canvases, gameObjects, rectTransforms };
 };
