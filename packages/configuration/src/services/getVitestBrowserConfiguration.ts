@@ -11,6 +11,10 @@ const checkVisualUpdate = (updateEnvironmentVariable?: string): boolean =>
   process.argv.includes("-u") ||
   process.argv.includes("--update");
 
+// Edge rasterizes a page on the GPU by default, and there an anti-aliased edge or a gradient's dither differs by a level
+// Between captures of one frame, which a pixel-exact update refuses. The CPU rasterizer gives the same pixels every capture,
+// And this flag leaves the compositor on the GPU
+const DISABLE_GPU_RASTERIZATION = "--disable-gpu-rasterization";
 // The browser suite's own options: the machine's Edge, headless, at the viewport its screens are drawn at, and each
 // Screenshot kept beside its component as a test is, so a member sets only what differs from one to the next. An update
 // (`-u` or `--update`, or the environment variable a suite names as `updateEnvironmentVariable`) compares every pixel
@@ -33,7 +37,7 @@ export const getVitestBrowserConfiguration = (
     // `node_modules`, which git ignores
     headless: true,
     instances: [{ browser: "chromium" }],
-    provider: playwright({ launchOptions: { channel: "msedge" } }),
+    provider: playwright({ launchOptions: { args: [DISABLE_GPU_RASTERIZATION], channel: "msedge" } }),
     screenshotDirectory: "node_modules/.vitest/screenshots",
     viewport,
   };
