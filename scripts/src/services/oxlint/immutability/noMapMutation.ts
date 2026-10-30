@@ -15,22 +15,34 @@ const getRootName = (node: ESTree.Node): string | undefined => {
   return current.type === "Identifier" && current !== node ? current.name : undefined;
 };
 
+// The parameters a function binds, and the element one of them is when the function is a projecting callback
+interface Scope {
+  element?: string;
+  names: string[];
+}
+
 export const noMapMutation: Rule = defineRule({
   create(context) {
-    // The element parameter of each projecting callback, keyed by the callback so entering it pushes its name
+    // The element parameter of each projecting callback, keyed by the callback so entering it records its name
     const elementNames = new WeakMap<CallbackFunction, string>();
-    const activeNames: string[] = [];
+    const scopes: Scope[] = [];
 
     const enterFunction = (node: CallbackFunction) => {
-      const name = elementNames.get(node);
-      if (name !== undefined) activeNames.push(name);
+      const names = node.params.flatMap((parameter) => (parameter.type === "Identifier" ? [parameter.name] : []));
+      scopes.push({ element: elementNames.get(node), names });
     };
-    const exitFunction = (node: CallbackFunction) => {
-      if (elementNames.has(node)) activeNames.pop();
+    const exitFunction = () => {
+      scopes.pop();
     };
     const checkTarget = (target: ESTree.Node) => {
       const rootName = getRootName(target);
-      if (rootName !== undefined && activeNames.includes(rootName)) context.report({ message: MESSAGE, node: target });
+      if (rootName === undefined) return;
+      // The innermost function that binds the name decides it, so a parameter that shadows an element is not the element
+      for (const { element, names } of scopes.toReversed()) {
+        if (!names.includes(rootName)) continue;
+        if (element === rootName) context.report({ message: MESSAGE, node: target });
+        return;
+      }
     };
 
     return {

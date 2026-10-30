@@ -19,7 +19,8 @@ What is left to judgement is `arr.with(index, value)` over `[...arr.slice(0, i),
 **A `.map` or `.flatMap` callback never writes to its element.** The element belongs to the source array, so
 `element.field = value` inside the callback changes the array the call was meant only to read.
 `immutability/no-map-mutation` (`scripts/src/services/oxlint/immutability/noMapMutation.ts`) reports an assignment, an
-update or a `delete` on the callback's first parameter, whether it is written there or in a closure inside it. Build the
+update or a `delete` on the callback's first parameter, whether it is written there or in a closure inside it, unless
+that closure binds its own parameter of the same name. Build the
 new element as `{ ...element, field }`, which `oxc/no-map-spread` is switched off for, or project the fields it needs.
 A loop that writes to live records and collects what undoes each write is a `for…of`, not a `flatMap`. The rule reads assignments, updates and `delete` only: a mutating call such as `element.list.push(x)` is out of its reach.
 

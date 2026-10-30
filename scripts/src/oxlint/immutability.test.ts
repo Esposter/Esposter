@@ -41,6 +41,11 @@ describe("immutability", () => {
       source: `export const rows = items.map((item) => { const set = () => { item.a = 1; }; set(); return item; });`,
       violations: 1,
     },
+    {
+      name: "shadowedParameter",
+      source: `export const rows = items.map((item) => { const set = (item) => { item.a = 1; }; set(item); return { ...item }; });`,
+      violations: 0,
+    },
     // A new object, a projection and a local built inside the callback never write to the element.
     { name: "spreadCopy", source: `export const rows = items.map((item) => ({ ...item, a: 1 }));`, violations: 0 },
     {
