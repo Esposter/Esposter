@@ -166,5 +166,5 @@ export const fitLoginScene = async (only: readonly string[], options: DryRunOpti
       objects: { [`${GameDataset.Login}/walkway`]: await fitLoginWalkway(placements, meshDirectory) },
     }),
   };
-  return runFits(fits, only, options);
+  return runFits(Object.entries(fits), only, options);
 };

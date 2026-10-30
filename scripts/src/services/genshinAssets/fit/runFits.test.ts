@@ -5,10 +5,10 @@ import { runFits } from "#src/services/genshinAssets/fit/runFits";
 import { describe, expect, test } from "vitest";
 
 describe(runFits, () => {
-  const fits: Record<string, () => Promise<GameDataBuild>> = {
-    clouds: () => Promise.resolve({ notes: ["clouds"], objects: { "login/clouds": 0 } }),
-    sky: () => Promise.resolve({ notes: ["sky"], objects: { "login/sky": 1 } }),
-  };
+  const fits: [name: string, fit: () => Promise<GameDataBuild>][] = [
+    ["clouds", () => Promise.resolve({ notes: ["clouds"], objects: { "login/clouds": 0 } })],
+    ["sky", () => Promise.resolve({ notes: ["sky"], objects: { "login/sky": 1 } })],
+  ];
 
   test("merges every fit's notes and records", async () => {
     expect.hasAssertions();
@@ -32,19 +32,20 @@ describe(runFits, () => {
     expect.hasAssertions();
     await expect(
       runFits(
-        {
-          "ground/a": () => Promise.resolve({ notes: ["a"], objects: { "ground/a": 0 } }),
-          "ground/b": () => Promise.resolve({ notes: ["b"], objects: { "ground/b": 1 } }),
-          sky: () => Promise.resolve({ notes: ["sky"], objects: { "login/sky": 2 } }),
-        },
+        [
+          ["ground/a", () => Promise.resolve({ notes: ["a"], objects: { "ground/a": 0 } })],
+          ["ground/b", () => Promise.resolve({ notes: ["b"], objects: { "ground/b": 1 } })],
+          ["sky", () => Promise.resolve({ notes: ["sky"], objects: { "login/sky": 2 } })],
+        ],
         ["ground"],
         { isDryRun: false },
       ),
     ).resolves.toStrictEqual({ notes: ["a", "b"], objects: { "ground/a": 0, "ground/b": 1 } });
   });
 
-  // A fit's compute holds the thread, so a record another fit fetched meanwhile would outwait its timeout
-  test("runs one fit at a time", async () => {
+  // A fit's compute holds the thread, so a record another fit fetched meanwhile would outwait its timeout. The fits run
+  // In the order they are given, not the order of their names, so `sky` runs before `clouds` here
+  test("runs one fit at a time, in the order they are given", async () => {
     expect.hasAssertions();
 
     const events: string[] = [];
@@ -54,9 +55,16 @@ describe(runFits, () => {
       events.push(`${name} end`);
       return { notes: [], objects: {} };
     };
-    await runFits({ clouds: createFit("clouds"), sky: createFit("sky") }, [], { isDryRun: false });
+    await runFits(
+      [
+        ["sky", createFit("sky")],
+        ["clouds", createFit("clouds")],
+      ],
+      [],
+      { isDryRun: false },
+    );
 
-    expect(events).toStrictEqual(["clouds start", "clouds end", "sky start", "sky end"]);
+    expect(events).toStrictEqual(["sky start", "sky end", "clouds start", "clouds end"]);
   });
 
   test("refuses a name no fit has", async () => {
@@ -66,7 +74,7 @@ describe(runFits, () => {
     );
   });
 
-  // Names are matched against the fits' own keys, so a prototype's name is no fit and is refused like any unknown name
+  // Names are matched against the fits' own names, so a prototype's name is no fit and is refused like any unknown name
   test("refuses a prototype's name, which no fit has", async () => {
     expect.hasAssertions();
     await expect(runFits(fits, ["toString"], { isDryRun: false })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -83,7 +91,14 @@ describe(runFits, () => {
       dryRuns.push(isDryRun);
       return Promise.resolve({ notes: [], objects: {} });
     };
-    await runFits({ clouds: createFit, sky: createFit }, [], { isDryRun: true });
+    await runFits(
+      [
+        ["clouds", createFit],
+        ["sky", createFit],
+      ],
+      [],
+      { isDryRun: true },
+    );
 
     expect(dryRuns).toStrictEqual([true, true]);
   });

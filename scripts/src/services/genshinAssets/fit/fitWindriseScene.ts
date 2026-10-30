@@ -35,91 +35,112 @@ import { GameDataset, WindrisePartFamily, WindrisePartFamilyMeshRegexMap, windri
 // Every area of the catalogue outlined, round the same origin, since the oak's foot is the whole world's
 export const fitWindriseScene = (only: readonly string[], options: DryRunOptions): Promise<GameDataBuild> =>
   runFits(
-    {
+    // The fit steps in the order they run, one after the other
+    [
       // Every area's outline in the catalogue is drawn round the oak's foot too, as the capitals are placed
-      catalogue: fitAreaOutlines,
+      ["catalogue", fitAreaOutlines],
       // Each open-world subarea's label, at the mean of its outline round the origin the outlines use
-      mapLabels: fitMapLabels,
-      ground: async () => {
-        const source = await readGroundSource(DerivedAssetComponent.Windrise);
-        return (
-          await fitGroundPieces(
-            {
-              centre: { x: 0, z: 0 },
-              checkIsInside: (x, z) => Math.hypot(x, z) <= GROUND_RADIUS,
-              half: GROUND_RADIUS,
-              key: `${GameDataset.Ground}/${DerivedAssetComponent.Windrise}`,
-            },
-            source,
-          )
-        ).build;
-      },
+      ["mapLabels", fitMapLabels],
+      [
+        "ground",
+        async () => {
+          const source = await readGroundSource(DerivedAssetComponent.Windrise);
+          return (
+            await fitGroundPieces(
+              {
+                centre: { x: 0, z: 0 },
+                checkIsInside: (x, z) => Math.hypot(x, z) <= GROUND_RADIUS,
+                half: GROUND_RADIUS,
+                key: `${GameDataset.Ground}/${DerivedAssetComponent.Windrise}`,
+              },
+              source,
+            )
+          ).build;
+        },
+      ],
       // Mondstadt's capital is in the file Windrise's landmarks are, so the two are written one after the other
-      landmarks: async (fitOptions) => {
-        const landmarksPath = await fitRegionLandmarks(
-          DerivedAssetComponent.Windrise,
-          WINDRISE_REGION_FILE,
-          fitOptions,
-        );
-        const { notes, objects } = await fitRegionCapitals(fitOptions);
-        return { notes: [landmarksPath, ...notes], objects };
-      },
-      oak: fitWindriseOak,
-      paving: async () => ({ notes: [], objects: { [`${GameDataset.Windrise}/paving`]: await fitWindrisePaving() } }),
-      plants: async () => ({ notes: [], objects: { [`${GameDataset.Windrise}/plants`]: await fitWindrisePlants() } }),
-      statue: fitWindriseStatue,
+      [
+        "landmarks",
+        async (fitOptions) => {
+          const landmarksPath = await fitRegionLandmarks(
+            DerivedAssetComponent.Windrise,
+            WINDRISE_REGION_FILE,
+            fitOptions,
+          );
+          const { notes, objects } = await fitRegionCapitals(fitOptions);
+          return { notes: [landmarksPath, ...notes], objects };
+        },
+      ],
+      ["oak", fitWindriseOak],
+      [
+        "paving",
+        async () => ({ notes: [], objects: { [`${GameDataset.Windrise}/paving`]: await fitWindrisePaving() } }),
+      ],
+      [
+        "plants",
+        async () => ({ notes: [], objects: { [`${GameDataset.Windrise}/plants`]: await fitWindrisePlants() } }),
+      ],
+      ["statue", fitWindriseStatue],
       // The surfaces record holds the families its reader parses: the grass has no mesh in the exports to read. The
       // Ground's family also holds each of its layers' colours, which the tiles' own cells class
-      surfaces: async () => {
-        const [tiles, origin] = await Promise.all([
-          readGroundLayerCells(DerivedAssetComponent.Windrise),
-          readWorldOrigin(DerivedAssetComponent.Windrise),
-        ]);
-        const groundLayers = fitGroundLayerField(tiles, origin, GROUND_RADIUS, GROUND_LAYER_CELL_SIZE);
-        const [groundLayerColours, surfaces] = await Promise.all([
-          fitGroundLayerColours(DerivedAssetComponent.Windrise, tiles, origin, GROUND_RADIUS),
-          fitSurfaceColours(
-            DerivedAssetComponent.Windrise,
-            Object.fromEntries(
-              windriseSurfacesSchema.keyof().options.map((family) => [family, WindrisePartFamilyMeshRegexMap[family]]),
+      [
+        "surfaces",
+        async () => {
+          const [tiles, origin] = await Promise.all([
+            readGroundLayerCells(DerivedAssetComponent.Windrise),
+            readWorldOrigin(DerivedAssetComponent.Windrise),
+          ]);
+          const groundLayers = fitGroundLayerField(tiles, origin, GROUND_RADIUS, GROUND_LAYER_CELL_SIZE);
+          const [groundLayerColours, surfaces] = await Promise.all([
+            fitGroundLayerColours(DerivedAssetComponent.Windrise, tiles, origin, GROUND_RADIUS),
+            fitSurfaceColours(
+              DerivedAssetComponent.Windrise,
+              Object.fromEntries(
+                windriseSurfacesSchema
+                  .keyof()
+                  .options.map((family) => [family, WindrisePartFamilyMeshRegexMap[family]]),
+              ),
+              GROUND_RADIUS,
             ),
-            GROUND_RADIUS,
-          ),
-        ]);
-        const layerColours: Record<string, string | undefined> = groundLayerColours;
-        const layerShares = Object.entries(groundLayers.layers).map(
-          ([layer, shares]) =>
-            `${layer} ${roundFitted((100 * shares.reduce((sum, share) => sum + share, 0)) / shares.length)}% ${layerColours[layer] ?? "unseen"}`,
-        );
-        // The metres a texel of each family's detail spans, as its faces draw its textures
-        const detailTexels = Object.entries(surfaces).map(
-          ([family, { detail }]) => `${family} ${detail ? `${detail.metresPerTexel.toPrecision(2)} m` : "none"}`,
-        );
-        return {
-          notes: [
-            `ground layers: ${layerShares.join(", ")} of the field's nodes, each with its colour`,
-            `surface detail a texel: ${detailTexels.join(", ")}`,
-          ],
-          objects: {
-            [`${GameDataset.Windrise}/ground-layers`]: groundLayers,
-            [`${GameDataset.Windrise}/surfaces`]: {
-              ...surfaces,
-              [WindrisePartFamily.Ground]: { ...surfaces[WindrisePartFamily.Ground], layers: groundLayerColours },
+          ]);
+          const layerColours: Record<string, string | undefined> = groundLayerColours;
+          const layerShares = Object.entries(groundLayers.layers).map(
+            ([layer, shares]) =>
+              `${layer} ${roundFitted((100 * shares.reduce((sum, share) => sum + share, 0)) / shares.length)}% ${layerColours[layer] ?? "unseen"}`,
+          );
+          // The metres a texel of each family's detail spans, as its faces draw its textures
+          const detailTexels = Object.entries(surfaces).map(
+            ([family, { detail }]) => `${family} ${detail ? `${detail.metresPerTexel.toPrecision(2)} m` : "none"}`,
+          );
+          return {
+            notes: [
+              `ground layers: ${layerShares.join(", ")} of the field's nodes, each with its colour`,
+              `surface detail a texel: ${detailTexels.join(", ")}`,
+            ],
+            objects: {
+              [`${GameDataset.Windrise}/ground-layers`]: groundLayers,
+              [`${GameDataset.Windrise}/surfaces`]: {
+                ...surfaces,
+                [WindrisePartFamily.Ground]: { ...surfaces[WindrisePartFamily.Ground], layers: groundLayerColours },
+              },
             },
-          },
-        };
-      },
-      water: async () => {
-        const [[, originY], waterLevel] = await Promise.all([
-          readWorldOrigin(DerivedAssetComponent.Windrise),
-          readWorldWaterLevel(DerivedAssetComponent.Windrise),
-        ]);
-        return {
-          notes: [],
-          objects: { [`${GameDataset.Windrise}/water`]: { level: roundFitted(waterLevel - originY) } },
-        };
-      },
-    },
+          };
+        },
+      ],
+      [
+        "water",
+        async () => {
+          const [[, originY], waterLevel] = await Promise.all([
+            readWorldOrigin(DerivedAssetComponent.Windrise),
+            readWorldWaterLevel(DerivedAssetComponent.Windrise),
+          ]);
+          return {
+            notes: [],
+            objects: { [`${GameDataset.Windrise}/water`]: { level: roundFitted(waterLevel - originY) } },
+          };
+        },
+      ],
+    ],
     only,
     options,
   );

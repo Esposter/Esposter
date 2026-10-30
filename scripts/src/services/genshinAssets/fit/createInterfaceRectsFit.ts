@@ -16,14 +16,17 @@ export const createInterfaceRectsFit =
   (only, options) => {
     const { root } = getComponentDirectory(component);
     return runFits(
-      {
-        interfaceRects: async () => {
-          const interfaceTree = parseMachineJson<InterfaceNode>(
-            await readFile(join(root, "interface", "interface.json"), "utf8"),
-          );
-          return { notes: [], objects: { [`${component}/interfaceRects`]: fitInterfaceRects(interfaceTree) } };
-        },
-      },
+      [
+        [
+          "interfaceRects",
+          async () => {
+            const interfaceTree = parseMachineJson<InterfaceNode>(
+              await readFile(join(root, "interface", "interface.json"), "utf8"),
+            );
+            return { notes: [], objects: { [`${component}/interfaceRects`]: fitInterfaceRects(interfaceTree) } };
+          },
+        ],
+      ],
       only,
       options,
     );
