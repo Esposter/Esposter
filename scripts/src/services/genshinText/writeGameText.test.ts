@@ -6,7 +6,6 @@ import { readSdkText } from "#src/services/genshinText/readSdkText";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { readVoiceLineFetters } from "#src/services/genshinText/readVoiceLineFetters";
 import { writeGameText } from "#src/services/genshinText/writeGameText";
-import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { GameLanguage, GameLanguages, GameTextKeys } from "genshin-text";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -17,7 +16,6 @@ vi.mock(import("#src/services/genshinText/readManualTextMap"));
 vi.mock(import("#src/services/genshinText/readSdkText"));
 vi.mock(import("#src/services/genshinText/readTextMap"));
 vi.mock(import("#src/services/genshinText/readVoiceLineFetters"));
-vi.mock(import("#src/services/shared/writeJsonFile"));
 vi.mock(import("genshin-persona/src/services/readGenshinDb.ts"), () => ({
   readGenshinDb: (() => ({ characters: () => [], voiceovers: () => undefined })) as unknown as typeof readGenshinDb,
 }));
@@ -36,10 +34,10 @@ describe(writeGameText, () => {
     vi.mocked(readVoiceLineFetters).mockReturnValue(new Map());
   });
 
-  test("reads every language and writes nothing on a dry run", () => {
+  test("reads every language and writes nothing on a dry run", async () => {
     expect.hasAssertions();
 
-    const notes = writeGameText({ isDryRun: true });
+    const notes = await writeGameText({ isDryRun: true });
 
     const languagesRead = vi.mocked(readTextMap).mock.calls.map(([language]) => language);
 
@@ -47,18 +45,17 @@ describe(writeGameText, () => {
     expect(notes).toStrictEqual([
       `dry run: ${GameTextKeys.length} strings in ${GameLanguages.length} languages read, and nothing written`,
     ]);
-    expect(writeJsonFile).not.toHaveBeenCalled();
     expect(rmSync).not.toHaveBeenCalled();
     expect(mkdirSync).not.toHaveBeenCalled();
     expect(writeFileSync).not.toHaveBeenCalled();
   });
 
-  test("writes the generated text on a run that is not a dry run", () => {
+  test("writes the generated text on a run that is not a dry run", async () => {
     expect.hasAssertions();
 
-    writeGameText({ isDryRun: false });
+    await writeGameText({ isDryRun: false });
 
-    expect(writeJsonFile).toHaveBeenCalledWith(
+    expect(writeFileSync).toHaveBeenCalledWith(
       join(GENSHIN_TEXT_GENERATED_DIRECTORY, "text", `${GameLanguage.English}.json`),
       expect.anything(),
     );

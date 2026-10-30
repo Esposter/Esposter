@@ -16,7 +16,7 @@ export const writeCommand: SubCommandsDef[string] = defineCommand({
       "Write every string GameTextKey names, and the lines of every character the game-data package has none for, in every language",
     name: "write",
   },
-  run: ({ args }) => {
-    for (const note of writeGameText({ isDryRun: args["dry-run"] })) console.log(note);
+  run: async ({ args }) => {
+    for (const note of await writeGameText({ isDryRun: args["dry-run"] })) console.log(note);
   },
 });

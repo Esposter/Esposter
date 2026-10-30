@@ -16,10 +16,7 @@
       "text": "Việc cần làm hôm nay tôi giao hết cho Ineffa rồi, yên tâm, chúng ta đi tìm Vịt Nắm Đấm chơi đi!",
       "title": "Nói chuyện phiếm - Vui Chơi"
     },
-    {
-      "text": "Hắt xì... Giày tất ướt sũng cả rồi, Aino muốn về nhà...",
-      "title": "Khi trời mưa..."
-    },
+    { "text": "Hắt xì... Giày tất ướt sũng cả rồi, Aino muốn về nhà...", "title": "Khi trời mưa..." },
     {
       "text": "Trời nắng rồi, chúng ta ra ngoài đi dạo đi, dẫn theo cả Ineffa nữa!",
       "title": "Sau cơn mưa trời lại sáng..."
@@ -172,10 +169,7 @@
       "text": "Đang đợi bất ngờ từ Aino phải không? Hì hì, nhìn này! Đèn Thần Cầu Nguyện Lắc Lư! Thắp nến lên đi, nó sẽ vừa hát bài mừng sinh nhật vừa quay vòng vòng, thú vị không nào? Nếu thích thì tuổi mới cũng phải đến chơi cùng tôi đấy nhé! Tiếp theo... Đến lúc cầu nguyện rồi, hãy nói ra điều ước của mình đi, thiên tài Aino nhất định sẽ biến nó thành hiện thực!",
       "title": "Sinh nhật..."
     },
-    {
-      "text": "Ồ ồ, robot được nâng cấp cũng sẽ có cảm giác thế này à?",
-      "title": "Cảm Giác Đột Phá - Khởi"
-    },
+    { "text": "Ồ ồ, robot được nâng cấp cũng sẽ có cảm giác thế này à?", "title": "Cảm Giác Đột Phá - Khởi" },
     {
       "text": "Nâng cấp hoàn tất. Độ ổn định hoạt động của Aino tăng lên, năng lượng tiêu hao cũng tăng tương ứng, hãy chuẩn bị thêm nhiều đồ ngọt để cung cấp năng lượng.",
       "title": "Cảm Giác Đột Phá - Thừa"
@@ -206,30 +200,15 @@
       "text": "Khoản này gửi về quê, khoản này đưa cho người trong hội mua thuốc, còn Mora để bảo dưỡng súng săn thì... để xem lần này băng cướp nào xui xẻo gặp phải tôi đây.",
       "title": "Nói chuyện phiếm - Tính Toán"
     },
-    {
-      "text": "Mũ trùm đầu sắp ướt hết rồi... Tugarin, đừng có vẩy nữa!",
-      "title": "Khi trời mưa..."
-    },
-    {
-      "text": "Mấy kẻ trốn trong hang sắp ra ngoài rồi.",
-      "title": "Sau cơn mưa trời lại sáng..."
-    },
+    { "text": "Mũ trùm đầu sắp ướt hết rồi... Tugarin, đừng có vẩy nữa!", "title": "Khi trời mưa..." },
+    { "text": "Mấy kẻ trốn trong hang sắp ra ngoài rồi.", "title": "Sau cơn mưa trời lại sáng..." },
     {
       "text": "Muốn mai phục người khác à? Vừa hay có thể lợi dụng tiếng sấm để bắn tỉa.",
       "title": "Khi có sấm sét..."
     },
-    {
-      "text": "Chậc, dấu vết của con mồi sắp bị che mất rồi.",
-      "title": "Khi tuyết rơi..."
-    },
-    {
-      "text": "Thời tiết thế này, đội mũ kiểu gì cũng không được...",
-      "title": "Gió lớn quá..."
-    },
-    {
-      "text": "Giá mà tôi cũng có thể thay lông thì tốt rồi...",
-      "title": "Khi trong sa mạc..."
-    },
+    { "text": "Chậc, dấu vết của con mồi sắp bị che mất rồi.", "title": "Khi tuyết rơi..." },
+    { "text": "Thời tiết thế này, đội mũ kiểu gì cũng không được...", "title": "Gió lớn quá..." },
+    { "text": "Giá mà tôi cũng có thể thay lông thì tốt rồi...", "title": "Khi trong sa mạc..." },
     {
       "text": "Sáng nào chim trong rừng cũng kêu ríu rít... Có muốn đi bắn vài con không?",
       "title": "Chào buổi sáng..."
@@ -346,22 +325,13 @@
       "text": "Hôm nay là sinh nhật của {F#cô}{M#cậu} phải không? Cho tôi gửi lời chúc mừng nhé. Từ khi còn nhỏ, \"mừng sinh nhật\" trong mắt người lớn luôn là một điều xa xỉ, không chỉ phải tìm cho được bột mì và kem khan hiếm để làm bánh, mà còn phải lùng sục những món đồ tinh xảo đã biến mất khỏi thị trường từ lâu để làm quà. Nhưng tôi nghĩ lỗi không phải ở bọn trẻ, sinh nhật vốn dĩ phải như vậy chứ. Tôi mong có một ngày, tất cả những đứa trẻ ở Snezhnaya đều có thể đón sinh nhật theo cách đó. Vì vậy tôi đã chuẩn bị quà rất cẩn thận, viết sẵn lời chúc. Giúp người bạn tốt của mình có một ngày sinh nhật vui vẻ, cũng xem như là một bước khởi đầu tốt cho lý tưởng tôi vừa mới lớn tiếng tuyên bố đó, phải không nào?",
       "title": "Sinh nhật..."
     },
-    {
-      "text": "Tốt lắm, cảm thấy như kỹ thuật bắn súng của tôi chuẩn hơn rồi.",
-      "title": "Cảm Giác Đột Phá - Khởi"
-    },
-    {
-      "text": "Ăn ý với Tugarin hơn rồi, nó cũng ngày càng tiến bộ đấy.",
-      "title": "Cảm Giác Đột Phá - Thừa"
-    },
+    { "text": "Tốt lắm, cảm thấy như kỹ thuật bắn súng của tôi chuẩn hơn rồi.", "title": "Cảm Giác Đột Phá - Khởi" },
+    { "text": "Ăn ý với Tugarin hơn rồi, nó cũng ngày càng tiến bộ đấy.", "title": "Cảm Giác Đột Phá - Thừa" },
     {
       "text": "Số lần trúng nhiều hơn rồi... Đây rốt cuộc là chuyện tốt hay xấu đây?",
       "title": "Cảm Giác Đột Phá - Chuyển"
     },
-    {
-      "text": "Để thực hiện được lý tưởng đó, còn bao xa nữa mới tới đích nhỉ?",
-      "title": "Cảm Giác Đột Phá - Hợp"
-    }
+    { "text": "Để thực hiện được lý tưởng đó, còn bao xa nữa mới tới đích nhỉ?", "title": "Cảm Giác Đột Phá - Hợp" }
   ],
   "Columbina": [
     {
@@ -384,10 +354,7 @@
       "text": "Khi trú mưa và lắng nghe tiếng mưa rơi gột rửa mặt đất, tôi cảm thấy an toàn như đang ở \"nhà\" vậy.",
       "title": "Khi trời mưa..."
     },
-    {
-      "text": "Trời đã sáng rồi, tối nay chắc sẽ ngắm được mặt trăng nhỉ?",
-      "title": "Sau cơn mưa trời lại sáng..."
-    },
+    { "text": "Trời đã sáng rồi, tối nay chắc sẽ ngắm được mặt trăng nhỉ?", "title": "Sau cơn mưa trời lại sáng..." },
     {
       "text": "Hmm...! Nếu không nhìn thấy tia chớp, thì sẽ rất dễ bị giật mình bởi tiếng sấm...",
       "title": "Khi có sấm sét..."
@@ -396,10 +363,7 @@
       "text": "Tôi thích tuyết lắm. Đẹp và yên bình, lại còn có thể chơi ném tuyết với các Kuuhenki nữa. {F#Cô}{M#Cậu} có muốn thử chơi ngay bây giờ không?",
       "title": "Khi tuyết rơi..."
     },
-    {
-      "text": "Nếu không mở mắt được thì đưa tay cho tôi, tôi sẽ dẫn {F#cô}{M#cậu} đi.",
-      "title": "Gió lớn quá..."
-    },
+    { "text": "Nếu không mở mắt được thì đưa tay cho tôi, tôi sẽ dẫn {F#cô}{M#cậu} đi.", "title": "Gió lớn quá..." },
     {
       "text": "Ban đêm giẫm lên cát sa mạc sẽ thấy rất mát mẻ và dễ chịu. Nhưng khi trời sáng thì nó lại nóng bỏng vô cùng...",
       "title": "Khi trong sa mạc..."
@@ -408,10 +372,7 @@
       "text": "Sáng rồi... Có thấy dây buộc tóc của tôi ở đâu không? Hmm? Tóc tôi hơi rối à...? Chỗ nào vậy? Giúp tôi chải lại nhé.",
       "title": "Chào buổi sáng..."
     },
-    {
-      "text": "Hmm... Trăng vẫn chưa lên, tôi muốn ôm Kuuhenki ngủ trưa một lát.",
-      "title": "Chào buổi trưa..."
-    },
+    { "text": "Hmm... Trăng vẫn chưa lên, tôi muốn ôm Kuuhenki ngủ trưa một lát.", "title": "Chào buổi trưa..." },
     {
       "text": "Màn đêm buông xuống... Không thấy cách nói này thú vị sao? Giống như \"màn đêm\" vấp phải mặt trăng rồi ngã xuống vậy.",
       "title": "Chào buổi tối..."
@@ -552,10 +513,7 @@
       "text": "Tôi muốn thêm nữa. Hmm...? Không còn nữa sao? Được rồi, lần sau tôi sẽ để dành.",
       "title": "Nhận Được Quà I"
     },
-    {
-      "text": "Cũng không tệ, tôi sẽ từ từ thưởng thức dưới ánh trăng.",
-      "title": "Nhận Được Quà II"
-    },
+    { "text": "Cũng không tệ, tôi sẽ từ từ thưởng thức dưới ánh trăng.", "title": "Nhận Được Quà II" },
     {
       "text": "Hm... Khi tôi chọc giận Sandrone, cô ấy cũng cho tôi ăn những thứ tương tự thế này...",
       "title": "Nhận Được Quà III"
@@ -564,18 +522,9 @@
       "text": "Sinh nhật của {F#cô}{M#cậu} năm nào cũng cùng một ngày sao? Dễ nhớ thật đấy. Ừm... Đêm Cầu Nguyệt thì mỗi năm mỗi khác, tôi chỉ có thể dựa vào cảm nhận về mặt trăng để ước tính ngày sinh của mình thôi. Tuy nhiên, \"sinh nhật\" quả thực là một ngày lễ vui vẻ. Mọi người quây quần bên nhau nhảy múa, còn làm cả lễ vật ngon lành cho {F#cô}{M#cậu} nữa. Ơ...? Sinh nhật của người thường không phải như vậy sao? Quà tặng, bánh kem, và bạn bè à...? Hm, cũng hay đấy, vậy thì gọi bạn bè đến ăn mừng sinh nhật {F#cô}{M#cậu} nhé. Tôi có thể hát tặng {F#cô}{M#cậu} một bài, còn có thể nhờ Maalaus vẽ cho {F#cô}{M#cậu} một bức tranh nữa đấy.",
       "title": "Sinh nhật..."
     },
-    {
-      "text": "Thủy triều dâng cao vì Hằng Nguyệt.",
-      "title": "Cảm Giác Đột Phá - Khởi"
-    },
-    {
-      "text": "Đêm lạnh lẽo trở nên sáng tỏ vì Sương Nguyệt.",
-      "title": "Cảm Giác Đột Phá - Thừa"
-    },
-    {
-      "text": "Bóng tối càng thêm sâu thẳm vì Hồng Nguyệt.",
-      "title": "Cảm Giác Đột Phá - Chuyển"
-    },
+    { "text": "Thủy triều dâng cao vì Hằng Nguyệt.", "title": "Cảm Giác Đột Phá - Khởi" },
+    { "text": "Đêm lạnh lẽo trở nên sáng tỏ vì Sương Nguyệt.", "title": "Cảm Giác Đột Phá - Thừa" },
+    { "text": "Bóng tối càng thêm sâu thẳm vì Hồng Nguyệt.", "title": "Cảm Giác Đột Phá - Chuyển" },
     {
       "text": "Sợi chỉ định mệnh đã được kế thừa trong lòng bàn tay tôi. Từ đây, Tân Nguyệt sẽ dõi theo và soi sáng thế giới dưới ánh trăng.",
       "title": "Cảm Giác Đột Phá - Hợp"
@@ -594,22 +543,13 @@
       "text": "Rảnh rỗi quá... Ước gì gặp được vài kẻ ngớ ngẩn nào đó muốn kiếm chuyện...",
       "title": "Nói chuyện phiếm - Nhàm Chán"
     },
-    {
-      "text": "Đi nào, đi hóng chuyện thôi!",
-      "title": "Nói chuyện phiếm - Hóng Chuyện"
-    },
-    {
-      "text": "Gió mưa kéo đến, cũng là một dạng chỉ dụ của thần.",
-      "title": "Khi trời mưa..."
-    },
+    { "text": "Đi nào, đi hóng chuyện thôi!", "title": "Nói chuyện phiếm - Hóng Chuyện" },
+    { "text": "Gió mưa kéo đến, cũng là một dạng chỉ dụ của thần.", "title": "Khi trời mưa..." },
     {
       "text": "Tôi nghe nói đây là cách mà vị thần nào đó truyền đạt chỉ dụ... Không phải là tôi muốn nói tốt về vị thần của mình đâu, nhưng mà... Barbatos dịu dàng hơn nhiều.",
       "title": "Khi có sấm sét..."
     },
-    {
-      "text": "Nổi gió rồi, bắt đầu cầu nguyện nào.",
-      "title": "Khi gió nổi lên..."
-    },
+    { "text": "Nổi gió rồi, bắt đầu cầu nguyện nào.", "title": "Khi gió nổi lên..." },
     {
       "text": "Chào buổi sáng. Tôi vừa cầu nguyện buổi sáng xong, thật may mắn, câu hỏi của tôi tiếp tục được Phong Thần giải đáp. Tất nhiên, tôi cũng đã cầu phúc cho {F#cô}{M#cậu} rồi.",
       "title": "Chào buổi sáng..."
@@ -622,10 +562,7 @@
       "text": "Chào buổi tối, có muốn lên trên tường thành hóng gió không? Tại sao lại là tường thành à? Tất nhiên là vì tầm nhìn đẹp rồi!",
       "title": "Chào buổi tối..."
     },
-    {
-      "text": "Gió đêm mang theo lời khuyên của thần linh... Đến lúc nghỉ ngơi rồi.",
-      "title": "Chúc ngủ ngon..."
-    },
+    { "text": "Gió đêm mang theo lời khuyên của thần linh... Đến lúc nghỉ ngơi rồi.", "title": "Chúc ngủ ngon..." },
     {
       "text": "Chức trách của phó tế là hỗ trợ Giáo Hội Tây Phong hoàn thành các nghi thức cầu nguyện, nhưng nhờ tư chất hơn người nên tôi còn phụ trách lắng nghe và truyền đạt lại chỉ thị của thần. Về một ý nghĩa nào đó, tôi coi như là người đại diện của Phong Thần ở Giáo Hội. Ngoài ra, có thể {F#cô}{M#cậu} không ngờ tới, nhưng tôi còn là người hát dẫn cho dàn hợp xướng của Giáo Hội đó.",
       "title": "Về bản thân Dahlia - Chức Trách"
@@ -746,10 +683,7 @@
       "text": "Hãy bước đi, tiến bước trên con đường {F#cô}{M#cậu} phải đi. Tiếng chuông ngoài cửa chính là chỉ thị của thần linh, đang kêu gọi {F#cô}{M#cậu} khởi hành.",
       "title": "Cảm Giác Đột Phá - Chuyển"
     },
-    {
-      "text": "Xin hãy lắng nghe lời cầu nguyện và để cho ngọn gió dẫn lối.",
-      "title": "Cảm Giác Đột Phá - Hợp"
-    }
+    { "text": "Xin hãy lắng nghe lời cầu nguyện và để cho ngọn gió dẫn lối.", "title": "Cảm Giác Đột Phá - Hợp" }
   ],
   "Durin": [
     {
@@ -768,42 +702,18 @@
       "text": "Tôi vẫn còn nhiều điều cần học về cách giao tiếp xã hội, nên khi căng thẳng thì không biết để tay vào đâu... Nhưng tôi rất muốn kết bạn với mọi người.",
       "title": "Nói chuyện phiếm - Lo Lắng"
     },
-    {
-      "text": "Ôi, muốn giẫm vào vũng nước quá...",
-      "title": "Khi trời mưa..."
-    },
-    {
-      "text": "Thời tiết thế này, tốt nhất đừng bay quá cao...",
-      "title": "Khi có sấm sét..."
-    },
-    {
-      "text": "\"Nó\" đã từng yên nghỉ ở một nơi như thế này sao...?",
-      "title": "Khi tuyết rơi..."
-    },
-    {
-      "text": "Đẹp như trong truyện cổ tích vậy.",
-      "title": "Ánh nắng thật chan hòa..."
-    },
-    {
-      "text": "Không ổn rồi, tôi muốn uống nước...",
-      "title": "Khi trong sa mạc..."
-    },
+    { "text": "Ôi, muốn giẫm vào vũng nước quá...", "title": "Khi trời mưa..." },
+    { "text": "Thời tiết thế này, tốt nhất đừng bay quá cao...", "title": "Khi có sấm sét..." },
+    { "text": "\"Nó\" đã từng yên nghỉ ở một nơi như thế này sao...?", "title": "Khi tuyết rơi..." },
+    { "text": "Đẹp như trong truyện cổ tích vậy.", "title": "Ánh nắng thật chan hòa..." },
+    { "text": "Không ổn rồi, tôi muốn uống nước...", "title": "Khi trong sa mạc..." },
     {
       "text": "Chào buổi sáng. Đừng để ý việc tôi nghiêng đầu nhé, do cổ tôi hơi cứng... Đêm qua hiếm hoi lắm mới có một chú mèo con ngủ cách tôi vài mét, thật không ngờ nó không bị tôi dọa chạy mất. Vì không muốn làm nó giật mình nên cả đêm tôi không dám cử động...",
       "title": "Chào buổi sáng..."
     },
-    {
-      "text": "Nếu đã có bữa sáng muộn, vậy thì liệu có bữa trưa trễ không nhỉ?",
-      "title": "Chào buổi trưa..."
-    },
-    {
-      "text": "Không biết tối nay có thể nhìn thấy những vì sao không nhỉ...",
-      "title": "Chào buổi tối..."
-    },
-    {
-      "text": "Cuộn đuôi quanh người và ngủ, thật yên bình.",
-      "title": "Chúc ngủ ngon..."
-    },
+    { "text": "Nếu đã có bữa sáng muộn, vậy thì liệu có bữa trưa trễ không nhỉ?", "title": "Chào buổi trưa..." },
+    { "text": "Không biết tối nay có thể nhìn thấy những vì sao không nhỉ...", "title": "Chào buổi tối..." },
+    { "text": "Cuộn đuôi quanh người và ngủ, thật yên bình.", "title": "Chúc ngủ ngon..." },
     {
       "text": "Thấy tôi trưởng thành hơn ư? Dù sao thì tôi cũng không còn là một đứa trẻ nữa mà, không cố gắng trưởng thành thì trông không ổn đâu... Tôi không muốn mãi giậm chân tại chỗ.",
       "title": "Về bản thân Durin - Trưởng Thành"
@@ -990,10 +900,7 @@
       "text": "Hơi nước bốc lên, nhiệt độ tăng trở lại... Cảm giác nhàn nhã này, nên chuyển đổi vị giác như thế nào để truyền đạt đây?",
       "title": "Sau cơn mưa trời lại sáng..."
     },
-    {
-      "text": "Hah, mong là tuyết này đủ sạch để giúp giữ cho mọi thứ tươi mới.",
-      "title": "Khi tuyết rơi..."
-    },
+    { "text": "Hah, mong là tuyết này đủ sạch để giúp giữ cho mọi thứ tươi mới.", "title": "Khi tuyết rơi..." },
     {
       "text": "Ánh nắng rực rỡ... Như hương vị \"rực rỡ\" với sự kết hợp giữa cam chua, lá mâm xôi và đường, có lẽ là một ý tưởng mới.",
       "title": "Ánh nắng thật chan hòa..."
@@ -1184,10 +1091,7 @@
       "text": "Mỗi trận tuyết đều là tiếng gọi từ Snezhnaya, đó là nơi huyết mạch của tôi thuộc về.",
       "title": "Khi tuyết rơi..."
     },
-    {
-      "text": "\"Gió đã tỉnh lại, lá rụng bay lượn...\"",
-      "title": "Gió lớn quá..."
-    },
+    { "text": "\"Gió đã tỉnh lại, lá rụng bay lượn...\"", "title": "Gió lớn quá..." },
     {
       "text": "Giữa không trung là những hạt tuyết màu vàng đang nhảy múa. Hah, thì ra đây chính là sa mạc trong truyền thuyết.",
       "title": "Khi trong sa mạc..."
@@ -1300,14 +1204,8 @@
       "text": "Vì quan hệ của chúng ta ngày càng thân thiết, có thể thứ lỗi khi tôi đưa ra ý kiến nho nhỏ không? {F#Cô}{M#Cậu} nên biết đôi chút về vài tình huống vi diệu của tôi... Những món ăn mà người bình thường thích thì tôi sẽ thấy không hấp dẫn lắm. À, đừng hiểu lầm nhé, tôi vẫn rất tận hưởng thời gian dùng bữa cùng {F#cô}{M#cậu}.",
       "title": "Món ăn ghét..."
     },
-    {
-      "text": "Tôi chưa bao giờ nghi ngờ tài năng của {F#cô}{M#cậu}.",
-      "title": "Nhận Được Quà I"
-    },
-    {
-      "text": "Hmm, đương nhiên rồi, mùi vị của chúng khá ngon đấy.",
-      "title": "Nhận Được Quà II"
-    },
+    { "text": "Tôi chưa bao giờ nghi ngờ tài năng của {F#cô}{M#cậu}.", "title": "Nhận Được Quà I" },
+    { "text": "Hmm, đương nhiên rồi, mùi vị của chúng khá ngon đấy.", "title": "Nhận Được Quà II" },
     {
       "text": "Vì mối quan hệ tốt đẹp giữa chúng ta, xin đừng hỏi cảm nghĩ của tôi nhé.",
       "title": "Nhận Được Quà III"
@@ -1338,10 +1236,7 @@
       "text": "Cứ gọi tôi Iansan là được, tôi đến từ Cộng Đồng Trù Phú, là huấn luyện viên thể hình nổi tiếng nhất ở đó. Vóc dáng của {F#cô}{M#cậu} khá ổn đấy, có hứng thú với việc tập thể hình không?",
       "title": "Lần đầu gặp mặt..."
     },
-    {
-      "text": "Vẫn chưa đạt chỉ tiêu hôm nay, thêm một hiệp nào.",
-      "title": "Nói chuyện phiếm - Cử Tạ"
-    },
+    { "text": "Vẫn chưa đạt chỉ tiêu hôm nay, thêm một hiệp nào.", "title": "Nói chuyện phiếm - Cử Tạ" },
     {
       "text": "Cân nhắc lượng calo đã nạp vào trước đó... Bữa tối phải điều chỉnh lại một chút.",
       "title": "Nói chuyện phiếm - Kế Hoạch Ăn Uống"
@@ -1350,26 +1245,11 @@
       "text": "Luôn có người cho rằng tôi bẩm sinh đã có sức mạnh siêu phàm, nhưng thật ra tôi chỉ kế thừa được mỗi gen thấp bé mà thôi. Tất cả sức mạnh mà tôi có được đều nhờ vào kế hoạch tập luyện hợp lý cả. Chỉ cần nỗ lực giống như vậy thì {F#cô}{M#cậu} cũng sẽ có sức mạnh này đấy.",
       "title": "Nói chuyện phiếm - Sức Mạnh"
     },
-    {
-      "text": "Mau tìm chỗ trú mưa đi, lỡ như bị cảm thì sẽ không tốt cho sức khỏe đâu.",
-      "title": "Khi trời mưa..."
-    },
-    {
-      "text": "Tới lúc ra ngoài tắm nắng rồi, tập hợp!",
-      "title": "Sau cơn mưa trời lại sáng..."
-    },
-    {
-      "text": "Thời tiết này rất thích hợp để tập luyện.",
-      "title": "Ánh nắng thật chan hòa..."
-    },
-    {
-      "text": "Chạy ngược chiều gió cũng là một cách tập luyện sức bền.",
-      "title": "Gió lớn quá..."
-    },
-    {
-      "text": "Ở đây không thích hợp để tập luyện...",
-      "title": "Khi trong sa mạc..."
-    },
+    { "text": "Mau tìm chỗ trú mưa đi, lỡ như bị cảm thì sẽ không tốt cho sức khỏe đâu.", "title": "Khi trời mưa..." },
+    { "text": "Tới lúc ra ngoài tắm nắng rồi, tập hợp!", "title": "Sau cơn mưa trời lại sáng..." },
+    { "text": "Thời tiết này rất thích hợp để tập luyện.", "title": "Ánh nắng thật chan hòa..." },
+    { "text": "Chạy ngược chiều gió cũng là một cách tập luyện sức bền.", "title": "Gió lớn quá..." },
+    { "text": "Ở đây không thích hợp để tập luyện...", "title": "Khi trong sa mạc..." },
     {
       "text": "Ồ, chào buổi sáng. Nếu muốn rèn luyện ý chí của mình thì dậy sớm là một trong những hạng mục cơ bản nhất. Người mà đến cả việc rời khỏi giường cũng không làm được thì chắc chắn cũng không thể kiên trì với bất cứ kế hoạch nào. Mà kể ra, lúc này cũng rất thích hợp để chạy bộ buổi sáng đấy, có muốn chạy cùng không?",
       "title": "Chào buổi sáng..."
@@ -1382,10 +1262,7 @@
       "text": "Chào buổi tối, {F#cô}{M#cậu} có hứng thú với tập luyện buổi tối không? Khoảng thời gian vừa chập tối rất thích hợp để tập luyện ngoài trời. Lúc này không có ánh nắng gay gắt, có thể giảm thiểu tiêu hao nước. Hơn nữa tập luyện vừa phải còn giúp ngủ ngon hơn, có muốn thử xem không?",
       "title": "Chào buổi tối..."
     },
-    {
-      "text": "Nên nghỉ ngơi thôi, thức khuya là đại kỵ trong việc tập luyện.",
-      "title": "Chúc ngủ ngon..."
-    },
+    { "text": "Nên nghỉ ngơi thôi, thức khuya là đại kỵ trong việc tập luyện.", "title": "Chúc ngủ ngon..." },
     {
       "text": "Tập luyện thể hình là một trong những truyền thống của Cộng Đồng Trù Phú, những người trẻ tuổi của bộ tộc còn thích khoe cơ bắp với nhau để thể hiện sự thân thiện. Thế nên nếu muốn trở thành huấn luyện viên thể hình ở một bộ tộc như vậy thì không thể chỉ khua môi múa mép được, mà còn phải có bản lĩnh thật sự nữa. Còn về trường hợp của tôi, thì thật ra lúc đầu tôi không có ý định trở thành huấn luyện viên, mà chỉ âm thầm thực hiện kế hoạch tập luyện của mình mà thôi. Cũng không biết từ lúc nào mà những người quan sát xung quanh đều tỏ vẻ ngạc nhiên, rồi dần dần có nhiều người đến xin lời khuyên của tôi hơn. Thế là tôi cũng tự nhiên trở thành một huấn luyện viên.",
       "title": "Về bản thân Iansan - Huấn Luyện Viên Thể Hình"
@@ -1556,10 +1433,7 @@
       "text": "Chào buổi sáng. Không phải là tôi muốn dậy sớm thế đâu. Chỉ là nếu ngủ tiếp thì e là bệnh nhân ở phòng khám sẽ đói đến mức la hét om sòm mất.",
       "title": "Chào buổi sáng..."
     },
-    {
-      "text": "Trùng hợp quá, tôi đang chuẩn bị đi ăn trưa, có muốn đi cùng không nào?",
-      "title": "Chào buổi trưa..."
-    },
+    { "text": "Trùng hợp quá, tôi đang chuẩn bị đi ăn trưa, có muốn đi cùng không nào?", "title": "Chào buổi trưa..." },
     {
       "text": "Buổi tối tôi thường hay ở nhà, nếu có bệnh nhân khẩn cấp sẽ dễ dàng tìm thấy tôi. Còn nếu không xảy ra chuyện gì ngoài ý muốn thì cứ nghỉ ngơi cho khỏe thôi.",
       "title": "Chào buổi tối..."
@@ -1684,10 +1558,7 @@
       "text": "Chúc mừng sinh nhật! Mong {F#cô}{M#cậu} luôn luôn mạnh khỏe, mãi mãi trẻ trung.\nTuy không thể ngăn cản thời gian, nhưng vẫn có thể giữ cho tâm hồn trẻ trung. Huống hồ, tâm trạng không tốt cũng sẽ ảnh hưởng đến sức khỏe. Nào, hôm nay hãy quên đi phiền não, tìm những việc thư giãn vui vẻ để làm thôi.\nÀ đúng rồi, {F#cô}{M#cậu} thích thể loại âm nhạc nào thế? Để tôi chơi một bài cho {F#cô}{M#cậu} nghe.",
       "title": "Sinh nhật..."
     },
-    {
-      "text": "Là khởi động làm nóng người à?",
-      "title": "Cảm Giác Đột Phá - Khởi"
-    },
+    { "text": "Là khởi động làm nóng người à?", "title": "Cảm Giác Đột Phá - Khởi" },
     {
       "text": "Bản thân có khỏe mạnh thì mới có sức để chăm sóc người khác chứ, đúng không?",
       "title": "Cảm Giác Đột Phá - Thừa"
@@ -1718,10 +1589,7 @@
       "text": "Chỉ làm những việc mình giỏi thì không được đâu. Khi ép bản thân làm những việc khó khăn thì mới mạnh mẽ hơn được.",
       "title": "Nói chuyện phiếm - Khó Khăn"
     },
-    {
-      "text": "Mặt trời mọc rồi, xem ra lần này phe ánh sáng đã thắng.",
-      "title": "Sau cơn mưa trời lại sáng..."
-    },
+    { "text": "Mặt trời mọc rồi, xem ra lần này phe ánh sáng đã thắng.", "title": "Sau cơn mưa trời lại sáng..." },
     {
       "text": "Cha nói hiện tượng này là do các vị thần trên trời đang giao chiến. Chỉ mong họ đừng gây hại đến những con người vô tội thôi.",
       "title": "Khi có sấm sét..."
@@ -1734,10 +1602,7 @@
       "text": "Gió nổi lên rồi. Tôi cứ có linh cảm chuyện chẳng lành sẽ xảy ra... Hay là chúng ta đến doanh trại gần đây trú tạm nhé?",
       "title": "Gió lớn quá..."
     },
-    {
-      "text": "Đêm đã qua, có vẻ như chúng ta lại trải qua một ngày bình an.",
-      "title": "Chào buổi sáng..."
-    },
+    { "text": "Đêm đã qua, có vẻ như chúng ta lại trải qua một ngày bình an.", "title": "Chào buổi sáng..." },
     {
       "text": "Ánh nắng đang đẹp, nên tranh thủ lúc này để quan sát xem xung quanh có gì nguy hiểm không... Ừm, nhưng mà tôi hơi buồn ngủ rồi...",
       "title": "Chào buổi trưa..."
@@ -1850,10 +1715,7 @@
       "text": "Hương vị thật tuyệt vời, có thể chia sẻ cho tôi bí quyết không? Tôi cũng muốn học làm thử.",
       "title": "Nhận Được Quà I"
     },
-    {
-      "text": "Tuyệt đấy, thật muốn cho các đồng nghiệp nếm thử quá.",
-      "title": "Nhận Được Quà II"
-    },
+    { "text": "Tuyệt đấy, thật muốn cho các đồng nghiệp nếm thử quá.", "title": "Nhận Được Quà II" },
     {
       "text": "Hmm... Hay là để tôi hướng dẫn cho {F#cô}{M#cậu} cách làm vài món ăn nhé.",
       "title": "Nhận Được Quà III"
@@ -1896,10 +1758,7 @@
       "text": "Số liệu chiến đấu đã được cập nhật. Hãy yên tâm, lần này sẽ không làm nổ tung trần nhà đâu.",
       "title": "Nói chuyện phiếm - Cập Nhật"
     },
-    {
-      "text": "Khớp nối... liệu có rỉ sét không?",
-      "title": "Khi trời mưa..."
-    },
+    { "text": "Khớp nối... liệu có rỉ sét không?", "title": "Khi trời mưa..." },
     {
       "text": "Lưu ý: Tỉ lệ hình thành cầu vồng cao, địa điểm quan sát đã được đánh dấu trên bản đồ.",
       "title": "Sau cơn mưa trời lại sáng..."
@@ -2060,10 +1919,7 @@
       "text": "Dịch vụ ngày đặc biệt của Ineffa đã bắt đầu. Hãy chọn vị trí thích hợp để ngồi nghỉ ngơi một lát, tôi sẽ quét dọn phòng ốc, bố trí ruy băng, bóng bay và hoa tươi. Sau đó căn cứ theo dữ liệu đã ghi nhận, tôi sẽ chuẩn bị món ăn và bánh kem mà {F#cô}{M#cậu} thích. Nếu có yêu cầu gì khác ngoài danh sách, hãy nói với tôi bất cứ lúc nào. Hãy cùng nhau trải qua một ngày đặc biệt nào, chúc mừng sinh nhật!",
       "title": "Sinh Nhật..."
     },
-    {
-      "text": "Đến giờ bảo trì định kỳ rồi sao?",
-      "title": "Cảm Giác Đột Phá - Khởi"
-    },
+    { "text": "Đến giờ bảo trì định kỳ rồi sao?", "title": "Cảm Giác Đột Phá - Khởi" },
     {
       "text": "Hiệu suất vận hành lõi đã tăng lên. {F#Cô}{M#Cậu} có tiềm năng trở thành thợ cơ khí đấy.",
       "title": "Cảm Giác Đột Phá - Thừa"
@@ -2094,18 +1950,9 @@
       "text": "Lần trước khi tôi sờ Ashru, nó bất ngờ chạy mất. Hừm, hôm nay không cho nó ăn cá khô nữa.",
       "title": "Nói chuyện phiếm - Ashru"
     },
-    {
-      "text": "Trời mưa rồi à? Đi thôi, tìm chỗ trú mưa nào, đừng để bị ướt nhé.",
-      "title": "Khi trời mưa..."
-    },
-    {
-      "text": "Waaah! Tuyết bay vào cổ rồi, lạnh chết đi được...",
-      "title": "Khi tuyết rơi..."
-    },
-    {
-      "text": "Khụ khụ khụ, cát bay vào miệng rồi!",
-      "title": "Khi trong sa mạc..."
-    },
+    { "text": "Trời mưa rồi à? Đi thôi, tìm chỗ trú mưa nào, đừng để bị ướt nhé.", "title": "Khi trời mưa..." },
+    { "text": "Waaah! Tuyết bay vào cổ rồi, lạnh chết đi được...", "title": "Khi tuyết rơi..." },
+    { "text": "Khụ khụ khụ, cát bay vào miệng rồi!", "title": "Khi trong sa mạc..." },
     {
       "text": "Chào buổi sáng. Đã ăn sáng chưa, để tôi dẫn {F#cô}{M#cậu} đi ăn món gì đó ngon nhé?",
       "title": "Chào buổi sáng..."
@@ -2114,10 +1961,7 @@
       "text": "Oápp, hay là quay về cửa tiệm để ngủ trưa nhỉ? Sao cứ thấy buồn ngủ thế nào ấy...",
       "title": "Chào buổi trưa..."
     },
-    {
-      "text": "Muộn thế này rồi, nghỉ ngơi thôi. Đi về vuốt ve Ashru nào...",
-      "title": "Chào buổi tối..."
-    },
+    { "text": "Muộn thế này rồi, nghỉ ngơi thôi. Đi về vuốt ve Ashru nào...", "title": "Chào buổi tối..." },
     {
       "text": "Oápp, đến giờ đi ngủ rồi... Này, vẫn còn đang bận à? Cũng nên nghỉ ngơi đi thôi.",
       "title": "Chúc ngủ ngon..."
@@ -2226,10 +2070,7 @@
       "text": "Ngon quá! Không ngờ tay nghề của {F#cô}{M#cậu} lại giỏi thế, cho tôi thêm nữa nhé. Hihihi, so với tay nghề của sếp Nef thì còn... Khụ! À... {F#Cô}{M#Cậu} ăn chưa? Hay là... cùng ăn nhé?",
       "title": "Nhận Được Quà I"
     },
-    {
-      "text": "Không tệ đâu! Hihi, ăn cho no vào rồi còn đi làm nữa.",
-      "title": "Nhận Được Quà II"
-    },
+    { "text": "Không tệ đâu! Hihi, ăn cho no vào rồi còn đi làm nữa.", "title": "Nhận Được Quà II" },
     {
       "text": "Ừm... Tôi có thể... ăn hết mà. Tôi sẽ không lãng phí đồ ăn đâu. Haha... ha...",
       "title": "Nhận Được Quà III"
@@ -2238,18 +2079,9 @@
       "text": "Chúc mừng sinh nhật! Đây, tặng {F#cô}{M#cậu} con búp bê này, tôi vừa mới may xong đấy. Đây là lần đầu tiên tôi may búp bê theo cách này nên mất khá nhiều thời gian đó. Bên trong búp bê còn có cả thảo dược giúp dễ ngủ và an thần nữa. {F#Cô}{M#Cậu} để nó bên cạnh gối nhé, đảm bảo sẽ ngủ ngon lành, tuyệt đối không gặp ác mộng đâu. Sao tay lại dán băng cá nhân thế này à? Hmm, lúc chơi với Ashru bị nó cào một cái thôi, không sao đâu, hahaha... Không sao đâu mà...",
       "title": "Sinh nhật..."
     },
-    {
-      "text": "Ồ? Không tệ đấy!",
-      "title": "Cảm Giác Đột Phá - Khởi"
-    },
-    {
-      "text": "Thân thủ nhanh nhẹn hơn rồi.",
-      "title": "Cảm Giác Đột Phá - Thừa"
-    },
-    {
-      "text": "Ừm... Đến lúc vận động cơ thể rồi!",
-      "title": "Cảm Giác Đột Phá - Chuyển"
-    },
+    { "text": "Ồ? Không tệ đấy!", "title": "Cảm Giác Đột Phá - Khởi" },
+    { "text": "Thân thủ nhanh nhẹn hơn rồi.", "title": "Cảm Giác Đột Phá - Thừa" },
+    { "text": "Ừm... Đến lúc vận động cơ thể rồi!", "title": "Cảm Giác Đột Phá - Chuyển" },
     {
       "text": "Hihi, đủ để tôi làm một phi vụ lớn rồi... Thế nào? Muốn tham gia không?",
       "title": "Cảm Giác Đột Phá - Hợp"
@@ -2272,14 +2104,8 @@
       "text": "Đã nghĩ ra muốn đi đâu chưa? Hay là, tìm một bãi cỏ nằm nghỉ ngơi một lát đi.",
       "title": "Nói chuyện phiếm - Hành Trình"
     },
-    {
-      "text": "A, lại sắp đến mùa cỏ cây um tùm rồi...",
-      "title": "Khi trời mưa..."
-    },
-    {
-      "text": "Một khoảnh khắc lấp lánh... còn khó nắm bắt hơn cả ánh trăng...",
-      "title": "Khi có sấm sét..."
-    },
+    { "text": "A, lại sắp đến mùa cỏ cây um tùm rồi...", "title": "Khi trời mưa..." },
+    { "text": "Một khoảnh khắc lấp lánh... còn khó nắm bắt hơn cả ánh trăng...", "title": "Khi có sấm sét..." },
     {
       "text": "Nghe nói ta không thể nhìn quá lâu vào màu trắng tinh khôi như vậy, là thật sao? Tôi thì khá thích đấy...",
       "title": "Khi tuyết rơi..."
@@ -2288,26 +2114,11 @@
       "text": "Tôi từng nghe Nefer nói trên thế gian có một nơi như thế... Thì ra là phong cảnh như vậy.",
       "title": "Khi trong sa mạc..."
     },
-    {
-      "text": "Chào buổi sáng. Nguyệt Thần phù hộ, bất kể ngày đêm.",
-      "title": "Chào buổi sáng..."
-    },
-    {
-      "text": "Chào buổi sáng. Ánh trăng sẽ kết nối chúng ta, bất kể ngày đêm.",
-      "title": "Chào buổi sáng..."
-    },
-    {
-      "text": "...A, tôi vừa ngủ gật sao? Xin lỗi. Có gì việc gì cần thì cứ nói nhé.",
-      "title": "Chào buổi trưa..."
-    },
-    {
-      "text": "Ánh trăng đêm nay rất bình yên. Muốn cùng đi dạo trong rừng không?",
-      "title": "Chào buổi tối..."
-    },
-    {
-      "text": "Những vì sao đã chúc nhau ngủ ngon rồi, giờ tới lượt chúng ta đấy.",
-      "title": "Chúc ngủ ngon..."
-    },
+    { "text": "Chào buổi sáng. Nguyệt Thần phù hộ, bất kể ngày đêm.", "title": "Chào buổi sáng..." },
+    { "text": "Chào buổi sáng. Ánh trăng sẽ kết nối chúng ta, bất kể ngày đêm.", "title": "Chào buổi sáng..." },
+    { "text": "...A, tôi vừa ngủ gật sao? Xin lỗi. Có gì việc gì cần thì cứ nói nhé.", "title": "Chào buổi trưa..." },
+    { "text": "Ánh trăng đêm nay rất bình yên. Muốn cùng đi dạo trong rừng không?", "title": "Chào buổi tối..." },
+    { "text": "Những vì sao đã chúc nhau ngủ ngon rồi, giờ tới lượt chúng ta đấy.", "title": "Chúc ngủ ngon..." },
     {
       "text": "Luật lệ không thể coi như trò đùa, sự vô tâm của con người chính là thần linh giả tạo. Dù là ở đâu, nơi mà đám đông tụ tập đều cần có quy tắc. Dù là nơi có chung tín ngưỡng như Dòng Dõi Sương Nguyệt cũng phải có quy tắc thuộc về con người.",
       "title": "Về bản thân Lauma - Trách Nhiệm"
@@ -2364,10 +2175,7 @@
       "text": "Thần linh mới sinh ra không thể học được cách chung sống với tín đồ từ bất cứ đâu, cô ấy trong quá khứ chắc hẳn đã rất buồn...\nĐể tìm cách hòa giải mối quan hệ này, tôi đã đưa ra yêu cầu gần như vô lễ với thần linh. Tuy cô ấy nói thích ở một mình hơn, nhưng tôi vẫn ôm hy vọng, mong một ngày nào đó, Kuutar và Dòng Dõi Sương Nguyệt, mặt trăng và những người ngước nhìn mặt trăng, có thể cùng nhau cụng ly dưới cùng một bầu trời.",
       "title": "Về \"Kuutar\"..."
     },
-    {
-      "text": "Hãy nhìn mặt trăng kìa. Nó luôn ở đó, và luôn tĩnh lặng.",
-      "title": "Muốn tìm hiểu Lauma - Điều thứ 1"
-    },
+    { "text": "Hãy nhìn mặt trăng kìa. Nó luôn ở đó, và luôn tĩnh lặng.", "title": "Muốn tìm hiểu Lauma - Điều thứ 1" },
     {
       "text": "Ở rất nhiều nơi, trăng khuyết đều là dấu hiệu của vận xui.\nNhưng bản thân mặt trăng không muốn mình vỡ vụn như thế... Đó cũng chỉ là kết quả của vận mệnh nghiêng ngả mà thôi.",
       "title": "Muốn tìm hiểu Lauma - Điều thứ 2"
@@ -2388,50 +2196,26 @@
       "text": "Tôi thích khoảng thời gian khi ở một mình giữa màn đêm. Chỉ có tiếng gió thổi qua lá cây, chim thú cũng không cất tiếng. Như vậy là yên tĩnh nhất.",
       "title": "Sở thích của Lauma..."
     },
-    {
-      "text": "Trên đầu... rất nặng nề.",
-      "title": "Phiền não của Lauma..."
-    },
+    { "text": "Trên đầu... rất nặng nề.", "title": "Phiền não của Lauma..." },
     {
       "text": "Không hề liên quan đến giới luật và tín ngưỡng, những món thanh đạm là đồ dễ ăn nhất với tôi.",
       "title": "Món ăn yêu thích..."
     },
-    {
-      "text": "Những món nhiều dầu mỡ hoặc khô khan... Tôi không thích nghi được.",
-      "title": "Món ăn ghét..."
-    },
+    { "text": "Những món nhiều dầu mỡ hoặc khô khan... Tôi không thích nghi được.", "title": "Món ăn ghét..." },
     {
       "text": "Nguyên liệu tươi ngon như vậy, {F#cô}{M#cậu} thật có lòng. Hãy để tôi đem tới cho các tín đồ... Sao cơ, dành riêng cho tôi à?",
       "title": "Nhận Được Quà I"
     },
-    {
-      "text": "Cảm ơn món quà này của {F#cô}{M#cậu}, hay là chúng ta cùng chia sẻ nhé.",
-      "title": "Nhận Được Quà II"
-    },
-    {
-      "text": "Có lẽ sẽ có người cần nó hơn tôi, tôi sẽ giúp {F#cô}{M#cậu} để ý.",
-      "title": "Nhận Được Quà III"
-    },
+    { "text": "Cảm ơn món quà này của {F#cô}{M#cậu}, hay là chúng ta cùng chia sẻ nhé.", "title": "Nhận Được Quà II" },
+    { "text": "Có lẽ sẽ có người cần nó hơn tôi, tôi sẽ giúp {F#cô}{M#cậu} để ý.", "title": "Nhận Được Quà III" },
     {
       "text": "Một con dao găm mang theo lời chúc phúc, dành tặng cho vị khách quý được ánh trăng và rừng sâu yêu mến. Dao găm không nhất định là vật nguy hiểm, đôi khi nó cũng được dùng như một món đồ lễ trong các nghi thức cầu nguyện.\nTất nhiên, {F#cô}{M#cậu} muốn dùng nó làm gì cũng được.",
       "title": "Sinh nhật..."
     },
-    {
-      "text": "Không nên tham đi đường tắt...",
-      "title": "Cảm Giác Đột Phá - Khởi"
-    },
-    {
-      "text": "Không được tham lam sức mạnh...",
-      "title": "Cảm Giác Đột Phá - Thừa"
-    },
-    {
-      "text": "Nếu tất cả đều là để gặp gỡ \"sự thật\"...",
-      "title": "Cảm Giác Đột Phá - Chuyển"
-    },
-    {
-      "text": "Tôi sẵn lòng dâng hiến máu và nước mắt như một người cầu đạo.",
-      "title": "Cảm Giác Đột Phá - Hợp"
-    }
+    { "text": "Không nên tham đi đường tắt...", "title": "Cảm Giác Đột Phá - Khởi" },
+    { "text": "Không được tham lam sức mạnh...", "title": "Cảm Giác Đột Phá - Thừa" },
+    { "text": "Nếu tất cả đều là để gặp gỡ \"sự thật\"...", "title": "Cảm Giác Đột Phá - Chuyển" },
+    { "text": "Tôi sẵn lòng dâng hiến máu và nước mắt như một người cầu đạo.", "title": "Cảm Giác Đột Phá - Hợp" }
   ],
   "Linnea": [
     {
@@ -2450,18 +2234,12 @@
       "text": "{F#Cô}{M#Cậu} muốn xem cuốn cẩm nang sưu tập à? Đương nhiên là được, đây là tác phẩm tâm đắc của tôi, ngay cả những hình minh họa bên trong cũng là do tôi tự vẽ đấy.",
       "title": "Nói chuyện phiếm - Cẩm Nang"
     },
-    {
-      "text": "Mùi đất ẩm... Thế giới đang tỉnh giấc lần nữa.",
-      "title": "Sau cơn mưa trời lại sáng..."
-    },
+    { "text": "Mùi đất ẩm... Thế giới đang tỉnh giấc lần nữa.", "title": "Sau cơn mưa trời lại sáng..." },
     {
       "text": "Lạnh quá... Muốn đắp người tuyết không? Lumi cũng đến giúp nào! A! Không cần búa đâu.",
       "title": "Khi tuyết rơi..."
     },
-    {
-      "text": "Không biết hạt giống bồ công anh sẽ bay về đâu...",
-      "title": "Khi gió nổi lên..."
-    },
+    { "text": "Không biết hạt giống bồ công anh sẽ bay về đâu...", "title": "Khi gió nổi lên..." },
     {
       "text": "\"Ngủ đi, ngủ đi, Cõi Mộng Hoàng Kim đang kêu gọi những hạt cát lang thang, ở nơi đây chẳng cần phải uống thứ nước mặn đắng ấy, ở nơi đây sẽ chẳng còn những nỗi lo lắng của ngày mai...\"",
       "title": "Khi trong sa mạc..."
@@ -2586,22 +2364,13 @@
       "text": "Ngon quá! Lần sau để tôi làm, cho {F#cô}{M#cậu} nếm thử tay nghề của tôi.",
       "title": "Nhận Được Quà II"
     },
-    {
-      "text": "Hmm... Ít nhất cũng không có hại gì cho cơ thể.",
-      "title": "Nhận Được Quà III"
-    },
+    { "text": "Hmm... Ít nhất cũng không có hại gì cho cơ thể.", "title": "Nhận Được Quà III" },
     {
       "text": "Chúc mừng sinh nhật... Tuy không phải là món quà quý giá gì, nhưng đây là hóa thạch mà tôi cất giữ lâu nay, xin hãy nhận lấy. Nhìn này, ở đây có xương và dấu lông vũ của loài chim đã tuyệt chủng từ lâu, tuy chúng không thể bay được nữa, nhưng khoảnh khắc vỗ cánh ấy đã được in dấu lại... Dù sinh mệnh rồi cũng sẽ lụi tàn, nhưng bằng chứng chúng ta từng tồn tại sẽ luôn được kế thừa dưới một hình thức nào đó. Mong cuộc đời {F#cô}{M#cậu} cũng kiên cường như cây cổ thụ, mỗi vòng năm tháng đều khắc ghi những câu chuyện đẹp đẽ.",
       "title": "Sinh nhật..."
     },
-    {
-      "text": "Các giác quan trở nên nhạy bén hơn.",
-      "title": "Cảm Giác Đột Phá - Khởi"
-    },
-    {
-      "text": "Sự thấu hiểu về vạn vật trên đời lại càng thêm sâu sắc.",
-      "title": "Cảm Giác Đột Phá - Thừa"
-    },
+    { "text": "Các giác quan trở nên nhạy bén hơn.", "title": "Cảm Giác Đột Phá - Khởi" },
+    { "text": "Sự thấu hiểu về vạn vật trên đời lại càng thêm sâu sắc.", "title": "Cảm Giác Đột Phá - Thừa" },
     {
       "text": "Cảm nhận được dòng chảy của sức mạnh... giống như nắm bắt được quy luật của dòng chảy, hành trình cũng trở nên suôn sẻ hơn.",
       "title": "Cảm Giác Đột Phá - Chuyển"
@@ -2628,10 +2397,7 @@
       "text": "Quan hệ giữa tôi và mọi người trong Đội Kỵ Sĩ thế nào? Ừm... ít nhất thì mọi người đều có ấn tượng sâu sắc về tôi. Như vậy cũng không tệ.",
       "title": "Nói chuyện phiếm - Các Mối Quan Hệ"
     },
-    {
-      "text": "Mưa to thật, chẳng biết lần này lại có bao nhiêu thứ bị cuốn trôi nữa.",
-      "title": "Khi trời mưa..."
-    },
+    { "text": "Mưa to thật, chẳng biết lần này lại có bao nhiêu thứ bị cuốn trôi nữa.", "title": "Khi trời mưa..." },
     {
       "text": "Sau cơn mưa trời lại sáng, cứ coi như cơn mưa trước đó chưa từng xảy ra.",
       "title": "Sau cơn mưa trời lại sáng..."
@@ -2640,26 +2406,14 @@
       "text": "Tiếng sấm có thể che đi rất nhiều thứ, nhưng tuyệt đối không thể che đi nhịp tim của chính {F#cô}{M#cậu}.",
       "title": "Khi có sấm sét..."
     },
-    {
-      "text": "Tôi rất thích Quán Rượu Đuôi Mèo... nhất là trong thời tiết như thế này.",
-      "title": "Khi tuyết rơi..."
-    },
+    { "text": "Tôi rất thích Quán Rượu Đuôi Mèo... nhất là trong thời tiết như thế này.", "title": "Khi tuyết rơi..." },
     {
       "text": "Gió nổi lên rồi, tiếc là trong tay không có bồ công anh, hay là xé một ít giấy đi, cảm giác cũng tương tự.",
       "title": "Khi gió nổi lên..."
     },
-    {
-      "text": "Tôi rất nhớ Hồ Rượu Trái Cây.",
-      "title": "Khi trong sa mạc..."
-    },
-    {
-      "text": "Chào buổi sáng. Hôm nay bận gì thế?",
-      "title": "Chào buổi sáng..."
-    },
-    {
-      "text": "Đã ăn trưa chưa? Được thôi, buổi chiều còn có việc phải làm.",
-      "title": "Chào buổi trưa..."
-    },
+    { "text": "Tôi rất nhớ Hồ Rượu Trái Cây.", "title": "Khi trong sa mạc..." },
+    { "text": "Chào buổi sáng. Hôm nay bận gì thế?", "title": "Chào buổi sáng..." },
+    { "text": "Đã ăn trưa chưa? Được thôi, buổi chiều còn có việc phải làm.", "title": "Chào buổi trưa..." },
     {
       "text": "Tối nay... hmm, tổ chức một buổi \"huấn luyện đột kích doanh trại\" cho các đội viên vậy.",
       "title": "Chào buổi tối..."
@@ -2792,10 +2546,7 @@
       "text": "Hôm nay là sinh nhật {F#cô}{M#cậu}, cầm lấy chiếc nỏ đeo tay này đi, đây là do tôi tự mày mò làm ra, chắc sẽ vừa vặn với cổ tay {F#cô}{M#cậu}... Tôi đo kích thước khi nào ư? Đo bằng mắt thôi, tôi là đội phó Tiểu Đội 5, hãy tin vào khả năng ước lượng bằng mắt của tôi. À đúng rồi, chiếc nỏ này còn có thể bắn ngược chiều nữa, phòng khi có kẻ đánh lén từ phía sau, chỉ cần ấn chỗ này... Haha, đừng né chứ, khóa an toàn của nỏ còn đang khoá mà, chẳng lẽ tôi trông giống kiểu người tặng người ta một chiếc nỏ, rồi nhìn họ tự bắn mũi tên lên người chính mình sao?",
       "title": "Sinh nhật..."
     },
-    {
-      "text": "Cảm giác không tệ, vũ khí dùng cũng thuận tay hơn rồi.",
-      "title": "Cảm Giác Đột Phá - Khởi"
-    },
+    { "text": "Cảm giác không tệ, vũ khí dùng cũng thuận tay hơn rồi.", "title": "Cảm Giác Đột Phá - Khởi" },
     {
       "text": "Hình như có thể nhìn càng xa hơn... Lần sau ra tay, chắc chắn sẽ càng chuẩn hơn.",
       "title": "Cảm Giác Đột Phá - Thừa"
@@ -2826,30 +2577,15 @@
       "text": "Cảm xúc là cơn sóng dữ cuộn trào trong tâm trí mọi người, phần lớn những người muốn ngăn cản chúng thì đã bị cuốn vào đáy vực sâu trong nội tâm. Còn những người muốn làm ngơ thì lại bị nó hủy hoại tâm hồn thành mớ hỗn độn.",
       "title": "Nói chuyện phiếm - Cảm Xúc"
     },
-    {
-      "text": "Đó là ân điển, và cũng là sự ưu ái của trời cao.",
-      "title": "Khi trời mưa..."
-    },
-    {
-      "text": "Lại có lời nói dối của người khác bị vạch trần rồi.",
-      "title": "Khi có sấm sét..."
-    },
-    {
-      "text": "Để nghe xem gió mang đến tin xấu gì nào.",
-      "title": "Khi gió nổi lên..."
-    },
-    {
-      "text": "Một cảm giác quen thuộc không vui vẻ gì.",
-      "title": "Khi trong sa mạc..."
-    },
+    { "text": "Đó là ân điển, và cũng là sự ưu ái của trời cao.", "title": "Khi trời mưa..." },
+    { "text": "Lại có lời nói dối của người khác bị vạch trần rồi.", "title": "Khi có sấm sét..." },
+    { "text": "Để nghe xem gió mang đến tin xấu gì nào.", "title": "Khi gió nổi lên..." },
+    { "text": "Một cảm giác quen thuộc không vui vẻ gì.", "title": "Khi trong sa mạc..." },
     {
       "text": "Chào buổi sáng. Mỗi ngày {F#cô}{M#cậu} đều chăm chỉ như vậy à? Jahoda thật sự nên học tập {F#cô}{M#cậu} đấy.",
       "title": "Chào buổi sáng..."
     },
-    {
-      "text": "Hooơ... Không có ai đến đây cả, đi ngủ trưa một lát thôi.",
-      "title": "Chào buổi trưa..."
-    },
+    { "text": "Hooơ... Không có ai đến đây cả, đi ngủ trưa một lát thôi.", "title": "Chào buổi trưa..." },
     {
       "text": "Ừm... Cũng đến lúc rồi, tôi phải ra ngoài một chút đây. Trà đã pha xong rồi, tự mình rót nhé.",
       "title": "Chào buổi tối..."
@@ -2966,30 +2702,15 @@
       "text": "Món này ngon thật, có muốn đến Hội Đồng Bí Mật làm đầu bếp để cải thiện bữa ăn của chúng tôi không? Đãi ngộ tốt lắm đó.",
       "title": "Nhận Được Quà I"
     },
-    {
-      "text": "Ngon lắm, không ngờ {F#cô}{M#cậu} lại có tài nghệ này đấy.",
-      "title": "Nhận Được Quà II"
-    },
-    {
-      "text": "Ừm, mùi vị thật ấn tượng... Lát nữa tôi sẽ để Jahoda ăn thử.",
-      "title": "Nhận Được Quà III"
-    },
+    { "text": "Ngon lắm, không ngờ {F#cô}{M#cậu} lại có tài nghệ này đấy.", "title": "Nhận Được Quà II" },
+    { "text": "Ừm, mùi vị thật ấn tượng... Lát nữa tôi sẽ để Jahoda ăn thử.", "title": "Nhận Được Quà III" },
     {
       "text": "Tôi không giỏi chọn quà cho người khác. Thế này đi, hay là tôi cũng hỏi {F#cô}{M#cậu} ba câu hỏi, chỉ cần tìm được đáp án chính xác thì tôi sẽ... Đừng chau mày chứ, tôi chỉ đùa thôi. Đây, cầm lấy cuốn sách này nhé. Trong đó ghi chép lại những truyền thuyết và câu chuyện cổ tích lưu truyền trong sa mạc, mấy đoạn này xem như là câu chuyện tương đối hoàn chỉnh. Những câu chuyện này đã giáo dục nhiều thế hệ người sa mạc, nói không chừng sau khi đọc xong thì {F#cô}{M#cậu} cũng sẽ trở thành một người sa mạc ưu tú đó.",
       "title": "Sinh nhật..."
     },
-    {
-      "text": "Hah, thì ra là vậy.",
-      "title": "Cảm Giác Đột Phá - Khởi"
-    },
-    {
-      "text": "Một vài chân tướng... không đáng nhắc đến.",
-      "title": "Cảm Giác Đột Phá - Thừa"
-    },
-    {
-      "text": "Lại một con đường dẫn tới chân lý.",
-      "title": "Cảm Giác Đột Phá - Chuyển"
-    },
+    { "text": "Hah, thì ra là vậy.", "title": "Cảm Giác Đột Phá - Khởi" },
+    { "text": "Một vài chân tướng... không đáng nhắc đến.", "title": "Cảm Giác Đột Phá - Thừa" },
+    { "text": "Lại một con đường dẫn tới chân lý.", "title": "Cảm Giác Đột Phá - Chuyển" },
     {
       "text": "Xem ra, mối liên hệ giữa hai chúng ta sẽ không dễ dàng bị phá vỡ, đúng không?",
       "title": "Cảm Giác Đột Phá - Hợp"
@@ -3000,14 +2721,8 @@
       "text": "Tôi tự giới thiệu lại một lần nữa nhé? Ừm, lần này sẽ không có phép thuật tự giới thiệu của Alice phá rối nữa. Khụ khụ, tôi là Nicole. Như đã thấy đấy, chỉ là... Aaaaa, sao lại xuất hiện rồi.",
       "title": "Lần đầu gặp mặt..."
     },
-    {
-      "text": "Ừm... không phải là ý hay đâu.",
-      "title": "Nói chuyện phiếm - Tiểu Thuyết"
-    },
-    {
-      "text": "Không cần lời nói, ngụ ý tự rõ.",
-      "title": "Nói chuyện phiếm - Tượng Điêu Khắc"
-    },
+    { "text": "Ừm... không phải là ý hay đâu.", "title": "Nói chuyện phiếm - Tiểu Thuyết" },
+    { "text": "Không cần lời nói, ngụ ý tự rõ.", "title": "Nói chuyện phiếm - Tượng Điêu Khắc" },
     {
       "text": "Bản chất hiện tại của tôi? Chỉ là một \"người\" mất đi giọng nói mà thôi.",
       "title": "Nói chuyện phiếm - Im Lặng"
@@ -3016,22 +2731,13 @@
       "text": "Thực ra kho báu ở cuối cầu vồng đều do các Tiên Linh dầm mưa chôn giấu đấy.",
       "title": "Sau cơn mưa trời lại sáng..."
     },
-    {
-      "text": "Chào buổi sáng.",
-      "title": "Chào buổi sáng..."
-    },
-    {
-      "text": "Chào buổi trưa.",
-      "title": "Chào buổi trưa..."
-    },
+    { "text": "Chào buổi sáng.", "title": "Chào buổi sáng..." },
+    { "text": "Chào buổi trưa.", "title": "Chào buổi trưa..." },
     {
       "text": "Buổi tối là lúc cảm hứng tuôn trào nhiều nhất, nên cũng là lúc người xưa thường gặp thiên sứ nhất. Đều tại người trên mặt đất ngày xưa cả, khiến chúng tôi hình như đều biến thành cú đêm. Nhưng nói vậy cũng không đúng lắm, vì thực ra trước kia chúng tôi vốn không có đồng hồ sinh học, chu kỳ giấc ngủ hay những thứ tương tự. Nói một cách chính xác thì có thể coi là chức năng cố định được điều chỉnh để cố gắng tránh khung giờ buổi tối?",
       "title": "Chào buổi tối..."
     },
-    {
-      "text": "Ngủ rồi sao? Chúc ngủ ngon, hihi.",
-      "title": "Chúc ngủ ngon..."
-    },
+    { "text": "Ngủ rồi sao? Chúc ngủ ngon, hihi.", "title": "Chúc ngủ ngon..." },
     {
       "text": "Chỉ cần là người còn sống thì tất nhiên chỉ có thể sáng tác ra những tác phẩm phổ biến thôi. Cũng giống như người ta không thể vừa mới vào Giáo Viện học mà đã có hai mươi năm kinh nghiệm nghiên cứu được đúng không? Dù sao con người cũng là một tổ hợp của hiện tại. Nếu người ngày nay không thể viết ra được tác phẩm cổ điển nổi tiếng, thì cứ viết sao cho thấy thú vị thôi. Dù sao tôi cũng đâu phải là người cầm bút.",
       "title": "Về bản thân Nicole - Tác Phẩm Phổ Biến"
@@ -3120,10 +2826,7 @@
       "text": "Loài người là một chủng tộc thú vị và rực rỡ biết bao. Tôi từ bỏ đôi cánh không phải vì sa ngã, mà là để chạm vào, tôi từ bỏ giọng nói cũng không phải vì im lặng, chỉ là để lắng nghe thật kỹ trước khi phán xét. Tiềm năng thiêng liêng tồn tại trong mỗi con người. Mỗi ngày bước đi giữa thế gian này, tôi đều cảm thấy rất thú vị.",
       "title": "Muốn tìm hiểu Nicole - Điều thứ 5"
     },
-    {
-      "text": "Điều đó còn phải nói sao?",
-      "title": "Sở thích của Nicole..."
-    },
+    { "text": "Điều đó còn phải nói sao?", "title": "Sở thích của Nicole..." },
     {
       "text": "Bây giờ những người bạn thân của tôi đều biết tôi là người nói nhiều rồi. Vậy tôi có cần phải giả vờ nữa không? Nhưng như vậy liệu có khiến mọi người bị đau đầu mà không muốn nói chuyện với tôi nữa không? Ừm, Klee vẫn chưa lớn, chắc tôi vẫn phải giả vờ đoan trang thêm một thời gian nữa.",
       "title": "Phiền não của Nicole..."
@@ -3136,18 +2839,12 @@
       "text": "Ừm... câu hỏi này thực sự làm khó tôi rồi đó. Chỉ cần món ăn không bị nấu hỏng thì chắc tôi cũng không kén chọn.",
       "title": "Món ăn ghét..."
     },
-    {
-      "text": "Ôi chao, cái này ngon quá đi thôi!",
-      "title": "Nhận Được Quà I"
-    },
+    { "text": "Ôi chao, cái này ngon quá đi thôi!", "title": "Nhận Được Quà I" },
     {
       "text": "Tôi đã cảm nhận được tấm lòng của {F#cô}{M#cậu} rồi. Đúng là vô cùng thơm ngon.",
       "title": "Nhận Được Quà II"
     },
-    {
-      "text": "Mùi vị này... Không được, Alice, tôi không chịu nổi nữa...",
-      "title": "Nhận Được Quà III"
-    },
+    { "text": "Mùi vị này... Không được, Alice, tôi không chịu nổi nữa...", "title": "Nhận Được Quà III" },
     {
       "text": "Chúc {F#cô}{M#cậu} sinh nhật vui vẻ! Quà sinh nhật dành cho {F#cô}{M#cậu} đã được giấu trong rương rồi. Phía trước còn có những câu đố mà tôi đã chuẩn bị kỹ càng, để tôi dẫn {F#cô}{M#cậu} đi lấy nhé!",
       "title": "Sinh nhật..."
@@ -3198,18 +2895,9 @@
       "text": "Tuyết ở Snezhnaya vốn dĩ lạnh thấu xương, nhưng lại chẳng bao giờ ngừng rơi.",
       "title": "Khi tuyết rơi..."
     },
-    {
-      "text": "Kiểu tóc... để lát nữa chải lại vậy.",
-      "title": "Gió lớn quá..."
-    },
-    {
-      "text": "...May mà không phải tổ chức buổi gặp mặt ở nơi thế này.",
-      "title": "Khi trong sa mạc..."
-    },
-    {
-      "text": "Tôi đã khởi động xong rồi, có thể hành động bất cứ lúc nào.",
-      "title": "Chào buổi sáng..."
-    },
+    { "text": "Kiểu tóc... để lát nữa chải lại vậy.", "title": "Gió lớn quá..." },
+    { "text": "...May mà không phải tổ chức buổi gặp mặt ở nơi thế này.", "title": "Khi trong sa mạc..." },
+    { "text": "Tôi đã khởi động xong rồi, có thể hành động bất cứ lúc nào.", "title": "Chào buổi sáng..." },
     {
       "text": "Tôi không cần ngủ trưa đâu, khoảng thời gian buổi chiều không thích hợp để luyện tập, tôi thường đọc kịch bản kịch múa. Hm? Đang nói đến mấy tờ giấy viết thư này sao? Đây là thư của người hâm mộ do Vodyanitsa nhét cho tôi, cô ấy muốn tôi phải đọc hết.",
       "title": "Chào buổi trưa..."
@@ -3338,22 +3026,13 @@
       "text": "Mấy hôm nay biểu diễn khá nhiều, có lẽ... không, không có gì đâu. Cảm ơn {F#cô}{M#cậu}, cái này ngon lắm.",
       "title": "Nhận Được Quà I"
     },
-    {
-      "text": "Một món ăn? Trông giống... thức ăn cho cả ngày hơn.",
-      "title": "Nhận Được Quà II"
-    },
-    {
-      "text": "Xin lỗi, tôi đang kiểm soát cân nặng.",
-      "title": "Nhận Được Quà III"
-    },
+    { "text": "Một món ăn? Trông giống... thức ăn cho cả ngày hơn.", "title": "Nhận Được Quà II" },
+    { "text": "Xin lỗi, tôi đang kiểm soát cân nặng.", "title": "Nhận Được Quà III" },
     {
       "text": "Chúc mừng sinh nhật. Không biết {F#cô}{M#cậu} muốn nhận món quà sinh nhật như thế nào? Những gì tôi nhận được luôn là hoa tươi, giày múa và hộp nhạc. Nhưng tôi đoán, đó không phải điều {F#cô}{M#cậu} mong muốn. Chi bằng hãy ước một điều với tôi đi, chỉ cần là điều tôi có thể thực hiện là được.",
       "title": "Sinh nhật..."
     },
-    {
-      "text": "Vẫn còn thiếu chút gì đó... Tập luyện thêm một chút vậy.",
-      "title": "Cảm Giác Đột Phá - Khởi"
-    },
+    { "text": "Vẫn còn thiếu chút gì đó... Tập luyện thêm một chút vậy.", "title": "Cảm Giác Đột Phá - Khởi" },
     {
       "text": "Ừm, động tác chính xác hơn rồi đó. Duy trì cường độ tập luyện như vậy nhé.",
       "title": "Cảm Giác Đột Phá - Thừa"
@@ -3392,10 +3071,7 @@
       "text": "Run rẩy là phản ứng tự nhiên của cơ thể trước tiếng vang đột ngột, hoàn toàn khác với sợ hãi.",
       "title": "Khi có sấm sét..."
     },
-    {
-      "text": "Tôi không lạnh, không cần mặc áo khoác.",
-      "title": "Khi tuyết rơi..."
-    },
+    { "text": "Tôi không lạnh, không cần mặc áo khoác.", "title": "Khi tuyết rơi..." },
     {
       "text": "Ánh nắng là miễn phí, nhưng có bao nhiêu người có thể tự do tắm nắng chứ?",
       "title": "Ánh nắng thật chan hòa..."
@@ -3548,14 +3224,8 @@
       "text": "Tôi luôn nghĩ trong \"Cẩm Nang Món Ăn\" toàn là những ảnh đã qua chỉnh sửa, không ngờ {F#cô}{M#cậu} thực sự có thể làm ra món giống y hệt như vậy!",
       "title": "Nhận Được Quà I"
     },
-    {
-      "text": "Ừm... tuy còn có thể cải thiện nhưng đã hơn rất nhiều thứ khác rồi.",
-      "title": "Nhận Được Quà II"
-    },
-    {
-      "text": "Nói mau, có phải {F#cô}{M#cậu} bị ma nữ nguyền rủa rồi không?",
-      "title": "Nhận Được Quà III"
-    },
+    { "text": "Ừm... tuy còn có thể cải thiện nhưng đã hơn rất nhiều thứ khác rồi.", "title": "Nhận Được Quà II" },
+    { "text": "Nói mau, có phải {F#cô}{M#cậu} bị ma nữ nguyền rủa rồi không?", "title": "Nhận Được Quà III" },
     {
       "text": "Chúc mừng sinh nhật! Đừng quá ngạc nhiên, thông tin về \"ngày sinh nhật\" rất dễ thu thập, không làm khó được tôi đâu. Nhưng thông tin \"điều ước sinh nhật\" quan trọng nhất thì tôi vẫn chưa nghe ngóng được...\nNói ra sẽ không còn linh nghiệm sao? Tôi không đồng ý. Điều đó sẽ khiến những người muốn giúp {F#cô}{M#cậu} thực hiện nguyện vọng... ví dụ như tôi đây, không biết phải bắt đầu từ đâu cả. Thẳng thắn lên nào, {F#cô}{M#cậu} muốn gì? Đừng coi thường tôi, tôi để dành được kha khá tiền tiêu vặt đấy, hơn nữa {F#cô}{M#cậu} cũng hay khen tôi hiểu biết nhiều mà? Biết đâu tôi thực sự có thể giúp được!\nNhưng... chắc {F#cô}{M#cậu} sẽ không ước mấy kiểu vượt quá khả năng như \"Trả đứt một lần mua nhà ở trung tâm Thành Mondstadt\" chứ?",
       "title": "Sinh nhật..."
@@ -3594,22 +3264,10 @@
       "text": "Lại có thông báo quay về Cung Điện Zapolyarny? Hah... Sao lúc nào cũng có lắm cuộc họp thế không biết?",
       "title": "Nói chuyện phiếm - Họp"
     },
-    {
-      "text": "...Thật phiền phức.",
-      "title": "Khi trời mưa..."
-    },
-    {
-      "text": "Những bông hoa tôi trồng rất thích thời tiết này.",
-      "title": "Sau cơn mưa trời lại sáng..."
-    },
-    {
-      "text": "Hệ thống phòng hộ... ừm, vận hành bình thường.",
-      "title": "Khi có sấm sét..."
-    },
-    {
-      "text": "Lại đến lúc người nào đó lao mình vào đống tuyết...",
-      "title": "Khi tuyết rơi..."
-    },
+    { "text": "...Thật phiền phức.", "title": "Khi trời mưa..." },
+    { "text": "Những bông hoa tôi trồng rất thích thời tiết này.", "title": "Sau cơn mưa trời lại sáng..." },
+    { "text": "Hệ thống phòng hộ... ừm, vận hành bình thường.", "title": "Khi có sấm sét..." },
+    { "text": "Lại đến lúc người nào đó lao mình vào đống tuyết...", "title": "Khi tuyết rơi..." },
     {
       "text": "Thời tiết này rất thích hợp để pha một tách cà phê đậm đà, ăn chút bánh ngọt, rồi thư thả dựa vào ban công đọc sách cả buổi chiều.",
       "title": "Ánh nắng thật chan hòa..."
@@ -3622,10 +3280,7 @@
       "text": "Chào buổi sáng, muốn uống một tách cà phê nóng không? Giúp tỉnh táo đấy. Hửm? {F#Cô}{M#Cậu} hỏi tôi uống cà phê có tác dụng gì à? Chậc, chỉ đơn giản là thích hương vị này thôi, không được sao?",
       "title": "Chào buổi sáng..."
     },
-    {
-      "text": "Đã đến giờ này rồi à? Tôi đi chuẩn bị trà bánh đây.",
-      "title": "Chào buổi trưa..."
-    },
+    { "text": "Đã đến giờ này rồi à? Tôi đi chuẩn bị trà bánh đây.", "title": "Chào buổi trưa..." },
     {
       "text": "Bữa tối cũng tìm đến tôi sao? Chỗ này không phải nhà ăn... Thôi bỏ đi, dù sao cũng đã đến rồi, để Fagio chuẩn bị vài món đơn giản vậy.",
       "title": "Chào buổi tối..."
@@ -3762,30 +3417,15 @@
       "text": "Ồ? Hương vị cũng được đấy. Lần tới trong buổi tiệc trà tôi sẽ chuẩn bị một phần quà đáp lễ cho {F#cô}{M#cậu}.",
       "title": "Nhận Được Quà II"
     },
-    {
-      "text": "Fagio, đến giờ dọn dẹp rồi.",
-      "title": "Nhận Được Quà III"
-    },
+    { "text": "Fagio, đến giờ dọn dẹp rồi.", "title": "Nhận Được Quà III" },
     {
       "text": "Hừm. Đây, cầm lấy. Bình thường tôi không bao giờ tặng mấy thứ này đâu. Nhưng hôm nay là một ngày đáng để ăn mừng đối với {F#cô}{M#cậu}, vì nó đại diện cho ngày mà {F#cô}{M#cậu} lần đầu làm quen với thế giới này. Tôi đã mời Arlecchino và Columbina, cùng một vài người bạn mà chúng ta đều quen biết. Trà bánh cũng đổi thành bánh kem do chính tay tôi làm rồi, {F#cô}{M#cậu} cứ việc mà mong chờ đi.",
       "title": "Sinh nhật..."
     },
-    {
-      "text": "Bắt đầu giải mã.",
-      "title": "Cảm Giác Đột Phá - Khởi"
-    },
-    {
-      "text": "Điền biến số.",
-      "title": "Cảm Giác Đột Phá - Thừa"
-    },
-    {
-      "text": "Tiến độ ổn định.",
-      "title": "Cảm Giác Đột Phá - Chuyển"
-    },
-    {
-      "text": "Phân tích mọi nguyên lý. Tôi đúng là lợi hại mà! Ahahaha.",
-      "title": "Cảm Giác Đột Phá - Hợp"
-    }
+    { "text": "Bắt đầu giải mã.", "title": "Cảm Giác Đột Phá - Khởi" },
+    { "text": "Điền biến số.", "title": "Cảm Giác Đột Phá - Thừa" },
+    { "text": "Tiến độ ổn định.", "title": "Cảm Giác Đột Phá - Chuyển" },
+    { "text": "Phân tích mọi nguyên lý. Tôi đúng là lợi hại mà! Ahahaha.", "title": "Cảm Giác Đột Phá - Hợp" }
   ],
   "Skirk": [
     {
@@ -3796,18 +3436,9 @@
       "text": "Vực Sâu giống như chiếc bóng của thế giới. Nó sẽ luôn ở đó, vĩnh viễn không lụi tàn.",
       "title": "Nói chuyện phiếm - Vực Sâu"
     },
-    {
-      "text": "Chúng ta từ đâu tới, và sẽ đi về đâu...?",
-      "title": "Nói chuyện phiếm - Thiền"
-    },
-    {
-      "text": "Vạn vật đều có điểm kết thúc, thời gian cũng không ngoại lệ.",
-      "title": "Nói chuyện phiếm - Điểm Cuối"
-    },
-    {
-      "text": "Mưa rồi, tốt lắm.",
-      "title": "Khi trời mưa..."
-    },
+    { "text": "Chúng ta từ đâu tới, và sẽ đi về đâu...?", "title": "Nói chuyện phiếm - Thiền" },
+    { "text": "Vạn vật đều có điểm kết thúc, thời gian cũng không ngoại lệ.", "title": "Nói chuyện phiếm - Điểm Cuối" },
+    { "text": "Mưa rồi, tốt lắm.", "title": "Khi trời mưa..." },
     {
       "text": "Sấm chớp dữ dội cũng chỉ nằm dưới tầng mây. Bầu trời cao phía trên vẫn trong xanh.",
       "title": "Khi có sấm sét..."
@@ -3816,10 +3447,7 @@
       "text": "Nghe nói trong cái lạnh tột cùng, vạn vật đều ngưng đọng... Nhưng nơi này rõ ràng đâu lạnh đến mức đấy.",
       "title": "Khi tuyết rơi..."
     },
-    {
-      "text": "Gió sẽ thổi tan sương mù trong tầm mắt.",
-      "title": "Gió lớn quá..."
-    },
+    { "text": "Gió sẽ thổi tan sương mù trong tầm mắt.", "title": "Gió lớn quá..." },
     {
       "text": "Ngủ ngon không? Có vẻ như {F#cô}{M#cậu} đã ở trong trạng thái tốt nhất rồi. Chuẩn bị lên đường thôi!",
       "title": "Chào buổi sáng..."
@@ -3832,10 +3460,7 @@
       "text": "Ồ... Trời đã tối rồi. Thời gian bên ngoài trôi nhanh quá, cho nên càng phải trân trọng.",
       "title": "Chào buổi tối..."
     },
-    {
-      "text": "Ngủ đi, tôi phải đi luyện kiếm thêm một lúc nữa.",
-      "title": "Chúc ngủ ngon..."
-    },
+    { "text": "Ngủ đi, tôi phải đi luyện kiếm thêm một lúc nữa.", "title": "Chúc ngủ ngon..." },
     {
       "text": "Gần đây tôi có mua vài quyển sách cổ từ Liyue, trong đó có một quyển khiến tôi tâm đắc: \"Khi lòng người trong như gương, không đón không đưa, nhận nhưng không giữ lại, thì sẽ chiến thắng vạn vật mà không chịu tổn thương.\"\nTôi vốn tưởng tác giả đạt đến cảnh giới tâm hồn này phải là vị tông sư võ học hiếm có, nào ngờ khi lật lại sử sách mới biết ông chỉ là một lữ khách bình thường. Con người đôi khi làm được những việc ngoài dự liệu của tôi, có lẽ đó chính là thứ mang tên \"sức mạnh tiềm tàng\".",
       "title": "Về bản thân Skirk - Đọc Sách"
@@ -3936,30 +3561,15 @@
       "text": "Món ngon thì rất dễ ăn, ngay cả món không ngon cũng rất dễ nuốt. Miễn không lãng phí là được.",
       "title": "Món ăn ghét..."
     },
-    {
-      "text": "Được đấy.",
-      "title": "Nhận Được Quà I"
-    },
-    {
-      "text": "Cũng tạm.",
-      "title": "Nhận Được Quà II"
-    },
-    {
-      "text": "Lãng phí thức ăn quá... Sau này cứ để tôi nấu cho.",
-      "title": "Nhận Được Quà III"
-    },
+    { "text": "Được đấy.", "title": "Nhận Được Quà I" },
+    { "text": "Cũng tạm.", "title": "Nhận Được Quà II" },
+    { "text": "Lãng phí thức ăn quá... Sau này cứ để tôi nấu cho.", "title": "Nhận Được Quà III" },
     {
       "text": "Chúc mừng sinh nhật. Tôi nghe nói có kiểu người muốn tổ chức sinh nhật thật linh đình, có kiểu người lại hy vọng sẽ trải qua một cách bình lặng, không biết {F#cô}{M#cậu} thuộc kiểu nào nhỉ. Tôi sẽ dùng ngày sinh nhật để nhìn lại sự trưởng thành của mình trong năm qua, nên đôi khi tôi sẽ an nhiên mà chúc mừng bản thân, nhưng cũng có lúc rơi vào cảm giác áy náy kỳ lạ.\n...Tốt hơn là đừng cho nó một ý nghĩa to tát như vậy. Mỗi nơi đều sẽ có những ngày lễ khác nhau, dành cho trời đất, cho tổ tiên, cho bạn bè... Nhưng chỉ có hôm nay là cho chính bản thân mình. Những lời cảm khái nói đến đây thôi, chúc mừng sinh nhật lần nữa nhé. Hy vọng {F#cô}{M#cậu} có thể trở thành người mà mình mong muốn.",
       "title": "Sinh Nhật..."
     },
-    {
-      "text": "Chỉ thế... thôi sao?",
-      "title": "Cảm Giác Đột Phá - Khởi"
-    },
-    {
-      "text": "Sự cải thiện này vẫn chưa đủ với tôi.",
-      "title": "Cảm Giác Đột Phá - Thừa"
-    },
+    { "text": "Chỉ thế... thôi sao?", "title": "Cảm Giác Đột Phá - Khởi" },
+    { "text": "Sự cải thiện này vẫn chưa đủ với tôi.", "title": "Cảm Giác Đột Phá - Thừa" },
     {
       "text": "Sức mạnh à... Đã từng có lúc tôi chẳng sở hữu nó, cũng chẳng màng theo đuổi nó. Nhưng giờ đây, tôi và nó lại lao vào nhau mà không thể quay đầu.",
       "title": "Cảm Giác Đột Phá - Chuyển"
@@ -3994,26 +3604,17 @@
       "text": "Ối! Trong sách nói rằng, Fietena có thể hất tia sét về lại trên trời! Tôi cũng không được sợ... Ối!",
       "title": "Khi có sấm sét..."
     },
-    {
-      "text": "Trắng trắng, lạnh lạnh, thật hiếm thấy... Có ăn được không?",
-      "title": "Khi tuyết rơi..."
-    },
+    { "text": "Trắng trắng, lạnh lạnh, thật hiếm thấy... Có ăn được không?", "title": "Khi tuyết rơi..." },
     {
       "text": "Ấm quá... Sau khi ăn no lại được ánh nắng ấm áp chiếu vào, làm tôi muốn... ngủ trưa... Zzz...",
       "title": "Ánh nắng thật chan hòa..."
     },
-    {
-      "text": "Nếu chạy theo hướng gió sẽ nhanh hơn chứ... Hmm, không được lười biếng!",
-      "title": "Gió lớn quá..."
-    },
+    { "text": "Nếu chạy theo hướng gió sẽ nhanh hơn chứ... Hmm, không được lười biếng!", "title": "Gió lớn quá..." },
     {
       "text": "Hơ ơ... Chào buổi sáng... Muốn ngủ nướng thêm chút nữa... Không được! Phải chống đẩy một trăm cái để tỉnh táo trước đã!",
       "title": "Chào buổi sáng..."
     },
-    {
-      "text": "Đến giờ ăn trưa rồi, phải ăn no thật no, vậy mới tràn đầy năng lượng!",
-      "title": "Chào buổi trưa..."
-    },
+    { "text": "Đến giờ ăn trưa rồi, phải ăn no thật no, vậy mới tràn đầy năng lượng!", "title": "Chào buổi trưa..." },
     {
       "text": "Câu nói nổi tiếng của anh hùng: \"Nếu buổi tối thấy mệt mỏi, thì chứng tỏ cả ngày hôm nay chúng ta đã không lười biếng và đã phát huy hết sức lực của bản thân.\" Vì vậy, đôi khi mệt mỏi cũng là một vinh dự!",
       "title": "Chào buổi tối..."
@@ -4172,18 +3773,12 @@
       "text": "Phù... Cảm giác rời khỏi bàn làm việc thật tuyệt, tìm chỗ nào ngủ thêm một lát vậy?",
       "title": "Nói Chuyện Phiếm - Nghỉ Ngơi"
     },
-    {
-      "text": "Mưa tạnh rồi, tiếp tục hành quân thôi.",
-      "title": "Sau cơn mưa trời lại sáng..."
-    },
+    { "text": "Mưa tạnh rồi, tiếp tục hành quân thôi.", "title": "Sau cơn mưa trời lại sáng..." },
     {
       "text": "Khi tuyết rơi, tôi hay nhớ tới những nơi mình từng đi qua trong cuộc viễn chinh.",
       "title": "Khi tuyết rơi..."
     },
-    {
-      "text": "Chà, gió to thế này, là đang định đối đầu với tôi sao?",
-      "title": "Gió lớn quá..."
-    },
+    { "text": "Chà, gió to thế này, là đang định đối đầu với tôi sao?", "title": "Gió lớn quá..." },
     {
       "text": "Chào buổi sáng! Sao trông mệt mỏi thế, có muốn uống một ly cho tỉnh táo không?",
       "title": "Chào buổi sáng..."
@@ -4360,10 +3955,7 @@
       "text": "Có vài loại đồ uống, rõ ràng trông giống rượu, ngửi cũng giống rượu, nhưng uống vào lại không phải rượu! Thế này cũng tính là lừa đảo nhỉ!",
       "title": "Món ăn ghét..."
     },
-    {
-      "text": "Món này... Ừm, đáng để mở một chai rượu Bồ Công Anh hảo hạng để dùng kèm!",
-      "title": "Nhận Được Quà I"
-    },
+    { "text": "Món này... Ừm, đáng để mở một chai rượu Bồ Công Anh hảo hạng để dùng kèm!", "title": "Nhận Được Quà I" },
     {
       "text": "Đồ ăn ổn đấy, tôi phải bảo tiểu đội hậu cần học hỏi thêm từ {F#cô}{M#cậu} mới được.",
       "title": "Nhận Được Quà II"
@@ -4422,22 +4014,10 @@
       "text": "Tôi biết tôi biết, đôi cánh của tôi lấp lánh nhất dưới ánh mặt trời.",
       "title": "Ánh nắng thật chan hòa..."
     },
-    {
-      "text": "Tuyệt vời, đây là kiểu thời tiết mà Vila yêu thích.",
-      "title": "Khi gió nổi lên..."
-    },
-    {
-      "text": "Tùy tiện hỏi một câu... Khi nào thì chúng ta về Snezhnaya?",
-      "title": "Khi trong sa mạc..."
-    },
-    {
-      "text": "Một ngày mới! Xin chào, Snezhnograd!",
-      "title": "Chào buổi sáng..."
-    },
-    {
-      "text": "Đi thôi, đến Nhà Hàng Podvorye! Đương nhiên vẫn là tôi mời.",
-      "title": "Chào buổi trưa..."
-    },
+    { "text": "Tuyệt vời, đây là kiểu thời tiết mà Vila yêu thích.", "title": "Khi gió nổi lên..." },
+    { "text": "Tùy tiện hỏi một câu... Khi nào thì chúng ta về Snezhnaya?", "title": "Khi trong sa mạc..." },
+    { "text": "Một ngày mới! Xin chào, Snezhnograd!", "title": "Chào buổi sáng..." },
+    { "text": "Đi thôi, đến Nhà Hàng Podvorye! Đương nhiên vẫn là tôi mời.", "title": "Chào buổi trưa..." },
     {
       "text": "Đoàn Kịch Korolevskiy có buổi biểu diễn mới. Ngoài giọng soprano của hát chính Vodyanitsa, điệu múa của Odette... còn có một vài \"người bạn mới\".",
       "title": "Chào buổi tối..."
@@ -4562,18 +4142,12 @@
       "text": "Hì hì! Mấy thứ rau củ phiền phức đều bị tôi gắp hết sang đĩa của Danica rồi! Hic... Bị gắp trả về rồi...",
       "title": "Món ăn ghét..."
     },
-    {
-      "text": "Vậy thì tôi không khách sáo nữa, tôi sẽ cất hết những món ngon vào bụng.",
-      "title": "Nhận Được Quà I"
-    },
+    { "text": "Vậy thì tôi không khách sáo nữa, tôi sẽ cất hết những món ngon vào bụng.", "title": "Nhận Được Quà I" },
     {
       "text": "Mhm hmm... Sự tinh tế trong nấu nướng sao... Mhm hmm... Để tôi nếm thử thêm một miếng nữa.",
       "title": "Nhận Được Quà II"
     },
-    {
-      "text": "Tôi no rồi, cảm ơn nhé! Tôi sẽ gói những thứ này về cho Danica ăn.",
-      "title": "Nhận Được Quà III"
-    },
+    { "text": "Tôi no rồi, cảm ơn nhé! Tôi sẽ gói những thứ này về cho Danica ăn.", "title": "Nhận Được Quà III" },
     {
       "text": "Tèn tén ten! Đến giờ rồi! Có biết hôm qua tôi phải kìm nén vất vả đến mức nào không? Lời chúc lỡ nói sớm hơn sẽ bị bão tuyết nuốt chửng đấy! Cuối cùng thì bây giờ cũng có thể nói rồi... Chúc mừng sinh nhật! Bạn thân mến của tôi. Mong {F#cô}{M#cậu} sẽ mạnh mẽ như cây bạch dương, không bao giờ khuất phục trước gió tuyết.\nĐược rồi, theo tập tục thì tiếp theo tôi sẽ véo nhẹ tai chủ nhân của bữa tiệc sinh nhật vài cái...",
       "title": "Sinh nhật..."
@@ -4612,22 +4186,10 @@
       "text": "Phù... Ở trên cạn lâu như vậy, da khô hết cả rồi. Mau xuống dưới nước nghỉ ngơi thôi.",
       "title": "Nói chuyện phiếm - Cách Thư Giãn"
     },
-    {
-      "text": "Ừm, thời tiết thật đẹp, rất thích hợp để nằm dưới nước nghỉ ngơi.",
-      "title": "Khi trời mưa..."
-    },
-    {
-      "text": "Tạnh rồi á? Chán ghê...",
-      "title": "Sau cơn mưa trời lại sáng..."
-    },
-    {
-      "text": "Một vùng trắng xóa, hmm, sạch sẽ thật.",
-      "title": "Khi tuyết rơi..."
-    },
-    {
-      "text": "Nóng quá, khô quá... Muốn xuống dưới nước...",
-      "title": "Khi trong sa mạc..."
-    },
+    { "text": "Ừm, thời tiết thật đẹp, rất thích hợp để nằm dưới nước nghỉ ngơi.", "title": "Khi trời mưa..." },
+    { "text": "Tạnh rồi á? Chán ghê...", "title": "Sau cơn mưa trời lại sáng..." },
+    { "text": "Một vùng trắng xóa, hmm, sạch sẽ thật.", "title": "Khi tuyết rơi..." },
+    { "text": "Nóng quá, khô quá... Muốn xuống dưới nước...", "title": "Khi trong sa mạc..." },
     {
       "text": "Chào buổi sáng, tôi vừa mới làm ấm giọng xong, {F#cô}{M#cậu} nghe thấy rồi à? Ừm, vậy cũng bình thường thôi, dù sao thì giọng hát của tôi rất có sức xuyên thấu mà.",
       "title": "Chào buổi sáng..."
@@ -4768,22 +4330,10 @@
       "text": "Chúc mừng sinh nhật! Quà tôi để ở bên kia, lát nữa tự mở ra xem nhé, cũng chỉ là vài món đồ trang sức nhỏ với đồ chơi này nọ thôi... Ây da, cái đó không quan trọng, giờ chắc {F#cô}{M#cậu} không bận gì đúng không? Đi nào đi nào, đến phòng vọng âm của tôi. Mấy hôm trước tôi nhờ người từ Natlan mua về một Đài Nhạc Rực Cháy, cùng với rất nhiều nhạc cụ kỳ lạ nhưng cực kỳ thú vị khác nữa. Tôi đang chuẩn bị tổ chức một buổi tiệc âm nhạc tuyệt vời nhất Snezhnaya, đoán xem ai là người được mời đầu tiên nào? Đúng vậy, chính là {F#cô}{M#cậu} đấy. Tới đây nào, hôm nay chúng ta hát thâu đêm luôn!",
       "title": "Sinh nhật..."
     },
-    {
-      "text": "E hèm... Giọng không tệ.",
-      "title": "Cảm Giác Đột Phá - Khởi"
-    },
-    {
-      "text": "Hình như có thể hát âm cao hơn rồi.",
-      "title": "Cảm Giác Đột Phá - Thừa"
-    },
-    {
-      "text": "Trạng thái cổ họng đã tốt hơn rồi.",
-      "title": "Cảm Giác Đột Phá - Chuyển"
-    },
-    {
-      "text": "Ừm! Đến lúc hát vang suốt đêm rồi!",
-      "title": "Cảm Giác Đột Phá - Hợp"
-    }
+    { "text": "E hèm... Giọng không tệ.", "title": "Cảm Giác Đột Phá - Khởi" },
+    { "text": "Hình như có thể hát âm cao hơn rồi.", "title": "Cảm Giác Đột Phá - Thừa" },
+    { "text": "Trạng thái cổ họng đã tốt hơn rồi.", "title": "Cảm Giác Đột Phá - Chuyển" },
+    { "text": "Ừm! Đến lúc hát vang suốt đêm rồi!", "title": "Cảm Giác Đột Phá - Hợp" }
   ],
   "Zibai": [
     {
@@ -4802,34 +4352,13 @@
       "text": "Tiên pháp quả thật kỳ diệu. Nhưng nếu tu pháp mà không tu tâm trước thì vạn sự chỉ như ánh trăng phản chiếu trên mặt nước, chạm vào là vỡ tan.",
       "title": "Nói chuyện phiếm - Tiên Pháp"
     },
-    {
-      "text": "Không còn thấy ánh trăng...",
-      "title": "Khi trời mưa..."
-    },
-    {
-      "text": "Ừm, chắc là thiên lôi đang đi trừng phạt kẻ xấu rồi.",
-      "title": "Khi có sấm sét..."
-    },
-    {
-      "text": "Không lạnh như trên mặt trăng.",
-      "title": "Khi tuyết rơi..."
-    },
-    {
-      "text": "...Ở sa mạc quả thật rất khó di chuyển.",
-      "title": "Khi trong sa mạc..."
-    },
-    {
-      "text": "Chào buổi sáng, đêm qua ngủ có ngon không?",
-      "title": "Chào buổi sáng..."
-    },
-    {
-      "text": "Mặt trời đang lên cao, nếu thấy mệt thì nghỉ ngơi một chút nhé.",
-      "title": "Chào buổi trưa..."
-    },
-    {
-      "text": "Bất giác... trăng đã lên cao rồi.",
-      "title": "Chào buổi tối..."
-    },
+    { "text": "Không còn thấy ánh trăng...", "title": "Khi trời mưa..." },
+    { "text": "Ừm, chắc là thiên lôi đang đi trừng phạt kẻ xấu rồi.", "title": "Khi có sấm sét..." },
+    { "text": "Không lạnh như trên mặt trăng.", "title": "Khi tuyết rơi..." },
+    { "text": "...Ở sa mạc quả thật rất khó di chuyển.", "title": "Khi trong sa mạc..." },
+    { "text": "Chào buổi sáng, đêm qua ngủ có ngon không?", "title": "Chào buổi sáng..." },
+    { "text": "Mặt trời đang lên cao, nếu thấy mệt thì nghỉ ngơi một chút nhé.", "title": "Chào buổi trưa..." },
+    { "text": "Bất giác... trăng đã lên cao rồi.", "title": "Chào buổi tối..." },
     {
       "text": "Haha, đừng thi thức khuya với ánh trăng nữa, đi ngủ thôi. Chúc ngủ ngon nhé.",
       "title": "Chúc ngủ ngon..."
@@ -4946,33 +4475,15 @@
       "text": "Nếu được thưởng thức những món ngon thế này khi sống một mình trên mặt trăng, vậy thì tôi ở lại thêm một lúc cũng chẳng sao. Haha, đùa tí thôi.",
       "title": "Nhận Được Quà I"
     },
-    {
-      "text": "Hương vị không tệ, đáng để thưởng thức.",
-      "title": "Nhận Được Quà II"
-    },
-    {
-      "text": "Vị của món này... Thật kỳ lạ, rất mới lạ...",
-      "title": "Nhận Được Quà III"
-    },
+    { "text": "Hương vị không tệ, đáng để thưởng thức.", "title": "Nhận Được Quà II" },
+    { "text": "Vị của món này... Thật kỳ lạ, rất mới lạ...", "title": "Nhận Được Quà III" },
     {
       "text": "Hôm nay là sinh nhật của {F#cô}{M#cậu} sao? Chắc chắn phải tổ chức rồi. Tôi nhớ là khi người già ăn sinh nhật thì họ phải ăn mì trường thọ đấy. Haha, tuy {F#cô}{M#cậu} trông còn trẻ, nhưng nếu tính theo số tuổi thật sự thì có lẽ còn lớn tuổi hơn đa số người ở Cảng Liyue đấy. Như vậy thì ăn một bát mì trường thọ cũng không có gì là quá... Tại sao tôi lại biết nấu ư? Dù tôi từng là người trời, nhưng cũng không phải là người không biết nấu nướng từ khi sinh ra. Haiz, kể ra thì việc giờ tôi không còn cảm thấy thèm ăn nữa cũng là do ở thiên cung lâu ngày không thể nhóm lửa nấu ăn... Tóm lại, ăn uống là việc lớn thứ hai thiên hạ, lát nữa {F#cô}{M#cậu} phải ăn bát mì trường thọ đó nhé.",
       "title": "Sinh nhật..."
     },
-    {
-      "text": "Thì ra là vậy.",
-      "title": "Cảm Giác Đột Phá - Khởi"
-    },
-    {
-      "text": "Trăng có khi tỏ, có khi mờ...",
-      "title": "Cảm Giác Đột Phá - Thừa"
-    },
-    {
-      "text": "Linh hồn trở về nhà.",
-      "title": "Cảm Giác Đột Phá - Chuyển"
-    },
-    {
-      "text": "Đã là tiên thì phải làm tròn thiên chức.",
-      "title": "Cảm Giác Đột Phá - Hợp"
-    }
+    { "text": "Thì ra là vậy.", "title": "Cảm Giác Đột Phá - Khởi" },
+    { "text": "Trăng có khi tỏ, có khi mờ...", "title": "Cảm Giác Đột Phá - Thừa" },
+    { "text": "Linh hồn trở về nhà.", "title": "Cảm Giác Đột Phá - Chuyển" },
+    { "text": "Đã là tiên thì phải làm tròn thiên chức.", "title": "Cảm Giác Đột Phá - Hợp" }
   ]
 }

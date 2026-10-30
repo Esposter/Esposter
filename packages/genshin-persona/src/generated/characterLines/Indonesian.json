@@ -20,10 +20,7 @@
       "text": "HATSYI! *hiks* ... Aduh, sepatu dan kaus kakiku basah kuyup. Mau pulang ....",
       "title": "Ketika Turun Hujan"
     },
-    {
-      "text": "Oh, hujannya sudah berhenti! Ayo jalan-jalan. Kita ajak Ineffa!",
-      "title": "Setelah Hujan"
-    },
+    { "text": "Oh, hujannya sudah berhenti! Ayo jalan-jalan. Kita ajak Ineffa!", "title": "Setelah Hujan" },
     {
       "text": "Wuah, salju! Ini, cobain Mesin Bola Salju Huhu-ku. Alat ini bisa bersuara kayak lagi nangis waktu kamu bikin bola salju. Seru, kan? Aku? Oh, aku sih pakai Mesin Bola Salju Hihi ini saja. Nah, ayo kita mulai perang bola saljunya!",
       "title": "Ketika Turun Salju"
@@ -206,30 +203,15 @@
       "text": "Uang ini untuk dibawa pulang, dan yang ini uang obat-obatan untuk Rokot. Sekarang aku tinggal cari lagi untuk perawatan senjata ... Heh, kita lihat gerombolan perampok mana yang apes kali ini ....",
       "title": "Berbincang: Menghitung Pengeluaran"
     },
-    {
-      "text": "Tudungku basah kuyup ... Aduh, Tugarin! Jangan kibas-kibas badan!",
-      "title": "Ketika Turun Hujan"
-    },
-    {
-      "text": "Saatnya si mangsa keluar dari persembunyiannya ....",
-      "title": "Setelah Hujan"
-    },
+    { "text": "Tudungku basah kuyup ... Aduh, Tugarin! Jangan kibas-kibas badan!", "title": "Ketika Turun Hujan" },
+    { "text": "Saatnya si mangsa keluar dari persembunyiannya ....", "title": "Setelah Hujan" },
     {
       "text": "Cuaca sempurna untuk penyergapan. Kalau ada yang ingin kamu incar ... aku bisa manfaatkan suara petir untuk menutupi suara tembakanku.",
       "title": "Ketika Petir Menyambar"
     },
-    {
-      "text": "Ck, melacak jejak bakal mustahil dalam cuaca seperti ini.",
-      "title": "Ketika Turun Salju"
-    },
-    {
-      "text": "Tidak bisa pakai tudung kepala dalam cuaca seperti ini ....",
-      "title": "Ketika Angin Berembus"
-    },
-    {
-      "text": "Andai aku juga bisa merontokkan bulu-bulu juga ....",
-      "title": "Di Padang Pasir"
-    },
+    { "text": "Ck, melacak jejak bakal mustahil dalam cuaca seperti ini.", "title": "Ketika Turun Salju" },
+    { "text": "Tidak bisa pakai tudung kepala dalam cuaca seperti ini ....", "title": "Ketika Angin Berembus" },
+    { "text": "Andai aku juga bisa merontokkan bulu-bulu juga ....", "title": "Di Padang Pasir" },
     {
       "text": "Dengar itu? Itu suara burung-burung berkicau di hutan, seperti yang biasa mereka lakukan setiap pagi ... Bagaimana kalau kita buru beberapa?",
       "title": "Selamat Pagi"
@@ -238,14 +220,8 @@
       "text": "Aku biasanya makan siang di alam terbuka, tapi aku tidak begitu merekomendasikannya.",
       "title": "Selamat Siang"
     },
-    {
-      "text": "Beberapa mangsa paling langka hanya keluar di malam hari.",
-      "title": "Selamat Malam"
-    },
-    {
-      "text": "Istirahatlah. Aku masih ada urusan, dan aku butuh kegelapan malam.",
-      "title": "Selamat Tidur"
-    },
+    { "text": "Beberapa mangsa paling langka hanya keluar di malam hari.", "title": "Selamat Malam" },
+    { "text": "Istirahatlah. Aku masih ada urusan, dan aku butuh kegelapan malam.", "title": "Selamat Tidur" },
     {
       "text": "Pertama kali aku menemukan Tugarin, si kecil itu terlantar di tengah salju. Dia meringkuk menjadi bola dan bahkan tidak bisa bergerak. Tapi dia tangguh sekali. Aku kasih beberapa sosis, dan dia langsung berdiri, berlari berputar-putar di sekelilingku dalam sekejap. Aku memang tidak punya jatah lebih untuk peliharaan sih, tapi ... namanya seorang pemburu harus punya anjing pemburu, kan?",
       "title": "Tentang Alyosha: Tugarin"
@@ -346,10 +322,7 @@
       "text": "Selamat ulang tahun. Hari ini, kan? Kamu tahu tidak? Di tempat asalku, perayaan ulang tahun biasanya adalah kemewahan yang tidak bisa kami miliki. Susah sekali mengumpulkan tepung dan krim yang cukup untuk membuat kue, atau menemukan seseorang yang menjual sesuatu selain kebutuhan pokok untuk dijadikan hadiah. Tapi, aku tidak akan pernah menyalahkan seorang anak karena ingin merayakan ulang tahunnya karena memang begitulah seharusnya. Dan suatu hari nanti, aku berharap tidak ada anak di Snezhnaya yang harus hidup tanpa pesta ulang tahun. Jadi, aku memutuskan untuk menganggap hari ulang tahunmu dengan sangat serius, dan aku sudah banyak berpikir soal hadiah dan kartu yang aku berikan untukmu. Terkadang, kamu harus menjadi perubahan yang ingin kamu lihat di dunia, kan?",
       "title": "Ulang Tahun"
     },
-    {
-      "text": "Oke. Rasanya bidikanku lebih akurat sekarang.",
-      "title": "Perasaan Tentang Ascension: Permulaan"
-    },
+    { "text": "Oke. Rasanya bidikanku lebih akurat sekarang.", "title": "Perasaan Tentang Ascension: Permulaan" },
     {
       "text": "Tugarin juga sudah makin membaik. Sepertinya kita semakin sinkron.",
       "title": "Perasaan Tentang Ascension: Persiapan"
@@ -384,10 +357,7 @@
       "text": "Berlindung dan mendengarkan hujan yang membersihkan bumi membuatku merasa aman, seperti berada di \"rumah\".",
       "title": "Ketika Turun Hujan"
     },
-    {
-      "text": "Langit sudah cerah lagi. Kita pasti bisa lihat rembulan malam ini.",
-      "title": "Setelah Hujan"
-    },
+    { "text": "Langit sudah cerah lagi. Kita pasti bisa lihat rembulan malam ini.", "title": "Setelah Hujan" },
     {
       "text": "Ah ...! Tanpa didahului tanda kilat ... suara guntur itu sangat mengejutkan ....",
       "title": "Ketika Petir Menyambar"
@@ -460,10 +430,7 @@
       "text": "Naga Hydro si Iudex Fontaine itu? Hmm ... Naga yang suka menjebloskan orang ke penjara ya. Aku malas bertemu dengannya.",
       "title": "Tentang Neuvillette"
     },
-    {
-      "text": "Kalau suatu saat perjalanan kita bersimpangan, aku pasti akan menyapa.",
-      "title": "Tentang The Seven"
-    },
+    { "text": "Kalau suatu saat perjalanan kita bersimpangan, aku pasti akan menyapa.", "title": "Tentang The Seven" },
     {
       "text": "Saat pertama kali aku bernyanyi di taman Istana Zapolyarny, Tsaritsa kebetulan lewat. Dia berdiri di sana, diam tidak bergerak, wajahnya bagaikan patung tanpa ekspresi. Sesaat, kurasa dia seperti ingin mengatakan sesuatu padaku, tapi dia tidak pernah mengatakannya.\nDia menyegel emosinya di bawah lapisan tebal es. Dunia luar hanya melihat satu sisi dari dirinya ... sosok Tsaritsa. Jika jawaban yang kucari berada di bulan, mungkin jawaban dirinya terkubur dalam salju dan es.",
       "title": "Tentang Tsaritsa"
@@ -552,10 +519,7 @@
       "text": "Lagi dong. Eh? Oh, sudah habis ya? Lain kali aku tidak boleh lupa untuk menyisakan lebihnya.",
       "title": "Menerima Hadiah: I"
     },
-    {
-      "text": "Rasanya menyenangkan. Aku akan menikmatinya di bawah sinar rembulan.",
-      "title": "Menerima Hadiah: II"
-    },
+    { "text": "Rasanya menyenangkan. Aku akan menikmatinya di bawah sinar rembulan.", "title": "Menerima Hadiah: II" },
     {
       "text": "Oh ... Kalau Sandrone lagi marah, dia juga suka memberikan barang-barang seperti ini ....",
       "title": "Menerima Hadiah: III"
@@ -564,14 +528,8 @@
       "text": "Ulang tahunmu selalu jatuh pada hari yang sama setiap tahun? Wah, mudah diingat dong ya. Malam Doa Rembulan diadakan di waktu yang berbeda setiap tahunnya, jadi aku hanya bisa memperkirakan ulang tahunku dengan cara merasakan bulan. Ulang tahun itu momen yang sangat membahagiakan, kan? Semua orang berkumpul untuk menari sementara orang-orang membuat makanan dan minuman lezat untukmu. Eh ...? Bukannya ulang tahun orang pada umumnya seperti itu? Hadiah, kue, dan teman-teman ...? Oh, itu juga bisa sih. Ayo kita undang teman-temanmu untuk merayakannya. Aku bisa menyanyikan lagu untukmu, dan kita bahkan bisa meminta Maalaus untuk melukiskan gambar untukmu.",
       "title": "Ulang Tahun"
     },
-    {
-      "text": "Demi Bulan Abadi, ombak akan bergelora.",
-      "title": "Perasaan Tentang Ascension: Permulaan"
-    },
-    {
-      "text": "Demi Bulan Embun, malam akan diterangi.",
-      "title": "Perasaan Tentang Ascension: Persiapan"
-    },
+    { "text": "Demi Bulan Abadi, ombak akan bergelora.", "title": "Perasaan Tentang Ascension: Permulaan" },
+    { "text": "Demi Bulan Embun, malam akan diterangi.", "title": "Perasaan Tentang Ascension: Persiapan" },
     {
       "text": "Demi Bulan Pelangi, kegelapan akan terlempar lebih dalam kepada bayang-bayang.",
       "title": "Perasaan Tentang Ascension: Klimaks"
@@ -594,10 +552,7 @@
       "text": "Bosan, bosaaan ... aku tidak suka cari perkara, tapi bakalan lebih seru kalau kita ketemu sama orang yang lagi ada perkara, ya kan ....",
       "title": "Berbincang: Bosan"
     },
-    {
-      "text": "Cepat, cepat, kita berburu drama!",
-      "title": "Berbincang: Drama"
-    },
+    { "text": "Cepat, cepat, kita berburu drama!", "title": "Berbincang: Drama" },
     {
       "text": "Ketika angin berembus, hujan turun tak lama kemudian. Percayalah, narasumberku sudah paling wahid.",
       "title": "Ketika Turun Hujan"
@@ -606,10 +561,7 @@
       "text": "Katanya petir adalah cara salah satu Archon menyampaikan sabdanya. Yah, aku bukan pilih-pilih loh ya, tapi cara Barbatos jauh lebih lembut.",
       "title": "Ketika Petir Menyambar"
     },
-    {
-      "text": "Angin bertiup. Waktunya berdoa.",
-      "title": "Ketika Angin Bertiup"
-    },
+    { "text": "Angin bertiup. Waktunya berdoa.", "title": "Ketika Angin Bertiup" },
     {
       "text": "Pagi, kawan. Aku baru selesai doa pagi, dan hati ini penuh rasa syukur sebab semua pertanyaanku telah dijawab oleh Barbatos. Oh, aku juga tidak lupa mendoakanmu kok, tentunya.",
       "title": "Selamat Pagi"
@@ -768,42 +720,18 @@
       "text": "Masih banyak yang harus aku pelajari tentang \"interaksi manusia.\" Misalnya, tanganku harus taruh di mana saat gugup? Aku hanya ... benar-benar mau berteman dengan semua orang.",
       "title": "Berbincang: Canggung"
     },
-    {
-      "text": "Ya ampun, aku rasanya ingin sekali lompat ke genangan airnya ....",
-      "title": "Ketika Turun Hujan"
-    },
-    {
-      "text": "Lebih baik jangan terbang terlalu tinggi dalam cuaca begini ....",
-      "title": "Ketika Petir Menyambar"
-    },
-    {
-      "text": "Apakah \"dia\" pernah tertidur di tempat seperti ini ...?",
-      "title": "Ketika Salju Turun"
-    },
-    {
-      "text": "Kelihatannya seperti pemandangan dari dongeng, indah sekali.",
-      "title": "Ketika Matahari Bersinar"
-    },
-    {
-      "text": "Wah, aku haus sekali ....",
-      "title": "Di Padang Pasir"
-    },
+    { "text": "Ya ampun, aku rasanya ingin sekali lompat ke genangan airnya ....", "title": "Ketika Turun Hujan" },
+    { "text": "Lebih baik jangan terbang terlalu tinggi dalam cuaca begini ....", "title": "Ketika Petir Menyambar" },
+    { "text": "Apakah \"dia\" pernah tertidur di tempat seperti ini ...?", "title": "Ketika Salju Turun" },
+    { "text": "Kelihatannya seperti pemandangan dari dongeng, indah sekali.", "title": "Ketika Matahari Bersinar" },
+    { "text": "Wah, aku haus sekali ....", "title": "Di Padang Pasir" },
     {
       "text": "Pagi. Abaikan saja kepalaku yang agak miring ini, soalnya leherku agak kaku. Semalam ada kucing yang tidur di dekatku, padahal biasanya, hewan-hewan kecil takut. Aku tidak ingin mengganggunya, jadi berusaha tidak gerak sepanjang malam ....",
       "title": "Selamat Pagi"
     },
-    {
-      "text": "Kalau ada yang namanya \"brunch\", apakah ada \"linner\" juga?",
-      "title": "Selamat Siang"
-    },
-    {
-      "text": "Aku penasaran, kita bisa lihat bintang-bintang tidak ya malam ini ...?",
-      "title": "Selamat Malam"
-    },
-    {
-      "text": "Tidak ada yang lebih damai dibandingkan meringkuk nyaman dan tidur nyenyak.",
-      "title": "Selamat Malam"
-    },
+    { "text": "Kalau ada yang namanya \"brunch\", apakah ada \"linner\" juga?", "title": "Selamat Siang" },
+    { "text": "Aku penasaran, kita bisa lihat bintang-bintang tidak ya malam ini ...?", "title": "Selamat Malam" },
+    { "text": "Tidak ada yang lebih damai dibandingkan meringkuk nyaman dan tidur nyenyak.", "title": "Selamat Malam" },
     {
       "text": "Menurutmu aku sudah lebih dewasa? Dilihat bagaimana pun, ini sudah bukan sosok anak-anak ... Selain itu, aku juga ingin terus melangkah maju!",
       "title": "Tentang Durin: Tumbuh Dewasa"
@@ -1180,14 +1108,8 @@
       "text": "Dengarkanlah ... suara itu, suara simfoni dunia yang mula-mula. Tidak ada alat musik yang mampu meniru kekuatan dan keagungan gemuruh guntur.",
       "title": "Ketika Petir Menyambar"
     },
-    {
-      "text": "Setiap kali salju turun, Snezhnaya memanggil. Di sanalah tanah airku.",
-      "title": "Ketika Turun Salju"
-    },
-    {
-      "text": "\"Angin telah terbangun, daun-daun berguguran ....\"",
-      "title": "Ketika Angin Berembus"
-    },
+    { "text": "Setiap kali salju turun, Snezhnaya memanggil. Di sanalah tanah airku.", "title": "Ketika Turun Salju" },
+    { "text": "\"Angin telah terbangun, daun-daun berguguran ....\"", "title": "Ketika Angin Berembus" },
     {
       "text": "Salju berwarna jingga menari-nari di udara ... Hah, jadi seperti ini rupa padang pasir yang dikisahkan dalam legenda.",
       "title": "Di Padang Pasir"
@@ -1300,14 +1222,8 @@
       "text": "Mengingat sekarang kita sudah akrab, apa boleh aku berbagi sedikit keluhan? Sejujurnya, mengingat ... kondisiku yang unik, makanan yang sangat disukai orang lain menurutku agak membosankan. ... Oh, tapi yang jelas, aku masih sangat menikmati waktu yang kita habiskan bersama di meja makan.",
       "title": "Makanan yang Tidak Disukai"
     },
-    {
-      "text": "Mm ... Tidak mengherankan. Istimewa.",
-      "title": "Menerima Hadiah: I"
-    },
-    {
-      "text": "Hmm, ya, menyenangkan.",
-      "title": "Menerima Hadiah: II"
-    },
+    { "text": "Mm ... Tidak mengherankan. Istimewa.", "title": "Menerima Hadiah: I" },
+    { "text": "Hmm, ya, menyenangkan.", "title": "Menerima Hadiah: II" },
     {
       "text": "Uh ... Demi kelanjutan hubungan persahabatan kita, rasanya lebih baik aku tidak mengemukakan pendapatku perihal ini.",
       "title": "Menerima Hadiah: III"
@@ -1354,22 +1270,13 @@
       "text": "Cepat, cari perlindungan. Jangan sampai terkena flu, sistem tubuhmu akan menjadi stres.",
       "title": "Ketika Turun Hujan"
     },
-    {
-      "text": "Waktunya berjemur. Ayo!",
-      "title": "Setelah Hujan"
-    },
-    {
-      "text": "Cuacanya cocok untuk latihan di luar ruangan.",
-      "title": "Ketika Matahari Bersinar"
-    },
+    { "text": "Waktunya berjemur. Ayo!", "title": "Setelah Hujan" },
+    { "text": "Cuacanya cocok untuk latihan di luar ruangan.", "title": "Ketika Matahari Bersinar" },
     {
       "text": "Kalau dipikir-pikir lagi, berlari melawan arus angin itu termasuk latihan penguatan otot deh.",
       "title": "Ketika Angin Berembus"
     },
-    {
-      "text": "Tempat ini kurang cocok untuk latihan di luar ruangan ....",
-      "title": "Di Padang Pasir"
-    },
+    { "text": "Tempat ini kurang cocok untuk latihan di luar ruangan ....", "title": "Di Padang Pasir" },
     {
       "text": "Hei, selamat pagi. Bangun pagi adalah salah satu hal yang harus dibiasakan kalau kamu ingin meningkatkan disiplin diri. Kalau beranjak dari kasur saja tidak bisa, tidak mungkin kamu bisa bertahan dengan rencanamu. Oh ya, aku lagi mau joging pagi nih. Mau ikut?",
       "title": "Selamat Pagi"
@@ -1556,10 +1463,7 @@
       "text": "Selamat pagi. Jangan tertipu, aku tidak biasa bangun pagi. Tapi aku harus ke klinik untuk kasih makan hewan yang sakit, atau mereka bakal ngamuk semua.",
       "title": "Selamat Pagi"
     },
-    {
-      "text": "Oh, hei. Aku baru mau istirahat makan siang. Mau bareng?",
-      "title": "Selamat Siang"
-    },
+    { "text": "Oh, hei. Aku baru mau istirahat makan siang. Mau bareng?", "title": "Selamat Siang" },
     {
       "text": "Kalau malam, aku biasa diam di rumah. Biar orang dan Saurian tahu dokter hewan ini ada di mana kalau darurat. Kalau sepi, ya tinggal nyantai saja rebahan.",
       "title": "Selamat Malam"
@@ -1672,10 +1576,7 @@
       "text": "Cacucu: Siniin, bos!\nIfa: Siapa yang ngajarin kamu kayak gitu? Ck, ya sudahlah. Ambil setengah sana.",
       "title": "Menerima Hadiah: I"
     },
-    {
-      "text": "Mm, enak. Minumnya jus buah kayaknya makin enak nih. Mau rasa apa?",
-      "title": "Menerima Hadiah: II"
-    },
+    { "text": "Mm, enak. Minumnya jus buah kayaknya makin enak nih. Mau rasa apa?", "title": "Menerima Hadiah: II" },
     {
       "text": "Cacucu: Serius bos? Kacau balau gini.\nIfa: EH, Cacucu! Jangan gitu ... Bisa dimakan kok, masih bisa. Makasih bosku.",
       "title": "Menerima Hadiah: III"
@@ -1684,10 +1585,7 @@
       "text": "Selamat ulang tahun! Panjang umur, awet muda dan sehat selalu ya.\nYa, kita tidak bisa menahan aliran waktu, tapi bisa dong selamanya berjiwa muda? Lagi pula bos, bermuram durja sambil cemberut tuh tidak bagus buat kesehatan. Ayo, hari ini lupakan semua kekhawatiran! Kita senang-senang!\nOh, kamu suka musik yang gimana? Aku nyanyi deh.",
       "title": "Ulang Tahun"
     },
-    {
-      "text": "Ini pemanasan?",
-      "title": "Perasaan Tentang Ascension: Permulaan"
-    },
+    { "text": "Ini pemanasan?", "title": "Perasaan Tentang Ascension: Permulaan" },
     {
       "text": "Harus bisa merawat diri sendiri dulu sebelum bisa merawat orang lain.",
       "title": "Perasaan Tentang Ascension: Persiapan"
@@ -1710,18 +1608,12 @@
       "text": "Katanya semakin luarnya terlihat tenang, justru bahaya mengintai dari balik bayang-bayang. Belum tentu selamanya begitu, tapi jaga-jaga tidak ada salahnya, kan.",
       "title": "Berbincang: Waspada"
     },
-    {
-      "text": "Dingin? Awas masuk ingin. Ayo, aku bikinin kuah hangat dulu.",
-      "title": "Berbincang: Patroli Malam"
-    },
+    { "text": "Dingin? Awas masuk ingin. Ayo, aku bikinin kuah hangat dulu.", "title": "Berbincang: Patroli Malam" },
     {
       "text": "Melakukan apa yang kita bisa saja belum cukup. Kadang, untuk menjadi lebih kuat, kita harus bisa keluar dari zona nyaman.",
       "title": "Berbincang: Kesulitan"
     },
-    {
-      "text": "Matahari bersinar! Terang pun kembali menang.",
-      "title": "Setelah Hujan"
-    },
+    { "text": "Matahari bersinar! Terang pun kembali menang.", "title": "Setelah Hujan" },
     {
       "text": "Seperti kata Pak Tua, \"dewa-dewa berulah lagi\". Semoga mereka tidak melibatkan kita-kita yang di bumi ya ....",
       "title": "Ketika Petir Menyambar"
@@ -1734,10 +1626,7 @@
       "text": "Angin ribut ... bukan pertanda baik. Lebih baik mendirikan kemah sebelum terlambat.",
       "title": "Ketika Angin Berembus"
     },
-    {
-      "text": "Fajar baru ... satu lagi malam kelam yang berlalu.",
-      "title": "Selamat Pagi"
-    },
+    { "text": "Fajar baru ... satu lagi malam kelam yang berlalu.", "title": "Selamat Pagi" },
     {
       "text": "Matahari sudah keluar, aku sebaiknya memanfaatkan kesempatan untuk memeriksa sekeliling. Masalahnya ... aku perlu tidur siang nih.",
       "title": "Selamat Siang"
@@ -1746,10 +1635,7 @@
       "text": "Kita tidak tahu apa yang bersembunyi di balik gelapnya malam. Jadi kalau mau bepergian, tolong selalu awas dan waspada.",
       "title": "Selamat Malam"
     },
-    {
-      "text": "Sudah larut, istirahatlah duluan. Malam ini biar aku yang jaga.",
-      "title": "Selamat Tidur"
-    },
+    { "text": "Sudah larut, istirahatlah duluan. Malam ini biar aku yang jaga.", "title": "Selamat Tidur" },
     {
       "text": "Hehe, aku berdebat cukup lama sebelum Pak Tua mengizinkanku bergabung dengan Lightkeeper. Aku tidak tahan diam dengan aman dan nyaman di Piramida sementara orang lain di luar sana mempertaruhkan nyawa. Aku bilang sama dia, mending perang sama Perburuan Liar di garis depan saja daripada begitu.",
       "title": "Tentang Illuga: Lightkeeper"
@@ -1850,14 +1736,8 @@
       "text": "Waduh, ini baru namanya rasa ... maaf, boleh tahu apa bumbu rahasia? Aku mau bikin sendiri!",
       "title": "Menerima Hadiah: I"
     },
-    {
-      "text": "Lumayan! Hehe, bisa nih dibagi ke rekan-rekan.",
-      "title": "Menerima Hadiah: II"
-    },
-    {
-      "text": "Ehem ... mau belajar bikin yang lain tidak?",
-      "title": "Menerima Hadiah: III"
-    },
+    { "text": "Lumayan! Hehe, bisa nih dibagi ke rekan-rekan.", "title": "Menerima Hadiah: II" },
+    { "text": "Ehem ... mau belajar bikin yang lain tidak?", "title": "Menerima Hadiah: III" },
     {
       "text": "Selamat ulang tahun, anggota! Lupakan misi dan petualangan, hari ini khusus buat teman baik, perut kenyang, dan tidur sampai puas! Aku akan jaga, jadi kamu nikmati hidup saja ya. Dan kalau misal ada yang berani ganggu ... lenteraku siap menghalau semuanya.",
       "title": "Ulang Tahun"
@@ -1896,10 +1776,7 @@
       "text": "Data pertempuran telah diperbarui. Jangan khawatir, kali ini aku tidak akan menghancurkan langit-langit lagi.",
       "title": "Berbincang: Pembaruan Data"
     },
-    {
-      "text": "Kuharap sendi-sendiku tidak berkarat ....",
-      "title": "Ketika Turun Hujan"
-    },
+    { "text": "Kuharap sendi-sendiku tidak berkarat ....", "title": "Ketika Turun Hujan" },
     {
       "text": "Harap diperhatikan: Peluang melihat pelangi sangat tinggi. Titik pengamatan yang disarankan ditandai pada peta.",
       "title": "Setelah Hujan"
@@ -2060,10 +1937,7 @@
       "text": "Mode ucapan selamat untuk hari-hari istimewa telah diaktifkan. Silakan pilih lokasi yang cocok untuk duduk dan beristirahat sejenak selagi aku membersihkan kamarmu dan memasang pita, balon, dan bunga. Setelahnya, aku akan menyiapkan makanan dan kue kesukaanmu, sesuai dengan data yang tercatat di bank memoriku. Kalau kamu punya permintaan lain untuk ditambahkan ke daftar ini, jangan ragu untuk menyampaikannya. Mari kita buat hari ini menjadi hari yang istimewa untukmu. Selamat Ulang Tahun!",
       "title": "Ulang Tahun"
     },
-    {
-      "text": "Apa sudah waktunya untuk pemeliharaan rutin?",
-      "title": "Perasaan Tentang Ascension: Permulaan"
-    },
+    { "text": "Apa sudah waktunya untuk pemeliharaan rutin?", "title": "Perasaan Tentang Ascension: Permulaan" },
     {
       "text": "Efisiensi inti meningkat. Kamu juga berbakat menjadi mekanik.",
       "title": "Perasaan Tentang Ascension: Persiapan"
@@ -2102,14 +1976,8 @@
       "text": "Waaah! Ada salju masuk ke punggungku, dingin ... dingin ... dingin ...!",
       "title": "Ketika Salju Turun"
     },
-    {
-      "text": "*Pfft!* *Pfft!* *Pfft!* Ugh, ada pasir masuk ke mulutku!",
-      "title": "Di Padang Pasir"
-    },
-    {
-      "text": "Pagi. Sudah sarapan? Aku tahu tempat yang enak.",
-      "title": "Selamat Pagi"
-    },
+    { "text": "*Pfft!* *Pfft!* *Pfft!* Ugh, ada pasir masuk ke mulutku!", "title": "Di Padang Pasir" },
+    { "text": "Pagi. Sudah sarapan? Aku tahu tempat yang enak.", "title": "Selamat Pagi" },
     {
       "text": "*hoammm* Bagaimana kalau kita kembali ke toko dan tidur siang dulu? Aku ngantuk banget ....",
       "title": "Selamat Siang"
@@ -2226,10 +2094,7 @@
       "text": "ENAK! Wah, sejak kapan kamu bisa masak seperti ini? Tambah lagi dong, hehehe. Ini jauh lebih enak daripada masakan Bos Nef ... *uhuk*! Eh, kamu sudah makan? Kalau belum ... mau makan bareng?",
       "title": "Menerima Hadiah: I"
     },
-    {
-      "text": "Lumayan! Hehe. Ayo makan! Harus makan kenyang biar bisa kerja.",
-      "title": "Menerima Hadiah: II"
-    },
+    { "text": "Lumayan! Hehe. Ayo makan! Harus makan kenyang biar bisa kerja.", "title": "Menerima Hadiah: II" },
     {
       "text": "Ugh ... Aku bi-bisa habisin ini ... Tidak ... boleh ... menyia-nyiakan ... makanan. Haha ... ha ....",
       "title": "Menerima Hadiah: III"
@@ -2238,18 +2103,9 @@
       "text": "Selamat ulang tahun! Ini, boneka untukmu! Baru selesai aku jahit. Ini pertama kalinya aku mencoba teknik ini ... butuh waktu lama, lho! Aku sudah isi pakai ramuan penenang yang bisa bantu kamu tidur, cukup taruh saja di samping bantalmu dan aku jamin kamu bakal langsung tidur nyenyak tanpa mimpi buruk. Perban di tanganku ...? Ah ... cuma luka kecil ... karena bermain dengan Ashru, hahaha ... Bukan apa-apa kok ....",
       "title": "Ulang Tahun"
     },
-    {
-      "text": "Oh? Lumayan juga!",
-      "title": "Perasaan Tentang Ascension: Permulaan"
-    },
-    {
-      "text": "Lebih gesit dari sebelumnya.",
-      "title": "Perasaan Tentang Ascension: Persiapan"
-    },
-    {
-      "text": "Baiklah .... Saatnya bergerak!",
-      "title": "Perasaan Tentang Ascension: Klimaks"
-    },
+    { "text": "Oh? Lumayan juga!", "title": "Perasaan Tentang Ascension: Permulaan" },
+    { "text": "Lebih gesit dari sebelumnya.", "title": "Perasaan Tentang Ascension: Persiapan" },
+    { "text": "Baiklah .... Saatnya bergerak!", "title": "Perasaan Tentang Ascension: Klimaks" },
     {
       "text": "Hehe, aku sudah siap buat pekerjaan besar sekarang .... Bagaimana? Mau ikut?",
       "title": "Perasaan Tentang Ascension: Konklusi"
@@ -2288,10 +2144,7 @@
       "text": "Saat Nefer bercerita tentang tempat ini, aku benar-benar tidak kebayang ... Tapi sekarang aku di sini, melihatnya dengan mata kepalaku sendiri.",
       "title": "Di Padang Pasir"
     },
-    {
-      "text": "Selamat pagi. Baik siang maupun malam, semoga berkah Dewi Bulan menyinarimu.",
-      "title": "Selamat Pagi"
-    },
+    { "text": "Selamat pagi. Baik siang maupun malam, semoga berkah Dewi Bulan menyinarimu.", "title": "Selamat Pagi" },
     {
       "text": "Selamat pagi. Kiranya terang bulan senantiasa menghubungkan kita, siang dan malam.",
       "title": "Selamat Pagi"
@@ -2300,10 +2153,7 @@
       "text": "Oh, sepertinya aku tertidur. Maaf. Kalau ada yang perlu ditanyakan, silakan.",
       "title": "Selamat Siang"
     },
-    {
-      "text": "Cahaya bulan begitu tenang malam ini. Ayo jalan-jalan di hutan bersamaku.",
-      "title": "Selamat Malam"
-    },
+    { "text": "Cahaya bulan begitu tenang malam ini. Ayo jalan-jalan di hutan bersamaku.", "title": "Selamat Malam" },
     {
       "text": "Bintang-bintang di langit telah saling mengucapkan selamat malam. Kini, giliran kita untuk melakukan hal yang sama.",
       "title": "Selamat Tidur"
@@ -2364,10 +2214,7 @@
       "text": "Dewa yang baru tidak bisa belajar cara untuk hidup bersama pengikutnya dari mana pun. Dia pasti sangat sedih ....\nSupaya mencapai semacam rekonsiliasi, aku mengajukan permintaan yang mungkin terdengar agak lancang. Dia bilang lebih suka hidup sendiri, tapi aku masih memimpikan suatu hari nanti Kuutar dan para Bani Bulan Embun, bulan dan para pengikutnya, bisa berkumpul dan bersulang.",
       "title": "Tentang Kuutar"
     },
-    {
-      "text": "Lihatlah bulan. Ia selalu ada di sana, selalu diam dan sunyi.",
-      "title": "Mengenal Lauma: I"
-    },
+    { "text": "Lihatlah bulan. Ia selalu ada di sana, selalu diam dan sunyi.", "title": "Mengenal Lauma: I" },
     {
       "text": "Di banyak tempat, memudarnya bulan dianggap sebagai pertanda nasib buruk.\nMungkin orang lupa bahwa bulan juga merupakan korban kemalangan ... Kehancuran mereka bukanlah nasib yang mereka harapkan terjadi pada dirinya sendiri.",
       "title": "Mengenal Lauma: II"
@@ -2388,10 +2235,7 @@
       "text": "Aku menikmati waktu menyendiri di tengah gelapnya malam. Burung-burung dan binatang-binatang mulai tenang, dan satu-satunya suara yang kudengar hanyalah desiran angin yang berembus lembut di antara pepohonan ... Semuanya begitu damai.",
       "title": "Hobi Lauma"
     },
-    {
-      "text": "Kepalaku ... berat sekali aku membawanya berkeliling.",
-      "title": "Kekhawatiran Lauma"
-    },
+    { "text": "Kepalaku ... berat sekali aku membawanya berkeliling.", "title": "Kekhawatiran Lauma" },
     {
       "text": "Makanan sederhana, dengan bumbu minimal. Ini tidak ada hubungannya dengan keyakinan atau pantangan makananku, hanya saja kurasa makanan yang lebih ringan lebih cocok.",
       "title": "Makanan Favorit"
@@ -2404,10 +2248,7 @@
       "text": "Bahan-bahannya segar sekali ... Maaf sekali sudah membuatmu repot. Dengan senang hati aku berbagi dengan teman-teman ... Apa? Semuanya untukku ...?",
       "title": "Menerima Hadiah: I"
     },
-    {
-      "text": "Terima kasih atas hadiahmu. Mari kita berbagi.",
-      "title": "Menerima Hadiah: II"
-    },
+    { "text": "Terima kasih atas hadiahmu. Mari kita berbagi.", "title": "Menerima Hadiah: II" },
     {
       "text": "Pasti ada orang-orang yang lebih membutuhkan daripada aku. Aku akan menjaga mereka.",
       "title": "Menerima Hadiah: III"
@@ -2416,14 +2257,8 @@
       "text": "Untukmu, tamu kehormatan kami, yang disayangi cahaya bulan dan hutan kami yang tenang, kupersembahkan belati suci ini. Karena belati tidak harus menjadi objek kekerasan — belati memang sering digunakan sebagai benda simbolis dalam upacara doa.\nMeski begitu, tentu saja kamu bebas menggunakannya untuk tujuan apa pun yang kamu inginkan.",
       "title": "Ulang Tahun"
     },
-    {
-      "text": "Aku tidak berusaha menempuh jalan pintas ....",
-      "title": "Perasaan Tentang Ascension: Permulaan"
-    },
-    {
-      "text": "Aku pun tidak ingin punya kekuatan yang besar ....",
-      "title": "Perasaan Tentang Ascension: Persiapan"
-    },
+    { "text": "Aku tidak berusaha menempuh jalan pintas ....", "title": "Perasaan Tentang Ascension: Permulaan" },
+    { "text": "Aku pun tidak ingin punya kekuatan yang besar ....", "title": "Perasaan Tentang Ascension: Persiapan" },
     {
       "text": "Tapi kalau tujuan kita melakukan semua ini adalah untuk menemukan kebenaran ....",
       "title": "Perasaan Tentang Ascension: Klimaks"
@@ -2450,18 +2285,12 @@
       "text": "Kamu mau lihat arsipku? Tentu! Aku selalu suka tunjukkan mahakaryaku, haha. Aku sampai gambar sendiri.",
       "title": "Mengobrol: Arsip"
     },
-    {
-      "text": "Ah ... Bau tanah basah ... Pertanda dunia sedang bangun.",
-      "title": "Setelah Hujan"
-    },
+    { "text": "Ah ... Bau tanah basah ... Pertanda dunia sedang bangun.", "title": "Setelah Hujan" },
     {
       "text": "Dingin sekali. Hei, mau buat manusia salju? Lumi, bantu dong! ... Eh! Tidak perlu sampai bawa palu!",
       "title": "Ketika Turun Salju"
     },
-    {
-      "text": "Ke mana arah benih dandelion terbang ya kali ini ....",
-      "title": "Ketika Angin Bertiup"
-    },
+    { "text": "Ke mana arah benih dandelion terbang ya kali ini ....", "title": "Ketika Angin Bertiup" },
     {
       "text": "\"Tidurlah, tutup matamu. Mimpi emas memanggil pasir yang mengembara. Janganlah meminum air asin yang penuh kepahitan, karena kesedihan hari esok telah berlalu.\"",
       "title": "Di Padang Pasir"
@@ -2478,10 +2307,7 @@
       "text": "Kalau kamu masih belum ngantuk ... mau di sini sebentar dan menatap bintang?",
       "title": "Selamat Malam"
     },
-    {
-      "text": "Kita sudah banyak jalan. Waktunya tidur ... Selamat tidur! Mimpi indah!",
-      "title": "Selamat Tidur"
-    },
+    { "text": "Kita sudah banyak jalan. Waktunya tidur ... Selamat tidur! Mimpi indah!", "title": "Selamat Tidur" },
     {
       "text": "Ada banyak sekali makhluk aneh dan luar biasa di dunia ini, tapi menguak rahasia mereka itu sama seperti main petak umpet sama teman yang malu-malu kucing. Untungnya, aku jago mengejar, dan pintar menunggu juga.",
       "title": "Tentang Linnea: Pengejaran dan Penantian"
@@ -2578,26 +2404,17 @@
       "text": "Aku rasa tidak ada makanan yang aku benar-benar benci sih, selain makanan yang super tidak sehat ya. Konsep buang-buang makanan hanya karena makanan itu tidak enak di lidahku sepertinya boros sekali menurutku.",
       "title": "Makanan yang Tidak Disukai"
     },
-    {
-      "text": "Ini enak sekali! Cara buatnya bagaimana? Boleh ajari aku?",
-      "title": "Menerima Hadiah: I"
-    },
+    { "text": "Ini enak sekali! Cara buatnya bagaimana? Boleh ajari aku?", "title": "Menerima Hadiah: I" },
     {
       "text": "Nyam! Lain kali giliranku ya. Aku ingin dengar pendapatmu soal masakanku.",
       "title": "Menerima Hadiah: II"
     },
-    {
-      "text": "Uhm ... yah, setidaknya tidak berbahaya untuk kesehatan.",
-      "title": "Menerima Hadiah: III"
-    },
+    { "text": "Uhm ... yah, setidaknya tidak berbahaya untuk kesehatan.", "title": "Menerima Hadiah: III" },
     {
       "text": "Selamat Ulang Tahun ... Ini bukan hadiah yang paling berharga, tapi ini sudah aku koleksi untuk waktu yang lama ... Harap terima fosil ini. Lihat yang ini? Ini jejak tulang dan bulu dari spesies burung yang sudah lama punah. Mereka tidak akan bisa terbang lagi, tapi momen saat burung ini membentangkan sayapnya sudah meninggalkan jejak yang akan bertahan lama di masa mendatang. Jadi, meski hidup akan memudar pada akhirnya, akan selalu ada bukti tentang keberadaan kita yang tertinggal. Semoga hidupmu setangguh pohon tua, dengan setiap lingkarannya menceritakan kisah yang indah.",
       "title": "Ulang Tahun"
     },
-    {
-      "text": "Indraku menjadi semakin tajam.",
-      "title": "Perasaan Tentang Ascension: Permulaan"
-    },
+    { "text": "Indraku menjadi semakin tajam.", "title": "Perasaan Tentang Ascension: Permulaan" },
     {
       "text": "Aku sudah menjadi lebih paham tentang hal-hal di dunia ini.",
       "title": "Perasaan Tentang Ascension: Persiapan"
@@ -2628,14 +2445,8 @@
       "text": "Bagaimana hubunganku dengan knight lainnya? Hmm ... Aku yakin aku sudah tinggalkan kesan yang mendalam. Itu pasti hal bagus, kan?",
       "title": "Berbincang: Hubungan Manusia"
     },
-    {
-      "text": "Huh, hujannya makin deras. Apa yang bakal terbawa arus ya?",
-      "title": "Ketika Turun Hujan"
-    },
-    {
-      "text": "Langitnya sudah cerah. Kayak tidak pernah hujan saja.",
-      "title": "Setelah Hujan"
-    },
+    { "text": "Huh, hujannya makin deras. Apa yang bakal terbawa arus ya?", "title": "Ketika Turun Hujan" },
+    { "text": "Langitnya sudah cerah. Kayak tidak pernah hujan saja.", "title": "Setelah Hujan" },
     {
       "text": "Petir bisa menutupi banyak hal, tapi tidak akan bisa tenggelamkan detak jantungmu sendiri.",
       "title": "Ketika Petir Menyambar"
@@ -2648,18 +2459,9 @@
       "text": "Fuh, anginnya kencang deh ... Sayang tidak ada bunga dandelion di sini. Kita sobek-sobek kertas saja yuk?",
       "title": "Ketika Angin Bertiup"
     },
-    {
-      "text": "Di saat-saat kayak begini, aku benar-benar kangen sama Danau Cider.",
-      "title": "Di Padang Pasir"
-    },
-    {
-      "text": "Pagi! Ada rencana apa hari ini?",
-      "title": "Selamat Pagi"
-    },
-    {
-      "text": "Sudah istirahat makan siang? Bagus, ada kerjaan untuk kita di siang ini.",
-      "title": "Selamat Siang"
-    },
+    { "text": "Di saat-saat kayak begini, aku benar-benar kangen sama Danau Cider.", "title": "Di Padang Pasir" },
+    { "text": "Pagi! Ada rencana apa hari ini?", "title": "Selamat Pagi" },
+    { "text": "Sudah istirahat makan siang? Bagus, ada kerjaan untuk kita di siang ini.", "title": "Selamat Siang" },
     {
       "text": "Malam ini ... Hmm. Ayo kasih kejutan ke pasukan dengan latihan serangan mendadak.",
       "title": "Selamat Malam"
@@ -2826,30 +2628,12 @@
       "text": "Emosi seperti badai yang mengalir di pikiranmu. Seringkali, kalau mencoba menahannya, kamu akan terbawa oleh kekuatannya yang luar biasa. Kalau kamu mengabaikannya ... kamu akan tercabik-cabik.",
       "title": "Berbincang: Emosi"
     },
-    {
-      "text": "Berkah langit tidak pernah berat sebelah.",
-      "title": "Ketika Turun Hujan"
-    },
-    {
-      "text": "Ada pembohong yang terbongkar lagi.",
-      "title": "Ketika Petir Menyambar"
-    },
-    {
-      "text": "Sepertinya ada banyak masalah yang mulai berembus kemari,",
-      "title": "Ketika Angin Bertiup"
-    },
-    {
-      "text": "Deja vu yang tidak seharusnya terjadi.",
-      "title": "Di Padang Pasir"
-    },
-    {
-      "text": "Pagi. Bangunnya pagi juga ya? Heh. Semoga Jahoda juga bisa sepertimu ....",
-      "title": "Selamat Pagi"
-    },
-    {
-      "text": "*hoam* Tidak pernah ada pelanggan di jam segini. Aku mau tidur dulu deh.",
-      "title": "Selamat Siang"
-    },
+    { "text": "Berkah langit tidak pernah berat sebelah.", "title": "Ketika Turun Hujan" },
+    { "text": "Ada pembohong yang terbongkar lagi.", "title": "Ketika Petir Menyambar" },
+    { "text": "Sepertinya ada banyak masalah yang mulai berembus kemari,", "title": "Ketika Angin Bertiup" },
+    { "text": "Deja vu yang tidak seharusnya terjadi.", "title": "Di Padang Pasir" },
+    { "text": "Pagi. Bangunnya pagi juga ya? Heh. Semoga Jahoda juga bisa sepertimu ....", "title": "Selamat Pagi" },
+    { "text": "*hoam* Tidak pernah ada pelanggan di jam segini. Aku mau tidur dulu deh.", "title": "Selamat Siang" },
     {
       "text": "Oh, sudah semalam ini? Maaf, aku harus keluar sebentar. Sekarang tehnya pasti sudah siap, silakan tuang sendiri.",
       "title": "Selamat Malam"
@@ -2966,10 +2750,7 @@
       "text": "Wah ... warnanya bagus sekali. Pernah terpikirkan untuk bekerja secara resmi? Curatorium of Secrets bisa pekerjakan koki kayak kamu. Kami juga akan bayar dengan gaji yang tinggi.",
       "title": "Menerima Hadiah: I"
     },
-    {
-      "text": "Lumayan, lumayan sekali. Tidak kusangka kamu bisa masak.",
-      "title": "Menerima Hadiah: II"
-    },
+    { "text": "Lumayan, lumayan sekali. Tidak kusangka kamu bisa masak.", "title": "Menerima Hadiah: II" },
     {
       "text": "Hmm ... Rasanya ... lumayan berkesan. Aku akan tanyakan pendapat Jahoda nanti.",
       "title": "Menerima Hadiah: III"
@@ -2978,10 +2759,7 @@
       "text": "Aku tidak terlalu pandai memilih hadiah, bagaimana kalau begini: Aku tanyakan tiga pertanyaan, kalau kamu bisa menjawab benar ... Aku akan ... Tenang saja, itu cuma candaan kok. Ini, coba lihat buku ini. Koleksi cerita rakyat dan dongeng di padang pasir, harusnya ini salah satu versi paling lengkap yang pernah ada. Sudah banyak generasi orang padang pasir yang tumbuh dewasa mendengar semua kisah ini, dan menceritakannya lagi. Siapa tahu kalau kamu sudah selesai membacanya, kamu juga bisa jadi orang padang pasir yang luar biasa!",
       "title": "Ulang Tahun"
     },
-    {
-      "text": "Heh, menarik.",
-      "title": "Perasaan Tentang Ascension: Permulaan"
-    },
+    { "text": "Heh, menarik.", "title": "Perasaan Tentang Ascension: Permulaan" },
     {
       "text": "Kebenaran yang tipis ... tapi hanya setetes di antara lautan.",
       "title": "Perasaan Tentang Ascension: Persiapan"
@@ -3000,14 +2778,8 @@
       "text": "Oh, apa aku harus kenalkan diriku lagi? Hm, sepertinya kali ini tidak ada gangguan sihir pengenalan diri Alice, jadi kurasa aku akan langsung lanjut saja ... Ekhem, aku Nicole. Seperti yang bisa kamu lihat, aku ... Ah, kok lagi sih! Kayaknya aku bicara terlalu cepat ....",
       "title": "Halo"
     },
-    {
-      "text": "Hm ... Bukan ide terbaik yang pernah kumiliki.",
-      "title": "Berbincang: Novel"
-    },
-    {
-      "text": "Hmm ... Metafora sudah cukup menjelaskan.",
-      "title": "Berbincang: Patung"
-    },
+    { "text": "Hm ... Bukan ide terbaik yang pernah kumiliki.", "title": "Berbincang: Novel" },
+    { "text": "Hmm ... Metafora sudah cukup menjelaskan.", "title": "Berbincang: Patung" },
     {
       "text": "Aku ini apa sekarang? Aku cuma \"manusia\" yang kehilangan suaranya.",
       "title": "Berbincang: Keheningan"
@@ -3016,22 +2788,13 @@
       "text": "Sebenarnya, semua harta karun di ujung pelangi itu dikubur oleh para Seelie.",
       "title": "Setelah Hujan"
     },
-    {
-      "text": "Selamat pagi.",
-      "title": "Selamat Pagi"
-    },
-    {
-      "text": "Selamat siang.",
-      "title": "Selamat Siang"
-    },
+    { "text": "Selamat pagi.", "title": "Selamat Pagi" },
+    { "text": "Selamat siang.", "title": "Selamat Siang" },
     {
       "text": "Malam hari itu waktu inspirasi yang paling sering datang, jadi di saat itu juga orang-orang dulu paling sering bertemu dengan malaikat. Kurasa mereka itu alasan utama kami berubah jadi sekumpulan makhluk yang suka begadang. Meksi begitu, itu tidak terlalu akurat sih. Kita kan tidak punya jam biologis atau siklus tidur ya. Yang kami lakukan itu lebih mirip kayak ... pemeliharaan fungsional rutin. Jadi, kurasa ini cuma masalah menghindari waktu malam hari ....",
       "title": "Selamat Malam"
     },
-    {
-      "text": "Sudah mau tidur? Hehe, kalau begitu, selamat malam.",
-      "title": "Selamat Tidur"
-    },
+    { "text": "Sudah mau tidur? Hehe, kalau begitu, selamat malam.", "title": "Selamat Tidur" },
     {
       "text": "Selama penulis masih hidup, yang terbaik yang bisa mereka harapkan adalah menghasilkan sesuatu yang populer. Soalnya, manusia itu perpaduan masa kini. Sama kayak, tidak mungkin pelajar Akademiya punya pengetahuan selama dua puluh tahun waktu mereka belajar di awal. Penulis modern juga tidak mungkin menulis karya klasik di zamannya sendiri. Dengan kata lain, yang bisa dilakukan hanyalah menulis apa yang menarik. Lagian, bukan aku yang tulis kok, jadi aku tidak merasa terlalu terbebani untuk hal ini.",
       "title": "Tentang Nicole: Karya Populer"
@@ -3120,10 +2883,7 @@
       "text": "Umat manusia itu spesies yang menarik dan cemerlang. Melepaskan sayapku bukan kejatuhan dari kemuliaan, tapi kesempatan untuk menjadi bagian dari sesuatu yang nyata. Mengorbankan suaraku tidak membuatku terbungkam, tapi memberiku kekuatan untuk mendengarkan sebelum menghakimi. Potensi ilahi terletak dalam diri manusia, setiap hari yang kuhabiskan bersama kalian terasa lebih menakjubkan daripada hari-hari sebelumnya.",
       "title": "Mengenal Nicole: V"
     },
-    {
-      "text": "Bukannya itu ... sudah jelas?",
-      "title": "Hobi Nicole"
-    },
+    { "text": "Bukannya itu ... sudah jelas?", "title": "Hobi Nicole" },
     {
       "text": "Sekarang teman-teman terdekatku sudah tahu kalau aku ini cerewet. Jadi, itu berarti aku tidak perlu berpura-pura lagi ya? Tapi kalau hal itu malah buat orang pusing, dan tidak ada lagi yang mau bicara denganku ... Hm, soalnya Klee juga belum cukup umur. Kayaknya aku harus berakting jadi malaikat yang anggun sedikit lebih lama lagi.",
       "title": "Kekhawatiran Nicole"
@@ -3136,18 +2896,12 @@
       "text": "Hm ... itu pertanyaan sulit. Selama makanannya dimasak dengan baik, aku makan apa saja kok.",
       "title": "Makanan yang Tidak Disukai"
     },
-    {
-      "text": "Mhm! Ini ... enak sekali!",
-      "title": "Menerima Hadiah: I"
-    },
+    { "text": "Mhm! Ini ... enak sekali!", "title": "Menerima Hadiah: I" },
     {
       "text": "Manis sekali. Aku bisa melihat seberapa besar perhatian yang kamu curahkan.",
       "title": "Menerima Hadiah: II"
     },
-    {
-      "text": "A-Aroma ini ... aneh. Harus dimakan ya?",
-      "title": "Menerima Hadiah: III"
-    },
+    { "text": "A-Aroma ini ... aneh. Harus dimakan ya?", "title": "Menerima Hadiah: III" },
     {
       "text": "Selamat ulang tahun! Aku sembunyikan hadiah ulang tahunmu di bawah peti, juga sudah siapkan banyak teka-teki untuk dipecahkan. Yuk, aku akan pandu kamu!",
       "title": "Ulang Tahun"
@@ -3174,10 +2928,7 @@
       "text": "... Terima kasih atas dukungannya. Kamu mau minta tanda tangan, kan? Mau aku gambar apa di sebelahnya? Bagaimana kalau sehelai bulu? Oh, tunggu, kamu bukan penggemarku? Sepertinya aku salah paham. Kalau begitu, izinkan aku memperkenalkan diri dari awal. Aku Odette, penari balet dari Rombongan Teater Korolevskiy ... Yah, tetap kuucapkan terima kasih atas dukungannya.",
       "title": "Halo"
     },
-    {
-      "text": "Kalau tidak ada apa-apa lagi, aku mau pergi latihan menari.",
-      "title": "Berbincang: Kesibukan"
-    },
+    { "text": "Kalau tidak ada apa-apa lagi, aku mau pergi latihan menari.", "title": "Berbincang: Kesibukan" },
     {
       "text": "Kalau jawaban singkat saja sudah cukup, kenapa harus buang tenaga dengan kata-kata yang panjang?",
       "title": "Berbincang: Santai"
@@ -3190,26 +2941,14 @@
       "text": "Suara rintik hujan selalu membuatku merasa tenang. Cuaca seperti ini sangat cocok untuk menari sendiri.",
       "title": "Ketika Turun Hujan"
     },
-    {
-      "text": "Momen-momen yang paling indah dan tenang selalu terasa yang paling singkat.",
-      "title": "Setelah Hujan"
-    },
+    { "text": "Momen-momen yang paling indah dan tenang selalu terasa yang paling singkat.", "title": "Setelah Hujan" },
     {
       "text": "Salju di Snezhnaya selalu dingin menusuk, dan sepertinya tak pernah berhenti turun.",
       "title": "Ketika Turun Salju"
     },
-    {
-      "text": "Rambutku ... akan kurapikan nanti.",
-      "title": "Ketika Angin Berembus"
-    },
-    {
-      "text": "... Setidaknya tidak akan ada jumpa fans di tempat seperti ini.",
-      "title": "Di Padang Pasir"
-    },
-    {
-      "text": "Aku sudah pemanasan dan siap berangkat.",
-      "title": "Selamat Pagi"
-    },
+    { "text": "Rambutku ... akan kurapikan nanti.", "title": "Ketika Angin Berembus" },
+    { "text": "... Setidaknya tidak akan ada jumpa fans di tempat seperti ini.", "title": "Di Padang Pasir" },
+    { "text": "Aku sudah pemanasan dan siap berangkat.", "title": "Selamat Pagi" },
     {
       "text": "Aku tidak terbiasa tidur siang. Siang hari juga bukan waktu yang tepat untuk berlatih, jadi biasanya aku mengisi waktu dengan membaca naskah drama tarianku. Hm? Soal surat-surat ini? Itu dari para penggemarku. Vodyanitsa yang memaksaku menerimanya. Ia ingin aku membacanya sekali saja.",
       "title": "Selamat Siang"
@@ -3342,10 +3081,7 @@
       "text": "Ini hanya satu hidangan? Ini terlihat lebih seperti ... makanan untuk seharian penuh.",
       "title": "Menerima Hadiah: II"
     },
-    {
-      "text": "Ah, terima kasih, tapi tidak perlu. Aku sedang menjaga pola makanku.",
-      "title": "Menerima Hadiah: III"
-    },
+    { "text": "Ah, terima kasih, tapi tidak perlu. Aku sedang menjaga pola makanku.", "title": "Menerima Hadiah: III" },
     {
       "text": "Selamat ulang tahun! Aku mencoba memikirkan apa yang harus kuberikan padamu ... Biasanya aku menerima hal-hal seperti bunga, sepatu balet, dan kotak musik, tapi rasanya itu bukan seleramu. Bagaimana kalau kamu cukup ... mengucapkan keinginanmu di sini sekarang? Tentu saja bagusnya sih sesuatu yang masih bisa kuwujudkan ya ....",
       "title": "Ulang Tahun"
@@ -3392,10 +3128,7 @@
       "text": "Gemetar itu respons fisiologis normal terhadap suara mendadak. Tidak ada hubungannya dengan rasa takut.",
       "title": "Ketika Petir Menyambar"
     },
-    {
-      "text": "Aku tidak kedinginan. Jadi tidak butuh mantel.",
-      "title": "Ketika Turun Salju"
-    },
+    { "text": "Aku tidak kedinginan. Jadi tidak butuh mantel.", "title": "Ketika Turun Salju" },
     {
       "text": "Sinar matahari itu gratis, tapi berapa banyak yang benar-benar menghargai kehangatannya?",
       "title": "Ketika Matahari Bersinar"
@@ -3548,14 +3281,8 @@
       "text": "Selama ini kupikir gambar di \"Ensiklopedia Masakan\" itu pakai trik-trik supaya kelihatan sempurna. Tidak kusangka masakannya bisa benar-benar jadi begitu di dunia nyata!",
       "title": "Menerima Hadiah: I"
     },
-    {
-      "text": "Hmm ... Lumayan, tapi masih bisa ditingkatkan.",
-      "title": "Menerima Hadiah: II"
-    },
-    {
-      "text": "Oke, jujur saja! Kamu dikutuk sama penyihir itu ya?!?",
-      "title": "Menerima Hadiah: III"
-    },
+    { "text": "Hmm ... Lumayan, tapi masih bisa ditingkatkan.", "title": "Menerima Hadiah: II" },
+    { "text": "Oke, jujur saja! Kamu dikutuk sama penyihir itu ya?!?", "title": "Menerima Hadiah: III" },
     {
       "text": "Selamat ulang tahun! Tidak perlu terkejut kayak begitu, tidak susah kok kalau mau dapatkan tanggal ulang tahun seseorang. Tapi ada satu informasi penting yang belum aku tahu ... Harapan ulang tahunmu.\nHah? Kalau dikasih tahu berarti tidak bakal terwujud? Aku tidak setuju sih. Itu justru buat orang kayak aku lebih sulit membantu mewujudkannya. Jadi, hei ayo, tidak perlu bertele-tele. Mau apa? Mungkin kamu rasa tidak banyak yang bisa aku lakukan, tapi aku sudah tabung sedikit loh. Lagian, kamu kan selalu bilang aku itu pintar, jadi pasti ada yang bisa kubantu.\nKecuali kalau itu kayak: mau beli rumah di pusat Mondstadt tanpa cicilan. Kamu tidak mungkin punya keinginan kayak begitu ... kan?",
       "title": "Ulang Tahun"
@@ -3594,22 +3321,10 @@
       "text": "Dipanggil balik ke Zapolyarny Palace lagi? Ugh ... Serius deh, apa gunanya sih rapat yang tak berujung ini?!",
       "title": "Berbincang: Rapat"
     },
-    {
-      "text": "... Merepotkan saja.",
-      "title": "Ketika Turun Hujan"
-    },
-    {
-      "text": "Bunga-bungaku suka sekali cuaca begini.",
-      "title": "Setelah Hujan"
-    },
-    {
-      "text": "Sistem pertahanan ... Mmhmm, beroperasi normal.",
-      "title": "Ketika Petir Menyambar"
-    },
-    {
-      "text": "Ugh, waktunya bikin \"gadis salju\" lagi ....",
-      "title": "Ketika Turun Salju"
-    },
+    { "text": "... Merepotkan saja.", "title": "Ketika Turun Hujan" },
+    { "text": "Bunga-bungaku suka sekali cuaca begini.", "title": "Setelah Hujan" },
+    { "text": "Sistem pertahanan ... Mmhmm, beroperasi normal.", "title": "Ketika Petir Menyambar" },
+    { "text": "Ugh, waktunya bikin \"gadis salju\" lagi ....", "title": "Ketika Turun Salju" },
     {
       "text": "Cuaca sempurna buat makan kue, minum kopi pahit, dan baca buku bagus.",
       "title": "Ketika Matahari Bersinar"
@@ -3622,10 +3337,7 @@
       "text": "Selamat pagi. Mau secangkir kopi? Bisa bikin semangat. Hmm? Kenapa orang sepertiku butuh kopi? Hah, memangnya perempuan tidak boleh menikmati cita rasa kopi?!",
       "title": "Selamat Pagi"
     },
-    {
-      "text": "Sudah siang? Aku harus menyiapkan camilan dulu ....",
-      "title": "Selamat Siang"
-    },
+    { "text": "Sudah siang? Aku harus menyiapkan camilan dulu ....", "title": "Selamat Siang" },
     {
       "text": "Kamu mencariku buat makan malam? Aku ini bukan kantin ya ... Ya sudah deh, berhubung kamu sudah di sini, biar Fagio siapkan sesuatu.",
       "title": "Selamat Malam"
@@ -3762,26 +3474,14 @@
       "text": "Oh? Rasanya enak juga. Nanti kalau kita minum teh bareng lagi, giliran aku yang siapkan hadiah untukmu ya.",
       "title": "Menerima Hadiah: II"
     },
-    {
-      "text": "Fagio, bersihkan ini dong tolong.",
-      "title": "Menerima Hadiah: III"
-    },
+    { "text": "Fagio, bersihkan ini dong tolong.", "title": "Menerima Hadiah: III" },
     {
       "text": "Hmph. Nih, ambil ini. Biasanya aku tidak kasih ini ke siapa-siapa, tapi hari ini spesial. Ini menandai hari lahirmu ke dunia. Aku mengundang Arlecchino dan Columbina, serta beberapa teman yang sama-sama kita kenal. Aku bahkan sudah membuat kue spesial nih ... tunggu ya.",
       "title": "Ulang Tahun"
     },
-    {
-      "text": "Perhitungan sedang berlangsung.",
-      "title": "Perasaan Tentang Ascension: Permulaan"
-    },
-    {
-      "text": "Memasukkan variabel.",
-      "title": "Perasaan Tentang Ascension: Persiapan"
-    },
-    {
-      "text": "Kemajuannya lancar.",
-      "title": "Perasaan Tentang Ascension: Klimaks"
-    },
+    { "text": "Perhitungan sedang berlangsung.", "title": "Perasaan Tentang Ascension: Permulaan" },
+    { "text": "Memasukkan variabel.", "title": "Perasaan Tentang Ascension: Persiapan" },
+    { "text": "Kemajuannya lancar.", "title": "Perasaan Tentang Ascension: Klimaks" },
     {
       "text": "Men-dekonstruksi tatanan segala sesuatu. Kamu kagum sama aku, kan? Hahaha ....",
       "title": "Perasaan Tentang Ascension: Konklusi"
@@ -3796,18 +3496,9 @@
       "text": "Abyss adalah bayangan dunia. Akan selalu ada, dan tidak akan pernah binasa.",
       "title": "Berbincang: Abyss"
     },
-    {
-      "text": "Dari mana asalnya? Ke mana tujuannya?",
-      "title": "Berbincang: Meditasi"
-    },
-    {
-      "text": "Tidak ada yang abadi, tidak terkecuali waktu.",
-      "title": "Berbincang: Tujuan Akhir"
-    },
-    {
-      "text": "Aku suka hujan.",
-      "title": "Ketika Turun Hujan"
-    },
+    { "text": "Dari mana asalnya? Ke mana tujuannya?", "title": "Berbincang: Meditasi" },
+    { "text": "Tidak ada yang abadi, tidak terkecuali waktu.", "title": "Berbincang: Tujuan Akhir" },
+    { "text": "Aku suka hujan.", "title": "Ketika Turun Hujan" },
     {
       "text": "Petir menyambar, namun murkanya terbatas pada alam di bawah naungan awan. Di atasnya, langit tetaplah cerah.",
       "title": "Ketika Petir Menyambar"
@@ -3816,14 +3507,8 @@
       "text": "Katanya dalam kondisi nol derajat mutlak, segalanya menjadi tenang. Dibanding itu, ini belum ada apa-apanya.",
       "title": "Ketika Turun Salju"
     },
-    {
-      "text": "Angin dapat meniup kabut yang menghalangi pandangan.",
-      "title": "Ketika Angin Berembus"
-    },
-    {
-      "text": "Tidur nyenyak? Kondisi sudah kembali prima? Ayo berangkat.",
-      "title": "Selamat Pagi"
-    },
+    { "text": "Angin dapat meniup kabut yang menghalangi pandangan.", "title": "Ketika Angin Berembus" },
+    { "text": "Tidur nyenyak? Kondisi sudah kembali prima? Ayo berangkat.", "title": "Selamat Pagi" },
     {
       "text": "Tengah hari bukan saat yang tepat untuk berlatih pedang, aku biasa memanfaatkan waktunya untuk bermeditasi. Kerja keras tidak boleh ditawar, tapi introspeksi dan refleksi diri juga penting agar tidak salah jalan.",
       "title": "Selamat Siang"
@@ -3832,10 +3517,7 @@
       "text": "Oh, sudah malam. Waktu di dunia luar berlalu begitu cepat, maka dari itu hargailah setiap saat yang kita miliki.",
       "title": "Selamat Malam"
     },
-    {
-      "text": "Tidurlah. Aku masih mau latihan.",
-      "title": "Selamat Tidur"
-    },
+    { "text": "Tidurlah. Aku masih mau latihan.", "title": "Selamat Tidur" },
     {
       "text": "Baru-baru ini aku beli buku-buku tua dari Liyue. Ada kutipan seperti ini di salah satunya: \"Orang berhikmat bercermin kepada pikirannya. Tidak menggapai, juga tidak mengempiskan. Menerima semua, tapi tidak menyimpan suatu apa pun. Dengan demikian ia dapat menang dari segala hal, dan tidak ada yang kuasa melukainya\".\nSangat mencerahkan. Awalnya aku kira penulisnya seorang ahli bela diri terkemuka, tapi setelah dibaca lebih lanjut, ternyata dia hanya pengembara biasa. Kadang aku terkejut melihat kemampuan orang yang tak disangka-sangka, mungkin inilah makna dari istilah \"kekuatan tersembunyi\" ya.",
       "title": "Tentang Skirk: Membaca"
@@ -3936,30 +3618,15 @@
       "text": "Makanan lebih mudah dicerna ketika rasanya enak. Tapi misal rasanya bikin muntah pun, asalkan masih bisa dimakan, jangan pernah disia-siakan ya.",
       "title": "Makanan yang Tidak Disukai"
     },
-    {
-      "text": "Lumayan.",
-      "title": "Menerima Hadiah: I"
-    },
-    {
-      "text": "Biasa.",
-      "title": "Menerima Hadiah: II"
-    },
-    {
-      "text": "Ugh, buang-buang makanan. Lain kali aku saja yang masak.",
-      "title": "Menerima Hadiah: III"
-    },
+    { "text": "Lumayan.", "title": "Menerima Hadiah: I" },
+    { "text": "Biasa.", "title": "Menerima Hadiah: II" },
+    { "text": "Ugh, buang-buang makanan. Lain kali aku saja yang masak.", "title": "Menerima Hadiah: III" },
     {
       "text": "Selamat ulang tahun. Aku tahu ada orang yang suka mengadakan pesta meriah untuk merayakan ulang tahun, dan ada juga yang lebih suka acara santai. Aku tidak tahu kamu tipe yang mana, tapi aku sendiri melihat hari ulang tahun sebagai ajang untuk refleksi tahunan. Kadang bangga karena penuh pencapaian, kadang sedih karena penuh penyesalan.\nYah, mungkin lebih baik tidak menyematkan makna berlebihan ke hari ulang tahun. Setiap daerah punya adat kebiasaan untuk merayakan tanah air, leluhur, persahabatan ... tapi ulang tahun adalah satu hari dalam setahun yang ada khusus untuk diri sendiri. Nah, sudah cukup khotbahnya. Selamat ulang tahun, semoga kamu selalu berkembang hingga menjadi versi diri sendiri yang selalu diidamkan.",
       "title": "Ulang Tahun"
     },
-    {
-      "text": "Itu saja?",
-      "title": "Perasaan Tentang Ascension: Permulaan"
-    },
-    {
-      "text": "Peningkatan, tapi kurang.",
-      "title": "Perasaan Tentang Ascension: Persiapan"
-    },
+    { "text": "Itu saja?", "title": "Perasaan Tentang Ascension: Permulaan" },
+    { "text": "Peningkatan, tapi kurang.", "title": "Perasaan Tentang Ascension: Persiapan" },
     {
       "text": "Kekuatan ... pernah ada suatu ketika, saat aku tidak memilikinya, dan tidak pula menginginkannya. Tapi sekarang aku tidak akan pernah melepaskannya.",
       "title": "Perasaan Tentang Ascension: Klimaks"
@@ -3994,10 +3661,7 @@
       "text": "Iikkk! Aku baca kalau Fietena bisa mementalkan petir kembali ke langit. Jadi, tidak perlu ada yang aku takuti. Iikkk!",
       "title": "Ketika Petir Menyambar"
     },
-    {
-      "text": "Coba lihat ... putih dan dingin sekali ... Bisa dimakan tidak ya?",
-      "title": "Ketika Turun Salju"
-    },
+    { "text": "Coba lihat ... putih dan dingin sekali ... Bisa dimakan tidak ya?", "title": "Ketika Turun Salju" },
     {
       "text": "Ah, nyaman dan hangat ... Tidak ada yang bisa tandingin kombinasi matahari hangat dan perut yang kenyang untuk buat aku ... *hoam* mau tidur siang ... zzz ....",
       "title": "Ketika Matahari Bersinar"
@@ -4010,10 +3674,7 @@
       "text": "Huff ... Selamat pagi. Rasanya aku ingin meringkuk lagi di kasur deh, tapi ... Aaahhh, tidak, tidak boleh. Seratus push-up, pasti bisa bangun.",
       "title": "Selamat Pagi"
     },
-    {
-      "text": "Waktunya makan siang! Kekuatan penuh berawal dari perut kenyang!",
-      "title": "Selamat Siang"
-    },
+    { "text": "Waktunya makan siang! Kekuatan penuh berawal dari perut kenyang!", "title": "Selamat Siang" },
     {
       "text": "Kata-kata motivasi pahlawan: \"Kalau kamu merasa capek di sore hari, berarti kamu sudah bekerja keras hari ini, dan sudah mengerahkan seluruh kekuatanmu.\" Jadi kadang-kadang, merasa capek itu adalah tanda kehormatan!",
       "title": "Selamat Malam"
@@ -4172,22 +3833,13 @@
       "text": "*huff* Pasti enak rasanya kalau bisa jauh dari meja kerjanya. Tempat tidur siang yang asyik di mana ya?",
       "title": "Berbincang: Istirahat"
     },
-    {
-      "text": "Hujan sudah berhenti. Ayo lanjutkan perjalanan.",
-      "title": "Setelah Hujan"
-    },
+    { "text": "Hujan sudah berhenti. Ayo lanjutkan perjalanan.", "title": "Setelah Hujan" },
     {
       "text": "Melihat salju turun selalu mengingatkanku tentang ekspedisi yang pernah kujalani ....",
       "title": "Ketika Turun Salju"
     },
-    {
-      "text": "Wah! Anginnya kencang banget! Mau coba menjatuhkanku ya?",
-      "title": "Ketika Angin Berembus"
-    },
-    {
-      "text": "Pagi! Loh, kamu kok kayak lesu? Mau minum dulu biar semangat?",
-      "title": "Selamat Pagi"
-    },
+    { "text": "Wah! Anginnya kencang banget! Mau coba menjatuhkanku ya?", "title": "Ketika Angin Berembus" },
+    { "text": "Pagi! Loh, kamu kok kayak lesu? Mau minum dulu biar semangat?", "title": "Selamat Pagi" },
     {
       "text": "Siang! Kita punya waktu, pastikan istirahat cukup, kalau tidak kamu pasti kelelahan sore nanti!",
       "title": "Selamat Siang"
@@ -4364,10 +4016,7 @@
       "text": "Wow! Ini mahakarya! Ini makanan yang pantas ditemani dengan Dandelion Wine terbaik!",
       "title": "Menerima Hadiah: I"
     },
-    {
-      "text": "Makanannya enak. Divisi Logistik harus banyak belajar darimu.",
-      "title": "Menerima Hadiah: II"
-    },
+    { "text": "Makanannya enak. Divisi Logistik harus banyak belajar darimu.", "title": "Menerima Hadiah: II" },
     {
       "text": "Ini ... makanan yang biasa kamu makan? Duh. Petualangan kayak kalian hidupnya sekeras kami di ekspedisi ... Kita makan yang enak-enak deh.",
       "title": "Menerima Hadiah: III"
@@ -4426,14 +4075,8 @@
       "text": "Ah ... Hehe, menyenangkan sekali. Para Vila memang suka angin sepoi-sepoi.",
       "title": "Ketika Angin Bertiup"
     },
-    {
-      "text": "Sekadar bertanya ... Kapan kita akan kembali ke Snezhnaya?",
-      "title": "Di Padang Pasir"
-    },
-    {
-      "text": "Hari yang baru! Halo, Snezhnograd!",
-      "title": "Selamat Pagi"
-    },
+    { "text": "Sekadar bertanya ... Kapan kita akan kembali ke Snezhnaya?", "title": "Di Padang Pasir" },
+    { "text": "Hari yang baru! Halo, Snezhnograd!", "title": "Selamat Pagi" },
     {
       "text": "Ayo kita pergi ke Podvorye Restaurant! Seperti biasa, tentu saja aku yang traktir!",
       "title": "Selamat Siang"
@@ -4570,10 +4213,7 @@
       "text": "Mmm ... Cukup kreatif dari segi kuliner ... Kurasa aku akan mencicipinya satu gigitan lagi.",
       "title": "Menerima Hadiah: II"
     },
-    {
-      "text": "Ohh, maaf, aku sudah makan! Tapi biar kubungkus ini untuk Danica.",
-      "title": "Menerima Hadiah: III"
-    },
+    { "text": "Ohh, maaf, aku sudah makan! Tapi biar kubungkus ini untuk Danica.", "title": "Menerima Hadiah: III" },
     {
       "text": "Eng-ing-eng! Akhirnya! Ih, kemarin aku sudah tidak sabar sekali ... Tapi ya harus ditahan, kan pamali kalau diucapkan sebelumnya, nanti kamu kegulung badai salju! Nah, kalau sekarang baru deh boleh: Selamat ulang tahun ya, temanku yang terkasih. Semoga kamu berdiri sekokoh pohon birch yang tidak pernah tergoyahkan oleh angin dan salju.\nOke, bagian itu sudah selesai. Selanjutnya, menurut tradisi, aku harus menarik telinga bintang ulang tahun kita beberapa kali dengan lembut ....",
       "title": "Ulang Tahun"
@@ -4612,22 +4252,10 @@
       "text": "Huuf ... aku sudah terlalu lama di darat, kulitku jadi kering. Aku butuh banget waktu buat berendam di air.",
       "title": "Berbincang: Mengisi Waktu"
     },
-    {
-      "text": "Hm, cuaca bagus. Cocok sekali untuk beristirahat di dasar air.",
-      "title": "Ketika Turun Hujan"
-    },
-    {
-      "text": "Yah, hujannya ke mana? Sayang banget ....",
-      "title": "Setelah Hujan"
-    },
-    {
-      "text": "Putih membentang luas. Hmph, setidaknya pemandangannya bersih.",
-      "title": "Ketika Turun Salju"
-    },
-    {
-      "text": "Ugh, panas dan kering banget ... Bawa aku balik ke air ....",
-      "title": "Di Padang Pasir"
-    },
+    { "text": "Hm, cuaca bagus. Cocok sekali untuk beristirahat di dasar air.", "title": "Ketika Turun Hujan" },
+    { "text": "Yah, hujannya ke mana? Sayang banget ....", "title": "Setelah Hujan" },
+    { "text": "Putih membentang luas. Hmph, setidaknya pemandangannya bersih.", "title": "Ketika Turun Salju" },
+    { "text": "Ugh, panas dan kering banget ... Bawa aku balik ke air ....", "title": "Di Padang Pasir" },
     {
       "text": "Selamat pagi. Aku baru selesai pemanasan vokal. Kamu dengar tidak? Iya, tidak heran sih. Suara nyanyiku memang menggema.",
       "title": "Selamat Pagi"
@@ -4768,22 +4396,13 @@
       "text": "Selamat ulang tahun! Hadiahmu sudah kusiapkan. Nanti buka saja ya. Isinya cuma pernak-pernik kecil, mainan, dan semacamnya ... Eh, tapi itu bukan bagian pentingnya. Kamu lagi senggang, kan? Kalau begitu, ikut aku! Kita ke ruang gemaku. Beberapa hari lalu aku minta orang belikan \"Panggung Joget\" dari Natlan, lengkap sama segala macam alat musik uniknya. Aku lagi bikin acara musik terhebat yang pernah ada di Snezhnaya, dan tebak siapa orang pertama yang dapat undangan? Yap, kamu! Ayo, kita nyanyi sepanjang malam!",
       "title": "Ulang Tahun"
     },
-    {
-      "text": "Ehem, ehem ... Oke. Suaranya bagus.",
-      "title": "Perasaan Tentang Ascension: Permulaan"
-    },
+    { "text": "Ehem, ehem ... Oke. Suaranya bagus.", "title": "Perasaan Tentang Ascension: Permulaan" },
     {
       "text": "Sepertinya aku baru saja mencapai nada tinggi yang baru.",
       "title": "Perasaan Tentang Ascension: Persiapan"
     },
-    {
-      "text": "Ah, suaraku terasa lebih kuat dari sebelumnya.",
-      "title": "Perasaan Tentang Ascension: Klimaks"
-    },
-    {
-      "text": "Wow! Saatnya nyanyi semalaman!",
-      "title": "Perasaan Tentang Ascension: Konklusi"
-    }
+    { "text": "Ah, suaraku terasa lebih kuat dari sebelumnya.", "title": "Perasaan Tentang Ascension: Klimaks" },
+    { "text": "Wow! Saatnya nyanyi semalaman!", "title": "Perasaan Tentang Ascension: Konklusi" }
   ],
   "Zibai": [
     {
@@ -4802,26 +4421,11 @@
       "text": "Seni Adeptus sungguh menakjubkan, tapi kalau orang tidak melatih batinnya sebelum mempelajarinya, semua pencapaiannya akan seperti pantulan bulan di atas air yang akan langsung pecah sekalipun disentuh dengan sentuhan yang paling lembut.",
       "title": "Berbincang: Seni Adeptus"
     },
-    {
-      "text": "Bulannya hampir tidak terlihat ....",
-      "title": "Ketika Turun Hujan"
-    },
-    {
-      "text": "Dengarlah, murka langit yang bergemuruh.",
-      "title": "Ketika Petir Menyambar"
-    },
-    {
-      "text": "Setidaknya tidak sedingin di bulan.",
-      "title": "Ketika Turun Salju"
-    },
-    {
-      "text": "Sudah diduga, perjalanan melintasi gurun memang benar-benar melelahkan.",
-      "title": "Di Padang Pasir"
-    },
-    {
-      "text": "Selamat pagi. Semalam tidurnya nyenyak?",
-      "title": "Selamat Pagi"
-    },
+    { "text": "Bulannya hampir tidak terlihat ....", "title": "Ketika Turun Hujan" },
+    { "text": "Dengarlah, murka langit yang bergemuruh.", "title": "Ketika Petir Menyambar" },
+    { "text": "Setidaknya tidak sedingin di bulan.", "title": "Ketika Turun Salju" },
+    { "text": "Sudah diduga, perjalanan melintasi gurun memang benar-benar melelahkan.", "title": "Di Padang Pasir" },
+    { "text": "Selamat pagi. Semalam tidurnya nyenyak?", "title": "Selamat Pagi" },
     {
       "text": "Matahari sudah berada di puncaknya. Kalau kamu lelah, sebaiknya beristirahat dulu.",
       "title": "Selamat Siang"
@@ -4946,33 +4550,15 @@
       "text": "Jika saat diasingkan di bulan aku bisa makan senikmat ini, mungkin aku bisa lebih betah di sana. Hah, aku bercanda kok.",
       "title": "Menerima Hadiah: I"
     },
-    {
-      "text": "Enak. Cocok dinikmati perlahan.",
-      "title": "Menerima Hadiah: II"
-    },
-    {
-      "text": "Rasanya agak ... lain ya. Sangat ... inovatif.",
-      "title": "Menerima Hadiah: III"
-    },
+    { "text": "Enak. Cocok dinikmati perlahan.", "title": "Menerima Hadiah: II" },
+    { "text": "Rasanya agak ... lain ya. Sangat ... inovatif.", "title": "Menerima Hadiah: III" },
     {
       "text": "Ini hari ulang tahunmu? Berarti perlu dirayakan. Aku ingat orang-orang tua bisa makan mie ulang tahun ... hehe, kamu memang kelihatan masih muda, tapi kalau kita menghitung tahun-tahun yang berlalu semenjak kamu dilahirkan, maka kita akan mendapati angka yang jumlahnya lebih banyak dari hampir semua penduduk Liyue. Maka dari itu, mie ulang tahun cocok untuk disantap pada kesempatan ini ... hmm? Tentu saja aku tahu cara mengolahnya. Memang aku ini Adeptus yang pernah tinggal di langit, tapi bukan berarti aku lahir dengan segala kenyamanan dan hak istimewa ... Malah, satu-satunya alasan nafsu makanku sangat kurang di zaman ini adalah, karena aku diam di langit lama sekali, tanpa peralatan memasak ... yah, tapi begitulah. Makan adalah kegiatan paling penting nomor dua di dunia, maka kita harus memastikan kamu dapat menikmati mie ulang tahun ternikmat sebelum hari yang gembira ini berakhir.",
       "title": "Ulang Tahun"
     },
-    {
-      "text": "Begitu ya.",
-      "title": "Perasaan Tentang Ascension: Permulaan"
-    },
-    {
-      "text": "Bulan membesar dan mengecil ....",
-      "title": "Perasaan Tentang Ascension: Persiapan"
-    },
-    {
-      "text": "Roh kembali ke peraduannya.",
-      "title": "Perasaan Tentang Ascension: Klimaks"
-    },
-    {
-      "text": "Tunaikan tugas selaku Adeptus.",
-      "title": "Perasaan Tentang Ascension: Konklusi"
-    }
+    { "text": "Begitu ya.", "title": "Perasaan Tentang Ascension: Permulaan" },
+    { "text": "Bulan membesar dan mengecil ....", "title": "Perasaan Tentang Ascension: Persiapan" },
+    { "text": "Roh kembali ke peraduannya.", "title": "Perasaan Tentang Ascension: Klimaks" },
+    { "text": "Tunaikan tugas selaku Adeptus.", "title": "Perasaan Tentang Ascension: Konklusi" }
   ]
 }

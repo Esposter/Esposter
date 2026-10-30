@@ -30,8 +30,7 @@ export const GameTextLoaderMap: Record<GameLanguage, () => Promise<GameText>> = 
     (await import("#src/generated/text/Russian.json", { with: { type: "json" } })).default,
   [GameLanguage.Spanish]: async () =>
     (await import("#src/generated/text/Spanish.json", { with: { type: "json" } })).default,
-  [GameLanguage.Thai]: async () =>
-    (await import("#src/generated/text/Thai.json", { with: { type: "json" } })).default,
+  [GameLanguage.Thai]: async () => (await import("#src/generated/text/Thai.json", { with: { type: "json" } })).default,
   [GameLanguage.Turkish]: async () =>
     (await import("#src/generated/text/Turkish.json", { with: { type: "json" } })).default,
   [GameLanguage.Vietnamese]: async () =>

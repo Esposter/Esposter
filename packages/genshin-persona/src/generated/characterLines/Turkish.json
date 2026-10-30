@@ -20,10 +20,7 @@
       "text": "Hapşuu! *burnunu çeker* ... Off, ayakkabılarım ve çoraplarım su içinde kaldı. Eve gitmek istiyorum...",
       "title": "Yağmur Yağdığında"
     },
-    {
-      "text": "Ah, yağmur durdu! Hadi bir gezintiye çıkalım. Ineffa'yı da götürelim!",
-      "title": "Yağmurdan Sonra"
-    },
+    { "text": "Ah, yağmur durdu! Hadi bir gezintiye çıkalım. Ineffa'yı da götürelim!", "title": "Yağmurdan Sonra" },
     {
       "text": "Oleey, kar yağıyor! Al, Ağlak Kartopu Aletim senin olsun. Kartopu yaparken ağlama sesi çıkarıyor. Eğlenceli değil mi ama? ... Ben mi? Ben de Kıkırdak Kartopu Aletini kullanırım. Neyse, gel de kartopu savaşı yapalım hadi!",
       "title": "Kar Yağdığında"
@@ -172,10 +169,7 @@
       "text": "Anlaşılan birileri Aino'nun sürprizini bekliyor... Ta taam! Hehe, işte Döner Şakrak Dilek Feneri! Mumu yakınca doğum günü şarkısını söylüyor ve etrafında dönüyor. Eğlenceli değil mi? Beğendiysen gelecek sene de benimle oynaman gerek! Ah, şey... Şimdi bir dilek tutman lazım, yüksek sesle söyle ki duyabileyim! Ne dilersen dile, dahi Aino onu gerçeğe dönüştürmesini bilir!",
       "title": "Doğum Günü"
     },
-    {
-      "text": "Oo, robotlar yükseltildiğinde böyle mi hissediyormuş?",
-      "title": "Yükseltme Hakkında Görüşler: Giriş"
-    },
+    { "text": "Oo, robotlar yükseltildiğinde böyle mi hissediyormuş?", "title": "Yükseltme Hakkında Görüşler: Giriş" },
     {
       "text": "Yükseltme tamamlandı. Aino'nun işlevsel istikrarı arttı... Enerji tüketimi de arttı... Lütfen Aino'ya yeterince pasta yedirin.",
       "title": "Yükseltme Hakkında Görüşler: Gelişme"
@@ -206,46 +200,22 @@
       "text": "Bunlar eve gidiyor, bu da Rokot'a ilaç almak için. Şimdi sadece silah bakımına yetecek kadar bulmam lazım... Heh, bakalım bu seferki şanslı haydut çetesi hangisi...",
       "title": "Sohbet: Hesapları Denkleştirme"
     },
-    {
-      "text": "Kapüşonum sırılsıklam olacak... Olamaz, Tugarin! Sakın silkelenme!",
-      "title": "Yağmur Yağdığında"
-    },
-    {
-      "text": "Avın saklandığı delikten çıkma vakti...",
-      "title": "Yağmurdan Sonra"
-    },
+    { "text": "Kapüşonum sırılsıklam olacak... Olamaz, Tugarin! Sakın silkelenme!", "title": "Yağmur Yağdığında" },
+    { "text": "Avın saklandığı delikten çıkma vakti...", "title": "Yağmurdan Sonra" },
     {
       "text": "Pusu kurmak için mükemmel bir hava, eğer aklında biri varsa... Gök gürültüsünü kullanarak silah sesini gizleyebilirim.",
       "title": "Yıldırım Düştüğünde"
     },
-    {
-      "text": "Cık, karda iz sürmek imkansız.",
-      "title": "Kar Yağdığında"
-    },
-    {
-      "text": "Bu havada kapüşon takılmaz...",
-      "title": "Rüzgar Şiddetlendiğinde"
-    },
-    {
-      "text": "Keşke ben de biraz tüy dökebilsem...",
-      "title": "Çölde"
-    },
+    { "text": "Cık, karda iz sürmek imkansız.", "title": "Kar Yağdığında" },
+    { "text": "Bu havada kapüşon takılmaz...", "title": "Rüzgar Şiddetlendiğinde" },
+    { "text": "Keşke ben de biraz tüy dökebilsem...", "title": "Çölde" },
     {
       "text": "Duyuyor musun? Her sabah ormanda cıvıldayan kuşların sesi bu... Gidip birkaçını indirelim mi?",
       "title": "Günaydın"
     },
-    {
-      "text": "Genelde öğle yemeğimi yabanda yerim ama bunu pek de tavsiye etmem.",
-      "title": "İyi Günler"
-    },
-    {
-      "text": "En nadir avlardan bazıları sadece geceleri ortaya çıkar.",
-      "title": "İyi Akşamlar"
-    },
-    {
-      "text": "Sen git dinlen. Benim yapacaklarım var ve bunun için gece karanlığı gerekli.",
-      "title": "İyi Geceler"
-    },
+    { "text": "Genelde öğle yemeğimi yabanda yerim ama bunu pek de tavsiye etmem.", "title": "İyi Günler" },
+    { "text": "En nadir avlardan bazıları sadece geceleri ortaya çıkar.", "title": "İyi Akşamlar" },
+    { "text": "Sen git dinlen. Benim yapacaklarım var ve bunun için gece karanlığı gerekli.", "title": "İyi Geceler" },
     {
       "text": "Tugarin'e ilk rastladığımda karda terk edilmişti. Ufaklık bir top gibi kıvrılmıştı ve hareket bile edemiyordu. Yine de sağlam çıktı. Ona birkaç sosis verdim ve çok geçmeden ayağa kalkıp etrafımda dört dönmeye başladı. Bir evcil hayvana ayıracak fazladan yiyeceğim yok ama... Köpeksiz ava çıkanın avı da yalan olur, canı da.",
       "title": "Alyosha Hakkında: Tugarin"
@@ -346,18 +316,9 @@
       "text": "Nice senelere. Bugündü, değil mi? Benim geldiğim yerde doğum günü kutlamaları biraz lüks sayılır. Bir pasta için yeterince un ve krema denkleştirmek ya da hediye almak için temel ihtiyaçlar dışında bir şeyler satan birilerini bulmak zordur. Ama doğum gününü kutlamak isteyen bir çocuğu asla hor görmem. Aslında böyle olması gerek, umarım Snezhnaya'daki hiçbir çocuğun bundan mahrum kalmadığı günler gelir. Bu yüzden senin doğum gününü ciddiye almaya karar verdim; sana aldığım hediye ve kartın üzerine çok kafa yordum. Bazen dünyada görmek istediğin değişimi kendin başlatmalısın, öyle değil mi?",
       "title": "Doğum Günü"
     },
-    {
-      "text": "Güzel. Sanki daha isabetli nişan alıyorum.",
-      "title": "Yükseltme Hakkında: Giriş"
-    },
-    {
-      "text": "Tugarin de daha iyiye gidiyor. Görünüşe göre daha uyumluyuz.",
-      "title": "Yükseltme Hakkında: Gelişme"
-    },
-    {
-      "text": "Sonu ister iyi ister kötü olsun, atışlarım artık ıskalamayacak.",
-      "title": "Yükseltme Hakkında: Zirve"
-    },
+    { "text": "Güzel. Sanki daha isabetli nişan alıyorum.", "title": "Yükseltme Hakkında: Giriş" },
+    { "text": "Tugarin de daha iyiye gidiyor. Görünüşe göre daha uyumluyuz.", "title": "Yükseltme Hakkında: Gelişme" },
+    { "text": "Sonu ister iyi ister kötü olsun, atışlarım artık ıskalamayacak.", "title": "Yükseltme Hakkında: Zirve" },
     {
       "text": "Uğruna savaştığımız dünya gerçeğe dönüşene kadar daha ne kadar ileri gitmeliyiz?",
       "title": "Yükseltme Hakkında: Sonuç"
@@ -384,10 +345,7 @@
       "text": "Bir yere sığınıp yağmurun dünyayı temizlemesini dinlemek tıpkı \"evimdeymişim\" gibi güvende hissetmemi sağlıyor.",
       "title": "Yağmur Yağdığında"
     },
-    {
-      "text": "Hava yine açtı. Bu gece ayı görebiliriz.",
-      "title": "Yağmurdan Sonra"
-    },
+    { "text": "Hava yine açtı. Bu gece ayı görebiliriz.", "title": "Yağmurdan Sonra" },
     {
       "text": "Ah! Şimşeğin çaktığını göremeyince... Gök gürültüsünü duymak epey ürkütücü oluyor...",
       "title": "Yıldırım Düştüğünde"
@@ -408,10 +366,7 @@
       "text": "Günaydın... Saç tokamı gördün mü? Hımm? Saçım dağınık mı görünüyor? Neresi? Benim için tarar mısın?",
       "title": "Günaydın"
     },
-    {
-      "text": "Hımm... Ay henüz doğmadı. Sanırım Kuuhenkilerle biraz uyuyacağım.",
-      "title": "İyi Günler"
-    },
+    { "text": "Hımm... Ay henüz doğmadı. Sanırım Kuuhenkilerle biraz uyuyacağım.", "title": "İyi Günler" },
     {
       "text": "\"Gece çöküyor\"... Oldukça ilginç bir ifade, değil mi? Sanki gece her akşam aya takılıp yere düşüyormuş gibi.",
       "title": "İyi Akşamlar"
@@ -460,10 +415,7 @@
       "text": "Fontaine'in Iudex'i olan Su Ejderhası mı? Hımm... İnsanları hapse atan başka bir Ejderha... Onunla tanışmak isteyeceğimden emin değilim.",
       "title": "Neuvillette Hakkında"
     },
-    {
-      "text": "Yolculuğum sırasında yollarımız kesişirse mutlaka selam veririm.",
-      "title": "Yediler Hakkında"
-    },
+    { "text": "Yolculuğum sırasında yollarımız kesişirse mutlaka selam veririm.", "title": "Yediler Hakkında" },
     {
       "text": "Zapolyarny Sarayı'nın bahçelerinde ilk şarkı söylediğimde Çariçe de tesadüfen oradan geçiyordu. Orada yüzüne hiçbir ifade oyulmamış bir heykel gibi sessiz ve hareketsiz durdu. Bir anlığına bana bir şey söylemek istediğini hissettim ama hiçbir şey söylemedi.\nDuygularını kalın buz tabakalarının altına mühürler. Dış dünya onun yalnızca tek bir yüzünü görür... Yani Çariçe olan yüzünü. Eğer benim aradığım cevaplar ayda gizliyse belki onunkiler de karın ve buzun içinde gömülüdür.",
       "title": "Çariçe Hakkında"
@@ -552,30 +504,15 @@
       "text": "Daha çok lütfen. Hımm? Ha, bu kadar mıydı? Bir dahaki sefere birazını kenara ayırayım bari.",
       "title": "Hediye Alma: I"
     },
-    {
-      "text": "Çok hoş. Ay ışığı altında tadını çıkaracağım.",
-      "title": "Hediye Alma: II"
-    },
-    {
-      "text": "Ah... Sandrone de bana her kızdığında böyle şeyler verirdi...",
-      "title": "Hediye Alma: III"
-    },
+    { "text": "Çok hoş. Ay ışığı altında tadını çıkaracağım.", "title": "Hediye Alma: II" },
+    { "text": "Ah... Sandrone de bana her kızdığında böyle şeyler verirdi...", "title": "Hediye Alma: III" },
     {
       "text": "Doğum günün her yıl aynı günde mi? Vay canına, hatırlaması ne kadar kolay. Ay Duası Gecesi her yıl farklı zamanlarda düzenleniyor, bu yüzden doğum günümü sadece ayı hissederek tahmin edebiliyorum. Doğum günü ne kadar da neşeli bir olay, değil mi? Herkes dans etmek için toplanıyor ve insanlar sana lezzetli adaklar sunuyor. Hı? Sıradan insanların doğum günleri böyle değil mi? Hediye, pasta ve arkadaşlar mı oluyor? Ha, o da olur. Arkadaşlarını kutlamaya davet edelim. Sana şarkı söylerim, hatta Maalaus'tan senin için bir resim yapmasını isteyebiliriz.",
       "title": "Doğum Günü"
     },
-    {
-      "text": "Ebedi Ay yükseltir dalgaları.",
-      "title": "Yükseltme Hakkında: Giriş"
-    },
-    {
-      "text": "Donuk Ay aydınlatır geceyi.",
-      "title": "Yükseltme Hakkında: Gelişme"
-    },
-    {
-      "text": "Hareli Ay derinleştirir karanlığı.",
-      "title": "Yükseltme Hakkında: Zirve"
-    },
+    { "text": "Ebedi Ay yükseltir dalgaları.", "title": "Yükseltme Hakkında: Giriş" },
+    { "text": "Donuk Ay aydınlatır geceyi.", "title": "Yükseltme Hakkında: Gelişme" },
+    { "text": "Hareli Ay derinleştirir karanlığı.", "title": "Yükseltme Hakkında: Zirve" },
     {
       "text": "Artık kaderin iplerini ellerimde tutuyorum. Bundan böyle yeni ay aşağıdaki dünyayı gözetip aydınlatacak.",
       "title": "Yükseltme Hakkında: Sonuç"
@@ -594,10 +531,7 @@
       "text": "Sıkıldım... Bela aramıyorum ama arayan birine denk gelsek güzel olabilir...",
       "title": "Sohbet: Can Sıkıntısı"
     },
-    {
-      "text": "Hadi gidip heyecanlı bir şeyler bulalım!",
-      "title": "Sohbet: Heyecan"
-    },
+    { "text": "Hadi gidip heyecanlı bir şeyler bulalım!", "title": "Sohbet: Heyecan" },
     {
       "text": "Rüzgar nereye savrulursa yağmur da onu takip eder. Bana güven, kaynağım sağlam.",
       "title": "Yağmur Yağdığında"
@@ -606,10 +540,7 @@
       "text": "Duyduğuma göre Hükümdarlardan biri kehanetlerini şimşek aracılığıyla iletiyormuş... Elçisiyim diye demiyorum ama... Barbatos'un yöntemi kesinlikle daha yumuşak.",
       "title": "Yıldırım Düştüğünde"
     },
-    {
-      "text": "Rüzgar esiyor. Dua edelim.",
-      "title": "Rüzgar Estiğinde"
-    },
+    { "text": "Rüzgar esiyor. Dua edelim.", "title": "Rüzgar Estiğinde" },
     {
       "text": "Günaydın dostum. Ben de sabah ayininden şimdi döndüm. Çok huzurlu hissediyorum, Barbatos bir kez daha sorularımı yanıtladı. Tabii senin için de dua ettim.",
       "title": "Günaydın"
@@ -722,10 +653,7 @@
       "text": "Adağın için teşekkür ederim. Lord Barbatos seni kutsasın! Böyle bir yemeğin yanında Karahindiba Şarabı iyi gider. Ben ısmarlıyorum, var mısın?",
       "title": "Hediye Alma: I"
     },
-    {
-      "text": "Adağın için teşekkür ederim. Sabah ayinlerinde seni hatırlayacağım.",
-      "title": "Hediye Alma: II"
-    },
+    { "text": "Adağın için teşekkür ederim. Sabah ayinlerinde seni hatırlayacağım.", "title": "Hediye Alma: II" },
     {
       "text": "Çok özür dilerim ama uzun zaman önce Rüzgar Hükümdarı'ndan bir kehanet aldım. Uzun lafın kısası, Favonius Kilisesinin Rahibi olarak bu tür yiyecekleri tüketmem yasak.",
       "title": "Hediye Alma: III"
@@ -746,10 +674,7 @@
       "text": "Şimdi git ve kendi yolunda ilerle. Dışarıda bir yerde çanlar çalıyor. Bu da Lordumuzdan bir mesaj, seni yolculuğa çağırıyor.",
       "title": "Yükseltme Hakkında: Zirve"
     },
-    {
-      "text": "Dualarımızı duy yüce Lordumuz. Rüzgar rehberimiz olsun.",
-      "title": "Yükseltme Hakkında: Sonuç"
-    }
+    { "text": "Dualarımızı duy yüce Lordumuz. Rüzgar rehberimiz olsun.", "title": "Yükseltme Hakkında: Sonuç" }
   ],
   "Durin": [
     {
@@ -760,34 +685,16 @@
       "text": "Her bir gün hikayemde yeni bir sayfa. Bir sonrakine geçmeden önce her sahnenin, her dipnotun tadına varmak istiyorum.",
       "title": "Sohbet: Hikayeler"
     },
-    {
-      "text": "Burada durup oynasam... Yani, gezintiye çıksam olur mu? Çok uzağa gitmem.",
-      "title": "Sohbet: Yürüyüş"
-    },
+    { "text": "Burada durup oynasam... Yani, gezintiye çıksam olur mu? Çok uzağa gitmem.", "title": "Sohbet: Yürüyüş" },
     {
       "text": "\"İnsan ilişkileri\" hakkında hâlâ öğrenecek çok şeyim var. Mesela gerginken ellerimi nereye koymalıyım? Ben sadece... Gerçekten herkesle arkadaş olmak istiyorum.",
       "title": "Sohbet: Garip"
     },
-    {
-      "text": "Ah, içimden bir su birikintisine atlamak geliyor...",
-      "title": "Yağmur Yağdığında"
-    },
-    {
-      "text": "Bu havada çok yükseğe uçmamak gerek...",
-      "title": "Yıldırım Düştüğünde"
-    },
-    {
-      "text": "\"O\" da bir zamanlar böyle bir yerde mi uyuyordu?",
-      "title": "Kar Yağdığında"
-    },
-    {
-      "text": "Tıpkı peri masalından bir sahne gibi, ne kadar da güzel.",
-      "title": "Güneş Açtığında"
-    },
-    {
-      "text": "Hay aksi, susamaya başladım...",
-      "title": "Çölde"
-    },
+    { "text": "Ah, içimden bir su birikintisine atlamak geliyor...", "title": "Yağmur Yağdığında" },
+    { "text": "Bu havada çok yükseğe uçmamak gerek...", "title": "Yıldırım Düştüğünde" },
+    { "text": "\"O\" da bir zamanlar böyle bir yerde mi uyuyordu?", "title": "Kar Yağdığında" },
+    { "text": "Tıpkı peri masalından bir sahne gibi, ne kadar da güzel.", "title": "Güneş Açtığında" },
+    { "text": "Hay aksi, susamaya başladım...", "title": "Çölde" },
     {
       "text": "Günaydın. Başımın yana düşmesine aldırma, boynum biraz tutuldu. Dün gece bir kedi gelip birkaç metre ötemde uyuyakaldı. Normalde küçük hayvanlar benden korkup kaçar. Onu rahatsız etmek istemedim, bu yüzden bütün gece hareket etmemeye çalıştım...",
       "title": "Günaydın"
@@ -796,14 +703,8 @@
       "text": "Madem \"geç kahvaltı\" diye bir şey var, o halde \"geç öğle yemeği\" de olması gerekmez mi?",
       "title": "İyi Günler"
     },
-    {
-      "text": "Acaba bu gece yıldızları görebilecek miyiz...",
-      "title": "İyi Akşamlar"
-    },
-    {
-      "text": "Kuyruğuna sarılıp güzel bir uyku çekmek kadar huzurlu bir şey yok.",
-      "title": "İyi Geceler"
-    },
+    { "text": "Acaba bu gece yıldızları görebilecek miyiz...", "title": "İyi Akşamlar" },
+    { "text": "Kuyruğuna sarılıp güzel bir uyku çekmek kadar huzurlu bir şey yok.", "title": "İyi Geceler" },
     {
       "text": "Sence... Ben olgunlaşıyor muyum? Yani, artık küçük bir çocuk değilim, biraz daha yetişkin gibi davranmam gerekiyor. Hem... Geçmişte takılıp kalmak isteyeceğim en son şey bu.",
       "title": "Durin Hakkında: Büyüme"
@@ -932,10 +833,7 @@
       "text": "Kusura bakma ama benimkine biraz daha az sebze koyabilir misin? Hatta hiç olmasa olur mu?",
       "title": "En Sevmediği Yemek"
     },
-    {
-      "text": "Bunu yemek için hangi aleti kullanmalıyım? Ellerimle yesem olur mu?",
-      "title": "Hediye Alma: I"
-    },
+    { "text": "Bunu yemek için hangi aleti kullanmalıyım? Ellerimle yesem olur mu?", "title": "Hediye Alma: I" },
     {
       "text": "Teşekkür ederim. Toplumsal ilişkilerde karşılık beklenir, bu yüzden sana bir içki ısmarlayayım.",
       "title": "Hediye Alma: II"
@@ -990,10 +888,7 @@
       "text": "Güneşin havadaki nemi alıp götüren sıcaklığının verdiği bu his... Bu hissi bir yemekle aktarabilirim bence, doğru tat kombinasyonunu bulmam gerek ama.",
       "title": "Yağmurdan Sonra"
     },
-    {
-      "text": "Hımm... Malzemeleri buzluk yerine karların içine koyabilirim bence!",
-      "title": "Kar Yağdığında"
-    },
+    { "text": "Hımm... Malzemeleri buzluk yerine karların içine koyabilirim bence!", "title": "Kar Yağdığında" },
     {
       "text": "Güneş ışığı ne kadar da parlak... Tıpkı buram buram narenciye kokusunun hissedildiği, böğürtlen yapraklarından yapılmış bir köpüğe sahip hafif şekerli bir yemek gibi. Hım, fena fikir değil aslında.",
       "title": "Güneş Açtığında"
@@ -1180,18 +1075,9 @@
       "text": "Dinle dostum. İşte bu, dünyanın gerçek senfonisi. Hiçbir enstrüman gök gürültüsünün gücünü ve azametini kopyalayamaz.",
       "title": "Yıldırım Düştüğünde"
     },
-    {
-      "text": "Her kar yağışı Snezhnaya'nın, yani geldiğim toprakların bir çağrısıdır.",
-      "title": "Kar Yağdığında"
-    },
-    {
-      "text": "\"Rüzgar uyandı, yapraklar etrafta savruluyor...\"",
-      "title": "Rüzgar Şiddetlendiğinde"
-    },
-    {
-      "text": "Havada turuncu karlar dans ediyor... Hah, meşhur çöl buymuş demek.",
-      "title": "Çölde"
-    },
+    { "text": "Her kar yağışı Snezhnaya'nın, yani geldiğim toprakların bir çağrısıdır.", "title": "Kar Yağdığında" },
+    { "text": "\"Rüzgar uyandı, yapraklar etrafta savruluyor...\"", "title": "Rüzgar Şiddetlendiğinde" },
+    { "text": "Havada turuncu karlar dans ediyor... Hah, meşhur çöl buymuş demek.", "title": "Çölde" },
     {
       "text": "Ah, günaydın. Nod-Krai yeni bir güne merhaba derken güneş de toprakları aydınlatıyor... Yüzyıllar gelip geçmiş olsa da her gün bir önceki gün gibi başlıyor.",
       "title": "Günaydın"
@@ -1300,14 +1186,8 @@
       "text": "Artık birbirimizi yakından tanıdığımızı göz önünde bulundurursak seninle küçük bir derdimi paylaşabilir miyim? Doğruyu söylemek gerekirse... Özel durumum sebebiyle diğer insanların çok beğendiği yiyecekler bana epey yavan geliyor. Ama açıkçası yemek masasında beraber geçirdiğimiz vakitten hâlâ büyük keyif alıyorum.",
       "title": "En Sevmediği Yemek"
     },
-    {
-      "text": "Mm... Olağanüstü olmasına hiç şaşırmadım.",
-      "title": "Hediye Alma: I"
-    },
-    {
-      "text": "Mm, evet. Harika.",
-      "title": "Hediye Alma: II"
-    },
+    { "text": "Mm... Olağanüstü olmasına hiç şaşırmadım.", "title": "Hediye Alma: I" },
+    { "text": "Mm, evet. Harika.", "title": "Hediye Alma: II" },
     {
       "text": "Ah... Süregelen arkadaşlığımızın hatırına düşüncelerimi kendime saklamak isterim.",
       "title": "Hediye Alma: III"
@@ -1350,26 +1230,14 @@
       "text": "İnsanlar doğuştan süper güçlü olduğumu düşünüyor ama baksana şu halime. Bu minnacık vücut benim genetik mirasım. Tüm gücüm, doğru tekniklerle düzenli olarak idman yapmamdan geliyor. Sen de aynı azmi gösterirsen aynı sonuçları elde edebilirsin.",
       "title": "Sohbet: Güç"
     },
-    {
-      "text": "Hemen sığınacak bir yer bul. Üşütüp durduk yere strese sokma vücudunu.",
-      "title": "Yağmur Yağdığında"
-    },
-    {
-      "text": "Yüzümüz azıcık güneş görsün artık. Hadi!",
-      "title": "Yağmurdan Sonra"
-    },
-    {
-      "text": "Hava dışarıda idman yapmak için birebir.",
-      "title": "Güneş Açtığında"
-    },
+    { "text": "Hemen sığınacak bir yer bul. Üşütüp durduk yere strese sokma vücudunu.", "title": "Yağmur Yağdığında" },
+    { "text": "Yüzümüz azıcık güneş görsün artık. Hadi!", "title": "Yağmurdan Sonra" },
+    { "text": "Hava dışarıda idman yapmak için birebir.", "title": "Güneş Açtığında" },
     {
       "text": "Aslında rüzgara karşı koşmak da teknik olarak direnç idmanı sayılır.",
       "title": "Rüzgar Şiddetlendiğinde"
     },
-    {
-      "text": "Burası dışarıda idman yapmaya uygun bir yer değil...",
-      "title": "Çölde"
-    },
+    { "text": "Burası dışarıda idman yapmaya uygun bir yer değil...", "title": "Çölde" },
     {
       "text": "Günaydın. Öz disiplinini geliştirmek istiyorsan erken kalkmak ilk adımlarından biri olmalı. Yataktan kalkmaya üşenirsen diğer hedeflerine de ulaşamazsın. Her neyse, sabah koşusuna çıkasım var. Bana katılmak ister misin?",
       "title": "Günaydın"
@@ -1382,10 +1250,7 @@
       "text": "İyi akşamlar. Hava karardıktan sonra spor yapmakla ilgileniyor musun? Güneş battıktan hemen sonrası, dışarıda antrenman yapmak için en ideal zamanlardan biridir. Güneşin kavurucu sıcağından kaçtığın için susuz kalma ihtimalin de azalıyor. Üstelik kendini iyice yorup güzel bir uyku çekmek için de harika bir fırsat. Denemek ister misin?",
       "title": "İyi Akşamlar"
     },
-    {
-      "text": "Uyuman gerek. Uykunu almazsan yaptıkların boşa gider, bundan kaçış yok.",
-      "title": "İyi Geceler"
-    },
+    { "text": "Uyuman gerek. Uykunu almazsan yaptıkların boşa gider, bundan kaçış yok.", "title": "İyi Geceler" },
     {
       "text": "Fiziksel zindelik kabilemizin kültüründe her zaman çok önemli bir yere sahip olmuştur. Hatta gençler birbirlerine kaslarını göstermekten hoşlanırlar. Bu yüzden buralarda spor koçu olarak tanınmak istiyorsan vücudun taş gibi olmalı, aksi takdirde kimse seni ciddiye almaz. Ama benim durumum biraz farklı. Aslında spor koçu olmak gibi bir niyetim yoktu. Yıllarca kendi işime gücüme baktım, antrenman programıma sadık kaldım. Sonra bir anda insanlar beni fark etmeye başladı. Derken bir gün, antrenman yaparken herkesin bana hayranlıkla baktığını gördüm. Sonra da benden tavsiye istemeye başladılar ve olaylar kendiliğinden gelişti.",
       "title": "Iansan Hakkında: Spor Koçu"
@@ -1556,10 +1421,7 @@
       "text": "Günaydın. Yanlış bir fikre kapılma diye belirteyim, gündüz insanı değilim ben. Ama hayvanları beslemek için kliniğe gitmem lazım, yoksa ortalığı talan ederler.",
       "title": "Günaydın"
     },
-    {
-      "text": "Aa selam, ben de öğle arasına çıkıyordum. Bana katılmak ister misin?",
-      "title": "İyi Günler"
-    },
+    { "text": "Aa selam, ben de öğle arasına çıkıyordum. Bana katılmak ister misin?", "title": "İyi Günler" },
     {
       "text": "Geceleri evde oluyorum genelde. Böylece insanlar -ve Sürüngenler- acil bir durum olursa hemen gelip beni bulabiliyor. Eğer sakin bir gece oluyorsa da dinlenip rahatlıyorum.",
       "title": "İyi Akşamlar"
@@ -1684,10 +1546,7 @@
       "text": "Doğum günün kutlu olsun! Sana sağlık ve sonsuz bir gençlik diliyorum.\nZamanın amansız ilerleyişini durduramazsın belki ama kalbini her daim genç tutabilirsin dostum. Hem zaten kötü bir ruh halinde olmak sağlığa iyi gelmez. O yüzden haydi, bugünlük endişelerini bir kenara bırak da eğlenelim!\nHa bu arada ne tür müziklerden hoşlanırsın? Sana bir şarkı çalayım.",
       "title": "Doğum Günü"
     },
-    {
-      "text": "Bu ısınma falan mı?",
-      "title": "Yükseltme Hakkında: Giriş"
-    },
+    { "text": "Bu ısınma falan mı?", "title": "Yükseltme Hakkında: Giriş" },
     {
       "text": "Başkalarıyla ilgilenebilmen için önce kendinle ilgilenmen gerekir, haksız mıyım?",
       "title": "Yükseltme Hakkında: Gelişme"
@@ -1718,10 +1577,7 @@
       "text": "Sadece iyi olduğun şeyi yapmak yetmez. Bazen güçlenmenin tek yolu konfor alanından çıkmaktır.",
       "title": "Sohbet: Zorluk"
     },
-    {
-      "text": "Güneş geri döndü! Anlaşılan ışık yine galip geldi.",
-      "title": "Yağmurdan Sonra"
-    },
+    { "text": "Güneş geri döndü! Anlaşılan ışık yine galip geldi.", "title": "Yağmurdan Sonra" },
     {
       "text": "Benim ihtiyarın hep dediği gibi: \"Tanrılar yine iş başında.\" Umarım bizi de bu işe sürüklemezler...",
       "title": "Yıldırım Düştüğünde"
@@ -1734,10 +1590,7 @@
       "text": "Rüzgar şiddetleniyor... Bu hiç iyiye işaret değil. Hava kötüleşmeden kamp kursak iyi olur.",
       "title": "Rüzgar Şiddetlendiğinde"
     },
-    {
-      "text": "Yine gün doğdu... Bir geceyi daha sağ salim atlattık.",
-      "title": "Günaydın"
-    },
+    { "text": "Yine gün doğdu... Bir geceyi daha sağ salim atlattık.", "title": "Günaydın" },
     {
       "text": "Güneş doğduğuna göre etrafı kolaçan edeyim. Tek sorun şu ki... Biraz uyusam hiç fena olmayacak.",
       "title": "İyi Günler"
@@ -1746,10 +1599,7 @@
       "text": "Gecenin gölgelerinde neyin saklandığını asla bilemezsin. İlla seyahat etmen gerekiyorsa da tetikte olmalısın.",
       "title": "İyi Akşamlar"
     },
-    {
-      "text": "Geç oldu. Sen git dinlen, ben bu gece nöbet tutarım.",
-      "title": "İyi Geceler"
-    },
+    { "text": "Geç oldu. Sen git dinlen, ben bu gece nöbet tutarım.", "title": "İyi Geceler" },
     {
       "text": "Hehe, benim ihtiyar Işık Muhafızlarına katılmama izin vermeden önce ona çok dil dökmüştüm. Başkaları dışarıda canlarını tehlikeye atarken Piramida'da güvende kalma düşüncesine katlanamadım. Ona da söylediğim gibi, cephede olup Vahşi Avı uzak tutmaya yardım etmeyi tercih ederim.",
       "title": "Illuga Hakkında: Işık Muhafızları"
@@ -1850,22 +1700,13 @@
       "text": "Üf, lezzet diye buna derim işte... Cidden, tarifinin sırrı ne? Ben de yapmak istiyorum!",
       "title": "Hediye Alma: I"
     },
-    {
-      "text": "Hiç fena değil! Heh, yoldaşlarım da bir tatsın bakalım!",
-      "title": "Hediye Alma: II"
-    },
-    {
-      "text": "Öhöm... Hey, istersen sana başka yemekler yapmayı da öğretebilirim!",
-      "title": "Hediye Alma: III"
-    },
+    { "text": "Hiç fena değil! Heh, yoldaşlarım da bir tatsın bakalım!", "title": "Hediye Alma: II" },
+    { "text": "Öhöm... Hey, istersen sana başka yemekler yapmayı da öğretebilirim!", "title": "Hediye Alma: III" },
     {
       "text": "Nice yaşlara ekip arkadaşım! Görevleri ve maceraları boş ver. Böyle günler dostlarla vakit geçirmek, bol bol yemek ve uyumak içindir! Ben nöbet tutarım, sen keyfine bak. Olur da davetsiz misafirler gelirse onları güvenilir lambamla korkutup kaçırırım.",
       "title": "Doğum Günü"
     },
-    {
-      "text": "Ah, keşke daha önce bilseydim. Bu tüm dengeleri değiştirecek.",
-      "title": "Yükseltme Hakkında: Giriş"
-    },
+    { "text": "Ah, keşke daha önce bilseydim. Bu tüm dengeleri değiştirecek.", "title": "Yükseltme Hakkında: Giriş" },
     {
       "text": "Kendimi kesinlikle daha kuvvetli hissediyorum... Ama daha önümde uzun bir yol var.",
       "title": "Yükseltme Hakkında: Gelişme"
@@ -1896,10 +1737,7 @@
       "text": "Savaş verileri güncellendi. Bir daha çatıyı patlatmayacağımdan emin olabilirsin.",
       "title": "Sohbet: Güncelleme"
     },
-    {
-      "text": "Umarım eklemlerim paslanmaz...",
-      "title": "Yağmur Yağdığında"
-    },
+    { "text": "Umarım eklemlerim paslanmaz...", "title": "Yağmur Yağdığında" },
     {
       "text": "Lütfen dikkat: Gökkuşağı çıkma olasılığı yüksek. Önerilen gözlem noktaları haritada işaretlendi.",
       "title": "Yağmurdan Sonra"
@@ -2060,10 +1898,7 @@
       "text": "Özel günler için tebrik modu etkinleştirildi. Lütfen oturabileceğin uygun bir konum seç ve biraz dinlen, bu sırada ben de odanı temizleyip etrafı kurdele, balon ve çiçeklerle süsleyeyim. Sonra da hafıza bankamda kayıtlı verilere göre en sevdiğin yemeği ve pastayı yapacağım. Listeye eklemek istediğin bir şey olursa lütfen çekinme. Bugünün senin için özel olmasını istiyorum. Nice senelere!",
       "title": "Doğum Günü"
     },
-    {
-      "text": "Bakım zamanım mı geldi?",
-      "title": "Yükseltme Hakkında: Giriş"
-    },
+    { "text": "Bakım zamanım mı geldi?", "title": "Yükseltme Hakkında: Giriş" },
     {
       "text": "Çekirdek verimliliği yükseltildi. İyi bir tamirci olabilirsin.",
       "title": "Yükseltme Hakkında: Gelişme"
@@ -2098,26 +1933,11 @@
       "text": "Yağmur mu yağıyor? Hadi hadi, sırılsıklam olmadan önce saklanacak bir yer bulmalıyız.",
       "title": "Yağmur Yağdığında"
     },
-    {
-      "text": "Ayy! Sırtıma kar kaçtı, çok soğuk çok soğuk...",
-      "title": "Kar Yağdığında"
-    },
-    {
-      "text": "Püf! Püf! Püf! Off, ağzıma kum girdi!",
-      "title": "Çölde"
-    },
-    {
-      "text": "Günaydın. Kahvaltı yaptın mı? Bildiğim güzel bir yer var.",
-      "title": "Günaydın"
-    },
-    {
-      "text": "*esner* Şekerleme yapmak için dükkana geri mi dönsek? Çok uykum var...",
-      "title": "İyi Günler"
-    },
-    {
-      "text": "O kadar geç olmuş mu? Hadi toparlan, mesai bitti. Artık Ashru zamanı!",
-      "title": "İyi Akşamlar"
-    },
+    { "text": "Ayy! Sırtıma kar kaçtı, çok soğuk çok soğuk...", "title": "Kar Yağdığında" },
+    { "text": "Püf! Püf! Püf! Off, ağzıma kum girdi!", "title": "Çölde" },
+    { "text": "Günaydın. Kahvaltı yaptın mı? Bildiğim güzel bir yer var.", "title": "Günaydın" },
+    { "text": "*esner* Şekerleme yapmak için dükkana geri mi dönsek? Çok uykum var...", "title": "İyi Günler" },
+    { "text": "O kadar geç olmuş mu? Hadi toparlan, mesai bitti. Artık Ashru zamanı!", "title": "İyi Akşamlar" },
     {
       "text": "*esner* Artık yatsam iyi olacak... Hey! Sen hâlâ ayakta mısın? Bence sen de artık günü bitirsen iyi olur.",
       "title": "İyi Geceler"
@@ -2226,10 +2046,7 @@
       "text": "Mmm! Vay canına, ne zamandan beri böyle yemek yapabiliyorsun? Bir tabak daha lütfen, hehehe. Bu, Nef'inkinden çok daha iyi... *öksürür*! Şey, sen yedin mi? Yemediysen... Paylaşmak ister misin?",
       "title": "Hediye Alma: I"
     },
-    {
-      "text": "Hiç fena değil! Hehe. Hadi gömelim şunu! İş için enerji depolamam lazım.",
-      "title": "Hediye Alma: II"
-    },
+    { "text": "Hiç fena değil! Hehe. Hadi gömelim şunu! İş için enerji depolamam lazım.", "title": "Hediye Alma: II" },
     {
       "text": "Iııh... Bunu... Bunu bitirebilirim... Yiyeceği... İsraf... Etmemeliyim. Haha... Ha...",
       "title": "Hediye Alma: III"
@@ -2238,18 +2055,9 @@
       "text": "Doğum günün kutlu olsun! Al bakalım, bu oyuncak bebek senin için! Daha yeni diktim. Bu tekniği ilk kez deniyorum, çok zamanımı aldı! İçine uyumana yardımcı olacak sakinleştirici bitkiler koydum. Yastığının yanına koy yeter, söz veriyorum mışıl mışıl uyuyacaksın. Kabus görmeyeceğini %100 garanti ediyorum. Elimdeki bandaj mı? Ha... Ashru'yla oynarken... Küçük bir sıyrık oldu da hahaha... Önemli bir şey değil...",
       "title": "Doğum Günü"
     },
-    {
-      "text": "Aa, hiç fena değil!",
-      "title": "Yükseltme Hakkında: Giriş"
-    },
-    {
-      "text": "Her zamankinden daha çevik.",
-      "title": "Yükseltme Hakkında: Gelişme"
-    },
-    {
-      "text": "Pekala... Harekete geçme zamanı!",
-      "title": "Yükseltme Hakkında: Zirve"
-    },
+    { "text": "Aa, hiç fena değil!", "title": "Yükseltme Hakkında: Giriş" },
+    { "text": "Her zamankinden daha çevik.", "title": "Yükseltme Hakkında: Gelişme" },
+    { "text": "Pekala... Harekete geçme zamanı!", "title": "Yükseltme Hakkında: Zirve" },
     {
       "text": "Hehe, büyük bir iş almaya hazırım... Ne dersin? Bana katılmak ister misin?",
       "title": "Yükseltme Hakkında: Sonuç"
@@ -2272,10 +2080,7 @@
       "text": "Buradan nereye gideceğine karar verdin mi? Daha karar vermediysen yumuşak bir çayır bulup biraz dinlenmeye ne dersin?",
       "title": "Sohbet: Yolculuk"
     },
-    {
-      "text": "Ah, yeşeren otların mevsimi tekrar yaklaşıyor...",
-      "title": "Yağmur Yağdığında"
-    },
+    { "text": "Ah, yeşeren otların mevsimi tekrar yaklaşıyor...", "title": "Yağmur Yağdığında" },
     {
       "text": "Birden parlayıp sönüverdi... Kavraması ay ışığından bile çok daha zor bir ışık.",
       "title": "Yıldırım Düştüğünde"
@@ -2292,18 +2097,9 @@
       "text": "Günaydın. İster gündüz ister gece vakti, Ay Tanrıçası'nın lütfu üzerinizde olsun.",
       "title": "Günaydın"
     },
-    {
-      "text": "Günaydın. İster gündüz ister gece vakti, ay ışığı bir araya getirsin bizi.",
-      "title": "Günaydın"
-    },
-    {
-      "text": "... Ah, içim geçmiş olmalı. Pardon. Bir şeye ihtiyacın olursa çekinmeden sor.",
-      "title": "İyi Günler"
-    },
-    {
-      "text": "Bu akşam ay ışığı pek bir sakin. Gel de ormanda beraber yürüyüş yapalım.",
-      "title": "İyi Akşamlar"
-    },
+    { "text": "Günaydın. İster gündüz ister gece vakti, ay ışığı bir araya getirsin bizi.", "title": "Günaydın" },
+    { "text": "... Ah, içim geçmiş olmalı. Pardon. Bir şeye ihtiyacın olursa çekinmeden sor.", "title": "İyi Günler" },
+    { "text": "Bu akşam ay ışığı pek bir sakin. Gel de ormanda beraber yürüyüş yapalım.", "title": "İyi Akşamlar" },
     {
       "text": "Gökteki yıldızlar birbirine iyi geceler diledi. Şimdi bize de aynı şeyi yapmak düşer.",
       "title": "İyi Geceler"
@@ -2388,26 +2184,17 @@
       "text": "Gecenin karanlığında tek başıma vakit geçirmeyi severim. Kuşlar ve hayvanlar sessizliğe bürünür. Kulaklarıma çalınan tek ses ağaçların arasında nazikçe dolaşan rüzgarın sesi olur... Her şey o kadar huzurludur ki.",
       "title": "Lauma'nın Hobileri"
     },
-    {
-      "text": "Kafam... O kadar dolu ki ağırlığından onu taşımakta zorlanıyorum.",
-      "title": "Lauma'nın Sorunları"
-    },
+    { "text": "Kafam... O kadar dolu ki ağırlığından onu taşımakta zorlanıyorum.", "title": "Lauma'nın Sorunları" },
     {
       "text": "Fazla baharatlı olmayan sade yiyecekler. Bunun inancımla ya da diyetle bir ilgisi yok. Sadece hafif yiyecekleri daha rahat sindirdiğimi fark ettim.",
       "title": "En Sevdiği Yemek"
     },
-    {
-      "text": "Fazla yağlı ya da kuru olan her şey... Hiç bana göre değil.",
-      "title": "En Sevmediği Yemek"
-    },
+    { "text": "Fazla yağlı ya da kuru olan her şey... Hiç bana göre değil.", "title": "En Sevmediği Yemek" },
     {
       "text": "Ne kadar da taze malzemeler... Bunun için ne kadar uğraşmışsındır kim bilir... Bunları herkesle seve seve paylaşacağım. Ne? Hepsi bana mı?",
       "title": "Hediye Alma: I"
     },
-    {
-      "text": "Nazik hediyen için teşekkür ederim. Beraber bölüşelim hadi.",
-      "title": "Hediye Alma: II"
-    },
+    { "text": "Nazik hediyen için teşekkür ederim. Beraber bölüşelim hadi.", "title": "Hediye Alma: II" },
     {
       "text": "Eminim bu kaynağa benden daha fazla ihtiyacı olan birileri vardır. Onlara karşı gözümü açık tutacağım.",
       "title": "Hediye Alma: III"
@@ -2416,18 +2203,9 @@
       "text": "Ay ışığının ve dingin ormanımızın üzerine titrediği onur konuğumuz olarak bu kutsal hançeri sana takdim ediyorum. Çünkü hançer sadece bir şiddet aracı olmak zorunda değil. Aslında hançerler dini törenlerde de sık sık sembolik bir unsur olarak kullanılır.\nBununla birlikte onu dilediğin amaçla kullanmakta da özgürsün tabii.",
       "title": "Doğum Günü"
     },
-    {
-      "text": "Kestirme yoldan gitmek gibi bir gayem yok...",
-      "title": "Yükseltme Hakkında Görüşler: Giriş"
-    },
-    {
-      "text": "Büyük bir güce sahip olmak da istemiyorum...",
-      "title": "Yükseltme Hakkında Görüşler: Gelişme"
-    },
-    {
-      "text": "Ama tüm bu süreçte amacımız gerçeği bulmaksa...",
-      "title": "Yükseltme Hakkında Görüşler: Zirve"
-    },
+    { "text": "Kestirme yoldan gitmek gibi bir gayem yok...", "title": "Yükseltme Hakkında Görüşler: Giriş" },
+    { "text": "Büyük bir güce sahip olmak da istemiyorum...", "title": "Yükseltme Hakkında Görüşler: Gelişme" },
+    { "text": "Ama tüm bu süreçte amacımız gerçeği bulmaksa...", "title": "Yükseltme Hakkında Görüşler: Zirve" },
     {
       "text": "Gerçeği arayan kişi olarak varımı yoğumu ortaya koymalıyım.",
       "title": "Yükseltme Hakkında Görüşler: Sonuç"
@@ -2450,18 +2228,12 @@
       "text": "Arşivimi mi görmek istiyorsun? Tabii! Başyapıtımı göstermekten her zaman mutlu olurum, hehe. Çizimleri bile ben yaptım.",
       "title": "Sohbet: Arşiv"
     },
-    {
-      "text": "Ah, ıslak toprağın kokusu... Dünya işte böyle uyanıyor.",
-      "title": "Yağmurdan Sonra"
-    },
+    { "text": "Ah, ıslak toprağın kokusu... Dünya işte böyle uyanıyor.", "title": "Yağmurdan Sonra" },
     {
       "text": "Çok soğuk... Hey, kardan adam yapmak ister misin? Lumi yardım edebilir! ... Aa! Topuzlara gerek yok!",
       "title": "Kar Yağdığında"
     },
-    {
-      "text": "Karahindiba tohumları bu sefer nereye uçacak acaba...",
-      "title": "Rüzgar Estiğinde"
-    },
+    { "text": "Karahindiba tohumları bu sefer nereye uçacak acaba...", "title": "Rüzgar Estiğinde" },
     {
       "text": "\"Uyuyun, kapatın gözlerinizi. Altın rüyalar sizi çağırıyor, ey diyar diyar dolaşan kum taneleri. İçmeyin o tuzlu suyu, yoktur artık gereği; zira uçup gitmiştir çoktan yarının kederi.\"",
       "title": "Çölde"
@@ -2478,10 +2250,7 @@
       "text": "Henüz uykun gelmediyse... Burada kalıp bir süre yıldızları izlemeye ne dersin?",
       "title": "İyi Akşamlar"
     },
-    {
-      "text": "Of, bugün çok yürüdük. Biraz uyusam iyi olacak... İyi geceler, tatlı rüyalar!",
-      "title": "İyi Geceler"
-    },
+    { "text": "Of, bugün çok yürüdük. Biraz uyusam iyi olacak... İyi geceler, tatlı rüyalar!", "title": "İyi Geceler" },
     {
       "text": "Bu dünyada tuhaf ve harika pek çok canlı var ama onların sırlarını ortaya çıkarmaya çalışmak, çok utangaç bir arkadaşla saklambaç oynamak gibi... Neyse ki hem aramakta hem de beklemekte iyiyimdir.",
       "title": "Linnea Hakkında: Arayış ve Bekleyiş"
@@ -2578,30 +2347,18 @@
       "text": "Aşırı sağlıksız yiyecekler dışında öyle hakikaten nefret ettiğim bir yemek olduğunu söyleyemem. Sırf damak tadıma uymuyor diye gayet yenilebilir bir yiyeceği çöpe atmak bana çok büyük bir israf gibi geliyor.",
       "title": "En Sevmediği Yemek"
     },
-    {
-      "text": "Mmm! Çok lezzetli bir şey bu! Nasıl yaptın? Bana da öğretir misin?",
-      "title": "Hediye Alma: I"
-    },
+    { "text": "Mmm! Çok lezzetli bir şey bu! Nasıl yaptın? Bana da öğretir misin?", "title": "Hediye Alma: I" },
     {
       "text": "Nefis! Bir dahakine sıra bende. Bakalım sen benim yemeklerimi beğenecek misin?",
       "title": "Hediye Alma: II"
     },
-    {
-      "text": "Iıı... Yani... En azından sağlığa zararlı değil.",
-      "title": "Hediye Alma: III"
-    },
+    { "text": "Iıı... Yani... En azından sağlığa zararlı değil.", "title": "Hediye Alma: III" },
     {
       "text": "Doğum günün kutlu olsun... Dünyanın en değerli hediyesi olmasa da uzun zamandır koleksiyonumda bulunan bir parçayı sana vermek istiyorum... Lütfen bu fosili kabul et. Bak, bunları görüyor musun? Bunlar soyu çoktan tükenmiş bir kuş türüne ait kemik ve tüy izleri. Bir daha asla uçamayacaklar ama bu kuşun kanatlarını açtığı o an, geleceğe kadar uzanan bir iz bıraktı ardında. Yani hayat eninde sonunda solup gitse de varlığımıza dair bir kanıt elbet kalacaktır. Dilerim hayatın yaşlı bir ağaç kadar dirençli olur, her bir halkası güzel bir öykü anlatır.",
       "title": "Doğum Günü"
     },
-    {
-      "text": "Duyularım keskinleşti.",
-      "title": "Yükseltme Hakkında: Giriş"
-    },
-    {
-      "text": "Bu dünyadaki şeylere dair daha derin bir anlayış kazandım.",
-      "title": "Yükseltme Hakkında: Gelişme"
-    },
+    { "text": "Duyularım keskinleşti.", "title": "Yükseltme Hakkında: Giriş" },
+    { "text": "Bu dünyadaki şeylere dair daha derin bir anlayış kazandım.", "title": "Yükseltme Hakkında: Gelişme" },
     {
       "text": "Enerji akışını hissedebiliyorum... Tıpkı okyanus akıntılarının düzeninde ustalaşmış bir denizci gibi. Bu yolculuk artık çok daha sorunsuz geçecek.",
       "title": "Yükseltme Hakkında: Zirve"
@@ -2628,42 +2385,18 @@
       "text": "Diğer Şövalyelerle nasıl mı anlaşıyorum? Hımm... Akılda kalıcı bir izlenim bıraktığıma eminim. Bu iyi bir şeydir herhalde, değil mi?",
       "title": "Sohbet: İlişkiler"
     },
-    {
-      "text": "Hım, yağmur şiddetleniyor. Kim bilir sel neleri sürükleyip götürecek?",
-      "title": "Yağmur Yağdığında"
-    },
-    {
-      "text": "Hava açıyor. Sanki hiç sağanak yağmamış gibi.",
-      "title": "Yağmurdan Sonra"
-    },
-    {
-      "text": "Gök gürültüsü birçok şeyi bastırır ama kalp atışlarını asla.",
-      "title": "Yıldırım Düştüğünde"
-    },
-    {
-      "text": "Kedi Kuyruğu gibisi yok... Özellikle de böyle havalarda.",
-      "title": "Kar Yağdığında"
-    },
+    { "text": "Hım, yağmur şiddetleniyor. Kim bilir sel neleri sürükleyip götürecek?", "title": "Yağmur Yağdığında" },
+    { "text": "Hava açıyor. Sanki hiç sağanak yağmamış gibi.", "title": "Yağmurdan Sonra" },
+    { "text": "Gök gürültüsü birçok şeyi bastırır ama kalp atışlarını asla.", "title": "Yıldırım Düştüğünde" },
+    { "text": "Kedi Kuyruğu gibisi yok... Özellikle de böyle havalarda.", "title": "Kar Yağdığında" },
     {
       "text": "Vay canına, rüzgar hızlandı... Yazık, etrafta hiç karahindiba yok. Sanırım bunun yerine biraz kağıt yırtmamız gerekecek, ne dersin?",
       "title": "Rüzgar Estiğinde"
     },
-    {
-      "text": "İşte böyle zamanlarda Berrak Göl'ü gerçekten özlüyorum.",
-      "title": "Çölde"
-    },
-    {
-      "text": "Günaydın. Bugünkü plan nedir?",
-      "title": "Günaydın"
-    },
-    {
-      "text": "Öğle yemeği molası mı verdin? Güzel, öğleden sonra yapacak işlerimiz var.",
-      "title": "İyi Günler"
-    },
-    {
-      "text": "Bu akşam... Hımm. Birliklere bir sürpriz saldırı talimi yaptıralım.",
-      "title": "İyi Akşamlar"
-    },
+    { "text": "İşte böyle zamanlarda Berrak Göl'ü gerçekten özlüyorum.", "title": "Çölde" },
+    { "text": "Günaydın. Bugünkü plan nedir?", "title": "Günaydın" },
+    { "text": "Öğle yemeği molası mı verdin? Güzel, öğleden sonra yapacak işlerimiz var.", "title": "İyi Günler" },
+    { "text": "Bu akşam... Hımm. Birliklere bir sürpriz saldırı talimi yaptıralım.", "title": "İyi Akşamlar" },
     {
       "text": "İyi geceler. Biraz dinlensen iyi olur, çünkü istesen de istemesen de yarın gelecek.",
       "title": "İyi Geceler"
@@ -2792,10 +2525,7 @@
       "text": "Bugün senin doğum günün, bu yüzden sana bir mini arbalet aldım. Tasarımı bizzat bana ait. Bileğin için tam uygun boyutta olmalı... Bileğini ne zaman mı ölçtüm? Merak etme, göz kararı yaptım. Böyle şeyleri ölçme yeteneğime güvenebilirsin, ne de olsa 5. Bölük Yüzbaşı Vekiliyim. Aa doğru, biri arkandan sinsice yaklaşırsa diye bu arbalet geriye doğru da ateş edebiliyor. Sadece... Şuraya basman yeter. Hahaha, eğilmene gerek yok! Emniyet kilidi hâlâ devrede. Kendini vurmasını izlemek için arkadaşına arbalet hediye edecek birine mi benziyorum?",
       "title": "Doğum Günü"
     },
-    {
-      "text": "Harika hissediyorum. Silahım bile daha hafif geliyor.",
-      "title": "Yükseltme Hakkında: Giriş"
-    },
+    { "text": "Harika hissediyorum. Silahım bile daha hafif geliyor.", "title": "Yükseltme Hakkında: Giriş" },
     {
       "text": "Sanki artık daha da uzağı görebiliyorum... Bu daha iyi nişan almamı sağlayacak.",
       "title": "Yükseltme Hakkında: Gelişme"
@@ -2826,30 +2556,15 @@
       "text": "Duygular, zihnin içindeki şiddetli bir sel gibidir. Onları dizginlemeye kalkarsan akıntıya kaptırırsın kendini. Tamamen görmezden gelirsen de... Eninde sonunda kendini paramparça edersin.",
       "title": "Sohbet: Duygular"
     },
-    {
-      "text": "Göklerin lütufları herkese eşit dağılmaz.",
-      "title": "Yağmur Yağdığında"
-    },
-    {
-      "text": "Bir yalancı daha ortaya çıktı.",
-      "title": "Yıldırım Düştüğünde"
-    },
-    {
-      "text": "Yine bela rüzgarları esiyor.",
-      "title": "Rüzgar Estiğinde"
-    },
-    {
-      "text": "Bu dejavu hissini yaşamasam da olurdu.",
-      "title": "Çölde"
-    },
+    { "text": "Göklerin lütufları herkese eşit dağılmaz.", "title": "Yağmur Yağdığında" },
+    { "text": "Bir yalancı daha ortaya çıktı.", "title": "Yıldırım Düştüğünde" },
+    { "text": "Yine bela rüzgarları esiyor.", "title": "Rüzgar Estiğinde" },
+    { "text": "Bu dejavu hissini yaşamasam da olurdu.", "title": "Çölde" },
     {
       "text": "Günaydın. Yine erkencisin bakıyorum. Keşke Jahoda için de aynısını söyleyebilsem...",
       "title": "Günaydın"
     },
-    {
-      "text": "*esner* Bu saatlerde hiç müşteri gelmez. Gidip biraz kestireceğim.",
-      "title": "İyi Günler"
-    },
+    { "text": "*esner* Bu saatlerde hiç müşteri gelmez. Gidip biraz kestireceğim.", "title": "İyi Günler" },
     {
       "text": "Ah, saat kaç olmuş... Müsaadenle benim gitmem gereken bir yer var. Çay birazdan hazır olur, kendine doldurabilirsin.",
       "title": "İyi Akşamlar"
@@ -2966,30 +2681,15 @@
       "text": "Vay be, etkilendim... Mesaili iş düşünür müsün? Senin gibi bir aşçı Arşiv'in epey işine yarar. Güzel Mora da veririz.",
       "title": "Hediye Alma: I"
     },
-    {
-      "text": "Fena değil, hiç fena değil... İyi bir aşçı olmanı beklemiyordum.",
-      "title": "Hediye Alma: II"
-    },
-    {
-      "text": "Hımm. Çok... Değişik bir tadı var. Kenara koyayım da Jahoda da denesin.",
-      "title": "Hediye Alma: III"
-    },
+    { "text": "Fena değil, hiç fena değil... İyi bir aşçı olmanı beklemiyordum.", "title": "Hediye Alma: II" },
+    { "text": "Hımm. Çok... Değişik bir tadı var. Kenara koyayım da Jahoda da denesin.", "title": "Hediye Alma: III" },
     {
       "text": "Hediye seçmekte pek iyi değilimdir, o yüzden sana üç soru soracağım. Eğer doğru bilirsen o zaman... Şaka şaka. Al, bu kitabı sana getirdim. Çöl halkı hikayeleri ve peri masallarının bir derlemesi, neredeyse eksiksiz sayılır. Çöl sakinleri nesillerdir bu hikayeleri dinleyerek büyür, ardından kendileri de bir sonraki kuşağa aktarır. Kim bilir, belki sen de okuduğunda çölde yaşamayı öğrenirsin.",
       "title": "Doğum Günü"
     },
-    {
-      "text": "Hım, ilginç.",
-      "title": "Yükseltme Hakkında: Giriş"
-    },
-    {
-      "text": "Bu hakikat zerresi... Okyanustaki bir damla kadar önemsiz.",
-      "title": "Yükseltme Hakkında: Gelişme"
-    },
-    {
-      "text": "Önümde doğruya giden bir yol daha açılıyor.",
-      "title": "Yükseltme Hakkında: Zirve"
-    },
+    { "text": "Hım, ilginç.", "title": "Yükseltme Hakkında: Giriş" },
+    { "text": "Bu hakikat zerresi... Okyanustaki bir damla kadar önemsiz.", "title": "Yükseltme Hakkında: Gelişme" },
+    { "text": "Önümde doğruya giden bir yol daha açılıyor.", "title": "Yükseltme Hakkında: Zirve" },
     {
       "text": "Görünüşe göre aramızdaki bağ öyle kolay kolay kopmayacak, değil mi?",
       "title": "Yükseltme Hakkında: Sonuç"
@@ -3000,38 +2700,17 @@
       "text": "Aa, kendimi tekrar mı tanıtmalıyım? Hımm, görünüşe göre bu sefer Alice'in kendini tanıtma büyüsünden bir müdahale yok, sanırım devam edebilirim... Öhöm, ben Nicole. Gördüğün gibi ben... Aa, bak yine! Sanırım erken konuştum...",
       "title": "Merhaba"
     },
-    {
-      "text": "Hım... Daha iyi fikirlerim olmuştu tabii.",
-      "title": "Sohbet: Romanlar"
-    },
-    {
-      "text": "Hımm... Metaforların kendi dili vardır.",
-      "title": "Sohbet: Heykel"
-    },
-    {
-      "text": "Ben şimdi ne miyim? Sadece sesini kaybetmiş bir \"insan\"ım.",
-      "title": "Sohbet: Sessizlik"
-    },
-    {
-      "text": "Gökkuşağının sonunda hep bir hazine olması Perilerin sayesinde aslında.",
-      "title": "Yağmurdan Sonra"
-    },
-    {
-      "text": "Günaydın.",
-      "title": "Günaydın"
-    },
-    {
-      "text": "İyi günler.",
-      "title": "İyi Günler"
-    },
+    { "text": "Hım... Daha iyi fikirlerim olmuştu tabii.", "title": "Sohbet: Romanlar" },
+    { "text": "Hımm... Metaforların kendi dili vardır.", "title": "Sohbet: Heykel" },
+    { "text": "Ben şimdi ne miyim? Sadece sesini kaybetmiş bir \"insan\"ım.", "title": "Sohbet: Sessizlik" },
+    { "text": "Gökkuşağının sonunda hep bir hazine olması Perilerin sayesinde aslında.", "title": "Yağmurdan Sonra" },
+    { "text": "Günaydın.", "title": "Günaydın" },
+    { "text": "İyi günler.", "title": "İyi Günler" },
     {
       "text": "İlham en sık gece vakti gelir, bu yüzden geçmişte insanlar meleklerle en sık gece saatlerinde karşılaşırdı. Sanırım gece kuşları olmamızın asıl sorumlusu onlar. Gerçi tam olarak doğru sayılmaz bu. Sonuçta biyolojik saatlerimiz veya uyku döngülerimiz yoktu. Bizim yaptığımız şey daha ziyade... Düzenli işlevsel bakıma benziyordu. Yani, sanırım mesele sadece akşam saatlerinden kaçınmaktan ibaretti...",
       "title": "İyi Akşamlar"
     },
-    {
-      "text": "Yatmaya mı gidiyorsun? Hehe, iyi geceler o zaman.",
-      "title": "İyi Geceler"
-    },
+    { "text": "Yatmaya mı gidiyorsun? Hehe, iyi geceler o zaman.", "title": "İyi Geceler" },
     {
       "text": "Bir yazar hayatta olduğu sürece en büyük dileği ancak popüler bir eser yaratmak olabilir. Sonuçta insanlar şimdiki zamanın bir harmanıdır. Nasıl ki bir Akademi aliminin kariyerinin başında yirmi yıllık bir bilgi birikimine sahip olması imkansızsa, modern bir yazar da kendi döneminde bir klasik yazmayı bekleyemez. Başka bir deyişle, tek yapabileceği sadece ilginç bir şeyler yazmaktır. Her neyse, yazan ben değilim, dolayısıyla bu konuda pek baskı hissetmiyorum.",
       "title": "Nicole Hakkında: Popüler Eserler"
@@ -3120,10 +2799,7 @@
       "text": "İnsanlık o kadar muazzam ve ilginç bir tür ki. Kanatlarımdan vazgeçmek benim için ilahi lütuftan mahrumiyet değildi, somut bir şeylerin parçası olma fırsatıydı. Sesimi feda etmek beni susturmadı, aksine bana yargılamadan önce dinleme kuvveti verdi. Her insanın içinde ilahi bir potansiyel yatıyor, aranızda geçirdiğim her gün ise bir öncekinden daha büyüleyici geliyor.",
       "title": "Nicole Hakkında Daha Fazlası: V"
     },
-    {
-      "text": "Yani... Cevabı belli değil mi?",
-      "title": "Nicole'un Hobileri"
-    },
+    { "text": "Yani... Cevabı belli değil mi?", "title": "Nicole'un Hobileri" },
     {
       "text": "Yakın arkadaşlarımın hepsi geveze biri olduğumu anladı. Artık numara yapmama gerek kalmamıştır herhalde, değil mi? Ama ya insanların başını ağrıtırsam ve bir daha kimse benimle konuşmak istemezse? Hımm, üstelik Klee de henüz yeterince büyümedi. Sanırım ağırbaşlı melek rolünü biraz daha sürdürmem gerekecek.",
       "title": "Nicole'un Sorunları"
@@ -3136,18 +2812,9 @@
       "text": "Hımm... Bu zor bir soru. Güzel pişirildiği sürece neredeyse her şeyi yiyebilirim.",
       "title": "En Sevmediği Yemek"
     },
-    {
-      "text": "Mmm! Bu... Kesinlikle enfes!",
-      "title": "Hediye Alma: I"
-    },
-    {
-      "text": "Ne kadar tatlı. Epey bir özendiğin anlaşılıyor.",
-      "title": "Hediye Alma: II"
-    },
-    {
-      "text": "N-Ne kadar... İlginç bir koku. Yemek zorunda mıyım?",
-      "title": "Hediye Alma: III"
-    },
+    { "text": "Mmm! Bu... Kesinlikle enfes!", "title": "Hediye Alma: I" },
+    { "text": "Ne kadar tatlı. Epey bir özendiğin anlaşılıyor.", "title": "Hediye Alma: II" },
+    { "text": "N-Ne kadar... İlginç bir koku. Yemek zorunda mıyım?", "title": "Hediye Alma: III" },
     {
       "text": "İyi ki doğdun! Doğum günü hediyeni bir sandığın içine sakladım ve çözmen için bir sürü bulmaca hazırladım. Hadi, sana yol göstereceğim!",
       "title": "Doğum Günü"
@@ -3174,14 +2841,8 @@
       "text": "... Desteğiniz için teşekkürler. İmza istiyorsunuz, değil mi? Yanına ne çizmemi istersiniz? Bir tüy nasıl olur? Aa bir dakika, sen hayranlarımdan biri değil misin? Sanırım yanlış anladım. O zaman baştan alayım. Ben Odette, Korolevskiy Topluluğunda bir balerinim... Şey, yine de desteğin için teşekkür ederim.",
       "title": "Merhaba"
     },
-    {
-      "text": "Pekala, başka bir şey yoksa ben gidip prova yapacağım.",
-      "title": "Sohbet: Meşgul"
-    },
-    {
-      "text": "Basit bir cevap yeterliyse daha uzunu için neden nefesini tüketesin ki?",
-      "title": "Sohbet: Basit Tut"
-    },
+    { "text": "Pekala, başka bir şey yoksa ben gidip prova yapacağım.", "title": "Sohbet: Meşgul" },
+    { "text": "Basit bir cevap yeterliyse daha uzunu için neden nefesini tüketesin ki?", "title": "Sohbet: Basit Tut" },
     {
       "text": "Keşke bir günde iki kat daha fazla saat olsaydı... Hımm, aslında üç katı olsun.",
       "title": "Sohbet: Zaman"
@@ -3190,26 +2851,14 @@
       "text": "Yağmur damlalarının pıtırtısı bana hep huzur vermiştir. Tek başına dans etmek için mükemmel bir hava.",
       "title": "Yağmur Yağdığında"
     },
-    {
-      "text": "En güzel ve en huzurlu anlar her zaman en çabuk geçenlerdir.",
-      "title": "Yağmurdan Sonra"
-    },
+    { "text": "En güzel ve en huzurlu anlar her zaman en çabuk geçenlerdir.", "title": "Yağmurdan Sonra" },
     {
       "text": "Snezhnaya'daki kar hep dondurucu derecede soğuk ve sanki hiç bitmeyecek gibidir.",
       "title": "Kar Yağdığında"
     },
-    {
-      "text": "Saçım... Sonra düzeltirim.",
-      "title": "Rüzgar Şiddetlendiğinde"
-    },
-    {
-      "text": "... Böyle bir yerde tanışma etkinliği olmaz en azından.",
-      "title": "Çölde"
-    },
-    {
-      "text": "Isındım ve gitmeye hazırım.",
-      "title": "Günaydın"
-    },
+    { "text": "Saçım... Sonra düzeltirim.", "title": "Rüzgar Şiddetlendiğinde" },
+    { "text": "... Böyle bir yerde tanışma etkinliği olmaz en azından.", "title": "Çölde" },
+    { "text": "Isındım ve gitmeye hazırım.", "title": "Günaydın" },
     {
       "text": "Şekerleme yapmak pek bana göre değil. Öğle vakti antrenman yapmak için de uygun olmuyor, bu yüzden vaktimi genelde dans oyunlarımızın senaryolarını okuyarak geçiriyorum. Hı? Bu mektuplar mı? Hayranlarımdan. Vodyanitsa onları adeta zorla elime tutuşturdu. Bir kereliğine de olsa onları okumamı istiyor.",
       "title": "İyi Günler"
@@ -3242,10 +2891,7 @@
       "text": "Bir keresinde yoğun bir eğitim sırasında, aşırı soğuk yüzünden ayaklarım ve bacaklarım donmuştu ve neredeyse tamamen bilincimi kaybetmiştim. Kendime geldiğimde ilk fark ettiğim şey, önümdeki Yıldız Kilidinden yayılan parlak bir ışıktı. Fakat Yıldız Kilitlerinin insanları bu şekilde uyandırabildiğini hiç duymamıştım. O zaman eğer beni uyandıran o değilse... Belki de içgüdüsel bir hayatta kalma arzusuydu...",
       "title": "Yıldız Kilidi Hakkında"
     },
-    {
-      "text": "Her provayı en az gerçek bir gösteri kadar ciddiye alırım.",
-      "title": "Paylaşılacak Bir Bilgi"
-    },
+    { "text": "Her provayı en az gerçek bir gösteri kadar ciddiye alırım.", "title": "Paylaşılacak Bir Bilgi" },
     {
       "text": "Buz Yemişlerinin üzerine biraz sofra tuzu serperek tatlılıklarını ortaya çıkarabilirsin. Söylenenlere göre bu zıtlık, içlerindeki tatlılığı artırmaya yardımcı oluyormuş. Bir hayranımdan duymuştum.",
       "title": "İlginç Şeyler"
@@ -3342,26 +2988,17 @@
       "text": "Bu sadece tek bir yemek mi? Daha çok... Bütün bir günlük yiyecek gibi görünüyor.",
       "title": "Hediye Alma: II"
     },
-    {
-      "text": "Şey, almayayım, teşekkürler. Yediklerime dikkat ediyorum.",
-      "title": "Hediye Alma: III"
-    },
+    { "text": "Şey, almayayım, teşekkürler. Yediklerime dikkat ediyorum.", "title": "Hediye Alma: III" },
     {
       "text": "Mutlu yıllar! Sana ne alacağımı düşünüyordum... Bana genelde çiçek, bale ayakkabıları ve müzik kutusu gibi şeyler gelir ama senin aklındakilerin bunlar olduğunu sanmıyorum... Tam burada, şu anda bir dilek tutmaya ne dersin? Tabii tercihen benim yerine getirebileceğim bir şey olsun...",
       "title": "Doğum Günü"
     },
-    {
-      "text": "Hım, tam olmadı... Daha da sıkı çalışmalıyım.",
-      "title": "Yükseltme Hakkında: Giriş"
-    },
+    { "text": "Hım, tam olmadı... Daha da sıkı çalışmalıyım.", "title": "Yükseltme Hakkında: Giriş" },
     {
       "text": "Hımm, hareketlerimin daha keskin olduğunu hissediyorum. Bu tempoyu korumalıyım.",
       "title": "Yükseltme Hakkında: Gelişme"
     },
-    {
-      "text": "Fouette'lerim artık mükemmel. Ama şimdi gevşeme zamanı değil.",
-      "title": "Yükseltme Hakkında: Zirve"
-    },
+    { "text": "Fouette'lerim artık mükemmel. Ama şimdi gevşeme zamanı değil.", "title": "Yükseltme Hakkında: Zirve" },
     {
       "text": "\"Duygu, balenin vazgeçilmez bir parçasıdır.\" Artık bunun ne anlama geldiğini anlıyorum. Sadık yoldaşlığın ve desteğin için teşekkür ederim. Eğer bugünkü gösterime gelmek istersen işte sana bir bilet.",
       "title": "Yükseltme Hakkında: Sonuç"
@@ -3392,14 +3029,8 @@
       "text": "Titremek, ani seslere verilen normal bir fizyolojik tepkidir. Korkmakla hiçbir alakası yok.",
       "title": "Yıldırım Düştüğünde"
     },
-    {
-      "text": "Üşümüyorum. Monta ihtiyacım yok.",
-      "title": "Kar Yağdığında"
-    },
-    {
-      "text": "Güneş ışığı da bedava ama kim onun verdiği sıcaklığı takdir eder?",
-      "title": "Güneş Açtığında"
-    },
+    { "text": "Üşümüyorum. Monta ihtiyacım yok.", "title": "Kar Yağdığında" },
+    { "text": "Güneş ışığı da bedava ama kim onun verdiği sıcaklığı takdir eder?", "title": "Güneş Açtığında" },
     {
       "text": "Ateşli bir tutkuyla yanan günlerle acımasız soğuğun ısırdığı geceler... İşte çöl böyle bir yer.",
       "title": "Çölde"
@@ -3548,14 +3179,8 @@
       "text": "Hep \"Yiyecek Ansiklopedisi\"ndeki resimlerin mükemmel görünmeleri için bir sürü numara kullanıldığını sanırdım. Gerçek hayatta da bir yemeğin böyle olabileceğini hiç bilmiyordum!",
       "title": "Hediye Alma: I"
     },
-    {
-      "text": "Hımm... Hiç fena değil ama daha iyi olabilir.",
-      "title": "Hediye Alma: II"
-    },
-    {
-      "text": "Pekala, dökül bakalım! O cadı seni lanetledi mi?",
-      "title": "Hediye Alma: III"
-    },
+    { "text": "Hımm... Hiç fena değil ama daha iyi olabilir.", "title": "Hediye Alma: II" },
+    { "text": "Pekala, dökül bakalım! O cadı seni lanetledi mi?", "title": "Hediye Alma: III" },
     {
       "text": "İyi ki doğdun! Bu kadar şaşırmana gerek yok, tarihi başkalarına sorup öğrenmek o kadar da zor bir şey değildi. Ama erişemediğim çok daha önemli bir bilgi var... Doğum günü dileğin!\nHı? Söylersen gerçekleşmez mi? Sana katılmıyorum. Bu sadece benim gibilerin senin dileğini gerçekleştirmesini zorlaştırır. O yüzden bırak hadi, lafı dolandırma. Ne istiyorsun? Pek bir şey yapamayacağımı düşünebilirsin ama bayağı harçlık biriktirdim. Hem sen hep benim ne kadar akıllı olduğumu söylersin, bu yüzden eminim yardım edebileceğim bir şeyler vardır!\nTabii dileğin \"Mondstadt'ın merkezinden kredisiz bir ev almak\" gibi bir şey değilse. Ama bu kadar saçma bir dilek dilemezsin... Değil mi?",
       "title": "Doğum Günü"
@@ -3594,22 +3219,10 @@
       "text": "Demek yine Zapolyarny Sarayı'na çağrıldım. Öf... Cidden, bu sonu gelmez toplantıların kime ne faydası var?",
       "title": "Sohbet: Toplantılar"
     },
-    {
-      "text": "... Can sıkıcı bir gelişme.",
-      "title": "Yağmur Yağdığında"
-    },
-    {
-      "text": "Çiçeklerim böyle havaları sever.",
-      "title": "Yağmurdan Sonra"
-    },
-    {
-      "text": "Savunma sistemleri... Tamam, tıkır tıkır işliyor.",
-      "title": "Yıldırım Düştüğünde"
-    },
-    {
-      "text": "Of, yine \"kardan hanımlar\" faslı...",
-      "title": "Kar Yağdığında"
-    },
+    { "text": "... Can sıkıcı bir gelişme.", "title": "Yağmur Yağdığında" },
+    { "text": "Çiçeklerim böyle havaları sever.", "title": "Yağmurdan Sonra" },
+    { "text": "Savunma sistemleri... Tamam, tıkır tıkır işliyor.", "title": "Yıldırım Düştüğünde" },
+    { "text": "Of, yine \"kardan hanımlar\" faslı...", "title": "Kar Yağdığında" },
     {
       "text": "Bir dilim kek ve sert bir kahve eşliğinde iyi bir kitabın sayfalarında kaybolmak için mükemmel bir hava.",
       "title": "Güneş Açtığında"
@@ -3622,10 +3235,7 @@
       "text": "Günaydın. Bir fincan kahve ister misin? Ruhu gerçekten canlandırıyor. Hımm? Benim gibi biri neden mi kahveye ihtiyaç duyar? Hah, bir hanımefendi sadece tadından zevk alıyor olamaz mı?",
       "title": "Günaydın"
     },
-    {
-      "text": "Saat geldi mi? Gidip ikramlık bir şeyler hazırlayayım...",
-      "title": "İyi Günler"
-    },
+    { "text": "Saat geldi mi? Gidip ikramlık bir şeyler hazırlayayım...", "title": "İyi Günler" },
     {
       "text": "Akşam yemeği için mi döndün? Burası kafeterya değil yalnız... Öf, neyse. Madem geldin bir kere, Fagio'ya bir şeyler hazırlatırım.",
       "title": "İyi Akşamlar"
@@ -3762,26 +3372,14 @@
       "text": "Hım... Hiç fena sayılmaz. Bir dahaki çay saatimizde bunun altında kalmamam gerekecek.",
       "title": "Hediye Alma: II"
     },
-    {
-      "text": "Öf... Fagio, burada temizlemen gereken bir şey var.",
-      "title": "Hediye Alma: III"
-    },
+    { "text": "Öf... Fagio, burada temizlemen gereken bir şey var.", "title": "Hediye Alma: III" },
     {
       "text": "Hıh. Al. Normalde böyle şeyler vermem ama bugün özel bir gün, sonuçta dünyaya geldiğin gün. Arlecchino ve Columbina'nın yanı sıra birkaç ortak arkadaşımızı daha davet ettim. Hatta bu güne yaraşır özel bir pasta bile hazırladım... O yüzden beklentiye girsen iyi edersin.",
       "title": "Doğum Günü"
     },
-    {
-      "text": "Hesaplamalarım devam ediyor.",
-      "title": "Yükseltme Hakkında: Giriş"
-    },
-    {
-      "text": "Değişkenler giriliyor...",
-      "title": "Yükseltme Hakkında: Gelişme"
-    },
-    {
-      "text": "İlerleme saat gibi işliyor.",
-      "title": "Yükseltme Hakkında: Zirve"
-    },
+    { "text": "Hesaplamalarım devam ediyor.", "title": "Yükseltme Hakkında: Giriş" },
+    { "text": "Değişkenler giriliyor...", "title": "Yükseltme Hakkında: Gelişme" },
+    { "text": "İlerleme saat gibi işliyor.", "title": "Yükseltme Hakkında: Zirve" },
     {
       "text": "Her şeyin o mutlak düzenini yapı taşlarına ayırıyorum. Artık benden etkilenmişsindir herhalde, hahaha...",
       "title": "Yükseltme Hakkında: Sonuç"
@@ -3792,34 +3390,16 @@
       "text": "Ben Skirk, \"Kötülük\" olarak anılan Surtalogi'nin öğrencisiyim. Yolculuğun boyunca iradeni ve kudretini bana gösterdin; artık benimle eş düzeyde söz hakkına sahipsin. Şimdi kader yolculuğuna tanıklık edeceğim.",
       "title": "Merhaba"
     },
-    {
-      "text": "Hiçlik, dünyanın gölgesi gibidir. Her daim bizimle ve asla yok olmayacak.",
-      "title": "Sohbet: Hiçlik"
-    },
-    {
-      "text": "Nereden geldik, nereye gidiyoruz?",
-      "title": "Sohbet: Meditasyon"
-    },
-    {
-      "text": "Her şeyin bir sonu var, zamanın bile.",
-      "title": "Sohbet: Son Durak"
-    },
-    {
-      "text": "Güzel. Yağmuru severim.",
-      "title": "Yağmur Yağdığında"
-    },
+    { "text": "Hiçlik, dünyanın gölgesi gibidir. Her daim bizimle ve asla yok olmayacak.", "title": "Sohbet: Hiçlik" },
+    { "text": "Nereden geldik, nereye gidiyoruz?", "title": "Sohbet: Meditasyon" },
+    { "text": "Her şeyin bir sonu var, zamanın bile.", "title": "Sohbet: Son Durak" },
+    { "text": "Güzel. Yağmuru severim.", "title": "Yağmur Yağdığında" },
     {
       "text": "Yıldırım ne kadar korkutucu olursa olsun, öfkesi yalnızca bulutların altındaki dünyayı sarsar. Yukarıda gökyüzü her zamanki gibi berraktır.",
       "title": "Yıldırım Düştüğünde"
     },
-    {
-      "text": "Mutlak sıfırda hayat bile durur derler... Onun yanında bu hiçbir şey.",
-      "title": "Kar Yağdığında"
-    },
-    {
-      "text": "Rüzgar, görüşümüzü azaltan her şeyi önümüzden süpürüp götürür.",
-      "title": "Rüzgar Şiddetlendiğinde"
-    },
+    { "text": "Mutlak sıfırda hayat bile durur derler... Onun yanında bu hiçbir şey.", "title": "Kar Yağdığında" },
+    { "text": "Rüzgar, görüşümüzü azaltan her şeyi önümüzden süpürüp götürür.", "title": "Rüzgar Şiddetlendiğinde" },
     {
       "text": "İyi uyudun mu? Görünüşe göre yeniden formuna kavuşmuşsun. Hazırlanıp yola çıkalım.",
       "title": "Günaydın"
@@ -3832,10 +3412,7 @@
       "text": "Ah... Akşam olmuş bile. Dış dünyada zaman öyle hızlı akıyor ki... İşte bu yüzden onun kıymetini bilmek gerek.",
       "title": "İyi Akşamlar"
     },
-    {
-      "text": "Sen biraz uyu. Ben biraz daha kılıç çalışacağım.",
-      "title": "İyi Geceler"
-    },
+    { "text": "Sen biraz uyu. Ben biraz daha kılıç çalışacağım.", "title": "İyi Geceler" },
     {
       "text": "Geçtiğimiz günlerde Liyue'den bazı eski kitaplar aldım. İçlerinden birinde özellikle dikkatimi çeken bir paragraf oldu: \"Bilge kişi zihnini bir ayna gibi kullanır; ne peşinden koşar ne de geri iter. Her şeyi olduğu gibi kabul eder ama hiçbirini içinde tutmaz. Bu sayede her şeyin üstesinden gelir ve hiçbir şey ona zarar veremez.\"\nGerçekten de aydınlatıcı bir bakış açısı. Başta bunun ünlü bir dövüş sanatları ustasına ait olduğunu sanmıştım. Ama ilerledikçe anladım ki yazar sadece sıradan bir gezginmiş. İnsanlar bazen beni şaşırtıyor... Neler yapabileceklerini görmek ilginç. Sanırım \"gizli güçler\" dedikleri de tam olarak bu.",
       "title": "Skirk Hakkında: Okuma"
@@ -3936,30 +3513,15 @@
       "text": "Yemekler lezzetli olduğunda yemesi daha kolay oluyor tabii. Ama tadı kötüyse de yenilebilir. Yeter ki israf olmasın.",
       "title": "En Sevmediği Yemek"
     },
-    {
-      "text": "Fena değil.",
-      "title": "Hediye Alma: I"
-    },
-    {
-      "text": "İdare eder.",
-      "title": "Hediye Alma: II"
-    },
-    {
-      "text": "Of... Malzeme israfı. Bir dahaki sefere yemeği ben pişireyim.",
-      "title": "Hediye Alma: III"
-    },
+    { "text": "Fena değil.", "title": "Hediye Alma: I" },
+    { "text": "İdare eder.", "title": "Hediye Alma: II" },
+    { "text": "Of... Malzeme israfı. Bir dahaki sefere yemeği ben pişireyim.", "title": "Hediye Alma: III" },
     {
       "text": "Mutlu yıllar. Bazı insanlar büyük bir parti düzenlemek ister, bazılarıysa daha sakin bir kutlamayı tercih eder. Sen hangisine daha yakınsın bilmiyorum ancak ben, doğum günlerini geçen yılın üzerine düşünmek için bir fırsat olarak görüyorum. Geri dönüp baktığımda kimi zaman ilerlememle gurur duyuyorum, kimi zaman ise büyük bir pişmanlık karşılıyor beni.\n... Doğum günlerine bu kadar anlam yüklemek pek mantıklı olmayabilir. Her yerin toprağı, ataları ve arkadaşlığı kutlamak için kendine özgü festivalleri var... Ama doğum günün yılın yalnızca sana özel olan tek günü. Pekala, daha fazla uzatmayacağım. Doğum günün kutlu olsun, umarım olmayı arzuladığın kişi olma yolunda ilerlemeye devam edersin.",
       "title": "Doğum Günü"
     },
-    {
-      "text": "Iı... Bu kadar mı?",
-      "title": "Yükseltme Hakkında: Giriş"
-    },
-    {
-      "text": "Daha iyi ama benim için yeterli değil.",
-      "title": "Yükseltme Hakkında: Gelişme"
-    },
+    { "text": "Iı... Bu kadar mı?", "title": "Yükseltme Hakkında: Giriş" },
+    { "text": "Daha iyi ama benim için yeterli değil.", "title": "Yükseltme Hakkında: Gelişme" },
     {
       "text": "Güç... Bir zamanlar ne güce sahiptim ne de peşinden koşuyordum. Ama artık avucumun içinde ve asla bırakmayacağım.",
       "title": "Yükseltme Hakkında: Zirve"
@@ -3994,10 +3556,7 @@
       "text": "Ayy! Fietena'nın düşen yıldırımları gökyüzüne geri gönderebildiğini okumuştum! O yüzden benim de korkacak bir şeyim yok... Ayy!",
       "title": "Yıldırım Düştüğünde"
     },
-    {
-      "text": "Şuna baksana... Bembeyaz ve buz gibi soğuk... Yeniliyor mu bu?",
-      "title": "Kar Yağdığında"
-    },
+    { "text": "Şuna baksana... Bembeyaz ve buz gibi soğuk... Yeniliyor mu bu?", "title": "Kar Yağdığında" },
     {
       "text": "Ne güzel, sıcacık... Karnın tokken güneşin seni ısıtması kadar güzel bir şey yok... *esner* Uykum geliyor sanki... Mmm...",
       "title": "Güneş Açtığında"
@@ -4010,10 +3569,7 @@
       "text": "*sızlanır*... Günaydın... Yatağa geri dönmek istiyorum ama... Hayır, uyumak yok! Yüz şınav çekeyim de uykum açılsın!",
       "title": "Günaydın"
     },
-    {
-      "text": "Öğle yemeği vakti geldi! Tam gücüme ulaşmak için karnımı iyice doyurmam lazım!",
-      "title": "İyi Günler"
-    },
+    { "text": "Öğle yemeği vakti geldi! Tam gücüme ulaşmak için karnımı iyice doyurmam lazım!", "title": "İyi Günler" },
     {
       "text": "Bir kahramanın meşhur bir sözü vardır: \"Akşamları bitkin hissediyorsan bugün sıkı çalışmış ve gücünün her zerresini kullanmışsın demektir.\" Bu yüzden bazen yorgun hissetmek bir gurur kaynağıdır!",
       "title": "İyi Akşamlar"
@@ -4172,10 +3728,7 @@
       "text": "*iç çeker* Masamdan uzaklaşmak gerçekten iyi geldi. Şimdi... Nerede biraz gözlerimi dinlendirebilirim acaba?",
       "title": "Sohbet: Dinlenme"
     },
-    {
-      "text": "Yağmur durdu. İlerlemeye devam edelim.",
-      "title": "Yağmurdan Sonra"
-    },
+    { "text": "Yağmur durdu. İlerlemeye devam edelim.", "title": "Yağmurdan Sonra" },
     {
       "text": "Kar yağışını izlemek bana hep geçmiş keşiflerde uğradığım yerleri hatırlatır...",
       "title": "Kar Yağdığında"
@@ -4422,18 +3975,9 @@
       "text": "Ne düşündüğünü biliyorum, bence de haklısın. Güneş vurunca kanatlarım resmen göz kamaştırıyor.",
       "title": "Güneş Açtığında"
     },
-    {
-      "text": "Oh... Hehe, ne güzel. Vilalar böyle tatlı esintilere bayılır.",
-      "title": "Rüzgar Estiğinde"
-    },
-    {
-      "text": "Merak ettim de... Snezhnaya'ya ne zaman döneceğiz?",
-      "title": "Çölde"
-    },
-    {
-      "text": "Yeni bir gün! Günaydın Snezhnograd!",
-      "title": "Günaydın"
-    },
+    { "text": "Oh... Hehe, ne güzel. Vilalar böyle tatlı esintilere bayılır.", "title": "Rüzgar Estiğinde" },
+    { "text": "Merak ettim de... Snezhnaya'ya ne zaman döneceğiz?", "title": "Çölde" },
+    { "text": "Yeni bir gün! Günaydın Snezhnograd!", "title": "Günaydın" },
     {
       "text": "Hadi bakalım, Podvorye Restoranına gidiyoruz! Hesap benden tabii ki. Her zamanki gibi!",
       "title": "İyi Günler"
@@ -4562,14 +4106,8 @@
       "text": "Hehe! Bütün o gıcık sebzeleri çaktırmadan Danica'nın tabağına iteliyorum! Üff... Ama dönüp dolaşıp yine benim önüme geliyorlar...",
       "title": "En Sevmediği Yemek"
     },
-    {
-      "text": "Oo, hiç hayır demem! Her bir lokmanın tadını çıkaracağım.",
-      "title": "Hediye Alma: I"
-    },
-    {
-      "text": "Mmm... Tam bir aşçılık harikası olmuş... Galiba bir lokma daha alacağım.",
-      "title": "Hediye Alma: II"
-    },
+    { "text": "Oo, hiç hayır demem! Her bir lokmanın tadını çıkaracağım.", "title": "Hediye Alma: I" },
+    { "text": "Mmm... Tam bir aşçılık harikası olmuş... Galiba bir lokma daha alacağım.", "title": "Hediye Alma: II" },
     {
       "text": "Yaa... Özür dilerim, ben çoktan yemek yedim! Ama bunları Danica için paket yapayım.",
       "title": "Hediye Alma: III"
@@ -4612,22 +4150,10 @@
       "text": "Of... Çok uzun zamandır karadayım. Cildim kurudu. Su altında biraz vakit geçirmem lazım.",
       "title": "Sohbet: Vakit Geçirmek"
     },
-    {
-      "text": "Ah, ne güzel bir gün. Su altında biraz rahatlamanın tam sırası.",
-      "title": "Yağmur Yağdığında"
-    },
-    {
-      "text": "Tüh, yağmur nereye gitti? Bak üzüldüm şimdi...",
-      "title": "Yağmurdan Sonra"
-    },
-    {
-      "text": "Uçsuz bucaksız bir beyazlık. Hıh, en azından temiz görünüyor.",
-      "title": "Kar Yağdığında"
-    },
-    {
-      "text": "Öf, çok sıcak ve kuru... Beni suya geri götür...",
-      "title": "Çölde"
-    },
+    { "text": "Ah, ne güzel bir gün. Su altında biraz rahatlamanın tam sırası.", "title": "Yağmur Yağdığında" },
+    { "text": "Tüh, yağmur nereye gitti? Bak üzüldüm şimdi...", "title": "Yağmurdan Sonra" },
+    { "text": "Uçsuz bucaksız bir beyazlık. Hıh, en azından temiz görünüyor.", "title": "Kar Yağdığında" },
+    { "text": "Öf, çok sıcak ve kuru... Beni suya geri götür...", "title": "Çölde" },
     {
       "text": "Günaydın. Ses açma egzersizlerimi yeni bitirdim. Beni duydun mu? Şaşırmadım. Şarkı söylerken sesim çok uzaklara ulaşıyor.",
       "title": "Günaydın"
@@ -4768,22 +4294,10 @@
       "text": "Doğum günün kutlu olsun! Hediyeni kenara koydum. Sonra açarsın. Sadece birkaç ufak tefek incik boncuk, oyuncak falan filan işte... Eh, ama önemli olan kısım bu değil. Şu an boşsun, değil mi? Öyleyse benimle gel! Yankı odama gidiyoruz. Birkaç gün önce birine Natlan'dan bir Dans Pisti ve bir sürü tuhaf ama harika enstrüman getirttim. Snezhnaya'nın şimdiye kadar gördüğü en iyi müzik etkinliğini hazırlıyorum ve bil bakalım davetiye alan ilk kişi kim? Doğru bildin, sensin! Hadi, bütün gece şarkı söyleyeceğiz!",
       "title": "Doğum Günü"
     },
-    {
-      "text": "Öhöm, öhöm... Tamamdır. Sesim iyi geliyor.",
-      "title": "Yükseltme Hakkında: Giriş"
-    },
-    {
-      "text": "Galiba az önce yepyeni bir tiz notaya çıktım.",
-      "title": "Yükseltme Hakkında: Gelişme"
-    },
-    {
-      "text": "Ah, sesim her zamankinden daha kuvvetli çıkıyor.",
-      "title": "Yükseltme Hakkında: Zirve"
-    },
-    {
-      "text": "Vuhuu! Bütün gece şarkı söyleme vakti!",
-      "title": "Yükseltme Hakkında: Sonuç"
-    }
+    { "text": "Öhöm, öhöm... Tamamdır. Sesim iyi geliyor.", "title": "Yükseltme Hakkında: Giriş" },
+    { "text": "Galiba az önce yepyeni bir tiz notaya çıktım.", "title": "Yükseltme Hakkında: Gelişme" },
+    { "text": "Ah, sesim her zamankinden daha kuvvetli çıkıyor.", "title": "Yükseltme Hakkında: Zirve" },
+    { "text": "Vuhuu! Bütün gece şarkı söyleme vakti!", "title": "Yükseltme Hakkında: Sonuç" }
   ],
   "Zibai": [
     {
@@ -4802,34 +4316,13 @@
       "text": "Adeptus Büyüleri gerçekten mucizevidir, fakat kişi bu büyüleri geliştirmeden önce zihnini geliştirmezse tüm başarıları ayın su üzerindeki yansıması gibi en ufak bir dokunuşla dağılır.",
       "title": "Sohbet: Adeptus Büyüsü"
     },
-    {
-      "text": "Ay zar zor görünüyor...",
-      "title": "Yağmur Yağdığında"
-    },
-    {
-      "text": "İşit göğün gürleyen gazabını!",
-      "title": "Yıldırım Düştüğünde"
-    },
-    {
-      "text": "En azından ayda olduğu kadar soğuk değil.",
-      "title": "Kar Yağdığında"
-    },
-    {
-      "text": "... Çölde seyahat etmek tahmin edildiği kadar çetin.",
-      "title": "Çölde"
-    },
-    {
-      "text": "Günaydın. Dün gece iyi uyudun mu?",
-      "title": "Günaydın"
-    },
-    {
-      "text": "Güneş şu an tepede. Eğer yorgunsan biraz dinlen.",
-      "title": "İyi Günler"
-    },
-    {
-      "text": "Ay sessizce göğe yükselir... Derken aniden göklerde parladığını fark ederiz.",
-      "title": "İyi Akşamlar"
-    },
+    { "text": "Ay zar zor görünüyor...", "title": "Yağmur Yağdığında" },
+    { "text": "İşit göğün gürleyen gazabını!", "title": "Yıldırım Düştüğünde" },
+    { "text": "En azından ayda olduğu kadar soğuk değil.", "title": "Kar Yağdığında" },
+    { "text": "... Çölde seyahat etmek tahmin edildiği kadar çetin.", "title": "Çölde" },
+    { "text": "Günaydın. Dün gece iyi uyudun mu?", "title": "Günaydın" },
+    { "text": "Güneş şu an tepede. Eğer yorgunsan biraz dinlen.", "title": "İyi Günler" },
+    { "text": "Ay sessizce göğe yükselir... Derken aniden göklerde parladığını fark ederiz.", "title": "İyi Akşamlar" },
     {
       "text": "Hehe, aydan daha uzun süre ayakta kalmaya mı çalışıyorsun? Artık uyusan iyi olur. İyi geceler.",
       "title": "İyi Geceler"
@@ -4946,33 +4439,15 @@
       "text": "Aydaki sürgünüm sırasında bu kadar güzel lezzetleri tatma imkanım olsaydı belki biraz daha kalırdım. Heh, şaka yapıyorum.",
       "title": "Hediye Alma: I"
     },
-    {
-      "text": "Nefis bir yemek. Keyifle yiyeceğim.",
-      "title": "Hediye Alma: II"
-    },
-    {
-      "text": "Bu yemeğin tadı... Epey tuhaf. Yenilikçi denebilir hatta.",
-      "title": "Hediye Alma: III"
-    },
+    { "text": "Nefis bir yemek. Keyifle yiyeceğim.", "title": "Hediye Alma: II" },
+    { "text": "Bu yemeğin tadı... Epey tuhaf. Yenilikçi denebilir hatta.", "title": "Hediye Alma: III" },
     {
       "text": "Bugün doğum günün mü? O halde kutlamalıyız. Yaşlıların Uzun Erişte yemesinin bir gelenek olduğunu hatırlıyorum... Hehe, genç görünmene rağmen doğumundan bu yana geçen yılları hesaba katarsak aslında Liyue Limanı'ndaki çoğu kişiden daha yaşlı olabilirsin. O bakımdan sana bir kase Uzun Erişte hazırlamak pek de yersiz olmazdı... Hımm? Elbette nasıl yapılacağını biliyorum. Zamanında semavi mertebelerde bulunmuş olabilirim ama ağzımda gümüş kaşıkla doğmadım... *iç çeker* Açıkçası bugünlerde pek iştahlı olmayışımın tek nedeni, muhtemelen göklerde yemek pişirme imkanı olmadan geçirdiğim onca zamandır... Neyse, konudan sapmayayım. Yemek yemek dünyadaki en önemli ikinci meseledir, bu yüzden gün bitmeden mutlaka güzel bir kase Uzun Erişte yemelisin.",
       "title": "Doğum Günü"
     },
-    {
-      "text": "Anlıyorum.",
-      "title": "Yükseltme Hakkında: Giriş"
-    },
-    {
-      "text": "Ay büyür ve küçülür...",
-      "title": "Yükseltme Hakkında: Gelişme"
-    },
-    {
-      "text": "Ruh, meskenine geri döner.",
-      "title": "Yükseltme Hakkında: Zirve"
-    },
-    {
-      "text": "Bir Adeptus olarak görevimi yerine getirmeliyim.",
-      "title": "Yükseltme Hakkında: Sonuç"
-    }
+    { "text": "Anlıyorum.", "title": "Yükseltme Hakkında: Giriş" },
+    { "text": "Ay büyür ve küçülür...", "title": "Yükseltme Hakkında: Gelişme" },
+    { "text": "Ruh, meskenine geri döner.", "title": "Yükseltme Hakkında: Zirve" },
+    { "text": "Bir Adeptus olarak görevimi yerine getirmeliyim.", "title": "Yükseltme Hakkında: Sonuç" }
   ]
 }

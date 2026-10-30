@@ -8,13 +8,15 @@ import {
 import { getCharacterLinesLoaderMapSource } from "#src/services/genshinText/getCharacterLinesLoaderMapSource";
 import { getGameTextLoaderMapSource } from "#src/services/genshinText/getGameTextLoaderMapSource";
 import { getPersonaModuleSource } from "#src/services/genshinText/getPersonaModuleSource";
+import { formatGeneratedSource } from "#src/services/shared/formatGeneratedSource";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 // The persona runs a copy of `genshin-text` rather than the package, so the one way the two drift is an edit to the
 // Source with no `genshin:text write` after it, or an edit to the copy by hand. Either fails here, as does a loader
-// Map the writer would no longer write. Generated output is never formatted, so each is compared byte for byte
+// Map the writer would no longer write. Generated output is the formatter's form, so each is compared byte for byte with
+// What the formatter writes for the writer's source
 describe(getPersonaModuleSource, () => {
   test("re-aims the package's alias at the copy, headed as the copy it is", () => {
     expect.hasAssertions();
@@ -34,22 +36,26 @@ describe(getPersonaModuleSource, () => {
     );
   });
 
-  test.each(PersonaCopiedModules)("the persona's copy of %s is the source's", (modulePath) => {
+  test.each(PersonaCopiedModules)("the persona's copy of %s is the source's", async (modulePath) => {
     expect.hasAssertions();
 
     const source = readFileSync(join(GENSHIN_TEXT_SOURCE_DIRECTORY, modulePath), "utf8");
+    const copyPath = join(PERSONA_COPY_DIRECTORY, modulePath);
 
-    expect(readFileSync(join(PERSONA_COPY_DIRECTORY, modulePath), "utf8")).toBe(getPersonaModuleSource(source));
+    expect(readFileSync(copyPath, "utf8")).toBe(await formatGeneratedSource(copyPath, getPersonaModuleSource(source)));
   });
 
-  test("the loader maps are the ones the writer writes", () => {
+  test("the loader maps are the ones the writer writes", async () => {
     expect.hasAssertions();
 
-    expect(readFileSync(join(GENSHIN_TEXT_GENERATED_DIRECTORY, "GameTextLoaderMap.ts"), "utf8")).toBe(
-      getGameTextLoaderMapSource(),
+    const gameTextMapPath = join(GENSHIN_TEXT_GENERATED_DIRECTORY, "GameTextLoaderMap.ts");
+    const characterLinesMapPath = join(dirname(CHARACTER_LINES_DIRECTORY), "CharacterLinesLoaderMap.ts");
+
+    expect(readFileSync(gameTextMapPath, "utf8")).toBe(
+      await formatGeneratedSource(gameTextMapPath, getGameTextLoaderMapSource()),
     );
-    expect(readFileSync(join(dirname(CHARACTER_LINES_DIRECTORY), "CharacterLinesLoaderMap.ts"), "utf8")).toBe(
-      getCharacterLinesLoaderMapSource(),
+    expect(readFileSync(characterLinesMapPath, "utf8")).toBe(
+      await formatGeneratedSource(characterLinesMapPath, getCharacterLinesLoaderMapSource()),
     );
   });
 });

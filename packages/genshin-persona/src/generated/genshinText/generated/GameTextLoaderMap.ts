@@ -9,9 +9,11 @@ import { GameLanguage } from "#src/generated/genshinText/models/GameLanguage";
 export const ENGLISH_GAME_TEXT: GameText = English;
 export const GameTextLoaderMap: Record<GameLanguage, () => Promise<GameText>> = {
   [GameLanguage.ChineseSimplified]: async () =>
-    (await import("#src/generated/genshinText/generated/text/ChineseSimplified.json", { with: { type: "json" } })).default,
+    (await import("#src/generated/genshinText/generated/text/ChineseSimplified.json", { with: { type: "json" } }))
+      .default,
   [GameLanguage.ChineseTraditional]: async () =>
-    (await import("#src/generated/genshinText/generated/text/ChineseTraditional.json", { with: { type: "json" } })).default,
+    (await import("#src/generated/genshinText/generated/text/ChineseTraditional.json", { with: { type: "json" } }))
+      .default,
   [GameLanguage.English]: () => Promise.resolve(ENGLISH_GAME_TEXT),
   [GameLanguage.French]: async () =>
     (await import("#src/generated/genshinText/generated/text/French.json", { with: { type: "json" } })).default,

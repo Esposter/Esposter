@@ -210,26 +210,14 @@
       "text": "Meine Kapuze wird ganz nass ... Oh nein, Tugarin! Schüttle dich doch nicht so!",
       "title": "Wenn es regnet"
     },
-    {
-      "text": "Zeit für die Beute, aus ihrem Versteck zu kriechen ...",
-      "title": "Es hat aufgehört zu regnen ..."
-    },
+    { "text": "Zeit für die Beute, aus ihrem Versteck zu kriechen ...", "title": "Es hat aufgehört zu regnen ..." },
     {
       "text": "Perfektes Wetter für einen Hinterhalt, falls du jemanden im Sinn hast ... Ich kann den Donner nutzen, um meine Schüsse zu übertönen.",
       "title": "Wenn es blitzt ..."
     },
-    {
-      "text": "Urgh, Spurenlesen wird dabei unmöglich sein.",
-      "title": "Wenn es schneit ..."
-    },
-    {
-      "text": "Bei diesem Wetter kann man keine Kapuze tragen ...",
-      "title": "Ein Sturm zieht auf."
-    },
-    {
-      "text": "Ich wünschte, ich könnte auch etwas Fell loswerden ...",
-      "title": "In der Wüste ..."
-    },
+    { "text": "Urgh, Spurenlesen wird dabei unmöglich sein.", "title": "Wenn es schneit ..." },
+    { "text": "Bei diesem Wetter kann man keine Kapuze tragen ...", "title": "Ein Sturm zieht auf." },
+    { "text": "Ich wünschte, ich könnte auch etwas Fell loswerden ...", "title": "In der Wüste ..." },
     {
       "text": "Hörst du das? Das sind die Vögel, die im Wald zwitschern, wie jeden Morgen ... Warum gehen wir nicht los und schießen ein paar davon ab?",
       "title": "Guten Morgen."
@@ -238,10 +226,7 @@
       "text": "Normalerweise esse ich draußen in der Wildnis zu Mittag, aber ich würde es nicht unbedingt empfehlen.",
       "title": "Guten Tag."
     },
-    {
-      "text": "Einige der seltensten Beutetiere kommen nur nachts heraus.",
-      "title": "Guten Abend."
-    },
+    { "text": "Einige der seltensten Beutetiere kommen nur nachts heraus.", "title": "Guten Abend." },
     {
       "text": "Ruh dich aus. Ich habe noch Dinge zu erledigen und brauche den Schutz der Nacht.",
       "title": "Gute Nacht."
@@ -552,10 +537,7 @@
       "text": "Mehr bitte. Hmm? Oh, war das schon alles? Ich muss daran denken, beim nächsten Mal etwas aufzuheben.",
       "title": "Geschenk erhalten I"
     },
-    {
-      "text": "Das ist wirklich angenehm. Ich werde es im Mondlicht genießen.",
-      "title": "Geschenk erhalten II"
-    },
+    { "text": "Das ist wirklich angenehm. Ich werde es im Mondlicht genießen.", "title": "Geschenk erhalten II" },
     {
       "text": "Oh ... Immer, wenn Sandrone sauer auf mich war, hat sie mir auch solche Sachen geschenkt ...",
       "title": "Geschenk erhalten III"
@@ -564,10 +546,7 @@
       "text": "Dein Geburtstag ist jedes Jahr am selben Tag? Oh, das ist leicht zu merken. Die Mondgebetsnacht findet jedes Jahr zu unterschiedlichen Zeiten statt, deshalb kann ich meinen Geburtstag nur schätzen, indem ich den Mond beobachte. Ein Geburtstag ist doch eine freudige Angelegenheit, oder nicht? Alle versammeln sich zum Tanz, und die Leute bringen auch noch köstliche Opfergaben für dich dar. Hä ...? Bei normalen Menschen sehen Geburtstage nicht so aus? Geschenke, Kuchen und Freunde ...? Oh, das geht auch. Lass uns deine Freunde zur Feier einladen. Ich kann dir ein Lied singen, und wir können sogar Maalaus bitten, dir ein Bild zu malen.",
       "title": "Dein Geburtstag ..."
     },
-    {
-      "text": "Beim ewigen Mond, die Gezeiten werden anschwellen.",
-      "title": "Gedanken über den Aufstieg – Beginn"
-    },
+    { "text": "Beim ewigen Mond, die Gezeiten werden anschwellen.", "title": "Gedanken über den Aufstieg – Beginn" },
     {
       "text": "Durch den Frostmond soll die Nacht erleuchtet werden.",
       "title": "Gedanken über den Aufstieg – Fortschritt"
@@ -594,10 +573,7 @@
       "text": "Mir ist langweilig ... Ich bin nicht wirklich auf Ärger aus, aber irgendwie hoffe ich, dass wir auf jemanden treffen, der es ist ...",
       "title": "Gespräch – Langeweile"
     },
-    {
-      "text": "Komm schon, lass uns ein bisschen Drama finden gehen!",
-      "title": "Gespräch – Drama"
-    },
+    { "text": "Komm schon, lass uns ein bisschen Drama finden gehen!", "title": "Gespräch – Drama" },
     {
       "text": "Wo der Wind hin weht, folgt bald der Regen. Glaub mir, ich weiß es aus zuverlässiger Quelle.",
       "title": "Wenn es regnet ..."
@@ -606,10 +582,7 @@
       "text": "Ich habe gehört, dass einer der anderen Archonten seine prophetischen Worte mit Blitzen überbringt ... Nicht, dass ich voreingenommen bin oder so, aber ... Barbatos geht da definitiv sanfter vor.",
       "title": "Wenn es blitzt ..."
     },
-    {
-      "text": "Der Wind weht. Lass uns beten.",
-      "title": "Wenn es windig ist ..."
-    },
+    { "text": "Der Wind weht. Lass uns beten.", "title": "Wenn es windig ist ..." },
     {
       "text": "Guten Morgen, mein Freund. Ich komme gerade vom Morgengebet zurück und fühle mich wirklich glücklich – meine Fragen an Barbatos wurden wieder einmal beantwortet. Oh, und ich habe natürlich auch ein Gebet für dich gesprochen.",
       "title": "Guten Morgen."
@@ -746,10 +719,7 @@
       "text": "Nun geh, und beschreite den Weg, den du beschreiten musst. Von irgendwo draußen ertönt eine Glocke. Auch das ist eine Botschaft unseres Herrn, der dich zu deiner Reise ruft.",
       "title": "Gedanken über den Aufstieg – Höhepunkt"
     },
-    {
-      "text": "Erhöre unsere Gebete, oh Herr. Lass den Wind uns führen.",
-      "title": "Gedanken über den Aufstieg – Ende"
-    }
+    { "text": "Erhöre unsere Gebete, oh Herr. Lass den Wind uns führen.", "title": "Gedanken über den Aufstieg – Ende" }
   ],
   "Durin": [
     {
@@ -768,38 +738,17 @@
       "text": "Ich muss noch so viel über „menschliche Interaktionen“ lernen. Zum Beispiel ... wohin ich mit meinen Händen soll, wenn ich nervös bin? Ich möchte einfach ... mit allen Freunde sein.",
       "title": "Gespräch – Peinlich"
     },
-    {
-      "text": "Oje ... ich hätte so Lust, in eine Pfütze zu springen ...",
-      "title": "Wenn es regnet ..."
-    },
-    {
-      "text": "Bei diesem Wetter sollte man nicht zu hoch fliegen ...",
-      "title": "Wenn es blitzt ..."
-    },
-    {
-      "text": "Hat „es“ schonmal an einem Ort wie diesem geschlummert ...?",
-      "title": "Wenn es schneit ..."
-    },
-    {
-      "text": "Das ist wie eine Szene aus einem Märchen – echt schön!",
-      "title": "Wie sonnig ..."
-    },
-    {
-      "text": "Oje, ich bekomme Durst ...",
-      "title": "In der Wüste ..."
-    },
+    { "text": "Oje ... ich hätte so Lust, in eine Pfütze zu springen ...", "title": "Wenn es regnet ..." },
+    { "text": "Bei diesem Wetter sollte man nicht zu hoch fliegen ...", "title": "Wenn es blitzt ..." },
+    { "text": "Hat „es“ schonmal an einem Ort wie diesem geschlummert ...?", "title": "Wenn es schneit ..." },
+    { "text": "Das ist wie eine Szene aus einem Märchen – echt schön!", "title": "Wie sonnig ..." },
+    { "text": "Oje, ich bekomme Durst ...", "title": "In der Wüste ..." },
     {
       "text": "Guten Morgen. Bitte wundere dich nicht darüber, dass mein Kopf so hängt – mein Nacken ist etwas steif. Letzte Nacht kam eine Katze vorbei und schlief nur ein paar Meter entfernt. Normalerweise verscheuche ich kleine Tiere, aber sie wollte ich nicht stören ... also habe ich versucht, mich die ganze Nacht nicht zu bewegen ...",
       "title": "Guten Morgen."
     },
-    {
-      "text": "Wenn es Brunch gibt, heißt das, dass es auch so etwas wie Mittabendessen gibt?",
-      "title": "Guten Tag."
-    },
-    {
-      "text": "Ich frage mich, ob wir heute Nacht die Sterne sehen werden ...",
-      "title": "Guten Abend."
-    },
+    { "text": "Wenn es Brunch gibt, heißt das, dass es auch so etwas wie Mittabendessen gibt?", "title": "Guten Tag." },
+    { "text": "Ich frage mich, ob wir heute Nacht die Sterne sehen werden ...", "title": "Guten Abend." },
     {
       "text": "Nichts ist friedlicher, als sich für einen guten Schlaf in den eigenen Schweif zu kuscheln.",
       "title": "Gute Nacht."
@@ -1184,10 +1133,7 @@
       "text": "Jedes Mal, wenn der Schnee fällt, ist das der Ruf von Snezhnaya – dem Land, aus dem ich stamme.",
       "title": "Wenn es schneit ..."
     },
-    {
-      "text": "„Der Wind ist erwacht, die Blätter wirbeln herum ...“",
-      "title": "Ein Sturm zieht auf."
-    },
+    { "text": "„Der Wind ist erwacht, die Blätter wirbeln herum ...“", "title": "Ein Sturm zieht auf." },
     {
       "text": "Ein orangefarbener Schnee tanzt in der Luft ... Ha, das ist also die sagenumwobene Wüste.",
       "title": "In der Wüste ..."
@@ -1300,14 +1246,8 @@
       "text": "Da wir uns mittlerweile gut kennen, würde es dir etwas ausmachen, wenn ich dir eine kleine Klage mitteile? Die Wahrheit ist, dass ich aufgrund meiner ... besonderen Situation Lebensmittel, die andere Menschen sehr schätzen, persönlich eher langweilig finde. ... Oh, aber um es klar zu sagen: Ich genieße die Zeit, die wir gemeinsam am Esstisch verbringen, nach wie vor sehr.",
       "title": "Was er nicht mag ..."
     },
-    {
-      "text": "Hm ... Das war erwartungsgemäß außergewöhnlich.",
-      "title": "Geschenk erhalten I"
-    },
-    {
-      "text": "Hm, ja, köstlich.",
-      "title": "Geschenk erhalten II"
-    },
+    { "text": "Hm ... Das war erwartungsgemäß außergewöhnlich.", "title": "Geschenk erhalten I" },
+    { "text": "Hm, ja, köstlich.", "title": "Geschenk erhalten II" },
     {
       "text": "Ähm ... Im Interesse unserer weiteren Freundschaft würde ich meine Gedanken lieber für mich behalten.",
       "title": "Geschenk erhalten III"
@@ -1354,22 +1294,13 @@
       "text": "Schnell, stell dich irgendwo unter. Eine Erkältung wäre für deinen Körper jetzt nicht gerade gut.",
       "title": "Wenn es regnet ..."
     },
-    {
-      "text": "Zeit, ein bisschen Sonne zu tanken, na komm schon!",
-      "title": "Es hat aufgehört zu regnen ..."
-    },
-    {
-      "text": "Dieses Wetter ist wie geschaffen für Training draußen.",
-      "title": "Wie sonnig ..."
-    },
+    { "text": "Zeit, ein bisschen Sonne zu tanken, na komm schon!", "title": "Es hat aufgehört zu regnen ..." },
+    { "text": "Dieses Wetter ist wie geschaffen für Training draußen.", "title": "Wie sonnig ..." },
     {
       "text": "Gegen den Wind zu laufen, ist ja auch eine Form des Widerstandstrainings.",
       "title": "Ein Sturm zieht auf."
     },
-    {
-      "text": "Das ist nicht der richtige Ort, um draußen zu trainieren ...",
-      "title": "In der Wüste ..."
-    },
+    { "text": "Das ist nicht der richtige Ort, um draußen zu trainieren ...", "title": "In der Wüste ..." },
     {
       "text": "He, guten Morgen. Wenn du deinen Willen stärken möchtest, solltest als Erstes damit anfangen, früh aufzustehen. Wenn du es nicht einmal hinbekommst, morgens rechtzeitig dein Bett zu verlassen, dann wirst du auch nicht in der Lage sein, dich an deine anderen Pläne zu halten. Wie dem auch sei, ich hätte Lust auf einen kleinen Morgenlauf. Kommst du mit?",
       "title": "Guten Morgen."
@@ -1556,10 +1487,7 @@
       "text": "Guten Morgen. Glaub ja nicht, dass ich gern so früh aufstehe. Aber ich muss zur Klinik und die Tiere füttern, sonst machen die noch richtig Radau.",
       "title": "Guten Morgen."
     },
-    {
-      "text": "Oh, he. Ich wollte auch gerade Mittagspause machen. Gehen wir zusammen?",
-      "title": "Guten Tag."
-    },
+    { "text": "Oh, he. Ich wollte auch gerade Mittagspause machen. Gehen wir zusammen?", "title": "Guten Tag." },
     {
       "text": "Nachts bleibe ich eher zu Hause. Denn so wissen die Menschen – und Saurier – wo sie mich im Notfall finden können. Und wenn es mal eine ruhige Nacht ist, kann ich mich einfach entspannen und erholen.",
       "title": "Guten Abend."
@@ -1684,10 +1612,7 @@
       "text": "Alles Gute zum Geburtstag! Ich wünsche dir viel Gesundheit und ewige Jugend.\nSicher, den gnadenlosen Lauf der Zeit kannst du nicht aufhalten, aber du kannst versuchen, im Herzen stets jung zu bleiben – und ganz nebenbei ist schlechte Laune nicht gut für deine Gesundheit. Also, lass deine Sorgen zumindest heute mal links liegen und lass uns ein bisschen Spaß haben.\nAch ja, und welche Musik gefällt dir eigentlich? Ich spiel’ dir ein Lied.",
       "title": "Dein Geburtstag ..."
     },
-    {
-      "text": "Ist das sowas wie ’ne Aufwärmübung?",
-      "title": "Gedanken über den Aufstieg – Beginn"
-    },
+    { "text": "Ist das sowas wie ’ne Aufwärmübung?", "title": "Gedanken über den Aufstieg – Beginn" },
     {
       "text": "Nur, wer sich gut um sich selbst kümmert, kann sich auch um andere kümmern, stimmt’s?",
       "title": "Gedanken über den Aufstieg – Fortschritt"
@@ -1734,10 +1659,7 @@
       "text": "Der Wind wird stärker ... Das ist kein gutes Zeichen. Wir sollten unser Lager aufschlagen, bevor es richtig ungemütlich wird.",
       "title": "Ein Sturm zieht auf."
     },
-    {
-      "text": "Ein weiterer Morgen ... Eine weitere Nacht sicher überstanden.",
-      "title": "Guten Morgen."
-    },
+    { "text": "Ein weiterer Morgen ... Eine weitere Nacht sicher überstanden.", "title": "Guten Morgen." },
     {
       "text": "Jetzt, wo die Sonne aufgegangen ist, sollte ich die Gelegenheit nutzen, um die Umgebung zu erkunden. Das Problem ist ... ich könnte wirklich ein Nickerchen gebrauchen.",
       "title": "Guten Tag."
@@ -1746,10 +1668,7 @@
       "text": "Man weiß nie, was sich in den Schatten der Nacht verbergen könnte. Wenn du wirklich reisen musst, bleib unbedingt wachsam.",
       "title": "Guten Abend."
     },
-    {
-      "text": "Es wird spät. Geh du schon mal schlafen – ich werde heute Nacht Wache halten.",
-      "title": "Gute Nacht."
-    },
+    { "text": "Es wird spät. Geh du schon mal schlafen – ich werde heute Nacht Wache halten.", "title": "Gute Nacht." },
     {
       "text": "Hehe, ich musste meinen alten Herrn ganz schön lange nerven, bis er mich endlich zu den Lichthütern gehen ließ. Ich konnte einfach nicht ertragen, sicher in Piramida zu sitzen, während andere ihr Leben riskieren. Ich sagte ihm, ich will lieber an der Front sein und dabei helfen, die Wilde Jagd in Schach zu halten.",
       "title": "Über Illuga – Lichthüter"
@@ -1850,10 +1769,7 @@
       "text": "Boah, das nenne ich mal Geschmack ... Ernsthaft, was ist denn da die Geheimzutat? Ich möchte lernen, wie man das zubereitet!",
       "title": "Geschenk erhalten I"
     },
-    {
-      "text": "Nicht schlecht! Hehe, warte nur, bis meine Kameraden das probieren!",
-      "title": "Geschenk erhalten II"
-    },
+    { "text": "Nicht schlecht! Hehe, warte nur, bis meine Kameraden das probieren!", "title": "Geschenk erhalten II" },
     {
       "text": "Ähm ... He, wenn du möchtest, kann ich dir noch ein paar andere Gerichte beibringen!",
       "title": "Geschenk erhalten III"
@@ -1896,10 +1812,7 @@
       "text": "Kampfdaten aktualisiert. Sei versichert, dass ich nicht wieder das Dach wegpusten werde.",
       "title": "Gespräch – Aktualisierung"
     },
-    {
-      "text": "Hoffe ich, dass meine Gelenke nicht anfangen zu rosten ...",
-      "title": "Wenn es regnet ..."
-    },
+    { "text": "Hoffe ich, dass meine Gelenke nicht anfangen zu rosten ...", "title": "Wenn es regnet ..." },
     {
       "text": "Bitte beachte: Hohe Wahrscheinlichkeit von Regenbögen. Vorgeschlagene Beobachtungsstellen sind auf der Karte markiert.",
       "title": "Es hat aufgehört zu regnen ..."
@@ -2060,10 +1973,7 @@
       "text": "Gratulationsmodus für besondere Tage aktiviert. Bitte suche dir einen geeigneten Ort aus, an dem du dich kurz ausruhen kannst, während ich dein Zimmer aufräume und Bänder, Luftballons und Blumen anbringe. Dann bereite ich dir dein Lieblingsessen und deinen Lieblingskuchen zu, so wie es in meiner Datenbank gespeichert ist. Wenn du weitere Wünsche hast, die du dieser Liste hinzufügen möchtest, zögere bitte nicht, sie vorzubringen. Lass uns den heutigen Tag zu einem besonderen Tag für dich machen. Alles Gute zum Geburtstag!",
       "title": "Dein Geburtstag ..."
     },
-    {
-      "text": "Ist es Zeit für die regelmäßige Wartung?",
-      "title": "Gedanken über den Aufstieg – Beginn"
-    },
+    { "text": "Ist es Zeit für die regelmäßige Wartung?", "title": "Gedanken über den Aufstieg – Beginn" },
     {
       "text": "Kernleistung verbessert. Du hast das Zeug zu einem begabten Mechaniker.",
       "title": "Gedanken über den Aufstieg – Fortschritt"
@@ -2098,18 +2008,9 @@
       "text": "Regen? Los, los, los! Wir müssen uns unterstellen, bevor wir nass werden.",
       "title": "Wenn es regnet ..."
     },
-    {
-      "text": "Waaah! Schnee den Rücken runter, kaltkaltkalt ...",
-      "title": "Wenn es schneit ..."
-    },
-    {
-      "text": "*Pfft!* *Pfft!* *Pfft!* Urgh, Sand im Mund!",
-      "title": "In der Wüste ..."
-    },
-    {
-      "text": "Morgen. Hast du schon gefrühstückt? Ich kenne einen guten Ort.",
-      "title": "Guten Morgen."
-    },
+    { "text": "Waaah! Schnee den Rücken runter, kaltkaltkalt ...", "title": "Wenn es schneit ..." },
+    { "text": "*Pfft!* *Pfft!* *Pfft!* Urgh, Sand im Mund!", "title": "In der Wüste ..." },
+    { "text": "Morgen. Hast du schon gefrühstückt? Ich kenne einen guten Ort.", "title": "Guten Morgen." },
     {
       "text": "*Gähn* Sollen wir zurück zum Laden gehen und ein Nickerchen machen? Ich bin so müde ...",
       "title": "Guten Tag."
@@ -2238,18 +2139,9 @@
       "text": "Alles Gute zum Geburtstag! Hier, bitte – diese Puppe ist für dich! Ich habe sie gerade fertig genäht. Es war das erste Mal, dass ich diese Technik ausprobiert habe – und es hat ewig gedauert, glaub mir! Ich habe sie mit beruhigenden Kräutern gefüllt, damit du besser einschlafen kannst. Leg sie einfach neben dein Kissen, und ich verspreche dir, du wirst tief und fest schlafen – garantiert ohne Albträume, zu 100 Prozent. Der Verband an meiner Hand ...? Ah ... nur ein kleiner Kratzer vom ... Spielen mit Ashru, hahaha ... Wirklich, nichts Schlimmes ...",
       "title": "Dein Geburtstag ..."
     },
-    {
-      "text": "Oh? Gar nicht schlecht!",
-      "title": "Gedanken über den Aufstieg – Beginn"
-    },
-    {
-      "text": "Geschickter als je zuvor.",
-      "title": "Gedanken über den Aufstieg – Fortschritt"
-    },
-    {
-      "text": "Na gut ... Los geht’s!",
-      "title": "Gedanken über den Aufstieg – Höhepunkt"
-    },
+    { "text": "Oh? Gar nicht schlecht!", "title": "Gedanken über den Aufstieg – Beginn" },
+    { "text": "Geschickter als je zuvor.", "title": "Gedanken über den Aufstieg – Fortschritt" },
+    { "text": "Na gut ... Los geht’s!", "title": "Gedanken über den Aufstieg – Höhepunkt" },
     {
       "text": "Hehe, ich fühle mich jetzt bereit für eine große Aufgabe ... Wie wär’s? Willst du mitmachen?",
       "title": "Gedanken über den Aufstieg – Ende"
@@ -2272,10 +2164,7 @@
       "text": "Weißt du schon, wohin du gehen willst? Wenn nicht, such dir doch ein Stückchen Wiese, um eine Pause zu machen?",
       "title": "Gespräch – Reise"
     },
-    {
-      "text": "Ah, es ist bald wieder die Zeit, in der alles blüht ...",
-      "title": "Wenn es regnet ..."
-    },
+    { "text": "Ah, es ist bald wieder die Zeit, in der alles blüht ...", "title": "Wenn es regnet ..." },
     {
       "text": "Ein flüchtiger Lichtschein, noch schwerer zu fassen als das Mondlicht ...",
       "title": "Wenn es blitzt ..."
@@ -2288,26 +2177,14 @@
       "text": "Nefer hat einmal von Orten wie diesem gesprochen ... So sieht es also dort aus.",
       "title": "In der Wüste ..."
     },
-    {
-      "text": "Guten Morgen. Ob Tag oder Nacht, möge die Mondgöttin über dich wachen.",
-      "title": "Guten Morgen."
-    },
-    {
-      "text": "Guten Morgen. Ob Tag oder Nacht, möge das Mondlicht uns verbinden.",
-      "title": "Guten Morgen."
-    },
+    { "text": "Guten Morgen. Ob Tag oder Nacht, möge die Mondgöttin über dich wachen.", "title": "Guten Morgen." },
+    { "text": "Guten Morgen. Ob Tag oder Nacht, möge das Mondlicht uns verbinden.", "title": "Guten Morgen." },
     {
       "text": "... Ah, war ich gerade am Schlafen? Tut mir leid. Bitte sag mir Bescheid, wenn du etwas brauchst.",
       "title": "Guten Tag."
     },
-    {
-      "text": "Das Mondlicht ist heute Nacht ruhig. Wollen wir zusammen im Wald spazieren?",
-      "title": "Guten Abend."
-    },
-    {
-      "text": "Die Sterne haben sich bereits gute Nacht gesagt, jetzt sind wir an der Reihe.",
-      "title": "Gute Nacht."
-    },
+    { "text": "Das Mondlicht ist heute Nacht ruhig. Wollen wir zusammen im Wald spazieren?", "title": "Guten Abend." },
+    { "text": "Die Sterne haben sich bereits gute Nacht gesagt, jetzt sind wir an der Reihe.", "title": "Gute Nacht." },
     {
       "text": "Eine Lehre ohne Gesetze ist nur ein Buch voller Tricks, und ein Anführer ohne Gewissen ist eine falsche Gottheit. Wo immer sich Gemeinschaften von Menschen versammeln, sind Regeln notwendig. Selbst für die Nachkommen des Frostmonds, die einen gemeinsamen Glauben teilen, sind Regeln unverzichtbar, um sie zu leiten.",
       "title": "Über Lauma – Haftung"
@@ -2388,26 +2265,17 @@
       "text": "Ich genieße es, Zeit allein in der Dunkelheit der Nacht zu verbringen. Die Vögel und Tiere werden still und das einzige vernehmbare Geräusch ist der Wind, der sanft durch die Bäume weht ... Alles ist so friedlich.",
       "title": "Laumas Hobbys ..."
     },
-    {
-      "text": "Mein Kopf ... ist so schwer.",
-      "title": "Laumas Sorgen ..."
-    },
+    { "text": "Mein Kopf ... ist so schwer.", "title": "Laumas Sorgen ..." },
     {
       "text": "Einfaches Essen mit minimaler Würzung. Das hat nichts mit meinen Überzeugungen oder Ernährungsbeschränkungen zu tun, ich finde einfach, dass mir leichteres Essen besser bekommt.",
       "title": "Was sie so mag ..."
     },
-    {
-      "text": "Zu fettig oder zu trocken ... Das ist einfach nichts für mich.",
-      "title": "Was sie nicht mag ..."
-    },
+    { "text": "Zu fettig oder zu trocken ... Das ist einfach nichts für mich.", "title": "Was sie nicht mag ..." },
     {
       "text": "So frische Zutaten – da hast du dir wirklich Mühe gemacht. Ich werde sie den Anhängern bringen. ... Was? Nur für mich?",
       "title": "Geschenk erhalten I"
     },
-    {
-      "text": "Danke für dein Geschenk. Teilen wir es doch zusammen.",
-      "title": "Geschenk erhalten II"
-    },
+    { "text": "Danke für dein Geschenk. Teilen wir es doch zusammen.", "title": "Geschenk erhalten II" },
     {
       "text": "Ich bin mir sicher, dass es jemanden gibt, der es mehr braucht als ich. Ich werde meine Augen offenhalten.",
       "title": "Geschenk erhalten III"
@@ -2416,14 +2284,8 @@
       "text": "Dir, unserem verehrten Gast, der vom Mondlicht und unserem ruhigen Wald umgeben ist, schenke ich diesen gesegneten Dolch. Denn ein Dolch muss kein Gegenstand der Gewalt sein – tatsächlich werden Dolche oft als symbolische Gegenstände in Gebetszeremonien verwendet.\nDu kannst ihn natürlich für alles verwenden, was du willst.",
       "title": "Dein Geburtstag ..."
     },
-    {
-      "text": "Ich möchte keine Abkürzung gehen ...",
-      "title": "Gedanken über den Aufstieg – Beginn"
-    },
-    {
-      "text": "Ich sehne mich nicht nach großer Macht ...",
-      "title": "Gedanken über den Aufstieg – Fortschritt"
-    },
+    { "text": "Ich möchte keine Abkürzung gehen ...", "title": "Gedanken über den Aufstieg – Beginn" },
+    { "text": "Ich sehne mich nicht nach großer Macht ...", "title": "Gedanken über den Aufstieg – Fortschritt" },
     {
       "text": "Wenn all dies nur dazu dient, der Wahrheit zu begegnen ...",
       "title": "Gedanken über den Aufstieg – Höhepunkt"
@@ -2578,26 +2440,17 @@
       "text": "Es gibt eigentlich nichts, was ich wirklich hasse, außer vielleicht Sachen, die extrem ungesund sind. Noch gut essbares Essen wegzuwerfen, nur weil es mir nicht besonders gut schmeckt, ist nämlich die totale Verschwendung, finde ich.",
       "title": "Was sie nicht mag ..."
     },
-    {
-      "text": "Das ist ja köstlich! Wie machst du das? Kannst du es mir beibringen?",
-      "title": "Geschenk erhalten I"
-    },
+    { "text": "Das ist ja köstlich! Wie machst du das? Kannst du es mir beibringen?", "title": "Geschenk erhalten I" },
     {
       "text": "Lecker! Nächstes Mal bin ich dran. Ich will sehen, was du von meinen Kochkünsten hältst.",
       "title": "Geschenk erhalten II"
     },
-    {
-      "text": "Uhh ... Na ja ... Wenigstens ist es nicht gesundheitsschädlich.",
-      "title": "Geschenk erhalten III"
-    },
+    { "text": "Uhh ... Na ja ... Wenigstens ist es nicht gesundheitsschädlich.", "title": "Geschenk erhalten III" },
     {
       "text": "Alles Gute zum Geburtstag ... Das ist vielleicht nicht das wertvollste Geschenk, aber es ist etwas, das ich schon seit langer Zeit in meiner Sammlung habe ... Bitte nimm dieses Fossil an. Siehst du das? Das sind Knochen- und Federabdrücke einer längst ausgestorbenen Vogelart. Sie werden nie wieder fliegen können. Doch der Moment, in dem dieser Vogel seine Flügel ausbreitete, hat einen Abdruck hinterlassen, der bis weit in die Zukunft überdauert hat. Selbst wenn das Leben am Ende verblasst, wird also immer ein Beweis für unsere Existenz zurückbleiben. Möge dein Leben so widerstandsfähig sein wie ein alter Baum, dessen jeder Jahresring eine wunderschöne Geschichte erzählt.",
       "title": "Dein Geburtstag ..."
     },
-    {
-      "text": "Meine Sinne sind schärfer geworden.",
-      "title": "Gedanken über den Aufstieg – Beginn"
-    },
+    { "text": "Meine Sinne sind schärfer geworden.", "title": "Gedanken über den Aufstieg – Beginn" },
     {
       "text": "Ich habe ein tieferes Verständnis für die Dinge dieser Welt gewonnen.",
       "title": "Gedanken über den Aufstieg – Fortschritt"
@@ -2632,10 +2485,7 @@
       "text": "Hm, der Regen wird stärker. Wer weiß, was die Fluten alles wegschwemmen werden?",
       "title": "Wenn es regnet ..."
     },
-    {
-      "text": "Der Himmel klart auf. Als hätte es nie geregnet.",
-      "title": "Es hat aufgehört zu regnen ..."
-    },
+    { "text": "Der Himmel klart auf. Als hätte es nie geregnet.", "title": "Es hat aufgehört zu regnen ..." },
     {
       "text": "Der Donner übertönt vieles, aber niemals den Schlag deines eigenen Herzens.",
       "title": "Wenn es blitzt ..."
@@ -2648,22 +2498,13 @@
       "text": "Puh, der Wind wird stärker ... Schade, dass es hier keine Löwenzähne gibt. Dann müssen wir wohl stattdessen Papier zerreißen, hm?",
       "title": "Wenn es windig ist ..."
     },
-    {
-      "text": "In solchen Momenten vermisse ich den Mostsee wirklich.",
-      "title": "In der Wüste ..."
-    },
-    {
-      "text": "Guten Morgen. Was steht heute an?",
-      "title": "Guten Morgen."
-    },
+    { "text": "In solchen Momenten vermisse ich den Mostsee wirklich.", "title": "In der Wüste ..." },
+    { "text": "Guten Morgen. Was steht heute an?", "title": "Guten Morgen." },
     {
       "text": "Schon mit dem Mittagessen fertig? Gut, wir haben heute Nachmittag noch einiges zu tun.",
       "title": "Guten Tag."
     },
-    {
-      "text": "Heute Nacht ... Mhm. Überraschen wir die Truppen mit einer Angriffsübung.",
-      "title": "Guten Abend ..."
-    },
+    { "text": "Heute Nacht ... Mhm. Überraschen wir die Truppen mit einer Angriffsübung.", "title": "Guten Abend ..." },
     {
       "text": "Gute Nacht. Ruh dich lieber aus, denn der morgige Tag kommt, ob du willst oder nicht.",
       "title": "Gute Nacht ..."
@@ -2826,22 +2667,10 @@
       "text": "Emotionen sind wie ein reißender Strom, der durch den Geist schießt. Wenn du versuchst, sie zurückzuhalten, wirst du häufiger als nicht von ihrer unaufhaltsamen Kraft mitgerissen. Und wenn du versuchst, sie völlig zu ignorieren ... zerreißt du dich am Ende selbst.",
       "title": "Gespräch – Emotionen"
     },
-    {
-      "text": "Die Gunst des Himmels fällt nicht unparteiisch.",
-      "title": "Wenn es regnet ..."
-    },
-    {
-      "text": "Wieder ein Lügner entlarvt.",
-      "title": "Wenn es blitzt ..."
-    },
-    {
-      "text": "Klingt, als ob mehr Ärger im Anmarsch ist.",
-      "title": "Wenn es windig ist ..."
-    },
-    {
-      "text": "Ein Déjà-vu, auf das ich hätte verzichten können.",
-      "title": "In der Wüste ..."
-    },
+    { "text": "Die Gunst des Himmels fällt nicht unparteiisch.", "title": "Wenn es regnet ..." },
+    { "text": "Wieder ein Lügner entlarvt.", "title": "Wenn es blitzt ..." },
+    { "text": "Klingt, als ob mehr Ärger im Anmarsch ist.", "title": "Wenn es windig ist ..." },
+    { "text": "Ein Déjà-vu, auf das ich hätte verzichten können.", "title": "In der Wüste ..." },
     {
       "text": "Morgen. Immerzu ein echter Frühaufsteher, hm? Wünschte, ich könnte dasselbe über Jahoda sagen ...",
       "title": "Guten Morgen."
@@ -2978,10 +2807,7 @@
       "text": "Ich bin nicht die Beste darin, Geschenke auszuwählen, also wie wäre es damit: Ich stelle dir drei Fragen, und wenn du die richtigen Antworten findest, werde ich ... Entspann dich, das sollte ein Witz sein. Hier, nimm dieses Buch. Es ist eine Sammlung von Wüstenfolklore und Märchen – einige der vollständigsten Versionen, die existieren. Generationen von Wüstenbewohnern sind mit ihnen aufgewachsen und haben sie dann selbst weitergegeben. Wer weiß? Vielleicht wirst du, nachdem du sie gelesen hast, auch in der Wüste zurechtkommen.",
       "title": "Dein Geburtstag ..."
     },
-    {
-      "text": "Oh, interessant.",
-      "title": "Gedanken über den Aufstieg – Beginn"
-    },
+    { "text": "Oh, interessant.", "title": "Gedanken über den Aufstieg – Beginn" },
     {
       "text": "Ein Körnchen Wahrheit ... aber nur ein Tropfen im Ozean.",
       "title": "Gedanken über den Aufstieg – Fortschritt"
@@ -3000,14 +2826,8 @@
       "text": "Oh, soll ich mich nochmal vorstellen? Hm, diesmal scheint es keine Störung durch Alices Selbstvorstellungsmagie zu geben, also lege ich einfach los ... Ähem, ich bin Nicole. Wie du siehst, bin ich ... Ah, schon wieder! Wohl zu früh gefreut ...",
       "title": "Schön, dich kennenzulernen ..."
     },
-    {
-      "text": "Hm ... Nicht die beste Idee, die ich je hatte.",
-      "title": "Gespräch – Kurze Erzählungen"
-    },
-    {
-      "text": "Mm ... Metaphern sprechen für sich selbst.",
-      "title": "Gespräch – Skulptur"
-    },
+    { "text": "Hm ... Nicht die beste Idee, die ich je hatte.", "title": "Gespräch – Kurze Erzählungen" },
+    { "text": "Mm ... Metaphern sprechen für sich selbst.", "title": "Gespräch – Skulptur" },
     {
       "text": "Was ich jetzt bin, willst du wissen? Nur ein „Mensch“, der seine Stimme verloren hat.",
       "title": "Gespräch – Stille"
@@ -3016,22 +2836,13 @@
       "text": "Tatsächlich ist es den Seelien zu verdanken, dass am Ende des Regenbogens immer ein Schatz ist.",
       "title": "Es hat aufgehört zu regnen ..."
     },
-    {
-      "text": "Guten Morgen.",
-      "title": "Guten Morgen ..."
-    },
-    {
-      "text": "Guten Tag.",
-      "title": "Guten Tag."
-    },
+    { "text": "Guten Morgen.", "title": "Guten Morgen ..." },
+    { "text": "Guten Tag.", "title": "Guten Tag." },
     {
       "text": "Nachts ist die Inspiration am stärksten. Daher begegneten die Menschen früher den Engeln am häufigsten zu dieser Zeit. Ich nehme an, sie sind größtenteils daran schuld, dass wir zu Nachteulen geworden sind. Obwohl das nicht ganz stimmt. Es ist ja nicht so, als hätten wir eine innere Uhr oder einen Schlafrhythmus gehabt. Was wir taten, war eher so etwas wie ... regelmäßige Funktionswartung. Es ging also wohl eher darum, die Abendstunden zu vermeiden ...",
       "title": "Guten Abend ..."
     },
-    {
-      "text": "Du gehst schon ins Bett? Hehe, dann gute Nacht.",
-      "title": "Gute Nacht ..."
-    },
+    { "text": "Du gehst schon ins Bett? Hehe, dann gute Nacht.", "title": "Gute Nacht ..." },
     {
       "text": "Solange ein Autor noch lebt, kann er bestenfalls hoffen, etwas Populäres zu schaffen. Menschen sind schließlich ein Produkt ihrer Zeit. So wie ein Gelehrter der Akademie zu Beginn seines Studiums nicht zwanzig Jahre an Wissen besitzen kann, kann ein moderner Autor nicht hoffen, zu seinen Lebzeiten einen Klassiker zu schreiben. Mit anderen Worten: Man kann nur einfach schreiben, was interessant ist. Wie auch immer, ich bin nicht diejenige, die schreibt. Daher verspüre ich diesbezüglich wenig Druck.",
       "title": "Über Nicole – Populäre Werke"
@@ -3120,10 +2931,7 @@
       "text": "Die Menschheit ist eine so faszinierende, brillante Spezies. Meine Flügel aufzugeben war kein Absturz, sondern die Chance, Teil von etwas Greifbarem zu werden. Meine Stimme zu opfern hat mich nicht zum Schweigen gebracht, sondern mir die Kraft gegeben, zuzuhören, bevor ich urteile. Göttliches Potenzial liegt in jedem einzelnen Menschen. Jeder Tag, den ich unter euch verbringe, ist faszinierender als der vorherige.",
       "title": "Ich will mehr über Nicole erfahren – V"
     },
-    {
-      "text": "Ist das ... nicht selbstverständlich?",
-      "title": "Nicoles Hobbys ..."
-    },
+    { "text": "Ist das ... nicht selbstverständlich?", "title": "Nicoles Hobbys ..." },
     {
       "text": "Mittlerweile wissen alle meine engsten Freunde, dass ich eine Quasselstrippe bin. Heißt das, ich muss nicht mehr so tun, als wäre ich es nicht? Aber was, wenn das den Leuten Kopfschmerzen bereitet und niemand mehr mit mir reden will ... Hm, außerdem ist Klee noch nicht alt genug. Ich muss wohl noch ein bisschen länger den würdevollen Engel spielen.",
       "title": "Nicoles Sorgen ..."
@@ -3136,18 +2944,9 @@
       "text": "Hm ... Das ist eine schwierige Frage. Solange das Essen gut zubereitet ist, esse ich so ziemlich alles.",
       "title": "Was sie nicht mag ..."
     },
-    {
-      "text": "Mmm! Das ist ... absolut köstlich!",
-      "title": "Geschenk erhalten I"
-    },
-    {
-      "text": "Wie süß. Man merkt, wie viel Mühe du dir gegeben hast.",
-      "title": "Geschenk erhalten II"
-    },
-    {
-      "text": "W... Was für ein ... seltsamer Geruch. Muss ich wirklich?",
-      "title": "Geschenk erhalten III"
-    },
+    { "text": "Mmm! Das ist ... absolut köstlich!", "title": "Geschenk erhalten I" },
+    { "text": "Wie süß. Man merkt, wie viel Mühe du dir gegeben hast.", "title": "Geschenk erhalten II" },
+    { "text": "W... Was für ein ... seltsamer Geruch. Muss ich wirklich?", "title": "Geschenk erhalten III" },
     {
       "text": "Alles Gute zum Geburtstag! Ich habe dein Geburtstagsgeschenk in einer Truhe versteckt und ein paar Rätsel vorbereitet, die du lösen musst. Komm, ich leite dich an!",
       "title": "Dein Geburtstag ..."
@@ -3174,10 +2973,7 @@
       "text": "... Ich danke dir sehr für all die Unterstützung. Du willst ein Autogramm, oder? Was genau soll ich dir denn daneben zeichnen? Wie wäre es mit einer Feder? Oh, Moment mal, du bist gar kein Fan von mir? Da habe ich mich wohl geirrt. Lass mich dann einfach noch einmal von vorne anfangen. Ich bin Odette, Ballerina der Korolevskiy-Theaterkompanie ... Nun, ich danke dir trotzdem sehr für all die Unterstützung.",
       "title": "Schön, dich kennenzulernen."
     },
-    {
-      "text": "Gut, wenn das alles ist, gehe ich jetzt proben.",
-      "title": "Gespräch – Beschäftigt"
-    },
+    { "text": "Gut, wenn das alles ist, gehe ich jetzt proben.", "title": "Gespräch – Beschäftigt" },
     {
       "text": "Wenn eine einfache Antwort reicht, warum dann den Atem für etwas Längeres verschwenden?",
       "title": "Gespräch – Kurz und knapp"
@@ -3198,18 +2994,9 @@
       "text": "Der Schnee in Snezhnaya ist immer bitterkalt und er scheint nie aufzuhören.",
       "title": "Wenn es schneit ..."
     },
-    {
-      "text": "Meine Haare ... Ich richte sie später.",
-      "title": "Ein Sturm zieht auf."
-    },
-    {
-      "text": "... Zumindest würde es an so einem Ort kein Kennenlerntreffen geben.",
-      "title": "In der Wüste ..."
-    },
-    {
-      "text": "Ich bin aufgewärmt und startklar.",
-      "title": "Guten Morgen."
-    },
+    { "text": "Meine Haare ... Ich richte sie später.", "title": "Ein Sturm zieht auf." },
+    { "text": "... Zumindest würde es an so einem Ort kein Kennenlerntreffen geben.", "title": "In der Wüste ..." },
+    { "text": "Ich bin aufgewärmt und startklar.", "title": "Guten Morgen." },
     {
       "text": "Ein Mittagsschlaf ist nichts für mich. Mittags zu trainieren ist auch nicht ideal, also verbringe ich die Zeit meistens damit, die Skripte für unsere Tanzdramen durchzulesen. Hm? Was es mit diesen Briefen auf sich hat? Sie sind von meinen Fans. Vodyanitsa hat sie mir regelrecht in die Hand gedrückt. Sie möchte, dass ich sie mir ausnahmsweise mal durchlese.",
       "title": "Guten Tag."
@@ -3342,10 +3129,7 @@
       "text": "Das ist nur ein Gericht? Es sieht eher aus wie ... Essen für einen ganzen Tag.",
       "title": "Geschenk erhalten II"
     },
-    {
-      "text": "Ähm, nein danke. Ich achte darauf, was ich esse.",
-      "title": "Geschenk erhalten III"
-    },
+    { "text": "Ähm, nein danke. Ich achte darauf, was ich esse.", "title": "Geschenk erhalten III" },
     {
       "text": "Alles Gute zum Geburtstag! Ich habe überlegt, was ich dir schenken könnte ... Meistens bekomme ich Blumen, Ballettschuhe und Spieluhren. Aber das ist wohl nichts für dich. Wie wäre es, wenn du dir einfach etwas wünschst ... Hier und jetzt? Am besten natürlich etwas, das ich dir auch erfüllen kann ...",
       "title": "Dein Geburtstag ..."
@@ -3392,10 +3176,7 @@
       "text": "Zittern ist eine normale physiologische Reaktion auf plötzliche Geräusche. Das hat nichts mit Angst zu tun.",
       "title": "Wenn es blitzt ..."
     },
-    {
-      "text": "Mir ist nicht kalt. Ich brauche keinen Mantel.",
-      "title": "Wenn es schneit ..."
-    },
+    { "text": "Mir ist nicht kalt. Ich brauche keinen Mantel.", "title": "Wenn es schneit ..." },
     {
       "text": "Sonnenschein kostet nichts. Doch wie viele Menschen können von sich behaupten, seine Wärme wirklich zu schätzen?",
       "title": "Wie sonnig ..."
@@ -3548,14 +3329,8 @@
       "text": "Ich dachte immer, dass die Bilder im „Gerichtehandbuch“ erst durch viele Tricks so perfekt aussehen. Ich hätte nie gedacht, dass ein Gericht im echten Leben auch wirklich so aussehen kann!",
       "title": "Geschenk erhalten I"
     },
-    {
-      "text": "Hmm ... Nicht schlecht, aber da ist noch Luft nach oben.",
-      "title": "Geschenk erhalten II"
-    },
-    {
-      "text": "Also, raus mit der Sprache! Hat dich etwa diese Hexe verflucht?!",
-      "title": "Geschenk erhalten III"
-    },
+    { "text": "Hmm ... Nicht schlecht, aber da ist noch Luft nach oben.", "title": "Geschenk erhalten II" },
+    { "text": "Also, raus mit der Sprache! Hat dich etwa diese Hexe verflucht?!", "title": "Geschenk erhalten III" },
     {
       "text": "Alles Gute zum Geburtstag! Du brauchst nicht so überrascht zu schauen – es ist nicht schwer, ein Datum aus den Leuten rauszukitzeln. Aber eine wichtige Information konnte ich nicht herausfinden ... Deinen Geburtstagswunsch!\nHm? Wenn man es laut ausspricht, geht es nicht in Erfüllung? Da bin ich anderer Meinung. Das macht es nur schwieriger für Leute wie mich, dabei zu helfen, es wahr werden zu lassen. Also, komm schon, red nicht um den heißen Brei herum. Was wünschst du dir? Du denkst vielleicht, dass ich nicht viel tun kann, aber ich habe ziemlich viel Taschengeld gespart. Außerdem sagst du doch immer, wie klug ich bin, also bin ich mir sicher, dass ich dabei helfen kann!\nEs sei denn, es ist etwas wie „ein Haus im Zentrum von Mondstadt kaufen, ohne Hypothek“. Aber ... du würdest dir doch nichts so Unvernünftiges wünschen ... oder?",
       "title": "Dein Geburtstag ..."
@@ -3594,22 +3369,10 @@
       "text": "Ich werde schon wieder in den Zapolyarny-Palast zurückgerufen? Ugh ... Ernsthaft, was bringen all diese endlosen Besprechungen?!",
       "title": "Gespräch – Besprechungen"
     },
-    {
-      "text": "... Wie lästig.",
-      "title": "Wenn es regnet ..."
-    },
-    {
-      "text": "Meine Blumen lieben diese Art von Wetter.",
-      "title": "Es hat aufgehört zu regnen ..."
-    },
-    {
-      "text": "Verteidigungssysteme ... Mmhmm, funktionieren normal.",
-      "title": "Wenn es blitzt ..."
-    },
-    {
-      "text": "Ugh, Zeit für noch mehr „Schneemädchen“ ...",
-      "title": "Wenn es schneit ..."
-    },
+    { "text": "... Wie lästig.", "title": "Wenn es regnet ..." },
+    { "text": "Meine Blumen lieben diese Art von Wetter.", "title": "Es hat aufgehört zu regnen ..." },
+    { "text": "Verteidigungssysteme ... Mmhmm, funktionieren normal.", "title": "Wenn es blitzt ..." },
+    { "text": "Ugh, Zeit für noch mehr „Schneemädchen“ ...", "title": "Wenn es schneit ..." },
     {
       "text": "Das perfekte Wetter für Kuchen, starken Kaffee und dafür, sich in einem guten Buch zu verlieren.",
       "title": "Wie sonnig ..."
@@ -3762,26 +3525,14 @@
       "text": "Oh? Das ist gar nicht mal so schlecht. Ich werde den Gefallen erwidern müssen, wenn wir uns das nächste Mal auf einen Tee treffen.",
       "title": "Geschenk erhalten II"
     },
-    {
-      "text": "Fagio, ich habe hier etwas, das du wegräumen sollst.",
-      "title": "Geschenk erhalten III"
-    },
+    { "text": "Fagio, ich habe hier etwas, das du wegräumen sollst.", "title": "Geschenk erhalten III" },
     {
       "text": "Hmpf. Hier, nimm das. Normalerweise gebe ich so etwas nicht her, aber heute ist ein besonderer Tag, denn es ist der Tag, an dem du auf die Welt gekommen bist. Ich habe Arlecchino und Columbina eingeladen und noch ein paar gemeinsame Freunde. Ich habe für diesen Anlass sogar einen besonderen Kuchen gebacken ... Also freu dich am besten darauf.",
       "title": "Dein Geburtstag ..."
     },
-    {
-      "text": "Berechnung läuft.",
-      "title": "Gedanken über den Aufstieg – Beginn"
-    },
-    {
-      "text": "Gebe Variablen ein ...",
-      "title": "Gedanken über den Aufstieg – Fortschritt"
-    },
-    {
-      "text": "Der Fortschritt ist reibungslos.",
-      "title": "Gedanken über den Aufstieg – Höhepunkt"
-    },
+    { "text": "Berechnung läuft.", "title": "Gedanken über den Aufstieg – Beginn" },
+    { "text": "Gebe Variablen ein ...", "title": "Gedanken über den Aufstieg – Fortschritt" },
+    { "text": "Der Fortschritt ist reibungslos.", "title": "Gedanken über den Aufstieg – Höhepunkt" },
     {
       "text": "Die Ordnung der Dinge in ihre Einzelteile zerlegen. Wetten, du bist jetzt beeindruckt von mir? Hahaha ...",
       "title": "Gedanken über den Aufstieg – Ende"
@@ -3796,18 +3547,9 @@
       "text": "Der Abgrund ist wie der Schatten der Welt. Er bleibt immer da und wird niemals untergehen.",
       "title": "Gespräch – Abgrund"
     },
-    {
-      "text": "Woher kommen wir und wohin gehen wir?",
-      "title": "Gespräch – Meditation"
-    },
-    {
-      "text": "Alle Dinge haben ein Ende, selbst die Zeit.",
-      "title": "Gespräch – Finales Ziel"
-    },
-    {
-      "text": "Angenehm. Ich mag den Regen.",
-      "title": "Wenn es regnet ..."
-    },
+    { "text": "Woher kommen wir und wohin gehen wir?", "title": "Gespräch – Meditation" },
+    { "text": "Alle Dinge haben ein Ende, selbst die Zeit.", "title": "Gespräch – Finales Ziel" },
+    { "text": "Angenehm. Ich mag den Regen.", "title": "Wenn es regnet ..." },
     {
       "text": "So furchterregend die Blitze auch sein mögen, ihr Zorn ist auf das Reich unter den Wolken beschränkt. Der hohe Himmel darüber bleibt klar.",
       "title": "Wenn es blitzt ..."
@@ -3816,10 +3558,7 @@
       "text": "Man sagt, dass am absoluten Nullpunkt alles völlig still steht ... Verglichen damit ist das hier nichts.",
       "title": "Wenn es schneit ..."
     },
-    {
-      "text": "Der Wind fegt alles weg, was unsere Sicht trübt.",
-      "title": "Ein Sturm zieht auf."
-    },
+    { "text": "Der Wind fegt alles weg, was unsere Sicht trübt.", "title": "Ein Sturm zieht auf." },
     {
       "text": "Gut geschlafen? Sieht aus, als wärst du wieder in Topform. Machen wir uns bereit, aufzubrechen.",
       "title": "Guten Morgen."
@@ -3832,10 +3571,7 @@
       "text": "Oh ... Es ist schon Abend. In der Welt draußen vergeht die Zeit so schnell – umso wichtiger ist es, sie zu genießen.",
       "title": "Guten Abend."
     },
-    {
-      "text": "Geh schlafen. Ich werde noch ein wenig an meiner Schwerttechnik üben.",
-      "title": "Gute Nacht."
-    },
+    { "text": "Geh schlafen. Ich werde noch ein wenig an meiner Schwerttechnik üben.", "title": "Gute Nacht." },
     {
       "text": "Ich habe kürzlich einige alte Bücher aus Liyue gekauft. Eine Passage in einem von ihnen fiel mir besonders auf: „Der Weise benutzt seinen Geist wie einen Spiegel: Er greift nicht aus und zieht nicht ein, er nimmt alles auf und behält nichts. Auf diese Weise triumphiert er über alle Dinge, und sie können ihm keinen Schaden zufügen.“\nDas ist ein sehr erleuchteter Geisteszustand. Zuerst nahm ich an, dass er von einem berühmten Kampfkunstmeister verfasst worden sein muss. Aber nachdem ich weiter gelesen hatte, stellte sich heraus, dass er nur ein gewöhnlicher Reisender war. Die Menschen überraschen mich manchmal mit ihren Fähigkeiten. Ich nehme an, das ist es, was man meint, wenn man von „verborgenen Stärken“ spricht.",
       "title": "Über Skirk – Lesen"
@@ -3936,14 +3672,8 @@
       "text": "Essen geht leichter runter, wenn es gut schmeckt, aber auch wenn es nicht schmeckt, ist es noch genießbar. Lass einfach nichts verkommen.",
       "title": "Was sie nicht mag ..."
     },
-    {
-      "text": "Nicht schlecht.",
-      "title": "Geschenk erhalten I"
-    },
-    {
-      "text": "Es geht so.",
-      "title": "Geschenk erhalten II"
-    },
+    { "text": "Nicht schlecht.", "title": "Geschenk erhalten I" },
+    { "text": "Es geht so.", "title": "Geschenk erhalten II" },
     {
       "text": "Igitt ... Was für eine Verschwendung von Zutaten. Das nächste Mal koche ich.",
       "title": "Geschenk erhalten III"
@@ -3952,10 +3682,7 @@
       "text": "Herzlichen Glückwunsch! Ich weiß, dass manche Leute gerne eine riesige Party schmeißen, während andere es lieber ruhig angehen lassen. Ich weiß nicht, zu welcher Art du gehörst, aber für mich sind Geburtstage die richtige Zeit, auf das vergangene Jahr zurückzublicken – manchmal mit Stolz angesichts meiner Fortschritte, andere Male mit tiefem Bedauern.\n... Es ist wohl am besten, Geburtstagen nicht allzu viel Bedeutung beizumessen. Jeder Ort hat seine eigenen Feste, um das Land, die Vorfahren und die Freundschaft zu feiern ... Aber der Geburtstag ist der eine Tag im Jahr, der nur für einen selbst bestimmt ist. Okay, meine Rede ist vorbei – noch einmal, ich wünsche dir alles Gute zum Geburtstag und hoffe, du entwickelst dich weiter zu der Person, die du werden möchtest.",
       "title": "Dein Geburtstag ..."
     },
-    {
-      "text": "Ähm ... Das war alles?",
-      "title": "Gedanken über den Aufstieg – Beginn"
-    },
+    { "text": "Ähm ... Das war alles?", "title": "Gedanken über den Aufstieg – Beginn" },
     {
       "text": "Eine Verbesserung, aber für mich immer noch nicht genug.",
       "title": "Gedanken über den Aufstieg – Fortschritt"
@@ -3994,10 +3721,7 @@
       "text": "Ah! Im Buch steht, dass Fietena Blitze direkt in den Himmel zurückwerfen konnte! Da habe ich erst recht keinen Grund, Angst zu haben ... Aaah!",
       "title": "Wenn es blitzt ..."
     },
-    {
-      "text": "Ganz weiß und kalt, sowas sieht man selten ... Ob das essbar ist?",
-      "title": "Wenn es schneit ..."
-    },
+    { "text": "Ganz weiß und kalt, sowas sieht man selten ... Ob das essbar ist?", "title": "Wenn es schneit ..." },
     {
       "text": "Ach, so schön warm ... Nachdem man sich sattgegessen hat, ist so ein Bad in der warmen Sonne genau das richtige, da möchte man direkt ... *gähn* ... einschlafen ...",
       "title": "Wie sonnig ..."
@@ -4010,10 +3734,7 @@
       "text": "*gähn* ... Guten Morgen ... Ich würde echt gern weiterschlafen ... Aber nein! Ich mach jetzt erstmal einhundert Liegestütze, das macht wach!",
       "title": "Guten Morgen."
     },
-    {
-      "text": "Zeit fürs Mittagessen! Nur mit einem vollen Bauch ist man voller Kraft!",
-      "title": "Guten Tag."
-    },
+    { "text": "Zeit fürs Mittagessen! Nur mit einem vollen Bauch ist man voller Kraft!", "title": "Guten Tag." },
     {
       "text": "Ein Held hat einmal gesagt: „Wenn du dich am Abend sehr erschöpft fühlst, heißt das, dass du den Tag über hart gearbeitet und die gesamte Kraft, die in deinem Körper steckt, genutzt hast.“ Deswegen ist Müdigkeit auch manchmal ein Zeichen der Ehre!",
       "title": "Guten Abend."
@@ -4172,18 +3893,12 @@
       "text": "Puh. Tut echt gut, mal vom Schreibtisch wegzukommen. Und wo finde ich jetzt einen guten Platz für ein Nickerchen?",
       "title": "Gespräch – Ausruhen"
     },
-    {
-      "text": "Der Regen hat aufgehört. Wir marschieren weiter.",
-      "title": "Es hat aufgehört zu regnen ..."
-    },
+    { "text": "Der Regen hat aufgehört. Wir marschieren weiter.", "title": "Es hat aufgehört zu regnen ..." },
     {
       "text": "Wenn ich den Schnee fallen sehe, erinnere ich mich immer an Orte, die ich auf vergangenen Expeditionen durchquert habe ...",
       "title": "Wenn es schneit ..."
     },
-    {
-      "text": "Oha, was für ein Wind! Willst mich wohl umwehen, was?",
-      "title": "Ein Sturm zieht auf."
-    },
+    { "text": "Oha, was für ein Wind! Willst mich wohl umwehen, was?", "title": "Ein Sturm zieht auf." },
     {
       "text": "Morgen! ... Huch, du siehst ganz schön fertig aus. Wie wäre es mit einem Drink, um dich wieder munter zu machen?",
       "title": "Guten Morgen."
@@ -4426,14 +4141,8 @@
       "text": "Ah ... Hehe, sehr schön. Die Vila lieben einfach eine frische Brise.",
       "title": "Wenn es windig ist ..."
     },
-    {
-      "text": "Ich frage mich nur ... Wann kehren wir wieder nach Snezhnaya zurück?",
-      "title": "In der Wüste ..."
-    },
-    {
-      "text": "Ein neuer Tag! Guten Morgen, Snezhnograd!",
-      "title": "Guten Morgen."
-    },
+    { "text": "Ich frage mich nur ... Wann kehren wir wieder nach Snezhnaya zurück?", "title": "In der Wüste ..." },
+    { "text": "Ein neuer Tag! Guten Morgen, Snezhnograd!", "title": "Guten Morgen." },
     {
       "text": "Auf geht's zum Restaurant Podvorye, komm schon! Geht natürlich auf mich. Wie immer!",
       "title": "Guten Tag."
@@ -4616,10 +4325,7 @@
       "text": "Ah, was für ein schönes Wetter. Perfekt, um sich unter Wasser auszuruhen.",
       "title": "Wenn es regnet ..."
     },
-    {
-      "text": "He, wo ist der Regen hin? Das ist doch blöd ...",
-      "title": "Es hat aufgehört zu regnen ..."
-    },
+    { "text": "He, wo ist der Regen hin? Das ist doch blöd ...", "title": "Es hat aufgehört zu regnen ..." },
     {
       "text": "Eine endlose weiße Weite. Hmpf, wenigstens hat der Anblick etwas sehr Reines an sich.",
       "title": "Wenn es schneit ..."
@@ -4768,22 +4474,13 @@
       "text": "Herzlichen Glückwunsch zum Geburtstag! Ich hab dein Geschenk beiseitegelegt. Du kannst es später auspacken. Es sind nur ein paar Kleinigkeiten, Spielzeug und so weiter ... Ach, aber das ist nicht das Wichtigste. Du hast doch gerade Zeit, oder? Na, dann komm mit! Lass uns in meine Echokammer gehen. Ich habe vor ein paar Tagen jemanden gebeten, mir eine Tanzspaßbühne aus Natlan zu besorgen, zusammen mit einer ganzen Menge ausgefallener und wunderbarer Instrumente. Ich bin gerade dabei, das tollste Musikevent aus der Taufe zu heben, das Snezhnaya je gesehen hat, und rate mal, wer als Erstes eine Einladung bekommt? Ganz genau, du! Also komm, machen wir die Nacht zum Tag!",
       "title": "Dein Geburtstag ..."
     },
-    {
-      "text": "Ähm ... also ... Alles klar, klingt gut.",
-      "title": "Gedanken über den Aufstieg – Beginn"
-    },
+    { "text": "Ähm ... also ... Alles klar, klingt gut.", "title": "Gedanken über den Aufstieg – Beginn" },
     {
       "text": "Ich glaube, ich habe gerade eine neue hohe Note erreicht.",
       "title": "Gedanken über den Aufstieg – Fortschritt"
     },
-    {
-      "text": "Oh, meine Stimme klingt ja kräftiger denn je.",
-      "title": "Gedanken über den Aufstieg – Höhepunkt"
-    },
-    {
-      "text": "Juhu! Lass uns die Nacht durchsingen!",
-      "title": "Gedanken über den Aufstieg – Ende"
-    }
+    { "text": "Oh, meine Stimme klingt ja kräftiger denn je.", "title": "Gedanken über den Aufstieg – Höhepunkt" },
+    { "text": "Juhu! Lass uns die Nacht durchsingen!", "title": "Gedanken über den Aufstieg – Ende" }
   ],
   "Zibai": [
     {
@@ -4802,26 +4499,14 @@
       "text": "Die Adeptenkünste sind wirklich wundersam, aber wenn man nicht zuerst den Geist kultiviert, bevor man diese Künste erlernt, werden all ihre Taten wie das Spiegelbild des Mondes im Wasser sein – und schon bei der kleinsten Berührung zerbrechen.",
       "title": "Gespräch – Adeptenkunst"
     },
-    {
-      "text": "Der Mond ist kaum zu sehen ...",
-      "title": "Wenn es regnet ..."
-    },
-    {
-      "text": "Horch, der donnernde Zorn des Himmels.",
-      "title": "Wenn es blitzt ..."
-    },
-    {
-      "text": "Zumindest ist es hier nicht so kalt wie auf dem Mond.",
-      "title": "Wenn es schneit ..."
-    },
+    { "text": "Der Mond ist kaum zu sehen ...", "title": "Wenn es regnet ..." },
+    { "text": "Horch, der donnernde Zorn des Himmels.", "title": "Wenn es blitzt ..." },
+    { "text": "Zumindest ist es hier nicht so kalt wie auf dem Mond.", "title": "Wenn es schneit ..." },
     {
       "text": "... Diese Reise durch die Wüste ist genauso beschwerlich, wie man es sich vorstellt.",
       "title": "In der Wüste ..."
     },
-    {
-      "text": "Guten Morgen. Hast du gut geschlafen letzte Nacht?",
-      "title": "Guten Morgen."
-    },
+    { "text": "Guten Morgen. Hast du gut geschlafen letzte Nacht?", "title": "Guten Morgen." },
     {
       "text": "Die Sonne steht jetzt am höchsten Punkt. Wenn du müde bist, solltest du dich ausruhen.",
       "title": "Guten Tag."
@@ -4946,33 +4631,15 @@
       "text": "Hätte ich solch feine Delikatessen während meiner Verbannung auf dem Mond kosten können, wäre ich vielleicht etwas länger geblieben ... Pff, ich scherze nur.",
       "title": "Geschenk erhalten I"
     },
-    {
-      "text": "Ein ausgezeichnetes Mahl. Ich werde es genießen.",
-      "title": "Geschenk erhalten II"
-    },
-    {
-      "text": "Dieses Gericht schmeckt ... ziemlich eigenartig. Innovativ sogar.",
-      "title": "Geschenk erhalten III"
-    },
+    { "text": "Ein ausgezeichnetes Mahl. Ich werde es genießen.", "title": "Geschenk erhalten II" },
+    { "text": "Dieses Gericht schmeckt ... ziemlich eigenartig. Innovativ sogar.", "title": "Geschenk erhalten III" },
     {
       "text": "Heute ist dein Geburtstag? Dann müssen wir das feiern. Ich erinnere mich, dass es für die Älteren üblich ist, Langlebigkeitsnudeln zu essen ... Hehe, und auch wenn du jung aussiehst, vermute ich, dass du, wenn wir die Jahre seit deiner Geburt zählen würden, tatsächlich älter als die meisten Menschen in Liyue wärst. In diesem Sinne wäre es keine unangemessene Geste, dir eine Schüssel Langlebigkeitsnudeln zuzubereiten ... Hmm? Natürlich weiß ich, wie man sie macht. Auch wenn ich zu den Himmlischen aufgestiegen bin, wurde ich nicht mit einem silbernen Löffel im Mund geboren ... *seufz* Ehrlich gesagt ist der einzige Grund, warum ich heutzutage kaum noch Appetit habe, wahrscheinlich die ganze Zeit, die ich im Himmel verbracht habe, ohne kochen zu können ... Ich schweife ab. Essen ist die zweitwichtigste Angelegenheit der Welt, also müssen wir sicherstellen, dass du vor Ende des Tages eine gute Schüssel Langlebigkeitsnudeln genießen kannst.",
       "title": "Dein Geburtstag ..."
     },
-    {
-      "text": "Ach so.",
-      "title": "Gedanken über den Aufstieg – Beginn"
-    },
-    {
-      "text": "Der Mond nimmt zu und wieder ab ...",
-      "title": "Gedanken über den Aufstieg – Fortschritt"
-    },
-    {
-      "text": "Die Seele kehrt in ihre Heimat zurück.",
-      "title": "Gedanken über den Aufstieg – Höhepunkt"
-    },
-    {
-      "text": "Als Adeptin muss ich meine Pflicht erfüllen.",
-      "title": "Gedanken über den Aufstieg – Ende"
-    }
+    { "text": "Ach so.", "title": "Gedanken über den Aufstieg – Beginn" },
+    { "text": "Der Mond nimmt zu und wieder ab ...", "title": "Gedanken über den Aufstieg – Fortschritt" },
+    { "text": "Die Seele kehrt in ihre Heimat zurück.", "title": "Gedanken über den Aufstieg – Höhepunkt" },
+    { "text": "Als Adeptin muss ich meine Pflicht erfüllen.", "title": "Gedanken über den Aufstieg – Ende" }
   ]
 }

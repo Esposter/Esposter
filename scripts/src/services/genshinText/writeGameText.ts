@@ -18,19 +18,27 @@ import { readManualTextMap } from "#src/services/genshinText/readManualTextMap";
 import { readSdkText } from "#src/services/genshinText/readSdkText";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { readVoiceLineFetters } from "#src/services/genshinText/readVoiceLineFetters";
-import { writeJsonFile } from "#src/services/shared/writeJsonFile";
+import { formatGeneratedSource } from "#src/services/shared/formatGeneratedSource";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readGenshinDb } from "genshin-persona/src/services/readGenshinDb.ts";
 import { GameLanguage, GameLanguages, GameTextKeys } from "genshin-text";
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
+// Written as the formatter writes it, through its API: a file under `generated/` is one its command line ignores
+const writeGeneratedFile = async (path: string, source: string): Promise<void> => {
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(path, await formatGeneratedSource(path, source));
+};
+
+const getJsonSource = (value: unknown): string => `${JSON.stringify(value, undefined, 2)}\n`;
+
 // Every string `GameTextKey` names, in every language, into `genshin-text`; the lines of every character the
 // Game-data package has none for yet, in every language, into the persona; and the persona's copy of the modules
 // It runs. A key the account kit files is read from the kit's strings, every other from the text map, its colour tags
 // Kept for the screen to draw. A key missing from one language's strings shows English there and says so, since a
 // Dump that lost a string is the dump's fault rather than a reason to ship none
-export const writeGameText = ({ isDryRun }: DryRunOptions): string[] => {
+export const writeGameText = async ({ isDryRun }: DryRunOptions): Promise<string[]> => {
   const notes: string[] = [];
   const manualTextMap = readManualTextMap();
   const ids = GameTextKeys.toSorted();
@@ -92,27 +100,34 @@ export const writeGameText = ({ isDryRun }: DryRunOptions): string[] => {
   for (const directory of [textDirectory, CHARACTER_LINES_DIRECTORY, copyTextDirectory])
     mkdirSync(directory, { recursive: true });
 
+  await Promise.all(
+    languageOutputs.flatMap(({ characterLines, gameText, language }) => [
+      writeGeneratedFile(join(textDirectory, `${language}.json`), getJsonSource(gameText)),
+      writeGeneratedFile(join(copyTextDirectory, `${language}.json`), getJsonSource(gameText)),
+      writeGeneratedFile(join(CHARACTER_LINES_DIRECTORY, `${language}.json`), getJsonSource(characterLines)),
+    ]),
+  );
   let voicedCount = 0;
-  for (const { characterLines, gameText, language } of languageOutputs) {
-    writeJsonFile(join(textDirectory, `${language}.json`), gameText);
-    writeJsonFile(join(copyTextDirectory, `${language}.json`), gameText);
-    writeJsonFile(join(CHARACTER_LINES_DIRECTORY, `${language}.json`), characterLines);
+  for (const { characterLines, language } of languageOutputs) {
     if (language === GameLanguage.English) voicedCount = Object.keys(characterLines).length;
   }
 
-  writeFileSync(join(GENSHIN_TEXT_GENERATED_DIRECTORY, "GameTextLoaderMap.ts"), getGameTextLoaderMapSource());
-  writeFileSync(
+  await writeGeneratedFile(
+    join(GENSHIN_TEXT_GENERATED_DIRECTORY, "GameTextLoaderMap.ts"),
+    getGameTextLoaderMapSource(),
+  );
+  await writeGeneratedFile(
     join(dirname(CHARACTER_LINES_DIRECTORY), "CharacterLinesLoaderMap.ts"),
     getCharacterLinesLoaderMapSource(),
   );
-  for (const modulePath of PersonaCopiedModules) {
-    const copyPath = join(PERSONA_COPY_DIRECTORY, modulePath);
-    mkdirSync(dirname(copyPath), { recursive: true });
-    writeFileSync(
-      copyPath,
-      getPersonaModuleSource(readFileSync(join(GENSHIN_TEXT_SOURCE_DIRECTORY, modulePath), "utf8")),
-    );
-  }
+  await Promise.all(
+    PersonaCopiedModules.map((modulePath) =>
+      writeGeneratedFile(
+        join(PERSONA_COPY_DIRECTORY, modulePath),
+        getPersonaModuleSource(readFileSync(join(GENSHIN_TEXT_SOURCE_DIRECTORY, modulePath), "utf8")),
+      ),
+    ),
+  );
 
   notes.push(
     `${ids.length} strings, and ${voicedCount} characters' lines, written in ${GameLanguages.length} languages`,

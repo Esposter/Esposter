@@ -20,10 +20,7 @@
       "text": "Achoo! *sniff* ...Ugh, my shoes and socks are soaking wet. I wanna go home...",
       "title": "When It Rains"
     },
-    {
-      "text": "Oh, the rain's stopped! Let's go on a trip. And let's bring Ineffa!",
-      "title": "After the Rain"
-    },
+    { "text": "Oh, the rain's stopped! Let's go on a trip. And let's bring Ineffa!", "title": "After the Rain" },
     {
       "text": "Wahoo, it's snowing! Here, you can have my Boo-Hoo Snowball Maker. It makes a crying sound when you make a snowball with it. Fun, right? ...Me? Oh, I'll use this Tee-Hee Snowball Maker instead. Anyway — c'mon, let's have a snowball fight!",
       "title": "When It Snows"
@@ -206,46 +203,22 @@
       "text": "This amount goes back home, and this is for the Rokot to buy medicine. Now I just need to find enough for gun maintenance... Heh, let's see which gang of highwaymen are out of luck this time...",
       "title": "Chat: Balancing the Books"
     },
-    {
-      "text": "My hood's getting soaked... Oh no, Tugarin! Don't shake!",
-      "title": "When It Rains"
-    },
-    {
-      "text": "Time for the prey to crawl out of its hiding place...",
-      "title": "After the Rain"
-    },
+    { "text": "My hood's getting soaked... Oh no, Tugarin! Don't shake!", "title": "When It Rains" },
+    { "text": "Time for the prey to crawl out of its hiding place...", "title": "After the Rain" },
     {
       "text": "Perfect weather for an ambush, if you had anyone in mind... I can use the sound of the thunder to mask my gunshots.",
       "title": "When Thunder Strikes"
     },
-    {
-      "text": "Tch, tracking is going to be impossible in this.",
-      "title": "When It Snows"
-    },
-    {
-      "text": "No wearing a hood in this weather...",
-      "title": "When the Wind Is Blowing"
-    },
-    {
-      "text": "Wish I could shed some fur too...",
-      "title": "In the Desert"
-    },
+    { "text": "Tch, tracking is going to be impossible in this.", "title": "When It Snows" },
+    { "text": "No wearing a hood in this weather...", "title": "When the Wind Is Blowing" },
+    { "text": "Wish I could shed some fur too...", "title": "In the Desert" },
     {
       "text": "Hear that? That's the birds chirping away in the woods, like they do every morning... Why don't we go shoot a couple down?",
       "title": "Good Morning"
     },
-    {
-      "text": "I usually eat lunch out in the wild, but I wouldn't exactly recommend it.",
-      "title": "Good Afternoon"
-    },
-    {
-      "text": "Some of the rarest prey only come out at night.",
-      "title": "Good Evening"
-    },
-    {
-      "text": "Go ahead and rest. I still have things to do, and I need the cover of night.",
-      "title": "Good Night"
-    },
+    { "text": "I usually eat lunch out in the wild, but I wouldn't exactly recommend it.", "title": "Good Afternoon" },
+    { "text": "Some of the rarest prey only come out at night.", "title": "Good Evening" },
+    { "text": "Go ahead and rest. I still have things to do, and I need the cover of night.", "title": "Good Night" },
     {
       "text": "When I first stumbled on Tugarin, the little guy had been abandoned in the snow. He was curled up in a ball and couldn't even move. He's a tough one, though. I fed him a couple sausages, and he was up, running circles around me in no time. It's not like I have the rations to spare for a pet, but... What's a hunter without a hunting dog?",
       "title": "About Alyosha: Tugarin"
@@ -346,10 +319,7 @@
       "text": "Happy Birthday. It is today, isn't it? Y'know, where I come from, birthday celebrations are usually a luxury we can't afford. Good luck scrounging up enough flour and cream for a cake, or finding someone who sells anything but the bare essentials to use as a gift. But, I'll never begrudge a kid for wanting to celebrate their birthday. That's how it should be, and one day, I hope no child in Snezhnaya has to go without. So, I've decided to take your birthday very seriously, and I've put a lot of thought into the gift and card I got for you. Sometimes, you have to be the change you want to see in the world, right?",
       "title": "Birthday"
     },
-    {
-      "text": "Nice. Feels like my aim is more accurate.",
-      "title": "Feelings About Ascension: Intro"
-    },
+    { "text": "Nice. Feels like my aim is more accurate.", "title": "Feelings About Ascension: Intro" },
     {
       "text": "Tugarin's getting better too. Seems like we're more in sync.",
       "title": "Feelings About Ascension: Building Up"
@@ -384,10 +354,7 @@
       "text": "Taking shelter and listening to the rain cleanse the earth makes me feel safe, like being \"home.\"",
       "title": "When It Rains"
     },
-    {
-      "text": "The sky is clear again. We should be able to see the moon tonight.",
-      "title": "After the Rain"
-    },
+    { "text": "The sky is clear again. We should be able to see the moon tonight.", "title": "After the Rain" },
     {
       "text": "Ah...! Without lightning to give warning... the sound of thunder is quite startling...",
       "title": "When Thunder Strikes"
@@ -460,10 +427,7 @@
       "text": "The Hydro Dragon who serves as the Iudex of Fontaine? Hmm... Another Dragon who puts people in prison. I'm not sure I'd want to meet him.",
       "title": "About Neuvillette"
     },
-    {
-      "text": "If we cross paths during my journey, I'll be sure to say hello.",
-      "title": "About The Seven"
-    },
+    { "text": "If we cross paths during my journey, I'll be sure to say hello.", "title": "About The Seven" },
     {
       "text": "The first time I sang in the gardens of Zapolyarny Palace, the Tsaritsa happened to pass by. She stood there, silent and motionless, like a statue with no expression carved onto the face. For a moment, I felt as if she wanted to say something to me, but she never did.\nShe seals her emotions beneath thick sheets of ice. The outside world sees but one side of who she is... that of the Tsaritsa. If the answers I sought rest on the moon, perhaps hers lie buried in snow and ice.",
       "title": "About the Tsaritsa"
@@ -552,10 +516,7 @@
       "text": "More please. Hmm? Oh, was that all? I'll have to remember to save some next time.",
       "title": "Receiving a Gift: I"
     },
-    {
-      "text": "It's quite pleasant. I'll savor it beneath the moonlight.",
-      "title": "Receiving a Gift: II"
-    },
+    { "text": "It's quite pleasant. I'll savor it beneath the moonlight.", "title": "Receiving a Gift: II" },
     {
       "text": "Oh... Whenever Sandrone was mad at me, she'd give me things like this too...",
       "title": "Receiving a Gift: III"
@@ -564,14 +525,8 @@
       "text": "Your birthday is on the same day every year? Wow, that's easy to remember. Moon-Prayer Night is held at different times each year, so I can only estimate my birthday by sensing the moon. A birthday is such a joyous occasion, isn't it? Everyone gathers to dance while people make delicious offerings to give you. Huh...? Regular people's birthdays aren't like that? Gifts, cake, and friends...? Oh, that works too. Let's invite your friends to celebrate. I can sing you a song, and we can even ask Maalaus to paint a picture for you.",
       "title": "Birthday"
     },
-    {
-      "text": "By the Eternal Moon, the tides shall surge.",
-      "title": "Feelings About Ascension: Intro"
-    },
-    {
-      "text": "By the Frost Moon, the night shall be illuminated.",
-      "title": "Feelings About Ascension: Building Up"
-    },
+    { "text": "By the Eternal Moon, the tides shall surge.", "title": "Feelings About Ascension: Intro" },
+    { "text": "By the Frost Moon, the night shall be illuminated.", "title": "Feelings About Ascension: Building Up" },
     {
       "text": "By the Iridescent Moon, darkness shall be cast deeper into the shadows.",
       "title": "Feelings About Ascension: Climax"
@@ -594,10 +549,7 @@
       "text": "I'm bored... I'm not looking for trouble, exactly, but I kinda hope we run into someone else who is...",
       "title": "Chat: Bored"
     },
-    {
-      "text": "C'mon, let's go find some drama!",
-      "title": "Chat: Drama"
-    },
+    { "text": "C'mon, let's go find some drama!", "title": "Chat: Drama" },
     {
       "text": "Where the wind blows, the rain soon follows. Believe me, I have it on good authority.",
       "title": "When It Rains"
@@ -606,10 +558,7 @@
       "text": "I heard that lightning is how one of the other archons delivers their prophetic words... Not that I'm biased or anything, but... Barbatos definitely has a softer touch.",
       "title": "When Thunder Strikes"
     },
-    {
-      "text": "The wind is blowing. Let us pray.",
-      "title": "When It's Windy"
-    },
+    { "text": "The wind is blowing. Let us pray.", "title": "When It's Windy" },
     {
       "text": "Good morning, my friend. I just got back from morning prayers, and I'm feeling very blessed — my questions to Barbatos were answered once again. Oh, and I said a prayer for you too, of course.",
       "title": "Good Morning"
@@ -746,10 +695,7 @@
       "text": "Now go, and tread the path that is yours to tread. A bell rings out somewhere in the great outdoors. That, too, is a message from our Lord, calling you forth on your journey.",
       "title": "Feelings About Ascension: Climax"
     },
-    {
-      "text": "Hear our prayers, O Lord. Let the Wind Lead.",
-      "title": "Feelings About Ascension: Conclusion"
-    }
+    { "text": "Hear our prayers, O Lord. Let the Wind Lead.", "title": "Feelings About Ascension: Conclusion" }
   ],
   "Durin": [
     {
@@ -760,46 +706,22 @@
       "text": "Each day is a new page in my story. I want to savor every scene, every footnote, before I turn to the next one.",
       "title": "Chat: Stories"
     },
-    {
-      "text": "Can I stop here and play— I mean, take a stroll? I won't go too far.",
-      "title": "Chat: Walking"
-    },
+    { "text": "Can I stop here and play— I mean, take a stroll? I won't go too far.", "title": "Chat: Walking" },
     {
       "text": "I still have so much to learn about \"human interactions.\" Like, where should I put my hands when I'm nervous? I just... really want to make friends with everyone.",
       "title": "Chat: Awkward"
     },
-    {
-      "text": "Oh dear, I'm feeling the urge to jump in a puddle...",
-      "title": "When It Rains"
-    },
-    {
-      "text": "It's best not to fly too high in this weather...",
-      "title": "When Thunder Strikes"
-    },
-    {
-      "text": "Did \"it\" once slumber in a place like this...?",
-      "title": "When It Snows"
-    },
-    {
-      "text": "It's like a scene from a fairy tale — how pretty.",
-      "title": "When the Sun Is Out"
-    },
-    {
-      "text": "Oh dear, I'm getting thirsty...",
-      "title": "In the Desert"
-    },
+    { "text": "Oh dear, I'm feeling the urge to jump in a puddle...", "title": "When It Rains" },
+    { "text": "It's best not to fly too high in this weather...", "title": "When Thunder Strikes" },
+    { "text": "Did \"it\" once slumber in a place like this...?", "title": "When It Snows" },
+    { "text": "It's like a scene from a fairy tale — how pretty.", "title": "When the Sun Is Out" },
+    { "text": "Oh dear, I'm getting thirsty...", "title": "In the Desert" },
     {
       "text": "Good morning. Please don't mind my head lolling — my neck's a bit stiff. Last night, a cat came and slept only a few meters away. Usually, I frighten small animals off. I didn't want to disturb it, so I tried not to move all night...",
       "title": "Good Morning"
     },
-    {
-      "text": "If brunch is a thing, does that mean there's such a thing as linner?",
-      "title": "Good Afternoon"
-    },
-    {
-      "text": "I wonder if we'll see the stars tonight...",
-      "title": "Good Evening"
-    },
+    { "text": "If brunch is a thing, does that mean there's such a thing as linner?", "title": "Good Afternoon" },
+    { "text": "I wonder if we'll see the stars tonight...", "title": "Good Evening" },
     {
       "text": "There's nothing more peaceful than curling up in your own tail for some good sleep.",
       "title": "Good Night"
@@ -932,10 +854,7 @@
       "text": "Excuse me, could I have a smaller portion of vegetables on mine? Or perhaps no vegetables at all?",
       "title": "Least Favorite Food"
     },
-    {
-      "text": "What type of cutlery should I use for this? Can I just use my hands?",
-      "title": "Receiving a Gift: I"
-    },
+    { "text": "What type of cutlery should I use for this? Can I just use my hands?", "title": "Receiving a Gift: I" },
     {
       "text": "Thank you. Societal expectations demand reciprocity, so let me treat you to a drink.",
       "title": "Receiving a Gift: II"
@@ -990,10 +909,7 @@
       "text": "The feeling of the warm sun as it burns off the moisture in the air... I'm sure I can capture it in a dish, I just need to strike the right flavor combination.",
       "title": "After the Rain"
     },
-    {
-      "text": "Hmm... I bet I could put ingredients in the snow instead of a freezer!",
-      "title": "When It Snows"
-    },
+    { "text": "Hmm... I bet I could put ingredients in the snow instead of a freezer!", "title": "When It Snows" },
     {
       "text": "The sunlight is so bright... like a dish with sharp notes of citrus, a foam made from berry leaves, and a hint of sugar. Hm, not a bad idea.",
       "title": "When the Sun Is Out"
@@ -1184,14 +1100,8 @@
       "text": "Each time the snow falls, that is the call of Snezhnaya — the land whence I hail.",
       "title": "When It Snows"
     },
-    {
-      "text": "\"The winds awaken, the leaves whirl round\"...",
-      "title": "When the Wind Is Blowing"
-    },
-    {
-      "text": "An orange snow dances in the air... Hah, so this is the fabled desert.",
-      "title": "In the Desert"
-    },
+    { "text": "\"The winds awaken, the leaves whirl round\"...", "title": "When the Wind Is Blowing" },
+    { "text": "An orange snow dances in the air... Hah, so this is the fabled desert.", "title": "In the Desert" },
     {
       "text": "Ah, good morning. The sun illuminates the land as another day dawns in Nod-Krai... Many centuries have gone by, yet each day begins just like the last.",
       "title": "Good Morning"
@@ -1300,14 +1210,8 @@
       "text": "Given that we are close acquaintances by this point, would you mind if I shared a minor grievance with you? The truth is that given my... unique situation, foods greatly relished by other people I personally find to be rather dull. ...Oh, but to be clear, I still immensely enjoy the time we spend together at the dinner table.",
       "title": "Least Favorite Food"
     },
-    {
-      "text": "Mm... Unsurprisingly, that was exceptional.",
-      "title": "Receiving a Gift: I"
-    },
-    {
-      "text": "Mm, yes, delightful.",
-      "title": "Receiving a Gift: II"
-    },
+    { "text": "Mm... Unsurprisingly, that was exceptional.", "title": "Receiving a Gift: I" },
+    { "text": "Mm, yes, delightful.", "title": "Receiving a Gift: II" },
     {
       "text": "Uh... In the interests of our continued friendship, I would prefer to keep my thoughts to myself.",
       "title": "Receiving a Gift: III"
@@ -1338,10 +1242,7 @@
       "text": "Hi there, I'm Iansan from the Collective of Plenty, and I'm the most well-known fitness coach in my tribe. You look like you're in pretty good shape... do you work out, too?",
       "title": "Hello"
     },
-    {
-      "text": "You haven't quite hit your reps for today. Come on, one more set.",
-      "title": "Chat: Lifting"
-    },
+    { "text": "You haven't quite hit your reps for today. Come on, one more set.", "title": "Chat: Lifting" },
     {
       "text": "I've gone a little over my calorie budget so far... Need to rethink my dinner plans to get back on track.",
       "title": "Chat: Diet Planning"
@@ -1354,22 +1255,13 @@
       "text": "Quick, find some shelter. You don't wanna catch a cold, it just puts unnecessary stress on your system.",
       "title": "When It Rains"
     },
-    {
-      "text": "Time to get some sun. Come on!",
-      "title": "After the Rain"
-    },
-    {
-      "text": "This weather's a good chance to train outdoors.",
-      "title": "When the Sun Is Out"
-    },
+    { "text": "Time to get some sun. Come on!", "title": "After the Rain" },
+    { "text": "This weather's a good chance to train outdoors.", "title": "When the Sun Is Out" },
     {
       "text": "Now that I think about it, running against the wind technically counts as resistance training.",
       "title": "When the Wind Is Blowing"
     },
-    {
-      "text": "This is not the place for training outdoors...",
-      "title": "In the Desert"
-    },
+    { "text": "This is not the place for training outdoors...", "title": "In the Desert" },
     {
       "text": "Hey, good morning. Becoming an early riser is one of the first things to work on when you're looking to improve your self-discipline. If you can't even get yourself out of bed, there's no chance you'll stick to your other plans either. Anyway, I'm in the mood for a morning run. Want to join me?",
       "title": "Good Morning"
@@ -1556,10 +1448,7 @@
       "text": "Good morning. Don't be fooled, I'm not a morning person. But I have to get to the clinic to feed the critters, or they'll start making a real racket.",
       "title": "Good Morning"
     },
-    {
-      "text": "Oh hey, I was just about to break for lunch too. Wanna come with?",
-      "title": "Good Afternoon"
-    },
+    { "text": "Oh hey, I was just about to break for lunch too. Wanna come with?", "title": "Good Afternoon" },
     {
       "text": "I tend to stay home at night. That way, people — and saurians — know where to find me in an emergency. Or if it's a quiet night, then I can just chill out and rest.",
       "title": "Good Evening"
@@ -1684,10 +1573,7 @@
       "text": "Happy birthday! Wishing you good health and eternal youth.\nSure, you can't stop the relentless march of time, but you can always stay young at heart — and besides, dude, a bad mood doesn't do your health any good. So come on, just for today, cast your worries aside and let's have some fun!\nOh yeah, also, what kind of music are you into? I'll play a song.",
       "title": "Birthday"
     },
-    {
-      "text": "Is this, like, a warm-up or something?",
-      "title": "Feelings About Ascension: Intro"
-    },
+    { "text": "Is this, like, a warm-up or something?", "title": "Feelings About Ascension: Intro" },
     {
       "text": "You gotta take care of yourself before you can take care of other people, right?",
       "title": "Feelings About Ascension: Building Up"
@@ -1718,10 +1604,7 @@
       "text": "Just doing what you're good at won't cut it, y'know. Sometimes, the only way to grow stronger is to step out of your comfort zone.",
       "title": "Chat: Adversity"
     },
-    {
-      "text": "Sun is back! Looks like the light won again.",
-      "title": "After the Rain"
-    },
+    { "text": "Sun is back! Looks like the light won again.", "title": "After the Rain" },
     {
       "text": "As my old pops always says, \"the gods are at it again.\" Just hope they don't drag the rest of us into it...",
       "title": "When Thunder Strikes"
@@ -1734,10 +1617,7 @@
       "text": "Wind's kicking up... That's never a good sign. We'd better make camp before it turns nasty.",
       "title": "When the Wind Is Blowing"
     },
-    {
-      "text": "Another dawn... Another night safely behind us.",
-      "title": "Good Morning"
-    },
+    { "text": "Another dawn... Another night safely behind us.", "title": "Good Morning" },
     {
       "text": "Now the sun's up, I should probably take the chance to scout out our surroundings. Problem is... I could really use a nap.",
       "title": "Good Afternoon"
@@ -1746,10 +1626,7 @@
       "text": "You never know what might be lurking in the shadows of night. If you really have to travel, make sure to stay sharp.",
       "title": "Good Evening"
     },
-    {
-      "text": "It's getting late. You go ahead and get some rest — I'll keep watch tonight.",
-      "title": "Good Night"
-    },
+    { "text": "It's getting late. You go ahead and get some rest — I'll keep watch tonight.", "title": "Good Night" },
     {
       "text": "Hehe, it took a lot of pestering before my old pops finally let me join the Lightkeepers. I just couldn't bear the idea of staying in Piramida safe and sound while others were out there risking their lives. Like I told him, I'd rather be on the frontlines helping keep the Wild Hunt at bay.",
       "title": "About Illuga: Lightkeepers"
@@ -1850,14 +1727,8 @@
       "text": "Wow, now that's what I call flavor... Seriously, what's the secret ingredient? I wanna learn how to make this myself!",
       "title": "Receiving a Gift: I"
     },
-    {
-      "text": "Not bad! Heh, wait till my comrades get a taste of this!",
-      "title": "Receiving a Gift: II"
-    },
-    {
-      "text": "Ahem... Hey, I can teach you a few other dishes, if you'd like!",
-      "title": "Receiving a Gift: III"
-    },
+    { "text": "Not bad! Heh, wait till my comrades get a taste of this!", "title": "Receiving a Gift: II" },
+    { "text": "Ahem... Hey, I can teach you a few other dishes, if you'd like!", "title": "Receiving a Gift: III" },
     {
       "text": "Happy birthday, squadmate! Forget about commissions and adventures — days like this are reserved for close friends, full bellies, and catching up on sleep! I'll be standing watch, so you just focus on letting your hair down. And on the off-chance we get gate-crashers, I'll scare 'em off with my trusty lamp.",
       "title": "Birthday"
@@ -1896,10 +1767,7 @@
       "text": "Combat data updated. Please rest assured that I will not blow the roof off again.",
       "title": "Chat: Updating"
     },
-    {
-      "text": "I hope my joints won't get rusty...",
-      "title": "When It Rains"
-    },
+    { "text": "I hope my joints won't get rusty...", "title": "When It Rains" },
     {
       "text": "Please note: High chance of rainbows. Suggested observation spots marked on the map.",
       "title": "After the Rain"
@@ -2060,10 +1928,7 @@
       "text": "Congratulation mode for special days, activated. Please select a suitable location to sit and rest for a few moments, while I clean your room and put up ribbons, balloons, and flowers. Then, I will prepare your favorite meal and cake, as per the data recorded in my memory banks. If you have any other requests to add to this list, please do not hesitate to raise them. Let's make today a special one for you. Happy Birthday!",
       "title": "Birthday"
     },
-    {
-      "text": "Is it time for my scheduled maintenance already?",
-      "title": "Feelings About Ascension: Intro"
-    },
+    { "text": "Is it time for my scheduled maintenance already?", "title": "Feelings About Ascension: Intro" },
     {
       "text": "Core efficiency upgraded. You have the makings of a gifted mechanic.",
       "title": "Feelings About Ascension: Building Up"
@@ -2082,10 +1947,7 @@
       "text": "Hey, nice to meet you. If you've got a commission, spit it out. As long as the pay's right, I can help you with anything... Uh, most things... I can help you with most things.",
       "title": "Hello"
     },
-    {
-      "text": "Ugh... Boss Nef, when can I get a raise? There's so much stuff I wanna buy...",
-      "title": "Chat: Nefer"
-    },
+    { "text": "Ugh... Boss Nef, when can I get a raise? There's so much stuff I wanna buy...", "title": "Chat: Nefer" },
     {
       "text": "Come on, let's hit the town. I'll show you someplace fun... But keep it quiet, yeah? Mum's the word.",
       "title": "Chat: Walking the Streets"
@@ -2094,30 +1956,12 @@
       "text": "Last time I tried to pet Ashru, the little fluffball ran away. Hmph! Someone's not getting their dried fish today!",
       "title": "Chat: Ashru"
     },
-    {
-      "text": "Rain? Gogogo, we gotta find some cover before we get soaked.",
-      "title": "When It Rains"
-    },
-    {
-      "text": "Waaah! Snow down my back, coldcoldcold...",
-      "title": "When It Snows"
-    },
-    {
-      "text": "*Pfft!* *Pfft!* *Pfft!* Ugh, sand in my mouth!",
-      "title": "In the Desert"
-    },
-    {
-      "text": "Morning. Have breakfast yet? I know a good place.",
-      "title": "Good Morning"
-    },
-    {
-      "text": "*yawn* How about we head back to the shop for a nap? I'm so sleepy...",
-      "title": "Good Afternoon"
-    },
-    {
-      "text": "It's that late already? Pack it up, worktime's over, it's Ashru time~",
-      "title": "Good Evening"
-    },
+    { "text": "Rain? Gogogo, we gotta find some cover before we get soaked.", "title": "When It Rains" },
+    { "text": "Waaah! Snow down my back, coldcoldcold...", "title": "When It Snows" },
+    { "text": "*Pfft!* *Pfft!* *Pfft!* Ugh, sand in my mouth!", "title": "In the Desert" },
+    { "text": "Morning. Have breakfast yet? I know a good place.", "title": "Good Morning" },
+    { "text": "*yawn* How about we head back to the shop for a nap? I'm so sleepy...", "title": "Good Afternoon" },
+    { "text": "It's that late already? Pack it up, worktime's over, it's Ashru time~", "title": "Good Evening" },
     {
       "text": "*yawn* Better hit the sack... Hey! You still at it? You should probably call it a night, too.",
       "title": "Good Night"
@@ -2226,10 +2070,7 @@
       "text": "YUM! Wow, since when can you cook like this? Seconds, please, hehehe. This is so much better than Nef's... *cough*! Uh, you eat already? If not... wanna share?",
       "title": "Receiving a Gift: I"
     },
-    {
-      "text": "Not bad! Hehe. Let's chow down! Gotta fuel up for work.",
-      "title": "Receiving a Gift: II"
-    },
+    { "text": "Not bad! Hehe. Let's chow down! Gotta fuel up for work.", "title": "Receiving a Gift: II" },
     {
       "text": "Ugh... I can— I can finish this... Must... not... waste... food. Haha... ha...",
       "title": "Receiving a Gift: III"
@@ -2238,18 +2079,9 @@
       "text": "Happy birthday! Here ya go, this doll's for you! I just finished sewing it. It was my first time trying this technique — took ages, you know! I stuffed it with calming herbs that'll help you sleep, so just put it next to your pillow and I promise you'll sleep nice and soundly, 100% nightmare-free. The bandage on my hand...? Ah... just a little scratch from... playing with Ashru, hahaha... It's nothing, really...",
       "title": "Birthday"
     },
-    {
-      "text": "Oh? Not bad at all!",
-      "title": "Feelings About Ascension: Intro"
-    },
-    {
-      "text": "Nimbler than ever.",
-      "title": "Feelings About Ascension: Building Up"
-    },
-    {
-      "text": "Alright... Time to get moving!",
-      "title": "Feelings About Ascension: Climax"
-    },
+    { "text": "Oh? Not bad at all!", "title": "Feelings About Ascension: Intro" },
+    { "text": "Nimbler than ever.", "title": "Feelings About Ascension: Building Up" },
+    { "text": "Alright... Time to get moving!", "title": "Feelings About Ascension: Climax" },
     {
       "text": "Hehe, I'm feeling ready for a big job now... How 'bout it? You wanna join me?",
       "title": "Feelings About Ascension: Conclusion"
@@ -2272,10 +2104,7 @@
       "text": "Have you decided where you will go from here? If not, why not find a patch of soft grass and rest awhile?",
       "title": "Chat: Journey"
     },
-    {
-      "text": "Ah, the season of verdure draws near once again...",
-      "title": "When It Rains"
-    },
+    { "text": "Ah, the season of verdure draws near once again...", "title": "When It Rains" },
     {
       "text": "Gone in a flash... A light harder to grasp even than that of the moon.",
       "title": "When Thunder Strikes"
@@ -2292,18 +2121,9 @@
       "text": "Good morning. Come night or day, may the blessings of the Moon Goddess shine down upon you.",
       "title": "Good Morning"
     },
-    {
-      "text": "Good morning. Come night or day, may the moonlight connect us.",
-      "title": "Good Morning"
-    },
-    {
-      "text": "...Oh, I must have drifted off. Sorry. If you need anything, please ask.",
-      "title": "Good Afternoon"
-    },
-    {
-      "text": "The moonlight is so calm tonight. Join me for a walk in the woods.",
-      "title": "Good Evening"
-    },
+    { "text": "Good morning. Come night or day, may the moonlight connect us.", "title": "Good Morning" },
+    { "text": "...Oh, I must have drifted off. Sorry. If you need anything, please ask.", "title": "Good Afternoon" },
+    { "text": "The moonlight is so calm tonight. Join me for a walk in the woods.", "title": "Good Evening" },
     {
       "text": "The stars above have bidden each other good night. Now, it falls to us to do the same.",
       "title": "Good Night"
@@ -2364,10 +2184,7 @@
       "text": "No one teaches a newborn god how to live in harmony with their followers. She must have had a very difficult past...\nIn the hopes of achieving some sort of reconciliation, I made a request of her that must have seemed a little rude. She claims that she prefers living alone, but I still dream of a day that Kuutar and the Frostmoon Scions, the moon and her believers, can come together and share a toast.",
       "title": "About Kuutar"
     },
-    {
-      "text": "Look at the moon. It is always there, ever still and ever silent.",
-      "title": "More About Lauma: I"
-    },
+    { "text": "Look at the moon. It is always there, ever still and ever silent.", "title": "More About Lauma: I" },
     {
       "text": "In many places, a waning moon is seen as an omen of ill fortune.\nPerhaps people forget that the moons, too, are the victims of misfortune... Their destruction was not a fate that they wished upon themselves.",
       "title": "More About Lauma: II"
@@ -2388,26 +2205,17 @@
       "text": "I enjoy spending time in solitude in the darkness of night. The birds and beasts quiet down, and the only sound I can hear is the wind blowing gently through the trees... Everything is so peaceful.",
       "title": "Lauma's Hobbies"
     },
-    {
-      "text": "My head... it's so heavy to carry around.",
-      "title": "Lauma's Troubles"
-    },
+    { "text": "My head... it's so heavy to carry around.", "title": "Lauma's Troubles" },
     {
       "text": "Simple food, with minimal seasoning. It has nothing to do with my beliefs or dietary restrictions, I just find that lighter food is what agrees with me.",
       "title": "Favorite Food"
     },
-    {
-      "text": "Anything too greasy, or too dry... It's just not for me.",
-      "title": "Least Favorite Food"
-    },
+    { "text": "Anything too greasy, or too dry... It's just not for me.", "title": "Least Favorite Food" },
     {
       "text": "Such fresh ingredients... I can't imagine the lengths you went to. I will gladly share it with my flock... What? All for me...?",
       "title": "Receiving a Gift: I"
     },
-    {
-      "text": "Thank you for your kind gift. Let us both share it.",
-      "title": "Receiving a Gift: II"
-    },
+    { "text": "Thank you for your kind gift. Let us both share it.", "title": "Receiving a Gift: II" },
     {
       "text": "There must surely be those in greater need than I of sustenance. I will watch out for them.",
       "title": "Receiving a Gift: III"
@@ -2416,22 +2224,10 @@
       "text": "To you, our honored guest, cherished by the moonlight and our tranquil forest, I give this blessed dagger. For a dagger does not have to be an object of violence — indeed, they are often used as symbolic items in prayer ceremonies.\nThat said, you're of course free to use it for whatever purpose you wish.",
       "title": "Birthday"
     },
-    {
-      "text": "I seek not to tread the expedient path...",
-      "title": "Feelings About Ascension: Intro"
-    },
-    {
-      "text": "Nor do I yearn to wield great power...",
-      "title": "Feelings About Ascension: Building Up"
-    },
-    {
-      "text": "But if our goal in all of this is to find the truth...",
-      "title": "Feelings About Ascension: Climax"
-    },
-    {
-      "text": "I shall offer my blood and tears as a truth seeker.",
-      "title": "Feelings About Ascension: Conclusion"
-    }
+    { "text": "I seek not to tread the expedient path...", "title": "Feelings About Ascension: Intro" },
+    { "text": "Nor do I yearn to wield great power...", "title": "Feelings About Ascension: Building Up" },
+    { "text": "But if our goal in all of this is to find the truth...", "title": "Feelings About Ascension: Climax" },
+    { "text": "I shall offer my blood and tears as a truth seeker.", "title": "Feelings About Ascension: Conclusion" }
   ],
   "Linnea": [
     {
@@ -2450,18 +2246,12 @@
       "text": "You wanna see my archive? Of course! I'm always happy to show off my masterpiece, hehe. I even did the illustrations.",
       "title": "Chat: Archive"
     },
-    {
-      "text": "Ah, the scent of wet soil... That's the world waking up.",
-      "title": "After the Rain"
-    },
+    { "text": "Ah, the scent of wet soil... That's the world waking up.", "title": "After the Rain" },
     {
       "text": "So cold... Hey, you wanna build a snowman? Lumi can come help out! ...Ah! No need for the hammers!",
       "title": "When It Snows"
     },
-    {
-      "text": "I wonder where the dandelion seeds will fly to this time...",
-      "title": "When It's Windy"
-    },
+    { "text": "I wonder where the dandelion seeds will fly to this time...", "title": "When It's Windy" },
     {
       "text": "\"Sleep, close your eyes. Yon golden slumber summons thee, wandering sand. Drink not that bitter salt water, for the sorrows of tomorrow have gone away.\"",
       "title": "In the Desert"
@@ -2474,10 +2264,7 @@
       "text": "It's about time I ate something to boost my energy levels. The day's still young, and there's so much I want to accomplish!",
       "title": "Good Afternoon"
     },
-    {
-      "text": "If you're not sleepy yet... How about we stay here and stargaze for a while?",
-      "title": "Good Evening"
-    },
+    { "text": "If you're not sleepy yet... How about we stay here and stargaze for a while?", "title": "Good Evening" },
     {
       "text": "Phew, we did a lot of walking today. I should get some sleep... Good night, and sweet dreams!",
       "title": "Good Night"
@@ -2578,26 +2365,17 @@
       "text": "I wouldn't say that there's any food I really hate, apart from the stuff that's super unhealthy. The idea of throwing away perfectly edible food just because it's not quite to my personal tastes seems very wasteful.",
       "title": "Least Favorite Food"
     },
-    {
-      "text": "Mmm! This is delicious! How did you make it? Can you teach me?",
-      "title": "Receiving a Gift: I"
-    },
+    { "text": "Mmm! This is delicious! How did you make it? Can you teach me?", "title": "Receiving a Gift: I" },
     {
       "text": "Yum! Next time, it's my turn. I wanna see what you think of my cooking.",
       "title": "Receiving a Gift: II"
     },
-    {
-      "text": "Uhh... Well... at least it's not a health risk.",
-      "title": "Receiving a Gift: III"
-    },
+    { "text": "Uhh... Well... at least it's not a health risk.", "title": "Receiving a Gift: III" },
     {
       "text": "Happy Birthday... This isn't the most valuable gift, but it's something I've had in my collection for a long time... Please accept this fossil. See this? These are bone and feather impressions from a long-extinct bird species. They'll never fly again, and yet the moment that this one spread its wings has left an imprint that will last long into the future. So, even if life fades in the end, there will always be some proof of our existence left behind. May your life be as tenacious as an old tree, with each and every ring telling a beautiful tale.",
       "title": "Birthday"
     },
-    {
-      "text": "My senses have become keener.",
-      "title": "Feelings About Ascension: Intro"
-    },
+    { "text": "My senses have become keener.", "title": "Feelings About Ascension: Intro" },
     {
       "text": "I've gained a deeper understanding of the things in this world.",
       "title": "Feelings About Ascension: Building Up"
@@ -2628,42 +2406,21 @@
       "text": "How do I get along with the other Knights? Hmm... Well, I'm certain I've left a deep impression. That can only be a good thing, right?",
       "title": "Chat: Relationships"
     },
-    {
-      "text": "Huh, the rain's getting heavy. Who knows what the floods will wash away?",
-      "title": "When It Rains"
-    },
-    {
-      "text": "The sky's clearing up. It's like those showers never even happened.",
-      "title": "After the Rain"
-    },
+    { "text": "Huh, the rain's getting heavy. Who knows what the floods will wash away?", "title": "When It Rains" },
+    { "text": "The sky's clearing up. It's like those showers never even happened.", "title": "After the Rain" },
     {
       "text": "Thunder drowns out many things, but never the beat of your own heart.",
       "title": "When Thunder Strikes"
     },
-    {
-      "text": "There's no place like The Cat's Tail... especially in weather like this.",
-      "title": "When It Snows"
-    },
+    { "text": "There's no place like The Cat's Tail... especially in weather like this.", "title": "When It Snows" },
     {
       "text": "Whew, wind's picking up... Too bad there aren't any dandelions around. Guess we'll just have to tear up some paper instead, huh?",
       "title": "When It's Windy"
     },
-    {
-      "text": "It's times like these when I really miss Cider Lake.",
-      "title": "In the Desert"
-    },
-    {
-      "text": "Good morning. What's the plan today?",
-      "title": "Good Morning"
-    },
-    {
-      "text": "Already stopped for lunch? Great, we've got work to do this afternoon.",
-      "title": "Good Afternoon"
-    },
-    {
-      "text": "Tonight... Mhm. Let's treat the troops to a surprise attack drill.",
-      "title": "Good Evening"
-    },
+    { "text": "It's times like these when I really miss Cider Lake.", "title": "In the Desert" },
+    { "text": "Good morning. What's the plan today?", "title": "Good Morning" },
+    { "text": "Already stopped for lunch? Great, we've got work to do this afternoon.", "title": "Good Afternoon" },
+    { "text": "Tonight... Mhm. Let's treat the troops to a surprise attack drill.", "title": "Good Evening" },
     {
       "text": "Good night. Better get some rest, 'cause tomorrow's coming, whether you like it or not.",
       "title": "Good Night"
@@ -2792,10 +2549,7 @@
       "text": "Today's your birthday, so I got you a mini-crossbow. I came up with the design myself. It should be the perfect size for your wrist... When did I measure your wrist? Don't worry, I did it by eye. You can trust my ability to gauge things like this — I'm vice captain of the 5th Company, after all. Oh, right, this crossbow can also fire backward, just in case someone sneaks up on you. You just press... here. Hahaha, no need to duck! The safety lock is still on. Do I look like the kind of person who gives a friend a crossbow just to watch them shoot themselves...",
       "title": "Birthday"
     },
-    {
-      "text": "I feel great. Even my weapon feels easier to handle.",
-      "title": "Feelings About Ascension: Intro"
-    },
+    { "text": "I feel great. Even my weapon feels easier to handle.", "title": "Feelings About Ascension: Intro" },
     {
       "text": "I feel like I can see even further now... This should help improve my aim.",
       "title": "Feelings About Ascension: Building Up"
@@ -2826,26 +2580,11 @@
       "text": "Emotions are like a raging torrent that surges through the mind. More often than not, if you try to hold them back, you'll be swept away by their unstoppable force. And if you try to ignore them entirely... you'll end up tearing yourself to pieces.",
       "title": "Chat: Emotions"
     },
-    {
-      "text": "The blessings of the heavens do not fall impartially.",
-      "title": "When It Rains"
-    },
-    {
-      "text": "Another liar exposed.",
-      "title": "When Thunder Strikes"
-    },
-    {
-      "text": "Sounds like more trouble is blowing in.",
-      "title": "When It's Windy"
-    },
-    {
-      "text": "A deja vu I could've done without.",
-      "title": "In the Desert"
-    },
-    {
-      "text": "Morning. Ever the early bird, huh? Wish I could say the same for Jahoda...",
-      "title": "Good Morning"
-    },
+    { "text": "The blessings of the heavens do not fall impartially.", "title": "When It Rains" },
+    { "text": "Another liar exposed.", "title": "When Thunder Strikes" },
+    { "text": "Sounds like more trouble is blowing in.", "title": "When It's Windy" },
+    { "text": "A deja vu I could've done without.", "title": "In the Desert" },
+    { "text": "Morning. Ever the early bird, huh? Wish I could say the same for Jahoda...", "title": "Good Morning" },
     {
       "text": "*yawn* There are never any clients at this time of day. Guess I'll go take a nap.",
       "title": "Good Afternoon"
@@ -2966,10 +2705,7 @@
       "text": "Well, color me impressed... Ever thought about getting a day job? The Curatorium could use a chef like you. We'd pay top Mora for it, too.",
       "title": "Receiving a Gift: I"
     },
-    {
-      "text": "Not bad, not bad at all... Didn't peg you for a cook.",
-      "title": "Receiving a Gift: II"
-    },
+    { "text": "Not bad, not bad at all... Didn't peg you for a cook.", "title": "Receiving a Gift: II" },
     {
       "text": "Hmm. Well, it certainly has a... distinctive flavor... I'll see what Jahoda thinks of it later.",
       "title": "Receiving a Gift: III"
@@ -2978,18 +2714,9 @@
       "text": "I'm not the best at picking gifts, so how about this: I'll pose three questions to you, and if you find the correct answers, I'll... Relax, that was meant to be a joke. Here, take this book. It's a collection of desert folklore and fairy tales — some of the most complete versions that exist. Generations of desert-dwellers have grown up hearing them, then passed them on themselves. Who knows? Once you've finished reading them, perhaps you'll be able to thrive in the desert too.",
       "title": "Birthday"
     },
-    {
-      "text": "Huh, interesting.",
-      "title": "Feelings About Ascension: Intro"
-    },
-    {
-      "text": "A grain of truth... but a mere drop in the ocean.",
-      "title": "Feelings About Ascension: Building Up"
-    },
-    {
-      "text": "Another path to the truth opens before me.",
-      "title": "Feelings About Ascension: Climax"
-    },
+    { "text": "Huh, interesting.", "title": "Feelings About Ascension: Intro" },
+    { "text": "A grain of truth... but a mere drop in the ocean.", "title": "Feelings About Ascension: Building Up" },
+    { "text": "Another path to the truth opens before me.", "title": "Feelings About Ascension: Climax" },
     {
       "text": "It looks like the bond between us won't be broken so easily after all, wouldn't you say?",
       "title": "Feelings About Ascension: Conclusion"
@@ -3000,38 +2727,20 @@
       "text": "Oh, should I introduce myself again? Hm, looks like no interference from Alice's self-introduction magic this time, so I suppose I'll just go ahead... Ahem, I'm Nicole. As you can see, I'm— Ah, again! Guess I spoke too soon...",
       "title": "Hello"
     },
-    {
-      "text": "Hm... Not the best idea I've ever had.",
-      "title": "Chat: Novels"
-    },
-    {
-      "text": "Mm... Metaphors speak for themselves.",
-      "title": "Chat: Statue"
-    },
-    {
-      "text": "What am I now, you ask? Just a \"human\" who's lost her voice.",
-      "title": "Chat: Silence"
-    },
+    { "text": "Hm... Not the best idea I've ever had.", "title": "Chat: Novels" },
+    { "text": "Mm... Metaphors speak for themselves.", "title": "Chat: Statue" },
+    { "text": "What am I now, you ask? Just a \"human\" who's lost her voice.", "title": "Chat: Silence" },
     {
       "text": "In truth, it's thanks to the Seelie that there's always treasure at the end of the rainbow.",
       "title": "After the Rain"
     },
-    {
-      "text": "Good morning.",
-      "title": "Good Morning"
-    },
-    {
-      "text": "Good afternoon.",
-      "title": "Good Afternoon"
-    },
+    { "text": "Good morning.", "title": "Good Morning" },
+    { "text": "Good afternoon.", "title": "Good Afternoon" },
     {
       "text": "Nighttime is when inspiration strikes the most, so it was also the most common time for people of the past to encounter angels. I suppose they're the ones who are largely to blame for why we turned into a bunch of night owls. Although, that's not quite accurate. It's not like we had biological clocks or sleep cycles. What we did was more akin to... regular functional maintenance. So, I suppose it was just a matter of avoiding the evening hours...",
       "title": "Good Evening"
     },
-    {
-      "text": "Heading to bed already? Hehe, good night, then.",
-      "title": "Good Night"
-    },
+    { "text": "Heading to bed already? Hehe, good night, then.", "title": "Good Night" },
     {
       "text": "As long as an author still lives, the most they can hope for is to create something popular. People are an amalgamation of the present, after all. Just as it's impossible for an Akademiya scholar to have twenty years of knowledge at the beginning of their studies, a modern author cannot hope to write a classic in their own time. In other words, all one can do is simply write what is interesting. Anyway, I'm not the one doing the writing, so I feel little pressure in that regard.",
       "title": "About Nicole: Popular Works"
@@ -3120,10 +2829,7 @@
       "text": "Humanity is such an intriguing, brilliant species. Giving up my wings was not a fall from grace, but a chance to become part of something tangible. Sacrificing my voice did not silence me, but gave me the strength to listen before judging. Divine potential lies within each and every human, and each day I spend among you is more fascinating than the last.",
       "title": "More About Nicole: V"
     },
-    {
-      "text": "Does that... not go without saying?",
-      "title": "Nicole's Hobbies"
-    },
+    { "text": "Does that... not go without saying?", "title": "Nicole's Hobbies" },
     {
       "text": "At this point, all my closest friends know I'm a chatterbox. So does that mean I don't have to pretend anymore? But what if that gives people headaches, and no one wants to talk to me ever again... Hm, plus Klee's still not old enough. Guess I need to put on the dignified angel act a little longer.",
       "title": "Nicole's Troubles"
@@ -3136,18 +2842,9 @@
       "text": "Hm... That's a tough question. As long as the food is made well, I'll pretty much eat anything.",
       "title": "Least Favorite Food"
     },
-    {
-      "text": "Mmm! This is... absolutely delicious!",
-      "title": "Receiving a Gift: I"
-    },
-    {
-      "text": "How sweet. I can certainly tell how much thought you put into it.",
-      "title": "Receiving a Gift: II"
-    },
-    {
-      "text": "Wh—What a... curious aroma. Do I have to?",
-      "title": "Receiving a Gift: III"
-    },
+    { "text": "Mmm! This is... absolutely delicious!", "title": "Receiving a Gift: I" },
+    { "text": "How sweet. I can certainly tell how much thought you put into it.", "title": "Receiving a Gift: II" },
+    { "text": "Wh—What a... curious aroma. Do I have to?", "title": "Receiving a Gift: III" },
     {
       "text": "Happy Birthday! I hid your birthday gift inside a chest and set up a bunch of puzzles for you to solve. Come on, I'll guide you through it!",
       "title": "Birthday"
@@ -3174,10 +2871,7 @@
       "text": "...Thanks for all the support. You want an autograph, right? What do you want me to draw next to it? How about a feather? Oh, wait, you're not one of my fans? Guess I misunderstood. Lemme start from the top, then. I'm Odette, a ballerina with the Korolevskiy Troupe... Well, thanks for all the support, anyway.",
       "title": "Hello"
     },
-    {
-      "text": "Well, if that's all, I'm going to go rehearse.",
-      "title": "Chat: Busy"
-    },
+    { "text": "Well, if that's all, I'm going to go rehearse.", "title": "Chat: Busy" },
     {
       "text": "If a simple response will do, why waste your breath on anything longer?",
       "title": "Chat: Keep It Simple"
@@ -3190,26 +2884,11 @@
       "text": "The pitter-patter of the raindrops always makes me feel so serene. This kind of weather is perfect for dancing alone.",
       "title": "When It Rains"
     },
-    {
-      "text": "The most beautiful, serene moments are always the most fleeting.",
-      "title": "After the Rain"
-    },
-    {
-      "text": "The snow in Snezhnaya is always bitterly cold, and it never seems to end.",
-      "title": "When It Snows"
-    },
-    {
-      "text": "My hair... I'll fix it later.",
-      "title": "When the Wind Is Blowing"
-    },
-    {
-      "text": "...At least there wouldn't be a meet-and-greet in a place like this.",
-      "title": "In the Desert"
-    },
-    {
-      "text": "I'm warmed up and ready to go.",
-      "title": "Good Morning"
-    },
+    { "text": "The most beautiful, serene moments are always the most fleeting.", "title": "After the Rain" },
+    { "text": "The snow in Snezhnaya is always bitterly cold, and it never seems to end.", "title": "When It Snows" },
+    { "text": "My hair... I'll fix it later.", "title": "When the Wind Is Blowing" },
+    { "text": "...At least there wouldn't be a meet-and-greet in a place like this.", "title": "In the Desert" },
+    { "text": "I'm warmed up and ready to go.", "title": "Good Morning" },
     {
       "text": "I'm not one for naps. Noon isn't a suitable time for training either, so I usually spend it reading through the scripts for our dance dramas. Hm? What about these letters? They're from my fans. Vodyanitsa practically forced them into my hand. She wants me to read through them for once.",
       "title": "Good Afternoon"
@@ -3242,10 +2921,7 @@
       "text": "Once, during an intense training session, I developed frostbite in my feet and legs due to the extreme cold, and almost lost consciousness entirely. When I came to, the first thing I noticed was a bright light emanating from the Stellar Linchpin in front of me. But, I've never heard of Stellar Linchpins being able to awaken people like that. So if that didn't wake me up... then maybe it was some instinctual desire to survive...?",
       "title": "About the Stellar Linchpin"
     },
-    {
-      "text": "I treat every rehearsal as seriously as an actual performance.",
-      "title": "Something to Share"
-    },
+    { "text": "I treat every rehearsal as seriously as an actual performance.", "title": "Something to Share" },
     {
       "text": "You can bring out the sweetness of Rimecurrants by sprinkling them with a little table salt. Supposedly, the contrast helps amplify their inner sweetness. I heard that from a fan.",
       "title": "Interesting Things"
@@ -3342,18 +3018,12 @@
       "text": "This is just one dish? It looks more like... a whole day's worth of food.",
       "title": "Receiving a Gift: II"
     },
-    {
-      "text": "Uhm, no thank you. I'm watching what I eat.",
-      "title": "Receiving a Gift: III"
-    },
+    { "text": "Uhm, no thank you. I'm watching what I eat.", "title": "Receiving a Gift: III" },
     {
       "text": "Happy Birthday! I was trying to think of what to get you... I usually receive things like flowers, ballet shoes, and music boxes, but I doubt that's what you have in mind. How about you simply... make a wish, here and now? Ideally, something within my power to grant, of course...",
       "title": "Birthday"
     },
-    {
-      "text": "Hm, not quite there yet... I need to train even harder.",
-      "title": "Feelings About Ascension: Intro"
-    },
+    { "text": "Hm, not quite there yet... I need to train even harder.", "title": "Feelings About Ascension: Intro" },
     {
       "text": "Mm, my movements feel sharper. I should keep up the intensity.",
       "title": "Feelings About Ascension: Building Up"
@@ -3392,10 +3062,7 @@
       "text": "Shaking is a normal physiological response to sudden noises. It has nothing to do with being afraid.",
       "title": "When Thunder Strikes"
     },
-    {
-      "text": "I'm not cold. I don't need a coat.",
-      "title": "When It Snows"
-    },
+    { "text": "I'm not cold. I don't need a coat.", "title": "When It Snows" },
     {
       "text": "Sunshine doesn't cost a thing, yet how many people can claim to truly appreciate its warmth?",
       "title": "When the Sun Is Out"
@@ -3548,14 +3215,8 @@
       "text": "I always thought the pictures in the \"Encyclopedia of Food\" used a bunch of tricks to make them look perfect. Never knew a dish could actually turn out like that in real life!",
       "title": "Receiving a Gift: I"
     },
-    {
-      "text": "Hmm... Certainly not bad, but there's room for improvement.",
-      "title": "Receiving a Gift: II"
-    },
-    {
-      "text": "Alright, fess up! Were you cursed by that witch!?",
-      "title": "Receiving a Gift: III"
-    },
+    { "text": "Hmm... Certainly not bad, but there's room for improvement.", "title": "Receiving a Gift: II" },
+    { "text": "Alright, fess up! Were you cursed by that witch!?", "title": "Receiving a Gift: III" },
     {
       "text": "Happy Birthday! No need to look so surprised — not like it's hard to fish a date out of people. There is a crucial piece of information I didn't manage to uncover though... Your birthday wish!\nHuh? Saying it out loud means it won't come true? I disagree. That just makes it harder for people like me to help make it a reality. So, c'mon, no use beating around the bush. What do you want? You might think there's not much I can do, but I've saved up quite a bit of allowance. Besides, you're always saying how smart I am, so I'm sure it's something I can help with!\nUnless it's something like, \"buying a house in the center of Mondstadt with no mortgage.\" But, you wouldn't wish for something that unreasonable... right?",
       "title": "Birthday"
@@ -3594,22 +3255,10 @@
       "text": "Called back to the Zapolyarny Palace, again? Ugh... Seriously, what's the point in all these endless meetings!?",
       "title": "Chat: Meetings"
     },
-    {
-      "text": "...Well, this is inconvenient.",
-      "title": "When It Rains"
-    },
-    {
-      "text": "My flowers adore this kind of weather.",
-      "title": "After the Rain"
-    },
-    {
-      "text": "Defensive systems... Mmhmm, operating normally.",
-      "title": "When Thunder Strikes"
-    },
-    {
-      "text": "Ugh, time for more \"snow damselettes\"...",
-      "title": "When It Snows"
-    },
+    { "text": "...Well, this is inconvenient.", "title": "When It Rains" },
+    { "text": "My flowers adore this kind of weather.", "title": "After the Rain" },
+    { "text": "Defensive systems... Mmhmm, operating normally.", "title": "When Thunder Strikes" },
+    { "text": "Ugh, time for more \"snow damselettes\"...", "title": "When It Snows" },
     {
       "text": "The perfect weather for cake, strong coffee, and getting lost in a good book.",
       "title": "When the Sun Is Out"
@@ -3622,10 +3271,7 @@
       "text": "Good morning. Would you like a cup of coffee? It really raises the spirits. Hmm? Why would someone like me need coffee? Hah, can't a lady appreciate the taste!?",
       "title": "Good Morning"
     },
-    {
-      "text": "Is it that time already? I'd better prepare some refreshments...",
-      "title": "Good Afternoon"
-    },
+    { "text": "Is it that time already? I'd better prepare some refreshments...", "title": "Good Afternoon" },
     {
       "text": "Back for dinner? This isn't a canteen, you know... Ugh, forget it, you're here now, I'll have Fagio whip something up.",
       "title": "Good Evening"
@@ -3762,26 +3408,14 @@
       "text": "Oh? That's not half bad. I'll have to return the favor next time we get together for tea.",
       "title": "Receiving a Gift: II"
     },
-    {
-      "text": "Ugh... Fagio, I have something for you to clean up.",
-      "title": "Receiving a Gift: III"
-    },
+    { "text": "Ugh... Fagio, I have something for you to clean up.", "title": "Receiving a Gift: III" },
     {
       "text": "Hmph. Here, take this. I wouldn't normally give these out, but today's a special day — it marks the day you came into the world. I invited Arlecchino and Columbina, plus a few shared friends. I even baked a special cake for the occasion... so you'd best look forward to it.",
       "title": "Birthday"
     },
-    {
-      "text": "Calculation underway.",
-      "title": "Feelings About Ascension: Intro"
-    },
-    {
-      "text": "Inputting variables...",
-      "title": "Feelings About Ascension: Building Up"
-    },
-    {
-      "text": "Progress is smooth.",
-      "title": "Feelings About Ascension: Climax"
-    },
+    { "text": "Calculation underway.", "title": "Feelings About Ascension: Intro" },
+    { "text": "Inputting variables...", "title": "Feelings About Ascension: Building Up" },
+    { "text": "Progress is smooth.", "title": "Feelings About Ascension: Climax" },
     {
       "text": "Deconstructing the very order of things. Bet you're impressed with me now? Hahaha...",
       "title": "Feelings About Ascension: Conclusion"
@@ -3796,18 +3430,9 @@
       "text": "The Abyss is like the world's shadow. It's always there, and it will never perish.",
       "title": "Chat: The Abyss"
     },
-    {
-      "text": "Where do we come from, and where are we going?",
-      "title": "Chat: Meditation"
-    },
-    {
-      "text": "All things come to an end, even time itself.",
-      "title": "Chat: Final Destination"
-    },
-    {
-      "text": "Nice. I like the rain.",
-      "title": "When It Rains"
-    },
+    { "text": "Where do we come from, and where are we going?", "title": "Chat: Meditation" },
+    { "text": "All things come to an end, even time itself.", "title": "Chat: Final Destination" },
+    { "text": "Nice. I like the rain.", "title": "When It Rains" },
     {
       "text": "However fearsome the lightning may be, its wrath is limited to the realm beneath the clouds. The high heavens above remain clear.",
       "title": "When Thunder Strikes"
@@ -3816,10 +3441,7 @@
       "text": "They say that at absolute zero, everything falls completely still... Compared to that, this is nothing.",
       "title": "When It Snows"
     },
-    {
-      "text": "The wind sweeps away everything that clouds our vision.",
-      "title": "When the Wind Is Blowing"
-    },
+    { "text": "The wind sweeps away everything that clouds our vision.", "title": "When the Wind Is Blowing" },
     {
       "text": "Sleep well? Looks like you're back to peak condition. Let's prepare to depart.",
       "title": "Good Morning"
@@ -3832,10 +3454,7 @@
       "text": "Oh... Nighttime already. Time moves so quickly in the outside world — it's all the more important to cherish it.",
       "title": "Good Evening"
     },
-    {
-      "text": "Get some sleep. I'll be practicing my bladework for a while longer.",
-      "title": "Good Night"
-    },
+    { "text": "Get some sleep. I'll be practicing my bladework for a while longer.", "title": "Good Night" },
     {
       "text": "I bought some old books from Liyue recently. A passage in one of them stood out to me: \"The wise man uses his mind as a mirror: Neither grasping out nor drawing in, it receives all yet keeps nothing. In this way, he triumphs over all things, and they can render him no harm.\"\nThat's a very enlightened state of mind. At first, I assumed it must have been penned by some renowned martial arts master. But after reading further, it turned out that he was just an ordinary traveler. People surprise me with what they're capable of sometimes. I suppose that's what they mean when they talk about \"hidden strengths.\"",
       "title": "About Skirk: Reading"
@@ -3936,30 +3555,15 @@
       "text": "Food goes down easier when it tastes good, but even when it doesn't it's still edible. Just don't let anything go to waste.",
       "title": "Least Favorite Food"
     },
-    {
-      "text": "Not bad.",
-      "title": "Receiving a Gift: I"
-    },
-    {
-      "text": "It's okay.",
-      "title": "Receiving a Gift: II"
-    },
-    {
-      "text": "Ugh... Waste of ingredients. Next time, I'm cooking.",
-      "title": "Receiving a Gift: III"
-    },
+    { "text": "Not bad.", "title": "Receiving a Gift: I" },
+    { "text": "It's okay.", "title": "Receiving a Gift: II" },
+    { "text": "Ugh... Waste of ingredients. Next time, I'm cooking.", "title": "Receiving a Gift: III" },
     {
       "text": "Happy Birthday. I know some people like to throw a huge party, while others prefer a quieter affair. I don't know which kind of person you are, but for me, birthdays are a time to reflect on the past year — sometimes with pride in my progress, other times with profound regret.\n...It's probably best not to ascribe so much meaning to birthdays after all. Each place has its own festivals for celebrating the land, one's ancestors, friendship... but your birthday is the one day of the year that is meant just for you. Okay, speech over — once again, I wish you a Happy Birthday, and I hope you keep growing into the person you aspire to become.",
       "title": "Birthday"
     },
-    {
-      "text": "Uh... Is that it?",
-      "title": "Feelings About Ascension: Intro"
-    },
-    {
-      "text": "An improvement, but it's still not enough for me.",
-      "title": "Feelings About Ascension: Building Up"
-    },
+    { "text": "Uh... Is that it?", "title": "Feelings About Ascension: Intro" },
+    { "text": "An improvement, but it's still not enough for me.", "title": "Feelings About Ascension: Building Up" },
     {
       "text": "Strength... There was once a time when I neither possessed nor sought it. But now it's in the palm of my hand, I'm never letting go.",
       "title": "Feelings About Ascension: Climax"
@@ -3994,10 +3598,7 @@
       "text": "Eek! I read that Fietena could send lightning bolts right back into the sky! So, I've got nothing to fear either— Eek!",
       "title": "When Thunder Strikes"
     },
-    {
-      "text": "Look at this stuff... It's so white, and so cold... Is it edible?",
-      "title": "When It Snows"
-    },
+    { "text": "Look at this stuff... It's so white, and so cold... Is it edible?", "title": "When It Snows" },
     {
       "text": "Ahh, so nice and warm... Nothing like the warm sun on a full stomach to make me feel... *yawn* like taking a nap... mmm...",
       "title": "When the Sun Is Out"
@@ -4010,10 +3611,7 @@
       "text": "*groan*... Good morning... I kinda want to go right back to bed, but... Argh, no, I can't! A hundred push-ups, that'll wake me up!",
       "title": "Good Morning"
     },
-    {
-      "text": "Time for lunch! Full strength starts with a full stomach!",
-      "title": "Good Afternoon"
-    },
+    { "text": "Time for lunch! Full strength starts with a full stomach!", "title": "Good Afternoon" },
     {
       "text": "A hero once famously said: \"If you feel exhausted by evening, that means you've worked hard today, and given every ounce of your strength.\" So sometimes, feeling tired can be a badge of honor!",
       "title": "Good Evening"
@@ -4160,10 +3758,7 @@
       "text": "Allow me to introduce myself again, though you're probably bored of hearing it by now. I am Varka, Grand Master of the Knights of Favonius, Mondstadt's Knight of Boreas. I'm here to fulfill the Favonian pledge: I swear by my sword, you shall not fall while I stand.",
       "title": "Hello"
     },
-    {
-      "text": "I like to drink on occasion... any and every occasion. Ha! Haha, good one.",
-      "title": "Chat: Drinking"
-    },
+    { "text": "I like to drink on occasion... any and every occasion. Ha! Haha, good one.", "title": "Chat: Drinking" },
     {
       "text": "Weapons need regular maintenance. Take good care of them, and they'll take care of you when it matters most.",
       "title": "Chat: Weapons"
@@ -4172,18 +3767,12 @@
       "text": "*sigh* Sure feels good to get away from my desk. Now, where's a good spot for a nap?",
       "title": "Chat: Rest"
     },
-    {
-      "text": "The rain's stopped. We march on.",
-      "title": "After the Rain"
-    },
+    { "text": "The rain's stopped. We march on.", "title": "After the Rain" },
     {
       "text": "Seeing the snow fall always reminds me of places I've been through on past expeditions...",
       "title": "When It Snows"
     },
-    {
-      "text": "Whoa, that's a strong wind! Trying to knock me down, huh?",
-      "title": "When the Wind Is Blowing"
-    },
+    { "text": "Whoa, that's a strong wind! Trying to knock me down, huh?", "title": "When the Wind Is Blowing" },
     {
       "text": "Morning! ...Huh, you're looking pretty groggy. How about a drink to perk you up?",
       "title": "Good Morning"
@@ -4192,10 +3781,7 @@
       "text": "Afternoon! We got some down time. Make sure to get some rest, or your afternoon's gonna be a real grind.",
       "title": "Good Afternoon"
     },
-    {
-      "text": "Evening! Long day, huh? How 'bout a nightcap to help you sleep?",
-      "title": "Good Evening"
-    },
+    { "text": "Evening! Long day, huh? How 'bout a nightcap to help you sleep?", "title": "Good Evening" },
     {
       "text": "Night. Even the wind needs to rest sometimes. I'll keep watch outside the tent. ...Don't need a night watch? Oh.... right, yeah — we're not sleeping rough. Hah, old habits...",
       "title": "Good Night"
@@ -4422,22 +4008,10 @@
       "text": "I know what you're thinking — and I agree. My wings look their most dazzling in the sun.",
       "title": "When the Sun Is Out"
     },
-    {
-      "text": "Ah... Hehe, very nice. The Vila just love a good breeze.",
-      "title": "When It's Windy"
-    },
-    {
-      "text": "Just wondering... When are we heading back to Snezhnaya again?",
-      "title": "In the Desert"
-    },
-    {
-      "text": "A new day! Good morning, Snezhnograd!",
-      "title": "Good Morning"
-    },
-    {
-      "text": "Off we go to Podvorye Restaurant, come on! My treat, of course. As always!",
-      "title": "Good Afternoon"
-    },
+    { "text": "Ah... Hehe, very nice. The Vila just love a good breeze.", "title": "When It's Windy" },
+    { "text": "Just wondering... When are we heading back to Snezhnaya again?", "title": "In the Desert" },
+    { "text": "A new day! Good morning, Snezhnograd!", "title": "Good Morning" },
+    { "text": "Off we go to Podvorye Restaurant, come on! My treat, of course. As always!", "title": "Good Afternoon" },
     {
       "text": "The Korolevskiy Troupe is debuting a new show tonight. Featuring Prima Donna Vodyanitsa's high soprano, Miss Odette latest choreography... and a few \"new friends.\"",
       "title": "Good Evening"
@@ -4562,18 +4136,12 @@
       "text": "Hehe! I'm slipping all those annoying veggies onto Danica's plate! Ugh... but they always come right back to me...",
       "title": "Least Favorite Food"
     },
-    {
-      "text": "Oh, don't mind if I do! I'm going to savor every last bite.",
-      "title": "Receiving a Gift: I"
-    },
+    { "text": "Oh, don't mind if I do! I'm going to savor every last bite.", "title": "Receiving a Gift: I" },
     {
       "text": "Mmm... Quite a feat of culinary ingenuity... I think I'll take another bite.",
       "title": "Receiving a Gift: II"
     },
-    {
-      "text": "Oof... I'm sorry, I already ate! But let me box them up for Danica~",
-      "title": "Receiving a Gift: III"
-    },
+    { "text": "Oof... I'm sorry, I already ate! But let me box them up for Danica~", "title": "Receiving a Gift: III" },
     {
       "text": "Ding-dong! The moment has arrived! You have no idea how hard it was for me to hold it in yesterday... But I had to, because saying it early is bad luck — you might get swallowed up by a snowstorm! Now, I can finally say it: Happy Birthday, my dear friend. May you stand as strong as the birch tree, never defeated by the wind and snow.\nAlright, that part's done. Next, tradition dictates that I've got to give our birthday superstar a few gentle tugs on the ear...",
       "title": "Birthday"
@@ -4612,22 +4180,10 @@
       "text": "Whew... I've been on dry land for too long — my skin's getting dry. I'm in serious need of some underwater time.",
       "title": "Chat: Passing the Time"
     },
-    {
-      "text": "Ah, what a lovely day. Perfect for some underwater relaxation.",
-      "title": "When It Rains"
-    },
-    {
-      "text": "Aw, where'd the rain go? What a downer...",
-      "title": "After the Rain"
-    },
-    {
-      "text": "A vast expanse of white. Hmph, if nothing else, it's a clean aesthetic.",
-      "title": "When It Snows"
-    },
-    {
-      "text": "Ugh, it's so hot and dry... Get me back to the water...",
-      "title": "In the Desert"
-    },
+    { "text": "Ah, what a lovely day. Perfect for some underwater relaxation.", "title": "When It Rains" },
+    { "text": "Aw, where'd the rain go? What a downer...", "title": "After the Rain" },
+    { "text": "A vast expanse of white. Hmph, if nothing else, it's a clean aesthetic.", "title": "When It Snows" },
+    { "text": "Ugh, it's so hot and dry... Get me back to the water...", "title": "In the Desert" },
     {
       "text": "Good morning. I just finished my vocal warm-ups. Did you hear me? Yeah, I'm not surprised. My singing voice really carries.",
       "title": "Good Morning"
@@ -4768,22 +4324,10 @@
       "text": "Happy Birthday! I've set aside your gift. You can open it later. It's just some small trinkets, toys, and whatnot... Eh, but that's not the important part. You're free now, aren't you? In that case, come with me! We're going to my echo chamber. I got someone to buy me a Dance-Off Stage from Natlan a few days ago, along with a whole bunch of weird and wonderful instruments. I'm working on the best music event Snezhnaya's ever seen, and guess who's the first person to receive an invitation? That's right, it's you! Come on, let's sing the night away!",
       "title": "Birthday"
     },
-    {
-      "text": "Ahem, ahem... Alright. Sounding good.",
-      "title": "Feelings About Ascension: Intro"
-    },
-    {
-      "text": "I think I just reached a new high note.",
-      "title": "Feelings About Ascension: Building Up"
-    },
-    {
-      "text": "Ah, my voice is feeling stronger than ever.",
-      "title": "Feelings About Ascension: Climax"
-    },
-    {
-      "text": "Whoo! Time to sing the whole night through!",
-      "title": "Feelings About Ascension: Conclusion"
-    }
+    { "text": "Ahem, ahem... Alright. Sounding good.", "title": "Feelings About Ascension: Intro" },
+    { "text": "I think I just reached a new high note.", "title": "Feelings About Ascension: Building Up" },
+    { "text": "Ah, my voice is feeling stronger than ever.", "title": "Feelings About Ascension: Climax" },
+    { "text": "Whoo! Time to sing the whole night through!", "title": "Feelings About Ascension: Conclusion" }
   ],
   "Zibai": [
     {
@@ -4802,30 +4346,12 @@
       "text": "The Adeptus Arts are most miraculous, but unless one first cultivates the mind before cultivating these arts, all their feats will be like the moon's reflection on water, shattering at the slightest touch.",
       "title": "Chat: Adeptus Art"
     },
-    {
-      "text": "The moon is barely visible...",
-      "title": "When It Rains"
-    },
-    {
-      "text": "Hark, the thunderous wrath of heaven.",
-      "title": "When Thunder Strikes"
-    },
-    {
-      "text": "At least it's not as cold as on the moon.",
-      "title": "When It Snows"
-    },
-    {
-      "text": "...Journeying through the desert is as arduous as one might imagine.",
-      "title": "In the Desert"
-    },
-    {
-      "text": "Good morning. Did you sleep well last night?",
-      "title": "Good Morning"
-    },
-    {
-      "text": "The sun is now at its peak. If you are tired, you should take a rest.",
-      "title": "Good Afternoon"
-    },
+    { "text": "The moon is barely visible...", "title": "When It Rains" },
+    { "text": "Hark, the thunderous wrath of heaven.", "title": "When Thunder Strikes" },
+    { "text": "At least it's not as cold as on the moon.", "title": "When It Snows" },
+    { "text": "...Journeying through the desert is as arduous as one might imagine.", "title": "In the Desert" },
+    { "text": "Good morning. Did you sleep well last night?", "title": "Good Morning" },
+    { "text": "The sun is now at its peak. If you are tired, you should take a rest.", "title": "Good Afternoon" },
     {
       "text": "The moon creeps silently into the sky... until, all of a sudden, we notice it shining down from the heavens.",
       "title": "Good Evening"
@@ -4946,33 +4472,15 @@
       "text": "Had I been able to sample such fine delicacies during my lunar exile, perhaps I would have stayed a little longer. Pah, I jest.",
       "title": "Receiving a Gift: I"
     },
-    {
-      "text": "A fine meal. I will savor it.",
-      "title": "Receiving a Gift: II"
-    },
-    {
-      "text": "This dish tastes... rather peculiar. Innovative, even.",
-      "title": "Receiving a Gift: III"
-    },
+    { "text": "A fine meal. I will savor it.", "title": "Receiving a Gift: II" },
+    { "text": "This dish tastes... rather peculiar. Innovative, even.", "title": "Receiving a Gift: III" },
     {
       "text": "Today is your birthday? Then we must celebrate. I recall that it is customary for the elderly to eat Longevity Noodles... Hehe, and while you appear youthful, I suspect that if we were to count the years since your birth, you would in fact be older than most people in Liyue Harbor. In that sense, preparing a bowl of Longevity Noodles for you would not be an inappropriate gesture... Hmm? Of course I know how to make them. I may have joined the celestial ranks in my time, but I wasn't born with a silver spoon in my mouth... *sigh* Frankly, the only reason I no longer have much of an appetite these days is probably all that time I spent in the heavens without any facility to cook... But I digress. Eating is the second most important affair in the world, so we must ensure that you enjoy a good bowl of Longevity Noodles before the day is through.",
       "title": "Birthday"
     },
-    {
-      "text": "I see.",
-      "title": "Feelings About Ascension: Intro"
-    },
-    {
-      "text": "The moon waxes and wanes...",
-      "title": "Feelings About Ascension: Building Up"
-    },
-    {
-      "text": "The spirit returns to its dwelling.",
-      "title": "Feelings About Ascension: Climax"
-    },
-    {
-      "text": "As an adeptus, I must fulfill my duty.",
-      "title": "Feelings About Ascension: Conclusion"
-    }
+    { "text": "I see.", "title": "Feelings About Ascension: Intro" },
+    { "text": "The moon waxes and wanes...", "title": "Feelings About Ascension: Building Up" },
+    { "text": "The spirit returns to its dwelling.", "title": "Feelings About Ascension: Climax" },
+    { "text": "As an adeptus, I must fulfill my duty.", "title": "Feelings About Ascension: Conclusion" }
   ]
 }

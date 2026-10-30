@@ -8,10 +8,7 @@
       "text": "Ça fait longtemps que je n'ai pas mangé de desserts. Mon cerveau est complètement rouillé... Je sais ! Je vais manger cinq knieperties au dîner ce soir et personne ne m'en empêchera. Même pas Ineffa dans son mode super fâchée !",
       "title": "Bavardage - Plan"
     },
-    {
-      "text": "J'ai super mal à la dent... Pourquoi ? Ineffa, à l'aide...",
-      "title": "Bavardage - Mal de dent"
-    },
+    { "text": "J'ai super mal à la dent... Pourquoi ? Ineffa, à l'aide...", "title": "Bavardage - Mal de dent" },
     {
       "text": "Ne t'inquiète pas, c'est Ineffa qui s'occupe de mon travail aujourd'hui ! On peut jouer avec Canard à torgnoles !",
       "title": "Bavardage - Jeu"
@@ -20,10 +17,7 @@
       "text": "Atchoum ! Mes chaussures et chaussettes sont complètement trempées. Je veux rentrer à la maison...",
       "title": "Quand il pleut..."
     },
-    {
-      "text": "Oh, la pluie s'est arrêtée ! Faisons une excursion avec Ineffa !",
-      "title": "Après la pluie..."
-    },
+    { "text": "Oh, la pluie s'est arrêtée ! Faisons une excursion avec Ineffa !", "title": "Après la pluie..." },
     {
       "text": "Waouh, il neige ! Tiens, je te donne mon Robot faiseur de Bouhou-les de neiges. Il pleure quand tu fais une boule de neige avec. C'est marrant, hein ? Et moi ? Je vais me servir du Robo-Hoho faiseur de boules de neige. Allez, faisons une bataille !",
       "title": "Quand il neige..."
@@ -172,18 +166,12 @@
       "text": "On dirait que tu t'attends à une surprise de ma part... Et voilà ! C'est une Lanterne à vœux Tournechante ! Quand tu allumes la bougie, elle te chante joyeux anniversaire, puis elle tourne. C'est drôle, non ? Si tu l'aimes, il faudra jouer avec moi l'année prochaine aussi ! Oh, euh, tu dois faire un vœu à haute voix pour que je l'entende ! Quel que soit ton souhait, Aino le génie peut le réaliser !",
       "title": "Anniversaire..."
     },
-    {
-      "text": "C'est ce que les robots ressentent quand on les améliore ?",
-      "title": "Affinité faible"
-    },
+    { "text": "C'est ce que les robots ressentent quand on les améliore ?", "title": "Affinité faible" },
     {
       "text": "Amélioration complète. Stabilité d'opération d'Aino augmentée... Consommation d'énergie augmentée... Nourris-la avec assez de gâteaux.",
       "title": "Affinité moyenne"
     },
-    {
-      "text": "Je peux voir que tu apprécies mon génie. Héhé, bon choix !",
-      "title": "Affinité élevée"
-    },
+    { "text": "Je peux voir que tu apprécies mon génie. Héhé, bon choix !", "title": "Affinité élevée" },
     {
       "text": "Je pense qu'à mes yeux, le parfait membre de famille te ressemble... C'est quelqu'un qui me comprend et passe du temps avec moi... Non, je ne suis pas triste. À partir de maintenant, tu peux toujours compter sur moi, d'accord ? Après tout, il n'y a aucun problème qui résiste à Aino, l'extraordinaire cheffe de famille !",
       "title": "Affinité max"
@@ -206,30 +194,15 @@
       "text": "Cette somme repart à la maison, et ça, c'est pour que la Rokot achète des médicaments. Il me reste juste à trouver de quoi entretenir mon arme... Héhé, voyons voir quelle bande de brigands va avoir la poisse cette fois...",
       "title": "Bavardage - Faire les comptes"
     },
-    {
-      "text": "Ma capuche est trempée... Oh non, Tugarin ! Ne t'ébroue pas !",
-      "title": "Quand il pleut..."
-    },
-    {
-      "text": "Il est temps pour la proie de sortir de sa cachette...",
-      "title": "Après la pluie..."
-    },
+    { "text": "Ma capuche est trempée... Oh non, Tugarin ! Ne t'ébroue pas !", "title": "Quand il pleut..." },
+    { "text": "Il est temps pour la proie de sortir de sa cachette...", "title": "Après la pluie..." },
     {
       "text": "Un temps parfait pour une embuscade, si tu as quelqu'un en tête... Je peux utiliser le bruit du tonnerre pour couvrir mes coups de feu.",
       "title": "Quand le tonnerre gronde..."
     },
-    {
-      "text": "Tss, impossible de traquer quoi que ce soit dans ces conditions.",
-      "title": "Quand il neige..."
-    },
-    {
-      "text": "Pas de capuche par ce temps...",
-      "title": "Le vent souffle fort..."
-    },
-    {
-      "text": "J'aimerais bien perdre un peu de fourrure moi aussi...",
-      "title": "Dans le désert..."
-    },
+    { "text": "Tss, impossible de traquer quoi que ce soit dans ces conditions.", "title": "Quand il neige..." },
+    { "text": "Pas de capuche par ce temps...", "title": "Le vent souffle fort..." },
+    { "text": "J'aimerais bien perdre un peu de fourrure moi aussi...", "title": "Dans le désert..." },
     {
       "text": "Tu entends ça ? Ce sont les oiseaux qui pépient dans les bois, comme chaque matin... Et si on en abattait quelques-uns ?",
       "title": "Au réveil..."
@@ -238,10 +211,7 @@
       "text": "En général, je mange dehors en pleine nature, mais je ne te le conseillerais pas vraiment.",
       "title": "À l'heure du déjeuner..."
     },
-    {
-      "text": "Certaines des proies les plus rares ne sortent que la nuit.",
-      "title": "Le soir..."
-    },
+    { "text": "Certaines des proies les plus rares ne sortent que la nuit.", "title": "Le soir..." },
     {
       "text": "Va te reposer. J'ai encore des choses à faire, et j'ai besoin de la nuit pour me couvrir.",
       "title": "La nuit..."
@@ -346,10 +316,7 @@
       "text": "Joyeux anniversaire. C'est bien aujourd'hui, non ? Tu sais, là d'où je viens, fêter son anniversaire est souvent un luxe qu'on ne peut pas se permettre. Bonne chance pour dénicher assez de farine et de crème pour un gâteau, ou pour trouver quelqu'un qui vende autre chose que le strict nécessaire à offrir en cadeau. Mais je ne reprocherai jamais à un enfant de vouloir fêter son anniversaire. C'est comme ça que ça devrait être, et j'espère qu'un jour, aucun enfant à Snezhnaya n'aura à y renoncer. Alors, j'ai décidé de prendre ton anniversaire très au sérieux, et j'ai longuement réfléchi au cadeau et à la carte que je t'ai préparés. Parfois, il faut incarner le changement qu'on veut voir dans le monde, tu ne penses pas ?",
       "title": "Anniversaire..."
     },
-    {
-      "text": "Génial. J'ai l'impression que ma précision s'est améliorée.",
-      "title": "Affinité faible"
-    },
+    { "text": "Génial. J'ai l'impression que ma précision s'est améliorée.", "title": "Affinité faible" },
     {
       "text": "Tugarin s'améliore aussi. On dirait qu'on est plus sur la même longueur d'onde.",
       "title": "Affinité moyenne"
@@ -384,10 +351,7 @@
       "text": "S'abriter et écouter la pluie purifier la terre me fait me sentir en sécurité, comme si j'étais « chez moi ».",
       "title": "Quand il pleut..."
     },
-    {
-      "text": "Le ciel est dégagé. Nous devrions pouvoir voir la lune ce soir.",
-      "title": "Après la pluie..."
-    },
+    { "text": "Le ciel est dégagé. Nous devrions pouvoir voir la lune ce soir.", "title": "Après la pluie..." },
     {
       "text": "Ah...! Sans les éclairs pour nous prévenir... le bruit du tonnerre est vraiment saisissant...",
       "title": "Quand le tonnerre gronde..."
@@ -552,10 +516,7 @@
       "text": "Encore, s'il vous plaît. Hum ? Oh, c'est tout ? Il faudra que je pense à en garder un peu la prochaine fois.",
       "title": "Cadeau reçu (1)"
     },
-    {
-      "text": "C'est vraiment agréable. Je vais savourer ceci au clair de lune.",
-      "title": "Cadeau reçu (2)"
-    },
+    { "text": "C'est vraiment agréable. Je vais savourer ceci au clair de lune.", "title": "Cadeau reçu (2)" },
     {
       "text": "Oh... Quand Sandrone était en colère contre moi, elle me donnait aussi ce genre de choses...",
       "title": "Cadeau reçu (3)"
@@ -564,18 +525,9 @@
       "text": "Votre anniversaire tombe le même jour chaque année ? Eh bien, c'est facile à retenir. La Nuit de la prière lunaire a lieu à des moments différents chaque année, donc je ne peux qu'estimer ma date de naissance en ressentant la lune. Un anniversaire, c'est un moment tellement joyeux, n'est-ce pas ? Tout le monde se rassemble pour danser pendant que les gens vous préparent de délicieuses offrandes. Hein...? Les anniversaires des gens ordinaires ne ressemblent pas à ça ? Des cadeaux, un gâteau et des amis...? Oh, ça marche aussi. Invitons vos amis pour fêter ça. Je peux vous chanter une chanson, et l'on peut même demander à Maalaus de vous faire un tableau.",
       "title": "Anniversaire..."
     },
-    {
-      "text": "Par la Lune éternelle, les marées se déchaîneront.",
-      "title": "Affinité faible"
-    },
-    {
-      "text": "Par la Lune de givre, la nuit s'illuminera.",
-      "title": "Affinité moyenne"
-    },
-    {
-      "text": "Par la Lune irisée, les ténèbres seront repoussées au loin.",
-      "title": "Affinité élevée"
-    },
+    { "text": "Par la Lune éternelle, les marées se déchaîneront.", "title": "Affinité faible" },
+    { "text": "Par la Lune de givre, la nuit s'illuminera.", "title": "Affinité moyenne" },
+    { "text": "Par la Lune irisée, les ténèbres seront repoussées au loin.", "title": "Affinité élevée" },
     {
       "text": "Je tiens désormais les fils du destin entre mes mains. À partir de maintenant, la nouvelle lune veillera sur le monde et l'illuminera.",
       "title": "Affinité max"
@@ -594,10 +546,7 @@
       "text": "Quel ennui... Je ne cherche pas vraiment les ennuis, mais j'espère que nous tomberons sur quelqu'un d'autre qui s'en attire...",
       "title": "Bavardage - Ennui"
     },
-    {
-      "text": "Allez, trouvons un peu d'animation !",
-      "title": "Bavardage - Animation"
-    },
+    { "text": "Allez, trouvons un peu d'animation !", "title": "Bavardage - Animation" },
     {
       "text": "Quand le vent souffle, la pluie vient après. Croyez-moi, je le sais de source sûre.",
       "title": "Quand il pleut..."
@@ -606,10 +555,7 @@
       "text": "J'ai entendu dire que le tonnerre était la manière dont un autre Archon transmettait ses paroles prophétiques... Non pas que je sois biaisé, mais... Je trouve que Barbatos est beaucoup plus délicat.",
       "title": "Quand le tonnerre gronde..."
     },
-    {
-      "text": "Le vent souffle. Prions.",
-      "title": "Quand le vent souffle..."
-    },
+    { "text": "Le vent souffle. Prions.", "title": "Quand le vent souffle..." },
     {
       "text": "Bonjour, {M#cher ami}{F#chère amie}. Je reviens des prières du matin. Je suis heureux que Barbatos ait à nouveau répondu à mes questions. Oh, j'ai bien entendu aussi dit une prière pour vous.",
       "title": "Au réveil..."
@@ -722,10 +668,7 @@
       "text": "Merci pour ce cadeau. Que le seigneur Barbatos vous bénisse ! Un tel repas s'accompagne idéalement d'un verre de vin de dent-de-lion. C'est moi qui régale, vous êtes {M#partant}{F#partante} ?",
       "title": "Cadeau reçu (1)"
     },
-    {
-      "text": "Merci pour ce cadeau. Vous serez dans mes prières matinales.",
-      "title": "Cadeau reçu (2)"
-    },
+    { "text": "Merci pour ce cadeau. Vous serez dans mes prières matinales.", "title": "Cadeau reçu (2)" },
     {
       "text": "Je vous prie de m'excuser, mais j'ai reçu il y a longtemps une parole prophétique de l'Archon Anémo. Pour faire court, en tant que diacre de l'Église de Favonius, il m'est interdit de consommer ce genre de nourriture.",
       "title": "Cadeau reçu (3)"
@@ -746,10 +689,7 @@
       "text": "Allez, et empruntez le chemin qui vous appartient. Une cloche retentit quelque part à l'extérieur. C'est un message de notre seigneur qui vous appelle à partir en voyage.",
       "title": "Affinité élevée"
     },
-    {
-      "text": "Que nos prières soient entendues et que le vent vous guide.",
-      "title": "Affinité max"
-    }
+    { "text": "Que nos prières soient entendues et que le vent vous guide.", "title": "Affinité max" }
   ],
   "Durin": [
     {
@@ -772,22 +712,10 @@
       "text": "Oh non, j'ai soudainement une envie irrésistible de sauter dans une flaque d'eau...",
       "title": "Quand il pleut..."
     },
-    {
-      "text": "Il vaut mieux ne pas voler trop haut par ce temps...",
-      "title": "Quand le tonnerre gronde..."
-    },
-    {
-      "text": "S'est-« il » déjà endormi dans un endroit comme celui-ci...?",
-      "title": "Quand il neige..."
-    },
-    {
-      "text": "Comme c'est joli ! On se croirait dans un conte de fées.",
-      "title": "Il fait bon dehors..."
-    },
-    {
-      "text": "Oh non, je commence à avoir soif...",
-      "title": "Dans le désert..."
-    },
+    { "text": "Il vaut mieux ne pas voler trop haut par ce temps...", "title": "Quand le tonnerre gronde..." },
+    { "text": "S'est-« il » déjà endormi dans un endroit comme celui-ci...?", "title": "Quand il neige..." },
+    { "text": "Comme c'est joli ! On se croirait dans un conte de fées.", "title": "Il fait bon dehors..." },
+    { "text": "Oh non, je commence à avoir soif...", "title": "Dans le désert..." },
     {
       "text": "Bonjour. Ne fais pas trop attention si j'ai la tête de travers, j'ai un peu mal au cou. Hier soir, un chat est venu dormir à quelques mètres de moi. D'habitude, j'effraie les petits animaux. Je ne voulais pas le déranger, alors j'ai essayé de ne pas bouger de toute la nuit...",
       "title": "Au réveil..."
@@ -796,10 +724,7 @@
       "text": "L'existence du « brunch » signifie qu'il doit forcément exister un repas entre le déjeuner et le dîner, non ?",
       "title": "À l'heure du déjeuner..."
     },
-    {
-      "text": "Je me demande si nous verrons les étoiles ce soir...",
-      "title": "Le soir..."
-    },
+    { "text": "Je me demande si nous verrons les étoiles ce soir...", "title": "Le soir..." },
     {
       "text": "Il n'y a rien de plus apaisant que de se blottir contre sa propre queue pour passer une bonne nuit.",
       "title": "La nuit..."
@@ -1184,10 +1109,7 @@
       "text": "Chaque tombée de neige est un appel de Snezhnaya, la terre d'où je viens.",
       "title": "Quand il neige..."
     },
-    {
-      "text": "« Le vent se lève, les feuilles tourbillonnent... »",
-      "title": "Le vent souffle fort..."
-    },
+    { "text": "« Le vent se lève, les feuilles tourbillonnent... »", "title": "Le vent souffle fort..." },
     {
       "text": "Une neige orange qui danse dans l'air... Ah, voici donc le légendaire désert.",
       "title": "Dans le désert..."
@@ -1300,14 +1222,8 @@
       "text": "Maintenant que nous nous connaissons bien, cela vous dérangerait-il que je me plaigne de quelque chose ? En raison de ma... situation particulière, je trouve les plats que les autres aiment... assez insipides. Ah, mais j'aime quand même beaucoup passer du temps avec vous à table.",
       "title": "Plats détestés..."
     },
-    {
-      "text": "Hm... Je n'ai jamais douté de votre talent.",
-      "title": "Cadeau reçu (1)"
-    },
-    {
-      "text": "Évidemment, c'est délicieux.",
-      "title": "Cadeau reçu (2)"
-    },
+    { "text": "Hm... Je n'ai jamais douté de votre talent.", "title": "Cadeau reçu (1)" },
+    { "text": "Évidemment, c'est délicieux.", "title": "Cadeau reçu (2)" },
     {
       "text": "Hum... Pour le bien de notre amitié, je préfère garder mes pensées pour moi.",
       "title": "Cadeau reçu (3)"
@@ -1354,22 +1270,13 @@
       "text": "Vite, trouvons un abri. Il ne faut pas attraper un rhume, ça stresse le corps inutilement.",
       "title": "Quand il pleut..."
     },
-    {
-      "text": "Il faut prendre un peu le soleil. Allez !",
-      "title": "Après la pluie..."
-    },
-    {
-      "text": "Ce temps est propice à l'entraînement en plein air.",
-      "title": "Il fait bon dehors..."
-    },
+    { "text": "Il faut prendre un peu le soleil. Allez !", "title": "Après la pluie..." },
+    { "text": "Ce temps est propice à l'entraînement en plein air.", "title": "Il fait bon dehors..." },
     {
       "text": "Maintenant que j'y pense, courir contre le vent peut techniquement être considéré comme un entraînement de résistance.",
       "title": "Le vent souffle fort..."
     },
-    {
-      "text": "Cet endroit ne convient pas pour un entraînement en plein air...",
-      "title": "Dans le désert..."
-    },
+    { "text": "Cet endroit ne convient pas pour un entraînement en plein air...", "title": "Dans le désert..." },
     {
       "text": "Hé, bonjour. Se lever tôt est l'une des premières choses à faire pour améliorer son autodiscipline. Si vous ne parvenez même pas à sortir du lit, vous n'arriverez jamais à respecter vos autres engagements. Enfin, je suis d'humeur à faire un petit jogging matinal. Vous voulez vous joindre à moi ?",
       "title": "Au réveil..."
@@ -1548,10 +1455,7 @@
       "text": "Pfiou, je peux à peine ouvrir les yeux à cause du vent. Il fait tellement froid... Je ne peux pas voler avec ce temps.",
       "title": "Quand il neige..."
     },
-    {
-      "text": "Soit je perds mon chapeau, soit je perds mon souffle...",
-      "title": "Le vent souffle fort..."
-    },
+    { "text": "Soit je perds mon chapeau, soit je perds mon souffle...", "title": "Le vent souffle fort..." },
     {
       "text": "Bonjour. Je ne suis pas du matin, contrairement à ce que tu pourrais croire. Il faut que j'aille nourrir les patients de la clinique, ou ils vont faire un boucan pas possible.",
       "title": "Au réveil..."
@@ -1684,10 +1588,7 @@
       "text": "Joyeux anniversaire ! Bonne santé et jeunesse éternelle !\nOn ne peut pas arrêter le temps, mais c'est possible de rester jeune dans sa tête. De plus, c'est mauvais pour la santé d'être de mauvaise humeur. Allez, oublie tous tes soucis pour aujourd'hui et amusons-nous.\nD'ailleurs, c'est quoi ton genre de musique ? Je vais te jouer un morceau.",
       "title": "Anniversaire..."
     },
-    {
-      "text": "C'est un échauffement ?",
-      "title": "Affinité faible"
-    },
+    { "text": "C'est un échauffement ?", "title": "Affinité faible" },
     {
       "text": "Il faut savoir prendre soin de soi avant de vouloir prendre soin des autres, hein ?",
       "title": "Affinité moyenne"
@@ -1734,10 +1635,7 @@
       "text": "Le vent se lève... Ça n'annonce rien de bon. On ferait mieux de monter le camp avant que ça ne tourne mal.",
       "title": "Le vent souffle fort..."
     },
-    {
-      "text": "Une nouvelle aube... Une nuit de plus passée en sécurité.",
-      "title": "Au réveil..."
-    },
+    { "text": "Une nouvelle aube... Une nuit de plus passée en sécurité.", "title": "Au réveil..." },
     {
       "text": "Maintenant que le soleil est levé, je devrais en profiter pour explorer les environs. Le problème, c'est que... je ferais bien une petite sieste.",
       "title": "À l'heure du déjeuner..."
@@ -1746,10 +1644,7 @@
       "text": "On ne sait jamais ce qui peut se cacher dans les ombres de la nuit. Si vous devez vraiment voyager, restez sur vos gardes.",
       "title": "Le soir..."
     },
-    {
-      "text": "Il se fait tard. Allez vous reposer, je monterai la garde cette nuit.",
-      "title": "La nuit..."
-    },
+    { "text": "Il se fait tard. Allez vous reposer, je monterai la garde cette nuit.", "title": "La nuit..." },
     {
       "text": "Héhé, j'ai dû harceler mon vieux père pendant un bon moment avant qu'il accepte enfin que je rejoigne les Gardiens de lumière. Je ne supportais pas l'idée de rester bien à l'abri à Piramida pendant que d'autres risquaient leur vie. Comme je lui ai dit, je préfère être en première ligne pour aider à tenir la Chasse sauvage à distance.",
       "title": "À propos d'Illuga - Gardiens de lumière"
@@ -1854,10 +1749,7 @@
       "text": "Pas mal ! Héhé, j'ai hâte de voir la tête de mes camarades quand ils goûteront ça !",
       "title": "Cadeau reçu (2)"
     },
-    {
-      "text": "Hum... Hé, je peux vous apprendre quelques autres plats, si vous voulez !",
-      "title": "Cadeau reçu (3)"
-    },
+    { "text": "Hum... Hé, je peux vous apprendre quelques autres plats, si vous voulez !", "title": "Cadeau reçu (3)" },
     {
       "text": "Joyeux anniversaire ! Oubliez les missions et les aventures, une journée comme celle-ci est réservée à vos proches, aux bons repas et aux longues siestes ! Je monte la garde, alors, concentrez-vous sur votre repos. Et si des trouble-fêtes osent se pointer, je les ferai fuir avec ma fidèle lanterne.",
       "title": "Anniversaire..."
@@ -1896,10 +1788,7 @@
       "text": "Données de combat mises à jour. Rassurez-vous, je ne referai pas exploser le toit.",
       "title": "Bavardage - Mise à jour"
     },
-    {
-      "text": "J'espère que mes articulations ne vont pas rouiller...",
-      "title": "Quand il pleut..."
-    },
+    { "text": "J'espère que mes articulations ne vont pas rouiller...", "title": "Quand il pleut..." },
     {
       "text": "Remarque : forte probabilité d'arc-en-ciel. Les sites d'observation recommandés sont indiqués sur la carte.",
       "title": "Après la pluie..."
@@ -2060,10 +1949,7 @@
       "text": "Mode festif pour les occasions spéciales activé. Veuillez choisir un endroit adapté pour vous asseoir et vous reposer, pendant que je nettoie votre maison et que j'y installe des rubans, des ballons et des fleurs. Ensuite, je préparerai votre repas et votre gâteau préférés, d'après les données enregistrées dans ma mémoire. Si vous avez d'autres demandes à ajouter, n'hésitez pas à le faire. Passons une journée spéciale ensemble. Joyeux anniversaire !",
       "title": "Anniversaire..."
     },
-    {
-      "text": "C'est déjà l'heure de ma maintenance ?",
-      "title": "Affinité faible"
-    },
+    { "text": "C'est déjà l'heure de ma maintenance ?", "title": "Affinité faible" },
     {
       "text": "Efficacité du noyau améliorée. Vous avez le potentiel pour être {M#un mécanicien doué}{F#une mécanicienne douée}.",
       "title": "Affinité moyenne"
@@ -2098,14 +1984,8 @@
       "text": "Il commence à pleuvoir ? Vite, il faut trouver un abri avant d'être {M#trempés}{F#trempées}.",
       "title": "Quand il pleut..."
     },
-    {
-      "text": "Ouaaah ! J'ai de la neige dans le cou, c'est froiiiid !",
-      "title": "Quand il neige..."
-    },
-    {
-      "text": "*Pfft !* *Pfft !* *Pfft !* Pouah, j'ai du sable dans la bouche !",
-      "title": "Dans le désert..."
-    },
+    { "text": "Ouaaah ! J'ai de la neige dans le cou, c'est froiiiid !", "title": "Quand il neige..." },
+    { "text": "*Pfft !* *Pfft !* *Pfft !* Pouah, j'ai du sable dans la bouche !", "title": "Dans le désert..." },
     {
       "text": "Bonjour. Tu as déjà pris ton petit-déjeuner ? Je t'emmène manger quelque chose ?",
       "title": "Au réveil..."
@@ -2238,18 +2118,9 @@
       "text": "Joyeux anniversaire ! Tiens, cette poupée est pour toi ! Je viens juste de la terminer. C'était la première fois que j'essayais cette technique, ça m'a pris un temps fou ! Je l'ai remplie d'herbes apaisantes qui t'aideront à dormir. Pose-la à côté de ton oreiller et je te promets des bonnes nuits de sommeil, sans aucun cauchemar. Le bandage sur ma main ? Ah... c'est une simple égratignure que je me suis faite en jouant avec Ashru, hahaha... Rien de grave, je t'assure...",
       "title": "Anniversaire..."
     },
-    {
-      "text": "Oh ? Pas mal du tout !",
-      "title": "Affinité faible"
-    },
-    {
-      "text": "Plus agile que jamais.",
-      "title": "Affinité moyenne"
-    },
-    {
-      "text": "Bon... C'est l'heure de se bouger un peu !",
-      "title": "Affinité élevée"
-    },
+    { "text": "Oh ? Pas mal du tout !", "title": "Affinité faible" },
+    { "text": "Plus agile que jamais.", "title": "Affinité moyenne" },
+    { "text": "Bon... C'est l'heure de se bouger un peu !", "title": "Affinité élevée" },
     {
       "text": "Héhé, je me sens prête pour une mission importante maintenant... Que dirais-tu de te joindre à moi ?",
       "title": "Affinité max"
@@ -2272,10 +2143,7 @@
       "text": "Avez-vous décidé de votre destination ? Si ce n'est pas le cas, pourquoi ne pas trouver un coin d'herbe où vous reposer ?",
       "title": "Bavardage - Voyage"
     },
-    {
-      "text": "Ah, la saison de la verdure approche...",
-      "title": "Quand il pleut..."
-    },
+    { "text": "Ah, la saison de la verdure approche...", "title": "Quand il pleut..." },
     {
       "text": "Disparu en un instant... Encore plus insaisissable que le clair de lune...",
       "title": "Quand le tonnerre gronde..."
@@ -2292,22 +2160,13 @@
       "text": "Bonjour. Que la bénédiction de la Déesse de la lune brille sur vous, de jour comme de nuit.",
       "title": "Au réveil..."
     },
-    {
-      "text": "Bonjour. Que le clair de lune nous unisse, de jour comme de nuit.",
-      "title": "Au réveil..."
-    },
+    { "text": "Bonjour. Que le clair de lune nous unisse, de jour comme de nuit.", "title": "Au réveil..." },
     {
       "text": "... Oh, j'ai dû m'assoupir. Désolée. Vous aviez besoin de quelque chose ? Dites-moi tout.",
       "title": "À l'heure du déjeuner..."
     },
-    {
-      "text": "Le clair de lune est si calme ce soir. Rejoignez-moi pour une balade en forêt.",
-      "title": "Le soir..."
-    },
-    {
-      "text": "Les étoiles se sont souhaité bonne nuit. Nous devrions faire pareil.",
-      "title": "La nuit..."
-    },
+    { "text": "Le clair de lune est si calme ce soir. Rejoignez-moi pour une balade en forêt.", "title": "Le soir..." },
+    { "text": "Les étoiles se sont souhaité bonne nuit. Nous devrions faire pareil.", "title": "La nuit..." },
     {
       "text": "Une doctrine sans lois n'est qu'un tas de ruses, tout comme un dirigeant sans conscience est un faux dieu. Des règles doivent être mises en place quand des communautés se créent. Les Descendants de givrelune en ont aussi besoin, même s'ils ont une foi commune.",
       "title": "À propos de Lauma - Responsabilité"
@@ -2364,10 +2223,7 @@
       "text": "Personne n'enseigne à une nouvelle divinité à vivre en harmonie avec ses fidèles. Son passé a sûrement été difficile...\nDans l'espoir de réparer la relation qu'elle a avec nous, je lui ai demandé quelque chose qui pourrait être perçu comme malpoli. Elle dit préférer vivre seule, mais j'espère vraiment que Kuutar et les Descendants de givrelune, la lune et ses fidèles, pourront un jour trinquer ensemble.",
       "title": "À propos de Kuutar..."
     },
-    {
-      "text": "Regardez la lune. Elle sera toujours là, silencieuse.",
-      "title": "Connaître Lauma (1)"
-    },
+    { "text": "Regardez la lune. Elle sera toujours là, silencieuse.", "title": "Connaître Lauma (1)" },
     {
       "text": "Dans de nombreux endroits, la lune décroissante est considérée comme un présage de malheur.\nCependant, les gens oublient que les lunes ont aussi été les victimes d'un malheur... Elles n'ont jamais voulu leur propre destruction.",
       "title": "Connaître Lauma (2)"
@@ -2388,26 +2244,17 @@
       "text": "J'aime passer du temps seule dans l'obscurité de la nuit. Les oiseaux et les bêtes sont silencieux. Le seul bruit que j'entends est le vent qui souffle doucement à travers les arbres. C'est le moment le plus paisible que je connaisse.",
       "title": "Les loisirs de Lauma..."
     },
-    {
-      "text": "Ma tête... C'est si lourd.",
-      "title": "Les problèmes de Lauma..."
-    },
+    { "text": "Ma tête... C'est si lourd.", "title": "Les problèmes de Lauma..." },
     {
       "text": "Des plats simples, avec peu d'assaisonnement. Cela n'a rien à voir avec mes croyances ou mes restrictions alimentaires, je trouve juste qu'ils sont plus faciles à manger.",
       "title": "Plats préférés..."
     },
-    {
-      "text": "Les plats gras ou secs... Ce n'est pas ma tasse de thé.",
-      "title": "Plats détestés..."
-    },
+    { "text": "Les plats gras ou secs... Ce n'est pas ma tasse de thé.", "title": "Plats détestés..." },
     {
       "text": "Les ingrédients sont frais... Merci de vous être donné la peine. Je vais partager cela avec les autres fidèles... Pardon ? C'est pour moi seulement ?",
       "title": "Cadeau reçu (1)"
     },
-    {
-      "text": "Merci pour votre cadeau. Partageons-le.",
-      "title": "Cadeau reçu (2)"
-    },
+    { "text": "Merci pour votre cadeau. Partageons-le.", "title": "Cadeau reçu (2)" },
     {
       "text": "Il y a sûrement des gens qui en ont plus besoin que moi. J'en prendrai note.",
       "title": "Cadeau reçu (3)"
@@ -2416,22 +2263,10 @@
       "text": "{M#Invité}{F#Invitée} d'honneur {M#choyé}{F#choyée} par la lumière de la lune et notre forêt paisible, je vous donne cette dague bénie. Une dague n'est pas forcément un objet de violence. On s'en sert souvent comme objet symbolique dans des rituels de prière.\nAprès, vous êtes évidemment libre d'en faire ce que vous voulez.",
       "title": "Anniversaire..."
     },
-    {
-      "text": "Je ne cherche pas de raccourci...",
-      "title": "Affinité faible"
-    },
-    {
-      "text": "Je ne cherche pas non plus le pouvoir...",
-      "title": "Affinité moyenne"
-    },
-    {
-      "text": "Mais si notre but dans tout cela est de trouver la vérité...",
-      "title": "Affinité élevée"
-    },
-    {
-      "text": "J'offrirai mon sang et mes larmes pour cette raison.",
-      "title": "Affinité max"
-    }
+    { "text": "Je ne cherche pas de raccourci...", "title": "Affinité faible" },
+    { "text": "Je ne cherche pas non plus le pouvoir...", "title": "Affinité moyenne" },
+    { "text": "Mais si notre but dans tout cela est de trouver la vérité...", "title": "Affinité élevée" },
+    { "text": "J'offrirai mon sang et mes larmes pour cette raison.", "title": "Affinité max" }
   ],
   "Linnea": [
     {
@@ -2450,10 +2285,7 @@
       "text": "Tu veux voir mes archives ? Bien sûr ! Je suis toujours ravie de montrer mon chef-d'œuvre, héhé. J'ai même fait les illustrations.",
       "title": "Bavardage - Archives"
     },
-    {
-      "text": "Ah, cette odeur de terre humide... C'est le monde qui se réveille.",
-      "title": "Après la pluie..."
-    },
+    { "text": "Ah, cette odeur de terre humide... C'est le monde qui se réveille.", "title": "Après la pluie..." },
     {
       "text": "Qu'il fait froid... Hé, ça te dit de faire un bonhomme de neige ? Lumi, viens nous aider ! ... Ah ! Pas besoin des marteaux !",
       "title": "Quand il neige..."
@@ -2578,30 +2410,18 @@
       "text": "Je ne crois pas qu'il y a un aliment que je déteste vraiment, à part les trucs super mauvais pour la santé. Je trouve que c'est du vrai gâchis de jeter de la nourriture parfaitement comestible juste parce qu'elle ne correspond pas tout à fait à mes goûts.",
       "title": "Plats détestés..."
     },
-    {
-      "text": "C'est délicieux ! Comment tu as fais ça ? Tu peux m'apprendre ?",
-      "title": "Cadeau reçu (1)"
-    },
+    { "text": "C'est délicieux ! Comment tu as fais ça ? Tu peux m'apprendre ?", "title": "Cadeau reçu (1)" },
     {
       "text": "Miam ! La prochaine fois, ce sera mon tour. Je veux voir ce que tu penses de ma cuisine.",
       "title": "Cadeau reçu (2)"
     },
-    {
-      "text": "Euh... Bon... au moins, ce n'est pas dangereux pour la santé.",
-      "title": "Cadeau reçu (3)"
-    },
+    { "text": "Euh... Bon... au moins, ce n'est pas dangereux pour la santé.", "title": "Cadeau reçu (3)" },
     {
       "text": "Joyeux anniversaire... Ce n'est pas le cadeau le plus précieux, mais c'est quelque chose que je garde dans ma collection depuis très longtemps... Accepte ce fossile. Tu vois là ? Ce sont des empreintes d'os et de plumes d'une espèce d'oiseau disparue depuis longtemps... Ils ne pourront plus jamais voler, et pourtant le moment où celui-ci a déployé ses ailes a laissé une empreinte qui durera encore longtemps dans le futur. Ainsi, même si la vie disparaît, il restera toujours une preuve de notre existence. Que ta vie soit aussi tenace qu'un vieil arbre, dont chaque anneau raconte une belle histoire.",
       "title": "Anniversaire..."
     },
-    {
-      "text": "Mes sens sont devenus plus aiguisés.",
-      "title": "Affinité faible"
-    },
-    {
-      "text": "Je comprends beaucoup mieux les choses de ce monde.",
-      "title": "Affinité moyenne"
-    },
+    { "text": "Mes sens sont devenus plus aiguisés.", "title": "Affinité faible" },
+    { "text": "Je comprends beaucoup mieux les choses de ce monde.", "title": "Affinité moyenne" },
     {
       "text": "Je peux sentir le flux d'énergie... Comme un marin qui a maîtrisé les courants océaniques. Ce voyage sera beaucoup plus facile à partir de maintenant.",
       "title": "Affinité élevée"
@@ -2628,10 +2448,7 @@
       "text": "Comment je m'entends avec les autres chevaliers ? Hum... Eh bien, je suis sûr d'avoir fait forte impression. C'est forcément une bonne chose, non ?",
       "title": "Bavardage - Relations"
     },
-    {
-      "text": "Tiens, la pluie s'intensifie. Qui sait ce que la crue va emporter ?",
-      "title": "Quand il pleut..."
-    },
+    { "text": "Tiens, la pluie s'intensifie. Qui sait ce que la crue va emporter ?", "title": "Quand il pleut..." },
     {
       "text": "Le ciel s'éclaircit. C'est comme si ces averses n'avaient jamais eu lieu.",
       "title": "Après la pluie..."
@@ -2640,10 +2457,7 @@
       "text": "Le tonnerre couvre bien des bruits, mais jamais les battements de son propre cœur.",
       "title": "Quand le tonnerre gronde..."
     },
-    {
-      "text": "Rien ne vaut La Queue de Chat... surtout par un temps pareil.",
-      "title": "Quand il neige..."
-    },
+    { "text": "Rien ne vaut La Queue de Chat... surtout par un temps pareil.", "title": "Quand il neige..." },
     {
       "text": "Oh, le vent se lève... Dommage qu'il n'y ait pas de pissenlits par ici. Je suppose qu'on va devoir se contenter de déchirer du papier à la place.",
       "title": "Quand le vent souffle..."
@@ -2652,18 +2466,12 @@
       "text": "C'est dans des moments comme celui-ci que le Lac de cidre me manque vraiment.",
       "title": "Dans le désert..."
     },
-    {
-      "text": "Bonjour. Quel est le programme du jour ?",
-      "title": "Au réveil..."
-    },
+    { "text": "Bonjour. Quel est le programme du jour ?", "title": "Au réveil..." },
     {
       "text": "Tu as déjà pris ta pause déjeuner ? Parfait, on a du pain sur la planche cet après-midi.",
       "title": "À l'heure du déjeuner..."
     },
-    {
-      "text": "Ce soir... Hum. Surprenons les troupes avec un exercice d'attaque surprise.",
-      "title": "Le soir..."
-    },
+    { "text": "Ce soir... Hum. Surprenons les troupes avec un exercice d'attaque surprise.", "title": "Le soir..." },
     {
       "text": "Bonne nuit. Tu ferais mieux de te reposer, car demain arrive, que ça te plaise ou non.",
       "title": "La nuit..."
@@ -2792,10 +2600,7 @@
       "text": "C'est ton anniversaire aujourd'hui, alors je t'ai fabriqué une mini-arbalète. J'ai conçu le modèle moi-même. Elle devrait être parfaitement adaptée à ton poignet... Tu veux savoir quand j'ai pris tes mesures ? Ne t'inquiète pas, j'ai fait ça à l'œil. Tu peux faire confiance à mon sens de l'estimation, je suis vice-capitaine de la 5e compagnie, après tout. Ah oui, cette arbalète peut aussi tirer vers l'arrière, au cas où quelqu'un s'approcherait furtivement de toi. Il suffit d'appuyer... ici. Hahaha, pas besoin de baisser la tête ! Le cran de sûreté est encore enclenché. Est-ce que j'ai l'air du genre de personne qui offre une arbalète à ses amis juste pour les voir se tirer dessus tout seuls.",
       "title": "Anniversaire..."
     },
-    {
-      "text": "Je me sens en pleine forme. Même mon arme me semble plus facile à manier.",
-      "title": "Affinité faible"
-    },
+    { "text": "Je me sens en pleine forme. Même mon arme me semble plus facile à manier.", "title": "Affinité faible" },
     {
       "text": "J'ai l'impression de voir encore plus loin maintenant... Ça devrait m'aider à mieux viser.",
       "title": "Affinité moyenne"
@@ -2826,22 +2631,10 @@
       "text": "Les émotions sont comme un torrent déchaîné qui déferle sur l'esprit. Le plus souvent, si vous essayez de les retenir, vous serez {M#emporté}{F#emportée} par leur force implacable. Et si vous essayez de les ignorer complètement... vous finirez {M#brisé}{F#brisée}.",
       "title": "Bavardage - Émotions"
     },
-    {
-      "text": "Les bénédictions des cieux n'arrivent pas de manière impartiale.",
-      "title": "Quand il pleut..."
-    },
-    {
-      "text": "Encore un menteur démasqué.",
-      "title": "Quand le tonnerre gronde..."
-    },
-    {
-      "text": "On dirait que d'autres ennuis se profilent à l'horizon.",
-      "title": "Quand le vent souffle..."
-    },
-    {
-      "text": "Un déjà-vu dont je me serais bien passée.",
-      "title": "Dans le désert..."
-    },
+    { "text": "Les bénédictions des cieux n'arrivent pas de manière impartiale.", "title": "Quand il pleut..." },
+    { "text": "Encore un menteur démasqué.", "title": "Quand le tonnerre gronde..." },
+    { "text": "On dirait que d'autres ennuis se profilent à l'horizon.", "title": "Quand le vent souffle..." },
+    { "text": "Un déjà-vu dont je me serais bien passée.", "title": "Dans le désert..." },
     {
       "text": "Bonjour. Toujours aussi {M#matinal}{F#matinale}, hein ? J'aimerais pouvoir en dire autant de Jahoda...",
       "title": "Au réveil..."
@@ -2966,10 +2759,7 @@
       "text": "Eh bien, je suis impressionnée... Vous ne cherchez pas du travail par hasard ? Le Curatorium aurait bien besoin de quelqu'un comme vous. Nous vous paierions le prix fort.",
       "title": "Cadeau reçu (1)"
     },
-    {
-      "text": "Pas mal... Je n'aurais pas pensé que vous cuisineriez aussi bien.",
-      "title": "Cadeau reçu (2)"
-    },
+    { "text": "Pas mal... Je n'aurais pas pensé que vous cuisineriez aussi bien.", "title": "Cadeau reçu (2)" },
     {
       "text": "Hmm. Eh bien, ça a un goût... particulier... Je verrai ce que Jahoda en pense plus tard.",
       "title": "Cadeau reçu (3)"
@@ -2978,18 +2768,9 @@
       "text": "Je ne suis pas douée pour choisir les cadeaux, alors voilà ce que je vous propose : je vais vous poser trois questions, et si vous trouvez les bonnes réponses... Détendez-vous, c'était une blague. Tenez, prenez ce livre. C'est un recueil de contes et légendes du désert. C'est l'une des versions les plus complètes qui existent. Des générations d'habitants du désert ont grandi en les écoutant, puis les ont transmises à leur tour. Qui sait ? Une fois que vous les aurez lus, vous serez peut-être capable de survivre dans le désert vous aussi.",
       "title": "Anniversaire..."
     },
-    {
-      "text": "Hmm, intéressant.",
-      "title": "Affinité faible"
-    },
-    {
-      "text": "Une part de vérité... mais ce n'est qu'une goutte d'eau dans l'océan.",
-      "title": "Affinité moyenne"
-    },
-    {
-      "text": "Une autre voie vers la vérité s'ouvre devant moi.",
-      "title": "Affinité élevée"
-    },
+    { "text": "Hmm, intéressant.", "title": "Affinité faible" },
+    { "text": "Une part de vérité... mais ce n'est qu'une goutte d'eau dans l'océan.", "title": "Affinité moyenne" },
+    { "text": "Une autre voie vers la vérité s'ouvre devant moi.", "title": "Affinité élevée" },
     {
       "text": "On dirait que le lien qui nous unit ne se rompra pas si facilement, après tout. Qu'en pensez-vous ?",
       "title": "Affinité max"
@@ -3000,14 +2781,8 @@
       "text": "Oh, je devrais peut-être me présenter à nouveau ? Hum, on dirait qu'il n'y a plus d'interférence avec la magie de présentation d'Alice cette fois, alors allons-y. Ahem, je m'appelle Nicole. Comme vous pouvez le voir, je suis... Ah, encore ! J'ai parlé trop vite, on dirait...",
       "title": "Première rencontre..."
     },
-    {
-      "text": "Hm... Ce n'était pas ma meilleure idée.",
-      "title": "Bavardage - Romans"
-    },
-    {
-      "text": "Nul besoin de mots, les métaphores parlent d'elles-mêmes.",
-      "title": "Bavardage - Statue"
-    },
+    { "text": "Hm... Ce n'était pas ma meilleure idée.", "title": "Bavardage - Romans" },
+    { "text": "Nul besoin de mots, les métaphores parlent d'elles-mêmes.", "title": "Bavardage - Statue" },
     {
       "text": "« Qui suis-je maintenant ? », me demanderez-vous. Juste une « humaine » qui a perdu sa voix.",
       "title": "Bavardage - Silence"
@@ -3016,22 +2791,13 @@
       "text": "En vérité, c'est grâce aux Fées qu'il y a toujours un trésor au bout de l'arc-en-ciel.",
       "title": "Après la pluie..."
     },
-    {
-      "text": "Bonjour.",
-      "title": "Au réveil..."
-    },
-    {
-      "text": "Bon après-midi.",
-      "title": "À l'heure du déjeuner..."
-    },
+    { "text": "Bonjour.", "title": "Au réveil..." },
+    { "text": "Bon après-midi.", "title": "À l'heure du déjeuner..." },
     {
       "text": "C'est la nuit que l'inspiration est la plus forte, c'est donc aussi à ce moment-là que les gens d'autrefois voyaient le plus souvent des anges. Je suppose que c'est en grande partie à cause d'eux que nous sommes devenus une bande de couche-tard. Bien que ce ne soit pas tout à fait exact. Ce n'est pas comme si nous avions des horloges biologiques ou des cycles de sommeil. Ce que nous faisions s'apparentait davantage à... un entretien fonctionnel régulier visant à éviter autant que possible les heures tardives.",
       "title": "Le soir..."
     },
-    {
-      "text": "Vous allez déjà vous coucher ? Héhé, bonne nuit, alors.",
-      "title": "La nuit..."
-    },
+    { "text": "Vous allez déjà vous coucher ? Héhé, bonne nuit, alors.", "title": "La nuit..." },
     {
       "text": "Tant qu'un auteur est en vie, le mieux qu'il puisse espérer, c'est de créer une œuvre qui plaise au public. Après tout, les gens sont le reflet de leur époque. Tout comme il est impossible pour un étudiant de l'Académie d'acquérir vingt ans de savoir dès le début de ses études, un auteur contemporain ne peut espérer écrire un ouvrage qui deviendra instantanément un classique. En d'autres termes, tout ce qu'il peut faire, c'est se contenter d'écrire sur des sujets qu'il trouve intéressants. Quoi qu'il en soit, ce n'est pas moi qui me charge de l'écriture, je ne ressens donc aucune pression à cet égard.",
       "title": "À propos de Nicole - Œuvres populaires"
@@ -3120,10 +2886,7 @@
       "text": "L'humanité est une espèce si fascinante et si brillante. Renoncer à mes ailes n'était pas un déshonneur, mais l'occasion de faire partie de quelque chose de concret. Sacrifier ma voix ne m'a pas réduite au silence, mais m'a donné la force d'écouter avant de juger. Un potentiel divin réside en chaque être humain, et chaque jour que je passe parmi vous est plus fascinant que le précédent.",
       "title": "Connaître Nicole (5)"
     },
-    {
-      "text": "N'est-ce pas... évident ?",
-      "title": "Les loisirs de Nicole..."
-    },
+    { "text": "N'est-ce pas... évident ?", "title": "Les loisirs de Nicole..." },
     {
       "text": "À ce stade, tous mes amis les plus proches savent que je suis une vraie pipelette. Est-ce que ça veut dire que je n'ai plus besoin de faire semblant ? Et si ça agaçait les gens, et que plus personne ne voulait m'adresser la parole...? Hum, en plus, Klee n'est pas encore assez grande. Je crois que je vais devoir continuer à jouer les anges distingués encore un peu.",
       "title": "Les problèmes de Nicole..."
@@ -3136,18 +2899,9 @@
       "text": "Hm... C'est une question difficile. Tant que c'est bien cuisiné, je mange un peu de tout.",
       "title": "Plats détestés..."
     },
-    {
-      "text": "Mmh! C'est... absolument délicieux !",
-      "title": "Cadeau reçu (1)"
-    },
-    {
-      "text": "Comme c'est gentil ! Je vois que vous y avez mis tout votre cœur.",
-      "title": "Cadeau reçu (2)"
-    },
-    {
-      "text": "Q—Quel... arôme curieux. Désolée, je ne peux vraiment pas...",
-      "title": "Cadeau reçu (3)"
-    },
+    { "text": "Mmh! C'est... absolument délicieux !", "title": "Cadeau reçu (1)" },
+    { "text": "Comme c'est gentil ! Je vois que vous y avez mis tout votre cœur.", "title": "Cadeau reçu (2)" },
+    { "text": "Q—Quel... arôme curieux. Désolée, je ne peux vraiment pas...", "title": "Cadeau reçu (3)" },
     {
       "text": "Joyeux anniversaire ! J'ai caché votre cadeau d'anniversaire dans un coffre et je vous ai préparé toute une série d'énigmes à résoudre. Allez, je vais vous guider !",
       "title": "Anniversaire..."
@@ -3174,10 +2928,7 @@
       "text": "... Merci pour tout votre soutien. Vous voulez un autographe, c'est ça ? Qu'est-ce que vous voulez que je dessine à côté ? Une plume, ça vous dit ? Oh, vous n'êtes pas {M#l'un}{F#l'une} de mes fans ? Je crois que j'ai mal compris. Bon, je vais recommencer depuis le début, alors. Je m'appelle Odette, je suis ballerine au sein de la Troupe Korolevskiy... Eh bien, merci quand même pour tout votre soutien.",
       "title": "Première rencontre..."
     },
-    {
-      "text": "Bon, si c'est tout, je vais aller répéter.",
-      "title": "Bavardage - Occupée"
-    },
+    { "text": "Bon, si c'est tout, je vais aller répéter.", "title": "Bavardage - Occupée" },
     {
       "text": "Si une réponse simple suffit, pourquoi s'embêter à en fournir une plus longue ?",
       "title": "Bavardage - Faire simple"
@@ -3198,18 +2949,12 @@
       "text": "La neige à Snezhnaya est toujours glaciale, et elle ne semble jamais vouloir s'arrêter.",
       "title": "Quand il neige..."
     },
-    {
-      "text": "Mes cheveux... Je les arrangerai plus tard.",
-      "title": "Le vent souffle fort..."
-    },
+    { "text": "Mes cheveux... Je les arrangerai plus tard.", "title": "Le vent souffle fort..." },
     {
       "text": "... Au moins, il n'y aura pas de rencontre avec le public dans un endroit pareil.",
       "title": "Dans le désert..."
     },
-    {
-      "text": "Je suis échauffée et prête à y aller.",
-      "title": "Au réveil..."
-    },
+    { "text": "Je suis échauffée et prête à y aller.", "title": "Au réveil..." },
     {
       "text": "Je ne suis pas du genre à faire la sieste. L'heure de midi n'est pas non plus propice à l'entraînement, alors je passe généralement ce moment-là à relire les scripts de nos spectacles de danse. Hmm ? Ces lettres ? Elles viennent de mes fans. Vodyanitsa me les a pratiquement mises de force dans les mains. Elle veut que je les lise, pour une fois.",
       "title": "À l'heure du déjeuner..."
@@ -3342,22 +3087,13 @@
       "text": "C'est juste un plat ? On dirait plutôt... de quoi manger pour toute une journée.",
       "title": "Cadeau reçu (2)"
     },
-    {
-      "text": "Ah, non merci. Je fais attention à ce que je mange.",
-      "title": "Cadeau reçu (3)"
-    },
+    { "text": "Ah, non merci. Je fais attention à ce que je mange.", "title": "Cadeau reçu (3)" },
     {
       "text": "Joyeux anniversaire ! Je réfléchissais à ce que je pourrais vous offrir... D'habitude, on m'offre des fleurs, des chaussures de danse ou des boîtes à musique, mais je doute que ce soit ce que vous avez en tête. Et si vous faisiez simplement... un vœu, ici et maintenant ? De préférence, quelque chose que je puisse exaucer, bien sûr...",
       "title": "Anniversaire..."
     },
-    {
-      "text": "Hmm, ce n'est pas encore ça... Je dois m'entraîner encore plus dur.",
-      "title": "Affinité faible"
-    },
-    {
-      "text": "Hmm, mes mouvements sont plus précis. Je dois maintenir cette intensité.",
-      "title": "Affinité moyenne"
-    },
+    { "text": "Hmm, ce n'est pas encore ça... Je dois m'entraîner encore plus dur.", "title": "Affinité faible" },
+    { "text": "Hmm, mes mouvements sont plus précis. Je dois maintenir cette intensité.", "title": "Affinité moyenne" },
     {
       "text": "Mes fouettés sont parfaits maintenant. Mais ce n'est pas le moment de relâcher mes efforts.",
       "title": "Affinité élevée"
@@ -3392,10 +3128,7 @@
       "text": "Trembler est une réaction physiologique normale face aux bruits soudains. Ça n'a rien à voir avec la peur.",
       "title": "Quand le tonnerre gronde..."
     },
-    {
-      "text": "Je n'ai pas froid. Pas besoin de manteau.",
-      "title": "Quand il neige..."
-    },
+    { "text": "Je n'ai pas froid. Pas besoin de manteau.", "title": "Quand il neige..." },
     {
       "text": "Le soleil ne coûte rien, et pourtant, combien de gens peuvent dire qu'ils apprécient sa chaleur à sa juste valeur ?",
       "title": "Il fait bon dehors..."
@@ -3548,14 +3281,8 @@
       "text": "J'ai toujours pensé qu'ils avaient utilisé toutes sortes d'astuces pour rendre les photos de l'« Encyclopédie gastronomique » parfaites. Je ne savais pas qu'un plat pouvait réellement ressembler à ça dans la vraie vie !",
       "title": "Cadeau reçu (1)"
     },
-    {
-      "text": "Hmm... Pas mal, mais il y a encore des progrès à faire.",
-      "title": "Cadeau reçu (2)"
-    },
-    {
-      "text": "Allez, avoue ! Est-ce que cette sorcière t'a jeté un sort ?",
-      "title": "Cadeau reçu (3)"
-    },
+    { "text": "Hmm... Pas mal, mais il y a encore des progrès à faire.", "title": "Cadeau reçu (2)" },
+    { "text": "Allez, avoue ! Est-ce que cette sorcière t'a jeté un sort ?", "title": "Cadeau reçu (3)" },
     {
       "text": "Joyeux anniversaire ! Ne fais pas cette tête, ce n'est pas comme si c'était difficile de trouver la date d'anniversaire des gens. Par contre, il y a une information cruciale que je n'ai pas réussi à obtenir... Ton vœu d'anniversaire !\nHein ? Le dire à voix haute empêcherait ce vœu de se réaliser ? Je ne suis pas d'accord. Ça rend juste les choses plus difficiles pour les gens comme moi qui veulent aider à le réaliser. Alors, inutile de tourner autour du pot. Qu'est-ce que tu souhaites ? Tu penses peut-être que je ne peux pas faire grand-chose, mais j'ai économisé pas mal d'argent de poche. Et puis, tu dis toujours que je suis intelligente, alors je suis sûre que je peux trouver un moyen de t'aider !\nÀ moins que ce soit quelque chose comme « acheter une maison en plein centre de Mondstadt sans emprunt immobilier ». Mais tu ne souhaiterais jamais quelque chose d'aussi déraisonnable... Pas vrai ?",
       "title": "Anniversaire..."
@@ -3594,22 +3321,10 @@
       "text": "J'ai encore été convoquée au Palais zapolyarny ? Pfff... Franchement, à quoi bon toutes ces réunions interminables ?!",
       "title": "Bavardage - Réunions"
     },
-    {
-      "text": "... Quelle plaie.",
-      "title": "Quand il pleut..."
-    },
-    {
-      "text": "Mes fleurs adorent ce genre de temps.",
-      "title": "Après la pluie..."
-    },
-    {
-      "text": "Systèmes de défense... Mmhmm, fonctionnement normal.",
-      "title": "Quand le tonnerre gronde..."
-    },
-    {
-      "text": "Ugh, revoilà les demoiselles de neige...",
-      "title": "Quand il neige..."
-    },
+    { "text": "... Quelle plaie.", "title": "Quand il pleut..." },
+    { "text": "Mes fleurs adorent ce genre de temps.", "title": "Après la pluie..." },
+    { "text": "Systèmes de défense... Mmhmm, fonctionnement normal.", "title": "Quand le tonnerre gronde..." },
+    { "text": "Ugh, revoilà les demoiselles de neige...", "title": "Quand il neige..." },
     {
       "text": "Le temps idéal pour déguster une part de gâteau et un café bien serré tout en se perdant dans un bon livre.",
       "title": "Il fait bon dehors..."
@@ -3762,30 +3477,15 @@
       "text": "Oh ? Pas mal du tout. Je vais devoir vous rendre la pareille la prochaine fois qu'on se retrouvera autour d'un thé.",
       "title": "Cadeau reçu (2)"
     },
-    {
-      "text": "Fagio, j'ai quelque chose à te faire nettoyer.",
-      "title": "Cadeau reçu (3)"
-    },
+    { "text": "Fagio, j'ai quelque chose à te faire nettoyer.", "title": "Cadeau reçu (3)" },
     {
       "text": "Hmph. Tenez, c'est pour vous. Je n'ai pas l'habitude d'offrir ce genre de chose, mais aujourd'hui, c'est un jour spécial, car c'est celui de votre naissance. J'ai invité Arlecchino et Columbina, ainsi que quelques amis communs. J'ai même préparé un gâteau spécial pour l'occasion... alors vous feriez bien de vous en réjouir.",
       "title": "Anniversaire..."
     },
-    {
-      "text": "Décodage en cours...",
-      "title": "Affinité faible"
-    },
-    {
-      "text": "Saisie des variables...",
-      "title": "Affinité moyenne"
-    },
-    {
-      "text": "Progression fluide...",
-      "title": "Affinité élevée"
-    },
-    {
-      "text": "Déconstruire l'ordre même des choses. Alors, ça vous impressionne ? Hahaha...",
-      "title": "Affinité max"
-    }
+    { "text": "Décodage en cours...", "title": "Affinité faible" },
+    { "text": "Saisie des variables...", "title": "Affinité moyenne" },
+    { "text": "Progression fluide...", "title": "Affinité élevée" },
+    { "text": "Déconstruire l'ordre même des choses. Alors, ça vous impressionne ? Hahaha...", "title": "Affinité max" }
   ],
   "Skirk": [
     {
@@ -3796,18 +3496,9 @@
       "text": "L'Abîme est comme l'ombre du monde. Il est toujours là et ne disparaîtra pas.",
       "title": "Bavardage - Abîme"
     },
-    {
-      "text": "D'où venons-nous et où allons-nous ?",
-      "title": "Bavardage - Méditation"
-    },
-    {
-      "text": "Toutes les choses ont une fin, même le temps lui-même.",
-      "title": "Bavardage - Destination"
-    },
-    {
-      "text": "J'aime la pluie.",
-      "title": "Quand il pleut..."
-    },
+    { "text": "D'où venons-nous et où allons-nous ?", "title": "Bavardage - Méditation" },
+    { "text": "Toutes les choses ont une fin, même le temps lui-même.", "title": "Bavardage - Destination" },
+    { "text": "J'aime la pluie.", "title": "Quand il pleut..." },
     {
       "text": "Aussi redoutable que soit la foudre, sa colère se limite au royaume sous les nuages. Les cieux, eux, restent clairs.",
       "title": "Quand le tonnerre gronde..."
@@ -3816,10 +3507,7 @@
       "text": "On dit qu'au zéro absolu, tout s'immobilise... Comparé à cela, ce n'est rien du tout.",
       "title": "Quand il neige..."
     },
-    {
-      "text": "Le vent emporte tout ce qui obstrue notre vue.",
-      "title": "Le vent souffle fort..."
-    },
+    { "text": "Le vent emporte tout ce qui obstrue notre vue.", "title": "Le vent souffle fort..." },
     {
       "text": "Vous avez bien dormi ? Vous avez l'air en pleine forme. Préparons-nous à partir.",
       "title": "Au réveil..."
@@ -3832,10 +3520,7 @@
       "text": "Oh... C'est déjà le soir. Le temps passe si vite dans le monde extérieur qu'il est d'autant plus important de le chérir.",
       "title": "Le soir..."
     },
-    {
-      "text": "Allez vous reposer. Je vais continuer à m'entraîner encore un peu à l'épée.",
-      "title": "La nuit..."
-    },
+    { "text": "Allez vous reposer. Je vais continuer à m'entraîner encore un peu à l'épée.", "title": "La nuit..." },
     {
       "text": "J'ai acheté de vieux livres de Liyue récemment. Un passage de l'un d'entre eux m'a particulièrement marquée : « Le sage utilise son esprit comme un miroir : il ne saisit pas et n'attire pas, il reçoit tout et ne garde rien. C'est ainsi qu'il triomphe de toutes choses et qu'elles ne peuvent lui faire aucun mal. »\nC'est un état d'esprit très éclairé. Au début, j'ai pensé qu'il avait été écrit par un maître en arts martiaux renommé. Mais après avoir continué à lire, il s'est avéré qu'il s'agissait d'un voyageur ordinaire. Les gens me surprennent parfois par ce dont ils sont capables. Je suppose que c'est de ça qu'il s'agit quand on parle de « forces cachées ».",
       "title": "À propos de Skirk - Lecture"
@@ -3936,14 +3621,8 @@
       "text": "Les aliments sont plus faciles à digérer lorsqu'ils ont bon goût. Mais même si ce n'est pas le cas, ils restent comestibles. Il ne faut rien gaspiller.",
       "title": "Plats détestés..."
     },
-    {
-      "text": "Pas mal.",
-      "title": "Cadeau reçu (1)"
-    },
-    {
-      "text": "C'est passable.",
-      "title": "Cadeau reçu (2)"
-    },
+    { "text": "Pas mal.", "title": "Cadeau reçu (1)" },
+    { "text": "C'est passable.", "title": "Cadeau reçu (2)" },
     {
       "text": "Quel gaspillage d'ingrédients... C'est moi qui cuisinerai la prochaine fois.",
       "title": "Cadeau reçu (3)"
@@ -3952,14 +3631,8 @@
       "text": "Joyeux anniversaire. Je sais que certaines personnes aiment organiser une grande fête, tandis que d'autres préfèrent une célébration plus calme. Je ne sais pas à quelle catégorie vous appartenez. Mais pour moi, les anniversaires sont l'occasion de réfléchir à l'année écoulée. Parfois en pensant à la fierté des progrès accomplis, parfois en éprouvant un profond regret.\n... Il est sans doute préférable de ne pas donner autant de sens aux anniversaires. Chaque endroit a ses propres festivités pour célébrer la terre, les ancêtres, l'amitié... Mais votre anniversaire est le seul jour de l'année qui vous est destiné. C'est bon, j'ai terminé mon discours. Une fois de plus, je vous souhaite un joyeux anniversaire. J'espère que vous deviendrez la personne que vous souhaitez être.",
       "title": "Anniversaire..."
     },
-    {
-      "text": "Euh... C'est tout ?",
-      "title": "Affinité faible"
-    },
-    {
-      "text": "Il y a du progrès, mais ce n'est toujours pas suffisant pour moi.",
-      "title": "Affinité moyenne"
-    },
+    { "text": "Euh... C'est tout ?", "title": "Affinité faible" },
+    { "text": "Il y a du progrès, mais ce n'est toujours pas suffisant pour moi.", "title": "Affinité moyenne" },
     {
       "text": "La force... Il fut un temps où je ne la possédais pas et où je ne la désirais pas non plus. Mais maintenant qu'elle est dans le creux de ma main, je ne la lâcherai plus.",
       "title": "Affinité élevée"
@@ -4160,10 +3833,7 @@
       "text": "Je me permets de me présenter à nouveau, même si tu dois probablement en avoir assez de m'entendre me répéter. Je m'appelle Varka, Grand Maître de l'Ordre de Favonius, également connu en tant que Chevalier de Borée de Mondstadt. Je suis ici pour honorer le serment de Favonius et je jure sur mon épée que nul ne tombera tant que je serai debout.",
       "title": "Première rencontre..."
     },
-    {
-      "text": "J'aime bien boire à l'occasion... et à toutes les occasions ! Haha !",
-      "title": "Bavardage - Boissons"
-    },
+    { "text": "J'aime bien boire à l'occasion... et à toutes les occasions ! Haha !", "title": "Bavardage - Boissons" },
     {
       "text": "Les armes doivent être entretenues régulièrement. Prends-en bien soin, et elles te rendront la pareille quand tu en auras le plus besoin.",
       "title": "Bavardage - Armes"
@@ -4172,10 +3842,7 @@
       "text": "*soupir* Ça fait du bien de sortir un peu de mon bureau. Bon, où est-ce que je pourrais bien faire une petite sieste ?",
       "title": "Bavardage - Repos"
     },
-    {
-      "text": "La pluie s'est arrêtée. En route.",
-      "title": "Après la pluie..."
-    },
+    { "text": "La pluie s'est arrêtée. En route.", "title": "Après la pluie..." },
     {
       "text": "Voir la neige tomber me rappelle certaines destinations de mes expéditions passées...",
       "title": "Quand il neige..."
@@ -4426,14 +4093,8 @@
       "text": "Ah... Comme c'est agréable. Les vila adorent profiter d'une bonne brise.",
       "title": "Quand le vent souffle..."
     },
-    {
-      "text": "Je me demandais... Quand retournons-nous à Snezhnaya ?",
-      "title": "Dans le désert..."
-    },
-    {
-      "text": "C'est une nouvelle journée ! Bonjour, Snezhnograd !",
-      "title": "Au réveil..."
-    },
+    { "text": "Je me demandais... Quand retournons-nous à Snezhnaya ?", "title": "Dans le désert..." },
+    { "text": "C'est une nouvelle journée ! Bonjour, Snezhnograd !", "title": "Au réveil..." },
     {
       "text": "Direction le Restaurant Podvorye ! C'est moi qui invite, bien sûr. Comme d'habitude !",
       "title": "À l'heure du déjeuner..."
@@ -4612,22 +4273,13 @@
       "text": "Pfiou... Ça fait trop longtemps que je suis sur la terre ferme, ma peau commence à se dessécher. J'ai vraiment besoin de passer un peu de temps sous l'eau.",
       "title": "Bavardage - Passer le temps"
     },
-    {
-      "text": "Ah, quelle belle journée. Parfaite pour se détendre sous l'eau.",
-      "title": "Quand il pleut..."
-    },
-    {
-      "text": "Oh non, où est passée la pluie ? Quel dommage...",
-      "title": "Après la pluie..."
-    },
+    { "text": "Ah, quelle belle journée. Parfaite pour se détendre sous l'eau.", "title": "Quand il pleut..." },
+    { "text": "Oh non, où est passée la pluie ? Quel dommage...", "title": "Après la pluie..." },
     {
       "text": "Une immense étendue blanche. Hmm, au moins, c'est une esthétique épurée.",
       "title": "Quand il neige..."
     },
-    {
-      "text": "Ugh, il fait tellement chaud et sec... Ramenez-moi à l'eau...",
-      "title": "Dans le désert..."
-    },
+    { "text": "Ugh, il fait tellement chaud et sec... Ramenez-moi à l'eau...", "title": "Dans le désert..." },
     {
       "text": "Bonjour. Je viens de terminer mes échauffements vocaux. Vous m'avez entendue ? Oui, ça ne m'étonne pas. Ma voix porte vraiment loin.",
       "title": "Au réveil..."
@@ -4768,22 +4420,10 @@
       "text": "Joyeux anniversaire ! J'ai mis votre cadeau de côté. Vous pourrez l'ouvrir plus tard. Ce ne sont que quelques petits bibelots, des jouets et autres bricoles... Mais bon, ce n'est pas ça l'essentiel. Vous êtes libre maintenant, n'est-ce pas ? Dans ce cas, venez avec moi ! Allons dans ma chambre d'écho. Il y a quelques jours, j'ai trouvé quelqu'un pour m'acheter une Scène de clash dansant de Natlan, ainsi qu'une ribambelle d'instruments bizarres et merveilleux. Je prépare le meilleur événement musical que Snezhnaya ait jamais connu, et devinez qui est la première personne à recevoir une invitation ? Exactement, c'est vous ! Allez, chantons toute la nuit !",
       "title": "Anniversaire..."
     },
-    {
-      "text": "Ahem, ahem... Voilà. Ça sonne bien.",
-      "title": "Affinité faible"
-    },
-    {
-      "text": "Je crois que j'ai réussi à atteindre une note encore plus aiguë.",
-      "title": "Affinité moyenne"
-    },
-    {
-      "text": "Ah, ma voix est plus forte que jamais.",
-      "title": "Affinité élevée"
-    },
-    {
-      "text": "Youhou ! On va chanter toute la nuit !",
-      "title": "Affinité max"
-    }
+    { "text": "Ahem, ahem... Voilà. Ça sonne bien.", "title": "Affinité faible" },
+    { "text": "Je crois que j'ai réussi à atteindre une note encore plus aiguë.", "title": "Affinité moyenne" },
+    { "text": "Ah, ma voix est plus forte que jamais.", "title": "Affinité élevée" },
+    { "text": "Youhou ! On va chanter toute la nuit !", "title": "Affinité max" }
   ],
   "Zibai": [
     {
@@ -4802,26 +4442,11 @@
       "text": "Les arcanes d'Adepte sont des plus miraculeux. Mais si l'on ne cultive pas d'abord son esprit avant de cultiver ces pouvoirs, toutes leurs prouesses seront pareilles au reflet de la lune sur l'eau, se brisant au moindre contact.",
       "title": "Bavardage - Arcane d'Adepte"
     },
-    {
-      "text": "La lune est à peine visible...",
-      "title": "Quand il pleut..."
-    },
-    {
-      "text": "Écoute la fureur tonnante des cieux.",
-      "title": "Quand le tonnerre gronde..."
-    },
-    {
-      "text": "Au moins, il ne fait pas aussi froid que sur la lune.",
-      "title": "Quand il neige..."
-    },
-    {
-      "text": "... Traverser le désert est aussi éprouvant que l'on peut l'imaginer.",
-      "title": "Dans le désert..."
-    },
-    {
-      "text": "Bonjour. As-tu bien dormi cette nuit ?",
-      "title": "Au réveil..."
-    },
+    { "text": "La lune est à peine visible...", "title": "Quand il pleut..." },
+    { "text": "Écoute la fureur tonnante des cieux.", "title": "Quand le tonnerre gronde..." },
+    { "text": "Au moins, il ne fait pas aussi froid que sur la lune.", "title": "Quand il neige..." },
+    { "text": "... Traverser le désert est aussi éprouvant que l'on peut l'imaginer.", "title": "Dans le désert..." },
+    { "text": "Bonjour. As-tu bien dormi cette nuit ?", "title": "Au réveil..." },
     {
       "text": "Le soleil est au zénith. Si la fatigue se fait ressentir, tu devrais te reposer.",
       "title": "À l'heure du déjeuner..."
@@ -4946,33 +4571,15 @@
       "text": "Si j'avais pu goûter de tels délices durant mon exil sur la lune, peut-être y serais-je restée un peu plus longtemps. Héhé, je plaisante.",
       "title": "Cadeau reçu (1)"
     },
-    {
-      "text": "C'est délicieux, je savourerai cela.",
-      "title": "Cadeau reçu (2)"
-    },
-    {
-      "text": "Ce plat a un goût... plutôt particulier. Innovant, même.",
-      "title": "Cadeau reçu (3)"
-    },
+    { "text": "C'est délicieux, je savourerai cela.", "title": "Cadeau reçu (2)" },
+    { "text": "Ce plat a un goût... plutôt particulier. Innovant, même.", "title": "Cadeau reçu (3)" },
     {
       "text": "Aujourd'hui, c'est ton anniversaire ? Alors, il faut fêter ça ! Je me souviens que la tradition veut que les personnes âgées mangent des nouilles de longévité... Héhé, et même si tu as l'air jeune, je soupçonne que si l'on comptait les années depuis ta naissance, ton âge serait plus élevé que la plupart des habitants du Port de Liyue. Dans ce cas, te préparer un bol de nouilles de longévité ne serait pas déplacé... Hmm ? Bien sûr que je sais les faire. J'ai peut-être rejoint les rangs des divinités en mon temps, mais je ne suis pas née avec une cuillère en argent dans la bouche... *soupir* Franchement, si je n'ai plus beaucoup d'appétit ces derniers temps, c'est sans doute à cause de tout ce temps passé dans les cieux sans pouvoir cuisiner... Mais je m'égare. Manger est la deuxième chose la plus importante au monde, alors nous devons absolument t'offrir un bon bol de nouilles de longévité avant la fin de la journée.",
       "title": "Anniversaire..."
     },
-    {
-      "text": "Je vois.",
-      "title": "Affinité faible"
-    },
-    {
-      "text": "La lune croît et décroît...",
-      "title": "Affinité moyenne"
-    },
-    {
-      "text": "L'esprit retourne à sa demeure.",
-      "title": "Affinité élevée"
-    },
-    {
-      "text": "En tant qu'Adepte, je dois accomplir mon devoir.",
-      "title": "Affinité max"
-    }
+    { "text": "Je vois.", "title": "Affinité faible" },
+    { "text": "La lune croît et décroît...", "title": "Affinité moyenne" },
+    { "text": "L'esprit retourne à sa demeure.", "title": "Affinité élevée" },
+    { "text": "En tant qu'Adepte, je dois accomplir mon devoir.", "title": "Affinité max" }
   ]
 }

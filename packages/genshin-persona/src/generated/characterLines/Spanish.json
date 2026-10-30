@@ -8,10 +8,7 @@
       "text": "Hace demasiado tiempo que no como dulces. Mi cerebro está a punto de pararse, como una máquina oxidada... ¡Ya está! Esta noche voy a cenar cinco krumkakes enteros, y nada me va a detener. ¡Ni siquiera el modo superenfado de Ineffa!",
       "title": "Charla - Planes"
     },
-    {
-      "text": "¡Aaah! Qué dolor de muelas... ¿Por quééé? ¡Ineffa, ayúdame! *Solloza*.",
-      "title": "Charla - Caries"
-    },
+    { "text": "¡Aaah! Qué dolor de muelas... ¿Por quééé? ¡Ineffa, ayúdame! *Solloza*.", "title": "Charla - Caries" },
     {
       "text": "No te preocupes, le he encargado a Ineffa todo mi trabajo de hoy, ¡así que podemos ir a jugar con el Puñopato!",
       "title": "Charla - Juego"
@@ -20,10 +17,7 @@
       "text": "¡Achís! *Snif*... Mis zapatos y calcetines están empapados. Quiero irme a casa...",
       "title": "Cuando llueve..."
     },
-    {
-      "text": "¡Oh, ha dejado de llover! Vamos de viaje, ¡y llevémonos a Ineffa!",
-      "title": "Tras la lluvia..."
-    },
+    { "text": "¡Oh, ha dejado de llover! Vamos de viaje, ¡y llevémonos a Ineffa!", "title": "Tras la lluvia..." },
     {
       "text": "¡Guau, está nevando! Toma, te regalo mi Máquina Buabua para hacer bolas de nieve. Se pone a llorar cuando haces una bola de nieve con ella. Divertido, ¿verdad? ¿Yo? Oh, yo usaré esta Máquina Jiji de bolas de nieve. Bueno, ¡vamos! ¡Hagamos una pelea de bolas de nieve!",
       "title": "Cuando nieva..."
@@ -206,30 +200,15 @@
       "text": "Este dinero va para casa, este otro se lo doy a los de Rókot para comprar medicamentos, y el Mora para el mantenimiento del arma... Me pregunto qué banda de malhechores tendrá la mala suerte de toparse conmigo esta vez...",
       "title": "Charla - Hacer las cuentas"
     },
-    {
-      "text": "Se me va a empapar la capucha... ¡Tugarin, deja de sacudirte!",
-      "title": "Cuando llueve..."
-    },
-    {
-      "text": "Es hora de que la presa salga arrastrándose de su escondite.",
-      "title": "Tras la lluvia..."
-    },
+    { "text": "Se me va a empapar la capucha... ¡Tugarin, deja de sacudirte!", "title": "Cuando llueve..." },
+    { "text": "Es hora de que la presa salga arrastrándose de su escondite.", "title": "Tras la lluvia..." },
     {
       "text": "Es el tiempo perfecto para una emboscada, si tienes a alguien en mente... Puedo aprovechar el ruido de los truenos para disimular los disparos.",
       "title": "Cuando truena..."
     },
-    {
-      "text": "*Tch*, va a ser imposible seguir las huellas.",
-      "title": "Cuando nieva..."
-    },
-    {
-      "text": "Con este tiempo no se puede andar con capucha...",
-      "title": "Hace mucho viento..."
-    },
-    {
-      "text": "Ojalá yo también pudiera mudar el pelaje...",
-      "title": "En el desierto..."
-    },
+    { "text": "*Tch*, va a ser imposible seguir las huellas.", "title": "Cuando nieva..." },
+    { "text": "Con este tiempo no se puede andar con capucha...", "title": "Hace mucho viento..." },
+    { "text": "Ojalá yo también pudiera mudar el pelaje...", "title": "En el desierto..." },
     {
       "text": "¿Oyes eso? Son los pájaros cantando en el bosque, como lo hacen todas las mañanas. ¿Por qué no vamos a cazar un par?",
       "title": "Buenos días..."
@@ -238,10 +217,7 @@
       "text": "Normalmente almuerzo al aire libre, pero no es algo que recomiende precisamente.",
       "title": "Buenas tardes..."
     },
-    {
-      "text": "Algunas de las presas más raras solo salen por la noche.",
-      "title": "Buenas noches... (I)"
-    },
+    { "text": "Algunas de las presas más raras solo salen por la noche.", "title": "Buenas noches... (I)" },
     {
       "text": "Ve y descansa. Yo todavía tengo cosas que hacer y necesito el amparo de la noche.",
       "title": "Buenas noches... (II)"
@@ -346,10 +322,7 @@
       "text": "Feliz cumpleaños. Es hoy, ¿no? Sabes, de donde yo vengo, las celebraciones de cumpleaños suelen ser un lujo que no podemos permitirnos. Buena suerte tratando de conseguir suficiente harina y crema para un pastel, o encontrando a alguien que venda algo más que lo estrictamente necesario como regalo. Pero nunca le voy a reprochar a un niño que quiera celebrar su cumpleaños. Así es como debe ser, y espero que algún día ningún niño en Snezhnaya tenga que renunciar a eso. Por eso, decidí tomarme tu cumpleaños muy en serio y pensé mucho en el regalo y la tarjeta que te compré. A veces, uno tiene que ser el cambio que quiere ver en el mundo, ¿no?",
       "title": "Cumpleaños..."
     },
-    {
-      "text": "Genial. Siento que mi puntería ha mejorado.",
-      "title": "El sentimiento de Ascensión - Introducción"
-    },
+    { "text": "Genial. Siento que mi puntería ha mejorado.", "title": "El sentimiento de Ascensión - Introducción" },
     {
       "text": "Tugarin también está mejorando. Parece que estamos más en sintonía.",
       "title": "El sentimiento de Ascensión - Desarrollo"
@@ -384,10 +357,7 @@
       "text": "Refugiarme de la lluvia y oír cómo cae y purifica la tierra me transmite una gran seguridad, como si estuviera en mi “hogar”.",
       "title": "Cuando llueve..."
     },
-    {
-      "text": "El cielo se ha despejado. Esta noche deberíamos poder ver la luna.",
-      "title": "Tras la lluvia..."
-    },
+    { "text": "El cielo se ha despejado. Esta noche deberíamos poder ver la luna.", "title": "Tras la lluvia..." },
     {
       "text": "Ah... Sin un relámpago que nos avise... el sonido del trueno es ciertamente alarmante...",
       "title": "Cuando truena..."
@@ -460,10 +430,7 @@
       "text": "Ah, ¿ese Dragón del Agua que sirve de juez supremo en Fontaine? Humm... Otro dragón que encarcela a la gente... No estoy segura de querer conocerlo.",
       "title": "Sobre Neuvillette..."
     },
-    {
-      "text": "Si me encuentro con ellos durante mi viaje, los saludaré.",
-      "title": "Sobre Los Siete..."
-    },
+    { "text": "Si me encuentro con ellos durante mi viaje, los saludaré.", "title": "Sobre Los Siete..." },
     {
       "text": "La primera vez que canté en los jardines del Palacio Zapoliarni, la Zarina justo pasaba por allí. Se detuvo, completamente inmóvil y en silencio, como una estatua sin expresión alguna en el rostro. Por un momento, pensé que quería decirme algo, pero nunca lo hizo.\nHa sellado sus emociones bajo gruesas capas de hielo. El mundo exterior solo atisba una parte de quien es... la de ella como Zarina. Si mis respuestas estaban en la luna, las suyas yacen enterradas bajo la nieve y el hielo.",
       "title": "Sobre la Zarina..."
@@ -552,10 +519,7 @@
       "text": "Más, por favor. ¿Eh? Oh, ¿eso era todo? Tendré que acordarme de guardar un poco la próxima vez.",
       "title": "Al recibir un regalo (I)"
     },
-    {
-      "text": "Es bastante agradable. Lo disfrutaré bajo la luz de la luna.",
-      "title": "Al recibir un regalo (II)"
-    },
+    { "text": "Es bastante agradable. Lo disfrutaré bajo la luz de la luna.", "title": "Al recibir un regalo (II)" },
     {
       "text": "Oh... Cuando Sandrone se enfadaba conmigo, también me daba cosas como esta...",
       "title": "Al recibir un regalo (III)"
@@ -564,14 +528,8 @@
       "text": "¿Tu cumpleaños cae en el mismo día todos los años? Vaya, eso es fácil de recordar. La Noche Rezolunar se celebra en diferentes fechas cada vez, así que solo puedo calcular cuándo es mi cumpleaños al percibir la luna. Un cumpleaños es una ocasión llena de felicidad, ¿verdad? Todos se reúnen a bailar mientras la gente prepara deliciosas ofrendas para ti. ¿Cómo? ¿Que los cumpleaños de la gente normal no son así? ¿Regalos, pastel y amigos?... Ah, eso también está bien. Invitemos a tus amigos para celebrarlo. Puedo cantarte una canción, e incluso podríamos pedirle a Maalaus que te pinte un cuadro.",
       "title": "Cumpleaños..."
     },
-    {
-      "text": "Por la Luna Eterna, las mareas se alzarán.",
-      "title": "El sentimiento de Ascensión - Introducción"
-    },
-    {
-      "text": "Por la Luna Escarchada, la noche se iluminará.",
-      "title": "El sentimiento de Ascensión - Desarrollo"
-    },
+    { "text": "Por la Luna Eterna, las mareas se alzarán.", "title": "El sentimiento de Ascensión - Introducción" },
+    { "text": "Por la Luna Escarchada, la noche se iluminará.", "title": "El sentimiento de Ascensión - Desarrollo" },
     {
       "text": "Por la Luna Arcoíris, la oscuridad quedará confinada a las sombras más profundas.",
       "title": "El sentimiento de Ascensión - Nudo"
@@ -594,22 +552,13 @@
       "text": "No tengo nada que hacer. Ojalá encontrarme con alguien que sea un imán para los problemas...",
       "title": "Charla - Aburrimiento"
     },
-    {
-      "text": "¡Vamos a ver qué se cuece!",
-      "title": "Charla - Bullicio"
-    },
-    {
-      "text": "Donde sopla el viento, cae la lluvia. Créeme, es la palabra de Barbatos.",
-      "title": "Cuando llueve..."
-    },
+    { "text": "¡Vamos a ver qué se cuece!", "title": "Charla - Bullicio" },
+    { "text": "Donde sopla el viento, cae la lluvia. Créeme, es la palabra de Barbatos.", "title": "Cuando llueve..." },
     {
       "text": "He oído que esta es la forma en que cierta Arconte comunica su palabra divina. No estoy diciendo que nuestro Arconte sea mejor que los demás, pero... Barbatos tiene mucho más tacto.",
       "title": "Cuando truena..."
     },
-    {
-      "text": "Se ha levantado el viento. Es hora de rezar.",
-      "title": "Cuando hace viento..."
-    },
+    { "text": "Se ha levantado el viento. Es hora de rezar.", "title": "Cuando hace viento..." },
     {
       "text": "Buenos días. Acabo de terminar mi oración matutina. Tuve la suerte de que el Arconte Anemo volvió a responder a mis preguntas. No te preocupes, también he rezado por ti.",
       "title": "Buenos días..."
@@ -768,26 +717,11 @@
       "text": "Todavía tengo mucho que aprender sobre las “interacciones humanas”. Cuando me pongo nervioso, no sé ni dónde poner las manos... pero lo cierto es que me gustaría hacer amigos.",
       "title": "Charla - Incómodo"
     },
-    {
-      "text": "Ay, qué ganas de saltar en los charcos...",
-      "title": "Cuando llueve..."
-    },
-    {
-      "text": "Con este clima, mejor no volar muy alto...",
-      "title": "Cuando truena..."
-    },
-    {
-      "text": "Entonces, ¿durmió “él” en un lugar como este?...",
-      "title": "Cuando nieva..."
-    },
-    {
-      "text": "Es hermoso, como en un cuento de hadas.",
-      "title": "Qué sol hace..."
-    },
-    {
-      "text": "Oh, no. Necesito agua...",
-      "title": "En el desierto..."
-    },
+    { "text": "Ay, qué ganas de saltar en los charcos...", "title": "Cuando llueve..." },
+    { "text": "Con este clima, mejor no volar muy alto...", "title": "Cuando truena..." },
+    { "text": "Entonces, ¿durmió “él” en un lugar como este?...", "title": "Cuando nieva..." },
+    { "text": "Es hermoso, como en un cuento de hadas.", "title": "Qué sol hace..." },
+    { "text": "Oh, no. Necesito agua...", "title": "En el desierto..." },
     {
       "text": "Buenos días. No te preocupes si ladeo mucho la cabeza, es que tengo el cuello un poco rígido. Anoche, un gato se acercó y durmió a solo unos metros de distancia. Normalmente, los animales pequeños se asustan cuando me ven. No quería molestarlo, así que intenté no moverme en toda la noche...",
       "title": "Buenos días..."
@@ -796,10 +730,7 @@
       "text": "La existencia del desayuno-almuerzo significa que tiene que haber también una merienda-cena, ¿no?",
       "title": "Buenas tardes..."
     },
-    {
-      "text": "Me pregunto si se podrán ver las estrellas esta noche...",
-      "title": "Buenas noches... (I)"
-    },
+    { "text": "Me pregunto si se podrán ver las estrellas esta noche...", "title": "Buenas noches... (I)" },
     {
       "text": "No hay nada más relajante que acurrucarse en tu propia cola para dormir plácidamente.",
       "title": "Buenas noches... (II)"
@@ -1184,10 +1115,7 @@
       "text": "Cada copo de nieve que cae es una llamada de Snezhnaya, el lugar del que provengo.",
       "title": "Cuando nieva..."
     },
-    {
-      "text": "“Los vientos se despiertan y las hojas revolotean”...",
-      "title": "Hace mucho viento..."
-    },
+    { "text": "“Los vientos se despiertan y las hojas revolotean”...", "title": "Hace mucho viento..." },
     {
       "text": "Veo una nieve amarilla flotando en el aire... Oh, así que este es ese tal mítico “desierto”.",
       "title": "En el desierto..."
@@ -1300,14 +1228,8 @@
       "text": "Puesto que a estas alturas ya somos buenos conocidos, ¿te importaría si hago un pequeño comentario? La verdad es que, dada mi... situación particular, los alimentos con los que otras personas se deleitan tanto a mí me parecen bastante insípidos. Pero, para que quede claro, sigo disfrutando sobremanera del tiempo que pasamos juntos comiendo.",
       "title": "Comida que menos le gusta..."
     },
-    {
-      "text": "Nunca he dudado de tu talento.",
-      "title": "Al recibir un regalo (I)"
-    },
-    {
-      "text": "Mmm, sí, tiene un sabor delicioso.",
-      "title": "Al recibir un regalo (II)"
-    },
+    { "text": "Nunca he dudado de tu talento.", "title": "Al recibir un regalo (I)" },
+    { "text": "Mmm, sí, tiene un sabor delicioso.", "title": "Al recibir un regalo (II)" },
     {
       "text": "Por el bien de nuestra relación, preferiría no comentar qué opino al respecto.",
       "title": "Al recibir un regalo (III)"
@@ -1338,10 +1260,7 @@
       "text": "Hola, soy Iansán, de la Comunidad de la Feracidad, y soy la entrenadora más conocida de mi tribu. Parece que estás en muy buena forma... ¿también haces ejercicio?",
       "title": "Hola..."
     },
-    {
-      "text": "No hemos alcanzado la meta de hoy. Hagamos otra serie.",
-      "title": "Charla - Levantamiento de pesas"
-    },
+    { "text": "No hemos alcanzado la meta de hoy. Hagamos otra serie.", "title": "Charla - Levantamiento de pesas" },
     {
       "text": "Teniendo en cuenta la cantidad de calorías que he consumido en el transcurso del día, tendré que volver a planificar la cena.",
       "title": "Charla - Planes alimenticios"
@@ -1354,22 +1273,13 @@
       "text": "¡Rápido, busquemos donde resguardarnos! No sería bueno que nos resfriáramos.",
       "title": "Cuando llueve..."
     },
-    {
-      "text": "¡Es hora de tomar el sol! ¡Vamos!",
-      "title": "Tras la lluvia..."
-    },
-    {
-      "text": "Este tiempo es perfecto para entrenar en el exterior.",
-      "title": "Qué sol hace..."
-    },
+    { "text": "¡Es hora de tomar el sol! ¡Vamos!", "title": "Tras la lluvia..." },
+    { "text": "Este tiempo es perfecto para entrenar en el exterior.", "title": "Qué sol hace..." },
     {
       "text": "Ahora que lo pienso, correr contra el viento puede considerarse un entrenamiento de resistencia.",
       "title": "Hace mucho viento..."
     },
-    {
-      "text": "Este lugar no es muy adecuado para entrenar en el exterior...",
-      "title": "En el desierto..."
-    },
+    { "text": "Este lugar no es muy adecuado para entrenar en el exterior...", "title": "En el desierto..." },
     {
       "text": "¡Buenos días! Si quieres entrenar tu fuerza de voluntad, levantarte temprano es una de las mejores formas de hacerlo. Las personas que no pueden levantarse temprano no son capaces de cumplir sus planes. Por cierto, esta hora del día es perfecta para ir a correr, ¿quieres acompañarme?",
       "title": "Buenos días..."
@@ -1532,10 +1442,7 @@
       "text": "Cuando no tengo nada que hacer, me empieza a entrar hambre... Tengo caramelos, fruta y carne seca, ¿quieres un poco?",
       "title": "Charla - Aperitivos"
     },
-    {
-      "text": "¿Has oído ese grito de animal? Humm, a lo mejor me lo he imaginado...",
-      "title": "Charla - Grito"
-    },
+    { "text": "¿Has oído ese grito de animal? Humm, a lo mejor me lo he imaginado...", "title": "Charla - Grito" },
     {
       "text": "Ten cuidado cuando Cacucu se sacuda las plumas, o podría empaparte. Bueno, pensándolo bien, ya estás empapad{F#a}{M#o}, así que da un poco igual.",
       "title": "Cuando llueve..."
@@ -1556,10 +1463,7 @@
       "text": "Buenos días. No es que quiera madrugar, es que si no me levanto de la cama, los pacientes de la clínica empezarán a quejarse de hambre.",
       "title": "Buenos días..."
     },
-    {
-      "text": "Qué coincidencia, justo iba a comer algo, ¿quieres venir conmigo?",
-      "title": "Buenas tardes..."
-    },
+    { "text": "Qué coincidencia, justo iba a comer algo, ¿quieres venir conmigo?", "title": "Buenas tardes..." },
     {
       "text": "Por la noche suelo estar en casa. Así es más fácil encontrarme si hay alguna urgencia, y si no la hay, puedo descansar tranquilamente.",
       "title": "Buenas noches... (I)"
@@ -1684,10 +1588,7 @@
       "text": "¡Feliz cumpleaños! Te deseo salud y juventud eterna.\nAunque no se puede parar el paso del tiempo, siempre puedes conservar una mente joven. Además, el mal humor puede afectar a tu salud, así que, vamos, olvídate de tus preocupaciones por hoy y hagamos algo divertido.\n¿Qué tipo de música te gusta? Puedo tocar algo para ti.",
       "title": "Cumpleaños..."
     },
-    {
-      "text": "¿Esto es como una especie de calentamiento?",
-      "title": "El sentimiento de Ascensión - Introducción"
-    },
+    { "text": "¿Esto es como una especie de calentamiento?", "title": "El sentimiento de Ascensión - Introducción" },
     {
       "text": "Tienes que cuidar de ti mism{F#a}{M#o} antes de poder cuidar de los demás, ¿no crees?",
       "title": "El sentimiento de Ascensión - Desarrollo"
@@ -1718,10 +1619,7 @@
       "text": "No basta con hacer solo lo que se te da bien, ¿sabes? A veces, la única forma de hacerse más fuerte es salir de tu zona de confort.",
       "title": "Charla - Adversidad"
     },
-    {
-      "text": "¡Ha vuelto a salir el sol! Parece que la luz ganó de nuevo.",
-      "title": "Tras la lluvia..."
-    },
+    { "text": "¡Ha vuelto a salir el sol! Parece que la luz ganó de nuevo.", "title": "Tras la lluvia..." },
     {
       "text": "Como siempre dice el viejo: “Ahí están los dioses otra vez”. Esperemos que no nos arrastren a los demás en sus asuntos...",
       "title": "Cuando truena..."
@@ -1734,10 +1632,7 @@
       "text": "El viento está arreciando... Eso nunca es buena señal. Será mejor que acampemos antes de que empeore.",
       "title": "Hace mucho viento..."
     },
-    {
-      "text": "Otro amanecer... Otra noche que dejamos atrás a salvo.",
-      "title": "Buenos días..."
-    },
+    { "text": "Otro amanecer... Otra noche que dejamos atrás a salvo.", "title": "Buenos días..." },
     {
       "text": "Ahora que el sol está en lo alto, debería aprovechar para explorar los alrededores. El problema es que... realmente necesito una siesta.",
       "title": "Buenas tardes..."
@@ -1850,14 +1745,8 @@
       "text": "¡Guau! Esto sí que tiene sabor... En serio, ¿cuál es el ingrediente secreto? ¡Quiero aprender a prepararlo yo mismo!",
       "title": "Al recibir un regalo (I)"
     },
-    {
-      "text": "¡No está mal! Je, ¡espera a que mis camaradas prueben esto!",
-      "title": "Al recibir un regalo (II)"
-    },
-    {
-      "text": "Ejem... Oye, ¡puedo enseñarte otras recetas si quieres!",
-      "title": "Al recibir un regalo (III)"
-    },
+    { "text": "¡No está mal! Je, ¡espera a que mis camaradas prueben esto!", "title": "Al recibir un regalo (II)" },
+    { "text": "Ejem... Oye, ¡puedo enseñarte otras recetas si quieres!", "title": "Al recibir un regalo (III)" },
     {
       "text": "¡Feliz cumpleaños, compañer{F#a}{M#o}! Olvídate de los encargos y las aventuras. ¡Días como este son para los amigos cercanos, para llenarse la barriga y recuperar horas de sueño! Yo haré guardia, así que intenta centrarte en relajarte. Y si por casualidad aparecen invitados no deseados, los ahuyentaré con mi lámpara.",
       "title": "Cumpleaños..."
@@ -1896,10 +1785,7 @@
       "text": "Datos de combate actualizados. Tranquil{F#a}{M#o}, esta vez no haré volar el techo.",
       "title": "Charla - Actualización"
     },
-    {
-      "text": "¿Pueden oxidarse mis articulaciones?",
-      "title": "Cuando llueve..."
-    },
+    { "text": "¿Pueden oxidarse mis articulaciones?", "title": "Cuando llueve..." },
     {
       "text": "Dato a considerar: hay una probabilidad alta de que aparezca un arcoíris. Ya he marcado en el mapa el lugar recomendado para su observación.",
       "title": "Tras la lluvia..."
@@ -2102,14 +1988,8 @@
       "text": "¡Ay! Se me ha metido un copo de nieve por la espalda... ¡Me congelo, me congelo!",
       "title": "Cuando nieva..."
     },
-    {
-      "text": "¡Puaj, puaj! ¡Me ha entrado arena en la boca!",
-      "title": "En el desierto..."
-    },
-    {
-      "text": "Buenos días, ¿has desayunado? ¿Quieres que te lleve a comer algo rico?",
-      "title": "Buenos días..."
-    },
+    { "text": "¡Puaj, puaj! ¡Me ha entrado arena en la boca!", "title": "En el desierto..." },
+    { "text": "Buenos días, ¿has desayunado? ¿Quieres que te lleve a comer algo rico?", "title": "Buenos días..." },
     {
       "text": "Ay, será mejor que vuelva a la tienda a echarme una siesta, qué sueño tengo...",
       "title": "Buenas tardes..."
@@ -2226,10 +2106,7 @@
       "text": "¡Qué delicia! No sabía que cocinabas tan bien. ¡Sírveme un poco más! Jejeje, mejor que lo que cocina la jef... ¡*Ejem*! Eh... ¿has comido ya? Si no, podríamos comer junt{F#a}{M#o}s...",
       "title": "Al recibir un regalo (I)"
     },
-    {
-      "text": "¡Nada mal, jeje! ¡A comer! Así podremos trabajar mejor.",
-      "title": "Al recibir un regalo (II)"
-    },
+    { "text": "¡Nada mal, jeje! ¡A comer! Así podremos trabajar mejor.", "title": "Al recibir un regalo (II)" },
     {
       "text": "Arg... P-puedo terminármelo... No puedo tirar la comida... Jajaja...",
       "title": "Al recibir un regalo (III)"
@@ -2238,18 +2115,9 @@
       "text": "¡Feliz cumpleaños! ¡Toma, este muñeco de trapo es para ti! Acabo de terminar de coserlo. Era la primera vez que probaba esta técnica, ¡así que tardé un montón! Lo he rellenado de hierbas relajantes para que te ayuden a conciliar el sueño, así que colócalo junto a tu almohada y ya verás lo bien que duermes. ¡Y sin pesadillas! ¿Que por qué tengo una venda en la mano? Ah... solo ha sido un pequeño arañazo... de cuando jugaba con Ashru, jajaja... Nada de lo que preocuparse.",
       "title": "Cumpleaños..."
     },
-    {
-      "text": "¿Eh? ¡No está nada mal!",
-      "title": "El sentimiento de Ascensión - Introducción"
-    },
-    {
-      "text": "Me siento más ágil que nunca.",
-      "title": "El sentimiento de Ascensión - Desarrollo"
-    },
-    {
-      "text": "Está bien... ¡Hora de moverse!",
-      "title": "El sentimiento de Ascensión - Nudo"
-    },
+    { "text": "¿Eh? ¡No está nada mal!", "title": "El sentimiento de Ascensión - Introducción" },
+    { "text": "Me siento más ágil que nunca.", "title": "El sentimiento de Ascensión - Desarrollo" },
+    { "text": "Está bien... ¡Hora de moverse!", "title": "El sentimiento de Ascensión - Nudo" },
     {
       "text": "Jeje, me siento lista para un trabajo de los grandes... ¿Qué te parece? ¿Te unes?",
       "title": "El sentimiento de Ascensión - Desenlace"
@@ -2272,14 +2140,8 @@
       "text": "¿Ya has decidido a dónde quieres ir? Si no, busquemos un lugar con hierba en el que descansar un rato.",
       "title": "Charla - Viaje"
     },
-    {
-      "text": "Ah, pronto llegará la estación en la que el bosque está más frondoso...",
-      "title": "Cuando llueve..."
-    },
-    {
-      "text": "Un destello fugaz es más difícil de capturar que la luz de la luna...",
-      "title": "Cuando truena..."
-    },
+    { "text": "Ah, pronto llegará la estación en la que el bosque está más frondoso...", "title": "Cuando llueve..." },
+    { "text": "Un destello fugaz es más difícil de capturar que la luz de la luna...", "title": "Cuando truena..." },
     {
       "text": "He oído que no debes quedarte mirando fijamente un blanco tan puro durante mucho tiempo. ¿Es eso cierto? Porque a mí me encanta...",
       "title": "Cuando nieva..."
@@ -2364,10 +2226,7 @@
       "text": "Nadie le enseña a una diosa recién nacida a vivir en armonía con sus seguidores. Debe haber tenido un pasado muy difícil...\nCon la esperanza de lograr cierta reconciliación, le realicé una petición a la diosa que podría parecer algo irrespetuosa. Ella afirma que prefiere vivir en solitario, pero yo sigo soñando con el día en que Kuutar y los Descendientes Lunaescarcha, la luna y sus seguidores, puedan brindar juntos bajo un mismo cielo.",
       "title": "Sobre Kuutar..."
     },
-    {
-      "text": "Mira la luna. Siempre está ahí arriba, silenciosa.",
-      "title": "Más sobre Lauma (I)"
-    },
+    { "text": "Mira la luna. Siempre está ahí arriba, silenciosa.", "title": "Más sobre Lauma (I)" },
     {
       "text": "En muchos lugares, la luna menguante se considera un presagio de mala suerte.\nPero la gente olvida que las lunas también fueron víctimas del infortunio... Su destrucción no fue un destino que desearan para ellas mismas.",
       "title": "Más sobre Lauma (II)"
@@ -2388,26 +2247,17 @@
       "text": "Me gusta pasar tiempo sola en la oscuridad de la noche, con la única compañía del sonido del viento al mecer las hojas, cuando los animales guardan silencio. Así me encuentro verdaderamente en calma.",
       "title": "Aficiones de Lauma..."
     },
-    {
-      "text": "Me pesa... la cabeza.",
-      "title": "Preocupaciones de Lauma..."
-    },
+    { "text": "Me pesa... la cabeza.", "title": "Preocupaciones de Lauma..." },
     {
       "text": "Me gusta la comida ligera y sencilla, y no tiene nada que ver con mis creencias o mi disciplina.",
       "title": "Comida que más le gusta..."
     },
-    {
-      "text": "La comida demasiado grasienta o seca no va conmigo...",
-      "title": "Comida que menos le gusta..."
-    },
+    { "text": "La comida demasiado grasienta o seca no va conmigo...", "title": "Comida que menos le gusta..." },
     {
       "text": "Qué ingredientes más frescos, debe de haberte costado mucho prepararlo. Se lo llevaré a mis fieles... ¿Cómo? ¿Que es solo para mí?",
       "title": "Al recibir un regalo (I)"
     },
-    {
-      "text": "Gracias por el regalo. ¿Por qué no lo compartimos?",
-      "title": "Al recibir un regalo (II)"
-    },
+    { "text": "Gracias por el regalo. ¿Por qué no lo compartimos?", "title": "Al recibir un regalo (II)" },
     {
       "text": "Debe de haber alguien que lo necesite más que yo. Estaré atenta por si aparece.",
       "title": "Al recibir un regalo (III)"
@@ -2416,18 +2266,9 @@
       "text": "Te entrego esta daga bendita a ti, que eres {F#la predilecta}{M#el predilecto} del fulgor de la luna y los bosques en calma. Una daga no tiene por qué ser un objeto de crueldad, pues también se usan como elementos simbólicos en las ceremonias de rezo.\nPor supuesto, tú eres libre de usarla como prefieras.",
       "title": "Cumpleaños..."
     },
-    {
-      "text": "No anhelo recorrer atajo alguno...",
-      "title": "El sentimiento de Ascensión - Introducción"
-    },
-    {
-      "text": "No ansío el poder...",
-      "title": "El sentimiento de Ascensión - Desarrollo"
-    },
-    {
-      "text": "Si todo es por encontrar la verdad...",
-      "title": "El sentimiento de Ascensión - Nudo"
-    },
+    { "text": "No anhelo recorrer atajo alguno...", "title": "El sentimiento de Ascensión - Introducción" },
+    { "text": "No ansío el poder...", "title": "El sentimiento de Ascensión - Desarrollo" },
+    { "text": "Si todo es por encontrar la verdad...", "title": "El sentimiento de Ascensión - Nudo" },
     {
       "text": "Estoy dispuesta a ofrecer mi sangre y mis lágrimas como buscadora de la verdad.",
       "title": "El sentimiento de Ascensión - Desenlace"
@@ -2450,18 +2291,12 @@
       "text": "¿Quieres echar un vistazo a mi archivo? ¡Adelante! Es una obra maestra de la que estoy superorgullosa. ¡Las ilustraciones las dibujé yo misma!",
       "title": "Charla - Archivo"
     },
-    {
-      "text": "Huele a tierra húmeda... El olor del mundo despertándose.",
-      "title": "Tras la lluvia..."
-    },
+    { "text": "Huele a tierra húmeda... El olor del mundo despertándose.", "title": "Tras la lluvia..." },
     {
       "text": "Qué frío... ¿Hacemos un muñeco de nieve? ¡Lumi, ven a ayudarnos! ¡Ah!... ¡No hace falta ninguna maza!",
       "title": "Cuando nieva..."
     },
-    {
-      "text": "¿Hacia dónde volarán las semillas de los dientes de león?...",
-      "title": "Cuando hace viento..."
-    },
+    { "text": "¿Hacia dónde volarán las semillas de los dientes de león?...", "title": "Cuando hace viento..." },
     {
       "text": "“Duerman ya. El Letargo Dorado llama a la arena errante. Aquí no necesitan beber de esa amarga agua salada. Aquí las penas del mañana desaparecen”...",
       "title": "En el desierto..."
@@ -2578,26 +2413,17 @@
       "text": "Mientras no sea malo para la salud, no soy especialmente quisquillosa con ninguna comida. Sería un desperdicio no comer algo solo porque no te gusta cómo sabe, ¿no crees?",
       "title": "Comida que menos le gusta..."
     },
-    {
-      "text": "¡Esto está buenísimo! ¿Cómo lo hiciste? ¿Podrías enseñarme?",
-      "title": "Al recibir un regalo (I)"
-    },
+    { "text": "¡Esto está buenísimo! ¿Cómo lo hiciste? ¿Podrías enseñarme?", "title": "Al recibir un regalo (I)" },
     {
       "text": "¡Qué rico! La próxima vez, ¡yo te preparé algo para que pruebes mis habilidades culinarias!",
       "title": "Al recibir un regalo (II)"
     },
-    {
-      "text": "Bueno... Al menos no es malo para la salud...",
-      "title": "Al recibir un regalo (III)"
-    },
+    { "text": "Bueno... Al menos no es malo para la salud...", "title": "Al recibir un regalo (III)" },
     {
       "text": "Feliz cumpleaños... No es un regalo muy caro, pero me gustaría que aceptaras este fósil que guardo desde hace mucho tiempo. Mira, son huesos y marcas de plumas de un ave que se extinguió hace mucho. Aunque ya no puede volar, el instante en que batió sus alas quedó grabado para siempre. Toda vida llega a su fin, pero, de alguna manera, la prueba de que hemos existido perdura en el tiempo. Que tu vida sea tan tenaz como un árbol antiguo, y que en cada anillo de su tronco haya grabada una hermosa historia.",
       "title": "Cumpleaños..."
     },
-    {
-      "text": "Mis sentidos se han agudizado.",
-      "title": "El sentimiento de Ascensión - Introducción"
-    },
+    { "text": "Mis sentidos se han agudizado.", "title": "El sentimiento de Ascensión - Introducción" },
     {
       "text": "Ahora entiendo mucho mejor las cosas que existen en este mundo.",
       "title": "El sentimiento de Ascensión - Desarrollo"
@@ -2648,18 +2474,9 @@
       "text": "Uf, el viento está ganando fuerza... Qué pena que no haya dientes de león por aquí. Supongo que tendremos que conformarnos con romper papel, ¿no?",
       "title": "Cuando hace viento..."
     },
-    {
-      "text": "Es en momentos como estos cuando echo mucho de menos el Lago de Sidra.",
-      "title": "En el desierto..."
-    },
-    {
-      "text": "Buenos días. ¿Qué planes hay para hoy?",
-      "title": "Buenos días..."
-    },
-    {
-      "text": "¿Ya comiste? Genial, tenemos trabajo que hacer esta tarde.",
-      "title": "Buenas tardes..."
-    },
+    { "text": "Es en momentos como estos cuando echo mucho de menos el Lago de Sidra.", "title": "En el desierto..." },
+    { "text": "Buenos días. ¿Qué planes hay para hoy?", "title": "Buenos días..." },
+    { "text": "¿Ya comiste? Genial, tenemos trabajo que hacer esta tarde.", "title": "Buenas tardes..." },
     {
       "text": "Esta noche... Humm. Vamos a sorprender a las tropas con un simulacro de ataque sorpresa.",
       "title": "Buenas noches... (I)"
@@ -2826,26 +2643,11 @@
       "text": "Las emociones son como un furioso torrente que inunda la mente. En la mayoría de los casos, si intentas contenerlas, su fuerza inexorable acabará arrastrándote con ellas, pero si intentas ignorarlas por completo... Bueno, terminarás hech{F#a}{M#o} añicos.",
       "title": "Charla - Emociones"
     },
-    {
-      "text": "Las bendiciones del cielo nunca son imparciales.",
-      "title": "Cuando llueve..."
-    },
-    {
-      "text": "Han expuesto a otro mentiroso más.",
-      "title": "Cuando truena..."
-    },
-    {
-      "text": "¿Qué mala noticia trae el viento?",
-      "title": "Cuando hace viento..."
-    },
-    {
-      "text": "Estaría más feliz sin recordar esta sensación de familiaridad.",
-      "title": "En el desierto..."
-    },
-    {
-      "text": "Buenos días. Siempre tan diligente, Jahoda debería aprender de ti...",
-      "title": "Buenos días..."
-    },
+    { "text": "Las bendiciones del cielo nunca son imparciales.", "title": "Cuando llueve..." },
+    { "text": "Han expuesto a otro mentiroso más.", "title": "Cuando truena..." },
+    { "text": "¿Qué mala noticia trae el viento?", "title": "Cuando hace viento..." },
+    { "text": "Estaría más feliz sin recordar esta sensación de familiaridad.", "title": "En el desierto..." },
+    { "text": "Buenos días. Siempre tan diligente, Jahoda debería aprender de ti...", "title": "Buenos días..." },
     {
       "text": "*Bosteza*... Nunca vienen clientes a estas horas, así que podría echarme una siesta.",
       "title": "Buenas tardes..."
@@ -2966,10 +2768,7 @@
       "text": "Esto no está nada mal. ¿Te gustaría trabajar de chef en la Cámara de Secretos y ayudarnos a darle un toque de sofisticación a nuestra comida? Sabes que te pagaríamos bien.",
       "title": "Al recibir un regalo (I)"
     },
-    {
-      "text": "Nada mal. No sabía que tenías talento para esto.",
-      "title": "Al recibir un regalo (II)"
-    },
+    { "text": "Nada mal. No sabía que tenías talento para esto.", "title": "Al recibir un regalo (II)" },
     {
       "text": "Humm, el sabor impresiona, desde luego... Se lo daré a probar a Jahoda más tarde.",
       "title": "Al recibir un regalo (III)"
@@ -2978,18 +2777,12 @@
       "text": "No se me da muy bien elegir regalos para la gente. ¿Por qué no hacemos lo siguiente? Te haré tres preguntas y, si consigues dar con las respuestas correctas, te... Eh, no me mires así, que estoy de broma. Toma este libro: es una colección de leyendas y cuentos populares de las gentes del desierto, y en esta edición aparecen bastante completos. Estas historias han servido para educar a numerosas generaciones de habitantes del desierto. Échale un vistazo. Tal vez, cuando lo termines, tú también te conviertas en un{F#a}{M#o} más de nosotros.",
       "title": "Cumpleaños..."
     },
-    {
-      "text": "Je, interesante.",
-      "title": "El sentimiento de Ascensión - Introducción"
-    },
+    { "text": "Je, interesante.", "title": "El sentimiento de Ascensión - Introducción" },
     {
       "text": "Una pizca de la verdad... pero sigue siendo insignificante.",
       "title": "El sentimiento de Ascensión - Desarrollo"
     },
-    {
-      "text": "Otro camino más que lleva a la verdad.",
-      "title": "El sentimiento de Ascensión - Nudo"
-    },
+    { "text": "Otro camino más que lleva a la verdad.", "title": "El sentimiento de Ascensión - Nudo" },
     {
       "text": "Parece que el vínculo entre nosotr{F#a}{M#o}s dos no se romperá tan fácilmente, ¿eh?",
       "title": "El sentimiento de Ascensión - Desenlace"
@@ -3000,38 +2793,20 @@
       "text": "Oh, ¿debería volver a presentarme? Humm, parece que esta vez la magia de presentación de Alice no está interfiriendo, así que supongo que seguiré adelante... *Ejem*, soy Nicole. Como puedes ver, soy... ¡Ah, otra vez! Supongo que me precipité...",
       "title": "Hola..."
     },
-    {
-      "text": "Humm... No es la mejor idea que se me ha ocurrido.",
-      "title": "Charla - Novelas"
-    },
-    {
-      "text": "Las alegorías hablan por sí solas.",
-      "title": "Charla - Estatua"
-    },
-    {
-      "text": "¿Que qué soy ahora? Solo una “persona” que ha perdido la voz.",
-      "title": "Charla - Silencio"
-    },
+    { "text": "Humm... No es la mejor idea que se me ha ocurrido.", "title": "Charla - Novelas" },
+    { "text": "Las alegorías hablan por sí solas.", "title": "Charla - Estatua" },
+    { "text": "¿Que qué soy ahora? Solo una “persona” que ha perdido la voz.", "title": "Charla - Silencio" },
     {
       "text": "En realidad, cuando ves un tesoro al final de un arcoíris, es porque algún Seelie lo enterró bajo la lluvia.",
       "title": "Tras la lluvia..."
     },
-    {
-      "text": "Buenos días.",
-      "title": "Buenos días..."
-    },
-    {
-      "text": "Buenas tardes.",
-      "title": "Buenas tardes..."
-    },
+    { "text": "Buenos días.", "title": "Buenos días..." },
+    { "text": "Buenas tardes.", "title": "Buenas tardes..." },
     {
       "text": "La noche es cuando más nos llega la inspiración, por lo que también era el momento en el que la gente de antaño solía encontrarse con los ángeles. Supongo que ellos son en gran parte los culpables de que nos convirtiéramos en un grupo de noctámbulos. Aunque eso no es del todo exacto. No es que tuviéramos relojes biológicos o ciclos de sueño. Lo que hacíamos se parecía más a... un mantenimiento funcional regular. Así que supongo que solo se trataba de evitar las últimas horas de la tarde...",
       "title": "Buenas noches... (I)"
     },
-    {
-      "text": "¿Ya te vas a dormir? Jeje, bueno, buenas noches.",
-      "title": "Buenas noches... (II)"
-    },
+    { "text": "¿Ya te vas a dormir? Jeje, bueno, buenas noches.", "title": "Buenas noches... (II)" },
     {
       "text": "Mientras un autor siga vivo, lo máximo a lo que puede aspirar es crear obras populares. Al fin y al cabo, las personas son una fusión del presente. Del mismo modo que es imposible que un erudito de la Academia de Sumeru posea veinte años de conocimiento al inicio de sus estudios, un autor moderno no puede aspirar a escribir un clásico en su propia época. En otras palabras, lo único que se puede hacer es escribir sobre lo que resulta interesante. Pero bueno, yo no soy quien escribe, así que no siento mucha presión al respecto.",
       "title": "Sobre Nicole - Obras populares"
@@ -3120,10 +2895,7 @@
       "text": "La humanidad es una especie tan intrigante y brillante. Renunciar a mis alas no fue una caída en desgracia, sino una oportunidad para formar parte de algo tangible. Sacrificar mi voz no me redujo al silencio, sino que me dio la fuerza para escuchar antes de juzgar. El potencial divino reside en todos y cada uno de los seres humanos, y cada día que paso entre ustedes es más fascinante que el anterior.",
       "title": "Más sobre Nicole (V)"
     },
-    {
-      "text": "¿Acaso... no es obvio?",
-      "title": "Aficiones de Nicole..."
-    },
+    { "text": "¿Acaso... no es obvio?", "title": "Aficiones de Nicole..." },
     {
       "text": "A estas alturas, todos mis amigos más cercanos saben que soy una charlatana. ¿Eso significa que ya no tengo que fingir? ¿Y si eso les da dolores de cabeza a los demás y nadie quiere volver a hablar conmigo nunca más...? Mhm, además, Klee todavía no tiene la edad suficiente. Supongo que tendré que seguir haciendo de ángel respetable un poco más.",
       "title": "Preocupaciones de Nicole..."
@@ -3136,10 +2908,7 @@
       "text": "Humm... Es una pregunta difícil. Mientras la comida esté bien hecha, como prácticamente de todo.",
       "title": "Comida que menos le gusta..."
     },
-    {
-      "text": "¡Guau, esto está... para chuparse los dedos!",
-      "title": "Al recibir un regalo (I)"
-    },
+    { "text": "¡Guau, esto está... para chuparse los dedos!", "title": "Al recibir un regalo (I)" },
     {
       "text": "Muchas gracias. Se nota que le dedicaste mucho tiempo y esfuerzo.",
       "title": "Al recibir un regalo (II)"
@@ -3174,10 +2943,7 @@
       "text": "Gracias por tu apoyo. Quieres un autógrafo, ¿verdad? ¿Qué quieres que dibuje al lado? ¿Qué tal una pluma? Ah, espera, ¿no eres uno de mis seguidores? Supongo que te he malinterpretado. Entonces, déjame empezar desde el principio. Soy Odette, una bailarina de la Compañía Korolevski... Bueno, gracias por tu apoyo, de todos modos.",
       "title": "Hola..."
     },
-    {
-      "text": "Bueno, si eso es todo, me voy a ensayar.",
-      "title": "Charla - Ocupada"
-    },
+    { "text": "Bueno, si eso es todo, me voy a ensayar.", "title": "Charla - Ocupada" },
     {
       "text": "Si basta con una respuesta sencilla, ¿por qué iba a decir algo más?",
       "title": "Charla - No te compliques"
@@ -3190,26 +2956,14 @@
       "text": "El golpeteo de las gotas de lluvia siempre me hace sentir muy tranquila. Este tipo de tiempo es perfecto para bailar sola.",
       "title": "Cuando llueve..."
     },
-    {
-      "text": "Los momentos más hermosos y serenos son siempre los más fugaces.",
-      "title": "Tras la lluvia..."
-    },
-    {
-      "text": "La nieve en Snezhnaya siempre es gélida y parece que nunca se acaba.",
-      "title": "Cuando nieva..."
-    },
-    {
-      "text": "Mi peinado... Lo arreglaré más tarde.",
-      "title": "Hace mucho viento..."
-    },
+    { "text": "Los momentos más hermosos y serenos son siempre los más fugaces.", "title": "Tras la lluvia..." },
+    { "text": "La nieve en Snezhnaya siempre es gélida y parece que nunca se acaba.", "title": "Cuando nieva..." },
+    { "text": "Mi peinado... Lo arreglaré más tarde.", "title": "Hace mucho viento..." },
     {
       "text": "Al menos no puede haber un encuentro con seguidores en un lugar como este.",
       "title": "En el desierto..."
     },
-    {
-      "text": "Ya hice el calentamiento y estoy lista para empezar.",
-      "title": "Buenos días..."
-    },
+    { "text": "Ya hice el calentamiento y estoy lista para empezar.", "title": "Buenos días..." },
     {
       "text": "No soy de las que duermen la siesta. El mediodía tampoco es un buen momento para entrenar, así que suelo pasar el tiempo leyendo los guiones de nuestras obras de danza. ¿Eh? ¿Que qué son estas cartas? Son de mis admiradores. Vodyanitsa prácticamente me las puso en la mano. Quiere que las lea aunque sea por una vez.",
       "title": "Buenas tardes..."
@@ -3242,10 +2996,7 @@
       "text": "Una vez, durante una intensa sesión de entrenamiento, sufrí congelación en los pies y las piernas debido al frío extremo, y casi perdí el conocimiento por completo. Cuando volví en mí, lo primero que noté fue una luz brillante que emanaba de la Cuña Estelar que tenía enfrente. Nunca había oído que las Cuñas Estelares pudieran despertar a la gente de esa manera... Así que, si eso no fue lo que me despertó... quizás fue algún deseo instintivo de sobrevivir.",
       "title": "Sobre la Cuña Estelar..."
     },
-    {
-      "text": "Me tomo cada ensayo con la misma seriedad que una actuación real.",
-      "title": "¿Algo que decir?"
-    },
+    { "text": "Me tomo cada ensayo con la misma seriedad que una actuación real.", "title": "¿Algo que decir?" },
     {
       "text": "Puedes resaltar el sabor dulce de las grosellas escarchadas espolvoreándolas con un poco de sal. Al parecer, el contraste ayuda a realzar su dulzura natural. Eso me lo dijo un seguidor.",
       "title": "Un dato curioso..."
@@ -3342,10 +3093,7 @@
       "text": "¿Esto es solo un plato? Parece más bien... la comida de todo un día.",
       "title": "Al recibir un regalo (II)"
     },
-    {
-      "text": "Ah, no, gracias. Estoy cuidando lo que como.",
-      "title": "Al recibir un regalo (III)"
-    },
+    { "text": "Ah, no, gracias. Estoy cuidando lo que como.", "title": "Al recibir un regalo (III)" },
     {
       "text": "¡Feliz cumpleaños! Estaba pensando qué regalarte... Normalmente me regalan cosas como flores, zapatos de ballet y cajas de música, pero dudo que eso sea lo que tienes en mente. ¿Qué tal si simplemente... pides un deseo, aquí y ahora? Ojalá sea algo que esté a mi alcance conceder, claro.",
       "title": "Cumpleaños..."
@@ -3392,10 +3140,7 @@
       "text": "Temblar es una respuesta fisiológica normal ante ruidos repentinos. No tiene nada que ver con el miedo.",
       "title": "Cuando truena..."
     },
-    {
-      "text": "No tengo frío. No necesito un abrigo.",
-      "title": "Cuando nieva..."
-    },
+    { "text": "No tengo frío. No necesito un abrigo.", "title": "Cuando nieva..." },
     {
       "text": "La luz del sol no cuesta nada, pero ¿cuántas personas pueden decir que realmente aprecian su calor?",
       "title": "Qué sol hace..."
@@ -3548,14 +3293,8 @@
       "text": "Siempre pensé que las fotos de la «Enciclopedia gastronómica» recurrían a un montón de trucos para que parecieran perfectas. ¡Nunca imaginé que un plato pudiera quedar así en la vida real!",
       "title": "Al recibir un regalo (I)"
     },
-    {
-      "text": "Humm... No está nada mal, pero se puede mejorar.",
-      "title": "Al recibir un regalo (II)"
-    },
-    {
-      "text": "¡Vamos, confiesa! ¡¿Te maldijo esa bruja?!",
-      "title": "Al recibir un regalo (III)"
-    },
+    { "text": "Humm... No está nada mal, pero se puede mejorar.", "title": "Al recibir un regalo (II)" },
+    { "text": "¡Vamos, confiesa! ¡¿Te maldijo esa bruja?!", "title": "Al recibir un regalo (III)" },
     {
       "text": "¡Feliz cumpleaños! No hay por qué sorprenderse tanto, no es que sea tan difícil sonsacar la fecha a la gente. Aunque hay un dato fundamental que no conseguí averiguar... ¡Tu deseo de cumpleaños!\n¿Eh? ¿Decirlo en voz alta significa que no se hará realidad? No estoy de acuerdo. Eso solo hace que a gente como yo nos resulte más difícil ayudar a que se haga realidad. Así que, vamos, no hay por qué andarse con rodeos. ¿Qué es lo que quieres? Quizá pienses que no hay mucho que yo pueda hacer, pero he ahorrado bastante de mi mesada. Además, siempre dices lo lista que soy, ¡así que de seguro que es algo en lo que puedo ayudar!\nA menos que sea algo como “comprar una casa en el centro de Mondstadt sin hipoteca”. Pero no pedirías algo tan descabellado... ¿verdad?",
       "title": "Cumpleaños..."
@@ -3594,22 +3333,10 @@
       "text": "¿Me han vuelto a llamar al Palacio Zapoliarni? Uf... En serio, ¿qué sentido tienen todas estas reuniones interminables?",
       "title": "Charla - Reuniones"
     },
-    {
-      "text": "Qué fastidio.",
-      "title": "Cuando llueve..."
-    },
-    {
-      "text": "A mis flores les encanta este tiempo.",
-      "title": "Tras la lluvia..."
-    },
-    {
-      "text": "Sistemas defensivos... Mhm, funcionan con normalidad.",
-      "title": "Cuando truena..."
-    },
-    {
-      "text": "Arg, ya estará esa haciendo más “damiselas de nieve”...",
-      "title": "Cuando nieva..."
-    },
+    { "text": "Qué fastidio.", "title": "Cuando llueve..." },
+    { "text": "A mis flores les encanta este tiempo.", "title": "Tras la lluvia..." },
+    { "text": "Sistemas defensivos... Mhm, funcionan con normalidad.", "title": "Cuando truena..." },
+    { "text": "Arg, ya estará esa haciendo más “damiselas de nieve”...", "title": "Cuando nieva..." },
     {
       "text": "El tiempo ideal para disfrutar de un pastel, un café bien cargado y perderse en un buen libro.",
       "title": "Qué sol hace..."
@@ -3622,10 +3349,7 @@
       "text": "Buenos días. ¿Te gustaría una taza de café? Te puede ayudar a levantar el ánimo. ¿Eh? ¿Que por qué alguien como yo necesitaría café? Ja, ¡¿acaso una dama no puede apreciar el sabor de una bebida?!",
       "title": "Buenos días..."
     },
-    {
-      "text": "¿Ya es por la tarde? Entonces será mejor que prepare algún refrigerio.",
-      "title": "Buenas tardes..."
-    },
+    { "text": "¿Ya es por la tarde? Entonces será mejor que prepare algún refrigerio.", "title": "Buenas tardes..." },
     {
       "text": "¿Volviste para cenar? Sabes que esto no es un comedor, ¿verdad? Bueno, da igual. Ya que estás aquí, le diré a Fagio que te prepare algo.",
       "title": "Buenas noches... (I)"
@@ -3762,26 +3486,14 @@
       "text": "Oh, no está nada mal. Tendré que devolverte el favor la próxima vez que nos veamos para tomar el té.",
       "title": "Al recibir un regalo (II)"
     },
-    {
-      "text": "Fagio, ven a limpiar esto.",
-      "title": "Al recibir un regalo (III)"
-    },
+    { "text": "Fagio, ven a limpiar esto.", "title": "Al recibir un regalo (III)" },
     {
       "text": "¡Hum! Toma esto. No suelo regalar estas cosas, pero hoy es un día especial: el día en que viniste al mundo. Invité a Arlecchino y a Colombina, y también a algunos amigos en común. Incluso hice un pastel especial para la ocasión... así que más te vale que lo disfrutes.",
       "title": "Cumpleaños..."
     },
-    {
-      "text": "Cálculo en curso.",
-      "title": "El sentimiento de Ascensión - Introducción"
-    },
-    {
-      "text": "Introduciendo variables...",
-      "title": "El sentimiento de Ascensión - Desarrollo"
-    },
-    {
-      "text": "El progreso va bien.",
-      "title": "El sentimiento de Ascensión - Nudo"
-    },
+    { "text": "Cálculo en curso.", "title": "El sentimiento de Ascensión - Introducción" },
+    { "text": "Introduciendo variables...", "title": "El sentimiento de Ascensión - Desarrollo" },
+    { "text": "El progreso va bien.", "title": "El sentimiento de Ascensión - Nudo" },
     {
       "text": "Deconstruyendo el orden mismo de las cosas... Apuesto a que ahora te he impresionado, jajaja.",
       "title": "El sentimiento de Ascensión - Desenlace"
@@ -3796,18 +3508,12 @@
       "text": "El Abismo es como la sombra del mundo. Siempre estará ahí y nunca se desvanecerá.",
       "title": "Charla - Abismo"
     },
-    {
-      "text": "¿De dónde venimos? ¿A dónde vamos?...",
-      "title": "Charla - Meditación"
-    },
+    { "text": "¿De dónde venimos? ¿A dónde vamos?...", "title": "Charla - Meditación" },
     {
       "text": "Todo está destinado a llegar a un fin, y el tiempo no es una excepción.",
       "title": "Charla - Destino final"
     },
-    {
-      "text": "Qué lluvia tan agradable.",
-      "title": "Cuando llueve..."
-    },
+    { "text": "Qué lluvia tan agradable.", "title": "Cuando llueve..." },
     {
       "text": "Por temible que sea el rayo, su ira se limita al reino bajo las nubes. Los altos cielos permanecen despejados.",
       "title": "Cuando truena..."
@@ -3816,10 +3522,7 @@
       "text": "Dicen que todo se detiene en los climas de frío extremo... Comparado con eso, esto no es nada.",
       "title": "Cuando nieva..."
     },
-    {
-      "text": "El viento disipa todo lo que obnubila nuestra visión.",
-      "title": "Hace mucho viento..."
-    },
+    { "text": "El viento disipa todo lo que obnubila nuestra visión.", "title": "Hace mucho viento..." },
     {
       "text": "¿Has dormido bien? Parece que has vuelto a tu mejor condición. Preparémonos para partir.",
       "title": "Buenos días..."
@@ -3832,10 +3535,7 @@
       "text": "Oh... Ya es de noche. El tiempo pasa muy rápido en el mundo exterior, así que debemos aprovecharlo al máximo.",
       "title": "Buenas noches... (I)"
     },
-    {
-      "text": "Duerme un poco. Yo iré a entrenar más con la espada.",
-      "title": "Buenas noches... (II)"
-    },
+    { "text": "Duerme un poco. Yo iré a entrenar más con la espada.", "title": "Buenas noches... (II)" },
     {
       "text": "Hace poco he adquirido unos libros antiguos de Liyue sobre estrategia militar. Uno de ellos menciona una frase que me llamó la atención: “El sabio utiliza su mente como un espejo. Ni atrapa ni atrae, lo recibe todo y no retiene nada. De este modo, triunfa sobre todas las cosas, y estas no pueden hacerle daño”.\nAl principio, pensé que el autor sería una especie de maestro de las artes marciales. Pero después de seguir leyendo, descubrí que no era más que un viajero común y corriente. A veces, los humanos sorprenden por las cosas que son capaces de hacer. Quizá sea eso lo que llaman “fortaleza oculta”.",
       "title": "Sobre Skirk - Lectura"
@@ -3936,14 +3636,8 @@
       "text": "La comida es más fácil de digerir cuando sabe bien, pero incluso cuando no sabe bien, sigue siendo comestible. No dejes que nada se eche a perder.",
       "title": "Comida que menos le gusta..."
     },
-    {
-      "text": "Nada mal.",
-      "title": "Al recibir un regalo (I)"
-    },
-    {
-      "text": "Tampoco es para tanto.",
-      "title": "Al recibir un regalo (II)"
-    },
+    { "text": "Nada mal.", "title": "Al recibir un regalo (I)" },
+    { "text": "Tampoco es para tanto.", "title": "Al recibir un regalo (II)" },
     {
       "text": "Qué desperdicio de ingredientes. De ahora en adelante, cocino yo.",
       "title": "Al recibir un regalo (III)"
@@ -3952,14 +3646,8 @@
       "text": "Feliz cumpleaños. He oído que algunas personas lo celebran con una gran fiesta, mientras que otras prefieren algo más tranquilo. No sé qué tipo de persona eres tú, pero para mí los cumpleaños son un momento para reflexionar sobre el año pasado, a veces con orgullo por mis progresos, y otras con un profundo pesar.\nEs mejor no darle tanta importancia. Cada lugar tiene sus propias festividades y formas de honrar la tierra, los antepasados, la amistad... Pero tu cumpleaños es el único día que es solo para ti. Bueno, basta de discursos. Una vez más, te deseo un feliz cumpleaños y espero que sigas creciendo para convertirte en la persona que aspiras a ser.",
       "title": "Cumpleaños..."
     },
-    {
-      "text": "¿Eso es todo?",
-      "title": "El sentimiento de Ascensión - Introducción"
-    },
-    {
-      "text": "Esta mejoría no es suficiente para mí.",
-      "title": "El sentimiento de Ascensión - Desarrollo"
-    },
+    { "text": "¿Eso es todo?", "title": "El sentimiento de Ascensión - Introducción" },
+    { "text": "Esta mejoría no es suficiente para mí.", "title": "El sentimiento de Ascensión - Desarrollo" },
     {
       "text": "El poder... Hubo un tiempo en que no lo poseía ni lo buscaba, pero ahora que está en la palma de mi mano, no lo pienso dejar ir.",
       "title": "El sentimiento de Ascensión - Nudo"
@@ -3994,10 +3682,7 @@
       "text": "¡Ah! ¡Leí que Fietena podía mandar los rayos de vuelta al cielo! Por eso, yo tampoco debería tener miedo... ¡Ah!",
       "title": "Cuando truena..."
     },
-    {
-      "text": "Es blanca y fría, qué cosa tan rara... ¿Se puede comer?",
-      "title": "Cuando nieva..."
-    },
+    { "text": "Es blanca y fría, qué cosa tan rara... ¿Se puede comer?", "title": "Cuando nieva..." },
     {
       "text": "Qué calorcito tan agradable. Con el estómago lleno y los cálidos rayos del sol, me dan ganas de... echarme una siesta... *Zzz*...",
       "title": "Qué sol hace..."
@@ -4010,10 +3695,7 @@
       "text": "*Bosteza*... Buenos días... Me gustaría dormir un poco más... ¡No! ¡Voy a hacer cien flexiones para despertarme!",
       "title": "Buenos días..."
     },
-    {
-      "text": "¡Hora de la comida! ¡Hay que comer bien para recargar las pilas!",
-      "title": "Buenas tardes..."
-    },
+    { "text": "¡Hora de la comida! ¡Hay que comer bien para recargar las pilas!", "title": "Buenas tardes..." },
     {
       "text": "Un héroe dijo una vez: “Si te sientes agotado por la noche, significa que has hecho un buen trabajo y has utilizado todas tus energías”. Así que, a veces, ¡estar cansada es una medalla de honor!",
       "title": "Buenas noches... (I)"
@@ -4160,10 +3842,7 @@
       "text": "Permíteme presentarme de nuevo, aunque a estas alturas ya debes estar hart{F#a}{M#o} de escucharlo. Soy Varka, Gran Maestro de los Caballeros de Favonius, el Caballero de Boreas de Mondstadt. Estoy aquí para cumplir el juramento de Favonius: juro por mi espada que no caerás mientras yo siga en pie.",
       "title": "Hola..."
     },
-    {
-      "text": "Me gusta beber ocasionalmente... en cualquier ocasión... Jajaja.",
-      "title": "Charla - Bebida"
-    },
+    { "text": "Me gusta beber ocasionalmente... en cualquier ocasión... Jajaja.", "title": "Charla - Bebida" },
     {
       "text": "Las armas necesitan mantenimiento regular. Cuídalas bien y ellas te cuidarán a ti cuando más lo necesites.",
       "title": "Charla - Armas"
@@ -4172,18 +3851,12 @@
       "text": "*Fiu*, qué bien se siente alejarse del escritorio. A ver, ¿dónde hay un buen lugar para echar una siesta?",
       "title": "Charla - Descanso"
     },
-    {
-      "text": "Ha dejado de llover. Sigamos adelante.",
-      "title": "Tras la lluvia..."
-    },
+    { "text": "Ha dejado de llover. Sigamos adelante.", "title": "Tras la lluvia..." },
     {
       "text": "Ver nevar siempre me recuerda los lugares por los que pasé en expediciones anteriores...",
       "title": "Cuando nieva..."
     },
-    {
-      "text": "¡Buah, qué vendaval! ¿Acaso intentas derribarme?",
-      "title": "Hace mucho viento..."
-    },
+    { "text": "¡Buah, qué vendaval! ¿Acaso intentas derribarme?", "title": "Hace mucho viento..." },
     {
       "text": "¡Buenos días!... Eh, pareces medio dormid{F#a}{M#o}. ¿Qué tal un trago para espabilarte?",
       "title": "Buenos días..."
@@ -4418,26 +4091,11 @@
       "text": "En la blancura de un campo nevado, cualquier imperfección en tu camuflaje puede resultar fatal. Avanza con cautela, querid{F#a}{M#o} amig{F#a}{M#o}.",
       "title": "Cuando nieva..."
     },
-    {
-      "text": "Ya lo sé, ya lo sé, mis alas brillan como nunca bajo el sol.",
-      "title": "Qué sol hace..."
-    },
-    {
-      "text": "Ah... Jeje, qué bien. A los vila nos encanta una buena brisa.",
-      "title": "Cuando hace viento..."
-    },
-    {
-      "text": "Yo tan solo pregunto, pero... ¿cuándo vamos a volver a Snezhnaya?",
-      "title": "En el desierto..."
-    },
-    {
-      "text": "¡Es un nuevo día! ¡Buenos días, Snezhnogrado!",
-      "title": "Buenos días..."
-    },
-    {
-      "text": "¡Vamos al Restaurante Podvorye! Yo invito, como siempre.",
-      "title": "Buenas tardes..."
-    },
+    { "text": "Ya lo sé, ya lo sé, mis alas brillan como nunca bajo el sol.", "title": "Qué sol hace..." },
+    { "text": "Ah... Jeje, qué bien. A los vila nos encanta una buena brisa.", "title": "Cuando hace viento..." },
+    { "text": "Yo tan solo pregunto, pero... ¿cuándo vamos a volver a Snezhnaya?", "title": "En el desierto..." },
+    { "text": "¡Es un nuevo día! ¡Buenos días, Snezhnogrado!", "title": "Buenos días..." },
+    { "text": "¡Vamos al Restaurante Podvorye! Yo invito, como siempre.", "title": "Buenas tardes..." },
     {
       "text": "La Compañía Korolevski estrena una nueva función esta noche. En ella, aparecerán la soprano Vodyanitsa y Odette con sus pasos de baile... pero también unos “nuevos amigos”.",
       "title": "Buenas noches... (I)"
@@ -4562,18 +4220,12 @@
       "text": "¡Jeje! ¡Voy a echar todas estas verduras aburridas al plato de Dánica! Arg... aunque siempre acaban regresando al mío...",
       "title": "Comida que menos le gusta..."
     },
-    {
-      "text": "¡Bueno, voy a hincar el diente! Saborearé cada bocado con ganas.",
-      "title": "Al recibir un regalo (I)"
-    },
+    { "text": "¡Bueno, voy a hincar el diente! Saborearé cada bocado con ganas.", "title": "Al recibir un regalo (I)" },
     {
       "text": "Mmm... Una verdadera hazaña de creatividad culinaria... Creo que probaré otro bocado.",
       "title": "Al recibir un regalo (II)"
     },
-    {
-      "text": "¡Estoy llena, gracias! Esto se lo guardaré a Dánica.",
-      "title": "Al recibir un regalo (III)"
-    },
+    { "text": "¡Estoy llena, gracias! Esto se lo guardaré a Dánica.", "title": "Al recibir un regalo (III)" },
     {
       "text": "¡Tan, tan, tan, tan! ¡Ha llegado el momento! No te imaginas lo difícil que fue contenerme ayer... Pero tenía que hacerlo, porque felicitar antes de tiempo trae mala suerte: ¡una ventisca podría tragarte! Ahora por fin puedo decirlo: ¡feliz cumpleaños, querid{F#a}{M#o} amig{F#a}{M#o}! Que te mantengas fuerte como un abedul, y que ni el viento ni la nieve puedan derrotarte jamás.\nBien, según la tradición, ahora tengo que tirar suavemente de las orejas de{F# la}{M#l} cumpleañer{F#a}{M#o} unas cuantas veces...",
       "title": "Cumpleaños..."
@@ -4612,18 +4264,9 @@
       "text": "Uf... Llevo demasiado tiempo en tierra firme y se me está resecando la piel. Necesito volver al agua un rato.",
       "title": "Charla - Pasar el rato"
     },
-    {
-      "text": "Ah, qué día tan hermoso. Es perfecto para relajarse bajo el agua.",
-      "title": "Cuando llueve..."
-    },
-    {
-      "text": "Ah, ¿y la lluvia? Qué decepción...",
-      "title": "Tras la lluvia..."
-    },
-    {
-      "text": "Un vasto manto blanco. Hum, al menos tiene una estética impecable.",
-      "title": "Cuando nieva..."
-    },
+    { "text": "Ah, qué día tan hermoso. Es perfecto para relajarse bajo el agua.", "title": "Cuando llueve..." },
+    { "text": "Ah, ¿y la lluvia? Qué decepción...", "title": "Tras la lluvia..." },
+    { "text": "Un vasto manto blanco. Hum, al menos tiene una estética impecable.", "title": "Cuando nieva..." },
     {
       "text": "Uf, hace demasiado calor y está todo tan seco... Llévame de vuelta al agua.",
       "title": "En el desierto..."
@@ -4768,22 +4411,10 @@
       "text": "¡Feliz cumpleaños! Ya tengo tu regalo preparado. Puedes abrirlo dentro de un rato. Son solo algunas cositas, juguetes y esas cosas... Pero bueno, eso no es lo importante. Ahora estás libre, ¿verdad? Entonces, ¡ven conmigo! Vamos a mi cámara de eco. Hace unos días le pedí a alguien que me comprara un Escenario de baile ferviente de Natlan, junto con un montón de instrumentos raros y maravillosos. Estoy preparando el mejor evento musical que Snezhnaya haya visto jamás, y adivina quién es la primera persona en recibir una invitación. ¡Exacto, tú! Vamos, ¡cantemos hasta que amanezca!",
       "title": "Cumpleaños..."
     },
-    {
-      "text": "*Ejem, ejem*... Bien. Suena bien.",
-      "title": "El sentimiento de Ascensión - Introducción"
-    },
-    {
-      "text": "Creo que acabo de alcanzar una nota más alta.",
-      "title": "El sentimiento de Ascensión - Desarrollo"
-    },
-    {
-      "text": "Ah, siento la voz más fuerte que nunca.",
-      "title": "El sentimiento de Ascensión - Nudo"
-    },
-    {
-      "text": "¡Yuju! ¡Es hora de cantar toda la noche!",
-      "title": "El sentimiento de Ascensión - Desenlace"
-    }
+    { "text": "*Ejem, ejem*... Bien. Suena bien.", "title": "El sentimiento de Ascensión - Introducción" },
+    { "text": "Creo que acabo de alcanzar una nota más alta.", "title": "El sentimiento de Ascensión - Desarrollo" },
+    { "text": "Ah, siento la voz más fuerte que nunca.", "title": "El sentimiento de Ascensión - Nudo" },
+    { "text": "¡Yuju! ¡Es hora de cantar toda la noche!", "title": "El sentimiento de Ascensión - Desenlace" }
   ],
   "Zibai": [
     {
@@ -4802,26 +4433,11 @@
       "text": "La magia adéptica es verdaderamente milagrosa, pero a menos que uno cultive la mente antes que esa magia, todos sus logros serán como el reflejo de la luna en el agua: se desvanecerán con el más mínimo roce.",
       "title": "Charla - Magia adéptica"
     },
-    {
-      "text": "La luna apenas se ve...",
-      "title": "Cuando llueve..."
-    },
-    {
-      "text": "Escucha, es la atronadora ira de los cielos.",
-      "title": "Cuando truena..."
-    },
-    {
-      "text": "Al menos no hace tanto frío como en la luna.",
-      "title": "Cuando nieva..."
-    },
-    {
-      "text": "Viajar por el desierto es tan arduo como me imaginaba.",
-      "title": "En el desierto..."
-    },
-    {
-      "text": "Buenos días. ¿Dormiste bien anoche?",
-      "title": "Buenos días..."
-    },
+    { "text": "La luna apenas se ve...", "title": "Cuando llueve..." },
+    { "text": "Escucha, es la atronadora ira de los cielos.", "title": "Cuando truena..." },
+    { "text": "Al menos no hace tanto frío como en la luna.", "title": "Cuando nieva..." },
+    { "text": "Viajar por el desierto es tan arduo como me imaginaba.", "title": "En el desierto..." },
+    { "text": "Buenos días. ¿Dormiste bien anoche?", "title": "Buenos días..." },
     {
       "text": "El sol está en su punto más alto. Si estás cansad{F#a}{M#o}, deberías descansar un poco.",
       "title": "Buenas tardes..."
@@ -4946,10 +4562,7 @@
       "text": "Si hubiera podido probar este manjar cuando vivía sola en la luna, tal vez me hubiera quedado un poco más en ella. Ja, era broma.",
       "title": "Al recibir un regalo (I)"
     },
-    {
-      "text": "Una comida exquisita. La disfrutaré.",
-      "title": "Al recibir un regalo (II)"
-    },
+    { "text": "Una comida exquisita. La disfrutaré.", "title": "Al recibir un regalo (II)" },
     {
       "text": "Este plato tiene un sabor... bastante peculiar. Innovador, incluso.",
       "title": "Al recibir un regalo (III)"
@@ -4958,21 +4571,9 @@
       "text": "¿Hoy es tu cumpleaños? Entonces tenemos que celebrarlo. Recuerdo que es costumbre que los ancianos coman fideos de la longevidad... Jeje, aunque tú parezcas joven, sospecho que si contáramos los años desde tu nacimiento, serías mayor que la mayoría de la gente de Liyue. Desde esa óptica, prepararte un cuenco de fideos de la longevidad no sería un gesto inapropiado. ¿Eh? Por supuesto que sé cómo prepararlos. Puede que me uniera a las filas celestiales en su momento, pero no nací en cuna de oro. *Suspira*, a decir verdad, si en el presente apenas tengo apetito, es por todo el tiempo que pasé en el cielo sin poder cocinar... Bueno, me estoy desviando del tema. Comer es el segundo asunto más importante del mundo, así que debemos asegurarnos de que disfrutes de un buen cuenco de fideos de la longevidad antes de que termine el día.",
       "title": "Cumpleaños..."
     },
-    {
-      "text": "Ya veo.",
-      "title": "El sentimiento de Ascensión - Introducción"
-    },
-    {
-      "text": "La luna crece y mengua...",
-      "title": "El sentimiento de Ascensión - Desarrollo"
-    },
-    {
-      "text": "El espíritu regresa a su morada.",
-      "title": "El sentimiento de Ascensión - Nudo"
-    },
-    {
-      "text": "Como Adeptus, debo cumplir con mi deber.",
-      "title": "El sentimiento de Ascensión - Desenlace"
-    }
+    { "text": "Ya veo.", "title": "El sentimiento de Ascensión - Introducción" },
+    { "text": "La luna crece y mengua...", "title": "El sentimiento de Ascensión - Desarrollo" },
+    { "text": "El espíritu regresa a su morada.", "title": "El sentimiento de Ascensión - Nudo" },
+    { "text": "Como Adeptus, debo cumplir con mi deber.", "title": "El sentimiento de Ascensión - Desenlace" }
   ]
 }
