@@ -55,6 +55,16 @@ The export route SHALL answer only with the components its index lists and with 
 - **WHEN** it is requested
 - **THEN** the answer is not found
 
+### Requirement: Each request reads the export from disk afresh
+
+The export route SHALL read each export from disk on every request, so an export written again is served as it stands on the next request.
+
+#### Scenario: An export written again is served on the next request
+
+- **GIVEN** a file of a listed component is written again on disk
+- **WHEN** the next request for that file is made
+- **THEN** the rewritten file is served
+
 ### Requirement: A scene draws only the families it names
 
 A scene SHALL load and draw only the families it names, and SHALL fetch the meshes and textures of those families alone.
