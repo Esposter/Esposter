@@ -43,6 +43,11 @@
       "matchPackageNames": ["vue-tsc"]
     },
     {
+      "allowedVersions": "<0.607.0",
+      "description": "`vize` 0.607.0 (#11043) stops treating an unresolved `useTemplateRef` as Vue's, so an auto-imported `useTemplateRef` (declared as `typeof import('vue').useTemplateRef` in each package's `auto-imports.d.ts`) types as `unknown`, and the template refs genshin-world and vue-phaserjs read fail typecheck (TS2339, TS2769, TS2322). 0.606.0 is green, and the same sources typecheck under vue-tsc. Drop this rule and restore the caret once ubugeeei-prod/vize#10980 is fixed and an auto-imported `useTemplateRef` types as Vue's again.",
+      "matchPackageNames": ["vize"]
+    },
+    {
       "description": "tsdown 0.23.3 moves its declaration plugin from 0.29.0-beta.2 to 0.28.8, and the size tests of genshin-interface, genshin-world and vue-phaserjs move with the declaration and bundle output, so the bump is a dedicated pass that reads that output before it lands. `@tsdown/css` pins its tsdown to the exact same version, so the two move together. Drop this rule and restore the carets once that output is checked.",
       "enabled": false,
       "matchPackageNames": ["@tsdown/css", "tsdown"]

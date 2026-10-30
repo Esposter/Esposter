@@ -246,7 +246,9 @@ catalog:
   vite-plus: ^1.4.0
   vitest: ^5.0.5
   vitest-browser-vue: ^3.1.0
-  vize: ^0.608.0
+  # @TODO: https://github.com/ubugeeei-prod/vize/issues/10980 — back to a caret, with the Renovate rule that holds it dropped, once
+  # an auto-imported `useTemplateRef` types as Vue's again: 0.607.0 (#11043) stops that, so genshin-world and vue-phaserjs fail typecheck
+  vize: ~0.606.0
   vue: ^3.5.44
   vue-eslint-parser: ^10.4.1
   vue-router: ^5.4.0
