@@ -1,3 +1,6 @@
+import formatterConfiguration from "../../../oxfmt.config.ts";
+
+import { format } from "oxfmt";
 import { glob, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -43,15 +46,21 @@ const relationEntries = await readEntries(
 const schemaPath = join(generatedDirectory, "schema.ts");
 const relationsPath = join(generatedDirectory, "relations.ts");
 
+// Written as the formatter writes it, through its API: a file under `generated/` is one its command line ignores
+const writeFormatted = async (path: string, source: string): Promise<void> => {
+  const { code } = await format(path, source, formatterConfiguration);
+  await writeFile(path, code);
+};
+
 await rm(generatedDirectory, { force: true, recursive: true });
 await mkdir(generatedDirectory, { recursive: true });
-await writeFile(
+await writeFormatted(
   schemaPath,
   `${getImports(schemaEntries)}\n\nexport const schema = {\n${getNames(schemaEntries)
     .map((name) => `  ${name},`)
     .join("\n")}\n};\n`,
 );
-await writeFile(
+await writeFormatted(
   relationsPath,
   `${getImports(relationEntries)}\n\nexport const relations = {\n${getNames(relationEntries)
     .map((name) => `  ...${name},`)
