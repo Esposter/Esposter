@@ -22,9 +22,7 @@ describe(listFixtureScreens, () => {
   const REFERENCE_ID = "foo-screen";
   // Sorts before REFERENCE_ID, so a region listed first is the first entry the planner could take
   const REGION_REFERENCE_ID = "bar-region";
-  const PROPS_REFERENCE_ID = "foo-props";
   const REGION = { height: 0, width: 0, x: 0, y: 0 };
-  const PROPS = {};
   const REPORTED_MEAN = 2.5;
   const VARIANT = "artifacts";
   let componentsDirectory = "";
@@ -83,10 +81,11 @@ describe(listFixtureScreens, () => {
   test("should name a variant's primary reference, the one the planner places beside its snapshot, over a region listed before it", async () => {
     expect.hasAssertions();
 
-    const referenceMap = {
-      [REFERENCE_ID]: { screen: SCREEN_NAME, source: "recording.mp4", variant: VARIANT },
-      [REGION_REFERENCE_ID]: { region: REGION, screen: SCREEN_NAME, source: "recording.mp4", variant: VARIANT },
-    } satisfies Record<string, ParityReference>;
+    // Built from entries, not an object literal, since the lint's key sort would list REFERENCE_ID first and undo the order
+    const referenceMap = Object.fromEntries<ParityReference>([
+      [REGION_REFERENCE_ID, { region: REGION, screen: SCREEN_NAME, source: "recording.mp4", variant: VARIANT }],
+      [REFERENCE_ID, { screen: SCREEN_NAME, source: "recording.mp4", variant: VARIANT }],
+    ]);
     const rows = await listFixtureScreens(componentsDirectory, referenceMap, new Map());
     const besideSnapshot = getFixtureReferenceFilePath(join(componentsDirectory, SCREEN_DIRECTORY), VARIANT);
     const besideId = planReferenceFiles(referenceMap, rows, componentsDirectory).find(
