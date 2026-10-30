@@ -1,5 +1,6 @@
-// The lock's keys as a nested constant, each path nested by its segments. GameDataKey is the union of its leaf paths,
-// which readers may use to name a key. Generated from gameDataLock.json on every publish.
+// The lock's keys as a nested constant, each path nested by its segments.
+// GameDataKey is the union of its leaf paths, which readers may use to name a key.
+// Generated from gameDataLock.json on every publish.
 export const GameDataKeys = {
   achievements: { achievements: "achievements/achievements", categories: "achievements/categories" },
   achievementText: {
