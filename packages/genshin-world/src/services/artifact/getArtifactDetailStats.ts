@@ -5,15 +5,8 @@ import type { Attribute } from "#src/models/character/Attribute";
 import type { GameText } from "genshin-text";
 
 import { getArtifactMainAffixValue } from "#src/services/artifact/getArtifactMainAffixValue";
-import { AttributeLabelGameTextKeyMap } from "#src/services/character/AttributeLabelGameTextKeyMap";
 import { formatAttributeValue } from "#src/services/character/formatAttributeValue";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-
-const getAffixLabel = (attribute: Attribute, gameText: GameText): string => {
-  const gameTextKey = AttributeLabelGameTextKeyMap.get(attribute);
-  if (!gameTextKey) throw new InvalidOperationError(Operation.Read, getAffixLabel.name, attribute);
-  return gameText[gameTextKey];
-};
+import { getAttributeLabel } from "#src/services/character/getAttributeLabel";
 
 // An affix's value as the Details list writes it, a flat attribute whole and a percentage to one place, with the sign
 // An affix adds
@@ -28,11 +21,11 @@ export const getArtifactDetailStats = (
 ): ArtifactDetailStats => ({
   isLocked: artifact.isLocked,
   mainStat: {
-    label: getAffixLabel(artifact.mainAffix, gameText),
+    label: getAttributeLabel(artifact.mainAffix, gameText),
     value: getAffixValue(artifact.mainAffix, getArtifactMainAffixValue(artifact, artifactMainAffixCurves)),
   },
   subStats: artifact.minorAffixes.map(({ attribute, value }) => ({
-    label: getAffixLabel(attribute, gameText),
+    label: getAttributeLabel(attribute, gameText),
     value: getAffixValue(attribute, value),
   })),
 });

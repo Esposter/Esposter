@@ -10,11 +10,9 @@ import type { GameText } from "genshin-text";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Currency } from "#src/models/inventory/Currency";
-import { AttributeLabelGameTextKeyMap } from "#src/services/character/AttributeLabelGameTextKeyMap";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { formatAttributeValue } from "#src/services/character/formatAttributeValue";
 import { formatWholeNumber } from "#src/services/character/formatWholeNumber";
-import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
+import { getAttributeLabel } from "#src/services/character/getAttributeLabel";
 import { getSecondaryAttribute } from "#src/services/character/getSecondaryAttribute";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
@@ -27,6 +25,7 @@ import { enhanceWeapon } from "#src/services/weapon/enhanceWeapon";
 import { getBagWeapon } from "#src/services/weapon/getBagWeapon";
 import { getRarityRequiredExps } from "#src/services/weapon/getRarityRequiredExps";
 import { getWeaponActions } from "#src/services/weapon/getWeaponActions";
+import { getWeaponAttributeTotals } from "#src/services/weapon/getWeaponAttributeTotals";
 import { getWeaponPassive } from "#src/services/weapon/getWeaponPassive";
 import { refineWeapon } from "#src/services/weapon/refineWeapon";
 import { setBagWeapon } from "#src/services/weapon/setBagWeapon";
@@ -136,12 +135,8 @@ const nextMaxLevel = computed(
 const isAtCap = computed(() => weapon.value.level >= maxLevel.value);
 // The level Enhance's header shows alone; the Ascend header writes its own level pair over the cap of each phase
 const levelText = computed(() => fillGameTextValues(gameText[GameTextKey.LevelFormat], `${weapon.value.level}`));
-// The weapon's attribute totals at its level in a phase, each line of its growth curve and of the phase summed as the
-// Character weapon panel sums them
 const getAttributeTotals = (ascension: number) =>
-  computeCharacterAttributes(
-    getGrownAttributeLines(weaponData.value, weaponGrowCurveMap, weapon.value.level, ascension),
-  ).attributeTotalMap;
+  getWeaponAttributeTotals(weaponData.value, weaponGrowCurveMap, weapon.value.level, ascension);
 // The base ATK at the held phase and at the next one, which the Ascend row sets side by side
 const getBaseAttackText = (ascension: number) => formatWholeNumber(getAttributeTotals(ascension)[Attribute.BaseAttack]);
 const baseAttackText = computed(() => getBaseAttackText(weapon.value.ascension));
@@ -157,11 +152,9 @@ const secondaryText = computed(() =>
         getAttributeTotals(weapon.value.ascension)[secondaryAttribute.value],
       ),
 );
-const secondaryLabel = computed(() => {
-  const gameTextKey =
-    secondaryAttribute.value === undefined ? undefined : AttributeLabelGameTextKeyMap.get(secondaryAttribute.value);
-  return gameTextKey === undefined ? "" : gameText[gameTextKey];
-});
+const secondaryLabel = computed(() =>
+  secondaryAttribute.value === undefined ? "" : getAttributeLabel(secondaryAttribute.value, gameText),
+);
 // The EXP the weapon holds towards the next level over what that level takes; a weapon at its cap has no next level
 const requiredExps = computed(() => getRarityRequiredExps(rarityRequiredExpsMap, weaponData.value.rarity));
 const requiredExp = computed(() => requiredExps.value[weapon.value.level - 1] ?? 0);

@@ -37,7 +37,6 @@ import { toggleCharacterArtifactLock } from "#src/services/artifact/toggleCharac
 import { unequipArtifactToBag } from "#src/services/artifact/unequipArtifactToBag";
 import { activateConstellation } from "#src/services/character/activateConstellation";
 import { ascendCharacter } from "#src/services/character/ascendCharacter";
-import { AttributeLabelGameTextKeyMap } from "#src/services/character/AttributeLabelGameTextKeyMap";
 import { CharacterMenuTabGameTextKeyMap } from "#src/services/character/CharacterMenuTabGameTextKeyMap";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import {
@@ -51,10 +50,10 @@ import { ElementNameGameTextKeyMap } from "#src/services/character/ElementNameGa
 import { formatAttributeValue } from "#src/services/character/formatAttributeValue";
 import { formatWholeNumber } from "#src/services/character/formatWholeNumber";
 import { getAscensionMaterials } from "#src/services/character/getAscensionMaterials";
+import { getAttributeLabel } from "#src/services/character/getAttributeLabel";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { getCharacterElement } from "#src/services/character/getCharacterElement";
 import { getConstellationActivationRefusal } from "#src/services/character/getConstellationActivationRefusal";
-import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
 import { getNextAscensionPhase } from "#src/services/character/getNextAscensionPhase";
 import { getSecondaryAttribute } from "#src/services/character/getSecondaryAttribute";
 import { getTalentRows } from "#src/services/character/getTalentRows";
@@ -67,6 +66,7 @@ import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { takeItemCounts } from "#src/services/inventory/takeItemCounts";
 import { ElementMarkPathMap } from "#src/services/loading/ElementMarkPathMap";
 import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
+import { getWeaponAttributeTotals } from "#src/services/weapon/getWeaponAttributeTotals";
 import { WeaponTypeNameGameTextKeyMap } from "#src/services/weapon/WeaponTypeNameGameTextKeyMap";
 import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import {
@@ -197,15 +197,15 @@ const weaponPanel = computed(() => {
   const weapon = character.value?.weapon;
   const weaponData = weapon && statTables.weaponDataMap.get(weapon.id);
   if (!weapon || !weaponData) return undefined;
-  // Every line of an attribute is summed, since an ascension phase can add to the base ATK the weapon's level grows
-  const { attributeTotalMap } = computeCharacterAttributes(
-    getGrownAttributeLines(weaponData, statTables.weaponGrowCurveMap, weapon.level, weapon.ascension),
+  const attributeTotalMap = getWeaponAttributeTotals(
+    weaponData,
+    statTables.weaponGrowCurveMap,
+    weapon.level,
+    weapon.ascension,
   );
   // The secondary attribute is the one the weapon grows beside its base ATK, written whole or as a percentage as the
   // Game writes it, captioned by the label the Weapon screen draws it under, and nothing for a weapon that grows none
   const subStatAttribute = getSecondaryAttribute(weaponData);
-  const subStatGameTextKey =
-    subStatAttribute === undefined ? undefined : AttributeLabelGameTextKeyMap.get(subStatAttribute);
   const subStatValue =
     subStatAttribute === undefined ? "" : formatAttributeValue(subStatAttribute, attributeTotalMap[subStatAttribute]);
   const maxLevel = weaponData.ascensionPhases[weapon.ascension]?.maxLevel ?? weapon.level;
@@ -219,7 +219,7 @@ const weaponPanel = computed(() => {
     name: nameText[weaponData.nameTextId] || "",
     rarity: weaponData.rarity,
     refinement: weapon.refinement,
-    subStatLabel: subStatGameTextKey === undefined ? "" : gameText[subStatGameTextKey],
+    subStatLabel: subStatAttribute === undefined ? "" : getAttributeLabel(subStatAttribute, gameText),
     subStatValue,
     switchLabel: gameText[GameTextKey.QuickSwapSwitch],
   };

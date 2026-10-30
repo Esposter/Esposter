@@ -82,17 +82,16 @@ describe(getArtifactDetailStats, () => {
     ).toStrictEqual([{ label: ENGLISH_GAME_TEXT[GameTextKey.AttributeDefense], value: "+5.8%" }]);
   });
 
-  test("an attribute no artifact affix names is refused", () => {
+  test("an affix the caption map names no caption for is captioned empty", () => {
     expect.hasAssertions();
 
-    expect(() =>
+    const minorAffixes = [{ attribute: Attribute.MovementSpeed, value: 0.1 }];
+    expect(
       getArtifactDetailStats(
-        createArtifact({ mainAffix: Attribute.MovementSpeed }),
+        createArtifact({ mainAffix: Attribute.Health, minorAffixes }),
         ENGLISH_GAME_TEXT,
         artifactMainAffixCurves,
-      ),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: getAffixLabel, FIGHT_PROP_MOVE_SPEED]`,
-    );
+      ).subStats,
+    ).toStrictEqual([{ label: "", value: "+10.0%" }]);
   });
 });
