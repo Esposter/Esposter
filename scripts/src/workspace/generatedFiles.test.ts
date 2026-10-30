@@ -13,9 +13,9 @@ import { tmpdir } from "node:os";
 import { extname, join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const GENERATED_FOLDER_REGEX = /(?:^|\/)generated\//u;
-
 describe("generated files", () => {
+  const GENERATED_FOLDER_REGEX = /(?:^|\/)generated\//u;
+
   test(
     "every git-tracked file under a generated folder is already the formatter's output",
     { timeout: TREE_READ_TIMEOUT_MS },
