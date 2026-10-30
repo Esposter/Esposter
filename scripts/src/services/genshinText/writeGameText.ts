@@ -106,10 +106,9 @@ export const writeGameText = async ({ isDryRun }: DryRunOptions): Promise<string
       writeGeneratedFile(join(CHARACTER_LINES_DIRECTORY, `${language}.json`), toJson(characterLines)),
     ]),
   );
-  let voicedCount = 0;
-  for (const { characterLines, language } of languageOutputs) {
-    if (language === GameLanguage.English) voicedCount = Object.keys(characterLines).length;
-  }
+  const voicedCount = Object.keys(
+    languageOutputs.find(({ language }) => language === GameLanguage.English)?.characterLines ?? {},
+  ).length;
 
   await writeGeneratedFile(
     join(GENSHIN_TEXT_GENERATED_DIRECTORY, "GameTextLoaderMap.ts"),
