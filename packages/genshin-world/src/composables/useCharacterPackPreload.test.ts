@@ -14,8 +14,9 @@ vi.mock(import("#src/services/character/readCharacterPackIndex"), () => ({
 
 describe(useCharacterPackPreload, () => {
   const gameDataBaseUrl = "http://a.test";
+  const sha256 = "0".repeat(64);
   const index: CharacterPackIndex = {
-    avatars: [{ avatarId: 1, files: [{ bytes: 5, path: CHARACTER_MODEL_PATH, sha256: "0".repeat(64) }], name: "a" }],
+    avatars: [{ avatarId: 1, files: [{ bytes: 5, path: CHARACTER_MODEL_PATH, sha256 }], name: "a" }],
   };
 
   beforeEach(() => {
@@ -55,7 +56,7 @@ describe(useCharacterPackPreload, () => {
 
     const cache = createCharacterPackCacheStub();
     await cache.put(
-      getCharacterPackCacheUrl(`${gameDataBaseUrl}/`, 1, CHARACTER_MODEL_PATH, "0".repeat(64)),
+      getCharacterPackCacheUrl(`${gameDataBaseUrl}/`, 1, CHARACTER_MODEL_PATH, sha256),
       new Response(null),
     );
     vi.stubGlobal("caches", { open: () => Promise.resolve(cache) });
