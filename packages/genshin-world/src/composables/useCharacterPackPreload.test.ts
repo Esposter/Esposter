@@ -4,6 +4,7 @@ import { useCharacterPackPreload } from "#src/composables/useCharacterPackPreloa
 import { CharacterPackPreloadStatus } from "#src/models/character/CharacterPackPreloadStatus";
 import { CHARACTER_MODEL_PATH } from "#src/services/character/constants";
 import { createCharacterPackCacheStub } from "#src/services/character/createCharacterPackCacheStub.test";
+import { getCharacterPackCacheUrl } from "#src/services/character/getCharacterPackCacheUrl";
 import { readCharacterPackIndex } from "#src/services/character/readCharacterPackIndex";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -19,7 +20,7 @@ describe(useCharacterPackPreload, () => {
 
   beforeEach(() => {
     vi.useFakeTimers({ now: 0 });
-    vi.stubGlobal("location", { href: `${gameDataBaseUrl}/` });
+    vi.stubGlobal("window", { location: { href: `${gameDataBaseUrl}/` } });
     vi.stubGlobal("caches", { open: () => Promise.resolve(createCharacterPackCacheStub()) });
     vi.stubGlobal(
       "fetch",
@@ -47,5 +48,26 @@ describe(useCharacterPackPreload, () => {
 
     expect(status.value).toBe(CharacterPackPreloadStatus.Failed);
     expect(onHeld).not.toHaveBeenCalled();
+  });
+
+  test("every pack already held is ready without a fetch", async () => {
+    expect.hasAssertions();
+
+    const cache = createCharacterPackCacheStub();
+    await cache.put(
+      getCharacterPackCacheUrl(`${gameDataBaseUrl}/`, 1, CHARACTER_MODEL_PATH, "0".repeat(64)),
+      new Response(null),
+    );
+    vi.stubGlobal("caches", { open: () => Promise.resolve(cache) });
+
+    const onHeld = vi.fn<() => void>();
+    const { retry, status } = useCharacterPackPreload(gameDataBaseUrl, onHeld);
+    const run = retry();
+    await vi.runAllTimersAsync();
+    await run;
+
+    expect(status.value).toBe(CharacterPackPreloadStatus.Ready);
+    expect(onHeld).toHaveBeenCalledExactlyOnceWith();
+    expect(fetch).not.toHaveBeenCalled();
   });
 });
