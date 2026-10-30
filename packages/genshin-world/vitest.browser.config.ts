@@ -4,7 +4,6 @@ import {
   dynamicJsonImportPlugin,
   getVitestBrowserConfiguration,
   getVuePlugins,
-  isVisualUpdate,
   SOURCE_CONDITION,
 } from "@esposter/configuration";
 import { templateCompilerOptions } from "@tresjs/core";
@@ -13,7 +12,7 @@ import { defaultClientConditions } from "vite";
 import { defineConfig } from "vitest/config";
 
 // `genshin:parity approve` sets its variable, so its one-screen update compares exactly as the suite's own update does
-const browser = getVitestBrowserConfiguration(
+const { browser, define } = getVitestBrowserConfiguration(
   { height: 720, width: 1280 },
   { updateEnvironmentVariable: APPROVE_ENVIRONMENT_VARIABLE },
 );
@@ -21,8 +20,8 @@ const browser = getVitestBrowserConfiguration(
 // Drawn in the machine's own Edge at 720 pixels high, each image kept beside its component as a test is, and the tests
 // Of what only a browser runs
 export default defineConfig({
+  define,
   plugins: [...getVuePlugins(templateCompilerOptions), dynamicJsonImportPlugin, gameDataMirrorPlugin],
-  define: { IS_VISUAL_UPDATE: JSON.stringify(isVisualUpdate(APPROVE_ENVIRONMENT_VARIABLE)) },
   // Its siblings from their source, as the page reads them
   resolve: { alias: terrainWorkerAlias, conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
   test: {
