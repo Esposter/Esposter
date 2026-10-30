@@ -1,7 +1,12 @@
 <script setup lang="ts">
+import CloseButton from "#src/components/CloseButton/Index.vue";
+import { CloseButtonMark } from "#src/models/CloseButtonMark";
+
 interface Props {
   // The switch's words, and whether it is on
   autoRecoverTitle: string;
+  // The way out of the screen in the reader's language
+  closeLabel: string;
   isAutoRecoverOn: boolean;
   // The members of the deployed team, each named in the reader's language with the share of its Max HP it holds
   members: { healthShare: number; id: number; name: string }[];
@@ -15,8 +20,17 @@ interface Props {
   worshipTitle: string;
 }
 
-const { autoRecoverTitle, isAutoRecoverOn, members, poolAmount, poolMaximum, thresholdPercent, title, worshipTitle } =
-  defineProps<Props>();
+const {
+  autoRecoverTitle,
+  closeLabel,
+  isAutoRecoverOn,
+  members,
+  poolAmount,
+  poolMaximum,
+  thresholdPercent,
+  title,
+  worshipTitle,
+} = defineProps<Props>();
 const emit = defineEmits<{
   close: [];
   heal: [characterId: number];
@@ -30,7 +44,7 @@ const emit = defineEmits<{
   <!-- The layout is provisional until the recording of the Blessing screen shows it -->
   <div class="blessing-screen">
     <h1 class="title">{{ title }}</h1>
-    <button class="close" type="button" @click="emit('close')">×</button>
+    <CloseButton class="close" :label="closeLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
     <button class="worship" type="button" @click="emit('worship')">{{ worshipTitle }}</button>
     <p class="pool">{{ Math.floor(poolAmount) }} / {{ poolMaximum }}</p>
     <div class="auto-recover">

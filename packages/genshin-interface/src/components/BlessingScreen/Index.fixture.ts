@@ -1,6 +1,7 @@
 // The Blessing screen of a team of two, its pool holding half of the maximum for one statue
 export const props = {
   autoRecoverTitle: "Auto-recover when nearby",
+  closeLabel: "Back",
   isAutoRecoverOn: true,
   members: [
     { healthShare: 1, id: 1, name: "Traveler" },
