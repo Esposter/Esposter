@@ -1,7 +1,11 @@
 // The screen folders with no fixture yet, each named with the reason it has no fixture.
 // The coverage test reads the list without loading the Vue components the screen list imports
 export const pendingScreens: { directory: string; reason: string }[] = [
-  { directory: "Domain/Screen", reason: "no recording on disk opens the screen" },
+  {
+    directory: "Domain/Screen",
+    reason:
+      "a frame is sourced (KitMcSelby, VViV93IhcUs at 9s, the Golden House entrance, 1080p30 with a webcam bottom right), but its Golden Shadow levels are in no published dataset, so no fixture can read them until the domain schedules are published",
+  },
   {
     directory: "Menu/Screen",
     reason:
