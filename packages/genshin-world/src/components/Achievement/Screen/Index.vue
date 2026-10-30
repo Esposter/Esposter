@@ -16,14 +16,16 @@ interface Props {
   categories: readonly AchievementCategory[];
   // The game's words in the reader's language
   gameText: GameText;
+  // The category the list opens on, the first category when absent
+  initialCategoryId?: number;
   progressMap: ReadonlyMap<number, AchievementProgress>;
   // The achievements' and categories' words in the reader's language, by the game's text id
   textMap: Readonly<Record<string, string>>;
 }
 
-const { achievements, categories, gameText, progressMap, textMap } = defineProps<Props>();
+const { achievements, categories, gameText, initialCategoryId, progressMap, textMap } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
-const selectedCategoryId = ref(categories[0]?.id ?? 0);
+const selectedCategoryId = ref(initialCategoryId ?? categories[0]?.id ?? 0);
 const selectedCategory = computed(() => categories.find(({ id }) => id === selectedCategoryId.value));
 const categoryAchievementsMap = computed(() => Map.groupBy(achievements, ({ categoryId }) => categoryId));
 const selectedAchievements = computed(() =>

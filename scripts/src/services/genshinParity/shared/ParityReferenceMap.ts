@@ -71,6 +71,27 @@ const NO_DOWNLOAD_STATE_SCREENSHOT = "the game's download state of the startup s
 
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
+  // The English PC client's Achievements screen at 1080 high from a public tutorial (yt-KoebEnOmDWI, 37 seconds in): the
+  // Marksmanship category open on its three achievements, the progress banner above them and the category list down the
+  // Left, over the blurred world behind the window, which is pillarboxed 96 pixels each side. The plates fill the screen's
+  // Own large pieces from round them, so the world shows through them as the frame draws it. The cursor rests on the end of
+  // The progress bar, inside the banner. The recorder's UID sits bottom right, below the region. The page draws no progress
+  // Banner, search box or completed count, which the frame shows; its rows read the table's Primogem rewards and progress
+  "achievement-screen": {
+    isBackdrop: true,
+    plate: [
+      { height: 50, width: 260, x: 125, y: 20 },
+      { height: 40, width: 430, x: 1355, y: 25 },
+      { height: 55, width: 60, x: 1725, y: 18 },
+      { height: 46, width: 540, x: 150, y: 98 },
+      { height: 875, width: 560, x: 140, y: 150 },
+      { height: 930, width: 1050, x: 722, y: 95 },
+    ],
+    region: { height: 1050, width: 1728, x: 96, y: 0 },
+    screen: "AchievementScreen",
+    source: "yt-KoebEnOmDWI-yt-KoebEnOmDWI-achievement-check.mp4 at 37s",
+    windowLeft: 96,
+  },
   // The English PC client's Archive on its Equipment section's Weapons grid at 1080 high, from the public recording at 19.5 seconds: the
   // First five rows of the weapons with the first one selected and the cursor resting on the fifth of the first row, forty entries open.
   // The page draws the header's title and counter on a dark ground of its own, each tile over a flat colour where the game draws its
@@ -780,6 +801,30 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The English PC client's title scene at dusk at 1080 high, 3 seconds in, settled (the same frame as the public dusk clip at 3
   // Seconds). The power button, the publisher's icon and the build string sit at the corners
   "login-screen-dusk": { screen: "LoginScreen", source: "yt-mMf727q-0w0-login-dusk.mkv at 3s", variant: "dusk" },
+  // The English PC client's Mailbox at 1080 high from a public tutorial (yt-sMwxCMoLYzM, 31 seconds in): the Mailbox tab open
+  // on its first mail, pinned and starred, with two more below it and the selected mail's text and its two items down the
+  // Right, over the blurred world behind the window, which is pillarboxed 96 pixels each side. The plates fill the screen's
+  // Own pieces from round them. The page draws the table's three mails, so the words and the dates differ from the frame's:
+  // The clip's mails are the 2024 build's, which the table no longer holds. The cursor rests at the top edge, above the
+  // Header. The recorder's UID sits bottom right, below the region
+  "mail-screen": {
+    isBackdrop: true,
+    plate: [
+      { height: 55, width: 300, x: 125, y: 18 },
+      { height: 55, width: 620, x: 1165, y: 18 },
+      { height: 55, width: 60, x: 1725, y: 18 },
+      { height: 315, width: 750, x: 195, y: 105 },
+      { height: 690, width: 760, x: 1000, y: 100 },
+      { height: 100, width: 200, x: 1005, y: 875 },
+      { height: 60, width: 550, x: 195, y: 990 },
+      { height: 60, width: 300, x: 1440, y: 990 },
+      { height: 60, width: 240, x: 1515, y: 990 },
+    ],
+    region: { height: 1050, width: 1728, x: 96, y: 0 },
+    screen: "MailScreen",
+    source: "yt-sMwxCMoLYzM-yt-sMwxCMoLYzM-gift-mail-box.mp4 at 31s",
+    windowLeft: 96,
+  },
   // The English PC client's map zoomed out over Galesong Hill at 99% (yt-kgW2IgWKukg at 4.6 seconds, 1080p and 60 frames a
   // Second, one chest before the area reads 100%). Its label, the name and the progress line under it, scored over the
   // Glyphs' silhouettes alone, the terrain between their strokes left out. The game places a label from map data the
