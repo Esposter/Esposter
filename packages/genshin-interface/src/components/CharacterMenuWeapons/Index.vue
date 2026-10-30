@@ -6,7 +6,7 @@ interface Props {
   // The weapon's ascension phase, from none to the last one
   ascension: number;
   // The weapon's base ATK at its level and phase, whole
-  baseAttack: number;
+  baseAttack: string;
   // The base ATK row's label, the game's name for the attribute
   baseAttackLabel: string;
   // The Enhance button's words, the equipment page's name for raising the weapon's level

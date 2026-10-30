@@ -8,6 +8,7 @@ describe("formatAttributeValue", () => {
   test.each([
     [Attribute.ElementalMastery, 187.2, "187"],
     [Attribute.Attack, 311.4, "311"],
+    [Attribute.BaseHealth, 12_345.4, "12,345"],
     [Attribute.CriticalRate, 0.269, "26.9%"],
     [Attribute.AttackPercent, 0.09, "9.0%"],
   ])("%s of %d reads %s", (attribute, total, text) => {

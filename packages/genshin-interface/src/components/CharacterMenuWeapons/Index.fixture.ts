@@ -2,7 +2,7 @@
 // Shows it at 156 seconds
 export const props = {
   ascension: 6,
-  baseAttack: 542,
+  baseAttack: "542",
   baseAttackLabel: "Base ATK",
   enhanceLabel: "Enhance",
   kind: "Sword",

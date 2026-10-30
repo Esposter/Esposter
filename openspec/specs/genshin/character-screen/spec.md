@@ -71,7 +71,7 @@ The Attributes tab SHALL show the character's name, its level over its phase's c
 
 - **GIVEN** the Attributes tab is open for a character
 - **WHEN** the panel is read
-- **THEN** Max HP, ATK, DEF, Elemental Mastery and Max Stamina are shown as whole numbers
+- **THEN** Max HP, ATK, DEF, Elemental Mastery and Max Stamina are shown as whole numbers, grouped in thousands as the game writes them (`12,345`)
 
 #### Scenario: Advanced attributes shown as percentages
 

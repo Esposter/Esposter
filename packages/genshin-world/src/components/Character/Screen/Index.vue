@@ -211,7 +211,7 @@ const weaponPanel = computed(() => {
   const maxLevel = weaponData.ascensionPhases[weapon.ascension]?.maxLevel ?? weapon.level;
   return {
     ascension: weapon.ascension,
-    baseAttack: Math.round(attributeTotalMap[Attribute.BaseAttack]),
+    baseAttack: formatWholeNumber(attributeTotalMap[Attribute.BaseAttack]),
     baseAttackLabel: gameText[GameTextKey.AttributeBaseAttack],
     enhanceLabel: gameText[GameTextKey.WeaponEnhance],
     kind: gameText[WeaponTypeNameGameTextKeyMap[weaponData.weaponType]],
