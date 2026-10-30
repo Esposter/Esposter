@@ -1,5 +1,16 @@
 import { NuxtImgStub } from "#parity/NuxtImgStub";
 import { NuxtTimeStub } from "#parity/NuxtTimeStub";
+import { recordConsoleWarnings } from "genshin-interface";
+import { aroundEach, expect } from "vitest";
 import { config } from "vitest-browser-vue";
 
 config.global.stubs = { ...config.global.stubs, NuxtImg: NuxtImgStub, NuxtTime: NuxtTimeStub };
+
+// A browser test whose body logs a Vue warning fails by name, as a visual case does for its fixture
+aroundEach(async (runTest) => {
+  const messages = await recordConsoleWarnings(runTest);
+  expect(
+    messages.filter((message) => message.startsWith("[Vue warn]")),
+    "the console logged a Vue warning while the test ran",
+  ).toStrictEqual([]);
+});

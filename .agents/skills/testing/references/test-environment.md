@@ -16,7 +16,7 @@ The `// @vitest-environment nuxt` directives are **load-bearing** — never remo
 
 ## A layout engine: a package's browser suite
 
-What happy-dom cannot show — a box's width, a media query, a frame's isolation — is a `*.browser.test.ts` beside the code it checks, in a package that holds no Nuxt. The default run excludes it, and the package's `vitest.browser.config.ts` (`getVitestBrowserConfiguration`) runs it in the machine's Edge. The app has no browser suite: a browser run there boots Nuxt, which costs more than the check is worth, so a layout claim about the app's own components waits until its code is extracted into such a package. A browser run loads the stylesheets its tests import, so a worktree runs it only once the packages those stylesheets come from are built.
+What happy-dom cannot show — a box's width, a media query, a frame's isolation — is a `*.browser.test.ts` beside the code it checks, in a package that holds no Nuxt. The default run excludes it, and the package's `vitest.browser.config.ts` (`getVitestBrowserConfiguration`) runs it in the machine's Edge, and genshin-world's setup file fails any browser test whose body logs a Vue warning (`recordConsoleWarnings` in `packages/genshin-world/parity/setupBrowser.ts`). The app has no browser suite: a browser run there boots Nuxt, which costs more than the check is worth, so a layout claim about the app's own components waits until its code is extracted into such a package. A browser run loads the stylesheets its tests import, so a worktree runs it only once the packages those stylesheets come from are built.
 
 ## Composables with lifecycle hooks
 
