@@ -7,6 +7,20 @@ import { UiScaleMode } from "#src/models/genshinAssets/ui/UiScaleMode";
 import { composeUiEntries } from "#src/services/genshinAssets/ui/composeUiEntries";
 import { describe, expect, test } from "vitest";
 
+const createGameObject = (
+  name: string,
+  transformId: string,
+  gameObjectId: string,
+  components: string[] = [],
+): DumpedGameObject => ({
+  m_Components: [
+    { m_PathID: transformId, Name: "" },
+    ...components.map((componentName) => ({ m_PathID: `${gameObjectId}-${componentName}`, Name: componentName })),
+  ],
+  m_Name: name,
+  m_Transform: { m_GameObject: { m_PathID: gameObjectId } },
+});
+
 describe(composeUiEntries, () => {
   const BLOCK = "00/04949489.blk";
   const CONTAINER = "-1001859426";
@@ -17,19 +31,6 @@ describe(composeUiEntries, () => {
     pivot: [0.5, 0.5],
     sizeDelta: [0, 0],
   };
-  const createGameObject = (
-    name: string,
-    transformId: string,
-    gameObjectId: string,
-    components: string[] = [],
-  ): DumpedGameObject => ({
-    m_Components: [
-      { m_PathID: transformId, Name: "" },
-      ...components.map((componentName) => ({ m_PathID: `${gameObjectId}-${componentName}`, Name: componentName })),
-    ],
-    m_Name: name,
-    m_Transform: { m_GameObject: { m_PathID: gameObjectId } },
-  });
   const createRectTransform = (
     name: string,
     gameObjectId: string,

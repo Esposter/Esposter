@@ -31,8 +31,8 @@ export const variants = {
   // The bag is full, so the Unequip the player pressed left the piece worn. The notice is a provisional sample line,
   // Not the game's card: the Character screen passes the game's own words in
   bagFull: { notice: "The bag is full." },
-  // Two pieces each of two sets worn, so the set bonus block draws both sets' names above their bonuses, each set's lines
-  // under its own name
+  // Two pieces each of two sets worn, so the set bonus block draws both sets' names above their bonuses.
+  // Each set's lines sit under its own name
   twoSets: {
     sets: [
       { lines: ["2-Piece Set: Attack +18%"], name: "Scroll of the Hero of Cinder City" },

@@ -1,3 +1,5 @@
+import type { SetupEnvironment } from "#src/models/setup/SetupEnvironment";
+
 import { SetupStatus } from "#src/models/setup/SetupStatus";
 import { DATA_VERIFY_ARGS } from "#src/services/setup/constants";
 import { createSetupEnvironment } from "#src/services/setup/createSetupEnvironment.test";
@@ -5,9 +7,9 @@ import { readSetupRows } from "#src/services/setup/readSetupRows";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { describe, expect, test, vi } from "vitest";
 
-describe(readSetupRows, () => {
-  const stepRow = (rows: ReturnType<typeof readSetupRows>, step: string) => rows.find((row) => row.step === step);
+const stepRow = (rows: ReturnType<typeof readSetupRows>, step: string) => rows.find((row) => row.step === step);
 
+describe(readSetupRows, () => {
   test("neither the install nor the hosted data's check runs unless asked for", () => {
     expect.hasAssertions();
 
@@ -34,7 +36,9 @@ describe(readSetupRows, () => {
   test("the hosted data's check runs when asked for, and its failure needs the person", () => {
     expect.hasAssertions();
 
-    const environment = createSetupEnvironment({ runVisibly: vi.fn(() => ({ status: 1, stdout: null })) });
+    const environment = createSetupEnvironment({
+      runVisibly: vi.fn<SetupEnvironment["runVisibly"]>(() => ({ status: 1, stdout: null })),
+    });
 
     const rows = readSetupRows({ install: false, verify: true }, environment);
 

@@ -1,4 +1,4 @@
-import { ReviewSettlementOutcome } from "#src/models/review/ReviewSettlementOutcome";
+import type { ReviewSettlementOutcome } from "#src/models/review/ReviewSettlementOutcome";
 
 // One finding's settlement, by the finding's index in the issue's body, from zero
 export interface ReviewSettlementDisposition {

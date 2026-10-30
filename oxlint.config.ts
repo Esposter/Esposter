@@ -112,14 +112,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     style: "error",
     suspicious: "error",
   },
-  ignorePatterns: [
-    "public",
-    TILESET_IGNORE_PATTERN,
-    ".agents/worktrees",
-    ".claude",
-    "**/auto-imports.d.ts",
-    "**/composables/visual/useFluidSimulator.ts",
-  ],
+  ignorePatterns: ["public", TILESET_IGNORE_PATTERN, ".agents/worktrees", ".claude", "**/auto-imports.d.ts"],
   jsPlugins: [
     "./scripts/src/oxlint/comments.ts",
     "./scripts/src/oxlint/countWriteAfterSettle.ts",

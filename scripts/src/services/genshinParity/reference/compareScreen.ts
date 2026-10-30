@@ -15,7 +15,6 @@ import { readScoredMask } from "#src/services/genshinParity/reference/readScored
 import { readSilhouetteInks } from "#src/services/genshinParity/reference/readSilhouetteInks";
 import { scoreLayers } from "#src/services/genshinParity/reference/scoreLayers";
 import { scoreStructure } from "#src/services/genshinParity/reference/scoreStructure";
-import { toPercent } from "#src/services/genshinParity/reference/toPercent";
 import { COMPARISONS_DIRECTORY, STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
@@ -25,7 +24,6 @@ import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErr
 import { readReferenceGbuffer } from "#src/services/genshinParity/shared/readReferenceGbuffer";
 import { shootScreen } from "#src/services/genshinParity/shared/shootScreen";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";

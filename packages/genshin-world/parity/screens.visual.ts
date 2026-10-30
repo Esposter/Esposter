@@ -56,9 +56,6 @@ describe("interface screens", () => {
 
   afterAll(async () => {
     await page.viewport(viewportBefore.width, viewportBefore.height);
-  });
-
-  afterAll(() => {
     visualComparison.report();
   });
 

@@ -8,9 +8,10 @@ import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// The Gaussian sigma of a recording's own blur, measured from the reference's bytes and cached in the scratch folder by
-// their hash. It is not published: it is a measurement of the image the manifest already holds, so a new machine measures
-// it once. Only a reference sampled from a recording asks for it, since a still shot in the game is never softened
+// The Gaussian sigma of a recording's own blur is measured from the reference's bytes.
+// It is cached in the scratch folder by their hash.
+// It is not published: it measures the image the manifest already holds, so a new machine measures it once.
+// Only a reference sampled from a recording asks for it, since a still shot in the game is never softened.
 export const getReferenceSoftness = async (referenceId: string): Promise<number> => {
   const referencePath = await getReferencePath(referenceId);
   const cachePath = join(REFERENCE_SCRATCH_DIRECTORY, getSoftnessFileName(referenceId, await hashFile(referencePath)));

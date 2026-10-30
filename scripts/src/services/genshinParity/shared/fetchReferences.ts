@@ -9,9 +9,10 @@ import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import sharp from "sharp";
 
-// Fetches every wiki reference not yet committed into the scratch folder, where `references pack` reads it, and names each
-// one that stays missing. A wiki file is written as the wiki serves it: its bytes are sniffed by pack, never its name. A
-// recording's frame is never fetched, so a missing one is named with its source and the scratch path to save its cut at
+// Fetches every wiki reference not yet committed into the scratch folder, where `references pack` reads it.
+// It names each one that stays missing.
+// A wiki file is written as the wiki serves it: its bytes are sniffed by pack, never its name.
+// A recording's frame is never fetched, so a missing one is named with its source and the scratch path to save its cut at
 export const fetchReferences = async (): Promise<void> => {
   await mkdir(REFERENCE_SCRATCH_DIRECTORY, { recursive: true });
   const references = await readReferenceFiles();

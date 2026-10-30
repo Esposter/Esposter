@@ -38,7 +38,7 @@ describe(verifyReference, () => {
   test("fails a reference whose committed image is missing, naming the path to it", async () => {
     expect.hasAssertions();
 
-    expect(await verifyReference("a", SOURCE, REFERENCE, pathsOf(missingPath))).toStrictEqual({
+    await expect(verifyReference("a", SOURCE, REFERENCE, pathsOf(missingPath))).resolves.toStrictEqual({
       id: "a",
       message: `no committed image at ${relative(REPOSITORY_ROOT, missingPath)}`,
       outcome: VerifyOutcome.Fail,

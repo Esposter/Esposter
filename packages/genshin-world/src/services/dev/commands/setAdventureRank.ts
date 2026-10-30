@@ -13,8 +13,8 @@ export const setAdventureRankArgumentsSchema = z.object({
 
 export type SetAdventureRankArguments = z.infer<typeof setAdventureRankArgumentsSchema>;
 
-// Sets the Adventure EXP that rank is reached at, read from the same rank table the game's rank rule reads, so the rank
-// the game shows is the one named unless a main quest holds it lower
+// Sets the Adventure EXP that rank is reached at, read from the same rank table the game's rank rule reads.
+// So the rank the game shows is the one named, unless a main quest holds it lower.
 export const setAdventureRank = (
   save: GenshinSave,
   { rank }: SetAdventureRankArguments,

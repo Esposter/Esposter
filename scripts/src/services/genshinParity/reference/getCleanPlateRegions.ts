@@ -3,8 +3,8 @@ import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
 import { checkIsWholeFrameCovered } from "#src/services/genshinParity/reference/checkIsWholeFrameCovered";
 
-// The regions a backdrop's clean plate fills, or undefined when the entry draws no clean plate: a screen that is not a
-// backdrop, or one whose regions cover the whole frame, has no border to fill from
+// The regions a backdrop's clean plate fills, or undefined when the entry draws no clean plate.
+// A screen that is not a backdrop, or one whose regions cover the whole frame, has no border to fill from.
 export const getCleanPlateRegions = (
   reference: ParityReference,
   dimensions: { height: number; width: number },

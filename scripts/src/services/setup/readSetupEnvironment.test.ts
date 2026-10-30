@@ -7,7 +7,12 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock("@esposter/shared-node/child-process", () => ({ spawnSync: vi.fn(() => ({ status: 0, stdout: "" })) }));
+vi.mock(import("@esposter/shared-node/child-process"), () => ({
+  spawnSync: vi.fn<() => { status: number; stdout: string }>(() => ({
+    status: 0,
+    stdout: "",
+  })) as unknown as typeof spawnSync,
+}));
 
 describe(readSetupEnvironment, () => {
   const PROCESS_OPTIONS = { cwd: REPOSITORY_ROOT, encoding: "utf8", maxBuffer: MAX_BUFFER_BYTES, stdio: "pipe" };

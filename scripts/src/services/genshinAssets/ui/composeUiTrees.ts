@@ -5,8 +5,8 @@ import { composeInterfaceTree } from "#src/services/genshinAssets/interface/comp
 import { findNearestUiCanvas } from "#src/services/genshinAssets/ui/findNearestUiCanvas";
 import { getUiRootEntries } from "#src/services/genshinAssets/ui/getUiRootEntries";
 
-// A container's RectTransform trees, `depth` levels below each root, and the canvas scaler nearest their roots. The canvas
-// is searched in the whole trees, so a depth that cuts its piece off still names it
+// A container's RectTransform trees, `depth` levels below each root, and the canvas scaler nearest their roots.
+// The canvas is searched in the whole trees, so a depth that cuts its piece off still names it.
 export const composeUiTrees = (entries: readonly UiIndexEntry[], depth: number): UiTrees => {
   const rootEntries = getUiRootEntries(entries);
   const canvas = findNearestUiCanvas(rootEntries.map((root) => composeInterfaceTree(entries, root)));

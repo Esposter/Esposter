@@ -12,7 +12,7 @@ describe(createStatCommand, () => {
     expect(setStatShown).toHaveBeenCalledExactlyOnceWith(true);
   });
 
-  test("Toggle hides it", () => {
+  test("toggle hides it", () => {
     expect.hasAssertions();
 
     const setStatShown = vi.fn<(isShown: boolean) => void>();

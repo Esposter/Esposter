@@ -9,12 +9,12 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
 import { join } from "node:path";
 
-// The repository's formatter binary runs from the main checkout, which holds its install, over the source on stdin. The
-// Configuration and the working directory are both the checkout the file is in, since the formatter matches its ignore
-// Patterns against the path it is given from the working directory: from the main checkout, a worktree's `generated/` file
-// would match none of them and be rewritten. The path is repository-relative, since a worktree's own path sits under
-// `.agents/worktrees`, which the config ignores. A file type the formatter has no parser for is undefined, not an error,
-// Since the pre-commit hook skips it the same way
+// The repository's formatter binary runs from the main checkout, which holds its install, over the source on stdin.
+// The configuration and the working directory are both the checkout the file is in.
+// The formatter matches its ignore patterns against the path it is given from the working directory.
+// From the main checkout, a worktree's `generated/` file would match none of them and be rewritten.
+// The path is repository-relative, since a worktree's own path sits under `.agents/worktrees`, which the config ignores.
+// A file type the formatter has no parser for is undefined, not an error, since the pre-commit hook skips it the same way
 export const formatSource = (
   source: string,
   relativePath: string,

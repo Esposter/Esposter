@@ -8,9 +8,11 @@ import { getFixtureReferenceFilePath } from "#src/services/genshinParity/shared/
 import { getFlatReferenceFilePath } from "#src/services/genshinParity/shared/getFlatReferenceFilePath";
 import { join } from "node:path";
 
-// Where each reference the map names is committed. Each fixture variant with a reference has its primary one beside its
-// snapshot, as `Index.reference.webp` or `Index-<variant>.reference.webp`. Every other reference, and every reference whose
-// screen has no fixture, is flat in the references folder under its id. The fixture rows were read from `componentsDirectory`
+// Where each reference the map names is committed.
+// Each fixture variant with a reference has its primary one beside its snapshot.
+// That file is named `Index.reference.webp` or `Index-<variant>.reference.webp`.
+// Every other reference, and every reference whose screen has no fixture, is flat in the references folder under its id.
+// The fixture rows were read from `componentsDirectory`.
 export const planReferenceFiles = (
   referenceMap: Record<string, ParityReference>,
   fixtureRows: FixtureScreenRow[],

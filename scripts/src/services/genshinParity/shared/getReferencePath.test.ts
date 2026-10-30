@@ -34,6 +34,6 @@ describe(getReferencePath, () => {
 
     readReferenceFiles.mockResolvedValue([{ id: ID, path: REFERENCE_MANIFEST_PATH, reference: REFERENCE }]);
 
-    expect(await getReferencePath(ID)).toBe(REFERENCE_MANIFEST_PATH);
+    await expect(getReferencePath(ID)).resolves.toBe(REFERENCE_MANIFEST_PATH);
   });
 });

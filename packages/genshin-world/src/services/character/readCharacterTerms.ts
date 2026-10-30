@@ -4,8 +4,8 @@ import { CHARACTER_TERMS_PATH } from "#src/services/character/constants";
 import { decodeCharacterTerms } from "#src/services/character/decodeCharacterTerms";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 
-// A pack's terms as the text bundled with its model, decoded as the terms file's own encoding reads, so the terms are
-// shown as written, since the wording differs slightly by character
+// A pack's terms as the text bundled with its model, decoded as the terms file's own encoding reads.
+// The terms are shown as written, since the wording differs slightly by character
 export const readCharacterTerms = (
   characterPackReader: CharacterPackReader,
 ): ReturnType<typeof getResultAsync<string>> =>

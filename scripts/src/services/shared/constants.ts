@@ -54,8 +54,9 @@ export const EMPTY_TREE_SHA = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
 // The manifest every member and the root carry, which is how a workspace glob's children are told from a plain
 // Directory and how an npm-installed project is found beside its lockfile
 export const PACKAGE_JSON_FILENAME = "package.json";
-// `pnpm`'s `packageManager` pin, `<name>@<version>` with the optional `+sha512.<hex>` suffix corepack verifies the download
-// against, which is no part of the version the registry is asked about
+// `pnpm`'s `packageManager` pin is `<name>@<version>`, with an optional `+sha512.<hex>` suffix.
+// Corepack verifies the download against that suffix, which is no part of the version the registry is asked about.
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
 export const PACKAGE_MANAGER_REGEX: RegExp = /^(?<packageName>[^@]+)@(?<version>[^+]+)/u;
 // The text between a `.vue` file's `<script>` tags, quoted attributes and all. The rename and the
 // Unterminated-results scan read through it: two readers parsing an attribute differently would disagree on which block

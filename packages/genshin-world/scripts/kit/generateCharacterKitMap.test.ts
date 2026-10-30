@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { format } from "oxfmt";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
+// oxlint-disable-next-line no-restricted-imports -- the repo-root formatter config, which no `#` map can reach
 import formatterConfiguration from "../../../../oxfmt.config.ts";
 
 describe(generateCharacterKitMap, () => {

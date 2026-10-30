@@ -4,12 +4,14 @@ import { SITE_NAME } from "@esposter/shared";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-// Everything the tool fetches, records and draws lives here, outside the repository, except the references the map names
-// and the manifest that holds their provenance, which are committed in the repository
+// Everything the tool fetches, records and draws lives here, outside the repository.
+// The exceptions are the references the map names, and the manifest that holds their provenance.
+// Both are committed in the repository.
 export const PARITY_DIRECTORY: string =
   process.env.GENSHIN_PARITY_DIRECTORY ?? join(homedir(), SITE_NAME, "genshin-parity");
-// The scratch images that are never committed: the clean plates, the softness caches, the wiki files a trace reads,
-// the namecards and the interactive map, and the reference files a machine has not yet packed (`references pack`)
+// The scratch images that are never committed: the clean plates, the softness caches, and the wiki files a trace reads.
+// The namecards and the interactive map are scratch as well.
+// So are the reference files a machine has not yet packed (`references pack`).
 export const REFERENCE_SCRATCH_DIRECTORY: string = join(PARITY_DIRECTORY, "references");
 // The shots of each checkout, under its own name, so a worktree's compare never overwrites another checkout's shot
 export const SHOTS_DIRECTORY: string = join(PARITY_DIRECTORY, "shots", getWorktreeName(REPOSITORY_ROOT));
@@ -49,8 +51,8 @@ export const PARITY_PAGE_TITLE = "<title>Genshin parity</title>";
 export const GENSHIN_WORLD_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world");
 // The committed references' folder: each reference the map names is committed here, or beside its fixture variant's snapshot
 export const REFERENCE_FILES_DIRECTORY: string = join(GENSHIN_WORLD_DIRECTORY, "parity", "references");
-// The manifest of every reference the map names: each file's hash, size, dimensions, source and attribution, which the
-// committed files are checked against
+// The manifest of every reference the map names: each file's hash, size, dimensions, source and attribution.
+// The committed files are checked against it.
 export const REFERENCE_MANIFEST_PATH: string = join(REFERENCE_FILES_DIRECTORY, "manifest.json");
 // The production build of the parity page: a folder inside that package, which git ignores, and the root task that builds it
 export const PARITY_BUILD_DIRECTORY_NAME = "parity-build";

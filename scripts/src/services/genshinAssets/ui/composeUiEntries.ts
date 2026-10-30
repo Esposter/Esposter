@@ -9,8 +9,8 @@ import { getUiPath } from "#src/services/genshinAssets/ui/getUiPath";
 import { toUiObjectKey } from "#src/services/genshinAssets/ui/toUiObjectKey";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A block's UI index entries: each RectTransform joined to its GameObject's dump and the canvas scaler its GameObject
-// holds, keyed by block, container and GameObject path ID. A repeated key is refused rather than kept twice
+// A block's UI index entries: each RectTransform joined to its GameObject's dump and to the GameObject's canvas scaler.
+// They are keyed by block, container and GameObject path ID. A repeated key is refused rather than kept twice.
 export const composeUiEntries = (
   block: string,
   rectTransforms: readonly UiRectTransformRead[],

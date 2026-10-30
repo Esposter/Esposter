@@ -18,8 +18,8 @@ import {
   getTerrainTileLevel,
 } from "genshin-engine/terrainWorker";
 
-// What the tiles are computed with, which the world's first message to the worker loads, and the ground and the regions'
-// Grounds laid over it so far that it is built from, built again as each region's ground arrives
+// What the tiles are computed with, built from the ground the world's first message to the worker loads.
+// It also takes the regions' grounds laid over it so far, and is built again as each region's ground arrives
 let context: TerrainWorkerContext | undefined;
 let loadedGround: TerrainWorkerGround | undefined;
 let regionGrounds: RegionGround[] = [];
@@ -55,8 +55,9 @@ const buildPlantedTerrainTile = (
       : { plantColors: new Float32Array(), plantMatrices: new Float32Array() };
   return { ...terrainTile, plantColors, plantMatrices };
 };
-// The worker cannot load `@esposter/shared`, so a build that throws is read as a rejection by allSettled rather than through
-// its getResult. A tile that fails is answered with its key, so the world releases it instead of waiting on it
+// The worker cannot load `@esposter/shared`, so a build that throws is read as a rejection by allSettled.
+// It is not read through its getResult.
+// A tile that fails is answered with its key, so the world releases it instead of waiting on it
 const answerTile = async (request: TerrainTileRequest, terrainWorkerContext: TerrainWorkerContext) => {
   const [outcome] = await Promise.allSettled([
     Promise.try(() => buildPlantedTerrainTile(request, terrainWorkerContext)),
@@ -105,8 +106,9 @@ const handleMessage = async (message: TerrainWorkerMessage) => {
   }
   await answerTile(message.request, context);
 };
-// Generates the world's ground a tile at a time off the main thread, the plants no record places scattered on each
-// Finest tile beside it, and hands each tile's arrays back without a copy. The worker lives as long as the world does,
-// So its ground is loaded once, ahead of any tile, and a tile costs its heights and its plants and nothing to start. A
-// Region's ground is laid over it as the region comes within reach, and every tile asked for after is raised by it
+// Generates the world's ground a tile at a time off the main thread, and hands each tile's arrays back without a copy.
+// The plants no record places are scattered on each finest tile beside it.
+// The worker lives as long as the world does, so its ground is loaded once, ahead of any tile.
+// A tile therefore costs its heights and its plants and nothing to start.
+// A region's ground is laid over it as the region comes within reach, and every tile asked for after is raised by it
 self.onmessage = (event: MessageEvent<TerrainWorkerMessage>) => handleMessage(event.data);

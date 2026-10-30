@@ -5,8 +5,9 @@ import { readSetupRows } from "#src/services/setup/readSetupRows";
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
-// `pnpm ai:setup [--install] [--verify]` — the new-machine steps after the clone and the logins, as one table. It exits 1 while
-// a step needs the person; the install and verify steps run only when asked for, since they take minutes and the network
+// `pnpm ai:setup [--install] [--verify]` — the new-machine steps after the clone and the logins, as one table.
+// It exits 1 while a step needs the person.
+// The install and verify steps run only when asked for, since they take minutes and the network
 await runCommand(
   defineCommand({
     args: {

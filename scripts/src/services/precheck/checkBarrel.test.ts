@@ -9,8 +9,8 @@ import { afterAll, describe, expect, test, vi } from "vitest";
 const { repositoryRoot } = await vi.hoisted(async () => {
   const { mkdtempSync } = await import("node:fs");
   const { tmpdir } = await import("node:os");
-  const { join } = await import("node:path");
-  return { repositoryRoot: mkdtempSync(join(tmpdir(), "check-barrel-")) };
+  const { join: joinPath } = await import("node:path");
+  return { repositoryRoot: mkdtempSync(joinPath(tmpdir(), "check-barrel-")) };
 });
 
 vi.mock(import("#src/services/shared/constants"), async (importOriginal) => ({

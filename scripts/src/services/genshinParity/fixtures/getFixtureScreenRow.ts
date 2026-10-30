@@ -6,8 +6,9 @@ import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constant
 import { getPrimaryReferenceId } from "#src/services/genshinParity/reference/getPrimaryReferenceId";
 import { getVariantEntries } from "#src/services/genshinParity/reference/getVariantEntries";
 
-// One fixture screen or variant as a row, with the reference that names it: its primary reference (`getPrimaryReferenceId`),
-// its status, and its last score and bar. A reference with no approval of its own is judged against the default bar
+// One fixture screen or variant as a row, named by its reference: its primary reference (`getPrimaryReferenceId`).
+// The row carries its status, its last score and its bar.
+// A reference with no approval of its own is judged against the default bar
 export const getFixtureScreenRow = ({
   directory,
   imageExists,

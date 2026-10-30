@@ -6,9 +6,9 @@ import { WeatherKind } from "genshin-engine";
 import { Object3D } from "three";
 import { describe, expect, test } from "vitest";
 
-describe(createStateCommand, () => {
-  const getCharacterName = (characterId: number) => (characterId === 1 ? "Amber" : "Kaeya");
+const getCharacterName = (characterId: number) => (characterId === 1 ? "Amber" : "Kaeya");
 
+describe(createStateCommand, () => {
   test("answers the position, place, hour, weather, health and party as one record", () => {
     expect.hasAssertions();
 

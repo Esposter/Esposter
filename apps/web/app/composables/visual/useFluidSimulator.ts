@@ -24,17 +24,19 @@ import {
   WebGPURenderer,
 } from "three/webgpu";
 
+// The page's own region, which the shell sizes to the viewport past the dock
+const getSize = ({ clientHeight, clientWidth }: HTMLElement) => ({ height: clientHeight, width: clientWidth });
+
 export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | undefined>) => {
   const parameters = { azimuth: 180, elevation: 2, exposure: 0.5 };
-  // Assigned only at the tail of onMounted (past every await), so an unmount that races setup leaves this
-  // undefined and teardown no-ops instead of dereferencing a handle that was never created
+  // Assigned only at the tail of onMounted, past every await.
+  // An unmount that races setup leaves it undefined, so teardown no-ops instead of dereferencing a handle never created
   let fluidResources: FluidResources | undefined;
-  // The page's own region, which the shell sizes to the viewport past the dock
-  const getSize = ({ clientHeight, clientWidth }: HTMLElement) => ({ height: clientHeight, width: clientWidth });
 
   onMounted(async () => {
     const containerValue = toValue(container);
     if (!containerValue) return;
+    // eslint-disable-next-line no-restricted-syntax -- the Inspector is the renderer's debug overlay, loaded only once the simulator mounts so it stays out of the server and eager graphs
     const { Inspector } = await import("three/examples/jsm/inspector/Inspector.js");
     const renderer = new WebGPURenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -44,7 +46,7 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     renderer.toneMappingExposure = parameters.exposure;
     const inspector = new Inspector();
     renderer.inspector = inspector;
-    containerValue.appendChild(renderer.domElement);
+    containerValue.append(renderer.domElement);
 
     const scene = new Scene();
     const camera = new PerspectiveCamera(55, width / height, 1, 20_000);
@@ -140,8 +142,8 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     folderClouds.add(sky.cloudCoverage, "value", 0, 1, 0.01).name("coverage");
     folderClouds.add(sky.cloudDensity, "value", 0, 1, 0.01).name("density");
     folderClouds.add(sky.cloudElevation, "value", 0, 1, 0.01).name("elevation");
-    // Registered after awaits, so it is outside the synchronous setup scope and won't auto-dispose —
-    // its stop handle travels in the resources so teardown can detach it
+    // Registered after awaits, so it is outside the synchronous setup scope and won't auto-dispose.
+    // Its stop handle travels in the resources so teardown can detach it
     const stopResize = useEventListener("resize", () => {
       const { height: newHeight, width: newWidth } = getSize(containerValue);
       camera.aspect = newWidth / newHeight;
@@ -173,8 +175,8 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
       water,
     };
   });
-  // Idempotent, undefined-safe teardown: an early unmount (before or between the onMounted awaits) leaves
-  // fluidResources undefined, so nothing is dereferenced; clearing it first makes a repeat call a no-op
+  // Teardown is idempotent and undefined-safe: an early unmount, before or between the onMounted awaits, leaves nothing set.
+  // Nothing is dereferenced then, and clearing the handle first makes a repeat call a no-op
   onUnmounted(async () => {
     if (!fluidResources) return;
 
@@ -194,7 +196,7 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     pmremGenerator.dispose();
     disposeRenderTarget();
     controls.dispose();
-    renderer.dispose();
+    await renderer.dispose();
     renderer.domElement.remove();
   });
 };

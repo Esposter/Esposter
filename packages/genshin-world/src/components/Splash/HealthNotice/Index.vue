@@ -12,8 +12,8 @@ interface Props {
 const { gameText } = defineProps<Props>();
 // The notice is one string in the game's text, its paragraphs a blank line apart
 const paragraphs = computed(() => gameText[GameTextKey.HealthNotice].split("\n\n"));
-// The game sets Japanese and Chinese at about three quarters of the Latin size, so the open CJK face below is tried first
-// for those characters alone; Latin characters pass it by and keep the game's face
+// The game sets Japanese and Chinese at about three quarters of the Latin size, so the open CJK face below is tried first.
+// It is tried for those characters alone; Latin characters pass it by and keep the game's face
 const fontFamily = `"GameNoticeCjk", ${GAME_FONT_FAMILY}`;
 </script>
 

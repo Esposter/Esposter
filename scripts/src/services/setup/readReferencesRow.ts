@@ -10,9 +10,11 @@ import { getRunRow } from "#src/services/setup/getRunRow";
 import { getStepRow } from "#src/services/setup/getStepRow";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 
-// The parity records the manifest names are in place when each is in the parity folder. The references are committed, so
-// a clone holds them and they are not this row's to check: the committed references test checks their hashes. A missing
-// record is what the restore closes, so --install runs it and otherwise the row names it. The check is presence alone
+// The parity records the manifest names are in place when each is in the parity folder.
+// The references are committed, so a clone holds them, and they are not this row's to check.
+// The committed references test checks their hashes.
+// A missing record is what the restore closes, so --install runs it, and otherwise the row names it.
+// The check is presence alone
 export const readReferencesRow = (options: SetupOptions, environment: SetupEnvironment): SetupRow => {
   const step = "parity records";
   const manifest = parseReferenceManifest(environment.readText(REFERENCE_MANIFEST_PATH));

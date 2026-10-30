@@ -14,6 +14,17 @@ import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { describe, expect, test, vi } from "vitest";
 import { z } from "zod";
 
+const createCloudVariable = (state: { cloudCoverage: number }): DevVariable => ({
+  get: () => state.cloudCoverage,
+  group: "Sky",
+  kind: DevVariableKind.Number,
+  name: "cloud coverage",
+  range: { max: 1, min: 0, step: 0.1 },
+  set: (value) => {
+    state.cloudCoverage = Number(value);
+  },
+});
+
 describe(createDevRegistry, () => {
   const TIME_ARGUMENTS = z.object({ hour: z.coerce.number() });
   const GIVE_ARGUMENTS = z.object({ count: z.coerce.number().int().min(1), item: z.string() });
@@ -39,18 +50,7 @@ describe(createDevRegistry, () => {
     },
   });
 
-  const createCloudVariable = (state: { cloudCoverage: number }): DevVariable => ({
-    get: () => state.cloudCoverage,
-    group: "Sky",
-    kind: DevVariableKind.Number,
-    name: "cloud coverage",
-    range: { max: 1, min: 0, step: 0.1 },
-    set: (value) => {
-      state.cloudCoverage = Number(value);
-    },
-  });
-
-  test("Valid line runs and reports", () => {
+  test("valid line runs and reports", () => {
     expect.hasAssertions();
 
     const calls: string[] = [];
@@ -61,7 +61,7 @@ describe(createDevRegistry, () => {
     expect(calls).toStrictEqual(["time"]);
   });
 
-  test("Bad argument runs nothing", () => {
+  test("bad argument runs nothing", () => {
     expect.hasAssertions();
 
     const calls: string[] = [];
@@ -72,7 +72,7 @@ describe(createDevRegistry, () => {
     expect(calls).toStrictEqual([]);
   });
 
-  test("Unknown name is refused", () => {
+  test("unknown name is refused", () => {
     expect.hasAssertions();
 
     const registry = createDevRegistry();
@@ -81,7 +81,7 @@ describe(createDevRegistry, () => {
     expect(registry.run("ti")).toStrictEqual({ error: "unknown command ti; did you mean time?", ok: false, usage: "" });
   });
 
-  test("Command whose state is not mounted says so", () => {
+  test("command whose state is not mounted says so", () => {
     expect.hasAssertions();
 
     const registry = createDevRegistry();
@@ -91,7 +91,7 @@ describe(createDevRegistry, () => {
     expect(registry.run("time 21")).toStrictEqual({ error: "not available here", ok: false, usage: "time <hour>" });
   });
 
-  test("Failure returns its usage", () => {
+  test("failure returns its usage", () => {
     expect.hasAssertions();
 
     const registry = createDevRegistry();
@@ -104,7 +104,7 @@ describe(createDevRegistry, () => {
     });
   });
 
-  test("Control and console agree", () => {
+  test("control and console agree", () => {
     expect.hasAssertions();
 
     const state = { cloudCoverage: 0 };
@@ -116,7 +116,7 @@ describe(createDevRegistry, () => {
     expect(variable.get()).toBe(0.1);
   });
 
-  test("Out of range is refused", () => {
+  test("out of range is refused", () => {
     expect.hasAssertions();
 
     const state = { cloudCoverage: 0 };
@@ -131,7 +131,7 @@ describe(createDevRegistry, () => {
     expect(state.cloudCoverage).toBe(0);
   });
 
-  test("Scenario applies its commands in order", () => {
+  test("scenario applies its commands in order", () => {
     expect.hasAssertions();
 
     const calls: string[] = [];
@@ -145,7 +145,7 @@ describe(createDevRegistry, () => {
     expect(calls).toStrictEqual(["time", "give"]);
   });
 
-  test("Failure stops the scenario", () => {
+  test("failure stops the scenario", () => {
     expect.hasAssertions();
 
     const calls: string[] = [];
@@ -162,7 +162,7 @@ describe(createDevRegistry, () => {
     expect(calls).toStrictEqual(["time"]);
   });
 
-  test("Automation receives data", () => {
+  test("automation receives data", () => {
     expect.hasAssertions();
 
     const registry = createDevRegistry();
@@ -170,10 +170,11 @@ describe(createDevRegistry, () => {
     const target: { __dev?: { run: (line: string) => DevResult } } = {};
     exposeDevRegistry(registry, target);
 
-    expect(target.__dev?.run("time 21")).toStrictEqual({ ok: true, value: 21 });
+    const { __dev: automation } = target;
+    expect(automation?.run("time 21")).toStrictEqual({ ok: true, value: 21 });
   });
 
-  test("Change signal reports a line that ran", () => {
+  test("change signal reports a line that ran", () => {
     expect.hasAssertions();
 
     const listener = vi.fn<() => void>();
@@ -187,7 +188,7 @@ describe(createDevRegistry, () => {
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
-  test("Listing shows what is mounted", () => {
+  test("listing shows what is mounted", () => {
     expect.hasAssertions();
 
     const variable = createCloudVariable({ cloudCoverage: 0 });
@@ -231,7 +232,7 @@ describe(createDevRegistry, () => {
     expect(registry.getRenderer()).toBe(earlier);
   });
 
-  test("A place of several words is one place when it is quoted, and a single word still is", () => {
+  test("a place of several words is one place when it is quoted, and a single word still is", () => {
     expect.hasAssertions();
 
     const catalogue: Catalogue = {

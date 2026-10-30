@@ -18,7 +18,7 @@ describe("genshinDevConsole", () => {
     localStorage.clear();
   });
 
-  test("Valid line runs and reports", async () => {
+  test("valid line runs and reports", async () => {
     expect.hasAssertions();
 
     const calls: string[] = [];
@@ -35,7 +35,7 @@ describe("genshinDevConsole", () => {
     registry.register({ commands: [timeCommand], variables: [] });
     const component = mount(GenshinDevConsole, { props: { modelValue: true, registry } });
 
-    component.get("input").setValue("time 21");
+    await component.get("input").setValue("time 21");
     await component.get("form").trigger("submit");
     await flushPromises();
 
@@ -43,7 +43,7 @@ describe("genshinDevConsole", () => {
     expect(component.findAll("li")).toHaveLength(1);
   });
 
-  test("Bad argument runs nothing", async () => {
+  test("bad argument runs nothing", async () => {
     expect.hasAssertions();
 
     const calls: string[] = [];
@@ -60,7 +60,7 @@ describe("genshinDevConsole", () => {
     registry.register({ commands: [giveCommand], variables: [] });
     const component = mount(GenshinDevConsole, { props: { modelValue: true, registry } });
 
-    component.get("input").setValue("give Mora lots");
+    await component.get("input").setValue("give Mora lots");
     await component.get("form").trigger("submit");
     await flushPromises();
 

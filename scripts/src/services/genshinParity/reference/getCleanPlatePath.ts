@@ -9,9 +9,10 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
 
-// The reference drawn behind a screen, each of its regions filled from the pixels round it in turn. A scratch copy is cut
-// on first use, named by the input's hash and the regions so a changed input is filled again. The caller decides whether
-// the entry draws a plate. A clean plate is derived, so it is a cache in the scratch folder and never committed
+// The reference drawn behind a screen, each of its regions filled from the pixels round it in turn.
+// A scratch copy is cut on first use, named by the input's hash and the regions, so a changed input is filled again.
+// The caller decides whether the entry draws a plate.
+// A clean plate is derived, so it is a cache in the scratch folder and never committed
 export const getCleanPlatePath = async (
   referenceId: string,
   referencePath: string,

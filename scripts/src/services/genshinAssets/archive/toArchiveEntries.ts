@@ -11,9 +11,7 @@ export const toArchiveEntries = (
 ): ArchiveEntry[] =>
   getNamedCandidates(candidates, englishTextMap).map(({ descriptionTextMapHash, id, nameTextMapHash }) => {
     const descriptionTextId = String(descriptionTextMapHash);
-    return {
-      ...(descriptionTextMapHash !== undefined && englishTextMap.get(descriptionTextId) ? { descriptionTextId } : {}),
-      id,
-      nameTextId: String(nameTextMapHash),
-    };
+    const nameTextId = String(nameTextMapHash);
+    if (descriptionTextMapHash === undefined || !englishTextMap.get(descriptionTextId)) return { id, nameTextId };
+    return { descriptionTextId, id, nameTextId };
   });

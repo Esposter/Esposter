@@ -17,6 +17,7 @@ describe(unlockLandmark, () => {
   const MONDSTADT_NAME = "Mondstadt";
   const UNKNOWN_NAME = "Zzz";
   const WAYPOINT_ID = "windrise-waypoint-1";
+  const STATUE_LANDMARK_ID: string = LandmarkIdStatuePointId.WindriseStatueOfTheSeven;
   const area: CatalogueArea = {
     id: AREA_ID,
     layer: WorldLayer.Surface,
@@ -50,7 +51,7 @@ describe(unlockLandmark, () => {
       unlockLandmark(EMPTY_GENSHIN_SAVE, { kind: DevUnlockKind.Region, name: MONDSTADT_NAME }, tables),
     ).toStrictEqual({
       ok: true,
-      save: { ...EMPTY_GENSHIN_SAVE, unlockedLandmarks: [LandmarkIdStatuePointId.WindriseStatueOfTheSeven] },
+      save: { ...EMPTY_GENSHIN_SAVE, unlockedLandmarks: [STATUE_LANDMARK_ID] },
       value: MONDSTADT_NAME,
     });
   });

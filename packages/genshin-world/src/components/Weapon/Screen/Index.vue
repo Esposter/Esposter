@@ -157,21 +157,20 @@ const passive = computed(() => getWeaponPassive(weaponData.value, weapon.value.r
 // The held rank's row is the game's Current line, its label coloured in the text, and the next rank's row is labelled by its rank.
 // Each row's dot is drawn as a bullet, so the Current line's own dot is left out of its first run
 const passiveRows = computed(() =>
-  (passive.value?.rows ?? [])
-    .slice(weapon.value.refinement - 1, weapon.value.refinement + 1)
-    .map((row, index) => ({
-      currentSegments: row.isHeld
-        ? splitGameTextColors(fillGameTextValues(gameText[GameTextKey.WeaponRefinementCurrent], row.description)).map(
-            (segment, segmentIndex) => ({
-              ...segment,
-              text: segmentIndex === 0 ? segment.text.replace(CURRENT_DOT_REGEX, "") : segment.text,
-            }),
-          )
-        : [],
-      description: row.description,
-      isHeld: row.isHeld,
-      rankText: getRankText(weapon.value.refinement + index),
-    })),
+  (passive.value?.rows ?? []).slice(weapon.value.refinement - 1, weapon.value.refinement + 1).map((row, index) => ({
+    currentSegments: row.isHeld
+      ? // oxlint-disable-next-line oxc/no-map-spread -- each segment is new from the split, never a shared one mutated in place
+        splitGameTextColors(fillGameTextValues(gameText[GameTextKey.WeaponRefinementCurrent], row.description)).map(
+          (segment, segmentIndex) => ({
+            ...segment,
+            text: segmentIndex === 0 ? segment.text.replace(CURRENT_DOT_REGEX, "") : segment.text,
+          }),
+        )
+      : [],
+    description: row.description,
+    isHeld: row.isHeld,
+    rankText: getRankText(weapon.value.refinement + index),
+  })),
 );
 // The ores the player picks for the next enhancement, each count taken from the bag when it is enhanced
 const pickedOres = ref<ItemCount[]>([]);

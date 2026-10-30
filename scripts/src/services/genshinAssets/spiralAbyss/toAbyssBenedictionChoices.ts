@@ -22,6 +22,7 @@ export const toAbyssBenedictionChoices = (
       `has ${lists.length} Benediction lists, not three`,
     );
   return lists.map((list) =>
+    // oxlint-disable-next-line oxc/no-map-spread -- each choice is a new object, never a shared tower buff mutated in place
     list.split(",").map((choice) => {
       const match = CHOICE_REGEX.exec(choice);
       if (!match?.groups)

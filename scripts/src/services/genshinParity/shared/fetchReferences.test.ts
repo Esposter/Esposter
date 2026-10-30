@@ -26,8 +26,8 @@ describe(fetchReferences, () => {
     readReferenceFiles.mockResolvedValue([
       { id: "-1", path: getFlatReferenceFilePath("-1"), reference: { screen: "ArchiveScreen", source: " " } },
     ]);
-    vi.spyOn(console, "error").mockImplementation(() => undefined);
-    vi.spyOn(console, "log").mockImplementation(() => undefined);
+    vi.spyOn(console, "error").mockReturnValue(undefined);
+    vi.spyOn(console, "log").mockReturnValue(undefined);
   });
   afterEach(() => {
     vi.restoreAllMocks();

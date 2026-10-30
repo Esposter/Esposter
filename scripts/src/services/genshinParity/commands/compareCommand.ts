@@ -69,8 +69,9 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
       async () => {
         // Fetched first, as each comparison would fetch it, so a reference the wiki holds is measured rather than reported
         if (args.all) await fetchReferences();
-        // Read once for the run: the held check comes from the manifest, and each held reference's planned path is read here
-        // before the loop, so the loop awaits only its comparison. A pending screen has no reference to read
+        // Read once for the run, so the loop awaits only its comparison.
+        // The held check comes from the manifest, and each held reference's planned path is read here before the loop.
+        // A pending screen has no reference to read
         const manifestRows = args.all ? await readReferenceManifest() : [];
         const plannedPaths = new Map(
           await Promise.all(
@@ -140,8 +141,8 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
               // A named reference fails the command as it always did, while `--all` reports the failure and goes on
               if (!args.all) throw error;
               console.error(`failed: ${error.message}`);
-              // Each reference's finalizers close its page, so the next one opens a page of its own, and a browser that
-              // Closed is replaced by the browser that page opens in
+              // Each reference's finalizers close its page, so the next one opens a page of its own.
+              // A browser that closed is replaced by the browser that page opens in
               if (classifyComparisonFailure(error.message) === ComparisonFailureRecovery.RelaunchAndContinue)
                 console.error("the browser closed, so the next reference opens its page on a fresh one");
             },
@@ -150,8 +151,9 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
       },
       () => freshPage?.stop(),
     );
-    // A witness's scores price the exports, not the scene, so the committed report keeps the scene's own. Only `--all`
-    // Visits every reference, so it alone is the full run that may drop a row; a single reference's scores are a subset
+    // A witness's scores price the exports, not the scene, so the committed report keeps the scene's own.
+    // Only `--all` visits every reference, so it alone is the full run that may drop a row.
+    // A single reference's scores are a subset
     if (!args.witness) await writeParityScores(scores, args.all ? ParityReportRun.Full : ParityReportRun.Subset);
     // A missing committed image or plate fails the run, so it is named once the scores of the others are written
     for (const { id, path } of missingImages)

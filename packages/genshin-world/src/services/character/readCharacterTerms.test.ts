@@ -8,7 +8,7 @@ describe(readCharacterTerms, () => {
   const characterId = 1;
   const termsText = "terms";
 
-  test("Terms are read from the pack's terms file as they decode", async () => {
+  test("terms are read from the pack's terms file as they decode", async () => {
     expect.hasAssertions();
 
     const characterPackReader: CharacterPackReader = {

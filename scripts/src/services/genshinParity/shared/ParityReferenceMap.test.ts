@@ -94,6 +94,6 @@ describe("parityReferenceMap", () => {
     // Each row is written on its own line in id order, so two machines' additions merge by rebase
     const ids = (await readReferenceManifest()).map(({ id }) => id);
 
-    expect(ids).toStrictEqual([...ids].sort());
+    expect(ids).toStrictEqual(ids.toSorted());
   });
 });

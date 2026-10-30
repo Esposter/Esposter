@@ -1,6 +1,5 @@
 import { buildCharacterPackIndex } from "#src/services/genshinAssets/characterPacks/buildCharacterPackIndex";
 import { readCharacterPackFiles } from "#src/services/genshinAssets/characterPacks/readCharacterPackFiles";
-import { InvalidOperationError } from "@esposter/shared";
 import { createHash } from "node:crypto";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -42,7 +41,7 @@ describe(buildCharacterPackIndex, () => {
     rmSync(directory, { force: true, recursive: true });
   });
 
-  test("Index lists each avatar's files", async () => {
+  test("index lists each avatar's files", async () => {
     expect.hasAssertions();
 
     const firstManifest = writePack(directory, "10000006", "丽莎", [
@@ -51,7 +50,7 @@ describe(buildCharacterPackIndex, () => {
     ]);
     const secondManifest = writePack(directory, "10000007", "女主角", [{ content: "hair", path: "Texture/hair.png" }]);
 
-    expect(await buildCharacterPackIndex(await readCharacterPackFiles(directory))).toStrictEqual({
+    await expect(buildCharacterPackIndex(await readCharacterPackFiles(directory))).resolves.toStrictEqual({
       avatars: [
         {
           avatarId: 10000006,
@@ -91,8 +90,10 @@ describe(buildCharacterPackIndex, () => {
     writePack(directory, "10000006", "丽莎", [{ content: "body", path: "Texture/body.png" }]);
     writeFileSync(join(directory, "10000006", "Texture", "extra.png"), "extra");
 
-    await expect(buildCharacterPackIndex(await readCharacterPackFiles(directory))).rejects.toThrowError(
-      InvalidOperationError,
+    await expect(
+      buildCharacterPackIndex(await readCharacterPackFiles(directory)),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: 10000006, holds 3 files, where its manifest lists 2]`,
     );
   });
 

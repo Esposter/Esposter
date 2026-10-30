@@ -13,8 +13,9 @@ export const setCharacterLevelArgumentsSchema = z.object({
 
 export type SetCharacterLevelArguments = z.infer<typeof setCharacterLevelArgumentsSchema>;
 
-// Sets a held character's level, the save's own level field the game's level-ups write, clamped to the highest level its
-// ascension allows. A character the save does not hold is not among the names a line can give
+// Sets a held character's level, the save's own level field the game's level-ups write.
+// The level is clamped to the highest level its ascension allows.
+// A character the save does not hold is not among the names a line can give
 export const setCharacterLevel = (
   save: GenshinSave,
   { character, level }: SetCharacterLevelArguments,

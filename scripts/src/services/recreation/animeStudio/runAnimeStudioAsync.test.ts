@@ -12,7 +12,7 @@ vi.mock(import("@esposter/shared-node/child-process"), async (importOriginal) =>
   spawn: spawnMock as unknown as typeof spawn,
 }));
 vi.mock(import("#src/services/recreation/animeStudio/waitForFreeMemory"), () => ({
-  waitForFreeMemory: async () => undefined,
+  waitForFreeMemory: () => Promise.resolve(undefined),
 }));
 
 describe(runAnimeStudioAsync, () => {

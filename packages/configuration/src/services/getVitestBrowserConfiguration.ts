@@ -8,7 +8,9 @@ type BrowserConfiguration = NonNullable<NonNullable<ViteUserConfig["test"]>["bro
 // Whether this run writes images: `-u`, `--update`, or the environment variable a suite names as its update variable
 const checkVisualUpdate = (updateEnvironmentVariable?: string): boolean =>
   (updateEnvironmentVariable !== undefined && Boolean(process.env[updateEnvironmentVariable])) ||
+  // oxlint-disable-next-line no-restricted-properties -- Vitest parses its own command line; this reads its update flag
   process.argv.includes("-u") ||
+  // oxlint-disable-next-line no-restricted-properties -- Vitest parses its own command line; this reads its update flag
   process.argv.includes("--update");
 
 // Edge rasterizes a page on the GPU by default, and there an anti-aliased edge or a gradient's dither differs by a level

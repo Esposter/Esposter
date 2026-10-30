@@ -24,7 +24,7 @@ describe(createCharacterPackReader, () => {
     name: "a",
   };
 
-  test("Held pack draws the character's model", async () => {
+  test("held pack draws the character's model", async () => {
     expect.hasAssertions();
 
     const cache = createCharacterPackCacheStub();
@@ -33,10 +33,10 @@ describe(createCharacterPackReader, () => {
 
     const modelBlob = await characterPackReader.readFile(CHARACTER_MODEL_PATH);
 
-    expect(await modelBlob?.text()).toBe(modelText);
+    await expect(modelBlob?.text()).resolves.toBe(modelText);
   });
 
-  test("A texture the model names is read beside the model's folder", async () => {
+  test("a texture the model names is read beside the model's folder", async () => {
     expect.hasAssertions();
 
     const cache = createCharacterPackCacheStub();
@@ -45,10 +45,10 @@ describe(createCharacterPackReader, () => {
 
     const textureBlob = await characterPackReader.readFile("tex.png");
 
-    expect(await textureBlob?.text()).toBe(textureText);
+    await expect(textureBlob?.text()).resolves.toBe(textureText);
   });
 
-  test("Terms are read from the pack's terms file", async () => {
+  test("terms are read from the pack's terms file", async () => {
     expect.hasAssertions();
 
     const cache = createCharacterPackCacheStub();
@@ -57,15 +57,15 @@ describe(createCharacterPackReader, () => {
 
     const termsBlob = await characterPackReader.readFile(CHARACTER_TERMS_PATH);
 
-    expect(await termsBlob?.text()).toBe(termsText);
+    await expect(termsBlob?.text()).resolves.toBe(termsText);
   });
 
-  test("A file the pack does not list is none", async () => {
+  test("a file the pack does not list is none", async () => {
     expect.hasAssertions();
 
     const cache = createCharacterPackCacheStub();
     const characterPackReader = await createCharacterPackReader(cache, gameDataBaseUrl, avatar);
 
-    expect(await characterPackReader.readFile("missing.png")).toBeUndefined();
+    await expect(characterPackReader.readFile("missing.png")).resolves.toBeUndefined();
   });
 });

@@ -25,8 +25,8 @@ describe("generated files", () => {
       const generatedPaths = runGit(["ls-files", "-z"])
         .split("\0")
         .filter((path) => GENERATED_FOLDER_REGEX.test(path));
-      // The formatter ignores a `generated/` path, so each file is formatted as a copy under a neutral name, which keeps
-      // its extension and no folder the ignore patterns name
+      // The formatter ignores a `generated/` path, so each file is formatted as a copy under a neutral name.
+      // The copy keeps its extension and no folder the ignore patterns name.
       const directory = mkdtempSync(join(tmpdir(), "canonical-copies-"));
       withFinalizer(
         () => {

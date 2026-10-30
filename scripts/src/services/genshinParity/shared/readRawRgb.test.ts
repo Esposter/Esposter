@@ -12,6 +12,6 @@ describe(readRawRgb, () => {
       .png()
       .toBuffer();
 
-    expect(await readRawRgb(input, 2, 1)).toStrictEqual(Buffer.from([10, 20, 30, 10, 20, 30]));
+    await expect(readRawRgb(input, 2, 1)).resolves.toStrictEqual(Buffer.from([10, 20, 30, 10, 20, 30]));
   });
 });

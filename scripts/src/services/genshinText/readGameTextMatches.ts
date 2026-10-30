@@ -5,8 +5,9 @@ import { readManualTextMap } from "#src/services/genshinText/readManualTextMap";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage, GameLanguageTagMap } from "genshin-text";
 
-// The English strings the predicate matches, each with its text in every language asked for. Each language's map is read
-// once, and only when something matched, and the English map that matching reads is the one English is filled from
+// The English strings the predicate matches, each with its text in every language asked for.
+// Each language's map is read once, and only when something matched.
+// The English map that matching reads is the one English is filled from
 export const readGameTextMatches = (
   checkIsMatch: (text: string, ids: string[]) => boolean,
   languages: GameLanguage[],

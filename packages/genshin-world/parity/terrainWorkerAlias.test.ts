@@ -5,8 +5,9 @@ import { createServer } from "vite";
 import { describe, expect, test } from "vitest";
 
 describe("the parity page's vite config", () => {
-  // The World fixture's terrain worker import must resolve to the worker's source under the parity config, or the page fails
-  // to load every fixture: the import carries Vite's `?worker` query, which only the alias resolves
+  // The World fixture's terrain worker import must resolve to the worker's source under the parity config.
+  // Otherwise the page fails to load every fixture.
+  // The import carries Vite's `?worker` query, which only the alias resolves
   test("resolves the World fixture's terrain worker import to the worker's source", async () => {
     expect.hasAssertions();
 

@@ -13,8 +13,8 @@ describe(getVitestBrowserConfiguration, () => {
 
     expect(
       getVitestBrowserConfiguration({ height: 1, width: 1 }, { updateEnvironmentVariable: "VISUAL_UPDATE" }).browser
-        .expect,
-    ).toMatchObject({ toMatchScreenshot: { comparatorOptions: { threshold: 0 } } });
+        .expect?.toMatchScreenshot?.comparatorOptions,
+    ).toStrictEqual({ threshold: 0 });
     expect(getVitestBrowserConfiguration({ height: 1, width: 1 }).browser.expect?.toMatchScreenshot).not.toHaveProperty(
       "comparatorOptions",
     );

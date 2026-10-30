@@ -3,21 +3,24 @@ import type { RecordObjectTarget } from "#src/models/genshinParity/reference/Rec
 import { putReferenceObject } from "#src/services/genshinParity/reference/putReferenceObject";
 import { describe, expect, test, vi } from "vitest";
 
+// A fake account that holds the names it is given, and records every upload it is asked for
+const createTarget = (held: string[]): RecordObjectTarget & { uploads: string[] } => {
+  const uploads: string[] = [];
+  return {
+    exists: vi.fn<(blobName: string) => Promise<boolean>>((blobName: string) =>
+      Promise.resolve(held.includes(blobName)),
+    ),
+    upload: vi.fn<(blobName: string) => Promise<void>>((blobName: string) => {
+      uploads.push(blobName);
+      return Promise.resolve();
+    }),
+    uploads,
+  };
+};
+
 describe(putReferenceObject, () => {
   const BLOB_NAME = "parityReferences/0.webp";
   const LOCAL_PATH = "0.webp";
-  // A fake account that holds the names it is given, and records every upload it is asked for
-  const createTarget = (held: string[]): RecordObjectTarget & { uploads: string[] } => {
-    const uploads: string[] = [];
-    return {
-      exists: vi.fn((blobName: string) => Promise.resolve(held.includes(blobName))),
-      upload: vi.fn((blobName: string) => {
-        uploads.push(blobName);
-        return Promise.resolve();
-      }),
-      uploads,
-    };
-  };
 
   test("uploads only to the accounts that lack the object", async () => {
     expect.hasAssertions();

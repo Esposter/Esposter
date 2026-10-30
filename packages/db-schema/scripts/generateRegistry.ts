@@ -2,6 +2,7 @@ import { glob, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { format } from "oxfmt";
 
+// oxlint-disable-next-line no-restricted-imports -- the repo-root formatter config, which no `#` map can reach
 import formatterConfiguration from "../../../oxfmt.config.ts";
 
 interface RegistryEntry {

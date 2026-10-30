@@ -88,8 +88,8 @@ export const SETTINGS_RING_WIDTH = 1.9;
 // Joins a component's name to its fixture's variant in its image's name, in both packages' visual suites.
 // A file name, so not `ID_SEPARATOR`: a vertical bar is one of the characters Windows rejects in a path
 export const FIXTURE_VARIANT_SEPARATOR = "-";
-// A fixture's image is named after the component's `Index`, and each variant's after the variant, as the visual suites and the
-// parity scripts read them (`getFixtureImageName`)
+// A fixture's image is named after the component's `Index`, and each variant's after the variant.
+// The visual suites and the parity scripts read them through `getFixtureImageName`
 export const FIXTURE_IMAGE_NAME = "Index";
 // Set on the visual suite by `genshin:parity approve`, which makes its comparison exact (`vitest.browser.config.ts`)
 export const APPROVE_ENVIRONMENT_VARIABLE = "GENSHIN_PARITY_APPROVE";
@@ -120,18 +120,19 @@ export const GAME_SMOOTHSTEP_EASING = "cubic-bezier(0.333, 0, 0.667, 1)";
 // Plain button, so no recording gives a row's tint: these are the jump list's hover tint, and a press a step stronger
 export const GAME_ROW_HOVER = "rgb(255 255 255 / 0.2)";
 export const GAME_ROW_PRESS = "rgb(255 255 255 / 0.3)";
-// The dialogue reply's pill, a black of 0.26 over the scene at rest, fitted to the English client's dialogue choices
-// (the reply frame the dialogue page is placed by): the alpha that minimises the mean difference over the pills' pixels
-// of `dialogue-choices-replies`. Its hover and press are Provisional: no recording shows a reply under
-// The pointer, so they are the look a lit reply took before the kind, a white pill with its words slate
+// The dialogue reply's pill, a black of 0.26 over the scene at rest, fitted to the English client's dialogue choices.
+// The fit is the alpha that minimises the mean difference over the pills' pixels of `dialogue-choices-replies`.
+// It is measured in the reply frame the dialogue page is placed by.
+// Its hover and press are provisional: no recording shows a reply under the pointer.
+// They are the look a lit reply took before the kind, a white pill with its words slate
 export const GAME_REPLY_REST = "rgb(0 0 0 / 0.26)";
 export const GAME_REPLY_HOVER = "rgb(255 255 255 / 0.85)";
 export const GAME_REPLY_HOVER_INK = "#3b4255";
 // The weapon screen's Ascend pill, lit gold, and its label faded over the gold, read off its reference (`weapon-screen-ascend`)
 export const GAME_LIT_GOLD = "#ffeab4";
 export const GAME_LIT_GOLD_LABEL = "#d6cdb8";
-// The dialogue's gold, the brightest saturated pixel of a speaker's letters in the English client's recording: the name,
-// the role and its curls take it whole, and the role's rule takes it at 0.28 alpha
+// The dialogue's gold, the brightest saturated pixel of a speaker's letters in the English client's recording.
+// The name, the role and its curls take it whole, and the role's rule takes it at 0.28 alpha
 export const GAME_DIALOGUE_GOLD = "#ffc700";
 // The cooking bar is the top half of an ellipse on the 1920 by 1080 stage, running from its left end to its right end:
 // Its centre and its horizontal radius

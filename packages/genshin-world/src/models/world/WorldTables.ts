@@ -39,8 +39,8 @@ export interface WorldTables {
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
   // The regions and their areas, which the map draws, the region data is fetched by and the weather is read from
   catalogue: Catalogue;
-  // The reader of each published character pack, by the id of the character it is of, which the world draws each
-  // character's model from and the Character screen its terms
+  // The reader of each published character pack, by the id of the character it is of.
+  // The world draws each character's model from its reader, and the Character screen its terms
   characterPackReaders: ReadonlyMap<number, CharacterPackReader>;
   // Each character's kit as the game's tables hold it, the proud skill group of each combat talent, which the Talents tab
   // Reads a talent's upgrades by

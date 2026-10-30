@@ -87,8 +87,8 @@ const handleEntryClick = (entryId: number): void => {
 const rarityMap = computed(
   () => new Map(Array.from(weaponDataMap, ([id, { rarity }]): [number, number] => [id, rarity])),
 );
-// A four or five star weapon's tile takes its face gradient from the item tile, which owns the gradients, while the two and
-// three star tiles keep the flat tints below
+// A four or five star weapon's tile takes its face gradient from the item tile, which owns the gradients.
+// The two and three star tiles keep the flat tints below.
 const getTileBackground = (entryId: number): string | undefined => {
   const rarity = rarityMap.value.get(entryId) ?? 0;
   return rarity >= 4 ? ItemRarityFaceGradientMap[rarity] : undefined;

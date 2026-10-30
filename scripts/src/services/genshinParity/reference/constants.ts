@@ -49,22 +49,27 @@ export const VERIFY_TOLERANCE_PERCENT = 1;
 // Score reads the same as it did from the screenshot
 export const REFERENCE_WEBP_OPTIONS = { effort: 6, lossless: true } as const;
 
-// How many files `references pack` writes and `references restore` moves at once, and how many of the largest files
-// the pack table names
+// How many files `references pack` writes and `references restore` moves at once.
+// How many of the largest files the pack table names.
 export const REFERENCE_PACK_CONCURRENCY = 2;
 export const REFERENCE_PACK_LARGEST_COUNT = 10;
 // How many leading hex digits of a hash a colliding id names, enough to tell two apart at a glance
 export const SHORT_HASH_LENGTH = 8;
 
 // A reference's source as the map writes it, `<file> at <N>s`, with `, cropped to WxH from X,Y` when the frame is cropped
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
 export const RECORDING_SOURCE_REGEX: RegExp =
-  /^(\S+) at (\d+(?:\.\d+)?)s(?:, cropped to (\d+)x(\d+) from (\d+),(\d+))?$/u;
+  /^(?<file>\S+) at (?<seconds>\d+(?:\.\d+)?)s(?:, cropped to (?<cropWidth>\d+)x(?<cropHeight>\d+) from (?<cropX>\d+),(?<cropY>\d+))?$/u;
 
-// A public recording's file name as the clip tool and the capture step write it, `yt-<id>-<name>.<ext>` or `bili-<id>-<name>.<ext>`:
-// a YouTube id is eleven characters, and the yt prefix refuses a Bilibili id, which the clip tool writes under it for a
-// Bilibili URL. A Bilibili id is `av` and its digits or `BV` and its characters
-export const YOUTUBE_RECORDING_NAME_REGEX: RegExp = /^yt-(?!av\d+-)([\w-]{11})-([\w-]+)\.[\da-z]+$/u;
-export const BILIBILI_RECORDING_NAME_REGEX: RegExp = /^bili-(av\d+|BV[\dA-Za-z]+)-([\w-]+)\.[\da-z]+$/u;
+// A public recording's file name as the clip tool and the capture step write it.
+// It is `yt-<id>-<name>.<ext>` or `bili-<id>-<name>.<ext>`.
+// A YouTube id is eleven characters.
+// The yt prefix refuses a Bilibili id, which the clip tool writes under it for a Bilibili URL.
+// A Bilibili id is `av` and its digits or `BV` and its characters.
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
+export const YOUTUBE_RECORDING_NAME_REGEX: RegExp = /^yt-(?!av\d+-)(?<id>[\w-]{11})-(?<name>[\w-]+)\.[\da-z]+$/u;
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
+export const BILIBILI_RECORDING_NAME_REGEX: RegExp = /^bili-(?<id>av\d+|BV[\dA-Za-z]+)-(?<name>[\w-]+)\.[\da-z]+$/u;
 
 // The language a reference's id names it in, by the word its id carries, as its language tag
 export const REFERENCE_ID_LANGUAGE_TAGS: Readonly<Record<string, string>> = {
@@ -74,6 +79,7 @@ export const REFERENCE_ID_LANGUAGE_TAGS: Readonly<Record<string, string>> = {
 };
 
 // A clean plate cached in the scratch folder, named by the digest of what it is filled from
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
 export const PLATE_CACHE_REGEX: RegExp = /\.plate-[\da-f]{16}\.png$/u;
 
 // The folder the game-data container keeps every stored object in, one per hash and extension, whatever its kind
@@ -82,8 +88,9 @@ export const REFERENCE_BLOB_FOLDER = "parityObjects";
 export const REFERENCE_FILE_EXTENSION = "webp";
 // A plate is committed flat in the references folder, named by its id with this suffix before the extension
 export const REFERENCE_PLATE_SUFFIX = ".plate";
-// The largest committed file the tree may hold: the largest lossless reference (`mondstadt-city-location`, 7,315,020
-// bytes) and a margin above it, so a larger file is a mistake to look at rather than a size to accept
+// The largest committed file the tree may hold is the largest lossless reference, `mondstadt-city-location`.
+// That reference runs to 7,315,020 bytes, and the limit is that size with a margin above it.
+// So a larger file is a mistake to look at rather than a size to accept.
 export const REFERENCE_FILE_MAX_BYTES = 7_500_000;
 // A stored object runs to several megabytes, which the default request bound of ten seconds cuts short on a slow link
 export const OBJECT_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");

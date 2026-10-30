@@ -14,14 +14,17 @@ import { getScratchPlatePath } from "#src/services/genshinParity/shared/getScrat
 import { getScratchReferencePath } from "#src/services/genshinParity/shared/getScratchReferencePath";
 import { basename } from "node:path";
 
-// One reference id's pack: its screenshot, and its plate screenshot when its entry names one. The row it ends with is the
-// one the manifest holds with those images' hashes, and it is returned only when that changed. The files it writes are the
-// packed bytes of a screenshot that is new, replaces the committed one, or is the recovery write: a committed file that is
-// absent is written from a scratch copy that holds the held hash. `checkedRow` is the row the local bytes are checked
-// against, which a replace leaves out; `committed` is the manifest's own row, whose plate a replace with no local plate
-// keeps when the committed plate on disk still holds its hash. Nothing is written here, so a collision is known before any
-// file is written. An id with an image missing is refused when it is started, that is the manifest holds it or a scratch
-// copy is beside it: a row would name a file that is not there, so it writes nothing and its missing files are named
+// One reference id's pack: its screenshot, and its plate screenshot when its entry names one.
+// The row it ends with is the one the manifest holds with those images' hashes.
+// It is returned only when that changed.
+// The files it writes are packed screenshots: a new one, one that replaces the committed one, or the recovery write.
+// A committed file that is absent is written from a scratch copy that holds the held hash.
+// `checkedRow` is the row the local bytes are checked against, which a replace leaves out.
+// `committed` is the manifest's own row.
+// A replace with no local plate keeps its plate when the committed plate on disk still holds its hash.
+// Nothing is written here, so a collision is known before any file is written.
+// An id with an image missing is refused when it is started: the manifest holds it, or a scratch copy is beside it.
+// A row would name a file that is not there, so it writes nothing and its missing files are named.
 export const planReferenceEntry = async (
   id: string,
   reference: ParityReference,

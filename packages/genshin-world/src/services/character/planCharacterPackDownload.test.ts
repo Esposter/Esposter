@@ -24,7 +24,7 @@ describe(planCharacterPackDownload, () => {
     ],
   };
 
-  test("First visit downloads every file", () => {
+  test("first visit downloads every file", () => {
     expect.hasAssertions();
 
     const plan = planCharacterPackDownload(index, gameDataBaseUrl, new Set());
@@ -38,7 +38,7 @@ describe(planCharacterPackDownload, () => {
     });
   });
 
-  test("Returning visit downloads nothing", () => {
+  test("returning visit downloads nothing", () => {
     expect.hasAssertions();
 
     const plan = planCharacterPackDownload(index, gameDataBaseUrl, new Set([modelUrl, termsUrl]));
@@ -46,7 +46,7 @@ describe(planCharacterPackDownload, () => {
     expect(plan).toStrictEqual({ files: [], pendingBytes: 0 });
   });
 
-  test("Republished file is fetched again", () => {
+  test("republished file is fetched again", () => {
     expect.hasAssertions();
 
     const republishedIndex: CharacterPackIndex = {

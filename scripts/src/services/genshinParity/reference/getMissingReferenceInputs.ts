@@ -1,9 +1,10 @@
 import { MissingReferenceInputKind } from "#src/models/genshinParity/reference/MissingReferenceInputKind";
 
-// The inputs a reference's comparison reads from disk that are not there yet, each with its path: its reference image, its
-// plate when its entry names a plate source, and, for a reference judged by a component's witness, that witness's layout.
-// Pure over the paths, `exists` telling whether one is on disk, so `compare --all` reports a reference it cannot measure yet
-// before opening a page
+// The inputs a reference's comparison reads from disk that are not there yet, each with its path.
+// They are its reference image, and its plate when its entry names a plate source.
+// For a reference judged by a component's witness, they also include that witness's layout.
+// Pure over the paths, with `exists` telling whether one is on disk.
+// That lets `compare --all` report a reference it cannot measure yet before opening a page
 export interface MissingReferenceInput {
   kind: MissingReferenceInputKind;
   path: string;

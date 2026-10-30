@@ -193,6 +193,7 @@ export const variants = {
 // Xilonen on her Artifacts tab wearing two pieces each of the Scroll and of Gilded Dreams, so both sets' names draw
 export const twoSetsProps = {
   ...props,
+  // oxlint-disable-next-line oxc/no-map-spread -- the roster also feeds the default props, so Xilonen is copied, not mutated
   characters: roster.map((character) =>
     character.id === XILONEN_ID ? { ...character, artifacts: TWO_SETS_ARTIFACTS } : character,
   ),

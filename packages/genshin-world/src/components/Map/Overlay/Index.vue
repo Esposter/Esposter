@@ -60,8 +60,8 @@ interface Props {
   now: Temporal.Instant;
   // The doings the save records as done, which an area counts alongside the statues its unlocked landmarks light
   recordedDoingIds: ReadonlySet<string>;
-  // Each subarea's label as the open world publishes it, named by its text id and drawn while the view is no further out
-  // than MAP_REFERENCE_ZOOM_METRES
+  // Each subarea's label as the open world publishes it, named by its text id.
+  // It is drawn while the view is no further out than MAP_REFERENCE_ZOOM_METRES
   subareaLabels: MapSubareaLabel[];
   // The wallet, whose Original Resin the top bar counts as it regenerates to the moment the map opens
   wallet: Wallet;
@@ -180,12 +180,16 @@ const progressSegmentsMap = computed(
     ),
 );
 const areaLabels = computed(() =>
-  computeAreaLabels(catalogue, landmarks).map(({ id, name, x, z }) => ({
-    id,
-    name,
-    progressSegments: progressSegmentsMap.value.get(id) ?? [],
-    ...projectMapPoint({ x, z }, centre.value),
-  })),
+  computeAreaLabels(catalogue, landmarks).map(({ id, name, x, z }) => {
+    const projectedPoint = projectMapPoint({ x, z }, centre.value);
+    return {
+      id,
+      name,
+      progressSegments: progressSegmentsMap.value.get(id) ?? [],
+      x: projectedPoint.x,
+      y: projectedPoint.y,
+    };
+  }),
 );
 // Each subarea's name at its place, named in the reader's language; a subarea whose text the language lacks is left out
 const subareaNames = computed(() =>

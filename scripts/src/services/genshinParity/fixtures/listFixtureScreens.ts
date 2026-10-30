@@ -31,16 +31,16 @@ export const listFixtureScreens = async (
       const name = componentNames.get(`${directory}/${COMPONENT_FILE_NAME}`);
       if (name === undefined) return [];
       const variants = getFixtureVariantNames(await readFile(join(componentsDirectory, file), "utf8"));
-      return ["", ...variants].map((variant) => {
-        return getFixtureScreenRow({
+      return ["", ...variants].map((variant) =>
+        getFixtureScreenRow({
           directory,
           imageExists: existsSync(join(componentsDirectory, directory, `${getFixtureImageName(variant)}.png`)),
           name,
           referenceMap,
           reportMeans,
           variant,
-        });
-      });
+        }),
+      );
     }),
   );
   return rows.flat();

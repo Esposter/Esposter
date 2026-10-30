@@ -32,9 +32,9 @@ describe(downloadCharacterPackFiles, () => {
   beforeEach(() => {
     vi.useFakeTimers({ now: 0 });
     isTermsServed = false;
-    fetchSpy.mockImplementation(async (url) => {
-      if (url === termsUrl && !isTermsServed) return new Response(null, { status: 500 });
-      return new Response(url === modelUrl ? modelText : termsText);
+    fetchSpy.mockImplementation((url) => {
+      if (url === termsUrl && !isTermsServed) return Promise.resolve(new Response(null, { status: 500 }));
+      return Promise.resolve(new Response(url === modelUrl ? modelText : termsText));
     });
   });
 
@@ -43,7 +43,7 @@ describe(downloadCharacterPackFiles, () => {
     fetchSpy.mockClear();
   });
 
-  test("Retry fetches only what is missing", async () => {
+  test("retry fetches only what is missing", async () => {
     expect.hasAssertions();
 
     const cache = createCharacterPackCacheStub();
@@ -61,21 +61,23 @@ describe(downloadCharacterPackFiles, () => {
 
     expect(firstError?.message).toBe(failedMessage);
     expect(retryPlan.files.map(({ path }) => path)).toStrictEqual([CHARACTER_TERMS_PATH]);
-    expect(fetchSpy).toHaveBeenCalledExactlyOnceWith(termsUrl, expect.any(Object));
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(fetchSpy.mock.calls[0]?.[0]).toBe(termsUrl);
+    expect(fetchSpy.mock.calls[0]?.[1]).toBeTypeOf("object");
     expect(retryError).toBeUndefined();
   });
 
-  test("Failure never enters the world without the model", async () => {
+  test("failure never enters the world without the model", async () => {
     expect.hasAssertions();
 
     const cache = createCharacterPackCacheStub();
     const plan = planCharacterPackDownload(index, gameDataBaseUrl, new Set());
     const run = downloadCharacterPackFiles(cache, plan.files, noop);
     await vi.runAllTimersAsync();
-    const error = await run.match(noop, (error) => error);
+    const error = await run.match(noop, (runError) => runError);
 
     expect(error?.message).toBe(failedMessage);
     expect(fetchSpy.mock.calls.filter(([url]) => url === termsUrl)).toHaveLength(3);
-    expect(await cache.match(termsUrl)).toBeUndefined();
+    await expect(cache.match(termsUrl)).resolves.toBeUndefined();
   });
 });

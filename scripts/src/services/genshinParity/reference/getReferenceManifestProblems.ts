@@ -1,9 +1,9 @@
 import type { ParityReferenceManifestRow } from "#src/models/genshinParity/reference/ParityReferenceManifestRow";
 import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
 
-// What the manifest disagrees with the map on, one line each, checked without the network: a row for an id the map does
-// not name, and a plate the map does not name a source for or a missing one. A committed file's own hash is checked by the
-// committed references test, since it is read from the tree
+// What the manifest disagrees with the map on, one line each, checked without the network.
+// It flags a row for an id the map does not name, and a plate the map does not name a source for or a missing one.
+// A committed file's own hash is checked by the committed references test, since it is read from the tree.
 export const getReferenceManifestProblems = (
   rows: ParityReferenceManifestRow[],
   references: Record<string, ParityReference>,

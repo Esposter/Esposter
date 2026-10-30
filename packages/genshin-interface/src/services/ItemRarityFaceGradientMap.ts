@@ -1,7 +1,8 @@
-// The gradient that lights an item's face from its foot up, by its rarity in stars: the item tile draws it, and so does
-// the Archive's tile for a four or five star weapon. A two star face is not measured yet, so it has no entry and draws
-// bare. Zero and one share the grey one star face: the materials table gives an expedition's exchange items no stars,
-// though the game draws them as one
+// The gradient that lights an item's face from its foot up, by its rarity in stars.
+// The item tile draws it, and so does the Archive's tile for a four or five star weapon.
+// A two star face is not measured yet, so it has no entry and draws bare.
+// Zero and one share the grey one star face: the materials table gives an expedition's exchange items no stars.
+// Yet the game draws them as one
 const ONE_STAR_FACE = "linear-gradient(#7e7e7d, #838383 30%, #909090 60%, #909090 77%)";
 
 export const ItemRarityFaceGradientMap: Readonly<Record<number, string>> = {

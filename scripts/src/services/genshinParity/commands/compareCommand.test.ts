@@ -21,7 +21,7 @@ vi.mock(import("#src/services/genshinParity/reference/compareScreen"), () => ({
 vi.mock(import("#src/services/genshinParity/page/startFreshPageServer"), () => ({
   startFreshPageServer: vi.fn<() => Promise<undefined>>(),
 }));
-// login-door's committed image is the manifest's own file, which is on disk, so `compare --all` measures it
+// The committed image of login-door is the manifest's own file, which is on disk, so `compare --all` measures it
 vi.mock(import("#src/services/genshinParity/shared/getPlannedReferencePath"), () => ({
   getPlannedReferencePath: vi.fn<(referenceId: string) => Promise<string>>(() =>
     Promise.resolve(REFERENCE_MANIFEST_PATH),

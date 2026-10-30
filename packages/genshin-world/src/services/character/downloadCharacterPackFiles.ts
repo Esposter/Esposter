@@ -16,12 +16,14 @@ export const downloadCharacterPackFiles = (
     const fileIterator = files.values();
     const failedPaths: string[] = [];
     let loadedBytes = 0;
+    const reportDeltaBytes = (deltaBytes: number): void => {
+      loadedBytes += deltaBytes;
+      onProgress(loadedBytes);
+    };
     const fetchFiles = async (): Promise<void> => {
       for (const file of fileIterator)
-        await downloadCharacterPackFile(cache, file, (deltaBytes) => {
-          loadedBytes += deltaBytes;
-          onProgress(loadedBytes);
-        }).match(noop, () => {
+        // oxlint-disable-next-line no-await-in-loop -- each worker fetches one file at a time, bounding the concurrency
+        await downloadCharacterPackFile(cache, file, reportDeltaBytes).match(noop, () => {
           failedPaths.push(file.path);
         });
     };

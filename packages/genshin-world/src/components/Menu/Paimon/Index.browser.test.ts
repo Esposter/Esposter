@@ -15,14 +15,17 @@ import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page, userEvent } from "vitest/browser";
 
+// The labels of the contents the menu draws, in its order, read from its entries that are not links
+const getContentLabels = () =>
+  Array.from(document.querySelectorAll(".contents .entry:not(.link) .label"), (label) => label.textContent);
+const dotOf = (name: string) => page.getByRole("button", { exact: true, name }).element().querySelector(".alert");
+
 describe("menuPaimon", () => {
   const birthday = { day: 13, month: 10 };
   const travelerName = "Aether";
   // The main quests the systems a quest opens wait on, all finished, as a player who has opened every system has them
   const openedQuestIds = new Set([ADVENTURER_HANDBOOK_UNLOCK_QUEST_ID, CO_OP_UNLOCK_QUEST_ID, WISH_UNLOCK_QUEST_ID]);
-  // The labels of the contents the menu draws, in its order, read from its entries that are not links
-  const getContentLabels = () =>
-    Array.from(document.querySelectorAll(".contents .entry:not(.link) .label"), (label) => label.textContent);
+
   // The side bar's Settings entry opens the Settings screen, which the world's menu names by its own screen kind
   test("settings opens from the side bar", async () => {
     expect.hasAssertions();
@@ -104,7 +107,6 @@ describe("menuPaimon", () => {
 
     await render(MenuPaimon, { props: { ...props, alertedIcons: [MenuEntryIcon.Achievements] } });
 
-    const dotOf = (name: string) => page.getByRole("button", { exact: true, name }).element().querySelector(".alert");
     expect(dotOf(ENGLISH_GAME_TEXT[GameTextKey.Achievements])).not.toBeNull();
     expect(dotOf(ENGLISH_GAME_TEXT[GameTextKey.Friends])).toBeNull();
   });

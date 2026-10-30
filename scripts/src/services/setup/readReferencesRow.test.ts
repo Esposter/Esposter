@@ -79,7 +79,7 @@ describe(readReferencesRow, () => {
 
     const environment = createEnvironment({
       exists: (path) => path !== getRecordDestination(RECORD_PATH),
-      runVisibly: vi.fn(() => ({ status: 1, stdout: null })),
+      runVisibly: vi.fn<SetupEnvironment["runVisibly"]>(() => ({ status: 1, stdout: null })),
     });
 
     expect(readReferencesRow(INSTALL, environment)).toStrictEqual({

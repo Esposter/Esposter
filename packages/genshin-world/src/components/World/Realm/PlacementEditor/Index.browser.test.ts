@@ -10,6 +10,7 @@ import { page } from "vitest/browser";
 
 describe("placementEditor", () => {
   const chair = takeOne(props.held);
+
   // A held furnishing picked and placed where the area has load to spare: the placement is emitted whole
   test("a furnishing that fits is placed where it was picked", async () => {
     expect.hasAssertions();

@@ -33,18 +33,20 @@ export const MAP_OVERLAY_MARK_SHARE = 0.00756;
 export const MAP_LABEL_SHARE = 0.02125;
 export const MAP_PROGRESS_SHARE = 0.012;
 export const MAP_PROGRESS_OFFSET_SHARE = 0.0227;
-// A subarea's name, its capitals 30 pixels high in the reference's English map over Jueyun Karst at 1080 high, 0.706 of
-// the size the page draws them at, so the name is 0.0221 of the view's extent
+// A subarea's name, its capitals 30 pixels high in the reference's English map over Jueyun Karst at 1080 high.
+// Those capitals are 0.706 of the size the page draws them at, so the name is 0.0221 of the view's extent
 export const MAP_SUBAREA_LABEL_SHARE = 0.0221;
-// The metres across the map's width at the zoom the reference draws its subarea names at, where its slider's thumb also
-// stands by default, read from the subarea labels it draws (`map-overlay-jueyun`), 1920 pixels across it. It is the
-// Furthest zoom the labels are drawn at, so the names hide when the view is further out than it, and the open map's
-// Default view
+// The metres across the map's width at the zoom the reference draws its subarea names at.
+// That is also where its slider's thumb stands by default.
+// It is read from the subarea labels it draws (`map-overlay-jueyun`), and the map is 1920 pixels across at that zoom.
+// It is the furthest zoom the labels are drawn at, and the open map's default view.
+// The names hide when the view is further out than it.
 export const MAP_REFERENCE_ZOOM_METRES = 1512;
-// Where the reference sets six subarea names away from the published points, which are their outlines' means: the
-// offset in catalogue metres from each name's point to the place its ink centre stands at the reference's zoom, keyed by
-// the name's text id, measured off `map-overlay-jueyun` (Huaguang Stone Forest, Qingyun Peak, Jueyun Karst, Mt. Hulao,
-// Nantianmen and Cuijue Slope; Mt. Aozang has no published point, so it is not drawn)
+// This is where the reference sets six subarea names away from the published points, which are their outlines' means.
+// Each entry is the offset in catalogue metres from a name's point to its ink centre at the reference's zoom.
+// It is keyed by the name's text id and measured off `map-overlay-jueyun`.
+// The six are Huaguang Stone Forest, Qingyun Peak, Jueyun Karst, Mt. Hulao, Nantianmen and Cuijue Slope.
+// Mt. Aozang has no published point, so it is not drawn
 export const MAP_SUBAREA_LABEL_OFFSETS: Readonly<Partial<Record<string, { x: number; z: number }>>> = {
   "455287262": { x: -59.5, z: 102.2 },
   "1198567662": { x: 43.1, z: -26.8 },

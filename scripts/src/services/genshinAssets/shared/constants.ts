@@ -50,11 +50,12 @@ export const ANIMESTUDIO_CLI_PATH: string =
   (process.platform === "darwin"
     ? join(TOOLS_DIRECTORY, PUBLISH_DIRECTORY_NAME, CLI_EXECUTABLE_NAME)
     : join(homedir(), "Downloads", "AnimeStudio", "AnimeStudio.CLI.exe"));
-// AnimeStudio's Maps folder, beside its command line: where each shard of `map` writes its CAB map, and where the CLI reads
-// the merged one on every export
+// AnimeStudio's Maps folder, beside its command line: where each shard of `map` writes its CAB map.
+// The CLI reads the merged one from there on every export
 export const ANIMESTUDIO_MAPS_DIRECTORY: string = join(dirname(ANIMESTUDIO_CLI_PATH), "Maps");
-// The CAB map `map` builds: every serialized file's block and the files it points into. It lives in the parity folder,
-// which is where every reader opens it, and `placeCabMap` copies it into the Maps folder the CLI reads
+// The CAB map `map` builds: every serialized file's block and the files it points into.
+// It lives in the parity folder, where every reader opens it.
+// `placeCabMap` copies it into the Maps folder the CLI reads
 export const CAB_MAP_PATH: string = join(EXTRACTED_DIRECTORY, "maps", `${ASSET_MAP_NAME}.bin`);
 // The copy of it in AnimeStudio's Maps folder, which the CLI reads on every export
 export const ANIMESTUDIO_CAB_MAP_PATH: string = join(ANIMESTUDIO_MAPS_DIRECTORY, `${ASSET_MAP_NAME}.bin`);
@@ -311,6 +312,7 @@ export const WORLD_AREA_POLYGONS_PATH: string = join(
   SCENE_WORLD_AREA_FILE_NAME,
 );
 // The key the open world's subarea labels are published under, one record of every level-two area's name and label point
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const MAP_LABELS_KEY: string = `${GameDataset.MapLabels}/subareas`;
 export const SCENE_POINT_AREA_FIELD = "EABBCMGNLEL";
 // The open world's scene, whose groups, points, NPC births and transport points the world is placed from

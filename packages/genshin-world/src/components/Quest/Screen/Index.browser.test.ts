@@ -5,19 +5,20 @@ import { describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
 import { nextTick } from "vue";
 
+const pressNext = async (count: number) => {
+  for (let press = 0; press < count; press++)
+    window.dispatchEvent(new KeyboardEvent("keydown", { code: LIST_SCREEN_TAB_NEXT_CODE }));
+  await nextTick();
+};
+
 describe(QuestScreen, () => {
   // E steps along the tabs, the first being the list of every quest, and holds at the last
-  test("E steps along the tabs and holds at the last", async () => {
+  test("the E key steps along the tabs and holds at the last", async () => {
     expect.hasAssertions();
 
     await render(QuestScreen, { props });
     const tabs = document.querySelectorAll('[role="tab"]');
     const getSelectedTabIndex = () => [...tabs].findIndex((tab) => tab.getAttribute("aria-selected") === "true");
-    const pressNext = async (count: number) => {
-      for (let press = 0; press < count; press++)
-        window.dispatchEvent(new KeyboardEvent("keydown", { code: LIST_SCREEN_TAB_NEXT_CODE }));
-      await nextTick();
-    };
 
     expect(getSelectedTabIndex()).toBe(0);
     await pressNext(1);

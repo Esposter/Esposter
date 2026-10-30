@@ -20,10 +20,10 @@ describe(useCharacterPackPreload, () => {
   beforeEach(() => {
     vi.useFakeTimers({ now: 0 });
     vi.stubGlobal("location", { href: `${gameDataBaseUrl}/` });
-    vi.stubGlobal("caches", { open: async () => createCharacterPackCacheStub() });
+    vi.stubGlobal("caches", { open: () => Promise.resolve(createCharacterPackCacheStub()) });
     vi.stubGlobal(
       "fetch",
-      vi.fn<typeof fetch>(async () => new Response(null, { status: 404 })),
+      vi.fn<typeof fetch>(() => Promise.resolve(new Response(null, { status: 404 }))),
     );
     vi.mocked(readCharacterPackIndex).mockResolvedValue(index);
     // The failed file's error is logged by the composable, which this suite does not need to read
@@ -36,7 +36,7 @@ describe(useCharacterPackPreload, () => {
     vi.restoreAllMocks();
   });
 
-  test("Missing pack stops the loading and draws no capsule", async () => {
+  test("missing pack stops the loading and draws no capsule", async () => {
     expect.hasAssertions();
 
     const onHeld = vi.fn<() => void>();

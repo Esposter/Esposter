@@ -17,13 +17,13 @@ describe(getCharacterPackReader, () => {
     [TRAVELER_CHARACTER_ID, travelerPackReader],
   ]);
 
-  test("Listed character draws its own pack", () => {
+  test("listed character draws its own pack", () => {
     expect.hasAssertions();
 
     expect(getCharacterPackReader(characterPackReaders, characterId)).toBe(characterPackReader);
   });
 
-  test("Character outside the index loads the Traveler", () => {
+  test("character outside the index loads the Traveler", () => {
     expect.hasAssertions();
 
     expect(getCharacterPackReader(characterPackReaders, 2)).toBe(travelerPackReader);

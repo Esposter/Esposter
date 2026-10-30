@@ -10,7 +10,6 @@ export const wakeEnemyCamps = (enemies: Enemy[]): void => {
   const engagedCampIds = new Set(
     enemies.filter(({ state }) => ENGAGED_ENEMY_STATES.includes(state)).map(({ campId }) => campId),
   );
-  for (const enemy of enemies) {
+  for (const enemy of enemies)
     if (enemy.state === EnemyState.Idle && engagedCampIds.has(enemy.campId)) setEnemyState(enemy, EnemyState.Alert);
-  }
 };

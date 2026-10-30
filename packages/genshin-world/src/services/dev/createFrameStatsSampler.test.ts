@@ -3,7 +3,7 @@ import { createFrameStatsSampler } from "#src/services/dev/createFrameStatsSampl
 import { describe, expect, test } from "vitest";
 
 describe(createFrameStatsSampler, () => {
-  test("Overlay shows the counters", () => {
+  test("overlay shows the counters", () => {
     expect.hasAssertions();
 
     const sampler = createFrameStatsSampler();

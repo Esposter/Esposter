@@ -6,8 +6,9 @@ import { ParityReferenceKind } from "#src/models/genshinParity/reference/ParityR
 import { parityReferenceManifestImageSchema } from "#src/models/genshinParity/reference/ParityReferenceManifestImage";
 import { z } from "zod";
 
-// One reference, by its id: its committed image's hash and dimensions, its plate when its entry has one, and what it was
-// drawn from and when. The committed file is checked against the hash of its bytes, so a changed file reads as a changed row
+// One reference, by its id: its committed image's hash and dimensions, and its plate when its entry has one.
+// It also holds what it was drawn from and when.
+// The committed file is checked against the hash of its bytes, so a changed file reads as a changed row.
 export interface ParityReferenceManifestRow extends ParityReferenceManifestImage {
   attribution: ParityReferenceAttribution;
   capturedAt: string;

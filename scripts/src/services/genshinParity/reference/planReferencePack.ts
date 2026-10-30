@@ -7,9 +7,11 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const hasScreenshot = ({ mainPath, missing }: ReferenceEntryPlan) => !missing.some(({ path }) => path === mainPath);
 
-// Decides what a pack stores from its plans and its options. A collision is one whose id is not replaced: `--skip-colliding`
-// leaves it out of the manifest and the files written, and without that flag it refuses the run. An id named by `--replace`
-// takes its local bytes, so its plan is the one stored, and an id the map names with no screenshot is refused, not ignored
+// Decides what a pack stores from its plans and its options.
+// A collision is one whose id is not replaced.
+// `--skip-colliding` leaves it out of the manifest and the files written; without that flag it refuses the run.
+// An id named by `--replace` takes its local bytes, so its plan is the one stored.
+// An id the map names with no screenshot is refused, not ignored
 export const planReferencePack = (
   plans: ReferenceEntryPlan[],
   { replace, skipColliding }: ReferencePackOptions,
@@ -23,14 +25,14 @@ export const planReferencePack = (
     );
   const collisions = plans
     .filter(({ id }) => !replace.includes(id))
-    .flatMap(({ collisions }) => collisions)
+    .flatMap(({ collisions: planCollisions }) => planCollisions)
     .filter((collision, index, all) => all.findIndex(({ id }) => id === collision.id) === index);
   const skipped: ReferenceCollision[] = skipColliding ? collisions : [];
-  const skippedIds = skipped.map(({ id }) => id);
+  const skippedIds = new Set(skipped.map(({ id }) => id));
   return {
     blocked: skipColliding ? [] : collisions,
     replaced: plans.filter(({ id, row }) => replace.includes(id) && row !== undefined).map(({ id }) => id),
     skipped,
-    stored: plans.filter(({ id }) => !skippedIds.includes(id)),
+    stored: plans.filter(({ id }) => !skippedIds.has(id)),
   };
 };

@@ -1,6 +1,6 @@
+import type { ParityReportRun } from "#src/models/genshinParity/reference/ParityReportRun";
 import type { ParityScore } from "#src/models/genshinParity/reference/ParityScore";
 
-import { ParityReportRun } from "#src/models/genshinParity/reference/ParityReportRun";
 import { PARITY_SCORES_PATH } from "#src/services/genshinParity/reference/constants";
 import { mergeParityScores } from "#src/services/genshinParity/reference/mergeParityScores";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";

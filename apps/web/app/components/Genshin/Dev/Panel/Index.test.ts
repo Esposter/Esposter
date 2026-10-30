@@ -12,7 +12,7 @@ describe("genshinDevPanel", () => {
     localStorage.clear();
   });
 
-  test("Scenarios and stats are in the panel", async () => {
+  test("scenarios and stats are in the panel", async () => {
     expect.hasAssertions();
 
     const registry = createDevRegistry();
@@ -36,7 +36,7 @@ describe("genshinDevPanel", () => {
     expect(component.findAll("button").map((button) => button.text())).toContain("Stats overlay");
   });
 
-  test("Control and console agree", async () => {
+  test("control and console agree", async () => {
     expect.hasAssertions();
 
     const state = { isFogShown: false };

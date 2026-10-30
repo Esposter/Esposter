@@ -13,8 +13,9 @@ export const unlockLandmarkArgumentsSchema = z.object({ kind: z.enum(DevUnlockKi
 
 export type UnlockLandmarkArguments = z.infer<typeof unlockLandmarkArgumentsSchema>;
 
-// Unlocks a region's Statue of The Seven or a Teleport Waypoint the way the game's activation does: its landmark's id joins
-// the landmarks the save holds unlocked. A waypoint is named by the area it stands in, as the map names it
+// Unlocks a region's Statue of The Seven or a Teleport Waypoint the way the game's activation does.
+// Its landmark's id joins the landmarks the save holds unlocked.
+// A waypoint is named by the area it stands in, as the map names it.
 export const unlockLandmark = (
   save: GenshinSave,
   { kind, name }: UnlockLandmarkArguments,

@@ -47,6 +47,7 @@ import { computed, ref, shallowRef } from "vue";
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+const createTrounceSave = () => ({ lastTeleportAt: undefined, trounceBlossoms: new Map() });
 
 describe(useWorldTrounceBlossoms, () => {
   const SPAWN_KEY = "spawn";
@@ -72,7 +73,6 @@ describe(useWorldTrounceBlossoms, () => {
   const savedState = readGenshinSave(EMPTY_GENSHIN_SAVE, {}, new Map(), new Map(), new Map());
   const maxAdventureExp = computeAdventureExpAtRank(adventureRankTables.levels, MAX_ADVENTURE_RANK);
   const ascensionQuestIds = new Set([25_001, 25_005, 25_009, 25_011]);
-  const createTrounceSave = () => ({ lastTeleportAt: undefined, trounceBlossoms: new Map() });
   const createNormalBoss = (): TrounceBlossom => ({
     claimedAts: [],
     kind: BlossomKind.NormalBoss,

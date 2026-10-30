@@ -3,6 +3,7 @@ import type { ExcelTowerBuffRow } from "#src/models/genshinAssets/spiralAbyss/Ex
 import { TowerBuffIcon } from "#src/models/genshinAssets/spiralAbyss/TowerBuffIcon";
 import { TowerBuffLastingType } from "#src/models/genshinAssets/spiralAbyss/TowerBuffLastingType";
 import { toAbyssTowerBuffs } from "#src/services/genshinAssets/spiralAbyss/toAbyssTowerBuffs";
+import { AbyssBenedictionIcon, AbyssBenedictionScope } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 describe(toAbyssTowerBuffs, () => {
@@ -19,13 +20,22 @@ describe(toAbyssTowerBuffs, () => {
     expect.hasAssertions();
 
     expect(toAbyssTowerBuffs([createRow(TowerBuffIcon.Attack, TowerBuffLastingType.Floor)])).toStrictEqual(
-      new Map([[TOWER_BUFF_ID, { descriptionTextHash: DESCRIPTION_TEXT_MAP_HASH, icon: "sword", scope: "floor" }]]),
+      new Map([
+        [
+          TOWER_BUFF_ID,
+          {
+            descriptionTextHash: DESCRIPTION_TEXT_MAP_HASH,
+            icon: AbyssBenedictionIcon.Sword,
+            scope: AbyssBenedictionScope.Floor,
+          },
+        ],
+      ]),
     );
   });
 
   test.each([
-    [TowerBuffIcon.Attack, "sword"],
-    [TowerBuffIcon.Defense, "shield"],
+    [TowerBuffIcon.Attack, AbyssBenedictionIcon.Sword],
+    [TowerBuffIcon.Defense, AbyssBenedictionIcon.Shield],
   ])("a %s icon draws the %s glyph", (buffIcon, icon) => {
     expect.hasAssertions();
 
@@ -33,8 +43,8 @@ describe(toAbyssTowerBuffs, () => {
   });
 
   test.each([
-    [TowerBuffLastingType.Floor, "floor"],
-    [TowerBuffLastingType.Level, "chamber"],
+    [TowerBuffLastingType.Floor, AbyssBenedictionScope.Floor],
+    [TowerBuffLastingType.Level, AbyssBenedictionScope.Chamber],
   ])("a %s lasting type spans the %s", (lastingType, scope) => {
     expect.hasAssertions();
 

@@ -7,7 +7,7 @@ import { DEV_SCENARIOS } from "#src/services/dev/scenarios/constants";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
-describe("DEV_SCENARIOS", () => {
+describe("dEV_SCENARIOS", () => {
   test.each(DEV_SCENARIOS)("$name runs every line to success through the registry", (scenario) => {
     expect.hasAssertions();
 

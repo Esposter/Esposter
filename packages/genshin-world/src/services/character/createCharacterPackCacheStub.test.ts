@@ -4,10 +4,11 @@ import { describe } from "vitest";
 export const createCharacterPackCacheStub = (): Pick<Cache, "keys" | "match" | "put"> => {
   const responses = new Map<string, Response>();
   return {
-    keys: async () => Array.from(responses.keys(), (url) => new Request(url)),
-    match: async (url) => responses.get(String(url))?.clone(),
-    put: async (url, response) => {
+    keys: () => Promise.resolve(Array.from(responses.keys(), (url) => new Request(url))),
+    match: (url: string | URL) => Promise.resolve(responses.get(String(url))?.clone()),
+    put: (url: string | URL, response) => {
       responses.set(String(url), response);
+      return Promise.resolve();
     },
   };
 };

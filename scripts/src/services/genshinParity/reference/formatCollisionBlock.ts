@@ -2,8 +2,8 @@ import type { ReferenceCollision } from "#src/models/genshinParity/reference/Ref
 
 import { SHORT_HASH_LENGTH } from "#src/services/genshinParity/reference/constants";
 
-// The one line a pack ends with, naming each colliding id with the leading digits of the hash of its local bytes and of
-// the committed bytes it differs from
+// The one line a pack ends with, naming each colliding id with the leading digits of the hash of its local bytes.
+// The hash of the committed bytes it differs from is named the same way
 export const formatCollisionBlock = (collisions: ReferenceCollision[]): string =>
   `colliding ${collisions.length}: ${collisions
     .map(

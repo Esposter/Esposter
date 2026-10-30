@@ -43,21 +43,25 @@ describe(giveItem, () => {
 
     expect(giveItem(EMPTY_GENSHIN_SAVE, { count: MORA_COUNT, item: MORA_NAME }, tables)).toStrictEqual({
       ok: true,
-      save: expect.objectContaining({
-        inventory: EMPTY_GENSHIN_SAVE.inventory,
-        wallet: expect.objectContaining({ currencies: expect.objectContaining({ [Currency.Mora]: MORA_COUNT }) }),
-      }),
+      save: {
+        ...EMPTY_GENSHIN_SAVE,
+        wallet: {
+          ...EMPTY_GENSHIN_SAVE.wallet,
+          currencies: { ...EMPTY_GENSHIN_SAVE.wallet.currencies, [Currency.Mora]: MORA_COUNT },
+        },
+      },
       value: MORA_COUNT,
     });
     expect(giveItem(EMPTY_GENSHIN_SAVE, { count: CRYSTAL_CORE_COUNT, item: CRYSTAL_CORE_NAME }, tables)).toStrictEqual({
       ok: true,
-      save: expect.objectContaining({
+      save: {
+        ...EMPTY_GENSHIN_SAVE,
         inventory: {
           items: [{ id: 0, itemId: CRYSTAL_CORE_ID, kind: InventoryItemKind.Stack, quantity: CRYSTAL_CORE_COUNT }],
           nextId: 1,
           quickSwapItemIds: [],
         },
-      }),
+      },
       value: CRYSTAL_CORE_COUNT,
     });
   });

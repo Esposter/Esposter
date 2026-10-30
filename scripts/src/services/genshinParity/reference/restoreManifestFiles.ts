@@ -10,9 +10,10 @@ import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import { dirname } from "node:path";
 
-// Streams every record into its place in the parity folder, each keeping a copy already holding the same hash. No recording
-// is fetched: a user's own stays on the machine that recorded it, and a public one is fetched again from its page by the
-// Clip tool. Returns how many were fetched and how many were already held
+// Streams every record into its place in the parity folder, each keeping a copy already holding the same hash.
+// No recording is fetched: a user's own stays on the machine that recorded it.
+// A public one is fetched again from its page by the Clip tool.
+// Returns how many were fetched and how many were already held
 export const restoreManifestFiles = async (
   manifest: ParityReferenceManifest,
 ): Promise<{ fetched: number; held: number }> => {

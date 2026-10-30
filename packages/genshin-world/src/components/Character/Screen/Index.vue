@@ -255,6 +255,7 @@ const artifactSetBonusGroups = computed(() =>
 const noSetBonusLabel = computed(() =>
   activeArtifactSetBonuses.value.length === 0 ? gameText[GameTextKey.ArtifactSetBonusNone] : "",
 );
+const formatTotal = (difference: number) => `+${formatWholeNumber(difference)}`;
 // The attribute totals the worn artifacts add: each stat the character reaches with them less the one it reaches without
 const artifactTotals = computed(() => {
   if (!character.value) return [];
@@ -262,7 +263,6 @@ const artifactTotals = computed(() => {
   const bare = computeCharacterAttributes(
     getCharacterAttributeLines({ ...character.value, artifacts: [] }, statTables),
   );
-  const formatTotal = (difference: number) => `+${formatWholeNumber(difference)}`;
   return [
     { label: gameText[GameTextKey.AttributeMaxHealth], value: formatTotal(worn.maxHealth - bare.maxHealth) },
     { label: gameText[GameTextKey.AttributeAttack], value: formatTotal(worn.attack - bare.attack) },

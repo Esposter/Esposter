@@ -15,8 +15,8 @@ import {
 } from "genshin-world";
 
 // The developer's save commands, `give`, `level`, `ar` and `unlock`, registered once the game's names and rules are read.
-// Each reads the save the world last wrote, writes the save field the game's own act writes and hands the new save to the
-// Page, which applies it. A refused line writes nothing
+// Each reads the save the world last wrote, and writes the save field the game's own act writes.
+// The new save is handed to the page, which applies it. A refused line writes nothing
 export const useGenshinDevSaveCommands = ({
   applySave,
   devRegistry,
@@ -29,13 +29,14 @@ export const useGenshinDevSaveCommands = ({
   let isActive = true;
   let unregister: (() => void) | undefined;
 
-  const createCommands = (tables: DevSaveTables): DevCommand[] => {
-    const takeOutcome = (outcome: DevSaveOutcome): DevOutcome => {
-      if (!outcome.ok) return outcome;
+  const takeOutcome = (outcome: DevSaveOutcome): DevOutcome => {
+    if (!outcome.ok) return outcome;
 
-      applySave(outcome.save);
-      return { ok: true, value: outcome.value };
-    };
+    applySave(outcome.save);
+    return { ok: true, value: outcome.value };
+  };
+
+  const createCommands = (tables: DevSaveTables): DevCommand[] => {
     // Each command is typed by its own schema, so its `run` takes the arguments that schema parses rather than the list's
     const giveCommand: DevCommand<typeof giveItemArgs> = {
       args: giveItemArgs,
@@ -64,13 +65,16 @@ export const useGenshinDevSaveCommands = ({
     return [giveCommand, levelCommand, adventureRankCommand, unlockCommand];
   };
 
-  // The read settles every failure itself, logging it, so the chain it returns cannot reject and nothing waits on it
-  onMounted(() => {
-    getResultAsync(() => readDevSaveTables(gameDataBaseUrl, regionDataBaseUrl, language, gameText)).match((tables) => {
-      if (!isActive) return;
+  // The read settles every failure itself, logging it, so the chain it returns cannot reject
+  onMounted(async () => {
+    await getResultAsync(() => readDevSaveTables(gameDataBaseUrl, regionDataBaseUrl, language, gameText)).match(
+      (tables) => {
+        if (!isActive) return;
 
-      unregister = devRegistry.register({ commands: createCommands(tables), variables: [] });
-    }, console.error);
+        unregister = devRegistry.register({ commands: createCommands(tables), variables: [] });
+      },
+      console.error,
+    );
   });
   onUnmounted(() => {
     isActive = false;

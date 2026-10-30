@@ -1,5 +1,5 @@
-// The names of an object's ancestors, from the root down to its father, read up the father links. A father with no dump
-// to name it stops the walk, so a path reaches only as far as the dumps do
+// The names of an object's ancestors, from the root down to its father, read up the father links.
+// A father with no dump to name it stops the walk, so a path reaches only as far as the dumps do
 export const getUiPath = (
   fatherId: string,
   transformIdNameMap: ReadonlyMap<string, { fatherId: string; name: string }>,

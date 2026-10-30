@@ -21,17 +21,21 @@ export const verifyReferences = async (
   return withFinalizerAsync(
     async () => {
       const verifications = await settleAll(
-        Object.entries(references).map(([referenceId, reference]) => async () => {
-          if (reference.source === undefined)
-            return reference.wikiTitle === undefined
-              ? undefined
-              : { id: referenceId, message: reference.wikiTitle, outcome: VerifyOutcome.NotCheckable };
-          return verifyReference(referenceId, reference.source, reference, {
-            capturesDirectory,
-            cutDirectory,
-            referencePath,
-          });
-        }),
+        Object.entries(references).map(
+          ([referenceId, reference]) =>
+            () =>
+              Promise.try(() => {
+                if (reference.source === undefined)
+                  return reference.wikiTitle === undefined
+                    ? undefined
+                    : { id: referenceId, message: reference.wikiTitle, outcome: VerifyOutcome.NotCheckable };
+                return verifyReference(referenceId, reference.source, reference, {
+                  capturesDirectory,
+                  cutDirectory,
+                  referencePath,
+                });
+              }),
+        ),
         REFERENCE_PACK_CONCURRENCY,
       );
       return verifications.filter((verification) => verification !== undefined);

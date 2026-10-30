@@ -12,9 +12,9 @@ import { readCatalogue } from "#src/services/world/readCatalogue";
 import { readRegionData } from "#src/services/world/readRegionData";
 import { getResultAsync } from "@esposter/shared";
 
-// The records a save command reads the names and the rules of the save from, read as the world reads them: the names in
-// the reader's language, the item, character and rank tables, the catalogue, and each region's waypoints. A region whose
-// data fails is logged and left out, as the map leaves it out
+// The records a save command reads the names and the rules of the save from, read as the world reads them.
+// They are the names in the reader's language, the item, character and rank tables, and the catalogue.
+// Each region's waypoints are read too. A region whose data fails is logged and left out, as the map leaves it out.
 export const readDevSaveTables = async (
   gameDataBaseUrl: string,
   regionDataBaseUrl: string,

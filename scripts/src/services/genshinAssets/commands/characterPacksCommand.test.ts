@@ -4,7 +4,6 @@ import type { CharacterPackIndex } from "genshin-world";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildCharacterPackIndex } from "#src/services/genshinAssets/characterPacks/buildCharacterPackIndex";
 import { publishCharacterPacks } from "#src/services/genshinAssets/characterPacks/publishCharacterPacks";
-import { readCharacterPackFiles } from "#src/services/genshinAssets/characterPacks/readCharacterPackFiles";
 import { characterPacksCommand } from "#src/services/genshinAssets/commands/characterPacksCommand";
 import { defineCommand, runCommand } from "citty";
 import { GameDataset } from "genshin-world";
@@ -54,15 +53,15 @@ describe("characterPacksCommand", () => {
   });
 
   // The dry run states the index's avatars and bytes, and asks the game data step for its change without a request
-  test("Dry run reports the index and writes nothing", async () => {
+  test("dry run reports the index and writes nothing", async () => {
     expect.hasAssertions();
 
-    const log = vi.spyOn(console, "log").mockImplementation(() => undefined);
+    const log = vi.spyOn(console, "log").mockReturnValue(undefined);
     await runCharacterPacks(["--dry-run"]);
 
     expect(log).toHaveBeenCalledWith(expect.stringContaining("2 avatars, 12 bytes"));
     expect(vi.mocked(publishCharacterPacks)).not.toHaveBeenCalled();
-    expect(vi.mocked(publishGameDataStep).mock.calls[0]?.[0]).toMatchObject({
+    expect(vi.mocked(publishGameDataStep).mock.calls[0]?.[0]).toStrictEqual({
       isDryRun: true,
       publication: { indexes: {}, objects: { [`${GameDataset.CharacterPackIndex}/index`]: INDEX } },
       scopes: [GameDataset.CharacterPackIndex],
@@ -73,7 +72,7 @@ describe("characterPacksCommand", () => {
   test("a publish uploads the files before it publishes the index", async () => {
     expect.hasAssertions();
 
-    vi.spyOn(console, "log").mockImplementation(() => undefined);
+    vi.spyOn(console, "log").mockReturnValue(undefined);
     await runCharacterPacks([]);
 
     expect(vi.mocked(publishCharacterPacks).mock.invocationCallOrder[0]).toBeLessThan(

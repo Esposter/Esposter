@@ -9,6 +9,7 @@ import { orderInterfaceChildren } from "#src/services/genshinAssets/interface/or
 export const composeInterfaceTree = (
   entries: readonly UiIndexEntry[],
   root: UiIndexEntry,
+  // oxlint-disable-next-line typescript/no-inferrable-types -- isolatedDeclarations demands this annotation
   depth: number = Infinity,
 ): InterfaceNode => {
   const childrenByFatherId = Map.groupBy(entries, ({ fatherId }) => fatherId);

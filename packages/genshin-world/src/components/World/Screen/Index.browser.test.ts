@@ -60,8 +60,9 @@ describe("worldScreen", () => {
     async () => {
       expect.hasAssertions();
 
-      // The page's full height, which the world fills: in the body's flow its host is as tall as its content, and a canvas
-      // with no height of its own takes its 2:1 intrinsic ratio, leaving the page white under the world
+      // The page's full height, which the world fills.
+      // In the body's flow its host is as tall as its content.
+      // A canvas with no height of its own takes its 2:1 intrinsic ratio, leaving the page white under the world
       const host = document.createElement("div");
       host.style.height = "100vh";
       document.body.append(host);
@@ -69,8 +70,9 @@ describe("worldScreen", () => {
         host.remove();
       });
       const { promise: ready, resolve: resolveReady } = Promise.withResolvers<void>();
-      // The sky runs on in real time from the minute it is handed, so a slower load reads a later sky, a darker one at
-      // dusk: held at the first view's minute, the frame is the same on every machine
+      // The sky runs on in real time from the minute it is handed.
+      // A slower load would read a later sky, a darker one at dusk.
+      // Held at the first view's minute, the frame is the same on every machine
       await render(WorldScreen, {
         attrs: { onReady: resolveReady },
         container: host,
@@ -88,11 +90,14 @@ describe("worldScreen", () => {
           0,
         ) / readyLuminances.length;
 
-      // No veil lifts the frame's darkest tones. The bound sits between two readings of the pinned frame's darkest
-      // twentieth, both measured in this test's own setup on this Mac (Metal): 0.586 with no veil, and 0.711 under a
-      // white veil at 30 per cent, the veil lifting each tone towards white in the same proportion. 0.65 is midway,
-      // 0.06 from either reading, twice the few hundredths GPU backends differ by, so the bound rests on what the veil
-      // does rather than on this machine's own number alone
+      // No veil lifts the frame's darkest tones.
+      // The bound sits between two readings of the pinned frame's darkest twentieth.
+      // Both were measured in this test's own setup on this Mac (Metal).
+      // They read 0.586 with no veil, and 0.711 under a white veil at 30 per cent.
+      // The veil lifts each tone towards white in the same proportion.
+      // The bound, 0.65, is midway between them, 0.06 from either reading.
+      // That margin is twice the few hundredths GPU backends differ by.
+      // So the bound rests on what the veil does, rather than on this machine's own number alone
       const darkestTwentieth = readyLuminances.toSorted(
         (firstLuminance, secondLuminance) => firstLuminance - secondLuminance,
       )[Math.floor(readyLuminances.length / 20)];

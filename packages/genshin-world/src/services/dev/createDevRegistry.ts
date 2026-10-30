@@ -46,7 +46,7 @@ export const createDevRegistry = (): DevRegistry => {
     const unmountedCommand = unmountedCommands.get(name);
     if (unmountedCommand) return { error: "not available here", ok: false, usage: formatDevUsage(unmountedCommand) };
 
-    const suggestions = Array.from(commands.keys()).filter((commandName) => commandName.includes(name));
+    const suggestions = [...commands.keys()].filter((commandName) => commandName.includes(name));
     if (suggestions.length === 0) return { error: `unknown command ${name}`, ok: false, usage: "" };
 
     return { error: `unknown command ${name}; did you mean ${suggestions.join(", ")}?`, ok: false, usage: "" };
@@ -76,20 +76,17 @@ export const createDevRegistry = (): DevRegistry => {
         if (index !== -1) renderers = renderers.toSpliced(index, 1);
       }
 
-      for (const command of handle.commands) {
+      for (const command of handle.commands)
         if (commands.get(command.name) === command) {
           commands.delete(command.name);
           unmountedCommands.set(command.name, command);
         }
-      }
 
-      for (const scenario of handleScenarios) {
+      for (const scenario of handleScenarios)
         if (scenarios.get(scenario.name) === scenario) scenarios.delete(scenario.name);
-      }
 
-      for (const variable of handle.variables) {
+      for (const variable of handle.variables)
         if (variables.get(variable.name) === variable) variables.delete(variable.name);
-      }
 
       notify();
     };
@@ -97,8 +94,8 @@ export const createDevRegistry = (): DevRegistry => {
 
   return {
     getRenderer: () => renderers.at(-1)?.(),
-    getScenarios: () => Array.from(scenarios.values()),
-    getVariables: () => Array.from(variables.values()),
+    getScenarios: () => [...scenarios.values()],
+    getVariables: () => [...variables.values()],
     register,
     run,
     runScenario: (scenario) => runDevScenario(run, scenario),

@@ -31,7 +31,7 @@ describe.skipIf(ffmpegStatus !== 0)(verifyReferences, () => {
       join(directory, `${referenceId}.png`),
     );
   const verifyAgainst = (references: Record<string, ParityReference>) =>
-    verifyReferences(references, directory, async (referenceId) => join(directory, `${referenceId}.png`));
+    verifyReferences(references, directory, (referenceId) => Promise.resolve(join(directory, `${referenceId}.png`)));
 
   beforeAll(async () => {
     directory = mkdtempSync(join(tmpdir(), "parity-verify-test-"));
@@ -55,7 +55,9 @@ describe.skipIf(ffmpegStatus !== 0)(verifyReferences, () => {
 
     await cutReference(TEST_FILENAME);
 
-    expect(await verifyAgainst({ [TEST_FILENAME]: { screen: "screen", source: recordingSource } })).toStrictEqual([
+    await expect(
+      verifyAgainst({ [TEST_FILENAME]: { screen: "screen", source: recordingSource } }),
+    ).resolves.toStrictEqual([
       { id: TEST_FILENAME, message: "0.00% mean difference over 320×240", outcome: VerifyOutcome.Pass },
     ]);
   });
@@ -75,11 +77,11 @@ describe.skipIf(ffmpegStatus !== 0)(verifyReferences, () => {
 
     await cutReference("c");
 
-    expect(
-      await verifyAgainst({
+    await expect(
+      verifyAgainst({
         c: { region: { height: 240, width: 400, x: 0, y: 0 }, screen: "screen", source: recordingSource },
       }),
-    ).toStrictEqual([
+    ).resolves.toStrictEqual([
       { id: "c", message: "region 400×240 at 0, 0, outside its 320×240 file", outcome: VerifyOutcome.Fail },
     ]);
   });

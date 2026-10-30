@@ -14,12 +14,26 @@ import { existsSync, readdirSync, statSync } from "node:fs";
 import { extname, join, relative } from "node:path";
 import { describe, expect, test } from "vitest";
 
-// The committed references are read from the tree: each one the map names has its file, each fixture variant holding one
-// has exactly one beside its snapshot, each file is named by an entry or a manifest row, its bytes are the hash its row
-// holds, and no file is larger than the ceiling
+const toRepositoryPath = (path: string): string => relative(REPOSITORY_ROOT, path);
+
+// The plate of every reference a manifest row or a map entry names one for, at the path its id gives
+const readNamedPlates = async (): Promise<{ id: string; path: string }[]> => {
+  const rows = await readReferenceManifest();
+  const ids = new Set([
+    ...rows.filter(({ plate }) => plate !== undefined).map(({ id }) => id),
+    ...Object.entries(ParityReferenceMap)
+      .filter(([, { pending, plateSource }]) => pending === undefined && plateSource !== undefined)
+      .map(([id]) => id),
+  ]);
+  return Array.from(ids, (id) => ({ id, path: getReferencePlateFilePath(id) }));
+};
+
+// The committed references are read from the tree.
+// Each one the map names has its file, and each fixture variant holding one has exactly one beside its snapshot.
+// Each file is named by an entry or a manifest row, and its bytes are the hash its row holds.
+// No file is larger than the ceiling
 describe("committedReferences", () => {
   const COMMITTED_REFERENCE_SUFFIX = `${REFERENCE_IMAGE_SUFFIX}.${REFERENCE_FILE_EXTENSION}`;
-  const toRepositoryPath = (path: string): string => relative(REPOSITORY_ROOT, path);
   // Every committed file: the flat ones in the references folder, and the ones beside a fixture variant's snapshot
   const readCommittedFiles = (): string[] => [
     ...readdirSync(REFERENCE_FILES_DIRECTORY)
@@ -30,18 +44,6 @@ describe("committedReferences", () => {
       .filter((path) => path.endsWith(COMMITTED_REFERENCE_SUFFIX))
       .map((path) => join(COMPONENTS_DIRECTORY, path)),
   ];
-
-  // The plate of every reference a manifest row or a map entry names one for, at the path its id gives
-  const readNamedPlates = async (): Promise<{ id: string; path: string }[]> => {
-    const rows = await readReferenceManifest();
-    const ids = new Set([
-      ...rows.filter(({ plate }) => plate !== undefined).map(({ id }) => id),
-      ...Object.entries(ParityReferenceMap)
-        .filter(([, { pending, plateSource }]) => pending === undefined && plateSource !== undefined)
-        .map(([id]) => id),
-    ]);
-    return Array.from(ids, (id) => ({ id, path: getReferencePlateFilePath(id) }));
-  };
 
   test("commits a file for every reference the map names, and a plate for every one that names one", async () => {
     expect.hasAssertions();

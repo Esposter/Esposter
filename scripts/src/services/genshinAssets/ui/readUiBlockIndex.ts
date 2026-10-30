@@ -14,8 +14,9 @@ import { existsSync } from "node:fs";
 import { rm } from "node:fs/promises";
 import { join } from "node:path";
 
-// A block's UI index path. The index is built from the block's AnimeStudio export when the block's bytes differ from the
-// ones its index was built from, and reused as it stands when they match, so an unchanged block is read once
+// A block's UI index path.
+// The index is built from the block's AnimeStudio export when the block's bytes differ from those it was built from.
+// It is reused as it stands when they match, so an unchanged block is read once
 export const readUiBlockIndex = async (block: string): Promise<string> => {
   const blockPath = join(INSTALLED_BLOCKS_DIRECTORY, block);
   if (!existsSync(blockPath)) throw new InvalidOperationError(Operation.Read, block, "is not an installed block");

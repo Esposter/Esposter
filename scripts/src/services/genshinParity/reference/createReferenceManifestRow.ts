@@ -6,9 +6,10 @@ import { ParityReferenceKind } from "#src/models/genshinParity/reference/ParityR
 import { RECORDING_SOURCE_REGEX, REFERENCE_ID_LANGUAGE_TAGS } from "#src/services/genshinParity/reference/constants";
 import { WIKI_ORIGIN } from "genshin-persona/src/services/constants.ts";
 
-// The manifest row of one reference, read from the entry it serves: a wiki file names its page, a recording's frame names
-// its recording, its second and the video's id, and anything else is kind Other with no attribution. The language is the
-// one the id names, and a field nothing names is left out rather than guessed
+// The manifest row of one reference, read from the entry it serves.
+// A wiki file names its page, and a recording's frame names its recording, its second and the video's id.
+// Anything else is kind Other with no attribution.
+// The language is the one the id names, and a field nothing names is left out rather than guessed
 export const createReferenceManifestRow = (
   id: string,
   image: ParityReferenceManifestImage,
@@ -25,7 +26,7 @@ export const createReferenceManifestRow = (
     attribution = { wikiTitle, wikiUrl: `${WIKI_ORIGIN}/wiki/${encodeURIComponent(wikiTitle.replaceAll(" ", "_"))}` };
   } else if (recording) {
     const [, recordingFile, second] = recording;
-    const videoId = /^yt-([\w-]{11})(?=[-.]|$)/u.exec(recordingFile ?? "")?.[1];
+    const videoId = /^yt-(?<videoId>[\w-]{11})(?=[-.]|$)/u.exec(recordingFile ?? "")?.groups?.videoId;
     kind = ParityReferenceKind.RecordingFrame;
     attribution = { recording: recordingFile, second: Number(second), ...(videoId === undefined ? {} : { videoId }) };
   }

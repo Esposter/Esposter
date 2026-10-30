@@ -22,7 +22,7 @@ export const useCharacterPackPreload = (gameDataBaseUrl: string, onHeld: () => v
       const index = await readCharacterPackIndex(gameDataBaseUrl);
       const cache = await caches.open(CHARACTER_PACK_CACHE_NAME);
       // The cache lists its keys as absolute urls, so the plan's urls are made absolute the same way
-      const absoluteGameDataBaseUrl = new URL(gameDataBaseUrl, location.href).href;
+      const absoluteGameDataBaseUrl = new URL(gameDataBaseUrl, window.location.href).href;
       const heldUrls = await listHeldCharacterPackUrls(cache);
       const plan = planCharacterPackDownload(index, absoluteGameDataBaseUrl, heldUrls);
       pendingBytes.value = plan.pendingBytes;

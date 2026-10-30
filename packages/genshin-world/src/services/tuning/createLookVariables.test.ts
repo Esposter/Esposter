@@ -14,28 +14,28 @@ import {
 import { Data3DTexture, DataTexture } from "three";
 import { describe, expect, test } from "vitest";
 
-describe(createLookVariables, () => {
-  const createOptions = () => ({
-    fogUniforms: createFogUniforms(),
-    gameClock: { minutes: 0, minutesPerSecond: 0 },
-    gradeLutTexture: new Data3DTexture(),
-    gradeOptions: {
-      contrast: 1,
-      highlightTint: [0, 0, 0],
-      saturation: 1,
-      shadowTint: [0, 0, 0],
-      size: 2,
-    } satisfies GradeOptions,
-    lightUniforms: createLightUniforms(),
-    postUniforms: createPostUniforms(),
-    rampOptions: { resolution: 2, shade: 0, softness: 0.1, terminator: 0.5 },
-    rampTexture: new DataTexture(),
-    skyUniforms: createSkyUniforms(),
-    waterUniforms: createWaterUniforms(),
-    windUniforms: createWindUniforms(),
-  });
+const createOptions = () => ({
+  fogUniforms: createFogUniforms(),
+  gameClock: { minutes: 0, minutesPerSecond: 0 },
+  gradeLutTexture: new Data3DTexture(),
+  gradeOptions: {
+    contrast: 1,
+    highlightTint: [0, 0, 0],
+    saturation: 1,
+    shadowTint: [0, 0, 0],
+    size: 2,
+  } satisfies GradeOptions,
+  lightUniforms: createLightUniforms(),
+  postUniforms: createPostUniforms(),
+  rampOptions: { resolution: 2, shade: 0, softness: 0.1, terminator: 0.5 },
+  rampTexture: new DataTexture(),
+  skyUniforms: createSkyUniforms(),
+  waterUniforms: createWaterUniforms(),
+  windUniforms: createWindUniforms(),
+});
 
-  test("Look values are in the panel", () => {
+describe(createLookVariables, () => {
+  test("look values are in the panel", () => {
     expect.hasAssertions();
 
     const options = createOptions();

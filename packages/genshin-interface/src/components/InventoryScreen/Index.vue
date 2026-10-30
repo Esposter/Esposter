@@ -67,8 +67,8 @@ interface Props {
   // The detail panel's button that uses the selected entry, in the reader's language
   useLabel: string;
 }
-// The bag's tab icons, each traced off the recording's head bar at 1080 high. The Weapon tab's is hidden under the
-// recording's webcam, so that tab keeps a placeholder disc
+// The bag's tab icons, each traced off the recording's head bar at 1080 high.
+// The Weapon tab's is hidden under the recording's webcam, so that tab keeps a placeholder disc
 const itemCategoryGlyphMap: Partial<Record<ItemCategory, string>> = {
   [ItemCategory.Artifact]:
     "M55 0h29.5q.88.04.5 3h1.5q2 .5 1.5 3.5l-3.5 5.5-4.5 3.5q-1.12 3.33 1.5 2.5l9 3 4 3 6 2 11.5 10.5 5 7 6 12 1 8 3 4v2l6 7-2.5 2.5h-3l-4.5 2.5v7l-2 3v2q-3.09 7.91-9 13l-1 3.5h-1.5l-5 5-11 7-11 1-4.5-3.5-2-3v-3l-1-2.5q-3.67-1.35-2 4.5l3 3v7l1.5 1.5q5.5 1 8-1l2.5 2.5-1 1-8 10-2 4.5h-13.5l-.5-1.5-11-13v-2q1.25-2.75 6.5-1.5 1.12 2 4.5 1l1-5.5q-1.75-.92-1-3.5-2.67-1.12-2 1.5l-3.5 3.5h-2l-1-1h-6l-8-4-12.5-11.5-5-7v-2l-4-7-2-8-1.5-1.5-7-3h-2.5v-2.5l9-10 1-4 2-2v-4l5-11q4.9-8.6 12.5-14.5l5-4 12-6h3l3.5-2.5v-2l-3.5-4.5-2.5-1.5-1-5 3-1.5v-3zm15 35-4 3 1 2-1 6-8 13q-2 2-5 3l-2 3-8 4h-6l-1 1q-4-1-2 4l7 3 5 1 9 5 5 6 6 9 1 7 2 3q-1 2 2 1l2-3v-4l3-6v-2l5-6 8-7 9-3 5-3h3q2 0 1-3l-1-2h-4l-12-5-7-7q-1-3-4-3v-1l-3-4-1-4-2-2v-6l-3-3zm-6 77q1 3-1 4-1 3 2 2l2-4v-2h-3z",

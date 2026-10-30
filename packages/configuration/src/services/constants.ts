@@ -26,7 +26,7 @@ export const DISTRIBUTION_DIRECTORY = "dist";
 
 export const KIBIBYTE: number = 2 ** 10;
 // How far above a bundle its size band must sit: a tenth, so a few percent of growth leaves the band it is in
-export const SIZE_BAND_HEADROOM: number = 1.1;
+export const SIZE_BAND_HEADROOM = 1.1;
 // The most gzipped script an editor may add beyond the explorer's to the client bundle, which the resource page
 // Builder cutover is held to before it merges
 export const EDITOR_SCRIPT_BUDGET: number = 200 * KIBIBYTE;

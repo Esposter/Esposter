@@ -68,8 +68,8 @@ const checkReference = async (
   return { id: referenceId, message: measure, outcome: VerifyOutcome.Pass };
 };
 
-// A check that throws, such as an image that sharp cannot read, fails its own reference: every other reference still gets its
-// line and the run its summary
+// A check that throws, such as an image that sharp cannot read, fails its own reference.
+// Every other reference still gets its line, and the run its summary
 export const verifyReference = async (
   referenceId: string,
   source: string,

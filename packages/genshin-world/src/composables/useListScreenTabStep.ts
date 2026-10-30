@@ -1,9 +1,9 @@
 import { LIST_SCREEN_TAB_NEXT_CODE, LIST_SCREEN_TAB_PREVIOUS_CODE } from "#src/services/menu/constants";
 import { useEventListener } from "@vueuse/core";
 
-// Q and E step a list screen's tab one place along, held at the first and the last. The screen gives its open tab's
-// index and its tab count, and is handed the index a step lands on to select. The stepping is returned, so the screen's
-// own controls that move the same way land on the same tab
+// Q and E step a list screen's tab one place along, held at the first and the last.
+// The screen gives its open tab's index and its tab count, and is handed the index a step lands on to select.
+// The stepping is returned, so the screen's own controls that move the same way land on the same tab
 export const useListScreenTabStep = (
   getTabIndex: () => number,
   getTabCount: () => number,

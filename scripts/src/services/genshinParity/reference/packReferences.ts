@@ -14,17 +14,18 @@ import { writeManifestFile } from "#src/services/genshinParity/reference/writeMa
 import { writePartialThenMove } from "#src/services/shared/writePartialThenMove";
 import { InvalidOperationError, Operation, settleAll } from "@esposter/shared";
 
-// Plans every reference the map names, then writes the files `planReferencePack` keeps and the manifest that names them. A
-// collision the options do not resolve refuses the run before anything is written. A dry run plans and reports the same
-// outcome and writes nothing
+// Plans every reference the map names, then writes the files `planReferencePack` keeps and the manifest naming them.
+// A collision the options do not resolve refuses the run before anything is written.
+// A dry run plans and reports the same outcome and writes nothing
 export const packReferences = async (
   isDryRun: boolean,
   options: ReferencePackOptions,
 ): Promise<ReferencePackOutcome> => {
   const manifest = await readManifestFile();
   const references = await readReferenceFiles();
-  // A replaced id's local bytes are checked against no committed row, so the bytes it packs to are its local ones and it
-  // writes a new row; the committed row still backs the plate it reads where its local plate is absent
+  // A replaced id's local bytes are checked against no committed row.
+  // The bytes it packs to are therefore its local ones, and it writes a new row.
+  // The committed row still backs the plate it reads where its local plate is absent
   const plans = await settleAll(
     references.map(({ id, path, reference }) => () => {
       const committed = manifest.references.find((row) => row.id === id);

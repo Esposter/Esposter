@@ -27,7 +27,7 @@ describe(checkIsSystemOpen, () => {
     expect(checkIsSystemOpen(ScreenKind.Wish, 20, new Set([WISH_UNLOCK_QUEST_ID]))).toBe(true);
   });
 
-  test("Co-Op Mode needs both its rank and its quest", () => {
+  test("the Co-Op Mode needs both its rank and its quest", () => {
     expect.hasAssertions();
 
     expect(checkIsSystemOpen(ScreenKind.CoOp, 16, noQuests)).toBe(false);

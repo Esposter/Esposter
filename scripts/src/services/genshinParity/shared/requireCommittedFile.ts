@@ -3,8 +3,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { relative } from "node:path";
 
-// A reference's committed file at a path, which must be on disk: one missing is refused with the path to add it at, and
-// the advice that says how
+// A reference's committed file at a path, which must be on disk.
+// One missing is refused with the path to add it at, and the advice that says how.
 export const requireCommittedFile = (referenceId: string, path: string, kind: string, advice: string): string => {
   if (!existsSync(path))
     throw new InvalidOperationError(

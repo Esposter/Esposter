@@ -44,10 +44,10 @@ describe("genshinWorld", () => {
     vi.restoreAllMocks();
   });
 
-  test("Development build offers the console and the panel", async () => {
+  test("development build offers the console and the panel", async () => {
     expect.hasAssertions();
 
-    // happy-dom reports every browser as automated, so a person's browser is stubbed as one
+    // A happy-dom window reports every browser as automated, so a person's browser is stubbed as one
     vi.spyOn(window.navigator, "webdriver", "get").mockReturnValue(false);
     const component = await mountWorld();
     await flushPromises();
@@ -57,7 +57,7 @@ describe("genshinWorld", () => {
     expect(window).not.toHaveProperty("__dev");
   });
 
-  test("Production build offers neither", async () => {
+  test("production build offers neither", async () => {
     expect.hasAssertions();
 
     environment.isDevelopment = false;
@@ -70,7 +70,7 @@ describe("genshinWorld", () => {
     expect(window).not.toHaveProperty("__dev");
   });
 
-  test("Browser driven by automation registers commands and mounts no surface", async () => {
+  test("browser driven by automation registers commands and mounts no surface", async () => {
     expect.hasAssertions();
 
     vi.spyOn(window.navigator, "webdriver", "get").mockReturnValue(true);
@@ -78,9 +78,8 @@ describe("genshinWorld", () => {
     await flushPromises();
 
     expect(window).toHaveProperty("__dev.run");
-    expect(useGenshinDevSaveCommands).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ devRegistry: expect.anything() }),
-    );
+    expect(useGenshinDevSaveCommands).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(useGenshinDevSaveCommands).mock.lastCall?.[0].devRegistry).toBeDefined();
     expect(component.findComponent(GenshinDevConsole).exists()).toBe(false);
     expect(component.findComponent(GenshinDevPanel).exists()).toBe(false);
   });

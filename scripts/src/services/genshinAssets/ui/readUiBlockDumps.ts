@@ -18,10 +18,13 @@ import { decodeCanvasScaler } from "#src/services/genshinAssets/ui/decodeCanvasS
 import { getUiBaseName } from "#src/services/genshinAssets/ui/getUiBaseName";
 import { readRawOwnerPathId } from "#src/services/genshinAssets/ui/readRawOwnerPathId";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, settleAll } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
+
+// Files read at once: a block holds thousands of exports, and reading them all together would open them all together
+const UI_READ_CONCURRENCY = 8;
 
 // The containers an export folder holds, each with the names of its files, or none where the folder was never written
 const listContainers = async (directory: string): Promise<{ container: string; files: string[] }[]> => {
@@ -41,66 +44,90 @@ const toFatherId = (pathId: string): string => (pathId === "0" ? "" : pathId);
 const readLayouts = async (directory: string): Promise<Map<string, DumpedRectTransform>> => {
   const layouts = new Map<string, DumpedRectTransform>();
   if (!existsSync(directory)) return layouts;
-  for (const file of await readdir(directory)) {
-    const raw = await readFile(join(directory, file));
-    layouts.set(readRawOwnerPathId(raw), parseRectTransformLayout(raw));
-  }
+  const raws = await settleAll(
+    (await readdir(directory)).map((file) => () => readFile(join(directory, file))),
+    UI_READ_CONCURRENCY,
+  );
+  for (const raw of raws) layouts.set(readRawOwnerPathId(raw), parseRectTransformLayout(raw));
   return layouts;
 };
 
 const readGameObjects = async (directory: string): Promise<DumpedGameObject[]> => {
-  const gameObjects: DumpedGameObject[] = [];
-  for (const { container, files } of await listContainers(directory))
-    for (const file of files)
-      gameObjects.push(
-        parseMachineJson<DumpedGameObject>(
-          await readFile(join(directory, container, file), "utf8"),
-          reviveSourcePathId,
-        ),
-      );
-  return gameObjects;
+  const paths = (await listContainers(directory)).flatMap(({ container, files }) =>
+    files.map((file) => join(directory, container, file)),
+  );
+  return settleAll(
+    paths.map(
+      (path) => async () => parseMachineJson<DumpedGameObject>(await readFile(path, "utf8"), reviveSourcePathId),
+    ),
+    UI_READ_CONCURRENCY,
+  );
+};
+
+const readRectTransform = async (
+  directory: string,
+  container: string,
+  file: string,
+  layouts: ReadonlyMap<string, DumpedRectTransform>,
+): Promise<UiRectTransformRead> => {
+  const dump = parseMachineJson<RectTransformDump>(
+    await readFile(join(directory, container, file), "utf8"),
+    reviveSourcePathId,
+  );
+  const gameObjectId = dump.m_GameObject.m_PathID;
+  const layout = layouts.get(gameObjectId);
+  if (!layout) throw new InvalidOperationError(Operation.Read, join(directory, container, file), "has no raw layout");
+  return {
+    childIds: dump.m_Children.map(({ m_PathID }) => m_PathID),
+    container,
+    fatherId: toFatherId(dump.m_Father.m_PathID),
+    gameObjectId,
+    layout,
+    name: dump.m_GameObject.Name,
+    scale: [dump.m_LocalScale.X, dump.m_LocalScale.Y],
+  };
+};
+
+const readContainerRectTransforms = async (
+  jsonDirectory: string,
+  rawDirectory: string,
+  container: string,
+  files: string[],
+): Promise<UiRectTransformRead[]> => {
+  const layouts = await readLayouts(join(rawDirectory, container));
+  return settleAll(
+    files.map((file) => () => readRectTransform(jsonDirectory, container, file, layouts)),
+    UI_READ_CONCURRENCY,
+  );
 };
 
 const readRectTransforms = async (exportDirectory: string): Promise<UiRectTransformRead[]> => {
-  const rectTransforms: UiRectTransformRead[] = [];
   const jsonDirectory = join(exportDirectory, UI_RECT_TRANSFORM_DIRECTORY);
   const rawDirectory = join(exportDirectory, UI_RECT_TRANSFORM_RAW_DIRECTORY);
-  for (const { container, files } of await listContainers(jsonDirectory)) {
-    const layouts = await readLayouts(join(rawDirectory, container));
-    for (const file of files) {
-      const dump = parseMachineJson<RectTransformDump>(
-        await readFile(join(jsonDirectory, container, file), "utf8"),
-        reviveSourcePathId,
-      );
-      const gameObjectId = dump.m_GameObject.m_PathID;
-      const layout = layouts.get(gameObjectId);
-      if (!layout)
-        throw new InvalidOperationError(Operation.Read, join(jsonDirectory, container, file), "has no raw layout");
-      rectTransforms.push({
-        childIds: dump.m_Children.map(({ m_PathID }) => m_PathID),
-        container,
-        fatherId: toFatherId(dump.m_Father.m_PathID),
-        gameObjectId,
-        layout,
-        name: dump.m_GameObject.Name,
-        scale: [dump.m_LocalScale.X, dump.m_LocalScale.Y],
-      });
-    }
-  }
-  return rectTransforms;
+  const containerRectTransforms = await settleAll(
+    (await listContainers(jsonDirectory)).map(
+      ({ container, files }) =>
+        () =>
+          readContainerRectTransforms(jsonDirectory, rawDirectory, container, files),
+    ),
+    UI_READ_CONCURRENCY,
+  );
+  return containerRectTransforms.flat();
 };
 
-// The canvas scalers' settings by the path ID of the GameObject each holds, from the raw exports of the script, the
-// export's name for a scaler under any duplicate suffix
+// The canvas scalers' settings by the path ID of the GameObject each holds, from the raw exports of the script.
+// Each export is named for its scaler, under any duplicate suffix.
 const readCanvases = async (directory: string): Promise<Map<string, UiCanvasScaler>> => {
-  const canvases = new Map<string, UiCanvasScaler>();
-  for (const { container, files } of await listContainers(directory))
-    for (const file of files) {
-      if (getUiBaseName(file.replace(/\.dat$/u, "")) !== UI_CANVAS_SCALER_NAME) continue;
-      const raw = await readFile(join(directory, container, file));
-      canvases.set(readRawOwnerPathId(raw), decodeCanvasScaler(raw));
-    }
-  return canvases;
+  const scalerPaths = (await listContainers(directory)).flatMap(({ container, files }) =>
+    files
+      .filter((file) => getUiBaseName(file.replace(/\.dat$/u, "")) === UI_CANVAS_SCALER_NAME)
+      .map((file) => join(directory, container, file)),
+  );
+  const raws = await settleAll(
+    scalerPaths.map((path) => () => readFile(path)),
+    UI_READ_CONCURRENCY,
+  );
+  return new Map(raws.map((raw): [string, UiCanvasScaler] => [readRawOwnerPathId(raw), decodeCanvasScaler(raw)]));
 };
 
 // A block's UI export read into the dumps the index joins, a folder at a time

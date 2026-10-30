@@ -5,8 +5,9 @@ import { sha256Buffer } from "#src/services/genshinParity/reference/sha256Buffer
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
 
-// A scratch screenshot packed as the lossless WebP every stored reference is. Its format is sniffed from its bytes, since
-// sharp reads the content rather than the name, and the name only says which entry the screenshot is for
+// A scratch screenshot packed as the lossless WebP every stored reference is.
+// Its format is sniffed from its bytes, since sharp reads the content rather than the name.
+// The name only says which entry the screenshot is for.
 export const packScratchImage = async (
   scratchPath: string,
 ): Promise<{ data: Buffer; image: ParityReferenceManifestImage; sourceBytes: number; sourceFormat: string }> => {

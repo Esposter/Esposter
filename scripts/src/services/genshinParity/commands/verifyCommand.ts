@@ -18,9 +18,9 @@ export const verifyCommand: SubCommandsDef[string] = defineCommand({
   run: async () => {
     const rows = await readReferenceManifest();
     // A reference the manifest does not hold is skipped, since there is no stored image to check
-    const verifications = await verifyReferences(ParityReferenceMap, CAPTURES_DIRECTORY, async (referenceId) => {
+    const verifications = await verifyReferences(ParityReferenceMap, CAPTURES_DIRECTORY, (referenceId) => {
       const row = rows.find(({ id }) => id === referenceId);
-      return row === undefined ? undefined : getPlannedReferencePath(referenceId);
+      return row === undefined ? Promise.resolve(undefined) : getPlannedReferencePath(referenceId);
     });
     const countOf = (outcome: VerifyOutcome): number =>
       verifications.filter((verification) => verification.outcome === outcome).length;
@@ -31,8 +31,9 @@ export const verifyCommand: SubCommandsDef[string] = defineCommand({
       .filter(({ outcome }) => outcome === VerifyOutcome.NotCheckable)
       .map(({ id }) => id);
     if (notCheckable.length > 0) console.log(`${VerifyOutcome.NotCheckable}  ${notCheckable.join(", ")}`);
-    // The manifest is checked against the map without the network. A row names an id the map names, and its plate is the
-    // one its entry gives. Each committed image's hash is checked by `committedReferences.test.ts`
+    // The manifest is checked against the map without the network.
+    // A row names an id the map names, and its plate is the one its entry gives.
+    // Each committed image's hash is checked by `committedReferences.test.ts`
     const manifestProblems = getReferenceManifestProblems(rows, ParityReferenceMap);
     for (const problem of manifestProblems) console.log(`${VerifyOutcome.Fail}  manifest  ${problem}`);
     console.log(

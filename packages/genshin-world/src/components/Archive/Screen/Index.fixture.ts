@@ -15,11 +15,9 @@ const OPENED_ENTRY_COUNT = 40;
 const equipmentEntryIds = sectionEntriesMap[ArchiveSection.Equipment].slice(0, OPENED_ENTRY_COUNT).map(({ id }) => id);
 const progressMap: ArchiveProgress = new Map([[ArchiveSection.Equipment, new Set(equipmentEntryIds)]]);
 // Fillet Blade and White Iron Greatsword read dimmed, and the first weapon, picked, wears no "New" badge, as the still shows
-const DIMMED_ENTRY_INDEXES = [13, 17];
-const dimmedEntryIds = new Set(equipmentEntryIds.filter((_value, index) => DIMMED_ENTRY_INDEXES.includes(index)));
-const newEntryIds = new Set(
-  equipmentEntryIds.filter((_value, index) => index > 0 && !DIMMED_ENTRY_INDEXES.includes(index)),
-);
+const DIMMED_ENTRY_INDEXES = new Set([13, 17]);
+const dimmedEntryIds = new Set(equipmentEntryIds.filter((_value, index) => DIMMED_ENTRY_INDEXES.has(index)));
+const newEntryIds = new Set(equipmentEntryIds.filter((_value, index) => index > 0 && !DIMMED_ENTRY_INDEXES.has(index)));
 
 export const props = {
   dimmedEntryIds,

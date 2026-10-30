@@ -7,9 +7,11 @@ import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap
 import { InventorySort, ItemCategory } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
-// The weapons' tab of the English client at 1080 high, holding 1,347 weapons, the tab's room counted beside its name
-// (`Weapons 1347/2000`), sorted by quality as the recording of the account tour shows it: eleven five-star weapons at level 20 first, one at level 1,
-// then the four-star ones, two at level 50 of which the first is The Eye of Perception the detail panel opens on, then five at 40
+// The weapons' tab of the English client at 1080 high, holding 1,347 weapons, is sorted by quality.
+// Its room is counted beside its name, as in `Weapons 1347/2000`, and the account tour's recording shows that order.
+// Eleven five-star weapons at level 20 come first, then one at level 1.
+// The four-star ones follow: two at level 50, the first of which is The Eye of Perception the detail panel opens on.
+// Five more follow at level 40.
 const WEAPON_COUNT = 1347;
 const WEAPON_LEVEL = 20;
 const WEAPON_RARITY = 4;

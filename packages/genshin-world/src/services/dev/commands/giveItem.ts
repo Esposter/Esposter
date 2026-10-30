@@ -24,8 +24,9 @@ export const giveItemArgs = z.object({
 
 export type GiveItemArguments = z.infer<typeof giveItemArgs>;
 
-// Gives an item the way the game's reward act gives one: a wallet currency into the wallet, any other item into the bag,
-// which refuses the whole of it when the bag cannot take all of it. The names are the ones the bag and its screens show
+// Gives an item the way the game's reward act gives one: a wallet currency into the wallet, any other item into the bag.
+// The bag refuses the whole of an item when it cannot take all of it.
+// The names are the ones the bag and its screens show
 export const giveItem = (
   save: GenshinSave,
   { count, item }: GiveItemArguments,
@@ -35,7 +36,7 @@ export const giveItem = (
     id: CurrencyItemIdMap[currency],
     name: tables.gameText[CurrencyGameTextKeyMap[currency]],
   }));
-  const materialCandidates = Array.from(tables.materialDataMap.values())
+  const materialCandidates = [...tables.materialDataMap.values()]
     .filter(({ id }) => !WALLET_ITEM_IDS.includes(id))
     .map(({ id, nameTextId }) => ({ id, name: getItemName(nameTextId, tables.nameText) }));
   const resolution = resolveDevName([...currencyCandidates, ...materialCandidates], ({ name }) => name, item, "item");

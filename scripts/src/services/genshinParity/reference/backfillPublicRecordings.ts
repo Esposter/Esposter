@@ -13,9 +13,10 @@ import { existsSync } from "node:fs";
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 
-// Adds a recording row for each public recording in the captures folder that has none, named by its file name. Its bytes
-// are not uploaded: a restore fetches it again from its public page. A row already there wins, even when the file's hash
-// differs, since two machines' copies of one public video are never byte-identical, so that is reported and not a collision.
+// Adds a recording row for each public recording in the captures folder that has none, named by its file name.
+// Its bytes are not uploaded: a restore fetches it again from its public page.
+// A row already there wins, even when the file's hash differs.
+// Two machines' copies of one public video are never byte-identical, so a differing hash is reported, not a collision.
 // A dry run plans the same rows and writes nothing
 export const backfillPublicRecordings = async (isDryRun: boolean): Promise<PublicRecordingBackfill> => {
   const fileNames = existsSync(CAPTURES_DIRECTORY) ? await readdir(CAPTURES_DIRECTORY) : [];

@@ -27,9 +27,9 @@ describe(readToolRow, () => {
   test("a file tool is in place when its file exists on this platform", () => {
     expect.hasAssertions();
 
-    const edge: SetupTool = { install: {}, name: "Microsoft Edge", paths: { win32: "C:\\Edge\\msedge.exe" } };
+    const edge: SetupTool = { install: {}, name: "Microsoft Edge", paths: { win32: String.raw`C:\Edge\msedge.exe` } };
     const environment = createSetupEnvironment({
-      exists: (path) => path === "C:\\Edge\\msedge.exe",
+      exists: (path) => path === String.raw`C:\Edge\msedge.exe`,
       platform: "win32",
     });
 

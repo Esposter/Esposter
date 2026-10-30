@@ -4,8 +4,8 @@ import type { GroundPoint } from "genshin-engine";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 
-// A level-two area's label, at the mean of its outline's corners as the map's area labels sit (`computeAreaLabels`), its
-// name held by the text id the table gives it
+// A level-two area's label, at the mean of its outline's corners as the map's area labels sit (`computeAreaLabels`).
+// Its name is held by the text id the table gives it
 export const toMapLabel = (
   { areaID1, areaID2, areaNameTextMapHash }: Pick<WorldArea, "areaID1" | "areaID2" | "areaNameTextMapHash">,
   outline: readonly GroundPoint[],

@@ -235,6 +235,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     return `W/"${crypto.randomUUID()}"`;
   }
   // Every operation on a row that must already exist reads it here, so each reports the same 404 the service does
+  // oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- getEntity names the shape it returns, and the table holds its entities untyped, so the caller's T is the assertion
   #getExistingEntity<T extends object = TableEntity>(key: string): T & { etag?: string } {
     const entity = this.table.get(key) as (T & { etag?: string }) | undefined;
     if (!entity) throw new MockRestError("The specified resource does not exist.", 404);

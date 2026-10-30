@@ -142,8 +142,8 @@ interface Props {
   characterBody?: Object3D;
   // How the character on the field moves, by the capsule and speeds of its body type
   characterLocomotion?: Locomotion;
-  // The readers of the published character packs by the character each is of, from which the character on the field is
-  // drawn on the body
+  // The readers of the published character packs by the character each is of.
+  // The character on the field is drawn on the body from them.
   characterPackReaders: ReadonlyMap<number, CharacterPackReader>;
   createTerrainWorker: () => Worker;
   // The development registry the look registers its variables with, given in development alone

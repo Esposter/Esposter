@@ -5,11 +5,12 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach, beforeEach, describe } from "vitest";
 
-// A temporary checkout holding the two files, each unformatted. Its configuration is a copy of the repository's, so the
-// patterns the test runs under are the repository's own, and `node_modules` links to the repository's install so the
-// copy resolves `oxfmt` as the repository does. The path is the physical one: the formatter matches its ignore patterns
-// against the path it resolves, which through a symlinked temporary folder is not the one the patterns name. Returns a
-// getter for the checkout, since each test gets its own
+// A temporary checkout holding the two files, each unformatted.
+// Its configuration is a copy of the repository's, so the patterns the test runs under are the repository's own.
+// `node_modules` links to the repository's install, so the copy resolves `oxfmt` as the repository does.
+// The path is the physical one: the formatter matches its ignore patterns against the path it resolves.
+// Through a symlinked temporary folder, that resolved path is not the one the patterns name.
+// Returns a getter for the checkout, since each test gets its own
 export const setupFormatterTree = (): (() => string) => {
   let root: string;
 

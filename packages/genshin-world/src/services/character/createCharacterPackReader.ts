@@ -10,9 +10,11 @@ import { resolveCharacterPackTextures } from "#src/services/character/resolveCha
 import { getResult, ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { parsePmx } from "genshin-engine";
 
-// One avatar's pack read from the cache its files were downloaded into. The model is the one its folder's rules choose
-// and the terms the terms file those rules find, so a pack keeps the names it was published under. Any other path is read
-// as the model names it, beside the model's own folder, and a path the pack does not list is none
+// One avatar's pack read from the cache its files were downloaded into.
+// The model is the one its folder's rules choose, and the terms are the terms file those rules find.
+// So a pack keeps the names it was published under.
+// Any other path is read as the model names it, beside the model's own folder.
+// A path the pack does not list is none
 export const createCharacterPackReader = async (
   cache: Pick<Cache, "match">,
   gameDataBaseUrl: string,
@@ -44,11 +46,12 @@ export const createCharacterPackReader = async (
   return {
     characterId: avatarId,
     key: [avatarId, ...files.map(({ sha256 }) => sha256)].join(ID_SEPARATOR),
-    readFile: async (path) => {
+    readFile: (path) => {
       if (path === CHARACTER_MODEL_PATH) return readListedFile(modelPath);
-      if (path === CHARACTER_TERMS_PATH) return termsPath === undefined ? undefined : readListedFile(termsPath);
+      if (path === CHARACTER_TERMS_PATH)
+        return termsPath === undefined ? Promise.resolve(undefined) : readListedFile(termsPath);
       const [texture] = resolveCharacterPackTextures([path], filePaths, modelPath).files;
-      return texture === undefined ? undefined : readListedFile(texture.filePath);
+      return texture === undefined ? Promise.resolve(undefined) : readListedFile(texture.filePath);
     },
   };
 };

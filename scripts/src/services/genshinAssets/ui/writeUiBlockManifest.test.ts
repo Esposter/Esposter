@@ -33,7 +33,7 @@ describe(writeUiBlockManifest, () => {
 
     await Promise.all([writeUiBlockManifest(BLOCK, ENTRY), writeUiBlockManifest(OTHER_BLOCK, OTHER_ENTRY)]);
 
-    expect(await readUiBlockManifest(BLOCK)).toStrictEqual(ENTRY);
-    expect(await readUiBlockManifest(OTHER_BLOCK)).toStrictEqual(OTHER_ENTRY);
+    await expect(readUiBlockManifest(BLOCK)).resolves.toStrictEqual(ENTRY);
+    await expect(readUiBlockManifest(OTHER_BLOCK)).resolves.toStrictEqual(OTHER_ENTRY);
   });
 });

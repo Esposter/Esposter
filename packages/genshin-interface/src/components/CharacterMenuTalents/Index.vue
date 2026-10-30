@@ -7,8 +7,8 @@ interface Props {
   costs: string[][];
   // Whether each talent's Upgrade is disabled, which it is while the talent cannot rise
   isUpgradeDisabled: boolean[];
-  // Each combat talent's level as the reader's language writes it, in the order the game lists them: the normal attack,
-  // the Elemental Skill and the Elemental Burst
+  // Each combat talent's level as the reader's language writes it, in the order the game lists them.
+  // Those are the normal attack, the Elemental Skill and the Elemental Burst
   levelTexts: string[];
   // Each talent's next level's phase, as its label, empty at its last level
   phases: string[];

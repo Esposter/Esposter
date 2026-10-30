@@ -39,7 +39,7 @@ const LAYER_SEPARATOR = "/";
 const splitCells = (line: string): string[] =>
   line
     .trim()
-    .replace(/^\||\|$/gu, "")
+    .replaceAll(/^\||\|$/gu, "")
     .split(/(?<!\\)\|/u)
     .map((cell) => cell.trim());
 // A row of either table, keyed in its first cell by its reference's id, and a layer's by that id and its name after a

@@ -27,7 +27,9 @@ describe(readEntryImage, () => {
   const red = () => packedOf("red", { b: BLUE, r: RED });
   const blue = () => packedOf("blue", { b: RED, r: BLUE });
   // Copies a colour's screenshot to the scratch path, as a run's screenshot lands beside its entry
-  const toScratch = (name: string) => copyFileSync(join(directory, `${name}.png`), scratchPath);
+  const toScratch = (name: string) => {
+    copyFileSync(join(directory, `${name}.png`), scratchPath);
+  };
 
   beforeEach(() => {
     directory = mkdtempSync(join(tmpdir(), "parity-entry-"));
@@ -50,7 +52,7 @@ describe(readEntryImage, () => {
     expect(entry?.isNew).toBe(false);
     expect(entry?.collision).toBeUndefined();
     expect(entry?.image).toStrictEqual(held.image);
-    expect(await entry?.read()).toStrictEqual(held.data);
+    await expect(entry?.read()).resolves.toStrictEqual(held.data);
   });
 
   test("names a committed file holding other bytes than the held hash as a collision when no scratch copy is beside it", async () => {

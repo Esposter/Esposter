@@ -374,10 +374,10 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "ExpeditionScreen",
     source: "yt-fxIjhlV3vUA-expedition-screen.mp4 at 26s",
   },
-  // The English PC client's fishing reel at 1080 high from the recording, 52.5 seconds in: a hooked fish pulling, with the
-  // Reel bar across the top of the frame and its tension held inside the zone. The bar and the ring under it are filled
-  // from round them, so the page draws the reel's own pieces and the rest of the frame is scored as the game draws it,
-  // above the recorder's UID at the bottom right corner
+  // The English PC client's fishing reel at 1080 high from the recording, 52.5 seconds in: a hooked fish pulling.
+  // The Reel bar is across the top of the frame, and its tension is held inside the zone.
+  // The bar and the ring under it are filled from round them, so the page draws the reel's own pieces.
+  // The rest of the frame is scored as the game draws it, above the recorder's UID at the bottom right corner.
   "fishing-screen": {
     isBackdrop: true,
     plate: [
@@ -802,8 +802,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
           rotation: -1.5708,
         },
       ],
-      // The still shows none of the neighbouring subarea names, which the map draws only at 1512 metres and closer, so
-      // its view is further out; the one label alone does not fix the zoom, so 3024 metres is provisional
+      // The still shows none of the neighbouring subarea names, which the map draws only at 1512 metres and closer.
+      // Its view is therefore further out, and the one label alone does not fix the zoom, so 3024 metres is provisional
       metres: 3024,
     },
     region: { height: 84, width: 296, x: 596, y: 336 },
@@ -914,19 +914,23 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Nasha Town.png",
   },
-  // The English PC client's Paimon menu on the current build, from a 2026 recording (`yt-jHr2bERjkYc`, 25 seconds in), cut
-  // at 1920 by 1080 with the recording's pillarbox around the game window and no screen open. The logo and the UID at the
-  // Frame's bottom right lie outside the region; the panel's own UID, name and avatar lie inside it. The account is at
-  // Adventure Rank 2, and every tile the frame draws reads open. Scored over the side bar and the panel, their translucent
-  // Feet where the world shows through included. The game window is the 1620 pixels between the pillarbox, so the menu stands
-  // At its left edge, 150 in.
-  // The five side bar icons above Quit, each centre's y in the frame's pixels (the window is 1080 high, so a unit is a pixel),
-  // measured on the frame: Photo Mode 284, Notices 395 (its glyph with the ring it hangs from), Mail 512, Time 627, Settings 740.
-  // The 16:9 map places them at 412, 524, 638, 754 and 868 when drawn at the menu's 0.79 reference pixel, so the 3:2 window
-  // stands each 126 to 129 pixels higher. Quit's centre is 1024 in the frame, 55 above the bottom edge: the map has it 70 of
-  // the 1440 high still's pixels from the bottom, which is the same 55 at 0.79, so Quit anchors to the bottom while the five
-  // are not, and the menu draws Quit from the bottom edge at that distance. How the game anchors the five is not known: the
-  // install's extraction did not find this menu's prefab, so the menu draws them where the 16:9 map has them
+  // The English PC client's Paimon menu on the current build, from a 2026 recording (`yt-jHr2bERjkYc`, 25 seconds in).
+  // It is cut at 1920 by 1080, with the recording's pillarbox around the game window and no screen open.
+  // The logo and the UID at the frame's bottom right lie outside the region.
+  // The panel's own UID, name and avatar lie inside it.
+  // The account is at Adventure Rank 2, and every tile the frame draws reads open.
+  // Scored over the side bar and the panel, their translucent feet where the world shows through included.
+  // The game window is the 1620 pixels between the pillarbox, so the menu stands at its left edge, 150 in.
+  // The five side bar icons above Quit each have a centre's y in the frame's pixels, a unit being a pixel at 1080 high.
+  // Measured on the frame, they are Photo Mode 284, Notices 395, Mail 512, Time 627 and Settings 740.
+  // The Notices measure takes in its glyph with the ring it hangs from.
+  // The 16:9 map places them at 412, 524, 638, 754 and 868 when drawn at the menu's 0.79 reference pixel.
+  // So the 3:2 window stands each 126 to 129 pixels higher.
+  // Quit's centre is 1024 in the frame, 55 above the bottom edge.
+  // The map has it 70 of the 1440 high still's pixels from the bottom, which is the same 55 at 0.79.
+  // So Quit anchors to the bottom while the five are not, and the menu draws Quit from the bottom edge at that distance.
+  // How the game anchors the five is not known.
+  // The install's extraction did not find this menu's prefab, so the menu draws them where the 16:9 map has them.
   "paimon-menu": {
     region: { height: 1080, width: 810, x: 150, y: 0 },
     screen: "MenuPaimon",

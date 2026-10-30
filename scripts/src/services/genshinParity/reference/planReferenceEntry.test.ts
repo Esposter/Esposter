@@ -176,7 +176,7 @@ describe(planReferenceEntry, () => {
   test("an id with no committed row and no scratch copy is missing its files without being refused", async () => {
     expect.hasAssertions();
 
-    readEntryImage.mockImplementation(() => Promise.resolve(undefined));
+    readEntryImage.mockResolvedValue(undefined);
 
     const { missing, refused } = await planReferenceEntry(ID, REFERENCE, MAIN_PATH, undefined, undefined);
 

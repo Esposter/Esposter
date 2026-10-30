@@ -1,8 +1,8 @@
 import type { SetupEnvironment } from "#src/models/setup/SetupEnvironment";
 import type { SetupTool } from "#src/models/setup/SetupTool";
 
-// Whether a tool is installed: its command answers with output its pattern matches, when one is set, or the file it
-// leaves on this platform exists
+// Whether a tool is installed: its command answers with output its pattern matches, when one is set.
+// A tool with no probe is installed when the file it leaves on this platform exists
 export const checkIsToolPresent = (tool: SetupTool, environment: SetupEnvironment): boolean => {
   if (!("probe" in tool)) {
     const path = tool.paths[environment.platform];

@@ -18,9 +18,9 @@ const formatEntryPaths = (paths: ReferenceEntryPath[]): string =>
     .toSorted()
     .join(", ") || "none";
 
-// The table `references pack` prints: the counts, the sizes by kind, the largest files packed, the ids refused for a missing
-// input, the files restored from scratch, the files with no screenshot, the ids whose rows were replaced, and the scratch
-// screenshots no entry names, left in place
+// The table `references pack` prints: the counts, the sizes by kind, and the largest files packed.
+// It also names the ids refused for a missing input, the files restored from scratch, and those with no screenshot.
+// The ids whose rows were replaced are named too, as are the scratch screenshots no entry names, left in place
 export const formatPackTable = ({
   held,
   missing,

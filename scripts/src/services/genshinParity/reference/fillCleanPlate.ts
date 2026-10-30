@@ -4,8 +4,9 @@ import type { SharpInput } from "sharp";
 import { fillRegionHarmonically } from "#src/services/recreation/image/fillRegionHarmonically";
 import sharp from "sharp";
 
-// A screenshot's pixels as RGBA, each region filled from the pixels round it in turn: the game's interface is gone from
-// them, so a render that draws nothing scores their own error rather than the interface's
+// A screenshot's pixels as RGBA, each region filled from the pixels round it in turn.
+// The game's interface is gone from them.
+// So a render that draws nothing scores their own error rather than the interface's
 export const fillCleanPlate = async (
   input: SharpInput,
   regions: ImageRegion[],

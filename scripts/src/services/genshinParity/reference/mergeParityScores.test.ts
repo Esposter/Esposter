@@ -39,10 +39,13 @@ const createScore = (layers: LayerScore[]): ParityScore => ({
   screen: "",
   toneDifference: 0,
 });
+const formatReport = (lines: readonly string[]): string =>
+  formatText(PARITY_SCORES_FORMAT_PATH, `${lines.join("\n")}\n`);
 
 describe(mergeParityScores, () => {
-  // The committed report's header, three reference rows, a scene among them, and its layers, as the writer writes them
-  // unpadded: the formatter pads them into the committed file's own table, so the tests read the report as it is committed
+  // The committed report's header, three reference rows, a scene among them, and its layers.
+  // The writer writes them unpadded, and the formatter pads them into the committed file's own table.
+  // So the tests read the report as it is committed
   const REPORT_LINES = [
     "# Parity scores",
     "",
@@ -77,8 +80,6 @@ describe(mergeParityScores, () => {
   ];
   const ARTIFACTS_ROW = "| `character-artifacts` | `CharacterScreen` | 2.88% | 0.924 | 0.91% | 0.1226 |";
   const ARTIFACTS_SCORED_ROW = "| `character-artifacts` | `CharacterScreen` | 3.00% | 0.924 | 0.91% | 0.1226 |";
-  const formatReport = (lines: readonly string[]): string =>
-    formatText(PARITY_SCORES_FORMAT_PATH, `${lines.join("\n")}\n`);
   const committedReport = formatReport(REPORT_LINES);
 
   test("a subset run rewrites only the scored row of the committed report, and writes the formatter's own text", () => {
