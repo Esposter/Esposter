@@ -39,21 +39,25 @@ export const useGenshinDevSaveCommands = ({
     // Each command is typed by its own schema, so its `run` takes the arguments that schema parses rather than the list's
     const giveCommand: DevCommand<typeof giveItemArgs> = {
       args: giveItemArgs,
+      argumentNames: ["item", "count"],
       name: "give",
       run: (args) => takeOutcome(giveItem(getSave(), args, tables)),
     };
     const levelCommand: DevCommand<typeof setCharacterLevelArgumentsSchema> = {
       args: setCharacterLevelArgumentsSchema,
+      argumentNames: ["character", "level"],
       name: "level",
       run: (args) => takeOutcome(setCharacterLevel(getSave(), args, tables)),
     };
     const adventureRankCommand: DevCommand<typeof setAdventureRankArgumentsSchema> = {
       args: setAdventureRankArgumentsSchema,
+      argumentNames: ["rank"],
       name: "ar",
       run: (args) => takeOutcome(setAdventureRank(getSave(), args, tables)),
     };
     const unlockCommand: DevCommand<typeof unlockLandmarkArgumentsSchema> = {
       args: unlockLandmarkArgumentsSchema,
+      argumentNames: ["kind", "name"],
       name: "unlock",
       run: (args) => takeOutcome(unlockLandmark(getSave(), args, tables)),
     };

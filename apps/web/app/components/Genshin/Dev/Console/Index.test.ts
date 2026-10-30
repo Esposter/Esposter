@@ -10,7 +10,7 @@ import { z } from "zod";
 
 describe("genshinDevConsole", () => {
   const TIME_ARGUMENTS = z.object({ hour: z.coerce.number() });
-  const GIVE_ARGUMENTS = z.object({ item: z.string(), count: z.coerce.number().int().min(1) });
+  const GIVE_ARGUMENTS = z.object({ count: z.coerce.number().int().min(1), item: z.string() });
 
   // The console's shortcuts register in the command store, which a plain mount has no Pinia for
   beforeEach(() => {
@@ -25,6 +25,7 @@ describe("genshinDevConsole", () => {
     const registry = createDevRegistry();
     const timeCommand: DevCommand<typeof TIME_ARGUMENTS> = {
       args: TIME_ARGUMENTS,
+      argumentNames: ["hour"],
       name: "time",
       run: ({ hour }) => {
         calls.push(`time ${hour}`);
@@ -49,6 +50,7 @@ describe("genshinDevConsole", () => {
     const registry = createDevRegistry();
     const giveCommand: DevCommand<typeof GIVE_ARGUMENTS> = {
       args: GIVE_ARGUMENTS,
+      argumentNames: ["item", "count"],
       name: "give",
       run: ({ item }) => {
         calls.push(item);

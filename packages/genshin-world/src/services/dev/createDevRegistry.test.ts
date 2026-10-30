@@ -16,11 +16,12 @@ import { z } from "zod";
 
 describe(createDevRegistry, () => {
   const TIME_ARGUMENTS = z.object({ hour: z.coerce.number() });
-  const GIVE_ARGUMENTS = z.object({ item: z.string(), count: z.coerce.number().int().min(1) });
+  const GIVE_ARGUMENTS = z.object({ count: z.coerce.number().int().min(1), item: z.string() });
   const SCENARIO_NAME = "boss-fight";
 
   const createTimeCommand = (calls: string[]): DevCommand<typeof TIME_ARGUMENTS> => ({
     args: TIME_ARGUMENTS,
+    argumentNames: ["hour"],
     name: "time",
     run: ({ hour }) => {
       calls.push("time");
@@ -30,6 +31,7 @@ describe(createDevRegistry, () => {
 
   const createGiveCommand = (calls: string[]): DevCommand<typeof GIVE_ARGUMENTS> => ({
     args: GIVE_ARGUMENTS,
+    argumentNames: ["item", "count"],
     name: "give",
     run: ({ count, item }) => {
       calls.push("give");

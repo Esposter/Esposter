@@ -76,6 +76,7 @@ describe(giveItem, () => {
 
     const countCommand: DevCommand<typeof giveItemArgs> = {
       args: giveItemArgs,
+      argumentNames: ["item", "count"],
       name: "give",
       run: ({ count, item }) => ({ ok: true, value: `${item} ${count}` }),
     };

@@ -16,8 +16,8 @@ describe("DEV_SCENARIOS", () => {
       commands: [
         createTeleportCommand({ catalogue: DEV_CATALOGUE, getLandmarks: () => [], jumpTo: () => undefined }),
         createTimeCommand({ getGameClock: () => ({ minutes: 0, minutesPerSecond: 0 }) }),
-        { args: giveItemArgs, name: "give", run: () => ({ ok: true, value: 0 }) },
-        { args: z.object({}), name: "heal", run: () => ({ ok: true, value: 0 }) },
+        { args: giveItemArgs, argumentNames: ["item", "count"], name: "give", run: () => ({ ok: true, value: 0 }) },
+        { args: z.object({}), argumentNames: [], name: "heal", run: () => ({ ok: true, value: 0 }) },
       ],
       variables: [],
     });

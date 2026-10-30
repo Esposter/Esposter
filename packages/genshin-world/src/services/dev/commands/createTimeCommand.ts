@@ -12,6 +12,7 @@ export const createTimeCommand = ({
   getGameClock: () => GameClock | undefined;
 }): DevCommand<z.ZodObject<{ time: z.ZodString }>> => ({
   args: z.object({ time: z.string().regex(DEV_CLOCK_TIME_REGEX, "expected a time as HH:MM") }),
+  argumentNames: ["time"],
   name: "time",
   run: ({ time }) => {
     const gameClock = getGameClock();

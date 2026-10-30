@@ -29,6 +29,7 @@ export const createStateCommand = ({
   party: Party;
 }): DevCommand => ({
   args: z.object({}),
+  argumentNames: [],
   name: "state",
   run: () => {
     const { position } = body;

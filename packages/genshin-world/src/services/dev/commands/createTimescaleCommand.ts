@@ -13,6 +13,7 @@ export const createTimescaleCommand = ({
   args: z.object({
     minutesPerSecond: z.coerce.number().min(GAME_MINUTES_PER_SECOND_RANGE.min).max(GAME_MINUTES_PER_SECOND_RANGE.max),
   }),
+  argumentNames: ["minutesPerSecond"],
   name: "timescale",
   run: ({ minutesPerSecond }) => {
     const gameClock = getGameClock();

@@ -7,9 +7,7 @@ import { findTeleportLandmark } from "#src/services/dev/findTeleportLandmark";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { z } from "zod";
 
-// A line's words are read against the keys in the order they are written; the `…Args` name is what keeps `sort-objects`
-// from sorting these keys alphabetically, which would read a line's place from its depth
-const teleportArgs = z.object({ place: z.string(), height: z.string().optional(), depth: z.string().optional() });
+const teleportArgs = z.object({ depth: z.string().optional(), height: z.string().optional(), place: z.string() });
 
 // `teleport <place>` jumps to the landmark the place is named after, at the pose the map's own jump lands at. A place of
 // Several words is quoted, as in `teleport "Liyue Harbor"`, and `teleport <x> <height> <depth>` jumps to the coordinates
@@ -24,6 +22,7 @@ export const createTeleportCommand = ({
   jumpTo: (pose: WorldJumpPose) => void;
 }): DevCommand<typeof teleportArgs> => ({
   args: teleportArgs,
+  argumentNames: ["place", "height", "depth"],
   name: "teleport",
   run: ({ depth, height, place }) => {
     if (height === undefined && depth === undefined) {

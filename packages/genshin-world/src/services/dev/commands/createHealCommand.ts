@@ -9,6 +9,7 @@ import { z } from "zod";
 // It healed. A member who is down stays down, as a heal leaves one
 export const createHealCommand = ({ party }: { party: Party }): DevCommand => ({
   args: z.object({}),
+  argumentNames: [],
   name: "heal",
   run: () => {
     const characterIds = getDeployedCharacterIds(party);
