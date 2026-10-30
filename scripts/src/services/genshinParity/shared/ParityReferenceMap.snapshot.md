@@ -8,17 +8,17 @@ committed.
 | Reference                              | Screen                      |                                                                Mean difference | Shape |   Tone |   FLIP |
 | :------------------------------------- | :-------------------------- | -----------------------------------------------------------------------------: | ----: | -----: | -----: |
 | `archive-screen`                       | `ArchiveScreen`             |                                                                          9.97% | 0.896 |  2.17% | 0.3457 |
-| `character-artifacts`                  | `CharacterScreen`           |                                                                          2.88% | 0.924 |  0.90% | 0.1225 |
+| `character-artifacts`                  | `CharacterScreen`           |                                                                          2.87% | 0.924 |  0.90% | 0.1224 |
 | `character-artifacts-tabs`             | `CharacterScreen`           |                                                                          0.88% | 0.976 |  0.32% | 0.0474 |
-| `character-attributes`                 | `CharacterScreen`           |                                                                          1.70% | 0.966 |  0.61% | 0.0703 |
+| `character-attributes`                 | `CharacterScreen`           |                                                                          1.70% | 0.966 |  0.61% | 0.0702 |
 | `character-attributes-panel`           | `CharacterScreen`           |                                                                          3.68% | 0.859 |  1.88% | 0.1547 |
 | `character-attributes-tabs`            | `CharacterScreen`           |                                                                          0.97% | 0.985 |  0.34% | 0.0441 |
-| `character-attributes-top`             | `CharacterScreen`           |                                                                          8.09% | 0.836 |  2.22% | 0.3151 |
-| `character-constellation`              | `CharacterScreen`           |                                                                          1.91% | 0.904 |  0.88% | 0.0752 |
+| `character-attributes-top`             | `CharacterScreen`           |                                                                          8.04% | 0.837 |  2.28% | 0.3138 |
+| `character-constellation`              | `CharacterScreen`           |                                                                          1.90% | 0.904 |  0.88% | 0.0751 |
 | `character-constellation-tabs`         | `CharacterScreen`           |                                                                          1.31% | 0.979 |  0.44% | 0.0478 |
-| `character-talents`                    | `CharacterScreen`           |                                                                          1.75% | 0.905 |  0.60% | 0.0782 |
+| `character-talents`                    | `CharacterScreen`           |                                                                          1.75% | 0.905 |  0.59% | 0.0781 |
 | `character-talents-tabs`               | `CharacterScreen`           |                                                                          0.89% | 0.978 |  0.28% | 0.0466 |
-| `character-weapons`                    | `CharacterScreen`           |                                                                          2.46% | 0.909 |  1.32% | 0.1048 |
+| `character-weapons`                    | `CharacterScreen`           |                                                                          2.46% | 0.909 |  1.32% | 0.1047 |
 | `character-weapons-tabs`               | `CharacterScreen`           |                                                                          0.89% | 0.976 |  0.30% | 0.0453 |
 | `cooking-screen`                       | `CookingScreen`             |                                                                          1.17% | 0.938 |  0.53% | 0.0540 |
 | `court-of-fontaine-location`           | `WorldScreen`               |                                                                         21.07% | 0.208 | 16.61% | 0.6768 |

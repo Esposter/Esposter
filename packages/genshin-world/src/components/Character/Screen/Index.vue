@@ -79,6 +79,8 @@ import {
   CharacterMenuTabs,
   CharacterMenuTalents,
   CharacterMenuWeapons,
+  CloseButton,
+  CloseButtonMark,
   GameScreen,
 } from "genshin-interface";
 import { fillGameTextValues, fillLinePlaceholders, GameLanguage, GameTextKey } from "genshin-text";
@@ -698,7 +700,12 @@ const isActivateDisabled = computed(
     <p v-if="tab === CharacterMenuTab.Attributes" class="training-guide cream-pill">
       {{ gameText[GameTextKey.TrainingGuide] }}
     </p>
-    <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">×</button>
+    <CloseButton
+      class="close"
+      :label="gameText[GameTextKey.Back]"
+      :mark="CloseButtonMark.Cross"
+      @click="emit('close')"
+    />
     <slot :character-id />
   </GameScreen>
 </template>
@@ -743,20 +750,13 @@ const isActivateDisabled = computed(
 /* The way back's centre is 49 units from the top and 149 from the right, off the English client's character screen at
    21:9 (references/character-attributes-session.png). Its size and colours are provisional, as the quest screen's */
 .close {
-  position: absolute;
   top: calc(var(--unit) * 21);
   right: calc(var(--unit) * 121);
   width: calc(var(--unit) * 56);
   height: calc(var(--unit) * 56);
-  border: none;
-  border-radius: 50%;
   background: #ece5d8;
   color: #3b4255;
   cursor: inherit;
-  font: inherit;
-  font-size: calc(var(--unit) * 36);
-  font-weight: 600;
-  line-height: 1;
 }
 </style>
 
