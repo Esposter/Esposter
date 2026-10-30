@@ -40,7 +40,6 @@ export const useAccountCommands = async () => {
             to: RoutePath.Login,
           },
         ]),
-    // oxlint-disable-next-line oxc/no-map-spread -- each command is a new object, never a result mutated in place
     ...SecondaryPageLinkItems.map((item) => ({
       group: PAGES_COMMAND_GROUP,
       icon: item.icon,

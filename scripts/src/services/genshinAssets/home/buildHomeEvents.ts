@@ -6,7 +6,6 @@ import { GameDataset } from "genshin-world";
 export const buildHomeEvents = (): Record<string, unknown> => ({
   [`${GameDataset.Home}/events`]: {
     favours: readHomeFavourRows()
-      // oxlint-disable-next-line oxc/no-map-spread -- each favour is a new object built from its row's fields, never a row mutated in place
       .map(({ avatarID, furnitureSuitID, rewardID, talkID }) => ({
         avatarId: avatarID,
         furnitureSuitId: furnitureSuitID,

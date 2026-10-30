@@ -26,7 +26,6 @@ export const skipWordlessTalkLines = (talk: Talk, checkHasWords: (textId: string
     ...talk,
     lines: talk.lines
       .filter(({ id }) => !wordlessNextLineIdMap.has(id))
-      // oxlint-disable-next-line oxc/no-map-spread -- each line is a new object, never the given talk's line mutated in place
       .map((line) => ({
         ...line,
         nextLineIds: [

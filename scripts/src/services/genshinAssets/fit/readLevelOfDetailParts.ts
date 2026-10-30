@@ -40,7 +40,6 @@ export const readLevelOfDetailParts = (
     parts.add(name);
     paintPartMap.set(paintKey, { mesh: placement.mesh, part: name });
   }
-  // oxlint-disable-next-line no-map-spread -- each placement is the caller's, tagged on a copy rather than written back into it
   const partPlacements = levelPlacements.map(({ part, placement }) => ({
     ...placement,
     part: paintPartMap.get(toPaintKey(part, placement.materials))?.part ?? part,

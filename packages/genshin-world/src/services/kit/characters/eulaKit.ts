@@ -214,7 +214,6 @@ export const createEulaKitBehaviour = ({
           });
           const icewhirls: KitHit[] = icewhirlHitmarkSecondsList
             .slice(0, stacks)
-            // oxlint-disable-next-line oxc/no-map-spread -- each Icewhirl is a new object copied from the stack hit
             .map((hitmarkSeconds) => ({
               ...lightfallStackHit,
               element: Element.Cryo,

@@ -9,6 +9,25 @@ import { usePostCountStore } from "@/store/post/count";
 const getRollback = (rollbacks: (() => void)[]) => () => {
   for (const rollback of rollbacks) rollback();
 };
+// Writes the next vote onto each copy that holds one and returns the rollback that restores what each copy held
+const applyOptimisticViewerLike = (
+  posts: PostInPostWithRelations[],
+  getNextViewerLike: (
+    previousViewerLike: NonNullable<PostInPostWithRelations["viewerLike"]>,
+  ) => PostInPostWithRelations["viewerLike"],
+) => {
+  const rollbacks: (() => void)[] = [];
+  for (const post of posts) {
+    const previousViewerLike = post.viewerLike;
+    if (!previousViewerLike) continue;
+
+    post.viewerLike = getNextViewerLike(previousViewerLike);
+    rollbacks.push(() => {
+      post.viewerLike = previousViewerLike;
+    });
+  }
+  return getRollback(rollbacks);
+};
 // A vote lands on every copy of its post the client holds — the feed's row and the post page's own read of it
 // Are separate objects — so no list can show a vote the other has already moved past. Each copy keeps its own vote,
 // So each is changed, and rolled back, against what it held
@@ -46,19 +65,7 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostInPostWithRelat
       // Behind the first, so a value captured at click time is the one from before that vote landed, and the rollback
       // Would restore a vote the server has already replaced
       applyOptimistic: () =>
-        getRollback(
-          posts.flatMap((post) => {
-            const previousViewerLike = post.viewerLike;
-            if (!previousViewerLike) return [];
-
-            post.viewerLike = { ...previousViewerLike, value: input.value };
-            return [
-              () => {
-                post.viewerLike = previousViewerLike;
-              },
-            ];
-          }),
-        ),
+        applyOptimisticViewerLike(posts, (previousViewerLike) => ({ ...previousViewerLike, value: input.value })),
       key: input.postId,
       onSuccess: (updatedLike) => {
         for (const post of posts) post.viewerLike = updatedLike;
@@ -73,20 +80,7 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostInPostWithRelat
     await executeDeleteLikeMutation(() => $trpc.like.deleteLike.mutate(postId), {
       // Read when the write is sent, so a second delete queued behind the first finds the vote already gone and
       // Withdraws nothing, rather than rolling a rejection back onto a like the first delete already removed
-      applyOptimistic: () =>
-        getRollback(
-          posts.flatMap((post) => {
-            const previousViewerLike = post.viewerLike;
-            if (!previousViewerLike) return [];
-
-            post.viewerLike = undefined;
-            return [
-              () => {
-                post.viewerLike = previousViewerLike;
-              },
-            ];
-          }),
-        ),
+      applyOptimistic: () => applyOptimisticViewerLike(posts, () => undefined),
       key: postId,
     });
     await refreshPostCounts([postId]);

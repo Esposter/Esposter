@@ -172,7 +172,6 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
   mails.push(
     ...guest.mails
       .filter((guestMail) => !account.mails.some((mail) => checkIsSameHeldMail(mail, guestMail)))
-      // oxlint-disable-next-line oxc/no-map-spread -- each mail is a new object, never a guest's held mail mutated in place
       .map((guestMail) => ({ ...guestMail, isClaimed: false })),
   );
   const isSameRefillDay = account.wallet.primogemResinRefillDay === guest.wallet.primogemResinRefillDay;

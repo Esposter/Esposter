@@ -16,10 +16,6 @@ What makes it work looks redundant until it is gone:
 - **The option is a union of literals, never an enum.** `packages/configuration` reaches its own source through `#src/*`, and tsdown loads a config with Node's strip-only type stripping: an enum fails outright with `TypeScript enum is not supported in strip-only mode`. A type erases to nothing.
 - **The generator runs from `packages/configuration`'s built `dist`, so that build must be current.** The order `generateExports` writes is the one perfectionist's `sort-exports` checks, case-insensitively. A checkout whose configuration build predates that order (a git worktree's, say) writes every package's barrel in the old order on its next build. Build the configuration package once there (`pnpm -C packages/configuration build`).
 
-## Settled — do not re-propose
-
-- **Committing the generated barrels — rejected.** A tracked barrel is linted like authored code, and every line is an `export *` from a relative specifier, which the repo's `no-restricted-imports` and `consistent-type-exports` reject (thousands of findings across the packages). The relative, extension-keeping specifier is what the generator must write, so the file is gitignored and no lint reads it. The kit map is different: it is committed, because the generator emits code that passes every rule.
-
 ## A name exported twice is a type error, never a silent drop
 
 Every line is `export *`, so two modules exporting the same name are an ambiguity TypeScript reports as `TS2308` — in the package's own typecheck, and in every consumer resolving its source. That is why the generator is ours and not ctix's: ctix resolved the same collision by dropping the name from the barrel with a warning and exit 0, so a rename could remove a public export with `publint`, `attw`, `deps.onlyImport` and typecheck all green. A module listed beside a hand-written barrel that re-exports it — `agent-console-server`'s `contracts` — is no collision, because both paths reach the same binding.
