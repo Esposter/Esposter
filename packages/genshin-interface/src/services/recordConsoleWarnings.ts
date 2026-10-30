@@ -13,11 +13,10 @@ export const recordConsoleWarnings = async (work: () => Promise<void>): Promise<
     };
   console.error = record(error);
   console.warn = record(warn);
-  try {
-    await work();
-  } finally {
-    console.error = error;
-    console.warn = warn;
-  }
+  // The package does not depend on `@esposter/shared`, so the console is restored whichever way `work` settles
+  const [outcome] = await Promise.allSettled([Promise.try(work)]);
+  console.error = error;
+  console.warn = warn;
+  if (outcome.status === "rejected") throw outcome.reason;
   return messages;
 };
