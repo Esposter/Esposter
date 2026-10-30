@@ -10,11 +10,13 @@ describe(collectGameTextMatches, () => {
   test("a matched string is filed under its hash, named by the manual text map and keyed by the member that takes it, the named ones first", () => {
     expect.hasAssertions();
 
-    const englishTextMap = new Map([
-      [CORRIDOR_HASH, "Corridor"],
+    // Not a Map literal, which the lint's key sort would reorder, leaving the named-first sort nothing to move
+    const englishTextEntries: [string, string][] = [
       [UNNAMED_HASH, "Corridor"],
+      [CORRIDOR_HASH, "Corridor"],
       [UNNAMED_HASH.repeat(2), "Other"],
-    ]);
+    ];
+    const englishTextMap = new Map(englishTextEntries);
     const manualTextMap = new Map([[CORRIDOR_NAME, CORRIDOR_HASH]]);
 
     expect(collectGameTextMatches(englishTextMap, manualTextMap, (text) => text === "Corridor")).toStrictEqual([
