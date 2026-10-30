@@ -1,6 +1,6 @@
 # Characters
 
-A character is drawn from the official MMD model pack HoYoverse publishes for it. The app publishes each official pack to the public game data container, under the owner's stated permission from HoYoverse ([published packs](published-packs/design.md)), and the world downloads them into the browser as it opens and draws each character from its own pack, with no stand-in. Every pack's bundled terms still say not to redistribute it (`{data-root}/character-packs/extracted/10000006/丽莎/使用规则.txt`, and the same term in the other extracted packs' files), so each pack's terms folder is published beside its model. No `.pmx` is committed to the repository. The engine reads the model itself ([reading a PMX](pmx-reader/design.md)), and the world draws it ([drawing it](drawing/design.md)) (`packages/genshin-engine/src/character/createPmxMesh.ts`, `packages/genshin-world/src/components/Character/Model/Index.vue`). Lumine's own shading, as the game draws it, is recorded in [Lumine's shading](shading/design.md). A player's own release is read as [a player's own pack](player-packs/design.md), and a development server's packs as [development packs](development-packs/design.md).
+A character is drawn from the official MMD model pack HoYoverse publishes for it. The app publishes each official pack to the public game data container, under the owner's stated permission from HoYoverse ([published packs](published-packs/design.md)), and the world downloads them into the browser as it opens and draws each character from its own pack, with no stand-in. Every pack's bundled terms still say not to redistribute it (`{data-root}/character-packs/extracted/10000006/丽莎/使用规则.txt`, and the same term in the other extracted packs' files), so each pack's terms folder is published beside its model. No `.pmx` is committed to the repository. The engine reads the model itself ([reading a PMX](pmx-reader/design.md)), and the world draws it ([drawing it](drawing/design.md)) (`packages/genshin-engine/src/character/createPmxMesh.ts`, `packages/genshin-world/src/components/Character/Model/Index.vue`). Lumine's own shading, as the game draws it, is recorded in [Lumine's shading](shading/design.md). A player's own release is read as [a player's own pack](player-packs/design.md).
 
 ## The pack's files
 
@@ -59,7 +59,7 @@ A model that fails to read is logged by the model component and draws nothing fo
 
 ## Notes
 
-- **The two pack capabilities left to remove.** [Player packs](player-packs/design.md) and [development packs](development-packs/design.md) describe code the change `genshin-published-character-packs` deletes; they leave the tree when that change is archived, with its REMOVED deltas.
+- **The pack capability left to remove.** [Player packs](player-packs/design.md) describes code the change `genshin-published-character-packs` deletes; it leaves the tree when that change is archived, with its REMOVED deltas.
 - **Within what the terms allow.** No commercial use of the models, and none of the uses the terms list (adult, extreme religious, gore, personal attacks) (`{data-root}/character-packs/extracted/10000030/readme【一定要看】.txt`), which the platform's own rules already forbid.
 
 ## Sources

@@ -2,7 +2,7 @@
 
 A player loads the official release they downloaded on the character screen, for the character it shows. The release is read in the page and kept in the browser's own storage, so a returning player loads it once. A signed-in player's copy is also kept with their account, so every device they sign in on draws the model without a second import. That copy is readable by its owner alone, as [the account copy](#kept-with-the-account) below sets out (apps/web/server/services/genshin/accountCharacterPack/readAccountCharacterPackFile.ts). The only other requests the load makes are for the game data's character names, fetched by key ([hosted game data](../../hosted-game-data/design.md)).
 
-The layout the release is read into is the one [the characters index](../README.md) sets out. The folder rules below are the same ones [the development server](../development-packs/design.md) applies to a folder on its disk (packages/genshin-world/src/characterPack.ts).
+The layout the release is read into is the one [the characters index](../README.md) sets out.
 
 ```mermaid
 flowchart TD

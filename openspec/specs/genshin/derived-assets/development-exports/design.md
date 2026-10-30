@@ -6,7 +6,7 @@ The exports are those `genshin:assets` writes ([derived assets](../design.md)): 
 
 ## The route
 
-`apps/web/modules/serveGenshinExtractions.ts` registers the route at `GENSHIN_SCENE_EXPORT_BASE_URL` beside the [development packs'](../../characters/development-packs/design.md), and returns before registering either unless Nuxt runs under `nuxt dev`. The route reads the `extracted` folder of the directory `GENSHIN_PARITY_DIRECTORY` names, by default `{data-root}/genshin-parity`, the folder the parity tooling reads and writes `apps/web/server/services/genshin/sceneExport/constants.ts`. The server reaches the layout's names through the world package's `genshin-world/sceneExport` entry, which reaches none of its components `packages/genshin-world/package.json`.
+`apps/web/modules/serveGenshinExtractions.ts` registers the route at `GENSHIN_SCENE_EXPORT_BASE_URL`, and returns before registering it unless Nuxt runs under `nuxt dev`, since a route that refused outside development would still be bundled into the production server. That early return is the module's only guard: it imports only the route's base URL and registers the handler by its path, and the handler checks nothing about development. No character pack is served by the route: the browser reads each character's model from the public container ([published packs](../../characters/published-packs/design.md)). The route reads the `extracted` folder of the directory `GENSHIN_PARITY_DIRECTORY` names, by default `{data-root}/genshin-parity`, the folder the parity tooling reads and writes `apps/web/server/services/genshin/sceneExport/constants.ts`. The server reaches the layout's names through the world package's `genshin-world/sceneExport` entry, which reaches none of its components `packages/genshin-world/package.json`.
 
 ```mermaid
 flowchart TD
@@ -50,7 +50,7 @@ flowchart TD
 
 | File                                                                              | Role                                                                           |
 | :-------------------------------------------------------------------------------- | :----------------------------------------------------------------------------- |
-| `apps/web/modules/serveGenshinExtractions.ts`                                     | Registers the exports' and the packs' routes under `nuxt dev` alone            |
+| `apps/web/modules/serveGenshinExtractions.ts`                                     | Registers the exports' route under `nuxt dev` alone                            |
 | `apps/web/server/development/genshinSceneExports.ts`                              | The route: the exports' directory handed to the service                        |
 | `apps/web/server/services/genshin/sceneExport/serveGenshinSceneExport.ts`         | Answers the index, a layout or a file inside a component's assets              |
 | `apps/web/server/services/genshin/sceneExport/listSceneExportComponents.ts`       | The index: the folders holding a witness layout or an avatar                   |
@@ -67,7 +67,7 @@ flowchart TD
 
 ## Decisions
 
-- **The development world draws the developer's own extraction; nothing of it ships.** Decided by the user: under `nuxt dev` alone the world reads the game's exports from the developer's own extraction, as the development packs are read, while the compute queue keeps re-deriving each object for the deployed site. The line is the one the [scene derivation](../../scene-derivation/design.md) draws. A developer's own copy read on their own machine crosses none of those `apps/web/modules/serveGenshinExtractions.ts`.
+- **The development world draws the developer's own extraction; nothing of it ships.** Decided by the user: under `nuxt dev` alone the world reads the game's exports from the developer's own extraction, while the compute queue keeps re-deriving each object for the deployed site. The line is the one the [scene derivation](../../scene-derivation/design.md) draws. A developer's own copy read on their own machine crosses none of those `apps/web/modules/serveGenshinExtractions.ts`.
 - **The route is the scene layout the witness already reads.** The development world and the parity page's witness draw one layout through one loader, so a family the witness prices is the family the development world draws, and an export's fidelity in the browser is the witness's `packages/genshin-world/src/services/scene/loadWitness.ts`.
 - **Collision and ground stay our data.** An export's meshes run to millions of triangles in a capital (the OBJ files under `{data-root}/genshin-parity/extracted/mondstadt` hold a few million triangles, counted from their face lines), and a collider built over them stalls the main thread; our hidden stand-ins and our ground answer the controller as in production, so nothing the body does differs between a development world and the deployed one.
 
