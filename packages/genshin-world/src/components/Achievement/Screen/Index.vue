@@ -36,7 +36,7 @@ const selectedAchievements = computed(() =>
   ),
 );
 const finishedCount = (categoryId: number): number =>
-  (categoryAchievementsMap.value.get(categoryId) ?? []).filter(checkIsFinished).length;
+  (categoryAchievementsMap.value.get(categoryId) ?? []).filter((achievement) => checkIsFinished(achievement)).length;
 // The share of a category's achievements that are finished, as the list and the banner read it
 const categoryPercent = (categoryId: number): number => {
   const total = categoryAchievementsMap.value.get(categoryId)?.length ?? 0;
