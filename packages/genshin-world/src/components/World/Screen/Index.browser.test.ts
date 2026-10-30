@@ -92,9 +92,7 @@ describe("worldScreen", () => {
       // twentieth, both measured in this test's own setup on this Mac (Metal): 0.586 with no veil, and 0.711 under a
       // white veil at 30 per cent, the veil lifting each tone towards white in the same proportion. 0.65 is midway,
       // 0.06 from either reading, twice the few hundredths GPU backends differ by, so the bound rests on what the veil
-      // does rather than on this machine's own number alone. Readings at 10, 20 and 50 per cent veil: 0.628, 0.669, 0.794.
-      // The bound of 0.5 this test once held measured how long the load took, since the sky runs on from the minute it
-      // is handed, so it is not used
+      // does rather than on this machine's own number alone
       const darkestTwentieth = readyLuminances.toSorted(
         (firstLuminance, secondLuminance) => firstLuminance - secondLuminance,
       )[Math.floor(readyLuminances.length / 20)];

@@ -58,7 +58,7 @@ export const layoutTopic: ReferenceTopic = {
         "Drawing that blur and wash on the screen itself, as a backdrop-filter layer in GameScreen behind the screen's own pieces, the list's top band drawn over it",
       outcome: InvestigationOutcome.Adopted,
       result:
-        "The layer blurs the world with a 16 unit blur and keeps 0.65 of it, the wash added as light down the screen. On the parity page the four quest ids score quest-screen 9.59, -details 13.97, -header 3.37 and -list 6.18 mean (their rows in `ParityReferenceMap.snapshot.md`). The blur radius moves the mean by under 0.2 between 10 and 24 units. The page's plate is the world the layer blurs, and the layer reproduces 0.65 times the plate plus the wash to within a few levels per band. The plate is darker than the still's world on the strip 340 high, so the remaining gap is the plate's, not the layer's",
+        "The layer blurs the world with a 16 unit blur and keeps 0.65 of it, the wash added as light down the screen. On the parity page the four quest ids' means are their rows in `ParityReferenceMap.snapshot.md`. The blur radius moves the mean by under 0.2 between 10 and 24 units. The page's plate is the world the layer blurs, and the layer reproduces 0.65 times the plate plus the wash to within a few levels per band. The plate is darker than the still's world on the strip 340 high, so the remaining gap is the plate's, not the layer's",
     },
     {
       method: "The screen's own words in the installed client's English text map",

@@ -22,8 +22,8 @@ const browser = getVitestBrowserConfiguration(
 // Of what only a browser runs
 export default defineConfig({
   plugins: [...getVuePlugins(templateCompilerOptions), dynamicJsonImportPlugin, gameDataMirrorPlugin],
-  // Its siblings from their source, as the page reads them
   define: { IS_VISUAL_UPDATE: JSON.stringify(isVisualUpdate(APPROVE_ENVIRONMENT_VARIABLE)) },
+  // Its siblings from their source, as the page reads them
   resolve: { alias: terrainWorkerAlias, conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
   test: {
     browser,
