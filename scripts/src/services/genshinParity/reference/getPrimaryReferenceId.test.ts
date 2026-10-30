@@ -51,6 +51,14 @@ describe(getPrimaryReferenceId, () => {
       "props-region",
     ],
     [
+      "a plain whole-screen entry, where a plain region entry is listed before it",
+      [
+        ["plain-region", REGION_REFERENCE],
+        ["plain-whole", WHOLE_REFERENCE],
+      ],
+      "plain-whole",
+    ],
+    [
       "a live entry over a pending one listed before it",
       [
         ["pending", PENDING_REFERENCE],

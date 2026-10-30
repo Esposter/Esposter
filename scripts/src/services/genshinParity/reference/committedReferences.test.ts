@@ -77,9 +77,7 @@ describe("committedReferences", () => {
 
     const named = new Set([
       ...(await readReferenceFiles()).map(({ path }) => path),
-      ...(await readReferenceManifest()).flatMap(({ id, plate }) =>
-        plate === undefined ? [] : [getReferencePlateFilePath(id)],
-      ),
+      ...(await readNamedPlates()).map(({ path }) => path),
     ]);
     const orphans = readCommittedFiles()
       .filter((path) => !named.has(path))

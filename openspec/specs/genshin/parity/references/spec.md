@@ -57,6 +57,13 @@ A command that reads a reference SHALL read the committed file, and a reference 
 - **THEN** the command fails naming the id and the path to add
 - **AND** no comparison is scored against another image
 
+#### Scenario: A reference's check throws
+
+- **GIVEN** a reference whose committed image cannot be read, so its check throws
+- **WHEN** `verify` checks every reference
+- **THEN** that reference is reported as failing, with the reason it could not be checked
+- **AND** every other reference is still checked and printed, and the run exits 1 at the end
+
 ### Requirement: Committed reference files match their manifest rows
 
 Every committed reference file SHALL be named by a map entry or a manifest plate row, SHALL hash to the sha256 its row holds, and SHALL be no larger than 7,500,000 bytes.

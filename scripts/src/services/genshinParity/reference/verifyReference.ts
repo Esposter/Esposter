@@ -11,13 +11,14 @@ import { measureMeanDifference } from "#src/services/genshinParity/reference/mea
 import { parseRecordingSource } from "#src/services/genshinParity/reference/parseRecordingSource";
 import { readImageSize } from "#src/services/genshinParity/reference/readImageSize";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { getResultAsync } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { join, relative } from "node:path";
 
 // Checks one reference against the frame its source names: its rectangles must lie within its file, then the frame is
 // Cut from the recording and the two are measured over the reference's region. A missing image fails the check, and a
 // Missing recording is skipped
-export const verifyReference = async (
+const checkReference = async (
   referenceId: string,
   source: string,
   reference: ParityReference,
@@ -66,3 +67,16 @@ export const verifyReference = async (
     };
   return { id: referenceId, message: measure, outcome: VerifyOutcome.Pass };
 };
+
+// A check that throws, such as an image that sharp cannot read, fails its own reference: every other reference still gets its
+// line and the run its summary
+export const verifyReference = async (
+  referenceId: string,
+  source: string,
+  reference: ParityReference,
+  paths: VerifyPaths,
+): Promise<ReferenceVerification> =>
+  (await getResultAsync(() => checkReference(referenceId, source, reference, paths))).match(
+    (verification) => verification,
+    ({ message }) => ({ id: referenceId, message: `could not be checked: ${message}`, outcome: VerifyOutcome.Fail }),
+  );

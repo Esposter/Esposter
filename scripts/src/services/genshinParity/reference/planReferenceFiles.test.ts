@@ -78,18 +78,19 @@ describe(planReferenceFiles, () => {
     ]);
   });
 
-  test("should place beside its snapshot the reference that renders the fixture as it is, over a props override listed after it", () => {
+  test("should place beside its snapshot the reference that renders the fixture as it is, over a props override listed before it", () => {
     expect.hasAssertions();
 
+    // The override's id sorts first, so it is listed first, and a planner that took the first listed entry would pick it
     const referenceMap = {
+      "a-props-reference": { props: PROPS, screen: SCREEN_NAME, source: " " },
       "plain-reference": { screen: SCREEN_NAME, source: " " },
-      "props-reference": { props: PROPS, screen: SCREEN_NAME, source: " " },
     } satisfies Record<string, ParityReference>;
     const plan = planReferenceFiles(referenceMap, [createFixtureRow("")], COMPONENTS_DIRECTORY);
 
     expect(plan.map(({ id, path }) => ({ id, path }))).toStrictEqual([
+      { id: "a-props-reference", path: join(REFERENCE_FILES_DIRECTORY, "a-props-reference.webp") },
       { id: "plain-reference", path: getFixtureReferenceFilePath(join(COMPONENTS_DIRECTORY, "Foo", "Screen"), "") },
-      { id: "props-reference", path: join(REFERENCE_FILES_DIRECTORY, "props-reference.webp") },
     ]);
   });
 });
