@@ -21,10 +21,9 @@
     "**/dist/**": true,
     "**/node_modules/**": true
   },
-  "javascript.updateImportsOnFileMove.enabled": "always",
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "js/ts.tsserver.maxMemory": 16384,
+  "js/ts.updateImportsOnFileMove.enabled": "always",
   "oxc.enable": true,
-  "search.followSymlinks": false,
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.tsserver.maxTsServerMemory": 16384,
-  "typescript.updateImportsOnFileMove.enabled": "always"
+  "search.followSymlinks": false
 }

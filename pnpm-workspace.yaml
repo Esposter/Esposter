@@ -32,7 +32,7 @@ lockfile:
   includeResolutionSettings: true
 
 catalog:
-  "@anthropic-ai/claude-agent-sdk": ^0.3.312
+  "@anthropic-ai/claude-agent-sdk": ^0.3.314
   "@arethetypeswrong/core": ^0.18.5
   "@azure/core-client": ^1.11.1
   "@azure/core-http-compat": ^2.5.0
@@ -40,7 +40,7 @@ catalog:
   "@azure/data-tables": ^13.3.2
   "@azure/eventgrid": ^5.12.0
   "@azure/functions": ^4.17.0
-  "@azure/identity": ^4.14.0
+  "@azure/identity": ^4.14.1
   "@azure/search-documents": ^13.0.0
   "@azure/service-bus": ^7.10.0
   "@azure/storage-blob": ^12.34.0
@@ -90,7 +90,7 @@ catalog:
   "@pulumi/github": ^6.15.0
   "@pulumi/pulumi": ^3.273.0
   "@standard-schema/spec": ^1.1.0
-  "@takumi-rs/core": ^2.18.2
+  "@takumi-rs/core": ^2.19.0
   "@tiptap/core": ^3.32.1
   "@tiptap/extension-code-block-lowlight": ^3.32.1
   "@tiptap/extension-file-handler": ^3.32.1
@@ -143,7 +143,7 @@ catalog:
   "@webgpu/types": ^0.1.74
   "@xterm/addon-fit": ^0.11.0
   "@xterm/xterm": ^6.0.0
-  apexcharts: ^8.5.0
+  apexcharts: ^8.6.0
   azurite: ^3.37.0
   better-auth: ^1.7.14
   bowser: ^2.15.0
@@ -172,7 +172,7 @@ catalog:
   happy-dom: ^21.0.4
   imagetracerjs: ^1.2.6
   jscpd: ^5.4.2
-  knip: ^6.43.0
+  knip: ^6.44.0
   link-preview-js: ^5.0.1
   linkifyjs: ^4.4.0
   livekit-client: ^2.23.0
@@ -210,12 +210,12 @@ catalog:
   phaser4-rex-plugins: ^4.2.0
   pinia: ^4.1.0
   playwright: ^1.64.1
-  postgres: ^3.4.9
+  postgres: ^4.0.0
   publint: ^0.3.25
   rou3: ^1.0.0
   rate-limiter-flexible: ^11.2.3
-  read-excel-file: ^9.3.13
-  rolldown: ^1.2.15
+  read-excel-file: ^9.3.14
+  rolldown: ^1.2.16
   rollup-plugin-visualizer: ^7.1.1
   rxjs: ^7.8.2
   sax: ^1.6.1
@@ -246,7 +246,7 @@ catalog:
   vite-plus: ^1.4.0
   vitest: ^5.0.5
   vitest-browser-vue: ^3.1.0
-  vize: ^0.606.0
+  vize: ^0.608.0
   vue: ^3.5.44
   vue-eslint-parser: ^10.4.1
   vue-router: ^5.4.0
