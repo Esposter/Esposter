@@ -12,6 +12,7 @@ import { getScenePieces } from "#parity/getScenePieces";
 import { getSceneSky } from "#parity/getSceneSky";
 import { getSceneWhiteBalance } from "#parity/getSceneWhiteBalance";
 import { getScreenBoxStyle } from "#parity/getScreenBoxStyle";
+import { NuxtTimeStub } from "#parity/NuxtTimeStub";
 import { pauseAnimations } from "#parity/pauseAnimations";
 import { recordError } from "#parity/recordError";
 import { renderMusic } from "#parity/renderMusic";
@@ -142,6 +143,8 @@ if (screen && root) {
     console.error(error);
     recordError(error);
   };
+  // NuxtTime is the Nuxt app's component, which the page has no Nuxt app to register, so the stub stands in for it
+  app.component("NuxtTime", NuxtTimeStub);
   app.mount(root);
   Reflect.set(window, "setScreenProps", (screenProps: Record<string, unknown>) => Object.assign(props, screenProps));
   Reflect.set(window, "benchScene", (frameCount: number) => benchScene(sceneContext.value, frameCount));
