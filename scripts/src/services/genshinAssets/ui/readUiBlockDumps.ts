@@ -42,17 +42,22 @@ const toFatherId = (pathId: string): string => (pathId === "0" ? "" : pathId);
 
 // The layouts of every container's raw RectTransforms, each keyed by its GameObject's path ID, the one their JSON dumps
 // Name, so one pool reads them all rather than one pool per container
+// Each file is parsed inside its task, so its buffer is released as the pool moves on
+// Not held until every raw file has been read
 const readLayouts = async (rawDirectory: string): Promise<Map<string, Map<string, DumpedRectTransform>>> => {
   const raws = await settleAll(
     (await listContainers(rawDirectory)).flatMap(({ container, files }) =>
-      files.map((file) => async () => ({ container, raw: await readFile(join(rawDirectory, container, file)) })),
+      files.map((file) => async () => {
+        const raw = await readFile(join(rawDirectory, container, file));
+        return { container, layout: parseRectTransformLayout(raw), owner: readRawOwnerPathId(raw) };
+      }),
     ),
     UI_READ_CONCURRENCY,
   );
   const layouts = new Map<string, Map<string, DumpedRectTransform>>();
-  for (const { container, raw } of raws) {
+  for (const { container, layout, owner } of raws) {
     const containerLayouts = layouts.get(container) ?? new Map<string, DumpedRectTransform>();
-    containerLayouts.set(readRawOwnerPathId(raw), parseRectTransformLayout(raw));
+    containerLayouts.set(owner, layout);
     layouts.set(container, containerLayouts);
   }
   return layouts;
