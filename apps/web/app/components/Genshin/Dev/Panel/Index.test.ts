@@ -9,7 +9,7 @@ import { beforeEach, describe, expect, test } from "vitest";
 describe("genshinDevPanel", () => {
   // The panel keeps its open tab in local storage, so a tab one test opens must not be the next test's first tab
   beforeEach(() => {
-    window.localStorage.clear();
+    localStorage.clear();
   });
 
   test("Scenarios and stats are in the panel", async () => {

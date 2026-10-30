@@ -15,7 +15,7 @@ describe("genshinDevConsole", () => {
   // The console's shortcuts register in the command store, which a plain mount has no Pinia for
   beforeEach(() => {
     setActivePinia(createPinia());
-    window.localStorage.clear();
+    localStorage.clear();
   });
 
   test("Valid line runs and reports", async () => {
