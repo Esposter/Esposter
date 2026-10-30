@@ -2,7 +2,8 @@ import type { KnipConfig } from "knip";
 
 const knipConfiguration: KnipConfig = {
   exclude: ["types"],
-  ignoreBinaries: ["pwsh"],
+  // `typecheck:workspace` in `vite.config.ts` names `typecheck` as the first word of its command, which knip reads as a binary
+  ignoreBinaries: ["pwsh", "typecheck"],
   ignoreExportsUsedInFile: true,
   // A workspace's `entry` replaces knip's default `src/index.ts`, so a package that sets one lists its barrel too
   workspaces: {
