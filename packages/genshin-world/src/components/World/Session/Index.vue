@@ -20,7 +20,6 @@ import type { ReputationProgress } from "#src/models/reputation/ReputationProgre
 import type { ReputationRequest } from "#src/models/reputation/ReputationRequest";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
-import type { ShortcutWheelStep } from "#src/models/shortcutWheel/ShortcutWheelStep";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { AutoRecoverDwell } from "#src/models/statue/AutoRecoverDwell";
 import type { AutoRecoverSetting } from "#src/models/statue/AutoRecoverSetting";
@@ -106,6 +105,7 @@ import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldReputationBounty } from "#src/composables/useWorldReputationBounty";
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
+import { useWorldShortcutWheel } from "#src/composables/useWorldShortcutWheel";
 import { useWorldShrines } from "#src/composables/useWorldShrines";
 import { useWorldSpiralAbyss } from "#src/composables/useWorldSpiralAbyss";
 import { useWorldStatues } from "#src/composables/useWorldStatues";
@@ -118,7 +118,6 @@ import { ReputationRequestQuestIds } from "#src/models/quest/QuestId";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
-import { ShortcutWheelDirectionCount } from "#src/models/shortcutWheel/ShortcutWheelDirectionCount";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { computeViewpointInteractables } from "#src/services/archive/computeViewpointInteractables";
 import { getViewpointInteractableId } from "#src/services/archive/getViewpointInteractableId";
@@ -203,7 +202,6 @@ import { checkIsVendorHourOpen } from "#src/services/shop/checkIsVendorHourOpen"
 import { checkIsVendorShopOpen } from "#src/services/shop/checkIsVendorShopOpen";
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { VendorShopTypeMap } from "#src/services/shop/VendorShopTypeMap";
-import { getShortcutWheelStep } from "#src/services/shortcutWheel/getShortcutWheelStep";
 import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { advanceAutoRecoverDwell } from "#src/services/statue/advanceAutoRecoverDwell";
 import { autoRecoverParty } from "#src/services/statue/autoRecoverParty";
@@ -1480,36 +1478,13 @@ const isHudHidden = ref(false);
 const isHudShown = computed(
   () => !cameraPose && !witness && !isPaused && !isHudHidden.value && !screenBehaviour.value.isHudHidden,
 );
-// The shortcut wheel is open while its key is held in the world: the move points at an entry, and letting the key go
-// Opens that entry's screen
-const shortcutWheelDirectionCount = ShortcutWheelDirectionCount.Eight;
-const isShortcutWheelOpen = ref(false);
-const shortcutWheelPickedIndex = ref<number>();
-let shortcutWheelStep: ShortcutWheelStep = {
-  isOpen: false,
-  move: { x: 0, y: 0 },
-  openedScreenKind: undefined,
-  pickedIndex: undefined,
-};
-const stepShortcutWheel = (isHeld: boolean, x: number, y: number): void => {
-  shortcutWheelStep = getShortcutWheelStep(shortcutWheelStep, isHeld, { x, y }, shortcutWheelDirectionCount);
-  isShortcutWheelOpen.value = shortcutWheelStep.isOpen;
-  shortcutWheelPickedIndex.value = shortcutWheelStep.pickedIndex;
-  if (shortcutWheelStep.openedScreenKind !== undefined) screenKind.value = shortcutWheelStep.openedScreenKind;
-};
-// A screen that takes the world closes the wheel without opening the entry its key was let go on, so the wheel does not
-// Open on the world's first frame after the screen
-const closeShortcutWheel = (): void => {
-  if (!shortcutWheelStep.isOpen) return;
-  shortcutWheelStep = {
-    isOpen: false,
-    move: shortcutWheelStep.move,
-    openedScreenKind: undefined,
-    pickedIndex: undefined,
-  };
-  isShortcutWheelOpen.value = false;
-  shortcutWheelPickedIndex.value = undefined;
-};
+const {
+  closeShortcutWheel,
+  isShortcutWheelOpen,
+  shortcutWheelDirectionCount,
+  shortcutWheelPickedIndex,
+  stepShortcutWheel,
+} = useWorldShortcutWheel({ screenKind });
 // Whether the device's main pointer is a finger, which the HUD draws the touch layout for
 const isTouch = useMediaQuery("(pointer: coarse)");
 // The character's ground point in world metres, the yaw the view faces and the yaw the character faces, for the map and
