@@ -1,10 +1,12 @@
-import { PACKAGE_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { readWorkspacePackageDirectories } from "#src/services/shared/readWorkspacePackageDirectories";
+import type { PackageManifest } from "@esposter/configuration";
+
+import { checkIsFile } from "#src/services/dependencies/score/checkIsFile";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
-import { readJsonFile } from "#src/workspace/readJsonFile.test";
 import { SOURCE_CONDITION } from "@esposter/configuration";
-import { readFileSync, statSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -23,20 +25,23 @@ interface SourceModule {
 const SPECIFIER_REGEX = /(?:from|import\()\s*"(?<specifier>[^"]+)"/gu;
 const WILDCARD = "*";
 
-const checkIsFile = (path: string): boolean => statSync(path, { throwIfNoEntry: false })?.isFile() ?? false;
 const readSpecifiers = (file: string): string[] =>
   Array.from(readFileSync(file, "utf8").matchAll(SPECIFIER_REGEX), ({ groups }) => groups?.specifier ?? "");
 const readPackageSources = (): PackageSource[] =>
-  readWorkspacePackageDirectories(REPOSITORY_ROOT)
-    .filter((workspaceDirectory) => workspaceDirectory.startsWith("packages/"))
-    .map((workspaceDirectory) => {
-      const directory = resolve(REPOSITORY_ROOT, workspaceDirectory);
-      const manifest = readJsonFile(join(directory, PACKAGE_JSON_FILENAME)) as {
+  readWorkspacePackages(REPOSITORY_ROOT)
+    .filter(({ workspaceDirectory }) => workspaceDirectory === "packages")
+    .map(({ directory, manifest, workspaceDirectory }) => {
+      // The manifest type has no `exports` or `imports`, which this graph reads from every package
+      const {
+        exports = {},
+        imports = {},
+        name,
+      } = manifest as PackageManifest & {
         exports?: Record<string, unknown>;
         imports?: Record<string, string>;
         name: string;
       };
-      return { directory, exports: manifest.exports ?? {}, imports: manifest.imports ?? {}, name: manifest.name };
+      return { directory: resolve(REPOSITORY_ROOT, workspaceDirectory, directory), exports, imports, name };
     });
 
 // A package's source arm for a specifier the way its manifest's `exports` declares it, by the package name and the subpath
@@ -111,7 +116,7 @@ const readComponentChains = (): string[] => {
 
   // One entry per module that imports a component, since a barrel reaches every component it re-exports through that one chain
   const chains = new Set<string>();
-  for (const module of queue) {
+  for (const module of queue)
     if (module.file.endsWith(".vue"))
       chains.add(`${readChain(parents.get(module.file) ?? module.file, parents)} -> a component`);
     else if (module.file.endsWith(".ts"))
@@ -122,8 +127,7 @@ const readComponentChains = (): string[] => {
           queue.push(next);
         }
       }
-  }
-  return Array.from(chains);
+  return [...chains];
 };
 
 /**
