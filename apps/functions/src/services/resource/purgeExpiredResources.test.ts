@@ -65,12 +65,14 @@ describe(purgeExpiredResources, () => {
     const failingResource = await insertResource(expiredDeletedAt);
     const laterResource = await insertResource(expiredDeletedAt);
     vi.mocked(purgeResourceAndBroadcast).mockImplementation((_context, _containerClient, resource) =>
-      resource.id === failingResource.id ? Promise.reject(new Error("purge failed")) : Promise.resolve(),
+      resource.id === failingResource.id ? Promise.reject(new Error(" ")) : Promise.resolve(),
     );
 
     await expect(purgeExpiredResources(context)).resolves.toBeUndefined();
-    const purgedIds = vi.mocked(purgeResourceAndBroadcast).mock.calls.map((call) => call[2].id);
-    expect(purgedIds).toHaveLength(2);
-    expect(purgedIds).toContain(laterResource.id);
+    const purgedIds = vi
+      .mocked(purgeResourceAndBroadcast)
+      .mock.calls.map((call) => call[2].id)
+      .toSorted();
+    expect(purgedIds).toStrictEqual([failingResource.id, laterResource.id].toSorted());
   });
 });
