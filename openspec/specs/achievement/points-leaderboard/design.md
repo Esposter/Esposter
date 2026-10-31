@@ -19,6 +19,7 @@ flowchart TB
 
 - **Ranking** — competition-style: an entry's rank is one plus the number of strictly higher totals, so ties share a rank. The caller's own `myEntry` carries its global rank even when it falls outside the top window; the client highlights the caller's row and appends `myEntry` when it is not already shown.
 - **Identity** — only the public profile columns (`id`, `name`, `image`) are carried, never email — mirroring the public-profile allowlist (`readUser`). Each row links to `/user/<id>`.
+- **Only an unlock the server vouches for carries points.** The clicker and dungeons achievements read a client's own save, so their definitions are typed `points: 0` and a forged save moves no rank; the sum is a plain `CASE` over the map and needs no filter of its own ([unlock pipeline](../unlock-pipeline/design.md)).
 - **Hidden achievements** count toward totals. A total could in principle be decomposed to infer a hidden unlock, but that infers nothing new: any user's full unlock list — hidden included — is already public via `readUserAchievements`. Hiddenness masks names and descriptions in the gallery, not the fact of an unlock.
 - **No denormalized total** — points change only on unlock, so the aggregate runs off existing tables; a `points` column on users is added only if the query ever hurts.
 

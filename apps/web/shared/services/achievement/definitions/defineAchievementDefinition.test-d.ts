@@ -1,4 +1,5 @@
 import { saveClickerInputSchema } from "#shared/models/db/clicker/SaveClickerInput";
+import { saveDungeonsInputSchema } from "#shared/models/db/dungeons/SaveDungeonsInput";
 import { zonedCreateMessageInputSchema } from "#shared/models/db/message/ZonedCreateMessageInput";
 import { isAtLeast } from "#shared/services/achievement/conditions/isAtLeast";
 import { length } from "#shared/services/achievement/conditions/length";
@@ -44,6 +45,26 @@ describe(defineAchievementDefinition, () => {
 
     // @ts-expect-error the clicker save schema is not the input of the message trigger
     defineTriggerAchievementDefinition("message.createMessage", saveClickerInputSchema);
+  });
+
+  // A save is the client's own account of its game, so a definition bound to one carries no points to inflate
+  test("rejects points on a trigger whose input is a client's own save", () => {
+    expect.hasAssertions();
+
+    const defineDungeonsAchievementDefinition = defineTriggerAchievementDefinition(
+      "dungeons.saveDungeons",
+      saveDungeonsInputSchema,
+    );
+    const { points } = defineDungeonsAchievementDefinition({ description: "", icon: "", points: 0 });
+
+    expectTypeOf(points).toEqualTypeOf<0>();
+
+    defineDungeonsAchievementDefinition({
+      description: "",
+      icon: "",
+      // @ts-expect-error a claimed trigger's points are typed 0
+      points: 1,
+    });
   });
 
   test("rejects a path the trigger's input does not have", () => {

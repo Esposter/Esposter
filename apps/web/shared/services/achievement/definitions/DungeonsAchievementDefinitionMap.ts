@@ -7,22 +7,15 @@ import { defineTriggerAchievementDefinition } from "#shared/services/achievement
 import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";
 import { DungeonsAchievementName } from "@esposter/db-schema";
 
-// Every dungeon achievement unlocks on a save of the dungeon game
+// Every dungeon achievement unlocks on a save of the dungeon game. The save is the client's own account of how play went,
+// So these are claims and carry no points (`ClaimedAchievementTriggerPath`)
 const defineDungeonsAchievementDefinition = defineTriggerAchievementDefinition(
   "dungeons.saveDungeons",
   saveDungeonsInputSchema,
 );
 
-// The monster level milestones differ only in threshold and reward, so one definition serves the family
-const defineMonsterLevelAchievementDefinition = ({
-  icon,
-  level,
-  points,
-}: {
-  icon: string;
-  level: number;
-  points: number;
-}) =>
+// The monster level milestones differ only in threshold, so one definition serves the family
+const defineMonsterLevelAchievementDefinition = ({ icon, level }: { icon: string; level: number }) =>
   defineDungeonsAchievementDefinition({
     amount: 1,
     condition: property(
@@ -31,7 +24,7 @@ const defineMonsterLevelAchievementDefinition = ({
     ),
     description: `Train a monster to level ${level} in your dungeon game`,
     icon,
-    points,
+    points: 0,
   });
 
 export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Dungeons, {
@@ -39,7 +32,7 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
     amount: 1,
     description: "Save your dungeon game",
     icon: "i-mdi:sword",
-    points: 10,
+    points: 0,
   }),
   [DungeonsAchievementName.DungeonHomeowner]: defineDungeonsAchievementDefinition({
     amount: 1,
@@ -50,13 +43,13 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
     }),
     description: "Open every chest you have discovered in your dungeon game",
     icon: "i-mdi:treasure-chest-outline",
-    points: 100,
+    points: 0,
   }),
   [DungeonsAchievementName.DungeonMaster]: defineDungeonsAchievementDefinition({
     amount: 50,
     description: "Save your dungeon game 50 times",
     icon: "i-mdi:castle",
-    points: 100,
+    points: 0,
   }),
   [DungeonsAchievementName.MonsterCatcher]: defineDungeonsAchievementDefinition({
     amount: 1,
@@ -64,7 +57,7 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
     condition: property("data.save.player.monsters", (value) => (value?.length ?? 0) >= 2),
     description: "Catch your first monster in your dungeon game",
     icon: "i-mdi:pokeball",
-    points: 20,
+    points: 0,
   }),
   [DungeonsAchievementName.MonsterCollector]: defineDungeonsAchievementDefinition({
     amount: 1,
@@ -74,16 +67,14 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
     ),
     description: "Catch every monster species in your dungeon game",
     icon: "i-mdi:book-open-page-variant",
-    points: 200,
+    points: 0,
   }),
   [DungeonsAchievementName.MonsterElite]: defineMonsterLevelAchievementDefinition({
     icon: "i-mdi:shield-star",
     level: 25,
-    points: 200,
   }),
   [DungeonsAchievementName.MonsterTrainer]: defineMonsterLevelAchievementDefinition({
     icon: "i-mdi:arm-flex",
     level: 10,
-    points: 50,
   }),
 });

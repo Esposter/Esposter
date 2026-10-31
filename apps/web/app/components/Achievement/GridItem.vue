@@ -39,7 +39,10 @@ const isRare = computed(() => rarity !== undefined && rarity < RARE_ACHIEVEMENT_
       <div flex flex-1 flex-col min-w-0>
         <h3 truncate ui-heading>{{ displayName }}</h3>
         <p text-sm text-muted truncate>
-          {{ achievementDefinition.category }} · <span text-warning>{{ achievementDefinition.points }} points</span>
+          {{ achievementDefinition.category
+          }}<template v-if="achievementDefinition.points">
+            · <span text-warning>{{ achievementDefinition.points }} points</span></template
+          >
         </p>
       </div>
     </div>

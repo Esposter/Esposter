@@ -39,7 +39,7 @@ flowchart TD
 | `clicker.readClicker` | user | —                                    | read the user's save blob with its ETag       |
 | `clicker.saveClicker` | user | `{ data: clickerSaveSchema, etag? }` | overwrite the user's save blob under its ETag |
 
-`saveClicker` is also the trigger path for every clicker achievement: save-count thresholds and milestones whose `condition` reads the save payload ([unlock pipeline](../../achievement/unlock-pipeline/design.md)) — ClickerMillionaire / ClickerBillionaire / ClickerTrillionaire (`pointCount` at 1e6/1e9/1e12), ClickerArchitect (every building owned), and ClickerCompletionist (every upgrade bought). The 60-second autosave cadence works for the milestones: progress is evaluated at least once a minute while playing, and unlocks are idempotent.
+`saveClicker` is also the trigger path for every clicker achievement: save-count thresholds and milestones whose `condition` reads the save payload ([unlock pipeline](../../achievement/unlock-pipeline/design.md)) — ClickerMillionaire / ClickerBillionaire / ClickerTrillionaire (`pointCount` at 1e6/1e9/1e12), ClickerArchitect (every building owned), and ClickerCompletionist (every upgrade bought). The 60-second autosave cadence works for the milestones: progress is evaluated at least once a minute while playing, and unlocks are idempotent. The save is the client's own account of play, so none of these carries points.
 
 ## Key files
 

@@ -92,6 +92,16 @@ The leaderboard SHALL include the points of hidden achievements in a user's tota
 - **WHEN** a visitor opens the Leaderboard tab on the achievements page
 - **THEN** that user's total shows 20 points
 
+### Requirement: A claimed unlock carries no points
+
+The leaderboard SHALL rank only the points of unlocks the server vouches for, and an unlock read from a client's own game save SHALL carry none.
+
+#### Scenario: A forged save moves no rank
+
+- **GIVEN** a user saves a dungeon game whose party holds a level 25 monster
+- **WHEN** the unlock is recorded
+- **THEN** the unlock shows among the user's achievements and adds nothing to the user's leaderboard total
+
 ### Requirement: The leaderboard read is rate limited
 
 The leaderboard read SHALL be rate limited, so requests beyond the allowance are refused.

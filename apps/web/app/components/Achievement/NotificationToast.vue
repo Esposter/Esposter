@@ -21,8 +21,10 @@ const displayName = computed(() => prettify(userAchievement.achievement.name));
     </template>
     <div truncate><span text-accent>Achievement unlocked</span> · {{ displayName }}</div>
     <div text-sm text-muted>
-      {{ userAchievement.achievement.description }} ·
-      <span text-warning>+{{ userAchievement.achievement.points }} points</span>
+      {{ userAchievement.achievement.description
+      }}<template v-if="userAchievement.achievement.points">
+        · <span text-warning>+{{ userAchievement.achievement.points }} points</span></template
+      >
     </div>
     <!-- Unlocking one is the moment someone first wants the rest of them, and the toast is the only thing on screen
       That knows it happened — Steam and Xbox both hang the gallery off it -->
