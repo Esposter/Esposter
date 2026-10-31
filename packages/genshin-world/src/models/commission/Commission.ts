@@ -35,7 +35,7 @@ export const commissionSchema = z.object({
   newGroupIds: z.array(z.int().positive()),
   oldGroupIds: z.array(z.int().positive()),
   poolId: z.int().positive(),
-  preferredRegion: z.string().nonempty(),
+  preferredRegion: z.string().min(1),
   questId: z.string(),
   rewardTier: z.int().positive(),
 }) satisfies z.ZodType<Commission>;

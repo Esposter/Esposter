@@ -6,12 +6,14 @@ import { z } from "zod";
 // Its leaves and its surface roots, which are the parts of the engine's tree options the oak takes
 export type WindriseOak = Pick<TreeOptions, "clusters" | "limbs" | "normalField" | "roots">;
 
-const treeClusterSchema = z.object({
-  leafArea: z.number().positive(),
+const treeTubePointSchema = z.object({
   radius: z.number().nonnegative(),
   x: z.number(),
   y: z.number(),
   z: z.number(),
+}) satisfies z.ZodType<TreeTubePoint>;
+const treeClusterSchema = treeTubePointSchema.safeExtend({
+  leafArea: z.number().positive(),
 }) satisfies z.ZodType<TreeCluster>;
 // The normals as a field over the crown, read trilinearly at each card vertex, its corner, cell size and node counts
 const treeNormalFieldSchema = z.object({
@@ -20,12 +22,6 @@ const treeNormalFieldSchema = z.object({
   origin: z.array(z.number()).length(3),
   size: z.array(z.int().positive()).length(3),
 }) satisfies z.ZodType<TreeNormalField>;
-const treeTubePointSchema = z.object({
-  radius: z.number().nonnegative(),
-  x: z.number(),
-  y: z.number(),
-  z: z.number(),
-}) satisfies z.ZodType<TreeTubePoint>;
 const treeTubeSchema = z.tuple([treeTubePointSchema, treeTubePointSchema]).rest(treeTubePointSchema);
 
 export const windriseOakSchema = z.object({

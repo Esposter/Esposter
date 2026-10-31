@@ -11,7 +11,7 @@ const editInputSchema = z.object({
   replace_all: z.boolean().optional(),
 });
 const multiEditInputSchema = z.object({
-  edits: z.object({ new_string: z.string(), old_string: z.string(), replace_all: z.boolean().optional() }).array(),
+  edits: editInputSchema.omit({ file_path: true }).array(),
   file_path: z.string(),
 });
 const writeInputSchema = z.object({ content: z.string(), file_path: z.string() });

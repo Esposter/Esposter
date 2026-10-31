@@ -10,7 +10,7 @@ export interface AdventureRankLock {
 }
 
 export const adventureRankLockSchema = z.object({
-  rankCap: z.int().min(1),
+  rankCap: z.int().positive(),
   unlockMainQuestId: z.string(),
   unlockPlayerLevel: z.int().nonnegative(),
   worldLevel: z.int().nonnegative(),

@@ -11,8 +11,8 @@ export interface Constellation {
 }
 
 export const constellationSchema = z.object({
-  descriptionTextId: z.string().nonempty(),
-  nameTextId: z.string().nonempty(),
+  descriptionTextId: z.string().min(1),
+  nameTextId: z.string().min(1),
   paramList: z.array(z.number()),
   raise: z.object({ levels: z.int().positive(), talent: z.enum(CombatTalent) }).optional(),
 }) satisfies z.ZodType<Constellation>;

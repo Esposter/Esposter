@@ -71,7 +71,7 @@ const loginTowerPlacementSchema = z.object({
   position: z.array(z.number()).length(3),
   rotation: z.array(z.number()).length(4),
   scale: z.number().positive(),
-  tower: z.string().nonempty(),
+  tower: z.string().min(1),
 }) satisfies z.ZodType<LoginTowerPlacement>;
 
 export const loginTowersSchema = z.object({

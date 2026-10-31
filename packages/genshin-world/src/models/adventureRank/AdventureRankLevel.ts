@@ -13,6 +13,6 @@ export interface AdventureRankLevel {
 
 export const adventureRankLevelSchema = z.object({
   exp: z.int().nonnegative(),
-  level: z.int().min(1),
+  level: z.int().positive(),
   rewardItems: z.array(questRewardItemSchema),
 }) satisfies z.ZodType<AdventureRankLevel>;

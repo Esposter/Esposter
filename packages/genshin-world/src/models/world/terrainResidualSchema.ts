@@ -1,13 +1,13 @@
 import type { TerrainResidual, TerrainResidualClearing, TerrainResidualFade } from "genshin-engine";
 
+import { groundPointSchema } from "#src/models/world/groundPointSchema";
 import { z } from "zod";
 
 // A disc its residual is kept out of: its centre, its radius, and the falloff the residual fades in across past it
 const terrainResidualClearingSchema = z.object({
+  ...groundPointSchema.shape,
   falloff: z.number().nonnegative(),
   radius: z.number().nonnegative(),
-  x: z.number(),
-  z: z.number(),
 }) satisfies z.ZodType<TerrainResidualClearing>;
 // The grid a residual is drawn over, read bilinearly: its corner, the distance between its nodes in metres, its node
 // Counts along x and z, the weights at its nodes from none to one, and the clearings it is kept out of

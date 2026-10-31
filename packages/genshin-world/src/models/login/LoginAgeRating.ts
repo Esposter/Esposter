@@ -8,6 +8,6 @@ export interface LoginAgeRating {
 }
 
 export const loginAgeRatingSchema = z.object({
-  age: z.string().nonempty(),
-  notice: z.string().nonempty(),
+  age: z.string().min(1),
+  notice: z.string().min(1),
 }) satisfies z.ZodType<LoginAgeRating>;

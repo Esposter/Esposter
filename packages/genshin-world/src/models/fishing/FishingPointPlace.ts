@@ -1,5 +1,6 @@
 import type { GroundPoint } from "genshin-engine";
 
+import { groundPointSchema } from "#src/models/world/groundPointSchema";
 import { z } from "zod";
 
 // A fishing point's place in the world, as the fit writes it into its region's slice: an id the map's point gives it and
@@ -11,5 +12,5 @@ export interface FishingPointPlace {
 
 export const fishingPointPlaceSchema = z.object({
   id: z.string(),
-  position: z.object({ x: z.number(), z: z.number() }),
+  position: groundPointSchema,
 }) satisfies z.ZodType<FishingPointPlace>;

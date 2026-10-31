@@ -9,7 +9,7 @@ export interface OutcropPlace {
 }
 
 export const outcropPlaceSchema = z.object({
-  id: z.int().min(1),
-  nextIds: z.array(z.int().min(1)),
-  sectionId: z.int().min(1),
+  id: z.int().positive(),
+  nextIds: z.array(z.int().positive()),
+  sectionId: z.int().positive(),
 }) satisfies z.ZodType<OutcropPlace>;

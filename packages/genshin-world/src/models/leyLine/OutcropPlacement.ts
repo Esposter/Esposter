@@ -11,6 +11,6 @@ export interface OutcropPlacement {
 }
 
 export const outcropPlacementSchema = z.object({
-  id: z.int().min(1),
+  id: z.int().positive(),
   position: groundPointSchema,
 }) satisfies z.ZodType<OutcropPlacement>;

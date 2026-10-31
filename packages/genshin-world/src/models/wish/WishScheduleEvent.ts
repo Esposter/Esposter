@@ -19,6 +19,6 @@ export const wishScheduleEventSchema = z.object({
   fourStarIds: z.array(z.int().positive()),
   id: z.string().min(1),
   kind: z.enum([BannerKind.CharacterEvent, BannerKind.WeaponEvent]),
-  kindNumber: z.int().min(1),
+  kindNumber: z.int().positive(),
   startTime: z.int(),
 }) satisfies z.ZodType<WishScheduleEvent>;

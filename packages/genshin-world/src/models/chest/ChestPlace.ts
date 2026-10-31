@@ -1,6 +1,7 @@
 import type { GroundPoint } from "genshin-engine";
 
 import { ChestKind } from "#src/models/chest/ChestKind";
+import { groundPointSchema } from "#src/models/world/groundPointSchema";
 import { z } from "zod";
 
 // A chest's place in the world, as the fit writes it into its region's generated slice: an id the map's point gives it,
@@ -14,5 +15,5 @@ export interface ChestPlace {
 export const chestPlaceSchema = z.object({
   id: z.string().min(1),
   kind: z.enum(ChestKind),
-  position: z.object({ x: z.number(), z: z.number() }),
+  position: groundPointSchema,
 }) satisfies z.ZodType<ChestPlace>;

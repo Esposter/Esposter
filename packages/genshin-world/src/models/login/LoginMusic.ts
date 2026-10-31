@@ -5,7 +5,7 @@ import { z } from "zod";
 
 // A recorded note an instrument layers over its synthesized one, over the keys and velocities it answers
 const musicRecordingSchema = z.object({
-  file: z.string().nonempty(),
+  file: z.string().min(1),
   gain: z.number(),
   highKey: z.int().nonnegative(),
   highVelocity: z.int().positive().max(MIDI_VELOCITY_MAX),

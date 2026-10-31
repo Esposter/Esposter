@@ -1,10 +1,11 @@
+import type { ParityStoredFile } from "#src/models/genshinParity/reference/ParityStoredFile";
+
+import { parityStoredFileSchema } from "#src/models/genshinParity/reference/ParityStoredFile";
 import { z } from "zod";
 
-// One stored image: the hash of its packed bytes, which names the object, and the size it packs to
-export interface ParityReferenceManifestImage {
-  bytes: number;
+// One stored image: the file it packs to, and the pixel size it is drawn at
+export interface ParityReferenceManifestImage extends ParityStoredFile {
   height: number;
-  sha256: string;
   width: number;
 }
 
@@ -14,8 +15,7 @@ export const parityReferenceManifestImageSchema: z.ZodObject<{
   sha256: z.ZodString;
   width: z.ZodNumber;
 }> = z.object({
-  bytes: z.int().positive(),
+  ...parityStoredFileSchema.shape,
   height: z.int().positive(),
-  sha256: z.string().regex(/^[\da-f]{64}$/u),
   width: z.int().positive(),
 }) satisfies z.ZodType<ParityReferenceManifestImage>;

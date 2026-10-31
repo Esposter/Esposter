@@ -8,6 +8,6 @@ export interface ReputationBountyTarget {
 }
 
 export const reputationBountyTargetSchema = z.object({
-  difficulty: z.string().nonempty(),
+  difficulty: z.string().min(1),
   enemyKindIds: z.array(z.int().positive()).min(1),
 }) satisfies z.ZodType<ReputationBountyTarget>;

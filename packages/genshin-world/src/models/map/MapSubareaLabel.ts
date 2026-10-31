@@ -1,3 +1,4 @@
+import { groundPointSchema } from "#src/models/world/groundPointSchema";
 import { z } from "zod";
 
 // A subarea's label on the map, as the open world's record holds it.
@@ -13,9 +14,8 @@ export interface MapSubareaLabel {
 }
 
 export const mapSubareaLabelSchema = z.object({
+  ...groundPointSchema.shape,
   levelOneAreaId: z.int().positive(),
   levelTwoAreaId: z.int().positive(),
   nameTextId: z.string().regex(/^\d+$/u),
-  x: z.number(),
-  z: z.number(),
 }) satisfies z.ZodType<MapSubareaLabel>;

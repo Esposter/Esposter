@@ -17,7 +17,7 @@ export interface EnemyCampMember {
 export const enemyCampMemberSchema = z.object({
   enemyKindId: z.enum(EnemyKindId) satisfies z.ZodType<EnemyKindId>,
   id: z.string().min(1),
-  level: z.int().min(1),
+  level: z.int().positive(),
   patrol: z.array(groundPointSchema),
   position: groundPointSchema,
 }) satisfies z.ZodType<EnemyCampMember>;

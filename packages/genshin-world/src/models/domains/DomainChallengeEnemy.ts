@@ -12,5 +12,5 @@ export interface DomainChallengeEnemy {
 export const domainChallengeEnemySchema = z.object({
   count: z.int().positive(),
   enemyKindId: z.enum(EnemyKindId).optional(),
-  name: z.string().nonempty(),
+  name: z.string().min(1),
 }) satisfies z.ZodType<DomainChallengeEnemy>;

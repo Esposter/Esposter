@@ -8,6 +8,6 @@ export interface WorldLevelRow {
 }
 
 export const worldLevelRowSchema = z.object({
-  level: z.int().min(1),
-  monsterLevel: z.int().min(1),
+  level: z.int().positive(),
+  monsterLevel: z.int().positive(),
 }) satisfies z.ZodType<WorldLevelRow>;

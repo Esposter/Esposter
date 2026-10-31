@@ -16,5 +16,5 @@ export interface OutcropRegion {
 export const outcropRegionSchema = z.object({
   kinds: z.array(outcropKindRuleSchema),
   places: z.array(outcropPlaceSchema),
-  sectionIds: z.array(z.int().min(1)),
+  sectionIds: z.array(z.int().positive()),
 }) satisfies z.ZodType<OutcropRegion>;

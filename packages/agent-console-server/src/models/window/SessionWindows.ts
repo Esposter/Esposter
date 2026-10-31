@@ -9,5 +9,5 @@ export interface SessionWindows {
 }
 
 export const sessionWindowsSchema: z.ZodObject<{ port: z.ZodNumber; secretHashes: z.ZodArray<z.ZodString> }> = z.object(
-  { port: z.int().min(0), secretHashes: z.array(z.string().min(1)) },
+  { port: z.int().nonnegative(), secretHashes: z.array(z.string().min(1)) },
 ) satisfies z.ZodType<SessionWindows>;

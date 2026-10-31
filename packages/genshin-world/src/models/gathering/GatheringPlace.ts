@@ -1,5 +1,6 @@
 import type { GroundPoint } from "genshin-engine";
 
+import { groundPointSchema } from "#src/models/world/groundPointSchema";
 import { z } from "zod";
 
 // A gathering point in the world as the fit writes it into its region's generated slice: an id the official map's point
@@ -13,5 +14,5 @@ export interface GatheringPlace {
 export const gatheringPlaceSchema = z.object({
   id: z.string().min(1),
   kind: z.int().positive(),
-  position: z.object({ x: z.number(), z: z.number() }),
+  position: groundPointSchema,
 }) satisfies z.ZodType<GatheringPlace>;

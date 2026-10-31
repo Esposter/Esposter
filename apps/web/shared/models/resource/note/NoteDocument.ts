@@ -6,19 +6,16 @@ import { getResult, noop } from "@esposter/shared";
 import { getSchema } from "@tiptap/core";
 import { z } from "zod";
 
+const attributesSchema = z.record(z.string().max(MAX_RESOURCE_CONTENT_SIZE), z.unknown()).optional();
+
 // The recursive structure keeps attrs and future extension fields the editor persists. The document schema below
 // Checks that each node and mark belongs to the writing kit this app actually loads.
 const jsonContentSchema: z.ZodType<JSONContent> = z.lazy(() =>
   z.looseObject({
-    attrs: z.record(z.string().max(MAX_RESOURCE_CONTENT_SIZE), z.unknown()).optional(),
+    attrs: attributesSchema,
     content: z.array(jsonContentSchema).max(MAX_RESOURCE_CONTENT_SIZE).optional(),
     marks: z
-      .array(
-        z.looseObject({
-          attrs: z.record(z.string().max(MAX_RESOURCE_CONTENT_SIZE), z.unknown()).optional(),
-          type: z.string().max(MAX_RESOURCE_CONTENT_SIZE),
-        }),
-      )
+      .array(z.looseObject({ attrs: attributesSchema, type: z.string().max(MAX_RESOURCE_CONTENT_SIZE) }))
       .max(MAX_RESOURCE_CONTENT_SIZE)
       .optional(),
     text: z.string().max(MAX_RESOURCE_CONTENT_SIZE).optional(),

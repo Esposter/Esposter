@@ -16,7 +16,7 @@ export interface OutcropKindRule {
 
 export const outcropKindRuleSchema = z.object({
   kind: z.enum(OutcropKind),
-  playerLevel: z.int().min(1),
-  unlockCityIds: z.array(z.int().min(1)),
+  playerLevel: z.int().positive(),
+  unlockCityIds: z.array(z.int().positive()),
   worldLevelRewards: z.array(z.array(rewardItemSchema)).min(1),
 }) satisfies z.ZodType<OutcropKindRule>;

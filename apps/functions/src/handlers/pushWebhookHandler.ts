@@ -12,10 +12,12 @@ import {
 import { getResultAsync } from "@esposter/shared";
 import { z } from "zod";
 
+const webhookParametersSchema = selectWebhookInMessageSchema.pick({ id: true, token: true });
+
 export const pushWebhookHandler: HttpHandler = (request, context) => {
   context.log(`${AzureFunction.PushWebhook} received a request`);
   return getResultAsync(async () => {
-    const { id, token } = await selectWebhookInMessageSchema.pick({ id: true, token: true }).parseAsync(request.params);
+    const { id, token } = await webhookParametersSchema.parseAsync(request.params);
     const webhook = await db.query.webhooksInMessage.findFirst({
       columns: { id: true, roomId: true, userId: true },
       where: { id: { eq: id }, isActive: { eq: true }, token: { eq: token } },

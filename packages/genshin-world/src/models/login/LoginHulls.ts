@@ -15,7 +15,7 @@ interface LoginHullPlacement {
 }
 
 const loginHullPlacementSchema = z.object({
-  hull: z.string().nonempty(),
+  hull: z.string().min(1),
   position: z.array(z.number()).length(3),
   rotation: z.array(z.number()).length(4),
   scale: z.array(z.number()).length(3),

@@ -12,7 +12,7 @@ export interface ReputationBounty {
 }
 
 export const reputationBountySchema = z.object({
-  difficulty: z.string().nonempty(),
+  difficulty: z.string().min(1),
   id: z.int().positive(),
   regionId: z.int().positive(),
   reward: reputationRewardSchema,
