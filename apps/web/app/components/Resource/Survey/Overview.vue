@@ -3,6 +3,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
 import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
+import { formatTruncationCount } from "@/services/dataset/formatTruncationCount";
 import { getResourceBladePath } from "@/services/resource/getResourceBladePath";
 import { useSurveyStore } from "@/store/survey";
 
@@ -18,7 +19,7 @@ const { loadContent } = surveyStore;
 const responseLabel = computed(() => {
   if (!responseCount.value) return "";
   const { count, isCapped } = responseCount.value;
-  return `${count}${isCapped ? "+" : ""} ${pluralize("response", count)}`;
+  return `${formatTruncationCount(count, isCapped)} ${pluralize("response", count)}`;
 });
 // The page is keyed by resource id, so this instance only ever describes one survey — both reads run
 // Once, in parallel. The Collection card edits the same content blob the editor writes, so it needs

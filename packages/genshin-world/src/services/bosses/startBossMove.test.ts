@@ -41,7 +41,7 @@ const createBoss = (state: EnemyState): Enemy => ({
   traits: { energyDrops: [], poiseType: PoiseType.Boss },
 });
 
-describe("startBossMove", () => {
+describe(startBossMove, () => {
   // Two made-up moves, the boss making the first of them next
   const MOVES: BossMove[] = [
     { atkPercent: 100, name: "Made-up Sweep", recoverySeconds: 1, windupSeconds: 1 },

@@ -22,13 +22,13 @@ flowchart TD
 - **Volume, Music Volume and SFX Volume** each run from 1 to 10 in whole levels. A pointer drag across the track snaps to the nearest level and stops at either end, and the arrow keys step one level. The Volume row is the overall level that scales the two channels.
 - **Horizontal and Vertical Sensitivity** run from 1 to 5 in steps of 1. **Default Camera Distance** runs from 4.5 to 6.0 in steps of 0.1. All three are sliders with the same snapping as the volumes.
 - **Camera Y-Axis Resets Automatically** is a switch that flips between On and Off on a click. It starts Off.
-- **Game Language** opens a list of the fifteen game languages, each under its own name, with the chosen one marked. Choosing one loads that language's game text and relabels the Settings screen only; the world keeps the reader's language.
-- **Key Bindings** shows the twelve Actions keys as key caps, with the mouse buttons written Left Click and Right Click. The action labels are game text and the keys are literal text. None can be rebound.
+- **Game Language** opens a list of the game's languages, each under its own name, with the chosen one marked. Choosing one loads that language's game text and relabels the Settings screen only; the world keeps the reader's language.
+- **Key Bindings** shows the Actions keys as key caps, with the mouse buttons written Left Click and Right Click. The action labels are game text and the keys are literal text. None can be rebound.
 - **Disabled rows.** The Controls tab's aimed sensitivities, combat camera, boat camera correction and control type; the Audio tab's Dialogue Volume, drawn at 10, and its other options; the Graphics tab's display mode, brightness and other rows; and the Language tab's voice-over row. Each shows the value the recording shows and cannot be changed. The Messages, Account, Resources and Other tabs have no rows, so the side bar draws them disabled.
 
 ## Storage and reads
 
-- One key, `genshin-settings`, holds one JSON object of nine fields: the language, the quality tier, the three volume levels, the two sensitivities, the default distance and the slope pitch.
+- One key, `genshin-settings`, holds one JSON object of the settings' fields: the language, the quality tier, the three volume levels, the two sensitivities, the default distance and the slope pitch.
 - A read parses the text and checks the object against one schema, whose ranges are the constants' ranges. Text that does not parse is logged. An object the schema refuses is read as no stored settings, so the whole object falls back to the defaults. A missing field takes its own default.
 - The defaults are the constants': the quality tier High, the three volumes at 10, English, and the follow camera's provisional camera values. The world starts from the host's language and tier instead.
 - Systems that start outside the screen take a one-off read of the key with no listening for changes: the follow camera, the login's music and door sound, and the Oculus chime. They use the constants' defaults, not the host's.
@@ -73,6 +73,6 @@ flowchart TD
 
 ## Sources
 
-- [Settings](https://genshin-impact.fandom.com/wiki/Settings), Genshin Impact Wiki: the graphics quality, the volumes from 1 to 10, the camera's ranges, the fifteen game languages and settings kept per device.
+- [Settings](https://genshin-impact.fandom.com/wiki/Settings), Genshin Impact Wiki: the graphics quality, the volumes from 1 to 10, the camera's ranges, the game's languages and settings kept per device.
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the Basic Settings' default keys for the Actions list, the PC column.
 - The English PC client's settings in [the Settings screen from the side bar](https://www.youtube.com/watch?v=5EmJX_RyuY8) (`{data-root}/genshin-parity/captures/yt-5EmJX_RyuY8-menu-settings.mp4`): the rows' places and values, as the code's comments record them.
