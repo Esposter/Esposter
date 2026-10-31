@@ -2,7 +2,7 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 
 import { getItemName } from "#src/services/inventory/getItemName";
-import { ItemCategory } from "genshin-interface";
+import { ItemCategory } from "genshin-interface/save";
 
 // An artifact's definition in the reader's language, from its piece of the reliquary tables: an artifact is filed in the
 // Artifact tab, is held one to a bag entry, and is named by its piece's text id

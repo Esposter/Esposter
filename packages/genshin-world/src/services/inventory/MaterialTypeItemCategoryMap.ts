@@ -1,5 +1,5 @@
 import { MaterialType } from "#src/models/inventory/MaterialType";
-import { ItemCategory } from "genshin-interface";
+import { ItemCategory } from "genshin-interface/save";
 
 // The tab each material type is filed in, as the wiki's item pages give its inventory category. The game files a wind
 // Glider and a namecard in no tab, keeping them in its attire and namecard collections, which are not built, so until

@@ -5,7 +5,7 @@ import type { InventorySave } from "#src/models/inventory/InventorySave";
 
 import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { ItemCategory } from "genshin-interface";
+import { ItemCategory } from "genshin-interface/save";
 
 // An entry of the bag as its save holds it, by the item's id and its kind: a weapon with its state, an artifact with the
 // Artifact it was rolled as, and a stack with its count. Its name and tab are left to the game's tables

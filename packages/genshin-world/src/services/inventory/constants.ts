@@ -5,7 +5,7 @@ import { Currency } from "#src/models/inventory/Currency";
 import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
 import { ORIGINAL_RESIN_CAP } from "#src/services/originalResin/constants";
-import { ItemCategory } from "genshin-interface";
+import { ItemCategory } from "genshin-interface/save";
 
 // The tabs whose every weapon or artifact is an entry of its own, never stacked, sorted by level or quality as chosen
 export const EQUIPMENT_CATEGORIES: readonly ItemCategory[] = [ItemCategory.Weapon, ItemCategory.Artifact];
