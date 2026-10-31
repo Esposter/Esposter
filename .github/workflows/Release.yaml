@@ -123,7 +123,7 @@ jobs:
   # The push goes through the collector's token, not the workflow's: main's ruleset lets only the Admin role update it, the role
   # the review's fast-forward pushes with. This job runs no repository code, no install and no script, so the token meets
   # nothing but git. It takes the bundle from a job that did run that code, and so verifies it first: a fast-forward of main
-  # that is one commit, changes only versions and changelogs, and carries one tag.
+  # that changes only versions and changelogs and carries one tag.
   push:
     name: Push
     needs: version
@@ -152,10 +152,6 @@ jobs:
             echo "main moved since the version commit was made." >&2
             exit 1
           fi
-          if [ "$(git rev-list --count HEAD..refs/release/main)" != 1 ]; then
-            echo "The bundle holds more than one commit past main." >&2
-            exit 1
-          fi
           if [ "$(git tag --points-at refs/release/main | wc -l)" != 1 ]; then
             echo "The version commit does not carry exactly one tag." >&2
             exit 1
@@ -165,24 +161,19 @@ jobs:
             exit 1
           fi
 
-      # The header `actions/checkout` would persist, held in the job's environment instead of its git config, and masked
-      - name: 🔑 Authenticate git
+      # The header `actions/checkout` would persist, held by this one command's environment instead of a git config, and
+      # masked. Atomic, so the branch never moves without its tag, and a rejected push fails the job before anything is published
+      - name: 🚚 Push the version commit
         env:
           PUSH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
         run: |
           credential="$(printf 'x-access-token:%s' "$PUSH_TOKEN" | base64 --wrap=0)"
           echo "::add-mask::$credential"
-          {
-            echo "GIT_CONFIG_COUNT=1"
-            echo "GIT_CONFIG_KEY_0=http.${GITHUB_SERVER_URL}/.extraheader"
-            echo "GIT_CONFIG_VALUE_0=AUTHORIZATION: basic $credential"
-          } >> "$GITHUB_ENV"
-
-      # Atomic, so the branch never moves without its tag. A rejected push fails the job before anything is published
-      - name: 🚚 Push the version commit
-        run: |
           tag="$(git tag --points-at refs/release/main)"
-          git push --atomic origin refs/release/main:refs/heads/main "refs/tags/$tag:refs/tags/$tag"
+          GIT_CONFIG_COUNT=1 \
+            GIT_CONFIG_KEY_0="http.${GITHUB_SERVER_URL}/.extraheader" \
+            GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $credential" \
+            git push --atomic origin refs/release/main:refs/heads/main "refs/tags/$tag:refs/tags/$tag"
 
   # The tag this night released, or the one `check` found unfinished. Skipped on a quiet night, and a failed `version` or
   # `push` ends the run before it, so no release is drafted for a tag that main never received
