@@ -62,24 +62,24 @@ packages/genshin-world/src/models/statue/StatueProgressSave.ts
 
 ## Key files
 
-| File                                                                       | Role after the change                                                                                       |
-| :------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/world/StatueLandmark.ts`                | A statue, its region's level read from the progress                                                         |
-| `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`             | Fits the Oculi from the official map's points                                                               |
-| `packages/genshin-world/src/components/Hud/Minimap/Index.vue`              | Marks a near Oculus                                                                                         |
-| `packages/genshin-world/src/components/World/Session/Index.vue`            | Holds the regions' state and the pool, and wires them                                                       |
-| `packages/genshin-world/src/services/statue/computeStatueInteractables.ts` | Names a resonated statue's F as the Worship Statue                                                          |
-| `packages/genshin-world/src/components/Statue/Screen/Index.vue`            | The Blessing's wrapper, healing from the pool and switching to the Worship Statue                           |
-| `packages/genshin-interface/src/components/BlessingScreen/Index.vue`       | The Blessing's provisional layout, its switch to the Worship Statue and auto-recover's switch and threshold |
-| `packages/genshin-interface/src/components/WorshipScreen/Index.vue`        | The Worship Statue's provisional layout                                                                     |
-| `packages/genshin-world/src/components/Statue/Worship/Index.vue`           | The Worship Statue's wrapper: each level's state, the offer and the claim                                   |
-| `packages/genshin-world/src/services/statue/offerStatueOculi.ts`           | Offers a started region's held Oculi through `offerItems`                                                   |
-| `packages/genshin-world/src/services/statue/claimStatueLevel.ts`           | Takes the next reached level, its rewards paid once                                                         |
-| `packages/genshin-world/src/services/statue/getStatueLevelState.ts`        | A level claimed, claimable or locked on the Worship Statue                                                  |
-| `packages/genshin-world/src/services/statue/findOculus.ts`                 | Holds a found Oculus in its region's count                                                                  |
-| `packages/genshin-world/src/services/statue/advanceAutoRecoverDwell.ts`    | A stand by a statue's base, due once when it reaches the two seconds                                        |
-| `packages/genshin-world/src/services/statue/stepAutoRecoverThreshold.ts`   | The threshold one step up or down, held between one step and the maximum                                    |
-| `packages/genshin-world/src/composables/useWorldStatues.ts`                | Holds, resonates, offers and claims, saving each region's progress                                          |
+| File                                                                       | Role after the change                                                                                           |
+| :------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/world/StatueLandmark.ts`                | A statue, its region's level read from the progress                                                             |
+| `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`             | Fits the Oculi from the official map's points                                                                   |
+| `packages/genshin-world/src/components/Hud/Minimap/Index.vue`              | Marks a near Oculus                                                                                             |
+| `packages/genshin-world/src/components/World/Session/Index.vue`            | Holds the regions' state and the pool, and wires them                                                           |
+| `packages/genshin-world/src/services/statue/computeStatueInteractables.ts` | Names a resonated statue's F as the Worship Statue                                                              |
+| `packages/genshin-world/src/components/Statue/Screen/Index.vue`            | The Blessing's wrapper, healing from the pool and switching to the Worship Statue                               |
+| `packages/genshin-interface/src/components/BlessingScreen/Index.vue`       | The Blessing's provisional layout, its switch to the Worship Statue and auto-recover's switch and threshold     |
+| `packages/genshin-interface/src/components/WorshipScreen/Index.vue`        | The Worship Statue's provisional layout                                                                         |
+| `packages/genshin-world/src/components/Statue/Worship/Index.vue`           | The Worship Statue's wrapper: each level's state, the offer and the claim                                       |
+| `packages/genshin-world/src/services/statue/offerStatueOculi.ts`           | Offers a started region's held Oculi through `offerItems`                                                       |
+| `packages/genshin-world/src/services/statue/claimStatueLevel.ts`           | Takes the next reached level, its rewards paid once                                                             |
+| `packages/genshin-world/src/services/statue/getStatueLevelState.ts`        | A level claimed, claimable or locked on the Worship Statue                                                      |
+| `packages/genshin-world/src/services/statue/findOculus.ts`                 | Holds a found Oculus in its region's count                                                                      |
+| `packages/genshin-world/src/services/statue/advanceAutoRecoverDwell.ts`    | A stand by a statue's base, due once when it reaches the two seconds                                            |
+| `packages/genshin-world/src/services/statue/stepAutoRecoverThreshold.ts`   | The threshold one step up or down, held between one step and the maximum                                        |
+| `packages/genshin-world/src/composables/useWorldStatues.ts`                | Holds, resonates, offers and claims, saving each region's progress, and holds the Worship Statue screen's state |
 
 ## Sources
 
