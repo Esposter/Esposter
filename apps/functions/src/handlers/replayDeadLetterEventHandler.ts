@@ -20,14 +20,17 @@ import {
   MAX_EVENT_GRID_PUBLISH_BYTES,
   MAX_EVENT_GRID_PUBLISH_EVENT_COUNT,
 } from "@esposter/db-schema";
-import { chunkBySerializedSize, getResult, getResultAsync, noop, takeOne } from "@esposter/shared";
+import { chunkBySerializedSize, getResult, getResultAsync, noop } from "@esposter/shared";
 import { z } from "zod";
 
 // The replay is payload-agnostic — it resends whatever it finds, and only each event's handler knows how to read its
 // `data` — so the envelope is parsed with the shared factory over an opaque payload. Duplicate ids are valid, not
 // Malformed: delivery is at-least-once and a send retried whole after a partial failure puts two copies of one id on
-// The topic, so rejecting the array would quarantine every replayable event batched alongside them.
-const deadLetteredEventsSchema = createEventGridEventSchema(z.unknown()).array();
+// The topic, so rejecting the array would quarantine every replayable event batched alongside them. Loose, so the
+// Parse is also the one view of the raw events: Event Grid's dead-letter diagnostics — `deadLetterReason`,
+// `deliveryAttempts` and `lastDeliveryOutcome` — are the only record of WHY a payload is here, which is the entire
+// Point of the quarantine copy an operator opens, and a republish reads only the five envelope fields
+const deadLetteredEventsSchema = createEventGridEventSchema(z.unknown()).loose().array();
 
 export const replayDeadLetterEventHandler: EventGridHandler = (event, context) => {
   context.log(`${AzureFunction.ReplayDeadLetterEvent} processed blob: `, event.subject);
@@ -49,8 +52,7 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     if (!(await blockBlobClient.exists())) return;
     const content = await blockBlobClient.downloadToBuffer();
     let parseError: Error | undefined;
-    // Decoded and JSON-parsed once and reused: a dead-letter blob carries up to a megabyte of events, and the
-    // Raw objects are needed again below to write a quarantine copy that keeps Event Grid's diagnostics
+    // Decoded and JSON-parsed once: a dead-letter blob carries up to a megabyte of events
     // oxlint-disable-next-line no-restricted-properties -- a dead-letter payload is replayed and quarantined verbatim, so no value is rewritten on the way through
     const rawEvents: unknown = getResult(() => JSON.parse(content.toString("utf8")))
       .orTee((error) => {
@@ -92,20 +94,11 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     // Judged per event, not per blob: Event Grid batches whatever expired together, so one poison payload must not
     // Strand the transient failures sharing its blob, and a blob-level count would be meaningless anyway once the
     // Batch splits across cycles. Both bars — the replay cap and handler idempotency — are `checkIsReplayable`'s.
-    // The raw objects parsed above stay index-aligned with the narrowed events: the schema keeps only the five
-    // Fields a republish needs, dropping Event Grid's dead-letter diagnostics — `deadLetterReason`,
-    // `deliveryAttempts` and `lastDeliveryOutcome`. Those are the only record of WHY a payload is here, which is the
-    // Entire point of the copy an operator opens, so the quarantine copy is written from the raw objects
-    // Typed, not re-validated: reaching here means the array schema above already parsed `rawEvents`, so this
-    // Cannot reject. Expressing it as a fallback (`Array.isArray(...) ? ... : []`, an element-shape check) would
-    // Read as though the two arrays might diverge in length or shape — the one thing the comment above rules out
-    const rawEventArray = z.looseObject({}).array().parse(rawEvents);
-    const replays = events.map((deadLetteredEvent, index) => {
+    const replays = events.map((deadLetteredEvent) => {
       const { eventId, replayAttempts } = parseReplayId(deadLetteredEvent.id);
       return {
         deadLetteredEvent,
         eventId,
-        index,
         isReplayable: checkIsReplayable(deadLetteredEvent.eventType, replayAttempts),
         replayAttempts,
       };
@@ -117,13 +110,13 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
         containerClient,
         blobName,
         DEAD_LETTER_QUARANTINE_PREFIX,
-        // Written from the raw objects so the diagnostics survive, and with the replay count stripped back off
+        // Written whole so the diagnostics survive, and with the replay count stripped back off
         // The id: the documented recovery is an operator moving this blob to the container root once the
         // Downstream handler is fixed, and an id still carrying the cap is re-quarantined on sight — deleting
         // The copy the operator just restored and silently no-opping their remediation
         Buffer.from(
           JSON.stringify(
-            quarantinedReplays.map(({ eventId, index }) => ({ ...takeOne(rawEventArray, index), id: eventId })),
+            quarantinedReplays.map(({ deadLetteredEvent, eventId }) => ({ ...deadLetteredEvent, id: eventId })),
           ),
         ),
       );

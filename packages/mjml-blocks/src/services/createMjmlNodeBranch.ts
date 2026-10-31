@@ -1,7 +1,10 @@
 import { MJML_NAME_MAX_LENGTH } from "#src/services/constants";
 import { z } from "zod";
 
-// A node's branch of its union: its type tag, its props checked by the props schema's own refinements once the shape passes, its id and each slot's children
+// A node's branch of its union: its type tag, its props checked by the props schema's own refinements once the shape passes, its id and each slot's children.
+// The props schema is parsed again for those refinements, because a spread of its shape brings the fields and leaves its
+// Whole-object checks behind, and zod offers no public way to carry them over that also holds them back while the shape
+// Has an issue: a refinement run past an unrecognised key reports a second, misleading problem.
 export const createMjmlNodeBranch = <
   TType extends string,
   TPropsShape extends z.core.$ZodLooseShape,
