@@ -38,7 +38,7 @@
       "matchPackageNames": ["typescript", "typescript-native-bridge"]
     },
     {
-      "description": "`vue-tsc` 3.3.12 reports `Property 'value' does not exist` on an imported ref used inside a template function (https://github.com/vuejs/language-tools/issues/6237), so it is pinned exactly to 3.3.11. Drop this rule and restore the catalog caret once a release fixes the issue.",
+      "description": "`vue-tsc` 3.3.14 fixes the imported-ref `Property 'value' does not exist` of 3.3.12 (https://github.com/vuejs/language-tools/issues/6237) and then reports the same TS2339 on an imported enum in a slot closure of a template holding a `//` in an attribute value, which `apps/web`'s `LinkMenuButton.vue` does (https://github.com/vuejs/language-tools/issues/6322), so it stays pinned exactly to 3.3.11, the last release that passes. Drop this rule and restore the catalog caret once a release fixes the issue.",
       "enabled": false,
       "matchPackageNames": ["vue-tsc"]
     },
