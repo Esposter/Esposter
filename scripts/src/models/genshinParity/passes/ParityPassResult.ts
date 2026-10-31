@@ -1,5 +1,5 @@
 import type { ParityPass } from "#src/models/genshinParity/passes/ParityPass";
-import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
+import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 
 // One pass of a run: what its measure read, and whether every reading held its gate
 export interface ParityPassResult {

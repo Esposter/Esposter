@@ -1,5 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
+import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 import type { SoundEffect } from "genshin-engine";
 
 import { SOUND_SAMPLE_RATE } from "#src/services/genshinAssets/shared/constants";

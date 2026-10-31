@@ -1,5 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
+import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { readLoginDoorPieces } from "#src/services/genshinAssets/fit/readLoginDoorPieces";

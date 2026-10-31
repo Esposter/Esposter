@@ -1,4 +1,4 @@
-import type { ParityPassReading } from "#src/models/genshinParity/passes/ParityPassReading";
+import type { ParityPassReading } from "#src/models/genshinParity/shared/ParityPassReading";
 
 import { formatPassValue } from "#src/services/genshinParity/passes/formatPassValue";
 

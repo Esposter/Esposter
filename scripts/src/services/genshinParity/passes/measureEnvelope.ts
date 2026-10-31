@@ -1,6 +1,6 @@
-import type { ParityPassReading } from "#src/models/genshinParity/passes/ParityPassReading";
 import type { Targets } from "#src/models/genshinParity/passes/Targets";
 import type { WitnessTargetsRead } from "#src/models/genshinParity/passes/WitnessTargetsRead";
+import type { ParityPassReading } from "#src/models/genshinParity/shared/ParityPassReading";
 import type { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import type { WitnessView } from "genshin-world/parity/models/witness/WitnessView";
 import type { Page } from "playwright";

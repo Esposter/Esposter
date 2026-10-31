@@ -1,4 +1,4 @@
-import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
+import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 
 import { FRAME_GATE_PIXELS } from "#src/services/genshinParity/passes/constants";
 

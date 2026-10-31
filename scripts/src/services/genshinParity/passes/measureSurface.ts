@@ -1,6 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
-import type { ParityPassReading } from "#src/models/genshinParity/passes/ParityPassReading";
+import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
+import type { ParityPassReading } from "#src/models/genshinParity/shared/ParityPassReading";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";

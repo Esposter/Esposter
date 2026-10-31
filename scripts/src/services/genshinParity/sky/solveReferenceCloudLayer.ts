@@ -1,5 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
+import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 import type { CloudLayer } from "#src/models/genshinParity/sky/CloudLayer";
 import type { SetCloudColors } from "#src/models/genshinParity/sky/SetCloudColors";
 import type { SetCloudCover } from "#src/models/genshinParity/sky/SetCloudCover";

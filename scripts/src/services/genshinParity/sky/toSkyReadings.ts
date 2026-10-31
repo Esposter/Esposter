@@ -1,4 +1,4 @@
-import type { ParityPassReading } from "#src/models/genshinParity/passes/ParityPassReading";
+import type { ParityPassReading } from "#src/models/genshinParity/shared/ParityPassReading";
 import type { SkyDistance } from "#src/models/genshinParity/sky/SkyDistance";
 
 import { COLOUR_GATE } from "#src/services/genshinParity/passes/constants";
