@@ -122,6 +122,7 @@
     "playwright": "catalog:",
     "sharp": "catalog:",
     "three": "catalog:",
-    "type-fest": "catalog:"
+    "type-fest": "catalog:",
+    "vite": "catalog:"
   }
 }

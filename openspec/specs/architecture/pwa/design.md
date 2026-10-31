@@ -30,7 +30,7 @@ flowchart LR
 | `apps/web/configuration/pwa.test.ts`                                    | Every manifest icon exists in the public folder                               |
 | `apps/web/service-worker/sw.ts`                                         | The worker: precache, offline navigation, `SKIP_WAITING`, push and click      |
 | `apps/web/service-worker/tsconfig.json`                                 | The worker's typecheck, extending the shared Node base with the WebWorker lib |
-| `apps/web/service-worker/sw.test.ts`                                    | Builds the worker and runs it in a scope with no window, process or document  |
+| `scripts/src/workspace/workerScope.test.ts`                             | Runs every worker, this one included, in a scope with no window or Node       |
 | `apps/web/app/components/App/ToastStack.vue`                            | The Reload notice that shows a waiting update                                 |
 | `apps/web/app/plugins/pushNotification.client.ts`                       | The tab's end of the worker's `postMessage`                                   |
 | `apps/web/public/pwa/`                                                  | The manifest and Apple icons, each named by its path in `pwa.ts`              |
@@ -42,7 +42,7 @@ flowchart LR
 - **Rejected: `generateSW` with an `importScripts` push file.** The push handler was a separate JavaScript file the build could not check. The `injectManifest` worker is typed and checked with the app.
 - **Declined: screenshots and shortcuts in the manifest.** Screenshots need captures of the real app, which this repo does not produce. Shortcuts add icons and an install surface nobody asked for.
 - **Declined: a custom install prompt.** The browser's own install affordance is the one the reader already knows.
-- **The worker's evaluation is tested, not linted.** Its scope has no `window` and no `process`, and a module's top level can read either as it loads, which fails the evaluation and leaves the worker unregistered with only a "script evaluation failed" to show for it. A lint on the worker's own imports sees one hop, and the read can sit several hops out, so `sw.test.ts` builds the worker and runs it in a scope that has what a worker has and nothing a window or Node adds.
+- **The worker's evaluation is tested, not linted.** Its scope has no `window` and no `process`, and a module's top level can read either as it loads, which fails the evaluation and leaves the worker unregistered with only a "script evaluation failed" to show for it. [Worker scope](../worker-scope/design.md) builds the worker, as it does every worker, and runs it in a scope that has what a worker has and nothing a window or Node adds.
 - **The worker imports Workbox and types only.** That keeps the bundle small, and the `SKIP_WAITING` handler hands `skipWaiting()` to `event.waitUntil`, so the browser holds the worker open until it settles and no fire-and-forget helper from a package is needed.
 - **Orientation is unlocked.** The app has landscape surfaces, the Genshin world and the call stage, which a portrait lock would block on installed Android copies.
 - **Maskable icons are drawn, not padded.** The mark sits at 70% scale on the light background, inside the safe zone, so no launcher's mask crops it. The `any` icons keep the unpadded artwork.
