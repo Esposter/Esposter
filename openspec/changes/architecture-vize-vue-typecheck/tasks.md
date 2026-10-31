@@ -31,7 +31,7 @@
 
 ## 6. `.vue` declarations without `vue-tsc`
 
-- [ ] 6.1 Generate the declarations of the Vue packages' `.vue` files from `vize` (`vize check --declaration`) inside the shared tsdown configuration, in place of `dts.tsc.vue`. The first comparison (`design.md`, "`.vue` declarations from `vize check --declaration`") found the output is a different component type that a `vue-tsc`-checked dependent refuses, so this waits on 5.2 and a byte match is not the bar. Verified by a dependent package's typecheck passing through both `vue-tsc` and the mapper against a package built with the `vize` declarations, with that package's size snapshot read and accounted for.
+- [ ] 6.1 Generate the declarations of the Vue packages' `.vue` files from `vize` (`vize check --declaration`) inside the shared tsdown configuration, in place of `dts.tsc.vue`. The gate and its reasons are the decision in `design.md`, "`.vue` declarations from `vize check --declaration`", and a byte match is not the bar. Verified by a dependent package's typecheck passing through both `vue-tsc` and the mapper against a package built with the `vize` declarations, with that package's size snapshot read and accounted for.
 
 ## 7. Retire `vue-tsc` and the override
 
