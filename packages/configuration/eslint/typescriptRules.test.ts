@@ -97,6 +97,39 @@ describe("typescriptRules", () => {
       },
       { filePath: "topLevelEmail.ts", name: "topLevelEmail", source: "export const a = z.email();", violations: 0 },
       { filePath: "topLevelInt.ts", name: "topLevelInt", source: "export const a = z.int();", violations: 0 },
+      {
+        filePath: "unpairedMinOne.ts",
+        name: "unpairedMinOne",
+        source: "export const a = z.int().min(1);",
+        violations: 1,
+      },
+      {
+        filePath: "unpairedMinZero.ts",
+        name: "unpairedMinZero",
+        source: "export const a = z.number().min(0);",
+        violations: 1,
+      },
+      // A bound paired with an upper one is a range, which `.positive()` and `.nonnegative()` cannot state
+      { filePath: "pairedMin.ts", name: "pairedMin", source: "export const a = z.int().min(1).max(5);", violations: 0 },
+      { filePath: "domainMin.ts", name: "domainMin", source: "export const a = z.int().min(2);", violations: 0 },
+      {
+        filePath: "positiveInt.ts",
+        name: "positiveInt",
+        source: "export const a = z.int().positive();",
+        violations: 0,
+      },
+      {
+        filePath: "stringMinOne.ts",
+        name: "stringMinOne",
+        source: "export const a = z.string().min(1);",
+        violations: 0,
+      },
+      {
+        filePath: "nonemptyString.ts",
+        name: "nonemptyString",
+        source: "export const a = z.string().nonempty();",
+        violations: 1,
+      },
       // The validator names are ordinary methods anywhere a Zod chain does not lead to them
       { filePath: "otherDate.ts", name: "otherDate", source: "export const a = b.date();", violations: 0 },
       {

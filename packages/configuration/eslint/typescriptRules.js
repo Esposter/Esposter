@@ -201,6 +201,20 @@ export default {
         "MemberExpression[object.name='z'][property.name='nativeEnum'], CallExpression[callee.property.name=/^(base64|base64url|cidr|cuid|cuid2|date|datetime|duration|email|emoji|guid|ip|ipv4|ipv6|nanoid|time|ulid|url|uuid)$/] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='string'], CallExpression[callee.property.name='int'] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='number'], CallExpression[callee.property.name=/^(passthrough|strict)$/] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='object']",
     },
     {
+      // `z.int().min(1)` and `z.int().positive()` parse alike, so a count could be written either way and the tree
+      // Would hold two spellings of one constraint. A bound paired with a `.max()` is a range, which only `.min()` can
+      // Say, so that pair is left alone — the Node reported is the `.min()` call
+      message:
+        "An unpaired lower bound of zero or one is `.nonnegative()` or `.positive()` — `z.int().positive()`, never `z.int().min(1)`. Pair `.min(n)` with a `.max()` only for a real range. See the zod skill.",
+      selector:
+        "CallExpression[callee.property.name='min']:matches([arguments.0.value=0], [arguments.0.value=1])[callee.object.callee.object.name='z'][callee.object.callee.property.name=/^(int|number)$/]:not(MemberExpression[property.name='max'] > CallExpression.object)",
+    },
+    {
+      // `.nonempty()` parses like `.min(1)`, which every other non-empty string and array in the tree is written with
+      message: "A non-empty string or array is `.min(1)`, never `.nonempty()`. See the zod skill.",
+      selector: "CallExpression[callee.property.name='nonempty']",
+    },
+    {
       // Zod 3's `message` still parses under Zod 4, so a refinement written either way works and the tree would hold
       // Two spellings of one key. The `message` of an issue pushed onto `ctx` is a different object and keeps its name
       message:

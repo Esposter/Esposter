@@ -12,5 +12,5 @@ Audit each numeric field against what it models, in the app and in `packages/*` 
 Rules:
 
 - **Integers use `z.int()`**, never `z.number().int()` (Zod 4) and never plain `z.number()` when the value is whole by definition (counts, indices, byte sizes).
-- **≥ 0 is `.nonnegative()`, > 0 is `.positive()`** — never `.min(0)` / `.min(1)` for these; reserve `.min(N)` for a domain-specific lower bound (usually paired with an upper).
+- **≥ 0 is `.nonnegative()`, > 0 is `.positive()`** — reserve `.min(N)` for a domain-specific lower bound paired with an upper, a range only `.min()` can state. `no-restricted-syntax` flags the unpaired `.min(0)` and `.min(1)` on `z.int()` and `z.number()`.
 - **Check the seed/fixture data** before choosing — if every real value is strictly positive (prices, effect multipliers), use `.positive()`, not the weaker `.nonnegative()`.
