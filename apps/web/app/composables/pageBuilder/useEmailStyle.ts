@@ -1,5 +1,4 @@
 import type { EmailStyleField } from "@/models/pageBuilder/EmailStyleField";
-import type { MaybeRefOrGetter } from "vue";
 
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
 import { getEmailAttributeValue } from "#shared/services/pageBuilder/email/getEmailAttributeValue";

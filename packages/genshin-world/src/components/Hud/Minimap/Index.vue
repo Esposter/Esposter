@@ -15,7 +15,6 @@ import { playOculusSound } from "#src/services/statue/playOculusSound";
 import { GameRect } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 import { MathUtils } from "three";
-import { watch } from "vue";
 
 interface Props {
   camera: MapCamera;

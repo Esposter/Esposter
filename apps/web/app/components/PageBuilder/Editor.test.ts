@@ -18,7 +18,6 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { nextTick } from "vue";
 
 describe("pageBuilderEditor", () => {
   afterEach(() => {

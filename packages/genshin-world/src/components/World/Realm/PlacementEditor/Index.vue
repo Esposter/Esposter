@@ -12,7 +12,6 @@ import { getHomeFurnishingLimit } from "#src/services/home/getHomeFurnishingLimi
 import { placeHomeFurnishing } from "#src/services/home/placeHomeFurnishing";
 import { GameButton, GameButtonKind, GameScreen, ProgressBar } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
-import { computed, ref } from "vue";
 
 interface Props {
   area: HomeArea;

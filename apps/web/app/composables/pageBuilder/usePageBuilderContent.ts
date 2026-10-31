@@ -1,6 +1,5 @@
 import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition, OwnProps } from "headless-block-editor";
-import type { MaybeRefOrGetter } from "vue";
 import type { z } from "zod";
 
 import { ROOT_INTERACTION_ID, ROOT_POINTER } from "@/services/pageBuilder/constants";

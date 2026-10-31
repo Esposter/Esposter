@@ -13,7 +13,6 @@ import {
   GAME_WHITE,
   MOBILE_INTERFACE_SCALE,
 } from "#src/services/constants";
-import { computed } from "vue";
 
 interface Props {
   // The state every button on the screen is drawn in in place of the pointer's, which a fixture sets to shoot a hover,

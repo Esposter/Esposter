@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { CloseButtonMark } from "genshin-interface";
 import type { GameText } from "genshin-text";
-import type { VNode } from "vue";
 
 import ScreenHeader from "#src/components/Menu/ScreenHeader/Index.vue";
 import { LIST_SCREEN_WIDTH } from "#src/services/menu/constants";

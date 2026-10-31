@@ -5,7 +5,6 @@ import type { ShopTabCell } from "#src/models/ShopTabCell";
 
 import DiscButton from "#src/components/DiscButton/Index.vue";
 import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
-import { computed } from "vue";
 
 interface Props {
   // The currencies the player holds, shown across the head, the top-up ones with a plus

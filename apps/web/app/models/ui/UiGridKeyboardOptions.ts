@@ -1,5 +1,3 @@
-import type { ShallowRef } from "vue";
-
 export interface UiGridKeyboardOptions<TCell> {
   // The selector of the element a cell is focused through
   getCellSelector: (cell: TCell) => string;

@@ -4,7 +4,6 @@ import { getResourceBladePath } from "@/services/resource/getResourceBladePath";
 import { getNextNavigationTrail } from "@/services/shared/getNextNavigationTrail";
 import { RoutePath } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { reactive } from "vue";
 
 describe(getNextNavigationTrail, () => {
   const id = crypto.randomUUID();

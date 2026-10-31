@@ -1,5 +1,6 @@
-import type { OxlintConfig } from "oxlint";
+import type { OxlintConfig, OxlintOverride } from "oxlint";
 
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { defineConfig } from "oxlint";
 
 // The Tiled tileset `.tsx` files are XML, not code. ESLint's ignores import this glob too,
@@ -74,6 +75,36 @@ const CHILD_PROCESS_IMPORT_PATHS = [
   { allowTypeImports: true, message: CHILD_PROCESS_MESSAGE, name: "node:child_process" },
 ];
 const RESTRICTED_IMPORT_PATHS = [...OTHER_RESTRICTED_IMPORT_PATHS, ...CHILD_PROCESS_IMPORT_PATHS];
+// What a tree has auto-imported is written by the tool that does it, as `const name: typeof import('module').name` and its
+// Types as `export type { … }` followed by the module they come from. Reading that file makes the ban follow the tool, so a
+// Name it starts auto-importing is banned with no list kept here. A module that starts with a dot or a hash is a local file
+const RUNTIME_DECLARATION_REGEX = /typeof import\('(?<module>[^'#.][^']*)'\)\.(?<name>\w+)/gu;
+const TYPE_DECLARATION_REGEX =
+  /export type \{(?<names>[^}]*)\}\s*(?:from '(?<fromModule>[^'#.][^']*)'|import\('(?<importModule>[^'#.][^']*)'\))/gu;
+const getAutoImportedPaths = (declarationsPath: string, source: string) => {
+  const declarations = readFileSync(new URL(declarationsPath, import.meta.url), "utf8");
+  const moduleNamesMap = new Map<string, string[]>();
+  const addNames = (module: string, names: string[]) => {
+    moduleNamesMap.set(module, [...(moduleNamesMap.get(module) ?? []), ...names]);
+  };
+  for (const { groups } of declarations.matchAll(RUNTIME_DECLARATION_REGEX))
+    addNames(groups?.module ?? "", [groups?.name ?? ""]);
+  for (const { groups } of declarations.matchAll(TYPE_DECLARATION_REGEX))
+    addNames(
+      groups?.fromModule ?? groups?.importModule ?? "",
+      (groups?.names ?? "").split(",").map((name) => name.trim()),
+    );
+  return Array.from(moduleNamesMap, ([name, importNames]) => ({
+    importNames: importNames.filter(Boolean),
+    message: `${source} auto-imports this, so it is never imported by hand — drop the import. The names are its generated \`${declarationsPath}\`.`,
+    name,
+  }));
+};
+// The app's imports are Nuxt's, written on `nuxt prepare` (the install's postinstall)
+const APP_RESTRICTED_IMPORT_PATHS = [
+  ...RESTRICTED_IMPORT_PATHS,
+  ...getAutoImportedPaths("apps/web/.nuxt/types/imports.d.ts", "Nuxt"),
+];
 const VUETIFY_IMPORT_PATH = { message: VUETIFY_MESSAGE, name: "@vuetify/v0" };
 const VUETIFY_IMPORT_PATTERN = { group: ["@vuetify/v0/*"], message: VUETIFY_MESSAGE };
 const WORKSPACE_LIBRARY_IMPORT_PATTERN = {
@@ -97,6 +128,28 @@ const PACKAGE_RELATIVE_IMPORT_PATTERN = {
   message:
     "A package addresses its own source through `#src/*`, never a relative specifier — a relative path breaks the moment the file moves, and `#src` is resolved from the importing file's own package.json so it survives being compiled by a sibling. See openspec/specs/architecture/build-pipeline/design.md.",
 };
+const PACKAGE_IMPORT_PATTERNS = [PACKAGE_ALIAS_IMPORT_PATTERN, PACKAGE_RELATIVE_IMPORT_PATTERN];
+// A package that builds with the shared Vue plugin has its own `auto-imports.d.ts`, committed beside its manifest, so the
+// Packages are the ones that have one. The plugin's imports are ambient in its components. Its `.ts` files are left out: a
+// Unit suite runs under the plain Vitest configuration, which applies no plugin, so a module it loads keeps the imports it
+// Needs there
+const AUTO_IMPORT_PACKAGE_OVERRIDES: OxlintOverride[] = readdirSync(new URL("packages/", import.meta.url))
+  .filter((name) => existsSync(new URL(`packages/${name}/auto-imports.d.ts`, import.meta.url)))
+  .map((name) => ({
+    files: [`packages/${name}/**/*.vue`],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            ...RESTRICTED_IMPORT_PATHS,
+            ...getAutoImportedPaths(`packages/${name}/auto-imports.d.ts`, "The package's Vue plugin"),
+          ],
+          patterns: PACKAGE_IMPORT_PATTERNS,
+        },
+      ],
+    },
+  }));
 const MOD_IMPORT_PATTERN = {
   group: ["#src/*", "@/**", "~/**"],
   message:
@@ -179,6 +232,16 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     { files: ["**/*.test.ts", "**/*.test-d.ts", "**/*.bench.ts"], rules: { "test-values/no-typed-date": "error" } },
     { files: ["**/*.test.ts"], rules: { "testing/no-faked-set-timeout": "error" } },
     {
+      // Nuxt auto-imports Vue into the app tree alone: a package, the Nuxt configuration and `shared/` reach it by import
+      files: ["apps/web/app/**"],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          { paths: [...APP_RESTRICTED_IMPORT_PATHS, VUETIFY_IMPORT_PATH], patterns: [VUETIFY_IMPORT_PATTERN] },
+        ],
+      },
+    },
+    {
       files: [
         "apps/web/app/components/Ui/**",
         "apps/web/app/composables/ui/**",
@@ -191,7 +254,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
           "error",
           ...RESTRICTED_GLOBALS.filter((restrictedGlobal) => restrictedGlobal !== USE_UI_STYLE_GLOBAL),
         ],
-        "no-restricted-imports": ["error", { paths: RESTRICTED_IMPORT_PATHS }],
+        "no-restricted-imports": ["error", { paths: APP_RESTRICTED_IMPORT_PATHS }],
       },
     },
     {
@@ -208,7 +271,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
           "error",
           {
             paths: [
-              ...RESTRICTED_IMPORT_PATHS,
+              ...APP_RESTRICTED_IMPORT_PATHS,
               VUETIFY_IMPORT_PATH,
               { importNames: ["useRouter"], message: USE_ROUTER_PAGE_MESSAGE, name: "#imports" },
               { importNames: ["useRouter"], message: USE_ROUTER_PAGE_MESSAGE, name: "vue-router" },
@@ -261,12 +324,10 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       // Config) reaches its own files through a subpath import too, such as `#parity/*`
       files: ["apps/*/src/**", "packages/*/**/*.{ts,vue}", "scripts/**/*.ts"],
       rules: {
-        "no-restricted-imports": [
-          "error",
-          { paths: RESTRICTED_IMPORT_PATHS, patterns: [PACKAGE_ALIAS_IMPORT_PATTERN, PACKAGE_RELATIVE_IMPORT_PATTERN] },
-        ],
+        "no-restricted-imports": ["error", { paths: RESTRICTED_IMPORT_PATHS, patterns: PACKAGE_IMPORT_PATTERNS }],
       },
     },
+    ...AUTO_IMPORT_PACKAGE_OVERRIDES,
     {
       // The wrappers are the one place node's child_process is imported, and two plugins keep it, each passing
       // `windowsHide` itself: genshin-persona's source installs from its own package-lock.json, and follow-ups installs as
@@ -278,13 +339,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
         "packages/follow-ups/scripts/**/*.ts",
       ],
       rules: {
-        "no-restricted-imports": [
-          "error",
-          {
-            paths: OTHER_RESTRICTED_IMPORT_PATHS,
-            patterns: [PACKAGE_ALIAS_IMPORT_PATTERN, PACKAGE_RELATIVE_IMPORT_PATTERN],
-          },
-        ],
+        "no-restricted-imports": ["error", { paths: OTHER_RESTRICTED_IMPORT_PATHS, patterns: PACKAGE_IMPORT_PATTERNS }],
       },
     },
     {

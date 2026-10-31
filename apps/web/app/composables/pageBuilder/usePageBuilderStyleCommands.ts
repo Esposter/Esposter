@@ -1,5 +1,4 @@
 import type { UiCommand } from "@/models/ui/UiCommand";
-import type { MaybeRefOrGetter } from "vue";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";

@@ -3,7 +3,6 @@ import type { PartySetupSlot } from "#src/models/PartySetupSlot";
 
 import CloseButton from "#src/components/CloseButton/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
-import { computed } from "vue";
 
 interface Props {
   // The words of the buttons in the reader's language

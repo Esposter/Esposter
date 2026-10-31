@@ -2,7 +2,6 @@ import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
-import type { MaybeRefOrGetter } from "vue";
 
 import { checkIsInsideBox } from "@/services/pageBuilder/checkIsInsideBox";
 import { DRAG_THRESHOLD } from "@/services/pageBuilder/constants";

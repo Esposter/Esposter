@@ -1,6 +1,5 @@
 import { useDisplayWidths } from "@/composables/dungeons/UI/healthBar/useDisplayWidths";
 import { describe, expect, test } from "vitest";
-import { nextTick, ref } from "vue";
 
 describe(useDisplayWidths, () => {
   // The middle takes what the two caps leave of the total, and the right cap takes the rest of the display width

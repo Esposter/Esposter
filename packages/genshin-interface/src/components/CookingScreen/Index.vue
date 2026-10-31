@@ -7,7 +7,6 @@ import {
   COOKING_ARC_RADIUS_X,
   COOKING_ZONE_RADIUS_Y,
 } from "#src/services/constants";
-import { computed } from "vue";
 
 interface Props {
   // The Auto Cook button's label in the reader's language

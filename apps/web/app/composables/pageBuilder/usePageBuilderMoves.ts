@@ -3,7 +3,6 @@ import type { UiCommand } from "@/models/ui/UiCommand";
 import type { UiCommandScope } from "@/models/ui/UiCommandScope";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
-import type { MaybeRefOrGetter } from "vue";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";

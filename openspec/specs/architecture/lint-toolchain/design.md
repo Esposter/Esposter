@@ -99,6 +99,12 @@ else can express the ban at all.
 directive `oxlint-disable-next-line` with the reporting rule's name. `useRoute` also takes a
 `no-restricted-imports` entry, because `no-restricted-globals` sees the auto-imported form and not an explicit
 `vue-router` import — and the pages' `useRouter` ban takes one for `vue-router` and `#imports` for the same reason.
+The same holds for every name a tool auto-imports: `oxlint.config.ts` reads them off the declarations that tool writes
+and bans each from its module. Under `apps/web/app` those are Nuxt's, written on `nuxt prepare`
+(`apps/web/.nuxt/types/imports.d.ts`, the install's postinstall). In the `.vue` files of a package that builds with the
+shared Vue plugin they are the plugin's, in the `auto-imports.d.ts` committed beside its manifest, and a package is
+covered by having one. A name a tool starts auto-importing is banned with no list kept in the repository. A package's
+`.ts` files are left out, because a unit suite runs under the plain Vitest configuration, which applies no plugin.
 
 What stays in ESLint, and why:
 

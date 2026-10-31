@@ -1,6 +1,5 @@
 import type { AgentConsoleReaction } from "@/models/agentConsole/AgentConsoleReaction";
 import type { UiToken } from "@/models/ui/UiToken";
-import type { Component } from "vue";
 
 // What a theme may change. It dresses the world and never replaces or reorders it, so the default sets the least a
 // Theme can — no reactions — and the parts a scene or a voice would take are added with the first theme that has one

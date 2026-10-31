@@ -6,7 +6,6 @@ import type { InventorySort } from "#src/models/InventorySort";
 
 import { InventorySorts } from "#src/models/InventorySort";
 import { ItemCategories, ItemCategory } from "#src/models/ItemCategory";
-import { computed, nextTick, useTemplateRef, watch } from "vue";
 
 interface Props {
   // The way back to the world in the reader's language

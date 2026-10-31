@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
-import type { VNode } from "vue";
 
 import { CloseButton, CloseButtonMark } from "genshin-interface";
 import { GameTextKey } from "genshin-text";

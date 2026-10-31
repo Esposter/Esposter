@@ -14,7 +14,6 @@ import { computeMysticOfferingText } from "#src/services/crafting/computeMysticO
 import { craftStrongbox } from "#src/services/crafting/craftStrongbox";
 import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { GameTextKey, splitGameTextColors } from "genshin-text";
-import { computed, ref } from "vue";
 
 interface Props {
   // The tables the strongbox's artifact is rolled from

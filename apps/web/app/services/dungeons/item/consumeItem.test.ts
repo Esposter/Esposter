@@ -6,7 +6,6 @@ import { consumeItem } from "@/services/dungeons/item/consumeItem";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { ref } from "vue";
 
 // The player store reads the dungeons store, which imports Phaser. Only its inventory is read here, so the fake holds one
 // Player for every reader

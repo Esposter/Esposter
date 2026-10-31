@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { AnyExtension } from "@tiptap/vue-3";
-import type { VNode } from "vue";
 
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 

@@ -5,7 +5,6 @@ import GameButton from "#src/components/GameButton/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 import { GAME_DIALOGUE_GOLD, ROLE_FLOURISH_PATH } from "#src/services/constants";
 import { DialogueChoiceIconPathMap } from "#src/services/DialogueChoiceIconPathMap";
-import { computed } from "vue";
 
 interface Props {
   // The replies on offer, shown once the line is written out, none while the talk only goes on

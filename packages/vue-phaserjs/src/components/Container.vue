@@ -3,7 +3,6 @@ import type { ContainerConfiguration } from "#src/models/configuration/Container
 import type { ContainerEventEmitsOptions } from "#src/models/emit/ContainerEventEmitsOptions";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
-import type { VNode } from "vue";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { ContainerSetterMap } from "#src/services/setterMap/ContainerSetterMap";

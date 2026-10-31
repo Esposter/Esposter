@@ -1,5 +1,3 @@
-import type { VNode } from "vue";
-
 import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
 import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";

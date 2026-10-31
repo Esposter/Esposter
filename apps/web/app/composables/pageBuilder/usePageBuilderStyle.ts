@@ -1,6 +1,5 @@
 import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
 import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
-import type { MaybeRefOrGetter } from "vue";
 
 import { DEVICE_BREAKPOINT_MAP } from "@/services/pageBuilder/constants";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";

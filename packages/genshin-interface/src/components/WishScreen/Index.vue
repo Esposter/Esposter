@@ -18,7 +18,6 @@ import WishHistory from "#src/components/WishHistory/Index.vue";
 import WishPath from "#src/components/WishPath/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
 import { GameButtonKind } from "#src/models/GameButtonKind";
-import { computed, ref } from "vue";
 
 interface Props {
   // The way back to the world in the reader's language

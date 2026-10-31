@@ -26,7 +26,6 @@ import { createGenshinRenderer, GENSHIN_TONE_MAPPING, QualityTier } from "genshi
 import { GameScreen } from "genshin-interface";
 import { fillLinePlaceholders, GameTextKey } from "genshin-text";
 import { PCFShadowMap } from "three";
-import { unref } from "vue";
 
 interface Props {
   // The game's words in the reader's language
@@ -135,16 +134,12 @@ const onClick = (event: MouseEvent): void => {
   // The door opens only once it has risen into place, as its prompt says it can
   else if (stage.value === LoginStage.Door && isDoorFormed.value) stage.value = LoginStage.Entering;
 };
+const createRenderer = (context: TresRendererSetupContext) => createGenshinRenderer(unref(context.canvas));
 </script>
 
 <template>
   <GameScreen class="login-screen" @click="(event: MouseEvent) => onClick(event)">
-    <TresCanvas
-      :renderer="({ canvas }: TresRendererSetupContext) => createGenshinRenderer(unref(canvas))"
-      :tone-mapping="GENSHIN_TONE_MAPPING"
-      shadows
-      :shadow-map-type="PCFShadowMap"
-    >
+    <TresCanvas :renderer="createRenderer" :tone-mapping="GENSHIN_TONE_MAPPING" shadows :shadow-map-type="PCFShadowMap">
       <LoginScene
         :cloud-layer-textures="loginData.cloudLayerTextures"
         :clouds="loginData.clouds"

@@ -10,7 +10,6 @@ import {
   SHORTCUT_WHEEL_OUTER_RADIUS,
 } from "#src/services/shortcutWheel/constants";
 import { ShortcutWheelDirectionCountScreenKindsMap } from "#src/services/shortcutWheel/ShortcutWheelDirectionCountScreenKindsMap";
-import { computed } from "vue";
 
 interface Props {
   directionCount: ShortcutWheelDirectionCount;

@@ -1,5 +1,4 @@
 import type { WebhookInMessage } from "@esposter/db-schema";
-import type { Ref } from "vue";
 
 import { WebhookDialogAction } from "@/models/message/room/WebhookDialogAction";
 

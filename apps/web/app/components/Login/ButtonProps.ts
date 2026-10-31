@@ -1,5 +1,4 @@
 import type { betterAuth } from "better-auth";
-import type { Component } from "vue";
 
 export interface ButtonProps {
   logo: Component;

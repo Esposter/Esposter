@@ -5,7 +5,6 @@ import type { ProfileNamecard } from "#src/models/profile/ProfileNamecard";
 import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
 import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
 import type { GameText } from "genshin-text";
-import type { VNode } from "vue";
 
 import MenuPaimon from "#src/components/Menu/Paimon/Index.vue";
 import MenuPlaceholder from "#src/components/Menu/Placeholder/Index.vue";

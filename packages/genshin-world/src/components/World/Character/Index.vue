@@ -51,7 +51,6 @@ import {
   stepGrassTrail,
 } from "genshin-engine";
 import { PerspectiveCamera, Vector2, Vector3 } from "three";
-import { onBeforeUnmount } from "vue";
 
 interface Props {
   // What the character is drawn on, which the scene places in the floating origin's group: it is stood at the body's

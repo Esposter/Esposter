@@ -2,7 +2,6 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
 import type { EmailKind } from "@/models/pageBuilder/EmailKind";
 import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
-import type { MaybeRefOrGetter } from "vue";
 
 import { ResourceType } from "@esposter/db-schema";
 

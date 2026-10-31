@@ -14,7 +14,6 @@ import { EditorContent } from "@tiptap/vue-3";
 import { flushPromises } from "@vue/test-utils";
 import { MjmlNodeType } from "mjml-blocks";
 import { assert, describe, expect, test } from "vitest";
-import { nextTick } from "vue";
 
 describe("pageBuilderCanvasTextEditor", () => {
   test("a text node being edited shows its own text in the editor", async () => {

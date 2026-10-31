@@ -1,7 +1,6 @@
 // @vitest-environment happy-dom
 import { useDocumentPictureInPicture } from "@/composables/useDocumentPictureInPicture";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
-import { effectScope } from "vue";
 
 describe(useDocumentPictureInPicture, () => {
   const attributeNames = ["data-theme", "data-ui-style"];

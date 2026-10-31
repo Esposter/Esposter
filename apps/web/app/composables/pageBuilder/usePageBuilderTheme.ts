@@ -1,5 +1,3 @@
-import type { MaybeRefOrGetter } from "vue";
-
 import { COLOR_TOKEN_PREFIX, FONT_TOKEN_PREFIX } from "#shared/services/pageBuilder/constants";
 import { DEFAULT_FONT_STACK, DEFAULT_THEME_COLOR, ROOT_POINTER } from "@/services/pageBuilder/constants";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";

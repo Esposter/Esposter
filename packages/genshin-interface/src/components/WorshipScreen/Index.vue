@@ -2,7 +2,6 @@
 import CloseButton from "#src/components/CloseButton/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
 import { WorshipLevelState } from "#src/models/WorshipLevelState";
-import { computed } from "vue";
 
 interface Props {
   // The title of the Statue's Blessing the screen switches to

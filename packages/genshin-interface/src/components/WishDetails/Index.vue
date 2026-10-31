@@ -6,7 +6,6 @@ import CloseButton from "#src/components/CloseButton/Index.vue";
 import RarityStars from "#src/components/RarityStars/Index.vue";
 import WishPath from "#src/components/WishPath/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
-import { computed } from "vue";
 
 interface Props {
   // The way out of the popup in the reader's language

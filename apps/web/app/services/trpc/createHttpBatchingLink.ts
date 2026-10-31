@@ -3,8 +3,6 @@ import type { TRPCLink } from "@trpc/client";
 
 import { transformer } from "#shared/services/trpc/transformer";
 import { TRPC_CLIENT_PATH } from "@/services/trpc/constants";
-import { httpBatchLink } from "trpc-nuxt-module/runtime/client/httpBatchLink";
-import { httpLink } from "trpc-nuxt-module/runtime/client/httpLink";
 
 // Production batches the calls sent in one tick into one request. The test build sends each call as its own request,
 // Because a batch is answered as one response: a read a test holds open would hold every read sent with it in that tick

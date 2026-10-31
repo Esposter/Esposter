@@ -244,7 +244,6 @@ import {
 import { CharacterMenuTab, ForgeTab, InteractionKind, InventorySort, ItemCategory } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 import { Euler, Group, MathUtils, PCFShadowMap, Vector3 } from "three";
-import { unref } from "vue";
 
 interface Props extends WorldScreenProps, WorldTables {}
 
@@ -1284,7 +1283,6 @@ const {
   domainArena,
   domainCamps,
   domainClaimOffers,
-  domainEntrance,
   domainLevelRows,
   enterDomain,
   isDomainTreeRaised,
@@ -1723,6 +1721,7 @@ useWorldSaveSync({
     worldLevelAdjustment: worldLevelAdjustment.value,
   }),
 });
+const createRenderer = (context: TresRendererSetupContext) => createGenshinRenderer(unref(context.canvas));
 </script>
 
 <template>
@@ -1730,7 +1729,7 @@ useWorldSaveSync({
     <TresCanvas
       ref="canvas"
       :dpr="[1, maxPixelRatio]"
-      :renderer="({ canvas }: TresRendererSetupContext) => createGenshinRenderer(unref(canvas))"
+      :renderer="createRenderer"
       :render-mode="isPaused ? 'manual' : 'always'"
       :tone-mapping="GENSHIN_TONE_MAPPING"
       shadows

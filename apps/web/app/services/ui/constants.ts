@@ -1,5 +1,4 @@
 import type { UiStyle } from "@/models/ui/UiStyle";
-import type { InjectionKey, Ref } from "vue";
 
 // The terminal's spinner: a star that grows and shrinks back, a frame at a time
 export const SPINNER_FRAMES = ["·", "✢", "✳", "✶", "✻", "✽", "✻", "✶", "✳", "✢"];

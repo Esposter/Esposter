@@ -1,6 +1,5 @@
 // @vitest-environment nuxt
 import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
-import type { Component } from "vue";
 
 import { GeneralNodeType } from "#shared/models/flowchartEditor/node/GeneralNodeType";
 import FlowchartEditorNodeRectangle from "@/components/FlowchartEditor/Node/Rectangle.vue";

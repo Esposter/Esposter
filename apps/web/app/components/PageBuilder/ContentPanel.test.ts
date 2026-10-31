@@ -34,7 +34,6 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises, mount } from "@vue/test-utils";
 import { MjmlNodeType } from "mjml-blocks";
 import { describe, expect, test } from "vitest";
-import { defineComponent, h } from "vue";
 
 const createButtonDocument = (): WebpageDocument => ({
   content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],

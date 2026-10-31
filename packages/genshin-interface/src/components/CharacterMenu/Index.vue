@@ -3,7 +3,6 @@ import type { CharacterMenuEntry } from "#src/models/CharacterMenuEntry";
 import type { CharacterMenuTab } from "#src/models/CharacterMenuTab";
 
 import { CharacterMenuTabs } from "#src/models/CharacterMenuTab";
-import { computed } from "vue";
 
 interface Props {
   // The player's characters, across the screen's top in the order given

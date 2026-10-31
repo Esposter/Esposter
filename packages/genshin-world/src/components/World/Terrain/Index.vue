@@ -93,7 +93,7 @@ const {
 const emit = defineEmits<{ ready: [] }>();
 const { camera, renderer, scene } = useTres();
 const { onBeforeRender } = useLoop();
-const { cellsPerSide, finestRange, finestTileSize } = terrainOptions;
+const { cellsPerSide, finestTileSize } = terrainOptions;
 const morphEye = uniform(new Vector3());
 const terrainMaterial = createTerrainMaterial(terrainOptions, morphEye, { lightUniforms, rampTexture }, waterUniforms);
 const tileIndices = computeTerrainIndices(cellsPerSide);

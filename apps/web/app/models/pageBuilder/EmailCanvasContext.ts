@@ -1,5 +1,4 @@
 import type { EmailKind } from "@/models/pageBuilder/EmailKind";
-import type { VNode } from "vue";
 
 // What a drawing reads besides its own node: its attributes resolved through the MJML cascade, its drawn children, and the
 // Email's kind and width state a section lays its columns out by

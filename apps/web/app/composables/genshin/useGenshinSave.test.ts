@@ -10,7 +10,6 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
-import { until } from "@vueuse/core";
 import { EMPTY_GENSHIN_SAVE } from "genshin-world/save";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 

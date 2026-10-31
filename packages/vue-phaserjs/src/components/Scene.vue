@@ -2,7 +2,6 @@
 import type { SceneEmits } from "#src/models/scene/SceneEmits";
 import type { SceneProps } from "#src/models/scene/SceneProps";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
-import type { VNode } from "vue";
 
 import { useGame } from "#src/composables/useGame";
 import { runSceneShutdown } from "#src/services/hooks/runSceneShutdown";

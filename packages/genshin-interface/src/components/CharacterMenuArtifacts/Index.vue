@@ -7,7 +7,6 @@ import CharacterMenuButtons from "#src/components/CharacterMenuButtons/Index.vue
 import GameButton from "#src/components/GameButton/Index.vue";
 import ToastNotice from "#src/components/ToastNotice/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
-import { computed, ref } from "vue";
 
 interface Props {
   // The pill that opens the picked piece's stats and its actions in place of the totals and the set bonus

@@ -1,7 +1,6 @@
 import type { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
 import type { EmailCanvasContext } from "@/models/pageBuilder/EmailCanvasContext";
 import type { MjmlNode, MjmlNodeType } from "mjml-blocks";
-import type { VNode } from "vue";
 
 // One email node type's drawing: the node narrowed to that type, and what the canvas reads around it
 export type EmailCanvasDrawing<TType extends EmailCanvasType> = (

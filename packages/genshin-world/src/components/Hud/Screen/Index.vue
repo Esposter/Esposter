@@ -14,7 +14,6 @@ import type { Catalogue } from "#src/models/world/Catalogue";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { Input } from "genshin-engine";
 import type { GameText } from "genshin-text";
-import type { VNode } from "vue";
 
 import HudActions from "#src/components/Hud/Actions/Index.vue";
 import HudHealth from "#src/components/Hud/Health/Index.vue";

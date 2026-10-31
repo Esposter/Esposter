@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { VNode } from "vue";
-
 interface Props {
   // The dialog's title, which heads its panel and names it to a screen reader
   title: string;

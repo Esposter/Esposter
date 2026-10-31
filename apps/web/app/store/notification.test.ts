@@ -1,6 +1,5 @@
 // @vitest-environment nuxt
 import type { AppNotification } from "@/models/notification/AppNotification";
-import type { ComputedRef, Ref } from "vue";
 
 import { useNotificationStore } from "@/store/notification";
 import { NotificationSeverity } from "@esposter/db-schema";

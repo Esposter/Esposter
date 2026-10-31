@@ -1,10 +1,8 @@
 // @vitest-environment happy-dom
-import type { Ref } from "vue";
 
 import { useFocusWhenActive } from "@/composables/message/slashCommand/useFocusWhenActive";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
-import { defineComponent, h } from "vue";
 
 const createInputComponent = (isActive: Ref<boolean>) =>
   defineComponent({

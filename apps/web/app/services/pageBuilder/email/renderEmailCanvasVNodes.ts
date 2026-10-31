@@ -1,7 +1,6 @@
 import type { EmailCanvasContext } from "@/models/pageBuilder/EmailCanvasContext";
 import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
 import type { EmailKind } from "@/models/pageBuilder/EmailKind";
-import type { VNode } from "vue";
 
 import { checkIsStackedColumns } from "#shared/services/pageBuilder/email/checkIsStackedColumns";
 import { getEmailAttributeValue } from "#shared/services/pageBuilder/email/getEmailAttributeValue";

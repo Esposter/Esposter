@@ -9,7 +9,6 @@ import { CaptureItemResolver } from "@/models/resolvers/dungeons/item/CaptureIte
 import { useInventoryInfoPanelStore } from "@/store/dungeons/inventory/infoPanel";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { ref } from "vue";
 
 // The party lives on the player, and the player store reads the dungeons store, which imports Phaser. Only the party is
 // Read here, so the fake holds one

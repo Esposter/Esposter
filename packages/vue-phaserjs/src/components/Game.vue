@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Types } from "phaser";
 import type { Except } from "type-fest";
-import type { VNode } from "vue";
 
 import { useGame } from "#src/composables/useGame";
 import { registerTiledJSONExternalLoader } from "#src/plugins/registerTiledJSONExternalLoader";

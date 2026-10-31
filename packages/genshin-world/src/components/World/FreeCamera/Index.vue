@@ -6,7 +6,6 @@ import { CAMERA_FRAME_PRIORITY, FIXED_STEP_SECONDS } from "#src/services/constan
 import { useLoop, useTres } from "@tresjs/core";
 import { createFixedStepLoop, createFreeCamera, createGroundQuery } from "genshin-engine";
 import { PerspectiveCamera } from "three";
-import { onUnmounted } from "vue";
 
 interface Props {
   // The world's ground at a point in its own coordinates, which the camera flies above

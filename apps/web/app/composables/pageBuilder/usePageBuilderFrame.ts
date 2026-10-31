@@ -1,7 +1,6 @@
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 import type { FramePlacement } from "@/models/pageBuilder/FramePlacement";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
-import type { Ref, ShallowRef } from "vue";
 
 import { checkIsHorizontalFlow } from "@/services/pageBuilder/checkIsHorizontalFlow";
 import { getToolbarPlacement } from "@/services/pageBuilder/getToolbarPlacement";

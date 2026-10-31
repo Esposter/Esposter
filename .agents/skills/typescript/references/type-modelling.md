@@ -31,6 +31,10 @@ Prefer a single `as T` whenever TS accepts it, and comment **what the compiler c
 
 What TS accepts is settled by one rule — **one side must be assignable to the other**. A single `as` holds for a fake that is a **subset** of its target: an `EventEmitter` standing in for a `ChildProcess`, a phantom-branded intersection (`TableClient` → `TableClient & { entityType }`), an `Except<T, K>` back to `T`, an object literal of a few members typed against an interface with many, a `defineComponent` stub against a library component, and a `Mock<F>` against a non-overloaded `F`. It never holds for a class fake against an SDK class (`MockContainerClient` → `ContainerClient`), a hand-rolled object against a class with fields the object lacks, a deep-partial stub against a `Database` or a store, or a `Mock` against an overload set — every one of those is a genuine `as unknown as`, and the single form is a typecheck error rather than a judgement call. Write the single form first and let the compiler answer.
 
+## A type is stated where the value is defined, never where it is used
+
+When a value needs a type the compiler would otherwise widen (a tuple read as an array, a literal read as `string`), the annotation or the one cast goes on the **definition** — `const OVERRIDES: OxlintOverride[] = names.map((name) => ({ … }))` — so every use sees the narrow type. An annotation on the callback that builds it, or a cast at the spread or the call that consumes it, repeats the claim at each site and leaves the next use to make it again. Where a cast is truly unavoidable, it sits once on the definition, with the comment above.
+
 ## Configuration interfaces — `Pick` from source types
 
 When a configuration interface re-declares properties already on a source type (e.g. a Phaser `GameObjects.X`), use `Pick<SourceType, "prop1" | "prop2">` in the `extends` clause instead of re-declaring each.
