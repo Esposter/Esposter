@@ -31,7 +31,7 @@ import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
 import type { PlacedDoing } from "#src/services/exploration/placeExplorationDoings";
-import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext } from "@tresjs/core";
+import type { TresCanvasInstance, TresContextWithClock } from "@tresjs/core";
 
 import AchievementScreen from "#src/components/Achievement/Screen/Index.vue";
 import BookReaderScreen from "#src/components/Archive/BookReader/Index.vue";
@@ -193,6 +193,7 @@ import { offerReputationRequest } from "#src/services/reputation/offerReputation
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
+import { createTresRenderer } from "#src/services/scene/createTresRenderer";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
@@ -230,7 +231,6 @@ import { getResultAsync } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
 import { useEventListener, useIntervalFn, useMediaQuery, useRafFn } from "@vueuse/core";
 import {
-  createGenshinRenderer,
   createGrassTrail,
   createInput,
   createLandmarkCollider,
@@ -1701,7 +1701,6 @@ useWorldSaveSync({
     worldLevelAdjustment: worldLevelAdjustment.value,
   }),
 });
-const createRenderer = (context: TresRendererSetupContext) => createGenshinRenderer(unref(context.canvas));
 </script>
 
 <template>
@@ -1709,7 +1708,7 @@ const createRenderer = (context: TresRendererSetupContext) => createGenshinRende
     <TresCanvas
       ref="canvas"
       :dpr="[1, maxPixelRatio]"
-      :renderer="createRenderer"
+      :renderer="createTresRenderer"
       :render-mode="isPaused ? 'manual' : 'always'"
       :tone-mapping="GENSHIN_TONE_MAPPING"
       shadows

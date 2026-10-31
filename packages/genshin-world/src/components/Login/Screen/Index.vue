@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { LoginData } from "#src/models/login/LoginData";
 import type { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
-import type { TresRendererSetupContext } from "@tresjs/core";
 import type { GameLanguage, GameText } from "genshin-text";
 
 import LoginInterface from "#src/components/Login/Interface/Index.vue";
@@ -19,10 +18,11 @@ import {
   LOGIN_TITLE_START_MS,
   LOGIN_TRAVELER_GENDER,
 } from "#src/services/login/constants";
+import { createTresRenderer } from "#src/services/scene/createTresRenderer";
 import { checkIsNestedInteraction } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
 import { useRafFn, useTimeoutFn, watchImmediate } from "@vueuse/core";
-import { createGenshinRenderer, GENSHIN_TONE_MAPPING, QualityTier } from "genshin-engine";
+import { GENSHIN_TONE_MAPPING, QualityTier } from "genshin-engine";
 import { GameScreen } from "genshin-interface";
 import { fillLinePlaceholders, GameTextKey } from "genshin-text";
 import { PCFShadowMap } from "three";
@@ -134,12 +134,16 @@ const onClick = (event: MouseEvent): void => {
   // The door opens only once it has risen into place, as its prompt says it can
   else if (stage.value === LoginStage.Door && isDoorFormed.value) stage.value = LoginStage.Entering;
 };
-const createRenderer = (context: TresRendererSetupContext) => createGenshinRenderer(unref(context.canvas));
 </script>
 
 <template>
   <GameScreen class="login-screen" @click="(event: MouseEvent) => onClick(event)">
-    <TresCanvas :renderer="createRenderer" :tone-mapping="GENSHIN_TONE_MAPPING" shadows :shadow-map-type="PCFShadowMap">
+    <TresCanvas
+      :renderer="createTresRenderer"
+      :tone-mapping="GENSHIN_TONE_MAPPING"
+      shadows
+      :shadow-map-type="PCFShadowMap"
+    >
       <LoginScene
         :cloud-layer-textures="loginData.cloudLayerTextures"
         :clouds="loginData.clouds"

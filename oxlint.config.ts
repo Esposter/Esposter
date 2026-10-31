@@ -1,5 +1,6 @@
 import type { OxlintConfig, OxlintOverride } from "oxlint";
 
+import { ok } from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { defineConfig } from "oxlint";
 
@@ -94,6 +95,9 @@ const getAutoImportedPaths = (declarationsPath: string, source: string) => {
       groups?.fromModule ?? groups?.importModule ?? "",
       (groups?.names ?? "").split(",").map((name) => name.trim()),
     );
+  // A file the regexes read nothing from would leave the ban empty and silent, as a format the tool changes does
+  ok(moduleNamesMap.size > 0, `${declarationsPath} declares no auto-import this ban can read.`);
+
   return Array.from(moduleNamesMap, ([name, importNames]) => ({
     importNames: importNames.filter(Boolean),
     message: `${source} auto-imports this, so it is never imported by hand — drop the import. The names are its generated \`${declarationsPath}\`.`,
