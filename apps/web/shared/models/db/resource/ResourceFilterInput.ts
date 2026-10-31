@@ -1,12 +1,13 @@
 import {
   MAX_TAG_NAME_LENGTH,
   MAX_TAG_VALUE_LENGTH,
+  MAX_TAGS_COUNT,
   RESOURCE_NAME_MAX_LENGTH,
   ResourceTypes,
   resourceTypeSchema,
   selectResourceInResourceSchema,
 } from "@esposter/db-schema";
-import { createUniqueArraySchema, MAX_READ_LIMIT } from "@esposter/shared";
+import { createRecordSchema, createUniqueArraySchema, MAX_READ_LIMIT } from "@esposter/shared";
 import { z } from "zod";
 
 export const resourceFilterInputSchema = z.object({
@@ -27,7 +28,11 @@ export const resourceFilterInputSchema = z.object({
   // Match, so reusing the write-time resourceTagsSchema here would only turn "no results" into a
   // Rejected query that errors the whole list. Its lengths are bounded all the same — a tag longer than any tag can
   // Be matches nothing either way, and the body is not a place to hand the query an arbitrarily large string
-  tags: z.record(z.string().max(MAX_TAG_NAME_LENGTH), z.string().max(MAX_TAG_VALUE_LENGTH)).optional(),
+  tags: createRecordSchema(
+    z.string().max(MAX_TAG_NAME_LENGTH),
+    z.string().max(MAX_TAG_VALUE_LENGTH),
+    MAX_TAGS_COUNT,
+  ).optional(),
   types: createUniqueArraySchema(resourceTypeSchema).max(ResourceTypes.length).optional(),
   // Coerced, so an agent's ISO string through the MCP endpoint, which hands tRPC raw JSON, reads as the Date the
   // Browser's transformer revives

@@ -3,13 +3,14 @@ import type { AnyProcedure } from "@trpc/server";
 import { OPAQUE_KEY } from "#server/services/mcp/constants";
 import { getRequestJsonSchema, readUnboundedPaths } from "#server/services/request/readUnboundedPaths.test";
 import { trpcRouter } from "#server/trpc/routers";
+import { createRecordSchema } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
 describe("trpcRouter", () => {
   // A request body is parsed whole before a procedure runs, so an input with no ceiling lets any caller hand the
-  // Server a string or an array as large as the body limit, and have it validated, stored or queried with
-  test("bounds every string and array in every procedure's input", () => {
+  // Server a string, an array or a record as large as the body limit, and have it validated, stored or queried with
+  test("bounds every string, array and record in every procedure's input", () => {
     expect.hasAssertions();
 
     const unboundedProcedurePaths = new Set<string>();
@@ -67,5 +68,21 @@ describe("trpcRouter", () => {
       "input.open (string)",
       "input.url (string)",
     ]);
+  });
+
+  // A record's keys are free text and its entries unlimited, unless its keys are an enumeration or its entry count is
+  // Capped
+  test("a record fails the guard until its entries are capped or its keys enumerated", () => {
+    expect.hasAssertions();
+
+    const schema = getRequestJsonSchema(
+      z.object({
+        capped: createRecordSchema(z.string().max(1), z.number(), 1),
+        enumerated: z.partialRecord(z.enum(["a"]), z.number()),
+        open: z.record(z.string().max(1), z.number()),
+      }),
+    );
+
+    expect(readUnboundedPaths(schema, "input")).toStrictEqual(["input.open (record)"]);
   });
 });

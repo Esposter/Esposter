@@ -1,4 +1,5 @@
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
+import { createRecordSchema } from "@esposter/shared";
 import { z } from "zod";
 
 // How the reader laid the sheet's table out, kept beside how its file is read: each column's width in px by the
@@ -9,5 +10,9 @@ export interface SheetLayoutSettings {
 }
 
 export const sheetLayoutSettingsSchema = z.object({
-  columnIdWidthMap: z.record(z.string().max(MAX_RESOURCE_CONTENT_SIZE), z.int().positive()).optional(),
+  columnIdWidthMap: createRecordSchema(
+    z.string().max(MAX_RESOURCE_CONTENT_SIZE),
+    z.int().positive(),
+    MAX_RESOURCE_CONTENT_SIZE,
+  ).optional(),
 }) satisfies z.ZodType<SheetLayoutSettings>;

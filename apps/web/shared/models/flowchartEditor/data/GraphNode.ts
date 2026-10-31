@@ -6,6 +6,7 @@ import { graphNodeIdSchema } from "#shared/models/flowchartEditor/data/GraphNode
 import { xyPositionSchema } from "#shared/models/flowchartEditor/data/XYPosition";
 import { generalNodeTypeSchema } from "#shared/models/flowchartEditor/node/GeneralNodeType";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
+import { createRecordSchema } from "@esposter/shared";
 import { z } from "zod";
 
 // What defines a node and nothing the canvas derives from it: its measured size, handle bounds and selection are
@@ -24,6 +25,10 @@ export const graphNodeSchema = z.object({
   data: z.strictObject({ label: z.string().max(MAX_RESOURCE_CONTENT_SIZE).optional() }),
   id: graphNodeIdSchema,
   position: xyPositionSchema,
-  style: z.record(z.string().max(MAX_RESOURCE_CONTENT_SIZE), z.string().max(MAX_RESOURCE_CONTENT_SIZE)).optional(),
+  style: createRecordSchema(
+    z.string().max(MAX_RESOURCE_CONTENT_SIZE),
+    z.string().max(MAX_RESOURCE_CONTENT_SIZE),
+    MAX_RESOURCE_CONTENT_SIZE,
+  ).optional(),
   type: generalNodeTypeSchema,
 }) satisfies z.ZodType<GraphNode>;

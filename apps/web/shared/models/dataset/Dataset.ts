@@ -4,7 +4,7 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 import { datasetColumnSchema } from "#shared/models/dataset/DatasetColumn";
 import { columnValueSchema } from "#shared/models/resource/sheet/column/ColumnValue";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
-import { createUniqueArraySchema } from "@esposter/shared";
+import { createRecordSchema, createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface Dataset {
@@ -28,6 +28,8 @@ export const datasetSchema = z.object({
     .max(MAX_RESOURCE_CONTENT_SIZE)
     .optional(),
   // The one array here duplicates are valid in: two rows holding identical values are two rows
-  rows: z.array(z.record(z.string().max(MAX_RESOURCE_CONTENT_SIZE), columnValueSchema)).max(MAX_RESOURCE_CONTENT_SIZE),
+  rows: z
+    .array(createRecordSchema(z.string().max(MAX_RESOURCE_CONTENT_SIZE), columnValueSchema, MAX_RESOURCE_CONTENT_SIZE))
+    .max(MAX_RESOURCE_CONTENT_SIZE),
   totalRows: z.int().nonnegative().optional(),
 }) satisfies z.ZodType<Dataset>;

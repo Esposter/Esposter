@@ -122,15 +122,21 @@ Hostile markup SHALL be removed from raw HTML.
 - **WHEN** the block's output is produced
 - **THEN** the vector is removed from the output
 
-### Requirement: Every string and array in a document's input is bounded, or is named as opaque
+### Requirement: Every string, array and record in a document's input is bounded, or is named as opaque
 
-A procedure whose input holds a resource-owned document SHALL bound every string and array outside that document, and the bounds guard SHALL fail on an unbounded string or array anywhere in the input except inside the opaque subschema it names.
+A procedure whose input holds a resource-owned document SHALL bound every string, array and record outside that document, and the bounds guard SHALL fail on an unbounded string, array or record anywhere in the input except inside the opaque subschema it names.
 
 #### Scenario: An unbounded string beside an opaque document fails the guard
 
 - **GIVEN** a procedure whose input is an opaque document alongside a plain string with no length limit
 - **WHEN** the bounds guard runs over that procedure
 - **THEN** the guard reports the plain string's path
+
+#### Scenario: A record fails the guard until its entries are capped or its keys enumerated
+
+- **GIVEN** a procedure whose input holds a record of free-text keys with no cap on its entries
+- **WHEN** the bounds guard runs over that procedure
+- **THEN** the guard reports the record's path
 
 ### Requirement: The starter document's own strings carry length limits
 

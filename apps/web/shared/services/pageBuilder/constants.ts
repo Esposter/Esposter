@@ -29,6 +29,8 @@ export const MAX_NODE_HTML_LENGTH = 100_000;
 export const MAX_LANG_LENGTH = 35;
 // The most characters a page token's name may hold, its color- or font- prefix included
 export const MAX_TOKEN_NAME_LENGTH = 64;
+// The most tokens a page's theme may name, its colours and font stacks together
+export const MAX_TOKEN_COUNT = 100;
 // The prefixes a colour token and a font-stack token are named with, which the theme sorts them into
 export const COLOR_TOKEN_PREFIX = "color-";
 export const FONT_TOKEN_PREFIX = "font-";

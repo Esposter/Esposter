@@ -17,12 +17,12 @@ export const getRequestJsonSchema = (schema: z.ZodType): JSONSchema.BaseSchema =
     unrepresentable: "any",
   });
 
-// Every path under `schema` where a string or an array accepts input of any size. A string is bounded by a length,
-// An enumeration, or a pattern that fixes its size — a format alone is not one, since a URL or an email has no ceiling
-// Of its own. A pattern is open when it holds a `*`, a `+` or an `{n,}` repeat, and a class holding a `+` reads as one
-// Too, which only asks for a length the schema could have carried anyway. An array is bounded by its item count. An
-// Opaque subschema is skipped: it holds whatever strings and arrays it is sent, which its own schema parses once it
-// Is applied
+// Every path under `schema` where a string, an array or a record accepts input of any size. A string is bounded by a
+// Length, an enumeration, or a pattern that fixes its size — a format alone is not one, since a URL or an email has no
+// Ceiling of its own. A pattern is open when it holds a `*`, a `+` or an `{n,}` repeat, and a class holding a `+` reads
+// As one too, which only asks for a length the schema could have carried anyway. An array is bounded by its item count
+// And a record by its entry count, or by keys that are an enumeration. An opaque subschema is skipped: it holds
+// Whatever strings, arrays and records it is sent, which its own schema parses once it is applied
 export const readUnboundedPaths = (schema: boolean | JSONSchema.JSONSchema, path: string): string[] => {
   if (typeof schema === "boolean" || schema[OPAQUE_KEY] === true) return [];
 
@@ -38,6 +38,11 @@ export const readUnboundedPaths = (schema: boolean | JSONSchema.JSONSchema, path
     unboundedPaths.push(`${path} (string)`);
   if (types.includes("array") && schema.maxItems === undefined && schema.prefixItems === undefined)
     unboundedPaths.push(`${path} (array)`);
+  const hasEnumeratedKeys =
+    typeof schema.propertyNames === "object" &&
+    (schema.propertyNames.enum !== undefined || schema.propertyNames.const !== undefined);
+  if (schema.propertyNames !== undefined && !hasEnumeratedKeys && schema.maxProperties === undefined)
+    unboundedPaths.push(`${path} (record)`);
 
   for (const [key, propertySchema] of Object.entries(schema.properties ?? {}))
     unboundedPaths.push(...readUnboundedPaths(propertySchema, `${path}.${key}`));

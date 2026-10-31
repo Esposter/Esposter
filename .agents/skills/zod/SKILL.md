@@ -21,6 +21,7 @@ description: Apply when writing Zod schemas. Esposter's Zod conventions for sche
 - `references/numeric-constraints.md` — when adding a numeric field: which constraint its meaning earns.
 - `references/field-key-checks.md` — when an object key mirrors another schema's field or a table's entry, and the choice is a literal key or the computed `[src.keyof().enum.field]`.
 - `references/arrays.md` — when a schema holds an array.
+- `references/records.md` — when a schema holds a record, a map from free-text keys to values.
 - `references/zod-4-apis.md` — when writing a format validator, an enum schema, a refinement's error text, or an issue on a `ZodError`.
 - `references/defaults.md` — when a field is about to take `.default()`.
 - `references/id-fields.md` — when a schema has an id field.
@@ -43,6 +44,10 @@ description: Apply when writing Zod schemas. Esposter's Zod conventions for sche
 
 Never `.array()` directly — `createUniqueArraySchema(schema, key?)` from `@esposter/shared`, unless duplicates are genuinely valid (`references/arrays.md`).
 
+## Records — Always `createRecordSchema`
+
+Never a bare `z.record(…)` — `createRecordSchema(keySchema, valueSchema, maxEntries)` from `@esposter/shared`, since Zod never bounds how many entries a record holds (`references/records.md`).
+
 ## Zod 4 APIs
 
 Zod 4's top-level builders (`z.email()`, `z.int()`, `z.strictObject`), `z.enum(MyEnum)`, a refinement's text under `error`, and an issue pushed onto `error.issues` (`references/zod-4-apis.md`).
@@ -57,7 +62,7 @@ Schemas for persisted client-authoritative data (save blobs, localStorage state)
 
 ## Tightest Possible Constraints — `references/numeric-constraints.md`
 
-Every field carries the tightest constraint its domain allows — a bare `z.number()` / `z.string()` is only correct where any value is valid. On a tRPC input the string and array half is enforced: `apps/web/server/trpc/routers/index.test.ts` walks every procedure's input as JSON Schema and fails on a string with no length and an array with no item cap — a format is no length (a URL or an email has no ceiling), and a pattern counts only when it fixes the size — and the webhook payload is held to the same walk (`apps/web/server/services/request/webhookPayloadSchema.test.ts`). The mapping from a field's meaning to its constraint is that page.
+Every field carries the tightest constraint its domain allows — a bare `z.number()` / `z.string()` is only correct where any value is valid. On a tRPC input the string, array and record half is enforced: `apps/web/server/trpc/routers/index.test.ts` walks every procedure's input as JSON Schema and fails on a string with no length, an array with no item cap and a record with no entry cap — a format is no length (a URL or an email has no ceiling), and a pattern counts only when it fixes the size — and the webhook payload is held to the same walk (`apps/web/server/services/request/webhookPayloadSchema.test.ts`). The mapping from a field's meaning to its constraint is that page.
 
 ## Schema Rules
 

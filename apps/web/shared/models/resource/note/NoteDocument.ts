@@ -2,11 +2,15 @@ import type { JSONContent } from "@tiptap/core";
 
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
-import { getResult, noop } from "@esposter/shared";
+import { createRecordSchema, getResult, noop } from "@esposter/shared";
 import { getSchema } from "@tiptap/core";
 import { z } from "zod";
 
-const attributesSchema = z.record(z.string().max(MAX_RESOURCE_CONTENT_SIZE), z.unknown()).optional();
+const attributesSchema = createRecordSchema(
+  z.string().max(MAX_RESOURCE_CONTENT_SIZE),
+  z.unknown(),
+  MAX_RESOURCE_CONTENT_SIZE,
+).optional();
 
 // The recursive structure keeps attrs and future extension fields the editor persists. The document schema below
 // Checks that each node and mark belongs to the writing kit this app actually loads.

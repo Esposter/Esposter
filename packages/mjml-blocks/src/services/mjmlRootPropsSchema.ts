@@ -7,6 +7,7 @@ import {
   MJML_ROOT_LIST_MAX_LENGTH,
   MJML_VALUE_MAX_LENGTH,
 } from "#src/services/constants";
+import { createRecordSchema } from "@esposter/shared";
 import { z } from "zod";
 
 // A root name and value are bounded alike, so each string the head and body write is held to a length
@@ -28,8 +29,12 @@ export const mjmlRootPropsSchema: z.ZodObject<
   },
   z.core.$strict
 > = z.strictObject({
-  attributes: z.record(rootName, z.record(rootName, rootValue)).optional(),
-  body: z.record(rootName, rootValue).optional(),
+  attributes: createRecordSchema(
+    rootName,
+    createRecordSchema(rootName, rootValue, MJML_ROOT_LIST_MAX_LENGTH),
+    MJML_ROOT_LIST_MAX_LENGTH,
+  ).optional(),
+  body: createRecordSchema(rootName, rootValue, MJML_ROOT_LIST_MAX_LENGTH).optional(),
   breakpoint: z.strictObject({ width: rootValue }).optional(),
   direction: z.enum(MjmlDirection).optional(),
   fonts: z
