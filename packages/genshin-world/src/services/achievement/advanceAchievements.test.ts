@@ -6,6 +6,7 @@ import { describe, expect, test } from "vitest";
 
 const craft = (quantity: number, targetId: string) => ({ kind: AchievementEventKind.ItemCrafted, quantity, targetId });
 const defeat = (targetId: string) => ({ kind: AchievementEventKind.MonsterDefeated, quantity: 1, targetId });
+const finishQuest = (targetId: string) => ({ kind: AchievementEventKind.QuestFinished, quantity: 1, targetId });
 
 describe(advanceAchievements, () => {
   const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
@@ -40,22 +41,12 @@ describe(advanceAchievements, () => {
 
   test("should count a quest its trigger names once more, and pay the Primogems once the count is reached", () => {
     expect.hasAssertions();
-    const firstAdvance = advanceAchievements(
-      [counted],
-      new Map(),
-      { kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: FIRST_QUEST_ID },
-      EPOCH,
-    );
+    const firstAdvance = advanceAchievements([counted], new Map(), finishQuest(FIRST_QUEST_ID), EPOCH);
     expect(firstAdvance).toStrictEqual({
       primogems: 0,
       progressMap: new Map([[COUNTED_ID, { count: 1, countedTargetIds: [FIRST_QUEST_ID] }]]),
     });
-    const secondAdvance = advanceAchievements(
-      [counted],
-      firstAdvance.progressMap,
-      { kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: SECOND_QUEST_ID },
-      EPOCH,
-    );
+    const secondAdvance = advanceAchievements([counted], firstAdvance.progressMap, finishQuest(SECOND_QUEST_ID), EPOCH);
     expect(secondAdvance).toStrictEqual({
       primogems: PRIMOGEMS,
       progressMap: new Map([[COUNTED_ID, { count: 2, finishedAt: EPOCH }]]),
@@ -65,16 +56,11 @@ describe(advanceAchievements, () => {
   test("an OR trigger counts each named quest once", () => {
     expect.hasAssertions();
     const fiveQuests: Achievement = { ...counted, progress: 5 };
-    const firstAdvance = advanceAchievements(
-      [fiveQuests],
-      new Map(),
-      { kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: FIRST_QUEST_ID },
-      EPOCH,
-    );
+    const firstAdvance = advanceAchievements([fiveQuests], new Map(), finishQuest(FIRST_QUEST_ID), EPOCH);
     const repeatedAdvance = advanceAchievements(
       [fiveQuests],
       firstAdvance.progressMap,
-      { kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: FIRST_QUEST_ID },
+      finishQuest(FIRST_QUEST_ID),
       EPOCH,
     );
     expect(repeatedAdvance).toStrictEqual(firstAdvance);
@@ -94,35 +80,22 @@ describe(advanceAchievements, () => {
         EPOCH,
       ),
     ).toStrictEqual({ primogems: 0, progressMap: new Map() });
-    expect(
-      advanceAchievements(
-        [counted],
-        new Map(),
-        { kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: "1" },
-        EPOCH,
-      ),
-    ).toStrictEqual({ primogems: 0, progressMap: new Map() });
-    expect(
-      advanceAchievements(
-        [unwatched],
-        new Map(),
-        { kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: FIRST_QUEST_ID },
-        EPOCH,
-      ),
-    ).toStrictEqual({ primogems: 0, progressMap: new Map() });
+    expect(advanceAchievements([counted], new Map(), finishQuest("1"), EPOCH)).toStrictEqual({
+      primogems: 0,
+      progressMap: new Map(),
+    });
+    expect(advanceAchievements([unwatched], new Map(), finishQuest(FIRST_QUEST_ID), EPOCH)).toStrictEqual({
+      primogems: 0,
+      progressMap: new Map(),
+    });
   });
 
   test("should hold an achievement until the tier before it is done", () => {
     expect.hasAssertions();
-    const secondQuestEvent = { kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: SECOND_QUEST_ID };
+    const secondQuestEvent = finishQuest(SECOND_QUEST_ID);
     const held = advanceAchievements([counted, tier], new Map(), secondQuestEvent, EPOCH);
     expect(held.progressMap).toStrictEqual(new Map([[COUNTED_ID, { count: 1, countedTargetIds: [SECOND_QUEST_ID] }]]));
-    const tierFinishing = advanceAchievements(
-      [counted, tier],
-      held.progressMap,
-      { kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: FIRST_QUEST_ID },
-      EPOCH,
-    );
+    const tierFinishing = advanceAchievements([counted, tier], held.progressMap, finishQuest(FIRST_QUEST_ID), EPOCH);
     const tiered = advanceAchievements([counted, tier], tierFinishing.progressMap, secondQuestEvent, EPOCH);
     expect(tiered.progressMap.get(TIER_ID)).toStrictEqual({ count: 1, finishedAt: EPOCH });
   });
