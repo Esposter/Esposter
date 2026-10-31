@@ -247,8 +247,8 @@ catalogs:
       specifier: ^2.1.1
       version: 2.1.1
     '@fission-ai/openspec':
-      specifier: ^1.15.0
-      version: 1.15.0
+      specifier: ^1.16.0
+      version: 1.16.0
     '@fontsource/signika':
       specifier: ^5.3.0
       version: 5.3.0
@@ -812,7 +812,7 @@ importers:
         version: link:packages/shared-node
       '@fission-ai/openspec':
         specifier: 'catalog:'
-        version: 1.15.0(@types/node@26.6.6)
+        version: 1.16.0(@types/node@26.6.6)
       '@kjanat/actionlint':
         specifier: 'catalog:'
         version: 1.17.0
@@ -3625,9 +3625,9 @@ packages:
   '@fingerprintjs/botd@2.0.0':
     resolution: {integrity: sha512-yhuz23NKEcBDTHmGz/ULrXlGnbHenO+xZmVwuBkuqHUkqvaZ5TAA0kAgcRy4Wyo5dIBdkIf57UXX8/c9UlMLJg==}
 
-  '@fission-ai/openspec@1.15.0':
-    resolution: {integrity: sha512-lG/EPEiL22bB70yKJhWWSPk1UQGLnwO7Dp+hNc/jUmBwb0qxPLzHCUkXEfkny4iYDOsgnsNQmc39/g9QcvnBnA==}
-    engines: {node: '>=20.19.0'}
+  '@fission-ai/openspec@1.16.0':
+    resolution: {integrity: sha512-WQVhZoIR5PoacH/H0qh84VKMcXFbKCIKuAI96arHS3KiKYhJStlRrjUKGxLqLYKLym0j+2hAAY5MZUrPE5qXIA==}
+    engines: {node: '>=22.12.0'}
     hasBin: true
 
   '@floating-ui/core@1.8.0':
@@ -15779,7 +15779,7 @@ snapshots:
 
   '@fingerprintjs/botd@2.0.0': {}
 
-  '@fission-ai/openspec@1.15.0(@types/node@26.6.6)':
+  '@fission-ai/openspec@1.16.0(@types/node@26.6.6)':
     dependencies:
       '@inquirer/core': 12.0.6(@types/node@26.6.6)
       '@inquirer/prompts': 8.7.5(@types/node@26.6.6)
