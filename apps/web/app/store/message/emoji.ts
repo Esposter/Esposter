@@ -37,7 +37,9 @@ export const useEmojiStore = defineStore("message/emoji", () => {
       },
     });
   };
-  const updateEmoji = async (input: Pick<MessageEmojiMetadataEntity, "userIds"> & UpdateEmojiInput) => {
+  const updateEmoji = async (
+    input: Pick<MessageEmojiMetadataEntity, "messageRowKey" | "userIds"> & UpdateEmojiInput,
+  ) => {
     if (!session.value.data) return;
     const { id: userId } = session.value.data.user;
     const updatedInput = { ...input, userIds: getUpdatedUserIds(input.userIds, userId) };
@@ -89,7 +91,9 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   };
   // The fields written ride along with the identity — every caller updates `userIds`, which the identity alone
   // Cannot name, and the assign below is what applies them
-  const storeUpdateEmoji = (input: Partial<MessageEmojiMetadataEntity> & UpdateEmojiInput) => {
+  const storeUpdateEmoji = (
+    input: Partial<MessageEmojiMetadataEntity> & Pick<MessageEmojiMetadataEntity, "messageRowKey"> & UpdateEmojiInput,
+  ) => {
     const emojis = getEmojis(input.partitionKey, input.messageRowKey);
     const index = emojis.findIndex((emoji) => getEntityIdEqualComparator(CompositeAzureKeyPath, input)(emoji));
     if (index === -1) return;

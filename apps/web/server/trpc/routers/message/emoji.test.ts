@@ -127,19 +127,6 @@ describe("emojiRouter", () => {
     expect(takeOne(emojis).userIds).toStrictEqual([userId, member.id]);
   });
 
-  test("keeps a reaction on its own message whatever message the caller names", async () => {
-    expect.hasAssertions();
-
-    const { emojiKey, newMessage } = await setupEmoji();
-    const otherMessage = await messageCaller.createMessage({ message, roomId, timeZone });
-    const member = await createMember();
-    await mockSessionOnce(mockContext.db, member);
-    await emojiCaller.updateEmoji({ ...emojiKey, messageRowKey: otherMessage.rowKey });
-    const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
-
-    expect(emojis.map(({ userIds }) => userIds)).toStrictEqual([[getMockSession().user.id, member.id]]);
-  });
-
   test("updateEmoji twice removes the user id", async () => {
     expect.hasAssertions();
 
@@ -161,11 +148,7 @@ describe("emojiRouter", () => {
 
     // Well-formed and absent rather than malformed: a key the schema rejects never reaches the lookup this
     // Test is named for
-    const input = {
-      messageRowKey: getReverseTickedTimestamp(),
-      partitionKey: roomId,
-      rowKey: getReverseTickedTimestamp(),
-    };
+    const input = { partitionKey: roomId, rowKey: getReverseTickedTimestamp() };
 
     await expect(emojiCaller.updateEmoji(input)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(MessageMetadataType.Emoji, JSON.stringify(input)).message}]`,

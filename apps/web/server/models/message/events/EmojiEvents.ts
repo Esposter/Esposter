@@ -6,5 +6,5 @@ import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/Update
 export interface EmojiEvents {
   createEmoji: [[MessageEmojiMetadataEntity, Device]];
   deleteEmoji: [[DeleteEmojiInput, Device]];
-  updateEmoji: [[Pick<MessageEmojiMetadataEntity, "userIds"> & UpdateEmojiInput, Device]];
+  updateEmoji: [[Pick<MessageEmojiMetadataEntity, "messageRowKey" | "userIds"> & UpdateEmojiInput, Device]];
 }

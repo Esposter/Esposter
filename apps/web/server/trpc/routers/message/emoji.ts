@@ -104,8 +104,7 @@ export const emojiRouter = router({
           if (checkIsOnlyReactor(existingEmoji.userIds, ctx.getSessionPayload.user.id))
             throw getInvalidOperationError(Operation.Update, MessageMetadataType.Emoji, JSON.stringify(existingEmoji));
 
-          // The row's own message, never the one the input names: a reaction is joined or left, and merging the
-          // Caller's messageRowKey would let any member move someone else's reaction onto another message
+          // The row's own message: the input names the reaction alone, so a caller has no message to move it onto
           return {
             messageRowKey: existingEmoji.messageRowKey,
             partitionKey: input.partitionKey,

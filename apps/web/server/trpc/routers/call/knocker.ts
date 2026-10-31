@@ -46,7 +46,7 @@ export const knockerRouter = router({
 
     getOrCreate(callKnockerMap, id, () => new Map<string, CallParticipant>()).set(session.id, knocker);
 
-    callEventEmitter.emit("knockCall", { callSessionId: id, knocker, knockerSessionId: session.id });
+    callEventEmitter.emit("knockCall", { callSessionId: id, knocker });
   }),
   onKnockCall: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
     ctx,

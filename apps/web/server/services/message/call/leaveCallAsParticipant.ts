@@ -16,7 +16,7 @@ export const leaveCallAsParticipant = async (
 ): Promise<boolean> => {
   const isDeleted = deleteCallParticipant(callSessionId, sessionId);
   if (!isDeleted) return false;
-  callEventEmitter.emit("leaveCall", { callSessionId, id: sessionId, sessionId });
+  callEventEmitter.emit("leaveCall", { callSessionId, id: sessionId });
 
   if (callSessionParticipantMap.has(callSessionId)) return true;
 

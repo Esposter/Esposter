@@ -50,11 +50,7 @@ describe("knockerRouter", () => {
     assert.exists(knocker);
 
     expect(callKnockerMap.get(callSessionId)?.size).toBe(1);
-    expect(emitSpy).toHaveBeenCalledExactlyOnceWith("knockCall", {
-      callSessionId,
-      knocker,
-      knockerSessionId: knockerSession.id,
-    });
+    expect(emitSpy).toHaveBeenCalledExactlyOnceWith("knockCall", { callSessionId, knocker });
   });
 
   test("fails knockCall with a non-existent call id", async () => {
