@@ -53,7 +53,7 @@ The first package after the pilot is `packages/genshin-interface`, also compared
 - **It is slower than `vue-tsc` on the native bridge**, by roughly an order of magnitude on this package.
 - **It emits per file, with no barrel.** The bundling into one `.d.ts` per entry stays with the declaration plugin, which would take the per-file output and inline the helper file.
 
-So the shape of the work is a plugin that runs the emit on the build's own file list and feeds the bundler, and a consumer test that builds a package with the `vize` declarations and checks a dependent through both `vue-tsc` and the mapper. Neither is done; `vue-tsc` stays the declaration generator.
+So the shape of the work is a plugin that runs the emit on the build's own file list and feeds the bundler, and a consumer test that builds a package with the `vize` declarations and checks a dependent through both `vue-tsc` and the mapper. Neither is done.
 
 ### `apps/web` last
 
