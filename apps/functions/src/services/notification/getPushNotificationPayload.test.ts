@@ -1,5 +1,5 @@
 import { getPushNotificationPayload } from "#src/services/notification/getPushNotificationPayload";
-import { AppNotificationType, NotificationSeverity, PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
+import { AppNotificationType, PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(getPushNotificationPayload, () => {
@@ -7,10 +7,9 @@ describe(getPushNotificationPayload, () => {
   const body = "body";
   const icon = "icon";
   const path = "path";
-  const severity = NotificationSeverity.Info;
   const title = "title";
   const type = AppNotificationType.Message;
-  const data = { severity, type, url: `${baseUrl}${path}` };
+  const data = { type, url: `${baseUrl}${path}` };
 
   beforeEach(() => {
     vi.stubEnv("BASE_URL", baseUrl);
@@ -19,7 +18,7 @@ describe(getPushNotificationPayload, () => {
   test("makes the deep link absolute against the base url", () => {
     expect.hasAssertions();
 
-    expect(getPushNotificationPayload({ body, icon, path, severity, title, type })).toBe(
+    expect(getPushNotificationPayload({ body, icon, path, title, type })).toBe(
       JSON.stringify({ body, data, icon, title }),
     );
   });
@@ -28,7 +27,7 @@ describe(getPushNotificationPayload, () => {
   test("omits an absent icon and title", () => {
     expect.hasAssertions();
 
-    expect(getPushNotificationPayload({ body, path, severity, type })).toBe(JSON.stringify({ body, data }));
+    expect(getPushNotificationPayload({ body, path, type })).toBe(JSON.stringify({ body, data }));
   });
 
   // The cap belongs to the payload rather than to each sender, so no notification can exceed it
@@ -41,7 +40,7 @@ describe(getPushNotificationPayload, () => {
     // Suffix would pass unnoticed
     const truncatedBody = `${"a".repeat(PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH - 3)}...`;
 
-    expect(getPushNotificationPayload({ body: longBody, path, severity, type })).toBe(
+    expect(getPushNotificationPayload({ body: longBody, path, type })).toBe(
       JSON.stringify({ body: truncatedBody, data }),
     );
   });

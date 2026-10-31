@@ -54,7 +54,7 @@ Rows are trimmed to `NOTIFICATION_RETENTION_MS` on the write path, where the rec
 
 ## Delivery
 
-`sendWebPushNotifications` is the single caller of `web-push` and owns the retry logging and the `410 Gone` subscription cleanup. `getPushNotificationPayload` is the single envelope the service worker parses: the body is capped and the deep link is made absolute there, so neither is something a new notification can forget, and `severity`/`type` ride in `data` so a tab that receives one knows whether its bell is meant to show it.
+`sendWebPushNotifications` is the single caller of `web-push` and owns the retry logging and the `410 Gone` subscription cleanup. `getPushNotificationPayload` is the single envelope the service worker parses: the body is capped and the deep link is made absolute there, so neither is something a new notification can forget, and `type` rides in `data` so a tab that receives one knows whether its bell is meant to show it.
 
 A subscription is per-session, which is what lets a resource operation exclude the session that caused it: that tab showed the toast synchronously, and every other device of the same user is still owed the push.
 

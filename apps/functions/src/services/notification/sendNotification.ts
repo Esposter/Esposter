@@ -77,6 +77,6 @@ export const sendNotification = async (context: InvocationContext, data: Notific
   await sendWebPushNotifications(
     context,
     pushSubscriptions,
-    getPushNotificationPayload({ body, icon, path, severity, title, type: data.type }),
+    getPushNotificationPayload({ body, icon, path, title, type: data.type }),
   );
 };
