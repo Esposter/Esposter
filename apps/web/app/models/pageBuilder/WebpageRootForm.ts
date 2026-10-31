@@ -1,7 +1,7 @@
 import type { WebpageRootProps } from "#shared/models/pageBuilder/WebpageRootProps";
+import type { z } from "zod";
 
 import { webpageRootPropsSchema } from "#shared/models/pageBuilder/WebpageRootProps";
-import { z } from "zod";
 
 // The root's form edits its language alone, since its tokens are edited in the Theme panel
 export interface WebpageRootForm extends Pick<WebpageRootProps, "lang"> {}
