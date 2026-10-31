@@ -25,7 +25,7 @@
 | `genshin-world/src/services/adventureRank`           | 2026-10-31 · Sonnet 5.5 |                                                                    |
 | `genshin-world/src/services/archive`                 | 2026-10-31 · Sonnet 5.5 |                                                                    |
 | `genshin-world/src/services/artifact`                | 2026-10-31 · Haiku 5.5  | its own files only; each subfolder is a row of its own             |
-| `genshin-world/src/services/artifact/sets`           | —                       |                                                                    |
+| `genshin-world/src/services/artifact/sets`           | —                       | flat and past one sitting, with no subfolder to cut at; split owed |
 | `genshin-world/src/services/bosses`                  | 2026-10-31 · Sonnet 5.5 |                                                                    |
 | `genshin-world/src/services/character`               | —                       | its own files only; each subfolder is a row of its own             |
 | `genshin-world/src/services/character/avatar`        | —                       |                                                                    |
