@@ -12,7 +12,7 @@ import { computed, shallowRef } from "vue";
 
 // The cooking recipes, the processing recipes, the cooks' talents by character id and the stove's place in Mondstadt as
 // The world starts, each read from the hosted game data
-export const useWorldCooking = (gameDataBaseUrl: string) => {
+export const useWorldCooking = ({ gameDataBaseUrl }: { gameDataBaseUrl: string }) => {
   const cookingRecipes = shallowRef<CookingRecipe[]>([]);
   const cookingTalents = shallowRef<Record<string, CookingTalent>>({});
   const cookingStovePlace = shallowRef<SceneGroupPlace | undefined>();
@@ -53,6 +53,9 @@ export const useWorldCooking = (gameDataBaseUrl: string) => {
       console.error(error);
     },
   );
+  const cookingRecipe = shallowRef<CookingRecipe>();
+  // The dishes the cook knows at the stove, the one on the screen being the first of them when it opens
+  const openCookingRecipes = shallowRef<CookingRecipe[]>([]);
   // The dish each instruction item teaches, by the item's id, read off the dishes' unlock items
   const instructionRecipeMap = computed(
     () =>
@@ -62,5 +65,13 @@ export const useWorldCooking = (gameDataBaseUrl: string) => {
         ),
       ),
   );
-  return { cookingRecipes, cookingStovePlace, cookingTalents, instructionRecipeMap, processingRecipes };
+  return {
+    cookingRecipe,
+    cookingRecipes,
+    cookingStovePlace,
+    cookingTalents,
+    instructionRecipeMap,
+    openCookingRecipes,
+    processingRecipes,
+  };
 };

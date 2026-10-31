@@ -3,7 +3,6 @@ import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { Character } from "#src/models/character/Character";
 import type { CharacterConstellationKit } from "#src/models/character/CharacterConstellationKit";
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
-import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Expedition } from "#src/models/expedition/Expedition";
@@ -827,8 +826,15 @@ const { grantRewards } = useWorldQuestRewards({
 const { dishUseMap } = useWorldDishes(gameDataBaseUrl);
 // The cooking recipes and the stove's place as the world starts. A used stove opens the cooking screen on a recipe, which
 // Is held here while the screen is open
-const { cookingRecipes, cookingStovePlace, cookingTalents, instructionRecipeMap, processingRecipes } =
-  useWorldCooking(gameDataBaseUrl);
+const {
+  cookingRecipe,
+  cookingRecipes,
+  cookingStovePlace,
+  cookingTalents,
+  instructionRecipeMap,
+  openCookingRecipes,
+  processingRecipes,
+} = useWorldCooking({ gameDataBaseUrl });
 const {
   blacksmithPlace,
   forgeAmount,
@@ -887,9 +893,6 @@ const profileNamecards = computed(() =>
     .filter((itemId) => materialDataMap.has(itemId))
     .map((itemId) => ({ itemId, name: getItemDefinition(itemId, nameText, materialDataMap).name })),
 );
-const cookingRecipe = shallowRef<CookingRecipe>();
-// The dishes the cook knows at the stove, the one on the screen being the first of them when it opens
-const openCookingRecipes = shallowRef<CookingRecipe[]>([]);
 // A deployed member's Max HP as the buffs on it stand now, none while the member has no combatant built
 const getMemberMaxHealth = (characterId: number): number | undefined => {
   const combatant = kitContext.characterIdCombatantMap.get(characterId);
