@@ -28,6 +28,7 @@
   - The decision is recorded in `design.md` ("`apps/web` last"), but the per-file, per-location `apps/web` diagnostic diff is not: `design.md` holds only aggregate counts and the class list. Re-run the spike and record the diff there, then tick this box.
 
 - [ ] 5.2 Triage the app's mapper diagnostics (`design.md`, "Landmines") into mapper defects reported upstream and real findings fixed in the app, and report the plain-JavaScript `type: null` prop break. Verified by `tsrs --runExternalCode` over the app project reporting nothing that `nuxt typecheck` does not.
+- [ ] 5.3 Choose the declaration gate in `design.md`, "`.vue` declarations from `vize check --declaration`": either move `apps/web` onto the mapper, or narrow the gate to the published consumers, since `apps/web` stays on `nuxt typecheck` otherwise. Verified by a recorded choice in that design section, with 6.1's dependency on it stated.
 
 ## 6. `.vue` declarations without `vue-tsc`
 
