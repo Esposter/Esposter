@@ -7,11 +7,11 @@ import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName"
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { MAX_NODE_TEXT_LENGTH } from "#shared/services/pageBuilder/constants";
+import { nodeTextSchema } from "#shared/services/pageBuilder/nodeTextSchema";
 import { webpageUrlSchema } from "#shared/services/pageBuilder/webpageUrlSchema";
 import { z } from "zod";
 
-const buttonFormSchema = z.strictObject({ href: webpageUrlSchema, label: z.string().min(1).max(MAX_NODE_TEXT_LENGTH) });
+const buttonFormSchema = z.strictObject({ href: webpageUrlSchema, label: nodeTextSchema });
 const buttonPropsSchema = z.object({
   ...buttonFormSchema.shape,
   style: nodeStyleSchema.optional(),

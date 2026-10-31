@@ -7,15 +7,16 @@ import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName"
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { MAX_NODE_TEXT_LENGTH, SURVEY_INVITE_BUTTON_COLOR } from "#shared/services/pageBuilder/constants";
+import { SURVEY_INVITE_BUTTON_COLOR } from "#shared/services/pageBuilder/constants";
 import { getSurveyInviteUrl } from "#shared/services/pageBuilder/getSurveyInviteUrl";
+import { nodeTextSchema } from "#shared/services/pageBuilder/nodeTextSchema";
 import { createResourceLinkSchema } from "#shared/services/resource/link/createResourceLinkSchema";
 import { ResourceLinkType } from "@esposter/db-schema";
 import { z } from "zod";
 
 // A link to one published survey, which the resource-link index finds through the declared surveyId
 const surveyInviteFormSchema = z.strictObject({
-  label: z.string().min(1).max(MAX_NODE_TEXT_LENGTH),
+  label: nodeTextSchema,
   surveyId: createResourceLinkSchema(ResourceLinkType.Survey),
 });
 const surveyInvitePropsSchema = z.object({

@@ -26,6 +26,3 @@ export const webpageRootPropsSchema = z.strictObject({
   lang: z.string().min(1).max(MAX_LANG_LENGTH),
   tokens: z.record(tokenNameSchema, styleValueSchema).default({}),
 }) satisfies z.ZodType<WebpageRootProps>;
-
-// The root's form edits its language alone, since its tokens are edited in the Theme panel
-export const webpageRootFormSchema = webpageRootPropsSchema.pick({ lang: true });

@@ -7,10 +7,11 @@ import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName"
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { MAX_NODE_TEXT_LENGTH, WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/constants";
+import { WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/constants";
+import { nodeTextSchema } from "#shared/services/pageBuilder/nodeTextSchema";
 import { z } from "zod";
 
-const tabFormSchema = z.strictObject({ label: z.string().min(1).max(MAX_NODE_TEXT_LENGTH) });
+const tabFormSchema = z.strictObject({ label: nodeTextSchema });
 const tabPropsSchema = z.object({ ...tabFormSchema.shape, style: nodeStyleSchema.optional() }) satisfies z.ZodType<
   OwnProps<TabNodeProps>
 >;
