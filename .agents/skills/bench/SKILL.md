@@ -27,7 +27,7 @@ A reporter writes each bench file's results to colocated `*.bench.{json,md}` you
 
 ## Writing benchmarks
 
-- **The number a session would quote, compare or re-check lives in a committed `*.bench.md`, and nowhere else** — an ad-hoc timing only locates where a run's time goes before a bench is written (`references/speed-gate.md`).
+- **The number a session would quote, compare or re-check lives in a committed `*.bench.md`, and nowhere else** — an ad-hoc timing only locates where a run's time goes before a bench is written (the argument is in `references/speed-gate.md`).
 - **The bench is the speed gate** — never a `*.speed.test.ts` asserting a ratio in the unit suite (`references/speed-gate.md`).
 - **Colocate `*.bench.ts` next to the source**, like `*.test.ts`. The barrel and the build exclude them; Vitest's `bench` glob picks them up and `vitest run` ignores them, so the two never collide.
 - **One `test()` per group, one `bench.compare()` inside it.** The test's full name is the markdown section title, so a `describe` around it nests exactly as it reads: `describe(Command, () => test("insert 100 rows", …))` renders `## Command > insert 100 rows`. A second `compare` in the same test renders a second table under a title of its own, so it has to earn one.
