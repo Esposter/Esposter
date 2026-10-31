@@ -24,11 +24,13 @@
 
 ## 5. The `apps/web` Nuxt typecheck
 
-- [ ] 5.1 Decide whether `vize` replaces `nuxt typecheck` or runs beside it, in `design.md`, after reading how Nuxt generates its check inputs. Verified by a recorded decision with the spike's `apps/web` diagnostic diff.
+- [x] 5.1 Decide whether `vize` replaces `nuxt typecheck` or runs beside it, in `design.md`, after reading how Nuxt generates its check inputs. Verified by a recorded decision with the spike's `apps/web` diagnostic diff.
+
+- [ ] 5.2 Triage the app's mapper diagnostics (`design.md`, "Landmines") into mapper defects reported upstream and real findings fixed in the app, and report the plain-JavaScript `type: null` prop break. Verified by `tsrs --runExternalCode` over the app project reporting nothing that `nuxt typecheck` does not.
 
 ## 6. `.vue` declarations without `vue-tsc`
 
-- [ ] 6.1 Generate the declarations of the Vue packages' `.vue` files from `vize` (`vize check --declaration`) inside the shared tsdown configuration, in place of `dts.tsc.vue`. Verified by each Vue package's built `.d.ts` matching what `vue-tsc` writes today, with its size snapshot unmoved.
+- [ ] 6.1 Generate the declarations of the Vue packages' `.vue` files from `vize` (`vize check --declaration`) inside the shared tsdown configuration, in place of `dts.tsc.vue`. The first comparison (`design.md`, "`.vue` declarations from `vize check --declaration`") found the output is a different component type, so a byte match is not the bar. Verified by a dependent package's typecheck passing through both `vue-tsc` and the mapper against a package built with the `vize` declarations, with that package's size snapshot read and accounted for.
 
 ## 7. Retire `vue-tsc` and the override
 
