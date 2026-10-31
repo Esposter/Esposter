@@ -17,7 +17,7 @@ Every worker entry SHALL evaluate in a scope that has the globals a worker has a
 
 ### Requirement: A worker is found by its name
 
-A file named `*.worker.ts`, and the service worker at `service-worker/sw.ts`, SHALL be a worker entry, and no list of entries is kept.
+A file whose name ends in .worker.ts, and the app's service worker, SHALL be a worker entry, and no list of entries is kept.
 
 #### Scenario: A new worker is covered without being listed
 
@@ -27,7 +27,7 @@ A file named `*.worker.ts`, and the service worker at `service-worker/sw.ts`, SH
 
 ### Requirement: A shared clock reads no Node global
 
-`now` from `@esposter/shared` SHALL read the platform's clock, and SHALL NOT read a global that a worker lacks, so a worker that imports the shared package evaluates.
+`now` from the shared package SHALL read the platform's clock, and SHALL NOT read a global that a worker lacks, so a worker that imports the shared package evaluates.
 
 #### Scenario: A worker imports the shared package
 
