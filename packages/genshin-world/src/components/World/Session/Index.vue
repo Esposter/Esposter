@@ -144,10 +144,7 @@ import { stepElementalSight } from "#src/services/elementalSight/stepElementalSi
 import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
 import { checkIsExpeditionTalk } from "#src/services/expedition/checkIsExpeditionTalk";
 import { computeFishingInteractables } from "#src/services/fishing/computeFishingInteractables";
-import { computeForgeDefinitions } from "#src/services/forging/computeForgeDefinitions";
-import { computeForgeWeapons } from "#src/services/forging/computeForgeWeapons";
-import { FIRST_FORGE_RECIPE_ID, FORGE_CLOCK_INTERVAL_MS, FORGE_INTERACTABLE_ID } from "#src/services/forging/constants";
-import { createForgeProgress } from "#src/services/forging/createForgeProgress";
+import { FORGE_INTERACTABLE_ID } from "#src/services/forging/constants";
 import { grantGcgGameReward } from "#src/services/gcg/grantGcgGameReward";
 import { toGcgWeekGameRewards } from "#src/services/gcg/toGcgWeekGameRewards";
 import { toHandbookDomains } from "#src/services/handbook/toHandbookDomains";
@@ -238,7 +235,7 @@ import {
   QualityTierSettingsMap,
   STAMINA_MAX,
 } from "genshin-engine";
-import { CharacterMenuTab, ForgeTab, InteractionKind, InventorySort, ItemCategory } from "genshin-interface";
+import { CharacterMenuTab, InteractionKind, InventorySort, ItemCategory } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 import { Euler, Group, MathUtils, PCFShadowMap, Vector3 } from "three";
 
@@ -832,7 +829,24 @@ const { dishUseMap } = useWorldDishes(gameDataBaseUrl);
 // Is held here while the screen is open
 const { cookingRecipes, cookingStovePlace, cookingTalents, instructionRecipeMap, processingRecipes } =
   useWorldCooking(gameDataBaseUrl);
-const { blacksmithPlace, forgeRecipes } = useWorldForging(gameDataBaseUrl);
+const {
+  blacksmithPlace,
+  forgeAmount,
+  forgeDefinitions,
+  forgeNow,
+  forgeProgress,
+  forgeRecipeId,
+  forgeRecipes,
+  forgeTab,
+  forgeWeapons,
+} = useWorldForging({
+  gameDataBaseUrl,
+  getWorldNow,
+  materialDataMap,
+  nameText,
+  screenKind,
+  weaponDataMap: statTables.weaponDataMap,
+});
 const { friendshipLevels, friendshipNamecards } = useWorldFriendship(gameDataBaseUrl);
 // The claims a commission makes with the points held, from the handbook's Commissions tab
 const { claimCommission, claimKatheryneBonus, convertLongTermPoint, isLongTermPointConvertible } =
@@ -873,18 +887,6 @@ const profileNamecards = computed(() =>
     .filter((itemId) => materialDataMap.has(itemId))
     .map((itemId) => ({ itemId, name: getItemDefinition(itemId, nameText, materialDataMap).name })),
 );
-// The forge's state for this session: the save holds no forge slice, so a reload empties it, and its clock is read again each
-// Interval while the forge screen is open so its queues' time left moves
-const forgeAmount = ref(1);
-const forgeDefinitions = computed(() => computeForgeDefinitions(forgeRecipes.value, materialDataMap, nameText));
-const forgeNow = shallowRef(getWorldNow());
-const forgeProgress = shallowRef(createForgeProgress(getWorldNow()));
-const forgeRecipeId = ref(FIRST_FORGE_RECIPE_ID);
-const forgeTab = ref(ForgeTab.Materials);
-const forgeWeapons = computed(() => computeForgeWeapons(forgeRecipes.value, statTables.weaponDataMap, nameText));
-useIntervalFn(() => {
-  if (screenKind.value === ScreenKind.Forge) forgeNow.value = getWorldNow();
-}, FORGE_CLOCK_INTERVAL_MS);
 const cookingRecipe = shallowRef<CookingRecipe>();
 // The dishes the cook knows at the stove, the one on the screen being the first of them when it opens
 const openCookingRecipes = shallowRef<CookingRecipe[]>([]);
