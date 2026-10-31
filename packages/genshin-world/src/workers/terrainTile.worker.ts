@@ -55,7 +55,7 @@ const buildPlantedTerrainTile = (
       : { plantColors: new Float32Array(), plantMatrices: new Float32Array() };
   return { ...terrainTile, plantColors, plantMatrices };
 };
-// The worker cannot load `@esposter/shared`, so a build that throws is read as a rejection by allSettled.
+// The worker imports no package but three, so a build that throws is read as a rejection by allSettled.
 // It is not read through its getResult.
 // A tile that fails is answered with its key, so the world releases it instead of waiting on it
 const answerTile = async (request: TerrainTileRequest, terrainWorkerContext: TerrainWorkerContext) => {

@@ -28,7 +28,7 @@ Always import them from `@esposter/azure`, never redefine locally.
 
 ## Reverse-Ticked Timestamps
 
-`getReverseTickedTimestamp` is its own inverse and nanosecond-resolved, so a `rowKey` is never `Date.now()`, an ISO string or a suffixed key, and a test faking timers narrows `toFake` to `["Date"]` (`references/keys.md`).
+`getReverseTickedTimestamp` is its own inverse and nanosecond-resolved, so a `rowKey` is never `Date.now()`, an ISO string or a suffixed key (`references/keys.md`).
 
 ## Batch Writes
 

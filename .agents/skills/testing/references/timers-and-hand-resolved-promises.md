@@ -10,9 +10,9 @@ Read when a test installs fake timers, asserts a timestamp, exercises throttled 
 
 ## `toFake` is for faking _less_, not more
 
-The default set is wide — `process.hrtime` is in it — so a test that only wants a fixed `createdAt` also freezes the monotonic clock. Anything keyed on a tick then stops advancing: every Azure Table row written to one partition gets an identical `rowKey`, the second write is rejected `409`, and a best-effort writer swallows it, which reads as a production bug in code that is fine.
+The default set is wide — `performance` is in it — so a test that only wants a fixed `createdAt` also freezes the monotonic clock, and anything keyed on a tick stops advancing with it. `now()` from `@esposter/shared` steps one nanosecond a call from a frozen clock, so a table row's `rowKey` stays distinct either way.
 
-Name what the test actually asserts on — `vi.useFakeTimers({ now: 0, toFake: ["Date"] })` — whenever the code under test writes a table row or otherwise reads `now()` from `@esposter/shared`.
+Name what the test actually asserts on — `vi.useFakeTimers({ now: 0, toFake: ["Date"] })` — so a clock it does not read keeps running.
 
 **A suite that imports `setupMswTrpc` never fakes `setTimeout`.** The harness's `afterEach` waits one timer boundary for
 msw to answer what is still in flight, and under a frozen clock that boundary never comes, so the suite hangs at its

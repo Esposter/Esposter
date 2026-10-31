@@ -82,11 +82,6 @@ const WORKSPACE_LIBRARY_IMPORT_PATTERN = {
   message:
     "The Nuxt configuration loads in `nuxt prepare`, the app's postinstall, before any workspace library is built — a runtime import of one fails every fresh install. Import the npm package the library wraps instead; types are fine.",
 };
-const SERVICE_WORKER_IMPORT_PATTERN = {
-  ...WORKSPACE_LIBRARY_IMPORT_PATTERN,
-  message:
-    "A service worker has no `window` and no `process`, and a library's top level may read either as it loads — an uncaught throw there leaves the worker unregistered. Keep it to Workbox and its own code; types are fine.",
-};
 const SHARED_APP_IMPORT_PATTERN = {
   group: ["@/**", "~/**"],
   message:
@@ -158,18 +153,6 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
           {
             paths: [...RESTRICTED_IMPORT_PATHS, VUETIFY_IMPORT_PATH],
             patterns: [VUETIFY_IMPORT_PATTERN, WORKSPACE_LIBRARY_IMPORT_PATTERN],
-          },
-        ],
-      },
-    },
-    {
-      files: ["apps/web/service-worker/**"],
-      rules: {
-        "no-restricted-imports": [
-          "error",
-          {
-            paths: [...RESTRICTED_IMPORT_PATHS, VUETIFY_IMPORT_PATH],
-            patterns: [VUETIFY_IMPORT_PATTERN, SERVICE_WORKER_IMPORT_PATTERN],
           },
         ],
       },
