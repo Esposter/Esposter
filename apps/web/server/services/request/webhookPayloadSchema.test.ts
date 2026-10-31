@@ -1,4 +1,5 @@
-import { getRequestJsonSchema, readUnboundedPaths } from "#server/services/request/readUnboundedPaths.test";
+import { getRequestJsonSchema } from "#server/services/request/getRequestJsonSchema.test";
+import { readUnboundedPaths } from "#server/services/request/readUnboundedPaths.test";
 import { webhookPayloadSchema } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

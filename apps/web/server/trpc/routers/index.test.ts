@@ -1,7 +1,8 @@
 import type { AnyProcedure } from "@trpc/server";
 
 import { OPAQUE_KEY } from "#server/services/mcp/constants";
-import { getRequestJsonSchema, readUnboundedPaths } from "#server/services/request/readUnboundedPaths.test";
+import { getRequestJsonSchema } from "#server/services/request/getRequestJsonSchema.test";
+import { readUnboundedPaths } from "#server/services/request/readUnboundedPaths.test";
 import { trpcRouter } from "#server/trpc/routers";
 import { createRecordSchema } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

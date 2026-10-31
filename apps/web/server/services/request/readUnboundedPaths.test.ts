@@ -2,20 +2,6 @@ import type { JSONSchema } from "zod/v4/core";
 
 import { OPAQUE_KEY } from "#server/services/mcp/constants";
 import { describe } from "vitest";
-import { z } from "zod";
-
-describe.todo("readUnboundedPaths");
-
-// A request schema as the JSON Schema its caller is held to, read as the output side, where the convention puts every
-// Constraint. A `z.unknown()` or `z.any()` is stamped opaque, since its JSON Schema is otherwise `{}`
-export const getRequestJsonSchema = (schema: z.ZodType): JSONSchema.BaseSchema =>
-  z.toJSONSchema(schema, {
-    io: "output",
-    override: ({ jsonSchema, zodSchema }) => {
-      if (zodSchema instanceof z.ZodAny || zodSchema instanceof z.ZodUnknown) jsonSchema[OPAQUE_KEY] = true;
-    },
-    unrepresentable: "any",
-  });
 
 // Every path under `schema` where a string, an array or a record accepts input of any size. A string is bounded by a
 // Length, an enumeration, or a pattern that fixes its size — a format alone is not one, since a URL or an email has no
@@ -64,3 +50,5 @@ export const readUnboundedPaths = (schema: boolean | JSONSchema.JSONSchema, path
     unboundedPaths.push(...readUnboundedPaths(definition, `${path}$${name}`));
   return unboundedPaths;
 };
+
+describe.todo("readUnboundedPaths");
