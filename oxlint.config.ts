@@ -83,7 +83,12 @@ const RUNTIME_DECLARATION_REGEX = /typeof import\('(?<module>[^'#.][^']*)'\)\.(?
 const TYPE_DECLARATION_REGEX =
   /export type \{(?<names>[^}]*)\}\s*(?:from '(?<fromModule>[^'#.][^']*)'|import\('(?<importModule>[^'#.][^']*)'\))/gu;
 const getAutoImportedPaths = (declarationsPath: string, source: string) => {
-  const declarations = readFileSync(new URL(declarationsPath, import.meta.url), "utf8");
+  const declarationsUrl = new URL(declarationsPath, import.meta.url);
+  // A tree that has not run `nuxt prepare` (a fresh worktree) has no generated file yet, and every command that loads the
+  // Configuration, formatting included, would fail on it. CI installs first, so the ban always holds there
+  if (!existsSync(declarationsUrl)) return [];
+
+  const declarations = readFileSync(declarationsUrl, "utf8");
   const moduleNamesMap = new Map<string, string[]>();
   const addNames = (module: string, names: string[]) => {
     moduleNamesMap.set(module, [...(moduleNamesMap.get(module) ?? []), ...names]);

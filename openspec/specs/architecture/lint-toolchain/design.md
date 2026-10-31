@@ -103,7 +103,9 @@ The same holds for every name a tool auto-imports: `oxlint.config.ts` reads them
 and bans each from its module. Under `apps/web/app` those are Nuxt's, written on `nuxt prepare`
 (`apps/web/.nuxt/types/imports.d.ts`, the install's postinstall). In the `.vue` files of a package that builds with the
 shared Vue plugin they are the plugin's, in the `auto-imports.d.ts` committed beside its manifest, and a package is
-covered by having one. A name a tool starts auto-importing is banned with no list kept in the repository. A package's
+covered by having one. A name a tool starts auto-importing is banned with no list kept in the repository. A file the
+tool wrote that the reader finds no name in aborts the configuration load, so a format change cannot leave the ban empty;
+a tree that has not run `nuxt prepare` has no Nuxt file yet and loads without that ban, CI's install having written it. A package's
 `.ts` files are left out, because a unit suite runs under the plain Vitest configuration, which applies no plugin.
 
 What stays in ESLint, and why:
