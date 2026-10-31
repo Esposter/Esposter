@@ -99,6 +99,22 @@ Three consequences shape the rest of the pipeline. **The `default` arm is load-b
 
 tsdown cleans `outDir` before each build. Every emitted chunk carries a content hash, so without that a changed build would write new files beside the old ones and a size measurement of `dist` would stop meaning anything. This is what makes the committed size snapshots (`*/src/index.test.ts`) a real signal — a jump in one means something genuinely started being bundled.
 
+## A package builds as a task of the root
+
+Each package with a `build` script is one `vp` task, `build:<directory>`, which the root `vite.config.ts` generates from the manifest, so a new package gains its task without an edit there. The task runs `pnpm run build` in the package's directory, after the build tasks of every workspace package the manifest names in `dependencies`, `devDependencies`, `optionalDependencies` or `peerDependencies`. An edit rebuilds its package and every package downstream of it, and the rest replay. `build:packages` orders the set and caches nothing itself, since each package's task answers for its own.
+
+```mermaid
+flowchart TD
+  D["dependency build tasks run first, from the manifest"] --> K{"every file the recorded build read still matches?"}
+  K -->|"yes"| R["replay the recorded dist and barrels"]
+  K -->|"no"| B["pnpm run build in the package directory"]
+  B --> W["record what the build read and wrote"]
+```
+
+The task's inputs are the package's own files less the ones its build rewrites: `dist`, the barrels (`src/index.ts` and `src/components/index.ts`), `auto-imports.d.ts`, the `_tmp_*` file the manifest rewrite writes through, the sources a build hook generates, and the package's `node_modules/.cache`. Those files stay outputs, so a replay restores them. Each is kept out of the inputs because a task that reads a file it also rewrites is one `vp` refuses to cache. pnpm's own run state is left out of every task, since no build's result depends on it.
+
+The cache lives in `node_modules/.vite/task-cache` at the root of each checkout, so a fresh worktree builds cold once. CI restores that directory between runs, with the `paths` a job names, through the `run-cached-task` action. The tracer and the replay rules are [the task cache](../vite-plus/design.md#the-task-cache).
+
 ## TypeScript configuration layers
 
 The presets are `@esposter/configuration`'s, extended by path, and the root carries no framework assumption: Vue-specific options sit in a leaf, so a Node-only package inherits neither `jsx` nor a DOM lib set.
@@ -135,6 +151,7 @@ A package keeps the flat `.` export by default. A subpath export or entry is add
 
 | File                                                            | Role                                                                                                                                |
 | --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `vite.config.ts`                                                | Generates each package's `build:<directory>` task from its manifest, and orders them as `build:packages`                            |
 | `packages/configuration/src/services/getTsdownConfiguration.ts` | The base every config composes onto                                                                                                 |
 | `packages/configuration/src/services/getPackagePatterns.ts`     | Turns package names into subpath-aware patterns                                                                                     |
 | `packages/configuration/src/services/readPackageManifest.ts`    | Reads the manifest every derivation starts from                                                                                     |
