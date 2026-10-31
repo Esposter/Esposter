@@ -1,9 +1,9 @@
 name: 🏁 Finish release
 
 # Finishes one version tag whose versions are already tagged: publishes the versions npm lacks, drafts the GitHub release,
-# attaches the Windows host to that draft, and makes the release public last. The nightly `Release.yaml` calls it after its
-# `pnpm release`, and `RecoverRelease.yaml` calls it for a tag pushed by hand or one a previous run did not finish. Every
-# step is idempotent, so a re-run picks up where the last one stopped.
+# attaches the Windows host to that draft, and makes the release public last. The nightly `Release.yaml` calls it once it has
+# pushed the version commit, and `RecoverRelease.yaml` calls it for a tag pushed by hand or one a previous run did not finish.
+# Every step is idempotent, so a re-run picks up where the last one stopped.
 on:
   workflow_call:
     inputs:
@@ -34,6 +34,13 @@ jobs:
 
       - name: 📦 Install the workspace
         uses: ./.github/actions/install-projects
+
+      # A tag's checkout holds sources, and a tarball carries what the build writes: each package's `dist` and its manifest's exports
+      - name: 🏗️ Build the packages
+        uses: ./.github/actions/run-cached-task
+        with:
+          task: build:packages
+          save: "false"
 
       # Publishes only the versions npm lacks, through npm trusted publishing (`id-token: write`, no token). Verbose, since
       # lerna-lite logs a failed token exchange only at that level and then publishes without a token, which npm answers

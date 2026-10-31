@@ -1,6 +1,6 @@
 name: 🩹 Recover release
 
-# A version tag finished as soon as it is pushed: a tag a manual `pnpm release` pushed, or one dispatched by name. The
+# A version tag finished as soon as it is pushed: a tag pushed by hand, or one dispatched by name. The
 # nightly `Release.yaml` finishes its own tags through FinishRelease.yaml, and its tag push starts this run too, which
 # queues behind the nightly on the shared `release` group and then finds the release already published and does nothing.
 on:

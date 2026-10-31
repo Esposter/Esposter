@@ -1,11 +1,10 @@
 name: 🚀 Release
 
 # The nightly release, of main: only what a review has passed ships. `check` first recovers the latest tag when its release
-# is missing or a draft. Otherwise `release` runs `pnpm release`, which gates the tree, versions and tags main's new commits,
-# pushes the version commit and its tags to main, and publishes the new versions through npm trusted publishing. Then
-# `finish` runs FinishRelease.yaml on the tag: the draft, the Windows host, and the public release last. The push that
-# `pnpm release` makes to main starts the review run that merges main into ai/queue (`MergeMain.yaml`), so nothing here
-# dispatches it.
+# is missing or a draft. Otherwise `version` gates the tree and versions and tags main's new commits, `push` lands that
+# version commit and its tag on main, and `finish` runs FinishRelease.yaml on the tag: the packages npm lacks, the draft, the
+# Windows host, and the public release last. The push to main starts the review run that merges main into ai/queue
+# (`MergeMain.yaml`), so nothing here dispatches it.
 on:
   schedule:
     # Nightly, at 15:16 UTC
@@ -66,17 +65,16 @@ jobs:
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
 
-  # The push goes through the collector's token, not the workflow's: main's ruleset lets only the Admin role update it, the role
-  # the review's fast-forward pushes with. The same job holds id-token: write, which npm's trusted publishing exchanges for each
-  # package's publish, so the versions the release pushes are the ones it publishes, with no second job to fetch them again.
-  release:
-    name: Release
+  # The one job that runs the repository's own code on main: the install and its dependencies' scripts, the gates, lerna's
+  # lifecycle scripts. It holds no credential for that reason, so it cannot push, and it hands the version commit and its
+  # tag to `push` as a bundle.
+  version:
+    name: Version
     needs: check
     if: needs.check.outputs.skip == 'false' && needs.check.outputs.recover-tag == ''
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      id-token: write
+      contents: read
     outputs:
       tag: ${{ steps.tag.outputs.tag }}
     steps:
@@ -85,8 +83,7 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-          token: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
-          persist-credentials: true
+          persist-credentials: false
 
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
@@ -100,22 +97,102 @@ jobs:
           git config user.email "Q16solver@users.noreply.github.com"
 
       # `scripts` too: the root's oxlint config loads its plugins, so the gates need the `scripts` project's dependencies
-      - name: 📢 Release
-        run: pnpm release
+      - name: 🚧 Gate the tree
+        run: pnpm release:gate
+
+      - name: 🏷️ Version main
+        run: pnpm release:version
 
       - name: 🏷️ Read the tag
         id: tag
         run: echo "tag=$(git describe --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
 
-  # The tag this night released, or the one `check` found unfinished. Skipped on a quiet night, and a failed `pnpm release`
-  # ends the run before it, so no release is drafted for a tag that npm never received
+      - name: 📦 Bundle the version commit
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: git bundle create "$RUNNER_TEMP/release.bundle" main "refs/tags/$TAG" ^origin/main
+
+      - name: 📤 Upload the bundle
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-bundle
+          path: ${{ runner.temp }}/release.bundle
+          if-no-files-found: error
+          retention-days: 1
+
+  # The push goes through the collector's token, not the workflow's: main's ruleset lets only the Admin role update it, the role
+  # the review's fast-forward pushes with. This job runs no repository code, no install and no script, so the token meets
+  # nothing but git. It takes the bundle from a job that did run that code, and so verifies it first: a fast-forward of main
+  # that is one commit, changes only versions and changelogs, and carries one tag.
+  push:
+    name: Push
+    needs: version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: 📥 Download the bundle
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-bundle
+          path: ${{ runner.temp }}
+
+      # A main that moved since `version` read it fails here, before anything is pushed, and the next night versions from the tip
+      - name: 🔎 Verify the version commit
+        run: |
+          git bundle verify "$RUNNER_TEMP/release.bundle"
+          git fetch "$RUNNER_TEMP/release.bundle" refs/heads/main:refs/release/main 'refs/tags/*:refs/tags/*'
+          if ! git merge-base --is-ancestor HEAD refs/release/main; then
+            echo "main moved since the version commit was made." >&2
+            exit 1
+          fi
+          if [ "$(git rev-list --count HEAD..refs/release/main)" != 1 ]; then
+            echo "The bundle holds more than one commit past main." >&2
+            exit 1
+          fi
+          if [ "$(git tag --points-at refs/release/main | wc -l)" != 1 ]; then
+            echo "The version commit does not carry exactly one tag." >&2
+            exit 1
+          fi
+          if git diff --name-only HEAD refs/release/main | grep -Ev '(^|/)(package\.json|CHANGELOG\.md)$|^lerna\.json$'; then
+            echo "The version commit changes paths other than versions and changelogs, listed above." >&2
+            exit 1
+          fi
+
+      # The header `actions/checkout` would persist, held in the job's environment instead of its git config, and masked
+      - name: 🔑 Authenticate git
+        env:
+          PUSH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
+        run: |
+          credential="$(printf 'x-access-token:%s' "$PUSH_TOKEN" | base64 --wrap=0)"
+          echo "::add-mask::$credential"
+          {
+            echo "GIT_CONFIG_COUNT=1"
+            echo "GIT_CONFIG_KEY_0=http.${GITHUB_SERVER_URL}/.extraheader"
+            echo "GIT_CONFIG_VALUE_0=AUTHORIZATION: basic $credential"
+          } >> "$GITHUB_ENV"
+
+      # Atomic, so the branch never moves without its tag. A rejected push fails the job before anything is published
+      - name: 🚚 Push the version commit
+        run: |
+          tag="$(git tag --points-at refs/release/main)"
+          git push --atomic origin refs/release/main:refs/heads/main "refs/tags/$tag:refs/tags/$tag"
+
+  # The tag this night released, or the one `check` found unfinished. Skipped on a quiet night, and a failed `version` or
+  # `push` ends the run before it, so no release is drafted for a tag that main never received
   finish:
     name: Finish
-    needs: [check, release]
-    if: always() && needs.check.outputs.skip == 'false' && (needs.release.result == 'success' || needs.check.outputs.recover-tag != '')
+    needs: [check, version, push]
+    if: always() && needs.check.outputs.skip == 'false' && (needs.push.result == 'success' || needs.check.outputs.recover-tag != '')
     uses: ./.github/workflows/FinishRelease.yaml
     with:
-      tag: ${{ needs.check.outputs.recover-tag || needs.release.outputs.tag }}
+      tag: ${{ needs.check.outputs.recover-tag || needs.version.outputs.tag }}
     permissions:
       contents: write
       id-token: write
