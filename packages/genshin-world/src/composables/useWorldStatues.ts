@@ -3,8 +3,10 @@ import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgress
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldOfferingDependencies } from "#src/models/world/WorldOfferingDependencies";
-import type { ShallowRef } from "vue";
+import type { Group } from "three";
+import type { Ref, ShallowRef } from "vue";
 
+import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
 import { payOfferingLevels } from "#src/services/offering/payOfferingLevels";
 import { claimStatueLevel } from "#src/services/statue/claimStatueLevel";
@@ -16,12 +18,14 @@ import { readStatueLevels } from "#src/services/statue/readStatueLevels";
 import { resonateRegion } from "#src/services/statue/resonateRegion";
 import { toStatueRegionProgress, toStatueRegionProgressSave } from "#src/services/statue/statueRegionProgress";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
+import { computed, ref, shallowRef } from "vue";
 
 // The statues' state the world holds: each region's level, the level its rewards are claimed through and the Oculi held,
 // And the Oculi found. A touch collects an Oculus and holds it in its region, a resonance starts its region at level one,
 // And the Worship Statue offers the Oculi held and pays each level's rewards as that level is claimed, one level an action.
 // What the bag has no room for drops where the claim was made
 export const useWorldStatues = ({
+  characterBody,
   events,
   foundOculusIds,
   gainWorldAdventureExp,
@@ -31,13 +35,16 @@ export const useWorldStatues = ({
   nameText,
   placeWorldDrops,
   regionStatueProgressMap,
+  screenKind,
   setInventory,
   setWallet,
   wallet,
 }: WorldOfferingDependencies & {
+  characterBody: Group;
   events: WorldEvents;
   foundOculusIds: ShallowRef<ReadonlySet<string>>;
   regionStatueProgressMap: ShallowRef<ReadonlyMap<string, StatueRegionProgressSave>>;
+  screenKind: Ref<ScreenKind>;
 }) => {
   // The region's progress is kept as the save holds it, its levels left to the table. A level the region rises to is an
   // Achievement event for its city, read against the level the region held before it
@@ -120,5 +127,47 @@ export const useWorldStatues = ({
     gainWorldAdventureExp(payLevels([claim.claimed], source));
     setRegionProgress(regionId, toStatueRegionProgressSave(offeringProgress, claim.claimedLevel));
   };
-  return { claimLevel, collectOculus, getRegionProgress, offerOculi, readRegionLevels, resonateStatue };
+  // The Worship Statue on screen: the statue it was opened at and the region's levels as the screen read them, which
+  // Its Offer and claim act on
+  const worshipLandmarkId = ref("");
+  const worshipLevels = shallowRef<StatueLevel[]>([]);
+  const worshipRegionId = computed(() =>
+    worshipLandmarkId.value ? getStatueRegionId(worshipLandmarkId.value) : undefined,
+  );
+  // F on a resonated statue opens its Worship Statue, its levels read first so the screen shows each level and its
+  // Rewards
+  const openWorship = (landmarkId: string) => {
+    const regionId = getStatueRegionId(landmarkId);
+    if (regionId === undefined) return;
+    readRegionLevels(regionId, (levels) => {
+      worshipLandmarkId.value = landmarkId;
+      worshipLevels.value = levels;
+      screenKind.value = ScreenKind.Worship;
+    });
+  };
+  const offerWorship = () => {
+    if (worshipRegionId.value !== undefined) offerOculi(worshipRegionId.value, worshipLevels.value);
+  };
+  // A claim takes the next level the region has reached, its rewards dropping where the Worship Statue was opened if
+  // The bag has no room for them
+  const claimWorship = () => {
+    if (worshipRegionId.value === undefined) return;
+    claimLevel(worshipRegionId.value, worshipLevels.value, {
+      id: worshipLandmarkId.value,
+      position: characterBody.position,
+    });
+  };
+  // The name of a reward's item in the reader's language, which a level pays by its material
+  const getWorshipItemName = (itemId: number) => nameText[materialDataMap.get(itemId)?.nameTextId ?? ""] ?? "";
+  return {
+    claimWorship,
+    collectOculus,
+    getRegionProgress,
+    getWorshipItemName,
+    offerWorship,
+    openWorship,
+    resonateStatue,
+    worshipLevels,
+    worshipRegionId,
+  };
 };

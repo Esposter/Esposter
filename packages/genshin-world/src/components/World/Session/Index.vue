@@ -25,7 +25,6 @@ import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { AutoRecoverDwell } from "#src/models/statue/AutoRecoverDwell";
 import type { AutoRecoverSetting } from "#src/models/statue/AutoRecoverSetting";
 import type { RestorativePower } from "#src/models/statue/RestorativePower";
-import type { StatueLevel } from "#src/models/statue/StatueLevel";
 import type { Trial } from "#src/models/trial/Trial";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
@@ -667,7 +666,18 @@ const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, isQuickSwapOpen, 
   inventory,
 });
 // The statues' Oculi and resonances, which pay their levels as the bag's offers do
-const { claimLevel, collectOculus, getRegionProgress, offerOculi, readRegionLevels, resonateStatue } = useWorldStatues({
+const {
+  claimWorship,
+  collectOculus,
+  getRegionProgress,
+  getWorshipItemName,
+  offerWorship,
+  openWorship,
+  resonateStatue,
+  worshipLevels,
+  worshipRegionId,
+} = useWorldStatues({
+  characterBody,
   events,
   foundOculusIds,
   gainWorldAdventureExp,
@@ -677,41 +687,11 @@ const { claimLevel, collectOculus, getRegionProgress, offerOculi, readRegionLeve
   nameText,
   placeWorldDrops,
   regionStatueProgressMap,
+  screenKind,
   setInventory,
   setWallet,
   wallet,
 });
-// The Worship Statue on screen: the statue it was opened at and the region's levels as the screen read them, which its
-// Offer and claim act on
-const worshipLandmarkId = ref("");
-const worshipLevels = shallowRef<StatueLevel[]>([]);
-const worshipRegionId = computed(() =>
-  worshipLandmarkId.value ? getStatueRegionId(worshipLandmarkId.value) : undefined,
-);
-// F on a resonated statue opens its Worship Statue, its levels read first so the screen shows each level and its rewards
-const openWorship = (landmarkId: string) => {
-  const regionId = getStatueRegionId(landmarkId);
-  if (regionId === undefined) return;
-  readRegionLevels(regionId, (levels) => {
-    worshipLandmarkId.value = landmarkId;
-    worshipLevels.value = levels;
-    screenKind.value = ScreenKind.Worship;
-  });
-};
-const offerWorship = () => {
-  if (worshipRegionId.value !== undefined) offerOculi(worshipRegionId.value, worshipLevels.value);
-};
-// A claim takes the next level the region has reached, its rewards dropping where the Worship Statue was opened if the bag
-// Has no room for them
-const claimWorship = () => {
-  if (worshipRegionId.value === undefined) return;
-  claimLevel(worshipRegionId.value, worshipLevels.value, {
-    id: worshipLandmarkId.value,
-    position: characterBody.position,
-  });
-};
-// The name of a reward's item in the reader's language, which a level pays by its material
-const getWorshipItemName = (itemId: number) => nameText[materialDataMap.get(itemId)?.nameTextId ?? ""] ?? "";
 // The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
 // Whose rewards the bag has no room for drop at the tree
 const { offerFrostbearingTree } = useWorldOfferings({
