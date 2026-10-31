@@ -1,64 +1,10 @@
 import type { AnyProcedure } from "@trpc/server";
-import type { JSONSchema } from "zod/v4/core";
 
 import { OPAQUE_KEY } from "#server/services/mcp/constants";
+import { getRequestJsonSchema, readUnboundedPaths } from "#server/services/request/readUnboundedPaths.test";
 import { trpcRouter } from "#server/trpc/routers";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
-
-// Every path under `schema` where a string or an array accepts input of any size. A string is bounded by a
-// Length, a format or a pattern (each of which a request cannot stretch past what the format allows, since an
-// Anchored format rejects the excess), and an array by its item count. An opaque subschema is skipped: it holds whatever
-// Strings and arrays it is sent, which its own schema parses once it is applied
-const readUnboundedPaths = (schema: boolean | JSONSchema.JSONSchema, path: string): string[] => {
-  if (typeof schema === "boolean" || schema[OPAQUE_KEY] === true) return [];
-
-  const unboundedPaths: string[] = [];
-  const types = Array.isArray(schema.type) ? schema.type : [schema.type];
-  const isEnumerated = schema.enum !== undefined || schema.const !== undefined;
-  if (
-    types.includes("string") &&
-    !isEnumerated &&
-    schema.maxLength === undefined &&
-    schema.format === undefined &&
-    schema.pattern === undefined
-  )
-    unboundedPaths.push(`${path} (string)`);
-  if (types.includes("array") && schema.maxItems === undefined && schema.prefixItems === undefined)
-    unboundedPaths.push(`${path} (array)`);
-
-  for (const [key, propertySchema] of Object.entries(schema.properties ?? {}))
-    unboundedPaths.push(...readUnboundedPaths(propertySchema, `${path}.${key}`));
-  for (const [index, subschema] of [
-    ...(schema.anyOf ?? []),
-    ...(schema.oneOf ?? []),
-    ...(schema.allOf ?? []),
-  ].entries())
-    unboundedPaths.push(...readUnboundedPaths(subschema, `${path}|${index}`));
-  for (const [index, itemSchema] of (schema.prefixItems ?? []).entries())
-    unboundedPaths.push(...readUnboundedPaths(itemSchema, `${path}[${index}]`));
-  if (schema.items !== undefined && !Array.isArray(schema.items))
-    unboundedPaths.push(...readUnboundedPaths(schema.items, `${path}[]`));
-  if (schema.additionalProperties !== undefined)
-    unboundedPaths.push(...readUnboundedPaths(schema.additionalProperties, `${path}{}`));
-  if (schema.propertyNames !== undefined)
-    unboundedPaths.push(...readUnboundedPaths(schema.propertyNames, `${path}{key}`));
-  for (const [name, definition] of Object.entries(schema.$defs ?? {}))
-    unboundedPaths.push(...readUnboundedPaths(definition, `${path}$${name}`));
-  return unboundedPaths;
-};
-
-// The JSON Schema of a procedure's input, read as the output side, where the convention puts every constraint
-const getInputJsonSchemas = (procedure: AnyProcedure) =>
-  procedure._def.inputs.map((input) =>
-    z.toJSONSchema(input as z.ZodType, {
-      io: "output",
-      override: ({ jsonSchema: overriddenJsonSchema, zodSchema }) => {
-        if (zodSchema instanceof z.ZodAny || zodSchema instanceof z.ZodUnknown) overriddenJsonSchema[OPAQUE_KEY] = true;
-      },
-      unrepresentable: "any",
-    }),
-  );
 
 describe("trpcRouter", () => {
   // A request body is parsed whole before a procedure runs, so an input with no ceiling lets any caller hand the
@@ -72,7 +18,8 @@ describe("trpcRouter", () => {
     const procedures = trpcRouter._def.procedures as unknown as Record<string, AnyProcedure>;
 
     for (const [procedurePath, procedure] of Object.entries(procedures))
-      for (const jsonSchema of getInputJsonSchemas(procedure)) {
+      for (const input of procedure._def.inputs) {
+        const jsonSchema = getRequestJsonSchema(input as z.ZodType);
         if (readUnboundedPaths(jsonSchema, procedurePath).length > 0) unboundedProcedurePaths.add(procedurePath);
         if (JSON.stringify(jsonSchema).includes(`"${OPAQUE_KEY}":true`)) opaqueProcedurePaths.add(procedurePath);
       }
@@ -96,14 +43,29 @@ describe("trpcRouter", () => {
   test("an unbounded string beside an opaque document fails the guard", () => {
     expect.hasAssertions();
 
-    const schema = z.toJSONSchema(z.object({ document: z.unknown(), title: z.string() }), {
-      io: "output",
-      override: ({ jsonSchema, zodSchema }) => {
-        if (zodSchema instanceof z.ZodUnknown) jsonSchema[OPAQUE_KEY] = true;
-      },
-      unrepresentable: "any",
-    });
+    const schema = getRequestJsonSchema(z.object({ document: z.unknown(), title: z.string() }));
 
     expect(readUnboundedPaths(schema, "input")).toStrictEqual(["input.title (string)"]);
+  });
+
+  // A format only says what shape a string takes, and a URL or an email has no length of its own
+  test("a url, an email and an open pattern fail the guard until they carry a length", () => {
+    expect.hasAssertions();
+
+    const schema = getRequestJsonSchema(
+      z.object({
+        bounded: z.url().max(1),
+        email: z.email(),
+        fixed: z.uuid(),
+        open: z.string().regex(/^a+$/u),
+        url: z.url(),
+      }),
+    );
+
+    expect(readUnboundedPaths(schema, "input")).toStrictEqual([
+      "input.email (string)",
+      "input.open (string)",
+      "input.url (string)",
+    ]);
   });
 });

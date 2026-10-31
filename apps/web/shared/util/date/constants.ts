@@ -8,6 +8,9 @@ import { DateTokens } from "#shared/util/date/DateToken";
 // The menu a sheet column's owner picks a display format from, and dropping it from that menu may not change
 // What the wire carries.
 export const ISO_DATE_FORMAT = "YYYY-MM-DD";
+// The longest datetime a client writes as `z.iso.datetime({ offset: true })` reads it: a date, a time with a
+// Nanosecond fraction, and a numeric offset
+export const ISO_DATETIME_MAX_LENGTH = 35;
 // Built from the token enum rather than written out, so a token added there is scanned for without a second
 // Edit here. Longest first, because an alternation takes the first branch that matches: a token listed before a
 // Longer one it prefixes (`M` before `MMMM`) would claim the first letter and leave the rest as literal text

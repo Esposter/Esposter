@@ -4,10 +4,11 @@ import {
   PUSH_SUBSCRIPTION_AUTH_MAX_LENGTH,
   PUSH_SUBSCRIPTION_P256DH_MAX_LENGTH,
 } from "#shared/services/notification/constants";
+import { URL_MAX_LENGTH } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const pushSubscriptionInputSchema = z.object({
-  endpoint: z.url(),
+  endpoint: z.url().max(URL_MAX_LENGTH),
   expirationTime: z.number().nonnegative().nullish(),
   keys: z.object({
     auth: z.string().max(PUSH_SUBSCRIPTION_AUTH_MAX_LENGTH),

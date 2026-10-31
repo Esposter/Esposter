@@ -1,4 +1,4 @@
-import { MAX_URL_LENGTH } from "#shared/services/pageBuilder/constants";
+import { URL_MAX_LENGTH } from "@esposter/db-schema";
 import { checkIsAllowedUrl, DEFAULT_ALLOWED_SCHEMES } from "@esposter/shared";
 import { z } from "zod";
 
@@ -6,5 +6,5 @@ import { z } from "zod";
 export const webpageUrlSchema = z
   .string()
   .min(1)
-  .max(MAX_URL_LENGTH)
+  .max(URL_MAX_LENGTH)
   .refine((url) => checkIsAllowedUrl(url, DEFAULT_ALLOWED_SCHEMES), { error: "uses a scheme that is not allowed" });

@@ -1,3 +1,4 @@
+import { MAX_SAVE_ID_LENGTH } from "#src/services/save/constants";
 import { MAX_ABYSS_CYCLE_REWARD_CLAIM_COUNT } from "#src/services/spiralAbyss/constants";
 import { z } from "zod";
 
@@ -6,12 +7,18 @@ export const spiralAbyssChamberSaveSchema = z.object({ isCleared: z.boolean(), s
 
 // One cycle of the Abyss: its chambers by id, and the rewards its clears have claimed
 export const spiralAbyssCycleSaveSchema = z.object({
-  chambers: z.record(z.string().regex(/^\d+$/u), spiralAbyssChamberSaveSchema),
+  chambers: z.record(z.string().max(MAX_SAVE_ID_LENGTH).regex(/^\d+$/u), spiralAbyssChamberSaveSchema),
   claimedRewardIds: z.array(z.int().positive()).max(MAX_ABYSS_CYCLE_REWARD_CLAIM_COUNT),
 });
 
 // The Abyss's progress by cycle: the Corridor's one cycle, or a Moon Spire period by its id
-export const spiralAbyssSaveSchema = z.record(z.string().regex(/^(?:corridor|\d+)$/u), spiralAbyssCycleSaveSchema);
+export const spiralAbyssSaveSchema = z.record(
+  z
+    .string()
+    .max(MAX_SAVE_ID_LENGTH)
+    .regex(/^(?:corridor|\d+)$/u),
+  spiralAbyssCycleSaveSchema,
+);
 
 export type SpiralAbyssCycleSave = z.infer<typeof spiralAbyssCycleSaveSchema>;
 export type SpiralAbyssSave = z.infer<typeof spiralAbyssSaveSchema>;

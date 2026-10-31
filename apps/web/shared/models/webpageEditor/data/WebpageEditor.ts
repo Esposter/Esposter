@@ -9,6 +9,7 @@ import {
   RESOURCE_ASSETS_URL_PREFIX,
   WEBPAGE_DESCRIPTION_MAX_LENGTH,
 } from "#shared/services/resource/constants";
+import { URL_MAX_LENGTH } from "@esposter/db-schema";
 import { z } from "zod";
 
 // A webpage's working copy: the page builder's document, its tree and root, with the share preview the published page
@@ -33,6 +34,6 @@ export const webpageEditorSchema = webpageDocumentSchema.and(
     ...aItemEntitySchema.shape,
     description: z.string().max(WEBPAGE_DESCRIPTION_MAX_LENGTH),
     html: z.string().max(MAX_RESOURCE_CONTENT_SIZE).meta({ readOnly: true }).optional(),
-    imageUrl: z.literal("").or(z.string().startsWith(RESOURCE_ASSETS_URL_PREFIX)),
+    imageUrl: z.literal("").or(z.string().startsWith(RESOURCE_ASSETS_URL_PREFIX).max(URL_MAX_LENGTH)),
   }),
 ) satisfies z.ZodType<ToData<WebpageEditor>>;

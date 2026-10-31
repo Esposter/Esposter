@@ -2,7 +2,7 @@ import type { CompositeKeyEntity } from "@esposter/db-schema";
 import type { ToData } from "@esposter/shared";
 
 import { EN_US_GRAPHEME_SEGMENTER } from "#shared/services/intl/constants";
-import { CUSTOM_EMOJI_TAG_PREFIX } from "#shared/services/message/emoji/constants";
+import { CUSTOM_EMOJI_TAG_PREFIX, UNICODE_EMOJI_TAG_MAX_LENGTH } from "#shared/services/message/emoji/constants";
 import {
   createMessageMetadataEntitySchema,
   MessageMetadataEntity,
@@ -30,7 +30,10 @@ export const messageEmojiMetadataEntitySchema = z.object({
   // Run of them, so the grapheme count beside it is what bounds a tag to a single cluster — toned characters,
   // Flags and ZWJ sequences all being one. See openspec/specs/esbabbler/emoji/design.md
   emojiTag: z.union([
-    z.emoji().refine((emojiTag) => [...EN_US_GRAPHEME_SEGMENTER.segment(emojiTag)].length === 1),
+    z
+      .emoji()
+      .max(UNICODE_EMOJI_TAG_MAX_LENGTH)
+      .refine((emojiTag) => [...EN_US_GRAPHEME_SEGMENTER.segment(emojiTag)].length === 1),
     z.templateLiteral([CUSTOM_EMOJI_TAG_PREFIX, z.uuid()]),
   ]),
   ...userIdsSchema.shape,

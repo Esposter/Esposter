@@ -2,12 +2,14 @@ import { followUpListInputSchema } from "#shared/models/db/resource/todoList/Fol
 import { aNamedItemEntitySchema } from "#shared/models/entity/ANamedItemEntity";
 import { todoListItemOriginSchema } from "#shared/models/resource/todoList/TodoListItemOrigin";
 import { TODO_LIST_ITEM_NOTES_MAX_LENGTH } from "#shared/services/resource/item/constants";
+import { ISO_DATETIME_MAX_LENGTH } from "#shared/util/date/constants";
 import { z } from "zod";
 
 export const addFollowUpInputSchema = z.object({
   ...followUpListInputSchema.shape,
   dueAt: z.iso
     .datetime({ offset: true })
+    .max(ISO_DATETIME_MAX_LENGTH)
     .optional()
     .meta({ description: "Only for a real deadline: a due date sends the owner a reminder" }),
   name: aNamedItemEntitySchema.shape.name.meta({ description: "An instruction a cold session can act on" }),
