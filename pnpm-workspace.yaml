@@ -259,7 +259,7 @@ catalog:
   workbox-precaching: ^7.4.1
   workbox-routing: ^7.4.1
   write-excel-file: ^4.1.1
-  ws: ^8.22.0
+  ws: ^8.22.1
   zod: ^4.6.7
 catalogMode: strict
 
