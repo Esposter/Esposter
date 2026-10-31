@@ -53,6 +53,10 @@ The zones above are about direction. The fourth import kind — a workspace pack
 
 The seam that is worth keeping is the opposite shape: a local function that _wraps_ package behaviour with something of its own, like `readSurveyResponseEntities` naming what "this survey's responses" means on top of `getPartitionKeyFilter`. The test is whether deleting the file would lose a decision.
 
+## The server never loads a component
+
+The server and shared TypeScript projects declare none of the client's Vue globals, so a component either one reaches is checked without `ref` or `computed`, and fails as a wall of `Cannot find name` in files nobody edited. A package that serves both sides therefore keeps a lean entry the server imports, and its root barrel, which re-exports every component, stays off that path. `scripts/src/workspace/serverComponentGraph.test.ts` walks the imports from each workspace-package module `server/` and `shared/` name, through relative imports, a package's own `#` imports and its siblings' source exports, and fails with the chain to the first module that imports a component.
+
 ## No module cycle
 
 An import never leads back to the module it came from, however many modules it passes through. A cycle is not a
@@ -81,13 +85,14 @@ fails whenever an auto-import closes one of its cycles.
 
 ## Key files
 
-| File                                                                                   | Role                                               |
-| -------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `oxlint.config.ts`                                                                     | The `apps/web/shared/**` override carrying the ban |
-| `apps/web/shared/types/zod.d.ts`                                                       | Zod metadata both zones share                      |
-| `apps/web/app/models/resource/sheet/column/transformation/ColumnTransformationForm.ts` | The worked twin                                    |
-| `apps/web/app/moduleCycles.test.ts`                                                    | The cycles only an auto-import closes              |
-| `apps/web/app/composables/message/thread/useOpenThread.ts`                             | The worked cut                                     |
+| File                                                                                   | Role                                                    |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `oxlint.config.ts`                                                                     | The `apps/web/shared/**` override carrying the ban      |
+| `apps/web/shared/types/zod.d.ts`                                                       | Zod metadata both zones share                           |
+| `apps/web/app/models/resource/sheet/column/transformation/ColumnTransformationForm.ts` | The worked twin                                         |
+| `apps/web/app/moduleCycles.test.ts`                                                    | The cycles only an auto-import closes                   |
+| `scripts/src/workspace/serverComponentGraph.test.ts`                                   | The component a server import reaches through a package |
+| `apps/web/app/composables/message/thread/useOpenThread.ts`                             | The worked cut                                          |
 
 ## Sources
 
