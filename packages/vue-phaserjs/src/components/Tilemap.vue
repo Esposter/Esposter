@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { Tilemaps, Types } from "phaser";
+import type { VNode } from "vue";
 
 import { useInjectSceneKey } from "#src/composables/useInjectSceneKey";
 import { getInitializeGameObjectLifecycleHook } from "#src/services/hooks/getInitializeGameObjectLifecycleHook";

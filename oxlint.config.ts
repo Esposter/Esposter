@@ -82,7 +82,7 @@ const RESTRICTED_IMPORT_PATHS = [...OTHER_RESTRICTED_IMPORT_PATHS, ...CHILD_PROC
 const RUNTIME_DECLARATION_REGEX = /typeof import\('(?<module>[^'#.][^']*)'\)\.(?<name>\w+)/gu;
 const TYPE_DECLARATION_REGEX =
   /export type \{(?<names>[^}]*)\}\s*(?:from '(?<fromModule>[^'#.][^']*)'|import\('(?<importModule>[^'#.][^']*)'\))/gu;
-const getAutoImportedPaths = (declarationsPath: string, source: string) => {
+const getAutoImportedPaths = (declarationsPath: string, source: string, allowTypeImports: boolean) => {
   const declarationsUrl = new URL(declarationsPath, import.meta.url);
   // A tree that has not run `nuxt prepare` (a fresh worktree) has no generated file yet, and every command that loads the
   // Configuration, formatting included, would fail on it. CI installs first, so the ban always holds there
@@ -104,6 +104,7 @@ const getAutoImportedPaths = (declarationsPath: string, source: string) => {
   ok(moduleNamesMap.size > 0, `${declarationsPath} declares no auto-import this ban can read.`);
 
   return Array.from(moduleNamesMap, ([name, importNames]) => ({
+    allowTypeImports,
     importNames: importNames.filter(Boolean),
     message: `${source} auto-imports this, so it is never imported by hand — drop the import. The names are its generated \`${declarationsPath}\`.`,
     name,
@@ -112,7 +113,7 @@ const getAutoImportedPaths = (declarationsPath: string, source: string) => {
 // The app's imports are Nuxt's, written on `nuxt prepare` (the install's postinstall)
 const APP_RESTRICTED_IMPORT_PATHS = [
   ...RESTRICTED_IMPORT_PATHS,
-  ...getAutoImportedPaths("apps/web/.nuxt/types/imports.d.ts", "Nuxt"),
+  ...getAutoImportedPaths("apps/web/.nuxt/types/imports.d.ts", "Nuxt", false),
 ];
 const VUETIFY_IMPORT_PATH = { message: VUETIFY_MESSAGE, name: "@vuetify/v0" };
 const VUETIFY_IMPORT_PATTERN = { group: ["@vuetify/v0/*"], message: VUETIFY_MESSAGE };
@@ -141,7 +142,8 @@ const PACKAGE_IMPORT_PATTERNS = [PACKAGE_ALIAS_IMPORT_PATTERN, PACKAGE_RELATIVE_
 // A package that builds with the shared Vue plugin has its own `auto-imports.d.ts`, committed beside its manifest, so the
 // Packages are the ones that have one. The plugin's imports are ambient in its components. Its `.ts` files are left out: a
 // Unit suite runs under the plain Vitest configuration, which applies no plugin, so a module it loads keeps the imports it
-// Needs there
+// Needs there. A type import stays allowed: the declaration build writes a prop, slot or emit type into the shipped `.d.ts`
+// Only through an import, and an ambient name there fails it as a private name (`TS4033`)
 const AUTO_IMPORT_PACKAGE_OVERRIDES: OxlintOverride[] = readdirSync(new URL("packages/", import.meta.url))
   .filter((name) => existsSync(new URL(`packages/${name}/auto-imports.d.ts`, import.meta.url)))
   .map((name) => ({
@@ -152,7 +154,7 @@ const AUTO_IMPORT_PACKAGE_OVERRIDES: OxlintOverride[] = readdirSync(new URL("pac
         {
           paths: [
             ...RESTRICTED_IMPORT_PATHS,
-            ...getAutoImportedPaths(`packages/${name}/auto-imports.d.ts`, "The package's Vue plugin"),
+            ...getAutoImportedPaths(`packages/${name}/auto-imports.d.ts`, "The package's Vue plugin", true),
           ],
           patterns: PACKAGE_IMPORT_PATTERNS,
         },
