@@ -8,12 +8,12 @@ logic is its pattern stays where it is, anything with control flow becomes a tes
 A code example teaching a convention is not a recipe and never migrates — the question is whether a reader is
 meant to **run** the block.
 
-| Unit                                           | Swept                 | Notes                                                                          |
-| ---------------------------------------------- | --------------------- | ------------------------------------------------------------------------------ |
-| `.agents/skills/*/references/*.md`, `SKILL.md` | 2026-10-05 · Opus 5.5 |                                                                                |
-| `.agents/ledgers/*.md`                         | 2026-10-05 · Opus 5.5 | a grep pipeline is one command — the find recipes are mostly already compliant |
-| root markdown                                  | 2026-10-05 · Opus 5.5 |                                                                                |
-| `openspec/**/*.md`                             | —                     |                                                                                |
+| Unit                                           | Swept                   | Notes                                                                          |
+| ---------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------ |
+| `.agents/skills/*/references/*.md`, `SKILL.md` | 2026-10-05 · Opus 5.5   |                                                                                |
+| `.agents/ledgers/*.md`                         | 2026-10-05 · Opus 5.5   | a grep pipeline is one command — the find recipes are mostly already compliant |
+| root markdown                                  | 2026-10-05 · Opus 5.5   |                                                                                |
+| `openspec/**/*.md`                             | 2026-10-31 · Sonnet 5.5 |                                                                                |
 
 Find recipe, over `*.md`: fenced `bash`/`sh` blocks are the candidates, and a block is a finding when it holds a
 loop, a branch, a fallback or a second process aggregating the first's output.
