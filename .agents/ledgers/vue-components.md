@@ -175,7 +175,7 @@ clean grep is the start of the pass, not its result.
 
 ## Find recipe — the normal form
 
-The criterion, and why length is only a first look, is in `normal-form.md`. Nothing enforces length, so the first look is by hand:
+The criterion, and why length is only a first look, is in `.agents/skills/vue-component-patterns/references/normal-form.md`. Nothing enforces length, so the first look is by hand:
 
 ```bash
 # the largest components, app and packages alike
