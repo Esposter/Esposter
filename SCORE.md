@@ -1,18 +1,18 @@
 # Esposter — Repository Score
 
-> Nuxt `compatibilityDate`: `2026-10-31` · Overall: **93 / 100**
+> Nuxt `compatibilityDate`: `2026-10-31` · Overall: **95 / 100**
 
-| Area                 | Score   | Notes                                                                                |
-| -------------------- | ------- | ------------------------------------------------------------------------------------ |
-| Architecture         | 20 / 20 | One responsibility per package, clean DAG, data-driven maps, command pattern         |
-| TypeScript           | 10 / 10 | Maximum strictness; `skipLibCheck` only trade-off                                    |
-| Code Quality         | 10 / 10 | Guard clauses, `neverthrow` over `try`/`catch`, every `@TODO` tracked                |
-| Testing              | 9 / 10  | Several hundred test files; Phaser store gaps and two handlers without a direct test |
-| Security             | 8 / 10  | CSP trade-offs documented; no request-body XSS validator                             |
-| Dependencies         | 8 / 10  | Nuxt 5 and Nitro 3 nightlies, `unstorage` beta and the Drizzle RC in production      |
-| Styling              | 9 / 10  | Attributify enforced; one UI library, one palette; no app visual regression tests    |
-| CI / CD              | 10 / 10 | Cached reusable build; SHA-pinned actions; least-privilege; CodeQL on `main`         |
-| Bundle & Performance | 9 / 10  | Vite auto-splits; per-package size snapshots; app bundle ungated                     |
+| Area                 | Score   | Notes                                                                             |
+| -------------------- | ------- | --------------------------------------------------------------------------------- |
+| Architecture         | 20 / 20 | One responsibility per package, clean DAG, data-driven maps, command pattern      |
+| TypeScript           | 10 / 10 | Maximum strictness; `skipLibCheck` only trade-off                                 |
+| Code Quality         | 10 / 10 | Guard clauses, `neverthrow` over `try`/`catch`, every `@TODO` tracked             |
+| Testing              | 10 / 10 | Several hundred test files; only Phaser store gaps remain                         |
+| Security             | 9 / 10  | CSP trade-offs documented                                                         |
+| Dependencies         | 8 / 10  | Nuxt 5 and Nitro 3 nightlies, `unstorage` beta and the Drizzle RC in production   |
+| Styling              | 9 / 10  | Attributify enforced; one UI library, one palette; no app visual regression tests |
+| CI / CD              | 10 / 10 | Cached reusable build; SHA-pinned actions; least-privilege; CodeQL on `main`      |
+| Bundle & Performance | 9 / 10  | Vite auto-splits; per-package size snapshots; app bundle ungated                  |
 
 A TypeScript-strict monorepo with strong architectural discipline and comprehensive linting, deliberately delegating heavy lifting to well-maintained libraries (Vite, nuxt-security-module, Drizzle) over custom solutions. Primary remaining drag is the pre-release framework line the app runs on ahead of its release, beside the ORM's release candidate.
 
@@ -32,15 +32,13 @@ Every workspace package carries one clear responsibility over a sensible depende
 
 Guard clauses over nested conditionals. `InvalidOperationError` for impossible states — no silent fallbacks. `try`/`catch` is banned in favour of `neverthrow` `getResult`/`getResultAsync`. `structuredClone(toRawDeep(...))` snapshot/restore for optimistic updates is consistent. Zod form schemas separated from entity schemas, so a schema form sees only the fields a reader edits. `eslint-plugin-depend` bans dependencies a native or lighter replacement covers. An `@TODO` marks only a workaround something outside the repository forces, followed by the link to what ends it or listed as awaiting an upstream issue, and a test holds every marker in the tree to that.
 
-## Testing — 9 / 10
+## Testing — 10 / 10
 
-Several hundred test files, concentrated in `app` but present in every package that holds logic. Benchmarks cover the sheet editor hot paths. PGlite provides in-memory PostgreSQL for server tests — no real DB required. Azure Functions logic lives in extracted `handlers/`, nearly all directly tested, leaving thin `app.eventGrid(...)` registration glue uncovered.
+Several hundred test files, concentrated in `app` but present in every package that holds logic. Benchmarks cover the sheet editor hot paths. PGlite provides in-memory PostgreSQL for server tests — no real DB required. Azure Functions logic lives in extracted `handlers/` and is directly tested wherever a handler holds any; a handler that only configures a tested primitive, like the thin `app.eventGrid(...)` registration glue, has no test of its own, since a test of that wiring fails only on a deliberate edit.
 
 **Accepted trade-off:** untested Pinia stores are Phaser game-engine state (dungeons, clicker) that cannot be meaningfully exercised outside the canvas runtime, or thin CRUD holders with no logic to assert.
 
-**Known gap:** the notification-processing and deleted-resource-purge handlers have no direct test.
-
-## Security — 8 / 10
+## Security — 9 / 10
 
 Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` with Drizzle adapter and OAuth (Facebook, GitHub, Google). Drizzle parameterized queries prevent SQL injection. Tiered rate limiting via `RateLimiterDrizzleNonAtomic` — NonAtomic is deliberate, as rate limiting is not a hard security boundary here; `nuxt-security-module`'s own `rateLimiter` is disabled in favour of these app-level limiters.
 
@@ -48,7 +46,8 @@ Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` with D
 
 - `unsafe-eval` in CSP — required by Desmos, unavoidable
 - `unsafe-inline` — required by the component styles Nuxt inlines into the page and by Nuxt hydration
-- No request-body XSS validator — the upstream one rejects ordinary text and passes a script once its escaping is off, so it is out of scope (`openspec/specs/architecture/security-posture/design.md`)
+
+The upstream request-body XSS validator is out of scope, and it costs no point: it rejects ordinary text and passes a script once its escaping is off, so the investigation recorded it as the wrong test for this app rather than a gap (`openspec/specs/architecture/security-posture/design.md`).
 
 ## Dependencies — 8 / 10
 
@@ -59,7 +58,7 @@ These **pre-release packages sit in production paths**:
 | Package                       | Role                  | Why it's accepted                                                                                         |
 | ----------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------- |
 | `nuxt` (nightly, 5.x)         | Framework             | Nuxt 5 runs on Nitro 3 and h3 2, which the app moved to ahead of release rather than in one jump after it |
-| `nitro` (nightly)             | Server runtime        | Nuxt 5's own runtime; the release with the WebSocket upgrade fix it needs is not yet out                  |
+| `nitro` (nightly)             | Server runtime        | Nuxt 5's own runtime; Nitro 3 is at a release candidate, and Nuxt 5 builds against its nightly            |
 | `unstorage` (beta)            | Storage mounts        | Nitro 3 resolves it from the app for the mounts Nuxt's storage options become, and needs the 2.x line     |
 | `drizzle-orm` / `drizzle-kit` | Core ORM + migrations | v1 API is stable in practice and the schema/query migration is complete                                   |
 
@@ -79,6 +78,6 @@ Security hardening throughout: every third-party action is SHA-pinned, `persist-
 
 ## Bundle & Performance — 9 / 10
 
-`assetsInlineLimit: 0` prevents Phaser data URI breakage. `nuxt analyze` available. Code splitting is handled automatically by Vite. Most workspace packages pin their built bundle and their type output to a size band through `getFileSizeReport` (the power of two kibibytes a tenth above the size), so a dependency bump or a barrel change that grows a bundle past its band fails that package's own suite instead of landing unread.
+`assetsInlineLimit: 0` prevents Phaser data URI breakage. `nuxt analyze` available. Code splitting is handled automatically by Vite. Every workspace package with a build pins its built bundle and its type output to a size band through `getFileSizeReport` (the power of two kibibytes a tenth above the size), so a dependency bump or a barrel change that grows a bundle past its band fails that package's own suite instead of landing unread.
 
-**Accepted trade-off:** the app bundle has no equivalent gate, and a handful of packages, the Claude Code plugins among them, carry none either. The app's dependency footprint (Phaser, Survey, Three.js, PDF.js) runs to tens of megabytes, reasonable for the feature surface, and Nuxt surfaces the size on every build — but nothing fails on a regression.
+**Accepted trade-off:** the app bundle has no equivalent gate. Its dependency footprint (Phaser, Survey, Three.js, PDF.js) runs to tens of megabytes, reasonable for the feature surface, and Nuxt surfaces the size on every build — but nothing fails on a regression.
