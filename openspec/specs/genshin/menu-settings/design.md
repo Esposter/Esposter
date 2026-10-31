@@ -75,4 +75,4 @@ flowchart TD
 
 - [Settings](https://genshin-impact.fandom.com/wiki/Settings), Genshin Impact Wiki: the graphics quality, the volumes from 1 to 10, the camera's ranges, the fifteen game languages and settings kept per device.
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the Basic Settings' default keys for the Actions list, the PC column.
-- The English PC client's settings in the recording `yt-5EmJX_RyuY8-menu-settings`: the rows' places and values, as the code's comments record them.
+- The English PC client's settings in [the Settings screen from the side bar](https://www.youtube.com/watch?v=5EmJX_RyuY8) (`{data-root}/genshin-parity/captures/yt-5EmJX_RyuY8-menu-settings.mp4`): the rows' places and values, as the code's comments record them.
