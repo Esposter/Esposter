@@ -3,6 +3,7 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
+import { FLOWER_ITEM_DEFINITION } from "#src/services/artifact/constants.test";
 import { createArtifact } from "#src/services/artifact/createArtifact.test";
 import { getBagArtifactsForSlot } from "#src/services/artifact/getBagArtifactsForSlot";
 import { ItemCategory } from "genshin-interface";
@@ -10,7 +11,7 @@ import { describe, expect, test } from "vitest";
 
 const createEntry = (id: number, artifact: Artifact): InventoryItem => ({
   artifact,
-  definition: { category: ItemCategory.Artifact, id: 101, name: "Flower Piece", rank: 1, rarity: 5, stackLimit: 1 },
+  definition: FLOWER_ITEM_DEFINITION,
   id,
   quantity: 1,
 });

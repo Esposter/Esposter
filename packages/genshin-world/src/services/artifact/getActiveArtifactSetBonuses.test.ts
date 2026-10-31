@@ -30,45 +30,34 @@ describe(getActiveArtifactSetBonuses, () => {
       },
     ],
   ]);
+  const twoPieces = [
+    createArtifact({ slot: ArtifactSlot.CircletOfLogos }),
+    createArtifact({ slot: ArtifactSlot.FlowerOfLife }),
+  ];
+  const twoPieceBonus = {
+    attributeLines: [{ attribute: Attribute.Health, value: 10 }],
+    descriptionTextHash: "",
+    params: [],
+    pieceCount: 2,
+    setId: SET_ID,
+  };
 
   test("a set's two-piece bonus is active from two pieces", () => {
     expect.hasAssertions();
 
-    const twoPieces = [
-      createArtifact({ slot: ArtifactSlot.CircletOfLogos }),
-      createArtifact({ slot: ArtifactSlot.FlowerOfLife }),
-    ];
-    expect(getActiveArtifactSetBonuses(twoPieces, artifactSetDataMap)).toStrictEqual([
-      {
-        attributeLines: [{ attribute: Attribute.Health, value: 10 }],
-        descriptionTextHash: "",
-        params: [],
-        pieceCount: 2,
-        setId: SET_ID,
-      },
-    ]);
+    expect(getActiveArtifactSetBonuses(twoPieces, artifactSetDataMap)).toStrictEqual([twoPieceBonus]);
   });
 
   test("a set's four-piece bonus is active from four pieces", () => {
     expect.hasAssertions();
 
-    const twoPieces = [
-      createArtifact({ slot: ArtifactSlot.CircletOfLogos }),
-      createArtifact({ slot: ArtifactSlot.FlowerOfLife }),
-    ];
     const fourPieces = [
       ...twoPieces,
       createArtifact({ slot: ArtifactSlot.GobletOfEonothem }),
       createArtifact({ slot: ArtifactSlot.PlumeOfDeath }),
     ];
     expect(getActiveArtifactSetBonuses(fourPieces, artifactSetDataMap)).toStrictEqual([
-      {
-        attributeLines: [{ attribute: Attribute.Health, value: 10 }],
-        descriptionTextHash: "",
-        params: [],
-        pieceCount: 2,
-        setId: SET_ID,
-      },
+      twoPieceBonus,
       {
         attributeLines: [{ attribute: Attribute.Attack, value: 20 }],
         descriptionTextHash: "",
