@@ -20,7 +20,8 @@ await runCommand(
       // Whole or partial, with a leading v or ^ allowed; vp resolves it to the highest release it names
       version: {
         default: "",
-        description: "The node version to pin, whole or partial, a leading v or ^ allowed",
+        description:
+          "The node version to pin, whole or partial, a leading v or ^ allowed; the pin's own major when empty",
         required: false,
         type: "positional",
       },
@@ -33,8 +34,9 @@ await runCommand(
       const nodeVersionPath = resolve(REPOSITORY_ROOT, NODE_VERSION_FILENAME);
       const oldVersion = readFileSync(nodeVersionPath, "utf8").trim();
       // 1. Pin through vp, which resolves the request to a full release, writes `.node-version` and installs it.
-      // With no request, `latest` is the Current line rather than LTS
-      runVp(["env", "pin", args.version.replace(/^[v^]/u, "") || "latest", "--target", "node-version", "--force"]);
+      // With no request the pin's own major is re-resolved, so a major only ever moves when it is named
+      const request = args.version.replace(/^[v^]/u, "") || String(getVersionParts(oldVersion).major);
+      runVp(["env", "pin", request, "--target", "node-version", "--force"]);
       const version = readFileSync(nodeVersionPath, "utf8").trim();
       const isNewVersion = oldVersion !== version;
       // 2. Bump the @types/node catalog entry to the highest release matching the new node major

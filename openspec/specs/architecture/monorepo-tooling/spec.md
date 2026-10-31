@@ -154,6 +154,13 @@ The repository SHALL declare its node version in a single file, and every consum
 - **THEN** the pinned node version and the matching type definitions move together
 - **AND** no other file holds a copy of the version number
 
+#### Scenario: A new node major ships
+
+- **GIVEN** a node major newer than the pinned one is released
+- **WHEN** the update command runs with no version, or Renovate proposes the node group's next update
+- **THEN** the pin stays inside its own major
+- **AND** the pin moves to the new major only when the update command is given it, once every environment that runs node can run that major
+
 ### Requirement: Workflow files are parsed before merge
 
 Every workflow file SHALL pass a workflow linter as part of the lint check, so that a file the CI platform cannot parse fails the push that carried it.
