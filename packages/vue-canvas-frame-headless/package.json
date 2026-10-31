@@ -51,6 +51,7 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
+    "@types/node": "catalog:",
     "@vue/test-utils": "catalog:",
     "happy-dom": "catalog:",
     "tsdown": "catalog:"

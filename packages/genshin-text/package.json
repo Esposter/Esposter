@@ -57,6 +57,7 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
+    "@types/node": "catalog:",
     "tsdown": "catalog:"
   }
 }
