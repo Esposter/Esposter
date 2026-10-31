@@ -102,6 +102,7 @@ import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldReputationBounty } from "#src/composables/useWorldReputationBounty";
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
+import { useWorldScreenBehaviour } from "#src/composables/useWorldScreenBehaviour";
 import { useWorldShortcutWheel } from "#src/composables/useWorldShortcutWheel";
 import { useWorldShrines } from "#src/composables/useWorldShrines";
 import { useWorldSpiralAbyss } from "#src/composables/useWorldSpiralAbyss";
@@ -189,7 +190,6 @@ import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { createTresRenderer } from "#src/services/scene/createTresRenderer";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
-import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { getTeamAntiColdRatio } from "#src/services/sheerCold/getTeamAntiColdRatio";
 import { checkIsVendorHourOpen } from "#src/services/shop/checkIsVendorHourOpen";
@@ -221,7 +221,7 @@ import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { getResultAsync } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
-import { useEventListener, useIntervalFn, useMediaQuery, useRafFn } from "@vueuse/core";
+import { useIntervalFn, useMediaQuery, useRafFn } from "@vueuse/core";
 import {
   createGrassTrail,
   createInput,
@@ -474,36 +474,8 @@ const { archiveData, bookReading, offeredViewpoints, readBook, viewpointPlaceMap
   reliquarySets,
   screenKind,
 });
-const screenBehaviour = computed(() => ScreenBehaviourMap[screenKind.value]);
-// A screen with a cursor of its own lets the pointer go, which a click on the world takes again once it closes
-watch(
-  () => screenBehaviour.value.isPointerReleased,
-  (isPointerReleased) => {
-    if (isPointerReleased) window.document.exitPointerLock();
-  },
-);
-// The press that closes a screen is spent with it, so the F, Space or click that ended it never reaches the world as an
-// Interact, a jump or an attack
-watch(screenKind, (newScreenKind) => {
-  if (newScreenKind !== ScreenKind.Fishing) closeFishing();
-  if (newScreenKind === ScreenKind.World) input.readInput(0);
-});
-// Left Alt shows the cursor, as the game's Show Cursor does, letting the lock go without opening the Paimon menu
-let isCursorShown = false;
-const showCursor = () => {
-  isCursorShown = true;
-  window.document.exitPointerLock();
-};
-// The browser keeps Escape for itself while the pointer is locked, letting the lock go in place of passing the key on,
-// So a lock lost with the world in play opens the Paimon menu as Escape does, unless it was let go to show the cursor
-useEventListener(
-  () => window.document,
-  "pointerlockchange",
-  () => {
-    if (window.document.pointerLockElement !== null) isCursorShown = false;
-    else if (screenKind.value === ScreenKind.World && !isCursorShown) screenKind.value = ScreenKind.PaimonMenu;
-  },
-);
+// The screen open over the world sets what the pointer and the keys do, and the cursor Left Alt shows over it
+const { screenBehaviour, showCursor } = useWorldScreenBehaviour({ closeFishing, input, screenKind });
 onUnmounted(() => {
   input.dispose();
 });
