@@ -16,7 +16,7 @@ The pin cannot move ahead of its environments by accident, because the hold is o
 
 A major moves when every line holds. A line that does not hold is the reason to wait.
 
-1. **The major is LTS** — an even major past its LTS date, never Current. Current is for trying a release, and the Functions host publishes support against LTS.
+1. **The major is in LTS**, never Alpha or Current. Every major reaches LTS on the release schedule's own date, so the check is that date for the major, never whether its number is odd or even. Current is for trying a release, and the Functions host publishes support against LTS.
 2. **The Functions host supports it**, generally available and not preview, on the plan the sites run (the runtime's supported-languages table, Node.js row). This is the line that closes last, and the same line closes today's gap: once it holds for the pin's own major, the host moves to it.
 3. **Every other runtime the repo ships to can run it** — each host or image that names a node version in a file the repo declares. List them by searching `apps/`, `packages/`, `.github/` and every `Dockerfile` for the current major rather than trusting a list written here, since a new environment would not be on it.
 4. **`@types/node` has the major**, so `pnpm update:node` can resolve the catalog entry.

@@ -61,9 +61,8 @@
     },
     {
       "allowedVersions": "<27",
-      "description": "`.node-version` is the one node pin, and `@types/node` follows its major with its own minors lagging node's, so the two move in one branch. The pin stays on its major until every environment that runs node can run the next one, and `references/node-major.md` is the checklist that says when. The change that moves the pin with `pnpm update:node <major>` raises this cap to the next major beside it. Renovate's `node` versioning calls a major stable only once its LTS date has passed and an odd major never, so under the default unstable filter the pin could reach no major past its own; `ignoreUnstable` stays off so a minor of the pinned major lands as soon as it ships.",
+      "description": "`.node-version` is the one node pin, and `@types/node` follows its major with its own minors lagging node's, so the two move in one branch. The pin stays on its major until every environment that runs node can run the next one, and `references/node-major.md` is the checklist that says when. The change that moves the pin with `pnpm update:node <major>` raises this cap to the next major beside it.",
       "groupName": "node",
-      "ignoreUnstable": false,
       "matchPackageNames": ["node", "@types/node"]
     },
     {
