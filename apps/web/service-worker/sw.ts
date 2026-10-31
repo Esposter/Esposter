@@ -1,7 +1,6 @@
 import type { PushNotificationPayload } from "@esposter/db-schema";
 import type { PrecacheEntry } from "workbox-precaching";
 
-import { getSynchronizedFunction } from "@esposter/shared";
 import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from "workbox-precaching";
 import { NavigationRoute, registerRoute } from "workbox-routing";
 
@@ -15,12 +14,9 @@ precacheAndRoute([...self.__WB_MANIFEST, { revision: null, url: "/" }]);
 registerRoute(new NavigationRoute(createHandlerBoundToURL("/")));
 
 // The update prompt in the tab asks a waiting worker to take over, and the reload follows the new worker taking control
-self.addEventListener(
-  "message",
-  getSynchronizedFunction(async (event: ExtendableMessageEvent) => {
-    if (event.data?.type === "SKIP_WAITING") await self.skipWaiting();
-  }),
-);
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "SKIP_WAITING") event.waitUntil(self.skipWaiting());
+});
 
 // The push handler lives here, typed, rather than in an
 // `importScripts` file

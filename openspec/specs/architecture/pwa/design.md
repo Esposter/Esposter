@@ -30,6 +30,7 @@ flowchart LR
 | `apps/web/configuration/pwa.test.ts`                                    | Every manifest icon exists in the public folder                               |
 | `apps/web/service-worker/sw.ts`                                         | The worker: precache, offline navigation, `SKIP_WAITING`, push and click      |
 | `apps/web/service-worker/tsconfig.json`                                 | The worker's typecheck, extending the shared Node base with the WebWorker lib |
+| `oxlint.config.ts`                                                      | The `service-worker/**` override: no runtime import of a workspace library    |
 | `apps/web/app/components/App/ToastStack.vue`                            | The Reload notice that shows a waiting update                                 |
 | `apps/web/app/plugins/pushNotification.client.ts`                       | The tab's end of the worker's `postMessage`                                   |
 | `apps/web/public/pwa/`                                                  | The manifest and Apple icons, each named by its path in `pwa.ts`              |
@@ -41,6 +42,7 @@ flowchart LR
 - **Rejected: `generateSW` with an `importScripts` push file.** The push handler was a separate JavaScript file the build could not check. The `injectManifest` worker is typed and checked with the app.
 - **Declined: screenshots and shortcuts in the manifest.** Screenshots need captures of the real app, which this repo does not produce. Shortcuts add icons and an install surface nobody asked for.
 - **Declined: a custom install prompt.** The browser's own install affordance is the one the reader already knows.
+- **The worker imports no app package at runtime.** Its scope has no `window` and no `process`, and a library's top level can read either as it loads, which fails the worker's evaluation and leaves it unregistered. An oxlint override on `service-worker/**` bans the import, types stay allowed, and the bundle stays Workbox and the worker's own code. The `SKIP_WAITING` handler hands `skipWaiting()` to `event.waitUntil`, so the browser holds the worker open until it settles, and it needs no fire-and-forget helper from a package.
 - **Orientation is unlocked.** The app has landscape surfaces, the Genshin world and the call stage, which a portrait lock would block on installed Android copies.
 - **Maskable icons are drawn, not padded.** The mark sits at 70% scale on the light background, inside the safe zone, so no launcher's mask crops it. The `any` icons keep the unpadded artwork.
 - **The offline home entry has no revision.** The `/` entry in the precache list carries `revision: null`, so each new worker fetches it at install rather than trusting a cached copy.
