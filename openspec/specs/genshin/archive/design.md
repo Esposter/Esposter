@@ -43,7 +43,7 @@ The codex's own order is kept: each section's entries are sorted by the table's 
 
 ## Opening entries
 
-`openArchiveEntries` takes the progress and the bag's items and returns the progress with every item's entry opened (`packages/genshin-world/src/services/archive/openArchiveEntries.ts`). A weapon opens its Equipment entry by its id, a material opens its Materials entry by the same id, and an artifact opens none (its set is opened by `openArchiveArtifactSets`, see Notes). An entry already open stays open, and the progress given is not changed. The world screen's `setInventory` is the one way the bag changes, so a drop picked up, a gathering point taken and a wish's weapon all open their entries through it (`packages/genshin-world/src/composables/useWorldSave.ts`, where `setInventory` is defined).
+`openArchiveEntries` takes the progress and the bag's items and returns the progress with every item's entry opened (`packages/genshin-world/src/services/archive/openArchiveEntries.ts`). A weapon opens its Equipment entry by its id, a material opens its Materials entry by the same id, and an artifact opens none (its set is opened by `openArchiveArtifactSets`, see Notes). An entry already open stays open, and the progress given is not changed. The world screen's `setInventory` is the one way the bag changes, so a drop picked up, a gathering point taken and a wish's weapon all open their entries through it (`packages/genshin-world/src/composables/useWorldSave.ts`, where `setInventory` is defined, and `packages/genshin-world/src/components/World/Session/Index.vue`, which sends every screen's `update:inventory` to it).
 
 A defeated enemy opens its Living Beings entry and counts one more kill under it (`openArchiveEntry`, `countArchiveDefeat`; `packages/genshin-world/src/composables/useWorldArchive.ts`). Each enemy kind carries its codex entry's id as `archiveEntryId`, so the count is kept by the entry, and the Living Beings entry shows it as "×N" once open (`packages/genshin-world/src/models/enemy/EnemyKind.ts`; `packages/genshin-world/src/components/Archive/Screen/Index.vue`).
 
@@ -118,7 +118,6 @@ The Archive screen is compared with the English PC client's Equipment / Weapons 
 
 ## Open
 
-- [ ] **`setInventory` is the one way the bag changes** — no source yet: the bag's writers were listed, but the call sites that write it were not read one by one.
 - [ ] **The gadget kinds count 4 to 40 triggers on interactive gadgets** — no source yet: a source that names the interactive gadgets and says what `paramList[1]` counts; `{data-root}/genshin-parity/text/ExcelBinOutput/GlobalWatcherConfigData.json` gives its values, 4 to 40 across the gadget watchers, but no name for them.
 - [ ] **The codex rows marked disused are the ones the game does not list** — no source yet: the match of the disused book rows to the game's Books list in the frames of `{data-root}/genshin-parity/captures/archive-screen.mkv`.
 - [ ] **The tips with no data trigger are shown by the game's scripts** — no source yet: the game's scripts are not in the dump.

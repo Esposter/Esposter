@@ -45,7 +45,7 @@ The wiki's table of Game System Unlocks, on its Adventure Rank page (`{data-root
 
 ## EXP past the total and past rank 60
 
-`gainAdventureExp` adds EXP up to rank 60's total, 1,880,200. Where the cap is below 60, EXP past that total is not gained, as the game does while a quest holds the rank. Once the cap is 60, EXP past the total is paid in Mora at ten for each point, returned as `moraPaid` for the wallet to take (`packages/genshin-world/src/services/adventureRank/gainAdventureExp.ts`, the rate in `constants.ts`). The game's text says all Adventure EXP received after the maximum rank is converted to Mora (text 365981086 in `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`) but gives no rate. The rate is the wiki's: its Adventure Rank and Adventure EXP pages both give a 1:10 ratio, ten Mora for each point (`{data-root}/cache/genshin-wiki/Adventure_EXP.json`, cited under Sources).
+`gainAdventureExp` adds EXP up to rank 60's total. Where the cap is below 60, EXP past that total is not gained, as the game does while a quest holds the rank. Once the cap is 60, EXP past the total is paid in Mora at ten for each point, returned as `moraPaid` for the wallet to take (`packages/genshin-world/src/services/adventureRank/gainAdventureExp.ts`, the rate in `constants.ts`). The game's text says all Adventure EXP received after the maximum rank is converted to Mora (text 365981086 in `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`) but gives no rate. The rate is the wiki's: its Adventure Rank and Adventure EXP pages both give a 1:10 ratio, ten Mora for each point (`{data-root}/cache/genshin-wiki/Adventure_EXP.json`, cited under Sources).
 
 ## Lowering the World Level
 
