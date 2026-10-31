@@ -23,12 +23,9 @@ export const mapHookMessage = (
   createdAt: Date,
 ): HookEvent => ({
   createdAt,
-  exitCode: "exit_code" in message ? (message.exit_code ?? 0) : 0,
   hookEvent: message.hook_event,
-  hookId: message.hook_id,
   hookName: message.hook_name,
   id: message.uuid,
-  outcome: "outcome" in message ? message.outcome : "",
   output: "output" in message ? message.output : "",
   phase: HookPhaseMap[message.subtype],
   stderr: "stderr" in message ? message.stderr : "",

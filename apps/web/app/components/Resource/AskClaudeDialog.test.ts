@@ -37,7 +37,6 @@ describe("resourceAskClaudeDialog", () => {
       {
         address: LOCAL_HOST_ADDRESS,
         credential: crypto.randomUUID(),
-        deviceId: crypto.randomUUID(),
         id: crypto.randomUUID(),
         publicKey: crypto.randomUUID(),
       },

@@ -10,12 +10,9 @@ import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface SessionInitEvent extends BaseAgentEvent<AgentEventType.SessionInit> {
-  agents: string[];
-  claudeCodeVersion: string;
   cwd: string;
   mcpServers: McpServer[];
   model: string;
-  outputStyle: string;
   permissionMode: PermissionMode;
   plugins: string[];
   skills: string[];
@@ -24,14 +21,11 @@ export interface SessionInitEvent extends BaseAgentEvent<AgentEventType.SessionI
 }
 
 export const sessionInitEventSchema: z.ZodObject<{
-  agents: z.ZodArray<z.ZodString>;
-  claudeCodeVersion: z.ZodString;
   createdAt: z.ZodCoercedDate;
   cwd: z.ZodString;
   id: z.ZodString;
   mcpServers: z.ZodArray<typeof mcpServerSchema>;
   model: z.ZodString;
-  outputStyle: z.ZodString;
   permissionMode: typeof permissionModeSchema;
   plugins: z.ZodArray<z.ZodString>;
   skills: z.ZodArray<z.ZodString>;
@@ -40,12 +34,9 @@ export const sessionInitEventSchema: z.ZodObject<{
   type: z.ZodLiteral<AgentEventType.SessionInit>;
 }> = z.object({
   ...createBaseAgentEventSchema(z.literal(AgentEventType.SessionInit)).shape,
-  agents: createUniqueArraySchema(z.string()),
-  claudeCodeVersion: z.string(),
   cwd: z.string(),
   mcpServers: createUniqueArraySchema(mcpServerSchema, "name"),
   model: z.string(),
-  outputStyle: z.string(),
   permissionMode: permissionModeSchema,
   plugins: createUniqueArraySchema(z.string()),
   skills: createUniqueArraySchema(z.string()),

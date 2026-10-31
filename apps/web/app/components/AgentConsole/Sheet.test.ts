@@ -11,13 +11,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 const pairConsole = () => {
   const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
   agentConsoleConnectionStore.connections = [
-    {
-      address: "wss://a",
-      credential: crypto.randomUUID(),
-      deviceId: crypto.randomUUID(),
-      id: crypto.randomUUID(),
-      publicKey: " ",
-    },
+    { address: "wss://a", credential: crypto.randomUUID(), id: crypto.randomUUID(), publicKey: " " },
   ];
   const agentConsolePanelStore = useAgentConsolePanelStore();
   agentConsolePanelStore.isConsoleOpen = true;

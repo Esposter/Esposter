@@ -184,4 +184,4 @@ The host SHALL keep this computer's Claude Code login and SHALL NOT send provide
 
 - **GIVEN** this computer's host paired with a page
 - **WHEN** the pairing completes
-- **THEN** the page holds the credential, device id, address and public key, and no provider key
+- **THEN** the page holds the credential, address and public key, and no provider key

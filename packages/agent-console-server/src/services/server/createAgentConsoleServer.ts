@@ -193,12 +193,7 @@ export const createAgentConsoleServer = async ({
     };
     writeDevices(stateDirectory, [...readDevices(stateDirectory), device]);
     writeLine(`${device.name} connected. To remove it: devices --revoke ${device.id}`);
-    sendServerMessage(webSocket, {
-      credential,
-      deviceId: device.id,
-      publicKey: publicKeyText,
-      type: ServerMessageType.Paired,
-    });
+    sendServerMessage(webSocket, { credential, publicKey: publicKeyText, type: ServerMessageType.Paired });
     admit(webSocket, device.id);
   };
 

@@ -271,8 +271,8 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
               }
 
               if (serverMessage.type === ServerMessageType.Paired && connectionPairing) {
-                const { credential, deviceId, publicKey } = serverMessage;
-                const pairedConnection: Connection = { address, credential, deviceId, id: connectionId, publicKey };
+                const { credential, publicKey } = serverMessage;
+                const pairedConnection: Connection = { address, credential, id: connectionId, publicKey };
                 connections.value = connection
                   ? connections.value.map((oldConnection) =>
                       oldConnection.id === connectionId ? pairedConnection : oldConnection,

@@ -145,12 +145,9 @@ describe(foldAgentEvents, () => {
     const additionalContext = "additionalContext";
     const toHookEvent = (phase: HookPhase): HookEvent => ({
       createdAt: new Date(0),
-      exitCode: 0,
       hookEvent: SESSION_START_HOOK_EVENT,
-      hookId: " ",
       hookName: "",
       id: crypto.randomUUID(),
-      outcome: "",
       output: "",
       phase,
       stderr: "",

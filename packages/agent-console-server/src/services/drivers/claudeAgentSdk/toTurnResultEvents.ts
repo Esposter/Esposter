@@ -9,9 +9,7 @@ import { getEventId } from "#src/services/drivers/claudeAgentSdk/getEventId";
 export const toTurnResultEvents = (message: SDKResultMessage, createdAt: Date): AgentEvent[] => [
   {
     createdAt,
-    durationApiMs: message.duration_api_ms,
     durationMs: message.duration_ms,
-    errors: message.subtype === "success" ? [] : message.errors,
     id: message.uuid,
     isError: message.is_error,
     numTurns: message.num_turns,

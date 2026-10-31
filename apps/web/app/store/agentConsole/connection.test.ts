@@ -83,7 +83,6 @@ const admit = async (socket: FakeWebSocket, privateKey: CryptoKey, port = DEFAUL
 
 describe(useAgentConsoleConnectionStore, () => {
   const credential = crypto.randomUUID();
-  const deviceId = crypto.randomUUID();
   const sideChatSessionId = crypto.randomUUID();
   const mainMessage = {
     attachmentCount: 0,
@@ -119,7 +118,7 @@ describe(useAgentConsoleConnectionStore, () => {
     const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
     const connectionId = crypto.randomUUID();
     agentConsoleConnectionStore.connections = [
-      { address: LOCAL_HOST_ADDRESS, credential, deviceId, id: connectionId, publicKey },
+      { address: LOCAL_HOST_ADDRESS, credential, id: connectionId, publicKey },
     ];
     agentConsoleConnectionStore.connect();
     const socket = takeOne(FakeWebSocket.sockets);
@@ -175,9 +174,7 @@ describe(useAgentConsoleConnectionStore, () => {
 
     vi.unstubAllGlobals();
     const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
-    agentConsoleConnectionStore.connections = [
-      { address: "a", credential, deviceId, id: crypto.randomUUID(), publicKey: " " },
-    ];
+    agentConsoleConnectionStore.connections = [{ address: "a", credential, id: crypto.randomUUID(), publicKey: " " }];
     agentConsoleConnectionStore.connect();
 
     expect(agentConsoleConnectionStore.status).toBe(ConnectionStatus.Unpaired);
@@ -252,8 +249,8 @@ describe(useAgentConsoleConnectionStore, () => {
     const firstConnectionId = crypto.randomUUID();
     const shellConnectionId = crypto.randomUUID();
     agentConsoleConnectionStore.connections = [
-      { address: LOCAL_HOST_ADDRESS, credential, deviceId, id: firstConnectionId, publicKey },
-      { address: "wss://a", credential, deviceId, id: shellConnectionId, publicKey },
+      { address: LOCAL_HOST_ADDRESS, credential, id: firstConnectionId, publicKey },
+      { address: "wss://a", credential, id: shellConnectionId, publicKey },
     ];
     agentConsoleConnectionStore.connect();
     const firstSocket = takeOne(FakeWebSocket.sockets);
@@ -295,14 +292,14 @@ describe(useAgentConsoleConnectionStore, () => {
     agentConsoleConnectionStore.pairLinkedHost(LOCAL_HOST_ADDRESS, code);
     const socket = takeOne(FakeWebSocket.sockets);
     socket.dispatchEvent(new Event("open"));
-    dispatchMessage(socket, { credential, deviceId, publicKey: " ", type: ServerMessageType.Paired });
+    dispatchMessage(socket, { credential, publicKey: " ", type: ServerMessageType.Paired });
     const { id } = takeOne(agentConsoleConnectionStore.connections);
 
     // oxlint-disable-next-line no-restricted-properties -- the page's message, read back as the test's host would
     expect(JSON.parse(takeOne(socket.send.mock.calls)[0])).toStrictEqual({ code, type: HandshakeMessageType.Pair });
     expect(agentConsoleConnectionStore.status).toBe(ConnectionStatus.Connected);
     expect(agentConsoleConnectionStore.connections).toStrictEqual([
-      { address: LOCAL_HOST_ADDRESS, credential, deviceId, id, publicKey: " " },
+      { address: LOCAL_HOST_ADDRESS, credential, id, publicKey: " " },
     ]);
   });
 
@@ -339,8 +336,8 @@ describe(useAgentConsoleConnectionStore, () => {
     const stoppingConnectionId = crypto.randomUUID();
     const remoteConnectionId = crypto.randomUUID();
     agentConsoleConnectionStore.connections = [
-      { address: LOCAL_HOST_ADDRESS, credential, deviceId, id: stoppingConnectionId, publicKey },
-      { address: "wss://a", credential, deviceId, id: remoteConnectionId, publicKey },
+      { address: LOCAL_HOST_ADDRESS, credential, id: stoppingConnectionId, publicKey },
+      { address: "wss://a", credential, id: remoteConnectionId, publicKey },
     ];
     agentConsoleConnectionStore.connect();
     const stoppingSocket = takeOne(FakeWebSocket.sockets);

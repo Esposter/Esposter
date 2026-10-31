@@ -18,7 +18,7 @@ import { readDevices } from "#src/services/device/readDevices";
 import { checkIsSignatureValid } from "#src/services/handshake/checkIsSignatureValid";
 import { createAgentConsoleServer } from "#src/services/server/createAgentConsoleServer";
 import { sendToRunningHost } from "#src/services/server/sendToRunningHost";
-import { noop } from "@esposter/shared";
+import { noop, takeOne } from "@esposter/shared";
 import { createPublicKey, generateKeyPairSync } from "node:crypto";
 import { once } from "node:events";
 import { mkdtempSync, rmSync } from "node:fs";
@@ -181,11 +181,11 @@ describe(createAgentConsoleServer, () => {
     await once(secondWebSocket, "open");
     secondWebSocket.send(JSON.stringify({ code, type: HandshakeMessageType.Pair }));
     const [closeCode] = await once(secondWebSocket, "close");
-    const [device] = readDevices(stateDirectory);
+    const devices = readDevices(stateDirectory);
 
     expect(closeCode).toBe(HostCloseCode.PairingRefused);
-    expect(device?.id).toBe(paired.deviceId);
-    expect(device?.credentialHash).not.toBe(paired.credential);
+    expect(devices).toHaveLength(1);
+    expect(takeOne(devices).credentialHash).not.toBe(paired.credential);
   });
 
   test("refuses a pairing that carries no browser's origin", async () => {
@@ -217,10 +217,11 @@ describe(createAgentConsoleServer, () => {
   test("closes a revoked device's socket at once", async () => {
     expect.hasAssertions();
 
-    const { paired, webSocket } = await pair();
+    const { webSocket } = await pair();
+    const { id: deviceId } = takeOne(readDevices(stateDirectory));
     const pendingClose = once(webSocket, "close");
     const isHost = await sendToRunningHost(DEFAULT_HOSTNAME, server.port, hostKey, (signature) => ({
-      deviceId: paired.deviceId,
+      deviceId,
       signature,
       type: HandshakeMessageType.Revoke,
     }));
@@ -234,9 +235,10 @@ describe(createAgentConsoleServer, () => {
   test("removes a revoked device a pairing wrote back to the list", async () => {
     expect.hasAssertions();
 
-    const { paired } = await pair();
+    await pair();
+    const { id: deviceId } = takeOne(readDevices(stateDirectory));
     await sendToRunningHost(DEFAULT_HOSTNAME, server.port, hostKey, (signature) => ({
-      deviceId: paired.deviceId,
+      deviceId,
       signature,
       type: HandshakeMessageType.Revoke,
     }));
@@ -281,9 +283,9 @@ describe(createAgentConsoleServer, () => {
     await once(webSocket, "open");
     webSocket.send(JSON.stringify({ code: handedOffCode, type: HandshakeMessageType.Pair }));
 
-    const { deviceId } = await pendingPaired;
+    await pendingPaired;
 
-    expect(readDevices(stateDirectory).map(({ id }) => id)).toStrictEqual([deviceId]);
+    expect(readDevices(stateDirectory)).toHaveLength(1);
   });
 
   // One key signs both proofs, so a page's challenge could have the host sign another connection's nonce: the purpose

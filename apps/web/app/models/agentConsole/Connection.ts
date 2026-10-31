@@ -4,7 +4,6 @@
 export interface Connection {
   address: string;
   credential: string;
-  deviceId: string;
   id: string;
   publicKey: string;
 }

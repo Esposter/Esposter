@@ -24,7 +24,7 @@ interface RecordedSession {
   commands: SlashCommand[];
   contextUsage: Pick<
     SDKControlGetContextUsageResponse,
-    "autoCompactThreshold" | "isAutoCompactEnabled" | "maxTokens" | "percentage" | "totalTokens"
+    "autoCompactThreshold" | "maxTokens" | "percentage" | "totalTokens"
   >;
   messages: SDKMessage[];
   models: ModelInfo[];

@@ -7,20 +7,15 @@ export const toContextUsageEvent = (
   id: string,
   {
     autoCompactThreshold,
-    isAutoCompactEnabled,
     maxTokens,
     percentage,
     totalTokens,
-  }: Pick<
-    SDKControlGetContextUsageResponse,
-    "autoCompactThreshold" | "isAutoCompactEnabled" | "maxTokens" | "percentage" | "totalTokens"
-  >,
+  }: Pick<SDKControlGetContextUsageResponse, "autoCompactThreshold" | "maxTokens" | "percentage" | "totalTokens">,
   createdAt: Date,
 ): ContextUsageEvent => ({
   autoCompactThreshold: autoCompactThreshold ?? 0,
   createdAt,
   id,
-  isAutoCompactEnabled,
   maxTokens,
   percentage,
   totalTokens,

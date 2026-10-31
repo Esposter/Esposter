@@ -34,13 +34,10 @@ export const mapTaskMessage = (
     description: "",
     durationMs: 0,
     id: message.uuid,
-    lastToolName: "",
     subagentType: "",
     summary: "",
     taskId: message.task_id,
     toolUseId: "tool_use_id" in message ? (message.tool_use_id ?? "") : "",
-    toolUses: 0,
-    totalTokens: 0,
     type: AgentEventType.Subagent,
   } as const;
   switch (message.subtype) {
@@ -50,20 +47,15 @@ export const mapTaskMessage = (
         durationMs: message.usage?.duration_ms ?? 0,
         status: SubagentStatusMap[message.status],
         summary: message.summary,
-        toolUses: message.usage?.tool_uses ?? 0,
-        totalTokens: message.usage?.total_tokens ?? 0,
       };
     case "task_progress":
       return {
         ...base,
         description: message.description,
         durationMs: message.usage.duration_ms,
-        lastToolName: message.last_tool_name ?? "",
         status: SubagentStatus.Running,
         subagentType: message.subagent_type ?? "",
         summary: message.summary ?? "",
-        toolUses: message.usage.tool_uses,
-        totalTokens: message.usage.total_tokens,
       };
     case "task_started":
       return {

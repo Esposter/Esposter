@@ -100,17 +100,12 @@ export const createSdkMessageMapper = (): SdkMessageMapper => {
           createdAt,
         );
       case "rate_limit_event": {
-        const { rateLimitType, resetsAt, status, utilization } = message.rate_limit_info;
+        const { rateLimitType, status, utilization } = message.rate_limit_info;
         return [
           {
             createdAt,
             id: message.uuid,
             rateLimitType: rateLimitType ?? "",
-            // The SDK reports the reset in epoch seconds
-            resetsAt:
-              resetsAt === undefined
-                ? undefined
-                : new Date(Temporal.Duration.from({ seconds: resetsAt }).total("milliseconds")),
             status,
             type: AgentEventType.RateLimit,
             utilization,

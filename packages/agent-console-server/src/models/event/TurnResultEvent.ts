@@ -7,9 +7,7 @@ import { tokenUsageSchema } from "#src/models/event/TokenUsage";
 import { z } from "zod";
 
 export interface TurnResultEvent extends BaseAgentEvent<AgentEventType.TurnResult> {
-  durationApiMs: number;
   durationMs: number;
-  errors: string[];
   isError: boolean;
   numTurns: number;
   result: string;
@@ -20,9 +18,7 @@ export interface TurnResultEvent extends BaseAgentEvent<AgentEventType.TurnResul
 
 export const turnResultEventSchema: z.ZodObject<{
   createdAt: z.ZodCoercedDate;
-  durationApiMs: z.ZodNumber;
   durationMs: z.ZodNumber;
-  errors: z.ZodArray<z.ZodString>;
   id: z.ZodString;
   isError: z.ZodBoolean;
   numTurns: z.ZodInt;
@@ -33,9 +29,7 @@ export const turnResultEventSchema: z.ZodObject<{
   usage: typeof tokenUsageSchema;
 }> = z.object({
   ...createBaseAgentEventSchema(z.literal(AgentEventType.TurnResult)).shape,
-  durationApiMs: z.number().nonnegative(),
   durationMs: z.number().nonnegative(),
-  errors: z.string().array(),
   isError: z.boolean(),
   numTurns: z.int().nonnegative(),
   result: z.string(),
