@@ -36,7 +36,7 @@
 | `openspec`                | —                       |       |
 | `over-engineering`        | —                       |       |
 | `oxlint`                  | —                       |       |
-| `package-scripts`         | —                       |       |
+| `package-scripts`         | 2026-10-31 · Haiku 5.5  |       |
 | `page-builder`            | —                       |       |
 | `pagination`              | —                       |       |
 | `pinia`                   | —                       |       |

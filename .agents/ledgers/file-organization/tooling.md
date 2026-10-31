@@ -37,7 +37,7 @@
 | `scripts/src/models/genshinAssets/expeditions`                                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/exploration`                                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/fishing`                                                | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/models/genshinAssets/fit`                                                    | —                       |       |
+| `scripts/src/models/genshinAssets/fit`                                                    | 2026-10-31 · Sonnet 5.5 |       |
 | `scripts/src/models/genshinAssets/forging`                                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/friendship`                                             | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/gadgets`                                                | 2026-10-29 · Haiku 5.5  |       |
@@ -47,7 +47,7 @@
 | `scripts/src/models/genshinAssets/interface`                                              | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/kits/KitCandidate.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/kits/KitCandidateSources.ts`                            | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/models/shared/KitOverlay.ts`                                                 | —                       |       |
+| `scripts/src/models/shared/KitOverlay.ts`                                                 | 2026-10-31 · Sonnet 5.5 |       |
 | `scripts/src/models/genshinAssets/kits/KitOverlayEntry.ts`                                | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/models/shared/KitProvisionalCause.ts`                                        | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/kits/KitRule.ts`                                        | 2026-10-29 · Haiku 5.5  |       |
@@ -100,7 +100,7 @@
 | `scripts/src/models/genshinParity/display`                                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinParity/music`                                                  | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinParity/page`                                                   | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/models/genshinParity/passes`                                                 | —                       |       |
+| `scripts/src/models/genshinParity/passes`                                                 | 2026-10-31 · Sonnet 5.5 |       |
 | `scripts/src/models/genshinParity/reference`                                              | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinParity/shared`                                                 | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/models/genshinParity/sky`                                                    | 2026-10-29 · Haiku 5.5  |       |
@@ -406,12 +406,12 @@
 | `scripts/src/services/genshinAssets/fit/fitCloudSprites.test.ts`                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitCloudSprites.ts`                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitFootprintOutline.test.ts`                      | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/fitFootprintOutline.ts`                           | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitFootprintOutline.ts`                           | 2026-10-31 · Sonnet 5.5 |       |
 | `scripts/src/services/genshinAssets/fit/fitGaussianHills.test.ts`                         | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/fitGaussianHills.ts`                              | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitGaussianHills.ts`                              | 2026-10-31 · Sonnet 5.5 |       |
 | `scripts/src/services/genshinAssets/fit/fitGroundLayerColours.ts`                         | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitGroundLayerField.ts`                           | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/fitGroundPiece.ts`                                | —                       |       |
+| `scripts/src/services/genshinAssets/fit/fitGroundPiece.ts`                                | 2026-10-31 · Sonnet 5.5 |       |
 | `scripts/src/services/genshinAssets/fit/fitGroundPieces.ts`                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitInteractiveMap.ts`                             | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitInterfaceClips.test.ts`                        | 2026-10-29 · Haiku 5.5  |       |
