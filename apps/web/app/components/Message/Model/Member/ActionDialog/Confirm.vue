@@ -7,7 +7,7 @@ import { AdminActionTitleMap } from "@/services/message/moderation/AdminActionTi
 interface Props {
   text: string;
   title: string;
-  type: AdminActionType.CreateBan | AdminActionType.KickFromRoom | AdminActionType.SoftBan;
+  type: AdminActionType.CreateBan | AdminActionType.KickFromRoom | AdminActionType.SoftBan | AdminActionType.Warn;
   user: MemberActionTarget["user"];
 }
 

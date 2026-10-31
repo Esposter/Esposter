@@ -86,4 +86,6 @@ The **Bans** tab searches by the banned user's name, over the join that already 
 
 ## Notes
 
-Adding a new action type touches five places (kept in lockstep by types — the permission, icon and color maps are a `Record<AdminActionType, …>`, and `ExecuteAdminActionInput.test-d.ts` holds the input union to the enum): the `AdminActionType` enum, an `ExecuteAdminActionInput` variant (its own model file, joined into the union), `AdminActionPermissionMap`, the `useAdminActionMap` client handler, and the icon/color/label maps in `app/services/message/moderation/`.
+Adding a new action type touches five places (kept in lockstep by types — the permission, icon and color maps are a `Record<AdminActionType, …>`, and `ExecuteAdminActionInput.test-d.ts` holds the input union to the enum): the `AdminActionType` enum, an `ExecuteAdminActionInput` variant (a member of `UnparameterizedAdminActionInput` when the action takes nothing past its target, otherwise its own model file joined into the union), `AdminActionPermissionMap`, the `useAdminActionMap` client handler, and the icon/color/label maps in `app/services/message/moderation/`.
+
+A warning carries no free-text reason, because nothing would read one: the log row holds the actor, the target and the type alone, and the targeted client's notice is fixed. Its dialog is therefore a plain confirmation, like a kick's, and a reason field returns only together with somewhere to store and show it.

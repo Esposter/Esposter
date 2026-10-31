@@ -17,6 +17,7 @@ export interface UnparameterizedAdminActionInput
       | AdminActionType.KickFromRoom
       | AdminActionType.SoftBan
       | AdminActionType.StopScreenShare
+      | AdminActionType.Warn
     > {}
 
 export const unparameterizedAdminActionInputSchema = z.object({
@@ -30,6 +31,7 @@ export const unparameterizedAdminActionInputSchema = z.object({
       AdminActionType.KickFromRoom,
       AdminActionType.SoftBan,
       AdminActionType.StopScreenShare,
+      AdminActionType.Warn,
     ]),
   ).shape,
 }) satisfies z.ZodType<UnparameterizedAdminActionInput>;

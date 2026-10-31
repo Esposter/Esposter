@@ -41,13 +41,20 @@ const isOpen = computed({
     :type="AdminActionType.KickFromRoom"
     :user
   />
+  <MessageModelMemberActionDialogConfirm
+    v-else-if="type === MemberDialogType.Warn"
+    v-model="isOpen"
+    :text="`Are you sure you want to warn ${displayName}? They will see a warning, and it is recorded in the audit log.`"
+    :title="`Warn ${displayName}`"
+    :type="AdminActionType.Warn"
+    :user
+  />
   <MessageModelMemberActionDialogTimeout
     v-else-if="type === MemberDialogType.Timeout"
     v-model="isOpen"
     :display-name
     :user
   />
-  <MessageModelMemberActionDialogWarn v-else-if="type === MemberDialogType.Warn" v-model="isOpen" :display-name :user />
   <MessageModelMemberActionDialogNotes
     v-else-if="type === MemberDialogType.Notes"
     v-model="isOpen"
