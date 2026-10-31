@@ -13,7 +13,7 @@
 ## 3. Pilot one small Vue package
 
 - [x] 3.1 Run `vize` through the chosen compiler on the pilot chosen in 2.2, and compare its diagnostics with `vue-tsc` on the same program. Verified by a diff of the two diagnostic lists recorded in `design.md`, empty on both the error set and the locations.
-- [ ] 3.2 Record any mismatch in `design.md` before the next package starts, and report upstream any mismatch that is a `vize` or `tsrs` defect. Verified by each mismatch appearing in `design.md` with its outcome.
+- [x] 3.2 Record any mismatch in `design.md` before the next package starts, and report upstream any mismatch that is a `vize` or `tsrs` defect. Verified by each mismatch appearing in `design.md` with its outcome.
 
 ## 4. Extend to the remaining Vue packages
 
@@ -26,7 +26,11 @@
 
 - [ ] 5.1 Decide whether `vize` replaces `nuxt typecheck` or runs beside it, in `design.md`, after reading how Nuxt generates its check inputs. Verified by a recorded decision with the spike's `apps/web` diagnostic diff.
 
-## 6. Retire `vue-tsc` and the override
+## 6. `.vue` declarations without `vue-tsc`
 
-- [ ] 6.1 Remove `vue-tsc` from every Vue package once each one's comparison has passed, and remove the `typescript-native-bridge` override in the same change. Verified by the workspace typecheck passing through the package scripts, and `pnpm ai:dependencies:score` showing no `vue-tsc` dependent.
-- [ ] 6.2 Rewrite `openspec/specs/architecture/monorepo-tooling/design.md`'s "TypeScript compiler" section as built, and archive this change. Verified by `pnpm exec openspec validate architecture-vize-vue-typecheck --strict --no-interactive`.
+- [ ] 6.1 Generate the declarations of the Vue packages' `.vue` files from `vize` (`vize check --declaration`) inside the shared tsdown configuration, in place of `dts.tsc.vue`. Verified by each Vue package's built `.d.ts` matching what `vue-tsc` writes today, with its size snapshot unmoved.
+
+## 7. Retire `vue-tsc` and the override
+
+- [ ] 7.1 Remove `vue-tsc` from every Vue package once each one's comparison has passed, and remove the `typescript-native-bridge` override in the same change. Verified by the workspace typecheck passing through the package scripts, and `pnpm ai:dependencies:score` showing no `vue-tsc` dependent.
+- [ ] 7.2 Rewrite `openspec/specs/architecture/monorepo-tooling/design.md`'s "TypeScript compiler" section as built, and archive this change. Verified by `pnpm exec openspec validate architecture-vize-vue-typecheck --strict --no-interactive`.

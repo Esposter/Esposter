@@ -55,14 +55,14 @@ catalog:
   "@codemirror/state": ^6.7.6
   "@dxup/nuxt": ^0.5.10
   "@dxup/unimport": ^0.1.2
-  "@electric-sql/pglite": ^0.5.13
+  "@electric-sql/pglite": ^0.5.14
   "@fission-ai/openspec": ^1.16.0
   "@eslint/core": ^1.2.1
   "@eslint/json": ^2.1.1
   "@fontsource/signika": ^5.3.0
   "@hpcc-js/wasm-graphviz": ^1.30.0
   "@huggingface/transformers": ^4.3.2
-  "@iconify-json/lucide": ^1.2.149
+  "@iconify-json/lucide": ^1.2.150
   "@iconify-json/mdi": ^1.2.3
   "@iconify-json/pixelarticons": ^1.2.10
   "@jsonforms/core": ^3.8.0
@@ -143,7 +143,7 @@ catalog:
   "@webgpu/types": ^0.1.74
   "@xterm/addon-fit": ^0.11.0
   "@xterm/xterm": ^6.0.0
-  apexcharts: ^8.6.0
+  apexcharts: ^8.7.0
   azurite: ^3.37.0
   better-auth: ^1.7.14
   bowser: ^2.15.0
@@ -172,7 +172,7 @@ catalog:
   happy-dom: ^21.0.4
   imagetracerjs: ^1.2.6
   jscpd: ^5.4.2
-  knip: ^6.44.0
+  knip: ^6.44.1
   link-preview-js: ^5.0.1
   linkifyjs: ^4.4.0
   livekit-client: ^2.23.0
@@ -246,9 +246,7 @@ catalog:
   vite-plus: ^1.4.0
   vitest: ^5.0.5
   vitest-browser-vue: ^3.1.0
-  # @TODO: https://github.com/ubugeeei-prod/vize/issues/10980 — back to a caret, with the Renovate rule that holds it dropped, once
-  # that issue is fixed (the rule's description carries the reason)
-  vize: ~0.606.0
+  vize: ^0.627.0
   vue: ^3.5.44
   vue-eslint-parser: ^10.4.1
   vue-router: ^5.4.0
@@ -259,7 +257,7 @@ catalog:
   workbox-precaching: ^7.4.1
   workbox-routing: ^7.4.1
   write-excel-file: ^4.1.1
-  ws: ^8.22.0
+  ws: ^8.22.1
   zod: ^4.6.7
 catalogMode: strict
 
