@@ -269,7 +269,7 @@ describe("friendRequestRouter", () => {
 
     expect(data.senderId).toBe(senderUser.id);
     expect(data.receiverId).toBe(receiverUser.id);
-    expect(data.receiver.id).toBe(receiverUser.id);
+    expect(data.sender.id).toBe(senderUser.id);
   });
 
   test("on accept friend request notifies sender", async () => {

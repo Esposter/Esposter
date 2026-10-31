@@ -24,7 +24,6 @@ describe(useFriendRequestStore, () => {
     createdAt: new Date(0),
     deletedAt: null,
     id: `${sender.id}-${appUser.id}`,
-    receiver: appUser,
     receiverId: appUser.id,
     sender,
     senderId: sender.id,
@@ -70,7 +69,7 @@ describe(useFriendRequestStore, () => {
     const { checkHasSentFriendRequest } = friendRequestStore;
     friendRequests.value = [
       firstFriendRequest,
-      { ...firstFriendRequest, receiver: second, receiverId: second.id, sender: appUser, senderId: appUser.id },
+      { ...firstFriendRequest, receiverId: second.id, sender: appUser, senderId: appUser.id },
     ];
 
     expect(checkHasSentFriendRequest(second.id)).toBe(true);

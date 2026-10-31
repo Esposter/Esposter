@@ -10,7 +10,4 @@ export const friendRequestsInSocialRelation = defineRelationsPart(schema, (r) =>
 }));
 
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
-export const FriendRequestInSocialRelations = {
-  receiver: { columns: PublicUserColumns },
-  sender: { columns: PublicUserColumns },
-} as const;
+export const FriendRequestInSocialRelations = { sender: { columns: PublicUserColumns } } as const;

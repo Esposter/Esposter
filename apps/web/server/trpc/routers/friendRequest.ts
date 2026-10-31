@@ -103,7 +103,7 @@ export const friendRequestRouter = router({
     .mutation<FriendRequestInSocialWithRelations>(async ({ ctx, input: receiverId }) => {
       const userId = ctx.getSessionPayload.user.id;
       if (userId === receiverId) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Friend, userId);
-      const [receiverUser, senderUser] = await readUserPair(ctx.db, receiverId, userId);
+      const [, senderUser] = await readUserPair(ctx.db, receiverId, userId);
       const friendshipId = getFriendshipId(userId, receiverId);
       const [newFriendRequest] = await ctx.db.transaction(async (tx) => {
         const existingBlock = await tx.query.blocksInSocial.findFirst({
@@ -133,11 +133,7 @@ export const friendRequestRouter = router({
           throw getInvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId);
         return existingFriendRequest;
       }
-      const friendRequest: FriendRequestInSocialWithRelations = {
-        ...newFriendRequest,
-        receiver: receiverUser,
-        sender: senderUser,
-      };
+      const friendRequest: FriendRequestInSocialWithRelations = { ...newFriendRequest, sender: senderUser };
       friendEventEmitter.emit("sendFriendRequest", friendRequest);
       // Best-effort after the insert — a failed publish loses one notification, never the friend request that
       // Already landed.

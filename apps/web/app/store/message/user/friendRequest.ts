@@ -46,7 +46,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     storeDeleteFriendRequestsByUser(friendUser.id);
     storeCreateFriend(friendUser);
   };
-  // Non-optimistic: the row carries the sender/receiver user graph the client can't faithfully fabricate, and a
+  // Non-optimistic: the row carries the sender's user the client can't faithfully fabricate, and a
   // Temp-id placeholder would race the echo's server-id row into a transient duplicate.
   const sendFriendRequest = async (receiverId: PublicUser["id"]) => {
     await executeSendFriendRequestMutation(() => $trpc.friendRequest.sendFriendRequest.mutate(receiverId), {
