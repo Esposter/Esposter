@@ -63,9 +63,9 @@ Before writing a helper, grep for an existing one; before finishing a feature, g
 
 ## File Length
 
-- **Target 50-100 lines per file** (`.ts` and `.vue` alike) — consistently over 100 lines is a yellow flag that an extraction is overdue (helper/sub-service/model for `.ts`; slot/sub-component/composable for `.vue` — the `vue-component-patterns` skill, "File Length").
+- **Target 50-100 lines per file** (`.ts` and `.vue` alike) — consistently over 100 lines is a yellow flag that an extraction is overdue (helper/sub-service/model for `.ts`; slot/sub-component/composable for `.vue` — the `vue-component-patterns` skill, `references/normal-form.md`).
 - Each file should have a single clear responsibility. Split a file that handles multiple concerns.
-- Exceptions: generated files, large constant maps with many entries, complex/rare layout components, and files where colocation of tightly coupled logic (a Zod schema next to its interface) is intentional.
+- Exceptions: generated files, large constant maps with many entries, a layout component that is long only in its template (never its script), and files where colocation of tightly coupled logic (a Zod schema next to its interface) is intentional.
 
 ## Reference pages
 

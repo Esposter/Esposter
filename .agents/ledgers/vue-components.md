@@ -6,12 +6,12 @@ on that date, and the pass resumes from the files changed since.
 
 ## Rules
 
-| Rule                                                                                 | Owner                                                                     |
-| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| Maximal component granularity — one action per component                             | `vue-page-composition`, incl. its `v-for` item-body clause                |
-| Computed by cost and identity, never by use count                                    | `vue`, `references/computed-extraction.md`                                |
-| The folder path is the prefix, and a prefix group folds                              | `vue-component-patterns`, `references/component-naming.md`                |
-| The normal form — one concern, a script binding is read, near the file-length target | `file-organization` "File Length", `vue-component-patterns` "File Length" |
+| Rule                                                     | Owner                                                      |
+| -------------------------------------------------------- | ---------------------------------------------------------- |
+| Maximal component granularity — one action per component | `vue-page-composition`, incl. its `v-for` item-body clause |
+| Computed by cost and identity, never by use count        | `vue`, `references/computed-extraction.md`                 |
+| The folder path is the prefix, and a prefix group folds  | `vue-component-patterns`, `references/component-naming.md` |
+| The normal form — nothing left to remove, merge or move  | `vue-component-patterns`, `references/normal-form.md`      |
 
 **The first two meet at the `v-for` item body, which is why they are one ledger.** A loop variable has no script scope, so
 an expression over it cannot become a `computed` however expensive it is. Extracting the item body into a
@@ -175,7 +175,7 @@ clean grep is the start of the pass, not its result.
 
 ## Find recipe — the normal form
 
-A component over the file-length target is the loudest signal, and the one nothing enforces:
+The file-length target is where a pass looks first, not the criterion: a file far past it almost always has something to remove, and a short file can still be out of form. Nothing enforces length, so the first look is by hand:
 
 ```bash
 # the largest components, app and packages alike

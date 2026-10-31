@@ -15,6 +15,7 @@ How an individual component is written, typed and named. Assembling a page or li
 - `references/async-components.md` — when a map dispatches a heavy component, or a component awaits in setup behind a `v-if`.
 - `references/slots.md` — when a component declares a slot, forwards an optional slot into a library component, or a named slot's content has grown non-trivial.
 - `references/abstraction-levels.md` — when a script setup mixes a composable with a hand-built block for one concept.
+- `references/normal-form.md` — when a `.vue` is past the file-length target, a script has grown long, or a feature's wiring is about to be added to a component that already wires several.
 - `references/selection-and-keys.md` — when a child reads the selection, initialises state from a prop, or a `:key` would be bumped.
 - `references/wrapper-and-child.md` — when a component initialises editable state from data that may not have arrived.
 
@@ -61,7 +62,7 @@ A component that gains a folder moves into it as `Index.vue`, never beside the f
 
 ## File Length
 
-The line-count target, the exceptions and what a `.vue` over it is split into are the `file-organization` skill's, "File Length". How an extracted slot is named and where it lives is `references/slots.md`.
+The line-count target and its exception are the `file-organization` skill's, "File Length". What a `.vue` over it is split into, and the shape a component in normal form has, is `references/normal-form.md`. How an extracted slot is named and where it lives is `references/slots.md`.
 
 ## Slots
 
