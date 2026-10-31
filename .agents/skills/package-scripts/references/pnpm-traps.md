@@ -1,6 +1,6 @@
 # pnpm Traps
 
-Read when a check behind a `--filter` reports success too quickly, when passing flags through a `pnpm <script>`, when a workflow step is about to spell out a binary, when reaching for a `run` prefix, or when a format or a node command fails on Windows. The rules themselves are in `SKILL.md`, one line each; this page is how each one fails and the shape that avoids it.
+Read when a check behind a `--filter` reports success too quickly, when passing flags through a `pnpm <script>`, when a workflow step is about to spell out a binary, when reaching for a `run` prefix, when a script spawns `pnpm`, or when a format or a node command fails on Windows. The rules themselves are in `SKILL.md`, one line each; this page is how each one fails and the shape that avoids it.
 
 ## A `--filter` that matches nothing exits 0
 
@@ -24,6 +24,15 @@ What the prefix _does_ decide is a name that collides with a pnpm command, and t
 
 After `oxlint --fix` rewrites many files on Windows, `pnpm format` or an in-place write can fail for minutes with os error 1224 (a user-mapped section), though no process holds them. Format a copy and rename it over the file, which succeeds where the in-place write is refused, then confirm with `pnpm exec oxfmt --check <files>`.
 
-## A shell started before the Node switch loses node
+## A shell whose PATH names a missing node loses node
 
-On the Windows PC node and pnpm come from vite-plus's `bin` folder on the user PATH. A shell started on fnm's multishell PATH, from before that switch, loses node mid-session, and the pre-commit formatter then skips silently. Prefix that `bin` folder on PATH for that shell; the path is per machine and never goes into `.githooks`.
+On the Windows PC, node and pnpm come from vite-plus's `bin` folder on the user PATH. A shell whose PATH still names an install that no longer exists loses node mid-session, and the pre-commit formatter then skips silently. Prefix that `bin` folder on PATH for that shell; the path is per machine and never goes into `.githooks`.
+
+## A script spawns `pnpm` as the file `pnpm run` names, never through a shell
+
+The `pnpm` on a Windows PATH is a `.cmd` shim only a shell resolves, and an args array under `shell` is the pair
+Node deprecates (DEP0190) — `no-restricted-syntax` in `packages/configuration/eslint/restrictedSyntaxes.js`
+rejects it. `pnpm run` puts the executable it is in `npm_execpath`, so `scripts` spawns `PNPM_FILE` with
+`PNPM_ARGS` ahead of its own (`scripts/src/services/shared/constants.ts`) and every argument reaches pnpm
+verbatim, with no quoting for a shell that is not there. A whole command line under `shell` — `crossOS`
+running a manifest's per-platform string — stays a single string.

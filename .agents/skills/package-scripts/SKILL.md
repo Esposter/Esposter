@@ -11,7 +11,7 @@ description: Apply when running or recommending any pnpm script. Esposter's pnpm
 
 - **A root `build:<app>` script per app.** A root script that only delegates to a package is a second definition of the line at the call site; what earns a root script its line is `openspec/specs/architecture/monorepo-tooling/design.md`, "Recursive script orchestration".
 - **Majoring the published packages because an export was renamed or removed.** `lerna.json` is `conventionalCommits: true` in fixed mode, so a `BREAKING CHANGE:` footer moves every public package to the next whole number; a rename or a removal ships as the `refactor` it is, and a package is kept at its smallest form rather than its oldest surface (`openspec/specs/architecture/no-compatibility-debt/design.md`).
-- **A developer's machine as the routine release.** The release is the nightly `Release.yaml` run: `release:gate` and `release:version` gate the tree and version `main` with no credential, a `push` job that runs no repository code pushes the version commit and its tag, and the finish publishes through npm's trusted publishing; the push to `main` starts the review run (`MergeMain.yaml`), which merges the version commit back into `ai/queue`. `pnpm release` stays for the owner's manual release (`openspec/specs/architecture/monorepo-tooling/design.md`, "Lerna Lite").
+- **A developer's machine as the routine release.** The routine release is the nightly `Release.yaml` run: its gate and version halves hold no credential, and the push credential is held only by a job that runs no repository code. `pnpm release` stays for the owner's manual release (`openspec/specs/architecture/release-flow/design.md`, the job graph; `openspec/specs/architecture/monorepo-tooling/design.md`, "Lerna Lite").
 
 ## `apps/web`
 
@@ -19,7 +19,7 @@ description: Apply when running or recommending any pnpm script. Esposter's pnpm
 
 ## Root Scripts — `references/root-scripts.md`
 
-`pnpm i` after a manifest change, `pnpm test` for the whole suite once (the ban on running it locally is the `testing` skill's, `references/running-the-suite.md`), `vp run build:packages` for the libraries as a set, `pnpm release` for a manual release (the nightly runs its halves, `release:gate` and `release:version`), and `vp run lint:unused` for knip; the `ai:<domain>:<verb>` scripts no human types are `references/ai-scripts.md`.
+`pnpm i` after a manifest change, `pnpm test` with the paths a change touched, never the whole suite locally (the ban is the `testing` skill's, `references/running-the-suite.md`), `vp run build:packages` for the libraries as a set, `pnpm release` for a manual release (the nightly runs its halves, `release:gate` and `release:version`), and `vp run lint:unused` for knip; the `ai:<domain>:<verb>` scripts no human types are `references/ai-scripts.md`.
 
 ## A `.ts` script runs under `node` where it can, `vpx` where it cannot — `references/typescript-scripts.md`
 
@@ -51,4 +51,4 @@ Once, after all the edits going out together: the tests of what the change touch
 - `references/ai-scripts.md` — when a sweep, a review or a skill needs the script that runs its scan.
 - `references/typescript-scripts.md` — when adding a `.ts` script or choosing its runner.
 - `references/scripts-comments.md` — when a script is shaped by something that should later be undone.
-- `references/pnpm-traps.md` — when a filtered check passes too quickly, flags are forwarded through a script, a `run` prefix is in question, or a format or a node command fails on Windows.
+- `references/pnpm-traps.md` — when a filtered check passes too quickly, flags are forwarded through a script, a `run` prefix is in question, a script spawns `pnpm`, or a format or a node command fails on Windows.
