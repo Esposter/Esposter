@@ -48,7 +48,7 @@ owning skill.
 | `app/composables`, `app/store`                                                                                                                                                                   | —     | Computed rule only; a returned computed is the surface, not a find                                                                                             |
 | `Ui`                                                                                                                                                                                             | —     |                                                                                                                                                                |
 | `AgentConsole`                                                                                                                                                                                   | —     |                                                                                                                                                                |
-| `genshin-world/World/Session`                                                                                                                                                                    | —     | The 2757-line integration root; split into per-feature composables first, then read whole                                                                      |
+| `genshin-world/World/Session`                                                                                                                                                                    | —     | The 2685-line integration root; split into per-feature composables first, then read whole                                                                      |
 | `genshin-world/Hud`, `genshin-world/World/Water`                                                                                                                                                 | —     |                                                                                                                                                                |
 | `genshin-world/Login`, `genshin-world/Crafting`, `genshin-world/GameOver`                                                                                                                        | —     |                                                                                                                                                                |
 | `genshin-world/Character`, `genshin-world/Map`                                                                                                                                                   | —     |                                                                                                                                                                |
@@ -175,7 +175,7 @@ clean grep is the start of the pass, not its result.
 
 ## Find recipe — the normal form
 
-The file-length target is where a pass looks first, not the criterion: a file far past it almost always has something to remove, and a short file can still be out of form. Nothing enforces length, so the first look is by hand:
+The criterion, and why length is only a first look, is in `normal-form.md`. Nothing enforces length, so the first look is by hand:
 
 ```bash
 # the largest components, app and packages alike
