@@ -172,7 +172,7 @@ catalog:
   happy-dom: ^21.0.4
   imagetracerjs: ^1.2.6
   jscpd: ^5.4.2
-  knip: ^6.44.0
+  knip: ^6.44.1
   link-preview-js: ^5.0.1
   linkifyjs: ^4.4.0
   livekit-client: ^2.23.0
