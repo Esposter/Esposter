@@ -20,7 +20,7 @@ Mondstadt is drawn as the game draws it, from the wind over its meadows to its l
 
 ## Waiting on
 
-- Snow weather for Dragonspine, which its build order's fifth step needs: `openspec/changes/genshin-weather/`.
+- Snow weather for Dragonspine, which the area's snow and snowstorm weather needs: `openspec/changes/genshin-weather/`.
 
 ## Impact
 
