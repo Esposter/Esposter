@@ -4,7 +4,7 @@ import type { AbyssProgress } from "#src/models/spiralAbyss/AbyssProgress";
 import { checkIsAbyssFloorUnlocked } from "#src/services/spiralAbyss/checkIsAbyssFloorUnlocked";
 import { describe, expect, test } from "vitest";
 
-const makeProgress = (stars: number): AbyssProgress => ({
+const createProgress = (stars: number): AbyssProgress => ({
   chamberIdProgressMap: new Map([
     [1, { isCleared: true, stars }],
     [2, { isCleared: true, stars: 0 }],
@@ -30,20 +30,20 @@ describe(checkIsAbyssFloorUnlocked, () => {
   test("should open the first floor, which has none below it", () => {
     expect.hasAssertions();
 
-    expect(checkIsAbyssFloorUnlocked(undefined, makeProgress(0))).toBe(true);
+    expect(checkIsAbyssFloorUnlocked(undefined, createProgress(0))).toBe(true);
   });
 
   test("should open the floor above once the floor below holds its unlock count of stars", () => {
     expect.hasAssertions();
 
-    expect(checkIsAbyssFloorUnlocked(floor, makeProgress(UNLOCK_STAR_COUNT - 1))).toBe(false);
-    expect(checkIsAbyssFloorUnlocked(floor, makeProgress(UNLOCK_STAR_COUNT))).toBe(true);
+    expect(checkIsAbyssFloorUnlocked(floor, createProgress(UNLOCK_STAR_COUNT - 1))).toBe(false);
+    expect(checkIsAbyssFloorUnlocked(floor, createProgress(UNLOCK_STAR_COUNT))).toBe(true);
   });
 
   test("should keep the floor above locked while a chamber below is not cleared", () => {
     expect.hasAssertions();
 
-    const progress = makeProgress(UNLOCK_STAR_COUNT);
+    const progress = createProgress(UNLOCK_STAR_COUNT);
     progress.chamberIdProgressMap.set(3, { isCleared: false, stars: 0 });
 
     expect(checkIsAbyssFloorUnlocked(floor, progress)).toBe(false);

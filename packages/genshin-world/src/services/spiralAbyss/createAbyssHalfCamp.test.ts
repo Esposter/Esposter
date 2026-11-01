@@ -1,15 +1,11 @@
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { DOMAIN_ARENA_SPREAD } from "#src/services/domains/constants";
+import { AREA_ID, CENTER, DESCRIBE_ID, ENEMY_KIND_IDS, MONSTER_LEVEL } from "#src/services/spiralAbyss/constants.test";
 import { createAbyssHalfCamp } from "#src/services/spiralAbyss/createAbyssHalfCamp";
 import { describe, expect, test } from "vitest";
 
 describe(createAbyssHalfCamp, () => {
-  const AREA_ID = "area";
   const CAMP_ID = "camp";
-  const CENTER = { x: 0, z: 0 };
-  const DESCRIBE_ID = 10101;
-  const MONSTER_LEVEL = 24;
-  const ENEMY_KIND_IDS = { [DESCRIBE_ID]: EnemyKindId.HilichurlFighter };
 
   test("a half's monsters stand in one camp, each as its describe's kind at the chamber's monster level", () => {
     expect.hasAssertions();
