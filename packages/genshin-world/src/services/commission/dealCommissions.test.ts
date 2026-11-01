@@ -6,7 +6,7 @@ import { COMMISSION_UNLOCK_RANK } from "#src/services/commission/constants";
 import { dealCommissions } from "#src/services/commission/dealCommissions";
 import { describe, expect, test } from "vitest";
 
-const commissionOf = (id: number, centerPosition: string): Commission => ({
+const createCommission = (id: number, centerPosition: string): Commission => ({
   centerPosition,
   enterDistance: 40,
   exitDistance: 60,
@@ -26,11 +26,11 @@ const commissionOf = (id: number, centerPosition: string): Commission => ({
 describe(dealCommissions, () => {
   const RANK = 12;
   const commissions = [
-    commissionOf(1, "Event_1"),
-    commissionOf(2, "Event_2"),
-    commissionOf(3, "Event_3"),
-    commissionOf(4, "Event_4"),
-    commissionOf(5, "Event_5"),
+    createCommission(1, "Event_1"),
+    createCommission(2, "Event_2"),
+    createCommission(3, "Event_3"),
+    createCommission(4, "Event_4"),
+    createCommission(5, "Event_5"),
   ];
 
   test("should deal four distinct commissions at the rank it is dealt at", () => {

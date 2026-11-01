@@ -20,7 +20,7 @@ describe(claimCommissionReward, () => {
   // Rank 12 is the third band, so the band's items name the one a claim paid from
   const rewardBands = createEmptyBands();
   rewardBands[2] = [{ itemId: MORA_ID, maxCount: 20, minCount: 10 }];
-  const commissionOf = (id: number): Commission => ({
+  const createCommission = (id: number): Commission => ({
     centerPosition: `Event_${id}`,
     enterDistance: 40,
     exitDistance: 60,
@@ -39,16 +39,16 @@ describe(claimCommissionReward, () => {
   const slice: CommissionSlice = {
     bonuses: createEmptyBands(),
     rewardTiers: [{ bands: rewardBands, tier: REWARD_TIER }],
-    tasks: [1, 2, 3, 4].map((id) => commissionOf(id)),
+    tasks: [1, 2, 3, 4].map((id) => createCommission(id)),
   };
-  const dealtOf = (commissionId: number, count: number) => ({ commissionId, count, dealtRank: DEALT_RANK });
+  const createProgress = (commissionId: number, count: number) => ({ commissionId, count, dealtRank: DEALT_RANK });
 
   test("should refuse an unfinished commission with no Encounter Point held", () => {
     expect.hasAssertions();
     const day: CommissionDay = {
       claimedCommissionIds: [],
       dealtAt: DEALT_AT,
-      dealtCommissions: [dealtOf(1, FINISH_PROGRESS - 1)],
+      dealtCommissions: [createProgress(1, FINISH_PROGRESS - 1)],
       isBonusClaimed: false,
     };
     expect(claimCommissionReward(day, 0, 1, slice, minimumRoll)).toBeUndefined();
@@ -59,14 +59,14 @@ describe(claimCommissionReward, () => {
     const day: CommissionDay = {
       claimedCommissionIds: [],
       dealtAt: DEALT_AT,
-      dealtCommissions: [dealtOf(1, FINISH_PROGRESS - 1)],
+      dealtCommissions: [createProgress(1, FINISH_PROGRESS - 1)],
       isBonusClaimed: false,
     };
     expect(claimCommissionReward(day, 2, 1, slice, minimumRoll)).toStrictEqual({
       day: {
         claimedCommissionIds: [1],
         dealtAt: DEALT_AT,
-        dealtCommissions: [dealtOf(1, FINISH_PROGRESS - 1)],
+        dealtCommissions: [createProgress(1, FINISH_PROGRESS - 1)],
         isBonusClaimed: false,
       },
       encounterPoints: 1,
@@ -79,7 +79,7 @@ describe(claimCommissionReward, () => {
     const day: CommissionDay = {
       claimedCommissionIds: [],
       dealtAt: DEALT_AT,
-      dealtCommissions: [dealtOf(1, FINISH_PROGRESS)],
+      dealtCommissions: [createProgress(1, FINISH_PROGRESS)],
       isBonusClaimed: false,
     };
     expect(claimCommissionReward(day, 2, 1, slice, minimumRoll)?.encounterPoints).toBe(2);
@@ -90,7 +90,7 @@ describe(claimCommissionReward, () => {
     const day: CommissionDay = {
       claimedCommissionIds: [],
       dealtAt: DEALT_AT,
-      dealtCommissions: [dealtOf(1, FINISH_PROGRESS)],
+      dealtCommissions: [createProgress(1, FINISH_PROGRESS)],
       isBonusClaimed: false,
     };
     expect(claimCommissionReward(day, 0, 2, slice, minimumRoll)).toBeUndefined();
@@ -101,14 +101,14 @@ describe(claimCommissionReward, () => {
     const day: CommissionDay = {
       claimedCommissionIds: [],
       dealtAt: DEALT_AT,
-      dealtCommissions: [dealtOf(1, FINISH_PROGRESS)],
+      dealtCommissions: [createProgress(1, FINISH_PROGRESS)],
       isBonusClaimed: false,
     };
     expect(claimCommissionReward(day, 0, 1, slice, maximumRoll)).toStrictEqual({
       day: {
         claimedCommissionIds: [1],
         dealtAt: DEALT_AT,
-        dealtCommissions: [dealtOf(1, FINISH_PROGRESS)],
+        dealtCommissions: [createProgress(1, FINISH_PROGRESS)],
         isBonusClaimed: false,
       },
       encounterPoints: 0,
@@ -122,7 +122,12 @@ describe(claimCommissionReward, () => {
     const day: CommissionDay = {
       claimedCommissionIds: [2, 3, 4],
       dealtAt: DEALT_AT,
-      dealtCommissions: [dealtOf(1, FINISH_PROGRESS), dealtOf(2, 0), dealtOf(3, 0), dealtOf(4, 0)],
+      dealtCommissions: [
+        createProgress(1, FINISH_PROGRESS),
+        createProgress(2, 0),
+        createProgress(3, 0),
+        createProgress(4, 0),
+      ],
       isBonusClaimed: false,
     };
     const claim = claimCommissionReward(day, 0, 1, slice, minimumRoll);
@@ -136,7 +141,7 @@ describe(claimCommissionReward, () => {
     const day: CommissionDay = {
       claimedCommissionIds: [1],
       dealtAt: DEALT_AT,
-      dealtCommissions: [dealtOf(1, FINISH_PROGRESS)],
+      dealtCommissions: [createProgress(1, FINISH_PROGRESS)],
       isBonusClaimed: false,
     };
     expect(claimCommissionReward(day, 0, 1, slice, minimumRoll)).toBeUndefined();

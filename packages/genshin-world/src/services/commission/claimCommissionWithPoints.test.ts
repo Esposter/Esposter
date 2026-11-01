@@ -68,7 +68,7 @@ describe(claimCommissionWithPoints, () => {
   moraBands[2] = [{ itemId: MORA_ITEM_ID, maxCount: 20, minCount: MORA_REWARD }];
   const itemBands = createEmptyBands();
   itemBands[2] = [{ itemId: ITEM_ID, maxCount: 1, minCount: 1 }];
-  const commissionOf = (id: number): Commission => ({
+  const createCommission = (id: number): Commission => ({
     centerPosition: `Event_${id}`,
     enterDistance: 40,
     exitDistance: 60,
@@ -84,18 +84,18 @@ describe(claimCommissionWithPoints, () => {
     questId: "",
     rewardTier: REWARD_TIER,
   });
-  const sliceWith = (bands: RewardItem[][]): CommissionSlice => ({
+  const createSlice = (bands: RewardItem[][]): CommissionSlice => ({
     bonuses: createEmptyBands(),
     rewardTiers: [{ bands, tier: REWARD_TIER }],
-    tasks: [commissionOf(1)],
+    tasks: [createCommission(1)],
   });
-  const dayWith = (count: number): CommissionDay => ({
+  const createDay = (count: number): CommissionDay => ({
     claimedCommissionIds: [],
     dealtAt: NOW,
     dealtCommissions: [{ commissionId: 1, count, dealtRank: DEALT_RANK }],
     isBonusClaimed: false,
   });
-  const pointsOf = (halfPoints: number) => ({ earnedOn: NOW, halfPoints });
+  const createPoints = (halfPoints: number) => ({ earnedOn: NOW, halfPoints });
   const base = {
     adventureExp: 0,
     adventureRankTables,
@@ -118,9 +118,9 @@ describe(claimCommissionWithPoints, () => {
     expect(
       claimCommissionWithPoints({
         ...base,
-        commissionDay: dayWith(FINISH_PROGRESS - 1),
-        encounterPoints: pointsOf(1),
-        slice: sliceWith(moraBands),
+        commissionDay: createDay(FINISH_PROGRESS - 1),
+        encounterPoints: createPoints(1),
+        slice: createSlice(moraBands),
       }),
     ).toBeUndefined();
   });
@@ -130,12 +130,12 @@ describe(claimCommissionWithPoints, () => {
 
     const outcome = claimCommissionWithPoints({
       ...base,
-      commissionDay: dayWith(FINISH_PROGRESS - 1),
-      encounterPoints: pointsOf(3),
-      slice: sliceWith(moraBands),
+      commissionDay: createDay(FINISH_PROGRESS - 1),
+      encounterPoints: createPoints(3),
+      slice: createSlice(moraBands),
     });
 
-    expect(outcome?.encounterPoints).toStrictEqual(pointsOf(1));
+    expect(outcome?.encounterPoints).toStrictEqual(createPoints(1));
     expect(outcome?.commissionDay.claimedCommissionIds).toStrictEqual([1]);
     expect(outcome?.routing.wallet[Currency.Mora]).toBe(STARTING_MORA + MORA_REWARD);
   });
@@ -145,12 +145,12 @@ describe(claimCommissionWithPoints, () => {
 
     const outcome = claimCommissionWithPoints({
       ...base,
-      commissionDay: dayWith(FINISH_PROGRESS),
-      encounterPoints: pointsOf(3),
-      slice: sliceWith(moraBands),
+      commissionDay: createDay(FINISH_PROGRESS),
+      encounterPoints: createPoints(3),
+      slice: createSlice(moraBands),
     });
 
-    expect(outcome?.encounterPoints).toStrictEqual(pointsOf(3));
+    expect(outcome?.encounterPoints).toStrictEqual(createPoints(3));
     expect(outcome?.commissionDay.claimedCommissionIds).toStrictEqual([1]);
   });
 
@@ -160,9 +160,9 @@ describe(claimCommissionWithPoints, () => {
     expect(
       claimCommissionWithPoints({
         ...base,
-        commissionDay: dayWith(FINISH_PROGRESS - 1),
+        commissionDay: createDay(FINISH_PROGRESS - 1),
         encounterPoints: { earnedOn: EPOCH, halfPoints: 8 },
-        slice: sliceWith(moraBands),
+        slice: createSlice(moraBands),
       }),
     ).toBeUndefined();
   });
@@ -179,10 +179,10 @@ describe(claimCommissionWithPoints, () => {
     expect(
       claimCommissionWithPoints({
         ...base,
-        commissionDay: dayWith(FINISH_PROGRESS - 1),
-        encounterPoints: pointsOf(2),
+        commissionDay: createDay(FINISH_PROGRESS - 1),
+        encounterPoints: createPoints(2),
         inventory: fullInventory,
-        slice: sliceWith(itemBands),
+        slice: createSlice(itemBands),
       }),
     ).toBeUndefined();
   });
