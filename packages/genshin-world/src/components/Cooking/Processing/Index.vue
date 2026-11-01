@@ -83,8 +83,8 @@ const start = (recipe: ProcessingRecipe) => {
           v-for="recipe in knownRecipes"
           :key="recipe.id"
           v-model:count="counts[recipe.id]"
-          :can-start="checkCanStart(recipe)"
           :game-text
+          :is-startable="checkCanStart(recipe)"
           :material-data-map
           :name-text
           :queued-count="queuedCount(recipe)"

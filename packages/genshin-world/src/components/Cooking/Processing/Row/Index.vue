@@ -7,10 +7,10 @@ import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
-  // Whether the picked units can be started now, from the bag and the queue as they stand
-  canStart: boolean;
   // The game's words in the reader's language
   gameText: GameText;
+  // Whether the picked units can be started now, from the bag and the queue as they stand
+  isStartable: boolean;
   // The game's material table by item id, which each result and ingredient is defined from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items and recipes in the reader's language, by their game text ids
@@ -21,9 +21,9 @@ interface Props {
   recipe: ProcessingRecipe;
 }
 
-const { canStart, gameText, materialDataMap, nameText, queuedCount, recipe } = defineProps<Props>();
 // The units the player picked for this processing, one until picked
 const count = defineModel<number>("count");
+const { gameText, isStartable, materialDataMap, nameText, queuedCount, recipe } = defineProps<Props>();
 const emit = defineEmits<{ start: [] }>();
 const getDefinition = (itemId: number) => getItemDefinition(itemId, nameText, materialDataMap);
 </script>
@@ -43,7 +43,7 @@ const getDefinition = (itemId: number) => getItemDefinition(itemId, nameText, ma
       type="number"
       :max="recipe.queueSize - queuedCount"
     />
-    <button type="button" :disabled="!canStart" @click="emit('start')">
+    <button type="button" :disabled="!isStartable" @click="emit('start')">
       {{ gameText[GameTextKey.ProcessingStart] }}
     </button>
   </li>
