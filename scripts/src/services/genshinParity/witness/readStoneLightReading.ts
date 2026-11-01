@@ -8,6 +8,7 @@ import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTarge
 import { computePixelPoint } from "#src/services/genshinParity/shared/computePixelPoint";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { readPageFunction } from "#src/services/genshinParity/shared/readPageFunction";
+import { readRawRgb } from "#src/services/genshinParity/shared/readRawRgb";
 import { readWitnessFamilies } from "#src/services/genshinParity/shared/readWitnessFamilies";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
@@ -19,7 +20,6 @@ import { STONE_HEIGHT_BANDS } from "#src/services/genshinParity/witness/constant
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { computeStoneHarmonics, computeStoneRampCoordinate, STONE_HARMONIC_COUNT } from "genshin-engine";
-import sharp from "sharp";
 import { Matrix3, Matrix4, Vector3 } from "three";
 
 // A pixel's bin: its depth band (`DEPTH_BANDS`), its height band (`STONE_HEIGHT_BANDS`), its ramp coordinate in this many
@@ -73,7 +73,7 @@ export const readStoneLightReading = async (
       ? await shootWitnessFamilies(page, await readWitnessFamilies(page), { height, width })
       : image;
     await setPageWitnessView(page, {});
-    const referenceShot = await sharp(source).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
+    const referenceShot = await readRawRgb(source, width, height);
     const matrixWorld = new Matrix4().fromArray(sky.matrixWorld);
     const projectionMatrixInverse = new Matrix4().fromArray(sky.projectionMatrixInverse);
     const eye = new Vector3().setFromMatrixPosition(matrixWorld);
