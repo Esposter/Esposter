@@ -9,6 +9,7 @@
     "scripts/**/*.ts",
     "src/**/*.ts",
     "../oxfmt.config.ts",
-    "../oxlint.config.ts"
+    "../oxlint.config.ts",
+    "../oxlint/*.ts"
   ]
 }
