@@ -19,13 +19,12 @@ import { interpolatePose } from "#src/services/genshinParity/passes/interpolateP
 import { PARITY_FRAME_MS } from "#src/services/genshinParity/shared/constants";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
+import { LoginStage } from "genshin-world";
 import { join } from "node:path";
 import { Box3, Matrix4, Vector3 } from "three";
 
 // The family whose pieces a clip moves, and the stages the scene stands still in and plays it at
 const DOOR_FAMILY = "Door";
-const STILL_STAGE = "Title";
-const DOOR_STAGE = "Door";
 
 // The motion pass: the door's pieces as the scene plays their lift, read frame by frame on a faked clock from the
 // Frame its stage turns to the door's, held against where the game's own lift clip carries each piece: its path, the
@@ -49,7 +48,7 @@ export const measureMotion = async (component: DerivedAssetComponent): Promise<P
   const { close, page } = await openParityPage({
     height: MOTION_HEIGHT,
     isClockFaked: true,
-    props: { heldScrolled: 0, isInterfaceHidden: true, stage: STILL_STAGE },
+    props: { heldScrolled: 0, isInterfaceHidden: true, stage: LoginStage.Title },
     screen: DerivedAssetComponentMap[component].screen,
     width: MOTION_WIDTH,
   });
@@ -91,7 +90,7 @@ export const measureMotion = async (component: DerivedAssetComponent): Promise<P
       const startElements = JSON.stringify(startPieces);
       await page.evaluate((stage) => {
         (Reflect.get(window, "setScreenProps") as (props: Record<string, unknown>) => void)({ stage });
-      }, DOOR_STAGE);
+      }, LoginStage.Door);
       const liftFrameCount = Math.ceil((duration * 1000) / PARITY_FRAME_MS);
       const read: { pieces: number[][]; riseMs: number }[] = [];
       let originTime = startTime;
