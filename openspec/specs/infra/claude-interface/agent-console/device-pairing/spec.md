@@ -111,6 +111,7 @@ A page pairing SHALL challenge the host first and send its one-time code only af
 - **GIVEN** a program holding the loopback port when the host was opened for a code
 - **WHEN** it answers the page's challenge, with whatever MAC it makes
 - **THEN** the page sends it no code, takes nothing it sends after, and tries again until the code's deadline
+- **AND** a host the user started and linked to is not asked again, since the host holding no such code is a code already used or expired
 
 ### Requirement: A second start hands its code over only to the proven host
 
