@@ -39,7 +39,7 @@ A key typed into a field (an input, a text area, a select or anything editable) 
 
 ## Escape and the locked pointer
 
-While the pointer is locked to turn the camera, the browser keeps `Escape` for itself: it lets the lock go and never passes the key on. So a lock lost while the world is in play opens the Paimon menu (`packages/genshin-world/src/components/World/Session/Index.vue`, the `pointerlockchange` listener), as `Escape` does with the pointer free (`packages/genshin-engine/src/input/InputActionBindingMap.ts`, [screens](../screens/design.md)). The lock is taken again by a click on the world (`packages/genshin-world/src/components/World/Character/Index.vue`), since the browser takes no lock from `Escape` itself.
+While the pointer is locked to turn the camera, the browser keeps `Escape` for itself: it lets the lock go and never passes the key on. So a lock lost while the world is in play, and not let go to show the cursor, opens the Paimon menu (`packages/genshin-world/src/composables/useWorldScreenBehaviour.ts`, the `pointerlockchange` listener), as `Escape` does with the pointer free (`packages/genshin-engine/src/input/InputActionBindingMap.ts`, [screens](../screens/design.md)). The lock is taken again by a click on the world (`packages/genshin-world/src/components/World/Character/Index.vue`), since the browser takes no lock from `Escape` itself.
 
 The first pointer move after a lock is taken is dropped (`packages/genshin-engine/src/input/createInput.ts`), since Chromium reports one spurious, very large movement on it, and so is any single move larger than half a turn at the look's sensitivity (`MOUSE_LOOK_MAX_PIXELS_PER_EVENT`, `packages/genshin-engine/src/input/constants.ts`), which no hand makes between two reports.
 
@@ -74,16 +74,13 @@ The bindings of places and modes the world does not have are left out (`packages
 
 ## Open
 
-- [ ] **Each action's default key on a PC and an Xbox pad, as the game's controls list sets them out, and M, F1, F3 and F5 as the game's keys** — no source yet: the wiki's Controls page is not in `{data-root}/cache/genshin-wiki/`, and no capture shows the game's controls list.
+The open items the spec's requirements carry (the default keys, the pad's bumper, Escape's lock, the spurious move and the F6 to F8 keys) are recorded once in [the spec](spec.md).
+
 - [ ] **A pad's top face button is the burst, the bumper chords and the directional pad's chords are the game's** — no source yet: no capture of a pad's controls, and the wiki's Controls page is not cached.
 - [ ] **The browser's standard gamepad layout puts a PlayStation cross and an Xbox A at the same index** — no source yet: the W3C Gamepad spec, cited in Sources, is not on this PC, so its button order is unread here.
-- [ ] **The game's shortcut wheel turns the face buttons into its own while the bumper is held** — no source yet: a capture of the pad's bumper held in the game, not on this machine.
-- [ ] **The browser keeps Escape for a pointer lock and takes no lock from it** — no source yet: the Pointer Lock and user-activation specs, which this pass did not open.
-- [ ] **Chromium reports one spurious, very large pointer move after a lock** — no source yet: a recording of the first move after a lock, not taken here.
 - [ ] **Control is the game's crouch key, and a held Control with W is the browser's close-tab shortcut** — no source yet: the game's controls list for crouch and the browser's shortcut list, neither checked here.
 - [ ] **The pad's touchpad is no button in the standard layout, and the View and Share buttons carry the chat on every pad** — no source yet: the game's controls list for a PlayStation pad, not on this machine.
 - [ ] **The game's defaults are the only ones, and the player-changeable keys are left at the game's own** — no source yet: the game's list of changeable keys; the `settings-controls` frames are a browser walkthrough, not the controls screen.
-- [ ] **F6, F7 and F8 are the Serenitea Pot, the Cat's Tail and Stellar Reunion** — no source yet: the game's controls list for those screens, which the wiki cache does not hold.
 - [ ] **Esc opens the Paimon menu on PC** — no source yet: the wiki's Controls page is not in the cache.
 - [ ] **Left Shift is the game's sprint key** — no source yet: the wiki's Controls page is not in the cache.
 - [ ] **On a keyboard, Left Alt held with a number switches to that party member and uses its burst** — no source yet: the wiki's Controls page is not in the cache.
