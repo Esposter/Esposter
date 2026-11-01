@@ -16,7 +16,7 @@ Eula's normal attacks SHALL be five strikes, a charged attack, a collision attac
 
 ### Requirement: Provisional charged attack
 
-Eula's charged attack SHALL be provisional, its spin landing at half a second and its final hit at one second within an attack of one and a half seconds, until a recording of the game settles them.
+Eula's charged attack SHALL be provisional, its spin landing at half a second and its final hit at one second within an attack of one and a half seconds, until a recording of the game settles them. Its sources are open in [the design](design.md#decisions).
 
 #### Scenario: Charged attack timings stay estimates
 
@@ -43,7 +43,7 @@ Pressing Icetide Vortex SHALL add a Grimheart stack, up to two stacks, lasting 1
 
 ### Requirement: Icetide Vortex hold spends stacks
 
-Holding Icetide Vortex SHALL spend every Grimheart stack on one Icewhirl each, shredding the enemy's Cryo and Physical RES for 7 seconds per stack, and the hold SHALL start after a half-second threshold that stays provisional.
+Holding Icetide Vortex SHALL spend every Grimheart stack on one Icewhirl each, shredding the enemy's Cryo and Physical RES for 7 seconds per stack, and the hold SHALL start after a half-second threshold that stays provisional, open in [the design](design.md#decisions).
 
 #### Scenario: The hold spends stacks into Icewhirls
 
@@ -133,8 +133,3 @@ From constellation 6, each stack the Sword gains from her strikes SHALL have a 5
 - **GIVEN** Eula is at constellation 6 and her Lightfall Sword is lit
 - **WHEN** one of her strikes gains the Sword a stack
 - **THEN** that stack is a second one with a 50% chance
-
-## Open
-
-- [ ] **Eula's charged attack's spin lands at half a second and its final hit at one second** — no source yet: no recording of her charged attack is on disk to settle the timings.
-- [ ] **The Icetide Vortex hold starts after a half-second threshold** — no source yet: no recording of the hold's threshold is on disk to settle it.
