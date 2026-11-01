@@ -3,9 +3,9 @@ import type { DevSaveTables } from "#src/models/dev/DevSaveTables";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 
 import { DevUnlockKind } from "#src/models/dev/DevUnlockKind";
+import { createAreaNameMap } from "#src/services/dev/createAreaNameMap";
 import { resolveDevName } from "#src/services/dev/resolveDevName";
 import { RegionIdStatueLandmarkIdMap } from "#src/services/statue/RegionIdStatueLandmarkIdMap";
-import { createAreaNameMap } from "#src/services/world/createAreaNameMap";
 import { z } from "zod";
 
 // The `unlock` line: a region or a waypoint, and the name the game shows it under
