@@ -71,4 +71,4 @@ The game's day SHALL turn at 04:00 in UTC+8, and a Domain of Forgery's day SHALL
 ## Open
 
 - [ ] **A Domain of Blessing is open every day** — contradicted by `{data-root}/cache/genshin-wiki/Page_Domain.json` wikitext line 25: each challenge domain, Blessing among them, is open three days a week, two set days and Sunday.
-- [ ] **Forgery and Mastery open on their two set days** — no source yet: the set days' weekday mapping is unread; `{data-root}/genshin-parity/text/ExcelBinOutput/DailyDungeonConfigData.json` holds 64 rows under obfuscated keys, and no key map in the repository names their weekday fields.
+- [ ] **Forgery and Mastery open on their two set days** — no source yet: the set days' weekday mapping is unread; `{data-root}/genshin-parity/text/ExcelBinOutput/DailyDungeonConfigData.json` holds its rows under obfuscated keys, and no key map in the repository names their weekday fields.
