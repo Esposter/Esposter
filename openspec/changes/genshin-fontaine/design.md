@@ -35,14 +35,6 @@ flowchart TD
 
 The catalogue holds Fontaine's areas as the game names them: the Court of Fontaine Region, the Belleau Region, the Beryl Region, the Liffey Region, Erinnyes Forest, the Fontaine Research Institute of Kinetic Energy Engineering Region, the Morte Region, the Nostoi Region and the Sea of Bygone Eras. Subareas include the Court of Fontaine, Palais Mermonia's Caesareum Palace, Opera Epiclese, Romaritime Harbor, Lumidouce Harbor, Poisson, Petrichor, Elynas, the Fortress of Meropide, Merusea Village, the Fountain of Lucine, Loch Urania, Salacia Plain, Mont Esus East, the slopes of Mont Automnequi, the Institute of Natural Philosophy, the Weeping Willow of the Lake, the Central Laboratory Ruins, Fort Charybdis Ruins and Thalatta Submarine Canyon.
 
-## Build order
-
-1. **The Court of Fontaine** and its plate edge, with the great waterfall.
-2. **The Belleau and Beryl regions** with Romaritime Harbor and Lumidouce Harbor.
-3. **Underwater Fontaine**, from Salacia Plain and Merusea Village to the Fortress of Meropide.
-4. **Erinnyes Forest**, **Liffey**, the **Research Institute** and **Morte**.
-5. **Nostoi** and the **Sea of Bygone Eras** as a layer.
-
 ## Reference checklist
 
 The Court of Fontaine from the aquabus, the Fountain of Lucine, Palais Mermonia, Opera Epiclese, the great waterfall from below, Poisson, the Research Institute's machinery, Elynas from the sea, Merusea Village under water, and the Fortress of Meropide from outside.
