@@ -32,7 +32,6 @@ const { characterDataMap, characters, gameText, nameText, party, travelerName } 
 const emit = defineEmits<{ close: [] }>();
 // Party Setup opens on the deployed team, and the arrows step from there
 const teamIndex = ref(party.deployedTeamIndex);
-const team = computed(() => party.teams[teamIndex.value]);
 // The name a team shows: its own, else the game's name for the default team at its place, none past the defaults
 const teamNameAt = (index: number) => {
   const name = party.teams[index]?.name;
@@ -40,10 +39,10 @@ const teamNameAt = (index: number) => {
   const defaultNameKey = DEFAULT_PARTY_TEAM_NAME_GAME_TEXT_KEYS[index];
   return defaultNameKey ? gameText[defaultNameKey] : "";
 };
-const teamName = computed(() => teamNameAt(teamIndex.value));
 const slots = computed<PartySetupSlot[]>(() => {
-  if (!team.value) return [];
-  return getPartyTeamSlots(team.value, characters, characterDataMap, nameText, travelerName).map((slot) => ({
+  const team = party.teams[teamIndex.value];
+  if (!team) return [];
+  return getPartyTeamSlots(team, characters, characterDataMap, nameText, travelerName).map((slot) => ({
     elementColor: slot.element === undefined ? "" : (ElementMarkColorMap[slot.element] ?? ""),
     elementMarkPath: slot.element === undefined ? "" : ElementMarkPathMap[slot.element],
     levelText: slot.level ? fillGameTextValues(gameText[GameTextKey.LevelFormat], slot.level) : "",
@@ -53,9 +52,6 @@ const slots = computed<PartySetupSlot[]>(() => {
 
 // The team a step from the one shown lands on, the arrows going round the teams from the last back to the first
 const stepTeamIndex = (step: number) => (teamIndex.value + step + party.teams.length) % party.teams.length;
-// Each arrow is named by the team it steps to, the name the foot gives that team once it is shown
-const nextLabel = computed(() => teamNameAt(stepTeamIndex(1)));
-const previousLabel = computed(() => teamNameAt(stepTeamIndex(-1)));
 const stepTeam = (step: number) => {
   teamIndex.value = stepTeamIndex(step);
 };
@@ -63,18 +59,19 @@ const stepTeam = (step: number) => {
 
 <template>
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.PartySetup]">
+    <!-- Each arrow is named by the team it steps to, the name the foot gives that team once it is shown -->
     <PartySetupScreen
       :back-label="gameText[GameTextKey.Back]"
       :configure-team-label="gameText[GameTextKey.ConfigureTeam]"
       :deploy-label="
         teamIndex === party.deployedTeamIndex ? gameText[GameTextKey.PartyDeployed] : gameText[GameTextKey.Deploy]
       "
-      :next-label
-      :previous-label
+      :next-label="teamNameAt(stepTeamIndex(1))"
+      :previous-label="teamNameAt(stepTeamIndex(-1))"
       :quick-setup-label="gameText[GameTextKey.QuickSetup]"
       :resonance-label="gameText[GameTextKey.PartyElementalResonance]"
       :slots
-      :team-name
+      :team-name="teamNameAt(teamIndex)"
       :title="gameText[GameTextKey.PartySetup]"
       @close="emit('close')"
       @deploy="deployPartyTeam(party, teamIndex)"
