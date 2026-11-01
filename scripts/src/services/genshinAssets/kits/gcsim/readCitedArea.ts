@@ -4,7 +4,6 @@ import type { AttackArea } from "genshin-world";
 import { readConstructorText } from "#src/services/genshinAssets/kits/gcsim/readConstructorText";
 import { readGcsimCitedArea } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedArea";
 import { resolveGoLocals } from "#src/services/genshinAssets/kits/gcsim/resolveGoLocals";
-import { substituteGoConstants } from "#src/services/genshinAssets/kits/gcsim/substituteGoConstants";
 import { substituteGoLoopIndices } from "#src/services/genshinAssets/kits/gcsim/substituteGoLoopIndices";
 import { substituteGoTableCells } from "#src/services/genshinAssets/kits/gcsim/substituteGoTableCells";
 
@@ -36,7 +35,7 @@ export const readCitedArea = (
     )) {
       const table = substituteGoTableCells(text, lines, counter);
       if (table === undefined) continue;
-      const cited = readGcsimCitedArea(substituteGoConstants(table.text, constantMap), file, targetingArea);
+      const cited = readGcsimCitedArea(table.text, file, targetingArea, (name) => constantMap.get(name)?.value);
       if (cited === undefined) continue;
       const cite = table.cites.find(({ value }) => cited.sizes.includes(value)) ?? table.cites[0];
       citedAreas.push({ area: cited.area, line: cite?.line ?? lineIndex + 1 });
