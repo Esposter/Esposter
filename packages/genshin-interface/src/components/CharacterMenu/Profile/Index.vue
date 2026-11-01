@@ -16,9 +16,10 @@ const selectedEntry = computed(() => entries[entryIndex.value]);
 </script>
 
 <template>
-  <!-- The Profile tab's panel: the stories down its left, each by its title, and the chosen one's title and text down its
-       right. A locked story shows its unlock line as its title, with no text under it. The namecard the Friendship holds is a plate of its
-       name under the stories, its art not drawn yet -->
+  <!-- The Profile tab's panel: the stories down its left, each by its title, and the chosen one's title and
+       text down its right. A locked story shows its unlock line as its title, or its plain title when no level
+       opens it, with no text under it. The namecard the Friendship holds is a plate of its name under the
+       stories, its art not drawn yet -->
   <div class="profile">
     <div class="entries-column">
       <ul class="entries">
