@@ -47,4 +47,4 @@ flowchart TD
 
 ## Open
 
-- [ ] **Each strike's gem reaches 5 metres of targeting** — no source yet: gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/ningguang/attack.go` lines 84 to 87 give the gem's own radius, 0.5 metres, and 3.5 from one constellation, but the 5-metre targeting the reach adds to them is the strike's area call, which was not read.
+- [ ] **Each strike's gem reaches 5 metres of targeting** — no source yet: gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/ningguang/attack.go` lines 84 to 87 give the gem's own radius, 0.5 metres, and 3.5 from one constellation, but the 5-metre targeting the reach adds to them is the strike's area call, which this page does not cite.
