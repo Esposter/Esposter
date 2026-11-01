@@ -7,12 +7,12 @@ committed.
 
 | Reference                              | Screen                      |                                                                Mean difference | Shape |   Tone |   FLIP |
 | :------------------------------------- | :-------------------------- | -----------------------------------------------------------------------------: | ----: | -----: | -----: |
-| `achievement-screen`                   | `AchievementScreen`         |                                                                          3.68% | 0.895 |  1.34% | 0.1678 |
-| `archive-screen`                       | `ArchiveScreen`             |                                                                          9.97% | 0.896 |  2.17% | 0.3457 |
+| `achievement-screen`                   | `AchievementScreen`         |                                                                          3.73% | 0.915 |  1.25% | 0.1674 |
+| `archive-screen`                       | `ArchiveScreen`             |                                                                          9.80% | 0.897 |  2.00% | 0.3418 |
 | `character-artifacts`                  | `CharacterScreen`           |                                                                          2.87% | 0.924 |  0.90% | 0.1224 |
 | `character-artifacts-tabs`             | `CharacterScreen`           |                                                                          0.88% | 0.976 |  0.32% | 0.0474 |
-| `character-attributes`                 | `CharacterScreen`           |                                                                          1.70% | 0.966 |  0.61% | 0.0702 |
-| `character-attributes-panel`           | `CharacterScreen`           |                                                                          3.68% | 0.859 |  1.88% | 0.1547 |
+| `character-attributes`                 | `CharacterScreen`           |                                                                          1.70% | 0.975 |  0.60% | 0.0699 |
+| `character-attributes-panel`           | `CharacterScreen`           |                                                                          3.71% | 0.872 |  1.83% | 0.1552 |
 | `character-attributes-tabs`            | `CharacterScreen`           |                                                                          0.97% | 0.985 |  0.34% | 0.0441 |
 | `character-attributes-top`             | `CharacterScreen`           |                                                                          8.03% | 0.837 |  2.20% | 0.3136 |
 | `character-constellation`              | `CharacterScreen`           |                                                                          1.90% | 0.904 |  0.88% | 0.0751 |
@@ -22,7 +22,7 @@ committed.
 | `character-weapons`                    | `CharacterScreen`           |                                                                          2.46% | 0.909 |  1.32% | 0.1047 |
 | `character-weapons-tabs`               | `CharacterScreen`           |                                                                          0.89% | 0.976 |  0.30% | 0.0453 |
 | `cooking-screen`                       | `CookingScreen`             |                                                                          1.17% | 0.938 |  0.53% | 0.0540 |
-| `court-of-fontaine-location`           | `WorldScreen`               |                                                                         21.07% | 0.208 | 16.61% | 0.6768 |
+| `court-of-fontaine-location`           | `WorldScreen`               |                                                                         21.14% | 0.227 | 16.60% | 0.6788 |
 | `crafting-strongbox`                   | `CraftingStrongbox`         |                                       pending: no screenshot of the screen yet |       |        |        |
 | `crafting-table`                       | `CraftingScreen`            |                                          pending: its recording is not on disk |       |        |        |
 | `dialogue-choices-line`                | `DialogueTalk`              |                                                                          8.99% | 0.924 |  2.15% | 0.2757 |
@@ -30,35 +30,38 @@ committed.
 | `dialogue-choices-speaker`             | `DialogueTalk`              |                                                                          6.37% | 0.798 |  4.63% | 0.2878 |
 | `dialogue-line`                        | `DialogueTalk`              |                                                                         10.61% | 0.982 |  2.29% | 0.3704 |
 | `dialogue-paimon-line`                 | `DialogueTalk`              |                                                                          9.67% | 0.949 |  3.35% | 0.2930 |
-| `everfrozen-earth-location`            | `WorldScreen`               |                                                                         20.61% | 0.234 | 19.75% | 0.6327 |
+| `everfrozen-earth-location`            | `WorldScreen`               |                                                                         21.38% | 0.242 | 19.17% | 0.6960 |
 | `exit-prompt`                          | `MenuExit`                  |                                                                          1.59% | 0.999 |  1.24% | 0.1205 |
 | `expedition-screen`                    | `ExpeditionScreen`          |                                                                          1.56% | 0.934 |  0.44% | 0.0674 |
 | `fishing-screen`                       | `FishingScreen`             |                                                                          0.05% | 0.998 |  0.03% | 0.0035 |
-| `forge-screen`                         | `ForgeScreen`               |                                                                          3.66% | 0.776 |  1.83% | 0.1538 |
-| `forge-screen-ores-done`               | `ForgeScreen`               |                                                                          2.96% | 0.837 |  1.70% | 0.1387 |
-| `forge-screen-queues`                  | `ForgeScreen`               |                                                                          3.43% | 0.771 |  1.87% | 0.1579 |
+| `forge-screen`                         | `ForgeScreen`               |                                                                          3.69% | 0.780 |  1.92% | 0.1544 |
+| `forge-screen-ores-done`               | `ForgeScreen`               |                                                                          2.79% | 0.858 |  1.62% | 0.1349 |
+| `forge-screen-queues`                  | `ForgeScreen`               |                                                                          3.29% | 0.789 |  1.80% | 0.1543 |
 | `forge-screen-refused`                 | `ForgeScreen`               |                                     pending: no screenshot of this variant yet |       |        |        |
 | `forge-screen-weapons-done`            | `ForgeScreen`               |                                     pending: no screenshot of this variant yet |       |        |        |
-| `gcg-duel-board`                       | `GcgScreen`                 |                                                                          8.21% | 0.563 |  3.98% | 0.3227 |
-| `handbook-experience`                  | `HandbookScreen`            |                                                                          4.18% | 0.958 |  1.97% | 0.2111 |
+| `gcg-duel-board`                       | `GcgScreen`                 |                                                                          8.09% | 0.564 |  4.02% | 0.3194 |
+| `handbook-experience`                  | `HandbookScreen`            |                                                                          4.17% | 0.958 |  1.97% | 0.2110 |
 | `health-notice`                        | `SplashHealthNotice`        |                                                                          6.17% | 0.964 |  1.51% | 0.1780 |
 | `health-notice-japanese`               | `SplashHealthNotice`        |                                                                          8.38% | 0.873 |  1.54% | 0.2395 |
 | `health-notice-mainland`               | `SplashHealthNotice`        |                                                                          4.71% | 0.960 |  1.19% | 0.1419 |
 | `hud-paimon-button`                    | `HudScreen`                 |                                                                          1.63% | 0.914 |  2.23% | 0.0940 |
 | `hud-stamina-climb`                    | `HudScreen`                 |                                                                          0.62% | 0.787 |  0.75% | 0.0629 |
 | `hud-world-keys`                       | `HudScreen`                 |                                                                          2.07% | 0.983 |  1.52% | 0.1296 |
-| `hud-world-pickup`                     | `HudScreen`                 |                                                                          2.79% | 0.769 |  1.50% | 0.1323 |
+| `hud-world-pickup`                     | `HudScreen`                 |                                                                          2.79% | 0.769 |  1.50% | 0.1320 |
+| `inazuma-city-location`                | `WorldScreen`               |                                                                         18.58% | 0.211 | 16.72% | 0.6033 |
 | `interaction-prompts-jueyun-chili`     | `InteractionPromptList`     |                                                                          4.63% | 0.954 |  1.79% | 0.2034 |
 | `interaction-prompts-pickup`           | `InteractionPromptList`     |                                                                          5.07% | 0.937 |  2.64% | 0.2181 |
 | `inventory-food`                       | `InventoryScreen`           |                                                                          3.00% | 0.994 |  1.96% | 0.1851 |
-| `inventory-weapons`                    | `InventoryScreen`           |                                                                          9.79% | 0.635 |  6.39% | 0.3665 |
-| `liyue-harbor-location`                | `WorldScreen`               |                                                                         29.33% | 0.303 | 24.45% | 0.8094 |
+| `inventory-weapons`                    | `InventoryScreen`           |                                                                          9.91% | 0.752 |  5.68% | 0.3656 |
+| `liyue-harbor-location`                | `WorldScreen`               |                                                                         19.83% | 0.392 | 17.24% | 0.6757 |
 | `loading-startup`                      | `LoadingStartup`            |                                                                          0.07% | 0.765 |  0.04% | 0.0027 |
-| `login-dawn-title`                     | `LoginScreen`               |                                                                         10.29% | 0.478 |  7.31% | 0.4134 |
-| `login-day-title`                      | `LoginScreen`               |                                                                         12.93% | 0.334 |  9.86% | 0.4689 |
+| `loading-startup-failed`               | `LoadingStartup`            |  pending: the game's download state of the startup screen has no sampled frame |       |        |        |
+| `loading-startup-none`                 | `LoadingStartup`            |  pending: the game's download state of the startup screen has no sampled frame |       |        |        |
+| `login-dawn-title`                     | `LoginScreen`               |                                                                         10.28% | 0.479 |  7.31% | 0.4132 |
+| `login-day-title`                      | `LoginScreen`               |                                                                         12.93% | 0.331 |  9.87% | 0.4689 |
 | `login-door`                           | `LoginScreen`               |                                                                         13.37% | 0.204 | 11.09% | 0.5029 |
-| `login-door-recording`                 | `LoginScreen`               |                                                                         16.44% | 0.366 | 11.47% | 0.5796 |
-| `login-door-session`                   | `LoginScreen`               |                                                                         12.25% | 0.417 |  8.41% | 0.4567 |
+| `login-door-recording`                 | `LoginScreen`               |                                                                         16.46% | 0.363 | 11.48% | 0.5797 |
+| `login-door-session`                   | `LoginScreen`               |                                                                         12.27% | 0.416 |  8.41% | 0.4568 |
 | `login-interface-arriving`             | `LoginInterface`            |                                     pending: no screenshot of this variant yet |       |        |        |
 | `login-interface-door`                 | `LoginInterface`            |                                                                          0.46% | 0.992 |  0.20% | 0.0381 |
 | `login-interface-door-mainland`        | `LoginInterface`            |                                                                          0.57% | 0.975 |  0.38% | 0.0288 |
@@ -66,29 +69,29 @@ committed.
 | `login-interface-loading-game`         | `LoginInterface`            |                                     pending: no screenshot of this variant yet |       |        |        |
 | `login-interface-mainland-rating`      | `LoginInterface`            |                                                                          3.01% | 0.992 |  2.34% | 0.1915 |
 | `login-interface-title`                | `LoginInterface`            |                                                                          0.36% | 0.996 |  0.24% | 0.0158 |
-| `login-night-title`                    | `LoginScreen`               |                                                                          9.42% | 0.369 |  7.03% | 0.3920 |
-| `login-screen-dusk`                    | `LoginScreen`               |                                                                         19.40% | 0.404 | 14.03% | 0.6462 |
-| `mail-screen`                          | `MailScreen`                |                                                                          5.30% | 0.602 |  3.36% | 0.2118 |
+| `login-night-title`                    | `LoginScreen`               |                                                                          9.41% | 0.366 |  7.01% | 0.3916 |
+| `login-screen-dusk`                    | `LoginScreen`               |                                                                         19.32% | 0.395 | 13.97% | 0.6455 |
+| `mail-screen`                          | `MailScreen`                |                                                                          5.19% | 0.635 |  3.18% | 0.2098 |
 | `map-overlay-galesong`                 | `MapOverlay`                |                                                                          6.51% | 0.747 | 21.89% | 0.4779 |
-| `map-overlay-jueyun`                   | `MapOverlay`                |                                                                         26.26% | 0.389 | 24.06% | 0.7516 |
+| `map-overlay-jueyun`                   | `MapOverlay`                |                                                                         26.54% | 0.393 | 23.97% | 0.7553 |
 | `menu-exit-hover`                      | `MenuExit`                  |                                                                          1.69% | 0.999 |  1.32% | 0.1237 |
 | `menu-exit-pressed`                    | `MenuExit`                  |                                                                          1.59% | 0.996 |  1.29% | 0.1233 |
 | `menu-paimon-disabled`                 | `MenuPaimon`                |                                     pending: no screenshot of this variant yet |       |        |        |
 | `menu-paimon-hover`                    | `MenuPaimon`                |                                     pending: no screenshot of this variant yet |       |        |        |
 | `menu-paimon-pressed`                  | `MenuPaimon`                |                                     pending: no screenshot of this variant yet |       |        |        |
-| `menu-time`                            | `MenuTime`                  |                                                                          1.34% | 0.927 |  1.12% | 0.0323 |
+| `menu-time`                            | `MenuTime`                  |                                                                          1.35% | 0.927 |  1.13% | 0.0329 |
 | `menu-world-level-prompt`              | `MenuWorldLevelPrompt`      |                                       pending: no screenshot of the screen yet |       |        |        |
 | `menu-world-level-prompt-hover`        | `MenuWorldLevelPrompt`      |                                     pending: no screenshot of this variant yet |       |        |        |
 | `menu-world-level-prompt-pressed`      | `MenuWorldLevelPrompt`      |                                     pending: no screenshot of this variant yet |       |        |        |
 | `menu-world-level-prompt-revert`       | `MenuWorldLevelPrompt`      |                                     pending: no screenshot of this variant yet |       |        |        |
-| `mondstadt-city-location`              | `WorldScreen`               |                                                                         26.66% | 0.292 | 22.43% | 0.7549 |
-| `nasha-town-location`                  | `WorldScreen`               |                                                                         29.69% | 0.238 | 24.60% | 0.7627 |
+| `mondstadt-city-location`              | `WorldScreen`               |                                                                         22.94% | 0.313 | 20.87% | 0.6846 |
+| `nasha-town-location`                  | `WorldScreen`               |                                                                         32.69% | 0.293 | 27.58% | 0.7918 |
 | `paimon-menu`                          | `MenuPaimon`                |                                                                          3.73% | 0.930 |  1.92% | 0.2058 |
-| `paimons-bargains-screen`              | `PaimonsBargainsScreen`     |                                                                         36.44% | 0.246 | 33.87% | 0.7330 |
-| `party-screen`                         | `PartyScreen`               |                                                                          4.27% | 0.366 |  2.51% | 0.1588 |
-| `people-of-the-springs-location`       | `WorldScreen`               |                                                                         25.06% | 0.223 | 21.49% | 0.7945 |
+| `paimons-bargains-screen`              | `PaimonsBargainsScreen`     |                                                                         30.92% | 0.350 | 26.38% | 0.6497 |
+| `party-screen`                         | `PartyScreen`               |                                                                          4.26% | 0.366 |  2.51% | 0.1582 |
+| `people-of-the-springs-location`       | `WorldScreen`               |                                                                         22.30% | 0.222 | 17.64% | 0.7110 |
 | `publisher-splash`                     | `SplashPublisher`           |                                                                          0.07% | 1.000 |  0.01% | 0.0036 |
-| `quest-screen`                         | `QuestScreen`               |                                                                          9.59% | 0.844 |  7.82% | 0.3511 |
+| `quest-screen`                         | `QuestScreen`               |                                                                          9.59% | 0.844 |  7.82% | 0.3512 |
 | `quest-screen-details`                 | `QuestScreen`               |                                                                         13.97% | 0.946 | 12.85% | 0.4368 |
 | `quest-screen-header`                  | `QuestScreen`               |                                                                          3.37% | 0.999 |  2.70% | 0.1857 |
 | `quest-screen-list`                    | `QuestScreen`               |                                                                          6.18% | 0.892 |  4.70% | 0.2657 |
@@ -96,15 +99,15 @@ committed.
 | `settings-audio-rows`                  | `MenuSettings`              |                                                                          1.01% | 0.997 |  0.38% | 0.0742 |
 | `settings-graphics`                    | `MenuSettings`              |                                                                          1.56% | 0.996 |  1.26% | 0.1010 |
 | `settings-graphics-rows`               | `MenuSettings`              |                                                                          1.07% | 0.998 |  0.41% | 0.0888 |
-| `shop-screen`                          | `ShopScreen`                |                                                                         43.52% | 0.276 | 41.27% | 0.8134 |
+| `shop-screen`                          | `ShopScreen`                |                                                                         11.72% | 0.722 |  9.20% | 0.3889 |
 | `spiral-abyss-benediction`             | `SpiralAbyssBenediction`    |                                                                          1.70% | 0.979 |  0.48% | 0.0696 |
 | `spiral-abyss-entry`                   | `SpiralAbyssEntry`          |                                       pending: no screenshot of the screen yet |       |        |        |
 | `splash-title-chinese-traditional`     | `SplashTitle`               |                                     pending: no screenshot of this variant yet |       |        |        |
 | `splash-title-japanese`                | `SplashTitle`               |                                                                          0.16% | 1.000 |  0.39% | 0.0342 |
 | `splash-title-korean`                  | `SplashTitle`               |                                     pending: no screenshot of this variant yet |       |        |        |
-| `statue-blessing`                      | `StatueScreen`              |                                                                         21.97% | 0.002 | 20.26% | 0.5818 |
-| `statue-worship`                       | `StatueWorship`             |                                                                         32.09% | 0.062 | 30.43% | 0.7274 |
-| `sumeru-city-location`                 | `WorldScreen`               |                                                                         32.42% | 0.227 | 28.07% | 0.8157 |
+| `statue-blessing`                      | `StatueScreen`              |                                                                         14.68% | 0.778 | 13.41% | 0.4551 |
+| `statue-worship`                       | `StatueWorship`             |                                                                          2.37% | 0.696 |  1.45% | 0.1510 |
+| `sumeru-city-location`                 | `WorldScreen`               |                                                                         23.89% | 0.273 | 21.35% | 0.6947 |
 | `title-splash`                         | `SplashTitle`               |                                                                          0.20% | 1.000 |  0.01% | 0.0089 |
 | `title-splash-mainland`                | `SplashTitle`               |                                                                          1.89% | 0.991 |  0.89% | 0.0807 |
 | `weapon-screen`                        | `WeaponScreen`              |                                                                          2.00% | 0.897 |  0.94% | 0.0832 |
@@ -113,9 +116,10 @@ committed.
 | `weapon-screen-rank-five`              | `WeaponScreen`              |                                     pending: no screenshot of this variant yet |       |        |        |
 | `weapon-screen-refine`                 | `WeaponScreen`              |                                                                          2.40% | 0.941 |  0.59% | 0.0875 |
 | `weapon-screen-two-star`               | `WeaponScreen`              |                                     pending: no screenshot of this variant yet |       |        |        |
-| `windrise-statue-day`                  | `WorldScreen`               |                                                                         26.73% | 0.306 | 26.74% | 0.7579 |
+| `windrise-statue-day`                  | `WorldScreen`               |                                                                         25.99% | 0.317 | 26.36% | 0.7570 |
 | `wish-screen`                          | `WishScreen`                |                                                                          9.21% | 0.626 |  6.28% | 0.2803 |
-| `world-level-dialog`                   | `MenuWorldLevelDialog`      |                                                                          5.79% | 0.864 |  1.71% | 0.1923 |
+| `world-level-dialog`                   | `MenuWorldLevelDialog`      |                                                                          5.79% | 0.864 |  1.71% | 0.1921 |
+| `world-level-dialog-lowered`           | `MenuWorldLevelDialog`      |                                     pending: no screenshot of this variant yet |       |        |        |
 | `world-realm-placement-editor`         | `WorldRealmPlacementEditor` |                                       pending: no screenshot of the screen yet |       |        |        |
 | `world-realm-placement-editor-at-load` | `WorldRealmPlacementEditor` |                                     pending: no screenshot of this variant yet |       |        |        |
 
@@ -128,55 +132,55 @@ drawn away from the reference shows on its own row.
 
 | Layer                                  | Coverage | Colour |   Tone |   FLIP |
 | :------------------------------------- | -------: | -----: | -----: | -----: |
-| `court-of-fontaine-location/frame`     |   100.0% |  15.06 | 16.61% | 0.6768 |
-| `court-of-fontaine-location/sky`       |   100.0% |  15.06 | 16.61% | 0.6768 |
-| `everfrozen-earth-location/frame`      |   100.0% |  25.50 | 19.75% | 0.6327 |
-| `everfrozen-earth-location/sky`        |   100.0% |  25.50 | 19.75% | 0.6327 |
-| `liyue-harbor-location/frame`          |   100.0% |  14.10 | 24.45% | 0.8094 |
-| `liyue-harbor-location/sky`            |   100.0% |  14.10 | 24.45% | 0.8094 |
-| `login-dawn-title/frame`               |   100.0% |   4.42 |  7.31% | 0.4134 |
-| `login-dawn-title/Walkway`             |    13.3% |   7.39 | 10.29% | 0.5578 |
-| `login-dawn-title/Bridges`             |     2.5% |   6.80 |  7.56% | 0.4908 |
-| `login-dawn-title/Towers`              |    35.5% |   8.45 |  8.29% | 0.4788 |
-| `login-dawn-title/sky`                 |    48.7% |   2.17 |  5.78% | 0.3222 |
-| `login-day-title/frame`                |   100.0% |   2.41 |  9.86% | 0.4689 |
-| `login-day-title/Walkway`              |     8.5% |   5.18 | 10.16% | 0.4928 |
-| `login-day-title/Bridges`              |     1.8% |   1.01 |  4.12% | 0.3983 |
-| `login-day-title/Towers`               |    55.6% |   4.26 | 11.70% | 0.5342 |
-| `login-day-title/sky`                  |    34.1% |   1.07 |  7.10% | 0.3603 |
+| `court-of-fontaine-location/frame`     |   100.0% |  15.36 | 16.60% | 0.6788 |
+| `court-of-fontaine-location/sky`       |   100.0% |  15.36 | 16.60% | 0.6788 |
+| `everfrozen-earth-location/frame`      |   100.0% |  25.24 | 19.17% | 0.6960 |
+| `everfrozen-earth-location/sky`        |   100.0% |  25.24 | 19.17% | 0.6960 |
+| `inazuma-city-location/frame`          |   100.0% |  12.19 | 16.72% | 0.6033 |
+| `inazuma-city-location/sky`            |   100.0% |  12.19 | 16.72% | 0.6033 |
+| `liyue-harbor-location/frame`          |   100.0% |  10.58 | 17.24% | 0.6757 |
+| `liyue-harbor-location/sky`            |   100.0% |  10.58 | 17.24% | 0.6757 |
+| `login-dawn-title/frame`               |   100.0% |   4.40 |  7.31% | 0.4132 |
+| `login-dawn-title/Walkway`             |    13.3% |   7.39 | 10.28% | 0.5577 |
+| `login-dawn-title/Bridges`             |     2.5% |   6.73 |  7.54% | 0.4901 |
+| `login-dawn-title/Towers`              |    35.5% |   8.44 |  8.29% | 0.4787 |
+| `login-dawn-title/sky`                 |    48.7% |   2.14 |  5.77% | 0.3220 |
+| `login-day-title/frame`                |   100.0% |   2.44 |  9.87% | 0.4689 |
+| `login-day-title/Walkway`              |     8.5% |   5.12 | 10.17% | 0.4914 |
+| `login-day-title/Bridges`              |     1.8% |   1.01 |  4.11% | 0.3983 |
+| `login-day-title/Towers`               |    55.6% |   4.28 | 11.70% | 0.5342 |
+| `login-day-title/sky`                  |    34.1% |   1.07 |  7.10% | 0.3604 |
 | `login-door/frame`                     |   100.0% |   8.01 | 11.09% | 0.5029 |
 | `login-door/Walkway`                   |    20.4% |  13.08 | 11.50% | 0.5684 |
 | `login-door/Bridges`                   |     8.3% |   9.40 |  8.46% | 0.4851 |
 | `login-door/Towers`                    |    30.1% |   1.19 |  9.48% | 0.4979 |
 | `login-door/sky`                       |    41.3% |  12.05 | 12.59% | 0.4777 |
-| `login-door-recording/frame`           |   100.0% |   4.53 | 11.47% | 0.5796 |
-| `login-door-recording/Door`            |     4.3% |  28.27 | 15.30% | 0.7293 |
-| `login-door-recording/Bridges`         |     3.9% |   7.33 | 11.16% | 0.5714 |
-| `login-door-recording/Towers`          |    35.4% |   6.51 | 11.98% | 0.6095 |
-| `login-door-recording/Walkway`         |     6.9% |  18.06 |  8.22% | 0.6795 |
-| `login-door-recording/sky`             |    49.5% |   2.38 | 11.24% | 0.5319 |
-| `login-door-session/frame`             |   100.0% |   0.98 |  8.41% | 0.4567 |
-| `login-door-session/Door`              |     3.9% |   8.59 |  9.84% | 0.6146 |
-| `login-door-session/Bridges`           |     1.8% |  11.48 |  5.62% | 0.4901 |
-| `login-door-session/Towers`            |    52.6% |   4.09 |  7.53% | 0.4262 |
-| `login-door-session/Walkway`           |     4.6% |  34.94 | 14.59% | 0.7123 |
-| `login-door-session/sky`               |    37.1% |   5.20 |  8.88% | 0.4502 |
-| `login-night-title/frame`              |   100.0% |   5.36 |  7.03% | 0.3920 |
-| `login-night-title/Walkway`            |     9.9% |  24.30 | 12.26% | 0.6014 |
-| `login-night-title/Bridges`            |     2.5% |  18.98 |  7.55% | 0.5184 |
-| `login-night-title/Towers`             |    37.7% |  10.13 |  7.17% | 0.4156 |
-| `login-night-title/sky`                |    49.9% |   6.67 |  5.86% | 0.3266 |
-| `mondstadt-city-location/frame`        |   100.0% |  18.73 | 22.43% | 0.7549 |
-| `mondstadt-city-location/sky`          |   100.0% |  18.73 | 22.43% | 0.7549 |
-| `nasha-town-location/frame`            |   100.0% |  23.93 | 24.60% | 0.7627 |
-| `nasha-town-location/sky`              |   100.0% |  23.93 | 24.60% | 0.7627 |
-| `people-of-the-springs-location/frame` |   100.0% |  24.17 | 21.49% | 0.7945 |
-| `people-of-the-springs-location/sky`   |   100.0% |  24.17 | 21.49% | 0.7945 |
-| `sumeru-city-location/frame`           |   100.0% |  19.08 | 28.07% | 0.8157 |
-| `sumeru-city-location/sky`             |   100.0% |  19.08 | 28.07% | 0.8157 |
-| `windrise-statue-day/frame`            |   100.0% |  24.21 | 26.74% | 0.7579 |
-| `windrise-statue-day/Statue`           |     0.8% |  36.64 | 15.11% | 0.6795 |
-| `windrise-statue-day/Oak`              |    32.5% |  26.13 | 26.59% | 0.7303 |
-| `windrise-statue-day/Paving`           |     0.5% |  44.17 | 14.32% | 0.7572 |
-| `windrise-statue-day/Ground`           |    58.8% |  28.43 | 25.14% | 0.7600 |
-| `windrise-statue-day/sky`              |     7.4% |  42.17 | 42.22% | 0.8708 |
+| `login-door-recording/frame`           |   100.0% |   4.56 | 11.48% | 0.5797 |
+| `login-door-recording/Walkway`         |     7.0% |  17.92 |  8.31% | 0.6785 |
+| `login-door-recording/Bridges`         |     4.7% |   8.12 | 11.74% | 0.5926 |
+| `login-door-recording/Towers`          |    36.6% |   6.77 | 12.03% | 0.6135 |
+| `login-door-recording/sky`             |    51.7% |   2.80 | 11.49% | 0.5413 |
+| `login-door-session/frame`             |   100.0% |   0.93 |  8.41% | 0.4568 |
+| `login-door-session/Walkway`           |     4.7% |  34.67 | 14.44% | 0.7113 |
+| `login-door-session/Bridges`           |     2.5% |  12.06 |  6.41% | 0.5265 |
+| `login-door-session/Towers`            |    53.7% |   4.26 |  7.57% | 0.4297 |
+| `login-door-session/sky`               |    39.1% |   4.70 |  8.98% | 0.4591 |
+| `login-night-title/frame`              |   100.0% |   5.28 |  7.01% | 0.3916 |
+| `login-night-title/Walkway`            |     9.9% |  24.24 | 12.21% | 0.5998 |
+| `login-night-title/Bridges`            |     2.5% |  18.95 |  7.52% | 0.5182 |
+| `login-night-title/Towers`             |    37.7% |  10.09 |  7.15% | 0.4154 |
+| `login-night-title/sky`                |    49.9% |   6.55 |  5.85% | 0.3262 |
+| `mondstadt-city-location/frame`        |   100.0% |  17.86 | 20.87% | 0.6846 |
+| `mondstadt-city-location/sky`          |   100.0% |  17.86 | 20.87% | 0.6846 |
+| `nasha-town-location/frame`            |   100.0% |  21.40 | 27.58% | 0.7918 |
+| `nasha-town-location/sky`              |   100.0% |  21.40 | 27.58% | 0.7918 |
+| `people-of-the-springs-location/frame` |   100.0% |  16.45 | 17.64% | 0.7110 |
+| `people-of-the-springs-location/sky`   |   100.0% |  16.45 | 17.64% | 0.7110 |
+| `sumeru-city-location/frame`           |   100.0% |  14.46 | 21.35% | 0.6947 |
+| `sumeru-city-location/sky`             |   100.0% |  14.46 | 21.35% | 0.6947 |
+| `windrise-statue-day/frame`            |   100.0% |  25.89 | 26.36% | 0.7570 |
+| `windrise-statue-day/Statue`           |     0.8% |  36.99 | 14.34% | 0.6794 |
+| `windrise-statue-day/Oak`              |    32.5% |  24.74 | 25.18% | 0.7258 |
+| `windrise-statue-day/Paving`           |     0.5% |  44.07 | 14.29% | 0.7552 |
+| `windrise-statue-day/Ground`           |    58.8% |  29.89 | 25.33% | 0.7612 |
+| `windrise-statue-day/sky`              |     7.4% |  41.87 | 41.94% | 0.8692 |

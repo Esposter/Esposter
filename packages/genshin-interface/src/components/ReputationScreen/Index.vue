@@ -173,7 +173,7 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   font-size: calc(var(--unit) * 26);
 }
 
-/* The list's panel, its rows 126 apart from 28 down and 32 in, a row 1145 wide */
+/* The list's panel, its rows 126 apart from 27 down and 32 in, a row 1145 wide */
 .levels {
   position: absolute;
   top: calc(var(--unit) * 145);
@@ -182,9 +182,9 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   width: calc(var(--unit) * 1220);
   height: calc(var(--unit) * 870);
   flex-direction: column;
-  gap: calc(var(--unit) * 9);
+  gap: calc(var(--unit) * 5);
   margin: 0;
-  padding: calc(var(--unit) * 28) calc(var(--unit) * 43) calc(var(--unit) * 27) calc(var(--unit) * 32);
+  padding: calc(var(--unit) * 27) calc(var(--unit) * 43) calc(var(--unit) * 27) calc(var(--unit) * 32);
   box-sizing: border-box;
   overflow-y: auto;
   background: #f0ebe5;
@@ -196,7 +196,7 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   position: relative;
   display: block;
   width: 100%;
-  height: calc(var(--unit) * 117);
+  height: calc(var(--unit) * 121);
   padding: 0;
   box-sizing: border-box;
   border: calc(var(--unit) * 2) solid #dad4cd;
