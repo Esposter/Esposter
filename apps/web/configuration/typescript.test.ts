@@ -13,7 +13,7 @@ describe("typescript", () => {
   });
 
   // The packages get `noUnusedLocals` from `tsconfig.base.json`, which no generated tsconfig extends
-  test("restates the unused-locals check the packages get from the base tsconfig", () => {
+  test("keeps noUnusedLocals on in the generated tsconfig, which the app typechecks against", () => {
     expect.hasAssertions();
 
     expect(typescript?.tsConfig?.compilerOptions?.noUnusedLocals).toBe(true);
