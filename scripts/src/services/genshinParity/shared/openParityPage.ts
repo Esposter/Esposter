@@ -1,5 +1,5 @@
 import type { ParityPageOptions } from "#src/models/genshinParity/shared/ParityPageOptions";
-import type { ConsoleMessage, Page } from "playwright";
+import type { Page } from "playwright";
 
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import {
@@ -12,26 +12,16 @@ import {
   WITNESS_LAYOUT_PATH,
   WITNESS_PATH_PREFIX,
 } from "#src/services/genshinParity/shared/constants";
+import { reportConsoleError } from "#src/services/genshinParity/shared/reportConsoleError";
 import { resolveParityPageRoot } from "#src/services/genshinParity/shared/resolveParityPageRoot";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { chromium } from "playwright";
 import sharp from "sharp";
-
-// A console error printed with its first argument's message, and the URL of a resource that failed to load, since the
-// Page's text names only the error's class: a ZodError's issues are its message
-const reportConsoleError = (message: ConsoleMessage): Promise<void> =>
-  getResultAsync(async () => {
-    const [firstArgument] = message.args();
-    const detail = firstArgument
-      ? await firstArgument.evaluate((value) => (value instanceof Error ? value.message : String(value)))
-      : message.text();
-    console.error(`parity page: ${detail} ${message.location().url}`);
-  }).match(noop, console.error);
 
 // The parity page on one screen, at the game's interface height and the reference's aspect, drawn at the reference's pixel
 // Size, once it has drawn. It launches its own Edge, with the flags an unlimited frame rate needs, and closes it with the page.
