@@ -6,7 +6,12 @@ import type { NuxtConfig } from "nuxt/schema";
 // Is what forces every private package to emit declarations nothing else reads. The condition is spelled rather
 // Than imported as `SOURCE_CONDITION`: `nuxt prepare` loads this from `postinstall`, before
 // `@esposter/configuration` is built, so `typescript.test.ts` holds the spelling to it instead.
+// `noUnusedLocals` is restated for the same reason: it is what fails a `<script setup>` binding nothing reads, which no
+// Lint rule can see, since the template is where such a binding is mostly read.
 // The Tiled tilesets are XML under `app/assets/`, where Nuxt's `app/**` include would compile them as TSX
 export const typescript: NuxtConfig["typescript"] = {
-  tsConfig: { compilerOptions: { customConditions: ["source"] }, exclude: ["../app/assets/**/*.tsx"] },
+  tsConfig: {
+    compilerOptions: { customConditions: ["source"], noUnusedLocals: true },
+    exclude: ["../app/assets/**/*.tsx"],
+  },
 };

@@ -1,6 +1,5 @@
 <script setup lang="ts" generic="TModel extends Date | undefined">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { getZonedDateTime } from "@esposter/shared";
 

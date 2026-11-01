@@ -25,7 +25,7 @@ import { LOAD_STEP_MEASURE_PREFIX } from "#src/services/loading/constants";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { createFrustumSetter } from "#src/services/world/createFrustumSetter";
 import { createTileHolders } from "#src/services/world/createTileHolders";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
 import {
   checkTerrainBoundsOverlap,

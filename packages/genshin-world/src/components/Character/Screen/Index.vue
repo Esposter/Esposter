@@ -16,7 +16,6 @@ import type { GameText } from "genshin-text";
 import CharacterAttributeList from "#src/components/Character/AttributeList/Index.vue";
 import CharacterProfile from "#src/components/Character/Profile/Index.vue";
 import { Attribute } from "#src/models/character/Attribute";
-import { CombatTalent } from "#src/models/character/CombatTalent";
 import { TalentUpgradeRefusal } from "#src/models/character/TalentUpgradeRefusal";
 import { Currency } from "#src/models/inventory/Currency";
 import { ArtifactSlotGameTextKeyMap } from "#src/services/artifact/ArtifactSlotGameTextKeyMap";

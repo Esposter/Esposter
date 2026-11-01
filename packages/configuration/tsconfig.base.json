@@ -15,6 +15,7 @@
     "noImplicitOverride": true,
     "noImplicitThis": true,
     "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,

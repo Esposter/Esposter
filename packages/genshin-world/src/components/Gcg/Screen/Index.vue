@@ -6,7 +6,6 @@ import type { GameText } from "genshin-text";
 import GcgScreenCard from "#src/components/Gcg/Screen/Card/Index.vue";
 import GcgScreenCharacter from "#src/components/Gcg/Screen/Character/Index.vue";
 import GcgScreenDie from "#src/components/Gcg/Screen/Die/Index.vue";
-import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import {
   GCG_EQUIPMENT_CARD_KINDS,

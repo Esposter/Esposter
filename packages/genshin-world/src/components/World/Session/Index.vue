@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { AttributeLine } from "#src/models/character/AttributeLine";
-import type { Character } from "#src/models/character/Character";
 import type { CharacterConstellationKit } from "#src/models/character/CharacterConstellationKit";
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { Expedition } from "#src/models/expedition/Expedition";

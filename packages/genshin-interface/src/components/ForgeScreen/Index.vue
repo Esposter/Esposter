@@ -5,7 +5,6 @@ import type { ForgeRecipeCell } from "#src/models/ForgeRecipeCell";
 import CloseButton from "#src/components/CloseButton/Index.vue";
 import TwoColumnScreen from "#src/components/TwoColumnScreen/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
-import { ForgeQueueState } from "#src/models/ForgeQueueState";
 import { ForgeTab } from "#src/models/ForgeTab";
 
 interface Props {

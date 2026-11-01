@@ -13,7 +13,10 @@ const { currentRoom } = storeToRefs(roomStore);
 const scrollStore = useScrollStore();
 // The sentinel and the container are the store's: whether the reader is looking at the present is one fact, read
 // By the jump-to-present affordance as much as by the anchoring below
-const { bottomSentinel, isPinnedToBottom, isScrolling, messageContainerElement } = storeToRefs(scrollStore);
+const { isPinnedToBottom, isScrolling, messageContainerElement } = storeToRefs(scrollStore);
+const setBottomSentinel = (element: unknown) => {
+  scrollStore.bottomSentinel = element instanceof HTMLDivElement ? element : null;
+};
 const getFirstVisibleMessageElement = () => {
   const element = messageContainerElement.value;
   if (!element) return undefined;
@@ -63,7 +66,7 @@ const readMoreNewerMessages = async (onComplete: () => void) => {
     of-y-auto
     ui-body
   >
-    <div ref="bottomSentinel" />
+    <div :ref="setBottomSentinel" />
     <template v-if="isPending">
       <MessageModelMessageListSkeletonItem v-for="index in DEFAULT_READ_LIMIT" :key="index" />
     </template>

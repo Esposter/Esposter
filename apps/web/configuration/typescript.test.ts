@@ -11,4 +11,11 @@ describe("typescript", () => {
 
     expect(typescript?.tsConfig?.compilerOptions?.customConditions).toStrictEqual([SOURCE_CONDITION]);
   });
+
+  // The packages get `noUnusedLocals` from `tsconfig.base.json`, which no generated tsconfig extends
+  test("restates the unused-locals check the packages get from the base tsconfig", () => {
+    expect.hasAssertions();
+
+    expect(typescript?.tsConfig?.compilerOptions?.noUnusedLocals).toBe(true);
+  });
 });

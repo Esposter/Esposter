@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiRules } from "@/services/ui/UiRules";
 import { RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-schema";
