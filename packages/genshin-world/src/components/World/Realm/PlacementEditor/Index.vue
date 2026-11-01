@@ -60,8 +60,6 @@ const notice = computed(() => {
   if (limit === HomeFurnishingLimit.Load) return gameText[GameTextKey.RetHomeFurnitureExceedLimit];
   return undefined;
 });
-const loadRatio = computed(() => Math.min(shownLoad.value / area.loadLimit, 1));
-const loadState = computed(() => computeHomeLoadState(shownLoad.value, area));
 </script>
 
 <template>
@@ -78,8 +76,8 @@ const loadState = computed(() => computeHomeLoadState(shownLoad.value, area));
         </GameButton>
       </li>
     </ul>
-    <div :data-load-state="loadState">
-      <ProgressBar :is-folded="false" :progress="loadRatio" />
+    <div :data-load-state="computeHomeLoadState(shownLoad, area)">
+      <ProgressBar :is-folded="false" :progress="Math.min(shownLoad / area.loadLimit, 1)" />
     </div>
     <p v-if="notice" role="status">{{ notice }}</p>
     <GameButton
