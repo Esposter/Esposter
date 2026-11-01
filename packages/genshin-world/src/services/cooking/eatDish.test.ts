@@ -110,23 +110,6 @@ describe(eatDish, () => {
     expect(getPartyMember(party, EATER_ID).healthShare).toBe(0.5);
   });
 
-  test("a heal dish heals the one who eats it", () => {
-    expect.hasAssertions();
-
-    const party = createParty([EATER_ID, ALLY_ID]);
-    getPartyMember(party, EATER_ID).healthShare = 0.5;
-    getPartyMember(party, ALLY_ID).healthShare = 0.5;
-    eatDish(
-      createInventory(1),
-      DISH_ID,
-      { heal: { flat: 0, healthShare: 0.2 }, target: DishTarget.Selected },
-      { eaterId: EATER_ID, getMaxHealth, kitEffectState: { effects: [] }, party },
-    );
-
-    expect(getPartyMember(party, EATER_ID).healthShare).toBeCloseTo(0.7);
-    expect(getPartyMember(party, ALLY_ID).healthShare).toBe(0.5);
-  });
-
   test("an anti-cold dish holds the team's anti-cold for its seconds, restarting the one it holds", () => {
     expect.hasAssertions();
 

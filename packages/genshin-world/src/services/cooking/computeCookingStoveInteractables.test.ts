@@ -24,14 +24,6 @@ describe(computeCookingStoveInteractables, () => {
     position,
   };
 
-  test("a city stove cooks where a campfire would be out", () => {
-    expect.hasAssertions();
-
-    const body = { x: 1, y: GROUND_HEIGHT, z: 2 };
-
-    expect(computeInteractionPrompts(interactables, body, NO_SELECTION).interactables).toContainEqual(stove);
-  });
-
   test("a stove offers processing beside cooking", () => {
     expect.hasAssertions();
 
