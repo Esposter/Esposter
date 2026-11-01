@@ -42,9 +42,8 @@ The palette's hues are the ones the game's Liyue reads as: ochre and grey rock, 
 
 ## Open
 
-- [ ] **The palette's hues are the ones the game's Liyue reads as** — no source yet: the hues are the first reading, and none has been measured against `{data-root}/genshin-parity/references/liyue-harbor-location.png`.
-- [ ] **The eave corners lift by the curl, and the shell rises steep at the eave and levels toward the top** — no source yet: no roof edge is measured from a Liyue reference, and `packages/genshin-world/src/services/liyue/createLiyueRoofTierGeometry.test.ts` checks only the rise to a flat top.
-- [ ] **Each bay's lattice has a rail at its sill and at its head, with bars standing flat to the wall** — no source yet: no test or reference checks the lattice.
+The palette, the eave curl and the lattice are open on the [spec](spec.md), which holds their requirements. The palette's hues have not been measured against the reference, `{data-root}/genshin-parity/references/liyue-harbor-location.png`, so that is where the fit starts.
+
 - [ ] **The export's buildings family is `Area_Ly_Build_` and `Area_LY_Build_`, with its terrain tiles as the ground** — no source yet: `{data-root}/genshin-parity/extracted/maps/index.tsv` names both families, but holds no `BigWorldTerrain_` mesh, and no row ties a building to a tile.
 - [ ] **Whether the harbour's six unique tree meshes belong in the undrawn list** — no source yet: `{data-root}/genshin-parity/extracted/maps/index.tsv` holds six "Area_Ly_Unique_BigTree_" rows (`Bark_Col`, `Leaf_Dither`, `Bark_Lod0` to `Bark_Lod3`), and no kind in `LiyueUndrawnMeshRegexMap` nor family in `LiyuePartFamilyMeshRegexMap` matches them, so the map does not claim them.
 - [ ] **the bay width is 3 metres** — no source yet: the Liyue building export in `{data-root}/genshin-parity/extracted/liyue/`, not yet measured for the bay width.
