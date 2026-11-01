@@ -9,7 +9,7 @@ describe("createAvatarShadingInputs", () => {
   test("leaves out each value the material does not hold, so the shading keeps its default for it", () => {
     expect.hasAssertions();
 
-    constinputs = createAvatarShadingInputs(
+    const inputs = createAvatarShadingInputs(
       { colors: { _Color: [0.5, 0.25, 1, 1] }, floats: { _Shininess: 10 }, keywords: [], textures: {} },
       CharacterMaterialKind.Face,
       new Map(),
@@ -95,7 +95,7 @@ describe("createAvatarShadingInputs", () => {
   test("reads each region's first and cool shadow colour, white where the material holds none", () => {
     expect.hasAssertions();
 
-    constinputs = createAvatarShadingInputs(
+    const inputs = createAvatarShadingInputs(
       {
         colors: {
           _CoolShadowMultColor: [0.2, 0.2, 0.3, 1],
