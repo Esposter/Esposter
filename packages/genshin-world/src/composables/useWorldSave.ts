@@ -6,6 +6,7 @@ import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
@@ -125,6 +126,11 @@ export const useWorldSave = ({
   const setWallet = (nextWallet: Wallet) => {
     wallet.value = nextWallet;
   };
+  // A destroy's bag and wallet are applied together, since what it returns may be currency
+  const applyDestruction = ({ inventory: nextInventory, wallet: nextWallet }: InventoryDestruction) => {
+    setInventory(nextInventory);
+    setWallet(nextWallet);
+  };
   events.on("campCleared", (camp) => {
     if (clearedCamps.value.some(({ id }) => id === camp.id)) return;
     clearedCamps.value = [...clearedCamps.value, camp];
@@ -150,6 +156,7 @@ export const useWorldSave = ({
   };
   return {
     achievementProgressMap,
+    applyDestruction,
     archiveKillsMap,
     archiveProgressMap,
     bossDefeatMap,

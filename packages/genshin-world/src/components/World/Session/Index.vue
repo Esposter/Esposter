@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { AttributeLine } from "#src/models/character/AttributeLine";
-import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
@@ -236,6 +235,7 @@ const savedState = readGenshinSave(
 const events = createWorldEvents();
 const {
   achievementProgressMap,
+  applyDestruction,
   archiveKillsMap,
   archiveProgressMap,
   bossDefeatMap,
@@ -268,11 +268,6 @@ const {
 } = useWorldSave({ emitGrant: () => emit("grant"), events, savedState });
 // The tips the world shows, each once per save, in the order the quests that trigger them finish
 const { closeTip, showingTip } = useWorldTips({ events, queuedTipIds, shownTipIds, tips });
-// A destroy's bag and wallet are applied together, since what it returns may be currency
-const applyDestruction = ({ inventory: nextInventory, wallet: nextWallet }: InventoryDestruction) => {
-  setInventory(nextInventory);
-  setWallet(nextWallet);
-};
 // The copies of each character the player holds, from the save's counts and as the wish screen grants them
 const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.characterCopyCountMap);
 // The carried quests, read as the world starts with their words in the reader's language, and how far each has come
