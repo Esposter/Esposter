@@ -12,8 +12,8 @@ interface Props {
   gameText: GameText;
   // Whether the card is the lit one the pointer rests on, drawn lit at rest as the game lights it
   isLit: boolean;
-  // The Benediction's name in the reader's language
-  name: string;
+  // The Benediction's name in the reader's language, and none where the names do not hold its text hash
+  name?: string;
   // Where the Benediction lasts, which its tag names, and none where the published record does not carry one
   scope?: AbyssBenedictionScope;
 }
