@@ -53,7 +53,7 @@ single operation resolves is a bug wearing rigour.
 - **Minimal public surface** — return only what callers use, and a single function directly (`references/earning-a-composable.md`).
 - **Shared reactive state lives in a Pinia store** — never `createSharedComposable`, never a bare `ref` at module scope (both `no-restricted-syntax`, `references/shared-state.md`).
 - **`Promise.resolve(value)` for sync-to-async** — when a sync expression must satisfy a `Promise<T>` return type, never `async () => value`.
-- **Don't annotate composable return types** — let TypeScript infer. Only annotate if inference fails or a contract must be enforced.
+- **Composable return types are inferred** — the `typescript` skill's inferred-return rule (`references/function-signatures.md`) applies to a composable as to any function.
 - **Call a composable at setup, never inside a callback** (`references/resource-cleanup.md`).
 
 ## MaybeRefOrGetter vs Function Argument
