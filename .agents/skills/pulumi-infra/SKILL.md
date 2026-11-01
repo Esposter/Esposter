@@ -1,6 +1,6 @@
 ---
 name: pulumi-infra
-description: Apply when modifying apps/infra. Esposter's Pulumi infrastructure — how a resource is declared, referenced, renamed and applied, and the hardenings and observability the estate declines.
+description: Apply when modifying apps/infra. Esposter's Pulumi infrastructure for Azure and GitHub in one prod stack, and the hardenings and observability the estate declines.
 ---
 
 # Pulumi Infrastructure
