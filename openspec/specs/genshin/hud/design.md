@@ -127,19 +127,15 @@ flowchart TD
 
 ## Open
 
+The open checks for the controls and shortcuts, the party's cooldown, the buttons' icons, the Paimon button and the stamina meter are recorded with their requirements in [the spec](spec.md).
+
 - [ ] **`TeamBtn_MP` is held by no other block** — no source yet: only the `04803507` layout folder was searched, not every block.
 - [ ] **The minimap, Paimon's button and the skill buttons are in the HUD's tree** — no source yet: no export named for any of them was found in the `04803507` layout folder.
 - [ ] **`SPBar` is anchored at the screen's middle** — no source yet: `{data-root}/genshin-parity/extracted/windrise/layout/04803507/GameObject/cab-d941eb770c630e0cf69edeb2ec596929/SPBarV2.json` holds no anchor fields, and its RectTransform was not matched here.
 - [ ] **The party rows sit 71.25 units above the container's middle on the keys' layout, and the party bar ends 173 units from the right edge on mobile** — no source yet: the RectTransforms of `TeamBtnContainer` and the party bar were not matched here, so the 173 is fitted to `hud-world-pickup`'s pixels.
-- [ ] **Each glyph is the game's icon, traced** — no source yet: the wiki's icon renders, which the cache does not hold (it holds no File pages).
 - [ ] **The burst fills in #309d6b over grass and #47bcea over water** — no source yet: the frames at 70 and 80 seconds of `{data-root}/genshin-parity/captures/world-pickup.mkv` were not sampled here.
-- [ ] **The shortcuts open as F3, F1, B and C do** — no source yet: the wiki's Controls page is not in the cache, and no record of the game's own key bindings is kept.
-- [ ] **A party switch has a one-second cooldown** — no source yet: the wiki's Party page is not in the cache.
 - [ ] **Health shows the level and whole-number HP as the game writes them** — no source yet: no recording with a health bar was read here.
-- [ ] **The Paimon button and the minimap open the Paimon menu and the map, as Escape and M do** — no source yet: the wiki's Paimon Menu and Map pages are not in the cache.
-- [ ] **The backslash hides the HUD, and V navigates to the tracked quest** — no source yet: the wiki's Controls page is not in the cache.
 - [ ] **The meter cuts at 0.464 and 0.936 of its arc** — no source yet: the two cut lines show in `{data-root}/genshin-parity/references/hud-stamina-climb.png`, but no pixel measurement of their fractions is recorded.
-- [ ] **The stamina meter is cut into sections of 100 and hides when full** — no source yet: the wiki's Stamina page is not in the cache.
 - [ ] **A navigated quest is beamed from 50 metres off** — no source yet: the wiki's Quest page is not in the cache.
 - [ ] **The touch buttons, health bar, tracker line and meter arc are measured off their recordings** — no source yet: no measurement record is in the cache or the parity snapshot.
 - [ ] **The world's pool rises past `STAMINA_MAX`, so the meter shows its cuts in the world** — no source yet: no roadmap task raises the pool.
