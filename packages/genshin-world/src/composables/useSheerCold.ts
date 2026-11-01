@@ -3,11 +3,11 @@ import type { SheerCold } from "#src/models/sheerCold/SheerCold";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { LocomotionPhase } from "genshin-engine";
 
-import { REGION_RECHECK_DISTANCE } from "#src/services/constants";
 import { findAreaAt } from "#src/services/map/findAreaAt";
 import { checkIsHeatedBy } from "#src/services/sheerCold/checkIsHeatedBy";
 import { checkIsSheerColdArea } from "#src/services/sheerCold/checkIsSheerColdArea";
 import { stepSheerCold } from "#src/services/sheerCold/stepSheerCold";
+import { createRecheckDueCheck } from "#src/services/world/createRecheckDueCheck";
 import { useLoop } from "@tresjs/core";
 import { LocomotionState, WeatherKind } from "genshin-engine";
 
@@ -33,8 +33,7 @@ export const useSheerCold = (
   const { onBeforeRender } = useLoop();
   const value = shallowRef(0);
   const sheerCold: SheerCold = { damageSeconds: 0, value: 0 };
-  let checkedX = Infinity;
-  let checkedZ = Infinity;
+  const checkIsRecheckDue = createRecheckDueCheck();
   let isInCold = false;
 
   onBeforeRender(({ delta }) => {
@@ -45,11 +44,7 @@ export const useSheerCold = (
       phase,
       position: { x, z },
     } = character;
-    if (Math.hypot(x - checkedX, z - checkedZ) >= REGION_RECHECK_DISTANCE) {
-      checkedX = x;
-      checkedZ = z;
-      isInCold = checkIsSheerColdArea(findAreaAt(catalogue, x, z));
-    }
+    if (checkIsRecheckDue(x, z)) isInCold = checkIsSheerColdArea(findAreaAt(catalogue, x, z));
     const isSwimming = phase.state === LocomotionState.Swim || phase.state === LocomotionState.SwimDash;
     const damage = stepSheerCold(
       sheerCold,

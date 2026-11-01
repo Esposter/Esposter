@@ -2,10 +2,11 @@ import type { Catalogue } from "#src/models/world/Catalogue";
 import type { CatalogueArea } from "#src/models/world/CatalogueArea";
 import type { Vector3 } from "three";
 
-import { AREA_WEATHER_CHANGE_SECONDS, REGION_RECHECK_DISTANCE, WORLD_RANDOM_SEED } from "#src/services/constants";
+import { AREA_WEATHER_CHANGE_SECONDS, WORLD_RANDOM_SEED } from "#src/services/constants";
 import { findAreaAt } from "#src/services/map/findAreaAt";
 import { checkIsInCity } from "#src/services/world/checkIsInCity";
 import { computeShownAreaWeather } from "#src/services/world/computeShownAreaWeather";
+import { createRecheckDueCheck } from "#src/services/world/createRecheckDueCheck";
 import { getAreaWeathers } from "#src/services/world/getAreaWeathers";
 import { getNextAreaWeather } from "#src/services/world/getNextAreaWeather";
 import { useLoop, useTres } from "@tresjs/core";
@@ -22,8 +23,7 @@ export const useAreaWeather = (origin: Vector3, catalogue: Catalogue) => {
   const { onBeforeRender } = useLoop();
   const areaWeather = shallowRef(WeatherKind.Clear);
   const isInCity = shallowRef(false);
-  let checkedX = Infinity;
-  let checkedZ = Infinity;
+  const checkIsRecheckDue = createRecheckDueCheck();
   let checkedArea: CatalogueArea | undefined;
   let checkedWeathers: WeatherKind[] = [];
   let secondsInWeather = 0;
@@ -37,9 +37,7 @@ export const useAreaWeather = (origin: Vector3, catalogue: Catalogue) => {
     if (!activeCamera) return;
     const x = activeCamera.position.x + origin.x;
     const z = activeCamera.position.z + origin.z;
-    if (Math.hypot(x - checkedX, z - checkedZ) >= REGION_RECHECK_DISTANCE) {
-      checkedX = x;
-      checkedZ = z;
+    if (checkIsRecheckDue(x, z)) {
       const area = findAreaAt(catalogue, x, z);
       isInCity.value = area !== undefined && checkIsInCity(area, x, z);
       if (area !== checkedArea) {
