@@ -3,7 +3,7 @@ import { toCompilerFlags } from "#src/services/benchTypes/toCompilerFlags";
 import { describe, expect, test } from "vitest";
 
 describe(toCompilerFlags, () => {
-  test("a true switch, a list and a value become flags; a false switch and a checking-free output do not", () => {
+  test("a true switch, a list and a value become flags; a false switch and an option the count leaves out do not", () => {
     expect.hasAssertions();
 
     expect(
@@ -13,6 +13,7 @@ describe(toCompilerFlags, () => {
         incremental: true,
         lib: ["esnext", "dom"],
         noEmit: true,
+        noUnusedLocals: true,
         strict: false,
         target: "esnext",
         types: [],
