@@ -20,10 +20,6 @@ flowchart TD
 - **The Autumn Whirlwind's reach is open at 9 metres.** gcsim draws its ticks' 9-metre circle one metre ahead of him (`{data-root}/cache/gcsim-v2.47.2/internal/characters/kazuha/burst.go` line 48, `Point{Y: 1}`), so its reach is 10 metres forward on the same rule that gives the absorb check its 9, and the page's 9 round the cast point holds the radius, not the reach. Open until the summon's circle holds its offset.
 - **Constellation 1 is open against the wiki.** gcsim takes a tenth off both skill cooldowns, which the kit models, and also resets the skill's cooldown on each Kazuha Slash at Constellation 1 (`{data-root}/cache/gcsim-v2.47.2/internal/characters/kazuha/burst.go` lines 106-108), which the kit does not. The wiki's Kazuha Slash page gives Scarlet Hills as the reset of Chihayaburu's cooldown upon Kazuha Slash, which is the reset alone, so the tenth is open until the wiki and gcsim agree.
 
-## Open
-
-Nothing here.
-
 ## Key files
 
 | File                                                              | Role                                                                                                                                                                                |
