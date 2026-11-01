@@ -72,4 +72,22 @@ describe("mentionSuggestion", () => {
       items.map(({ id }) => id).filter((id) => id === MENTION_EVERYONE_ID || id === MENTION_HERE_ID),
     ).toStrictEqual(ids);
   });
+
+  // A room made or joined in this session has no permissions read yet, and the server judges what its member sends
+  test("offers the room-wide mentions while the room's permissions are not read", async () => {
+    expect.hasAssertions();
+
+    setCurrentRoomId(crypto.randomUUID());
+    trpcMsw.room.readMembers.query(() => ({ hasMore: false, items: [], nextCursor: "" }));
+    assert.exists(MentionSuggestion?.items);
+    const items = await MentionSuggestion.items({
+      editor: {} as Editor,
+      query: "",
+      signal: new AbortController().signal,
+    });
+
+    expect(
+      items.map(({ id }) => id).filter((id) => id === MENTION_EVERYONE_ID || id === MENTION_HERE_ID),
+    ).toStrictEqual([MENTION_EVERYONE_ID, MENTION_HERE_ID]);
+  });
 });
