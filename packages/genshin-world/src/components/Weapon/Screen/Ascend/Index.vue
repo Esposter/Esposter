@@ -12,7 +12,7 @@ import { GameTextKey } from "genshin-text";
 interface Props {
   // The base ATK at the held phase, which the row beside the header sets against the next phase's
   baseAttackText: string;
-  // The materials the next phase takes, each with its name, rarity, the count it takes and the count the bag holds
+  // The next phase's materials, handed on to the materials cards
   costs: WeaponAscendCost[];
   // The game's words in the reader's language
   gameText: GameText;

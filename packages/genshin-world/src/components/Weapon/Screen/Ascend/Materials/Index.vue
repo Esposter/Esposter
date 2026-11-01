@@ -5,7 +5,7 @@ import type { GameText } from "genshin-text";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
-  // The materials the next phase takes, each with its name, rarity, the count it takes and the count the bag holds
+  // The next phase's materials, each drawn as a card beneath the title
   costs: WeaponAscendCost[];
   // The game's words in the reader's language, which the materials' title is set in
   gameText: GameText;
