@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import type { Achievement } from "#src/models/achievement/Achievement";
-import type { AchievementCategory } from "#src/models/achievement/AchievementCategory";
-import type { BannerKind } from "genshin-interface/save";
-import type { Constellation } from "#src/models/character/Constellation";
-import type { Mail } from "#src/models/mail/Mail";
-import type { TextChunk } from "#src/models/data/TextChunk";
-import type { WishDrawSave } from "#src/models/wish/WishDrawSave";
-import type { WishPity } from "#src/models/wish/WishPity";
 import type WorldWindrise from "#src/components/World/Windrise/Index.vue";
+import type { useWorldAchievements } from "#src/composables/useWorldAchievements";
+import type { useWorldArchive } from "#src/composables/useWorldArchive";
+import type { useWorldConstellations } from "#src/composables/useWorldConstellations";
+import type { useWorldMail } from "#src/composables/useWorldMail";
+import type { useWorldSave } from "#src/composables/useWorldSave";
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
 import type { ArchiveData } from "#src/models/archive/ArchiveData";
 import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
@@ -43,6 +40,7 @@ import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { WorldTables } from "#src/models/world/WorldTables";
 import type { QualityTier } from "genshin-engine";
 import type { GameLanguage, GameText } from "genshin-text";
+import type { UnwrapRef } from "vue";
 
 import AchievementScreen from "#src/components/Achievement/Screen/Index.vue";
 import BookReaderScreen from "#src/components/Archive/BookReader/Index.vue";
@@ -70,7 +68,7 @@ import { CharacterMenuTab, InventorySort, ItemCategory } from "genshin-interface
 interface Props {
   accountAvatarUrl: string;
   accountName: string;
-  achievementData?: { achievements: Achievement[]; categories: AchievementCategory[]; textMap: TextChunk };
+  achievementData?: UnwrapRef<ReturnType<typeof useWorldAchievements>["achievementData"]>;
   achievementProgressMap: ReadonlyMap<number, AchievementProgress>;
   activeCharacterId: number;
   adventureExpProgress: number;
@@ -78,10 +76,10 @@ interface Props {
   archiveData?: ArchiveData;
   archiveKillsMap: ArchiveKills;
   archiveProgressMap: ArchiveProgress;
-  bookReading?: { body: string; title: string };
+  bookReading?: UnwrapRef<ReturnType<typeof useWorldArchive>["bookReading"]>;
   canUseLongTermEncounterPoints: boolean;
   catalogue: WorldTables["catalogue"];
-  characterIdConstellationsMap: Map<number, Constellation[]>;
+  characterIdConstellationsMap: UnwrapRef<ReturnType<typeof useWorldConstellations>["characterIdConstellationsMap"]>;
   characterPackReaders: WorldTables["characterPackReaders"];
   characterTalentKits: WorldTables["characterTalentKits"];
   companionshipExpMap: ReadonlyMap<number, number>;
@@ -104,7 +102,7 @@ interface Props {
   isWorldLevelAdjustable: boolean;
   isWorldLevelLowered: boolean;
   language: GameLanguage;
-  mailData?: { birthdayMailIds: ReadonlySet<number>; mailRows: ReadonlyMap<number, Mail>; textMap: TextChunk };
+  mailData?: UnwrapRef<ReturnType<typeof useWorldMail>["mailData"]>;
   mails: MailSave[];
   mapCamera: MapCamera;
   materialDataMap: WorldTables["materialDataMap"];
@@ -148,8 +146,12 @@ const mapZoom = defineModel<number>("mapZoom", { required: true });
 const characters = defineModel<Character[]>("characters", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
 const characterCopyCountMap = defineModel<ReadonlyMap<number, number>>("characterCopyCountMap", { required: true });
-const wishPityMap = defineModel<Readonly<Record<BannerKind, Readonly<WishPity>>>>("wishPityMap", { required: true });
-const wishHistory = defineModel<WishDrawSave[]>("wishHistory", { required: true });
+const wishPityMap = defineModel<UnwrapRef<ReturnType<typeof useWorldSave>["wishPityMap"]>>("wishPityMap", {
+  required: true,
+});
+const wishHistory = defineModel<UnwrapRef<ReturnType<typeof useWorldSave>["wishHistory"]>>("wishHistory", {
+  required: true,
+});
 const shopPurchases = defineModel<ShopPurchase[]>("shopPurchases", { required: true });
 const settings = defineModel<GenshinSettings>("settings", { required: true });
 const {

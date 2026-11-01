@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CookingTalent } from "#src/models/cooking/CookingTalent";
+import type { useWorldCooking } from "#src/composables/useWorldCooking";
 import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
 import type { CookingProgress } from "#src/models/cooking/CookingProgress";
 import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
@@ -15,6 +15,7 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { WorldTables } from "#src/models/world/WorldTables";
 import type { CraftingCell, ForgeTab } from "genshin-interface";
 import type { GameText } from "genshin-text";
+import type { UnwrapRef } from "vue";
 
 import CookingScreen from "#src/components/Cooking/Screen/Index.vue";
 import ProcessingScreen from "#src/components/Cooking/Processing/Index.vue";
@@ -28,8 +29,11 @@ interface Props {
   adventureRank: number;
   adventureRankTables: WorldTables["adventureRankTables"];
   completedMainQuestIds: ReadonlySet<string>;
-  cookingTalents: Record<string, CookingTalent>;
-  craftingArtifactDropTables: Pick<WorldTables, "artifactMainAffixPools" | "artifactRarityDataMap" | "reliquarySets">;
+  cookingTalents: UnwrapRef<ReturnType<typeof useWorldCooking>["cookingTalents"]>;
+  craftingArtifactDropTables: Pick<
+    WorldTables,
+    "artifactMainAffixPools" | "artifactRarityDataMap" | "reliquarySets"
+  >;
   craftingProgress: CraftingProgress;
   craftingRecipes: WorldTables["craftingRecipes"];
   craftingStrongboxes: WorldTables["craftingStrongboxes"];

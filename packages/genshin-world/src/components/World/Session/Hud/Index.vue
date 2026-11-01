@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import type { BlossomClaimPrompt } from "#src/models/originalResin/BlossomClaimPrompt";
-import type { InteractionPrompts } from "#src/models/interaction/InteractionPrompts";
-import type { KitContext } from "#src/models/kit/KitContext";
-import type { OrthographicCamera } from "three";
-import type { PerspectiveCamera } from "three";
-import type { ShortcutWheelDirectionCount } from "#src/models/shortcutWheel/ShortcutWheelDirectionCount";
-import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
+import type { useWorldCamera } from "#src/composables/useWorldCamera";
+import type { useWorldCombat } from "#src/composables/useWorldCombat";
+import type { useWorldInteractables } from "#src/composables/useWorldInteractables";
+import type { useWorldOutcrops } from "#src/composables/useWorldOutcrops";
+import type { useWorldShortcutWheel } from "#src/composables/useWorldShortcutWheel";
+import type { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
 import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { HudMember } from "#src/models/hud/HudMember";
@@ -22,6 +21,7 @@ import type { WorldTables } from "#src/models/world/WorldTables";
 import type { Input } from "genshin-engine";
 import type { GameText } from "genshin-text";
 import type { Vector3 } from "three";
+import type { UnwrapRef } from "vue";
 
 import HudNavigation from "#src/components/Hud/Navigation/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
@@ -36,21 +36,21 @@ interface Props {
   bagFullHint: string;
   catalogue: WorldTables["catalogue"];
   characterDataMap: WorldTables["statTables"]["characterDataMap"];
-  characterIdSkillGlyphsMap: Map<number, SkillGlyphs>;
-  claimPrompt?: BlossomClaimPrompt & { placeId: number };
+  characterIdSkillGlyphsMap: UnwrapRef<ReturnType<typeof useWorldCombat>["characterIdSkillGlyphsMap"]>;
+  claimPrompt?: UnwrapRef<ReturnType<typeof useWorldOutcrops>["claimPrompt"]>;
   domainClaimOffers?: BlossomClaimOffer[];
   elementalSight: ElementalSight;
   enemyKindMap: WorldTables["enemyTables"]["enemyKindMap"];
-  enemyMap: KitContext["enemyMap"];
+  enemyMap: ReturnType<typeof useWorldCombat>["kitContext"]["enemyMap"];
   gadgetCooldownSeconds?: number;
   gameText: GameText;
-  getCamera: () => OrthographicCamera | PerspectiveCamera | undefined;
+  getCamera: ReturnType<typeof useWorldCamera>["getCamera"];
   getGroundHeight: (x: number, z: number) => number;
   hudFrame: HudFrame;
   hudInterfaceRects: WorldTables["hudInterfaceRects"];
   hudMember?: HudMember;
   input: Input;
-  interactionPrompts: InteractionPrompts;
+  interactionPrompts: UnwrapRef<ReturnType<typeof useWorldInteractables>["interactionPrompts"]>;
   isHudShown: boolean;
   isShortcutWheelOpen: boolean;
   isTouch: boolean;
@@ -64,14 +64,14 @@ interface Props {
   questProgress?: QuestProgress;
   questTextMap: Readonly<Record<string, string>>;
   quickSwapOpen: boolean;
-  shortcutWheelDirectionCount: ShortcutWheelDirectionCount;
+  shortcutWheelDirectionCount: UnwrapRef<ReturnType<typeof useWorldShortcutWheel>["shortcutWheelDirectionCount"]>;
   shortcutWheelPickedIndex?: number;
   showingTip?: Tip;
   tipText: WorldTables["tipText"];
   trackedQuest?: Quest;
   travelerName: string;
   trialSecondsRemaining?: number;
-  trounceClaimPrompt?: { offers: BlossomClaimOffer[]; spawnKey: string };
+  trounceClaimPrompt?: UnwrapRef<ReturnType<typeof useWorldTrounceBlossoms>["claimPrompt"]>;
   unlockedLandmarks: Landmark[];
 }
 
@@ -133,7 +133,15 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <WorldEnemyNameTags :elemental-sight :enemy-kind-map :enemy-map :get-camera :get-ground-height :name-text :origin />
+  <WorldEnemyNameTags
+    :elemental-sight
+    :enemy-kind-map
+    :enemy-map
+    :get-camera
+    :get-ground-height
+    :name-text
+    :origin
+  />
   <!-- The shortcut wheel drawn over the world while its key is held, its entries and their pick from the move -->
   <div v-if="isShortcutWheelOpen" class="shortcut-wheel">
     <HudShortcutWheel

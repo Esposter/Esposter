@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { AbyssBenedictionChoice } from "#src/models/spiralAbyss/AbyssBenedictionChoice";
-import type { FishingPhase } from "#src/models/fishing/FishingPhase";
-import type { FishingZone } from "#src/models/fishing/FishingZone";
-import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
+import type { useWorldExpeditionRoster } from "#src/composables/useWorldExpeditionRoster";
+import type { useWorldFishing } from "#src/composables/useWorldFishing";
+import type { useWorldSave } from "#src/composables/useWorldSave";
+import type { useWorldSpiralAbyss } from "#src/composables/useWorldSpiralAbyss";
+import type { useWorldStatues } from "#src/composables/useWorldStatues";
 import type { DomainLevelRow } from "#src/models/domains/DomainLevelRow";
 import type { Talk } from "#src/models/dialogue/Talk";
 import type { TalkOffer } from "#src/models/dialogue/TalkOffer";
@@ -21,6 +22,7 @@ import type { AbyssFloor } from "#src/models/spiralAbyss/AbyssFloor";
 import type { AbyssPeriodBlessing } from "#src/models/spiralAbyss/AbyssPeriodBlessing";
 import type { WorldTables } from "#src/models/world/WorldTables";
 import type { GameLanguage, GameText } from "genshin-text";
+import type { UnwrapRef } from "vue";
 
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
 import DomainScreen from "#src/components/Domain/Screen/Index.vue";
@@ -42,23 +44,25 @@ interface Props {
   abyssBlessing?: AbyssPeriodBlessing;
   abyssChoiceChamberIndex?: number;
   abyssChoiceFloorIndex?: number;
-  abyssChoices?: AbyssBenedictionChoice[];
+  abyssChoices?: UnwrapRef<ReturnType<typeof useWorldSpiralAbyss>["abyssChoices"]>;
   abyssFloorsOffered: AbyssFloor[];
   adventureRank: number;
-  castView?: { phase: FishingPhase; tension: number; zone: FishingZone };
-  characterPassiveGroupIdMap: Map<number, Set<number>>;
+  castView?: UnwrapRef<ReturnType<typeof useWorldFishing>["castView"]>;
+  characterPassiveGroupIdMap: UnwrapRef<
+    ReturnType<typeof useWorldExpeditionRoster>["characterPassiveGroupIdMap"]
+  >;
   completedMainQuestIds: ReadonlySet<string>;
   domainLevelRows: DomainLevelRow[];
   downCharacterIds: ReadonlySet<number>;
-  expeditionCharacters: { id: number; name: string }[];
+  expeditionCharacters: UnwrapRef<ReturnType<typeof useWorldExpeditionRoster>["expeditionCharacters"]>;
   gameDataBaseUrl: string;
   gameText: GameText;
   gcgGameId?: number;
   getCharacterName: (characterId: number) => string;
   getMaxHealth: (characterId: number) => number;
-  getRegionProgress: (regionId: string) => StatueRegionProgressSave;
+  getRegionProgress: ReturnType<typeof useWorldStatues>["getRegionProgress"];
   getWorldNow: () => Temporal.Instant;
-  getWorshipItemName: (itemId: number) => string;
+  getWorshipItemName: ReturnType<typeof useWorldStatues>["getWorshipItemName"];
   inventory: Inventory;
   isInDomain: boolean;
   language: GameLanguage;
@@ -66,7 +70,7 @@ interface Props {
   nameText: WorldTables["nameText"];
   party: Party;
   random: () => number;
-  regionStatueProgressMap: ReadonlyMap<string, StatueRegionProgressSave>;
+  regionStatueProgressMap: UnwrapRef<ReturnType<typeof useWorldSave>["regionStatueProgressMap"]>;
   reputation: ReputationProgress;
   reputationBountyOffer?: ReputationBountyOffer;
   reputationCity?: ReputationCity;
@@ -82,7 +86,7 @@ interface Props {
   wallet: Wallet;
   worldNow: Temporal.Instant;
   worshipLevels: StatueLevel[];
-  worshipRegionId?: string;
+  worshipRegionId?: UnwrapRef<ReturnType<typeof useWorldStatues>["worshipRegionId"]>;
 }
 
 const autoRecover = defineModel<AutoRecoverSetting>("autoRecover", { required: true });
