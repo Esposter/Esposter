@@ -74,11 +74,11 @@ A new character is `createCharacter` over the roster: level 1 in its first phase
 
 ## Open
 
+The open items the [spec](spec.md) also holds are listed there, not here.
+
 - [ ] **Every Attributes-tab number is computed the way the game computes it** — no source yet: no test sums a recorded character's lines to its Attributes tab; the one capture, `{data-root}/genshin-parity/captures/character-attributes-1080.png` (Jean at level 50: Max HP 8,639, ATK 625, DEF 397), has no test.
 - [ ] **Every attribute's name is filed under its id in the game's text** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/ManualTextMapConfigData.json`: a few of the Attribute ids have no row there.
 - [ ] **The crossbow rows are the Traveler's discarded shooter forms, from 7.1** — no source yet: the dump gives the five crossbow rows no English name and holds no patch version.
 - [ ] **The tables run to hundreds of kilobytes** — no source yet: the published stats files are not in the checkout.
 - [ ] **The Traveler's base HP, ATK and DEF match the wiki at each level and phase** — no source yet: the wiki's Traveler page is not cached.
-- [ ] **The Traveler at level 90 with a Dull Blade gives the wiki's 10,874.91 Max HP and 682.52 DEF** — no source yet: the wiki's Traveler page, named in Sources, is not in the wiki cache.
-- [ ] **The Snezhnaya association names Snezhnaya's region** — no source yet: a game record naming a region for the Snezhnaya associations; `{data-root}/genshin-parity/text/ExcelBinOutput/FetterInfoExcelConfigData.json` files five characters under them and names none.
 - [ ] **The Fatui association counts as Snezhnaya's region, as the wiki counts it** — no source yet: the wiki's page that files the Fatui under Snezhnaya, which is not in `{data-root}/cache/genshin-wiki/`.
