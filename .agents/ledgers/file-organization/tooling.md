@@ -1370,8 +1370,8 @@
 | `scripts/src/services/genshinText/writeGameText.ts`                                       | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/identifiers`                                                        | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/jev`                                                                | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/machine`                                                            | —                       |       |
-| `scripts/src/services/openspec`                                                           | —                       |       |
+| `scripts/src/services/machine`                                                            | 2026-11-01 · Haiku 5.5  |       |
+| `scripts/src/services/openspec`                                                           | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/outdatedDependencies/distTag`                                       | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/outdatedDependencies/docker`                                        | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/outdatedDependencies/getDependencyType.test.ts`                     | 2026-10-29 · Haiku 5.5  |       |
@@ -1487,7 +1487,7 @@
 | `scripts/src/services/review/writeFixIssues.ts`                                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/review/writeReviewIssueFindings.ts`                                 | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/review/writeReviewSummary.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/semver`                                                             | —                       |       |
+| `scripts/src/services/semver`                                                             | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/shared/at.ts`                                                       | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/blurMasked.ts`                                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/checkIsNotFound.ts`                                          | 2026-10-29 · Haiku 5.5  |       |
