@@ -66,6 +66,7 @@ export const GcsimInternalCooldownTagMap: Partial<Record<string, InternalCooldow
   "attacks.ICDTagOdetteDanceDuo": InternalCooldownTag.OdetteDanceDuo,
   "attacks.ICDTagOroronElmentalBurst": InternalCooldownTag.OroronElmentalBurst,
   "attacks.ICDTagOverloadDamage": InternalCooldownTag.OverloadDamage,
+  "attacks.ICDTagQiqiElementalArt": InternalCooldownTag.QiqiElementalArt,
   "attacks.ICDTagShatter": InternalCooldownTag.Shatter,
   "attacks.ICDTagSkirkCons": InternalCooldownTag.SkirkCons,
   "attacks.ICDTagSuperconductDamage": InternalCooldownTag.SuperconductDamage,

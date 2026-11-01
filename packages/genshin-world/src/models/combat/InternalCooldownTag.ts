@@ -64,6 +64,7 @@ export enum InternalCooldownTag {
   OdetteDanceDuo = "OdetteDanceDuo",
   OroronElmentalBurst = "OroronElmentalBurst",
   OverloadDamage = "OverloadDamage",
+  QiqiElementalArt = "QiqiElementalArt",
   Shatter = "Shatter",
   SkirkCons = "SkirkCons",
   SuperconductDamage = "SuperconductDamage",
