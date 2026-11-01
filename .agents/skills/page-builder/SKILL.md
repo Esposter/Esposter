@@ -1,6 +1,6 @@
 ---
 name: page-builder
-description: Apply when working on the page builder — the editor shell the webpage and email resources mount, its document model, keyboard, undo and publish. Esposter's one page builder for its document resources.
+description: Apply when working on the page builder — the editor shell the webpage and email resources mount. Esposter's one page builder for its document resources.
 ---
 
 # Page Builder
