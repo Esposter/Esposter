@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import CloseButton from "#src/components/CloseButton/Index.vue";
+import Level from "#src/components/WorshipScreen/Level/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
 import { WorshipLevelState } from "#src/models/WorshipLevelState";
 
@@ -36,13 +37,13 @@ const nextClaimableLevel = computed(() => levels.find(({ state }) => state === W
     <button class="held" type="button" @click="emit('offer')">{{ heldCount }}</button>
     <ol class="levels">
       <li v-for="{ level, oculusCount, rewards, state } of levels" :key="level" :class="state">
-        <button type="button" :disabled="level !== nextClaimableLevel" @click="emit('claim')">
-          <span class="level">{{ level }}</span>
-          <span class="oculi">{{ oculusCount }}</span>
-          <span class="rewards">
-            <span v-for="{ count, name } of rewards" :key="name">{{ name }} × {{ count }}</span>
-          </span>
-        </button>
+        <Level
+          :is-disabled="level !== nextClaimableLevel"
+          :level
+          :oculus-count="oculusCount"
+          :rewards
+          @claim="emit('claim')"
+        />
       </li>
     </ol>
   </div>

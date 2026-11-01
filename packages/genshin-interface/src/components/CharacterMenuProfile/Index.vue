@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { CharacterMenuProfileEntry } from "#src/models/CharacterMenuProfileEntry";
 
+import Entry from "#src/components/CharacterMenuProfile/Entry/Index.vue";
+
 interface Props {
   // The character's stories and then its voice-overs, each in the order the game lists them, the first one open at the start
   entries: CharacterMenuProfileEntry[];
@@ -21,15 +23,7 @@ const selectedEntry = computed(() => entries[entryIndex.value]);
     <div class="entries-column">
       <ul class="entries">
         <li v-for="(entry, index) of entries" :key="index">
-          <button
-            class="entry"
-            :aria-pressed="index === entryIndex"
-            :data-locked="entry.isLocked"
-            type="button"
-            @click="entryIndex = index"
-          >
-            {{ entry.title }}
-          </button>
+          <Entry :entry :is-selected="index === entryIndex" @select="entryIndex = index" />
         </li>
       </ul>
       <p v-if="namecardName" class="namecard">{{ namecardName }}</p>

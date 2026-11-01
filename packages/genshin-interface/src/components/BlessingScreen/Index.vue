@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Member from "#src/components/BlessingScreen/Member/Index.vue";
 import CloseButton from "#src/components/CloseButton/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
 
@@ -57,10 +58,7 @@ const emit = defineEmits<{
     </div>
     <ul class="members">
       <li v-for="{ healthShare, id, name } of members" :key="id">
-        <button type="button" @click="emit('heal', id)">
-          <span class="name">{{ name }}</span>
-          <span class="health">{{ Math.round(healthShare * 100) }}%</span>
-        </button>
+        <Member :health-share="healthShare" :name @heal="emit('heal', id)" />
       </li>
     </ul>
   </div>
