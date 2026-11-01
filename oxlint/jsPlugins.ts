@@ -9,4 +9,4 @@ const SUITE_EXTENSION = ".test.ts";
 export const JS_PLUGINS: string[] = readdirSync(PLUGINS_DIRECTORY)
   .filter((fileName) => fileName.endsWith(PLUGIN_EXTENSION) && !fileName.endsWith(SUITE_EXTENSION))
   .map((fileName) => `./scripts/src/oxlint/${fileName}`)
-  .toSorted((first, second) => first.localeCompare(second));
+  .toSorted((firstPath, secondPath) => firstPath.localeCompare(secondPath));
