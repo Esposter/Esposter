@@ -25,6 +25,14 @@ describe(getUnattributedPresses, () => {
     expect(getUnattributedPresses(".a:is(:active, [data-pressed]) {\n  color: blue;\n}")).toStrictEqual([]);
   });
 
+  test("reports a press in a selector list whose other selector names the attribute", () => {
+    expect.hasAssertions();
+
+    expect(getUnattributedPresses(".x:active, .y[data-pressed] {\n  color: red;\n}")).toStrictEqual([
+      "1: .x:active, .y[data-pressed]",
+    ]);
+  });
+
   test("skips a selector that only contains the text of the state", () => {
     expect.hasAssertions();
 
