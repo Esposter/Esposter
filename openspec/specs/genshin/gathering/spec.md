@@ -1,6 +1,6 @@
 ## Purpose
 
-The plants and specialties the official map marks, placed by the fit into each region as gathering points, picked with F and kept gone until their respawn. A local specialty comes back 46 hours after it is picked, as the wiki gives it, and a cooking ingredient at the daily reset that follows. The gather table's refresh ids name no policy in the dump, so the category settles it (`{data-root}/genshin-parity/text/ExcelBinOutput/GatherExcelConfigData.json`, checked against `{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`).
+The plants and specialties the official map marks, placed by the fit into each region as gathering points, picked with F and kept gone until their respawn. A local specialty comes back 46 hours after it is picked, as the wiki gives it, and a cooking ingredient at the game's midnight that follows. The gather table's refresh ids name no policy in the dump, so the category settles it (`{data-root}/genshin-parity/text/ExcelBinOutput/GatherExcelConfigData.json`, checked against `{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`).
 
 ## Requirements
 
@@ -21,6 +21,12 @@ An item the game excludes SHALL NOT be a gathering point.
 #### Scenario: Mining item is not a gathering point
 
 - **GIVEN** an item is drawn by a mining outcrop instead
+- **WHEN** the gathering points are built
+- **THEN** no gathering point is made for that item
+
+#### Scenario: Quest item the official map does not mark is not a gathering point
+
+- **GIVEN** the game types a ground item as a quest item, the official map marks no point of it and its id is in `GATHER_EXCLUDED_ITEM_IDS`
 - **WHEN** the gathering points are built
 - **THEN** no gathering point is made for that item
 
@@ -58,14 +64,14 @@ A picked local specialty SHALL stand again 46 hours after it was picked.
 - **WHEN** less than 46 hours have passed
 - **THEN** the specialty stays gone
 
-### Requirement: A picked cooking ingredient stands again at the next daily reset
+### Requirement: A picked cooking ingredient stands again at the game's midnight
 
-A picked cooking ingredient SHALL stand again at the game's next daily reset after the pick, which is 04:00 on the game's clock.
+A picked cooking ingredient SHALL stand again at the game's midnight that follows the pick, which is 00:00 on the game's clock.
 
-#### Scenario: Ingredient picked before the reset is back at the reset
+#### Scenario: Ingredient picked before midnight is back at midnight
 
-- **GIVEN** a cooking ingredient was picked before the game's daily reset
-- **WHEN** the game's daily reset comes
+- **GIVEN** a cooking ingredient was picked before the game's midnight
+- **WHEN** the game's midnight comes
 - **THEN** the ingredient stands again
 
 ### Requirement: An ore is struck and broken rather than picked
@@ -146,7 +152,7 @@ A broken ore SHALL drop one more for each of two draws that comes under ten per 
 
 ### Requirement: An ore stands again on its own respawn
 
-A broken ore SHALL stand again on its own respawn: an iron chunk at the daily reset, a white iron chunk or starsilver two days after it breaks, and a crystal chunk, amethyst lump or condessence crystal three days after it breaks.
+A broken ore SHALL stand again on its own respawn: an iron chunk at the game's midnight, a white iron chunk or starsilver two days after it breaks, and a crystal chunk, amethyst lump or condessence crystal three days after it breaks.
 
 #### Scenario: White iron chunk is back two days after breaking
 
@@ -163,15 +169,15 @@ A broken ore SHALL stand again on its own respawn: an iron chunk at the daily re
 ## Sources
 
 - [Local Specialty](https://genshin-impact.fandom.com/wiki/Local_Specialty), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Local_Specialty.json`, line 6: "After a local specialty is harvested, it will respawn after 46 hours." The [Reset](https://genshin-impact.fandom.com/wiki/Reset) page, cached at `{data-root}/cache/genshin-wiki/Page_Reset.json`, line 48, lists All Local Specialties at 48 hours; the requirement keeps the 46 hours of the Local Specialty page, which `packages/genshin-world/src/services/gathering/constants.ts` also sets.
+- [Reset](https://genshin-impact.fandom.com/wiki/Reset), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Reset.json`, line 19: the Iron Chunk and the common cooking ingredients spawn at 0:00 server time, four hours before the daily reset; grounds the midnight requirements. The page's own stub notice (line 1) asks for its timers to be verified.
 - [Mineral](https://genshin-impact.fandom.com/wiki/Mineral), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Mineral.json`: an ore needs Poise Damage from melee or Blunt attacks to break (line 29), and a broken regular ore drops one for certain and one more for each of two draws at 10 per cent (line 20; the Chasm's special ores drop two for certain, line 21).
-- [Blunt Attack](https://genshin-impact.fandom.com/wiki/Blunt_Attack), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Blunt_Attack.json`: plunges by sword, claymore and polearm users are blunt, and catalyst plunges are not listed (line 6); Ningguang's plunge is excepted from the Geo rule (line 8).
+- [Blunt Attack](https://genshin-impact.fandom.com/wiki/Blunt_Attack), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Blunt_Attack.json`: plunges by sword, claymore and polearm users are blunt, and catalyst plunges are not listed (line 6); Ningguang's plunge is excepted from the Geo rule (line 8), and her Sparkling Scatter's Normal and Charged Attacks, which deal Geo, are blunt (`{data-root}/cache/genshin-wiki/Category_Ningguang_Talents.json`, lines 46 and 54).
 - `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/GatherExcelConfigData.json`: the row of Magical Crystal Chunk, item 101004 (line 68), saves nothing (`GATHER_SAVE_TYPE_NONE`, line 74), so the mining outcrop's drop is no gathering point.
 - `packages/genshin-world/src/composables/useWorldPickups.ts`: the pick ups leave an ore out (line 113, `kind in OreItemIdBreakPoiseMap`), and a point is kept as picked only once the bag has taken its item (line 181, `addition.overflow === 0`).
 
 ## Open
 
 - [ ] **Gathering points stand where the official map marks their item** — no source yet: a comparison of the gathering points with `label-tree.json` and `points.json` under `{data-root}/genshin-parity/references/interactive-map/`, which no record keeps.
-- [ ] **A burst breaks a crystal chunk in one hit** — no source yet: no frame of the Zhongli clip `{data-root}/genshin-parity/captures/yt-EWYe-MYjmqU-ore-zhongli.mp4` in genshin-parity's captures has been checked.
-- [ ] **Claymore attacks, plunges and Geo damage strike blunt, and a Geo Traveler's skill does too; a Geo character's normal attack does not** — contradicted by `{data-root}/cache/genshin-wiki/Category_Ningguang_Talents.json` (the page Sparkling Scatter, its Normal Attack blunt at line 46): Ningguang's normal attack deals Geo and is blunt, as `{data-root}/cache/genshin-wiki/Page_Blunt_Attack.json` line 134 lists it; only a physical normal attack is not blunt, which the requirement's scenario reads.
+- [ ] **A burst breaks a crystal chunk in one hit** — no source yet: the frames of the Zhongli clip `{data-root}/genshin-parity/captures/yt-EWYe-MYjmqU-ore-zhongli.mp4` at 75 to 79 s show Zhongli reaching blue crystal chunks with no burst striking one, and the rest of the clip is not read.
 - [ ] **Converted poise from an infusion does not reach an ore** — no source yet: `{data-root}/cache/genshin-wiki/Page_Elemental_Infusion.json`, fetched for this check, gives no poise rule for an infused hit, and `{data-root}/cache/genshin-wiki/Page_Mineral.json` line 29 counts melee poise without naming infusions; a recording of an infused sword's normal attack striking an unbroken ore would settle it.
-- [ ] **Ores stand again on their own respawn: an iron chunk at the daily reset, a white iron chunk or starsilver after two days, a crystal chunk, amethyst lump or condessence crystal after three** — contradicted by `{data-root}/cache/genshin-wiki/Page_Reset.json` line 19: iron chunk nodes spawn 4 hours before the daily reset, at 0:00 server time. Its line 50 gives the two-day group, and its line 54 the three-day one for crystal chunks outside a Mining Outcrop and for amethyst lumps; no cached page names a respawn for condessence crystal.
+- [ ] **A condessence crystal stands again three days after it breaks** — no source yet: no cached page names a respawn for condessence crystal; `{data-root}/cache/genshin-wiki/Page_Reset.json` line 54 gives the three-day group as crystal chunks outside a Mining Outcrop and amethyst lumps alone.

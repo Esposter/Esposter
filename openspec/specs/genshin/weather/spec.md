@@ -20,6 +20,13 @@ The world's weather SHALL be the weather of the area the camera stands in, and S
 - **WHEN** the area's change interval passes
 - **THEN** the weather turns to the next one of the area's weathers (the 300-second interval, `AREA_WEATHER_CHANGE_SECONDS`)
 
+#### Scenario: Desert turns to a sandstorm and back
+
+- **GIVEN** the camera stands in the Desert of Hadramaveth, whose weathers are clear and sandstorm
+- **WHEN** the change interval passes while the weather is clear
+- **THEN** the weather turns to a sandstorm or stays clear (the chain's clear row weighs the sandstorm 10 against clear's 50, provisional)
+- **AND** a sandstorm turns back to clear at the next change, as the desert lists no other weather to turn to
+
 #### Scenario: Place no area holds
 
 - **GIVEN** the camera stands where no area's outline holds it
@@ -169,7 +176,8 @@ Under the water's surface the water's haze SHALL replace the weather's colour, a
 ## Open
 
 - [ ] **A strike's second pulse is dimmer than the first** — no source yet: a measure of the second pulse's strength on the thunderstorm recording, since the 0.6 in `LIGHTNING_FLASH_PULSES` is provisional.
-- [ ] **A weather change blends over nine seconds, eased in and out, from where the sky had reached** — no source yet: the same recording, `{data-root}/genshin-parity/captures/world-weather-turn.mkv`, read for a change begun part way through another.
-- [ ] **A sandstorm tints the haze toward the colour of sand** — no source yet: the haze's colour read off the Desert of Hadramaveth clip `{data-root}/genshin-parity/captures/yt-k_FKK0qcYHw-0-40.mp4`, which is on disk but was not viewed; the Weather page gives no colour.
+- [ ] **A weather change blends over nine seconds, eased in and out, from where the sky had reached** — no source yet: the same recording, `{data-root}/genshin-parity/captures/world-weather-turn.mkv`, read for a change begun part way through another; at about 0 to 31 s of that recording the storm clears between about 7 and 17 s, but 3.4 s spacing cannot time the blend or its easing.
+- [ ] **A sandstorm tints the haze toward the colour of sand** — no source yet: the haze's colour read off the Desert of Hadramaveth clip `{data-root}/genshin-parity/captures/yt-k_FKK0qcYHw-0-40.mp4`, viewed at about 0 to 40 s, where the haze is tan-brown from about 13 to 27 s, but no colour value reads by eye; the Weather page gives no colour.
 - [ ] **An area with several weathers turns after its 300-second interval** — no source yet: a recording of an area's weather changing, to read its interval off, since the 300 seconds is a built stand-in.
-- [ ] **A thunderstorm strikes about 27.6 times a minute, each flashing the sky twice and dropping a bolt** — no source yet: a strike count over `{data-root}/genshin-parity/captures/world-thunderstorm.mkv`, not yet read; the cached Lightning page (`{data-root}/cache/genshin-wiki/Page_Lightning.json`) gives no rate.
+- [ ] **A thunderstorm strikes about 27.6 times a minute, each flashing the sky twice and dropping a bolt** — no source yet: a strike count over `{data-root}/genshin-parity/captures/world-thunderstorm.mkv`, viewed at 5.6 s spacing over 0 to 51 s, which shows bolts at about 28 s and 45 s but no count and no double flash; the cached Lightning page (`{data-root}/cache/genshin-wiki/Page_Lightning.json`) gives no rate.
+- [ ] **The desert turns to a sandstorm at weights of 10 from clear, and a sandstorm turns back to clear** — no source yet: the weights are the [design's](design.md) open item, since the dump's template table holds no sandstorm row (`{data-root}/genshin-parity/text/ExcelBinOutput/WeatherTemplateExcelConfigData.json`).

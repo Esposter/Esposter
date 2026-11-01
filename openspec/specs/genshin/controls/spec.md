@@ -122,6 +122,53 @@ The button left of centre on a gamepad SHALL open the chat on every gamepad (`Op
 - **WHEN** its button left of centre is pressed
 - **THEN** the chat opens
 
+### Requirement: A pad walks a menu's controls
+
+A menu over the world SHALL take the pad's directional pad and left stick as focus moves, its east face button (Confirm) as a press of the focused control, its bumpers as a list screen's tab steps, and its south face button (Cancel) as the close Escape makes.
+
+#### Scenario: The directional pad moves the focus to the nearest control that way
+
+- **GIVEN** a menu open with one of its controls focused
+- **WHEN** the directional pad is pressed to the right
+- **THEN** the focus moves to the nearest control lying to the right of it
+
+#### Scenario: A held stick repeats the move at a steady pace
+
+- **GIVEN** a menu open with one of its controls focused
+- **WHEN** the left stick is held past its dead zone downward
+- **THEN** the focus moves once at once, and again each repeat interval once the repeat delay has passed, for as long as the stick is held
+
+#### Scenario: The east face button presses the focused control
+
+- **GIVEN** a menu open with one of its controls focused
+- **WHEN** the east face button is pressed
+- **THEN** the focused control shows its pressed look, then is clicked
+
+#### Scenario: The south face button closes the menu to the world
+
+- **GIVEN** a menu open
+- **WHEN** the south face button is pressed
+- **THEN** the menu closes to the world, as Escape closes it
+
+#### Scenario: A bumper steps a list screen's tab
+
+- **GIVEN** a list screen open on its first tab
+- **WHEN** the right bumper is pressed
+- **THEN** the second tab is selected
+- **AND** the left bumper steps back, held at the first tab
+
+#### Scenario: A menu opens on its first control
+
+- **GIVEN** no control of a menu has the focus as it opens
+- **WHEN** the menu opens
+- **THEN** its first control takes the focus, drawing a focus ring only when the last input was a key or the pad
+
+#### Scenario: The world takes no press while a menu is open
+
+- **GIVEN** a menu open over the world
+- **WHEN** the pad's or the keyboard's world button is pressed
+- **THEN** the character takes no press
+
 ### Requirement: Bound actions stay bound before any feature reads them
 
 Every action the game binds SHALL stay bound and read every frame, whether or not a feature reads it yet.

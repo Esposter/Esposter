@@ -14,6 +14,12 @@ A character other than the Traveler SHALL be sent to an open place for one of th
 - **WHEN** the character is sent for 8 hours
 - **THEN** the character is away for 8 hours
 
+#### Scenario: A place sent to before a length is picked sends for its first length
+
+- **GIVEN** an open place and no length picked
+- **WHEN** the character is sent
+- **THEN** the character is away for 4 hours, the place's first length
+
 ### Requirement: A send is refused for the Traveler, a character who is down, a closed place or past the limit
 
 A send SHALL be refused for the Traveler, for a character who is down or already away, for a closed place, and for a send past the expedition limit.

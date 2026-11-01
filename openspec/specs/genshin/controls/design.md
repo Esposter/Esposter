@@ -37,6 +37,15 @@ A bound key's default is prevented (`packages/genshin-engine/src/input/createInp
 
 A key typed into a field (an input, a text area, a select or anything editable) reaches no binding at all and keeps its default, so a letter typed into a chat or a console never opens a screen (`packages/genshin-engine/src/input/createInput.ts`, `FIELD_SELECTOR` in `packages/genshin-engine/src/input/constants.ts`).
 
+## A pad walks a menu
+
+A menu over the world is one of its held screens (`packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`, `isHeld`), and while one is open the pad moves through its controls as Tab moves them from the keyboard. Its directional pad, and the left stick past its dead zone, are read as a menu's direction (`menuDown` and `menuRight` in `packages/genshin-engine/src/models/input/InputState.ts`), and `packages/genshin-world/src/composables/useMenuNavigation.ts` moves the focus to the nearest control lying that way (`packages/genshin-world/src/services/menu/findMenuFocusTarget.ts`), where a control in line counts as nearer than one off it. A held direction repeats at a steady pace after a delay (`packages/genshin-world/src/services/menu/constants.ts`).
+
+- **The east face button presses the focused control, and the south face button closes the menu.** The game binds Confirm to the Xbox B and the PlayStation circle, which is the east face, and Cancel to the Xbox A and the cross, the south face (`{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext lines 250 to 260). The map keeps those bindings (`packages/genshin-engine/src/input/InputActionBindingMap.ts`), so the press is Confirm's click and the close is Cancel's, and `CLOSING_INPUT_ACTIONS` already closes a screen on Cancel as it does on Escape (`packages/genshin-world/src/services/screen/constants.ts`). The press first sets `data-pressed` on the focused control for `INTERACTION_PRESS_MS` (`packages/genshin-interface/src/services/constants.ts`), so the control draws its pressed look before its click runs; a press is dropped if its menu closes in that time or its control is pressed already (`packages/genshin-world/src/composables/useMenuNavigation.ts`).
+- **The bumpers step a list screen's tab.** They are read as tab steps (`menuTabSteps`) and dispatched as the step event the Q and E keys' handler also listens to (`packages/genshin-world/src/composables/useListScreenTabStep.ts`), so both steps land on the same tab and hold at the first and the last.
+- **A menu takes the focus on its first control as it opens**, unless one of its controls has it already, and draws the focus ring only when the last input was a key or the pad, so a pointer user sees no ring (`packages/genshin-world/src/composables/useMenuNavigation.ts`). A frame that reads the pad's directions, a bumper, its Confirm or its Start makes the last input the pad's, as a key's keydown makes it a key's, so a menu the pad opens after a pointer's use still draws its ring.
+- **The world takes no press while a menu holds.** The character reads its presses only while the screen is not held (`packages/genshin-world/src/components/World/Character/Index.vue`, the `isHeld` check beside `holdPresses`), so a pad's world button does nothing under a menu, as a key does not. The press that closes a menu gives no jump either: the frame reads it before the character's render, and the character still takes the menu's hold from its `isHeld` prop, which the close updates only after that render, so the closing frame skips `holdPresses` (`packages/genshin-world/src/components/World/Session/Index.vue`, the `before-loop` frame, and `packages/genshin-world/src/composables/useWorldFrame.ts`).
+
 ## Escape and the locked pointer
 
 While the pointer is locked to turn the camera, the browser keeps `Escape` for itself: it lets the lock go and never passes the key on. So a lock lost while the world is in play, and not let go to show the cursor, opens the Paimon menu (`packages/genshin-world/src/composables/useWorldScreenBehaviour.ts`, the `pointerlockchange` listener), as `Escape` does with the pointer free (`packages/genshin-engine/src/input/InputActionBindingMap.ts`, [screens](../screens/design.md)); the wiki binds the PC's Paimon Menu to Esc (`{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext line 162). The lock is taken again by a click on the world (`packages/genshin-world/src/components/World/Character/Index.vue`), since the browser takes no lock from `Escape` itself.
@@ -56,14 +65,16 @@ The bindings of places and modes the world does not have are left out (`packages
 
 ## Key files
 
-| File                                                         | Its role                                                                                  |
-| :----------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| `packages/genshin-engine/src/models/input/InputAction.ts`    | every action a player's buttons ask for                                                   |
-| `packages/genshin-engine/src/input/InputActionBindingMap.ts` | the game's default chords for each action, on a PC and a pad                              |
-| `packages/genshin-engine/src/models/input/GamepadButton.ts`  | a pad's buttons in the standard layout, named by where they sit                           |
-| `packages/genshin-engine/src/models/input/MouseButton.ts`    | a mouse's buttons, spelt apart from every key                                             |
-| `packages/genshin-engine/src/input/createInput.ts`           | the listeners, the gamepad's poll and the once-a-frame read into held and pressed actions |
-| `packages/genshin-engine/src/input/constants.ts`             | the focus keys, the field selector and the standard layout's button order                 |
+| File                                                              | Its role                                                                                                           |
+| :---------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/models/input/InputAction.ts`         | every action a player's buttons ask for                                                                            |
+| `packages/genshin-engine/src/input/InputActionBindingMap.ts`      | the game's default chords for each action, on a PC and a pad                                                       |
+| `packages/genshin-engine/src/models/input/GamepadButton.ts`       | a pad's buttons in the standard layout, named by where they sit                                                    |
+| `packages/genshin-engine/src/models/input/MouseButton.ts`         | a mouse's buttons, spelt apart from every key                                                                      |
+| `packages/genshin-engine/src/input/createInput.ts`                | the listeners, the gamepad's poll and the once-a-frame read into held and pressed actions, and a menu's directions |
+| `packages/genshin-engine/src/input/constants.ts`                  | the focus keys, the field selector and the standard layout's button order                                          |
+| `packages/genshin-world/src/composables/useMenuNavigation.ts`     | the pad's walk of a menu: its focus, its press, its tab steps and the focus a menu opens on                        |
+| `packages/genshin-world/src/services/menu/findMenuFocusTarget.ts` | the nearest control lying in a direction from another                                                              |
 
 ## Sources
 

@@ -126,4 +126,4 @@ From constellation 1, Ice Unleashed SHALL add blades; from constellation 2, Atmo
 
 ## Open
 
-- [ ] **Which cooldown cut Atmospheric Revolution gets** — contradicted by `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json` line 190148: the text cuts by 15% the cooldown of Elemental Skills and Elemental Bursts cast within the Frost Field, where the page names Atmospheric Revolution, which the text gives as the constellation's name (line 125874); gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/chongyun/skill.go` cuts the infused wielder's skill, burst and special-skill cooldowns by 15%.
+- [ ] **The kit's Atmospheric Revolution cut is the infused wielder's, not the field's** — contradicted by `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json` line 190148, whose text cuts the skills and bursts cast within the Frost Field, as the requirement above states; the kit follows gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/chongyun/skill.go` lines 129 to 138, which cut the infused wielder's. The [design's Open list](design.md#open) says what settles it.

@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's shop goods read from its shop table into slices and bought by one rule, with a buy limit restocked on its refresh and nothing for Genesis Crystals. Paimon's Bargains' Fates and the Mondstadt grocery's Mora-priced general goods are built; the screens, the rotation, the weapons and materials, and the other shops are not yet built.
+The game's shop goods read from its shop table into slices and bought by one rule, with a buy limit restocked on its refresh and nothing for Genesis Crystals. Paimon's Bargains' screen, with its Fates and its rotation's characters and weapons, and the Mondstadt grocery's Mora-priced general goods are built; the rotation's materials and the other shops are not yet built.
 
 ## Requirements
 
@@ -100,3 +100,4 @@ A good priced in Mora SHALL cost the Mora amount.
 ## Open
 
 - [ ] **Refreshes happen at four in the morning in the game's time** — no source yet: the monthly refresh's hour, since shop 102 (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ShopExcelConfigData.json`, monthly on day 1) names no hour and the refresh policy has no monthly row; the daily rows of `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/RefreshPolicyExcelConfigData.json` (line 20, and line 45) and its weekly row (line 50) give 14400 seconds, four in the morning, and the cached "Paimon's Bargains" page says only that it resets on the first of the month. A monthly row's time in the policy table, or a recording of the monthly reset, would settle it.
+- [ ] **Paimon's Bargains draws the 2021 reference's grid without its tab row, art, currency icons or sold-out band** — the reference (`"paimons-bargains-screen"`, `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`) is a 2021 near build whose tabs, rotation and Fates' costs are not the current build's, so the tab row is not drawn. The Fates' icons, the portraits and the weapon art are not shipped, so the cards are plain and the currency icons are placeholder diamonds. The 2021 build's sold-out band, "Obtained the maximum possible amount of Stella Fortuna", has no text key, so the screen does not draw it. The balances at the head's right are the current build's, and the reference shows none there.

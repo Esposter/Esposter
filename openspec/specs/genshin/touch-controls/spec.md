@@ -4,13 +4,19 @@ The world's controls on a touch screen, as the game's mobile client lays them ou
 
 ## Requirements
 
-### Requirement: Touch in the stick area holds the stick
+### Requirement: Touch on the left half holds the stick
 
-A finger landing in the stick's area at the bottom left SHALL hold the stick until it lifts, with its push set by how far it is moved from where it landed.
+A finger landing on the screen's left half SHALL bring the stick up centred where it landed and hold it until it lifts, with its push set by how far it is moved from where it landed.
+
+#### Scenario: Stick appears where the finger lands
+
+- **GIVEN** no finger is on the left half
+- **WHEN** a finger lands on the left half
+- **THEN** the stick's ring is drawn centred on the landing point, pulled in from the screen's edges so the whole ring stays on the screen
 
 #### Scenario: Stick pushed within its reach
 
-- **GIVEN** a finger has landed in the stick's area
+- **GIVEN** a finger has landed on the left half
 - **WHEN** it moves part of the way to the edge of the stick's reach
 - **THEN** the character moves at a matching share of a full push
 
@@ -20,19 +26,31 @@ A finger landing in the stick's area at the bottom left SHALL hold the stick unt
 - **WHEN** it moves farther than the stick's reach
 - **THEN** the push is a full push in the direction of the finger
 
-#### Scenario: Stick stays where the game places it
+#### Scenario: Head moves within the ring
 
 - **GIVEN** a finger holds the stick
 - **WHEN** the finger moves
-- **THEN** the stick's back and head stay where the game places them
+- **THEN** the head moves within the ring toward the push, and the ring stays where the finger landed
 
-### Requirement: Touch elsewhere drags the look
+#### Scenario: Stick fades out when the finger lifts
 
-A finger landing anywhere outside the stick's area and the buttons SHALL turn the look by how far it moves.
+- **GIVEN** a finger holds the stick
+- **WHEN** it lifts, or its touch is cancelled or loses its capture
+- **THEN** the stick fades out with nothing pushed, and the left half takes the next landing
+
+#### Scenario: A second finger does not take the stick
+
+- **GIVEN** a finger holds the stick
+- **WHEN** a second finger lands on the left half
+- **THEN** the stick stays with the first finger
+
+### Requirement: Touch on the right half drags the look
+
+A finger landing on the screen's right half, outside the HUD's pieces and buttons, SHALL turn the look by how far it moves.
 
 #### Scenario: Drag turns the look
 
-- **GIVEN** a finger lands on the screen outside the stick's area and the buttons
+- **GIVEN** a finger lands on the right half outside the HUD's pieces and buttons
 - **WHEN** it drags across the screen
 - **THEN** the camera's look turns with the drag
 
@@ -110,5 +128,6 @@ The free camera flown by touch SHALL climb on the jump button, and the touch lay
 
 ## Open
 
-- [ ] **The stick stands still where the game places it** — no source yet: a frame of the stick's placement in the game; `{data-root}/genshin-parity/captures/touch-controls-mobile.mkv` at 20 s is a cutscene with no HUD, and the three YouTube recordings the design page cites are not on disk; `{data-root}/genshin-parity/captures/mobile-touch.png` shows one finger over the stick's area with no stick ring readable, and a single still cannot show it holding still.
-- [ ] **On the mobile client's three recordings the stick never moves to the thumb and its head never travels, its head is a faint ring with four chevrons, and its push shows a mark on a quarter of the rim, with a teal arc below the push and a cyan arc above it** — no source yet: the three recordings are not in `{data-root}/genshin-parity/captures/`, so none of it is read back.
+- [ ] **The recordings' fixed placement of the stick** — contradicted by the owner's account of the mobile client (2026-11-02): the stick is not fixed, it appears where a thumb lands on the left half, so a recording's placement is not the game's at every landing. `{data-root}/genshin-parity/captures/touch-controls-mobile.mkv` at about 40, 50 and 60 s shows the ring at one lower-left spot, with a push arc at 50 s, which the owner's account contradicts as the game's placement; `{data-root}/genshin-parity/captures/mobile-touch.png` shows one finger over the stick's area with no stick ring readable.
+- [ ] **The stick's rest look, and its head that never travels, on the mobile client's three recordings** — contradicted by the owner's account of the mobile client (2026-11-02): the stick is not drawn at rest, and its head moves within the ring as the thumb drags. The held look, a faint ring with four chevrons and a push's mark on a quarter of the rim, is not contradicted and is kept.
+- [ ] **The margin a wider phone's stick keeps from the screen's edges** — no source yet: the owner's account gives where the stick appears, not its margin on a 19.5:9 or a 20:9 screen; a recording of a landing near such an edge would measure it.

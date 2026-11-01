@@ -1,6 +1,6 @@
 ## Purpose
 
-The rules of a Statue of The Seven past being a jump, built and tested, and held by the world screen, which keeps the stamina maximum at its start. Mondstadt's levels read from the game's level-up table with their rewards and stamina (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/CityLevelupConfigData.json`), the Oculi offered to level them, the maximum stamina they raise to 240 at most, and the Statue's Blessing's pool with its click heal and auto-recover.
+The rules of a Statue of The Seven past being a jump, built and tested, and held by the world screen, which raises the party's stamina maximum with the levels reached. Mondstadt's levels read from the game's level-up table with their rewards and stamina (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/CityLevelupConfigData.json`), the Oculi offered to level them, the maximum stamina they raise to 240 at most, and the Statue's Blessing's pool with its click heal and auto-recover.
 
 ## Requirements
 
@@ -110,13 +110,26 @@ Auto-recover SHALL revive the deployed team's fallen members at thirty-five perc
 - **THEN** the earlier slots are healed up to the threshold
 - **AND** the later slots stay where they stand
 
-### Requirement: Statues stay jumps until the world wires them
+### Requirement: The world's stamina maximum follows the reached levels
 
-The world screen SHALL hold each region's levels, claimed level, held count and Restorative Power pool, and a Worship Statue's offer and claim SHALL act through them, and the maximum stamina SHALL stay at its start until the character component reads the reached levels.
+The world screen SHALL hold each region's levels, claimed level, held count and Restorative Power pool, a Worship Statue's offer and claim SHALL act through them, and the party's maximum stamina SHALL be the maximum the reached levels give, which the party's pool follows as they change.
 
-#### Scenario: Statue used before it is wired
+#### Scenario: Oculi offered at the Worship Statue
 
 - **GIVEN** the world screen holds a region's levels and pool
 - **WHEN** Oculi are offered at the Worship Statue
 - **THEN** the Oculi are offered to that region
 - **AND** its level and held count are kept in the save
+
+#### Scenario: A level reached raises the party's maximum
+
+- **GIVEN** a region's next level is reached by an offer at the Worship Statue
+- **WHEN** the level's stamina share is added to the reached levels
+- **THEN** the party's stamina maximum rises by that share, to two hundred and forty at most
+- **AND** a pool that was full at the old maximum stays full at the new one
+
+#### Scenario: A started region's levels are read on load
+
+- **GIVEN** the save holds a region that has been started
+- **WHEN** the world loads
+- **THEN** its levels are read, so the maximum stamina they raise holds from the start

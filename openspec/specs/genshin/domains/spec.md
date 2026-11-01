@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's domains' opening rules as pure checks. A kind opens at its Adventure Rank, Forgery at 16, Blessing at 22 and Mastery at 27, as the proposal states them. A Domain of Forgery or Mastery is open every Sunday and on the two days its table sets. A Domain of Blessing is checked against every weekday, since its table gives all seven until its set days are read. Entrances, levels and challenges wait on the proposal.
+The game's domains' opening rules as pure checks. A kind opens at its Adventure Rank, Forgery at 16, Blessing at 22 and Mastery at 27, as the proposal states them. A Domain of Forgery or Mastery is open every Sunday and on the two days its table sets. A Domain of Blessing is open every day, so its table gives all seven weekdays. Entrances, levels and challenges wait on the proposal.
 
 ## Requirements
 
@@ -70,5 +70,4 @@ The game's day SHALL turn at 04:00 in UTC+8, and a Domain of Forgery's day SHALL
 
 ## Open
 
-- [ ] **A Domain of Blessing is open every day** — contradicted by `{data-root}/cache/genshin-wiki/Page_Domain.json` wikitext line 25: each challenge domain, Blessing among them, is open three days a week, two set days and Sunday.
 - [ ] **Forgery and Mastery open on their two set days** — no source yet: the set days' weekday mapping is unread; `{data-root}/genshin-parity/text/ExcelBinOutput/DailyDungeonConfigData.json` holds its rows under obfuscated keys, and no key map in the repository names their weekday fields.

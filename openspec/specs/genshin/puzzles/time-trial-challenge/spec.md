@@ -36,4 +36,4 @@ A running challenge SHALL fail when its clock runs out before its last target is
 
 ## Open
 
-- [ ] **A challenge is solved by striking every target before its clock runs out, as the game does** — no source yet for the match: the frame-by-frame match of `{data-root}/genshin-parity/captures/yt-B_l5b_KXt-o-time-trial-limit.mp4` (frames at 0 to 55 seconds) to the rule is not done; the wiki's Time Trial Challenge page is cited in the design's Sources.
+- [ ] **A challenge is solved by striking every target before its clock runs out, as the game does** — contradicted by `{data-root}/genshin-parity/captures/yt-B_l5b_KXt-o-time-trial-limit.mp4` at about 0 s: the banner reads "Open the chest in 45s" with the clock at 42 s, and "Challenge Completed" shows with the chest's rewards at about 44 s; the wiki's Time Trial Challenge page is cited in the design's Sources.

@@ -126,6 +126,13 @@ An entry SHALL be destroyable only when the game's destroy rule for it returns m
 - **WHEN** it is chosen for destruction
 - **THEN** it cannot be destroyed
 
+#### Scenario: A material whose row carries a destroy rule is destroyable and returns nothing
+
+- **GIVEN** a material whose row carries a destroy rule that returns materials
+- **WHEN** it is chosen for destruction
+- **THEN** it is destroyed
+- **AND** it returns no material, as the game's table names none for it
+
 #### Scenario: A selection holding an entry that cannot be destroyed is refused
 
 - **GIVEN** a selection includes an entry that may not be destroyed
@@ -207,7 +214,7 @@ Each material SHALL be read from the game's material table and named in the read
 
 ### Requirement: Using a food heals its own target
 
-Using a food SHALL take one of that food from the bag and apply its heal to the target the food names, never raising a character's health past full.
+Using a food SHALL take the chosen amount of that food from the bag, one where none is chosen and never more than the bag holds, and apply its heal to the target the food names for each one taken, never raising a character's health past full.
 
 #### Scenario: Using a recovery dish heals the selected character
 
@@ -230,6 +237,13 @@ Using a food SHALL take one of that food from the bag and apply its heal to the 
 - **THEN** the character's health is full
 - **AND** the health does not rise past full
 
+#### Scenario: Using a food takes the chosen amount, never more than the bag holds
+
+- **GIVEN** the bag holds two of a recovery dish
+- **WHEN** the player uses three of the dish on the selected character
+- **THEN** both of the dish are taken from the bag
+- **AND** the selected character's health rises by two dishes' heal
+
 #### Scenario: A food with none in the bag cannot be used
 
 - **GIVEN** the bag holds none of a food
@@ -247,8 +261,7 @@ Using a food SHALL take one of that food from the bag and apply its heal to the 
 - [ ] **Ties in a tab's sort fall to rank and then to the order obtained** — no source yet: the wiki's Inventory page sorts weapons by Level or Quantity and furnishings from oldest to newest (`{data-root}/cache/genshin-wiki/Page_Inventory.json` lines 32 and 103) and gives no tie rule, and no recording of two entries tied on the sort key is on disk.
 - [ ] **The wallet counts the game's currencies: Mora, Primogems, Genesis Crystals, the Intertwined and Acquaint Fates, Masterless Starglitter, Stardust, Stella Fortuna and Original Resin** — no source yet: the wiki's Genesis Crystal and Inventory pages, which give Genesis Crystals and file the Fates and the Masterless Starglitter and Stardust under Precious Items, are not on disk, and the wiki's Mora, Primogem and Masterless Stella Fortuna pages are not in the cache, and the parity text names each of these items in its material table (`{data-root}/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`) but gives no list of wallet currencies. Owner decides: whether the Inventory page's 2,300 kinds limit counts Precious Items, the Fates among them, which the wish-currency scenario keeps out of the bag's kinds, is unchecked, since that page is not on disk.
 - [ ] **Original Resin regenerates from the moment it last changed** — contradicted by `{data-root}/cache/genshin-wiki/Page_Original_Resin.json`, wikitext line 45: "The timer will start once the amount drops below the cap."
-- [ ] **An entry is destroyable only when the game's destroy rule returns materials, and returns exactly the materials its table names** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json` line 23104: the material rows with a `destroyRule` (520 of them, Apple's at that line) name no `destroyReturnMaterial`, and `{data-root}/cache/genshin-wiki/Page_Inventory.json` lines 67 and 79 say food and some materials are destroyed "but with nothing recovered". The weapon half holds: row 11101, one star, returns 104011 once (`{data-root}/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json` line 16).
 - [ ] **The destroy mode ticks the entries the player picks, offers quick selects by rarity, and destroys only after confirmation** — no source yet: a recording of the bag's destroy mode in the English PC client, showing the ticks, the quick selects by rarity and the count beside Destroy
 - [ ] **The confirm lists the chosen entries and the materials they return under the game's Recovered line, and warns that the action cannot be undone** — no source yet for the list: the confirm's texts are on record (`{data-root}/genshin-parity/text/ManualTextMapConfigData.json` lines 55586 and 55593), but no recording of the destroy confirm with its chosen entries is on disk.
 - [ ] **The OK button is held off under the game's bag-full line when the returns have no room** — no source yet: a recording of a destruction whose returns overflow the bag, showing the OK held off under the line, is not on disk; the wiki's bag-full message (`{data-root}/cache/genshin-wiki/Page_Inventory.json` line 26) is named for a pick up only.
-- [ ] **Using a food takes one of it from the bag and applies its heal to the target it names, never past full health** — contradicted by `{data-root}/cache/genshin-wiki/Page_Inventory.json` line 52: a recovering food is used by "selecting the amount to use and the character", so a Use takes a chosen amount, where the built rule takes one. The heal's cap at full health and a party-wide heal have no source: a recording of a Use on a party-healing dish and of a Use on a character at full health would settle them.
+- [ ] **Using a food heals its target once for each one taken, a party-wide dish heals every member, and no heal rises past full health** — no source yet: the wiki's Inventory page says a food is used by "selecting the amount to use and the character" (`{data-root}/cache/genshin-wiki/Page_Inventory.json` line 52) but not whether each one taken heals, nor whether a party-wide heal reaches every member or a member at full health; a recording of a Use of several of a recovery food, of a Use of a party-healing dish and of a Use on a character at full health would settle them.

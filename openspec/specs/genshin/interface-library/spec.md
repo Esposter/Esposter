@@ -22,7 +22,7 @@ Every screen SHALL be drawn inside one root that sizes its interface to the wind
 
 ### Requirement: Every button takes its game template's look for each state
 
-Every button SHALL take the look its game template gives for each state, which is the disabled, pressed, hover or rest look, decided by the pointer and by the screen's forced state.
+Every button SHALL take the look its game template gives for each state, which is the disabled, pressed, hover or rest look, decided by the pointer, by a press given to it and by the screen's forced state.
 
 #### Scenario: A hovered button fades in at the hover speed
 
@@ -41,6 +41,18 @@ Every button SHALL take the look its game template gives for each state, which i
 - **GIVEN** a button is in its hover look
 - **WHEN** the pointer leaves it
 - **THEN** it fades back to its rest look over the rest duration (`INTERACTION_REST_MS`)
+
+#### Scenario: A tapped button is not left lit
+
+- **GIVEN** the device's main pointer is a finger
+- **WHEN** a button is tapped and the finger lifts
+- **THEN** the press shows while the finger is down, and no hover look is left lit once the finger lifts
+
+#### Scenario: A button given a press shows its pressed look
+
+- **GIVEN** a button carries `data-pressed`
+- **WHEN** it is drawn
+- **THEN** it shows its pressed look as `:active` draws it
 
 #### Scenario: A disabled button answers nothing
 
@@ -63,6 +75,28 @@ A button focused from the keyboard SHALL show its hover look, and a plain button
 - **GIVEN** a plain button is focused from the keyboard
 - **WHEN** it is drawn
 - **THEN** a white ring surrounds it (`[data-kind="Plain"]:focus-visible`)
+
+### Requirement: Every clickable element is a button that lights on hover and press
+
+A clickable element SHALL be a real button, so the keyboard reaches it, and SHALL draw a hover look when it is hovered or focused from the keyboard and a pressed look when it is pressed, unless it is disabled, whatever box its screen gives it.
+
+#### Scenario: A clickable row lights over its own box
+
+- **GIVEN** a row, tab or translucent box on a screen is clickable
+- **WHEN** the pointer hovers it or the player presses it
+- **THEN** a tint lights over its own box behind its words, and a press tints it stronger at once
+
+#### Scenario: A round clickable element rings when hovered
+
+- **GIVEN** a round clickable element on a screen, a coin or a portrait
+- **WHEN** the pointer hovers it or it is focused from the keyboard
+- **THEN** a white ring lights 1 unit outside its edge, and a press dims it at once without changing its size
+
+#### Scenario: A pressed close tints its disc slate
+
+- **GIVEN** a close button is under the pointer
+- **WHEN** the player presses it
+- **THEN** its disc tints slate at once, and its size does not change
 
 ### Requirement: A side bar disc lights and enlarges its icon on hover
 

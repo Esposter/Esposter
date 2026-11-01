@@ -85,6 +85,8 @@ A hit whose stagger level is Air SHALL leave an enemy it staggers launched while
 
 A hit that leaves the enemy unstaggered, or does not launch, SHALL leave it unlaunched.
 
+An enemy immune to Air staggers SHALL stay on the ground when a launching hit staggers it.
+
 #### Scenario: A launching hit that staggers an enemy leaves it launched while the stagger lasts
 
 - **GIVEN** a launching hit, one whose stagger level is Air (the wiki's common impulse types 5 to 9 are Air, `{data-root}/cache/genshin-wiki/Page_Interruption_Resistance%2FStagger.json`, wikitext lines 123 to 131, and `packages/genshin-world/src/models/kit/KitHit.ts` line 60 names them too), whose poise damage breaks an enemy's poise
@@ -96,6 +98,13 @@ A hit that leaves the enemy unstaggered, or does not launch, SHALL leave it unla
 - **GIVEN** a launching hit that leaves an enemy's poise standing, or a hit that staggers it without launching
 - **WHEN** the hit lands
 - **THEN** the enemy carries no launched status
+
+#### Scenario: A launching hit that staggers an Air-immune enemy leaves it on the ground
+
+- **GIVEN** a launching hit whose poise damage breaks the poise of an enemy immune to Air staggers
+- **WHEN** the hit lands
+- **THEN** the enemy is staggered
+- **AND** the enemy carries no launched status
 
 ### Requirement: An enemy past its leash walks home immune to damage
 
@@ -137,7 +146,7 @@ An enemy whose health reaches zero SHALL be defeated and drop Mora, Character EX
 
 ### Requirement: A boss drops nothing
 
-A boss SHALL drop nothing.
+A boss SHALL drop nothing where it falls, its reward being claimed from the Trounce Blossom it leaves (`openspec/specs/genshin/bosses/design.md`).
 
 #### Scenario: A defeated boss drops nothing
 
@@ -145,13 +154,13 @@ A boss SHALL drop nothing.
 - **WHEN** it is defeated
 - **THEN** it drops nothing
 
-### Requirement: No enemy gives Adventure EXP
+### Requirement: No enemy the world places gives Adventure EXP
 
-No enemy SHALL give Adventure EXP, which the game awards only for claiming a boss's reward.
+No enemy the world places SHALL give Adventure EXP where it falls, since `packages/genshin-world/src/services/enemy/computeEnemyDrops.ts` rolls none. The game awards it for a boss only on claiming the reward from its Trounce Blossom (`openspec/specs/genshin/bosses/design.md`).
 
 #### Scenario: A defeated enemy gives no Adventure EXP
 
-- **GIVEN** an enemy defeated
+- **GIVEN** an enemy the world places, defeated
 - **WHEN** its rewards are given
 - **THEN** no Adventure EXP is given
 
@@ -307,4 +316,4 @@ Each enemy SHALL be tinted white with a small flash at its middle for a moment a
 ## Open
 
 - [ ] **A boss stays down across a reload until its Trounce Blossom is claimed or the first teleport after its defeat** — contradicted by `{data-root}/cache/genshin-wiki/Page_Normal_Boss.json` wikitext line 16: the boss stays down "unless the player teleports out of the area", where the page's value is the first teleport after its defeat, which `packages/genshin-world/src/composables/useWorldMap.ts` line 266 emits for every jump.
-- [ ] **No enemy gives Adventure EXP** — contradicted by `{data-root}/cache/genshin-wiki/Page_Adventure_EXP.json` wikitext line 77: each defeated Unusual Hilichurl gives 18 Adventure Rank EXP, where the page's value is that no enemy gives Adventure EXP.
+- [ ] **The Unusual Hilichurl gives 18 Adventure EXP a defeat** — no kind to give it yet: the wiki's Adventure EXP page gives each defeated Unusual Hilichurl 18 AR EXP (`{data-root}/cache/genshin-wiki/Page_Adventure_EXP.json` wikitext line 77), but no region places it, and `{data-root}/genshin-parity/text/ExcelBinOutput/MonsterExcelConfigData.json` has its one row, id 21011501 ("Hili_Wei_NoWeapon_01"), whose kill drop 22010010 is in no table the dump holds, so the 18 rests on the wiki alone. A recording of a defeat, or a reward table giving the 18, would settle it.

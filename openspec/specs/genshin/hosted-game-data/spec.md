@@ -258,9 +258,9 @@ Each record SHALL be served directly from storage to the browser with no app rou
 - **WHEN** the page loads again within a year
 - **THEN** the browser answers without making a request
 
-### Requirement: A profile record is checked before it is published
+### Requirement: A profile record and a book body are checked before they are published
 
-A profile record SHALL be parsed by its schema before it is published, a book body SHALL be published as the string its reader returns, and an index SHALL hash to the same name whatever order its entries were built in.
+A profile record and a book body SHALL each be parsed by their reader's schema before it is published, and an index SHALL hash to the same name whatever order its entries were built in.
 
 #### Scenario: An invalid profile record is not published
 

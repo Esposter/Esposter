@@ -77,7 +77,7 @@ A new character is `createCharacter` over the roster: level 1 in its first phase
 
 The open items the [spec](spec.md) also holds are listed there, not here.
 
-- [ ] **Every Attributes-tab number is computed the way the game computes it** — no source yet: no test sums a recorded character's lines to its Attributes tab; the one capture, `{data-root}/genshin-parity/captures/character-attributes-1080.png` (Jean at level 50: Max HP 8,639, ATK 625, DEF 397), has no test.
+- [ ] **Every Attributes-tab number is computed the way the game computes it** — no source yet: no test sums a recorded character's lines to its Attributes tab; the one capture, `{data-root}/genshin-parity/captures/character-attributes-1080.png` (Jean at level 50: Max HP 8,639, ATK 625, DEF 397), has no test. Viewed as a still, the capture shows the numbers but not how they are computed.
 - [ ] **Every attribute's name is filed under its id in the game's text** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/ManualTextMapConfigData.json`: a few of the Attribute ids have no row there.
 - [ ] **The crossbow rows are the Traveler's discarded shooter forms, from 7.1** — no source yet: the five rows' depots and bodies are the Traveler's, but the English text names no Traveler shooter form, the avatar table holds no patch version, and their name hashes have no English text in `{data-root}/genshin-dump-backup-6.6/TextMap/TextMapEN.json`.
 - [ ] **The tables run to hundreds of kilobytes** — no source yet: the published stats files are not in the checkout, so only the build of `pnpm -C scripts genshin:assets stats`, measured before its publish, gives their size.

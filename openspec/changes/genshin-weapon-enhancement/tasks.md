@@ -10,4 +10,4 @@
 
 ## 3. The weapon screen's shared styles
 
-- [ ] 3.1 One home for the rules the Ascend and Enhance headers repeat: the divider, the stats rule with its star, and the stat value. Open: the three rules are copied verbatim between `Weapon/Screen/Ascend/Index.vue` and `Weapon/Screen/Enhance/Index.vue`, and the choice of a shared stylesheet or a shared component is a design call, so it is not made here. Until it is, a change to one of the three edits both files.
+- [x] 3.1 One home for the rules the Ascend, Enhance and Refine modes repeat: the divider, the stats rule with its star, the stat names and values with their marks, and the cream pill. They live in `packages/genshin-world/src/styles/weaponScreen.css`, which each mode pulls in as a stylesheet. Verify: the duplicate-code scan names no clone of these rules.

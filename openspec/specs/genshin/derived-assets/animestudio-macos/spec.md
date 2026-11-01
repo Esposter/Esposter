@@ -87,6 +87,7 @@ Steps that need a Windows-only or proprietary component SHALL NOT run on Apple s
 - **GIVEN** a step that needs a Windows-only or proprietary component
 - **WHEN** the step is requested on Apple silicon
 - **THEN** the step does not run
+- **AND** it refuses with an `InvalidOperationError` naming what it lacks, before any Windows executable is fetched
 
 ### Requirement: Animation clips from families whose decoder does not build are unavailable on macOS
 
@@ -122,5 +123,4 @@ The build SHALL apply the Oodle hook patch to the checked-out source, and SHALL 
 
 ## Open
 
-- [ ] **Steps that need a Windows-only or proprietary component do not run on Apple silicon** — contradicted by `scripts/src/services/genshinAssets/materials/extractShader.ts` line 41: the decompile step spawns 3Dmigoto's `{data-root}/cache/3dmigoto/cmd_Decompiler.exe`, a Windows executable, on macOS too, and its failure is logged and the assembly stands.
 - [ ] **No clip of a family whose decoder does not build is available on macOS** — no source yet: no checked gate or build log for those families is cited.

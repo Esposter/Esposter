@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's dialogue as built. A talk is a graph of spoken lines and the Traveler's replies, each line's words named by the game's own text id. A pure runner advances it as a click, F or Space does, chooses a reply, and skips to the next reply or the end. The dialogue screen writes the line out in place at the game's own rate, a space taking no time, under its speaker's name and title, centres a narration on black, offers the replies down the right beside their traced marks, and carries auto-play and skip. A talk fills the player into its words. F on a resident begins their standing talk, read from the game's talk table, and its opening line offers the quest talks open to them.
+Genshin's dialogue as built. A talk is a graph of spoken lines and the Traveler's replies, each line's words named by the game's own text id. A pure runner advances it as a click, F or Space does, and chooses a reply. The dialogue screen writes the line out in place at the game's own rate, a space taking no time, under its speaker's name and title, centres a narration on black, and offers the replies down the right beside their traced marks. A talk fills the player into its words. F on a resident begins their standing talk, read from the game's talk table, and its opening line offers the quest talks open to them.
 
 ## Requirements
 
@@ -56,29 +56,6 @@ A reply SHALL be chosen only from the replies a line offers, and a reply not on 
 - **THEN** the choice is refused
 - **AND** the talk stays where it was
 
-### Requirement: Skip runs the talk on without choosing a reply for the player
-
-Skip SHALL run the talk on to the next line that offers replies, written out whole, or to the end of the talk, and SHALL NOT choose a reply for the player.
-
-#### Scenario: Skip runs to the next replies with the line shown whole
-
-- **GIVEN** a talk of spoken lines followed by a line offering replies
-- **WHEN** Skip is pressed
-- **THEN** the talk runs on to that line
-- **AND** the line is shown whole with its replies offered
-
-#### Scenario: Skip on a talk with no replies left ends it
-
-- **GIVEN** a talk of spoken lines with no replies left
-- **WHEN** Skip is pressed
-- **THEN** the talk ends
-
-#### Scenario: A talk whose spoken lines loop back without a reply is refused
-
-- **GIVEN** spoken lines that loop back to each other with no reply between them
-- **WHEN** the talk is run
-- **THEN** the talk is refused rather than run forever
-
 ### Requirement: The player's name fills every word of a talk
 
 Every line, reply and speaker name SHALL have the player's nickname and gender-specific words filled in before it is shown.
@@ -110,22 +87,6 @@ A line SHALL be written out one character every thirty milliseconds, a space tak
 - **GIVEN** a line being written out
 - **WHEN** its characters appear
 - **THEN** the line keeps the layout it has from its first frame
-
-### Requirement: Auto-play holds each whole line and stops at replies
-
-Auto-play SHALL hold each whole line for a fixed time and then go on, and SHALL stop at a line offering replies or quest talks.
-
-#### Scenario: Auto-play goes on after holding a whole line
-
-- **GIVEN** auto-play on and a whole line with a next line
-- **WHEN** the hold time passes
-- **THEN** the talk goes on to the next line
-
-#### Scenario: Auto-play stops at a line offering replies
-
-- **GIVEN** auto-play on and a line offering replies
-- **WHEN** the line is whole
-- **THEN** auto-play stops there and waits for a reply
 
 ### Requirement: F on a resident begins their talk
 
@@ -230,6 +191,22 @@ A standing talk that cannot run without its words SHALL be left out of the recor
 - **THEN** that talk is left out of the record
 - **AND** the number of talks left out is reported
 
+### Requirement: Auto holds each whole line before going on
+
+With auto-play on, a talk SHALL go on from a line shown whole once `TALK_AUTO_PLAY_HOLD_MS` has passed, unless the line's next lines are replies. The Auto control at the screen's top left turns auto-play on and off, its word turning from Auto to Playing while it runs.
+
+#### Scenario: A whole line is left behind once the hold has passed
+
+- **GIVEN** auto-play on, and a line shown whole whose next line is not a reply
+- **WHEN** the hold has passed
+- **THEN** the talk goes on to the next line
+
+#### Scenario: A line asking for a reply is waited on
+
+- **GIVEN** auto-play on, and a line shown whole whose next lines are replies
+- **WHEN** the hold has passed
+- **THEN** the talk stays on the line until a reply is chosen
+
 ## Open
 
-- [ ] **Lines are written out at the game's rate, one character every thirty milliseconds** — no source yet: the recording's character timing (1.79 to 1.81 frames a character at 60 frames a second, in `{data-root}/genshin-parity/captures/yt-9I7XyJ2Z5RI-dialogue-npc-60.mp4`) was not re-measured here.
+- [ ] **Lines are written out at the game's rate, one character every thirty milliseconds** — no source yet: the recording's character timing (1.79 to 1.81 frames a character at 60 frames a second, in `{data-root}/genshin-parity/captures/yt-9I7XyJ2Z5RI-dialogue-npc-60.mp4`) was not re-measured here. Nine frames over 0 to 27 s of that recording show the line filling from "Fischl's re" at about 3.3 s, but one character every 1.8 frames is not resolved by looking.

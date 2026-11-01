@@ -62,7 +62,7 @@ Tidecaller SHALL press an Electro shield onto Beidou that stands until the skill
 
 ### Requirement: Thunderbeast's Targe after Stormbreaker
 
-Stormbreaker SHALL summon the Thunderbeast's Targe, which stands for 15 seconds and moves with whichever member stands on the field.
+Stormbreaker SHALL summon the Thunderbeast's Targe, which stands for 15 seconds, moves with whichever member stands on the field and ends when Beidou falls.
 
 #### Scenario: Casting Stormbreaker summons the Targe
 
@@ -80,7 +80,7 @@ Stormbreaker SHALL summon the Thunderbeast's Targe, which stands for 15 seconds 
 
 - **GIVEN** the Targe stands
 - **WHEN** Beidou falls
-- **THEN** the Targe ends when Beidou falls, before its 15 seconds run out (the end is not built, see the [design's Open list](design.md#open))
+- **THEN** the Targe ends when Beidou falls, before its 15 seconds run out
 
 ### Requirement: Discharges from Beidou's attacks
 

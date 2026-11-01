@@ -15,11 +15,10 @@ flowchart TD
   FOLLOW -->|"yes"| OWN["The reply stays on screen as the Traveler's line"]
   OWN --> CHOOSE
   FOLLOW -->|"no"| NEXT
-  OFFER -->|"no: click, F, Space, or auto-play's hold"| NEXT{"Anything follows?"}
+  OFFER -->|"no: click, F or Space"| NEXT{"Anything follows?"}
   NEXT -->|"yes: the first"| START2["The next line, unwritten"]
   START2 --> WRITE
   NEXT -->|"no"| END["The talk ends"]
-  SKIP["Skip"] -.->|"runs on through spoken lines"| OFFER
 ```
 
 ### The talk graph
@@ -41,7 +40,6 @@ Where a talk stands is a `TalkProgress`: the id of the line on screen, empty onc
 
 - **`advanceTalk`** is a click, F or Space (`packages/genshin-world/src/services/dialogue/advanceTalk.ts`). A line still being written out is shown whole. A whole line goes on to the first of its next lines, as the game would pick one by a quest's state. A line nothing follows ends the talk. A line that offers replies waits, and an ended talk stays ended.
 - **`chooseTalkLine`** chooses one of the replies on offer, and refuses one that is not on offer (`packages/genshin-world/src/services/dialogue/chooseTalkLine.ts`). The talk goes on down the reply's branch, or ends where nothing follows it. A reply followed straight by more replies stays on screen as the Traveler's own line while the next ones are offered.
-- **`skipTalk`** runs on to the next line that offers replies, written out whole, or to the end, so a skip never answers for the player. A talk whose spoken lines loop back without a reply between them is refused, since it would never get anywhere (`packages/genshin-world/src/services/dialogue/skipTalk.ts`).
 - **`getTalkChoices`** gives the replies a line offers: those of its next lines that are choices (`packages/genshin-world/src/services/dialogue/getTalkChoices.ts`).
 
 ### On screen
@@ -53,8 +51,7 @@ Where a talk stands is a `TalkProgress`: the id of the line on screen, empty onc
 - **The player is filled into every word.** The line, each reply and the speaker's name and title pass through `fillLinePlaceholders`, the nickname being the game's own title for the Traveler, filled as the login fills it, and each word per gender the login's twin's (`LOGIN_TRAVELER_GENDER`; `packages/genshin-text/src/services/fillLinePlaceholders.ts`, `packages/genshin-world/src/components/Dialogue/Talk/Index.vue`). Both stand in until the world holds a player profile.
 - **The line is written out** a character at a time, one each `TALK_REVEAL_MS_PER_CHARACTER`, over the filled line (`packages/genshin-world/src/services/dialogue/constants.ts`, 30 milliseconds). A space or a line break takes no time of its own and shows with the character before it (`getTalkRevealedLength`, `packages/genshin-world/src/services/dialogue/getTalkRevealedLength.ts`), so the line is whole the moment its last character is written.
 - **A click goes on, and so do F and Space.** These keys are read off the engine's own `InputActionBindingMap`, as its Interact and Jump, so they stay the game's default bindings (`packages/genshin-world/src/services/shared/checkIsActionKey.ts`, `packages/genshin-world/src/services/shared/getActionKeyCode.ts`). The wiki's Controls page gives those defaults on PC as Space for Jump and F for Pick Up/Interact (`{data-root}/cache/genshin-wiki/Page_Controls.json` wikitext lines 81–82 and 91–92). While replies are on offer, none is lit until the pointer passes over one or an arrow lights the first, F chooses the lit one, and the arrows move the light between them.
-- **Auto-play** holds each whole line for `TALK_AUTO_PLAY_HOLD_MS` and then goes on, stopping at replies. Its button reads the game's own "Auto" and "Playing" (`packages/genshin-world/src/components/Dialogue/Talk/Index.vue`; the keys `UI_TALK_DIALOG_AUTO_TALK_START` and `UI_TALK_DIALOG_AUTO_TALK_STOP` read "Auto" and "Playing" in `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`, lines 85546 and 197729).
-- **Skip** runs on to the next replies or to the end, an opening line's quest talks and duel among them. Its button reads the game's own "Skip" (`packages/genshin-world/src/components/Dialogue/Talk/Index.vue`; `UI_SKIP_BUTTON` reads "Skip" in `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`, line 168631).
+- **Auto is drawn and Skip is not.** `DialogueTalk` draws an Auto control at the screen's top left, a cream disc 40 across, centred 70 in and 47 down at 1920 across, a dark play mark in it and the label in white 15 past it, which reads `UI_TALK_DIALOG_AUTO_TALK_START` at rest and `UI_TALK_DIALOG_AUTO_TALK_STOP` while auto-play runs. `{data-root}/genshin-parity/captures/dialogue-auto-skip.mkv` shows that control alone on an ordinary world talk, at 42 seconds, and shows Auto with Skip beside it only on a hangout event's talk, at 18 to 27 seconds, where the video itself says a talk can be skipped only in a hangout event, re-reading what has been gone through. So Skip is not drawn: no ordinary talk has one, and the hangout events are not built. Its word, `UI_SKIP_BUTTON`, is not read by the screen. The five references and the 12-second frame of `{data-root}/genshin-parity/captures/yt-uGtyP02Ie2Q-0-40.mp4` show neither, and why the control is missing from them is not known.
 - **A reply's speaker is the Traveler**, named with the game's own title for them (`packages/genshin-world/src/components/Dialogue/Talk/Index.vue`, `GameTextKey.Traveler`), which is `UI_TEXT_QUEST_GUIDE_LABEL` (`packages/genshin-text/src/models/GameTextKey.ts` line 861) and reads "Traveler" in English (`packages/genshin-text/src/generated/text/English.json` line 703).
 
 ### Residents
@@ -85,13 +82,12 @@ flowchart TD
 
 **The opening line offers the quest talks open to the resident.** `getTalkOffers` (`packages/genshin-world/src/services/dialogue/getTalkOffers.ts`) finds them: each talk offering a quest not yet started, and each talk-to objective of the step a quest in progress is on, not yet met, whose talk is begun on one of the characters the standing talk is begun on. Each is a reply with its quest's mark, a quest's or a story quest's, named by the quest's title. They are offered ahead of the talk's own replies and the card game's duel. Choosing one leaves the standing talk for the quest's, and its end advances the quest as any talk does, or starts the quest it offers ([quests](../quests/design.md)). A quest's own talk offers none. A resident whose standing talk the world does not hold begins the first quest talk open to them instead, and one with neither is not listed.
 
-While the opening line offers a quest talk or a duel, auto-play and Skip stop there, as at any line offering replies. A click, F or Space waits there only for the talk's own replies, so a standing talk whose opening line has none goes on past the offers to its next line.
+While the opening line offers a quest talk or a duel, a click, F or Space waits there only for the talk's own replies, so a standing talk whose opening line has none goes on past the offers to its next line.
 
 - **A black screen's narration sits at the screen's middle, with no speaker or title.** A line whose dialog names no speaker (`TALK_ROLE_BLACK_SCREEN` and its forms) is drawn at the middle, a best estimate no published frame has shown yet.
 - **A quest reply's mark is its gold ring with the exclamation mark inside, and a story quest's its outer diamond with the inner one.** Both are traced from the wiki's copy of the game's file, split from its darker ground, and drawn in the reply's colour (`{data-root}/genshin-parity/Icon_Dialogue_Quest-trace-0-0.svg`, `{data-root}/genshin-parity/Icon_Dialogue_Story_Quest-trace-0-0.svg`).
 - **A resident's quest-title reply opens a quest talk ahead of their own replies.** Each quest talk is offered on the standing talk's opening line, named by its quest's title, a best estimate no published source shows.
 - **The PC client writes at the PlayStation's rate.** `TALK_REVEAL_MS_PER_CHARACTER` is 30 milliseconds, from a public PlayStation recording writing a character every 1.8 frames at 60 frames a second, a space taking no time.
-- **Auto-play's hold for a whole line is a best estimate.** `TALK_AUTO_PLAY_HOLD_MS` is about a second and a half, as no published clip shows a line with no voice-over under auto-play.
 
 ## Parity
 
@@ -118,39 +114,38 @@ Every state beats its bare render by the margin its snapshot row sets against th
 - **Colour.** The line stays white, the recording's peak. A paler white scored lower only by making up for the blur, so it was refused.
 - **Band.** The band's gradient stays removed. Restored at 0.3 and 0.5, it scored worse on the three line states and on Paimon's line (`dialogue-line` 11.96% and 13.61%), and better only on the speaker.
 - **Replies.** The pill's darkness is 0.22 of black, the best of 0.15 to 0.45 swept against the plate. The text starts 48 units in, past the mark's place, and moving the first pill up three pixels scored worse (23.78% against 22.03%), so its top stays where it was.
+- **Rows.** Measured off the five frames at 1280 by 720 by their ink rows: Sara's one line runs from 591 to 607 and Paimon's from 580 to 597, the two lines of `dialogue-line` start at 591 and 613 (33 units apart at 1920, against the line's 32), and the name's gold runs from 549 to 563 and the role's from 572 to 581. Each lands within about two units of the component's place, so the rows stay as the component places them.
 
-The reveal is timed off three lines of `{data-root}/genshin-parity/captures/yt-9I7XyJ2Z5RI-dialogue-npc-60.mp4` (Notes), and auto-play's hold waits on `{data-root}/genshin-parity/captures/dialogue-auto-skip.mkv`.
+The reveal is timed off three lines of `{data-root}/genshin-parity/captures/yt-9I7XyJ2Z5RI-dialogue-npc-60.mp4` (Notes).
 
 ## Key files
 
-| File                                                                    | Role                                                                           |
-| :---------------------------------------------------------------------- | :----------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/dialogue/Talk.ts`                    | A talk: its lines and where it starts, with its schema                         |
-| `packages/genshin-world/src/models/dialogue/TalkLine.ts`                | A line: spoken, with its speaker and voice, or one of the replies              |
-| `packages/genshin-world/src/services/dialogue/advanceTalk.ts`           | A click, F or Space: written out whole, on to the next, or the end             |
-| `packages/genshin-world/src/services/dialogue/chooseTalkLine.ts`        | A reply chosen, and the branch it leads down                                   |
-| `packages/genshin-world/src/services/dialogue/skipTalk.ts`              | On to the next replies or the end                                              |
-| `packages/genshin-world/src/services/dialogue/constants.test.ts`        | The hand-written sample talk every runner suite walks                          |
-| `packages/genshin-world/src/services/dialogue/constants.ts`             | The measured reveal and the provisional auto-play hold                         |
-| `packages/genshin-world/src/services/dialogue/getTalkRevealedLength.ts` | How much of a line is written out, a space taking no time                      |
-| `packages/genshin-world/src/components/Dialogue/Talk/Index.vue`         | A talk run over the world: the player filled in, reveal, keys, auto-play, skip |
-| `packages/genshin-world/src/components/World/Session/Index.vue`         | Mounts the talk over the world while its screen is open                        |
-| `packages/genshin-interface/src/components/DialogueScreen/Index.vue`    | The speaker's name and title, the line or a narration, and the replies         |
-| `packages/genshin-interface/src/models/DialogueChoiceIcon.ts`           | The marks a reply is drawn beside                                              |
-| `packages/genshin-interface/src/services/DialogueChoiceIconPathMap.ts`  | Each mark's traced path                                                        |
-| `scripts/src/services/genshinText/readTalk.ts`                          | A talk read from the dialog table: replies, speakers, titles, narration        |
-| `packages/genshin-world/src/models/world/Resident.ts`                   | A resident placed in a region's data, and the talk F begins with them          |
-| `scripts/src/services/genshinText/mapNpcStandingTalkIds.ts`             | Each NPC's standing talk, picked from the talk table                           |
-| `scripts/src/services/genshinText/skipWordlessTalkLines.ts`             | A talk with its wordless lines skipped, or none where that cannot be done      |
-| `scripts/src/services/genshinText/buildStandingTalks.ts`                | `genshin:text standing-talks`: the residents' standing talks and their words   |
-| `packages/genshin-world/src/services/resident/readStandingTalks.ts`     | The standing talks read from the hosted game data                              |
-| `packages/genshin-world/src/composables/useWorldTalks.ts`               | The talks held by id, their words, a resident's prompt and the offers          |
-| `packages/genshin-world/src/services/dialogue/getTalkOffers.ts`         | The quest talks open to a talk's characters, each with its quest's mark        |
+| File                                                                    | Role                                                                         |
+| :---------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/dialogue/Talk.ts`                    | A talk: its lines and where it starts, with its schema                       |
+| `packages/genshin-world/src/models/dialogue/TalkLine.ts`                | A line: spoken, with its speaker and voice, or one of the replies            |
+| `packages/genshin-world/src/services/dialogue/advanceTalk.ts`           | A click, F or Space: written out whole, on to the next, or the end           |
+| `packages/genshin-world/src/services/dialogue/chooseTalkLine.ts`        | A reply chosen, and the branch it leads down                                 |
+| `packages/genshin-world/src/services/dialogue/constants.test.ts`        | The hand-written sample talk every runner suite walks                        |
+| `packages/genshin-world/src/services/dialogue/constants.ts`             | The measured reveal, and the auto-play hold the Auto control runs            |
+| `packages/genshin-world/src/services/dialogue/getTalkRevealedLength.ts` | How much of a line is written out, a space taking no time                    |
+| `packages/genshin-world/src/components/Dialogue/Talk/Index.vue`         | A talk run over the world: the player filled in, the reveal, the keys        |
+| `packages/genshin-world/src/components/World/Session/Index.vue`         | Mounts the talk over the world while its screen is open                      |
+| `packages/genshin-interface/src/components/DialogueScreen/Index.vue`    | The speaker's name and title, the line or a narration, and the replies       |
+| `packages/genshin-interface/src/models/DialogueChoiceIcon.ts`           | The marks a reply is drawn beside                                            |
+| `packages/genshin-interface/src/services/DialogueChoiceIconPathMap.ts`  | Each mark's traced path                                                      |
+| `scripts/src/services/genshinText/readTalk.ts`                          | A talk read from the dialog table: replies, speakers, titles, narration      |
+| `packages/genshin-world/src/models/world/Resident.ts`                   | A resident placed in a region's data, and the talk F begins with them        |
+| `scripts/src/services/genshinText/mapNpcStandingTalkIds.ts`             | Each NPC's standing talk, picked from the talk table                         |
+| `scripts/src/services/genshinText/skipWordlessTalkLines.ts`             | A talk with its wordless lines skipped, or none where that cannot be done    |
+| `scripts/src/services/genshinText/buildStandingTalks.ts`                | `genshin:text standing-talks`: the residents' standing talks and their words |
+| `packages/genshin-world/src/services/resident/readStandingTalks.ts`     | The standing talks read from the hosted game data                            |
+| `packages/genshin-world/src/composables/useWorldTalks.ts`               | The talks held by id, their words, a resident's prompt and the offers        |
+| `packages/genshin-world/src/services/dialogue/getTalkOffers.ts`         | The quest talks open to a talk's characters, each with its quest's mark      |
 
 ## Notes
 
 - **The reveal is timed word by word.** Three of Xinyan's lines in a public recording at 60 frames a second each write a character every 1.79 to 1.81 frames, 30 milliseconds. The time each word's first character appears fits a line through the characters it follows three times as closely when the spaces are left uncounted, so a space takes no time. Each character appears whole in one frame, with no fade of its own; the line's first word comes in under the band's own fade. The recording is the PlayStation client's, its prompts on the square and cross buttons, and the PC's rate is taken to be the same, which the roadmap's manual verification list asks. The 720 high recording the screen is placed by shows its lines whole in their first frame, so the reveal could not be read there.
-- **The auto-play hold's clip is still sought.** `TALK_AUTO_PLAY_HOLD_MS` waits on `{data-root}/genshin-parity/captures/dialogue-auto-skip.mkv`: the recording the reveal is timed off goes on at the player's press, with auto-play off. It is on the roadmap's References sought list.
 - **The screen's place and colour are read off one frame.** The speaker's name is gold `#ffc700` (`packages/genshin-interface/src/components/DialogueScreen/Index.vue`), the brightest saturated pixel of its letters. The replies are dark pills 45 high and 15 apart, the first at 1275 by 698 of 1920 by 1080 (`packages/genshin-interface/src/components/DialogueScreen/Index.vue`, lines 139 to 143). The screen is drawn over the clean plate of its frame (Parity above), so the score covers the band's text and the pills over the game's own scene, and the band has no gradient, since the game's scene under its line is not darkened.
 - **A title is the manual text map's, not the dialog's.** The dialog table's own "talkTitleTextMapHash" resolves to no text in `{data-root}/genshin-parity/text/TextMap/TextMapEN.json` for most of its 203,908 entries, eleven resolving there (1730881339 reads "Donna"), though nine of its first 50,000 resolve in `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`, while the manual text map's "NPC_TITLE_1419" and "NPC_TITLE_15241" both read "Waitress, Good Hunter", the title over Sara's line in the recording (`{data-root}/genshin-parity/text/ExcelBinOutput/ManualTextMapConfigData.json`, "NPC_TITLE_1419" and "NPC_TITLE_15241"; `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json` line 185460; `{data-root}/genshin-parity/text/TextMap/TextMapEN.json` line 122209). So a speaker's title is looked up by their character id there, and a character with no such key, Paimon among them, has none.
 - **Only a character's line names its speaker.** The dialog table also holds lines a gadget or the Traveler's twin speaks ("TALK_ROLE_GADGET", "TALK_ROLE_MATE_AVATAR", `{data-root}/genshin-parity/text/ExcelBinOutput/DialogExcelConfigData.json`), whose role ids the character table does not hold either, so the reader would give such a line no speaker and the screen would draw it as a narration. None of the carried quests' talks holds one, so it waits until a carried quest's talk does.
@@ -175,7 +170,7 @@ The reveal is timed off three lines of `{data-root}/genshin-parity/captures/yt-9
 
 ## Reference
 
-- `{data-root}/genshin-parity/captures/dialogue-auto-skip.mkv` — a talk with auto-play switched on through three lines, then Skip pressed, with the Auto and Skip buttons in view, their look and their keys shown. Partly found: https://www.youtube.com/watch?v=uGtyP02Ie2Q at 0–40 s (`{data-root}/genshin-parity/captures/yt-uGtyP02Ie2Q-0-40.mp4`); still sought: skip being pressed, with its look and keys. No source in the clip shows the Skip button pressed. No still of a talk with Skip pressed: the Dialogue, Auto Play and Settings articles have no whole-screen image. Also still sought: a line with no voice-over held whole under auto-play until the next begins, for its hold. Searched on YouTube: PM26QZHjraQ's lines under auto-play are Katheryne's voiced ones, y53hoUs8MK0's are clicked through, each made whole and gone within a fifth of a second, and 7WzdUObSfII shows the mobile setting for talk bubbles.
+- `{data-root}/genshin-parity/captures/dialogue-auto-skip.mkv` — a talk with auto-play switched on through three lines, then Skip pressed, with the Auto and Skip buttons in view, their look and their keys shown. Found, in part: the capture is https://www.youtube.com/watch?v=uGtyP02Ie2Q read past its first 40 seconds, and its 18 to 27 second span shows both buttons on a hangout event's talk and its 39 to 45 second span the Auto control alone on a world talk. Still sought: the controls lit by a hover or a press, auto-play running with its label turned, a line with no voice-over held whole under auto-play until the next begins, for its hold, and any Skip pressed. Searched on YouTube: PM26QZHjraQ's lines under auto-play are Katheryne's voiced ones, y53hoUs8MK0's are clicked through, each made whole and gone within a fifth of a second, and 7WzdUObSfII shows the mobile setting for talk bubbles.
 
 ## Open
 
@@ -183,8 +178,8 @@ The reveal's rate is open in [the spec](spec.md).
 
 - [ ] **The bare-render column of the Parity table** — no source yet: the softened column is the snapshot's rows (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md` lines 28 to 32), and no run of the bare-render shots is committed; `pnpm -C scripts genshin:parity compare` on each of the five ids, scored against its bare render, must print 9.64%, 17.80%, 12.60%, 11.65% and 11.86%.
 - [ ] **The Parity trials for the line's place, the band's gradient and the pill's nudge** — no source yet: no committed run of these trials sits beside the snapshot.
-- [ ] **The recording's blur is sigma 0.641** — no source yet: the softness measure of `{data-root}/genshin-parity/captures/yt-nWBqOXWZuFg.mp4` is not committed.
-- [ ] **The reply pill is 0.22 of black, the best of 0.15 to 0.45** — contradicted by `packages/genshin-interface/src/services/constants.ts` line 128: `GAME_REPLY_REST` is `rgb(0 0 0 / 0.26)`, the value the pill's GameButton kind draws (`packages/genshin-interface/src/components/GameButton/Index.vue` line 327).
+- [ ] **The recording's blur is sigma 0.641** — no source yet: the softness measure of `{data-root}/genshin-parity/captures/yt-nWBqOXWZuFg.mp4` is not committed; the frames at about 0 to 134 s show a dialogue with Sara, but a softness measure is not read by eye.
+- [ ] **The reply pill is 0.22 of black, the best of 0.15 to 0.45** — contradicted by `packages/genshin-interface/src/services/constants.ts` line 128: `GAME_REPLY_REST` is `rgb(0 0 0 / 0.26)`, the value the pill's GameButton kind draws (`packages/genshin-interface/src/components/GameButton/Index.vue` line 389).
 - [ ] **A talk's dialogs are the hundred numbered after its id** — contradicted by `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/TalkExcelConfigData_0.json` line 4640: talk 34781's first dialog is 3477101, outside its hundred; 1,773 of the 22,426 talks whose first dialog resolves start outside it, across it and `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/TalkExcelConfigData_1.json`.
 - [ ] **The dialog table's talk title hash resolves to no text** — contradicted by `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json` line 161624: "Donna" is under hash 1307310371, and nine of the table's first 50,000 title hashes resolve in it (19 of all 203,908).
 - [ ] **No carried quest's talk holds a gadget or mate-avatar line** — no source yet: 702 dialogs in `{data-root}/genshin-parity/text/ExcelBinOutput/DialogExcelConfigData.json` hold a gadget or mate-avatar role, and the carried quests' talk ids are not matched to them in this pass; a read of the carried quests' talks by `scripts/src/services/genshinText/readTalk.ts`, joined to those 702 ids, must count none.
@@ -192,3 +187,4 @@ The reveal's rate is open in [the spec](spec.md).
 - [ ] **The margin under the name is 15 units, so the line sits 30 units under the name with a role and 15 without** — no source yet: the dialogue recording named in Sources (`nWBqOXWZuFg`), not yet measured for the margin with a role or without one.
 - [ ] **The line is 26 units with 2.35 units of letter spacing, and its x-height, ascender and width match the recording's** — no source yet: the dialogue recording named in Sources (`nWBqOXWZuFg`), not yet measured for the line's size and spacing.
 - [ ] **The speaker's name is gold `#ffc700`, and the replies are dark pills 45 high and 15 apart, the first at 1275 by 698 of 1920 by 1080** — no source yet: the dialogue recording named in Sources (`nWBqOXWZuFg`), not yet measured for the name's colour and the reply pills.
+- [ ] **The Auto control's states and the hold it drives** — the control's rest look and place are read from `{data-root}/genshin-parity/captures/dialogue-auto-skip.mkv` at 24 seconds, and the Auto word turns to `UI_TALK_DIALOG_AUTO_TALK_STOP` while auto-play runs. No source shows it lit, pressed or running, so the mark and the hold, `TALK_AUTO_PLAY_HOLD_MS`, are provisional, and none of the talk's five reference frames shows the control, so the parity compare does not cover it. Skip waits on the hangout events, whose talk alone draws it.

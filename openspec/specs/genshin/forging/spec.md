@@ -1,6 +1,6 @@
 ## Purpose
 
-The blacksmith's recipes from the game's forge table — enhancement ores and four-star weapons forged from their billets once their diagrams are learned, the Mystic Enhancement Ore drawn from its random table, each order queued in a queue the Adventure Rank opens, its units finishing over real time and collected at any blacksmith, the enhancement ores' forge points held to 400,000 a game day, the forging talents of five characters, and the Serenitea Pot's refusal of Magical Crystal Chunks. The blacksmith's place is not built yet.
+The blacksmith's recipes from the game's forge table — enhancement ores and four-star weapons forged from their billets (the first ten open at Adventure Rank five, the rest at rank ten once their diagrams are learned), the Mystic Enhancement Ore drawn from its random table, each order queued in a queue the Adventure Rank opens, its units finishing over real time and collected at any blacksmith, the enhancement ores' forge points held to 400,000 a game day, the forging talents of five characters, and the Serenitea Pot's refusal of Magical Crystal Chunks. The blacksmith's place is not built yet.
 
 ## Requirements
 
