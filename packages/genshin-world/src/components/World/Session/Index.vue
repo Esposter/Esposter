@@ -68,6 +68,8 @@ import { useStoredGenshinSettings } from "#src/composables/useStoredGenshinSetti
 import { useWorldAchievements } from "#src/composables/useWorldAchievements";
 import { useWorldAdventureRank } from "#src/composables/useWorldAdventureRank";
 import { useWorldArchive } from "#src/composables/useWorldArchive";
+import { useWorldBagUse } from "#src/composables/useWorldBagUse";
+import { useWorldCardGame } from "#src/composables/useWorldCardGame";
 import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldCommissionClaims } from "#src/composables/useWorldCommissionClaims";
@@ -117,13 +119,9 @@ import { getCharacterIdConstellationsMap } from "#src/services/character/getChar
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
 import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
-import { grantGcgGameReward } from "#src/services/gcg/grantGcgGameReward";
-import { toGcgWeekGameRewards } from "#src/services/gcg/toGcgWeekGameRewards";
 import { toHandbookDomains } from "#src/services/handbook/toHandbookDomains";
 import { HOME_REALM_GROUND_HEIGHT } from "#src/services/home/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
-import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
-import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { computeStandingPose } from "#src/services/map/computeStandingPose";
@@ -300,9 +298,6 @@ const applyDestruction = ({ inventory: nextInventory, wallet: nextWallet }: Inve
 };
 // The copies of each character the player holds, from the save's counts and as the wish screen grants them
 const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.characterCopyCountMap);
-// The card game's EXP and the games whose one-time reward is paid, which a won week game's duel pays into
-const cardGameExp = ref(savedState.cardGameExp);
-const cardGameRewardedGameIds = ref(savedState.cardGameRewardedGameIds);
 // The carried quests, read as the world starts with their words in the reader's language, and how far each has come
 const {
   acceptQuest,
@@ -640,6 +635,7 @@ const {
   clearKitEffects,
   coldDamageParty,
   defeatEnemy,
+  getMemberMaxHealth,
   hudMember,
   kitContext,
   locomotion,
@@ -789,30 +785,20 @@ const profileNamecards = computed(() =>
     .filter((itemId) => materialDataMap.has(itemId))
     .map((itemId) => ({ itemId, name: getItemDefinition(itemId, nameText, materialDataMap).name })),
 );
-// A deployed member's Max HP as the buffs on it stand now, none while the member has no combatant built
-const getMemberMaxHealth = (characterId: number): number | undefined => {
-  const combatant = kitContext.characterIdCombatantMap.get(characterId);
-  return combatant
-    ? getKitMaxHealth(combatant, kitContext.kitEffectState.effects, party, kitContext.characterIdCombatantMap)
-    : undefined;
-};
-const useBagEntry = (entryId: number) => {
-  const use = useInventoryEntry(inventory.value, entryId, {
-    cookingProgress: cookingProgress.value,
-    dishUseMap: dishUseMap.value,
-    eaterId: getActiveCharacterId(party),
-    getMaxHealth: (characterId) => getMemberMaxHealth(characterId) ?? 0,
-    instructionRecipeMap: instructionRecipeMap.value,
-    kitEffectState: kitContext.kitEffectState,
-    now: getWorldNow(),
-    party,
-    wallet: wallet.value,
-  });
-  if (!use) return;
-  setInventory(use.inventory);
-  if (use.wallet) setWallet(use.wallet);
-  if (use.cookingProgress) cookingProgress.value = use.cookingProgress;
-};
+// Using an entry of the bag, which the bag's screen offers
+const { useBagEntry } = useWorldBagUse({
+  cookingProgress,
+  dishUseMap,
+  getMemberMaxHealth,
+  getWorldNow,
+  instructionRecipeMap,
+  inventory,
+  kitContext,
+  party,
+  setInventory,
+  setWallet,
+  wallet,
+});
 // The text id of each character's own Stella Fortuna's name, by the character's id, for a character with one set
 const stellaFortunaNameTextIdMap = computed(() => {
   const map = new Map<number, string>();
@@ -824,28 +810,18 @@ const stellaFortunaNameTextIdMap = computed(() => {
 });
 // The residents of the regions in reach, which the talks and a keeper's screen are read from
 const getResidents = () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents);
-// A won week game pays its reward once, its Player EXP into the card game's EXP and its Lucky Coins into the bag and wallet,
-// The way a Mail claim pays into them. A duel that is not a week game, or was lost, pays nothing
-const payCardGameReward = (gameId: number | undefined, won: boolean) => {
-  const weekGame = getResidents().find((resident) => resident.weekGame?.gameId === gameId)?.weekGame;
-  if (!won || !weekGame) return;
-  const granted = grantGcgGameReward(
-    {
-      cardGameExp: cardGameExp.value,
-      inventory: inventory.value,
-      rewardedGameIds: cardGameRewardedGameIds.value,
-      wallet: wallet.value,
-    },
-    weekGame.gameId,
-    toGcgWeekGameRewards(weekGame),
-    nameText,
-    materialDataMap,
-  );
-  cardGameExp.value = granted.cardGameExp;
-  cardGameRewardedGameIds.value = granted.rewardedGameIds;
-  setInventory(granted.inventory);
-  setWallet(granted.wallet);
-};
+// The card game's EXP and the games whose one-time reward is paid, which a won week game's duel pays into
+const { cardGameExp, cardGameRewardedGameIds, payCardGameReward } = useWorldCardGame({
+  getResidents,
+  inventory,
+  materialDataMap,
+  nameText,
+  savedCardGameExp: savedState.cardGameExp,
+  savedRewardedGameIds: savedState.cardGameRewardedGameIds,
+  setInventory,
+  setWallet,
+  wallet,
+});
 // The talks a resident begins and the talk the world runs, held by id, with their words, the quest talks a resident's
 // Standing talk offers and the duel a resident offers from each talk
 const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap, talkOffers, talkTextMap } =

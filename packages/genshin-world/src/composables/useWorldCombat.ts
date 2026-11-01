@@ -318,6 +318,13 @@ export const useWorldCombat = ({
     hitPartyMember(party, combatant, kitContext.kitEffectState, kitContext.characterIdCombatantMap, damage);
     respawnParty();
   };
+  // A deployed member's Max HP as the buffs on it stand now, none while the member has no combatant built
+  const getMemberMaxHealth = (characterId: number): number | undefined => {
+    const combatant = kitContext.characterIdCombatantMap.get(characterId);
+    return combatant
+      ? getKitMaxHealth(combatant, kitContext.kitEffectState.effects, party, kitContext.characterIdCombatantMap)
+      : undefined;
+  };
   return {
     characterIdKitMap,
     characterIdSkillGlyphsMap,
@@ -326,6 +333,7 @@ export const useWorldCombat = ({
     clearKitEffects,
     coldDamageParty,
     defeatEnemy,
+    getMemberMaxHealth,
     hudMember,
     kitContext,
     locomotion,
