@@ -59,8 +59,10 @@ import { useWorldAchievements } from "#src/composables/useWorldAchievements";
 import { useWorldAdventureRank } from "#src/composables/useWorldAdventureRank";
 import { useWorldArchive } from "#src/composables/useWorldArchive";
 import { useWorldBagUse } from "#src/composables/useWorldBagUse";
+import { useWorldCamera } from "#src/composables/useWorldCamera";
 import { useWorldCardGame } from "#src/composables/useWorldCardGame";
 import { useWorldChests } from "#src/composables/useWorldChests";
+import { useWorldClock } from "#src/composables/useWorldClock";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldCommissionClaims } from "#src/composables/useWorldCommissionClaims";
 import { useWorldCommissions } from "#src/composables/useWorldCommissions";
@@ -126,12 +128,10 @@ import { getTeamAntiColdRatio } from "#src/services/sheerCold/getTeamAntiColdRat
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
-import { WORLD_CLOCK_INTERVAL_MS } from "#src/services/time/constants";
-import { getServerNow } from "#src/services/time/getServerNow";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { TresCanvas } from "@tresjs/core";
-import { useIntervalFn, useMediaQuery } from "@vueuse/core";
+import { useMediaQuery } from "@vueuse/core";
 import {
   createGrassTrail,
   createInput,
@@ -142,7 +142,7 @@ import {
 } from "genshin-engine";
 import { CharacterMenuTab, InventorySort, ItemCategory } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
-import { Euler, Group, MathUtils, PCFShadowMap, Vector3 } from "three";
+import { Group, PCFShadowMap, Vector3 } from "three";
 
 interface Props extends WorldScreenProps, WorldTables {}
 
@@ -207,6 +207,9 @@ const settingsDefaults = { ...GENSHIN_SETTINGS_DEFAULTS, language, qualityTier }
 const settings = useStoredGenshinSettings(settingsDefaults);
 const worldQualityTier = settings.value.qualityTier;
 const { maxPixelRatio } = QualityTierSettingsMap[worldQualityTier];
+// The world on its own canvas: the camera circling Windrise's oak, and the scene it looks at. It is ready once the
+// Scene has the ground and the landmarks of its first view, which keep loading while the world is paused. A world that
+// Cannot start, where neither WebGPU nor WebGL 2 is available, is ready all the same, so a host waiting on it moves on
 const canvas = useTemplateRef<TresCanvasInstance>("canvas");
 const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");
 // The bends the character leaves as it walks through the grass, written by the character and read by the grass
@@ -288,14 +291,8 @@ const {
   trackedQuestId,
   trackerQuest,
 } = useWorldQuests({ events, gameDataBaseUrl, language, savedQuestProgressMap: savedState.quests });
-// Every saved timer is read against the server's clock, which this machine's own runs behind or ahead of by the offset
-const getWorldNow = () => getServerNow(serverClockOffsetMs);
-// The world's clock as a ref the computeds read, set from getWorldNow once each game minute so a reset or a regeneration that
-// Passes is seen without a write
-const worldNow = shallowRef(getWorldNow());
-useIntervalFn(() => {
-  worldNow.value = getWorldNow();
-}, WORLD_CLOCK_INTERVAL_MS);
+// The world's time: every saved timer is read against the server's clock, and a ref the computeds read
+const { getWorldNow, worldNow } = useWorldClock(serverClockOffsetMs);
 // The fishing points in reach, whether fishing is open at them, and the cast held while a point is fished
 const {
   castView,
@@ -1186,8 +1183,13 @@ const {
 } = useWorldShortcutWheel({ screenKind });
 // Whether the device's main pointer is a finger, which the HUD draws the touch layout for
 const isTouch = useMediaQuery("(pointer: coarse)");
-// The camera the world is drawn through, which the enemies' name tags project their enemies through
-const getCamera = () => canvas.value?.context?.camera.activeCamera.value;
+// The camera the world is drawn through, where it stands and the rotation a reference holds it at
+const { cameraRotation, getCamera, readCameraPosition } = useWorldCamera({
+  canvas,
+  getCameraPose: () => cameraPose,
+  getIsPaused: () => isPaused,
+  origin,
+});
 const { hudFrame, mapCamera } = useWorldHudFrame({
   characterBody,
   getCamera,
@@ -1261,29 +1263,6 @@ const { questDistanceMap, questMark } = useWorldQuestTargets({
   questTargetId,
   windrise,
 });
-// Where the camera stands in world metres, which its host reads to know where a player is
-const readCameraPosition = (): Vector3 => {
-  const activeCamera = canvas.value?.context?.camera.activeCamera.value;
-  return activeCamera ? activeCamera.position.clone().add(origin) : origin.clone();
-};
-const cameraRotation = computed(() =>
-  cameraPose
-    ? new Euler(MathUtils.degToRad(cameraPose.pitch), MathUtils.degToRad(cameraPose.heading), 0, "YXZ")
-    : undefined,
-);
-// The world on its own canvas: the camera circling Windrise's oak, and the scene it looks at. It is ready once the
-// Scene has the ground and the landmarks of its first view, which keep loading while the world is paused. A world that
-// Cannot start, where neither WebGPU nor WebGL 2 is available, is ready all the same, so a host waiting on it moves on
-// @TODO: https://github.com/Tresjs/tres/issues/1487 — TresJS draws only while it owes a frame, and always mode owes one
-// Only once it has drawn, so a canvas switched from manual, having drawn the frame it was owed, never draws again. The
-// Uncovered world is owed one while the canvas is still manual, before its props change
-watch(
-  () => isPaused,
-  (newIsPaused) => {
-    if (!newIsPaused) canvas.value?.context?.renderer.advance();
-  },
-  { flush: "sync" },
-);
 defineExpose({ jumpTo, readCameraPosition });
 // The Companionship EXP, the day's commissions, the statues, the solved puzzles, the realm's placements and the
 // Traveler's name no source changes yet, so they are carried as they were saved
