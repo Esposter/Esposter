@@ -1,6 +1,6 @@
 ---
 name: settle
-description: Apply when the `/settle` command is run, or when the open `review` GitHub issues from this session are to be settled here, locally, rather than left to the review's settle job. The session-run counterpart of the review's settle job, with its verdicts decided by the main session.
+description: Apply when the `/settle` command is run, or when the open `review` GitHub issues are to be settled here, locally, rather than left to the review's settle job. The session-run counterpart of the review's settle job, with its verdicts decided by the main session.
 ---
 
 # Settle — the open review issues, locally
