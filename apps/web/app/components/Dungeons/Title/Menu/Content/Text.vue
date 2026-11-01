@@ -18,7 +18,6 @@ interface Props {
 
 const { columnIndex, rowIndex, text } = defineProps<Props>();
 const onGridClick = useOnGridClick(PlayerTitleMenuOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
-const isValid = computed(() => unref(PlayerTitleMenuOptionGrid.validate({ x: columnIndex, y: rowIndex })));
 </script>
 
 <template>
@@ -29,7 +28,7 @@ const isValid = computed(() => unref(PlayerTitleMenuOptionGrid.validate({ x: col
       origin: 0.5,
       text,
       style: MenuTextStyle,
-      alpha: isValid ? 1 : DISABLED_OPACITY,
+      alpha: unref(PlayerTitleMenuOptionGrid.validate({ x: columnIndex, y: rowIndex })) ? 1 : DISABLED_OPACITY,
     }"
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick()"
   />

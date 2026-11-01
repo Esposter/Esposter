@@ -18,14 +18,12 @@ const emit = defineEmits<{ click: [] }>();
 const itemOptionGrid = useItemOptionGrid();
 const isUsableItem = useIsUsableItem(() => item);
 const text = computed(() => prettify(item.id));
-const alpha = computed(() => {
-  const isValid = unref(itemOptionGrid.validate({ x: columnIndex, y: rowIndex }));
-  return isValid ? 1 : DISABLED_OPACITY;
-});
 </script>
 
 <template>
-  <Container :configuration="{ alpha }">
+  <Container
+    :configuration="{ alpha: unref(itemOptionGrid.validate({ x: columnIndex, y: rowIndex })) ? 1 : DISABLED_OPACITY }"
+  >
     <DungeonsInventoryItemListRow :text @click="isUsableItem && emit('click')">
       <Text
         :configuration="{
