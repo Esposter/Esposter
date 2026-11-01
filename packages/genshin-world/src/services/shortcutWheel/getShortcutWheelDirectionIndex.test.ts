@@ -2,7 +2,7 @@ import { ShortcutWheelDirectionCount } from "#src/models/shortcutWheel/ShortcutW
 import { getShortcutWheelDirectionIndex } from "#src/services/shortcutWheel/getShortcutWheelDirectionIndex";
 import { describe, expect, test } from "vitest";
 
-describe("getShortcutWheelDirectionIndex", () => {
+describe(getShortcutWheelDirectionIndex, () => {
   test("a pointer pushed to the right picks the entry to its right", () => {
     expect.hasAssertions();
     expect(getShortcutWheelDirectionIndex(1, 0, ShortcutWheelDirectionCount.Eight)).toBe(2);
