@@ -31,7 +31,6 @@ flowchart LR
 
 - **Pactsworn Pathclearer's plunges are not built.** Its low, high and collision plunges are gcsim's Electro plunges with a wider reach, and a stance's actions carry no plunges, so its kit keeps the Invoker's plunges during the stance. The hook is plunges on `KitStanceActions`.
 - **The stance's slide is not built.** gcsim extends the burst so a hit that lands after its end still counts (its burst-slide check). The stance ends on its seconds alone, so a late hit of the stance is cut.
-- **Mortuary Rite's cooldown after the stance is approximate**, as the Decisions say. The kit has one cooldown per character, so the stance's skill cannot set a second one for Secret Rite.
 
 ## Key files
 
