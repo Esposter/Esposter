@@ -178,7 +178,6 @@ import { checkIsSpecialStoryModeActive } from "#src/services/quest/checkIsSpecia
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { getEnteredGoToEvents } from "#src/services/quest/getEnteredGoToEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
-import { REPUTATION_OFFER_FIRST_LEVEL } from "#src/services/reputation/constants";
 import { offerReputationRequest } from "#src/services/reputation/offerReputationRequest";
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
@@ -1061,7 +1060,7 @@ const {
 });
 // The Mondstadt bounty the keeper offers from the level its bounties unlock at, and its claim once the taken one's target is
 // Defeated. A bounty's offer stands ahead of her request, which waits until the bounty is claimed
-const { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty, takeBounty } =
+const { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty, reputationBountyOffer, takeBounty } =
   useWorldReputationBounty({
     events,
     getWorldNow,
@@ -1073,12 +1072,6 @@ const { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty,
     savedBountyHunt: savedState.reputationBountyHunt,
     worldLevel,
   });
-const reputationBountyOffer = computed(() => {
-  if (bountyHunt.value) return bountyHunt.value.isTargetDefeated ? ReputationBountyOffer.Claim : undefined;
-  return reputation.value.level >= REPUTATION_OFFER_FIRST_LEVEL && (reputationCity.value?.bounties.length ?? 0) > 0
-    ? ReputationBountyOffer.Offer
-    : undefined;
-});
 watch(unlockedLandmarkIds, (landmarkIds) => {
   resonatedRegionIds.value = getResonatedRegionIds(landmarkIds);
 });

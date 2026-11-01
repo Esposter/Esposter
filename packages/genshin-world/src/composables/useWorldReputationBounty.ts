@@ -6,8 +6,10 @@ import type { ReputationReward } from "#src/models/reputation/ReputationReward";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
+import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { computeBountyTrailEnds } from "#src/services/elementalSight/computeBountyTrailEnds";
 import { claimWeeklyReputationBounty } from "#src/services/reputation/claimWeeklyReputationBounty";
+import { REPUTATION_OFFER_FIRST_LEVEL } from "#src/services/reputation/constants";
 import { createReputationBountyCamp } from "#src/services/reputation/createReputationBountyCamp";
 import { defeatReputationBountyTarget } from "#src/services/reputation/defeatReputationBountyTarget";
 import { takeReputationBounty } from "#src/services/reputation/takeReputationBounty";
@@ -82,5 +84,11 @@ export const useWorldReputationBounty = ({
     bountyHunt.value = undefined;
     bountyCamp.value = undefined;
   };
-  return { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty, takeBounty };
+  const reputationBountyOffer = computed(() => {
+    if (bountyHunt.value) return bountyHunt.value.isTargetDefeated ? ReputationBountyOffer.Claim : undefined;
+    return reputation.value.level >= REPUTATION_OFFER_FIRST_LEVEL && (reputationCity.value?.bounties.length ?? 0) > 0
+      ? ReputationBountyOffer.Offer
+      : undefined;
+  });
+  return { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty, reputationBountyOffer, takeBounty };
 };
