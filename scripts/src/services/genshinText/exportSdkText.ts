@@ -1,3 +1,4 @@
+import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
 import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
 import { SDK_BUNDLE_PATH, SDK_TEXT_DIRECTORY } from "#src/services/genshinText/constants";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
@@ -6,7 +7,7 @@ import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStu
 // Its region names share file names and would overwrite each other exported by name
 export const exportSdkText = (): void => {
   runAnimeStudio(
-    [SDK_BUNDLE_PATH, SDK_TEXT_DIRECTORY, "--types", "TextAsset", "--group_assets", "ByContainer"],
+    [SDK_BUNDLE_PATH, SDK_TEXT_DIRECTORY, "--types", "TextAsset", "--group_assets", AnimeStudioGroupType.ByContainer],
     GENSHIN_ANIMESTUDIO_OPTIONS,
   );
 };
