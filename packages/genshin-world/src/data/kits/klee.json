@@ -126,12 +126,12 @@
   "hits.jumpyDumpty.4.hitmarkFrames": { "file": "skill.go", "line": 78, "source": "Gcsim", "value": 240 },
   "hits.jumpyDumpty.4.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 2932 } },
   "hits.sparklyExplosion.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
   "hits.sparklyExplosion.element": { "cause": "Unsourced", "value": "Fire" },
   "hits.sparklyExplosion.gauge": { "file": "burst.go", "line": 143, "source": "Gcsim", "value": 2 },
-  "hits.sparklyExplosion.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
+  "hits.sparklyExplosion.hitmarkFrames": { "cause": "Unsourced", "value": 1 },
   "hits.sparklyExplosion.multiplier": { "file": "burst.go", "line": 144, "source": "Gcsim", "value": 5.55 },
   "hits.sparklyExplosion.poiseDamage": { "cause": "Unsourced", "value": 120 },
   "hits.chargedAttackBomb.hitmarkFrames": { "cause": "Unsourced", "value": 72 },
