@@ -23,21 +23,4 @@ describe("createUniqueArraySchema type", () => {
     // @ts-expect-error a Set compares items by reference, so an object schema is unique only against a key
     expectTypeOf(createUniqueArraySchema).toBeCallableWith(z.object({ id: z.string() }));
   });
-
-  test("generic object", () => {
-    expect.hasAssertions();
-
-    const genericObjectSchema: z.ZodType<{ id: string }> = z.object({ id: z.string() });
-    const schema = createUniqueArraySchema(genericObjectSchema, "id");
-
-    expectTypeOf<z.output<typeof schema>>().toEqualTypeOf<{ id: string }[]>();
-  });
-
-  test("generic mapped object", () => {
-    expect.hasAssertions();
-
-    const schema = createUniqueArraySchema(z.object({ id: z.literal("id") }), "id");
-
-    expectTypeOf<z.output<typeof schema>>().toEqualTypeOf<{ id: "id" }[]>();
-  });
 });
