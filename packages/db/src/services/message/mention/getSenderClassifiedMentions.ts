@@ -11,7 +11,7 @@ import { RoomPermission } from "@esposter/db-schema";
 export const getSenderClassifiedMentions = async (
   db: Database,
   roomId: string,
-  userId: string,
+  userId: string | undefined,
   message: string,
 ): Promise<ClassifiedMentions> => {
   const classifiedMentions = classifyMentions(message);
