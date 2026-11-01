@@ -3,7 +3,8 @@ import type { Weapon } from "#src/models/weapon/Weapon";
 import type { GameText } from "genshin-text";
 
 import WeaponScreenAscendMaterials from "#src/components/Weapon/Screen/Ascend/Materials/Index.vue";
-import { DIVIDER_OPACITY, SPARK_PHASES } from "#src/services/weapon/constants";
+import WeaponScreenAscendSparks from "#src/components/Weapon/Screen/Ascend/Sparks/Index.vue";
+import { DIVIDER_OPACITY } from "#src/services/weapon/constants";
 import { OrnamentDivider } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
@@ -48,17 +49,7 @@ const {
 </script>
 
 <template>
-  <div class="sparks left-sparks">
-    <span v-for="phase in SPARK_PHASES" :key="phase" class="spark" :class="{ lit: phase <= weapon.ascension }" />
-  </div>
-  <div class="sparks right-sparks">
-    <span
-      v-for="phase in SPARK_PHASES"
-      :key="phase"
-      class="spark"
-      :class="{ lit: phase <= weapon.ascension + 1 }"
-    />
-  </div>
+  <WeaponScreenAscendSparks :ascension="weapon.ascension" />
   <p class="level-current">
     <span class="level-word">{{ gameText[GameTextKey.LevelShort] }}</span> {{ weapon.level }} / {{ maxLevel }}
   </p>
@@ -132,34 +123,6 @@ const {
   top: calc(var(--reference-pixel) * 305);
   left: calc(var(--reference-pixel) * 1128);
   font-size: calc(var(--reference-pixel) * 28);
-}
-
-/* Ascend's header: the phases as sparks, each row of six, the left lit to the weapon's phase and the right to the next */
-.sparks {
-  position: absolute;
-  top: calc(var(--reference-pixel) * 106);
-  display: flex;
-}
-
-.left-sparks {
-  left: calc(var(--reference-pixel) * 1191);
-  gap: calc(var(--reference-pixel) * 10);
-}
-
-.right-sparks {
-  left: calc(var(--reference-pixel) * 1499);
-  gap: calc(var(--reference-pixel) * 10);
-}
-
-.spark {
-  width: calc(var(--reference-pixel) * 31);
-  height: calc(var(--reference-pixel) * 31);
-  background: #8e8c98;
-  clip-path: var(--sparkle-clip-path);
-}
-
-.spark.lit {
-  background: #fff;
 }
 
 .level-current,
