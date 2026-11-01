@@ -27,8 +27,7 @@ flowchart LR
 
 ## Data and measures
 
-- **Provisional:** each claim kind's Companionship EXP, until the References sought clips show what a claim pays out.
-- **Settled:** the first claim amounts are provisional at the low end of each wiki range, measured by the References sought clips.
+- **Provisional:** each claim kind's Companionship EXP, at the low end of its wiki range, until the References sought clips show what a claim pays out.
 
 ## Key files
 
