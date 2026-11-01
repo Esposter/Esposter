@@ -21,7 +21,7 @@ flowchart TD
   PARTY -- "no, the conversion is Physical, so Anemo" --> ANEMO["Burst's first hit<br/>Anemo"]
 ```
 
-- **Four Winds waits on the conversion hook.** A second press converts his skill into Four Winds (`skill.go`, lines 84-86 and 105-125), and the burst's first hit takes the element it converts to (`burst.go`, lines 30-32). The kit keeps no record of the conversion, so each hit is its Anemo hit alone.
+- **Four Winds waits on the conversion hook.** A second press converts his skill into Four Winds (`skill.go`, lines 84-86 and 105-125). The burst's first hit takes the element set once at Init from the party, not any Four Winds state (`burst.go`, lines 30-32), so the press changes none of his hits here. The kit keeps no record of the conversion, so each hit stays at the element its record gives.
 - **His passives wait on their hooks.** Each one reads his Four Winds or the party's Elemental Resonance (`asc.go` and `cons.go`), so none is built.
 
 ## Key files
