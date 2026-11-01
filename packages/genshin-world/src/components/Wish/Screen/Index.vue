@@ -157,13 +157,16 @@ const purchases = computed(() => {
     },
   ];
 });
+// The Primogems at the head, and at the foot the open banner's Fate beside the Genesis Crystals the game counts there too
 const currencies = computed(() =>
-  [Currency.Primogem, ...(bannerKind.value ? [BannerKindFateMap[bannerKind.value]] : [])].map((currency) => ({
-    id: currency,
-    isTopUp: currency === Currency.Primogem,
-    name: gameText[CurrencyGameTextKeyMap[currency]],
-    quantity: wallet.value[currency],
-  })),
+  [Currency.Primogem, ...(bannerKind.value ? [BannerKindFateMap[bannerKind.value]] : []), Currency.GenesisCrystal].map(
+    (currency) => ({
+      id: currency,
+      isTopUp: currency === Currency.Primogem,
+      name: gameText[CurrencyGameTextKeyMap[currency]],
+      quantity: wallet.value[currency],
+    }),
+  ),
 );
 const isWeaponWish = computed(() => bannerKind.value === BannerKind.WeaponEvent);
 // The Epitomized Path's Fate Points in the game's words and colours, which only the weapon wish shows

@@ -18,7 +18,7 @@ import { countGcgDiceCost } from "#src/services/gcg/countGcgDiceCost";
 import { listGcgActiveSkills } from "#src/services/gcg/effects/listGcgActiveSkills";
 import { toGcgRemainingDiceIndices } from "#src/services/gcg/toGcgRemainingDiceIndices";
 import { takeOne } from "@esposter/shared";
-import { GameScreen } from "genshin-interface";
+import { GameScreen, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
@@ -47,6 +47,8 @@ const emit = defineEmits<{
   tuneDie: [handIndex: number, dieIndex: number];
   useSkill: [skillId: number, dieIndices: number[]];
 }>();
+const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
+const restDuration = `${INTERACTION_REST_MS}ms`;
 // What the player is choosing: the dice it has picked to pay or reroll with, the hand card it is about to play onto a
 // Character, whether its next hand card tunes its picked die, and the cards it has picked to switch away and the
 // Character it has picked to start on
@@ -259,7 +261,7 @@ const playRerollChoice = () => {
       {{ gameText[GameTextKey.GcgElementalTuning] }}
     </button>
     <button
-      class="hud-disc concede"
+      class="hud-disc concede ring-button"
       :aria-label="gameText[GameTextKey.GcgConcede]"
       type="button"
       @click="emit('leave', false)"
@@ -285,6 +287,8 @@ const playRerollChoice = () => {
   </GameScreen>
 </template>
 
+<style scoped src="genshin-interface/styles/ringButton.css"></style>
+
 <style scoped>
 /* The board's places and colours are measured off the game's frame at 1080 high; its table's texture and the frame's ornament are not drawn */
 .gcg-screen {
@@ -298,7 +302,7 @@ const playRerollChoice = () => {
   left: 0;
   width: calc(var(--unit) * 186);
   height: calc(var(--unit) * 174);
-  background: #393742;
+  background: #343340;
 }
 
 .table {
@@ -335,12 +339,22 @@ const playRerollChoice = () => {
   background: #3a5274;
 }
 
+/* The player's plate is the frame's gold, lit at its left under the name and dark at its right end */
 .player-plate {
-  top: calc(var(--unit) * 982);
+  top: calc(var(--unit) * 978);
   left: calc(var(--unit) * 130);
-  width: calc(var(--unit) * 236);
-  height: calc(var(--unit) * 34);
-  background: #d4a264;
+  width: calc(var(--unit) * 238);
+  height: calc(var(--unit) * 42);
+  background: linear-gradient(
+    to right,
+    #bd8e4e 0%,
+    #e6ad66 25%,
+    #e6ad66 46%,
+    #c38f52 67%,
+    #8f642c 80%,
+    #7a5631 90%,
+    #5d4630 100%
+  );
 }
 
 .avatar {
@@ -352,18 +366,22 @@ const playRerollChoice = () => {
   border-radius: 50%;
 }
 
+/* Each portrait disc is the frame's ring around its art, the art's own mean colour inside */
 .opponent-avatar {
-  top: calc(var(--unit) * 20);
-  left: calc(var(--unit) * 54);
-  border-color: #4b7bb8;
-  background: #e6ecf2;
+  top: calc(var(--unit) * 21);
+  left: calc(var(--unit) * 51);
+  width: calc(var(--unit) * 84);
+  height: calc(var(--unit) * 84);
+  border-width: calc(var(--unit) * 8);
+  border-color: #5f7fa6;
+  background: #acb0c0;
 }
 
 .player-avatar {
-  top: calc(var(--unit) * 987);
-  left: calc(var(--unit) * 52);
-  width: calc(var(--unit) * 80);
-  height: calc(var(--unit) * 80);
+  top: calc(var(--unit) * 975);
+  left: calc(var(--unit) * 51);
+  width: calc(var(--unit) * 84);
+  height: calc(var(--unit) * 84);
   border-color: #c99a4a;
   background: #ece3c8;
 }
@@ -406,7 +424,7 @@ const playRerollChoice = () => {
   right: 0;
   left: 0;
   height: calc(var(--unit) * 56);
-  background: #786453;
+  background: #6f6857;
   color: #f6e3a1;
   font-size: calc(var(--unit) * 38);
   font-weight: 700;
@@ -438,28 +456,53 @@ const playRerollChoice = () => {
   font-weight: 700;
 }
 
+/* The hand's cards step 83.75 apart across the frame's five, the first at 694 */
 .hand {
   position: absolute;
-  top: calc(var(--unit) * 975);
+  top: calc(var(--unit) * 974);
   left: calc(var(--unit) * 694);
   display: flex;
   align-items: flex-end;
 }
 
 .hand > * + * {
-  margin-left: calc(var(--unit) * -89);
+  margin-left: calc(var(--unit) * -91.25);
 }
 
+/* The end-round token is the frame's gold coin in its bronze bevel, 128 across, the coin's gold 76 inside a dark rim */
 .end-round {
+  --state-duration: v-bind(restDuration);
   position: absolute;
-  top: calc(var(--unit) * 475);
-  left: calc(var(--unit) * 20);
-  width: calc(var(--unit) * 120);
-  height: calc(var(--unit) * 120);
-  border: calc(var(--unit) * 4) solid #c99a4a;
+  top: calc(var(--unit) * 477);
+  left: calc(var(--unit) * 16);
+  width: calc(var(--unit) * 128);
+  height: calc(var(--unit) * 128);
+  border: calc(var(--unit) * 20) solid #6e553b;
   border-radius: 50%;
-  background: #7d5a36;
+  background: #e6a83e;
+  box-shadow: inset 0 0 0 calc(var(--unit) * 6) #4f3524;
   cursor: inherit;
+  outline: calc(var(--unit) * 1) solid transparent;
+  transition:
+    filter var(--state-duration),
+    outline-color var(--state-duration);
+}
+
+@media (hover: hover) {
+  .end-round:enabled:hover {
+    --state-duration: v-bind(hoverDuration);
+    outline-color: #fff;
+  }
+}
+
+.end-round:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  --state-duration: v-bind(hoverDuration);
+  outline-color: #fff;
+}
+
+.end-round:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+  --state-duration: 0s;
+  filter: brightness(0.9);
 }
 
 .round {
@@ -503,6 +546,7 @@ const playRerollChoice = () => {
 
 .synchro,
 .confirm button {
+  --state-duration: v-bind(restDuration);
   padding: calc(var(--unit) * 8) calc(var(--unit) * 24);
   border: none;
   border-radius: calc(var(--unit) * 24);
@@ -512,12 +556,36 @@ const playRerollChoice = () => {
   font: inherit;
   font-size: calc(var(--unit) * 24);
   font-weight: 600;
+  outline: calc(var(--unit) * 1) solid transparent;
+  transition:
+    filter var(--state-duration),
+    outline-color var(--state-duration);
 }
 
 .synchro {
   position: absolute;
   top: calc(var(--unit) * 780);
   left: calc(var(--unit) * 1420);
+}
+
+@media (hover: hover) {
+  .synchro:enabled:hover,
+  .confirm button:enabled:hover {
+    --state-duration: v-bind(hoverDuration);
+    outline-color: #fff;
+  }
+}
+
+.synchro:enabled:is(:focus-visible, [data-interaction-state="Hover"] *),
+.confirm button:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  --state-duration: v-bind(hoverDuration);
+  outline-color: #fff;
+}
+
+.synchro:enabled:is(:active, [data-interaction-state="Pressed"] *),
+.confirm button:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+  --state-duration: 0s;
+  filter: brightness(0.9);
 }
 
 /* The buttons take their places in the row, so a choice's Reroll, Confirm and Cancel never stack on one another */
@@ -549,7 +617,18 @@ const playRerollChoice = () => {
 }
 
 .concede {
+  --hover-duration: v-bind(hoverDuration);
+  --state-duration: v-bind(restDuration);
   right: calc(var(--unit) * 26);
   cursor: inherit;
+  outline: calc(var(--unit) * 1) solid transparent;
+  transition:
+    filter var(--state-duration),
+    outline-color var(--state-duration);
+}
+
+.concede:is(:active, [data-interaction-state="Pressed"] *) {
+  --state-duration: 0s;
+  filter: brightness(0.9);
 }
 </style>

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import GameButton from "#src/components/GameButton/Index.vue";
+import { GameButtonKind } from "#src/models/GameButtonKind";
+
 interface Props {
   // The caption the option shows under its name
   caption: string;
@@ -13,20 +16,15 @@ const emit = defineEmits<{ choose: [] }>();
 </script>
 
 <template>
-  <button class="option" :data-rarity="rarity" type="button" @click="emit('choose')">
+  <GameButton class="option" :data-rarity="rarity" :kind="GameButtonKind.Row" tip="" @click="emit('choose')">
     <span class="name">{{ name }}</span>
     <span class="caption">{{ caption }}</span>
-  </button>
+  </GameButton>
 </template>
 
 <style scoped>
 .option {
   padding: calc(var(--unit) * 12) calc(var(--unit) * 16);
-}
-
-.option:hover,
-.option:focus-visible {
-  background: rgb(255 255 255 / 0.2);
 }
 </style>
 

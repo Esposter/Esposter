@@ -2,6 +2,7 @@
 import type { GcgCost } from "#src/models/gcg/GcgCost";
 
 import { countGcgDiceCost } from "#src/services/gcg/countGcgDiceCost";
+import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface";
 
 interface Props {
   // The costs the skill takes to use, whose dice its token shows
@@ -12,6 +13,8 @@ interface Props {
 
 const { costs, isDisabled } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
+const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
+const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -23,6 +26,7 @@ const emit = defineEmits<{ select: [] }>();
 
 <style scoped>
 .skill {
+  --state-duration: v-bind(restDuration);
   position: relative;
   width: calc(var(--unit) * 94);
   height: calc(var(--unit) * 94);
@@ -31,6 +35,30 @@ const emit = defineEmits<{ select: [] }>();
   background: #8e7154;
   color: #f6e3a1;
   cursor: inherit;
+  outline: calc(var(--unit) * 1) solid transparent;
+  transition:
+    filter var(--state-duration),
+    outline-color var(--state-duration);
+}
+
+/* A usable coin lights a white ring when focused or held in the forced Hover state, and a press dims it at once,
+   A spent one staying as it is. The shared ring sheet has no `:enabled`, so a spent coin keeps its own ring rules.
+   A pointer's hover is guarded by `(hover: hover)`, so a touch screen leaves nothing lit after a tap */
+@media (hover: hover) {
+  .skill:enabled:hover {
+    --state-duration: v-bind(hoverDuration);
+    outline-color: #fff;
+  }
+}
+
+.skill:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  --state-duration: v-bind(hoverDuration);
+  outline-color: #fff;
+}
+
+.skill:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+  --state-duration: 0s;
+  filter: brightness(0.9);
 }
 
 .skill-cost {

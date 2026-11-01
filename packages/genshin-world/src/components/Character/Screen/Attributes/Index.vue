@@ -27,6 +27,8 @@ interface Props {
   character: Character;
   // The character's name in the reader's language, the one the panel's title draws
   characterName: string;
+  // The Friendship Level the character has reached, which the panel's Friendship row draws, none until given
+  friendshipLevel?: number;
   // The game's words in the reader's language
   gameText: GameText;
   // The game's material table by item id, which the materials an ascension takes are named from
@@ -48,6 +50,7 @@ const {
   adventureRank,
   character,
   characterName,
+  friendshipLevel,
   gameText,
   materialDataMap,
   maxStamina,
@@ -99,6 +102,7 @@ const isLiftable = computed(() => {
 <template>
   <CharacterAttributeList
     :character
+    :friendship-level="friendshipLevel"
     :game-text
     :ascend-rows
     :is-ascendable="ascendResult !== undefined"

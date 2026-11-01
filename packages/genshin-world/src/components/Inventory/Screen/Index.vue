@@ -7,7 +7,7 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
-import type { InventoryCell } from "genshin-interface";
+import type { InventoryCell, InventoryWeaponDetails } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
 import { Currency } from "#src/models/inventory/Currency";
@@ -54,6 +54,8 @@ interface Props {
   // The game's names in the reader's language, by their text ids, for the materials a destroy returns
   names: Readonly<Record<string, string>>;
   wallet: Wallet;
+  // The weapons' details by the entry's id, for the entries whose weapon the bag can already read, the detail panel's stats
+  weaponDetails?: Record<string, InventoryWeaponDetails>;
 }
 
 const {
@@ -69,6 +71,7 @@ const {
   materialDataMap,
   names,
   wallet,
+  weaponDetails,
 } = defineProps<Props>();
 const emit = defineEmits<{
   close: [];
@@ -265,6 +268,7 @@ const currencies = computed(() =>
       :title="gameText[GameTextKey.Inventory]"
       :unlock-label="gameText[GameTextKey.ArtifactActionUnlock]"
       :use-label="gameText[GameTextKey.InventoryUse]"
+      :weapon-details="weaponDetails"
       @cancel-destroy="isConfirming = false"
       @choose="(id) => chooseCell(id)"
       @close="emit('close')"

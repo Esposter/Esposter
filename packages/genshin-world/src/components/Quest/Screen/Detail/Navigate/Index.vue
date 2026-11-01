@@ -19,7 +19,7 @@ const emit = defineEmits<{ navigate: [questId: string] }>();
 </script>
 
 <template>
-  <button class="pill navigate" type="button" @click="emit('navigate', questId)">
+  <button class="quest-pill navigate cream-pill-button" type="button" @click="emit('navigate', questId)">
     <svg class="navigate-mark" aria-hidden="true" viewBox="0 0 32 32">
       <path
         v-for="(path, index) of QuestGlyphMap[QuestGlyph.ObjectiveRing].paths"
@@ -36,28 +36,14 @@ const emit = defineEmits<{ navigate: [questId: string] }>();
   </button>
 </template>
 
-<style scoped>
-/* The overview's pill in Footer takes the same base: the two sit in different boxes, so each carries its own copy */
-.pill {
-  margin: 0;
-  padding: 0;
-  border: none;
-  cursor: inherit;
-  font: inherit;
-  font-weight: 600;
-  position: absolute;
-  top: calc(var(--unit) * 989);
-  width: calc(var(--unit) * 288);
-  height: calc(var(--unit) * 62);
-  border-radius: calc(var(--unit) * 31);
-  background: #ece5d7;
-  color: #3c404b;
-  font-size: calc(var(--unit) * 27);
-}
+<style scoped src="genshin-interface/styles/creamPillButton.css"></style>
+<style scoped src="../../../../../styles/questPill.css"></style>
 
+<style scoped>
 /* Its button 1512 across the screen, under the details */
 .navigate {
   left: calc(var(--unit) * 635);
+  isolation: isolate;
 }
 
 /* The objective's mark at 47 across, its ring grey round a dark core */

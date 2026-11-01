@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { GameButton, GameButtonKind } from "genshin-interface";
+
 interface Props {
   // The button's words in the reader's language
   reviveLabel: string;
@@ -15,7 +17,7 @@ const emit = defineEmits<{ revive: [] }>();
        under it, which brings the team back at the nearest teleport waypoint -->
   <div class="game-over">
     <h1 class="title">{{ title }}</h1>
-    <button class="revive" type="button" @click="emit('revive')">{{ reviveLabel }}</button>
+    <GameButton class="revive" :kind="GameButtonKind.Row" tip="" @click="emit('revive')">{{ reviveLabel }}</GameButton>
   </div>
 </template>
 

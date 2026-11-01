@@ -11,7 +11,7 @@ import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ArchiveSectionGameTextKeyMap } from "#src/services/archive/ArchiveSectionGameTextKeyMap";
 import { ArchiveSectionOrder } from "#src/services/archive/ArchiveSectionOrder";
 import { TWO_LINE_NAME_LENGTH } from "#src/services/archive/constants";
-import { CloseButtonMark, GameScreen, ItemRarityFaceGradientMap } from "genshin-interface";
+import { CloseButtonMark, GameButton, GameButtonKind, GameScreen, ItemRarityFaceGradientMap } from "genshin-interface";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
@@ -107,9 +107,9 @@ const getAdjacentSection = (step: number): ArchiveSection =>
 
 <template>
   <!-- The game's Archive as its Equipment section's weapons draw it: the section's title across the head with the close mark, the
-       count of open entries, its entries in a grid five across, each tile tinted by its rarity with its stars and name on a band, the
-       "New" badges, the picked entry's name and lore down the right and the filter bar under the grid. The arrows at the screen's
-       edges step between the sections, as Q and E do -->
+       count of open entries, its entries in a grid five across, each tile tinted by its rarity with its stars and name on a band,
+       the "New" badges, the grid's scrollbar, the picked entry's name and lore down the right and the filter bar under the grid.
+       The arrows at the screen's edges step between the sections, as Q and E do -->
   <GameScreen class="archive-screen">
     <span class="header" aria-hidden="true" />
     <svg class="crest" viewBox="0 0 132 140" aria-hidden="true">
@@ -146,15 +146,16 @@ const getAdjacentSection = (step: number): ArchiveSection =>
       >
     </p>
     <div class="grid">
-      <button
+      <GameButton
         v-for="entry of selectedEntries"
         :key="entry.id"
         class="tile"
-        type="button"
         :aria-pressed="entry.id === selectedEntry?.id"
         :data-dimmed="dimmedEntryIds.has(entry.id) || undefined"
         :data-rarity="rarityMap.get(entry.id)"
+        :kind="GameButtonKind.Row"
         :style="{ background: getTileBackground(entry.id) }"
+        tip=""
         @click="checkIsEntryReadable(entry.id) ? emit('readBook', entry.id) : (selectedEntryId = entry.id)"
       >
         <span class="name" :data-two-lines="checkIsTwoLineName(getEntryName(entry)) || undefined">
@@ -167,8 +168,9 @@ const getAdjacentSection = (step: number): ArchiveSection =>
           ><span v-for="star in rarityMap.get(entry.id) ?? 0" :key="star" class="star"
         /></span>
         <span v-if="newEntryIds.has(entry.id)" class="new">{{ gameText[GameTextKey.New] }}</span>
-      </button>
+      </GameButton>
     </div>
+    <span class="scrollbar" aria-hidden="true" />
     <p v-if="selectedEntry" class="detail-name">{{ getEntryName(selectedEntry) }}</p>
     <template v-if="selectedDescription">
       <span class="separator" aria-hidden="true" />
@@ -179,13 +181,14 @@ const getAdjacentSection = (step: number): ArchiveSection =>
       </span>
       <p class="description">{{ selectedDescription }}</p>
     </template>
-    <button
+    <GameButton
       v-for="step of stepDirections"
       :key="step"
       class="step"
-      type="button"
-      :data-step="step"
       :aria-label="gameText[ArchiveSectionGameTextKeyMap[getAdjacentSection(step)]]"
+      :data-step="step"
+      :kind="GameButtonKind.Disc"
+      tip=""
       @click="selectSection(getSteppedSectionIndex(step))"
     >
       <svg viewBox="0 0 46 64">
@@ -193,7 +196,7 @@ const getAdjacentSection = (step: number): ArchiveSection =>
         <polygon fill="#7b8599" points="29,23 38,32 29,41 20,32" />
         <polygon fill="#232b40" points="29,28 33,32 29,36 25,32" />
       </svg>
-    </button>
+    </GameButton>
     <span class="filter" aria-hidden="true">
       <svg class="filter-icon" viewBox="0 0 22 24">
         <polygon fill="#3f3d4b" points="0,0 22,0 14,11 14,24 8,20 8,11" />
@@ -276,7 +279,7 @@ const getAdjacentSection = (step: number): ArchiveSection =>
   left: calc(var(--unit) * 136);
   display: grid;
   width: calc(var(--unit) * 641);
-  height: calc(var(--unit) * 865);
+  height: calc(var(--unit) * 856);
   padding: calc(var(--unit) * 6) calc(var(--unit) * 4) 0;
   grid-auto-rows: calc(var(--unit) * 140);
   grid-template-columns: repeat(5, calc(var(--unit) * 115));
@@ -285,6 +288,17 @@ const getAdjacentSection = (step: number): ArchiveSection =>
   row-gap: calc(var(--unit) * 20.9);
   overflow-y: auto;
   scrollbar-width: none;
+}
+
+/* The grid's scrollbar thumb, drawn where the still shows it at the top of the list and not moved as the grid scrolls */
+.scrollbar {
+  position: absolute;
+  top: calc(var(--unit) * 132);
+  left: calc(var(--unit) * 784);
+  width: calc(var(--unit) * 6);
+  height: calc(var(--unit) * 239);
+  border-radius: calc(var(--unit) * 3);
+  background: #bebcc3;
 }
 
 .tile {
@@ -301,18 +315,23 @@ const getAdjacentSection = (step: number): ArchiveSection =>
 }
 
 .tile[data-rarity="2"] {
-  background: #486b66;
+  background: #507a71;
 }
 
 .tile[data-rarity="3"] {
-  background: #4f6386;
+  background: #4f6a8f;
 }
 
 .tile[data-dimmed] {
   filter: brightness(0.5);
 }
 
-.tile:hover,
+@media (hover: hover) {
+  .tile:hover {
+    outline: calc(var(--unit) * 2) solid #f4f7ff;
+  }
+}
+
 .tile[aria-pressed="true"] {
   outline: calc(var(--unit) * 2) solid #f4f7ff;
 }
@@ -418,11 +437,13 @@ const getAdjacentSection = (step: number): ArchiveSection =>
   font-size: calc(var(--unit) * 26);
   font-weight: 600;
   line-height: calc(var(--unit) * 30);
-  letter-spacing: calc(var(--unit) * 0.4);
+  letter-spacing: calc(var(--unit) * 0.1);
   white-space: nowrap;
 }
 
+/* The count sits a space past its label, as the game sets the two apart */
 .count {
+  margin-inline-start: calc(var(--unit) * 7);
   color: #e6e6e0;
 }
 

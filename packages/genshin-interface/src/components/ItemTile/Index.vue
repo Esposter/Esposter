@@ -1,16 +1,21 @@
 <script setup lang="ts">
 import { ItemRarityFaceGradientMap } from "#src/services/ItemRarityFaceGradientMap";
+import { ItemRarityQuestFaceGradientMap } from "#src/services/ItemRarityQuestFaceGradientMap";
 
 interface Props {
   // How many of the item, on the strip across the tile's foot: a number, or the range a reward rolls as words ("4~5")
   count: number | string;
   // The count's font size, in the tile's own units (cqh): a screen unit set outside the tile would resolve against the tile
   countSize?: string;
+  // The look the quest screen's reward tiles draw: a face lit by its own gradients, and a translucent count strip.
+  // The game's reward lists' look when none is given
+  variant?: "quest";
   // The item's rarity in stars, which colours the tile
   rarity: number;
 }
 
-const { count, countSize = "30cqh", rarity } = defineProps<Props>();
+const { count, countSize = "30cqh", rarity, variant } = defineProps<Props>();
+const faceGradientMap = computed(() => (variant ? ItemRarityQuestFaceGradientMap : ItemRarityFaceGradientMap));
 </script>
 
 <template>
@@ -20,8 +25,8 @@ const { count, countSize = "30cqh", rarity } = defineProps<Props>();
        tiles, and the Expedition clip's grey tiles, whose items the table gives no stars (rarity zero). A count keeps
        the screen's size rather than the tile's, so each screen passes its own as `countSize`. A two star tile is not
        measured yet and draws bare. The item's own art is the game's and does not ship -->
-  <span class="item-tile" :data-rarity="rarity">
-    <span class="face" :style="{ background: ItemRarityFaceGradientMap[rarity] }">
+  <span class="item-tile" :data-rarity="rarity" :data-variant="variant">
+    <span class="face" :style="{ background: faceGradientMap[rarity] }">
       <span class="count" aria-hidden="true" :style="{ fontSize: countSize }">{{ count }}</span>
     </span>
   </span>
@@ -66,5 +71,10 @@ const { count, countSize = "30cqh", rarity } = defineProps<Props>();
 
 .item-tile[data-rarity="5"] .count {
   background: #6d645c;
+}
+
+/* The quest screen's count strip is a translucent slate over the face, whatever the rarity, so the face shows through */
+.item-tile[data-variant="quest"] .count {
+  background: rgb(70 82 101 / 0.73);
 }
 </style>

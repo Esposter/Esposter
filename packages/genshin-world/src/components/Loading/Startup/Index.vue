@@ -85,8 +85,8 @@ const formatMegabytes = (bytes: number): string => megabyteFormat.value.format(b
       </p>
       <GameButton
         v-if="status === CharacterPackPreloadStatus.Failed"
-        tip=""
         :kind="GameButtonKind.Pill"
+        tip=""
         @click="emit('retry')"
       >
         {{ gameText[GameTextKey.Retry] }}

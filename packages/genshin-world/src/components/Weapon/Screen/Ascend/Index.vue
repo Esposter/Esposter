@@ -53,58 +53,26 @@ const {
     <span class="level-word">{{ gameText[GameTextKey.LevelShort] }}</span> {{ weapon.level }} /
     <span class="next-max">{{ nextMaxLevel }}</span>
   </p>
-  <p class="stat ascend-base-attack">{{ gameText[GameTextKey.AttributeBaseAttack] }}</p>
+  <p class="stat stat-sparkle ascend-base-attack">{{ gameText[GameTextKey.AttributeBaseAttack] }}</p>
   <p class="stat-value base-current">{{ baseAttackText }}</p>
   <span class="arrow" aria-hidden="true" />
   <p class="stat-value base-next">{{ nextBaseAttackText }}</p>
-  <p class="stat ascend-attack">{{ secondaryLabel }}</p>
+  <p class="stat stat-dot ascend-attack">{{ secondaryLabel }}</p>
   <p class="stat-value attack-current">{{ secondaryText }}</p>
   <OrnamentDivider class="divider ascend-divider" is-middle-hidden :opacity="DIVIDER_OPACITY" />
   <span class="stats-rule ascend-stats-rule" aria-hidden="true" />
   <WeaponScreenAscendMaterials :costs :gameText />
 </template>
 
-<style scoped>
-.divider {
-  position: absolute;
-  left: calc(var(--reference-pixel) * 1086);
-  width: calc(var(--reference-pixel) * 738);
-}
+<style scoped src="../../../../styles/weaponScreen.css"></style>
 
+<style scoped>
 .ascend-divider {
   top: calc(var(--reference-pixel) * 190);
 }
 
-/* The rule between two stat rows: a faint hairline with a small star at its middle, which the game sets instead of a divider's ends */
-.stats-rule {
-  position: absolute;
-  left: calc(var(--reference-pixel) * 1100);
-  width: calc(var(--reference-pixel) * 705);
-  height: calc(var(--reference-pixel) * 1);
-  background: rgb(200 196 225 / 0.22);
-}
-
-.stats-rule::before {
-  position: absolute;
-  top: calc(var(--reference-pixel) * -4);
-  left: calc(50% - var(--reference-pixel) * 4);
-  width: calc(var(--reference-pixel) * 9);
-  height: calc(var(--reference-pixel) * 9);
-  background: rgb(200 196 225 / 0.4);
-  clip-path: var(--sparkle-clip-path);
-  content: "";
-}
-
 .ascend-stats-rule {
   top: calc(var(--reference-pixel) * 285);
-}
-
-.stat {
-  position: absolute;
-  margin: 0;
-  color: #efe9f9;
-  font-weight: 600;
-  line-height: 1;
 }
 
 /* Ascend's stat names sit lower, under its level pair, at the sizes their words set */
@@ -156,17 +124,6 @@ const {
   width: calc(var(--reference-pixel) * 33);
 }
 
-/* The stat values the rows read at their right: Ascend's two base ATKs either side of its arrow, and its secondary */
-.stat-value {
-  position: absolute;
-  width: calc(var(--reference-pixel) * 100);
-  margin: 0;
-  color: #efe9f9;
-  font-weight: 600;
-  line-height: 1;
-  text-align: right;
-}
-
 .base-current,
 .base-next {
   top: calc(var(--reference-pixel) * 231);
@@ -207,26 +164,7 @@ const {
   content: "";
 }
 
-/* The marks before the stat names: a sparkle before Base ATK and a dot before the percentage */
-.ascend-base-attack::before {
-  position: absolute;
-  top: calc(var(--reference-pixel) * 2);
-  left: calc(var(--reference-pixel) * -33);
-  width: calc(var(--reference-pixel) * 23);
-  height: calc(var(--reference-pixel) * 23);
-  background: #d9d3ea;
-  clip-path: var(--sparkle-clip-path);
-  content: "";
-}
-
 .ascend-attack::before {
-  position: absolute;
   top: calc(var(--reference-pixel) * 6);
-  left: calc(var(--reference-pixel) * -24);
-  width: calc(var(--reference-pixel) * 9);
-  height: calc(var(--reference-pixel) * 9);
-  border-radius: 50%;
-  background: #aaa3bd;
-  content: "";
 }
 </style>

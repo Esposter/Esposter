@@ -10,6 +10,7 @@ import { QUEST_MARK_MIN_HEIGHT } from "#src/services/quest/constants";
 import { getQuestCounter } from "#src/services/quest/getQuestCounter";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { InputAction } from "genshin-engine";
+import { GAME_ROW_HOVER, GAME_ROW_PRESS, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface/constants";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
@@ -28,6 +29,8 @@ interface Props {
 
 const { gameText, input, mark, quest, questProgress, textMap } = defineProps<Props>();
 const step = computed(() => quest.steps[questProgress?.stepIndex ?? 0]);
+const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
+const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -62,8 +65,10 @@ const step = computed(() => quest.steps[questProgress?.stepIndex ?? 0]);
 /* Provisional: the tracker's width and type, measured off a recording of the English PC client's world HUD with a quest
    Navigated */
 .quest-tracker {
+  position: relative;
   display: flex;
   width: calc(var(--unit) * 360);
+  isolation: isolate;
   flex-direction: column;
   padding: 0;
   border: none;
@@ -75,6 +80,38 @@ const step = computed(() => quest.steps[questProgress?.stepIndex ?? 0]);
   pointer-events: auto;
   text-align: start;
   text-shadow: 0 0 calc(var(--unit) * 4) rgb(0 0 0 / 0.6);
+}
+
+/* Lit as a Row is, a tint laid over the tracker's own box and behind its words: hovered or focused, and a stronger one
+   pressed. Provisional, as the tracker is no list row and no recording shows it lit */
+.quest-tracker::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: calc(var(--unit) * 4);
+  background-color: v-bind(GAME_ROW_HOVER);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity v-bind(restDuration);
+}
+
+.quest-tracker:is(:focus-visible, [data-interaction-state="Hover"] *)::before {
+  opacity: 1;
+  transition-duration: v-bind(hoverDuration);
+}
+
+@media (hover: hover) {
+  .quest-tracker:hover::before {
+    opacity: 1;
+    transition-duration: v-bind(hoverDuration);
+  }
+}
+
+.quest-tracker:is(:active, [data-interaction-state="Pressed"] *)::before {
+  background-color: v-bind(GAME_ROW_PRESS);
+  opacity: 1;
+  transition-duration: 0s;
 }
 
 /* The title is white over a muted yellow underline the width of its words, its cap height 1.23 of the stand-in's at 22 */

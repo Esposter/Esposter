@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import GameButton from "#src/components/GameButton/Index.vue";
+import { GameButtonKind } from "#src/models/GameButtonKind";
 import { CONSTELLATION_NODE_PLACES } from "#src/services/constants";
 
 interface Props {
@@ -8,9 +10,11 @@ interface Props {
   activateLabel: string;
   // Whether activation is refused now, every constellation being active or no Stella Fortuna held
   isActivateDisabled: boolean;
+  // Each constellation's name in the reader's language, in the same order as the activation list
+  names: string[];
 }
 
-const { activated, activateLabel, isActivateDisabled } = defineProps<Props>();
+const { activated, activateLabel, isActivateDisabled, names } = defineProps<Props>();
 const emit = defineEmits<{ activate: [] }>();
 const nodeStyles = CONSTELLATION_NODE_PLACES.map(({ left, top }) => ({
   left: `calc(var(--unit) * ${left})`,
@@ -20,8 +24,8 @@ const nodeStyles = CONSTELLATION_NODE_PLACES.map(({ left, top }) => ({
 
 <template>
   <!-- The Constellation tab's panel: the six constellations down its right, each a ring lit once activated, and the
-       button that activates the next under them while one is left, the game drawing no button once all six are lit. The
-       game's star map is its own art and its names are not decoded yet, so neither is drawn -->
+       button that activates the next under them while one is left, the game drawing no button once all six are lit, and
+       each ring's name written beside it. The game's star map is its own art, so it is not drawn -->
   <div class="constellations">
     <ul class="nodes">
       <li
@@ -30,17 +34,20 @@ const nodeStyles = CONSTELLATION_NODE_PLACES.map(({ left, top }) => ({
         class="node"
         :class="{ lit: isActivated }"
         :style="nodeStyles[index]"
-      />
+      >
+        <span class="name">{{ names[index] }}</span>
+      </li>
     </ul>
-    <button
+    <GameButton
       v-if="activated.includes(false)"
       class="activate"
       :disabled="isActivateDisabled"
-      type="button"
+      :kind="GameButtonKind.Pill"
+      tip=""
       @click="emit('activate')"
     >
       {{ activateLabel }}
-    </button>
+    </GameButton>
   </div>
 </template>
 
@@ -78,6 +85,19 @@ const nodeStyles = CONSTELLATION_NODE_PLACES.map(({ left, top }) => ({
     0 0 calc(var(--unit) * 6) rgb(255 180 40 / 0.6);
 }
 
+/* Each name starts 16 units right of its ring and is centred on the ring's height, wrapping within 240 units */
+.name {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--unit) * 88);
+  width: calc(var(--unit) * 240);
+  color: #ece5d8;
+  font-size: calc(var(--unit) * 24);
+  line-height: calc(var(--unit) * 30);
+  text-align: left;
+  transform: translateY(-50%);
+}
+
 /* Placed under the lowest ring, which ends near 744 units, its place and colours provisional until the Constellation
    tab's frame is measured against the button */
 .activate {
@@ -87,9 +107,6 @@ const nodeStyles = CONSTELLATION_NODE_PLACES.map(({ left, top }) => ({
   height: calc(var(--unit) * 56);
   padding: 0 calc(var(--unit) * 32);
   border: none;
-  border-radius: calc(var(--unit) * 28);
-  background: #ece5d8;
-  color: #3b4255;
   cursor: pointer;
   font: inherit;
   font-size: calc(var(--unit) * 26);

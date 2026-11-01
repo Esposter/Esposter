@@ -1,0 +1,85 @@
+/* The divider under the header, which each mode places at its own height */
+.divider {
+  position: absolute;
+  left: calc(var(--reference-pixel) * 1086);
+  width: calc(var(--reference-pixel) * 738);
+}
+
+/* The rule between two stat rows: a faint hairline with a small star at its middle,
+   which the game sets instead of a divider's ends */
+.stats-rule {
+  position: absolute;
+  left: calc(var(--reference-pixel) * 1100);
+  width: calc(var(--reference-pixel) * 705);
+  height: calc(var(--reference-pixel) * 1);
+  background: rgb(200 196 225 / 0.22);
+}
+
+.stats-rule::before {
+  position: absolute;
+  top: calc(var(--reference-pixel) * -4);
+  left: calc(50% - var(--reference-pixel) * 4);
+  width: calc(var(--reference-pixel) * 9);
+  height: calc(var(--reference-pixel) * 9);
+  background: rgb(200 196 225 / 0.4);
+  clip-path: var(--sparkle-clip-path);
+  content: "";
+}
+
+.stat,
+.stat-value {
+  position: absolute;
+  margin: 0;
+  color: #efe9f9;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* The stat values the rows read at their right, beside their names */
+.stat-value {
+  width: calc(var(--reference-pixel) * 100);
+  text-align: right;
+}
+
+/* The marks before the stat names: a sparkle before Base ATK and a dot before the percentage */
+.stat-sparkle::before {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 2);
+  left: calc(var(--reference-pixel) * -33);
+  width: calc(var(--reference-pixel) * 23);
+  height: calc(var(--reference-pixel) * 23);
+  background: #d9d3ea;
+  clip-path: var(--sparkle-clip-path);
+  content: "";
+}
+
+.stat-dot::before {
+  position: absolute;
+  left: calc(var(--reference-pixel) * -24);
+  width: calc(var(--reference-pixel) * 9);
+  height: calc(var(--reference-pixel) * 9);
+  border-radius: 50%;
+  background: #aaa3bd;
+  content: "";
+}
+
+/* The game's cream pills that show the ores' filter and the Auto Add button, drawn as the game draws them */
+.pill {
+  position: absolute;
+  height: calc(var(--reference-pixel) * 50);
+  border-radius: calc(var(--reference-pixel) * 25);
+  background: #ece5d6;
+  color: #3d3d48;
+  font-size: calc(var(--reference-pixel) * 27);
+  font-weight: 600;
+  line-height: calc(var(--reference-pixel) * 50);
+  text-align: center;
+}
+
+.auto-add {
+  top: calc(var(--reference-pixel) * 527);
+  left: calc(var(--reference-pixel) * 1584);
+  width: calc(var(--reference-pixel) * 216);
+  background: #e0d6ce;
+  line-height: calc(var(--reference-pixel) * 44);
+}

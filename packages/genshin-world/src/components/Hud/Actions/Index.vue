@@ -11,6 +11,7 @@ import { pressCapturedPointer } from "#src/services/hud/pressCapturedPointer";
 import { WeaponTypeGlyphLayersMap } from "#src/services/hud/WeaponTypeGlyphLayersMap";
 import { getActionKeyCode } from "#src/services/shared/getActionKeyCode";
 import { InputAction } from "genshin-engine";
+import { GAME_CREAM, GAME_INK, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -27,6 +28,8 @@ const attackCode = getActionKeyCode(InputAction.NormalAttack);
 const aimCode = getActionKeyCode(InputAction.Aim);
 const jumpCode = getActionKeyCode(InputAction.Jump);
 const sprintCode = getActionKeyCode(InputAction.Sprint);
+const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
+const restDuration = `${INTERACTION_REST_MS}ms`;
 // Each button in the order a reader tabs through them: the key it holds, its glyph's layers, its name in the game's words
 // And the class that places it
 const buttons = computed<{ code: string; glyphLayers: readonly GlyphLayer[]; label: string; name: string }[]>(() => [
@@ -80,7 +83,7 @@ onUnmounted(() => {
   <button
     v-for="{ code, glyphLayers, label, name } of buttons"
     :key="name"
-    :class="['action', name]"
+    :class="['action', 'lit-disc', name]"
     :aria-label="label"
     type="button"
     @blur="input.release(code)"
@@ -101,14 +104,16 @@ onUnmounted(() => {
    Centred on its disc, its side read off the glyph's box against its icon's: the attack's the disc's own, the jump's
    1.26 and the sprint's 0.985 of its icon's 128 pixels, and the aim's the 54 pixels it was measured in */
 .action {
+  --lit-hover-duration: v-bind(hoverDuration);
+  --lit-press-color: v-bind(GAME_CREAM);
+  --lit-rest-duration: v-bind(restDuration);
   position: absolute;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
   background: v-bind(ACTION_BUTTON_BACKGROUND);
-  cursor: inherit;
-  pointer-events: auto;
   touch-action: none;
+}
+
+.action:is(:active, [data-interaction-state="Pressed"] *) .glyph {
+  fill: v-bind(GAME_INK);
 }
 
 .attack {
@@ -144,3 +149,5 @@ onUnmounted(() => {
   bottom: calc(var(--unit) * 62.9);
 }
 </style>
+
+<style scoped src="../../../styles/litDisc.css"></style>

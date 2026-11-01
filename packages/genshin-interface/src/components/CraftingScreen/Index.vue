@@ -3,7 +3,9 @@ import type { CraftingCell } from "#src/models/CraftingCell";
 import type { CraftingMaterial } from "#src/models/CraftingMaterial";
 
 import DiscButton from "#src/components/DiscButton/Index.vue";
+import GameButton from "#src/components/GameButton/Index.vue";
 import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
+import { GameButtonKind } from "#src/models/GameButtonKind";
 
 interface Props {
   // The amount slider's name for assistive tech
@@ -79,18 +81,30 @@ const pickedRecipeName = computed(() => recipes.find((recipe) => recipe.id === r
     </header>
     <ul class="tabs">
       <li v-for="tab of tabs" :key="tab.id">
-        <button class="tab" :aria-pressed="tab.id === tabId" type="button" @click="tabId = tab.id">
+        <GameButton
+          class="tab"
+          :aria-pressed="tab.id === tabId"
+          :kind="GameButtonKind.Row"
+          tip=""
+          @click="tabId = tab.id"
+        >
           <span class="tab-name">{{ tab.name }}</span>
-        </button>
+        </GameButton>
       </li>
     </ul>
     <div class="list">
       <ul class="recipes">
         <li v-for="recipe of recipes" :key="recipe.id">
-          <button class="recipe" :aria-pressed="recipe.id === recipeId" type="button" @click="recipeId = recipe.id">
+          <GameButton
+            class="recipe"
+            :aria-pressed="recipe.id === recipeId"
+            :kind="GameButtonKind.Row"
+            tip=""
+            @click="recipeId = recipe.id"
+          >
             <span class="recipe-name">{{ recipe.name }}</span>
             <span v-if="recipe.count !== undefined" class="recipe-count">{{ recipe.count }}</span>
-          </button>
+          </GameButton>
         </li>
       </ul>
     </div>
@@ -99,14 +113,15 @@ const pickedRecipeName = computed(() => recipes.find((recipe) => recipe.id === r
       <p class="recipe-title">{{ pickedRecipeName }}</p>
       <ul class="crafters">
         <li v-for="crafter of crafters" :key="crafter.id">
-          <button
+          <GameButton
             class="crafter"
             :aria-pressed="crafter.id === crafterId"
-            type="button"
+            :kind="GameButtonKind.Row"
+            tip=""
             @click="crafterId = crafter.id"
           >
             <span class="crafter-name">{{ crafter.name }}</span>
-          </button>
+          </GameButton>
         </li>
       </ul>
       <input
@@ -125,7 +140,7 @@ const pickedRecipeName = computed(() => recipes.find((recipe) => recipe.id === r
           {{ material.owned }} / {{ material.required }}
         </li>
       </ul>
-      <button class="craft" type="button" @click="emit('craft')">{{ craftLabel }}</button>
+      <GameButton class="craft" :kind="GameButtonKind.Row" tip="" @click="emit('craft')">{{ craftLabel }}</GameButton>
     </div>
   </div>
 </template>

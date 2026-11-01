@@ -19,7 +19,7 @@ const emit = defineEmits<{ jump: [] }>();
 </script>
 
 <template>
-  <GameButton class="jump" tip="" :kind="GameButtonKind.Row" @click="emit('jump')">
+  <GameButton class="jump" :kind="GameButtonKind.Row" tip="" @click="emit('jump')">
     <span>{{ areaName }}</span>
     <span class="kind">{{ gameText[computeJumpLandmarkTextKey(landmark)] }}</span>
   </GameButton>

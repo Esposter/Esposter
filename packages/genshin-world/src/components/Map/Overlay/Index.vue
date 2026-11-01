@@ -43,6 +43,7 @@ import { unprojectMapPoint } from "#src/services/map/unprojectMapPoint";
 import { ORIGINAL_RESIN_CAP } from "#src/services/originalResin/constants";
 import { regenerateOriginalResin } from "#src/services/originalResin/regenerateOriginalResin";
 import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { GAME_CREAM, GAME_INK, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface/constants";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
@@ -80,6 +81,8 @@ const {
   wallet,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; jump: [pose: WorldJumpPose] }>();
+const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
+const restDuration = `${INTERACTION_REST_MS}ms`;
 
 // The landmark chosen on the map or in the list, whose teleport panel names its area and jumps there on its Teleport
 // Button alone, so a stray click on the map never teleports
@@ -287,10 +290,12 @@ onMounted(() => {
       <rect class="zoom-track" x="23" :y="MAP_ZOOM_TRACK_TOP" width="10" :height="MAP_ZOOM_TRACK_HEIGHT" rx="5" />
       <path class="zoom-stop" d="M 28 16.5 L 39.5 28 L 28 39.5 L 16.5 28 Z" />
       <path class="zoom-sign" d="M 28 20 V 36 M 20 28 H 36" />
-      <path class="zoom-stop" d="M 28 110.5 L 40.5 123 L 28 135.5 L 15.5 123 Z" />
       <path class="zoom-stop" d="M 28 241.5 L 39.5 253 L 28 264.5 L 16.5 253 Z" />
       <path class="zoom-sign" d="M 20 253 H 36" />
-      <path class="zoom-thumb" d="M 0 -7 L 4 0 L 0 7 L -4 0 Z" :transform="`translate(28 ${zoomThumbY})`" />
+      <g :transform="`translate(28 ${zoomThumbY})`">
+        <path class="zoom-stop" d="M 0 -12.5 L 12.5 0 L 0 12.5 L -12.5 0 Z" />
+        <path class="zoom-star" d="M 0 -6 Q 0.9 -0.9 6 0 Q 0.9 0.9 0 6 Q -0.9 0.9 -6 0 Q -0.9 -0.9 0 -6 Z" />
+      </g>
     </svg>
     <ul class="progress-list">
       <li v-for="{ id, name, progressSegments } of areaProgresses" :key="id">
@@ -337,8 +342,8 @@ onMounted(() => {
       <p class="teleport-place">{{ chosenArea?.name }} - {{ chosenArea?.subregion }}</p>
       <GameButton
         class="teleport"
-        tip=""
         :kind="GameButtonKind.Pill"
+        tip=""
         @click="emit('jump', computeJumpPose(chosenLandmark))"
       >
         {{ gameText[GameTextKey.Teleport] }}
@@ -425,17 +430,17 @@ onMounted(() => {
   stroke-width: 0.8;
 }
 
-.zoom-stop,
-.zoom-thumb {
+.zoom-stop {
   fill: #ede4e0;
   stroke: #111317;
   stroke-width: 1;
   stroke-linejoin: round;
 }
 
-.zoom-thumb {
+/* The thumb is the cream diamond the stops are, with a dark four-pointed star, and stands where the zoom shows: at the
+   reference's 1512 metres that is the middle of the track, so no stop is drawn there */
+.zoom-star {
   fill: #4b5367;
-  stroke: none;
 }
 
 .zoom-sign {
@@ -507,14 +512,44 @@ onMounted(() => {
   font-weight: normal;
 }
 
+/* Its cross is stroked in the text's colour, and lit as a Disc is: hovered or focused, a navy disc behind it, and pressed,
+   the disc cream with the cross ink. Provisional, as no recording shows the close lit */
 .teleport-close {
   display: grid;
   width: calc(var(--unit) * 36);
   height: calc(var(--unit) * 36);
   padding: 0;
   border: 0;
+  border-radius: 50%;
   background: none;
   color: inherit;
+  transition: background-color v-bind(restDuration);
+}
+
+.teleport-close svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 0.26;
+}
+
+.teleport-close:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  background: rgb(30 49 63 / 0.5);
+  transition-duration: v-bind(hoverDuration);
+}
+
+@media (hover: hover) {
+  .teleport-close:hover {
+    background: rgb(30 49 63 / 0.5);
+    transition-duration: v-bind(hoverDuration);
+  }
+}
+
+.teleport-close:is(:active, [data-interaction-state="Pressed"] *) {
+  background: v-bind(GAME_CREAM);
+  color: v-bind(GAME_INK);
+  transition-duration: 0s;
 }
 
 .teleport-place {
@@ -575,14 +610,21 @@ onMounted(() => {
 }
 
 /* Provisional: the resin counter's place, left of the close button, and its type, until a recording of the English PC
-   client's map top bar measures them */
+   client's map top bar measures them. It sits in a dark pill as the reference's top bar does, its middle level with the
+   close button's */
 .resin {
   position: absolute;
-  top: calc(var(--unit) * 40);
+  top: calc(var(--unit) * 26);
   right: calc(var(--unit) * 130);
   display: flex;
+  height: calc(var(--unit) * 44);
+  box-sizing: border-box;
+  align-items: center;
   gap: calc(var(--unit) * 14);
   margin: 0;
+  padding: 0 calc(var(--unit) * 18);
+  border-radius: calc(var(--unit) * 22);
+  background: rgb(24 30 40 / 0.6);
   color: #ece5d7;
   font-size: calc(var(--unit) * 26);
 }
@@ -600,6 +642,9 @@ onMounted(() => {
   background: #ece5d7;
   cursor: inherit;
   place-items: center;
+  transition:
+    background-color v-bind(restDuration),
+    border-color v-bind(restDuration);
 }
 
 .close svg {
@@ -608,5 +653,31 @@ onMounted(() => {
   fill: none;
   stroke: #384150;
   stroke-width: 0.26;
+}
+
+/* Lit as the Pill's ring is, white over its rim and disc, and pressed the disc turns over: ink with its cross cream.
+   Provisional, as no recording shows the close lit */
+.close:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  border-color: #fff;
+  background: #fff;
+  transition-duration: v-bind(hoverDuration);
+}
+
+@media (hover: hover) {
+  .close:hover {
+    border-color: #fff;
+    background: #fff;
+    transition-duration: v-bind(hoverDuration);
+  }
+}
+
+.close:is(:active, [data-interaction-state="Pressed"] *) {
+  border-color: v-bind(GAME_INK);
+  background: v-bind(GAME_INK);
+  transition-duration: 0s;
+}
+
+.close:is(:active, [data-interaction-state="Pressed"] *) svg {
+  stroke: v-bind(GAME_CREAM);
 }
 </style>

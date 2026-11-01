@@ -1,8 +1,5 @@
-import { OrnamentEndSide } from "#src/models/quest/OrnamentEndSide";
 import { QuestCategory } from "#src/models/quest/QuestCategory";
 
-// The two ends of a rule's ornament, in the order they are drawn
-export const ORNAMENT_END_SIDES: readonly OrnamentEndSide[] = [OrnamentEndSide.Left, OrnamentEndSide.Right];
 // The quest screen's tabs after its first, which lists every quest, in the order the game draws them and its list's
 // Headings run
 export const QUEST_CATEGORIES: readonly QuestCategory[] = [
@@ -24,3 +21,5 @@ export const QUEST_BEAM_TOP = 1000;
 // Tracker names it higher or lower. No reference shows the line at a small height, so it is a climb's height rather than
 // A step's
 export const QUEST_MARK_MIN_HEIGHT = 10;
+// The translucent white the quest screen's shared ornament dividers are filled with
+export const QUEST_DIVIDER_FILL = "rgb(255 255 255 / 0.3)";

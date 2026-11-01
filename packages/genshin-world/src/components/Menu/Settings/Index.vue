@@ -19,7 +19,15 @@ import { SettingsTabSectionsMap } from "#src/services/menu/SettingsTabSectionsMa
 import { snapToRange } from "#src/services/menu/snapToRange";
 import { getResultAsync } from "@esposter/shared";
 import { useResizeObserver, watchImmediate } from "@vueuse/core";
-import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import {
+  GAME_ROW_HOVER,
+  GAME_ROW_PRESS,
+  GameButton,
+  GameButtonKind,
+  GameScreen,
+  INTERACTION_HOVER_MS,
+  INTERACTION_REST_MS,
+} from "genshin-interface";
 import {
   fillGameTextValues,
   GameLanguages,
@@ -42,6 +50,8 @@ const settings = defineModel<GenshinSettings>("settings", { required: true });
 const tab = defineModel<SettingsTab>("tab", { default: SettingsTab.Graphics });
 const { defaultQualityTier, gameText, language } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
+const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
+const restDuration = `${INTERACTION_REST_MS}ms`;
 // The close mark's box and glyph, each one object the button and its mark keep rather than a fresh one per render
 const closeStyle = getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Close]);
 const closeGlyph = { ...MenuFrameGlyphMap[MenuFrameIcon.Close], x: 0, y: 0 };
@@ -184,10 +194,10 @@ onMounted(() => {
     </p>
     <GameButton
       class="close"
-      tip=""
       :aria-label="shownGameText[GameTextKey.Back]"
       :kind="GameButtonKind.Disc"
       :style="closeStyle"
+      tip=""
       @click="emit('close')"
     >
       <MenuGlyph :glyph="closeGlyph" class="close-glyph" />
@@ -197,12 +207,12 @@ onMounted(() => {
         v-for="settingsTab of SETTINGS_TABS"
         :key="settingsTab"
         class="tab"
-        :class="{ dimmed: SETTINGS_DIMMED_TABS.includes(settingsTab) }"
-        role="tab"
-        tip=""
         :aria-selected="settingsTab === tab"
+        :class="{ dimmed: SETTINGS_DIMMED_TABS.includes(settingsTab) }"
         :disabled="!SettingsTabSectionsMap[settingsTab]"
         :kind="GameButtonKind.Row"
+        role="tab"
+        tip=""
         @click="tab = settingsTab"
       >
         <svg v-if="settingsTab === tab" class="selected-bullet" aria-hidden="true" viewBox="0 0 28 28">
@@ -260,13 +270,14 @@ onMounted(() => {
                   <span class="knob" :style="{ left: `${getTrackShare(row) * 100}%` }" />
                 </div>
               </template>
-              <button
+              <GameButton
                 v-else
                 class="choice"
-                :aria-label="shownGameText[row.labelKey]"
                 :aria-expanded="checkIsListRow(row) ? openedList === row.kind : undefined"
+                :aria-label="shownGameText[row.labelKey]"
                 :disabled="!checkIsActiveRow(row)"
-                type="button"
+                :kind="GameButtonKind.Row"
+                tip=""
                 @click="row.kind === SettingsRowKind.Toggle ? flipToggle(row.setting) : toggleList(row.kind)"
               >
                 <svg class="star" aria-hidden="true" viewBox="0 0 48 48">
@@ -289,7 +300,7 @@ onMounted(() => {
                   <path class="arrow" d="M 8.5 7 L 17 12.5 L 8.5 18 L 10.5 12.5 Z" />
                 </svg>
                 <span v-else class="caret" />
-              </button>
+              </GameButton>
             </div>
             <div
               v-if="openedList === row.kind"
@@ -300,7 +311,7 @@ onMounted(() => {
               <button
                 v-for="option of openedOptions"
                 :key="option.label"
-                class="option"
+                class="option row-tint"
                 role="option"
                 type="button"
                 :aria-selected="option.isSelected"
@@ -520,6 +531,9 @@ onMounted(() => {
   border-radius: calc(var(--unit) * 28);
   background: rgb(240 231 215 / 0.78);
   box-shadow: 0 0 calc(var(--unit) * 3) rgb(0 0 0 / 0.15);
+  --lit-shadow:
+    0 0 calc(var(--unit) * 1.5) calc(var(--unit) * 1) rgb(255 255 255 / 0.9),
+    inset 0 0 calc(var(--unit) * 1.5) calc(var(--unit) * 1) rgb(255 255 255 / 0.6);
   color: #4b4d54;
   font-size: calc(var(--unit) * 27);
   font-weight: 600;
@@ -528,12 +542,16 @@ onMounted(() => {
 }
 
 /* Provisional: the white rim a row takes under the pointer or the keyboard's focus, about 4 across and centred on its
-   Edge, read off the clip's rows lit one at a time from 176 to 179 seconds */
-.row:hover,
+   Edge, read off the clip's rows lit one at a time from 176 to 179 seconds. A pointer's hover is guarded by
+   `(hover: hover)`, so a touch screen leaves no rim after a tap */
+@media (hover: hover) {
+  .row:hover {
+    box-shadow: var(--lit-shadow);
+  }
+}
+
 .row:focus-within {
-  box-shadow:
-    0 0 calc(var(--unit) * 1.5) calc(var(--unit) * 1) rgb(255 255 255 / 0.9),
-    inset 0 0 calc(var(--unit) * 1.5) calc(var(--unit) * 1) rgb(255 255 255 / 0.6);
+  box-shadow: var(--lit-shadow);
 }
 
 .label {
@@ -701,7 +719,13 @@ onMounted(() => {
   gap: calc(var(--unit) * 8);
 }
 
+/* Provisional: an option is lit as a row is, a tint over its box behind its words (`rowTint.css`), hovered or
+   Focused, and pressed at once. The chosen option keeps its own tan, which the tint does not hold */
 .option {
+  --row-press: v-bind(GAME_ROW_PRESS);
+  --row-tint: v-bind(GAME_ROW_HOVER);
+  --state-duration: v-bind(restDuration);
+  position: relative;
   height: calc(var(--unit) * 56);
   padding: 0 calc(var(--unit) * 29);
   border: none;
@@ -714,6 +738,20 @@ onMounted(() => {
   font-weight: 600;
   letter-spacing: calc(var(--unit) * 1);
   text-align: start;
+}
+
+.option:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  --state-duration: v-bind(hoverDuration);
+}
+
+@media (hover: hover) {
+  .option:enabled:hover {
+    --state-duration: v-bind(hoverDuration);
+  }
+}
+
+.option:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
+  --state-duration: 0s;
 }
 
 .option[aria-selected="true"] {
@@ -730,3 +768,5 @@ onMounted(() => {
   outline-offset: calc(var(--unit) * 4);
 }
 </style>
+
+<style scoped src="genshin-interface/styles/rowTint.css"></style>

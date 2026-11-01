@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { InventoryCell } from "#src/models/InventoryCell";
 
+import GameButton from "#src/components/GameButton/Index.vue";
+import RarityStars from "#src/components/RarityStars/Index.vue";
+import { GameButtonKind } from "#src/models/GameButtonKind";
+
 interface Props {
   // The entry the cell shows, its name, rarity and caption
   cell: InventoryCell;
@@ -15,18 +19,19 @@ const { cell, isDestroying, isShown } = defineProps<Props>();
 </script>
 
 <template>
-  <button
+  <GameButton
     class="cell"
     :aria-label="cell.name"
     :aria-pressed="isDestroying ? Boolean(cell.isSelected) : isShown"
     :data-rarity="cell.rarity"
     :data-selected="cell.isSelected || undefined"
-    type="button"
+    :kind="GameButtonKind.Row"
+    tip=""
     @click="isDestroying && cell.isDestroyable ? emit('choose', cell.id) : emit('select', cell.id)"
   >
-    <span class="stars" aria-hidden="true">{{ "★".repeat(cell.rarity) }}</span>
+    <RarityStars class="stars" aria-hidden="true" color="var(--rarity-gold)" :rarity="cell.rarity" />
     <span class="caption">{{ cell.caption }}</span>
-  </button>
+  </GameButton>
 </template>
 
 <style scoped>
@@ -55,7 +60,6 @@ const { cell, isDestroying, isShown } = defineProps<Props>();
   right: 0;
   bottom: calc(var(--unit) * 21);
   left: 0;
-  color: #f5c542;
   font-size: calc(var(--unit) * 19);
   letter-spacing: calc(var(--unit) * 1);
   line-height: calc(var(--unit) * 22);

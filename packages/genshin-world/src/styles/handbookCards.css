@@ -74,6 +74,29 @@
   cursor: pointer;
 }
 
+/* Lit as a row is, a tint over the green's own box behind its words: on a pointer's hover only, so a tap leaves none, and on
+   focus or the forced hover; pressed at once. The two tints are GAME_ROW_HOVER and GAME_ROW_PRESS of genshin-interface's
+   constants, restated because this sheet is plain CSS. Provisional, as no recording shows one under the pointer */
+@media (hover: hover) {
+  .commission-claim:enabled:hover,
+  .encounter-points-use:enabled:hover,
+  .domain-action:enabled:hover {
+    background-image: linear-gradient(rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.2));
+  }
+}
+
+.commission-claim:enabled:is(:focus-visible, [data-interaction-state="Hover"] *),
+.encounter-points-use:enabled:is(:focus-visible, [data-interaction-state="Hover"] *),
+.domain-action:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  background-image: linear-gradient(rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.2));
+}
+
+.commission-claim:enabled:is(:active, [data-interaction-state="Pressed"] *),
+.encounter-points-use:enabled:is(:active, [data-interaction-state="Pressed"] *),
+.domain-action:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+  background-image: linear-gradient(rgb(255 255 255 / 0.3), rgb(255 255 255 / 0.3));
+}
+
 .commission-check {
   position: absolute;
   top: calc(var(--reference-pixel) * 74);

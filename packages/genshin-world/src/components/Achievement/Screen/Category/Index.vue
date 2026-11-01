@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { AchievementCategory } from "#src/models/achievement/AchievementCategory";
 
+import { GAME_ROW_HOVER, GAME_ROW_PRESS } from "genshin-interface";
+
 interface Props {
   // The category the row names, which the list selects when the row is pressed
   category: AchievementCategory;
@@ -39,6 +41,23 @@ const emit = defineEmits<{ select: [] }>();
   font: inherit;
   text-align: left;
   cursor: inherit;
+}
+
+/* Lit as a row is, a tint over its own box behind its words, the selected one too: on a pointer's hover only, so a tap
+   leaves none, and on focus or the forced hover; pressed at once. Provisional, as no recording shows a category under the
+   pointer */
+@media (hover: hover) {
+  .category:enabled:hover {
+    background-image: linear-gradient(v-bind(GAME_ROW_HOVER), v-bind(GAME_ROW_HOVER));
+  }
+}
+
+.category:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  background-image: linear-gradient(v-bind(GAME_ROW_HOVER), v-bind(GAME_ROW_HOVER));
+}
+
+.category:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+  background-image: linear-gradient(v-bind(GAME_ROW_PRESS), v-bind(GAME_ROW_PRESS));
 }
 
 .category[aria-selected="true"] {

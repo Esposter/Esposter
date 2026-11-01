@@ -48,6 +48,8 @@ interface Props {
   characterTalentKits: CharacterTalentKit[];
   // The Companionship EXP each character has earned, by its id, from which its Friendship Level is read
   companionshipExpMap?: ReadonlyMap<number, number>;
+  // The Friendship Level each character has reached, by its id, which its Attributes tab's Friendship row shows
+  friendshipLevelMap?: ReadonlyMap<number, number>;
   // Where the host serves the game's published data, which the Profile tab reads its character's record from
   gameDataBaseUrl: string;
   // The game's words in the reader's language
@@ -74,6 +76,8 @@ interface Props {
   travelerBonusLines: AttributeLine[];
   // The element the Traveler holds from the statue it resonated with last, none before any resonance
   travelerElement?: Element;
+  // The player's UID, which the Attributes tab draws at the foot of the frame, none until the host gives it
+  uid?: number;
 }
 
 // What the host lays behind the screen, the scene the open tab is shown over, and over it for the character it shows,
@@ -88,6 +92,7 @@ const {
   characterIdConstellationsMap,
   characterTalentKits,
   companionshipExpMap = new Map<number, number>(),
+  friendshipLevelMap = new Map<number, number>(),
   gameDataBaseUrl,
   gameText,
   initialTab,
@@ -101,6 +106,7 @@ const {
   talentUpgradeMap,
   travelerBonusLines,
   travelerElement,
+  uid,
 } = defineProps<Props>();
 // The player's characters, across the screen's top in the order given, a character's activated constellation and a
 // Talent's raised level written back into them
@@ -174,6 +180,7 @@ const tabLabels = computed(() =>
         :adventure-rank
         :character
         :character-name="characterName"
+        :friendship-level="friendshipLevelMap.get(character.id)"
         :game-text
         :material-data-map
         :max-stamina
@@ -209,6 +216,7 @@ const tabLabels = computed(() =>
         :character
         :character-id-constellations-map
         :game-text
+        :name-text
       />
       <CharacterScreenTalents
         v-else-if="character && tab === CharacterMenuTab.Talents"
@@ -261,6 +269,9 @@ const tabLabels = computed(() =>
     <p v-if="tab === CharacterMenuTab.Attributes" class="training-guide cream-pill">
       {{ gameText[GameTextKey.TrainingGuide] }}
     </p>
+    <p v-if="uid !== undefined && tab === CharacterMenuTab.Attributes" class="uid">
+      {{ gameText[GameTextKey.Uid] }}: {{ uid }}
+    </p>
     <CloseButton
       class="close"
       :label="gameText[GameTextKey.Back]"
@@ -306,6 +317,19 @@ const tabLabels = computed(() =>
   margin: 0;
   padding: 0 calc(var(--unit) * 26);
   line-height: calc(var(--unit) * 49);
+}
+
+/* The UID at the frame's foot, its right edge 150 units in from the frame's right and its line centred 1065 units down,
+   measured off the reference frame (`references/character-attributes.png`, 0.75 units a pixel at 1440 high) */
+.uid {
+  position: absolute;
+  top: calc(var(--unit) * 1052);
+  right: calc(var(--unit) * 150);
+  margin: 0;
+  color: #ece5d8;
+  font-size: calc(var(--unit) * 22);
+  font-weight: 600;
+  line-height: calc(var(--unit) * 26);
 }
 
 /* The way back's centre is 49 units from the top and 149 from the right, off the English client's character screen at

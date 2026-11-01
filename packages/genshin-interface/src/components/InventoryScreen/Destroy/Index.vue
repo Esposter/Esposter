@@ -2,6 +2,9 @@
 import type { InventoryCell } from "#src/models/InventoryCell";
 import type { InventoryQuickSelect } from "#src/models/InventoryQuickSelect";
 
+import GameButton from "#src/components/GameButton/Index.vue";
+import { GameButtonKind } from "#src/models/GameButtonKind";
+
 interface Props {
   // The Destroy button that opens the dialog, and the dialog's own OK that destroys the chosen entries
   destroyButtonLabel: string;
@@ -39,15 +42,27 @@ const {
     <p v-if="selectedCell && !selectedCell.isDestroyable" class="destroy-cannot">{{ destroyCannotLabel }}</p>
     <ul class="quick-selects">
       <li v-for="{ label, rarity } of quickSelects" :key="rarity">
-        <button class="quick-select" :data-rarity="rarity" type="button" @click="emit('quickSelect', rarity)">
+        <GameButton
+          class="translucent-button"
+          :data-rarity="rarity"
+          :kind="GameButtonKind.Row"
+          tip=""
+          @click="emit('quickSelect', rarity)"
+        >
           {{ label }}
-        </button>
+        </GameButton>
       </li>
     </ul>
     <p class="destroy-count">{{ destroySelectedLabel }}</p>
-    <button class="destroy-button" :disabled="!destroyNames.length" type="button" @click="emit('destroy')">
+    <GameButton
+      class="destroy-button translucent-button"
+      :disabled="!destroyNames.length"
+      :kind="GameButtonKind.Row"
+      tip=""
+      @click="emit('destroy')"
+    >
       {{ destroyButtonLabel }}
-    </button>
+    </GameButton>
   </section>
 </template>
 
@@ -88,17 +103,9 @@ const {
   list-style: none;
 }
 
-.quick-select,
-.destroy-button {
-  padding: calc(var(--unit) * 10) calc(var(--unit) * 20);
-  border: none;
-  border-radius: calc(var(--unit) * 8);
-  background: rgb(255 255 255 / 0.14);
-  color: inherit;
-  font: inherit;
-}
-
 .destroy-button:disabled {
   opacity: 0.4;
 }
 </style>
+
+<style scoped src="../../../styles/translucentButton.css"></style>

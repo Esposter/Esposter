@@ -5,10 +5,13 @@ import type { ExpeditionPin } from "#src/models/ExpeditionPin";
 import type { ExpeditionPlaceDetail } from "#src/models/ExpeditionPlaceDetail";
 
 import CloseButton from "#src/components/CloseButton/Index.vue";
+import GameButton from "#src/components/GameButton/Index.vue";
 import ItemTile from "#src/components/ItemTile/Index.vue";
 import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
 import { ExpeditionActionKind } from "#src/models/ExpeditionActionKind";
+import { GameButtonKind } from "#src/models/GameButtonKind";
+import { GAME_CREAM } from "#src/services/constants";
 
 interface Props {
   // The characters the picker lists in the game's order, a character away from home shown with its status and not sent
@@ -70,11 +73,17 @@ const act = () => {
     <CloseButton class="close" :label="closeLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
     <ul class="nations">
       <li v-for="{ hasAlert, name } of nations" :key="name">
-        <button class="nation" :aria-pressed="name === nation" type="button" @click="nation = name">
+        <GameButton
+          class="nation"
+          :aria-pressed="name === nation"
+          :kind="GameButtonKind.Row"
+          tip=""
+          @click="nation = name"
+        >
           <span class="marker" aria-hidden="true" />
           <span>{{ name }}</span>
           <span v-if="hasAlert" class="alert" aria-hidden="true">!</span>
-        </button>
+        </GameButton>
       </li>
     </ul>
     <ul class="pins">
@@ -98,9 +107,14 @@ const act = () => {
       <p v-if="detail.statusLabel" class="status">{{ detail.statusLabel }}</p>
       <ul v-else class="durations">
         <li v-for="{ hours: durationHours, label } of detail.durations" :key="durationHours">
-          <button :aria-pressed="durationHours === hours" type="button" @click="emit('update:hours', durationHours)">
+          <GameButton
+            :aria-pressed="durationHours === hours"
+            :kind="GameButtonKind.Row"
+            tip=""
+            @click="emit('update:hours', durationHours)"
+          >
             {{ label }}
-          </button>
+          </GameButton>
         </li>
       </ul>
     </section>
@@ -109,10 +123,11 @@ const act = () => {
       <ul>
         <li v-for="{ bonusLabel, id, label, statusLabel } of characters" :key="id">
           <!-- The character picked sends the place's expedition for the duration picked, and closes the picker -->
-          <button
+          <GameButton
             class="character"
             :disabled="statusLabel !== ''"
-            type="button"
+            :kind="GameButtonKind.Row"
+            tip=""
             @click="
               () => {
                 picking = false;
@@ -123,14 +138,14 @@ const act = () => {
             <span class="character-name">{{ label }}</span>
             <span class="character-bonus">{{ bonusLabel }}</span>
             <span v-if="statusLabel" class="character-status">{{ statusLabel }}</span>
-          </button>
+          </GameButton>
         </li>
       </ul>
     </section>
-    <button v-if="detail" class="action" type="button" @click="act()">
+    <GameButton v-if="detail" class="action" :kind="GameButtonKind.Row" tip="" @click="act()">
       <span class="ring" aria-hidden="true" />
       <span>{{ detail.actionLabel }}</span>
-    </button>
+    </GameButton>
   </div>
 </template>
 
@@ -288,9 +303,28 @@ const act = () => {
   font: inherit;
   font-size: calc(var(--unit) * 48);
   line-height: calc(var(--unit) * 72);
-  box-shadow:
-    inset 0 0 0 calc(var(--unit) * 4) #fbfbfb,
-    0 calc(var(--unit) * 4) calc(var(--unit) * 8) rgb(0 0 0 / 0.3);
+  --pin-rest-shadow:
+    inset 0 0 0 calc(var(--unit) * 4) #fbfbfb, 0 calc(var(--unit) * 4) calc(var(--unit) * 8) rgb(0 0 0 / 0.3);
+  --pin-lit-shadow: var(--pin-rest-shadow), 0 0 0 calc(var(--unit) * 3) rgb(30 49 63 / 0.5);
+  box-shadow: var(--pin-rest-shadow);
+}
+
+/* A pin is lit as a disc is lit: a navy halo a unit and a half out from its rim on hover and focus, and its press a cream
+   fill. Provisional, as no recording shows a pin under the pointer; the pin's own brackets and pointer keep their pseudo-elements */
+.pin:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  outline: none;
+  box-shadow: var(--pin-lit-shadow);
+}
+
+@media (hover: hover) {
+  .pin:enabled:hover {
+    outline: none;
+    box-shadow: var(--pin-lit-shadow);
+  }
+}
+
+.pin:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+  background: v-bind(GAME_CREAM);
 }
 
 /* The plus is two bars of 40 by 7 in the game's grey, centred on the pin */

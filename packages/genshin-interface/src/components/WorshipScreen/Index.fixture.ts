@@ -1,22 +1,23 @@
-// A region's three levels, one claimed, one claimable and one still locked, with two Oculi held toward the next level
+// The second level of a region, locked and with no Anemoculus held toward it, as the statue-worship reference shows it
 import { WorshipLevelState } from "#src/models/WorshipLevelState";
 
 export const props = {
   blessingTitle: "Sample Blessing",
   closeLabel: "Back",
-  heldCount: 2,
-  levels: [
-    { level: 1, oculusCount: 1, rewards: [{ count: 2, name: "Sample Ore" }], state: WorshipLevelState.Claimed },
-    {
-      level: 2,
-      oculusCount: 2,
-      rewards: [
-        { count: 1, name: "Sample Ore" },
-        { count: 3, name: "Sample Coin" },
-      ],
-      state: WorshipLevelState.Claimable,
-    },
-    { level: 3, oculusCount: 3, rewards: [{ count: 1, name: "Sample Gem" }], state: WorshipLevelState.Locked },
-  ],
-  title: "Sample Worship",
+  heldCount: 0,
+  level: {
+    level: 2,
+    oculus: { count: 2, name: "Anemoculus" },
+    rewards: [
+      { count: 120, name: "Adventure EXP" },
+      { count: 10, name: "Primogem" },
+      { count: 5, name: "Anemo Sigil" },
+    ],
+    staminaShare: 7,
+    state: WorshipLevelState.Locked,
+  },
+  levelLabel: "Lv.",
+  requiredLabel: "Required",
+  staminaLabel: "Stamina",
+  title: "Worship Statue",
 };

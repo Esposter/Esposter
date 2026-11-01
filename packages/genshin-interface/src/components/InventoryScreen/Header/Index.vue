@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { ItemCategory } from "#src/models/ItemCategory";
 
+import GameButton from "#src/components/GameButton/Index.vue";
+import { GameButtonKind } from "#src/models/GameButtonKind";
 import { ItemCategories } from "#src/models/ItemCategory";
 import { ItemCategoryGlyphMap } from "#src/services/ItemCategoryGlyphMap";
 
@@ -21,22 +23,27 @@ const emit = defineEmits<{ close: [] }>();
   <!-- The head bar: the tabs across it in the game's order, the open tab's room beside the way back -->
   <ul class="tabs">
     <li v-for="itemCategory of ItemCategories" :key="itemCategory">
-      <button
+      <GameButton
         class="tab"
         :aria-label="tabLabels[itemCategory]"
         :aria-pressed="itemCategory === category"
         :data-category="itemCategory"
-        type="button"
+        :kind="GameButtonKind.Row"
+        tip=""
         @click="category = itemCategory"
       >
         <svg v-if="ItemCategoryGlyphMap[itemCategory]" viewBox="0 0 144 144" aria-hidden="true">
           <path :d="ItemCategoryGlyphMap[itemCategory]" />
         </svg>
-      </button>
+      </GameButton>
     </li>
   </ul>
   <p class="capacity">{{ capacity }}</p>
-  <button class="back" :aria-label="backLabel" type="button" @click="emit('close')" />
+  <GameButton class="back" :aria-label="backLabel" :kind="GameButtonKind.Row" tip="" @click="emit('close')">
+    <svg class="back-glyph" viewBox="0 0 56 56" aria-hidden="true">
+      <path d="M19.5 19.5 36.5 36.5M36.5 19.5 19.5 36.5" />
+    </svg>
+  </GameButton>
 </template>
 
 <style scoped>
@@ -105,20 +112,17 @@ const emit = defineEmits<{ close: [] }>();
   background: #ece3d8;
 }
 
-.back::before,
-.back::after {
+/* The way back's cross, two round-ended bars of 28 units at 45 degrees, drawn as strokes so the button's own lit look
+   does not take the bars' pseudo-elements */
+.back-glyph {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(var(--unit) * 28);
-  height: calc(var(--unit) * 4);
-  border-radius: calc(var(--unit) * 2);
-  background: #3b4255;
-  content: "";
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.back::after {
-  transform: translate(-50%, -50%) rotate(-45deg);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: #3b4255;
+  stroke-linecap: round;
+  stroke-width: 4;
 }
 </style>

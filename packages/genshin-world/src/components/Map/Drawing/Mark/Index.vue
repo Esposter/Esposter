@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Landmark } from "#src/models/world/Landmark";
 
+import { GAME_CREAM, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface/constants";
+
 interface Props {
   // The landmark the mark stands on, drawn at its place in the catalogue's metres
   landmark: Landmark;
@@ -10,6 +12,8 @@ interface Props {
 
 const { landmark, markRadius } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
+const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
+const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -17,12 +21,27 @@ const emit = defineEmits<{ select: [] }>();
 </template>
 
 <style scoped>
-/* Provisional: the map's colours, measured off the game's map with the HUD's reference */
+/* Provisional: the map's colours, measured off the game's map with the HUD's reference. Hovered, the fill lightens toward
+   white, and pressed it turns cream as a Disc's press does: no recording shows a mark lit. A mark is a drawing in the
+   map's own SVG, so it takes no keyboard focus; the map's jump list is its keyboard route */
 .mark {
   fill: rgb(96 178 196);
   stroke: #fff;
   stroke-width: 2;
   cursor: inherit;
+  transition: fill v-bind(restDuration);
   vector-effect: non-scaling-stroke;
+}
+
+@media (hover: hover) {
+  .mark:hover {
+    fill: color-mix(in srgb, rgb(96 178 196) 60%, #fff);
+    transition-duration: v-bind(hoverDuration);
+  }
+}
+
+.mark:active {
+  fill: v-bind(GAME_CREAM);
+  transition-duration: 0s;
 }
 </style>

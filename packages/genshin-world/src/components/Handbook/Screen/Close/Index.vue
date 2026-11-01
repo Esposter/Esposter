@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
 
+import { GAME_CREAM, GAME_GOLD } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -51,5 +52,24 @@ const emit = defineEmits<{ close: [] }>();
   height: calc(var(--reference-pixel) * 67);
   fill: #d4bfb3;
   stroke: #d4bfb3;
+}
+
+/* The cross turns cream when a pointer hovers it (only a pointer's, so a tap leaves none) or focus lights it, as a Disc's
+   icon does, and gold while pressed. Provisional, as no recording shows this cross under the pointer */
+@media (hover: hover) {
+  .close:enabled:hover svg {
+    fill: v-bind(GAME_CREAM);
+    stroke: v-bind(GAME_CREAM);
+  }
+}
+
+.close:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) svg {
+  fill: v-bind(GAME_CREAM);
+  stroke: v-bind(GAME_CREAM);
+}
+
+.close:enabled:is(:active, [data-interaction-state="Pressed"] *) svg {
+  fill: v-bind(GAME_GOLD);
+  stroke: v-bind(GAME_GOLD);
 }
 </style>

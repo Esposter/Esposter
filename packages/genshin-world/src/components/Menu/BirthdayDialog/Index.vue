@@ -49,9 +49,9 @@ const confirmSegments = computed(() => {
         v-for="monthChoice of BIRTHDAY_MONTHS"
         :key="monthChoice"
         class="month"
-        tip=""
         :aria-pressed="monthChoice === month"
         :kind="GameButtonKind.Row"
+        tip=""
         @click="
           () => {
             month = monthChoice;
@@ -67,9 +67,9 @@ const confirmSegments = computed(() => {
         v-for="dayChoice of days"
         :key="dayChoice"
         class="day"
-        tip=""
         :aria-pressed="dayChoice === day"
         :kind="GameButtonKind.Row"
+        tip=""
         @click="day = dayChoice"
       >
         {{ dayChoice }}
@@ -82,18 +82,18 @@ const confirmSegments = computed(() => {
     <div class="actions">
       <GameButton
         class="confirm-button"
-        tip=""
         :disabled="!birthday"
         :kind="GameButtonKind.Pill"
+        tip=""
         @click="birthday && emit('confirm', birthday)"
       >
         {{ gameText[GameTextKey.Confirm] }}
       </GameButton>
       <GameButton
         class="close"
-        tip=""
         :aria-label="gameText[GameTextKey.Back]"
         :kind="GameButtonKind.Plain"
+        tip=""
         @click="emit('close')"
       >
         <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Close]" />

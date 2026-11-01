@@ -2,6 +2,7 @@
 import type { QuestChapter } from "#src/models/quest/QuestChapter";
 import type { GameText } from "genshin-text";
 
+import { ItemTile } from "genshin-interface";
 import { GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
@@ -22,8 +23,8 @@ const rewardsCaptionSegments = computed(() => splitGameTextColors(gameText[GameT
     <span v-for="({ color, text }, index) of rewardsCaptionSegments" :key="index" :style="{ color }">{{ text }}</span>
   </p>
   <ul class="rewards">
-    <li v-for="{ count, itemId, rarity } of chapter.rewards" :key="itemId" class="reward" :data-rarity="rarity">
-      <span class="reward-count">{{ count }}</span>
+    <li v-for="{ count, itemId, rarity } of chapter.rewards" :key="itemId" class="reward">
+      <ItemTile class="reward-tile" count-size="21.28cqh" :count :rarity variant="quest" />
     </li>
   </ul>
 </template>
@@ -64,36 +65,15 @@ const rewardsCaptionSegments = computed(() => splitGameTextColors(gameText[GameT
   list-style: none;
 }
 
-/* A tile shaded by its item's rarity, three stars and under in blue, four in purple and five in gold, its count on a
-   Band along its foot */
+/* Each reward is the shared item tile in the quest's look, its box the reward's 94 units, its count 20 units high */
 .reward {
-  position: relative;
+  display: flex;
   width: calc(var(--unit) * 94);
   height: calc(var(--unit) * 94);
-  overflow: hidden;
-  border-radius: calc(var(--unit) * 6);
-  background: linear-gradient(#5a698f, #5482aa);
 }
 
-.reward[data-rarity="4"] {
-  background: linear-gradient(#666094, #8870b3);
-}
-
-.reward[data-rarity="5"] {
-  background: linear-gradient(#9e6a3c, #ba7831);
-}
-
-.reward-count {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: calc(var(--unit) * 23);
-  background: rgb(70 82 101 / 0.73);
-  color: #fff;
-  font-size: calc(var(--unit) * 20);
-  font-weight: 600;
-  line-height: calc(var(--unit) * 23);
-  text-align: center;
+.reward-tile {
+  width: 100%;
+  height: 100%;
 }
 </style>

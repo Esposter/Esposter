@@ -3,9 +3,11 @@ import type { ForgeQueueCell } from "#src/models/ForgeQueueCell";
 import type { ForgeRecipeCell } from "#src/models/ForgeRecipeCell";
 
 import CloseButton from "#src/components/CloseButton/Index.vue";
+import GameButton from "#src/components/GameButton/Index.vue";
 import TwoColumnScreen from "#src/components/TwoColumnScreen/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
 import { ForgeTab } from "#src/models/ForgeTab";
+import { GameButtonKind } from "#src/models/GameButtonKind";
 
 interface Props {
   // The amount slider's name for assistive tech, the game's "Amount" line
@@ -38,6 +40,8 @@ interface Props {
   refusalLabel: string;
   // The coins the selected recipe costs for its amount
   requiredCoins: number;
+  // The Required line's label, the game's "Required", set over the coins
+  requiredLabel: string;
   startLabel: string;
   supportLabel: string;
   // The title the game shows over the screen
@@ -66,6 +70,7 @@ const {
   recipes,
   refusalLabel,
   requiredCoins,
+  requiredLabel,
   startLabel,
   supportLabel,
   title,
@@ -84,29 +89,42 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
     <header class="head">
       <p class="title" role="heading" aria-level="1">{{ title }}</p>
       <div class="tabs">
-        <button class="tab" :aria-pressed="tab === ForgeTab.Materials" type="button" @click="tab = ForgeTab.Materials">
+        <GameButton
+          class="tab"
+          :aria-pressed="tab === ForgeTab.Materials"
+          :kind="GameButtonKind.Row"
+          tip=""
+          @click="tab = ForgeTab.Materials"
+        >
           {{ materialsLabel }}
-        </button>
-        <button class="tab" :aria-pressed="tab === ForgeTab.Queues" type="button" @click="tab = ForgeTab.Queues">
+        </GameButton>
+        <GameButton
+          class="tab"
+          :aria-pressed="tab === ForgeTab.Queues"
+          :kind="GameButtonKind.Row"
+          tip=""
+          @click="tab = ForgeTab.Queues"
+        >
           {{ queuesLabel }}
-        </button>
+        </GameButton>
       </div>
       <p class="coins">{{ coins }}</p>
       <CloseButton class="close" :label="closeLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
     </header>
     <ul v-if="tab === ForgeTab.Materials" class="recipes">
       <li v-for="recipe of recipes" :key="recipe.id">
-        <button
+        <GameButton
           class="recipe"
           :aria-pressed="recipe.id === recipeId"
           :disabled="!recipe.isOpen"
-          type="button"
+          :kind="GameButtonKind.Row"
+          tip=""
           @click="recipeId = recipe.id"
         >
           <span class="recipe-tile" aria-hidden="true" />
           <span class="recipe-name">{{ recipe.name }}</span>
           <span class="recipe-time">{{ recipe.forgeTimeLabel }}</span>
-        </button>
+        </GameButton>
       </li>
     </ul>
     <ul v-else class="queues">
@@ -144,8 +162,11 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
         <span class="amount-end amount-min">1</span>
         <span class="amount-end amount-max">{{ amountMaximum }}</span>
         <span aria-hidden="true" class="amount-step amount-plus">+</span>
+        <p class="required-label">{{ requiredLabel }}</p>
         <p class="required">{{ requiredCoins }}</p>
-        <button v-if="!refusalLabel" class="action" type="button" @click="emit('start')">{{ startLabel }}</button>
+        <GameButton v-if="!refusalLabel" class="action" :kind="GameButtonKind.Row" tip="" @click="emit('start')">
+          {{ startLabel }}
+        </GameButton>
         <p v-else class="refusal">{{ refusalLabel }}</p>
       </template>
       <template v-else-if="queueDetail">
@@ -155,9 +176,15 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
         <span class="detail-track">
           <span class="detail-fill" :style="{ width: `${queueDetail.progress * 100}%` }" />
         </span>
-        <button v-if="queueDetail.isObtainable" class="action" type="button" @click="emit('obtain', queueDetail.id)">
+        <GameButton
+          v-if="queueDetail.isObtainable"
+          class="action"
+          :kind="GameButtonKind.Row"
+          tip=""
+          @click="emit('obtain', queueDetail.id)"
+        >
           {{ obtainLabel }}
-        </button>
+        </GameButton>
       </template>
       <div class="item-icon">
         <span class="item-count">{{ yieldCount }}</span>
@@ -184,21 +211,24 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   font-family: "Signika", sans-serif;
   font-weight: 600;
 }
+/* The game's face is wider than Signika at the same cap height, so each line is letter-spaced out to its width */
 .title {
   position: absolute;
-  top: calc(var(--unit) * 34);
-  left: calc(var(--unit) * 268);
+  top: calc(var(--unit) * 46);
+  left: calc(var(--unit) * 270);
   margin: 0;
   font-size: calc(var(--unit) * 29);
   line-height: 1;
+  letter-spacing: calc(var(--unit) * 2.75);
 }
 .coins {
   position: absolute;
-  top: calc(var(--unit) * 41);
-  left: calc(var(--unit) * 1902);
+  top: calc(var(--unit) * 43);
+  left: calc(var(--unit) * 1896);
   margin: 0;
-  font-size: calc(var(--unit) * 27);
+  font-size: calc(var(--unit) * 32);
   line-height: 1;
+  letter-spacing: calc(var(--unit) * 2.2);
 }
 .close {
   top: calc(var(--unit) * 26);
@@ -281,10 +311,11 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
 }
 .recipe-name {
   position: absolute;
-  top: calc(var(--unit) * 14);
+  top: calc(var(--unit) * 18);
   left: calc(var(--unit) * 152);
-  font-size: calc(var(--unit) * 35);
+  font-size: calc(var(--unit) * 39);
   line-height: 1;
+  letter-spacing: calc(var(--unit) * 1.8);
 }
 .recipe-time {
   position: absolute;
@@ -292,6 +323,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   left: calc(var(--unit) * 151);
   font-size: calc(var(--unit) * 29);
   line-height: 1;
+  letter-spacing: calc(var(--unit) * 2.5);
 }
 .queue.selected {
   background: #ece5d8;
@@ -330,11 +362,13 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   left: calc(var(--unit) * 152);
   font-size: calc(var(--unit) * 29);
   line-height: 1;
+  letter-spacing: calc(var(--unit) * 2.5);
   white-space: nowrap;
 }
 .queue-name {
-  top: calc(var(--unit) * 14);
-  font-size: calc(var(--unit) * 35);
+  top: calc(var(--unit) * 18);
+  font-size: calc(var(--unit) * 39);
+  letter-spacing: calc(var(--unit) * 1.8);
 }
 .queue[data-state="Forging"] .queue-progress {
   color: #f0a53a;
@@ -351,9 +385,11 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   line-height: 1;
   white-space: nowrap;
 }
-.queue[data-state="Idle"] .queue-progress,
+.queue[data-state="Idle"] .queue-progress {
+  top: calc(var(--unit) * 42);
+}
 .queue[data-state="Locked"] .queue-time {
-  top: calc(var(--unit) * 40);
+  top: calc(var(--unit) * 46);
 }
 /* The Materials tab's sort control: a cream pill of the list's width with its toggle beside it, its word undrawn for want of a key */
 .sort,
@@ -403,11 +439,18 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   height: calc(var(--unit) * 20);
   accent-color: #ece5d8;
 }
+/* The Required line: its label, then the coins the picked recipe costs, both on the line under the amount */
+.required-label,
 .required {
   top: calc(var(--unit) * 987);
-  left: calc(var(--unit) * 1011);
   font-size: calc(var(--unit) * 24);
   line-height: 1;
+}
+.required-label {
+  left: calc(var(--unit) * 1020);
+}
+.required {
+  left: calc(var(--unit) * 1240);
 }
 .refusal {
   top: calc(var(--unit) * 963);
@@ -417,16 +460,20 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   line-height: 1;
   text-align: right;
 }
+/* The game's label sits right of its icon, which is not drawn, so the padding pushes the label along by half of itself */
 .action {
+  box-sizing: border-box;
   top: calc(var(--unit) * 963);
   left: calc(var(--unit) * 1883);
   width: calc(var(--unit) * 277);
-  height: calc(var(--unit) * 73);
+  height: calc(var(--unit) * 78);
+  padding-left: calc(var(--unit) * 39);
   border: none;
-  border-radius: calc(var(--unit) * 36);
+  border-radius: calc(var(--unit) * 39);
   background: #ece5d8;
   color: #3b3b3b;
-  font-size: calc(var(--unit) * 29);
+  font-size: calc(var(--unit) * 36);
+  letter-spacing: calc(var(--unit) * 2.9);
 }
 .detail-ring {
   top: calc(var(--unit) * 205);
@@ -441,8 +488,9 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
 .detail-forged {
   left: calc(var(--unit) * 1590);
   translate: -50% 0;
-  font-size: calc(var(--unit) * 27);
+  font-size: calc(var(--unit) * 31);
   line-height: 1;
+  letter-spacing: calc(var(--unit) * 1.5);
   white-space: nowrap;
 }
 .detail-heading {
@@ -484,11 +532,11 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   text-align: center;
 }
 .amount-label {
-  top: calc(var(--unit) * 551);
+  top: calc(var(--unit) * 550);
   left: calc(var(--unit) * 1589.5);
   translate: -50% 0;
   color: #ece5d8;
-  font-size: calc(var(--unit) * 26.8);
+  font-size: calc(var(--unit) * 34);
   line-height: 1;
   white-space: nowrap;
 }
@@ -511,8 +559,9 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   position: absolute;
   top: calc(var(--unit) * 15.8);
   margin: 0;
-  font-size: calc(var(--unit) * 26.8);
+  font-size: calc(var(--unit) * 30);
   line-height: 1;
+  letter-spacing: calc(var(--unit) * 0.9);
   white-space: nowrap;
 }
 .materials-title {

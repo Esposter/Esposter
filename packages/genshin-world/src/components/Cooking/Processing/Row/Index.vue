@@ -4,6 +4,7 @@ import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { GameText } from "genshin-text";
 
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { GameButton, GameButtonKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -43,8 +44,8 @@ const getDefinition = (itemId: number) => getItemDefinition(itemId, nameText, ma
       type="number"
       :max="recipe.queueSize - queuedCount"
     />
-    <button type="button" :disabled="!isStartable" @click="emit('start')">
+    <GameButton :disabled="!isStartable" :kind="GameButtonKind.Row" tip="" @click="emit('start')">
       {{ gameText[GameTextKey.ProcessingStart] }}
-    </button>
+    </GameButton>
   </li>
 </template>

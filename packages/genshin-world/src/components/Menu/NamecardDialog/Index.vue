@@ -27,18 +27,18 @@ const emit = defineEmits<{ close: []; pick: [itemId: number] }>();
       v-for="{ itemId, name } of namecards"
       :key="itemId"
       class="choice"
-      tip=""
       :aria-pressed="itemId === namecardItemId"
       :kind="GameButtonKind.Row"
+      tip=""
       @click="emit('pick', itemId)"
     >
       {{ name }}
     </GameButton>
     <GameButton
       class="close"
-      tip=""
       :aria-label="gameText[GameTextKey.Back]"
       :kind="GameButtonKind.Plain"
+      tip=""
       @click="emit('close')"
     >
       <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Close]" />

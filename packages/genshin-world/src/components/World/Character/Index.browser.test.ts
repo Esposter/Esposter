@@ -8,7 +8,14 @@ import { createParty } from "#src/services/party/createParty";
 import { BodyTypeLocomotionMap } from "#src/services/world/locomotion/BodyTypeLocomotionMap";
 import { sleep } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
-import { createGrassTrail, createLandmarkCollider, createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
+import {
+  createGrassTrail,
+  createIdleInputState,
+  createLandmarkCollider,
+  createStamina,
+  LocomotionState,
+  STAMINA_MAX,
+} from "genshin-engine";
 import { Object3D, Vector3 } from "three";
 import { describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -30,16 +37,7 @@ const createFieldKitContext = (): KitContext => {
 // The character mounted in a canvas with a camera behind it, its body read back after the frames it steps through
 const renderCharacter = async (isMoveHeld = false): Promise<Object3D> => {
   const body = new Object3D();
-  const inputState: InputState = {
-    heldActions: new Set(),
-    lookPitch: 0,
-    lookYaw: 0,
-    moveForward: 1,
-    moveRight: 0,
-    moveUp: 0,
-    pressedActions: new Set(),
-    zoomSteps: 0,
-  };
+  const inputState: InputState = { ...createIdleInputState(), moveForward: 1 };
   await render(
     defineComponent({
       setup: () => () =>

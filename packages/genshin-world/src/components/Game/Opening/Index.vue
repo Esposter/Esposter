@@ -69,7 +69,8 @@ getResultAsync(() => measureLoadStep("opening", readLoginData(gameDataBaseUrl)))
 );
 // The published character packs download from the moment the opening mounts, so the splashes and the login play while
 // The bytes arrive, and the startup loading screen shows them
-const { loadedBytes, pendingBytes, retry, status } = useCharacterPackPreload(gameDataBaseUrl, () => emit("held"));
+const { loadedBytes, pendingBytes, preload, status } = useCharacterPackPreload(gameDataBaseUrl, () => emit("held"));
+onMounted(preload);
 defineExpose({ loadedBytes, pendingBytes });
 </script>
 
@@ -106,7 +107,7 @@ defineExpose({ loadedBytes, pendingBytes });
     :progress
     :status
     @finish="emit('finish')"
-    @retry="retry()"
+    @retry="preload()"
   />
   <GameScreen v-else class="waiting" />
 </template>

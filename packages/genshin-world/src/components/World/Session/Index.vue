@@ -52,6 +52,7 @@ import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldRealm from "#src/components/World/Realm/Index.vue";
 import TipPopup from "#src/components/World/Tip/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
+import { useMenuNavigation } from "#src/composables/useMenuNavigation";
 import { useMiningOutcrops } from "#src/composables/useMiningOutcrops";
 import { useStoredGenshinSettings } from "#src/composables/useStoredGenshinSettings";
 import { useWorldAchievements } from "#src/composables/useWorldAchievements";
@@ -137,7 +138,6 @@ import {
   createLandmarkCollider,
   GENSHIN_TONE_MAPPING,
   QualityTierSettingsMap,
-  STAMINA_MAX,
 } from "genshin-engine";
 import { CharacterMenuTab, InventorySort, ItemCategory } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
@@ -373,6 +373,9 @@ const { archiveData, bookReading, offeredViewpoints, readBook, viewpointPlaceMap
 });
 // The screen open over the world sets what the pointer and the keys do, and the cursor Left Alt shows over it
 const { screenBehaviour, showCursor } = useWorldScreenBehaviour({ closeFishing, input, screenKind });
+// The world's root, which a menu's controls are walked within, so the pad's focus never leaves the menu over the world
+const worldScreen = useTemplateRef("worldScreen");
+const { stepMenuNavigation } = useMenuNavigation({ inputState, root: worldScreen, screenKind });
 onUnmounted(() => {
   input.dispose();
 });
@@ -526,6 +529,7 @@ const {
   offerWorship,
   openWorship,
   resonateStatue,
+  staminaMaximum,
   worshipLevels,
   worshipRegionId,
 } = useWorldStatues({
@@ -623,6 +627,7 @@ const {
   placeWorldDrops,
   savedCharacters: savedState.characters,
   savedParty: savedState.party,
+  staminaMaximum,
   startingCharacterIdKitMap,
   statTables,
   travelerBonusLines,
@@ -1192,8 +1197,9 @@ const { hudFrame, mapCamera } = useWorldHudFrame({
   characterBody,
   getCamera,
   getCapsuleHeight: () => locomotion.value.capsuleHeight,
-  getStamina: () => character.value?.stamina.value ?? STAMINA_MAX,
+  getStamina: () => character.value?.stamina.value ?? staminaMaximum.value,
   origin,
+  staminaMaximum,
 });
 // The zoom the open map is at, in metres across its width, which the map's slider and wheel change and the world keeps
 // From one opening of the map to the next
@@ -1232,6 +1238,7 @@ const { stepFrame } = useWorldFrame({
   stepAutoRecover,
   stepDomainChallenge,
   stepFishing,
+  stepMenuNavigation,
   stepQuickUse,
   stepShortcutWheel,
   stepTrial,
@@ -1327,7 +1334,7 @@ useWorldSaveSync({
 </script>
 
 <template>
-  <div class="world-screen">
+  <div ref="worldScreen" class="world-screen">
     <TresCanvas
       ref="canvas"
       :dpr="[1, maxPixelRatio]"
@@ -1492,7 +1499,7 @@ useWorldSaveSync({
       :interface-rects="hudInterfaceRects"
       :is-touch
       :landmarks="unlockedLandmarks"
-      :max-stamina="STAMINA_MAX"
+      :max-stamina="staminaMaximum"
       :near-oculus-places
       :member="hudMember"
       :name-text-map="nameText"
@@ -1691,7 +1698,7 @@ useWorldSaveSync({
           :is-touch
           :language
           :material-data-map
-          :max-stamina="STAMINA_MAX"
+          :max-stamina="staminaMaximum"
           :name-text
           :reliquary-sets
           :stat-tables

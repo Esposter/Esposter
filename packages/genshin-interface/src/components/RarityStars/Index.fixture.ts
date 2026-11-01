@@ -1,1 +1,1 @@
-export const props = { rarity: 5 };
+export const props = { color: "", rarity: 5 };

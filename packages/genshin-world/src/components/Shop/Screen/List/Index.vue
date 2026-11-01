@@ -1,0 +1,410 @@
+<script setup lang="ts">
+import type { CurrencyCount, ShopGoodCell } from "genshin-interface";
+
+import { GameButton, GameButtonKind, ScreenTitle, ShopScreenCloseButton, useShopGoodPick } from "genshin-interface";
+
+interface Props {
+  // The currencies the player holds, shown across the head
+  balances: CurrencyCount[];
+  // The Purchase button's label
+  buyLabel: string;
+  // The close button's name for assistive tech
+  closeLabel: string;
+  // The count picker's name for assistive tech
+  countLabel: string;
+  // The most the picked good can be bought for, its limit and the player's currency both counted
+  countMaximum: number;
+  // The goods the shop sells, in the shop's order, one under another
+  goods: ShopGoodCell[];
+  // The title the game shows over the list
+  title: string;
+}
+
+const count = defineModel<number>("count", { default: 1 });
+const goodId = defineModel<number>("goodId", { default: 0 });
+const { balances, buyLabel, closeLabel, countLabel, countMaximum, goods, title } = defineProps<Props>();
+// The good the player picked, if any, and the good the detail shows, which is the first good until one is picked
+const { pickedCount, pickedGood, setCount } = useShopGoodPick({
+  count,
+  getCountMaximum: () => countMaximum,
+  getGoods: () => goods,
+  goodId,
+});
+const shownGood = computed(() => pickedGood.value ?? goods[0]);
+const emit = defineEmits<{ buy: [good: ShopGoodCell, count: number]; close: [] }>();
+const buy = () => {
+  if (pickedGood.value && countMaximum >= 1) emit("buy", pickedGood.value, pickedCount.value);
+};
+</script>
+
+<template>
+  <!-- The General Goods list a single-list shop opens on: its goods one under another down the left, the shown good's
+       detail beside them with its picture and Owned strip, the balances across the head, the item-refresh line and the
+       Purchase button at the foot. The pixels are measured from the public General Goods clip at 34 seconds (the frame is
+       kept outside the repo, its reference is `genshin-parity/references/shop-screen.png`) -->
+  <div class="shop-list">
+    <ScreenTitle class="heading" role="heading" aria-level="1">{{ title }}</ScreenTitle>
+    <ul class="balances">
+      <li v-for="balance of balances" :key="balance.id" class="balance">
+        <span class="coin" role="img" :aria-label="balance.name" />
+        {{ balance.quantity }}
+      </li>
+    </ul>
+    <ShopScreenCloseButton :label="closeLabel" @click="emit('close')" />
+    <ul class="goods">
+      <li v-for="good of goods" :key="good.id">
+        <GameButton
+          class="good"
+          :aria-pressed="good.id === shownGood?.id"
+          :kind="GameButtonKind.Row"
+          tip=""
+          @click="goodId = good.id"
+        >
+          <span class="good-arrow" aria-hidden="true" />
+          <span class="good-icon" />
+          <span class="good-name">{{ good.name }}</span>
+          <span v-if="good.limitLabel" class="good-limit">{{ good.limitLabel }}</span>
+          <span class="good-costs">
+            <span v-for="cost of good.costs" :key="cost.name" class="good-price price-line">
+              <span class="coin" role="img" :aria-label="cost.name" />
+              {{ cost.count }}
+            </span>
+          </span>
+        </GameButton>
+      </li>
+    </ul>
+    <section v-if="shownGood" class="detail" :aria-label="shownGood.name">
+      <div class="detail-head">
+        <p class="detail-name">{{ shownGood.name }}</p>
+      </div>
+      <div class="detail-art">
+        <span class="detail-picture" />
+      </div>
+      <div class="detail-body">
+        <span class="detail-source" />
+      </div>
+      <div class="detail-owned" />
+    </section>
+    <div v-if="pickedGood" class="amount-picker">
+      <input
+        :aria-label="countLabel"
+        class="amount"
+        :max="countMaximum"
+        min="1"
+        type="range"
+        :value="pickedCount"
+        @input="(event) => setCount(event)"
+      />
+      <p class="amount-value">{{ pickedCount }}</p>
+    </div>
+    <p v-if="shownGood?.refreshLabel" class="refresh">{{ shownGood.refreshLabel }}</p>
+    <GameButton class="buy" :disabled="countMaximum < 1" :kind="GameButtonKind.Row" tip="" @click="buy">
+      <span class="buy-icon" />
+      {{ buyLabel }}
+    </GameButton>
+  </div>
+</template>
+
+<style scoped>
+.shop-list {
+  position: absolute;
+  inset: 0;
+  color: #f5f0e4;
+  background: rgb(30 36 47 / 0.8);
+}
+
+.heading {
+  position: absolute;
+  top: calc(var(--unit) * 34);
+  left: calc(var(--unit) * 143);
+  color: #d9c48f;
+  font-size: calc(var(--unit) * 24);
+  line-height: calc(var(--unit) * 30);
+}
+
+.balances {
+  position: absolute;
+  top: calc(var(--unit) * 30);
+  left: calc(var(--unit) * 1578);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 16);
+  height: calc(var(--unit) * 36);
+  margin: 0;
+  padding: 0 calc(var(--unit) * 16) 0 calc(var(--unit) * 14);
+  border: calc(var(--unit) * 1) solid rgb(200 190 160 / 0.5);
+  border-radius: calc(var(--unit) * 18);
+  background: rgb(20 26 36 / 0.6);
+  font-size: calc(var(--unit) * 24);
+  line-height: calc(var(--unit) * 26);
+  list-style: none;
+}
+
+.balance {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 16);
+}
+
+.coin {
+  display: inline-block;
+  width: calc(var(--unit) * 26);
+  height: calc(var(--unit) * 26);
+  flex: none;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f6d77a 0 35%, #c99a2e 36% 100%);
+}
+
+.goods {
+  position: absolute;
+  top: calc(var(--unit) * 118);
+  left: calc(var(--unit) * 78);
+  width: calc(var(--unit) * 1192);
+  height: calc(var(--unit) * 840);
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  list-style: none;
+}
+
+.goods li {
+  position: relative;
+  height: calc(var(--unit) * 115.5);
+}
+
+.good {
+  position: absolute;
+  top: 0;
+  left: calc(var(--unit) * 42);
+  box-sizing: border-box;
+  width: calc(var(--unit) * 1127);
+  height: calc(var(--unit) * 104);
+  padding: 0;
+  border: calc(var(--unit) * 1) solid rgb(170 180 196 / 0.35);
+  background: rgb(62 73 91 / 0.92);
+  color: inherit;
+  text-align: left;
+  cursor: inherit;
+}
+
+.good[aria-pressed="true"] {
+  left: calc(var(--unit) * 19);
+  width: calc(var(--unit) * 1173);
+  height: calc(var(--unit) * 110);
+  border-color: #fbf8ef;
+  background: #ebe4d3;
+  color: #2b2a26;
+}
+
+/* The picked good's pointer, a triangle at its left edge, drawn in its own span so the good's lit tint keeps its pseudo-element */
+.good-arrow {
+  display: none;
+}
+
+.good[aria-pressed="true"] .good-arrow {
+  display: block;
+  position: absolute;
+  top: calc(var(--unit) * 46);
+  left: calc(var(--unit) * -19);
+  border-width: calc(var(--unit) * 8) 0 calc(var(--unit) * 8) calc(var(--unit) * 12);
+  border-style: solid;
+  border-color: transparent transparent transparent #f3eee2;
+}
+
+.good-icon {
+  position: absolute;
+  top: calc(var(--unit) * 5);
+  left: calc(var(--unit) * 5);
+  width: calc(var(--unit) * 96);
+  height: calc(var(--unit) * 96);
+  background: rgb(96 108 128);
+}
+
+.good[aria-pressed="true"] .good-icon {
+  background: #d6d0c1;
+}
+
+.good-name {
+  position: absolute;
+  top: calc(var(--unit) * 14);
+  left: calc(var(--unit) * 120);
+  font-size: calc(var(--unit) * 26);
+  line-height: calc(var(--unit) * 30);
+}
+
+.good-limit {
+  position: absolute;
+  top: calc(var(--unit) * 15);
+  right: calc(var(--unit) * 25);
+  box-sizing: border-box;
+  height: calc(var(--unit) * 28);
+  padding: 0 calc(var(--unit) * 14);
+  border: calc(var(--unit) * 2) solid rgb(235 230 215 / 0.75);
+  border-radius: calc(var(--unit) * 14);
+  font-size: calc(var(--unit) * 20);
+  line-height: calc(var(--unit) * 24);
+}
+
+.good[aria-pressed="true"] .good-limit {
+  right: calc(var(--unit) * 14);
+  border-color: rgb(120 118 110 / 0.7);
+}
+
+.good-costs {
+  position: absolute;
+  top: calc(var(--unit) * 60);
+  left: calc(var(--unit) * 118);
+  display: flex;
+  gap: calc(var(--unit) * 16);
+}
+
+.good-price {
+  line-height: calc(var(--unit) * 26);
+}
+
+.detail {
+  position: absolute;
+  top: calc(var(--unit) * 126);
+  left: calc(var(--unit) * 1308);
+  width: calc(var(--unit) * 492);
+  height: calc(var(--unit) * 834);
+}
+
+.detail-head {
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: calc(var(--unit) * 54);
+  padding: 0 calc(var(--unit) * 28);
+  border: calc(var(--unit) * 2) solid #a9b0c0;
+  background: #7d8598;
+  color: #f7f2e6;
+}
+
+.detail-name {
+  margin: 0;
+  font-size: calc(var(--unit) * 30);
+  font-weight: 600;
+  line-height: calc(var(--unit) * 34);
+}
+
+.detail-art {
+  position: absolute;
+  top: calc(var(--unit) * 54);
+  left: 0;
+  width: 100%;
+  height: calc(var(--unit) * 225);
+  background: #aab0bf;
+}
+
+.detail-picture {
+  position: absolute;
+  top: calc(var(--unit) * 36);
+  left: calc(var(--unit) * 312);
+  width: calc(var(--unit) * 110);
+  height: calc(var(--unit) * 150);
+  background: #e3e5ea;
+}
+
+.detail-body {
+  position: absolute;
+  top: calc(var(--unit) * 279);
+  left: 0;
+  width: 100%;
+  height: calc(var(--unit) * 330);
+  background: #ebe5d5;
+}
+
+.detail-source {
+  position: absolute;
+  top: calc(var(--unit) * 208);
+  left: calc(var(--unit) * 32);
+  box-sizing: border-box;
+  width: calc(var(--unit) * 428);
+  height: calc(var(--unit) * 62);
+  border: calc(var(--unit) * 2) solid #cdc4ae;
+}
+
+.detail-owned {
+  position: absolute;
+  top: calc(var(--unit) * 786);
+  left: 0;
+  width: 100%;
+  height: calc(var(--unit) * 48);
+  background: #f0d78f;
+}
+
+.amount-picker {
+  position: absolute;
+  top: calc(var(--unit) * 756);
+  left: calc(var(--unit) * 1368);
+  width: calc(var(--unit) * 420);
+}
+
+.amount {
+  position: absolute;
+  top: calc(var(--unit) * 6);
+  left: 0;
+  width: calc(var(--unit) * 360);
+}
+
+.amount-value {
+  position: absolute;
+  top: 0;
+  left: calc(var(--unit) * 380);
+  margin: 0;
+  font-size: calc(var(--unit) * 26);
+  line-height: calc(var(--unit) * 30);
+}
+
+.refresh {
+  position: absolute;
+  top: calc(var(--unit) * 1008);
+  left: calc(var(--unit) * 143);
+  margin: 0;
+  color: #efe9dc;
+  font-size: calc(var(--unit) * 22);
+  line-height: calc(var(--unit) * 24);
+}
+
+.buy {
+  position: absolute;
+  top: calc(var(--unit) * 990);
+  left: calc(var(--unit) * 1570);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 12);
+  width: calc(var(--unit) * 222);
+  height: calc(var(--unit) * 60);
+  padding: 0 0 0 calc(var(--unit) * 14);
+  border: calc(var(--unit) * 2) solid rgb(230 225 210 / 0.6);
+  border-radius: calc(var(--unit) * 30);
+  background: rgb(28 34 46 / 0.85);
+  color: #f7f1e3;
+  font-size: calc(var(--unit) * 26);
+  line-height: calc(var(--unit) * 30);
+  cursor: inherit;
+}
+
+.buy-icon {
+  box-sizing: border-box;
+  width: calc(var(--unit) * 36);
+  height: calc(var(--unit) * 36);
+  flex: none;
+  border: calc(var(--unit) * 4) solid #e8c46a;
+  border-radius: 50%;
+}
+
+.buy:disabled {
+  opacity: 0.4;
+}
+</style>
+
+<style scoped src="genshin-interface/styles/shopScreen.css"></style>

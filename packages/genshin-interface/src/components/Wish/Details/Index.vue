@@ -34,7 +34,7 @@ const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rari
       <CloseButton class="close" :label="closeLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
       <ul class="pool">
         <li v-for="[rarity, cells] of poolRarityCellsMap" :key="rarity" class="pool-rarity">
-          <RarityStars :rarity />
+          <RarityStars color="" :rarity />
           <ul class="pool-items">
             <li v-for="{ id, isFeatured, name } of cells" :key="id" class="pool-item" :data-featured="isFeatured">
               {{ name }}

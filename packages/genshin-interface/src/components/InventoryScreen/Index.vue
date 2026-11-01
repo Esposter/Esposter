@@ -3,8 +3,10 @@ import type { CurrencyCount } from "#src/models/CurrencyCount";
 import type { InventoryCell } from "#src/models/InventoryCell";
 import type { InventoryQuickSelect } from "#src/models/InventoryQuickSelect";
 import type { InventorySort } from "#src/models/InventorySort";
+import type { InventoryWeaponDetails } from "#src/models/InventoryWeaponDetails";
 import type { ItemCategory } from "#src/models/ItemCategory";
 
+import GameButton from "#src/components/GameButton/Index.vue";
 import Actions from "#src/components/InventoryScreen/Actions/Index.vue";
 import Confirm from "#src/components/InventoryScreen/Confirm/Index.vue";
 import Currencies from "#src/components/InventoryScreen/Currencies/Index.vue";
@@ -13,6 +15,7 @@ import Detail from "#src/components/InventoryScreen/Detail/Index.vue";
 import Grid from "#src/components/InventoryScreen/Grid/Index.vue";
 import Header from "#src/components/InventoryScreen/Header/Index.vue";
 import Sort from "#src/components/InventoryScreen/Sort/Index.vue";
+import { GameButtonKind } from "#src/models/GameButtonKind";
 
 interface Props {
   // The way back to the world in the reader's language
@@ -72,6 +75,8 @@ interface Props {
   unlockLabel: string;
   // The detail panel's button that uses the selected entry, in the reader's language
   useLabel: string;
+  // The weapons' details by the entry's id, drawn by the detail panel while that entry is the one it shows
+  weaponDetails?: Record<string, InventoryWeaponDetails>;
 }
 
 const category = defineModel<ItemCategory>("category", { required: true });
@@ -112,6 +117,7 @@ const {
   title,
   unlockLabel,
   useLabel,
+  weaponDetails,
 } = defineProps<Props>();
 const emit = defineEmits<{
   cancelDestroy: [];
@@ -173,6 +179,7 @@ watch(
         :is-sortable="isSortable"
         :lock-label="lockLabel"
         :unlock-label="unlockLabel"
+        :weapon="weaponDetails?.[selectedCell.id]"
         @lock="(id) => emit('lock', id)"
       />
       <Actions
@@ -183,12 +190,13 @@ watch(
         :use-label="useLabel"
         @use="(id) => emit('use', id)"
       />
-      <button
+      <GameButton
         ref="trashButton"
         class="trash"
         :aria-label="destroyLabel"
         :aria-pressed="isDestroying"
-        type="button"
+        :kind="GameButtonKind.Disc"
+        tip=""
         @click="emit('toggleDestroy')"
       >
         <svg class="trash-glyph" viewBox="0 0 128 144" aria-hidden="true">
@@ -197,7 +205,7 @@ watch(
             d="M54.5 21h21l1.5 1.5 4.5 6.5h22l3.5 3.5q1.67 1.83 1 6l-3.5 4.5q-2.5 2-8 1l-1-1h-64q-1 2-2 0-7.75 1.75-9.5-2.5-1.46-7.96 2.5-10.5l3-1h16q1-2 5-1l2.5-2.5 2.5-3.5 3-1z M27.5 54h70l5.5 2v71.5l-2.5 3.5-2 1h-68l-3-1-2.5-2.5q.75-3.25-1-4v-66l3.5-4.5zm11.5 9-4 4v46l1 1v3l1 2 6-1 2-3v-47l-1-2-3-3h-2zm24 0-4 4v41l-1 1v3l3 7 3 1q0-2 3-1l2-5q1-5-1-6-1-4 1-4v-34l-2-6-4-1zm24 0-2 1-3 3v41l-1 1 3 9 2 1h4l3-6v-46l-1-3-2-1h-3z"
           />
         </svg>
-      </button>
+      </GameButton>
       <Destroy
         v-if="isDestroying"
         :destroy-button-label="destroyButtonLabel"
@@ -220,14 +228,15 @@ watch(
       <Currencies v-else :currencies />
       <!-- The gadget's action under the detail panel, which equips the gadget to the quick-use slot. Provisional: its place
            is where the controller recording shows a gadget's action, the bottom bar's X, until the keyboard's is read -->
-      <button
+      <GameButton
         v-if="selectedCell?.isEquipable && !isDestroying"
-        class="quick-use"
-        type="button"
+        class="quick-use translucent-button"
+        :kind="GameButtonKind.Row"
+        tip=""
         @click="emit('quickUse', selectedCell.id)"
       >
         {{ quickUseLabel }}
-      </button>
+      </GameButton>
     </div>
     <Confirm
       v-if="isConfirming"
@@ -252,6 +261,8 @@ watch(
 /* Every place and size is in the game's 1080-high units, read off the recording of the English PC client's bag: the
    Grid's top left at 207 by 114, its cells 124 by 152 with 23 and 24 between, and the detail panel 493 wide at 1298 */
 .inventory-screen {
+  --rarity-gold: #ffca30;
+
   position: absolute;
   inset: 0;
   color: #ece3d8;
@@ -318,11 +329,7 @@ watch(
   position: absolute;
   top: calc(var(--unit) * 960);
   left: calc(var(--unit) * 1298);
-  padding: calc(var(--unit) * 10) calc(var(--unit) * 20);
-  border: none;
-  border-radius: calc(var(--unit) * 8);
-  background: rgb(255 255 255 / 0.14);
-  color: inherit;
-  font: inherit;
 }
 </style>
+
+<style scoped src="../../styles/translucentButton.css"></style>

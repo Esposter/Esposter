@@ -3,4 +3,13 @@ export const props = {
   activated: [true, true, true, true, true, true],
   activateLabel: "Activate",
   isActivateDisabled: true,
+  // Xilonen's six constellation names in English, in the order the game activates them
+  names: [
+    "Sabbatical Phrase",
+    "Chiucue Mix",
+    "Tonalpohualli's Loop",
+    "Suchitl's Trance",
+    "Tlaltecuhtli's Crossfade",
+    "Imperishable Night Carnival",
+  ],
 };

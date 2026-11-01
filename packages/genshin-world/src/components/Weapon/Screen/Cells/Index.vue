@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ENHANCE_SLOT_COUNT } from "#src/services/weapon/constants";
-import { WeaponMenuTab } from "genshin-interface";
+import { GameButton, GameButtonKind, WeaponMenuTab } from "genshin-interface";
 
 interface Props {
   // The copies of the weapon the bag holds beside it, which the Refine tab offers, each with its name and level
@@ -51,40 +51,67 @@ const emptySlotCount = computed(() =>
   <div class="cells" :class="openTab === WeaponMenuTab.Enhance ? 'enhance-cells' : 'refine-cells'">
     <template v-if="openTab === WeaponMenuTab.Enhance">
       <div v-for="ore of oreCells" :key="ore.id" class="cell">
-        <button
+        <GameButton
           class="pick"
           :disabled="ore.pickedCount >= ore.ownedCount"
-          type="button"
+          :kind="GameButtonKind.Row"
+          tip=""
           @click="emit('pickOre', ore.id)"
         >
           <span class="cell-name">{{ ore.name }}</span>
           <span class="plus" aria-hidden="true" />
           <span class="caption" aria-hidden="true">{{ ore.pickedCount || "--" }}</span>
-        </button>
-        <button v-if="ore.pickedCount > 0" class="unpick" type="button" @click="emit('unpickOre', ore.id)">−</button>
+        </GameButton>
+        <GameButton
+          v-if="ore.pickedCount > 0"
+          class="unpick"
+          :kind="GameButtonKind.Row"
+          tip=""
+          @click="emit('unpickOre', ore.id)"
+        >
+          −
+        </GameButton>
       </div>
       <div v-for="fodder of fodderCells" :key="fodder.id" class="cell">
-        <button class="pick" :aria-pressed="fodder.picked" type="button" @click="emit('toggleFodder', fodder.id)">
+        <GameButton
+          class="pick"
+          :aria-pressed="fodder.picked"
+          :kind="GameButtonKind.Row"
+          tip=""
+          @click="emit('toggleFodder', fodder.id)"
+        >
           <span class="cell-name">{{ fodder.name }}</span>
           <span class="plus" aria-hidden="true" />
           <span class="caption" aria-hidden="true">{{ fodder.levelText }}</span>
-        </button>
+        </GameButton>
       </div>
     </template>
     <template v-else>
       <div v-if="refinementMaterial && isRefinementMaterialHeld" class="cell">
-        <button class="pick" :aria-pressed="pickedCopyId === undefined" type="button" @click="emit('pickMaterial')">
+        <GameButton
+          class="pick"
+          :aria-pressed="pickedCopyId === undefined"
+          :kind="GameButtonKind.Row"
+          tip=""
+          @click="emit('pickMaterial')"
+        >
           <span class="cell-name">{{ refinementMaterial.name }}</span>
           <span class="plus" aria-hidden="true" />
           <span class="caption" aria-hidden="true">{{ refinementMaterial.count }}</span>
-        </button>
+        </GameButton>
       </div>
       <div v-for="copy of copyCells" :key="copy.id" class="cell">
-        <button class="pick" :aria-pressed="pickedCopyId === copy.id" type="button" @click="emit('pickCopy', copy.id)">
+        <GameButton
+          class="pick"
+          :aria-pressed="pickedCopyId === copy.id"
+          :kind="GameButtonKind.Row"
+          tip=""
+          @click="emit('pickCopy', copy.id)"
+        >
           <span class="cell-name">{{ copy.name }}</span>
           <span class="plus" aria-hidden="true" />
           <span class="caption" aria-hidden="true">{{ copy.levelText }}</span>
-        </button>
+        </GameButton>
       </div>
     </template>
     <div v-for="slot in emptySlotCount" :key="slot" class="cell">

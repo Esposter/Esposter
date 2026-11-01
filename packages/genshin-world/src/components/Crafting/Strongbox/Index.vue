@@ -78,8 +78,8 @@ const confirmSegments = computed(() =>
     <ul>
       <li v-for="strongbox in strongboxes" :key="strongbox.id">
         <GameButton
-          tip=""
           :kind="GameButtonKind.Row"
+          tip=""
           @click="
             () => {
               pickedStrongboxId = strongbox.id;
@@ -95,9 +95,9 @@ const confirmSegments = computed(() =>
     <ul>
       <li v-for="item in candidates" :key="item.id">
         <GameButton
-          tip=""
-          :kind="GameButtonKind.Row"
           :disabled="isOfferingFull && !pickedIds.includes(item.id)"
+          :kind="GameButtonKind.Row"
+          tip=""
           @click="
             pickedIds = pickedIds.includes(item.id)
               ? pickedIds.filter((pickedId) => pickedId !== item.id)
@@ -110,19 +110,19 @@ const confirmSegments = computed(() =>
     </ul>
     <p v-if="candidates.length === 0">{{ gameText[GameTextKey.MysticOfferingRequiresFiveStar] }}</p>
     <p v-if="!isReady">{{ gameText[GameTextKey.MysticOfferingNotEnough] }}</p>
-    <GameButton tip="" :kind="GameButtonKind.Row" :disabled="!isReady" @click="isConfirming = true">
+    <GameButton :disabled="!isReady" :kind="GameButtonKind.Row" tip="" @click="isConfirming = true">
       {{ gameText[GameTextKey.MysticOfferingCreate] }}
     </GameButton>
     <template v-if="isConfirming">
       <p>
         <span v-for="({ color, text }, index) of confirmSegments" :key="index" :style="{ color }">{{ text }}</span>
       </p>
-      <GameButton tip="" :kind="GameButtonKind.Row" @click="isConfirming = false">{{
+      <GameButton :kind="GameButtonKind.Row" tip="" @click="isConfirming = false">{{
         gameText[GameTextKey.Cancel]
       }}</GameButton>
       <GameButton
-        tip=""
         :kind="GameButtonKind.Row"
+        tip=""
         @click="
           () => {
             if (pickedStrongbox === undefined) return;
@@ -143,6 +143,6 @@ const confirmSegments = computed(() =>
         >{{ gameText[GameTextKey.Confirm] }}</GameButton
       >
     </template>
-    <GameButton tip="" :kind="GameButtonKind.Row" @click="emit('close')">{{ gameText[GameTextKey.Back] }}</GameButton>
+    <GameButton :kind="GameButtonKind.Row" tip="" @click="emit('close')">{{ gameText[GameTextKey.Back] }}</GameButton>
   </GameScreen>
 </template>

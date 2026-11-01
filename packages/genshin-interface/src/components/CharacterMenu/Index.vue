@@ -3,6 +3,7 @@ import type { CharacterMenuEntry } from "#src/models/CharacterMenuEntry";
 import type { CharacterMenuTab } from "#src/models/CharacterMenuTab";
 
 import { CharacterMenuTabs } from "#src/models/CharacterMenuTab";
+import { GAME_ROW_HOVER, GAME_ROW_PRESS, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
 
 interface Props {
   // The player's characters, across the screen's top in the order given
@@ -21,6 +22,8 @@ defineSlots<{ default: () => unknown }>();
 const characterId = defineModel<number>("characterId", { required: true });
 const tab = defineModel<CharacterMenuTab>("tab", { required: true });
 const { characters, elementMarkPath, elementName, isTouch, tabLabels } = defineProps<Props>();
+const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
+const restDuration = `${INTERACTION_REST_MS}ms`;
 const characterName = computed(() => characters.find(({ id }) => id === characterId.value)?.name ?? "");
 // The characters either side of the chosen one, the list wrapping round at its ends, which the arrows at the frame's
 // Left and right edges step to
@@ -41,7 +44,12 @@ const steps = computed(() => {
     <div class="head" />
     <ul class="characters">
       <li v-for="{ id, name } of characters" :key="id">
-        <button class="character" :aria-pressed="id === characterId" type="button" @click="characterId = id">
+        <button
+          class="character ring-button"
+          :aria-pressed="id === characterId"
+          type="button"
+          @click="characterId = id"
+        >
           {{ name }}
         </button>
       </li>
@@ -67,7 +75,7 @@ const steps = computed(() => {
     </div>
     <ul class="tabs">
       <li v-for="menuTab of CharacterMenuTabs" :key="menuTab">
-        <button class="tab" :aria-pressed="menuTab === tab" type="button" @click="tab = menuTab">
+        <button class="tab fill-tint" :aria-pressed="menuTab === tab" type="button" @click="tab = menuTab">
           {{ tabLabels[menuTab] }}
         </button>
       </li>
@@ -92,6 +100,10 @@ const steps = computed(() => {
     </template>
   </div>
 </template>
+
+<style scoped src="../../styles/fillTint.css"></style>
+
+<style scoped src="../../styles/ringButton.css"></style>
 
 <style scoped>
 /* Measured off the English PC client's character screen at 21:9 (captures/session-2.mp4, a frame per tab from 155 to
@@ -139,6 +151,8 @@ const steps = computed(() => {
    roster, measured off the frame's portraits, with its name on it. The chosen one's cyan underline sits 79 units below
    the top of its portrait */
 .character {
+  --hover-duration: v-bind(hoverDuration);
+  --state-duration: v-bind(restDuration);
   position: relative;
   display: grid;
   width: calc(var(--unit) * 69);
@@ -146,6 +160,7 @@ const steps = computed(() => {
   flex: none;
   padding: 0;
   border: calc(var(--unit) * 3) solid #9bbf4b;
+  outline: calc(var(--unit) * 1) solid transparent;
   border-radius: 50%;
   background: rgb(171 154 146);
   color: inherit;
@@ -153,6 +168,12 @@ const steps = computed(() => {
   font: inherit;
   font-size: calc(var(--unit) * 11);
   place-items: center;
+}
+
+/* A portrait lights a white ring when hovered or focused (`ringButton.css`), and a press dims it, its size held */
+.character:is(:active, [data-interaction-state="Pressed"] *) {
+  --state-duration: 0s;
+  filter: brightness(0.9);
 }
 
 .character[aria-pressed="true"] {
@@ -211,6 +232,9 @@ const steps = computed(() => {
 /* A closed tab's word starts 216 units in, its ascenders 25.5 units tall in a cream a little short of white, letter-spaced
    out to the game's width, with a faint shadow round it */
 .tab {
+  --hover-duration: v-bind(hoverDuration);
+  --rest-duration: v-bind(restDuration);
+  --row-tint: v-bind(GAME_ROW_HOVER);
   position: relative;
   display: block;
   width: 100%;
@@ -227,6 +251,12 @@ const steps = computed(() => {
   line-height: calc(var(--unit) * 69.6);
   text-align: start;
   text-shadow: 0 0 calc(var(--unit) * 3) rgb(0 0 0 / 0.2);
+}
+
+/* A press tints the row at once, over the tint `fillTint.css` draws behind its word and its diamond */
+.tab:is(:active, [data-interaction-state="Pressed"] *) {
+  --state-duration: 0s;
+  background-color: v-bind(GAME_ROW_PRESS);
 }
 
 /* A closed tab's diamond, 15 units corner to corner and centred 196.9 units in, the word's cream at half strength */
@@ -352,6 +382,7 @@ const steps = computed(() => {
 /* The arrows stepping to the characters either side, centred down the frame's left and right edges, their heads 129.75
    units from the edge and their backs 153.75 */
 .step {
+  --state-duration: v-bind(restDuration);
   position: absolute;
   top: calc(50% - var(--unit) * 21);
   width: calc(var(--unit) * 32.25);
@@ -360,6 +391,24 @@ const steps = computed(() => {
   border: none;
   background: transparent;
   cursor: inherit;
+  transition: filter var(--state-duration);
+}
+
+.step:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  --state-duration: v-bind(hoverDuration);
+  filter: brightness(1.2);
+}
+
+@media (hover: hover) {
+  .step:hover {
+    --state-duration: v-bind(hoverDuration);
+    filter: brightness(1.2);
+  }
+}
+
+.step:is(:active, [data-interaction-state="Pressed"] *) {
+  --state-duration: 0s;
+  filter: brightness(0.9);
 }
 
 .step svg {

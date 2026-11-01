@@ -17,10 +17,12 @@ interface Props {
   characterIdConstellationsMap: ReadonlyMap<number, Constellation[]>;
   // The game's words in the reader's language
   gameText: GameText;
+  // The names the stat tables and the constellation sets cite, in the reader's language, by their text id
+  nameText: Readonly<Record<string, string>>;
 }
 
 const characters = defineModel<Character[]>("characters", { required: true });
-const { character, characterIdConstellationsMap, gameText } = defineProps<Props>();
+const { character, characterIdConstellationsMap, gameText, nameText } = defineProps<Props>();
 // Which of the six constellations are activated, the first the character's count of them
 const constellationsActivated = computed(() =>
   Array.from({ length: CONSTELLATION_COUNT }, (_value, index) => index < character.constellationCount),
@@ -30,6 +32,8 @@ const constellations = computed(() => characterIdConstellationsMap.get(character
 const isActivateDisabled = computed(
   () => getConstellationActivationRefusal(character, constellations.value) !== undefined,
 );
+// Each constellation's name, in the order its set gives them, read by the text id the set cites
+const names = computed(() => constellations.value.map(({ nameTextId }) => nameText[nameTextId] ?? ""));
 </script>
 
 <template>
@@ -37,6 +41,7 @@ const isActivateDisabled = computed(
     :activate-label="gameText[GameTextKey.Activate]"
     :activated="constellationsActivated"
     :is-activate-disabled
+    :names
     @activate="characters = replaceCharacterInRoster(characters, activateConstellation(character, constellations))"
   />
 </template>

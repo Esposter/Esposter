@@ -11,11 +11,13 @@ import { healPartyMemberWithPower } from "#src/services/statue/healPartyMemberWi
 import { regenerateRestorativePower } from "#src/services/statue/regenerateRestorativePower";
 import { stepAutoRecoverThreshold } from "#src/services/statue/stepAutoRecoverThreshold";
 import { BlessingScreen, GameScreen } from "genshin-interface";
-import { GameTextKey } from "genshin-text";
+import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
+  // The level of a character by its id, which its member's tab shows; none while the host does not know it
+  getLevel?: (characterId: number) => number | undefined;
   // The Max HP of a character on the field, by its id
   getMaxHealth: (characterId: number) => number;
   // The name of a character in the reader's language, by its id
@@ -28,7 +30,7 @@ interface Props {
   statueCount: number;
 }
 
-const { gameText, getMaxHealth, getName, getNow, party, statueCount } = defineProps<Props>();
+const { gameText, getLevel, getMaxHealth, getName, getNow, party, statueCount } = defineProps<Props>();
 const emit = defineEmits<{ close: []; worship: [] }>();
 // The Restorative Power as the save's moment left it, refilled to now before the screen shows it or spends it
 const power = defineModel<RestorativePower>("power", { required: true });
@@ -45,14 +47,25 @@ const stepThreshold = (direction: -1 | 1) => {
     thresholdPercent: stepAutoRecoverThreshold(autoRecover.value.thresholdPercent, direction),
   };
 };
-// The deployed team's members, each with the share of its Max HP it holds
-const members = computed(() =>
-  getDeployedCharacterIds(party).map((id) => ({
+// A member as the Blessing lists it: its share of Max HP, its name and, while the host knows it, its level's words
+const toMember = (id: number) => {
+  const level = getLevel?.(id);
+  return {
     healthShare: getPartyMember(party, id).healthShare,
     id,
+    levelText: level === undefined ? undefined : fillGameTextValues(gameText[GameTextKey.LevelFormat], level),
     name: getName(id),
-  })),
-);
+  };
+};
+// The deployed team's members, which the game lists as in combat
+const members = computed(() => getDeployedCharacterIds(party).map(toMember));
+// The members of the other teams, each once and none of them deployed, which the game lists as preparing for combat
+const waitingMembers = computed(() => {
+  const deployedIds = getDeployedCharacterIds(party);
+  return [...new Set(party.teams.flatMap(({ characterIds }) => characterIds))]
+    .filter((id) => !deployedIds.includes(id))
+    .map(toMember);
+});
 const heal = (characterId: number) => {
   power.value = healPartyMemberWithPower(party, characterId, getMaxHealth(characterId), regeneratePower());
 };
@@ -69,6 +82,7 @@ const heal = (characterId: number) => {
       :pool-maximum="statueCount * RESTORATIVE_POWER_PER_STATUE"
       :threshold-percent="autoRecover.thresholdPercent"
       :title="gameText[GameTextKey.StatueBlessing]"
+      :waiting-members
       :worship-title="gameText[GameTextKey.StatueWorship]"
       @close="emit('close')"
       @heal="(characterId) => heal(characterId)"

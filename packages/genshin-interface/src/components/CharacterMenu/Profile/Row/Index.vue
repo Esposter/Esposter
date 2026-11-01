@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { CharacterMenuProfileEntry } from "#src/models/CharacterMenuProfileEntry";
 
+import GameButton from "#src/components/GameButton/Index.vue";
+import { GameButtonKind } from "#src/models/GameButtonKind";
+
 interface Props {
   // The story or voice-over the button names, a locked one shown as such
   entry: CharacterMenuProfileEntry;
@@ -14,7 +17,14 @@ const emit = defineEmits<{ select: [] }>();
 </script>
 
 <template>
-  <button class="entry" :aria-pressed="isSelected" :data-locked="entry.isLocked" type="button" @click="emit('select')">
+  <GameButton
+    class="entry"
+    :aria-pressed="isSelected"
+    :data-locked="entry.isLocked"
+    :kind="GameButtonKind.Row"
+    tip=""
+    @click="emit('select')"
+  >
     {{ entry.title }}
-  </button>
+  </GameButton>
 </template>

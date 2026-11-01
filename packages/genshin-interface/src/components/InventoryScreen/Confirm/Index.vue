@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import GameButton from "#src/components/GameButton/Index.vue";
+import { GameButtonKind } from "#src/models/GameButtonKind";
+
 interface Props {
   // The dialog's way out without destroying, in the reader's language
   cancelLabel: string;
@@ -55,26 +58,29 @@ defineExpose({ focus: () => cancelButton.value?.focus() });
       </ul>
     </template>
     <div class="confirm-buttons">
-      <button ref="cancelButton" class="confirm-button" type="button" @click="emit('cancelDestroy')">
+      <GameButton
+        ref="cancelButton"
+        class="translucent-button"
+        :kind="GameButtonKind.Row"
+        tip=""
+        @click="emit('cancelDestroy')"
+      >
         {{ cancelLabel }}
-      </button>
-      <button :disabled="isDestroyFull" class="confirm-button" type="button" @click="emit('confirmDestroy')">
+      </GameButton>
+      <GameButton
+        class="translucent-button"
+        :disabled="isDestroyFull"
+        :kind="GameButtonKind.Row"
+        tip=""
+        @click="emit('confirmDestroy')"
+      >
         {{ destroyConfirmButtonLabel }}
-      </button>
+      </GameButton>
     </div>
   </section>
 </template>
 
 <style scoped>
-.confirm-button {
-  padding: calc(var(--unit) * 10) calc(var(--unit) * 20);
-  border: none;
-  border-radius: calc(var(--unit) * 8);
-  background: rgb(255 255 255 / 0.14);
-  color: inherit;
-  font: inherit;
-}
-
 .confirm-title,
 .confirm-list-label,
 .confirm-warning {
@@ -103,3 +109,5 @@ defineExpose({ focus: () => cancelButton.value?.focus() });
 </style>
 
 <style scoped src="../../../styles/confirmDialog.css"></style>
+
+<style scoped src="../../../styles/translucentButton.css"></style>

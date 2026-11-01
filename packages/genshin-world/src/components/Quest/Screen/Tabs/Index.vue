@@ -9,6 +9,7 @@ import { QuestCategoryGameTextKeyMap } from "#src/services/quest/QuestCategoryGa
 import { QuestCategoryGlyphMap } from "#src/services/quest/QuestCategoryGlyphMap";
 import { QuestCategoryShadeGlyphMap } from "#src/services/quest/QuestCategoryShadeGlyphMap";
 import { QuestGlyphMap } from "#src/services/quest/QuestGlyphMap";
+import { GAME_ROW_HOVER, GAME_ROW_PRESS } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -50,6 +51,8 @@ const emit = defineEmits<{ select: [questCategory?: QuestCategory] }>();
   </div>
 </template>
 
+<style scoped src="../../../../styles/tabTint.css"></style>
+
 <style scoped>
 .tab {
   margin: 0;
@@ -70,6 +73,8 @@ const emit = defineEmits<{ select: [questCategory?: QuestCategory] }>();
   top: 0;
   left: calc(var(--unit) * 720);
   display: flex;
+  --tab-hover: v-bind(GAME_ROW_HOVER);
+  --tab-press: v-bind(GAME_ROW_PRESS);
 }
 
 /* The open tab's mark sits dark on a cream disc over the gold line along its foot */

@@ -13,6 +13,7 @@ import { MAP_MARK_SHARE, MINIMAP_RADIUS } from "#src/services/map/constants";
 import { OCULUS_MARK_RADIUS_SHARE } from "#src/services/statue/constants";
 import { playOculusSound } from "#src/services/statue/playOculusSound";
 import { GameRect } from "genshin-interface";
+import { GAME_CREAM, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 import { MathUtils } from "three";
 
@@ -33,6 +34,8 @@ interface Props {
 
 const { camera, catalogue, gameText, interfaceRects, landmarks, nearOculusPlaces, parent } = defineProps<Props>();
 const emit = defineEmits<{ open: [] }>();
+const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
+const restDuration = `${INTERACTION_REST_MS}ms`;
 // The chime sounds as an Oculus comes into range, not on every frame it stays in range
 let nearOculusIds = new Set<string>();
 watch(
@@ -105,6 +108,7 @@ watch(
    colour over the reference's disc, not on the open map's MAP_GROUND. It fades out over the rim's outer sixth to a
    thin light ring */
 .minimap {
+  position: relative;
   width: 100%;
   height: 100%;
   padding: 0;
@@ -115,6 +119,35 @@ watch(
   box-shadow: inset 0 0 0 calc(var(--canvas-unit) * 1.25) rgb(255 255 255 / 0.2);
   cursor: inherit;
   pointer-events: auto;
+}
+
+/* The rim lit over the drawing when hovered or focused, white at half, and cream when pressed. Provisional: no recording
+   shows the back lit, so the rest rim is the only measured one */
+.minimap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 calc(var(--canvas-unit) * 1.25) transparent;
+  pointer-events: none;
+  transition: box-shadow v-bind(restDuration);
+}
+
+.minimap:is(:focus-visible, [data-interaction-state="Hover"] *)::after {
+  box-shadow: inset 0 0 0 calc(var(--canvas-unit) * 1.25) rgb(255 255 255 / 0.5);
+  transition-duration: v-bind(hoverDuration);
+}
+
+@media (hover: hover) {
+  .minimap:hover::after {
+    box-shadow: inset 0 0 0 calc(var(--canvas-unit) * 1.25) rgb(255 255 255 / 0.5);
+    transition-duration: v-bind(hoverDuration);
+  }
+}
+
+.minimap:is(:active, [data-interaction-state="Pressed"] *)::after {
+  box-shadow: inset 0 0 0 calc(var(--canvas-unit) * 1.25) v-bind(GAME_CREAM);
+  transition-duration: 0s;
 }
 
 .minimap svg {

@@ -251,6 +251,7 @@ const obtain = (queueId: number) => {
       :recipes="recipeCells"
       :refusal-label
       :required-coins
+      :required-label="gameText[GameTextKey.CraftingRequired]"
       :start-label="gameText[GameTextKey.ForgeStart]"
       :support-label="gameText[GameTextKey.ForgeSupportCharacter]"
       :yield-count

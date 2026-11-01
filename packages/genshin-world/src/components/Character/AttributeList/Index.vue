@@ -9,12 +9,15 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { formatWholeNumber } from "#src/services/character/formatWholeNumber";
 import { getAttributeDetailGroups } from "#src/services/character/getAttributeDetailGroups";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
+import { GameButton, GameButtonKind } from "genshin-interface";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
   // The Adventure Rank, Mora and materials the character's next phase takes, each held against what it takes, none at its last phase
   ascendRows: { label: string; value: string }[];
   character: Character;
+  // The Friendship Level the character has reached, which the Friendship row draws beside its word, none until given
+  friendshipLevel?: number;
   // The game's words in the reader's language
   gameText: GameText;
   // Whether the character can ascend now, at its level cap with the Adventure Rank, Mora and materials its next phase takes
@@ -36,6 +39,7 @@ interface Props {
 const {
   ascendRows,
   character,
+  friendshipLevel,
   gameText,
   isAscendable,
   isLevelUpable,
@@ -104,26 +108,36 @@ const detailGroups = computed(() =>
         <dd class="value">{{ value }}</dd>
       </div>
     </dl>
-    <button v-if="isLevelUpable" type="button" class="details" @click="emit('levelUp')">
+    <GameButton v-if="isLevelUpable" class="details" :kind="GameButtonKind.Row" tip="" @click="emit('levelUp')">
       {{ gameText[GameTextKey.LevelUp] }}
-    </button>
-    <button type="button" class="details" @click="isDetailsOpen = !isDetailsOpen">
+    </GameButton>
+    <GameButton class="details" :kind="GameButtonKind.Row" tip="" @click="isDetailsOpen = !isDetailsOpen">
       {{ gameText[GameTextKey.CharacterDetails] }}
-    </button>
-    <p class="friendship">{{ gameText[GameTextKey.Friendship] }}</p>
+    </GameButton>
+    <p class="friendship">
+      {{ gameText[GameTextKey.Friendship] }}
+      <span v-if="friendshipLevel !== undefined" class="value">{{ friendshipLevel }}</span>
+    </p>
     <div class="friendship-bar" />
-    <button type="button" class="lift cream-pill" :disabled="!isLiftable" @click="emit('lift')">
+    <GameButton class="lift cream-pill" :disabled="!isLiftable" :kind="GameButtonKind.Row" tip="" @click="emit('lift')">
       {{ gameText[GameTextKey.AscensionLimit] }}
-    </button>
+    </GameButton>
     <dl v-if="ascendRows.length" class="rows">
       <div v-for="{ label, value } of ascendRows" :key="label" class="row">
         <dt>{{ label }}</dt>
         <dd class="value">{{ value }}</dd>
       </div>
     </dl>
-    <button v-if="ascendRows.length" type="button" class="details" :disabled="!isAscendable" @click="emit('ascend')">
+    <GameButton
+      v-if="ascendRows.length"
+      class="details"
+      :disabled="!isAscendable"
+      :kind="GameButtonKind.Row"
+      tip=""
+      @click="emit('ascend')"
+    >
       {{ gameText[GameTextKey.CharacterAscend] }}
-    </button>
+    </GameButton>
     <section v-for="{ rows: groupRows, title } of detailGroups" :key="title">
       <h2 class="title">{{ title }}</h2>
       <dl class="rows">
@@ -207,9 +221,11 @@ const detailGroups = computed(() =>
   line-height: calc(var(--unit) * 40);
 }
 
-/* The Friendship row under Details: its word 27 units in from the panel's edge, its lavender bar across the panel, both
-   read off the reference's pixels at 1080 high. Its level is not drawn, since the panel is not given it */
+/* The Friendship row under Details: its word 27 units in from the panel's edge, its level flush with the rows' values,
+   its lavender bar across the panel, all read off the reference's pixels at 1080 high */
 .friendship {
+  display: flex;
+  justify-content: space-between;
   margin: calc(var(--unit) * 17) 0 0;
   padding-left: calc(var(--unit) * 27);
   font-size: calc(var(--unit) * 26);

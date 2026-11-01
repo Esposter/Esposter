@@ -26,6 +26,7 @@ export const boardTopic: ReferenceTopic = {
     "The energy pips are too small to count at 1080 high, so the fixture gives every character no energy",
     "The left panel with a trefoil icon, read as the player's support zone; no summons, supports or equipment are visible in the frame",
     "The round number: the frame shows no round words, so the fixture's round is the first",
+    "The opponent's right card is raised as the active one is, with no active character behind it: the recording's pointer may rest on it, which a `pointer` on the reference entry would record",
     "The game's own duel of game 12 is not the frame's duel: the frame's opponent is not deck 1, and the player's cards are not deck 3's, so the fixture takes the frame's HP, dice and turn and the decks' names",
   ],
 };

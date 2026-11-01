@@ -2,7 +2,9 @@
 import type { PartySetupSlot } from "#src/models/PartySetupSlot";
 
 import CloseButton from "#src/components/CloseButton/Index.vue";
+import GameButton from "#src/components/GameButton/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
+import { GameButtonKind } from "#src/models/GameButtonKind";
 
 interface Props {
   // The words of the buttons in the reader's language
@@ -74,19 +76,20 @@ const steps = computed(() => [
       <CloseButton class="close" :label="backLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
     </header>
     <section class="team">
-      <button
+      <GameButton
         v-for="step of steps"
         :key="step.name"
-        :class="['step', step.name]"
         :aria-label="step.label"
-        type="button"
+        :class="['step', step.name]"
+        :kind="GameButtonKind.Disc"
+        tip=""
         @click="step.name === 'previous' ? emit('previous') : emit('next')"
       >
         <svg viewBox="54 514 40 52" aria-hidden="true">
           <path class="chevron" d="M58.5 540 80.5 520.5v7l-10.5 12.5 10.5 12.5v8z" />
           <path class="ornament" d="M71 540 81 530l9 10-9 10z" />
         </svg>
-      </button>
+      </GameButton>
       <ol class="slots">
         <li v-for="(slot, index) of slots" :key="index" class="slot">
           <div v-if="slot.levelText" class="plate">
@@ -109,10 +112,18 @@ const steps = computed(() => [
       </ol>
     </section>
     <footer class="foot">
-      <button class="configure" :aria-label="configureTeamLabel" type="button" @click="emit('configureTeam')" />
+      <GameButton
+        class="configure"
+        :aria-label="configureTeamLabel"
+        :kind="GameButtonKind.Disc"
+        tip=""
+        @click="emit('configureTeam')"
+      />
       <p class="team-name">{{ teamName }}</p>
-      <button class="quick" type="button" @click="emit('quickSetup')">{{ quickSetupLabel }}</button>
-      <button class="deploy" type="button" @click="emit('deploy')">{{ deployLabel }}</button>
+      <button class="quick cream-pill-button" type="button" @click="emit('quickSetup')">{{ quickSetupLabel }}</button>
+      <GameButton class="deploy" :kind="GameButtonKind.Row" tip="" @click="emit('deploy')">{{
+        deployLabel
+      }}</GameButton>
       <svg class="foot-art" viewBox="0 0 1920 1080" aria-hidden="true">
         <path class="list" d="M64 1008h24v3H64zM64 1015h22v3H64zM64 1023h20v3H64z" />
         <circle class="list" cx="88" cy="1018" r="3.5" />
@@ -131,6 +142,8 @@ const steps = computed(() => [
     </footer>
   </div>
 </template>
+
+<style scoped src="../../styles/creamPillButton.css"></style>
 
 <style scoped>
 .party-setup-screen {
@@ -301,6 +314,7 @@ const steps = computed(() => [
 
 .slot:nth-child(3) .plate {
   top: calc(var(--unit) * 293);
+  margin-left: calc(var(--unit) * 12);
 }
 
 .slot:nth-child(4) .plate {
@@ -322,12 +336,14 @@ const steps = computed(() => [
   top: calc(var(--unit) * -2);
   width: calc(var(--unit) * 34);
   height: calc(var(--unit) * 34);
-  margin: calc(var(--unit) * -4) calc(var(--unit) * 8) calc(var(--unit) * -4) 0;
-  vertical-align: middle;
+  margin: calc(var(--unit) * -4) 0;
   fill: #eef8ff;
 }
 
 .name {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 5);
   font-size: calc(var(--unit) * 26);
   line-height: 1;
 }
@@ -410,6 +426,7 @@ const steps = computed(() => [
   font-size: calc(var(--unit) * 30);
   letter-spacing: calc(var(--unit) * 1.5);
   text-align: left;
+  isolation: isolate;
 }
 
 .deploy {

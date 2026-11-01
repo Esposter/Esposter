@@ -2,7 +2,7 @@
 import type { GameText } from "genshin-text";
 
 import ScreenHeader from "#src/components/Menu/ScreenHeader/Index.vue";
-import { TIME_DIAL_ORNAMENT_POSITIONS } from "#src/services/menu/constants";
+import { TIME_DIAL_ORNAMENT_POSITIONS, TIME_MINIMUM_ADVANCE_MINUTES } from "#src/services/menu/constants";
 import { getTimeTargetMinutes } from "#src/services/menu/getTimeTargetMinutes";
 import { stepTimeDialAdvance } from "#src/services/menu/stepTimeDialAdvance";
 import { MINUTES_PER_DAY } from "genshin-engine";
@@ -24,6 +24,10 @@ const confirmButton = useTemplateRef("confirmButton");
 const advance = ref(0);
 let pointerAngle: number | undefined;
 const targetMinutes = computed(() => getTimeTargetMinutes(clockMinutes, advance.value));
+// Whether the target falls on the clock's own day, counting the advance from its minimum as the target does
+const targetIsToday = computed(
+  () => clockMinutes + Math.max(advance.value, TIME_MINIMUM_ADVANCE_MINUTES) < MINUTES_PER_DAY,
+);
 // The dial turns the day as the game draws it: noon at the top, midnight at the bottom, clockwise through the day
 const toDialAngle = (minutes: number): number => ((minutes / MINUTES_PER_DAY) * 360 + 180) % 360;
 const formatMinutes = (minutes: number): string => {
@@ -61,9 +65,9 @@ onMounted(() => {
 
 <template>
   <!-- The Time screen the Paimon menu's side bar opens: its title and the cross that closes it, the clock's dial on the
-       right of the screen and, in the middle, the clock's time and the hour the dial points at, then Confirm, which sets
-       the world's clock to that hour. The dial and the column are placed from the English PC client's screen (1080 high,
-       a reference pixel a unit). "Current Time" and "Today" have no game text key yet, so they are not drawn -->
+       right of the screen and, in the middle, the clock's time and the hour the dial points at, with Today beneath that
+       hour while it falls on the clock's day, then Confirm, which sets the world's clock to that hour. The dial and the
+       column are placed from the English PC client's screen (1080 high, a reference pixel a unit). -->
   <GameScreen class="menu-time" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Time]">
     <ScreenHeader :game-text :mark="CloseButtonMark.Cross" :title="gameText[GameTextKey.Time]" @close="emit('close')" />
     <div
@@ -124,16 +128,18 @@ onMounted(() => {
       <path d="M 2 18 L 22 8 L 29 12 M 68 18 L 48 8 L 41 12" fill="none" />
       <path d="M 35 2 L 41 12 L 35 22 L 29 12 Z" fill="#c6b794" />
     </svg>
+    <p class="current-time">{{ gameText[GameTextKey.TimeCurrent] }}</p>
     <p class="clock-time">{{ clockTime }}</p>
     <span class="caret first" />
     <p class="wait-until">{{ gameText[GameTextKey.TimeWaitUntil] }}</p>
     <span class="caret second" />
     <p class="hour">{{ targetTime }}</p>
+    <p v-if="targetIsToday" class="day">{{ gameText[GameTextKey.TimeToday] }}</p>
     <GameButton
       ref="confirmButton"
       class="confirm"
-      tip=""
       :kind="GameButtonKind.Pill"
+      tip=""
       @click="emit('confirm', targetMinutes)"
     >
       {{ gameText[GameTextKey.TimeConfirm] }}
@@ -236,15 +242,23 @@ onMounted(() => {
   top: calc(var(--reference-pixel) * 645);
 }
 
+.current-time,
 .clock-time,
 .wait-until,
-.hour {
+.hour,
+.day {
   position: absolute;
   left: 50%;
   margin: 0;
   font-weight: 600;
   white-space: nowrap;
   translate: -50% -50%;
+}
+
+.current-time {
+  top: calc(var(--reference-pixel) * 390);
+  color: #c9b994;
+  font-size: calc(var(--reference-pixel) * 19);
 }
 
 .clock-time {
@@ -263,6 +277,11 @@ onMounted(() => {
   top: calc(var(--reference-pixel) * 570);
   color: #f3efe6;
   font-size: calc(var(--reference-pixel) * 28);
+}
+
+.day {
+  top: calc(var(--reference-pixel) * 605);
+  font-size: calc(var(--reference-pixel) * 16);
 }
 
 .caret {

@@ -12,8 +12,8 @@ interface Props {
 const { gameText } = defineProps<Props>();
 // The notice is one string in the game's text, its paragraphs a blank line apart
 const paragraphs = computed(() => gameText[GameTextKey.HealthNotice].split("\n\n"));
-// The game sets Japanese and Chinese at about three quarters of the Latin size, so the open CJK face below is tried first.
-// It is tried for those characters alone; Latin characters pass it by and keep the game's face
+// The open CJK face below is tried first, for those characters alone; Latin characters pass it by and keep
+// the game's face
 const fontFamily = `"GameNoticeCjk", ${GAME_FONT_FAMILY}`;
 </script>
 
@@ -30,20 +30,22 @@ const fontFamily = `"GameNoticeCjk", ${GAME_FONT_FAMILY}`;
 
 <style scoped>
 /* Measured against the English PC client's notice: the divider spans the screen's width less a fixed inset a side, and
-   the text sits a little inside it, by the inset that keeps the first line's last word on that line. The sizes are the
-   ones that match the English notice's line breaks in Signika, whose letters are proportioned apart from the game's own
-   face. The heading's and the text's greys are the English recording's */
+   the text sits a little inside it, by the inset that keeps the first line's last word on that line. The Latin text is
+   Signika at 40 units, the size whose first line runs closest to the English notice's, and the paragraphs wrap inside
+   1505 units, the width the English notice's lines break at in Signika. The heading's and the text's greys are the
+   English recording's */
 .health-notice {
   display: grid;
   place-items: center;
   background: var(--white);
 }
 
-/* The first of these local CJK faces the reader has, drawn at three quarters of the size its Latin text is set at */
+/* The first of these local CJK faces the reader has, scaled so a full-width character advances 32.4 units, the advance
+   the mainland notice's lines measure (81% of the 40-unit Latin size) */
 @font-face {
   font-family: "GameNoticeCjk";
   font-weight: 600;
-  size-adjust: 75%;
+  size-adjust: 81%;
   src:
     local("PingFangSC-Semibold"), local("HiraginoSans-W6"), local("MicrosoftYaHei-Bold"), local("NotoSansCJKjp-Bold"),
     local("NotoSansCJKsc-Bold");
@@ -73,10 +75,10 @@ const fontFamily = `"GameNoticeCjk", ${GAME_FONT_FAMILY}`;
 }
 
 .paragraph {
-  max-width: calc(100cqw - var(--unit) * 410);
+  max-width: calc(100cqw - var(--unit) * 415);
   margin: calc(var(--unit) * 12.5) 0 0;
   color: #696969;
-  font-size: calc(var(--unit) * 40.5);
+  font-size: calc(var(--unit) * 40);
   font-weight: 600;
   line-height: calc(var(--unit) * 48);
 }

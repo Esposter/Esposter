@@ -1,0 +1,21 @@
+/* A fill tint: the element's box takes `--row-tint` behind its words, lit as a list row is, by focus, by the forced
+   Hover state or by a pointer's hover. The first two draw the tint unguarded, and a pointer's hover is guarded by
+   `(hover: hover)`, so a touch screen leaves no tint after a tap. The element wears the `fill-tint` class and sets
+   `--row-tint`, `--hover-duration` and `--rest-duration` on its own base rule. Its press is its own, in a block placed
+   after this sheet. Worn by the artifact picker's options and the character screen's tabs */
+.fill-tint {
+  --state-duration: var(--rest-duration);
+  transition: background-color var(--state-duration);
+}
+
+.fill-tint:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  --state-duration: var(--hover-duration);
+  background-color: var(--row-tint);
+}
+
+@media (hover: hover) {
+  .fill-tint:hover {
+    --state-duration: var(--hover-duration);
+    background-color: var(--row-tint);
+  }
+}

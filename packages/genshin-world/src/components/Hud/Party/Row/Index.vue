@@ -7,6 +7,7 @@ import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { getActionKeyCode } from "#src/services/shared/getActionKeyCode";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
+import { GAME_ROW_HOVER, GAME_ROW_PRESS, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface/constants";
 
 interface Props {
   // The input action the row's slot's key taps
@@ -26,6 +27,8 @@ interface Props {
 }
 
 const { action, characterId, index, input, isTouch, name, party, switchCooldownShare } = defineProps<Props>();
+const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
+const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -93,6 +96,37 @@ const { action, characterId, index, input, isTouch, name, party, switchCooldownS
   background: linear-gradient(to right, transparent, rgb(255 255 255 / 0.18) 40%);
   content: "";
   translate: 0 -50%;
+}
+
+/* A row lit as the game's Row is, a tint laid over its own box and behind its words: hovered or focused, and a stronger
+   one pressed. Provisional, as no recording shows a party row lit. The member on the field's band is its ::before */
+.member::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: v-bind(GAME_ROW_HOVER);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity v-bind(restDuration);
+}
+
+.member:is(:focus-visible, [data-interaction-state="Hover"] *)::after {
+  opacity: 1;
+  transition-duration: v-bind(hoverDuration);
+}
+
+@media (hover: hover) {
+  .member:hover::after {
+    opacity: 1;
+    transition-duration: v-bind(hoverDuration);
+  }
+}
+
+.member:is(:active, [data-interaction-state="Pressed"] *)::after {
+  background-color: v-bind(GAME_ROW_PRESS);
+  opacity: 1;
+  transition-duration: 0s;
 }
 
 .down {

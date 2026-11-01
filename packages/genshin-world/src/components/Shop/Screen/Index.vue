@@ -7,6 +7,7 @@ import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { CurrencyCount, ShopGoodCell } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
+import ShopScreenList from "#src/components/Shop/Screen/List/Index.vue";
 import { useShopGoodCells } from "#src/composables/useShopGoodCells";
 import { useShopPick } from "#src/composables/useShopPick";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
@@ -125,9 +126,25 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
 
 <template>
   <!-- The shop a city vendor sells from, opened by their talk: the goods on offer to the player's rank, and the picked
-       good's detail with its costs, limit and refresh, the count the player buys and the Buy button -->
+       good's detail with its costs, limit and refresh, the count the player buys and the Buy button. A shop with no tabs
+       lists its goods one under another, as the General Goods does -->
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Shop]">
+    <ShopScreenList
+      v-if="tabs.length === 0"
+      v-model:count="count"
+      v-model:good-id="goodId"
+      :balances
+      :buy-label="gameText[GameTextKey.ShopPurchase]"
+      :close-label="gameText[GameTextKey.Back]"
+      :count-label="gameText[GameTextKey.CraftingAmount]"
+      :count-maximum
+      :goods="goodCells"
+      :title="gameText[GameTextKey.Shop]"
+      @buy="(good, count) => buy(good, count)"
+      @close="emit('close')"
+    />
     <ShopScreen
+      v-else
       v-model:count="count"
       v-model:good-id="goodId"
       v-model:tab-id="tabId"

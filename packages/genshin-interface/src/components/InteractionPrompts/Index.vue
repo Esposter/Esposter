@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { InteractionPrompt } from "#src/models/InteractionPrompt";
 
-import { INTERACTION_HOVER_MS, INTERACTION_KEY_LABEL } from "#src/services/constants";
+import { GAME_ROW_PRESS, INTERACTION_HOVER_MS, INTERACTION_KEY_LABEL } from "#src/services/constants";
 
 interface Props {
   // Whether the rows are laid out for a touch screen, which has no key to press, so no row is the one it acts on
@@ -139,6 +139,8 @@ const selectionDuration = `${INTERACTION_HOVER_MS}ms`;
   z-index: -1;
   border-radius: calc(var(--unit) * 31.5) 0 0 calc(var(--unit) * 31.5);
   background: var(--pill-fill);
+  --pill-lit-shadow:
+    inset 0 0 0 calc(var(--unit) * 2.5) var(--pill-fill), inset 0 0 0 calc(var(--unit) * 4.5) rgb(255 255 255 / 0.41);
   box-shadow:
     inset 0 0 0 calc(var(--unit) * 2.5) var(--pill-fill),
     inset 0 0 0 calc(var(--unit) * 4.5) rgb(255 255 255 / 0.24);
@@ -147,10 +149,21 @@ const selectionDuration = `${INTERACTION_HOVER_MS}ms`;
   transition: box-shadow v-bind(selectionDuration) linear;
 }
 
-.prompt[aria-current="true"] .pill::before {
-  box-shadow:
-    inset 0 0 0 calc(var(--unit) * 2.5) var(--pill-fill),
-    inset 0 0 0 calc(var(--unit) * 4.5) rgb(255 255 255 / 0.41);
+.prompt[aria-current="true"] .pill::before,
+.pill:is(:focus-visible, [data-interaction-state="Hover"] *)::before {
+  box-shadow: var(--pill-lit-shadow);
+}
+
+/* Hovered, the rim lights as the selected row's does, and pressed the ground takes the Row's press tint over its slate, so
+   a press shows at once. Provisional, as no recording shows a prompt lit */
+@media (hover: hover) {
+  .pill:hover::before {
+    box-shadow: var(--pill-lit-shadow);
+  }
+}
+
+.pill:is(:active, [data-interaction-state="Pressed"] *)::before {
+  background-image: linear-gradient(v-bind(GAME_ROW_PRESS), v-bind(GAME_ROW_PRESS));
 }
 
 .name {

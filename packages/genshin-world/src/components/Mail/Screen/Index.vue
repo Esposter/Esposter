@@ -123,7 +123,8 @@ const selectedItemTiles = computed(() =>
        take, and Delete Read, once confirmed, removes every read mail with nothing left to claim. Delete on a Gift Mail Box
        mail, once its warning is confirmed, removes that one mail. A pin keeps a mail at the top of the list. The header's
        envelope and its help and folder marks, the list's star and person marks, the item icons and the button icons are
-       the game's own art, which does not ship, so their places stay bare -->
+       the game's own art, which does not ship, so their places stay bare; the pills' dark discs are the pill's own disc
+       (`pill-disc`), and the pin's cream disc is a plain shape, drawn here -->
   <GameScreen class="mail-screen">
     <span class="band" />
     <svg class="mailbox-glyph" aria-hidden="true" viewBox="0 0 72 56" preserveAspectRatio="none">
@@ -131,22 +132,26 @@ const selectedItemTiles = computed(() =>
     </svg>
     <GameButton
       class="mailbox-tab"
-      tip=""
       :aria-pressed="!isGiftBoxTab"
       :kind="GameButtonKind.Plain"
+      tip=""
       @click="selectTab(false)"
     >
       {{ gameText[GameTextKey.MailBox] }}
     </GameButton>
     <GameButton
       class="gift-box-tab"
-      tip=""
       :aria-pressed="isGiftBoxTab"
       :kind="GameButtonKind.Plain"
+      tip=""
       @click="selectTab(true)"
     >
       {{ gameText[GameTextKey.MailGiftBox] }}
     </GameButton>
+    <p class="mail-count">
+      {{ gameText[GameTextKey.MailItems] }}
+      <span>{{ mails.length }}/{{ MAX_MAIL_COUNT }}</span>
+    </p>
     <CloseButton
       class="close"
       :label="gameText[GameTextKey.Back]"
@@ -187,13 +192,13 @@ const selectedItemTiles = computed(() =>
       :aria-label="gameText[GameTextKey.MailDeleteRead]"
     >
       <p class="confirm-text">{{ gameText[GameTextKey.MailDeleteReadConfirm] }}</p>
-      <GameButton class="cancel" tip="" :kind="GameButtonKind.Pill" @click="isConfirmingDeleteRead = false">
+      <GameButton class="cancel" :kind="GameButtonKind.Pill" tip="" @click="isConfirmingDeleteRead = false">
         {{ gameText[GameTextKey.Cancel] }}
       </GameButton>
       <GameButton
         class="confirm-button"
-        tip=""
         :kind="GameButtonKind.Pill"
+        tip=""
         @click="
           () => {
             isConfirmingDeleteRead = false;
@@ -237,9 +242,9 @@ const selectedItemTiles = computed(() =>
       </div>
       <GameButton
         class="pin"
-        tip=""
         :aria-label="gameText[selectedEntry.mail.isPinned ? GameTextKey.MailCancelStar : GameTextKey.MailStar]"
         :kind="GameButtonKind.Disc"
+        tip=""
         @click="emit('pin', selectedEntry.mail)"
       />
       <p v-if="selectedEntry.mail.isClaimed && selectedEntry.row.items.length > 0" class="claimed">
@@ -247,9 +252,9 @@ const selectedItemTiles = computed(() =>
       </p>
       <GameButton
         v-else-if="selectedEntry.row.items.length > 0"
-        class="claim"
-        tip=""
+        class="claim pill-disc"
         :kind="GameButtonKind.Pill"
+        tip=""
         @click="emit('claim', selectedEntry.mail)"
       >
         {{ gameText[GameTextKey.MailClaim] }}
@@ -257,8 +262,8 @@ const selectedItemTiles = computed(() =>
       <GameButton
         v-if="checkIsGiftBoxed(selectedEntry.mail, selectedEntry.row, birthdayMailIds) && !isConfirmingDeleteGift"
         class="delete-gift"
-        tip=""
         :kind="GameButtonKind.Pill"
+        tip=""
         @click="isConfirmingDeleteGift = true"
       >
         {{ gameText[GameTextKey.MailDelete] }}
@@ -271,13 +276,13 @@ const selectedItemTiles = computed(() =>
       >
         <p class="confirm-title">{{ gameText[GameTextKey.MailGiftDeleteWarningTitle] }}</p>
         <p class="confirm-text">{{ gameText[GameTextKey.MailGiftDeleteWarning] }}</p>
-        <GameButton class="cancel" tip="" :kind="GameButtonKind.Pill" @click="isConfirmingDeleteGift = false">
+        <GameButton class="cancel" :kind="GameButtonKind.Pill" tip="" @click="isConfirmingDeleteGift = false">
           {{ gameText[GameTextKey.Cancel] }}
         </GameButton>
         <GameButton
           class="confirm-button"
-          tip=""
           :kind="GameButtonKind.Pill"
+          tip=""
           @click="
             isConfirmingDeleteGift = false;
             emit('deleteGift', selectedEntry.mail);
@@ -288,19 +293,19 @@ const selectedItemTiles = computed(() =>
       </section>
     </div>
     <GameButton
-      class="claim-all"
-      tip=""
+      class="claim-all pill-disc"
       :disabled="!hasClaimable"
       :kind="GameButtonKind.Pill"
+      tip=""
       @click="emit('claimAll')"
     >
       {{ gameText[GameTextKey.MailClaimAll] }}
     </GameButton>
     <GameButton
-      class="delete-read"
-      tip=""
+      class="delete-read pill-disc"
       :disabled="!hasDeletableMail"
       :kind="GameButtonKind.Pill"
+      tip=""
       @click="isConfirmingDeleteRead = true"
     >
       {{ gameText[GameTextKey.MailDeleteRead] }}
@@ -340,7 +345,7 @@ const selectedItemTiles = computed(() =>
   top: calc(var(--unit) * 28);
   height: calc(var(--unit) * 28);
   color: #d0bf9f;
-  font-size: calc(var(--unit) * 22);
+  font-size: calc(var(--unit) * 25);
   font-weight: 600;
   line-height: calc(var(--unit) * 28);
 }
@@ -351,6 +356,22 @@ const selectedItemTiles = computed(() =>
 
 .gift-box-tab {
   left: calc(var(--unit) * 1077);
+}
+
+/* The count of the mails held, out of the mailbox's capacity, on the header's line beside the Gift Mail Box tab's place */
+.mail-count {
+  position: absolute;
+  top: calc(var(--unit) * 28);
+  left: calc(var(--unit) * 1319);
+  margin: 0;
+  color: #d0bf9f;
+  font-size: calc(var(--unit) * 25);
+  font-weight: 600;
+  line-height: calc(var(--unit) * 28);
+}
+
+.mail-count span {
+  color: #fff;
 }
 
 /* The close disc is 46 units across at the reference's place, where the shared close button's 58 at its right stands */
@@ -479,7 +500,8 @@ const selectedItemTiles = computed(() =>
   height: calc(var(--unit) * 54);
   align-items: center;
   justify-content: start;
-  font-size: calc(var(--unit) * 24);
+  font-size: calc(var(--unit) * 28);
+  letter-spacing: calc(var(--unit) * 0.8);
   text-align: start;
 }
 
@@ -507,12 +529,15 @@ const selectedItemTiles = computed(() =>
   padding-left: calc(var(--unit) * 85);
 }
 
+/* The star's cream disc, which the game draws at rest behind the star, the star itself bare */
 .mail-screen .pin {
   position: absolute;
   top: calc(var(--unit) * 884);
   left: calc(var(--unit) * 437);
   width: calc(var(--unit) * 44);
   height: calc(var(--unit) * 44);
+  border-radius: 50%;
+  background-color: #f4edd5;
 }
 
 .confirm-text {

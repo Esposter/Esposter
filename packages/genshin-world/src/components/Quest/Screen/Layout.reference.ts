@@ -61,6 +61,13 @@ export const layoutTopic: ReferenceTopic = {
         "The layer blurs the world with a 16 unit blur and keeps 0.65 of it, the wash added as light down the screen. On the parity page the four quest ids' means are their rows in `ParityReferenceMap.snapshot.md`. The blur radius moves the mean by under 0.2 between 10 and 24 units. The page's plate is the world the layer blurs, and the layer reproduces 0.65 times the plate plus the wash to within a few levels per band. The plate is darker than the still's world on the strip 340 high, so the remaining gap is the plate's, not the layer's",
     },
     {
+      method:
+        "The reward tiles' edge strips, 5 pixels wide over the 60 above their count strip, and the strip's own mean colour, sampled off the still at 1 to 1 with ImageMagick, against the quest's rarity gradients and the translucent slate laid over each face",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The three, four and five star tiles' edge means (86 121 158), (126 105 164) and (172 115 53), within 4, 7 and 2 levels of their gradients' averages, so the quest's faces stand, and ItemTile's default faces run 11 to 31 levels lighter, so the quest takes the variant. The count strip's mean on a three star face, (74 95 119), is rgb(70 82 101 / 0.73) over that face's foot within 2 levels, against the default's opaque strip per rarity, so the variant draws it translucent. The count's size is 20 units on a 94 tile",
+    },
+    {
       method: "The screen's own words in the installed client's English text map",
       outcome: InvestigationOutcome.Found,
       result:

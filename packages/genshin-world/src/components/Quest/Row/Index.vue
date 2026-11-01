@@ -5,6 +5,7 @@ import { QuestGlyph } from "#src/models/quest/QuestGlyph";
 import { QuestCategoryGlyphMap } from "#src/services/quest/QuestCategoryGlyphMap";
 import { QuestCategoryShadeGlyphMap } from "#src/services/quest/QuestCategoryShadeGlyphMap";
 import { QuestGlyphMap } from "#src/services/quest/QuestGlyphMap";
+import { GameButton, GameButtonKind } from "genshin-interface";
 
 interface Props {
   // How far the quest's objective stands from the player in the reader's words, "" with no place to go to
@@ -21,7 +22,7 @@ const { distance, isCommission, title } = defineProps<Props>();
 <template>
   <!-- One quest of the quest screen's list: its title over how far it stands, and its mark at its end, the commission's
        Star drawn as the Commission tab's mark in its own purples -->
-  <button class="quest-row" type="button">
+  <GameButton class="quest-row" :kind="GameButtonKind.Row" tip="">
     <span class="title">{{ title }}</span>
     <span v-if="distance" class="distance">{{ distance }}</span>
     <span class="mark" aria-hidden="true">
@@ -36,7 +37,7 @@ const { distance, isCommission, title } = defineProps<Props>();
       </svg>
       <MenuGlyph v-else :glyph="QuestGlyphMap[QuestGlyph.RowPlace]" />
     </span>
-  </button>
+  </GameButton>
 </template>
 
 <style scoped>

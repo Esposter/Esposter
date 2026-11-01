@@ -1,0 +1,24 @@
+/* The pieces the shop's grid and its list draw alike. Each screen sets its own position, size and line height */
+.amount::-webkit-slider-runnable-track {
+  background: #9aa3b8;
+}
+
+.amount::-webkit-slider-thumb {
+  background: #2b2a26;
+}
+
+.cross {
+  width: calc(var(--unit) * 24);
+  height: calc(var(--unit) * 24);
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-width: 3;
+}
+
+.price-line {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 10);
+  font-size: calc(var(--unit) * 24);
+}

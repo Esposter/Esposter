@@ -3,7 +3,7 @@ import type { WorldHudFrameOptions } from "#src/models/hud/WorldHudFrameOptions"
 import type { MapCamera } from "#src/models/map/MapCamera";
 
 import { useRafFn } from "@vueuse/core";
-import { FOLLOW_CAMERA_PIVOT_SHARE, STAMINA_MAX } from "genshin-engine";
+import { FOLLOW_CAMERA_PIVOT_SHARE } from "genshin-engine";
 import { Euler, Vector3 } from "three";
 import { reactive, shallowRef } from "vue";
 
@@ -14,6 +14,7 @@ export const useWorldHudFrame = ({
   getCapsuleHeight,
   getStamina,
   origin,
+  staminaMaximum,
 }: WorldHudFrameOptions) => {
   // The character's ground point in world metres, the yaw the view faces and the yaw the character faces, for the map and
   // The minimap, read each frame and handed on only when one moved, so a still player re-renders nothing
@@ -26,7 +27,7 @@ export const useWorldHudFrame = ({
     pivotY: 0,
     seconds: 0,
     sheerCold: 0,
-    stamina: STAMINA_MAX,
+    stamina: staminaMaximum.value,
   });
   const cameraEuler = new Euler();
   const pivot = new Vector3();
@@ -39,7 +40,7 @@ export const useWorldHudFrame = ({
     const { facing: lastFacing, x: lastX, yaw: lastYaw, z: lastZ } = mapCamera.value;
     if (x !== lastX || yaw !== lastYaw || z !== lastZ || facing !== lastFacing) mapCamera.value = { facing, x, yaw, z };
     const stamina = getStamina();
-    if (stamina >= STAMINA_MAX && hudFrame.stamina >= STAMINA_MAX) return;
+    if (stamina >= staminaMaximum.value && hudFrame.stamina >= staminaMaximum.value) return;
     hudFrame.stamina = stamina;
     pivot.set(x - origin.x, y + getCapsuleHeight() * FOLLOW_CAMERA_PIVOT_SHARE, z - origin.z).project(activeCamera);
     hudFrame.pivotX = (pivot.x + 1) / 2;

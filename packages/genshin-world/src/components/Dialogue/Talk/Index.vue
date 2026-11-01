@@ -15,12 +15,11 @@ import {
 import { getTalkChoices } from "#src/services/dialogue/getTalkChoices";
 import { getTalkLine } from "#src/services/dialogue/getTalkLine";
 import { getTalkRevealedLength } from "#src/services/dialogue/getTalkRevealedLength";
-import { skipTalk } from "#src/services/dialogue/skipTalk";
 import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
 import { checkIsActionKey } from "#src/services/shared/checkIsActionKey";
 import { useEventListener, useRafFn } from "@vueuse/core";
 import { InputAction } from "genshin-engine";
-import { DialogueChoiceIcon, DialogueScreen, GameScreen } from "genshin-interface";
+import { DialogueChoiceIcon, DialogueScreen, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { fillLinePlaceholders, GameTextKey } from "genshin-text";
 
 interface Props {
@@ -100,13 +99,6 @@ const setProgress = (newProgress: TalkProgress) => {
 const goOn = () => {
   setProgress(advanceTalk(talk, progress.value));
 };
-// Skip stops at the opening line written out whole while it offers a quest talk or a duel, as at any line asking for a
-// Reply, so a skip never passes them by
-const skip = () => {
-  if (progress.value.lineId === talk.startLineId && (offers.length > 0 || isDuelOffered))
-    setProgress({ ...progress.value, isRevealed: true });
-  else setProgress(skipTalk(talk, progress.value));
-};
 const choose = (choiceId: string) => {
   if (choiceId === DIALOGUE_DUEL_CHOICE_ID) emit("duel");
   else if (choiceId.startsWith(DIALOGUE_OFFER_CHOICE_ID_PREFIX))
@@ -136,10 +128,11 @@ useEventListener("keydown", (event) => {
 </script>
 
 <template>
-  <!-- A talk run over the world: the line written out a character at a time, a click, F or Space going on, the
-       Replies chosen by a click or by F on the one lit, the opening line's quest talks and duel among them, auto-play
-       Holding each whole line before going on until replies are on offer, and skip running on to the next replies or
-       The end -->
+  <!-- A talk run over the world: the line written out a character at a time, a click, F or Space going on, the replies
+       Chosen by a click or by F on the one lit, the opening line's quest talks and duel among them, and auto-play
+       Holding each whole line before going on until replies are on offer. Only the Auto control is drawn, at the
+       Screen's top left: `dialogue-auto-skip.mkv` shows an ordinary talk's with no Skip beside it, which only a
+       Hangout event's talk has -->
   <GameScreen class="dialogue-talk">
     <DialogueScreen
       :choices
@@ -152,37 +145,55 @@ useEventListener("keydown", (event) => {
       @advance="goOn()"
       @choose="(choiceId) => choose(choiceId)"
     />
-    <button class="auto" :aria-pressed="isAutoPlaying" type="button" @click="isAutoPlaying = !isAutoPlaying">
-      {{ gameText[isAutoPlaying ? GameTextKey.DialogueAutoPlaying : GameTextKey.DialogueAuto] }}
-    </button>
-    <button class="skip" type="button" @click="skip()">
-      {{ gameText[GameTextKey.Skip] }}
-    </button>
+    <GameButton
+      class="auto"
+      :aria-pressed="isAutoPlaying"
+      :kind="GameButtonKind.Plain"
+      tip=""
+      @click="isAutoPlaying = !isAutoPlaying"
+    >
+      <span class="auto-disc" aria-hidden="true">
+        <svg class="auto-mark" viewBox="0 0 10 12"><path d="M1 0 10 6 1 12Z" /></svg>
+      </span>
+      <span class="auto-label">
+        {{ gameText[isAutoPlaying ? GameTextKey.DialogueAutoPlaying : GameTextKey.DialogueAuto] }}
+      </span>
+    </GameButton>
   </GameScreen>
 </template>
 
 <style scoped>
-/* Provisional: the buttons' places and looks wait on the parity pass, as the dialogue screen's do */
-.auto,
-.skip {
-  position: absolute;
-  top: calc(var(--unit) * 40);
-  padding: calc(var(--unit) * 8) calc(var(--unit) * 24);
-  border: none;
-  border-radius: calc(var(--unit) * 24);
-  background: rgb(0 0 0 / 0.35);
-  color: #ece5d8;
-  cursor: inherit;
-  font: inherit;
-  font-size: calc(var(--unit) * 26);
-  font-weight: 600;
-}
-
+/* The Auto control as `dialogue-auto-skip.mkv` shows it at 1920 across: a cream disc 40 across, its centre 70 in and 47
+   down, a dark play mark in it, and the label in white 15 past the disc */
 .auto {
-  left: calc(var(--unit) * 60);
+  position: absolute;
+  top: calc(var(--unit) * 27);
+  left: calc(var(--unit) * 50);
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 15);
 }
 
-.skip {
-  right: calc(var(--unit) * 60);
+.auto-disc {
+  display: grid;
+  place-items: center;
+  width: calc(var(--unit) * 40);
+  height: calc(var(--unit) * 40);
+  border-radius: 50%;
+  background: #ece5d8;
+}
+
+.auto-mark {
+  width: calc(var(--unit) * 14);
+  height: calc(var(--unit) * 16);
+  margin-left: calc(var(--unit) * 3);
+  fill: #3b4255;
+}
+
+.auto-label {
+  color: #fff;
+  font-size: calc(var(--unit) * 28);
+  font-weight: 600;
+  text-shadow: 0 0 calc(var(--unit) * 4) rgb(0 0 0 / 0.45);
 }
 </style>

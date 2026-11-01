@@ -30,7 +30,7 @@ const emit = defineEmits<{ close: [] }>();
           <span class="time">{{ time }}</span>
           <span class="banner">{{ bannerLabel }}</span>
           <span class="name">{{ name }}</span>
-          <RarityStars :rarity />
+          <RarityStars color="" :rarity />
         </li>
       </ul>
     </div>

@@ -10,7 +10,7 @@ import { collectProcessingJobs } from "#src/services/cooking/collectProcessingJo
 import { PROCESSING_COLLECT_INTERVAL_MS } from "#src/services/cooking/constants";
 import { startProcessing } from "#src/services/cooking/startProcessing";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
-import { GameScreen } from "genshin-interface";
+import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -92,7 +92,7 @@ const start = (recipe: ProcessingRecipe) => {
           @start="start(recipe)"
         />
       </ul>
-      <button type="button" @click="emit('close')">{{ gameText[GameTextKey.Back] }}</button>
+      <GameButton :kind="GameButtonKind.Row" tip="" @click="emit('close')">{{ gameText[GameTextKey.Back] }}</GameButton>
     </div>
   </GameScreen>
 </template>

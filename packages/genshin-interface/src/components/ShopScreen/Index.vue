@@ -3,8 +3,11 @@ import type { CurrencyCount } from "#src/models/CurrencyCount";
 import type { ShopGoodCell } from "#src/models/ShopGoodCell";
 import type { ShopTabCell } from "#src/models/ShopTabCell";
 
-import DiscButton from "#src/components/DiscButton/Index.vue";
+import GameButton from "#src/components/GameButton/Index.vue";
 import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
+import ShopScreenCloseButton from "#src/components/ShopScreen/CloseButton/Index.vue";
+import { useShopGoodPick } from "#src/composables/useShopGoodPick";
+import { GameButtonKind } from "#src/models/GameButtonKind";
 
 interface Props {
   // The currencies the player holds, shown across the head, the top-up ones with a plus
@@ -30,13 +33,13 @@ const goodId = defineModel<number>("goodId", { default: 0 });
 const tabId = defineModel<number>("tabId", { default: 0 });
 const { balances, buyLabel, closeLabel, countLabel, countMaximum, goods, tabs, title } = defineProps<Props>();
 const emit = defineEmits<{ buy: [good: ShopGoodCell, count: number]; close: [] }>();
-// The good the player picked, whose detail the screen shows over the goods grid
-const pickedGood = computed(() => goods.find((good) => good.id === goodId.value));
-// The count kept within the picked good's most, never less than one so the picker still reads as a count
-const pickedCount = computed(() => Math.min(Math.max(count.value, 1), Math.max(countMaximum, 1)));
-const setCount = (event: Event) => {
-  count.value = Number((event.target as HTMLInputElement).value);
-};
+// The good the player picked, whose detail the screen shows over the goods grid, and the count it is bought for
+const { pickedCount, pickedGood, setCount } = useShopGoodPick({
+  count,
+  getCountMaximum: () => countMaximum,
+  getGoods: () => goods,
+  goodId,
+});
 </script>
 
 <template>
@@ -55,34 +58,43 @@ const setCount = (event: Event) => {
         <span v-if="balance.isTopUp" class="top-up" aria-hidden="true">+</span>
       </li>
     </ul>
-    <DiscButton class="close" :label="closeLabel" :size="56" @click="emit('close')">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M6 6 18 18M18 6 6 18" />
-      </svg>
-    </DiscButton>
+    <ShopScreenCloseButton :label="closeLabel" @click="emit('close')" />
     <ul v-if="tabs.length > 0" class="tabs">
       <li v-for="tab of tabs" :key="tab.id">
-        <button class="tab" :aria-pressed="tab.id === tabId" type="button" @click="tabId = tab.id">
+        <GameButton
+          class="tab"
+          :aria-pressed="tab.id === tabId"
+          :kind="GameButtonKind.Row"
+          tip=""
+          @click="tabId = tab.id"
+        >
           {{ tab.name }}
-        </button>
+        </GameButton>
       </li>
     </ul>
     <ul class="goods">
       <li v-for="good of goods" :key="good.id">
-        <button class="good" :aria-pressed="good.id === goodId" type="button" @click="goodId = good.id">
+        <GameButton
+          class="good"
+          :aria-pressed="good.id === goodId"
+          :data-tone="good.tone"
+          :kind="GameButtonKind.Row"
+          tip=""
+          @click="goodId = good.id"
+        >
           <span class="good-name">{{ good.name }}</span>
           <span v-if="good.limitLabel" class="good-limit">{{ good.limitLabel }}</span>
           <span v-for="cost of good.costs" :key="cost.name" class="good-price">
             <span class="price-icon" role="img" :aria-label="cost.name" />
             {{ cost.count }}
           </span>
-        </button>
+        </GameButton>
       </li>
     </ul>
     <div v-if="pickedGood" class="detail" role="dialog" aria-modal="true" :aria-label="pickedGood.name">
       <div class="detail-good">
         <p class="detail-name">{{ pickedGood.name }}</p>
-        <p v-for="cost of pickedGood.costs" :key="cost.name" class="detail-price">
+        <p v-for="cost of pickedGood.costs" :key="cost.name" class="detail-price price-line">
           <span class="price-icon" role="img" :aria-label="cost.name" />
           {{ cost.count * pickedCount }}
         </p>
@@ -99,19 +111,20 @@ const setCount = (event: Event) => {
         @input="(event) => setCount(event)"
       />
       <p class="amount-value">{{ pickedCount }}</p>
-      <button class="cancel" :aria-label="closeLabel" type="button" @click="goodId = 0">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
+      <GameButton class="cancel" :aria-label="closeLabel" :kind="GameButtonKind.Row" tip="" @click="goodId = 0">
+        <svg class="cross" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M6 6 18 18M18 6 6 18" />
         </svg>
-      </button>
-      <button
+      </GameButton>
+      <GameButton
         class="buy"
         :disabled="countMaximum < 1"
-        type="button"
+        :kind="GameButtonKind.Row"
+        tip=""
         @click="pickedGood && countMaximum >= 1 && emit('buy', pickedGood, pickedCount)"
       >
         {{ buyLabel }}
-      </button>
+      </GameButton>
     </div>
   </div>
 </template>
@@ -159,22 +172,6 @@ const setCount = (event: Event) => {
 .top-up {
   margin-left: calc(var(--unit) * 4);
   color: #e8d9b0;
-}
-
-.close {
-  position: absolute;
-  top: calc(var(--unit) * 19);
-  left: calc(var(--unit) * 1815);
-}
-
-.close svg,
-.cancel svg {
-  width: calc(var(--unit) * 24);
-  height: calc(var(--unit) * 24);
-  fill: none;
-  stroke: currentcolor;
-  stroke-linecap: round;
-  stroke-width: 3;
 }
 
 .tabs {
@@ -311,10 +308,6 @@ const setCount = (event: Event) => {
 }
 
 .detail-price {
-  display: flex;
-  align-items: center;
-  gap: calc(var(--unit) * 10);
-  font-size: calc(var(--unit) * 24);
   line-height: calc(var(--unit) * 28);
 }
 
@@ -328,14 +321,6 @@ const setCount = (event: Event) => {
   top: calc(var(--unit) * 380);
   left: calc(var(--unit) * 183);
   width: calc(var(--unit) * 540);
-}
-
-.amount::-webkit-slider-runnable-track {
-  background: #9aa3b8;
-}
-
-.amount::-webkit-slider-thumb {
-  background: #2b2a26;
 }
 
 .amount-value {
@@ -379,3 +364,4 @@ const setCount = (event: Event) => {
 </style>
 
 <style scoped src="../../styles/craftingShop.css"></style>
+<style scoped src="../../styles/shopScreen.css"></style>

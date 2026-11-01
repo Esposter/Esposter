@@ -21,24 +21,33 @@ interface Props {
 const { gameText, getItemName, levels, progress } = defineProps<Props>();
 const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
 
-// Each level with the Oculi it takes, the rewards it pays and its state, which a claim takes one level of at a time
-const worshipLevels = computed(() =>
-  levels.map((level) => ({
-    level: level.level,
-    oculusCount: level.items.reduce((count, { itemCount }) => count + itemCount, 0),
-    rewards: level.rewards.map(({ itemCount, itemId }) => ({ count: itemCount, name: getItemName(itemId) })),
-    state: getStatueLevelState(level.level, progress.level, progress.claimedLevel),
-  })),
-);
+// The level the screen shows: the lowest one whose rewards are not yet claimed, or the last once all are. Its Oculus is the
+// first item it takes, and its state is the one a claim reads, a claim taking one level at a time
+const shownLevel = computed(() => {
+  const statueLevel = levels.find(({ level }) => level > progress.claimedLevel) ?? levels.at(-1);
+  if (!statueLevel) return undefined;
+  const [oculusItem] = statueLevel.items;
+  return {
+    level: statueLevel.level,
+    oculus: oculusItem && { count: oculusItem.itemCount, name: getItemName(oculusItem.itemId) },
+    rewards: statueLevel.rewards.map(({ itemCount, itemId }) => ({ count: itemCount, name: getItemName(itemId) })),
+    staminaShare: statueLevel.staminaShare,
+    state: getStatueLevelState(statueLevel.level, progress.level, progress.claimedLevel),
+  };
+});
 </script>
 
 <template>
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.StatueWorship]">
     <WorshipScreen
+      v-if="shownLevel"
       :blessing-title="gameText[GameTextKey.StatueBlessing]"
       :close-label="gameText[GameTextKey.Back]"
       :held-count="progress.heldCount"
-      :levels="worshipLevels"
+      :level="shownLevel"
+      :level-label="gameText[GameTextKey.LevelShort]"
+      :required-label="gameText[GameTextKey.CraftingRequired]"
+      :stamina-label="gameText[GameTextKey.Stamina]"
       :title="gameText[GameTextKey.StatueWorship]"
       @blessing="emit('blessing')"
       @claim="emit('claim')"

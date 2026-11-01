@@ -1,0 +1,18 @@
+/* The lit rim of a cream pill control, the game's Pill as it is lit: a white ring a unit over its edge and two within.
+   It shows on hover and focus, with no browser outline. Provisional, as no recording shows an inventory pill lit.
+   The rim is the Pill's, measured on a dialog's Confirm. */
+.cream-pill-lit {
+  --cream-pill-lit-shadow: 0 0 0 calc(var(--unit) * 1) #fff, inset 0 0 0 calc(var(--unit) * 2) #fff;
+}
+
+.cream-pill-lit:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  outline: none;
+  box-shadow: var(--cream-pill-lit-shadow);
+}
+
+@media (hover: hover) {
+  .cream-pill-lit:enabled:hover {
+    outline: none;
+    box-shadow: var(--cream-pill-lit-shadow);
+  }
+}

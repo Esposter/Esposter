@@ -25,7 +25,7 @@ const emit = defineEmits<{ upgrade: [index: number] }>();
 <template>
   <!-- The Talents tab's panel: the three combat talents down its right, each with its level, the phase and cost of its next
        level, why it cannot rise if it cannot, and its Upgrade while it is drawn. The talents' names and the passives under
-       them are not drawn yet, since the game's text for them is not decoded -->
+       them are not drawn yet, since the published kit carries no name id for either -->
   <div class="talents">
     <ul class="talent-list">
       <li v-for="(levelText, index) in levelTexts" :key="index" class="talent">

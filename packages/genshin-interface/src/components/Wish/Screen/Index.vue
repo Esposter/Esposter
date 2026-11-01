@@ -18,6 +18,7 @@ import WishHistory from "#src/components/Wish/History/Index.vue";
 import WishPath from "#src/components/Wish/Path/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
 import { GameButtonKind } from "#src/models/GameButtonKind";
+import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
 
 interface Props {
   // The way back to the world in the reader's language
@@ -88,6 +89,8 @@ const {
   trialLabel,
 } = defineProps<Props>();
 const emit = defineEmits<{ buy: []; close: []; dismiss: []; trial: []; wish: [count: number] }>();
+const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
+const restDuration = `${INTERACTION_REST_MS}ms`;
 // The Details popup the Details button opens over the screen
 const isDetailsOpen = ref(false);
 const isHistoryOpen = ref(false);
@@ -150,7 +153,7 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
       <p v-if="timeRemainingText" class="time-duration">{{ timeRemainingText }}</p>
       <div v-if="bannerCard && featuredCell" class="featured">
         <p class="featured-name">{{ featuredCell.name }}</p>
-        <p class="featured-stars"><RarityStars :rarity="featuredCell.rarity" /></p>
+        <p class="featured-stars"><RarityStars color="" :rarity="featuredCell.rarity" /></p>
         <p class="featured-title">{{ bannerCard.featuredTitle }}</p>
       </div>
     </section>
@@ -209,9 +212,9 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
       :title="historyLabel"
       @close="isHistoryOpen = false"
     />
-    <div v-if="results.length > 0" class="results" @click="emit('dismiss')">
-      <ul class="result-list">
-        <li
+    <button v-if="results.length > 0" class="results" type="button" @click="emit('dismiss')">
+      <span class="result-list">
+        <span
           v-for="({ isCapturingRadiance, name, rarity, stellaFortuna, wishReturn }, index) of results"
           :key="index"
           class="result"
@@ -219,12 +222,12 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
           :data-rarity="rarity"
         >
           <span class="result-name">{{ name }}</span>
-          <RarityStars :rarity />
+          <RarityStars color="" :rarity />
           <span v-if="stellaFortuna" class="result-stella-fortuna">{{ stellaFortuna }}</span>
           <span class="result-return">{{ wishReturn }}</span>
-        </li>
-      </ul>
-    </div>
+        </span>
+      </span>
+    </button>
   </div>
 </template>
 
@@ -560,11 +563,45 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
 }
 
 .results {
+  --state-duration: v-bind(restDuration);
   position: absolute;
   inset: 0;
   display: grid;
+  border: none;
+  padding: 0;
   background: rgb(255 255 255 / 0.92);
+  color: inherit;
+  cursor: inherit;
+  font: inherit;
   place-items: center;
+}
+
+/* The overlay is one click that goes on, so hovering or focusing it lights its results together, and a press
+   dims them at once */
+.results:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  --state-duration: v-bind(hoverDuration);
+}
+
+.results:is(:focus-visible, [data-interaction-state="Hover"] *) .result {
+  filter: brightness(1.1);
+}
+
+@media (hover: hover) {
+  .results:hover {
+    --state-duration: v-bind(hoverDuration);
+  }
+
+  .results:hover .result {
+    filter: brightness(1.1);
+  }
+}
+
+.results:is(:active, [data-interaction-state="Pressed"] *) {
+  --state-duration: 0s;
+}
+
+.results:is(:active, [data-interaction-state="Pressed"] *) .result {
+  filter: brightness(0.9);
 }
 
 .result-list {
@@ -583,6 +620,7 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
   color: #ece5d8;
   font-size: calc(var(--unit) * 18);
   text-align: center;
+  transition: filter var(--state-duration);
 }
 
 .result[data-rarity="4"] {

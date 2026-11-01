@@ -21,13 +21,9 @@ const { gameText, pendingMora } = defineProps<Props>();
   <p class="required-amount">{{ pendingMora }}</p>
 </template>
 
-<style scoped>
-.divider {
-  position: absolute;
-  left: calc(var(--reference-pixel) * 1086);
-  width: calc(var(--reference-pixel) * 738);
-}
+<style scoped src="../../../../styles/weaponScreen.css"></style>
 
+<style scoped>
 .bottom-divider {
   top: calc(var(--reference-pixel) * 730);
 }

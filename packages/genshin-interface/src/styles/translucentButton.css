@@ -1,0 +1,9 @@
+/* A button's translucent box, its words in the colour and font around it, its place left to the button */
+.translucent-button {
+  padding: calc(var(--unit) * 10) calc(var(--unit) * 20);
+  border: none;
+  border-radius: calc(var(--unit) * 8);
+  background: rgb(255 255 255 / 0.14);
+  color: inherit;
+  font: inherit;
+}

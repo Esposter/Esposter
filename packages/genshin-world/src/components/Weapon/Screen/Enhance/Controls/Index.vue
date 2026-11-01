@@ -19,28 +19,9 @@ const { gameText } = defineProps<Props>();
   <span class="sparkle-button" aria-hidden="true" />
 </template>
 
+<style scoped src="../../../../../styles/weaponScreen.css"></style>
+
 <style scoped>
-/* The game's cream pills that show the ores' filter and the Auto Add button, drawn as the game draws them */
-.pill {
-  position: absolute;
-  height: calc(var(--reference-pixel) * 50);
-  border-radius: calc(var(--reference-pixel) * 25);
-  background: #ece5d6;
-  color: #3d3d48;
-  font-size: calc(var(--reference-pixel) * 27);
-  font-weight: 600;
-  line-height: calc(var(--reference-pixel) * 50);
-  text-align: center;
-}
-
-.auto-add {
-  top: calc(var(--reference-pixel) * 527);
-  left: calc(var(--reference-pixel) * 1584);
-  width: calc(var(--reference-pixel) * 216);
-  background: #e0d6ce;
-  line-height: calc(var(--reference-pixel) * 44);
-}
-
 .filter {
   top: calc(var(--reference-pixel) * 527);
   left: calc(var(--reference-pixel) * 1103);

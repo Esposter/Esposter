@@ -5,7 +5,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { InventorySort, ItemCategory } from "genshin-interface";
-import { ENGLISH_GAME_TEXT } from "genshin-text";
+import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 
 // The weapons' tab of the English client at 1080 high, holding 1,347 weapons, is sorted by quality.
 // Its room is counted beside its name, as in `Weapons 1347/2000`, and the account tour's recording shows that order.
@@ -54,4 +54,17 @@ export const props = {
   materialDataMap: await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL),
   names: englishNameText,
   wallet: EMPTY_WALLET,
+  // The Eye of Perception's panel as the reference shows it, its words the game's own, its passive and description read off it
+  weaponDetails: {
+    [String(EYE_OF_PERCEPTION_INDEX)]: {
+      baseAttack: { label: ENGLISH_GAME_TEXT[GameTextKey.AttributeBaseAttack], value: "238" },
+      description: "A dim black glaze pearl that is said to have the power to read the purity of one's heart.",
+      kind: ENGLISH_GAME_TEXT[GameTextKey.WeaponTypeCatalyst],
+      passiveName: "Echo",
+      passiveText:
+        "· Normal and Charged Attacks have a 50% chance to fire a Bolt of Perception, dealing 360% ATK as DMG. This bolt can bounce between opponents a maximum of 4 times. This effect can occur once every 8s.",
+      refinement: 5,
+      secondaryStat: { label: ENGLISH_GAME_TEXT[GameTextKey.AttributeAttack], value: "35.7%" },
+    },
+  },
 };

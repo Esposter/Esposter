@@ -167,6 +167,8 @@ export const props = {
   characterIdConstellationsMap: new Map<number, Constellation[]>(),
   characters: roster,
   characterTalentKits,
+  // Xilonen's Friendship Level 10 as the reference's Attributes panel shows it
+  friendshipLevelMap: new Map([[XILONEN_ID, 10]]),
   gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
   gameText: ENGLISH_GAME_TEXT,
   initialTab: CharacterMenuTab.Attributes,
@@ -179,6 +181,8 @@ export const props = {
   statTables,
   talentUpgradeMap,
   travelerBonusLines: [],
+  // A placeholder in the reference's place: the player's own UID is not committed to the repository
+  uid: 123456789,
   wallet: EMPTY_WALLET,
 };
 

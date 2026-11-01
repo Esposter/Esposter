@@ -136,12 +136,19 @@ const offerNames = computed(() =>
           : getWeaponDefinition(good.itemId).name,
   })),
 );
-const goodCells = useShopGoodCells({
+const shopGoodCells = useShopGoodCells({
   getCostName: (itemId) => gameText[takeOne(CurrencyGameTextKeyMap, currencyOf(itemId))],
   getGameText: () => gameText,
   getNow: () => now,
   goods: offerNames,
   purchases,
+});
+// The Fates are drawn in the gold tone the reference gives them, the characters and weapons in the plain one
+const goodCells = computed(() => {
+  const fateIds = new Set(
+    offers.value.filter(({ kind }) => kind === ShopOfferKind.Fate).map(({ good }) => good.goodsId),
+  );
+  return shopGoodCells.value.map((cell): ShopGoodCell => (fateIds.has(cell.id) ? { ...cell, tone: "gold" } : cell));
 });
 // The most the picked good can be bought for: a Fate counts its limit left and the player's currency, a character or a
 // Weapon of the rotation is bought one at a time
@@ -211,6 +218,7 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
     <ShopScreen
       v-model:count="count"
       v-model:good-id="goodId"
+      class="paimons-bargains-shop"
       :balances
       :buy-label="gameText[GameTextKey.ShopPurchase]"
       :close-label="gameText[GameTextKey.Back]"
@@ -224,3 +232,50 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
     />
   </GameScreen>
 </template>
+
+<style scoped>
+/* The grid is the reference's top two rows at 1920 by 1080, measured off its pixels: four cards of 354 by 335 from 206 across and
+   128 down, with gaps of 35 across and 37 down. Each name sits over its limit line, and each price in a band of 57 */
+.paimons-bargains-shop :deep(.goods) {
+  top: calc(var(--unit) * 128);
+  left: calc(var(--unit) * 206);
+  width: calc(var(--unit) * 1521);
+  height: calc(var(--unit) * 952);
+  grid-template-columns: repeat(4, calc(var(--unit) * 354));
+  gap: calc(var(--unit) * 37) calc(var(--unit) * 35);
+}
+
+.paimons-bargains-shop :deep(.good) {
+  height: calc(var(--unit) * 335);
+  background: #62578e;
+}
+
+/* The gold of the Fates, read from the reference's first two cards clear of their art */
+.paimons-bargains-shop :deep(.good[data-tone="gold"]) {
+  background: #9d6e3d;
+}
+
+.paimons-bargains-shop :deep(.good-name) {
+  top: auto;
+  bottom: calc(var(--unit) * 105);
+  font-size: calc(var(--unit) * 30);
+  line-height: calc(var(--unit) * 37);
+}
+
+.paimons-bargains-shop :deep(.good-limit) {
+  top: calc(var(--unit) * 239);
+  font-size: calc(var(--unit) * 22);
+  line-height: calc(var(--unit) * 26);
+}
+
+.paimons-bargains-shop :deep(.good-price) {
+  height: calc(var(--unit) * 57);
+  background: #465168;
+  font-size: calc(var(--unit) * 28);
+}
+
+.paimons-bargains-shop :deep(.good-price .price-icon) {
+  width: calc(var(--unit) * 22);
+  height: calc(var(--unit) * 22);
+}
+</style>

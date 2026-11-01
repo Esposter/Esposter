@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { GameButtonKind } from "#src/models/GameButtonKind";
-
+import { GameButtonKind } from "#src/models/GameButtonKind";
 import {
   GAME_CREAM,
   GAME_GOLD,
@@ -40,7 +39,13 @@ defineExpose({ focus: () => button.value?.focus() });
   <!-- One of the game's buttons, placed by its parent, in its kind's look for each state: at rest, hovered (or focused
        From the keyboard, which the game draws as a hover), pressed and disabled. Only a Disc draws a disabled look: the
        Other kinds look the same enabled or disabled. The look is the button's own, and its content Takes the colour it sets -->
-  <button ref="button" class="game-button" :data-kind="kind" type="button">
+  <button
+    ref="button"
+    class="game-button"
+    :class="{ 'row-tint': kind === GameButtonKind.Row }"
+    :data-kind="kind"
+    type="button"
+  >
     <slot />
     <span v-if="tip" class="tip">{{ tip }}</span>
   </button>
@@ -56,6 +61,11 @@ defineExpose({ focus: () => button.value?.focus() });
   color: inherit;
   cursor: inherit;
   font: inherit;
+  /* A tap draws the game's press alone, so the browser's tap flash, double tap zoom and text selection are off,
+     while panning and pinching still work */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 
 /* Each state is reached over its own crossfade: the duration is the state's being entered, so a hover fades in over
@@ -65,11 +75,20 @@ defineExpose({ focus: () => button.value?.focus() });
   transition: color var(--state-duration);
 }
 
-.game-button:enabled:is(:hover, :focus-visible, [data-interaction-state="Hover"] *) {
+/* A pointer's hover is guarded by `(hover: hover)`, so a touch screen leaves nothing lit after a tap. Focus from
+   The keyboard and the forced Hover state draw the hover unguarded, and the press applies everywhere */
+.game-button:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
   --state-duration: v-bind(hoverDuration);
 }
 
-.game-button:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+@media (hover: hover) {
+  .game-button:enabled:hover {
+    --state-duration: v-bind(hoverDuration);
+  }
+}
+
+/* A `data-pressed` attribute draws the press as `:active` does, so a parent can press a button without a pointer */
+.game-button:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
 }
 
@@ -107,28 +126,43 @@ defineExpose({ focus: () => button.value?.focus() });
   transition: scale var(--state-duration);
 }
 
-.game-button[data-kind="Disc"]:enabled:is(:hover, :focus-visible, [data-interaction-state="Hover"] *) {
+.game-button[data-kind="Disc"]:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
   outline: none;
   color: v-bind(GAME_CREAM);
 }
 
-.game-button[data-kind="Disc"]:enabled:is(:hover, :focus-visible, [data-interaction-state="Hover"] *)::before {
+.game-button[data-kind="Disc"]:enabled:is(:focus-visible, [data-interaction-state="Hover"] *)::before {
   background-color: rgb(30 49 63 / 0.5);
 }
 
-.game-button[data-kind="Disc"]:enabled:is(:hover, :focus-visible, [data-interaction-state="Hover"] *) > :slotted(*) {
+.game-button[data-kind="Disc"]:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) > :slotted(*) {
   scale: 1.12;
 }
 
-.game-button[data-kind="Disc"]:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+@media (hover: hover) {
+  .game-button[data-kind="Disc"]:enabled:hover {
+    outline: none;
+    color: v-bind(GAME_CREAM);
+  }
+
+  .game-button[data-kind="Disc"]:enabled:hover::before {
+    background-color: rgb(30 49 63 / 0.5);
+  }
+
+  .game-button[data-kind="Disc"]:enabled:hover > :slotted(*) {
+    scale: 1.12;
+  }
+}
+
+.game-button[data-kind="Disc"]:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   color: v-bind(GAME_INK);
 }
 
-.game-button[data-kind="Disc"]:enabled:is(:active, [data-interaction-state="Pressed"] *)::before {
+.game-button[data-kind="Disc"]:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *)::before {
   background-color: v-bind(GAME_CREAM);
 }
 
-.game-button[data-kind="Disc"]:enabled:is(:active, [data-interaction-state="Pressed"] *) > :slotted(*) {
+.game-button[data-kind="Disc"]:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) > :slotted(*) {
   scale: 1;
 }
 
@@ -158,35 +192,25 @@ defineExpose({ focus: () => button.value?.focus() });
   translate: 0 -50%;
 }
 
-.game-button:enabled:is(:hover, :focus-visible, :active, [data-interaction-state] *) > .tip {
+.game-button:enabled:is(:focus-visible, :active, [data-pressed], [data-interaction-state] *) > .tip {
   opacity: 1;
 }
 
-/* A row, the game's rectangle, lit by a tint laid over its own box and behind its words, as a disc is: hovered or focused,
-   pressed at once, or held selected by its parent's aria-selected at the hover's strength. Provisional, see the colours */
+@media (hover: hover) {
+  .game-button:enabled:hover > .tip {
+    opacity: 1;
+  }
+}
+
+/* A row, the game's rectangle, lit by a tint laid over its own box and behind its words (`rowTint.css`), as a disc is:
+   Hovered or focused, pressed at once, or held selected by its parent's aria-selected at the hover's strength. Provisional,
+   See the colours */
 .game-button[data-kind="Row"] {
-  isolation: isolate;
+  --row-press: v-bind(GAME_ROW_PRESS);
+  --row-tint: v-bind(GAME_ROW_HOVER);
 }
 
-.game-button[data-kind="Row"]::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  border-radius: inherit;
-  background-color: v-bind(GAME_ROW_HOVER);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--state-duration);
-}
-
-.game-button[data-kind="Row"]:enabled:is(:hover, :focus-visible, [data-interaction-state="Hover"] *)::before,
 .game-button[data-kind="Row"][aria-selected="true"]::before {
-  opacity: 1;
-}
-
-.game-button[data-kind="Row"]:enabled:is(:active, [data-interaction-state="Pressed"] *)::before {
-  background-color: v-bind(GAME_ROW_PRESS);
   opacity: 1;
 }
 
@@ -197,6 +221,9 @@ defineExpose({ focus: () => button.value?.focus() });
    A white ring lights over its edge, 1 unit outside it and 2 within, its shadow turning a faint white glow; it holds
    Its size, the ring alone reaching past it */
 .game-button[data-kind="Pill"] {
+  --lit-shadow:
+    0 0 0 calc(var(--unit) * 1) #fff, inset 0 0 0 calc(var(--unit) * 2) #fff, inset 0 0 0 calc(var(--unit) * 3) #f1ede5,
+    inset 0 0 0 calc(var(--unit) * 6) #e6e1d5, 0 0 calc(var(--unit) * 7) rgb(255 255 255 / 0.125);
   --state-duration: v-bind(pillRestDuration);
   border-radius: calc(infinity * 1px);
   background-color: v-bind(GAME_CREAM);
@@ -211,14 +238,16 @@ defineExpose({ focus: () => button.value?.focus() });
   transition-property: background-color, box-shadow, color;
 }
 
-.game-button[data-kind="Pill"]:enabled:is(:hover, :focus-visible, [data-interaction-state="Hover"] *) {
+.game-button[data-kind="Pill"]:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
   outline: none;
-  box-shadow:
-    0 0 0 calc(var(--unit) * 1) #fff,
-    inset 0 0 0 calc(var(--unit) * 2) #fff,
-    inset 0 0 0 calc(var(--unit) * 3) #f1ede5,
-    inset 0 0 0 calc(var(--unit) * 6) #e6e1d5,
-    0 0 calc(var(--unit) * 7) rgb(255 255 255 / 0.125);
+  box-shadow: var(--lit-shadow);
+}
+
+@media (hover: hover) {
+  .game-button[data-kind="Pill"]:enabled:hover {
+    outline: none;
+    box-shadow: var(--lit-shadow);
+  }
 }
 
 /* Pressed, the pill's cream is tinted to slate at half alpha, its bevel lost in it, and from 2 units inside its edge a
@@ -239,7 +268,7 @@ defineExpose({ focus: () => button.value?.focus() });
   transition: opacity var(--state-duration);
 }
 
-.game-button[data-kind="Pill"]:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+.game-button[data-kind="Pill"]:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   background-color: transparent;
   box-shadow:
     0 0 0 0 rgb(255 255 255 / 0),
@@ -251,7 +280,7 @@ defineExpose({ focus: () => button.value?.focus() });
   animation: pill-press-words v-bind(pressDuration) v-bind(GAME_SMOOTHSTEP_EASING);
 }
 
-.game-button[data-kind="Pill"]:enabled:is(:active, [data-interaction-state="Pressed"] *)::before {
+.game-button[data-kind="Pill"]:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *)::before {
   opacity: 1;
   animation: pill-press-light v-bind(pressDuration) v-bind(GAME_SMOOTHSTEP_EASING);
 }
@@ -272,6 +301,7 @@ defineExpose({ focus: () => button.value?.focus() });
    disc. Lit by the pointer or focus, or by its screen's state on the choice itself, with a gold rim 2 units in and a faint gold
    glow out; pressed, a pale fill with a grey rim, its disc gold and its label gold. Its place and its words are its screen's */
 .game-button[data-kind="Choice"] {
+  --lit-shadow: inset 0 0 0 calc(var(--unit) * 2) #e6cf86, 0 0 calc(var(--unit) * 3) rgb(255 236 170 / 80%);
   padding: 0 0 0 calc(var(--unit) * 30);
   border-radius: calc(infinity * 1px);
   background-color: #4a5365;
@@ -279,7 +309,10 @@ defineExpose({ focus: () => button.value?.focus() });
   transition: none;
 }
 
-.game-button[data-kind="Choice"]::before {
+/* The dark disc at a pill's left, where the game's icon sits: a Choice draws it under its words, and a pill a screen marks
+   With `pill-disc` draws it over its own light, its icon left bare */
+.game-button[data-kind="Choice"]::before,
+.game-button.pill-disc::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -291,14 +324,19 @@ defineExpose({ focus: () => button.value?.focus() });
   translate: 0 -50%;
 }
 
-.game-button[data-kind="Choice"]:enabled:is(:hover, :focus-visible, [data-interaction-state="Hover"]) {
+.game-button[data-kind="Choice"]:enabled:is(:focus-visible, [data-interaction-state="Hover"]) {
   outline: none;
-  box-shadow:
-    inset 0 0 0 calc(var(--unit) * 2) #e6cf86,
-    0 0 calc(var(--unit) * 3) rgb(255 236 170 / 80%);
+  box-shadow: var(--lit-shadow);
 }
 
-.game-button[data-kind="Choice"]:enabled:is(:active, [data-interaction-state="Pressed"]) {
+@media (hover: hover) {
+  .game-button[data-kind="Choice"]:enabled:hover {
+    outline: none;
+    box-shadow: var(--lit-shadow);
+  }
+}
+
+.game-button[data-kind="Choice"]:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"]) {
   background-color: #fffefa;
   box-shadow:
     inset 0 0 0 calc(var(--unit) * 2) #cbc5b9,
@@ -306,7 +344,7 @@ defineExpose({ focus: () => button.value?.focus() });
   color: #c4ab6a;
 }
 
-.game-button[data-kind="Choice"]:enabled:is(:active, [data-interaction-state="Pressed"])::before {
+.game-button[data-kind="Choice"]:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"])::before {
   background-color: #fed78c;
 }
 
@@ -333,14 +371,23 @@ defineExpose({ focus: () => button.value?.focus() });
   transition-property: background-color, color;
 }
 
-.game-button[data-kind="Reply"]:enabled:is(:hover, :focus-visible, [data-interaction-state="Hover"] *) {
+.game-button[data-kind="Reply"]:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
   --state-duration: v-bind(hoverDuration);
   outline: none;
   background-color: v-bind(GAME_REPLY_HOVER);
   color: v-bind(GAME_REPLY_HOVER_INK);
 }
 
-.game-button[data-kind="Reply"]:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+@media (hover: hover) {
+  .game-button[data-kind="Reply"]:enabled:hover {
+    --state-duration: v-bind(hoverDuration);
+    outline: none;
+    background-color: v-bind(GAME_REPLY_HOVER);
+    color: v-bind(GAME_REPLY_HOVER_INK);
+  }
+}
+
+.game-button[data-kind="Reply"]:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
   background-color: v-bind(GAME_REPLY_HOVER);
   color: v-bind(GAME_REPLY_HOVER_INK);
@@ -358,3 +405,5 @@ defineExpose({ focus: () => button.value?.focus() });
   }
 }
 </style>
+
+<style scoped src="../../styles/rowTint.css"></style>

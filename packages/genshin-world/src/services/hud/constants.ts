@@ -4,6 +4,13 @@ import { GameTextKey } from "genshin-text";
 
 // Provisional, until a recording of a drag is measured: the radians a pixel of a drag turns the look by
 export const TOUCH_LOOK_RADIANS_PER_PIXEL = 0.005;
+// The least distance a held stick's centre keeps from the screen's left and right edges, and from its top and bottom,
+// In canvas units, so its ring keeps the margin the fixed placement kept on the 16:9 recording. Provisional, as the
+// Margins on the wider phones are not measured
+export const TOUCH_STICK_CLEARANCE_X = 199.5;
+export const TOUCH_STICK_CLEARANCE_Y = 172.5;
+// How long a held stick takes to appear or to fade out, provisional until the game's fade on the stick is measured
+export const TOUCH_STICK_FADE_MS = 100;
 // The touch layout's action buttons' discs, a dark blue at a sixth over the world: inside the jump's, sprint's, skill's
 // And attack's discs on `hud-world-pickup` the scene reads 0.84, 0.88 and 0.91 of itself just outside them, red to blue
 export const ACTION_BUTTON_BACKGROUND = "rgb(0 27 61 / 0.16)";
@@ -57,3 +64,5 @@ export const PAIMON_EMBLEM_LAYERS: readonly { color: string; path: string }[] = 
     path: "M202 260h5v8.5l1.5.5 2-4 .5 4.5-3 3-1 4-3.5 3.5h-3l-4 2h-5l-4.5-3.5 1.5-2.5 2 4 4 1q1.5-3.5 8-2l3.5-3.5 1-4.5q-3-.75-4 1.5.87 3-3.5 1.5l-1.5-1.5v-4.5l3-1.5q1.83-2.32 1-6.5z M81.5 270l1.5 3.5v5l3 6.5q4.5 1.75 3-3.5.5-2 3.5-1.5l3-3q2.2 6.8 8 10 5.39 1.11 8 5h6l1 1h11l1-1 11-1 2-2 7-3h4.5l1 4h8.5q.75-1.75 4-1v1l-3.5 1q-.5 3.25 3 4.5-2 1.12-1 4.5h1.5l3.5-3.5q-.75-2.25 1.5-1.5l4-3h4.5l.5-5 3 5 5 4h1.5q.75 3-1.5 4l-5-1q-2.25.75-1.5 4.5l4.5 3.5 6.5 2.5-4.5.5-9 4h-4.5l1 4-5.5 2-2-1-2.5 1v6.5l-1.5 1.5-4-1-2.5 2.5v3l-1 2.5-14 3-1 4h-4.5l-5 2h-38q-1-3-6-2-1.25 2.25-2.5-.5v-4.5h-1.5q-1-2-5-1l-2.5-2.5v-5l2-2q-1-4.5 1.5-5.5l5 1q1.25-2.25 6-1l3.5-2.5-2-6 1-2.5h9.5q1 2 5 1l2.5-4.5q-.75-3.25-5.5-2.5l-1 1h-11l-1-1h-13l-5-5-4-2h-5l-3.5-2.5-1-8.5 7.5 1 .5-.5-3.5-3.5-3.5-2.5 2.5-.5 6.5 5.5 2.5 3.5 7 4h6.5q1.25-5.5-2.5-7-2.25.75-1.5-1.5l-3-5q.75-3.25-1-4l.5-5.5zm31.5 24v2h23l2-1v-1h-10l-1 1q-5 1-5-1h-9z",
   },
 ];
+// The width of the touch stick's drawing, in the units its marks and head are drawn in, which its group's canvas width spans
+export const STICK_VIEW_BOX_SIZE = 204;

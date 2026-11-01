@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { InventorySort } from "#src/models/InventorySort";
 
+import GameButton from "#src/components/GameButton/Index.vue";
+import { GameButtonKind } from "#src/models/GameButtonKind";
 import { InventorySorts } from "#src/models/InventorySort";
+import { GAME_ROW_PRESS } from "#src/services/constants";
 
 interface Props {
   // The sort's order in the reader's language, which a screen reader says in place of its arrow
@@ -16,17 +19,18 @@ const { orderLabel, sortLabels } = defineProps<Props>();
 
 <template>
   <div class="sort">
-    <select v-model="sort" class="sort-select" :aria-label="sortLabels[sort]">
+    <select v-model="sort" class="sort-select cream-pill-lit" :aria-label="sortLabels[sort]">
       <option v-for="inventorySort of InventorySorts" :key="inventorySort" :value="inventorySort">
         {{ sortLabels[inventorySort] }}
       </option>
     </select>
   </div>
-  <button
+  <GameButton
     class="order"
     :aria-label="orderLabel"
     :data-descending="isDescending"
-    type="button"
+    :kind="GameButtonKind.Row"
+    tip=""
     @click="isDescending = !isDescending"
   />
 </template>
@@ -68,6 +72,10 @@ const { orderLabel, sortLabels } = defineProps<Props>();
   font-weight: 600;
 }
 
+.sort-select:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+  background-image: linear-gradient(v-bind(GAME_ROW_PRESS), v-bind(GAME_ROW_PRESS));
+}
+
 .sort::after {
   position: absolute;
   top: 50%;
@@ -82,3 +90,5 @@ const { orderLabel, sortLabels } = defineProps<Props>();
   transform: translateY(-50%);
 }
 </style>
+
+<style scoped src="../../../styles/creamPillLit.css"></style>

@@ -14,7 +14,7 @@ let isDragging = false;
 let dragPointerId = 0;
 let dragX = 0;
 let dragY = 0;
-// A finger landing anywhere the stick's area and the HUD's pieces are not drags the look, one finger at a time
+// A finger landing on the screen's right half, where no HUD piece takes it, drags the look, one finger at a time
 useEventListener(layer, "pointerdown", (event) => {
   if (isDragging) return;
   isDragging = true;
@@ -37,15 +37,15 @@ useEventListener(layer, ["pointerup", "pointercancel"], (event) => {
 </script>
 
 <template>
-  <!-- The touch layout's look under every piece of the HUD: a drag anywhere the stick and the buttons are not turns it,
-       As the game's touch controls do outside the stick's area -->
+  <!-- The touch layout's look under every piece of the HUD on the screen's right half, the left half being the stick's:
+       A drag there turns the look, as the game's touch controls do outside the stick's area -->
   <div ref="layer" class="touch-layer" />
 </template>
 
 <style scoped>
 .touch-layer {
   position: absolute;
-  inset: 0;
+  inset: 0 0 0 50%;
   pointer-events: auto;
   touch-action: none;
 }

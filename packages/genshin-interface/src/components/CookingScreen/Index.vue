@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import CloseButton from "#src/components/CloseButton/Index.vue";
+import GameButton from "#src/components/GameButton/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
+import { GameButtonKind } from "#src/models/GameButtonKind";
 import {
   COOKING_ARC_CENTRE_X,
   COOKING_ARC_CENTRE_Y,
@@ -59,14 +61,15 @@ const deliciousZonePath = computed(() => toArcPath(zones.delicious, COOKING_ZONE
     <CloseButton class="close" :label="closeLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
     <ul v-if="dishes.length > 1" class="dishes">
       <li v-for="dish in dishes" :key="dish.id">
-        <button
+        <GameButton
           :aria-pressed="dish.id === selectedId"
           :class="{ selected: dish.id === selectedId }"
-          type="button"
+          :kind="GameButtonKind.Row"
+          tip=""
           @click="emit('select', dish.id)"
         >
           {{ dish.name }}
-        </button>
+        </GameButton>
       </li>
     </ul>
     <svg aria-hidden="true" class="stage" viewBox="0 0 1920 1080">
@@ -122,13 +125,13 @@ const deliciousZonePath = computed(() => toArcPath(zones.delicious, COOKING_ZONE
         <path d="M-6 -8 L6 -8 L5 66 L-5 66 Z" />
       </g>
     </svg>
-    <button v-if="isAutoCookable" class="auto-cook" type="button" @click="emit('autoCook')">
+    <GameButton v-if="isAutoCookable" class="auto-cook" :kind="GameButtonKind.Row" tip="" @click="emit('autoCook')">
       {{ autoCookLabel }}
-    </button>
-    <button class="stop" type="button" @click="emit('stop')">
+    </GameButton>
+    <GameButton class="stop" :kind="GameButtonKind.Row" tip="" @click="emit('stop')">
       <span class="stop-disc" aria-hidden="true"><span class="stop-square" /></span>
       <span class="stop-label">{{ stopLabel }}</span>
-    </button>
+    </GameButton>
   </div>
 </template>
 

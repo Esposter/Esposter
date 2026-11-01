@@ -12,7 +12,7 @@ export const props = {
   confirmLabel: "Confirm",
   line: LINE,
   revealedLength: LINE.length,
-  selectedChoiceId: "1",
+  selectedChoiceId: "",
   speakerName: "Sara",
   speakerRole: "Waitress, Good Hunter",
 };

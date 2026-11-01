@@ -11,6 +11,7 @@ import { ElementBurstColorsMap } from "#src/services/hud/ElementBurstColorsMap";
 import { pressCapturedPointer } from "#src/services/hud/pressCapturedPointer";
 import { getActionKeyCode } from "#src/services/shared/getActionKeyCode";
 import { InputAction } from "genshin-engine";
+import { GAME_CREAM, GAME_INK, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -55,6 +56,8 @@ const {
 const skillCode = getActionKeyCode(InputAction.ElementalSkill);
 const burstCode = getActionKeyCode(InputAction.ElementalBurst);
 const gadgetCode = getActionKeyCode(InputAction.QuickUseGadget);
+const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
+const restDuration = `${INTERACTION_REST_MS}ms`;
 const burstColors = computed(() => (element === undefined ? undefined : ElementBurstColorsMap[element]));
 // The share of a cooldown left, none for a kit whose cooldown is no time at all, and all of it while more is left than the
 // Kit's own, as a stance's end sets
@@ -75,7 +78,7 @@ onUnmounted(() => {
        stopped before the world's own keys hear them -->
   <div class="skills" :class="isTouch ? 'touch' : 'keys'">
     <button
-      class="skill"
+      class="skill lit-disc"
       :aria-label="gameText[GameTextKey.ElementalSkill]"
       :style="{ '--cooldown': getCooldownShare(skillCooldown, skillCooldownSeconds) }"
       type="button"
@@ -89,7 +92,7 @@ onUnmounted(() => {
       <span v-if="skillCooldown > 0" class="cooldown">{{ skillCooldown.toFixed(1) }}</span>
     </button>
     <button
-      class="burst"
+      class="burst lit-disc"
       :class="{ ready: energy >= energyCost && burstCooldown <= 0 }"
       :aria-label="gameText[GameTextKey.ElementalBurst]"
       :style="{
@@ -126,17 +129,20 @@ onUnmounted(() => {
 <style scoped>
 .skill,
 .burst {
+  --lit-hover-duration: v-bind(hoverDuration);
+  --lit-press-color: v-bind(GAME_CREAM);
+  --lit-rest-duration: v-bind(restDuration);
   position: absolute;
   display: grid;
   place-items: center;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
   color: #fff;
-  cursor: inherit;
   font: inherit;
-  pointer-events: auto;
   touch-action: none;
+}
+
+.skill:is(:active, [data-interaction-state="Pressed"] *) .glyph,
+.burst:is(:active, [data-interaction-state="Pressed"] *) .glyph {
+  fill: v-bind(GAME_INK);
 }
 
 /* The burst's icon is white at 0.14 over its disc until charged, as `hud-world-pickup` shows it at 24% energy */
@@ -279,3 +285,5 @@ onUnmounted(() => {
   text-shadow: 0 0 calc(var(--unit) * 3) rgb(0 0 0 / 0.8);
 }
 </style>
+
+<style scoped src="../../../styles/litDisc.css"></style>

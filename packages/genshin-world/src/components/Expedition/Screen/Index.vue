@@ -13,6 +13,7 @@ import type { GameText } from "genshin-text";
 import { checkIsExpeditionPlaceOpen } from "#src/services/expedition/checkIsExpeditionPlaceOpen";
 import { checkIsExpeditionReturned } from "#src/services/expedition/checkIsExpeditionReturned";
 import { claimExpedition } from "#src/services/expedition/claimExpedition";
+import { computeExpeditionHours } from "#src/services/expedition/computeExpeditionHours";
 import { computeExpeditionLimit } from "#src/services/expedition/computeExpeditionLimit";
 import { computeExpeditionPassives } from "#src/services/expedition/computeExpeditionPassives";
 import { recallExpedition } from "#src/services/expedition/recallExpedition";
@@ -90,6 +91,8 @@ const getExpeditionAt = (placeId: number): Expedition | undefined =>
   expeditions.value.find((expedition) => expedition.placeId === placeId);
 const pickedPlace = computed(() => openPlaces.value.find(({ id }) => id === place.value));
 const pickedExpedition = computed(() => (pickedPlace.value ? getExpeditionAt(pickedPlace.value.id) : undefined));
+// The length a send takes, which the picker opens on: the length picked while the place offers it, else its first
+const pickedHours = computed(() => computeExpeditionHours(pickedPlace.value?.durations ?? [], hours.value));
 // An expedition returned is claimed and one still out is recalled, while a place with none out is sent to
 // The talents of the character sent shorten the time it takes in the place's region, so the return is read with them
 const getActionKind = (expeditionPlace: ExpeditionPlace, expedition: Expedition | undefined): ExpeditionActionKind => {
@@ -122,7 +125,7 @@ const detail = computed<ExpeditionPlaceDetail | undefined>(() => {
   if (!picked) return undefined;
   const expedition = pickedExpedition.value;
   const actionKind = getActionKind(picked, expedition);
-  const duration = picked.durations.find(({ hours: durationHours }) => durationHours === hours.value);
+  const duration = picked.durations.find(({ hours: durationHours }) => durationHours === pickedHours.value);
   return {
     actionKind,
     actionLabel: actionLabels[actionKind],
@@ -196,7 +199,6 @@ const claim = (placeId: number) => {
        the expedition away from each, the picked place's panel and its action, and the character picker a send opens -->
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.ExpeditionTitle]">
     <ExpeditionScreen
-      v-model:hours="hours"
       v-model:nation="nation"
       v-model:picking="picking"
       v-model:place="place"
@@ -204,6 +206,7 @@ const claim = (placeId: number) => {
       :characters="pickerCharacters"
       :close-label="gameText[GameTextKey.Back]"
       :detail
+      :hours="pickedHours"
       :limit-label="
         fillGameTextValues(gameText[GameTextKey.ExpeditionLimit], expeditions.length, context.expeditionLimit)
       "
@@ -212,6 +215,7 @@ const claim = (placeId: number) => {
       :rewards-label="gameText[GameTextKey.ExpeditionRewards]"
       :title="gameText[GameTextKey.ExpeditionTitle]"
       @claim="(placeId) => claim(placeId)"
+      @update:hours="(durationHours) => (hours = durationHours)"
       @close="emit('close')"
       @recall="(placeId) => recall(placeId)"
       @send="(placeId, characterId, hours) => send(placeId, characterId, hours)"

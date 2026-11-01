@@ -3,7 +3,7 @@ import type { DomainLevelRow } from "#src/models/domains/DomainLevelRow";
 import type { GameText } from "genshin-text";
 
 import DomainScreenRow from "#src/components/Domain/Screen/Row/Index.vue";
-import { GameScreen } from "genshin-interface";
+import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -23,8 +23,10 @@ const emit = defineEmits<{ close: []; enter: [dungeonId: number]; leave: [] }>()
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.DomainTitle]">
     <div v-if="isInDomain">
       <p>{{ gameText[GameTextKey.DomainLeavePrompt] }}</p>
-      <button type="button" @click="emit('leave')">{{ gameText[GameTextKey.DomainLeave] }}</button>
-      <button type="button" @click="emit('close')">{{ gameText[GameTextKey.Back] }}</button>
+      <GameButton :kind="GameButtonKind.Row" tip="" @click="emit('leave')">
+        {{ gameText[GameTextKey.DomainLeave] }}
+      </GameButton>
+      <GameButton :kind="GameButtonKind.Row" tip="" @click="emit('close')">{{ gameText[GameTextKey.Back] }}</GameButton>
     </div>
     <div v-else>
       <h2>{{ gameText[GameTextKey.DomainTitle] }}</h2>
@@ -37,7 +39,7 @@ const emit = defineEmits<{ close: []; enter: [dungeonId: number]; leave: [] }>()
           @enter="(dungeonId) => emit('enter', dungeonId)"
         />
       </ul>
-      <button type="button" @click="emit('close')">{{ gameText[GameTextKey.Back] }}</button>
+      <GameButton :kind="GameButtonKind.Row" tip="" @click="emit('close')">{{ gameText[GameTextKey.Back] }}</GameButton>
     </div>
   </GameScreen>
 </template>

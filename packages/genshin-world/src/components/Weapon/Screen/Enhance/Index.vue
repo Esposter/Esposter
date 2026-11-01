@@ -39,47 +39,24 @@ const consumedText = computed(() =>
 
 <template>
   <p class="level">{{ levelText }}</p>
+  <p class="exp-tag">{{ gameText[GameTextKey.WeaponExp] }}</p>
   <p class="experience-text">{{ experienceText }}</p>
   <span class="exp-track" aria-hidden="true" />
   <p class="consumed">{{ consumedText }}</p>
-  <p class="stat base-attack">{{ gameText[GameTextKey.AttributeBaseAttack] }}</p>
+  <p class="stat stat-sparkle base-attack">{{ gameText[GameTextKey.AttributeBaseAttack] }}</p>
   <p class="stat-value base-attack-value">{{ baseAttackText }}</p>
-  <p class="stat attack">{{ secondaryLabel }}</p>
+  <p class="stat stat-dot attack">{{ secondaryLabel }}</p>
   <p class="stat-value attack-value">{{ secondaryText }}</p>
   <div class="divider enhance-divider"><OrnamentDivider is-middle-hidden :opacity="DIVIDER_OPACITY" /></div>
   <span class="stats-rule enhance-stats-rule" aria-hidden="true" />
   <WeaponScreenEnhanceControls :game-text="gameText" />
 </template>
 
-<style scoped>
-.divider {
-  position: absolute;
-  left: calc(var(--reference-pixel) * 1086);
-  width: calc(var(--reference-pixel) * 738);
-}
+<style scoped src="../../../../styles/weaponScreen.css"></style>
 
+<style scoped>
 .enhance-divider {
   top: calc(var(--reference-pixel) * 180);
-}
-
-/* The rule between two stat rows: a faint hairline with a small star at its middle, which the game sets instead of a divider's ends */
-.stats-rule {
-  position: absolute;
-  left: calc(var(--reference-pixel) * 1100);
-  width: calc(var(--reference-pixel) * 705);
-  height: calc(var(--reference-pixel) * 1);
-  background: rgb(200 196 225 / 0.22);
-}
-
-.stats-rule::before {
-  position: absolute;
-  top: calc(var(--reference-pixel) * -4);
-  left: calc(50% - var(--reference-pixel) * 4);
-  width: calc(var(--reference-pixel) * 9);
-  height: calc(var(--reference-pixel) * 9);
-  background: rgb(200 196 225 / 0.4);
-  clip-path: var(--sparkle-clip-path);
-  content: "";
 }
 
 .enhance-stats-rule {
@@ -98,6 +75,18 @@ const consumedText = computed(() =>
   line-height: 1;
 }
 
+/* The EXP tag under the level, set in the same white as the stat names */
+.exp-tag {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 157);
+  left: calc(var(--reference-pixel) * 1102);
+  margin: 0;
+  color: #efe9f9;
+  font-size: calc(var(--reference-pixel) * 16);
+  font-weight: 600;
+  line-height: 1;
+}
+
 .experience-text {
   position: absolute;
   top: calc(var(--reference-pixel) * 124);
@@ -105,14 +94,6 @@ const consumedText = computed(() =>
   margin: 0;
   color: #c9a2ee;
   font-size: calc(var(--reference-pixel) * 24);
-  font-weight: 600;
-  line-height: 1;
-}
-
-.stat {
-  position: absolute;
-  margin: 0;
-  color: #efe9f9;
   font-weight: 600;
   line-height: 1;
 }
@@ -144,16 +125,6 @@ const consumedText = computed(() =>
   text-align: center;
 }
 
-.stat-value {
-  position: absolute;
-  width: calc(var(--reference-pixel) * 100);
-  margin: 0;
-  color: #efe9f9;
-  font-weight: 600;
-  line-height: 1;
-  text-align: right;
-}
-
 .base-attack-value {
   top: calc(var(--reference-pixel) * 218);
   left: calc(var(--reference-pixel) * 1700);
@@ -176,26 +147,7 @@ const consumedText = computed(() =>
   background: #482864;
 }
 
-/* The marks before the stat names: a sparkle before Base ATK and a dot before the percentage */
-.base-attack::before {
-  position: absolute;
-  top: calc(var(--reference-pixel) * 2);
-  left: calc(var(--reference-pixel) * -33);
-  width: calc(var(--reference-pixel) * 23);
-  height: calc(var(--reference-pixel) * 23);
-  background: #d9d3ea;
-  clip-path: var(--sparkle-clip-path);
-  content: "";
-}
-
 .attack::before {
-  position: absolute;
   top: calc(var(--reference-pixel) * 8);
-  left: calc(var(--reference-pixel) * -24);
-  width: calc(var(--reference-pixel) * 9);
-  height: calc(var(--reference-pixel) * 9);
-  border-radius: 50%;
-  background: #aaa3bd;
-  content: "";
 }
 </style>

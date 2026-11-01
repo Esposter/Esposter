@@ -81,9 +81,15 @@ const isSelectedWorn = computed(() => selectedStats.value !== undefined);
        with its Enhance, Equip or Unequip and Lock buttons at the foot in place of those two -->
   <div class="artifacts">
     <ToastNotice v-if="notice" class="notice">{{ notice }}</ToastNotice>
-    <button class="details" :aria-expanded="isDetailsOpen" type="button" @click="isDetailsOpen = !isDetailsOpen">
+    <GameButton
+      class="details"
+      :aria-expanded="isDetailsOpen"
+      :kind="GameButtonKind.Row"
+      tip=""
+      @click="isDetailsOpen = !isDetailsOpen"
+    >
       {{ artifactDetailsLabel }}
-    </button>
+    </GameButton>
     <template v-if="isDetailsOpen">
       <p class="slot-name">{{ slotNames[selectedIndex] }}</p>
       <ul v-if="selectedStats" class="stats">

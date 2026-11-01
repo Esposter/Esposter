@@ -4,6 +4,7 @@ import type { AbyssBenedictionScope } from "#src/models/spiralAbyss/AbyssBenedic
 import type { GameText } from "genshin-text";
 
 import { SCOPE_TEXT_KEYS } from "#src/services/spiralAbyss/constants";
+import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface";
 
 interface Props {
   // The game's words in the reader's language, which the tag of the card's scope is read from
@@ -20,6 +21,8 @@ interface Props {
 
 const { gameText, icon, isLit, name, scope } = defineProps<Props>();
 const emit = defineEmits<{ choose: [] }>();
+const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
+const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -45,6 +48,10 @@ const emit = defineEmits<{ choose: [] }>();
 
 <style scoped>
 .card {
+  --state-duration: v-bind(restDuration);
+  --lit-border: calc(var(--unit) * 4) solid #263d57;
+  --lit-shadow:
+    0 0 0 calc(var(--unit) * 2) #8599a9, 0 0 calc(var(--unit) * 12) calc(var(--unit) * 2) rgb(70 120 180 / 40%);
   position: relative;
   box-sizing: border-box;
   width: calc(var(--unit) * 240);
@@ -58,6 +65,10 @@ const emit = defineEmits<{ choose: [] }>();
   font: inherit;
   cursor: inherit;
   outline: none;
+  transition:
+    box-shadow var(--state-duration),
+    filter var(--state-duration),
+    transform var(--state-duration);
 }
 
 /* The card's tan frame, five in from its edge */
@@ -69,13 +80,29 @@ const emit = defineEmits<{ choose: [] }>();
   border-radius: calc(var(--unit) * 12);
 }
 
+/* The lit card, or one focused or held in the forced Hover state, rises and takes its navy rim and glow. A
+   Pointer's hover is guarded by `(hover: hover)`, so a touch screen leaves nothing lit after a tap */
+@media (hover: hover) {
+  .card:hover {
+    --state-duration: v-bind(hoverDuration);
+    border: var(--lit-border);
+    box-shadow: var(--lit-shadow);
+    transform: scale(1.035);
+  }
+}
+
 .card.lit,
-.card:is(:hover, :focus-visible) {
+.card:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  --state-duration: v-bind(hoverDuration);
   transform: scale(1.035);
-  border: calc(var(--unit) * 4) solid #263d57;
-  box-shadow:
-    0 0 0 calc(var(--unit) * 2) #8599a9,
-    0 0 calc(var(--unit) * 12) calc(var(--unit) * 2) rgb(70 120 180 / 40%);
+  border: var(--lit-border);
+  box-shadow: var(--lit-shadow);
+}
+
+/* A press dims the card at once, its size held, as a press resizes nothing the game does not */
+.card:is(:active, [data-interaction-state="Pressed"] *) {
+  --state-duration: 0s;
+  filter: brightness(0.92);
 }
 
 /* The faint square behind the diamond */

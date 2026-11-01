@@ -54,7 +54,7 @@ const confirmAdjustment = () => {
   emit("toggleWorldLevel");
 };
 // The dividers above and below the body, each a hairline ending in a star and a diamond at either side
-const dividerTops = [74, 582];
+const dividerTops = [74, 583];
 const infoSegments = computed(() => splitGameTextColors(gameText[GameTextKey.WorldLevelInfo]));
 // The button waits while the last change's cooldown runs, read as the dialog opens, at each look at the clock while it
 // Stays open, and again as a change is made
@@ -108,9 +108,9 @@ onMounted(() => {
       <p class="title" role="heading" aria-level="2">{{ gameText[GameTextKey.WorldLevel] }}</p>
       <GameButton
         class="close"
-        tip=""
         :aria-label="gameText[GameTextKey.Back]"
         :kind="GameButtonKind.Plain"
+        tip=""
         @click="emit('close')"
       />
       <MenuGlyph :glyph="MenuDialogGlyphMap[MenuDialogIcon.Close]" class="close-glyph" />
@@ -149,9 +149,9 @@ onMounted(() => {
       <GameButton
         v-if="isWorldLevelAdjustable"
         class="adjust"
-        tip=""
         :disabled="isCoolingDown"
         :kind="GameButtonKind.Pill"
+        tip=""
         @click="isAdjustPromptOpen = true"
       >
         <span class="disc" />

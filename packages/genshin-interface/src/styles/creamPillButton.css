@@ -1,0 +1,39 @@
+/* A cream pill button, lit as the game's cream pill is without its bevel, which these pills never drew: a white ring
+   1 unit outside its edge and 2 within on a pointer's hover (only a pointer's, so a tap leaves none), and on focus or
+   the forced hover, holding its size. Pressed, its cream gives way to the slate and gold light the pill takes at once.
+   Provisional past the ring, as no recording shows these pills under the pointer */
+@media (hover: hover) {
+  .cream-pill-button:enabled:hover {
+    box-shadow:
+      0 0 0 calc(var(--unit) * 1) #fff,
+      inset 0 0 0 calc(var(--unit) * 2) #fff,
+      0 0 calc(var(--unit) * 7) rgb(255 255 255 / 0.125);
+  }
+}
+
+.cream-pill-button:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  box-shadow:
+    0 0 0 calc(var(--unit) * 1) #fff,
+    inset 0 0 0 calc(var(--unit) * 2) #fff,
+    0 0 calc(var(--unit) * 7) rgb(255 255 255 / 0.125);
+}
+
+.cream-pill-button::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border: calc(var(--unit) * 2) solid rgb(73 83 103 / 0.5);
+  border-radius: inherit;
+  background-color: rgb(255 243 183 / 0.5);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cream-pill-button:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+  background-color: transparent;
+}
+
+.cream-pill-button:enabled:is(:active, [data-interaction-state="Pressed"] *)::before {
+  opacity: 1;
+}

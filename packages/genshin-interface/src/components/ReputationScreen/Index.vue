@@ -3,7 +3,7 @@ import type { ReputationLevelCell } from "#src/models/ReputationLevelCell";
 import type { TextSegment } from "#src/models/TextSegment";
 
 import ItemTile from "#src/components/ItemTile/Index.vue";
-import { CHECK_MARK_PATH } from "#src/services/constants";
+import { CHECK_MARK_PATH, GAME_ROW_HOVER, GAME_ROW_PRESS } from "#src/services/constants";
 
 interface Props {
   // The achieved mark's words in the reader's language, read to assistive technology in place of the mark
@@ -173,7 +173,7 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   font-size: calc(var(--unit) * 26);
 }
 
-/* The list's panel, its rows 126 apart from 27 down and 32 in, a row 1145 wide */
+/* The list's panel, its rows 126 apart from 28 down and 32 in, a row 1145 wide */
 .levels {
   position: absolute;
   top: calc(var(--unit) * 145);
@@ -182,9 +182,9 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   width: calc(var(--unit) * 1220);
   height: calc(var(--unit) * 870);
   flex-direction: column;
-  gap: calc(var(--unit) * 5);
+  gap: calc(var(--unit) * 9);
   margin: 0;
-  padding: calc(var(--unit) * 27) calc(var(--unit) * 43) calc(var(--unit) * 27) calc(var(--unit) * 32);
+  padding: calc(var(--unit) * 28) calc(var(--unit) * 43) calc(var(--unit) * 27) calc(var(--unit) * 32);
   box-sizing: border-box;
   overflow-y: auto;
   background: #f0ebe5;
@@ -196,7 +196,7 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   position: relative;
   display: block;
   width: 100%;
-  height: calc(var(--unit) * 121);
+  height: calc(var(--unit) * 117);
   padding: 0;
   box-sizing: border-box;
   border: calc(var(--unit) * 2) solid #dad4cd;
@@ -214,6 +214,29 @@ const emit = defineEmits<{ accept: []; close: [] }>();
 
 .level[aria-pressed="true"] {
   background: rgb(255 255 255 / 0.6);
+}
+
+/* The way back, the offer's button and each level are lit as a row is, a tint over their own boxes behind their words (the
+   round way back takes the tint in its curve): on a pointer's hover only, so a tap leaves none, and on focus or the forced
+   hover; pressed at once. Provisional, as no recording shows them under the pointer */
+@media (hover: hover) {
+  .back:enabled:hover,
+  .accept:enabled:hover,
+  .level:enabled:hover {
+    background-image: linear-gradient(v-bind(GAME_ROW_HOVER), v-bind(GAME_ROW_HOVER));
+  }
+}
+
+.back:enabled:is(:focus-visible, [data-interaction-state="Hover"] *),
+.accept:enabled:is(:focus-visible, [data-interaction-state="Hover"] *),
+.level:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  background-image: linear-gradient(v-bind(GAME_ROW_HOVER), v-bind(GAME_ROW_HOVER));
+}
+
+.back:enabled:is(:active, [data-interaction-state="Pressed"] *),
+.accept:enabled:is(:active, [data-interaction-state="Pressed"] *),
+.level:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+  background-image: linear-gradient(v-bind(GAME_ROW_PRESS), v-bind(GAME_ROW_PRESS));
 }
 
 /* The level's pentagon, the row's height, its point 166 in; its drop shadow falls on the row to its right */

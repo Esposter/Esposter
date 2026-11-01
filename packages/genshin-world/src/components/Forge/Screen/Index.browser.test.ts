@@ -9,7 +9,8 @@ import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
 describe("forgeScreen", () => {
-  // The Materials tab with its actions named by the forge page's own words, the Start button among them
+  // The Materials tab with its actions named by the forge page's own words, the Start button and the Required
+  // Line among them
   test("the forge screen labels its actions in the game's words", async () => {
     expect.hasAssertions();
 
@@ -19,6 +20,9 @@ describe("forgeScreen", () => {
       .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.ForgeMaterialsTab] }))
       .toBeVisible();
     await expect.element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.ForgeStart], { exact: true })).toBeVisible();
+    await expect
+      .element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.CraftingRequired], { exact: true }))
+      .toBeVisible();
   });
 
   // Its frame is wider than 16:9, so the window it is drawn in must hold the rightmost of its pieces

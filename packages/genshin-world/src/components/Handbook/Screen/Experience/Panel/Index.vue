@@ -95,14 +95,15 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   letter-spacing: calc(var(--reference-pixel) * -5);
 }
 
+/* Eleven segments on gaps of 12, spanning the reference's green bar from 432 to 1024 and from 723 to 748 */
 .panel-bar {
   position: absolute;
-  top: calc(var(--reference-pixel) * 451);
-  left: calc(var(--reference-pixel) * 29);
+  top: calc(var(--reference-pixel) * 455);
+  left: calc(var(--reference-pixel) * 32);
   display: flex;
-  width: calc(var(--reference-pixel) * 595);
-  height: calc(var(--reference-pixel) * 30);
-  gap: calc(var(--reference-pixel) * 10);
+  width: calc(var(--reference-pixel) * 592);
+  height: calc(var(--reference-pixel) * 28);
+  gap: calc(var(--reference-pixel) * 12);
 }
 
 .panel-segment {

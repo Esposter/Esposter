@@ -40,7 +40,9 @@ const lineParts = computed(() => ({
 <template>
   <!-- The game's dialogue over the world: a click anywhere goes on, the speaker's name over the line at the foot of the
        Screen, and the replies down the right. Sized and placed off the English client's recording of its dialogue
-       choices; the selected reply's look and a narration's place wait on recordings still owed -->
+       choices; the selected reply's look and a narration's place wait on recordings still owed. The root stays a div,
+       not a button: the advance key is the world's own listener, and a button a click focused would take the same
+       key's press as a second advance -->
   <div class="dialogue-screen" @click="emit('advance')">
     <div class="band" :class="{ narration: !speakerName }" aria-live="polite">
       <p v-if="speakerName" class="speaker" :class="{ 'no-role': !speakerRole }">{{ speakerName }}</p>

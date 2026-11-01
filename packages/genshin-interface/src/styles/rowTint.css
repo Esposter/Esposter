@@ -1,0 +1,33 @@
+/* A row's tint: a box laid over the row behind its words, lit as a row is when it is hovered or focused, and pressed at
+   Once. The row wears the `row-tint` class and sets the tint's colours as `--row-tint` and `--row-press` */
+.row-tint {
+  isolation: isolate;
+}
+
+.row-tint::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background-color: var(--row-tint);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--state-duration);
+}
+
+.row-tint:enabled:is(:focus-visible, [data-interaction-state="Hover"] *)::before {
+  opacity: 1;
+}
+
+/* A pointer's hover is guarded by `(hover: hover)`, so a touch screen leaves no tint after a tap */
+@media (hover: hover) {
+  .row-tint:enabled:hover::before {
+    opacity: 1;
+  }
+}
+
+.row-tint:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *)::before {
+  background-color: var(--row-press);
+  opacity: 1;
+}

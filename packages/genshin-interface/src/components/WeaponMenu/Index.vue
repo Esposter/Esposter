@@ -39,10 +39,16 @@ const emit = defineEmits<{ action: []; close: [] }>();
         <span class="label">{{ detailsLabel }}</span>
       </li>
       <li v-for="menuTab of tabs" :key="menuTab.tab" class="row">
-        <button class="tab" :aria-pressed="menuTab.tab === tab" type="button" @click="tab = menuTab.tab">
+        <GameButton
+          class="tab"
+          :aria-pressed="menuTab.tab === tab"
+          :kind="GameButtonKind.Row"
+          tip=""
+          @click="tab = menuTab.tab"
+        >
           <span class="diamond" />
           <span class="label">{{ menuTab.label }}</span>
-        </button>
+        </GameButton>
       </li>
     </ul>
     <slot />
@@ -56,9 +62,9 @@ const emit = defineEmits<{ action: []; close: [] }>();
       <span class="action-icon" :class="{ coin: tab === WeaponMenuTab.Ascend }" aria-hidden="true" />
       {{ actionLabel }}
     </GameButton>
-    <button class="close" :aria-label="closeLabel" type="button" @click="emit('close')">
+    <GameButton class="close" :aria-label="closeLabel" :kind="GameButtonKind.Disc" tip="" @click="emit('close')">
       <svg class="close-arrow" viewBox="0 0 30 30" aria-hidden="true"><path :d="BACK_ARROW_PATH" /></svg>
-    </button>
+    </GameButton>
   </div>
 </template>
 

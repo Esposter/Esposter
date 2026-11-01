@@ -8,10 +8,10 @@ import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import QuestScreenDetailNavigate from "#src/components/Quest/Screen/Detail/Navigate/Index.vue";
 import QuestScreenDetailRewards from "#src/components/Quest/Screen/Detail/Rewards/Index.vue";
 import { QuestGlyph } from "#src/models/quest/QuestGlyph";
-import { ORNAMENT_END_SIDES } from "#src/services/quest/constants";
+import { QUEST_DIVIDER_FILL } from "#src/services/quest/constants";
 import { getQuestCounter } from "#src/services/quest/getQuestCounter";
 import { QuestGlyphMap } from "#src/services/quest/QuestGlyphMap";
-import { ORNAMENT_END_PATH } from "genshin-interface";
+import { OrnamentDivider } from "genshin-interface";
 
 interface Props {
   // The game's words in the reader's language
@@ -49,9 +49,9 @@ const questStep = computed(() => {
       <span class="journal-emblem" />
     </template>
     <span class="divider" />
-    <svg v-for="side of ORNAMENT_END_SIDES" :key="side" class="ornament-end" :class="side" viewBox="0 0 320 224">
-      <path :d="ORNAMENT_END_PATH" />
-    </svg>
+    <div class="rule">
+      <OrnamentDivider :fill="QUEST_DIVIDER_FILL" is-hairline-hidden is-middle-hidden />
+    </div>
     <p v-if="questStep" class="step">
       <MenuGlyph class="objective" :glyph="QuestGlyphMap[QuestGlyph.ObjectiveRing]" />
       <MenuGlyph class="objective" :glyph="QuestGlyphMap[QuestGlyph.ObjectiveCore]" />
@@ -167,19 +167,12 @@ const questStep = computed(() => {
   line-height: calc(var(--unit) * 30);
 }
 
-/* The game's tapered diamond at each end of the divider, the flipped one at the right, its tips on the hairline */
-.ornament-end {
+/* The shared divider's two ends laid over the column's own translucent hairline, the left one 33.5 out past the
+   column's left and the right one 32 past its right, their centre 220 down, their tips on the hairline */
+.rule {
   position: absolute;
-  top: calc(var(--unit) * 209.5);
-  left: calc(var(--unit) * -33.5);
-  width: calc(var(--unit) * 30);
-  height: calc(var(--unit) * 21);
-  fill: rgb(255 255 255 / 0.3);
-}
-
-.ornament-end.right {
-  left: auto;
+  top: calc(var(--unit) * 205);
   right: calc(var(--unit) * -32);
-  scale: -1 1;
+  left: calc(var(--unit) * -33.5);
 }
 </style>

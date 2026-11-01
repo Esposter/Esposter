@@ -66,60 +66,15 @@ const passiveRows = computed(() =>
   <span class="pill auto-add refine-auto-add" aria-hidden="true">{{ gameText[GameTextKey.ArtifactAutoAdd] }}</span>
 </template>
 
-<style scoped>
-.divider {
-  position: absolute;
-  left: calc(var(--reference-pixel) * 1086);
-  width: calc(var(--reference-pixel) * 738);
-}
+<style scoped src="../../../../styles/weaponScreen.css"></style>
 
+<style scoped>
 .refine-divider {
   top: calc(var(--reference-pixel) * 173);
 }
 
-/* The rule between two stat rows: a faint hairline with a small star at its middle, which the game sets instead of a divider's ends */
-.stats-rule {
-  position: absolute;
-  left: calc(var(--reference-pixel) * 1100);
-  width: calc(var(--reference-pixel) * 705);
-  height: calc(var(--reference-pixel) * 1);
-  background: rgb(200 196 225 / 0.22);
-}
-
-.stats-rule::before {
-  position: absolute;
-  top: calc(var(--reference-pixel) * -4);
-  left: calc(50% - var(--reference-pixel) * 4);
-  width: calc(var(--reference-pixel) * 9);
-  height: calc(var(--reference-pixel) * 9);
-  background: rgb(200 196 225 / 0.4);
-  clip-path: var(--sparkle-clip-path);
-  content: "";
-}
-
 .refine-stats-rule {
   top: calc(var(--reference-pixel) * 528);
-}
-
-/* The game's cream pill, drawn as the game draws it, for the Auto Add button */
-.pill {
-  position: absolute;
-  height: calc(var(--reference-pixel) * 50);
-  border-radius: calc(var(--reference-pixel) * 25);
-  background: #ece5d6;
-  color: #3d3d48;
-  font-size: calc(var(--reference-pixel) * 27);
-  font-weight: 600;
-  line-height: calc(var(--reference-pixel) * 50);
-  text-align: center;
-}
-
-.auto-add {
-  top: calc(var(--reference-pixel) * 527);
-  left: calc(var(--reference-pixel) * 1584);
-  width: calc(var(--reference-pixel) * 216);
-  background: #e0d6ce;
-  line-height: calc(var(--reference-pixel) * 44);
 }
 
 .refine-auto-add {

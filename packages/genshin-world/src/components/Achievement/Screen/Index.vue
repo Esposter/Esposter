@@ -9,7 +9,7 @@ import AchievementScreenEntry from "#src/components/Achievement/Screen/Entry/Ind
 import { useListScreenTabStep } from "#src/composables/useListScreenTabStep";
 import { checkIsAchievementFinished } from "#src/services/achievement/checkIsAchievementFinished";
 import { CloseButton, CloseButtonMark, GameScreen } from "genshin-interface";
-import { GameTextKey } from "genshin-text";
+import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
   achievements: readonly Achievement[];
@@ -28,6 +28,15 @@ const emit = defineEmits<{ close: [] }>();
 const selectedCategoryId = ref(initialCategoryId ?? categories[0]?.id ?? 0);
 const categoryAchievementsMap = computed(() => Map.groupBy(achievements, ({ categoryId }) => categoryId));
 const checkIsFinished = (achievement: Achievement): boolean => checkIsAchievementFinished(achievement.id, progressMap);
+// The header's count of every finished achievement, its number split out in the colour the game gives it
+const completedCountSegments = computed(() =>
+  splitGameTextColors(
+    fillGameTextValues(
+      gameText[GameTextKey.AchievementCompletedCount],
+      achievements.filter((achievement) => checkIsFinished(achievement)).length,
+    ),
+  ),
+);
 // The finished achievements sit after the ones still to do, each group in its table order
 const selectedAchievements = computed(() =>
   (categoryAchievementsMap.value.get(selectedCategoryId.value) ?? []).toSorted(
@@ -67,14 +76,16 @@ useListScreenTabStep(
 
 <template>
   <!-- The game's achievements screen over the blurred world: its title under a laurel and the back disc across the top,
-       the search box, and the categories down the left, each with its share of finished achievements. The selected
-       category's banner and its achievements sit on the cream panel to the right, each with its reward, its progress and
-       a stamp once it is finished. The words the banner, the search box and the header's count draw are not in
-       GameTextKey, and the laurel, the category badges, the medals, the namecard and the Primogem are the game's art, so
-       they are flat placeholders -->
+       the count of finished achievements beside the disc, the search box, and the categories down the left, each with its
+       share of finished achievements. The selected category's banner and its achievements sit on the cream panel to the
+       right, each with its reward, its progress and a stamp once it is finished. The laurel, the category badges, the
+       medals, the namecard and the Primogem are the game's art, so they are flat placeholders -->
   <GameScreen class="achievement-screen">
     <span class="laurel" />
     <p class="heading" role="heading" aria-level="1">{{ gameText[GameTextKey.Achievements] }}</p>
+    <p class="completed">
+      <span v-for="({ color, text }, index) of completedCountSegments" :key="index" :style="{ color }">{{ text }}</span>
+    </p>
     <CloseButton
       class="close"
       :label="gameText[GameTextKey.Back]"
@@ -86,6 +97,7 @@ useListScreenTabStep(
         <circle cx="7.5" cy="7.5" r="6" />
         <path d="M12 12 17 17" />
       </svg>
+      <span class="search-placeholder">{{ gameText[GameTextKey.AchievementSearch] }}</span>
     </span>
     <div ref="list" class="list" role="tablist" aria-orientation="vertical">
       <AchievementScreenCategory
@@ -101,6 +113,8 @@ useListScreenTabStep(
     <div class="frame" />
     <div class="banner">
       <span class="namecard" />
+      <p class="banner-title">{{ gameText[GameTextKey.AchievementProgress] }}</p>
+      <p class="banner-hint">{{ gameText[GameTextKey.AchievementNamecardHint] }}</p>
       <span class="rate">{{ categoryPercents.get(selectedCategoryId) ?? 0 }} %</span>
       <span class="track"><span class="fill" /></span>
       <span class="status" />
@@ -110,6 +124,7 @@ useListScreenTabStep(
         v-for="achievement of selectedAchievements"
         :key="achievement.id"
         :achievement
+        :game-text
         :progress-map
         :text-map
       />
@@ -145,6 +160,17 @@ useListScreenTabStep(
   line-height: calc(var(--unit) * 30);
 }
 
+/* The count sits at the heading's line, its left edge measured off the reference's header, the number drawn in its own colour */
+.completed {
+  position: absolute;
+  top: calc(var(--unit) * 27);
+  left: calc(var(--unit) * 1264);
+  margin: 0;
+  color: #e2c486;
+  font-size: calc(var(--unit) * 24);
+  line-height: calc(var(--unit) * 30);
+}
+
 /* The back disc, placed at the reference's top right: its right edge 232 from the window's and its top 14 down */
 .close {
   top: calc(var(--unit) * 14);
@@ -173,6 +199,18 @@ useListScreenTabStep(
   stroke: #fff;
   stroke-width: 2;
   stroke-linecap: round;
+}
+
+/* The placeholder starts 43 units in from the box's left edge, where the magnifier's space ends, and is centred on its height */
+.search-placeholder {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--unit) * 43);
+  display: flex;
+  color: rgb(200 200 206 / 0.85);
+  font-size: calc(var(--unit) * 22);
+  align-items: center;
 }
 
 /* The list is scrolled to the selected category, its rows 534 wide and its bar at the right edge; its left padding holds
@@ -239,6 +277,27 @@ useListScreenTabStep(
   color: #3a3328;
   font-size: calc(var(--unit) * 26);
   line-height: calc(var(--unit) * 26);
+}
+
+/* The title sits over the bar and the line under it beneath, both starting where the bar starts */
+.banner-title {
+  position: absolute;
+  top: calc(var(--unit) * 18);
+  left: calc(var(--unit) * 131);
+  margin: 0;
+  color: #3a3328;
+  font-size: calc(var(--unit) * 26);
+  line-height: calc(var(--unit) * 30);
+}
+
+.banner-hint {
+  position: absolute;
+  top: calc(var(--unit) * 70);
+  left: calc(var(--unit) * 131);
+  margin: 0;
+  color: #8a8275;
+  font-size: calc(var(--unit) * 20);
+  line-height: calc(var(--unit) * 24);
 }
 
 .track {

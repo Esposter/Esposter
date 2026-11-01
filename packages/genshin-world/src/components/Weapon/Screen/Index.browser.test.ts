@@ -50,6 +50,7 @@ describe("weaponScreen", () => {
     await expect.element(page.getByLabelText(`${weaponData.rarity}`, { exact: true })).toBeInTheDocument();
     await expect.element(page.getByText(levelText, { exact: true })).toBeVisible();
     await expect.element(page.getByText(heldExperienceText, { exact: true })).toBeVisible();
+    await expect.element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.WeaponExp], { exact: true })).toBeVisible();
     expect(container.querySelectorAll(".spark.lit")).toHaveLength(heldWeapon.ascension);
     expect(container.querySelector(".refinement")?.textContent?.trim()).toBe(
       fillGameTextValues(ENGLISH_GAME_TEXT[GameTextKey.WeaponRefinementRank], `${heldWeapon.refinement}`),

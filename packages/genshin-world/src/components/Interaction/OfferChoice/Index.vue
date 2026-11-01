@@ -2,6 +2,7 @@
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
 import type { GameText } from "genshin-text";
 
+import { GameButton, GameButtonKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -29,19 +30,22 @@ const emit = defineEmits<{
        Fragile Resin can restore the Original Resin, and a row that leaves the blossom unclaimed. Drawn in the prompts
        beside the character, where the prompt list is -->
   <div class="offer-choice">
-    <button
+    <GameButton
       v-for="offer of offers"
       :key="`${offer.claimCount}-${offer.condensedResinCount}-${offer.resin}`"
       class="offer"
-      type="button"
+      :kind="GameButtonKind.Row"
+      tip=""
       @click="emit('choose', offer)"
     >
       {{ gameText[offer.condensedResinCount > 0 ? GameTextKey.UseCondensedResin : GameTextKey.UseOriginalResin] }}
-    </button>
-    <button v-if="canRestore" class="offer" type="button" @click="emit('restore')">
+    </GameButton>
+    <GameButton v-if="canRestore" class="offer" :kind="GameButtonKind.Row" tip="" @click="emit('restore')">
       {{ gameText[GameTextKey.FragileResinRestore] }}
-    </button>
-    <button class="offer" type="button" @click="emit('close')">{{ gameText[GameTextKey.Cancel] }}</button>
+    </GameButton>
+    <GameButton class="offer" :kind="GameButtonKind.Row" tip="" @click="emit('close')">{{
+      gameText[GameTextKey.Cancel]
+    }}</GameButton>
   </div>
 </template>
 

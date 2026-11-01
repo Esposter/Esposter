@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
 
+import { GAME_CREAM, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -17,6 +18,8 @@ const emit = defineEmits<{
   // The button that closes the tip, after which the next tip waiting is shown
   close: [];
 }>();
+const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
+const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -25,7 +28,9 @@ const emit = defineEmits<{
       <p class="heading">{{ gameText[GameTextKey.TipHeading] }}</p>
       <p class="title">{{ title }}</p>
       <p class="subtitle">{{ subtitle }}</p>
-      <button class="dismiss" type="button" @click="emit('close')">{{ gameText[GameTextKey.TipDismiss] }}</button>
+      <button class="dismiss ring-button" type="button" @click="emit('close')">
+        {{ gameText[GameTextKey.TipDismiss] }}
+      </button>
     </div>
   </div>
 </template>
@@ -65,11 +70,24 @@ const emit = defineEmits<{
   font-size: 0.875rem;
 }
 
+/* Provisional: no reference frame shows the tip's button, so its states are the cream pill's own: a white ring lights at
+   its edge when hovered or focused (`ringButton.css`), and a press tints it slate with its words cream */
 .dismiss {
+  --hover-duration: v-bind(hoverDuration);
+  --state-duration: v-bind(restDuration);
   padding: 0.25rem 1rem;
   border-radius: 0.25rem;
   background: #fff;
   color: #000;
   cursor: pointer;
+  outline: 0.125rem solid transparent;
+}
+
+.dismiss:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
+  --state-duration: 0s;
+  background: rgb(73 83 103 / 0.5);
+  color: v-bind(GAME_CREAM);
 }
 </style>
+
+<style scoped src="genshin-interface/styles/ringButton.css"></style>

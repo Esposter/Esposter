@@ -1,0 +1,19 @@
+/* A tab is lit as a row is: a tint over its own box, on a pointer's hover only, so a tap leaves none.
+   Focus and the forced hover light it the same, and a press lights it at once.
+   It is the tab's own background rather than a GameButton Row's, since a Row would light a selected tab at rest.
+   The Quest's open tab takes a Row's ::before for its disc.
+   The tints are the --tab-hover and --tab-press its parent sets from GAME_ROW_HOVER and GAME_ROW_PRESS.
+   Provisional, as no recording shows a tab under the pointer */
+@media (hover: hover) {
+  .tab:enabled:hover {
+    background-image: linear-gradient(var(--tab-hover), var(--tab-hover));
+  }
+}
+
+.tab:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  background-image: linear-gradient(var(--tab-hover), var(--tab-hover));
+}
+
+.tab:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+  background-image: linear-gradient(var(--tab-press), var(--tab-press));
+}

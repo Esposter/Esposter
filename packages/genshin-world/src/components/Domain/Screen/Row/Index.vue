@@ -3,6 +3,7 @@ import type { DomainLevelRow } from "#src/models/domains/DomainLevelRow";
 import type { GameText } from "genshin-text";
 
 import { DomainLevelState } from "#src/models/domains/DomainLevelState";
+import { GameButton, GameButtonKind } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
@@ -29,8 +30,13 @@ const stateText = computed(() => {
     <span>{{ fillGameTextValues(gameText[GameTextKey.RecommendedLevel], level.requiredRank) }}</span>
     <span>{{ fillGameTextValues(gameText[GameTextKey.EnemyLevel], level.enemyLevel) }}</span>
     <span v-if="stateText">{{ stateText }}</span>
-    <button type="button" :disabled="level.state !== DomainLevelState.Open" @click="emit('enter', level.dungeonId)">
+    <GameButton
+      :disabled="level.state !== DomainLevelState.Open"
+      :kind="GameButtonKind.Row"
+      tip=""
+      @click="emit('enter', level.dungeonId)"
+    >
       {{ gameText[GameTextKey.DomainEnter] }}
-    </button>
+    </GameButton>
   </li>
 </template>

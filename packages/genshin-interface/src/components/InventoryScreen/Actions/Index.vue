@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { InventoryCell } from "#src/models/InventoryCell";
 
+import { GAME_ROW_PRESS } from "#src/services/constants";
+
 interface Props {
   // The equipment tab's pill that opens the entry's details, in the reader's language
   detailsLabel: string;
@@ -21,7 +23,7 @@ const { detailsLabel, isDestroying, isSortable, selectedCell, useLabel } = defin
 <template>
   <button
     v-if="selectedCell?.isUsable && !isDestroying"
-    class="use"
+    class="use cream-pill-lit"
     type="button"
     @click="emit('use', selectedCell.id)"
   >
@@ -71,4 +73,10 @@ const { detailsLabel, isDestroying, isSortable, selectedCell, useLabel } = defin
   content: "";
   transform: translateY(-50%);
 }
+
+.use:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+  background-image: linear-gradient(v-bind(GAME_ROW_PRESS), v-bind(GAME_ROW_PRESS));
+}
 </style>
+
+<style scoped src="../../../styles/creamPillLit.css"></style>

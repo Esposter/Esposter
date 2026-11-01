@@ -1,0 +1,27 @@
+/* A button a white ring lights round when it is hovered or focused, its crossfade the button's own `--hover-duration`.
+   The keyboard's focus and the forced Hover state draw the ring unguarded, and a pointer's hover is guarded by
+   `(hover: hover)`, so a touch screen leaves nothing lit after a tap. The ring has no `:enabled`, so a button's enabled
+   Press outranks it at equal specificity; a Press without `:enabled` does so only when its own block comes after this
+   sheet. The transition lists `filter` too, for the brightness a press sets: a transition on a property that never
+   changes draws nothing, so the close, the disc and the tip, which never change `filter`, are unaffected.
+   Provisional: no reference frame shows a close, a disc or a tip's button under the Pointer, so these states are
+   the cream pill's own */
+.ring-button {
+  transition:
+    background-color var(--state-duration),
+    color var(--state-duration),
+    filter var(--state-duration),
+    outline-color var(--state-duration);
+}
+
+.ring-button:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  --state-duration: var(--hover-duration);
+  outline-color: #fff;
+}
+
+@media (hover: hover) {
+  .ring-button:hover {
+    --state-duration: var(--hover-duration);
+    outline-color: #fff;
+  }
+}

@@ -6,6 +6,7 @@ import MenuGlyphPaths from "#src/components/Menu/GlyphPaths/Index.vue";
 import { HUD_SHORTCUTS } from "#src/services/hud/constants";
 import { MenuEntryGlyphMap } from "#src/services/menu/MenuEntryGlyphMap";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
+import { GameButton, GameButtonKind } from "genshin-interface";
 
 interface Props {
   // The game's words in the reader's language, which name each shortcut for a screen reader
@@ -27,7 +28,13 @@ const shortcuts = HUD_SHORTCUTS.map(({ icon, inputAction, labelKey }) => ({
        Alone -->
   <ul class="shortcuts">
     <li v-for="{ glyph, inputAction, labelKey } of shortcuts" :key="inputAction">
-      <button class="shortcut" type="button" :aria-label="gameText[labelKey]" @click="tapActionKey(input, inputAction)">
+      <GameButton
+        class="shortcut"
+        :aria-label="gameText[labelKey]"
+        :kind="GameButtonKind.Disc"
+        tip=""
+        @click="tapActionKey(input, inputAction)"
+      >
         <svg
           class="glyph"
           aria-hidden="true"
@@ -36,7 +43,7 @@ const shortcuts = HUD_SHORTCUTS.map(({ icon, inputAction, labelKey }) => ({
         >
           <MenuGlyphPaths :glyph />
         </svg>
-      </button>
+      </GameButton>
     </li>
   </ul>
 </template>
@@ -53,15 +60,13 @@ const shortcuts = HUD_SHORTCUTS.map(({ icon, inputAction, labelKey }) => ({
   list-style: none;
 }
 
+/* A GameButton of the Disc kind, so its look in each state is the disc's own; the icon stays white at rest, which the
+   parent's colour sets over the button's gold */
 .shortcut {
   display: grid;
   width: calc(var(--canvas-unit) * 76);
   height: 100%;
-  padding: 0;
-  border: none;
-  background: none;
   color: #fff;
-  cursor: inherit;
   place-items: center;
   pointer-events: auto;
 }

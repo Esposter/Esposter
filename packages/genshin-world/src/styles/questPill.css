@@ -1,0 +1,18 @@
+/* The base of the quest screen's foot pills: the navigate pill in Detail and the overview pill in Footer, each setting
+   its own place in its own box */
+.quest-pill {
+  margin: 0;
+  padding: 0;
+  border: none;
+  cursor: inherit;
+  font: inherit;
+  font-weight: 600;
+  position: absolute;
+  top: calc(var(--unit) * 989);
+  width: calc(var(--unit) * 288);
+  height: calc(var(--unit) * 62);
+  border-radius: calc(var(--unit) * 31);
+  background: #ece5d7;
+  color: #3c404b;
+  font-size: calc(var(--unit) * 27);
+}

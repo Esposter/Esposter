@@ -4,6 +4,7 @@ import type { GameText } from "genshin-text";
 
 import { HANDBOOK_TABS } from "#src/services/handbook/constants";
 import { HandbookTabGameTextKeyMap } from "#src/services/handbook/HandbookTabGameTextKeyMap";
+import { GAME_ROW_HOVER, GAME_ROW_PRESS } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -36,6 +37,8 @@ const tabs = computed(() =>
   </div>
 </template>
 
+<style scoped src="../../../../styles/tabTint.css"></style>
+
 <style scoped>
 .tabs {
   position: absolute;
@@ -43,6 +46,8 @@ const tabs = computed(() =>
   left: calc(var(--reference-pixel) * 67);
   width: calc(var(--reference-pixel) * 265);
   height: calc(var(--reference-pixel) * 1200);
+  --tab-hover: v-bind(GAME_ROW_HOVER);
+  --tab-press: v-bind(GAME_ROW_PRESS);
 }
 
 .tab {

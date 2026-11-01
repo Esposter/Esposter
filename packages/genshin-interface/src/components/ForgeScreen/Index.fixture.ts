@@ -48,6 +48,7 @@ export const props = {
   ],
   refusalLabel: "",
   requiredCoins: 25,
+  requiredLabel: "Required",
   startLabel: "Start",
   supportLabel: "Support Character",
   tab: ForgeTab.Materials,

@@ -1,0 +1,35 @@
+/* The lit disc a HUD button's round face takes, as the game's Disc does, provisionally, as no recording shows one lit:
+   Hovered or focused, a navy lies over the button's fill and under its icon, and pressed while held the disc takes the
+   Button's press colour. The fades run over the durations and that colour the button sets as custom properties */
+.lit-disc {
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  cursor: inherit;
+  pointer-events: auto;
+}
+
+.lit-disc::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  transition: background-color var(--lit-rest-duration);
+}
+
+.lit-disc:is(:focus-visible, [data-interaction-state="Hover"] *)::before {
+  background-color: rgb(30 49 63 / 0.5);
+  transition-duration: var(--lit-hover-duration);
+}
+
+@media (hover: hover) {
+  .lit-disc:hover::before {
+    background-color: rgb(30 49 63 / 0.5);
+    transition-duration: var(--lit-hover-duration);
+  }
+}
+
+.lit-disc:is(:active, [data-interaction-state="Pressed"] *)::before {
+  background-color: var(--lit-press-color);
+  transition-duration: 0s;
+}
