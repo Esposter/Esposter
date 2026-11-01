@@ -3,7 +3,7 @@ import type { TerrainResidualGrid } from "#src/models/genshinAssets/fit/TerrainR
 import { describe } from "vitest";
 
 // A square residual grid of `size` cells a side, each `step` metres from the next and the grid's `origin` in both axes,
-// each cell's value read from `getValue` at its position
+// Each cell's value read from `getValue` at its position
 export const createTerrainResidualGrid = (
   getValue: (x: number, z: number) => number,
   { origin, size, step }: { origin: number; size: number; step: number },
