@@ -141,8 +141,10 @@ export const useWorldCombat = ({
     )();
   };
   watch(deployedCharacterIds, readUnloadedCharacterKits);
+  // The character on the field, which the screens and the HUD name the active member by
+  const activeCharacterId = computed(() => getActiveCharacterId(party));
   // How the character on the field moves, its body type's
-  const locomotion = computed(() => getCharacterLocomotion(getActiveCharacterId(party), statTables.characterDataMap));
+  const locomotion = computed(() => getCharacterLocomotion(activeCharacterId.value, statTables.characterDataMap));
   // Each character's combat once its kit is built, a character whose kit has not arrived having none yet. The character on
   // The field's combat and its party member are what the HUD's Health and skills read
   const characterIdCombatantMap = computed(() => {
@@ -173,10 +175,8 @@ export const useWorldCombat = ({
     }
     return combatantMap;
   });
-  // The character on the field, which the screens and the HUD name the active member by
-  const activeCharacterId = computed(() => getActiveCharacterId(party));
   const activeCombatant = computed(() => characterIdCombatantMap.value.get(activeCharacterId.value));
-  const activePartyMember = computed(() => getPartyMember(party, getActiveCharacterId(party)));
+  const activePartyMember = computed(() => getPartyMember(party, activeCharacterId.value));
   // The deployed team's skill and burst icons the HUD's buttons carry, by character id, each carried by its kit
   const characterIdSkillGlyphsMap = computed(
     () =>
@@ -188,7 +188,7 @@ export const useWorldCombat = ({
   );
   const startingCombatant = activeCombatant.value;
   if (!startingCombatant)
-    throw new InvalidOperationError(Operation.Read, useWorldCombat.name, `${getActiveCharacterId(party)}`);
+    throw new InvalidOperationError(Operation.Read, useWorldCombat.name, `${activeCharacterId.value}`);
   // The party's stamina pool, which the character on the field spends from and the kit restores to, held across swaps.
   // Impetuous Winds cuts every spend from it, the body's and the kit's, read from the field's resonances at each spend
   const stamina = createStamina(STAMINA_MAX, () =>
@@ -237,7 +237,7 @@ export const useWorldCombat = ({
     return {
       burstCooldown: partyMember.burstCooldownSeconds,
       burstCooldownSeconds: combatant.kit.burstCooldownSeconds,
-      characterId: getActiveCharacterId(party),
+      characterId: activeCharacterId.value,
       element: combatant.element,
       energy: partyMember.energy,
       energyCost: combatant.kit.burstEnergyCost,
@@ -251,11 +251,11 @@ export const useWorldCombat = ({
   });
   // Mora the character on the field picks up is an event of combat for the next step, which an artifact set answers
   events.on("pickUpMora", () => {
-    kitContext.outbox.push({ characterId: getActiveCharacterId(party), kind: KitEventKind.MoraPickedUp });
+    kitContext.outbox.push({ characterId: activeCharacterId.value, kind: KitEventKind.MoraPickedUp });
   });
   // A chest opened in the world is an event of combat for the next step too, which an artifact set answers
   events.on("chestOpened", () => {
-    kitContext.outbox.push({ characterId: getActiveCharacterId(party), kind: KitEventKind.ChestOpened });
+    kitContext.outbox.push({ characterId: activeCharacterId.value, kind: KitEventKind.ChestOpened });
   });
   const clearKitEffects = () => {
     kitContext.kitEffectState.effects = [];
