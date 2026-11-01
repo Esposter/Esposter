@@ -5,7 +5,7 @@ description: Apply when a task spans many files, when waiting on an external pro
 
 # Context Efficiency
 
-The main session's context is the scarce resource. These are the habits that stop it being spent on things that carry no judgment. **Which command to run and from where is the `package-scripts` skill; whether work goes to a subagent and on which family is `llm-delegation`; when a check runs and how the session waits on it is `running-checks`.** This skill is only about what the main session reads, waits on, and re-does.
+The main session's context is the scarce resource. These are the habits that stop it being spent on things that carry no judgment. **Which command to run and from where is the `package-scripts` skill; whether work goes to a subagent and on which family is the `llm-delegation` skill; when a check runs and how the session waits on it is the `running-checks` skill.** This skill is only about what the main session reads, waits on, and re-does.
 
 ## Keep dumps out of the session
 
