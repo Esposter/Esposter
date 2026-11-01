@@ -1,6 +1,8 @@
 import type { ResidentSpot } from "#src/models/world/ResidentSpot";
+import type { ResidentWeekGame } from "#src/models/world/ResidentWeekGame";
 
 import { residentSpotSchema } from "#src/models/world/ResidentSpot";
+import { residentWeekGameSchema } from "#src/models/world/ResidentWeekGame";
 import { z } from "zod";
 
 // One of the world's people, placed in its region's data as the game places an NPC: its id the game's own, its name
@@ -20,22 +22,6 @@ export interface Resident {
   talkId: string;
   weekGame?: ResidentWeekGame;
 }
-
-// The game a resident's week offers in the weekly guest challenge, the Genius Invokation level it is offered at, and the Lucky
-// Coins and Player EXP the week's reward gives at that level
-export interface ResidentWeekGame {
-  gameId: number;
-  gcgLevel: number;
-  luckyCoins: number;
-  playerExp: number;
-}
-
-export const residentWeekGameSchema = z.object({
-  gameId: z.int().positive(),
-  gcgLevel: z.int().positive(),
-  luckyCoins: z.int().nonnegative(),
-  playerExp: z.int().nonnegative(),
-}) satisfies z.ZodType<ResidentWeekGame>;
 
 export const residentSchema = z.object({
   absentAtNight: z.literal(true).optional(),

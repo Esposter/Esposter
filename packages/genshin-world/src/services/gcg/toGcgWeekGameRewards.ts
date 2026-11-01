@@ -1,5 +1,5 @@
 import type { ItemCount } from "#src/models/inventory/ItemCount";
-import type { ResidentWeekGame } from "#src/models/world/Resident";
+import type { ResidentWeekGame } from "#src/models/world/ResidentWeekGame";
 
 import { GCG_LUCKY_COIN_ITEM_ID, GCG_PLAYER_EXP_ITEM_ID } from "#src/services/gcg/constants";
 
