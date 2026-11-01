@@ -57,6 +57,7 @@ export const readGcsimCitedCandidates = (
         file,
         readNormalCounter(path),
         readCitedTargetingArea(path, overlay, talentGroupIdMap),
+        gcsim.constantMap,
       );
       for (const cited of citedAreas)
         addKitCandidate(candidateMap, path, {

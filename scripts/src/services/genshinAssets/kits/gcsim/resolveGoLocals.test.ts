@@ -106,6 +106,35 @@ describe("readGcsimCitedCandidates local aliases", () => {
     "",
   ].join("\n");
 
+  // The radius is a package constant, a number the constructor names
+  const CONSTANT_GO = [
+    "package aino",
+    "",
+    "const burstAoE = 3.5",
+    "",
+    "func burst() {",
+    "\tap := combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, burstAoE)",
+    "}",
+    "",
+  ].join("\n");
+
+  test("a size a package constant names reads as the number, and the constructor's line is cited", () => {
+    expect.hasAssertions();
+    const candidates =
+      readGcsimCitedCandidates(
+        overlayFor("burst.area", 6),
+        createGcsimDirectory(CONSTANT_GO),
+        createCharacter(CONSTANT_GO),
+        TALENT_GROUP_ID_MAP,
+      ).get("burst.area") ?? [];
+    expect(candidates).toStrictEqual([
+      {
+        provenance: { file: "internal/characters/aino/burst.go", line: 6, source: KitSource.Gcsim },
+        value: { angle: 2 * Math.PI, height: 2, radius: 3.5 },
+      },
+    ]);
+  });
+
   test("a single-assignment alias reads as its right-hand side, and the constructor's line is cited", () => {
     expect.hasAssertions();
     const candidates =
