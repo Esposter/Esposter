@@ -55,10 +55,9 @@ The rest of the config's widgets, the cameras, the avatar attachments, the water
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `{data-root}/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, the widget config with each widget's type, cooldowns and cooldown group, and `{data-root}/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`, which names each spawned gadget. Both are read from the dump outside the repository and nothing from them is committed.
 - [Gadget](https://genshin-impact.fandom.com/wiki/Gadget), Genshin Impact Wiki: the gadgets as the bag's tab, and the cooldowns that run while the world is paused.
-- Collector with no failure cooldown has none: (`{data-root}/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, the collector `220004`, which has no `coolDownOnFail`).
-- A cooldown keeps running while the world is paused: "as the game's do".
 
 ## Open
 
-- [ ] **A cooldown counts on through a paused world, as the game's do** — no source yet: the wiki's Gadget page, which the Sources name for the paused cooldowns, is not in `{data-root}/cache/genshin-wiki/`.
+The open check for a cooldown through a paused world is recorded with its requirement in [the spec](spec.md).
+
 - [ ] **The success and failure crystals belong to each gather point type** — no source yet: the two grass crystals are named in `{data-root}/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`, but no table checked ties them to a gather point type of the one-off detector.
