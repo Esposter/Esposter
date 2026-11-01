@@ -6,7 +6,7 @@ Amber's kit as built: her five arrows, fully charged aimed shot, Explosive Puppe
 
 ### Requirement: Amber's fully charged aimed shot is her Pyro attack and turns to the aim
 
-Only Amber's fully charged aimed shot SHALL deal Pyro damage, under a charged attack cooldown, and while the aim key is held the shot SHALL follow the camera's direction.
+Only Amber's fully charged aimed shot SHALL deal Pyro damage, under a charged attack cooldown, and while the aim key is held the shot SHALL follow the camera's direction. When the aim key is not held the shot turns to its enemy, a score the sources do not give (see design.md, Open).
 
 #### Scenario: The aimed shot follows the camera while aiming
 
@@ -87,7 +87,3 @@ From Constellation 6, Fiery Rain SHALL give each deployed party member 15% Movem
 - **GIVEN** Amber has Constellation 5
 - **WHEN** Fiery Rain is cast
 - **THEN** no party member gains Movement SPD or ATK
-
-## Open
-
-- [ ] **The aimed shot turns to the enemy its aim is scored on** — no source yet: the cached Sharpshooter text (`{data-root}/cache/genshin-wiki/Category_Amber_Talents.json`) gives the Aimed Shot's damage and poise, and no turn or score.
