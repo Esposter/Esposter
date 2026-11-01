@@ -6,7 +6,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-describe("region data", () => {
+describe("regionData", () => {
   const REGION_DIRECTORY = join(import.meta.dirname, "../../data/regions");
 
   test("every region file parses against its schema", async () => {

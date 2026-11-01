@@ -13,7 +13,7 @@ describe(computeShownAreaWeather, () => {
   test("a city's weather never turns to rain", () => {
     expect.hasAssertions();
 
-    expect(TURNS).toContain(WeatherKind.Rain);
+    expect(new Set(TURNS)).toStrictEqual(new Set(AREA_WEATHERS));
     expect(TURNS.map((turned) => computeShownAreaWeather(turned, true))).toStrictEqual(
       TURNS.map(() => WeatherKind.Clear),
     );

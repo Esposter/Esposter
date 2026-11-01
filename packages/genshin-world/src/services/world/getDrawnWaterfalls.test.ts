@@ -16,6 +16,7 @@ describe(getDrawnWaterfalls, () => {
     expect.hasAssertions();
 
     const fall = createWaterfall(new Vector3(0, 1, 0), 1, 1);
+
     expect(
       getDrawnWaterfalls([
         createWaterfall(new Vector3(0, 0, 0), 0, 1),
@@ -30,6 +31,7 @@ describe(getDrawnWaterfalls, () => {
 
     const fall = createWaterfall(new Vector3(0, 1, 0), 1, 1);
     const otherFall = createWaterfall(new Vector3(2, 1, 0), 1, 1);
+
     expect(getDrawnWaterfalls([fall, createWaterfall(new Vector3(0, 1, 0), 1, 1), otherFall])).toStrictEqual([
       fall,
       otherFall,
