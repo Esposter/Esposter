@@ -12,7 +12,7 @@ Touching an outcrop fights it, and its blossom pays its reward by the reader's W
 - The Ley Line Blossom appears once every enemy of the outcrop is defeated.
 - Claiming a blossom with resin pays the reward row for the reader's World Level, the last row standing for every World Level past the list.
 - A cleared but unclaimed outcrop stays where it is until the daily reset.
-- A claimed outcrop moves to the next place in its group.
+- A claimed outcrop moves to the nearest other place of its region.
 - The daily reset starts each open outcrop kind over at newly drawn places.
 - Liyue's blossoms open at Adventure Rank 18, as the dump's table has them, and a claim grants the spent resin's Adventure EXP once and no more.
 
@@ -25,7 +25,7 @@ Touching an outcrop fights it, and its blossom pays its reward by the reader's W
 - Original Resin, whose claim the blossoms spawn: `openspec/specs/genshin/original-resin/`.
 - Adventure Rank, which opens the outcrops and sets their level: `openspec/changes/archive/2026-10-22-genshin-adventure-rank/`.
 - The character kits, which fight the outcrops' enemies: `openspec/changes/genshin-character-kits/`.
-- The regions the dump does not yet cover: Fontaine, Natlan, Snezhnaya, and Nod-Krai, whose refresh rows the dump does not name.
+- The regions the dump does not yet cover: Fontaine, Natlan, Snezhnaya, and Nod-Krai, whose sections the dump's section order table does not name.
 
 ## Impact
 
