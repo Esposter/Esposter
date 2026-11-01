@@ -3,6 +3,7 @@ import type { DecodedClip } from "#src/models/genshinAssets/shared/DecodedClip";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { simplifyPath } from "#src/services/genshinAssets/fit/simplifyPath";
 import { toProperty } from "#src/services/genshinAssets/fit/toProperty";
+import { MILLISECONDS_PER_SECOND } from "@esposter/shared";
 
 // A decoded clip's curve kept within this share of its own range, over its span, when its keyframes are simplified
 const KEYFRAME_TOLERANCE = 0.005;
@@ -20,7 +21,7 @@ export const fitInterfaceClips = (
     clips.map(({ curves, duration, name }) => [
       name,
       {
-        durationMs: Math.round(duration * 1000),
+        durationMs: Math.round(duration * MILLISECONDS_PER_SECOND),
         tracks: curves.flatMap((curve) => {
           const property = toProperty(curve);
           const { path, samples } = curve;
