@@ -2,7 +2,8 @@
 const TABLE_DECLARATION_REGEX = /^\s*(?:var |const )?(?<name>[A-Za-z_]\w*)\s*(?::=|=)\s*\[\]/u;
 
 // The constructor an area is read from, by the line it is cited at. A table's declaration line is cited by its row, so the
-// Constructor is the nearest `combat.New` line above the first use of the table below it; any other line is its own
+// Constructor is the nearest `combat.New` line above the first use of the table below it, else the first one below that
+// Use, where the use binds a local the constructor reads; any other line is its own
 export const readConstructorIndex = (lines: readonly string[], lineIndex: number): number => {
   const name = TABLE_DECLARATION_REGEX.exec(lines[lineIndex] ?? "")?.groups?.name;
   if (name === undefined) return lineIndex;
@@ -10,5 +11,7 @@ export const readConstructorIndex = (lines: readonly string[], lineIndex: number
   if (use === -1) return lineIndex;
   let constructor = use;
   while (constructor > lineIndex && !(lines[constructor] ?? "").includes("combat.New")) constructor--;
-  return constructor > lineIndex ? constructor : lineIndex;
+  if (constructor > lineIndex) return constructor;
+  const below = lines.findIndex((line, index) => index > use && line.includes("combat.New"));
+  return below === -1 ? lineIndex : below;
 };

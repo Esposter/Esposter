@@ -45,6 +45,8 @@ describe("readGcsimCitedCandidates", () => {
     "package citlali\n\nfunc skill() {\n\tc.Core.QueueAttack(ai, combat.NewCircleHitOnTarget(c.Core.Combat.Player().Pos(), nil, 6), 0, 0)\n}\n";
   const COMPUTED_OFFSET_GO =
     "package rosaria\n\nfunc burst() {\n\tplayerPos := c.Core.Combat.Player()\n\tgadgetOffset := info.Point{Y: 3}\n\tapHit2 := combat.NewCircleHitOnTarget(playerPos, gadgetOffset, 6)\n}\n";
+  const COMPUTED_PLACE_GO =
+    "package zhongli\n\nfunc stele() {\n\tsteleDir := c.Core.Combat.Player().Direction()\n\tstelePos := info.CalcOffsetPoint(c.Core.Combat.Player().Pos(), info.Point{Y: 3}, steleDir)\n\tc.Core.QueueAttack(ai, combat.NewCircleHitOnTarget(stelePos, nil, 2), 0, 0)\n}\n";
   const TARGET_GO =
     "package tartaglia\n\nfunc skill() {\n\tc.Core.QueueAttack(ai, combat.NewCircleHitOnTarget(c.Core.Combat.PrimaryTarget(), nil, 3), 0, 0)\n}\n";
   const BOX_GO =
@@ -69,6 +71,7 @@ describe("readGcsimCitedCandidates", () => {
     ["asc.go", ASC_GO],
     ["box.go", BOX_GO],
     ["computedOffset.go", COMPUTED_OFFSET_GO],
+    ["computedPlace.go", COMPUTED_PLACE_GO],
     ["constants.go", CONSTANTS_GO],
     ["durability.go", DURABILITY_GO],
     ["fieldCentre.go", FIELD_CENTRE_GO],
@@ -410,6 +413,24 @@ describe("readGcsimCitedCandidates", () => {
         "burst.hits.1.area",
       )?.[0]?.value,
     ).toStrictEqual({ angle, height: 2, radius: 9 });
+  });
+
+  test("a cited circle centred on a local the code computes is priced as a circle round the body, as the mechanical path prices a place", () => {
+    expect.hasAssertions();
+    const angle = 2 * Math.PI;
+    const overlay: KitOverlay = {
+      "hits.pressStele.0.area": {
+        file: "computedPlace.go",
+        line: 6,
+        source: KitSource.Gcsim,
+        value: { angle, height: 2, radius: 2 },
+      },
+    };
+    expect(
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
+        "hits.pressStele.0.area",
+      )?.[0]?.value,
+    ).toStrictEqual({ angle, height: 2, radius: 2 });
   });
 
   test("a cited circle centred on the player's position with its .Pos() gives its own radius", () => {

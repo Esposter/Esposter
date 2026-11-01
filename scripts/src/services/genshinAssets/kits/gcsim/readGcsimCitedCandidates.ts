@@ -51,14 +51,14 @@ export const readGcsimCitedCandidates = (
     const lines = source.split("\n");
     // An area is cited by the constructor on its line, whole, with the table cells it reads cited by their rows
     if (typeof entry.value === "object" && entry.value !== null && !Array.isArray(entry.value)) {
-      const cited = readCitedArea(
+      const citedAreas = readCitedArea(
         lines,
         readConstructorIndex(lines, entry.line - 1),
         file,
         readNormalCounter(path),
         readCitedTargetingArea(path, overlay, talentGroupIdMap),
       );
-      if (cited !== undefined)
+      for (const cited of citedAreas)
         addKitCandidate(candidateMap, path, {
           provenance: { file, line: cited.line, source: KitSource.Gcsim },
           value: cited.area,
