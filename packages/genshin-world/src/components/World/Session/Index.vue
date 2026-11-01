@@ -6,7 +6,6 @@ import type { Expedition } from "#src/models/expedition/Expedition";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MapSubareaLabel } from "#src/models/map/MapSubareaLabel";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
-import type { QuestMark } from "#src/models/quest/QuestMark";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
@@ -95,6 +94,7 @@ import { useWorldPickups } from "#src/composables/useWorldPickups";
 import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
+import { useWorldQuestTargets } from "#src/composables/useWorldQuestTargets";
 import { useWorldReputationBounty } from "#src/composables/useWorldReputationBounty";
 import { useWorldReputationRequest } from "#src/composables/useWorldReputationRequest";
 import { useWorldRestorativePower } from "#src/composables/useWorldRestorativePower";
@@ -135,9 +135,6 @@ import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { computeProfileNamecardItemIds } from "#src/services/profile/computeProfileNamecardItemIds";
-import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
-import { getEnteredGoToEvents } from "#src/services/quest/getEnteredGoToEvents";
-import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { createTresRenderer } from "#src/services/scene/createTresRenderer";
@@ -1396,12 +1393,6 @@ const pointedLandmark = shallowRef<Landmark>();
 watch([mapCamera, lockedJumpLandmarks], ([{ x, z }, lockedLandmarks]) => {
   pointedLandmark.value = findPointedLandmark(lockedLandmarks, { x, z }, pointedLandmark.value?.id);
 });
-// A quest's go-to step is reached once the character steps into its place's radius, so each place it steps into is a go-to
-watch(mapCamera, (newCamera, oldCamera) => {
-  if (!windrise.value) return;
-  for (const questEvent of getEnteredGoToEvents([...windrise.value.regionDataMap.values()], oldCamera, newCamera))
-    events.emit("questEvent", questEvent);
-});
 // The locomotion phase of the character on the field, which Windrise's Sheer Cold gauge reads its swimming off
 // The character on the field's locomotion and max HP, which the sheer cold gauge reads each frame
 const getCharacter = () => {
@@ -1410,33 +1401,15 @@ const getCharacter = () => {
   return phase && maxHealth !== undefined ? { maxHealth, phase } : undefined;
 };
 const getAntiColdRatio = () => getTeamAntiColdRatio(kitContext.kitEffectState.effects);
-// How far each quest in progress's objective stands from the character's ground point, in metres, which the quest
-// Screen lists. It is read only while that screen is drawn, and a quest whose target no region in reach places has none
-const questDistanceMap = computed(() => {
-  const distanceMap = new Map<string, number>();
-  if (!windrise.value) return distanceMap;
-  const { regionDataMap, residentSpots } = windrise.value;
-  const { x, z } = mapCamera.value;
-  for (const quest of questsInProgress.value) {
-    const targetId = getQuestTargetId(quest, questProgressMap.value.get(quest.id));
-    const position = targetId ? findQuestTargetPosition(regionDataMap, residentSpots, targetId) : undefined;
-    if (position) distanceMap.set(quest.id, Math.hypot(position.x - x, position.z - z));
-  }
-  return distanceMap;
-});
-// Where the navigated objective stands from the character, which the tracker's line under its title reads: its distance
-// Across the ground, as the quest screen lists it, and its ground's height over the character's ground point, both read
-// Off the world's one ground. None while no quest is navigated to or no region in reach places its objective
-const questMark = computed<QuestMark | undefined>(() => {
-  if (!windrise.value || !questTargetId.value) return undefined;
-  const { regionDataMap, residentSpots } = windrise.value;
-  const position = findQuestTargetPosition(regionDataMap, residentSpots, questTargetId.value);
-  if (!position) return undefined;
-  const { x, z } = mapCamera.value;
-  return {
-    distance: Math.hypot(position.x - x, position.z - z),
-    height: getGroundHeight(position.x, position.z) - getGroundHeight(x, z),
-  };
+// Where the quests' targets stand from the character, which the quest screen and the tracker read
+const { questDistanceMap, questMark } = useWorldQuestTargets({
+  events,
+  getGroundHeight,
+  mapCamera,
+  questProgressMap,
+  questsInProgress,
+  questTargetId,
+  windrise,
 });
 // Where the camera stands in world metres, which its host reads to know where a player is
 const readCameraPosition = (): Vector3 => {

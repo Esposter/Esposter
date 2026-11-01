@@ -81,6 +81,7 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 | `packages/genshin-world/src/services/quest/readQuests.ts`                | The carried quests fetched by their keys and checked against the schema          |
 | `packages/genshin-world/src/services/archive/openTravelLogEntries.ts`    | The Travel Log entries of the finished main quests opened                        |
 | `packages/genshin-world/src/services/quest/findQuestTargetPosition.ts`   | Where a navigated objective's target stands                                      |
+| `packages/genshin-world/src/composables/useWorldQuestTargets.ts`         | The go-to events a step raises, and the quests' distances and the tracker's mark |
 | `packages/genshin-world/src/composables/useWorldQuests.ts`               | The quests in progress, and the navigated objective's target                     |
 | `packages/genshin-world/src/services/quest/QuestKindCategoryMap.ts`      | Each kind's list on the quest screen                                             |
 | `packages/genshin-world/src/services/quest/constants.ts`                 | The screen's tab order and keys, and the beam's distance and look                |
