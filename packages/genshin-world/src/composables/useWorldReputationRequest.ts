@@ -2,19 +2,23 @@ import type { ReputationRequest } from "#src/models/reputation/ReputationRequest
 import type { ReputationRequestOptions } from "#src/models/reputation/ReputationRequestOptions";
 
 import { ReputationRequestQuestIds } from "#src/models/quest/QuestId";
+import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { offerReputationRequest } from "#src/services/reputation/offerReputationRequest";
 import { computed, shallowRef } from "vue";
 
 export const useWorldReputationRequest = ({
   acceptQuest,
   bountyHunt,
+  claimBounty,
   getWorldNow,
   questProgressMap,
   quests,
   questTextMap,
   reputation,
+  reputationBountyOffer,
   reputationCity,
   requestClaimedAts,
+  takeBounty,
 }: ReputationRequestOptions) => {
   // The request the keeper offers as her screen opens, drawn from the requests the world carries that the player has not
   // Started, not kept with the save, and none past the week's request limit: a provisional rule until the weekly refresh is read
@@ -43,5 +47,12 @@ export const useWorldReputationRequest = ({
     acceptQuest(String(reputationRequestOffer.value.questId));
     reputationOffer.value = undefined;
   };
-  return { acceptReputationRequest, drawReputationOffer, reputationOfferTitle };
+  // Accepting the offer claims the bounty hunted, takes the bounty offered, or starts the request, whose quest the world then
+  // Runs as any other
+  const acceptReputationOffer = () => {
+    if (reputationBountyOffer.value === ReputationBountyOffer.Claim) claimBounty();
+    else if (reputationBountyOffer.value === ReputationBountyOffer.Offer) takeBounty();
+    else acceptReputationRequest();
+  };
+  return { acceptReputationOffer, drawReputationOffer, reputationOfferTitle };
 };

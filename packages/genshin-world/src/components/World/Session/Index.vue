@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import type { AttributeLine } from "#src/models/character/AttributeLine";
-import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { Trial } from "#src/models/trial/Trial";
-import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
 import type { TresCanvasInstance } from "@tresjs/core";
@@ -89,6 +87,8 @@ import { useWorldOculi } from "#src/composables/useWorldOculi";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldOutcrops } from "#src/composables/useWorldOutcrops";
 import { useWorldPickups } from "#src/composables/useWorldPickups";
+import { useWorldPointedLandmark } from "#src/composables/useWorldPointedLandmark";
+import { useWorldProfileNamecards } from "#src/composables/useWorldProfileNamecards";
 import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
@@ -108,23 +108,19 @@ import { useWorldTips } from "#src/composables/useWorldTips";
 import { useWorldTrials } from "#src/composables/useWorldTrials";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
-import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
 import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import { HOME_REALM_GROUND_HEIGHT } from "#src/services/home/constants";
-import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { computeStandingPose } from "#src/services/map/computeStandingPose";
 import { MAP_REFERENCE_ZOOM_METRES, TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { findAreaAt } from "#src/services/map/findAreaAt";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
-import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
 import { GENSHIN_SETTINGS_DEFAULTS } from "#src/services/menu/constants";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
-import { computeProfileNamecardItemIds } from "#src/services/profile/computeProfileNamecardItemIds";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { createTresRenderer } from "#src/services/scene/createTresRenderer";
@@ -495,12 +491,6 @@ const {
   shrinePlaces,
   timeTrialPlaces,
 });
-// The camps' chest locks as the Enemies component writes them, and each time trial's lock until it is solved
-const campLockSources = shallowRef<ChestLockSource[]>([]);
-const chestLockSources = computed<ChestLockSource[]>(() => [
-  ...campLockSources.value,
-  ...timeTrialMarkers.map(({ id, position }) => ({ isDone: solvedPuzzleIds.value.has(id), positions: [position] })),
-]);
 // Each shut shrine is offered beneath its point while the bag holds a key of its region, and opened with that key
 const { openShrineById, shrineInteractables } = useWorldShrines({
   gameText,
@@ -511,7 +501,7 @@ const { openShrineById, shrineInteractables } = useWorldShrines({
   shrineMarkers,
 });
 // Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
-const { chestInteractables, digChestById, openChestById, worldChestPlaces } = useWorldChests({
+const { campLockSources, chestInteractables, digChestById, openChestById, worldChestPlaces } = useWorldChests({
   artifactMainAffixPools,
   artifactRarityDataMap,
   events,
@@ -520,7 +510,6 @@ const { chestInteractables, digChestById, openChestById, worldChestPlaces } = us
   gameText,
   getGroundHeight,
   inventory,
-  lockSources: chestLockSources,
   materialDataMap,
   nameText,
   openedChestIds,
@@ -530,6 +519,8 @@ const { chestInteractables, digChestById, openChestById, worldChestPlaces } = us
   reliquarySets,
   setInventory,
   setWallet,
+  solvedPuzzleIds,
+  timeTrialMarkers,
   wallet,
   waterLevel: windriseData.water.level,
   weaponDataMap: statTables.weaponDataMap,
@@ -744,19 +735,16 @@ const { claimCommission, claimKatheryneBonus, convertLongTermPoint, isLongTermPo
     wallet,
     worldNow,
   });
-// The namecards the profile holds, read from the Friendship and the achievements each time, each named in the reader's language
-const profileNamecards = computed(() =>
-  computeProfileNamecardItemIds({
-    achievements: achievementData.value?.achievements ?? [],
-    categories: achievementData.value?.categories ?? [],
-    characters: characters.value,
-    friendshipLevels: friendshipLevels.value ?? [],
-    friendshipNamecards: friendshipNamecards.value,
-    progressMap: achievementProgressMap.value,
-  })
-    .filter((itemId) => materialDataMap.has(itemId))
-    .map((itemId) => ({ itemId, name: getItemDefinition(itemId, nameText, materialDataMap).name })),
-);
+// The namecards the profile holds, which the profile's screen lists
+const { profileNamecards } = useWorldProfileNamecards({
+  achievementData,
+  achievementProgressMap,
+  characters,
+  friendshipLevels,
+  friendshipNamecards,
+  materialDataMap,
+  nameText,
+});
 // Using an entry of the bag, which the bag's screen offers
 const { useBagEntry } = useWorldBagUse({
   cookingProgress,
@@ -836,12 +824,6 @@ const {
   wallet,
 });
 const reputationLevel = shallowRef(reputation.value.level);
-// Accepting the offer starts its quest, which the world then runs as any other
-const acceptReputationOffer = () => {
-  if (reputationBountyOffer.value === ReputationBountyOffer.Claim) return claimBounty();
-  if (reputationBountyOffer.value === ReputationBountyOffer.Offer) return takeBounty();
-  return acceptReputationRequest();
-};
 // The Oculi of the region published: those not found, those near the camera and the one the body touches
 const { findTouchedOculus, nearOculusPlaces, oculusPlaces, unfoundOculusPlaces } = useWorldOculi({
   characterBody,
@@ -910,16 +892,19 @@ const { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty,
     savedBountyHunt: savedState.reputationBountyHunt,
     worldLevel,
   });
-const { acceptReputationRequest, drawReputationOffer, reputationOfferTitle } = useWorldReputationRequest({
+const { acceptReputationOffer, drawReputationOffer, reputationOfferTitle } = useWorldReputationRequest({
   acceptQuest,
   bountyHunt,
+  claimBounty,
   getWorldNow,
   questProgressMap,
   quests,
   questTextMap,
   reputation,
+  reputationBountyOffer,
   reputationCity,
   requestClaimedAts,
+  takeBounty,
 });
 watch(unlockedLandmarkIds, (landmarkIds) => {
   resonatedRegionIds.value = getResonatedRegionIds(landmarkIds);
@@ -1276,12 +1261,8 @@ const { stepFrame } = useWorldFrame({
   trackerQuest,
   unlockedLandmarkIds,
 });
-// The locked jump landmark the HUD points to, re-read as the character moves and as a landmark unlocks, so unlocking the
-// One it points to lets the pointer go at once
-const pointedLandmark = shallowRef<Landmark>();
-watch([mapCamera, lockedJumpLandmarks], ([{ x, z }, lockedLandmarks]) => {
-  pointedLandmark.value = findPointedLandmark(lockedLandmarks, { x, z }, pointedLandmark.value?.id);
-});
+// The locked jump landmark the HUD points to
+const { pointedLandmark } = useWorldPointedLandmark({ lockedJumpLandmarks, mapCamera });
 // The locomotion phase of the character on the field, which Windrise's Sheer Cold gauge reads its swimming off
 // The character on the field's locomotion and max HP, which the sheer cold gauge reads each frame
 const getCharacter = () => {
