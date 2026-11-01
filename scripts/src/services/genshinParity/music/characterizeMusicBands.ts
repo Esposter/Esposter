@@ -2,6 +2,7 @@ import type { MusicBandCharacter } from "#src/models/genshinParity/music/MusicBa
 import type { MusicNote } from "genshin-engine";
 
 import { computePartialBinRanges } from "#src/services/genshinAssets/shared/computePartialBinRanges";
+import { computeAudibleFrames } from "#src/services/genshinParity/music/computeAudibleFrames";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
 import { BANDS_ONSET_RISE } from "#src/services/genshinParity/music/constants";
 import { getFrameSeconds } from "#src/services/genshinParity/music/getFrameSeconds";
@@ -9,7 +10,6 @@ import { sum } from "#src/services/genshinParity/music/sum";
 import {
   CHROMA_FRAME_LENGTH,
   CHROMA_HOP_LENGTH,
-  CHROMA_QUIET_SHARE,
   LISTEN_BAND_CENTRES,
 } from "#src/services/genshinParity/shared/constants";
 import { computeBandBins } from "#src/services/recreation/signal/computeBandBins";
@@ -30,8 +30,7 @@ export const characterizeMusicBands = (
   const { binCount, frameCount, frameLength, magnitudes } = spectrogram;
   const binWidth = sampleRate / frameLength;
   const { loudness } = computeChroma(spectrogram);
-  const quiet = Math.max(...loudness) * CHROMA_QUIET_SHARE;
-  const loudFrames = [...loudness.keys()].filter((frame) => frame < frameCount && (loudness[frame] ?? 0) >= quiet);
+  const loudFrames = computeAudibleFrames(loudness).filter((frame) => frame < frameCount);
   const getPower = (frame: number, bin: number): number => (magnitudes[frame * binCount + bin] ?? 0) ** 2;
   const totals = Float64Array.from({ length: frameCount }, (_value, frame) => {
     let total = 0;
