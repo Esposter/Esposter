@@ -255,7 +255,7 @@ Open items the [spec](spec.md) also holds are listed there, not here.
 - [ ] **A Stellar-Conduct counts as a Stellar Glimmer reaction for Heart of the Furnace's four-piece** — no source yet: the wiki's Stellar Glimmer Reaction page is not in the cache.
 - [ ] **Instructor's Elemental Mastery reaches the reactions after the one that gave it, as the game does** — no source yet: the wiki's Instructor page is not in the cache.
 - [ ] **Set 15004 is named on no wiki page** — no source yet: no wiki page for set 15004 is on disk.
-- [ ] **The heals of Traveling Doctor and the other sets are raised by the Healing Bonuses** — no source yet: the wiki's Healing Bonus page is not in the cache, and gcsim has no Traveling Doctor module.
+- [ ] **The heals of the other sets are raised by the Healing Bonuses** — no source yet: the wiki's Healing Bonus page is not in the cache.
 - [ ] **A failed Valley Rite check raises the next chance only while the wearer is on the field** — no source yet: the wiki's off-field note is not in the cache, and the game's text states no such limit.
 - [ ] **A defeat by wildlife counts for Bloodstained Chivalry, and a swap off the field does not end its status** — no source yet: the wiki's Bloodstained Chivalry page is not in the cache.
 - [ ] **A zero-cost Charged Attack needs some stamina to start** — no source yet: the wiki's note is not in the cache, and it gives no magnitude.

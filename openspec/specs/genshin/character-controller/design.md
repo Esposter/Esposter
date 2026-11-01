@@ -174,3 +174,5 @@ Every speed, height and threshold is a body type's, since how far a character sp
 ## Open
 
 The open items the [spec](spec.md) also holds are listed there, not here.
+
+- [ ] **Running out of stamina stops the costing states** — no source yet: the Stamina wiki page is not on disk, and the spec holds only the drowning half of the item.
