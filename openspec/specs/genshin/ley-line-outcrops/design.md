@@ -68,7 +68,8 @@ flowchart TD
 
 ## Open
 
-- [ ] **The Blossom of Revelation gives Character EXP materials, and the Blossom of Wealth gives Mora** — no source yet: the refresh rows' reward previews do not resolve to item names in the dump.
+The rewards each kind gives are open on the [spec](spec.md).
+
 - [ ] **Liyue's Revelation and Wealth open at Adventure Rank 8 and 12 in the wiki** — no source yet: the Game8 guide is not in the cache.
 - [ ] **A Statue of The Seven unlocks its nation's area** — no source yet: the wiki's Statue of The Seven page, which is not in the cache.
 - [ ] **Original Resin charges 20 resin** — no source yet: the Original Resin price as a standalone cost; the one text read, key 1691155488 in `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json` ("Consume 20 Original Resin to receive the normal amount of rewards"), belongs to a challenge that no dump table holds (its hash appears only in `{data-root}/genshin-parity/text/ManualTextMapConfigData.json`).
