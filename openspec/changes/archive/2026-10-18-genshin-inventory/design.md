@@ -1,6 +1,6 @@
 # Inventory
 
-The [inventory](../../specs/genshin/inventory/design.md) page holds the bag, its wallet, screen and destroy mode. What is left is using a food, and where an item a source names with no material type lives.
+The [inventory](../../../specs/genshin/inventory/design.md) page holds the bag, its wallet, screen and destroy mode. What is left is using a food, and where an item a source names with no material type lives.
 
 ## Decisions
 
@@ -16,7 +16,7 @@ The [inventory](../../specs/genshin/inventory/design.md) page holds the bag, its
 ## What this does not propose
 
 - **Topping up.** No payment of any kind.
-- **The screen's look.** Its sizes, colours and the tabs' and items' icons are measured and traced in the [recreation passes](../genshin-recreation-passes/design.md).
+- **The screen's look.** Its sizes, colours and the tabs' and items' icons are measured and traced in the [recreation passes](../../genshin-recreation-passes/design.md).
 
 ## Key files
 
