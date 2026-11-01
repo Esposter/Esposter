@@ -2,6 +2,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 
 import { getCurrentBuildReferenceIds } from "#src/services/genshinParity/passes/getCurrentBuildReferenceIds";
+import { mergeParityPassMeasures } from "#src/services/genshinParity/passes/mergeParityPassMeasures";
 import { formatSkyComparison } from "#src/services/genshinParity/sky/formatSkyComparison";
 import { readCloudStatistics } from "#src/services/genshinParity/sky/readCloudStatistics";
 import { toSkyReadings } from "#src/services/genshinParity/sky/toSkyReadings";
@@ -19,5 +20,5 @@ export const measureAtmosphere = async (component: DerivedAssetComponent): Promi
       readings: toSkyReadings(referenceId, distance, spread),
     });
   }
-  return { notes: measures.flatMap(({ notes }) => notes), readings: measures.flatMap(({ readings }) => readings) };
+  return mergeParityPassMeasures(measures);
 };
