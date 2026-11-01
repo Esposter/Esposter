@@ -311,6 +311,35 @@ describe(bindPanzoom, () => {
     expect(panzoom.getPan()).toStrictEqual({ x: 0, y: 0 });
   });
 
+  test("setOptions with canvas moves the pointer listeners to the parent, so a pointer down on it starts a gesture", () => {
+    expect.hasAssertions();
+
+    const element = getElement();
+    stubPanzoomLayout(element, { height: 100, left: 0, top: 0, width: 100 });
+    stubPanzoomParent(getParent(), { height: 200, left: 0, top: 0, width: 200 });
+    const panzoom = createPanzoom(element);
+
+    panzoom.setOptions({ canvas: true });
+    dispatchPointer(getParent(), "pointerdown", 1, { x: 0, y: 0 });
+    dispatchPointer(document, "pointermove", 1, { x: 50, y: 0 });
+
+    expect(panzoom.getPan()).toStrictEqual({ x: 50, y: 0 });
+  });
+
+  test("setOptions with canvas moves the cursor to the parent and gives the element its own back", () => {
+    expect.hasAssertions();
+
+    const element = getElement();
+    stubPanzoomLayout(element, { height: 100, left: 0, top: 0, width: 100 });
+    stubPanzoomParent(getParent(), { height: 200, left: 0, top: 0, width: 200 });
+    const panzoom = createPanzoom(element);
+
+    panzoom.setOptions({ canvas: true });
+
+    expect(element.style.cursor).toBe("");
+    expect(getParent().style.cursor).toBe("move");
+  });
+
   test("destroy aborts the listeners, so a pointer down after it pans nothing", () => {
     expect.hasAssertions();
 

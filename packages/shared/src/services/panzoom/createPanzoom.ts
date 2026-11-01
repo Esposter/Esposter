@@ -14,6 +14,7 @@ import { getPanzoomMeasure } from "#src/services/panzoom/getPanzoomMeasure";
 import { getPanzoomParent } from "#src/services/panzoom/getPanzoomParent";
 import { getPanzoomStartState } from "#src/services/panzoom/getPanzoomStartState";
 import { getPanzoomStepScale } from "#src/services/panzoom/getPanzoomStepScale";
+import { getPanzoomTarget } from "#src/services/panzoom/getPanzoomTarget";
 import { getPanzoomWheelScale } from "#src/services/panzoom/getPanzoomWheelScale";
 import { panPanzoom } from "#src/services/panzoom/panPanzoom";
 import { resetPanzoom } from "#src/services/panzoom/resetPanzoom";
@@ -81,7 +82,15 @@ export const createPanzoom = (element: PanzoomElement, options: PanzoomOptions =
       restorePanzoomStyles(context, ["cursor", "overflow", "touch-action", "transform-origin", "user-select"]);
     },
     setOptions: (newOptions = {}) => {
+      const previousTarget = getPanzoomTarget(context);
       context.options = { ...context.options, ...newOptions };
+      if (controller && getPanzoomTarget(context) !== previousTarget) {
+        controller.abort();
+        controller = undefined;
+        restorePanzoomStyles(context, ["cursor"]);
+        bind();
+      }
+
       applyPanzoomStyles(context);
     },
     zoom: (scale, zoomOptions = {}) => zoomPanzoom(context, scale, zoomOptions),
