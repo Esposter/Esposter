@@ -27,7 +27,7 @@ grep -n -i 'poise\|cooldown\|gauge\|area\|element' openspec/specs/genshin/kits/<
 | `chevreuse`          | 2026-10-19 · Haiku 5.5 |                    |
 | `chiori`             | 2026-10-19 · Haiku 5.5 |                    |
 | `chongyun`           | 2026-10-19 · Haiku 5.5 |                    |
-| `citlali`            | —                      |                    |
+| `citlali`            | 2026-11-01 · Haiku 5.5 |                    |
 | `clorinde`           | 2026-10-19 · Haiku 5.5 |                    |
 | `collei`             | 2026-10-19 · Haiku 5.5 |                    |
 | `columbina`          | 2026-10-19 · Haiku 5.5 |                    |
@@ -36,7 +36,7 @@ grep -n -i 'poise\|cooldown\|gauge\|area\|element' openspec/specs/genshin/kits/<
 | `dehya`              | 2026-10-19 · Haiku 5.5 |                    |
 | `diluc`              | 2026-10-19 · Haiku 5.5 |                    |
 | `diona`              | 2026-10-19 · Haiku 5.5 |                    |
-| `dori`               | —                      |                    |
+| `dori`               | 2026-11-01 · Haiku 5.5 |                    |
 | `durin`              | 2026-10-19 · Haiku 5.5 |                    |
 | `emilie`             | 2026-10-19 · Haiku 5.5 |                    |
 | `escoffier`          | 2026-10-19 · Haiku 5.5 |                    |
@@ -46,7 +46,7 @@ grep -n -i 'poise\|cooldown\|gauge\|area\|element' openspec/specs/genshin/kits/<
 | `flins`              | 2026-10-19 · Haiku 5.5 |                    |
 | `freminet`           | 2026-10-19 · Haiku 5.5 |                    |
 | `furina`             | 2026-10-19 · Haiku 5.5 |                    |
-| `gaming`             | —                      |                    |
+| `gaming`             | 2026-11-01 · Haiku 5.5 |                    |
 | `ganyu`              | 2026-10-19 · Haiku 5.5 |                    |
 | `gorou`              | 2026-10-19 · Haiku 5.5 |                    |
 | `hu-tao`             | 2026-10-19 · Haiku 5.5 |                    |
@@ -57,7 +57,7 @@ grep -n -i 'poise\|cooldown\|gauge\|area\|element' openspec/specs/genshin/kits/<
 | `jahoda`             | 2026-10-19 · Haiku 5.5 |                    |
 | `jean`               | 2026-10-19 · Haiku 5.5 |                    |
 | `kachina`            | 2026-10-19 · Haiku 5.5 |                    |
-| `kaedehara-kazuha`   | —                      | design is `kazuha` |
+| `kaedehara-kazuha`   | 2026-11-01 · Haiku 5.5 | design is `kazuha` |
 | `kaeya`              | 2026-10-19 · Haiku 5.5 |                    |
 | `kamisato-ayaka`     | 2026-10-19 · Haiku 5.5 |                    |
 | `kamisato-ayato`     | 2026-10-19 · Haiku 5.5 |                    |
@@ -89,7 +89,7 @@ grep -n -i 'poise\|cooldown\|gauge\|area\|element' openspec/specs/genshin/kits/<
 | `ningguang`          | 2026-10-19 · Haiku 5.5 |                    |
 | `noelle`             | 2026-10-19 · Haiku 5.5 |                    |
 | `odette`             | 2026-10-19 · Haiku 5.5 |                    |
-| `ororon`             | —                      |                    |
+| `ororon`             | 2026-11-01 · Haiku 5.5 |                    |
 | `prune`              | 2026-10-19 · Haiku 5.5 |                    |
 | `qiqi`               | 2026-10-19 · Haiku 5.5 |                    |
 | `raiden-shogun`      | 2026-10-19 · Haiku 5.5 |                    |
@@ -97,7 +97,7 @@ grep -n -i 'poise\|cooldown\|gauge\|area\|element' openspec/specs/genshin/kits/<
 | `rosaria`            | 2026-10-19 · Haiku 5.5 |                    |
 | `sandrone`           | 2026-10-19 · Haiku 5.5 |                    |
 | `sangonomiya-kokomi` | 2026-10-19 · Haiku 5.5 | design is `kokomi` |
-| `sayu`               | —                      |                    |
+| `sayu`               | 2026-11-01 · Haiku 5.5 |                    |
 | `sethos`             | 2026-10-19 · Haiku 5.5 |                    |
 | `shenhe`             | 2026-10-19 · Haiku 5.5 |                    |
 | `shikanoin-heizou`   | 2026-10-29 · Haiku 5.5 | design is `heizou` |
