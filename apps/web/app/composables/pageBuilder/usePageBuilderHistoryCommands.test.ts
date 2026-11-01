@@ -40,7 +40,7 @@ describe(usePageBuilderHistoryCommands, () => {
     applyEdit(
       resourceId,
       moveBlockNode(document, webpageRegistry, webpageNodeChildren, "/content/0", "/content", 1),
-      "Move block",
+      "a",
     ).match(noop, (error) => {
       throw error;
     });
@@ -48,7 +48,7 @@ describe(usePageBuilderHistoryCommands, () => {
     const { commands } = storeToRefs(commandStore);
 
     expect(commands.value.map(({ id, title }) => ({ id, title }))).toStrictEqual([
-      { id: "page-builder-undo", title: "Undo Move block" },
+      { id: "page-builder-undo", title: "Undo a" },
       { id: "page-builder-redo", title: "Redo" },
       { id: "page-builder-redo-y", title: "Redo" },
     ]);

@@ -32,10 +32,7 @@ const createImage = (id: string): ImageNode => createTestImageNode(TEST_URL, id)
 
 // Section 1 holds Columns with one Column; Section 2 holds an image; the image sits in Section 2
 const createFixtureDocument = (): WebpageDocument => ({
-  content: [
-    createSection("s1", [createColumns("cs", [createColumn("k1", [])])]),
-    createSection("s2", [createImage("i1")]),
-  ],
+  content: [createSection("a", [createColumns("c", [createColumn("d", [])])]), createSection("b", [createImage("f")])],
   root: TEST_ROOT,
 });
 
@@ -61,13 +58,13 @@ describe(usePageBuilderMoves, () => {
   test("alt Down moves the selected node after its next sibling", () => {
     expect.hasAssertions();
 
-    const { moveDown, pageBuilderDocumentStore, resourceId } = setup("s1");
+    const { moveDown, pageBuilderDocumentStore, resourceId } = setup("a");
     moveDown();
 
     expect(pageBuilderDocumentStore.getDocument(resourceId)).toStrictEqual({
       content: [
-        createSection("s2", [createImage("i1")]),
-        createSection("s1", [createColumns("cs", [createColumn("k1", [])])]),
+        createSection("b", [createImage("f")]),
+        createSection("a", [createColumns("c", [createColumn("d", [])])]),
       ],
       root: TEST_ROOT,
     });
@@ -76,12 +73,12 @@ describe(usePageBuilderMoves, () => {
   test("alt Right moves a node into the previous sibling", () => {
     expect.hasAssertions();
 
-    const { moveRight, pageBuilderDocumentStore, resourceId } = setup("s2");
+    const { moveRight, pageBuilderDocumentStore, resourceId } = setup("b");
     moveRight();
 
     expect(pageBuilderDocumentStore.getDocument(resourceId)).toStrictEqual({
       content: [
-        createSection("s1", [createColumns("cs", [createColumn("k1", [])]), createSection("s2", [createImage("i1")])]),
+        createSection("a", [createColumns("c", [createColumn("d", [])]), createSection("b", [createImage("f")])]),
       ],
       root: TEST_ROOT,
     });
@@ -90,14 +87,14 @@ describe(usePageBuilderMoves, () => {
   test("alt Left moves a node out after its parent", () => {
     expect.hasAssertions();
 
-    const { moveLeft, pageBuilderDocumentStore, resourceId } = setup("i1");
+    const { moveLeft, pageBuilderDocumentStore, resourceId } = setup("f");
     moveLeft();
 
     expect(pageBuilderDocumentStore.getDocument(resourceId)).toStrictEqual({
       content: [
-        createSection("s1", [createColumns("cs", [createColumn("k1", [])])]),
-        createSection("s2", []),
-        createImage("i1"),
+        createSection("a", [createColumns("c", [createColumn("d", [])])]),
+        createSection("b", []),
+        createImage("f"),
       ],
       root: TEST_ROOT,
     });
@@ -106,7 +103,7 @@ describe(usePageBuilderMoves, () => {
   test("move to lists every slot that accepts the node", () => {
     expect.hasAssertions();
 
-    const { moveToScope } = setup("i1");
+    const { moveToScope } = setup("f");
 
     expect(moveToScope.commands().map(({ title }) => title)).toStrictEqual([
       "The page",
@@ -119,7 +116,7 @@ describe(usePageBuilderMoves, () => {
   test("move to offers no slot that refuses the node", () => {
     expect.hasAssertions();
 
-    const { moveToScope } = setup("k1");
+    const { moveToScope } = setup("d");
 
     expect(moveToScope.commands().map(({ title }) => title)).toStrictEqual(["Section 1 › Columns"]);
   });
@@ -127,20 +124,20 @@ describe(usePageBuilderMoves, () => {
   test("deleting a node moves focus to a neighbour", () => {
     expect.hasAssertions();
 
-    const { deleteSelected, pageBuilderCanvasStore, pageBuilderDocumentStore, resourceId } = setup("s1");
+    const { deleteSelected, pageBuilderCanvasStore, pageBuilderDocumentStore, resourceId } = setup("a");
     deleteSelected();
 
     expect(pageBuilderDocumentStore.getDocument(resourceId)).toStrictEqual({
-      content: [createSection("s2", [createImage("i1")])],
+      content: [createSection("b", [createImage("f")])],
       root: TEST_ROOT,
     });
-    expect(pageBuilderCanvasStore.getSelectedNodeId(resourceId)).toBe("s2");
+    expect(pageBuilderCanvasStore.getSelectedNodeId(resourceId)).toBe("b");
   });
 
   test("a move announces the node's new position among its siblings", () => {
     expect.hasAssertions();
 
-    const { announce, moveDown } = setup("s1");
+    const { announce, moveDown } = setup("a");
     moveDown();
 
     expect(announce.mock.calls).toStrictEqual([["Moved Section 2 to position 2 of 2 in The page"]]);
@@ -149,8 +146,8 @@ describe(usePageBuilderMoves, () => {
   test("a move announces a sibling of the same type by its ordinal, as the path names it", () => {
     expect.hasAssertions();
 
-    const { announce, moveDown } = setup("k1", {
-      content: [createSection("s1", [createColumns("cs", [createColumn("k1", []), createColumn("k2", [])])])],
+    const { announce, moveDown } = setup("d", {
+      content: [createSection("a", [createColumns("c", [createColumn("d", []), createColumn("e", [])])])],
       root: TEST_ROOT,
     });
     moveDown();
@@ -161,7 +158,7 @@ describe(usePageBuilderMoves, () => {
   test("a move to another slot announces the slot it landed in", () => {
     expect.hasAssertions();
 
-    const { announce, moveTo } = setup("i1");
+    const { announce, moveTo } = setup("f");
     moveTo("/content/0/props/children");
 
     expect(announce.mock.calls).toStrictEqual([["Moved Image to position 2 of 2 in Section 1"]]);
@@ -170,7 +167,7 @@ describe(usePageBuilderMoves, () => {
   test("a delete announces what was deleted", () => {
     expect.hasAssertions();
 
-    const { announce, deleteSelected } = setup("s1");
+    const { announce, deleteSelected } = setup("a");
     deleteSelected();
 
     expect(announce.mock.calls).toStrictEqual([["Deleted Section 1"]]);
@@ -179,7 +176,7 @@ describe(usePageBuilderMoves, () => {
   test("a refused move announces nothing", () => {
     expect.hasAssertions();
 
-    const { announce, moveUp, pageBuilderDocumentStore, resourceId } = setup("s1");
+    const { announce, moveUp, pageBuilderDocumentStore, resourceId } = setup("a");
     const before = pageBuilderDocumentStore.getDocument(resourceId);
     moveUp();
 
@@ -190,15 +187,15 @@ describe(usePageBuilderMoves, () => {
   test("duplicating a node places its copy after it", () => {
     expect.hasAssertions();
 
-    const { announce, duplicateSelected, pageBuilderCanvasStore, pageBuilderDocumentStore, resourceId } = setup("i1");
+    const { announce, duplicateSelected, pageBuilderCanvasStore, pageBuilderDocumentStore, resourceId } = setup("f");
     duplicateSelected();
     const copyId = pageBuilderCanvasStore.getSelectedNodeId(resourceId);
 
-    expect(copyId).not.toBe("i1");
+    expect(copyId).not.toBe("f");
     expect(pageBuilderDocumentStore.getDocument(resourceId)).toStrictEqual({
       content: [
-        createSection("s1", [createColumns("cs", [createColumn("k1", [])])]),
-        createSection("s2", [createImage("i1"), createImage(copyId)]),
+        createSection("a", [createColumns("c", [createColumn("d", [])])]),
+        createSection("b", [createImage("f"), createImage(copyId)]),
       ],
       root: TEST_ROOT,
     });

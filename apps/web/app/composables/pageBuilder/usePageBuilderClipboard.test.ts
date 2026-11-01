@@ -66,9 +66,9 @@ const openResource = (content: WebpageDocument["content"]) => {
 };
 
 describe(usePageBuilderClipboard, () => {
-  const REFUSAL_MESSAGE = "A webpage block cannot be pasted into an email";
+  const REFUSAL_MESSAGE = "a";
   // A type name no webpage node holds, written over a copied text node's tag in the clipboard text
-  const UNKNOWN_NODE_TYPE = "UnknownNodeType";
+  const UNKNOWN_NODE_TYPE = "a";
 
   beforeEach(() => {
     setActivePinia(createPinia());

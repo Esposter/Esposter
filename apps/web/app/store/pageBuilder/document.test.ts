@@ -7,8 +7,8 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { describe, expect, test, vi } from "vitest";
 
 describe(usePageBuilderDocumentStore, () => {
-  const TEST_OTHER_LANG = "fr";
-  const TEST_CHANGED_LANG = "de";
+  const TEST_OTHER_LANG = "a";
+  const TEST_CHANGED_LANG = "b";
 
   test("two open webpages keep their own documents", () => {
     expect.hasAssertions();

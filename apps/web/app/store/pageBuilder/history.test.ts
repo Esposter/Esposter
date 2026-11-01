@@ -38,12 +38,12 @@ describe(usePageBuilderHistoryStore, () => {
     content: [createButton(TEST_ID), createButton(TEST_THIRD_ID), createButton(TEST_OTHER_ID)],
     root: TEST_ROOT,
   };
-  const TEST_MOVE_LABEL = "Move block";
-  const TEST_LABEL_LABEL = "Change label";
-  const TEST_TEXT_LABEL = "Edit text";
-  const TEST_OTHER_LANG = "fr";
+  const TEST_MOVE_LABEL = "a";
+  const TEST_LABEL_LABEL = "b";
+  const TEST_TEXT_LABEL = "c";
+  const TEST_OTHER_LANG = "a";
   // Values an edit writes over a button's label and link, each different from the one the fixture holds
-  const TEST_EDITED_LABEL = "Edited";
+  const TEST_EDITED_LABEL = "e";
   const TEST_EDITED_URL = "https://example.com/edited";
   const setupDocument = () => {
     const resourceId = crypto.randomUUID();
@@ -321,7 +321,7 @@ describe(usePageBuilderHistoryStore, () => {
     applyEdit(
       resourceId,
       updateBlockNodeProps<ButtonNodeProps>("/content/0", { href: TEST_EDITED_URL }),
-      "Change link",
+      "d",
       interactionId,
     ).match(noop, (error) => {
       throw error;
@@ -482,11 +482,11 @@ describe(usePageBuilderHistoryStore, () => {
     pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, result.data);
     pageBuilderHistoryStore.applyEdit(
       resourceId,
-      [{ op: JsonPatchOperationType.Add, path: "/root/props/title", value: "Edited" }],
-      "Change title",
+      [{ op: JsonPatchOperationType.Add, path: "/root/props/title", value: "e" }],
+      "f",
     );
 
-    expect(pageBuilderDocumentStore.getEmailDocument(resourceId)?.root.props.title).toBe("Edited");
+    expect(pageBuilderDocumentStore.getEmailDocument(resourceId)?.root.props.title).toBe("e");
     expect(pageBuilderDocumentStore.getDocument(resourceId)).toBeUndefined();
 
     pageBuilderHistoryStore.undo(resourceId);
