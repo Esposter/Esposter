@@ -31,7 +31,7 @@ flowchart LR
 
 ## Not built
 
-- **The first hit's Fatal Reckoning share is open.** gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/albedo/burst.go:46` gives the burst's first hit the stacks' 30% of DEF as well as the blossoms, and the record plays that hit with no per-cast override, so the kit's first hit takes none.
+- **The first hit's Fatal Reckoning share is open.** The burst's first hit takes none of the stacks, as the Decisions section above sets out.
 - **Constellation 1's 50% DEF for 20 seconds is open.** The dump's talent `381` holds 1.2, 0.5 and 20, which match the energy and the kit's values, but gcsim gives Albedo no defence buff for it, and the talent's own wording, under its description hash (`3462874567` in `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`), names only the 1.2 Energy, so the attribute is not sourced.
 - **Calcite Might's second clause is not built.** The wiki's Calcite Might page also adds 240% of Albedo's DEF to each Transient Blossom while a Solar Isotoma of his stands, which neither gcsim (`{data-root}/cache/gcsim-v2.47.2/internal/characters/albedo/asc.go:22`, the 25% only) nor the kit gives.
 
