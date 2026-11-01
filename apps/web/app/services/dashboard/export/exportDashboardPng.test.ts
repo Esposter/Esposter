@@ -19,7 +19,7 @@ vi.mock(import("@/services/capture/captureFlowchart"), async (importOriginal) =>
 });
 
 describe(exportDashboardPng, () => {
-  const dashboardName = "Quarterly sales";
+  const dashboardName = "a";
   const tileTitles = ["Revenue", "Orders"];
 
   // The capture reads the grid the dashboard draws, so a test lays out one with a tile per title
@@ -74,7 +74,7 @@ describe(exportDashboardPng, () => {
 
     appendGrid();
     vi.mocked(captureFlowchart).mockRejectedValueOnce(
-      new InvalidOperationError(Operation.Read, "captureFlowchart", "Canvas has no size"),
+      new InvalidOperationError(Operation.Read, "captureFlowchart", " "),
     );
 
     await exportDashboardPng(dashboardName);

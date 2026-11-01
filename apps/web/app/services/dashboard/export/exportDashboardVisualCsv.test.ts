@@ -29,9 +29,9 @@ describe(exportDashboardVisualCsv, () => {
       { name: scoreColumn, type: ColumnType.Number },
     ],
     rows: [
-      { [categoryColumn]: "North", [responseColumn]: "a", [scoreColumn]: 2 },
-      { [categoryColumn]: "North", [responseColumn]: "b", [scoreColumn]: 3 },
-      { [categoryColumn]: "South", [responseColumn]: "c", [scoreColumn]: 4 },
+      { [categoryColumn]: "a", [responseColumn]: "a", [scoreColumn]: 2 },
+      { [categoryColumn]: "a", [responseColumn]: "b", [scoreColumn]: 3 },
+      { [categoryColumn]: "b", [responseColumn]: "c", [scoreColumn]: 4 },
     ],
   };
 
@@ -81,7 +81,7 @@ describe(exportDashboardVisualCsv, () => {
 
     expect(downloadFile).toHaveBeenCalledExactlyOnceWith(
       `${VisualType.Bar}.csv`,
-      `${categoryColumn},${responseColumn},${scoreColumn}\nNorth,2,5\nSouth,1,4`,
+      `${categoryColumn},${responseColumn},${scoreColumn}\na,2,5\nb,1,4`,
       MimeType.Csv,
     );
   });
@@ -108,7 +108,7 @@ describe(exportDashboardVisualCsv, () => {
 
     expect(downloadFile).toHaveBeenCalledExactlyOnceWith(
       `${VisualType.Pie}.csv`,
-      `${categoryColumn},${responseColumn}\nNorth,2\nSouth,1`,
+      `${categoryColumn},${responseColumn}\na,2\nb,1`,
       MimeType.Csv,
     );
   });

@@ -8,7 +8,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
 describe("dashboardVisualCard", () => {
-  const name = "Count of x";
+  const name = "a";
 
   test("a card abbreviates a large number", async () => {
     expect.hasAssertions();
