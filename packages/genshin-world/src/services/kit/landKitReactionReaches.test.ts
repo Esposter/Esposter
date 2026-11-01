@@ -49,10 +49,8 @@ describe(landKitReactionReaches, () => {
       context,
     );
 
-    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
-      enemy: reached,
-      kind: KitEventKind.EnemyDefeated,
-      striker: combatant,
-    });
+    expect(
+      onKitEvent.mock.calls.map(([event]) => event).filter(({ kind }) => kind === KitEventKind.EnemyDefeated),
+    ).toStrictEqual([{ enemy: reached, kind: KitEventKind.EnemyDefeated, striker: combatant }]);
   });
 });

@@ -76,6 +76,6 @@ describe(detonateStellarVortex, () => {
     const widened = explode(3, 7);
 
     expect(outside.health).toBe(outside.maxHealth);
-    expect(widened.health).toBeLessThan(widened.maxHealth);
+    expect(widened.maxHealth - widened.health).toBeCloseTo(getExpectedDamage(3, widened), 6);
   });
 });

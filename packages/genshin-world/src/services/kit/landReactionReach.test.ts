@@ -15,6 +15,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { applyElement } from "#src/services/combat/aura/applyElement";
+import { AURA_TAX, BURNING_PYRO_GAUGE } from "#src/services/combat/aura/constants";
 import {
   SUPERCONDUCT_PHYSICAL_RESISTANCE_REDUCTION,
   SUPERCONDUCT_SECONDS,
@@ -178,7 +179,7 @@ describe(landReactionReach, () => {
     const pyroGauge = near.elementalState.auras.get(AuraType.Pyro)?.gauge;
     landReactionReach(context, origin, [origin, near], burningTick, combatant);
 
-    expect(pyroGauge).toBeGreaterThan(0);
+    expect(pyroGauge).toBeCloseTo(BURNING_PYRO_GAUGE * AURA_TAX);
     expect(near.elementalState.auras.get(AuraType.Pyro)?.gauge).toBe(pyroGauge);
     expect(near.maxHealth - near.health).toBeCloseTo(
       2 * getReactionDamage(TransformativeReactionType.Burning, Element.Pyro),
@@ -311,7 +312,7 @@ describe(landReactionReach, () => {
 
     landReactionReach(natlanContext, origin, [origin, wet], swirl, natlanCombatant);
 
-    expect(wet.maxHealth - wet.health).toBeGreaterThan(0);
+    expect(wet.maxHealth - wet.health).toBeCloseTo(getReactionDamage(TransformativeReactionType.Swirl, Element.Pyro));
     expect(bursts).toStrictEqual([{ enemy: wet, kind: KitEventKind.NightsoulBurst, striker: natlanCombatant }]);
   });
 });

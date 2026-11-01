@@ -17,6 +17,7 @@ import { addPolestarField } from "#src/services/kit/addPolestarField";
 import { RADIANCE_STELLAR_CONDUCT_STATUS_ID } from "#src/services/kit/constants";
 import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { createPolestarFieldHooks } from "#src/services/kit/createPolestarFieldHooks";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
@@ -34,7 +35,7 @@ const buffAmounts = (kitEffectState: KitEffectState, attribute: Attribute) =>
     effect.kind === "buff" && effect.attribute === attribute ? [effect.amount] : [],
   );
 
-describe("createPolestarFieldHooks", () => {
+describe(createPolestarFieldHooks, () => {
   const ORIGIN = { x: 0, z: 0 };
   const POLESTAR_TICK_SECONDS = 4;
   const STELLAR_CONDUCT = { element: Element.Cryo, reactionType: ReactionType.StellarConduct };
@@ -67,7 +68,7 @@ describe("createPolestarFieldHooks", () => {
     expect(buffAmounts(context.kitEffectState, Attribute.ElectroDamageBonus)).toStrictEqual([expect.closeTo(0.2, 9)]);
   });
 
-  test("a Cryo or Electro applied inside the field is a recorded hit, which the next tick's buff raises by 1%", () => {
+  test("a Cryo or Electro applied inside the field is a recorded hit, which the next tick's buff raises to 28% plus 1% for it", () => {
     expect.hasAssertions();
     const enemy = createEnemyAt(3);
     const context = createKitTestContext(combatant, {

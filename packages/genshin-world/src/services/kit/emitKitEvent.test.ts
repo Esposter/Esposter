@@ -14,7 +14,7 @@ import { describe, expect, test, vi } from "vitest";
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(emitKitEvent, () => {
-  test("sends an event to the kit of each deployed member, each as its own combatant", () => {
+  test("sends an event to the deployed member's kit as its own combatant, and to no benched member's", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
     const createCombatant = (characterId: number): Combatant => ({
