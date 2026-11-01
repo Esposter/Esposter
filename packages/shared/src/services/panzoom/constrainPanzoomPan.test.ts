@@ -10,6 +10,65 @@ describe(constrainPanzoomPan, () => {
     size: { height: 100, width: 100 },
   };
 
+  test("#102 contains automatically: inside at scale 1, and outside once zoomed past the parent", () => {
+    expect.hasAssertions();
+
+    const elementMeasure = {
+      center: { x: 50, y: 50 },
+      parent: { height: 100, left: 0, top: 0, width: 200 },
+      size: { height: 100, width: 100 },
+    };
+    const current = { scale: 1, x: 0, y: 0 };
+
+    expect(
+      constrainPanzoomPan(current, { x: 500, y: 0 }, 1, elementMeasure, { contain: PanzoomContain.Automatic }),
+    ).toStrictEqual({ x: 100, y: 0 });
+    expect(
+      constrainPanzoomPan(current, { x: 500, y: 0 }, 3, elementMeasure, { contain: PanzoomContain.Automatic }).x,
+    ).toBeCloseTo(33.3333, 3);
+  });
+
+  test("#511 #598 and #707 contain an element that fits at the parent's leading edge and one that overflows at its covering pan", () => {
+    expect.hasAssertions();
+
+    const fittingMeasure = {
+      center: { x: 50, y: 50 },
+      parent: { height: 200, left: 0, top: 0, width: 200 },
+      size: { height: 100, width: 100 },
+    };
+    const overflowingMeasure = {
+      center: { x: 200, y: 200 },
+      parent: { height: 200, left: 0, top: 0, width: 200 },
+      size: { height: 400, width: 400 },
+    };
+    const current = { scale: 1, x: 0, y: 0 };
+
+    expect(
+      constrainPanzoomPan(current, { x: -1000, y: -1000 }, 1, fittingMeasure, { contain: PanzoomContain.Automatic }),
+    ).toStrictEqual({ x: 0, y: 0 });
+    expect(
+      constrainPanzoomPan(current, { x: -1000, y: -1000 }, 1, overflowingMeasure, {
+        contain: PanzoomContain.Automatic,
+      }),
+    ).toStrictEqual({ x: -200, y: -200 });
+  });
+
+  test("#583 contains each axis on its own, outside where the element overflows and inside where it fits", () => {
+    expect.hasAssertions();
+
+    const perAxisMeasure = {
+      center: { x: 200, y: 25 },
+      parent: { height: 200, left: 0, top: 0, width: 200 },
+      size: { height: 50, width: 400 },
+    };
+
+    expect(
+      constrainPanzoomPan({ scale: 1, x: 0, y: 0 }, { x: -1000, y: -1000 }, 1, perAxisMeasure, {
+        contain: PanzoomContain.Automatic,
+      }),
+    ).toStrictEqual({ x: -200, y: 0 });
+  });
+
   test("#614 keeps a flex-centred element covering its parent at its own layout offset", () => {
     expect.hasAssertions();
 

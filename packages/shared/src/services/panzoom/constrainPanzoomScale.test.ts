@@ -31,4 +31,18 @@ describe(constrainPanzoomScale, () => {
 
     expect(constrainPanzoomScale(3, thinMeasure, { contain: PanzoomContain.Inside })).toBe(3);
   });
+
+  test("#504 and #577 floor the scale at the fit under automatic containment", () => {
+    expect.hasAssertions();
+
+    const wideMeasure = {
+      center: { x: 100, y: 100 },
+      parent: { height: 200, left: 0, top: 0, width: 200 },
+      size: { height: 200, width: 400 },
+    };
+    const smallParentMeasure = { ...wideMeasure, parent: { height: 100, left: 0, top: 0, width: 100 } };
+
+    expect(constrainPanzoomScale(0.1, wideMeasure, { contain: PanzoomContain.Automatic })).toBe(0.5);
+    expect(constrainPanzoomScale(0.1, smallParentMeasure, { contain: PanzoomContain.Automatic })).toBe(0.25);
+  });
 });

@@ -26,6 +26,13 @@ describe(constrainPanzoomAxis, () => {
     expect(constrainPanzoomAxis(1000, largerAxis, 1, PanzoomContain.Outside)).toBe(0);
   });
 
+  test("automatic is inside on an axis the element fits and outside on one it overflows", () => {
+    expect.hasAssertions();
+
+    expect(constrainPanzoomAxis(-500, centredAxis, 1, PanzoomContain.Automatic)).toBe(-50);
+    expect(constrainPanzoomAxis(-1000, largerAxis, 1, PanzoomContain.Automatic)).toBe(-200);
+  });
+
   test("inside pins an element larger than its parent to the leading edge", () => {
     expect.hasAssertions();
 

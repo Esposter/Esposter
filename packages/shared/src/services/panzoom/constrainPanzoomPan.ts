@@ -5,6 +5,7 @@ import type { PanzoomState } from "#src/models/panzoom/PanzoomState";
 
 import { PANZOOM_DEFAULT_START_SCALE } from "#src/services/panzoom/constants";
 import { constrainPanzoomAxis } from "#src/services/panzoom/constrainPanzoomAxis";
+import { getPanzoomStartScale } from "#src/services/panzoom/getPanzoomStartScale";
 
 // The pan a call lands on: the requested point, relative to the current pan when asked, with a disabled axis held,
 // Then contained at the scale the call moves to, then rounded. A disabled pan holds the current pan unless the call forces it
@@ -25,7 +26,8 @@ export const constrainPanzoomPan = (
     startScale = PANZOOM_DEFAULT_START_SCALE,
   }: PanzoomPanOptions,
 ): PanzoomPoint => {
-  const isPanDisabled = disablePan || (panOnlyWhenZoomed && current.scale === startScale);
+  const startScaleValue = getPanzoomStartScale(startScale, measure);
+  const isPanDisabled = disablePan || (panOnlyWhenZoomed && current.scale === startScaleValue);
   if (!force && isPanDisabled) return { x: current.x, y: current.y };
 
   const offsetX = relative ? current.x : 0;
