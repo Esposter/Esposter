@@ -102,6 +102,15 @@ const quitStyle = {
   bottom: "calc(var(--reference-pixel) * 36)",
   top: "auto",
 };
+// The easing and fades the menu's CSS animations read as custom properties on the screen
+const menuStyle = {
+  "--menu-ease": GAME_SMOOTHSTEP_EASING,
+  "--menu-fade": `${PAIMON_MENU_FADE_MS}ms`,
+  "--menu-panel-delay": `${PAIMON_MENU_PANEL_DELAY_MS}ms`,
+};
+// The info mark's box and the Quit mark's glyph, each one object the buttons keep rather than a fresh one per render
+const infoStyle = getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Info]);
+const quitGlyph = { ...MenuFrameGlyphMap[MenuFrameIcon.Quit], x: 0, y: 0 };
 const backButton = useTemplateRef("backButton");
 const worldLevelInfoButton = useTemplateRef("worldLevelInfoButton");
 // The World Level dialog opens over the menu from the info icon beside the World Level, and closes back to it; the menu
@@ -110,16 +119,8 @@ const isWorldLevelDialogOpen = ref(false);
 // The namecard the profile shows is the held one the player equipped, and its picker changes it, closing back to the menu
 const isNamecardDialogOpen = ref(false);
 const equippedNamecard = computed(() => namecards.find(({ itemId }) => itemId === namecardItemId));
-const pickNamecard = (itemId: number) => {
-  isNamecardDialogOpen.value = false;
-  emit("pickNamecard", itemId);
-};
 // The birthday is set once from its dialog, which closes back to the menu, and the row shows the date after that
 const isBirthdayDialogOpen = ref(false);
-const setBirthday = (birthday: TravelerBirthdaySave) => {
-  isBirthdayDialogOpen.value = false;
-  emit("setBirthday", birthday);
-};
 // The info button is inert until the menu is patched, so the focus goes back to it on the tick after the dialog closes
 const closeWorldLevelDialog = async () => {
   isWorldLevelDialogOpen.value = false;
@@ -165,11 +166,7 @@ onBeforeUnmount(() => {
     aria-modal="true"
     :aria-label="gameText[GameTextKey.Paimon]"
     :interaction-state
-    :style="{
-      '--menu-ease': GAME_SMOOTHSTEP_EASING,
-      '--menu-fade': `${PAIMON_MENU_FADE_MS}ms`,
-      '--menu-panel-delay': `${PAIMON_MENU_PANEL_DELAY_MS}ms`,
-    }"
+    :style="menuStyle"
   >
     <div
       class="menu"
@@ -207,7 +204,7 @@ onBeforeUnmount(() => {
         :tip="gameText[GameTextKey.QuitGame]"
         @click="isExitPrompted = true"
       >
-        <MenuGlyph :glyph="{ ...MenuFrameGlyphMap[MenuFrameIcon.Quit], x: 0, y: 0 }" />
+        <MenuGlyph :glyph="quitGlyph" />
       </GameButton>
       <!-- The panel and everything on it, one layer so it is revealed on its own, after the side bar -->
       <div class="panel-layer">
@@ -237,7 +234,7 @@ onBeforeUnmount(() => {
           tip=""
           :aria-label="gameText[GameTextKey.WorldLevel]"
           :kind="GameButtonKind.Plain"
-          :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Info])"
+          :style="infoStyle"
           @click="isWorldLevelDialogOpen = true"
         />
         <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
@@ -300,7 +297,12 @@ onBeforeUnmount(() => {
       v-if="isBirthdayDialogOpen"
       :game-text
       @close="isBirthdayDialogOpen = false"
-      @confirm="(birthday) => setBirthday(birthday)"
+      @confirm="
+        (birthday) => {
+          isBirthdayDialogOpen = false;
+          emit('setBirthday', birthday);
+        }
+      "
     />
     <MenuNamecardDialog
       v-if="isNamecardDialogOpen"
@@ -308,7 +310,12 @@ onBeforeUnmount(() => {
       :namecard-item-id
       :namecards
       @close="isNamecardDialogOpen = false"
-      @pick="(itemId) => pickNamecard(itemId)"
+      @pick="
+        (itemId) => {
+          isNamecardDialogOpen = false;
+          emit('pickNamecard', itemId);
+        }
+      "
     />
     <MenuWorldLevelDialog
       v-if="isWorldLevelDialogOpen"

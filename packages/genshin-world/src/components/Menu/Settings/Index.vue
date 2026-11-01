@@ -42,9 +42,11 @@ const settings = defineModel<GenshinSettings>("settings", { required: true });
 const tab = defineModel<SettingsTab>("tab", { default: SettingsTab.Graphics });
 const { defaultQualityTier, gameText, language } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
+// The close mark's box and glyph, each one object the button and its mark keep rather than a fresh one per render
+const closeStyle = getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Close]);
+const closeGlyph = { ...MenuFrameGlyphMap[MenuFrameIcon.Close], x: 0, y: 0 };
 const page = useTemplateRef("page");
 const content = useTemplateRef("content");
-const sections = computed(() => SettingsTabSectionsMap[tab.value] ?? []);
 // The labels show the words of the language chosen here. The reader's own language's are the game text given, and any
 // Other is its chunk, loaded when it is chosen and kept only if it is still the choice when it arrives
 const chosenGameText = shallowRef<GameText>();
@@ -109,10 +111,6 @@ const toggleList = (kind: SettingsRowKind): void => {
 };
 const flipToggle = (setting: ToggleSetting): void => {
   settings.value = { ...settings.value, [setting]: !settings.value[setting] };
-};
-const activateRow = (row: SettingsRow): void => {
-  if (row.kind === SettingsRowKind.Toggle) flipToggle(row.setting);
-  else toggleList(row.kind);
 };
 type BackedRow = Extract<SettingsRow, { kind: SettingsRowKind.Range | SettingsRowKind.Volume }>;
 // A track row's value: the setting the world backs it with, or the value an unbacked slider is drawn at
@@ -189,10 +187,10 @@ onMounted(() => {
       tip=""
       :aria-label="shownGameText[GameTextKey.Back]"
       :kind="GameButtonKind.Disc"
-      :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Close])"
+      :style="closeStyle"
       @click="emit('close')"
     >
-      <MenuGlyph :glyph="{ ...MenuFrameGlyphMap[MenuFrameIcon.Close], x: 0, y: 0 }" class="close-glyph" />
+      <MenuGlyph :glyph="closeGlyph" class="close-glyph" />
     </GameButton>
     <div class="tabs" role="tablist" aria-orientation="vertical">
       <GameButton
@@ -217,7 +215,7 @@ onMounted(() => {
     </div>
     <div :key="tab" ref="page" class="page" role="tabpanel" tabindex="0" @scroll="updateScrollThumb()">
       <div ref="content" class="content">
-        <template v-for="{ headingKey, rows } of sections" :key="headingKey">
+        <template v-for="{ headingKey, rows } of SettingsTabSectionsMap[tab] ?? []" :key="headingKey">
           <p class="heading" role="heading" aria-level="2">{{ shownGameText[headingKey] }}</p>
           <template v-for="row of rows" :key="row.labelKey">
             <div class="row">
@@ -269,7 +267,7 @@ onMounted(() => {
                 :aria-expanded="checkIsListRow(row) ? openedList === row.kind : undefined"
                 :disabled="!checkIsActiveRow(row)"
                 type="button"
-                @click="activateRow(row)"
+                @click="row.kind === SettingsRowKind.Toggle ? flipToggle(row.setting) : toggleList(row.kind)"
               >
                 <svg class="star" aria-hidden="true" viewBox="0 0 48 48">
                   <path d="M 24 0 Q 31 17 48 24 Q 31 31 24 48 Q 17 31 0 24 Q 17 17 24 0 Z" />
