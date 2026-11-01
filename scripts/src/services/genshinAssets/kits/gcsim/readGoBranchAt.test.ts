@@ -21,14 +21,13 @@ describe(readGoBranchAt, () => {
     "    ai := info.AttackInfo{Mult: mult}",
     "}",
   ].join("\n");
+  const tokens = tokenizeGo(SWITCH_SOURCE);
+  const branchAt = readGoBranchAt(tokens);
+  const branchOnLine = (line: number) =>
+    branchAt(tokens.findIndex((token) => token.line === line && token.text === "mult"));
 
   test("reads each case clause of a switch as a branch numbered from zero in the order the clauses are written", () => {
     expect.hasAssertions();
-
-    const tokens = tokenizeGo(SWITCH_SOURCE);
-    const branchAt = readGoBranchAt(tokens);
-    const branchOnLine = (line: number) =>
-      branchAt(tokens.findIndex((token) => token.line === line && token.text === "mult"));
 
     expect([5, 7, 12].map((line) => branchOnLine(line))).toStrictEqual([
       { armCount: 3, chain: 0, endLine: 13, index: 0, isExhaustive: true },
@@ -39,11 +38,6 @@ describe(readGoBranchAt, () => {
 
   test("reads an if inside a case clause as the innermost branch, and a position after the switch as no branch", () => {
     expect.hasAssertions();
-
-    const tokens = tokenizeGo(SWITCH_SOURCE);
-    const branchAt = readGoBranchAt(tokens);
-    const branchOnLine = (line: number) =>
-      branchAt(tokens.findIndex((token) => token.line === line && token.text === "mult"));
 
     expect([2, 9, 14].map((line) => branchOnLine(line))).toStrictEqual([
       undefined,
