@@ -36,7 +36,7 @@ This page links them and does not restate them.
   - _Rejected: handing a read over by message alone._ A message holds no claim, so two machines can run the same read, and nothing records that it is owed once the session ends.
 - **A table is read only at the install's build, and its revision is measured before it is trusted.**
   - The install's build is the one its own files name (`game_version`, `scripts/src/services/genshinAssets/shared/readGameVersion.ts`), and the community dump's tables are fetched from the branch at that build (`.agents/skills/genshin-parity/references/data-sources.md`).
-  - A dump holds tables of several builds at once, so a table's size is compared with each branch's copy before its rows are used ([data sources](../../../../.agents/skills/genshin-parity/references/data-sources.md), `.agents/skills/genshin-parity/references/data-sources.md`).
+  - A dump holds tables of several builds at once, so a table's size is compared with each branch's copy before its rows are used ([data sources](../../../../.agents/skills/genshin-parity/references/data-sources.md)).
   - _Rejected: taking the dump's name for its revision._ Most of the dump matched the 6.6 branch while the install was 7.1.0 (`{data-root}/genshin-parity/game/config.ini`).
 - **A value's role is a candidate until a field name confirms it.**
   - A scrambled object with no type data gives its values offsets and shapes only, so a role such as fog density or sun intensity is written as a candidate, and its page lists it as open.
