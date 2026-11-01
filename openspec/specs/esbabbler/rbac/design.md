@@ -30,6 +30,8 @@ Authority is layered: **Owner** (`rooms.userId`, immune to all role manipulation
 
 Every procedure that names a target member calls that guard, because holding the permission and outranking the target are two different questions: `getPermissionsProcedure` answers only the first. A member-targeting procedure that checks the permission alone is a hierarchy bypass, whatever the permission was.
 
+**`SendMessages` is enforced where a message is created, not at a procedure.** The shared message gate refuses a sender whose roles do not grant it, after the timeout and before the room's own rules ([moderation](../moderation/design.md) owns that order). Every send, forward and scheduled delivery goes through that gate, and the Function worker's deliveries run it too, so a procedure guard would leave the worker's path unchecked. The owner and an Administrator pass it through the same permission read as every other check.
+
 **The bits are ordered by what they are, not by when they were added.** They run in category order — the text-channel permissions, then the room-wide ones, then moderation, then the advanced ones — with `Administrator` last, and adding one in the middle renumbers everything after it. That is only possible because a stored bitfield is read as the current shape rather than migrated ([clean slate](../../architecture/persisted-data-latest-shape-only/design.md)); the alternative, appending each new permission to whatever bit happened to be free, buys nothing here and costs the list its readability.
 
 ## Why a bitfield, and what it does not bound
@@ -73,15 +75,16 @@ tRPC procedure builders in `server/trpc/procedure/room/`:
 
 ## Key files
 
-| File                                                                 | Role                                    |
-| -------------------------------------------------------------------- | --------------------------------------- |
-| `packages/db-schema/src/schema/message/roomRolesInMessage.ts`        | `RoomPermission` const + roles table    |
-| `packages/db-schema/src/schema/message/usersToRoomRolesInMessage.ts` | Assignment table                        |
-| `packages/db/src/services/room/rbac/`                                | `getPermissions` + `checkHasPermission` |
-| `apps/web/server/services/room/rbac/`                                | Server helpers + re-export shims        |
-| `apps/web/shared/services/room/rbac/checkIsManageable.ts`            | Hierarchy predicate shared w/ client    |
-| `apps/web/server/trpc/procedure/room/getPermissionsProcedure.ts`     | Permission middleware builder           |
-| `apps/web/server/trpc/routers/role.ts`                               | Role CRUD + `readMemberRoles`           |
+| File                                                                         | Role                                              |
+| ---------------------------------------------------------------------------- | ------------------------------------------------- |
+| `packages/db-schema/src/schema/message/roomRolesInMessage.ts`                | `RoomPermission` const + roles table              |
+| `packages/db-schema/src/schema/message/usersToRoomRolesInMessage.ts`         | Assignment table                                  |
+| `packages/db/src/services/room/rbac/`                                        | `getPermissions` + `checkHasPermission`           |
+| `apps/web/server/services/room/rbac/`                                        | Server helpers + re-export shims                  |
+| `apps/web/shared/services/room/rbac/checkIsManageable.ts`                    | Hierarchy predicate shared w/ client              |
+| `apps/web/server/trpc/procedure/room/getPermissionsProcedure.ts`             | Permission middleware builder                     |
+| `apps/web/server/trpc/routers/role.ts`                                       | Role CRUD + `readMemberRoles`                     |
+| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts` | The message gate, where `SendMessages` is checked |
 
 ## Notes
 

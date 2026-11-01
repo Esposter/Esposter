@@ -7,6 +7,8 @@ import { createMockDb } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
   roomFiltersInMessage,
+  RoomPermission,
+  roomRolesInMessage,
   roomsInMessage,
   usersInAuth,
   usersToRoomsInMessage,
@@ -36,6 +38,10 @@ describe(assertCanCreateMessage, () => {
     mockDb = await createMockDb();
     await mockDb.insert(usersInAuth).values([createUser(ownerUserId), createUser(memberUserId)]);
     await mockDb.insert(roomsInMessage).values({ id: roomId, name, userId: ownerUserId });
+    // The @everyone role every member holds, seeded with the send permission `createRoom` gives it
+    await mockDb
+      .insert(roomRolesInMessage)
+      .values({ isEveryone: true, name, permissions: RoomPermission.SendMessages, roomId });
     await mockDb.insert(usersToRoomsInMessage).values([
       { roomId, userId: ownerUserId },
       { roomId, userId: memberUserId },

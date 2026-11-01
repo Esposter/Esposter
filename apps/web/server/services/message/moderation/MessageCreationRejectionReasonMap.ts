@@ -4,6 +4,7 @@ import { MessageCreationRejectionType } from "@esposter/db-schema";
 // Worker reads, where nobody is waiting to be told anything — so the sentence lives here, on the tRPC side with a
 // Person on the other end, for whom a bare code says neither what stopped the message nor whether waiting helps
 export const MessageCreationRejectionReasonMap: Record<MessageCreationRejectionType, string> = {
+  [MessageCreationRejectionType.MissingPermission]: "You do not have permission to send messages in this room.",
   [MessageCreationRejectionType.NotAMember]: "You are not a member of this room.",
   [MessageCreationRejectionType.ReadOnly]: "This room is read-only.",
   [MessageCreationRejectionType.Slowmode]: "Slowmode is on — wait before sending another message.",

@@ -133,3 +133,19 @@ A room SHALL allow as many roles as its owner creates, and a member SHALL be abl
 - **GIVEN** a room with a large number of roles
 - **WHEN** a moderator assigns several of them to a member
 - **THEN** the member holds the permissions of every assigned role
+
+### Requirement: A send needs the send messages permission
+
+A member SHALL be able to send a message in a room only when the room grants them the send messages permission, and a refused send SHALL tell them it is the permission that is missing.
+
+#### Scenario: a member without the permission tries to send
+
+- **GIVEN** a member whose roles do not grant send messages
+- **WHEN** the member sends a message in the room
+- **THEN** the message is refused and the member is told they do not have permission to send messages in this room
+
+#### Scenario: an administrator sends where no role grants send messages
+
+- **GIVEN** a member whose role grants administrator, in a room where no role grants send messages
+- **WHEN** the member sends a message in the room
+- **THEN** the message is sent

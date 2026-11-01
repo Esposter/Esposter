@@ -2,6 +2,7 @@
 // Message — live send, forward, scheduled delivery — decides with the same rule set and maps the answer to
 // Whatever error its own transport speaks, so the two can never disagree about what is allowed.
 export enum MessageCreationRejectionType {
+  MissingPermission = "MissingPermission",
   NotAMember = "NotAMember",
   ReadOnly = "ReadOnly",
   Slowmode = "Slowmode",
