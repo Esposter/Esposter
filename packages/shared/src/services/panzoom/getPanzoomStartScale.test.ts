@@ -11,7 +11,13 @@ describe(getPanzoomStartScale, () => {
   test("#616 starts at the fit when asked, and at the number otherwise", () => {
     expect.hasAssertions();
 
-    expect(getPanzoomStartScale("fit", measure)).toBe(0.5);
-    expect(getPanzoomStartScale(1, measure)).toBe(1);
+    expect(getPanzoomStartScale(measure, { startScale: "fit" })).toBe(0.5);
+    expect(getPanzoomStartScale(measure, { startScale: 1 })).toBe(1);
+  });
+
+  test("the start scale is clamped to the limits, the one a start lands on and a pan at the start is judged against", () => {
+    expect.hasAssertions();
+
+    expect(getPanzoomStartScale(measure, { startScale: 0.05 })).toBe(0.125);
   });
 });

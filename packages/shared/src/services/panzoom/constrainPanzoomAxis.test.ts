@@ -38,4 +38,12 @@ describe(constrainPanzoomAxis, () => {
 
     expect(constrainPanzoomAxis(-500, largerAxis, 1, PanzoomContain.Inside)).toBe(0);
   });
+
+  test("an axis whose parent has a collapsed side has no containment, so the value stands", () => {
+    expect.hasAssertions();
+
+    const collapsedAxis = { center: 100, length: 100, parentLength: 0, parentStart: 0 };
+
+    expect(constrainPanzoomAxis(-500, collapsedAxis, 1, PanzoomContain.Inside)).toBe(-500);
+  });
 });

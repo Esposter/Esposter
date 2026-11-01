@@ -3,37 +3,29 @@ import type { PanzoomPanOptions } from "#src/models/panzoom/PanzoomPanOptions";
 import type { PanzoomPoint } from "#src/models/panzoom/PanzoomPoint";
 import type { PanzoomState } from "#src/models/panzoom/PanzoomState";
 
-import { PANZOOM_DEFAULT_START_SCALE } from "#src/services/panzoom/constants";
 import { constrainPanzoomAxis } from "#src/services/panzoom/constrainPanzoomAxis";
 import { getPanzoomStartScale } from "#src/services/panzoom/getPanzoomStartScale";
 
-// The pan a call lands on: the requested point, relative to the current pan when asked, with a disabled axis held,
-// Then contained at the scale the call moves to, then rounded. A disabled pan holds the current pan unless the call forces it
+// The pan a call lands on: the requested point, relative to the current pan when asked, with a disabled axis held, then
+// Rounded to whole pixels, then contained at the scale the call moves to, so a rounded pan never sits outside its bounds.
+// A disabled pan holds the current pan unless the call forces it
 export const constrainPanzoomPan = (
   current: PanzoomState,
   requested: PanzoomPoint,
   toScale: number,
   measure: PanzoomMeasure,
-  {
-    contain,
-    disablePan,
-    disableXAxis,
-    disableYAxis,
-    force,
-    panOnlyWhenZoomed,
-    relative,
-    roundPixels,
-    startScale = PANZOOM_DEFAULT_START_SCALE,
-  }: PanzoomPanOptions,
+  options: PanzoomPanOptions,
 ): PanzoomPoint => {
-  const startScaleValue = getPanzoomStartScale(startScale, measure);
-  const isPanDisabled = disablePan || (panOnlyWhenZoomed && current.scale === startScaleValue);
+  const { contain, disablePan, disableXAxis, disableYAxis, force, panOnlyWhenZoomed, relative, roundPixels } = options;
+  const isPanDisabled = disablePan || (panOnlyWhenZoomed && current.scale === getPanzoomStartScale(measure, options));
   if (!force && isPanDisabled) return { x: current.x, y: current.y };
 
   const offsetX = relative ? current.x : 0;
   const offsetY = relative ? current.y : 0;
   const unconstrainedX = disableXAxis ? current.x : offsetX + requested.x;
   const unconstrainedY = disableYAxis ? current.y : offsetY + requested.y;
+  const roundedX = roundPixels ? Math.round(unconstrainedX) : unconstrainedX;
+  const roundedY = roundPixels ? Math.round(unconstrainedY) : unconstrainedY;
   const axisX = {
     center: measure.center.x,
     length: measure.size.width,
@@ -46,9 +38,9 @@ export const constrainPanzoomPan = (
     parentLength: measure.parent.height,
     parentStart: measure.parent.top,
   };
-  const containedX = constrainPanzoomAxis(unconstrainedX, axisX, toScale, contain);
-  const containedY = constrainPanzoomAxis(unconstrainedY, axisY, toScale, contain);
-  if (!roundPixels) return { x: containedX, y: containedY };
 
-  return { x: Math.round(containedX), y: Math.round(containedY) };
+  return {
+    x: constrainPanzoomAxis(roundedX, axisX, toScale, contain),
+    y: constrainPanzoomAxis(roundedY, axisY, toScale, contain),
+  };
 };

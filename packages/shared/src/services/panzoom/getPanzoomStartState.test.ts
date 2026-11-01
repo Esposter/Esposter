@@ -39,4 +39,20 @@ describe(getPanzoomStartState, () => {
       y: 0,
     });
   });
+
+  test("a zero-size parent and element with a fit start stay at the unscaled size, with no NaN", () => {
+    expect.hasAssertions();
+
+    const zeroMeasure = {
+      center: { x: 0, y: 0 },
+      parent: { height: 0, left: 0, top: 0, width: 0 },
+      size: { height: 0, width: 0 },
+    };
+
+    expect(getPanzoomStartState({ scale: 1, x: 0, y: 0 }, zeroMeasure, { startScale: "fit" })).toStrictEqual({
+      scale: 1,
+      x: 0,
+      y: 0,
+    });
+  });
 });

@@ -45,4 +45,41 @@ describe(constrainPanzoomScale, () => {
     expect(constrainPanzoomScale(0.1, wideMeasure, { contain: PanzoomContain.Automatic })).toBe(0.5);
     expect(constrainPanzoomScale(0.1, smallParentMeasure, { contain: PanzoomContain.Automatic })).toBe(0.25);
   });
+
+  test("inside caps the scale at the fit but no lower than the minimum scale, as automatic does", () => {
+    expect.hasAssertions();
+
+    const wideMeasure = {
+      center: { x: 500, y: 50 },
+      parent: { height: 100, left: 0, top: 0, width: 100 },
+      size: { height: 100, width: 1000 },
+    };
+
+    expect(constrainPanzoomScale(0.05, wideMeasure, { contain: PanzoomContain.Inside })).toBe(0.125);
+    expect(constrainPanzoomScale(0.05, wideMeasure, { contain: PanzoomContain.Automatic })).toBe(0.125);
+  });
+
+  test("a parent with a collapsed side contains on its other axis alone, so the fit there caps the scale", () => {
+    expect.hasAssertions();
+
+    const collapsedMeasure = {
+      center: { x: 100, y: 50 },
+      parent: { height: 0, left: 0, top: 0, width: 200 },
+      size: { height: 100, width: 100 },
+    };
+
+    expect(constrainPanzoomScale(3, collapsedMeasure, { contain: PanzoomContain.Inside })).toBe(2);
+  });
+
+  test("a parent with no side to contain in leaves the scale to the limits alone", () => {
+    expect.hasAssertions();
+
+    const zeroMeasure = {
+      center: { x: 50, y: 50 },
+      parent: { height: 0, left: 0, top: 0, width: 0 },
+      size: { height: 100, width: 100 },
+    };
+
+    expect(constrainPanzoomScale(3, zeroMeasure, { contain: PanzoomContain.Inside })).toBe(3);
+  });
 });

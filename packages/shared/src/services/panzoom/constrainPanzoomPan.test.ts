@@ -139,4 +139,32 @@ describe(constrainPanzoomPan, () => {
       constrainPanzoomPan({ scale: 1, x: 0, y: 0 }, { x: 0.4, y: 0.6 }, 1, measure, { roundPixels: true }),
     ).toStrictEqual({ x: 0, y: 1 });
   });
+
+  test("roundPixels rounds before containment, so a pan held between bounds half a pixel apart lands on the bound", () => {
+    expect.hasAssertions();
+
+    const pinnedMeasure = {
+      center: { x: 50.5, y: 50 },
+      parent: { height: 100, left: 0, top: 0, width: 100 },
+      size: { height: 100, width: 100 },
+    };
+
+    expect(
+      constrainPanzoomPan({ scale: 1, x: 0, y: 0 }, { x: 0, y: 0 }, 1, pinnedMeasure, {
+        contain: PanzoomContain.Inside,
+        roundPixels: true,
+      }),
+    ).toStrictEqual({ x: -0.5, y: 0 });
+  });
+
+  test("panOnlyWhenZoomed holds the pan at a start scale the limits clamp to, since that is the start state", () => {
+    expect.hasAssertions();
+
+    expect(
+      constrainPanzoomPan({ scale: 0.125, x: 0, y: 0 }, { x: 50, y: 50 }, 0.125, measure, {
+        panOnlyWhenZoomed: true,
+        startScale: 0.05,
+      }),
+    ).toStrictEqual({ x: 0, y: 0 });
+  });
 });
