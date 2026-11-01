@@ -43,10 +43,6 @@ flowchart TD
 
 Her third and fifth constellations raise her skill and burst levels from the constellation table, as [the constellations page](../../constellations/design.md) builds them.
 
-## Not yet built
-
-- **The burst's 21.5-metre area is unsourced.** gcsim's burst is a 6.5-metre circle on the primary target (`burst.go:109`). The 21.5 metres, the targeting zone's radius plus the circle's, is in neither the overlay nor the kit code, so its reach waits on the record that holds it being read.
-
 ## Key files
 
 | File                                                              | Role                                                                                                                                                                                                 |
