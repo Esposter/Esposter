@@ -104,12 +104,6 @@ The Mail screen SHALL let the player pin a held mail to the top of the list, and
 - **WHEN** the player deletes its pin
 - **THEN** the mail is listed by its delivery again
 
-#### Scenario: Delete Read keeps a pinned mail
-
-- **GIVEN** the player has pinned a read mail whose attachment is claimed
-- **WHEN** the player presses Delete Read
-- **THEN** the mail is kept
-
 #### Scenario: A pinned mail still expires
 
 - **GIVEN** the player has pinned a mail that is past its expiry
