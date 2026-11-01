@@ -1,17 +1,7 @@
+import type { ResidentJoin } from "#src/models/genshinAssets/residents/ResidentJoin";
 import type { ResidentPlacement } from "#src/models/genshinAssets/residents/ResidentPlacement";
 import type { GroundPoint } from "genshin-engine";
 import type { Resident, ResidentSpot } from "genshin-world";
-
-// The residents each region holds, and what was left out of the join: an NPC a crafting bench stands for, which is an
-// Interaction point rather than a person, an NPC with no name, an NPC no talk of the game names, and each repeat
-// Placement of an NPC already placed in its region, which the first placement stands for
-interface ResidentJoin {
-  craftingBench: number;
-  noName: number;
-  noTalk: number;
-  regions: Map<string, Resident[]>;
-  repeated: number;
-}
 
 // Each NPC placed in a region as a resident of it, at the place of its first birth record there, which is its day spot.
 // Its night spot is the one the map gives it, and none otherwise, since the game's records give no second place to tell the
