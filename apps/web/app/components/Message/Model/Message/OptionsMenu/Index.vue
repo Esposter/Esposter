@@ -4,7 +4,6 @@ import type { MessageEntity } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { EmojiMoreMenuItems } from "@/services/message/emoji/EmojiMoreMenuItems";
-import { getEmojiDescription } from "@/services/message/emoji/getEmojiDescription";
 import { useMessageStore } from "@/store/message";
 import { useContextMenuStore } from "@/store/ui/contextMenu";
 
@@ -52,25 +51,12 @@ watchImmediate(contextMenuRequest, (newContextMenuRequest) => {
      It floats over the message it acts on, so it is lifted rather than framed -->
 <template>
   <div aria-label="Message actions" role="group" p-1 flex items-center ui-lifted>
-    <UiTooltip v-for="emoji of EmojiMoreMenuItems" :key="emoji" :label="getEmojiDescription(emoji)">
-      <template #default="{ activatorProps }">
-        <UiButton
-          :="activatorProps"
-          :aria-label="`React with ${getEmojiDescription(emoji)}`"
-          :variant="UiButtonVariant.Quiet"
-          px-0
-          @click="selectEmoji(emoji)"
-        >
-          {{ emoji }}
-        </UiButton>
-      </template>
-      <template #content>
-        <span text-center flex flex-col>
-          <span>{{ getEmojiDescription(emoji) }}</span>
-          <span text-sm text-muted>Click to react</span>
-        </span>
-      </template>
-    </UiTooltip>
+    <MessageModelMessageOptionsMenuReaction
+      v-for="emoji of EmojiMoreMenuItems"
+      :key="emoji"
+      :emoji
+      @select="selectEmoji(emoji)"
+    />
     <span aria-hidden="true" mx-1 bg-divider h-6 w="[var(--ui-border-width)]" />
     <MessageModelMessageEmojiPicker
       :variant="UiButtonVariant.Quiet"
