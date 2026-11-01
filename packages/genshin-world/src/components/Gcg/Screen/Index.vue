@@ -6,6 +6,7 @@ import type { GameText } from "genshin-text";
 import GcgScreenCard from "#src/components/Gcg/Screen/Card/Index.vue";
 import GcgScreenCharacter from "#src/components/Gcg/Screen/Character/Index.vue";
 import GcgScreenDie from "#src/components/Gcg/Screen/Die/Index.vue";
+import GcgScreenSkill from "#src/components/Gcg/Screen/Skill/Index.vue";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import {
   GCG_EQUIPMENT_CARD_KINDS,
@@ -240,16 +241,13 @@ const playRerollChoice = () => {
     <div class="battle">{{ battleLabel }}</div>
     <div v-if="isPlayerTurn" class="acting">{{ gameText[GameTextKey.GcgNowActing] }}</div>
     <div class="skills">
-      <button
+      <GcgScreenSkill
         v-for="skill in activeSkills"
         :key="skill.id"
-        class="skill"
-        :disabled="!isPlayerTurn || isChoosingReroll"
-        type="button"
-        @click="useSkill(skill.id)"
-      >
-        <span class="skill-cost">{{ countGcgDiceCost(skill.costs) }}</span>
-      </button>
+        :costs="skill.costs"
+        :is-disabled="!isPlayerTurn || isChoosingReroll"
+        @select="useSkill(skill.id)"
+      />
     </div>
     <button
       class="synchro"
@@ -501,33 +499,6 @@ const playRerollChoice = () => {
   left: calc(var(--unit) * 1560);
   display: flex;
   gap: calc(var(--unit) * 14);
-}
-
-.skill {
-  position: relative;
-  width: calc(var(--unit) * 94);
-  height: calc(var(--unit) * 94);
-  border: calc(var(--unit) * 4) solid #6e5238;
-  border-radius: 50%;
-  background: #8e7154;
-  color: #f6e3a1;
-  cursor: inherit;
-}
-
-.skill-cost {
-  position: absolute;
-  top: calc(var(--unit) * 104);
-  left: 50%;
-  display: grid;
-  width: calc(var(--unit) * 30);
-  height: calc(var(--unit) * 30);
-  place-items: center;
-  transform: translateX(-50%);
-  border-radius: calc(var(--unit) * 6);
-  background: #7b5bb0;
-  color: #fff;
-  font-size: calc(var(--unit) * 20);
-  font-weight: 700;
 }
 
 .synchro,

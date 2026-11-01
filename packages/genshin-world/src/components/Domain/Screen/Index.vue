@@ -2,9 +2,9 @@
 import type { DomainLevelRow } from "#src/models/domains/DomainLevelRow";
 import type { GameText } from "genshin-text";
 
-import { DomainLevelState } from "#src/models/domains/DomainLevelState";
+import DomainScreenRow from "#src/components/Domain/Screen/Row/Index.vue";
 import { GameScreen } from "genshin-interface";
-import { fillGameTextValues, GameTextKey } from "genshin-text";
+import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The game's words in the reader's language
@@ -17,13 +17,6 @@ interface Props {
 
 const { gameText, isInDomain, levels } = defineProps<Props>();
 const emit = defineEmits<{ close: []; enter: [dungeonId: number]; leave: [] }>();
-// The line a level's state shows in place of its entry button: the rank it asks for, or that it is closed today
-const getStateText = ({ requiredRank, state }: DomainLevelRow): string => {
-  if (state === DomainLevelState.RankRequired)
-    return fillGameTextValues(gameText[GameTextKey.AvailableAtAdventureRank], requiredRank);
-  if (state === DomainLevelState.Closed) return gameText[GameTextKey.Closed];
-  return "";
-};
 </script>
 
 <template>
@@ -36,18 +29,13 @@ const getStateText = ({ requiredRank, state }: DomainLevelRow): string => {
     <div v-else>
       <h2>{{ gameText[GameTextKey.DomainTitle] }}</h2>
       <ul>
-        <li v-for="level in levels" :key="level.dungeonId">
-          <span>{{ fillGameTextValues(gameText[GameTextKey.RecommendedLevel], level.requiredRank) }}</span>
-          <span>{{ fillGameTextValues(gameText[GameTextKey.EnemyLevel], level.enemyLevel) }}</span>
-          <span v-if="getStateText(level)">{{ getStateText(level) }}</span>
-          <button
-            type="button"
-            :disabled="level.state !== DomainLevelState.Open"
-            @click="emit('enter', level.dungeonId)"
-          >
-            {{ gameText[GameTextKey.DomainEnter] }}
-          </button>
-        </li>
+        <DomainScreenRow
+          v-for="level in levels"
+          :key="level.dungeonId"
+          :game-text
+          :level
+          @enter="(dungeonId) => emit('enter', dungeonId)"
+        />
       </ul>
       <button type="button" @click="emit('close')">{{ gameText[GameTextKey.Back] }}</button>
     </div>
