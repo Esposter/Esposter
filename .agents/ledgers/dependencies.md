@@ -195,7 +195,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `three-globe`                           | —                     | Keep — engine    | the globe                                                                                              |
 | `three-mesh-bvh`                        | 2026-10-11 · Opus 5.5 | Keep — engine    | the landmark collider's bounding volume hierarchy                                                      |
 | `tsdown`                                | —                     | Keep — tooling   | the package bundler                                                                                    |
-| `tsrs`                                  | —                     |                  |                                                                                                        |
+| `tsrs`                                  | —                     | Keep — tooling   | the type checker the plain typecheck scripts run                                                       |
 | `type-fest`                             | —                     | Keep — types     | type utilities                                                                                         |
 | `typescript`                            | —                     | Keep — tooling   | the compiler                                                                                           |
 | `unicode-emoji-json`                    | —                     | Keep — data      | the emoji list, tracking Unicode                                                                       |
