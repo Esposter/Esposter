@@ -24,14 +24,6 @@ review is **files changed**, and what spends that is **findings**: a unit report
 as the density of findings falls, the same review window carries more units, and each cycle reaches further into
 the tree than the last.
 
-```mermaid
-flowchart LR
-  FIRST["first pass — dense findings"] --> ONE["one unit fills a window"]
-  ONE --> LATER["later pass — sparse findings"]
-  LATER --> MANY["several units fit one window"]
-  MANY --> FIXED["the fixed point: every open row read, nothing reported"]
-```
-
 That is what the coverage dates make visible, and it is why a convention is swept again rather than declared done.
 A pass that finds nothing is the sweep having converged **there**, recorded as a date so the next cycle starts from
 it instead of re-reading it.

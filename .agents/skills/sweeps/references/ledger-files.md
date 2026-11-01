@@ -50,14 +50,6 @@ Two ledgers reading the same files is **not** duplication on its own. `ux` and `
 They merge only when the question is the same — two ledgers reading `.agents/skills` against `skill-authoring`
 are one ledger, since each pass would hand the other its findings.
 
-```mermaid
-flowchart TD
-  TWO["two ledgers reach the same files"] --> Q{"same question of them?"}
-  Q -->|"yes — same owning skill, findings hand back and forth"| MERGE["merge; the survivor's dates reset"]
-  Q -->|"no — different owning skill"| KEEP["keep both; the file is read twice on purpose"]
-  KEEP --> WHY["reading is cheap, attention is not"]
-```
-
 The reason is attention: a pass carrying one question finds what a pass carrying twenty skims past. Passes differ by **question**, not by **address** — so widening a
 ledger's rule set to cover more of a file is how a sweep quietly becomes a skim, and an area-keyed "cleanup"
 ledger is that mistake at its widest. When a rule set has no ledger, the answer is a new ledger, not a wider row
