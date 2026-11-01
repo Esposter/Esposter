@@ -18,7 +18,8 @@ const LOOP_HEADER_REGEX = /^\s*for\s/u;
 // The values a local name may hold where it is used: the expression it is declared with, by `:=` or `var` in a block
 // That is still open at the use, and each expression a plain `=` before the use writes to it. None where the name is
 // Bound any other way, as its value is then not known from the text, and none to replace where no function binds it or a
-// `for` loop declares it, which the loop's turns give a value
+// `for` loop declares it, which the loop's turns give a value. A bare declaration, `var name float64`, is no value of its
+// Own: the zero it holds before a write is not an expression any path writes, so the alternatives are the writes alone
 const readLocalValues = (
   name: string,
   lines: readonly string[],
