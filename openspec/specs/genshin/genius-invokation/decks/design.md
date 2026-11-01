@@ -114,7 +114,8 @@ A duel's enemy card group is its deck's id, and the built decks are these.
 
 ## Open
 
-- [ ] **The card values and card behaviours in the character and card decisions match the game** — no source yet: the wiki's card pages are not in the cache, and the medium text map holds no card texts. The cache was checked again: no cached page is a Genius Invokation card page, so the values are still unread.
+The open check for the card values is recorded with its requirement in [the spec](spec.md).
+
 - [ ] **Deck 10 is not legal, since its Crossfire needs Xiangling** — no source yet: deck 10's `characterList` is 1203 alone, with no Xiangling (1302); card 213021 reads Crossfire in `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`, but no character row names that card, so the link to Xiangling is not sourced.
 - [ ] **The dice cap of sixteen and four supports match the game** — no source yet: the wiki's rules page is not in the cache. The cache was checked: no cached page is the Genius Invokation rules page, and none states a dice cap of sixteen or a four-support limit.
 - [ ] **Kid Kujirai creates its Omni Element die once a phase, then moves to the opposing support zone** — no source yet: its skill 3220141 in `{data-root}/genshin-parity/text/ExcelBinOutput/GCGSkillExcelConfigData.json` has no text in the medium text map, and its effect is not in that row.

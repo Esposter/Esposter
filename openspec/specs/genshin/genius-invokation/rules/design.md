@@ -97,15 +97,14 @@ flowchart TD
 
 - Genius Invokation rule texts, the game's own, read off disk: `{data-root}/genshin-parity/text/ExcelBinOutput/GCGRuleTextDetailExcelConfigData.json`, each row's `contentTextMapHash` and `titleTextMapHash` looked up in the English text map the [dialogue page](../../dialogue/design.md) cites. Quotes below carry the row's id as `#id`, read from that text; `#1003` ("Both sides will get 8 Elemental Dice to roll.") grounds each side's eight dice a round in the spec.
 
-- [Genius Invokation TCG: Rules](https://genshin-impact.fandom.com/wiki/Genius_Invokation_TCG/Rules), Genshin Impact Wiki: the preparation, the round's phases, the zones, the elemental reactions and their bonuses, the piercing and the spread, and the fifteen-round limit.
+- [Genius Invokation TCG: Rules](https://genshin-impact.fandom.com/wiki/Genius_Invokation_TCG/Rules), Genshin Impact Wiki: the preparation, the round's phases, the zones, the elemental reactions and their bonuses, the piercing and the spread, and the fifteen-round limit. Not in the genshin-wiki cache, so its claims are unchecked here.
 - [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the rule and element reaction tables the standard rule is written from.
-- A card's cost reduction applies to the payer its text names: "The holder reading is the wiki's, which reads "the character" for Vermillion Hereafter and Capricious Visage, and the side reading is the game's, which names the side for Shimenawa's Reminiscence, as the decks design records."
-- A normal attack after a switch is a plunging attack: as the wiki's Plunging Attack page is the open-world action and does not settle the TCG case (see the rules design).
-- A character at no health is defeated and its side owes a replacement or loses: "The Genius Invokation TCG/Rules page (Other Rules, the Defeated row) states the discard."
+- A character at no health is defeated and its side owes a replacement or loses: "The Genius Invokation TCG/Rules page (Other Rules, the Defeated row) states the discard." That page is not in the cache, so the discard is unchecked here.
 
 ## Open
 
-- [ ] **A duel concedes after its fifteenth round, as the game does** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/GCGRuleTextDetailExcelConfigData.json`: Round Limit says both sides lose at the start of Round 15.
+The open checks for the fifteenth round's concession, for Leave It to Me! and for a second reaction's join are recorded with their requirements in [the spec](spec.md).
+
 - [ ] **Tenko Thunderbolts deals 3 Electro** — no source yet: the placeholder `$[K104]` in its card text is not resolved to Electro here.
 - [ ] **Sesshou Sakura lasts four usages** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/GCGCardExcelConfigData.json`: its card text starts the `$[K3]` counter at 3.
 - [ ] **A turn begins with the damage the field's before-action and round-end cards deal** — no source yet: a rule text giving the before-action and round-end timing of cards in general; `#2004` gives only the End Phase's card effects, and the Tenko and Sesshou card texts are the two read.
@@ -117,8 +116,6 @@ flowchart TD
 - [ ] **Each side has one reroll of any dice it names, and naming none passes** — no source yet: a rule text stating that naming no dice passes; `#2002` gives one chance to reroll any number of dice.
 - [ ] **An element applied with no damage reacts with its aura but deals no damage, and its other effects still land** — no source yet: whether its other effects still land, which `#4002` does not state.
 - [ ] **A shield takes damage before HP** — no source yet: the order of a shield against HP, which `#6006` does not state (it deducts a shield's points to block some DMG).
-- [ ] **Leave It to Me! makes the next switch a fast action and is spent by it** — no source yet: the keyword placeholders `$[K1]` and `$[K2]` in its card text are not resolved here.
-- [ ] **A second reaction of the same kind joins the card already there, up to its most usages** — no source yet: the effect that places a reaction's card was not among the files read under `packages/genshin-world/src/services/gcg/effects/`.
 - [ ] **Each dice face is one of the seven elements or Omni, equally likely** — no source yet: the game's dice-face odds, which no rule text read here states.
 - [ ] **A side's switched cards go back into its draw pile** — no source yet: a rule text on where a switched card goes; `#1002` gives only the switch chance.
 - [ ] **A defeat's replacement does not count as a switch** — no source yet: a rule text on whether a defeat's replacement is a switch; `#6009` gives only the switch-in.
