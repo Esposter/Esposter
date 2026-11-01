@@ -7,7 +7,7 @@
 | `Resource/Sheet` components                                                                       | 2026-10-29 · Haiku 5.5 |                                                                         |
 | `composables/resource/sheet`                                                                      | 2026-10-29 · Haiku 5.5 |                                                                         |
 | `services/resource/sheet`                                                                         | 2026-10-29 · Haiku 5.5 |                                                                         |
-| `store/resource/sheet` + `shared/models/resource/sheet`                                           | 2026-10-05 · Opus 5.5  | content-class casts pinned by `ResourceContent.test-d.ts`               |
+| `store/resource/sheet` + `shared/models/resource/sheet`                                           | 2026-10-05 · Opus 5.5  | content-class casts pinned by each schema's satisfies ToData            |
 | `Resource/Dashboard`, `Resource/Email`, `Resource/Webpage`, `Resource/Flowchart`                  | 2026-10-05 · Opus 5.5  |                                                                         |
 | `Resource/Survey`, `Resource/Program`, `Resource/TodoList`, `Resource/Blueprint`, `Resource/Note` | 2026-10-05 · Opus 5.5  |                                                                         |
 | `app/composables/resource` + `app/services/resource`, less the `sheet` and list units above       | 2026-10-05 · Opus 5.5  |                                                                         |

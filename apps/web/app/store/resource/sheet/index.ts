@@ -18,8 +18,8 @@ export const useSheetStore = defineStore("resource/sheet", () => {
     // Content is parsed from the blob with plain JSON.parse, so the loaded value carries the sheet's data
     // Shape rather than its class instances. Reviving them the way the dashboard does would mean walking
     // Every row and column of a sheet on open, and buys nothing: `toJSON` is the only method these classes
-    // Have, and it returns what `JSON.stringify` produces without it. ResourceContent.test-d.ts holds that
-    // Invariant, so the cast stops compiling if a second method is ever added
+    // Have, and it returns what `JSON.stringify` produces without it. The content schemas hold that invariant
+    // Through `satisfies z.ZodType<ToData<…>>`, so they stop compiling the day a second method is added
     (data) => (data as SheetResource | undefined) ?? createDefaultSheetResource(),
   );
   // The grid operates on the data section; settings is the parse configuration the Settings blade edits
