@@ -7,6 +7,13 @@ import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 import { describe, expect, test } from "vitest";
 
 describe(readConstantLoops, () => {
+  // The loops a source gives, its constants resolving the bounds the way the file's own constants do
+  const readLoops = (source: string) => {
+    const tokens = tokenizeGo(source);
+    const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
+    return readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG);
+  };
+
   test("reads a loop over a constant slice as one iteration per element, its index and element as the variables", () => {
     expect.hasAssertions();
 
@@ -21,14 +28,8 @@ describe(readConstantLoops, () => {
       "\t}",
       "}",
     ].join("\n");
-    const tokens = tokenizeGo(source);
-    const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
-    expect(
-      readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG).map(
-        ({ iterations }) => iterations,
-      ),
-    ).toStrictEqual([
+    expect(readLoops(source).map(({ iterations }) => iterations)).toStrictEqual([
       [
         new Map([
           ["delay", 112],
@@ -60,14 +61,10 @@ describe(readConstantLoops, () => {
       "\t}",
       "}",
     ].join("\n");
-    const tokens = tokenizeGo(source);
-    const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
-    expect(
-      readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG).map(
-        ({ iterations }) => iterations,
-      ),
-    ).toStrictEqual([[new Map([["hitmark", 50]]), new Map([["hitmark", 59]]), new Map([["hitmark", 67]])]]);
+    expect(readLoops(source).map(({ iterations }) => iterations)).toStrictEqual([
+      [new Map([["hitmark", 50]]), new Map([["hitmark", 59]]), new Map([["hitmark", 67]])],
+    ]);
   });
 
   test("reads a counting loop to a literal bound inclusively, one iteration per step up to and including the bound", () => {
@@ -82,14 +79,10 @@ describe(readConstantLoops, () => {
       "\t}",
       "}",
     ].join("\n");
-    const tokens = tokenizeGo(source);
-    const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
-    expect(
-      readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG).map(
-        ({ iterations }) => iterations,
-      ),
-    ).toStrictEqual([[new Map([["delay", 0]]), new Map([["delay", 4]]), new Map([["delay", 8]])]]);
+    expect(readLoops(source).map(({ iterations }) => iterations)).toStrictEqual([
+      [new Map([["delay", 0]]), new Map([["delay", 4]]), new Map([["delay", 8]])],
+    ]);
   });
 
   test("reads a counting loop's bound from the local's base value, a constellation branch's reassignment left out", () => {
@@ -108,14 +101,10 @@ describe(readConstantLoops, () => {
       "\t}",
       "}",
     ].join("\n");
-    const tokens = tokenizeGo(source);
-    const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
-    expect(
-      readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG).map(
-        ({ iterations }) => iterations,
-      ),
-    ).toStrictEqual([[new Map([["delay", 0]]), new Map([["delay", 4]]), new Map([["delay", 8]])]]);
+    expect(readLoops(source).map(({ iterations }) => iterations)).toStrictEqual([
+      [new Map([["delay", 0]]), new Map([["delay", 4]]), new Map([["delay", 8]])],
+    ]);
   });
 
   test("reads a loop whose step is a call as its first iteration alone, its variable at the start, as the step has no value", () => {
@@ -130,14 +119,8 @@ describe(readConstantLoops, () => {
       "\t}",
       "}",
     ].join("\n");
-    const tokens = tokenizeGo(source);
-    const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
-    expect(
-      readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG).map(
-        ({ iterations }) => iterations,
-      ),
-    ).toStrictEqual([[new Map([["i", 0]])]]);
+    expect(readLoops(source).map(({ iterations }) => iterations)).toStrictEqual([[new Map([["i", 0]])]]);
   });
 
   test("reads no iteration of a loop whose step is a call where its bound stops it before its start", () => {
@@ -152,14 +135,8 @@ describe(readConstantLoops, () => {
       "\t}",
       "}",
     ].join("\n");
-    const tokens = tokenizeGo(source);
-    const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
-    expect(
-      readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG).map(
-        ({ iterations }) => iterations,
-      ),
-    ).toStrictEqual([[]]);
+    expect(readLoops(source).map(({ iterations }) => iterations)).toStrictEqual([[]]);
   });
 
   test("reads a loop whose step is a bare local, the brace after it the loop's body and no composite literal", () => {
@@ -175,14 +152,10 @@ describe(readConstantLoops, () => {
       "\t}",
       "}",
     ].join("\n");
-    const tokens = tokenizeGo(source);
-    const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
-    expect(
-      readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG).map(
-        ({ iterations }) => iterations,
-      ),
-    ).toStrictEqual([[new Map([["i", 0]]), new Map([["i", 2]]), new Map([["i", 4]])]]);
+    expect(readLoops(source).map(({ iterations }) => iterations)).toStrictEqual([
+      [new Map([["i", 0]]), new Map([["i", 2]]), new Map([["i", 4]])],
+    ]);
   });
 
   test("reads no loop from a bound a branch that is no constellation branch reassigns", () => {
@@ -201,10 +174,8 @@ describe(readConstantLoops, () => {
       "\t}",
       "}",
     ].join("\n");
-    const tokens = tokenizeGo(source);
-    const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
-    expect(readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG)).toStrictEqual([]);
+    expect(readLoops(source)).toStrictEqual([]);
   });
 
   // The bound is a local a compound assignment updates after its declaration, so its value is not the declared 2
@@ -224,10 +195,8 @@ describe(readConstantLoops, () => {
         "\t}",
         "}",
       ].join("\n");
-      const tokens = tokenizeGo(source);
-      const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
-      expect(readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG)).toStrictEqual([]);
+      expect(readLoops(source)).toStrictEqual([]);
     },
   );
 });
