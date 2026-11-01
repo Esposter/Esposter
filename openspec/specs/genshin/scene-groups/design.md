@@ -59,7 +59,7 @@ Every field below is held by the group scripts, which the record does not read: 
 - **A puzzle's mechanisms and a chest's gadget.** The only gadgets are the viewpoints (`scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`).
 - **A trigger's region.** A trigger member names its group but has no place (`scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`). A quest's go-to step is placed instead by its own location guide, which names a dummy point the client's scene3_dummy_points.lua holds ([quests](../quests/design.md)).
 - **The suites that move a resident by the hour.** The births give each NPC one spot, so no resident has a night spot.
-- **The NPCs the births leave out.** The cities' service keepers among them: Hertha, Wagner, Katheryne, Sara and Timaeus each have no birth (`{data-root}/genshin-dump-backup-6.6/BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json`: each birth has its spot, suites and config id, none for an NPC of these five names in `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/NpcExcelConfigData.json`), so the record places their services' building points but not them.
+- **The NPCs the births leave out.** The cities' service keepers among them: Hertha, Wagner, Katheryne, Sara and Timaeus each have no birth (`{data-root}/genshin-dump-backup-6.6/BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json`: each birth has its spot, suites and config id, none for an NPC of these five names in `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/NpcExcelConfigData.json`), so the record places their services' building points but not them. The open check of that absence is in the [spec's](spec.md) open list.
 - **Nod-Krai's NPC placements.** `packages/genshin-world/src/data/regions/nod-krai.json` keeps its one resident, `lempo-isle` (id 7086), and the [resident schedules](../../../changes/genshin-resident-schedules/proposal.md) change waits on the rest (see Open).
 
 ## Key files
@@ -85,8 +85,7 @@ Every field below is held by the group scripts, which the record does not read: 
 
 ## Open
 
-- [ ] **The publish's notes count a handful of the codex's left-out rows** — no source yet: the publish notes were not run for the count in this pass.
+- [ ] **The publish's notes count a handful of the codex's left-out rows** — no source yet: the publish notes have not been checked against the count.
 - [ ] **No Nod-Krai NPC is placed in the record beyond `lempo-isle`** — no source yet: the record's Nod-Krai members were not checked against the births.
 - [ ] **The group scripts hold the fields this page leaves out** — no source yet: `{data-root}/genshin-parity/extracted/lua/raw/scene3.dat` names `born_pos`, `born_rot`, `routes`, `routes_config`, `block_rects` and `dummy_points`, but does not say which of the page's left-out rows those fields serve; the dummy point in `{data-root}/genshin-parity/extracted/lua/raw/scene3_dummy_points.json` is not matched to the quests' location guide, which is not on disk.
-- [ ] **Hertha, Wagner, Katheryne, Sara and Timaeus have no birth** — no source yet: an exact-name lookup of the five in `{data-root}/genshin-parity/text/TextMapEN.json` returned no entry in this pass, so the birth check named in the body is not re-run here.
 - [ ] **Whether the client's scene 3 block scripts hold any group's members** — raised: `{data-root}/genshin-parity/extracted/lua/raw/Build_Scripts_Scene_3_scene3_block115.dat` (785,764 bytes) is a block script, named `scene3_block115` rather than `scene<id>_group<id>`, so it does not contradict the group claim by name. It carries no readable Lua signature, text or group name, and its id 115 is not among the block ids `scene3.dat` lists, so what it holds is not decoded here.
