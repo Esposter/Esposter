@@ -40,7 +40,7 @@ Measured off the reference frame at 21:9, 3440 by 1440 pixels, in units: a pixel
 ## Decisions
 
 - **The layout is the reference's.** The game draws the characters across the top and the tabs down the left. It was read off the user's own recording of the build at 21:9 (`{data-root}/genshin-parity/captures/session-2.mp4`, its English text, 49.9 frames a second), the character screen from about 154 seconds on, every tab in turn.
-- **The panel is anchored to the right edge.** It moves with the window's width. Where the game anchors it at 16:9 is not measured yet: the reference is 21:9 only.
+- **The panel is anchored to the right edge.** It moves with the window's width. Where the game anchors it at 16:9 is not measured yet: the reference is 21:9 only, and `character-attributes-1080.png` on the roadmap's References sought list is the reference that measures it.
 - **The name has its element before it.** The game writes the element before the name (`Geo / Xilonen`, `{data-root}/genshin-parity/comparisons/character-attributes.png`). The screen passes the element's own word as `elementName` (from `ElementNameGameTextKeyMap`), and the frame writes it before the name, so the breadcrumb reads `Geo / Xilonen`; `CharacterMenuEntry` still carries no element.
 - **The open tab's pill slides.** At 158 seconds the pill is still moving from Constellation to Talents while Talents' text is already bold, and by 159 seconds the pill has faded out of its old place. The slide is not measured yet; it waits on the recording named in the roadmap.
 - **Profile's red alert is not drawn.** The game marks Profile with a red alert when something waits there (`{data-root}/genshin-parity/comparisons/character-constellation-tabs.png`); its trigger is not built.
@@ -59,7 +59,6 @@ The Artifacts and Constellation references are timed to where their tabs have se
 - **The backdrop samples the whole frame.** The middle is the held scene: the golden beams and particles and the character's model, which rises over 154.4 to 155.6 seconds and is the game's art, so the screen draws each tab's backdrop from its reference's scene and nothing more. The backdrop is sampled over the whole frame less its head band and its foot, as the median of six horizontal bands: the panels and the tab column are text over the scene, with no fill of their own in the reference. Sampling only the area the panels leave bare scores worse on every tab column but one.
 - **Not drawn yet, for want of text or art.** The Friendship row's level, which the default panel shows beside its word under Details, and the character's description: the Friendship word (`GameTextKey.Friendship`) and its bar are drawn under Details, but the level is not, since the panel is not given it, and the description's words are not in the decoded English text yet. The element-coloured stars wait on the glyph pass or the text, the stars drawn white until then. The Weapons tab's passive name and description are not drawn: the reference sets them in the game's typeface, and ours drawn beside it scores worse than the frame's own text left bare (the id's mean rose by 0.26).
 - **The Attributes tab's motion is owed.** The model's rise is read off the recording at 60 frames a second once `character-details.mkv` and the other owed clips land on the roadmap's References sought list.
-- At 16:9 the panel stays right-anchored in the build, and the game's placement there is not measured yet: `character-attributes-1080.png` on the roadmap's References sought list is the reference that measures it.
 - **Only the Traveler and the roster's names come from the game's text.** Every other character's name is read from the name text map (`nameText`), which the world screen loads for the banners as well (`{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json` holds "Xilonen" and "Traveler").
 
 ## Key files
@@ -90,9 +89,6 @@ The Artifacts and Constellation references are timed to where their tabs have se
 
 ## Open
 
-- [ ] **In the game, `C` opens the character screen** — no source yet: no recording or wiki page of the key binding is in the parity folders, and the Character/Menu page is not in `{data-root}/cache/genshin-wiki/`.
-- [ ] **The layout table's places** — no checked disagreement yet: `{data-root}/genshin-parity/comparisons/character-attributes.png` holds the Attributes reference as its left panel, a still, and no place in it is measured against the table.
-- [ ] **The Attributes tab's sums** — contradicted by `{data-root}/genshin-parity/comparisons/character-attributes.png`: the reference's sums for Max HP, ATK, DEF and EM are well above the build's.
-- [ ] **The level line in the game's `Lv.` wording** — contradicted by `{data-root}/genshin-parity/comparisons/character-attributes.png`: the game writes "Level 90 / 90", not "Lv. 90/90".
-- [ ] **The advanced group's values and percentage format** — no source yet: the game holds this group behind Details, so no reference frame shows its values.
+The open items the [spec](spec.md) also holds are listed there, not here.
+
 - [ ] **The parity scores of the five states the Notes name** — held by the snapshot's `character-attributes`, `character-artifacts`, `character-weapons`, `character-talents` and `character-constellation` rows (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`).
