@@ -81,7 +81,7 @@ const tab = ref(HandbookTab.Experience);
       <div class="stack stack-left" />
       <div class="stack stack-right" />
       <div class="pages" />
-      <HandbookScreenTabs v-model="tab" :game-text="gameText" />
+      <HandbookScreenTabs v-model:tab="tab" :game-text="gameText" />
       <HandbookScreenExperience
         v-if="tab === HandbookTab.Experience"
         :commissions

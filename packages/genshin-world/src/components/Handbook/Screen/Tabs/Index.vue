@@ -11,7 +11,7 @@ interface Props {
   gameText: GameText;
 }
 
-const tab = defineModel<HandbookTab>({ required: true });
+const tab = defineModel<HandbookTab>("tab", { required: true });
 const { gameText } = defineProps<Props>();
 // Each tab with its label in the reader's language
 const tabs = computed(() =>
