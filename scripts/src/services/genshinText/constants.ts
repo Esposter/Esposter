@@ -28,8 +28,8 @@ export const SUB_QUEST_TABLE_NAME = "QuestExcelConfigData";
 export const GIVING_TABLE_NAME = "GivingExcelConfigData";
 export const GIVING_GROUP_TABLE_NAME = "GivingGroupExcelConfigData";
 export const DIALOG_TABLE_NAME = "DialogExcelConfigData";
-// The chapter table, each series of quests by its id with its title and number by text hash and the city it is in, the
-// City table naming each city by its id, and the material table giving each item its rarity in stars
+// The chapter table, each series of quests by its id with its title and number by text hash and the city it is in.
+// The City table naming each city by its id
 export const CHAPTER_TABLE_NAME = "ChapterExcelConfigData";
 export const CITY_TABLE_NAME = "CityConfigData";
 // The shop goods table, each good by its id with its shop, its price and its limit, which the shops and the items builds read
