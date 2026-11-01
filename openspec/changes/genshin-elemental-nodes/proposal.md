@@ -13,7 +13,7 @@ Enemies in reach of a node take its element on a fixed clock, and the buff that 
 - A buffed enemy resists more to every element and to physical hits, and more again to the node's own element, for as long as the buff's gauge lasts.
 - A reaction that spends the buff ends it, and the enemy cannot regain it for the next two pulses.
 
-The duration is the gauge, not a timer, because the wiki says the buff does not decay and ends only when reactions deplete it.
+The duration is the gauge, not a timer; the [design](design.md) gives the wiki's reason and the timed alternative it rejected.
 
 Placing the nodes and stones in the world, and destroying a stone, wait on data this build does not hold, so they are not built here (see the design's Notes).
 
@@ -27,4 +27,4 @@ Placing the nodes and stones in the world, and destroying a stone, wait on data 
 
 ## Impact
 
-Adds the node's model and four pure services under `packages/genshin-world/src/services/elementalNode/`, and one enemy field the services read. Nothing in the world calls them yet.
+Adds the node's model and its pure services under `packages/genshin-world/src/services/elementalNode/`, and one enemy field the services read. Nothing in the world calls them yet.
