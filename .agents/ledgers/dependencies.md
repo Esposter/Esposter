@@ -31,12 +31,12 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@eslint/core`                          | —                     | Keep — tooling   | the linter's core                                                                                      |
 | `@eslint/json`                          | —                     | Keep — tooling   | the ESLint JSON language the dependency rule lints manifests with                                      |
 | `@fission-ai/openspec`                  | —                     | Keep — tooling   | validates and archives the repository's specifications                                                 |
-| `@fontsource/signika`                   | —                     | Keep — data      | font files                                                                                             |
+| `@fontsource/signika`                   | —                     | Keep — data      | the Signika font files the app loads and the parity page imports; they track the font's releases       |
 | `@hpcc-js/wasm-graphviz`                | —                     | Keep — engine    | Graphviz layout for the dependency graph                                                               |
 | `@huggingface/transformers`             | —                     | Keep — engine    | model inference                                                                                        |
 | `@iconify-json/lucide`                  | —                     | Keep — data      | an icon set UnoCSS reads                                                                               |
-| `@iconify-json/mdi`                     | —                     | Keep — data      | an icon set UnoCSS reads                                                                               |
-| `@iconify-json/pixelarticons`           | —                     | Keep — data      | an icon set UnoCSS reads                                                                               |
+| `@iconify-json/mdi`                     | —                     | Keep — data      | an icon set UnoCSS reads by class name; it tracks the set's releases, so a copy would drift            |
+| `@iconify-json/pixelarticons`           | —                     | Keep — data      | an icon set UnoCSS reads by class name; it tracks the set's releases, so a copy would drift            |
 | `@jsonforms/core`                       | 2026-10-18 · Opus 5.5 | Keep — engine    | the form engine under the schema form, which draws its own fields in place of the Vue bindings         |
 | `@kjanat/actionlint`                    | —                     | Keep — tooling   | workflow lint                                                                                          |
 | `@lerna-lite/cli`                       | —                     | Keep — tooling   | fixed-mode versioning and publishing, which pnpm does not do                                           |
@@ -134,14 +134,14 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `eslint-plugin-pinia`                   | —                     | Keep — tooling   | the linter and its rules                                                                               |
 | `eslint-plugin-vuejs-accessibility`     | —                     | Keep — tooling   | the linter and its rules                                                                               |
 | `fake-indexeddb`                        | —                     | Keep — tooling   | IndexedDB in the test environment                                                                      |
-| `fflate`                                | —                     | Keep — spec      | the zip format, which `CompressionStream` does not write                                               |
+| `fflate`                                | —                     | Keep — spec      | the zip format `CompressionStream` does not write: a DEFLATE codec, kept as an engine is               |
 | `grid-engine`                           | —                     | Keep — engine    | the tile-movement engine                                                                               |
 | `h3`                                    | —                     | Keep — framework | the server framework nitro is built on; the security module augments its route-rule types              |
 | `happy-dom`                             | —                     | Keep — tooling   | the DOM test environment                                                                               |
 | `imagetracerjs`                         | —                     | Keep — engine    | raster tracing for the glyph pipeline                                                                  |
 | `jscpd`                                 | —                     | Keep — tooling   | the duplicate-code finder                                                                              |
 | `knip`                                  | —                     | Keep — tooling   | unused files, exports and dependencies                                                                 |
-| `link-preview-js`                       | —                     | Keep — utility   | maintained, with its own SSRF guard options                                                            |
+| `link-preview-js`                       | —                     | Keep — security  | its SSRF guard options, a security-shaped feed the stop list keeps                                     |
 | `linkifyjs`                             | —                     | Keep — data      | URL detection over the TLD list                                                                        |
 | `livekit-client`                        | —                     | Keep — SDK       | the call SDK                                                                                           |
 | `livekit-server-sdk`                    | —                     | Keep — SDK       | the call SDK                                                                                           |
@@ -155,7 +155,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `mlly`                                  | —                     | Keep — tooling   | the static export reader the module lists a package's exports with, never importing it                 |
 | `mocked-exports`                        | —                     | Keep — hold      | Nitro 3 resolves it from the app (`@TODO` in the catalog)                                              |
 | `msw`                                   | —                     | Keep — tooling   | request mocking                                                                                        |
-| `natural-orderby`                       | —                     |                  |                                                                                                        |
+| `natural-orderby`                       | —                     | Keep — tooling   | the barrel comparator, matching perfectionist's sort-exports, which depends on the same package        |
 | `neverthrow`                            | —                     | Keep — framework | the `Result` the error-handling convention is built on                                                 |
 | `nitro`                                 | —                     | Keep — framework | the server framework                                                                                   |
 | `node-html-parser`                      | 2026-10-18 · Opus 5.5 | Keep — engine    | HTML parsing with CSS selectors in the app, the server and the functions; parse5 has none              |
@@ -182,7 +182,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `rollup-plugin-visualizer`              | —                     | Keep — tooling   | the analyzer `nuxt analyze` reads the client bundle through                                            |
 | `rou3`                                  | —                     | Keep — free      | h3's own router, reused by nuxt-security-module                                                        |
 | `rxjs`                                  | —                     | Keep — free      | grid-engine's own observables                                                                          |
-| `sax`                                   | —                     | Keep — spec      | the XML tokenizer under parse-tmx's reader                                                             |
+| `sax`                                   | —                     | Keep — spec      | the XML 1.0 tokenizer under parse-tmx's reader, a large format algorithm that stays a package          |
 | `sharp`                                 | —                     | Keep — engine    | image processing                                                                                       |
 | `sirv`                                  | —                     | Keep — tooling   | the static file server Vite's public middleware runs on, serving `public/` in dev                      |
 | `superjson`                             | —                     | Keep — spec      | tRPC's wire transformer                                                                                |
