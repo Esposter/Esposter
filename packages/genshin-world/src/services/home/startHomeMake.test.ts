@@ -6,7 +6,7 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import { startHomeMake } from "#src/services/home/startHomeMake";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { ItemCategory } from "genshin-interface";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe(startHomeMake, () => {
   const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
@@ -51,8 +51,10 @@ describe(startHomeMake, () => {
 
     const result = startHomeMake(blueprint, { inventory: bag(8), now: EPOCH, progress, trustRank: TRUST_RANK });
 
-    expect(countInventoryItem(result?.inventory.items ?? [], MATERIAL_ID)).toBe(0);
-    expect(result?.progress.orders).toStrictEqual([{ blueprintId: blueprint.id, startedAt: EPOCH }]);
+    assert.exists(result);
+
+    expect(countInventoryItem(result.inventory.items, MATERIAL_ID)).toBe(0);
+    expect(result.progress.orders).toStrictEqual([{ blueprintId: blueprint.id, startedAt: EPOCH }]);
   });
 
   test("should refuse a furnishing whose blueprint is not learned from its diagram", () => {

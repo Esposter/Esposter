@@ -6,7 +6,7 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import { plantHomeSeed } from "#src/services/home/plantHomeSeed";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { ItemCategory } from "genshin-interface";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe(plantHomeSeed, () => {
   const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
@@ -37,8 +37,10 @@ describe(plantHomeSeed, () => {
       { inventory: bag(2), now: EPOCH, plantings: [], plants: [plant] },
     );
 
-    expect(result?.plantings).toStrictEqual([{ plantedAt: EPOCH, plotId: PLOT_ID, seedItemId: SEED_ID }]);
-    expect(countInventoryItem(result?.inventory.items ?? [], SEED_ID)).toBe(1);
+    assert.exists(result);
+
+    expect(result.plantings).toStrictEqual([{ plantedAt: EPOCH, plotId: PLOT_ID, seedItemId: SEED_ID }]);
+    expect(countInventoryItem(result.inventory.items, SEED_ID)).toBe(1);
   });
 
   test("a plot already holding a planting takes no other seed", () => {

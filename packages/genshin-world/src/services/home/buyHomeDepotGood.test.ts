@@ -6,7 +6,7 @@ import { buyHomeDepotGood } from "#src/services/home/buyHomeDepotGood";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { ItemCategory } from "genshin-interface";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe(buyHomeDepotGood, () => {
   const ADVENTURE_RANK = 1;
@@ -48,8 +48,10 @@ describe(buyHomeDepotGood, () => {
       wallet,
     });
 
-    expect(result?.wallet[Currency.RealmCurrency]).toBe(PRICE_COUNT);
-    expect(countInventoryItem(result?.inventory.items ?? [], FURNISHING_ID)).toBe(1);
+    assert.exists(result);
+
+    expect(result.wallet[Currency.RealmCurrency]).toBe(PRICE_COUNT);
+    expect(countInventoryItem(result.inventory.items, FURNISHING_ID)).toBe(1);
   });
 
   test("a purchase the wallet cannot cover is refused", () => {
@@ -90,7 +92,7 @@ describe(buyHomeDepotGood, () => {
         wallet,
       });
 
-    expect(buy(boughtLastWeek, WEEKLY_REFRESH.add({ hours: 2 }))).toBeDefined();
+    expect(buy(boughtLastWeek, WEEKLY_REFRESH.add({ hours: 2 }))?.wallet[Currency.RealmCurrency]).toBe(PRICE_COUNT);
     expect(buy(boughtThisWeek, WEEKLY_REFRESH.add({ hours: 2 }))).toBeUndefined();
   });
 });

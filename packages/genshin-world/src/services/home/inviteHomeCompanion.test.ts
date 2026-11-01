@@ -6,6 +6,7 @@ import { inviteHomeCompanion } from "#src/services/home/inviteHomeCompanion";
 import { describe, expect, test } from "vitest";
 
 describe(inviteHomeCompanion, () => {
+  const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
   const CHARACTER_ID = 10_000_001;
   const OTHER_CHARACTER_ID = 10_000_002;
   const UNOWNED_CHARACTER_ID = 10_000_003;
@@ -21,9 +22,9 @@ describe(inviteHomeCompanion, () => {
     madeBlueprintIds: [],
     orders: [],
     realmBounty: 0,
-    realmBountyAccruedAt: Temporal.Instant.fromEpochMilliseconds(0),
+    realmBountyAccruedAt: EPOCH,
     realmCurrency: 0,
-    realmCurrencyAccruedAt: Temporal.Instant.fromEpochMilliseconds(0),
+    realmCurrencyAccruedAt: EPOCH,
     trustExp: 0,
   };
   const ownedCharacterIds = [CHARACTER_ID, OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID];

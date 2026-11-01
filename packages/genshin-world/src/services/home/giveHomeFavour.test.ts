@@ -5,6 +5,7 @@ import { giveHomeFavour } from "#src/services/home/giveHomeFavour";
 import { describe, expect, test } from "vitest";
 
 describe(giveHomeFavour, () => {
+  const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
   // Made-up companions, furnishing suite, reward and talk ids
   const COMPANION_ID = 1001;
   const OTHER_COMPANION_ID = 1002;
@@ -24,9 +25,9 @@ describe(giveHomeFavour, () => {
     madeBlueprintIds: [],
     orders: [],
     realmBounty: 0,
-    realmBountyAccruedAt: Temporal.Instant.fromEpochMilliseconds(0),
+    realmBountyAccruedAt: EPOCH,
     realmCurrency: 0,
-    realmCurrencyAccruedAt: Temporal.Instant.fromEpochMilliseconds(0),
+    realmCurrencyAccruedAt: EPOCH,
     trustExp: 0,
   };
 

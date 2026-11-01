@@ -4,6 +4,7 @@ import { dismissHomeCompanion } from "#src/services/home/dismissHomeCompanion";
 import { describe, expect, test } from "vitest";
 
 describe(dismissHomeCompanion, () => {
+  const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
   const CHARACTER_ID = 10_000_001;
   const OTHER_CHARACTER_ID = 10_000_002;
   const progress: HomeProgress = {
@@ -13,9 +14,9 @@ describe(dismissHomeCompanion, () => {
     madeBlueprintIds: [],
     orders: [],
     realmBounty: 0,
-    realmBountyAccruedAt: Temporal.Instant.fromEpochMilliseconds(0),
+    realmBountyAccruedAt: EPOCH,
     realmCurrency: 0,
-    realmCurrencyAccruedAt: Temporal.Instant.fromEpochMilliseconds(0),
+    realmCurrencyAccruedAt: EPOCH,
     trustExp: 0,
   };
 
