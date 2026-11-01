@@ -14,16 +14,6 @@ reverses a bulk act, the operation becomes a batch procedure and the single one 
 send one id. A single and a batch for the same operation are two code paths for one behaviour, and they drift in
 exactly the ways a batch differs: which rows the guard admits, what the notification says, what a missing row does.
 
-```mermaid
-flowchart TD
-  NEW["a procedure that acts on an entity"] --> SET{"does a caller act on a set of them"}
-  SET -->|"no"| SINGLE["single — one id, the ownership guard, a status per entity"]
-  SET -->|"yes — a selection, a bulk undo"| TWIN{"is there a single procedure for it already"}
-  TWIN -->|"no"| BATCH["batch — ids, owner-scoped where"]
-  TWIN -->|"yes"| REPLACE["promote — the batch replaces it, and one-item callers send one id"]
-  REPLACE --> BATCH
-```
-
 ## What a promoted procedure owes
 
 - **The guard moves into the where.** A batch has no `ctx.resource`, so it scopes its own statement to the caller
