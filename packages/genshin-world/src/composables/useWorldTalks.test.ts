@@ -1,15 +1,19 @@
+import type { Talk } from "#src/models/dialogue/Talk";
 import type { GcgPlayerLevel } from "#src/models/gcg/GcgPlayerLevel";
 import type { Quest } from "#src/models/quest/Quest";
+import type { QuestEvent } from "#src/models/quest/QuestEvent";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { Resident } from "#src/models/world/Resident";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldTalks } from "#src/composables/useWorldTalks";
+import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { regionDataSchema } from "#src/models/world/RegionData";
 import { GCG_OPEN_ADVENTURE_RANK, GCG_TUTORIAL_QUEST_ID } from "#src/services/gcg/constants";
 import { readGcgLevels } from "#src/services/gcg/readGcgLevels";
 import { readStandingTalks } from "#src/services/resident/readStandingTalks";
 import { flushReads } from "#src/services/shared/flushReads.test";
+import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { jsonDateParse } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";
 import { readFile } from "node:fs/promises";
@@ -33,6 +37,8 @@ const useMondstadtTalks = async (adventureRank: number) => {
     jsonDateParse(await readFile(join(import.meta.dirname, "../data/regions/mondstadt.json"), "utf8")),
   );
   const talks = useWorldTalks({
+    closeScreen: vi.fn<() => void>(),
+    events: createWorldEvents(),
     gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
     getAdventureRank: () => adventureRank,
     getCardGameExp: () => 0,
@@ -69,14 +75,19 @@ describe(useWorldTalks, () => {
   };
 
   // A resident seated at the duel, with the card game's EXP the player holds, read as the world opens
-  const useSeatedTalks = (cardGameExp: number) => {
+  const useSeatedTalks = (
+    cardGameExp: number,
+    { closeScreen = vi.fn<() => void>(), events = createWorldEvents(), standingTalks = [] as Talk[] } = {},
+  ) => {
     vi.mocked(readGcgLevels).mockResolvedValue({
       challengerGames: { 0: [{ gameId: DUEL_GAME_ID, level: OPENING_LEVEL }] },
       playerLevelLocks: [],
       playerLevels: PLAYER_LEVELS,
     });
-    vi.mocked(readStandingTalks).mockResolvedValue([]);
+    vi.mocked(readStandingTalks).mockResolvedValue(standingTalks);
     return useWorldTalks({
+      closeScreen,
+      events,
       gameDataBaseUrl: "",
       getAdventureRank: () => GCG_OPEN_ADVENTURE_RANK,
       getCardGameExp: () => cardGameExp,
@@ -101,6 +112,25 @@ describe(useWorldTalks, () => {
   const ELLIN_DUEL_GAME_ID = 1031;
   // The Adventure Rank the game opens the card game's duels at
   const DUEL_ADVENTURE_RANK = 32;
+
+  test("a talk that ends is a talk-to for the quests in progress and returns to the world", async () => {
+    expect.hasAssertions();
+
+    const closeScreen = vi.fn<() => void>();
+    const events = createWorldEvents();
+    const questEvents: QuestEvent[] = [];
+    events.on("questEvent", (questEvent) => {
+      questEvents.push(questEvent);
+    });
+    const standingTalks: Talk[] = [{ id: TALK_ID, lines: [], npcIds: [], startLineId: "line" }];
+    const talks = useSeatedTalks(1, { closeScreen, events, standingTalks });
+    await flushReads();
+    talks.beginTalk(TALK_ID);
+    talks.endTalk();
+
+    expect(questEvents).toStrictEqual([{ kind: QuestObjectiveKind.TalkTo, targetId: TALK_ID }]);
+    expect(closeScreen).toHaveBeenCalledTimes(1);
+  });
 
   test("a game opens once the Player Level reaches its level", async () => {
     expect.hasAssertions();

@@ -8,6 +8,7 @@ import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTre
 import type { SceneGroupPlace } from "#src/models/sceneGroup/SceneGroupPlace";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
+import type { Input } from "genshin-engine";
 import type { GameText } from "genshin-text";
 import type { Object3D } from "three";
 import type { Ref } from "vue";
@@ -28,6 +29,7 @@ export interface WorldInteractablesOptions {
   getGroundHeight: (x: number, z: number) => number;
   homePotPoint: Readonly<Ref<undefined | { x: number; z: number }>>;
   homeRealmVisit: Readonly<Ref<HomeRealmVisit | undefined>>;
+  input: Input;
   isDomainTreeRaised: Readonly<Ref<boolean>>;
   isFishingOpen: Readonly<Ref<boolean>>;
   lockedJumpLandmarks: Readonly<Ref<Landmark[]>>;

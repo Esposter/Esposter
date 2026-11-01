@@ -17,8 +17,10 @@ import { computeHomePotInteractable } from "#src/services/home/computeHomePotInt
 import { computeHomeRealmInteractables } from "#src/services/home/computeHomeRealmInteractables";
 import { computePlaceInteractables } from "#src/services/interaction/computePlaceInteractables";
 import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
+import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { computeStatueInteractables } from "#src/services/statue/computeStatueInteractables";
+import { InputAction } from "genshin-engine";
 import { InteractionKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 import { computed } from "vue";
@@ -39,6 +41,7 @@ export const useWorldInteractables = ({
   getGroundHeight,
   homePotPoint,
   homeRealmVisit,
+  input,
   isDomainTreeRaised,
   isFishingOpen,
   lockedJumpLandmarks,
@@ -150,5 +153,11 @@ export const useWorldInteractables = ({
       ...(homePotPoint.value ? [computeHomePotInteractable(gameText, homePotPoint.value, getGroundHeight)] : []),
     ];
   });
-  return { interactables, ...useInteraction(() => interactables.value, characterBody) };
+  const interaction = useInteraction(() => interactables.value, characterBody);
+  // A prompt's row pressed itself, by a tap or a click with the cursor shown: it is selected and Interact tapped
+  const pressInteractable = (id: string) => {
+    interaction.selectInteractable(id);
+    tapActionKey(input, InputAction.Interact);
+  };
+  return { interactables, ...interaction, pressInteractable };
 };

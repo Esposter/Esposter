@@ -107,7 +107,6 @@ import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { useWorldTips } from "#src/composables/useWorldTips";
 import { useWorldTrials } from "#src/composables/useWorldTrials";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
-import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
 import { HOME_REALM_GROUND_HEIGHT } from "#src/services/home/constants";
@@ -123,7 +122,6 @@ import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { createTresRenderer } from "#src/services/scene/createTresRenderer";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
-import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { getTeamAntiColdRatio } from "#src/services/sheerCold/getTeamAntiColdRatio";
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
@@ -139,7 +137,6 @@ import {
   createInput,
   createLandmarkCollider,
   GENSHIN_TONE_MAPPING,
-  InputAction,
   QualityTierSettingsMap,
   STAMINA_MAX,
 } from "genshin-engine";
@@ -777,22 +774,34 @@ const { cardGameExp, cardGameRewardedGameIds, payCardGameReward } = useWorldCard
 });
 // The talks a resident begins and the talk the world runs, held by id, with their words, the quest talks a resident's
 // Standing talk offers and the duel a resident offers from each talk
-const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap, talkOffers, talkTextMap } =
-  useWorldTalks({
-    gameDataBaseUrl,
-    getAdventureRank: () => rank.value,
-    getCardGameExp: () => cardGameExp.value,
-    getCompletedMainQuestIds: () => completedMainQuestIds.value,
-    getGroundHeight,
-    getResidents,
-    getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),
-    language,
-    nameText,
-    questProgressMap,
-    questsInProgress,
-    questsOffered,
-    questTextMap,
-  });
+const {
+  beginTalk,
+  endTalk,
+  gcgGameId,
+  getTalkDuelGameId,
+  residentInteractables,
+  talk,
+  talkDuelGameId,
+  talkMap,
+  talkOffers,
+  talkTextMap,
+} = useWorldTalks({
+  closeScreen,
+  events,
+  gameDataBaseUrl,
+  getAdventureRank: () => rank.value,
+  getCardGameExp: () => cardGameExp.value,
+  getCompletedMainQuestIds: () => completedMainQuestIds.value,
+  getGroundHeight,
+  getResidents,
+  getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),
+  language,
+  nameText,
+  questProgressMap,
+  questsInProgress,
+  questsOffered,
+  questTextMap,
+});
 // The Mondstadt Reputation the player holds, which the exploration thresholds a statue's unlock crosses raise
 const reputation = shallowRef<ReputationProgress>(savedState.reputation);
 const shopId = shallowRef(0);
@@ -1130,7 +1139,7 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   worldDrops,
 });
 // The prompts beside the character, joined from every source that offers one
-const { interactables, interactionPrompts, readInteraction, selectInteractable } = useWorldInteractables({
+const { interactables, interactionPrompts, pressInteractable, readInteraction } = useWorldInteractables({
   archiveData,
   blacksmithPlace,
   characterBody,
@@ -1144,6 +1153,7 @@ const { interactables, interactionPrompts, readInteraction, selectInteractable }
   getGroundHeight,
   homePotPoint,
   homeRealmVisit,
+  input,
   isDomainTreeRaised,
   isFishingOpen,
   lockedJumpLandmarks,
@@ -1157,21 +1167,6 @@ const { interactables, interactionPrompts, readInteraction, selectInteractable }
   unlockedLandmarks,
   viewpointPlaceMap,
 });
-// A prompt's row pressed itself, by a tap or a click with the cursor shown: it is selected and Interact tapped
-const pressInteractable = (id: string) => {
-  selectInteractable(id);
-  tapActionKey(input, InputAction.Interact);
-};
-// A quest's talk chosen on a standing talk's opening line runs in its place, and offers no duel of its own
-const beginTalk = (talkId: string) => {
-  talk.value = talkMap.value.get(talkId);
-  talkDuelGameId.value = undefined;
-};
-// A talk that ends is a talk-to for the quests in progress, and the world is back under the Traveler
-const endTalk = () => {
-  if (talk.value) events.emit("questEvent", { kind: QuestObjectiveKind.TalkTo, targetId: talk.value.id });
-  closeScreen();
-};
 const character = useTemplateRef("character");
 // Entering combat returns the camera to its default distance, keeping the look it has
 events.on("enterCombat", () => character.value?.returnToDefaultDistance());

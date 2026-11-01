@@ -5,9 +5,11 @@ import type { Quest } from "#src/models/quest/Quest";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { Resident } from "#src/models/world/Resident";
 import type { ResidentSpot } from "#src/models/world/ResidentSpot";
+import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { GameLanguage } from "genshin-text";
 import type { ComputedRef, Ref } from "vue";
 
+import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { getTalkOffers } from "#src/services/dialogue/getTalkOffers";
 import { mergeTalks } from "#src/services/dialogue/mergeTalks";
 import { checkIsGcgCardGameOpen } from "#src/services/gcg/checkIsGcgCardGameOpen";
@@ -25,6 +27,8 @@ import { computed, shallowRef } from "vue";
 // Yet started the talks offering them, and the residents their standing talks, read with their words as the world
 // Starts. A quest's talk wins a shared id
 export const useWorldTalks = ({
+  closeScreen,
+  events,
   gameDataBaseUrl,
   getAdventureRank,
   getCardGameExp,
@@ -39,6 +43,8 @@ export const useWorldTalks = ({
   questsOffered,
   questTextMap,
 }: {
+  closeScreen: () => void;
+  events: WorldEvents;
   gameDataBaseUrl: string;
   // The Adventure Rank the player stands at, which opens the card game's duels from its rank
   getAdventureRank: () => number;
@@ -155,7 +161,19 @@ export const useWorldTalks = ({
       ];
     }),
   );
+  // A quest's talk chosen on a standing talk's opening line runs in its place, and offers no duel of its own
+  const beginTalk = (talkId: string) => {
+    talk.value = talkMap.value.get(talkId);
+    talkDuelGameId.value = undefined;
+  };
+  // A talk that ends is a talk-to for the quests in progress, and the world is back under the Traveler
+  const endTalk = () => {
+    if (talk.value) events.emit("questEvent", { kind: QuestObjectiveKind.TalkTo, targetId: talk.value.id });
+    closeScreen();
+  };
   return {
+    beginTalk,
+    endTalk,
     gcgGameId,
     getTalkDuelGameId,
     residentInteractables,
