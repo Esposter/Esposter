@@ -115,20 +115,20 @@ When the member on the field falls, the next standing member of the deployed tea
 - **THEN** the member is down and loses its energy
 - **AND** the next standing member of the deployed team takes the field
 
-### Requirement: A fallen deployed team is revived at 35 percent and jumped to the nearest statue
+### Requirement: A fallen deployed team is revived at 35 percent and jumped to the nearest waypoint
 
-A deployed team whose members have all fallen SHALL be revived at 35 percent of each member's Max HP and jumped to the nearest loaded statue to the body.
+A deployed team whose members have all fallen SHALL be revived at 35 percent of each member's Max HP and jumped to the nearest unlocked Teleport Waypoint to the body.
 
 #### Scenario: Whole team fallen
 
 - **GIVEN** every member of the deployed team is down
 - **WHEN** the team is revived
 - **THEN** each fallen member is revived at 35 percent of its Max HP
-- **AND** the team is jumped to the nearest loaded Statue of The Seven to the body
+- **AND** the team is jumped to the nearest unlocked Teleport Waypoint to the body
 
-#### Scenario: No statue loaded
+#### Scenario: No waypoint unlocked
 
-- **GIVEN** every member of the deployed team is down and no statue is loaded
+- **GIVEN** every member of the deployed team is down and no Teleport Waypoint is unlocked
 - **WHEN** the team is revived
 - **THEN** the team is revived where it fell
 
@@ -340,7 +340,7 @@ The world's HUD SHALL redraw as members' HP, energy and cooldowns change and as 
 - [ ] **Left Alt with a member's key uses that member's burst, and a refused switch uses none** — no source yet: no test holds the chord or the fixed step's read.
 - [ ] **A character keeps its HP, energy and cooldowns when moved into another team, and its HP keeps its share of Max HP** — no source yet: no test holds the move or the share.
 - [ ] **A fallen deployed team is revived at 35 percent of each member's Max HP** — no source yet: no 35% revive wording is in the English game text, and the revive clip is not measured.
-- [ ] **A fallen team is jumped to the nearest loaded Statue of The Seven, or revived where it fell with none loaded** — no source yet: no test holds it, and the design names the nearest unlocked teleport waypoint instead of a statue, so the two pages disagree.
+- [ ] **A fallen team is jumped to the nearest unlocked Teleport Waypoint, or revived where it fell with none unlocked** — no source yet: no test holds it.
 - [ ] **A drowning takes a tenth of each member's Max HP** — no source yet: no 10% drowning wording is in the English game text, and the wiki's Fallen Character page is not cached.
 - [ ] **The switch cooldown is one second** — no source yet: the wiki's Party page is not cached.
 - [ ] **A skill's cooldown is shortened and each stamina spend is lowered on the field's Anemo team** — no source yet: no test holds the skill cooldown multiplier or the stamina pool.
