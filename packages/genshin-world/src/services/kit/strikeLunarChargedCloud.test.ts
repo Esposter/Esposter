@@ -100,10 +100,14 @@ describe(strikeLunarChargedCloud, () => {
   test("ends its 5.5 seconds on the 330th frame of a sixtieth of a second, not a frame later", () => {
     expect.hasAssertions();
 
+    const FRAMES_BEFORE_LAST = 329;
     const context = createContext([]);
     startPartyLunarReactions(context.party, [{ reactionType: ReactionType.LunarCharged }]);
-    for (let frame = 0; frame < 329; frame++) strikeLunarChargedCloud(FIXED_STEP_SECONDS, { x: 0, z: 0 }, context);
-    expect(context.party.lunarChargedCloud.secondsRemaining).toBeGreaterThan(0);
+    for (let frame = 0; frame < FRAMES_BEFORE_LAST; frame++)
+      strikeLunarChargedCloud(FIXED_STEP_SECONDS, { x: 0, z: 0 }, context);
+    expect(context.party.lunarChargedCloud.secondsRemaining).toBeCloseTo(
+      LUNAR_CHARGED_CLOUD_SECONDS - FRAMES_BEFORE_LAST * FIXED_STEP_SECONDS,
+    );
 
     strikeLunarChargedCloud(FIXED_STEP_SECONDS, { x: 0, z: 0 }, context);
     expect(context.party.lunarChargedCloud.secondsRemaining).toBe(0);
