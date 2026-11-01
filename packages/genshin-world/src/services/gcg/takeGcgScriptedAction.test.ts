@@ -1,10 +1,8 @@
-import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
-import type { GcgSideState } from "#src/models/gcg/GcgSideState";
-
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { PYRO_SCORPION_ID } from "#src/services/gcg/cards/constants";
 import { createDuel } from "#src/services/gcg/cards/createDuel.test";
+import { createSideState } from "#src/services/gcg/cards/createSideState.test";
 import { pyroScorpion } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
@@ -12,24 +10,6 @@ import { takeGcgScriptedAction } from "#src/services/gcg/takeGcgScriptedAction";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const createSideState = (characters: GcgCharacterState[], dice: Element[] = []): GcgSideState => ({
-  activeIndex: 0,
-  cards: [],
-  characters,
-  deckCardIds: [],
-  dice,
-  drawPile: [],
-  hand: [],
-  hasDeclaredEnd: false,
-  hasPrepared: true,
-  hasRolled: true,
-  isReplacementPending: false,
-  onstages: [],
-  summons: [],
-  supports: [],
-  usedCardIds: [],
-  usedSkillIds: [],
-});
 describe(takeGcgScriptedAction, () => {
   const EREMITE_ID = 2303;
   const HYDRO_ID = 2101;
