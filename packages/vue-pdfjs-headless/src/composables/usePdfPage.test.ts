@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import type { PDFDocumentProxy, PDFPageProxy, RenderTask } from "pdfjs-dist";
 
+import { PAGE_HEIGHT, PAGE_WIDTH } from "#src/composables/constants.test";
 import { usePdfPage } from "#src/composables/usePdfPage";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -26,9 +27,6 @@ const mountPage = async (page: PDFPageProxy) => {
 };
 
 describe(usePdfPage, () => {
-  const PAGE_WIDTH = 800;
-  const PAGE_HEIGHT = 1000;
-
   type ResizeCallback = (entries: ResizeObserverEntry[]) => void;
 
   // The observer the composable makes for its canvas, kept so a test can report the canvas's width as a screen would

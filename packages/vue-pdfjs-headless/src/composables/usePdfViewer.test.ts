@@ -4,6 +4,7 @@ import type { PdfViewerApi } from "#src/models/PdfViewerApi";
 import type { PageViewport, PDFDocumentProxy, PDFPageProxy, RenderTask } from "pdfjs-dist";
 import type { MaybeRefOrGetter } from "vue";
 
+import { PAGE_HEIGHT, PAGE_WIDTH } from "#src/composables/constants.test";
 import { createAnnotationStorage } from "#src/composables/createAnnotationStorage.fixture";
 import { usePdfViewer } from "#src/composables/usePdfViewer";
 import { PdfEditorMode } from "#src/models/PdfEditorMode";
@@ -46,8 +47,6 @@ const setFullscreenElement = (element: Element | null) => {
 };
 
 describe(usePdfViewer, () => {
-  const PAGE_WIDTH = 800;
-  const PAGE_HEIGHT = 1000;
   const FIND_STATE_NOT_FOUND = 1;
   const LINK_TARGET_BLANK = 2;
   const CHAPTER_PAGE = 3;
