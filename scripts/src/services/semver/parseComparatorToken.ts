@@ -2,30 +2,11 @@ import type { ComparatorToken } from "#src/models/semver/ComparatorToken";
 
 import { RangeOperator } from "#src/models/semver/RangeOperator";
 import { checkIsAnyPart } from "#src/services/semver/checkIsAnyPart";
+import { parseOperator } from "#src/services/semver/parseOperator";
 
 // One comparator as written: an optional operator, then a version whose parts may be wildcards
 const COMPARATOR_TOKEN_REGEX =
   /^(?<operator><=|>=|<|>|=|~>?|\^)?v?=?(?<major>0|[1-9]\d*|[*xX])(?:\.(?<minor>0|[1-9]\d*|[*xX])(?:\.(?<patch>0|[1-9]\d*|[*xX])(?<prerelease>-[\dA-Za-z.-]+)?)?)?(?:\+[\dA-Za-z.-]+)?$/u;
-
-const parseOperator = (text: string | undefined): RangeOperator => {
-  switch (text) {
-    case "<":
-      return RangeOperator.LessThan;
-    case "<=":
-      return RangeOperator.LessThanOrEqual;
-    case ">":
-      return RangeOperator.GreaterThan;
-    case ">=":
-      return RangeOperator.GreaterThanOrEqual;
-    case "^":
-      return RangeOperator.Caret;
-    case "~":
-    case "~>":
-      return RangeOperator.Tilde;
-    default:
-      return RangeOperator.Equal;
-  }
-};
 
 export const parseComparatorToken = (text: string): ComparatorToken | undefined => {
   const groups = COMPARATOR_TOKEN_REGEX.exec(text)?.groups;
