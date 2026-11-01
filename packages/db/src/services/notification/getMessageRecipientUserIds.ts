@@ -1,8 +1,8 @@
 import type { Database, MessageEntity } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
-import { classifyMentions } from "#src/services/message/mention/classifyMentions";
 import { getMentionNotificationConditions } from "#src/services/message/mention/getMentionNotificationConditions";
+import { getSenderClassifiedMentions } from "#src/services/message/mention/getSenderClassifiedMentions";
 import { getThreadFollowerUserIds } from "#src/services/notification/getThreadFollowerUserIds";
 import { NotificationType, userStatusesInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq, ne, or } from "drizzle-orm";
@@ -22,7 +22,7 @@ export const getMessageRecipientUserIds = async (
   const andWheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, partitionKey)];
   if (userId) andWheres.push(ne(usersToRoomsInMessage.userId, userId));
 
-  const classifiedMentions = classifyMentions(message);
+  const classifiedMentions = await getSenderClassifiedMentions(db, partitionKey, userId, message);
   const mentionConditions = await getMentionNotificationConditions(db, partitionKey, classifiedMentions);
   andWheres.push(or(eq(usersToRoomsInMessage.notificationType, NotificationType.All), ...mentionConditions));
   const roomRecipients = await db

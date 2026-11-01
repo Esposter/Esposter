@@ -6,6 +6,7 @@ import { incrementMentionCounts } from "#src/services/message/incrementMentionCo
 import { createMockDb } from "@esposter/db-mock";
 import {
   NotificationType,
+  RoomPermission,
   roomRolesInMessage,
   roomsInMessage,
   RoomType,
@@ -57,7 +58,10 @@ describe(incrementMentionCounts, () => {
       { notificationType: NotificationType.DirectMessage, roomId, userId: senderUserId },
     ]);
 
-    await db.insert(roomRolesInMessage).values({ id: roleId, name, roomId });
+    // The sender holds this role, so its broadcasts are theirs to make
+    await db
+      .insert(roomRolesInMessage)
+      .values({ id: roleId, name, permissions: RoomPermission.MentionEveryone, roomId });
     await db.insert(usersToRoomRolesInMessage).values([
       { roleId, roomId, userId: roleMemberUserId },
       { roleId, roomId, userId: senderUserId },
@@ -140,6 +144,18 @@ describe(incrementMentionCounts, () => {
     expect(getMentionedUserIds(updatedUsersToRooms)).toStrictEqual(
       new Set([nullStatusUserId, onlineUserId, roleMemberUserId]),
     );
+  });
+
+  test("@everyone from a sender without MentionEveryone increments nobody", async () => {
+    expect.hasAssertions();
+
+    const updatedUsersToRooms = await incrementMentionCounts(db, {
+      message: createMention(MENTION_EVERYONE_ID),
+      partitionKey: roomId,
+      userId: neverUserId,
+    });
+
+    expect(updatedUsersToRooms).toHaveLength(0);
   });
 
   test("role mention increments role members excluding sender", async () => {

@@ -1,8 +1,8 @@
 import type { Database, MessageEntity, UserToRoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
-import { classifyMentions } from "#src/services/message/mention/classifyMentions";
 import { getMentionBadgeConditions } from "#src/services/message/mention/getMentionBadgeConditions";
+import { getSenderClassifiedMentions } from "#src/services/message/mention/getSenderClassifiedMentions";
 import { userStatusesInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq, inArray, ne, or, sql } from "drizzle-orm";
 
@@ -13,7 +13,7 @@ export const incrementMentionCounts = async (
   db: Database,
   { message, partitionKey, userId }: Pick<MessageEntity, "message" | "partitionKey" | "userId">,
 ): Promise<UserToRoomInMessage[]> => {
-  const classifiedMentions = classifyMentions(message);
+  const classifiedMentions = await getSenderClassifiedMentions(db, partitionKey, userId, message);
   const mentionCondition = or(...(await getMentionBadgeConditions(db, partitionKey, classifiedMentions)));
   if (!mentionCondition) return [];
 

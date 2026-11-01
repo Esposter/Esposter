@@ -8,7 +8,7 @@ The send itself publishes unconditionally: the request path never asks whether a
 
 ```mermaid
 flowchart TD
-  M["Message published"] --> C["classifyMentions(message html)"]
+  M["Message published"] --> C["getSenderClassifiedMentions(message html)<br/>broadcasts need the sender's MentionEveryone"]
   C --> R["room members: notificationType = All<br/>OR a mention condition matches"]
   M -->|"the send is a reply"| T["thread followers of the root<br/>minus unfollowed, minus Never"]
   R --> U(("recipient user ids"))
@@ -20,7 +20,7 @@ Recipients are resolved as **user ids**, not as device rows, and the devices are
 
 `getMessageRecipientUserIds(db, { message, partitionKey, threadRootRowKey, userId })`:
 
-1. Parse mention `data-id` attributes from the message HTML → split into `regularUserIds | @here | @everyone`.
+1. Parse mention `data-id` attributes from the message HTML → split into `regularUserIds | @here | @everyone`, with the two broadcasts dropped unless the sender holds `MentionEveryone`.
 2. One SQL query over the room's members:
 
 ```text
@@ -40,7 +40,7 @@ usersToRooms
 
 3. When the send is a reply, union in the thread's followers — everyone following the root, minus the replier and minus anyone muted at room level. The follow model and its rules are [thread follows](../thread-follows/design.md).
 
-A webhook message has no sender to exclude, so every `All` member is reached including the app user's own account.
+A webhook message has no sender to exclude, so every `All` member is reached including the app user's own account. It has no sender permission to read either, so its `@everyone` and `@here` reach as they always have.
 
 ### `NotificationType` (on `usersToRooms`)
 
@@ -58,9 +58,10 @@ A reply deep-links to the thread root rather than to itself: the thread is where
 
 ## Key files
 
-| File                                                                  | Role                                                |
-| :-------------------------------------------------------------------- | :-------------------------------------------------- |
-| `packages/db/src/services/notification/getMessageRecipientUserIds.ts` | the room's recipients, thread followers unioned in  |
-| `packages/db/src/services/notification/getThreadFollowerUserIds.ts`   | the thread half of that union                       |
-| `apps/functions/src/services/notification/resolveNotification.ts`     | the message case — body, deep link, recipients      |
-| `apps/web/server/services/message/createUserMessage.ts`               | publishes one notification per send, reply included |
+| File                                                                      | Role                                                |
+| :------------------------------------------------------------------------ | :-------------------------------------------------- |
+| `packages/db/src/services/notification/getMessageRecipientUserIds.ts`     | the room's recipients, thread followers unioned in  |
+| `packages/db/src/services/notification/getThreadFollowerUserIds.ts`       | the thread half of that union                       |
+| `packages/db/src/services/message/mention/getSenderClassifiedMentions.ts` | broadcasts held to the sender's `MentionEveryone`   |
+| `apps/functions/src/services/notification/resolveNotification.ts`         | the message case — body, deep link, recipients      |
+| `apps/web/server/services/message/createUserMessage.ts`                   | publishes one notification per send, reply included |

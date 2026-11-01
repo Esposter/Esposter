@@ -6,11 +6,11 @@ Red count chips in the room sidebar for rooms with unread `@mentions` of the cur
 
 A per-user, per-room counter (`usersToRooms.mentionCount`) increments when a message mentioning the user arrives and resets when the user views the room. The room list item renders it as a red chip, taking precedence over the plain unread name colour — Discord behaviour.
 
-`createMessage` classifies the message's mentions (`classifyMentions`) and bumps every targeted member's counter in a single batched UPDATE (`incrementMentionCounts`): direct and role mentions badge unconditionally; `@everyone`/`@here` follow each member's notification rules (`Never` opts out; `@here` requires online, with no status row treated as online — the same broadcast targeting as [push notifications](../push-notifications/design.md)); the sender is always excluded. The increment runs best-effort after the Table write — a failed increment loses one badge count, never a message, so there is no retry.
+`createMessage` classifies the message's mentions (`getSenderClassifiedMentions`) and bumps every targeted member's counter in a single batched UPDATE (`incrementMentionCounts`): direct and role mentions badge unconditionally; `@everyone`/`@here` follow each member's notification rules (`Never` opts out; `@here` requires online, with no status row treated as online — the same broadcast targeting as [push notifications](../push-notifications/design.md)), and only for a sender who holds `MentionEveryone`; the sender is always excluded. The increment runs best-effort after the Table write — a failed increment loses one badge count, never a message, so there is no retry.
 
 ### Each consumer classifies for itself
 
-Badging and [push notifications](../push-notifications/design.md) both resolve the same three mention kinds, and `createMessage` invokes them back to back — so both call `classifyMentions` on the same body. That repetition is deliberate: the classification is a regex pass over the message text with no I/O, and the one query behind it (`getRoleMemberIds`) is skipped entirely unless the message actually mentions a role.
+Badging and [push notifications](../push-notifications/design.md) both resolve the same three mention kinds, and `createMessage` invokes them back to back — so both call `getSenderClassifiedMentions` on the same body. That repetition is deliberate: the classification is a regex pass over the message text, and each query behind it is skipped unless the message needs it — `getRoleMemberIds` unless it mentions a role, and the sender's `MentionEveryone` read unless it mentions a broadcast.
 
 Threading a precomputed `ClassifiedMentions` through instead would buy that back at a real cost. `getMessageRecipientUserIds` is also called from outside the send path, where no classification has happened, so the parameter would have to be optional — and an optional precomputed input is a parameter a caller can pass from the _wrong_ message, turning a self-contained function into one whose correctness depends on its caller. What the two functions share is the resolution rule, and that is already shared: `getMentionConditions` holds one copy of it, and the badge and notification variants differ only in the condition a resolved set of user ids becomes, which is its one parameter.
 
@@ -39,15 +39,16 @@ flowchart LR
 
 ## Key files
 
-| File                                                             | Role                                                      |
-| ---------------------------------------------------------------- | --------------------------------------------------------- |
-| `packages/db-schema/src/schema/message/usersToRoomsInMessage.ts` | `mentionCount` column + check                             |
-| `packages/db/src/services/message/incrementMentionCounts.ts`     | batched increment (`getMentionBadgeConditions` targeting) |
-| `apps/web/server/services/message/createUserMessage.ts`          | best-effort increment + `updateUserToRoom` fan-out        |
-| `apps/web/server/trpc/routers/userToRoom.ts`                     | `clearMentionCount`                                       |
-| `apps/web/app/pages/messages/[id]/index.vue`                     | clears the count on room view                             |
-| `apps/web/app/components/Message/Model/Room/List/Item.vue`       | red count chip                                            |
-| `apps/web/app/services/message/room/list/checkIsRoomUnread.ts`   | the unread flag that un-mutes the row, beside the chip    |
+| File                                                                      | Role                                                      |
+| ------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `packages/db-schema/src/schema/message/usersToRoomsInMessage.ts`          | `mentionCount` column + check                             |
+| `packages/db/src/services/message/incrementMentionCounts.ts`              | batched increment (`getMentionBadgeConditions` targeting) |
+| `packages/db/src/services/message/mention/getSenderClassifiedMentions.ts` | broadcasts held to the sender's `MentionEveryone`         |
+| `apps/web/server/services/message/createUserMessage.ts`                   | best-effort increment + `updateUserToRoom` fan-out        |
+| `apps/web/server/trpc/routers/userToRoom.ts`                              | `clearMentionCount`                                       |
+| `apps/web/app/pages/messages/[id]/index.vue`                              | clears the count on room view                             |
+| `apps/web/app/components/Message/Model/Room/List/Item.vue`                | red count chip                                            |
+| `apps/web/app/services/message/room/list/checkIsRoomUnread.ts`            | the unread flag that un-mutes the row, beside the chip    |
 
 ## Notes
 

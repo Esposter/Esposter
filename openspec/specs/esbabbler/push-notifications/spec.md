@@ -34,11 +34,11 @@ A member's notification setting for a room SHALL decide which messages in that r
 
 ### Requirement: An everyone mention notifies every member who has not muted the room
 
-An everyone mention SHALL notify every member whose setting for the room is not Never.
+An everyone mention SHALL notify every member whose setting for the room is not Never, when the sender holds the mention everyone permission.
 
 #### Scenario: a message mentions everyone
 
-- **GIVEN** a member who is set to direct mentions only and a member who has muted the room
+- **GIVEN** a sender who holds the mention everyone permission, a member who is set to direct mentions only and a member who has muted the room
 - **WHEN** a message mentions everyone
 - **THEN** the first member is notified
 - **AND** the muted member is not notified

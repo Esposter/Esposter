@@ -61,7 +61,7 @@ A message's mentions SHALL add to the count of every member they reach, and SHAL
 
 #### Scenario: Everyone mention respects notification settings
 
-- **GIVEN** a message mentions everyone
+- **GIVEN** a message from a sender who holds the mention everyone permission mentions everyone
 - **WHEN** it is sent
 - **THEN** the mention count goes up only for members whose notification settings allow it
 
@@ -85,7 +85,7 @@ A member whose notification setting is Never SHALL NOT have everyone or here men
 #### Scenario: Never setting skips everyone mentions
 
 - **GIVEN** a member's notification setting is Never
-- **WHEN** a message mentions everyone
+- **WHEN** a message from a sender who holds the mention everyone permission mentions everyone
 - **THEN** the member's mention count does not go up
 
 ### Requirement: A failed mention count never stops the message from being sent

@@ -149,3 +149,13 @@ A member SHALL be able to send a message in a room only when the room grants the
 - **GIVEN** a member whose role grants administrator, in a room where no role grants send messages
 - **WHEN** the member sends a message in the room
 - **THEN** the message is sent
+
+### Requirement: A broadcast mention needs the mention everyone permission
+
+An everyone or here mention SHALL notify the whole room only when the sender holds the mention everyone permission; without it the mention is read as plain text.
+
+#### Scenario: a member without the permission mentions everyone
+
+- **GIVEN** a member whose roles do not grant mention everyone
+- **WHEN** the member sends a message that mentions everyone
+- **THEN** the message is sent, and the mention notifies no one and raises no mention count

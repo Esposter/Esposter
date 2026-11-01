@@ -7,12 +7,15 @@ import { createMockDb } from "@esposter/db-mock";
 import {
   getReverseTickedTimestamp,
   NotificationType,
+  RoomPermission,
+  roomRolesInMessage,
   roomsInMessage,
   RoomType,
   threadFollowsInMessage,
   usersInAuth,
   UserStatus,
   userStatusesInMessage,
+  usersToRoomRolesInMessage,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { MENTION_EVERYONE_ID, MENTION_HERE_ID } from "@esposter/shared";
@@ -22,6 +25,7 @@ describe(getMessageRecipientUserIds, () => {
   let db: Database;
   const name = "name";
   const roomId = crypto.randomUUID();
+  const roleId = crypto.randomUUID();
   const threadRootRowKey = getReverseTickedTimestamp();
   const allOnlineUserId = crypto.randomUUID();
   const allOfflineUserId = crypto.randomUUID();
@@ -55,6 +59,11 @@ describe(getMessageRecipientUserIds, () => {
       { notificationType: NotificationType.Never, roomId, userId: neverUserId },
       { notificationType: NotificationType.All, roomId, userId: senderUserId },
     ]);
+    // The sender holds this role, so its broadcasts are theirs to make
+    await db
+      .insert(roomRolesInMessage)
+      .values({ id: roleId, name, permissions: RoomPermission.MentionEveryone, roomId });
+    await db.insert(usersToRoomRolesInMessage).values({ roleId, roomId, userId: senderUserId });
     await db.insert(userStatusesInMessage).values([
       { status: UserStatus.Online, userId: allOnlineUserId },
       { status: UserStatus.Offline, userId: allOfflineUserId },
@@ -116,6 +125,18 @@ describe(getMessageRecipientUserIds, () => {
     expect(recipientUserIds.toSorted()).toStrictEqual(
       [...allUserIds, directMessageOnlineUserId, directMessageOfflineUserId].toSorted(),
     );
+  });
+
+  test("@everyone from a sender without MentionEveryone notifies only the room's own recipients", async () => {
+    expect.hasAssertions();
+
+    const recipientUserIds = await getMessageRecipientUserIds(db, {
+      message: createMention(MENTION_EVERYONE_ID),
+      partitionKey: roomId,
+      userId: allOfflineUserId,
+    });
+
+    expect(recipientUserIds.toSorted()).toStrictEqual([allOnlineUserId, allNullStatusUserId, senderUserId].toSorted());
   });
 
   test("@here notifies All and online DirectMessage members excluding offline DirectMessage and sender", async () => {
