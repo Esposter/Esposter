@@ -22,7 +22,6 @@ Sandrone's kit is its record and one behaviour module, `createSandroneKitBehavio
 
 - **The frames are open until a timings run is cached.** Her clips are read with `genshin:assets timings` from the installed game, and no timings output is on disk to confirm the record's 145, 228, 296, 128, 66 and 92 frames, nor the plunges' FallingAttack clips.
 - **Her charged attack's element is open.** The wiki's Self-Evident Proposition text gives its Sweeping Fire and Condensed Beam as AoE Cryo DMG, but the record names no element for it, so it reads the default Physical until a source or the record settles it.
-- **Her charged attack's stamina of 0 is provisional.** No table or wiki text states a stamina cost for it, so the 0 stands as the overlay's value.
 - **Prism Shot's 16.2-metre area is open.** No source gives the hit a radius of 16.2 metres; gcsim's Aino circle is 1.2 on the target ([Aino's kit](../aino/design.md)), and the wiki's cached text gives no area.
 
 ## Key files
