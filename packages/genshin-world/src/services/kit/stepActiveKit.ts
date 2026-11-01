@@ -31,7 +31,6 @@ import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { strikeLunarChargedCloud } from "#src/services/kit/strikeLunarChargedCloud";
 import { strikeMoondriftHarmonyHits } from "#src/services/kit/strikeMoondriftHarmonyHits";
 import { tickEnemyStatuses } from "#src/services/kit/tickEnemyStatuses";
-import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { lightAscendantGleam } from "#src/services/party/lightAscendantGleam";
@@ -209,8 +208,7 @@ export const stepActiveKit = (
     const healthChange = takeOne(healthChanges, index);
     triggerHealthChange(healthChange);
     // A fall ends the summons its character's fall ends, before the kits hear of the change
-    if (healthChange.healthShare < 0 && checkIsCharacterDown(party, healthChange.characterId))
-      endKitFallEffects(kitEffectState.effects, healthChange.characterId);
+    if (healthChange.isFall) endKitFallEffects(kitEffectState.effects, healthChange.characterId);
     emitKitEvent({ ...healthChange, kind: KitEventKind.HealthChanged }, context);
     // A fall a kit refused is heard just after the change that left its member standing
     if (healthChange.isFallRefused)

@@ -31,12 +31,14 @@ import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
 import { createParty } from "#src/services/party/createParty";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { reviveParty } from "#src/services/party/reviveParty";
 import { readPuzzleHit } from "#src/services/puzzle/readPuzzleHit";
 import { noop, takeOne } from "@esposter/shared";
 import {
@@ -295,6 +297,21 @@ describe(stepActiveKit, () => {
         overflowHealthShare: 0,
       },
     ]);
+  });
+
+  test("ends a summon on its character's fall even when the member is revived before the step", () => {
+    expect.hasAssertions();
+    const combatant = createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT);
+    const summon = createKitSummon(createContext([combatant]).body, combatant, [], {
+      isEndedOnFall: true,
+      secondsRemaining: 5,
+    });
+    const context = createContext([combatant], { effects: [summon] });
+    damagePartyMember(context.party, TRAVELER_CHARACTER_ID, 1);
+    reviveParty(context.party);
+    stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, createControls());
+
+    expect(summon.secondsRemaining).toBe(0);
   });
 
   test("sends the team's kits a fall a kit refused just after the change that left its member standing", () => {

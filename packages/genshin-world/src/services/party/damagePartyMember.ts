@@ -28,16 +28,18 @@ export const damagePartyMember = (
   const remainingHealthShare = previousHealthShare - lostHealthShare;
   const isFallRefused = remainingHealthShare <= 0 && fallRefusal?.refuses() === true;
   partyMember.healthShare = isFallRefused ? fallRefusal.healthShare : Math.max(0, remainingHealthShare);
+  const isFall = partyMember.healthShare === 0;
   party.healthChanges.push({
     bondOfLifeShare: 0,
     characterId,
     ...(element === undefined ? {} : { element }),
     healthShare: partyMember.healthShare - previousHealthShare,
     isFallRefused,
+    ...(isFall ? { isFall: true } : {}),
     overflowHealthShare: 0,
     ...(sourceCharacterId === undefined ? {} : { sourceCharacterId }),
   });
-  if (partyMember.healthShare > 0) return;
+  if (!isFall) return;
   partyMember.energy = 0;
   if (getDeployedCharacterIds(party)[party.activeIndex] === characterId)
     party.fallSecondsRemaining = PARTY_FALL_SECONDS;
