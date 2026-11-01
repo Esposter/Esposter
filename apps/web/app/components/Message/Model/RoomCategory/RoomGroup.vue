@@ -59,7 +59,6 @@ const headerAttrs = computed(() =>
 
 <template>
   <div>
-    <!-- A right-click on the header opens the same actions its overflow button does -->
     <UiCollapsible v-if="category" v-model="isOpen" :header-attrs>
       <template #title>
         <span text-sm text-muted flex-1 min-w-0 truncate uppercase>{{ category.name }}</span>
