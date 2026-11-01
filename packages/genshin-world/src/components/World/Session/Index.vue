@@ -8,49 +8,13 @@ import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
 import type { TresCanvasInstance } from "@tresjs/core";
 
-import AchievementScreen from "#src/components/Achievement/Screen/Index.vue";
-import BookReaderScreen from "#src/components/Archive/BookReader/Index.vue";
-import ArchiveScreen from "#src/components/Archive/Screen/Index.vue";
-import CharacterScene from "#src/components/Character/Scene/Index.vue";
-import CharacterScreen from "#src/components/Character/Screen/Index.vue";
-import CharacterTerms from "#src/components/Character/Terms/Index.vue";
-import ProcessingScreen from "#src/components/Cooking/Processing/Index.vue";
-import CookingScreen from "#src/components/Cooking/Screen/Index.vue";
-import CraftingScreen from "#src/components/Crafting/Screen/Index.vue";
-import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
-import DomainScreen from "#src/components/Domain/Screen/Index.vue";
-import ExpeditionLoader from "#src/components/Expedition/Loader/Index.vue";
-import FishingScreen from "#src/components/Fishing/Screen/Index.vue";
-import ForgeScreen from "#src/components/Forge/Screen/Index.vue";
-import GameOverScreen from "#src/components/GameOver/Index.vue";
-import GcgSession from "#src/components/Gcg/Session/Index.vue";
-import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
-import HudNavigation from "#src/components/Hud/Navigation/Index.vue";
-import HudScreen from "#src/components/Hud/Screen/Index.vue";
-import HudShortcutWheel from "#src/components/Hud/ShortcutWheel/Index.vue";
-import OfferChoice from "#src/components/Interaction/OfferChoice/Index.vue";
-import InteractionPromptList from "#src/components/Interaction/PromptList/Index.vue";
-import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
-import MailScreen from "#src/components/Mail/Screen/Index.vue";
-import MapOverlay from "#src/components/Map/Overlay/Index.vue";
-import MenuScreen from "#src/components/Menu/Screen/Index.vue";
-import MenuSettings from "#src/components/Menu/Settings/Index.vue";
-import MenuTime from "#src/components/Menu/Time/Index.vue";
-import PaimonsBargainsScreen from "#src/components/PaimonsBargains/Screen/Index.vue";
-import PartyScreen from "#src/components/Party/Screen/Index.vue";
-import QuestScreen from "#src/components/Quest/Screen/Index.vue";
-import ReputationScreen from "#src/components/Reputation/Screen/Index.vue";
-import ShopScreen from "#src/components/Shop/Screen/Index.vue";
-import SpiralAbyssBenediction from "#src/components/SpiralAbyss/Benediction/Index.vue";
-import SpiralAbyssEntryScreen from "#src/components/SpiralAbyss/Entry/Index.vue";
-import StatueScreen from "#src/components/Statue/Screen/Index.vue";
-import StatueWorshipScreen from "#src/components/Statue/Worship/Index.vue";
-import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
-import WorldEnemyNameTags from "#src/components/World/EnemyNameTags/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldRealm from "#src/components/World/Realm/Index.vue";
-import TipPopup from "#src/components/World/Tip/Index.vue";
+import WorldSessionHud from "#src/components/World/Session/Hud/Index.vue";
+import WorldSessionMenu from "#src/components/World/Session/Menu/Index.vue";
+import WorldSessionScreens from "#src/components/World/Session/Screens/Index.vue";
+import WorldSessionWorkshop from "#src/components/World/Session/Workshop/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useMiningOutcrops } from "#src/composables/useMiningOutcrops";
 import { useStoredGenshinSettings } from "#src/composables/useStoredGenshinSettings";
@@ -124,7 +88,6 @@ import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { createTresRenderer } from "#src/services/scene/createTresRenderer";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getTeamAntiColdRatio } from "#src/services/sheerCold/getTeamAntiColdRatio";
-import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
@@ -139,8 +102,6 @@ import {
   QualityTierSettingsMap,
   STAMINA_MAX,
 } from "genshin-engine";
-import { CharacterMenuTab, InventorySort, ItemCategory } from "genshin-interface";
-import { GameTextKey } from "genshin-text";
 import { Group, PCFShadowMap, Vector3 } from "three";
 
 interface Props extends WorldScreenProps, WorldTables {}
@@ -1454,585 +1415,309 @@ useWorldSaveSync({
       />
       <WorldRealm v-else />
     </TresCanvas>
-    <WorldEnemyNameTags
-      :elemental-sight
-      :enemy-kind-map="enemyTables.enemyKindMap"
-      :enemy-map="kitContext.enemyMap"
-      :get-camera
-      :get-ground-height
-      :name-text
-      :origin
-    />
-    <!-- The shortcut wheel drawn over the world while its key is held, its entries and their pick from the move -->
-    <div v-if="isShortcutWheelOpen" class="shortcut-wheel">
-      <HudShortcutWheel
-        :direction-count="shortcutWheelDirectionCount"
-        :game-text
-        :picked-index="shortcutWheelPickedIndex"
-      />
-    </div>
-    <!-- No HUD over a reference's held camera or a witness render, which the game's recordings show bare -->
-    <HudNavigation
-      v-if="isHudShown && pointedLandmark"
-      :get-camera
-      :get-ground-height
-      :landmark="pointedLandmark"
-      :origin
-    />
-    <HudScreen
-      v-if="isHudShown"
-      :camera="mapCamera"
+    <WorldSessionHud
+      :bag-full-hint
       :catalogue
       :character-data-map="statTables.characterDataMap"
       :character-id-skill-glyphs-map
-      :frame="hudFrame"
-      :game-text
+      :claim-prompt
+      :domain-claim-offers
+      :elemental-sight
+      :enemy-kind-map="enemyTables.enemyKindMap"
+      :enemy-map="kitContext.enemyMap"
       :gadget-cooldown-seconds="equippedGadget?.cooldownSeconds"
+      :game-text
+      :get-camera
+      :get-ground-height
+      :hud-frame="hudFrame"
+      :hud-interface-rects="hudInterfaceRects"
+      :hud-member="hudMember"
       :input
-      :interface-rects="hudInterfaceRects"
+      :interaction-prompts
+      :is-hud-shown="isHudShown"
+      :is-shortcut-wheel-open="isShortcutWheelOpen"
       :is-touch
-      :landmarks="unlockedLandmarks"
-      :max-stamina="STAMINA_MAX"
+      :map-camera="mapCamera"
+      :name-text
       :near-oculus-places
-      :member="hudMember"
-      :name-text-map="nameText"
+      :origin
       :party
+      :pointed-landmark
       :quest-mark
       :quest-progress="trackerQuest && questProgressMap.get(trackerQuest.id)"
       :quest-text-map
       :quick-swap-open="isQuickSwapOpen"
+      :shortcut-wheel-direction-count
+      :shortcut-wheel-picked-index
+      :showing-tip
+      :tip-text
       :tracked-quest="trackerQuest"
       :traveler-name="savedState.travelerName"
       :trial-seconds-remaining
+      :trounce-claim-prompt
+      :unlocked-landmarks
+      @choose-domain="(offer) => chooseDomainTreeClaim(offer, getWorldNow())"
+      @choose-outcrop="(offer) => chooseOutcropClaim(offer, getWorldNow(), worldLevel, kitContext.random)"
+      @choose-trounce="() => chooseTrounceBlossomClaim(getWorldNow(), worldLevel, kitContext.random)"
+      @close-domain="closeDomainTreeClaim()"
+      @close-outcrop="closeOutcropClaim()"
+      @close-tip="closeTip()"
+      @close-trounce="closeTrounceBlossomClaim()"
       @map="screenKind = ScreenKind.Map"
       @menu="screenKind = ScreenKind.PaimonMenu"
-    >
-      <template #prompts>
-        <InteractionPromptList :interaction-prompts :is-touch @press="(id) => pressInteractable(id)" />
-        <TipPopup
-          v-if="showingTip"
-          :game-text
-          :subtitle="tipText[showingTip.subtitleTextId] || ''"
-          :title="tipText[showingTip.titleTextId] || ''"
-          @close="closeTip()"
-        />
-        <OfferChoice
-          v-if="claimPrompt"
-          :can-restore="claimPrompt.canRestore"
-          :game-text
-          :offers="claimPrompt.offers"
-          @choose="(offer) => chooseOutcropClaim(offer, getWorldNow(), worldLevel, kitContext.random)"
-          @close="closeOutcropClaim()"
-          @restore="restoreOutcropClaim(getWorldNow())"
-        />
-        <OfferChoice
-          v-if="trounceClaimPrompt"
-          :game-text
-          :offers="trounceClaimPrompt.offers"
-          @choose="() => chooseTrounceBlossomClaim(getWorldNow(), worldLevel, kitContext.random)"
-          @close="closeTrounceBlossomClaim()"
-        />
-        <OfferChoice
-          v-if="domainClaimOffers"
-          :game-text
-          :offers="domainClaimOffers"
-          @choose="(offer) => chooseDomainTreeClaim(offer, getWorldNow())"
-          @close="closeDomainTreeClaim()"
-        />
-        <p v-if="bagFullHint" class="bag-full-hint">{{ bagFullHint }}</p>
-      </template>
-    </HudScreen>
-    <MenuScreen
+      @press="(id) => pressInteractable(id)"
+      @restore-outcrop="restoreOutcropClaim(getWorldNow())"
+    />
+    <WorldSessionMenu
       v-model:screen-kind="screenKind"
+      v-model:map-zoom="mapZoom"
+      v-model:characters="characters"
+      v-model:character-copy-count-map="characterCopyCountMap"
+      v-model:settings="settings"
+      v-model:shop-purchases="shopPurchases"
+      v-model:wallet="wallet"
+      v-model:wish-history="wishHistory"
+      v-model:wish-pity-map="wishPityMap"
       :account-avatar-url
       :account-name
+      :achievement-data
+      :achievement-progress-map
+      :active-character-id
       :adventure-exp-progress
       :adventure-rank="rank"
-      :alerted-icons="[]"
+      :archive-data
+      :archive-kills-map
+      :archive-progress-map
+      :book-reading
+      :can-use-long-term-encounter-points="isAdventureEncountersUnlocked && isLongTermPointConvertible"
+      :catalogue
+      :character-id-constellations-map
+      :character-pack-readers
+      :character-talent-kits
+      :companionship-exp-map="savedState.companionshipExpMap"
+      :cooking-progress
+      :dish-use-map
+      :encounter-point-limit
+      :exploration-areas
       :finished-main-quest-ids
+      :gadget-rows
+      :game-data-base-url
       :game-text
+      :get-world-now
+      :handbook-day-commissions
+      :handbook-domains
+      :inventory
+      :instruction-recipe-map
+      :is-adventure-encounters-unlocked
+      :is-mail-bag-full
+      :is-touch
       :is-world-level-adjustable
       :is-world-level-lowered="worldLevelAdjustment.isLowered"
+      :language
+      :mail-data
+      :mails
+      :map-camera
+      :material-data-map
+      :name-text
       :namecard-item-id
       :namecards="profileNamecards"
+      :paimons-bargains-rotation
+      :party
+      :quality-tier
+      :quest-chapters
+      :quest-distance-map
+      :quest-progress-map
+      :quest-text-map
+      :quests-in-progress
+      :recorded-doing-ids
+      :reliquary-sets
       :server-clock-offset-ms
+      :shop-id-shop-good-map
+      :stat-tables
+      :stella-fortuna-name-text-id-map
+      :subarea-labels
+      :talent-upgrade-map
+      :tracked-quest-id
+      :trials
       :traveler-birthday
+      :traveler-bonus-lines
+      :traveler-element
+      :traveler-name="savedState.travelerName"
+      :unlocked-landmarks
+      :whole-encounter-points
+      :whole-long-term-encounter-points
+      :wish-schedule
+      :windrise
       :world-level
       :world-level-changed-at="worldLevelAdjustment.changedAt"
+      :world-now
+      @challenge="(landmark) => challengeWeeklyBoss(landmark)"
+      @claim-all-mails="claimAllMails()"
+      @claim-commission="(commissionId) => claimCommission(commissionId)"
+      @claim-first-clear="(entryId) => claimWeeklyBossFirstClearReward(entryId)"
+      @claim-mail="(mail) => claimMail(mail)"
+      @close="closeScreen()"
+      @close-book="bookReading = undefined"
+      @confirm-time="
+        (minutes) => {
+          if (windrise) windrise.gameClock.minutes = minutes;
+          closeScreen();
+        }
+      "
+      @delete-gift-mail="(mail) => deleteGiftMail(mail)"
+      @delete-read-mails="deleteReadMails()"
+      @destroy="(destruction) => applyDestruction(destruction)"
+      @jump="
+        (pose) => {
+          closeScreen();
+          jumpTo(pose);
+        }
+      "
+      @navigate="(questId) => (trackedQuestId = questId)"
       @pick-namecard="(itemId) => setNamecardItemId(itemId)"
+      @pin-mail="(mail) => toggleMailPin(mail)"
       @quit="emit('quit')"
+      @read-book="(entryId) => readBook(entryId)"
+      @read-mail="(mail) => markMailRead(mail)"
       @set-birthday="(birthday) => chooseTravelerBirthday(birthday)"
       @toggle-world-level="toggleWorldLevel()"
-    >
-      <template #[ScreenKind.Map]>
-        <MapOverlay
-          v-model:metres="mapZoom"
-          :camera="mapCamera"
-          :catalogue
-          :exploration-areas
-          :game-text
-          :landmarks="unlockedLandmarks"
-          :name-text
-          :recorded-doing-ids
-          :now="worldNow"
-          :subarea-labels
-          :wallet
-          @close="closeScreen()"
-          @jump="
-            (pose) => {
-              closeScreen();
-              jumpTo(pose);
-            }
-          "
-        />
-      </template>
-      <template v-if="achievementData" #[ScreenKind.Achievements]>
-        <AchievementScreen
-          :achievements="achievementData.achievements"
-          :categories="achievementData.categories"
-          :game-text
-          :progress-map="achievementProgressMap"
-          :text-map="achievementData.textMap"
-          @close="closeScreen()"
-        />
-      </template>
-      <template v-if="archiveData" #[ScreenKind.Archive]>
-        <BookReaderScreen
-          v-if="bookReading"
-          :body="bookReading.body"
-          :game-text
-          :title="bookReading.title"
-          @close="bookReading = undefined"
-        />
-        <ArchiveScreen
-          v-else
-          :game-text
-          :kills-map="archiveKillsMap"
-          :progress-map="archiveProgressMap"
-          :section-entries-map="archiveData.sectionEntriesMap"
-          :text-map="archiveData.textMap"
-          :weapon-data-map="statTables.weaponDataMap"
-          @close="closeScreen()"
-          @read-book="(entryId) => readBook(entryId)"
-        />
-      </template>
-      <template v-if="mailData" #[ScreenKind.Mail]>
-        <!-- eslint-disable vue/no-restricted-syntax -- the Mail screen's own confirm dialog asks first and emits a delete only once the player confirms -->
-        <MailScreen
-          :birthday-mail-ids="mailData.birthdayMailIds"
-          :game-text
-          :is-bag-full="isMailBagFull"
-          :mail-rows="mailData.mailRows"
-          :mails
-          :material-data-map
-          :names="nameText"
-          :now="worldNow"
-          :text-map="mailData.textMap"
-          @claim="(mail) => claimMail(mail)"
-          @claim-all="claimAllMails()"
-          @close="closeScreen()"
-          @delete-gift="(mail) => deleteGiftMail(mail)"
-          @delete-read="deleteReadMails()"
-          @read="(mail) => markMailRead(mail)"
-          @pin="(mail) => toggleMailPin(mail)"
-        />
-        <!-- eslint-enable vue/no-restricted-syntax -->
-      </template>
-      <template #[ScreenKind.Quests]>
-        <QuestScreen
-          :game-text
-          :quest-chapters
-          :quest-distance-map
-          :quest-progress-map
-          :quests="questsInProgress"
-          :text-map="questTextMap"
-          :tracked-quest-id
-          @close="closeScreen()"
-          @navigate="(questId) => (trackedQuestId = questId)"
-        />
-      </template>
-      <template #[ScreenKind.AdventurerHandbook]>
-        <!-- The world keeps no investigations yet, so the Experience page opens on an empty panel -->
-        <HandbookScreen
-          :commissions="[]"
-          :completed-count="0"
-          :can-use-long-term-encounter-points="isAdventureEncountersUnlocked && isLongTermPointConvertible"
-          :day-commissions="handbookDayCommissions"
-          :domains="handbookDomains"
-          :encounter-point-limit
-          :encounter-points="wholeEncounterPoints"
-          :game-text
-          :investigation-rewards="[]"
-          :is-adventure-encounters-unlocked
-          :is-reward-claimed="false"
-          :long-term-encounter-points="wholeLongTermEncounterPoints"
-          :name-text
-          :total-count="0"
-          @challenge="(landmark) => challengeWeeklyBoss(landmark)"
-          @claim-commission="(commissionId) => claimCommission(commissionId)"
-          @claim-first-clear="(entryId) => claimWeeklyBossFirstClearReward(entryId)"
-          @close="closeScreen()"
-          @use-long-term-encounter-points="convertLongTermPoint()"
-        />
-      </template>
-      <template #[ScreenKind.Character]>
-        <CharacterScreen
-          v-model:characters="characters"
-          v-model:wallet="wallet"
-          :active-character-id
-          :adventure-rank="rank"
-          :character-talent-kits
-          :character-id-constellations-map
-          :companionship-exp-map="savedState.companionshipExpMap"
-          :game-data-base-url
-          :game-text
-          :initial-tab="CharacterMenuTab.Attributes"
-          :inventory
-          :is-touch
-          :language
-          :material-data-map
-          :max-stamina="STAMINA_MAX"
-          :name-text
-          :reliquary-sets
-          :stat-tables
-          :talent-upgrade-map
-          :traveler-bonus-lines
-          :traveler-element
-          @close="closeScreen()"
-          @update:inventory="(nextInventory) => setInventory(nextInventory)"
-        >
-          <template #scene="{ element, tab }">
-            <CharacterScene :element :tab />
-          </template>
-          <template #default="{ characterId }">
-            <div class="character-terms">
-              <CharacterTerms :key="characterId" :character-id :character-pack-readers />
-            </div>
-          </template>
-        </CharacterScreen>
-      </template>
-      <template #[ScreenKind.Inventory]>
-        <InventoryScreen
-          :cooking-progress
-          :dish-use-map
-          :game-text
-          :gadget-rows
-          :initial-category="ItemCategory.Weapon"
-          initial-selected-id=""
-          :initial-sort="InventorySort.Level"
-          :instruction-recipe-map
-          :inventory
-          :material-data-map
-          :names="nameText"
-          :wallet
-          @close="closeScreen()"
-          @destroy="(destruction) => applyDestruction(destruction)"
-          @update:inventory="(nextInventory) => setInventory(nextInventory)"
-          @use="(entryId) => useBagEntry(entryId)"
-        />
-      </template>
-      <template #[ScreenKind.Wish]>
-        <WishScreen
-          v-model:character-copy-count-map="characterCopyCountMap"
-          v-model:characters="characters"
-          v-model:pity-map="wishPityMap"
-          v-model:wish-history="wishHistory"
-          v-model:wallet="wallet"
-          :game-text
-          :inventory
-          :name-text
-          :stat-tables
-          :get-world-now
-          :now="worldNow"
-          :wish-schedule
-          :stella-fortuna-name-text-id-map
-          :trials
-          @close="closeScreen()"
-          @trial="(trial) => openTrial(trial)"
-          @update:inventory="(nextInventory) => setInventory(nextInventory)"
-        />
-      </template>
-      <template #[ScreenKind.PaimonsBargains]>
-        <PaimonsBargainsScreen
-          v-model:characters="characters"
-          v-model:purchases="shopPurchases"
-          :adventure-rank="rank"
-          :character-data-map="statTables.characterDataMap"
-          :game-text
-          :get-world-now
-          :goods="shopIdShopGoodMap.get(PAIMON_BARGAINS_SHOP_ID) ?? []"
-          :inventory
-          :material-data-map
-          :name-text
-          :now="worldNow"
-          :rotation="paimonsBargainsRotation"
-          :wallet
-          :weapon-data-map="statTables.weaponDataMap"
-          @close="closeScreen()"
-          @update:inventory="(nextInventory) => setInventory(nextInventory)"
-          @update:wallet="(nextWallet) => setWallet(nextWallet)"
-        />
-      </template>
-      <!-- The Time screen dials the hour and confirming sets the world's clock to it, from which the world runs on -->
-      <template v-if="windrise" #[ScreenKind.Time]>
-        <MenuTime
-          :clock-minutes="windrise.gameClock.minutes"
-          :game-text
-          @close="closeScreen()"
-          @confirm="
-            (minutes) => {
-              if (windrise) windrise.gameClock.minutes = minutes;
-              closeScreen();
-            }
-          "
-        />
-      </template>
-      <template #[ScreenKind.Settings]>
-        <MenuSettings
-          v-model:settings="settings"
-          :default-quality-tier="qualityTier"
-          :game-text
-          :language
-          @close="closeScreen()"
-        />
-      </template>
-      <template #[ScreenKind.PartySetup]>
-        <PartyScreen
-          :character-data-map="statTables.characterDataMap"
-          :characters
-          :game-text
-          :name-text
-          :party
-          :traveler-name="savedState.travelerName"
-          @close="closeScreen()"
-        />
-      </template>
-    </MenuScreen>
-    <GameOverScreen
-      v-if="screenKind === ScreenKind.GameOver"
-      :revive-label="gameText[GameTextKey.Revive]"
-      :title="gameText[GameTextKey.PlayerDieNone]"
-      @revive="
-        reviveFallenParty();
-        closeScreen();
-      "
+      @trial="(trial) => openTrial(trial)"
+      @update-inventory="(nextInventory) => setInventory(nextInventory)"
+      @update-wallet="(nextWallet) => setWallet(nextWallet)"
+      @use="(entryId) => useBagEntry(entryId)"
+      @use-long-term-encounter-points="convertLongTermPoint()"
     />
-    <DialogueTalk
-      v-if="screenKind === ScreenKind.Dialogue && talk"
-      :key="talk.id"
+    <WorldSessionScreens
+      v-model:auto-recover="autoRecoverSetting"
+      v-model:expeditions="expeditions"
+      v-model:power="restorativePower"
+      v-model:reputation-level="reputationLevel"
+      v-model:shop-purchases="shopPurchases"
+      :abyss-blessing
+      :abyss-choice-chamber-index
+      :abyss-choice-floor-index
+      :abyss-choices
+      :abyss-floors-offered
+      :adventure-rank="rank"
+      :cast-view
+      :character-passive-group-id-map
+      :completed-main-quest-ids="completedMainQuestIds"
+      :domain-level-rows
+      :down-character-ids
+      :expedition-characters
+      :game-data-base-url
       :game-text
-      :is-duel-offered="talkDuelGameId !== undefined"
-      :offers="talkOffers"
+      :gcg-game-id
+      :get-character-name="getCharacterName"
+      :get-max-health="(characterId) => getMemberMaxHealth(characterId) ?? 0"
+      :get-region-progress
+      :get-world-now
+      :get-worship-item-name
+      :inventory
+      :is-in-domain="domainArena !== undefined"
+      :language
+      :material-data-map
+      :name-text
+      :party
+      :random="kitContext.random"
+      :region-statue-progress-map
+      :reputation
+      :reputation-bounty-offer
+      :reputation-city
+      :reputation-offer-title
+      :screen-kind
+      :shop-id
+      :shop-id-shop-good-map
+      :statue-count="resonatedRegionIds.length"
       :talk
-      :text-map="talkTextMap"
+      :talk-duel-game-id
+      :talk-offers
+      :talk-text-map
+      :wallet
+      :world-now
+      :worship-levels
+      :worship-region-id
+      @accept="acceptReputationOffer()"
       @begin="(talkId) => beginTalk(talkId)"
+      @blessing="screenKind = ScreenKind.Blessing"
+      @choose-benediction="(towerBuffId) => chooseAbyssBenediction(towerBuffId)"
+      @choose-floor="
+        (floorId, chamberId) => {
+          enterAbyssChamber(floorId, chamberId);
+          closeScreen();
+        }
+      "
+      @claim-worship="claimWorship()"
+      @close="closeScreen()"
       @duel="
         gcgGameId = talkDuelGameId;
         screenKind = ScreenKind.GcgDuel;
       "
       @end="endTalk()"
-    />
-    <ReputationScreen
-      v-if="screenKind === ScreenKind.Reputation && reputationCity"
-      v-model:level="reputationLevel"
-      :game-text
-      :material-data-map
-      :name-text
-      :bounty-offer="reputationBountyOffer"
-      :offer-title="reputationOfferTitle"
-      :progress="reputation"
-      :reputation="reputationCity"
-      @accept="acceptReputationOffer()"
-      @close="closeScreen()"
-    />
-    <GcgSession
-      v-if="screenKind === ScreenKind.GcgDuel && gcgGameId !== undefined"
-      :game-data-base-url
-      :game-id="gcgGameId"
-      :game-text
-      :language
+      @enter="(dungeonId) => enterDomainLevel(dungeonId)"
       @leave="
+        leaveDomain();
+        closeScreen();
+      "
+      @leave-game="
         (won) => {
           payCardGameReward(gcgGameId, won);
           gcgGameId = undefined;
           closeScreen();
         }
       "
-    />
-    <StatueScreen
-      v-if="screenKind === ScreenKind.Blessing"
-      v-model:auto-recover="autoRecoverSetting"
-      v-model:power="restorativePower"
-      :game-text
-      :get-max-health="(characterId) => getMemberMaxHealth(characterId) ?? 0"
-      :get-name="getCharacterName"
-      :get-now="getWorldNow"
-      :party
-      :statue-count="resonatedRegionIds.length"
-      @close="closeScreen()"
-      @worship="screenKind = ScreenKind.Worship"
-    />
-    <StatueWorshipScreen
-      v-if="screenKind === ScreenKind.Worship && worshipRegionId"
-      :game-text
-      :get-item-name="getWorshipItemName"
-      :levels="worshipLevels"
-      :progress="getRegionProgress(worshipRegionId)"
-      @blessing="screenKind = ScreenKind.Blessing"
-      @claim="claimWorship()"
-      @close="closeScreen()"
-      @offer="offerWorship()"
-    />
-    <CookingScreen
-      v-if="screenKind === ScreenKind.Cooking && cookingRecipe"
-      v-model:progress="cookingProgress"
-      v-model:recipe="cookingRecipe"
-      :avatar-id="activeCharacterId"
-      :game-text
-      :inventory
-      :material-data-map
-      :name-text
-      :random="kitContext.random"
-      :recipes="openCookingRecipes"
-      :talent="cookingTalents[activeCharacterId]"
-      @close="closeScreen()"
-      @update:inventory="(nextInventory) => setInventory(nextInventory)"
-    />
-    <ProcessingScreen
-      v-if="screenKind === ScreenKind.Processing"
-      v-model:jobs="processingJobs"
-      :game-text
-      :inventory
-      :material-data-map
-      :name-text
-      :now="getWorldNow"
-      :recipes="processingRecipes"
-      @close="closeScreen()"
-      @update:inventory="(nextInventory) => setInventory(nextInventory)"
-    />
-    <FishingScreen v-if="screenKind === ScreenKind.Fishing" :view="castView" />
-    <DomainScreen
-      v-if="screenKind === ScreenKind.Domain"
-      :game-text
-      :is-in-domain="domainArena !== undefined"
-      :levels="domainLevelRows"
-      @close="closeScreen()"
-      @enter="(dungeonId) => enterDomainLevel(dungeonId)"
-      @leave="
-        leaveDomain();
+      @offer-worship="offerWorship()"
+      @revive="
+        reviveFallenParty();
         closeScreen();
       "
+      @update-inventory="(nextInventory) => setInventory(nextInventory)"
+      @update-wallet="(nextWallet) => setWallet(nextWallet)"
+      @worship="screenKind = ScreenKind.Worship"
     />
-    <CraftingScreen
-      v-if="screenKind === ScreenKind.Crafting"
+    <WorldSessionWorkshop
+      v-model:adventure-exp="adventureExp"
+      v-model:cooking-progress="cookingProgress"
+      v-model:cooking-recipe="cookingRecipe"
       v-model:crafted-count-map="craftedCountMap"
+      v-model:forge-amount="forgeAmount"
+      v-model:forge-progress="forgeProgress"
+      v-model:forge-recipe-id="forgeRecipeId"
+      v-model:forge-tab="forgeTab"
+      v-model:processing-jobs="processingJobs"
+      :active-character-id
       :adventure-rank="rank"
-      :artifact-drop-tables="craftingArtifactDropTables"
+      :adventure-rank-tables
+      :completed-main-quest-ids
+      :cooking-talents
+      :crafting-artifact-drop-tables="craftingArtifactDropTables"
+      :crafting-progress
+      :crafting-recipes
+      :crafting-strongboxes
       :crafters="crafting.crafters"
+      :forge-definitions
+      :forge-now
+      :forge-recipes
+      :forge-weapons
       :game-text
       :get-world-now
       :initial-crafter-id="crafting.crafterId"
       :inventory
       :material-data-map
       :name-text
-      :now="worldNow"
-      :progress="craftingProgress"
+      :open-cooking-recipes
+      :party-character-ids="getDeployedCharacterIds(party)"
+      :processing-recipes
       :random="kitContext.random"
-      :recipes="craftingRecipes"
       :reliquary-piece-entry-map
-      :strongboxes="craftingStrongboxes"
+      :screen-kind
       :wallet
       :weapon-data-map="statTables.weaponDataMap"
+      :world-now
       @achievement-events="(achievementEvents) => events.emit('achievementEvents', achievementEvents)"
       @close="closeScreen()"
-      @update:inventory="(nextInventory) => setInventory(nextInventory)"
-      @update:wallet="(nextWallet) => setWallet(nextWallet)"
-    />
-    <SpiralAbyssEntryScreen
-      v-if="screenKind === ScreenKind.SpiralAbyss"
-      :blessing="abyssBlessing"
-      :floors="abyssFloorsOffered"
-      :game-text
-      :name-text
-      @choose="
-        (floorId, chamberId) => {
-          enterAbyssChamber(floorId, chamberId);
-          closeScreen();
-        }
-      "
-      @close="closeScreen()"
-    />
-    <SpiralAbyssBenediction
-      v-if="abyssChoices"
-      :chamber="abyssChoiceChamberIndex"
-      :choices="abyssChoices"
-      :floor="abyssChoiceFloorIndex"
-      :game-text
-      :name-text
-      @choose="(towerBuffId) => chooseAbyssBenediction(towerBuffId)"
-    />
-    <ForgeScreen
-      v-if="screenKind === ScreenKind.Forge"
-      v-model:adventure-exp="adventureExp"
-      v-model:amount="forgeAmount"
-      v-model:progress="forgeProgress"
-      v-model:recipe-id="forgeRecipeId"
-      v-model:tab="forgeTab"
-      :adventure-rank="rank"
-      :adventure-rank-tables
-      :completed-main-quest-ids
-      :definitions="forgeDefinitions"
-      :game-text
-      :inventory
-      :is-in-realm="false"
-      :now="forgeNow"
-      :party-character-ids="getDeployedCharacterIds(party)"
-      :random="kitContext.random"
-      :recipes="forgeRecipes"
-      :wallet
-      :weapons="forgeWeapons"
-      @achievement-events="(achievementEvents) => events.emit('achievementEvents', achievementEvents)"
-      @close="closeScreen()"
-      @update:inventory="(nextInventory) => setInventory(nextInventory)"
-      @update:wallet="(nextWallet) => setWallet(nextWallet)"
-    />
-    <ShopScreen
-      v-if="screenKind === ScreenKind.Shop"
-      v-model:purchases="shopPurchases"
-      :adventure-rank="rank"
-      :game-text
-      :get-world-now
-      :goods="shopIdShopGoodMap.get(shopId) ?? []"
-      :inventory
-      :material-data-map
-      :name-text
-      :now="worldNow"
-      :reputation-level="reputation.level"
-      :wallet
-      @close="closeScreen()"
-      @update:inventory="(nextInventory) => setInventory(nextInventory)"
-      @update:wallet="(nextWallet) => setWallet(nextWallet)"
-    />
-    <ExpeditionLoader
-      v-if="screenKind === ScreenKind.Expedition"
-      v-model:expeditions="expeditions"
-      :adventure-rank="rank"
-      :characters="expeditionCharacters"
-      :character-passive-group-id-map
-      :completed-quest-ids="completedMainQuestIds"
-      :down-character-ids
-      :game-data-base-url
-      :game-text
-      :inventory
-      :material-data-map
-      :name-text
-      :now="worldNow"
-      :random="kitContext.random"
-      :region-statue-progress-map
-      :wallet
-      @close="closeScreen()"
-      @update:inventory="(nextInventory) => setInventory(nextInventory)"
-      @update:wallet="(nextWallet) => setWallet(nextWallet)"
+      @update-inventory="(nextInventory) => setInventory(nextInventory)"
+      @update-wallet="(nextWallet) => setWallet(nextWallet)"
     />
     <div
       class="teleport-fade"
@@ -2050,50 +1735,10 @@ useWorldSaveSync({
 
 <style scoped>
 /* The package carries no utility classes, so the screen fills its host with a style of its own */
-/* Provisional: where the game's hint sits and how long it stays wait on a recording of the English client at 1080 high */
-.bag-full-hint {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  margin: 0;
-  color: #ece5d8;
-  text-shadow: 0 0 4px rgb(0 0 0 / 0.8);
-}
-
 .world-screen {
   position: relative;
   width: 100%;
   height: 100%;
-}
-
-/* The terms of the character's model, beside its foot, read as its release carries them */
-.character-terms {
-  position: absolute;
-  right: calc(var(--unit) * 120);
-  bottom: calc(var(--unit) * 48);
-  max-width: calc(var(--unit) * 720);
-  max-height: calc(var(--unit) * 300);
-  overflow: auto;
-  color: #ece5d8;
-  font-size: calc(var(--unit) * 22);
-}
-
-.character-terms > pre {
-  margin: 0;
-  font: inherit;
-  white-space: pre-wrap;
-}
-
-/* The shortcut wheel centred over the world, its size the shorter side of the view so it fits any window */
-.shortcut-wheel {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: min(60vh, 60vw);
-  aspect-ratio: 1;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
 }
 
 /* The teleport's fade to the loading screen's background and back, its durations read off the teleport clip */
