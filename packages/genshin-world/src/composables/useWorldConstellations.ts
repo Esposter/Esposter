@@ -1,6 +1,7 @@
 import type { CharacterConstellationKit } from "#src/models/character/CharacterConstellationKit";
 
 import { getCharacterIdConstellationsMap } from "#src/services/character/getCharacterIdConstellationsMap";
+import { getCharacterIdDepotMap } from "#src/services/character/getCharacterIdDepotMap";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
@@ -20,13 +21,14 @@ export const useWorldConstellations = (gameDataBaseUrl: string) => {
   );
   const characterIdConstellationsMap = computed(() => getCharacterIdConstellationsMap(constellationKits.value));
   // The text id of each character's own Stella Fortuna's name, by the character's id, for a character with one set
-  const stellaFortunaNameTextIdMap = computed(() => {
-    const map = new Map<number, string>();
-    for (const { characterId, depots } of constellationKits.value) {
-      const [depot] = depots;
-      if (depots.length === 1 && depot) map.set(characterId, depot.stellaFortuna.nameTextId);
-    }
-    return map;
-  });
+  const stellaFortunaNameTextIdMap = computed(
+    () =>
+      new Map(
+        Array.from(
+          getCharacterIdDepotMap(constellationKits.value),
+          ([characterId, { stellaFortuna }]) => [characterId, stellaFortuna.nameTextId] as const,
+        ),
+      ),
+  );
   return { characterIdConstellationsMap, stellaFortunaNameTextIdMap };
 };

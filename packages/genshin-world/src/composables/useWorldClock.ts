@@ -4,9 +4,9 @@ import { useIntervalFn } from "@vueuse/core";
 import { shallowRef } from "vue";
 
 // The world's time: every saved timer is read against the server's clock, which this machine's own runs behind or ahead of
-// By the offset
-export const useWorldClock = (serverClockOffsetMs: number) => {
-  const getWorldNow = () => getServerNow(serverClockOffsetMs);
+// By the offset, which is measured again after each save
+export const useWorldClock = (getServerClockOffsetMs: () => number) => {
+  const getWorldNow = () => getServerNow(getServerClockOffsetMs());
   // The world's clock as a ref the computeds read, set from getWorldNow once each game minute so a reset or a regeneration that
   // Passes is seen without a write
   const worldNow = shallowRef(getWorldNow());

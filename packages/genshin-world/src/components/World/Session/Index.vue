@@ -287,7 +287,7 @@ const {
   trackerQuest,
 } = useWorldQuests({ events, gameDataBaseUrl, language, savedQuestProgressMap: savedState.quests });
 // The world's time: every saved timer is read against the server's clock, and a ref the computeds read
-const { getWorldNow, worldNow } = useWorldClock(serverClockOffsetMs);
+const { getWorldNow, worldNow } = useWorldClock(() => serverClockOffsetMs);
 // The fishing points in reach, whether fishing is open at them, and the cast held while a point is fished
 const {
   castView,
@@ -448,12 +448,12 @@ const {
   gameDataBaseUrl,
   gameText,
   getGroundHeight,
+  getServerClockOffsetMs: () => serverClockOffsetMs,
   getWorldNow,
   inventory,
   materialDataMap,
   nameText,
   reliquaryPieceEntryMap,
-  serverClockOffsetMs,
   setInventory,
   setWallet,
   wallet,

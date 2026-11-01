@@ -47,12 +47,12 @@ export const useWorldPickups = ({
   gameDataBaseUrl,
   gameText,
   getGroundHeight,
+  getServerClockOffsetMs,
   getWorldNow,
   inventory,
   materialDataMap,
   nameText,
   reliquaryPieceEntryMap,
-  serverClockOffsetMs,
   setInventory,
   setWallet,
   wallet,
@@ -63,9 +63,9 @@ export const useWorldPickups = ({
   gameDataBaseUrl: string;
   gameText: GameText;
   getGroundHeight: (x: number, z: number) => number;
+  getServerClockOffsetMs: () => number;
   getWorldNow: () => Temporal.Instant;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
-  serverClockOffsetMs: number;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {
   // The drops lying in the world, which each defeated enemy's are placed among, and how many drops the page has placed,
@@ -104,7 +104,7 @@ export const useWorldPickups = ({
           : getDroppedItemDefinition(itemId, nameText, weaponDataMap, materialDataMap, reliquaryPieceEntryMap).name,
       position: { x, y: getGroundHeight(x, z), z },
     }));
-    const now = Temporal.Instant.fromEpochMilliseconds(gatheringClock.value.getTime() + serverClockOffsetMs);
+    const now = Temporal.Instant.fromEpochMilliseconds(gatheringClock.value.getTime() + getServerClockOffsetMs());
     // An ore is struck until it breaks rather than picked up, so its points are left out of the pick ups
     const gatherings = gatheringPlaces.value.flatMap(({ id, kind, position: { x, z } }) => {
       const item = idGatheringItemMap.value.get(kind);
