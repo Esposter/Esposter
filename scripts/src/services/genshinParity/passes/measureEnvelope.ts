@@ -1,11 +1,10 @@
 import type { Targets } from "#src/models/genshinParity/passes/Targets";
 import type { WitnessTargetsRead } from "#src/models/genshinParity/passes/WitnessTargetsRead";
 import type { ParityPassReading } from "#src/models/genshinParity/shared/ParityPassReading";
-import type { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import type { WitnessView } from "genshin-world/parity/models/witness/WitnessView";
 import type { Page } from "playwright";
 
-import { WitnessTargetName as TargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
+import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyEnvelope } from "#src/services/genshinParity/passes/compareFamilyEnvelope";
 import { computeEnvelopeRadius } from "#src/services/genshinParity/passes/computeEnvelopeRadius";
 import { computeFamilyEnvelope } from "#src/services/genshinParity/passes/computeFamilyEnvelope";
@@ -17,7 +16,11 @@ import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWi
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { WindrisePartFamily } from "genshin-world";
 
-const TARGET_NAMES: WitnessTargetName[] = [TargetName.Part, TargetName.Depth, TargetName.GeometryNormal];
+const TARGET_NAMES: WitnessTargetName[] = [
+  WitnessTargetName.Part,
+  WitnessTargetName.Depth,
+  WitnessTargetName.GeometryNormal,
+];
 
 // The Oak's shape read on its envelope, a family of scattered cards: the exports' and ours at the reference's camera
 // Each closed at the cards' spacing (`computeEnvelopeRadius`), against a gate read off the exports themselves. The
