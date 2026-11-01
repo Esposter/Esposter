@@ -75,7 +75,7 @@ A convention about to be written into a skill is probed against oxlint first —
 
 ## Prime example — a room-scoped store's writes
 
-The worked case is a room-scoped store's writes: a guard in every callback ends up present in one store and absent in its neighbour, where a writer reachable only by naming its room cannot be misfiled at all (`references/room-scoped-writes.md`).
+The worked case is a room-scoped store's writes (`references/room-scoped-writes.md`).
 
 ## Where this is not the answer
 
