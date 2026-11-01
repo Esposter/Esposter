@@ -117,5 +117,3 @@ Sweeping Time SHALL convert Noelle's normal attacks to Geo with their own poise,
 
 - **WHEN** Sweeping Time starts
 - **THEN** Noelle gains an ATK bonus of 40% of her DEF after 80 frames for 15 seconds
-
-## Open
