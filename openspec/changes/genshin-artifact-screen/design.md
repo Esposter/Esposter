@@ -54,7 +54,7 @@ What works today and what this change adds:
   words, slot names, stats and the set block's lines. Their tests are named in the change's tasks, and the existing
   character, kit and save suites cover what they share.
 - **Built with the bag:** the bag moves (task 6.2). The bag holds each piece as an entry of its own with a unique `id`
-  (task 6.1, landed on `eye` with the character-screen change). The Artifacts tab's Equip opens the bag's pieces for the
+  (task 6.1, built with the character-screen change). The Artifacts tab's Equip opens the bag's pieces for the
   slot and the piece worn goes back to the bag, Unequip returns the worn piece to the bag, and fodder is taken from it
   through `takeFodderArtifacts`.
 - **Not built, and why:** the panel's parity reference and approval (task 5.4), which waits on a browser run.
@@ -67,8 +67,8 @@ What works today and what this change adds:
   reads them. Rejected: deleting the path, since chest drops are being wired to roll artifacts into the bag, and a bag
   piece with nowhere to go is the gap this change closes.
 - **Equip and unequip are pure services over the character.** The bag is written by the caller, so the services do not
-  reach the chest drop path's files. Rejected: having the service put the displaced piece in the bag, since that writes
-  an entry whose shape is not settled.
+  reach the chest drop path's files. Rejected: having the service put the displaced piece in the bag, since the bag is
+  the caller's to write, as above.
 - **The panel names a slot by its index and holds no artifact model.** Its actions emit the index of the picked slot,
   and the host maps it to the character's artifact through these services, so the panel builds against the `Artifact`
   type rather than a view model of its own.
@@ -100,7 +100,7 @@ What works today and what this change adds:
 
 None in this change. A worn artifact is saved in full already (`CharacterSave.artifacts`), so equipping and enhancing a
 worn piece write nothing new. The bag's artifact entry takes the individual piece, a save change that belongs to the
-character-screen change and landed on `eye` with task 6.1, not to this one. This change builds against the `Artifact`
+character-screen change, not to this one. This change builds against the `Artifact`
 type `rollArtifact` returns and writes no second artifact model. The dev backfill rule is that change's to state.
 
 ## Key files
@@ -125,8 +125,8 @@ type `rollArtifact` returns and writes no second artifact model. The dev backfil
 | `scripts/src/services/genshinAssets/stats/getArtifactSetDatas.ts`               | Each bonus's effect text hash, read from its affix row at that piece count                                                       |
 | `packages/genshin-world/src/services/artifact/ArtifactSlotGameTextKeyMap.ts`    | Each artifact slot by the game's name for it, read by the character screen                                                       |
 | `packages/genshin-world/src/components/Character/Screen/Index.vue`              | The Artifacts tab's props: the labels, the slot names, the stats and the set block's lines, from the game text and the tables    |
-| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`             | The bag's add, which takes a dropped artifact in through `addInventoryArtifact`, landed on `eye` with task 6.1                   |
-| `packages/genshin-world/src/services/save/toInventorySave.ts`                   | The bag's save of an artifact entry, landed on `eye` with task 6.1                                                               |
+| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`             | The bag's add, which takes a dropped artifact in through `addInventoryArtifact`                                                  |
+| `packages/genshin-world/src/services/save/toInventorySave.ts`                   | The bag's save of an artifact entry                                                                                              |
 
 New files, as a tree:
 
@@ -156,9 +156,8 @@ packages/genshin-world/src/
   slot and Unequip returns the worn piece to the bag, with the full artifact inventory's notice when the bag cannot take
   it. Equip is disabled for a slot the bag holds no piece for.
 - **The panel's Enhance and Unequip ids are provisional.** The dump's artifact page has no button word of its own for
-  either. Enhance takes the equip page's level-up id, which the weapon page shares in its own name, and Unequip is the one
-  exact "Unequip" in the dump, the potion buff's remove button. The reference frame checks both before the panel is
-  approved, and a different id changes only the enum member's value.
+  either. The reference frame checks both before the panel is approved, and a different id changes only the enum
+  member's value.
 
 ## Sources
 

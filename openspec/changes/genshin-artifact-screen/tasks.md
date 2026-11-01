@@ -58,7 +58,7 @@ Each built task names the test it was written first in, and each test is a scena
 ## 6. The bag, the main stat and the lock
 
 - [x] 6.1 The bag's artifact entry holds a rolled, individual piece with a unique instance id. The character-screen
-      change has landed on `eye`: each artifact enters the bag as an entry of its own, its `id` from the bag's `nextId`.
+      change built it: each artifact enters the bag as an entry of its own, its `id` from the bag's `nextId`.
       Covered by `addInventoryArtifact.test.ts`'s "takes each artifact in as an entry of its own holding the artifact it
       was rolled as".
 - [x] 6.2 Equipping from the bag, unequipping to it and taking fodder from it. Built: the Artifacts tab's Equip opens the
