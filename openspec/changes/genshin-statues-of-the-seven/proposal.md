@@ -14,7 +14,7 @@ The player finds a region's Oculi, offers them at the Worship Statue to level th
 - The Worship Statue claims one reached level per action, paying that level's rewards once.
 - Each level pays the game's rewards for its region when claimed: Adventure EXP, Primogems and Sigils everywhere, and each region's own items.
 - Resonating with a statue changes the Traveler's element to its region's, with that element's constellations coming with the levels.
-- F on a resonated statue opens the Worship Statue, with its levels and the held Oculi, and the Statue's Blessing, with its healing pool and the party's portraits, is one switch away, a click healing a member from the pool. The auto-recover switch and threshold are open task 3.4.
+- F on a resonated statue opens the Worship Statue, with its levels and the held Oculi, and the Statue's Blessing, with its healing pool and the party's portraits, is one switch away, a click healing a member from the pool. The auto-recover switch and threshold are provisional controls on the Statue's Blessing (task 3.4).
 - Standing by a statue for two seconds with auto-recover on revives the fallen and heals members under the threshold from the pool.
 - The statues' state is kept with the world and merged between two saves, so no found Oculus or claimed level is lost.
 
