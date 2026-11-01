@@ -31,6 +31,9 @@ const agentConsolePaneStore = useAgentConsolePaneStore();
 const { isPaneOpen, paneWidth } = storeToRefs(agentConsolePaneStore);
 const agentConsoleSideChatStore = useAgentConsoleSideChatStore();
 const { isSideChatOpen } = storeToRefs(agentConsoleSideChatStore);
+const unreachedConnectionStatuses = computed(() =>
+  connectionStatuses.value.filter(({ status: connectionStatus }) => connectionStatus !== ConnectionStatus.Connected),
+);
 useAgentConsoleCommands();
 // A question from the agent is never left waiting where nobody looks
 watch(
@@ -158,9 +161,7 @@ onConsoleFocusRequest(async () => {
       </p>
       <!-- Each host not reached says so on its own, so one stopping leaves the others' sessions in reach -->
       <div
-        v-for="{ connection, status: connectionStatus } of connectionStatuses.filter(
-          ({ status: connectionStatus }) => connectionStatus !== ConnectionStatus.Connected,
-        )"
+        v-for="{ connection, status: connectionStatus } of unreachedConnectionStatuses"
         :key="connection.id"
         role="status"
         flex

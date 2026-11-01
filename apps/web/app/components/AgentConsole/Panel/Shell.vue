@@ -33,22 +33,13 @@ onMounted(() => {
   <p v-if="!currentSession" text-muted>Open a session to start a shell in its folder.</p>
   <div v-else flex flex-col gap-2 h-full min-h-0>
     <div role="tablist" aria-label="Shells" flex flex-wrap gap-1 items-center>
-      <div v-for="({ id }, index) of sessionShells" :key="id" flex items-center>
-        <UiButton
-          :aria-selected="id === shownShell?.id"
-          role="tab"
-          :variant="id === shownShell?.id ? undefined : UiButtonVariant.Quiet"
-          @click="currentShellId = id"
-        >
-          Shell {{ index + 1 }}
-        </UiButton>
-        <UiIconButton
-          :label="`Close shell ${index + 1}`"
-          :meaning="UiIconMeaning.Close"
-          :variant="UiButtonVariant.Quiet"
-          @click="sendCommand({ shellId: id, type: CommandType.CloseShell })"
-        />
-      </div>
+      <AgentConsolePanelShellTab
+        v-for="({ id }, index) of sessionShells"
+        :key="id"
+        :index
+        :is-shown="id === shownShell?.id"
+        :shell-id="id"
+      />
       <UiIconButton
         label="New shell"
         :meaning="UiIconMeaning.New"

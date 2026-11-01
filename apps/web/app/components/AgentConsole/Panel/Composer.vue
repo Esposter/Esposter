@@ -49,15 +49,10 @@ const mentionMenuItems = computed(() => {
     .slice(0, 50)
     .map((path) => ({ title: path, value: path }));
 });
-const suggestionItems = computed(() => (isMentioning.value ? mentionMenuItems.value : commandMenuItems.value));
-const suggestionLabel = computed(() => (isMentioning.value ? "Files" : "Slash commands"));
 // A side chat has no session until its first question opens one, and there is no file list to ask of none
 watch(isMentioning, (newIsMentioning) => {
   if (newIsMentioning && sessionId.value) sendCommand({ sessionId: sessionId.value, type: CommandType.ListFiles });
 });
-const selectSuggestion = (value: string) => {
-  composerText.value = isMentioning.value ? composerText.value.replace(/@\S*$/u, `@${value} `) : `/${value} `;
-};
 const modelMenuItems = computed(
   () =>
     capabilities.value?.models.map(({ displayName, value }) => ({
@@ -110,15 +105,12 @@ const submit = () => {
       <div v-if="attachments.length > 0" flex flex-wrap gap-1>
         <!-- Keyed by position: an attachment has no id and a file pasted twice repeats its name, and a chip holds no
              State, so a removal only relabels the chips after it and focus stays on the one sliding into its place -->
-        <UiButton
+        <AgentConsolePanelComposerAttachment
           v-for="({ name }, index) of attachments"
           :key="index"
-          :aria-label="`Remove ${name}`"
-          @click="attachments = attachments.toSpliced(index, 1)"
-        >
-          {{ name }}
-          <UiIcon :meaning="UiIconMeaning.Remove" />
-        </UiButton>
+          :name
+          @remove="attachments = attachments.toSpliced(index, 1)"
+        />
       </div>
       <!-- eslint-disable vuejs-accessibility/no-autofocus -- the console sheet's initial focus, which the sheet moves here as it opens on a key the person pressed to type -->
       <textarea
@@ -147,9 +139,13 @@ const submit = () => {
       <!-- eslint-enable vuejs-accessibility/no-autofocus -->
       <UiSuggestions
         :field="prompt ?? undefined"
-        :items="suggestionItems"
-        :label="suggestionLabel"
-        @select="(value) => selectSuggestion(value)"
+        :items="isMentioning ? mentionMenuItems : commandMenuItems"
+        :label="isMentioning ? 'Files' : 'Slash commands'"
+        @select="
+          (value) => {
+            composerText = isMentioning ? composerText.replace(/@\S*$/u, `@${value} `) : `/${value} `;
+          }
+        "
       />
       <div flex flex-wrap gap-2 items-center>
         <!-- The settings are the session's, so a side chat with no session yet has none to choose for. A side chat stays

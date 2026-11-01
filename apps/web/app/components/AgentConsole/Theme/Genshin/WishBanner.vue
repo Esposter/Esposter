@@ -15,7 +15,6 @@ interface Props {
 const { avatar, sessionStartContext } = defineProps<Props>();
 const rarity = computed(() => Number(getSessionStartLine(sessionStartContext, GENSHIN_RARITY_LINE_PREFIX)));
 const starColor = computed(() => getStarColor(rarity.value));
-const stars = computed(() => "★".repeat(rarity.value));
 const loreRates = computed(() => getLoreRates(sessionStartContext));
 const maxProbability = computed(() => Math.max(...loreRates.value.map(({ probability }) => probability)));
 // A session the lore pick drew falls its star in; one a pin or a birthday chose has no rows, so its nameplate is there
@@ -41,7 +40,7 @@ const isRatesShown = ref(false);
           <span rd-full bg-accent h-1 block :style="{ width: `${(probability / maxProbability) * 100}%` }" />
         </li>
       </ul>
-      <span :style="{ color: starColor }">{{ stars }}</span>
+      <span :style="{ color: starColor }">{{ "★".repeat(rarity) }}</span>
       <span fw-bold>{{ avatar }}</span>
       <UiButton
         v-if="isFalling"

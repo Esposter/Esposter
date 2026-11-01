@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getEmbeddedPath } from "@/services/agentConsole/getEmbeddedPath";
 import { useAgentConsolePaneStore } from "@/store/agentConsole/pane";
 
 const agentConsolePaneStore = useAgentConsolePaneStore();
 const { currentPagePath, pagePaths } = storeToRefs(agentConsolePaneStore);
-const { closePage, openPage } = agentConsolePaneStore;
 </script>
 
 <template>
@@ -14,22 +11,7 @@ const { closePage, openPage } = agentConsolePaneStore;
     again. Every frame is same-origin, so it shares the session's sign-in and needs nothing passed into it -->
   <div flex flex-col gap-2 min-h-0>
     <div role="tablist" aria-label="Pages" flex flex-wrap gap-1 items-center>
-      <div v-for="pagePath of pagePaths" :key="pagePath" flex items-center>
-        <UiButton
-          :aria-selected="pagePath === currentPagePath"
-          role="tab"
-          :variant="pagePath === currentPagePath ? undefined : UiButtonVariant.Quiet"
-          @click="openPage(pagePath)"
-        >
-          {{ pagePath }}
-        </UiButton>
-        <UiIconButton
-          :label="`Close ${pagePath}`"
-          :meaning="UiIconMeaning.Close"
-          :variant="UiButtonVariant.Quiet"
-          @click="closePage(pagePath)"
-        />
-      </div>
+      <AgentConsolePaneTab v-for="pagePath of pagePaths" :key="pagePath" :page-path="pagePath" />
     </div>
     <iframe
       v-for="pagePath of pagePaths"
