@@ -16,9 +16,12 @@ describe(stepVerdantDew, () => {
     party.verdantDew.gatheringSeconds = VERDANT_DEW_GATHERING_SECONDS;
     stepVerdantDew(party, VERDANT_DEW_GATHER_SECONDS);
     stepVerdantDew(party, 1);
-    stepVerdantDew(party, 1);
 
-    expect(party.verdantDew).toStrictEqual({ count: 1, gatheredSeconds: expect.closeTo(3 / 60), gatheringSeconds: 0 });
+    expect(party.verdantDew).toStrictEqual({
+      count: 1,
+      gatheredSeconds: expect.closeTo(3 / 60, 9),
+      gatheringSeconds: 0,
+    });
   });
 
   test("gathers nothing past the most Dew a party holds", () => {

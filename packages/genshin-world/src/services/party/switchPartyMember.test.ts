@@ -11,6 +11,9 @@ import { switchPartyMember } from "#src/services/party/switchPartyMember";
 import { describe, expect, test } from "vitest";
 
 describe(switchPartyMember, () => {
+  const lockedState: KitEffectState = { effects: [] };
+  addKitSwapLock(lockedState, 1, 5);
+
   test("puts the member on the field and holds the next switch for the cooldown", () => {
     expect.hasAssertions();
 
@@ -61,8 +64,6 @@ describe(switchPartyMember, () => {
   test("refuses a swap off the character on the field while their swap lock holds, not while another's does", () => {
     expect.hasAssertions();
 
-    const lockedState: KitEffectState = { effects: [] };
-    addKitSwapLock(lockedState, 1, 5);
     const otherState: KitEffectState = { effects: [] };
     addKitSwapLock(otherState, 2, 5);
 
@@ -75,8 +76,6 @@ describe(switchPartyMember, () => {
   test("switches off an empty field slot without a swap lock blocking it", () => {
     expect.hasAssertions();
 
-    const lockedState: KitEffectState = { effects: [] };
-    addKitSwapLock(lockedState, 1, 5);
     const party = createParty([1, 2]);
     party.activeIndex = 2;
     const result = switchPartyMember(party, 1, 0, lockedState.effects);

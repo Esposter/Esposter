@@ -21,13 +21,13 @@ describe(stepPartyCooldowns, () => {
     ]);
   });
 
-  test("the team's Nightsoul burst cooldown runs off with the team's particle cooldowns, on the step its seconds do", () => {
+  test("the team's Nightsoul burst cooldown runs off on the step its seconds do", () => {
     expect.hasAssertions();
 
     const party = createParty([1]);
     party.nightsoulBurstCooldownSeconds = 1;
     stepPartyCooldowns(party, 0.75);
-    expect(party.nightsoulBurstCooldownSeconds).toBeCloseTo(0.25);
+    expect(party.nightsoulBurstCooldownSeconds).toBe(0.25);
     stepPartyCooldowns(party, 0.75);
     expect(party.nightsoulBurstCooldownSeconds).toBe(0);
   });
@@ -40,9 +40,9 @@ describe(stepPartyCooldowns, () => {
     party.particleCooldownSecondsMap.set(ParticleSource.HighVoltage, 5);
     for (let step = 0; step < 300; step++) stepPartyCooldowns(party, FIXED_STEP_SECONDS);
 
-    expect([
-      getPartyMember(party, 1).burstCooldownSeconds,
-      party.particleCooldownSecondsMap.get(ParticleSource.HighVoltage),
-    ]).toStrictEqual([0, 0]);
+    expect([getPartyMember(party, 1), party.particleCooldownSecondsMap.get(ParticleSource.HighVoltage)]).toStrictEqual([
+      { ...createPartyMember(), burstCooldownSeconds: 0 },
+      0,
+    ]);
   });
 });
