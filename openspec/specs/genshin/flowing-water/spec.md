@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's rivers and waterfalls in the anime style, built on the still water's material. A flow carries the ripples and foam downstream, a river is a ribbon along its course at the water's width and level whose bends gather foam on their outer bank, and a waterfall is a sheet whose streaks fall with its height. The game's own courses and falls are fitted in a later pass.
+Genshin's rivers and waterfalls in the anime style, built on the still water's material. A flow carries the ripples and foam downstream, a river is a ribbon along its course at the water's width and level whose bends gather foam on their outer bank, and a waterfall is a sheet whose streaks fall with its height. The falls of Mondstadt and Liyue and the rivers of Liyue are fitted from the game's witness exports.
 
 ## Requirements
 
@@ -84,23 +84,22 @@ A waterfall SHALL be a sheet hung from its lip down by its drop, with streaks fa
 - **WHEN** the streaks are shown
 - **THEN** each streak falls along the sheet and the sheet is clear between the streaks
 
-### Requirement: Rivers and recorded waterfalls are not drawn in the open world yet
+### Requirement: The open world draws the rivers and waterfalls its region data records
 
-The open world SHALL NOT yet draw its rivers or the waterfalls its region data records.
+The open world SHALL draw the rivers and the waterfalls its region data records, the rivers still.
 
-#### Scenario: Region with rivers shows no river
+#### Scenario: Region's recorded river is drawn still
 
-- **GIVEN** a region has rivers in the game
+- **GIVEN** a region's data records a river course
 - **WHEN** the world is shown
-- **THEN** no river is drawn
+- **THEN** the river is drawn as a ribbon that does not flow
 
-#### Scenario: Recorded waterfall is not drawn
+#### Scenario: Recorded waterfall is drawn
 
 - **GIVEN** a region's data records a waterfall
 - **WHEN** the world is shown
-- **THEN** no waterfall sheet is drawn
+- **THEN** its sheet is drawn
 
 ## Open
 
 - [ ] **A flowing water surface carries its ripples and foam downstream at its flow's speed in its direction** — no source yet: the game's water material's flow or a recording of a river's ripples and foam, which the river material at `packages/genshin-engine/src/nodes/createRiverMaterial.ts:12` waits on, so it draws still until then.
-- [ ] **The open world does not draw its rivers or the waterfalls its region data records** — contradicted by `packages/genshin-world/src/components/World/Windrise/Index.vue:579-580`: mounts WorldWaterfalls and WorldRivers; the removing delta is aba38417f6.
