@@ -6,7 +6,7 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { WeaponType } from "genshin-world";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/genshinText/readExcelTable"), () => ({ readExcelTable: vi.fn<typeof readExcelTable>() }));
+vi.mock(import("#src/services/genshinText/readExcelTable"), () => ({ readExcelTable: vi.fn<() => never[]>() }));
 
 const createAvatarRow = (id: number, weaponType: string, useType?: string): ExcelAvatarRow => ({
   attackBase: 0,
