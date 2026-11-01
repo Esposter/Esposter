@@ -23,7 +23,6 @@ flowchart TD
 
 ## Provisional constants
 
-- **Skyward Sonnet's hold is reached at half a second, provisionally.** No table or wiki page gives a press's hold seconds, so the half second stands until the roadmap's References sought list's `venti-skyward-sonnet.mkv` measures it.
 - **Venti's plunges are provisional.** gcsim models only the high plunge after a held Skyward Sonnet and counts its 58 frames from its start in the air (`plunge.go`, lines 17 and 48), where this kit starts a plunge's action as it lands, so each plunge lands as its action starts (the end at 0.4 seconds is Open). The high plunge reaches gcsim's 3.5 metres (line 47), and the collision and the low plunge Amber's 1 and 3 (Open). Their poise is the wiki's Divine Marksmanship.
 
 ## Not built
