@@ -39,13 +39,6 @@ flowchart TD
 
 The catalogue holds Inazuma's areas as the game names them: Narukami Island, Kannazuka, Yashiori Island, Watatsumi Island, Seirai Island, Tsurumi Island, Enkanomiya and the Three Realms Gateway Offering. Subareas include Inazuma City, Ritou, the Grand Narukami Shrine, Mt. Yougou, Chinju Forest, Byakko Plain, Konda Village, the Kamisato Estate, Tatarasuna, the Kujou Encampment, Nazuchi Beach, Jakotsu Mine, Musoujin Gorge, Sangonomiya Shrine, Bourou Village, Suigetsu Pool, Amakane Island, Asase Shrine, Koseki Village, Moshiri Ceremonial Site, Oina Beach, and Enkanomiya's Dainichi Mikoshi, Evernight Temple, The Serpent's Heart and The Serpent's Bowels.
 
-## Build order
-
-1. **Ritou and Narukami Island**, where the game lands: Inazuma City, Tenshukaku and the Grand Narukami Shrine.
-2. **Kannazuka and Yashiori Island**, with the serpent's bones.
-3. **Watatsumi Island**, then **Seirai** and **Tsurumi**.
-4. **Enkanomiya**, as a layer.
-
 ## Reference checklist
 
 Ritou's harbour, Inazuma City's main street, Tenshukaku from the plaza, the Grand Narukami Shrine and its sakura, a torii line on Mt. Yougou, Tatarasuna's forge, the serpent's ribs on Yashiori, Sangonomiya Shrine, Tsurumi in fog, and Dainichi Mikoshi from Enkanomiya's plaza.
