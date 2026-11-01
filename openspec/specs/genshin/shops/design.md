@@ -51,7 +51,6 @@ flowchart TD
 
 ## Open
 
-- [ ] **The goods filed under 1001 are the only monthly ones** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/ShopGoodsExcelConfigData.json`: goodsId 316006 is monthly under shop type 1031.
 - [ ] **Shop 1004 is the Mondstadt grocery, which the wiki's Blanche page confirms** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/ShopExcelConfigData.json`: types shop 1004 as SHOP_TYPE_ACTIVITY_DRAGON_SPINE.
 - [ ] **The rotation's item ids name no row in the dump** — no source: they were not checked against `{data-root}/genshin-parity/text/ExcelBinOutput/ShopGoodsExcelConfigData.json`.
 - [ ] **Each refresh is at four in the morning in UTC+8** — no source: the zone of the daily hour (14400 seconds in `{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, row 101000), and a shop row that names that policy; the wiki's Reset page is not in the cache.
