@@ -13,7 +13,6 @@ import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { applyBluntHit } from "#src/services/combat/aura/applyBluntHit";
 import { applyBurningInternalCooldown } from "#src/services/combat/aura/applyBurningInternalCooldown";
-import { TransformativeReactionPoiseDamageMap } from "#src/services/combat/damage/TransformativeReactionPoiseDamageMap";
 import { applyReactionInternalCooldown } from "#src/services/combat/internalCooldown/applyReactionInternalCooldown";
 import { TransformativeReactionReachRadiusMap } from "#src/services/combat/reach/TransformativeReactionReachRadiusMap";
 import { addSuperconductStatus } from "#src/services/enemy/addSuperconductStatus";
@@ -49,7 +48,8 @@ export const landReactionReach = (
   const enemyStrikeResultMap = new Map<Enemy, EnemyStrikeResult>();
   const radius = reachRadius ?? TransformativeReactionReachRadiusMap[reactionType];
   if (radius === undefined) return enemyStrikeResultMap;
-  const reachPoiseDamage = TransformativeReactionPoiseDamageMap[reactionType] ?? 0;
+  const reactionPoise = context.enemyTables.reactionPoiseMap.get(reactionType);
+  const reachPoiseDamage = reactionPoise?.reachPoiseDamage ?? 0;
 
   const { characterId, level } = combatant;
   const elementalMastery = combatant.attributes.attributeTotalMap[Attribute.ElementalMastery];
@@ -71,7 +71,7 @@ export const landReactionReach = (
     const { elementalState, internalCooldownMap } = enemy;
     const gauge =
       reactionType === TransformativeReactionType.Burning ? applyBurningInternalCooldown(elementalState) : spreadGauge;
-    const reactions = reachPoiseDamage > 0 ? applyBluntHit(elementalState, reachPoiseDamage) : [];
+    const reactions = reactionPoise?.isBlunt ? applyBluntHit(elementalState, reachPoiseDamage) : [];
     if (element !== undefined && gauge !== undefined)
       reactions.push(...applyEnemyElement(enemy, element, gauge, combatant, lunarReactionTypes, stellarReactionTypes));
     if (reactionType === TransformativeReactionType.Superconduct) addSuperconductStatus(enemy);

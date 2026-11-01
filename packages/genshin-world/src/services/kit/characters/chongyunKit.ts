@@ -46,8 +46,9 @@ const RIMECHASER_BLADE_STATUS_SECONDS = 8;
 // Ice Unleashed, from one constellation: the fourth strike releases its ice blades
 // https://genshin-impact.fandom.com/wiki/Ice_Unleashed
 const ICE_UNLEASHED_CONSTELLATION = 1;
-// Atmospheric Revolution, from two constellations: a skill or burst the infused wielder casts has its cooldown cut by 15%
-// While the infusion holds, wherever it stands
+// Atmospheric Revolution, from two constellations: a skill or burst cast within the Frost Field has its cooldown cut
+// By 15%, whoever casts it, as the game's English text gives it, where gcsim cuts only the infused wielder's
+// Skill and burst cooldowns, wherever she stands
 const ATMOSPHERIC_REVOLUTION_CONSTELLATION = 2;
 const ATMOSPHERIC_REVOLUTION_COOLDOWN_MULTIPLIER = 0.85;
 // Frozen Skies, from four constellations: Chongyun's hits on an enemy with Cryo on it while he is on the field give him
@@ -99,15 +100,12 @@ export const createChongyunKitBehaviour = ({
   // The field's infusion on a character, with Steady Breathing's Normal ATK SPD from Ascension 1
   const infuse = (
     kitEffectState: KitEffectState,
-    { ascension, constellationCount }: Combatant,
+    { ascension }: Combatant,
     { characterId, weaponType }: Combatant,
   ): void => {
     if (weaponType === undefined || !MELEE_WEAPON_TYPES.has(weaponType)) return;
     addKitEffect(kitEffectState, {
       characterId,
-      ...(constellationCount >= ATMOSPHERIC_REVOLUTION_CONSTELLATION && {
-        cooldownMultiplier: ATMOSPHERIC_REVOLUTION_COOLDOWN_MULTIPLIER,
-      }),
       element: Element.Cryo,
       kind: "infusion",
       ...(ascension >= STEADY_BREATHING_ASCENSION && {
@@ -183,6 +181,9 @@ export const createChongyunKitBehaviour = ({
             z: body.position.z - Math.cos(body.facing) * FIELD_OFFSET_METRES,
           },
           {
+            ...(combatant.constellationCount >= ATMOSPHERIC_REVOLUTION_CONSTELLATION && {
+              cooldownMultiplier: ATMOSPHERIC_REVOLUTION_COOLDOWN_MULTIPLIER,
+            }),
             id: FROST_FIELD_ID,
             nextTickSeconds: skillHitmarkSeconds,
             onTick: ({ activeCombatant, kitEffectState: tickEffectState }) => {

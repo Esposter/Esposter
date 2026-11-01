@@ -29,7 +29,6 @@ import HudNavigation from "#src/components/Hud/Navigation/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
 import HudShortcutWheel from "#src/components/Hud/ShortcutWheel/Index.vue";
 import OfferChoice from "#src/components/Interaction/OfferChoice/Index.vue";
-import InteractionPromptList from "#src/components/Interaction/PromptList/Index.vue";
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
 import MailScreen from "#src/components/Mail/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
@@ -139,7 +138,7 @@ import {
   GENSHIN_TONE_MAPPING,
   QualityTierSettingsMap,
 } from "genshin-engine";
-import { CharacterMenuTab, InventorySort, ItemCategory } from "genshin-interface";
+import { CharacterMenuTab, GAME_CREAM, InventorySort, ItemCategory } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 import { Group, PCFShadowMap, Vector3 } from "three";
 
@@ -293,6 +292,7 @@ const {
   castView,
   checkIsFishingPoint,
   closeFishing,
+  fishingCatchAts,
   fishingPointPlaces,
   isFishingOpen,
   openFishingPoint,
@@ -307,7 +307,9 @@ const {
   questProgressMap,
   quests,
   random: () => kitContext.random(),
+  savedFishingCatchAts: savedState.fishingCatchAts,
   setInventory,
+  worldNow,
 });
 // The Adventure EXP the session holds live, and the rank and the World Level the camps spawn at from it and the main quests
 const {
@@ -999,11 +1001,12 @@ const {
   claimPrompt: trounceClaimPrompt,
   closeTrounceBlossomClaim,
   forgetTrounceBlossom,
-  lastTeleportAt,
+  lastTeleportAts,
   openTrounceBlossomClaim,
   trounceBlossomInteractables,
   trounceBlossoms,
 } = useWorldTrounceBlossoms({
+  catalogue,
   characters,
   emitGrant: () => emit("grant"),
   enemyKindMap: enemyTables.enemyKindMap,
@@ -1294,6 +1297,7 @@ useWorldSaveSync({
     craftingProgress: craftingProgress.value,
     encounterPoints: encounterPoints.value,
     enemyRespawnMap: enemyRespawnMap.value,
+    fishingCatchAts: fishingCatchAts.value,
     foundOculusIds: foundOculusIds.value,
     frostbearingTreeProgress: frostbearingTreeProgress.value,
     homePlacements: savedState.homePlacements,
@@ -1301,7 +1305,7 @@ useWorldSaveSync({
     homeProgress: savedState.homeProgress,
     inventory: inventory.value,
     investigationDay: savedState.investigationDay,
-    lastTeleportAt: lastTeleportAt.value,
+    lastTeleportAts: lastTeleportAts.value,
     longTermEncounterPoints: longTermEncounterPoints.value,
     mails: mails.value,
     minedOutcrops: minedOutcrops.value,
@@ -1397,7 +1401,7 @@ useWorldSaveSync({
       <WorldWindrise
         v-if="!homeRealmVisit"
         ref="windrise"
-        :last-teleport-at
+        :last-teleport-ats
         :trounce-blossoms
         :mining-outcrop-places="standingMiningOutcrops"
         :oculus-places="unfoundOculusPlaces"
@@ -1496,6 +1500,7 @@ useWorldSaveSync({
       :game-text
       :gadget-cooldown-seconds="equippedGadget?.cooldownSeconds"
       :input
+      :interaction-prompts
       :interface-rects="hudInterfaceRects"
       :is-touch
       :landmarks="unlockedLandmarks"
@@ -1513,9 +1518,9 @@ useWorldSaveSync({
       :trial-seconds-remaining
       @map="screenKind = ScreenKind.Map"
       @menu="screenKind = ScreenKind.PaimonMenu"
+      @press="(id) => pressInteractable(id)"
     >
       <template #prompts>
-        <InteractionPromptList :interaction-prompts :is-touch @press="(id) => pressInteractable(id)" />
         <TipPopup
           v-if="showingTip"
           :game-text
@@ -1735,7 +1740,7 @@ useWorldSaveSync({
           @close="closeScreen()"
           @destroy="(destruction) => applyDestruction(destruction)"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
-          @use="(entryId) => useBagEntry(entryId)"
+          @use="(entryId, count) => useBagEntry(entryId, count)"
         />
       </template>
       <template #[ScreenKind.Wish]>
@@ -2064,7 +2069,7 @@ useWorldSaveSync({
   left: 50%;
   transform: translate(-50%, -50%);
   margin: 0;
-  color: #ece5d8;
+  color: v-bind(GAME_CREAM);
   text-shadow: 0 0 4px rgb(0 0 0 / 0.8);
 }
 
@@ -2082,7 +2087,7 @@ useWorldSaveSync({
   max-width: calc(var(--unit) * 720);
   max-height: calc(var(--unit) * 300);
   overflow: auto;
-  color: #ece5d8;
+  color: v-bind(GAME_CREAM);
   font-size: calc(var(--unit) * 22);
 }
 

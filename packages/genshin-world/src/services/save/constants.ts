@@ -97,6 +97,15 @@ export const MAX_ENEMY_RESPAWN_COUNT = 8192;
 // The bosses a player defeats and has not seen come back, one entry each, bounded by the bosses the mapped regions hold
 // With room to spare
 export const MAX_BOSS_DEFEAT_COUNT = 512;
+// The areas a teleport has landed in, one entry each, bounded by the catalogue's seventy areas and the landing outside
+// Every one of them, with room to spare
+export const MAX_TELEPORT_AREA_COUNT = 128;
+// The stocks a fishing catch is held under, one entry each by the stock's key, bounded by the 195 stocks the mapped regions'
+// Pools hold in the dump's pool and stock tables, with room to spare
+export const MAX_FISHING_STOCK_COUNT = 256;
+// The fish a stock holds not yet back, one entry each, bounded by the largest pool's fish count in the mapped regions, which
+// Is five, with room to spare
+export const MAX_FISHING_CATCH_COUNT = 8;
 // The Trounce Blossoms the bosses leave, one each, bounded the same way as the defeats
 export const MAX_TROUNCE_BLOSSOM_COUNT = 512;
 // The newest claims a Trounce Blossom keeps in a save: a weekly boss's blossom takes one claim a week, so these reach
@@ -345,7 +354,9 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_ENEMY_RESPAWN_COUNT * getRecordEntryLength(MAX_SAVE_INSTANT) +
   MAX_BOSS_DEFEAT_COUNT * getRecordEntryLength(MAX_SAVE_INSTANT) +
   MAX_TROUNCE_BLOSSOM_COUNT * getRecordEntryLength(LONGEST_TROUNCE_BLOSSOM_SAVE) +
-  getRecordEntryLength(MAX_SAVE_INSTANT) +
+  MAX_TELEPORT_AREA_COUNT * getRecordEntryLength(MAX_SAVE_INSTANT) +
+  MAX_FISHING_STOCK_COUNT *
+    getRecordEntryLength(Array.from({ length: MAX_FISHING_CATCH_COUNT }, () => MAX_SAVE_INSTANT)) +
   MAX_HOME_PLACEMENT_COUNT * getListEntryLength(LONGEST_HOME_PLACEMENT) +
   MAX_HOME_PLACEMENT_COUNT * getListEntryLength(LONGEST_HOME_PLANTING) +
   MAX_HOME_COMPANION_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +

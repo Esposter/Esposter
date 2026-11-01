@@ -41,6 +41,7 @@ export const toGenshinSave = ({
   craftingProgress,
   encounterPoints,
   enemyRespawnMap,
+  fishingCatchAts,
   foundOculusIds,
   frostbearingTreeProgress,
   homePlacements,
@@ -48,7 +49,7 @@ export const toGenshinSave = ({
   homeProgress,
   inventory,
   investigationDay,
-  lastTeleportAt,
+  lastTeleportAts,
   longTermEncounterPoints,
   mails,
   minedOutcrops,
@@ -101,12 +102,24 @@ export const toGenshinSave = ({
   encounterPoints: toEncounterPointsSave(encounterPoints),
   ...(bossDefeatMap.size > 0 && { bossDefeats: Object.fromEntries(bossDefeatMap) }),
   enemyRespawns: Object.fromEntries(enemyRespawnMap),
+  ...(fishingCatchAts.size > 0 && {
+    fishingCatchAts: Object.fromEntries(
+      Array.from(fishingCatchAts, ([stockKey, caughtAts]) => [
+        stockKey,
+        caughtAts.map((caughtAt) => caughtAt.toString()),
+      ]),
+    ),
+  }),
   homePlacements,
   homePlantings: homePlantings.map((planting) => toHomePlantingSave(planting)),
   homeProgress: toHomeProgressSave(homeProgress),
   inventory: toInventorySave(inventory),
   investigationDay: toInvestigationDaySave(investigationDay),
-  ...(lastTeleportAt && { lastTeleportAt: lastTeleportAt.toString() }),
+  ...(lastTeleportAts.size > 0 && {
+    lastTeleportAts: Object.fromEntries(
+      Array.from(lastTeleportAts, ([areaId, landedAt]) => [areaId, landedAt.toString()]),
+    ),
+  }),
   longTermEncounterPoints,
   mails,
   ...(minedOutcrops.length > 0 && {

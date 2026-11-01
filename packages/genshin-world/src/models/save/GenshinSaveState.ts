@@ -65,6 +65,8 @@ export interface GenshinSaveState {
   craftingProgress: CraftingProgress;
   encounterPoints: EncounterPoints;
   enemyRespawnMap: ReadonlyMap<string, string>;
+  // The catches each stock holds that are not yet back, by the stock's key, so a stock refills fish by fish
+  fishingCatchAts: ReadonlyMap<string, readonly Temporal.Instant[]>;
   foundOculusIds: ReadonlySet<string>;
   frostbearingTreeProgress: OfferingProgressSave;
   homePlacements: HomePlacement[];
@@ -72,8 +74,9 @@ export interface GenshinSaveState {
   homeProgress: HomeProgress;
   inventory: Inventory;
   investigationDay: InvestigationDay;
-  // The last teleport, none before the player's first
-  lastTeleportAt?: Temporal.Instant;
+  // The last teleport that landed in each area, by the area's id, and the one that landed outside every area under the
+  // Empty id, none before the player's first
+  lastTeleportAts: ReadonlyMap<string, Temporal.Instant>;
   longTermEncounterPoints: LongTermEncounterPoints;
   mails: MailSave[];
   minedOutcrops: readonly MinedOutcrop[];

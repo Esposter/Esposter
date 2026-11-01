@@ -22,14 +22,23 @@ import { startPartyLunarReactions } from "#src/services/party/startPartyLunarRea
 // The enemies round it, priced from the combatant that triggered them, as the party's Moonsign turns them Lunar. Each
 // Enemy reached drops its energy to the team, a Bloom there leaves its Dendro Core, a Lunar reaction there is the party's
 // To answer, its reactions are sent to the deployed team's kits, and those of them that reach are reached in turn.
-// A reaction whose own hit carries poise, an Overloaded's explosion, strikes the ores in its reach as well, from where
-// It landed, once the step's strikes have landed
+// A reaction whose own hit is blunt, an Overloaded's explosion, strikes the ores in its reach as well, from where it
+// Landed, once the step's strikes have landed
 export const landKitReactionReaches = (
   reaches: [Pick<Enemy, "position">, TransformativeReaction][],
   combatant: Combatant,
   context: KitContext,
 ): void => {
-  const { characterIdCombatantMap, enemyMap, kitEffectState, oreStrikes, party, random, reactionTriggers } = context;
+  const {
+    characterIdCombatantMap,
+    enemyMap,
+    enemyTables,
+    kitEffectState,
+    oreStrikes,
+    party,
+    random,
+    reactionTriggers,
+  } = context;
   if (reaches.length === 0) return;
   const { lunarReactionTypes } = getPartyMoonsign(
     characterIdCombatantMap,
@@ -39,7 +48,7 @@ export const landKitReactionReaches = (
   );
   const stellarReactionTypes = getPartyStellarReactionTypes(characterIdCombatantMap, party);
   for (const [origin, reaction] of reaches) {
-    const oreHit = readReactionOreHit(reaction.reactionType);
+    const oreHit = readReactionOreHit(enemyTables.reactionPoiseMap, reaction.reactionType);
     if (oreHit) oreStrikes.push({ body: createKitBody(origin.position), hit: oreHit });
     for (const [enemy, { energyDrops, reachingReactions, reactions }] of landReactionReach(
       context,

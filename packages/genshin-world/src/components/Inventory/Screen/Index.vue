@@ -12,6 +12,7 @@ import type { GameText } from "genshin-text";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { equipGadget } from "#src/services/gadget/equipGadget";
+import { checkIsInventoryItemAmountable } from "#src/services/inventory/checkIsInventoryItemAmountable";
 import { checkIsInventoryItemDestroyable } from "#src/services/inventory/checkIsInventoryItemDestroyable";
 import { checkIsInventoryItemUsable } from "#src/services/inventory/checkIsInventoryItemUsable";
 import { computeInventoryTab } from "#src/services/inventory/computeInventoryTab";
@@ -77,7 +78,7 @@ const emit = defineEmits<{
   close: [];
   destroy: [destruction: InventoryDestruction];
   "update:inventory": [inventory: Inventory];
-  use: [entryId: number];
+  use: [entryId: number, count: number];
 }>();
 const category = ref(initialCategory);
 const selectedId = ref(initialSelectedId);
@@ -132,6 +133,7 @@ const cells = computed((): InventoryCell[] => {
           ? fillGameTextValues(gameText[GameTextKey.LevelFormat], level)
           : `+${level}`;
     return {
+      amountMaximum: checkIsInventoryItemAmountable(item, dishUseMap) ? quantity : undefined,
       caption,
       id: String(id),
       isDestroyable: checkIsInventoryItemDestroyable(item),
@@ -236,6 +238,7 @@ const currencies = computed(() =>
       v-model:is-descending="isDescending"
       v-model:sort="sort"
       v-model:selected-id="selectedId"
+      :amount-label="gameText[GameTextKey.InventoryUseAmount]"
       :back-label="gameText[GameTextKey.Back]"
       :cancel-label="gameText[GameTextKey.Cancel]"
       :capacity
@@ -278,7 +281,7 @@ const currencies = computed(() =>
       @quick-select="(rarity) => quickSelect(rarity)"
       @quick-use="(id) => quickUse(id)"
       @toggle-destroy="toggleDestroy()"
-      @use="(id) => emit('use', Number(id))"
+      @use="(id, count) => emit('use', Number(id), count)"
     />
   </GameScreen>
 </template>

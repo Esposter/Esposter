@@ -3,7 +3,7 @@ import { createRecordSchema } from "@esposter/shared";
 import { z } from "zod";
 
 // Each defeated boss's moment of defeat by its spawn key, as an ISO string on the server's clock. A boss stays down until
-// Its blossom is claimed or the first teleport after this moment, so the save keeps the moment its return is read from
+// Its blossom is claimed or a teleport out of its area lands after this moment, so the save keeps the moment its return is read from
 export const bossDefeatSaveSchema = createRecordSchema(
   z.string().min(1).max(MAX_SAVE_ID_LENGTH),
   z.iso.datetime().max(MAX_SAVE_INSTANT_LENGTH),

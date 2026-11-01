@@ -25,7 +25,7 @@ export const createKitTestContext = (combatant: Combatant, context: Partial<KitC
   body: createKitBody({ x: 0, z: 0 }),
   characterIdCombatantMap: new Map([[combatant.characterId, combatant]]),
   enemyMap: new Map(),
-  enemyTables: { enemyKindMap: new Map(), enemyLevelCurves: {} },
+  enemyTables: { enemyKindMap: new Map(), enemyLevelCurves: {}, reactionPoiseMap: new Map() },
   expiredEffects: [],
   isSkillHeld: false,
   kitEffectState: { effects: [] },

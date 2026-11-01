@@ -71,6 +71,8 @@ const createAedonHit = (combatant: Combatant): KitHit => ({
   element: Element.Geo,
   hitArea: takeOne(combatant.kit.elementalBurst.hits).hitArea,
   hitmarkSeconds: 0,
+  // A Geo hit with no record, blunt as the wiki's Geo rule makes it
+  isBlunt: true,
   poiseDamage: 0,
   talentMultiplier: 0,
   targetIndex: 0,

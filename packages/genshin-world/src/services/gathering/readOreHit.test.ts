@@ -27,11 +27,12 @@ describe(readOreHit, () => {
     actionAttackTag: AttackTag.NormalAttack,
     hitArea: { angle: 2 * Math.PI, height: 2, radius: 1 },
     hitmarkSeconds: 0,
+    isBlunt: true,
     poiseDamage: 1,
     talentMultiplier: 1,
   };
 
-  test("an ore hit takes the hit's area and poise, blunt and melee by the kit's rules", () => {
+  test("an ore hit takes the hit's area and poise, blunt by its flag and melee by the kit's rules", () => {
     expect.hasAssertions();
 
     expect(readOreHit(combatant, hit)).toStrictEqual({

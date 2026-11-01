@@ -7,6 +7,9 @@ import type { GroundPoint } from "genshin-engine";
 export interface KitField {
   centre: GroundPoint;
   characterId: number;
+  // The factor the cooldown of a skill or a burst cast within the field is multiplied by, if it lowers them, whichever
+  // Character casts it
+  cooldownMultiplier?: number;
   // The name its character's kit finds it by among the team's effects, if the kit reads it again
   id?: string;
   // Whether the field moves with the body on the field, its centre standing where that body stands on each step

@@ -40,6 +40,7 @@ import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
+import { readCatalogue } from "#src/services/world/readCatalogue";
 import { takeOne } from "@esposter/shared";
 import { InteractionKind } from "genshin-interface";
 import { describe, expect, test, vi } from "vitest";
@@ -47,7 +48,8 @@ import { computed, ref, shallowRef } from "vue";
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const createTrounceSave = () => ({ lastTeleportAt: undefined, trounceBlossoms: new Map() });
+const catalogue = await readCatalogue(GAME_DATA_LOCAL_BASE_URL);
+const createTrounceSave = () => ({ lastTeleportAts: new Map(), trounceBlossoms: new Map() });
 
 describe(useWorldTrounceBlossoms, () => {
   const SPAWN_KEY = "spawn";
@@ -88,6 +90,7 @@ describe(useWorldTrounceBlossoms, () => {
     const abyssOnlyKind = takeOne([...enemyTables.enemyKindMap.values()].filter(({ id }) => !checkIsEnemyKindId(id)));
     const events = createWorldEvents();
     useWorldTrounceBlossoms({
+      catalogue,
       characters: shallowRef<Character[]>([]),
       emitGrant: () => {},
       enemyKindMap: enemyTables.enemyKindMap,
@@ -120,10 +123,43 @@ describe(useWorldTrounceBlossoms, () => {
     expect(defeatListener).toHaveBeenCalledExactlyOnceWith(enemy);
   });
 
+  test("a teleport is kept under the area it lands in, and a landing outside every area under the empty id", () => {
+    expect.hasAssertions();
+
+    const events = createWorldEvents();
+    const { lastTeleportAts } = useWorldTrounceBlossoms({
+      catalogue,
+      characters: ref([]),
+      emitGrant: () => {},
+      enemyKindMap: new Map(),
+      events,
+      friendshipLevels: ref<FriendshipLevels>(),
+      gainWorldAdventureExp: vi.fn<(amount: number) => void>(),
+      gameText: {},
+      getGroundHeight: () => 0,
+      getWorldNow: () => epoch,
+      inventory: ref<Inventory>(EMPTY_INVENTORY),
+      materialDataMap: new Map(),
+      nameText: {},
+      party: createParty([TRAVELER_CHARACTER_ID]),
+      savedState: createTrounceSave(),
+      setInventory: vi.fn<(nextInventory: Inventory) => void>(),
+      setWallet: vi.fn<(nextWallet: Wallet) => void>(),
+      wallet: ref(EMPTY_WALLET),
+      worldNow: ref(epoch),
+    });
+    // The map fixture's player stands in the Sea of Clouds, and the far point is past every outline
+    events.emit("teleport", { heightOffset: 0, point: { x: -2390, z: -1560 }, yaw: 0 });
+    events.emit("teleport", { heightOffset: 0, point: { x: 1e6, z: 1e6 }, yaw: 0 });
+
+    expect([...lastTeleportAts.value.keys()]).toStrictEqual(["sea-of-clouds", ""]);
+  });
+
   test("a weekly boss's Trounce Blossom is offered again once the weekly reset passes, with no write", () => {
     expect.hasAssertions();
     const clock = createWorldClock(epoch.add({ hours: 1 }));
     const { trounceBlossomInteractables, trounceBlossoms } = useWorldTrounceBlossoms({
+      catalogue,
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
@@ -159,6 +195,7 @@ describe(useWorldTrounceBlossoms, () => {
     expect.hasAssertions();
     const adventureExp = ref(0);
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
+      catalogue,
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
@@ -211,6 +248,7 @@ describe(useWorldTrounceBlossoms, () => {
       wallet,
     });
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
+      catalogue,
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
@@ -269,6 +307,7 @@ describe(useWorldTrounceBlossoms, () => {
     const wallet = ref<Wallet>({ ...EMPTY_WALLET, [Currency.OriginalResin]: offer.resin + 1 });
     const inventory = ref<Inventory>(EMPTY_INVENTORY);
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
+      catalogue,
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),

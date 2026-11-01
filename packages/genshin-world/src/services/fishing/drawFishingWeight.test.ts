@@ -11,12 +11,12 @@ describe(drawFishingWeight, () => {
     { fishId: SECOND_FISH_ID, weight: 100 },
   ];
 
-  test("a roll falls to the fish whose share of the total its weight is, and a stock weighing nothing draws none", () => {
+  test("a roll falls to the entry whose share of the total its weight is, and a stock weighing nothing draws none", () => {
     expect.hasAssertions();
 
-    expect(drawFishingWeight(weights, 0)).toBe(FIRST_FISH_ID);
-    expect(drawFishingWeight(weights, 0.74)).toBe(FIRST_FISH_ID);
-    expect(drawFishingWeight(weights, 0.75)).toBe(SECOND_FISH_ID);
+    expect(drawFishingWeight(weights, 0)?.fishId).toBe(FIRST_FISH_ID);
+    expect(drawFishingWeight(weights, 0.74)?.fishId).toBe(FIRST_FISH_ID);
+    expect(drawFishingWeight(weights, 0.75)?.fishId).toBe(SECOND_FISH_ID);
     expect(drawFishingWeight([], 0)).toBeUndefined();
   });
 });

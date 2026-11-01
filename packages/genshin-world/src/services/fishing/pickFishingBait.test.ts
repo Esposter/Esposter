@@ -1,26 +1,23 @@
 import type { FishBait } from "#src/models/fishing/FishBait";
-import type { FishingPool } from "#src/models/fishing/FishingPool";
+import type { StandingFishingStock } from "#src/models/fishing/StandingFishingStock";
 
 import { FishingStockType } from "#src/models/fishing/FishingStockType";
+import { getFishingStockKey } from "#src/services/fishing/getFishingStockKey";
 import { pickFishingBait } from "#src/services/fishing/pickFishingBait";
 import { describe, expect, test } from "vitest";
 
 describe(pickFishingBait, () => {
-  const REGION = "a";
-  const HOUR = 0;
   const FISH_ID = 1;
-  const POOLS = {
-    [REGION]: [
-      { id: 1, maxNum: 0, stocks: [{ type: FishingStockType.Any, weights: [{ fishId: FISH_ID, weight: 1 }] }] },
-    ] as FishingPool[],
-  };
+  const STANDING_STOCKS: StandingFishingStock[] = [
+    { stockKey: getFishingStockKey(1, FishingStockType.Any), weights: [{ fishId: FISH_ID, weight: 1 }] },
+  ];
   const PULLING_BAIT: FishBait = { fishIds: [FISH_ID], id: 10 };
   const OTHER_BAIT: FishBait = { fishIds: [FISH_ID + 1], id: 11 };
 
-  test("the first held bait that pulls a fish at the point is the one a cast uses", () => {
+  test("the first held bait that pulls a fish from the standing stocks is the one a cast uses", () => {
     expect.hasAssertions();
 
-    expect(pickFishingBait([OTHER_BAIT, PULLING_BAIT], POOLS, REGION, HOUR)).toBe(PULLING_BAIT);
-    expect(pickFishingBait([OTHER_BAIT], POOLS, REGION, HOUR)).toBeUndefined();
+    expect(pickFishingBait([OTHER_BAIT, PULLING_BAIT], STANDING_STOCKS)).toBe(PULLING_BAIT);
+    expect(pickFishingBait([OTHER_BAIT], STANDING_STOCKS)).toBeUndefined();
   });
 });

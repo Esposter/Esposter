@@ -3,6 +3,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AmplifyingReactionType } from "#src/models/combat/AmplifyingReactionType";
+import { AuraType } from "#src/models/combat/AuraType";
 import { CatalyzeReactionType } from "#src/models/combat/CatalyzeReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
@@ -51,6 +52,20 @@ describe(priceEnemyReactions, () => {
     expect(transformativeDamage).toBeCloseTo(
       getTransformativeDamage(TransformativeReactionType.Swirl, LEVEL, 0, kind.elementResistances[Element.Pyro], 0.6),
     );
+  });
+
+  test("an Electro-Charged deals its poise but no blunt hit, so the Freeze on the enemy it lands on is left standing", () => {
+    expect.hasAssertions();
+    const creator = createCombatant();
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    enemy.elementalState.auras.set(AuraType.Freeze, { decayRate: 0, gauge: 10, isImmutable: false });
+    const context = createKitTestContext(creator, { enemyTables });
+    const electroCharged = { element: Element.Electro, reactionType: TransformativeReactionType.ElectroCharged };
+
+    const { poiseDamage } = priceEnemyReactions(kind, enemy, [electroCharged], creator, undefined, context);
+
+    expect(poiseDamage).toBe(130);
+    expect(enemy.elementalState.auras.get(AuraType.Freeze)?.gauge).toBe(10);
   });
 
   test("a Swirl's party reaction bonus is read with the element the Swirl absorbed", () => {

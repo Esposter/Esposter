@@ -182,8 +182,9 @@ interface Props {
   kitEffectState: KitEffectState;
   // What the character's body and the camera collide with, which the landmarks are given to as they arrive
   landmarkCollider: LandmarkCollider;
-  // The last teleport, which brings back a boss whose blossom is unclaimed, none until the player has teleported
-  lastTeleportAt?: Temporal.Instant;
+  // The last teleport into each area, by the area's id and the one outside every area under the empty id, which holds a
+  // Boss down until a teleport lands outside its area after its defeat
+  lastTeleportAts: ReadonlyMap<string, Temporal.Instant>;
   // The mining outcrops standing now, each stood in as a rock at its place
   miningOutcropPlaces: GatheringPlace[];
   // The Oculi not yet found, each stood in at its place
@@ -204,7 +205,8 @@ interface Props {
   sceneExportBaseUrl: string;
   // The Seelies of Mondstadt, whose courts the sight leads a trail to while each rests
   seelies: Seelie[];
-  // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport comes
+  // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport out of its
+  // Area comes
   trounceBlossoms: ReadonlyMap<string, TrounceBlossom>;
   // The animals in the world, each stood at its place or fallen, which the session holds
   wildlifeList: Wildlife[];
@@ -243,7 +245,7 @@ const {
   isPaused,
   kitEffectState,
   landmarkCollider,
-  lastTeleportAt,
+  lastTeleportAts,
   miningOutcropPlaces,
   oculusPlaces,
   origin,
@@ -629,7 +631,7 @@ onUnmounted(() => {
       :get-world-now
       :is-held
       :is-paused
-      :last-teleport-at
+      :last-teleport-ats
       :trounce-blossoms
       :light-uniforms
       :outcrop-camps

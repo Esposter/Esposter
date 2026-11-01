@@ -99,6 +99,7 @@ export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap
       ...(hitRecord.area && { hitArea: hitRecord.area }),
       ...(hitRecord.hitmarkFrames !== undefined && { hitmarkSeconds: toKitSeconds(hitRecord.hitmarkFrames) }),
       ...(hitRecord.internalCooldownTag && { internalCooldownTag: hitRecord.internalCooldownTag }),
+      ...(hitRecord.isBlunt && { isBlunt: true }),
       ...(lunarReactionType !== undefined && {
         lunarHit: {
           ...(scalingAttribute !== undefined && {

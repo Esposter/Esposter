@@ -26,13 +26,7 @@ describe(checkIsSealFreed, () => {
   test("a chest sealed in rock is freed by a blunt attack", () => {
     expect.hasAssertions();
 
-    expect(
-      checkIsSealFreed(
-        ChestSeal.Rock,
-        { ...combatant, weaponType: WeaponType.Claymore },
-        { ...hit, actionAttackTag: AttackTag.NormalAttack },
-      ),
-    ).toBe(true);
+    expect(checkIsSealFreed(ChestSeal.Rock, combatant, { ...hit, isBlunt: true })).toBe(true);
   });
 
   test("a chest sealed in rock is freed by a strike that deals poise damage", () => {

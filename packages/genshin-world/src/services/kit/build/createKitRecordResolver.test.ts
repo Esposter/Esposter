@@ -9,6 +9,7 @@ import { describe, expect, test } from "vitest";
 const createHitRecord = (multiplierFactor?: KitParameter): KitHitRecord => ({
   area: { angle: 360, height: 1, radius: 1 },
   hitmarkFrames: 10,
+  isBlunt: false,
   multiplier: { index: 0, proudSkillGroupId: 1 },
   multiplierFactor,
   poiseDamage: 0,

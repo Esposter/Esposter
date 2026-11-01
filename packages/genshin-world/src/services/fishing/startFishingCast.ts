@@ -12,12 +12,14 @@ export const startFishingCast = ({
   gear,
   nibbleSeconds,
   rod,
+  stockKey,
   travel,
 }: {
   fish: Fish;
   gear: { inSpeed: number; outSpeed: number };
   nibbleSeconds: number;
   rod: FishRod;
+  stockKey: string;
   travel: FishingZoneTravel;
 }): FishingCast => ({
   bite: { elapsedSeconds: 0, nibbleSeconds },
@@ -27,5 +29,6 @@ export const startFishingCast = ({
   reel: { hp: fish.hp, outOfZoneSeconds: 0, phase: FishingPhase.Waiting, tension: 0 },
   reelSeconds: 0,
   rod,
+  stockKey,
   travel,
 });

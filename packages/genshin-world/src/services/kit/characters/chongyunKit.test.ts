@@ -3,6 +3,7 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
+import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -67,6 +68,15 @@ const endFieldOf = (combatant: Combatant): KitEffect[] => {
 
 describe(createChongyunKitBehaviour, () => {
   const kitBody = createKitBody({ x: 0, z: 0 });
+  // A still character's input pressing the burst or the skill
+  const pressInput = (press: Pick<KitInput, "isBurstPressed" | "isSkillPressed">): KitInput => ({
+    height: 0,
+    isAttackHeld: false,
+    isAttackPressed: false,
+    isSkillHeld: false,
+    locomotionState: LocomotionState.Idle,
+    ...press,
+  });
   // The effects an action's start adds, as the kit's effects hold them
   const castEffects = (action: KitAction, combatant = createChongyunCombatant()): KitEffect[] => {
     const context = createKitTestContext(combatant);
@@ -232,50 +242,38 @@ describe(createChongyunKitBehaviour, () => {
     ]);
   });
 
-  test("two constellations' field's infusion carries the 15% cooldown cut its wielder's skill and burst take", () => {
+  test.each([
+    [
+      "Chongyun inside a field cast at constellation 2 is cut by 15%",
+      2,
+      createChongyunCombatant(0, 2),
+      { x: 0, z: 0 },
+      0.85,
+    ],
+    ["the Traveler inside a field cast at constellation 2 is cut by 15%", 2, travelerCombatant, { x: 0, z: 0 }, 0.85],
+    [
+      "Chongyun outside a field cast at constellation 2 takes his full cooldown",
+      2,
+      createChongyunCombatant(0, 2),
+      { x: 0, z: 7 },
+      1,
+    ],
+    [
+      "Chongyun inside a field cast at constellation 1 takes his full cooldown",
+      1,
+      createChongyunCombatant(0, 1),
+      { x: 0, z: 0 },
+      1,
+    ],
+  ])("%s", (_description, fieldConstellationCount, caster, position, cooldownMultiplier) => {
     expect.hasAssertions();
-    const combatant = createChongyunCombatant(0, 2);
-
-    expect(tickFieldOn(combatant, castField(combatant))).toStrictEqual([
-      {
-        characterId: CHONGYUN_CHARACTER_ID,
-        cooldownMultiplier: 0.85,
-        element: Element.Cryo,
-        kind: "infusion",
-        secondsRemaining: 2,
-      },
-    ]);
-  });
-
-  test("two constellations' infusion cuts the cooldown of a burst its wielder casts by 15%, wherever it stands", () => {
-    expect.hasAssertions();
-    const combatant = createChongyunCombatant(0, 2);
-    const context = createKitTestContext(combatant, {
-      kitEffectState: {
-        effects: [
-          {
-            characterId: CHONGYUN_CHARACTER_ID,
-            cooldownMultiplier: 0.85,
-            element: Element.Cryo,
-            kind: "infusion",
-            secondsRemaining: 2,
-          },
-        ],
-      },
-    });
+    const field = castEffects(CHONGYUN_KIT.elementalSkill, createChongyunCombatant(0, fieldConstellationCount));
+    const context = createKitTestContext(caster, { body: createKitBody(position), kitEffectState: { effects: field } });
     const partyMember = { ...createPartyMember(), energy: 40 };
     stepKit(
       createKitState(),
       CHONGYUN_KIT,
-      {
-        height: 0,
-        isAttackHeld: false,
-        isAttackPressed: false,
-        isBurstPressed: true,
-        isSkillHeld: false,
-        isSkillPressed: false,
-        locomotionState: LocomotionState.Idle,
-      },
+      pressInput({ isBurstPressed: true, isSkillPressed: false }),
       partyMember,
       createStamina(STAMINA_MAX),
       0.1,
@@ -283,7 +281,28 @@ describe(createChongyunKitBehaviour, () => {
       context,
     );
 
-    expect(partyMember.burstCooldownSeconds).toBeCloseTo(12 * 0.85);
+    expect(partyMember.burstCooldownSeconds).toBeCloseTo(12 * cooldownMultiplier);
+  });
+
+  test("a skill cast within a field cast at constellation 2 has its cooldown cut by 15%", () => {
+    expect.hasAssertions();
+    const combatant = createChongyunCombatant(0, 2);
+    const context = createKitTestContext(combatant, {
+      kitEffectState: { effects: castEffects(CHONGYUN_KIT.elementalSkill, combatant) },
+    });
+    const partyMember = createPartyMember();
+    stepKit(
+      createKitState(),
+      CHONGYUN_KIT,
+      pressInput({ isBurstPressed: false, isSkillPressed: true }),
+      partyMember,
+      createStamina(STAMINA_MAX),
+      0.1,
+      [],
+      context,
+    );
+
+    expect(partyMember.skillCooldownSeconds).toBeCloseTo(15 * 0.85);
   });
 
   test("four constellations give him 1 energy as his hit lands on an enemy with Cryo on it, once in 2 seconds", () => {

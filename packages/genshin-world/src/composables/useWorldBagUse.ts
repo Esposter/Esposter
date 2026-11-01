@@ -18,9 +18,10 @@ export const useWorldBagUse = ({
   setWallet,
   wallet,
 }: WorldBagUseOptions) => {
-  const useBagEntry = (entryId: number) => {
+  const useBagEntry = (entryId: number, count: number) => {
     const use = useInventoryEntry(inventory.value, entryId, {
       cookingProgress: cookingProgress.value,
+      count,
       dishUseMap: dishUseMap.value,
       eaterId: getActiveCharacterId(party),
       getMaxHealth: (characterId) => getMemberMaxHealth(characterId) ?? 0,

@@ -32,6 +32,9 @@ export interface BaseKitHitRecord {
   healParty?: KitPartyHealRecord;
   hitmarkFrames: number;
   internalCooldownTag?: InternalCooldownTag;
+  // Whether the hit is blunt, as the builder reads the wiki's Blunt Attacks for its action, its wielder's weapon and
+  // Its element. A hit naming no element takes its wielder's, and blunts as a Geo wielder's Geo does, as the world reads
+  isBlunt: boolean;
   // The Lunar reaction a direct Lunar hit deals its damage as
   lunarReactionType?: LunarReactionType;
   multiplier: KitParameter;
@@ -55,6 +58,7 @@ export const baseKitHitRecordSchema = z.strictObject({
   healParty: kitPartyHealRecordSchema.optional(),
   hitmarkFrames: z.number().nonnegative(),
   internalCooldownTag: z.enum(InternalCooldownTag).optional(),
+  isBlunt: z.boolean(),
   lunarReactionType: z.enum(LunarReactionType).optional(),
   multiplier: kitParameterSchema,
   multiplierFactor: kitParameterSchema.optional(),

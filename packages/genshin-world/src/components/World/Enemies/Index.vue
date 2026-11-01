@@ -55,7 +55,7 @@ import { CapsuleGeometry, Color, Matrix4, MeshBasicMaterial, SphereGeometry, Vec
 
 interface Props {
   // The moments the defeated bosses fell, by their spawn keys, as the save holds them: each boss stays down from its
-  // Defeat until its blossom is claimed or the first teleport after it
+  // Defeat until its blossom is claimed or a teleport out of its area comes after it
   bossDefeatMap: ReadonlyMap<string, string>;
   // The enemies in the world by their spawn key, which this writes as the camps load and unload and as enemies die
   enemyMap: Map<string, Enemy>;
@@ -74,8 +74,9 @@ interface Props {
   isPaused: boolean;
   // The effects on the team, whose live taunts draw the enemies' strikes within their aggro range
   kitEffectState: KitEffectState;
-  // The last teleport, which brings back a boss whose blossom is unclaimed, none until the player has teleported
-  lastTeleportAt?: Temporal.Instant;
+  // The last teleport into each area, by the area's id and the one outside every area under the empty id, which holds a
+  // Boss down until a teleport lands outside its area after its defeat
+  lastTeleportAts: ReadonlyMap<string, Temporal.Instant>;
   lightUniforms: LightUniforms;
   // The camps of the ley line outcrops whose fights run: each spawns whole as its fight starts, and is dropped as it is won
   outcropCamps: EnemyCamp[];
@@ -85,7 +86,8 @@ interface Props {
   sightScene: Scene;
   // The point the enemies target, the character's feet, which none is given while no character stands in the world
   target?: GroundPoint;
-  // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport comes
+  // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport out of its
+  // Area comes
   trounceBlossoms: ReadonlyMap<string, TrounceBlossom>;
   // The World Level the camps spawn at, which a change of it spawns every camp anew at
   worldLevel: number;
@@ -103,7 +105,7 @@ const {
   isHeld,
   isPaused,
   kitEffectState,
-  lastTeleportAt,
+  lastTeleportAts,
   lightUniforms,
   outcropCamps,
   rampTexture,
@@ -170,7 +172,7 @@ watchImmediate(
     for (const [spawnKey, { campId }] of enemyMap) if (!campIds.has(campId)) enemyMap.delete(spawnKey);
     for (const campId of loadedCampIds.difference(campIds)) loadedCampIds.delete(campId);
     const now = getWorldNow();
-    for (const { id, members } of enemyCamps) {
+    for (const { areaId, id, members } of enemyCamps) {
       if (loadedCampIds.has(id)) continue;
       loadedCampIds.add(id);
       const campEnemyTypes = getCampEnemyTypes(members);
@@ -181,7 +183,14 @@ watchImmediate(
           const defeatedAt = spawnKeyDefeatedAtMap.get(spawnKey);
           if (
             defeatedAt &&
-            !checkIsEnemyRespawned(campEnemyTypes, defeatedAt, now, trounceBlossoms.get(spawnKey), lastTeleportAt)
+            !checkIsEnemyRespawned(
+              campEnemyTypes,
+              defeatedAt,
+              now,
+              areaId,
+              lastTeleportAts,
+              trounceBlossoms.get(spawnKey),
+            )
           )
             continue;
         } else if (Temporal.Instant.compare(Temporal.Instant.from(savedRespawnAt), now) > 0) continue;
@@ -240,7 +249,7 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
       const campEnemyTypes = camp && getCampEnemyTypes(camp.members);
       const respawnAt = campEnemyTypes && computeEnemyRespawnTime(campEnemyTypes, defeatedAt);
       if (respawnAt) emit("saveRespawn", spawnKey, respawnAt.toString());
-      // A boss's defeat is kept too, since its return waits on a claim or a teleport that the save holds
+      // A boss's defeat is kept too, since its return waits on a claim or a teleport out of its area that the save holds
       if (campEnemyTypes?.includes(EnemyType.Boss)) emit("saveBossDefeat", spawnKey, defeatedAt.toString());
       const [firstMember] = camp?.members ?? [];
       if (camp && firstMember && camp.members.every(({ id }) => spawnKeyDefeatedAtMap.has(getSpawnKey(camp.id, id))))

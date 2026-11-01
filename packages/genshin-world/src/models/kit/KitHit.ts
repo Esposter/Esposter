@@ -55,6 +55,9 @@ export interface KitHit {
   // The gauge the hit deals while an infusion takes it, if not the infused element's 1U: a plunge's collision's 0U
   infusedGauge?: number;
   internalCooldownTag?: InternalCooldownTag;
+  // Whether the hit is blunt by its own record, or by the behaviour that builds it, which `checkIsBluntHit` reads with
+  // The Geo rule for a hit that names no element of its own
+  isBlunt?: true;
   // Whether the hit always lands as a critical hit, which its strike rolls no CRIT Rate for
   isForcedCritical?: true;
   // Whether the hit's stagger level is Air, as the wiki's impulse types 5 to 9 are, which launches an enemy it staggers

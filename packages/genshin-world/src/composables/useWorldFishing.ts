@@ -15,7 +15,9 @@ import type { Ref } from "vue";
 import { FishingPhase } from "#src/models/fishing/FishingPhase";
 import { addFishingCatch } from "#src/services/fishing/addFishingCatch";
 import { checkIsFishingOpen } from "#src/services/fishing/checkIsFishingOpen";
+import { computeFishingCatchAts } from "#src/services/fishing/computeFishingCatchAts";
 import { computeFishingZone } from "#src/services/fishing/computeFishingZone";
+import { computeStandingFishingStocks } from "#src/services/fishing/computeStandingFishingStocks";
 import { SERENITEA_POT_ITEM_ID, SERENITEA_POT_QUEST_ID } from "#src/services/fishing/constants";
 import { drawFishingPointFish } from "#src/services/fishing/drawFishingPointFish";
 import { drawFishingRange } from "#src/services/fishing/drawFishingRange";
@@ -31,12 +33,13 @@ import { readFishRods } from "#src/services/fishing/readFishRods";
 import { startFishingCast } from "#src/services/fishing/startFishingCast";
 import { stepFishingCast } from "#src/services/fishing/stepFishingCast";
 import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
-import { GAME_TIME_ZONE } from "#src/services/time/constants";
+import { computeGameHour } from "#src/services/time/computeGameHour";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
 // The fishing of the world: the points in reach and whether fishing is open at them, the one cast held while a point is
-// Fished, and the catch it puts in the bag. The game's tables are read once as the world starts
+// Fished, and the catch it puts in the bag. Each stock's catches are held until they return, so a stock refills fish by
+// Fish. The game's tables are read once as the world starts
 export const useWorldFishing = ({
   gameDataBaseUrl,
   getRegionIds,
@@ -47,7 +50,9 @@ export const useWorldFishing = ({
   questProgressMap,
   quests,
   random,
+  savedFishingCatchAts,
   setInventory,
+  worldNow,
 }: {
   gameDataBaseUrl: string;
   getRegionIds: () => string[];
@@ -58,7 +63,9 @@ export const useWorldFishing = ({
   questProgressMap: Ref<ReadonlyMap<string, QuestProgress>>;
   quests: Ref<Quest[]>;
   random: () => number;
+  savedFishingCatchAts: ReadonlyMap<string, readonly Temporal.Instant[]>;
   setInventory: (nextInventory: Inventory) => void;
+  worldNow: Readonly<Ref<Temporal.Instant>>;
 }) => {
   const fishingPoints = shallowRef<Readonly<Record<string, FishingPointPlace[]>>>({});
   const pools = shallowRef<Readonly<Record<string, FishingPool[]>>>({});
@@ -67,6 +74,8 @@ export const useWorldFishing = ({
   const rods = shallowRef<FishRod[]>([]);
   const proficiencyMap = shallowRef<ReadonlyMap<number, FishProficient>>(new Map());
   const rewardMap = shallowRef<ReadonlyMap<number, FishReward>>(new Map());
+  // The catches each stock holds that are not yet back, by the stock's key
+  const caughtAtMap = shallowRef<ReadonlyMap<string, readonly Temporal.Instant[]>>(savedFishingCatchAts);
   getSynchronizedFunction(() =>
     getResultAsync(() =>
       Promise.all([
@@ -103,7 +112,15 @@ export const useWorldFishing = ({
         quest === undefined ? undefined : checkIsQuestFinished(quest, questProgressMap.value.get(quest.id)),
     });
   });
-  const fishingPointPlaces = computed(() => getRegionIds().flatMap((region) => fishingPoints.value[region] ?? []));
+  // A point draws from every pool of its region, so its points are in reach only while their region has a stock standing at
+  // The hour, the ripple the wiki's Fishing page puts on the spot as the fish are caught
+  const fishingPointPlaces = computed(() => {
+    const now = worldNow.value;
+    const hour = computeGameHour(now);
+    return getRegionIds()
+      .filter((region) => computeStandingFishingStocks(pools.value, region, hour, caughtAtMap.value, now).length > 0)
+      .flatMap((region) => fishingPoints.value[region] ?? []);
+  });
   // The region each fishing point lies in, by the point's id, which its pools are drawn from
   const fishingPointRegionMap = computed(
     () =>
@@ -122,25 +139,34 @@ export const useWorldFishing = ({
     pointId.value === "" ? undefined : fishingPointRegionMap.value.get(pointId.value),
   );
   const startCast = (region: string): FishingCast | undefined => {
-    const hour = getWorldNow().toZonedDateTimeISO(GAME_TIME_ZONE).hour;
-    const bait = pickFishingBait(heldBaits.value, pools.value, region, hour);
+    const now = getWorldNow();
+    const standingStocks = computeStandingFishingStocks(
+      pools.value,
+      region,
+      computeGameHour(now),
+      caughtAtMap.value,
+      now,
+    );
+    const bait = pickFishingBait(heldBaits.value, standingStocks);
     if (bait === undefined) return undefined;
-    const fishId = drawFishingPointFish(pools.value, region, hour, random(), new Set(bait.fishIds));
-    const fish = fishId === undefined ? undefined : fishMap.value.get(fishId);
+    const draw = drawFishingPointFish(standingStocks, random(), new Set(bait.fishIds));
+    const fish = draw === undefined ? undefined : fishMap.value.get(draw.fishId);
     const rod = heldRod.value;
     // The reel takes the proficiency's first gear, as no table says which gear a player holds
     const gear = fish === undefined ? undefined : proficiencyMap.value.get(fish.proficientId)?.gear[0];
-    if (fish === undefined || rod === undefined || gear === undefined) return undefined;
+    if (draw === undefined || fish === undefined || rod === undefined || gear === undefined) return undefined;
     return startFishingCast({
       fish,
       gear,
       nibbleSeconds: drawFishingRange(fish.feelerTimes, random),
       rod,
+      stockKey: draw.stockKey,
       travel: drawFishingZoneTravel(fish, rod, random),
     });
   };
   // The cast steps while the fishing screen is open: a press at aim casts, and a press while the cast is out strikes it
-  // And a hold reels it. A caught fish goes into the bag, and a cast that is scared off, or lost, returns to aiming
+  // And a hold reels it. A caught fish goes into the bag and is held against its stock, and a cast that is scared off, or
+  // Lost, returns to aiming
   const stepFishing = ({
     isReeling,
     isStruck,
@@ -159,6 +185,7 @@ export const useWorldFishing = ({
     const next = stepFishingCast(cast.value, { isReeling, isStruck, seconds });
     if (next.phase === FishingPhase.Caught) {
       setInventory(addFishingCatch(inventory.value, next.fish, rewardMap.value, names, materialDataMap).inventory);
+      caughtAtMap.value = computeFishingCatchAts(caughtAtMap.value, next.stockKey, getWorldNow());
       cast.value = undefined;
     } else cast.value = next.phase === FishingPhase.Aiming || next.phase === FishingPhase.Lost ? undefined : next;
   };
@@ -185,6 +212,7 @@ export const useWorldFishing = ({
     castView,
     checkIsFishingPoint,
     closeFishing,
+    fishingCatchAts: caughtAtMap,
     fishingPointPlaces,
     isFishingOpen,
     openFishingPoint,

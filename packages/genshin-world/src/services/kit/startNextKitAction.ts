@@ -15,7 +15,7 @@ import {
 } from "#src/services/kit/constants";
 import { checkIsKitSkillChargeComplete } from "#src/services/kit/effects/checkIsKitSkillChargeComplete";
 import { clearKitSkillCharge } from "#src/services/kit/effects/clearKitSkillCharge";
-import { getKitInfusionCooldownMultiplier } from "#src/services/kit/effects/getKitInfusionCooldownMultiplier";
+import { getKitFieldCooldownMultiplier } from "#src/services/kit/effects/getKitFieldCooldownMultiplier";
 import { spendKitChargeSkip } from "#src/services/kit/effects/spendKitChargeSkip";
 import { getSkillReadySeconds } from "#src/services/kit/getSkillReadySeconds";
 import { startKitAction } from "#src/services/kit/startKitAction";
@@ -26,9 +26,9 @@ import { takeOne } from "@esposter/shared";
 // Burst or a skill its gates allow in any state they may start in, else the string's next strike when it is pressed or
 // Queued on the ground. A charged attack spends its stamina at the factor the kit's passive gives it, a skill starts
 // While a charge of it stands, and a skill with holds starts on its release, at the hold level its seconds held reach,
-// Or the top one while a counter window stands. A skill's or a burst's cooldown is lowered by each infusion the
-// Active character holds that lowers cooldowns. An action whose
-// Start gate fails starts nothing, and what it would have spent or advanced stays as it was
+// Or the top one while a counter window stands. A skill's or a burst's cooldown is lowered by each field standing over
+// The active body that lowers cooldowns. An action whose start gate fails starts nothing, and what it would have spent
+// Or advanced stays as it was
 export const startNextKitAction = (
   kitState: KitState,
   kit: Kit,
@@ -73,8 +73,7 @@ export const startNextKitAction = (
     if (checkCanStartKitAction(burstAction, context)) {
       partyMember.energy = 0;
       partyMember.burstCooldownSeconds =
-        kit.burstCooldownSeconds *
-        getKitInfusionCooldownMultiplier(context.kitEffectState.effects, context.activeCombatant.characterId);
+        kit.burstCooldownSeconds * getKitFieldCooldownMultiplier(context.kitEffectState.effects, context.body.position);
       return startKitAction(kitState, burstAction, landedHits, context);
     }
   }
@@ -118,7 +117,7 @@ export const startNextKitAction = (
       partyMember.skillCooldownSeconds +=
         cooldownSeconds *
         (kit.getSkillCooldownMultiplier?.(context) ?? 1) *
-        getKitInfusionCooldownMultiplier(context.kitEffectState.effects, context.activeCombatant.characterId) *
+        getKitFieldCooldownMultiplier(context.kitEffectState.effects, context.body.position) *
         getImpetuousWindsSkillCooldownMultiplier(context.activeCombatant.elementalResonances);
       kitState.skillChainCount = kit.elementalSkillChain ? 1 : 0;
       kitState.skillChainSeconds = 0;

@@ -493,7 +493,10 @@ describe(stepActiveKit, () => {
 
     expect(strikeOre.mock.calls).toStrictEqual([
       [context.body, readOreHit(combatant, hit)],
-      [createKitBody(enemy.position), readReactionOreHit(TransformativeReactionType.Overloaded)],
+      [
+        createKitBody(enemy.position),
+        readReactionOreHit(enemyTables.reactionPoiseMap, TransformativeReactionType.Overloaded),
+      ],
     ]);
     expect(context.oreStrikes).toStrictEqual([]);
   });

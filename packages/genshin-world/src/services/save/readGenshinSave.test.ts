@@ -11,11 +11,13 @@ import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
+import { FishingStockType } from "#src/models/fishing/FishingStockType";
 import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { COMMISSION_UNLOCK_RANK, COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
+import { getFishingStockKey } from "#src/services/fishing/getFishingStockKey";
 import { EMPTY_CURRENCIES, SIGIL_CURRENCIES } from "#src/services/inventory/constants";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
@@ -340,12 +342,12 @@ describe(readGenshinSave, () => {
     );
   });
 
-  test("a boss's defeat, its Trounce Blossom and the last teleport survive a reload", () => {
+  test("a boss's defeat, its Trounce Blossom and the last teleports survive a reload", () => {
     expect.hasAssertions();
     const bossSave: GenshinSave = {
       ...EMPTY_GENSHIN_SAVE,
       bossDefeats: { boss: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 4 }).toString() },
-      lastTeleportAt: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 5 }).toString(),
+      lastTeleportAts: { "1": Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 5 }).toString() },
       trounceBlossoms: {
         boss: {
           claimedAts: [Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 6 }).toString()],
@@ -357,6 +359,21 @@ describe(readGenshinSave, () => {
     };
     expect(toGenshinSave(readGenshinSave(bossSave, NAMES, WEAPON_DATA_MAP, new Map(), new Map()))).toStrictEqual(
       bossSave,
+    );
+  });
+
+  test("the fish caught from a stock that are not yet back survive a reload", () => {
+    expect.hasAssertions();
+    const fishingSave: GenshinSave = {
+      ...EMPTY_GENSHIN_SAVE,
+      fishingCatchAts: {
+        [getFishingStockKey(1, FishingStockType.Night)]: [
+          Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 5 }).toString(),
+        ],
+      },
+    };
+    expect(toGenshinSave(readGenshinSave(fishingSave, NAMES, WEAPON_DATA_MAP, new Map(), new Map()))).toStrictEqual(
+      fishingSave,
     );
   });
 

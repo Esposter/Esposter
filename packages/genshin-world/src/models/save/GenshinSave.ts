@@ -14,6 +14,7 @@ import { clearedDomainSaveSchema } from "#src/models/domains/ClearedDomainSave";
 import { bossDefeatSaveSchema } from "#src/models/enemy/BossDefeatSave";
 import { enemyRespawnSaveSchema } from "#src/models/enemy/EnemyRespawnSave";
 import { clearedCampSchema } from "#src/models/exploration/ClearedCamp";
+import { fishingCatchesSaveSchema } from "#src/models/fishing/FishingCatchesSave";
 import { companionshipExpSaveSchema } from "#src/models/friendship/CompanionshipExpSave";
 import { minedOutcropSaveSchema } from "#src/models/gathering/MinedOutcropSave";
 import { cardGameExpSaveSchema } from "#src/models/gcg/CardGameExpSave";
@@ -24,6 +25,7 @@ import { inventorySaveSchema } from "#src/models/inventory/InventorySave";
 import { walletSaveSchema } from "#src/models/inventory/WalletSave";
 import { investigationDaySaveSchema } from "#src/models/investigation/InvestigationDaySave";
 import { mailSaveSchema } from "#src/models/mail/MailSave";
+import { lastTeleportsSaveSchema } from "#src/models/map/LastTeleportsSave";
 import { unlockedLandmarkSaveSchema } from "#src/models/map/UnlockedLandmarkSave";
 import { offeringProgressSaveSchema } from "#src/models/offering/OfferingProgressSave";
 import { partySaveSchema } from "#src/models/party/PartySave";
@@ -68,7 +70,7 @@ export const genshinSaveSchema = z
     // The entries the Archive has opened and the defeats it has counted
     archive: archiveSaveSchema,
     // Each defeated boss's moment of defeat by its spawn key, on the server's clock. A boss stays down until its blossom's
-    // Claim or the first teleport after the defeat, so a reload keeps it down. Absent until a boss is defeated
+    // Claim or a teleport out of its area after the defeat, so a reload keeps it down. Absent until a boss is defeated
     bossDefeats: bossDefeatSaveSchema.optional(),
     cardGameExp: cardGameExpSaveSchema,
     cardGameRewardedGameIds: createUniqueArraySchema(z.int().positive()).max(GCG_REWARDABLE_GAME_COUNT),
@@ -91,6 +93,9 @@ export const genshinSaveSchema = z
     // Each defeated enemy's moment of coming back, by its spawn key, for the camps with no boss among them
     // On the server's clock
     enemyRespawns: enemyRespawnSaveSchema,
+    // The fish caught from each stock that are not yet back, by the stock's key, each held until its seventy-two hours have
+    // Run. Absent while no fish is caught from any stock
+    fishingCatchAts: fishingCatchesSaveSchema.optional(),
     // The furnishings placed in the realm, each with the area it stands in and where, in the order they were placed
     homePlacements: homePlacementSaveSchema,
     // The seeds the realm's garden holds, each on its plot, with the instant it was planted at
@@ -101,8 +106,9 @@ export const genshinSaveSchema = z
     // The game day's investigations: how many were made, up to the daily cap, and when the day's count began
     // (empty before the day's first investigation)
     investigationDay: investigationDaySaveSchema,
-    // The last teleport, which brings back a boss whose blossom is unclaimed, on the server's clock. Absent before the player's first teleport
-    lastTeleportAt: z.iso.datetime().max(MAX_SAVE_INSTANT_LENGTH).optional(),
+    // The last teleport into each area, which holds a boss down until a teleport lands outside its area after its defeat.
+    // Absent before the player's first teleport
+    lastTeleportAts: lastTeleportsSaveSchema.optional(),
     // The Long-Term Encounter Points held and the major version they were earned in, reset when the major version moves on
     longTermEncounterPoints: longTermEncounterPointsSaveSchema,
     // The mails the player holds, each once per delivery by its id and when it was delivered, with whether it was

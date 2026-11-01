@@ -25,7 +25,7 @@ const createDefinition = (category: ItemCategory, id: number, stackLimit = 1): I
 describe(addInventoryItem, () => {
   const emptyInventory: Inventory = { items: [], nextId: 0, quickSwapItemIds: [] };
   const QUICK_SWAP_ITEM_ID = 9;
-  const material = createDefinition(ItemCategory.Material, 0, 2);
+  const material = createDefinition(ItemCategory.Material, 0, 9_999);
 
   // The bag's quick swap slots are the bag's own, so taking an item in keeps them as they are
   test("taking an item into the bag keeps the quick swap slots", () => {
@@ -35,13 +35,14 @@ describe(addInventoryItem, () => {
     expect(addInventoryItem(inventory, material, 1).inventory.quickSwapItemIds).toStrictEqual([QUICK_SWAP_ITEM_ID]);
   });
 
-  test("fills a stack to its item's limit and leaves the rest", () => {
+  // Most items stack to 9,999, under the save's ceiling of 99,999, so a pick up is clamped by the item's own limit
+  test("fills a stack to its item's limit of 9,999 and refuses the 10,000th", () => {
     expect.hasAssertions();
 
-    const { inventory } = addInventoryItem(emptyInventory, material, 1);
+    const { inventory } = addInventoryItem(emptyInventory, material, 9_998);
 
     expect(addInventoryItem(inventory, material, 2)).toStrictEqual({
-      inventory: { items: [{ definition: material, id: 0, quantity: 2 }], nextId: 1, quickSwapItemIds: [] },
+      inventory: { items: [{ definition: material, id: 0, quantity: 9_999 }], nextId: 1, quickSwapItemIds: [] },
       overflow: 1,
     });
   });

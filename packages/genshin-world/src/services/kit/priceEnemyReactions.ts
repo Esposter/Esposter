@@ -14,7 +14,6 @@ import { TransformativeReactionType } from "#src/models/combat/TransformativeRea
 import { applyBluntHit } from "#src/services/combat/aura/applyBluntHit";
 import { getAmplifyingMultiplier } from "#src/services/combat/damage/getAmplifyingMultiplier";
 import { getCatalyzeBonus } from "#src/services/combat/damage/getCatalyzeBonus";
-import { TransformativeReactionPoiseDamageMap } from "#src/services/combat/damage/TransformativeReactionPoiseDamageMap";
 import { applySimultaneousReactionInternalCooldown } from "#src/services/combat/internalCooldown/applySimultaneousReactionInternalCooldown";
 import { TransformativeReactionReachRadiusMap } from "#src/services/combat/reach/TransformativeReactionReachRadiusMap";
 import { addSuperconductStatus } from "#src/services/enemy/addSuperconductStatus";
@@ -25,7 +24,7 @@ import { priceTransformativeReaction } from "#src/services/kit/priceTransformati
 // In place. A Superconduct takes its Physical RES down first. Melt and Vaporize amplify the damage that triggered them, and
 // Aggravate and Spread add to its base, each raised by the deployed team's party reaction DMG Bonus inside its Elemental
 // Mastery term, as gcsim (MIT) pkg/enemy/damage.go and pkg/core/combat/reaction.go read it. Each transformative reaction
-// That lands adds its own hit's Poise damage, an Overloaded's explosion's
+// That lands adds its own hit's poise, as the published reaction table gives it
 export const priceEnemyReactions = (
   kind: EnemyKind,
   enemy: Enemy,
@@ -45,8 +44,8 @@ export const priceEnemyReactions = (
   let poiseDamage = 0;
   let transformativeDamage = 0;
   const reachingReactions: TransformativeReaction[] = [];
-  // An Overloaded's explosion is a blunt hit that lands after it, so it is priced in turn: its poise drains a Freeze, and a
-  // Freeze left shatters
+  // A blunt reaction's hit, an Overloaded's explosion, lands after it, so it is priced in turn: its poise drains a
+  // Freeze, and a Freeze left shatters
   const pendingReactions = [...reactions];
   for (const reaction of pendingReactions) {
     const { element: reactionElement, reactionType } = reaction;
@@ -76,10 +75,10 @@ export const priceEnemyReactions = (
       if (TransformativeReactionReachRadiusMap[reactionType] !== undefined)
         // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the spread brings Reaction's reactionType (the wider ReactionType union), which this literal overrides with the narrowed TransformativeReactionType of the condition above; the literal's reactionType is exactly TransformativeReaction's
         reachingReactions.push({ ...reaction, reactionType });
-      const reactionPoiseDamage = TransformativeReactionPoiseDamageMap[reactionType] ?? 0;
-      poiseDamage += reactionPoiseDamage;
-      if (reactionType === TransformativeReactionType.Overloaded)
-        pendingReactions.push(...applyBluntHit(enemy.elementalState, reactionPoiseDamage));
+      const reactionPoise = context.enemyTables.reactionPoiseMap.get(reactionType);
+      poiseDamage += reactionPoise?.poiseDamage ?? 0;
+      if (reactionPoise?.isBlunt)
+        pendingReactions.push(...applyBluntHit(enemy.elementalState, reactionPoise.poiseDamage));
       transformativeDamage += priceTransformativeReaction(
         kind,
         enemy,

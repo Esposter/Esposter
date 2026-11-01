@@ -48,17 +48,9 @@ describe(computeEnemyRespawnTime, () => {
     ).toBe(epoch.add(BOSS_RESPAWN_AFTER_CLAIM_DURATION).toString());
   });
 
-  test("an unclaimed blossom keeps the boss defeated until the player teleports away", () => {
+  test("an unclaimed blossom gives the boss no respawn time, its area's teleports holding it instead", () => {
     expect.hasAssertions();
 
-    const teleportedAt = epoch.add({ seconds: 1 });
-
     expect(computeEnemyRespawnTime([EnemyType.Elite, EnemyType.Boss], epoch, unclaimed)).toBeUndefined();
-    expect(
-      computeEnemyRespawnTime([EnemyType.Elite, EnemyType.Boss], epoch, unclaimed, epoch.subtract({ seconds: 1 })),
-    ).toBeUndefined();
-    expect(computeEnemyRespawnTime([EnemyType.Elite, EnemyType.Boss], epoch, unclaimed, teleportedAt)?.toString()).toBe(
-      teleportedAt.toString(),
-    );
   });
 });

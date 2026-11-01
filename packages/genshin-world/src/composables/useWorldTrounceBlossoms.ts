@@ -6,6 +6,7 @@ import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
 import type { Party } from "#src/models/party/Party";
 import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
+import type { Catalogue } from "#src/models/world/Catalogue";
 import type { WorldBagDependencies } from "#src/models/world/WorldBagDependencies";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
@@ -28,6 +29,7 @@ import { drawWeeklyBossReward } from "#src/services/bosses/drawWeeklyBossReward"
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getSpawnKey } from "#src/services/enemy/getSpawnKey";
 import { gainCompanionshipExp } from "#src/services/friendship/gainCompanionshipExp";
+import { findAreaAt } from "#src/services/map/findAreaAt";
 import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimResinMap";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
@@ -37,10 +39,11 @@ import { takeOne } from "@esposter/shared";
 import { computed, shallowRef, watch } from "vue";
 
 // The Trounce Blossoms the defeated normal bosses leave where they fell, keyed by the spawn each boss fell under. A
-// Blossom waits until it is claimed or the boss respawns after a teleport, and a claim spends the boss's Original Resin
-// And grants its World Level's rewards and its own drop, the claim setting the boss's respawn five seconds on. Choosing
-// A claim the holdings or the bag cannot pay whole is refused, and the blossom stays as it was
+// Blossom waits until it is claimed or its boss is released by a teleport out of its area, and a claim spends the boss's
+// Original Resin and grants its World Level's rewards and its own drop, the claim setting the boss's respawn five seconds
+// On. Choosing a claim the holdings or the bag cannot pay whole is refused, and the blossom stays as it was
 export const useWorldTrounceBlossoms = ({
+  catalogue,
   characters,
   emitGrant,
   enemyKindMap,
@@ -60,6 +63,7 @@ export const useWorldTrounceBlossoms = ({
   wallet,
   worldNow,
 }: WorldBagDependencies & {
+  catalogue: Catalogue;
   characters: Ref<Character[]>;
   emitGrant: () => void;
   enemyKindMap: ReadonlyMap<number, EnemyKind>;
@@ -70,12 +74,12 @@ export const useWorldTrounceBlossoms = ({
   getGroundHeight: (x: number, z: number) => number;
   getWorldNow: () => Temporal.Instant;
   party: Party;
-  savedState: Pick<GenshinSaveState, "lastTeleportAt" | "trounceBlossoms">;
+  savedState: Pick<GenshinSaveState, "lastTeleportAts" | "trounceBlossoms">;
   worldNow: Readonly<Ref<Temporal.Instant>>;
 }) => {
   const trounceBlossoms = shallowRef<ReadonlyMap<string, TrounceBlossom>>(savedState.trounceBlossoms);
-  // The last teleport, which brings back a boss whose blossom is unclaimed, none until the player has teleported
-  const lastTeleportAt = shallowRef<Temporal.Instant | undefined>(savedState.lastTeleportAt);
+  // The last teleport into each area, which holds a boss down until a teleport lands outside its area after its defeat
+  const lastTeleportAts = shallowRef<ReadonlyMap<string, Temporal.Instant>>(savedState.lastTeleportAts);
   const claimPrompt = shallowRef<{ offers: BlossomClaimOffer[]; spawnKey: string }>();
   const trounceBlossomInteractables = computed(() =>
     computeTrounceBlossomInteractables(trounceBlossoms.value, gameText, getGroundHeight, worldNow.value),
@@ -91,12 +95,14 @@ export const useWorldTrounceBlossoms = ({
       computeDefeatTrounceBlossom(enemyType, enemy.position, enemy.traits.uniqueDropId);
     if (trounceBlossom) writeTrounceBlossom(getSpawnKey(enemy.campId, enemy.id), trounceBlossom);
   });
-  events.on("teleport", () => {
-    lastTeleportAt.value = getWorldNow();
+  // A teleport is kept as the last one into the area it lands in, the landing outside every area under the empty id
+  events.on("teleport", ({ point }) => {
+    const landedAreaId = findAreaAt(catalogue, point.x, point.z)?.id ?? "";
+    lastTeleportAts.value = new Map(lastTeleportAts.value).set(landedAreaId, getWorldNow());
   });
-  // The blossoms and the last teleport are the save's, so a change to either is a grant the host saves
+  // The blossoms and the last teleports are the save's, so a change to either is a grant the host saves
   watch(
-    [trounceBlossoms, lastTeleportAt],
+    [trounceBlossoms, lastTeleportAts],
     () => {
       emitGrant();
     },
@@ -173,7 +179,7 @@ export const useWorldTrounceBlossoms = ({
     claimPrompt,
     closeTrounceBlossomClaim,
     forgetTrounceBlossom,
-    lastTeleportAt,
+    lastTeleportAts,
     openTrounceBlossomClaim,
     trounceBlossomInteractables,
     trounceBlossoms,
