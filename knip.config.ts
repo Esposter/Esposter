@@ -115,7 +115,7 @@ const knipConfiguration: KnipConfig = {
       // Command entry and the shell wrapper's slot gate are named here
       entry: ["src/**/index.ts", "src/oxlint/**/*.ts", "src/services/genshinAssets/kits/gcsim/checkGcsimConfigs.ts"],
       // Loaded by path through createRequire, which knip cannot follow
-      ignoreDependencies: ["@wasm-audio-decoders/ogg-vorbis", "jscpd"],
+      ignoreDependencies: ["jscpd"],
     },
   },
 };
