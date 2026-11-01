@@ -6,4 +6,7 @@ export const TEST_EPOCH_DATE: Temporal.PlainDate = Temporal.Instant.fromEpochMil
   .toZonedDateTimeISO("UTC")
   .toPlainDate();
 
+// The one name every path a suite writes is made of
+export const TEST_FILENAME = "a";
+
 describe.todo("constants");
