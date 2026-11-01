@@ -13,7 +13,8 @@ flowchart TD
   DEAL --> KEPT["Each kept with its count and the rank it was dealt at"]
   KEPT --> FIN{"A scene task's count reached?"}
   FIN -->|"yes"| CLAIM["Claimed: the reward of its tier's band for the dealt rank"]
-  POINT["An Encounter Point spent"] -->|"unfinished"| CLAIM
+  FIN -->|"no"| POINT["An Encounter Point spent"]
+  POINT --> CLAIM
   CLAIM --> FOURTH{"The day's four claimed?"}
   FOURTH -->|"yes, bonus not given"| BONUS["Talking to Katheryne gives her bonus: the band of the rank held now"]
 ```
@@ -28,7 +29,7 @@ A commission is one daily task of a region's city, read from the game's daily ta
 
 ## Claims and rewards
 
-The game's Adventure Rank is cut into bands of `COMMISSION_RANK_BAND_SIZE` ranks, `COMMISSION_RANK_BAND_COUNT` bands in all (`packages/genshin-world/src/services/commission/constants.ts`; the game's table holds one row a band, `{data-root}/genshin-parity/text/ExcelBinOutput/DailyTaskLevelExcelConfigData.json`), and a rank past the last band stays in it (`packages/genshin-world/src/services/commission/computeCommissionBand.ts`). A reward tier holds the items of each band (three tiers of twelve bands (`COMMISSION_RANK_BAND_COUNT`) in `{data-root}/genshin-parity/text/ExcelBinOutput/DailyTaskRewardExcelConfigData.json`), and a claim draws each item's count from its range with the world's random source (`packages/genshin-world/src/services/reward/drawRewardItems.ts`). A draw of zero gives nothing.
+The game's Adventure Rank is cut into bands of `COMMISSION_RANK_BAND_SIZE` ranks, `COMMISSION_RANK_BAND_COUNT` bands in all (`packages/genshin-world/src/services/commission/constants.ts`; the game's table holds one row a band, `{data-root}/genshin-parity/text/ExcelBinOutput/DailyTaskLevelExcelConfigData.json`), and a rank past the last band stays in it (`packages/genshin-world/src/services/commission/computeCommissionBand.ts`). A reward tier holds the items of each band (three tiers, each of `COMMISSION_RANK_BAND_COUNT` bands, in `{data-root}/genshin-parity/text/ExcelBinOutput/DailyTaskRewardExcelConfigData.json`), and a claim draws each item's count from its range with the world's random source (`packages/genshin-world/src/services/reward/drawRewardItems.ts`). A draw of zero gives nothing.
 
 - `claimCommissionReward` claims a dealt scene task. A task whose count has reached its finish count is claimed free; an unfinished one is claimed for one Encounter Point, which it spends (`packages/genshin-world/src/services/commission/claimCommissionReward.ts`). Either way its reward is the tier's band for the rank it was dealt at (`packages/genshin-world/src/services/commission/takeCommissionClaim.ts`), and a commission claimed cannot be claimed again (`packages/genshin-world/src/services/commission/findDealtCommission.ts`).
 - Claims stop at four a day. Each claim counts toward the four, whichever way it was made (`{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `1812726784`: "Regardless of how you obtain them, you will not be able to obtain more than 4 Commission Rewards per day").
@@ -43,7 +44,7 @@ The Adventure Treasure Pack the wiki lists is not paid. The preview names its it
 
 ## Data
 
-`pnpm -C scripts genshin:assets commissions` builds every region's daily tasks from the game text dump outside the repository and publishes one record a region to the hosted game data, as `commissions/<region>`, each task filed under the region its city is named for (`scripts/src/services/genshinAssets/commissions/buildCommissions.ts`). The run reads the daily task, reward and level tables and the reward previews, and refuses a level table that is not the game's twelve bands (`COMMISSION_RANK_BAND_COUNT`) (`scripts/src/services/genshinAssets/commissions/checkLevelBands.ts`). `readCommissions` fetches a region's slice by its key from the hosted game data and checks it against its schema as it arrives (`packages/genshin-world/src/services/commission/readCommissions.ts`).
+`pnpm -C scripts genshin:assets commissions` builds every region's daily tasks from the game text dump outside the repository and publishes one record a region to the hosted game data, as `commissions/<region>`, each task filed under the region its city is named for (`scripts/src/services/genshinAssets/commissions/buildCommissions.ts`). The run reads the daily task, reward and level tables and the reward previews, and refuses a level table that does not hold `COMMISSION_RANK_BAND_COUNT` bands (`scripts/src/services/genshinAssets/commissions/checkLevelBands.ts`). `readCommissions` fetches a region's slice by its key from the hosted game data and checks it against its schema as it arrives (`packages/genshin-world/src/services/commission/readCommissions.ts`).
 
 The three daily task tables are read from the dump (`scripts/src/services/genshinAssets/commissions/buildCommissions.ts`), where `genshin:text fetch` fills any table the dump lacks (`scripts/src/services/genshinText/fetchDump.ts`, as the [game data formats](../game-data-formats/design.md) page covers), and nothing from them is committed.
 
@@ -78,9 +79,9 @@ The three daily task tables are read from the dump (`scripts/src/services/genshi
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `DailyTaskExcelConfigData`, `DailyTaskRewardExcelConfigData` and `DailyTaskLevelExcelConfigData`, the tasks, their reward tiers and the Adventure Rank bands, with `RewardPreviewExcelConfigData` for each reward's items.
 - [Commission](https://genshin-impact.fandom.com/wiki/Commission), Genshin Impact Wiki: the four commissions a day, the unlock at Adventure Rank 12, and the bonus's items the dump's preview is checked against. Its figures are the dump's.
 - `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `1812726784`: grounds the requirement "A player" and scenario "Katheryne's bonus is given once the day's four are claimed".
-- `{data-root}/genshin-parity/text/ExcelBinOutput/RewardPreviewExcelConfigData.json`, rows `2001` to `2012`: Primogem `201` at 20 and Adventure EXP `102` at 500 in every band, Mora `202` from 3875 to 13175 and Companionship EXP `105` from 35 to 100; grounds the requirement "Katheryne's bonus".
+- `{data-root}/genshin-parity/text/ExcelBinOutput/RewardPreviewExcelConfigData.json`, rows `2001` to `2012`: grounds the requirement "Katheryne's bonus".
 - `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `33283106`: grounds scenario "A claim does not draw Katheryne's bonus".
-- `{data-root}/genshin-parity/text/ExcelBinOutput/RewardPreviewExcelConfigData.json`, item `107004` is at count `0` in every band: grounds scenario "The Adventure Treasure Pack is not paid by the bonus".
+- `{data-root}/genshin-parity/text/ExcelBinOutput/RewardPreviewExcelConfigData.json`, the Adventure Treasure Pack's row: grounds scenario "The Adventure Treasure Pack is not paid by the bonus".
 
 ## Reference
 
@@ -88,8 +89,8 @@ The three daily task tables are read from the dump (`scripts/src/services/genshi
 
 ## Open
 
-- [ ] **Nothing is dealt before Adventure Rank 12, where commissions open** — no source yet: the wiki's Commission page is not in `{data-root}/cache/genshin-wiki/`, and no system open UI in `{data-root}/genshin-parity/text/ExcelBinOutput/SystemOpenUIConfigData.json` names the commissions.
-- [ ] **An unfinished commission is claimed for one Encounter Point** — no source yet: the game's text gives Encounter Points' use in place of a commission but no per-commission cost, and its one-per-commission line (`{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `2417337778`) is for Long-Term Encounter Points.
+The sources the Adventure Rank 12 gate and the one-point claim still lack are listed in the [spec](spec.md), not repeated here.
+
 - [ ] **The stored saves written before the flag existed are backfilled once from outside the app** — no source yet: no backfill script or run record names `isBonusClaimed` in the repo or in the scratch folders under `{data-root}`.
 - [ ] **The three daily task tables all come from the same pull** — no source yet: the level and reward tables are recorded as one fetch, while `{data-root}/genshin-parity/text/ExcelBinOutput/DailyTaskExcelConfigData.json` carries a different pull, and no manifest of the dump's pulls is kept.
 - [ ] **A finished commission is claimed free** — no source yet: the game's side, the wiki's Adventure Encounters page, which is not in the cache.
