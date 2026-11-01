@@ -37,9 +37,6 @@ const pickedCount = computed(() => Math.min(Math.max(count.value, 1), Math.max(c
 const setCount = (event: Event) => {
   count.value = Number((event.target as HTMLInputElement).value);
 };
-const buy = () => {
-  if (pickedGood.value && countMaximum >= 1) emit("buy", pickedGood.value, pickedCount.value);
-};
 </script>
 
 <template>
@@ -99,7 +96,7 @@ const buy = () => {
         min="1"
         type="range"
         :value="pickedCount"
-        @input="(event) => setCount(event)"
+        @input="setCount"
       />
       <p class="amount-value">{{ pickedCount }}</p>
       <button class="cancel" :aria-label="closeLabel" type="button" @click="goodId = 0">
@@ -107,7 +104,14 @@ const buy = () => {
           <path d="M6 6 18 18M18 6 6 18" />
         </svg>
       </button>
-      <button class="buy" :disabled="countMaximum < 1" type="button" @click="buy()">{{ buyLabel }}</button>
+      <button
+        class="buy"
+        :disabled="countMaximum < 1"
+        type="button"
+        @click="pickedGood && countMaximum >= 1 && emit('buy', pickedGood, pickedCount)"
+      >
+        {{ buyLabel }}
+      </button>
     </div>
   </div>
 </template>

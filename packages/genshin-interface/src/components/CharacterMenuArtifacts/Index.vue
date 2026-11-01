@@ -73,9 +73,6 @@ const selectedIndex = ref(0);
 const isDetailsOpen = ref(false);
 const selectedStats = computed(() => slotStats[selectedIndex.value]);
 const isSelectedWorn = computed(() => selectedStats.value !== undefined);
-const switchSlot = () => {
-  selectedIndex.value = (selectedIndex.value + 1) % slotNames.length;
-};
 </script>
 
 <template>
@@ -167,7 +164,12 @@ const switchSlot = () => {
           <span class="key" aria-hidden="true">R</span>
           {{ fastEquipLabel }}
         </GameButton>
-        <GameButton class="button" :kind="GameButtonKind.Pill" tip="" @click="switchSlot()">
+        <GameButton
+          class="button"
+          :kind="GameButtonKind.Pill"
+          tip=""
+          @click="selectedIndex = (selectedIndex + 1) % slotNames.length"
+        >
           <span class="key" aria-hidden="true">F</span>
           {{ switchLabel }}
         </GameButton>
