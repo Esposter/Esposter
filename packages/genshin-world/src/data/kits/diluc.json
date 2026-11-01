@@ -12,13 +12,13 @@
     "value": { "angle": 6.283185307179586, "height": 7, "radius": 8.9 }
   },
   "chargedAttack.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
   "chargedAttack.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "chargedAttack.hits.0.poiseDamage": { "cause": "Unsourced", "value": 60 },
   "chargedAttack.hits.1.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "chargedAttack.hits.1.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
@@ -40,7 +40,7 @@
   "skillChain.followUps.0.animationFrames": { "file": "skill.go", "line": 38, "source": "Gcsim", "value": 38 },
   "skillChain.followUps.0.hits.length": { "cause": "Unsourced", "value": 1 },
   "skillChain.followUps.0.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 5.235987755982989, "height": 2, "radius": 3.4 }
   },
   "skillChain.followUps.0.hits.0.hitmarkFrames": { "file": "skill.go", "line": 18, "source": "Gcsim", "value": 28 },
@@ -48,7 +48,7 @@
   "skillChain.followUps.1.animationFrames": { "file": "skill.go", "line": 47, "source": "Gcsim", "value": 66 },
   "skillChain.followUps.1.hits.length": { "cause": "Unsourced", "value": 1 },
   "skillChain.followUps.1.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.9 }
   },
   "skillChain.followUps.1.hits.0.hitmarkFrames": { "file": "skill.go", "line": 18, "source": "Gcsim", "value": 46 },
