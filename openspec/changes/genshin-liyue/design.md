@@ -32,15 +32,6 @@ The catalogue holds Liyue's areas as the game names them: Bishui Plain, Minlin, 
    - **No export holds them.** Liyue's extraction is the harbour's streams. Jueyun Karst's waypoints stand a few hundred metres past the farthest of its placements. Guyun Stone Forest's waypoint stands inside them, but no rock or stone is placed within 400 metres of it: the nearest are the harbour's own "Area_Ly_Stone_LYG_" pieces. An extraction reaching the karst's and the stone forests' streams needs the game's install.
    - **The passes before shape.** The capital's passes run in order: the Inventory (`liyue-every-renderer`) and the base ground (`liyue-region-base`) are done, the Layout waits on the camera `liyue-harbor-location` solves on its landmarks, which waits on a mesh the extraction holds for each, then the Camera ([compute queue](../../specs/genshin/compute/liyue/design.md)).
 
-## Build order
-
-1. **Bishui Plain** from Stone Gate to Wangshu Inn, the way the game enters Liyue.
-2. **Liyue Harbor**, matched landmark by landmark.
-3. **Minlin with Jueyun Karst**, where the karst meshes and the sea of clouds first appear, then **Qingce Village**.
-4. **Lisha and Qiongji Estuary**, including Guyun Stone Forest.
-5. **The Chasm**, surface and underground.
-6. **Chenyu Vale**, then the rest in the catalogue's order.
-
 ## Reference checklist
 
 Stone Gate, Wangshu Inn from the bridge, Liyue Harbor from the sea and from the top of the steps, a harbour street, Jueyun Karst from within the sea of clouds, Qingce Village's terraces, Guyun Stone Forest from the water, the Chasm's rim, and a Chenyu Vale village.
