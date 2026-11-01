@@ -1,4 +1,4 @@
-import { RegionId } from "#src/models/RegionId";
+import { RegionId } from "#src/models/shared/RegionId";
 import { LandmarkIdStatuePointId } from "#src/models/statue/LandmarkIdStatuePointId";
 
 // The landmark of each nation's Statue of The Seven, by its region's id in the save, whose scene point the landmark map

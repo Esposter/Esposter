@@ -2,7 +2,7 @@ import type { CatalogueArea } from "#src/models/world/CatalogueArea";
 import type { WaypointLandmark } from "#src/models/world/WaypointLandmark";
 
 import { DevUnlockKind } from "#src/models/dev/DevUnlockKind";
-import { RegionId } from "#src/models/RegionId";
+import { RegionId } from "#src/models/shared/RegionId";
 import { LandmarkIdStatuePointId } from "#src/models/statue/LandmarkIdStatuePointId";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { WorldLayer } from "#src/models/world/WorldLayer";
