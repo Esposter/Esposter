@@ -18,19 +18,13 @@ import { readManualTextMap } from "#src/services/genshinText/readManualTextMap";
 import { readSdkText } from "#src/services/genshinText/readSdkText";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { readVoiceLineFetters } from "#src/services/genshinText/readVoiceLineFetters";
-import { formatGeneratedSource } from "#src/services/shared/formatGeneratedSource";
+import { writeGeneratedFile } from "#src/services/genshinText/writeGeneratedFile";
 import { toJson } from "#src/services/shared/toJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readGenshinDb } from "genshin-persona/src/services/readGenshinDb.ts";
 import { GameLanguage, GameLanguages, GameTextKeys } from "genshin-text";
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
-
-// Written as the formatter writes it, through its API: a file under `generated/` is one its command line ignores
-const writeGeneratedFile = async (path: string, source: string): Promise<void> => {
-  mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, await formatGeneratedSource(path, source));
-};
 
 // Every string `GameTextKey` names, in every language, into `genshin-text`; the lines of every character the
 // Game-data package has none for yet, in every language, into the persona; and the persona's copy of the modules
