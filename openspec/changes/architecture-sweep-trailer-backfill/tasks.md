@@ -2,7 +2,7 @@
 
 ## 1. Decide the dating path
 
-- [ ] 1.1 The owner picks one of the three options in `proposal.md`. Verified by a recorded choice in this change's `proposal.md`, replacing the open question.
+- [ ] 1.1 The owner picks one of the three dating paths in `proposal.md`'s open question. Verified by `proposal.md` naming the chosen path in place of that question.
 
 ## 2. Date the swept units (option 1)
 

@@ -2,7 +2,7 @@
 
 ## 1. Decide the proof for #703
 
-- [ ] 1.1 The owner picks one of the three options in `proposal.md`. Verified by a recorded choice in this change's `proposal.md`, replacing the open question.
+- [ ] 1.1 The owner picks one of the three proofs in `proposal.md`'s open question. Verified by `proposal.md` naming the chosen proof in place of that question.
 
 ## 2. Cite the proof (option 1)
 
