@@ -1,7 +1,7 @@
 import type { DerivedAssetComponentOptions } from "#src/models/genshinAssets/shared/DerivedAssetComponentOptions";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { SCENE_POINT_CATEGORY, SCENE_POINT_FILE } from "#src/services/genshinAssets/shared/constants";
+import { LOGIN_DOOR_MESH, SCENE_POINT_CATEGORY, SCENE_POINT_FILE } from "#src/services/genshinAssets/shared/constants";
 
 // Each component's roots, which `extract` follows every pointer from, and the assets no pointer from them reaches by
 // The name the game gives them, which the asset index turns into the blocks holding them. The login screen's roots are
@@ -71,7 +71,7 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
         // The door's turn held to the walkway's and the camera's heading ModelCamera's. The two solves scatter the
         // Foot by a few centimetres either side of the top and the axis, so it stands on both
         position: [262, -340.68, -776.1],
-        prefab: { block: "00/11790361.blk", name: "LoginScene_Door01_Vo", pathId: "3964741434016489810" },
+        prefab: { block: "00/11790361.blk", name: LOGIN_DOOR_MESH, pathId: "3964741434016489810" },
       },
     ],
   },
