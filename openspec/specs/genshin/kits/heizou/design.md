@@ -29,7 +29,6 @@ flowchart TD
 ## Open
 
 - [ ] **The stack count a press or hold carries** — no source yet: a recording of a short hold's stack count, which gcsim does not give before three seconds.
-- [ ] **The built hits carry the wiki's poise** — contradicted by `packages/genshin-world/src/services/kit/characters/heizouKit.ts`: it carries no poise for any hit.
 
 ## Key files
 
