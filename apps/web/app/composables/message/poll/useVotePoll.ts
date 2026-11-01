@@ -15,16 +15,15 @@ export const useVotePoll = async (
   const { data: session } = await useAuthSession();
   const dataStore = useDataStore();
   const { storeUpdateMessage } = dataStore;
-  const userId = computed(() => session.value?.user.id);
   // Scoped to the poll bound right now rather than to anything this instance has in flight — `message` is a
   // Getter, so the surface can re-point at another poll, and a whole-instance flag would disable a radio group
   // Whose own vote landed long ago
   const isVoting = computed(() => checkIsPending(toValue(message).rowKey));
   // An empty option id withdraws the reader's vote, as the server takes it
   const vote = async (optionId: string) => {
-    if (!userId.value || isPreview) return;
+    const votingUserId = session.value?.user.id;
+    if (!votingUserId || isPreview) return;
 
-    const votingUserId = userId.value;
     const messageValue = toValue(message);
     const pollContentValue = toValue(pollContent);
     const { [votingUserId]: _previousOptionId, ...otherVotes } = pollContentValue.votes;
