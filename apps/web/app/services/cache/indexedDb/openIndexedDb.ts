@@ -44,25 +44,25 @@ export const openIndexedDb = () => {
   return databasePromise;
 };
 
+// The database is deleted by name whether or not this page has opened it: a page load that never opened it holds
+// No connection, and the rows an earlier page load wrote are still there to be served to the next reader
 export const resetIndexedDb = async () => {
   const database = await databasePromise;
-  if (database) {
-    database.close();
-    const deleteRequest = indexedDB.deleteDatabase(database.name);
-    await new Promise<void>((resolve, reject) => {
-      deleteRequest.onsuccess = () => {
-        resolve();
-      };
-      deleteRequest.onerror = () => {
-        reject(
-          deleteRequest.error ??
-            new InvalidOperationError(Operation.Delete, indexedDB.deleteDatabase.name, database.name),
-        );
-      };
-      deleteRequest.onblocked = () => {
-        resolve();
-      };
-    });
-  }
+  if (database) database.close();
   databasePromise = undefined;
+  const deleteRequest = indexedDB.deleteDatabase(DATABASE_NAME);
+  await new Promise<void>((resolve, reject) => {
+    deleteRequest.onsuccess = () => {
+      resolve();
+    };
+    deleteRequest.onerror = () => {
+      reject(
+        deleteRequest.error ??
+          new InvalidOperationError(Operation.Delete, indexedDB.deleteDatabase.name, DATABASE_NAME),
+      );
+    };
+    deleteRequest.onblocked = () => {
+      resolve();
+    };
+  });
 };

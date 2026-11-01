@@ -1,4 +1,5 @@
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
+import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { signOut } from "@/services/auth/authClient.test";
 import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
@@ -8,10 +9,35 @@ import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSuite.test";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { createUser } from "@/services/message/user/createUser.test";
-import { noop, RoutePath } from "@esposter/shared";
+import { noop, RoutePath, SITE_NAME, toRawDeep } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+
+// Rows an earlier page load left in the database, written straight to IndexedDB so this module never opens it
+const writeEarlierPageRows = (message: StandardMessageEntity) =>
+  new Promise<void>((resolve, reject) => {
+    const { indexName, keyPath, storeName } = MessageIndexedDbStoreConfiguration;
+    const request = indexedDB.open(SITE_NAME.toLowerCase(), 1);
+    request.onupgradeneeded = () => {
+      request.result.createObjectStore(storeName, { keyPath }).createIndex(indexName, indexName);
+    };
+    request.onsuccess = () => {
+      const { result } = request;
+      const transaction = result.transaction(storeName, "readwrite");
+      transaction.objectStore(storeName).put(toRawDeep(message));
+      transaction.oncomplete = () => {
+        result.close();
+        resolve();
+      };
+      transaction.onerror = () => {
+        reject(new Error("The earlier page's rows could not be written"));
+      };
+    };
+    request.onerror = () => {
+      reject(new Error("The database could not be opened to write the earlier page's rows"));
+    };
+  });
 
 describe(signOutOfBrowser, () => {
   const reloadMock = vi.fn<() => void>();
@@ -74,6 +100,18 @@ describe(signOutOfBrowser, () => {
 
     expect(messages).toStrictEqual([]);
     expect(members).toStrictEqual([]);
+  });
+
+  // A page load that never opened the cache holds no connection to the database, so the sign-out reaches the rows
+  // An earlier page load wrote only by deleting the database by name
+  test("clears the rows of an earlier page load when this page never opened the cache", async () => {
+    expect.hasAssertions();
+
+    await writeEarlierPageRows(message1);
+    signOut.mockResolvedValue();
+    await signOutOfBrowser(RoutePath.Login);
+
+    await expect(readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey)).resolves.toStrictEqual([]);
   });
 
   // A failed clear is logged and the sign-out still runs, so the cache cannot hold the reader signed in
