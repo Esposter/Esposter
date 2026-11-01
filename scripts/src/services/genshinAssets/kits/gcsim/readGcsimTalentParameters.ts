@@ -1,5 +1,7 @@
 import type { GcsimTalentParameter } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentParameter";
 
+import { toGroupKey } from "#src/services/genshinAssets/shared/toGroupKey";
+
 const TALENT_COMMENT_REGEX = /\/\/ (?<type>attack|burst|skill): .+? - (?<label>.+): (?<formula>[^:]*\{\d+\}[^:]*)$/u;
 const PARAMETER_REGEX = /\{(?<index>\d+)\}/gu;
 
@@ -10,7 +12,7 @@ export const readGcsimTalentParameters = (source: string): Map<string, GcsimTale
   for (const [lineIndex, line] of source.split("\n").entries()) {
     const groups = TALENT_COMMENT_REGEX.exec(line.trim())?.groups;
     if (groups?.type === undefined || groups.label === undefined || groups.formula === undefined) continue;
-    const key = `${groups.type}|${groups.label}`;
+    const key = toGroupKey(groups.type, groups.label);
     const lineNumber = lineIndex + 1;
     const row = talentRowMap.get(key);
     if (row === undefined)
