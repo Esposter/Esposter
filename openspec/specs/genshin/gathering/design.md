@@ -91,17 +91,17 @@ F on a gathering point's row picks one of its item into the bag, through the sam
 
 ## Sources
 
-- [Local Specialty](https://genshin-impact.fandom.com/wiki/Local_Specialty), Genshin Impact Wiki: a harvested specialty respawns after 46 hours.
-- [Reset](https://genshin-impact.fandom.com/wiki/Reset), Genshin Impact Wiki: the overworld Iron Chunk and common cooking ingredients spawning at 0:00 server time, four hours before the [daily reset](../reset-clock/design.md).
-- [Mineral](https://genshin-impact.fandom.com/wiki/Mineral), Genshin Impact Wiki: the poise each ore takes to break, from melee hits and from blunt ones.
-- [Interruption Resistance data](https://genshin-impact.fandom.com/wiki/Interruption_Resistance/Data), Genshin Impact Wiki: Overloaded's 90 poise.
+- [Local Specialty](https://genshin-impact.fandom.com/wiki/Local_Specialty), Genshin Impact Wiki: a harvested specialty respawns after 46 hours. Not in the cache (see Open).
+- [Reset](https://genshin-impact.fandom.com/wiki/Reset), Genshin Impact Wiki: the overworld Iron Chunk and common cooking ingredients spawning at 0:00 server time, four hours before the [daily reset](../reset-clock/design.md). Not in the cache (see Open).
+- [Mineral](https://genshin-impact.fandom.com/wiki/Mineral), Genshin Impact Wiki: the poise each ore takes to break, from melee hits and from blunt ones. Not in the cache (see Open).
+- [Interruption Resistance data](https://genshin-impact.fandom.com/wiki/Interruption_Resistance/Data), Genshin Impact Wiki: Overloaded's 90 poise. Not on disk (see Open).
 - [gcsim](https://github.com/genshinsim/gcsim), MIT: the source of the Overloaded explosion, cited on the [combat page](../combat/design.md).
 - [Genshin Impact - Fast Mining Methods](https://www.youtube.com/watch?v=6CY2RwKc_TE), YouTube, 0–10 s at 60 frames a second: three low plunges of the Traveler's break a Crystal Chunk.
 - [Farming Ores with Zhongli](https://www.youtube.com/watch?v=EWYe-MYjmqU), YouTube, 77–82 s at 60 frames a second: one Planet Befall breaks a Crystal Chunk and a Magical Crystal Chunk.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `GatherExcelConfigData` and `MaterialExcelConfigData`, the tables the items and their ground rows are read from.
 - [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map's labels and points that the places are fitted from.
 - `{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, the daily refresh of 14400 seconds that the reset at 04:00 is read from; grounds the requirement "A picked cooking ingredient stands again at the next daily reset".
-- The Genshin Impact Wiki's Blunt Attacks table, not in the genshin-wiki cache: Ningguang's plunge is not blunt, as the wiki's table excepts it. Grounds scenario 'A Geo character's physical normal attack and a listed exception do not strike blunt'.
+- The Genshin Impact Wiki's Blunt Attacks table, not in the genshin-wiki cache: Ningguang's plunge is not blunt, as the wiki's table excepts it. It grounds scenario 'A Geo character's physical normal attack and a listed exception do not strike blunt' only once it is cached (see Open).
 - The Overloaded explosion's blunt strike, its 90 poise and the 3-metre circle, as the [combat page](../combat/design.md) cites them. Grounds scenario 'Overloaded explosion strikes ores nearby'.
 
 ## Reference
@@ -109,6 +109,8 @@ F on a gathering point's row picks one of its item into the bag, through the sam
 - A montage cut between strikes, so which of them count is settled here. Its source and recording are on [world compute](../compute/world/design.md).
 
 ## Open
+
+The open check for each ore's own respawn is recorded with its requirement in [the spec](spec.md).
 
 - [ ] **The respawn durations match the wiki** — no source: the Local Specialty, Reset and Mineral wiki pages are not in `{data-root}/cache/genshin-wiki/`, so the 46 hours, the 04:00 reset and the 0:00 spawn are unchecked.
 - [ ] **The ore poise values match the wiki's Mineral page** — no source: the page is not cached; `packages/genshin-world/src/services/gathering/OreItemIdBreakPoiseMap.ts` carries the values.
@@ -119,6 +121,5 @@ F on a gathering point's row picks one of its item into the bag, through the sam
 - [ ] **Special Items (the Oculi) are left to the statues' page, and four cooking ingredients and one specialty are left out** — no source: neither exclusion was found in `scripts/src/services/genshinAssets/gathering/readGatheringItems.ts` or `scripts/src/services/genshinAssets/gathering/buildGatheringPlaces.ts`.
 - [ ] **`ore-strike.mkv` holds the strikes this page settles** — no source: no `ore-strike.mkv` is in `{data-root}/genshin-parity/captures/`, and the stand-in there, `{data-root}/genshin-parity/captures/yt-VlRNdhoeXTk-ore-strike.mp4`, is the montage the page's own note calls cut between strikes, not the single recording the claim names.
 - [ ] **Items are named as their map labels, less the mining outcrop and poise exclusions** — no source: the map labels in `{data-root}/genshin-parity/text/TextMapEN.json`, not compared with the item names.
-- [ ] **Each ore respawns on its own clock: Iron at the daily reset, White Iron and Starsilver in two days, Crystal, Amethyst and Condessence in three** — no source: the game side is the wiki's Reset page, which is not in `{data-root}/cache/genshin-wiki/`, and the gadget table the [game data formats](../game-data-formats/design.md) page names holds no respawn field to read it from; the repo's `scripts/src/services/genshinAssets/gathering/getLabelRespawn.ts` and `scripts/src/services/genshinAssets/gathering/constants.ts` are repo copies, not evidence.
 - [ ] **Only Overloaded's explosion carries poise among the reactions** — no source: the wiki's Interruption Resistance/Poise page, named in the enemies page's Sources, is not on disk, and neither is its Interruption Resistance/Data page.
 - [ ] **The wiki's Reset page is tagged a stub asking for its timers and respawns to be verified** — no source yet: the wiki's Reset page, which is not in `{data-root}/cache/genshin-wiki/`.
