@@ -38,9 +38,9 @@ Landing commits on **`ai/queue`** is the `review-queue` skill's loop (its pull, 
 
 Resolve `pnpm-workspace.yaml` first, keeping the higher version on every conflict — no `pnpm` runs while its markers stand — then delete `pnpm-lock.yaml` and `pnpm i`; never hand-resolve the lock, and never merge `main` into `ai/queue` by hand — the review's diverged-main step is the one merge (`references/lockfile-merges.md`).
 
-## Verify Once Per Sitting
+## Commit Chunks
 
-The touched tests run once per sitting, in the background (the `running-checks` skill, and the `package-scripts` skill's `references/check-suite.md`). Commits stay per coherent chunk, and a fix is its own commit behind the unit.
+Commits stay per coherent chunk, and a fix is its own commit behind the unit. The touched tests' timing is the `running-checks` skill's.
 
 ## Reference pages
 
