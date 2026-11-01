@@ -36,7 +36,26 @@ Every object store is partitioned; `readIndexedDb` / `writeIndexedDb` always tak
 
 ### Sign-out clears the whole database
 
-Messages and members are partitioned by room, not by reader, so the rows one reader cached for a room are what the next reader of the browser would be served there, and the rooms partition on the user does not cover them. `signOutOfBrowser` therefore deletes the whole database before it ends the session, and a failed delete is logged while the sign-out goes on. Draining the page's pending fire-and-forget work first was rejected: `waitForSynchronizedFunctions` waits on every one of them, so one that never settles would hold the sign-out.
+Messages and members are partitioned by room, not by reader, so the rows one reader cached for a room are what the next reader of the browser would be served there, and the rooms partition on the user does not cover them. `signOutOfBrowser` therefore deletes the whole database, after the network sign-out and immediately before the load: a write still queued on the cache can reopen the database only in that instant, not for the round trip signing out takes. A failed delete is logged while the sign-out goes on. Draining the page's pending fire-and-forget work first was rejected: `waitForSynchronizedFunctions` waits on every one of them, so one that never settles would hold the sign-out.
+
+The delete waits for other tabs, since an open connection holds the database against a delete until it closes. The cache's connection therefore gives way when asked: its `blocking` handler closes it and forgets the cached promise, and the next read or write opens a fresh connection queued behind the delete. The delete resolves only on its own success or error. Resolving on `blocked` is rejected: the sign-out goes on while the delete is still pending, so the first user's rows stay on disk for the other tab to read, and the next sign-out queues a delete behind it that never settles. An unbounded wait is rejected for the same reason, so a tab from older code that never releases holds the sign-out for `RESET_DATABASE_TIMEOUT_MS` at most, and the expired wait rejects as a failed delete.
+
+```mermaid
+sequenceDiagram
+  participant Sign as signOutOfBrowser
+  participant Reset as resetIndexedDb
+  participant Other as Other tab
+  Sign->>Sign: authClient.signOut()
+  Sign->>Reset: clear the cache
+  Reset->>Reset: close this tab's connection
+  Reset->>Other: deleteDatabase, versionchange
+  alt the other tab closes its connection
+    Other-->>Reset: delete succeeds
+  else it never closes
+    Reset-->>Sign: rejects at the bound
+  end
+  Sign->>Sign: reload
+```
 
 ### Readiness is the store's, not the cache's
 
@@ -81,20 +100,21 @@ Nothing in a fetch composable touches the cache: hydration is a watcher's job, f
 
 ## Key files
 
-| File                                                          | Role                                                       |
-| :------------------------------------------------------------ | :--------------------------------------------------------- |
-| `apps/web/app/models/cache/indexedDb/`                        | store name enum, configuration interface, typed `DBSchema` |
-| `apps/web/app/services/cache/indexedDb/openIndexedDb.ts`      | singleton `openDB` + `resetIndexedDb` (sign-out and tests) |
-| `apps/web/app/services/auth/signOutOfBrowser.ts`              | deletes the whole database before the session ends         |
-| `apps/web/app/services/cache/indexedDb/readIndexedDb.ts`      | read all items by `partitionKey`                           |
-| `apps/web/app/services/cache/indexedDb/writeIndexedDb.ts`     | replace all items for a `partitionKey` (respects `limit`)  |
-| `apps/web/app/composables/cache/indexedDb/`                   | the generic pagination cache composables                   |
-| `apps/web/app/composables/message/message/useMessageCache.ts` | message wiring                                             |
-| `apps/web/app/composables/message/room/useMemberCache.ts`     | member wiring                                              |
-| `apps/web/app/composables/message/room/useRoomCache.ts`       | room wiring                                                |
+| File                                                          | Role                                                                                       |
+| :------------------------------------------------------------ | :----------------------------------------------------------------------------------------- |
+| `apps/web/app/models/cache/indexedDb/`                        | store name enum, configuration interface, typed `DBSchema`                                 |
+| `apps/web/app/services/cache/indexedDb/openIndexedDb.ts`      | singleton open, releasing to another tab's delete, + `resetIndexedDb` (sign-out and tests) |
+| `apps/web/app/services/cache/constants.ts`                    | `RESET_DATABASE_TIMEOUT_MS`, the bound on the delete's wait                                |
+| `apps/web/app/services/auth/signOutOfBrowser.ts`              | deletes the whole database just before the load                                            |
+| `apps/web/app/services/cache/indexedDb/readIndexedDb.ts`      | read all items by `partitionKey`                                                           |
+| `apps/web/app/services/cache/indexedDb/writeIndexedDb.ts`     | replace all items for a `partitionKey` (respects `limit`)                                  |
+| `apps/web/app/composables/cache/indexedDb/`                   | the generic pagination cache composables                                                   |
+| `apps/web/app/composables/message/message/useMessageCache.ts` | message wiring                                                                             |
+| `apps/web/app/composables/message/room/useMemberCache.ts`     | member wiring                                                                              |
+| `apps/web/app/composables/message/room/useRoomCache.ts`       | room wiring                                                                                |
 
 ## Notes
 
 - The cache is wired at the composable layer, so a read helper never learns whether one exists — threading cache parameters back through them would give the same question two answers.
-- Neither half of the cache alerts. `readIndexedDb` / `writeIndexedDb` report a refused operation to their caller rather than swallowing it, and `usePaginationCache` declares the one `onError` both halves use — the user never asked for the cache, so a browser that refuses it (quota reached, private mode, a database another tab has blocked) is logged and nothing more. A second error channel inside the services is a channel that can disagree with that one.
+- Neither half of the cache alerts. `readIndexedDb` / `writeIndexedDb` report a refused operation to their caller rather than swallowing it, and `usePaginationCache` declares the one `onError` both halves use — the user never asked for the cache, so a browser that refuses it (quota reached, private mode) is logged and nothing more. A second error channel inside the services is a channel that can disagree with that one.
 - Tests: the generic composable owns the whole cache lifecycle (persist on change, clear on empty, hydrate on mount/switch/offline, readiness and partition-key guards), tested once for both pagination variants. A feature cache tests only what is its own — its `getWriteItems` filter, its `onHydrate` side effects, and one end-to-end wiring pass over its partition-key source and store hook. Awaiting landed cache state follows the [no-polling](../../architecture/no-polling/design.md) rule; the composables return nothing. `fake-indexeddb/auto` is loaded in `vitest.config.ts` `setupFiles` — no mocking needed.
