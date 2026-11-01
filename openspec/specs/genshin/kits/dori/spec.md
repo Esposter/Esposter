@@ -16,7 +16,7 @@ Dori's normal attacks SHALL be three strikes, a charged attack, a collision atta
 
 ### Requirement: Provisional charged attack
 
-Dori's charged attack SHALL be provisional, with a spin that lands at the start and a final hit at its maximum duration.
+Dori's charged attack SHALL be provisional, with a spin that lands at the start and a final hit at its maximum duration. The spin's open timing is in [the design](design.md#open).
 
 #### Scenario: Charging plays the spin and the final hit
 
@@ -84,7 +84,3 @@ Troubleshooter Shot and the plunging collision SHALL deal 30 and 35 poise, and t
 - **GIVEN** Dori is in the air
 - **WHEN** her plunging collision hits an enemy
 - **THEN** the enemy takes 35 poise damage
-
-## Open
-
-- [ ] **The charged attack's spin lands at the start** — no source yet: no source gives the spin's frame of 0, and gcsim has no charged attack for Dori to take it from.
