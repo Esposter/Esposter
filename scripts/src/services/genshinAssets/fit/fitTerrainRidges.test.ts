@@ -1,6 +1,7 @@
 import type { TerrainResidualGrid } from "#src/models/genshinAssets/fit/TerrainResidualGrid";
 import type { RidgeFeature } from "genshin-engine";
 
+import { createTerrainResidualGrid } from "#src/services/genshinAssets/fit/createTerrainResidualGrid.test";
 import { fitTerrainRidges } from "#src/services/genshinAssets/fit/fitTerrainRidges";
 import { getRidgeBlend, TerrainFeatureKind } from "genshin-engine";
 import { describe, expect, test } from "vitest";
@@ -9,13 +10,8 @@ describe(fitTerrainRidges, () => {
   const STEP = 6;
   const SIZE = 21;
   const ORIGIN = -60;
-  const createGrid = (getValue: (x: number, z: number) => number): TerrainResidualGrid => {
-    const values = new Float64Array(SIZE * SIZE);
-    for (let row = 0; row < SIZE; row++)
-      for (let column = 0; column < SIZE; column++)
-        values[row * SIZE + column] = getValue(ORIGIN + column * STEP, ORIGIN + row * STEP);
-    return { originX: ORIGIN, originZ: ORIGIN, size: SIZE, step: STEP, values };
-  };
+  const createGrid = (getValue: (x: number, z: number) => number): TerrainResidualGrid =>
+    createTerrainResidualGrid(getValue, { origin: ORIGIN, size: SIZE, step: STEP });
 
   test("finds a ridge the residual is one of, near its heading and at its height", () => {
     expect.hasAssertions();
