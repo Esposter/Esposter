@@ -2,7 +2,7 @@
 
 ## Decision
 
-The owner has stated that HoYoverse permits redistributing the official character packs. The app therefore publishes each pack to the public game data container, so a browser reads a character's model from the public container. This reverses the earlier decision against hosting them. No written grant is in the repository, so the basis is the owner's statement, cited under Sources.
+The owner has stated that HoYoverse permits redistributing the official character packs. The app therefore publishes each pack to the public game data container, so a browser reads a character's model from the public container. No written grant is in the repository, so the basis is the owner's statement, cited under Sources.
 
 The packs' bundled terms still say 「请勿二次配布」, do not redistribute, and miHoYo is named as the model's copyright holder. The publish carries each pack's terms folder unchanged, so the credit and the terms reach a reader with the model. The decision rests on the owner's permission, not on those terms.
 
@@ -25,9 +25,7 @@ Both accounts upload in parallel, and each file replaces the account's copy unde
 
 ## The world reads the packs
 
-The index record `characterPackIndex/index` lists each avatar with its name and each file's path, bytes and sha256, and the world reads it through the game data's lock like every dataset (`packages/genshin-world/src/services/character/readCharacterPackIndex.ts`). The opening downloads each file the browser's Cache Storage lacks, keyed by its url with the first sixteen hex characters of its sha256, so a republished file is fetched again, and the world mounts once every file is held (`packages/genshin-world/src/composables/useCharacterPackPreload.ts`).
-
-The world reads each pack by its own names. Its model is the folder's one `.pmx`, or of several the one its character is named by, its terms the file the terms rules find, and its textures the paths the model names beside its folder (`packages/genshin-world/src/services/character/createCharacterPackReader.ts`). A character the index lists no pack for draws the Traveler's pack (`packages/genshin-world/src/services/character/getCharacterPackReader.ts`). The character screen shows the terms of the character it shows (`packages/genshin-world/src/components/Character/Terms/Index.vue`).
+How the world reads the packs, from the index through the cache to each pack's reader, is set out in [the characters index](../README.md#how-the-world-reads-a-pack).
 
 ## Not built
 
