@@ -63,7 +63,7 @@ The sky is the scene's background node (`createSkyNode`), drawn behind everythin
 
 - **A set hour is a cut, not a sweep.** Setting the clock jumps the keyframes; only the running clock blends, so reduced motion needs nothing extra.
 - **Weather is its own page.** A weather raises the sky's cloud cover and the fog's density over these keyframes, as the [weather](../weather/design.md) page describes.
-- **The clock control is the Time screen's.** The tuning panel sets the hour in development. The game's Time screen, which the [menu screens](../../../changes/genshin-menu-time/design.md) proposal adds, will set it for a reader as the game does.
+- **The tuning panel sets the clock.** It sets the hour in development. The game's Time screen, which the [menu screens](../../../changes/genshin-menu-time/design.md) proposal adds, will set it for a reader as the game does.
 
 ## Sources
 
@@ -73,8 +73,7 @@ The sky is the scene's background node (`createSkyNode`), drawn behind everythin
 
 ## Open
 
+The checks of the day's length, the reference hour and the sun's bearing are the [spec's](spec.md) open items.
+
 - [ ] **The afternoon and night skies read as a high clear blue and a deep blue under a large moon** — no source yet: no afternoon or night frame was read.
-- [ ] **One in-game minute passes per real second, with dawn at six, noon at twelve, dusk at eighteen and midnight at twenty-four** — no source yet: the wiki's Time page is not in the cache, and the time clip `{data-root}/genshin-parity/captures/yt-a4_J84iMqR0-time.mp4` was not read.
-- [ ] **Windrise loads at three in the afternoon, its reference hour** — no source yet: the in-game hour of its reference screenshots was not read here.
-- [ ] **The sun rises due east at six and sets due west at eighteen** — no source yet: the Time page is not in the cache, and no frame's sun bearing was read.
 - [ ] **The painted sky draws as the game's own sky shader does, ported from its decompiled programs** — no source yet: the decompiled programs are not in the cache, and no in-world sky frame was compared.
