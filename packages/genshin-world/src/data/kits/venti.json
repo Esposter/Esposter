@@ -16,13 +16,13 @@
     "value": "ChargedAttack"
   },
   "hits.splittingGalesArrows.0.multiplier": { "cause": "DiffersFromSource", "value": 0.4092 },
-  "hits.splittingGalesArrows.0.poiseDamage": { "cause": "Unclassified", "value": 2 },
+  "hits.splittingGalesArrows.0.poiseDamage": { "cause": "Unsourced", "value": 2 },
   "hits.splittingGalesArrows.1.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
   },
   "hits.splittingGalesArrows.1.multiplier": { "cause": "DiffersFromSource", "value": 0.4092 },
-  "hits.splittingGalesArrows.1.poiseDamage": { "cause": "Unclassified", "value": 2 },
+  "hits.splittingGalesArrows.1.poiseDamage": { "cause": "Unsourced", "value": 2 },
   "hits.stormeyeTicks.length": { "file": "burst.go", "line": 61, "source": "Gcsim", "value": 20 },
   "hits.stormeyeTicks.0-19.area": {
     "file": "burst.go",
@@ -85,16 +85,16 @@
   "normalAttacks.4.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 27 },
   "normalAttacks.5.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 59 },
   "plungeCollision.area": {
-    "cause": "Unclassified",
+    "cause": "NoActionFile",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
   },
   "plunges.high.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 58 },
-  "plunges.low.animationFrames": { "cause": "Unclassified", "value": 24 },
+  "plunges.low.animationFrames": { "cause": "NoActionFile", "value": 24 },
   "plunges.low.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "NoActionFile",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
-  "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
+  "plunges.low.hits.0.hitmarkFrames": { "cause": "NoActionFile", "value": 0 },
   "skill.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
