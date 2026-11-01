@@ -21,12 +21,12 @@ describe(createOutcropCamp, () => {
     );
   });
 
-  test("an outcrop's enemies stand within its fight radius", () => {
+  test("an outcrop's enemies stand half its fight radius from its place, inside the fight", () => {
     expect.hasAssertions();
 
     for (const { position } of camp.members)
-      expect(Math.hypot(position.x - PLACEMENT.position.x, position.z - PLACEMENT.position.z)).toBeLessThanOrEqual(
-        OUTCROP_FIGHT_RADIUS,
+      expect(Math.hypot(position.x - PLACEMENT.position.x, position.z - PLACEMENT.position.z)).toBeCloseTo(
+        OUTCROP_FIGHT_RADIUS / 2,
       );
   });
 });
