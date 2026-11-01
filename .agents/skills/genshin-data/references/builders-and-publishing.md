@@ -10,4 +10,4 @@ A record the code names by itself gets its own key (`stats/weapons`), and a set 
 
 ## Proving a builder
 
-A path `removed` across many rows is a field the source stopped writing, never new content, so it is fixed before the publish. A real publish needs `az login`, writes the lock only once both accounts hold every object, and the lock is committed at once with the publish's report in its body.
+A path `removed` across many rows is a field the source stopped writing, never new content, so it is fixed before the publish. A real publish needs `az login`, writes the lock only once both accounts hold every object, and the lock is committed at once with the publish's report in its body. A publish refused with `AuthorizationPermissionMismatch` (403) is the login lacking the declared `public-genshin-assets` container grant, most often because Pulumi's state holds one Azure no longer does, and the fix is the `pulumi-infra` skill's `references/operations.md` (a targeted refresh and apply), never a hand-made role assignment.
