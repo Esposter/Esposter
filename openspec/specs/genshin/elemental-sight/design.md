@@ -53,23 +53,24 @@ flowchart TD
 
 ## Key files
 
-| File                                                                        | Role                                                                            |
-| :-------------------------------------------------------------------------- | :------------------------------------------------------------------------------ |
-| `packages/genshin-engine/src/post/createSightNode.ts`                       | The mute, the highlight and the ring, over the scene's depth                    |
-| `packages/genshin-engine/src/post/createSightUniforms.ts`                   | The origin, radius and strength the pass reads each frame                       |
-| `packages/genshin-engine/src/post/createPostPipeline.ts`                    | The sight's pass, drawn after the fog and before the bloom                      |
-| `packages/genshin-world/src/services/elementalSight/stepElementalSight.ts`  | The press, the spread and the walk that ends the sight                          |
-| `packages/genshin-world/src/services/elementalSight/computeSightTrail.ts`   | The points a trail runs through from the character to its end, cut at the reach |
-| `packages/genshin-world/src/services/elementalSight/writeSightTrails.ts`    | Each trail written as a white ribbon into the sight's scene                     |
-| `packages/genshin-world/src/components/World/SightTrails/Index.vue`         | The ribbon mesh the trails are drawn on, in the sight's lit scene only          |
-| `packages/genshin-world/src/services/elementalSight/computeSightElement.ts` | The element a target shows, from its aura or its innate element                 |
-| `packages/genshin-world/src/models/combat/ElementalState.ts`                | The aura a lit thing or enemy shows                                             |
-| `packages/genshin-world/src/models/enemy/EnemyKindTraits.ts`                | An enemy's innate element, from its kind's traits                               |
-| `packages/genshin-world/src/services/elementalSight/createSightProxy.ts`    | A stand-in sharing an instanced mesh's matrices                                 |
-| `packages/genshin-world/src/services/elementalSight/checkIsInSightReach.ts` | Whether a ground point lies within the range                                    |
-| `packages/genshin-world/src/components/World/EnemyNameTags/Index.vue`       | The enemies' names over their heads, projected each frame                       |
-| `packages/genshin-world/src/components/World/Windrise/Index.vue`            | The sight's scene and uniforms, written each frame from the screen              |
-| `packages/genshin-world/src/components/World/Session/Index.vue`             | The binding that steps the sight, and the screens that end it                   |
+| File                                                                        | Role                                                                                          |
+| :-------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/post/createSightNode.ts`                       | The mute, the highlight and the ring, over the scene's depth                                  |
+| `packages/genshin-engine/src/post/createSightUniforms.ts`                   | The origin, radius and strength the pass reads each frame                                     |
+| `packages/genshin-engine/src/post/createPostPipeline.ts`                    | The sight's pass, drawn after the fog and before the bloom                                    |
+| `packages/genshin-world/src/services/elementalSight/stepElementalSight.ts`  | The press, the spread and the walk that ends the sight                                        |
+| `packages/genshin-world/src/services/elementalSight/computeSightTrail.ts`   | The points a trail runs through from the character to its end, cut at the reach               |
+| `packages/genshin-world/src/services/elementalSight/writeSightTrails.ts`    | Each trail written as a white ribbon into the sight's scene                                   |
+| `packages/genshin-world/src/components/World/SightTrails/Index.vue`         | The ribbon mesh the trails are drawn on, in the sight's lit scene only                        |
+| `packages/genshin-world/src/services/elementalSight/computeSightElement.ts` | The element a target shows, from its aura or its innate element                               |
+| `packages/genshin-world/src/models/combat/ElementalState.ts`                | The aura a lit thing or enemy shows                                                           |
+| `packages/genshin-world/src/models/enemy/EnemyKindTraits.ts`                | An enemy's innate element, from its kind's traits                                             |
+| `packages/genshin-world/src/services/elementalSight/createSightProxy.ts`    | A stand-in sharing an instanced mesh's matrices                                               |
+| `packages/genshin-world/src/services/elementalSight/checkIsInSightReach.ts` | Whether a ground point lies within the range                                                  |
+| `packages/genshin-world/src/components/World/EnemyNameTags/Index.vue`       | The enemies' names over their heads, projected each frame                                     |
+| `packages/genshin-world/src/components/World/Windrise/Index.vue`            | The sight's scene and uniforms, written each frame from the screen                            |
+| `packages/genshin-world/src/components/World/Session/Index.vue`             | Holds the sight and the screens that end it                                                   |
+| `packages/genshin-world/src/composables/useWorldFrame.ts`                   | The frame step that turns the sight on while the key is held in the world, and off outside it |
 
 ## Sources
 

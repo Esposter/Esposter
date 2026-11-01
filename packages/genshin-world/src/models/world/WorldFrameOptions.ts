@@ -1,0 +1,78 @@
+import type { GadgetRow } from "#src/models/gadget/GadgetRow";
+import type { HudFrame } from "#src/models/hud/HudFrame";
+import type { Interactable } from "#src/models/interaction/Interactable";
+import type { InteractionPrompts } from "#src/models/interaction/InteractionPrompts";
+import type { KitContext } from "#src/models/kit/KitContext";
+import type { OculusPlace } from "#src/models/oculus/OculusPlace";
+import type { Party } from "#src/models/party/Party";
+import type { Quest } from "#src/models/quest/Quest";
+import type { QuestProgress } from "#src/models/quest/QuestProgress";
+import type { ScreenKind } from "#src/models/screen/ScreenKind";
+import type { ElementalSight } from "#src/models/sight/ElementalSight";
+import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
+import type { GroundPoint, Input, InputState } from "genshin-engine";
+import type { Object3D } from "three";
+import type { Ref } from "vue";
+
+// What the world's frame steps are joined from: the input read for it, the screen it is on, the state and the step of
+// Each feature that moves on its own, and the body and the party they act on
+export interface WorldFrameOptions {
+  abyssChoices: Readonly<Ref<unknown>>;
+  characterBody: Object3D;
+  checkIsPaused: () => boolean;
+  closeShortcutWheel: () => void;
+  collectOculus: (regionId: string, source: OculusPlace) => void;
+  dispatchInteraction: (interactable: Interactable | undefined) => void;
+  domainClaimOffers: Readonly<Ref<unknown>>;
+  drawDayOutcrops: (now: Temporal.Instant, random: () => number) => void;
+  elementalSight: ElementalSight;
+  findTouchedOculus: () => OculusPlace | undefined;
+  getEquippedGadgetCooldown: (now: Temporal.Instant) => number;
+  getMemberMaxHealth: (characterId: number) => number | undefined;
+  getWorldNow: () => Temporal.Instant;
+  hudFrame: HudFrame;
+  input: Input;
+  inputState: InputState;
+  interactionPrompts: Readonly<Ref<InteractionPrompts>>;
+  isHudHidden: Ref<boolean>;
+  jumpTo: (pose: WorldJumpPose) => void;
+  kitContext: KitContext;
+  party: Party;
+  placeUsedGadget: (usedGadget: GadgetRow | undefined, feet: { x: number; z: number }) => void;
+  questProgressMap: Readonly<Ref<ReadonlyMap<string, QuestProgress>>>;
+  questsInProgress: Readonly<Ref<Quest[]>>;
+  readInteraction: (inputState: InputState, frameSeconds: number) => Interactable | undefined;
+  refreshMiningOutcrops: (now: Temporal.Instant, random: () => number) => void;
+  screenKind: Ref<ScreenKind>;
+  showCursor: () => void;
+  stepAbyss: (step: WorldChallengeStep) => void;
+  stepAutoRecover: (step: {
+    deltaMilliseconds: number;
+    getMaxHealth: (characterId: number) => number | undefined;
+    isNearStatue: boolean;
+    party: Party;
+  }) => void;
+  stepDomainChallenge: (step: WorldChallengeStep) => string[];
+  stepFishing: (step: { isReeling: boolean; isStruck: boolean; seconds: number }) => void;
+  stepQuickUse: (step: {
+    isActive: boolean;
+    isHeld: boolean;
+    now: Temporal.Instant;
+    seconds: number;
+  }) => GadgetRow | undefined;
+  stepShortcutWheel: (isHeld: boolean, x: number, y: number) => void;
+  stepTrial: (step: WorldChallengeStep) => undefined | WorldJumpPose;
+  stepWorldPuzzles: (deltaSeconds: number, position: GroundPoint) => void;
+  touchOutcropsNear: (x: number, z: number, random: () => number) => void;
+  trackedQuestId: Ref<string>;
+  trackerQuest: Readonly<Ref<Quest | undefined>>;
+  unlockedLandmarkIds: Readonly<Ref<ReadonlySet<string>>>;
+}
+
+// What a challenge's step is told each frame: the time that passed, whether the world is in play for it and whether the
+// Party is down
+interface WorldChallengeStep {
+  deltaMilliseconds: number;
+  isPartyDown: boolean;
+  isPlaying: boolean;
+}

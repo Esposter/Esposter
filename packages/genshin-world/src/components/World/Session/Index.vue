@@ -18,7 +18,7 @@ import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
 import type { PlacedDoing } from "#src/services/exploration/placeExplorationDoings";
-import type { TresCanvasInstance, TresContextWithClock } from "@tresjs/core";
+import type { TresCanvasInstance } from "@tresjs/core";
 
 import AchievementScreen from "#src/components/Achievement/Screen/Index.vue";
 import BookReaderScreen from "#src/components/Archive/BookReader/Index.vue";
@@ -79,6 +79,7 @@ import { useWorldDishes } from "#src/composables/useWorldDishes";
 import { useWorldDomains } from "#src/composables/useWorldDomains";
 import { useWorldFishing } from "#src/composables/useWorldFishing";
 import { useWorldForging } from "#src/composables/useWorldForging";
+import { useWorldFrame } from "#src/composables/useWorldFrame";
 import { useWorldFriendship } from "#src/composables/useWorldFriendship";
 import { useWorldGadgets } from "#src/composables/useWorldGadgets";
 import { useWorldHomeRealm } from "#src/composables/useWorldHomeRealm";
@@ -113,14 +114,10 @@ import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOf
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { checkIsWeeklyBossEntryOpen } from "#src/services/bosses/checkIsWeeklyBossEntryOpen";
-import { EnemyKindMovesMap } from "#src/services/bosses/EnemyKindMovesMap";
-import { startBossMove } from "#src/services/bosses/startBossMove";
 import { getCharacterIdConstellationsMap } from "#src/services/character/getCharacterIdConstellationsMap";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
 import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
-import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
-import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
 import { grantGcgGameReward } from "#src/services/gcg/grantGcgGameReward";
 import { toGcgWeekGameRewards } from "#src/services/gcg/toGcgWeekGameRewards";
 import { toHandbookDomains } from "#src/services/handbook/toHandbookDomains";
@@ -138,12 +135,9 @@ import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
 import { readMapSubareaLabels } from "#src/services/map/readMapSubareaLabels";
 import { GENSHIN_SETTINGS_DEFAULTS } from "#src/services/menu/constants";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
-import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
-import { switchPartyMember } from "#src/services/party/switchPartyMember";
 import { computeProfileNamecardItemIds } from "#src/services/profile/computeProfileNamecardItemIds";
-import { checkIsSpecialStoryModeActive } from "#src/services/quest/checkIsSpecialStoryModeActive";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { getEnteredGoToEvents } from "#src/services/quest/getEnteredGoToEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
@@ -152,7 +146,6 @@ import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { createTresRenderer } from "#src/services/scene/createTresRenderer";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
-import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { getTeamAntiColdRatio } from "#src/services/sheerCold/getTeamAntiColdRatio";
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
@@ -160,7 +153,6 @@ import { ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { OCULUS_MINIMAP_DISTANCE, OCULUS_REGION_ID, OCULUS_TOUCH_RADIUS } from "#src/services/statue/constants";
 import { getNearOculusPlaces } from "#src/services/statue/getNearOculusPlaces";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
-import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { readOculusPlaces } from "#src/services/statue/readOculusPlaces";
 import { WORLD_CLOCK_INTERVAL_MS } from "#src/services/time/constants";
 import { getServerNow } from "#src/services/time/getServerNow";
@@ -178,7 +170,7 @@ import {
   QualityTierSettingsMap,
   STAMINA_MAX,
 } from "genshin-engine";
-import { CharacterMenuTab, InteractionKind, InventorySort, ItemCategory } from "genshin-interface";
+import { CharacterMenuTab, InventorySort, ItemCategory } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 import { Euler, Group, MathUtils, PCFShadowMap, Vector3 } from "three";
 
@@ -1391,6 +1383,49 @@ const nearOculusPlaces = computed(() =>
 // The unfound Oculus the body is touching, if it is touching one, which the frame collects
 const findTouchedOculus = () =>
   getNearOculusPlaces(oculusPlaces.value, foundOculusIds.value, characterBody.position, OCULUS_TOUCH_RADIUS)[0];
+// The frame run before each draw, which reads the input and steps each feature that moves on its own
+const { stepFrame } = useWorldFrame({
+  abyssChoices,
+  characterBody,
+  checkIsPaused: () => isPaused,
+  closeShortcutWheel,
+  collectOculus,
+  dispatchInteraction,
+  domainClaimOffers,
+  drawDayOutcrops,
+  elementalSight,
+  findTouchedOculus,
+  getEquippedGadgetCooldown,
+  getMemberMaxHealth,
+  getWorldNow,
+  hudFrame,
+  input,
+  inputState,
+  interactionPrompts,
+  isHudHidden,
+  jumpTo,
+  kitContext,
+  party,
+  placeUsedGadget,
+  questProgressMap,
+  questsInProgress,
+  readInteraction,
+  refreshMiningOutcrops,
+  screenKind,
+  showCursor,
+  stepAbyss,
+  stepAutoRecover,
+  stepDomainChallenge,
+  stepFishing,
+  stepQuickUse,
+  stepShortcutWheel,
+  stepTrial,
+  stepWorldPuzzles,
+  touchOutcropsNear,
+  trackedQuestId,
+  trackerQuest,
+  unlockedLandmarkIds,
+});
 // The locked jump landmark the HUD points to, re-read as the character moves and as a landmark unlocks, so unlocking the
 // One it points to lets the pointer go at once
 const pointedLandmark = shallowRef<Landmark>();
@@ -1537,110 +1572,7 @@ useWorldSaveSync({
       :tone-mapping="GENSHIN_TONE_MAPPING"
       shadows
       :shadow-map-type="PCFShadowMap"
-      @before-loop="
-        (context: TresContextWithClock) => {
-          input.readInput(context.delta);
-          hudFrame.seconds = context.elapsed;
-          if (!isPaused)
-            screenKind = getNextScreenKind(screenKind, inputState.pressedActions, {
-              isPaimonMenuLocked: checkIsSpecialStoryModeActive(questsInProgress, questProgressMap),
-            });
-          if (!isPaused && screenKind === ScreenKind.World)
-            stepShortcutWheel(
-              inputState.heldActions.has(InputAction.OpenShortcutWheel),
-              inputState.moveRight,
-              -inputState.moveForward,
-            );
-          else if (screenKind !== ScreenKind.World) closeShortcutWheel();
-          if (!isPaused && screenKind === ScreenKind.World && inputState.pressedActions.has(InputAction.HideInterface))
-            isHudHidden = !isHudHidden;
-          if (!isPaused && screenKind === ScreenKind.World)
-            stepElementalSight(
-              elementalSight,
-              characterBody.position,
-              context.delta,
-              inputState.pressedActions.has(InputAction.ElementalSight),
-            );
-          else elementalSight.isOn = false;
-          if (!isPaused && screenKind === ScreenKind.World) stepWorldPuzzles(context.delta, characterBody.position);
-          if (!isPaused && screenKind === ScreenKind.World) drawDayOutcrops(getWorldNow(), kitContext.random);
-          const transitionAttacks = stepDomainChallenge({
-            deltaMilliseconds: context.delta,
-            isPlaying: !isPaused && screenKind === ScreenKind.World && domainClaimOffers === undefined,
-            isPartyDown: false,
-          });
-          const trialReturnPose = stepTrial({
-            deltaMilliseconds: context.delta,
-            isPlaying: !isPaused && screenKind === ScreenKind.World,
-            isPartyDown: false,
-          });
-          if (trialReturnPose) jumpTo(trialReturnPose);
-          stepAbyss({
-            deltaMilliseconds: context.delta,
-            isPlaying: !isPaused && screenKind === ScreenKind.World && abyssChoices === undefined,
-            isPartyDown: false,
-          });
-          if (!isPaused && screenKind === ScreenKind.World) refreshMiningOutcrops(getWorldNow(), kitContext.random);
-          // Each attack a phase's end names starts on whichever boss makes it, and a name no boss makes starts nothing
-          for (const attack of transitionAttacks)
-            for (const enemy of kitContext.enemyMap.values())
-              startBossMove(
-                enemy,
-                checkIsEnemyKindId(enemy.enemyKindId) ? (EnemyKindMovesMap[enemy.enemyKindId] ?? []) : [],
-                attack,
-              );
-          if (!isPaused && screenKind === ScreenKind.World)
-            touchOutcropsNear(characterBody.position.x, characterBody.position.z, kitContext.random);
-          if (!isPaused && screenKind === ScreenKind.Fishing)
-            stepFishing({
-              isReeling: inputState.heldActions.has(InputAction.NormalAttack),
-              isStruck: inputState.pressedActions.has(InputAction.NormalAttack),
-              seconds: context.delta,
-            });
-          if (inputState.pressedActions.has(InputAction.ShowCursor)) showCursor();
-          const usedGadget = stepQuickUse({
-            isActive: !isPaused && screenKind === ScreenKind.World,
-            isHeld:
-              inputState.heldActions.has(InputAction.QuickUseGadget) ||
-              inputState.pressedActions.has(InputAction.QuickUseGadget),
-            now: getWorldNow(),
-            seconds: context.delta,
-          });
-          placeUsedGadget(usedGadget, characterBody.position);
-          hudFrame.gadgetCooldown = getEquippedGadgetCooldown(getWorldNow());
-          // A switch with a burst switches as a plain one does, so its member is on the field when the kit reads the burst
-          const partyMemberIndex = PARTY_MEMBER_INPUT_ACTIONS.findIndex(
-            (action, index) =>
-              inputState.pressedActions.has(action) ||
-              inputState.pressedActions.has(PARTY_MEMBER_BURST_INPUT_ACTIONS[index] ?? action),
-          );
-          if (!isPaused && screenKind === ScreenKind.World && partyMemberIndex !== -1)
-            switchPartyMember(party, partyMemberIndex, context.elapsed, kitContext.kitEffectState.effects);
-          if (
-            !isPaused &&
-            screenKind === ScreenKind.World &&
-            trackerQuest &&
-            inputState.pressedActions.has(InputAction.QuestNavigation)
-          )
-            trackedQuestId = trackerQuest.id;
-          if (!isPaused && screenKind === ScreenKind.World) {
-            const interactable = readInteraction(inputState, context.delta);
-            const touchedOculus = findTouchedOculus();
-            if (touchedOculus) collectOculus(OCULUS_REGION_ID, touchedOculus);
-            const isNearStatue = interactionPrompts.interactables.some(
-              ({ id, kind }) =>
-                kind === InteractionKind.Activate && unlockedLandmarkIds.has(id) && getStatueRegionId(id) !== undefined,
-            );
-            stepAutoRecover({
-              deltaMilliseconds: context.delta,
-              getMaxHealth: getMemberMaxHealth,
-              isNearStatue,
-              party,
-            });
-            dispatchInteraction(interactable);
-          }
-        }
-      "
+      @before-loop="(context) => stepFrame(context)"
       @error="emit('ready')"
     >
       <TresPerspectiveCamera
