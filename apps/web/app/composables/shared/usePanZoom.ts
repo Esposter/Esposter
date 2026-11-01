@@ -1,6 +1,6 @@
-import type { PanzoomObject, PanzoomOptions } from "@panzoom/panzoom";
+import type { Panzoom, PanzoomOptions } from "@esposter/shared";
 
-import Panzoom from "@panzoom/panzoom";
+import { createPanzoom } from "@esposter/shared";
 
 // One pan/zoom instance for whichever element the target currently holds. The element arrives after the content
 // It wraps has rendered — a diagram written into a container, a dialog mounted on open — so the instance is
@@ -10,14 +10,14 @@ export const usePanZoom = (
   target: MaybeRefOrGetter<HTMLElement | null | SVGElement | undefined>,
   options: PanzoomOptions,
 ) => {
-  const panzoom = shallowRef<PanzoomObject>();
+  const panzoom = shallowRef<Panzoom>();
   const scale = ref(1);
   const isZoomed = computed(() => scale.value > 1);
   watch(
     () => toValue(target),
     (element) => {
       panzoom.value?.destroy();
-      panzoom.value = element ? Panzoom(element, options) : undefined;
+      panzoom.value = element ? createPanzoom(element, options) : undefined;
       scale.value = panzoom.value?.getScale() ?? 1;
     },
   );

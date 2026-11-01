@@ -54,7 +54,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@nuxt/test-utils`                      | 2026-11-01 · Haiku 5.5  | Keep — tooling   | the app's test environment                                                                             |
 | `@nuxtjs/seo`                           | 2026-11-01 · Haiku 5.5  | Keep — framework | the framework's SEO module                                                                             |
 | `@oxlint/plugins`                       | 2026-11-01 · Haiku 5.5  | Keep — tooling   | the repo's own oxlint rules load through it                                                            |
-| `@panzoom/panzoom`                      | 2026-11-01 · Sonnet 5.5 | Keep — engine    | pointer, pinch and wheel interaction, where a hand-rolled version ships worse                          |
 | `@pinia/nuxt`                           | 2026-11-01 · Haiku 5.5  | Keep — framework | the store's Nuxt module                                                                                |
 | `@pulumi/azure-native`                  | 2026-11-01 · Haiku 5.5  | Keep — SDK       | the infrastructure SDK                                                                                 |
 | `@pulumi/github`                        | 2026-11-01 · Haiku 5.5  | Keep — SDK       | the infrastructure SDK                                                                                 |

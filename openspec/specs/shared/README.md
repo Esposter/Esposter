@@ -10,3 +10,4 @@
 - [Media types](mime-types/design.md) — the extension and media type lookup over `mime-db`, replacing `mime-types`.
 - [HTML sanitiser](sanitize-html/design.md) — `sanitizeHtml` over parse5, replacing `sanitize-html`.
 - [Bounded history](bounded-history/design.md) — the undo and redo stack the editor core's documents and the sheet's commands share.
+- [Pan and zoom](panzoom/design.md) — `createPanzoom`, the element dragged and zoomed by a CSS transform, replacing `@panzoom/panzoom`.

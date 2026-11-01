@@ -158,7 +158,7 @@ describe(bindPanzoom, () => {
     expect(panzoom.getPan()).toStrictEqual({ x: 10, y: 20 });
   });
 
-  test("#609 a filter that vetoes a button starts no gesture at all", () => {
+  test("#527 #609 a filter that vetoes a button starts no gesture at all", () => {
     expect.hasAssertions();
 
     const element = getElement();
