@@ -204,4 +204,4 @@ Lauma's Spirit Envoy state, her other passives, and Constellation 6 SHALL NOT ta
 
 ## Open
 
-- [ ] **Spiritcall Prayer costs no stamina** — no source yet: gcsim draws stamina only in the Spirit Envoy state, and the wiki gives no stamina figure for the charged attack.
+The charged attack's stamina is unsourced, so the no-stamina requirement is open: see [the design's provisional constants](design.md#provisional-constants).
