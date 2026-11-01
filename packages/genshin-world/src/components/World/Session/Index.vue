@@ -13,7 +13,6 @@ import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { QuestMark } from "#src/models/quest/QuestMark";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
-import type { ReputationRequest } from "#src/models/reputation/ReputationRequest";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
@@ -96,6 +95,7 @@ import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldReputationBounty } from "#src/composables/useWorldReputationBounty";
+import { useWorldReputationRequest } from "#src/composables/useWorldReputationRequest";
 import { useWorldRestorativePower } from "#src/composables/useWorldRestorativePower";
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
@@ -109,7 +109,6 @@ import { useWorldTips } from "#src/composables/useWorldTips";
 import { useWorldTrials } from "#src/composables/useWorldTrials";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
-import { ReputationRequestQuestIds } from "#src/models/quest/QuestId";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
@@ -178,7 +177,6 @@ import { checkIsSpecialStoryModeActive } from "#src/services/quest/checkIsSpecia
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { getEnteredGoToEvents } from "#src/services/quest/getEnteredGoToEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
-import { offerReputationRequest } from "#src/services/reputation/offerReputationRequest";
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
@@ -952,35 +950,11 @@ const {
 // The expeditions out from the Adventurers' Guild, held for the session, so a reload empties them
 const expeditions = shallowRef<Expedition[]>([]);
 const reputationLevel = shallowRef(reputation.value.level);
-// The request the keeper offers as her screen opens, drawn from the requests the world carries that the player has not
-// Started, not kept with the save, and none past the week's request limit: a provisional rule until the weekly refresh is read
-const reputationOffer = shallowRef<ReputationRequest>();
-// The request waits while a taken bounty hunts, and is offered once the bounty is claimed
-const reputationRequestOffer = computed(() => (bountyHunt.value ? undefined : reputationOffer.value));
-const reputationOfferTitle = computed(() => {
-  const request = reputationRequestOffer.value;
-  const quest = request && quests.value.find(({ id }) => id === String(request.questId));
-  return quest ? questTextMap.value[quest.titleTextId] : undefined;
-});
-const drawReputationOffer = () => {
-  if (!reputationCity.value) return;
-  const offerableQuestIds = ReputationRequestQuestIds.filter((questId) => !questProgressMap.value.has(questId));
-  reputationOffer.value = offerReputationRequest(
-    reputationCity.value,
-    reputation.value.level,
-    Math.random(),
-    offerableQuestIds,
-    requestClaimedAts.value,
-    getWorldNow(),
-  );
-};
 // Accepting the offer starts its quest, which the world then runs as any other
 const acceptReputationOffer = () => {
   if (reputationBountyOffer.value === ReputationBountyOffer.Claim) return claimBounty();
   if (reputationBountyOffer.value === ReputationBountyOffer.Offer) return takeBounty();
-  if (!reputationRequestOffer.value) return;
-  acceptQuest(String(reputationRequestOffer.value.questId));
-  reputationOffer.value = undefined;
+  return acceptReputationRequest();
 };
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
 getResultAsync(() => readMondstadtReputation(gameDataBaseUrl)).match(
@@ -1072,6 +1046,17 @@ const { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty,
     savedBountyHunt: savedState.reputationBountyHunt,
     worldLevel,
   });
+const { acceptReputationRequest, drawReputationOffer, reputationOfferTitle } = useWorldReputationRequest({
+  acceptQuest,
+  bountyHunt,
+  getWorldNow,
+  questProgressMap,
+  quests,
+  questTextMap,
+  reputation,
+  reputationCity,
+  requestClaimedAts,
+});
 watch(unlockedLandmarkIds, (landmarkIds) => {
   resonatedRegionIds.value = getResonatedRegionIds(landmarkIds);
 });
