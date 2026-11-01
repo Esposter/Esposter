@@ -12,7 +12,7 @@
   "chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "chargedAttack.hits.0.hitmarkFrames": { "file": "charge.go", "line": 18, "source": "Gcsim", "value": 34 },
   "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 7531 } },
-  "frames.windfavored": { "cause": "Unclassified", "value": 600 },
+  "frames.windfavored": { "cause": "Unsourced", "value": 600 },
   "normalAttacks.length": { "file": "attack.go", "line": 24, "source": "Gcsim", "value": 3 },
   "normalAttacks.0.animationFrames": { "file": "attack.go", "line": 29, "source": "Gcsim", "value": 35 },
   "normalAttacks.0.hits.length": { "cause": "Unsourced", "value": 1 },
@@ -87,7 +87,7 @@
     "source": "Gcsim",
     "value": 36
   },
-  "stances.windfavored.chargedAttack.hits.0.multiplier": { "cause": "Unclassified", "value": 1.669306288 },
+  "stances.windfavored.chargedAttack.hits.0.multiplier": { "cause": "Unsourced", "value": 1.669306288 },
   "stances.windfavored.chargedAttack.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "stances.windfavored.chargedAttack.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.windfavored.normalAttacks.length": { "file": "attack.go", "line": 24, "source": "Gcsim", "value": 3 },
@@ -109,7 +109,7 @@
     "value": 15
   },
   "stances.windfavored.normalAttacks.0.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
-  "stances.windfavored.normalAttacks.0.hits.0.multiplier": { "cause": "Unclassified", "value": 0.9137759504999999 },
+  "stances.windfavored.normalAttacks.0.hits.0.multiplier": { "cause": "Unsourced", "value": 0.9137759504999999 },
   "stances.windfavored.normalAttacks.0.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "stances.windfavored.normalAttacks.0.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.windfavored.normalAttacks.1.animationFrames": {
@@ -130,7 +130,7 @@
     "value": 3
   },
   "stances.windfavored.normalAttacks.1.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
-  "stances.windfavored.normalAttacks.1.hits.0.multiplier": { "cause": "Unclassified", "value": 0.8645990219999999 },
+  "stances.windfavored.normalAttacks.1.hits.0.multiplier": { "cause": "Unsourced", "value": 0.8645990219999999 },
   "stances.windfavored.normalAttacks.1.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "stances.windfavored.normalAttacks.1.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.windfavored.normalAttacks.2.animationFrames": {
@@ -151,7 +151,7 @@
     "value": 32
   },
   "stances.windfavored.normalAttacks.2.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
-  "stances.windfavored.normalAttacks.2.hits.0.multiplier": { "cause": "Unclassified", "value": 0.633581823 },
+  "stances.windfavored.normalAttacks.2.hits.0.multiplier": { "cause": "Unsourced", "value": 0.633581823 },
   "stances.windfavored.normalAttacks.2.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "stances.windfavored.normalAttacks.2.hits.1.area": {
     "cause": "Unsourced",
@@ -164,7 +164,7 @@
     "value": 40
   },
   "stances.windfavored.normalAttacks.2.hits.1.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
-  "stances.windfavored.normalAttacks.2.hits.1.multiplier": { "cause": "Unclassified", "value": 0.633581823 },
+  "stances.windfavored.normalAttacks.2.hits.1.multiplier": { "cause": "Unsourced", "value": 0.633581823 },
   "stances.windfavored.normalAttacks.2.hits.1.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "stances.windfavored.normalAttacks.2.targeting": { "cause": "Unsourced", "value": "Strike" }
 }
