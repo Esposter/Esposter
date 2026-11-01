@@ -11,6 +11,10 @@ The goal is a root `Index.vue` that reads as a bill of materials: its `<script s
 3. **A cluster of refs, computeds and handlers serving one region** moves with that region into the child, or into a composable when two regions share it. Pure helpers and constants move to the package's `services/`, one export per file.
 4. **Props go down and events go up** (`defineEmits`, or `defineModel` for a two-way value). A child that needs many props usually means the state belongs inside it, or the cut runs along the wrong line. The exception is a layer of an integration root, whose overlays and screens legitimately read many values the root's composables return; those take as many props as their block reads, never `provide`/`inject`.
 
+## A component declares at most fourteen events
+
+Count a component's `defineEmits` keys and add one for every `defineModel`: past fourteen, the vize-based typecheck loses the component's whole event map and reports every declared emit as `Property '<name>' does not exist on type '$StaticEventMap'`, in a virtual file whose line numbers map to nothing in the source. A component declaring fourteen passes and one declaring twenty-two fails, so the real ceiling sits between them and fourteen is the bar until a probe pins it. A layer that would declare more is cut into several, grouped by the events that belong together, never given the root's events renamed or merged to fit. The package typecheck is the only check that sees it, so run it before the cut is committed.
+
 ## Where the pieces live
 
 - A component is a folder holding `Index.vue`. A child drawn only inside its parent is a nested folder, `<Parent>/<Child>/Index.vue`, named for its role and never repeating the parent's name. In `genshin-interface` and `genshin-world` a nested folder is a piece of its parent and takes no `Index.fixture.ts`, image, `Index.reference.ts` or browser test of its own (`normal-form.md`, "An integration root"). In `apps/web` the folder-path prefix naming is `references/component-naming.md`.
