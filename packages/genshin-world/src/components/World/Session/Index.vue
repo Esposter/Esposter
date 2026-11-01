@@ -3,7 +3,6 @@ import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { CharacterConstellationKit } from "#src/models/character/CharacterConstellationKit";
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { Expedition } from "#src/models/expedition/Expedition";
-import type { HomeRealmVisit } from "#src/models/home/HomeRealmVisit";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MapSubareaLabel } from "#src/models/map/MapSubareaLabel";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
@@ -82,6 +81,7 @@ import { useWorldFishing } from "#src/composables/useWorldFishing";
 import { useWorldForging } from "#src/composables/useWorldForging";
 import { useWorldFriendship } from "#src/composables/useWorldFriendship";
 import { useWorldGadgets } from "#src/composables/useWorldGadgets";
+import { useWorldHomeRealm } from "#src/composables/useWorldHomeRealm";
 import { useWorldHudFrame } from "#src/composables/useWorldHudFrame";
 import { useWorldInteractables } from "#src/composables/useWorldInteractables";
 import { useWorldMail } from "#src/composables/useWorldMail";
@@ -131,16 +131,7 @@ import { FORGE_INTERACTABLE_ID } from "#src/services/forging/constants";
 import { grantGcgGameReward } from "#src/services/gcg/grantGcgGameReward";
 import { toGcgWeekGameRewards } from "#src/services/gcg/toGcgWeekGameRewards";
 import { toHandbookDomains } from "#src/services/handbook/toHandbookDomains";
-import { computeHomeRealmVisit } from "#src/services/home/computeHomeRealmVisit";
-import {
-  HOME_POT_GADGET_ID,
-  HOME_REALM_GROUND_HEIGHT,
-  HOME_REALM_SPAWN,
-  HOME_STAND_IN_POT_REGION_ID,
-  HOME_TUBBY_NPC_ID,
-} from "#src/services/home/constants";
-import { leaveHomeRealm } from "#src/services/home/leaveHomeRealm";
-import { placeHomePot } from "#src/services/home/placeHomePot";
+import { HOME_POT_GADGET_ID, HOME_REALM_GROUND_HEIGHT, HOME_TUBBY_NPC_ID } from "#src/services/home/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
@@ -446,12 +437,8 @@ onUnmounted(() => {
 });
 // The world's origin, owned here so the cameras read the ground through it before the floating origin shifts it
 const origin = new Vector3();
-// The realm the player is in, once they have gone into it from the pot: the place they went in from. While it is set the realm's
-// Island is shown in place of the world, and the world's ground gives way to the realm's flat ground
-const homeRealmVisit = shallowRef<HomeRealmVisit>();
-// The point the Serenitea Pot is set down at in the open world, from the gadget slot at the player's feet. The save does
-// Not hold it yet, so it lasts for the session
-const homePotPoint = shallowRef<{ x: number; z: number }>();
+// The Serenitea Pot on the open world and the realm the player goes into from it
+const { homePotPoint, homeRealmVisit, placeUsedGadget, toggleHomeRealm } = useWorldHomeRealm();
 // The world's one ground, Windrise's with each region's laid over it from the moment the region first comes within
 // Reach, which everything in the world stands on. It is built again only as a region's ground arrives
 const worldHeight = computed(() =>
@@ -1573,9 +1560,7 @@ useWorldSaveSync({
             now: getWorldNow(),
             seconds: context.delta,
           });
-          // The Serenitea Pot used from the gadget slot is set down at the player's feet, unless the open world already holds one
-          if (usedGadget?.id === HOME_POT_GADGET_ID && !homeRealmVisit)
-            homePotPoint = placeHomePot(usedGadget, homePotPoint, characterBody.position);
+          placeUsedGadget(usedGadget, characterBody.position);
           hudFrame.gadgetCooldown = getEquippedGadgetCooldown(getWorldNow());
           // A switch with a burst switches as a plain one does, so its member is on the field when the kit reads the burst
           const partyMemberIndex = PARTY_MEMBER_INPUT_ACTIONS.findIndex(
@@ -1673,17 +1658,11 @@ useWorldSaveSync({
               interactable?.kind === InteractionKind.Activate &&
               interactable.id === String(HOME_POT_GADGET_ID)
             ) {
-              if (homeRealmVisit) {
-                jumpTo(leaveHomeRealm(homeRealmVisit).pose);
-                homeRealmVisit = undefined;
-              } else {
-                homeRealmVisit = computeHomeRealmVisit(
-                  { position: characterBody.position, yaw: characterBody.rotation.y },
-                  getGroundHeight(characterBody.position.x, characterBody.position.z),
-                  HOME_STAND_IN_POT_REGION_ID,
-                );
-                jumpTo(HOME_REALM_SPAWN);
-              }
+              toggleHomeRealm({
+                getGroundHeight,
+                jumpTo,
+                standing: { position: characterBody.position, yaw: characterBody.rotation.y },
+              });
             } else if (interactable?.kind === InteractionKind.Talk && interactable.id === String(HOME_TUBBY_NPC_ID)) {
               shopId = VendorShopTypeMap[String(HOME_TUBBY_NPC_ID)] ?? 0;
               reputationLevel = reputation.level;

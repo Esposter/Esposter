@@ -86,29 +86,30 @@ flowchart TD
 
 ## Key files
 
-| File                                                                          | Role after the change                                                                              |
-| :---------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/World/Session/Index.vue`               | Enters a realm's scene and returns to the world, carrying the realm's saved progress and plantings |
-| `packages/genshin-world/src/models/world/BuildingKit.ts`                      | The kits a furnishing is drawn by                                                                  |
-| `packages/genshin-world/src/models/inventory/Currency.ts`                     | Gains Realm Currency, once its game text name has a key                                            |
-| `packages/genshin-world/src/models/inventory/Inventory.ts`                    | Furnishings and blueprints, in the bag's Furnishings tab                                           |
-| `packages/genshin-world/src/services/home/settleHomeStores.ts`                | Settles Realm Currency and Realm Bounty, each on its own clock                                     |
-| `packages/genshin-world/src/services/home/claimHomeCurrency.ts`               | Pays out the Realm Currency a store holds at the claim                                             |
-| `packages/genshin-world/src/components/World/Realm/PlacementEditor/Index.vue` | Picks a held furnishing and places it within load                                                  |
-| `packages/genshin-world/src/services/home/computeHomeAreaLoad.ts`             | The load an area's placements hold, read once                                                      |
-| `packages/genshin-world/src/services/home/computeHomeLoadState.ts`            | The green, orange or red state a load reads at                                                     |
-| `packages/genshin-world/src/services/home/getHomeAreaPlacements.ts`           | The placements in one area, the filter the placement and the editor share                          |
-| `packages/genshin-world/src/services/home/getHomeFurnishingLimit.ts`          | The count or the load a placement would pass, read once                                            |
-| `packages/genshin-world/src/models/home/HomeFurnishingLimit.ts`               | The limit a placement passes: the count or the load                                                |
-| `packages/genshin-world/src/components/World/Realm/Index.vue`                 | The stand-in realm's island, with Tubby and the exit pot                                           |
-| `packages/genshin-world/src/services/home/computeHomePotInteractable.ts`      | The pot set down in the open world, named by its text                                              |
-| `packages/genshin-world/src/services/home/placeHomePot.ts`                    | The pot set down at the player's feet from the gadget slot, once its caps allow                    |
-| `packages/genshin-world/src/services/home/computeHomeRealmInteractables.ts`   | The realm's Tubby and exit pot, as interactables                                                   |
-| `packages/genshin-world/src/services/home/computeHomeRealmVisit.ts`           | The place a visit into the realm records, from the character's pose                                |
-| `packages/genshin-world/src/services/home/giveHomeFavour.ts`                  | A favoured gift set's talk, and its one-time reward once                                           |
-| `packages/genshin-world/src/services/home/plantHomeSeed.ts`                   | A seed planted on a free plot, taken from the bag                                                  |
-| `packages/genshin-text/src/models/GameTextKey.ts`                             | The notices, the placement word, the pot and Tubby as game text keys                               |
-| `packages/genshin-world/src/services/shop/VendorShopTypeMap.ts`               | Tubby, keyed to the realm depot's shop type                                                        |
+| File                                                                          | Role after the change                                                                                   |
+| :---------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/components/World/Session/Index.vue`               | Enters a realm's scene and returns to the world, carrying the realm's saved progress and plantings      |
+| `packages/genshin-world/src/composables/useWorldHomeRealm.ts`                 | Holds the realm visit and the pot's point, sets the pot down from the gadget slot and toggles the realm |
+| `packages/genshin-world/src/models/world/BuildingKit.ts`                      | The kits a furnishing is drawn by                                                                       |
+| `packages/genshin-world/src/models/inventory/Currency.ts`                     | Gains Realm Currency, once its game text name has a key                                                 |
+| `packages/genshin-world/src/models/inventory/Inventory.ts`                    | Furnishings and blueprints, in the bag's Furnishings tab                                                |
+| `packages/genshin-world/src/services/home/settleHomeStores.ts`                | Settles Realm Currency and Realm Bounty, each on its own clock                                          |
+| `packages/genshin-world/src/services/home/claimHomeCurrency.ts`               | Pays out the Realm Currency a store holds at the claim                                                  |
+| `packages/genshin-world/src/components/World/Realm/PlacementEditor/Index.vue` | Picks a held furnishing and places it within load                                                       |
+| `packages/genshin-world/src/services/home/computeHomeAreaLoad.ts`             | The load an area's placements hold, read once                                                           |
+| `packages/genshin-world/src/services/home/computeHomeLoadState.ts`            | The green, orange or red state a load reads at                                                          |
+| `packages/genshin-world/src/services/home/getHomeAreaPlacements.ts`           | The placements in one area, the filter the placement and the editor share                               |
+| `packages/genshin-world/src/services/home/getHomeFurnishingLimit.ts`          | The count or the load a placement would pass, read once                                                 |
+| `packages/genshin-world/src/models/home/HomeFurnishingLimit.ts`               | The limit a placement passes: the count or the load                                                     |
+| `packages/genshin-world/src/components/World/Realm/Index.vue`                 | The stand-in realm's island, with Tubby and the exit pot                                                |
+| `packages/genshin-world/src/services/home/computeHomePotInteractable.ts`      | The pot set down in the open world, named by its text                                                   |
+| `packages/genshin-world/src/services/home/placeHomePot.ts`                    | The pot set down at the player's feet from the gadget slot, once its caps allow                         |
+| `packages/genshin-world/src/services/home/computeHomeRealmInteractables.ts`   | The realm's Tubby and exit pot, as interactables                                                        |
+| `packages/genshin-world/src/services/home/computeHomeRealmVisit.ts`           | The place a visit into the realm records, from the character's pose                                     |
+| `packages/genshin-world/src/services/home/giveHomeFavour.ts`                  | A favoured gift set's talk, and its one-time reward once                                                |
+| `packages/genshin-world/src/services/home/plantHomeSeed.ts`                   | A seed planted on a free plot, taken from the bag                                                       |
+| `packages/genshin-text/src/models/GameTextKey.ts`                             | The notices, the placement word, the pot and Tubby as game text keys                                    |
+| `packages/genshin-world/src/services/shop/VendorShopTypeMap.ts`               | Tubby, keyed to the realm depot's shop type                                                             |
 
 ## Sources
 
