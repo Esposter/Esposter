@@ -23,7 +23,6 @@ A commission acts in the world once dealt, and the day's four are kept until the
 ## Waiting on
 
 - `openspec/changes/genshin-spawned-places/`: the camps and objects a scene task swaps in, placed from the official map's enemy marks.
-- The quests reporting their completion, which a quest task finishes on.
 - The pages that give Encounter Points, which hold the sources the claim's Encounter Points need.
 
 ## Impact
