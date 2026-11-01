@@ -15,7 +15,7 @@ Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row i
 
 - **Filing a sweep as an OpenSpec change.** A sweep changes no behaviour and never ends, so it is repo state in `.agents/ledgers/` rather than something that leaves when it ships (`openspec/changes/`).
 - **A progress column, percentage or tick count on the index row.** A rolled-up number is a second copy of the truth that drifts; state lives at the leaf (`references/ledger-files.md`).
-- **Splitting a ledger's units across parallel agents.** A ledger is one sequence of units, since each unit's carve-outs carry to the next; who runs which unit is `references/one-pass.md`, "Who decides the edit".
+- **Splitting a ledger's units across parallel agents before a pilot has set the carve-outs.** A unit's carve-outs carry to the next, so one row is read first and its findings written into the brief; only then do the rows run one agent each, in parallel (`references/one-pass.md`, "Who decides the edit").
 - **Dating the `Swept` cell by hand in the sweep commit.** It is a second file in every sweep commit, the one every other pass is also writing, and it is the part a pass forgets; the commit's trailer dates the row and `pnpm ai:sweep:ledger-coverage` writes it in (`references/one-pass.md`).
 - **An empty commit to carry a clean unit's trailer.** A commit with no change is not a reliable carrier, so the trailer goes on the sitting's next commit (`references/one-pass.md`).
 - **A test holding the `Swept` dates to the trailers.** CI checks out one commit deep, so there `git log` holds no trailer and the test would reopen every row; the rows are held to the tree (`scripts/src/workspace/ledgerUnits.test.ts`) and the dates are written at the sitting.

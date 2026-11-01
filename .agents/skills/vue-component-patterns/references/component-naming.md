@@ -34,3 +34,5 @@ The collapse is against the folder path's **trailing run**, not just its last wo
 This is also the one shape where folding a prefix into a folder **does** change the name: the flat file was collapsing against a word further up the path, and the folder form no longer is (`ThisAndThat/ThatList.vue` → `FooThisAndThatList` becomes `ThisAndThat/That/List.vue` → `FooThisAndThatThatList`). Update the tags in the same change.
 
 Verify with `typecheck`, which flags an unknown collapsed tag.
+
+**A new folder's generated name is checked against the exports beside it.** A package's barrel exports a component under its path-derived name, so a sub-component folder `Entry` under `CharacterMenuProfile` emits `CharacterMenuProfileEntry`, which a model type of that name already took and the barrel then refused as ambiguous. Pick the other word (`Row`) when the model owns the first.
