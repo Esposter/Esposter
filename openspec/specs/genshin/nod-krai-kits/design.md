@@ -35,4 +35,4 @@ flowchart TD
 
 ## Open
 
-- [ ] **Nasha Town's halls, cranes and pipes are drawn by the dieselpunk works** — no source yet: a map from the `Area_Ndkl_Build_` assets in `{data-root}/genshin-parity/extracted/maps/index.tsv` to the halls, cranes and pipes; the index names NXZ_House, NXZ_Qizhongji and LJC_Guandao among them, but no map ties them to the works.
+The map from the `Area_Ndkl_Build_` assets to the halls, cranes and pipes is open on the [spec](spec.md): the index `{data-root}/genshin-parity/extracted/maps/index.tsv` names NXZ_House, NXZ_Qizhongji and LJC_Guandao among them, but no map ties them to the works.
