@@ -1163,10 +1163,12 @@ const { interactables, interactionPrompts, pressInteractable, readInteraction } 
 const character = useTemplateRef("character");
 // Entering combat returns the camera to its default distance, keeping the look it has
 events.on("enterCombat", () => character.value?.returnToDefaultDistance());
+// Whether the world is paused, read as the HUD's visibility and the frame step
+const checkIsPaused = () => isPaused;
 // Whether the HUD is hidden, and drawn over the world
 const { isHudHidden, isHudShown } = useWorldHudVisibility({
   checkIsCameraHeld: () => cameraPose !== undefined,
-  checkIsPaused: () => isPaused,
+  checkIsPaused,
   checkIsWitnessed: () => witness !== null,
   screenBehaviour,
 });
@@ -1200,7 +1202,7 @@ const mapZoom = shallowRef(MAP_REFERENCE_ZOOM_METRES);
 const { stepFrame } = useWorldFrame({
   abyssChoices,
   characterBody,
-  checkIsPaused: () => isPaused,
+  checkIsPaused,
   closeShortcutWheel,
   collectOculus,
   dispatchInteraction,

@@ -41,7 +41,9 @@ export const CLAUDE_PLUGIN_MANIFEST_PATH = ".claude-plugin/plugin.json";
 // A composable's destructured call, or a props destructure of defineProps, opens on `const {` and closes on the
 // `} = useName(...);` or `} = defineProps<...>();` that binds it, and its return opens on `return {`. A block is a
 // Declaration only while every line in it is an entry: a bare name or `name: alias,` in a call, and a bare name in a
-// Return. A block with a computed value stays code.
+// Return. A composable's options object is read the same way from both ends: the argument of its call opens on
+// `useName({` and closes on `});`, and the destructured parameter list of its definition opens on `const useName = ({`
+// And closes on `}: Options) => {`, each an entry of a bare name. A block with a computed value stays code.
 export const WIRING_BLOCKS: WiringBlock[] = [
   {
     end: /^\s*\} = (?:use\w+|defineProps<.*>)\(.*\);\s*$/u,
@@ -49,6 +51,8 @@ export const WIRING_BLOCKS: WiringBlock[] = [
     start: /^\s*const \{\s*$/u,
   },
   { end: /^\s*\};?\s*$/u, entry: /^\s*\w+,\s*$/u, start: /^\s*return \{\s*$/u },
+  { end: /^\s*\}\);\s*$/u, entry: /^\s*\w+,\s*$/u, start: /^\s*(?:const (?:\w+|\{[^}]*\}) = )?use\w+\(\{\s*$/u },
+  { end: /^\s*\}: \w+\) => \{\s*$/u, entry: /^\s*\w+,\s*$/u, start: /^\s*(?:export )?const use\w+ = \(\{\s*$/u },
 ];
 // A fragment's name is its path, behind Windows' verbatim `\\?\` prefix, and a Vue file's name ends in `:` and the
 // Format its script was read as. A drive's `:` is never followed by letters, so the suffix matches only the format.

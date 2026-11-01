@@ -50,6 +50,28 @@ describe(getDeclarationLines, () => {
     expect(getDeclarationLines("return {\n  a,\n  b,\n};\nconst c = 0;")).toStrictEqual(new Set([1, 2, 3, 4]));
   });
 
+  test("reads a composable's call with an options object of bare names as component wiring", () => {
+    expect.hasAssertions();
+
+    expect(getDeclarationLines("const { a } = useWorldFrame({\n  b,\n  c,\n});\nconst d = 0;")).toStrictEqual(
+      new Set([1, 2, 3, 4]),
+    );
+  });
+
+  test("reads a composable's destructured parameter list of bare names as component wiring", () => {
+    expect.hasAssertions();
+
+    expect(
+      getDeclarationLines("export const useWorldFrame = ({\n  b,\n  c,\n}: Options) => {\n  const d = 0;"),
+    ).toStrictEqual(new Set([1, 2, 3, 4]));
+  });
+
+  test("keeps a composable's call with an options object holding a computed value as code", () => {
+    expect.hasAssertions();
+
+    expect(getDeclarationLines("useWorldFrame({\n  b: () => c,\n});")).toStrictEqual(new Set());
+  });
+
   test("keeps a composable's destructured call holding a computed value as code", () => {
     expect.hasAssertions();
 
