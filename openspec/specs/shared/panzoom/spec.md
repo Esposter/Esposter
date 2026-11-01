@@ -65,7 +65,7 @@ A zoom during a drag SHALL re-anchor the drag to the pointer, and a pinch SHALL 
 
 ### Requirement: A drag starts past a threshold and swallows the click after it
 
-The module SHALL start a drag only once the pointer has travelled the pan threshold, and SHALL swallow the click that follows a drag past it.
+The module SHALL start a drag only once the pointer has travelled the pan threshold, and SHALL swallow the click that follows a drag past it when the drag ends on the primary button. A cancelled drag or a drag ended by another button SHALL swallow no click.
 
 #### Scenario: A tap is not a drag
 
@@ -74,9 +74,15 @@ The module SHALL start a drag only once the pointer has travelled the pan thresh
 - **THEN** no pan occurs
 - **AND** the click reaches its target
 
+#### Scenario: A cancelled drag leaves the next click alone
+
+- **GIVEN** an instance with a pan threshold
+- **WHEN** the pointer drags past the threshold and the browser cancels it
+- **THEN** the click that follows reaches its target
+
 ### Requirement: Destroy restores what the module wrote
 
-Destroying an instance SHALL abort its listeners and restore every style it wrote to the element and its parent.
+Destroying an instance SHALL abort its listeners and restore every style it wrote to the element and its parent, and a destroyed instance SHALL write nothing and bind nothing again, even when a listener destroys it mid-gesture.
 
 #### Scenario: Styles return to their previous values
 
