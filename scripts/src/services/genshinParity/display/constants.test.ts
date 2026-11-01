@@ -3,7 +3,7 @@ import type { Vector } from "#src/models/shared/Vector";
 import { describe } from "vitest";
 
 // A sun and a sky of their own colours, mixed in each pixel's own shares over albedos of their own, which the display
-// tests light a scene with
+// Tests light a scene with
 export const SUN: Vector = [1, 0.8, 0.5];
 export const SKY: Vector = [0.3, 0.5, 1];
 export const ALBEDOS: Vector[] = [

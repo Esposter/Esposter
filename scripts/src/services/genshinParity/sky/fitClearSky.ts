@@ -30,7 +30,7 @@ export const fitClearSky = (
       });
   const termCount = computeTerms(0, 0).length;
   let coefficients = Array.from({ length: termCount }, () => 0);
-  let weights = pixels.map(() => 1);
+  const weights = pixels.map(() => 1);
   for (let iteration = 0; iteration < ITERATION_COUNT; iteration++) {
     const { gram: normal, right: vector } = accumulateNormalEquations(
       pixels.map(({ logLuminance, terms }, index) => ({
@@ -42,11 +42,11 @@ export const fitClearSky = (
     );
     const solved = solveLinearSystem(normal, vector) ?? coefficients;
     coefficients = solved;
-    weights = pixels.map(({ logLuminance, terms }) => {
-      const over = logLuminance - terms.reduce((sum, term, index) => sum + term * (solved[index] ?? 0), 0);
-      if (over > logRatio) return 0;
-      else return over > 0 ? OVER_WEIGHT : 1;
-    });
+    for (const [index, { logLuminance, terms }] of pixels.entries()) {
+      const over = logLuminance - terms.reduce((sum, term, termIndex) => sum + term * (solved[termIndex] ?? 0), 0);
+      if (over > logRatio) weights[index] = 0;
+      else weights[index] = over > 0 ? OVER_WEIGHT : 1;
+    }
   }
   return Float32Array.from({ length: width * height }, (_value, pixel) =>
     computeTerms(((pixel % width) / width) * 2 - 1, (Math.floor(pixel / width) / height) * 2 - 1).reduce(

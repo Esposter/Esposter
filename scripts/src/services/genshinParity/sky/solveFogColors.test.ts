@@ -3,6 +3,8 @@ import type { Vector } from "#src/models/shared/Vector";
 import { solveFogColors } from "#src/services/genshinParity/sky/solveFogColors";
 import { describe, expect, test } from "vitest";
 
+const round = (vector: Vector): number[] => vector.map((value) => Number(value.toFixed(6)));
+
 describe(solveFogColors, () => {
   const color: Vector = [0.5, 0.4, 0.3];
   const scatterColor: Vector = [1, 0.6, 0.2];
@@ -15,7 +17,6 @@ describe(solveFogColors, () => {
     [0.8, 0.5, [0.65, 0.55, 0.4]],
     [0.1, 0.2, [0.5, 0.4, 0.5]],
   ];
-  const round = (vector: Vector): number[] => vector.map((value) => Number(value.toFixed(6)));
 
   test("recovers the fog's own and sunward colours", () => {
     expect.hasAssertions();
