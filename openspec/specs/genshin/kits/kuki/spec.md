@@ -53,7 +53,7 @@ Kuki's elemental burst SHALL deal seven hits, or twelve at half her health or le
 
 ### Requirement: Kuki's burst hit count at half health
 
-Kuki's burst SHALL land seven hits while her health is above half, and twelve at half or less, the hits past the seventh each a gap of the record's own on from the last.
+Kuki's burst SHALL land seven hits while her health is above half, and twelve at half or less, the hits past the seventh each following the last at the record's own gap.
 
 #### Scenario: Seven hits above half health
 
