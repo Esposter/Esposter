@@ -139,7 +139,7 @@ Every speed, height and threshold is a body type's, since how far a character sp
 
 ## Notes
 
-- **A jump from the map places the body**, standing it on the ground at the jump's point facing its yaw, with the follow camera level behind it, and makes that point where a drowning brings it back to until its stamina is next full on foot (`packages/genshin-engine/src/locomotion/createCharacterController.ts`). A place ends a kit's action in progress, since the body no longer stands where it played it (`packages/genshin-world/src/components/World/Character/Index.vue`).
+- **A jump from the map places the body** as the [spec](spec.md) requires, with the follow camera level behind it (`packages/genshin-engine/src/locomotion/createCharacterController.ts`). A place ends a kit's action in progress, since the body no longer stands where it played it (`packages/genshin-world/src/components/World/Character/Index.vue`).
 - **A party switch changes the body type the next step moves by** and the model drawn on the body, never the body's place or its stamina, which the party shares (`packages/genshin-world/src/services/world/locomotion/getCharacterLocomotion.ts`).
 
 ## Sources
@@ -173,10 +173,4 @@ Every speed, height and threshold is a body type's, since how far a character sp
 
 ## Open
 
-- [ ] **Running out of stamina stops the costing states, and a drowned body returns where its stamina was last full, as the game does** — no source yet: the Stamina and Fallen Character wiki pages are not on disk.
-- [ ] **The pool starts at 100 and refills at 25 a second once a second and a half passes with no costing action, as the game's wiki gives it** — no source yet: the Stamina wiki page is not on disk.
-- [ ] **W, A and D move along the camera's yaw as the game's controls bind them** — no source yet: the Controls wiki page is not on disk, and `{data-root}/genshin-parity/captures/yt-4VkVOwpPgwE-settings-controls.mp4` shows only browser download pages, not the game's controls.
-- [ ] **The walk switch is the left Control, and a part-way stick push walks as a light push does in the game** — no source yet: the Controls wiki page is not on disk.
-- [ ] **The pool refills on foot and in the air outside the glider, and never on a wall, in water or under the glider** — no source yet: the Stamina wiki page is not on disk.
-- [ ] **The party's Impetuous Winds cuts the stamina each spend takes** — no source yet: the Team Bonus wiki page that `packages/genshin-world/src/services/party/constants.ts` names is not on disk, and the cached gcsim source has no Impetuous Winds rule.
-- [ ] **A climb grips any surface too steep to walk, lets go on a drop or when stamina runs out, and stands the character on walkable ground at the top, as the game does** — no source yet: the wiki's Climbing page is not in the cache, and `packages/genshin-world/src/components/World/Character/Stamina.reference.ts` records the climb's start and cost only.
+The open items the [spec](spec.md) also holds are listed there, not here.
