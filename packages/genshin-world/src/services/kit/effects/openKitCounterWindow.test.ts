@@ -25,6 +25,12 @@ const createStrike = (healthShare: number, sourceCharacterId?: number): KitHealt
 describe(openKitCounterWindow, () => {
   const WINDOW_ID = "test-window";
   const WINDOW_SECONDS = 2;
+  const WINDOW = {
+    characterId: TRAVELER_CHARACTER_ID,
+    id: WINDOW_ID,
+    kind: "status",
+    secondsRemaining: WINDOW_SECONDS,
+  };
   const combatant: Combatant = {
     ascension: 0,
     attributes: computeCharacterAttributes([]),
@@ -46,9 +52,7 @@ describe(openKitCounterWindow, () => {
   test("a strike on the character holding its skill opens a window for its seconds", () => {
     expect.hasAssertions();
 
-    expect(openWindow(createStrike(-0.1))).toStrictEqual([
-      { characterId: TRAVELER_CHARACTER_ID, id: WINDOW_ID, kind: "status", secondsRemaining: WINDOW_SECONDS },
-    ]);
+    expect(openWindow(createStrike(-0.1))).toStrictEqual([WINDOW]);
   });
 
   test("a shield taking a strike for the character holding its skill opens it too", () => {
@@ -62,9 +66,7 @@ describe(openKitCounterWindow, () => {
       struckCharacterId: TRAVELER_CHARACTER_ID,
     };
 
-    expect(openWindow(shieldAbsorbed)).toStrictEqual([
-      { characterId: TRAVELER_CHARACTER_ID, id: WINDOW_ID, kind: "status", secondsRemaining: WINDOW_SECONDS },
-    ]);
+    expect(openWindow(shieldAbsorbed)).toStrictEqual([WINDOW]);
   });
 
   test("a strike opens nothing unless the character struck is the one on the field, holding its skill", () => {

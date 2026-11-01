@@ -67,7 +67,7 @@ const CONSTELLATION_1_SHIELD_SECONDS = 8;
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_GRAVITY_RATE = 0.34;
 const CONSTELLATION_2_HEALTH_SHARE = 0.4;
-const CONSTELLATION_2_HEALTH_SOURCE = "columbina-c2-health";
+export const CONSTELLATION_2_HEALTH_SOURCE = "columbina-c2-health";
 const CONSTELLATION_2_SECONDS = 8;
 // The team buff a Gravity Ripple gives its active member, of the reaction it fires, with the share of her max HP it adds
 const CONSTELLATION_2_TEAM_BUFFS: Record<

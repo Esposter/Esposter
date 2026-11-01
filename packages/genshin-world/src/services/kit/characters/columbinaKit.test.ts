@@ -22,7 +22,11 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { getBenedictionBaseDamageBonus } from "#src/services/kit/characters/columbinaBenediction";
-import { COLUMBINA_CHARACTER_ID, createColumbinaKitBehaviour } from "#src/services/kit/characters/columbinaKit";
+import {
+  COLUMBINA_CHARACTER_ID,
+  CONSTELLATION_2_HEALTH_SOURCE,
+  createColumbinaKitBehaviour,
+} from "#src/services/kit/characters/columbinaKit";
 import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
@@ -422,7 +426,7 @@ describe(createColumbinaKitBehaviour, () => {
       characterId: COLUMBINA_CHARACTER_ID,
       kind: "buff",
       secondsRemaining: 8,
-      source: "columbina-c2-health",
+      source: CONSTELLATION_2_HEALTH_SOURCE,
     });
   });
 
