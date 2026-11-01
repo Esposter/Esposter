@@ -6,6 +6,7 @@ import { SOUND_SAMPLE_RATE } from "#src/services/genshinAssets/shared/constants"
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 import { DerivedAssetSoundEffectMap } from "#src/services/genshinAssets/sound/DerivedAssetSoundEffectMap";
 import { readGameSoundEffect } from "#src/services/genshinAssets/sound/readGameSoundEffect";
+import { mergeParityPassMeasures } from "#src/services/genshinParity/passes/mergeParityPassMeasures";
 import { scoreSoundEffect } from "#src/services/genshinParity/sound/scoreSoundEffect";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { computeSoundEffectSamples, SOUND_EFFECT_BAND_EDGES } from "genshin-engine";
@@ -39,5 +40,5 @@ export const measureAudio = async (component: DerivedAssetComponent): Promise<Pa
       readings: [{ gate: grain, name: `${name} bands`, unit: "dB", value: distance }],
     });
   }
-  return { notes: measures.flatMap(({ notes }) => notes), readings: measures.flatMap(({ readings }) => readings) };
+  return mergeParityPassMeasures(measures);
 };
