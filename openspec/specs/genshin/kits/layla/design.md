@@ -23,7 +23,7 @@ flowchart TD
 
 ## Provisional constants
 
-- **The record's 13.5-metre strike area is unsourced, and gcsim's and the kit's field use 12.** `hits.starlightSlugStrike.area` in `layla.json` reads 13.5 with cause `Unsourced`; gcsim's circle is 12 round the body (`burst.go` line 52), and `laylaKit.ts` holds `STARLIGHT_SLUG_RADIUS` at 12. The record should be brought to the source; this pass does not change it.
+- **The record's 13.5-metre strike area is unsourced, and gcsim's and the kit's field use 12.** `hits.starlightSlugStrike.area` in `layla.json` reads 13.5 with cause `Unsourced`; gcsim's circle is 12 round the body (`burst.go` line 52), and `laylaKit.ts` holds `STARLIGHT_SLUG_RADIUS` at 12. The record should be brought to the source.
 - **The record's Starlight Slug hitmark of 42 frames is unsourced, and gcsim's tick releases at 56.** `burst.go` line 76 queues each tick's strike at `tickRelease`, 56 frames, landing 22 frames later with its travel; the record's 42 has no source.
 - **The record's Starlight Slug duration of 755 frames is unsourced, and gcsim's is 756.** `burst.go` line 49 runs the status for 12 seconds, 720 frames, from the burst's start at 36 (line 16).
 - **Her plunges' frames and low and high poise are not in her record.** `layla.json` carries only the collision's poise, 25 (wiki), so the Bennett frames of Decision 2 are the design's, not yet her record's.
