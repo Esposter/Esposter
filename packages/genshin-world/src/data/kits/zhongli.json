@@ -5,7 +5,9 @@
   "frames.holdSteleEnd": { "cause": "Unsourced", "value": 1908 },
   "hits.pressStele.length": { "cause": "Unsourced", "value": 16 },
   "hits.pressStele.0.area": {
-    "cause": "Unclassified",
+    "file": "stele.go",
+    "line": 32,
+    "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
   },
   "hits.pressStele.0.hitmarkFrames": { "file": "skill.go", "line": 49, "source": "Gcsim", "value": 24 },
@@ -102,7 +104,9 @@
   "hits.pressStele.15.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 3032 } },
   "hits.holdStele.length": { "cause": "Unsourced", "value": 16 },
   "hits.holdStele.0.area": {
-    "cause": "Unclassified",
+    "file": "stele.go",
+    "line": 32,
+    "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
   },
   "hits.holdStele.0.hitmarkFrames": { "file": "skill.go", "line": 82, "source": "Gcsim", "value": 48 },
