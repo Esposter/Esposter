@@ -6,7 +6,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 
-const { assetUrl } = vi.hoisted(() => ({ assetUrl: "https://assets.example/image" }));
+const { assetUrl } = vi.hoisted(() => ({ assetUrl: "a" }));
 vi.mock(import("@/composables/resource/useUploadResourceFile"), () => ({
   useUploadResourceFile: () => () => Promise.resolve(assetUrl),
 }));

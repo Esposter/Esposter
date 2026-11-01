@@ -17,7 +17,7 @@ describe("pageBuilderStylePanelField", () => {
       expect.hasAssertions();
 
       vi.stubGlobal("CSS", { supports: () => true });
-      const component = mount(UiStyleField, { props: { label: "Color", modelValue: "", property: "color" } });
+      const component = mount(UiStyleField, { props: { label: "a", modelValue: "", property: "color" } });
 
       await component.get("input").setValue("red");
 
@@ -28,19 +28,19 @@ describe("pageBuilderStylePanelField", () => {
       expect.hasAssertions();
 
       vi.stubGlobal("CSS", { supports: () => false });
-      const component = mount(UiStyleField, { props: { label: "Color", modelValue: "red", property: "color" } });
+      const component = mount(UiStyleField, { props: { label: "a", modelValue: "red", property: "color" } });
 
-      await component.get("input").setValue("notacolour");
+      await component.get("input").setValue("a");
 
       expect(component.emitted<[string]>("update:modelValue")).toBeUndefined();
-      expect((component.get("input").element as HTMLInputElement).value).toBe("notacolour");
+      expect((component.get("input").element as HTMLInputElement).value).toBe("a");
     });
 
     test("the arrows step a length by one and Shift by ten, keeping its unit", async () => {
       expect.hasAssertions();
 
       vi.stubGlobal("CSS", { supports: () => true });
-      const component = mount(UiStyleField, { props: { label: "Width", modelValue: "10rem", property: "width" } });
+      const component = mount(UiStyleField, { props: { label: "a", modelValue: "10rem", property: "width" } });
 
       await component.get("input").trigger("keydown", { key: "ArrowUp" });
       await component.get("input").trigger("keydown", { key: "ArrowDown", shiftKey: true });
@@ -52,7 +52,7 @@ describe("pageBuilderStylePanelField", () => {
       expect.hasAssertions();
 
       vi.stubGlobal("CSS", { supports: () => true });
-      const component = mount(UiStyleField, { props: { label: "Width", modelValue: "0.14rem", property: "width" } });
+      const component = mount(UiStyleField, { props: { label: "a", modelValue: "0.14rem", property: "width" } });
 
       await component.get("input").trigger("keydown", { key: "ArrowUp" });
 
@@ -63,7 +63,7 @@ describe("pageBuilderStylePanelField", () => {
       expect.hasAssertions();
 
       vi.stubGlobal("CSS", { supports: () => true });
-      const component = mount(UiStyleField, { props: { label: "Width", modelValue: "", property: "width" } });
+      const component = mount(UiStyleField, { props: { label: "a", modelValue: "", property: "width" } });
 
       expect(component.get('[role="combobox"]').attributes("aria-disabled")).toBe("true");
 
@@ -76,7 +76,7 @@ describe("pageBuilderStylePanelField", () => {
       expect.hasAssertions();
 
       vi.stubGlobal("CSS", { supports: () => true });
-      const component = mount(UiStyleField, { props: { label: "Width", modelValue: "10rem", property: "width" } });
+      const component = mount(UiStyleField, { props: { label: "a", modelValue: "10rem", property: "width" } });
 
       await component.get("input").setValue("");
       await component.get("input").setValue("5");
@@ -88,7 +88,7 @@ describe("pageBuilderStylePanelField", () => {
       expect.hasAssertions();
 
       vi.stubGlobal("CSS", { supports: () => true });
-      const component = mount(UiStyleField, { props: { label: "Color", modelValue: "red", property: "color" } });
+      const component = mount(UiStyleField, { props: { label: "a", modelValue: "red", property: "color" } });
 
       await component.get("input").setValue("red} body { display: none");
 
@@ -104,7 +104,7 @@ describe("pageBuilderStylePanelField", () => {
       vi.stubGlobal("CSS", { supports: () => true });
       const component = mount(UiStyleField, {
         attachTo: document.body,
-        props: { label: "Width", modelValue: "auto", property: "width" },
+        props: { label: "a", modelValue: "auto", property: "width" },
       });
       const input = component.get("input");
       (input.element as HTMLInputElement).focus();
@@ -119,9 +119,7 @@ describe("pageBuilderStylePanelField", () => {
       expect.hasAssertions();
 
       vi.stubGlobal("CSS", { supports: () => true });
-      const component = mount(UiStyleField, {
-        props: { label: "Border width", modelValue: "2px", property: "border-width" },
-      });
+      const component = mount(UiStyleField, { props: { label: "a", modelValue: "2px", property: "border-width" } });
 
       expect(component.findComponent({ name: "UiSelect" }).props("items")).toStrictEqual(
         ["px", "rem", "em", "vw", "vh"].map((lengthUnit) => ({ title: lengthUnit, value: lengthUnit })),

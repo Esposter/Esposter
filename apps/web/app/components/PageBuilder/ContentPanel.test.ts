@@ -87,18 +87,18 @@ describe("pageBuilderContentPanel", () => {
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
 
-    component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { href: TEST_URL, label: "Open" });
+    component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { href: TEST_URL, label: "a" });
 
     const document = webpageDocumentSchema.parse(pageBuilderDocumentStore.getDocument(resourceId));
 
     expect(document.content).toStrictEqual([
-      { props: { href: TEST_URL, id: TEST_ID, label: "Open" }, type: WebpageNodeType.Button },
+      { props: { href: TEST_URL, id: TEST_ID, label: "a" }, type: WebpageNodeType.Button },
     ]);
     const canvas = mount(
       defineComponent({ render: () => h("div", renderCanvasVNodes(webpageKind, document, TEST_CONTEXT)) }),
     );
 
-    expect(canvas.text()).toBe("Open");
+    expect(canvas.text()).toBe("a");
 
     canvas.unmount();
     component.unmount();
@@ -129,9 +129,9 @@ describe("pageBuilderContentPanel", () => {
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createButtonDocument());
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
 
-    component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { lang: "fr" });
+    component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { lang: "a" });
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.root).toStrictEqual({ props: { lang: "fr", tokens: {} } });
+    expect(pageBuilderDocumentStore.getDocument(resourceId)?.root).toStrictEqual({ props: { lang: "a", tokens: {} } });
 
     component.unmount();
   });
