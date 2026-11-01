@@ -93,7 +93,7 @@ No diagnostic, as with `vue-tsc`. `vue-tsc` reads the file: `item.nope` in place
 
 ## Cause
 
-`define_slots_type_requires_setup_scope` has no generic clause, and its sibling for props has one.
+The cause is likely: `define_slots_type_requires_setup_scope` has no generic clause, and its sibling for props has one.
 
 `define_props_type_requires_setup_scope` returns true for a generic component (`crates/vize_canon/src/virtual_ts/generator/setup_scope.rs:22`):
 

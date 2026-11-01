@@ -77,7 +77,7 @@ No diagnostic, as with `vue-tsc`. `vue-tsc` reads the file: removing `v-if="foo"
 
 ## Cause
 
-The mapper declares the type aliases of a `:is` member chain at the template root, outside the `v-if` guard. The guard wraps only the value call.
+The cause is likely: the mapper declares the type aliases of a `:is` member chain at the template root, outside the `v-if` guard. The guard wraps only the value call.
 
 `:is="foo.bar"` is a static member chain, so the mapper keeps the name `foo.bar` and writes its aliases as `typeof foo.bar`. `generate_usage_declarations` writes them with no guard (`crates/vize_canon/src/virtual_ts/scope/component_props.rs:113`):
 

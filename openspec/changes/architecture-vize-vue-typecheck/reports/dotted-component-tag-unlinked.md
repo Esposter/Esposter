@@ -114,7 +114,7 @@ The stub is `any`, so a listener parameter is `any`. A `typeof` check then narro
 
 ## Cause
 
-The mapper resolves a tag by its whole string, so `Parts.Foo` never matches the `Parts` binding.
+The cause is likely: the mapper resolves a tag by its whole string, so `Parts.Foo` never matches the `Parts` binding.
 
 `resolve` tries three candidates, none of which is the root segment of a dotted name (`crates/vize_canon/src/virtual_ts/component_reference.rs:144`):
 

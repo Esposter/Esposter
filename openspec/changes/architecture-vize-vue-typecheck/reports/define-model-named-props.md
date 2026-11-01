@@ -79,7 +79,7 @@ No diagnostic, as with `vue-tsc`. `vue-tsc` reads the file: adding `const bar = 
 
 ## Cause
 
-The template reads `Props`, and the model key exists only in `$ResolvedProps`.
+The cause is likely: the template reads `Props`, and the model key exists only in `$ResolvedProps`. The source is read at the tag `v0.638.0` of `ubugeeei-prod/vize`.
 
 `hoisted_props_alias_replaced` returns false when the `defineProps` argument is exactly `Props` (`crates/vize_canon/src/virtual_ts/props.rs:156`):
 
@@ -87,7 +87,7 @@ The template reads `Props`, and the model key exists only in `$ResolvedProps`.
 let names_props = inner == "Props"
 ```
 
-So `template_model.rs:67` takes the `else` branch and the template contract is `Props`. The same case in `props.rs:117` puts the model into a different alias:
+So `template_model.rs:67` takes the `else` branch and the template contract is `Props`. The same case in `props.rs:118` puts the model into a different alias:
 
 ```rust
 ts.push_str("type $ResolvedProps = Props & ");

@@ -104,7 +104,7 @@ No diagnostic, as with `vue-tsc`. `vue-tsc` reads the file: `value.nope()` in pl
 
 ## Cause
 
-The mapper gives a computed `:is` no component target inside a slot. The listener then takes the native-element branch, which types it by event name.
+The cause is likely: the mapper gives a computed `:is` no component target inside a slot. The listener then takes the native-element branch, which types it by event name.
 
 The alias for a computed `:is` expression exists only at the template root. Under a `v-slot` scope the mapper refuses it (`crates/vize_croquis/src/drawer/template/visit_element/dynamic_component_alias.rs:22`):
 
