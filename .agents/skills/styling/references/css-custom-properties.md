@@ -1,6 +1,6 @@
 # CSS custom properties for component styles
 
-Read when a component genuinely needs a `<style>` block (`:deep()`, `@keyframes`, element selectors) and a shared value inside it. A preprocessor variable is banned there — it is a build-time value needing `additionalData` injection — and these are the `:root` properties in `apps/web/app/assets/css/globals.css` to use instead.
+Read when a `<style>` block (`:deep()`, `@keyframes`, element selectors) needs a shared value. A preprocessor variable is banned there — it is a build-time value needing `additionalData` injection — and these are the `:root` properties in `apps/web/app/assets/css/globals.css` to use instead.
 
 The shared properties are the `:root` block in `apps/web/app/assets/css/globals.css`, and they are deliberately not restated here: a copy of the list in prose goes stale the moment that block moves, and the values are not even all one kind — a length beside a duration beside a colour. Read the block for the name a style needs, including the ApexCharts tokens.
 
