@@ -16,6 +16,7 @@ How an individual component is written, typed and named. Assembling a page or li
 - `references/slots.md` — when a component declares a slot, forwards an optional slot into a library component, or a named slot's content has grown non-trivial.
 - `references/abstraction-levels.md` — when a script setup mixes a composable with a hand-built block for one concept.
 - `references/normal-form.md` — when a `.vue` is past the file-length target, a script has grown long, or a feature's wiring is about to be added to a component that already wires several.
+- `references/splitting-a-component.md` — when a `.vue` several times past the file-length target is about to be cut, by a session or a delegated agent.
 - `references/selection-and-keys.md` — when a child reads the selection, initialises state from a prop, or a `:key` would be bumped.
 - `references/wrapper-and-child.md` — when a component initialises editable state from data that may not have arrived.
 
