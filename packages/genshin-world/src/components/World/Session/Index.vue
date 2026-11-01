@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { AttributeLine } from "#src/models/character/AttributeLine";
-import type { CharacterConstellationKit } from "#src/models/character/CharacterConstellationKit";
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
-import type { Expedition } from "#src/models/expedition/Expedition";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
@@ -12,7 +10,6 @@ import type { Trial } from "#src/models/trial/Trial";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
-import type { PlacedDoing } from "#src/services/exploration/placeExplorationDoings";
 import type { TresCanvasInstance } from "@tresjs/core";
 
 import AchievementScreen from "#src/components/Achievement/Screen/Index.vue";
@@ -70,10 +67,13 @@ import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldCommissionClaims } from "#src/composables/useWorldCommissionClaims";
 import { useWorldCommissions } from "#src/composables/useWorldCommissions";
+import { useWorldConstellations } from "#src/composables/useWorldConstellations";
 import { useWorldCooking } from "#src/composables/useWorldCooking";
 import { useWorldDevHandles } from "#src/composables/useWorldDevHandles";
 import { useWorldDishes } from "#src/composables/useWorldDishes";
+import { useWorldDoings } from "#src/composables/useWorldDoings";
 import { useWorldDomains } from "#src/composables/useWorldDomains";
+import { useWorldExpeditionRoster } from "#src/composables/useWorldExpeditionRoster";
 import { useWorldFishing } from "#src/composables/useWorldFishing";
 import { useWorldForging } from "#src/composables/useWorldForging";
 import { useWorldFrame } from "#src/composables/useWorldFrame";
@@ -107,12 +107,9 @@ import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { useWorldTips } from "#src/composables/useWorldTips";
 import { useWorldTrials } from "#src/composables/useWorldTrials";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
-import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
-import { getCharacterIdConstellationsMap } from "#src/services/character/getCharacterIdConstellationsMap";
-import { readConstellationTables } from "#src/services/character/readConstellationTables";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
 import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import { HOME_REALM_GROUND_HEIGHT } from "#src/services/home/constants";
@@ -125,7 +122,6 @@ import { findAreaAt } from "#src/services/map/findAreaAt";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
 import { GENSHIN_SETTINGS_DEFAULTS } from "#src/services/menu/constants";
-import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { computeProfileNamecardItemIds } from "#src/services/profile/computeProfileNamecardItemIds";
@@ -142,7 +138,6 @@ import { WORLD_CLOCK_INTERVAL_MS } from "#src/services/time/constants";
 import { getServerNow } from "#src/services/time/getServerNow";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
-import { getResultAsync } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
 import { useIntervalFn, useMediaQuery } from "@vueuse/core";
 import {
@@ -601,20 +596,9 @@ const {
 });
 // The bonus lines the Spiral Abyss's chamber gives the whole party, held here as the combat and the chamber both read them
 const abyssBonusLines = shallowRef<AttributeLine[]>([]);
+// The constellations each character holds and the name of its own Stella Fortuna, which the character screen and the wish read
+const { characterIdConstellationsMap, stellaFortunaNameTextIdMap } = useWorldConstellations(gameDataBaseUrl);
 // The party, the characters, the enemies and the kit's effects, which a defeat places drops among and a team's fall revives
-// The constellation table, read as the world starts, and the constellations each character's one set holds, by its id. A
-// Traveler's form has a set for each element, which a statue picks, so it has none here until one does
-const constellationKits = shallowRef<CharacterConstellationKit[]>([]);
-// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-getResultAsync(() => readConstellationTables(gameDataBaseUrl)).match(
-  (kits) => {
-    constellationKits.value = kits;
-  },
-  (error) => {
-    console.error(error);
-  },
-);
-const characterIdConstellationsMap = computed(() => getCharacterIdConstellationsMap(constellationKits.value));
 const {
   characterIdKitMap,
   characterIdSkillGlyphsMap,
@@ -787,15 +771,6 @@ const { useBagEntry } = useWorldBagUse({
   setWallet,
   wallet,
 });
-// The text id of each character's own Stella Fortuna's name, by the character's id, for a character with one set
-const stellaFortunaNameTextIdMap = computed(() => {
-  const map = new Map<number, string>();
-  for (const { characterId, depots } of constellationKits.value) {
-    const [depot] = depots;
-    if (depots.length === 1 && depot) map.set(characterId, depot.stellaFortuna.nameTextId);
-  }
-  return map;
-});
 // The residents of the regions in reach, which the talks and a keeper's screen are read from
 const getResidents = () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents);
 // The card game's EXP and the games whose one-time reward is paid, which a won week game's duel pays into
@@ -860,8 +835,6 @@ const {
   setWallet,
   wallet,
 });
-// The expeditions out from the Adventurers' Guild, held for the session, so a reload empties them
-const expeditions = shallowRef<Expedition[]>([]);
 const reputationLevel = shallowRef(reputation.value.level);
 // Accepting the offer starts its quest, which the world then runs as any other
 const acceptReputationOffer = () => {
@@ -876,29 +849,19 @@ const { findTouchedOculus, nearOculusPlaces, oculusPlaces, unfoundOculusPlaces }
   gameDataBaseUrl,
   getMapCamera: () => mapCamera.value,
 });
-// The doings the world places, each counted toward the area its point stands in: the chests, the Oculi, the puzzles' marks
-// And Seelies at their courts, and the camps the save records as cleared
-const placedDoings = computed<PlacedDoing[]>(() => [
-  ...worldChestPlaces.value.map(({ id, position }) => ({ id, kind: ExplorationKind.Chest, position })),
-  ...oculusPlaces.value.map(({ id, position }) => ({ id, kind: ExplorationKind.Oculus, position })),
-  ...[...monumentPlaces.filter(({ monument }) => monument !== undefined), ...timeTrialPlaces].map(
-    ({ id, position }) => ({ id, kind: ExplorationKind.Puzzle, position }),
-  ),
-  ...puzzleSeelies.map(({ court, id }) => ({ id, kind: ExplorationKind.Puzzle, position: court })),
-  ...clearedCamps.value.map(({ id, position }) => ({ id, kind: ExplorationKind.Camp, position })),
-]);
-// The doings the save records as done, by id: the chests opened, the Oculi found, the puzzles and Seelies settled, and
-// The camps cleared
-const recordedDoingIds = computed<ReadonlySet<string>>(
-  () =>
-    new Set([
-      ...openedChestIds.value,
-      ...foundOculusIds.value,
-      ...solvedPuzzleIds.value,
-      ...settledSeelieIds.value,
-      ...clearedCamps.value.map(({ id }) => id),
-    ]),
-);
+// The doings the world places and the ids the save records of them as done, which each area's exploration counts
+const { placedDoings, recordedDoingIds } = useWorldDoings({
+  clearedCamps,
+  foundOculusIds,
+  monumentPlaces,
+  oculusPlaces,
+  openedChestIds,
+  puzzleSeelies,
+  settledSeelieIds,
+  solvedPuzzleIds,
+  timeTrialPlaces,
+  worldChestPlaces,
+});
 // The landmarks the world holds and the ones the player has unlocked, which a jump lands at and the first unlock pays
 const {
   activateLandmark,
@@ -977,30 +940,13 @@ useWorldDevHandles({
   jumpTo,
   party,
 });
-// The roster the expedition picker lists in the game's order, each named by the game's text, and the characters down,
-// Whom no expedition is sent with
-const expeditionCharacters = computed(() => characters.value.map(({ id }) => ({ id, name: getCharacterName(id) })));
-// Each character's passives it has unlocked at its ascension, by their proud skill groups, which the expedition talents are
-// Read from. A character with no talent kit has none
-const characterPassiveGroupIdMap = computed(
-  () =>
-    new Map(
-      characters.value.map(
-        ({ ascension, id }) =>
-          [
-            id,
-            new Set(
-              (characterTalentKits.find((kit) => kit.characterId === id)?.passives ?? [])
-                .filter(({ phase }) => phase <= ascension)
-                .map(({ proudSkillGroupId }) => proudSkillGroupId),
-            ),
-          ] as const,
-      ),
-    ),
-);
-const downCharacterIds = computed(
-  () => new Set(characters.value.filter(({ id }) => checkIsCharacterDown(party, id)).map(({ id }) => id)),
-);
+// The expeditions out from the Adventurers' Guild and the roster the expedition picker lists
+const { characterPassiveGroupIdMap, downCharacterIds, expeditionCharacters, expeditions } = useWorldExpeditionRoster({
+  characters,
+  characterTalentKits,
+  getCharacterName,
+  party,
+});
 // The artifact tables the Mystic Offering rolls its strongbox's artifact from, the same ones the chests draw from
 const craftingArtifactDropTables = { artifactMainAffixPools, artifactRarityDataMap, reliquarySets };
 // The party's crafters, each named by the game's text, and the one on the field, who is picked as the bench opens
