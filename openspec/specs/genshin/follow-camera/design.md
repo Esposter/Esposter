@@ -69,15 +69,13 @@ The camera's numbers are in `packages/genshin-engine/src/camera/constants.ts`, e
 
 ## Sources
 
-- [Settings](https://genshin-impact.fandom.com/wiki/Settings), Genshin Impact Wiki: not in the cache (see Open), so nothing here cites it.
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: not in the cache (see Open), so nothing here cites it.
-- [Photo Mode](https://genshin-impact.fandom.com/wiki/Photo_Mode), Genshin Impact Wiki: not in the cache (see Open), so nothing here cites it.
-- [Time](https://genshin-impact.fandom.com/wiki/Time), Genshin Impact Wiki: not in the cache (see Open), so nothing here cites it.
 - [Fix your timestep!](https://gafferongames.com/post/fix_your_timestep/), Glenn Fiedler: the shown state as a blend of the two latest steps, weighted by what the accumulator has left over.
 - [WorldReverse](https://github.com/fengjixuchui/WorldReverse/tree/main/Assets/DummyScripts/Assembly-CSharp), fengjixuchui: the camera profile's classes, its global config's and each module config's fields in declaration order, and the numbers of its camera modules.
 - [genshin-utility](https://github.com/lanylow/genshin-utility/blob/main/src/library/src/hooks/hooks.cpp), lanylow: a field-of-view tool that takes the game's own call setting 45 as its world camera's.
 
 ## Open
+
+The open checks for photo mode's clock, the wheel's distances and the Left Alt cursor are recorded with their requirements in [the spec](spec.md).
 
 - [ ] **In the game the camera stays behind the character, turns freely, zooms, and is pulled in by a wall rather than hiding the character** — no source yet: the Settings and Controls wiki pages are not in the cache, and no capture of the orbit is checked frame by frame.
 - [ ] **The game's sensitivity runs from 1 to 5, and the look turns at its middle** — no source yet: the range is not read from the interface export in the cache.
@@ -85,13 +83,11 @@ The camera's numbers are in `packages/genshin-engine/src/camera/constants.ts`, e
 - [ ] **The field of view is 45 degrees, the wheel runs from 1 to 6 metres, and the profile's elevation limit is 89 degrees** — no source yet: the camera export under `{data-root}/genshin-parity/extracted/` is not on disk (that folder has no `camera` folder), and the cached sources do not hold the profile.
 - [ ] **The Settings screen's default distance runs from 4.5 to 6.0 metres, topping out at the furthest radius** — no source yet: the Settings wiki page is not in the cache, and the camera profile is not exported.
 - [ ] **The middle mouse button and the right stick press are the game's camera reset** — no source yet: the Controls wiki page is not in the cache, and the controls capture is not checked frame by frame.
-- [ ] **The game hides its cursor in play, Left Alt is its Show Cursor, and Escape opens the Paimon menu** — no source yet: the Controls wiki page is not in the cache, and the controls capture is not checked frame by frame.
+- [ ] **The game hides its cursor in play, and Escape opens the Paimon menu** — no source yet: the Controls wiki page is not in the cache, and the controls capture is not checked frame by frame.
 - [ ] **Photo mode is reached from the Paimon menu** — no source yet: the Photo Mode wiki page is not in the cache.
-- [ ] **The world's clock runs on in photo mode, as the game's does** — no source yet: the Time wiki page is not in the cache.
 - [ ] **The game ships its recentering switched off** — no source yet: the game's camera settings are not checked in the cache.
 - [ ] **The game raises its look by body type, so a taller body's pivot stands higher** — no source yet: the two body readings in `packages/genshin-world/src/components/World/Character/Camera.reference.ts` show a near-equal share, which does not establish the game's rule.
 - [ ] **The world's camera orbits the character's body as the game's camera does** — no source yet: the Controls wiki page is not in the cache, and the game's camera profile is not exported to read the orbit from.
-- [ ] **The wheel's notches zoom the camera within the game's nearest and furthest distance** — no source yet: the Settings wiki page is not in the cache, and the profile's nearest and furthest distances are not exported.
 - [ ] **The limits and distances are the game's camera profile, read from the install** — no source yet: the camera profile export is not on disk.
 - [ ] **The pivot is the share of a standing character's height at which the screen's centre falls** — no source yet: a measured pivot share from the game's own camera data, which is not exported.
 - [ ] **Each number the game's camera profile holds is read from it, and a later build makes the reader throw** — no source yet: the camera profile export is not on disk, so the reader's throw on a later build is not tested.
