@@ -25,9 +25,13 @@ const emit = defineEmits<UiCalendarSlotEmits & { showDay: [day: Temporal.PlainDa
 const scroller = useTemplateRef("scroller");
 const grid = useTemplateRef("grid");
 const header = useTemplateRef("header");
-const hours = Array.from({ length: Temporal.Duration.from({ days: 1 }).total("hours") }, (_hour, hour) => hour);
-// The gutter is as wide as its longest hour, whichever way the reader's locale writes one
-const gridTemplateColumns = computed(() => `auto repeat(${days.length}, minmax(0, 1fr))`);
+// The instant each hour's gutter label reads, taken once for the day rather than on every render of the grid
+const hourInstants = computed(() =>
+  Array.from(
+    { length: Temporal.Duration.from({ days: 1 }).total("hours") },
+    (_hour, hour) => today.toZonedDateTime({ plainTime: { hour }, timeZone: "UTC" }).epochMilliseconds,
+  ),
+);
 const selectedSlot = ref<Temporal.PlainDateTime>();
 // The slot holding the tab stop: the selected one while its day is shown, otherwise the start of the working day on the
 // Day shown, or on the first day where a work week does not show it
@@ -92,8 +96,14 @@ onMounted(() => {
 <template>
   <!-- Positioned, so an hour's offsetTop is measured from the top of the grid it scrolls -->
   <div ref="scroller" h-full relative of-y-auto>
-    <!-- A new week's days fade in over the old one's place, as a new month's do -->
-    <div :key="days[0]?.toString()" class="hours" grid :style="{ gridTemplateColumns }">
+    <!-- A new week's days fade in over the old one's place, as a new month's do. The gutter is as wide as its longest
+      hour, whichever way the reader's locale writes one -->
+    <div
+      :key="days[0]?.toString()"
+      class="hours"
+      grid
+      :style="{ gridTemplateColumns: `auto repeat(${days.length}, minmax(0, 1fr))` }"
+    >
       <!-- One row across the grid on its columns, so a heading always sits over its day, scrollbar or not -->
       <div ref="header" class="header" ui-bar>
         <span />
@@ -124,13 +134,17 @@ onMounted(() => {
         </div>
       </div>
       <div aria-hidden="true">
-        <div v-for="hour of hours" :key="hour" :data-hour="hour" class="hour" text-sm text-muted px-2 text-right>
-          <NuxtTime
-            v-if="hour > 0"
-            :datetime="today.toZonedDateTime({ plainTime: { hour }, timeZone: 'UTC' }).epochMilliseconds"
-            hour="numeric"
-            time-zone="UTC"
-          />
+        <div
+          v-for="(instant, hour) of hourInstants"
+          :key="hour"
+          :data-hour="hour"
+          class="hour"
+          text-sm
+          text-muted
+          px-2
+          text-right
+        >
+          <NuxtTime v-if="hour > 0" :datetime="instant" hour="numeric" time-zone="UTC" />
         </div>
       </div>
       <!-- The days' columns are the grid's rows for assistive technology, in a wrapper the layout sees through -->

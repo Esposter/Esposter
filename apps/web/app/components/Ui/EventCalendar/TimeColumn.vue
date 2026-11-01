@@ -33,6 +33,10 @@ const slotStarts = Array.from(
   { length: Temporal.Duration.from({ days: 1 }).total("minutes") / slotMinutes },
   (_slot, index) => midnight.add({ minutes: index * slotMinutes }),
 );
+// Each slot's name, which the grid keys and focus read, held once per day rather than rebuilt on every render
+const slots = computed(() =>
+  slotStarts.map((slotStart) => ({ slotName: day.toPlainDateTime(slotStart).toString(), slotStart })),
+);
 const dropTargetIndex = ref(-1);
 // How many slots into the day a time is, a fraction of one past the slot it falls in
 const getSlotOffset = (plainTime: Temporal.PlainTime) => plainTime.since(midnight).total("minutes") / slotMinutes;
@@ -58,7 +62,7 @@ const nowSlotOffset = computed(() => getSlotOffset(now.value.toPlainTime()));
   <div class="column" :data-date="day.toString()" :data-weekend="isWeekend || undefined" role="row" ui-guide relative>
     <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- the grid's roving focus sets the cell's tabindex -->
     <div
-      v-for="(slotStart, index) of slotStarts"
+      v-for="({ slotName, slotStart }, index) of slots"
       :key="index"
       :aria-selected="selectedIndex === index"
       class="slot"
@@ -66,7 +70,7 @@ const nowSlotOffset = computed(() => getSlotOffset(now.value.toPlainTime()));
       :data-hour-start="slotStart.minute === 0 || undefined"
       :data-off-hours="slotStart.hour < CALENDAR_OPENING_HOUR || slotStart.hour >= CALENDAR_CLOSING_HOUR || undefined"
       :data-selected="selectedIndex === index || undefined"
-      :data-slot="day.toPlainDateTime(slotStart).toString()"
+      :data-slot="slotName"
       :class="{ 'cursor-cell': isCreatable }"
       role="gridcell"
       :tabindex="focusedIndex === index ? 0 : -1"
