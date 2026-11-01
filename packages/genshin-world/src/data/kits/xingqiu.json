@@ -5,9 +5,7 @@
   "frames.rainSwordsBurstFirstTick": { "cause": "DiffersFromSource", "value": 19 },
   "frames.rainSwordsSkillFirstTick": { "cause": "DiffersFromSource", "value": 44 },
   "hitFields.rainSwordsTick.area": {
-    "file": "orbital.go",
-    "line": 79,
-    "source": "Gcsim",
+    "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.2 }
   },
   "hitFields.rainSwordsTick.element": { "file": "orbital.go", "line": 63, "source": "Gcsim", "value": "Water" },
