@@ -9,7 +9,7 @@ The [HUD](../../specs/genshin/hud/design.md) is built with its pieces and their 
 
 ## Scope and order
 
-**Today:** the HUD's block is exported and fitted, every piece but the quest tracker, the stamina meter and the Sheer Cold gauge stands in its fitted rect, the tracker's line names the navigated objective's distance and whether it stands higher or lower, every playable character's skill and burst icons are traced onto the buttons from hosted game data, the stamina meter is cut at each 100 of the pool, and each piece's look is built from the recordings it is measured on, as the [as-built page](../../specs/genshin/hud/design.md) records.
+**Today:** each piece is built and drawn as the [as-built page](../../specs/genshin/hud/design.md) records, and the intro names the three that do not yet stand in their fitted rect.
 
 **This adds, in order:**
 
