@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 
 const slashCommandStore = useSlashCommandStore();
@@ -35,16 +34,13 @@ const errorMessage = computed(
         flex-col
       >
         <span aria-hidden="true" text-sm text-muted px-3 py-1>{{ subheader }}</span>
-        <button
+        <MessageModelMessageInputHeaderHiddenParameter
           v-for="({ name }, index) of parameters"
           :key="name"
-          :data-highlighted="index + offset === selectedHiddenIndex || undefined"
-          type="button"
-          ui-item
-          @click="createParameter(name)"
-        >
-          <UiItemContent :description="`Your ${name}`" :meaning="UiIconMeaning.Tag" :title="name" />
-        </button>
+          :is-highlighted="index + offset === selectedHiddenIndex"
+          :name
+          @select="createParameter(name)"
+        />
       </div>
     </div>
     <MessageModelMessageInputHeader @close="clearPendingSlashCommand()">
