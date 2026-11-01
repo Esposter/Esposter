@@ -3,6 +3,7 @@ import type { ExcelBlossomRefreshRow } from "#src/models/genshinAssets/leyLine/E
 import type { ExcelBlossomSectionOrderRow } from "#src/models/genshinAssets/leyLine/ExcelBlossomSectionOrderRow";
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/shared/ExcelRewardPreviewRow";
 
+import { AREA_UNLOCK_CONDITION_TYPE, PLAYER_LEVEL_CONDITION_TYPE } from "#src/services/genshinAssets/leyLine/constants";
 import { toLeyLineRegions } from "#src/services/genshinAssets/leyLine/toLeyLineRegions";
 import { OutcropKind } from "genshin-world";
 import { describe, expect, test } from "vitest";
@@ -18,12 +19,10 @@ describe(toLeyLineRegions, () => {
   const SECOND_PREVIEW_ID = 102;
   const FIRST_ITEM_ID = 901;
   const SECOND_ITEM_ID = 902;
-  const PLAYER_LEVEL_CONDITION = "BLOSSOM_REFRESH_COND_PLAYER_LEVEL_EQUAL_GREATER";
-  const AREA_UNLOCK_CONDITION = "BLOSSOM_REFRESH_COND_UNLOCK_ANY_AREA_IN_CITY";
   const refreshRows: ExcelBlossomRefreshRow[] = [
     {
       cityId: FIRST_CITY_ID,
-      KNHAALNEMLL: [{ param: [8], type: PLAYER_LEVEL_CONDITION }],
+      KNHAALNEMLL: [{ param: [8], type: PLAYER_LEVEL_CONDITION_TYPE }],
       OFGHJMOLMNA: [
         { DANEGNOIKLH: FIRST_PREVIEW_ID, EPOBLCBBIMB: 1 },
         { DANEGNOIKLH: SECOND_PREVIEW_ID, EPOBLCBBIMB: 2 },
@@ -32,15 +31,15 @@ describe(toLeyLineRegions, () => {
     },
     {
       cityId: FIRST_CITY_ID,
-      KNHAALNEMLL: [{ param: [2], type: PLAYER_LEVEL_CONDITION }],
+      KNHAALNEMLL: [{ param: [2], type: PLAYER_LEVEL_CONDITION_TYPE }],
       OFGHJMOLMNA: [],
       refreshType: "BLOSSOM_REFRESH_CRYSTAL",
     },
     {
       cityId: SECOND_CITY_ID,
       KNHAALNEMLL: [
-        { param: [18], type: PLAYER_LEVEL_CONDITION },
-        { param: [SECOND_CITY_ID], type: AREA_UNLOCK_CONDITION },
+        { param: [18], type: PLAYER_LEVEL_CONDITION_TYPE },
+        { param: [SECOND_CITY_ID], type: AREA_UNLOCK_CONDITION_TYPE },
       ],
       OFGHJMOLMNA: [{ DANEGNOIKLH: SECOND_PREVIEW_ID, EPOBLCBBIMB: 3 }],
       refreshType: "BLOSSOM_REFRESH_SCOIN",
