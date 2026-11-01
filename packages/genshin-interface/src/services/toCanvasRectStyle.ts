@@ -1,21 +1,8 @@
 import type { CanvasRect } from "#src/models/CanvasRect";
 
 import { computeRectOffsets } from "#src/services/computeRectOffsets";
+import { toAxis } from "#src/services/toAxis";
 
-// One axis of a RectTransform as CSS along it: the offset of its start from its parent's start (the left, or the
-// Foot, since Unity's y runs up) and its length, each a share of the parent's span and a length in canvas units, the
-// Start being Unity's offsetMin from the lower anchor
-const toAxis = (
-  anchorMin: number,
-  anchorMax: number,
-  offsetMin: number,
-  size: number,
-  span: string,
-  start: string,
-): [string, string] => [
-  `calc(${start} + ${anchorMin} * ${span} + ${offsetMin} * var(--canvas-unit))`,
-  `calc(${anchorMax - anchorMin} * ${span} + ${size} * var(--canvas-unit))`,
-];
 // A RectTransform as the CSS that places it absolutely in its parent's box, as the game lays it out. A piece laid on
 // The canvas itself spans the canvas, the screen less its inset at each side, where one inside another piece spans
 // That piece's whole box
