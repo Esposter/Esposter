@@ -20,6 +20,8 @@ interface Props {
   // The picked place: its name, its description, the rewards it may pay, the durations it offers and the action its
   // Button takes. Absent while no place is picked, so the panel and its button are not drawn
   detail?: ExpeditionPlaceDetail;
+  // The duration picked, in hours, which a send to the picked place takes
+  hours: number;
   // The expedition limit in the reader's words, its count filled in: "Expedition Limit: 1/2"
   limitLabel: string;
   // The nations down the left in the game's order, the picked one drawn larger
@@ -34,15 +36,15 @@ interface Props {
 
 const nation = defineModel<string>("nation", { required: true });
 const place = defineModel<number | undefined>("place");
-const hours = defineModel<number>("hours", { default: 0 });
 const picking = defineModel<boolean>("picking", { default: false });
-const { characters, characterTitle, closeLabel, detail, limitLabel, nations, pins, rewardsLabel, title } =
+const { characters, characterTitle, closeLabel, detail, hours, limitLabel, nations, pins, rewardsLabel, title } =
   defineProps<Props>();
 const emit = defineEmits<{
   claim: [placeId: number];
   close: [];
   recall: [placeId: number];
   send: [placeId: number, characterId: number, hours: number];
+  "update:hours": [hours: number];
 }>();
 
 // The picked place's button acts on that place: a send opens the picker of the character it takes, a claim or a recall
@@ -96,7 +98,7 @@ const act = () => {
       <p v-if="detail.statusLabel" class="status">{{ detail.statusLabel }}</p>
       <ul v-else class="durations">
         <li v-for="{ hours: durationHours, label } of detail.durations" :key="durationHours">
-          <button :aria-pressed="durationHours === hours" type="button" @click="hours = durationHours">
+          <button :aria-pressed="durationHours === hours" type="button" @click="emit('update:hours', durationHours)">
             {{ label }}
           </button>
         </li>
