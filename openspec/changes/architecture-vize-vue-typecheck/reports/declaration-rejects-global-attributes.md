@@ -55,7 +55,7 @@ No diagnostic. The declaration that `vue-tsc --declaration --emitDeclarationOnly
 
 ## Cause
 
-The emitted constructor carries a guard that treats every key outside the props and emits as extra. The mapper adds the global HTML attributes in its own check path, and the declaration does not.
+The cause is likely: the emitted constructor carries a guard that treats every key outside the props and emits as extra. The mapper adds the global HTML attributes in its own check path, and the declaration does not. The source was read; no run has confirmed it.
 
 The emitted type is `new <$AuthoredProps = unknown>(props?: $AuthoredProps & $ComponentInput<…>, …) => … $ReplaceComponentProps<…, $ComponentInputGuard<Props, __EmitProps<Emits>, $AuthoredProps>>` (`crates/vize_canon/src/virtual_ts/generator/component_constructors.rs:172`). The guard computes the extra keys against the declared props and emits only (`npm/cli/virtual-ts-globals.d.ts:230-239`):
 
