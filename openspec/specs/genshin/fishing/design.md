@@ -27,13 +27,13 @@ stateDiagram-v2
 
 ## The read
 
-`pnpm -C scripts genshin:assets fishing` publishes four records to the fishing dataset of the [hosted game data](../hosted-game-data/design.md), one for each of the points, the fish, the rods and the pools:
+`pnpm -C scripts genshin:assets fishing` publishes eight records to the fishing dataset of the [hosted game data](../hosted-game-data/design.md): the points, the fish, the rods and the pools described here, and the baits, skills, proficiencies and rewards, which none of the rules below reads:
 
 - **Points.** The official map's Fishing Point label, placed by the fit that already carries the statues and waypoints into the game's coordinates ([spawned places](../spawned-places/design.md)), carried into its region's axes by the same step as the chests, and filed by region.
 - **Fish and rods.** Every fish's hit points, attract and flee ranges, bite timeout, feeler range, moving zone and item, and every rod's base attack, multiplier, accuracy and maximum, read by the table's own names (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/FishExcelConfigData.json` holds `hp`, `attractRange`, `fleeRange`, `biteTimeout` and `bonusWidth`; `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/FishRodExcelConfigData.json` holds `baseAttack`, `attackMag`, `attackAcc` and `maxAttack`).
 - **Pools.** Each region's fishing pools, filed by the game's city id, each stock on a pool's list resolved to its table row with the fish weights kept in the table's order (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/FishStockExcelConfigData.json` holds each `fishWeight`; `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/FishPoolExcelConfigData.json` holds each pool's `stockList` and `cityId`). A stock the table does not hold is an error, never a pool missing it.
 
-The fish, stock, pool and rod tables are not in the community dump the repository reads, so the seven the fishing reads were fetched from the AnimeGameData repository into the dump's folder, never committed.
+The fishing tables are not in the community dump the repository reads, so they were fetched from the AnimeGameData repository into the dump's folder, never committed.
 
 ## The rules
 
@@ -63,9 +63,9 @@ The fish, stock, pool and rod tables are not in the community dump the repositor
 
 ## Sources
 
-- [Fishing](https://genshin-impact.fandom.com/wiki/Fishing), Genshin Impact Wiki: the day and night stocks, the seventy-two hour refill and the bite.
+- [Fishing](https://genshin-impact.fandom.com/wiki/Fishing), Genshin Impact Wiki: the day and night stocks, the seventy-two hour refill and the bite. Not cached, so none of its claims is checked (see Open).
 - [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the Fishing Point label whose points the fit places. Grounds the requirement "Fishing points stand at their fitted places" and the scenario "Region's points are placed from the official map" (the place the official map marks for it).
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the fish, pool, stock and rod tables read here. Grounds the requirement "A pool stock with no record is an error" (a pool stock the game's table does not hold, now stated as a stock that has no record) and the scenario "Stock with no record fails the build" (a pool lists a stock the game's table does not hold).
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the fish, pool, stock and rod tables read here. Grounds the requirement "A pool stock with no record is an error" and the scenario "Stock with no record fails the build".
 
 ## Open
 
