@@ -13,6 +13,7 @@ import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage, applyGcgStandbyPiercing } from "#src/services/gcg/applyGcgDamage";
 import { beaconOfTheReedSea } from "#src/services/gcg/cards/beaconOfTheReedSea";
 import {
+  ARATAKI_ITTO_ID,
   BEACON_OF_THE_REED_SEA_ID,
   ELLIN_ID,
   GENERALS_GLORY_ID,
@@ -84,8 +85,6 @@ const createSideState = (
 });
 const defenderOf = (duel: GcgDuel): GcgCharacterState => takeOne(takeOne(duel.sides, 1).characters, 0);
 const attackerOf = (duel: GcgDuel): GcgCharacterState => takeOne(takeOne(duel.sides, 0).characters, 0);
-
-const ITTO_ID = 1605;
 
 describe("inuzakaAllRoundDefense", () => {
   const BOW = "BOW";
@@ -191,7 +190,7 @@ describe("generalsGlory", () => {
     const attacker = createSideState(
       [
         createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } }),
-        createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } }),
+        createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } }),
       ],
       { summons: [createGcgZoneCard(GENERALS_GLORY_ID, generalsGlory)] },
     );
@@ -356,7 +355,7 @@ describe("spiritOfOmensPower", () => {
       hp: 8,
     });
     const attacker = createSideState([
-      createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } }),
+      createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } }),
       eremite,
     ]);
     const duel = createDuel([
@@ -527,7 +526,7 @@ describe("kingsSquire", () => {
     expect.hasAssertions();
 
     const squire = createGcgCharacterState({
-      character: { element: Element.Geo, id: ITTO_ID, weapon: BOW },
+      character: { element: Element.Geo, id: ARATAKI_ITTO_ID, weapon: BOW },
       equipments: [createGcgZoneCard(KINGS_SQUIRE_ID, kingsSquire)],
     });
     const attacker = createSideState([squire], {
@@ -560,7 +559,7 @@ describe("beaconOfTheReedSea", () => {
     expect.hasAssertions();
 
     const itto = createGcgCharacterState({
-      character: { element: Element.Geo, id: ITTO_ID, weapon: CLAYMORE },
+      character: { element: Element.Geo, id: ARATAKI_ITTO_ID, weapon: CLAYMORE },
       equipments: [createGcgZoneCard(BEACON_OF_THE_REED_SEA_ID, beaconOfTheReedSea)],
     });
     const attacker = createSideState([itto]);
@@ -669,7 +668,7 @@ describe("sangonomiyaShrine", () => {
 
     const attacker = createSideState([
       createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID }, hp: 5 }),
-      createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID }, hp: 5 }),
+      createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID }, hp: 5 }),
     ]);
     attacker.supports = [createGcgZoneCard(SANGONOMIYA_SHRINE_ID, sangonomiyaShrine)];
     const duel = createDuel([
@@ -774,7 +773,7 @@ describe("elementalResonanceWovenStone", () => {
 
     const attacker = createSideState([
       createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } }),
-      createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } }),
+      createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } }),
     ]);
     const duel = createDuel([
       attacker,
@@ -806,7 +805,7 @@ describe("elementalResonanceEnduringRock", () => {
 
     const attacker = createSideState([
       createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } }),
-      createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } }),
+      createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } }),
     ]);
     const duel = createDuel([
       attacker,

@@ -19,6 +19,7 @@ import { bakeKurage } from "#src/services/gcg/cards/bakeKurage";
 import { capriciousVisage } from "#src/services/gcg/cards/capriciousVisage";
 import { ceremonialGarment } from "#src/services/gcg/cards/ceremonialGarment";
 import {
+  ARATAKI_ITTO_ID,
   BAKE_KURAGE_ID,
   CAPRICIOUS_VISAGE_ID,
   CEREMONIAL_GARMENT_ID,
@@ -70,7 +71,6 @@ const withSkills = (character: GcgCharacterState, skills: GcgSkill[]): GcgCharac
   ...character,
   character: { ...character.character, skills },
 });
-const ITTO_ID = 1605;
 
 describe("capriciousVisage", () => {
   const ELECTRO_DIE: GcgCost = { count: 2, element: Element.Electro, kind: GcgCostKind.Dice };
@@ -364,7 +364,7 @@ describe("ushi", () => {
   test("the active character takes 1 less DMG, once", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } })]),
       createSideState([createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } })]),
     ]);
     takeOne(duel.sides, 0).summons.push(createGcgZoneCard(USHI_ID, ushi));
@@ -379,7 +379,7 @@ describe("ushi", () => {
   test("the first DMG the active character takes attaches Superlative Superstrength to Arataki Itto, once", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } })]),
       createSideState([createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } })]),
     ]);
     takeOne(duel.sides, 0).summons.push(createGcgZoneCard(USHI_ID, ushi));
@@ -399,7 +399,7 @@ describe("ushi", () => {
     expect.hasAssertions();
     const duel = createDuel([
       createSideState([
-        withSkills(createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } }), [MASATSU]),
+        withSkills(createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } }), [MASATSU]),
       ]),
       createSideState([createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } })]),
     ]);
@@ -415,7 +415,7 @@ describe("ushi", () => {
   test("at the End Phase it is discarded, deals 1 Geo DMG and attaches Superlative Superstrength to Arataki Itto", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } })]),
       createSideState([createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } })]),
     ]);
     takeOne(duel.sides, 0).summons.push(createGcgZoneCard(USHI_ID, ushi));
@@ -437,7 +437,7 @@ describe("ragingOniKing", () => {
     const duel = createDuel([
       createSideState([
         {
-          ...createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } }),
+          ...createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } }),
           statuses: [createGcgZoneCard(RAGING_ONI_KING_ID, ragingOniKing)],
         },
       ]),
@@ -453,7 +453,7 @@ describe("ragingOniKing", () => {
     const duel = createDuel([
       createSideState([
         {
-          ...createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } }),
+          ...createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } }),
           statuses: [createGcgZoneCard(RAGING_ONI_KING_ID, ragingOniKing)],
         },
       ]),
@@ -478,7 +478,7 @@ describe("superlativeSuperstrength", () => {
     const duel = createDuel([
       createSideState([
         {
-          ...createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } }),
+          ...createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } }),
           statuses: [{ ...createGcgZoneCard(SUPERLATIVE_SUPERSTRENGTH_ID, superlativeSuperstrength), usages: 2 }],
         },
       ]),
@@ -496,7 +496,7 @@ describe("superlativeSuperstrength", () => {
     const duel = createDuel([
       createSideState([
         {
-          ...createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } }),
+          ...createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } }),
           statuses: [{ ...createGcgZoneCard(SUPERLATIVE_SUPERSTRENGTH_ID, superlativeSuperstrength), usages: 2 }],
         },
       ]),
@@ -514,7 +514,7 @@ describe("superlativeSuperstrength", () => {
     expect.hasAssertions();
     const duel = createDuel([
       createSideState(
-        [createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } })],
+        [createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } })],
         Array.from({ length: diceCount }, () => Element.Geo),
       ),
       createSideState([]),
@@ -527,7 +527,7 @@ describe("superlativeSuperstrength", () => {
   test("with at least two usages, a Charged Attack spends one Unaligned die less", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } })]),
       createSideState([]),
     ]);
     duel.sides[0].hasChargedAttack = true;
@@ -567,7 +567,7 @@ describe("emblemOfSeveredFate", () => {
       createSideState([
         withSkills(createGcgCharacterState({ character: { element: Element.Electro, id: YAE_MIKO_ID } }), [TENKO]),
         {
-          ...createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } }),
+          ...createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } }),
           equipments: [createGcgZoneCard(EMBLEM_OF_SEVERED_FATE_ID, emblemOfSeveredFate)],
         },
       ]),
@@ -602,7 +602,7 @@ describe("emblemOfSeveredFate", () => {
     const duel = createDuel([
       createSideState([
         {
-          ...withSkills(createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } }), [ROYAL]),
+          ...withSkills(createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } }), [ROYAL]),
           equipments: [createGcgZoneCard(EMBLEM_OF_SEVERED_FATE_ID, emblemOfSeveredFate)],
         },
         {
@@ -624,7 +624,7 @@ describe("emblemOfSeveredFate", () => {
     const duel = createDuel([
       createSideState([
         {
-          ...createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } }),
+          ...createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } }),
           equipments: [createGcgZoneCard(EMBLEM_OF_SEVERED_FATE_ID, emblemOfSeveredFate)],
         },
       ]),
@@ -794,7 +794,9 @@ describe("masatsu Zetsugi: Akaushi Burst!", () => {
   test("it deals 1 Geo DMG, summons Ushi and gains Superlative Superstrength", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([withSkills(createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } }), [])]),
+      createSideState([
+        withSkills(createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } }), []),
+      ]),
       createSideState([createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, MASATSU);
@@ -814,7 +816,7 @@ describe("royal Descent: Behold, Itto the Evil!", () => {
   test("it deals 4 Geo DMG and gains Raging Oni King", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: ARATAKI_ITTO_ID } })]),
       createSideState([createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, ROYAL);
