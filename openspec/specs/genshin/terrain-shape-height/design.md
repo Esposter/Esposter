@@ -40,7 +40,6 @@ The features keep the residual off their own ground too: the composed height mul
 ## Not yet
 
 - **A smooth window on each hill.** A hill is cut at its reach, where its Gaussian still stands at about a hundredth of its height (the exponential of minus four and a half, 1.1%), so the ground steps by that much where a tall hill's square ends. A window falling smoothly to none at the reach would close the step, but the fit would then read a different shape, so the hills would have to be fitted again with it.
-- **One bilinear read for the fitted grids.** `sampleTerrainResidualFade` reads its weights between four nodes exactly as `sampleGroundLayerField` reads each layer's shares, over the same row-major grid, and differs only past the edges, where the fade draws none and the field keeps to its edge. One read of a grid's value at a point would serve both.
 
 ## Key files
 
@@ -58,6 +57,7 @@ The features keep the residual off their own ground too: the composed height mul
 | `packages/genshin-engine/src/terrain/createTerrainFeaturesBlend.ts`  | The largest blend any feature stands at, which the residual is kept off                |
 | `packages/genshin-engine/src/terrain/createResidualHeight.ts`        | The residual's octaves of simplex noise, scaled by its fade's weight                   |
 | `packages/genshin-engine/src/terrain/sampleTerrainResidualFade.ts`   | The fade's weight at a point, bilinear in its grid, none outside it                    |
+| `packages/genshin-engine/src/terrain/blendGridNodes.ts`              | The bilinear blend of a grid's four nodes, read by the layer field and the fade        |
 | `packages/genshin-engine/src/terrain/fileByCell.ts`                  | Items filed under the cells their bounds cover, read by a point                        |
 | `packages/genshin-engine/src/terrain/getTerrainShapeLevel.ts`        | A ground laid over another lifted onto its own base, round its hills                   |
 | `packages/genshin-world/src/services/world/createWorldHeight.ts`     | The world's ground: every region's laid over Windrise's, a fitted one on its own level |
