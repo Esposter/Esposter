@@ -27,7 +27,7 @@ flowchart TD
 - **Events keep their names and detail.** `panzoomstart`, `panzoompan`, `panzoomzoom`, `panzoomreset`, `panzoomend` and `panzoomchange` fire on the element with `{ x, y, scale, isSVG, originalEvent }`, not bubbling.
 - **The tracker's features that fit a viewer are built.**
   - A pinch is proportional (#63, #643, #671, #683): the scale is the scale at the gesture's start times the ratio of the fingers' distance now to the distance then, so it feels the same at every scale.
-  - A wheel step follows the delta (#586): a pixel delta of 100 is one step, a smaller trackpad delta a proportional fraction, a line delta is taken as pixels, and one event moves at most one step.
+  - A wheel notch follows the delta (#586): a pixel delta of 100 is one notch, which scales by the exponential of the step divided by three, as the upstream wheel does, a smaller trackpad delta a proportional fraction of it, a line delta is taken as pixels, and one event moves at most one notch.
   - `automatic` containment (#102, #511, #598, #707, #583): per axis, `inside` where the scaled element fits the area and `outside` where it overflows. Its scale floor is the fitting scale, which is the "aspect fit" the tracker asks for apart (#504, #577, #659).
   - `panThreshold` (#441, #452) is the distance a pointer travels before a drag starts, and the click that follows a drag past it is swallowed (#674).
   - `panCursor` (#546) is the cursor while a drag is live.

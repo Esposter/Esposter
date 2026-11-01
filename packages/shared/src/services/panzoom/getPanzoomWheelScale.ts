@@ -6,8 +6,8 @@ import {
   PANZOOM_WHEEL_STEP_DIVISOR,
 } from "#src/services/panzoom/constants";
 
-// The scale a wheel event moves to. A notch of PANZOOM_WHEEL_NOTCH_PIXELS is one step, a smaller delta a proportional part
-// Of one, and one event moves at most one step. A zero vertical delta takes the horizontal one, as a shift-wheel on a Mac reports it.
+// The scale a wheel event moves to. A notch of PANZOOM_WHEEL_NOTCH_PIXELS moves the scale by the step divided by PANZOOM_WHEEL_STEP_DIVISOR, a smaller delta
+// A proportional part of that, and one event moves at most one notch. A zero vertical delta takes the horizontal one, as a shift-wheel on a Mac reports it.
 // A delta in lines counts PANZOOM_PIXELS_PER_LINE pixels a line, and pages, which browsers report rarely, count as lines
 export const getPanzoomWheelScale = (
   scale: number,

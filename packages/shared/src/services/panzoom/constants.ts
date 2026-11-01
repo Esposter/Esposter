@@ -7,7 +7,7 @@ export const PANZOOM_DEFAULT_START_SCALE = 1;
 export const PANZOOM_DEFAULT_STEP = 0.3;
 // A wheel notch moves the scale by the step divided by this
 export const PANZOOM_WHEEL_STEP_DIVISOR = 3;
-// The pixel delta of one wheel notch, which is one whole step
+// The pixel delta of one wheel notch
 export const PANZOOM_WHEEL_NOTCH_PIXELS = 100;
 // A wheel delta reported in lines counts this many pixels per line
 export const PANZOOM_PIXELS_PER_LINE = 16;
