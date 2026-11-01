@@ -38,6 +38,7 @@ flowchart LR
 
 - **Relentless's "+3s duration" clause and the phase-0 passive, Tradition of the Dawn Knight, are not built.** The first has no named referent in the talent text, which says only "its duration is increased by 3s" (the wiki's Relentless), and the second refunds 15% of the ore used when crafting Claymore-type weapons (the wiki's Tradition of the Dawn Knight), outside combat.
 - **Constellation 2 is built for a hit on Diluc that costs him HP, and for one a shield takes (`packages/genshin-world/src/services/kit/characters/dilucKit.ts`).** Searing Ember's stacks (`{data-root}/cache/gcsim-v2.47.2/internal/characters/diluc/cons.go:55-61`: up to three, 10% ATK and 5% ATK SPD, 600 frames, 10 seconds) follow each such hit, one at most every 1.5 seconds. The 1.5 seconds is not sourced: gcsim checks an interval key that no code sets (`{data-root}/cache/gcsim-v2.47.2/internal/characters/diluc/cons.go:34`, `:47`), and the cached wiki has no text for it, so it is open. gcsim hooks `OnPlayerHit` (`{data-root}/cache/gcsim-v2.47.2/internal/characters/diluc/cons.go:40-41`), which fires on a shielded hit too, so a strike a shield takes whole counts as a hit on him, whoever owns the shield: the `ShieldAbsorbed` event names the member the strike was on, and an HP loss and a shield's absorb of the same hit share the one interval. A teammate's damageless hit is not built.
+
 ## Key files
 
 | File                                                             | Role                                                                                               |
