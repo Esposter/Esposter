@@ -6,6 +6,7 @@ import { readDisplaySamples } from "#src/services/genshinParity/display/readDisp
 import { solveToneContrast } from "#src/services/genshinParity/display/solveToneContrast";
 import { DISPLAY_CONTRAST_GATE } from "#src/services/genshinParity/passes/constants";
 import { getCurrentBuildReferenceIds } from "#src/services/genshinParity/passes/getCurrentBuildReferenceIds";
+import { mergeParityPassMeasures } from "#src/services/genshinParity/passes/mergeParityPassMeasures";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { GENSHIN_TONE_CONTRAST } from "genshin-engine";
 
@@ -51,5 +52,5 @@ export const measureDisplay = async (component: DerivedAssetComponent): Promise<
       ],
     });
   }
-  return { notes: measures.flatMap(({ notes }) => notes), readings: measures.flatMap(({ readings }) => readings) };
+  return mergeParityPassMeasures(measures);
 };
