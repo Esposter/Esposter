@@ -25,7 +25,7 @@ flowchart TD
 
 | File                                                                | Role                                                                                                                      |
 | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/tighnariKit.ts` | `createTighnariKitBehaviour`, empty: his strikes, plunges, Vijnana-Phala Mine and Tanglevine Shaft are his record's alone |
+| `packages/genshin-world/src/services/kit/characters/tighnariKit.ts` | `createTighnariKitBehaviour`, Constellations 1 and 4 and Ascension 4's DMG; the rest is his record's alone                |
 
 ## Sources
 
