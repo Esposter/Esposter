@@ -9,4 +9,4 @@
 ## 2. Species
 
 - [x] 2.1 Show each tree's mesh near and its impostor far. Verify: a test named after the scenario 'A far tree shows its impostor'.
-- [ ] 2.2 Fit each placed plant's species to its game export, costliest first, with the oak last. Verify: a test named after the scenario 'A fitted species matches its game export'. The oak's step waits on the roadmap's `windrise-oak-shape` row.
+- [ ] 2.2 Fit each placed plant's species to its game export, costliest first, with the oak last. Verify: a test named after the scenario 'A fitted species matches its game export'. The oak's step waits on the `windrise-oak-shape` compute run.

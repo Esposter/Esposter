@@ -20,7 +20,7 @@ Every plant the game places stands in the world as its species, drawn in batches
 
 ## Waiting on
 
-- The roadmap's `windrise-oak-shape` row, which holds the oak's species open; the oak's step comes last and waits on that row alone.
+- The `windrise-oak-shape` run in the [Windrise compute](../../specs/genshin/compute/windrise/design.md) queue, which holds the oak's species open; the oak's step comes last and waits on that run alone.
 - Game data: `game-exports` (per the change's needs).
 
 ## Impact
