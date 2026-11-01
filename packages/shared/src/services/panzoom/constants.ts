@@ -11,6 +11,8 @@ export const PANZOOM_WHEEL_STEP_DIVISOR = 3;
 export const PANZOOM_WHEEL_NOTCH_PIXELS = 100;
 // A wheel delta reported in lines counts this many pixels per line
 export const PANZOOM_PIXELS_PER_LINE = 16;
+// The button a click follows, so the one whose release can end a drag with a click
+export const PANZOOM_PRIMARY_BUTTON = 0;
 // The defaults the shell reads, each named once so the default options and the shell share the value
 export const PANZOOM_DEFAULT_CURSOR = "move";
 export const PANZOOM_DEFAULT_DURATION = 200;

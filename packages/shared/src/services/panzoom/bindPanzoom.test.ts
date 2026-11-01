@@ -231,6 +231,70 @@ describe(bindPanzoom, () => {
     expect(childClick).toHaveBeenCalledTimes(1);
   });
 
+  test("a right-button drag past the threshold swallows no click, so a click on an excluded child is delivered", () => {
+    expect.hasAssertions();
+
+    const element = getElement();
+    const child = document.createElement("span");
+    child.classList.add(PANZOOM_DEFAULT_EXCLUDE_CLASS);
+    element.append(child);
+    stubPanzoomLayout(element, { height: 100, left: 0, top: 0, width: 100 });
+    stubPanzoomParent(getParent(), { height: 200, left: 0, top: 0, width: 200 });
+    createPanzoom(element);
+    const childClick = vi.fn<(event: Event) => void>();
+    child.addEventListener("click", childClick);
+    dispatchPointer(element, "pointerdown", 1, { x: 0, y: 0 }, 2);
+    dispatchPointer(document, "pointermove", 1, { x: 30, y: 0 });
+    dispatchPointer(document, "pointerup", 1, { x: 30, y: 0 }, 2);
+
+    dispatchPointer(child, "pointerdown", 2, { x: 30, y: 0 });
+    child.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+
+    expect(childClick).toHaveBeenCalledTimes(1);
+  });
+
+  test("a drag the browser cancels swallows no click, so the click after it is delivered", () => {
+    expect.hasAssertions();
+
+    const element = getElement();
+    const child = document.createElement("span");
+    element.append(child);
+    stubPanzoomLayout(element, { height: 100, left: 0, top: 0, width: 100 });
+    stubPanzoomParent(getParent(), { height: 200, left: 0, top: 0, width: 200 });
+    createPanzoom(element);
+    const childClick = vi.fn<(event: Event) => void>();
+    child.addEventListener("click", childClick);
+    dispatchPointer(element, "pointerdown", 1, { x: 0, y: 0 });
+    dispatchPointer(document, "pointermove", 1, { x: 30, y: 0 });
+    dispatchPointer(document, "pointercancel", 1, { x: 30, y: 0 });
+
+    child.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+
+    expect(childClick).toHaveBeenCalledTimes(1);
+  });
+
+  test("a pointer down on an excluded child clears a click suppression that no click reached", () => {
+    expect.hasAssertions();
+
+    const element = getElement();
+    const child = document.createElement("span");
+    child.classList.add(PANZOOM_DEFAULT_EXCLUDE_CLASS);
+    element.append(child);
+    stubPanzoomLayout(element, { height: 100, left: 0, top: 0, width: 100 });
+    stubPanzoomParent(getParent(), { height: 200, left: 0, top: 0, width: 200 });
+    createPanzoom(element);
+    const childClick = vi.fn<(event: Event) => void>();
+    child.addEventListener("click", childClick);
+    dispatchPointer(element, "pointerdown", 1, { x: 0, y: 0 });
+    dispatchPointer(document, "pointermove", 1, { x: 30, y: 0 });
+    dispatchPointer(document, "pointerup", 1, { x: 30, y: 0 });
+
+    dispatchPointer(child, "pointerdown", 2, { x: 30, y: 0 });
+    child.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+
+    expect(childClick).toHaveBeenCalledTimes(1);
+  });
+
   test("an element with the exclude class starts no gesture", () => {
     expect.hasAssertions();
 

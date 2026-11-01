@@ -11,9 +11,10 @@ import { writePanzoomStyle } from "#src/services/panzoom/writePanzoomStyle";
 import { takeOne } from "#src/util/array/takeOne";
 
 // A pointer that the exclusions and the filter let through joins the gesture. One pointer starts a drag, and a second turns
-// The gesture into a pinch. A pointer past the second is not tracked
+// The gesture into a pinch. A pointer past the second is not tracked. Every press clears the click suppression a drag left armed
 export const startPanzoomGesture = (context: PanzoomContext, event: PointerEvent): void => {
   const { element, options, pointers, state } = context;
+  context.isClickSuppressed = false;
   if (pointers.size >= 2) return;
   if (isPanzoomExcluded(event.target as Element, options)) return;
   const { filter } = options;
@@ -22,7 +23,6 @@ export const startPanzoomGesture = (context: PanzoomContext, event: PointerEvent
   const point = { x: event.clientX, y: event.clientY };
   pointers.set(event.pointerId, point);
   getPanzoomTarget(context).setPointerCapture(event.pointerId);
-  context.isClickSuppressed = false;
   if (options.handleStartEvent) options.handleStartEvent(event);
   else {
     event.preventDefault();

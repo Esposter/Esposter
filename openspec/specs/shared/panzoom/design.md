@@ -29,7 +29,7 @@ flowchart TD
   - A pinch is proportional (#63, #643, #671, #683): the scale is the scale at the gesture's start times the ratio of the fingers' distance now to the distance then, so it feels the same at every scale.
   - A wheel notch follows the delta (#586): a pixel delta of 100 is one notch, which scales by the exponential of the step divided by three, as the upstream wheel does, a smaller trackpad delta a proportional fraction of it, a line delta is taken as pixels, and one event moves at most one notch.
   - `automatic` containment (#102, #511, #598, #707, #583): per axis, `inside` where the scaled element fits the area and `outside` where it overflows. Its scale floor is the fitting scale, which is the "aspect fit" the tracker asks for apart (#504, #577, #659).
-  - `panThreshold` (#441, #452) is the distance a pointer travels before a drag starts, and the click that follows a drag past it is swallowed (#674).
+  - `panThreshold` (#441, #452) is the distance a pointer travels before a drag starts, and the click that follows a drag past it is swallowed (#674). Only a drag released by the primary button arms that swallower, so a cancelled drag or a right-button drag leaves the next click alone, and a press clears an armed one.
   - `panCursor` (#546) is the cursor while a drag is live.
   - `filter(event)` decides whether a pointer down starts a gesture, which covers the button and modifier asks (#527, #609, #197, #129); `handleStartEvent` stays for parity.
   - The element carries its scale in `--panzoom-scale` (#627).
