@@ -25,6 +25,23 @@ flowchart TD
 - **A drag survives a zoom.** The drag anchors to the pointer, the pan and the scale at the moment it began, and a zoom during the drag re-anchors it, so the next move continues from where the zoom left the element. Pinch with `pan` keeps the point between the fingers under the fingers.
 - **The cursor is not forced.** The `cursor` option writes only while panning is possible, so a stylesheet cursor on a pan-disabled element stands. A parent that is a shadow root is handled by its host.
 - **Events keep their names and detail.** `panzoomstart`, `panzoompan`, `panzoomzoom`, `panzoomreset`, `panzoomend` and `panzoomchange` fire on the element with `{ x, y, scale, isSVG, originalEvent }`, not bubbling.
+- **The tracker's features that fit a viewer are built.**
+  - A pinch is proportional (#63, #643, #671, #683): the scale is the scale at the gesture's start times the ratio of the fingers' distance now to the distance then, so it feels the same at every scale.
+  - A wheel step follows the delta (#586): a pixel delta of 100 is one step, a smaller trackpad delta a proportional fraction, a line delta is taken as pixels, and one event moves at most one step.
+  - `automatic` containment (#102, #511, #598, #707, #583): per axis, `inside` where the scaled element fits the area and `outside` where it overflows. Its scale floor is the fitting scale, which is the "aspect fit" the tracker asks for apart (#504, #577, #659).
+  - `panThreshold` (#441, #452) is the distance a pointer travels before a drag starts, and the click that follows a drag past it is swallowed (#674).
+  - `panCursor` (#546) is the cursor while a drag is live.
+  - `filter(event)` decides whether a pointer down starts a gesture, which covers the button and modifier asks (#527, #609, #197, #129); `handleStartEvent` stays for parity.
+  - The element carries its scale in `--panzoom-scale` (#627).
+  - `fit()` scales the element to the parent and centres it, and `startScale: "fit"` does so at construction (#432, #616, #656).
+  - Attachment is `isConnected`, so an element in an iframe is accepted (#693).
+- **The rest are declined, each with its reason in the Upstream table.**
+  - Inertia and rubber-band (#212, #225, #625) are an animation model a consumer layers on `panzoomend`.
+  - Rotation (#286, #694) is a gesture of its own.
+  - Double tap (#20, #275) is a gesture recogniser's work, and a consumer calls `zoomToPoint` from its own handler.
+  - Targeting an SVG element and fly-to (#73, #103, #642) are SVG-specific.
+  - Pan limits by ratio (#184, #476, #490) are what containment is.
+  - The remainder (#230, #644, #665, #435, #684, #648, #361, #370, #617) has a workaround on the consumer's side that costs less than an option.
 - **One module in `@esposter/shared`.** The module is small enough that every consumer of the package can carry it, and only the viewer calls it today. Rejected: a package of its own, since it holds no engine and no state a second consumer would rebuild.
 
 ## Key files
