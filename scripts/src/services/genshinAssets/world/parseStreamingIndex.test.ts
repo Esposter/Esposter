@@ -1,11 +1,6 @@
 import { parseStreamingIndex } from "#src/services/genshinAssets/world/parseStreamingIndex";
+import { writeUint32s } from "#src/services/genshinAssets/world/writeUint32s.test";
 import { describe, expect, test } from "vitest";
-
-const writeUint32 = (value: number): Buffer => {
-  const bytes = Buffer.alloc(4);
-  bytes.writeUInt32LE(value);
-  return bytes;
-};
 
 describe(parseStreamingIndex, () => {
   test("reads each chunk's offset past a name that does not fill its last word", () => {
@@ -13,12 +8,12 @@ describe(parseStreamingIndex, () => {
 
     const bytes = Buffer.concat([
       Buffer.alloc(28),
-      writeUint32(1),
+      writeUint32s(1),
       Buffer.from("a\0\0\0"),
-      writeUint32(2),
-      writeUint32(0),
+      writeUint32s(2),
+      writeUint32s(0),
       Buffer.alloc(8),
-      writeUint32(1),
+      writeUint32s(1),
       Buffer.alloc(8),
     ]);
 
