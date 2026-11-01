@@ -1,6 +1,7 @@
 import type { CommissionTask } from "../../../types";
 import type { TaskCall } from "../../models/TaskCall";
 
+import { TaskStatus } from "../../models/TaskStatus";
 import { TaskTool } from "../../models/TaskTool";
 
 const DELETED_STATUS = "deleted";
@@ -8,7 +9,7 @@ const DELETED_STATUS = "deleted";
 export const foldTaskCall = (tasks: CommissionTask[], call: TaskCall): CommissionTask[] => {
   switch (call.tool) {
     case TaskTool.TaskCreate:
-      return [...tasks, { id: call.id, status: "pending", subject: call.subject }];
+      return [...tasks, { id: call.id, status: TaskStatus.Pending, subject: call.subject }];
     case TaskTool.TaskUpdate: {
       const { id, status, subject } = call;
       if (status === DELETED_STATUS) return tasks.filter((task) => task.id !== id);

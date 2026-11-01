@@ -1,6 +1,7 @@
 import type { EngineInterface, On } from "claude-code";
 
-import { getDenyReason, getDiskScanRefusal } from "./getDiskScanRefusal";
+import { getDenyReason } from "./getDenyReason";
+import { getDiskScanRefusal } from "./getDiskScanRefusal";
 
 // Any failure lets the command through, as the ward's and the delegation guard's do: a guard that blocked on its own
 // Failure would block every command after it

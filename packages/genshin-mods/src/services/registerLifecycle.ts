@@ -4,7 +4,9 @@ import { atom, read, update } from "claude-code";
 
 import type { EnabledMods } from "../../types";
 
+import { ModName } from "../models/ModName";
 import { SinStatusKind } from "../models/SinStatusKind";
+import { TaskStatus } from "../models/TaskStatus";
 import {
   CACHE_WARNING_MS,
   MACHINE_WATCHER_RETRY_MILLISECONDS,
@@ -175,7 +177,7 @@ export const registerLifecycle = (on: On, typeSafeKey: string): void => {
       const current = await read($, enabledModsAtom);
       const isNext = argument ? argument === "on" : !current[name];
       // Sins scores only with a TypeSafe key, so turning it on without one is refused and its value is left as it was
-      if (name === "sins" && isNext) {
+      if (name === ModName.Sins && isNext) {
         const key = await readTypeSafeKey($, typeSafeKey);
         if (!key)
           return { text: "Sins needs a TypeSafe key: set the typesafe_key option, or TYPESAFE_API_KEY, first." };
@@ -221,7 +223,7 @@ export const registerLifecycle = (on: On, typeSafeKey: string): void => {
     await update($, lookupStreakAtom, () => InitialState.lookupStreak);
     await update($, lastPromptAtom, () => e.text);
     const { tasks } = await read($, commissionAtom);
-    if (tasks.length > 0 && tasks.every(({ status }) => status === "completed")) await closeCommission($);
+    if (tasks.length > 0 && tasks.every(({ status }) => status === TaskStatus.Completed)) await closeCommission($);
     $.clock.after(0, () => {
       runDetached(() => scoreSins($, e.text, typeSafeKey));
     });

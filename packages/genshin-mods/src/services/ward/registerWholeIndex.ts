@@ -6,7 +6,8 @@ import { InitialState } from "../InitialState";
 import { joinDirectory } from "../shell/joinDirectory";
 import { getCheckoutPeer } from "./getCheckoutPeer";
 import { getParentFolder } from "./getParentFolder";
-import { getWholeIndexDenyReason, getWholeIndexRefusal } from "./getWholeIndexRefusal";
+import { getWholeIndexDenyReason } from "./getWholeIndexDenyReason";
+import { getWholeIndexRefusal } from "./getWholeIndexRefusal";
 import { readRecords } from "./readRecords";
 import { resolveRecordsPath } from "./resolveRecordsPath";
 

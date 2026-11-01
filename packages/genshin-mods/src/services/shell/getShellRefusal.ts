@@ -1,4 +1,8 @@
+import type { CommandRefusal } from "../../models/CommandRefusal";
+
+import { getDollarSubstitutionBodies } from "./getDollarSubstitutionBodies";
 import { joinDirectory } from "./joinDirectory";
+import { tokenize } from "./tokenize";
 
 // A shell command passed as one argument (`bash -c "…"`) is read again on its own, to this depth at most
 const MAX_NESTING_DEPTH = 3;
@@ -8,45 +12,7 @@ const SEGMENT_REGEX = /(?:"[^"]*"|'[^']*'|[^\n"&'();`|])+/gu;
 // A backtick substitution runs even inside double quotes, so its body is read again on its own
 const BACKTICK_SUBSTITUTION_REGEX = /`(?<body>[^`]*)`/gu;
 const SHELL_FLAG_REGEX = /^-[a-zA-Z]*c$|^eval$/u;
-const TOKEN_REGEX = /"(?<double>[^"]*)"|'(?<single>[^']*)'|(?<bare>\S+)/gu;
 const PATH_SEPARATOR_REGEX = /[/\\]/u;
-
-// The refusal for a command's name, the arguments after it and the folder it runs in from the session's ("" for the
-// Session's own), undefined when the command is not one the guard reads
-export type CommandRefusal<T = string> = (name: string, args: string[], directory: string) => T | undefined;
-
-// A quoted argument keeps its inner spaces, so a shell command passed as one argument is read again on its own
-const tokenize = (segment: string) =>
-  Array.from(
-    segment.matchAll(TOKEN_REGEX),
-    (match) => match.groups?.double ?? match.groups?.single ?? match.groups?.bare ?? "",
-  );
-
-// The bodies of a command's `$(…)` substitutions, which run even inside double quotes: each runs to the parenthesis
-// Closing it, past any a quote or a backslash holds, so a body such as `find / -name '(x)'` is read whole. A
-// Substitution inside a body is the body's own, read when the body is
-const getDollarSubstitutionBodies = (command: string): string[] => {
-  const bodies: string[] = [];
-  let start = command.indexOf("$(");
-  while (start !== -1) {
-    let depth = 1;
-    let quote = "";
-    let index = start + 2;
-    for (; index < command.length && depth > 0; index++) {
-      const character = command[index];
-      if (character === "\\" && quote !== "'") index++;
-      else if (quote !== "") {
-        if (character === quote) quote = "";
-      } else if (character === '"' || character === "'") quote = character;
-      else if (character === "(") depth++;
-      else if (character === ")") depth--;
-    }
-    if (depth > 0) break;
-    bodies.push(command.slice(start + 2, index - 1));
-    start = command.indexOf("$(", index);
-  }
-  return bodies;
-};
 
 // The refusal of the first command in a Bash command that the given reader refuses, undefined when none does. A `cd`
 // Moves every command after it in the line; one to a home folder or back to the last is not followed
