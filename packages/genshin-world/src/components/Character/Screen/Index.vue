@@ -115,6 +115,10 @@ const character = computed(() => characters.value.find(({ id }) => id === charac
 // The slot each picker is open for: the Artifacts panel's Equip and Enhance buttons open it, and the picker's close clears it
 const equipSlot = ref<ArtifactSlot>();
 const enhanceSlot = ref<ArtifactSlot>();
+// The bag's artifacts chosen as fodder and the ore counts chosen by item id, which the Artifacts panel's Enhance button
+// Clears each time it opens the picker, so a choice never carries over from one enhancement to the next
+const enhanceFodderIds = ref<number[]>([]);
+const enhanceMaterialCounts = ref<Record<number, number>>({});
 // The notice the artifact panel shows, the game's card for a refusal, kept across tabs until the next artifact action
 const artifactNotice = ref("");
 // The Traveler's name is the game's own, and every other character's is the name its table cites
@@ -188,6 +192,8 @@ const tabLabels = computed(() =>
         v-else-if="character && tab === CharacterMenuTab.Artifacts"
         v-model:artifact-notice="artifactNotice"
         v-model:characters="characters"
+        v-model:enhance-fodder-ids="enhanceFodderIds"
+        v-model:enhance-material-counts="enhanceMaterialCounts"
         v-model:enhance-slot="enhanceSlot"
         v-model:equip-slot="equipSlot"
         v-model:inventory="inventory"
@@ -241,6 +247,8 @@ const tabLabels = computed(() =>
     <CharacterScreenEnhance
       v-if="enhanceSlot && character"
       v-model:characters="characters"
+      v-model:enhance-fodder-ids="enhanceFodderIds"
+      v-model:enhance-material-counts="enhanceMaterialCounts"
       v-model:inventory="inventory"
       v-model:wallet="wallet"
       :artifact-slot="enhanceSlot"

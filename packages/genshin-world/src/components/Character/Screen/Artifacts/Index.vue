@@ -39,6 +39,8 @@ const characters = defineModel<Character[]>("characters", { required: true });
 const inventory = defineModel<Inventory>("inventory", { required: true });
 // The slots the picker overlays are open for, which this panel's Equip and Enhance buttons open
 const equipSlot = defineModel<ArtifactSlot>("equipSlot");
+const enhanceFodderIds = defineModel<number[]>("enhanceFodderIds", { required: true });
+const enhanceMaterialCounts = defineModel<Record<number, number>>("enhanceMaterialCounts", { required: true });
 const enhanceSlot = defineModel<ArtifactSlot>("enhanceSlot");
 const { character, gameText, nameText, reliquarySets, statTables } = defineProps<Props>();
 // Each artifact slot's stats in the game's order, undefined where the character wears no artifact there
@@ -113,9 +115,11 @@ const equipDisabledSlots = computed(() =>
     :unlock-label="gameText[GameTextKey.ArtifactActionUnlock]"
     @enhance="
       (index) => {
-        // The Enhance button opens the picker over the worn artifact's slot
+        // The Enhance button opens the picker over the worn artifact's slot, with nothing chosen yet
         artifactNotice = '';
         enhanceSlot = ARTIFACT_SLOT_ORDER[index];
+        enhanceFodderIds = [];
+        enhanceMaterialCounts = {};
       }
     "
     @equip="

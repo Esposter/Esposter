@@ -32,14 +32,13 @@ interface Props {
 }
 
 const characters = defineModel<Character[]>("characters", { required: true });
+// The bag's artifacts chosen as fodder and the ore counts chosen by item id, which the Artifacts panel clears as it opens the picker
+const enhanceFodderIds = defineModel<number[]>("enhanceFodderIds", { required: true });
+const enhanceMaterialCounts = defineModel<Record<number, number>>("enhanceMaterialCounts", { required: true });
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
 const { artifactSlot, character, gameText, statTables } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
-// The bag's artifacts chosen as fodder and the ore counts chosen by item id, which start with none chosen: the picker
-// Is mounted again for each opening, so its choices never carry over from one enhancement to the next
-const enhanceFodderIds = ref<number[]>([]);
-const enhanceMaterialCounts = ref<Record<number, number>>({});
 const enhanceArtifactWorn = computed(() => character.artifacts.find((worn) => worn.slot === artifactSlot));
 const enhanceFodders = computed(() =>
   inventory.value.items.flatMap(({ artifact, id }) =>
