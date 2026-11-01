@@ -10,12 +10,13 @@ if (!checkIsCreatableResourceType(typeParam)) throw createError({ status: 404, s
 // The guard narrows `typeParam` for the rest of setup, but a template reads the declared type — so the narrowed
 // Value is bound through its own const rather than the parameter
 const type = typeParam;
+const title = `Create ${ResourceDefinitionMap[type].title}`;
 </script>
 
 <template>
-  <NuxtLayout name="resource" :title="`Create ${ResourceDefinitionMap[type].title}`">
+  <NuxtLayout name="resource" :title>
     <Head>
-      <Title>{{ `Create ${ResourceDefinitionMap[type].title}` }}</Title>
+      <Title>{{ title }}</Title>
     </Head>
     <div flex-1 of-y-auto>
       <ResourceCreateForm :type />
