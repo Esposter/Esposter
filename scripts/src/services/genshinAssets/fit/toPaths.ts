@@ -2,8 +2,7 @@ import type { PathPoint } from "#src/models/genshinAssets/fit/PathPoint";
 import type { SkeletonNode } from "#src/models/genshinAssets/fit/SkeletonNode";
 
 import { toDistance } from "#src/services/genshinAssets/fit/toDistance";
-
-const toPoint = ({ centre: [x, y, z], radius }: SkeletonNode): PathPoint => [x, y, z, radius];
+import { toPathPoint } from "#src/services/genshinAssets/fit/toPathPoint";
 
 // A skeleton's nodes as the paths a tube is swept along, each a node's centre and radius: from its start, each path
 // Keeps to the child leading farthest on, and every other child starts a path of its own at the node it forks from, in
@@ -26,12 +25,12 @@ export const toPaths = (nodes: readonly SkeletonNode[]): PathPoint[][] => {
     const [start, forkChild] = fork;
     const startNode = nodes[start];
     if (!startNode) continue;
-    const path = [toPoint(startNode)];
+    const path = [toPathPoint(startNode)];
     let current = forkChild ?? start;
     if (forkChild !== undefined) {
       const child = nodes[forkChild];
-      path[0] = toPoint({ ...startNode, radius: child?.radius ?? startNode.radius });
-      if (child) path.push(toPoint(child));
+      path[0] = toPathPoint({ ...startNode, radius: child?.radius ?? startNode.radius });
+      if (child) path.push(toPathPoint(child));
     }
     for (
       let children = childrenMap.get(current) ?? [];
@@ -43,7 +42,7 @@ export const toPaths = (nodes: readonly SkeletonNode[]): PathPoint[][] => {
       );
       for (const other of others) forks.push([current, other]);
       const nextNode = nodes[next];
-      if (nextNode) path.push(toPoint(nextNode));
+      if (nextNode) path.push(toPathPoint(nextNode));
       current = next;
     }
     paths.push(path);
