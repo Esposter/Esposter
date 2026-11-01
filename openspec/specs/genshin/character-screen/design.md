@@ -69,10 +69,10 @@ The Artifacts and Constellation references are timed to where their tabs have se
 | `packages/genshin-interface/src/components/CharacterMenu/Index.vue`               | The frame: the characters, the name, the tabs and the panel                                              |
 | `packages/genshin-interface/src/components/CharacterMenu/Index.fixture.ts`        | Xilonen on Attributes, the reference's state                                                             |
 | `packages/genshin-interface/src/models/CharacterMenuTab.ts`                       | The six tabs, and their order down the screen                                                            |
-| `packages/genshin-interface/src/components/CharacterMenuWeapons/Index.vue`        | The Weapons panel: the weapon, its stats, level and refinement                                           |
-| `packages/genshin-interface/src/components/CharacterMenuArtifacts/Index.vue`      | The Artifacts panel: the slots, the stats, the set bonus block and the actions (see the artifact screen) |
-| `packages/genshin-interface/src/components/CharacterMenuConstellation/Index.vue`  | The Constellation panel: six rings, activated ones lit                                                   |
-| `packages/genshin-interface/src/components/CharacterMenuTalents/Index.vue`        | The Talents panel: the three combat talents' rows and their Upgrade                                      |
+| `packages/genshin-interface/src/components/CharacterMenu/Weapons/Index.vue`       | The Weapons panel: the weapon, its stats, level and refinement                                           |
+| `packages/genshin-interface/src/components/CharacterMenu/Artifacts/Index.vue`     | The Artifacts panel: the slots, the stats, the set bonus block and the actions (see the artifact screen) |
+| `packages/genshin-interface/src/components/CharacterMenu/Constellation/Index.vue` | The Constellation panel: six rings, activated ones lit                                                   |
+| `packages/genshin-interface/src/components/CharacterMenu/Talents/Index.vue`       | The Talents panel: the three combat talents' rows and their Upgrade                                      |
 | `packages/genshin-world/src/components/Character/Screen/Index.vue`                | The screen: the words, the characters and the way back                                                   |
 | `packages/genshin-world/src/components/Character/AttributeList/Index.vue`         | The Attributes tab's level and attributes by group                                                       |
 | `packages/genshin-world/src/services/character/CharacterMenuTabGameTextKeyMap.ts` | Each tab's name in the game's text                                                                       |

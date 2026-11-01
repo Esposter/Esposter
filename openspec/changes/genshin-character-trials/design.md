@@ -34,7 +34,7 @@ The trial rows come from 7.1 tables. `TrialAvatar` maps a trial id to a characte
 | `packages/genshin-world/src/composables/useWorldTrials.ts`             | Takes the player's roster for a trial's fight and gives it back, runs its arena clock, and pays its first clear once |
 | `packages/genshin-world/src/services/domains/createDomainArenaCamp.ts` | The arena camp a trial's enemies stand in                                                                            |
 | `packages/genshin-world/src/components/World/Session/Index.vue`        | Opens a trial from the Wish screen, steps its clock, and saves the player's roster while the trial holds it          |
-| `packages/genshin-interface/src/components/WishScreen/Index.vue`       | The trial button in the banner's link row, labelled by its prop and emitting the open                                |
+| `packages/genshin-interface/src/components/Wish/Screen/Index.vue`      | The trial button in the banner's link row, labelled by its prop and emitting the open                                |
 
 ## Notes
 

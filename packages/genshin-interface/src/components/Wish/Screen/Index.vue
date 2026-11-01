@@ -13,9 +13,9 @@ import CloseButton from "#src/components/CloseButton/Index.vue";
 import GameButton from "#src/components/GameButton/Index.vue";
 import RarityStars from "#src/components/RarityStars/Index.vue";
 import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
-import WishDetails from "#src/components/WishDetails/Index.vue";
-import WishHistory from "#src/components/WishHistory/Index.vue";
-import WishPath from "#src/components/WishPath/Index.vue";
+import WishDetails from "#src/components/Wish/Details/Index.vue";
+import WishHistory from "#src/components/Wish/History/Index.vue";
+import WishPath from "#src/components/Wish/Path/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 

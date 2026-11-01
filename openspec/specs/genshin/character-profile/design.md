@@ -33,18 +33,18 @@ flowchart LR
 
 ## Key files
 
-| File                                                                       | Role                                                                                         |
-| :------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/profile/buildProfilePublication.ts`    | Builds each character's profile in every language from the dump, one index a language        |
-| `scripts/src/services/genshinAssets/profile/toProfileStory.ts`             | A story row's open conditions and its text in one language                                   |
-| `scripts/src/models/genshinAssets/profile/ExcelFetterVoiceRow.ts`          | A voice-over row of the fetters table, read as a story row                                   |
-| `scripts/src/services/genshinAssets/profile/getNamecardIconName.ts`        | The namecard convention and the characters with none                                         |
-| `packages/genshin-world/src/services/profile/readCharacterProfile.ts`      | Reads a character's profile record, its Friendship Level and its namecard's name text id     |
-| `packages/genshin-world/src/services/profile/checkProfileStoryUnlocked.ts` | The unlock rule                                                                              |
-| `packages/genshin-world/src/services/profile/toCharacterProfileEntries.ts` | Turns the stories and voice-overs into the panel's entries, locked ones with the unlock line |
-| `packages/genshin-world/src/components/Character/Profile/Index.vue`        | The wrapper that loads the profile for the screen's character                                |
-| `packages/genshin-world/src/components/Character/Screen/Index.vue`         | Opens the Profile tab for the chosen character                                               |
-| `packages/genshin-interface/src/components/CharacterMenuProfile/Index.vue` | The list, the chosen story's text and the namecard's name plate                              |
+| File                                                                        | Role                                                                                         |
+| :-------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/profile/buildProfilePublication.ts`     | Builds each character's profile in every language from the dump, one index a language        |
+| `scripts/src/services/genshinAssets/profile/toProfileStory.ts`              | A story row's open conditions and its text in one language                                   |
+| `scripts/src/models/genshinAssets/profile/ExcelFetterVoiceRow.ts`           | A voice-over row of the fetters table, read as a story row                                   |
+| `scripts/src/services/genshinAssets/profile/getNamecardIconName.ts`         | The namecard convention and the characters with none                                         |
+| `packages/genshin-world/src/services/profile/readCharacterProfile.ts`       | Reads a character's profile record, its Friendship Level and its namecard's name text id     |
+| `packages/genshin-world/src/services/profile/checkProfileStoryUnlocked.ts`  | The unlock rule                                                                              |
+| `packages/genshin-world/src/services/profile/toCharacterProfileEntries.ts`  | Turns the stories and voice-overs into the panel's entries, locked ones with the unlock line |
+| `packages/genshin-world/src/components/Character/Profile/Index.vue`         | The wrapper that loads the profile for the screen's character                                |
+| `packages/genshin-world/src/components/Character/Screen/Index.vue`          | Opens the Profile tab for the chosen character                                               |
+| `packages/genshin-interface/src/components/CharacterMenu/Profile/Index.vue` | The list, the chosen story's text and the namecard's name plate                              |
 
 ## Open
 

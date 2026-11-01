@@ -3,7 +3,7 @@ import type { ArtifactSetBonusGroup } from "#src/models/ArtifactSetBonusGroup";
 import type { ArtifactSlotStats } from "#src/models/ArtifactSlotStats";
 import type { ArtifactStatLine } from "#src/models/ArtifactStatLine";
 
-import CharacterMenuButtons from "#src/components/CharacterMenuButtons/Index.vue";
+import CharacterMenuButtons from "#src/components/CharacterMenu/Buttons/Index.vue";
 import GameButton from "#src/components/GameButton/Index.vue";
 import ToastNotice from "#src/components/ToastNotice/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";

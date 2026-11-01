@@ -1,4 +1,4 @@
-import { FATE_POINTS, PATH_LABEL, POOL } from "#src/components/WishDetails/Index.fixture";
+import { FATE_POINTS, PATH_LABEL, POOL } from "#src/components/Wish/Details/Index.fixture";
 import { BannerKind } from "#src/models/BannerKind";
 
 const BANNER_LABELS = {

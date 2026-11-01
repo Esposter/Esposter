@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CharacterMenuButtons from "#src/components/CharacterMenuButtons/Index.vue";
+import CharacterMenuButtons from "#src/components/CharacterMenu/Buttons/Index.vue";
 import { ASCENSION_PHASE_COUNT } from "#src/services/constants";
 
 interface Props {
@@ -237,6 +237,6 @@ const {
 }
 </style>
 
-<style scoped src="../../styles/creamPill.css"></style>
+<style scoped src="../../../styles/creamPill.css"></style>
 
-<style scoped src="../../styles/weaponStars.css"></style>
+<style scoped src="../../../styles/weaponStars.css"></style>

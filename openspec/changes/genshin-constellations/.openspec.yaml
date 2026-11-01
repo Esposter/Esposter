@@ -5,7 +5,7 @@ x-needs: [game-exports]
 x-touches:
   [
     "packages/genshin-world/src/components/Character/**",
-    "packages/genshin-interface/src/components/CharacterMenuConstellation/**",
+    "packages/genshin-interface/src/components/CharacterMenu/Constellation/**",
     "packages/genshin-world/src/services/character/**",
     "packages/genshin-world/src/models/character/**",
     "packages/genshin-world/src/components/Wish/Screen/**",

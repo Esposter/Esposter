@@ -58,4 +58,4 @@ const emit = defineEmits<{ close: [] }>();
 }
 </style>
 
-<style scoped src="../../styles/wishOverlay.css"></style>
+<style scoped src="../../../styles/wishOverlay.css"></style>
