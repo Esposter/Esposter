@@ -4,6 +4,8 @@ import type { AchievementCategory } from "#src/models/achievement/AchievementCat
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
 import type { GameText } from "genshin-text";
 
+import AchievementScreenCategory from "#src/components/Achievement/Screen/Category/Index.vue";
+import AchievementScreenEntry from "#src/components/Achievement/Screen/Entry/Index.vue";
 import { useListScreenTabStep } from "#src/composables/useListScreenTabStep";
 import { checkIsAchievementFinished } from "#src/services/achievement/checkIsAchievementFinished";
 import { CloseButton, CloseButtonMark, GameScreen } from "genshin-interface";
@@ -24,7 +26,6 @@ interface Props {
 const { achievements, categories, gameText, initialCategoryId, progressMap, textMap } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const selectedCategoryId = ref(initialCategoryId ?? categories[0]?.id ?? 0);
-const selectedCategory = computed(() => categories.find(({ id }) => id === selectedCategoryId.value));
 const categoryAchievementsMap = computed(() => Map.groupBy(achievements, ({ categoryId }) => categoryId));
 const checkIsFinished = (achievement: Achievement): boolean => checkIsAchievementFinished(achievement.id, progressMap);
 // The finished achievements sit after the ones still to do, each group in its table order
@@ -42,8 +43,10 @@ const categoryPercent = (categoryId: number): number => {
   const total = categoryAchievementsMap.value.get(categoryId)?.length ?? 0;
   return total === 0 ? 0 : Math.round((finishedCount(categoryId) / total) * 100);
 };
-// A hidden achievement shows nothing of itself until it is finished
-const checkIsRevealed = (achievement: Achievement): boolean => !achievement.isHidden || checkIsFinished(achievement);
+// Each category's share is read once for the list and the banner, not walked again by each row on every render
+const categoryPercents = computed(
+  () => new Map(categories.map((category): [number, number] => [category.id, categoryPercent(category.id)])),
+);
 // The list opens scrolled to the selected category, and follows it when Q or E steps to another
 const list = useTemplateRef<HTMLElement>("list");
 const scrollSelectedIntoView = (): void => {
@@ -85,42 +88,31 @@ useListScreenTabStep(
       </svg>
     </span>
     <div ref="list" class="list" role="tablist" aria-orientation="vertical">
-      <button
+      <AchievementScreenCategory
         v-for="category of categories"
         :key="category.id"
-        class="category"
-        role="tab"
-        type="button"
-        :aria-selected="category.id === selectedCategoryId"
-        @click="selectedCategoryId = category.id"
-      >
-        <span class="badge" />
-        <span class="name">{{ textMap[category.nameTextId] }}</span>
-        <span class="percent">{{ categoryPercent(category.id) }} %</span>
-      </button>
+        :category
+        :is-selected="category.id === selectedCategoryId"
+        :percent="categoryPercents.get(category.id) ?? 0"
+        :text-map="textMap"
+        @select="selectedCategoryId = category.id"
+      />
     </div>
     <div class="frame" />
     <div class="banner">
       <span class="namecard" />
-      <span class="rate">{{ selectedCategory ? categoryPercent(selectedCategory.id) : 0 }} %</span>
+      <span class="rate">{{ categoryPercents.get(selectedCategoryId) ?? 0 }} %</span>
       <span class="track"><span class="fill" /></span>
       <span class="status" />
     </div>
     <ul class="achievements">
-      <li v-for="achievement of selectedAchievements" :key="achievement.id" class="achievement">
-        <span class="medal" />
-        <div class="text">
-          <p class="title">{{ checkIsRevealed(achievement) ? textMap[achievement.titleTextId] : "?" }}</p>
-          <p v-if="checkIsRevealed(achievement)" class="description">{{ textMap[achievement.descriptionTextId] }}</p>
-        </div>
-        <span class="reward">
-          <span class="primogems">{{ achievement.primogems }}</span>
-        </span>
-        <span class="progress">
-          <span v-if="checkIsFinished(achievement)" class="stamp" />
-          <template v-else>{{ progressMap.get(achievement.id)?.count ?? 0 }}/{{ achievement.progress }}</template>
-        </span>
-      </li>
+      <AchievementScreenEntry
+        v-for="achievement of selectedAchievements"
+        :key="achievement.id"
+        :achievement
+        :progress-map="progressMap"
+        :text-map="textMap"
+      />
     </ul>
   </GameScreen>
 </template>
@@ -200,74 +192,6 @@ useListScreenTabStep(
   gap: calc(var(--unit) * 9.75);
   scrollbar-color: rgb(190 190 195) transparent;
   scrollbar-width: thin;
-}
-
-.category {
-  position: relative;
-  flex: none;
-  box-sizing: border-box;
-  width: calc(var(--unit) * 534);
-  height: calc(var(--unit) * 83);
-  margin: 0;
-  padding: 0;
-  border: none;
-  background: #353f4e;
-  color: #ebe7dc;
-  font: inherit;
-  text-align: left;
-  cursor: inherit;
-}
-
-.category[aria-selected="true"] {
-  width: calc(var(--unit) * 556);
-  margin-left: calc(var(--unit) * -11);
-  outline: calc(var(--unit) * 2) solid #fff;
-  outline-offset: 0;
-  background: #eae2d3;
-  color: #2e2a24;
-}
-
-.category[aria-selected="true"]::before {
-  position: absolute;
-  top: calc(50% - var(--unit) * 6);
-  left: calc(var(--unit) * -11);
-  width: 0;
-  height: 0;
-  border-top: calc(var(--unit) * 6) solid transparent;
-  border-bottom: calc(var(--unit) * 6) solid transparent;
-  border-left: calc(var(--unit) * 8) solid #fff;
-  content: "";
-}
-
-.badge {
-  position: absolute;
-  top: calc(var(--unit) * 14);
-  left: calc(var(--unit) * 18);
-  width: calc(var(--unit) * 28);
-  height: calc(var(--unit) * 32);
-  background: #938a76;
-}
-
-.name {
-  position: absolute;
-  top: calc(var(--unit) * 14);
-  left: calc(var(--unit) * 65);
-  font-size: calc(var(--unit) * 24);
-  line-height: calc(var(--unit) * 28);
-  white-space: nowrap;
-}
-
-.percent {
-  position: absolute;
-  top: calc(var(--unit) * 46);
-  left: calc(var(--unit) * 65);
-  color: #cfcac0;
-  font-size: calc(var(--unit) * 20);
-  line-height: calc(var(--unit) * 22);
-}
-
-.category[aria-selected="true"] .percent {
-  color: #3a342a;
 }
 
 /* The cream panel with its dark slate frame, its corners and bottom drawn by the frame's own pieces */
@@ -354,94 +278,5 @@ useListScreenTabStep(
   flex-direction: column;
   gap: calc(var(--unit) * 6);
   list-style: none;
-}
-
-.achievement {
-  position: relative;
-  flex: none;
-  height: calc(var(--unit) * 106);
-  background: #f5f0eb;
-}
-
-.medal {
-  position: absolute;
-  top: calc(var(--unit) * 11);
-  left: calc(var(--unit) * 25);
-  width: calc(var(--unit) * 80);
-  height: calc(var(--unit) * 80);
-  background: #d5b795;
-}
-
-.text {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(var(--unit) * 130);
-  display: flex;
-  width: calc(var(--unit) * 580);
-  flex-direction: column;
-  justify-content: center;
-  gap: calc(var(--unit) * 3);
-}
-
-.title {
-  margin: 0;
-  color: #3d372e;
-  font-size: calc(var(--unit) * 24);
-  font-weight: 400;
-  line-height: calc(var(--unit) * 30);
-}
-
-.description {
-  margin: 0;
-  color: #8a8275;
-  font-size: calc(var(--unit) * 20);
-  line-height: calc(var(--unit) * 24);
-}
-
-.reward {
-  position: absolute;
-  top: calc(var(--unit) * 22);
-  left: calc(var(--unit) * 745);
-  width: calc(var(--unit) * 63);
-  height: calc(var(--unit) * 63);
-  background: #b19574;
-}
-
-.primogems {
-  position: absolute;
-  right: 0;
-  bottom: calc(var(--unit) * 3);
-  left: 0;
-  color: #fff;
-  font-size: calc(var(--unit) * 18);
-  line-height: calc(var(--unit) * 18);
-  text-align: center;
-  text-shadow: 0 0 calc(var(--unit) * 2) #000;
-}
-
-.progress {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(var(--unit) * 830);
-  display: flex;
-  width: calc(var(--unit) * 142);
-  background: #f1e9dd;
-  color: #7a7263;
-  font-size: calc(var(--unit) * 22);
-  align-items: center;
-  justify-content: center;
-}
-
-.stamp {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(var(--unit) * 130);
-  height: calc(var(--unit) * 130);
-  border: calc(var(--unit) * 4) solid rgb(150 140 120 / 0.35);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
 }
 </style>

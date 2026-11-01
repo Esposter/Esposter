@@ -136,6 +136,14 @@ const queueCells = computed<ForgeQueueCell[]>(() =>
     }
   }),
 );
+// The Queues button's words: the queues holding an order over the queues that are not locked
+const queuesLabel = computed(() =>
+  fillGameTextValues(
+    gameText[GameTextKey.ForgeQueueButton],
+    queueSlots.value.filter((queueSlot) => isQueueOccupied(queueSlot)).length,
+    queueSlots.value.filter(({ state }) => state !== ForgeQueueState.Locked).length,
+  ),
+);
 // The queue the Queues tab's detail shows, the first holding an order: its units done, the words over its ring (its time
 // Left, or Complete once every unit is done) and the share of the unit being forged, which a complete queue shows full
 const queueDetail = computed(() => {
@@ -239,13 +247,7 @@ const obtain = (queueId: number) => {
       :obtain-label="gameText[GameTextKey.ForgeObtain]"
       :queue-detail
       :queues="queueCells"
-      :queues-label="
-        fillGameTextValues(
-          gameText[GameTextKey.ForgeQueueButton],
-          queueSlots.filter((queueSlot) => isQueueOccupied(queueSlot)).length,
-          queueSlots.filter(({ state }) => state !== ForgeQueueState.Locked).length,
-        )
-      "
+      :queues-label="queuesLabel"
       :recipes="recipeCells"
       :refusal-label
       :required-coins
