@@ -122,9 +122,10 @@ export const fitLoginPaving = async (
   const width = Math.round(PLAN_SIZE[0] / CELL_SIZE);
   const height = Math.round(PLAN_SIZE[1] / CELL_SIZE);
   const { tags, values } = rasterizeTopFaces(faces, { cellSize: CELL_SIZE, corner: PLAN_CORNER, height, width });
+  const getDiffusePath = (name: string): string => join(textureDirectory, `${name}_Diffuse.png`);
   const textures = await Promise.all(
     materialNames.map((name) =>
-      sharp(join(textureDirectory, `${name}_Diffuse.png`))
+      sharp(getDiffusePath(name))
         .greyscale()
         .raw()
         .toBuffer({ resolveWithObject: true }),
@@ -153,7 +154,7 @@ export const fitLoginPaving = async (
   const traceCells = (cells: readonly number[]): Loop[] => traceCellLoops(cells, grid);
   const colorTextures = await Promise.all(
     materialNames.map((name) =>
-      sharp(join(textureDirectory, `${name}_Diffuse.png`))
+      sharp(getDiffusePath(name))
         .removeAlpha()
         .raw()
         .toBuffer({ resolveWithObject: true }),
@@ -172,7 +173,7 @@ export const fitLoginPaving = async (
     await fitAlbedo(
       materialNames
         .filter((name) => LoginStoneFamilyMaterialRegexMap[LoginStoneFamilyMaterialRegex.Walkway].test(name))
-        .map((name) => join(textureDirectory, `${name}_Diffuse.png`)),
+        .map((name) => getDiffusePath(name)),
     ),
   );
   // Each cell's stone read over its neighbours of its own material, past the speckle the texture paints it with
