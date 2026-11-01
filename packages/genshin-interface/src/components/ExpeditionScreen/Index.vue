@@ -53,12 +53,6 @@ const act = () => {
   else if (detail.actionKind === ExpeditionActionKind.Claim) emit("claim", detail.id);
   else emit("recall", detail.id);
 };
-// The character picked sends the place's expedition for the duration picked, and closes the picker
-const pick = (characterId: number) => {
-  if (!detail) return;
-  picking.value = false;
-  emit("send", detail.id, characterId, hours.value);
-};
 </script>
 
 <template>
@@ -112,7 +106,18 @@ const pick = (characterId: number) => {
       <p class="characters-title">{{ characterTitle }}</p>
       <ul>
         <li v-for="{ bonusLabel, id, label, statusLabel } of characters" :key="id">
-          <button class="character" :disabled="statusLabel !== ''" type="button" @click="pick(id)">
+          <!-- The character picked sends the place's expedition for the duration picked, and closes the picker -->
+          <button
+            class="character"
+            :disabled="statusLabel !== ''"
+            type="button"
+            @click="
+              () => {
+                picking = false;
+                emit('send', detail.id, id, hours);
+              }
+            "
+          >
             <span class="character-name">{{ label }}</span>
             <span class="character-bonus">{{ bonusLabel }}</span>
             <span v-if="statusLabel" class="character-status">{{ statusLabel }}</span>

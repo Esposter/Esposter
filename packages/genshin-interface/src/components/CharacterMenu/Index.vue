@@ -22,8 +22,6 @@ const characterId = defineModel<number>("characterId", { required: true });
 const tab = defineModel<CharacterMenuTab>("tab", { required: true });
 const { characters, elementMarkPath, elementName, isTouch, tabLabels } = defineProps<Props>();
 const characterName = computed(() => characters.find(({ id }) => id === characterId.value)?.name ?? "");
-// The band's words: the element's name and the character's, split by the screen's own slash
-const breadcrumb = computed(() => (elementName ? `${elementName} / ${characterName.value}` : characterName.value));
 // The characters either side of the chosen one, the list wrapping round at its ends, which the arrows at the frame's
 // Left and right edges step to
 const steps = computed(() => {
@@ -48,7 +46,8 @@ const steps = computed(() => {
         </button>
       </li>
     </ul>
-    <p class="breadcrumb">{{ breadcrumb }}</p>
+    <!-- The band's words: the element's name and the character's, split by the screen's own slash -->
+    <p class="breadcrumb">{{ elementName ? `${elementName} / ${characterName}` : characterName }}</p>
     <svg v-if="elementMarkPath" class="element" viewBox="0 0 1600 1600" aria-hidden="true">
       <path
         class="frame"
