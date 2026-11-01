@@ -30,7 +30,7 @@ Open the parity page (or the app) in DevTools' Performance panel, record the loa
 
 The budgets are written in `scripts/src/services/genshinParity/load/ScreenLoadBudgetMap.ts`, each at the figure measured on the budget's machine plus a tenth, rounded up. A screen with a crossing holds its crossing's requests, game data and tiles rebuilt the same way, under `crossing` (`WorldScreen.crossing` in `scripts/src/services/genshinParity/load/ScreenLoadBudgetMap.ts`). A trim is measured with `load` on both sides of its change, and lowering a budget is part of the commit that lowers the load, so the meter only tightens; raising one needs its own reason.
 
-A screen's own load steps are the names its `measureLoadStep` calls give: the world's are `world-gate` with each of its reads, `regions`, `landmark-colliders` once for each sync of the landmarks that arrived, `terrain` from mount to ready, and `compile`; the login's is `scene-exports`, and the opening's, which reads its login records too, is `opening`.
+A screen's own load steps are the names its `measureLoadStep` calls give: the world's are `world-gate` with each of its reads, `regions`, `landmark-colliders` once for each sync of the landmarks that arrived, `terrain` from mount to ready, `scene-exports`, and `compile`; the login's is `scene-exports` too, and the opening's, which reads its login records too, is `opening`.
 
 ## How it works
 
