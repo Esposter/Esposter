@@ -25,7 +25,7 @@ flowchart TD
 - **A claim's offers.** `computeBlossomClaimOffers` lists how a blossom's claim is paid: one claim at its price; at a ley line or a domain also two claims at twice the price, and a Condensed Resin for `CONDENSED_RESIN_CLAIM_COUNT` claims. A boss offers its one claim only (`packages/genshin-world/src/services/originalResin/computeBlossomClaimOffers.ts`).
 - **Condensed Resin's claim.** `claimResinReward` takes its cost's Condensed Resin out of the bag, one for a ley line's or a domain's `CONDENSED_RESIN_CLAIM_COUNT` claims (`packages/genshin-world/src/services/originalResin/claimResinReward.ts`). `computeBlossomClaimOffers` offers that cost only at a ley line or a domain, so a boss is refused it. It spends no Original Resin, so it gives no Adventure EXP.
 - **`ADVENTURE_EXP_PER_RESIN` Adventure EXP a point.** `claimOriginalResin` spends the resin, then gives `ADVENTURE_EXP_PER_RESIN` Adventure EXP a point through `gainAdventureExp`, so the EXP past rank 60 is paid out the way [forging](../forging/design.md) describes. A claim the resin does not cover returns undefined and spends nothing (`packages/genshin-world/src/services/originalResin/claimOriginalResin.ts`, `ADVENTURE_EXP_PER_RESIN` in `packages/genshin-world/src/services/originalResin/constants.ts`).
-- **The claim's offer on F.** `useWorldOutcrops` opens the prompt at a cleared outcrop's blossom from `computeBlossomClaimPrompt`, which lists the offers the holdings pay. A blossom whose offers the holdings cannot pay, and that no Fragile Resin can restore, opens no prompt. A challenge cleared but not claimed gives nothing.
+- **The claim's offer on F.** `useWorldOutcrops` opens the prompt at a cleared outcrop's blossom from `computeBlossomClaimPrompt`, which lists the offers the holdings pay. A blossom whose offers the holdings cannot pay, and that no Fragile Resin can restore, opens no prompt.
 - **A short Original Resin restores first.** Where the Original Resin covers no resin claim and the bag holds a Fragile Resin, the prompt's restore row spends one for `FRAGILE_RESIN_RESTORE` Original Resin through `refillOriginalResinWithFragileResin`, then offers the claims again from the restored holdings (`packages/genshin-world/src/services/originalResin/refillOriginalResinWithFragileResin.ts`). The row reads the game's own "Can use Fragile Resin to restore" (`GameTextKey.FragileResinRestore` in `packages/genshin-text/src/models/GameTextKey.ts`). Its place among the rows is provisional until a recording measures it.
 - **Settled calls.** A new player holds the full `ORIGINAL_RESIN_CAP` (`packages/genshin-world/src/services/inventory/constants.ts`). The resin's rarity is 3, the game's material table's `rankLevel` (`{data-root}/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`, row `106`, `rankLevel` 3). Its name is the game's own text, `GameTextKey.OriginalResin`. Both the starting amount and the `GAME_DAY_START_HOUR` reset are settled from the game's own design rather than checked against the wiki.
 
@@ -67,7 +67,6 @@ The top bar's place and type are provisional until a recording measures them. Th
 
 ## Notes
 
-- **The map reads its count once.** The count is taken when the map opens, so it holds still while the map is up, which is the moment a player reads it (`packages/genshin-world/src/components/Map/Overlay/Index.vue`).
 - **A claim's Companionship EXP is a rule of its own.** The claim gives no Companionship EXP itself; a blossom's amount goes to the deployed team through the [companionship](../companionship/design.md) grant, its amounts provisional until recorded.
 
 ## Sources
@@ -78,11 +77,7 @@ The top bar's place and type are provisional until a recording measures them. Th
 
 ## Open
 
-- [ ] **one Original Resin regenerates every eight minutes, up to 200** — no source: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **a refill fills to 2,000, and six Primogem refills a game day restore 60 each** — no source: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **a claim's price by blossom kind, and a weekly boss's 30 then 60 Original Resin** — no source: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **a ley line or a domain offers two claims at twice the price, or a Condensed Resin for three claims** — no source: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **a claim gives five Adventure EXP a point of resin** — no source: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **a new player holds 200 Original Resin, and the game day starts at 04:00 in UTC+8** — no source: the game's own design for the UTC+8 offset, since the dump's RefreshPolicy row gives a daily refresh of 14400 seconds with no time zone (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/RefreshPolicyExcelConfigData.json`).
+The sources behind the regeneration, refill, price and reward numbers, and the timings, are open in the [spec](spec.md).
+
 - [ ] **the ley line outcrops, the Petrified Tree and the Trounce Blossom are the blossoms that leave a claim** — no source: a read of the dump's blossom tables for the rows that leave a claim.
 - [ ] **the restore row reads "Can use Fragile Resin to restore"** — no source: the English text of `UI_GUIDE_FRAGILE_RESIN`, which the dump's English text map does not hold under that phrase.
