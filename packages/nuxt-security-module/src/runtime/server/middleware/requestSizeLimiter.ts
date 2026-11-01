@@ -1,6 +1,6 @@
 import type { Middleware } from "nitro/h3";
 
-import { SIZE_LIMITED_METHODS } from "#src/runtime/constants";
+import { checkIsBodyCounted } from "#src/runtime/services/checkIsBodyCounted";
 import { checkIsRequestTooLarge } from "#src/runtime/services/checkIsRequestTooLarge";
 import { getRequestSizeLimit } from "#src/runtime/services/getRequestSizeLimit";
 import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
@@ -19,7 +19,7 @@ const requestSizeLimiter: Middleware = defineMiddleware((event) => {
   if (checkIsRequestTooLarge(method, contentLength, contentType, rules.requestSizeLimiter))
     throw new HTTPError({ status: 413, statusText: "Payload Too Large" });
 
-  if (contentLength === null && SIZE_LIMITED_METHODS.includes(method))
+  if (checkIsBodyCounted(method, contentLength))
     assertBodySize(event, getRequestSizeLimit(contentType, rules.requestSizeLimiter));
 });
 
