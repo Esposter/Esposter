@@ -6,5 +6,7 @@ export enum AssociationRegionId {
   AssociationTypeMondstadt = "ASSOC_TYPE_MONDSTADT",
   AssociationTypeNatlan = "ASSOC_TYPE_NATLAN",
   AssociationTypeNodkrai = "ASSOC_TYPE_NODKRAI",
+  AssociationTypeSnezhnaya = "ASSOC_TYPE_SNEZHNAYA",
+  AssociationTypeSnezhnayaStar = "ASSOC_TYPE_SNEZHNAYA_STAR",
   AssociationTypeSumeru = "ASSOC_TYPE_SUMERU",
 }

@@ -18,8 +18,9 @@ export const QualityTypeRarityMap: Readonly<Record<string, number>> = {
   [QualityTypeRarity.QualityOrangeSp]: 5,
   [QualityTypeRarity.QualityPurple]: 4,
 };
-// The catalogue region each association the game files a character under names: a nation's own, and the Fatui
-// Counted as Snezhnaya's, as the wiki counts them. Every other association, the Traveler's and a visitor's, names none
+// The catalogue region each association the game files a character under names: a nation's own, and the Fatui and
+// Snezhnaya's two associations counted as Snezhnaya's, as the wiki counts the Fatui. Every other association, the
+// Traveler's and a visitor's, names none
 export const AssociationRegionIdMap: Readonly<Record<string, string>> = {
   [AssociationRegionId.AssociationTypeFatui]: "snezhnaya",
   [AssociationRegionId.AssociationTypeFontaine]: "fontaine",
@@ -28,6 +29,8 @@ export const AssociationRegionIdMap: Readonly<Record<string, string>> = {
   [AssociationRegionId.AssociationTypeMondstadt]: "mondstadt",
   [AssociationRegionId.AssociationTypeNatlan]: "natlan",
   [AssociationRegionId.AssociationTypeNodkrai]: "nod-krai",
+  [AssociationRegionId.AssociationTypeSnezhnaya]: "snezhnaya",
+  [AssociationRegionId.AssociationTypeSnezhnayaStar]: "snezhnaya",
   [AssociationRegionId.AssociationTypeSumeru]: "sumeru",
 };
 // The character table's playable characters, apart from its test and retired rows

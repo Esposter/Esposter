@@ -84,7 +84,7 @@ The Friendship Level SHALL be the level that the character's total Companionship
 
 ### Requirement: The panel names the namecard once Friendship holds it
 
-The panel SHALL name the character's namecard once Friendship holds it, except for Momoka and the Traveler, who have none.
+The panel SHALL name the character's namecard once Friendship holds it, except for a character whose card pays none, the Traveler among them.
 
 #### Scenario: Namecard named after Friendship holds it
 
@@ -94,10 +94,6 @@ The panel SHALL name the character's namecard once Friendship holds it, except f
 
 #### Scenario: Characters with no namecard show none
 
-- **GIVEN** the character is Momoka or the Traveler
+- **GIVEN** the character is the Traveler
 - **WHEN** the panel is shown
 - **THEN** no namecard is shown
-
-## Open
-
-- [ ] **Momoka and the Traveler have no namecard, and every other playable character has one** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json` line 267245, which gives Momoka namecard 210162 ("UI_NameCardIcon_Kirara"), and in which no row bears the derived names of avatars 10000117, 10000118, 10000998 and 10000999 (the stats record's "Manekin", "Manekina" and the two UGC official avatars). The Traveler has none in that file, and Xinyan's 210045 and Yae Miko's 210112 are there.

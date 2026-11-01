@@ -1,18 +1,21 @@
-import type { ExcelAvatarRow } from "#src/models/genshinAssets/profile/ExcelAvatarRow";
+import type { ExcelFetterCharacterCardRow } from "#src/models/genshinAssets/profile/ExcelFetterCharacterCardRow";
 import type { ExcelFetterStoryRow } from "#src/models/genshinAssets/profile/ExcelFetterStoryRow";
 import type { ExcelFetterVoiceRow } from "#src/models/genshinAssets/profile/ExcelFetterVoiceRow";
+import type { ExcelNamecardMaterialRow } from "#src/models/genshinAssets/profile/ExcelNamecardMaterialRow";
 import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { ProfileText } from "genshin-world";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import {
-  AVATAR_TABLE_NAME,
+  FETTER_CHARACTER_CARD_TABLE_NAME,
   FETTER_STORY_TABLE_NAME,
   FETTER_VOICE_TABLE_NAME,
 } from "#src/services/genshinAssets/profile/constants";
-import { getNamecardIconName } from "#src/services/genshinAssets/profile/getNamecardIconName";
+import { getNamecardIconNameMap } from "#src/services/genshinAssets/profile/getNamecardIconNameMap";
 import { selectFetterStoryRows } from "#src/services/genshinAssets/profile/selectFetterStoryRows";
 import { toProfileStory } from "#src/services/genshinAssets/profile/toProfileStory";
+import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -26,9 +29,6 @@ import { z } from "zod";
 export const buildProfilePublication = async (): Promise<{ note: string; publication: GameDataPublication }> => {
   const characters = z.array(characterDataSchema).parse(await readPublishedGameData("stats/characters"));
   const characterIds = characters.map(({ id }) => id).toSorted((firstId, secondId) => firstId - secondId);
-  const avatarRowMap = new Map(
-    readExcelTable<ExcelAvatarRow>(AVATAR_TABLE_NAME).map((avatarRow) => [avatarRow.id, avatarRow]),
-  );
   const storyRows = selectFetterStoryRows(
     readExcelTable<ExcelFetterStoryRow>(FETTER_STORY_TABLE_NAME),
     new Set(characterIds),
@@ -48,11 +48,10 @@ export const buildProfilePublication = async (): Promise<{ note: string; publica
     new Set(characterIds),
   );
   const voiceRowsMap = Map.groupBy(voiceRows, ({ avatarId }) => avatarId);
-  const namecardIconNameMap = new Map(
-    characterIds.map((avatarId) => [
-      avatarId,
-      getNamecardIconName(avatarId, avatarRowMap.get(avatarId)?.iconName ?? ""),
-    ]),
+  const namecardIconNameMap = getNamecardIconNameMap(
+    readExcelTable<ExcelFetterCharacterCardRow>(FETTER_CHARACTER_CARD_TABLE_NAME),
+    readRewardMap(),
+    readExcelTable<ExcelNamecardMaterialRow>(MATERIAL_TABLE_NAME),
   );
   const englishTextMap = readTextMap(GameLanguage.English);
   // Every language is read before anything is published, so a text map that fails to read publishes nothing
@@ -84,7 +83,7 @@ export const buildProfilePublication = async (): Promise<{ note: string; publica
       ];
     }),
   );
-  const namecardCount = [...namecardIconNameMap.values()].filter((namecardIconName) => namecardIconName !== "").length;
+  const namecardCount = characterIds.filter((avatarId) => namecardIconNameMap.has(avatarId)).length;
   return {
     note: `${characterIds.length} profiles, ${storyRows.length} stories, ${voiceRows.length} voice-overs and ${namecardCount} namecards built in ${GameLanguages.length} languages`,
     publication: { indexes, objects: {} },

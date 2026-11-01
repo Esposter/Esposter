@@ -6,8 +6,6 @@ export const AVATAR_TABLE_NAME = "AvatarExcelConfigData";
 // Entry, and a Friendship Level, which opens it at that level
 export const FETTER_NONE_CONDITION_TYPE = "FETTER_COND_NONE";
 export const FETTER_LEVEL_CONDITION_TYPE = "FETTER_COND_FETTER_LEVEL";
-// The icon names an avatar and its namecard share, the one prefix swapped for the other
-export const AVATAR_ICON_PREFIX = "UI_AvatarIcon_";
-export const NAMECARD_ICON_PREFIX = "UI_NameCardIcon_";
-// The playable characters the game gives no namecard under their avatar icon's name: Xinyan, Yae Miko and Momoka
-export const NAMECARDLESS_AVATAR_IDS: readonly number[] = [10_000_044, 10_000_058, 10_000_061];
+// The table that pays each character's card its reward, and the material kind of a namecard among the reward's items
+export const FETTER_CHARACTER_CARD_TABLE_NAME = "FetterCharacterCardExcelConfigData";
+export const NAMECARD_MATERIAL_TYPE = "MATERIAL_NAMECARD";
