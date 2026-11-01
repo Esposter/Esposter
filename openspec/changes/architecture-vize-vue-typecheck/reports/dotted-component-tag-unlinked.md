@@ -10,7 +10,7 @@ A second effect is harder to see. In a dotted tag, the parameter of an event han
 
 ## Environment
 
-`vize` 0.631.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
+`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
 
 ## Reproduction
 
@@ -27,7 +27,7 @@ A second effect is harder to see. In a dotted tag, the parameter of an event han
   "devDependencies": {
     "tsrs": "0.20.1-ts7.1.0-beta",
     "typescript": "6.0.3",
-    "vize": "0.631.0",
+    "vize": "0.638.0",
     "vue": "3.5.44",
     "vue-tsc": "3.3.11"
   }
@@ -182,7 +182,7 @@ The first group has no error in the source, so every error is a TS6133. The seco
 | Real error in a prop, dotted tag                                                             |             0 |                1 |
 | Real error in a prop, plain import                                                           |             1 |                1 |
 
-`vize` 0.606.0, 0.627.0, 0.628.0 and 0.630.0 give the same results for the files shown. Earlier versions are not tested. With `noUnusedLocals` off, there is no TS6133.
+`vize` 0.606.0, 0.627.0, 0.628.0, 0.630.0, 0.631.0 and 0.638.0 give the same results for the files shown. Earlier versions are not tested. With `noUnusedLocals` off, there is no TS6133.
 
 ## Not known
 

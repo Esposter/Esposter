@@ -8,7 +8,7 @@ The type check of a Nuxt app moved from `vue-tsc` to `tsrs --runExternalCode` wi
 
 ## Environment
 
-`vize` 0.631.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
+`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
 
 ## Reproduction
 
@@ -25,7 +25,7 @@ The type check of a Nuxt app moved from `vue-tsc` to `tsrs --runExternalCode` wi
   "devDependencies": {
     "tsrs": "0.20.1-ts7.1.0-beta",
     "typescript": "6.0.3",
-    "vize": "0.631.0",
+    "vize": "0.638.0",
     "vue": "3.5.44",
     "vue-tsc": "3.3.11"
   }
@@ -82,7 +82,7 @@ npm i && npm run typecheck ; npm run typecheck:oracle
 `npm run typecheck` gives one error for the file. The position is in generated code. The file has fewer lines than the number in the message.
 
 ```
-src/Reduced.vue(56,20): error TS7006: Parameter 'value' implicitly has an 'any' type.
+src/Reduced.vue(55,20): error TS7006: Parameter 'value' implicitly has an 'any' type.
 ```
 
 ## Expected
@@ -109,7 +109,7 @@ One change at a time from `Reduced.vue`. A row for the control counts only TS233
 | A plain `.ts` file: the receiver of the inner callback is `any`                    |             1 |                1 |
 | Control: the same file with a read of a field that does not exist (`scene.nope()`) |             1 |                1 |
 
-`vize` 0.631.0 is the only version tested.
+`vize` 0.631.0 and 0.638.0 give the same result. Earlier versions are not tested.
 
 ## Not known
 
@@ -117,4 +117,4 @@ The generated code from `vize check --show-virtual-ts` holds the callback twice.
 
 ## Not a duplicate of
 
-Searched open and closed issues and pull requests for TS7006, callbacks and inference. The search matches words, not meaning. The nearest are #10191 (closed; a callback prop whose parameters are not on the first line, with the same one-line `@ts-ignore`), #10739 (closed) and #10879 (merged, and in 0.630.0 and 0.631.0; event-inference callbacks are kept out of the mapper's unowned copies). The input here is a bound callback prop whose body holds a second callback. It reproduces on 0.631.0.
+Searched open and closed issues and pull requests for TS7006, callbacks and inference. The search matches words, not meaning. The nearest are #10191 (closed; a callback prop whose parameters are not on the first line, with the same one-line `@ts-ignore`), #10739 (closed) and #10879 (merged, and in 0.630.0 and 0.631.0; event-inference callbacks are kept out of the mapper's unowned copies). The input here is a bound callback prop whose body holds a second callback. It reproduces on 0.638.0. The input of #10191 gives no diagnostic on 0.638.0, so its fix holds, and the parameter that still fails here is the one of the nested callback.

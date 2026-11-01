@@ -10,7 +10,7 @@ Without a default on the type parameter, the slot payload is `any`, so a wrong r
 
 ## Environment
 
-`vize` 0.631.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
+`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
 
 ## Reproduction
 
@@ -27,7 +27,7 @@ Without a default on the type parameter, the slot payload is `any`, so a wrong r
   "devDependencies": {
     "tsrs": "0.20.1-ts7.1.0-beta",
     "typescript": "6.0.3",
-    "vize": "0.631.0",
+    "vize": "0.638.0",
     "vue": "3.5.44",
     "vue-tsc": "3.3.11"
   }
@@ -187,7 +187,7 @@ One change at a time. Each row names the consumer or child file it counts errors
 | Generic child, `Props` without the alias                                      |             0 |                0 |
 | Child that is not generic, alias in `Props`                                   |             0 |                0 |
 
-`vize` 0.631.0 is the only version tested.
+`vize` 0.631.0 and 0.638.0 give the same result. Earlier versions are not tested.
 
 ## Not known
 

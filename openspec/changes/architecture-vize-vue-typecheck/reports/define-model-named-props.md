@@ -10,7 +10,7 @@ The error is in the generated code. It has no position in the source file, so th
 
 ## Environment
 
-`vize` 0.631.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
+`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
 
 ## Reproduction
 
@@ -27,7 +27,7 @@ The error is in the generated code. It has no position in the source file, so th
   "devDependencies": {
     "tsrs": "0.20.1-ts7.1.0-beta",
     "typescript": "6.0.3",
-    "vize": "0.631.0",
+    "vize": "0.638.0",
     "vue": "3.5.44",
     "vue-tsc": "3.3.11"
   }
@@ -135,7 +135,7 @@ One change at a time from the reproduction. The first row is `src/Probe.vue`.
 | No `defineModel()` call                                                                                                                 |             0 |                0 |
 | No `defineProps()` call                                                                                                                 |             0 |                0 |
 
-`vize` 0.606.0, 0.627.0, 0.628.0 and 0.630.0 give the same error for the first row. Earlier versions are not tested.
+`vize` 0.606.0, 0.627.0, 0.628.0, 0.630.0, 0.631.0 and 0.638.0 give the same error for the first row. Earlier versions are not tested.
 
 ## Not known
 

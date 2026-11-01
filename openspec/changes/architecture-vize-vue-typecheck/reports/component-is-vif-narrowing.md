@@ -8,7 +8,7 @@ The type check of a Nuxt app moved from `vue-tsc` to `tsrs --runExternalCode` wi
 
 ## Environment
 
-`vize` 0.631.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
+`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
 
 ## Reproduction
 
@@ -25,7 +25,7 @@ The type check of a Nuxt app moved from `vue-tsc` to `tsrs --runExternalCode` wi
   "devDependencies": {
     "tsrs": "0.20.1-ts7.1.0-beta",
     "typescript": "6.0.3",
-    "vize": "0.631.0",
+    "vize": "0.638.0",
     "vue": "3.5.44",
     "vue-tsc": "3.3.11"
   }
@@ -99,7 +99,7 @@ One change at a time from `Probe.vue`.
 | `<component :is="x" v-if="x" />` where `x` is a `string` or `undefined` |             0 |                0 |
 | Control: no `v-if` (a real error)                                       |             5 |                1 |
 
-`vize` 0.631.0 is the only version tested.
+`vize` 0.631.0 and 0.638.0 give the same result. Earlier versions are not tested.
 
 ## Not known
 

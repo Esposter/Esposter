@@ -8,7 +8,7 @@ The type check of a Nuxt app moved from `vue-tsc` to `tsrs --runExternalCode` wi
 
 ## Environment
 
-`vize` 0.631.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
+`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
 
 ## Reproduction
 
@@ -25,7 +25,7 @@ The type check of a Nuxt app moved from `vue-tsc` to `tsrs --runExternalCode` wi
   "devDependencies": {
     "tsrs": "0.20.1-ts7.1.0-beta",
     "typescript": "6.0.3",
-    "vize": "0.631.0",
+    "vize": "0.638.0",
     "vue": "3.5.44",
     "vue-tsc": "3.3.11"
   }
@@ -149,7 +149,7 @@ npm i && npm run typecheck ; npm run typecheck:oracle
 `npm run typecheck` gives one error for the input:
 
 ```
-src/InputMapLocal.vue(21,15): error TS2322: Type 'Event' is not assignable to type 'SerializableValue'.
+src/InputMapLocal.vue(21,13): error TS2322: Type 'Event' is not assignable to type 'SerializableValue'.
 ```
 
 ## Expected
@@ -177,7 +177,7 @@ One change at a time from `InputMapLocal.vue`.
 | The event is named `pick` in place of `select`             |             0 |                0 |
 | Control: no slot, and the payload assigned to a `number`   |             1 |                1 |
 
-`vize` 0.631.0 is the only version tested.
+`vize` 0.631.0 and 0.638.0 give the same result. Earlier versions are not tested.
 
 ## Not known
 

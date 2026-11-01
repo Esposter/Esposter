@@ -8,7 +8,7 @@ The type check of a Nuxt app moved from `vue-tsc` to `tsrs --runExternalCode` wi
 
 ## Environment
 
-`vize` 0.631.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
+`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
 
 ## Reproduction
 
@@ -25,7 +25,7 @@ The type check of a Nuxt app moved from `vue-tsc` to `tsrs --runExternalCode` wi
   "devDependencies": {
     "tsrs": "0.20.1-ts7.1.0-beta",
     "typescript": "6.0.3",
-    "vize": "0.631.0",
+    "vize": "0.638.0",
     "vue": "3.5.44",
     "vue-tsc": "3.3.11"
   }
@@ -196,7 +196,7 @@ One change at a time from `RowMin.vue`.
 | A static `<ValueText>` in place of the dynamic tag      |             0 |                0 |
 | The dynamic tag with a wrong prop value (`:label="42"`) |             2 |                1 |
 
-`vize` 0.631.0 is the only version tested. In the last row, `tsrs` reports the same two errors as in the first row, and `vue-tsc` reports the wrong value.
+`vize` 0.631.0 and 0.638.0 give the same result. Earlier versions are not tested. In the last row, `tsrs` reports the same two errors as in the first row, and `vue-tsc` reports the wrong value.
 
 ## Not known
 
@@ -204,4 +204,4 @@ The generated code indexes the map with the key as written (`TextMap[row.type]`)
 
 ## Not a duplicate of
 
-Searched open and closed issues and pull requests for dynamic components and `never`. The search matches words, not meaning. The nearest are #10026 (closed) and #10048 (merged): a dynamic component union with an attribute and a listener gave `never` in the mapper's generated code. They may share a cause with this report. The input here is a map member chosen by a generic-typed key, with `v-model`, and it reproduces on 0.631.0.
+Searched open and closed issues and pull requests for dynamic components and `never`. The search matches words, not meaning. The nearest are #10026 (closed) and #10048 (merged): a dynamic component union with an attribute and a listener gave `never` in the mapper's generated code. They may share a cause with this report. The input here is a map member chosen by a generic-typed key, with `v-model`, and it reproduces on 0.638.0.
