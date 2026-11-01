@@ -46,6 +46,8 @@ const toArcPath = ([start, end]: [number, number], radiusY: number) => {
   return `M ${from.x} ${from.y} A ${COOKING_ARC_RADIUS_X} ${radiusY} 0 0 1 ${to.x} ${to.y}`;
 };
 const pointerPosition = computed(() => toArcPoint(pointer, COOKING_ZONE_RADIUS_Y));
+const regularZonePath = computed(() => toArcPath(zones.regular, COOKING_ZONE_RADIUS_Y));
+const deliciousZonePath = computed(() => toArcPath(zones.delicious, COOKING_ZONE_RADIUS_Y));
 </script>
 
 <template>
@@ -113,8 +115,8 @@ const pointerPosition = computed(() => toArcPoint(pointer, COOKING_ZONE_RADIUS_Y
         <circle cx="1105" cy="720" r="3" />
         <circle cx="1173" cy="735" r="3" />
       </g>
-      <path class="regular" :d="toArcPath(zones.regular, COOKING_ZONE_RADIUS_Y)" />
-      <path class="delicious" :d="toArcPath(zones.delicious, COOKING_ZONE_RADIUS_Y)" />
+      <path class="regular" :d="regularZonePath" />
+      <path class="delicious" :d="deliciousZonePath" />
       <g class="pointer" :transform="`translate(${pointerPosition.x} ${pointerPosition.y}) rotate(-17)`">
         <rect height="44" rx="14" width="36" x="-18" y="-48" />
         <path d="M-6 -8 L6 -8 L5 66 L-5 66 Z" />

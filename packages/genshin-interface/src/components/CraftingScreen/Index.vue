@@ -57,6 +57,7 @@ const {
   title,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; craft: [] }>();
+const pickedRecipeName = computed(() => recipes.find((recipe) => recipe.id === recipeId.value)?.name);
 </script>
 
 <template>
@@ -95,7 +96,7 @@ const emit = defineEmits<{ close: []; craft: [] }>();
     </div>
     <div class="detail">
       <div class="materials-band" aria-hidden="true" />
-      <p class="recipe-title">{{ recipes.find((recipe) => recipe.id === recipeId)?.name }}</p>
+      <p class="recipe-title">{{ pickedRecipeName }}</p>
       <ul class="crafters">
         <li v-for="crafter of crafters" :key="crafter.id">
           <button
