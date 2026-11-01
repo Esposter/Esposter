@@ -1,9 +1,7 @@
 import type { BasicAuthOptions } from "#src/models/BasicAuthOptions";
 
 import { checkIsRecord } from "#src/runtime/services/checkIsRecord";
-
-const checkIsStringList = (value: unknown): value is string[] =>
-  Array.isArray(value) && value.every((item) => typeof item === "string");
+import { checkIsStringList } from "#src/runtime/services/checkIsStringList";
 
 // The basic auth options the module wrote into the server-only runtime config.
 // `undefined` when basic auth is off or the config holds no valid options.

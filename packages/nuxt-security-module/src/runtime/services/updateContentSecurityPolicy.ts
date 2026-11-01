@@ -2,6 +2,7 @@ import type { ContentSecurityPolicy } from "#src/models/ContentSecurityPolicy";
 import type { SecurityState } from "#src/runtime/services/getSecurityState";
 
 import { NONCE_PLACEHOLDER } from "#src/runtime/constants";
+import { checkIsStaticNonce } from "#src/runtime/services/checkIsStaticNonce";
 
 const SCRIPT_DIRECTIVES = new Set(["script-src", "script-src-elem"]);
 const STYLE_DIRECTIVES = new Set(["style-src", "style-src-elem"]);
@@ -29,5 +30,3 @@ export const updateContentSecurityPolicy = (
       return [directive, sources];
     }),
   );
-
-const checkIsStaticNonce = (source: string): boolean => source.startsWith("'nonce-") && source !== NONCE_PLACEHOLDER;
