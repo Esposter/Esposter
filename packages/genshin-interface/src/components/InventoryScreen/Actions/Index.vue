@@ -2,7 +2,7 @@
 import type { InventoryCell } from "#src/models/InventoryCell";
 
 import Amount from "#src/components/InventoryScreen/Amount/Index.vue";
-import { GAME_ROW_PRESS } from "#src/services/constants";
+import { GAME_REPLY_HOVER_INK, GAME_ROW_PRESS } from "#src/services/constants";
 
 interface Props {
   // The slider's name for assistive tech, the game's "Amount to use" line in the reader's language
@@ -63,7 +63,7 @@ const amount = ref(1);
   border: none;
   border-radius: calc(var(--unit) * 32);
   background: #ece3d8;
-  color: #3b4255;
+  color: v-bind(GAME_REPLY_HOVER_INK);
   font: inherit;
   font-size: calc(var(--unit) * 26);
   font-weight: 600;

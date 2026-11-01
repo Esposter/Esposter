@@ -4,6 +4,7 @@ import type { ExpeditionPlaceDetail } from "#src/models/ExpeditionPlaceDetail";
 import GameButton from "#src/components/GameButton/Index.vue";
 import ItemTile from "#src/components/ItemTile/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
+import { GAME_REPLY_HOVER_INK } from "#src/services/constants";
 
 interface Props {
   // The picked place: its name, its description, the rewards it may pay, the durations it offers and its status
@@ -14,8 +15,8 @@ interface Props {
   rewardsLabel: string;
 }
 
-const emit = defineEmits<{ "update:hours": [hours: number] }>();
 const { detail, hours, rewardsLabel } = defineProps<Props>();
+const emit = defineEmits<{ "update:hours": [hours: number] }>();
 </script>
 
 <template>
@@ -55,7 +56,7 @@ const { detail, hours, rewardsLabel } = defineProps<Props>();
   height: calc(var(--unit) * 598);
   margin: 0;
   background: #e1d9cb;
-  color: #3b4255;
+  color: v-bind(GAME_REPLY_HOVER_INK);
   box-shadow: 0 0 calc(var(--unit) * 12) rgb(0 0 0 / 0.35);
 }
 

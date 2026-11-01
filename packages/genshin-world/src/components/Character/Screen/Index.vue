@@ -35,6 +35,7 @@ import {
   CloseButton,
   CloseButtonMark,
   GAME_CREAM,
+  GAME_REPLY_HOVER_INK,
   GameScreen,
 } from "genshin-interface";
 import { fillLinePlaceholders, GameLanguage, GameTextKey } from "genshin-text";
@@ -292,7 +293,7 @@ const tabLabels = computed(() =>
   width: calc(var(--unit) * 56);
   height: calc(var(--unit) * 56);
   background: v-bind(GAME_CREAM);
-  color: #3b4255;
+  color: v-bind(GAME_REPLY_HOVER_INK);
   cursor: inherit;
 }
 </style>

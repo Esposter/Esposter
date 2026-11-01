@@ -9,8 +9,10 @@ import type { KitRecord } from "genshin-world";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { checkIsNoActionFileCandidate } from "#src/services/genshinAssets/kits/candidates/checkIsNoActionFileCandidate";
+import { getBluntKitCandidates } from "#src/services/genshinAssets/kits/candidates/getBluntKitCandidates";
 import { getNamedListKitCandidates } from "#src/services/genshinAssets/kits/candidates/getNamedListKitCandidates";
 import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidates/getRuleKitCandidates";
+import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
 import { mergeKitCandidateSources } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidateSources";
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
 import { checkIsCitedBy } from "#src/services/genshinAssets/kits/record/checkIsCitedBy";
@@ -122,7 +124,11 @@ export const compareKitRecord = (
     const candidateMap = mergeKitCandidateSources({
       namedHitCandidateMap: getNamedHitKitCandidates(publishedValueMap, namedHitCandidateMap),
       namedListCandidateMap: getNamedListKitCandidates(publishedValueMap, tables.talentGroupIdMap),
-      ruleCandidateMap: getRuleKitCandidates(publishedValueMap, tables.element),
+      // The blunt flags are rules too, so a published hit's flag is classified by the rule that gave it and takes no entry
+      ruleCandidateMap: mergeKitCandidates(
+        getRuleKitCandidates(publishedValueMap, tables.element),
+        getBluntKitCandidates(publishedValueMap, tables),
+      ),
       sourceCandidateMap,
     });
     for (const [path, value] of publishedValueMap) classify(path, value, candidateMap);

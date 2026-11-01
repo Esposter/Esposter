@@ -4,7 +4,7 @@ import type { InventorySort } from "#src/models/InventorySort";
 import GameButton from "#src/components/GameButton/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 import { InventorySorts } from "#src/models/InventorySort";
-import { GAME_ROW_PRESS } from "#src/services/constants";
+import { GAME_REPLY_HOVER_INK, GAME_ROW_PRESS } from "#src/services/constants";
 
 interface Props {
   // The sort's order in the reader's language, which a screen reader says in place of its arrow
@@ -59,7 +59,7 @@ const { orderLabel, sortLabels } = defineProps<Props>();
   border: none;
   border-radius: calc(var(--unit) * 25);
   background: #ece3d8;
-  color: #3b4255;
+  color: v-bind(GAME_REPLY_HOVER_INK);
   appearance: none;
   font: inherit;
   font-size: calc(var(--unit) * 22);
@@ -76,7 +76,7 @@ const { orderLabel, sortLabels } = defineProps<Props>();
   right: calc(var(--unit) * 26);
   width: 0;
   height: 0;
-  border-top: calc(var(--unit) * 6) solid #3b4255;
+  border-top: calc(var(--unit) * 6) solid v-bind(GAME_REPLY_HOVER_INK);
   border-right: calc(var(--unit) * 6) solid transparent;
   border-left: calc(var(--unit) * 6) solid transparent;
   content: "";

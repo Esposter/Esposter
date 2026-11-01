@@ -3,7 +3,13 @@ import type { ReputationLevelCell } from "#src/models/ReputationLevelCell";
 import type { TextSegment } from "#src/models/TextSegment";
 
 import ItemTile from "#src/components/ItemTile/Index.vue";
-import { CHECK_MARK_PATH, GAME_CREAM, GAME_ROW_HOVER, GAME_ROW_PRESS } from "#src/services/constants";
+import {
+  CHECK_MARK_PATH,
+  GAME_CREAM,
+  GAME_REPLY_HOVER_INK,
+  GAME_ROW_HOVER,
+  GAME_ROW_PRESS,
+} from "#src/services/constants";
 
 interface Props {
   // The achieved mark's words in the reader's language, read to assistive technology in place of the mark
@@ -97,7 +103,7 @@ const emit = defineEmits<{ accept: []; close: [] }>();
 .reputation-screen {
   position: absolute;
   inset: 0;
-  color: #3b4255;
+  color: v-bind(GAME_REPLY_HOVER_INK);
   font-weight: 600;
 }
 
@@ -168,7 +174,7 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   border: none;
   border-radius: calc(var(--unit) * 8);
   background: v-bind(GAME_CREAM);
-  color: #3b4255;
+  color: v-bind(GAME_REPLY_HOVER_INK);
   font: inherit;
   font-size: calc(var(--unit) * 26);
 }

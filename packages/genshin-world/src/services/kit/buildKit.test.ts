@@ -32,6 +32,7 @@ describe(buildKit, () => {
   const HIT_RECORD: KitHitRecord = {
     area: { angle: 2 * Math.PI, height: 2, radius: 1 },
     hitmarkFrames: 12,
+    isBlunt: false,
     multiplier: { index: 0, proudSkillGroupId: PROUD_SKILL_GROUP_ID },
     poiseDamage: 0,
   };

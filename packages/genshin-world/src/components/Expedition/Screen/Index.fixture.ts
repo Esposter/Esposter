@@ -39,7 +39,7 @@ export const props = {
   materialDataMap: await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL),
   nameText: englishNameText,
   now,
-  picking: false,
+  isPicking: false,
   pinPositions: new Map(
     pinnedPlaces.map(({ id }, index) => [id, MONDSTADT_EXPEDITION_PIN_LAYOUT[index] ?? { x: 0, y: 0 }] as const),
   ),

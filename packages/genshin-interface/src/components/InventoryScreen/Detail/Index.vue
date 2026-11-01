@@ -5,6 +5,7 @@ import type { InventoryWeaponDetails } from "#src/models/InventoryWeaponDetails"
 import GameButton from "#src/components/GameButton/Index.vue";
 import RarityStars from "#src/components/RarityStars/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
+import { GAME_REPLY_HOVER_INK } from "#src/services/constants";
 
 interface Props {
   // The entry the panel shows, its name, rarity, caption and lock
@@ -79,7 +80,7 @@ const { cell, isDestroying, isSortable, lockLabel, unlockLabel, weapon } = defin
     #ece3d8 calc(var(--unit) * 786),
     #fde5b9 calc(var(--unit) * 786)
   );
-  color: #3b4255;
+  color: v-bind(GAME_REPLY_HOVER_INK);
 }
 
 .detail[data-rarity="5"] {
@@ -171,7 +172,7 @@ const { cell, isDestroying, isSortable, lockLabel, unlockLabel, weapon } = defin
   margin: 0;
   border-radius: calc(var(--unit) * 4);
   background: #f5a16e;
-  color: #3b4255;
+  color: v-bind(GAME_REPLY_HOVER_INK);
   font-size: calc(var(--unit) * 20);
   font-weight: 600;
   line-height: calc(var(--unit) * 25);
@@ -180,7 +181,7 @@ const { cell, isDestroying, isSortable, lockLabel, unlockLabel, weapon } = defin
 
 .weapon-passive-name {
   top: calc(var(--unit) * 396);
-  color: #3b4255;
+  color: v-bind(GAME_REPLY_HOVER_INK);
   font-size: calc(var(--unit) * 24);
   font-weight: 600;
   line-height: calc(var(--unit) * 28);
@@ -188,7 +189,7 @@ const { cell, isDestroying, isSortable, lockLabel, unlockLabel, weapon } = defin
 
 .weapon-passive {
   top: calc(var(--unit) * 424);
-  color: #3b4255;
+  color: v-bind(GAME_REPLY_HOVER_INK);
   font-size: calc(var(--unit) * 24);
   line-height: calc(var(--unit) * 29);
 }

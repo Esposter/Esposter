@@ -7,7 +7,7 @@ import { checkIsClaimable } from "#src/services/mail/checkIsClaimable";
 import { checkIsGiftBoxed } from "#src/services/mail/checkIsGiftBoxed";
 import { getMailExpiry } from "#src/services/mail/getMailExpiry";
 import { MailExpiryUnitGameTextKeyMap } from "#src/services/mail/MailExpiryUnitGameTextKeyMap";
-import { GAME_ROW_HOVER, GAME_ROW_PRESS } from "genshin-interface";
+import { GAME_INK, GAME_ROW_HOVER, GAME_ROW_PRESS } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
@@ -74,7 +74,7 @@ const statusText = computed(() => {
 .entry[aria-selected="true"] {
   height: calc(var(--unit) * 98);
   background: rgb(239 229 216);
-  color: #3b4354;
+  color: v-bind(GAME_INK);
 }
 
 .entry:not([aria-selected="true"]) {

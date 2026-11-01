@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ForgeQueueDetail } from "#src/models/ForgeQueueDetail";
+
 import ForgeScreenDetailMaterials from "#src/components/ForgeScreen/Detail/Materials/Index.vue";
 import ForgeScreenDetailQueue from "#src/components/ForgeScreen/Detail/Queue/Index.vue";
 import ForgeScreenMaterialsBox from "#src/components/ForgeScreen/MaterialsBox/Index.vue";
@@ -15,10 +17,8 @@ interface Props {
   materialsBoxLabel: string;
   // The Obtain button of a queue with units ready, in the game's words
   obtainLabel: string;
-  // The queue the Queues tab's detail shows, the first holding an order: its id, the words over its ring (its time left, or
-  // Complete once every unit is done), its units done in words, its share of the unit being forged, and whether a unit is
-  // Ready to obtain
-  queueDetail?: { forgedLabel: string; headingLabel: string; id: number; isObtainable: boolean; progress: number };
+  // The queue the Queues tab's detail shows
+  queueDetail?: ForgeQueueDetail;
   // The refusal words the game shows in place of Start for an order past the day's forge points, or none
   refusalLabel: string;
   // The coins the selected recipe costs for its amount

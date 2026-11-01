@@ -16,6 +16,7 @@ import Grid from "#src/components/InventoryScreen/Grid/Index.vue";
 import Header from "#src/components/InventoryScreen/Header/Index.vue";
 import Sort from "#src/components/InventoryScreen/Sort/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
+import { GAME_REPLY_HOVER_INK } from "#src/services/constants";
 
 interface Props {
   // The slider's name for assistive tech, the game's "Amount to use" line in the reader's language
@@ -317,7 +318,7 @@ watch(
   left: calc(var(--unit) * 10);
   width: calc(var(--unit) * 32);
   height: calc(var(--unit) * 36);
-  fill: #3b4255;
+  fill: v-bind(GAME_REPLY_HOVER_INK);
 }
 
 .quick-use {

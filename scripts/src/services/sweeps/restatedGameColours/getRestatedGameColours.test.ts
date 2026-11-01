@@ -11,6 +11,17 @@ describe(getRestatedGameColours, () => {
     expect(getRestatedGameColours(".a {\n  color: #ECE5D8;\n}", colourMap)).toStrictEqual(["2: GAME_CREAM"]);
   });
 
+  test("reports the same colour written as rgb, with commas or spaces, but not a translucent one", () => {
+    expect.hasAssertions();
+
+    expect(
+      getRestatedGameColours(
+        ".a {\n  fill: rgb(236 229 216);\n  stroke: rgb(236, 229, 216);\n  color: rgb(236 229 216 / 0.5);\n}",
+        colourMap,
+      ),
+    ).toStrictEqual(["2: GAME_CREAM", "3: GAME_CREAM"]);
+  });
+
   test("counts lines from the style block's first line", () => {
     expect.hasAssertions();
 

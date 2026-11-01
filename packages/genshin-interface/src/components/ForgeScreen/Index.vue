@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ForgeQueueCell } from "#src/models/ForgeQueueCell";
+import type { ForgeQueueDetail } from "#src/models/ForgeQueueDetail";
 import type { ForgeRecipeCell } from "#src/models/ForgeRecipeCell";
 
 import ForgeScreenDetail from "#src/components/ForgeScreen/Detail/Index.vue";
@@ -26,10 +27,8 @@ interface Props {
   materialsLabel: string;
   // The Obtain button of a queue with units ready, in the game's words
   obtainLabel: string;
-  // The queue the Queues tab's detail shows, the first holding an order: its id, the words over its ring (its time left, or
-  // Complete once every unit is done), its units done in words, its share of the unit being forged, and whether a unit is
-  // Ready to obtain
-  queueDetail?: { forgedLabel: string; headingLabel: string; id: number; isObtainable: boolean; progress: number };
+  // The queue the Queues tab's detail shows
+  queueDetail?: ForgeQueueDetail;
   // The forge queues, each open one or locked until its Adventure Rank
   queues: ForgeQueueCell[];
   // The Forge Queues tab's label with its open queues, the game's "Forge Queues (1/3)"

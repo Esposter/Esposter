@@ -41,7 +41,7 @@ export const props = {
     { hasAlert: false, name: "Mondstadt" },
     { hasAlert: true, name: "Liyue" },
   ],
-  picking: false,
+  isPicking: false,
   pins: [
     { awayLabel: "", id: 101, label: "Expedition place", x: 815, y: 195 },
     { awayLabel: "", id: 102, label: "Expedition place", x: 565, y: 410 },

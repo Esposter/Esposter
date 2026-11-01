@@ -6,6 +6,7 @@ import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GCG_EQUIPMENT_CARD_KINDS, GCG_TOSS_UP_CARD_ID, GCG_TOSS_UP_REROLL_COUNT } from "#src/services/gcg/constants";
 import { countGcgDiceCost } from "#src/services/gcg/countGcgDiceCost";
 import { toGcgRemainingDiceIndices } from "#src/services/gcg/toGcgRemainingDiceIndices";
+import { toggleGcgIndex } from "#src/services/gcg/toggleGcgIndex";
 import { takeOne } from "@esposter/shared";
 import { computed, ref, toValue } from "vue";
 
@@ -25,9 +26,6 @@ interface GcgSelectionEmit {
   (event: "tuneDie", handIndex: number, dieIndex: number): void;
   (event: "useSkill", skillId: number, dieIndices: number[]): void;
 }
-
-const toggleList = (list: number[], value: number): number[] =>
-  list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
 
 // The player's choices on the duel board and the events each one leaves with. The duel and the side the player steers are
 // read where each choice is made, so they are passed as getters that follow the board's props
@@ -84,7 +82,7 @@ export const useGcgSelection = (
     const card = playerHandCards.value[handIndex];
     if (isChoosingReroll.value) return;
     else if (toValue(duel).phase === GcgPhase.Preparation)
-      switchedHandIndices.value = toggleList(switchedHandIndices.value, handIndex);
+      switchedHandIndices.value = toggleGcgIndex(switchedHandIndices.value, handIndex);
     else if (!isPlayerTurn.value || !card) return;
     else if (isTuning.value) {
       if (selectedDieIndices.value.length === 1) emit("tuneDie", handIndex, takeOne(selectedDieIndices.value, 0));
@@ -122,7 +120,7 @@ export const useGcgSelection = (
   };
   const selectDie = (dieIndex: number) => {
     if (!paidDiceIndices.value.includes(dieIndex))
-      selectedDieIndices.value = toggleList(selectedDieIndices.value, dieIndex);
+      selectedDieIndices.value = toggleGcgIndex(selectedDieIndices.value, dieIndex);
   };
   const toggleTuning = () => {
     isTuning.value = !isTuning.value;

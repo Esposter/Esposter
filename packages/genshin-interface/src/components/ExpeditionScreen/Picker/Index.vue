@@ -16,7 +16,7 @@ interface Props {
   hours: number;
 }
 
-const picking = defineModel<boolean>("picking", { default: false });
+const isPicking = defineModel<boolean>("isPicking", { default: false });
 const { characterTitle, characters, detail, hours } = defineProps<Props>();
 const emit = defineEmits<{ send: [placeId: number, characterId: number, hours: number] }>();
 </script>
@@ -34,7 +34,7 @@ const emit = defineEmits<{ send: [placeId: number, characterId: number, hours: n
           tip=""
           @click="
             () => {
-              picking = false;
+              isPicking = false;
               emit('send', detail.id, id, hours);
             }
           "

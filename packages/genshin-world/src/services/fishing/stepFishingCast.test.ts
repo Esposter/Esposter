@@ -12,13 +12,12 @@ describe(stepFishingCast, () => {
   const WHOLE_BAR_TRAVEL = { duration: 10, offset: 0, speed: 0, width: 100 };
   const NIBBLE_SECONDS = 2;
   const STEP = { isReeling: false, isStruck: false, seconds: 1 };
-  const STOCK_KEY = "";
   const START = {
     fish: FISH,
     gear: GEAR,
     nibbleSeconds: NIBBLE_SECONDS,
     rod: ROD,
-    stockKey: STOCK_KEY,
+    stockKey: "",
     travel: WHOLE_BAR_TRAVEL,
   };
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
 
+import { GAME_INK } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -47,7 +48,7 @@ const { gameText } = defineProps<Props>();
   position: absolute;
   top: calc(var(--reference-pixel) * 21);
   left: calc(var(--reference-pixel) * 424);
-  border-top: calc(var(--reference-pixel) * 9) solid #3b4354;
+  border-top: calc(var(--reference-pixel) * 9) solid v-bind(GAME_INK);
   border-right: calc(var(--reference-pixel) * 7) solid transparent;
   border-left: calc(var(--reference-pixel) * 7) solid transparent;
 }

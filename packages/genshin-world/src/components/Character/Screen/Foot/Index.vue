@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
 
-import { CharacterMenuTab, GAME_CREAM } from "genshin-interface";
+import { CharacterMenuTab, GAME_CREAM, GAME_REPLY_HOVER_INK } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -40,8 +40,10 @@ const { gameText, tab, uid } = defineProps<Props>();
   border-radius: 50%;
   background-color: v-bind(GAME_CREAM);
   background-image:
-    linear-gradient(#3b4255, #3b4255), linear-gradient(#3b4255, #3b4255), linear-gradient(#3b4255, #3b4255),
-    linear-gradient(#3b4255, #3b4255);
+    linear-gradient(v-bind(GAME_REPLY_HOVER_INK), v-bind(GAME_REPLY_HOVER_INK)),
+    linear-gradient(v-bind(GAME_REPLY_HOVER_INK), v-bind(GAME_REPLY_HOVER_INK)),
+    linear-gradient(v-bind(GAME_REPLY_HOVER_INK), v-bind(GAME_REPLY_HOVER_INK)),
+    linear-gradient(v-bind(GAME_REPLY_HOVER_INK), v-bind(GAME_REPLY_HOVER_INK));
   background-position:
     30% 30%,
     70% 30%,

@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import type { VNode } from "vue";
 
-import { GAME_ROW_HOVER, GAME_ROW_PRESS, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface";
+import {
+  GAME_GOLD,
+  GAME_ROW_HOVER,
+  GAME_ROW_PRESS,
+  INTERACTION_HOVER_MS,
+  INTERACTION_REST_MS,
+} from "genshin-interface";
 
 defineSlots<{ default: () => VNode }>();
 const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
@@ -55,6 +61,6 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 }
 
 .tab[aria-selected="true"] {
-  outline: calc(var(--unit) * 2) solid #d3bc8e;
+  outline: calc(var(--unit) * 2) solid v-bind(GAME_GOLD);
 }
 </style>

@@ -72,7 +72,7 @@ const {
 } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const hours = defineModel<number>("hours", { default: 0 });
-const picking = defineModel<boolean>("picking", { default: false });
+const isPicking = defineModel<boolean>("isPicking", { default: false });
 const place = defineModel<number | undefined>("place");
 const nation = ref(gameText[GameTextKey.Mondstadt]);
 // The expedition context read off the player's progress now, the character on the send added where one is sent
@@ -200,7 +200,7 @@ const claim = (placeId: number) => {
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.ExpeditionTitle]">
     <ExpeditionScreen
       v-model:nation="nation"
-      v-model:picking="picking"
+      v-model:is-picking="isPicking"
       v-model:place="place"
       :character-title="gameText[GameTextKey.ExpeditionCharacterSelection]"
       :characters="pickerCharacters"

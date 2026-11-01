@@ -1,20 +1,17 @@
 <script setup lang="ts">
 import type { GenshinSettings } from "#src/models/menu/GenshinSettings";
-import type { SettingsRow } from "#src/models/menu/SettingsRow";
+import type { SettingsTrackRow } from "#src/models/menu/SettingsTrackRow";
 import type { GameText } from "genshin-text";
 
 import MenuSettingsRowSlider from "#src/components/Menu/Settings/Row/Slider/Index.vue";
-import { SettingsRowKind } from "#src/models/menu/SettingsRowKind";
 import { SettingsTab } from "#src/models/menu/SettingsTab";
-import { getTrackShare } from "#src/services/menu/getTrackShare";
-
-type TrackRow = Extract<SettingsRow, { kind: SettingsRowKind.Range | SettingsRowKind.Slider | SettingsRowKind.Volume }>;
+import { getTrackValue } from "#src/services/menu/getTrackValue";
 
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   // The range, the volume or the slider the track shows, which the row's own kind reads its value from
-  row: TrackRow;
+  row: SettingsTrackRow;
   // The tab the row is on, under which the Audio tab draws a volume's speaker
   tab: SettingsTab;
 }
@@ -23,10 +20,8 @@ interface Props {
 const settings = defineModel<GenshinSettings>("settings", { required: true });
 const { gameText, row, tab } = defineProps<Props>();
 // A value reads with one decimal place where its range steps by tenths, and as a whole number everywhere else
-const formatTrackValue = (trackRow: TrackRow): string =>
-  (trackRow.kind === SettingsRowKind.Slider ? trackRow.value : settings.value[trackRow.setting]).toFixed(
-    trackRow.range.step < 1 ? 1 : 0,
-  );
+const formatTrackValue = (trackRow: SettingsTrackRow): string =>
+  getTrackValue(trackRow, settings.value).toFixed(trackRow.range.step < 1 ? 1 : 0);
 </script>
 
 <template>
@@ -35,27 +30,8 @@ const formatTrackValue = (trackRow: TrackRow): string =>
     <path class="wave" d="M 23 9 Q 26 15 23 21 M 28 5 Q 33 15 28 25" />
   </svg>
   <span class="volume">{{ formatTrackValue(row) }}</span>
-  <MenuSettingsRowSlider
-    v-if="row.kind === SettingsRowKind.Range || row.kind === SettingsRowKind.Volume"
-    v-model:settings="settings"
-    :game-text="gameText"
-    :row
-  />
-  <div
-    v-else
-    class="slider"
-    role="slider"
-    aria-disabled="true"
-    :aria-label="gameText[row.labelKey]"
-    :aria-valuemax="row.range.max"
-    :aria-valuemin="row.range.min"
-    :aria-valuenow="row.value"
-  >
-    <span class="knob" :style="{ left: `${getTrackShare(row.value, row.range) * 100}%` }" />
-  </div>
+  <MenuSettingsRowSlider v-model:settings="settings" :game-text="gameText" :row />
 </template>
-
-<style scoped src="../../../../../styles/settingsSlider.css"></style>
 
 <style scoped>
 /* A volume's speaker, its number in a faint box and its slider, the knob a diamond at its share of the line. Provisional:

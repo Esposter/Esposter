@@ -112,13 +112,15 @@ export const useWorldFishing = ({
         quest === undefined ? undefined : checkIsQuestFinished(quest, questProgressMap.value.get(quest.id)),
     });
   });
+  // The stocks of a region's pools standing at the moment, the game hour taken from the moment itself
+  const getStandingStocks = (region: string, now: Temporal.Instant) =>
+    computeStandingFishingStocks(pools.value, region, computeGameHour(now), caughtAtMap.value, now);
   // A point draws from every pool of its region, so its points are in reach only while their region has a stock standing at
   // The hour, the ripple the wiki's Fishing page puts on the spot as the fish are caught
   const fishingPointPlaces = computed(() => {
     const now = worldNow.value;
-    const hour = computeGameHour(now);
     return getRegionIds()
-      .filter((region) => computeStandingFishingStocks(pools.value, region, hour, caughtAtMap.value, now).length > 0)
+      .filter((region) => getStandingStocks(region, now).length > 0)
       .flatMap((region) => fishingPoints.value[region] ?? []);
   });
   // The region each fishing point lies in, by the point's id, which its pools are drawn from
@@ -140,13 +142,7 @@ export const useWorldFishing = ({
   );
   const startCast = (region: string): FishingCast | undefined => {
     const now = getWorldNow();
-    const standingStocks = computeStandingFishingStocks(
-      pools.value,
-      region,
-      computeGameHour(now),
-      caughtAtMap.value,
-      now,
-    );
+    const standingStocks = getStandingStocks(region, now);
     const bait = pickFishingBait(heldBaits.value, standingStocks);
     if (bait === undefined) return undefined;
     const draw = drawFishingPointFish(standingStocks, random(), new Set(bait.fishIds));

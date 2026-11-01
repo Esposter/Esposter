@@ -40,7 +40,7 @@ interface Props {
 
 const nation = defineModel<string>("nation", { required: true });
 const place = defineModel<number | undefined>("place");
-const picking = defineModel<boolean>("picking", { default: false });
+const isPicking = defineModel<boolean>("isPicking", { default: false });
 const { characters, characterTitle, closeLabel, detail, hours, limitLabel, nations, pins, rewardsLabel, title } =
   defineProps<Props>();
 const emit = defineEmits<{
@@ -73,8 +73,8 @@ const emit = defineEmits<{
       @update:hours="(durationHours) => emit('update:hours', durationHours)"
     />
     <Picker
-      v-if="picking && detail"
-      v-model:picking="picking"
+      v-if="isPicking && detail"
+      v-model:is-picking="isPicking"
       :character-title="characterTitle"
       :characters
       :detail
@@ -83,7 +83,7 @@ const emit = defineEmits<{
     />
     <Action
       v-if="detail"
-      v-model:picking="picking"
+      v-model:is-picking="isPicking"
       :detail
       @claim="(placeId) => emit('claim', placeId)"
       @recall="(placeId) => emit('recall', placeId)"

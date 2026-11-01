@@ -1,25 +1,29 @@
 <script setup lang="ts">
 import type { GenshinSettings } from "#src/models/menu/GenshinSettings";
-import type { SettingsRow } from "#src/models/menu/SettingsRow";
-import type { SettingsRowKind } from "#src/models/menu/SettingsRowKind";
+import type { SettingsTrackRow } from "#src/models/menu/SettingsTrackRow";
 import type { GameText } from "genshin-text";
 
+import { SettingsRowKind } from "#src/models/menu/SettingsRowKind";
 import { getTrackShare } from "#src/services/menu/getTrackShare";
+import { getTrackValue } from "#src/services/menu/getTrackValue";
 import { snapToRange } from "#src/services/menu/snapToRange";
 
 interface Props {
   // The game's words in the reader's language, which the slider's label reads
   gameText: GameText;
-  // The range or the volume the slider moves across, whose setting the world backs it with
-  row: Extract<SettingsRow, { kind: SettingsRowKind.Range | SettingsRowKind.Volume }>;
+  // The range or the volume the slider moves across, whose setting the world backs it with, or the slider the world does
+  // Not back, which is drawn at its value and moves by no pointer or key
+  row: SettingsTrackRow;
 }
 
 // The settings the slider sets, which the host keeps on this device
 const settings = defineModel<GenshinSettings>("settings", { required: true });
 const { gameText, row } = defineProps<Props>();
-const trackValue = computed(() => settings.value[row.setting]);
-// Sets the value, held within the row's range
+const trackValue = computed(() => getTrackValue(row, settings.value));
+const isBacked = computed(() => row.kind !== SettingsRowKind.Slider);
+// Sets the value, held within the row's range, of a slider the world backs
 const setBackedValue = (value: number): void => {
+  if (row.kind === SettingsRowKind.Slider) return;
   settings.value = { ...settings.value, [row.setting]: snapToRange(value, row.range) };
 };
 // A value follows the pointer while its button is held, the pointer captured at the press so a drag past the track's
@@ -40,7 +44,8 @@ const startSettingDrag = (event: PointerEvent): void => {
   <div
     class="slider"
     role="slider"
-    tabindex="0"
+    :aria-disabled="isBacked ? undefined : true"
+    :tabindex="isBacked ? 0 : undefined"
     :aria-label="gameText[row.labelKey]"
     :aria-valuemax="row.range.max"
     :aria-valuemin="row.range.min"

@@ -6,7 +6,7 @@ import Band from "#src/components/CharacterMenu/Band/Index.vue";
 import Characters from "#src/components/CharacterMenu/Characters/Index.vue";
 import Keys from "#src/components/CharacterMenu/Keys/Index.vue";
 import Steps from "#src/components/CharacterMenu/Steps/Index.vue";
-import Tabs from "#src/components/CharacterMenu/Tabs/Index.vue";
+import TabColumn from "#src/components/CharacterMenu/TabColumn/Index.vue";
 
 interface Props {
   // The player's characters, across the screen's top in the order given
@@ -43,7 +43,7 @@ const steps = computed(() => {
     <!-- The keys stepping through the tabs, W up and S down, beside the first; the keys stepping through the characters,
          Q and E, either side of the row; a finger has no keys to press -->
     <Keys v-if="!isTouch" />
-    <Tabs v-model:tab="tab" :tab-labels="tabLabels" />
+    <TabColumn v-model:tab="tab" :tab-labels="tabLabels" />
     <section class="panel" :aria-label="tabLabels[tab]"><slot /></section>
     <Steps v-if="characters.length > 1" :next="steps.next" :previous="steps.previous" @step="characterId = $event" />
   </div>

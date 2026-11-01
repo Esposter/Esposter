@@ -4,6 +4,7 @@ import type { ItemCategory } from "#src/models/ItemCategory";
 import GameButton from "#src/components/GameButton/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 import { ItemCategories } from "#src/models/ItemCategory";
+import { GAME_REPLY_HOVER_INK } from "#src/services/constants";
 import { ItemCategoryGlyphMap } from "#src/services/ItemCategoryGlyphMap";
 
 interface Props {
@@ -118,7 +119,7 @@ const emit = defineEmits<{ close: [] }>();
   width: 100%;
   height: 100%;
   fill: none;
-  stroke: #3b4255;
+  stroke: v-bind(GAME_REPLY_HOVER_INK);
   stroke-linecap: round;
   stroke-width: 4;
 }

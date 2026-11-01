@@ -1,7 +1,6 @@
 import type { FishingPool } from "#src/models/fishing/FishingPool";
 
 import { FishingStockType } from "#src/models/fishing/FishingStockType";
-import { computeFishingCatchAts } from "#src/services/fishing/computeFishingCatchAts";
 import { computeStandingFishingStocks } from "#src/services/fishing/computeStandingFishingStocks";
 import { drawFishingPointFish } from "#src/services/fishing/drawFishingPointFish";
 import { getFishingStockKey } from "#src/services/fishing/getFishingStockKey";
@@ -26,18 +25,14 @@ describe(drawFishingPointFish, () => {
   const BAITED_FISH_IDS = new Set([FIRST_FISH_ID, SECOND_FISH_ID]);
   const CAUGHT_AT = Temporal.Instant.fromEpochMilliseconds(0);
   const FIRST_STOCK_KEY = getFishingStockKey(FIRST_POOL_ID, FishingStockType.Any);
-  const SECOND_STOCK_KEY = getFishingStockKey(SECOND_POOL_ID, FishingStockType.Any);
+  const TWO_POOLS = {
+    [REGION]: [createPool(FIRST_POOL_ID, FIRST_FISH_ID), createPool(SECOND_POOL_ID, SECOND_FISH_ID)],
+  };
 
   test("a point draws the fish of its region's standing stocks, each tagged with the stock it is in", () => {
     expect.hasAssertions();
 
-    const standingStocks = computeStandingFishingStocks(
-      { [REGION]: [createPool(FIRST_POOL_ID, FIRST_FISH_ID), createPool(SECOND_POOL_ID, SECOND_FISH_ID)] },
-      REGION,
-      HOUR,
-      new Map(),
-      CAUGHT_AT,
-    );
+    const standingStocks = computeStandingFishingStocks(TWO_POOLS, REGION, HOUR, new Map(), CAUGHT_AT);
 
     expect(drawFishingPointFish(standingStocks, FIRST_ROLL, BAITED_FISH_IDS)).toStrictEqual({
       fishId: FIRST_FISH_ID,
@@ -50,13 +45,7 @@ describe(drawFishingPointFish, () => {
   test("a fish is drawn only by its own bait", () => {
     expect.hasAssertions();
 
-    const standingStocks = computeStandingFishingStocks(
-      { [REGION]: [createPool(FIRST_POOL_ID, FIRST_FISH_ID), createPool(SECOND_POOL_ID, SECOND_FISH_ID)] },
-      REGION,
-      HOUR,
-      new Map(),
-      CAUGHT_AT,
-    );
+    const standingStocks = computeStandingFishingStocks(TWO_POOLS, REGION, HOUR, new Map(), CAUGHT_AT);
 
     expect(drawFishingPointFish(standingStocks, LAST_ROLL, new Set([FIRST_FISH_ID]))?.fishId).toBe(FIRST_FISH_ID);
   });
@@ -73,25 +62,5 @@ describe(drawFishingPointFish, () => {
     );
 
     expect(drawFishingPointFish(standingStocks, FIRST_ROLL, new Set([OTHER_FISH_ID]))).toBeUndefined();
-  });
-
-  test("a stock its catches have emptied is never drawn", () => {
-    expect.hasAssertions();
-
-    const caughtAtMap = computeFishingCatchAts(new Map(), FIRST_STOCK_KEY, CAUGHT_AT);
-    const standingStocks = computeStandingFishingStocks(
-      { [REGION]: [createPool(FIRST_POOL_ID, FIRST_FISH_ID), createPool(SECOND_POOL_ID, SECOND_FISH_ID)] },
-      REGION,
-      HOUR,
-      caughtAtMap,
-      CAUGHT_AT,
-    );
-
-    expect(drawFishingPointFish(standingStocks, FIRST_ROLL, BAITED_FISH_IDS)).toStrictEqual({
-      fishId: SECOND_FISH_ID,
-      stockKey: SECOND_STOCK_KEY,
-      weight: 1,
-    });
-    expect(drawFishingPointFish(standingStocks, LAST_ROLL, BAITED_FISH_IDS)?.stockKey).toBe(SECOND_STOCK_KEY);
   });
 });

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { CurrencyCount } from "#src/models/CurrencyCount";
 
+import { GAME_REPLY_HOVER_INK } from "#src/services/constants";
+
 interface Props {
   // The counts the bag shows beside its tabs
   currencies: CurrencyCount[];
@@ -89,7 +91,7 @@ const { currencies } = defineProps<Props>();
   position: absolute;
   top: 50%;
   left: 50%;
-  background: #3b4255;
+  background: v-bind(GAME_REPLY_HOVER_INK);
   content: "";
   transform: translate(-50%, -50%);
 }

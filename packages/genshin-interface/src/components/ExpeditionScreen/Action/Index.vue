@@ -10,21 +10,23 @@ interface Props {
   detail: ExpeditionPlaceDetail;
 }
 
-const picking = defineModel<boolean>("picking", { default: false });
+const isPicking = defineModel<boolean>("isPicking", { default: false });
 const { detail } = defineProps<Props>();
 const emit = defineEmits<{ claim: [placeId: number]; recall: [placeId: number] }>();
 
-// The picked place's button acts on that place: a send opens the picker of the character it takes, a claim or a recall
-// Acts on the place at once
-const act = () => {
-  if (detail.actionKind === ExpeditionActionKind.Send) picking.value = true;
-  else if (detail.actionKind === ExpeditionActionKind.Claim) emit("claim", detail.id);
-  else emit("recall", detail.id);
+// The picked place's button acts on that place by its kind: a send opens the picker of the character it takes, a claim or
+// A recall acts on the place at once
+const actionMap: Record<ExpeditionActionKind, () => void> = {
+  [ExpeditionActionKind.Claim]: () => emit("claim", detail.id),
+  [ExpeditionActionKind.Recall]: () => emit("recall", detail.id),
+  [ExpeditionActionKind.Send]: () => {
+    isPicking.value = true;
+  },
 };
 </script>
 
 <template>
-  <GameButton class="action" :kind="GameButtonKind.Row" tip="" @click="act()">
+  <GameButton class="action" :kind="GameButtonKind.Row" tip="" @click="actionMap[detail.actionKind]()">
     <span class="ring" aria-hidden="true" />
     <span>{{ detail.actionLabel }}</span>
   </GameButton>

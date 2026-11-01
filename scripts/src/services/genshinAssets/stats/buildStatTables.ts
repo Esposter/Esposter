@@ -29,8 +29,8 @@ export const buildStatTables = (): { notes: string[]; publication: GameDataPubli
   const notes: string[] = [];
   const characterDatas = getCharacterDatas(notes);
   const weaponDatas = getWeaponDatas(notes);
-  const characterTalentKits = getCharacterTalentKits();
   const proudSkillRows = readExcelTable<ExcelProudSkillRow>("ProudSkillExcelConfigData");
+  const characterTalentKits = getCharacterTalentKits(proudSkillRows);
   const combatGroupIds = new Set(characterTalentKits.flatMap(({ talentGroupIds }) => Object.values(talentGroupIds)));
   const talentTables = characterTalentKits.map(({ characterId, talentGroupIds }) => ({
     characterId,

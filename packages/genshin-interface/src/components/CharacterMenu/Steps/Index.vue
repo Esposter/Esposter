@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CharacterMenuEntry } from "#src/models/CharacterMenuEntry";
 
-import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
+import { GAME_CREAM, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
 
 interface Props {
   // The characters either side of the chosen one, which the arrows at the frame's left and right edges step to
@@ -86,7 +86,7 @@ const steps = computed(() => [
 }
 
 .arrow {
-  fill: rgb(236 229 216);
+  fill: v-bind(GAME_CREAM);
 }
 
 .mark {

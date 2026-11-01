@@ -10,7 +10,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { formatWholeNumber } from "#src/services/character/formatWholeNumber";
 import { getAttributeDetailGroups } from "#src/services/character/getAttributeDetailGroups";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
-import { GameButton, GameButtonKind } from "genshin-interface";
+import { GAME_CREAM, GameButton, GameButtonKind } from "genshin-interface";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
@@ -204,7 +204,7 @@ const detailGroups = computed(() =>
   border: calc(var(--unit) * 1.5) solid rgb(255 255 255 / 0.25);
   border-radius: calc(var(--unit) * 20);
   background: rgb(255 255 255 / 0.08);
-  color: rgb(236 229 216);
+  color: v-bind(GAME_CREAM);
   line-height: calc(var(--unit) * 40);
 }
 

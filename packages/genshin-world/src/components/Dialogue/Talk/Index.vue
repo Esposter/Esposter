@@ -23,6 +23,7 @@ import {
   DialogueChoiceIcon,
   DialogueScreen,
   GAME_CREAM,
+  GAME_REPLY_HOVER_INK,
   GameButton,
   GameButtonKind,
   GameScreen,
@@ -194,7 +195,7 @@ useEventListener("keydown", (event) => {
   width: calc(var(--unit) * 14);
   height: calc(var(--unit) * 16);
   margin-left: calc(var(--unit) * 3);
-  fill: #3b4255;
+  fill: v-bind(GAME_REPLY_HOVER_INK);
 }
 
 .auto-label {

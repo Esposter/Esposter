@@ -13,7 +13,7 @@ import { MENU_DIALOG_CORNER_SCALES } from "#src/services/menu/constants";
 import { MenuDialogGlyphMap } from "#src/services/menu/MenuDialogGlyphMap";
 import { MenuPromptGlyphMap } from "#src/services/menu/MenuPromptGlyphMap";
 import { useIntervalFn, useNow, useResizeObserver } from "@vueuse/core";
-import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { GAME_GOLD, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
@@ -227,7 +227,7 @@ onMounted(() => {
   right: 0;
   left: 0;
   margin: 0;
-  color: #d3bc8e;
+  color: v-bind(GAME_GOLD);
   font-size: calc(var(--unit) * 39.5);
   font-weight: 600;
   letter-spacing: 0.1em;

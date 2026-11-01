@@ -117,4 +117,24 @@ describe(compareKitRecord, () => {
       { ...HIT_RECORD, hitmarkFrames: WIKI_HITMARK_FRAMES },
     ]);
   });
+
+  test("classifies a hit's blunt flag by the rule that gives it, so the overlay holds no entry for it", () => {
+    expect.hasAssertions();
+
+    // No source gives a blunt flag, only the rule does
+    const sourceCandidateMap = new Map([...SOURCE_CANDIDATE_MAP].filter(([path]) => !path.endsWith(".isBlunt")));
+
+    const { overlay } = compareKitRecord(
+      RECORD,
+      sourceCandidateMap,
+      new Map(),
+      false,
+      {},
+      new Map(),
+      new Map(),
+      tables,
+    );
+
+    expect(Object.keys(overlay).filter((path) => path.endsWith(".isBlunt"))).toStrictEqual([]);
+  });
 });
