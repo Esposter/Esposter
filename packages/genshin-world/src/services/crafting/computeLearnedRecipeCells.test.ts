@@ -5,7 +5,9 @@ import { computeLearnedRecipeCells } from "#src/services/crafting/computeLearned
 import { CONVERSION_TAB_ID_OFFSET } from "#src/services/crafting/constants";
 import { describe, expect, test } from "vitest";
 
-const recipe = (overrides: Partial<CraftingRecipe> & Pick<CraftingRecipe, "id" | "nameTextId">): CraftingRecipe => ({
+const createRecipe = (
+  overrides: Partial<CraftingRecipe> & Pick<CraftingRecipe, "id" | "nameTextId">,
+): CraftingRecipe => ({
   combineType: 7,
   kind: CraftingRecipeKind.Tier,
   materials: [{ count: 3, id: 1001 }],
@@ -24,11 +26,11 @@ describe(computeLearnedRecipeCells, () => {
     expect(
       computeLearnedRecipeCells(
         [
-          recipe({ id: 1, nameTextId: "ALPHA" }),
-          recipe({ id: 2, nameTextId: "BETA", unlockItemIds: [9001] }),
-          recipe({ id: 3, nameTextId: "GAMMA", unlockItemIds: [9001] }),
-          recipe({ combineType: 8, id: 4, nameTextId: "DELTA" }),
-          recipe({ id: 5, nameTextId: "EPSILON", playerLevel: 9 }),
+          createRecipe({ id: 1, nameTextId: "ALPHA" }),
+          createRecipe({ id: 2, nameTextId: "BETA", unlockItemIds: [9001] }),
+          createRecipe({ id: 3, nameTextId: "GAMMA", unlockItemIds: [9001] }),
+          createRecipe({ combineType: 8, id: 4, nameTextId: "DELTA" }),
+          createRecipe({ id: 5, nameTextId: "EPSILON", playerLevel: 9 }),
         ],
         {
           adventureRank: 5,
@@ -48,8 +50,8 @@ describe(computeLearnedRecipeCells, () => {
     expect.hasAssertions();
 
     const recipes = [
-      recipe({ combineType: 5, id: 1, nameTextId: "ALPHA" }),
-      recipe({ combineType: 5, id: 2, kind: CraftingRecipeKind.Convert, nameTextId: "BETA", playerLevel: 0 }),
+      createRecipe({ combineType: 5, id: 1, nameTextId: "ALPHA" }),
+      createRecipe({ combineType: 5, id: 2, kind: CraftingRecipeKind.Convert, nameTextId: "BETA", playerLevel: 0 }),
     ];
     const options = {
       adventureRank: 5,

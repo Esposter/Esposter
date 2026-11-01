@@ -7,7 +7,7 @@ import { XINGQIU_CHARACTER_ID } from "#src/services/kit/characters/xingqiuKit";
 import { YAE_MIKO_CHARACTER_ID } from "#src/services/kit/characters/yaeMikoKit";
 import { describe, expect, test } from "vitest";
 
-const drawsOf = (draws: number[]) => {
+const createDraws = (draws: number[]) => {
   const remainingDraws = [...draws];
   return () => remainingDraws.shift() ?? 1;
 };
@@ -34,7 +34,7 @@ describe(rollCraftingTalent, () => {
   test("should double the result of a craft whose draw falls under the talent's chance", () => {
     expect.hasAssertions();
 
-    expect(rollCraftingTalent(SUCROSE_CHARACTER_ID, recipe, 2, drawsOf([0.05, 0.5]))).toStrictEqual([
+    expect(rollCraftingTalent(SUCROSE_CHARACTER_ID, recipe, 2, createDraws([0.05, 0.5]))).toStrictEqual([
       { count: 1, id: RESULT_ITEM_ID },
     ]);
   });
@@ -44,7 +44,7 @@ describe(rollCraftingTalent, () => {
 
     const talentRecipe = { ...recipe, combineType: TALENT_MATERIAL_COMBINE_TYPE };
 
-    expect(rollCraftingTalent(XINGQIU_CHARACTER_ID, talentRecipe, 1, drawsOf([0.1]))).toStrictEqual([
+    expect(rollCraftingTalent(XINGQIU_CHARACTER_ID, talentRecipe, 1, createDraws([0.1]))).toStrictEqual([
       { count: 1, id: MATERIAL_ID },
     ]);
   });
@@ -60,7 +60,7 @@ describe(rollCraftingTalent, () => {
       materials: [{ count: 3, id: TEACHINGS_OF_FREEDOM_ID }],
     };
 
-    expect(rollCraftingTalent(YAE_MIKO_CHARACTER_ID, talentBookRecipe, 1, drawsOf([0.1, 0.7]))).toStrictEqual([
+    expect(rollCraftingTalent(YAE_MIKO_CHARACTER_ID, talentBookRecipe, 1, createDraws([0.1, 0.7]))).toStrictEqual([
       { count: 1, id: TEACHINGS_OF_BALLAD_ID },
     ]);
   });
@@ -68,12 +68,14 @@ describe(rollCraftingTalent, () => {
   test("should add nothing for a combine type the talent does not name", () => {
     expect.hasAssertions();
 
-    expect(rollCraftingTalent(SUCROSE_CHARACTER_ID, { ...recipe, combineType: 2 }, 1, drawsOf([0]))).toStrictEqual([]);
+    expect(rollCraftingTalent(SUCROSE_CHARACTER_ID, { ...recipe, combineType: 2 }, 1, createDraws([0]))).toStrictEqual(
+      [],
+    );
   });
 
   test("should add nothing for a character with no crafting talent", () => {
     expect.hasAssertions();
 
-    expect(rollCraftingTalent(NO_TALENT_AVATAR_ID, recipe, 1, drawsOf([0]))).toStrictEqual([]);
+    expect(rollCraftingTalent(NO_TALENT_AVATAR_ID, recipe, 1, createDraws([0]))).toStrictEqual([]);
   });
 });
