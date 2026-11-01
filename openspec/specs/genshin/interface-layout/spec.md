@@ -1,6 +1,6 @@
 ## Purpose
 
-Every screen's interface laid out from the game's own RectTransform tree. A fit publishes the tree's rects as the screen's record of the hosted game data (`packages/genshin-world/src/generated/gameDataLock.json`, `hud/interfaceRects` and `login/interfaceRects`), and one nesting component, GameRect, places each piece inside its game parent, so nothing is positioned by hand. Unity's anchors, pivots and size deltas map exactly onto absolute positioning with calc, so the browser is the layout engine (`packages/genshin-interface/src/services/computeRectOffsets.test.ts`, `packages/genshin-interface/src/services/toCanvasRectStyle.test.ts`). Only what the tree cannot hold, a prefab loaded at run time, a layout group's spacing or a line of text inside its rect, is measured.
+Every screen's interface is laid out from the game's own RectTransform tree, with one nesting component placing each piece inside its game parent so that nothing is positioned by hand.
 
 ## Requirements
 
@@ -74,8 +74,8 @@ A screen SHALL keep only the pieces of its published record that it places by na
 
 - [ ] **A nested piece moves and resizes with its parent** — no source yet: no test holds the nesting, and `GameRect` has no fixture.
 - [ ] **A scaled piece keeps its pivot corner where the layout places it** — no source yet: the export holds `GrpMap`'s scale of 0.6 but no pivot, and no test holds the scale origin.
-- [ ] **A layout group's children are stacked and spaced as the recording shows** — no source yet: the recording is not named.
+- [ ] **A layout group's children are stacked and spaced as the recording shows** — no source yet: the recording is not named, and the children's rects are not checked against one.
 - [ ] **A clip that moves a parent piece moves every piece nested in it** — no source yet: no test holds `data-clip-target`, and no run of the page was read to show the tag on a rendered piece.
-- [ ] **A run-time prefab stays in its place inside its container on any window** — no source yet: no recording or test holds the prefab's place.
+- [ ] **A run-time prefab stays in its place inside its container on any window** — no source yet: no recording or test holds the prefab's place, and the recordings for `BtnPressStart` and the age rating's layout adaptor are not named.
 - [ ] **A screen keeps only the named pieces of its record** — no source yet: no test holds the named filter; the fit test covers only the keys.
 - [ ] **Unity's anchors, pivots and size deltas map exactly onto absolute positioning with calc** — no source yet: the game's side needs a recording of the login at a second window size, which this spec does not cite.

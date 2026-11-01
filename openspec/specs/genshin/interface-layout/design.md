@@ -35,12 +35,9 @@ flowchart LR
 
 ## Open
 
+The requirement-level open items (a nested piece's placement, the scale origin, the layout group's spacing, the clip's tag and the run-time prefab's place) sit on the [spec's Open list](spec.md). The items below are this page's own.
+
 - [ ] **The login's loading row, account, build string and button columns ride in `Bottom` on any window** — no source yet: no recording at another window size, and no test, shows them riding in it.
-- [ ] **A nested `GameRect` is placed inside its parent's box** — no source yet: no test holds the nesting, and `GameRect` has no fixture.
-- [ ] **A scaled piece keeps its pivot corner where the tree places it** — no source yet: the export holds `GrpMap`'s scale of 0.6 but no pivot, and no test holds the scale origin.
-- [ ] **A `GridLayoutGroup`'s children read zero rects and are spaced as the recording shows** — no source yet: the children's rects are not checked against a recording, and the recording is not named.
-- [ ] **A prefab or text line the tree cannot hold is measured on a recording** — no source yet: the recordings for `BtnPressStart` and the age rating's layout adaptor are not named, and no test holds their measures.
-- [ ] **A clip-moved `GameRect` carries its clip path as `data-clip-target`** — no source yet: no test holds `data-clip-target`, and no run of the page was read to show the tag on a rendered piece.
 - [ ] **The prompt's 38-unit measure is taken off a recording** — no source yet: the recording is not named.
 
 ## Sources
