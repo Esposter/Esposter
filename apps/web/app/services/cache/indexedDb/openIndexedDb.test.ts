@@ -51,4 +51,25 @@ describe(resetIndexedDb, () => {
     ]);
     otherTabDatabase.close();
   });
+
+  // This tab's own open is queued behind a delete that a tab from older code never lets finish, so releasing the
+  // Connection never settles either, and the bound must still hold the sign-out
+  test("stops waiting at the bound when this tab's own open is queued behind a blocked delete", async () => {
+    expect.hasAssertions();
+
+    const otherTabDatabase = await openDatabase(DATABASE_NAME, DATABASE_VERSION);
+    indexedDB.deleteDatabase(DATABASE_NAME);
+    const queuedOpen = openIndexedDb();
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+
+    const reset = resetIndexedDb();
+    await Promise.all([
+      expect(reset).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[InvalidOperationError: Invalid operation: ${Operation.Delete}, name: ${DATABASE_NAME}, still blocked by another open connection]`,
+      ),
+      vi.advanceTimersByTimeAsync(RESET_DATABASE_TIMEOUT_MS),
+    ]);
+    otherTabDatabase.close();
+    await expect(queuedOpen).resolves.toBeDefined();
+  });
 });

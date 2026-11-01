@@ -13,6 +13,7 @@ import {
   openDatabase,
   Operation,
   SITE_NAME,
+  withFinalizerAsync,
 } from "@esposter/shared";
 
 export const DATABASE_NAME = SITE_NAME.toLowerCase();
@@ -62,24 +63,34 @@ export const openIndexedDb = () => {
 // The database is deleted by name whether or not this page has opened it: a page load that never opened it holds
 // No connection, and the rows an earlier page load wrote are still there to be served to the next reader
 export const resetIndexedDb = async () => {
-  await releaseDatabase();
-  const deleteRequest = indexedDB.deleteDatabase(DATABASE_NAME);
-  await new Promise<void>((resolve, reject) => {
-    // Another tab's open connection holds the delete back until it closes, and a tab from older code never closes it, so
-    // The wait is bounded and an expired one fails the delete
-    const deleteTimeout = setTimeout(() => {
-      reject(new InvalidOperationError(Operation.Delete, DATABASE_NAME, "still blocked by another open connection"));
-    }, RESET_DATABASE_TIMEOUT_MS);
+  // Another tab's open connection holds the delete back until it closes, and a tab from older code never closes it, so
+  // The wait is bounded and an expired one fails the delete. The bound covers the release too, since this tab's own
+  // Open can be queued behind that same delete and never settle
+  const { promise: expiry, reject: expire } = Promise.withResolvers<never>();
+  const expiryTimeout = setTimeout(() => {
+    expire(new InvalidOperationError(Operation.Delete, DATABASE_NAME, "still blocked by another open connection"));
+  }, RESET_DATABASE_TIMEOUT_MS);
+  await withFinalizerAsync(
+    async () => {
+      await Promise.race([releaseDatabase(), expiry]);
+      await Promise.race([deleteDatabase(), expiry]);
+    },
+    () => {
+      clearTimeout(expiryTimeout);
+    },
+  );
+};
+
+const deleteDatabase = () =>
+  new Promise<void>((resolve, reject) => {
+    const deleteRequest = indexedDB.deleteDatabase(DATABASE_NAME);
     deleteRequest.onsuccess = () => {
-      clearTimeout(deleteTimeout);
       resolve();
     };
     deleteRequest.onerror = () => {
-      clearTimeout(deleteTimeout);
       reject(
         deleteRequest.error ??
           new InvalidOperationError(Operation.Delete, indexedDB.deleteDatabase.name, DATABASE_NAME),
       );
     };
   });
-};
