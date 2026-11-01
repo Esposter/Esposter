@@ -49,7 +49,7 @@ describe(createRepentanceAndRedemptionPassiveModule, () => {
     ]);
   });
 
-  test("a Stellar Glimmer reaction the wielder triggers raises its ATK by the rank's percentage for the rank's seconds", () => {
+  test("a Stellar Glimmer reaction the wielder triggers raises its Elemental Mastery and its ATK by the rank's amounts for the rank's seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
