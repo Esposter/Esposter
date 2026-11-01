@@ -17,6 +17,14 @@ describe(fightImaginariumStage, () => {
   };
   const cast = Array.from({ length: IMAGINARIUM_PERFORMER_COUNT }, () => member);
   const progress = { defeats: 3, defeatTarget: 3, elapsedMilliseconds: 0, timeLimitMilliseconds: 1000 };
+  const fought = cast.map(() => ({
+    burstEnergyCost: 40,
+    energy: 40,
+    healthShare: 1,
+    isSpecialGuest: false,
+    maxHealth: 1000,
+    vigor: IMAGINARIUM_VIGOR - 1,
+  }));
 
   test("a stage is fought by four performers with Vigor", () => {
     expect.hasAssertions();
@@ -25,14 +33,7 @@ describe(fightImaginariumStage, () => {
     expect(fightImaginariumStage(cast, progress, false)).toStrictEqual({
       isFought: true,
       outcome: DomainChallengeOutcome.Cleared,
-      principalCast: cast.map(() => ({
-        burstEnergyCost: 40,
-        energy: 40,
-        healthShare: 1,
-        isSpecialGuest: false,
-        maxHealth: 1000,
-        vigor: IMAGINARIUM_VIGOR - 1,
-      })),
+      principalCast: fought,
     });
   });
 
@@ -53,14 +54,7 @@ describe(fightImaginariumStage, () => {
     expect(fightImaginariumStage(cast, { ...progress, defeats: 1 }, true)).toStrictEqual({
       isFought: true,
       outcome: DomainChallengeOutcome.Wiped,
-      principalCast: cast.map(() => ({
-        burstEnergyCost: 40,
-        energy: 40,
-        healthShare: 1,
-        isSpecialGuest: false,
-        maxHealth: 1000,
-        vigor: IMAGINARIUM_VIGOR - 1,
-      })),
+      principalCast: fought,
     });
   });
 });
