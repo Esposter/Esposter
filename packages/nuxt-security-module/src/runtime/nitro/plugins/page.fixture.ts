@@ -5,6 +5,7 @@ import type { H3Event } from "nitro/h3";
 import type { NitroAppPlugin } from "nitro/types";
 
 import { XFrameOptions } from "#src/models/XFrameOptions";
+import { NONCE_PLACEHOLDER } from "#src/runtime/constants";
 
 // A rendered docs page, the shape the app's SSR emits: a head of stylesheets, preloads, entry scripts and an inline
 // State script, then a body of nested sections with their own inline scripts. Built from its shape so every bench reads
@@ -59,7 +60,7 @@ export const PAGE_CONTENT_SECURITY_POLICY: ContentSecurityPolicy = {
   "frame-ancestors": ["'none'"],
   "img-src": ["'self'", "data:"],
   "object-src": ["'none'"],
-  "script-src": ["'self'", "'nonce-{{nonce}}'", "'strict-dynamic'"],
+  "script-src": ["'self'", NONCE_PLACEHOLDER, "'strict-dynamic'"],
   "style-src": ["'self'", "'unsafe-inline'"],
 };
 

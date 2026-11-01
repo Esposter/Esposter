@@ -16,7 +16,8 @@ import { H3Event } from "nitro/h3";
 import { describe, test } from "vitest";
 
 const DEV_SERVER_URL = "http://localhost:3000";
-const REQUEST_URL = "http://localhost:3000/docs/section-1";
+const REQUEST_URL = `${DEV_SERVER_URL}/docs/section-1`;
+const RUN_OPTIONS = { ...BENCHMARK_RUN_OPTIONS, iterations: 2000, warmupIterations: 200 };
 
 // The handlers module.ts registers for these options, in its order. Each sits behind the option that enables it, so a
 // Disabled feature adds nothing to the chain. Basic auth is left out: it is registered only with credentials, which
@@ -54,7 +55,7 @@ describe("server middleware chain", () => {
     await bench.compare(
       bench("native — creating the event alone", () => new H3Event(new Request(REQUEST_URL))),
       bench("a request through the app's chain", () => runServerChain(chain)),
-      { ...BENCHMARK_RUN_OPTIONS, iterations: 2000, warmupIterations: 200 },
+      RUN_OPTIONS,
     );
   });
 
@@ -64,7 +65,7 @@ describe("server middleware chain", () => {
     await bench.compare(
       bench("native — creating the event alone", () => new H3Event(new Request(REQUEST_URL))),
       bench("a request through a chain with most features off", () => runServerChain(chain)),
-      { ...BENCHMARK_RUN_OPTIONS, iterations: 2000, warmupIterations: 200 },
+      RUN_OPTIONS,
     );
   });
 });

@@ -1,5 +1,7 @@
 import type { ModuleOptions } from "#src/models/ModuleOptions";
 
+const REQUEST_SIZE_LIMITER = { maxRequestSizeInBytes: 2_000_000, maxUploadFileRequestInBytes: 10_000_000 };
+
 // The app's security options as its configuration file states them. Its environment-derived origins are placeholders of
 // The same shape, so the bench reads the same directive counts without the app's environment. Only the options that
 // Decide the server chain and the route rules it matches are here. The rest take the module's defaults
@@ -38,7 +40,7 @@ export const APP_SECURITY_OPTIONS: Partial<ModuleOptions> = {
     permissionsPolicy: { camera: ["self"], "display-capture": ["self"], fullscreen: ["self"], microphone: ["self"] },
   },
   rateLimiter: false,
-  requestSizeLimiter: { maxRequestSizeInBytes: 2_000_000, maxUploadFileRequestInBytes: 10_000_000 },
+  requestSizeLimiter: REQUEST_SIZE_LIMITER,
 };
 
 // The same app with most features off: only the request size limit stays on, so a chain of one handler is measured
@@ -48,5 +50,5 @@ export const MINIMAL_SECURITY_OPTIONS: Partial<ModuleOptions> = {
   corsHandler: false,
   csrf: false,
   rateLimiter: false,
-  requestSizeLimiter: { maxRequestSizeInBytes: 2_000_000, maxUploadFileRequestInBytes: 10_000_000 },
+  requestSizeLimiter: REQUEST_SIZE_LIMITER,
 };
