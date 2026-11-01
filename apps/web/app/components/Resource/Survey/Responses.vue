@@ -97,7 +97,9 @@ await refreshResponses();
             v-model:sort-by="sortBy"
             :columns="tableColumns"
             :get-item-title="({ id }) => `response ${id}`"
-            :get-row-props="(item) => getContextMenuProps(item.id, () => getActionItems(item.id))"
+            :get-row-props="
+              (item) => getContextMenuProps(item.id, () => actionItemsMap.get(item.id) ?? NO_ACTION_ITEMS)
+            "
             :items
             :items-per-page-options="DATA_TABLE_ITEMS_PER_PAGE_OPTIONS"
             label="Responses"
