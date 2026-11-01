@@ -1,6 +1,8 @@
 {
   "chargedAttack.hits.0.convertedArea": {
-    "cause": "Unclassified",
+    "file": "charge.go",
+    "line": 52,
+    "source": "Gcsim",
     "value": { "angle": 3.490658503988659, "height": 2, "radius": 3.2 }
   },
   "chargedAttack.hits.0.convertedPoiseDamage": { "cause": "Unsourced", "value": 180 },
@@ -85,7 +87,9 @@
   "plungeCollision.element": { "file": "xiao.go", "line": 83, "source": "Gcsim", "value": "Wind" },
   "plunges.high.animationFrames": { "file": "plunge.go", "line": 56, "source": "Gcsim", "value": 66 },
   "plunges.high.hits.0.convertedArea": {
-    "cause": "Unclassified",
+    "file": "plunge.go",
+    "line": 253,
+    "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
   "plunges.high.hits.0.convertedPoiseDamage": { "file": "plunge.go", "line": 229, "source": "Gcsim", "value": 225 },
@@ -93,7 +97,9 @@
   "plunges.low.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 46 },
   "plunges.low.animationFrames": { "file": "plunge.go", "line": 50, "source": "Gcsim", "value": 62 },
   "plunges.low.hits.0.convertedArea": {
-    "cause": "Unclassified",
+    "file": "plunge.go",
+    "line": 170,
+    "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
   },
   "plunges.low.hits.0.convertedPoiseDamage": { "file": "plunge.go", "line": 146, "source": "Gcsim", "value": 150 },

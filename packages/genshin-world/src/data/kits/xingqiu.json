@@ -14,7 +14,9 @@
   "hitFields.rainSwordsTick.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.evilsootherRainscreen.length": { "cause": "Unsourced", "value": 2 },
   "hits.evilsootherRainscreen.0.area": {
-    "cause": "Unclassified",
+    "file": "skill.go",
+    "line": 17,
+    "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.8 }
   },
   "hits.evilsootherRainscreen.0.element": { "file": "skill.go", "line": 42, "source": "Gcsim", "value": "Water" },
@@ -33,7 +35,9 @@
   "hits.evilsootherRainscreen.1.multiplierFactor": { "file": "skill.go", "line": 56, "source": "Gcsim", "value": 1.5 },
   "hits.rainscreen.length": { "cause": "Unsourced", "value": 2 },
   "hits.rainscreen.0.area": {
-    "cause": "Unclassified",
+    "file": "skill.go",
+    "line": 17,
+    "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.8 }
   },
   "hits.rainscreen.0.element": { "file": "skill.go", "line": 42, "source": "Gcsim", "value": "Water" },
