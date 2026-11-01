@@ -349,7 +349,8 @@ There is no client-side hash check: TLS, the immutable keys and the schema parse
 
 ## Open
 
-- [ ] **A book body must be a string when it is written** — no source yet for a runtime check: `scripts/src/services/genshinAssets/archive/readBookBody.ts` line 12 types the body as `string`, so the type holds at compile time, but `scripts/src/services/genshinAssets/archive/buildBookBodyPublication.ts` shows no runtime string check.
+The open check for a book record's runtime check is recorded with its requirement in [the spec](spec.md).
+
 - [ ] **The surfaces' parts carry a palette no reader uses** — no source yet: the surfaces' published record was not read for a palette key; `packages/genshin-world/src/models/windrise/WindriseSurface.ts` is repo code, not game evidence.
 - [ ] **The number of entries the mirror fill reads from the indexes** — no source yet: `packages/genshin-world/src/generated/gameDataLock.json` names 454 object keys, so the lock's objects are a few hundred, and 37 index keys; the entries inside those indexes are in the account's index blobs, not on disk, and no count of them is kept.
 - [ ] **A publish changes a handful of objects** — no source yet: the count a publish changes is printed by its dry run and is not kept in the repository.

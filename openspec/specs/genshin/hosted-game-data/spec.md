@@ -288,4 +288,4 @@ A verification SHALL fetch every object the lock reaches from each account and S
 ## Open
 
 - [ ] **A screen keeps what it showed and logs a later read's failure** — no source yet: only the world's gate and the opening's logging were checked.
-- [ ] **A book record is parsed by its schema before it is published** — no source yet: the book body publication shows no schema parse.
+- [ ] **A book record is parsed by its schema before it is published** — no source yet: the book body publication shows no schema parse, and `scripts/src/services/genshinAssets/archive/readBookBody.ts` types the body as a string, so only the type holds it at compile time.
