@@ -17,9 +17,6 @@ import type { ReputationRequest } from "#src/models/reputation/ReputationRequest
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
-import type { AutoRecoverDwell } from "#src/models/statue/AutoRecoverDwell";
-import type { AutoRecoverSetting } from "#src/models/statue/AutoRecoverSetting";
-import type { RestorativePower } from "#src/models/statue/RestorativePower";
 import type { Trial } from "#src/models/trial/Trial";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
@@ -99,6 +96,7 @@ import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldReputationBounty } from "#src/composables/useWorldReputationBounty";
+import { useWorldRestorativePower } from "#src/composables/useWorldRestorativePower";
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
 import { useWorldScreenBehaviour } from "#src/composables/useWorldScreenBehaviour";
@@ -121,7 +119,6 @@ import { getViewpointInteractableId } from "#src/services/archive/getViewpointIn
 import { checkIsWeeklyBossEntryOpen } from "#src/services/bosses/checkIsWeeklyBossEntryOpen";
 import { EnemyKindMovesMap } from "#src/services/bosses/EnemyKindMovesMap";
 import { startBossMove } from "#src/services/bosses/startBossMove";
-import { TRAVELER_BONUS_QUEST_ID } from "#src/services/character/constants";
 import { getCharacterIdConstellationsMap } from "#src/services/character/getCharacterIdConstellationsMap";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
 import { computeCookingStoveInteractables } from "#src/services/cooking/computeCookingStoveInteractables";
@@ -196,24 +193,12 @@ import { checkIsVendorShopOpen } from "#src/services/shop/checkIsVendorShopOpen"
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { VendorShopTypeMap } from "#src/services/shop/VendorShopTypeMap";
 import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
-import { advanceAutoRecoverDwell } from "#src/services/statue/advanceAutoRecoverDwell";
-import { autoRecoverParty } from "#src/services/statue/autoRecoverParty";
 import { computeStatueInteractables } from "#src/services/statue/computeStatueInteractables";
-import { computeTravelerElement } from "#src/services/statue/computeTravelerElement";
-import {
-  AUTO_RECOVER_THRESHOLD_DEFAULT_PERCENT,
-  AUTO_RECOVER_THRESHOLD_MAXIMUM_PERCENT,
-  OCULUS_MINIMAP_DISTANCE,
-  OCULUS_REGION_ID,
-  OCULUS_TOUCH_RADIUS,
-  RESTORATIVE_POWER_PER_STATUE,
-} from "#src/services/statue/constants";
+import { OCULUS_MINIMAP_DISTANCE, OCULUS_REGION_ID, OCULUS_TOUCH_RADIUS } from "#src/services/statue/constants";
 import { getNearOculusPlaces } from "#src/services/statue/getNearOculusPlaces";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
-import { getTravelerElementBonusLines } from "#src/services/statue/getTravelerElementBonusLines";
 import { readOculusPlaces } from "#src/services/statue/readOculusPlaces";
-import { regenerateRestorativePower } from "#src/services/statue/regenerateRestorativePower";
 import { WORLD_CLOCK_INTERVAL_MS } from "#src/services/time/constants";
 import { getServerNow } from "#src/services/time/getServerNow";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
@@ -670,25 +655,19 @@ const { offerFrostbearingTree } = useWorldOfferings({
   setWallet,
   wallet,
 });
-// The regions whose statues the Traveler resonated with, which give its element and, once Welkin Moon's Homecoming is
-// Done, its bonuses. The unlocked landmarks, which hold the resonances, set them again as they change, below the map
-const resonatedRegionIds = shallowRef(getResonatedRegionIds(savedState.unlockedLandmarkIds));
-// The Restorative Power the Statue's Blessing holds, full to the statues resonated with. The save holds no pool, so it is kept for the session
-const restorativePower = shallowRef<RestorativePower>({
-  amount: RESTORATIVE_POWER_PER_STATUE * resonatedRegionIds.value.length,
-  changedAt: getWorldNow(),
+// The Traveler's resonated regions, Restorative Power and auto-recover, and the element and bonuses they give it
+const {
+  autoRecoverSetting,
+  resonatedRegionIds,
+  restorativePower,
+  stepAutoRecover,
+  travelerBonusLines,
+  travelerElement,
+} = useWorldRestorativePower({
+  finishedMainQuestIds,
+  getWorldNow,
+  unlockedLandmarkIds: savedState.unlockedLandmarkIds,
 });
-// Auto-recover as the Blessing sets it, off at its starting threshold, and the stand by a statue's base it runs after its
-// Dwell. Kept for the session as the pool is, since the save holds neither
-const autoRecoverSetting = shallowRef<AutoRecoverSetting>({
-  isOn: false,
-  thresholdPercent: AUTO_RECOVER_THRESHOLD_DEFAULT_PERCENT,
-});
-let autoRecoverDwell: AutoRecoverDwell = { isRecovered: false, seconds: 0 };
-const travelerElement = computed(() => computeTravelerElement(resonatedRegionIds.value));
-const travelerBonusLines = computed(() =>
-  getTravelerElementBonusLines(resonatedRegionIds.value, finishedMainQuestIds.value.has(TRAVELER_BONUS_QUEST_ID)),
-);
 // The bonus lines the Spiral Abyss's chamber gives the whole party, held here as the combat and the chamber both read them
 const abyssBonusLines = shallowRef<AttributeLine[]>([]);
 // The party, the characters, the enemies and the kit's effects, which a defeat places drops among and a team's fall revives
@@ -1754,24 +1733,16 @@ useWorldSaveSync({
             const interactable = readInteraction(inputState, context.delta);
             const touchedOculus = findTouchedOculus();
             if (touchedOculus) collectOculus(OCULUS_REGION_ID, touchedOculus);
-            // Auto-recover runs once a stand by a statue's base reaches its dwell, with the switch on
             const isNearStatue = interactionPrompts.interactables.some(
               ({ id, kind }) =>
                 kind === InteractionKind.Activate && unlockedLandmarkIds.has(id) && getStatueRegionId(id) !== undefined,
             );
-            const autoRecoverStep = advanceAutoRecoverDwell(
-              autoRecoverDwell,
-              isNearStatue && autoRecoverSetting.isOn,
-              context.delta,
-            );
-            autoRecoverDwell = autoRecoverStep.dwell;
-            if (autoRecoverStep.isDue)
-              restorativePower = autoRecoverParty(
-                party,
-                regenerateRestorativePower(restorativePower, resonatedRegionIds.length, getWorldNow()),
-                autoRecoverSetting.thresholdPercent / AUTO_RECOVER_THRESHOLD_MAXIMUM_PERCENT,
-                (characterId) => getMemberMaxHealth(characterId) ?? 0,
-              );
+            stepAutoRecover({
+              deltaMilliseconds: context.delta,
+              getMaxHealth: getMemberMaxHealth,
+              isNearStatue,
+              party,
+            });
             const worldDrop = worldDrops.find(({ id }) => id === interactable?.id);
             const materialSource = materialSources.find(({ id }) => id === interactable?.id);
             const frostbearingTreePlace = frostbearingTreePlaces.find(({ id }) => id === interactable?.id);
