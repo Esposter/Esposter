@@ -99,9 +99,8 @@ flowchart TD
 
 ## Open
 
-- [ ] **The game day's cap of 400,000 forge points** — no source: the wiki's Forging page is not on disk, so the equivalence of a forge point to Weapon EXP is open, and no cap value is in the dump.
-- [ ] **The game day turns at four in the morning in the game's time zone** — no source: the reset hour is not in the dump, and the wiki's Forging page is not on disk.
-- [ ] **The three refusal lines are the game's own, keyed in `genshin-text`** — no source: their "forgePointNoticeTextMapHash" values were not found in `{data-root}/genshin-dump-backup-6.6/TextMap/TextMapEN.json`.
+The open checks for the cap's reset, the refusal lines and the Adventure EXP past rank sixty are recorded with their requirements in [the spec](spec.md).
+
+- [ ] **A forge point's equivalence to Weapon EXP** — no source: the wiki's Forging page is not on disk.
 - [ ] **Venti's reduce-time of a fifth and Bennett's one-in-five extra copy** — no source: their talent rows (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`, 221 to 224 and 321 to 324) and their depots' proud groups name no forge talent.
-- [ ] **Adventure EXP past rank 60 is paid into the wallet as Mora** — no source: the rank-60 rule is not in the dump, and the wiki's Forging page is not on disk.
 - [ ] **Each four-star weapon is open from the start or once its diagram is learned** — no source: no field of the weapon rows is checked against the diagram-unlock rule.
