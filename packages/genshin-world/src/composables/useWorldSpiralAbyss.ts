@@ -35,13 +35,13 @@ import { getAbyssChamberSeconds } from "#src/services/spiralAbyss/getAbyssChambe
 import { getAbyssCycleKey } from "#src/services/spiralAbyss/getAbyssCycleKey";
 import { getAbyssFloorsOffered } from "#src/services/spiralAbyss/getAbyssFloorsOffered";
 import { readAbyssBenedictionChoices } from "#src/services/spiralAbyss/readAbyssBenedictionChoices";
+import { readAbyssData } from "#src/services/spiralAbyss/readAbyssData";
 import { readAbyssEnemyKinds } from "#src/services/spiralAbyss/readAbyssEnemyKinds";
 import { readAbyssFloorRewards } from "#src/services/spiralAbyss/readAbyssFloorRewards";
 import { readAbyssFloors } from "#src/services/spiralAbyss/readAbyssFloors";
 import { readAbyssPeriods } from "#src/services/spiralAbyss/readAbyssPeriods";
 import { settleAbyssClear } from "#src/services/spiralAbyss/settleAbyssClear";
 import { stepAbyssArena } from "#src/services/spiralAbyss/stepAbyssArena";
-import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
 // A Benediction a Corridor chamber offers before it starts, with the chamber and floor it starts
@@ -50,14 +50,6 @@ interface AbyssPendingChoice {
   choices: AbyssBenedictionChoice[];
   floor: AbyssFloor;
 }
-
-// Reads one piece of the Spiral Abyss's game data once, and names a failed read in the console
-const readAbyssData = <T>(read: () => Promise<T>, onRead: (value: T) => void) => {
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(read).match(onRead, (error) => {
-    console.error(error);
-  });
-};
 
 // The Spiral Abyss on the world: its periods, floors, enemy kinds, Benedictions and rewards read once, a chamber entered in
 // The arena beside the entrance, and the bonus lines the chamber's Benediction gives the party. The arena's camp is fought on

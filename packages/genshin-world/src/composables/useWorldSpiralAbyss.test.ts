@@ -13,7 +13,7 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
+import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { createParty } from "#src/services/party/createParty";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { GAME_TIME_ZONE } from "#src/services/time/constants";
@@ -56,7 +56,7 @@ const OTHER_REWARD_ID = 102;
 const PERIOD_ID = 1;
 const PERIOD_REWARD_GROUP = 2;
 const PRIMOGEM_COUNT = 5;
-const PRIMOGEM_ITEM_ID = 201;
+const PRIMOGEM_ITEM_ID = CurrencyItemIdMap[Currency.Primogem];
 const REWARD_ID = 101;
 const NOW = Temporal.Instant.fromEpochMilliseconds(0);
 const gameWallClock = (instant: Temporal.Instant) =>
