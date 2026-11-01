@@ -2,7 +2,7 @@
 
 ## Why
 
-The Upstream table in `openspec/specs/shared/panzoom/design.md` says each in-scope row is linked to the test that proves it. Five rows now cite one, but the row for `timmywil/panzoom#703` (Incorrect import when compiling with TypeScript 6) is a verdict of "fixed by absence": the package ships no polyfill file and its typings import none. A test cannot prove an absence by asserting it without pinning today's file list, so the row has no proof the rule accepts.
+The Upstream table in `openspec/specs/shared/panzoom/design.md` says each in-scope row is linked to the test that proves it. Forty-nine rows now cite one, but the row for `timmywil/panzoom#703` (Incorrect import when compiling with TypeScript 6) is a verdict of "fixed by absence": the package ships no polyfill file and its typings import none. A test cannot prove an absence by asserting it without pinning today's file list, so the row has no proof the rule accepts.
 
 ## What changes
 
@@ -17,4 +17,4 @@ The Upstream table in `openspec/specs/shared/panzoom/design.md` says each in-sco
 
 ## Out of scope
 
-The five other rows, which now cite the tests that prove them.
+The other forty-nine rows that cite a test, which already prove their own verdicts.
