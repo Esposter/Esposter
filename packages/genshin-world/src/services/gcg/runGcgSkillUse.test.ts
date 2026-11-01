@@ -30,7 +30,7 @@ import { takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-describe("a skill's on-use hooks", () => {
+describe(runGcgSkillUse, () => {
   const SEED = 9;
   const OCEANID_DECK_ID = 2;
   const TUTORIAL_DECK_ID = 1;
@@ -108,7 +108,7 @@ const createDuel = (
   skillModules: GcgEffectNameSkillModuleMap,
 });
 
-describe("a skill's any-side hooks", () => {
+describe(runGcgSkillUse, () => {
   const SKILL_ID = 990_101;
   const SUPPORT_ID = 990_201;
   const DAMAGE_SKILL: GcgSkill = {
@@ -132,15 +132,14 @@ describe("a skill's any-side hooks", () => {
     const duel = createDuel();
     const supportZoneCard = { cardId: SUPPORT_ID, counter: 0, rounds: 0, usages: 0 };
     takeOne(duel.sides, 1).supports.push(supportZoneCard);
+
     expect(runGcgSkillUse({ duel, sideIndex: 0 }, DAMAGE_SKILL)).toBe(true);
-    expect(onAnySkillUsed.mock.calls).toStrictEqual([
-      [
-        { characterIndex: undefined, duel, isPlunge: false, sideIndex: 1, skill: DAMAGE_SKILL, userSideIndex: 0 },
-        DAMAGE_SKILL,
-        supportZoneCard,
-        [{ damageType: Element.Pyro }],
-      ],
-    ]);
+    expect(onAnySkillUsed).toHaveBeenCalledExactlyOnceWith(
+      { characterIndex: undefined, duel, isPlunge: false, sideIndex: 1, skill: DAMAGE_SKILL, userSideIndex: 0 },
+      DAMAGE_SKILL,
+      supportZoneCard,
+      [{ damageType: Element.Pyro }],
+    );
   });
 
   test("should prune a card that an opposing side's skill spends, from the side it is on", () => {
@@ -157,6 +156,7 @@ describe("a skill's any-side hooks", () => {
     );
     const duel = createDuel();
     takeOne(duel.sides, 1).supports.push({ cardId: SUPPORT_ID, counter: 0, rounds: 0, usages: 1 });
+
     expect(runGcgSkillUse({ duel, sideIndex: 0 }, DAMAGE_SKILL)).toBe(true);
     expect(takeOne(duel.sides, 1).supports).toStrictEqual([]);
   });
@@ -169,7 +169,7 @@ const createMaskedXiao = () =>
 // Xiao with Yaksha's Mask: a Physical hit of 2 is dealt as 3 Anemo, and a Plunging Attack's hit 2 more
 const readHp = (duel: GcgDuel) => takeOne(duel.sides, 1).characters.map(({ hp }) => hp);
 
-describe("a Plunging Attack", () => {
+describe(runGcgSkillUse, () => {
   const CHONGYUN_ID = 1104;
   const KABUKI: GcgSkill = {
     costs: [],
@@ -199,6 +199,7 @@ describe("a Plunging Attack", () => {
 
     switchGcgActiveCharacter(duel, 0, 1);
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+
     expect(readHp(duel)).toStrictEqual([5]);
   });
 
@@ -214,6 +215,7 @@ describe("a Plunging Attack", () => {
     );
 
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+
     expect(readHp(duel)).toStrictEqual([7]);
   });
 
@@ -231,6 +233,7 @@ describe("a Plunging Attack", () => {
     switchGcgActiveCharacter(duel, 0, 1);
     runGcgSkillUse({ duel, sideIndex: 0 }, ELEMENTAL_SKILL);
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+
     expect(readHp(duel)).toStrictEqual([4]);
   });
 
@@ -248,6 +251,7 @@ describe("a Plunging Attack", () => {
     switchGcgActiveCharacter(duel, 0, 1);
     duel.round = GCG_ROUND_LIMIT;
     endGcgRound(duel, PLUNGE_RULE);
+
     expect(takeOne(takeOne(duel.sides, 0).characters, 1).isSwitchedIn).toBe(false);
   });
 });

@@ -1,33 +1,14 @@
-import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { createSideState } from "#src/services/gcg/cards/createSideState.test";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { replaceGcgCharacter } from "#src/services/gcg/replaceGcgCharacter";
 import { describe, expect, test } from "vitest";
-
-const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
-  activeIndex: 0,
-  cards: [],
-  characters,
-  deckCardIds: [],
-  dice: [],
-  drawPile: [],
-  hand: [],
-  hasDeclaredEnd: false,
-  hasPrepared: true,
-  hasRolled: true,
-  isReplacementPending: false,
-  onstages: [],
-  summons: [],
-  supports: [],
-  usedCardIds: [],
-  usedSkillIds: [],
-});
 
 const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
   actingSideIndex: 0,

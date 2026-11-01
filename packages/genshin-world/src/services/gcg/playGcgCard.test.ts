@@ -94,8 +94,9 @@ describe(playGcgCard, () => {
     vi.spyOn(GcgCardIdModuleMap, "get").mockReturnValue({ play });
     const duel = createDuel();
     const choice: GcgPlayChoice = { rerollDiceIndices: [[0], [2]] };
+
     expect(playGcgCard(duel, 0, 0, undefined, [], choice)).toBe(GcgActionResult.Done);
-    expect(play.mock.calls).toStrictEqual([[{ duel, sideIndex: 0 }, undefined, choice]]);
+    expect(play).toHaveBeenCalledExactlyOnceWith({ duel, sideIndex: 0 }, undefined, choice);
   });
 
   test("should pass the turn after a combat action is played", () => {
@@ -105,6 +106,7 @@ describe(playGcgCard, () => {
       play: vi.fn<NonNullable<GcgCardModule["play"]>>(),
     });
     const duel = createDuel();
+
     expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
     expect(duel.actingSideIndex).toBe(1);
   });
@@ -113,6 +115,7 @@ describe(playGcgCard, () => {
     expect.hasAssertions();
     vi.spyOn(GcgCardIdModuleMap, "get").mockReturnValue({ play: vi.fn<NonNullable<GcgCardModule["play"]>>() });
     const duel = createDuel();
+
     expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
     expect(duel.actingSideIndex).toBe(0);
   });

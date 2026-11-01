@@ -1,43 +1,21 @@
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
-import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
-import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { MINTY_MEAT_ROLLS_ID, PYRO_SCORPION_ID, SWEEPING_TIME_ID } from "#src/services/gcg/cards/constants";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
+import { createDuel } from "#src/services/gcg/cards/createDuel.test";
 import { mintyMeatRolls } from "#src/services/gcg/cards/mintyMeatRolls";
 import { BURNING_ASSAULT_SKILL, pyroScorpion } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
 import { sweepingTime } from "#src/services/gcg/cards/sweepingTime";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
-import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-
-const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
-
-const createDuel = (attacker: GcgSideState, defender: GcgSideState): GcgDuel => ({
-  actingSideIndex: 0,
-  cardModules: GcgCardIdModuleMap,
-  firstSideIndex: 0,
-  nextFirstSideIndex: 0,
-  outcome: undefined,
-  phase: GcgPhase.Action,
-  random: () => 0,
-  round: 1,
-  rule: TEST_RULE,
-  sides: [attacker, defender],
-  skillModules: GcgEffectNameSkillModuleMap,
-  winnerSideIndex: undefined,
-});
 
 const createSideState = (character: GcgCharacterState, dice: Element[]): GcgSideState => ({
   activeIndex: 0,
@@ -83,7 +61,7 @@ describe(useGcgSkill, () => {
     expect.hasAssertions();
 
     const attacker = createSideState(createPyroCharacter([normalAttack]), [Element.Pyro, Element.Hydro]);
-    const duel = createDuel(attacker, createSideState(createPyroCharacter([]), []));
+    const duel = createDuel([attacker, createSideState(createPyroCharacter([]), [])]);
     const result = useGcgSkill(duel, 0, NORMAL_ATTACK_ID, [0]);
 
     expect({
@@ -100,7 +78,7 @@ describe(useGcgSkill, () => {
     const character = createPyroCharacter([normalAttack]);
     character.isFrozen = true;
     const attacker = createSideState(character, [Element.Pyro]);
-    const duel = createDuel(attacker, createSideState(createPyroCharacter([]), []));
+    const duel = createDuel([attacker, createSideState(createPyroCharacter([]), [])]);
 
     expect({ dice: attacker.dice, result: useGcgSkill(duel, 0, NORMAL_ATTACK_ID, [0]) }).toStrictEqual({
       dice: [Element.Pyro],
@@ -114,7 +92,7 @@ describe(useGcgSkill, () => {
     const character = createPyroCharacter([burst]);
     character.energy = 1;
     const attacker = createSideState(character, []);
-    const duel = createDuel(attacker, createSideState(createPyroCharacter([]), []));
+    const duel = createDuel([attacker, createSideState(createPyroCharacter([]), [])]);
 
     expect(useGcgSkill(duel, 0, BURST_ID, [])).toBe(GcgActionResult.Unpayable);
   });
@@ -127,7 +105,7 @@ describe(useGcgSkill, () => {
     const minty = createGcgZoneCard(MINTY_MEAT_ROLLS_ID, mintyMeatRolls);
     const standby = { ...createPyroCharacter([]), statuses: [minty] };
     const attacker = { ...createSideState(active, [Element.Pyro]), characters: [active, standby] };
-    const duel = createDuel(attacker, createSideState(createPyroCharacter([]), []));
+    const duel = createDuel([attacker, createSideState(createPyroCharacter([]), [])]);
     const usagesBefore = minty.usages;
 
     const result = useGcgSkill(duel, 0, NORMAL_ATTACK_ID, [0]);
@@ -150,7 +128,7 @@ describe(useGcgSkill, () => {
     const sweeping = createGcgZoneCard(SWEEPING_TIME_ID, sweepingTime);
     const standby = { ...createPyroCharacter([]), statuses: [sweeping] };
     const attacker = { ...createSideState(active, [Element.Geo]), characters: [active, standby] };
-    const duel = createDuel(attacker, createSideState(createPyroCharacter([]), []));
+    const duel = createDuel([attacker, createSideState(createPyroCharacter([]), [])]);
 
     const result = useGcgSkill(duel, 0, NORMAL_ATTACK_ID, [0]);
 
@@ -168,7 +146,7 @@ describe(useGcgSkill, () => {
     character.equipments = [createGcgZoneCard(PYRO_SCORPION_ID, pyroScorpion)];
     const attacker = createSideState(character, [Element.Pyro, Element.Pyro]);
     const defender = createSideState(createPyroCharacter([]), []);
-    const duel = createDuel(attacker, defender);
+    const duel = createDuel([attacker, defender]);
 
     const result = useGcgSkill(duel, 0, BURNING_ASSAULT_SKILL.id, [0, 1]);
 

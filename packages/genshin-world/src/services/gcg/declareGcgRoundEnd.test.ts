@@ -54,12 +54,11 @@ describe(declareGcgRoundEnd, () => {
     winnerSideIndex: undefined,
   });
 
-  test("should pass the turn to the side still acting, and make the first to declare the next round's first", async () => {
+  test("should pass the turn to the side still acting, and make the first to declare the next round's first", () => {
     expect.hasAssertions();
 
-    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
     const duel = createDuel();
-    const result = declareGcgRoundEnd(duel, 0, rule);
+    const result = declareGcgRoundEnd(duel, 0, TEST_RULE);
 
     expect({
       actingSideIndex: duel.actingSideIndex,
@@ -76,13 +75,12 @@ describe(declareGcgRoundEnd, () => {
     });
   });
 
-  test("should close the round once both sides declare, drawing two cards each and rolling the next round", async () => {
+  test("should close the round once both sides declare, drawing two cards each and rolling the next round", () => {
     expect.hasAssertions();
 
-    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
     const duel = createDuel();
-    declareGcgRoundEnd(duel, 0, rule);
-    declareGcgRoundEnd(duel, 1, rule);
+    declareGcgRoundEnd(duel, 0, TEST_RULE);
+    declareGcgRoundEnd(duel, 1, TEST_RULE);
 
     expect({
       handSizes: duel.sides.map(({ hand }) => hand.length),
@@ -91,13 +89,12 @@ describe(declareGcgRoundEnd, () => {
     }).toStrictEqual({ handSizes: [HAND_CARD_COUNT + 2, HAND_CARD_COUNT + 2], phase: GcgPhase.Roll, round: 2 });
   });
 
-  test("should concede the duel to both sides once the fifteenth round's end phase closes", async () => {
+  test("should concede the duel to both sides once the fifteenth round's end phase closes", () => {
     expect.hasAssertions();
 
-    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
     const duel = createDuel(GCG_ROUND_LIMIT);
-    declareGcgRoundEnd(duel, 0, rule);
-    declareGcgRoundEnd(duel, 1, rule);
+    declareGcgRoundEnd(duel, 0, TEST_RULE);
+    declareGcgRoundEnd(duel, 1, TEST_RULE);
 
     expect({ outcome: duel.outcome, phase: duel.phase, winnerSideIndex: duel.winnerSideIndex }).toStrictEqual({
       outcome: GcgOutcome.Conceded,

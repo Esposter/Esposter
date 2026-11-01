@@ -18,7 +18,7 @@ import { takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-describe("switching characters under the field's cards", () => {
+describe(switchGcgCharacter, () => {
   const SEED = 5;
   const PLAYER_DECK_ID = 7;
   const DILUC_INDEX = 0;

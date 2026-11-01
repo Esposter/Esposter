@@ -21,6 +21,7 @@ describe(reduceGcgReceivedDamage, () => {
     const zoneCard = createGcgZoneCard(ICE_LOTUS_ID, iceLotus);
     takeOne(duel.sides, 0).onstages.push(zoneCard);
     const damage = reduceGcgReceivedDamage(duel, 0, { damageType: Element.Cryo, value: 3 });
+
     expect(damage).toStrictEqual({ damageType: Element.Cryo, value: 2 });
     expect(zoneCard.usages).toBe(1);
   });
@@ -36,6 +37,7 @@ describe(reduceGcgReceivedDamage, () => {
       createSideState([createGcgCharacterState({ character: { element: Element.Dendro, id: 1203 } })]),
     ]);
     const damage = reduceGcgReceivedDamage(duel, 0, { damageType: Element.Pyro, value: 5 });
+
     expect(damage).toStrictEqual({ damageType: Element.Pyro, value: 2 });
   });
 
@@ -50,6 +52,7 @@ describe(reduceGcgReceivedDamage, () => {
       createSideState([createGcgCharacterState({ character: { element: Element.Dendro, id: 1203 } })]),
     ]);
     const damage = reduceGcgReceivedDamage(duel, 0, { damageType: Element.Pyro, value: 5 });
+
     expect(damage).toStrictEqual({ damageType: Element.Pyro, value: 5 });
   });
 });

@@ -45,9 +45,12 @@ describe(computeGcgPlayerLevel, () => {
     [2000, new Set(["a"]), 4],
     [3000, new Set(["a"]), 4],
     [3000, new Set(["a", "b"]), 5],
-  ])("a lock holds the Player Level at its level until its main quest is done", (exp, completedMainQuestIds, level) => {
-    expect.hasAssertions();
+  ])(
+    "a lock holds the Player Level at its level until its main quest is done: %s EXP, completed quests %s",
+    (exp, completedMainQuestIds, level) => {
+      expect.hasAssertions();
 
-    expect(computeGcgPlayerLevel(exp, PLAYER_LEVELS, true, LOCKS, completedMainQuestIds)).toBe(level);
-  });
+      expect(computeGcgPlayerLevel(exp, PLAYER_LEVELS, true, LOCKS, completedMainQuestIds)).toBe(level);
+    },
+  );
 });
