@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's investigation spots as built — the daily cap of a hundred investigations, after which no more spawn, read as a pure, tested rule. The spots, their places and the artifacts, ingredients, ores or Mora they give are the proposal's still.
+Genshin's investigation spots as built: the daily cap of a hundred investigations, after which no more spawn, read as a pure, tested rule.
 
 ## Requirements
 
