@@ -8,7 +8,7 @@ describe(getProfileEntries, () => {
   const STORY: ProfileStory = { friendshipLevel: 0, hasOtherCondition: false, text: "Story text", title: "Details" };
   const VOICE: ProfileStory = { friendshipLevel: 0, hasOtherCondition: false, text: "Voice text", title: "Greeting" };
 
-  test("the profile tab lists the character's voice-over lines", () => {
+  test("the profile tab lists the character's stories, then its voice-over lines", () => {
     expect.hasAssertions();
     const profileText: ProfileText = { namecardIconName: "", stories: [STORY], voices: [VOICE] };
     expect(getProfileEntries(profileText)).toStrictEqual([STORY, VOICE]);
