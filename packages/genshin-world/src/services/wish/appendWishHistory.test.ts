@@ -20,6 +20,7 @@ describe(appendWishHistory, () => {
     expect.hasAssertions();
 
     const draw = createDraw(now, 10_000_116);
+
     expect(appendWishHistory([], [draw], now)).toStrictEqual([draw]);
   });
 
@@ -29,6 +30,7 @@ describe(appendWishHistory, () => {
     const kept = createDraw(now.subtract({ hours: 24 * 364 }));
     const dropped = createDraw(now.subtract({ hours: 24 * 366 }));
     const draw = createDraw(now);
+
     expect(appendWishHistory([dropped, kept], [draw], now)).toStrictEqual([kept, draw]);
   });
 
@@ -39,7 +41,8 @@ describe(appendWishHistory, () => {
       createDraw(now.add({ seconds: index })),
     );
     const history = appendWishHistory([], draws, now);
+
     expect(history).toHaveLength(MAX_WISH_HISTORY_COUNT);
-    expect(history[0]).toStrictEqual(draws[1]);
+    expect(history).toStrictEqual(draws.slice(1));
   });
 });

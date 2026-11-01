@@ -4,14 +4,11 @@ import type { WishPity } from "#src/models/wish/WishPity";
 
 import { WishItemKind } from "#src/models/wish/WishItemKind";
 import { BEGINNERS_GUARANTEED_WISH } from "#src/services/wish/constants";
+import { createRandom } from "#src/services/wish/createRandom.test";
 import { pullWish } from "#src/services/wish/pullWish";
 import { BannerKind } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
-const createRandom = (values: number[]): (() => number) => {
-  let index = 0;
-  return () => values[index++] ?? 0;
-};
 const createItem = (id: number, kind: WishItemKind, rarity: number): WishItem => ({ id, kind, name: "", rarity });
 
 describe(pullWish, () => {
@@ -55,8 +52,8 @@ describe(pullWish, () => {
     expect.hasAssertions();
 
     expect(
-      pullWish(createBanner(BannerKind.Standard), { ...pity, fiveStarCount: 73 }, createRandom([roll])).result.item,
-    ).toBe(item);
+      pullWish(createBanner(BannerKind.Standard), { ...pity, fiveStarCount: 73 }, createRandom([roll])).result,
+    ).toStrictEqual({ isCapturingRadiance: false, item });
   });
 
   test("draws a five-star at hard pity and passes the four-star guarantee on to the next wish", () => {
@@ -66,8 +63,11 @@ describe(pullWish, () => {
     const random = createRandom([0.99, 0, 0, 0.99]);
     const fiveStarPull = pullWish(banner, { ...pity, fiveStarCount: 89, fourStarCount: 9 }, random);
 
-    expect(fiveStarPull.result.item).toBe(fiveStar);
-    expect(pullWish(banner, fiveStarPull.pity, random).result.item).toBe(fourStar);
+    expect(fiveStarPull.result).toStrictEqual({ isCapturingRadiance: false, item: fiveStar });
+    expect(pullWish(banner, fiveStarPull.pity, random).result).toStrictEqual({
+      isCapturingRadiance: false,
+      item: fourStar,
+    });
   });
 
   test("guarantees a featured four-star after a miss", () => {
@@ -76,11 +76,12 @@ describe(pullWish, () => {
     const banner = createBanner(BannerKind.CharacterEvent);
     const { pity: missedPity, result } = pullWish(banner, { ...pity, fourStarCount: 9 }, createRandom([0.5, 0.99]));
 
-    expect(result.item).toBe(fourStar);
-    expect(missedPity.isFourStarGuaranteed).toBe(true);
-    expect(pullWish(banner, { ...missedPity, fourStarCount: 9 }, createRandom([0.5])).result.item).toBe(
-      featuredFourStar,
-    );
+    expect(result).toStrictEqual({ isCapturingRadiance: false, item: fourStar });
+    expect(missedPity).toStrictEqual({ ...pity, fiveStarCount: 1, isFourStarGuaranteed: true, wishCount: 1 });
+    expect(pullWish(banner, { ...missedPity, fourStarCount: 9 }, createRandom([0.5])).result).toStrictEqual({
+      isCapturingRadiance: false,
+      item: featuredFourStar,
+    });
   });
 
   test("draws the beginners' featured four-star on its eighth wish", () => {
@@ -91,8 +92,8 @@ describe(pullWish, () => {
         createBanner(BannerKind.Beginners),
         { ...pity, wishCount: BEGINNERS_GUARANTEED_WISH - 1 },
         createRandom([0.99]),
-      ).result.item,
-    ).toBe(featuredFourStar);
+      ).result,
+    ).toStrictEqual({ isCapturingRadiance: false, item: featuredFourStar });
   });
 
   test("noelle is drawn only on the eighth beginners' wish", () => {
@@ -102,10 +103,14 @@ describe(pullWish, () => {
     let currentPity = pity;
     for (let wish = 1; wish < BEGINNERS_GUARANTEED_WISH; wish++) {
       const { pity: nextPity, result } = pullWish(createBanner(BannerKind.Beginners), currentPity, () => 0.03);
-      expect(result.item).toBe(fourStar);
+
+      expect(result).toStrictEqual({ isCapturingRadiance: false, item: fourStar });
       currentPity = nextPity;
     }
 
-    expect(pullWish(createBanner(BannerKind.Beginners), currentPity, () => 0.03).result.item).toBe(featuredFourStar);
+    expect(pullWish(createBanner(BannerKind.Beginners), currentPity, () => 0.03).result).toStrictEqual({
+      isCapturingRadiance: false,
+      item: featuredFourStar,
+    });
   });
 });

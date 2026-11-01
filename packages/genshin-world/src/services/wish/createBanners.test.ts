@@ -42,6 +42,7 @@ describe(createBanners, () => {
     const banners = createBanners(statTables, {}, [event]);
     const eventBanner = takeOne(banners, 1);
     const standardBanner = takeOne(banners, 2);
+
     expect(eventBanner.fiveStars).toStrictEqual(standardBanner.fiveStars);
     expect(eventBanner.fourStars).toStrictEqual(standardBanner.fourStars);
     expect(eventBanner.threeStars).toStrictEqual(standardBanner.threeStars);
@@ -51,6 +52,7 @@ describe(createBanners, () => {
     expect.hasAssertions();
 
     const eventBanner = takeOne(createBanners(statTables, {}, [event]), 1);
+
     expect(eventBanner.id).toBe(event.id);
     expect(eventBanner.kind).toBe(BannerKind.CharacterEvent);
     expect(eventBanner.featuredFiveStars.map(({ id }) => id)).toStrictEqual([LIMITED_FEATURED_CHARACTER_ID]);
@@ -62,6 +64,7 @@ describe(createBanners, () => {
     const second: WishScheduleEvent = { ...event, id: "Second Event", kindNumber: 2 };
     const banners = createBanners(statTables, {}, [event, second]);
     const characterBanners = banners.filter(({ kind }) => kind === BannerKind.CharacterEvent);
+
     expect(characterBanners.map(({ id, kindNumber }) => ({ id, kindNumber }))).toStrictEqual([
       { id: event.id, kindNumber: 1 },
       { id: second.id, kindNumber: 2 },
@@ -73,6 +76,7 @@ describe(createBanners, () => {
 
     const featuredWeaponId = takeOne(STANDARD_WISH_WEAPON_IDS);
     const eventBanner = takeOne(createBanners(statTables, {}, [{ ...event, fiveStarIds: [featuredWeaponId] }]), 1);
+
     expect(eventBanner.featuredFiveStars).toStrictEqual([
       { id: featuredWeaponId, kind: WishItemKind.Weapon, name: "", rarity: 5 },
     ]);

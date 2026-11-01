@@ -4,14 +4,11 @@ import type { WishPity } from "#src/models/wish/WishPity";
 
 import { WishItemKind } from "#src/models/wish/WishItemKind";
 import { CAPTURING_RADIANCE_LOSS_LIMIT, FATE_POINT_LIMIT } from "#src/services/wish/constants";
+import { createRandom } from "#src/services/wish/createRandom.test";
 import { pullFiveStar } from "#src/services/wish/pullFiveStar";
 import { BannerKind } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
-const createRandom = (values: number[]): (() => number) => {
-  let index = 0;
-  return () => values[index++] ?? 0;
-};
 const createItem = (id: number, kind: WishItemKind): WishItem => ({ id, kind, name: "", rarity: 5 });
 
 describe(pullFiveStar, () => {
