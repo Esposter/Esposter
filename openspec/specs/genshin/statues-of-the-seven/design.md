@@ -56,9 +56,8 @@ flowchart TD
 
 ## Open
 
+The checks of the cap, the pool and the healing are the [spec's](spec.md) open items.
+
 - [ ] **A region's statues stand for its Archon and level together as Oculi are offered to them, as the game does** — no source yet: the wiki's Statue of The Seven page is not in the genshin-wiki cache.
 - [ ] **The Mondstadt levels take one short of the 66 Anemoculi the wiki counts** — no source yet: the wiki's Oculus page is not in the genshin-wiki cache, so the 66 is unchecked.
-- [ ] **The maximum stamina stops at 240** — no source yet: the wiki's Statue of The Seven page is not in the cache, and no dump table read holds the cap.
-- [ ] **The Restorative Power holds 5,000 for each unlocked statue and refills 1% of its maximum every 15 seconds** — no source yet: the wiki's page is not in the cache, and no dump table read holds these numbers.
-- [ ] **A click heals a tenth of a member's Max HP, and auto-recover revives the fallen at 35% of their HP** — no source yet: the wiki's Statue of The Seven page is not in the cache.
 - [ ] **The pool also counts each unlocked Statue of the New Moon** — no source yet: the wiki's Statue of The Seven page is not in the cache.
