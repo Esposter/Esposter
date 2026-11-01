@@ -1,10 +1,7 @@
-import type { ElementalSight } from "#src/models/sight/ElementalSight";
-
 import { checkIsInSightReach } from "#src/services/elementalSight/checkIsInSightReach";
 import { SIGHT_REACH } from "#src/services/elementalSight/constants";
+import { createSight } from "#src/services/elementalSight/createSight.test";
 import { describe, expect, test } from "vitest";
-
-const createSight = (spreadSeconds: number): ElementalSight => ({ isOn: true, origin: { x: 0, z: 0 }, spreadSeconds });
 
 describe(checkIsInSightReach, () => {
   test("a point is in reach within the range the sight has spread to, and out of it beyond", () => {
