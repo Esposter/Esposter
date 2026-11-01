@@ -1,6 +1,6 @@
 ## Purpose
 
-The official Teyvat Interactive Map's chests, fitted into each region's slice of the game data by their kind: the five tiers from Common to Remarkable, and the buried and sealed places that carry no tier. Only ground chests are placed. Opening a Common, Exquisite or Precious chest pays its Primogems and Mora once and pours its drops out where it stands; locks, digging, seals and the other tiers wait on the proposal's later steps.
+The official Teyvat Interactive Map's chests, fitted into each region's slice of the game data by their kind: the five tiers from Common to Remarkable, and the buried and sealed places that carry no tier. Only ground chests are placed. Opening a Common, Exquisite, Luxurious, Precious or Remarkable chest pays its Primogems and Mora once and pours its drops out where it stands; a Buried or Sealed place stays unopened.
 
 ## Requirements
 
@@ -26,9 +26,9 @@ The map's chests SHALL be placed on the ground only, and every other chest point
 - **WHEN** the chests are placed
 - **THEN** no chest of the seven kinds is placed for it
 
-### Requirement: Opening a Common, Exquisite or Precious chest
+### Requirement: Opening a Common, Exquisite, Luxurious, Precious or Remarkable chest
 
-Opening a Common, Exquisite or Precious chest SHALL pay its Primogems and Mora once, and a second opening SHALL pay nothing.
+Opening a Common, Exquisite, Luxurious, Precious or Remarkable chest SHALL pay its Primogems and Mora once, and a second opening SHALL pay nothing.
 
 #### Scenario: Opening a Common chest pays its rolled rewards and pours out its drops
 
@@ -43,19 +43,19 @@ Opening a Common, Exquisite or Precious chest SHALL pay its Primogems and Mora o
 - **WHEN** the player opens it again
 - **THEN** the wallet gains nothing
 
-### Requirement: A chest of a kind with no reward entry
+### Requirement: A Buried or Sealed place
 
-A chest of a kind with no reward entry SHALL stay unopened.
-
-#### Scenario: A Luxurious chest does not open
-
-- **GIVEN** a player stands in reach of a Luxurious chest
-- **WHEN** the player presses F on the chest
-- **THEN** the chest does not open and nothing is paid
+A Buried or Sealed place SHALL stay unopened.
 
 #### Scenario: A buried place offers no opening
 
 - **GIVEN** a player stands at a buried place
+- **WHEN** the player looks for something to open
+- **THEN** no opening is offered there
+
+#### Scenario: A sealed place offers no opening
+
+- **GIVEN** a player stands at a sealed place
 - **WHEN** the player looks for something to open
 - **THEN** no opening is offered there
 
