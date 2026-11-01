@@ -3,7 +3,7 @@ import type { KitOverlay } from "#src/models/shared/KitOverlay";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
-import { GCSIM_CONFIG_FILE } from "#src/services/genshinAssets/kits/constants";
+import { GCSIM_CHARACTERS_PATH, GCSIM_CONFIG_FILE } from "#src/services/genshinAssets/kits/constants";
 import { TALENT_GROUP_ID_MAP } from "#src/services/genshinAssets/kits/constants.test";
 import { createBoxReach } from "#src/services/genshinAssets/kits/gcsim/createBoxReach";
 import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/createTargetedHitArea";
@@ -110,7 +110,7 @@ describe("readGcsimCitedCandidates", () => {
     )?.[0];
     expect(candidate?.value).toBe(90);
     expect(candidate?.provenance).toStrictEqual({
-      file: "internal/characters/aino/asc.go",
+      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/asc.go`,
       line: 4,
       source: KitSource.Gcsim,
     });
@@ -126,7 +126,7 @@ describe("readGcsimCitedCandidates", () => {
     )?.[0];
     expect(candidate?.value).toBe(2);
     expect(candidate?.provenance).toStrictEqual({
-      file: "internal/characters/aino/durability.go",
+      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/durability.go`,
       line: 5,
       source: KitSource.Gcsim,
     });
@@ -158,7 +158,7 @@ describe("readGcsimCitedCandidates", () => {
     )?.[0];
     expect(candidate?.value).toStrictEqual([10, 15, 20]);
     expect(candidate?.provenance).toStrictEqual({
-      file: "internal/characters/aino/loop.go",
+      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/loop.go`,
       line: 5,
       source: KitSource.Gcsim,
     });
@@ -208,7 +208,7 @@ describe("readGcsimCitedCandidates", () => {
     )?.[0];
     expect(candidate?.value).toStrictEqual({ angle, height: 2, radius: 8 });
     expect(candidate?.provenance).toStrictEqual({
-      file: "internal/characters/aino/area.go",
+      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/area.go`,
       line: 4,
       source: KitSource.Gcsim,
     });
@@ -245,7 +245,7 @@ describe("readGcsimCitedCandidates", () => {
     )?.[0];
     expect(candidate?.value).toBe(145);
     expect(candidate?.provenance).toStrictEqual({
-      file: "internal/characters/aino/queue.go",
+      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/queue.go`,
       line: 5,
       source: KitSource.Gcsim,
     });
@@ -325,7 +325,7 @@ describe("readGcsimCitedCandidates", () => {
     )?.[0];
     expect(candidate?.value).toStrictEqual(Element.Cryo);
     expect(candidate?.provenance).toStrictEqual({
-      file: "internal/characters/aino/fields.go",
+      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/fields.go`,
       line: 5,
       source: KitSource.Gcsim,
     });
@@ -574,7 +574,7 @@ describe("readGcsimCitedCandidates", () => {
     )?.[0];
     expect(candidate?.value).toBe(60);
     expect(candidate?.provenance).toStrictEqual({
-      file: "internal/characters/aino/icd.go",
+      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/icd.go`,
       line: 4,
       source: KitSource.Gcsim,
     });
@@ -590,7 +590,7 @@ describe("readGcsimCitedCandidates", () => {
     )?.[0];
     expect(candidate?.value).toBe(50);
     expect(candidate?.provenance).toStrictEqual({
-      file: "internal/characters/aino/queued.go",
+      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/queued.go`,
       line: 5,
       source: KitSource.Gcsim,
     });
@@ -661,7 +661,7 @@ describe("readGcsimCitedCandidates", () => {
     )?.[0];
     expect(candidate?.value).toBe(320 / 60);
     expect(candidate?.provenance).toStrictEqual({
-      file: "internal/characters/aino/status.go",
+      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/status.go`,
       line: 4,
       source: KitSource.Gcsim,
     });
