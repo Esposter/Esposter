@@ -24,11 +24,10 @@ describe(readGcsimHoldCooldowns, () => {
     "	c.SetCDWithDelay(action.ActionSkill, c.a4CD(c.a1(cd)), cdDelay)",
     "}",
   ].join("\n");
+  const constantMap = new Map<string, GoConstant>();
 
   test("reads the cooldown each case of the switch sets the local the cooldown call passes, in frames", () => {
     expect.hasAssertions();
-
-    const constantMap = new Map<string, GoConstant>();
 
     expect(readGcsimHoldCooldowns([{ path: "skill.go", source: SKILL_SOURCE }], constantMap)).toStrictEqual([
       { file: "skill.go", frames: 450, line: 8 },
@@ -39,7 +38,6 @@ describe(readGcsimHoldCooldowns, () => {
   test("gives none where the cooldown call passes a literal, or a local no case of a switch sets", () => {
     expect.hasAssertions();
 
-    const constantMap = new Map<string, GoConstant>();
     const literalSource = SKILL_SOURCE.replace(
       "c.SetCDWithDelay(action.ActionSkill, c.a4CD(c.a1(cd)), cdDelay)",
       "c.SetCD(action.ActionSkill, 600)",
@@ -53,7 +51,6 @@ describe(readGcsimHoldCooldowns, () => {
   test("gives none where the switch that sets the local sits in an earlier function than the cooldown call", () => {
     expect.hasAssertions();
 
-    const constantMap = new Map<string, GoConstant>();
     const source = [
       "package bennett",
       "",
@@ -78,7 +75,6 @@ describe(readGcsimHoldCooldowns, () => {
   test("reads the cooldown a closure's cooldown call passes from the switch in the function the closure is in", () => {
     expect.hasAssertions();
 
-    const constantMap = new Map<string, GoConstant>();
     const closureSource = SKILL_SOURCE.replace(
       "c.SetCDWithDelay(action.ActionSkill, c.a4CD(c.a1(cd)), cdDelay)",
       "c.Core.Tasks.Add(func() {\n\t\tc.SetCDWithDelay(action.ActionSkill, c.a4CD(c.a1(cd)), cdDelay)\n\t}, 1)",
