@@ -179,7 +179,7 @@ A quest's titles and words SHALL come from the game's own text, referenced by it
 
 ### Requirement: The world carries only the quests its inventory lists
 
-The world SHALL carry only the quests `QuestIds` lists, read by their ids from the game's data: the prologue's first two, The Seventh Samurai and the other world quests and series the talks offer, the keeper's Reputation requests, and New Horizons of Adventure, whose finish pays the Mondstadt Shrine of Depths Key.
+The world SHALL carry only the quests its inventory lists, read by their ids from the game's data: the prologue's first two, The Seventh Samurai and the other world quests and series the talks offer, the keeper's Reputation requests, and New Horizons of Adventure, whose finish pays the Mondstadt Shrine of Depths Key.
 
 #### Scenario: Carried quests read
 
@@ -220,4 +220,4 @@ Quest progress SHALL be kept in the save so that a reload resumes the quests in 
 
 ## Open
 
-- [ ] **Xavier offers The Seventh Samurai from the start** — no source yet: the Lua script that starts sub quest 7215401 is not on disk, and the wiki's "The Seventh Samurai" page is not in `{data-root}/cache/genshin-wiki`; the talk that offers it (talk 7215401, NPC 3162) in `{data-root}/genshin-dump-backup-6.6/BinOutput/Quest/72154.json` begins manually once its sub quest 7215401 is at state 2, naming no finished quest, so the claim is not settled by it.
+The source for Xavier's offer of The Seventh Samurai from the start is open with that quest's unlock in [the design's Open list](design.md#open).
