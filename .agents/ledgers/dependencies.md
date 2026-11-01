@@ -90,19 +90,19 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@unocss/nuxt`                          | —                     | Keep — framework | the styling engine's integration                                                                       |
 | `@vite-pwa/nuxt`                        | —                     | Keep — framework | the PWA module                                                                                         |
 | `@vitest/browser`                       | —                     | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
-| `@vitest/browser-playwright`            | —                     | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
+| `@vitest/browser-playwright`            | —                     | Keep — tooling   | the browser provider our browser-mode config imports, at the version vite-plus's peer names            |
 | `@vitest/browser-preview`               | —                     | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
-| `@vitest/coverage-v8`                   | —                     | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
+| `@vitest/coverage-v8`                   | —                     | Keep — tooling   | the coverage provider the root's coverage script runs                                                  |
 | `@vitest/mocker`                        | —                     | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
 | `@vitest/pretty-format`                 | —                     | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
 | `@vitest/snapshot`                      | —                     | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
 | `@vitest/spy`                           | —                     | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
 | `@vitest/utils`                         | —                     | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
-| `@vue-flow/background`                  | —                     | Keep — hold      | held while the flowchart's future is decided (flowchart on the editor core, deferred)                  |
-| `@vue-flow/controls`                    | —                     | Keep — hold      | held while the flowchart's future is decided (flowchart on the editor core, deferred)                  |
+| `@vue-flow/background`                  | —                     | Keep — hold      | held until the flowchart retirement removes it; its future is decided as removal                       |
+| `@vue-flow/controls`                    | —                     | Keep — hold      | held until the flowchart retirement removes it; its future is decided as removal                       |
 | `@vue-flow/core`                        | —                     | Keep — engine    | the flow-diagram engine                                                                                |
-| `@vue-flow/minimap`                     | —                     | Keep — hold      | held while the flowchart's future is decided (flowchart on the editor core, deferred)                  |
-| `@vue-flow/node-resizer`                | —                     | Keep — hold      | held while the flowchart's future is decided (flowchart on the editor core, deferred)                  |
+| `@vue-flow/minimap`                     | —                     | Keep — hold      | held until the flowchart retirement removes it; its future is decided as removal                       |
+| `@vue-flow/node-resizer`                | —                     | Keep — hold      | held until the flowchart retirement removes it; its future is decided as removal                       |
 | `@vue/compiler-core`                    | —                     | Keep — framework | Vue's compiler, read by the app's tooling                                                              |
 | `@vue/test-utils`                       | —                     | Keep — tooling   | component tests                                                                                        |
 | `@vuetify/v0`                           | —                     | Keep — framework | the UI library's headless base, on the stop list for accessibility                                     |
