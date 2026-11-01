@@ -7,8 +7,8 @@ description: Apply when writing or reviewing any Pinia store, or deciding whethe
 
 ## Settled — do not re-propose
 
-- **Destructuring a store's refs** — `const { rooms } = roomStore` is the same syntax as `const { createRoom } = roomStore` and loses reactivity when the name is a ref, so refs come through `storeToRefs`; the dot read a component makes is the half a lint decides (`packages/configuration/eslint/restrictedStoreSyntaxes.js`).
-- **Restoring a whole-list snapshot on a rollback** — `items.value = snapshot` resurrects a row a concurrent delete removed and drops one a subscription delivered mid-flight; a rollback undoes its own write (`references/mutation-actions.md`).
+- **A rule for a ref destructured off a store without `storeToRefs`** — `const { rooms } = roomStore` and `const { createRoom } = roomStore` are the same syntax, and which loses reactivity is a fact about the field's type (`packages/configuration/eslint/restrictedStoreSyntaxes.js`); the dot read a component makes is the decidable half and is banned.
+- **A rule for optimistic rollback correctness** — needs the whole write path in mind.
 
 ## Consuming a Store
 
