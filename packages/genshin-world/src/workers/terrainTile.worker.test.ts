@@ -20,7 +20,7 @@ const regionGrounds = await Promise.all(
   selectLaidGroundKeys(gameDataLockKeys).map((key) => readGameData(GAME_DATA_LOCAL_BASE_URL, key, regionGroundSchema)),
 );
 
-describe("terrainTile.worker", () => {
+describe("terrainTileWorker", () => {
   const postMessage = vi.fn<(message: PlantedTerrainTile, options: StructuredSerializeOptions) => void>();
   // The worker sets its message handler as `self.onmessage`, read off the stubbed global the test gives it
   const worker: {
@@ -72,6 +72,7 @@ describe("terrainTile.worker", () => {
     await receive(tileMessage);
 
     assert.exists(postMessage.mock.lastCall);
+
     expect(postMessage.mock.lastCall[0].positions).toStrictEqual(
       new Float32Array([
         0,
@@ -108,6 +109,7 @@ describe("terrainTile.worker", () => {
     });
 
     assert.exists(postMessage.mock.lastCall);
+
     expect(postMessage.mock.lastCall[0].positions).toStrictEqual(
       new Float32Array([
         0,
