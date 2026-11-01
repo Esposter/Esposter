@@ -1,4 +1,5 @@
 import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
+import type { solveReferenceCamera as baseSolveReferenceCamera } from "#src/services/genshinParity/passes/solveReferenceCamera";
 import type { openWitnessPage as baseOpenWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import type { Page } from "playwright";
 
@@ -9,7 +10,7 @@ import { describe, expect, test, vi } from "vitest";
 
 const { openWitnessPage, solveReferenceCamera } = vi.hoisted(() => ({
   openWitnessPage: vi.fn<typeof baseOpenWitnessPage>(),
-  solveReferenceCamera: vi.fn<() => Promise<{ errors: number[]; names: string[]; pose: number[]; rms: number }>>(),
+  solveReferenceCamera: vi.fn<typeof baseSolveReferenceCamera>(),
 }));
 
 vi.mock(import("#src/services/genshinParity/passes/getCurrentBuildReferenceIds"), () => ({
