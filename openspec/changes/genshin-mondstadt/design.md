@@ -23,15 +23,6 @@ The catalogue holds Mondstadt's areas as the game names them: Starfell Valley, G
 
 1. **The windmill and wall generators**, in `packages/genshin-world/src/services/mondstadt/`, each fitted against its exports when the passes reach its shape.
 
-## Build order
-
-1. **Starfell Valley** beside Galesong Hill's Windrise, growing out of the rendering-style scene: Starfell Lake, Whispering Woods and the road to the city.
-2. **Mondstadt City** on its island: the gate bridge, the walls, the cathedral, the plaza of the Anemo Archon's statue and the windmills. It is matched landmark by landmark.
-3. **Windwail Highland and Springvale**, then **Dawn Winery** and **Galesong Hill**.
-4. **Stormterror's Lair** and **Brightcrown Mountains**.
-5. **Dragonspine**, once snow weather exists.
-6. The remaining areas in the catalogue's order.
-
 ## Reference checklist
 
 References are found for each of these first, published recordings searched before the game is recorded: Windrise's oak and statue, the city gate bridge, the cathedral front, the Anemo Archon statue plaza, a windmill, a Springvale house, Dawn Winery's manor, Stormterror's Lair from the approach, Thousand Winds Temple, Starsnatch Cliff, and Skyfrost Nail from the Entombed City.
