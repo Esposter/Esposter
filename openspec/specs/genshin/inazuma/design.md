@@ -41,5 +41,6 @@ In the [witness](../parity/witness/design.md) of Inazuma City, the post-and-beam
 
 ## Open
 
+The open check for each area's outline is recorded with its requirement in [the spec](spec.md).
+
 - [ ] **The Tenshukaku's tiers are among the meshes named `Area_Dq_Build_`** — no source yet: no mesh name in the witness export is the Tenshukaku, and the cached wiki holds no Tenshukaku page.
-- [ ] **Each area takes the game's own polygon as its outline** — no source yet: the catalogue's Inazuma outlines are not matched here to the game's dumped area polygons.
