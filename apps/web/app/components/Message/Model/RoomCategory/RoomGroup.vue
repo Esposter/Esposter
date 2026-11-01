@@ -50,16 +50,17 @@ const getCategoryItems = (categoryId: RoomCategoryInMessage["id"]): Item[] => [
     title: "Delete category",
   },
 ];
+// The header's right-click and its overflow button open the same actions, built once per change of category
+const categoryItems = computed(() => (category ? getCategoryItems(category.id) : []));
+const headerAttrs = computed(() =>
+  category ? getContextMenuProps(category.id, () => categoryItems.value) : undefined,
+);
 </script>
 
 <template>
   <div>
     <!-- A right-click on the header opens the same actions its overflow button does -->
-    <UiCollapsible
-      v-if="category"
-      v-model="isOpen"
-      :header-attrs="getContextMenuProps(category.id, () => getCategoryItems(category.id))"
-    >
+    <UiCollapsible v-if="category" v-model="isOpen" :header-attrs="headerAttrs">
       <template #title>
         <span text-sm text-muted flex-1 min-w-0 truncate uppercase>{{ category.name }}</span>
       </template>
@@ -67,7 +68,7 @@ const getCategoryItems = (categoryId: RoomCategoryInMessage["id"]): Item[] => [
         <span :class="REORDER_HANDLE_CLASS" aria-hidden="true" text-muted flex cursor-grab>
           <UiIcon :meaning="UiIconMeaning.Drag" />
         </span>
-        <UiOverflowMenu :items="getCategoryItems(category.id)" :label="`${category.name} actions`" />
+        <UiOverflowMenu :items="categoryItems" :label="`${category.name} actions`" />
       </template>
       <MessageModelRoomListItem v-for="room of rooms" :key="room.id" :room />
     </UiCollapsible>

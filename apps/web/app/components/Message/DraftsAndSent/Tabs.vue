@@ -13,17 +13,17 @@ const scheduledMessageJobStore = useScheduledMessageJobStore();
 const { scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
 const sentMessageStore = useSentMessageStore();
 const { sentMessageCount } = storeToRefs(sentMessageStore);
-const counts = computed(() => ({
-  [DraftsAndSentTab.Drafts]: draftItems.value.length,
-  [DraftsAndSentTab.Scheduled]: scheduledMessageJobCount.value,
-  [DraftsAndSentTab.Sent]: sentMessageCount.value,
-}));
-const items = computed<UiTabItem<DraftsAndSentTab>[]>(() =>
-  Array.from(DraftsAndSentTabs, (value) => {
+const items = computed<UiTabItem<DraftsAndSentTab>[]>(() => {
+  const counts = {
+    [DraftsAndSentTab.Drafts]: draftItems.value.length,
+    [DraftsAndSentTab.Scheduled]: scheduledMessageJobCount.value,
+    [DraftsAndSentTab.Sent]: sentMessageCount.value,
+  };
+  return Array.from(DraftsAndSentTabs, (value) => {
     const { icon, title } = DraftsAndSentTabMetadataMap[value];
-    return { count: counts.value[value] || undefined, icon, title, value };
-  }),
-);
+    return { count: counts[value] || undefined, icon, title, value };
+  });
+});
 </script>
 
 <template>

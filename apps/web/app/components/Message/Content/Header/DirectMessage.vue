@@ -40,18 +40,13 @@ const isLeaveOpen = ref(false);
         </template>
         <div w="[min(18rem,80dvw)]" flex flex-col>
           <p text-sm text-muted px-2>Participants</p>
-          <div v-for="{ id, image, name } of participants" :key="id" ui-row>
-            <UiItemContent :image :title="name">
-              <template v-if="isOwner" #append>
-                <UiIconButton
-                  :label="`Remove ${name}`"
-                  :meaning="UiIconMeaning.Remove"
-                  :variant="UiButtonVariant.Quiet"
-                  @click="removingParticipantId = id"
-                />
-              </template>
-            </UiItemContent>
-          </div>
+          <MessageContentHeaderDirectMessageParticipant
+            v-for="participant of participants"
+            :key="participant.id"
+            :is-owner="isOwner"
+            :participant
+            @remove="removingParticipantId = participant.id"
+          />
           <UiButton v-if="!isOwner" :variant="UiButtonVariant.Danger" @click="isLeaveOpen = true">
             <UiIcon :meaning="UiIconMeaning.Leave" />
             Leave Group

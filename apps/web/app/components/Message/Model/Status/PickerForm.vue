@@ -34,6 +34,7 @@ const statusItems = SelectableStatusDefinitionList.map(({ label, status, subtitl
   title: label,
   value: status,
 }));
+const selectedStatuses = computed(() => [editedStatus.value.status]);
 const isValid = ref(true);
 const { executeMutation } = useMutation();
 const save = async () => {
@@ -75,7 +76,7 @@ const save = async () => {
     <h2 ui-heading>Set status</h2>
     <!-- Picking the status already chosen saves at once, so setting only a status is one click -->
     <UiList
-      :model-value="[editedStatus.status]"
+      :model-value="selectedStatuses"
       :items="statusItems"
       label="Status"
       @select="

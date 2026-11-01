@@ -22,18 +22,9 @@ const { invitableRooms } = useInvitableRooms();
 const roomItems = computed<UiListItem<string>[]>(() =>
   invitableRooms.value.map(({ id, image, name }) => ({ image, title: name, value: id })),
 );
-// The room's own link goes to the friend's direct message, the same send the room's invite dialog makes
-const inviteToRoom = async (roomId: string) => {
-  const room = invitableRooms.value.find(({ id }) => id === roomId);
-  if (!room || !friend.value) return;
-
-  const { id: friendId } = friend.value;
-  isOpen.value = false;
-  const inviteLink = await getUsableInviteLink(room);
-  if (inviteLink) await inviteFriend(friendId, inviteLink);
-};
 </script>
 
+<!-- The room's own link goes to the friend's direct message, the same send the room's invite dialog makes -->
 <template>
   <StyledDialog v-if="friend" v-model="isOpen" :title="`Invite ${friend.name} to a room`">
     <UiList
@@ -42,7 +33,17 @@ const inviteToRoom = async (roomId: string) => {
       :items="roomItems"
       max-h="[40dvh]"
       of-y-auto
-      @select="(roomId) => inviteToRoom(roomId)"
+      @select="
+        async (roomId) => {
+          const room = invitableRooms.find(({ id }) => id === roomId);
+          if (!room || !friend) return;
+
+          const { id: friendId } = friend;
+          isOpen = false;
+          const inviteLink = await getUsableInviteLink(room);
+          if (inviteLink) await inviteFriend(friendId, inviteLink);
+        }
+      "
     />
     <UiEmptyState
       v-else

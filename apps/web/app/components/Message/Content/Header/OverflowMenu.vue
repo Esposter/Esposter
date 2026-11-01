@@ -19,7 +19,6 @@ const { currentRoomId } = storeToRefs(roomStore);
 const userToRoomStore = useUserToRoomStore();
 const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
 const { myUserToRoom } = storeToRefs(userToRoomStore);
-const notificationType = computed(() => myUserToRoom.value?.notificationType ?? NotificationType.DirectMessage);
 const { executeMutation } = useMutation();
 const updateNotificationType = async (newNotificationType: NotificationType) => {
   const roomId = currentRoomId.value;
@@ -48,7 +47,7 @@ const items = computed<Item[]>(() => [
   { meaning: UiIconMeaning.Pin, onClick: () => openRightDrawer(RightDrawer.Pinned), title: "Pinned Messages" },
   ...Object.values(NotificationType).map<Item>((type, index) => ({
     isGroupStart: index === 0,
-    isSelected: type === notificationType.value,
+    isSelected: type === (myUserToRoom.value?.notificationType ?? NotificationType.DirectMessage),
     meaning: NotificationTypeMeaningMap[type],
     onClick: () => updateNotificationType(type),
     title: NotificationTypeLabelMap[type],
