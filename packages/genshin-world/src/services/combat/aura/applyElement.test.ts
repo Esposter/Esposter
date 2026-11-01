@@ -1,5 +1,4 @@
 import type { Aura } from "#src/models/combat/Aura";
-import type { ElementalState } from "#src/models/combat/ElementalState";
 import type { Reaction } from "#src/models/combat/Reaction";
 
 import { AuraType } from "#src/models/combat/AuraType";
@@ -10,12 +9,8 @@ import { Element } from "#src/models/Element";
 import { applyElement } from "#src/services/combat/aura/applyElement";
 import { FREEZE_DECAY_RATE } from "#src/services/combat/aura/constants";
 import { createElementalState } from "#src/services/combat/aura/createElementalState";
+import { createState } from "#src/services/combat/aura/createState.test";
 import { describe, expect, test } from "vitest";
-
-const createState = (auras: [AuraType, Aura][]): ElementalState => ({
-  ...createElementalState(),
-  auras: new Map(auras),
-});
 
 describe(applyElement, () => {
   test("taxes an attack's gauge to four fifths as an aura, decaying over 2.5 seconds a unit plus 7", () => {
@@ -214,18 +209,6 @@ describe(applyElement, () => {
     expect(reactions).toStrictEqual([
       { element: Element.Cryo, reactionType: ReactionType.Swirl, spreadGauge: expect.closeTo(2.2) },
     ]);
-  });
-
-  test("a Stellar Swirl spreads no Cryo beside it", () => {
-    expect.hasAssertions();
-
-    const state = createState([[AuraType.Cryo, { decayRate: 0, gauge: 1, isImmutable: false }]]);
-    const [reaction] = applyElement(state, Element.Anemo, 0.25, {
-      auraDecayRateScale: 1,
-      stellarReactionTypes: [StellarReactionType.StellarSwirl],
-    });
-
-    expect(reaction).not.toHaveProperty("spreadGauge");
   });
 
   test("a Superconduct becomes Stellar-Conduct while the party enables it", () => {

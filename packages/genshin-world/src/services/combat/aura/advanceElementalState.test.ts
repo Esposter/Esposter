@@ -1,4 +1,3 @@
-import type { Aura } from "#src/models/combat/Aura";
 import type { ElementalState } from "#src/models/combat/ElementalState";
 import type { Reaction } from "#src/models/combat/Reaction";
 
@@ -10,12 +9,8 @@ import { advanceElementalState } from "#src/services/combat/aura/advanceElementa
 import { applyElement } from "#src/services/combat/aura/applyElement";
 import { FREEZE_DECAY_RATE } from "#src/services/combat/aura/constants";
 import { createElementalState } from "#src/services/combat/aura/createElementalState";
+import { createState } from "#src/services/combat/aura/createState.test";
 import { describe, expect, test } from "vitest";
-
-const createState = (auras: [AuraType, Aura][]): ElementalState => ({
-  ...createElementalState(),
-  auras: new Map(auras),
-});
 
 describe(advanceElementalState, () => {
   const stepSeconds = 1 / 60;
