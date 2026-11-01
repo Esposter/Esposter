@@ -118,7 +118,7 @@ From constellation 1, Hu Tao's charged attacks SHALL cost no stamina while a sta
 
 ### Requirement: Second constellation adds to Blood Blossom's DMG
 
-From constellation 2, each Blood Blossom tick SHALL add 10% of Hu Tao's Max HP as it was when the effect was applied.
+From constellation 2, each Blood Blossom tick SHALL add 10% of Hu Tao's Max HP as it was when the effect was applied, the game's reading where gcsim differs, as [the design](design.md) sets out.
 
 #### Scenario: Blood Blossom's tick adds 10% of the Max HP Hu Tao had when it was applied, not the Max HP she has as it ticks
 
@@ -141,9 +141,3 @@ From constellation 2, Spirit Soother SHALL apply Blood Blossom to each enemy its
 - **GIVEN** Hu Tao is at constellation 1
 - **WHEN** Spirit Soother's hit strikes an enemy
 - **THEN** no Blood Blossom is applied to that enemy
-
-## Open
-
-- [ ] **Guide to Afterlife's HP cost never takes Hu Tao below 1 HP** — no source yet: no game text or gcsim record of that floor is checked here.
-- [ ] **Hu Tao's plunge frames and poise stay provisional until a recording settles them** — no source yet: no recording of her plunges is on disk.
-- [ ] **Blood Blossom's constellation 2 tick adds 10% of the Max HP Hu Tao had when it was applied** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go`: adds 10% of MaxHP at the tick (line 140).
