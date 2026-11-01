@@ -6,7 +6,7 @@
 // Back into the same handler, which exits at once rather than writing again
 let isExiting = false;
 
-export const exitQuietly = (reason: unknown) => {
+export const exitQuietly = (reason: unknown): void => {
   if (isExiting) process.exit(0);
 
   isExiting = true;
