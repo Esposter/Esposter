@@ -1,35 +1,29 @@
-import type { Commission } from "#src/models/commission/Commission";
 import type { CommissionDay } from "#src/models/commission/CommissionDay";
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 
-import { CommissionFinishKind } from "#src/models/commission/CommissionFinishKind";
 import { CommissionKind } from "#src/models/commission/CommissionKind";
 import { computeEncounterPointStorage } from "#src/services/commission/computeEncounterPointStorage";
+import { createCommission } from "#src/services/commission/createCommission.test";
 import { describe, expect, test } from "vitest";
-
-const createCommission = (id: number): Commission => ({
-  centerPosition: "",
-  enterDistance: 0,
-  exitDistance: 0,
-  finishKind: CommissionFinishKind.Monster,
-  finishProgress: 1,
-  id,
-  kind: CommissionKind.Quest,
-  nameTextId: "",
-  newGroupIds: [],
-  oldGroupIds: [],
-  poolId: 0,
-  preferredRegion: "",
-  questId: "",
-  rewardTier: 0,
-});
 
 describe(computeEncounterPointStorage, () => {
   const COMMISSION_IDS = [1, 2, 3, 4];
   const slice: CommissionSlice = {
     bonuses: [],
     rewardTiers: [],
-    tasks: COMMISSION_IDS.map((id) => createCommission(id)),
+    tasks: COMMISSION_IDS.map((id) =>
+      createCommission(id, {
+        centerPosition: "",
+        enterDistance: 0,
+        exitDistance: 0,
+        finishProgress: 1,
+        kind: CommissionKind.Quest,
+        nameTextId: "",
+        poolId: 0,
+        preferredRegion: "",
+        rewardTier: 0,
+      }),
+    ),
   };
   // The day with its first `finishedCount` commissions finished
   const createDay = (finishedCount: number): CommissionDay => ({

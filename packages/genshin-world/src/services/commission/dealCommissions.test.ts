@@ -1,36 +1,16 @@
-import type { Commission } from "#src/models/commission/Commission";
-
-import { CommissionFinishKind } from "#src/models/commission/CommissionFinishKind";
-import { CommissionKind } from "#src/models/commission/CommissionKind";
 import { COMMISSION_UNLOCK_RANK } from "#src/services/commission/constants";
+import { createCommission } from "#src/services/commission/createCommission.test";
 import { dealCommissions } from "#src/services/commission/dealCommissions";
 import { describe, expect, test } from "vitest";
-
-const createCommission = (id: number, centerPosition: string): Commission => ({
-  centerPosition,
-  enterDistance: 40,
-  exitDistance: 60,
-  finishKind: CommissionFinishKind.Monster,
-  finishProgress: 8,
-  id,
-  kind: CommissionKind.Scene,
-  nameTextId: "1",
-  newGroupIds: [],
-  oldGroupIds: [],
-  poolId: 1001,
-  preferredRegion: "mondstadt",
-  questId: "",
-  rewardTier: 2,
-});
 
 describe(dealCommissions, () => {
   const RANK = 12;
   const commissions = [
-    createCommission(1, "Event_1"),
-    createCommission(2, "Event_2"),
-    createCommission(3, "Event_3"),
-    createCommission(4, "Event_4"),
-    createCommission(5, "Event_5"),
+    createCommission(1),
+    createCommission(2),
+    createCommission(3),
+    createCommission(4),
+    createCommission(5),
   ];
 
   test("should deal four distinct commissions at the rank it is dealt at", () => {

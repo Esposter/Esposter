@@ -1,5 +1,4 @@
 import type { Character } from "#src/models/character/Character";
-import type { Commission } from "#src/models/commission/Commission";
 import type { CommissionDay } from "#src/models/commission/CommissionDay";
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
@@ -9,13 +8,12 @@ import type { RewardItem } from "#src/models/reward/RewardItem";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { CombatTalent } from "#src/models/character/CombatTalent";
-import { CommissionFinishKind } from "#src/models/commission/CommissionFinishKind";
-import { CommissionKind } from "#src/models/commission/CommissionKind";
 import { Currency } from "#src/models/inventory/Currency";
 import { MaterialType } from "#src/models/inventory/MaterialType";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { claimCommissionWithPoints } from "#src/services/commission/claimCommissionWithPoints";
+import { createCommission } from "#src/services/commission/createCommission.test";
 import { createEmptyBands } from "#src/services/commission/createEmptyBands.test";
 import { minimumRoll } from "#src/services/commission/minimumRoll.test";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
@@ -68,26 +66,12 @@ describe(claimCommissionWithPoints, () => {
   moraBands[2] = [{ itemId: MORA_ITEM_ID, maxCount: 20, minCount: MORA_REWARD }];
   const itemBands = createEmptyBands();
   itemBands[2] = [{ itemId: ITEM_ID, maxCount: 1, minCount: 1 }];
-  const createCommission = (id: number): Commission => ({
-    centerPosition: `Event_${id}`,
-    enterDistance: 40,
-    exitDistance: 60,
-    finishKind: CommissionFinishKind.Monster,
-    finishProgress: FINISH_PROGRESS,
-    id,
-    kind: CommissionKind.Scene,
-    nameTextId: NAME_TEXT_ID,
-    newGroupIds: [],
-    oldGroupIds: [],
-    poolId: 1001,
-    preferredRegion: "mondstadt",
-    questId: "",
-    rewardTier: REWARD_TIER,
-  });
   const createSlice = (bands: RewardItem[][]): CommissionSlice => ({
     bonuses: createEmptyBands(),
     rewardTiers: [{ bands, tier: REWARD_TIER }],
-    tasks: [createCommission(1)],
+    tasks: [
+      createCommission(1, { finishProgress: FINISH_PROGRESS, nameTextId: NAME_TEXT_ID, rewardTier: REWARD_TIER }),
+    ],
   });
   const createDay = (count: number): CommissionDay => ({
     claimedCommissionIds: [],

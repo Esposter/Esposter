@@ -1,10 +1,8 @@
-import type { Commission } from "#src/models/commission/Commission";
 import type { CommissionDay } from "#src/models/commission/CommissionDay";
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 
-import { CommissionFinishKind } from "#src/models/commission/CommissionFinishKind";
-import { CommissionKind } from "#src/models/commission/CommissionKind";
 import { claimCommissionReward } from "#src/services/commission/claimCommissionReward";
+import { createCommission } from "#src/services/commission/createCommission.test";
 import { createEmptyBands } from "#src/services/commission/createEmptyBands.test";
 import { minimumRoll } from "#src/services/commission/minimumRoll.test";
 import { describe, expect, test } from "vitest";
@@ -20,26 +18,10 @@ describe(claimCommissionReward, () => {
   // Rank 12 is the third band, so the band's items name the one a claim paid from
   const rewardBands = createEmptyBands();
   rewardBands[2] = [{ itemId: MORA_ID, maxCount: 20, minCount: 10 }];
-  const createCommission = (id: number): Commission => ({
-    centerPosition: `Event_${id}`,
-    enterDistance: 40,
-    exitDistance: 60,
-    finishKind: CommissionFinishKind.Monster,
-    finishProgress: FINISH_PROGRESS,
-    id,
-    kind: CommissionKind.Scene,
-    nameTextId: "1",
-    newGroupIds: [],
-    oldGroupIds: [],
-    poolId: 1001,
-    preferredRegion: "mondstadt",
-    questId: "",
-    rewardTier: REWARD_TIER,
-  });
   const slice: CommissionSlice = {
     bonuses: createEmptyBands(),
     rewardTiers: [{ bands: rewardBands, tier: REWARD_TIER }],
-    tasks: [1, 2, 3, 4].map((id) => createCommission(id)),
+    tasks: [1, 2, 3, 4].map((id) => createCommission(id, { finishProgress: FINISH_PROGRESS, rewardTier: REWARD_TIER })),
   };
   const createProgress = (commissionId: number, count: number) => ({ commissionId, count, dealtRank: DEALT_RANK });
 
