@@ -22,7 +22,6 @@ interface TableRow {
 const { data, visual } = defineProps<Props>();
 // The categories and series are the chart's own, so a table over a binding reads the same numbers the chart draws
 const categories = computed(() => (data.options?.xaxis?.categories ?? []).map(String));
-const querySeries = computed(() => visual.dataset?.query.series ?? []);
 const rows = computed<TableRow[]>(() =>
   categories.value.map((category, index) => ({
     category,
@@ -53,7 +52,7 @@ const columnKeyTotalMap = computed(
     new Map<string, string>([
       [DASHBOARD_TABLE_CATEGORY_KEY, "Total"],
       ...data.series.flatMap((_series, index): [string, string][] => {
-        const aggregation = querySeries.value[index]?.aggregation;
+        const aggregation = visual.dataset?.query.series[index]?.aggregation;
         if (aggregation !== DatasetAggregationType.Count && aggregation !== DatasetAggregationType.Sum) return [];
 
         const total = rows.value.reduce((sum, row) => sum + takeOne(row.values, index), 0);

@@ -32,7 +32,7 @@ const readSources = async (providerType: DatasetProviderType): Promise<{ id: str
 // Can land after the one picked now: listed under it, a survey would be offered as a sheet, and picking it would bind
 // That id under the type on screen
 const typeSourceItemsMap = ref(new Map<DatasetProviderType, UiSelectItem<string>[]>());
-const sourceItems = computed(() => typeSourceItemsMap.value.get(type.value) ?? []);
+const sourceSelectItems = computed(() => prependNoneSelectItem(typeSourceItemsMap.value.get(type.value) ?? []));
 
 watchImmediate([() => session.value.data, type], async ([newSession, newType]) => {
   if (!newSession) return;
@@ -60,7 +60,7 @@ watchImmediate([() => session.value.data, type], async ([newSession, newType]) =
     <div flex flex-col gap-1>
       <span text-sm text-muted>Source</span>
       <UiSelect
-        :items="prependNoneSelectItem(sourceItems)"
+        :items="sourceSelectItems"
         label="Source"
         :model-value="modelValue?.id ?? ''"
         @update:model-value="modelValue = $event ? { id: $event, type } : undefined"

@@ -2,7 +2,6 @@
 import type { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { DATA_EXPORT_MUTATION_KEY } from "@/services/user/constants";
 import { DataExportOmittedItems } from "@/services/user/settings/DataExportOmittedItems";
 import { DataExportStatus } from "@esposter/db-schema";
 
@@ -12,7 +11,6 @@ interface Props {
 
 const { section } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
-const { checkIsPending, executeMutation } = useMutation();
 const {
   data: dataExport,
   error,
@@ -34,21 +32,7 @@ const isDownloadable = computed(
 <template>
   <UserSettingsSection :section>
     <template #actions>
-      <UiButton
-        v-if="!isInFlight && !isDownloadable"
-        :is-pending="checkIsPending(DATA_EXPORT_MUTATION_KEY)"
-        @click="
-          executeMutation(() => $trpc.user.requestDataExport.mutate(), {
-            key: DATA_EXPORT_MUTATION_KEY,
-            onSuccess: async () => {
-              await refresh();
-            },
-          })
-        "
-      >
-        <UiIcon :meaning="UiIconMeaning.Create" />
-        Request export
-      </UiButton>
+      <UserDataExportCardRequestButton v-if="!isInFlight && !isDownloadable" :refresh />
     </template>
     <p text-muted>The archive holds your own data, and leaves out:</p>
     <ul flex flex-col>
