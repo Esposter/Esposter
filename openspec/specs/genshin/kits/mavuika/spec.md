@@ -1,6 +1,6 @@
 ## Purpose
 
-Mavuika's kit as built outside her Nightsoul Blessing, and her skill's press entering the blessing with its points:
+Mavuika's kit as built outside her Nightsoul Blessing, and her skill's press entering the blessing with its points.
 
 ## Requirements
 
