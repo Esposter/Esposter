@@ -1,11 +1,11 @@
 {
-  "chargedAttackStamina": { "cause": "Unclassified", "value": 0 },
+  "chargedAttackStamina": { "cause": "Unsourced", "value": 0 },
   "hitFields.hymnOfEternalRestLunarBloom.multiplier": {
     "source": "Gcsim",
     "value": { "index": 2, "proudSkillGroupId": 11932 }
   },
   "hitFields.hymnOfEternalRestLunarBloom.scalingAttribute": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": "FIGHT_PROP_ELEMENT_MASTERY"
   },
   "hits.frostgroveSanctuaryTicks.length": { "file": "skill.go", "line": 19, "source": "Gcsim", "value": 8 },
@@ -97,8 +97,8 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11932 }
   },
-  "moonsignBenediction.lunarReactionTypes.length": { "cause": "Unclassified", "value": 1 },
-  "moonsignBenediction.lunarReactionTypes.0": { "cause": "Unclassified", "value": "LunarBloom" },
+  "moonsignBenediction.lunarReactionTypes.length": { "cause": "Unsourced", "value": 1 },
+  "moonsignBenediction.lunarReactionTypes.0": { "cause": "Unsourced", "value": "LunarBloom" },
   "parameters.frostgroveSanctuaryResistanceDecrease": {
     "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 11932 }
