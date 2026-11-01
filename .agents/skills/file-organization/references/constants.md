@@ -14,4 +14,4 @@ Read when declaring, placing or repeating a constant — a literal a config file
 
 ## One source per value
 
-`KIBIBYTE = 2 ** 10`, with `MEGABYTE = KIBIBYTE ** 2` derived from it — never a bare `1024`/`2 ** 20`.
+**Declare each value once.** A value two files need is one exported constant they both import, and a value another constant derives from is built from that constant: `KIBIBYTE = 2 ** 10`, with `MEGABYTE = KIBIBYTE ** 2` derived from it — never a bare `1024`/`2 ** 20`.
