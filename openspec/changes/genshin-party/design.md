@@ -30,7 +30,7 @@ flowchart TD
 
 ## Scope
 
-**Today:** the party's state and rules, switching on `1` to `4` and a pad's directions in play, a burst on a switch with `Left Alt`, the teams added, renamed and disbanded as rules, Elemental Resonance as a rule with its built effects on the stats, the strikes, the reactions, the skills and the stamina, the deployed team down the [HUD](../../specs/genshin/hud/design.md)'s right, and the [character screen](../../specs/genshin/character-screen/design.md) on `C`.
+**Today:** the [party](../../specs/genshin/party/design.md) page records what is built: its teams, switching and the Resonance effects so far.
 
 **This adds, in order:**
 
