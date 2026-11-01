@@ -2,9 +2,7 @@
 import type { InviteInMessageWithCreator, RoomInMessage } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getInviteLink } from "@/services/message/room/invite/getInviteLink";
-import { useRoomDialogStore } from "@/store/message/room/dialog";
 import { useUserStore } from "@/store/message/user";
 
 interface Props {
@@ -15,8 +13,6 @@ interface Props {
 
 const { invite, isCreator, roomId } = defineProps<Props>();
 const runtimeConfig = useRuntimeConfig();
-const roomDialogStore = useRoomDialogStore();
-const { inviteRoomId } = storeToRefs(roomDialogStore);
 const userStore = useUserStore();
 const { getRoomMemberName } = userStore;
 // The creator is named as the room knows them, and an account with no membership in the room by its own name
@@ -51,13 +47,7 @@ const { countdown, isExpired } = useCountdown(() => invite.expiresAt);
     </div>
     <UiCopyButton :source="getInviteLink(runtimeConfig.public.baseUrl, invite.id)" :variant="UiButtonVariant.Quiet" />
     <!-- Editing replaces the reader's own link, so it is only offered on the row that is theirs -->
-    <UiIconButton
-      v-if="isCreator"
-      label="Edit invite link"
-      :meaning="UiIconMeaning.Edit"
-      :variant="UiButtonVariant.Quiet"
-      @click="inviteRoomId = roomId"
-    />
+    <MessageModelRoomInviteEditButton v-if="isCreator" :room-id="roomId" />
     <MessageModelRoomInviteRevokeButton :id="invite.id" />
   </div>
 </template>

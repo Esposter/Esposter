@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import type { InviteRecipient } from "@/models/message/room/invite/InviteRecipient";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { getInviteRecipients } from "@/services/message/room/invite/getInviteRecipients";
@@ -22,30 +20,12 @@ const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
 const directMessageStore = useDirectMessageStore();
 const { directMessages } = storeToRefs(directMessageStore);
-const {
-  checkIsGroupDirectMessage,
-  checkIsInviteDirectMessagePending,
-  checkIsInviteFriendPending,
-  getDirectMessageParticipants,
-  inviteDirectMessage,
-  inviteFriend,
-} = directMessageStore;
+const { checkIsGroupDirectMessage, getDirectMessageParticipants } = directMessageStore;
 const inviteStore = useInviteStore();
-const { getUsableInviteLink } = inviteStore;
 const { invites } = storeToRefs(inviteStore);
 // A paused room has no usable link to send, and the invite the reader holds is the one the send carries
 const invite = computed(() => invites.value.get(room.id));
 const isInviteSendable = computed(() => Boolean(invite.value) && !room.isInvitePaused);
-// The invite can lapse or run out of uses while the dialog is open, so the send rechecks it and mints a fresh one
-// Before a link is sent
-const sendInvite = async (recipient: InviteRecipient) => {
-  const inviteLink = await getUsableInviteLink(room);
-  if (!inviteLink) return;
-  if (recipient.isGroup) await inviteDirectMessage(recipient.id, inviteLink);
-  else await inviteFriend(recipient.id, inviteLink);
-};
-const checkIsRecipientPending = ({ id, isGroup }: InviteRecipient) =>
-  isGroup ? checkIsInviteDirectMessagePending(id) : checkIsInviteFriendPending(id);
 const searchQuery = ref("");
 const recipients = computed(() =>
   getInviteRecipients(friends.value, directMessages.value, checkIsGroupDirectMessage, getDirectMessageParticipants),
@@ -70,25 +50,14 @@ const { isPending: isFriendsPending } = useQuery(useReadFriends(), {
   <div flex flex-col gap-2>
     <UiTextField v-model="searchQuery" label="Search friends" :type="UiTextFieldType.Search" />
     <ul v-if="recipientItems.length > 0" max-h="[40dvh]" flex flex-col of-y-auto>
-      <MessageFriendsUserListItem
+      <MessageModelRoomInviteFriendListItem
         v-for="recipient of recipientItems"
         :key="recipient.id"
-        :image="recipient.image"
-        :name="recipient.name"
-      >
-        <template #append>
-          <UiButton v-if="memberIdSet.has(recipient.id)" disabled>Joined</UiButton>
-          <UiButton
-            v-else
-            :disabled="!isInviteSendable"
-            :is-pending="checkIsRecipientPending(recipient)"
-            :variant="UiButtonVariant.Accent"
-            @click="sendInvite(recipient)"
-          >
-            Invite
-          </UiButton>
-        </template>
-      </MessageFriendsUserListItem>
+        :is-invite-sendable="isInviteSendable"
+        :member-id-set="memberIdSet"
+        :recipient
+        :room
+      />
     </ul>
     <ul v-else-if="isFriendsPending" aria-busy="true" flex flex-col>
       <li v-for="i in 3" :key="i" ui-row>

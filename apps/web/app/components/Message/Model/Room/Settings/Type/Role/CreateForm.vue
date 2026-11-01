@@ -18,6 +18,7 @@ const { isCreateRolePending } = storeToRefs(roleStore);
 const memberStore = useMemberStore();
 const { members } = storeToRefs(memberStore);
 const name = ref("");
+const isNameValid = computed(() => createRoleInputSchema.shape.name.safeParse(name.value).success);
 const submit = async () => {
   const newName = name.value;
   name.value = "";
@@ -43,7 +44,7 @@ const memberItems = computed(() =>
       min-w-0
     />
     <UiIconButton
-      :disabled="!createRoleInputSchema.shape.name.safeParse(name).success"
+      :disabled="!isNameValid"
       :is-pending="isCreateRolePending"
       label="Create role"
       :meaning="UiIconMeaning.Create"
