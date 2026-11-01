@@ -11,13 +11,12 @@ interface Props {
 }
 
 const { dialogMessage } = defineProps<Props>();
-// A titled message stacks its title above the text, one line height apart
-const lines = computed(() => (dialogMessage.title ? [dialogMessage.title, dialogMessage.text] : [dialogMessage.text]));
 </script>
 
 <template>
+  <!-- A titled message stacks its title above the text, one line height apart -->
   <Text
-    v-for="(line, index) of lines"
+    v-for="(line, index) of dialogMessage.title ? [dialogMessage.title, dialogMessage.text] : [dialogMessage.text]"
     :key="index"
     :configuration="{
       x: 18,

@@ -18,7 +18,6 @@ const { imagePosition, isHiddenWhenEmpty, middleDisplayWidth, scaleY, textures }
 // Each segment begins where the one before it ends. The caps report their own texture's width back through
 // Their models, so the offsets are read off the rendered images rather than declared anywhere
 const middleX = computed(() => imagePosition.x + (leftCapDisplayWidth.value ?? 0));
-const rightCapX = computed(() => middleX.value + (middleDisplayWidth ?? 0));
 </script>
 
 <template>
@@ -38,7 +37,7 @@ const rightCapX = computed(() => middleX.value + (middleDisplayWidth ?? 0));
   />
   <DungeonsUIBarImage
     v-model:display-width="rightCapDisplayWidth"
-    :image-position="{ ...imagePosition, x: rightCapX }"
+    :image-position="{ ...imagePosition, x: middleX + (middleDisplayWidth ?? 0) }"
     :texture="textures[BarOrigin.Right]"
     :scale-y
     :is-hidden-when-empty
