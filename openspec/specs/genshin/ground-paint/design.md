@@ -60,13 +60,11 @@ flowchart TD
 
 ## Open
 
-- [ ] **Genshin's terrain blends its layers per texel in its shader** — no source yet: the extracted shaders in `{data-root}/genshin-parity/extracted/shaders/Shader` spell no terrain, splat or ground in any file, so the game's terrain blend is not on disk.
-- [ ] **The game places its layers by cell, never by slope** — no source yet: no checked game data shows that placement ignores slope.
+The open checks for the blend and the layer placement are recorded with their requirements in [the spec](spec.md).
+
 - [ ] **Every region's tiles hold their cells, so any region's field is fitted the same way** — no source yet: only Windrise's tile cells are checked.
 - [ ] **Only Windrise's tiles have their base maps exported** — no source yet: only Windrise's `_BaseMap` textures are checked, and no listing covers the other regions.
-- [ ] **Grass grows only where the ground is green, and flowers only where the weights are nearly all grass** — no source yet: no vegetation or scatter placement check is cited here.
 - [ ] **Painting costs a fraction of a tile's heights** — no source yet: no timing of the worker is recorded.
 - [ ] **Windrise's field is a grid of 64 nodes a side, tens of kilobytes, with each layer's shares held to the hundredth** — no source yet: no node count, byte size or rounding of the published record is checked.
 - [ ] **The game's layer textures carry detail under a metre** — no source yet: no checked layer texture measurement is cited.
 - [ ] **Each cell in the terrain radius takes the layer its kind paints, and road stone is the path** — no source yet: the TerrainData layers [game data formats](../game-data-formats/design.md) names, not yet read for the road stone's layer; its diffuse id `1269405965739264337` has no hit in `{data-root}/genshin-parity/asset-index/gi-2.6.0.json` or `gi-7.1.0-derived.json`.
-- [ ] **The layer field is fitted from the layer the game's tiles paint each four-metre cell** — no source yet: the four-metre span of a tile is not read from the game, and the cells' layers are not checked against the `BigWorldTerrain_*.bin.dat` tiles.
