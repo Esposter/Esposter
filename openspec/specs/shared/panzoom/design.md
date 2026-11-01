@@ -47,7 +47,7 @@ flowchart TD
 - **Three limits are kept, each with its trigger.**
   - Two instances on siblings under one parent each record that parent's inline styles, so the second records the first's `overflow: hidden` and a destroy in creation order leaves it behind. Destroying in reverse order restores both.
   - A listener that changes the state during a `panzoomzoom` or `panzoompan` dispatch is followed by a `panzoomchange` carrying the detail built before the nested change; `getScale()` is current.
-  - A measure taken while an animated write is still running reads the box the transition has reached, so a second zoom or pan inside the transition's duration lands off by what is left of it. Animated writes are `reset` and `fit` by default; the wheel and the drag never animate.
+  - A measure taken while an animated write is still running reads the box the transition has reached, so a second zoom or pan inside the transition's duration lands off by what is left of it. Animated writes are `reset` and the one-step `zoomIn` and `zoomOut` by default; `fit` writes at the instance's `animate`, off by default, and the wheel and the drag never animate.
 - **One module in `@esposter/shared`.** The module is small enough that every consumer of the package can carry it, and only the viewer calls it today. Rejected: a package of its own, since it holds no engine and no state a second consumer would rebuild.
 
 ## Key files
