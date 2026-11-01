@@ -79,6 +79,7 @@ import { useWorldFriendship } from "#src/composables/useWorldFriendship";
 import { useWorldGadgets } from "#src/composables/useWorldGadgets";
 import { useWorldHomeRealm } from "#src/composables/useWorldHomeRealm";
 import { useWorldHudFrame } from "#src/composables/useWorldHudFrame";
+import { useWorldHudVisibility } from "#src/composables/useWorldHudVisibility";
 import { useWorldInteractables } from "#src/composables/useWorldInteractables";
 import { useWorldInteractionDispatch } from "#src/composables/useWorldInteractionDispatch";
 import { useWorldMail } from "#src/composables/useWorldMail";
@@ -1162,13 +1163,13 @@ const { interactables, interactionPrompts, pressInteractable, readInteraction } 
 const character = useTemplateRef("character");
 // Entering combat returns the camera to its default distance, keeping the look it has
 events.on("enterCombat", () => character.value?.returnToDefaultDistance());
-// Whether the backslash has hidden the HUD, as the game's Hide UI does, apart from the screens that hide it
-const isHudHidden = ref(false);
-// Whether the HUD is drawn over the world, which a reference's held camera, a witness render, the pause and the screens
-// That hide it all keep off
-const isHudShown = computed(
-  () => !cameraPose && !witness && !isPaused && !isHudHidden.value && !screenBehaviour.value.isHudHidden,
-);
+// Whether the HUD is hidden, and drawn over the world
+const { isHudHidden, isHudShown } = useWorldHudVisibility({
+  checkIsCameraHeld: () => cameraPose !== undefined,
+  checkIsPaused: () => isPaused,
+  checkIsWitnessed: () => witness !== null,
+  screenBehaviour,
+});
 const {
   closeShortcutWheel,
   isShortcutWheelOpen,
