@@ -1,11 +1,7 @@
 import { parseLodInfoMap } from "#src/services/genshinAssets/world/parseLodInfoMap";
+import { writeUint32s } from "#src/services/genshinAssets/world/writeUint32s.test";
 import { describe, expect, test } from "vitest";
 
-const writeUint32 = (value: number): Buffer => {
-  const bytes = Buffer.alloc(4);
-  bytes.writeUInt32LE(value);
-  return bytes;
-};
 const writeUint64 = (value: bigint): Buffer => {
   const bytes = Buffer.alloc(8);
   bytes.writeBigUInt64LE(value);
@@ -14,10 +10,10 @@ const writeUint64 = (value: bigint): Buffer => {
 // A record of the table: its key, the world id in its low four bytes, six words, its levels, then its tail
 const writeRecord = (prefabId: number, levels: [number, bigint][]): Buffer =>
   Buffer.concat([
-    writeUint32(prefabId),
+    writeUint32s(prefabId),
     Buffer.alloc(4 + 24),
-    writeUint32(levels.length),
-    ...levels.flatMap(([level, pathHash]) => [writeUint32(level), writeUint64(pathHash), Buffer.alloc(4)]),
+    writeUint32s(levels.length),
+    ...levels.flatMap(([level, pathHash]) => [writeUint32s(level), writeUint64(pathHash), Buffer.alloc(4)]),
     Buffer.alloc(24),
   ]);
 
@@ -27,9 +23,9 @@ describe(parseLodInfoMap, () => {
 
     const bytes = Buffer.concat([
       Buffer.alloc(28),
-      writeUint32(1),
+      writeUint32s(1),
       Buffer.from("a\0\0\0"),
-      writeUint32(2),
+      writeUint32s(2),
       writeRecord(0, []),
       writeRecord(1, [
         [9, 1n],
@@ -45,8 +41,8 @@ describe(parseLodInfoMap, () => {
 
     const bytes = Buffer.concat([
       Buffer.alloc(28),
-      writeUint32(0),
-      writeUint32(1),
+      writeUint32s(0),
+      writeUint32s(1),
       writeRecord(0, []),
       Buffer.alloc(1),
     ]);
