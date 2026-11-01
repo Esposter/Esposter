@@ -8,6 +8,7 @@ import type { PanzoomZoomOptions } from "#src/models/panzoom/PanzoomZoomOptions"
 export interface Panzoom {
   bind: () => void;
   destroy: () => void;
+  fit: (fitOptions?: PanzoomPanOptions) => PanzoomEventDetail;
   getOptions: () => PanzoomOptions;
   getPan: () => PanzoomPoint;
   getScale: () => number;
