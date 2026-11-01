@@ -53,7 +53,7 @@ describe("genshin-interface components", () => {
 
     // A piece sits in a folder whose parent folder is itself a component, drawn inside that parent and never alone
     const componentPaths = Object.keys(components).filter(
-      (path) => !LAYOUT_COMPONENTS.has(path) && !(path.replace(/\/[^/]+\/Index\.vue$/u, "/Index.vue") in components),
+      (path) => !LAYOUT_COMPONENTS.has(path) && !(path.replace(/\/[^/]+\/Index\.vue$/u, COMPONENT_FILE) in components),
     );
     const fixturePaths = new Set(Object.keys(fixtures).map((path) => path.replace(/\.fixture\.ts$/u, ".vue")));
 
