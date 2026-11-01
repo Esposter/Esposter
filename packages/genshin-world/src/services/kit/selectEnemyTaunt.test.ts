@@ -42,7 +42,7 @@ describe(selectEnemyTaunt, () => {
 
     damageKitTaunt([], taunt, 100);
 
-    expect(stepKitTaunt(taunt)).toBeDefined();
+    expect(stepKitTaunt(taunt)).toStrictEqual({ body: taunt.body, combatant: taunt.combatant, hit: taunt.explosion });
     expect(selectEnemyTaunt(enemy, [taunt])).toBeUndefined();
   });
 });
