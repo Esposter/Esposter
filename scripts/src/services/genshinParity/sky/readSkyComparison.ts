@@ -10,6 +10,7 @@ import { ATMOSPHERE_SPLIT_BLOCK_SIZES } from "#src/services/genshinParity/passes
 import { solveReferenceCamera } from "#src/services/genshinParity/passes/solveReferenceCamera";
 import { LUMINANCE } from "#src/services/genshinParity/shared/constants";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
+import { readPageFunction } from "#src/services/genshinParity/shared/readPageFunction";
 import { readRawRgb } from "#src/services/genshinParity/shared/readRawRgb";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
@@ -49,7 +50,7 @@ export const readSkyComparison = async (
 }> => {
   const camera = ParityReferenceMap[referenceId]?.landmarks
     ? toPageCamera((await solveReferenceCamera(page, referenceId, component)).pose)
-    : await page.evaluate(() => (Reflect.get(window, "getSceneCamera") as () => NonNullable<WitnessView["camera"]>)());
+    : await readPageFunction<NonNullable<WitnessView["camera"]>>(page, "getSceneCamera");
   await setPageWitnessView(page, { camera });
   const { computeClouds, computeElevationCoverage, skyMask, width } = await readCloudSky(page, {
     checkIsScored,

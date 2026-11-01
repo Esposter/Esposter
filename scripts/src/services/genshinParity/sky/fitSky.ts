@@ -1,5 +1,6 @@
 import type { Vector } from "#src/models/shared/Vector";
 
+import { accumulateNormalEquations } from "#src/services/genshinParity/shared/accumulateNormalEquations";
 import { LUMINANCE } from "#src/services/genshinParity/shared/constants";
 import { SKY_GRADIENT_TERMS, SKY_TERMS } from "#src/services/genshinParity/sky/constants";
 import { solveNonNegativeSystem } from "#src/services/recreation/solve/solveNonNegativeSystem";
@@ -27,18 +28,14 @@ export const fitSky = (
 ): { colors: Vector[]; fullResidual: number; kept: number; residual: number } => {
   const termCount = SKY_TERMS.length;
   const solved = ([0, 1, 2] as const).map((channel) => {
-    const normal = Array.from({ length: termCount }, () => Array.from({ length: termCount }, () => 0));
-    const right = Array.from({ length: termCount }, () => 0);
-    for (const { color, slope, weights } of samples) {
-      const emphasis = slope[channel] ** 2;
-      const excess = color[channel] - weights.reduce((sum, weight, term) => sum + weight * (TERM_FLOORS[term] ?? 0), 0);
-      for (let row = 0; row < termCount; row++) {
-        right[row] = (right[row] ?? 0) + emphasis * (weights[row] ?? 0) * excess;
-        const normalRow = normal[row] ?? [];
-        for (let column = 0; column < termCount; column++)
-          normalRow[column] = (normalRow[column] ?? 0) + emphasis * (weights[row] ?? 0) * (weights[column] ?? 0);
-      }
-    }
+    const { gram: normal, right } = accumulateNormalEquations(
+      samples.map(({ color, slope, weights }) => ({
+        row: weights,
+        target: color[channel] - weights.reduce((sum, weight, term) => sum + weight * (TERM_FLOORS[term] ?? 0), 0),
+        weight: slope[channel] ** 2,
+      })),
+      termCount,
+    );
     // A term no pixel weighs (no moon in a day sky) is held at none by a touch of damping
     for (let row = 0; row < termCount; row++) (normal[row] ?? [])[row] = (normal[row]?.[row] ?? 0) + 1e-6;
     return solveNonNegativeSystem(normal, right).map((value, term) => value + (TERM_FLOORS[term] ?? 0));

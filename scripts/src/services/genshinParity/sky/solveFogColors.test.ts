@@ -1,8 +1,9 @@
+import type { Vector } from "#src/models/shared/Vector";
+
 import { solveFogColors } from "#src/services/genshinParity/sky/solveFogColors";
 import { describe, expect, test } from "vitest";
 
 describe(solveFogColors, () => {
-  type Vector = [number, number, number];
   const color: Vector = [0.5, 0.4, 0.3];
   const scatterColor: Vector = [1, 0.6, 0.2];
   const slope: Vector = [1, 1, 1];

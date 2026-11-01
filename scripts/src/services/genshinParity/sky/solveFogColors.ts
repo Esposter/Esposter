@@ -1,5 +1,6 @@
 import type { Vector } from "#src/models/shared/Vector";
 
+import { accumulateNormalEquations } from "#src/services/genshinParity/shared/accumulateNormalEquations";
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { solveLinearSystem } from "#src/services/recreation/solve/solveLinearSystem";
 
@@ -37,17 +38,9 @@ export const solveFogColors = (
     );
     const targets = samples.map(({ lit, opacity, reference }) => reference[channel] - lit[channel] * (1 - opacity));
     const emphases = samples.map(({ slope, weight }) => weight * slope[channel] ** 2);
-    const indices = Array.from({ length: rows[0]?.length ?? 0 }, (_value, index) => index);
-    const normal = indices.map((row) =>
-      indices.map((column) =>
-        rows.reduce(
-          (sum, values, index) => sum + (emphases[index] ?? 0) * (values[row] ?? 0) * (values[column] ?? 0),
-          0,
-        ),
-      ),
-    );
-    const right = indices.map((row) =>
-      rows.reduce((sum, values, index) => sum + (emphases[index] ?? 0) * (values[row] ?? 0) * (targets[index] ?? 0), 0),
+    const { gram: normal, right } = accumulateNormalEquations(
+      rows.map((row, index) => ({ row, target: targets[index] ?? 0, weight: emphases[index] ?? 0 })),
+      rows[0]?.length ?? 0,
     );
     const [own = 0, sunward = own] = solveLinearSystem(normal, right) ?? [];
     return { color: own, scatterColor: sunward };

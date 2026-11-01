@@ -5,6 +5,7 @@ import type { Vector } from "#src/models/shared/Vector";
 
 import { getToneSlope } from "#src/services/genshinParity/display/getToneSlope";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
+import { readPageFunction } from "#src/services/genshinParity/shared/readPageFunction";
 import { readRawRgb } from "#src/services/genshinParity/shared/readRawRgb";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { SAMPLE_STRIDE } from "#src/services/genshinParity/sky/constants";
@@ -27,16 +28,12 @@ export const readSky = async (referenceId: string, witness: DerivedAssetComponen
     async () => {
       const { computeClouds, readLuminance, skyMask, width } = await readCloudSky(page, { checkIsScored, height });
       const clouds = computeClouds(await readLuminance(image));
-      const sky = await page.evaluate(() =>
-        (
-          Reflect.get(window, "getSceneSky") as () => {
-            matrixWorld: number[];
-            moonDirection: Vector;
-            projectionMatrixInverse: number[];
-            sunDirection: Vector;
-          }
-        )(),
-      );
+      const sky = await readPageFunction<{
+        matrixWorld: number[];
+        moonDirection: Vector;
+        projectionMatrixInverse: number[];
+        sunDirection: Vector;
+      }>(page, "getSceneSky");
       const projectionInverse = new Matrix4().fromArray(sky.projectionMatrixInverse);
       const world = new Matrix4().fromArray(sky.matrixWorld);
       const data = await readRawRgb(image, width, height);
@@ -55,7 +52,7 @@ export const readSky = async (referenceId: string, witness: DerivedAssetComponen
           const color = getPixelSceneColor(data, pixel);
           pixels.push({ color, direction: direction.toArray(), pixel, slope: getToneSlope(color) });
         }
-      const bands = await page.evaluate(() => (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)());
+      const bands = await readPageFunction<ReturnType<SetCloudCover>>(page, "setSceneCloudCover");
       await page.evaluate(
         (covers) => (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)(covers),
         Object.fromEntries(bands.map((band) => [band, 0])),

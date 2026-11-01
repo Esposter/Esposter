@@ -2,6 +2,7 @@ import type { Page } from "playwright";
 
 import { blurGrey } from "#src/services/genshinParity/shared/blurGrey";
 import { CLOUD_ELEVATION_BANDS, LUMINANCE } from "#src/services/genshinParity/shared/constants";
+import { readPageFunction } from "#src/services/genshinParity/shared/readPageFunction";
 import { readRawRgb } from "#src/services/genshinParity/shared/readRawRgb";
 import { readWitnessPartTarget } from "#src/services/genshinParity/shared/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
@@ -34,8 +35,9 @@ export const readCloudSky = async (
 }> => {
   await setPageWitnessView(page, {});
   const { part, width } = await readWitnessPartTarget(page);
-  const sceneSky = await page.evaluate(() =>
-    (Reflect.get(window, "getSceneSky") as () => { matrixWorld: number[]; projectionMatrixInverse: number[] })(),
+  const sceneSky = await readPageFunction<{ matrixWorld: number[]; projectionMatrixInverse: number[] }>(
+    page,
+    "getSceneSky",
   );
   const projectionInverse = new Matrix4().fromArray(sceneSky.projectionMatrixInverse);
   const world = new Matrix4().fromArray(sceneSky.matrixWorld);

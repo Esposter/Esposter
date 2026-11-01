@@ -6,6 +6,7 @@ import type { Page } from "playwright";
 import { CLOUDS_WIDTH } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
+import { readPageFunction } from "#src/services/genshinParity/shared/readPageFunction";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { computeSquaredResidual } from "#src/services/genshinParity/sky/computeSquaredResidual";
 import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
@@ -69,7 +70,7 @@ export const solveReferenceCloudCover = async (
         const referenceLuminance = await readLuminance(image);
         // Our sky drawn with no cloud, which each guess's clouds are read against (`computeDrawnClouds`)
         // oxlint-disable-next-line no-await-in-loop -- read on the page just opened
-        const bandNames = await page.evaluate(() => (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)());
+        const bandNames = await readPageFunction<ReturnType<SetCloudCover>>(page, "setSceneCloudCover");
         // oxlint-disable-next-line no-await-in-loop -- as above
         await page.evaluate(
           (clearCovers) => {
@@ -102,8 +103,8 @@ export const solveReferenceCloudCover = async (
       }
       const [first] = skies;
       if (!first) return { heights: {}, references: [], residual: 0 };
-      const bands = await first.page.evaluate(() => (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)());
-      let heights = await first.page.evaluate(() => (Reflect.get(window, "setSceneCloudHeights") as SetCloudHeights)());
+      const bands = await readPageFunction<ReturnType<SetCloudCover>>(first.page, "setSceneCloudCover");
+      let heights = await readPageFunction<ReturnType<SetCloudHeights>>(first.page, "setSceneCloudHeights");
       const toCovers = (logits: readonly number[]): Record<string, number> =>
         Object.fromEntries(bands.map((band, index) => [band, toShare(logits[index] ?? 0)]));
       const toHeights = (point: readonly number[]): Record<string, [number, number]> =>

@@ -1,3 +1,4 @@
+import { accumulateNormalEquations } from "#src/services/genshinParity/shared/accumulateNormalEquations";
 import { computeTerms } from "#src/services/genshinParity/sky/computeTerms";
 import { solveLinearSystem } from "#src/services/recreation/solve/solveLinearSystem";
 
@@ -31,18 +32,14 @@ export const fitClearSky = (
   let coefficients = Array.from({ length: termCount }, () => 0);
   let weights = pixels.map(() => 1);
   for (let iteration = 0; iteration < ITERATION_COUNT; iteration++) {
-    const normal = Array.from({ length: termCount }, () => Array.from({ length: termCount }, () => 0));
-    const vector = Array.from({ length: termCount }, () => 0);
-    for (const [index, { logLuminance, terms }] of pixels.entries()) {
-      const weight = weights[index] ?? 0;
-      for (let row = 0; row < termCount; row++) {
-        const rowTerm = (terms[row] ?? 0) * weight;
-        vector[row] = (vector[row] ?? 0) + rowTerm * logLuminance;
-        const normalRow = normal[row] ?? [];
-        for (let column = 0; column < termCount; column++)
-          normalRow[column] = (normalRow[column] ?? 0) + rowTerm * (terms[column] ?? 0);
-      }
-    }
+    const { gram: normal, right: vector } = accumulateNormalEquations(
+      pixels.map(({ logLuminance, terms }, index) => ({
+        row: terms,
+        target: logLuminance,
+        weight: weights[index] ?? 0,
+      })),
+      termCount,
+    );
     const solved = solveLinearSystem(normal, vector) ?? coefficients;
     coefficients = solved;
     weights = pixels.map(({ logLuminance, terms }) => {
