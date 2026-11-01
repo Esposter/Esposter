@@ -157,12 +157,6 @@ const purchases = computed(() => {
     },
   ];
 });
-// The open banner's Fate bought: the wallet takes its Primogems and gains the Fate
-const buyFate = () => {
-  const kind = bannerKind.value;
-  if (!kind) return;
-  wallet.value = buyWishFate(wallet.value, BannerKindFateMap[kind]);
-};
 const currencies = computed(() =>
   [Currency.Primogem, ...(bannerKind.value ? [BannerKindFateMap[bannerKind.value]] : [])].map((currency) => ({
     id: currency,
@@ -185,14 +179,10 @@ const fatePoints = computed(() =>
     : [],
 );
 const banner = computed(() => banners.value.find(({ id }) => id === bannerId.value));
-// The trial the open banner's featured character has, which the card's button opens, and the game's words the button is labelled with
+// The trial the open banner's featured character has, which the card's button opens
 const bannerTrial = computed(() =>
   banner.value ? findBannerTrial(trials, banner.value.featuredFiveStars) : undefined,
 );
-const trialLabel = computed(() => (bannerTrial.value ? gameText[GameTextKey.WishGoToTrial] : ""));
-const openTrial = () => {
-  if (bannerTrial.value) emit("trial", bannerTrial.value);
-};
 // The Character Event banner's card, the banner the world builds its card for
 const bannerCard = computed(() =>
   bannerKind.value === BannerKind.CharacterEvent
@@ -295,7 +285,8 @@ const wish = (count: number) => {
 </script>
 
 <template>
-  <!-- The wish, opened by F3 or the Paimon menu, on the first banner on offer -->
+  <!-- The wish, opened by F3 or the Paimon menu, on the first banner on offer. The Fate on offer is bought with the
+       wallet's Primogems, and the trial the banner's character has opens from its card -->
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Wish]">
     <WishScreen
       v-model:banner-id="bannerId"
@@ -318,11 +309,11 @@ const wish = (count: number) => {
       :time-remaining-label="gameText[GameTextKey.WishTimeRemaining]"
       :time-remaining-text
       :title="gameText[GameTextKey.Wish]"
-      :trial-label
-      @buy="buyFate()"
+      :trial-label="bannerTrial ? gameText[GameTextKey.WishGoToTrial] : ''"
+      @buy="bannerKind && (wallet = buyWishFate(wallet, BannerKindFateMap[bannerKind]))"
       @close="emit('close')"
       @dismiss="results = []"
-      @trial="openTrial()"
+      @trial="bannerTrial && emit('trial', bannerTrial)"
       @wish="(count) => wish(count)"
     />
   </GameScreen>

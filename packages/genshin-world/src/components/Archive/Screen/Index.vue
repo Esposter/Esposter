@@ -79,10 +79,6 @@ const checkIsTwoLineName = (name: string): boolean => name.length > TWO_LINE_NAM
 // An opened volume of the Books section is read, so only it is a button that reads; every other entry is picked
 const checkIsEntryReadable = (entryId: number): boolean =>
   selectedSection.value === ArchiveSection.Books && checkIsEntryOpened(entryId);
-const handleEntryClick = (entryId: number): void => {
-  if (checkIsEntryReadable(entryId)) emit("readBook", entryId);
-  else selectedEntryId.value = entryId;
-};
 // Each weapon's rarity in stars by its entry's id, derived once from the data map this screen is given
 const rarityMap = computed(
   () => new Map(Array.from(weaponDataMap, ([id, { rarity }]): [number, number] => [id, rarity])),
@@ -159,7 +155,7 @@ const getAdjacentSection = (step: number): ArchiveSection =>
         :data-dimmed="dimmedEntryIds.has(entry.id) || undefined"
         :data-rarity="rarityMap.get(entry.id)"
         :style="{ background: getTileBackground(entry.id) }"
-        @click="handleEntryClick(entry.id)"
+        @click="checkIsEntryReadable(entry.id) ? emit('readBook', entry.id) : (selectedEntryId = entry.id)"
       >
         <span class="name" :data-two-lines="checkIsTwoLineName(getEntryName(entry)) || undefined">
           <span class="label">{{ getEntryName(entry) }}</span>
