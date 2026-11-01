@@ -1,5 +1,5 @@
 import type { DevVariable } from "#src/models/dev/DevVariable";
-import type { GenshinTuningOptions } from "#src/models/GenshinTuningOptions";
+import type { GenshinTuningOptions } from "#src/models/tuning/GenshinTuningOptions";
 import type { PostPipeline } from "genshin-engine";
 import type { Except } from "type-fest";
 

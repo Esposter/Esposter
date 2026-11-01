@@ -1,4 +1,4 @@
-import type { GenshinTuningOptions } from "#src/models/GenshinTuningOptions";
+import type { GenshinTuningOptions } from "#src/models/tuning/GenshinTuningOptions";
 
 import { createLookVariables } from "#src/services/tuning/createLookVariables";
 import { createPassVariables } from "#src/services/tuning/createPassVariables";
