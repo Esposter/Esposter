@@ -147,7 +147,7 @@ A boss SHALL drop nothing.
 
 ### Requirement: No enemy gives Adventure EXP
 
-No enemy SHALL give Adventure EXP (which gives a boss nothing).
+No enemy SHALL give Adventure EXP, which the game awards only for claiming a boss's reward.
 
 #### Scenario: A defeated enemy gives no Adventure EXP
 
@@ -311,7 +311,7 @@ Each enemy SHALL be tinted white with a small flash at its middle for a moment a
 - [ ] **The server's clock is UTC+8** — no source yet: no row of the game's exports names the zone, and the wiki's Reset page is not in the wiki cache.
 - [ ] **A camp with a normal boss returns five seconds after its reward is claimed** — no source yet: the wiki's Normal Bosses page is not in the wiki cache.
 - [ ] **A boss stays down across a reload until its Trounce Blossom is claimed or the first teleport after its defeat** — no source yet: the wiki's Normal Bosses page is not in the wiki cache.
-- [ ] **An enemy drops its energy at each health threshold, once for its life** — no source yet: the wiki's Energy/Data page is not in the wiki cache.
-- [ ] **Each level band's Mora and Character EXP follow the wiki's table** — no source yet: the wiki's Module:Drops Table page is not in the wiki cache.
+- [ ] **An enemy drops its energy at each health threshold, once for its life** — no source yet: the wiki's Energy/Data page is not in the wiki cache; `packages/genshin-world/src/services/enemy/damageEnemy.ts` takes each threshold once through `droppedThresholdCount`.
+- [ ] **Each level band's Mora and Character EXP follow the wiki's table** — no source yet: the wiki's Module:Drops Table page, which reads its values from the Module:Drops Table/data page, is not in the wiki cache, and neither is that data page.
 - [ ] **No enemy gives Adventure EXP** — no source yet: the wiki's Adventure EXP page is not in the wiki cache.
-- [ ] **A hit that launches is one whose stagger level is Air** — no source yet: the wiki's Interruption Resistance/Stagger page is not in the wiki cache.
+- [ ] **A hit that launches is one whose stagger level is Air, the common impulse table's Air rows being impulse types 5 to 9** — no source yet: the wiki's Interruption Resistance/Stagger page is not in the wiki cache; `packages/genshin-world/src/models/kit/KitHit.ts` (`isLaunching`) names those rows.

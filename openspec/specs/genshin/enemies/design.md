@@ -136,18 +136,16 @@ A capsule that a hit landed on is tinted white for 0.15 seconds (`ENEMY_HIT_TINT
 
 ## Open
 
+The sources for the energy, the Mora and Character EXP, the Adventure EXP and the launch rule are recorded with their requirements in [the spec](spec.md).
+
 - [ ] **The enemies notice whoever comes near, fight together and leash home, as the wiki documents** — no source yet: the Exploration and Enemy wiki pages are not in the wiki cache, and the cache holds no page giving a fight-together or leash rule.
 - [ ] **Stormterror's shield is a fifth of its max HP** — no source yet: the Stormterror wiki page and its Weekly Bosses entry are not in the wiki cache.
 - [ ] **An enemy's strike splits its shields first, as Qiqi's Talisman from four constellations does** — no source yet: `{data-root}/cache/genshin-wiki/Category_Qiqi_Talents.json` names constellation 4, Divine Suppression, and gives none of its text, so no Talisman rule is stated.
-- [ ] **Launching hits are impulse types 5 to 9, the common impulse table's Air rows** — no source yet: the Interruption Resistance/Stagger wiki page is not in the wiki cache; `packages/genshin-world/src/models/kit/KitHit.ts` (`isLaunching`) names those rows.
 - [ ] **Each poise type's bar is the wiki's table** — no source yet: the Poise Type table on the Interruption Resistance/Poise wiki page is not in the wiki cache, so `packages/genshin-world/src/services/enemy/PoiseTypeSettingsMap.ts` is not checked row for row against it.
-- [ ] **An enemy drops its energy at each HP threshold, once for its life** — no source yet: the Energy/Data wiki page is not in the wiki cache; `packages/genshin-world/src/services/enemy/damageEnemy.ts` takes each threshold once through `droppedThresholdCount`.
 - [ ] **The stagger levels run Mute, Shake, Light, Heavy and Air, each set by its attack's impulse type** — no source yet: the Interruption Resistance/Stagger wiki page is not in the wiki cache.
 - [ ] **A hit falls to Heavy under 5.5 times the enemy's weight, and some kinds are immune to Air** — no source yet: the Interruption Resistance/Stagger wiki page, named in Sources, is not in the wiki cache.
 - [ ] **An enemy's max HP and ATK are its base value times its curve's multiplier, and its DEF one plus a hundredth of the level** — no source yet: the Enemy/Level Scaling wiki page is not in the wiki cache.
-- [ ] **The Mora shares and Character EXP by level band are the wiki's table** — no source yet: the Module:Drops Table/data wiki page is not in the wiki cache, and the Module:Drops Table page, which reads its values from it, is not either, so no band's share or Character EXP is stated.
 - [ ] **The second and third material tiers start at levels 40 and 60** — no source yet: the Module:Drops Table/data wiki page, which holds the tiers' rates by level, is not in the wiki cache. The tier shares in `packages/genshin-world/src/services/enemy/constants.ts` are the repo's own table, not evidence of the game's.
-- [ ] **Enemies give no Adventure EXP, the game awarding it only for a boss's reward** — no source yet, as the [adventure rank page](../adventure-rank/design.md) records.
 - [ ] **The daily reset is read on the server's UTC+8 clock** — the zone is open, as the [bosses page](../bosses/design.md) has it, with no source yet for it beyond the export's daily refresh rows, which give the 04:00 hour (`{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, "REFRESH_DAILY"), and the Reset wiki page is not in the wiki cache.
 - [ ] **The hosted `enemies/kinds` record holds the Hilichurl Fighter, and `enemies/levelCurves` its first ten levels** — no source yet: `packages/genshin-world/src/generated/gameDataLock.json` records only each record's hash (lines 115 and 116), and the record is in Blob storage, not on disk; reading it there settles this.
 - [ ] **An elite's camp comes back whole at the next daily reset, for an elite with no limited daily spawn points** — no source yet: the Reset wiki page is not in the wiki cache, and it would give daily-reset respawn only for elites with limited spawn points per day and for the commons of their groups.
