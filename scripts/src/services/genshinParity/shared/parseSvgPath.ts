@@ -9,6 +9,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 const COMMAND_REGEX = /[A-Za-z]/u;
 const FLAG_REGEX = /[01]/u;
 const NUMBER_REGEX = new RegExp(NUMBER_SOURCE, "uy");
+const PATH_DATA = "path data";
 const SEPARATOR_REGEX = /[\s,]/u;
 
 // Reads an SVG path's moveto, lineto, horizontal and vertical lines, quadratic and cubic curves, arcs and closes in
@@ -33,7 +34,7 @@ export const parseSvgPath = (d: string, scale: number = getScale(d)): SvgPath =>
     skipSeparators();
     NUMBER_REGEX.lastIndex = index;
     const match = NUMBER_REGEX.exec(d);
-    if (!match) throw new InvalidOperationError(Operation.Read, "path data", "a number where a command's operand is");
+    if (!match) throw new InvalidOperationError(Operation.Read, PATH_DATA, "a number where a command's operand is");
     index = NUMBER_REGEX.lastIndex;
     return Math.round(Number(match[0]) * scale);
   };
@@ -41,7 +42,7 @@ export const parseSvgPath = (d: string, scale: number = getScale(d)): SvgPath =>
     skipSeparators();
     const flag = d.charAt(index);
     if (!FLAG_REGEX.test(flag))
-      throw new InvalidOperationError(Operation.Read, "path data", "an arc flag that is not 0 or 1");
+      throw new InvalidOperationError(Operation.Read, PATH_DATA, "an arc flag that is not 0 or 1");
     index++;
     return Number(flag);
   };
@@ -56,12 +57,12 @@ export const parseSvgPath = (d: string, scale: number = getScale(d)): SvgPath =>
     if (COMMAND_REGEX.test(d.charAt(index))) {
       command = d.charAt(index);
       index++;
-    } else if (!command) throw new InvalidOperationError(Operation.Read, "path data", "an operand before any command");
+    } else if (!command) throw new InvalidOperationError(Operation.Read, PATH_DATA, "an operand before any command");
 
     const upper = command.toUpperCase();
     const relative = command !== upper;
     if (segments.length === 0 && upper !== SvgPathCommand.Move)
-      throw new InvalidOperationError(Operation.Read, "path data", "a path that does not start with a moveto");
+      throw new InvalidOperationError(Operation.Read, PATH_DATA, "a path that does not start with a moveto");
     if (upper === SvgPathCommand.Close) {
       segments.push({ command: SvgPathCommand.Close, values: [] });
       x = startX;
@@ -112,7 +113,7 @@ export const parseSvgPath = (d: string, scale: number = getScale(d)): SvgPath =>
           startX = x;
           startY = y;
           // The operands after a moveto's first pair are linetos, so the command repeats as one
-          command = relative ? "l" : "L";
+          command = relative ? "l" : SvgPathCommand.Line;
         }
         break;
       }
@@ -131,7 +132,7 @@ export const parseSvgPath = (d: string, scale: number = getScale(d)): SvgPath =>
         break;
       }
       default:
-        throw new InvalidOperationError(Operation.Read, "path data", "a command outside M L H V Q C A Z");
+        throw new InvalidOperationError(Operation.Read, PATH_DATA, "a command outside M L H V Q C A Z");
     }
   }
 
