@@ -1,31 +1,9 @@
 import type { Constellation } from "genshin-world";
 
 import { PROUD_SKILL_SLOT_MODULUS } from "#src/services/genshinAssets/stats/constants";
+import { toSkillAction } from "#src/services/genshinAssets/stats/toSkillAction";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { CombatTalent } from "genshin-world";
-
-// A constellation's skill action in the dump's talent configs, in one of its two shapes: the first with its names
-// Scrambled, the second plain. Each names the skill by its slot and the levels it adds, and reads to the same thing
-interface SkillAction {
-  levels: number;
-  slot: number;
-}
-
-const toSkillAction = (action: Record<string, unknown>): SkillAction | undefined => {
-  if (
-    action.MONCLPCEMJG === "AvatarSkill" &&
-    typeof action.CCDDFPKKMDK === "number" &&
-    typeof action.PLLGLGGOCHL === "number"
-  )
-    return { levels: action.PLLGLGGOCHL, slot: action.CCDDFPKKMDK };
-  if (
-    action.talentType === "AvatarSkill" &&
-    typeof action.talentIndex === "number" &&
-    typeof action.extraLevel === "number"
-  )
-    return { levels: action.extraLevel, slot: action.talentIndex };
-  return undefined;
-};
 
 // The talent a constellation's skill action raises, from its actions in the dump: the one skill action, its levels and
 // The combat talent whose proud skill group ends in its slot. The skill the description names must be that talent's own,

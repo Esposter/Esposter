@@ -3,6 +3,7 @@ import type { ExcelWeaponPromoteRow } from "#src/models/genshinAssets/stats/Exce
 import type { ExcelWeaponRow } from "#src/models/genshinAssets/stats/ExcelWeaponRow";
 import type { WeaponData } from "genshin-world";
 
+import { EQUIP_AFFIX_TABLE_NAME, WEAPON_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import {
   DEFAULT_DESTROY_RULE,
   EMPTY_ITEM_ID,
@@ -24,8 +25,8 @@ export const getWeaponDatas = (notes: string[]): WeaponData[] => {
     readExcelTable<ExcelWeaponPromoteRow>("WeaponPromoteExcelConfigData"),
     ({ weaponPromoteId }) => weaponPromoteId,
   );
-  const affixIdRowsMap = Map.groupBy(readExcelTable<ExcelEquipAffixRow>("EquipAffixExcelConfigData"), ({ id }) => id);
-  return readExcelTable<ExcelWeaponRow>("WeaponExcelConfigData").flatMap((row) => {
+  const affixIdRowsMap = Map.groupBy(readExcelTable<ExcelEquipAffixRow>(EQUIP_AFFIX_TABLE_NAME), ({ id }) => id);
+  return readExcelTable<ExcelWeaponRow>(WEAPON_TABLE_NAME).flatMap((row) => {
     const promoteRows = promoteIdRowsMap.get(row.weaponPromoteId);
     if (!promoteRows) return [];
     if (!WeaponTypeNameSet.has(row.weaponType)) {

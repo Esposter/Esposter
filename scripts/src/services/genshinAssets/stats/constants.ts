@@ -2,13 +2,16 @@ import { AssociationRegionId } from "#src/models/genshinAssets/stats/Association
 import { QualityTypeRarity } from "#src/models/genshinAssets/stats/QualityTypeRarity";
 import { AVATAR_TALENT_DIRECTORY, GAME_TEXT_DIRECTORY } from "#src/services/genshinText/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { ArtifactSlot, DestroyRule, Element, WeaponType } from "genshin-world";
+import { ArtifactSlot, DestroyRule, Element, GameDataset, WeaponType } from "genshin-world";
 import { join } from "node:path";
 
 // The world package's generated folder, which holds the committed loader maps
 export const WORLD_GENERATED_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world", "src", "generated");
 // The folder of the committed loader map whose entries read each character's multipliers from the hosted index
-export const TALENT_MULTIPLIER_GENERATED_DIRECTORY: string = join(WORLD_GENERATED_DIRECTORY, "talentMultipliers");
+export const TALENT_MULTIPLIER_GENERATED_DIRECTORY: string = join(
+  WORLD_GENERATED_DIRECTORY,
+  GameDataset.TalentMultipliers,
+);
 // What a character's quality means in stars: the purple four, and the gold five, the crossover's gold among them
 export const QualityTypeRarityMap: Readonly<Record<string, number>> = {
   [QualityTypeRarity.QualityOrange]: 5,
