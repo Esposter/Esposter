@@ -147,8 +147,7 @@ describe(createSongOfDaysPastSetModule, () => {
     ].map((attackTag) => land(other, attackTag));
 
     const share = 0.08 * 0.2 * MAX_HEALTH;
-    expect(bonuses.slice(0, 5)).toStrictEqual([share, share, share, share, share]);
-    expect(bonuses[5]).toBe(0);
+    expect(bonuses).toStrictEqual([share, share, share, share, share, 0]);
   });
 
   test("a Waves stage ends ten seconds after its Yearning does, and adds nothing past that", () => {
