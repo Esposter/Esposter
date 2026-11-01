@@ -50,8 +50,6 @@ The trial rows come from 7.1 tables. `TrialAvatar` maps a trial id to a characte
 - The trial's clock shows on the HUD as a countdown in minutes and seconds, read from the arena's elapsed time and rounded up so the last second shows until the clock runs out. Its place at the top of the screen is PROVISIONAL until the HUD's tree has a rect for it.
 - The trial button is labelled with `GameTextKey.WishGoToTrial`, which holds the game's own "Go to Trial" (`UI_REUNIONV2_GOTO_AVARTARTRIAL`), the words the game gives the entry to an avatar trial. The Wish screen's own words for its trial button are not in the dump: its gacha ids name no trial, so "Go to Trial" is the closest the game's text gives (PROVISIONAL). The key's values are written by the main session's `genshin:text write`, and the generated English chunk holds "Go to Trial" for it.
 - While a trial holds the roster, the save keeps the roster the player held before it, so the trial's party member is never saved in place of the player's characters.
-- The first-clear reward is claimed once and saved with the save, so the save holds that key, and the stored saves owe a backfill.
-
 ## Sources
 
 - The Genshin Impact wiki, [Character Trial](https://genshin-impact.fandom.com/wiki/Character_Trial): trial characters come from quests, domains and events, with their artifacts given a fixed sub-stat distribution, and the reading of the trial's level and talents.
