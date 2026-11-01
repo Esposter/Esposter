@@ -1,12 +1,15 @@
 import type { LoadBudget } from "#src/models/genshinParity/LoadBudget";
 
+// The machine every budget was measured on
+const MEASURED_MACHINE = "DESKTOP-B9KPH2V";
+
 // Each screen's load budget, written at its measured figures plus a tenth on the machine named, so `load` fails a screen
 // That grows past what it loaded when its budget was written, and its crossing's the same way
 export const ScreenLoadBudgetMap: Record<string, LoadBudget> = {
   GameOpening: {
     gameDataBytes: 2559181,
     geometries: 0,
-    machine: "DESKTOP-B9KPH2V",
+    machine: MEASURED_MACHINE,
     objects: 0,
     programs: 0,
     readyMs: 1158,
@@ -16,7 +19,7 @@ export const ScreenLoadBudgetMap: Record<string, LoadBudget> = {
   LoginScreen: {
     gameDataBytes: 2559181,
     geometries: 28,
-    machine: "DESKTOP-B9KPH2V",
+    machine: MEASURED_MACHINE,
     objects: 57,
     programs: 33,
     readyMs: 6042,
@@ -27,7 +30,7 @@ export const ScreenLoadBudgetMap: Record<string, LoadBudget> = {
     crossing: { gameDataBytes: 105077, requests: 4, tileCount: 37 },
     gameDataBytes: 4444324,
     geometries: 242,
-    machine: "DESKTOP-B9KPH2V",
+    machine: MEASURED_MACHINE,
     objects: 322,
     programs: 107,
     readyMs: 11802,
