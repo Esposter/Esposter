@@ -1,16 +1,14 @@
 import type { Dirent, readdirSync, readFileSync } from "node:fs";
 
 import {
-  BIN_OUTPUT_DIRECTORY,
-  GAME_TEXT_DIRECTORY,
   MAIN_QUEST_TABLE_NAME,
+  QUEST_BINARY_DIRECTORY,
   QUEST_BINARY_DIRECTORY_PATH,
 } from "#src/services/genshinText/constants";
 import { fetchDump } from "#src/services/genshinText/fetchDump";
 import { getGitBlobSha } from "#src/services/genshinText/getGitBlobSha";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { fetchJson } from "#src/services/shared/fetchJson";
-import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
 
 const { CONTENT } = vi.hoisted(() => ({ CONTENT: "a" }));
@@ -36,7 +34,7 @@ vi.mock(import("node:fs"), async (importOriginal) => ({
       isSocket: () => false,
       isSymbolicLink: () => false,
       name: "352.json",
-      parentPath: join(GAME_TEXT_DIRECTORY, BIN_OUTPUT_DIRECTORY, "Quest"),
+      parentPath: QUEST_BINARY_DIRECTORY,
     } satisfies Dirent,
   ]) as unknown as typeof readdirSync,
   readFileSync: vi.fn<() => Buffer>(() => Buffer.from(CONTENT)) as unknown as typeof readFileSync,
