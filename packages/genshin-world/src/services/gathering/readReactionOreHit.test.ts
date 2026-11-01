@@ -1,21 +1,8 @@
-import type { OreHit } from "#src/models/gathering/OreHit";
-import type { OrePoiseRequirement } from "#src/models/gathering/OrePoiseRequirement";
-
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { OreItemIdBreakPoiseMap } from "#src/services/gathering/OreItemIdBreakPoiseMap";
 import { readReactionOreHit } from "#src/services/gathering/readReactionOreHit";
-import { strikeOre } from "#src/services/gathering/strikeOre";
+import { strikeOreTimes } from "#src/services/gathering/strikeOreTimes.test";
 import { describe, expect, test } from "vitest";
-
-// An ore's broken share once the same hit has struck it a number of times from whole, none without a hit
-const strikeOreTimes = (
-  hitCount: number,
-  hit: OreHit | undefined,
-  requirement: OrePoiseRequirement | undefined,
-): number =>
-  hit && requirement
-    ? Array.from({ length: hitCount }).reduce<number>((share) => strikeOre(share, hit, requirement), 0)
-    : 0;
 
 describe(readReactionOreHit, () => {
   const IRON_CHUNK_ITEM_ID = 101_001;

@@ -25,6 +25,7 @@ describe(computeStandingMiningOutcrops, () => {
     expect.hasAssertions();
     const minedAt = new Map([["a", resetDay1.add({ hours: 6 })]]);
     const now = resetDay1.add({ hours: 11 });
+
     expect(computeStandingMiningOutcrops(places, drawnAt(resetDay1), minedAt, now)).toStrictEqual([places[1]]);
   });
 
@@ -36,6 +37,7 @@ describe(computeStandingMiningOutcrops, () => {
   test("a mined outcrop stands again from the next day's draw", () => {
     expect.hasAssertions();
     const minedAt = new Map([["a", resetDay1.add({ hours: 6 })]]);
+
     expect(computeStandingMiningOutcrops(places, drawnAt(resetDay2), minedAt, resetDay2)).toStrictEqual(places);
   });
 });

@@ -20,6 +20,7 @@ describe(computeDailyMiningOutcrops, () => {
   test("a region draws its count of distinct places, Liyue's ten", () => {
     expect.hasAssertions();
     const drawn = computeDailyMiningOutcrops("liyue", placeIds, 30, () => 0.5);
+
     expect(drawn).toHaveLength(10);
     expect(new Set(drawn)).toStrictEqual(new Set(placeIds));
   });

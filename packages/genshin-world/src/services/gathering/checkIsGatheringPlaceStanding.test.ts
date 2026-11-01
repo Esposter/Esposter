@@ -14,6 +14,7 @@ describe(checkIsGatheringPlaceStanding, () => {
     expect.hasAssertions();
     const pickedAt = epoch;
     const respawnAt = epoch.add({ hours: 46 });
+
     expect(
       checkIsGatheringPlaceStanding(pickedAt, GatheringRespawn.Specialty, respawnAt.subtract({ seconds: 1 })),
     ).toBe(false);
