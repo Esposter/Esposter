@@ -208,7 +208,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `vite-plus`                             | —                     | Keep — tooling   | the task runner, lint, format and the `vpx` script runner                                              |
 | `vitest`                                | —                     | Keep — tooling   | the test runner                                                                                        |
 | `vitest-browser-vue`                    | —                     | Keep — tooling   | browser-mode component tests                                                                           |
-| `vize`                                  | —                     | Keep — tooling   | the content mapper spike in the TypeScript toolchain change                                            |
+| `vize`                                  | —                     | Keep — tooling   | the Vue content mapper `tsrs` runs over `.vue` files, owned by the vize Vue typecheck change           |
 | `vue`                                   | —                     | Keep — framework | the UI framework                                                                                       |
 | `vue-eslint-parser`                     | —                     | Keep — tooling   | ESLint's Vue parser                                                                                    |
 | `vue-router`                            | —                     | Keep — framework | routing                                                                                                |
