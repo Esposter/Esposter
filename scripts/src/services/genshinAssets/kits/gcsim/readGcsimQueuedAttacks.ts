@@ -28,7 +28,6 @@ import { readTaskClosures } from "#src/services/genshinAssets/kits/gcsim/readTas
 import { sumOptionalDelays } from "#src/services/genshinAssets/kits/gcsim/sumOptionalDelays";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
-const QUEUE_CALLEES = new Set(["QueueAttack", "QueueAttackWithSnap"]);
 // The damage delay's place among a queue call's arguments, the fourth in both of them
 const DELAY_ARGUMENT_INDEX = 3;
 // The attack pattern's place among a queue call's arguments, the second, or the third in `QueueAttackWithSnap`
@@ -36,6 +35,7 @@ const HITBOX_ARGUMENT_INDEX_MAP = new Map([
   ["QueueAttack", 1],
   ["QueueAttackWithSnap", 2],
 ]);
+const QUEUE_CALLEES = new Set(HITBOX_ARGUMENT_INDEX_MAP.keys());
 
 // Each `QueueAttack` and `QueueAttackWithSnap` call of a gcsim character's action files, its `AttackInfo` read from its
 // Inline literal or from the name it passes, and its damage delay read as the fourth argument, where the constants and the
