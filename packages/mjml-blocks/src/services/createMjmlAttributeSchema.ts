@@ -1,45 +1,9 @@
-import type { MjmlAttributeType } from "#src/models/MjmlAttributeType";
+import type { z } from "zod";
 
-import { MjmlAttributeKind } from "#src/models/MjmlAttributeKind";
 import { allowedAddressSchema } from "#src/services/allowedAddressSchema";
 import { checkIsMjmlAddressAttribute } from "#src/services/checkIsMjmlAddressAttribute";
-import { MJML_COLOR_MATCHERS, MJML_VALUE_MAX_LENGTH } from "#src/services/constants";
+import { createTypeSchema } from "#src/services/createTypeSchema";
 import { parseMjmlAttributeType } from "#src/services/parseMjmlAttributeType";
-import { exhaustiveGuard } from "@esposter/shared";
-import { z } from "zod";
-
-// MJML's own pattern for a unit: values of one unit each, or 0, repeated within its count, matched as its validator matches them.
-// The one departure is the comma: MJML's validator takes it as a digit, but CSS reads "1,5px" as no length, so it is refused
-const createUnitPattern = (units: string[], isNegativeAllowed: boolean, minCount: number, maxCount: number): RegExp => {
-  const numeric = isNegativeAllowed ? String.raw`-|\d|\.` : String.raw`\d|\.`;
-  const filteredUnits = units
-    .filter((unit) => unit !== "auto")
-    .map((unit) => RegExp.escape(unit))
-    .join("|");
-  const autoAlternative = units.includes("auto") ? "|auto" : "";
-  return new RegExp(`^(((${numeric}){1,}(${filteredUnits})|0${autoAlternative})( )?){${minCount},${maxCount}}$`, "u");
-};
-
-const createTypeSchema = (type: MjmlAttributeType): z.ZodType<string> => {
-  // Every branch starts from one bounded string, so no value a branch checks is longer than a value may be
-  const boundedString = z.string().max(MJML_VALUE_MAX_LENGTH);
-  switch (type.kind) {
-    case MjmlAttributeKind.Boolean:
-      return boundedString.refine((value) => ["false", "true"].includes(value));
-    case MjmlAttributeKind.Color:
-      return boundedString.refine((value) => MJML_COLOR_MATCHERS.some((matcher) => matcher.test(value)));
-    case MjmlAttributeKind.Enum:
-      return boundedString.refine((value) => type.options.includes(value));
-    case MjmlAttributeKind.Integer:
-      return boundedString.regex(/^\d+$/u);
-    case MjmlAttributeKind.String:
-      return boundedString;
-    case MjmlAttributeKind.Unit:
-      return boundedString.regex(createUnitPattern(type.units, type.isNegativeAllowed, type.minCount, type.maxCount));
-    default:
-      return exhaustiveGuard(type);
-  }
-};
 
 // The schema of one attribute's value as its grammar writes its type, accepting what MJML's validator for that type accepts, and for an address only a scheme that is allowed
 export const createMjmlAttributeSchema = (grammar: string, name: string): z.ZodType<string> => {

@@ -3,14 +3,8 @@ import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition"
 import type { HTMLElement } from "node-html-parser";
 
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
+import { checkHasElement } from "#src/services/checkHasElement";
 import { exhaustiveGuard, sanitizeHtml } from "@esposter/shared";
-
-// The content holds an element when a `<`, followed by a letter or by `/` and a letter, lies before the last `>`. The
-// Text up to that `>` is searched once, since a `<[^>]*>` pattern rescans to the end from every `<` of an unclosed run
-const checkHasElement = (html: string): boolean => {
-  const lastTagEnd = html.lastIndexOf(">");
-  return lastTagEnd !== -1 && /<\/?[a-z]/iu.test(html.slice(0, lastTagEnd));
-};
 
 // An element's content as MJML wrote it: a label is its decoded text unless it holds an element, which its schema then refuses
 export const readMjmlContent = <TContent extends MjmlRichText>(
