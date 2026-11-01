@@ -16,6 +16,7 @@ describe(computeShownResidentSpot, () => {
   test("holds the spot it stands at while the resident is in view", () => {
     expect.hasAssertions();
     expect(computeShownResidentSpot(DAY_SPOT, NIGHT_SPOT, true)).toStrictEqual(DAY_SPOT);
+    expect(computeShownResidentSpot(DAY_SPOT, DAY_SPOT, true)).toStrictEqual(DAY_SPOT);
     expect(computeShownResidentSpot(undefined, NIGHT_SPOT, true)).toBeUndefined();
   });
 
@@ -24,10 +25,5 @@ describe(computeShownResidentSpot, () => {
     const shownSpot = computeShownResidentSpot(DAY_SPOT, NIGHT_SPOT, true);
     expect(shownSpot).toStrictEqual(DAY_SPOT);
     expect(computeShownResidentSpot(shownSpot, NIGHT_SPOT, false)).toStrictEqual(NIGHT_SPOT);
-  });
-
-  test("keeps the spot it stands at when the clock gives the same one", () => {
-    expect.hasAssertions();
-    expect(computeShownResidentSpot(DAY_SPOT, DAY_SPOT, true)).toStrictEqual(DAY_SPOT);
   });
 });

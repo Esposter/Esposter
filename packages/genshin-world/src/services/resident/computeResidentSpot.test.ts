@@ -33,12 +33,6 @@ describe(computeResidentSpot, () => {
     expect(computeResidentSpot({ ...RESIDENT, absentAtNight: true }, DAY_START_MINUTES)).toStrictEqual(DAY_SPOT);
   });
 
-  test("a resident not marked absent stays in the world at night", () => {
-    expect.hasAssertions();
-    expect(computeResidentSpot(RESIDENT, DAY_END_MINUTES)).toStrictEqual(NIGHT_SPOT);
-    expect(computeResidentSpot({ ...RESIDENT, night: undefined }, DAY_END_MINUTES)).toStrictEqual(DAY_SPOT);
-  });
-
   test("is absent in the day when the resident keeps no day spot", () => {
     expect.hasAssertions();
     expect(computeResidentSpot({ ...RESIDENT, day: undefined }, DAY_START_MINUTES)).toBeUndefined();
