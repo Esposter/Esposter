@@ -4,12 +4,8 @@ import { Currency } from "#src/models/inventory/Currency";
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { buyShopGoodCount } from "#src/services/shop/buyShopGoodCount";
+import { getNoItemDefinition } from "#src/services/shop/getNoItemDefinition.test";
 import { describe, expect, test } from "vitest";
-
-//  A currency good gives its currency and never reads the bag's definition, so none is returned
-const getNoItemDefinition = () => {
-  throw new Error("a currency good is not defined as an item");
-};
 
 describe(buyShopGoodCount, () => {
   const ADVENTURE_RANK = 4;

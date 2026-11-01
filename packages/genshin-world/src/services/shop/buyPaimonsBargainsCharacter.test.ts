@@ -10,7 +10,7 @@ import { createCharacter } from "#src/services/character/createCharacter";
 import { CurrencyItemIdMap, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { buyPaimonsBargainsCharacter } from "#src/services/shop/buyPaimonsBargainsCharacter";
 import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 // A character's data as the tables hold it, with the rest of its fields left empty since a purchase reads only its weapon
 const createCharacterData = (id: number): CharacterData => ({
@@ -79,16 +79,9 @@ describe(buyPaimonsBargainsCharacter, () => {
 
     const first = buyPaimonsBargainsCharacter(wallet, [], [], good, characterDataMap, NOW);
 
-    expect(first).toBeDefined();
+    assert.exists(first);
     expect(
-      buyPaimonsBargainsCharacter(
-        first?.wallet ?? wallet,
-        first?.characters ?? [],
-        first?.purchases ?? [],
-        good,
-        characterDataMap,
-        NOW,
-      ),
+      buyPaimonsBargainsCharacter(first.wallet, first.characters, first.purchases, good, characterDataMap, NOW),
     ).toBeUndefined();
   });
 

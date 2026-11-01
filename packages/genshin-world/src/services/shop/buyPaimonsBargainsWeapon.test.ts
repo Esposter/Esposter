@@ -13,7 +13,7 @@ import {
 } from "#src/services/inventory/constants";
 import { buyPaimonsBargainsWeapon } from "#src/services/shop/buyPaimonsBargainsWeapon";
 import { ItemCategory } from "genshin-interface";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe(buyPaimonsBargainsWeapon, () => {
   const WEAPON_ID = 13_502;
@@ -72,15 +72,9 @@ describe(buyPaimonsBargainsWeapon, () => {
     const limited = { ...good, buyLimit: 1 };
     const first = buyPaimonsBargainsWeapon(wallet, EMPTY_INVENTORY, [], limited, getWeaponDefinition, NOW);
 
+    assert.exists(first);
     expect(
-      buyPaimonsBargainsWeapon(
-        first?.wallet ?? wallet,
-        first?.inventory ?? EMPTY_INVENTORY,
-        first?.purchases ?? [],
-        limited,
-        getWeaponDefinition,
-        NOW,
-      ),
+      buyPaimonsBargainsWeapon(first.wallet, first.inventory, first.purchases, limited, getWeaponDefinition, NOW),
     ).toBeUndefined();
   });
 

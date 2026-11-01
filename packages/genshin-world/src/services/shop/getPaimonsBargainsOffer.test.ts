@@ -33,9 +33,8 @@ describe(getPaimonsBargainsOffer, () => {
     );
     for (const { characterIds } of offers) expect(characterIds).toHaveLength(2);
     // January is Fischl and Xiangling, the fourth pair, and the six pairs come round again after six months
-    expect(offers.at(0)?.characterIds).toStrictEqual(rotation.characterPairs.at(3));
-    expect(offers.slice(6).map(({ characterIds }) => characterIds)).toStrictEqual(
-      offers.slice(0, 6).map(({ characterIds }) => characterIds),
+    expect(offers.map(({ characterIds }) => characterIds)).toStrictEqual(
+      [3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2].map((pairIndex) => rotation.characterPairs[pairIndex]),
     );
   });
 

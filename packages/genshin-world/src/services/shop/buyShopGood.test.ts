@@ -10,13 +10,9 @@ import { INVENTORY_KIND_LIMIT } from "#src/services/inventory/bagLimits";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { buyShopGood } from "#src/services/shop/buyShopGood";
+import { getNoItemDefinition } from "#src/services/shop/getNoItemDefinition.test";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
-
-// A Fate is a currency, so its purchase never asks for a definition
-const getNoItemDefinition = (itemId: number): ItemDefinition => {
-  throw new Error(`no definition asked for item ${itemId}`);
-};
 
 const getFishDefinition = (itemId: number): ItemDefinition => ({
   category: ItemCategory.Material,
