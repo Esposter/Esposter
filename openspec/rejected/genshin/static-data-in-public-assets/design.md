@@ -6,4 +6,4 @@ The first way to get the game's data to the browser without bundling it was to l
 
 ## Sources
 
-- [Railway pricing](https://railway.com/pricing) — egress for services is $0.05 per GB, the rate that serving the data from the app would be billed at.
+- [Railway pricing](https://railway.com/pricing) — egress for services is billed per GB, the unit that serving the data from the app would be billed in.
