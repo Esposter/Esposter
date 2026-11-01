@@ -1,4 +1,4 @@
-import type { PlantedTerrainTile } from "#src/models/PlantedTerrainTile";
+import type { PlantedTerrainTile } from "#src/models/shared/PlantedTerrainTile";
 import type { TerrainTileRequest } from "#src/models/TerrainTileRequest";
 import type { RegionGround } from "#src/models/world/RegionGround";
 import type { TerrainWorkerContext } from "#src/models/world/TerrainWorkerContext";

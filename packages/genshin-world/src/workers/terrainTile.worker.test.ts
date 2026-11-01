@@ -1,4 +1,4 @@
-import type { PlantedTerrainTile } from "#src/models/PlantedTerrainTile";
+import type { PlantedTerrainTile } from "#src/models/shared/PlantedTerrainTile";
 import type { TerrainWorkerMessage } from "#src/models/world/TerrainWorkerMessage";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";

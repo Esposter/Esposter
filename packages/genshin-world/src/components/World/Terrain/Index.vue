@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PlantedTerrainTile } from "#src/models/PlantedTerrainTile";
+import type { PlantedTerrainTile } from "#src/models/shared/PlantedTerrainTile";
 import type { RegionGround } from "#src/models/world/RegionGround";
 import type { TerrainWorkerFailure } from "#src/models/world/TerrainWorkerFailure";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";

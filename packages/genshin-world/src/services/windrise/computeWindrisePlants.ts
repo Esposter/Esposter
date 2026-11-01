@@ -1,4 +1,4 @@
-import type { PlantedTerrainTile } from "#src/models/PlantedTerrainTile";
+import type { PlantedTerrainTile } from "#src/models/shared/PlantedTerrainTile";
 import type { WindrisePlantsGround } from "#src/models/windrise/WindrisePlantsGround";
 
 import {
