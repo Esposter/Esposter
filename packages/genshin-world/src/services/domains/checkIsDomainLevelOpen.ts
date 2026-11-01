@@ -1,5 +1,5 @@
 import type { DomainKind } from "#src/models/domains/DomainKind";
-import type { DomainLevel } from "#src/models/domains/DomainSchedule";
+import type { DomainLevel } from "#src/models/domains/DomainLevel";
 
 import { checkIsDomainKindOpenAtRank } from "#src/services/domains/checkIsDomainKindOpenAtRank";
 import { checkIsDomainKindOpenOnDay } from "#src/services/domains/checkIsDomainKindOpenOnDay";

@@ -1,4 +1,4 @@
-import type { DomainLevel } from "#src/models/domains/DomainSchedule";
+import type { DomainLevel } from "#src/models/domains/DomainLevel";
 
 import { DomainKind } from "#src/models/domains/DomainKind";
 import { checkIsDomainLevelOpen } from "#src/services/domains/checkIsDomainLevelOpen";
