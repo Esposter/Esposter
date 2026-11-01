@@ -18,7 +18,6 @@ const { rankedRecentPages } = storeToRefs(recentPageStore);
 const isBookmarkable = computed(
   () => Boolean(session.value) && !RECENT_PAGE_EXCLUDED_PATHS.includes(currentRoute.value.path),
 );
-const isBookmarked = computed(() => bookmarkPaths.value.has(currentRoute.value.path));
 </script>
 
 <!-- Keeping the page open now among the reader's places, said in words: a mark alone on the rail read as anything
@@ -39,7 +38,11 @@ const isBookmarked = computed(() => bookmarkPaths.value.has(currentRoute.value.p
       }
     "
   >
-    <UiItemContent v-if="isBookmarked" :meaning="UiIconMeaning.Unbookmark" title="Remove bookmark" />
+    <UiItemContent
+      v-if="bookmarkPaths.has(currentRoute.path)"
+      :meaning="UiIconMeaning.Unbookmark"
+      title="Remove bookmark"
+    />
     <UiItemContent v-else :meaning="UiIconMeaning.Bookmark" title="Bookmark this page" />
   </button>
 </template>

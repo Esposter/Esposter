@@ -25,7 +25,6 @@ const digits = computed(() => {
     }));
   });
 });
-const fallenBlockDelay = computed(() => `${digits.value.length * VOXEL_DIGIT_WIDTH * VOXEL_DROP_STAGGER_MS}ms`);
 </script>
 
 <template>
@@ -44,7 +43,7 @@ const fallenBlockDelay = computed(() => `${digits.value.length * VOXEL_DIGIT_WID
       <span
         v-if="isMissingBlock"
         class="fallen block"
-        :style="{ animationDelay: fallenBlockDelay }"
+        :style="{ animationDelay: `${digits.length * VOXEL_DIGIT_WIDTH * VOXEL_DROP_STAGGER_MS}ms` }"
         size-6
         bottom-0
         left="1/2"
