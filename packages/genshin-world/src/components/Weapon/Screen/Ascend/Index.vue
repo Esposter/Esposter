@@ -220,15 +220,12 @@ const {
 
 .ascend-attack::before {
   position: absolute;
+  top: calc(var(--reference-pixel) * 6);
   left: calc(var(--reference-pixel) * -24);
   width: calc(var(--reference-pixel) * 9);
   height: calc(var(--reference-pixel) * 9);
   border-radius: 50%;
   background: #aaa3bd;
   content: "";
-}
-
-.ascend-attack::before {
-  top: calc(var(--reference-pixel) * 6);
 }
 </style>

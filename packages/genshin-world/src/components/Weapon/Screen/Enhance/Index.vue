@@ -132,19 +132,16 @@ const consumedText = computed(() =>
 /* The consumed count the Enhance panel sets over its strip, centred like the words the game sets over its panels */
 .consumed {
   position: absolute;
+  top: calc(var(--reference-pixel) * 489);
   left: calc(var(--reference-pixel) * 1097);
   width: calc(var(--reference-pixel) * 706);
   margin: 0;
-  font-weight: 600;
-  line-height: 1;
-  text-align: center;
-}
-
-.consumed {
-  top: calc(var(--reference-pixel) * 489);
   color: #e9d29a;
   font-size: calc(var(--reference-pixel) * 25);
+  font-weight: 600;
   letter-spacing: calc(var(--reference-pixel) * 1.9);
+  line-height: 1;
+  text-align: center;
 }
 
 .stat-value {
@@ -193,15 +190,12 @@ const consumedText = computed(() =>
 
 .attack::before {
   position: absolute;
+  top: calc(var(--reference-pixel) * 8);
   left: calc(var(--reference-pixel) * -24);
   width: calc(var(--reference-pixel) * 9);
   height: calc(var(--reference-pixel) * 9);
   border-radius: 50%;
   background: #aaa3bd;
   content: "";
-}
-
-.attack::before {
-  top: calc(var(--reference-pixel) * 8);
 }
 </style>

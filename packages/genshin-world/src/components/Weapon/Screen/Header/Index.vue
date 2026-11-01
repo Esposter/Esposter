@@ -80,18 +80,15 @@ const rankText = computed(() => getWeaponRankText(gameText, refinement));
 /* The rank the header sets over its panel, centred between the frame's two ornaments */
 .refinement {
   position: absolute;
+  top: calc(var(--reference-pixel) * 98);
   left: calc(var(--reference-pixel) * 1097);
   width: calc(var(--reference-pixel) * 706);
   margin: 0;
+  color: #f6f0f9;
+  font-size: calc(var(--reference-pixel) * 42);
   font-weight: 600;
   line-height: 1;
   text-align: center;
-}
-
-.refinement {
-  top: calc(var(--reference-pixel) * 98);
-  color: #f6f0f9;
-  font-size: calc(var(--reference-pixel) * 42);
 }
 
 /* The rank's two ornaments, a hairline with a sparkle at its end either side of the rank */
@@ -133,15 +130,12 @@ const rankText = computed(() => getWeaponRankText(gameText, refinement));
 /* The gold coin beside the wallet's Mora */
 .mora::before {
   position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, #fff7c8, #f7d25a 60%, #d9a53a);
-  content: "";
-}
-
-.mora::before {
   top: calc(var(--reference-pixel) * 5);
   left: calc(var(--reference-pixel) * 11);
   width: calc(var(--reference-pixel) * 30);
   height: calc(var(--reference-pixel) * 30);
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #fff7c8, #f7d25a 60%, #d9a53a);
+  content: "";
 }
 </style>
