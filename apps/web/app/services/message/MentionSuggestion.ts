@@ -23,7 +23,7 @@ export const MentionSuggestion: MentionOptions<
     if (!roomId) return [];
     // Every kind of item names the room the query was typed in, since the member read spans an await
     const members = await readMemberMentionItems(query, roomId);
-    return [...getBroadcastMentionItems(query), ...getRoleMentionItems(query, roomId), ...members];
+    return [...getBroadcastMentionItems(query, roomId), ...getRoleMentionItems(query, roomId), ...members];
   },
   pluginKey: new PluginKey("mentionSuggestion"),
   render: getRender(MentionList),

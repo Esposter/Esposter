@@ -6,7 +6,8 @@ import { MentionSuggestion } from "@/services/message/MentionSuggestion";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoleStore } from "@/store/message/room/role";
-import { MentionType } from "@esposter/shared";
+import { RoomPermission } from "@esposter/db-schema";
+import { MENTION_EVERYONE_ID, MENTION_HERE_ID, MentionType } from "@esposter/shared";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe("mentionSuggestion", () => {
@@ -46,5 +47,29 @@ describe("mentionSuggestion", () => {
     expect(items.filter((item) => "type" in item && item.type === MentionType.Role).map(({ id }) => id)).toStrictEqual([
       role.id,
     ]);
+  });
+
+  // The server strips the two room-wide mentions from a message whose sender lacks the permission, so they are offered
+  // Only to a member who holds it
+  test.each([
+    ["holds", RoomPermission.MentionEveryone, [MENTION_EVERYONE_ID, MENTION_HERE_ID]],
+    ["lacks", 0n, []],
+  ])("offers the room-wide mentions to a member who %s the permission", async (_title, permissions, ids) => {
+    expect.hasAssertions();
+
+    trpcMsw.room.readMembers.query(() => ({ hasMore: false, items: [], nextCursor: "" }));
+    trpcMsw.role.readMyPermissions.query(() => [{ isRoomOwner: false, permissions, roomId, topRolePosition: 0 }]);
+    const roleStore = useRoleStore();
+    await roleStore.readMyPermissions({ roomIds: [roomId] });
+    assert.exists(MentionSuggestion?.items);
+    const items = await MentionSuggestion.items({
+      editor: {} as Editor,
+      query: "",
+      signal: new AbortController().signal,
+    });
+
+    expect(
+      items.map(({ id }) => id).filter((id) => id === MENTION_EVERYONE_ID || id === MENTION_HERE_ID),
+    ).toStrictEqual(ids);
   });
 });
