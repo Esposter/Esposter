@@ -1,7 +1,7 @@
 import { isFlag } from "./isFlag";
 
 // The options git takes before its subcommand, each with its value as the next word
-const GIT_VALUE_OPTIONS: ReadonlySet<string> = new Set(["-C", "-c"]);
+const GIT_VALUE_OPTIONS: ReadonlySet<string> = new Set(["--git-dir", "--namespace", "--work-tree", "-C", "-c"]);
 
 // The subcommand past the options git takes before it, the arguments after the subcommand, and the folders its `-C`
 // Options name, each from the one before

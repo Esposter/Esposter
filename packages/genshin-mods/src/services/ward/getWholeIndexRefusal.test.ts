@@ -14,6 +14,8 @@ describe(getWholeIndexRefusal, () => {
     ["intent-to-add with no path", "git add -N", "git add -N"],
     ["add everything behind a directory flag", "git -C packages/genshin-mods add .", "git add ."],
     ["add everything behind a config flag", "git -c core.autocrlf=true add -A", "git add -A"],
+    ["checkout everything behind a work-tree flag", "git --work-tree . checkout .", "git checkout ."],
+    ["reset hard behind a git-dir flag", "git --git-dir somewhere reset --hard", "git reset"],
     ["reset with no path", "git reset", "git reset"],
     ["reset quietly", "git reset -q", "git reset"],
     ["reset to a commit with mixed mode", "git reset HEAD~1", "git reset"],
