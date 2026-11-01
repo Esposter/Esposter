@@ -27,9 +27,25 @@ describe(requestSizeLimiter, () => {
 
     requestSizeLimiter(event, () => undefined);
 
-    await expect(event.req.text()).rejects.toThrowErrorMatchingInlineSnapshot(
+    const read = event.req.text();
+
+    await expect(read).rejects.toThrowErrorMatchingInlineSnapshot(
       `[HTTPError: Request body size exceeds the limit of ${LIMITS.maxRequestSizeInBytes} bytes]`,
     );
+    await expect(read).rejects.toMatchObject({ status: 413 });
+  });
+
+  test("a chunked body exactly at the limit is read whole", async () => {
+    expect.hasAssertions();
+
+    const body = " ".repeat(LIMITS.maxRequestSizeInBytes);
+    const event = createEvent(body);
+
+    requestSizeLimiter(event, () => undefined);
+
+    const read = await event.req.text();
+
+    expect(read).toBe(body);
   });
 
   test("a chunked body within the limit is read whole", async () => {
