@@ -13,7 +13,7 @@ A comparison SHALL print the mean difference and a six by six grid of per-cell d
 - **GIVEN** a screen and its reference
 - **WHEN** the screen is compared
 - **THEN** the mean difference is printed
-- **AND** a six by six grid of per-cell differences is printed (`GRID_SIZE = 6`)
+- **AND** a six by six grid of per-cell differences is printed (`GRID_SIZE`)
 - **AND** the reference, the shot and their difference are written side by side
 
 ### Requirement: A scene is scored by its shape and its tone apart

@@ -44,7 +44,7 @@ The camera pose SHALL be solved from landmarks whose places are known, against t
 
 - **GIVEN** six or more landmarks
 - **WHEN** the pose is solved
-- **THEN** the projection is read in closed form (`DLT_POINT_COUNT = 6`)
+- **THEN** the projection is read in closed form (`DLT_POINT_COUNT`)
 - **AND** the reprojection error of each landmark is printed
 
 #### Scenario: Fewer than six landmarks
@@ -108,5 +108,5 @@ A scrolling row SHALL stand where the exports lay it, with only its phase along 
 
 ## Open
 
-- [ ] **The parts in one frame share one camera, with a barely fixed axis taken from a part that fixes it** — no source yet: the shared-camera solve in `scripts/src/services/genshinParity/witness/solveCameraPose.ts` was not traced for that axis rule.
+- [ ] **The parts in one frame share one camera, with a barely fixed axis taken from a part that fixes it** — no source yet: the shared-camera solve in `scripts/src/services/genshinParity/witness/solveCameraPose.ts` was not traced for that axis rule; `scripts/src/services/genshinParity/witness/solveReferencePose.ts` takes its held axes only from the command's `--hold` flag, and no step names the hand-off from one part to another.
 - [ ] **A scrolling row stands where the exports lay it, with only its phase taken from the reference** — no source yet: the row placement and the phase read were not traced to a file.

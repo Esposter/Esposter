@@ -2,13 +2,11 @@
 
 Each step takes seconds, so the loop runs as often as a test would:
 
-- The parity page is up in about a second (see Open).
-- Each command runs its own Edge, which closes with its page ([machine efficiency](../../../architecture/machine-efficiency/design.md), `scripts/src/services/genshinParity/shared/openParityPage.ts`). The parity page is served once per checkout: the shared checkout's on port 3011, the `PARITY_DEFAULT_PORT` in `scripts/src/services/genshinParity/shared/constants.ts`, which `GENSHIN_PARITY_PORT` changes (`packages/genshin-world/parity/vite.config.ts`, `scripts/src/services/genshinParity/shared/constants.ts`).
+- The parity page is up in about a second (see the [spec](spec.md)).
+- Each command runs its own Edge, which closes with its page ([machine efficiency](../../../architecture/machine-efficiency/design.md), `scripts/src/services/genshinParity/shared/openParityPage.ts`). The parity page is served once per checkout: the shared checkout's on the `PARITY_DEFAULT_PORT` in `scripts/src/services/genshinParity/shared/constants.ts`, which `GENSHIN_PARITY_PORT` changes (`packages/genshin-world/parity/vite.config.ts`, `scripts/src/services/genshinParity/shared/constants.ts`).
 - A comparison, shot included, takes a few seconds.
 - The visual suite's first screen takes a few seconds, and each further screen a fraction of one.
 - A trace at a mark's full 1600-unit resolution takes a second or two.
-
-The startup screen's mean difference is small, read from its `loading-startup` row in `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`; the remainder is antialiasing along the edge of the lit marks (see Open).
 
 - **A scene's cost is benched, not guessed.** `bench` draws the screen as fast as the GPU allows rather than at the display's refresh. It prints the frame time's median and slow tenth against the main thread's busy time a frame, which tells a scene held up on the CPU from one held up on the GPU; then the renderer's passes, draw calls and triangles a frame, the objects it draws by kind, and the pipelines, geometries and textures it keeps, which grow from one bench to the next in a scene that leaks them (`scripts/src/services/genshinParity/commands/benchCommand.ts`). The page reads them from the renderer the scene hands any host that asks (`packages/genshin-world/src/services/scene/SceneContextKey.ts`). The login's cloud billboards and its walkway pieces are drawn as one instanced sprite per band and one batch for the walkway, since a mesh of its own per piece costs frame time that `bench` reports (see Open).
 
@@ -23,7 +21,5 @@ The startup screen's mean difference is small, read from its `loading-startup` r
 
 ## Open
 
-- [ ] **The parity timings** — no source yet: the page coming up in about a second, a comparison in a few seconds, the visual suite's first screen, a trace in a second or two, and the Windrise reduction in a few minutes are not in any timing record in the repository.
-- [ ] **The startup screen's remainder is antialiasing along the lit marks' edges** — no source yet: no diff image for `loading-startup` was read to show where its remainder sits.
 - [ ] **The login's cloud billboards and walkway cut the frame time by more than a third** — no source yet: no bench record from before and after the change is cited or committed.
 - [ ] **`compare` keeps its CPU scoring, since its PNG encode and browser launch cost more than the scoring they would save** — no source yet: its PNG encode and browser launch timings are not yet measured.
