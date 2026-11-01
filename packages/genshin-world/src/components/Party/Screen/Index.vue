@@ -5,10 +5,10 @@ import type { Party } from "#src/models/party/Party";
 import type { PartySetupSlot } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
-import { ElementMarkColorMap } from "#src/services/loading/ElementMarkColorMap";
 import { ElementMarkPathMap } from "#src/services/loading/ElementMarkPathMap";
 import { DEFAULT_PARTY_TEAM_NAME_GAME_TEXT_KEYS } from "#src/services/party/constants";
 import { deployPartyTeam } from "#src/services/party/deployPartyTeam";
+import { ElementMarkColorMap } from "#src/services/party/ElementMarkColorMap";
 import { getPartyTeamSlots } from "#src/services/party/getPartyTeamSlots";
 import { quickSetupPartyTeam } from "#src/services/party/quickSetupPartyTeam";
 import { GameScreen, PartySetupScreen } from "genshin-interface";
