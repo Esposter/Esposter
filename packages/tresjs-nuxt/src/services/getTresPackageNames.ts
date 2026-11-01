@@ -1,15 +1,7 @@
-import type { PackageManifest } from "#src/models/PackageManifest";
-
 import { CORE_PACKAGE_NAME, TRES_PACKAGE_SCOPE } from "#src/services/constants";
+import { getDependencyNames } from "#src/services/getDependencyNames";
 import { existsSync } from "node:fs";
-import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
-
-const getDependencyNames = async (directory: string): Promise<string[]> => {
-  // oxlint-disable-next-line no-restricted-properties -- package manifests contain versions and scripts, never date fields to revive
-  const manifest: PackageManifest = JSON.parse(await readFile(join(directory, "package.json"), "utf8"));
-  return [...Object.keys(manifest.dependencies ?? {}), ...Object.keys(manifest.devDependencies ?? {})];
-};
 
 // The app's own manifest and the one above it when the app sits in a monorepo, where a @tresjs package is often installed
 export const getTresPackageNames = async (rootDirectory: string): Promise<string[]> => {
