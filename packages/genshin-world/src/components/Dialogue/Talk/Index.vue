@@ -52,6 +52,15 @@ const talkLine = computed(() => (progress.value.lineId ? getTalkLine(talk, progr
 const travelerName = computed(() => fillLinePlaceholders(gameText[GameTextKey.Traveler], "", LOGIN_TRAVELER_GENDER));
 const fillLine = (text: string) => fillLinePlaceholders(text, travelerName.value, LOGIN_TRAVELER_GENDER);
 const lineText = computed(() => (talkLine.value ? fillLine(textMap[talkLine.value.textId] ?? "") : ""));
+// The speaker's name and role are filled once per line, not on each frame the reveal re-renders the talk
+const speakerName = computed(() =>
+  talkLine.value?.kind === TalkLineKind.Spoken
+    ? fillLine(textMap[talkLine.value.speakerTextId] ?? "")
+    : travelerName.value,
+);
+const speakerRole = computed(() =>
+  talkLine.value?.kind === TalkLineKind.Spoken ? fillLine(textMap[talkLine.value.speakerRoleTextId] ?? "") : "",
+);
 const lineLength = computed(() => [...lineText.value].length);
 const revealedLength = computed(() =>
   progress.value.isRevealed ? lineLength.value : getTalkRevealedLength(lineText.value, elapsedMs.value),
@@ -138,10 +147,8 @@ useEventListener("keydown", (event) => {
       :line="lineText"
       :revealed-length
       :selected-choice-id="choices[selectedChoiceIndex]?.id ?? ''"
-      :speaker-name="
-        talkLine?.kind === TalkLineKind.Spoken ? fillLine(textMap[talkLine.speakerTextId] ?? '') : travelerName
-      "
-      :speaker-role="talkLine?.kind === TalkLineKind.Spoken ? fillLine(textMap[talkLine.speakerRoleTextId] ?? '') : ''"
+      :speaker-name
+      :speaker-role
       @advance="goOn()"
       @choose="(choiceId) => choose(choiceId)"
     />

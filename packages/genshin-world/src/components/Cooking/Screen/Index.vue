@@ -44,6 +44,7 @@ const recipe = defineModel<CookingRecipe>("recipe", { required: true });
 const zones = computed(() => readCookingZones(recipe.value.qteParam));
 const dishes = computed(() => recipes.map(({ id, nameTextId }) => ({ id, name: nameText[nameTextId] ?? "" })));
 const isAutoCookable = computed(() => checkCanAutoCook(recipe.value, progress.value, avatarId));
+const getDefinition = (itemId: number) => getItemDefinition(itemId, nameText, materialDataMap);
 const selectDish = (id: number) => {
   const selected = recipes.find((dish) => dish.id === id);
   if (selected) recipe.value = selected;
@@ -68,7 +69,7 @@ onBeforeUnmount(() => {
 const stopCooking = () => {
   const cooked = cookRecipeByHand(recipe.value, {
     avatarId,
-    getDefinition: (itemId) => getItemDefinition(itemId, nameText, materialDataMap),
+    getDefinition,
     inventory: inventory.value,
     progress: progress.value,
     random,
@@ -87,7 +88,7 @@ const stopCooking = () => {
 const autoCook = () => {
   const made = autoCookRecipe(recipe.value, {
     avatarId,
-    getDefinition: (itemId) => getItemDefinition(itemId, nameText, materialDataMap),
+    getDefinition,
     inventory: inventory.value,
     progress: progress.value,
     random,

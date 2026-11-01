@@ -5,6 +5,7 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { GameText } from "genshin-text";
 
+import ProcessingRow from "#src/components/Cooking/Processing/Row/Index.vue";
 import { collectProcessingJobs } from "#src/services/cooking/collectProcessingJobs";
 import { PROCESSING_COLLECT_INTERVAL_MS } from "#src/services/cooking/constants";
 import { startProcessing } from "#src/services/cooking/startProcessing";
@@ -78,24 +79,18 @@ const start = (recipe: ProcessingRecipe) => {
     <div>
       <h2>{{ gameText[GameTextKey.ProcessingStart] }}</h2>
       <ul>
-        <li v-for="recipe in knownRecipes" :key="recipe.id">
-          <span>{{ nameText[recipe.nameTextId] }}</span>
-          <span>{{ getDefinition(recipe.result.id).name }} x{{ recipe.result.count }}</span>
-          <span v-for="ingredient in recipe.ingredients" :key="ingredient.id">
-            {{ getDefinition(ingredient.id).name }} x{{ ingredient.count }}
-          </span>
-          <span>{{ queuedCount(recipe) }} / {{ recipe.queueSize }}</span>
-          <input
-            v-model.number="counts[recipe.id]"
-            :aria-label="gameText[GameTextKey.CraftingAmount]"
-            min="1"
-            type="number"
-            :max="recipe.queueSize - queuedCount(recipe)"
-          />
-          <button type="button" :disabled="!checkCanStart(recipe)" @click="start(recipe)">
-            {{ gameText[GameTextKey.ProcessingStart] }}
-          </button>
-        </li>
+        <ProcessingRow
+          v-for="recipe in knownRecipes"
+          :key="recipe.id"
+          v-model:count="counts[recipe.id]"
+          :can-start="checkCanStart(recipe)"
+          :game-text
+          :material-data-map
+          :name-text
+          :queued-count="queuedCount(recipe)"
+          :recipe
+          @start="start(recipe)"
+        />
       </ul>
       <button type="button" @click="emit('close')">{{ gameText[GameTextKey.Back] }}</button>
     </div>

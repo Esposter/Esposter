@@ -26,8 +26,6 @@ let pointerAngle: number | undefined;
 const targetMinutes = computed(() => getTimeTargetMinutes(clockMinutes, advance.value));
 // The dial turns the day as the game draws it: noon at the top, midnight at the bottom, clockwise through the day
 const toDialAngle = (minutes: number): number => ((minutes / MINUTES_PER_DAY) * 360 + 180) % 360;
-const currentAngle = computed(() => toDialAngle(clockMinutes));
-const targetAngle = computed(() => toDialAngle(targetMinutes.value));
 const formatMinutes = (minutes: number): string => {
   const wholeMinutes = Math.floor(minutes);
   return Temporal.PlainTime.from({ hour: Math.floor(wholeMinutes / 60), minute: wholeMinutes % 60 }).toString({
@@ -105,10 +103,10 @@ onMounted(() => {
         <path d="M -147 0 A 9 9 0 0 1 -129 0 Z" fill="#ebe3d7" />
         <circle class="marker" cx="138" cy="0" r="9" />
         <path d="M 129 0 A 9 9 0 0 1 147 0 Z" fill="#ebe3d7" />
-        <g :transform="`rotate(${currentAngle})`">
+        <g :transform="`rotate(${toDialAngle(clockMinutes)})`">
           <path class="hand current" d="M 0 10 V -86" />
         </g>
-        <g :transform="`rotate(${targetAngle})`">
+        <g :transform="`rotate(${toDialAngle(targetMinutes)})`">
           <path class="hand" d="M 0 10 V -98" />
           <polygon points="-9,-96 0,-118 9,-96" fill="#efe9dc" />
         </g>
