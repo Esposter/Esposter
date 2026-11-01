@@ -144,7 +144,7 @@ Find recipe: a page is open if either test holds. Test one: `git grep -l "no sou
 | `openspec/specs/genshin/compute/inventory/design.md`                   | 2026-10-29 · Haiku 5.5  |       |
 | `openspec/specs/genshin/compute/windrise/design.md`                    | 2026-10-29 · Haiku 5.5  |       |
 | `openspec/specs/genshin/kits/qiqi/design.md`                           | 2026-10-26 · Haiku 5.5  |       |
-| `openspec/specs/genshin/parity/commands/design.md`                     | —                       |       |
+| `openspec/specs/genshin/parity/commands/design.md`                     | 2026-11-01 · Haiku 5.5  |       |
 | `openspec/specs/genshin/puzzles/monument/design.md`                    | 2026-10-26 · Haiku 5.5  |       |
 | `openspec/specs/genshin/puzzles/time-trial-challenge/design.md`        | 2026-10-29 · Haiku 5.5  |       |
 | `openspec/specs/genshin/snezhnaya/design.md`                           | 2026-10-29 · Haiku 5.5  |       |
