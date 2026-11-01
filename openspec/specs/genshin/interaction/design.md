@@ -104,12 +104,10 @@ Provisional and unmeasured: the pill's right end (the column's 318 units, since 
 
 ## Open
 
-- [ ] **The wheel moves the selection through the rows** — no source yet: the still's caption says the mouse scroll speeds looting but shows no wheel step, the GameStegy tip is a player's note, and the pickup-scroll clip is still sought.
-- [ ] **Pick Up and Interact are X on Xbox and Square on PlayStation, as the game's defaults** — no source yet: no cached Controls page is in `{data-root}/cache/genshin-wiki/`, and the binding in `packages/genshin-engine/src/input/InputActionBindingMap.ts` names `GamepadButton.FaceLeft`, not the buttons.
-- [ ] **The held F's 27-frame spacing** — no source yet: the frames of `{data-root}/genshin-parity/captures/world-pickup.mkv` between 38.5 and 39.6 seconds were not extracted and counted here.
+The wheel's step, the Xbox and PlayStation bindings, the held F's interval and the locked statue's F are requirements, so their open items sit on the [spec's Open list](spec.md). The items below are this page's own.
+
 - [ ] **The list's and the touch pill's measured pixels** — no source yet: no saved measurement record exists; the still is cited for the frame, and the component's comment reads the pill 63 high on a 72 pitch with its left edge 59 past the cap, where this page reads rows of 59 on a 72 pitch.
 - [ ] **A defeat's drops reach the world screen through Windrise** — no source yet: the drop path found is `packages/genshin-world/src/composables/useWorldCombat.ts`, and no Windrise step in it was found.
 - [ ] **A witness render draws none of the stand-ins** — no source yet: `packages/genshin-world/src/components/World/Interactables/Index.vue` has no witness check.
 - [ ] **Drops last the page's life** — no source yet: `packages/genshin-world/src/components/World/Session/Index.vue` holds the drops, but no check ties their lifetime to the page's state.
 - [ ] **The item icons are drawn as discs, since the game's item art ships nowhere** — no source yet: whether the game's item art is in `{data-root}/genshin-parity/extracted/`, not yet checked.
-- [ ] **F unlocks a locked statue, and Windrise's then has its Worship row** — no source yet: a recording of F at Windrise's own statue while it is locked; `{data-root}/genshin-parity/captures/statue-resonance.mkv` is White Birch Snowgrave's, not Windrise's, per `openspec/changes/genshin-roadmap/tasks.md`.

@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's F prompts over the world, the list of what is in reach beside the character. The drops lying in the world, the residents with a talk and the Statues of The Seven at unlocked landmarks are the things in reach: F picks a drop up into the wallet or the bag, begins a resident's talk, or resonates with an unresonated statue, and a defeated enemy's drops lie where it fell. A pure selector rows what is in reach nearest first, keeps the selection on its thing, scrolls a window to keep it in view and steps it with the mouse wheel while more than one row shows; a held F repeats its pick up. F is the input's Interact action, and the list is drawn in the HUD by genshin-interface's prompt list (`packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`, `packages/genshin-world/src/services/interaction/stepInteractionSelection.ts`, `packages/genshin-world/src/services/interaction/getHeldPickUp.ts`, `packages/genshin-engine/src/input/InputActionBindingMap.ts`, `packages/genshin-interface/src/components/InteractionPrompts/Index.vue`).
+The game's F prompts over the world: a list of the drops, residents and Statues of The Seven in reach beside the character, where F acts on the selected row and a held F repeats its pick up.
 
 ## Requirements
 
@@ -179,7 +179,7 @@ The pick up and interact action SHALL be bound to F on a keyboard, to the X butt
 
 ## Open
 
-- [ ] **F unlocks a locked statue, which then has no row** — no source yet: the code path that unlocks a locked statue by F, since the statue service's Activate rows cover only the unlocked landmarks, F on a resonated one opens the Worship screen, and no path that unlocks a locked statue by F was traced.
-- [ ] **The wheel steps the selection one row per notch** — no source yet: the GameStegy tip is a player's note, no clip shows the wheel stepping the rows, and the pickup-scroll clip is still sought.
-- [ ] **Interact is X on an Xbox controller and Square on a PlayStation one** — no source yet: no cached Controls page is in `{data-root}/cache/genshin-wiki/`.
-- [ ] **A held F repeats its pick up every 0.45 seconds** — no source yet: the 27-frame spacing in `{data-root}/genshin-parity/captures/world-pickup.mkv` was not extracted and counted here.
+- [ ] **F unlocks a locked statue, and Windrise's then has its Worship row** — no source yet: a recording of F at Windrise's own statue while it is locked; `{data-root}/genshin-parity/captures/statue-resonance.mkv` is White Birch Snowgrave's, not Windrise's, per `openspec/changes/genshin-roadmap/tasks.md`.
+- [ ] **The wheel steps the selection one row per notch** — no source yet: the still's caption says the mouse scroll speeds looting but shows no wheel step, the GameStegy tip is a player's note, and the pickup-scroll clip is still sought.
+- [ ] **Interact is X on an Xbox controller and Square on a PlayStation one** — no source yet: no cached Controls page is in `{data-root}/cache/genshin-wiki/`, and the binding in `packages/genshin-engine/src/input/InputActionBindingMap.ts` names `GamepadButton.FaceLeft`, not the buttons.
+- [ ] **A held F repeats its pick up every 0.45 seconds** — no source yet: the 27-frame spacing in `{data-root}/genshin-parity/captures/world-pickup.mkv` between 38.5 and 39.6 seconds was not extracted and counted here.
