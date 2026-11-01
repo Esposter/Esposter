@@ -1,26 +1,16 @@
-import type { ElementalMonument } from "#src/models/puzzle/ElementalMonument";
-
 import { AuraType } from "#src/models/combat/AuraType";
 import { Element } from "#src/models/Element";
-import { createElementalState } from "#src/services/combat/aura/createElementalState";
 import { ELEMENTAL_MONUMENT_LIT_SECONDS } from "#src/services/puzzle/constants";
+import { createMonument } from "#src/services/puzzle/createMonument.test";
 import { stepElementalMonument } from "#src/services/puzzle/stepElementalMonument";
 import { strikeElementalMonument } from "#src/services/puzzle/strikeElementalMonument";
 import { describe, expect, test } from "vitest";
-
-const createMonument = (isTimed: boolean): ElementalMonument => ({
-  element: Element.Pyro,
-  elementalState: createElementalState(),
-  isLit: false,
-  isTimed,
-  litSeconds: 0,
-});
 
 describe(stepElementalMonument, () => {
   test("a timed monument goes out after its time", () => {
     expect.hasAssertions();
 
-    const monument = createMonument(true);
+    const monument = { ...createMonument(false), isTimed: true };
     strikeElementalMonument(monument, Element.Pyro, 1);
     stepElementalMonument(monument, ELEMENTAL_MONUMENT_LIT_SECONDS - 1);
     const isLitBeforeTime = monument.isLit;
