@@ -71,36 +71,37 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 
 ## Key files
 
-| File                                                                     | Role                                                                             |
-| :----------------------------------------------------------------------- | :------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/quest/Quest.ts`                       | A quest: its main quest, kind, words, steps, talks, rewards and schema           |
-| `packages/genshin-world/src/models/quest/QuestObjective.ts`              | One thing a step asks for, by its kind, targets and count                        |
-| `packages/genshin-world/src/services/quest/advanceQuest.ts`              | The Traveler's doing met against the current step, step by step                  |
-| `packages/genshin-world/src/services/quest/startQuests.ts`               | The Archon quests run in turn, and a quest started by a talk or by its parents   |
-| `packages/genshin-world/src/services/quest/getFinishedQuestEvents.ts`    | The steps and quests a progress moves past, as the achievements' events          |
-| `packages/genshin-world/src/services/quest/readQuests.ts`                | The carried quests fetched by their keys and checked against the schema          |
-| `packages/genshin-world/src/services/archive/openTravelLogEntries.ts`    | The Travel Log entries of the finished main quests opened                        |
-| `packages/genshin-world/src/services/quest/findQuestTargetPosition.ts`   | Where a navigated objective's target stands                                      |
-| `packages/genshin-world/src/composables/useWorldQuestTargets.ts`         | The go-to events a step raises, and the quests' distances and the tracker's mark |
-| `packages/genshin-world/src/composables/useWorldQuests.ts`               | The quests in progress, and the navigated objective's target                     |
-| `packages/genshin-world/src/services/quest/QuestKindCategoryMap.ts`      | Each kind's list on the quest screen                                             |
-| `packages/genshin-world/src/services/quest/constants.ts`                 | The screen's tab order and keys, and the beam's distance and look                |
-| `packages/genshin-world/src/components/Quest/Screen/Index.vue`           | The quest screen J opens                                                         |
-| `packages/genshin-world/src/components/Quest/Screen/Layout.reference.ts` | The screen's places, sizes, fills and marks as measured off the still            |
-| `packages/genshin-world/src/components/Quest/Row/Index.vue`              | One quest of the list: its title, distance and end mark                          |
-| `packages/genshin-world/src/models/quest/QuestChapter.ts`                | A series: its title, region, journal, quests and rewards                         |
-| `packages/genshin-world/src/services/quest/QuestGlyphMap.ts`             | The screen's own traced marks                                                    |
-| `packages/genshin-world/src/services/quest/QuestCategoryGlyphMap.ts`     | Each list's traced mark, on its tab and by its heading                           |
-| `packages/genshin-world/src/services/quest/getQuestTargetId.ts`          | What a quest's current step sends the player to                                  |
-| `packages/genshin-world/src/components/Quest/Beam/Index.vue`             | The beam over the navigated objective                                            |
-| `packages/genshin-world/src/models/quest/QuestId.ts`                     | The quests the world carries, the reader's inventory, in reading order           |
-| `scripts/src/services/genshinText/buildQuests.ts`                        | The builder: every inventoried quest, its talks and words, published             |
-| `scripts/src/services/genshinText/readQuestSteps.ts`                     | A quest's shown steps and offers read off its binary output by shape             |
-| `scripts/src/services/genshinText/OpeningParentTitleMap.ts`              | The wiki's named prerequisites of the three city openings, provisional           |
-| `scripts/src/services/genshinText/readOpeningParentQuestIds.ts`          | An opening's named prerequisites, each resolved to the one quest its title names |
-| `scripts/src/services/genshinText/readParentQuestIds.ts`                 | The parent quests a quest's sub quests' accept conditions name                   |
-| `scripts/src/services/genshinText/readTitleQuestIds.ts`                  | Each quest and chapter title in the English text, to the quest it names          |
-| `scripts/src/services/genshinText/readTalk.ts`                           | A talk read off the dialog and talk tables                                       |
+| File                                                                     | Role                                                                                            |
+| :----------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/quest/Quest.ts`                       | A quest: its main quest, kind, words, steps, talks, rewards and schema                          |
+| `packages/genshin-world/src/models/quest/QuestObjective.ts`              | One thing a step asks for, by its kind, targets and count                                       |
+| `packages/genshin-world/src/services/quest/advanceQuest.ts`              | The Traveler's doing met against the current step, step by step                                 |
+| `packages/genshin-world/src/services/quest/startQuests.ts`               | The Archon quests run in turn, and a quest started by a talk or by its parents                  |
+| `packages/genshin-world/src/services/quest/getFinishedQuestEvents.ts`    | The steps and quests a progress moves past, as the achievements' events                         |
+| `packages/genshin-world/src/services/quest/readQuests.ts`                | The carried quests fetched by their keys and checked against the schema                         |
+| `packages/genshin-world/src/services/archive/openTravelLogEntries.ts`    | The Travel Log entries of the finished main quests opened                                       |
+| `packages/genshin-world/src/services/quest/findQuestTargetPosition.ts`   | Where a navigated objective's target stands                                                     |
+| `packages/genshin-world/src/composables/useWorldQuestTargets.ts`         | The go-to events a step raises, and the quests' distances and the tracker's mark                |
+| `packages/genshin-world/src/composables/useWorldQuests.ts`               | The quests in progress, and the navigated objective's target                                    |
+| `packages/genshin-world/src/services/quest/QuestKindCategoryMap.ts`      | Each kind's list on the quest screen                                                            |
+| `packages/genshin-world/src/services/quest/constants.ts`                 | The screen's tab order and keys, and the beam's distance and look                               |
+| `packages/genshin-world/src/components/Quest/Screen/Index.vue`           | The quest screen J opens: its keys, slots and selection, mounting a child per region            |
+| `packages/genshin-world/src/components/Quest/Screen/<Part>/Index.vue`    | The tabs, the list and its sections, the detail with its navigation and rewards, and the footer |
+| `packages/genshin-world/src/components/Quest/Screen/Layout.reference.ts` | The screen's places, sizes, fills and marks as measured off the still                           |
+| `packages/genshin-world/src/components/Quest/Row/Index.vue`              | One quest of the list: its title, distance and end mark                                         |
+| `packages/genshin-world/src/models/quest/QuestChapter.ts`                | A series: its title, region, journal, quests and rewards                                        |
+| `packages/genshin-world/src/services/quest/QuestGlyphMap.ts`             | The screen's own traced marks                                                                   |
+| `packages/genshin-world/src/services/quest/QuestCategoryGlyphMap.ts`     | Each list's traced mark, on its tab and by its heading                                          |
+| `packages/genshin-world/src/services/quest/getQuestTargetId.ts`          | What a quest's current step sends the player to                                                 |
+| `packages/genshin-world/src/components/Quest/Beam/Index.vue`             | The beam over the navigated objective                                                           |
+| `packages/genshin-world/src/models/quest/QuestId.ts`                     | The quests the world carries, the reader's inventory, in reading order                          |
+| `scripts/src/services/genshinText/buildQuests.ts`                        | The builder: every inventoried quest, its talks and words, published                            |
+| `scripts/src/services/genshinText/readQuestSteps.ts`                     | A quest's shown steps and offers read off its binary output by shape                            |
+| `scripts/src/services/genshinText/OpeningParentTitleMap.ts`              | The wiki's named prerequisites of the three city openings, provisional                          |
+| `scripts/src/services/genshinText/readOpeningParentQuestIds.ts`          | An opening's named prerequisites, each resolved to the one quest its title names                |
+| `scripts/src/services/genshinText/readParentQuestIds.ts`                 | The parent quests a quest's sub quests' accept conditions name                                  |
+| `scripts/src/services/genshinText/readTitleQuestIds.ts`                  | Each quest and chapter title in the English text, to the quest it names                         |
+| `scripts/src/services/genshinText/readTalk.ts`                           | A talk read off the dialog and talk tables                                                      |
 
 ## Notes
 

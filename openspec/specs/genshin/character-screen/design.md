@@ -72,7 +72,8 @@ The Artifacts and Constellation references are timed to where their tabs have se
 | `packages/genshin-interface/src/components/CharacterMenu/Artifacts/Index.vue`     | The Artifacts panel: the slots, the stats, the set bonus block and the actions (see the artifact screen) |
 | `packages/genshin-interface/src/components/CharacterMenu/Constellation/Index.vue` | The Constellation panel: six rings, activated ones lit                                                   |
 | `packages/genshin-interface/src/components/CharacterMenu/Talents/Index.vue`       | The Talents panel: the three combat talents' rows and their Upgrade                                      |
-| `packages/genshin-world/src/components/Character/Screen/Index.vue`                | The screen: the words, the characters and the way back                                                   |
+| `packages/genshin-world/src/components/Character/Screen/Index.vue`                | The screen: the words, the characters, the way back, and a child per tab and picker                      |
+| `packages/genshin-world/src/components/Character/Screen/<Part>/Index.vue`         | Attributes, Artifacts, Enhance, Talents, Weapons, Equip and Constellation, each a piece of the screen    |
 | `packages/genshin-world/src/components/Character/AttributeList/Index.vue`         | The Attributes tab's level and attributes by group                                                       |
 | `packages/genshin-world/src/services/character/CharacterMenuTabGameTextKeyMap.ts` | Each tab's name in the game's text                                                                       |
 | `packages/genshin-world/src/services/character/constants.ts`                      | The Traveler's id and the advanced and elemental groups                                                  |

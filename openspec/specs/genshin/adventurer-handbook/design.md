@@ -14,7 +14,8 @@ The book is scored whole-frame against `handbook-experience`, the wiki's screens
 
 | File                                                                        | Role                                                        |
 | :-------------------------------------------------------------------------- | :---------------------------------------------------------- |
-| `packages/genshin-world/src/components/Handbook/Screen/Index.vue`           | The book, its tabs and its Experience page                  |
+| `packages/genshin-world/src/components/Handbook/Screen/Index.vue`           | The book's frame, which mounts its tabs and its three pages |
+| `packages/genshin-world/src/components/Handbook/Screen/<Part>/Index.vue`    | The tab bar, the close ribbon and each page with its rows   |
 | `packages/genshin-world/src/services/handbook/constants.ts`                 | The tabs in the English client's order, and the rows' pitch |
 | `packages/genshin-world/src/services/handbook/HandbookTabGameTextKeyMap.ts` | Each tab's name in the game's words                         |
 | `packages/genshin-interface/src/components/ItemTile/Index.vue`              | A reward's tile, coloured by its rarity                     |

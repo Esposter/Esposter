@@ -40,38 +40,39 @@ flowchart TD
 
 ## Key files
 
-| File                                                                                | Role                                                                                                           |
-| :---------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`                 | A pick up taken into the bag: stacks, single pieces, room and what is left                                     |
-| `packages/genshin-world/src/services/inventory/takeInventoryItems.ts`               | The items taken out of the bag's stacks, from the first stack onwards                                          |
-| `packages/genshin-world/src/services/inventory/checkIsInventoryItemDestroyable.ts`  | Whether an entry may be destroyed: its definition's destroy rule returns materials                             |
-| `packages/genshin-world/src/services/inventory/getDestroyableItem.ts`               | The bag's entry with an id, refused unless the bag holds it and may destroy it                                 |
-| `packages/genshin-world/src/services/inventory/getDestroyReturns.ts`                | The materials the destroyed entries return, summed by material                                                 |
-| `packages/genshin-world/src/services/inventory/addRewardItem.ts`                    | One reward taken in: a wallet currency into the wallet, any other into the bag                                 |
-| `packages/genshin-world/src/services/inventory/getWalletCurrency.ts`                | The wallet currency an item id is filed under, if any                                                          |
-| `packages/genshin-world/src/services/inventory/destroyInventoryItems.ts`            | The bag's entries after every chosen entry of the destroy mode is destroyed                                    |
-| `packages/genshin-world/src/services/inventory/DestroyQuickSelectGameTextKeyMap.ts` | The destroy mode's quick selects by rarity, each with the game's label                                         |
-| `packages/genshin-world/src/components/World/Session/Index.vue`                     | Sets the full-bag hint on a pick up the bag has no room for                                                    |
-| `packages/genshin-world/src/services/inventory/computeInventoryTab.ts`              | A tab's entries in the order the game shows them                                                               |
-| `packages/genshin-world/src/services/inventory/ItemCategoryRoomMap.ts`              | The room of the tabs counted on their own                                                                      |
-| `packages/genshin-world/src/services/inventory/bagLimits.ts`                        | The bag's kind limit and the most of one item it holds, the wiki's Inventory page's limits                     |
-| `packages/genshin-world/src/services/inventory/constants.ts`                        | The starting levels, the currencies shown, an empty bag and a wallet with Original Resin full                  |
-| `packages/genshin-world/src/services/inventory/getItemDefinition.ts`                | An item's definition, read from the materials table, its name from the `nameText` record                       |
-| `packages/genshin-world/src/services/inventory/toWeaponDefinition.ts`               | A weapon in the bag as a weapon entry of one, at rank zero                                                     |
-| `packages/genshin-world/src/services/save/toInventory.ts`                           | The bag read from its save, a weapon rebuilt from the weapon table and any other item from the materials table |
-| `packages/genshin-world/src/services/inventory/MaterialTypeItemCategoryMap.ts`      | The tab each material type is filed in                                                                         |
-| `packages/genshin-world/src/models/inventory/MaterialData.ts`                       | A row of the materials table, checked against its schema as the world loads                                    |
-| `packages/genshin-world/src/services/inventory/readMaterialDataMap.ts`              | The materials table by item id, read from the hosted game data as the world opens                              |
-| `packages/genshin-world/src/services/inventory/checkIsInventoryItemUsable.ts`       | Whether an entry offers a Use: a food the dish table gives a use                                               |
-| `packages/genshin-world/src/services/inventory/useInventoryEntry.ts`                | The bag after an entry is used, routed by its kind: a food to `eatDish`                                        |
-| `packages/genshin-world/src/services/cooking/eatDish.ts`                            | A dish eaten from the bag: its revive, heal and bonus applied to the character on the field                    |
-| `packages/genshin-world/src/composables/useWorldDishes.ts`                          | The dishes' uses read as the world opens, by the item id each is eaten from                                    |
-| `scripts/src/services/genshinAssets/items/buildItems.ts`                            | The reader that builds the materials table from the game's dump                                                |
-| `packages/genshin-world/src/models/inventory/Currency.ts`                           | The currencies the wallet counts, Original Resin among them                                                    |
-| `packages/genshin-world/src/components/Inventory/Screen/Index.vue`                  | The bag's screen in the reader's language                                                                      |
-| `packages/genshin-world/src/components/Inventory/Screen/Index.fixture.ts`           | The weapons tab sorted by quality, its first entry selected: the parity page's and the visual suite's state    |
-| `packages/genshin-interface/src/components/InventoryScreen/Index.vue`               | The bag's tabs, room, sort, grid and counts                                                                    |
-| `packages/genshin-interface/src/models/ItemCategory.ts`                             | The nine tabs, in the game's order                                                                             |
+| File                                                                                | Role                                                                                                                               |
+| :---------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`                 | A pick up taken into the bag: stacks, single pieces, room and what is left                                                         |
+| `packages/genshin-world/src/services/inventory/takeInventoryItems.ts`               | The items taken out of the bag's stacks, from the first stack onwards                                                              |
+| `packages/genshin-world/src/services/inventory/checkIsInventoryItemDestroyable.ts`  | Whether an entry may be destroyed: its definition's destroy rule returns materials                                                 |
+| `packages/genshin-world/src/services/inventory/getDestroyableItem.ts`               | The bag's entry with an id, refused unless the bag holds it and may destroy it                                                     |
+| `packages/genshin-world/src/services/inventory/getDestroyReturns.ts`                | The materials the destroyed entries return, summed by material                                                                     |
+| `packages/genshin-world/src/services/inventory/addRewardItem.ts`                    | One reward taken in: a wallet currency into the wallet, any other into the bag                                                     |
+| `packages/genshin-world/src/services/inventory/getWalletCurrency.ts`                | The wallet currency an item id is filed under, if any                                                                              |
+| `packages/genshin-world/src/services/inventory/destroyInventoryItems.ts`            | The bag's entries after every chosen entry of the destroy mode is destroyed                                                        |
+| `packages/genshin-world/src/services/inventory/DestroyQuickSelectGameTextKeyMap.ts` | The destroy mode's quick selects by rarity, each with the game's label                                                             |
+| `packages/genshin-world/src/components/World/Session/Index.vue`                     | Sets the full-bag hint on a pick up the bag has no room for                                                                        |
+| `packages/genshin-world/src/services/inventory/computeInventoryTab.ts`              | A tab's entries in the order the game shows them                                                                                   |
+| `packages/genshin-world/src/services/inventory/ItemCategoryRoomMap.ts`              | The room of the tabs counted on their own                                                                                          |
+| `packages/genshin-world/src/services/inventory/bagLimits.ts`                        | The bag's kind limit and the most of one item it holds, the wiki's Inventory page's limits                                         |
+| `packages/genshin-world/src/services/inventory/constants.ts`                        | The starting levels, the currencies shown, an empty bag and a wallet with Original Resin full                                      |
+| `packages/genshin-world/src/services/inventory/getItemDefinition.ts`                | An item's definition, read from the materials table, its name from the `nameText` record                                           |
+| `packages/genshin-world/src/services/inventory/toWeaponDefinition.ts`               | A weapon in the bag as a weapon entry of one, at rank zero                                                                         |
+| `packages/genshin-world/src/services/save/toInventory.ts`                           | The bag read from its save, a weapon rebuilt from the weapon table and any other item from the materials table                     |
+| `packages/genshin-world/src/services/inventory/MaterialTypeItemCategoryMap.ts`      | The tab each material type is filed in                                                                                             |
+| `packages/genshin-world/src/models/inventory/MaterialData.ts`                       | A row of the materials table, checked against its schema as the world loads                                                        |
+| `packages/genshin-world/src/services/inventory/readMaterialDataMap.ts`              | The materials table by item id, read from the hosted game data as the world opens                                                  |
+| `packages/genshin-world/src/services/inventory/checkIsInventoryItemUsable.ts`       | Whether an entry offers a Use: a food the dish table gives a use                                                                   |
+| `packages/genshin-world/src/services/inventory/useInventoryEntry.ts`                | The bag after an entry is used, routed by its kind: a food to `eatDish`                                                            |
+| `packages/genshin-world/src/services/cooking/eatDish.ts`                            | A dish eaten from the bag: its revive, heal and bonus applied to the character on the field                                        |
+| `packages/genshin-world/src/composables/useWorldDishes.ts`                          | The dishes' uses read as the world opens, by the item id each is eaten from                                                        |
+| `scripts/src/services/genshinAssets/items/buildItems.ts`                            | The reader that builds the materials table from the game's dump                                                                    |
+| `packages/genshin-world/src/models/inventory/Currency.ts`                           | The currencies the wallet counts, Original Resin among them                                                                        |
+| `packages/genshin-world/src/components/Inventory/Screen/Index.vue`                  | The bag's screen in the reader's language                                                                                          |
+| `packages/genshin-world/src/components/Inventory/Screen/Index.fixture.ts`           | The weapons tab sorted by quality, its first entry selected: the parity page's and the visual suite's state                        |
+| `packages/genshin-interface/src/components/InventoryScreen/Index.vue`               | The bag's props, focus and footer, which mounts a child per region                                                                 |
+| `packages/genshin-interface/src/components/InventoryScreen/<Part>/Index.vue`        | The tabs and capacity, the grid and its cells, the detail, the actions, the destroy foot, the sort, the currencies and the confirm |
+| `packages/genshin-interface/src/models/ItemCategory.ts`                             | The nine tabs, in the game's order                                                                                                 |
 
 ## Notes
 
