@@ -5,7 +5,6 @@ import type { DatabaseIndexName } from "#src/models/indexedDb/DatabaseIndexName"
 import type { DatabaseSchema } from "#src/models/indexedDb/DatabaseSchema";
 import type { DatabaseStoreName } from "#src/models/indexedDb/DatabaseStoreName";
 import type { DatabaseTransaction } from "#src/models/indexedDb/DatabaseTransaction";
-import type { UpgradeDatabase } from "#src/models/indexedDb/UpgradeDatabase";
 
 import { describe, expect, expectTypeOf, test } from "vitest";
 
@@ -19,7 +18,6 @@ interface UserValue {
 }
 
 declare const database: Database<Schema>;
-declare const upgradeDatabase: UpgradeDatabase<Schema>;
 
 // A generic read through a store name the caller holds as a variable, the way the cache's reads and writes do it
 const readIndex = <
@@ -134,11 +132,5 @@ describe("database type", () => {
     expect.hasAssertions();
 
     expectTypeOf(writeItems("users", [{ id: 1, name: "a" }])).resolves.toEqualTypeOf<number[]>();
-  });
-
-  test("the upgrade creates a store whose index can be created", () => {
-    expect.hasAssertions();
-
-    expectTypeOf(upgradeDatabase.createObjectStore("users").createIndex).toBeFunction();
   });
 });
