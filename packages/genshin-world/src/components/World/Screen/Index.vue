@@ -118,7 +118,7 @@ getResultAsync(() =>
     nameText,
     statTables,
     talentTables,
-    _characterConstellationKits,
+    ,
     enemyTables,
     adventureRankTables,
     materialDataMap,
