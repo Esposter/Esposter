@@ -4,7 +4,7 @@ Elemental Sight as the world plays it: a white range spreads from the character 
 
 ## Open
 
-- [ ] **the sight plays as the game does: white interactables, element colours, enemy names and the walk end** — no source yet: the wiki's Elemental Sight page, which the cache does not hold, or a recording of the sight (the design's open list has the parts).
+The sources for these requirements are open item by item in [the design](design.md).
 
 ## Requirements
 

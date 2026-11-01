@@ -83,3 +83,4 @@ flowchart TD
 - [ ] **white is the colour of what no element affects** — no source yet: the wiki's colour key, which the cache does not hold.
 - [ ] **a walk past the limit ends the sight, as the game does** — no source yet: the wiki's Elemental Sight page, which the cache does not hold, or a recording of the walk.
 - [ ] **the element colours are the game's interface colours** — no source yet: the game's interface colour for each element, which no dump table holds (the repo keeps the table by hand in `genshin-text`).
+- [ ] **enemies within the range show their names over their heads** — no source yet: the wiki's Elemental Sight page, which the cache does not hold, or a recording of the sight.
