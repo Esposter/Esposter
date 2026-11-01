@@ -15,6 +15,7 @@ import { checkIsCitedBy } from "#src/services/genshinAssets/kits/record/checkIsC
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
 import { checkIsKitValueResolvedEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueResolvedEqual";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
+import { refuseChoice } from "#src/services/genshinAssets/kits/record/refuseChoice";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The causes saying no source gives a value: none, no poise, and no damage
@@ -23,9 +24,6 @@ const NO_SOURCE_CAUSES: ReadonlySet<KitProvisionalCause> = new Set([
   KitProvisionalCause.NoPoiseSource,
   KitProvisionalCause.Unsourced,
 ]);
-
-const refuseChoice = (path: string, entry: KitOverlayChoice) =>
-  new InvalidOperationError(Operation.Read, path, `has no ${entry.source} value for the overlay to choose`);
 
 // A kit's values from its sources' candidates and its overlay: each path takes its first source's value, the overlay
 // Then sets its own values, removes others and picks another source where it names one. A talent whose hits a named list
