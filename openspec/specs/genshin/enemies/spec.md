@@ -307,5 +307,4 @@ Each enemy SHALL be tinted white with a small flash at its middle for a moment a
 ## Open
 
 - [ ] **A boss stays down across a reload until its Trounce Blossom is claimed or the first teleport after its defeat** — contradicted by `{data-root}/cache/genshin-wiki/Page_Normal_Boss.json` wikitext line 16: the boss stays down "unless the player teleports out of the area", where the page's value is the first teleport after its defeat, which `packages/genshin-world/src/composables/useWorldMap.ts` line 266 emits for every jump.
-- [ ] **An enemy's strike lands on the team's shields first, as Qiqi's Talisman from four constellations does** — contradicted by `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json` line 223548: the Talisman's constellation 4 gives an ATK decrease of 20% to marked targets and no shield split. The design's Open list holds the same record.
 - [ ] **No enemy gives Adventure EXP** — contradicted by `{data-root}/cache/genshin-wiki/Page_Adventure_EXP.json` wikitext line 77: each defeated Unusual Hilichurl gives 18 Adventure Rank EXP, where the page's value is that no enemy gives Adventure EXP.
