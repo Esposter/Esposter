@@ -18,10 +18,6 @@
   "frames.pneumaSummonDelay": { "file": "skill.go", "line": 23, "source": "Gcsim", "value": 10 },
   "frames.fanfareStart": { "file": "burst.go", "line": 174, "source": "Gcsim", "value": 95 },
   "hits.salonMemberAttacks.length": { "cause": "Unsourced", "value": 3 },
-  "hits.salonMemberAttacks.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.5 }
-  },
   "hits.salonMemberAttacks.0.element": { "file": "skill.go", "line": 207, "source": "Gcsim", "value": "Water" },
   "hits.salonMemberAttacks.0.gauge": { "file": "skill.go", "line": 208, "source": "Gcsim", "value": 1 },
   "hits.salonMemberAttacks.0.hitmarkFrames": { "file": "skill.go", "line": 35, "source": "Gcsim", "value": 20 },
@@ -33,10 +29,6 @@
   },
   "hits.salonMemberAttacks.0.multiplier": { "cause": "Unsourced", "value": 0 },
   "hits.salonMemberAttacks.0.poiseDamage": { "page": "Salon Solitaire", "row": 3, "source": "Wiki" },
-  "hits.salonMemberAttacks.1.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
-  },
   "hits.salonMemberAttacks.1.element": { "file": "skill.go", "line": 242, "source": "Gcsim", "value": "Water" },
   "hits.salonMemberAttacks.1.gauge": { "file": "skill.go", "line": 243, "source": "Gcsim", "value": 1 },
   "hits.salonMemberAttacks.1.hitmarkFrames": { "file": "skill.go", "line": 41, "source": "Gcsim", "value": 40 },
@@ -48,10 +40,6 @@
   },
   "hits.salonMemberAttacks.1.multiplier": { "cause": "Unsourced", "value": 0 },
   "hits.salonMemberAttacks.1.poiseDamage": { "page": "Salon Solitaire", "row": 2, "source": "Wiki" },
-  "hits.salonMemberAttacks.2.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
-  },
   "hits.salonMemberAttacks.2.element": { "file": "skill.go", "line": 278, "source": "Gcsim", "value": "Water" },
   "hits.salonMemberAttacks.2.gauge": { "file": "skill.go", "line": 279, "source": "Gcsim", "value": 1 },
   "hits.salonMemberAttacks.2.hitmarkFrames": { "file": "skill.go", "line": 46, "source": "Gcsim", "value": 41 },
@@ -118,5 +106,17 @@
     "value": { "index": 5, "proudSkillGroupId": 8939 }
   },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
-  "skill.hits.length": { "cause": "NamedHitList", "value": 0 }
+  "skill.hits.length": { "cause": "NamedHitList", "value": 0 },
+  "hits.salonMemberAttacks.0.area": {
+    "cause": "TargetCentred",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.5 }
+  },
+  "hits.salonMemberAttacks.1.area": {
+    "cause": "TargetCentred",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
+  },
+  "hits.salonMemberAttacks.2.area": {
+    "cause": "TargetCentred",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
+  }
 }
