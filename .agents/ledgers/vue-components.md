@@ -182,6 +182,4 @@ The criterion, and why length is only a first look, is in `.agents/skills/vue-co
 git ls-files '*.vue' | xargs wc -l | sort -rn | head -40
 ```
 
-Nothing lints a `<script setup>` binding that is declared and never read, so a long script hides them. A heuristic
-scan counts each name against the whole file, spread uses and the template's kebab-case shorthand included; read
-what it reports before deleting, because a name used only by a string key or a dynamic access reads as unused.
+A `<script setup>` binding that is declared and never read fails the typecheck (`noUnusedLocals`), so a pass never searches for one.

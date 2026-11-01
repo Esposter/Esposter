@@ -20,7 +20,7 @@ A value derivable from other state is a `computed`, never a second ref held in s
 
 ## Nothing unread
 
-Every name declared in `<script setup>` is read by the script, the template or `defineExpose`, and a `computed` nothing reads is dead weight that still evaluates. Nothing lints it, so a script collects them: usually names destructured from a composable and later abandoned. Delete the name from the destructuring; the composable keeps what it returns only while another caller reads it. The scan is in the Vue components ledger.
+Every name declared in `<script setup>` is read by the script, the template or `defineExpose`, and a `computed` nothing reads is dead weight that still evaluates. `noUnusedLocals` fails the typecheck on one that is not, template reads included; it is set in `packages/configuration/tsconfig.base.json` and restated for the app in `apps/web/configuration/typescript.ts`. A name destructured from a composable and later abandoned is the usual case: delete it from the destructuring, and the composable keeps what it returns only while another caller reads it. The checker does not count a string `ref="name"` as a read, so an element a store owns is bound with a function ref the script names (`:ref="setElement"`, a template expression cannot reach `HTMLDivElement`), and an element the component reads is a `useTemplateRef`.
 
 ## Nothing written twice
 
