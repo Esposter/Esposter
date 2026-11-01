@@ -29,7 +29,7 @@ An object literal that fits the width is on one line — `oxfmt`'s `objectWrap: 
 - **A comment explains the code, never the change that produced it** (`references/comment-content.md`).
 - **`/** */` is for an exported API surface and a module-scope paragraph, `//` for everything else** (`references/doc-blocks.md`).
 - **Tight and generic** — no baked-in example values; an actual error text a workaround addresses is kept (`references/comment-content.md`).
-- **Don't fight `eslint(capitalized-comments)`** — after a rewrap, move an identifier off the line front and re-read the joined sentence (`comments/no-capitalized-identifier`, `references/capitalized-comments.md`).
+- **Don't fight oxlint's `capitalized-comments`** — after a rewrap, move an identifier off the line front and re-read the joined sentence (`comments/no-capitalized-identifier`, `references/capitalized-comments.md`).
 
 ## Line Endings
 
