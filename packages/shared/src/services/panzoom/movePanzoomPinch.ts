@@ -5,13 +5,11 @@ import { getPanzoomPinchFrame } from "#src/services/panzoom/getPanzoomPinchFrame
 import { getPanzoomPinchScale } from "#src/services/panzoom/getPanzoomPinchScale";
 import { panPanzoom } from "#src/services/panzoom/panPanzoom";
 import { zoomPanzoom } from "#src/services/panzoom/zoomPanzoom";
-import { takeOne } from "#src/util/array/takeOne";
 
 // A pinch zooms to the scale its fingers' distance gives, about the midpoint its last step ended on, so the content there
 // Stays put. With pinchAndPan the midpoint's movement pans as well, which keeps the content under the fingers under them
 export const movePanzoomPinch = (context: PanzoomContext, pinch: PanzoomPinch, event: PointerEvent): void => {
-  const points = [...context.pointers.values()];
-  const frame = getPanzoomPinchFrame(takeOne(points, 0), takeOne(points, 1));
+  const frame = getPanzoomPinchFrame(context.pointers);
   const scale = getPanzoomPinchScale(pinch.startScale, pinch.startDistance, frame.distance);
   zoomPanzoom(context, scale, { animate: false, focal: pinch.midpoint }, event);
   if (context.options.pinchAndPan) {

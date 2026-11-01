@@ -8,7 +8,6 @@ import { getPanzoomPinchFrame } from "#src/services/panzoom/getPanzoomPinchFrame
 import { getPanzoomTarget } from "#src/services/panzoom/getPanzoomTarget";
 import { isPanzoomExcluded } from "#src/services/panzoom/isPanzoomExcluded";
 import { writePanzoomStyle } from "#src/services/panzoom/writePanzoomStyle";
-import { takeOne } from "#src/util/array/takeOne";
 
 // A pointer that the exclusions and the filter let through joins the gesture. One pointer starts a drag, and a second turns
 // The gesture into a pinch. A pointer past the second is not tracked. Every press clears the click suppression a drag left armed
@@ -31,8 +30,7 @@ export const startPanzoomGesture = (context: PanzoomContext, event: PointerEvent
 
   if (pointers.size === 1) context.drag = getPanzoomDrag(state, point);
   if (pointers.size === 2) {
-    const points = [...pointers.values()];
-    const frame = getPanzoomPinchFrame(takeOne(points, 0), takeOne(points, 1));
+    const frame = getPanzoomPinchFrame(pointers);
     if (frame.distance > 0) {
       context.drag = undefined;
       context.pinch = { midpoint: frame.midpoint, startDistance: frame.distance, startScale: state.scale };

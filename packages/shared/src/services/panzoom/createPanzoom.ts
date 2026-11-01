@@ -15,7 +15,6 @@ import { getPanzoomCallOptions } from "#src/services/panzoom/getPanzoomCallOptio
 import { getPanzoomMeasure } from "#src/services/panzoom/getPanzoomMeasure";
 import { getPanzoomParent } from "#src/services/panzoom/getPanzoomParent";
 import { getPanzoomStartState } from "#src/services/panzoom/getPanzoomStartState";
-import { getPanzoomStepScale } from "#src/services/panzoom/getPanzoomStepScale";
 import { getPanzoomTarget } from "#src/services/panzoom/getPanzoomTarget";
 import { getPanzoomWheelScale } from "#src/services/panzoom/getPanzoomWheelScale";
 import { panPanzoom } from "#src/services/panzoom/panPanzoom";
@@ -24,6 +23,7 @@ import { restorePanzoomStyles } from "#src/services/panzoom/restorePanzoomStyles
 import { writePanzoomState } from "#src/services/panzoom/writePanzoomState";
 import { writePanzoomStyle } from "#src/services/panzoom/writePanzoomStyle";
 import { zoomPanzoom } from "#src/services/panzoom/zoomPanzoom";
+import { zoomPanzoomStep } from "#src/services/panzoom/zoomPanzoomStep";
 
 // One panzoom on an element: it moves the element by writing its transform, and reads the element and its parent to contain it.
 // Construction applies the start state synchronously and sends no event, so a pan made on the next line is not overwritten
@@ -96,16 +96,8 @@ export const createPanzoom = (element: PanzoomElement, options: PanzoomOptions =
       applyPanzoomStyles(context);
     },
     zoom: (scale, zoomOptions = {}) => zoomPanzoom(context, scale, zoomOptions),
-    zoomIn: (zoomOptions = {}) =>
-      zoomPanzoom(context, getPanzoomStepScale(context.state.scale, PanzoomZoomDirection.In, context.options.step), {
-        animate: true,
-        ...zoomOptions,
-      }),
-    zoomOut: (zoomOptions = {}) =>
-      zoomPanzoom(context, getPanzoomStepScale(context.state.scale, PanzoomZoomDirection.Out, context.options.step), {
-        animate: true,
-        ...zoomOptions,
-      }),
+    zoomIn: (zoomOptions = {}) => zoomPanzoomStep(context, PanzoomZoomDirection.In, zoomOptions),
+    zoomOut: (zoomOptions = {}) => zoomPanzoomStep(context, PanzoomZoomDirection.Out, zoomOptions),
     zoomToPoint: (scale, point, zoomOptions, originalEvent) =>
       zoomPanzoom(context, scale, { ...zoomOptions, focal: { x: point.clientX, y: point.clientY } }, originalEvent),
     zoomWithWheel: (event, zoomOptions = {}) => {
