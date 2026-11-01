@@ -11,7 +11,7 @@ The Upstream table in `openspec/specs/shared/panzoom/design.md` says each in-sco
 
 ## Open question for the owner
 
-1. **Prove it with the TypeScript 6 typecheck (recommended).** The claim is that the typings import nothing a TypeScript 6 build would reject. CI's typecheck of the shared package under TypeScript 6 fails on exactly the import #703 reports, so a green typecheck is the proof and no test is written. The cell cites that typecheck.
+1. **Prove it with a TypeScript 6 check that compiles the upstream typings (recommended).** The claim is that the upstream typings import nothing a TypeScript 6 build would reject. `packages/shared` and `apps/web` do not depend on or import upstream panzoom, so the existing typecheck never reads those typings and a green run proves nothing about them. The proof is a check that compiles the upstream typings under TypeScript 6, which this change adds; no test is written. The cell cites that check.
 2. **Pin the shipped file list in a test.** A test asserts the package's built output has no polyfill file. It can fail, but it only pins today's layout, so it is weaker than option 1.
 3. **Drop #703 from the in-scope rows.** The row moves to "declined" with the reason that the upstream polyfill does not exist in this package, and no proof is needed.
 
