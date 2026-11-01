@@ -29,11 +29,6 @@ const days = computed(() =>
 const birthday = computed<TravelerBirthdaySave | undefined>(() =>
   month.value !== undefined && day.value !== undefined ? { day: day.value, month: month.value } : undefined,
 );
-// A month that is shorter than the picked day takes the day back, so a date is always one the month holds
-const pickMonth = (nextMonth: number) => {
-  month.value = nextMonth;
-  if (day.value !== undefined && day.value > getBirthdayDayCount(nextMonth)) day.value = undefined;
-};
 // The confirm line names the date, the twenty-ninth of February with a line of its own, and is coloured as the game colours it
 const confirmSegments = computed(() => {
   if (!birthday.value) return [];
@@ -44,14 +39,12 @@ const confirmSegments = computed(() => {
       : fillGameTextValues(gameText[GameTextKey.BirthdayConfirmTip], pickedMonth, pickedDay);
   return splitGameTextColors(tip);
 });
-const confirmBirthday = () => {
-  if (birthday.value) emit("confirm", birthday.value);
-};
 </script>
 
 <template>
   <MenuDialog :title="gameText[GameTextKey.BirthdaySet]">
     <div class="months">
+      <!-- A month that is shorter than the picked day takes the day back, so a date is always one the month holds -->
       <GameButton
         v-for="monthChoice of BIRTHDAY_MONTHS"
         :key="monthChoice"
@@ -59,7 +52,12 @@ const confirmBirthday = () => {
         tip=""
         :aria-pressed="monthChoice === month"
         :kind="GameButtonKind.Row"
-        @click="pickMonth(monthChoice)"
+        @click="
+          () => {
+            month = monthChoice;
+            if (day !== undefined && day > getBirthdayDayCount(monthChoice)) day = undefined;
+          }
+        "
       >
         {{ monthChoice }}
       </GameButton>
@@ -87,7 +85,7 @@ const confirmBirthday = () => {
         tip=""
         :disabled="!birthday"
         :kind="GameButtonKind.Pill"
-        @click="confirmBirthday()"
+        @click="birthday && emit('confirm', birthday)"
       >
         {{ gameText[GameTextKey.Confirm] }}
       </GameButton>

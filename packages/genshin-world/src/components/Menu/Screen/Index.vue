@@ -50,6 +50,8 @@ const emit = defineEmits<{
   setBirthday: [birthday: TravelerBirthdaySave];
   toggleWorldLevel: [];
 }>();
+// One check for the instance, not a fresh arrow each render, so the Paimon menu's prop keeps its identity
+const checkIsBuilt = (titledScreenKind: TitledScreenKind) => Boolean(slots[titledScreenKind]);
 </script>
 
 <template>
@@ -62,7 +64,7 @@ const emit = defineEmits<{
     :adventure-exp-progress
     :adventure-rank
     :alerted-icons
-    :check-is-built="(titledScreenKind) => Boolean(slots[titledScreenKind])"
+    :check-is-built="checkIsBuilt"
     :finished-main-quest-ids
     :game-text
     :is-world-level-adjustable
