@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T extends ClickerListItem">
 import type { ClickerListItem } from "@/models/clicker/ClickerListItem";
 import type { UiListItem } from "@/models/ui/UiListItem";
+import { ID_SEPARATOR } from "@esposter/shared";
 
 interface Props {
   items: T[];
@@ -16,8 +17,10 @@ const { items, label, positionArea } = defineProps<Props>();
 const listItems = computed(() =>
   items.map<UiListItem<string> & { item: T }>((item) => ({ hasMarkSlot: true, item, title: item.id, value: item.id })),
 );
+// One key for a row, read both by its attribute and by the lookup that finds it again
+const getRowKey = (value: string) => `${label}${ID_SEPARATOR}${value}`;
 // Stable across renders: the list calls it per row as it renders, so a selection re-renders no row
-const getRowProps = ({ value }: UiListItem<string>) => ({ "data-item-key": `${label}:${value}` });
+const getRowProps = ({ value }: UiListItem<string>) => ({ "data-item-key": getRowKey(value) });
 const anchor = ref<HTMLElement>();
 const selectedId = ref("");
 // Resolved against the list rather than held on its own, so an item that leaves it — an upgrade just bought, which
@@ -27,7 +30,8 @@ const { isOpen, item: selectedItem } = useSingletonDialog(selectedId, () =>
 );
 const open = (id: string) => {
   // A building and an upgrade may share a name, so a row is found by its list as well
-  const row = window.document.querySelector(`[data-item-key="${label}:${id}"]`);
+  const rowKey = getRowKey(id);
+  const row = window.document.querySelector(`[data-item-key="${rowKey}"]`);
   if (!(row instanceof HTMLElement)) return;
   anchor.value = row;
   selectedId.value = id;
