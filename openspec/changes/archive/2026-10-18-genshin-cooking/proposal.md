@@ -19,7 +19,7 @@ Add the city stove, the cooking screen, what an eaten dish does, the passives th
 
 ## Waiting on
 
-- `openspec/changes/genshin-inventory/`: eating a dish goes through its using of food, which that change builds first.
+- `openspec/changes/archive/2026-10-18-genshin-inventory/`: eating a dish goes through its using of food, which that change builds first.
 - `openspec/changes/genshin-character-kits/`: a dish's bonus is applied through the character kits' shared effects.
 
 ## Impact
