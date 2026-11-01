@@ -6,7 +6,7 @@ import { TIME_DIAL_ORNAMENT_POSITIONS, TIME_MINIMUM_ADVANCE_MINUTES } from "#src
 import { getTimeTargetMinutes } from "#src/services/menu/getTimeTargetMinutes";
 import { stepTimeDialAdvance } from "#src/services/menu/stepTimeDialAdvance";
 import { MINUTES_PER_DAY } from "genshin-engine";
-import { CloseButtonMark, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { CloseButtonMark, GAME_CREAM, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -150,7 +150,7 @@ onMounted(() => {
 <style scoped>
 .menu-time {
   --reference-pixel: var(--unit);
-  color: #ece5d8;
+  color: v-bind(GAME_CREAM);
 }
 
 /* The dial's centre at 445 reference pixels right of the screen's middle, 505 down, its ring and badges within 460 */

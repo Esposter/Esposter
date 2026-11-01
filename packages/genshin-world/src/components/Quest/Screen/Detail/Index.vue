@@ -42,7 +42,7 @@ const questStep = computed(() => {
 
 <template>
   <div class="details">
-    <p class="detail-title" role="heading" aria-level="1">{{ textMap[quest.titleTextId] }}</p>
+    <p class="detail-title" aria-level="1" role="heading">{{ textMap[quest.titleTextId] }}</p>
     <MenuGlyph class="place" :glyph="QuestGlyphMap[QuestGlyph.Place]" />
     <template v-if="selectedChapter">
       <p class="journal">{{ textMap[selectedChapter.journalTextId] ?? "" }}</p>

@@ -29,8 +29,8 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   <!-- A character card on the board: its HP in the corner, its energy as pips down its right edge, its aura and shield
        beside it. Its name is only the button's label. A defeated one is greyed; the board raises the active one by its class -->
   <button
-    :aria-label="name"
     class="character"
+    :aria-label="name"
     :class="{ choosable: isChoosable, defeated: hp <= 0 }"
     type="button"
     @click="emit('select')"

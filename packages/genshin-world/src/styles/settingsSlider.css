@@ -1,0 +1,28 @@
+/* A slider's line, which a backed slider and an unbacked one share: it takes the pointer, which sets its level, and the arrow
+   Keys once it has the focus. The knob is a diamond at its share of the line */
+.slider {
+  position: absolute;
+  top: calc(var(--unit) * 24.5);
+  left: calc(var(--unit) * 952);
+  width: calc(var(--unit) * 330);
+  height: calc(var(--unit) * 7);
+  border-radius: calc(var(--unit) * 3.5);
+  background: #faf5eb;
+  touch-action: none;
+}
+
+.slider:focus-visible {
+  outline: calc(var(--unit) * 2) solid rgb(255 255 255 / 0.9);
+  outline-offset: calc(var(--unit) * 4);
+}
+
+.knob {
+  position: absolute;
+  top: 50%;
+  width: calc(var(--unit) * 19);
+  height: calc(var(--unit) * 19);
+  border: calc(var(--unit) * 2) solid #8f8a85;
+  background: #e6e0d5;
+  box-sizing: border-box;
+  transform: translate(-50%, -50%) rotate(45deg);
+}

@@ -4,6 +4,7 @@ import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
 import type { HudMember } from "#src/models/hud/HudMember";
 import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
+import type { InteractionPrompts } from "#src/models/interaction/InteractionPrompts";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { Party } from "#src/models/party/Party";
@@ -29,6 +30,7 @@ import HudSkills from "#src/components/Hud/Skills/Index.vue";
 import HudStamina from "#src/components/Hud/Stamina/Index.vue";
 import HudStick from "#src/components/Hud/Stick/Index.vue";
 import HudTouch from "#src/components/Hud/Touch/Index.vue";
+import InteractionPromptList from "#src/components/Interaction/PromptList/Index.vue";
 import { HudInterfaceRectName } from "#src/models/hud/HudInterfaceRectName";
 import { formatTrialCountdown } from "#src/services/trial/formatTrialCountdown";
 import { GameRect, GameScreen } from "genshin-interface";
@@ -48,6 +50,8 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   input: Input;
+  // The prompts beside the character, drawn as a row each beside the centre, absent where the HUD shows no list
+  interactionPrompts?: InteractionPrompts;
   // The HUD's pieces' rects as the game's tree places them, read before the world opens
   interfaceRects: HudInterfaceRects;
   // Whether the main pointer is a finger, which has no keys or mouse to move, look and act with, so the touch controls
@@ -81,7 +85,7 @@ interface Props {
 }
 
 defineSlots<{
-  // The prompts of what the character can act on, beside the centre
+  // The popups drawn beside the centre over the list of prompts, such as a tip or a choice of offers
   prompts?: () => VNode;
 }>();
 const {
@@ -93,6 +97,7 @@ const {
   gadgetCooldownSeconds,
   gameText,
   input,
+  interactionPrompts,
   interfaceRects,
   isTouch,
   landmarks,
@@ -109,7 +114,12 @@ const {
   travelerName,
   trialSecondsRemaining,
 } = defineProps<Props>();
-const emit = defineEmits<{ map: []; menu: [] }>();
+const emit = defineEmits<{
+  map: [];
+  menu: [];
+  // A row of the prompts pressed itself, which acts on it as F acts on the selected row
+  press: [id: string];
+}>();
 </script>
 
 <template>
@@ -192,6 +202,13 @@ const emit = defineEmits<{ map: []; menu: [] }>();
          Middle, since the recordings show it beside the character wherever the character stands -->
     <HudStamina :frame :game-text :max-stamina />
     <HudSheerCold :frame :game-text />
+    <!-- The prompts beside the centre, a row each, under the popups the slot holds -->
+    <InteractionPromptList
+      v-if="interactionPrompts"
+      :interaction-prompts
+      :is-touch
+      @press="(id) => emit('press', id)"
+    />
     <slot name="prompts" />
   </GameScreen>
 </template>

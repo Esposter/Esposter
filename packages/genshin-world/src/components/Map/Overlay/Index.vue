@@ -8,41 +8,25 @@ import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { GameText } from "genshin-text";
 
+import { useMapPan } from "#src/composables/useMapPan";
 import MapDrawing from "#src/components/Map/Drawing/Index.vue";
 import MapJumpList from "#src/components/Map/JumpList/Index.vue";
+import MapOverlayDomainsOnly from "#src/components/Map/Overlay/DomainsOnly/Index.vue";
+import MapOverlayLabels from "#src/components/Map/Overlay/Labels/Index.vue";
+import MapOverlayRegionTag from "#src/components/Map/Overlay/RegionTag/Index.vue";
+import MapOverlayResin from "#src/components/Map/Overlay/Resin/Index.vue";
+import MapOverlayTeleport from "#src/components/Map/Overlay/Teleport/Index.vue";
+import MapOverlayZoom from "#src/components/Map/Overlay/Zoom/Index.vue";
 import MapPointer from "#src/components/Map/Pointer/Index.vue";
-import { Currency } from "#src/models/inventory/Currency";
 import { computeExplorationProgress } from "#src/services/exploration/computeExplorationProgress";
 import { computeExploredDoingIds } from "#src/services/exploration/computeExploredDoingIds";
 import { computeAreaLabels } from "#src/services/map/computeAreaLabels";
-import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
-import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { computeMapFrameTransform } from "#src/services/map/computeMapFrameTransform";
-import { computeWheelZoomMetres } from "#src/services/map/computeWheelZoomMetres";
-import { computeZoomMetresAtShare } from "#src/services/map/computeZoomMetresAtShare";
-import { computeZoomShare } from "#src/services/map/computeZoomShare";
-import {
-  MAP_DRAG_THRESHOLD_PIXELS,
-  MAP_GROUND,
-  MAP_LABEL_SHARE,
-  MAP_OVERLAY_MARK_SHARE,
-  MAP_PROGRESS_OFFSET_SHARE,
-  MAP_PROGRESS_SHARE,
-  MAP_REFERENCE_ZOOM_METRES,
-  MAP_SUBAREA_LABEL_OFFSETS,
-  MAP_SUBAREA_LABEL_SHARE,
-  MAP_ZOOM_DRAWING_HEIGHT,
-  MAP_ZOOM_TRACK_HEIGHT,
-  MAP_ZOOM_TRACK_TOP,
-} from "#src/services/map/constants";
+import { MAP_GROUND, MAP_OVERLAY_MARK_SHARE, MAP_SUBAREA_LABEL_OFFSETS } from "#src/services/map/constants";
 import { findAreaAt } from "#src/services/map/findAreaAt";
 import { findAreaNameAt } from "#src/services/map/findAreaNameAt";
-import { findLandmarkArea } from "#src/services/map/findLandmarkArea";
 import { projectMapPoint } from "#src/services/map/projectMapPoint";
-import { unprojectMapPoint } from "#src/services/map/unprojectMapPoint";
-import { ORIGINAL_RESIN_CAP } from "#src/services/originalResin/constants";
-import { regenerateOriginalResin } from "#src/services/originalResin/regenerateOriginalResin";
-import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { GameScreen } from "genshin-interface";
 import { GAME_CREAM, GAME_INK, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface/constants";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
@@ -87,87 +71,23 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 // The landmark chosen on the map or in the list, whose teleport panel names its area and jumps there on its Teleport
 // Button alone, so a stray click on the map never teleports
 const chosenLandmark = shallowRef<Landmark>();
-const chosenArea = computed(() => chosenLandmark.value && findLandmarkArea(catalogue, chosenLandmark.value));
 const chooseLandmark = (landmark: Landmark) => {
   chosenLandmark.value = landmark;
 };
 const closeButton = useTemplateRef("closeButton");
 const map = useTemplateRef("map");
-const zoomTrack = useTemplateRef("zoomTrack");
 // The drawn metres across the map's width, which the wheel and the slider change from the page's zoom, and the offset the
 // Map is dragged to from the player
 const metres = defineModel<number>("metres", { required: true });
-const pan = ref({ x: 0, z: 0 });
+const { pan, onMapClickCapture, onMapPointerDown, onMapPointerMove, onMapPointerUp, onMapWheel } = useMapPan(
+  map,
+  metres,
+);
 // The catalogue point the view is centred on, the player's own point until the map is dragged off it
 const centre = computed(() => ({ x: camera.x + pan.value.x, z: camera.z + pan.value.z }));
 const frameTransform = computed(() => computeMapFrameTransform(centre.value));
 const playerPlace = computed(() => projectMapPoint(camera, centre.value));
 const markRadius = computed(() => metres.value * MAP_OVERLAY_MARK_SHARE);
-const zoomThumbY = computed(() => MAP_ZOOM_TRACK_TOP + computeZoomShare(metres.value) * MAP_ZOOM_TRACK_HEIGHT);
-// A press's start and last place, whether it has travelled far enough to pan, and whether the slider is being dragged.
-// These are not drawn, so they are plain variables rather than state
-let pressStart = { x: 0, y: 0 };
-let pointer = { x: 0, y: 0 };
-let isPanning = false;
-let isDragged = false;
-let isSlidingZoom = false;
-const onMapPointerDown = (event: PointerEvent) => {
-  isPanning = true;
-  isDragged = false;
-  pressStart = { x: event.clientX, y: event.clientY };
-  pointer = pressStart;
-};
-const onMapPointerMove = (event: PointerEvent) => {
-  if (!isPanning || !map.value) return;
-  // The pointer is captured only once the press is a drag, since a captured press's click lands on the map rather than
-  // On the landmark it was made on
-  if (
-    !isDragged &&
-    Math.hypot(event.clientX - pressStart.x, event.clientY - pressStart.y) > MAP_DRAG_THRESHOLD_PIXELS
-  ) {
-    isDragged = true;
-    map.value.setPointerCapture(event.pointerId);
-  }
-  const { height, width } = map.value.getBoundingClientRect();
-  // The map is drawn over the screen's larger side, so a pixel is that many metres of the drawn width
-  const metresPerPixel = metres.value / Math.max(width, height);
-  // The view moves opposite to the pointer on the screen, so the drag's place is read back into the catalogue from the centre
-  const drag = unprojectMapPoint(
-    { x: -(event.clientX - pointer.x) * metresPerPixel, y: -(event.clientY - pointer.y) * metresPerPixel },
-    { x: 0, z: 0 },
-  );
-  pan.value = { x: pan.value.x + drag.x, z: pan.value.z + drag.z };
-  pointer = { x: event.clientX, y: event.clientY };
-};
-const onMapPointerUp = () => {
-  isPanning = false;
-};
-// A drag that ends on a landmark is not a choice of it, so the click that follows it is stopped before the landmark
-const onMapClickCapture = (event: MouseEvent) => {
-  if (!isDragged) return;
-  event.stopPropagation();
-  isDragged = false;
-};
-const setZoomAtPointer = (clientY: number) => {
-  if (!zoomTrack.value) return;
-  const { height, top } = zoomTrack.value.getBoundingClientRect();
-  const drawingY = ((clientY - top) / height) * MAP_ZOOM_DRAWING_HEIGHT;
-  metres.value = computeZoomMetresAtShare((drawingY - MAP_ZOOM_TRACK_TOP) / MAP_ZOOM_TRACK_HEIGHT);
-};
-const onMapWheel = (event: WheelEvent) => {
-  metres.value = computeWheelZoomMetres(metres.value, event.deltaY);
-};
-const onZoomPointerDown = (event: PointerEvent) => {
-  isSlidingZoom = true;
-  zoomTrack.value?.setPointerCapture(event.pointerId);
-  setZoomAtPointer(event.clientY);
-};
-const onZoomPointerMove = (event: PointerEvent) => {
-  if (isSlidingZoom) setZoomAtPointer(event.clientY);
-};
-const onZoomPointerUp = () => {
-  isSlidingZoom = false;
-};
 // Each counted area's progress line as the unlocked landmarks and the recorded doings leave it, in the game's words and
 // Their colours, keyed by
 // Its catalogue area: a fully explored area's percentage turns gold
@@ -215,7 +135,6 @@ const regionTag = computed(() => {
 });
 // The filled areas' progress, read out of the hidden drawing by a screen reader as a list of its own
 const areaProgresses = computed(() => areaLabels.value.filter(({ progressSegments }) => progressSegments.length > 0));
-const originalResin = computed(() => regenerateOriginalResin(wallet, now)[Currency.OriginalResin]);
 // The map is a dialog over the world, so focus starts inside it
 onMounted(() => {
   closeButton.value?.focus();
@@ -248,107 +167,20 @@ onMounted(() => {
         :transform="frameTransform"
         @select="(landmark) => chooseLandmark(landmark)"
       />
-      <template v-if="metres <= MAP_REFERENCE_ZOOM_METRES">
-        <text
-          v-for="({ name, x, y }, index) of subareaNames"
-          :key="index"
-          class="subarea-name"
-          :font-size="metres * MAP_SUBAREA_LABEL_SHARE"
-          :x
-          :y
-        >
-          {{ name }}
-        </text>
-      </template>
-      <template v-for="{ id, name, progressSegments, x, y } of areaLabels" :key="id">
-        <text class="area-name" :font-size="metres * MAP_LABEL_SHARE" :x :y>
-          {{ name }}
-        </text>
-        <text
-          v-if="progressSegments.length > 0"
-          class="area-progress"
-          :font-size="metres * MAP_PROGRESS_SHARE"
-          :x
-          :y="y + metres * MAP_PROGRESS_OFFSET_SHARE"
-        >
-          <tspan v-for="({ color, text }, index) of progressSegments" :key="index" :fill="color">{{ text }}</tspan>
-        </text>
-      </template>
+      <MapOverlayLabels :area-labels="areaLabels" :metres :subarea-names="subareaNames" />
       <MapPointer :size="markRadius" :x="playerPlace.x" :y="playerPlace.y" :yaw="camera.yaw" />
     </svg>
-    <svg
-      ref="zoomTrack"
-      class="zoom"
-      :viewBox="`0 0 56 ${MAP_ZOOM_DRAWING_HEIGHT}`"
-      role="group"
-      :aria-label="gameText[GameTextKey.Zoom]"
-      @pointercancel="onZoomPointerUp()"
-      @pointerdown="(event) => onZoomPointerDown(event)"
-      @pointermove="(event) => onZoomPointerMove(event)"
-      @pointerup="onZoomPointerUp()"
-    >
-      <rect class="zoom-track" x="23" :y="MAP_ZOOM_TRACK_TOP" width="10" :height="MAP_ZOOM_TRACK_HEIGHT" rx="5" />
-      <path class="zoom-stop" d="M 28 16.5 L 39.5 28 L 28 39.5 L 16.5 28 Z" />
-      <path class="zoom-sign" d="M 28 20 V 36 M 20 28 H 36" />
-      <path class="zoom-stop" d="M 28 241.5 L 39.5 253 L 28 264.5 L 16.5 253 Z" />
-      <path class="zoom-sign" d="M 20 253 H 36" />
-      <g :transform="`translate(28 ${zoomThumbY})`">
-        <path class="zoom-stop" d="M 0 -12.5 L 12.5 0 L 0 12.5 L -12.5 0 Z" />
-        <path class="zoom-star" d="M 0 -6 Q 0.9 -0.9 6 0 Q 0.9 0.9 0 6 Q -0.9 0.9 -6 0 Q -0.9 -0.9 0 -6 Z" />
-      </g>
-    </svg>
+    <MapOverlayZoom v-model:metres="metres" :game-text />
     <ul class="progress-list">
       <li v-for="{ id, name, progressSegments } of areaProgresses" :key="id">
         {{ name }} <span v-for="({ text }, index) of progressSegments" :key="index">{{ text }}</span>
       </li>
     </ul>
     <MapJumpList class="jumps" :catalogue :game-text :landmarks @jump="(landmark) => chooseLandmark(landmark)" />
-    <p v-if="regionTag" class="region-tag">
-      <span class="region-name">{{ regionTag.name }}</span>
-      <span v-if="regionTag.progressSegments.length > 0" class="region-progress">
-        <span v-for="({ color, text }, index) of regionTag.progressSegments" :key="index" :style="{ color }">{{
-          text
-        }}</span>
-      </span>
-    </p>
-    <p class="resin">
-      <span>{{ gameText[GameTextKey.OriginalResin] }}</span>
-      <span>{{ originalResin }}/{{ ORIGINAL_RESIN_CAP }}</span>
-    </p>
-    <p class="domains-only">
-      <span class="switch" aria-hidden="true">
-        <span class="knob">
-          <svg viewBox="-1 -1 2 2">
-            <path d="M -0.5 -0.5 L 0.5 0.5 M 0.5 -0.5 L -0.5 0.5" />
-          </svg>
-        </span>
-      </span>
-      <span>{{ gameText[GameTextKey.DomainsOnly] }}</span>
-    </p>
-    <section v-if="chosenLandmark" class="teleport-panel">
-      <header class="teleport-header">
-        <h2 class="teleport-title">{{ gameText[computeJumpLandmarkTextKey(chosenLandmark)] }}</h2>
-        <button
-          class="teleport-close"
-          type="button"
-          :aria-label="gameText[GameTextKey.Back]"
-          @click="chosenLandmark = undefined"
-        >
-          <svg viewBox="-1 -1 2 2" aria-hidden="true">
-            <path d="M -0.7 -0.7 L 0.7 0.7 M 0.7 -0.7 L -0.7 0.7" />
-          </svg>
-        </button>
-      </header>
-      <p class="teleport-place">{{ chosenArea?.name }} - {{ chosenArea?.subregion }}</p>
-      <GameButton
-        class="teleport"
-        :kind="GameButtonKind.Pill"
-        tip=""
-        @click="emit('jump', computeJumpPose(chosenLandmark))"
-      >
-        {{ gameText[GameTextKey.Teleport] }}
-      </GameButton>
-    </section>
+    <MapOverlayRegionTag v-if="regionTag" :name="regionTag.name" :progress-segments="regionTag.progressSegments" />
+    <MapOverlayResin :game-text :now :wallet />
+    <MapOverlayDomainsOnly :game-text />
+    <MapOverlayTeleport v-model:landmark="chosenLandmark" :catalogue :game-text @jump="(pose) => emit('jump', pose)" />
     <button
       ref="closeButton"
       class="close"
@@ -383,73 +215,6 @@ onMounted(() => {
   touch-action: none;
 }
 
-/* The labels' white, read off the English map's ink over Galesong Hill, which draws them with no outline. Signika is
-   Narrower than the game's face at one cap height, so each line keeps the game's cap height and is spaced out toward
-   Its width (the name 252 pixels across, its line 278), at the spacing whose strokes score nearest the game's */
-.area-name,
-.area-progress {
-  fill: #e5e9e0;
-  font-weight: 600;
-  text-anchor: middle;
-  dominant-baseline: middle;
-}
-
-.area-name {
-  letter-spacing: 0.04em;
-}
-
-/* The subarea names' white, read off the brightest ink the English map draws over Jueyun Karst, which it sets without an
-   outline, so the name is drawn alone */
-.subarea-name {
-  fill: rgb(245 255 255);
-  font-weight: 600;
-  text-anchor: middle;
-  dominant-baseline: middle;
-  letter-spacing: 0.07em;
-}
-
-.area-progress {
-  letter-spacing: 0.03em;
-}
-
-/* The slider stands on the sea at the map's left edge, which the English map draws at this near-black, read off the frame
-   beside the track */
-.zoom {
-  position: absolute;
-  top: calc(var(--unit) * 400);
-  left: 0;
-  width: calc(var(--unit) * 56);
-  height: calc(var(--unit) * 270);
-  background: #121721;
-  touch-action: none;
-}
-
-.zoom-track {
-  fill: #111317;
-  stroke: rgb(255 255 255 / 0.35);
-  stroke-width: 0.8;
-}
-
-.zoom-stop {
-  fill: #ede4e0;
-  stroke: #111317;
-  stroke-width: 1;
-  stroke-linejoin: round;
-}
-
-/* The thumb is the cream diamond the stops are, with a dark four-pointed star, and stands where the zoom shows: at the
-   reference's 1512 metres that is the middle of the track, so no stop is drawn there */
-.zoom-star {
-  fill: #4b5367;
-}
-
-.zoom-sign {
-  fill: none;
-  stroke: #384150;
-  stroke-width: 2.2;
-  stroke-linecap: round;
-}
-
 .jumps,
 .progress-list {
   position: absolute;
@@ -458,175 +223,6 @@ onMounted(() => {
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
-}
-
-/* Provisional: the region tag's place, bottom right, and its sizes, measured off the captured PC waypoint clip's frame at
-   1080 high (the name 134 units off the right edge and 51 off the bottom); its words are the client's own */
-.region-tag {
-  position: absolute;
-  right: calc(var(--unit) * 134);
-  bottom: calc(var(--unit) * 51);
-  margin: 0;
-  color: #ece5d7;
-  text-align: end;
-}
-
-.region-name {
-  display: block;
-  font-size: calc(var(--unit) * 28);
-}
-
-.region-progress {
-  display: block;
-  font-size: calc(var(--unit) * 22);
-}
-
-/* Provisional: the teleport panel as the game's right-hand sidebar, measured off the captured PC waypoint clip
-   (`captures/yt-Mhw53PsdhKI-waypoint.webm`, the Indonesian client): its header of 72 units, its place strip and its
-   Teleport button 40 units off the bottom. The colours are estimated off that frame */
-.teleport-panel {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  width: calc(var(--unit) * 490);
-  flex-direction: column;
-  background: #efe9db;
-  color: #3d4152;
-}
-
-.teleport-header {
-  display: flex;
-  height: calc(var(--unit) * 72);
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 calc(var(--unit) * 18) 0 calc(var(--unit) * 46);
-  background: #3d4152;
-  color: #f1e8cf;
-}
-
-.teleport-title {
-  margin: 0;
-  font-size: calc(var(--unit) * 30);
-  font-weight: normal;
-}
-
-/* Its cross is stroked in the text's colour, and lit as a Disc is: hovered or focused, a navy disc behind it, and pressed,
-   the disc cream with the cross ink. Provisional, as no recording shows the close lit */
-.teleport-close {
-  display: grid;
-  width: calc(var(--unit) * 36);
-  height: calc(var(--unit) * 36);
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: none;
-  color: inherit;
-  transition: background-color v-bind(restDuration);
-}
-
-.teleport-close svg {
-  width: 100%;
-  height: 100%;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 0.26;
-}
-
-.teleport-close:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  background: rgb(30 49 63 / 0.5);
-  transition-duration: v-bind(hoverDuration);
-}
-
-@media (hover: hover) {
-  .teleport-close:hover {
-    background: rgb(30 49 63 / 0.5);
-    transition-duration: v-bind(hoverDuration);
-  }
-}
-
-.teleport-close:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
-  background: v-bind(GAME_CREAM);
-  color: v-bind(GAME_INK);
-  transition-duration: 0s;
-}
-
-.teleport-place {
-  margin: calc(var(--unit) * 24) calc(var(--unit) * 14) 0;
-  padding: calc(var(--unit) * 10) calc(var(--unit) * 16);
-  border-radius: calc(var(--unit) * 4);
-  background: #e0d4b6;
-  font-size: calc(var(--unit) * 22);
-}
-
-.teleport {
-  margin: auto calc(var(--unit) * 14) calc(var(--unit) * 40);
-}
-
-/* Provisional: the domains switch at the bottom left, measured off `map-overlay-jueyun` at 1080 high: a pill 90 units across
-   and 46 high, 28 units in from the left and 1008 down, its words 134 units from the left. It is drawn off; the filter
-   it names is not built yet */
-.domains-only {
-  position: absolute;
-  top: calc(var(--unit) * 1008);
-  left: calc(var(--unit) * 28);
-  display: flex;
-  margin: 0;
-  align-items: center;
-  color: #f0ead8;
-  font-size: calc(var(--unit) * 28);
-}
-
-.switch {
-  position: relative;
-  box-sizing: border-box;
-  width: calc(var(--unit) * 90);
-  height: calc(var(--unit) * 46);
-  margin-right: calc(var(--unit) * 17);
-  border: calc(var(--unit) * 3) solid #f0f0f0;
-  border-radius: calc(var(--unit) * 23);
-  background: #3e4558;
-}
-
-.knob {
-  position: absolute;
-  top: calc(var(--unit) * 4);
-  left: calc(var(--unit) * 4);
-  display: grid;
-  width: calc(var(--unit) * 34);
-  height: calc(var(--unit) * 34);
-  border-radius: 50%;
-  background: #e9dfc8;
-  place-items: center;
-}
-
-.knob svg {
-  width: 50%;
-  height: 50%;
-  fill: none;
-  stroke: #c9b98a;
-  stroke-width: 0.3;
-}
-
-/* Provisional: the resin counter's place, left of the close button, and its type, until a recording of the English PC
-   client's map top bar measures them. It sits in a dark pill as the reference's top bar does, its middle level with the
-   close button's */
-.resin {
-  position: absolute;
-  top: calc(var(--unit) * 26);
-  right: calc(var(--unit) * 130);
-  display: flex;
-  height: calc(var(--unit) * 44);
-  box-sizing: border-box;
-  align-items: center;
-  gap: calc(var(--unit) * 14);
-  margin: 0;
-  padding: 0 calc(var(--unit) * 18);
-  border-radius: calc(var(--unit) * 22);
-  background: rgb(24 30 40 / 0.6);
-  color: #ece5d7;
-  font-size: calc(var(--unit) * 26);
 }
 
 .close {

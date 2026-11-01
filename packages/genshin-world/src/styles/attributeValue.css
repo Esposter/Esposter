@@ -1,0 +1,5 @@
+/* An attribute's value takes no margin: the browser's definition margin is reset in the attribute rows and beside the
+   Friendship level */
+.value {
+  margin: 0;
+}

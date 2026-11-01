@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Mail } from "#src/models/mail/Mail";
+import type { MailEntry } from "#src/models/mail/MailEntry";
 import type { MailSave } from "#src/models/mail/MailSave";
 import type { GameText } from "genshin-text";
 
+import MailScreenDetail from "#src/components/Mail/Screen/Detail/Index.vue";
 import MailScreenEntry from "#src/components/Mail/Screen/Entry/Index.vue";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
-import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
-import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
-import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
 import { checkIsClaimable } from "#src/services/mail/checkIsClaimable";
 import { checkIsGiftBoxed } from "#src/services/mail/checkIsGiftBoxed";
 import { checkIsSameHeldMail } from "#src/services/mail/checkIsSameHeldMail";
@@ -17,21 +16,8 @@ import { deleteReadMails } from "#src/services/mail/deleteReadMails";
 import { sortMails } from "#src/services/mail/sortMails";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
 import { ID_SEPARATOR } from "@esposter/shared";
-import {
-  CloseButton,
-  CloseButtonMark,
-  GameButton,
-  GameButtonKind,
-  GameScreen,
-  ItemTile,
-  OrnamentDivider,
-} from "genshin-interface";
-import { fillGameTextValues, GameTextKey } from "genshin-text";
-
-interface MailEntry {
-  mail: MailSave;
-  row: Mail;
-}
+import { CloseButton, CloseButtonMark, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The held mails that are the Traveler's birthday mails, which the Gift Mail Box keeps once claimed
@@ -89,31 +75,11 @@ const selectedEntry = computed(
 );
 const hasClaimable = computed(() => sortedEntries.value.some(({ mail, row }) => checkIsClaimable(mail, row)));
 const hasDeletableMail = computed(() => deleteReadMails(mails, mailRows, birthdayMailIds).length < mails.length);
-// The date line's words either side of the date, since the game's line holds the date as {0} and the date is a NuxtTime
-const dateLine = computed(() => gameText[GameTextKey.MailDetailDate].split("{0}"));
 const mailGlyph = MenuFrameGlyphMap[MenuFrameIcon.Mail];
 const selectTab = (isGift: boolean) => {
   isGiftBoxTab.value = isGift;
   isConfirmingDeleteGift.value = false;
 };
-// A currency's name is the game's, and an item's its material row's, read in the reader's language
-const getItemName = (itemId: number): string => {
-  const currency = getWalletCurrency(itemId);
-  if (currency !== undefined) return gameText[CurrencyGameTextKeyMap[currency]];
-  const materialData = materialDataMap.get(itemId);
-  return materialData ? toItemDefinition(materialData, names).name : String(itemId);
-};
-// The tile of an item takes its rarity from its material row, and a currency, which has none, draws the lowest tile
-const getItemRarity = (itemId: number): number => materialDataMap.get(itemId)?.rarity ?? 0;
-// The selected mail's item tiles, each with its count, rarity and count label, made once per selection
-const selectedItemTiles = computed(() =>
-  (selectedEntry.value?.row.items ?? []).map(({ itemId, quantity }) => ({
-    count: quantity,
-    id: itemId,
-    label: fillGameTextValues(gameText[GameTextKey.ItemCount], getItemName(itemId), quantity),
-    rarity: getItemRarity(itemId),
-  })),
-);
 </script>
 
 <template>
@@ -209,89 +175,19 @@ const selectedItemTiles = computed(() =>
         {{ gameText[GameTextKey.Confirm] }}
       </GameButton>
     </section>
-    <div v-if="selectedEntry" class="detail" role="tabpanel" :aria-label="textMap[selectedEntry.row.titleTextId]">
-      <p class="detail-title">{{ textMap[selectedEntry.row.titleTextId] }}</p>
-      <OrnamentDivider class="divider" />
-      <p class="sender">
-        {{ fillGameTextValues(gameText[GameTextKey.MailSender], textMap[selectedEntry.row.senderTextId] ?? "") }}
-      </p>
-      <p class="date">
-        {{ dateLine[0]
-        }}<NuxtTime
-          :datetime="selectedEntry.mail.deliveredAt"
-          year="numeric"
-          month="2-digit"
-          day="2-digit"
-          hour="2-digit"
-          minute="2-digit"
-          hour-cycle="h23"
-        />{{ dateLine[1] }}
-      </p>
-      <p class="body">{{ textMap[selectedEntry.row.contentTextId] }}</p>
-      <div v-if="selectedEntry.row.items.length > 0" class="items">
-        <ItemTile
-          v-for="tile of selectedItemTiles"
-          :key="tile.id"
-          class="item"
-          count-size="30cqh"
-          :count="tile.count"
-          :rarity="tile.rarity"
-          role="img"
-          :aria-label="tile.label"
-        />
-      </div>
-      <GameButton
-        class="pin"
-        :aria-label="gameText[selectedEntry.mail.isPinned ? GameTextKey.MailCancelStar : GameTextKey.MailStar]"
-        :kind="GameButtonKind.Disc"
-        tip=""
-        @click="emit('pin', selectedEntry.mail)"
-      />
-      <p v-if="selectedEntry.mail.isClaimed && selectedEntry.row.items.length > 0" class="claimed">
-        {{ gameText[GameTextKey.MailClaimed] }}
-      </p>
-      <GameButton
-        v-else-if="selectedEntry.row.items.length > 0"
-        class="claim pill-disc"
-        :kind="GameButtonKind.Pill"
-        tip=""
-        @click="emit('claim', selectedEntry.mail)"
-      >
-        {{ gameText[GameTextKey.MailClaim] }}
-      </GameButton>
-      <GameButton
-        v-if="checkIsGiftBoxed(selectedEntry.mail, selectedEntry.row, birthdayMailIds) && !isConfirmingDeleteGift"
-        class="delete-gift"
-        :kind="GameButtonKind.Pill"
-        tip=""
-        @click="isConfirmingDeleteGift = true"
-      >
-        {{ gameText[GameTextKey.MailDelete] }}
-      </GameButton>
-      <section
-        v-if="isConfirmingDeleteGift"
-        class="confirm-gift"
-        role="dialog"
-        :aria-label="gameText[GameTextKey.MailGiftDeleteWarningTitle]"
-      >
-        <p class="confirm-title">{{ gameText[GameTextKey.MailGiftDeleteWarningTitle] }}</p>
-        <p class="confirm-text">{{ gameText[GameTextKey.MailGiftDeleteWarning] }}</p>
-        <GameButton class="cancel" :kind="GameButtonKind.Pill" tip="" @click="isConfirmingDeleteGift = false">
-          {{ gameText[GameTextKey.Cancel] }}
-        </GameButton>
-        <GameButton
-          class="confirm-button"
-          :kind="GameButtonKind.Pill"
-          tip=""
-          @click="
-            isConfirmingDeleteGift = false;
-            emit('deleteGift', selectedEntry.mail);
-          "
-        >
-          {{ gameText[GameTextKey.MailDelete] }}
-        </GameButton>
-      </section>
-    </div>
+    <MailScreenDetail
+      v-if="selectedEntry"
+      v-model:is-confirming-delete-gift="isConfirmingDeleteGift"
+      :birthday-mail-ids
+      :entry="selectedEntry"
+      :game-text
+      :material-data-map
+      :names
+      :text-map
+      @claim="(mail) => emit('claim', mail)"
+      @delete-gift="(mail) => emit('deleteGift', mail)"
+      @pin="(mail) => emit('pin', mail)"
+    />
     <GameButton
       class="claim-all pill-disc"
       :disabled="!hasClaimable"
@@ -418,93 +314,6 @@ const selectedItemTiles = computed(() =>
   font-weight: 600;
 }
 
-/* The selected mail on the right: its title, a hairline with its diamonds, its sender and date, its text, its items */
-.detail {
-  position: absolute;
-  top: calc(var(--unit) * 112);
-  left: calc(var(--unit) * 915);
-  width: calc(var(--unit) * 724);
-  height: calc(var(--unit) * 900);
-}
-
-.detail-title {
-  margin: 0;
-  font-size: calc(var(--unit) * 28);
-  font-weight: 600;
-  line-height: calc(var(--unit) * 32);
-}
-
-.divider {
-  position: absolute;
-  top: calc(var(--unit) * 32);
-  left: calc(var(--unit) * -16);
-  width: calc(var(--unit) * 755);
-}
-
-.sender,
-.date,
-.body {
-  position: absolute;
-  left: 0;
-  margin: 0;
-}
-
-.sender,
-.date {
-  font-size: calc(var(--unit) * 19);
-  line-height: calc(var(--unit) * 24);
-}
-
-.sender {
-  top: calc(var(--unit) * 58);
-}
-
-.date {
-  top: calc(var(--unit) * 91);
-  color: rgb(220 220 220 / 0.75);
-}
-
-.body {
-  top: calc(var(--unit) * 143);
-  width: calc(var(--unit) * 724);
-  font-size: calc(var(--unit) * 22);
-  line-height: calc(var(--unit) * 29);
-  white-space: pre-line;
-}
-
-.items {
-  position: absolute;
-  top: calc(var(--unit) * 770);
-  left: calc(var(--unit) * 2);
-  display: flex;
-  gap: calc(var(--unit) * 10);
-}
-
-.item {
-  width: calc(var(--unit) * 84);
-  height: calc(var(--unit) * 84);
-}
-
-.claimed {
-  margin: 0;
-  font-size: calc(var(--unit) * 20);
-}
-
-/* The bottom row, Claim All and Delete Read on the left and the star and Claim on the right: the game's cream pills, which
-   the shared button draws, placed here at the reference's own pixels */
-.mail-screen .claim-all,
-.mail-screen .delete-read,
-.mail-screen .claim {
-  position: absolute;
-  display: flex;
-  height: calc(var(--unit) * 54);
-  align-items: center;
-  justify-content: start;
-  font-size: calc(var(--unit) * 28);
-  letter-spacing: calc(var(--unit) * 0.8);
-  text-align: start;
-}
-
 .mail-screen .claim-all,
 .mail-screen .delete-read {
   top: calc(var(--unit) * 996);
@@ -520,40 +329,7 @@ const selectedItemTiles = computed(() =>
   left: calc(var(--unit) * 352);
   padding-left: calc(var(--unit) * 50);
 }
-
-/* Inside the detail, which starts at 112 and 915, so the bottom row sits 884 down and 510 across it */
-.mail-screen .claim {
-  top: calc(var(--unit) * 884);
-  left: calc(var(--unit) * 510);
-  width: calc(var(--unit) * 216);
-  padding-left: calc(var(--unit) * 85);
-}
-
-/* The star's cream disc, which the game draws at rest behind the star, the star itself bare */
-.mail-screen .pin {
-  position: absolute;
-  top: calc(var(--unit) * 884);
-  left: calc(var(--unit) * 437);
-  width: calc(var(--unit) * 44);
-  height: calc(var(--unit) * 44);
-  border-radius: 50%;
-  background-color: #f4edd5;
-}
-
-.confirm-text {
-  margin: 0 0 calc(var(--unit) * 12);
-  font-size: calc(var(--unit) * 24);
-  white-space: pre-line;
-}
-
-.confirm-gift {
-  margin-top: calc(var(--unit) * 24);
-}
-
-.confirm-title {
-  margin: 0 0 calc(var(--unit) * 12);
-  font-size: calc(var(--unit) * 30);
-}
 </style>
 
+<style scoped src="../../../styles/mailScreen.css"></style>
 <style scoped src="genshin-interface/styles/confirmDialog.css"></style>

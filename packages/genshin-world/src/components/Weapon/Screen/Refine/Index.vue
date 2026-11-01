@@ -44,13 +44,13 @@ const passiveRows = computed(() =>
 </script>
 
 <template>
-  <div class="divider refine-divider"><OrnamentDivider is-middle-hidden :opacity="DIVIDER_OPACITY" /></div>
+  <div class="divider refine-divider"><OrnamentDivider :opacity="DIVIDER_OPACITY" is-middle-hidden /></div>
   <p class="refinement-level">{{ gameText[GameTextKey.WeaponRefinementLevel] }}</p>
   <p class="passive-name">
     <span class="bullet" aria-hidden="true" />{{ passive?.name }}<span class="bullet" aria-hidden="true" />
   </p>
   <div class="passive">
-    <p v-for="row of passiveRows" :key="row.rankText" class="passive-row" :class="{ held: row.isHeld }">
+    <p v-for="row of passiveRows" :key="row.rankText" class="passive-row">
       <template v-if="row.isHeld">
         <span v-for="(segment, index) of row.currentSegments" :key="index" :style="{ color: segment.color }">{{
           segment.text

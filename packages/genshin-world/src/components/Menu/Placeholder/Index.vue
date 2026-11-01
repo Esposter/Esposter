@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
 
-import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { GAME_CREAM, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -40,7 +40,7 @@ onMounted(() => {
   justify-items: center;
   gap: calc(var(--unit) * 32);
   background: rgb(20 24 36 / 0.7);
-  color: #ece5d8;
+  color: v-bind(GAME_CREAM);
 }
 
 .title {

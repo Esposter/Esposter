@@ -1,0 +1,20 @@
+/* The red dot the frame draws over an entry with news, its centre 5 units in from the top right corner and 4 down */
+.alert {
+  position: absolute;
+  top: calc(var(--unit) * -7);
+  left: calc(100% - var(--unit) * 16);
+  z-index: 1;
+  width: calc(var(--unit) * 22);
+  height: calc(var(--unit) * 22);
+  border-radius: 50%;
+  background: #e0302f;
+  color: #fff;
+  font-size: calc(var(--unit) * 16);
+  font-weight: 700;
+  line-height: calc(var(--unit) * 22);
+  text-align: center;
+}
+
+.alert::before {
+  content: "!";
+}

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { GAME_WHITE } from "genshin-interface";
+
 interface Props {
   // The key's physical code, whose letter or digit the cap reads
   code: string;
@@ -20,7 +22,7 @@ const { code } = defineProps<Props>();
   height: calc(var(--unit) * 25);
   place-items: center;
   border-radius: calc(var(--unit) * 3);
-  background: #fdfdfd;
+  background: v-bind(GAME_WHITE);
   color: #2e2b30;
   font-family: inherit;
   font-size: calc(var(--unit) * 20);

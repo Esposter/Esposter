@@ -4,6 +4,7 @@ import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { GameText } from "genshin-text";
 
+import CharacterAttributeListRows from "#src/components/Character/AttributeList/Rows/Index.vue";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { formatWholeNumber } from "#src/services/character/formatWholeNumber";
@@ -102,12 +103,7 @@ const detailGroups = computed(() =>
       <span v-for="({ color, text }, index) of levelSegments" :key="index" :style="{ color }">{{ text }}</span>
     </p>
     <div class="experience" />
-    <dl class="rows">
-      <div v-for="{ label, value } of rows" :key="label" class="row">
-        <dt>{{ label }}</dt>
-        <dd class="value">{{ value }}</dd>
-      </div>
-    </dl>
+    <CharacterAttributeListRows :rows />
     <GameButton v-if="isLevelUpable" class="details" :kind="GameButtonKind.Row" tip="" @click="emit('levelUp')">
       {{ gameText[GameTextKey.LevelUp] }}
     </GameButton>
@@ -122,12 +118,7 @@ const detailGroups = computed(() =>
     <GameButton class="lift cream-pill" :disabled="!isLiftable" :kind="GameButtonKind.Row" tip="" @click="emit('lift')">
       {{ gameText[GameTextKey.AscensionLimit] }}
     </GameButton>
-    <dl v-if="ascendRows.length" class="rows">
-      <div v-for="{ label, value } of ascendRows" :key="label" class="row">
-        <dt>{{ label }}</dt>
-        <dd class="value">{{ value }}</dd>
-      </div>
-    </dl>
+    <CharacterAttributeListRows v-if="ascendRows.length" :rows="ascendRows" />
     <GameButton
       v-if="ascendRows.length"
       class="details"
@@ -140,17 +131,13 @@ const detailGroups = computed(() =>
     </GameButton>
     <section v-for="{ rows: groupRows, title } of detailGroups" :key="title">
       <h2 class="title">{{ title }}</h2>
-      <dl class="rows">
-        <div v-for="{ label, value } of groupRows" :key="label" class="row">
-          <dt>{{ label }}</dt>
-          <dd class="value">{{ value }}</dd>
-        </div>
-      </dl>
+      <CharacterAttributeListRows :rows="groupRows" />
     </section>
   </div>
 </template>
 
 <style scoped src="genshin-interface/styles/creamPill.css"></style>
+<style scoped src="../../../styles/attributeValue.css"></style>
 
 <style scoped>
 /* Measured off the English PC client's character screen at 21:9 (references/character-attributes-session.png), in units
@@ -261,21 +248,7 @@ const detailGroups = computed(() =>
   opacity: 0.7;
 }
 
-.rows {
-  margin: calc(var(--unit) * 5) 0 0;
-}
-
 .experience + .rows {
   margin-top: calc(var(--unit) * 28);
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  line-height: calc(var(--unit) * 36);
-}
-
-.value {
-  margin: 0;
 }
 </style>

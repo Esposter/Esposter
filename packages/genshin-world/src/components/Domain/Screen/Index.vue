@@ -20,7 +20,7 @@ const emit = defineEmits<{ close: []; enter: [dungeonId: number]; leave: [] }>()
 </script>
 
 <template>
-  <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.DomainTitle]">
+  <GameScreen :aria-label="gameText[GameTextKey.DomainTitle]" aria-modal="true" role="dialog">
     <div v-if="isInDomain">
       <p>{{ gameText[GameTextKey.DomainLeavePrompt] }}</p>
       <GameButton :kind="GameButtonKind.Row" tip="" @click="emit('leave')">

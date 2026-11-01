@@ -1,0 +1,20 @@
+/* The bottom row, Claim All and Delete Read on the left and the star and Claim on the right: the game's cream pills, which
+   the shared button draws, placed here at the reference's own pixels */
+.mail-screen .claim-all,
+.mail-screen .delete-read,
+.mail-screen .claim {
+  position: absolute;
+  display: flex;
+  height: calc(var(--unit) * 54);
+  align-items: center;
+  justify-content: start;
+  font-size: calc(var(--unit) * 28);
+  letter-spacing: calc(var(--unit) * 0.8);
+  text-align: start;
+}
+
+.confirm-text {
+  margin: 0 0 calc(var(--unit) * 12);
+  font-size: calc(var(--unit) * 24);
+  white-space: pre-line;
+}

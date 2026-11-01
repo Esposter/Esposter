@@ -1,0 +1,83 @@
+/* A slot of the Weapon screen's Cells, a grey card over the cream band its count sits on; the Enhance strip,
+   the Refine tab and the ore cell share these rules */
+.cell {
+  position: relative;
+  flex: none;
+  width: calc(var(--reference-pixel) * 98.5);
+  height: calc(var(--reference-pixel) * 122);
+}
+
+.refine-cells .cell {
+  width: calc(var(--reference-pixel) * 101);
+}
+
+.pick {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: none;
+  border-radius: calc(var(--reference-pixel) * 12);
+  background: linear-gradient(#6f6f7b 0 80%, #ece6e0 80% 100%);
+  color: inherit;
+  cursor: inherit;
+  font: inherit;
+}
+
+.pick:disabled {
+  opacity: 0.6;
+}
+
+.pick[aria-pressed="true"] {
+  background: linear-gradient(#6e707c 0 80%, #f6f2ee 80% 100%);
+}
+
+/* The slot's plus, centred on the card's grey above its cream band */
+.plus {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 29);
+  left: calc(50% - var(--reference-pixel) * 20);
+  width: calc(var(--reference-pixel) * 40);
+  height: calc(var(--reference-pixel) * 40);
+}
+
+.plus::before,
+.plus::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: #bab9c0;
+  content: "";
+  translate: -50% -50%;
+}
+
+.plus::before {
+  width: calc(var(--reference-pixel) * 40);
+  height: calc(var(--reference-pixel) * 7);
+}
+
+.plus::after {
+  width: calc(var(--reference-pixel) * 7);
+  height: calc(var(--reference-pixel) * 40);
+}
+
+.caption {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 101);
+  right: 0;
+  left: 0;
+  color: #55555e;
+  font-size: calc(var(--reference-pixel) * 16);
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+}
+
+/* A slot's name is read aloud over the whole slot, its art not drawn; it is clear so only its slot is the thing clicked */
+.cell-name {
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  font-size: 1px;
+}

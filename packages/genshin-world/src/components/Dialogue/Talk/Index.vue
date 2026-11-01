@@ -19,7 +19,14 @@ import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
 import { checkIsActionKey } from "#src/services/shared/checkIsActionKey";
 import { useEventListener, useRafFn } from "@vueuse/core";
 import { InputAction } from "genshin-engine";
-import { DialogueChoiceIcon, DialogueScreen, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import {
+  DialogueChoiceIcon,
+  DialogueScreen,
+  GAME_CREAM,
+  GameButton,
+  GameButtonKind,
+  GameScreen,
+} from "genshin-interface";
 import { fillLinePlaceholders, GameTextKey } from "genshin-text";
 
 interface Props {
@@ -180,7 +187,7 @@ useEventListener("keydown", (event) => {
   width: calc(var(--unit) * 40);
   height: calc(var(--unit) * 40);
   border-radius: 50%;
-  background: #ece5d8;
+  background: v-bind(GAME_CREAM);
 }
 
 .auto-mark {

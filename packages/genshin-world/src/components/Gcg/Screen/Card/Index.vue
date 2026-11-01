@@ -18,7 +18,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 <template>
   <!-- A card of a side's hand, fanned along the bottom of the board by its hand's row, its dice cost in the corner. A
        chosen card lifts -->
-  <button :aria-label="name" class="card" :class="{ selected: isSelected }" type="button" @click="emit('select')">
+  <button class="card" :aria-label="name" :class="{ selected: isSelected }" type="button" @click="emit('select')">
     <span class="cost">{{ diceCount }}</span>
   </button>
 </template>

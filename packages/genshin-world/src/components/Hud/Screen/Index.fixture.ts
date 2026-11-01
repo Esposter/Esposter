@@ -15,6 +15,7 @@ import { createParty } from "#src/services/party/createParty";
 import { QUEST_MARK_MIN_HEIGHT } from "#src/services/quest/constants";
 import { readCatalogue } from "#src/services/world/readCatalogue";
 import { createInput, STAMINA_MAX } from "genshin-engine";
+import { InteractionKind } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 // The English mobile client's world HUD on a 1920 by 935 screen, from the public recording of a session at 70 seconds,
@@ -101,4 +102,20 @@ export const props = {
   },
   // The name the recording's player chose for the Traveler, which its third row shows
   travelerName: "Tabibito",
+};
+// The pickup's three rows at 70 seconds of the recording: three "Jueyun Chili" in reach, none selected, since a
+// Touch screen has no key to act on one. The list is drawn beside the centre, as the world draws it
+export const variants = {
+  pickup: {
+    interactionPrompts: {
+      interactables: ["0", "1", "2"].map((id) => ({
+        id,
+        kind: InteractionKind.PickUp,
+        name: "Jueyun Chili",
+        position: { x: 0, y: 0, z: 0 },
+      })),
+      selectedId: "",
+      windowStart: 0,
+    },
+  },
 };

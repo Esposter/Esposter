@@ -4,6 +4,7 @@ import type { Landmark } from "#src/models/world/Landmark";
 import type { GameText } from "genshin-text";
 
 import MapJumpListItem from "#src/components/Map/JumpList/Item/Index.vue";
+import { GAME_CREAM } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -55,7 +56,7 @@ const regionJumps = computed(() =>
   flex-direction: column;
   gap: calc(var(--unit) * 24);
   overflow-y: auto;
-  color: #ece5d8;
+  color: v-bind(GAME_CREAM);
 }
 
 .region {

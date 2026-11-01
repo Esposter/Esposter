@@ -1,0 +1,23 @@
+.entry {
+  position: relative;
+  border-radius: calc(var(--unit) * 2);
+  background: #51596b;
+  color: #ece5d7;
+}
+
+.label {
+  position: absolute;
+  right: 0;
+  bottom: calc(var(--unit) * 10.5);
+  left: 0;
+  font-size: calc(var(--unit) * 23);
+  font-weight: 600;
+  letter-spacing: calc(var(--unit) * 0.4);
+  line-height: 1.1;
+  text-align: center;
+  color: #c8c4bb;
+}
+
+.entry:disabled:not(.link) {
+  opacity: 0.4;
+}

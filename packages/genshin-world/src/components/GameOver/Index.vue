@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GameButton, GameButtonKind } from "genshin-interface";
+import { GAME_CREAM, GameButton, GameButtonKind } from "genshin-interface";
 
 interface Props {
   // The button's words in the reader's language
@@ -32,7 +32,7 @@ const emit = defineEmits<{ revive: [] }>();
   justify-content: center;
   gap: calc(var(--unit) * 40);
   background: rgb(0 0 0 / 0.6);
-  color: #ece5d8;
+  color: v-bind(GAME_CREAM);
 }
 
 .title {
@@ -47,7 +47,7 @@ const emit = defineEmits<{ revive: [] }>();
   border: none;
   border-radius: calc(var(--unit) * 8);
   background: rgb(255 255 255 / 0.15);
-  color: #ece5d8;
+  color: v-bind(GAME_CREAM);
   cursor: pointer;
   font: inherit;
   font-size: calc(var(--unit) * 24);

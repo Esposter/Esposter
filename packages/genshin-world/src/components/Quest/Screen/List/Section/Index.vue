@@ -10,6 +10,7 @@ import { QuestGlyph } from "#src/models/quest/QuestGlyph";
 import { QuestCategoryGameTextKeyMap } from "#src/services/quest/QuestCategoryGameTextKeyMap";
 import { QuestCategoryGlyphMap } from "#src/services/quest/QuestCategoryGlyphMap";
 import { QuestGlyphMap } from "#src/services/quest/QuestGlyphMap";
+import { GAME_CREAM } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
@@ -29,15 +30,8 @@ interface Props {
   textMap: Readonly<Record<string, string>>;
 }
 
-const {
-  chapters,
-  gameText,
-  questCategory,
-  questDistanceMap,
-  rowQuests,
-  selectedQuestId,
-  textMap,
-} = defineProps<Props>();
+const { chapters, gameText, questCategory, questDistanceMap, rowQuests, selectedQuestId, textMap } =
+  defineProps<Props>();
 const emit = defineEmits<{ select: [questId: string] }>();
 // How far a quest stands in the reader's words, "" for a quest with no place
 const getQuestDistance = (questId: string): string => {
@@ -115,7 +109,7 @@ const getQuestDistance = (questId: string): string => {
 
 /* Provisional: the still shows no selected row, so the selected one is ringed in the game's cream */
 .quest.selected {
-  box-shadow: 0 0 0 calc(var(--unit) * 2) #ece5d8;
+  box-shadow: 0 0 0 calc(var(--unit) * 2) v-bind(GAME_CREAM);
 }
 
 /* A series' row: its fill fitted against the world just over it, a blue bar down its left and a blue glow inside its

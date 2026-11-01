@@ -11,6 +11,7 @@ import { checkIsNextMemberAsked } from "#src/services/party/checkIsNextMemberAsk
 import { PARTY_MEMBER_INPUT_ACTIONS, PARTY_SWITCH_COOLDOWN_SECONDS } from "#src/services/party/constants";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { takeOne } from "@esposter/shared";
+import { GAME_CREAM } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -108,7 +109,7 @@ const rows = computed(() =>
   top: 100%;
   right: calc(var(--canvas-unit) * 33);
   margin: 0;
-  color: #ece5d8;
+  color: v-bind(GAME_CREAM);
   text-shadow: 0 0 4px rgb(0 0 0 / 0.8);
   white-space: nowrap;
 }

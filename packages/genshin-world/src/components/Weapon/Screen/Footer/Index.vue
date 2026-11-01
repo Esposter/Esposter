@@ -16,7 +16,7 @@ const { gameText, pendingMora } = defineProps<Props>();
 </script>
 
 <template>
-  <div class="divider bottom-divider"><OrnamentDivider is-middle-hidden :opacity="DIVIDER_OPACITY" /></div>
+  <div class="divider bottom-divider"><OrnamentDivider :opacity="DIVIDER_OPACITY" is-middle-hidden /></div>
   <p class="required-label">{{ gameText[GameTextKey.CraftingRequired] }}</p>
   <p class="required-amount">{{ pendingMora }}</p>
 </template>
@@ -53,15 +53,12 @@ const { gameText, pendingMora } = defineProps<Props>();
 /* The gold coin beside the Required line's Mora */
 .required-amount::before {
   position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, #fff7c8, #f7d25a 60%, #d9a53a);
-  content: "";
-}
-
-.required-amount::before {
   top: calc(var(--reference-pixel) * 1);
   left: calc(var(--reference-pixel) * -45);
   width: calc(var(--reference-pixel) * 27);
   height: calc(var(--reference-pixel) * 27);
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #fff7c8, #f7d25a 60%, #d9a53a);
+  content: "";
 }
 </style>

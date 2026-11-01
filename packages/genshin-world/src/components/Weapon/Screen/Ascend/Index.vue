@@ -59,7 +59,7 @@ const {
   <p class="stat-value base-next">{{ nextBaseAttackText }}</p>
   <p class="stat stat-dot ascend-attack">{{ secondaryLabel }}</p>
   <p class="stat-value attack-current">{{ secondaryText }}</p>
-  <OrnamentDivider class="divider ascend-divider" is-middle-hidden :opacity="DIVIDER_OPACITY" />
+  <OrnamentDivider class="divider ascend-divider" :opacity="DIVIDER_OPACITY" is-middle-hidden />
   <span class="stats-rule ascend-stats-rule" aria-hidden="true" />
   <WeaponScreenAscendMaterials :costs :gameText />
 </template>
@@ -117,13 +117,6 @@ const {
   color: #f5c33b;
 }
 
-/* The arrow between the two levels, the grey shaft and head the base ATK's arrow has */
-.level-arrow {
-  top: calc(var(--reference-pixel) * 155);
-  left: calc(var(--reference-pixel) * 1437);
-  width: calc(var(--reference-pixel) * 33);
-}
-
 .base-current,
 .base-next {
   top: calc(var(--reference-pixel) * 231);
@@ -162,6 +155,14 @@ const {
   border-bottom: calc(var(--reference-pixel) * 5.5) solid transparent;
   border-left: calc(var(--reference-pixel) * 9) solid #6b6479;
   content: "";
+}
+
+/* The arrow between the two levels, the grey shaft and head the base ATK's arrow has. It must follow .arrow, which at the
+   same specificity would otherwise win its top, left and width */
+.level-arrow {
+  top: calc(var(--reference-pixel) * 155);
+  left: calc(var(--reference-pixel) * 1437);
+  width: calc(var(--reference-pixel) * 33);
 }
 
 .ascend-attack::before {

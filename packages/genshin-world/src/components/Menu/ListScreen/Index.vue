@@ -5,7 +5,7 @@ import type { VNode } from "vue";
 
 import ScreenHeader from "#src/components/Menu/ScreenHeader/Index.vue";
 import { LIST_SCREEN_WIDTH } from "#src/services/menu/constants";
-import { GameScreen } from "genshin-interface";
+import { GAME_WHITE, GameScreen } from "genshin-interface";
 
 interface Props {
   // The game's words in the reader's language
@@ -74,7 +74,7 @@ defineSlots<{ detail: () => VNode; icon?: () => VNode; list: () => VNode; tabs?:
   display: grid;
   width: calc(var(--unit) * 32);
   height: calc(var(--unit) * 28);
-  background: #fdfdfd;
+  background: v-bind(GAME_WHITE);
   color: #000;
   font-size: calc(var(--unit) * 20);
   place-items: center;

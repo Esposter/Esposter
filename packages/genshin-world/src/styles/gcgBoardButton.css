@@ -1,0 +1,52 @@
+/* The board's buttons: the end-round token, the synchro, the confirm bar's buttons and the concede. The pill look of the
+   synchro and the confirm's buttons is here, the end-round's and the concede's own. Each button rests at the screen's
+   `--rest-duration`, lights its outline at `--hover-duration` under a pointer's hover (guarded by `(hover: hover)`) and on
+   focus, and presses to a dimmed face. The concede draws its hover from `ringButton.css`, which a component pulls before
+   this sheet, so it takes only the rest and the press here */
+.end-round,
+.synchro,
+.confirm button,
+.concede {
+  --state-duration: var(--rest-duration);
+  cursor: inherit;
+  outline: calc(var(--unit) * 1) solid transparent;
+  transition:
+    filter var(--state-duration),
+    outline-color var(--state-duration);
+}
+
+.synchro,
+.confirm button {
+  padding: calc(var(--unit) * 8) calc(var(--unit) * 24);
+  border: none;
+  border-radius: calc(var(--unit) * 24);
+  background: rgb(0 0 0 / 0.4);
+  color: #f6e3a1;
+  font: inherit;
+  font-size: calc(var(--unit) * 24);
+  font-weight: 600;
+}
+
+@media (hover: hover) {
+  .end-round:enabled:hover,
+  .synchro:enabled:hover,
+  .confirm button:enabled:hover {
+    --state-duration: var(--hover-duration);
+    outline-color: #fff;
+  }
+}
+
+.end-round:enabled:is(:focus-visible, [data-interaction-state="Hover"] *),
+.synchro:enabled:is(:focus-visible, [data-interaction-state="Hover"] *),
+.confirm button:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  --state-duration: var(--hover-duration);
+  outline-color: #fff;
+}
+
+.end-round:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *),
+.synchro:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *),
+.confirm button:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *),
+.concede:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
+  --state-duration: 0s;
+  filter: brightness(0.9);
+}

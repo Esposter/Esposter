@@ -36,18 +36,18 @@ const characters = defineModel<Character[]>("characters", { required: true });
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
 const { character, characterTalentKits, gameText, materialDataMap, nameText, talentUpgradeMap } = defineProps<Props>();
-// The proud skill group each of the character's combat talents names in its kit, which its upgrades are read by
-const talentGroupIds = computed(
-  () =>
-    characterTalentKits.find(({ characterId: kitCharacterId }) => kitCharacterId === character.id)?.talentGroupIds,
+// The kit the character's combat talents and passives are read from, which names each talent's proud skill group and name
+const talentKit = computed(() =>
+  characterTalentKits.find(({ characterId: kitCharacterId }) => kitCharacterId === character.id),
 );
 const toItemCountText = (name: string, count: number) =>
   fillGameTextValues(gameText[GameTextKey.ItemCount], name, count);
-// The Talents tab's panel for the chosen character: each combat talent's level, the phase and the cost of its next level,
-// And why it cannot rise now, its Upgrade disabled while it cannot
+// The Talents tab's panel for the chosen character: each combat talent's name and level, the phase and the cost of its
+// Next level, why it cannot rise now, its Upgrade disabled while it cannot, and each passive's name
 const talentPanel = computed(() => {
-  if (!talentGroupIds.value) return undefined;
-  const rows = getTalentRows(character, talentGroupIds.value, talentUpgradeMap, {
+  const kit = talentKit.value;
+  if (!kit) return undefined;
+  const rows = getTalentRows(character, kit.talentGroupIds, talentUpgradeMap, {
     inventory: inventory.value,
     wallet: wallet.value,
   });
@@ -65,6 +65,8 @@ const talentPanel = computed(() => {
     // A talent at its last level draws no Upgrade and names no reason, the game showing neither
     isUpgradeDisabled: rows.map(({ refusal }) => refusal !== undefined),
     levelTexts: rows.map(({ level }) => fillGameTextValues(gameText[GameTextKey.LevelFormat], level)),
+    names: rows.map(({ talent }) => nameText[kit.talentNames[talent].nameTextId] || ""),
+    passiveNames: kit.passives.map(({ nameTextId }) => nameText[nameTextId] || ""),
     phases: rows.map(({ upgrade }) =>
       upgrade ? fillGameTextValues(gameText[GameTextKey.TalentPhaseRequired], upgrade.phase) : "",
     ),
@@ -77,12 +79,13 @@ const talentPanel = computed(() => {
 });
 const upgradeTalentAt = (index: number) => {
   const talent = COMBAT_TALENT_ORDER[index];
-  if (!talentGroupIds.value || !talent) return;
+  const talentGroupIds = talentKit.value?.talentGroupIds;
+  if (!talentGroupIds || !talent) return;
   const raised = upgradeCharacterTalent(
     characters.value,
     character,
     talent,
-    talentUpgradeMap[talentGroupIds.value[talent]] ?? [],
+    talentUpgradeMap[talentGroupIds[talent]] ?? [],
     { inventory: inventory.value, wallet: wallet.value },
   );
   characters.value = raised.characters;

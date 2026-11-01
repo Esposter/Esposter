@@ -9,6 +9,7 @@ import { formatWholeNumber } from "#src/services/character/formatWholeNumber";
 import { getAttributeLabel } from "#src/services/character/getAttributeLabel";
 import { getSecondaryAttribute } from "#src/services/character/getSecondaryAttribute";
 import { getWeaponAttributeTotals } from "#src/services/weapon/getWeaponAttributeTotals";
+import { getWeaponPassive } from "#src/services/weapon/getWeaponPassive";
 import { WeaponTypeNameGameTextKeyMap } from "#src/services/weapon/WeaponTypeNameGameTextKeyMap";
 import { CharacterMenuWeapons } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
@@ -51,6 +52,7 @@ const weaponPanel = computed(() => {
     kind: gameText[WeaponTypeNameGameTextKeyMap[weaponData.weaponType]],
     levelText: fillGameTextValues(gameText[GameTextKey.LevelFormat], `${weapon.level}/${maxLevel}`),
     name: nameText[weaponData.nameTextId] || "",
+    passiveName: getWeaponPassive(weaponData, weapon.refinement, nameText)?.name ?? "",
     rarity: weaponData.rarity,
     refinement: weapon.refinement,
     subStatLabel: subStatAttribute === undefined ? "" : getAttributeLabel(subStatAttribute, gameText),

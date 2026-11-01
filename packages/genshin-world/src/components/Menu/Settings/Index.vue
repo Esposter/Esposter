@@ -1,40 +1,24 @@
 <script setup lang="ts">
 import type { GenshinSettings } from "#src/models/menu/GenshinSettings";
-import type { SettingsRow } from "#src/models/menu/SettingsRow";
-import type { ToggleSetting } from "#src/models/menu/ToggleSetting";
+import type { SettingsRowKind } from "#src/models/menu/SettingsRowKind";
 import type { QualityTier } from "genshin-engine";
 import type { GameLanguage, GameText } from "genshin-text";
 
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import MenuScrollTrack from "#src/components/Menu/ScrollTrack/Index.vue";
+import MenuSettingsRow from "#src/components/Menu/Settings/Row/Index.vue";
+import MenuSettingsTabs from "#src/components/Menu/Settings/Tabs/Index.vue";
+import { useSettingsGameText } from "#src/composables/useSettingsGameText";
+import { useSettingsRowList } from "#src/composables/useSettingsRowList";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
-import { SettingsRowKind } from "#src/models/menu/SettingsRowKind";
 import { SettingsTab } from "#src/models/menu/SettingsTab";
-import { GRAPHICS_QUALITY_TIERS, SETTINGS_DIMMED_TABS, SETTINGS_TABS } from "#src/services/menu/constants";
 import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
-import { QualityTierGameTextKeyMap } from "#src/services/menu/QualityTierGameTextKeyMap";
 import { SettingsTabGameTextKeyMap } from "#src/services/menu/SettingsTabGameTextKeyMap";
 import { SettingsTabSectionsMap } from "#src/services/menu/SettingsTabSectionsMap";
-import { snapToRange } from "#src/services/menu/snapToRange";
-import { getResultAsync } from "@esposter/shared";
-import { useResizeObserver, watchImmediate } from "@vueuse/core";
-import {
-  GAME_ROW_HOVER,
-  GAME_ROW_PRESS,
-  GameButton,
-  GameButtonKind,
-  GameScreen,
-  INTERACTION_HOVER_MS,
-  INTERACTION_REST_MS,
-} from "genshin-interface";
-import {
-  fillGameTextValues,
-  GameLanguages,
-  GameTextKey,
-  GameTextLoaderMap,
-  getLanguageDisplayName,
-} from "genshin-text";
+import { useResizeObserver } from "@vueuse/core";
+import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The quality tier the device was given, which the row's words mark as the default
@@ -50,111 +34,24 @@ const settings = defineModel<GenshinSettings>("settings", { required: true });
 const tab = defineModel<SettingsTab>("tab", { default: SettingsTab.Graphics });
 const { defaultQualityTier, gameText, language } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 // The close mark's box and glyph, each one object the button and its mark keep rather than a fresh one per render
 const closeStyle = getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Close]);
 const closeGlyph = { ...MenuFrameGlyphMap[MenuFrameIcon.Close], x: 0, y: 0 };
 const page = useTemplateRef("page");
 const content = useTemplateRef("content");
-// The labels show the words of the language chosen here. The reader's own language's are the game text given, and any
-// Other is its chunk, loaded when it is chosen and kept only if it is still the choice when it arrives
-const chosenGameText = shallowRef<GameText>();
-const shownGameText = computed(() => chosenGameText.value ?? gameText);
-watchImmediate(
-  () => settings.value.language,
-  (newLanguage) => {
-    if (newLanguage === language) {
-      chosenGameText.value = undefined;
-      return;
-    }
-
-    getResultAsync(() => GameTextLoaderMap[newLanguage]()).match(
-      (loadedGameText) => {
-        if (settings.value.language === newLanguage) chosenGameText.value = loadedGameText;
-      },
-      (error) => console.error(error),
-    );
-  },
-);
-// The Graphics Quality and Game Language rows each open a list, one at a time, and a change of tab closes it
 const openedList = shallowRef<SettingsRowKind>();
-watch(tab, () => {
-  openedList.value = undefined;
-});
-const getQualityTierWords = (qualityTier: QualityTier): string => {
-  const words = shownGameText.value[QualityTierGameTextKeyMap[qualityTier]];
-  return qualityTier === defaultQualityTier
-    ? fillGameTextValues(shownGameText.value[GameTextKey.SettingsDefault], words)
-    : words;
-};
-const qualityValue = computed(() => getQualityTierWords(settings.value.qualityTier));
-const languageValue = computed(() => getLanguageDisplayName(settings.value.language, settings.value.language));
-// The options the open list offers, each with whether it is the setting now and the choice that sets it
-const openedOptions = computed(() => {
-  if (openedList.value === SettingsRowKind.Language)
-    return GameLanguages.map((gameLanguage) => ({
-      choose: () => {
-        settings.value = { ...settings.value, language: gameLanguage };
-        openedList.value = undefined;
-      },
-      isSelected: gameLanguage === settings.value.language,
-      label: getLanguageDisplayName(gameLanguage, gameLanguage),
-    }));
-  if (openedList.value === SettingsRowKind.Quality)
-    return GRAPHICS_QUALITY_TIERS.map((qualityTier) => ({
-      choose: () => {
-        settings.value = { ...settings.value, qualityTier };
-        openedList.value = undefined;
-      },
-      isSelected: qualityTier === settings.value.qualityTier,
-      label: getQualityTierWords(qualityTier),
-    }));
-  return [];
-});
-const checkIsListRow = (row: SettingsRow): boolean =>
-  row.kind === SettingsRowKind.Quality || row.kind === SettingsRowKind.Language;
-// A row the player acts on: a list row opens its list, and a toggle flips its setting
-const checkIsActiveRow = (row: SettingsRow): boolean => checkIsListRow(row) || row.kind === SettingsRowKind.Toggle;
-const toggleList = (kind: SettingsRowKind): void => {
-  openedList.value = openedList.value === kind ? undefined : kind;
-};
-const flipToggle = (setting: ToggleSetting): void => {
-  settings.value = { ...settings.value, [setting]: !settings.value[setting] };
-};
-type BackedRow = Extract<SettingsRow, { kind: SettingsRowKind.Range | SettingsRowKind.Volume }>;
-// A track row's value: the setting the world backs it with, or the value an unbacked slider is drawn at
-type TrackRow = Extract<SettingsRow, { kind: SettingsRowKind.Range | SettingsRowKind.Slider | SettingsRowKind.Volume }>;
-const getTrackValue = (row: TrackRow): number =>
-  row.kind === SettingsRowKind.Slider ? row.value : settings.value[row.setting];
-// The share of its track a row's value stands at, which places the knob
-const getTrackShare = (row: TrackRow): number => (getTrackValue(row) - row.range.min) / (row.range.max - row.range.min);
-// A value reads with one decimal place where its range steps by tenths, and as a whole number everywhere else
-const formatTrackValue = (row: TrackRow): string => getTrackValue(row).toFixed(row.range.step < 1 ? 1 : 0);
-const setBackedValue = (row: BackedRow, value: number): void => {
-  settings.value = { ...settings.value, [row.setting]: snapToRange(value, row.range) };
-};
-// A value follows the pointer while its button is held, the pointer captured at the press so a drag past the track's
-// Ends keeps setting it, where the value stops at its limit
-const dragSetting = (event: PointerEvent, row: BackedRow): void => {
-  if (!(event.currentTarget instanceof HTMLElement) || event.buttons === 0) return;
-
-  const { left, width } = event.currentTarget.getBoundingClientRect();
-  setBackedValue(row, row.range.min + ((event.clientX - left) / width) * (row.range.max - row.range.min));
-};
-const startSettingDrag = (event: PointerEvent, row: BackedRow): void => {
-  if (event.currentTarget instanceof HTMLElement) event.currentTarget.setPointerCapture(event.pointerId);
-  dragSetting(event, row);
-};
-// The arrow keys step a value by its range's step, held within its range as a drag is
-const stepSetting = (event: KeyboardEvent, row: BackedRow): void => {
-  const value = settings.value[row.setting];
-  if (event.key === "ArrowLeft" || event.key === "ArrowDown") setBackedValue(row, value - row.range.step);
-  else if (event.key === "ArrowRight" || event.key === "ArrowUp") setBackedValue(row, value + row.range.step);
-  else return;
-
-  event.preventDefault();
-};
+const shownGameText = useSettingsGameText(
+  settings,
+  () => language,
+  () => gameText,
+);
+const { openedOptions, qualityValue } = useSettingsRowList(
+  settings,
+  tab,
+  openedList,
+  shownGameText,
+  () => defaultQualityTier,
+);
 // The scroll thumb's share of the track and how far down it stands, from the page's scroll as it stands
 const scrollThumb = shallowRef({ offset: 0, share: 1 });
 const updateScrollThumb = () => {
@@ -202,125 +99,22 @@ onMounted(() => {
     >
       <MenuGlyph :glyph="closeGlyph" class="close-glyph" />
     </GameButton>
-    <div class="tabs" role="tablist" aria-orientation="vertical">
-      <GameButton
-        v-for="settingsTab of SETTINGS_TABS"
-        :key="settingsTab"
-        class="tab"
-        :aria-selected="settingsTab === tab"
-        :class="{ dimmed: SETTINGS_DIMMED_TABS.includes(settingsTab) }"
-        :disabled="!SettingsTabSectionsMap[settingsTab]"
-        :kind="GameButtonKind.Row"
-        role="tab"
-        tip=""
-        @click="tab = settingsTab"
-      >
-        <svg v-if="settingsTab === tab" class="selected-bullet" aria-hidden="true" viewBox="0 0 28 28">
-          <path d="M 14 1.5 L 26.5 14 L 14 26.5 L 1.5 14 Z" />
-          <path class="arrow" d="M 12 9 L 17.5 14 L 12 19 Z" />
-        </svg>
-        <span v-else class="bullet" />
-        <span class="name">{{ shownGameText[SettingsTabGameTextKeyMap[settingsTab]] }}</span>
-      </GameButton>
-    </div>
+    <MenuSettingsTabs v-model:tab="tab" :game-text="shownGameText" />
     <div :key="tab" ref="page" class="page" role="tabpanel" tabindex="0" @scroll="updateScrollThumb()">
       <div ref="content" class="content">
         <template v-for="{ headingKey, rows } of SettingsTabSectionsMap[tab] ?? []" :key="headingKey">
           <p class="heading" role="heading" aria-level="2">{{ shownGameText[headingKey] }}</p>
-          <template v-for="row of rows" :key="row.labelKey">
-            <div class="row">
-              <span class="label">{{ shownGameText[row.labelKey] }}</span>
-              <template
-                v-if="
-                  row.kind === SettingsRowKind.Range ||
-                  row.kind === SettingsRowKind.Slider ||
-                  row.kind === SettingsRowKind.Volume
-                "
-              >
-                <svg v-if="tab === SettingsTab.Audio" class="speaker" aria-hidden="true" viewBox="0 0 36 30">
-                  <path d="M 3 10 L 9 10 L 18 3 L 18 27 L 9 20 L 3 20 Z" />
-                  <path class="wave" d="M 23 9 Q 26 15 23 21 M 28 5 Q 33 15 28 25" />
-                </svg>
-                <span class="volume">{{ formatTrackValue(row) }}</span>
-                <div
-                  v-if="row.kind === SettingsRowKind.Range || row.kind === SettingsRowKind.Volume"
-                  class="slider"
-                  role="slider"
-                  tabindex="0"
-                  :aria-label="shownGameText[row.labelKey]"
-                  :aria-valuemax="row.range.max"
-                  :aria-valuemin="row.range.min"
-                  :aria-valuenow="getTrackValue(row)"
-                  @keydown="stepSetting($event, row)"
-                  @pointerdown="startSettingDrag($event, row)"
-                  @pointermove="dragSetting($event, row)"
-                >
-                  <span class="knob" :style="{ left: `${getTrackShare(row) * 100}%` }" />
-                </div>
-                <div
-                  v-else
-                  class="slider"
-                  role="slider"
-                  aria-disabled="true"
-                  :aria-label="shownGameText[row.labelKey]"
-                  :aria-valuemax="row.range.max"
-                  :aria-valuemin="row.range.min"
-                  :aria-valuenow="getTrackValue(row)"
-                >
-                  <span class="knob" :style="{ left: `${getTrackShare(row) * 100}%` }" />
-                </div>
-              </template>
-              <GameButton
-                v-else
-                class="choice"
-                :aria-expanded="checkIsListRow(row) ? openedList === row.kind : undefined"
-                :aria-label="shownGameText[row.labelKey]"
-                :disabled="!checkIsActiveRow(row)"
-                :kind="GameButtonKind.Row"
-                tip=""
-                @click="row.kind === SettingsRowKind.Toggle ? flipToggle(row.setting) : toggleList(row.kind)"
-              >
-                <svg class="star" aria-hidden="true" viewBox="0 0 48 48">
-                  <path d="M 24 0 Q 31 17 48 24 Q 31 31 24 48 Q 17 31 0 24 Q 17 17 24 0 Z" />
-                </svg>
-                <svg class="star faint" aria-hidden="true" viewBox="0 0 48 48">
-                  <path d="M 24 0 Q 31 17 48 24 Q 31 31 24 48 Q 17 31 0 24 Q 17 17 24 0 Z" />
-                </svg>
-                <span class="value">
-                  <template v-if="row.kind === SettingsRowKind.Quality">{{ qualityValue }}</template>
-                  <template v-else-if="row.kind === SettingsRowKind.Language">{{ languageValue }}</template>
-                  <template v-else-if="row.kind === SettingsRowKind.Toggle">{{
-                    shownGameText[settings[row.setting] ? GameTextKey.SettingsOn : GameTextKey.SettingsOff]
-                  }}</template>
-                  <template v-else-if="row.kind === SettingsRowKind.Action">{{ shownGameText[row.valueKey] }}</template>
-                  <template v-else>{{ row.getValue(shownGameText, settings.language) }}</template>
-                </span>
-                <svg v-if="row.kind === SettingsRowKind.Action" class="go" aria-hidden="true" viewBox="0 0 25 25">
-                  <circle cx="12.5" cy="12.5" r="12.5" />
-                  <path class="arrow" d="M 8.5 7 L 17 12.5 L 8.5 18 L 10.5 12.5 Z" />
-                </svg>
-                <span v-else class="caret" />
-              </GameButton>
-            </div>
-            <div
-              v-if="openedList === row.kind"
-              class="options"
-              role="listbox"
-              :aria-label="shownGameText[row.labelKey]"
-            >
-              <button
-                v-for="option of openedOptions"
-                :key="option.label"
-                class="option row-tint"
-                role="option"
-                type="button"
-                :aria-selected="option.isSelected"
-                @click="option.choose()"
-              >
-                {{ option.label }}
-              </button>
-            </div>
-          </template>
+          <MenuSettingsRow
+            v-for="row of rows"
+            :key="row.labelKey"
+            v-model:opened-list="openedList"
+            v-model:settings="settings"
+            :game-text="shownGameText"
+            :options="openedOptions"
+            :quality-value="qualityValue"
+            :row
+            :tab
+          />
         </template>
       </div>
     </div>
@@ -400,99 +194,6 @@ onMounted(() => {
   translate: calc(var(--unit) * -5.5) calc(var(--unit) * -5.5);
 }
 
-.tabs {
-  position: absolute;
-  top: calc(var(--unit) * 120);
-  left: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.tab {
-  position: relative;
-  height: calc(var(--unit) * 69.5);
-  padding: 0 0 0 calc(var(--unit) * 144);
-  border: none;
-  background: none;
-  color: rgb(232 232 230 / 0.74);
-  cursor: inherit;
-  font: inherit;
-  font-size: calc(var(--unit) * 36);
-  font-weight: 600;
-  letter-spacing: calc(var(--unit) * 1.2);
-  line-height: 1;
-  text-align: start;
-  text-shadow: 0 0 calc(var(--unit) * 4) rgb(30 30 40 / 0.3);
-  white-space: nowrap;
-}
-
-.tab[aria-selected="true"] {
-  padding-bottom: calc(var(--unit) * 3);
-  padding-left: calc(var(--unit) * 154);
-  color: #edeae7;
-  font-size: calc(var(--unit) * 41);
-  letter-spacing: calc(var(--unit) * 2.4);
-}
-
-/* The last two tabs, Resources and Other, are dimmer than the rest: set by eye off the clip's tab column
-   (`yt-5EmJX_RyuY8-menu-settings`, 1920 wide), where they are barely above the sand behind them */
-.tab.dimmed {
-  opacity: 0.5;
-}
-
-/* The open tab is held selected by GameButton's row tint, which the game does not draw here: the reference's Graphics tab
-   Has no band behind its name, only the light below, so the tint is turned off on the tabs. Measured on the clip's sidebar
-   (`yt-5EmJX_RyuY8-menu-settings`, 1920 wide), where the band scored the sidebar's cell at 5% */
-.tabs .tab[aria-selected="true"]::before {
-  opacity: 0;
-}
-
-/* Provisional: the light the open tab's name trails to its right, behind its last letters, solved from the clip's glow
-   Over its world, without the sparkles that drift along it */
-.name {
-  position: relative;
-}
-
-.tab[aria-selected="true"] .name::after {
-  position: absolute;
-  top: calc(50% - var(--unit) * 12.5);
-  left: calc(100% - var(--unit) * 36);
-  z-index: -1;
-  width: calc(var(--unit) * 170);
-  height: calc(var(--unit) * 24);
-  background: linear-gradient(to right, rgb(255 255 255 / 0.45), rgb(255 255 255 / 0.2) 50%, rgb(255 255 255 / 0));
-  content: "";
-  mask-image: linear-gradient(transparent, #000, transparent);
-}
-
-/* Dimmer than the name beside it */
-.bullet {
-  position: absolute;
-  top: calc(50% - var(--unit));
-  left: calc(var(--unit) * 124.5);
-  width: calc(var(--unit) * 10.5);
-  height: calc(var(--unit) * 10.5);
-  background: rgb(232 232 230 / 0.52);
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.selected-bullet {
-  position: absolute;
-  top: 50%;
-  left: calc(var(--unit) * 110.5);
-  width: calc(var(--unit) * 28);
-  height: calc(var(--unit) * 28);
-  fill: none;
-  stroke: currentcolor;
-  stroke-width: 1.5;
-  transform: translateY(-50%);
-}
-
-.selected-bullet .arrow {
-  fill: currentcolor;
-  stroke: none;
-}
-
 .page {
   position: absolute;
   top: calc(var(--unit) * 100);
@@ -521,171 +222,6 @@ onMounted(() => {
   line-height: calc(var(--unit) * 51);
 }
 
-/* The row's glass, lighter over its label and a tan panel under its value from 977 across, solved from the clip's rows
-   Over the world between them. Its colour is 240 231 215: the clip's pill interior reads 226 217 202 over the same world.
-   Provisional: the faint shadow round its edge, read off the clip's column through a row against the world beside it */
-.row {
-  position: relative;
-  flex: none;
-  height: calc(var(--unit) * 56);
-  border-radius: calc(var(--unit) * 28);
-  background: rgb(240 231 215 / 0.78);
-  box-shadow: 0 0 calc(var(--unit) * 3) rgb(0 0 0 / 0.15);
-  --lit-shadow:
-    0 0 calc(var(--unit) * 1.5) calc(var(--unit) * 1) rgb(255 255 255 / 0.9),
-    inset 0 0 calc(var(--unit) * 1.5) calc(var(--unit) * 1) rgb(255 255 255 / 0.6);
-  color: #4b4d54;
-  font-size: calc(var(--unit) * 27);
-  font-weight: 600;
-  letter-spacing: calc(var(--unit) * 1);
-  overflow: hidden;
-}
-
-/* Provisional: the white rim a row takes under the pointer or the keyboard's focus, about 4 across and centred on its
-   Edge, read off the clip's rows lit one at a time from 176 to 179 seconds. A pointer's hover is guarded by
-   `(hover: hover)` and the focus is a child's `:focus-visible`, so a touch screen leaves no rim after a tap or a drag
-   That focuses one */
-@media (hover: hover) {
-  .row:hover {
-    box-shadow: var(--lit-shadow);
-  }
-}
-
-.row:has(:focus-visible) {
-  box-shadow: var(--lit-shadow);
-}
-
-.label {
-  position: absolute;
-  top: 50%;
-  left: calc(var(--unit) * 29);
-  line-height: 1;
-  transform: translateY(-50%);
-}
-
-.choice {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: calc(var(--unit) * 342);
-  height: 100%;
-  padding: 0;
-  border: none;
-  background: rgb(216 203 183 / 0.86);
-  color: inherit;
-  cursor: inherit;
-  font: inherit;
-  letter-spacing: inherit;
-}
-
-.row:has(.choice) {
-  background: linear-gradient(
-    to right,
-    rgb(240 231 215 / 0.78) calc(var(--unit) * 977),
-    rgb(240 231 215 / 0) calc(var(--unit) * 977)
-  );
-}
-
-/* The star the value's panel begins at, and a fainter one before it. Provisional: the second's strength, read by eye */
-.star {
-  position: absolute;
-  top: calc(var(--unit) * 4);
-  left: calc(var(--unit) * -24);
-  width: calc(var(--unit) * 48);
-  height: calc(var(--unit) * 48);
-  fill: #cebb99;
-}
-
-.faint {
-  left: calc(var(--unit) * -76);
-  opacity: 0.3;
-}
-
-.value {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  line-height: 1;
-  text-align: center;
-  transform: translateY(-50%);
-}
-
-.caret {
-  position: absolute;
-  top: calc(var(--unit) * 23);
-  right: calc(var(--unit) * 17.5);
-  width: 0;
-  height: 0;
-  border-top: calc(var(--unit) * 10.5) solid #4b5464;
-  border-right: calc(var(--unit) * 8.5) solid transparent;
-  border-left: calc(var(--unit) * 8.5) solid transparent;
-}
-
-/* An action's mark in place of the caret, a slate disc with a pale gold arrow */
-.go {
-  position: absolute;
-  top: calc(var(--unit) * 15.5);
-  right: calc(var(--unit) * 13);
-  width: calc(var(--unit) * 25);
-  height: calc(var(--unit) * 25);
-  fill: #4d5464;
-}
-
-.go .arrow {
-  fill: #cebf8e;
-}
-
-/* A volume's speaker, its number in a faint box and its slider, the knob a diamond at its share of the line. Provisional:
-   Their sizes and places, read by eye off the clip's Audio tab at 178 seconds */
-.speaker {
-  position: absolute;
-  top: calc(var(--unit) * 11.5);
-  left: calc(var(--unit) * 798);
-  width: calc(var(--unit) * 45);
-  height: calc(var(--unit) * 33);
-  fill: #4b5568;
-}
-
-.speaker .wave {
-  fill: none;
-  stroke: rgb(75 85 104 / 0.45);
-  stroke-width: 3;
-}
-
-.volume {
-  position: absolute;
-  top: calc(var(--unit) * 11);
-  left: calc(var(--unit) * 852);
-  width: calc(var(--unit) * 70);
-  height: calc(var(--unit) * 34);
-  border-radius: calc(var(--unit) * 6);
-  background: rgb(75 77 84 / 0.03);
-  line-height: calc(var(--unit) * 34);
-  text-align: center;
-}
-
-.slider {
-  position: absolute;
-  top: calc(var(--unit) * 24.5);
-  left: calc(var(--unit) * 952);
-  width: calc(var(--unit) * 330);
-  height: calc(var(--unit) * 7);
-  border-radius: calc(var(--unit) * 3.5);
-  background: #faf5eb;
-}
-
-.knob {
-  position: absolute;
-  top: 50%;
-  width: calc(var(--unit) * 19);
-  height: calc(var(--unit) * 19);
-  border: calc(var(--unit) * 2) solid #8f8a85;
-  background: #e6e0d5;
-  box-sizing: border-box;
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-
 .scroll-caret {
   position: absolute;
   top: calc(var(--unit) * 124);
@@ -712,62 +248,4 @@ onMounted(() => {
   border-radius: calc(var(--unit) * 3.5) calc(var(--unit) * 3.5) 0 0;
   background: rgb(217 216 212 / 0.8);
 }
-/* The list an open row shows under it, each option a row's glass and the chosen one a tan panel. Provisional: the list's
-   Place and the chosen option's colour, which the clip shows only with the list closed */
-.options {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--unit) * 8);
-}
-
-/* Provisional: an option is lit as a row is, a tint over its box behind its words (`rowTint.css`), hovered or
-   Focused, and pressed at once. The chosen option keeps its own tan, which the tint does not hold */
-.option {
-  --row-press: v-bind(GAME_ROW_PRESS);
-  --row-tint: v-bind(GAME_ROW_HOVER);
-  --state-duration: v-bind(restDuration);
-  position: relative;
-  height: calc(var(--unit) * 56);
-  padding: 0 calc(var(--unit) * 29);
-  border: none;
-  border-radius: calc(var(--unit) * 28);
-  background: rgb(239 231 221 / 0.78);
-  color: #4b4d54;
-  cursor: pointer;
-  font: inherit;
-  font-size: calc(var(--unit) * 27);
-  font-weight: 600;
-  letter-spacing: calc(var(--unit) * 1);
-  text-align: start;
-}
-
-.option:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  --state-duration: v-bind(hoverDuration);
-}
-
-@media (hover: hover) {
-  .option:enabled:hover {
-    --state-duration: v-bind(hoverDuration);
-  }
-}
-
-.option:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
-  --state-duration: 0s;
-}
-
-.option[aria-selected="true"] {
-  background: rgb(216 203 183 / 0.86);
-}
-
-/* A volume's line takes the pointer, which sets its level, and the arrow keys once it has the focus */
-.slider {
-  touch-action: none;
-}
-
-.slider:focus-visible {
-  outline: calc(var(--unit) * 2) solid rgb(255 255 255 / 0.9);
-  outline-offset: calc(var(--unit) * 4);
-}
 </style>
-
-<style scoped src="genshin-interface/styles/rowTint.css"></style>

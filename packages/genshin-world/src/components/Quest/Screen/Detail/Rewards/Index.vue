@@ -24,7 +24,7 @@ const rewardsCaptionSegments = computed(() => splitGameTextColors(gameText[GameT
   </p>
   <ul class="rewards">
     <li v-for="{ count, itemId, rarity } of chapter.rewards" :key="itemId" class="reward">
-      <ItemTile class="reward-tile" count-size="21.28cqh" :count :rarity variant="quest" />
+      <ItemTile class="reward-tile" :count count-size="21.28cqh" :rarity variant="quest" />
     </li>
   </ul>
 </template>

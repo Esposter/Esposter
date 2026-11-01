@@ -12,15 +12,11 @@ import type { WishScheduleEvent } from "#src/models/wish/WishScheduleEvent";
 import type { WishResultCell } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
+import { useWishDraw } from "#src/composables/useWishDraw";
 import { Currency } from "#src/models/inventory/Currency";
-import { WishItemKind } from "#src/models/wish/WishItemKind";
-import { addStellaFortuna } from "#src/services/character/addStellaFortuna";
-import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
-import { toWeaponDefinition } from "#src/services/inventory/toWeaponDefinition";
 import { SECONDS_PER_DAY, SECONDS_PER_HOUR, SECONDS_PER_MINUTE } from "#src/services/time/constants";
 import { findBannerTrial } from "#src/services/trial/findBannerTrial";
-import { appendWishHistory } from "#src/services/wish/appendWishHistory";
 import { BannerKindFateMap } from "#src/services/wish/BannerKindFateMap";
 import { BannerKindGameTextKeyMap } from "#src/services/wish/BannerKindGameTextKeyMap";
 import { buyWishFate } from "#src/services/wish/buyWishFate";
@@ -32,13 +28,10 @@ import {
   TEN_WISH_COUNT,
 } from "#src/services/wish/constants";
 import { createBanners } from "#src/services/wish/createBanners";
-import { getNewCharacters } from "#src/services/wish/getNewCharacters";
 import { getOpenEventBanners } from "#src/services/wish/getOpenEventBanners";
 import { getWishCost } from "#src/services/wish/getWishCost";
-import { makeWishes } from "#src/services/wish/makeWishes";
-import { sortWishResults } from "#src/services/wish/sortWishResults";
 import { toWishHistoryCells } from "#src/services/wish/toWishHistoryCells";
-import { InvalidOperationError, MILLISECONDS_PER_SECOND, Operation } from "@esposter/shared";
+import { MILLISECONDS_PER_SECOND } from "@esposter/shared";
 import { BannerKind, BannerKinds, GameScreen, WishScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
@@ -112,7 +105,8 @@ const bannerOffers = computed(() =>
   })),
 );
 const bannerId = ref(bannerOffers.value[0]?.id);
-const bannerKind = computed(() => banners.value.find(({ id }) => id === bannerId.value)?.kind);
+const banner = computed(() => banners.value.find(({ id }) => id === bannerId.value));
+const bannerKind = computed(() => banner.value?.kind);
 const toCountText = (currency: Currency, quantity: number) =>
   fillGameTextValues(gameText[GameTextKey.ItemCount], gameText[CurrencyGameTextKeyMap[currency]], quantity);
 // The Stella Fortuna a result brought, as its count text: the drawn character's own, named in the reader's language, or the
@@ -181,7 +175,6 @@ const fatePoints = computed(() =>
       )
     : [],
 );
-const banner = computed(() => banners.value.find(({ id }) => id === bannerId.value));
 // The trial the open banner's featured character has, which the card's button opens
 const bannerTrial = computed(() =>
   banner.value ? findBannerTrial(trials, banner.value.featuredFiveStars) : undefined,
@@ -201,17 +194,15 @@ const fiveStarNotice = computed(() => {
   if (bannerKind.value === BannerKind.CharacterEvent) return gameText[GameTextKey.WishFiveStarCharacterNotice];
   return bannerKind.value === BannerKind.WeaponEvent ? gameText[GameTextKey.WishFiveStarWeaponNotice] : "";
 });
-// The seconds the open event banner's window has left by the screen's clock, "undefined" on a banner with no window
-const timeRemaining = computed(() => {
-  const event = wishSchedule.find(({ id }) => id === bannerId.value);
-  return event ? Math.max(0, Math.floor((event.endTime - now.epochMilliseconds) / MILLISECONDS_PER_SECOND)) : undefined;
-});
-// The seconds left as the game's three parts, each counted in its unit's words, and the three joined by the game's format
+// The seconds left as the game's three parts, each counted in its unit's words, and the three joined by the game's format,
+// "" on a banner with no window and otherwise the open event banner's window left by the screen's clock
 const timeRemainingText = computed(() => {
-  if (timeRemaining.value === undefined) return "";
-  const days = Math.floor(timeRemaining.value / SECONDS_PER_DAY);
-  const hours = Math.floor((timeRemaining.value % SECONDS_PER_DAY) / SECONDS_PER_HOUR);
-  const minutes = Math.floor((timeRemaining.value % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
+  const event = wishSchedule.find(({ id }) => id === bannerId.value);
+  if (!event) return "";
+  const seconds = Math.max(0, Math.floor((event.endTime - now.epochMilliseconds) / MILLISECONDS_PER_SECOND));
+  const days = Math.floor(seconds / SECONDS_PER_DAY);
+  const hours = Math.floor((seconds % SECONDS_PER_DAY) / SECONDS_PER_HOUR);
+  const minutes = Math.floor((seconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
   return fillGameTextValues(
     gameText[GameTextKey.WishTimeRemainingFormat],
     fillGameTextValues(gameText[GameTextKey.WishTimeRemainingDays], days),
@@ -234,57 +225,35 @@ const pool = computed(() => {
   ];
 });
 const results = ref<WishResultCell[]>([]);
-// A set's wishes made: the counters, the wallet and the characters' copies after them, every weapon drawn into the bag,
-// And what each drew shown until a click goes on, a card each in the order the game shows them
-const wish = (count: number) => {
-  if (!banner.value) return;
-  const wishes = makeWishes(
-    {
-      banner: banner.value,
-      count,
-      heldCountMap: characterCopyCountMap.value,
-      pity: pityMap.value[banner.value.kind],
-      wallet: wallet.value,
-    },
-    () => Math.random(),
-  );
-  let nextInventory = inventory.value;
-  for (const { item } of wishes.results)
-    if (item.kind === WishItemKind.Weapon) {
-      const weaponData = statTables.weaponDataMap.get(item.id);
-      if (!weaponData) throw new InvalidOperationError(Operation.Read, String(item.id), "has no weapon data");
-      nextInventory = addInventoryItem(nextInventory, toWeaponDefinition(weaponData, item.name), 1).inventory;
-    }
-  // A character drawn for the first time joins the roster in the order it was drawn, a duplicate only counting a copy, and
-  // Each duplicate's Stella Fortuna is added to its character as the draw lands, a new character's second copy included
-  const newCharacters = getNewCharacters(characterCopyCountMap.value, wishes.heldCountMap, statTables.characterDataMap);
-  characters.value = addStellaFortuna([...characters.value, ...newCharacters], wishes.stellaFortunaCountMap);
-  characterCopyCountMap.value = wishes.heldCountMap;
-  inventory.value = nextInventory;
-  pityMap.value = { ...pityMap.value, [banner.value.kind]: wishes.pity };
-  const { kind } = banner.value;
-  const drawnAt = getWorldNow();
-  wishHistory.value = appendWishHistory(
-    wishHistory.value,
-    wishes.results.map(({ item }) => ({ bannerKind: kind, itemId: item.id, time: drawnAt.toString() })),
-    drawnAt,
-  );
-  wallet.value = wishes.wallet;
-  results.value = sortWishResults(wishes.results).map((wishResult) => {
-    const {
-      isCapturingRadiance,
-      item: { name, rarity },
-      wishReturn,
-    } = wishResult;
-    return {
-      isCapturingRadiance,
-      name,
-      rarity,
-      stellaFortuna: toStellaFortunaText(wishResult),
-      wishReturn: wishReturn ? toCountText(wishReturn.currency, wishReturn.quantity) : "",
-    };
-  });
+// The card a drawn result shows: its name, rarity and capturing radiance, and the Stella Fortuna and the return it brought
+// as their count texts
+const toResultCell = (wishResult: WishResult): WishResultCell => {
+  const {
+    isCapturingRadiance,
+    item: { name, rarity },
+    wishReturn,
+  } = wishResult;
+  return {
+    isCapturingRadiance,
+    name,
+    rarity,
+    stellaFortuna: toStellaFortunaText(wishResult),
+    wishReturn: wishReturn ? toCountText(wishReturn.currency, wishReturn.quantity) : "",
+  };
 };
+const wish = useWishDraw({
+  characterCopyCountMap,
+  characters,
+  getBanner: () => banner.value,
+  getStatTables: () => statTables,
+  getWorldNow,
+  inventory,
+  pityMap,
+  results,
+  toResultCell,
+  wallet,
+  wishHistory,
+});
 </script>
 
 <template>
@@ -317,7 +286,7 @@ const wish = (count: number) => {
       @close="emit('close')"
       @dismiss="results = []"
       @trial="bannerTrial && emit('trial', bannerTrial)"
-      @wish="(count) => wish(count)"
+      @wish="wish"
     />
   </GameScreen>
 </template>
