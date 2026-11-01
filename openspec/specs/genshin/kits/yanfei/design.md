@@ -40,4 +40,4 @@ flowchart TD
 
 ## Open
 
-- [ ] **Blazing Eye deals no poise** — contradicted by `{data-root}/cache/genshin-wiki/Category_Yanfei_Talents.json`: its Blazing Eye page gives the Extra Pyro DMG a poise of 50, and gcsim's `asc.go` lines 56 to 67 set none.
+- [ ] **Blazing Eye deals no poise** — contradicted by `{data-root}/cache/genshin-wiki/Category_Yanfei_Talents.json`, the Blazing Eye page's Advanced Properties: "Extra Pyro DMG", `gu = 1U`, `poise = 50`, `impulse = 2`; the record holds 0, as gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/yanfei/asc.go` lines 54 to 66 set no `PoiseDMG`.

@@ -42,5 +42,5 @@ flowchart LR
 
 ## Open
 
-- [ ] **The charged attack's spin lands at the start** — no source yet: no source gives the spin's frame of 0, and gcsim has no charged attack for Dori to take it from.
-- [ ] **The charged attack's two circles, radius 2 metres** — no source yet: the wiki and gcsim give no radius for Dori's charged attack, and the record marks it `Unsourced`.
+- [ ] **The charged attack's spin lands at the start** — no source yet: no source gives the spin's frame of 0, and gcsim has no charged attack for Dori to take it from; her config's `CA-Spinning` circle (`{data-root}/cache/gcsim-v2.47.2/internal/characters/dori/config.yml` line 77) gives an area and no frame, and the wiki and dump give none either.
+- [ ] **The charged attack's two circles, radius 2 metres** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/dori/config.yml` line 82 (`radius: 2.8`, `CA-Spinning`) and line 89 (`radius: 3.3`, `CA-Final`), where the record holds 2 on both, marked `Unsourced`.

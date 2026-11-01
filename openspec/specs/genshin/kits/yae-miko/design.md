@@ -41,4 +41,4 @@ flowchart TD
 
 ## Open
 
-- [ ] **A totem lasts 900 frames** — contradicted by `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json` (group `5832` index 4, 14 seconds) and by the wiki's Yakan Evocation page in `{data-root}/cache/genshin-wiki/Category_Yae_Miko_Talents.json` (duration 14s, "over their 14 seconds duration"); `kitsune.go` line 13 holds 900 frames, which is 15 seconds.
+- [ ] **A totem lasts 900 frames** — contradicted by `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json` line 240024: group `5832` index 4 is 14, its "Duration" row, 14 seconds; and by the wiki's Yakan Evocation page in `{data-root}/cache/genshin-wiki/Category_Yae_Miko_Talents.json` (duration 14s, "over their 14 seconds duration"). The record holds 900 frames, `kitsune.go` line 13 (`const kitsuneDur = 900`), which is 15 seconds.

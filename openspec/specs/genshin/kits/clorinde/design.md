@@ -52,4 +52,4 @@ flowchart LR
 
 ## Open
 
-- [ ] **Each summon lands where her body stands, not where the lunge carries her** — no source yet: a source for the lunge's displacement, which gcsim's skill code (`{data-root}/cache/gcsim-v2.47.2/internal/characters/clorinde/skill.go` lines 85 to 101) does not give.
+- [ ] **Each summon lands where her body stands, not where the lunge carries her** — no source yet: a source for the lunge's displacement, which gcsim's skill code (`{data-root}/cache/gcsim-v2.47.2/internal/characters/clorinde/skill.go` lines 85 to 101) does not give. Searched: gcsim centres all three lunge hits on the primary target (`skill.go` lines 100, 127 and 166) and gives no distance, and the wiki's Hunter's Vigil says only "perform a lunging attack", so a source that gives the lunge's distance would settle it.

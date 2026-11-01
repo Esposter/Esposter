@@ -41,4 +41,4 @@ Lohen's kit is its record and one behaviour module, `createLohenKitBehaviour`, a
 
 ## Open
 
-- [ ] **The skill's 20-frame animation** — no source yet: gcsim has no Lohen folder, and the cached Category:Lohen Talents pages (seven, from Moratorium on Questioning to Manifest Judgment, `{data-root}/cache/genshin-wiki/Category_Lohen_Talents.json`) give no animation frames.
+- [ ] **The skill's 20-frame animation** — no source yet: gcsim has no Lohen folder, and the cached Category:Lohen Talents pages (seven, from Moratorium on Questioning to Manifest Judgment, `{data-root}/cache/genshin-wiki/Category_Lohen_Talents.json`) give no animation frames. The dump's Lohen talent config (`{data-root}/genshin-dump-backup-6.6/BinOutput/Talent/AvatarTalents/ConfigTalent_Lohen.json`) and the skill's proud group 12932 (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`) carry no frame count either, so a clip's length or a Lohen action file remains the source that would settle it.

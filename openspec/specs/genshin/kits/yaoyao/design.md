@@ -46,4 +46,4 @@ flowchart TD
 
 ## Open
 
-- [ ] **Yaoyao's plunges land 0.4 seconds after they start** — no source yet: gcsim's Yaoyao directory has no plunge file, and the cached wiki's plunge rows (`{data-root}/cache/genshin-wiki/Category_Yaoyao_Talents.json`) give damage only, with no timing.
+- [ ] **Yaoyao's plunges land 0.4 seconds after they start** — no source yet: gcsim's Yaoyao directory has no plunge file, and the cached wiki's plunge rows (`{data-root}/cache/genshin-wiki/Category_Yaoyao_Talents.json`) give damage only, with no timing. The only plunge timings a source gives are Bennett's, 36 and 38 frames for the low and high plunge (`{data-root}/cache/gcsim-v2.47.2/internal/characters/bennett/plunge.go` lines 21 and 22, 0.6 and 0.63 seconds at 60 frames a second), the stand-in the kits index names for a kit with no plunge file, so no source gives 0.4. Also searched: `0.4` and `plunge` across the Yaoyao, Ganyu and Bennett gcsim files, and the dump's `ExcelBinOutput` for plunge data (none in either); what remains is a recording of her plunge clips.

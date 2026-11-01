@@ -51,4 +51,4 @@ flowchart TD
 
 ## Open
 
-- [ ] **Each normal attack's last hit has a 20% chance of Constellation 2's follow-up** — contradiction: the Constellation 2 Decisions bullet states the roll unconditionally, while gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/mona/cons.go` line 120 makes the roll only while the Hexerei post-burst status is inactive (`!c.StatusIsActive(c2HexereiPostBurstCAKey) && c.Core.Rand.Float64() > .2`), so the follow-up is certain while that status holds, and the follow-up consumes the status at line 126.
+- [ ] **Each normal attack's last hit has a 20% chance of Constellation 2's follow-up** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/mona/cons.go` line 120: the roll runs only while the Hexerei post-burst status is inactive (`!c.StatusIsActive(c2HexereiPostBurstCAKey) && c.Core.Rand.Float64() > .2`), so the follow-up is certain while that status holds, and line 126 consumes the status; the record holds a flat 20% roll on each normal attack's last hit, as the Constellation 2 Decisions bullet states it.

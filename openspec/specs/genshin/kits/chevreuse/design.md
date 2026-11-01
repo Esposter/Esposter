@@ -47,4 +47,4 @@ flowchart LR
 
 ## Open
 
-- [ ] **The 21-metre reach of the shells** — no source yet: the 15-metre targeting area it is built from is in no gcsim file or wiki page on disk.
+- [ ] **The 21-metre reach of the shells** — no source yet: the 15-metre targeting area it is built from is in no gcsim file or wiki page on disk. gcsim's shells are circles of radius 6 round the primary target (`{data-root}/cache/gcsim-v2.47.2/internal/characters/chevreuse/burst.go` line 82, `{data-root}/cache/gcsim-v2.47.2/internal/characters/chevreuse/config.yml` lines 126 to 136), with no range from her, and neither the wiki's Ring of Bursting Grenades page nor the game's text for it (`{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json` line 184619) gives a 15-metre area, so the targeting area stays unsourced.

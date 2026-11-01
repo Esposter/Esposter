@@ -41,12 +41,8 @@ Two differences from gcsim are named here. The kit spends one stack for each rea
 
 ## Not built
 
-- **The Spirit Envoy state waits on a stance that drains stamina.** Her charged attack's first press, when the state is ready, enters a deer state that drains 25 stamina a second (`{data-root}/cache/gcsim-v2.47.2/internal/characters/lauma/charge.go` line 49, and "deerStateStaminaBleed" at lines 149 to 159), blocks dashing and ends on any other action (Open below). The kit has no stance that drains stamina or ends on an action, so that first press is not built, and the charged attack is always Spiritcall Prayer.
+- **The Spirit Envoy state waits on a stance that drains stamina.** Her charged attack's first press, when the state is ready, enters a deer state that drains 25 stamina a second (`{data-root}/cache/gcsim-v2.47.2/internal/characters/lauma/charge.go` line 49, and "deerStateStaminaBleed" at lines 149 to 159), blocks dashing (`{data-root}/cache/gcsim-v2.47.2/internal/characters/lauma/dash.go` lines 10 to 11, and `{data-root}/cache/gcsim-v2.47.2/internal/characters/lauma/config.yml` line 91) and ends on any action but a jump or a walk (`{data-root}/cache/gcsim-v2.47.2/internal/characters/lauma/charge.go` lines 130 to 131, in the subscriber of lines 119 to 134) or a swap off her (lines 136 to 146). The kit has no stance that drains stamina or ends on an action, so that first press is not built, and the charged attack is always Spiritcall Prayer.
 - **Her Ascension 4 passive's Spirit Envoy cooldown cut, Constellation 6 and her other passives are not built.** The cut waits on the Spirit Envoy state. Each of the others reads the Pale Hymn, the Spirit Envoy or the Moonsign's level, or the Frostgrove Sanctuary's own timing.
-
-## Open
-
-- [ ] **The Spirit Envoy's deer state blocks dashing and ends on any other action** — no source yet: gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/lauma/charge.go` lines 28 to 36 set the deer state's frames by action, and the dash is not set apart there; the deer state's own transition rules would settle it.
 
 ## Key files
 

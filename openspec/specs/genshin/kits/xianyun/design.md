@@ -66,4 +66,4 @@ From Constellation 2, each White Clouds at Dawn press gives Xianyun 20% ATK for 
 
 ## Open
 
-- [ ] **Constellation 4's heal reaches the active character** — contradicted in part by gcsim's heal target: `{data-root}/cache/gcsim-v2.47.2/internal/characters/xianyun/cons.go` line 79 gives `Target: -1`, which `{data-root}/cache/gcsim-v2.47.2/pkg/core/info/heal.go` line 5 defines as all characters, so gcsim's heal lands on every character. Which target the game gives is not read.
+- [ ] **Constellation 4's heal reaches the active character** — contradicted by the game text: `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json` line 48861 (the Mystery Millet Gourmet text, whose row is line 16547 of `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`) gives "heal all nearby party members for 50%/80%/150% of Xianyun's ATK", where the record holds the active character. gcsim agrees the heal is not the active character's alone: `{data-root}/cache/gcsim-v2.47.2/internal/characters/xianyun/cons.go` line 79 gives `Target: -1`, which `{data-root}/cache/gcsim-v2.47.2/pkg/core/info/heal.go` line 5 defines as all characters.

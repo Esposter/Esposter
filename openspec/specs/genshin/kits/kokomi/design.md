@@ -52,4 +52,4 @@ flowchart TD
 
 ## Open
 
-- [ ] **Bake-Kurage's field lasts 12 seconds, as the wiki and the dump give** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/kokomi/skill.go:31`: gcsim's status is `12*60+30+1` frames, about 12.5 seconds.
+- [ ] **Bake-Kurage's field lasts 12 seconds, as the wiki and the dump give** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/kokomi/skill.go` line 31, `c.Core.Status.Add("kokomiskill", 12*60+30+1)`, which its line 29 calls "about 12.5 seconds"; the record holds 12 seconds, the wiki's `duration=12s` (`{data-root}/cache/genshin-wiki/Category_Sangonomiya_Kokomi_Talents.json`, Kurage's Oath) and the dump's group 5432 index 3.

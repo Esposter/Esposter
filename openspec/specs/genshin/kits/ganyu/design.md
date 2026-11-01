@@ -21,10 +21,10 @@ flowchart LR
 
 ## Open
 
-- [ ] **The Ice Lotus takes no health in the kit** — contradicted by `{data-root}/cache/genshin-wiki/Category_Ganyu_Talents.json`: gives its Inherited HP as 120% to 255% of Max HP.
-- [ ] **Constellation 1's Cryo RES cut lasts 5 seconds or 6** — no source yet: the Constellation 1 wiki page is not in `{data-root}/cache/genshin-wiki/`, and gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/ganyu/cons.go` gives 300 frames beside a comment that says 6 seconds, which the kit's `packages/genshin-world/src/services/kit/characters/ganyuKit.ts` comment also cites from the wiki.
-- [ ] **The record's area is a 12.5-metre circle** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/ganyu/burst.go`: its field is a 10-metre circle ("burstArea").
-- [ ] **The Ice Lotus flower's 120% multiplier** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/ganyu/zz_ganyu.dm.go`: its level-1 lotus table is 1.32, which both hits use.
+- [ ] **The Ice Lotus takes no health in the kit** — contradicted by `{data-root}/cache/genshin-wiki/Category_Ganyu_Talents.json` (the Trail of the Qilin infobox: `attr1 = Inherited HP`, `value1 = 120–255%`): it gives the lotus a health of 120% to 255% of Max HP, and the record holds none. The dump's group 3732 index 0 is 1.2 at level 1, the same 120% the record reads as the flower's damage (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`).
+- [ ] **Constellation 1's Cryo RES cut lasts 5 seconds or 6** — contradicted by `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json` line 5568 (the `Ganyu_Constellation_1` entry's `paramList`: `-0.15`, then `6`, then `2` energy) and `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json` line 120729 ("decrease opponents' Cryo RES by 15% for 6s"): the record holds 5 seconds, `secondsRemaining: 5` in `packages/genshin-world/src/services/kit/characters/ganyuKit.ts` line 59, from gcsim's 300 frames (`{data-root}/cache/gcsim-v2.47.2/internal/characters/ganyu/cons.go` line 32).
+- [ ] **The record's area is a 12.5-metre circle** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/ganyu/burst.go` line 46: its field is a 10-metre circle ("burstArea"); the record holds 12.5 at `hits.celestialShower.area` in `packages/genshin-world/src/data/kits/ganyu.json`.
+- [ ] **The Ice Lotus flower's 120% multiplier** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/ganyu/zz_ganyu.dm.go` line 214: its level-1 lotus table is 1.32, which both hits use (`skill.go` lines 29, 35 and 37); the record holds 120% at `skill.hits.0.multiplier` (group 3732 index 0).
 
 ## Key files
 

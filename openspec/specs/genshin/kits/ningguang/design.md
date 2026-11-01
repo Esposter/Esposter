@@ -47,4 +47,4 @@ flowchart TD
 
 ## Open
 
-- [ ] **Each strike's gem reaches 5 metres of targeting** — no source yet: gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/ningguang/attack.go` lines 84 to 87 give the gem's own radius, 0.5 metres, and 3.5 from one constellation, but the 5-metre targeting the reach adds to them is the strike's area call, which this page does not cite.
+- [ ] **Each strike's gem reaches 5 metres of targeting** — no source yet: gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/ningguang/attack.go` lines 84 to 87 give the gem's own radius, 0.5 metres, and 3.5 from one constellation, and lines 107 to 115 centre the gem on the primary target with no range of its own (`{data-root}/cache/gcsim-v2.47.2/pkg/core/combat/hitbox.go` lines 50 to 56, `enemy.go` lines 50 to 58); the cached Ningguang talents file gives her normal attack's homing only as a minimum turning radius with no metres, and the dump holds no attack-range table, so the 5 metres the reach adds to them stays unsourced.

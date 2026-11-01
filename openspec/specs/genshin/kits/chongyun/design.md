@@ -37,4 +37,4 @@ flowchart LR
 
 ## Open
 
-- [ ] **The wiki's note keeps Atmospheric Revolution's cut while the infusion would hold** — no source yet: the note's text, which `{data-root}/cache/genshin-wiki/Category_Chongyun_Talents.json` names as constellation 2 without giving.
+- [ ] **The wiki's note keeps Atmospheric Revolution's cut while the infusion would hold** — contradicted by `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json` line 190148 (key 1537894911, the constellation 2 talent of `AvatarTalentExcelConfigData.json` line 5393), which gates the cut on skills and bursts cast within the Frost Field; the record applies it through the infusion, `packages/genshin-world/src/services/kit/characters/chongyunKit.ts` line 109, so it holds while the infusion does.
