@@ -22,6 +22,7 @@ flowchart TD
 ## Not built
 
 - **The Musou Isshin plunges are not built.** gcsim has three (`{data-root}/cache/gcsim-v2.47.2/internal/characters/raiden/plunge.go:151`, `:244`, `:293`), and the kit does not take them yet.
+
 ## Key files
 
 | File                                                              | Role                                                                                                                                        |

@@ -12,6 +12,7 @@ Not built yet: Enigmatic Feint's hold, its Shadowsign and release strike, which 
 ## Provisional constants
 
 - **The record marks the Bogglecat Box's first tick and its interval `Unsourced`, though gcsim gives both.** `frames.bogglecatFirstTick` (122) and `frames.bogglecatTickInterval` (59) agree with `{data-root}/cache/gcsim-v2.47.2/internal/characters/lynette/burst.go` lines 17 and 18 less the 14-frame placing (`{data-root}/cache/gcsim-v2.47.2/internal/characters/lynette/burst.go` line 16); the record's causes should name gcsim.
+
 ## Open
 
 - [ ] **The kit reads the charged attack's stamina and the skill's and burst's cooldowns and energy cost from groups 8331, 8332 and 8339** — no source yet: `lynetteKit.ts` names no such read, and the record it reads these from has not been checked against the game data.
