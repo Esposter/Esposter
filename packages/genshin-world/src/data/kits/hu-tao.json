@@ -27,11 +27,11 @@
   "normalAttacks.4.hits.1.poiseDamage": { "source": "Wiki", "value": 26.2 },
   "normalAttacks.5.hits.0.poiseDamage": { "source": "Wiki", "value": 65.52 },
   "parameters.spiritSootherLowHealthShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 4639 }
   },
-  "parameters.spiritSootherRegen": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 4639 } },
-  "parameters.spiritSootherLowRegen": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 4639 } },
+  "parameters.spiritSootherRegen": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 4639 } },
+  "parameters.spiritSootherLowRegen": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 4639 } },
   "parameters.guideToAfterlifeHealthCost": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 4632 } },
   "parameters.paramitaSeconds": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 4632 } },
   "parameters.paramitaMaxHealthAttackShare": {
@@ -70,7 +70,7 @@
   },
   "stances.paramita.normalAttacks.0.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.paramita.normalAttacks.0.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.0999999999999996 }
   },
   "stances.paramita.normalAttacks.0.hits.0.hitmarkFrames": {
@@ -93,7 +93,7 @@
   },
   "stances.paramita.normalAttacks.1.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.paramita.normalAttacks.1.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.0516389039334255 }
   },
   "stances.paramita.normalAttacks.1.hits.0.hitmarkFrames": {
@@ -116,7 +116,7 @@
   },
   "stances.paramita.normalAttacks.2.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.paramita.normalAttacks.2.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.7 }
   },
   "stances.paramita.normalAttacks.2.hits.0.hitmarkFrames": {
@@ -139,7 +139,7 @@
   },
   "stances.paramita.normalAttacks.3.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.paramita.normalAttacks.3.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.6 }
   },
   "stances.paramita.normalAttacks.3.hits.0.hitmarkFrames": {
@@ -162,7 +162,7 @@
   },
   "stances.paramita.normalAttacks.4.hits.length": { "cause": "Unsourced", "value": 2 },
   "stances.paramita.normalAttacks.4.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.8 }
   },
   "stances.paramita.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 15 },
@@ -172,7 +172,7 @@
   },
   "stances.paramita.normalAttacks.4.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "stances.paramita.normalAttacks.4.hits.1.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.6687872655688287 }
   },
   "stances.paramita.normalAttacks.4.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 26 },
@@ -190,7 +190,7 @@
   },
   "stances.paramita.normalAttacks.5.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.paramita.normalAttacks.5.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.9 }
   },
   "stances.paramita.normalAttacks.5.hits.0.hitmarkFrames": {

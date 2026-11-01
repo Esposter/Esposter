@@ -22,6 +22,7 @@ flowchart TD
 
 - [ ] **The stance's ATK rise reads the share of Max HP with no cap (whether the cap binds at her levels is not checked)** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go:35-38`: gcsim caps the share at four times her base ATK.
 - [ ] **Constellation 1's charged attack costs zero stamina** — no source yet: the constellation's wording, which the cached Hu Tao wiki page (`{data-root}/cache/genshin-wiki/Category_Hu_Tao_Talents.json`) names as Crimson Bouquet without giving; gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/hutao/hutao.go:70-77` gives the zero while the Paramita is active, and the kit's `getChargedAttackStaminaMultiplier` (`packages/genshin-world/src/services/kit/characters/huTaoKit.ts`, line 167) carries it until the wording is cached.
+- [ ] **The Paramita Papilio strikes' areas are full circles where gcsim fans three of them** — no source yet: the overlay's seven stance strike areas are `Unsourced`, as the reader reads no stance of gcsim's `ppAttack` (`{data-root}/cache/gcsim-v2.47.2/internal/characters/hutao/attack.go` lines 27 to 29 and 145 to 152, three levels of table), and the record holds 2π for the first, third and fifth strikes where gcsim's fans are 180, 300 and 320 degrees. No design reason is written for the full circles, so the record follows gcsim's fans once the reader reads the stance.
 
 ## Key files
 
