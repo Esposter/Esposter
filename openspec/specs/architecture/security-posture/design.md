@@ -11,7 +11,7 @@ flowchart TD
   modules["configuration/modules.ts — production branch only"] -->|"registers nuxt-security-module"| module["nuxt-security-module"]
   config["configuration/security.ts"] -->|"headers, requestSizeLimiter"| module
   module -->|"Content-Security-Policy and Permissions-Policy"| response["every response"]
-  module -->|"rejects an oversized body before the handler"| upload["request size limit"]
+  module -->|"rejects an oversized body before the handler, or as a handler reads it"| upload["request size limit"]
   response --> browser["browser enforces the policy"]
   module -->|"integrity hash on every script"| browser
   experimental["configuration/experimental.ts"] -->|"entryImportMap false"| names["a chunk's name changes with its bytes"]

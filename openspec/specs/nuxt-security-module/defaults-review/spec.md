@@ -136,10 +136,16 @@ Web workers SHALL load only from the app's own origin or from blob addresses, wh
 
 ### Requirement: Request bodies above the app's size limits are refused
 
-The app SHALL refuse any request whose body is larger than its configured size limit, with those limits taken from shared constants.
+The app SHALL refuse any request whose body is larger than its configured size limit, with those limits taken from shared constants. A request that declares its length is refused before a handler runs; one that does not is refused when a handler reads past the limit.
 
 #### Scenario: An oversized request body is refused
 
-- **GIVEN** a request whose body is larger than the limit for its kind
+- **GIVEN** a request that declares a body length larger than the limit for its kind
 - **WHEN** the request is received
 - **THEN** the request is refused
+
+#### Scenario: A chunked body past the limit is refused as it is read
+
+- **GIVEN** a POST request with no declared body length whose body is larger than the limit for its kind
+- **WHEN** a handler reads the body
+- **THEN** the read fails with a 413, and the bytes past the limit never reach the handler

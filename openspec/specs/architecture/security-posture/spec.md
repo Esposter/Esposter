@@ -111,12 +111,18 @@ Requests SHALL be rate limited by the application's one shared rate limiter, wit
 - **WHEN** it sends another request
 - **THEN** the shared rate limiter refuses the request
 
-### Requirement: An oversized request body is refused before the handler reads it
+### Requirement: An oversized request body is refused
 
-A request whose body is larger than the configured limit SHALL be refused before any handler reads the body.
+A request that declares a body length larger than the configured limit SHALL be refused before any handler runs. A request with no declared length SHALL be refused when a handler reads past the limit, so no byte past it reaches the handler.
 
 #### Scenario: A request body over the limit
 
-- **GIVEN** a request whose body is larger than the configured limit for its kind
+- **GIVEN** a request that declares a body length larger than the configured limit for its kind
 - **WHEN** the request arrives
 - **THEN** the request is refused before its body is read by the handler
+
+#### Scenario: A chunked body over the limit
+
+- **GIVEN** a POST request with no declared body length whose body is larger than the configured limit for its kind
+- **WHEN** a handler reads the body
+- **THEN** the read fails with a 413, and the bytes past the limit never reach the handler
