@@ -112,15 +112,7 @@ describe("the burst's droplets", () => {
   test("spawns three, two and one droplets at its ticks, 95, 135 and 154 frames in", () => {
     expect.hasAssertions();
 
-    const combatant = {
-      ascension: 0,
-      attributes: computeCharacterAttributes([]),
-      characterId: NEUVILLETTE_CHARACTER_ID,
-      constellationCount: 0,
-      elementalResonances: [],
-      kit: NEUVILLETTE_KIT,
-      level: 90,
-    };
+    const combatant = createNeuvilletteCombatant(0);
     const context = createKitTestContext(combatant);
     createNeuvilletteKitBehaviour({ kit: NEUVILLETTE_KIT, readHits: () => [] }).burst?.onStart?.(context);
     const dropletCounts: number[] = [];

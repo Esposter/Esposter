@@ -74,10 +74,17 @@ describe(createZibaiKitBehaviour, () => {
 
   test("costs 60 energy for its burst, cooling for 15 seconds, and 20 stamina for its charged attack, its skill cooling for 18 seconds", () => {
     expect.hasAssertions();
-    expect(ZIBAI_KIT.burstEnergyCost).toBe(60);
-    expect(ZIBAI_KIT.burstCooldownSeconds).toBe(15);
-    expect(ZIBAI_KIT.chargedAttackStamina).toBe(20);
-    expect(ZIBAI_KIT.skillCooldownSeconds).toBe(18);
+    expect({
+      burstCooldownSeconds: ZIBAI_KIT.burstCooldownSeconds,
+      burstEnergyCost: ZIBAI_KIT.burstEnergyCost,
+      chargedAttackStamina: ZIBAI_KIT.chargedAttackStamina,
+      skillCooldownSeconds: ZIBAI_KIT.skillCooldownSeconds,
+    }).toStrictEqual({
+      burstCooldownSeconds: 15,
+      burstEnergyCost: 60,
+      chargedAttackStamina: 20,
+      skillCooldownSeconds: 18,
+    });
   });
 
   test("her skill enters Lunar Phase Shift, where her normal attacks and charged attack are Geo, for a stance with its own four normal attacks", () => {
