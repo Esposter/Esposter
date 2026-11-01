@@ -34,9 +34,6 @@ export const NORMAL_ATTACK_RESET_SECONDS = 0.5;
 export const PLUNGE_COLLISION_SECONDS = 0.3;
 // A plunge landing from a drop higher than this is a high plunge, and from or under it a low one, as the wiki gives
 export const HIGH_PLUNGE_MIN_HEIGHT = 2.4;
-// An enemy more than this many metres above or below the body scores lower as a target, by the wiki's targeting score
-export const ALTITUDE_LIMIT = 2;
-export const ALTITUDE_COEFFICIENT = 0.2;
 
 // The wiki's targeting score weighs an enemy's nearness to the body at 0.7 and its being ahead of it at 0.3
 export const TARGET_DISTANCE_WEIGHT = 0.7;
