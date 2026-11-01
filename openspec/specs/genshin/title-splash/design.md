@@ -34,9 +34,9 @@ flowchart LR
 
 ## Open
 
-- [ ] **Five logos: the login interface picks between them by language** — no source yet: no export or wiki page holds the login interface's language-to-logo choice, and the extracted login data names none of the five sprites.
+The login interface's logo choice and the placement of the logos other than English are the [spec's](spec.md) open items.
+
 - [ ] **A patch that changes a logo is one run** — no source yet: the fit has not been rerun against a patched install.
-- [ ] **Every other logo stands where its own client's does** — no source yet: the parity snapshot measures only the English and the Simplified Chinese mainland splashes, not the Traditional Chinese, Japanese or Korean marks.
 - [ ] **The English trace agrees with the wiki's render to a tenth of a percent** — no source yet: no render of the English logo is in `{data-root}/cache/genshin-wiki/`.
 - [ ] **The licence's forty-unit spacing, its 400 ms fade and the splash's own hold** — no source yet: the bili recording has not been read frame by frame for these timings.
 - [ ] **The licence's second line runs narrower than the recording's** — no source yet: the licence line's width has not been measured against the recording.
