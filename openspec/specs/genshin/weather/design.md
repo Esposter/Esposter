@@ -100,6 +100,8 @@ The values are starting points, not the game's: each is marked provisional where
 
 ## Open
 
+The thunderstorm's strike rate is the [spec's](spec.md) open item.
+
 - [ ] **The Weather page's named weathers: Dragonspine's snow, Tsurumi Island's fog, Yashiori Island's perpetual thunderstorm and the Desert of Hadramaveth's sandstorms** — no source yet: the Weather wiki page is not on disk.
 - [ ] **The rest of the Weather page's area list: no rain in cities or deserts, the Golden Apple Archipelago's fog, no area with rain named, and nothing of the deserts' cloudy weather** — no source yet: the Weather wiki page, which is not on disk.
 - [ ] **The Weather page's storm names: Yashiori Island's Tatarigami, lifted after Orobashi's Legacy, and the Inazuma-wide storm, lifted after Transient Dreams** — no source yet: the Weather wiki page, which is not on disk.
@@ -115,6 +117,5 @@ The values are starting points, not the game's: each is marked provisional where
 - [ ] **Rain turns to an eruption in the chain, and an eruption turns back to rain where the area has it** — no source yet: "WeatherTemplateExcelConfigData" in `{data-root}/genshin-parity/text/ExcelBinOutput/`, not yet read for the eruption's turns; the Weather wiki page is not on disk.
 - [ ] **A sandstorm's haze takes the sand's colour, its `fogColor` being `0xc9a66b`** — no source yet: the sandstorm's environment profile, `ESP_Xm31_CWSM_General`, which no dump file holds.
 - [ ] **The Weather page names the Desert of Hadramaveth as the only place sandstorms occur** — no source yet: the Weather wiki page, which is not on disk.
-- [ ] **A thunderstorm strikes 27.6 times a minute, counted off Yashiori Island's perpetual storm** — no source yet: the wiki's Lightning page, which is not on disk; the clip count's re-run is the open line on the dusk recordings.
 - [ ] **Rain splashes where it meets the ground** — no source yet: a game recording of the rain's splashes, since `packages/genshin-engine/src/nodes/createSplashMaterial.ts` is repo code.
 - [ ] **Snow and fog keep the ground dry** — no source yet: the game's own snow and fog wetness, since `packages/genshin-engine/src/atmosphere/constants.ts` sets wetness 0 for both, which is repo code.
