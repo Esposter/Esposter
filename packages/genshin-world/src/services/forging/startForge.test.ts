@@ -12,7 +12,7 @@ import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
 import { VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
 import { ItemCategory } from "genshin-interface";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 const createDefinition = (id: number): ItemDefinition => ({
   category: ItemCategory.Material,
@@ -70,10 +70,11 @@ describe(startForge, () => {
 
     const result = startForge(recipe, 2, startArguments);
 
-    expect(countInventoryItem(result?.inventory.items ?? [], INGREDIENT_ID)).toBe(0);
-    expect(result?.wallet[Currency.Mora]).toBe(80);
-    expect(result?.progress.forgedPoints).toBe(4000);
-    expect(result?.progress.orders).toStrictEqual([
+    assert.exists(result);
+    expect(countInventoryItem(result.inventory.items, INGREDIENT_ID)).toBe(0);
+    expect(result.wallet[Currency.Mora]).toBe(80);
+    expect(result.progress.forgedPoints).toBe(4000);
+    expect(result.progress.orders).toStrictEqual([
       { count: 2, queueId: 1, recipeId: recipe.id, startedAt: EPOCH, unitSeconds: 6 },
     ]);
   });
@@ -166,7 +167,9 @@ describe(startForge, () => {
     const chunkArguments = { ...startArguments, definitions: chunkDefinitions, inventory: chunkInventory };
 
     expect(startForge(chunkRecipe, 1, { ...chunkArguments, isInRealm: true })).toBeUndefined();
-    expect(startForge(chunkRecipe, 1, chunkArguments)).toBeDefined();
+    expect(startForge(chunkRecipe, 1, chunkArguments)?.progress.orders).toStrictEqual([
+      { count: 1, queueId: 1, recipeId: recipe.id, startedAt: EPOCH, unitSeconds: 6 },
+    ]);
   });
 
   test("should save a unit's seconds where a party's Venti gives an enhancement recipe its reduce talent", () => {
@@ -207,7 +210,9 @@ describe(startForge, () => {
     const result = startForge(weaponRecipe, 2, weaponArguments);
     const enhancementResult = startForge(recipe, 1, { ...startArguments, partyCharacterIds: [DILUC_CHARACTER_ID] });
 
-    expect(countInventoryItem(result?.inventory.items ?? [], INGREDIENT_ID)).toBe(15);
-    expect(countInventoryItem(enhancementResult?.inventory.items ?? [], INGREDIENT_ID)).toBe(3);
+    assert.exists(result);
+    assert.exists(enhancementResult);
+    expect(countInventoryItem(result.inventory.items, INGREDIENT_ID)).toBe(15);
+    expect(countInventoryItem(enhancementResult.inventory.items, INGREDIENT_ID)).toBe(3);
   });
 });
