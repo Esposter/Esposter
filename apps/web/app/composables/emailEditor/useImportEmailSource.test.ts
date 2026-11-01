@@ -20,8 +20,7 @@ describe(useImportEmailSource, () => {
     "<mjml><mj-body><mj-section><mj-column><mj-text></mj-text></mj-column></mj-section></mj-body></mjml>";
   const TEST_IMPORTED_SOURCE =
     "<mjml><mj-body><mj-section><mj-column><mj-button></mj-button></mj-column></mj-section></mj-body></mjml>";
-  const TEST_INCLUDE_SOURCE =
-    '<mjml><mj-head><mj-include path="./header.mjml"></mj-include></mj-head><mj-body></mj-body></mjml>';
+  const TEST_INCLUDE_SOURCE = '<mjml><mj-head><mj-include path="a"></mj-include></mj-head><mj-body></mj-body></mjml>';
   const setupEmail = () => {
     const result = parseMjmlDocument(
       TEST_EXISTING_SOURCE,

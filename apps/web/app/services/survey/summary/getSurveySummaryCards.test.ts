@@ -9,7 +9,7 @@ describe(getSurveySummaryCards, () => {
   const rowKey = crypto.randomUUID();
   const questions = new Model({
     elements: [
-      { choices: [{ text: "A", value: "a" }, "b"], name: "a", title: "Radiogroup", type: "radiogroup" },
+      { choices: [{ text: "A", value: "a" }, "b"], name: "a", title: "b", type: "radiogroup" },
       { choices: ["a", "b"], name: "b", type: "checkbox" },
       { name: "c", type: "boolean" },
       { name: "d", rateMax: 2, type: "rating" },
@@ -36,7 +36,7 @@ describe(getSurveySummaryCards, () => {
           { count: 0, label: "b" },
         ],
         name: "a",
-        title: "Radiogroup",
+        title: "b",
         type: SurveySummaryCardType.Choice,
       },
       {
@@ -90,16 +90,16 @@ describe(getSurveySummaryCards, () => {
     expect.hasAssertions();
 
     const choiceQuestions = new Model({
-      elements: [{ choices: ["Yes; definitely", "Yes"], name: "a", type: "checkbox" }],
+      elements: [{ choices: [`a${CHECKBOX_ANSWER_SEPARATOR}b`, "a"], name: "a", type: "checkbox" }],
     }).getAllQuestions();
 
-    expect(getSurveySummaryCards(choiceQuestions, [{ a: "Yes; definitely", rowKey }])).toStrictEqual([
+    expect(getSurveySummaryCards(choiceQuestions, [{ a: `a${CHECKBOX_ANSWER_SEPARATOR}b`, rowKey }])).toStrictEqual([
       {
         answeredCount: 1,
         average: undefined,
         choices: [
-          { count: 1, label: "Yes; definitely" },
-          { count: 0, label: "Yes" },
+          { count: 1, label: `a${CHECKBOX_ANSWER_SEPARATOR}b` },
+          { count: 0, label: "a" },
         ],
         name: "a",
         title: "a",
