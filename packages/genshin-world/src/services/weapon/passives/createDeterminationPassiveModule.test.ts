@@ -27,8 +27,8 @@ describe(createDeterminationPassiveModule, () => {
       wielder,
     );
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.2);
-    expect(getBuff(kitEffectState, Attribute.MovementSpeed)?.amount).toBeCloseTo(0.2);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.2);
+    expect(getBuff(kitEffectState, Attribute.MovementSpeed)?.amount).toBe(0.2);
   });
 
   test("a burst another character uses raises nothing", () => {

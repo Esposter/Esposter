@@ -39,7 +39,7 @@ describe(createDecimatePassiveModule, () => {
         createParty([TRAVELER_CHARACTER_ID]),
         [],
       ),
-    ).toBeCloseTo(0.2);
+    ).toBe(0.2);
   });
 
   test("a strike on another family of enemy is not raised", () => {

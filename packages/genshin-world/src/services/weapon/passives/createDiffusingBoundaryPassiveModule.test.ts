@@ -5,33 +5,23 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
 import { createKitStrike } from "#src/services/kit/createKitStrike.test";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
 import { createDiffusingBoundaryPassiveModule } from "#src/services/weapon/passives/createDiffusingBoundaryPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
-const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 describe(createDiffusingBoundaryPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  const wielder: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 1,
-  };
+  const wielder: Combatant = createWielderCombatant();
   const deployed = (isOnField: boolean): DeployedCombatant[] => [createDeployedCombatant(wielder, { isOnField })];
   const liveShield: KitEffect = { characterId: OTHER_CHARACTER_ID, health: 100, kind: "shield", secondsRemaining: 5 };
 
