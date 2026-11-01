@@ -3,6 +3,7 @@ import type { Vector } from "#src/models/shared/Vector";
 
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
+import { readRawRgb } from "#src/services/genshinParity/shared/readRawRgb";
 import { countPassed } from "#src/services/genshinParity/witness/countPassed";
 import { readLuminance } from "#src/services/genshinParity/witness/readLuminance";
 import { BYTE } from "#src/services/shared/constants";
@@ -60,7 +61,7 @@ export const readLightCeilings = async ({
 }> => {
   const count = width * height;
   const readLinear = async (input: Buffer): Promise<Float32Array> => {
-    const data = await sharp(input).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
+    const data = await readRawRgb(input, width, height);
     return Float32Array.from(data, (value) => toLinear(value / BYTE));
   };
   const [reference, exports] = await Promise.all([readLinear(image), readLinear(exportsShot)]);
