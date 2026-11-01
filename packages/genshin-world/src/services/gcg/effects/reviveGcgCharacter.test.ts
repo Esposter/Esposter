@@ -13,6 +13,7 @@ describe(reviveGcgCharacter, () => {
     reviveGcgCharacter(lowRevival, 1);
     reviveGcgCharacter(highRevival, 20);
     reviveGcgCharacter(standing, 1);
+
     expect([lowRevival.hp, highRevival.hp, standing.hp]).toStrictEqual([1, MAX_HP, 7]);
   });
 });

@@ -36,6 +36,7 @@ describe(rethrowGcgDice, () => {
     expect.hasAssertions();
     const side = createSide([Element.Hydro, Element.Pyro, Element.Cryo]);
     rethrowGcgDice(side, [0, 2], createFaceRandom([1, 2]));
+
     expect(side.dice).toStrictEqual([takeOne(GCG_DIE_FACES, 1), Element.Pyro, takeOne(GCG_DIE_FACES, 2)]);
   });
 
@@ -43,6 +44,7 @@ describe(rethrowGcgDice, () => {
     expect.hasAssertions();
     const side = createSide([Element.Hydro, Element.Pyro]);
     rethrowGcgDice(side, [], createFaceRandom([]));
+
     expect(side.dice).toStrictEqual([Element.Hydro, Element.Pyro]);
   });
 });
