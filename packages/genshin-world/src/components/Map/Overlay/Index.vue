@@ -276,7 +276,7 @@ onMounted(() => {
     <svg
       ref="zoomTrack"
       class="zoom"
-      viewBox="0 0 56 270"
+      :viewBox="`0 0 56 ${MAP_ZOOM_DRAWING_HEIGHT}`"
       role="group"
       :aria-label="gameText[GameTextKey.Zoom]"
       @pointercancel="onZoomPointerUp()"
@@ -284,7 +284,7 @@ onMounted(() => {
       @pointermove="(event) => onZoomPointerMove(event)"
       @pointerup="onZoomPointerUp()"
     >
-      <rect class="zoom-track" x="23" y="43" width="10" height="194" rx="5" />
+      <rect class="zoom-track" x="23" :y="MAP_ZOOM_TRACK_TOP" width="10" :height="MAP_ZOOM_TRACK_HEIGHT" rx="5" />
       <path class="zoom-stop" d="M 28 16.5 L 39.5 28 L 28 39.5 L 16.5 28 Z" />
       <path class="zoom-sign" d="M 28 20 V 36 M 20 28 H 36" />
       <path class="zoom-stop" d="M 28 110.5 L 40.5 123 L 28 135.5 L 15.5 123 Z" />
