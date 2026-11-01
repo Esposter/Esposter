@@ -78,8 +78,3 @@ The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `FurnitureMakeExcelConfigData`, `HomeworldLevelExcelConfigData` and `HomeWorldComfortLevelExcelConfigData`, fetched into the dump, and the material table's `ITEM_USE_UNLOCK_FURNITURE_FORMULA` uses.
 - [Serenitea Pot](https://genshin-impact.fandom.com/wiki/Serenitea_Pot), Genshin Impact Wiki: the per-hour rates and the store limits. The page could not be read from this build, so the per-hour unit waits on a recording.
-
-## Open
-
-- [ ] **The wiki answered HTTP 402 to this build's read** — no source yet: no fetch log of the wiki's response is in the repo or the caches.
-- [ ] **Realm Currency is not in the wallet until its game text name has a key in `genshin-text`** — contradicted by `packages/genshin-world/src/services/inventory/CurrencyGameTextKeyMap.ts`: it maps RealmCurrency to its key, and the wallet holds every currency.
