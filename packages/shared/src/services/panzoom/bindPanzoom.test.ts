@@ -106,6 +106,22 @@ describe(bindPanzoom, () => {
     expect(panzoom.getScale()).toBe(40);
   });
 
+  test("two pointers down on one pixel start no pinch, so a move leaves the scale finite and unchanged", () => {
+    expect.hasAssertions();
+
+    const element = getElement();
+    stubPanzoomLayout(element, { height: 100, left: 0, top: 0, width: 100 });
+    stubPanzoomParent(getParent(), { height: 200, left: 0, top: 0, width: 200 });
+    const panzoom = createPanzoom(element);
+    dispatchPointer(element, "pointerdown", 1, { x: 50, y: 50 });
+    dispatchPointer(element, "pointerdown", 2, { x: 50, y: 50 });
+
+    dispatchPointer(document, "pointermove", 2, { x: 60, y: 50 });
+
+    expect(panzoom.getScale()).toBe(1);
+    expect(panzoom.getPan()).toStrictEqual({ x: 0, y: 0 });
+  });
+
   test("#546 writes the pan cursor while a drag is live, and the cursor again once it ends", () => {
     expect.hasAssertions();
 

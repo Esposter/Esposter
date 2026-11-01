@@ -20,6 +20,13 @@ describe(getPanzoomPinchScale, () => {
     expect(getPanzoomPinchScale(10, 100, 130)).toBe(13);
   });
 
+  test("a pinch whose fingers started on one point keeps its start scale, never a non-finite one", () => {
+    expect.hasAssertions();
+
+    expect(getPanzoomPinchScale(2, 0, 10)).toBe(2);
+    expect(getPanzoomPinchScale(2, 0, 0)).toBe(2);
+  });
+
   test("#683 a pinch whose fingers move by one wheel notch's ratio ends where that notch does, at scale 20", () => {
     expect.hasAssertions();
 

@@ -33,8 +33,10 @@ export const startPanzoomGesture = (context: PanzoomContext, event: PointerEvent
   if (pointers.size === 2) {
     const points = [...pointers.values()];
     const frame = getPanzoomPinchFrame(takeOne(points, 0), takeOne(points, 1));
-    context.drag = undefined;
-    context.pinch = { midpoint: frame.midpoint, startDistance: frame.distance, startScale: state.scale };
+    if (frame.distance > 0) {
+      context.drag = undefined;
+      context.pinch = { midpoint: frame.midpoint, startDistance: frame.distance, startScale: state.scale };
+    }
   }
 
   writePanzoomStyle(context, element, "user-select", "none");
