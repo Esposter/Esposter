@@ -1,4 +1,4 @@
-import { RegionId } from "#src/models/RegionId";
+import { RegionId } from "#src/models/shared/RegionId";
 
 // The region whose ground is the world's base, read whole and laid over by none of the others
 export const WINDRISE_GROUND_REGION = "windrise";
