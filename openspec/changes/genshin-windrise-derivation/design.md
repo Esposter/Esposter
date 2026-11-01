@@ -4,7 +4,6 @@ The [scene derivation](../../specs/genshin/scene-derivation/design.md) page keep
 
 ## Decisions
 
-- **Every streamed object is placed, not only the large ones.** The layout pass stands each object the game streams at its exact place and turn. The dais and the pedestals are named from the extraction as well.
 - **A stand-in is ranked before it is rebuilt.** Each one is scored against its export by the parity loss table, and the lowest-ranked are rebuilt first, so a rebuild is judged by the same gate as the rest of the frame.
 - **Each hour's light and haze are calibrated over the rebuilt objects.** They are fitted last, since the light and haze read the geometry they fall on.
 
