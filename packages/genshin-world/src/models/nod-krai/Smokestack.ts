@@ -1,7 +1,7 @@
 import type { LatheSection } from "genshin-engine";
 import type { Vector3 } from "three";
 
-import { latheSectionSchema } from "#src/models/world/latheSectionSchema";
+import { latheSectionSchema } from "#src/models/nod-krai/latheSectionSchema";
 import { vector3Schema } from "#src/models/world/vector3Schema";
 import { z } from "zod";
 
