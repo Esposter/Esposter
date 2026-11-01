@@ -13,6 +13,6 @@ describe(createLoginTowerSlabGeometry, () => {
       return angle / (2 * Math.PI) + (angle < 0 ? 1 : 0);
     });
 
-    expect(Math.min(...turns)).toBeGreaterThan(0.89);
+    expect(Math.min(...turns)).toBeCloseTo(0.9);
   });
 });
