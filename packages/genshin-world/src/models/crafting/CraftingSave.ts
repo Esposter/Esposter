@@ -1,4 +1,4 @@
-import { numericSaveIdSchema } from "#src/models/save/numericSaveIdSchema";
+import { numericSaveIdSchema } from "#src/models/shared/numericSaveIdSchema";
 import { MAX_CRAFTING_RECIPE_COUNT } from "#src/services/save/constants";
 import { createRecordSchema, createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
