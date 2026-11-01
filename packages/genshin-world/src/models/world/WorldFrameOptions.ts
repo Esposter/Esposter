@@ -9,6 +9,7 @@ import type { Quest } from "#src/models/quest/Quest";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { ScreenKind } from "#src/models/screen/ScreenKind";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
+import type { WorldChallengeStep } from "#src/models/world/WorldChallengeStep";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { GroundPoint, Input, InputState } from "genshin-engine";
 import type { Object3D } from "three";
@@ -67,12 +68,4 @@ export interface WorldFrameOptions {
   trackedQuestId: Ref<string>;
   trackerQuest: Readonly<Ref<Quest | undefined>>;
   unlockedLandmarkIds: Readonly<Ref<ReadonlySet<string>>>;
-}
-
-// What a challenge's step is told each frame: the time that passed, whether the world is in play for it and whether the
-// Party is down
-interface WorldChallengeStep {
-  deltaMilliseconds: number;
-  isPartyDown: boolean;
-  isPlaying: boolean;
 }

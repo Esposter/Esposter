@@ -12,6 +12,7 @@ import type { AbyssFloor } from "#src/models/spiralAbyss/AbyssFloor";
 import type { AbyssPeriod } from "#src/models/spiralAbyss/AbyssPeriod";
 import type { AbyssProgress } from "#src/models/spiralAbyss/AbyssProgress";
 import type { AbyssRewards } from "#src/models/spiralAbyss/AbyssRewards";
+import type { WorldChallengeStep } from "#src/models/world/WorldChallengeStep";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
@@ -283,15 +284,7 @@ export const useWorldSpiralAbyss = ({
 
   // The arena's clock, stepped each frame and when the party falls. The clock counts only while the world is open, and a
   // Party down ends the chamber without its stars
-  const stepAbyss = ({
-    deltaMilliseconds,
-    isPartyDown,
-    isPlaying,
-  }: {
-    deltaMilliseconds: number;
-    isPartyDown: boolean;
-    isPlaying: boolean;
-  }) => {
+  const stepAbyss = ({ deltaMilliseconds, isPartyDown, isPlaying }: WorldChallengeStep) => {
     const arena = abyssArena.value;
     if (!arena) return;
     if (isPartyDown) {

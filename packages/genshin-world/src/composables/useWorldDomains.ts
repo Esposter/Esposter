@@ -19,6 +19,7 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldBagDependencies } from "#src/models/world/WorldBagDependencies";
+import type { WorldChallengeStep } from "#src/models/world/WorldChallengeStep";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { GroundPoint } from "genshin-engine";
@@ -307,15 +308,7 @@ export const useWorldDomains = ({
   };
   // The challenge's step, each frame and when the party falls. The clock counts only while the world is open. A clear
   // Raises the tree and keeps the player in the arena, while a timed-out or wiped run returns the player to the entrance
-  const stepDomainChallenge = ({
-    deltaMilliseconds,
-    isPartyDown,
-    isPlaying,
-  }: {
-    deltaMilliseconds: number;
-    isPartyDown: boolean;
-    isPlaying: boolean;
-  }): string[] => {
+  const stepDomainChallenge = ({ deltaMilliseconds, isPartyDown, isPlaying }: WorldChallengeStep): string[] => {
     const arena = domainArena.value;
     if (!arena) return [];
     const challenge = domainChallenge.value;

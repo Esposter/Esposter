@@ -10,6 +10,7 @@ import type { Trial } from "#src/models/trial/Trial";
 import type { TrialArena } from "#src/models/trial/TrialArena";
 import type { TrialRoster } from "#src/models/trial/TrialRoster";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
+import type { WorldChallengeStep } from "#src/models/world/WorldChallengeStep";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { CharacterTrialTables } from "#src/services/trial/readCharacterTrials";
 import type { Ref } from "vue";
@@ -167,15 +168,7 @@ export const useWorldTrials = ({
   // The arena's clock, stepped each frame and when the party falls. The clock counts only while the world is open. When it runs
   // Out the trial is cleared, and its first clear pays once (PROVISIONAL). Either end gives the player's roster back and returns
   // The pose the player was at when the trial was entered, which the world jumps them to; none while the trial runs on
-  const stepTrial = ({
-    deltaMilliseconds,
-    isPartyDown,
-    isPlaying,
-  }: {
-    deltaMilliseconds: number;
-    isPartyDown: boolean;
-    isPlaying: boolean;
-  }): undefined | WorldJumpPose => {
+  const stepTrial = ({ deltaMilliseconds, isPartyDown, isPlaying }: WorldChallengeStep): undefined | WorldJumpPose => {
     const arena = trialArena.value;
     if (!arena) return undefined;
     const elapsedMilliseconds = computeDomainChallengeElapsed(arena.elapsedMilliseconds, deltaMilliseconds, isPlaying);
