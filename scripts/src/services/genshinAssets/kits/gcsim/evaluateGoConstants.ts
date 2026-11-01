@@ -20,7 +20,8 @@ import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBra
 import { skipToNewline } from "#src/services/genshinAssets/kits/gcsim/skipToNewline";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
-const DECLARATION_KEYWORDS = new Set(["const", "var"]);
+const CONST_KEYWORD = "const";
+const DECLARATION_KEYWORDS = new Set([CONST_KEYWORD, "var"]);
 
 // The constants and variables of a gcsim character's package, read from every file of it by a constant evaluator rather
 // Than a Go parser: each `const` and `var` holding a literal, an integer sum or a slice of them, and what the package's
@@ -110,7 +111,7 @@ export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, G
         // Each spec of a group is one index, which the spec's `iota` counts
         let iota = 0;
         // Only a const group repeats its expressions, a var group's specs with none having no value
-        const group: undefined | { expression?: GoExpression } = token.text === "const" ? {} : undefined;
+        const group: undefined | { expression?: GoExpression } = token.text === CONST_KEYWORD ? {} : undefined;
         while (position < end - 1)
           if (tokens[position]?.kind === GoTokenKind.Identifier) {
             position = readDeclarationSpec(tokens, position, file, iota, group);
