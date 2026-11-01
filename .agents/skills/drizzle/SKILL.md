@@ -75,7 +75,7 @@ A column's empty value and its insert side are the `absent-values` skill's (`ref
 
 ## Time Duration Columns
 
-**A duration is stored in milliseconds**, never seconds, minutes or hours unless it needs sub-millisecond precision, and its column carries the `Ms` suffix the `naming` skill sets (`references/numbers-and-time.md`) — `durationMs: integer().notNull()`.
+**A duration is stored in milliseconds**, never seconds, minutes or hours unless it needs sub-millisecond precision, and its column carries the `Ms` suffix (the `naming` skill, "No abbreviations") — `durationMs: integer().notNull()`.
 
 ## Primary Keys
 
