@@ -21,15 +21,15 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@azure/web-pubsub-client`              | —                     | Keep — SDK       | a cloud SDK, on the stop list                                                                          |
 | `@better-auth/api-key`                  | —                     | Keep — security  | authentication, on the stop list                                                                       |
 | `@better-auth/drizzle-adapter`          | —                     | Keep — security  | authentication, on the stop list                                                                       |
-| `@codemirror/lang-vue`                  | —                     | Keep — engine    | the code editor engine, on the stop list for accessibility                                             |
+| `@codemirror/lang-vue`                  | —                     | Keep — engine    | the Vue language mode the code editor loads lazily                                                     |
 | `@codemirror/language`                  | —                     | Keep — engine    | the code editor engine, on the stop list for accessibility                                             |
-| `@codemirror/language-data`             | —                     | Keep — engine    | the code editor engine, on the stop list for accessibility                                             |
+| `@codemirror/language-data`             | —                     | Keep — engine    | the registry of language grammars the code editor loads on demand                                      |
 | `@codemirror/state`                     | —                     | Keep — engine    | the code editor engine, on the stop list for accessibility                                             |
 | `@dxup/nuxt`                            | —                     | Keep — tooling   | a TypeScript language-service plugin                                                                   |
 | `@dxup/unimport`                        | —                     | Keep — tooling   | a TypeScript language-service plugin                                                                   |
 | `@electric-sql/pglite`                  | —                     | Keep — engine    | in-memory PostgreSQL for the server tests                                                              |
 | `@eslint/core`                          | —                     | Keep — tooling   | the linter's core                                                                                      |
-| `@eslint/json`                          | —                     | Keep — tooling   | the linter's core                                                                                      |
+| `@eslint/json`                          | —                     | Keep — tooling   | the ESLint JSON language the dependency rule lints manifests with                                      |
 | `@fission-ai/openspec`                  | —                     | Keep — tooling   | validates and archives the repository's specifications                                                 |
 | `@fontsource/signika`                   | —                     | Keep — data      | font files                                                                                             |
 | `@hpcc-js/wasm-graphviz`                | —                     | Keep — engine    | Graphviz layout for the dependency graph                                                               |
