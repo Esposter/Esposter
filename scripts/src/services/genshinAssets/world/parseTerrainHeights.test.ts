@@ -1,11 +1,7 @@
 import { parseTerrainHeights } from "#src/services/genshinAssets/world/parseTerrainHeights";
+import { writeUint32s } from "#src/services/genshinAssets/world/writeUint32s.test";
 import { assert, describe, expect, test } from "vitest";
 
-const writeUint32s = (...values: number[]): Buffer => {
-  const bytes = Buffer.alloc(values.length * 4);
-  for (const [index, value] of values.entries()) bytes.writeUInt32LE(value, index * 4);
-  return bytes;
-};
 const writeFloats = (...values: number[]): Buffer => {
   const bytes = Buffer.alloc(values.length * 4);
   for (const [index, value] of values.entries()) bytes.writeFloatLE(value, index * 4);
