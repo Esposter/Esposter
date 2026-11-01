@@ -1,6 +1,6 @@
 ## Purpose
 
-Lan Yan's kit as built, with her four strikes, charged attack, plunges and burst's three hits Constellation 4 and Constellation 6's skill charge, and what is left waiting on the stance and the element-absorbing shield.
+Lan Yan's kit as built, with her four strikes, charged attack, plunges and burst's three hits, Constellation 4 and Constellation 6's skill charge, and what is left waiting on the stance and the element-absorbing shield.
 
 ## Requirements
 
