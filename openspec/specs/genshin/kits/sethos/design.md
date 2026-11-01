@@ -24,7 +24,7 @@ Sethos's kit is built from its record alone, on avatar 10000097 (`{data-root}/ge
 
 | File                                                              | Role                                                                                        |
 | :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/sethosKit.ts` | `createSethosKitBehaviour`, empty: his strikes, aimed shot and skill are his record's alone |
+| `packages/genshin-world/src/services/kit/characters/sethosKit.ts` | `createSethosKitBehaviour`, Constellation 1's CRIT Rate; the rest is his record's alone     |
 
 ## Sources
 
