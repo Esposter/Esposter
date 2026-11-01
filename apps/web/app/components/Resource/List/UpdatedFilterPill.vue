@@ -19,13 +19,6 @@ const createDayBound = (bound: Ref<Date | undefined>) =>
   });
 const updatedAfterDay = createDayBound(updatedAfter);
 const updatedBeforeDay = createDayBound(updatedBefore);
-const selectPreset = (preset: ResourceUpdatedFilter) => {
-  updatedFilter.value = preset;
-  if (preset === ResourceUpdatedFilter.Custom) return;
-
-  updatedAfter.value = undefined;
-  updatedBefore.value = undefined;
-};
 </script>
 
 <template>
@@ -34,7 +27,15 @@ const selectPreset = (preset: ResourceUpdatedFilter) => {
       :items="ResourceUpdatedFilterItems"
       :meaning="UiIconMeaning.Recent"
       :selected-values="updatedFilter ? [updatedFilter] : []"
-      @toggle="(preset) => selectPreset(preset)"
+      @toggle="
+        (preset) => {
+          updatedFilter = preset;
+          if (preset === ResourceUpdatedFilter.Custom) return;
+
+          updatedAfter = undefined;
+          updatedBefore = undefined;
+        }
+      "
     />
     <UiDateRangeField
       v-if="updatedFilter === ResourceUpdatedFilter.Custom"

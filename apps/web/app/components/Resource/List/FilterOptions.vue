@@ -1,7 +1,6 @@
 <script setup lang="ts" generic="T extends string">
+import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
-
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 interface Props {
   items: UiMenuItem<T>[];
@@ -9,6 +8,7 @@ interface Props {
   meaning: UiIconMeaning;
   selectedValues: T[];
 }
+
 // A filter's choices as buttons that say whether each is on, so one list serves a filter of one choice and of several
 const { items, meaning, selectedValues } = defineProps<Props>();
 const emit = defineEmits<{ toggle: [value: T] }>();
@@ -16,19 +16,13 @@ const emit = defineEmits<{ toggle: [value: T] }>();
 
 <template>
   <div flex flex-col>
-    <button
-      v-for="{ icon, title, value } of items"
-      :key="value"
-      :aria-pressed="selectedValues.includes(value)"
-      type="button"
-      ui-item
-      @click="emit('toggle', value)"
-    >
-      <UiItemContent :icon :meaning="icon ? undefined : meaning" :title>
-        <template #append>
-          <UiIcon v-if="selectedValues.includes(value)" :meaning="UiIconMeaning.Selected" text-accent />
-        </template>
-      </UiItemContent>
-    </button>
+    <ResourceListFilterOptionItem
+      v-for="item of items"
+      :key="item.value"
+      :item
+      :meaning
+      :selected-values="selectedValues"
+      @toggle="emit('toggle', $event)"
+    />
   </div>
 </template>
