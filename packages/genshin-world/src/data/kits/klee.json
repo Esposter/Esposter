@@ -131,7 +131,7 @@
   },
   "hits.sparklyExplosion.element": { "cause": "Unsourced", "value": "Fire" },
   "hits.sparklyExplosion.gauge": { "file": "burst.go", "line": 143, "source": "Gcsim", "value": 2 },
-  "hits.sparklyExplosion.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
+  "hits.sparklyExplosion.hitmarkFrames": { "cause": "DiffersFromSource", "value": 1 },
   "hits.sparklyExplosion.multiplier": { "file": "burst.go", "line": 144, "source": "Gcsim", "value": 5.55 },
   "hits.sparklyExplosion.poiseDamage": { "cause": "Unsourced", "value": 120 },
   "hits.chargedAttackBomb.hitmarkFrames": { "cause": "Unsourced", "value": 72 },
