@@ -38,6 +38,21 @@ describe(getNextAreaWeather, () => {
     expect(new Set(eruptionTurns)).toStrictEqual(new Set([WeatherKind.Rain]));
   });
 
+  test("a desert turns between clear and a sandstorm", () => {
+    expect.hasAssertions();
+
+    const desertWeathers = [WeatherKind.Clear, WeatherKind.Sandstorm];
+    const draw = (weather: WeatherKind) =>
+      new Set(
+        Array.from({ length: 1000 }, (_value, index) =>
+          getNextAreaWeather(weather, desertWeathers, () => index / 1000),
+        ),
+      );
+
+    expect(draw(WeatherKind.Clear)).toStrictEqual(new Set([WeatherKind.Clear, WeatherKind.Sandstorm]));
+    expect(draw(WeatherKind.Sandstorm)).toStrictEqual(new Set([WeatherKind.Clear]));
+  });
+
   test("holds snow, which the chain names no next weather for", () => {
     expect.hasAssertions();
 
