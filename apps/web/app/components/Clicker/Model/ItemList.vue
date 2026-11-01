@@ -16,6 +16,8 @@ const { items, label, positionArea } = defineProps<Props>();
 const listItems = computed(() =>
   items.map<UiListItem<string> & { item: T }>((item) => ({ hasMarkSlot: true, item, title: item.id, value: item.id })),
 );
+// Stable across renders: the list calls it per row as it renders, so a selection re-renders no row
+const getRowProps = ({ value }: UiListItem<string>) => ({ "data-item-key": `${label}:${value}` });
 const anchor = ref<HTMLElement>();
 const selectedId = ref("");
 // Resolved against the list rather than held on its own, so an item that leaves it — an upgrade just bought, which
@@ -33,13 +35,7 @@ const open = (id: string) => {
 </script>
 
 <template>
-  <UiList
-    :get-row-props="({ value }) => ({ 'data-item-key': `${label}:${value}` })"
-    :items="listItems"
-    :label
-    select-none
-    @select="open($event)"
-  >
+  <UiList :get-row-props="getRowProps" :items="listItems" :label select-none @select="open($event)">
     <template #mark="{ item: { item } }">
       <NuxtImg size-6 object-contain :src="item.image" alt="" />
     </template>
