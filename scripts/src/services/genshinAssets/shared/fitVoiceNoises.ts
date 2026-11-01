@@ -66,6 +66,7 @@ export const fitVoiceNoises = (
     }
     return powers;
   });
+  const allFrames = Array.from({ length: frameCount }, (_value, frame) => frame);
   const getPower = (voice: number, frame: number): number => voicePowers[voice]?.[frame] ?? 0;
   // The normal equations over the active voices, each frame's row and target given, a frame without a target left out
   const solveNormal = (
@@ -73,9 +74,7 @@ export const fitVoiceNoises = (
     getRow: (index: number, frame: number) => number,
     computeTarget: (frame: number) => number | undefined,
   ): number[] | undefined => {
-    const frames = Array.from({ length: frameCount }, (_value, frame) => frame).filter(
-      (frame) => computeTarget(frame) !== undefined,
-    );
+    const frames = allFrames.filter((frame) => computeTarget(frame) !== undefined);
     const rows = [...active.keys()];
     return solveLinearSystem(
       rows.map((row) =>
@@ -84,9 +83,7 @@ export const fitVoiceNoises = (
       rows.map((row) => frames.reduce((sum, frame) => sum + getRow(row, frame) * (computeTarget(frame) ?? 0), 0)),
     );
   };
-  const soundingFrames = Array.from({ length: frameCount }, (_value, frame) => frame).filter((frame) =>
-    voicePowers.some((powers) => (powers[frame] ?? 0) > 0),
-  );
+  const soundingFrames = allFrames.filter((frame) => voicePowers.some((powers) => (powers[frame] ?? 0) > 0));
   const bands = MUSIC_NOISE_BAND_CENTRES.map((centre) => {
     const [low, high] = computeBandBins(centre, sampleRate, frameLength, binCount);
     const flatness = computeMedianFlatness(spectrogram, soundingFrames, [low, high]);
