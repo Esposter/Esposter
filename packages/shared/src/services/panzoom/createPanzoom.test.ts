@@ -278,6 +278,20 @@ describe(createPanzoom, () => {
     expect(panzoom.getPan().x).toBeCloseTo(45.3173, 4);
   });
 
+  test("a wheel zoom that disableZoom refuses is not default-prevented, so an ancestor can still scroll", () => {
+    expect.hasAssertions();
+
+    const element = getElement();
+    stubPanzoomLayout(element, { height: 100, left: 0, top: 0, width: 100 });
+    stubPanzoomParent(getParent(), { height: 200, left: 0, top: 0, width: 200 });
+    const panzoom = createPanzoom(element, { disableZoom: true });
+    const event = new WheelEvent("wheel", { cancelable: true, deltaY: -100 });
+
+    panzoom.zoomWithWheel(event);
+
+    expect(event.defaultPrevented).toBe(false);
+  });
+
   test("#639 and #692 a per-call animate writes its transition", () => {
     expect.hasAssertions();
 

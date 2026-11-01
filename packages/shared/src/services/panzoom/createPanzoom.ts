@@ -9,7 +9,9 @@ import { Operation } from "#src/models/shared/Operation";
 import { PANZOOM_DEFAULT_OPTIONS, PANZOOM_DEFAULT_TRANSFORM_ORIGIN } from "#src/services/panzoom/constants";
 import { applyPanzoomStyles } from "#src/services/panzoom/applyPanzoomStyles";
 import { bindPanzoom } from "#src/services/panzoom/bindPanzoom";
+import { checkIsZoomRefused } from "#src/services/panzoom/checkIsZoomRefused";
 import { fitPanzoom } from "#src/services/panzoom/fitPanzoom";
+import { getPanzoomCallOptions } from "#src/services/panzoom/getPanzoomCallOptions";
 import { getPanzoomMeasure } from "#src/services/panzoom/getPanzoomMeasure";
 import { getPanzoomParent } from "#src/services/panzoom/getPanzoomParent";
 import { getPanzoomStartState } from "#src/services/panzoom/getPanzoomStartState";
@@ -107,7 +109,9 @@ export const createPanzoom = (element: PanzoomElement, options: PanzoomOptions =
     zoomToPoint: (scale, point, zoomOptions, originalEvent) =>
       zoomPanzoom(context, scale, { ...zoomOptions, focal: { x: point.clientX, y: point.clientY } }, originalEvent),
     zoomWithWheel: (event, zoomOptions = {}) => {
-      event.preventDefault();
+      const callOptions = getPanzoomCallOptions(context, zoomOptions);
+      if (!checkIsZoomRefused(callOptions)) event.preventDefault();
+
       return zoomPanzoom(
         context,
         getPanzoomWheelScale(context.state.scale, event, context.options.step),

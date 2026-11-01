@@ -3,6 +3,7 @@ import type { PanzoomEventDetail } from "#src/models/panzoom/PanzoomEventDetail"
 import type { PanzoomZoomOptions } from "#src/models/panzoom/PanzoomZoomOptions";
 
 import { PanzoomEventName } from "#src/models/panzoom/PanzoomEventName";
+import { checkIsZoomRefused } from "#src/services/panzoom/checkIsZoomRefused";
 import { dispatchPanzoomChange } from "#src/services/panzoom/dispatchPanzoomChange";
 import { getPanzoomCallOptions } from "#src/services/panzoom/getPanzoomCallOptions";
 import { getPanzoomEventDetail } from "#src/services/panzoom/getPanzoomEventDetail";
@@ -19,7 +20,7 @@ export const zoomPanzoom = (
   originalEvent?: Event,
 ): PanzoomEventDetail => {
   const options = getPanzoomCallOptions(context, callOptions);
-  if (options.disableZoom && !options.force) return getPanzoomEventDetail(context, originalEvent);
+  if (checkIsZoomRefused(options)) return getPanzoomEventDetail(context, originalEvent);
 
   const { element, parent, state } = context;
   const measure = getPanzoomMeasure(element, parent, state);
