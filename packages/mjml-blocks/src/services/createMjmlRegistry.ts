@@ -2,9 +2,10 @@ import type { CreateMjmlRegistryOptions } from "#src/models/CreateMjmlRegistryOp
 import type { MjmlRegistry } from "#src/models/MjmlRegistry";
 import type { MjmlRichText } from "#src/models/MjmlRichText";
 
+import { createMjmlAccordionTextType } from "#src/services/components/createMjmlAccordionTextType";
+import { createMjmlTextType } from "#src/services/components/createMjmlTextType";
 import { mjmlAccordionType } from "#src/services/components/mjAccordion";
 import { mjmlAccordionElementType } from "#src/services/components/mjAccordionElement";
-import { createMjmlAccordionTextType } from "#src/services/components/mjAccordionText";
 import { mjmlAccordionTitleType } from "#src/services/components/mjAccordionTitle";
 import { mjmlButtonType } from "#src/services/components/mjButton";
 import { mjmlCarouselType } from "#src/services/components/mjCarousel";
@@ -22,7 +23,6 @@ import { mjmlSocialType } from "#src/services/components/mjSocial";
 import { mjmlSocialElementType } from "#src/services/components/mjSocialElement";
 import { mjmlSpacerType } from "#src/services/components/mjSpacer";
 import { mjmlTableType } from "#src/services/components/mjTable";
-import { createMjmlTextType } from "#src/services/components/mjText";
 import { mjmlWrapperType } from "#src/services/components/mjWrapper";
 import { MJML_BODY_CHILDREN } from "#src/services/constants";
 import { createMjmlRootPropsSchema } from "#src/services/createMjmlRootPropsSchema";
