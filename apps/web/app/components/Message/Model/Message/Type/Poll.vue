@@ -23,6 +23,9 @@ const optionIdVoteCountMap = computed(() => getOptionIdVoteCountMap(pollContent.
 const userId = computed(() => session.value?.user.id);
 const totalVoteDescription = computed(() => getVoteDescription(totalVoteCount.value));
 const pollOptionItems = computed(() => pollContent.value.options.map(({ id, label }) => ({ title: label, value: id })));
+const optionLabelMap = computed(
+  () => new Map(pollContent.value.options.map(({ id, label }): [string, string] => [id, label])),
+);
 const { isVoting, vote } = await useVotePoll(
   () => message,
   () => pollContent.value,
@@ -60,7 +63,7 @@ const { isVoting, vote } = await useVotePoll(
       >
         <template #append="{ value }">
           <MessageModelMessageTypePollOption
-            :label="pollOptionItems.find((pollOptionItem) => pollOptionItem.value === value)?.title ?? ''"
+            :label="optionLabelMap.get(value) ?? ''"
             :total-vote-count
             :vote-count="optionIdVoteCountMap.get(value) ?? 0"
           />
