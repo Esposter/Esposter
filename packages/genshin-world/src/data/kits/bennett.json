@@ -8,7 +8,9 @@
   "parameters.fantasticVoyageFieldSeconds": { "source": "Tables" },
   "skillHolds.0.action.animationFrames": { "file": "skill.go", "line": 37, "source": "Gcsim", "value": 98 },
   "skillHolds.0.action.hits.0.area": {
-    "cause": "Unclassified",
+    "file": "skill.go",
+    "line": 17,
+    "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
   "skillHolds.0.action.hits.0-1.element": { "file": "skill.go", "line": 145, "source": "Gcsim", "value": "Fire" },
@@ -21,7 +23,9 @@
   "skillHolds.1.action.animationFrames": { "file": "skill.go", "line": 50, "source": "Gcsim", "value": 343 },
   "skillHolds.1.action.hits.length": { "cause": "DiffersFromSource", "value": 3 },
   "skillHolds.1.action.hits.0.area": {
-    "cause": "Unclassified",
+    "file": "skill.go",
+    "line": 17,
+    "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
   "skillHolds.1.action.hits.0-1.element": { "file": "skill.go", "line": 145, "source": "Gcsim", "value": "Fire" },
@@ -37,7 +41,9 @@
   "skillHolds.1.variant.animationFrames": { "file": "skill.go", "line": 58, "source": "Gcsim", "value": 175 },
   "skillHolds.1.variant.hits.length": { "cause": "DiffersFromSource", "value": 3 },
   "skillHolds.1.variant.hits.0.area": {
-    "cause": "Unclassified",
+    "file": "skill.go",
+    "line": 17,
+    "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
   "skillHolds.1.variant.hits.0-1.element": { "file": "skill.go", "line": 145, "source": "Gcsim", "value": "Fire" },
