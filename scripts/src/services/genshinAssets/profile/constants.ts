@@ -6,6 +6,3 @@ export const AVATAR_TABLE_NAME = "AvatarExcelConfigData";
 // Entry, and a Friendship Level, which opens it at that level
 export const FETTER_NONE_CONDITION_TYPE = "FETTER_COND_NONE";
 export const FETTER_LEVEL_CONDITION_TYPE = "FETTER_COND_FETTER_LEVEL";
-// The table that pays each character's card its reward, and the material kind of a namecard among the reward's items
-export const FETTER_CHARACTER_CARD_TABLE_NAME = "FetterCharacterCardExcelConfigData";
-export const NAMECARD_MATERIAL_TYPE = "MATERIAL_NAMECARD";

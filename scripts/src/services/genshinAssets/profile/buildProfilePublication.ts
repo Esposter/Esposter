@@ -1,21 +1,18 @@
-import type { ExcelFetterCharacterCardRow } from "#src/models/genshinAssets/profile/ExcelFetterCharacterCardRow";
 import type { ExcelFetterStoryRow } from "#src/models/genshinAssets/profile/ExcelFetterStoryRow";
 import type { ExcelFetterVoiceRow } from "#src/models/genshinAssets/profile/ExcelFetterVoiceRow";
 import type { ExcelNamecardMaterialRow } from "#src/models/genshinAssets/profile/ExcelNamecardMaterialRow";
+import type { ExcelFetterCharacterCardRow } from "#src/models/genshinAssets/shared/ExcelFetterCharacterCardRow";
 import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { ProfileText } from "genshin-world";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
-import {
-  FETTER_CHARACTER_CARD_TABLE_NAME,
-  FETTER_STORY_TABLE_NAME,
-  FETTER_VOICE_TABLE_NAME,
-} from "#src/services/genshinAssets/profile/constants";
+import { FETTER_STORY_TABLE_NAME, FETTER_VOICE_TABLE_NAME } from "#src/services/genshinAssets/profile/constants";
 import { getNamecardIconNameMap } from "#src/services/genshinAssets/profile/getNamecardIconNameMap";
 import { selectFetterStoryRows } from "#src/services/genshinAssets/profile/selectFetterStoryRows";
 import { toProfileStory } from "#src/services/genshinAssets/profile/toProfileStory";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
+import { FETTER_CHARACTER_CARD_TABLE_NAME } from "#src/services/genshinAssets/shared/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";

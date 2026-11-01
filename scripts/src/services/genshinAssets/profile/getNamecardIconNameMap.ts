@@ -1,8 +1,8 @@
-import type { ExcelFetterCharacterCardRow } from "#src/models/genshinAssets/profile/ExcelFetterCharacterCardRow";
 import type { ExcelNamecardMaterialRow } from "#src/models/genshinAssets/profile/ExcelNamecardMaterialRow";
 import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
+import type { ExcelFetterCharacterCardRow } from "#src/models/genshinAssets/shared/ExcelFetterCharacterCardRow";
 
-import { NAMECARD_MATERIAL_TYPE } from "#src/services/genshinAssets/profile/constants";
+import { NAMECARD_MATERIAL_TYPE } from "#src/services/genshinAssets/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The namecard of each character the game's card table pays one, by the name of its icon: the material of the namecard
@@ -14,9 +14,9 @@ export const getNamecardIconNameMap = (
   materialRows: ExcelNamecardMaterialRow[],
 ): Map<number, string> => {
   const namecardIconNameMap = new Map(
-    materialRows
-      .filter(({ icon, materialType }) => materialType === NAMECARD_MATERIAL_TYPE && icon !== undefined)
-      .map(({ icon, id }) => [id, icon as string]),
+    materialRows.flatMap(({ icon, id, materialType }): [number, string][] =>
+      materialType === NAMECARD_MATERIAL_TYPE && icon !== undefined ? [[id, icon]] : [],
+    ),
   );
   const characterNamecardIconNameMap = new Map<number, string>();
   for (const { avatarId, rewardId } of cardRows)

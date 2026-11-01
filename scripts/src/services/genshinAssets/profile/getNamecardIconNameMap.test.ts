@@ -1,8 +1,7 @@
 import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 
-import { NAMECARD_MATERIAL_TYPE } from "#src/services/genshinAssets/profile/constants";
 import { getNamecardIconNameMap } from "#src/services/genshinAssets/profile/getNamecardIconNameMap";
-import { InvalidOperationError } from "@esposter/shared";
+import { NAMECARD_MATERIAL_TYPE } from "#src/services/genshinAssets/shared/constants";
 import { describe, expect, test } from "vitest";
 
 describe(getNamecardIconNameMap, () => {
@@ -21,10 +20,11 @@ describe(getNamecardIconNameMap, () => {
     expect.hasAssertions();
 
     expect(
-      getNamecardIconNameMap([{ avatarId: AVATAR_ID, rewardId: REWARD_ID }], createRewardMap(GIFT_ID, NAMECARD_ID), [
-        giftMaterialRow,
-        namecardMaterialRow,
-      ]),
+      getNamecardIconNameMap(
+        [{ avatarId: AVATAR_ID, fetterLevel: 10, rewardId: REWARD_ID }],
+        createRewardMap(GIFT_ID, NAMECARD_ID),
+        [giftMaterialRow, namecardMaterialRow],
+      ),
     ).toStrictEqual(new Map([[AVATAR_ID, "icon"]]));
   });
 
@@ -32,10 +32,11 @@ describe(getNamecardIconNameMap, () => {
     expect.hasAssertions();
 
     expect(
-      getNamecardIconNameMap([{ avatarId: AVATAR_ID, rewardId: REWARD_ID }], createRewardMap(GIFT_ID), [
-        giftMaterialRow,
-        namecardMaterialRow,
-      ]).size,
+      getNamecardIconNameMap(
+        [{ avatarId: AVATAR_ID, fetterLevel: 10, rewardId: REWARD_ID }],
+        createRewardMap(GIFT_ID),
+        [giftMaterialRow, namecardMaterialRow],
+      ).size,
     ).toBe(0);
     expect(getNamecardIconNameMap([], createRewardMap(NAMECARD_ID), [namecardMaterialRow]).size).toBe(0);
   });
@@ -44,10 +45,13 @@ describe(getNamecardIconNameMap, () => {
     expect.hasAssertions();
 
     expect(() =>
-      getNamecardIconNameMap([{ avatarId: AVATAR_ID, rewardId: REWARD_ID }], createRewardMap(NAMECARD_ID, GIFT_ID), [
-        namecardMaterialRow,
-        { ...giftMaterialRow, materialType: NAMECARD_MATERIAL_TYPE },
-      ]),
-    ).toThrow(InvalidOperationError);
+      getNamecardIconNameMap(
+        [{ avatarId: AVATAR_ID, fetterLevel: 10, rewardId: REWARD_ID }],
+        createRewardMap(NAMECARD_ID, GIFT_ID),
+        [namecardMaterialRow, { ...giftMaterialRow, materialType: NAMECARD_MATERIAL_TYPE }],
+      ),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: 1, is paid more than one namecard]`,
+    );
   });
 });
