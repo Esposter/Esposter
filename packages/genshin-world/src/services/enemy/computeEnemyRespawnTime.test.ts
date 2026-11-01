@@ -1,4 +1,4 @@
-import type { NormalBossTrounceBlossom } from "#src/models/bosses/TrounceBlossom";
+import type { NormalBossTrounceBlossom } from "#src/models/bosses/NormalBossTrounceBlossom";
 
 import { EnemyType } from "#src/models/enemy/EnemyType";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";

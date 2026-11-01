@@ -1,4 +1,4 @@
-import type { WeeklyBossTrounceBlossom } from "#src/models/bosses/TrounceBlossom";
+import type { WeeklyBossTrounceBlossom } from "#src/models/bosses/WeeklyBossTrounceBlossom";
 import type { GroundPoint } from "genshin-engine";
 
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";

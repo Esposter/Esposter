@@ -1,4 +1,4 @@
-import type { NormalBossTrounceBlossom } from "#src/models/bosses/TrounceBlossom";
+import type { NormalBossTrounceBlossom } from "#src/models/bosses/NormalBossTrounceBlossom";
 import type { GroundPoint } from "genshin-engine";
 
 import { EnemyType } from "#src/models/enemy/EnemyType";

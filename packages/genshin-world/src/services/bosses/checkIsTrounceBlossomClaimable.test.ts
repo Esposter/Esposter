@@ -1,4 +1,5 @@
-import type { NormalBossTrounceBlossom, WeeklyBossTrounceBlossom } from "#src/models/bosses/TrounceBlossom";
+import type { NormalBossTrounceBlossom } from "#src/models/bosses/NormalBossTrounceBlossom";
+import type { WeeklyBossTrounceBlossom } from "#src/models/bosses/WeeklyBossTrounceBlossom";
 
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { checkIsTrounceBlossomClaimable } from "#src/services/bosses/checkIsTrounceBlossomClaimable";

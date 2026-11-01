@@ -1,4 +1,4 @@
-import type { NormalBossTrounceBlossom } from "#src/models/bosses/TrounceBlossom";
+import type { NormalBossTrounceBlossom } from "#src/models/bosses/NormalBossTrounceBlossom";
 
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { computeTrounceBlossomInteractables } from "#src/services/bosses/computeTrounceBlossomInteractables";
