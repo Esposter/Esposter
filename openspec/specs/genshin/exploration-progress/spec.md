@@ -60,7 +60,7 @@ An area's progress SHALL add the weight of each done doing a single time.
 
 ### Requirement: An unlocked statue completes its area's waypoint
 
-The progress SHALL count an unlocked statue as completing the waypoint doing of its own area, and no chest or camp, since the world keeps no record of either.
+The progress SHALL count an unlocked statue as completing the waypoint doing of its own area, and no chest or camp, which count only once the save records them.
 
 #### Scenario: Unlocked statue completes its area's waypoint
 

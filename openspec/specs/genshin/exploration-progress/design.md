@@ -48,8 +48,8 @@ flowchart TD
 
 ## Open
 
-- [ ] **The label appears once a statue in its area is unlocked, as the game does** — no source: the cached Map and Exploration wiki pages are not on disk, and the capture shows the label but not the unlock.
-- [ ] **The Windrise statue is Galesong Hill's waypoint, the one doing its statue completes** — no source: event 40 of the table names point 4, and no row read ties that point to the statue at Windrise.
+The open sources for the statue label and its waypoint are recorded with their requirements in [the spec](spec.md).
+
 - [ ] **A single chest took Galesong Hill from 99% to 100%** — no source: the capture shows the step near 10 s, but no frame read shows the chest that caused it.
 - [ ] **The label's measures have no recording file** — no source: a file recording the label's capital heights and spacing, measured on the frame at 4.6 s.
 - [ ] **The English map reads the fully explored area in gold 100%** — no source: a frame of the recording at 10.5 s read for its rendered gold, beyond the colour tag `#FFCC33` in `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`.
