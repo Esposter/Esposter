@@ -1,7 +1,6 @@
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
-import type { OreStrike } from "#src/models/gathering/OreStrike";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitEffect } from "#src/models/kit/KitEffect";
@@ -9,6 +8,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitReactionTrigger } from "#src/models/kit/KitReactionTrigger";
 import type { KitStrike } from "#src/models/kit/KitStrike";
+import type { OreStrike } from "#src/models/kit/OreStrike";
 import type { Party } from "#src/models/party/Party";
 import type { Wildlife } from "#src/models/wildlife/Wildlife";
 import type { LocomotionState, Stamina } from "genshin-engine";
