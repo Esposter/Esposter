@@ -26,7 +26,7 @@ describe(checkIsRequestTooLarge, () => {
     expect(checkIsRequestTooLarge("GET", "100", JSON_TYPE, LIMITS)).toBe(false);
   });
 
-  test("a request with no declared length is not refused here", () => {
+  test("a request with no declared length is left to the count its body is read through", () => {
     expect.hasAssertions();
 
     expect(checkIsRequestTooLarge("POST", null, JSON_TYPE, LIMITS)).toBe(false);
