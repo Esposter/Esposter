@@ -130,17 +130,48 @@ const { isEditMode, row, title } = defineProps<Props<TType>>();
 </template>
 ```
 
+`src/RowWrongLabel.vue` is the proof file for the Expected section. It is `RowMin.vue` with a wrong prop value. Run it in place of `RowMin.vue`, as the last row of the Isolation table does:
+
+```vue
+<script setup lang="ts" generic="TType extends RowValueType">
+import type { Row } from "./Row";
+import type { Component } from "vue";
+
+import { defineAsyncComponent } from "vue";
+import { RowValueType } from "./RowValueType";
+
+interface Props<TType extends RowValueType> {
+  isEditMode: boolean;
+  row: Row<TType>;
+  title: string;
+}
+
+const TextMap = {
+  [RowValueType.Image]: defineAsyncComponent(() => import("./Text.vue")),
+  [RowValueType.Text]: defineAsyncComponent(() => import("./Text.vue")),
+  [RowValueType.Textarea]: defineAsyncComponent(() => import("./Text.vue")),
+} as const satisfies Record<RowValueType, Component>;
+const modelValue = defineModel<null | string | undefined>({ required: true });
+const { isEditMode, row, title } = defineProps<Props<TType>>();
+</script>
+
+<template>
+  <component :is="TextMap[row.type]" v-model="modelValue" :is-edit-mode :label="42" :value="row.value" />
+</template>
+```
+
 ```sh
 npm i && npm run typecheck ; npm run typecheck:oracle
 ```
 
 ## Actual
 
-`npm run typecheck` gives these errors for the card. Long lines are cut:
+`npm run typecheck` gives these errors for the card. The lines are verbatim. `tsrs` elides parts of the type text itself, shown as `...`:
 
 ```
-src/RowMin.vue(24,4): error TS2345: Argument of type '{ "onUpdate:modelValue": never; modelValue: string | null | undefined; isEditMode: boolean; label: string; value: string | null | undefined; }' is not assignable to parameter o …
-src/RowMin.vue(24,4): error TS2322: Type '{}' is not assignable to type '$RequiredSlots<$StructuralSlots<{ readonly Image: { __vizeEmitProps?: $StaticEmitProps | undefined; __vizeRawEmits?: $AuthoredEventMap | undefined; __vizeEve …
+src/RowMin.vue(24,4): error TS2345: Argument of type '{ "onUpdate:modelValue": never; modelValue: string | null | undefined; isEditMode: boolean; label: string; value: string | null | undefined; }' is not assignable to parameter of type '$ComponentCheckProps<____vize_dynamic_is_3_CheckProps_0, ____vize_dynamic_is_3_CheckTail_0>'.
+  Type '{ "onUpdate:modelValue": never; modelValue: string | null | undefined; isEditMode: boolean; label: string; value: string | null | undefined; }' is not assignable to type '{ readonly [K in keyof ____vize_dynamic_is_3_CheckProps_0]: ____vize_dynamic_is_3_CheckProps_0[K]; }'.
+src/RowMin.vue(24,4): error TS2322: Type '{}' is not assignable to type '$RequiredSlots<$StructuralSlots<{ readonly Image: { __vizeEmitProps?: $StaticEmitProps | undefined; __vizeRawEmits?: $AuthoredEventMap | undefined; __vizeEventMap?: { "update:modelValue": ...; } | undefined; ... 4 more ...; readonly __vizeFallthroughProps?: ... | undefined; } & $ComponentConstructor & $VueComponentO...'.
 ```
 
 ## Expected
@@ -151,7 +182,7 @@ No diagnostic, as with `vue-tsc` 3.3.11. All members of the map have the same pr
 No output. The command exits 0.
 ```
 
-`vue-tsc` checks the dynamic tag. In `RowWrongLabel.vue`, a wrong prop value (`:label="42"`) is an error in `vue-tsc`.
+`vue-tsc` checks the dynamic tag. With `RowWrongLabel.vue` in place of `RowMin.vue`, `vue-tsc` reports `src/RowWrongLabel.vue(24,74): error TS2322: Type 'number' is not assignable to type 'string'.` for the wrong prop value.
 
 ## Isolation
 
