@@ -56,4 +56,4 @@ Gilding SHALL take the stone's colour, and no bump SHALL tilt the light at a rec
 
 ## Open
 
-- [ ] **No bump tilts the light at a recess's edge** — no source yet: whether the recess edges are masked from the bump, which `{data-root}/genshin-parity/extracted/login/assets/Material/LoginScene_Build04.json` does not show (its "_BumpScale" is 1.0 with a `_BumpMap` set).
+- [ ] **No bump tilts the light at a recess's edge** — no source yet: whether the recess edges are masked from the bump, which `{data-root}/genshin-parity/extracted/login/assets/Material/LoginScene_Build04.json` does not show (its "_BumpScale" is 1.0 with a `_BumpMap` set). No frame comparison of a bump over the atlas is kept in `{data-root}/genshin-parity/comparisons/`, which holds no tower snapshot, and `packages/genshin-world/src/components/Login/Scene/Towers.reference.ts` records the result without one.

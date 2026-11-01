@@ -67,3 +67,6 @@ Faces turned upward SHALL be lit by the sky's bright cloud colour and faces turn
 
 - [ ] **The frame is drawn through the game's own tone curve alone, with no grade or bloom** — no source yet: the login scene's post pipeline call passes `isBloomed: false` with a comment giving no grade and no bloom, but gives no curve values to compare the game's own tone curve against.
 - [ ] **The night's moon stands behind the lantern tower** — no source yet: the reference point is not annotated against the lantern tower in any kept file.
+- [ ] **The night's white balance was solved over both its frames by `genshin:parity balance`** — no source yet: the balance run is not kept.
+- [ ] **The dusk's sunlight falls from the door recording's shadows, 49.7 degrees up and 49.7 degrees off the walkway's +z axis** — no source yet: the shadows' reading from `{data-root}/genshin-parity/references/login-door-recording.png` is not kept, and the value is `DUSK_LIGHT_DIRECTION` in `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`.
+- [ ] **The dawn's and the dusk's suns sit just past the left edge, a little over the horizon** — no source yet: the dawn login still `{data-root}/genshin-parity/references/login-dawn-title.png`, not yet read for the sun's position.

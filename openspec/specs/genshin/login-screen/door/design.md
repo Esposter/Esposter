@@ -44,11 +44,10 @@ stateDiagram-v2
 
 ## Open
 
-- [ ] **The door has 13 pieces, each rising from about 6 metres below and settling between 0.4 and 1.33 seconds** — not yet read against the clip: the door record is hosted, and the `Ani_LogginScene_Door01_Liftting` clip is in `{data-root}/genshin-parity/extracted/login/clips/16000354/AnimationClip/`.
+Items this page shares with the [door spec](spec.md) are kept there.
+
 - [ ] **The scene's playback follows the clip's path within a centimetre** — not yet checked: the scene's playback against the `Ani_LogginScene_Door01_Liftting` clip in `{data-root}/genshin-parity/extracted/login/clips/16000354/AnimationClip/`.
 - [ ] **At rest the door is the shape the mesh is, to within a millimetre on average** — no source yet: no per-piece shape comparison is kept in `{data-root}/genshin-parity/comparisons/`.
-- [ ] **The glow reads each piece's slit through `doorSlitWorldX`** — no source yet: the game's per-piece slit was not measured, so where the line sits during the rise is settled by the eye-check.
-- [ ] **The door casts no shadow** — no source yet: only the exported copies are set `castShadow = false` (`packages/genshin-world/src/services/login/door/rideLoginWitnessDoor.ts`), and our door's setting was not located.
 - [ ] **The door's shape is its mesh's front, traced and extruded layer by layer through each piece's depth** — no source yet: `packages/genshin-world/src/components/Login/Scene/Door.reference.ts` traces the door, not yet read against the door mesh in `{data-root}/genshin-parity/extracted/login/assets/Mesh/`.
 - [ ] **The title's frames show the walkway running on with no door on it** — no source yet: no frame of the title is cited for the walkway before the door is due.
 - [ ] **The recording's door grows about 1.7 times during the rush** — no source yet: no measure of the door's size across the recording's frames is cited.
