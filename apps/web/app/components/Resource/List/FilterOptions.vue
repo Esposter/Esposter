@@ -4,7 +4,6 @@ import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
 interface Props {
   items: UiMenuItem<T>[];
-  // The mark a choice with no icon of its own leads with: what the filter reads, such as a status or a time
   meaning: UiIconMeaning;
   selectedValues: T[];
 }
