@@ -5,12 +5,9 @@ import type { VoiceLanguage } from "#src/models/VoiceLanguage";
 import { MAX_REFERENCE_SECONDS, VOICE_SAMPLE_RATE } from "#src/services/constants";
 import { cutReferenceClip } from "#src/services/cutReferenceClip";
 import { getReferencePath } from "#src/services/getReferencePath";
-import { getWikiFileTitle } from "#src/services/getWikiFileTitle";
-import { readWikiFile } from "#src/services/readWikiFile";
-import { readWikiFileUrls } from "#src/services/readWikiFileUrls";
+import { readWikiReferenceClip } from "#src/services/readWikiReferenceClip";
 import { readWikiStoryLines } from "#src/services/readWikiStoryLines";
 import { resampleClip } from "#src/services/resampleClip";
-import { writeStateFile } from "#src/services/writeStateFile";
 import { existsSync, readFileSync } from "node:fs";
 
 // A character the reference selection could not measure is spoken from the longest story line the wiki lists —
@@ -27,25 +24,15 @@ export const readReferenceClip = async (
   name: string,
   stem: string,
   language: VoiceLanguage,
-  { decode }: ClipDecoder,
+  decoder: ClipDecoder,
 ): Promise<PcmClip | undefined> => {
   const referenceStem = stem || (await readLongestStoryStem(name));
   if (!referenceStem) return undefined;
 
   const referencePath = getReferencePath(referenceStem, language);
-  if (!existsSync(referencePath)) {
-    const title = getWikiFileTitle(referenceStem, language);
-    const urls = await readWikiFileUrls([title]);
-    const url = urls.get(title);
-    if (!url) return undefined;
-
-    const bytes = await readWikiFile(url);
-    if (!bytes) return undefined;
-
-    writeStateFile(referencePath, bytes);
-  }
-
-  const clip = await decode(readFileSync(referencePath));
+  // A cached file that no longer decodes — an earlier session's write cut short — is fetched again and overwritten
+  const cachedClip = existsSync(referencePath) ? await decoder.decode(readFileSync(referencePath)) : undefined;
+  const clip = cachedClip ?? (await readWikiReferenceClip(referenceStem, language, referencePath, decoder));
   if (!clip) return undefined;
 
   const ownClip = cutReferenceClip(name, clip);

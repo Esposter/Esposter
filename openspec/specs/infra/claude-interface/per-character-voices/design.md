@@ -59,19 +59,20 @@ The number beside each stem is a validation, not a ranking: the cosine between t
 
 ## Key files
 
-| File                                                                | Role                                                               |
-| :------------------------------------------------------------------ | :----------------------------------------------------------------- |
-| `packages/genshin-persona/src/generated/PersonaReferenceMap.ts`     | The measured stem and likeness per character, one generated map    |
-| `packages/genshin-persona/src/personaCards/*.ts`                    | The optional `reference` field, the ear's                          |
-| `packages/genshin-persona/src/services/getCharacterReference.ts`    | The card's stem over the generated one, "" for neither             |
-| `packages/genshin-persona/src/services/getWikiFileTitle.ts`         | The file title from the stem and the dub                           |
-| `packages/genshin-persona/src/services/readWikiFileUrls.ts`         | The wiki's URL for each title, in one call                         |
-| `packages/genshin-persona/src/services/readWikiFile.ts`             | The clip off the file host, over the https module its edge answers |
-| `packages/genshin-persona/src/services/readReferenceClip.ts`        | Fetch on first use, cache by dub and stem, decode, cut, trim       |
-| `packages/genshin-persona/src/services/cutOpeningTurn.ts`           | A dialogue's first turn, cut at the first pause long enough        |
-| `packages/genshin-persona/src/services/readWikiStoryLines.ts`       | A character's lines off their page, a twin's off the Traveler's    |
-| `packages/genshin-persona/src/services/readSessionCharacterName.ts` | Who the session speaks as, without picking again                   |
-| `packages/genshin-persona/src/models/PersonaReference.ts`           | The map entry's shape                                              |
+| File                                                                | Role                                                                |
+| :------------------------------------------------------------------ | :------------------------------------------------------------------ |
+| `packages/genshin-persona/src/generated/PersonaReferenceMap.ts`     | The measured stem and likeness per character, one generated map     |
+| `packages/genshin-persona/src/personaCards/*.ts`                    | The optional `reference` field, the ear's                           |
+| `packages/genshin-persona/src/services/getCharacterReference.ts`    | The card's stem over the generated one, "" for neither              |
+| `packages/genshin-persona/src/services/getWikiFileTitle.ts`         | The file title from the stem and the dub                            |
+| `packages/genshin-persona/src/services/readWikiFileUrls.ts`         | The wiki's URL for each title, in one call                          |
+| `packages/genshin-persona/src/services/readWikiFile.ts`             | The clip off the file host, over the https module its edge answers  |
+| `packages/genshin-persona/src/services/readReferenceClip.ts`        | Read the kept clip, fetch it again if it will not decode, cut, trim |
+| `packages/genshin-persona/src/services/readWikiReferenceClip.ts`    | The wiki's clip, kept by dub and stem only once it decodes          |
+| `packages/genshin-persona/src/services/cutOpeningTurn.ts`           | A dialogue's first turn, cut at the first pause long enough         |
+| `packages/genshin-persona/src/services/readWikiStoryLines.ts`       | A character's lines off their page, a twin's off the Traveler's     |
+| `packages/genshin-persona/src/services/readSessionCharacterName.ts` | Who the session speaks as, without picking again                    |
+| `packages/genshin-persona/src/models/PersonaReference.ts`           | The map entry's shape                                               |
 
 ## Notes
 

@@ -56,6 +56,12 @@ A reference clip SHALL be fetched on first use and kept on this machine, and a l
 - **WHEN** the character is first spoken
 - **THEN** the clip is fetched and kept
 
+#### Scenario: A kept clip that no longer decodes
+
+- **GIVEN** a clip on this machine that decodes to no samples, such as one an earlier write cut short
+- **WHEN** the character is spoken
+- **THEN** the clip is fetched again and the kept file is replaced, and a fetched clip is kept only once it decodes
+
 #### Scenario: Speaking the same character again
 
 - **GIVEN** a reference clip already kept on this machine

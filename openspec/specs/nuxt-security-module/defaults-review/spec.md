@@ -149,3 +149,4 @@ The app SHALL refuse any request whose body is larger than its configured size l
 - **GIVEN** a POST request with no declared body length whose body is larger than the limit for its kind
 - **WHEN** a handler reads the body
 - **THEN** the read fails with a 413, and the bytes past the limit never reach the handler
+- **AND** a handler that wraps its own read reports that failure under its own status: tRPC and better-auth answer 500 and the MCP route 400, because the limiter cannot see the failure from outside them. Reporting 413 for them would take a counting stream the app owns beside h3's, which is kept until a client is found retrying on that 5xx
