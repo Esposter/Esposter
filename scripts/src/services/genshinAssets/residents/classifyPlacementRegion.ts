@@ -1,5 +1,7 @@
 import type { GroundPoint } from "genshin-engine";
 
+import { findNearest } from "#src/services/genshinAssets/shared/findNearest";
+
 // A point of the official map carried into the game's axes and named by its region
 export interface RegionMapPoint {
   position: GroundPoint;
@@ -13,10 +15,8 @@ export const classifyPlacementRegion = (
   regionMapPoints: readonly RegionMapPoint[],
   maxDistance: number,
 ): string | undefined => {
-  let nearest: undefined | { distance: number; region: string };
-  for (const { position: mapPosition, region } of regionMapPoints) {
-    const distance = Math.hypot(mapPosition.x - position.x, mapPosition.z - position.z);
-    if (!nearest || distance < nearest.distance) nearest = { distance, region };
-  }
-  return nearest && nearest.distance <= maxDistance ? nearest.region : undefined;
+  const getDistance = ({ position: mapPosition }: RegionMapPoint): number =>
+    Math.hypot(mapPosition.x - position.x, mapPosition.z - position.z);
+  const nearest = findNearest(regionMapPoints, getDistance);
+  return nearest && getDistance(nearest) <= maxDistance ? nearest.region : undefined;
 };
