@@ -82,8 +82,17 @@ describe(toHandbookDayCommissions, () => {
       dealtCommissions: [{ commissionId: 2, count: 0, dealtRank: RANK }],
       isBonusClaimed: false,
     };
-    expect(toHandbookDayCommissions(day, slice, ONE_POINT)[0]?.isClaimable).toBe(true);
-    expect(toHandbookDayCommissions(day, slice, NO_POINTS)[0]?.isClaimable).toBe(false);
+    const baseRow = {
+      commissionId: 2,
+      isClaimed: false,
+      nameTextId: "2",
+      progress: 0,
+      regionTextKey: GameTextKey.Liyue,
+      total: 8,
+    };
+
+    expect(toHandbookDayCommissions(day, slice, ONE_POINT)).toStrictEqual([{ ...baseRow, isClaimable: true }]);
+    expect(toHandbookDayCommissions(day, slice, NO_POINTS)).toStrictEqual([{ ...baseRow, isClaimable: false }]);
   });
 
   test("a claimed commission is claimed and not claimable", () => {
