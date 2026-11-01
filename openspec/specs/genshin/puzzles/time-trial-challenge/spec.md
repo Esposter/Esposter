@@ -1,6 +1,6 @@
 ## Purpose
 
-A Time Trial Challenge as a timed state machine, solved by striking every target before its clock runs out. Built in the world package; not yet placed or started in the world.
+A Time Trial Challenge as a timed state machine, solved by striking every target before its clock runs out. Built in the world package and placed in the world, each marker starting its challenge once the character reaches it.
 
 ## Requirements
 

@@ -31,5 +31,6 @@ flowchart TD
 
 ## Open
 
-- [ ] **A Swirl that spreads Pyro lights a Pyro monument, and auras decay on each step, as the game does** — no source yet: the Elemental Monument, Elemental Gauge Theory and Swirl wiki pages are not in the genshin-wiki cache.
+Whether a Swirl lights a Pyro monument, and whether auras decay on each step, as the game does is open in the [spec](spec.md).
+
 - [ ] **A timed monument goes out `ELEMENTAL_MONUMENT_LIT_SECONDS` after it was last lit** — no source yet: a recording of a timed monument going out, which would settle the provisional `ELEMENTAL_MONUMENT_LIT_SECONDS`.

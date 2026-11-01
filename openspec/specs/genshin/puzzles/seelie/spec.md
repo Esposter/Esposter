@@ -1,6 +1,6 @@
 ## Purpose
 
-A Seelie as a state machine, led along its route while followed and settled at its court or sent back to rest. Built in the world package; not yet placed in the world with its court.
+A Seelie as a state machine, led along its route while followed and settled at its court or sent back to rest. Built in the world package and placed in the world, each Seelie paired with its court.
 
 ## Requirements
 
