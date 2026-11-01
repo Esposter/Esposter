@@ -63,9 +63,7 @@ const passiveRows = computed(() =>
   </div>
   <span class="stats-rule refine-stats-rule" aria-hidden="true" />
   <p class="refine-material">{{ gameText[GameTextKey.WeaponRefinementMaterial] }}</p>
-  <span class="pill auto-add refine-auto-add" aria-hidden="true">{{
-    gameText[GameTextKey.ArtifactAutoAdd]
-  }}</span>
+  <span class="pill auto-add refine-auto-add" aria-hidden="true">{{ gameText[GameTextKey.ArtifactAutoAdd] }}</span>
 </template>
 
 <style scoped>

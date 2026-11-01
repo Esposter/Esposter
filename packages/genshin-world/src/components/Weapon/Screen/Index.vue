@@ -124,14 +124,7 @@ const {
   refinementMaterial,
   toggleFodder,
   unpickOre,
-} = useWeaponPicks({
-  entryId: () => entryId,
-  getEntryLevelText,
-  getItemName,
-  inventory,
-  weapon,
-  weaponData,
-});
+} = useWeaponPicks({ entryId: () => entryId, getEntryLevelText, getItemName, inventory, weapon, weaponData });
 // The next phase's ascension materials, each with what the bag holds of it, and its rarity
 const nextPhaseCosts = computed(() =>
   (weaponData.value.ascensionPhases[weapon.value.ascension + 1]?.costItems ?? []).map(({ count, id }) => {

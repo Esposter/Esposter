@@ -21,7 +21,8 @@ export const useWeaponStats = (
   const getAttributeTotals = (ascension: number) =>
     getWeaponAttributeTotals(weaponData.value, toValue(weaponGrowCurveMap), weapon.value.level, ascension);
   // The base ATK at the held phase and at the next one, which the Ascend row sets side by side
-  const getBaseAttackText = (ascension: number) => formatWholeNumber(getAttributeTotals(ascension)[Attribute.BaseAttack]);
+  const getBaseAttackText = (ascension: number) =>
+    formatWholeNumber(getAttributeTotals(ascension)[Attribute.BaseAttack]);
   const baseAttackText = computed(() => getBaseAttackText(weapon.value.ascension));
   const nextBaseAttackText = computed(() => getBaseAttackText(weapon.value.ascension + 1));
   // The secondary attribute the weapon grows beside its base ATK, at the held phase, written whole or as a percentage by its

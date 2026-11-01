@@ -25,8 +25,7 @@ const rankText = computed(() => getWeaponRankText(gameText, refinement));
 <template>
   <span class="sr-only" role="img" :aria-label="`${rarity}`" />
   <p class="refinement" :class="{ 'sr-only': openTab !== WeaponMenuTab.Refine }">
-    <span class="ornament left" aria-hidden="true" />{{ rankText
-    }}<span class="ornament right" aria-hidden="true" />
+    <span class="ornament left" aria-hidden="true" />{{ rankText }}<span class="ornament right" aria-hidden="true" />
   </p>
   <span v-if="openTab !== WeaponMenuTab.Refine" class="talent" aria-hidden="true">{{
     gameText[GameTextKey.CharacterTalentEffect]

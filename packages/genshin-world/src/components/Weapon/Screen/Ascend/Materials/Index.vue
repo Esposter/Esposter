@@ -5,13 +5,7 @@ import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The materials the next phase takes, each with its name, rarity, the count it takes and the count the bag holds
-  costs: {
-    count: number;
-    id: number;
-    name: string;
-    ownedCount: number;
-    rarity: number;
-  }[];
+  costs: { count: number; id: number; name: string; ownedCount: number; rarity: number }[];
   // The game's words in the reader's language, which the materials' title is set in
   gameText: GameText;
 }
@@ -24,9 +18,7 @@ const { costs, gameText } = defineProps<Props>();
   <div class="cards">
     <div v-for="cost of costs" :key="cost.id" class="card" :data-rarity="cost.rarity">
       <span class="card-name">{{ cost.name }}</span>
-      <span class="card-stars" aria-hidden="true"
-        ><span v-for="star in cost.rarity" :key="star" class="star"
-      /></span>
+      <span class="card-stars" aria-hidden="true"><span v-for="star in cost.rarity" :key="star" class="star" /></span>
       <span class="card-count">{{ cost.ownedCount }} / {{ cost.count }}</span>
     </div>
   </div>
