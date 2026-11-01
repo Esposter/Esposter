@@ -23,22 +23,23 @@ flowchart TD
 
 ## Key files
 
-| File                                                                               | Role                                                                                      |
-| :--------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/exploration/computeExplorationProgress.ts`    | An area's percentage, the done weight over its total, rounded down and at most 100        |
-| `packages/genshin-world/src/services/exploration/computeExploredDoingIds.ts`       | The doings an area's unlocked statue has done                                             |
-| `packages/genshin-world/src/services/exploration/readMondstadtExplorationAreas.ts` | The Mondstadt slice, fetched from the hosted game data and parsed                         |
-| `packages/genshin-world/src/composables/useExplorationAreas.ts`                    | Reads the slice as the world opens, logging a slice that fails                            |
-| `packages/genshin-world/src/components/Map/Overlay/Index.vue`                      | Shows each filled area's progress line under its name, and lists them for a screen reader |
-| `packages/genshin-world/src/models/exploration/ExplorationArea.ts`                 | An area's total, its reputation ratio and the doings its progress counts                  |
-| `scripts/src/services/genshinAssets/exploration/buildMondstadtExplorationAreas.ts` | Builds the Mondstadt slice from the dump, for publishing                                  |
-| `scripts/src/services/genshinAssets/exploration/ExploreEventKindMap.ts`            | The event types the progress counts, each as its kind                                     |
-| `scripts/src/services/genshinAssets/exploration/ExploreAreaCatalogueIdMap.ts`      | Each level-one area the world holds, by its catalogue area                                |
+| File                                                                               | Role                                                                               |
+| :--------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/exploration/computeExplorationProgress.ts`    | An area's percentage, the done weight over its total, rounded down and at most 100 |
+| `packages/genshin-world/src/services/exploration/computeExploredDoingIds.ts`       | The doings an area's unlocked statue has done                                      |
+| `packages/genshin-world/src/services/exploration/readMondstadtExplorationAreas.ts` | The Mondstadt slice, fetched from the hosted game data and parsed                  |
+| `packages/genshin-world/src/composables/useExplorationAreas.ts`                    | Reads the slice as the world opens, logging a slice that fails                     |
+| `packages/genshin-world/src/components/Map/Overlay/Index.vue`                      | Computes each filled area's progress line, and lists them for a screen reader      |
+| `packages/genshin-world/src/components/Map/Overlay/Labels/Index.vue`               | Draws each filled area's progress line under its name                              |
+| `packages/genshin-world/src/models/exploration/ExplorationArea.ts`                 | An area's total, its reputation ratio and the doings its progress counts           |
+| `scripts/src/services/genshinAssets/exploration/buildMondstadtExplorationAreas.ts` | Builds the Mondstadt slice from the dump, for publishing                           |
+| `scripts/src/services/genshinAssets/exploration/ExploreEventKindMap.ts`            | The event types the progress counts, each as its kind                              |
+| `scripts/src/services/genshinAssets/exploration/ExploreAreaCatalogueIdMap.ts`      | Each level-one area the world holds, by its catalogue area                         |
 
 ## Notes
 
 - **Thresholds paid.** Mondstadt's Reputation is kept in the [save](../save-data/design.md), and each exploration threshold the nation's percentage passes pays its Reputation EXP and wallet items once (`packages/genshin-world/src/composables/useWorldMap.ts`, `payReputationReward`).
-- **The label's measures are the game's, its face is not.** The name's and the line's sizes and the line's place below the name are read off the English map over Galesong Hill at 4.6 seconds (in the [map page](../compute/map/design.md)'s recording): white with no outline. Signika stands in for the game's face, spaced out toward each line's width, and its strokes are the difference left: the label scores within the 2% bar of the [map](../map/design.md) over its glyphs' silhouettes (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`, the `map-overlay-galesong` row).
+- **The label's measures are the game's, its face is not.** The name's and the line's sizes and the line's place below the name are read off the English map over Galesong Hill at 4.6 seconds (in the [map page](../compute/map/design.md)'s recording): white with no outline. Signika stands in for the game's face, spaced out toward each line's width, and its strokes are the difference left: the label's score over its glyphs' silhouettes waits on the [map compute page](../compute/map/design.md)'s task.
 
 ## Sources
 

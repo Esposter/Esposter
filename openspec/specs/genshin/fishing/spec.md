@@ -1,6 +1,6 @@
 ## Purpose
 
-Fishing's points, stocks, fish and rods read from the game's tables (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/FishStockExcelConfigData.json`, `FishExcelConfigData.json`) onto the world, each stock drawn by the game's clock and refilled seventy-two hours after it is emptied, a lure's reaction read off a fish's ranges, and a reel's tension held in its zone until the fish is caught or the line breaks, with nothing yet cast or on a screen.
+Fishing's points, stocks, fish and rods read from the game's tables (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/FishStockExcelConfigData.json`, `FishExcelConfigData.json`) onto the world, each stock drawn by the game's clock and each caught fish back in its stock seventy-two hours after it is caught, a lure's reaction read off a fish's ranges, and a reel's tension held in its zone until the fish is caught or the line breaks, with nothing yet cast or on a screen.
 
 ## Requirements
 
@@ -36,25 +36,39 @@ A fishing pool SHALL draw its day stock from six o'clock to eighteen o'clock and
 - **WHEN** a fish is drawn at any hour
 - **THEN** the fish is drawn from that stock
 
-### Requirement: An emptied stock refills seventy-two hours later
+### Requirement: A caught fish returns to its stock seventy-two hours later
 
-An emptied fishing stock SHALL be back in full seventy-two hours after it was emptied.
+A caught fish SHALL return to the stock it was caught from seventy-two hours after the catch, so a stock refills fish by fish, and each stock's catches SHALL persist in the save until they return, so a reload neither refills nor empties a stock early.
 
-#### Scenario: Stock is full again after seventy-two hours
+#### Scenario: Caught fish is back seventy-two hours later
 
-- **GIVEN** a stock was emptied
-- **WHEN** seventy-two hours have passed
-- **THEN** the stock is back in full
+- **GIVEN** a fish was caught from a stock
+- **WHEN** seventy-two hours have passed since the catch
+- **THEN** the fish is back in the stock
 
-#### Scenario: Day and night stocks refill on their own emptying
+#### Scenario: Stock refills one fish at a time
 
-- **GIVEN** the day stock was emptied at one time and the night stock at another
-- **WHEN** each has been seventy-two hours since it was emptied
-- **THEN** each is back in full on its own emptying
+- **GIVEN** two fish were caught from a stock an hour apart
+- **WHEN** seventy-two hours have passed since the first catch
+- **THEN** one fish is back in the stock
+- **AND** both are back once seventy-two hours have passed since the second catch
+
+#### Scenario: Day and night stocks return fish on their own catches
+
+- **GIVEN** a fish was caught from the day stock and another from the night stock at different times
+- **WHEN** each has been seventy-two hours since its catch
+- **THEN** each fish is back in its own stock on its own catch
+
+#### Scenario: Catches persist across a reload
+
+- **GIVEN** a fish was caught from a stock and has not yet come back
+- **WHEN** the save is written and read back
+- **THEN** the stock is still short of that fish
+- **AND** the fish is back once seventy-two hours have passed since the catch
 
 ### Requirement: A draw picks a fish by its share of the stock's weight
 
-A fishing stock SHALL pick each fish with a chance equal to its share of the stock's total weight, and a stock weighing nothing SHALL draw no fish.
+A fishing stock SHALL pick each fish with a chance equal to its share of the stock's total weight, and a stock weighing nothing, or with no fish left, SHALL draw no fish.
 
 #### Scenario: Heavier fish is drawn more often
 
@@ -67,6 +81,12 @@ A fishing stock SHALL pick each fish with a chance equal to its share of the sto
 - **GIVEN** a stock's total weight is zero
 - **WHEN** a fish is drawn
 - **THEN** no fish is drawn
+
+#### Scenario: Stock with no fish left draws none
+
+- **GIVEN** a stock's catches have left it with no fish
+- **WHEN** a fish is drawn at a point in its region
+- **THEN** the stock draws no fish
 
 ### Requirement: A fish reacts to a lure by its ranges
 
@@ -106,15 +126,15 @@ A reel's tension SHALL rise while the reel is held and fall while it is not, cla
 - **WHEN** the allowance runs out
 - **THEN** the line breaks and the fish is lost
 
-### Requirement: Fishing offers no cast, bite, bait or bag item yet
+### Requirement: Fishing offers a cast, a bite, bait, a screen and the catch in the bag
 
-Fishing SHALL NOT yet offer casting, bites, bait, a fish's skills, a screen or a bag item to the player.
+Fishing SHALL offer the player a cast at a fishing point in reach while a stock of its region stands, with the bite, the bait, the screen and the caught fish put in the bag, and SHALL NOT yet give a fish its skills.
 
-#### Scenario: Fishing point in reach offers no cast
+#### Scenario: Fishing point in reach offers a cast
 
-- **GIVEN** the player stands in reach of a fishing point
+- **GIVEN** the player stands in reach of a fishing point whose region has a stock standing
 - **WHEN** the player is in the world
-- **THEN** no cast prompt or fishing screen is offered
+- **THEN** a cast row named by the game's fishing text is offered at the point
 
 ### Requirement: A pool stock with no record is an error
 
@@ -125,6 +145,22 @@ A fishing pool SHALL NOT be built with a stock that has no record.
 - **GIVEN** a pool lists a stock that has no record
 - **WHEN** the fishing data is built
 - **THEN** the build fails rather than leaving that stock out of the pool
+
+### Requirement: A spot's ripple shows only while a stock of its region still has fish
+
+A fishing point SHALL be offered for a cast only while a stock of its region's pools stands at the hour with fish left, the ripple the wiki's Fishing page puts on the spot, which disappears once all its available fish are caught and returns once one respawns (`{data-root}/cache/genshin-wiki/Page_Fishing.json`, wikitext line 23).
+
+#### Scenario: Points are withheld once every stock reads zero
+
+- **GIVEN** every stock of a region's pools reads zero at the hour
+- **WHEN** the world lists the points in reach
+- **THEN** the region's points are not offered
+
+#### Scenario: Points return seventy-two hours after the first catch
+
+- **GIVEN** every stock of a region's pools reads zero at the hour, after a catch made at a moment
+- **WHEN** seventy-two hours have passed since that catch
+- **THEN** the region's points are offered again
 
 ## Open
 

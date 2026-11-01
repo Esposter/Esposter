@@ -49,27 +49,33 @@ flowchart TD
 
 ## Key files
 
-| File                                                                   | Role                                                                   |
-| :--------------------------------------------------------------------- | :--------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/Menu/Settings/Index.vue`        | The tabs, rows, lists and sliders, drawn and driven                    |
-| `packages/genshin-world/src/services/menu/SettingsTabSectionsMap.ts`   | Each tab's rows, backed or drawn disabled, with the recording's values |
-| `packages/genshin-world/src/services/menu/constants.ts`                | The tabs, ranges, storage key, defaults and the tiers the list offers  |
-| `packages/genshin-world/src/services/menu/readGenshinSettings.ts`      | Reads the stored text over the defaults                                |
-| `packages/genshin-world/src/services/menu/genshinSettingsSchema.ts`    | The schema the stored object is checked against                        |
-| `packages/genshin-world/src/composables/useStoredGenshinSettings.ts`   | The reactive copy of the key, read through `readGenshinSettings`       |
-| `packages/genshin-world/src/services/menu/getChannelGain.ts`           | The gain a music or sound-effect channel plays at                      |
-| `packages/genshin-world/src/services/menu/getStoredChannelGain.ts`     | That gain read from the key, for sounds that start outside the screen  |
-| `packages/genshin-world/src/services/menu/getStoredGenshinSettings.ts` | The settings read once from the key                                    |
-| `packages/genshin-world/src/services/menu/getFollowCameraSettings.ts`  | The camera's four settings taken from the stored object                |
-| `packages/genshin-world/src/services/menu/snapToRange.ts`              | Holds a slider's value to its range's steps and limits                 |
-| `packages/genshin-world/src/models/menu/`                              | The row kinds, and the settings a row names by key                     |
-| `packages/genshin-world/src/components/World/Session/Index.vue`        | The settings copy, the tier read at setup and the screen's slot        |
-| `packages/genshin-world/src/components/World/Character/Index.vue`      | The follow camera, made from the stored camera settings                |
-| `packages/genshin-world/src/components/Login/Music/Index.vue`          | The login's music and door sound, through the stored gains             |
-| `packages/genshin-world/src/services/statue/playOculusSound.ts`        | The Oculus chime, through the stored sound-effect gain                 |
-| `packages/genshin-engine/src/renderer/QualityTierSettingsMap.ts`       | The renderer's settings for each tier                                  |
-| `packages/genshin-engine/src/camera/constants.ts`                      | The follow camera's default settings                                   |
-| `packages/genshin-text/src/models/GameLanguage.ts`                     | The fifteen game languages                                             |
+| File                                                                        | Role                                                                                                                |
+| :-------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/components/Menu/Settings/Index.vue`             | The close, the open tab's headings and rows over the world, and the one list open at a time                         |
+| `packages/genshin-world/src/components/Menu/Settings/Tabs/Index.vue`        | The tabs down the left, each drawn as a Row, the open one held selected                                             |
+| `packages/genshin-world/src/components/Menu/Settings/Row/Index.vue`         | One settings row: its label and value, with the Track, Choice or Options its kind draws                             |
+| `packages/genshin-world/src/components/Menu/Settings/Row/Choice/Index.vue`  | A row's button for a choice, an action or a toggle                                                                  |
+| `packages/genshin-world/src/components/Menu/Settings/Row/Options/Index.vue` | The list a Graphics Quality or Game Language row opens under it, the chosen option marked                           |
+| `packages/genshin-world/src/components/Menu/Settings/Row/Slider/Index.vue`  | A volume or range row's value, held to its range and steps, or a slider the world does not back, drawn at its value |
+| `packages/genshin-world/src/components/Menu/Settings/Row/Track/Index.vue`   | The track a row shows, its number and slider, read from its own kind                                                |
+| `packages/genshin-world/src/services/menu/SettingsTabSectionsMap.ts`        | Each tab's rows, backed or drawn disabled, with the recording's values                                              |
+| `packages/genshin-world/src/services/menu/constants.ts`                     | The tabs, ranges, storage key, defaults and the tiers the list offers                                               |
+| `packages/genshin-world/src/services/menu/readGenshinSettings.ts`           | Reads the stored text over the defaults                                                                             |
+| `packages/genshin-world/src/services/menu/genshinSettingsSchema.ts`         | The schema the stored object is checked against                                                                     |
+| `packages/genshin-world/src/composables/useStoredGenshinSettings.ts`        | The reactive copy of the key, read through `readGenshinSettings`                                                    |
+| `packages/genshin-world/src/services/menu/getChannelGain.ts`                | The gain a music or sound-effect channel plays at                                                                   |
+| `packages/genshin-world/src/services/menu/getStoredChannelGain.ts`          | That gain read from the key, for sounds that start outside the screen                                               |
+| `packages/genshin-world/src/services/menu/getStoredGenshinSettings.ts`      | The settings read once from the key                                                                                 |
+| `packages/genshin-world/src/services/menu/getFollowCameraSettings.ts`       | The camera's four settings taken from the stored object                                                             |
+| `packages/genshin-world/src/services/menu/snapToRange.ts`                   | Holds a slider's value to its range's steps and limits                                                              |
+| `packages/genshin-world/src/models/menu/`                                   | The row kinds, and the settings a row names by key                                                                  |
+| `packages/genshin-world/src/components/World/Session/Index.vue`             | The settings copy, the tier read at setup and the screen's slot                                                     |
+| `packages/genshin-world/src/components/World/Character/Index.vue`           | The follow camera, made from the stored camera settings                                                             |
+| `packages/genshin-world/src/components/Login/Music/Index.vue`               | The login's music and door sound, through the stored gains                                                          |
+| `packages/genshin-world/src/services/statue/playOculusSound.ts`             | The Oculus chime, through the stored sound-effect gain                                                              |
+| `packages/genshin-engine/src/renderer/QualityTierSettingsMap.ts`            | The renderer's settings for each tier                                                                               |
+| `packages/genshin-engine/src/camera/constants.ts`                           | The follow camera's default settings                                                                                |
+| `packages/genshin-text/src/models/GameLanguage.ts`                          | The fifteen game languages                                                                                          |
 
 ## Sources
 

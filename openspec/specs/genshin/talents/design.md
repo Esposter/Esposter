@@ -8,6 +8,7 @@ A character's three combat talents, the normal attack, the Elemental Skill and t
 - **A skill set names its talents by group.** A skill row names the proud skill group of the talent it is. A set's first slot is the normal attack, its second the Elemental Skill, and its energy skill the burst. The third slot is the alternate sprint, which has one row and no level, so it is never levelled.
 - **The first set that names all three is the character's.** That is its own form's set, and then the element forms' in the order the game lists them. The Traveler's own form names only its normal attack, so the Traveler reads its Anemo set, the form it takes by default, which the world's Traveler kit also reads ([forging](../forging/design.md) cites the depot table: depots 501 and 701 name only their normal attack (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarSkillDepotExcelConfigData.json`, skill slots at lines 267 and 846), and depot 504's energy skill costs Wind (its energy skill at line 511, and `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarSkillExcelConfigData.json`, line 2316); `scripts/src/services/genshinAssets/stats/getCharacterSkillDepotRows.ts` puts the set of the default element first). A statue's element will pick another set once the [statues page](../../../changes/genshin-statues-of-the-seven/design.md) holds the resonance, and until then the stats run puts the Anemo set first.
 - **Passives come from that same set.** The skill depot's inherent proud skill opens name each passive and the phase it opens at. Across the roster the phases are 0, 1 and 4: the utility passive comes with the character, and the first and fourth ascension passives open at phases 1 and 4 ("{data-root}/cache/genshin-wiki/Category_Xilonen_Talents.json" names Xilonen's utility, first and fourth ascension passives, and "Category_Traveler_Talents.json" the Traveler's first and fourth). The dump's passive lists hold no other phase: Ayaka's list at `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarSkillDepotExcelConfigData.json` line 84 gives 1, 4 and 0, and every passive of the 156 avatar rows is 0, 1 or 4, with 127 first ascension passives at 1, 127 fourth at 4 and 126 utility at 0 by the type names the wiki's category pages give. A passive has no level.
+- **Names are published with the groups.** Each combat talent is named by its skill's `nameTextMapHash` in the set the kit reads (`AvatarSkillExcelConfigData`), and each passive by its proud skill group's first-level row (`ProudSkillExcelConfigData`). The kit holds both as text ids (`talentNames`, `Passive.nameTextId`), which `genshin:text names` publishes into the names dataset, and every group has a first-level row with a name.
 - **The table is fetched beside the dump.** The dump the game text is read from lacks this table at its revision. The community repository's `main` holds it at the install's 7.1.0 build; `master` holds an older copy at 6.6 that matches the dump, so it is the stale one. The table is fetched from `main`. The keys below were read at `master`'s revision and are checked against `main`'s before the stat run is trusted. It is not committed.
 
 ```mermaid
@@ -44,22 +45,23 @@ A passive has no level. It is open where the character's ascension phase has rea
 
 ## Key files
 
-| File                                                                      | Role                                                                                |
-| :------------------------------------------------------------------------ | :---------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/character/Character.ts`                | Each combat talent's level, kept with the character                                 |
-| `packages/genshin-world/src/models/character/CombatTalent.ts`             | The three combat talents                                                            |
-| `packages/genshin-world/src/models/character/TalentUpgrade.ts`            | A level's phase, Mora and items                                                     |
-| `packages/genshin-world/src/models/character/TalentUpgradeMap.ts`         | Each proud skill group's upgrades, from the second level                            |
-| `packages/genshin-world/src/models/character/CharacterTalentKit.ts`       | A character's talent groups and passives                                            |
-| `packages/genshin-world/src/models/character/Passive.ts`                  | A passive's group and the phase it opens at                                         |
-| `packages/genshin-world/src/services/character/upgradeTalent.ts`          | The upgrade rule: phase, Mora and items checked before any is taken                 |
-| `packages/genshin-world/src/services/character/upgradeCharacterTalent.ts` | The press: a character's talent raised, the roster, bag and wallet it leaves        |
-| `packages/genshin-world/src/services/character/getTalentRows.ts`          | Each combat talent's row on the Talents tab: its level, next upgrade and refusal    |
-| `packages/genshin-world/src/services/character/readTalentTables.ts`       | The two tables, fetched by their keys and checked against their shapes              |
-| `packages/genshin-world/src/services/character/createCharacter.ts`        | Every combat talent at level 1                                                      |
-| `scripts/src/services/genshinAssets/stats/toCharacterTalentKit.ts`        | A character's talents from the first skill set that names all three                 |
-| `scripts/src/services/genshinAssets/stats/toTalentUpgradeMap.ts`          | Each named group's levels from the second to the tenth, costs as the table has them |
-| `scripts/src/services/genshinAssets/stats/buildStatTables.ts`             | Builds both tables with the other stat tables, published under their `stats/` keys  |
+| File                                                                      | Role                                                                                          |
+| :------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/character/Character.ts`                | Each combat talent's level, kept with the character                                           |
+| `packages/genshin-world/src/models/character/CombatTalent.ts`             | The three combat talents                                                                      |
+| `packages/genshin-world/src/models/character/TalentUpgrade.ts`            | A level's phase, Mora and items                                                               |
+| `packages/genshin-world/src/models/character/TalentUpgradeMap.ts`         | Each proud skill group's upgrades, from the second level                                      |
+| `packages/genshin-world/src/models/character/CharacterTalentKit.ts`       | A character's talent groups, talent names and passives                                        |
+| `packages/genshin-world/src/models/character/Passive.ts`                  | A passive's group, its name and the phase it opens at                                         |
+| `packages/genshin-world/src/services/character/upgradeTalent.ts`          | The upgrade rule: phase, Mora and items checked before any is taken                           |
+| `packages/genshin-world/src/services/character/upgradeCharacterTalent.ts` | The press: a character's talent raised, the roster, bag and wallet it leaves                  |
+| `packages/genshin-world/src/services/character/getTalentRows.ts`          | Each combat talent's row on the Talents tab: its level, next upgrade and refusal              |
+| `packages/genshin-world/src/services/character/readTalentTables.ts`       | The two tables, fetched by their keys and checked against their shapes                        |
+| `packages/genshin-world/src/services/character/createCharacter.ts`        | Every combat talent at level 1                                                                |
+| `scripts/src/services/genshinAssets/stats/toCharacterTalentKit.ts`        | A character's talents, their names and passives from the first skill set that names all three |
+| `scripts/src/services/genshinAssets/stats/toProudSkillNameTextIdMap.ts`   | Each proud skill group's name, from its first level's row                                     |
+| `scripts/src/services/genshinAssets/stats/toTalentUpgradeMap.ts`          | Each named group's levels from the second to the tenth, costs as the table has them           |
+| `scripts/src/services/genshinAssets/stats/buildStatTables.ts`             | Builds both tables with the other stat tables, published under their `stats/` keys            |
 
 ## Sources
 

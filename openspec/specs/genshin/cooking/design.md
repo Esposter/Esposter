@@ -81,6 +81,7 @@ The quality weights the table gives each dish are all the Delicious weight in th
 | `packages/genshin-world/src/components/Cooking/Screen/Index.vue`                  | The cooking screen in the reader's language, its indicator laid out from the recipe's zones |
 | `packages/genshin-world/src/components/Cooking/Processing/Index.vue`              | The processing screen: the processings known from the start, queued and collected           |
 | `packages/genshin-interface/src/components/CookingScreen/Index.vue`               | The cooking screen's view: its indicator, Stop, Auto Cook and the dish list when offered    |
+| `packages/genshin-interface/src/components/CookingScreen/Stage/Index.vue`         | The indicator's bar, its zones and the pointer along it                                     |
 
 ## Notes
 

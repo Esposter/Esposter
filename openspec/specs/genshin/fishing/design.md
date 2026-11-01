@@ -1,6 +1,6 @@
 # Fishing
 
-The fishing points stand where the official map places them, each region's pools and the fish they draw from are the game's own tables (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/FishPoolExcelConfigData.json`, `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/FishExcelConfigData.json`), and the rules of a cast are pure functions over them: a stock's day and night, its refill, a weighted draw of a fish, a lure's reaction and a reel's tension against its zone. This is the first half of the [fishing](../../../changes/genshin-fishing/design.md) proposal. Nothing is cast yet: no bait, no bite timing, no fish's skills, no screen, no prompt and no bag item.
+The fishing points stand where the official map places them, each region's pools and the fish they draw from are the game's own tables (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/FishPoolExcelConfigData.json`, `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/FishExcelConfigData.json`), and the rules of a cast are pure functions over them: a stock's day and night, the return of each caught fish, a weighted draw of a fish, a lure's reaction and a reel's tension against its zone. This is the first half of the [fishing](../../../changes/genshin-fishing/design.md) proposal. Nothing is cast yet: no bait, no bite timing, no fish's skills, no screen, no prompt and no bag item.
 
 ## How it works
 
@@ -38,32 +38,37 @@ The fishing tables are not in the community dump the repository reads, so they w
 ## The rules
 
 - **Day and night.** A pool's day stock is drawn from six o'clock to eighteen on the game's clock, which runs in `Asia/Shanghai` as the world's daily resets do, and its night stock otherwise. The night's indicator shows only from 18:00 to 6:00 in-game time (`{data-root}/cache/genshin-wiki/Page_Fishing.json`, wikitext line 223), so the day is the rest of the clock. A stock held at every hour is drawn at any time (`pickFishingStock`).
-- **Seventy-two hours.** An emptied stock is back in full seventy-two hours on, the day's and the night's kept apart by their own emptying (`checkIsFishingStockRefilled`).
-- **A draw.** A roll in one unit picks a fish by its share of the stock's total weight, and a stock weighing nothing draws none (`drawFishingWeight`).
+- **Seventy-two hours.** A caught fish comes back to its stock seventy-two hours after its catch, so a stock refills fish by fish, the first back before the rest. Each catch is held under its stock's key, the pool's id and its `FishingStockType` joined with `ID_SEPARATOR` (`getFishingStockKey`), so the day's and the night's stocks of one pool are kept apart. A stock's count at an instant is its pool's `maxNum` less the catches under its key that are not yet seventy-two hours old (`countFishingStock`, `checkIsFishingCatchReturned`), and a catch returned leaves the record (`computeFishingCatchAts`), which the save holds as `fishingCatchAts` ([save data](../save-data/design.md)).
+- **A draw.** A roll in one unit picks a fish by its share of the stock's total weight, and a stock weighing nothing draws none (`drawFishingWeight`). A point draws only from the stocks of its region's pools that stand at the hour with fish left (`computeStandingFishingStocks`), and each fish drawn names the stock it leaves (`drawFishingPointFish`).
+- **The ripple.** A point is offered for a cast only while a stock of its region's pools stands at the hour, the ripple the wiki's Fishing page puts on the spot: it disappears once all its available fish are caught and returns once one respawns (`{data-root}/cache/genshin-wiki/Page_Fishing.json`, wikitext line 23).
 - **A lure.** A fish inside its flee range flees whatever the bait. A fish turns toward the bait it takes within its attract range, and every other lure is ignored (`computeFishReaction`).
 - **The reel.** The tension rises while the reel is held and falls while it is not, at the gear's inside rate while it lies inside the zone and its outside rate outside it, clamped to the bar's range. The zone starts at the fish's own offset, moves at its own speed for its own duration and holds, kept within the bar at the fish's width (`computeFishingZone`). Inside the zone the rod's attack wears the fish's hit points down, and the fish is caught at none. Outside it the allowance runs out, and the line breaks past it (`stepFishingReel`).
 
 ## Provisional
 
 - **The reel's zone travel, its gear rates and its allowance** (`computeFishingZone`, the gear's `inSpeed` and `outSpeed`, `REEL_LOST_OUT_OF_ZONE_SECONDS`, and `REEL_BAR_MAX`) are held provisional. The gear's rates are the table's; the travel's direction and hold, the bar's scale and the allowance are not in the tables. A recording of the minigame sets them, listed on the [roadmap](../../../changes/genshin-roadmap/tasks.md)'s References sought list.
+- **A point's stocks are its region's, for now.** A point draws from every pool of its region, so its stocks and its ripple are the region's, and a catch at one point empties the stock every point of the region draws from. A recording that ties a point to one pool narrows both to that pool.
 
 ## Key files
 
-| File                                                                         | Role                                                          |
-| :--------------------------------------------------------------------------- | :------------------------------------------------------------ |
-| `scripts/src/services/genshinAssets/fishing/buildFishingPoints.ts`           | The official map's fishing points, fitted and filed by region |
-| `scripts/src/services/genshinAssets/fishing/buildFishingTables.ts`           | The fish, rods and each region's pools as records             |
-| `scripts/src/services/genshinAssets/fishing/toFishingPool.ts`                | A pool's stocks resolved to their table rows                  |
-| `packages/genshin-world/src/services/fishing/pickFishingStock.ts`            | The stock a pool draws from at an hour of the game's day      |
-| `packages/genshin-world/src/services/fishing/checkIsFishingStockRefilled.ts` | Whether an emptied stock is back in full                      |
-| `packages/genshin-world/src/services/fishing/drawFishingWeight.ts`           | The fish a stock draws for a roll                             |
-| `packages/genshin-world/src/services/fishing/computeFishReaction.ts`         | A fish's answer to a lure within its reach                    |
-| `packages/genshin-world/src/services/fishing/computeFishingZone.ts`          | The reel's zone after its travel                              |
-| `packages/genshin-world/src/services/fishing/stepFishingReel.ts`             | The reel's tension, hit points and allowance after a step     |
+| File                                                                          | Role                                                          |
+| :---------------------------------------------------------------------------- | :------------------------------------------------------------ |
+| `scripts/src/services/genshinAssets/fishing/buildFishingPoints.ts`            | The official map's fishing points, fitted and filed by region |
+| `scripts/src/services/genshinAssets/fishing/buildFishingTables.ts`            | The fish, rods and each region's pools as records             |
+| `scripts/src/services/genshinAssets/fishing/toFishingPool.ts`                 | A pool's stocks resolved to their table rows                  |
+| `packages/genshin-world/src/services/fishing/pickFishingStock.ts`             | The stock a pool draws from at an hour of the game's day      |
+| `packages/genshin-world/src/services/fishing/countFishingStock.ts`            | The fish a stock holds at an instant, from its catches        |
+| `packages/genshin-world/src/services/fishing/getFishingStockKey.ts`           | The key a stock's catches are held under                      |
+| `packages/genshin-world/src/services/fishing/computeFishingCatchAts.ts`       | The catches a stock holds once one more fish is caught        |
+| `packages/genshin-world/src/services/fishing/computeStandingFishingStocks.ts` | The stocks a region's pools hold at an hour with fish left    |
+| `packages/genshin-world/src/services/fishing/drawFishingWeight.ts`            | The fish a stock draws for a roll                             |
+| `packages/genshin-world/src/services/fishing/computeFishReaction.ts`          | A fish's answer to a lure within its reach                    |
+| `packages/genshin-world/src/services/fishing/computeFishingZone.ts`           | The reel's zone after its travel                              |
+| `packages/genshin-world/src/services/fishing/stepFishingReel.ts`              | The reel's tension, hit points and allowance after a step     |
 
 ## Sources
 
-- [Fishing](https://genshin-impact.fandom.com/wiki/Fishing), Genshin Impact Wiki, cached as `{data-root}/cache/genshin-wiki/Page_Fishing.json`: the day and night stocks and the seventy-two hour respawn, read against the rules (see Open). Its bite is not checked.
+- [Fishing](https://genshin-impact.fandom.com/wiki/Fishing), Genshin Impact Wiki, cached as `{data-root}/cache/genshin-wiki/Page_Fishing.json`: the day and night stocks and the seventy-two hour respawn of a caught fish ("New fish will respawn every 72 hours", wikitext line 23), with its ripple, which disappears once all its available fish are caught and returns once one respawns (the same line), and the Reset page's "Respawns 72 hours (3 days) after harvest" (`{data-root}/cache/genshin-wiki/Page_Reset.json`, wikitext line 53) (see Open). Its bite is not checked.
 - [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the Fishing Point label whose points the fit places. Grounds the requirement "Fishing points stand at their fitted places" and the scenario "Region's points are placed from the official map" (the place the official map marks for it).
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the fish, pool, stock and rod tables read here. Grounds the requirement "A pool stock with no record is an error" and the scenario "Stock with no record fails the build".
 
@@ -71,7 +76,7 @@ The fishing tables are not in the community dump the repository reads, so they w
 
 - [ ] **The fishing points stand where the official map marks them** — no source yet: no comparison of the fitted points against the official map is saved in the parity folders (`pnpm -C scripts genshin:assets fishing` places them; no run saves them beside their official pins).
 - [ ] **The game's clock runs in `Asia/Shanghai`** — no source yet for the zone's name: the notices give the offset "UTC+8" (`{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json` line 154177), and the English text and the wiki's Reset page (`{data-root}/cache/genshin-wiki/Page_Reset.json` line 2) name no zone, so only a source that names it settles this.
-- [ ] **An emptied stock is back in full seventy-two hours on** — contradicted by `{data-root}/cache/genshin-wiki/Page_Fishing.json` wikitext line 23: "New fish will respawn every 72 hours", and the ripple returns once one has, where this rule has the whole stock back in full at seventy-two hours.
+- [ ] **A caught fish's seventy-two hours run from its catch, not from the daily reset** — the wiki gives the seventy-two hours and one fish returning at a time (`{data-root}/cache/genshin-wiki/Page_Fishing.json` wikitext line 23), but its Reset page binds fishing respawns to the daily reset's conditions (`{data-root}/cache/genshin-wiki/Page_Reset.json` wikitext line 56) and its stub header asks for verification (line 1), so a source that times a respawn from its catch, or from the reset, would settle it.
 - [ ] **A fish flees any lure within its flee range, and turns toward the bait it takes** — no source yet: the reaction rule is not in the decoded tables, the wiki's Fishing page (line 19) names one bait per fish and no flee range, and no recording of it is checked; a frame of a lure within a fish's flee range would settle it.
 - [ ] **A draw picks a fish by its share of the stock's weight** — no source yet: the stock table holds the weights, not the draw rule, and the Fishing wiki page gives no catch shares; a tally of catches over many casts at one stock would settle it, and no such recording is on disk.
 - [ ] **The reel's tension holds in its zone until the fish is caught or the line breaks** — no source yet: `{data-root}/genshin-parity/captures/yt-iKr-nF1P7xQ-fishing-reel.mkv` at 35 to 53 s shows the bar and its zone, but the marker's place in the zone and the bar's colour are not plain enough to read a hold until the catch at about 56 s.

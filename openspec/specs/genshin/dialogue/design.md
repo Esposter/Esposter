@@ -120,33 +120,34 @@ The reveal is timed off three lines of `{data-root}/genshin-parity/captures/yt-9
 
 ## Key files
 
-| File                                                                    | Role                                                                         |
-| :---------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/dialogue/Talk.ts`                    | A talk: its lines and where it starts, with its schema                       |
-| `packages/genshin-world/src/models/dialogue/TalkLine.ts`                | A line: spoken, with its speaker and voice, or one of the replies            |
-| `packages/genshin-world/src/services/dialogue/advanceTalk.ts`           | A click, F or Space: written out whole, on to the next, or the end           |
-| `packages/genshin-world/src/services/dialogue/chooseTalkLine.ts`        | A reply chosen, and the branch it leads down                                 |
-| `packages/genshin-world/src/services/dialogue/constants.test.ts`        | The hand-written sample talk every runner suite walks                        |
-| `packages/genshin-world/src/services/dialogue/constants.ts`             | The measured reveal, and the auto-play hold the Auto control runs            |
-| `packages/genshin-world/src/services/dialogue/getTalkRevealedLength.ts` | How much of a line is written out, a space taking no time                    |
-| `packages/genshin-world/src/components/Dialogue/Talk/Index.vue`         | A talk run over the world: the player filled in, the reveal, the keys        |
-| `packages/genshin-world/src/components/World/Session/Index.vue`         | Mounts the talk over the world while its screen is open                      |
-| `packages/genshin-interface/src/components/DialogueScreen/Index.vue`    | The speaker's name and title, the line or a narration, and the replies       |
-| `packages/genshin-interface/src/models/DialogueChoiceIcon.ts`           | The marks a reply is drawn beside                                            |
-| `packages/genshin-interface/src/services/DialogueChoiceIconPathMap.ts`  | Each mark's traced path                                                      |
-| `scripts/src/services/genshinText/readTalk.ts`                          | A talk read from the dialog table: replies, speakers, titles, narration      |
-| `packages/genshin-world/src/models/world/Resident.ts`                   | A resident placed in a region's data, and the talk F begins with them        |
-| `scripts/src/services/genshinText/mapNpcStandingTalkIds.ts`             | Each NPC's standing talk, picked from the talk table                         |
-| `scripts/src/services/genshinText/skipWordlessTalkLines.ts`             | A talk with its wordless lines skipped, or none where that cannot be done    |
-| `scripts/src/services/genshinText/buildStandingTalks.ts`                | `genshin:text standing-talks`: the residents' standing talks and their words |
-| `packages/genshin-world/src/services/resident/readStandingTalks.ts`     | The standing talks read from the hosted game data                            |
-| `packages/genshin-world/src/composables/useWorldTalks.ts`               | The talks held by id, their words, a resident's prompt and the offers        |
-| `packages/genshin-world/src/services/dialogue/getTalkOffers.ts`         | The quest talks open to a talk's characters, each with its quest's mark      |
+| File                                                                         | Role                                                                                              |
+| :--------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/models/dialogue/Talk.ts`                         | A talk: its lines and where it starts, with its schema                                            |
+| `packages/genshin-world/src/models/dialogue/TalkLine.ts`                     | A line: spoken, with its speaker and voice, or one of the replies                                 |
+| `packages/genshin-world/src/services/dialogue/advanceTalk.ts`                | A click, F or Space: written out whole, on to the next, or the end                                |
+| `packages/genshin-world/src/services/dialogue/chooseTalkLine.ts`             | A reply chosen, and the branch it leads down                                                      |
+| `packages/genshin-world/src/services/dialogue/constants.test.ts`             | The hand-written sample talk every runner suite walks                                             |
+| `packages/genshin-world/src/services/dialogue/constants.ts`                  | The measured reveal, and the auto-play hold the Auto control runs                                 |
+| `packages/genshin-world/src/services/dialogue/getTalkRevealedLength.ts`      | How much of a line is written out, a space taking no time                                         |
+| `packages/genshin-world/src/components/Dialogue/Talk/Index.vue`              | A talk run over the world: the player filled in, the reveal, the keys                             |
+| `packages/genshin-world/src/components/World/Session/Index.vue`              | Mounts the talk over the world while its screen is open                                           |
+| `packages/genshin-interface/src/components/DialogueScreen/Index.vue`         | The speaker's name and title, and the line or a narration, with the replies handed to the choices |
+| `packages/genshin-interface/src/components/DialogueScreen/Choices/Index.vue` | The replies down the right, each beside its mark, the one F would choose lit                      |
+| `packages/genshin-interface/src/models/DialogueChoiceIcon.ts`                | The marks a reply is drawn beside                                                                 |
+| `packages/genshin-interface/src/services/DialogueChoiceIconPathMap.ts`       | Each mark's traced path                                                                           |
+| `scripts/src/services/genshinText/readTalk.ts`                               | A talk read from the dialog table: replies, speakers, titles, narration                           |
+| `packages/genshin-world/src/models/world/Resident.ts`                        | A resident placed in a region's data, and the talk F begins with them                             |
+| `scripts/src/services/genshinText/mapNpcStandingTalkIds.ts`                  | Each NPC's standing talk, picked from the talk table                                              |
+| `scripts/src/services/genshinText/skipWordlessTalkLines.ts`                  | A talk with its wordless lines skipped, or none where that cannot be done                         |
+| `scripts/src/services/genshinText/buildStandingTalks.ts`                     | `genshin:text standing-talks`: the residents' standing talks and their words                      |
+| `packages/genshin-world/src/services/resident/readStandingTalks.ts`          | The standing talks read from the hosted game data                                                 |
+| `packages/genshin-world/src/composables/useWorldTalks.ts`                    | The talks held by id, their words, a resident's prompt and the offers                             |
+| `packages/genshin-world/src/services/dialogue/getTalkOffers.ts`              | The quest talks open to a talk's characters, each with its quest's mark                           |
 
 ## Notes
 
 - **The reveal is timed word by word.** Three of Xinyan's lines in a public recording at 60 frames a second each write a character every 1.79 to 1.81 frames, 30 milliseconds. The time each word's first character appears fits a line through the characters it follows three times as closely when the spaces are left uncounted, so a space takes no time. Each character appears whole in one frame, with no fade of its own; the line's first word comes in under the band's own fade. The recording is the PlayStation client's, its prompts on the square and cross buttons, and the PC's rate is taken to be the same, which the roadmap's manual verification list asks. The 720 high recording the screen is placed by shows its lines whole in their first frame, so the reveal could not be read there.
-- **The screen's place and colour are read off one frame.** The speaker's name is gold `#ffc700` (`packages/genshin-interface/src/components/DialogueScreen/Index.vue`), the brightest saturated pixel of its letters. The replies are dark pills 45 high and 15 apart, the first at 1275 by 698 of 1920 by 1080 (`packages/genshin-interface/src/components/DialogueScreen/Index.vue`, lines 139 to 143). The screen is drawn over the clean plate of its frame (Parity above), so the score covers the band's text and the pills over the game's own scene, and the band has no gradient, since the game's scene under its line is not darkened.
+- **The screen's place and colour are read off one frame.** The speaker's name is gold `#ffc700` (`packages/genshin-interface/src/components/DialogueScreen/Index.vue`), the brightest saturated pixel of its letters. The replies are dark pills 45 high and 15 apart, the first at 1275 by 698 of 1920 by 1080 (`packages/genshin-interface/src/components/DialogueScreen/Choices/Index.vue`, lines 37 to 41). The screen is drawn over the clean plate of its frame (Parity above), so the score covers the band's text and the pills over the game's own scene, and the band has no gradient, since the game's scene under its line is not darkened.
 - **A title is the manual text map's, not the dialog's.** The dialog table's own "talkTitleTextMapHash" resolves to no text in `{data-root}/genshin-parity/text/TextMap/TextMapEN.json` for most of its 203,908 entries, eleven resolving there (1730881339 reads "Donna"), though nine of its first 50,000 resolve in `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`, while the manual text map's "NPC_TITLE_1419" and "NPC_TITLE_15241" both read "Waitress, Good Hunter", the title over Sara's line in the recording (`{data-root}/genshin-parity/text/ExcelBinOutput/ManualTextMapConfigData.json`, "NPC_TITLE_1419" and "NPC_TITLE_15241"; `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json` line 185460; `{data-root}/genshin-parity/text/TextMap/TextMapEN.json` line 122209). So a speaker's title is looked up by their character id there, and a character with no such key, Paimon among them, has none.
 - **Only a character's line names its speaker.** The dialog table also holds lines a gadget or the Traveler's twin speaks ("TALK_ROLE_GADGET", "TALK_ROLE_MATE_AVATAR", `{data-root}/genshin-parity/text/ExcelBinOutput/DialogExcelConfigData.json`), whose role ids the character table does not hold either, so the reader would give such a line no speaker and the screen would draw it as a narration. None of the carried quests' talks holds one, so it waits until a carried quest's talk does.
 - **The Confirm prompt is not drawn.** The frame shows a controller's X mark and the word Confirm bottom right. The keyboard client's key for it is the reader's call.

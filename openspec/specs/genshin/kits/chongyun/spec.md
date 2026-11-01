@@ -109,8 +109,8 @@ From constellation 1, Ice Unleashed SHALL add blades; from constellation 2, Atmo
 #### Scenario: Constellation 2 shortens Atmospheric Revolution
 
 - **GIVEN** Chongyun is at constellation 2 and his frost field stands
-- **WHEN** Atmospheric Revolution is cast within the frost field
-- **THEN** its cooldown is cut
+- **WHEN** a skill or burst is cast while its caster stands within the frost field
+- **THEN** its cooldown is cut, whichever character casts it
 
 #### Scenario: Constellation 4 gives energy from Cryo hits
 
@@ -123,7 +123,3 @@ From constellation 1, Ice Unleashed SHALL add blades; from constellation 2, Atmo
 - **GIVEN** Chongyun is at constellation 6
 - **WHEN** Cloud-Parting Star casts its blades
 - **THEN** a fourth blade joins them with its own DMG Bonus, a provisional reach of 5 metres
-
-## Open
-
-- [ ] **The kit's Atmospheric Revolution cut is the infused wielder's, not the field's** — contradicted by `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json` line 190148, whose text cuts the skills and bursts cast within the Frost Field, as the requirement above states; the kit follows gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/chongyun/skill.go` lines 129 to 138, which cut the infused wielder's. The [design's Open list](design.md#open) says what settles it.

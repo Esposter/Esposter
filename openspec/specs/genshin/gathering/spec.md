@@ -118,6 +118,12 @@ An ore SHALL break once the poise its landed hits deal reaches its requirement f
 - **WHEN** the hit is dealt
 - **THEN** the ore takes its poise as a blunt hit (where Geo damage is blunt)
 
+#### Scenario: A Geo infusion does not blunt an attack the wiki does not list as blunt
+
+- **GIVEN** a Pyro character's normal attack, which is not blunt, is infused with Geo and lands on an ore
+- **WHEN** the hit is dealt
+- **THEN** the ore takes its poise as a melee hit or none, since the infused hit keeps the flag its record gives it
+
 #### Scenario: Converted poise from an infusion does not reach an ore
 
 - **GIVEN** a hit's damage has been converted by an infusion

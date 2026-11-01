@@ -65,6 +65,9 @@ stateDiagram-v2
 | `packages/genshin-world/src/models/expedition/ExpeditionBonus.ts`                 | A bonus row: the level it names and its chance                                                                                          |
 | `packages/genshin-world/src/components/Expedition/Screen/Index.vue`               | The expedition screen's world wrapper over Mondstadt's slice                                                                            |
 | `packages/genshin-interface/src/components/ExpeditionScreen/Index.vue`            | The expedition screen's layout, drawn from the public clip (`{data-root}/genshin-parity/captures/yt-fxIjhlV3vUA-expedition-screen.mp4`) |
+| `packages/genshin-interface/src/components/ExpeditionScreen/Detail/Index.vue`     | The picked place's panel: its rewards, its durations and the hours picked                                                               |
+| `packages/genshin-interface/src/components/ExpeditionScreen/Picker/Index.vue`     | The character picker a send opens, for the place and the hours picked                                                                   |
+| `packages/genshin-interface/src/components/ExpeditionScreen/Action/Index.vue`     | The picked place's button: a send opens the picker, a claim or a recall acts at once                                                    |
 
 ## Sources
 

@@ -25,7 +25,7 @@ stateDiagram-v2
 - **One screen at a time.** Over a screen, every other screen's shortcut waits; the Paimon menu's entries are the one way from a screen to another, and they replace the menu with the screen chosen (`packages/genshin-world/src/services/screen/getNextScreenKind.ts`).
 - **A talk stays open.** Over a talk, every key waits, Escape and a pad's Start among them; only the talk's own end sets the world back (`packages/genshin-world/src/services/screen/getNextScreenKind.ts`). A talk is begun from the world by F on a resident, as the [dialogue](../dialogue/design.md) page describes.
 
-The rule is read only while the world is shown (`packages/genshin-world/src/components/World/Session/Index.vue`, which calls it only while the world is not paused), so nothing opens under the opening that covers it.
+The rule is read only while the world is shown (`packages/genshin-world/src/composables/useWorldFrame.ts`, which calls it only while the world is not paused), so nothing opens under the opening that covers it.
 
 ## What a screen does to the world
 
@@ -71,6 +71,8 @@ A talk is none of these: `MenuScreen` draws nothing for it, and the world screen
 | `packages/genshin-world/src/composables/useWorldFrame.ts`                | reads the input once a frame and picks the screen it moves to                                   |
 | `packages/genshin-world/src/components/Menu/Screen/Index.vue`            | draws the open screen: the Paimon menu, a built screen's slot or a placeholder                  |
 | `packages/genshin-world/src/components/Menu/Settings/Index.vue`          | the settings: their tabs and the Graphics and Audio tabs' rows, held until the world opens them |
+| `packages/genshin-world/src/components/Menu/Settings/Tabs/Index.vue`     | the settings' tabs, each named in the game's words                                              |
+| `packages/genshin-world/src/components/Menu/Settings/Row/Index.vue`      | one settings row: its label, the slider or choice it draws, and its options list when open      |
 | `packages/genshin-world/src/components/Menu/Placeholder/Index.vue`       | an unbuilt screen's title and way back                                                          |
 
 ## Sources

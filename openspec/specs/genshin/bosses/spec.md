@@ -1,18 +1,18 @@
 ## Purpose
 
-The game's bosses as pure rules in genshin-world. A normal boss stays defeated until its Trounce Blossom is claimed and comes back five seconds after the claim. A week's weekly-boss claims are counted from the Monday 04:00 reset on the server's clock, the count pricing each claim 30 resin for the first three and 60 after. The fights, the blossom's offer and the boss's rewards are the proposal's still. The rules are built as pure services that the world calls: the enemies' respawn check reads the boss rule, and the claim composable reads the weekly count (`packages/genshin-world/src/services/bosses/computeBossRespawnTime.ts`, `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`).
+The game's bosses as pure rules in genshin-world. A normal boss stays defeated until its Trounce Blossom is claimed or a teleport lands outside its area, and comes back five seconds after the claim. A week's weekly-boss claims are counted from the Monday 04:00 reset on the server's clock, the count pricing each claim 30 resin for the first three and 60 after. The fights, the blossom's offer and the boss's rewards are the proposal's still. The rules are built as pure services that the world calls: the enemies' respawn check reads the boss rule, and the claim composable reads the weekly count (`packages/genshin-world/src/services/bosses/computeBossRespawnTime.ts`, `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`).
 
 ## Requirements
 
-### Requirement: A normal boss stays defeated until its blossom is claimed
+### Requirement: A normal boss stays defeated until its blossom is claimed or a teleport leaves its area
 
-A normal boss SHALL stay defeated until its Trounce Blossom is claimed. The wiki's Normal Boss page says an unclaimed blossom keeps the boss defeated unless the player teleports out of the area (`{data-root}/cache/genshin-wiki/Page_Normal_Boss.json`, wikitext line 16).
+A normal boss SHALL stay defeated until its Trounce Blossom is claimed or the player teleports out of its area after the defeat. The wiki's Normal Boss page says an unclaimed blossom keeps the boss defeated unless the player teleports out of the area (`{data-root}/cache/genshin-wiki/Page_Normal_Boss.json`, wikitext line 16).
 
 #### Scenario: Unclaimed boss stays defeated
 
 - **GIVEN** a normal boss is defeated and its Trounce Blossom is not claimed
 - **WHEN** time passes
-- **THEN** the boss stays defeated until the player teleports away
+- **THEN** the boss stays defeated until the player teleports out of its area
 
 ### Requirement: A normal boss returns five seconds after its blossom is claimed
 

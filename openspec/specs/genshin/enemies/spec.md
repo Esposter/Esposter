@@ -281,16 +281,16 @@ A reload of the page SHALL bring back a defeated enemy only once its saved respa
 - **THEN** the enemy is not in the world
 - **AND** it is back in the world once its respawn time passes
 
-### Requirement: A page reload brings a boss's camp back only by the return its saved defeat, blossom and last teleport give
+### Requirement: A page reload brings a boss's camp back only by the return its saved defeat, blossom and teleports give
 
-A reload of the page SHALL bring back a boss's camp only by the return its saved defeat, blossom and last teleport give.
+A reload of the page SHALL bring back a boss's camp only by the return its saved defeat, blossom and the teleports into each area give.
 
-#### Scenario: A boss stays down after a reload until its blossom is claimed or the player teleports
+#### Scenario: A boss stays down after a reload until its blossom is claimed or the player teleports out of its area
 
 - **GIVEN** a boss defeated with its Trounce Blossom unclaimed
 - **WHEN** the page is reloaded
 - **THEN** the boss is not in the world
-- **AND** it is back in the world at the first teleport after its defeat
+- **AND** it is back in the world at the first teleport that lands outside its area after its defeat
 
 ### Requirement: Each enemy is drawn as a capsule tinted by its state
 
@@ -315,5 +315,4 @@ Each enemy SHALL be tinted white with a small flash at its middle for a moment a
 
 ## Open
 
-- [ ] **A boss stays down across a reload until its Trounce Blossom is claimed or the first teleport after its defeat** — contradicted by `{data-root}/cache/genshin-wiki/Page_Normal_Boss.json` wikitext line 16: the boss stays down "unless the player teleports out of the area", where the page's value is the first teleport after its defeat, which `packages/genshin-world/src/composables/useWorldMap.ts` line 266 emits for every jump.
 - [ ] **The Unusual Hilichurl gives 18 Adventure EXP a defeat** — no kind to give it yet: the wiki's Adventure EXP page gives each defeated Unusual Hilichurl 18 AR EXP (`{data-root}/cache/genshin-wiki/Page_Adventure_EXP.json` wikitext line 77), but no region places it, and `{data-root}/genshin-parity/text/ExcelBinOutput/MonsterExcelConfigData.json` has its one row, id 21011501 ("Hili_Wei_NoWeapon_01"), whose kill drop 22010010 is in no table the dump holds, so the 18 rests on the wiki alone. A recording of a defeat, or a reward table giving the 18, would settle it.

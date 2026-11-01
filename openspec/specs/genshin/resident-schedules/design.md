@@ -44,20 +44,20 @@ The record's NPCs are filled from the dump's NPC births, which give one place fo
 
 ## Key files
 
-| File                                                                       | Role                                                                              |
-| :------------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/world/Resident.ts`                      | A resident with an optional day spot, night spot and explicit absence at night    |
-| `packages/genshin-world/src/models/world/ResidentSpot.ts`                  | One spot: its ground point and the way it faces                                   |
-| `packages/genshin-world/src/services/resident/computeResidentSpot.ts`      | The spot the clock gives at a minute, or none                                     |
-| `packages/genshin-world/src/services/resident/computeShownResidentSpot.ts` | The spot shown, held while the resident is in view across a change                |
-| `packages/genshin-world/src/composables/useResidentSpots.ts`               | The shown spot of each resident, read each frame from the clock and the camera    |
-| `packages/genshin-world/src/services/shop/checkIsVendorHourOpen.ts`        | The hours a city vendor's shop is open, from the wiki's pages                     |
-| `packages/genshin-world/src/components/World/Windrise/Index.vue`           | Holds the residents' spots and exposes them to the world screen                   |
-| `packages/genshin-world/src/components/World/Session/Index.vue`            | Lists the residents at their shown spot as talk prompts                           |
-| `packages/genshin-world/src/services/quest/findQuestTargetPosition.ts`     | A quest target resident's shown spot, for the navigation marker                   |
-| `scripts/src/services/genshinAssets/residents/writeResidents.ts`           | `genshin:assets residents`, joining the record's NPCs to names, talks and regions |
-| `scripts/src/services/genshinAssets/residents/joinResidents.ts`            | The join: one resident per NPC per region, and what was left out                  |
-| `packages/genshin-world/src/data/regions/<region>.json`                    | Each fitted region's residents, written by the generator beside its landmarks     |
+| File                                                                       | Role                                                                                 |
+| :------------------------------------------------------------------------- | :----------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/world/Resident.ts`                      | A resident with an optional day spot, night spot and explicit absence at night       |
+| `packages/genshin-world/src/models/world/ResidentSpot.ts`                  | One spot: its ground point and the way it faces                                      |
+| `packages/genshin-world/src/services/resident/computeResidentSpot.ts`      | The spot the clock gives at a minute, or none                                        |
+| `packages/genshin-world/src/services/resident/computeShownResidentSpot.ts` | The spot shown, held while the resident is in view across a change                   |
+| `packages/genshin-world/src/composables/useResidentSpots.ts`               | The shown spot of each resident, read each frame from the clock and the camera       |
+| `packages/genshin-world/src/services/shop/checkIsVendorHourOpen.ts`        | The hours a city vendor's shop is open, from the wiki's pages                        |
+| `packages/genshin-world/src/components/World/Windrise/Index.vue`           | Holds the residents' spots and exposes them to the world screen                      |
+| `packages/genshin-world/src/components/World/Session/Index.vue`            | Hands the residents at their shown spot to the HUD, which lists them as talk prompts |
+| `packages/genshin-world/src/services/quest/findQuestTargetPosition.ts`     | A quest target resident's shown spot, for the navigation marker                      |
+| `scripts/src/services/genshinAssets/residents/writeResidents.ts`           | `genshin:assets residents`, joining the record's NPCs to names, talks and regions    |
+| `scripts/src/services/genshinAssets/residents/joinResidents.ts`            | The join: one resident per NPC per region, and what was left out                     |
+| `packages/genshin-world/src/data/regions/<region>.json`                    | Each fitted region's residents, written by the generator beside its landmarks        |
 
 ## Sources
 
