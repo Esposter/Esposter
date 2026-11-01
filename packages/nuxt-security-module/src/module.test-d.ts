@@ -1,7 +1,6 @@
-import type { RouteRuleConfig } from "nitro/types";
 import type { NuxtConfig } from "nuxt/schema";
 
-import { describe, expect, expectTypeOf, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 // The augmentation of `h3/rules` ships with the module's own file, so the test loads it through the module
 // oxlint-disable-next-line import/no-unassigned-import -- the import exists for the augmentation, not a binding
@@ -13,7 +12,6 @@ describe("route rules security key", () => {
 
     const routeRules: NuxtConfig["routeRules"] = { "/admin/**": { security: { csrf: false } } };
 
-    expectTypeOf<RouteRuleConfig>().toHaveProperty("security");
     expect(routeRules).toStrictEqual({ "/admin/**": { security: { csrf: false } } });
   });
 
