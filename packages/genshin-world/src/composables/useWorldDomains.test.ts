@@ -15,7 +15,6 @@ import { EnemyFamily } from "#src/models/enemy/EnemyFamily";
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { PoiseType } from "#src/models/enemy/PoiseType";
-import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { STORMTERROR_FINALE_ATTACK } from "#src/services/bosses/stormterror";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -105,13 +104,14 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
   };
   const events = createWorldEvents();
   const jumpTo = vi.fn<(pose: WorldJumpPose) => void>();
-  const screenKind = ref(ScreenKind.AdventurerHandbook);
+  const closeScreen = vi.fn<() => void>();
   const domains = useWorldDomains({
     adventureExp: ref(0),
     adventureRankTables: { levels: [], locks: [], worldLevelRows: [] },
     artifactMainAffixPools: [],
     artifactRarityDataMap: new Map(),
     clearedDomainIds: shallowRef(new Set<string>()),
+    closeScreen,
     completedMainQuestIds: shallowRef(new Set<string>()),
     domainChallengeLevels,
     events,
@@ -128,7 +128,6 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
     rank: ref(40),
     reliquaryPieceEntryMap: new Map(),
     reliquarySets: [],
-    screenKind,
     setInventory: vi.fn<() => void>(),
     setWallet: vi.fn<() => void>(),
     unlockedLandmarks: ref<Landmark[]>([createDomainEntrance()]),
@@ -136,7 +135,7 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
     weaponDataMap: new Map(),
     worldNow: clock.worldNow,
   });
-  return { domains, events, jumpTo, screenKind };
+  return { closeScreen, domains, events, jumpTo };
 };
 
 describe(useWorldDomains, () => {
@@ -202,21 +201,20 @@ describe(useWorldDomains, () => {
   test("a weekly boss challenged from the handbook opens the world once its fight has started", async () => {
     expect.hasAssertions();
 
-    const { domains, screenKind } = createDomains();
+    const { closeScreen, domains } = createDomains();
     await domains.challengeWeeklyBoss(domainEntrance);
 
-    expect(screenKind.value).toBe(ScreenKind.World);
+    expect(closeScreen).toHaveBeenCalledTimes(1);
   });
 
   test("a level entered from a domain's screen leaves the screen for the world", async () => {
     expect.hasAssertions();
 
-    const { domains, screenKind } = createDomains();
+    const { closeScreen, domains } = createDomains();
     await domains.quickChallengeDomain(domainEntrance, 40, true);
-    screenKind.value = ScreenKind.Domain;
     domains.enterDomainLevel(1006);
 
-    expect(screenKind.value).toBe(ScreenKind.World);
+    expect(closeScreen).toHaveBeenCalledTimes(1);
   });
 
   test("leaving a domain fades back to its entrance", async () => {

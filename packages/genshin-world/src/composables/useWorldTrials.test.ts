@@ -18,6 +18,7 @@ import { toCharacterTrialSave } from "#src/services/save/toCharacterTrialSave";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS } from "#src/services/trial/constants";
 import { takeOne } from "@esposter/shared";
+import { Object3D } from "three";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { shallowRef } from "vue";
 
@@ -65,12 +66,16 @@ describe(useWorldTrials, () => {
   // The world's inputs the trials read and write, each a fresh one a test can keep a hold of
   const createDependencies = () => ({
     artifactRarityDataMap: new Map<number, ArtifactRarityData>(),
+    characterBody: new Object3D(),
     characterDataMap: new Map([[CHARACTER_ID, { ascensionPhases: [{ attributeLines: [], maxLevel: 90 }] }]]),
     characterIdKitMap: shallowRef<ReadonlyMap<number, Kit>>(new Map([[OWNED_CHARACTER_ID, OWNED_KIT]])),
     characters: shallowRef<Character[]>([]),
     claimedStageIds: new Set<number>(),
+    closeScreen: vi.fn<() => void>(),
     gameDataBaseUrl: "https://example.test/game-data/",
+    getGroundHeight: () => 0,
     inventory: shallowRef(EMPTY_INVENTORY),
+    jumpTo: vi.fn<(pose: WorldJumpPose) => void>(),
     materialDataMap: new Map(),
     nameText: {},
     party: createWorldParty(createParty([OWNED_CHARACTER_ID])),
@@ -111,6 +116,19 @@ describe(useWorldTrials, () => {
     await enterTrial(trial, RETURN_POSE);
     stepTrial(TIMED_OUT_STEP);
     expect(setWallet).toHaveBeenCalledExactlyOnceWith(reward);
+  });
+
+  test("a trial opened from the Wish screen leaves the screen and lands on its stand-in arena", async () => {
+    expect.hasAssertions();
+    const closeScreen = vi.fn<() => void>();
+    const jumpTo = vi.fn<(pose: WorldJumpPose) => void>();
+    const { openTrial, trialArena, trials } = setUpTrials({ closeScreen, jumpTo });
+    await flushReads();
+
+    await openTrial(takeOne(trials.value));
+    expect(trialArena.value).toBeDefined();
+    expect(closeScreen).toHaveBeenCalledTimes(1);
+    expect(jumpTo).toHaveBeenCalledTimes(1);
   });
 
   test("a trial takes the player's roster for its fight, and the roster is given back when it ends", async () => {

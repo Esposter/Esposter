@@ -13,13 +13,16 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { WorldChallengeStep } from "#src/models/world/WorldChallengeStep";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { CharacterTrialTables } from "#src/services/trial/readCharacterTrials";
+import type { Object3D } from "three";
 import type { Ref } from "vue";
 
 import { DomainChallengeOutcome } from "#src/models/domains/DomainChallengeOutcome";
 import { getPlayedTalentLevels } from "#src/services/character/getPlayedTalentLevels";
 import { computeDomainChallengeElapsed } from "#src/services/domains/computeDomainChallengeElapsed";
+import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import { resolveDomainChallenge } from "#src/services/domains/resolveDomainChallenge";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
+import { computeStandingPose } from "#src/services/map/computeStandingPose";
 import { createParty } from "#src/services/party/createParty";
 import { createWorldParty } from "#src/services/party/createWorldParty";
 import { claimTrialStageReward } from "#src/services/trial/claimTrialStageReward";
@@ -35,12 +38,16 @@ import { computed, shallowRef } from "vue";
 // Reward, and either end gives the player's roster back as it was
 export const useWorldTrials = ({
   artifactRarityDataMap,
+  characterBody,
   characterDataMap,
   characterIdKitMap,
   characters,
   claimedStageIds,
+  closeScreen,
   gameDataBaseUrl,
+  getGroundHeight,
   inventory,
+  jumpTo,
   materialDataMap,
   nameText,
   party,
@@ -50,12 +57,16 @@ export const useWorldTrials = ({
   weaponDataMap,
 }: {
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
+  characterBody: Object3D;
   characterDataMap: ReadonlyMap<number, Pick<CharacterData, "ascensionPhases">>;
   characterIdKitMap: Ref<ReadonlyMap<number, Kit>>;
   characters: Ref<Character[]>;
   claimedStageIds: ReadonlySet<number>;
+  closeScreen: () => void;
   gameDataBaseUrl: string;
+  getGroundHeight: (x: number, z: number) => number;
   inventory: Ref<Inventory>;
+  jumpTo: (pose: WorldJumpPose) => void;
   materialDataMap: ReadonlyMap<number, MaterialData>;
   nameText: Readonly<Record<string, string>>;
   party: Party;
@@ -191,5 +202,31 @@ export const useWorldTrials = ({
     return arena.returnPose;
   };
 
-  return { enterTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, trials, trialSecondsRemaining };
+  // A banner's trial, opened from the Wish screen: the trial takes the player's roster and the world opens on its stand-in arena,
+  // East of where the player stands (PROVISIONAL until the trial's scene is read)
+  const openTrial = async (trial: Trial) => {
+    const returnPose = computeStandingPose(
+      { position: characterBody.position, yaw: characterBody.rotation.y },
+      getGroundHeight(characterBody.position.x, characterBody.position.z),
+    );
+    if (!(await enterTrial(trial, returnPose))) return;
+    closeScreen();
+    jumpTo(
+      computeDomainScenePose({
+        heightOffset: 0,
+        position: { x: characterBody.position.x, z: characterBody.position.z },
+        rotation: characterBody.rotation.y,
+      }),
+    );
+  };
+  return {
+    enterTrial,
+    openTrial,
+    playerRoster,
+    stepTrial,
+    trialArena,
+    trialClaimedStageIds,
+    trials,
+    trialSecondsRemaining,
+  };
 };

@@ -5,7 +5,6 @@ import type { ReputationProgress } from "#src/models/reputation/ReputationProgre
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
-import type { Trial } from "#src/models/trial/Trial";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
 import type { TresCanvasInstance } from "@tresjs/core";
@@ -98,6 +97,7 @@ import { useWorldReputationRequest } from "#src/composables/useWorldReputationRe
 import { useWorldRestorativePower } from "#src/composables/useWorldRestorativePower";
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
+import { useWorldScreen } from "#src/composables/useWorldScreen";
 import { useWorldScreenBehaviour } from "#src/composables/useWorldScreenBehaviour";
 import { useWorldShortcutWheel } from "#src/composables/useWorldShortcutWheel";
 import { useWorldShrines } from "#src/composables/useWorldShrines";
@@ -110,11 +110,9 @@ import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossom
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
-import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import { HOME_REALM_GROUND_HEIGHT } from "#src/services/home/constants";
 import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
-import { computeStandingPose } from "#src/services/map/computeStandingPose";
 import { MAP_REFERENCE_ZOOM_METRES, TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { findAreaAt } from "#src/services/map/findAreaAt";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
@@ -223,7 +221,7 @@ const witness = inject(SceneWitnessKey, null);
 const input = createInput(window);
 const inputState = input.readInput(0);
 // What is open over the world, one screen at a time, and what it does to the world under it
-const screenKind = ref(ScreenKind.World);
+const { closeScreen, screenKind } = useWorldScreen();
 // The systems the save holds, read once as the world is made, so the world starts where the player left it. A bag's
 // Names are the game's own in the reader's language, and its weapons and materials are read from the game's tables, so
 // All of them arrive first
@@ -642,15 +640,19 @@ const {
   wildlifePlaces,
 });
 // The character trials: a trial takes the player's roster for its fight, and the claims its first clears make are saved
-const { enterTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, trials, trialSecondsRemaining } =
+const { openTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, trials, trialSecondsRemaining } =
   useWorldTrials({
     artifactRarityDataMap,
+    characterBody,
     characterDataMap: statTables.characterDataMap,
     characterIdKitMap,
     characters,
     claimedStageIds: savedState.characterTrialClaimedStageIds,
+    closeScreen,
     gameDataBaseUrl,
+    getGroundHeight,
     inventory,
+    jumpTo: (pose) => jumpTo(pose),
     materialDataMap,
     nameText,
     party,
@@ -1040,6 +1042,7 @@ const {
   artifactMainAffixPools,
   artifactRarityDataMap,
   clearedDomainIds,
+  closeScreen,
   completedMainQuestIds,
   domainChallengeLevels,
   events,
@@ -1056,7 +1059,6 @@ const {
   rank,
   reliquaryPieceEntryMap,
   reliquarySets,
-  screenKind,
   setInventory,
   setWallet,
   unlockedLandmarks,
@@ -1160,23 +1162,6 @@ const pressInteractable = (id: string) => {
   selectInteractable(id);
   tapActionKey(input, InputAction.Interact);
 };
-// A banner's trial, opened from the Wish screen: the trial takes the player's roster and the world opens on its stand-in arena,
-// East of where the player stands (PROVISIONAL until the trial's scene is read)
-const openTrial = async (trial: Trial) => {
-  const returnPose = computeStandingPose(
-    { position: characterBody.position, yaw: characterBody.rotation.y },
-    getGroundHeight(characterBody.position.x, characterBody.position.z),
-  );
-  if (!(await enterTrial(trial, returnPose))) return;
-  screenKind.value = ScreenKind.World;
-  jumpTo(
-    computeDomainScenePose({
-      heightOffset: 0,
-      position: { x: characterBody.position.x, z: characterBody.position.z },
-      rotation: characterBody.rotation.y,
-    }),
-  );
-};
 // A quest's talk chosen on a standing talk's opening line runs in its place, and offers no duel of its own
 const beginTalk = (talkId: string) => {
   talk.value = talkMap.value.get(talkId);
@@ -1185,7 +1170,7 @@ const beginTalk = (talkId: string) => {
 // A talk that ends is a talk-to for the quests in progress, and the world is back under the Traveler
 const endTalk = () => {
   if (talk.value) events.emit("questEvent", { kind: QuestObjectiveKind.TalkTo, targetId: talk.value.id });
-  screenKind.value = ScreenKind.World;
+  closeScreen();
 };
 const character = useTemplateRef("character");
 // Entering combat returns the camera to its default distance, keeping the look it has
@@ -1631,10 +1616,10 @@ useWorldSaveSync({
           :now="worldNow"
           :subarea-labels
           :wallet
-          @close="screenKind = ScreenKind.World"
+          @close="closeScreen()"
           @jump="
             (pose) => {
-              screenKind = ScreenKind.World;
+              closeScreen();
               jumpTo(pose);
             }
           "
@@ -1647,7 +1632,7 @@ useWorldSaveSync({
           :game-text
           :progress-map="achievementProgressMap"
           :text-map="achievementData.textMap"
-          @close="screenKind = ScreenKind.World"
+          @close="closeScreen()"
         />
       </template>
       <template v-if="archiveData" #[ScreenKind.Archive]>
@@ -1666,7 +1651,7 @@ useWorldSaveSync({
           :section-entries-map="archiveData.sectionEntriesMap"
           :text-map="archiveData.textMap"
           :weapon-data-map="statTables.weaponDataMap"
-          @close="screenKind = ScreenKind.World"
+          @close="closeScreen()"
           @read-book="(entryId) => readBook(entryId)"
         />
       </template>
@@ -1684,7 +1669,7 @@ useWorldSaveSync({
           :text-map="mailData.textMap"
           @claim="(mail) => claimMail(mail)"
           @claim-all="claimAllMails()"
-          @close="screenKind = ScreenKind.World"
+          @close="closeScreen()"
           @delete-gift="(mail) => deleteGiftMail(mail)"
           @delete-read="deleteReadMails()"
           @read="(mail) => markMailRead(mail)"
@@ -1701,7 +1686,7 @@ useWorldSaveSync({
           :quests="questsInProgress"
           :text-map="questTextMap"
           :tracked-quest-id
-          @close="screenKind = ScreenKind.World"
+          @close="closeScreen()"
           @navigate="(questId) => (trackedQuestId = questId)"
         />
       </template>
@@ -1725,7 +1710,7 @@ useWorldSaveSync({
           @challenge="(landmark) => challengeWeeklyBoss(landmark)"
           @claim-commission="(commissionId) => claimCommission(commissionId)"
           @claim-first-clear="(entryId) => claimWeeklyBossFirstClearReward(entryId)"
-          @close="screenKind = ScreenKind.World"
+          @close="closeScreen()"
           @use-long-term-encounter-points="convertLongTermPoint()"
         />
       </template>
@@ -1752,7 +1737,7 @@ useWorldSaveSync({
           :talent-upgrade-map
           :traveler-bonus-lines
           :traveler-element
-          @close="screenKind = ScreenKind.World"
+          @close="closeScreen()"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
         >
           <template #scene="{ element, tab }">
@@ -1779,7 +1764,7 @@ useWorldSaveSync({
           :material-data-map
           :names="nameText"
           :wallet
-          @close="screenKind = ScreenKind.World"
+          @close="closeScreen()"
           @destroy="(destruction) => applyDestruction(destruction)"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
           @use="(entryId) => useBagEntry(entryId)"
@@ -1801,7 +1786,7 @@ useWorldSaveSync({
           :wish-schedule
           :stella-fortuna-name-text-id-map
           :trials
-          @close="screenKind = ScreenKind.World"
+          @close="closeScreen()"
           @trial="(trial) => openTrial(trial)"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
         />
@@ -1822,7 +1807,7 @@ useWorldSaveSync({
           :rotation="paimonsBargainsRotation"
           :wallet
           :weapon-data-map="statTables.weaponDataMap"
-          @close="screenKind = ScreenKind.World"
+          @close="closeScreen()"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
           @update:wallet="(nextWallet) => setWallet(nextWallet)"
         />
@@ -1832,11 +1817,11 @@ useWorldSaveSync({
         <MenuTime
           :clock-minutes="windrise.gameClock.minutes"
           :game-text
-          @close="screenKind = ScreenKind.World"
+          @close="closeScreen()"
           @confirm="
             (minutes) => {
               if (windrise) windrise.gameClock.minutes = minutes;
-              screenKind = ScreenKind.World;
+              closeScreen();
             }
           "
         />
@@ -1847,7 +1832,7 @@ useWorldSaveSync({
           :default-quality-tier="qualityTier"
           :game-text
           :language
-          @close="screenKind = ScreenKind.World"
+          @close="closeScreen()"
         />
       </template>
       <template #[ScreenKind.PartySetup]>
@@ -1858,7 +1843,7 @@ useWorldSaveSync({
           :name-text
           :party
           :traveler-name="savedState.travelerName"
-          @close="screenKind = ScreenKind.World"
+          @close="closeScreen()"
         />
       </template>
     </MenuScreen>
@@ -1868,7 +1853,7 @@ useWorldSaveSync({
       :title="gameText[GameTextKey.PlayerDieNone]"
       @revive="
         reviveFallenParty();
-        screenKind = ScreenKind.World;
+        closeScreen();
       "
     />
     <DialogueTalk
@@ -1897,7 +1882,7 @@ useWorldSaveSync({
       :progress="reputation"
       :reputation="reputationCity"
       @accept="acceptReputationOffer()"
-      @close="screenKind = ScreenKind.World"
+      @close="closeScreen()"
     />
     <GcgSession
       v-if="screenKind === ScreenKind.GcgDuel && gcgGameId !== undefined"
@@ -1909,7 +1894,7 @@ useWorldSaveSync({
         (won) => {
           payCardGameReward(gcgGameId, won);
           gcgGameId = undefined;
-          screenKind = ScreenKind.World;
+          closeScreen();
         }
       "
     />
@@ -1923,7 +1908,7 @@ useWorldSaveSync({
       :get-now="getWorldNow"
       :party
       :statue-count="resonatedRegionIds.length"
-      @close="screenKind = ScreenKind.World"
+      @close="closeScreen()"
       @worship="screenKind = ScreenKind.Worship"
     />
     <StatueWorshipScreen
@@ -1934,7 +1919,7 @@ useWorldSaveSync({
       :progress="getRegionProgress(worshipRegionId)"
       @blessing="screenKind = ScreenKind.Blessing"
       @claim="claimWorship()"
-      @close="screenKind = ScreenKind.World"
+      @close="closeScreen()"
       @offer="offerWorship()"
     />
     <CookingScreen
@@ -1949,7 +1934,7 @@ useWorldSaveSync({
       :random="kitContext.random"
       :recipes="openCookingRecipes"
       :talent="cookingTalents[getActiveCharacterId(party)]"
-      @close="screenKind = ScreenKind.World"
+      @close="closeScreen()"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
     />
     <ProcessingScreen
@@ -1961,7 +1946,7 @@ useWorldSaveSync({
       :name-text
       :now="getWorldNow"
       :recipes="processingRecipes"
-      @close="screenKind = ScreenKind.World"
+      @close="closeScreen()"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
     />
     <FishingScreen v-if="screenKind === ScreenKind.Fishing" :view="castView" />
@@ -1970,11 +1955,11 @@ useWorldSaveSync({
       :game-text
       :is-in-domain="domainArena !== undefined"
       :levels="domainLevelRows"
-      @close="screenKind = ScreenKind.World"
+      @close="closeScreen()"
       @enter="(dungeonId) => enterDomainLevel(dungeonId)"
       @leave="
         leaveDomain();
-        screenKind = ScreenKind.World;
+        closeScreen();
       "
     />
     <CraftingScreen
@@ -1998,7 +1983,7 @@ useWorldSaveSync({
       :wallet
       :weapon-data-map="statTables.weaponDataMap"
       @achievement-events="(achievementEvents) => events.emit('achievementEvents', achievementEvents)"
-      @close="screenKind = ScreenKind.World"
+      @close="closeScreen()"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
       @update:wallet="(nextWallet) => setWallet(nextWallet)"
     />
@@ -2011,10 +1996,10 @@ useWorldSaveSync({
       @choose="
         (floorId, chamberId) => {
           enterAbyssChamber(floorId, chamberId);
-          screenKind = ScreenKind.World;
+          closeScreen();
         }
       "
-      @close="screenKind = ScreenKind.World"
+      @close="closeScreen()"
     />
     <SpiralAbyssBenediction
       v-if="abyssChoices"
@@ -2046,7 +2031,7 @@ useWorldSaveSync({
       :wallet
       :weapons="forgeWeapons"
       @achievement-events="(achievementEvents) => events.emit('achievementEvents', achievementEvents)"
-      @close="screenKind = ScreenKind.World"
+      @close="closeScreen()"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
       @update:wallet="(nextWallet) => setWallet(nextWallet)"
     />
@@ -2063,7 +2048,7 @@ useWorldSaveSync({
       :now="worldNow"
       :reputation-level="reputation.level"
       :wallet
-      @close="screenKind = ScreenKind.World"
+      @close="closeScreen()"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
       @update:wallet="(nextWallet) => setWallet(nextWallet)"
     />
@@ -2084,7 +2069,7 @@ useWorldSaveSync({
       :random="kitContext.random"
       :region-statue-progress-map
       :wallet
-      @close="screenKind = ScreenKind.World"
+      @close="closeScreen()"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
       @update:wallet="(nextWallet) => setWallet(nextWallet)"
     />
