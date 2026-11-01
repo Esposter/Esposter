@@ -71,6 +71,7 @@ A passive has no level. It is open where the character's ascension phase has rea
 
 ## Open
 
-- [ ] **The alternate sprint has one row and no level** — no source yet: the wiki pages cached here do not name it, and its skill row is not read.
+The alternate sprint's check is the [spec's](spec.md) open item.
+
 - [ ] **The Traveler's own form names only its normal attack, so the Anemo set is read** — no source yet: the skill depot's rows for the Traveler's forms are not read here, only the wiki's Anemo talents.
 - [ ] **Across the roster the passives open at phases 0, 1 and 4** — no source yet: the phase of the extra passives the cached talent pages list (Witch's Eve Rite, Moonsign Benediction and the like), and the Traveler's utility passive, which its pages do not type.
