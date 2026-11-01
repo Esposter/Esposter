@@ -1,5 +1,6 @@
+import { DXBC_MAGIC } from "#src/services/genshinAssets/materials/constants";
+
 // A DXBC container: its magic, then a 16 byte checksum, a version, and its total size in bytes
-const DXBC_MAGIC = Buffer.from("DXBC", "ascii");
 const DXBC_CHECKSUM_OFFSET = 4;
 const DXBC_CHECKSUM_LENGTH = 16;
 const DXBC_SIZE_OFFSET = 24;

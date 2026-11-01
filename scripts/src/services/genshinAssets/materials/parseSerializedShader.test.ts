@@ -1,35 +1,31 @@
+import { alignBytes } from "#src/services/genshinAssets/materials/alignBytes.test";
+import { createInt32 } from "#src/services/genshinAssets/materials/createInt32.test";
+import { createString } from "#src/services/genshinAssets/materials/createString.test";
 import { parseSerializedShader } from "#src/services/genshinAssets/materials/parseSerializedShader";
 import { describe, expect, test } from "vitest";
 
 // The fixture is written in the layout the parser reads, from synthetic values only, so no game bytes are in the repo
-const align = (bytes: Buffer): Buffer => Buffer.concat([bytes, Buffer.alloc((4 - (bytes.length % 4)) % 4)]);
-const int32 = (value: number): Buffer => {
-  const bytes = Buffer.alloc(4);
-  bytes.writeInt32LE(value);
-  return bytes;
-};
 const uint32 = (value: number): Buffer => {
   const bytes = Buffer.alloc(4);
   bytes.writeUInt32LE(value);
   return bytes;
 };
-const string = (value: string): Buffer => align(Buffer.concat([int32(value.length), Buffer.from(value)]));
-const list = (items: Buffer[]): Buffer => Buffer.concat([int32(items.length), ...items]);
+const list = (items: Buffer[]): Buffer => Buffer.concat([createInt32(items.length), ...items]);
 const uint32List = (values: number[]): Buffer => list(values.map((value) => uint32(value)));
 const uint16List = (values: number[]): Buffer => {
   const body = Buffer.alloc(values.length * 2);
   for (const [index, value] of values.entries()) body.writeUInt16LE(value, index * 2);
-  return align(Buffer.concat([int32(values.length), body]));
+  return alignBytes(Buffer.concat([createInt32(values.length), body]));
 };
-const uint8List = (bytes: Buffer): Buffer => align(Buffer.concat([int32(bytes.length), bytes]));
+const uint8List = (bytes: Buffer): Buffer => alignBytes(Buffer.concat([createInt32(bytes.length), bytes]));
 // A program's container is its magic and some bytes of the game's own, and a blob chunk is its entry count, each entry's
 // Offset and length, then each program's header and container
 const payload = (text: string): Buffer => Buffer.concat([Buffer.from("DXBC"), Buffer.from(text)]);
 const blobChunk = (programs: { code: Buffer; gpuProgramType: number }[]): Buffer => {
   const bodies = programs.map(({ code, gpuProgramType }) =>
     Buffer.concat([
-      int32(201_806_140),
-      int32(gpuProgramType),
+      createInt32(201_806_140),
+      createInt32(gpuProgramType),
       Buffer.alloc(12),
       Buffer.alloc(4),
       list([]),
@@ -39,11 +35,11 @@ const blobChunk = (programs: { code: Buffer; gpuProgramType: number }[]): Buffer
   );
   let offset = 4 + programs.length * 8;
   const entries = bodies.map((body) => {
-    const entry = Buffer.concat([int32(offset), int32(body.length)]);
+    const entry = Buffer.concat([createInt32(offset), createInt32(body.length)]);
     offset += body.length;
     return entry;
   });
-  return Buffer.concat([int32(programs.length), ...entries, ...bodies]);
+  return Buffer.concat([createInt32(programs.length), ...entries, ...bodies]);
 };
 
 describe(parseSerializedShader, () => {
@@ -57,14 +53,14 @@ describe(parseSerializedShader, () => {
       uint32(blobIndex),
       Buffer.alloc(4),
       Buffer.alloc(16),
-      int32(0),
-      int32(0),
+      createInt32(0),
+      createInt32(0),
       uint32(0),
       uint16List(keywordIndices),
       uint16List([]),
       Buffer.from([0, gpuProgramType, 0, 0]),
       Buffer.alloc(EMPTY_PARAMETER_LISTS_BYTES),
-      int32(0),
+      createInt32(0),
       Buffer.alloc(TRAILER_BYTES),
     ]);
   // A pass's trailer is one zero word or two, as the game writes it, and two is the usual one
@@ -75,9 +71,9 @@ describe(parseSerializedShader, () => {
     trailerWords: 1 | 2 = 2,
   ): Buffer =>
     Buffer.concat([
-      list(keywords.map(([keyword, index]) => Buffer.concat([string(keyword), int32(index)]))),
-      int32(0),
-      string(name),
+      list(keywords.map(([keyword, index]) => Buffer.concat([createString(keyword), createInt32(index)]))),
+      createInt32(0),
+      createString(name),
       Buffer.alloc(RENDER_STATE_BYTES - 4),
       uint32(0),
       list(stages.vertex),
@@ -87,11 +83,11 @@ describe(parseSerializedShader, () => {
       list([]),
       list([]),
       Buffer.alloc(4),
-      string(""),
-      string(""),
-      string(""),
+      createString(""),
+      createString(""),
+      createString(""),
       list([]),
-      ...Array.from({ length: trailerWords }, () => int32(0)),
+      ...Array.from({ length: trailerWords }, () => createInt32(0)),
     ]);
 
   test("reads a pass whose trailer is one word, so the next pass starts right after it", () => {
@@ -100,7 +96,7 @@ describe(parseSerializedShader, () => {
     const blob = blobChunk([{ code: payload("vertex-a"), gpuProgramType: 16 }]);
     const stages = { fragment: [], geometry: [], vertex: [subProgram(0, 16, [1])] };
     const shader = Buffer.concat([
-      string(""),
+      createString(""),
       list([]),
       list([
         Buffer.concat([
@@ -125,12 +121,12 @@ describe(parseSerializedShader, () => {
             ),
           ]),
           list([]),
-          int32(0),
+          createInt32(0),
         ]),
       ]),
-      string("miHoYo/Test"),
-      string(""),
-      string(""),
+      createString("miHoYo/Test"),
+      createString(""),
+      createString(""),
       list([]),
       Buffer.alloc(4),
       uint32List([4, 23]),
@@ -150,7 +146,7 @@ describe(parseSerializedShader, () => {
     const blob = blobChunk([{ code: payload("vertex-a"), gpuProgramType: 16 }]);
     const stages = { fragment: [], geometry: [], vertex: [subProgram(0, 16, [1])] };
     const shader = Buffer.concat([
-      string(""),
+      createString(""),
       list([]),
       list([
         Buffer.concat([
@@ -166,12 +162,12 @@ describe(parseSerializedShader, () => {
             ),
           ]),
           list([]),
-          int32(0),
+          createInt32(0),
         ]),
       ]),
-      string("miHoYo/Test"),
-      string(""),
-      string(""),
+      createString("miHoYo/Test"),
+      createString(""),
+      createString(""),
       list([]),
       Buffer.alloc(4),
       uint32List([4, 23]),
@@ -195,7 +191,7 @@ describe(parseSerializedShader, () => {
     const ps5 = blobChunk([{ code: payload("geometry-c"), gpuProgramType: 26 }]);
     const blob = Buffer.concat([d3d11, ps5]);
     const shader = Buffer.concat([
-      string(""),
+      createString(""),
       list([]),
       list([
         Buffer.concat([
@@ -215,12 +211,12 @@ describe(parseSerializedShader, () => {
             ),
           ]),
           list([]),
-          int32(0),
+          createInt32(0),
         ]),
       ]),
-      string("miHoYo/Test"),
-      string(""),
-      string(""),
+      createString("miHoYo/Test"),
+      createString(""),
+      createString(""),
       list([]),
       Buffer.alloc(4),
       uint32List([4, 23]),

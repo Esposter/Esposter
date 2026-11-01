@@ -4,3 +4,5 @@ export const COMPONENT_BYTES = 4;
 
 export const VECTOR_OR_MATRIX_PARAMETER_BYTES = 12;
 export const PARAMETER_FLAG_BYTES = 2;
+// A DXBC container's magic, the four bytes its compiled program opens with
+export const DXBC_MAGIC = "DXBC";
