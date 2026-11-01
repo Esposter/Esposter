@@ -109,7 +109,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@vueuse/core`                          | 2026-11-01 · Haiku 5.5 | Keep — framework | the composable library                                                                                 |
 | `@vueuse/nuxt`                          | 2026-11-01 · Haiku 5.5 | Keep — framework | auto-imports the composables                                                                           |
 | `@vueuse/router`                        | 2026-11-01 · Haiku 5.5 | Keep — framework | route-query composables, auto-imported                                                                 |
-| `@wasm-audio-decoders/ogg-vorbis`       | —                      | Keep — engine    | an Ogg Vorbis decoder                                                                                  |
 | `@webgpu/types`                         | —                      | Keep — types     | WebGPU's declarations                                                                                  |
 | `@xterm/addon-fit`                      | 2026-11-01 · Haiku 5.5 | Keep — engine    | the terminal engine's sizing                                                                           |
 | `@xterm/xterm`                          | 2026-11-01 · Haiku 5.5 | Keep — engine    | the terminal engine                                                                                    |

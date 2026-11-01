@@ -105,7 +105,6 @@
     "@types/node": "catalog:",
     "@types/three": "catalog:",
     "@typesafe-ai/sdk": "catalog:",
-    "@wasm-audio-decoders/ogg-vorbis": "catalog:",
     "@webgpu/types": "catalog:",
     "azure-mock": "workspace:*",
     "genshin-engine": "workspace:*",
