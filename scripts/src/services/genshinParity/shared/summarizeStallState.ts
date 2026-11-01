@@ -2,9 +2,8 @@ import type { FrameSample } from "#src/models/genshinParity/shared/FrameSample";
 import type { StallState } from "#src/models/genshinParity/shared/StallState";
 
 import { SLOW_FRAME_MS } from "#src/services/genshinParity/shared/constants";
+import { roundMs } from "#src/services/genshinParity/shared/roundMs";
 
-// A frame is kept to a tenth of a millisecond
-const TENTHS_PER_MS = 10;
 const STALLED_FRAME_MS = 250;
 
 // The summary of one state from the frames drawn while it ran. A frame's time is the gap from the frame before it, so the
@@ -28,7 +27,8 @@ export const summarizeStallState = (
   return {
     frames: frameMs.length,
     growthAt,
-    maxFrameMs: Math.round(Math.max(0, ...frameMs) * TENTHS_PER_MS) / TENTHS_PER_MS,
+    // A frame is kept to a tenth of a millisecond
+    maxFrameMs: roundMs(Math.max(0, ...frameMs)),
     name,
     over50: frameMs.filter((ms) => ms > SLOW_FRAME_MS).length,
     over250: frameMs.filter((ms) => ms > STALLED_FRAME_MS).length,
