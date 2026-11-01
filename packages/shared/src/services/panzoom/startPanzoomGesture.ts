@@ -1,0 +1,45 @@
+import type { PanzoomContext } from "#src/models/panzoom/PanzoomContext";
+
+import { PanzoomEventName } from "#src/models/panzoom/PanzoomEventName";
+import { dispatchPanzoomEvent } from "#src/services/panzoom/dispatchPanzoomEvent";
+import { getPanzoomDrag } from "#src/services/panzoom/getPanzoomDrag";
+import { getPanzoomEventDetail } from "#src/services/panzoom/getPanzoomEventDetail";
+import { getPanzoomPinchFrame } from "#src/services/panzoom/getPanzoomPinchFrame";
+import { getPanzoomTarget } from "#src/services/panzoom/getPanzoomTarget";
+import { isPanzoomExcluded } from "#src/services/panzoom/isPanzoomExcluded";
+import { writePanzoomStyle } from "#src/services/panzoom/writePanzoomStyle";
+import { takeOne } from "#src/util/array/takeOne";
+
+// A pointer that the exclusions and the filter let through joins the gesture. One pointer starts a drag, and a second turns
+// The gesture into a pinch. A pointer past the second is not tracked
+export const startPanzoomGesture = (context: PanzoomContext, event: PointerEvent): void => {
+  const { element, options, pointers, state } = context;
+  if (pointers.size >= 2) return;
+  if (isPanzoomExcluded(event.target as Element, options)) return;
+  const { filter } = options;
+  if (filter && !filter(event)) return;
+
+  const point = { x: event.clientX, y: event.clientY };
+  pointers.set(event.pointerId, point);
+  getPanzoomTarget(context).setPointerCapture(event.pointerId);
+  context.isClickSuppressed = false;
+  if (options.handleStartEvent) options.handleStartEvent(event);
+  else {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  if (pointers.size === 1) context.drag = getPanzoomDrag(state, point);
+  if (pointers.size === 2) {
+    const points = [...pointers.values()];
+    const frame = getPanzoomPinchFrame(takeOne(points, 0), takeOne(points, 1));
+    context.drag = undefined;
+    context.pinch = { midpoint: frame.midpoint, startDistance: frame.distance, startScale: state.scale };
+  }
+
+  writePanzoomStyle(context, element, "user-select", "none");
+  if (!options.disablePan && options.panCursor)
+    writePanzoomStyle(context, getPanzoomTarget(context), "cursor", options.panCursor);
+
+  dispatchPanzoomEvent(element, PanzoomEventName.Start, getPanzoomEventDetail(context, event), options);
+};
