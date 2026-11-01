@@ -18,7 +18,7 @@ flowchart TD
 - **The week resets on Monday at 04:00 on the server's clock.** `computeLastWeeklyReset`, in the [reset clock](../reset-clock/design.md), finds the most recent Monday at the server's 04:00 at or before the moment read; `packages/genshin-world/src/services/time/constants.ts` names its zone `GAME_TIME_ZONE`, `Asia/Shanghai`. A moment before that week's reset belongs to the week before. The Monday 04:00 is the weekly refresh row "REFRESH_WEEKlY", id 800001, `14400;360000`, in `{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json` (14400 is the 4:00 hour, and 360000 seconds past the epoch's Thursday is Monday 04:00); the function is `packages/genshin-world/src/services/time/computeLastWeeklyReset.ts`.
 - **A claim at the reset counts toward the new week.** `countWeeklyClaims` counts a claim made at or after the reset and no later than the moment read, so the claim at exactly 04:00 Monday is this week's first and a claim after the moment is not yet counted (`packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`).
 - **One count across every weekly boss.** `countWeeklyClaims` counts the claims of all weekly bosses together, since the cheap price is for the first three claims in the week, whichever boss they are for (`packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`).
-- **A weekly boss's claim costs 30 resin for the first three of a week and 60 after.** The wiki's Weekly Bosses page, named in Sources, would give the same two prices, but it is not in the cache, so the prices are open (see Open). The code's constants hold them (`packages/genshin-world/src/services/originalResin/constants.ts`), and the export's discount row gives three claims at 0.5 ("CONST_VALUE_WEEKLY_BOSS_RESIN_DISCOUNT_PARAM" in `{data-root}/genshin-parity/text/ExcelBinOutput/ConstValueExcelConfigData.json`).
+- **The prices are the constants'.** The wiki's Weekly Bosses page, named in Sources, would give the same two prices, but it is not in the cache, so the prices are open (see Open). The code's constants hold them (`packages/genshin-world/src/services/originalResin/constants.ts`), and the export's discount row gives three claims at 0.5 ("CONST_VALUE_WEEKLY_BOSS_RESIN_DISCOUNT_PARAM" in `{data-root}/genshin-parity/text/ExcelBinOutput/ConstValueExcelConfigData.json`).
 
 ## Scope and order
 
@@ -47,8 +47,4 @@ Not built, and in the [proposal](../../../changes/genshin-bosses/design.md): the
 
 ## Open
 
-- [ ] **A normal boss stays defeated until the player teleports away** — no source yet: the wiki's Normal Bosses page, named in Sources, is not in the wiki cache.
-- [ ] **A claimed normal boss returns five seconds after its claim** — no source yet: the wiki's Normal Bosses page, named in Sources, is not in the wiki cache, and no respawn row in the game's exports holds the five seconds.
-- [ ] **The weekly reset is read on the server's UTC+8 clock** — no source yet: no row of the game's exports names the zone, and the wiki's Domains page, named in Sources, is not in the wiki cache.
-- [ ] **A weekly boss's claim costs 30 resin for the first three of a week and 60 after** — no source yet: the export's weekly discount row gives three claims at 0.5 but no base price of 60, and the wiki's Weekly Bosses page is not in the wiki cache.
-- [ ] **The first three weekly claims count across every weekly boss together** — no source yet: the export's weekly discount row does not say the cheap claims are counted across bosses, and the wiki's Weekly Bosses page is not in the wiki cache.
+The open items are the spec's, in its [Open list](spec.md), so none is repeated here.
