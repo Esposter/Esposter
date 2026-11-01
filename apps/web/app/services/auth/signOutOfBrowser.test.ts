@@ -9,7 +9,7 @@ import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSuite.test";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { createUser } from "@/services/message/user/createUser.test";
-import { noop, RoutePath, SITE_NAME, toRawDeep } from "@esposter/shared";
+import { noop, RoutePath, SITE_NAME, takeOne, toRawDeep } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -85,6 +85,16 @@ describe(signOutOfBrowser, () => {
     expect(window.location.href).toBe(RoutePath.Login);
   });
 
+  test("reloads in place when signing out fails", async () => {
+    expect.hasAssertions();
+
+    vi.spyOn(console, "error").mockImplementation(noop);
+    signOut.mockRejectedValue(new Error(" "));
+    await signOutOfBrowser();
+
+    expect(reloadMock).toHaveBeenCalledExactlyOnceWith();
+  });
+
   // Messages and members are cached per room rather than per reader, so the next reader to open that room offline
   // Would be served the previous reader's rows unless the sign-out clears them
   test("a second user opens a room offline after the first user signs out", async () => {
@@ -128,5 +138,17 @@ describe(signOutOfBrowser, () => {
 
     expect(signOut).toHaveBeenCalledExactlyOnceWith();
     expect(window.location.href).toBe(RoutePath.Login);
+  });
+
+  // The network sign-out goes first and the clear runs last, so a write still queued on the cache cannot reopen the
+  // Database during the round trip that signing out takes
+  test("clears the cache after signing out", async () => {
+    expect.hasAssertions();
+
+    const deleteDatabase = vi.spyOn(indexedDB, "deleteDatabase");
+    signOut.mockResolvedValue();
+    await signOutOfBrowser(RoutePath.Login);
+
+    expect(takeOne(deleteDatabase.mock.invocationCallOrder)).toBeGreaterThan(takeOne(signOut.mock.invocationCallOrder));
   });
 });

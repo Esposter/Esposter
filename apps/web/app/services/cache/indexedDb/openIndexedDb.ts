@@ -1,6 +1,7 @@
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { Database } from "@esposter/shared";
 
+import { RESET_DATABASE_TIMEOUT_MS } from "@/services/cache/constants";
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
@@ -14,14 +15,28 @@ import {
   SITE_NAME,
 } from "@esposter/shared";
 
-const DATABASE_NAME = SITE_NAME.toLowerCase();
-const DATABASE_VERSION = 1;
+export const DATABASE_NAME = SITE_NAME.toLowerCase();
+export const DATABASE_VERSION = 1;
 
 let databasePromise: Promise<Database<IndexedDbDatabaseSchema>> | undefined;
+
+// Closes the connection this module holds and forgets it, so the next read or write opens a fresh one. A rejected open
+// Holds no connection, and its failure was already logged where the open raised it
+const releaseDatabase = async () => {
+  const promise = databasePromise;
+  databasePromise = undefined;
+  if (!promise) return;
+  await getResultAsync(() => promise).match((database) => {
+    database.close();
+  }, noop);
+};
 
 export const openIndexedDb = () => {
   if (databasePromise) return databasePromise;
   const promise = openDatabase<IndexedDbDatabaseSchema>(DATABASE_NAME, DATABASE_VERSION, {
+    // A delete or upgrade from another tab waits until this connection closes, so the connection gives way when asked.
+    // The next read or write opens a fresh one, queued behind that request
+    blocking: getSynchronizedFunction(releaseDatabase),
     upgrade: (database) => {
       const configurations = [
         MemberIndexedDbStoreConfiguration,
@@ -47,22 +62,24 @@ export const openIndexedDb = () => {
 // The database is deleted by name whether or not this page has opened it: a page load that never opened it holds
 // No connection, and the rows an earlier page load wrote are still there to be served to the next reader
 export const resetIndexedDb = async () => {
-  const database = await databasePromise;
-  if (database) database.close();
-  databasePromise = undefined;
+  await releaseDatabase();
   const deleteRequest = indexedDB.deleteDatabase(DATABASE_NAME);
   await new Promise<void>((resolve, reject) => {
+    // Another tab's open connection holds the delete back until it closes, and a tab from older code never closes it, so
+    // The wait is bounded and an expired one fails the delete
+    const deleteTimeout = setTimeout(() => {
+      reject(new InvalidOperationError(Operation.Delete, DATABASE_NAME, "still blocked by another open connection"));
+    }, RESET_DATABASE_TIMEOUT_MS);
     deleteRequest.onsuccess = () => {
+      clearTimeout(deleteTimeout);
       resolve();
     };
     deleteRequest.onerror = () => {
+      clearTimeout(deleteTimeout);
       reject(
         deleteRequest.error ??
           new InvalidOperationError(Operation.Delete, indexedDB.deleteDatabase.name, DATABASE_NAME),
       );
-    };
-    deleteRequest.onblocked = () => {
-      resolve();
     };
   });
 };
