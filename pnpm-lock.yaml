@@ -628,8 +628,8 @@ catalogs:
       specifier: ^7.0.2005
       version: 7.0.2005
     parse5:
-      specifier: ^8.0.1
-      version: 8.0.1
+      specifier: ^8.1.0
+      version: 8.1.0
     pdfjs-dist:
       specifier: ^6.4.299
       version: 6.4.299
@@ -1361,7 +1361,7 @@ importers:
         version: 3.0.3(@types/node@26.6.6)(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261101-051726-294bddeb
+        version: nitro-nightly@3.0.1-20261101-163719-5b140142
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611010234-c709ec8(80a234f86c5812b9d71750249db38c29)
@@ -1998,7 +1998,7 @@ importers:
         version: 6.1.7
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261101-051726-294bddeb
+        version: nitro-nightly@3.0.1-20261101-163719-5b140142
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611010234-c709ec8(80a234f86c5812b9d71750249db38c29)
@@ -2091,7 +2091,7 @@ importers:
         version: 9.0.6
       parse5:
         specifier: 'catalog:'
-        version: 8.0.1
+        version: 8.1.0
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -2242,7 +2242,7 @@ importers:
         version: 0.4.17(srvx@1.0.8)
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261101-051726-294bddeb
+        version: nitro-nightly@3.0.1-20261101-163719-5b140142
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611010234-c709ec8(80a234f86c5812b9d71750249db38c29)
@@ -9022,6 +9022,10 @@ packages:
     resolution: {integrity: sha512-kxL7msIffSuh9aaFAMD7rxAIuTRMAHMeBtgHW2yUdWw732ZNh4MehkF2gdjvtdmikkaIP9bFDDJOPlsvm7avrA==}
     engines: {node: '>=20.19.0'}
 
+  entities@9.0.0:
+    resolution: {integrity: sha512-oJFNDJg3kTPwAD1cNn2+WmUq4wFoo09npc3Ydf1D7ED4smRiWrsKnaLxykrTWgyGEcusc87P5dxlAleol9kpkg==}
+    engines: {node: '>=20.19.0'}
+
   env-paths@2.2.1:
     resolution: {integrity: sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==}
     engines: {node: '>=6'}
@@ -11067,8 +11071,8 @@ packages:
     resolution: {integrity: sha512-kOCT/1MCPAxY5iUV3wytNFUMUolzuwd/VF/1KCx7kf6CutrOsTie+84zTGTpgQycjvfLdBBdvBvFLqFD2c0wkQ==}
     engines: {node: '>=18'}
 
-  nitro-nightly@3.0.1-20261101-051726-294bddeb:
-    resolution: {integrity: sha512-rVJxC0NzOUdiepubFy3//XS8cLGhp1T+7w1D6QZCcYzq1bkMdxAX8SHTorrg4thspIaqk63wKuQckNE/agfbTA==}
+  nitro-nightly@3.0.1-20261101-163719-5b140142:
+    resolution: {integrity: sha512-qZdEW/VCsM8s2ptJXmtLPq10l7TEHBsQtjeb5OwCrgBydUYCOfd/8AfGN2nCIaGslkaflRyvPOkXGvFg95v0uA==}
     engines: {node: '>=22.22.0'}
     hasBin: true
 
@@ -11627,8 +11631,8 @@ packages:
   parse5@7.3.0:
     resolution: {integrity: sha512-IInvU7fabl34qmi9gY8XOVxhYyMyuH2xUNpb2q8/Y+7552KlejkRvqvD19nMoUW/uQGGbqNpA6Tufu5FL5BZgw==}
 
-  parse5@8.0.1:
-    resolution: {integrity: sha512-z1e/HMG90obSGeidlli3hj7cbocou0/wa5HacvI3ASx34PecNjNQeaHNo5WIZpWofN9kgkqV1q5YvXe3F0FoPw==}
+  parse5@8.1.0:
+    resolution: {integrity: sha512-sq3qBFpee5jeocbFbO48VHlGr8sT7mbXS0vxlKN6sottBtJzrOG3998sr0llSZcQAGgfpdmEYAIZE0P9z0dE8w==}
 
   parseurl@1.3.3:
     resolution: {integrity: sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==}
@@ -17062,7 +17066,7 @@ snapshots:
       magic-string: 1.4.5
       mocked-exports: 0.1.1
       my-bad: 0.2.11(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
-      nitro: nitro-nightly@3.0.1-20261101-051726-294bddeb
+      nitro: nitro-nightly@3.0.1-20261101-163719-5b140142
       nostics: 1.3.0
       nuxt: nuxt-nightly@5.0.0-2611010234-c709ec8(80a234f86c5812b9d71750249db38c29)
       ofetch: 2.0.0-alpha.3
@@ -21430,6 +21434,8 @@ snapshots:
 
   entities@8.1.0: {}
 
+  entities@9.0.0: {}
+
   env-paths@2.2.1: {}
 
   env-runner@0.3.11:
@@ -23893,7 +23899,7 @@ snapshots:
     optionalDependencies:
       '@rollup/rollup-linux-x64-gnu': 4.67.4
 
-  nitro-nightly@3.0.1-20261101-051726-294bddeb:
+  nitro-nightly@3.0.1-20261101-163719-5b140142:
     dependencies:
       crossws: 0.4.17(srvx@1.0.8)
       env-runner: 0.3.11
@@ -24843,9 +24849,9 @@ snapshots:
     dependencies:
       entities: 6.0.1
 
-  parse5@8.0.1:
+  parse5@8.1.0:
     dependencies:
-      entities: 8.1.0
+      entities: 9.0.0
 
   parseurl@1.3.3: {}
 
