@@ -3,9 +3,9 @@ import { splitRigidPieces } from "#src/services/scene/splitRigidPieces";
 import { takeOne } from "@esposter/shared";
 import { Mesh } from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
-describe("splitRigidPieces", () => {
+describe(splitRigidPieces, () => {
   // Two triangles on vertices the first bone carries and one on the second's, the second written first in its group
   const OBJ = [
     "g Door",
@@ -26,7 +26,10 @@ describe("splitRigidPieces", () => {
     expect.hasAssertions();
 
     const submesh = takeOne(new OBJLoader().parse(OBJ).children.filter((child) => child instanceof Mesh));
-    const pieceGeometryMap = splitRigidPieces(submesh, readObjFaceVertices(OBJ).get(submesh.name) ?? [], VERTEX_PIECES);
+    const faceVertices = readObjFaceVertices(OBJ).get(submesh.name);
+
+    assert.exists(faceVertices);
+    const pieceGeometryMap = splitRigidPieces(submesh, faceVertices, VERTEX_PIECES);
 
     expect(
       Object.fromEntries(

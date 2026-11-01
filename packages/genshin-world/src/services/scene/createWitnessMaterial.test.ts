@@ -1,17 +1,15 @@
-import type { WitnessMaterialFactory } from "#src/models/scene/WitnessMaterialFactory";
 import type { SceneMaterial } from "genshin-engine";
 
 import { WitnessProperty } from "#src/models/scene/WitnessProperty";
 import { LEAF_SHADER } from "#src/services/scene/constants";
+import { createMaterialFactory } from "#src/services/scene/createMaterialFactory.test";
 import { createWitnessMaterial } from "#src/services/scene/createWitnessMaterial";
 import { ToonNodeMaterial } from "genshin-engine";
 import { DoubleSide, Texture } from "three";
 import { vec3 } from "three/tsl";
 import { describe, expect, test } from "vitest";
 
-const createMaterialFactory: WitnessMaterialFactory = () => new ToonNodeMaterial({}, false);
-
-describe("createWitnessMaterial", () => {
+describe(createWitnessMaterial, () => {
   const DIFFUSE_NAME = "Stages_Unique_CyTree01_Leaf_Diffuse";
   const CUTOFF = 0.5;
   const TINT: [number, number, number, number] = [0.5, 1, 0.25, 1];

@@ -1,13 +1,10 @@
-import type { WitnessMaterialFactory } from "#src/models/scene/WitnessMaterialFactory";
 import type { SceneLayout } from "genshin-engine";
 
+import { createMaterialFactory } from "#src/services/scene/createMaterialFactory.test";
 import { loadWitness } from "#src/services/scene/loadWitness";
-import { ToonNodeMaterial } from "genshin-engine";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-const createMaterialFactory: WitnessMaterialFactory = () => new ToonNodeMaterial({}, false);
-
-describe("loadWitness", () => {
+describe(loadWitness, () => {
   const LAYOUT_URL = "/witness/layout.json";
 
   afterEach(() => {
