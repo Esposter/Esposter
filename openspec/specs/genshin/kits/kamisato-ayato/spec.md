@@ -1,6 +1,6 @@
 ## Purpose
 
-Kamisato Ayato's kit as built: his strikes, charged attack and plunges, Kamisato Art: Kyouka with its water illusion and Soukai Kanka stance of Shunsuiken strikes and Namisen stacks, and Kamisato Art: Suiyuu's field, with his fourth-ascension and off-field effects left unbuilt.
+Kamisato Ayato's kit as built: his strikes, charged attack and plunges, Kamisato Art: Kyouka with its water illusion and Soukai Kanka stance of Shunsuiken strikes and Namisen stacks, and Kamisato Art: Suiyuu's field, with his first ascension, his fourth-ascension energy off the field and his first, second and sixth constellations built; his fourth constellation's team attack speed, his second constellation's Max HP at three stacks and Suiyuu's normal attack DMG bonus are left unbuilt.
 
 ## Requirements
 
