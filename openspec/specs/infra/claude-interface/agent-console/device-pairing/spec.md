@@ -96,6 +96,22 @@ The page SHALL send its credential only after the host signs the page's fresh ch
 - **WHEN** the page checks it
 - **THEN** the page rejects it and sends nothing
 
+### Requirement: The page sends its pairing code only to a host that holds it
+
+A page pairing SHALL challenge the host first and send its one-time code only after the host's answer carries a MAC of the challenge under that code.
+
+#### Scenario: A host that holds the code
+
+- **GIVEN** a page that made a one-time code and a host started or printing with it
+- **WHEN** the host answers the page's challenge with a MAC under the code
+- **THEN** the page sends the code and the host pairs it
+
+#### Scenario: A program on the port that never saw the code
+
+- **GIVEN** a program holding the loopback port when the host was opened for a code
+- **WHEN** it answers the page's challenge, with whatever MAC it makes
+- **THEN** the page sends it no code, takes nothing it sends after, and tries again until the code's deadline
+
 ### Requirement: A second start hands its code over only to the proven host
 
 A second start of the host SHALL hand its pairing code to the running host only after the running host proves itself.

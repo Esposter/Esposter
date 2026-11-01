@@ -24,7 +24,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 class FakeWebSocket extends EventTarget {
   static readonly OPEN = 1;
   static sockets: FakeWebSocket[] = [];
-  close = vi.fn<() => void>();
+  close = vi.fn<(code?: number) => void>();
   readyState = FakeWebSocket.OPEN;
   send = vi.fn<(data: string) => void>();
   constructor() {
@@ -47,6 +47,24 @@ const signProof = async (privateKey: CryptoKey, nonce: string, port = DEFAULT_PO
       new TextEncoder().encode(getSignedText(SignaturePurpose.HostProof, port, nonce)),
     ),
   ).toBase64({ alphabet: "base64url" });
+
+// What a host holding the code would answer the page's challenge with: the MAC of its signed text under the code
+const signPairingProof = async (code: string, nonce: string, port = DEFAULT_PORT) => {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(code),
+    { hash: "SHA-256", name: "HMAC" },
+    false,
+    ["sign"],
+  );
+  return new Uint8Array(
+    await crypto.subtle.sign(
+      "HMAC",
+      key,
+      new TextEncoder().encode(getSignedText(SignaturePurpose.PairingProof, port, nonce)),
+    ),
+  ).toBase64({ alphabet: "base64url" });
+};
 
 const dispatchMessage = (socket: FakeWebSocket, data: object) => {
   socket.dispatchEvent(new MessageEvent("message", { data: JSON.stringify(data) }));
@@ -72,6 +90,7 @@ const admit = async (socket: FakeWebSocket, privateKey: CryptoKey, port = DEFAUL
   });
   dispatchMessage(socket, {
     nonce: " ",
+    pairingProofs: [],
     port,
     signature: await signProof(privateKey, nonce, port),
     type: ServerMessageType.Proof,
@@ -207,6 +226,7 @@ describe(useAgentConsoleConnectionStore, () => {
     });
     dispatchMessage(socket, {
       nonce: " ",
+      pairingProofs: [],
       port: DEFAULT_PORT,
       signature: await signProof(otherPrivateKey, nonce),
       type: ServerMessageType.Proof,
@@ -231,6 +251,7 @@ describe(useAgentConsoleConnectionStore, () => {
     });
     dispatchMessage(socket, {
       nonce: " ",
+      pairingProofs: [],
       port: DEFAULT_PORT + 1,
       signature: await signProof(privateKey, nonce, DEFAULT_PORT + 1),
       type: ServerMessageType.Proof,
@@ -284,7 +305,7 @@ describe(useAgentConsoleConnectionStore, () => {
     expect(agentConsoleConnectionStore.connections).toHaveLength(0);
   });
 
-  test("keeps the credential a pairing hands it", () => {
+  test("keeps the credential a pairing hands it, once the host has shown it holds the code", async () => {
     expect.hasAssertions();
 
     const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
@@ -292,15 +313,64 @@ describe(useAgentConsoleConnectionStore, () => {
     agentConsoleConnectionStore.pairLinkedHost(LOCAL_HOST_ADDRESS, code);
     const socket = takeOne(FakeWebSocket.sockets);
     socket.dispatchEvent(new Event("open"));
+    const nonce = readNonce(socket);
+    const pendingPair = new Promise<string>((resolve) => {
+      socket.send.mockImplementation((data) => {
+        resolve(data);
+      });
+    });
+    dispatchMessage(socket, {
+      nonce: " ",
+      pairingProofs: [await signPairingProof(code, nonce)],
+      port: DEFAULT_PORT,
+      signature: " ",
+      type: ServerMessageType.Proof,
+    });
+    const pairMessage = await pendingPair;
     dispatchMessage(socket, { credential, publicKey: " ", type: ServerMessageType.Paired });
+    await vi.waitFor(() => {
+      expect(agentConsoleConnectionStore.connections).toHaveLength(1);
+    });
     const { id } = takeOne(agentConsoleConnectionStore.connections);
 
     // oxlint-disable-next-line no-restricted-properties -- the page's message, read back as the test's host would
-    expect(JSON.parse(takeOne(socket.send.mock.calls)[0])).toStrictEqual({ code, type: HandshakeMessageType.Pair });
+    expect(JSON.parse(pairMessage)).toStrictEqual({ code, type: HandshakeMessageType.Pair });
     expect(agentConsoleConnectionStore.status).toBe(ConnectionStatus.Connected);
     expect(agentConsoleConnectionStore.connections).toStrictEqual([
       { address: LOCAL_HOST_ADDRESS, credential, id, publicKey: " " },
     ]);
+  });
+
+  // A program already on the port when the host is opened for a code never saw it, so it cannot answer for it
+  test("sends its code to no program that cannot show it holds the code, and takes nothing it sends", async () => {
+    expect.hasAssertions();
+
+    const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
+    agentConsoleConnectionStore.pairLinkedHost(LOCAL_HOST_ADDRESS, crypto.randomUUID());
+    const socket = takeOne(FakeWebSocket.sockets);
+    socket.dispatchEvent(new Event("open"));
+    const nonce = readNonce(socket);
+    const pendingClose = new Promise<void>((resolve) => {
+      socket.close.mockImplementation(() => {
+        resolve();
+      });
+    });
+    dispatchMessage(socket, {
+      nonce: " ",
+      pairingProofs: [await signPairingProof(crypto.randomUUID(), nonce)],
+      port: DEFAULT_PORT,
+      signature: " ",
+      type: ServerMessageType.Proof,
+    });
+    await pendingClose;
+    dispatchMessage(socket, { credential, publicKey: " ", type: ServerMessageType.Paired });
+    await new Promise((resolve) => {
+      setTimeout(resolve);
+    });
+
+    expect(socket.send).toHaveBeenCalledTimes(1);
+    expect(socket.close).toHaveBeenCalledWith(HostCloseCode.PairingRefused);
+    expect(agentConsoleConnectionStore.connections).toHaveLength(0);
   });
 
   test("unpairs to a page with nothing of the host left open", () => {

@@ -16,6 +16,8 @@ import { SessionState } from "#src/models/session/SessionState";
 import { DEFAULT_APP_ORIGIN, DEFAULT_HOSTNAME, SCHEME_PAIRING_CODE_DURATION_MS } from "#src/services/constants";
 import { readDevices } from "#src/services/device/readDevices";
 import { checkIsSignatureValid } from "#src/services/handshake/checkIsSignatureValid";
+import { getPairingProof } from "#src/services/handshake/getPairingProof";
+import { getSignedText } from "#src/services/handshake/getSignedText";
 import { createAgentConsoleServer } from "#src/services/server/createAgentConsoleServer";
 import { sendToRunningHost } from "#src/services/server/sendToRunningHost";
 import { noop, takeOne } from "@esposter/shared";
@@ -171,6 +173,28 @@ describe(createAgentConsoleServer, () => {
     expect(checkIsSignatureValid(createPublicKey(hostKey), SignaturePurpose.HostProof, port, nonce, signature)).toBe(
       true,
     );
+  });
+
+  // The page sends its code only to a host it has found to hold it, so the host proves the code without receiving it
+  test("answers a challenge with a MAC under each pairing code it holds, and under none it does not", async () => {
+    expect.hasAssertions();
+
+    const nonce = crypto.randomUUID();
+    const challenge = async () => {
+      const webSocket = connect();
+      const pendingProof = waitForMessage(webSocket, ServerMessageType.Proof);
+      await once(webSocket, "open");
+      webSocket.send(JSON.stringify({ nonce, type: HandshakeMessageType.Challenge }));
+      return pendingProof;
+    };
+    const { pairingProofs: proofsWithoutCode } = await challenge();
+    server.addPairingCode(code, SCHEME_PAIRING_CODE_DURATION_MS);
+    const { pairingProofs, port } = await challenge();
+
+    expect(proofsWithoutCode).toStrictEqual([]);
+    expect(pairingProofs).toStrictEqual([
+      getPairingProof(code, getSignedText(SignaturePurpose.PairingProof, port, nonce)),
+    ]);
   });
 
   test("pairs a page once per code, keeping only its credential's hash", async () => {

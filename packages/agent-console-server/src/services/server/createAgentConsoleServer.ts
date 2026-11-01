@@ -24,6 +24,7 @@ import { readDevices } from "#src/services/device/readDevices";
 import { writeDevices } from "#src/services/device/writeDevices";
 import { checkIsSignatureValid } from "#src/services/handshake/checkIsSignatureValid";
 import { getPublicKeyText } from "#src/services/handshake/getPublicKeyText";
+import { getSignedText } from "#src/services/handshake/getSignedText";
 import { signNonce } from "#src/services/handshake/signNonce";
 import { answerHttpRequest } from "#src/services/server/answerHttpRequest";
 import { createEventLog } from "#src/services/server/createEventLog";
@@ -222,6 +223,9 @@ export const createAgentConsoleServer = async ({
       case HandshakeMessageType.Challenge:
         sendServerMessage(webSocket, {
           nonce: hostNonce,
+          pairingProofs: pairingCodes.prove(
+            getSignedText(SignaturePurpose.PairingProof, localPort, handshakeMessage.nonce),
+          ),
           port: localPort,
           signature: signNonce(hostKey, SignaturePurpose.HostProof, localPort, handshakeMessage.nonce),
           type: ServerMessageType.Proof,

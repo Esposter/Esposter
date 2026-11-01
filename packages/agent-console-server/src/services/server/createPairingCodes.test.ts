@@ -1,3 +1,4 @@
+import { getPairingProof } from "#src/services/handshake/getPairingProof";
 import { createPairingCodes } from "#src/services/server/createPairingCodes";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -39,5 +40,18 @@ describe(createPairingCodes, () => {
     vi.advanceTimersByTime(1);
 
     expect(pairingCodes.take(code)).toBe(true);
+  });
+
+  test("proves a text under each code it holds and under none it has used or lost", () => {
+    expect.hasAssertions();
+
+    const text = "a";
+    const otherCode = crypto.randomUUID();
+    const pairingCodes = createPairingCodes();
+    pairingCodes.add(code, 1);
+    pairingCodes.add(otherCode, 1);
+    pairingCodes.take(otherCode);
+
+    expect(pairingCodes.prove(text)).toStrictEqual([getPairingProof(code, text)]);
   });
 });

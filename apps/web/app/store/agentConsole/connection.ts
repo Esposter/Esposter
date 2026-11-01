@@ -9,6 +9,8 @@ import type { DistributedOmit } from "type-fest";
 import { AgentConsoleThemeType } from "@/models/agentConsole/AgentConsoleThemeType";
 import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
 import { checkIsHostProofValid } from "@/services/agentConsole/checkIsHostProofValid";
+import { checkIsPairingProofValid } from "@/services/agentConsole/checkIsPairingProofValid";
+import { checkIsProofPortMismatched } from "@/services/agentConsole/checkIsProofPortMismatched";
 import {
   AGGREGATE_STATUS_ORDER,
   LOCAL_HOST_ADDRESS,
@@ -16,8 +18,6 @@ import {
   MIN_RECONNECT_DELAY_MS,
   PAIRING_CODE_BYTE_LENGTH,
 } from "@/services/agentConsole/constants";
-import { getPort } from "@/services/agentConsole/getPort";
-import { getRemoteHostname } from "@/services/agentConsole/getRemoteHostname";
 import { reactToEvents } from "@/services/agentConsole/reactToEvents";
 import { AgentConsoleThemeMap } from "@/services/agentConsole/themes/AgentConsoleThemeMap";
 import { toPromptCommand } from "@/services/agentConsole/toPromptCommand";
@@ -246,18 +246,13 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
       (socket) => {
         connectionSocket.webSocket = socket;
         const nonce = crypto.randomUUID();
-        // Until the host has signed the challenge nothing is sent to it, and until it has admitted the page, or paired
-        // It, nothing it sends is taken
+        // Until the host has proved itself nothing is sent to it — a paired host by signing the challenge, a host being
+        // Paired by answering it with a MAC under the pairing code, which crosses only after — and until it has admitted
+        // The page, or paired it, nothing it sends is taken
         let isHostProven = false;
         let isAdmitted = false;
         socket.addEventListener("open", () => {
-          socket.send(
-            JSON.stringify(
-              connectionPairing
-                ? { code: connectionPairing.code, type: HandshakeMessageType.Pair }
-                : { nonce, type: HandshakeMessageType.Challenge },
-            ),
-          );
+          socket.send(JSON.stringify({ nonce, type: HandshakeMessageType.Challenge }));
         });
         socket.addEventListener(
           "message",
@@ -270,7 +265,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
                 return;
               }
 
-              if (serverMessage.type === ServerMessageType.Paired && connectionPairing) {
+              if (serverMessage.type === ServerMessageType.Paired && connectionPairing && isHostProven) {
                 const { credential, publicKey } = serverMessage;
                 const pairedConnection: Connection = { address, credential, id: connectionId, publicKey };
                 connections.value = connection
@@ -281,16 +276,36 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
                 pairing.value = undefined;
                 isAdmitted = true;
                 markConnected(connectionId);
-              } else if (serverMessage.type === ServerMessageType.Proof && connection)
+              } else if (serverMessage.type === ServerMessageType.Proof && connectionPairing)
+                await getResultAsync(() =>
+                  checkIsPairingProofValid(
+                    connectionPairing.code,
+                    serverMessage.port,
+                    nonce,
+                    serverMessage.pairingProofs,
+                  ),
+                ).match(
+                  (isValid) => {
+                    // A host that does not hold this code — not yet started with it, or another program on the port —
+                    // Is left without it: the pairing is refused here as the host would refuse it
+                    if (!isValid || checkIsProofPortMismatched(address, serverMessage.port)) {
+                      socket.close(HostCloseCode.PairingRefused);
+                      return;
+                    }
+
+                    isHostProven = true;
+                    socket.send(JSON.stringify({ code: connectionPairing.code, type: HandshakeMessageType.Pair }));
+                  },
+                  () => {
+                    socket.close(HostCloseCode.PairingRefused);
+                  },
+                );
+              else if (serverMessage.type === ServerMessageType.Proof && connection)
                 await getResultAsync(() =>
                   checkIsHostProofValid(connection.publicKey, serverMessage.port, nonce, serverMessage.signature),
                 ).match(
                   (isValid) => {
-                    // On this computer another program can hold a port beside the host's and relay the challenge to
-                    // It, so the port the host signed must be the one the page reached. A remote host is reached
-                    // Through its own certificate, often on a port its proxy forwards from, so its signature alone
-                    // Proves it
-                    if (!isValid || (!getRemoteHostname(address) && serverMessage.port !== getPort(address))) {
+                    if (!isValid || checkIsProofPortMismatched(address, serverMessage.port)) {
                       socket.close();
                       return;
                     }

@@ -1,5 +1,6 @@
 import type { PairingCodes } from "#src/models/server/PairingCodes";
 
+import { getPairingProof } from "#src/services/handshake/getPairingProof";
 import { checkIsTokenValid } from "#src/services/server/checkIsTokenValid";
 
 // The codes that may pair a page now: each pairs once, and only until it expires
@@ -19,6 +20,7 @@ export const createPairingCodes = (): PairingCodes => {
       for (const timeout of codeTimeoutMap.values()) clearTimeout(timeout);
       codeTimeoutMap.clear();
     },
+    prove: (text) => [...codeTimeoutMap.keys()].map((code) => getPairingProof(code, text)),
     take: (code) => {
       const heldCode = [...codeTimeoutMap.keys()].find((candidate) => checkIsTokenValid(code, candidate));
       if (heldCode === undefined) return false;

@@ -35,7 +35,9 @@ describe(sendToRunningHost, () => {
     await once(webSocketServer, "listening");
     webSocketServer.on("connection", (webSocket) => {
       webSocket.on("message", () => {
-        webSocket.send(JSON.stringify({ nonce: " ", signature: " ", type: ServerMessageType.Proof }));
+        webSocket.send(
+          JSON.stringify({ nonce: " ", pairingProofs: [], port, signature: " ", type: ServerMessageType.Proof }),
+        );
       });
     });
     const address = webSocketServer.address();
