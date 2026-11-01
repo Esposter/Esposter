@@ -64,7 +64,7 @@ const getActionItems = (rowKey: string): Item[] => [
   },
 ];
 // A cell's menu reads its commands from one map, so the list is not rebuilt for every row on every render
-const actionItemsMap = computed(() => new Map(items.value.map(({ id }) => [id, getActionItems(id)])));
+const actionItemsMap = computed(() => new Map(items.value.map(({ id: itemId }) => [itemId, getActionItems(itemId)])));
 const truncation = computed(() => (records.value ? getDatasetTruncation(records.value) : undefined));
 
 await refreshResponses();

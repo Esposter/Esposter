@@ -32,7 +32,14 @@ export const useLoginStageClips = ({ interfaceClips, onWhiten, page, stage }: Op
   const playStageClips = (newStage: LoginStage, oldStage?: LoginStage): void => {
     if (oldStage === LoginStage.Title) {
       const [startFadeOut] = playClip(LoginInterfaceClip.StartFadeOut);
-      if (startFadeOut) startFadeOut.addEventListener("finish", () => (isStartLeaving.value = false), { once: true });
+      if (startFadeOut)
+        startFadeOut.addEventListener(
+          "finish",
+          () => {
+            isStartLeaving.value = false;
+          },
+          { once: true },
+        );
       else isStartLeaving.value = false;
     }
 
@@ -42,11 +49,20 @@ export const useLoginStageClips = ({ interfaceClips, onWhiten, page, stage }: Op
     } else if (newStage === LoginStage.Title) playClip(LoginInterfaceClip.StartFadeIn);
     else if (newStage === LoginStage.Entering) {
       const [fadeOut] = playClip(LoginInterfaceClip.FadeOut);
-      if (fadeOut) fadeOut.addEventListener("finish", () => onWhiten(), { once: true });
+      if (fadeOut)
+        fadeOut.addEventListener(
+          "finish",
+          () => {
+            onWhiten();
+          },
+          { once: true },
+        );
       else onWhiten();
     }
   };
-  onMounted(() => playStageClips(toValue(stage)));
+  onMounted(() => {
+    playStageClips(toValue(stage));
+  });
   watch(
     () => toValue(stage),
     async (newStage, oldStage) => {
