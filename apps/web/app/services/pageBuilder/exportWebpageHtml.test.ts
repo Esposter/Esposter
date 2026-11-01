@@ -13,7 +13,7 @@ describe(exportWebpageHtml, () => {
   test("exporting a webpage downloads one HTML file", () => {
     expect.hasAssertions();
 
-    const name = "name";
+    const name = "a";
     exportWebpageHtml(name, createTestTextDocument(1), TEST_ORIGIN);
 
     const [fileName, html, mimeType] = takeOne(vi.mocked(downloadFile).mock.calls);

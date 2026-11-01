@@ -10,9 +10,9 @@ describe(getRecordedHistory, () => {
   const TEST_PATH = "/content/0/props/content";
   const createEntry = (overrides: Partial<PageBuilderHistoryEntry> = {}): PageBuilderHistoryEntry => ({
     interactionId: TEST_INTERACTION_ID,
-    inverses: [{ op: JsonPatchOperationType.Replace, path: TEST_PATH, value: "before" }],
+    inverses: [{ op: JsonPatchOperationType.Replace, path: TEST_PATH, value: "a" }],
     label: "a",
-    operations: [{ op: JsonPatchOperationType.Replace, path: TEST_PATH, value: "after" }],
+    operations: [{ op: JsonPatchOperationType.Replace, path: TEST_PATH, value: "b" }],
     ...overrides,
   });
 
@@ -31,9 +31,9 @@ describe(getRecordedHistory, () => {
 
     const first = createEntry();
     const second = createEntry({
-      inverses: [{ op: JsonPatchOperationType.Replace, path: TEST_PATH, value: "after" }],
+      inverses: [{ op: JsonPatchOperationType.Replace, path: TEST_PATH, value: "b" }],
       label: "b",
-      operations: [{ op: JsonPatchOperationType.Replace, path: TEST_PATH, value: "later" }],
+      operations: [{ op: JsonPatchOperationType.Replace, path: TEST_PATH, value: "c" }],
     });
     const history = getRecordedHistory(createEmptyHistory(), first);
 
@@ -91,8 +91,8 @@ describe(getRecordedHistory, () => {
       getRecordedHistory(
         history,
         createEntry({
-          inverses: [{ op: JsonPatchOperationType.Replace, path: "/content/0/props/tag", value: "div" }],
-          operations: [{ op: JsonPatchOperationType.Replace, path: "/content/0/props/tag", value: "main" }],
+          inverses: [{ op: JsonPatchOperationType.Replace, path: "/content/0/props/tag", value: "a" }],
+          operations: [{ op: JsonPatchOperationType.Replace, path: "/content/0/props/tag", value: "b" }],
         }),
       ).past,
     ).toHaveLength(2);

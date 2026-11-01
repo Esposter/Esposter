@@ -71,7 +71,7 @@ describe(renderEmailCanvasVNodes, () => {
       renderEmailCanvasVNodes(
         emailKind,
         parseEmail(
-          `<mjml><mj-body><mj-section><mj-column><mj-button href="#">Go</mj-button></mj-column></mj-section></mj-body></mjml>`,
+          `<mjml><mj-body><mj-section><mj-column><mj-button href="#">a</mj-button></mj-column></mj-section></mj-body></mjml>`,
         ),
         1024,
       ),
@@ -91,7 +91,7 @@ describe(renderEmailCanvasVNodes, () => {
       padding: "10px 25px",
       textAlign: "center",
     });
-    expect(button.children).toBe("Go");
+    expect(button.children).toBe("a");
   });
 
   test("a navbar draws each link as its own words, in a row", () => {
@@ -101,7 +101,7 @@ describe(renderEmailCanvasVNodes, () => {
       renderEmailCanvasVNodes(
         emailKind,
         parseEmail(
-          `<mjml><mj-body><mj-section><mj-column><mj-navbar><mj-navbar-link href="#">Home</mj-navbar-link></mj-navbar></mj-column></mj-section></mj-body></mjml>`,
+          `<mjml><mj-body><mj-section><mj-column><mj-navbar><mj-navbar-link href="#">a</mj-navbar-link></mj-navbar></mj-column></mj-section></mj-body></mjml>`,
         ),
         1024,
       ),
@@ -110,7 +110,7 @@ describe(renderEmailCanvasVNodes, () => {
     const navbar = takeOne(childrenOf(column));
     const link = takeOne(childrenOf(navbar));
 
-    expect(link.children).toBe("Home");
+    expect(link.children).toBe("a");
   });
 
   test("each drawn node carries its own id, so the canvas can outline and select it", () => {

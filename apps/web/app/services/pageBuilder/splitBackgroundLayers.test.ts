@@ -9,8 +9,8 @@ describe(splitBackgroundLayers, () => {
   });
 
   test.each([
-    ["url(a.png), linear-gradient(red, blue)", ["url(a.png)", "linear-gradient(red, blue)"]],
-    ['url("a,b.png"), linear-gradient(red, blue)', ['url("a,b.png")', "linear-gradient(red, blue)"]],
+    ["url(a), linear-gradient(red, blue)", ["url(a)", "linear-gradient(red, blue)"]],
+    ['url("a,b"), linear-gradient(red, blue)', ['url("a,b")', "linear-gradient(red, blue)"]],
   ])("%j splits at the commas outside its parentheses and quotes", (value, layers) => {
     expect.hasAssertions();
 
