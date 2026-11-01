@@ -27,9 +27,6 @@ interface Props {
 }
 
 const { interactionState, isTouch } = defineProps<Props>();
-const style = computed(() =>
-  isTouch === undefined ? undefined : { "--interface-scale": isTouch ? MOBILE_INTERFACE_SCALE : 1 },
-);
 </script>
 
 <template>
@@ -41,7 +38,11 @@ const style = computed(() =>
        is clipped to, in the game's face and pointer. Each resolves where a
        Child uses it, against this container. A screen that opts in draws the world behind it blurred under its own
        Pieces, the blur taking what is painted behind this root and the wash added over it as light -->
-  <div class="game-screen" :data-interaction-state="interactionState" :style>
+  <div
+    class="game-screen"
+    :data-interaction-state="interactionState"
+    :style="isTouch === undefined ? undefined : { '--interface-scale': isTouch ? MOBILE_INTERFACE_SCALE : 1 }"
+  >
     <div v-if="isWorldBlurred" class="world-backdrop">
       <div class="world-blur" />
       <div class="world-wash" />
