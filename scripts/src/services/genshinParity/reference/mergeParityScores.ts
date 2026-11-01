@@ -3,11 +3,12 @@ import type { ParityReference } from "#src/models/genshinParity/shared/ParityRef
 
 import { ParityReportRun } from "#src/models/genshinParity/reference/ParityReportRun";
 import { PARITY_SCORES_FORMAT_PATH } from "#src/services/genshinParity/reference/constants";
+import { placeNewIds } from "#src/services/genshinParity/reference/placeNewIds";
+import { readRowKey } from "#src/services/genshinParity/reference/readRowKey";
 import { toLayerRow } from "#src/services/genshinParity/reference/toLayerRow";
 import { toPendingRow } from "#src/services/genshinParity/reference/toPendingRow";
 import { toRow } from "#src/services/genshinParity/reference/toRow";
 import { formatText } from "#src/services/shared/formatText";
-import { takeOne } from "@esposter/shared";
 
 const HEADER = [
   "# Parity scores",
@@ -33,30 +34,6 @@ const LAYER_HEADER = [
   "| :---- | -------: | -----: | ---: | ---: |",
 ];
 const LAYER_SEPARATOR = "/";
-
-// A row's cells: the text between its outer pipes, split on the pipes a cell does not escape, each cell trimmed, so the
-// Formatter's padding never changes what a cell holds
-const splitCells = (line: string): string[] =>
-  line
-    .trim()
-    .replaceAll(/^\||\|$/gu, "")
-    .split(/(?<!\\)\|/u)
-    .map((cell) => cell.trim());
-// A row of either table, keyed in its first cell by its reference's id, and a layer's by that id and its name after a
-// Slash. A line that is not a row has no key
-const readRowKey = (line: string): string | undefined =>
-  line.trim().startsWith("|") ? /^`(?<key>[^`]+)`$/u.exec(takeOne(splitCells(line), 0))?.groups?.key : undefined;
-
-// Each new id goes after the nearest id before it in the references' order that the report already lists, so it lands
-// Where a full run would put it
-const placeNewIds = (ids: readonly string[], newIds: readonly string[], referenceIds: readonly string[]): string[] =>
-  newIds.reduce(
-    (order, newId) => {
-      const predecessor = referenceIds.slice(0, referenceIds.indexOf(newId)).findLast((id) => order.includes(id));
-      return order.toSpliced(predecessor === undefined ? 0 : order.indexOf(predecessor) + 1, 0, newId);
-    },
-    [...ids],
-  );
 
 // The report merged from its lines as they were and the given scores, the one merge both writers (`compare` and `approve`)
 // Use. A scored reference's row and layers are rewritten, a full run writes a pending screen's row with its reason and no

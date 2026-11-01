@@ -3,9 +3,8 @@ import type { ReferenceEntryPlan } from "#src/models/genshinParity/reference/Ref
 import type { ReferencePackDecision } from "#src/models/genshinParity/reference/ReferencePackDecision";
 import type { ReferencePackOptions } from "#src/models/genshinParity/reference/ReferencePackOptions";
 
+import { hasScreenshot } from "#src/services/genshinParity/reference/hasScreenshot";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-
-const hasScreenshot = ({ mainPath, missing }: ReferenceEntryPlan) => !missing.some(({ path }) => path === mainPath);
 
 // Decides what a pack stores from its plans and its options.
 // A collision is one whose id is not replaced.

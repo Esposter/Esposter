@@ -1,4 +1,5 @@
 import { estimateEdgeSigma } from "#src/services/genshinParity/reference/estimateEdgeSigma";
+import { clamp } from "#src/services/genshinParity/shared/clamp";
 import { describe, expect, test } from "vitest";
 
 describe(estimateEdgeSigma, () => {
@@ -16,7 +17,7 @@ describe(estimateEdgeSigma, () => {
     const weightSum = weights.reduce((sum, weight) => sum + weight, 0);
     return Array.from({ length: PROFILE_LENGTH }, (_value, position) =>
       weights.reduce((sum, weight, index) => {
-        const sample = Math.min(Math.max(position + index - radius, 0), PROFILE_LENGTH - 1);
+        const sample = clamp(position + index - radius, 0, PROFILE_LENGTH - 1);
         return sum + (weight / weightSum) * (sample >= EDGE_POSITION ? HIGH : LOW);
       }, 0),
     );

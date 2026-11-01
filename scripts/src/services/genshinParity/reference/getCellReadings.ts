@@ -1,16 +1,10 @@
 import type { CellReading } from "#src/models/genshinParity/reference/CellReading";
+import type { CellSum } from "#src/models/genshinParity/reference/CellSum";
 
 import { RGB_CHANNEL_COUNT } from "#src/services/genshinParity/probe/constants";
 import { toMeanColour } from "#src/services/genshinParity/reference/toMeanColour";
 import { toPercent } from "#src/services/genshinParity/reference/toPercent";
 import { roundHundredths } from "#src/services/genshinParity/shared/roundHundredths";
-
-interface CellSum {
-  count: number;
-  difference: number;
-  ours: number[];
-  reference: number[];
-}
 
 // The compared region split into a grid of cells, row by row from the top, each read over its scored pixels: the mean of
 // The greyscale difference in percent, and the mean colour of the reference and of ours, with the whole region's mean

@@ -1,22 +1,12 @@
-import type { ReferenceEntryPath } from "#src/models/genshinParity/reference/ReferenceEntryPath";
 import type { ReferencePackOutcome } from "#src/models/genshinParity/reference/ReferencePackOutcome";
 
 import { ParityReferenceKind } from "#src/models/genshinParity/reference/ParityReferenceKind";
 import { REFERENCE_PACK_LARGEST_COUNT } from "#src/services/genshinParity/reference/constants";
+import { formatEntryPaths } from "#src/services/genshinParity/reference/formatEntryPaths";
 import { formatMebibytes } from "#src/services/genshinParity/reference/formatMebibytes";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { relative } from "node:path";
+import { sumOf } from "#src/services/genshinParity/reference/sumOf";
 
 const KINDS = [ParityReferenceKind.Wiki, ParityReferenceKind.RecordingFrame, ParityReferenceKind.Other];
-
-const sumOf = (values: number[]): number => values.reduce((total, value) => total + value, 0);
-
-// Each file named by its id and its repository path, since a file name alone is the same for every variant of a screen
-const formatEntryPaths = (paths: ReferenceEntryPath[]): string =>
-  paths
-    .map(({ id, path }) => `${id}: ${relative(REPOSITORY_ROOT, path)}`)
-    .toSorted()
-    .join(", ") || "none";
 
 // The table `references pack` prints: the counts, the sizes by kind, and the largest files packed.
 // It also names the ids refused for a missing input, the files restored from scratch, and those with no screenshot.
