@@ -2,10 +2,11 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { SetLights } from "#src/models/genshinParity/witness/SetLights";
 
 import { computePixelPoint } from "#src/services/genshinParity/shared/computePixelPoint";
-import { LUMINANCE, SKY_LAYER } from "#src/services/genshinParity/shared/constants";
+import { CHANNELS, LUMINANCE, SKY_LAYER } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
+import { readRawRgb } from "#src/services/genshinParity/shared/readRawRgb";
 import { readWitnessFamilies } from "#src/services/genshinParity/shared/readWitnessFamilies";
 import { readWitnessGbuffer } from "#src/services/genshinParity/shared/readWitnessGbuffer";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
@@ -15,7 +16,6 @@ import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootW
 import { BYTE } from "#src/services/shared/constants";
 import { toLinear } from "#src/services/shared/toLinear";
 import { getOrCreate, withFinalizerAsync } from "@esposter/shared";
-import sharp from "sharp";
 import { Matrix4 } from "three";
 
 // The depths a part's pixels are split by, near, middle and far, where the light, then the haze, decides their colour
@@ -77,10 +77,10 @@ export const rankReferenceGains = async (
         readFlipErrorMap(image, ourShot, width, height),
       ]);
       const readLuminances = async (shot: Buffer): Promise<Float32Array> => {
-        const data = await sharp(shot).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
+        const data = await readRawRgb(shot, width, height);
         return Float32Array.from({ length: width * height }, (_value, pixel) =>
           LUMINANCE.reduce(
-            (sum, weight, channel) => sum + weight * toLinear((data[pixel * 3 + channel] ?? 0) / BYTE),
+            (sum, weight, channel) => sum + weight * toLinear((data[pixel * CHANNELS.length + channel] ?? 0) / BYTE),
             0,
           ),
         );
