@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Row from "#src/components/ArtifactPicker/Row/Index.vue";
 import GameButton from "#src/components/GameButton/Index.vue";
 import PickerShell from "#src/components/PickerShell/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
@@ -28,10 +29,7 @@ const emit = defineEmits<{ choose: [id: string]; close: [] }>();
   <PickerShell class="artifact-picker" :title>
     <ul class="options">
       <li v-for="{ caption, id, name, rarity } of options" :key="id">
-        <button class="option" :data-rarity="rarity" type="button" @click="emit('choose', id)">
-          <span class="name">{{ name }}</span>
-          <span class="caption">{{ caption }}</span>
-        </button>
+        <Row :caption :name :rarity @choose="emit('choose', id)" />
       </li>
     </ul>
     <GameButton class="close" :kind="GameButtonKind.Pill" tip="" @click="emit('close')">{{ closeLabel }}</GameButton>
@@ -54,18 +52,7 @@ const emit = defineEmits<{ choose: [id: string]; close: [] }>();
   list-style: none;
 }
 
-.option {
-  padding: calc(var(--unit) * 12) calc(var(--unit) * 16);
-}
-
-.option:hover,
-.option:focus-visible {
-  background: rgb(255 255 255 / 0.2);
-}
-
 .close {
   align-self: flex-end;
 }
 </style>
-
-<style scoped src="../../styles/artifactPicker.css"></style>
