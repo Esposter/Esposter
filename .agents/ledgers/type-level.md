@@ -28,7 +28,7 @@ Each `*.test-d.ts` and `*.typebench.ts` kept for what it guards: a refusal the t
 | `packages/shared/src/util/types/GetPaths.test-d.ts`                                      | open       | kept: named under the README's Type Utilities, and the path keys it yields are what a caller reads       |
 | `packages/shared/src/util/types/GetPaths.typebench.ts`                                   | open       | deleted: no TS2589 or recorded regression; the report only compares counts to type-fest                  |
 | `packages/shared/src/util/types/GetProperties.test-d.ts`                                 | open       | kept: GetPaths reads its paths from this helper; its Date, nullable and tuple edges are only tested here |
-| `packages/trpc-msw/src/models/TRPCMswRouterRecord.test-d.ts`                             | open       |                                                                                                          |
+| `packages/trpc-msw/src/models/TRPCMswRouterRecord.test-d.ts`                             | open       | kept: resolver input, context and output are typed for consumers; the write identity pins its key set    |
 | `packages/trpc-nuxt-module/src/runtime/client/models/TRPCNuxtClient.test-d.ts`           | open       |                                                                                                          |
 | `packages/trpc-nuxt-module/src/runtime/server/models/TRPCEventHandlerOptions.test-d.ts`  | open       |                                                                                                          |
 
