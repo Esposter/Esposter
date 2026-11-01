@@ -36,6 +36,9 @@ const isImportOpen = computed({
 });
 const { answer, isPending } = useDialogAnswer(isImportOpen);
 const surveys = ref<ResourceInResource[]>();
+const surveyItems = computed(() =>
+  (surveys.value ?? []).map(({ id, name }) => ({ meaning: UiIconMeaning.Survey, title: name, value: id })),
+);
 const readError = ref("");
 const selectedSurveyId = ref("");
 const getImportTruncationMessage = (truncation: DatasetTruncation) =>
@@ -78,12 +81,7 @@ watch(isOpen, async (newIsOpen) => {
         :meaning="UiIconMeaning.Survey"
         title="No surveys yet"
       />
-      <UiSelect
-        v-else-if="surveys"
-        v-model="selectedSurveyId"
-        :items="surveys.map(({ id, name }) => ({ meaning: UiIconMeaning.Survey, title: name, value: id }))"
-        label="Survey"
-      />
+      <UiSelect v-else-if="surveys" v-model="selectedSurveyId" :items="surveyItems" label="Survey" />
     </div>
     <footer p-3 flex gap-2 justify-end>
       <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
