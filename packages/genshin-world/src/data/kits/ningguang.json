@@ -122,7 +122,9 @@
   "hits.chargedAttackGem.hitmarkFrames": { "cause": "Unsourced", "value": 30 },
   "hits.chargedAttackGem.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 2731 } },
   "hits.jadeScreen.area": {
-    "cause": "Unclassified",
+    "file": "skill.go",
+    "line": 54,
+    "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
   "hits.jadeScreen.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 2732 } },
