@@ -11,6 +11,7 @@ import { describe } from "vitest";
 export const HIT_RECORD: KitHitRecord = {
   area: { angle: 2 * Math.PI, height: 2, radius: 1 },
   hitmarkFrames: 12,
+  isBlunt: false,
   multiplier: { index: 0, proudSkillGroupId: 1 },
   poiseDamage: 0,
 };

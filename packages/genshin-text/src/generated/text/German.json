@@ -691,6 +691,7 @@
   "UI_STC_LEVELUP_DIALOG_OK": "Okay",
   "UI_STC_MAP_TITLE": "Karte",
   "UI_STC_NEW": "Neu",
+  "UI_STC_USEMATERIALDIALOG_USENUM": "Anzuwendende Menge",
   "UI_STC_World_Revive": "Wiederbeleben",
   "UI_SYNTHESIS_PAGE_FOOD_ITEM_TITLE": "Material zum Herstellen",
   "UI_SYNTHESIS_PAGE_ITEM_COUNT": "Herzustellende Menge: {0}",

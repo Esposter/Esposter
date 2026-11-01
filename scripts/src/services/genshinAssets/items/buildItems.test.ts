@@ -18,6 +18,7 @@ import {
   EnemyDropFamilyDropTableMap,
   GadgetKind,
   GameDataset,
+  MAX_ITEM_QUANTITY,
 } from "genshin-world";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -366,6 +367,17 @@ describe(buildItems, () => {
 
     await expect(buildItems()).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: 107010, has no material type in the material table, so the bag would show it in no tab]`,
+    );
+  });
+
+  test("an item whose stack limit the save's ceiling does not hold fails the publish, naming the id", async () => {
+    expect.hasAssertions();
+    itemTables[MATERIAL_TABLE_NAME] = materialTable.map((row) =>
+      row.id === TREE_ITEM_ID ? { ...row, stackLimit: MAX_ITEM_QUANTITY + 1 } : row,
+    );
+
+    await expect(buildItems()).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: 107010, has a stack limit past the save's ceiling of 99999, so a save holding it is refused]`,
     );
   });
 

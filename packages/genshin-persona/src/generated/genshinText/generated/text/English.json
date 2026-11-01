@@ -691,6 +691,7 @@
   "UI_STC_LEVELUP_DIALOG_OK": "Confirm",
   "UI_STC_MAP_TITLE": "Map",
   "UI_STC_NEW": "New",
+  "UI_STC_USEMATERIALDIALOG_USENUM": "Amount to use",
   "UI_STC_World_Revive": "Revive",
   "UI_SYNTHESIS_PAGE_FOOD_ITEM_TITLE": "Crafting Materials",
   "UI_SYNTHESIS_PAGE_ITEM_COUNT": "Crafting Performed: {0}",

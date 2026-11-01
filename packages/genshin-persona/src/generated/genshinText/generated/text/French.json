@@ -691,6 +691,7 @@
   "UI_STC_LEVELUP_DIALOG_OK": "Confirmer",
   "UI_STC_MAP_TITLE": "Carte",
   "UI_STC_NEW": "Nouv.",
+  "UI_STC_USEMATERIALDIALOG_USENUM": "Quantité à utiliser",
   "UI_STC_World_Revive": "Réanimer",
   "UI_SYNTHESIS_PAGE_FOOD_ITEM_TITLE": "Matériaux de synthèse",
   "UI_SYNTHESIS_PAGE_ITEM_COUNT": "Synthèses effectuées : {0}",

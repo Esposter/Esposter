@@ -478,6 +478,8 @@ export enum GameTextKey {
   InventoryQuickUseGadget = "UI_BEYOND_HALL_WIDGET_USE_BUTTON_SET",
   // The detail panel's button that uses the selected entry of the bag
   InventoryUse = "BAG_USE_BUTTON",
+  // The slider that picks how many of a food the bag's Use eats, its name the game's own "Amount to use"
+  InventoryUseAmount = "UI_STC_USEMATERIALDIALOG_USENUM",
   InventoryWeapons = "ITEM_WEAPON",
   IronChunk = "4060716292",
   // An item and its count, its name in place of `{0}` and the count in place of `{1}`

@@ -691,6 +691,7 @@
   "UI_STC_LEVELUP_DIALOG_OK": "확인",
   "UI_STC_MAP_TITLE": "맵",
   "UI_STC_NEW": "New",
+  "UI_STC_USEMATERIALDIALOG_USENUM": "사용 수량",
   "UI_STC_World_Revive": "부활",
   "UI_SYNTHESIS_PAGE_FOOD_ITEM_TITLE": "합성 재료",
   "UI_SYNTHESIS_PAGE_ITEM_COUNT": "합성 횟수: {0}",

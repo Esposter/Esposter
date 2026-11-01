@@ -8,9 +8,11 @@ import type { KitOverlay } from "#src/models/shared/KitOverlay";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
+import { getBluntKitCandidates } from "#src/services/genshinAssets/kits/candidates/getBluntKitCandidates";
 import { getNamedListKitCandidates } from "#src/services/genshinAssets/kits/candidates/getNamedListKitCandidates";
 import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidates/getRuleKitCandidates";
 import { mergeKitCandidateSources } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidateSources";
+import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
 import { checkIsCitedBy } from "#src/services/genshinAssets/kits/record/checkIsCitedBy";
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
 import { checkIsKitValueResolvedEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueResolvedEqual";
@@ -124,11 +126,14 @@ export const resolveKitValues = (
   chooseDefaults(namedHitKitCandidateMap);
   const ruleCandidateMap = getRuleKitCandidates(valueMap, tables.element);
   chooseDefaults(ruleCandidateMap);
+  // The blunt flags come after the rules, which give the hitmarks and the collision's hit they are read over
+  const bluntCandidateMap = getBluntKitCandidates(valueMap, tables);
+  chooseDefaults(bluntCandidateMap);
   return {
     candidateMap: mergeKitCandidateSources({
       namedHitCandidateMap: namedHitKitCandidateMap,
       namedListCandidateMap: namedListKitCandidateMap,
-      ruleCandidateMap,
+      ruleCandidateMap: mergeKitCandidates(ruleCandidateMap, bluntCandidateMap),
       sourceCandidateMap,
     }),
     provenanceMap,

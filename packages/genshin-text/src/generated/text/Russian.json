@@ -691,6 +691,7 @@
   "UI_STC_LEVELUP_DIALOG_OK": "Подтвердить",
   "UI_STC_MAP_TITLE": "Карта",
   "UI_STC_NEW": "Новое",
+  "UI_STC_USEMATERIALDIALOG_USENUM": "Количество",
   "UI_STC_World_Revive": "Воскресить",
   "UI_SYNTHESIS_PAGE_FOOD_ITEM_TITLE": "Компоненты",
   "UI_SYNTHESIS_PAGE_ITEM_COUNT": "Создать предметов: {0}",

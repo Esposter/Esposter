@@ -23,6 +23,7 @@ import {
   forgeRecipeSchema,
   gadgetRowSchema,
   GameDataset,
+  MAX_ITEM_QUANTITY,
   reputationCitySchema,
   WALLET_ITEM_IDS,
 } from "genshin-world";
@@ -38,7 +39,8 @@ import { z } from "zod";
 // Recipe yields is no item either, it is in the weapon table. The
 // Recipes and the levels are the records their steps published, read from the dev account. An item no table holds is
 // An error, and so is an item the table gives no type: the publish names every such item at once, so a typeless item a
-// Source adds fails the publish rather than showing in no tab. Returns the record the materials publish under
+// Source adds fails the publish rather than showing in no tab. So is an item whose stack limit is past the save's
+// Ceiling, since a save holding it would be refused. Returns the record the materials publish under
 export const buildItems = async (): Promise<Record<string, unknown>> => {
   const expeditionItemIds = readMondstadtExpeditionPlaces().flatMap(({ durations }) =>
     durations.flatMap(({ items }) => items.map(({ itemId }) => itemId)),
@@ -140,6 +142,13 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
       Operation.Read,
       typelessItemIds.join(", "),
       "has no material type in the material table, so the bag would show it in no tab",
+    );
+  const oversizedItemIds = items.filter(({ stackLimit }) => stackLimit > MAX_ITEM_QUANTITY).map(({ id }) => id);
+  if (oversizedItemIds.length > 0)
+    throw new InvalidOperationError(
+      Operation.Read,
+      oversizedItemIds.join(", "),
+      `has a stack limit past the save's ceiling of ${MAX_ITEM_QUANTITY}, so a save holding it is refused`,
     );
   return { [`${GameDataset.Items}/materials`]: items };
 };

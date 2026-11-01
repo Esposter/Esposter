@@ -22,7 +22,7 @@ import { toGcsimFolderName } from "#src/services/genshinAssets/kits/gcsim/toGcsi
 import { getKitBagPaths } from "#src/services/genshinAssets/kits/getKitBagPaths";
 import { readKitOverlayFile } from "#src/services/genshinAssets/kits/readKitOverlay";
 import { compareKitRecord } from "#src/services/genshinAssets/kits/record/compareKitRecord";
-import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
+import { getKitGapPaths } from "#src/services/genshinAssets/kits/record/getKitGapPaths";
 import { seedKitOverlay } from "#src/services/genshinAssets/kits/record/seedKitOverlay";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { getResult } from "@esposter/shared";
@@ -85,7 +85,7 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
       buildKitRecordWithDonors(characterId, inputMap, builtMap),
     ).match(
       ({ record }) => ({
-        gapPaths: getMismatchedKitPaths(record, publishedRecord, tables.talentMultiplierMap),
+        gapPaths: getKitGapPaths(record, publishedRecord, tables.talentMultiplierMap),
         overlayFailures: [] as string[],
       }),
       (error) => ({

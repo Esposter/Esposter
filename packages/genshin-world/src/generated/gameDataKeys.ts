@@ -90,7 +90,7 @@ export const GameDataKeys = {
   craftingBenchPlaces: { mondstadt: "craftingBenchPlaces/mondstadt" },
   domainChallengeLevels: { levels: "domainChallengeLevels/levels" },
   domains: { weeklyBosses: "domains/weeklyBosses" },
-  enemies: { kinds: "enemies/kinds", levelCurves: "enemies/levelCurves" },
+  enemies: { kinds: "enemies/kinds", levelCurves: "enemies/levelCurves", reactionPoise: "enemies/reactionPoise" },
   expeditions: {
     bonuses: "expeditions/bonuses",
     limits: "expeditions/limits",

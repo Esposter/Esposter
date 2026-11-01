@@ -5,15 +5,21 @@ import type { CharacterTalentKit } from "genshin-world";
 import { characterTalentKitSchema, CombatTalent } from "genshin-world";
 
 // A character's talents from the first of its skill sets that names a proud skill group for each of its three combat
-// Talents, the sets given in the order they are read (`getCharacterSkillDepotRows`). Its passives are the ones that same
-// Set opens. A set naming none for one of them is passed over, as the Traveler's own form is, whose Elemental Skill and
-// Burst its element forms hold
+// Talents, the sets given in the order they are read (`getCharacterSkillDepotRows`). Each combat talent is named by its
+// Skill, and each passive by its proud skill group's name in `proudSkillNameTextIdMap`. Its passives are the ones that
+// Same set opens. A set naming none for one of them is passed over, as the Traveler's own form is, whose Elemental Skill
+// And Burst its element forms hold
 export const toCharacterTalentKit = (
   characterId: number,
   depotRows: readonly ExcelSkillDepotRow[],
   skillMap: ReadonlyMap<number, ExcelSkillRow>,
+  proudSkillNameTextIdMap: ReadonlyMap<number, string>,
 ): CharacterTalentKit | undefined => {
   const getProudSkillGroupId = (skillId = 0): number => skillMap.get(skillId)?.proudSkillGroupId ?? 0;
+  const getSkillNameTextId = (skillId = 0): string => {
+    const nameTextMapHash = skillMap.get(skillId)?.nameTextMapHash;
+    return nameTextMapHash ? String(nameTextMapHash) : "";
+  };
   for (const { energySkill, LLEFDMDOMGG, skills } of depotRows) {
     const [normalAttackSkillId, elementalSkillId] = skills;
     const talentGroupIds = {
@@ -25,9 +31,18 @@ export const toCharacterTalentKit = (
       return characterTalentKitSchema.parse({
         characterId,
         passives: LLEFDMDOMGG.filter(({ proudSkillGroupId }) => proudSkillGroupId > 0).map(
-          ({ DHIEHDPAFGI, proudSkillGroupId }) => ({ phase: DHIEHDPAFGI, proudSkillGroupId }),
+          ({ DHIEHDPAFGI, proudSkillGroupId }) => ({
+            nameTextId: proudSkillNameTextIdMap.get(proudSkillGroupId) ?? "",
+            phase: DHIEHDPAFGI,
+            proudSkillGroupId,
+          }),
         ),
         talentGroupIds,
+        talentNames: {
+          [CombatTalent.ElementalBurst]: { nameTextId: getSkillNameTextId(energySkill) },
+          [CombatTalent.ElementalSkill]: { nameTextId: getSkillNameTextId(elementalSkillId) },
+          [CombatTalent.NormalAttack]: { nameTextId: getSkillNameTextId(normalAttackSkillId) },
+        },
       });
   }
   return undefined;

@@ -9,17 +9,17 @@ committed.
 | :------------------------------------- | :-------------------------- | -----------------------------------------------------------------------------: | ----: | -----: | -----: |
 | `achievement-screen`                   | `AchievementScreen`         |                                                                          3.73% | 0.915 |  1.25% | 0.1674 |
 | `archive-screen`                       | `ArchiveScreen`             |                                                                          9.80% | 0.897 |  2.00% | 0.3418 |
-| `character-artifacts`                  | `CharacterScreen`           |                                                                          2.87% | 0.924 |  0.90% | 0.1224 |
+| `character-artifacts`                  | `CharacterScreen`           |                                                                          2.88% | 0.924 |  0.90% | 0.1225 |
 | `character-artifacts-tabs`             | `CharacterScreen`           |                                                                          0.88% | 0.976 |  0.32% | 0.0474 |
-| `character-attributes`                 | `CharacterScreen`           |                                                                          1.70% | 0.975 |  0.60% | 0.0699 |
+| `character-attributes`                 | `CharacterScreen`           |                                                                          1.70% | 0.974 |  0.60% | 0.0699 |
 | `character-attributes-panel`           | `CharacterScreen`           |                                                                          3.71% | 0.872 |  1.83% | 0.1552 |
 | `character-attributes-tabs`            | `CharacterScreen`           |                                                                          0.97% | 0.985 |  0.34% | 0.0441 |
-| `character-attributes-top`             | `CharacterScreen`           |                                                                          8.03% | 0.837 |  2.20% | 0.3136 |
-| `character-constellation`              | `CharacterScreen`           |                                                                          1.90% | 0.904 |  0.88% | 0.0751 |
+| `character-attributes-top`             | `CharacterScreen`           |                                                                          8.07% | 0.830 |  2.21% | 0.3141 |
+| `character-constellation`              | `CharacterScreen`           |                                                                          1.91% | 0.904 |  0.88% | 0.0751 |
 | `character-constellation-tabs`         | `CharacterScreen`           |                                                                          1.31% | 0.979 |  0.44% | 0.0478 |
-| `character-talents`                    | `CharacterScreen`           |                                                                          1.75% | 0.905 |  0.59% | 0.0781 |
+| `character-talents`                    | `CharacterScreen`           |                                                                          2.01% | 0.916 |  0.73% | 0.0839 |
 | `character-talents-tabs`               | `CharacterScreen`           |                                                                          0.89% | 0.978 |  0.28% | 0.0466 |
-| `character-weapons`                    | `CharacterScreen`           |                                                                          2.46% | 0.909 |  1.32% | 0.1047 |
+| `character-weapons`                    | `CharacterScreen`           |                                                                          2.47% | 0.919 |  1.29% | 0.1047 |
 | `character-weapons-tabs`               | `CharacterScreen`           |                                                                          0.89% | 0.976 |  0.30% | 0.0453 |
 | `cooking-screen`                       | `CookingScreen`             |                                                                          1.17% | 0.938 |  0.53% | 0.0540 |
 | `court-of-fontaine-location`           | `WorldScreen`               |                                                                         21.14% | 0.227 | 16.60% | 0.6788 |
@@ -47,7 +47,7 @@ committed.
 | `hud-paimon-button`                    | `HudScreen`                 |                                                                          1.63% | 0.914 |  2.23% | 0.0940 |
 | `hud-stamina-climb`                    | `HudScreen`                 |                                                                          0.62% | 0.787 |  0.75% | 0.0629 |
 | `hud-world-keys`                       | `HudScreen`                 |                                                                          2.07% | 0.983 |  1.52% | 0.1296 |
-| `hud-world-pickup`                     | `HudScreen`                 |                                                                          2.79% | 0.769 |  1.50% | 0.1320 |
+| `hud-world-pickup`                     | `HudScreen`                 |                                                                          2.69% | 0.864 |  1.34% | 0.1277 |
 | `inazuma-city-location`                | `WorldScreen`               |                                                                         18.58% | 0.211 | 16.72% | 0.6033 |
 | `interaction-prompts-jueyun-chili`     | `InteractionPromptList`     |                                                                          4.63% | 0.954 |  1.79% | 0.2034 |
 | `interaction-prompts-pickup`           | `InteractionPromptList`     |                                                                          5.07% | 0.937 |  2.64% | 0.2181 |
@@ -111,7 +111,7 @@ committed.
 | `title-splash`                         | `SplashTitle`               |                                                                          0.20% | 1.000 |  0.01% | 0.0089 |
 | `title-splash-mainland`                | `SplashTitle`               |                                                                          1.89% | 0.991 |  0.89% | 0.0807 |
 | `weapon-screen`                        | `WeaponScreen`              |                                                                          2.00% | 0.897 |  0.94% | 0.0832 |
-| `weapon-screen-ascend`                 | `WeaponScreen`              |                                                                          1.86% | 0.824 |  0.85% | 0.0741 |
+| `weapon-screen-ascend`                 | `WeaponScreen`              |                                                                          1.86% | 0.827 |  0.85% | 0.0741 |
 | `weapon-screen-at-cap`                 | `WeaponScreen`              | pending: the recording zooms over the state, so no whole-screen frame shows it |       |        |        |
 | `weapon-screen-rank-five`              | `WeaponScreen`              |                                     pending: no screenshot of this variant yet |       |        |        |
 | `weapon-screen-refine`                 | `WeaponScreen`              |                                                                          2.40% | 0.941 |  0.59% | 0.0875 |

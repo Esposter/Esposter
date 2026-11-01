@@ -19,9 +19,10 @@ import { checkIsKitValueResolvedEqual } from "#src/services/genshinAssets/kits/r
 import { classifyKitValue } from "#src/services/genshinAssets/kits/record/classifyKitValue";
 import { flattenKitValues } from "#src/services/genshinAssets/kits/record/flattenKitValues";
 import { getDonorKitCandidates } from "#src/services/genshinAssets/kits/record/getDonorKitCandidates";
-import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
+import { getKitGapPaths } from "#src/services/genshinAssets/kits/record/getKitGapPaths";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
 import { keepCommittedKitCause } from "#src/services/genshinAssets/kits/record/keepCommittedKitCause";
+import { seedKitOverlay } from "#src/services/genshinAssets/kits/record/seedKitOverlay";
 import { getResult } from "@esposter/shared";
 
 // The overlay a kit's published record needs for its sources to reproduce it, each entry classified: every value the
@@ -129,11 +130,20 @@ export const compareKitRecord = (
     // Value the build still reads, so it stays in the overlay the build and the report hold
     for (const [path, entry] of Object.entries(committedOverlay))
       if (!publishedValueMap.has(path) && !(path in overlay)) overlay[path] = entry;
-    return buildKitRecord(sourceCandidateMap, overlay, donorRecordMap, namedHitCandidateMap, tables, !isTagPredated);
+    // The build reads the overlay the seeding writes, which keeps every committed entry
+    const seededOverlay = seedKitOverlay(committedOverlay, overlay);
+    return buildKitRecord(
+      sourceCandidateMap,
+      seededOverlay,
+      donorRecordMap,
+      namedHitCandidateMap,
+      tables,
+      !isTagPredated,
+    );
   }).match(
     (built): KitComparison => ({
       built,
-      failures: getMismatchedKitPaths(built.record, publishedRecord, tables.talentMultiplierMap),
+      failures: getKitGapPaths(built.record, publishedRecord, tables.talentMultiplierMap),
       overlay,
     }),
     (error): KitComparison => ({ failures: [error.message], overlay }),

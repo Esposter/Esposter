@@ -21,12 +21,18 @@ vi.mock(import("#src/services/genshinText/readTextMap"), () => ({ readTextMap: v
 describe(readGatheringItems, () => {
   const ITEM_ID = 101;
 
-  const ITEM_LABEL_ID = 63;
+  // A label no respawn rule names, so the inventory category's daily respawn applies
+  const ITEM_LABEL_ID = 64;
 
   const ITEM_NAME = "Test Ore";
 
   // The inventory category the official map files its labels under, whose labels respawn daily
   const INVENTORY_LABEL_ID = 60;
+
+  // The Electro Crystal's label, which its own respawn rule names, spelled with the no-break space the official map uses
+  const ELECTRO_CRYSTAL_LABEL_ID = 63;
+
+  const ELECTRO_CRYSTAL_NAME = "Electro Crystal";
 
   const NAME_TEXT_ID = "1000";
 
@@ -98,5 +104,32 @@ describe(readGatheringItems, () => {
         : [{ ...materialRow, id: excludedItemId }],
     );
     expect(readGatheringItems([])).toStrictEqual({ items: [], labelItemIdMap: new Map() });
+  });
+
+  test("should give an item its label's own respawn over its category's, as an Electro Crystal comes back two days after its pick", () => {
+    expect.hasAssertions();
+    vi.mocked(readTextMap).mockReturnValue(new Map([[NAME_TEXT_ID, "Electro Crystal"]]));
+    readGatherRows([{ itemId: ITEM_ID, pointType: 1001, saveType: "GATHER_SAVE_TYPE_OWN" }]);
+    const electroCrystalLabels: InteractiveMapLabel[] = [
+      {
+        children: [{ children: [], id: ELECTRO_CRYSTAL_LABEL_ID, name: ELECTRO_CRYSTAL_NAME }],
+        id: INVENTORY_LABEL_ID,
+        name: "Inventory / Materials",
+      },
+    ];
+    expect(readGatheringItems(electroCrystalLabels)).toStrictEqual({
+      items: [
+        {
+          id: ITEM_ID,
+          materialType: MaterialType.Exchange,
+          nameTextId: NAME_TEXT_ID,
+          rank: 1,
+          rarity: 1,
+          respawn: GatheringRespawn.TwoDays,
+          stackLimit: 1,
+        },
+      ],
+      labelItemIdMap: new Map([[ELECTRO_CRYSTAL_LABEL_ID, ITEM_ID]]),
+    });
   });
 });

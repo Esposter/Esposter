@@ -543,7 +543,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Black letterbox bars cropped away and its subtitles left out of the region scored. The HUD is drawn over the
   // Recording's own frame, so a piece the HUD drops reads as the game's own (the screen is shot bare too, `isBackdrop`
   // Only shows the overlay)
-  // Its plate is the HUD's pieces alone, so the scene between them is the recording's own pixels
+  // Its plate is the HUD's pieces alone, so the scene between them is the recording's own pixels; the pickup's three
+  // Rows lie in its box at 1100, 350, drawn by the `pickup` variant from the HUD's `interactionPrompts`
   "hud-world-pickup": {
     isBackdrop: true,
     plate: [
@@ -562,6 +563,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     region: { height: 880, width: 1920, x: 0, y: 0 },
     screen: "HudScreen",
     source: "world-pickup.mkv at 70s, cropped to 1920x935 from 0,72",
+    variant: "pickup",
   },
   // Inazuma City from the wiki's 4K location image, a daytime haze with its sun's minute unread (noon provisionally).
   // Its build is not stated, so it is read as current and a red camera pass reopens it. Its landmarks are rigid
