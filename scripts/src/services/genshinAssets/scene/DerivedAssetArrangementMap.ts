@@ -13,6 +13,7 @@ import { readObjectPositions } from "#src/services/genshinAssets/scene/readObjec
 import { readTowersRow } from "#src/services/genshinAssets/scene/readTowersRow";
 import { readWalkwayLift } from "#src/services/genshinAssets/scene/readWalkwayLift";
 import { WindrisePlantArrangementFamilies } from "#src/services/genshinAssets/scene/WindrisePlantArrangementFamilies";
+import { LOGIN_DOOR_MESH } from "#src/services/genshinAssets/shared/constants";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 import { Quaternion, Vector3 } from "three";
 
@@ -96,7 +97,7 @@ export const DerivedAssetArrangementMap: Record<
         name: "Door",
         // Its skin, which names no mesh of its own
         readExpected: (placements) =>
-          Promise.resolve(readObjectPositions(placements, ({ name }) => name === "LoginScene_Door01_Vo")),
+          Promise.resolve(readObjectPositions(placements, ({ name }) => name === LOGIN_DOOR_MESH)),
         readPositions: async () => [(await readWorldData<{ position: Vector }>("login/door.json")).position],
       },
     ],
