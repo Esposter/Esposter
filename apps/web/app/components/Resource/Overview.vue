@@ -28,18 +28,12 @@ const { updateResourceTags } = resourceStore;
 const isTagsEditorOpen = ref(false);
 const tagRows = computed(() => Object.entries(resource.tags));
 const isPublishable = computed(() => checkHasCapability(resource.type, "publishable"));
-// The publication records the `contentVersion` it was published from, so whether the draft has moved since is
-// A comparison rather than a guess off two timestamps — `updatedAt` moves for a rename and a tag edit too, and
-// The publish itself writes nothing to the resource row for it to be compared against
 // Every type has revisions, so the Status row is not the publishable types' alone: it says a version exists to
 // Return to, once one does. The version history panel is where they are chosen, so the number itself is never
 // Rendered — an owner picks a version by its time and its label, never by its ordinal. Read off the newest take's
 // Clock rather than the counter, since every revision expires with its age and a counter never goes back down
 const hasRestorePoint = computed(() =>
   resource.revisionTakenAt ? resource.revisionTakenAt > getSnapshotRetainedSince(SnapshotChannel.Revisions) : false,
-);
-const hasUnpublishedChanges = computed(() =>
-  publication.value ? resource.contentVersion > publication.value.publishedContentVersion : false,
 );
 const publicUrl = computed(() => (publication.value ? RoutePath.View(resource.type, resource.id) : undefined));
 // The page is keyed by resource id, so this instance only ever describes one resource — the count is
@@ -90,8 +84,11 @@ const { data: viewCount } = useQuery(() => {
               <span text-muted>v{{ publication.publishVersion }}</span>
               <!-- The Azure-portal question this row exists to answer: is what I am looking at what the world
                    sees. A published resource whose draft has moved says so rather than leaving it to be worked
-                   out from the two dates above -->
-              <span v-if="hasUnpublishedChanges" flex gap-1 items-center>
+                   out from the two dates above. The publication records the `contentVersion` it was published
+                   from, so whether the draft has moved since is a comparison rather than a guess off two
+                   timestamps — `updatedAt` moves for a rename and a tag edit too, and the publish itself writes
+                   nothing to the resource row for it to be compared against -->
+              <span v-if="resource.contentVersion > publication.publishedContentVersion" flex gap-1 items-center>
                 <span text-warning flex><UiIcon :meaning="UiIconMeaning.Warning" /></span>
                 Draft changes not published
               </span>
