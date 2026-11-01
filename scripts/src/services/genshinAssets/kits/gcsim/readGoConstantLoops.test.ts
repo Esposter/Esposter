@@ -6,14 +6,14 @@ import { readConstantLoops } from "#src/services/genshinAssets/kits/gcsim/readGo
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 import { describe, expect, test } from "vitest";
 
-describe(readConstantLoops, () => {
-  // The loops a source gives, its constants resolving the bounds the way the file's own constants do
-  const readLoops = (source: string) => {
-    const tokens = tokenizeGo(source);
-    const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
-    return readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG);
-  };
+// The loops a source gives, its constants resolving the bounds the way the file's own constants do
+const readLoops = (source: string) => {
+  const tokens = tokenizeGo(source);
+  const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
+  return readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG);
+};
 
+describe(readConstantLoops, () => {
   test("reads a loop over a constant slice as one iteration per element, its index and element as the variables", () => {
     expect.hasAssertions();
 
