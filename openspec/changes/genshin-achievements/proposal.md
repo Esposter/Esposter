@@ -20,8 +20,7 @@ Achievements for exploring, server-fired triggers and the namecard grant start c
 ## Waiting on
 
 - The waypoint and area triggers, which wait on the statues of the seven's scene points and areas for every region (region data holds Windrise only).
-- The chest triggers, which wait on the chests unit calling `openChest` in the world.
-- The offering levels, which wait on the offering systems unit.
+- The chest triggers, which wait on chest places that carry the game's chest id and region, since a chest opening carries neither yet.
 - The server-fired achievements, which wait on the pages that build their subjects.
 
 ## Impact
