@@ -1,11 +1,11 @@
 // @vitest-environment happy-dom
+import { PanzoomEventName } from "#src/models/panzoom/PanzoomEventName";
+import { bindPanzoom } from "#src/services/panzoom/bindPanzoom";
 import { PANZOOM_DEFAULT_EXCLUDE_CLASS } from "#src/services/panzoom/constants";
 import { createPanzoom } from "#src/services/panzoom/createPanzoom";
 import { setupPanzoomDom } from "#src/services/panzoom/setupPanzoomDom.test";
 import { stubPanzoomLayout } from "#src/services/panzoom/stubPanzoomLayout.test";
 import { stubPanzoomParent } from "#src/services/panzoom/stubPanzoomParent.test";
-import { PanzoomEventName } from "#src/models/panzoom/PanzoomEventName";
-import { bindPanzoom } from "#src/services/panzoom/bindPanzoom";
 import { describe, expect, test, vi } from "vitest";
 
 // A pointer event as a browser sends it: pointers are told apart by id, and move and up reach the document

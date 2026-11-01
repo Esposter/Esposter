@@ -46,6 +46,25 @@ const setFullscreenElement = (element: Element | null) => {
   Object.defineProperty(window.document, "fullscreenElement", { configurable: true, value: element });
 };
 
+const createPage = (
+  render: PDFPageProxy["render"] = vi.fn<PDFPageProxy["render"]>(() => createRenderTask(Promise.resolve())),
+): PDFPageProxy =>
+  ({
+    getViewport: ({ scale }: { scale: number }) => ({ height: PAGE_HEIGHT * scale, width: PAGE_WIDTH * scale }),
+    render,
+  }) as PDFPageProxy;
+
+// A document with no outline resolves to null, which the viewer reads as no bookmarks
+const createDocument = (numPages: number, page = createPage(), outline: null | PdfOutline = null): PDFDocumentProxy =>
+  ({
+    annotationStorage: createAnnotationStorage(),
+    getData: vi.fn<PDFDocumentProxy["getData"]>(() => Promise.resolve(new Uint8Array([1, 2, 3]))),
+    getOutline: vi.fn<() => Promise<null | PdfOutline>>(() => Promise.resolve(outline)),
+    getPage: vi.fn<PDFDocumentProxy["getPage"]>(() => Promise.resolve(page)),
+    numPages,
+    saveDocument: vi.fn<PDFDocumentProxy["saveDocument"]>(() => Promise.resolve(new Uint8Array([4, 5, 6]))),
+  }) as unknown as PDFDocumentProxy;
+
 describe(usePdfViewer, () => {
   const FIND_STATE_NOT_FOUND = 1;
   const LINK_TARGET_BLANK = 2;
@@ -213,23 +232,6 @@ describe(usePdfViewer, () => {
       PDFLinkService,
       PDFViewer,
     }) as unknown as PdfViewerApi;
-  const createPage = (
-    render: PDFPageProxy["render"] = vi.fn<PDFPageProxy["render"]>(() => createRenderTask(Promise.resolve())),
-  ): PDFPageProxy =>
-    ({
-      getViewport: ({ scale }: { scale: number }) => ({ height: PAGE_HEIGHT * scale, width: PAGE_WIDTH * scale }),
-      render,
-    }) as PDFPageProxy;
-  // A document with no outline resolves to null, which the viewer reads as no bookmarks
-  const createDocument = (numPages: number, page = createPage(), outline: null | PdfOutline = null): PDFDocumentProxy =>
-    ({
-      annotationStorage: createAnnotationStorage(),
-      getData: vi.fn<PDFDocumentProxy["getData"]>(() => Promise.resolve(new Uint8Array([1, 2, 3]))),
-      getOutline: vi.fn<() => Promise<null | PdfOutline>>(() => Promise.resolve(outline)),
-      getPage: vi.fn<PDFDocumentProxy["getPage"]>(() => Promise.resolve(page)),
-      numPages,
-      saveDocument: vi.fn<PDFDocumentProxy["saveDocument"]>(() => Promise.resolve(new Uint8Array([4, 5, 6]))),
-    }) as unknown as PDFDocumentProxy;
   const mountViewer = (
     pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>,
     highlightTerms: string[] = [],

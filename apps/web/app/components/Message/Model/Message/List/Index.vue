@@ -13,9 +13,9 @@ const { currentRoom } = storeToRefs(roomStore);
 const scrollStore = useScrollStore();
 // The sentinel and the container are the store's: whether the reader is looking at the present is one fact, read
 // By the jump-to-present affordance as much as by the anchoring below
-const { isPinnedToBottom, isScrolling, messageContainerElement } = storeToRefs(scrollStore);
+const { bottomSentinel, isPinnedToBottom, isScrolling, messageContainerElement } = storeToRefs(scrollStore);
 const setBottomSentinel = (element: unknown) => {
-  scrollStore.bottomSentinel = element instanceof HTMLDivElement ? element : null;
+  bottomSentinel.value = element instanceof HTMLDivElement ? element : null;
 };
 const getFirstVisibleMessageElement = () => {
   const element = messageContainerElement.value;

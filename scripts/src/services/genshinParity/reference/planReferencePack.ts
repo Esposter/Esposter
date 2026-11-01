@@ -3,7 +3,7 @@ import type { ReferenceEntryPlan } from "#src/models/genshinParity/reference/Ref
 import type { ReferencePackDecision } from "#src/models/genshinParity/reference/ReferencePackDecision";
 import type { ReferencePackOptions } from "#src/models/genshinParity/reference/ReferencePackOptions";
 
-import { hasScreenshot } from "#src/services/genshinParity/reference/hasScreenshot";
+import { checkHasScreenshot } from "#src/services/genshinParity/reference/checkHasScreenshot";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Decides what a pack stores from its plans and its options.
@@ -15,7 +15,7 @@ export const planReferencePack = (
   plans: ReferenceEntryPlan[],
   { replace, skipColliding }: ReferencePackOptions,
 ): ReferencePackDecision => {
-  const unknown = replace.filter((id) => !plans.some((plan) => plan.id === id && hasScreenshot(plan)));
+  const unknown = replace.filter((id) => !plans.some((plan) => plan.id === id && checkHasScreenshot(plan)));
   if (unknown.length > 0)
     throw new InvalidOperationError(
       Operation.Read,

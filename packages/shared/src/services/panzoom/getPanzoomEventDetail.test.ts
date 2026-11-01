@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
-import { createPanzoomContext } from "#src/services/panzoom/createPanzoomContext.test";
 import { PANZOOM_SVG_NAMESPACE } from "#src/services/panzoom/constants";
+import { createPanzoomContext } from "#src/services/panzoom/createPanzoomContext.test";
 import { getPanzoomEventDetail } from "#src/services/panzoom/getPanzoomEventDetail";
 import { describe, expect, test } from "vitest";
 

@@ -8,6 +8,7 @@ import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { useAgentConsoleSideChatStore } from "@/store/agentConsole/sideChat";
 import { takeOne } from "@esposter/shared";
+import { flushPromises } from "@vue/test-utils";
 import {
   AgentEventType,
   CommandType,
@@ -328,9 +329,8 @@ describe(useAgentConsoleConnectionStore, () => {
     });
     const pairMessage = await pendingPair;
     dispatchMessage(socket, { credential, publicKey: " ", type: ServerMessageType.Paired });
-    await vi.waitFor(() => {
-      expect(agentConsoleConnectionStore.connections).toHaveLength(1);
-    });
+    await flushPromises();
+    expect(agentConsoleConnectionStore.connections).toHaveLength(1);
     const { id } = takeOne(agentConsoleConnectionStore.connections);
 
     // oxlint-disable-next-line no-restricted-properties -- the page's message, read back as the test's host would
@@ -364,9 +364,7 @@ describe(useAgentConsoleConnectionStore, () => {
     });
     await pendingClose;
     dispatchMessage(socket, { credential, publicKey: " ", type: ServerMessageType.Paired });
-    await new Promise((resolve) => {
-      setTimeout(resolve);
-    });
+    await flushPromises();
 
     expect(socket.send).toHaveBeenCalledTimes(1);
     expect(socket.close).toHaveBeenCalledWith(HostCloseCode.PairingRefused);

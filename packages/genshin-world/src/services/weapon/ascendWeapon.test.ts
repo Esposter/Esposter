@@ -1,5 +1,6 @@
 import type { Character } from "#src/models/character/Character";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
+
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { ascendCharacter } from "#src/services/character/ascendCharacter";

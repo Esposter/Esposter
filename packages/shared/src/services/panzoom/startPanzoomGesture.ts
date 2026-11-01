@@ -1,12 +1,12 @@
 import type { PanzoomContext } from "#src/models/panzoom/PanzoomContext";
 
 import { PanzoomEventName } from "#src/models/panzoom/PanzoomEventName";
+import { checkIsPanzoomExcluded } from "#src/services/panzoom/checkIsPanzoomExcluded";
 import { dispatchPanzoomEvent } from "#src/services/panzoom/dispatchPanzoomEvent";
 import { getPanzoomDrag } from "#src/services/panzoom/getPanzoomDrag";
 import { getPanzoomEventDetail } from "#src/services/panzoom/getPanzoomEventDetail";
 import { getPanzoomPinchFrame } from "#src/services/panzoom/getPanzoomPinchFrame";
 import { getPanzoomTarget } from "#src/services/panzoom/getPanzoomTarget";
-import { isPanzoomExcluded } from "#src/services/panzoom/isPanzoomExcluded";
 import { writePanzoomStyle } from "#src/services/panzoom/writePanzoomStyle";
 
 // A pointer that the exclusions and the filter let through joins the gesture. One pointer starts a drag, and a second turns
@@ -15,7 +15,7 @@ export const startPanzoomGesture = (context: PanzoomContext, event: PointerEvent
   const { element, options, pointers, state } = context;
   context.isClickSuppressed = false;
   if (pointers.size >= 2) return;
-  if (isPanzoomExcluded(event.target as Element, options)) return;
+  if (checkIsPanzoomExcluded(event.target as Element, options)) return;
   const { filter } = options;
   if (filter && !filter(event)) return;
 

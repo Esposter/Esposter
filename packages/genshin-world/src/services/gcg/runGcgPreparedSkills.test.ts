@@ -1,7 +1,7 @@
 import { CROWFEATHER_COVER_ID } from "#src/services/gcg/cards/constants";
-import { crowfeatherCover } from "#src/services/gcg/cards/crowfeatherCover";
 import { createDuel } from "#src/services/gcg/cards/createDuel.test";
 import { createSideState } from "#src/services/gcg/cards/createSideState.test";
+import { crowfeatherCover } from "#src/services/gcg/cards/crowfeatherCover";
 import { ELECTRO_CHARACTER, PREPARED_SKILL } from "#src/services/gcg/constants.test";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";

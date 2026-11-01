@@ -20,7 +20,7 @@ export const createPairingCodes = (): PairingCodes => {
       for (const timeout of codeTimeoutMap.values()) clearTimeout(timeout);
       codeTimeoutMap.clear();
     },
-    prove: (text) => [...codeTimeoutMap.keys()].map((code) => getPairingProof(code, text)),
+    prove: (text) => Array.from(codeTimeoutMap.keys(), (code) => getPairingProof(code, text)),
     take: (code) => {
       const heldCode = [...codeTimeoutMap.keys()].find((candidate) => checkIsTokenValid(code, candidate));
       if (heldCode === undefined) return false;

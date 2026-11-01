@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
+import { checkIsPanzoomExcluded } from "#src/services/panzoom/checkIsPanzoomExcluded";
 import { PANZOOM_DEFAULT_EXCLUDE_CLASS } from "#src/services/panzoom/constants";
-import { isPanzoomExcluded } from "#src/services/panzoom/isPanzoomExcluded";
 import { describe, expect, test } from "vitest";
 
-describe(isPanzoomExcluded, () => {
+describe(checkIsPanzoomExcluded, () => {
   test("a target inside an excluded element is excluded, and a sibling of it is not", () => {
     expect.hasAssertions();
 
@@ -12,8 +12,8 @@ describe(isPanzoomExcluded, () => {
     const sibling = document.createElement("span");
     parent.append(child);
 
-    expect(isPanzoomExcluded(child, { exclude: [parent] })).toBe(true);
-    expect(isPanzoomExcluded(sibling, { exclude: [parent] })).toBe(false);
+    expect(checkIsPanzoomExcluded(child, { exclude: [parent] })).toBe(true);
+    expect(checkIsPanzoomExcluded(sibling, { exclude: [parent] })).toBe(false);
   });
 
   test("a target inside an element with the exclude class is excluded, under the class the options name", () => {
@@ -24,7 +24,7 @@ describe(isPanzoomExcluded, () => {
     parent.append(child);
     parent.classList.add(PANZOOM_DEFAULT_EXCLUDE_CLASS);
 
-    expect(isPanzoomExcluded(child, {})).toBe(true);
-    expect(isPanzoomExcluded(child, { excludeClass: "custom" })).toBe(false);
+    expect(checkIsPanzoomExcluded(child, {})).toBe(true);
+    expect(checkIsPanzoomExcluded(child, { excludeClass: "custom" })).toBe(false);
   });
 });

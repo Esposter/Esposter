@@ -26,6 +26,12 @@ const mountPage = async (page: PDFPageProxy) => {
   return { canvas, scope };
 };
 
+const createPage = (render: PDFPageProxy["render"]): PDFPageProxy =>
+  ({
+    getViewport: ({ scale }: { scale: number }) => ({ height: PAGE_HEIGHT * scale, width: PAGE_WIDTH * scale }),
+    render,
+  }) as PDFPageProxy;
+
 describe(usePdfPage, () => {
   type ResizeCallback = (entries: ResizeObserverEntry[]) => void;
 
@@ -44,11 +50,6 @@ describe(usePdfPage, () => {
   const reportWidth = (width: number) => {
     reportResize?.([{ contentRect: { width } }] as ResizeObserverEntry[]);
   };
-  const createPage = (render: PDFPageProxy["render"]): PDFPageProxy =>
-    ({
-      getViewport: ({ scale }: { scale: number }) => ({ height: PAGE_HEIGHT * scale, width: PAGE_WIDTH * scale }),
-      render,
-    }) as PDFPageProxy;
 
   beforeEach(() => {
     vi.stubGlobal("ResizeObserver", ResizeObserverStub);
