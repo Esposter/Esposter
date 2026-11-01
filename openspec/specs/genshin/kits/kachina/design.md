@@ -41,10 +41,10 @@ flowchart TD
 
 ## Key files
 
-| File                                                               | Role                                                                                         |
-| :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
+| File                                                               | Role                                                                                        |
+| :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
 | `packages/genshin-world/src/services/kit/characters/kachinaKit.ts` | `createKachinaKitBehaviour`, Kachina's module, with her Weight of Stone on the skill's hits |
-| `packages/genshin-world/src/data/kits/kachina.json`                | Kachina's overlay: the frames, areas and hit counts her sources do not give                  |
+| `packages/genshin-world/src/data/kits/kachina.json`                | Kachina's overlay: the frames, areas and hit counts her sources do not give                 |
 
 ## Sources
 
