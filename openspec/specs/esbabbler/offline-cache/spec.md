@@ -45,13 +45,19 @@ A room that loads with no messages SHALL NOT keep messages cached from an earlie
 
 ### Requirement: Cached data is kept separately for each room and each user
 
-Cached messages, members and rooms SHALL be kept apart by the room or user they belong to.
+Cached messages, members and rooms SHALL be kept apart by the room or user they belong to, and signing out SHALL remove all of them from the browser.
 
 #### Scenario: a second user signs in on the same browser
 
 - **GIVEN** a browser where one user's room list is cached
 - **WHEN** a different user signs in and reads their rooms offline
 - **THEN** the first user's rooms are not shown
+
+#### Scenario: a second user opens a room offline after the first user signs out
+
+- **GIVEN** a browser where the first user has cached messages and members for a room
+- **WHEN** the first user signs out and a second user opens that room while offline
+- **THEN** none of the first user's messages or members are shown
 
 ### Requirement: The browser refusing the cache does not disturb the reader
 

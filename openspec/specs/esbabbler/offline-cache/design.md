@@ -34,6 +34,10 @@ Every object store is partitioned; `readIndexedDb` / `writeIndexedDb` always tak
 - **Members** → `roomId` (injected `partitionKey`; key path `[partitionKey, id]`)
 - **Rooms** → `userId` (injected `partitionKey`; key path `[partitionKey, id]`)
 
+### Sign-out clears the whole database
+
+Messages and members are partitioned by room, not by reader, so the rows one reader cached for a room are what the next reader of the browser would be served there, and the rooms partition on the user does not cover them. `signOutOfBrowser` therefore deletes the whole database before it ends the session, and a failed delete is logged while the sign-out goes on. Draining the page's pending fire-and-forget work first was rejected: `waitForSynchronizedFunctions` waits on every one of them, so one that never settles would hold the sign-out.
+
 ### Readiness is the store's, not the cache's
 
 A partitioned cache asks one question, on every switch and on every mount: **are the rows currently loaded this partition's own?** The list cannot answer it — emptiness says nothing about whether a load happened — so the answer is a per-partition `isLoaded` flag **recorded by the store that performed the load**, set the moment a read or a hydration lands and therefore set for a partition the server says is empty too. The pagination data map keys it exactly like the slice it describes, and the cache takes it as an option.
@@ -80,7 +84,8 @@ Nothing in a fetch composable touches the cache: hydration is a watcher's job, f
 | File                                                          | Role                                                       |
 | :------------------------------------------------------------ | :--------------------------------------------------------- |
 | `apps/web/app/models/cache/indexedDb/`                        | store name enum, configuration interface, typed `DBSchema` |
-| `apps/web/app/services/cache/indexedDb/openIndexedDb.ts`      | singleton `openDB` + `resetIndexedDb` (tests)              |
+| `apps/web/app/services/cache/indexedDb/openIndexedDb.ts`      | singleton `openDB` + `resetIndexedDb` (sign-out and tests) |
+| `apps/web/app/services/auth/signOutOfBrowser.ts`              | deletes the whole database before the session ends         |
 | `apps/web/app/services/cache/indexedDb/readIndexedDb.ts`      | read all items by `partitionKey`                           |
 | `apps/web/app/services/cache/indexedDb/writeIndexedDb.ts`     | replace all items for a `partitionKey` (respects `limit`)  |
 | `apps/web/app/composables/cache/indexedDb/`                   | the generic pagination cache composables                   |

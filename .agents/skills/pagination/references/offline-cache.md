@@ -9,6 +9,7 @@ Consequences that keep this boundary intact:
 - **`readItems`/`readMoreItems` know nothing about IndexedDB** — they are plain pagination helpers. Never add cache options to them or push cache behaviour deeper into pagination.
 - **Read composables know nothing about the cache either** — there is no read-side cache composable to call. Never call `useOnline`, `readIndexedDb`, or `writeIndexedDb` from a feature read composable; hydration is already automatic.
 - `readIndexedDb` / `writeIndexedDb` (`apps/web/app/services/cache/indexedDb/`) are called **only** from `usePaginationCache`.
+- **Sign-out deletes the whole database** (`apps/web/app/services/auth/signOutOfBrowser.ts`), which is what stops room-keyed messages and members reaching the next reader of the browser. A store keyed by anything other than the reader relies on that delete.
 
 **Generic cache composables** (`apps/web/app/composables/cache/indexedDb/`) — each takes one options object and returns nothing. Both of its operations are fired from watchers through `getSynchronizedFunction`, so the completion signal is the repo-wide drain, `waitForSynchronizedFunctions()`; never give the cache (or the `useMutation` instance under it) a `flush` of its own for a test to await.
 
