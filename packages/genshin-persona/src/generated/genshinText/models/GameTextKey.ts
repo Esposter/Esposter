@@ -14,7 +14,17 @@ export const GameTextKey = {
   // The title of a floor's chamber, filled with the floor and the chamber
   AbyssFloorChamberTitle: "UI_TOWER_LEVEL_TITLE",
   AbyssMoonSpire: "UI_TOWER_SPIRAL",
+  // The stamp a finished achievement is marked with, its date written beneath it
+  AchievementCompleted: "UI_ACHIEVEMENT_COMPLETE",
+  // The header's count of every finished achievement, its number drawn in the colour the game gives it
+  AchievementCompletedCount: "UI_ACHIEVEMENT_COUNTS",
+  // The line under the banner's title, the namecard a category's completion earns
+  AchievementNamecardHint: "UI_ACHIEVEMENT_ILLUSTRATION",
+  // The banner's title over its progress bar
+  AchievementProgress: "UI_ACHIEVEMENT_RATE",
   Achievements: "UI_ACHIEVEMENT_TITLE",
+  // The placeholder in the Achievements screen's search box
+  AchievementSearch: "UI_ACHIEVEMENT_SEARCH",
   // The currencies by their item names: the two Fates, Genesis Crystals, the Masterless Starglitter and Stardust
   // Wishes return, Mora and Primogems
   AcquaintFate: "1444439468",
@@ -534,6 +544,8 @@ export const GameTextKey = {
   MailGiftBox: "UI_MAIL_FAVORITES_TITLE_1",
   MailGiftDeleteWarning: "UI_MAIL_FAVORITES_WARNING_DESC",
   MailGiftDeleteWarningTitle: "UI_MAIL_FAVORITES_WARNING_TITLE",
+  // The label before the count of the mails held, out of the mailbox's capacity, in the Mail screen's header
+  MailItems: "UI_MAIL_NUM_LABEL",
   MailNoMail: "UI_MAIL_NO_MAIL_TIP_TITLE",
   MailNoMailDescription: "UI_MAIL_NO_MAIL_TIP_DESC",
   MailSender: "MAIL_DETAIL_SENDER",
@@ -849,6 +861,10 @@ export const GameTextKey = {
   Time: "UI_STC_GAMEENTRYPAGE_TIME",
   // The Time screen's confirm, in the game's own word for Confirm
   TimeConfirm: "UI_STC_LEVELUP_DIALOG_OK",
+  // The label over the world's clock time on the Time screen, which the dial's advance is counted from
+  TimeCurrent: "UI_CLOCK_PAGE_CURRENT_TIME",
+  // The day under the hour the dial points at, while that hour falls on the clock's own day
+  TimeToday: "UI_TIMECHANGE_TODAY",
   // The label over the hour the Time screen's dial points at, before the player confirms it
   TimeWaitUntil: "UI_CLOCK_PAGE_TO_TIME",
   // The tip popup's button that closes it, in the game's own words for Got it
@@ -881,6 +897,8 @@ export const GameTextKey = {
   WeaponEnhance: "UI_EQUIP_PAGE_LEVELUP_BUTTON",
   // The enhancement materials chosen so far over those the next level needs, "({0}/{1})"
   WeaponEnhanceMaterialsConsumed: "UI_EQUIP_LEVELUP_NEED_NEW",
+  // The EXP tag under the weapon's level on the Enhance tab, which the English text files under this manual name
+  WeaponExp: "BeyondEditorInstructionNodeConfig_inParamList_1_name_390",
   // The quick-add option choosing every material of three stars and under
   WeaponMaterialsThreeStarAndUnder: "UI_FAST_ADD_OPTION_3",
   WeaponRefine: "UI_EQUIP_PAGE_AWAKEN_BUTTON",
