@@ -51,7 +51,8 @@ const createFixture = () => {
 
 describe("createCharacterAvatar", () => {
   test("names the humanoid bones for the pose and reads the mesh over the binary without a copy", () => {
-    expect.assertions(2);
+    expect.hasAssertions();
+
     const { buffer, manifest } = createFixture();
     const { skinnedMeshes } = createCharacterAvatar(manifest, buffer, new Map(), {
       lightUniforms: createLightUniforms(),

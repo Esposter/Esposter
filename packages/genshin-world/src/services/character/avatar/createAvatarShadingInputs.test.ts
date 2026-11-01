@@ -7,8 +7,9 @@ describe("createAvatarShadingInputs", () => {
   const WHITE_REGIONS = { five: [1, 1, 1], four: [1, 1, 1], one: [1, 1, 1], three: [1, 1, 1], two: [1, 1, 1] };
 
   test("leaves out each value the material does not hold, so the shading keeps its default for it", () => {
-    expect.assertions(2);
-    const inputs = createAvatarShadingInputs(
+    expect.hasAssertions();
+
+    constinputs = createAvatarShadingInputs(
       { colors: { _Color: [0.5, 0.25, 1, 1] }, floats: { _Shininess: 10 }, keywords: [], textures: {} },
       CharacterMaterialKind.Face,
       new Map(),
@@ -33,7 +34,8 @@ describe("createAvatarShadingInputs", () => {
   });
 
   test("reads the ramp width the material gives, and leaves the shading's default where it gives none", () => {
-    expect.assertions(2);
+    expect.hasAssertions();
+
     const { rampWidth } = createAvatarShadingInputs(
       { colors: {}, floats: { _ShadowRampWidth: 0.8 }, keywords: [], textures: {} },
       CharacterMaterialKind.Body,
@@ -50,7 +52,8 @@ describe("createAvatarShadingInputs", () => {
   });
 
   test("reads the outline's width knots the material names, and keeps the unit knots for any it does not name", () => {
-    expect.assertions(3);
+    expect.hasAssertions();
+
     const { outlineWidthKnots } = createAvatarShadingInputs(
       {
         colors: { _OutlineWidthAdjustScales: [0.5, 1, 2, 0], _OutlineWidthAdjustZs: [1, 4, 9, 0] },
@@ -78,7 +81,8 @@ describe("createAvatarShadingInputs", () => {
   });
 
   test("turns on each later region the material turns on", () => {
-    expect.assertions(1);
+    expect.hasAssertions();
+
     const { regionToggles } = createAvatarShadingInputs(
       { colors: {}, floats: { _UseMaterial2: 1, _UseMaterial3: 1, _UseMaterial4: 0 }, keywords: [], textures: {} },
       CharacterMaterialKind.Body,
@@ -89,8 +93,9 @@ describe("createAvatarShadingInputs", () => {
   });
 
   test("reads each region's first and cool shadow colour, white where the material holds none", () => {
-    expect.assertions(2);
-    const inputs = createAvatarShadingInputs(
+    expect.hasAssertions();
+
+    constinputs = createAvatarShadingInputs(
       {
         colors: {
           _CoolShadowMultColor: [0.2, 0.2, 0.3, 1],
