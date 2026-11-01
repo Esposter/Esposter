@@ -315,17 +315,14 @@ watch(
 }
 
 .quick-use {
+  position: absolute;
+  top: calc(var(--unit) * 960);
+  left: calc(var(--unit) * 1298);
   padding: calc(var(--unit) * 10) calc(var(--unit) * 20);
   border: none;
   border-radius: calc(var(--unit) * 8);
   background: rgb(255 255 255 / 0.14);
   color: inherit;
   font: inherit;
-}
-
-.quick-use {
-  position: absolute;
-  top: calc(var(--unit) * 960);
-  left: calc(var(--unit) * 1298);
 }
 </style>
