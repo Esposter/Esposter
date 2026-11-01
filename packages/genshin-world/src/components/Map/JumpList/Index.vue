@@ -3,8 +3,7 @@ import type { Catalogue } from "#src/models/world/Catalogue";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { GameText } from "genshin-text";
 
-import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
-import { GameButton, GameButtonKind } from "genshin-interface";
+import MapJumpListItem from "#src/components/Map/JumpList/Item/Index.vue";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -37,17 +36,14 @@ const regionJumps = computed(() =>
   <nav class="jump-list" :aria-label="gameText[GameTextKey.Teleport]">
     <section v-for="{ id, jumps, name } of regionJumps" :key="id">
       <h2 class="region">{{ name }}</h2>
-      <GameButton
+      <MapJumpListItem
         v-for="{ areaName, landmark } of jumps"
         :key="landmark.id"
-        class="jump"
-        tip=""
-        :kind="GameButtonKind.Row"
-        @click="emit('jump', landmark)"
-      >
-        <span>{{ areaName }}</span>
-        <span class="kind">{{ gameText[computeJumpLandmarkTextKey(landmark)] }}</span>
-      </GameButton>
+        :area-name="areaName"
+        :game-text
+        :landmark
+        @jump="emit('jump', landmark)"
+      />
     </section>
   </nav>
 </template>
@@ -66,22 +62,5 @@ const regionJumps = computed(() =>
   margin: 0 0 calc(var(--unit) * 8);
   font-size: calc(var(--unit) * 28);
   font-weight: normal;
-}
-
-.jump {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  padding: calc(var(--unit) * 12) calc(var(--unit) * 16);
-  border-radius: calc(var(--unit) * 8);
-  background: rgb(255 255 255 / 0.08);
-  color: inherit;
-  font-size: calc(var(--unit) * 24);
-  text-align: start;
-}
-
-.kind {
-  font-size: calc(var(--unit) * 18);
-  opacity: 0.7;
 }
 </style>

@@ -2,6 +2,7 @@
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { Landmark } from "#src/models/world/Landmark";
 
+import MapDrawingMark from "#src/components/Map/Drawing/Mark/Index.vue";
 import { computeFilledAreaIds } from "#src/services/map/computeFilledAreaIds";
 
 interface Props {
@@ -34,14 +35,12 @@ const areaOutlines = computed(() => {
        landmarks a jump lands at, in the catalogue's metres, turned into the view's frame by the transform it is given -->
   <g :transform>
     <polygon v-for="{ id, points } of areaOutlines" :key="id" class="area" :points />
-    <circle
+    <MapDrawingMark
       v-for="landmark of landmarks"
       :key="landmark.id"
-      class="mark"
-      :cx="landmark.position.x"
-      :cy="landmark.position.z"
-      :r="markRadius"
-      @click="emit('select', landmark)"
+      :landmark
+      :mark-radius="markRadius"
+      @select="emit('select', landmark)"
     />
   </g>
 </template>
@@ -52,14 +51,6 @@ const areaOutlines = computed(() => {
   fill: rgb(214 201 168 / 0.85);
   stroke: rgb(120 104 74);
   stroke-width: 2;
-  vector-effect: non-scaling-stroke;
-}
-
-.mark {
-  fill: rgb(96 178 196);
-  stroke: #fff;
-  stroke-width: 2;
-  cursor: inherit;
   vector-effect: non-scaling-stroke;
 }
 </style>
