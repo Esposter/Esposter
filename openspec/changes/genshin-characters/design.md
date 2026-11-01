@@ -46,15 +46,15 @@ packages/genshin-world/src/components/Character/Model/Index.reference.ts
 
 ## Key files
 
-| File                                                                    | Role after the change                                                                   |
-| :---------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |
-| `scripts/src/models/genshinAssets/shared/DerivedAssetComponent.ts`      | Gains the `Traveler` component the Traveler's clips are exported under                 |
-| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts` | Gains the Traveler's entry, its clip pattern and no root of its own                    |
-| `scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts` | Gains an empty `Traveler` entry                                                        |
-| `packages/genshin-world/src/components/Character/Model/Index.vue`       | The model, posed by the fitted motion and drawn at its measured scale                  |
-| `packages/genshin-world/src/services/character/constants.ts`            | The Traveler's measured unit, and the reckoned unit every other character keeps        |
-| `packages/genshin-world/src/components/Character/Screen/Index.vue`      | Its foot slot, which holds the terms beside the character                              |
-| `packages/genshin-world/src/components/World/Session/Index.vue`         | Fills the screen's foot slot with the terms view                                       |
+| File                                                                    | Role after the change                                                           |
+| :---------------------------------------------------------------------- | :------------------------------------------------------------------------------ |
+| `scripts/src/models/genshinAssets/shared/DerivedAssetComponent.ts`      | Gains the `Traveler` component the Traveler's clips are exported under          |
+| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts` | Gains the Traveler's entry, its clip pattern and no root of its own             |
+| `scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts` | Gains an empty `Traveler` entry                                                 |
+| `packages/genshin-world/src/components/Character/Model/Index.vue`       | The model, posed by the fitted motion and drawn at its measured scale           |
+| `packages/genshin-world/src/services/character/constants.ts`            | The Traveler's measured unit, and the reckoned unit every other character keeps |
+| `packages/genshin-world/src/components/Character/Screen/Index.vue`      | Its foot slot, which holds the terms beside the character                       |
+| `packages/genshin-world/src/components/World/Session/Index.vue`         | Fills the screen's foot slot with the terms view                                |
 
 ## Sources
 

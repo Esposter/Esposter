@@ -124,12 +124,7 @@ export const fitLoginPaving = async (
   const { tags, values } = rasterizeTopFaces(faces, { cellSize: CELL_SIZE, corner: PLAN_CORNER, height, width });
   const getDiffusePath = (name: string): string => join(textureDirectory, `${name}_Diffuse.png`);
   const textures = await Promise.all(
-    materialNames.map((name) =>
-      sharp(getDiffusePath(name))
-        .greyscale()
-        .raw()
-        .toBuffer({ resolveWithObject: true }),
-    ),
+    materialNames.map((name) => sharp(getDiffusePath(name)).greyscale().raw().toBuffer({ resolveWithObject: true })),
   );
   // Each cell's texel in its material's texture, its coordinates tiled and its rows read from the top
   const getTexel = (cell: number): [number, number] =>
@@ -153,12 +148,7 @@ export const fitLoginPaving = async (
   };
   const traceCells = (cells: readonly number[]): Loop[] => traceCellLoops(cells, grid);
   const colorTextures = await Promise.all(
-    materialNames.map((name) =>
-      sharp(getDiffusePath(name))
-        .removeAlpha()
-        .raw()
-        .toBuffer({ resolveWithObject: true }),
-    ),
+    materialNames.map((name) => sharp(getDiffusePath(name)).removeAlpha().raw().toBuffer({ resolveWithObject: true })),
   );
   const colors = Array.from({ length: width * height }, (_value, cell): Vector => {
     const texture = colorTextures[tags[cell] ?? -1];
