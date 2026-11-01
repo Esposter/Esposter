@@ -78,7 +78,7 @@ The page is open all day beside an editor, so the overlay adds nothing per frame
 | `apps/web/app/components/AgentConsole/Sheet.vue`                   | The console: a sheet of tabs docked above the bar, which a permission request opens            |
 | `apps/web/app/components/AgentConsole/PauseMenu.vue`               | Back to the world, the sessions, unpair, and leave to the app                                  |
 | `apps/web/app/components/AgentConsole/Panel/Hud.vue`               | The bar under the world: the session, the host, the console, pause and home                    |
-| `apps/web/app/components/AgentConsole/ChatLines.vue`               | The latest replies' opening words over the world, fading                                       |
+| `apps/web/app/components/AgentConsole/ChatLines/Index.vue`         | The latest replies' opening words over the world, fading                                       |
 | `apps/web/app/components/AgentConsole/Panel/Opening.vue`           | The opening wired to the page: its loading steps as progress, and the step under way announced |
 | `packages/genshin-world/src/components/Game/Opening/Index.vue`     | The game's opening as one sequence: the splashes, the login screen, then the startup screen    |
 | `packages/genshin-world/src/components/Splash/Sequence/Index.vue`  | The opening: the logos and the health notice, one after another on white                       |

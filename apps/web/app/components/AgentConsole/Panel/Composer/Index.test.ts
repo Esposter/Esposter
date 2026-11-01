@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import AgentConsolePanelComposer from "@/components/AgentConsole/Panel/Composer.vue";
+import AgentConsolePanelComposer from "@/components/AgentConsole/Panel/Composer/Index.vue";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { useAgentConsoleSideChatStore } from "@/store/agentConsole/sideChat";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

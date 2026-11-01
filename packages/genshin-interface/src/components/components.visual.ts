@@ -48,10 +48,13 @@ describe("genshin-interface components", () => {
     visualComparison.report();
   });
 
-  test("every component but the layout ones has a fixture", () => {
+  test("every component but the layout ones and the pieces has a fixture", () => {
     expect.hasAssertions();
 
-    const componentPaths = Object.keys(components).filter((path) => !LAYOUT_COMPONENTS.has(path));
+    // A piece sits in a folder whose parent folder is itself a component, drawn inside that parent and never alone
+    const componentPaths = Object.keys(components).filter(
+      (path) => !LAYOUT_COMPONENTS.has(path) && !(path.replace(/\/[^/]+\/Index\.vue$/u, "/Index.vue") in components),
+    );
     const fixturePaths = new Set(Object.keys(fixtures).map((path) => path.replace(/\.fixture\.ts$/u, ".vue")));
 
     expect(componentPaths.filter((path) => !fixturePaths.has(path))).toStrictEqual([]);

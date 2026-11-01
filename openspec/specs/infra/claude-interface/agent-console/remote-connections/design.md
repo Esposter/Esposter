@@ -30,15 +30,15 @@ flowchart TD
 
 ## Key files
 
-| File                                                           | Role                                                                      |
-| :------------------------------------------------------------- | :------------------------------------------------------------------------ |
-| `apps/web/app/store/agentConsole/connection.ts`                | One socket, status and credential per connection, and each command's host |
-| `apps/web/app/store/agentConsole/session.ts`                   | Every host's sessions, each tagged with its connection                    |
-| `apps/web/app/components/AgentConsole/Panel/Sessions.vue`      | Sessions grouped by host, with each host's status and actions             |
-| `apps/web/app/components/AgentConsole/Panel/AddConnection.vue` | Connect this computer, and a machine's address and code                   |
-| `apps/web/app/components/AgentConsole/Panel/NewSession.vue`    | The host a new session starts on, asked when more than one is reached     |
-| `apps/web/app/services/agentConsole/toHostAddress.ts`          | A typed address as the socket it is reached at                            |
-| `packages/agent-console-server/src/services/cli/serveHost.ts`  | The code printed on its own, for a page on another computer               |
+| File                                                            | Role                                                                      |
+| :-------------------------------------------------------------- | :------------------------------------------------------------------------ |
+| `apps/web/app/store/agentConsole/connection.ts`                 | One socket, status and credential per connection, and each command's host |
+| `apps/web/app/store/agentConsole/session.ts`                    | Every host's sessions, each tagged with its connection                    |
+| `apps/web/app/components/AgentConsole/Panel/Sessions/Index.vue` | Sessions grouped by host, with each host's status and actions             |
+| `apps/web/app/components/AgentConsole/Panel/AddConnection.vue`  | Connect this computer, and a machine's address and code                   |
+| `apps/web/app/components/AgentConsole/Panel/NewSession.vue`     | The host a new session starts on, asked when more than one is reached     |
+| `apps/web/app/services/agentConsole/toHostAddress.ts`           | A typed address as the socket it is reached at                            |
+| `packages/agent-console-server/src/services/cli/serveHost.ts`   | The code printed on its own, for a page on another computer               |
 
 ## Sources
 

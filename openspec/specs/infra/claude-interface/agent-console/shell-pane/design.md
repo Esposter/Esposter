@@ -41,8 +41,8 @@ Both pass the [admission test](../../../../architecture/dependency-admission/des
 | `packages/agent-console-server/src/services/server/createAgentConsoleServer.ts` | The shell commands answered, output broadcast and replayed              |
 | `packages/agent-console-server/scripts/copyNodePty.ts`                          | node-pty's Windows files, placed for the executable to embed            |
 | `apps/web/app/store/agentConsole/shell.ts`                                      | Every host's shells and the output a later terminal is written          |
-| `apps/web/app/components/AgentConsole/Panel/Shell.vue`                          | The Shell tab: a shell per tab, + and close                             |
-| `apps/web/app/components/AgentConsole/Panel/ShellTerminal.vue`                  | xterm.js, loaded on first show, sized to its space                      |
+| `apps/web/app/components/AgentConsole/Panel/Shell/Index.vue`                    | The Shell tab: a shell per tab, + and close                             |
+| `apps/web/app/components/AgentConsole/Panel/Shell/Terminal.vue`                 | xterm.js, loaded on first show, sized to its space                      |
 
 ## Sources
 

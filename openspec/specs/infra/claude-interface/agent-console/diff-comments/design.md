@@ -31,13 +31,13 @@ flowchart LR
 
 ## Key files
 
-| File                                                         | Role                                                                                  |
-| :----------------------------------------------------------- | :------------------------------------------------------------------------------------ |
-| `apps/web/app/components/AgentConsole/Panel/Diff.vue`        | the comment box under a line, the saved comment with its Edit and Remove              |
-| `apps/web/app/components/AgentConsole/Panel/Changes.vue`     | the Send comments button with its count, and the move of the draft into the composer  |
-| `apps/web/app/services/agentConsole/toDiffCommentsPrompt.ts` | the prompt the comments are sent as, one `path:line`, the quoted line and the comment |
-| `apps/web/app/services/agentConsole/toDiffRows.ts`           | each row's line number on each side, counted through the lines a fold hides           |
-| `apps/web/app/store/agentConsole/session.ts`                 | the session's draft, kept in its per-session view and carried through a replay        |
+| File                                                           | Role                                                                                  |
+| :------------------------------------------------------------- | :------------------------------------------------------------------------------------ |
+| `apps/web/app/components/AgentConsole/Panel/Diff.vue`          | the comment box under a line, the saved comment with its Edit and Remove              |
+| `apps/web/app/components/AgentConsole/Panel/Changes/Index.vue` | the Send comments button with its count, and the move of the draft into the composer  |
+| `apps/web/app/services/agentConsole/toDiffCommentsPrompt.ts`   | the prompt the comments are sent as, one `path:line`, the quoted line and the comment |
+| `apps/web/app/services/agentConsole/toDiffRows.ts`             | each row's line number on each side, counted through the lines a fold hides           |
+| `apps/web/app/store/agentConsole/session.ts`                   | the session's draft, kept in its per-session view and carried through a replay        |
 
 ## Sources
 

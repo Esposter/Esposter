@@ -32,7 +32,7 @@ flowchart LR
 | `packages/agent-console-server/src/models/event/SessionSettingsEvent.ts`                          | gains `effort`                                           |
 | `packages/agent-console-server/src/models/claudeAgentSdk/SessionSettingsUpdate.ts`                | an update may carry the effort                           |
 | `packages/agent-console-server/src/models/event/Model.ts`                                         | gains `supportsEffort` and `supportedEffortLevels`       |
-| `apps/web/app/components/AgentConsole/Panel/Composer.vue`                                         | the effort select beside the model select, and its chord |
+| `apps/web/app/components/AgentConsole/Panel/Composer/Index.vue`                                   | the effort select beside the model select, and its chord |
 
 ## Sources
 

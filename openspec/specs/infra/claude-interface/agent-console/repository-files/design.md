@@ -43,11 +43,11 @@ flowchart LR
 | `packages/agent-console-server/src/services/server/handleFileCommand.ts`    | answers both commands from the session's working directory   |
 | `apps/web/app/store/agentConsole/file.ts`                                   | the session's file list and the opened file                  |
 | `apps/web/app/store/agentConsole/connection.ts`                             | hands each answer to the file store                          |
-| `apps/web/app/components/AgentConsole/Panel/Composer.vue`                   | the @ menu and the mention it inserts                        |
+| `apps/web/app/components/AgentConsole/Panel/Composer/Index.vue`             | the @ menu and the mention it inserts                        |
 | `apps/web/app/components/AgentConsole/Markdown.vue`                         | links known paths in replies and code                        |
 | `apps/web/app/components/AgentConsole/Panel/ToolCall.vue`                   | renders tool input through the path-linking markdown         |
 | `apps/web/app/components/AgentConsole/Panel/File.vue`                       | the read-only file view                                      |
-| `apps/web/app/components/AgentConsole/Panel/Changes.vue`                    | the Open file control on each file's diff                    |
+| `apps/web/app/components/AgentConsole/Panel/Changes/Index.vue`              | the Open file control on each file's diff                    |
 
 ## Sources
 

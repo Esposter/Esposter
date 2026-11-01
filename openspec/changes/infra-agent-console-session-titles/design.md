@@ -23,7 +23,7 @@ A sub-spec of the [agent console](../infra-agent-console-program/design.md). A s
 | `packages/agent-console-server/src/services/server/handleCommand.ts`                              | routes the command to the driver                                            |
 | `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createClaudeAgentSdkDriver.ts` | writes the title to the transcript, or holds it until the first prompt does |
 | `apps/web/app/components/AgentConsole/Panel/Hud.vue`                                              | the open session's title, editable in place                                 |
-| `apps/web/app/components/AgentConsole/Panel/Sessions.vue`                                         | each row's title, editable in place                                         |
+| `apps/web/app/components/AgentConsole/Panel/Sessions/Index.vue`                                   | each row's title, editable in place                                         |
 
 ## Sources
 
