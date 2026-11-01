@@ -39,7 +39,7 @@ describe(createDoriKitBehaviour, () => {
     ]);
   });
 
-  test("the skill and burst cost, cooldown and duration come from the table", () => {
+  test("the skill and burst cooldowns and the burst's cost come from the table, and so does the charged attack's stamina rate", () => {
     expect.hasAssertions();
 
     expect(DORI_KIT.skillCooldownSeconds).toBe(9);

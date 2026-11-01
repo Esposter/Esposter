@@ -57,10 +57,10 @@ describe("amber kit", () => {
       takeOne(AMBER_KIT.lowPlunge.hits).talentMultiplier,
       takeOne(AMBER_KIT.highPlunge.hits).talentMultiplier,
     ];
-    const expectedMultipliers = [0.3612, 0.3612, 0.4644, 0.473, 0.5934, 1.24, 0.5683, 1.1363, 1.4193];
-    expect(multipliers).toHaveLength(expectedMultipliers.length);
-    for (const [index, expectedMultiplier] of expectedMultipliers.entries())
-      expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 2);
+    const expectedMultipliers = [0.3612, 0.3612, 0.4644, 0.473, 0.5934, 1.24, 0.5683, 1.1363, 1.4193].map(
+      (expectedMultiplier) => expect.closeTo(expectedMultiplier, 2),
+    );
+    expect(multipliers).toStrictEqual(expectedMultipliers);
   });
 
   test("an active constellation's switch changes its character's kit", () => {

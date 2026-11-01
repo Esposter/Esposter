@@ -14,6 +14,7 @@ import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
 const CHARLOTTE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CHARLOTTE_CHARACTER_ID);
@@ -69,8 +70,7 @@ describe(createCharlotteKitBehaviour, () => {
   test("still photo's cast heals every member of the party at its strike's frame, by its flat HP and a share of the caster's ATK", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createCharlotteCombatant());
-    const member = context.party.characterIdMemberMap.get(CHARLOTTE_CHARACTER_ID);
-    if (!member) throw new Error("Charlotte is not in her party");
+    const member = getPartyMember(context.party, CHARLOTTE_CHARACTER_ID);
     member.healthShare = 0.5;
     CHARLOTTE_KIT.elementalBurst.onStart?.(context);
     const stepBurst = (stepSeconds: number): void => {

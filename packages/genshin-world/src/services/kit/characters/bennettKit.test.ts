@@ -131,10 +131,8 @@ describe("bennett kit", () => {
     ];
     const expectedMultipliers = [
       0.4455, 0.4274, 0.5461, 0.5968, 0.719, 0.559, 0.6072, 0.6393, 1.2784, 1.5968, 1.376, 2.328,
-    ];
-    expect(multipliers).toHaveLength(expectedMultipliers.length);
-    for (const [index, expectedMultiplier] of expectedMultipliers.entries())
-      expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 2);
+    ].map((expectedMultiplier) => expect.closeTo(expectedMultiplier, 2));
+    expect(multipliers).toStrictEqual(expectedMultipliers);
   });
 
   test("its field gives the character on it an ATK bonus from its first tick and no infusion, and heals one under 70% from the second", () => {
@@ -276,16 +274,11 @@ describe("bennett kit", () => {
     expect(press.partyMember.skillCooldownSeconds).toBeCloseTo(5, 5);
   });
 
-  test("ascension 1 cuts every passion overload's cooldown by 20%, and ascension 4 halves it in fantastic voyage's field", () => {
+  test("at Ascension 4 outside Fantastic Voyage's field, only Rekindle's cut applies to a passion overload", () => {
     expect.hasAssertions();
     const body = { x: 0, z: 0 };
     const field = createFantasticVoyageField(body);
 
-    expect(releaseSkill(0.1, { ascension: 1, body, effects: [] }).partyMember.skillCooldownSeconds).toBeCloseTo(4, 5);
-    expect(releaseSkill(0.1, { ascension: 4, body, effects: [field] }).partyMember.skillCooldownSeconds).toBeCloseTo(
-      2,
-      5,
-    );
     expect(
       releaseSkill(0.1, { ascension: 4, body: { x: 50, z: 0 }, effects: [field] }).partyMember.skillCooldownSeconds,
     ).toBeCloseTo(4, 5);

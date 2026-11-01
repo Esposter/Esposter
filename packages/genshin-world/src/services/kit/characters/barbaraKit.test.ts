@@ -154,10 +154,10 @@ describe(createBarbaraKitBehaviour, () => {
       takeOne(BARBARA_KIT.lowPlunge.hits).talentMultiplier,
       takeOne(BARBARA_KIT.highPlunge.hits).talentMultiplier,
     ];
-    const expectedMultipliers = [0.3784, 0.3552, 0.4104, 0.552, 1.6624, 0.5683, 1.1363, 1.4193];
-    expect(multipliers).toHaveLength(expectedMultipliers.length);
-    for (const [index, expectedMultiplier] of expectedMultipliers.entries())
-      expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 2);
+    const expectedMultipliers = [0.3784, 0.3552, 0.4104, 0.552, 1.6624, 0.5683, 1.1363, 1.4193].map(
+      (expectedMultiplier) => expect.closeTo(expectedMultiplier, 2),
+    );
+    expect(multipliers).toStrictEqual(expectedMultipliers);
   });
 
   test("lands Let the Show Begin's two droplets, and its Melody Loop heals the character on the field as it starts and every 5 seconds, four times", () => {

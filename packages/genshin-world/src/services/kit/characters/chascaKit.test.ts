@@ -25,7 +25,6 @@ import { stepDeployedKits } from "#src/services/kit/stepDeployedKits";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
-import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { assert, describe, expect, test } from "vitest";
 
@@ -120,8 +119,8 @@ describe(createChascaKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(toFrames(CHASCA_KIT.chargedAttack.seconds)).toBe(chascaRecord.chargedAttack.animationFrames);
-    expect(toFrames(CHASCA_KIT.chargedAttack.hits[0]?.hitmarkSeconds ?? 0)).toBe(
-      takeOne(chascaRecord.chargedAttack.hits).hitmarkFrames,
+    expect(CHASCA_KIT.chargedAttack.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual(
+      chascaRecord.chargedAttack.hits.map(({ hitmarkFrames }) => hitmarkFrames),
     );
     expect(CHASCA_KIT.chargedAttackStamina).toBe(toParameter(chascaRecord.chargedAttackStamina));
   });

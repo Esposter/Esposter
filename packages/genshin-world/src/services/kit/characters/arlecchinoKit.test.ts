@@ -35,10 +35,10 @@ describe(createArlecchinoKitBehaviour, () => {
       takeOne(ARLECCHINO_KIT.highPlunge.hits).talentMultiplier,
     ];
     // The fourth strike's two hits both read index 3
-    const expectedMultipliers = [0.475, 0.5211, 0.6539, 0.3715, 0.3715, 0.6998, 0.8538, 0.9082, 0.6393, 1.2784, 1.5968];
-    expect(multipliers).toHaveLength(expectedMultipliers.length);
-    for (const [index, expectedMultiplier] of expectedMultipliers.entries())
-      expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 3);
+    const expectedMultipliers = [
+      0.475, 0.5211, 0.6539, 0.3715, 0.3715, 0.6998, 0.8538, 0.9082, 0.6393, 1.2784, 1.5968,
+    ].map((expectedMultiplier) => expect.closeTo(expectedMultiplier, 3));
+    expect(multipliers).toStrictEqual(expectedMultipliers);
   });
 
   test("lands her strikes at gcsim's hitmarks, the fourth's two hits at 24 and 35 frames", () => {
@@ -120,7 +120,7 @@ describe(createArlecchinoKitBehaviour, () => {
     getPartyMember(context.party, ARLECCHINO_CHARACTER_ID).skillCooldownSeconds = 20;
     ARLECCHINO_KIT.elementalBurst.onStart?.(context);
     stepKitSeconds(context, toKitSeconds(106));
-    expect(getPartyMember(context.party, ARLECCHINO_CHARACTER_ID).skillCooldownSeconds).toBeGreaterThan(0);
+    expect(getPartyMember(context.party, ARLECCHINO_CHARACTER_ID).skillCooldownSeconds).toBe(20);
     stepKitSeconds(context, toKitSeconds(2));
     expect(getPartyMember(context.party, ARLECCHINO_CHARACTER_ID).skillCooldownSeconds).toBe(0);
   });

@@ -44,10 +44,8 @@ describe(createChioriKitBehaviour, () => {
     ];
     const expectedMultipliers = [
       0.4941, 0.4683, 0.3042, 0.3042, 0.7512, 0.5431, 0.5431, 0.6393, 1.2784, 1.5968, 1.4928, 0.8208, 2.5632,
-    ];
-    expect(multipliers).toHaveLength(expectedMultipliers.length);
-    for (const [index, expectedMultiplier] of expectedMultipliers.entries())
-      expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 3);
+    ].map((expectedMultiplier) => expect.closeTo(expectedMultiplier, 3));
+    expect(multipliers).toStrictEqual(expectedMultipliers);
   });
 
   test("her charged attack's stamina is the table's 20, and its burst costs 50 energy on a 13.5 second cooldown", () => {

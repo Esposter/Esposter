@@ -94,31 +94,28 @@ describe(createGamingKitBehaviour, () => {
 
   test("strikes its four normal attacks at their hitmarks, and its burst's one hit lands at a second", () => {
     expect.hasAssertions();
-    expect(GAMING_KIT.normalAttacks.map((action) => takeOne(action.hits).hitmarkSeconds)).toStrictEqual([
-      25 / 60,
-      18 / 60,
-      34 / 60,
-      48 / 60,
-    ]);
+    expect(
+      GAMING_KIT.normalAttacks.map((action) => Math.round(takeOne(action.hits).hitmarkSeconds * 60)),
+    ).toStrictEqual([25, 18, 34, 48]);
     expect(GAMING_KIT.elementalBurst.hits.map((hit) => hit.hitmarkSeconds)).toStrictEqual([1]);
   });
 
   test("lands the collision six frames before the low plunge's hitmark, with the plunges' poise", () => {
     expect.hasAssertions();
     expect({
-      collision: GAMING_KIT.plungeCollision.hitmarkSeconds,
+      collisionFrames: Math.round(GAMING_KIT.plungeCollision.hitmarkSeconds * 60),
       high: {
-        hitmarkSeconds: takeOne(GAMING_KIT.highPlunge.hits).hitmarkSeconds,
+        hitmarkFrames: Math.round(takeOne(GAMING_KIT.highPlunge.hits).hitmarkSeconds * 60),
         poiseDamage: takeOne(GAMING_KIT.highPlunge.hits).poiseDamage,
       },
       low: {
-        hitmarkSeconds: takeOne(GAMING_KIT.lowPlunge.hits).hitmarkSeconds,
+        hitmarkFrames: Math.round(takeOne(GAMING_KIT.lowPlunge.hits).hitmarkSeconds * 60),
         poiseDamage: takeOne(GAMING_KIT.lowPlunge.hits).poiseDamage,
       },
     }).toStrictEqual({
-      collision: 37 / 60,
-      high: { hitmarkSeconds: 46 / 60, poiseDamage: 200 },
-      low: { hitmarkSeconds: 43 / 60, poiseDamage: 150 },
+      collisionFrames: 37,
+      high: { hitmarkFrames: 46, poiseDamage: 200 },
+      low: { hitmarkFrames: 43, poiseDamage: 150 },
     });
   });
 

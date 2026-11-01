@@ -244,10 +244,15 @@ describe(createColumbinaKitBehaviour, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     startEffects(kitEffectState);
     const [field] = kitEffectState.effects as KitField[];
-    field?.onTick(createKitTestContext(combatant, { kitEffectState }), 0);
+    const context = createKitTestContext(combatant, { kitEffectState });
+    // The body moves off the press's spot, so a tick reading the body rather than the centre would land off it
+    context.body.position.x = 1;
+    field?.onTick(context, 0);
     const summons = kitEffectState.effects.filter((effect: KitEffect): effect is KitSummon => effect.kind === "summon");
+
     expect(summons).toHaveLength(1);
     expect(summons[0]?.combatant).toBe(combatant);
+    expect(summons[0]?.body.position).toStrictEqual({ x: 0, z: 0 });
     expect(summons[0]?.hits.map(({ hitmarkSeconds }) => hitmarkSeconds)).toStrictEqual([0]);
   });
 
@@ -381,13 +386,16 @@ describe(createColumbinaKitBehaviour, () => {
       feedGravitySecond(field, context, pressed, LunarReactionType.LunarCrystallize);
 
     const shield = kitEffectState.effects.find((effect): effect is KitShield => effect.kind === "shield");
-    expect(shield?.characterId).toBe(COLUMBINA_CHARACTER_ID);
-    expect(shield?.element).toBe(Element.Hydro);
-    expect(shield?.secondsRemaining).toBe(8);
+
+    expect({
+      characterId: shield?.characterId,
+      element: shield?.element,
+      secondsRemaining: shield?.secondsRemaining,
+    }).toStrictEqual({ characterId: COLUMBINA_CHARACTER_ID, element: Element.Hydro, secondsRemaining: 8 });
     expect(shield?.health).toBeCloseTo(0.12 * pressed.attributes.maxHealth);
   });
 
-  test("gravity interference's Lunar-Crystallize shield is 12% of her max HP at constellation 1, and her constellation 2 buff raises it", () => {
+  test("gravity interference's Lunar-Crystallize shield at constellation 2 is 12% of her max HP with the constellation 2 buff's 40% added", () => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [] };
@@ -408,9 +416,14 @@ describe(createColumbinaKitBehaviour, () => {
       (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.HealthPercent,
     );
 
-    expect(healthBuff?.amount).toBe(0.4);
-    expect(healthBuff?.characterId).toBe(COLUMBINA_CHARACTER_ID);
-    expect(healthBuff?.secondsRemaining).toBe(8);
+    expect(healthBuff).toStrictEqual({
+      amount: 0.4,
+      attribute: Attribute.HealthPercent,
+      characterId: COLUMBINA_CHARACTER_ID,
+      kind: "buff",
+      secondsRemaining: 8,
+      source: "columbina-c2-health",
+    });
   });
 
   test("gravity interference gives the active member 1% of her max HP in ATK from a constellation 2 Lunar-Charged ripple, and a Lunar-Crystallize one moves it to DEF", () => {
@@ -432,10 +445,12 @@ describe(createColumbinaKitBehaviour, () => {
     });
     COLUMBINA_KIT.elementalSkill.onStart?.(context);
     const [field] = kitEffectState.effects as KitField[];
-    const [attack] = readTeamBuffs(kitEffectState);
-    expect(attack?.attribute).toBe(Attribute.Attack);
-    expect(attack?.characterId).toBe(COLUMBINA_CHARACTER_ID);
-    expect(attack?.amount).toBeCloseTo(0.01 * 1.4 * pressed.attributes.maxHealth);
+    const teamBuffs = readTeamBuffs(kitEffectState);
+
+    expect(teamBuffs.map(({ attribute, characterId }) => ({ attribute, characterId }))).toStrictEqual([
+      { attribute: Attribute.Attack, characterId: COLUMBINA_CHARACTER_ID },
+    ]);
+    expect(teamBuffs[0]?.amount).toBeCloseTo(0.01 * 1.4 * pressed.attributes.maxHealth);
 
     for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE; second++)
       feedGravitySecond(field, context, pressed, LunarReactionType.LunarCrystallize);

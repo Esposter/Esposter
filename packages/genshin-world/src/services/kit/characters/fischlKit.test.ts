@@ -107,18 +107,18 @@ describe(createFischlKitBehaviour, () => {
 
     expect(oz?.spawnSeconds).toBeCloseTo(18 / 60);
     expect(summonHit?.hitmarkSeconds).toBeCloseTo(38 / 60);
-    expect(attackHits).toHaveLength(10);
-    expect(attackHits[0]?.hitmarkSeconds).toBeCloseTo(92 / 60);
-    expect(attackHits.at(-1)?.hitmarkSeconds).toBeCloseTo((92 + 9 * 59) / 60);
+    expect(attackHits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([
+      92, 151, 210, 269, 328, 387, 446, 505, 564, 623,
+    ]);
   });
 
   test("the burst's Oz attacks nine times from 192 frames, 59 frames apart", () => {
     expect.hasAssertions();
     const [oz] = castSummons(FISCHL_KIT.elementalBurst);
 
-    expect(oz?.hits).toHaveLength(9);
-    expect(oz?.hits[0]?.hitmarkSeconds).toBeCloseTo(192 / 60);
-    expect(oz?.hits.at(-1)?.hitmarkSeconds).toBeCloseTo((192 + 8 * 59) / 60);
+    expect(oz?.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([
+      192, 251, 310, 369, 428, 487, 546, 605, 664,
+    ]);
   });
 
   test("one Oz stands at a time, the burst's ending the skill's", () => {

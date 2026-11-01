@@ -31,8 +31,6 @@ const findStance = (kitEffectState: KitEffectState): KitStance | undefined =>
   kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
 const findField = (kitEffectState: KitEffectState): KitField | undefined =>
   kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
-const roundToThousandth = (value: number): number => Math.round(value * 1000) / 1000;
-
 describe(createCynoKitBehaviour, () => {
   test("an active constellation's switch changes its character's kit", () => {
     expect.hasAssertions();
@@ -121,15 +119,10 @@ describe(createCynoKitBehaviour, () => {
 
     expect({
       normalAttacks: findStance(kitEffectState)?.combatant.kit.normalAttacks.length,
-      secondsRemaining: Math.round((findStance(kitEffectState)?.secondsRemaining ?? 0) * 1000) / 1000,
       statAmount: buff?.kind === "buff" ? buff.amount : undefined,
       statAttribute: buff?.kind === "buff" ? buff.attribute : undefined,
-    }).toStrictEqual({
-      normalAttacks: 5,
-      secondsRemaining: roundToThousandth(10 + 112 / 60),
-      statAmount: 100,
-      statAttribute: Attribute.ElementalMastery,
-    });
+    }).toStrictEqual({ normalAttacks: 5, statAmount: 100, statAttribute: Attribute.ElementalMastery });
+    expect(findStance(kitEffectState)?.secondsRemaining).toBeCloseTo(10 + 112 / 60, 3);
   });
 
   test("mortuary Rite extends the burst by four seconds, twice at most, and its cooldown is three seconds in the stance", () => {
@@ -141,10 +134,8 @@ describe(createCynoKitBehaviour, () => {
     const context = createKitTestContext(combatant, { kitEffectState });
     for (let cast = 0; cast < 3; cast++) mortuaryRite?.onStart?.(context);
 
-    expect({
-      cooldownMultiplier: CYNO_KIT.getSkillCooldownMultiplier?.(context),
-      extensionSeconds: roundToThousandth((findStance(kitEffectState)?.secondsRemaining ?? 0) - stanceSeconds),
-    }).toStrictEqual({ cooldownMultiplier: 0.4, extensionSeconds: 8 });
+    expect(CYNO_KIT.getSkillCooldownMultiplier?.(context)).toBe(0.4);
+    expect((findStance(kitEffectState)?.secondsRemaining ?? 0) - stanceSeconds).toBeCloseTo(8, 3);
   });
 
   test("the skill's cooldown is unchanged outside the stance", () => {
@@ -154,7 +145,7 @@ describe(createCynoKitBehaviour, () => {
     expect(CYNO_KIT.getSkillCooldownMultiplier?.(createKitTestContext(combatant))).toBe(1);
   });
 
-  test("judication's Endseer lands on the first tick at 328 frames, and only while the stance holds", () => {
+  test("judication's Endseer lands on the first tick at 328 frames", () => {
     expect.hasAssertions();
     const combatant = createCynoCombatant({ ascension: 1 });
     const kitEffectState = castAction(CYNO_KIT.elementalBurst, combatant);
@@ -231,9 +222,8 @@ describe(createCynoKitBehaviour, () => {
     hit.onStrike?.(context, { body: context.body, combatant, hit }, enemy);
     const bonus = kitEffectState.effects.find((effect) => effect.kind === "buff");
 
-    expect(
-      bonus?.kind === "buff" ? { amount: roundToThousandth(bonus.amount), attribute: bonus.attribute } : undefined,
-    ).toStrictEqual({ amount: 0.1, attribute: Attribute.ElectroDamageBonus });
+    expect(bonus?.kind === "buff" ? bonus.attribute : undefined).toBe(Attribute.ElectroDamageBonus);
+    expect(bonus?.kind === "buff" ? bonus.amount : undefined).toBeCloseTo(0.1, 3);
   });
 
   test("a constellation 4 reaction restores 3 energy to each other member, up to five times a burst", () => {

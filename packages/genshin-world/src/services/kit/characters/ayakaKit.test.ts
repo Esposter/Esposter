@@ -115,10 +115,8 @@ describe(createAyakaKitBehaviour, () => {
     ];
     const expectedMultipliers = [
       0.4573, 0.4868, 0.6262, 0.2265, 0.2265, 0.2265, 0.7818, 0.5513, 0.5513, 0.5513, 0.6393, 1.2784, 1.5968, 2.392,
-    ];
-    expect(multipliers).toHaveLength(expectedMultipliers.length);
-    for (const [index, expectedMultiplier] of expectedMultipliers.entries())
-      expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 2);
+    ].map((expectedMultiplier) => expect.closeTo(expectedMultiplier, 2));
+    expect(multipliers).toStrictEqual(expectedMultipliers);
   });
 
   test.each([

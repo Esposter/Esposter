@@ -88,10 +88,8 @@ describe(createBeidouKitBehaviour, () => {
     ];
     const expectedMultipliers = [
       0.7112, 0.7086, 0.8832, 0.8652, 1.1214, 0.5624, 1.0182, 0.7459, 1.4914, 1.8629, 1.216, 1.216, 0.96,
-    ];
-    expect(multipliers).toHaveLength(expectedMultipliers.length);
-    for (const [index, expectedMultiplier] of expectedMultipliers.entries())
-      expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 2);
+    ].map((expectedMultiplier) => expect.closeTo(expectedMultiplier, 2));
+    expect(multipliers).toStrictEqual(expectedMultipliers);
   });
 
   test("the skill's press sets an Electro shield of 14.4% of her Max HP plus 1386, standing until its hit", () => {

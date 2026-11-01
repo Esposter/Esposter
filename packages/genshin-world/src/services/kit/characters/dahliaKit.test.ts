@@ -69,11 +69,11 @@ describe(createDahliaKitBehaviour, () => {
       takeOne(DAHLIA_KIT.highPlunge.hits).talentMultiplier,
       takeOne(DAHLIA_KIT.elementalSkill.hits).talentMultiplier,
       takeOne(DAHLIA_KIT.elementalBurst.hits).talentMultiplier,
-    ].map((multiplier) => Number(multiplier.toFixed(4)));
-
-    expect(multipliers).toStrictEqual([
-      0.4355, 0.401, 0.2374, 0.6566, 0.3988, 0.5507, 0.6393, 1.2784, 1.5968, 2.328, 4.064,
-    ]);
+    ];
+    const expectedMultipliers = [0.4355, 0.401, 0.2374, 0.6566, 0.3988, 0.5507, 0.6393, 1.2784, 1.5968, 2.328, 4.064];
+    expect(multipliers).toHaveLength(expectedMultipliers.length);
+    for (const [index, expectedMultiplier] of expectedMultipliers.entries())
+      expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 4);
   });
 
   test("reads her stamina, her cooldowns and her burst's energy cost from her proud skill groups", () => {

@@ -98,7 +98,7 @@ describe(createFurinaKitBehaviour, () => {
       FURINA_CHARACTER_ID,
       TEAMMATE_CHARACTER_ID,
     ]);
-    expect(party.healthChanges.every(({ healthShare }) => Math.abs(healthShare + 0.036) < 1e-9)).toBe(true);
+    for (const { healthShare } of party.healthChanges) expect(healthShare).toBeCloseTo(-0.036, 5);
     expect(attack?.kind === "summon" ? attack.hits[0]?.additiveBaseDamageBonus?.(furina) : undefined).toBeCloseTo(
       0.08288 * 1.2 * MAX_HEALTH,
     );
