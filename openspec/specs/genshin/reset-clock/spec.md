@@ -167,8 +167,11 @@ A domain kind and a domain level SHALL be open or closed on the game day of the 
 - **WHEN** a Domain of Mastery set for Tuesday and Saturday is checked
 - **THEN** it is open, because Tuesday is one of its days
 
+## Sources
+
+- [Reset](https://genshin-impact.fandom.com/wiki/Reset), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Reset.json`, line 14: elite enemies with limited spawn points per day respawn at the daily reset, and line 40: a common enemy in an elite's group "will respawn along with the Elite Enemy at daily reset". The page's own stub notice (line 1) asks for its respawn timers to be verified.
+
 ## Open
 
-- [ ] **The enemies' camp member stays down one millisecond before the daily reset and is back at it** — no source yet: the dump's camp table (`{data-root}/genshin-parity/text/ExcelBinOutput/CampExcelConfigData.json`) holds only enemy lists and a trophic level, with no respawn time.
-- [ ] **A domain kind and level are open or closed on the game day of the moment checked, with a Domain of Mastery set for Tuesday and Saturday closed before the reset** — no source yet: the dump's daily dungeon table (`{data-root}/genshin-parity/text/ExcelBinOutput/DailyDungeonConfigData.json`) holds obfuscated keys over dungeon-id lists, with no weekday, so the Tuesday and Saturday sets are not in it.
+- [ ] **A domain kind and level are open or closed on the game day of the moment checked, with a Domain of Mastery set for Tuesday and Saturday closed before the reset** — no source yet: the dump's daily dungeon table (`{data-root}/genshin-parity/text/ExcelBinOutput/DailyDungeonConfigData.json`) holds obfuscated keys over dungeon-id lists, with no weekday, and the wiki's Domain of Mastery page (`{data-root}/cache/genshin-wiki/Page_Domain_of_Mastery.json` line 9) names no reserved day but Sunday, so the Tuesday and Saturday sets are not in either.
 - [ ] **The monthly reset is at 04:00 on the server's clock** — no source yet for the hour: the Paimon's Bargains page gives its shop's reset as the 1st of each month (`{data-root}/cache/genshin-wiki/Page_Paimon's_Bargains.json` line 9), and the dump's refresh table, `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, has no monthly row.

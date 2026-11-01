@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's character screen on C, its layout measured off the English client's own frame at 21:9 — the player's characters across the top, the six tabs down the left in the game's words (`{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`), and the chosen character's Attributes panel down the right with its level and attributes by group from the game's own sums.
+The game's character screen on C (the wiki's Controls page, `{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext line 159) or from the Paimon menu's Character entry (`{data-root}/cache/genshin-wiki/Page_Paimon_Menu.json`, wikitext line 46), its layout measured off the English client's own frame at 21:9 — the player's characters across the top, the six tabs down the left in the game's words (`{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`), and the chosen character's Attributes panel down the right with its level and attributes by group from the game's own sums.
 
 ## Requirements
 
@@ -140,7 +140,6 @@ The screen SHALL leave out any label whose game text has not been decoded yet, r
 
 ## Open
 
-- [ ] **C and the Paimon menu open the character screen** — no source yet: no recording or wiki page of the C key or the Paimon menu's Character entry is checked against this build, and the cached Character Menu wiki page is not on disk.
 - [ ] **The layout is the reference's** — no source yet: the 21:9 reference frame at 154 seconds is not saved as a still, so its places cannot be checked.
 - [ ] **The Attributes tab's values are the game's sums** — contradicted by `{data-root}/genshin-parity/comparisons/character-attributes.png`: the reference's base five differ from the build's.
 - [ ] **The advanced group is shown as percentages to one place** — no source yet: no reference frame shows its values, which the game holds behind Details.

@@ -25,7 +25,7 @@ flowchart TD
 
 - **Things that cannot be acted on go dark inside the range.** The scene keeps a quarter of its own brightness, with its colour gone. Outside the range nothing changes.
 - **Interactables show white.** A drop and a resident are lit white.
-- **Enemies show the element on them.** An enemy's colour is its strongest aura's element, else its innate element, else white (`packages/genshin-world/src/services/elementalSight/computeSightElement.ts`). Burning counts as Pyro and Freeze as Cryo. Quicken names two elements, so it counts for none (`packages/genshin-world/src/services/combat/aura/AuraElementMap.ts`).
+- **Enemies show the element on them.** An enemy's colour is its strongest aura's element, else its innate element, else white (`packages/genshin-world/src/services/elementalSight/computeSightElement.ts`). The wiki highlights an affected enemy in its element's colour (`{data-root}/cache/genshin-wiki/Page_Elemental_Sight.json` wikitext line 18). Burning counts as Pyro and Freeze as Cryo, as the wiki has them: its Burning aura is an animated Pyro aura (`{data-root}/cache/genshin-wiki/Page_Burning.json` wikitext line 10), and its Freeze aura is Cryo-coloured (`{data-root}/cache/genshin-wiki/Page_Elemental_Gauge_Theory.json` wikitext line 122). Quicken names two elements, so it counts for none (`packages/genshin-world/src/services/combat/aura/AuraElementMap.ts`).
 - **Enemies show their name.** A living enemy within the range has its name over its head, projected through the camera. An enemy whose name the game's text does not give shows no tag (`packages/genshin-world/src/components/World/EnemyNameTags/Index.vue`).
 - **A thing behind a wall stays dark.** A stand-in is lit only where it is the nearest thing the scene draws, so the sight never shows through a wall (`packages/genshin-engine/src/post/createSightNode.ts`).
 - **A ring marks the reach.** A white ring sits at the range's edge while the sight is on (`packages/genshin-engine/src/post/createSightNode.ts`).
@@ -33,7 +33,7 @@ flowchart TD
 ## Ends and spreads
 
 - **The range spreads, then holds.** The radius grows at the spread speed from where the sight was turned on, and stops at the reach (`packages/genshin-world/src/services/elementalSight/stepElementalSight.ts`).
-- **A walk past the limit turns it off.** The check is on the ground from the point it was turned on. Standing still keeps it on (`packages/genshin-world/src/services/elementalSight/stepElementalSight.ts`).
+- **A walk past the limit turns it off.** The check is on the ground from the point it was turned on. Standing still keeps it on (`packages/genshin-world/src/services/elementalSight/stepElementalSight.ts`). The wiki says it deactivates after moving a short distance (`{data-root}/cache/genshin-wiki/Page_Elemental_Sight.json` wikitext line 20).
 - **A press turns it off** at once, wherever the character stands (`packages/genshin-world/src/services/elementalSight/stepElementalSight.ts`).
 - **A screen over the world turns it off.** The menus, the map and a talk end the sight, which a press turns on again (`packages/genshin-world/src/components/World/Session/Index.vue`).
 
@@ -78,8 +78,6 @@ flowchart TD
 
 ## Open
 
-- [ ] **things that cannot be acted on go dark, and interactables and residents show lit white** — no source yet: the wiki's Elemental Sight page, which the cache does not hold, or a recording of the sight.
-- [ ] **an enemy shows its aura's element, with Burning as Pyro and Freeze as Cryo** — no source yet: the wiki's colour key, which the cache does not hold, or a recording of an aura on an enemy.
-- [ ] **a walk past the limit ends the sight, as the game does** — no source yet: the wiki's Elemental Sight page, which the cache does not hold, or a recording of the walk.
+- [ ] **things that cannot be acted on go dark, and interactables and residents show lit white** — contradicted by `{data-root}/cache/genshin-wiki/Page_Elemental_Sight.json` wikitext line 27: interactables are highlighted "typically in white or by a color corresponding to the element", where this page says they show white; the dark is "most" such things (line 16), and the residents' white is at line 29.
 - [ ] **the element colours are the game's interface colours** — no source yet: the game's interface colour for each element, which no dump table holds (the repo keeps the table by hand in `genshin-text`); the wiki's table names each element only by a hue (`{data-root}/cache/genshin-wiki/Page_Elemental_Sight.json` wikitext lines 47–73), so a recording frame of an element's interface colour would settle it.
-- [ ] **enemies within the range show their names over their heads** — no source yet: the wiki's Elemental Sight page, which the cache does not hold, or a recording of the sight.
+- [ ] **enemies within the range show their names over their heads** — the wiki names enemy name tags (`{data-root}/cache/genshin-wiki/Page_Elemental_Sight.json` wikitext line 14) and limits the sight's range (line 20), but gives no range for the tags; a recording of an enemy outside the range would settle it.

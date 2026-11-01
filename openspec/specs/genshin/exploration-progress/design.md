@@ -48,8 +48,6 @@ flowchart TD
 
 ## Open
 
-The open sources for the statue label and its waypoint are recorded with their requirements in [the spec](spec.md).
-
-- [ ] **A single chest took Galesong Hill from 99% to 100%** — no source: the capture shows the step near 10 s, but no frame read shows the chest that caused it.
-- [ ] **The label's measures have no recording file** — no source: a file recording the label's capital heights and spacing, measured on the frame at 4.6 s.
-- [ ] **The English map reads the fully explored area in gold 100%** — no source: a frame of the recording at 10.5 s read for its rendered gold, beyond the colour tag `#FFCC33` in `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`.
+- [ ] **A single chest took Galesong Hill from 99% to 100%** — no source: the capture shows the step near 10 s, but no frame read shows the chest that caused it (no frame of `{data-root}/genshin-parity/captures/yt-kgW2IgWKukg-exploration-steps.mp4` is extracted; a frame at 9 to 11 s would settle it).
+- [ ] **The label's measures have no recording file** — no source: a file recording the label's capital heights and spacing, measured on the frame at 4.6 s (`{data-root}/genshin-parity` holds no such file; a measurement of the capitals on that frame would settle it).
+- [ ] **The English map reads the fully explored area in gold 100%** — no source: a frame of the recording at 10.5 s read for its rendered gold, beyond the colour tag `#FFCC33` in `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json` (no frame of that recording is extracted).

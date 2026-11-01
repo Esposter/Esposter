@@ -31,7 +31,7 @@ Its ground-layer and mapped-region checks are `scripts/src/services/genshinAsset
 The numbers are provisional, each marked in `packages/genshin-world/src/services/wildlife/constants.ts`:
 
 - **The escape radius and the escape time.** `WILDLIFE_ESCAPE_RADIUS` and `WILDLIFE_ESCAPE_SECONDS` are the environment table's gadget rows' values (`{data-root}/genshin-parity/text/ExcelBinOutput/EnvAnimalGatherExcelConfigData.json`, four of its six Gadget rows at escapeRadius 4 and escapeTime 1), the closest it holds, since it has no row for a bird or a beast, until a recording of each kind's flight measures them.
-- **The flight speed.** `WILDLIFE_FLEE_SPEED` is a placeholder, since no table gives it, until a recording times it (`packages/genshin-world/src/services/wildlife/constants.ts`; the environment table's keys carry escapeRadius and escapeTime and no speed).
+- **The flight speed.** `WILDLIFE_FLEE_SPEED` is a placeholder, since no table gives it, until a recording times it (`packages/genshin-world/src/services/wildlife/constants.ts`; the environment table's keys carry escapeRadius and escapeTime and no speed, and a search of `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/` for speed-named keys finds them in the avatar and fish tables only).
 
 ## The placement
 
@@ -64,5 +64,4 @@ Every animal of the slice exists from the scene's load (`packages/genshin-world/
 
 ## Open
 
-- [ ] **No table gives a flight's speed** — no source yet: the environment table's eight keys (`{data-root}/genshin-parity/text/ExcelBinOutput/EnvAnimalGatherExcelConfigData.json`) carry no speed, checked; no other table was read.
-- [ ] **Mondstadt's slice holds about a hundred animals, and the other regions hold the same kinds where their labels are marked** — no source yet: the published slices are in hosted storage, not the local dump, so neither count was checked; the hosted slices, counted by kind, would settle both (`packages/genshin-world/src/generated/gameDataLock.json`, `wildlife/mondstadt`).
+- [ ] **Mondstadt's slice holds about a hundred animals, and the other regions hold the same kinds where their labels are marked** — no source yet: the published slices are in hosted storage, not the local dump, so neither count was checked; the hosted slices, counted by kind, would settle both (`packages/genshin-world/src/generated/gameDataLock.json`, `wildlife/mondstadt`: fetch that record and count its places).

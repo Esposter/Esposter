@@ -69,6 +69,10 @@ The top bar's place and type are provisional until a recording measures them. Th
 
 - **A claim's Companionship EXP is a rule of its own.** The claim gives no Companionship EXP itself; a blossom's amount goes to the deployed team through the [companionship](../companionship/design.md) grant, its amounts provisional until recorded.
 
+## Open
+
+- [ ] **A refill is refused from 1,940, where the build refuses it only at the 2,000 cap** — contradicted by `{data-root}/cache/genshin-wiki/Page_Original_Resin.json`, Primogem refills: "Replenishing is unavailable when the count is above 1,940 (as such would result in values of 2,001 and above after refill)"; `packages/genshin-world/src/services/originalResin/refillOriginalResinWithPrimogems.ts` refuses only at `ORIGINAL_RESIN_REFILL_CAP`, so a refill from 1,950 charges the full price for 50 resin.
+
 ## Sources
 
 - [Original Resin](https://genshin-impact.fandom.com/wiki/Original_Resin), Genshin Impact Wiki: the claims' prices, five Adventure EXP a point, one point every eight minutes to 200, the Fragile and Primogem refills, and the 2,000 cap.

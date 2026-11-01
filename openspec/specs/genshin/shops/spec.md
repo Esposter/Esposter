@@ -97,7 +97,10 @@ A good priced in Mora SHALL cost the Mora amount.
 - **WHEN** the player buys it
 - **THEN** the good costs its Mora amount from the wallet
 
+## Sources
+
+- [Blanche](<https://genshin-impact.fandom.com/wiki/Blanche_(Mondstadt)>), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Blanche_(Mondstadt).json`, lines 25 to 32: eight cooking ingredients at 60, 80, 80, 100, 120, 120, 120 and 100, the prices that the shop 1004 goods hold as their `costScoin` (`{data-root}/genshin-parity/text/ExcelBinOutput/ShopGoodsExcelConfigData.json` lines 716 to 926), which `scripts/src/services/genshinAssets/shops/getShopGoodCosts.ts` line 8 takes as the Mora cost.
+
 ## Open
 
 - [ ] **Refreshes happen at four in the morning in the game's time** — no source yet: the monthly refresh's hour, since shop 102 (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ShopExcelConfigData.json`, monthly on day 1) names no hour and the refresh policy has no monthly row; the daily rows of `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/RefreshPolicyExcelConfigData.json` (line 20, and line 45) and its weekly row (line 50) give 14400 seconds, four in the morning, and the cached "Paimon's Bargains" page says only that it resets on the first of the month. A monthly row's time in the policy table, or a recording of the monthly reset, would settle it.
-- [ ] **A general good of the Mondstadt grocery costs its table's Mora amount** — no source yet: a recording of a purchase at Mondstadt General Goods that shows the Mora taken, or the wiki's Blanche (Mondstadt) page, which is not in the cache, if it gives her prices

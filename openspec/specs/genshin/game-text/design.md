@@ -110,6 +110,6 @@ The plugin is installed alone by a stranger's frozen `npm ci`, and every release
 
 The open check for HYWenHei's coverage is recorded with its requirement in [the spec](spec.md).
 
-- [ ] **The `ExcelBinOutput` tables and text maps match the install's revision** — no source yet: a file recording the dump's revision, which none holds.
+- [ ] **The `ExcelBinOutput` tables and text maps match the install's revision** — no source yet: a file recording the dump's revision, which none holds; a run comparing each table with the community repository's `main` copy, the 7.1.0 branch, would settle it.
 - [ ] **The server's name stays as recorded** — no source yet: no source checked here shows how the server list names it; a frame of the server bar in a non-English client, or the server list's response, would settle it.
 - [ ] **The mixer's core constants changed, so a known-plaintext solve against the current text does not hold** — no source yet: a known-plaintext solve of the current text's mixer constants, which no record keeps; the decoder's constants are 7.0.0's (`scripts/src/services/genshinText/constants.ts` lines 64-68) and the install is 7.1.0 (`{data-root}/genshin-parity/game/config.ini` line 1), so only a solve on the install's chunks settles it.

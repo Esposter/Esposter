@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's daily commissions as built. Every region's daily tasks are read from the game's tables, one record a region (`scripts/src/services/genshinAssets/commissions/buildCommissions.ts`), and four are dealt a day from the areas reached (`{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `1812726784`), and a finished one is claimed for the reward of the rank it was dealt at (`packages/genshin-world/src/services/commission/claimCommissionReward.ts`). Katheryne gives the day's bonus from the game's score previews (`{data-root}/genshin-parity/text/ExcelBinOutput/RewardPreviewExcelConfigData.json`) once the four are claimed (`packages/genshin-world/src/services/commission/takeKatheryneBonus.ts`), and an Encounter Point claims one unfinished. The scene swap, the handbook's tab and the kept day are not yet built.
+Genshin's daily commissions as built. Daily commissions open at Adventure Rank 12, once the quest "Every Day a New Adventure" is complete (`{data-root}/cache/genshin-wiki/Page_Commission.json`, wikitext line 43). Every region's daily tasks are read from the game's tables, one record a region (`scripts/src/services/genshinAssets/commissions/buildCommissions.ts`), and four are dealt a day from the areas reached (`{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `1812726784`), and a finished one is claimed for the reward of the rank it was dealt at (`packages/genshin-world/src/services/commission/claimCommissionReward.ts`). Katheryne gives the day's bonus from the game's score previews (`{data-root}/genshin-parity/text/ExcelBinOutput/RewardPreviewExcelConfigData.json`) once the four are claimed (`packages/genshin-world/src/services/commission/takeKatheryneBonus.ts`), and an Encounter Point claims one unfinished, one whole point a reward, since the wiki's Adventure Encounters page gives up to the whole Encounter Points held as commission rewards (`{data-root}/cache/genshin-wiki/Page_Adventure_Encounters.json`, wikitext line 24). The scene swap, the handbook's tab and the kept day are not yet built.
 
 ## Requirements
 
@@ -106,8 +106,3 @@ Each reward item SHALL draw its count from its range, and a draw of zero SHALL g
 - **GIVEN** a claimed reward includes an item whose draw comes to zero
 - **WHEN** the claim is made
 - **THEN** none of that item is given
-
-## Open
-
-- [ ] **Daily commissions open at Adventure Rank 12** — no source yet: the wiki's Commission page is not in `{data-root}/cache/genshin-wiki/`, and no system open UI in `{data-root}/genshin-parity/text/ExcelBinOutput/SystemOpenUIConfigData.json` names the commissions.
-- [ ] **An unfinished commission is claimed for one Encounter Point** — no source yet: the game's text gives Encounter Points' use in place of a commission but no per-commission cost, and its one-per-commission line (`{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `2417337778`) is for Long-Term Encounter Points.

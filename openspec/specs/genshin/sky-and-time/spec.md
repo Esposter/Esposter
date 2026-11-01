@@ -12,7 +12,7 @@ The world's clock SHALL run at one in-game minute per real second, so that a ful
 
 - **GIVEN** the world's clock is running
 - **WHEN** one real minute passes
-- **THEN** one in-game hour has passed
+- **THEN** one in-game hour has passed (the wiki's Time page, `{data-root}/cache/genshin-wiki/Page_Time.json`, wikitext line 19)
 
 #### Scenario: A region opens at its reference hour
 
@@ -109,8 +109,7 @@ Every colour the world is lit by SHALL be read from the sky at the current minut
 
 ## Open
 
-- [ ] **The day runs at one in-game minute per real second** — no source yet: the wiki's Time page is not in the cache, and the time clip `{data-root}/genshin-parity/captures/yt-a4_J84iMqR0-time.mp4` was not read.
-- [ ] **A region opens at its reference hour** — no source yet: the in-game hours of the reference screenshots were not read here.
-- [ ] **The sun rises due east at dawn and sets due west at dusk** — no source yet: the Time page is not in the cache, and no frame's sun bearing was read.
-- [ ] **The light passes from the sun to the moon at dawn and dusk without a visible jump** — no source yet: no dawn or dusk handover frame was compared.
-- [ ] **The sky shows a gradient, sun, moon, stars and stepped clouds in the region's colours** — no source yet: no in-world frame was compared for these elements.
+- [ ] **A region opens at its reference hour** — no source yet: the in-game hours of the reference screenshots were not read here, and no file under `packages/genshin-world/src` or `packages/genshin-engine/src` names a reference hour.
+- [ ] **The sun rises due east at dawn and sets due west at dusk** — no source yet: the cached Time page gives no bearing (`{data-root}/cache/genshin-wiki/Page_Time.json`), and no frame's sun bearing was read; a 06:00 and an 18:00 frame with the camera's heading would settle it.
+- [ ] **The light passes from the sun to the moon at dawn and dusk without a visible jump** — no source yet: no dawn or dusk handover frame was compared; the time clip's stills under `{data-root}/genshin-parity/frames/yt-a4_J84iMqR0-time/` have not been read for it.
+- [ ] **The sky shows a gradient, sun, moon, stars and stepped clouds in the region's colours** — no source yet: no in-world frame was compared for these elements; a still of the sky at midnight and at noon would settle them.

@@ -28,4 +28,4 @@ flowchart TD
 
 ## Open
 
-- [ ] **The build string and repair button are what the mainland rating's score holds** — no source yet: the login interface's rows in the committed `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md` hold mean differences under one percent for the title, door, door-mainland and loading stages and about three percent for the mainland rating, with arriving and loading-game pending no screenshot. Which pixels of the rating hold the build string and the repair button is not measured here.
+- [ ] **The build string and repair button are what the mainland rating's score holds** — contradicted by `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts` line 779, which reads "Its age rating alone", and by its region at line 783: x 1740, y 30, 150 by 150 on the 1080-high frame, the top right, while the build string and the repair button are placed at the foot and in the lower right column (`packages/genshin-world/src/components/Login/Interface/Index.reference.ts` lines 46 and 76).

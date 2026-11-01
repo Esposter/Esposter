@@ -82,7 +82,7 @@ A cooldown SHALL keep counting down while the world is paused, since it is kept 
 
 - **GIVEN** a cooldown started before the player opened a menu
 - **WHEN** the menu is open and the ready moment comes
-- **THEN** the gadget is ready once that moment has come
+- **THEN** the gadget is ready once that moment has come (`{data-root}/cache/genshin-wiki/Page_Gadget.json` line 14: gadget cooldowns "will continue to decrease even while the game is paused")
 
 ### Requirement: Gadgets are not yet equipped or used
 
@@ -91,9 +91,5 @@ Gadgets SHALL NOT yet be equipped to the quick-use key or used from the world.
 #### Scenario: Quick-use key does nothing yet
 
 - **GIVEN** no gadget is equipped
-- **WHEN** the player presses the quick-use key
+- **WHEN** the player presses the quick-use key (`{data-root}/cache/genshin-wiki/Page_Controls.json` lines 96 and 97 bind Z to the Quick-Use Gadget)
 - **THEN** no gadget is used
-
-## Open
-
-- [ ] **Z is bound to the quick-use gadget** — no source yet: the game's settings file, which would hold the key binding, is not on disk (`{data-root}/genshin-parity/game/config.ini` holds only the game version).

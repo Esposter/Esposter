@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's Archive as built. Its seven sections are the game's own codex tables, read from the dump with each entry's name in the game's text. A bag's items open their entries as they are taken in, the Archive waits on the quest it opens after, and its screen shows one section at a time with a name or a "?" per entry. The sections whose doings are not built yet stay locked.
+Genshin's Archive as built. Its seven sections are the game's own codex tables, read from the dump with each entry's name in the game's text, and they step in the order the wiki's Archive page lists them (`{data-root}/cache/genshin-wiki/Page_Archive.json` lines 14, 295, 569, 950, 1594, 1976 and 2145). A bag's items open their entries as they are taken in, the Archive waits on the quest it opens after, and its screen shows one section at a time with a name or a "?" per entry. The sections whose doings are not built yet stay locked.
 
 ## Requirements
 
@@ -131,7 +131,3 @@ Each section SHALL list its entries in the game's codex order, and a codex row t
 - **GIVEN** a codex row the game has left out
 - **WHEN** its section is listed
 - **THEN** that row is not listed
-
-## Open
-
-- [ ] **The seven sections are listed in the game's order** — no source yet: the dump table that holds the Archive's section order; the Archive screen recording shows the sections as a ring (Books, Tutorials, Geography, Equipment, Materials at 12 seconds), which does not settle the order.

@@ -107,7 +107,7 @@ One-star and two-star weapons SHALL never be refined, and a four-star weapon the
 
 - **GIVEN** a two-star weapon
 - **WHEN** a copy or a refinement material is used on it
-- **THEN** the refinement is refused
+- **THEN** the refinement is refused (the wiki's Refinement Rank page, `{data-root}/cache/genshin-wiki/Page_Refinement_Rank.json`, wikitext line 6, says one-star and two-star weapons cannot be refined)
 
 ### Requirement: Only a bag weapon can be a copy or material
 
@@ -118,7 +118,3 @@ A copy or a refinement material SHALL come only from the bag, never from a weapo
 - **GIVEN** a weapon is wielded by a character
 - **WHEN** a copy of it is sought for refinement
 - **THEN** the wielded weapon is not offered as a copy
-
-## Open
-
-- [ ] **One-star and two-star weapons are never refined** — no source yet: the wiki's Refinement page is not in `{data-root}/cache/genshin-wiki/`, and no table on disk states the star rule; `{data-root}/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json` omits `awakenCosts` from its one-star and two-star rows, which states no rule.

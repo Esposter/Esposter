@@ -76,4 +76,4 @@ The sky is the scene's background node (`createSkyNode`), drawn behind everythin
 The checks of the day's length, the reference hour and the sun's bearing are the [spec's](spec.md) open items.
 
 - [ ] **The afternoon and night skies read as a high clear blue and a deep blue under a large moon** — no source yet: no afternoon or night frame was read.
-- [ ] **The painted sky draws as the game's own sky shader does, ported from its decompiled programs** — no source yet: the decompiled programs are not in the cache, and no in-world sky frame was compared.
+- [ ] **The painted sky draws as the game's own sky shader does, ported from its decompiled programs** — contradicted by `{data-root}/genshin-parity/extracted/shaders/asm/sky/00000.asm` line 2: the programs are on disk as seven D3D disassemblies, `{data-root}/genshin-parity/extracted/shaders/asm/sky/00000.asm` to `00006.asm`, and no in-world sky frame was compared.

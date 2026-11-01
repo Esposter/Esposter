@@ -2,7 +2,7 @@
 
 ## Queue
 
-- [ ] `[page]` {paimon-menu-whole} needs parity-page — **Paimon: the menu over its whole frame.** `pnpm -C scripts genshin:parity compare paimon-menu-whole`, then `pnpm -C scripts genshin:parity approve paimon-menu-whole`. Reads the wiki's Paimon menu Version 1.3 still, and the screen's page. Writes the screen's image beside its component, and its row of `ParityReferenceMap.snapshot.md`. Bar: the default, as the screen names no bar ([compute bars](../README.md#bars)). — blocked: the still is a region of the menu, with the world behind it left out, so no whole-frame reference exists yet.
+- [ ] `[page]` {paimon-menu-whole} needs parity-page — **Paimon: the menu over its whole frame.** `pnpm -C scripts genshin:parity compare paimon-menu-whole`, then `pnpm -C scripts genshin:parity approve paimon-menu-whole`. Reads the wiki's Paimon menu Version 1.3 still, and the screen's page. Writes the screen's image beside its component, and its row of `ParityReferenceMap.snapshot.md`. Bar: the default, as the screen names no bar ([compute bars](../README.md#bars)). — blocked: the still is a region of the menu, with the world behind it left out, so no whole-frame reference exists yet; the still's pixels ("File:Paimon Menu Version 1.3.png", named at `{data-root}/cache/genshin-wiki/Page_Paimon_Menu.json` line 152) would settle it.
 
 ## Waiting
 
@@ -21,7 +21,7 @@
 - [ ] **Reputation: the round's scores of 2.07% mean, shape 0.879 and FLIP 0.1448, before the ItemTile slots** — no source yet: the recorded run of that round, which the snapshot no longer keeps.
 - [ ] **Reputation: the grid's worst cells at 4.6% to 7.9%, the slots of levels 4 to 7** — no source yet: a per-cell score of the reward grid, which the snapshot does not break down.
 - [ ] **Reputation: the unlock lines at 5.4% to 7.4%** — no source yet: a per-line score of the unlock lines, which the snapshot does not break down.
-- [ ] **Paimon: the menu over its whole frame is read from the wiki's Version 1.3 still** — no source yet: the wiki's `File:Paimon Menu Version 1.3.png` is not on disk, and the Paimon Menu wiki page is not in the cache.
+- [ ] **Paimon: the menu over its whole frame is read from the wiki's Version 1.3 still** — no source yet: the cached Paimon Menu page names "Paimon Menu Version 1.3.png" in its gallery (`{data-root}/cache/genshin-wiki/Page_Paimon_Menu.json` line 152), but that image is not on disk, and only its pixels would settle the claim.
 
 ## Sources
 

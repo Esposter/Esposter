@@ -16,7 +16,7 @@ The map SHALL draw an area's label, with its exploration line, only once a landm
 
 #### Scenario: Area with an unlocked statue shows its percentage line
 
-- **GIVEN** a statue in an area is unlocked
+- **GIVEN** a statue in an area is unlocked (the wikitext in `{data-root}/cache/genshin-wiki/Page_Area.json` line 7 unlocks each area's part of the map upon its statue's activation, and `{data-root}/cache/genshin-wiki/Page_Statue_of_The_Seven.json` line 17 says a statue fills in its area of the map)
 - **WHEN** the map draws the area's label
 - **THEN** the label shows the game's exploration line under the area's name with its percentage
 - **AND** no count is shown beside the percentage
@@ -105,7 +105,3 @@ Exploration SHALL be counted for the four level-one areas of Mondstadt, Galesong
 - **GIVEN** the published Mondstadt exploration data does not match its schema
 - **WHEN** the world opens
 - **THEN** the failure is logged
-
-## Open
-
-- [ ] **The label appears once a statue in its area is unlocked, as the game does** — no source yet: the capture shows the label but not the unlock, and the wiki's Exploration page is not in the genshin-wiki cache.

@@ -100,4 +100,4 @@ The published Oculi SHALL be those on the ground, each with its map id, its kind
 
 ## Open
 
-- [ ] **Snezhnaya holds no transport points in the scene** — no source yet: the dump's transport points for Snezhnaya's areas were not counted, and `{data-root}/genshin-parity/references/interactive-map/fit.json` shows only its zero matches.
+- [ ] **Snezhnaya holds no transport points in the scene** — no source yet: the dump's transport points for Snezhnaya's areas were not counted, and `{data-root}/genshin-parity/references/interactive-map/fit.json` shows only its zero matches; the statue-kind points in `{data-root}/genshin-parity/text/BinOutput/Scene/Point/scene3_point.json` name area ids (7001, 7004, 7101 and others) that `{data-root}/genshin-parity/text/ExcelBinOutput/WorldAreaConfigData.json` does not hold, so their share is unread.

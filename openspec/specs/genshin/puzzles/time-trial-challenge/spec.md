@@ -34,6 +34,6 @@ A running challenge SHALL fail when its clock runs out before its last target is
 - **WHEN** its clock runs out
 - **THEN** the challenge fails
 
-## Open
+## Sources
 
-- [ ] **A challenge is solved by striking every target before its clock runs out, as the game does** — no source yet: the frame-by-frame match of `{data-root}/genshin-parity/captures/yt-B_l5b_KXt-o-time-trial-limit.mp4` (frames at 0 to 55 seconds) to the rule, and the wiki's Time Trial Challenge page, which is not in the genshin-wiki cache.
+- [Time Trial Challenge](https://genshin-impact.fandom.com/wiki/Time_Trial_Challenge), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Time_Trial_Challenge.json`, line 11: a challenge gives its reward for "completing the task within an allocated time limit"; its Aiming type blows up X barrels or bubbles and its Battling type defeats all opponents, each "within X second(s)" (lines 64 and 69), and its Traversing type collects particles rather than striking targets (line 75).

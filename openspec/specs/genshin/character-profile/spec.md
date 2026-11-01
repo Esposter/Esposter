@@ -100,4 +100,4 @@ The panel SHALL name the character's namecard once Friendship holds it, except f
 
 ## Open
 
-- [ ] **Momoka and the Traveler have no namecard, and every other playable character has one** — no source yet: the other characters' namecard rows in `{data-root}/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json` were not counted (Xinyan's 210045 and Yae Miko's 210112 are there, and the Travellers' derived names "UI_NameCardIcon_PlayerBoy" and "_PlayerGirl" are absent).
+- [ ] **Momoka and the Traveler have no namecard, and every other playable character has one** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json` line 267245, which gives Momoka namecard 210162 ("UI_NameCardIcon_Kirara"), and in which no row bears the derived names of avatars 10000117, 10000118, 10000998 and 10000999 (the stats record's "Manekin", "Manekina" and the two UGC official avatars). The Traveler has none in that file, and Xinyan's 210045 and Yae Miko's 210112 are there.

@@ -54,10 +54,8 @@ The rest of the config's widgets, the cameras, the avatar attachments, the water
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `{data-root}/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, the widget config with each widget's type, cooldowns and cooldown group, and `{data-root}/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`, which names each spawned gadget. Both are read from the dump outside the repository and nothing from them is committed.
-- [Gadget](https://genshin-impact.fandom.com/wiki/Gadget), Genshin Impact Wiki: the gadgets as the bag's tab, and the cooldowns that run while the world is paused. Not cached, so none of its claims is checked (see Open).
+- [Gadget](https://genshin-impact.fandom.com/wiki/Gadget), Genshin Impact Wiki, cached as `{data-root}/cache/genshin-wiki/Page_Gadget.json`: the cooldowns that keep decreasing while the game is paused (wikitext line 14).
 
 ## Open
 
-The open check for a cooldown through a paused world is recorded with its requirement in [the spec](spec.md).
-
-- [ ] **The success and failure crystals belong to each gather point type** — no source yet: the two grass crystals are named in `{data-root}/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`, but no table checked ties them to a gather point type of the one-off detector.
+- [ ] **The success and failure crystals belong to each gather point type** — contradicted by `{data-root}/genshin-parity/text/BinOutput/Widget/ConfigWidget.json` lines 49 to 51, 67 to 69 and 85 to 87: each one-off detector names its own crystal pair (70500007 and 70500011 for gather point type 4001001, 70500006 and 70500010 for 4002, 70500029 and 70500030 for 4005), where the row gives the grass crystals 70290533 and 70290534 for every gather point type.

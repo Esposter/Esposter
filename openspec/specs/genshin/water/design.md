@@ -63,6 +63,6 @@ flowchart TD
 
 ## Open
 
-- [ ] **The game draws its water clear and bright, with the floor showing through the shallows, a white foam band on every shore and hard sun glints** — no source yet: no capture under `{data-root}/genshin-parity/captures/` is named for Windrise's creek or lake, and the wiki has no description of the rendering.
-- [ ] **Windrise's water level is the game's own, fitted from its tile and fetched at the world's gate** — no source yet: the water level the game sets at Windrise, which the environment export at `{data-root}/genshin-parity/references/windrise-environment/` does not hold.
+- [ ] **The game draws its water clear and bright, with the floor showing through the shallows, a white foam band on every shore and hard sun glints** — no source yet: no capture under `{data-root}/genshin-parity/captures/` is named for Windrise's creek or lake, and the wiki has no description of the rendering; `captures/` names no water clip, so a still of the creek or lake is needed.
+- [ ] **Windrise's water level is the game's own, fitted from its tile and fetched at the world's gate** — no source yet: the water level the game sets at Windrise, which the environment export at `{data-root}/genshin-parity/references/windrise-environment/` does not hold (its `README.md` names no water level).
 - [ ] **Still water is one level per region, and Windrise's ponds above the valley's water are dry** — no source yet: the ponds' water levels, which the environment export at `{data-root}/genshin-parity/references/windrise-environment/` does not hold.
