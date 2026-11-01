@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's bag and its currencies as pure state. Nine tabs in the game's order, items stacking to their own limits, weapons and artifacts one each, the bag's room per tab and by kind, each tab sorted as the game sorts it, and a wallet of Mora, Primogems, Genesis Crystals, the two Fates, Starglitter, Stardust, the Masterless Stella Fortuna and Original Resin, which regenerates. The materials the enemies drop are defined from the game's material table and taken into the bag on a pick up. Its screen opens on B, its words the game's own. Nothing is bought with money. (The game's tables are `{data-root}/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`, `{data-root}/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json` and `{data-root}/genshin-parity/text/ExcelBinOutput/ReliquaryExcelConfigData.json`; the behaviour is tested in `packages/genshin-world/src/services/inventory/`, among others `packages/genshin-world/src/services/inventory/addInventoryItem.test.ts`, `packages/genshin-world/src/services/inventory/computeInventoryTab.test.ts`, `packages/genshin-world/src/services/inventory/destroyInventoryItems.test.ts` and `packages/genshin-world/src/services/inventory/useInventoryEntry.test.ts`.)
+The game's bag of nine tabs and its currencies as pure state, with stacking, room, sorting, destruction and food use as the game has them.
 
 ## Requirements
 
@@ -239,9 +239,8 @@ Using a food SHALL take one of that food from the bag and apply its heal to the 
 
 ## Open
 
-- [ ] **The bag opens on B** — no source yet: the wiki's Controls page is not cached in `{data-root}/cache/genshin-wiki`.
-- [ ] **Every one- to three-star weapon is destroyable** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json`: a handful of one-star weapons (`rankLevel` 1) have no `destroyRule`, as [the design page](design.md) already says.
-- [ ] **The bag holds everything in nine tabs, in the game's order, each with the game's own name** — no source yet: the wiki's Inventory page, whose Inventory Categories section lists the nine in this order under their own names, is not on disk.
+- [ ] **The bag opens on B** — no source yet: the wiki's Controls page is not cached in `{data-root}/cache/genshin-wiki`; the code binds `B` to `OpenInventory` (`packages/genshin-engine/src/input/InputActionBindingMap.ts`).
+- [ ] **The bag holds everything in nine tabs, in the game's order, each with the game's own name** — no source yet: the wiki's Inventory page, whose Inventory Categories section lists the nine in this order under their own names, is not on disk, and where the currencies sit is unchecked.
 - [ ] **The bag opens on the weapons tab, with its weapons sorted by level from the highest** — no source yet: a recording of the bag opened on B with nothing chosen, showing the tab and sort it opens on
 - [ ] **An item stacks up to its own stack limit, and each weapon or artifact is an entry of its own** — no source yet: the wiki's Inventory page, whose Maximum Item Quantities section gives each item's limit by type, is not on disk, and no recording of two copies of one weapon held in the bag is on disk.
 - [ ] **A picked up weapon becomes an entry at level one, in its first phase, with no EXP and at refinement rank one** — no source yet: the wiki's Weapon page, for the starting level, phase, EXP and refinement rank, is not in the cache, and the wiki's Refinement Rank page, which says 1- and 2-star weapons cannot be refined, is not on disk either, so no page checked gives the starting state.
