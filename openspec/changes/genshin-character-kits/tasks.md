@@ -23,7 +23,7 @@
 
 ## 6. Size ceiling
 
-- [ ] 6.1 Cut the world's entry to a lower size ceiling. The gate is the entry's measured size as it stands, 2,292,637 bytes, held by the snapshot in `packages/genshin-world/src/index.test.ts`, so a regression fails that test. Verify: the snapshot holds the cut's size once the cut lands. Blocked: a cut to a lower ceiling is a separate open item, not decided here, so this box stays open for it; measuring a cut needs a build.
+- [ ] 6.1 Cut the world's entry to a lower size ceiling. The gate is the size ceiling the bundle-size snapshot in `packages/genshin-world/src/index.test.ts` holds, so a regression past it fails that test. Verify: the snapshot holds the cut's size once the cut lands. Blocked: a cut to a lower ceiling is a separate open item, not decided here, so this box stays open for it; measuring a cut needs a build.
 
 ## 7. Decisions
 
