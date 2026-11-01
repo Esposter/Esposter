@@ -222,7 +222,8 @@ describe(createOceanHuedClamSetModule, () => {
     emitKitEvent(createHeal(0.2, TRAVELER_CHARACTER_ID), context);
     context.body.position = { x: 20, z: 0 };
     stepKitSeconds(context, 3);
+    const physicalMultiplier = getResistanceMultiplier(getEnemyResistance(kind, atPop, undefined));
     expect(atCast.health).toBe(1e9);
-    expect(atPop.health).toBeLessThan(1e9);
+    expect(1e9 - atPop.health).toBeCloseTo(0.9 * 0.2 * wearer.attributes.maxHealth * physicalMultiplier);
   });
 });

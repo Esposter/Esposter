@@ -1,5 +1,3 @@
-import type { KitStrike } from "#src/models/kit/KitStrike";
-
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
@@ -12,6 +10,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
@@ -29,12 +28,7 @@ const createEnemyUnder = (auraTypes: AuraType[]) => {
 
 describe(createBlizzardStrayerSetModule, () => {
   const wearer = createKitCombatant(TRAVELER_CHARACTER_ID, KIT);
-  const strike: KitStrike = {
-    attackTag: AttackTag.NormalAttack,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wearer,
-    hit: KIT.plungeCollision,
-  };
+  const strike = createKitStrike(wearer, AttackTag.NormalAttack);
   const party = createParty([TRAVELER_CHARACTER_ID]);
 
   test("raises CRIT Rate by 20% against an enemy under Cryo, and by 20% more against a Frozen one, from four pieces", () => {

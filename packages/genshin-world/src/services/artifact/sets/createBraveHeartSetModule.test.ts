@@ -1,5 +1,3 @@
-import type { KitStrike } from "#src/models/kit/KitStrike";
-
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { BRAVE_HEART_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
@@ -11,6 +9,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
@@ -27,12 +26,7 @@ const createEnemyAtHealthShare = (healthShare: number) => {
 
 describe(createBraveHeartSetModule, () => {
   const wearer = createKitCombatant(TRAVELER_CHARACTER_ID, KIT);
-  const strike: KitStrike = {
-    attackTag: AttackTag.NormalAttack,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wearer,
-    hit: KIT.plungeCollision,
-  };
+  const strike = createKitStrike(wearer, AttackTag.NormalAttack);
   const party = createParty([TRAVELER_CHARACTER_ID]);
 
   test("raises the DMG of a strike on an enemy with more than half its HP by 30% from four pieces", () => {

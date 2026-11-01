@@ -1,5 +1,4 @@
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -16,6 +15,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
 import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -79,12 +79,7 @@ describe(createDisenchantmentInDeepShadowSetModule, () => {
     );
     const party = createParty([TRAVELER_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
-    const strike: KitStrike = {
-      attackTag: AttackTag.NormalAttack,
-      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-      combatant: wearer,
-      hit: KIT.plungeCollision,
-    };
+    const strike = createKitStrike(wearer, AttackTag.NormalAttack);
     const plainEnemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const superconductedEnemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     addSuperconductStatus(superconductedEnemy);

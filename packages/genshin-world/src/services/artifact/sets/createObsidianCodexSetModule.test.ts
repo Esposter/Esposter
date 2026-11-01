@@ -1,5 +1,4 @@
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -16,6 +15,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { NIGHTSOUL_BLESSING_STATUS_ID } from "#src/services/kit/constants";
 import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
 import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -30,12 +30,7 @@ const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_
 describe(createObsidianCodexSetModule, () => {
   const wearer = createKitCombatant(TRAVELER_CHARACTER_ID, KIT);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  const strike: KitStrike = {
-    attackTag: AttackTag.NormalAttack,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wearer,
-    hit: KIT.plungeCollision,
-  };
+  const strike = createKitStrike(wearer, AttackTag.NormalAttack);
 
   test("raises the DMG its wearer deals by 15% in Nightsoul's Blessing while on the field from two pieces", () => {
     expect.hasAssertions();
