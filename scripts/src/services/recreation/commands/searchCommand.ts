@@ -1,30 +1,10 @@
-import type { SearchCandidate } from "#src/models/recreation/video/SearchCandidate";
 import type { SubCommandsDef } from "citty";
 
-import { VideoSite } from "#src/models/recreation/video/VideoSite";
+import { checkIsVideoSite } from "#src/services/recreation/video/checkIsVideoSite";
+import { formatCandidate } from "#src/services/recreation/video/formatCandidate";
 import { searchVideos } from "#src/services/recreation/video/searchVideos";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
-
-const formatClock = (seconds: number): string =>
-  `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, "0")}`;
-
-const formatCandidate = (candidate: SearchCandidate): string[] => {
-  const resolution = candidate.height === undefined ? undefined : `${candidate.height}p${candidate.fps ?? ""}`;
-  const details = [
-    candidate.title,
-    candidate.uploader,
-    candidate.durationSeconds === undefined ? undefined : formatClock(candidate.durationSeconds),
-    resolution,
-    candidate.uploadDate,
-  ].filter((detail) => detail !== undefined);
-  const chapters = (candidate.chapters ?? []).map(
-    (chapter) => `  ${formatClock(chapter.startSeconds)} ${chapter.title}`,
-  );
-  return [candidate.url, details.join(" · "), ...chapters];
-};
-
-const checkIsVideoSite = (site: string): site is VideoSite => Object.values<string>(VideoSite).includes(site);
 
 export const searchCommand: SubCommandsDef[string] = defineCommand({
   args: {
