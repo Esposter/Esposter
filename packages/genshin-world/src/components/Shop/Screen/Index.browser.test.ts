@@ -28,7 +28,11 @@ describe("shopScreen", () => {
     [GameTextKey.InventoryFurnishings]: "made up furnishings",
     [GameTextKey.RealmDepotTreasures]: "made up treasures",
   };
-  const nameText = { "301": "made up currency", "302": "made up treasure", "303": "made up furnishing" };
+  const nameText = {
+    [String(PRICE_ITEM_ID)]: "made up currency",
+    [String(TREASURE_ITEM_ID)]: "made up treasure",
+    [String(FURNISHING_ITEM_ID)]: "made up furnishing",
+  };
   const materialDataMap = new Map<number, MaterialData>(
     [PRICE_ITEM_ID, TREASURE_ITEM_ID, FURNISHING_ITEM_ID].map((id) => [
       id,
