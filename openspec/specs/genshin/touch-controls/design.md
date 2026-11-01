@@ -56,7 +56,7 @@ flowchart LR
 
 ## Open
 
-The stick's placement and its appearance on the recordings are the [spec's](spec.md) open item, and the recordings are named in the reference above.
+The stick's placement and its appearance on the recordings are the [spec's](spec.md) open items, and the recordings are named in the reference above.
 
 - [ ] **The stick's area is a third of the screen across, 340 canvas units up, with an 80 unit strip over it, and scales with the screen** — no source yet: the extracted `MoveJoystick_H4` transform (`{data-root}/genshin-parity/extracted/character/interface/json/RectTransform/RectTransform#324403.json`) holds only its local position, rotation, scale and hierarchy, with no size delta or anchor to read back.
 - [ ] **The tree's own rect puts the stick 102 units in and up** — no source yet: the extracted `MoveJoystick_H4` rect (`RectTransform#324403.json`) has a zero local position and no size or anchor, so the 102 is not read back.
