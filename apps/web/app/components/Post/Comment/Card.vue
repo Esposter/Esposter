@@ -2,8 +2,6 @@
 import type { Item } from "@/models/shared/Item";
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
-import { pluralize } from "#shared/util/text/pluralize";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { authClient } from "@/services/auth/authClient";
 import { MAX_COMMENT_INDENT_DEPTH } from "@/services/post/constants";
@@ -27,10 +25,7 @@ const isCreator = computed(() => comment.userId === session.value.data?.user.id)
 const isUpdateMode = ref(false);
 const commentStore = useCommentStore();
 const { expandedCommentIds } = storeToRefs(commentStore);
-const { toggleCommentExpanded } = commentStore;
 const isExpanded = computed(() => expandedCommentIds.value.has(comment.id));
-// Past the clamp a thread goes on on its own page rather than further in
-const isClamped = computed(() => depth >= MAX_COMMENT_INDENT_DEPTH);
 const repliesId = useId();
 const items: Item[] = [
   {
@@ -73,29 +68,18 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
         <PostDescription v-else :description="comment.description" />
         <div flex gap-2 items-center>
           <PostLikeSection :post="comment" />
-          <UiButton
-            v-if="session.data"
-            :aria-expanded="replyingId === comment.id"
-            :variant="UiButtonVariant.Quiet"
-            @click="replyingId = replyingId === comment.id ? '' : comment.id"
-          >
-            <UiIcon :meaning="UiIconMeaning.Reply" />
-            Reply
-          </UiButton>
+          <PostCommentReplyButton v-if="session.data" :comment-id="comment.id" />
           <UiOverflowMenu v-if="isCreator" :items label="Comment actions" />
         </div>
         <PostCommentCreateRichTextEditor v-if="replyingId === comment.id" :parent-id="comment.id" />
-        <UiButton
-          v-if="comment.commentCount > 0 && !isClamped"
-          :aria-controls="repliesId"
-          :aria-expanded="isExpanded"
-          :variant="UiButtonVariant.Quiet"
+        <!-- Past the clamp a thread goes on on its own page rather than further in -->
+        <PostCommentExpandButton
+          v-if="comment.commentCount > 0 && depth < MAX_COMMENT_INDENT_DEPTH"
+          :comment
+          :is-expanded="isExpanded"
+          :replies-id="repliesId"
           self-start
-          @click="toggleCommentExpanded(comment.id)"
-        >
-          <UiIcon :class="{ 'rotate-90': isExpanded }" :meaning="UiIconMeaning.Disclosure" />
-          {{ comment.commentCount }} {{ pluralize("reply", comment.commentCount, "replies") }}
-        </UiButton>
+        />
         <NuxtLink
           v-else-if="comment.commentCount > 0"
           :to="RoutePath.Post(comment.id)"
