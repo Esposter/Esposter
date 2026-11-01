@@ -13,76 +13,29 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { GameText } from "genshin-text";
 
-import CharacterAttributeList from "#src/components/Character/AttributeList/Index.vue";
 import CharacterProfile from "#src/components/Character/Profile/Index.vue";
-import { Attribute } from "#src/models/character/Attribute";
-import { TalentUpgradeRefusal } from "#src/models/character/TalentUpgradeRefusal";
-import { Currency } from "#src/models/inventory/Currency";
-import { ArtifactSlotGameTextKeyMap } from "#src/services/artifact/ArtifactSlotGameTextKeyMap";
-import { ENHANCE_AUTO_ADD_MAX_RARITY } from "#src/services/artifact/constants";
-import { enhanceArtifact } from "#src/services/artifact/enhanceArtifact";
-import { enhanceCharacterArtifact } from "#src/services/artifact/enhanceCharacterArtifact";
-import { equipBagArtifact } from "#src/services/artifact/equipBagArtifact";
-import { getActiveArtifactSetBonuses } from "#src/services/artifact/getActiveArtifactSetBonuses";
-import { getArtifactDetailStats } from "#src/services/artifact/getArtifactDetailStats";
-import { getArtifactRarityData } from "#src/services/artifact/getArtifactRarityData";
-import { getArtifactSetBonusLines } from "#src/services/artifact/getArtifactSetBonusLines";
-import { getAutoAddFodders } from "#src/services/artifact/getAutoAddFodders";
-import { getBagArtifactsForSlot } from "#src/services/artifact/getBagArtifactsForSlot";
-import { getEnhancementMoraCost } from "#src/services/artifact/getEnhancementMoraCost";
-import { getMaterialExperience } from "#src/services/artifact/getMaterialExperience";
-import { takeFodderArtifacts } from "#src/services/artifact/takeFodderArtifacts";
-import { toggleCharacterArtifactLock } from "#src/services/artifact/toggleCharacterArtifactLock";
-import { unequipArtifactToBag } from "#src/services/artifact/unequipArtifactToBag";
-import { activateConstellation } from "#src/services/character/activateConstellation";
-import { ascendCharacter } from "#src/services/character/ascendCharacter";
+import CharacterScreenArtifacts from "#src/components/Character/Screen/Artifacts/Index.vue";
+import CharacterScreenAttributes from "#src/components/Character/Screen/Attributes/Index.vue";
+import CharacterScreenConstellation from "#src/components/Character/Screen/Constellation/Index.vue";
+import CharacterScreenEnhance from "#src/components/Character/Screen/Enhance/Index.vue";
+import CharacterScreenEquip from "#src/components/Character/Screen/Equip/Index.vue";
+import CharacterScreenTalents from "#src/components/Character/Screen/Talents/Index.vue";
+import CharacterScreenWeapons from "#src/components/Character/Screen/Weapons/Index.vue";
 import { CharacterMenuTabGameTextKeyMap } from "#src/services/character/CharacterMenuTabGameTextKeyMap";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import {
-  ARTIFACT_SLOT_ORDER,
-  COMBAT_TALENT_ORDER,
-  MASTERLESS_LEVEL_LIFTS,
-  MASTERLESS_STELLA_FORTUNA_ID,
-  TRAVELER_CHARACTER_ID,
-} from "#src/services/character/constants";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ElementNameGameTextKeyMap } from "#src/services/character/ElementNameGameTextKeyMap";
-import { formatAttributeValue } from "#src/services/character/formatAttributeValue";
-import { formatWholeNumber } from "#src/services/character/formatWholeNumber";
-import { getAscensionMaterials } from "#src/services/character/getAscensionMaterials";
-import { getAttributeLabel } from "#src/services/character/getAttributeLabel";
-import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { getCharacterElement } from "#src/services/character/getCharacterElement";
-import { getConstellationActivationRefusal } from "#src/services/character/getConstellationActivationRefusal";
-import { getNextAscensionPhase } from "#src/services/character/getNextAscensionPhase";
-import { getSecondaryAttribute } from "#src/services/character/getSecondaryAttribute";
-import { getTalentRows } from "#src/services/character/getTalentRows";
-import { levelUpCharacter } from "#src/services/character/levelUpCharacter";
-import { liftCharacterLevel } from "#src/services/character/liftCharacterLevel";
-import { TalentUpgradeRefusalGameTextKeyMap } from "#src/services/character/TalentUpgradeRefusalGameTextKeyMap";
-import { upgradeCharacterTalent } from "#src/services/character/upgradeCharacterTalent";
-import { checkIsItemCountsHeld } from "#src/services/inventory/checkIsItemCountsHeld";
-import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
-import { takeItemCounts } from "#src/services/inventory/takeItemCounts";
 import { ElementMarkPathMap } from "#src/services/loading/ElementMarkPathMap";
 import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
-import { getWeaponAttributeTotals } from "#src/services/weapon/getWeaponAttributeTotals";
-import { WeaponTypeNameGameTextKeyMap } from "#src/services/weapon/WeaponTypeNameGameTextKeyMap";
-import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import {
-  ArtifactEnhancePicker,
-  ArtifactPicker,
   CharacterMenu,
-  CharacterMenuArtifacts,
-  CharacterMenuConstellation,
   CharacterMenuTab,
   CharacterMenuTabs,
-  CharacterMenuTalents,
-  CharacterMenuWeapons,
   CloseButton,
   CloseButtonMark,
   GameScreen,
 } from "genshin-interface";
-import { fillGameTextValues, fillLinePlaceholders, GameLanguage, GameTextKey } from "genshin-text";
+import { fillLinePlaceholders, GameLanguage, GameTextKey } from "genshin-text";
 
 interface Props {
   // The character the screen opens on, the one on the field
@@ -159,10 +112,11 @@ const emit = defineEmits<{ close: [] }>();
 const characterId = ref(activeCharacterId);
 const tab = ref(initialTab);
 const character = computed(() => characters.value.find(({ id }) => id === characterId.value));
-// The character written back in its place among the roster, the others left as they are
-const replaceCharacter = (replacement: Character) => {
-  characters.value = characters.value.map((item) => (item.id === replacement.id ? replacement : item));
-};
+// The slot each picker is open for: the Artifacts panel's Equip and Enhance buttons open it, and the picker's close clears it
+const equipSlot = ref<ArtifactSlot>();
+const enhanceSlot = ref<ArtifactSlot>();
+// The notice the artifact panel shows, the game's card for a refusal, kept across tabs until the next artifact action
+const artifactNotice = ref("");
 // The Traveler's name is the game's own, and every other character's is the name its table cites
 const menuEntries = computed(() =>
   characters.value.map(({ id }) => ({
@@ -192,311 +146,6 @@ const elementName = computed(() => {
 const tabLabels = computed(() =>
   Object.fromEntries(CharacterMenuTabs.map((menuTab) => [menuTab, gameText[CharacterMenuTabGameTextKeyMap[menuTab]]])),
 );
-// The weapon the character wields at its level and phase: its name, base ATK and secondary attribute, as the Weapons tab
-// Shows them
-const weaponPanel = computed(() => {
-  const weapon = character.value?.weapon;
-  const weaponData = weapon && statTables.weaponDataMap.get(weapon.id);
-  if (!weapon || !weaponData) return undefined;
-  const attributeTotalMap = getWeaponAttributeTotals(
-    weaponData,
-    statTables.weaponGrowCurveMap,
-    weapon.level,
-    weapon.ascension,
-  );
-  // The secondary attribute is the one the weapon grows beside its base ATK, written whole or as a percentage as the
-  // Game writes it, captioned by the label the Weapon screen draws it under, and nothing for a weapon that grows none
-  const subStatAttribute = getSecondaryAttribute(weaponData);
-  const subStatValue =
-    subStatAttribute === undefined ? "" : formatAttributeValue(subStatAttribute, attributeTotalMap[subStatAttribute]);
-  const maxLevel = weaponData.ascensionPhases[weapon.ascension]?.maxLevel ?? weapon.level;
-  return {
-    ascension: weapon.ascension,
-    baseAttack: formatWholeNumber(attributeTotalMap[Attribute.BaseAttack]),
-    baseAttackLabel: gameText[GameTextKey.AttributeBaseAttack],
-    enhanceLabel: gameText[GameTextKey.WeaponEnhance],
-    kind: gameText[WeaponTypeNameGameTextKeyMap[weaponData.weaponType]],
-    levelText: fillGameTextValues(gameText[GameTextKey.LevelFormat], `${weapon.level}/${maxLevel}`),
-    name: nameText[weaponData.nameTextId] || "",
-    rarity: weaponData.rarity,
-    refinement: weapon.refinement,
-    subStatLabel: subStatAttribute === undefined ? "" : getAttributeLabel(subStatAttribute, gameText),
-    subStatValue,
-    switchLabel: gameText[GameTextKey.QuickSwapSwitch],
-  };
-});
-// Each artifact slot's stats in the game's order, undefined where the character wears no artifact there
-const artifactSlotStats = computed(() =>
-  ARTIFACT_SLOT_ORDER.map((slot) => {
-    const artifact = character.value?.artifacts.find((wornArtifact) => wornArtifact.slot === slot);
-    return artifact ? getArtifactDetailStats(artifact, gameText, statTables.artifactMainAffixCurves) : undefined;
-  }),
-);
-// The artifact slots' names in the game's order
-const artifactSlotNames = computed(() => ARTIFACT_SLOT_ORDER.map((slot) => gameText[ArtifactSlotGameTextKeyMap[slot]]));
-// The set bonuses the worn artifacts reach, each naming the set it belongs to
-const activeArtifactSetBonuses = computed(() =>
-  getActiveArtifactSetBonuses(character.value?.artifacts ?? [], statTables.artifactSetDataMap),
-);
-// Each set the worn artifacts make, with its name and its bonuses' lines
-const artifactSetBonusGroups = computed(() =>
-  Array.from(
-    Map.groupBy(activeArtifactSetBonuses.value, ({ setId }) => setId),
-    ([setId, setBonuses]) => {
-      const nameTextId = reliquarySets.find(({ id }) => id === setId)?.nameTextId;
-      return {
-        lines: getArtifactSetBonusLines(setBonuses, gameText, nameText),
-        name: nameTextId === undefined ? "" : nameText[nameTextId] || "",
-      };
-    },
-  ),
-);
-const noSetBonusLabel = computed(() =>
-  activeArtifactSetBonuses.value.length === 0 ? gameText[GameTextKey.ArtifactSetBonusNone] : "",
-);
-const formatTotal = (difference: number) => `+${formatWholeNumber(difference)}`;
-// The attribute totals the worn artifacts add: each stat the character reaches with them less the one it reaches without
-const artifactTotals = computed(() => {
-  if (!character.value) return [];
-  const worn = computeCharacterAttributes(getCharacterAttributeLines(character.value, statTables));
-  const bare = computeCharacterAttributes(
-    getCharacterAttributeLines({ ...character.value, artifacts: [] }, statTables),
-  );
-  return [
-    { label: gameText[GameTextKey.AttributeMaxHealth], value: formatTotal(worn.maxHealth - bare.maxHealth) },
-    { label: gameText[GameTextKey.AttributeAttack], value: formatTotal(worn.attack - bare.attack) },
-    { label: gameText[GameTextKey.AttributeDefense], value: formatTotal(worn.defense - bare.defense) },
-    {
-      label: gameText[GameTextKey.AttributeElementalMastery],
-      value: formatTotal(
-        worn.attributeTotalMap[Attribute.ElementalMastery] - bare.attributeTotalMap[Attribute.ElementalMastery],
-      ),
-    },
-  ];
-});
-// Which of the six constellations are activated, the first the character's count of them
-const constellationsActivated = computed(() =>
-  Array.from({ length: CONSTELLATION_COUNT }, (_value, index) => index < (character.value?.constellationCount ?? 0)),
-);
-// The proud skill group each of the character's combat talents names in its kit, which its upgrades are read by
-const talentGroupIds = computed(
-  () =>
-    characterTalentKits.find(({ characterId: kitCharacterId }) => kitCharacterId === character.value?.id)
-      ?.talentGroupIds,
-);
-const toItemCountText = (name: string, count: number) =>
-  fillGameTextValues(gameText[GameTextKey.ItemCount], name, count);
-// The Talents tab's panel for the chosen character: each combat talent's level, the phase and the cost of its next level,
-// And why it cannot rise now, its Upgrade disabled while it cannot
-const talentPanel = computed(() => {
-  if (!character.value || !talentGroupIds.value) return undefined;
-  const rows = getTalentRows(character.value, talentGroupIds.value, talentUpgradeMap, {
-    inventory: inventory.value,
-    wallet: wallet.value,
-  });
-  return {
-    costs: rows.map(({ upgrade }) =>
-      upgrade
-        ? [
-            toItemCountText(gameText[GameTextKey.Mora], upgrade.coinCost),
-            ...upgrade.costItems.map(({ count, id }) =>
-              toItemCountText(getItemDefinition(id, nameText, materialDataMap).name, count),
-            ),
-          ]
-        : [],
-    ),
-    // A talent at its last level draws no Upgrade and names no reason, the game showing neither
-    isUpgradeDisabled: rows.map(({ refusal }) => refusal !== undefined),
-    levelTexts: rows.map(({ level }) => fillGameTextValues(gameText[GameTextKey.LevelFormat], level)),
-    phases: rows.map(({ upgrade }) =>
-      upgrade ? fillGameTextValues(gameText[GameTextKey.TalentPhaseRequired], upgrade.phase) : "",
-    ),
-    reasons: rows.map(({ refusal }) =>
-      refusal === undefined || refusal === TalentUpgradeRefusal.LastLevel
-        ? ""
-        : gameText[TalentUpgradeRefusalGameTextKeyMap[refusal]],
-    ),
-  };
-});
-// The chosen character raised one level with its Character EXP materials, or undefined where that is refused now
-const levelUpResult = computed(() => {
-  if (!character.value) return undefined;
-  const maxLevel = statTables.characterDataMap.get(character.value.id)?.ascensionPhases[character.value.ascension]
-    ?.maxLevel;
-  return maxLevel === undefined
-    ? undefined
-    : levelUpCharacter(character.value, { inventory: inventory.value, maxLevel, wallet: wallet.value });
-});
-// Whether the chosen character sits at a level cap a Masterless Stella Fortuna lifts, with the items in the bag for it
-const isLiftable = computed(() => {
-  const liftLevel = character.value ? MASTERLESS_LEVEL_LIFTS.get(character.value.level) : undefined;
-  return (
-    liftLevel !== undefined &&
-    checkIsItemCountsHeld(inventory.value.items, [{ count: liftLevel.count, id: MASTERLESS_STELLA_FORTUNA_ID }], 1)
-  );
-});
-// The phase the chosen character enters at its next ascension, as the Attributes tab lists it: the Adventure Rank it needs
-// Against the player's, the Mora and the materials, each held against what it takes. None at its last phase, or where
-// The table carries no cost for that phase yet
-const ascendRows = computed(() => {
-  const phases = character.value && statTables.characterDataMap.get(character.value.id)?.ascensionPhases;
-  const nextPhase = character.value && phases && getNextAscensionPhase(phases, character.value.ascension);
-  if (nextPhase?.coinCost === undefined || nextPhase.requiredPlayerLevel === undefined) return [];
-  return [
-    { label: gameText[GameTextKey.AdventureRank], value: `${adventureRank}/${nextPhase.requiredPlayerLevel}` },
-    { label: gameText[GameTextKey.Mora], value: `${wallet.value[Currency.Mora]}/${nextPhase.coinCost}` },
-    ...getAscensionMaterials(nextPhase, inventory.value).map(({ count, held, id }) => ({
-      label: getItemDefinition(id, nameText, materialDataMap).name,
-      value: `${held}/${count}`,
-    })),
-  ];
-});
-// The chosen character ascended into its next phase, with the Mora and materials taken, or undefined where that is
-// Refused now
-const ascendResult = computed(() => {
-  const phases = character.value && statTables.characterDataMap.get(character.value.id)?.ascensionPhases;
-  return character.value && phases
-    ? ascendCharacter(character.value, { adventureRank, inventory: inventory.value, phases, wallet: wallet.value })
-    : undefined;
-});
-const upgradeTalentAt = (index: number) => {
-  const talent = COMBAT_TALENT_ORDER[index];
-  if (!character.value || !talentGroupIds.value || !talent) return;
-  const raised = upgradeCharacterTalent(
-    characters.value,
-    character.value,
-    talent,
-    talentUpgradeMap[talentGroupIds.value[talent]] ?? [],
-    { inventory: inventory.value, wallet: wallet.value },
-  );
-  characters.value = raised.characters;
-  inventory.value = raised.inventory;
-  wallet.value = raised.wallet;
-};
-// The slot Equip is open for, whose bag artifacts the picker lists for the player to choose one from
-const equipSlot = ref<ArtifactSlot>();
-const equipOptions = computed(() =>
-  equipSlot.value
-    ? getBagArtifactsForSlot(inventory.value, equipSlot.value).map(({ artifact, definition, id }) => ({
-        caption: `+${artifact.level}`,
-        id: String(id),
-        name: definition.name,
-        rarity: artifact.rarity,
-      }))
-    : [],
-);
-// The notice the artifact panel shows, the game's card for a refusal, cleared by the next artifact action
-const artifactNotice = ref("");
-// The Enhance picker's state: the slot it is open for, the bag's artifacts chosen as fodder, and the ore counts chosen by item id
-const enhanceSlot = ref<ArtifactSlot>();
-const enhanceFodderIds = ref<number[]>([]);
-const enhanceMaterialCounts = ref<Record<number, number>>({});
-const enhanceArtifactWorn = computed(() => character.value?.artifacts.find((worn) => worn.slot === enhanceSlot.value));
-const enhanceFodders = computed(() =>
-  inventory.value.items.flatMap(({ artifact, id }) =>
-    artifact && enhanceFodderIds.value.includes(id) ? [artifact] : [],
-  ),
-);
-// The bag's unlocked artifacts in the order Auto Add takes them, the lowest star first and then the lowest level
-const enhanceFodderOptions = computed(() =>
-  inventory.value.items
-    .flatMap(({ artifact, definition, id }) => (artifact && !artifact.isLocked ? [{ artifact, definition, id }] : []))
-    .toSorted(
-      (firstFodder, secondFodder) =>
-        firstFodder.artifact.rarity - secondFodder.artifact.rarity ||
-        firstFodder.artifact.level - secondFodder.artifact.level,
-    )
-    .map(({ artifact, definition, id }) => ({
-      caption: `+${artifact.level}`,
-      id: String(id),
-      isSelected: enhanceFodderIds.value.includes(id),
-      name: definition.name,
-      rarity: artifact.rarity,
-    })),
-);
-const enhanceMaterialOptions = computed(() =>
-  inventory.value.items
-    .filter(({ definition }) => statTables.artifactExpMaterialMap.has(definition.id))
-    .map(({ definition, quantity }) => ({
-      count: quantity,
-      id: String(definition.id),
-      name: definition.name,
-      selectedCount: enhanceMaterialCounts.value[definition.id] ?? 0,
-    })),
-);
-const enhanceMaterialItemCounts = computed(() =>
-  Object.entries(enhanceMaterialCounts.value).flatMap(([id, count]) => (count > 0 ? [{ count, id: Number(id) }] : [])),
-);
-const enhanceMaterialExperience = computed(() =>
-  getMaterialExperience(statTables.artifactExpMaterialMap, enhanceMaterialItemCounts.value),
-);
-const enhanceMoraCost = computed(() =>
-  getEnhancementMoraCost({
-    artifactRarityDataMap: statTables.artifactRarityDataMap,
-    fodders: enhanceFodders.value,
-    materialExperience: enhanceMaterialExperience.value,
-  }),
-);
-// The level the worn artifact reaches with what is chosen at the base EXP bonus, the one the game shows before its draw
-const enhanceLevelLabel = computed(() => {
-  const artifact = enhanceArtifactWorn.value;
-  if (!artifact) return "";
-  const { level } = enhanceArtifact({
-    artifact,
-    artifactRarityDataMap: statTables.artifactRarityDataMap,
-    fodders: enhanceFodders.value,
-    materialExperience: enhanceMaterialExperience.value,
-    random: () => 0,
-  });
-  return fillGameTextValues(gameText[GameTextKey.LevelFormat], String(level));
-});
-const isEnhanceMaxed = computed(() => {
-  const artifact = enhanceArtifactWorn.value;
-  return (
-    artifact !== undefined &&
-    artifact.level >= getArtifactRarityData(statTables.artifactRarityDataMap, artifact.rarity).maxLevel
-  );
-});
-const enhanceNotice = computed(() => (isEnhanceMaxed.value ? gameText[GameTextKey.ArtifactLevelMax] : ""));
-// Confirm waits on something chosen, Mora enough to pay for it, and an artifact still short of its top level
-const isEnhanceConfirmDisabled = computed(
-  () => enhanceMoraCost.value === 0 || enhanceMoraCost.value > wallet.value[Currency.Mora] || isEnhanceMaxed.value,
-);
-const autoAddEnhanceFodders = () => {
-  const artifact = enhanceArtifactWorn.value;
-  if (!artifact) return;
-  enhanceFodderIds.value = getAutoAddFodders({
-    artifact,
-    artifactRarityDataMap: statTables.artifactRarityDataMap,
-    inventory: inventory.value,
-    maxRarity: ENHANCE_AUTO_ADD_MAX_RARITY,
-  });
-};
-const toggleEnhanceFodder = (id: string) => {
-  const entryId = Number(id);
-  enhanceFodderIds.value = enhanceFodderIds.value.includes(entryId)
-    ? enhanceFodderIds.value.filter((chosen) => chosen !== entryId)
-    : [...enhanceFodderIds.value, entryId];
-};
-// A material's chosen count moves by one, kept between none and what the bag holds
-const changeEnhanceMaterial = (id: string, delta: number) => {
-  const itemId = Number(id);
-  const held = inventory.value.items.find(({ definition }) => definition.id === itemId)?.quantity ?? 0;
-  const selected = enhanceMaterialCounts.value[itemId] ?? 0;
-  enhanceMaterialCounts.value = {
-    ...enhanceMaterialCounts.value,
-    [itemId]: Math.min(Math.max(selected + delta, 0), held),
-  };
-};
-// Per slot, whether the bag holds no piece for it, which Equip is disabled on
-const equipDisabledSlots = computed(() =>
-  ARTIFACT_SLOT_ORDER.map((slot) => !inventory.value.items.some(({ artifact }) => artifact?.slot === slot)),
-);
-// The set the Activate button presses the next of, and whether that is refused now, a character with no set refused too
-const constellations = computed(() => characterIdConstellationsMap.get(characterId.value) ?? []);
-const isActivateDisabled = computed(
-  () => !character.value || getConstellationActivationRefusal(character.value, constellations.value) !== undefined,
-);
 </script>
 
 <template>
@@ -513,122 +162,59 @@ const isActivateDisabled = computed(
       :is-touch
       :tab-labels
     >
-      <CharacterAttributeList
+      <CharacterScreenAttributes
         v-if="character && tab === CharacterMenuTab.Attributes"
+        v-model:characters="characters"
+        v-model:inventory="inventory"
+        v-model:wallet="wallet"
+        :adventure-rank
+        :character
+        :character-name="characterName"
+        :game-text
+        :material-data-map
+        :max-stamina
+        :name-text
+        :stat-tables
+        :traveler-bonus-lines
+      />
+      <CharacterScreenWeapons
+        v-else-if="character && tab === CharacterMenuTab.Weapons"
         :character
         :game-text
-        :ascend-rows
-        :is-ascendable="ascendResult !== undefined"
-        :is-level-upable="levelUpResult !== undefined"
-        :is-liftable
-        :traveler-bonus-lines
-        :max-stamina
-        :name="characterName"
+        :name-text
         :stat-tables
-        @ascend="
-          () => {
-            const ascended = ascendResult;
-            if (!ascended) return;
-            replaceCharacter(ascended.character);
-            inventory = ascended.inventory;
-            wallet = ascended.wallet;
-          }
-        "
-        @level-up="
-          () => {
-            const raised = levelUpResult;
-            if (!raised) return;
-            replaceCharacter(raised.character);
-            inventory = raised.inventory;
-            wallet = raised.wallet;
-          }
-        "
-        @lift="
-          () => {
-            if (!character || !isLiftable) return;
-            const lifted = liftCharacterLevel(character, { inventory });
-            replaceCharacter(lifted.character);
-            inventory = lifted.inventory;
-          }
-        "
       />
-      <CharacterMenuWeapons v-else-if="weaponPanel && tab === CharacterMenuTab.Weapons" :="weaponPanel" />
-      <CharacterMenuArtifacts
+      <CharacterScreenArtifacts
         v-else-if="character && tab === CharacterMenuTab.Artifacts"
-        :artifact-details-label="gameText[GameTextKey.ArtifactDetails]"
-        :enhance-label="gameText[GameTextKey.ArtifactActionEnhance]"
-        :equip-disabled-slots
-        :notice="artifactNotice"
-        :equip-label="gameText[GameTextKey.ArtifactActionEquip]"
-        :fast-equip-label="gameText[GameTextKey.ArtifactActionFastEquip]"
-        :lock-label="gameText[GameTextKey.ArtifactActionLock]"
-        :no-set-bonus-label
-        :set-bonus-heading="gameText[GameTextKey.ArtifactSetBonusHeading]"
-        :sets="artifactSetBonusGroups"
-        :slot-names="artifactSlotNames"
-        :slot-stats="artifactSlotStats"
-        :switch-label="gameText[GameTextKey.QuickSwapSwitch]"
-        :totals="artifactTotals"
-        :unequip-label="gameText[GameTextKey.ArtifactActionUnequip]"
-        :unlock-label="gameText[GameTextKey.ArtifactActionUnlock]"
-        @enhance="
-          (index) => {
-            // The Enhance button opens the picker over the worn artifact's slot, with nothing chosen yet
-            artifactNotice = '';
-            enhanceSlot = ARTIFACT_SLOT_ORDER[index];
-            enhanceFodderIds = [];
-            enhanceMaterialCounts = {};
-          }
-        "
-        @equip="
-          (index) => {
-            artifactNotice = '';
-            equipSlot = ARTIFACT_SLOT_ORDER[index];
-          }
-        "
-        @lock="
-          (index) => {
-            // The picked slot's worn artifact is locked or unlocked, which keeps it out of fodder
-            const slot = ARTIFACT_SLOT_ORDER[index];
-            if (!character || !slot) return;
-            artifactNotice = '';
-            replaceCharacter(toggleCharacterArtifactLock(character, slot));
-          }
-        "
-        @unequip="
-          (index) => {
-            // The worn artifact in the picked slot goes back to the bag, and nothing moves where the bag
-            // Has no room for it
-            const slot = ARTIFACT_SLOT_ORDER[index];
-            if (!character || !slot) return;
-            const unequipped = unequipArtifactToBag(inventory, character, slot, { names: nameText, reliquarySets });
-            if (unequipped.isBagFull) {
-              artifactNotice = gameText[GameTextKey.ArtifactInventoryFull];
-              return;
-            }
-            artifactNotice = '';
-            replaceCharacter(unequipped.character);
-            inventory = unequipped.inventory;
-          }
-        "
+        v-model:artifact-notice="artifactNotice"
+        v-model:characters="characters"
+        v-model:enhance-slot="enhanceSlot"
+        v-model:equip-slot="equipSlot"
+        v-model:inventory="inventory"
+        :character
+        :game-text
+        :name-text
+        :reliquary-sets
+        :stat-tables
       />
-      <CharacterMenuConstellation
+      <CharacterScreenConstellation
         v-else-if="character && tab === CharacterMenuTab.Constellation"
-        :activate-label="gameText[GameTextKey.Activate]"
-        :activated="constellationsActivated"
-        :is-activate-disabled
-        @activate="
-          () => {
-            if (!character) return;
-            replaceCharacter(activateConstellation(character, constellations));
-          }
-        "
+        v-model:characters="characters"
+        :character
+        :character-id-constellations-map
+        :game-text
       />
-      <CharacterMenuTalents
-        v-else-if="talentPanel && tab === CharacterMenuTab.Talents"
-        :="talentPanel"
-        :upgrade-label="gameText[GameTextKey.TalentLevelUp]"
-        @upgrade="(index) => upgradeTalentAt(index)"
+      <CharacterScreenTalents
+        v-else-if="character && tab === CharacterMenuTab.Talents"
+        v-model:characters="characters"
+        v-model:inventory="inventory"
+        v-model:wallet="wallet"
+        :character
+        :character-talent-kits
+        :game-text
+        :material-data-map
+        :name-text
+        :talent-upgrade-map
       />
       <CharacterProfile
         v-else-if="character && tab === CharacterMenuTab.Profile"
@@ -641,59 +227,27 @@ const isActivateDisabled = computed(
         :name-text
       />
     </CharacterMenu>
-    <ArtifactPicker
+    <CharacterScreenEquip
       v-if="equipSlot && character"
-      :close-label="gameText[GameTextKey.Cancel]"
-      :options="equipOptions"
-      :title="gameText[GameTextKey.ArtifactActionEquip]"
-      @choose="
-        (id) => {
-          // The artifact the player chose is worn, and the piece it wore goes back to the bag
-          if (!character) return;
-          const equipped = equipBagArtifact(inventory, character, Number(id), { names: nameText, reliquarySets });
-          replaceCharacter(equipped.character);
-          inventory = equipped.inventory;
-          equipSlot = undefined;
-        }
-      "
+      v-model:characters="characters"
+      v-model:inventory="inventory"
+      :artifact-slot="equipSlot"
+      :character
+      :game-text
+      :name-text
+      :reliquary-sets
       @close="equipSlot = undefined"
     />
-    <ArtifactEnhancePicker
+    <CharacterScreenEnhance
       v-if="enhanceSlot && character"
-      :auto-add-label="gameText[GameTextKey.ArtifactAutoAdd]"
-      :cancel-label="gameText[GameTextKey.Cancel]"
-      :confirm-label="gameText[GameTextKey.Confirm]"
-      :fodders="enhanceFodderOptions"
-      :is-confirm-disabled="isEnhanceConfirmDisabled"
-      :level-label="enhanceLevelLabel"
-      :materials="enhanceMaterialOptions"
-      :mora-cost="enhanceMoraCost"
-      :mora-label="gameText[GameTextKey.Mora]"
-      :notice="enhanceNotice"
-      :title="gameText[GameTextKey.ArtifactActionEnhance]"
-      @auto-add="autoAddEnhanceFodders()"
-      @cancel="enhanceSlot = undefined"
-      @confirm="
-        () => {
-          const slot = enhanceSlot;
-          if (!character || !slot || isEnhanceConfirmDisabled) return;
-          // The worn artifact is enhanced first, and the chosen fodder and materials leave the bag only once it is
-          const enhanced = enhanceCharacterArtifact(character, slot, {
-            artifactRarityDataMap: statTables.artifactRarityDataMap,
-            fodders: enhanceFodders,
-            materialExperience: enhanceMaterialExperience,
-            random: Math.random,
-            wallet,
-          });
-          const taken = takeFodderArtifacts(inventory, enhanceFodderIds);
-          replaceCharacter(enhanced.character);
-          wallet = enhanced.wallet;
-          inventory = { ...taken, items: takeItemCounts(taken.items, enhanceMaterialItemCounts, 1) };
-          enhanceSlot = undefined;
-        }
-      "
-      @fodder="(id) => toggleEnhanceFodder(id)"
-      @material="(id, delta) => changeEnhanceMaterial(id, delta)"
+      v-model:characters="characters"
+      v-model:inventory="inventory"
+      v-model:wallet="wallet"
+      :artifact-slot="enhanceSlot"
+      :character
+      :game-text
+      :stat-tables
+      @close="enhanceSlot = undefined"
     />
     <span class="grid" />
     <p v-if="tab === CharacterMenuTab.Attributes" class="training-guide cream-pill">
