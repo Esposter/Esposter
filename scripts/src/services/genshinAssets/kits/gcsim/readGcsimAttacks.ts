@@ -28,9 +28,9 @@ import { resolveGoAlias } from "#src/services/genshinAssets/kits/gcsim/resolveGo
 import { resolveStringConstant } from "#src/services/genshinAssets/kits/gcsim/resolveStringConstant";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
-// The field an if on a constant loop's variable may set on a copy, by its gcsim name: the poise its hit deals in that
-// Iteration. Other fields an if sets are not read
-const ITERATION_POISE_FIELD = "PoiseDMG";
+// The `AttackInfo` field a poise is set by, by its gcsim name: an if on a constant loop's variable sets it on a copy
+// For that iteration, and a literal's own poise is read from it. Other fields an if sets are not read
+const POISE_FIELD = "PoiseDMG";
 
 // The `AttackInfo` literals of a gcsim character's action files, each field read from the literal as written: its tags,
 // Element by their gcsim names, its durability and poise evaluated through the package's constants, and
@@ -128,8 +128,8 @@ export const readGcsimAttacks = (
           return readGoNumber(field === undefined ? undefined : evaluateGoExpression(field.expression, resolveName));
         };
         const multiplierField = fieldMap.get("Mult");
-        const poiseDamage = evaluateNumber("PoiseDMG");
-        const poiseField = fieldMap.get("PoiseDMG");
+        const poiseDamage = evaluateNumber(POISE_FIELD);
+        const poiseField = fieldMap.get(POISE_FIELD);
         const abilExpression = fieldMap.get("Abil")?.expression;
         const variableName = readVariableName(tokens, position);
         const returnedBy =
@@ -197,7 +197,7 @@ export const readGcsimAttacks = (
               position,
             ),
           );
-      } else if (token.text === ITERATION_POISE_FIELD && checkIsFieldSet(tokens, position)) {
+      } else if (token.text === POISE_FIELD && checkIsFieldSet(tokens, position)) {
         const iteration = readIterationAt(tokens, position, loops);
         const copyAttack = readOwnAttack(tokens[position - 2]?.text ?? "", token.line);
         const poiseDamage = readGoNumber(
@@ -208,7 +208,7 @@ export const readGcsimAttacks = (
           withBranch(
             {
               ...copyAttack,
-              fieldLineMap: { ...copyAttack.fieldLineMap, [ITERATION_POISE_FIELD]: token.line },
+              fieldLineMap: { ...copyAttack.fieldLineMap, [POISE_FIELD]: token.line },
               iteration,
               line: token.line,
               poiseDamage,
