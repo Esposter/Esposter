@@ -65,7 +65,7 @@ The fit report SHALL list each region in turn, Mondstadt first, with its matched
 - **GIVEN** the fit has run
 - **WHEN** the report is printed
 - **THEN** Mondstadt is listed first with about fifty matched statues and waypoints
-- **AND** its Anemoculi count is compared with sixty-six (the wiki's Oculus page gives Mondstadt's Anemoculi as 66, `{data-root}/cache/genshin-wiki/Page_Oculus.json`, wikitext line 16)
+- **AND** its Anemoculi count is compared with sixty-six
 
 #### Scenario: Shortfall kept as it stands
 

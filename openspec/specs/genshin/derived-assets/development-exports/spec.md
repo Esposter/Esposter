@@ -118,5 +118,5 @@ The body and the camera SHALL collide with our stand-ins and walk on our ground,
 ## Open
 
 - [ ] **No production build holds a byte of the exports** — no source yet: a production build's output, which is not on disk; `pnpm build` in `apps/web`, then `rg -l genshinSceneExports apps/web/.output` must print nothing.
-- [ ] **The body still collides with a landmark hidden for an export** — no source yet: a checked collider test of the body against a landmark hidden for an export; `packages/genshin-world/src/components/World/Landmarks/Index.vue` line 16 keeps the hidden landmark mounted, and no test in the package checks its collision.
+- [ ] **The body still collides with a landmark hidden for an export** — no source yet: a checked collider test of the body against a landmark hidden for an export; `packages/genshin-world/src/components/World/Landmarks/Index.vue` line 135 keeps the hidden landmark mounted, and no test in the package checks its collision.
 - [ ] **The body stands on our ground and collides with our stand-ins while exports are drawn** — no source yet: a checked test of the body standing on our ground and colliding with our stand-ins while exports are drawn; `packages/genshin-world/src/components/World/Character/Index.browser.test.ts` line 55 stubs the ground at zero and draws no export.

@@ -18,7 +18,7 @@ The Spiral Abyss SHALL be open only to a player whose Adventure Rank is twenty o
 
 - **GIVEN** a player whose Adventure Rank is twenty
 - **WHEN** the Abyss is checked against the player's rank
-- **THEN** the Abyss reads as open (the wiki's Spiral Abyss page gives the rank in its infobox, `{data-root}/cache/genshin-wiki/Page_Spiral_Abyss.json`, wikitext line 14)
+- **THEN** the Abyss reads as open
 
 ### Requirement: The first floor is always open
 
@@ -44,7 +44,7 @@ A floor above another SHALL open only when the floor below has all three of its 
 
 - **GIVEN** the floor below has all three chambers cleared and six stars
 - **WHEN** the floor above is checked
-- **THEN** the floor above is open (the wiki's Spiral Abyss page gives the next floor's entry as all three chambers cleared and six Abyssal Stars, `{data-root}/cache/genshin-wiki/Page_Spiral_Abyss.json`, wikitext lines 27 and 176)
+- **THEN** the floor above is open
 
 #### Scenario: Moon Spire opens on the Corridor's last floor
 
@@ -60,7 +60,7 @@ A chamber's clock SHALL run for its floor's time, five minutes on the Corridor's
 
 - **GIVEN** a chamber on the Corridor's floor one is about to start
 - **WHEN** its clock starts
-- **THEN** the clock runs for five minutes (the wiki's Spiral Abyss page gives 300 seconds for floors 1 to 4 and 600 from floor 5, `{data-root}/cache/genshin-wiki/Page_Spiral_Abyss.json`, wikitext line 25)
+- **THEN** the clock runs for five minutes
 
 ### Requirement: Both halves of a chamber share one clock
 
@@ -70,7 +70,7 @@ Both halves of a chamber SHALL share one clock.
 
 - **GIVEN** the first half of a chamber ends with two minutes left on the clock
 - **WHEN** the second half begins
-- **THEN** the clock reads two minutes (the wiki's Spiral Abyss page gives the second half the time the first half left, `{data-root}/cache/genshin-wiki/Page_Spiral_Abyss.json`, wikitext line 25)
+- **THEN** the clock reads two minutes
 
 ### Requirement: Chamber lost at zero clock
 
@@ -80,7 +80,7 @@ A chamber SHALL be lost when its clock reaches zero before it is cleared.
 
 - **GIVEN** a chamber is being fought and has not been cleared
 - **WHEN** its clock reaches zero
-- **THEN** the chamber is failed (the wiki's Spiral Abyss page says a chamber must be cleared within its seconds, `{data-root}/cache/genshin-wiki/Page_Spiral_Abyss.json`, wikitext line 25)
+- **THEN** the chamber is failed
 - **AND** nothing from that attempt is kept
 
 ### Requirement: Chamber lost at zero monolith
@@ -91,7 +91,7 @@ A chamber SHALL be lost when its monolith reaches zero health before it is clear
 
 - **GIVEN** a chamber is being fought with a monolith and has not been cleared
 - **WHEN** the monolith reaches zero health
-- **THEN** the chamber is failed (the wiki's Spiral Abyss page says the monolith must be kept intact or the challenge fails, `{data-root}/cache/genshin-wiki/Page_Spiral_Abyss.json`, wikitext line 25)
+- **THEN** the chamber is failed
 
 ### Requirement: A cleared chamber is never lost
 
@@ -101,7 +101,7 @@ A cleared chamber SHALL never be lost.
 
 - **GIVEN** a chamber has been cleared
 - **WHEN** its clock or its monolith is checked afterwards
-- **THEN** the chamber stays cleared (the wiki's Spiral Abyss page says a cleared chamber cannot be reset, `{data-root}/cache/genshin-wiki/Page_Spiral_Abyss.json`, wikitext line 29)
+- **THEN** the chamber stays cleared
 
 ### Requirement: Stars count the conditions a clear meets
 
@@ -111,13 +111,13 @@ A clear SHALL earn one star for each star condition it meets at the moment it cl
 
 - **GIVEN** a chamber has a time condition and a monolith condition
 - **WHEN** it is cleared with the clock above the time mark and the monolith above its health mark
-- **THEN** the clear earns two stars (the wiki's Spiral Abyss page gives three challenges per chamber, each a star when met, `{data-root}/cache/genshin-wiki/Page_Spiral_Abyss.json`, wikitext lines 33 and 176)
+- **THEN** the clear earns two stars
 
 #### Scenario: Cleared with no condition met
 
 - **GIVEN** a chamber whose conditions are all missed
 - **WHEN** it is cleared
-- **THEN** the chamber counts as cleared with no stars (the wiki's Spiral Abyss page says a chamber cleared with its requirements missed cannot be reset, `{data-root}/cache/genshin-wiki/Page_Spiral_Abyss.json`, wikitext line 29)
+- **THEN** the chamber counts as cleared with no stars
 
 ### Requirement: A chamber keeps its best stars
 
@@ -127,7 +127,7 @@ A chamber SHALL keep the most stars any of its clears has earned.
 
 - **GIVEN** an earlier clear of a chamber earned two stars
 - **WHEN** a later clear earns one star
-- **THEN** the chamber keeps two stars (the wiki's Spiral Abyss page keeps the highest stars gained across a chamber's attempts, `{data-root}/cache/genshin-wiki/Page_Spiral_Abyss.json`, wikitext line 29)
+- **THEN** the chamber keeps two stars
 
 ### Requirement: Each reward given once per cycle
 
