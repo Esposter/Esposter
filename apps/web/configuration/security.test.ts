@@ -4,7 +4,7 @@ import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-import { NUXT_IMAGE_ERROR_HANDLER } from "./constants.ts";
+import { NONCE_SOURCE, NUXT_IMAGE_ERROR_HANDLER } from "./constants.ts";
 
 describe("security", () => {
   afterEach(() => {
@@ -57,6 +57,20 @@ describe("security", () => {
       "https://storage.googleapis.com",
     ]);
     expect(contentSecurityPolicy?.["media-src"]).toStrictEqual(["'self'", "blob:"]);
+  });
+
+  // `script-src-elem` governs script elements in place of `script-src`, so the nonce is named here or an inline script
+  // Runs on `'unsafe-inline'` alone, which any injected script satisfies
+  test("runs script elements on the response's nonce, not on unsafe-inline", async () => {
+    expect.hasAssertions();
+
+    vi.resetModules();
+    const { security } = await import("./security.ts");
+
+    const contentSecurityPolicy = security?.headers ? security.headers.contentSecurityPolicy || undefined : undefined;
+
+    expect(contentSecurityPolicy?.["script-src-elem"]).toContain(NONCE_SOURCE);
+    expect(contentSecurityPolicy?.["script-src-elem"]).not.toContain("'unsafe-inline'");
   });
 
   // The page blocks an inline handler its policy does not list, so the one NuxtImg renders is allowed by the hash of its

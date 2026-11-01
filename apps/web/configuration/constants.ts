@@ -12,3 +12,7 @@ export const DEFAULT_UI_STYLE = UiStyle.Standard;
 // Image that failed before hydration. The security config allows this exact string by its hash, and its test reads the
 // Module's components for the string, so an upgrade that rewords it fails the test rather than the page
 export const NUXT_IMAGE_ERROR_HANDLER = "this.setAttribute('data-error', 1)";
+// The source the security module swaps for each response's own nonce in every directive that names it, and the one it
+// Puts on every script element the server renders. A directive that governs script elements in place of `script-src`
+// Names it itself, or the nonce never reaches them
+export const NONCE_SOURCE = "'nonce-{{nonce}}'";
