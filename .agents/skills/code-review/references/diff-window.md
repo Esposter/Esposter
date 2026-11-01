@@ -22,7 +22,7 @@ Two exclusions belong in the window, because they consume real attention otherwi
 - Lockfiles and version-only catalog churn.
 - Anything already merged and reviewed upstream. An empty `git diff --stat origin/<trunk> HEAD -- <path>` proves the path shipped there — a range that spans a trunk merge otherwise re-reviews it.
 
-**`.agents/` is never one of them**, however tooling-shaped the window looks — SKILL.md, "The skill improves itself".
+**`.agents/` is never one of them** — SKILL.md, "The skill improves itself".
 
 `area` mode pulls the opposite way — narrow the target, don't batch it (`references/area-window.md`), because there every line of a file is in scope rather than the hunks.
 

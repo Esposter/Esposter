@@ -14,9 +14,9 @@ The finding that most often turns out wrong argues against a decision already ma
 
 Three findings are never reported, whatever the diff shows, because the repository has settled each one:
 
-- **The casing of a `//` comment's continuation line** is never a finding.
-- **Back-compat for a renamed persisted shape** is never asked for; the persisted data is modelled as its latest shape only.
-- **Mock call history leaking between tests** is never reported. A leaking `mockImplementation` or an unrestored spy is still reported, because it changes what the next test runs against.
+- **The casing of a `//` comment's continuation line** is never a finding (the `formatting` skill, `references/capitalized-comments.md`).
+- **Back-compat for a renamed persisted shape** is never asked for (the `zod` skill, "Persisted Data — Latest Shape Only").
+- **Mock call history leaking between tests** is never reported (the `testing` skill, `references/mock-cleanup.md`). A leaking `mockImplementation` or an unrestored spy is still reported, because it changes what the next test runs against.
 
 ## Overturning one
 
