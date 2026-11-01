@@ -1,10 +1,6 @@
 import type { MjmlJson } from "#src/models/MjmlJson";
 
-// Each attribute as MJML source writes it, its value as given: the render escaped it already
-const serializeAttributes = (attributes: Record<string, boolean | string>): string =>
-  Object.entries(attributes)
-    .map(([name, value]) => ` ${name}="${String(value)}"`)
-    .join("");
+import { serializeAttributes } from "#src/services/serializeAttributes";
 
 // MJML source for MJML's JSON form, every element closed by its own tag, so an element that closes nothing never swallows its siblings
 export const serializeMjml = (json: MjmlJson): string => {
