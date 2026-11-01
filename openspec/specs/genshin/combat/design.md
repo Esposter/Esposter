@@ -391,6 +391,8 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 
 ## Open
 
+The Polestar Field's and the Stellar Vortex's open sources are listed in the [spec](spec.md), not repeated here.
+
 - [ ] **Frozen doubles its gauge, decays 0.4U a second and ramps 0.1 a second, lasting 2√(5G + 4) − 4 seconds** — no source yet: gcsim's freeze decay in `{data-root}/cache/gcsim-v2.47.2/pkg/reactable/reactable.go:47-48` and `{data-root}/cache/gcsim-v2.47.2/pkg/reactable/reactable.go:382-391` is in per-frame units not converted to these values.
 - [ ] **Swirl records the spread gauge (G − 0.04) × 1.25 + 1** — no source yet: gcsim's "calcSwirlAtkDurability" at `{data-root}/cache/gcsim-v2.47.2/pkg/reactable/swirl.go:13-17` is in durability units, and no source converts it to gauge units.
 - [ ] **The table's cells that gcsim's `reduce` calls do not name: Burning, Frozen on Cryo and Hydro, Aggravate and Spread** — no source yet: a read of gcsim's `reduce` calls against each of these cells.
@@ -399,7 +401,6 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - [ ] **Transformative damage from 0.25 to 3 times the level multiplier** — no source yet: the wiki's Damage page is not in the cache, and no gcsim factor range was opened.
 - [ ] **Lunar-Bloom's coefficient is 1** — no source yet: no Lunar-Bloom case is among `{data-root}/cache/gcsim-v2.47.2/pkg/core/combat/reaction.go` lines 20 to 30, where line 24 gives Stellar Swirl's 1.
 - [ ] **Moondrift Harmony's 37-frame limit** — no source yet: the game's own 37-frame limit; gcsim's `{data-root}/cache/gcsim-v2.47.2/pkg/reactable/lunarcrystallize.go` line 65 sets it from "lcrHitmarks", but that is a simulator's value.
-- [ ] **The Polestar Field lasts 7 seconds, with a 15-metre radius, a tick every 4 seconds and a 40% Physical RES shred** — contradicted by `{data-root}/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go:17`: its field lasts 6 seconds, not 7.
 - [ ] **The Traveler's strikes, charged attack, plunges, Palm Vortex and Gust Surge figures** — no source yet: the wiki's Foreign Ironwind, Palm Vortex and Gust Surge pages are not cached.
 - [ ] **The hit cylinders of 5 and 6 metres, the targeting zone of 15 metres and 10 high, and the score weights 0.7 and 0.3** — no source yet: the wiki's Area of Effect and Targeting pages are not cached.
 - [ ] **A Stellar Vortex's explosion coefficient at Lv. 1 and Lv. 2, as the wiki's Damage page gives them** — no source yet: the wiki's Damage page is not in the cache.
@@ -412,8 +413,6 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - [ ] **Each Stellar Linchpin user's Jubilee enables the Stellar reactions** — no source yet: the wiki's Stellar Linchpin page is not in the cache.
 - [ ] **The Stellar-Conduct deals no damage on its own** — no source yet: the wiki's Stellar-Conduct page is not in the cache.
 - [ ] **The Lunar and Stellar Glimmer reactions share one formula** — no source yet: the wiki's Damage page is not in the cache.
-- [ ] **A Stellar Vortex's Lv. 2 comes at the third Stellar Swirl stack, and a restack does not renew its lifetime** — no source yet: the wiki's Stellar Swirl page is not in the cache.
-- [ ] **The second Stellar Swirl levels the vortex to Lv. 2, and the third explodes it** — no source yet: the wiki's Stellar Swirl page is not in the cache; gcsim's stack add at `{data-root}/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go:239` agrees with it, but gcsim is not the game.
 - [ ] **A member's DMG Reduction is subtracted from an enemy's strike's DMG Bonus, its sources adding up** — no source yet: the wiki's DMG Reduction page is not in the cache.
 - [ ] **Mona's Constellation 1 has no effect on Frozen's duration** — no source yet: the wiki's Prophecy of Submersion page is not in the cache.
 - [ ] **An attack's hit rolls once for energy however many enemies it strikes** — no source yet: the wiki's Energy page is not in the cache.
