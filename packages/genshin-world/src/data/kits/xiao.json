@@ -10,7 +10,7 @@
   "frames.baneOfAllEvil": { "file": "burst.go", "line": 31, "source": "Gcsim", "value": 957 },
   "frames.drainFirstTick": { "file": "burst.go", "line": 37, "source": "Gcsim", "value": 117 },
   "frames.lastDrain": { "cause": "Unsourced", "value": 897 },
-  "frames.drainInterval": { "cause": "Unclassified", "value": 60 },
+  "frames.drainInterval": { "cause": "Unsourced", "value": 60 },
   "hits.dash.length": { "cause": "DiffersFromSource", "value": 4 },
   "hits.dash.0.area": {
     "cause": "DiffersFromSource",
@@ -37,7 +37,7 @@
   "hits.dash.3.damageBonus": { "cause": "DiffersFromSource", "value": 0.44999999999999996 },
   "hits.dash.3.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2632 } },
   "normalAttacks.0.hits.0.convertedArea": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 2.6179938779914944, "height": 2, "radius": 1.9 }
   },
   "normalAttacks.0.hits.0.convertedPoiseDamage": { "cause": "Unsourced", "value": 37.62 },
@@ -48,22 +48,22 @@
   "normalAttacks.0.hits.1.convertedPoiseDamage": { "cause": "Unsourced", "value": 37.62 },
   "normalAttacks.0.hits.1.multiplier": { "source": "Tables" },
   "normalAttacks.1.hits.0.convertedArea": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 5.235987755982989, "height": 2, "radius": 2.8 }
   },
   "normalAttacks.1.hits.0.convertedPoiseDamage": { "cause": "Unsourced", "value": 77.64 },
   "normalAttacks.2.hits.0.convertedArea": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 5.235987755982989, "height": 2, "radius": 2.9000000000000004 }
   },
   "normalAttacks.2.hits.0.convertedPoiseDamage": { "cause": "Unsourced", "value": 93.48 },
   "normalAttacks.3.hits.0.convertedArea": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 5.585053606381854, "height": 2, "radius": 2.7055385138137416 }
   },
   "normalAttacks.3.hits.0.convertedPoiseDamage": { "cause": "Unsourced", "value": 51.42 },
   "normalAttacks.3.hits.1.convertedArea": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 5.585053606381854, "height": 2, "radius": 2.8 }
   },
   "normalAttacks.3.hits.1.convertedPoiseDamage": { "cause": "Unsourced", "value": 51.42 },
@@ -74,14 +74,11 @@
   },
   "normalAttacks.4.hits.0.convertedPoiseDamage": { "cause": "Unsourced", "value": 97.56 },
   "normalAttacks.5.hits.0.convertedArea": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "normalAttacks.5.hits.0.convertedPoiseDamage": { "cause": "Unsourced", "value": 130.68 },
-  "parameters.baneOfAllEvilDamageBonus": {
-    "cause": "Unclassified",
-    "value": { "index": 0, "proudSkillGroupId": 2639 }
-  },
+  "parameters.baneOfAllEvilDamageBonus": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 2639 } },
   "parameters.drainShare": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 2639 } },
   "plungeCollision.convertedPoiseDamage": { "cause": "Unsourced", "value": 37.5 },
   "plungeCollision.element": { "file": "xiao.go", "line": 83, "source": "Gcsim", "value": "Wind" },
