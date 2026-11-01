@@ -39,7 +39,7 @@ const regionJumps = computed(() =>
       <MapJumpListItem
         v-for="{ areaName, landmark } of jumps"
         :key="landmark.id"
-        :area-name="areaName"
+        :area-name
         :game-text
         :landmark
         @jump="emit('jump', landmark)"

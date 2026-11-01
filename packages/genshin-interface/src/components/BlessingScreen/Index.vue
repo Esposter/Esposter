@@ -58,7 +58,7 @@ const emit = defineEmits<{
     </div>
     <ul class="members">
       <li v-for="{ healthShare, id, name } of members" :key="id">
-        <Member :health-share="healthShare" :name @heal="emit('heal', id)" />
+        <Member :health-share :name @heal="emit('heal', id)" />
       </li>
     </ul>
   </div>

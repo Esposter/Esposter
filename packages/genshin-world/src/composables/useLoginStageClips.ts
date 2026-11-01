@@ -10,10 +10,10 @@ import { computed, nextTick, onMounted, ref, toValue, watch } from "vue";
 interface Options {
   // The page's clips as the fit sampled them, which the screen plays at each stage
   interfaceClips: LoginInterfaceClips;
-  // The page the clips play on, each piece they move named by its path under the game's page
-  page: Readonly<ShallowRef<HTMLElement | null>>;
   // Called once the page has faded into white as it enters, which hands the screen on
   onWhiten: () => void;
+  // The page the clips play on, each piece they move named by its path under the game's page
+  page: Readonly<ShallowRef<HTMLElement | null>>;
   stage: MaybeRefOrGetter<LoginStage>;
 }
 

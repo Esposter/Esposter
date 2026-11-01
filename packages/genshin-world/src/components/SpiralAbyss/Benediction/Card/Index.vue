@@ -6,10 +6,10 @@ import type { GameText } from "genshin-text";
 import { SCOPE_TEXT_KEYS } from "#src/services/spiralAbyss/constants";
 
 interface Props {
-  // The glyph the card draws in its diamond, and none where the published record does not carry one
-  icon?: AbyssBenedictionIcon;
   // The game's words in the reader's language, which the tag of the card's scope is read from
   gameText: GameText;
+  // The glyph the card draws in its diamond, and none where the published record does not carry one
+  icon?: AbyssBenedictionIcon;
   // Whether the card is the lit one the pointer rests on, drawn lit at rest as the game lights it
   isLit: boolean;
   // The Benediction's name in the reader's language, and none where the names do not hold its text hash

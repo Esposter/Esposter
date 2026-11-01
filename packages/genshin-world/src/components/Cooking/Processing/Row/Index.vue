@@ -15,10 +15,10 @@ interface Props {
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items and recipes in the reader's language, by their game text ids
   nameText: Readonly<Record<string, string>>;
-  // The processing this row offers
-  recipe: ProcessingRecipe;
   // The units of it the queue holds already
   queuedCount: number;
+  // The processing this row offers
+  recipe: ProcessingRecipe;
 }
 
 const { canStart, gameText, materialDataMap, nameText, queuedCount, recipe } = defineProps<Props>();

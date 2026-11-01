@@ -76,8 +76,8 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
         <PostCommentExpandButton
           v-if="comment.commentCount > 0 && depth < MAX_COMMENT_INDENT_DEPTH"
           :comment
-          :is-expanded="isExpanded"
-          :replies-id="repliesId"
+          :is-expanded
+          :replies-id
           self-start
         />
         <NuxtLink

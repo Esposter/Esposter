@@ -35,7 +35,7 @@ const open = (id: string) => {
 </script>
 
 <template>
-  <UiList :get-row-props="getRowProps" :items="listItems" :label select-none @select="open($event)">
+  <UiList :get-row-props :items="listItems" :label select-none @select="open($event)">
     <template #mark="{ item: { item } }">
       <NuxtImg size-6 object-contain :src="item.image" alt="" />
     </template>

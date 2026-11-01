@@ -48,7 +48,7 @@ const title = computed(() =>
       <SpiralAbyssBenedictionCard
         v-for="{ descriptionTextHash, icon, scope, towerBuffId } in choices"
         :key="towerBuffId"
-        :game-text="gameText"
+        :game-text
         :icon
         :is-lit="towerBuffId === litTowerBuffId"
         :name="nameText[String(descriptionTextHash)]"

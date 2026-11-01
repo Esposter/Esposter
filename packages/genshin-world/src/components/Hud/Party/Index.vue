@@ -60,13 +60,13 @@ const rows = computed(() =>
     <li v-for="{ action, characterId, index } of rows" :key="characterId">
       <HudPartyRow
         :action
-        :character-id="characterId"
+        :character-id
         :index
         :input
-        :is-touch="isTouch"
+        :is-touch
         :name="getName(characterId)"
         :party
-        :switch-cooldown-share="switchCooldownShare"
+        :switch-cooldown-share
       />
     </li>
   </ol>

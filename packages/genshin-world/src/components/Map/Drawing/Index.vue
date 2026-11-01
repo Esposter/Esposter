@@ -39,7 +39,7 @@ const areaOutlines = computed(() => {
       v-for="landmark of landmarks"
       :key="landmark.id"
       :landmark
-      :mark-radius="markRadius"
+      :mark-radius
       @select="emit('select', landmark)"
     />
   </g>

@@ -43,7 +43,7 @@ const isLeaveOpen = ref(false);
           <MessageContentHeaderDirectMessageParticipant
             v-for="participant of participants"
             :key="participant.id"
-            :is-owner="isOwner"
+            :is-owner
             :participant
             @remove="removingParticipantId = participant.id"
           />

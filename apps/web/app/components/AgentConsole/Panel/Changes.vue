@@ -51,9 +51,9 @@ const fileDiffs = computed(() =>
     v-for="{ editCount, fileEdits: diffFileEdits, filePath, isMerged } of fileDiffs"
     v-else
     :key="filePath"
-    :edit-count="editCount"
+    :edit-count
     :file-edits="diffFileEdits"
-    :file-path="filePath"
-    :is-merged="isMerged"
+    :file-path
+    :is-merged
   />
 </template>

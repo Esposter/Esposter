@@ -94,7 +94,7 @@ useListScreenTabStep(
         :category
         :is-selected="category.id === selectedCategoryId"
         :percent="categoryPercents.get(category.id) ?? 0"
-        :text-map="textMap"
+        :text-map
         @select="selectedCategoryId = category.id"
       />
     </div>
@@ -110,8 +110,8 @@ useListScreenTabStep(
         v-for="achievement of selectedAchievements"
         :key="achievement.id"
         :achievement
-        :progress-map="progressMap"
-        :text-map="textMap"
+        :progress-map
+        :text-map
       />
     </ul>
   </GameScreen>

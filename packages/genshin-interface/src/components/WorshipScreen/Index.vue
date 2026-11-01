@@ -37,13 +37,7 @@ const nextClaimableLevel = computed(() => levels.find(({ state }) => state === W
     <button class="held" type="button" @click="emit('offer')">{{ heldCount }}</button>
     <ol class="levels">
       <li v-for="{ level, oculusCount, rewards, state } of levels" :key="level" :class="state">
-        <Level
-          :is-disabled="level !== nextClaimableLevel"
-          :level
-          :oculus-count="oculusCount"
-          :rewards
-          @claim="emit('claim')"
-        />
+        <Level :is-disabled="level !== nextClaimableLevel" :level :oculus-count :rewards @claim="emit('claim')" />
       </li>
     </ol>
   </div>

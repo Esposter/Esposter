@@ -11,7 +11,7 @@ const { currentPagePath, pagePaths } = storeToRefs(agentConsolePaneStore);
     again. Every frame is same-origin, so it shares the session's sign-in and needs nothing passed into it -->
   <div flex flex-col gap-2 min-h-0>
     <div role="tablist" aria-label="Pages" flex flex-wrap gap-1 items-center>
-      <AgentConsolePaneTab v-for="pagePath of pagePaths" :key="pagePath" :page-path="pagePath" />
+      <AgentConsolePaneTab v-for="pagePath of pagePaths" :key="pagePath" :page-path />
     </div>
     <iframe
       v-for="pagePath of pagePaths"

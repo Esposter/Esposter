@@ -64,7 +64,7 @@ const checkIsBuilt = (titledScreenKind: TitledScreenKind) => Boolean(slots[title
     :adventure-exp-progress
     :adventure-rank
     :alerted-icons
-    :check-is-built="checkIsBuilt"
+    :check-is-built
     :finished-main-quest-ids
     :game-text
     :is-world-level-adjustable

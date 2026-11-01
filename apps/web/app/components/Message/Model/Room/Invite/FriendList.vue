@@ -53,8 +53,8 @@ const { isPending: isFriendsPending } = useQuery(useReadFriends(), {
       <MessageModelRoomInviteFriendListItem
         v-for="recipient of recipientItems"
         :key="recipient.id"
-        :is-invite-sendable="isInviteSendable"
-        :member-id-set="memberIdSet"
+        :is-invite-sendable
+        :member-id-set
         :recipient
         :room
       />

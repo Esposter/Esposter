@@ -21,7 +21,7 @@ const emit = defineEmits<{ toggle: [value: T] }>();
       :key="item.value"
       :item
       :meaning
-      :selected-values="selectedValues"
+      :selected-values
       @toggle="emit('toggle', $event)"
     />
   </div>

@@ -47,7 +47,7 @@ const { countdown, isExpired } = useCountdown(() => invite.expiresAt);
     </div>
     <UiCopyButton :source="getInviteLink(runtimeConfig.public.baseUrl, invite.id)" :variant="UiButtonVariant.Quiet" />
     <!-- Editing replaces the reader's own link, so it is only offered on the row that is theirs -->
-    <MessageModelRoomInviteEditButton v-if="isCreator" :room-id="roomId" />
+    <MessageModelRoomInviteEditButton v-if="isCreator" :room-id />
     <MessageModelRoomInviteRevokeButton :id="invite.id" />
   </div>
 </template>

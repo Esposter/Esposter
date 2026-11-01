@@ -247,7 +247,7 @@ const obtain = (queueId: number) => {
       :obtain-label="gameText[GameTextKey.ForgeObtain]"
       :queue-detail
       :queues="queueCells"
-      :queues-label="queuesLabel"
+      :queues-label
       :recipes="recipeCells"
       :refusal-label
       :required-coins
