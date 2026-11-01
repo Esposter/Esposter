@@ -11,6 +11,7 @@ export interface PanzoomContext {
   drag?: PanzoomDrag;
   element: PanzoomElement;
   isClickSuppressed: boolean;
+  isDestroyed: boolean;
   options: PanzoomOptions;
   parent: PanzoomElement;
   pinch?: PanzoomPinch;

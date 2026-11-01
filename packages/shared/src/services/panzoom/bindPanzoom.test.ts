@@ -261,4 +261,59 @@ describe(bindPanzoom, () => {
 
     expect(panzoom.getPan()).toStrictEqual({ x: 0, y: 0 });
   });
+
+  test("a bind after destroy binds nothing, so a pointer down after it pans nothing", () => {
+    expect.hasAssertions();
+
+    const element = getElement();
+    stubPanzoomLayout(element, { height: 100, left: 0, top: 0, width: 100 });
+    stubPanzoomParent(getParent(), { height: 200, left: 0, top: 0, width: 200 });
+    const panzoom = createPanzoom(element);
+    panzoom.destroy();
+
+    panzoom.bind();
+    dispatchPointer(element, "pointerdown", 1, { x: 0, y: 0 });
+    dispatchPointer(document, "pointermove", 1, { x: 50, y: 0 });
+
+    expect(panzoom.getPan()).toStrictEqual({ x: 0, y: 0 });
+  });
+
+  test("a panzoomend listener that destroys leaves the elements with the styles they had before", () => {
+    expect.hasAssertions();
+
+    const element = getElement();
+    const parent = getParent();
+    stubPanzoomLayout(element, { height: 100, left: 0, top: 0, width: 100 });
+    stubPanzoomParent(parent, { height: 200, left: 0, top: 0, width: 200 });
+    const panzoom = createPanzoom(element);
+    element.addEventListener(PanzoomEventName.End, () => {
+      panzoom.destroy();
+    });
+    dispatchPointer(element, "pointerdown", 1, { x: 0, y: 0 });
+
+    dispatchPointer(document, "pointerup", 1, { x: 0, y: 0 });
+
+    expect(parent.style.getPropertyValue("overflow")).toBe("");
+    expect(parent.style.getPropertyValue("touch-action")).toBe("");
+    expect(element.style.getPropertyValue("touch-action")).toBe("");
+    expect(element.style.getPropertyValue("cursor")).toBe("");
+  });
+
+  test("a panzoomzoom listener that destroys during a pinch writes no transform after it", () => {
+    expect.hasAssertions();
+
+    const element = getElement();
+    stubPanzoomLayout(element, { height: 200, left: 0, top: 0, width: 200 });
+    stubPanzoomParent(getParent(), { height: 200, left: 0, top: 0, width: 200 });
+    const panzoom = createPanzoom(element, { pinchAndPan: true });
+    element.addEventListener(PanzoomEventName.Zoom, () => {
+      panzoom.destroy();
+    });
+    dispatchPointer(element, "pointerdown", 1, { x: 100, y: 90 });
+    dispatchPointer(element, "pointerdown", 2, { x: 100, y: 110 });
+
+    dispatchPointer(document, "pointermove", 1, { x: 100, y: 85 });
+
+    expect(element.style.getPropertyValue("transform")).toBe("");
+  });
 });

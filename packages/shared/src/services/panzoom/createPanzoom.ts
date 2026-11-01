@@ -37,6 +37,7 @@ export const createPanzoom = (element: PanzoomElement, options: PanzoomOptions =
   const context: PanzoomContext = {
     element,
     isClickSuppressed: false,
+    isDestroyed: false,
     options: { ...PANZOOM_DEFAULT_OPTIONS, ...options },
     parent,
     pointers: new Map(),
@@ -52,12 +53,13 @@ export const createPanzoom = (element: PanzoomElement, options: PanzoomOptions =
 
   let controller: AbortController | undefined;
   const bind = (): void => {
-    if (controller) return;
+    if (controller || context.isDestroyed) return;
 
     controller = new AbortController();
     bindPanzoom(context, controller.signal);
   };
   const destroy = (): void => {
+    context.isDestroyed = true;
     controller?.abort();
     controller = undefined;
     context.drag = undefined;

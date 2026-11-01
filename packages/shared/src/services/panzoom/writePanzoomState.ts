@@ -7,12 +7,15 @@ import { getPanzoomEventDetail } from "#src/services/panzoom/getPanzoomEventDeta
 import { writePanzoomStyle } from "#src/services/panzoom/writePanzoomStyle";
 
 // Makes the state the current one and writes it: the transition first, timed when the call animates and none otherwise,
-// Then the transform, which setTransform writes instead when the options give one, and the scale's custom property
+// Then the transform, which setTransform writes instead when the options give one, and the scale's custom property.
+// A destroyed panzoom keeps its state and writes nothing
 export const writePanzoomState = (
   context: PanzoomContext,
   state: PanzoomState,
   { animate, duration = PANZOOM_DEFAULT_DURATION, easing = PANZOOM_DEFAULT_EASING, setTransform }: PanzoomPanOptions,
 ): void => {
+  if (context.isDestroyed) return;
+
   const { element } = context;
   context.state = state;
   writePanzoomStyle(context, element, "transition", animate ? `transform ${duration}ms ${easing}` : "none");

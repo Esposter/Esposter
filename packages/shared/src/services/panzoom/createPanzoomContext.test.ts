@@ -12,6 +12,7 @@ export const createPanzoomContext = (
 ): PanzoomContext => ({
   element,
   isClickSuppressed: false,
+  isDestroyed: false,
   options,
   parent,
   pointers: new Map(),
