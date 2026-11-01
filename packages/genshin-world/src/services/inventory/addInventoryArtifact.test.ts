@@ -59,31 +59,14 @@ describe(addInventoryArtifact, () => {
     expect(inventory.equippedGadgetItemId).toBe(1);
   });
 
-  test("leaves the artifact over once the artifacts tab is full", () => {
+  test("leaves the artifact over once the artifacts tab is full, keeping the equipped gadget", () => {
     expect.hasAssertions();
 
     const room = ItemCategoryRoomMap[ItemCategory.Artifact];
     assert.exists(room);
     const items = Array.from({ length: room }, (_value, index) => ({ artifact, definition, id: index, quantity: 1 }));
+    const inventory = { equippedGadgetItemId: 1, items, nextId: room, quickSwapItemIds: [] };
 
-    expect(addInventoryArtifact({ items, nextId: room, quickSwapItemIds: [] }, definition, artifact)).toStrictEqual({
-      inventory: { items, nextId: room, quickSwapItemIds: [] },
-      overflow: 1,
-    });
-  });
-
-  test("keeps the equipped gadget in the bag that has no room for the artifact", () => {
-    expect.hasAssertions();
-
-    const room = ItemCategoryRoomMap[ItemCategory.Artifact];
-    assert.exists(room);
-    const items = Array.from({ length: room }, (_value, index) => ({ artifact, definition, id: index, quantity: 1 }));
-    const { inventory } = addInventoryArtifact(
-      { equippedGadgetItemId: 1, items, nextId: room, quickSwapItemIds: [] },
-      definition,
-      artifact,
-    );
-
-    expect(inventory.equippedGadgetItemId).toBe(1);
+    expect(addInventoryArtifact(inventory, definition, artifact)).toStrictEqual({ inventory, overflow: 1 });
   });
 });
