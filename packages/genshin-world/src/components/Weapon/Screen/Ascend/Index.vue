@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Weapon } from "#src/models/weapon/Weapon";
+import type { WeaponAscendCost } from "#src/models/weapon/WeaponAscendCost";
 import type { GameText } from "genshin-text";
 
 import WeaponScreenAscendMaterials from "#src/components/Weapon/Screen/Ascend/Materials/Index.vue";
@@ -12,7 +13,7 @@ interface Props {
   // The base ATK at the held phase, which the row beside the header sets against the next phase's
   baseAttackText: string;
   // The materials the next phase takes, each with its name, rarity, the count it takes and the count the bag holds
-  costs: { count: number; id: number; name: string; ownedCount: number; rarity: number }[];
+  costs: WeaponAscendCost[];
   // The game's words in the reader's language
   gameText: GameText;
   // The level the weapon's phase caps at, which the header's current level is drawn against
@@ -60,7 +61,7 @@ const {
   <p class="stat-value attack-current">{{ secondaryText }}</p>
   <OrnamentDivider class="divider ascend-divider" is-middle-hidden :opacity="DIVIDER_OPACITY" />
   <span class="stats-rule ascend-stats-rule" aria-hidden="true" />
-  <WeaponScreenAscendMaterials :costs="costs" :game-text="gameText" />
+  <WeaponScreenAscendMaterials :costs :gameText />
 </template>
 
 <style scoped>

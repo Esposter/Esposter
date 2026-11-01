@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import type { WeaponAscendCost } from "#src/models/weapon/WeaponAscendCost";
 import type { GameText } from "genshin-text";
 
 import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The materials the next phase takes, each with its name, rarity, the count it takes and the count the bag holds
-  costs: { count: number; id: number; name: string; ownedCount: number; rarity: number }[];
+  costs: WeaponAscendCost[];
   // The game's words in the reader's language, which the materials' title is set in
   gameText: GameText;
 }
