@@ -48,10 +48,10 @@ describe(createJusticePassiveModule, () => {
 
     expect(
       justicePassiveModule.getStrikeDamageBonus?.(createKitStrike(wielder, AttackTag.NormalAttack), enemy, party, []),
-    ).toBeCloseTo(0.15);
+    ).toBe(0.15);
     expect(
       justicePassiveModule.getStrikeDamageBonus?.(createKitStrike(wielder, AttackTag.ChargedAttack), enemy, party, []),
-    ).toBeCloseTo(0.15);
+    ).toBe(0.15);
     expect(
       justicePassiveModule.getStrikeDamageBonus?.(createKitStrike(wielder, AttackTag.ElementalSkill), enemy, party, []),
     ).toBe(0);

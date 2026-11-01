@@ -10,7 +10,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
+import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES, SMALL_AOE_AREA } from "#src/services/weapon/passives/constants";
 import { createWanderingCloudsPassiveModule } from "#src/services/weapon/passives/createWanderingCloudsPassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
@@ -48,9 +48,13 @@ describe(createWanderingCloudsPassiveModule, () => {
     const context = createKitTestContext(wielder);
     wanderingCloudsPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBe(2);
-    expect(context.strikes[0]?.hit.element).toBeUndefined();
+    expect(context.strikes).toStrictEqual([
+      {
+        body: context.body,
+        combatant: wielder,
+        hit: { hitArea: SMALL_AOE_AREA, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: 2 },
+      },
+    ]);
   });
 
   test("a Charged Attack hit queues nothing, as the rank's chance is on Normal Attack hits", () => {

@@ -23,8 +23,8 @@ describe(createMagicAffinityPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     magicAffinityPassiveModule.onKitEvent?.(createSkillUsed(), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.NormalAttackDamageBonus)?.amount).toBeCloseTo(0.1);
-    expect(getBuff(kitEffectState, Attribute.ChargedAttackDamageBonus)?.amount).toBeCloseTo(0.1);
+    expect(getBuff(kitEffectState, Attribute.NormalAttackDamageBonus)?.amount).toBe(0.1);
+    expect(getBuff(kitEffectState, Attribute.ChargedAttackDamageBonus)?.amount).toBe(0.1);
   });
 
   test("a further skill stacks the bonus to two and a third holds it there", () => {
@@ -36,7 +36,7 @@ describe(createMagicAffinityPassiveModule, () => {
     magicAffinityPassiveModule.onKitEvent?.(createSkillUsed(), context, wielder);
     magicAffinityPassiveModule.onKitEvent?.(createSkillUsed(), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.NormalAttackDamageBonus)?.amount).toBeCloseTo(0.2);
-    expect(getBuff(kitEffectState, Attribute.ChargedAttackDamageBonus)?.amount).toBeCloseTo(0.2);
+    expect(getBuff(kitEffectState, Attribute.NormalAttackDamageBonus)?.amount).toBe(0.2);
+    expect(getBuff(kitEffectState, Attribute.ChargedAttackDamageBonus)?.amount).toBe(0.2);
   });
 });

@@ -42,7 +42,7 @@ describe(createInfusionStingerPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     infusionStingerPassiveModule.onKitEvent?.(createEnemyHit(Element.Pyro), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AllDamageBonus)?.amount).toBeCloseTo(0.05);
+    expect(getBuff(kitEffectState, Attribute.AllDamageBonus)?.amount).toBe(0.05);
   });
 
   test("stacks hold at the rank's maximum of three, one each second", () => {

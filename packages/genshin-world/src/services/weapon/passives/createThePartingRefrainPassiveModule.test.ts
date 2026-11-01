@@ -40,6 +40,19 @@ describe(createThePartingRefrainPassiveModule, () => {
     striker: wielder,
   });
 
+  // Four Sigils, from an Elemental Skill and an Elemental Burst hit each, 0.3 seconds apart
+  const hitFourSigils = (context: KitContext) => {
+    for (const attackTag of [
+      AttackTag.ElementalSkill,
+      AttackTag.ElementalBurst,
+      AttackTag.ElementalSkill,
+      AttackTag.ElementalBurst,
+    ]) {
+      thePartingRefrainPassiveModule.onKitEvent?.(createDamageTaken(attackTag), context, wielder);
+      stepKitSeconds(context, 0.3);
+    }
+  };
+
   test("the wielder's Elemental Mastery is raised by the rank's amount", () => {
     expect.hasAssertions();
 
@@ -52,15 +65,7 @@ describe(createThePartingRefrainPassiveModule, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder, { party: createParty([TRAVELER_CHARACTER_ID]) });
-    for (const attackTag of [
-      AttackTag.ElementalSkill,
-      AttackTag.ElementalBurst,
-      AttackTag.ElementalSkill,
-      AttackTag.ElementalBurst,
-    ]) {
-      thePartingRefrainPassiveModule.onKitEvent?.(createDamageTaken(attackTag), context, wielder);
-      stepKitSeconds(context, 0.3);
-    }
+    hitFourSigils(context);
 
     expect(readBuffed(context, wielder, Attribute.ElementalMastery)).toBe(10);
     expect(readBuffed(context, wielder, Attribute.AttackPercent)).toBe(0.25);
@@ -89,27 +94,9 @@ describe(createThePartingRefrainPassiveModule, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder, { party: createParty([TRAVELER_CHARACTER_ID]) });
-    for (const attackTag of [
-      AttackTag.ElementalSkill,
-      AttackTag.ElementalBurst,
-      AttackTag.ElementalSkill,
-      AttackTag.ElementalBurst,
-    ]) {
-      thePartingRefrainPassiveModule.onKitEvent?.(createDamageTaken(attackTag), context, wielder);
-      stepKitSeconds(context, 0.3);
-    }
-
+    hitFourSigils(context);
     stepKitSeconds(context, 2.1);
-
-    for (const attackTag of [
-      AttackTag.ElementalSkill,
-      AttackTag.ElementalBurst,
-      AttackTag.ElementalSkill,
-      AttackTag.ElementalBurst,
-    ]) {
-      thePartingRefrainPassiveModule.onKitEvent?.(createDamageTaken(attackTag), context, wielder);
-      stepKitSeconds(context, 0.3);
-    }
+    hitFourSigils(context);
 
     expect(readBuffed(context, wielder, Attribute.ElementalMastery)).toBe(0);
   });

@@ -31,8 +31,8 @@ describe(createGuerillaTacticsPassiveModule, () => {
       wielder,
     );
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.1);
-    expect(getBuff(kitEffectState, Attribute.MovementSpeed)?.amount).toBeCloseTo(0.1);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.1);
+    expect(getBuff(kitEffectState, Attribute.MovementSpeed)?.amount).toBe(0.1);
   });
 
   test("a defeat with no striker raises nothing", () => {

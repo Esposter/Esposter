@@ -40,8 +40,8 @@ describe(createInfusionArrowPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     infusionArrowPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.05);
-    expect(getBuff(kitEffectState, Attribute.NormalAttackSpeed)?.amount).toBeCloseTo(0.02);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.05);
+    expect(getBuff(kitEffectState, Attribute.NormalAttackSpeed)?.amount).toBe(0.02);
   });
 
   test("a charged attack hit stacks the same as a normal attack", () => {
@@ -51,6 +51,6 @@ describe(createInfusionArrowPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     infusionArrowPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ChargedAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.05);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.05);
   });
 });

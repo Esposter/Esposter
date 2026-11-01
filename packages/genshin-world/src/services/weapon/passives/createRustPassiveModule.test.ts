@@ -26,10 +26,10 @@ describe(createRustPassiveModule, () => {
     const party = createParty([TRAVELER_CHARACTER_ID]);
     expect(
       rustPassiveModule.getStrikeDamageBonus?.(createKitStrike(wielder, AttackTag.NormalAttack), enemy, party, []),
-    ).toBeCloseTo(0.5);
+    ).toBe(0.5);
     expect(
       rustPassiveModule.getStrikeDamageBonus?.(createKitStrike(wielder, AttackTag.ChargedAttack), enemy, party, []),
-    ).toBeCloseTo(-0.2);
+    ).toBe(-0.2);
   });
 
   test("an elemental skill is not changed", () => {

@@ -7,6 +7,7 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { createPrecisePassiveModule } from "#src/services/weapon/passives/createPrecisePassiveModule";
@@ -22,9 +23,7 @@ describe(createPrecisePassiveModule, () => {
   // A synthetic DMG percentage of a fifth, not the weapon's row
   const precisePassiveModule = createPrecisePassiveModule([0.2]);
   const createStrike = (weakPoint: boolean): KitStrike => ({
-    attackTag: AttackTag.ChargedAttack,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wielder,
+    ...createKitStrike(wielder, AttackTag.ChargedAttack),
     hit: { ...TRAVELER_KIT.plungeCollision, weakPoint },
   });
 
@@ -33,7 +32,7 @@ describe(createPrecisePassiveModule, () => {
 
     expect(
       precisePassiveModule.getStrikeDamageBonus?.(createStrike(true), enemy, createParty([TRAVELER_CHARACTER_ID]), []),
-    ).toBeCloseTo(0.2);
+    ).toBe(0.2);
   });
 
   test("a strike off a weak point is not raised", () => {

@@ -36,7 +36,7 @@ describe(createReactionAttackPassiveModule, () => {
       wielder,
     );
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.5);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.5);
   });
 
   test("a Swirl of an element the passive does not name raises nothing", () => {

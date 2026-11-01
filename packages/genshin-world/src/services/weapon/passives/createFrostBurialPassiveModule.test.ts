@@ -10,6 +10,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { SMALL_AOE_AREA } from "#src/services/weapon/passives/constants";
 import { createFrostBurialPassiveModule } from "#src/services/weapon/passives/createFrostBurialPassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
@@ -45,18 +46,31 @@ describe(createFrostBurialPassiveModule, () => {
     const context = createKitTestContext(wielder);
     frostBurialPassiveModule.onKitEvent?.(createDamageTaken(enemy), context, wielder);
 
-    expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.target).toBe(enemy);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(0.8);
+    expect(context.strikes).toStrictEqual([
+      {
+        body: context.body,
+        combatant: wielder,
+        hit: { hitArea: SMALL_AOE_AREA, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: 0.8 },
+        target: enemy,
+      },
+    ]);
   });
 
   test("a hit on an enemy under Cryo queues the icicle at the rank's Cryo multiplier", () => {
     expect.hasAssertions();
 
+    const enemy = createEnemyUnder(AuraType.Cryo);
     const context = createKitTestContext(wielder);
-    frostBurialPassiveModule.onKitEvent?.(createDamageTaken(createEnemyUnder(AuraType.Cryo)), context, wielder);
+    frostBurialPassiveModule.onKitEvent?.(createDamageTaken(enemy), context, wielder);
 
-    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(2);
+    expect(context.strikes).toStrictEqual([
+      {
+        body: context.body,
+        combatant: wielder,
+        hit: { hitArea: SMALL_AOE_AREA, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: 2 },
+        target: enemy,
+      },
+    ]);
   });
 
   test("a hit inside the rank's cooldown queues no second icicle, and an elemental skill queues none", () => {

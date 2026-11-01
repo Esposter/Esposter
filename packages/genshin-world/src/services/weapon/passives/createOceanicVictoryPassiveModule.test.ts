@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -8,9 +7,11 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { SMALL_AOE_AREA } from "#src/services/weapon/passives/constants";
 import { createOceanicVictoryPassiveModule } from "#src/services/weapon/passives/createOceanicVictoryPassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
@@ -23,12 +24,6 @@ describe(createOceanicVictoryPassiveModule, () => {
   const wielder: Combatant = createWielderCombatant();
   // Oceanic Victory with synthetic params: 20% burst DMG, a certain chance, a 150% multiplier and a fifteen-second cooldown
   const oceanicVictoryPassiveModule = createOceanicVictoryPassiveModule([0.2, 1, 1.5, 15]);
-  const createStrike = (attackTag: AttackTag): KitStrike => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wielder,
-    hit: TRAVELER_KIT.plungeCollision,
-  });
   const createDamageTaken = (attackTag: AttackTag) => ({
     attackTag,
     enemy,
@@ -44,10 +39,20 @@ describe(createOceanicVictoryPassiveModule, () => {
 
     const party = createParty([TRAVELER_CHARACTER_ID]);
     expect(
-      oceanicVictoryPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalBurst), enemy, party, []),
-    ).toBeCloseTo(0.2);
+      oceanicVictoryPassiveModule.getStrikeDamageBonus?.(
+        createKitStrike(wielder, AttackTag.ElementalBurst),
+        enemy,
+        party,
+        [],
+      ),
+    ).toBe(0.2);
     expect(
-      oceanicVictoryPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, []),
+      oceanicVictoryPassiveModule.getStrikeDamageBonus?.(
+        createKitStrike(wielder, AttackTag.NormalAttack),
+        enemy,
+        party,
+        [],
+      ),
     ).toBe(0);
   });
 
@@ -58,7 +63,12 @@ describe(createOceanicVictoryPassiveModule, () => {
     oceanicVictoryPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ElementalBurst), context, wielder);
     oceanicVictoryPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ElementalBurst), context, wielder);
 
-    expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(1.5);
+    expect(context.strikes).toStrictEqual([
+      {
+        body: context.body,
+        combatant: wielder,
+        hit: { hitArea: SMALL_AOE_AREA, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: 1.5 },
+      },
+    ]);
   });
 });

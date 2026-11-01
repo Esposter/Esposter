@@ -5,34 +5,23 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
 import { createTheFirstGreatMagicPassiveModule } from "#src/services/weapon/passives/createTheFirstGreatMagicPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const createMember = (characterId: number, element: Element): DeployedCombatant =>
-  createDeployedCombatant(
-    {
-      ascension: 0,
-      attributes: computeCharacterAttributes([]),
-      characterId,
-      constellationCount: 0,
-      element,
-      elementalResonances: [],
-      kit: TRAVELER_KIT,
-      level: 1,
-    },
-    { isOnField: false },
-  );
+  createDeployedCombatant({ ...createKitCombatant(characterId, TRAVELER_KIT), element }, { isOnField: false });
 
 describe(createTheFirstGreatMagicPassiveModule, () => {
   // Synthetic params, not the weapon's row: half Charged Attack DMG, a tenth, a fifth and three tenths ATK for one,
@@ -41,16 +30,7 @@ describe(createTheFirstGreatMagicPassiveModule, () => {
   const theFirstGreatMagicPassiveModule = createTheFirstGreatMagicPassiveModule([
     0.5, 0.1, 0.2, 0.3, 0.05, 0.1, 0.15, 0,
   ]);
-  const wielder: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    element: Element.Pyro,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 1,
-  };
+  const wielder: Combatant = { ...createWielderCombatant(), element: Element.Pyro };
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
   test("a Charged Attack the wielder deals is raised by the rank's percentage and a normal attack is not", () => {

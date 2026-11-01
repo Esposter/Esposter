@@ -44,8 +44,15 @@ describe(createInfusionNeedlePassiveModule, () => {
     infusionNeedlePassiveModule.onKitEvent?.(createParticleCollected(), context, wielder);
     infusionNeedlePassiveModule.onKitEvent?.(createNormalAttackLanded(), context, wielder);
 
-    expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(0.3);
+    const normalAttack = takeOne(TRAVELER_KIT.normalAttacks, 0);
+    const hitArea = takeOne(normalAttack.hits, 0).hitArea;
+    expect(context.strikes).toStrictEqual([
+      {
+        body: context.body,
+        combatant: wielder,
+        hit: { hitArea, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: 0.3 },
+      },
+    ]);
 
     stepKitSeconds(context, 5.1);
     infusionNeedlePassiveModule.onKitEvent?.(createNormalAttackLanded(), context, wielder);

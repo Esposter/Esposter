@@ -31,7 +31,7 @@ describe(createSkillAndBurstDamagePassiveModule, () => {
         party,
         [],
       ),
-    ).toBeCloseTo(0.5);
+    ).toBe(0.5);
     expect(
       skillAndBurstDamagePassiveModule.getStrikeDamageBonus?.(
         createKitStrike(wielder, AttackTag.ElementalBurst),
@@ -39,7 +39,7 @@ describe(createSkillAndBurstDamagePassiveModule, () => {
         party,
         [],
       ),
-    ).toBeCloseTo(0.5);
+    ).toBe(0.5);
   });
 
   test("a normal attack is not raised", () => {

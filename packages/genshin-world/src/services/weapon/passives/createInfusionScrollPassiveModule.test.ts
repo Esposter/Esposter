@@ -38,8 +38,8 @@ describe(createInfusionScrollPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     infusionScrollPassiveModule.onKitEvent?.(createReaction(wielder), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBeCloseTo(0.1);
-    expect(getBuff(kitEffectState, Attribute.HydroDamageBonus)?.amount).toBeCloseTo(0.1);
+    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBe(0.1);
+    expect(getBuff(kitEffectState, Attribute.HydroDamageBonus)?.amount).toBe(0.1);
   });
 
   test("a second reaction stacks the bonus to two, and a third holds it there", () => {
@@ -50,11 +50,11 @@ describe(createInfusionScrollPassiveModule, () => {
     infusionScrollPassiveModule.onKitEvent?.(createReaction(wielder), context, wielder);
     infusionScrollPassiveModule.onKitEvent?.(createReaction(wielder), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBeCloseTo(0.2);
+    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBe(0.2);
 
     infusionScrollPassiveModule.onKitEvent?.(createReaction(wielder), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBeCloseTo(0.2);
+    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBe(0.2);
   });
 
   test("a reaction another character triggers gives nothing", () => {

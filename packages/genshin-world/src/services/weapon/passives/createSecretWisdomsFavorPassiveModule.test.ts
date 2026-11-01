@@ -41,7 +41,7 @@ describe(createSecretWisdomsFavorPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     secretWisdomsFavorPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ChargedAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.ElementalMastery)?.amount).toBeCloseTo(80);
+    expect(getBuff(kitEffectState, Attribute.ElementalMastery)?.amount).toBe(80);
   });
 
   test("a normal attack hit raises no Elemental Mastery", () => {

@@ -34,7 +34,7 @@ describe(createUnbendingPassiveModule, () => {
         party,
         [],
       ),
-    ).toBeCloseTo(0.2);
+    ).toBe(0.2);
   });
 
   test("a charged attack at the rank's HP share or above, or a normal attack below it, prices no bonus", () => {

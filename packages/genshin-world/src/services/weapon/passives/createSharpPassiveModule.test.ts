@@ -30,7 +30,7 @@ describe(createSharpPassiveModule, () => {
         createParty([TRAVELER_CHARACTER_ID]),
         [],
       ),
-    ).toBeCloseTo(0.5);
+    ).toBe(0.5);
   });
 
   test("a charged attack its wielder deals is not raised", () => {

@@ -37,9 +37,14 @@ describe(createGashPassiveModule, () => {
     const context = createKitTestContext(wielder);
     gashPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.target).toBe(enemy);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(2);
+    expect(context.strikes).toStrictEqual([
+      {
+        body: context.body,
+        combatant: wielder,
+        hit: { hitArea: TRAVELER_KIT.plungeCollision.hitArea, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: 2 },
+        target: enemy,
+      },
+    ]);
   });
 
   test("a hit inside the rank's cooldown queues no second extra hit", () => {

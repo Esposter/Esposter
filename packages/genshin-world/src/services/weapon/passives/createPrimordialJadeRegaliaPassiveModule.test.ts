@@ -4,7 +4,6 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
@@ -14,6 +13,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createPrimordialJadeRegaliaPassiveModule } from "#src/services/weapon/passives/createPrimordialJadeRegaliaPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { getBuff } from "#src/services/weapon/passives/getBuff.test";
 import { describe, expect, test } from "vitest";
 
@@ -30,14 +30,9 @@ describe(createPrimordialJadeRegaliaPassiveModule, () => {
   // Its element's DMG Bonus for each 1,000 Max HP, up to 12%, and 4.5 energy restored
   const passiveModule = createPrimordialJadeRegaliaPassiveModule([0.003, 0.12, 3, 2.5, 4.5]);
   const createWielder = (maxHealth: number): Combatant => ({
-    ascension: 0,
-    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: maxHealth }]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
+    ...createWielderCombatant([{ attribute: Attribute.BaseHealth, value: maxHealth }]),
     element: Element.Hydro,
-    elementalResonances: [],
     kit: getPassiveKit(TRAVELER_KIT, [passiveModule]),
-    level: 1,
   });
 
   test.each([

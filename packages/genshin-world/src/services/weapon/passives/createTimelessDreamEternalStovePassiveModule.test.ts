@@ -1,25 +1,10 @@
-import type { Combatant } from "#src/models/kit/Combatant";
-
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createTimelessDreamEternalStovePassiveModule } from "#src/services/weapon/passives/createTimelessDreamEternalStovePassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
-
-const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const createWielder = (energyRecharge: number): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.EnergyRecharge, value: energyRecharge }]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-});
 
 describe(createTimelessDreamEternalStovePassiveModule, () => {
   // Synthetic params, not the weapon's row: half ATK per point of Energy Recharge over its base, a proportional
@@ -30,7 +15,7 @@ describe(createTimelessDreamEternalStovePassiveModule, () => {
   test("a wielder's Energy Recharge over the base raises ATK by the rank's share of it", () => {
     expect.hasAssertions();
 
-    const wielder = createWielder(1.5);
+    const wielder = createWielderCombatant([{ attribute: Attribute.EnergyRecharge, value: 1.5 }]);
 
     expect(timelessDreamEternalStovePassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
       { amount: 0.5 * 0.5, attribute: Attribute.AttackPercent },
@@ -40,7 +25,7 @@ describe(createTimelessDreamEternalStovePassiveModule, () => {
   test("the ATK bonus stops at the rank's maximum", () => {
     expect.hasAssertions();
 
-    const wielder = createWielder(5);
+    const wielder = createWielderCombatant([{ attribute: Attribute.EnergyRecharge, value: 5 }]);
 
     expect(timelessDreamEternalStovePassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
       { amount: 0.6, attribute: Attribute.AttackPercent },
@@ -50,7 +35,7 @@ describe(createTimelessDreamEternalStovePassiveModule, () => {
   test("an Elemental Burst's Energy Recharge counts toward the ATK bonus while it lasts", () => {
     expect.hasAssertions();
 
-    const wielder = createWielder(1.5);
+    const wielder = createWielderCombatant([{ attribute: Attribute.EnergyRecharge, value: 1.5 }]);
     const context = createKitTestContext(wielder);
     timelessDreamEternalStovePassiveModule.onKitEvent?.(
       { characterId: TRAVELER_CHARACTER_ID, energyCost: 0, kind: KitEventKind.BurstUsed },

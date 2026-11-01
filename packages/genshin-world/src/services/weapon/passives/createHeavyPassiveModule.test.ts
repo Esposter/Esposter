@@ -27,8 +27,15 @@ describe(createHeavyPassiveModule, () => {
     const context = createKitTestContext(wielder);
     heavyPassiveModule.onKitEvent?.(createNormalAttackLanded(), context, wielder);
 
-    expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(1.4);
+    const normalAttack = takeOne(TRAVELER_KIT.normalAttacks, 0);
+    const hitArea = takeOne(normalAttack.hits, 0).hitArea;
+    expect(context.strikes).toStrictEqual([
+      {
+        body: context.body,
+        combatant: wielder,
+        hit: { hitArea, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: 1.4 },
+      },
+    ]);
   });
 
   test("a normal attack inside the rank's cooldown queues no second extra hit, and one after it queues another", () => {

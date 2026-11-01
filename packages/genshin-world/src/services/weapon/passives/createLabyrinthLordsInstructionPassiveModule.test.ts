@@ -1,17 +1,16 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
-import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext, stepKitSecondsSendingExpiries } from "#src/services/kit/createKitTestContext.test";
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
@@ -30,15 +29,7 @@ describe(createLabyrinthLordsInstructionPassiveModule, () => {
   // Labyrinth Lord's Instruction at its first rank: an Elemental Skill or Burst gives Teachings of the Forest, 60
   // Elemental Mastery for twelve seconds, once every twenty, and its end deals 100% ATK
   const passiveModule = createLabyrinthLordsInstructionPassiveModule([60, 12, 1, 20]);
-  const wielder: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: getPassiveKit(TRAVELER_KIT, [passiveModule]),
-    level: 1,
-  };
+  const wielder = createKitCombatant(TRAVELER_CHARACTER_ID, getPassiveKit(TRAVELER_KIT, [passiveModule]));
   const createContext = (enemies: Enemy[] = []): KitContext =>
     createKitTestContext(wielder, { enemyMap: new Map(enemies.map((enemy) => [enemy.id, enemy])) });
   const useSkill = (context: KitContext, characterId = TRAVELER_CHARACTER_ID) =>

@@ -40,8 +40,8 @@ describe(createUnreturningPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     unreturningPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ChargedAttack, true), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.MovementSpeed)?.amount).toBeCloseTo(0.2);
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.3);
+    expect(getBuff(kitEffectState, Attribute.MovementSpeed)?.amount).toBe(0.2);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.3);
   });
 
   test("a charged attack off a weak point, or a normal attack on one, raises nothing", () => {

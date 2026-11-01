@@ -40,8 +40,8 @@ describe(createInfusionBladePassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     infusionBladePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.05);
-    expect(getBuff(kitEffectState, Attribute.DefensePercent)?.amount).toBeCloseTo(0.05);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.05);
+    expect(getBuff(kitEffectState, Attribute.DefensePercent)?.amount).toBe(0.05);
   });
 
   test("a hit inside the rank's half-second cooldown adds no stack, and one after it stacks to two", () => {
@@ -53,11 +53,11 @@ describe(createInfusionBladePassiveModule, () => {
     stepKitSeconds(context, 0.45);
     infusionBladePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.05);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.05);
 
     stepKitSeconds(context, 0.1);
     infusionBladePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.1);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.1);
   });
 });

@@ -11,6 +11,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { SMALL_AOE_AREA } from "#src/services/weapon/passives/constants";
 import { createSkyRippingDragonSpinePassiveModule } from "#src/services/weapon/passives/createSkyRippingDragonSpinePassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
@@ -42,7 +43,13 @@ describe(createSkyRippingDragonSpinePassiveModule, () => {
     skyRippingDragonSpinePassiveModule.onKitEvent?.(BURST_USED, context, wielder);
     skyRippingDragonSpinePassiveModule.onKitEvent?.(createAttackDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(context.strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([0.5]);
+    expect(context.strikes).toStrictEqual([
+      {
+        body: context.body,
+        combatant: wielder,
+        hit: { hitArea: SMALL_AOE_AREA, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: 0.5 },
+      },
+    ]);
   });
 
   test("a hit before a burst, or an elemental skill's hit after one, queues no blade", () => {
