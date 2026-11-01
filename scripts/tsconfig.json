@@ -10,6 +10,6 @@
     "src/**/*.ts",
     "../oxfmt.config.ts",
     "../oxlint.config.ts",
-    "../oxlint/*.ts"
+    "../oxlint/**/*.ts"
   ]
 }

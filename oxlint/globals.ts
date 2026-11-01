@@ -1,4 +1,4 @@
-import type { RestrictedGlobal } from "./RestrictedGlobal.ts";
+import type { RestrictedGlobal } from "./models/RestrictedGlobal.ts";
 
 import { BROWSER_GLOBAL_MESSAGE, CONTEXT_MESSAGE, POLLING_MESSAGE, USE_ROUTE_MESSAGE } from "./messages.ts";
 

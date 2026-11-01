@@ -2,7 +2,8 @@ import type { OxlintOverride } from "oxlint";
 
 import { existsSync, readdirSync } from "node:fs";
 
-import { getAutoImportedPaths, PACKAGE_IMPORT_PATTERNS, RESTRICTED_IMPORT_PATHS } from "./importRestrictions.ts";
+import { PACKAGE_IMPORT_PATTERNS, RESTRICTED_IMPORT_PATHS } from "./importRestrictions.ts";
+import { getAutoImportedPaths } from "./services/getAutoImportedPaths.ts";
 
 // A package that builds with the shared Vue plugin has its own `auto-imports.d.ts`, committed beside its manifest, so the
 // Packages are the ones that have one. The plugin's imports are ambient in its components. Its `.ts` files are left out: a
