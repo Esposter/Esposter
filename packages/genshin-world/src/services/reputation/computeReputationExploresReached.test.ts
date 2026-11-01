@@ -1,6 +1,7 @@
 import type { ReputationExplore } from "#src/models/reputation/ReputationExplore";
 
 import { computeReputationExploresReached } from "#src/services/reputation/computeReputationExploresReached";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(computeReputationExploresReached, () => {
@@ -13,18 +14,18 @@ describe(computeReputationExploresReached, () => {
   test("passing an exploration threshold pays once", () => {
     expect.hasAssertions();
 
-    expect(computeReputationExploresReached(0, 39, EXPLORES).map(({ exploreId }) => exploreId)).toStrictEqual([20]);
+    expect(computeReputationExploresReached(0, 39, EXPLORES)).toStrictEqual([takeOne(EXPLORES, 0)]);
   });
 
   test("should reach a threshold exactly at its percentage", () => {
     expect.hasAssertions();
 
-    expect(computeReputationExploresReached(19, 20, EXPLORES).map(({ exploreId }) => exploreId)).toStrictEqual([20]);
+    expect(computeReputationExploresReached(19, 20, EXPLORES)).toStrictEqual([takeOne(EXPLORES, 0)]);
   });
 
   test("a passed threshold does not pay again", () => {
     expect.hasAssertions();
 
-    expect(computeReputationExploresReached(40, 60, EXPLORES).map(({ exploreId }) => exploreId)).toStrictEqual([60]);
+    expect(computeReputationExploresReached(40, 60, EXPLORES)).toStrictEqual([takeOne(EXPLORES, 2)]);
   });
 });

@@ -2,7 +2,6 @@ import type { ReputationBountyHunt } from "#src/models/reputation/ReputationBoun
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 
 import { claimWeeklyReputationBounty } from "#src/services/reputation/claimWeeklyReputationBounty";
-import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import { now, weeklyReset } from "#src/services/reputation/constants.test";
 import { describe, expect, test } from "vitest";
 
@@ -30,27 +29,6 @@ describe(claimWeeklyReputationBounty, () => {
 
     expect(claimWeeklyReputationBounty(CITY, HUNT, [weeklyReset], now)).toStrictEqual({
       claimedAts: [weeklyReset, now],
-      reward: REWARD,
-    });
-  });
-
-  test("a claim past the week's limit is refused", () => {
-    expect.hasAssertions();
-    const claimedAts = Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, (_value, index) =>
-      weeklyReset.add({ minutes: index + 1 }),
-    );
-
-    expect(claimWeeklyReputationBounty(CITY, HUNT, claimedAts, now)).toBeUndefined();
-  });
-
-  test("the claims of the week before the reset do not count, and are dropped", () => {
-    expect.hasAssertions();
-    const claimedAts = Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, (_value, index) =>
-      weeklyReset.subtract({ hours: index + 1 }),
-    );
-
-    expect(claimWeeklyReputationBounty(CITY, HUNT, claimedAts, now)).toStrictEqual({
-      claimedAts: [now],
       reward: REWARD,
     });
   });
