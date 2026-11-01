@@ -102,6 +102,8 @@ export const createOroronKitBehaviour = ({ readHit, readParameter, readSeconds }
   const soundwave = readHit("soundwave", { onStrike: addConstellation2Stack });
   const darkVoicesEchoSeconds = readParameter("darkVoicesEchoSeconds");
   const soundwaveTickSeconds = readSeconds("soundwaveTick");
+  // Constellation 4's tick is gcsim's int(60 * c4BurstInterval()), 45 frames at its 0.75 interval (burst.go line 73).
+  // Its interval is set at cons.go lines 105 to 109. No line gives the 45 as a literal, since a method call computes it
   const constellation4SoundwaveTickSeconds = readSeconds("constellation4SoundwaveTick");
   return {
     // Constellation 2's bonus starts with the burst, and the ritual's hit and each soundwave's raise it

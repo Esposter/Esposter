@@ -82,7 +82,10 @@ export const createYaeMikoKitBehaviour = ({
   readSecondsList,
 }: KitRecordReader): KitBehaviour => {
   const totemSeconds = readSeconds("totem");
-  // A totem's strikes over its life, gcsim v2.47.2's (MIT) yaemiko/kitsune.go schedule from the press
+  // A totem's strikes over its life, gcsim v2.47.2's (MIT) yaemiko/kitsune.go schedule from the press. No line writes
+  // their count or frames, as the tick re-adds itself every 176 frames from 120 until the totem ends, at 900 frames in
+  // kitsune.go or 14 seconds in the table: five strikes land by 824 frames, and a tick at 1000 finds the totem gone.
+  // The wiki's notes say five too, which the builder does not read
   const totemStrikeSecondsList = readSecondsList("totemStrikes");
   const skillSpawnSeconds = readSeconds("sesshouSakuraSpawn");
   const totemStrikeFields = readHitFields("totemStrikes", ["hitmarkSeconds", "talentMultiplier"]);
