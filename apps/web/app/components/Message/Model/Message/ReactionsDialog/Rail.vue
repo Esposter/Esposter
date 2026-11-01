@@ -16,13 +16,14 @@ const items = computed(() =>
     value: emojiTag,
   })),
 );
+const selectedValues = computed(() => [modelValue.value]);
 </script>
 
 <template>
   <UiList
     :items
     label="Reactions"
-    :model-value="[modelValue]"
+    :model-value="selectedValues"
     shrink-0
     w-28
     of-y-auto
