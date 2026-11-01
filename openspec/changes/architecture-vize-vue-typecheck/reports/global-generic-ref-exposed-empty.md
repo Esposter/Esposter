@@ -123,7 +123,7 @@ The fix is likely to leave the fallback out of the intersection for a generic co
 
 ## Real occurrence
 
-The shape in a real Nuxt app: [`Message/Content/Header/CreateDirectMessageParticipantDialog.vue` line 51](https://github.com/Esposter/Esposter/blob/49df4394844218f957290581ab2090a56f7a4f3d/apps/web/app/components/Message/Content/Header/CreateDirectMessageParticipantDialog.vue#L51) calls `friendPicker.value?.reset()` on a ref to [a generic component](https://github.com/Esposter/Esposter/blob/49df4394844218f957290581ab2090a56f7a4f3d/apps/web/app/components/Message/Model/Room/DirectMessage/FriendPicker.vue#L1) that exposes `reset`. `vue-tsc` accepts it.
+The shape in a real Nuxt app: [`Message/Content/Header/CreateDirectMessageParticipantDialog.vue` line 51](https://github.com/Esposter/Esposter/blob/49df4394844218f957290581ab2090a56f7a4f3d/apps/web/app/components/Message/Content/Header/CreateDirectMessageParticipantDialog.vue#L51) calls `friendPicker.value?.reset()` on a ref to a generic component that exposes `reset`. `vue-tsc` accepts it.
 
 ## Not a duplicate of
 
