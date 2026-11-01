@@ -1,0 +1,75 @@
+import type { CookingProgress } from "#src/models/cooking/CookingProgress";
+import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
+import type { Talk } from "#src/models/dialogue/Talk";
+import type { HomeRealmToggleOptions } from "#src/models/home/HomeRealmToggleOptions";
+import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
+import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
+import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
+import type { QuestRewardItem } from "#src/models/quest/Quest";
+import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
+import type { ScreenKind } from "#src/models/screen/ScreenKind";
+import type { MaterialSourcePlace } from "#src/models/wildlife/MaterialSourcePlace";
+import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
+import type { Resident } from "#src/models/world/Resident";
+import type { WorldDrop } from "#src/models/world/WorldDrop";
+import type { Object3D } from "three";
+import type { Ref } from "vue";
+
+// What using a prompted interactable does, joined from the world's features: the places and state each kind of
+// Interactable is looked up in, the screen it opens and what it opens that screen on, and the action each feature takes
+// Its interactable by
+export interface WorldInteractionDispatchOptions {
+  activateLandmark: (landmarkId: string) => void;
+  characterBody: Object3D;
+  checkIsFishingPoint: (id: string) => boolean;
+  claimKatheryneBonus: () => void;
+  claimKatheryneRewards: () => QuestRewardItem[];
+  cookingProgress: Readonly<Ref<CookingProgress>>;
+  cookingRecipe: Ref<CookingRecipe | undefined>;
+  cookingRecipes: Readonly<Ref<readonly CookingRecipe[]>>;
+  digChestById: (chestId: string) => void;
+  drawReputationOffer: () => void;
+  forgeNow: Ref<Temporal.Instant>;
+  frostbearingTreeLevels: readonly OfferingLevel[];
+  frostbearingTreePlaces: readonly FrostbearingTreePlace[];
+  frostbearingTreeProgress: Readonly<Ref<OfferingProgressSave>>;
+  getGameClockMinutes: () => number | undefined;
+  getGroundHeight: (x: number, z: number) => number;
+  getResidents: () => Resident[];
+  getTalkDuelGameId: (talkId: string) => number | undefined;
+  getWorldNow: () => Temporal.Instant;
+  grantRewards: (rewards: QuestRewardItem[]) => void;
+  jumpTo: HomeRealmToggleOptions["jumpTo"];
+  materialSources: Readonly<Ref<readonly MaterialSourcePlace[]>>;
+  offeredViewpoints: Readonly<Ref<readonly { id: number }[]>>;
+  offerFrostbearingTree: (frostbearingTreePlace: FrostbearingTreePlace) => void;
+  openAbyssEntrance: () => void;
+  openChestById: (chestId: string, random: () => number) => void;
+  openCookingRecipes: Ref<CookingRecipe[]>;
+  openDomain: (landmark: DomainEntranceLandmark) => void;
+  openDomainTreeClaim: (now: Temporal.Instant) => void;
+  openFishingPoint: (id: string) => void;
+  openOutcropClaim: (placeId: number, now: Temporal.Instant) => void;
+  openShrineById: (shrineId: string) => void;
+  openTrounceBlossomClaim: (spawnKey: string, now: Temporal.Instant) => void;
+  openWorship: (landmarkId: string) => void;
+  pickUpGatheringPlace: (placeId: string) => void;
+  pickUpMaterialSourcePlace: (placeId: string) => void;
+  pickUpWorldDrop: (worldDrop: WorldDrop) => void;
+  random: () => number;
+  reputation: Readonly<Ref<ReputationProgress>>;
+  reputationLevel: Ref<number>;
+  resonateStatue: (landmarkId: string) => void;
+  screenKind: Ref<ScreenKind>;
+  shopId: Ref<number>;
+  shrineMarkers: readonly { id: string }[];
+  talk: Ref<Talk | undefined>;
+  talkDuelGameId: Ref<number | undefined>;
+  talkMap: Readonly<Ref<ReadonlyMap<string, Talk>>>;
+  toggleHomeRealm: (options: HomeRealmToggleOptions) => void;
+  trounceBlossoms: Readonly<Ref<ReadonlyMap<string, unknown>>>;
+  unlockedDomainEntrances: Readonly<Ref<readonly DomainEntranceLandmark[]>>;
+  unlockedLandmarkIds: Readonly<Ref<ReadonlySet<string>>>;
+  viewViewpoint: (viewpointId: number) => void;
+  worldDrops: Readonly<Ref<readonly WorldDrop[]>>;
+}

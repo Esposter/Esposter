@@ -84,6 +84,7 @@ import { useWorldGadgets } from "#src/composables/useWorldGadgets";
 import { useWorldHomeRealm } from "#src/composables/useWorldHomeRealm";
 import { useWorldHudFrame } from "#src/composables/useWorldHudFrame";
 import { useWorldInteractables } from "#src/composables/useWorldInteractables";
+import { useWorldInteractionDispatch } from "#src/composables/useWorldInteractionDispatch";
 import { useWorldMail } from "#src/composables/useWorldMail";
 import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
@@ -111,27 +112,19 @@ import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
-import { getViewpointInteractableId } from "#src/services/archive/getViewpointInteractableId";
 import { checkIsWeeklyBossEntryOpen } from "#src/services/bosses/checkIsWeeklyBossEntryOpen";
 import { EnemyKindMovesMap } from "#src/services/bosses/EnemyKindMovesMap";
 import { startBossMove } from "#src/services/bosses/startBossMove";
 import { getCharacterIdConstellationsMap } from "#src/services/character/getCharacterIdConstellationsMap";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
-import { COOKING_PROCESSING_INTERACTABLE_ID, COOKING_STOVE_INTERACTABLE_ID } from "#src/services/cooking/constants";
-import { listOpenCookingRecipes } from "#src/services/cooking/listOpenCookingRecipes";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
-import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
-import { getTalkVendorShopId } from "#src/services/dialogue/getTalkVendorShopId";
 import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
-import { DOMAIN_LEAVE_INTERACTABLE_ID, DOMAIN_TREE_INTERACTABLE_ID } from "#src/services/domains/constants";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
 import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
-import { checkIsExpeditionTalk } from "#src/services/expedition/checkIsExpeditionTalk";
-import { FORGE_INTERACTABLE_ID } from "#src/services/forging/constants";
 import { grantGcgGameReward } from "#src/services/gcg/grantGcgGameReward";
 import { toGcgWeekGameRewards } from "#src/services/gcg/toGcgWeekGameRewards";
 import { toHandbookDomains } from "#src/services/handbook/toHandbookDomains";
-import { HOME_POT_GADGET_ID, HOME_REALM_GROUND_HEIGHT, HOME_TUBBY_NPC_ID } from "#src/services/home/constants";
+import { HOME_REALM_GROUND_HEIGHT } from "#src/services/home/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
@@ -162,11 +155,8 @@ import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { getTeamAntiColdRatio } from "#src/services/sheerCold/getTeamAntiColdRatio";
-import { checkIsVendorHourOpen } from "#src/services/shop/checkIsVendorHourOpen";
-import { checkIsVendorShopOpen } from "#src/services/shop/checkIsVendorShopOpen";
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
-import { VendorShopTypeMap } from "#src/services/shop/VendorShopTypeMap";
-import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
+import { ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { OCULUS_MINIMAP_DISTANCE, OCULUS_REGION_ID, OCULUS_TOUCH_RADIUS } from "#src/services/statue/constants";
 import { getNearOculusPlaces } from "#src/services/statue/getNearOculusPlaces";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
@@ -1207,6 +1197,62 @@ const fightingCamps = computed(() => [
   ...abyssCamps.value,
   ...bountyCamps.value,
 ]);
+// What using the interactable the player is prompted on does, joined from the features that act on it
+const { dispatchInteraction } = useWorldInteractionDispatch({
+  activateLandmark,
+  characterBody,
+  checkIsFishingPoint,
+  claimKatheryneBonus,
+  claimKatheryneRewards,
+  cookingProgress,
+  cookingRecipe,
+  cookingRecipes,
+  digChestById,
+  drawReputationOffer,
+  forgeNow,
+  frostbearingTreeLevels,
+  frostbearingTreePlaces,
+  frostbearingTreeProgress,
+  getGameClockMinutes: () => windrise.value?.gameClock.minutes,
+  getGroundHeight,
+  getResidents,
+  getTalkDuelGameId,
+  getWorldNow,
+  grantRewards,
+  jumpTo,
+  materialSources,
+  offeredViewpoints,
+  offerFrostbearingTree,
+  openAbyssEntrance,
+  openChestById,
+  openCookingRecipes,
+  openDomain,
+  openDomainTreeClaim,
+  openFishingPoint,
+  openOutcropClaim,
+  openShrineById,
+  openTrounceBlossomClaim,
+  openWorship,
+  pickUpGatheringPlace,
+  pickUpMaterialSourcePlace,
+  pickUpWorldDrop,
+  random: () => kitContext.random(),
+  reputation,
+  reputationLevel,
+  resonateStatue,
+  screenKind,
+  shopId,
+  shrineMarkers,
+  talk,
+  talkDuelGameId,
+  talkMap,
+  toggleHomeRealm,
+  trounceBlossoms,
+  unlockedDomainEntrances,
+  unlockedLandmarkIds,
+  viewViewpoint,
+  worldDrops,
+});
 // The prompts beside the character, joined from every source that offers one
 const { interactables, interactionPrompts, readInteraction, selectInteractable } = useWorldInteractables({
   archiveData,
@@ -1591,117 +1637,7 @@ useWorldSaveSync({
               isNearStatue,
               party,
             });
-            const worldDrop = worldDrops.find(({ id }) => id === interactable?.id);
-            const materialSource = materialSources.find(({ id }) => id === interactable?.id);
-            const frostbearingTreePlace = frostbearingTreePlaces.find(({ id }) => id === interactable?.id);
-            const offeredViewpoint = offeredViewpoints.find(
-              ({ id }) => getViewpointInteractableId(id) === interactable?.id,
-            );
-            const domainEntranceLandmark = unlockedDomainEntrances.find(({ id }) => id === interactable?.id);
-            if (interactable?.kind === InteractionKind.PickUp && worldDrop) pickUpWorldDrop(worldDrop);
-            else if (interactable?.kind === InteractionKind.PickUp && materialSource)
-              pickUpMaterialSourcePlace(materialSource.id);
-            else if (interactable?.kind === InteractionKind.PickUp) pickUpGatheringPlace(interactable.id);
-            else if (
-              interactable?.kind === InteractionKind.Open &&
-              shrineMarkers.some(({ id }) => id === interactable.id)
-            )
-              openShrineById(interactable.id);
-            else if (interactable?.kind === InteractionKind.Open) openChestById(interactable.id, kitContext.random);
-            else if (interactable?.kind === InteractionKind.Claim && trounceBlossoms.has(interactable.id))
-              openTrounceBlossomClaim(interactable.id, getWorldNow());
-            else if (interactable?.kind === InteractionKind.Claim)
-              openOutcropClaim(Number(interactable.id), getWorldNow());
-            else if (interactable?.kind === InteractionKind.Dig) digChestById(interactable.id);
-            else if (interactable?.kind === InteractionKind.Activate && frostbearingTreePlace)
-              offerFrostbearingTree(frostbearingTreePlace);
-            else if (interactable?.kind === InteractionKind.Activate && offeredViewpoint)
-              viewViewpoint(offeredViewpoint.id);
-            else if (
-              interactable?.kind === InteractionKind.Activate &&
-              interactable.id === COOKING_STOVE_INTERACTABLE_ID
-            ) {
-              openCookingRecipes = listOpenCookingRecipes(cookingRecipes, cookingProgress);
-              cookingRecipe = openCookingRecipes[0];
-              if (cookingRecipe) screenKind = ScreenKind.Cooking;
-            } else if (
-              interactable?.kind === InteractionKind.Activate &&
-              interactable.id === COOKING_PROCESSING_INTERACTABLE_ID
-            ) {
-              screenKind = ScreenKind.Processing;
-            } else if (
-              interactable?.kind === InteractionKind.Activate &&
-              unlockedLandmarkIds.has(interactable.id) &&
-              getStatueRegionId(interactable.id) !== undefined
-            ) {
-              openWorship(interactable.id);
-            } else if (
-              interactable?.kind === InteractionKind.Activate &&
-              interactable.id === DOMAIN_LEAVE_INTERACTABLE_ID
-            ) {
-              screenKind = ScreenKind.Domain;
-            } else if (
-              interactable?.kind === InteractionKind.Activate &&
-              interactable.id === DOMAIN_TREE_INTERACTABLE_ID
-            ) {
-              openDomainTreeClaim(getWorldNow());
-            } else if (interactable?.kind === InteractionKind.Activate && domainEntranceLandmark) {
-              openDomain(domainEntranceLandmark);
-              screenKind = ScreenKind.Domain;
-            } else if (
-              interactable?.kind === InteractionKind.Activate &&
-              interactable.id === ABYSS_ENTRANCE_INTERACTABLE_ID
-            ) {
-              openAbyssEntrance();
-              screenKind = ScreenKind.SpiralAbyss;
-            } else if (
-              interactable?.kind === InteractionKind.Activate &&
-              interactable.id === String(HOME_POT_GADGET_ID)
-            ) {
-              toggleHomeRealm({
-                getGroundHeight,
-                jumpTo,
-                standing: { position: characterBody.position, yaw: characterBody.rotation.y },
-              });
-            } else if (interactable?.kind === InteractionKind.Talk && interactable.id === String(HOME_TUBBY_NPC_ID)) {
-              shopId = VendorShopTypeMap[String(HOME_TUBBY_NPC_ID)] ?? 0;
-              reputationLevel = reputation.level;
-              screenKind = ScreenKind.Shop;
-            } else if (interactable?.kind === InteractionKind.Activate) {
-              activateLandmark(interactable.id);
-              resonateStatue(interactable.id);
-            } else if (interactable?.kind === InteractionKind.Use && checkIsFishingPoint(interactable.id)) {
-              openFishingPoint(interactable.id);
-              screenKind = ScreenKind.Fishing;
-            } else if (interactable?.id === FORGE_INTERACTABLE_ID) {
-              forgeNow = getWorldNow();
-              screenKind = ScreenKind.Forge;
-            } else if (interactable?.kind === InteractionKind.Use) {
-              screenKind = ScreenKind.Crafting;
-            } else if (interactable?.kind === InteractionKind.Talk) {
-              talk = talkMap.get(interactable.id);
-              talkDuelGameId = getTalkDuelGameId(interactable.id);
-              screenKind = getTalkScreenKind(interactable.id, getResidents());
-              // Katheryne's talk opens the expedition screen in place of the talk, once she stands in the world
-              if (checkIsExpeditionTalk(interactable.id, getResidents())) {
-                grantRewards(claimKatheryneRewards());
-                claimKatheryneBonus();
-                screenKind = ScreenKind.Expedition;
-              }
-              shopId = getTalkVendorShopId(interactable.id, getResidents()) ?? 0;
-              // A Souvenir Shop stays closed until its region's offering is at its last level, a day vendor's outside their hours,
-              // And no shop opens before the world's clock is read, so its talk is a dialogue until then
-              const gameClockMinutes = windrise?.gameClock.minutes;
-              if (
-                screenKind === ScreenKind.Shop &&
-                (!checkIsVendorShopOpen(shopId, frostbearingTreeProgress.level, frostbearingTreeLevels) ||
-                  gameClockMinutes === undefined ||
-                  !checkIsVendorHourOpen(shopId, gameClockMinutes))
-              )
-                screenKind = ScreenKind.Dialogue;
-              reputationLevel = reputation.level;
-              if (screenKind === ScreenKind.Reputation) drawReputationOffer();
-            }
+            dispatchInteraction(interactable);
           }
         }
       "
