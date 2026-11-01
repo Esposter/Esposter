@@ -55,6 +55,10 @@ const isReady = computed(
 const isOfferingFull = computed(
   () => pickedStrongbox.value !== undefined && pickedIds.value.length >= pickedStrongbox.value.needCount,
 );
+// The requirement is the game's own words, with the picked strongbox's count and name filled in
+const requirementText = computed(() =>
+  computeMysticOfferingText(props.gameText[GameTextKey.MysticOfferingRequirement], pickedStrongbox.value, props.names),
+);
 // The confirm is the game's own words, in the colours their tags give the counts and the strongbox's name
 const confirmSegments = computed(() =>
   splitGameTextColors(
@@ -69,7 +73,7 @@ const confirmSegments = computed(() =>
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.MysticOffering]">
     <h2>{{ gameText[GameTextKey.MysticOffering] }}</h2>
     <p>
-      {{ computeMysticOfferingText(gameText[GameTextKey.MysticOfferingRequirement], pickedStrongbox, names) }}
+      {{ requirementText }}
     </p>
     <ul>
       <li v-for="strongbox in strongboxes" :key="strongbox.id">

@@ -217,6 +217,10 @@ const checkIsExported = (family: string): boolean =>
     ? witness.families.value.includes(family)
     : (sceneExportMap.get(LOGIN_SCENE_EXPORT_COMPONENT)?.familyBoundsMap.has(family) ?? false);
 const checkIsOwnFamilyDrawn = (family: LoginPartFamily): boolean => !checkIsExported(family);
+// The families the template draws ours of, each held as a computed so a row of copies does not ask again per render
+const isWalkwayDrawn = computed(() => checkIsOwnFamilyDrawn(LoginPartFamily.Walkway));
+const isTowersDrawn = computed(() => checkIsOwnFamilyDrawn(LoginPartFamily.Towers));
+const isBridgesDrawn = computed(() => checkIsOwnFamilyDrawn(LoginPartFamily.Bridges));
 const { scene, sizes } = useTres();
 const cameraFov = computed(() => getLoginCameraFov(sizes.aspectRatio.value));
 const { onRender } = useLoop();
@@ -315,6 +319,9 @@ const doorMaterial = createStoneMaterial(stone.doorPanel, loginStoneLight, doorL
 const doorAlbedo = createLoginDoorRelief(door).mul(color(stone.door.albedo));
 doorFrameMaterial.colorNode = doorAlbedo;
 doorMaterial.colorNode = doorAlbedo;
+// Each family's tag, one object per family so every copy's mesh keeps the same prop identity across renders
+const towersUserData = { [SCENE_FAMILY_KEY]: LoginPartFamily.Towers };
+const bridgesUserData = { [SCENE_FAMILY_KEY]: LoginPartFamily.Bridges };
 const towersGeometry = createLoginTowersGeometry(towers, towerAtlas);
 const hullsGeometry = createLoginHullsGeometry(hulls);
 const walkwayPieces = createLoginWalkwayPieces(walkway);
@@ -395,6 +402,10 @@ cloudSeaMaterial.colorNode = mix(
     mx_fractal_noise_float(positionWorld.xz.add(vec2(0, cloudSeaScrolled)).mul(LOGIN_CLOUD_SEA_SCALE)),
   ),
 );
+// The cloud sea's place, turn and plane size, each kept as one value so the template's props keep their identity
+const cloudSeaPosition: [number, number, number] = [0, LOGIN_CLOUD_SEA_HEIGHT, 0];
+const cloudSeaRotation: [number, number, number] = [-Math.PI / 2, 0, 0];
+const cloudSeaGeometryArgs: [number, number] = [LOGIN_CLOUD_SEA_SIZE, LOGIN_CLOUD_SEA_SIZE];
 // No grade and no bloom: every colour of the login is measured off its references through the tone mapping alone, the
 // Sky's, the haze's and the stone's light, so the frame is drawn through that alone and each inverts exactly
 usePostPipeline(
@@ -438,6 +449,9 @@ const cameraZ = computed(() => {
   const share = Math.min(LOGIN_DOOR_RUSH_SHARE * (rushMs.value / LOGIN_DOOR_RUSH_MS) ** 2, LOGIN_DOOR_RUSH_LIMIT);
   return cameraRestZ - share * (cameraRestZ - doorRestPosition[2]);
 });
+// The camera's place and turn, each kept as one value so the template's props keep their identity across renders
+const cameraPosition = computed((): [number, number, number] => [0, cameraHeight, cameraZ.value]);
+const cameraRotation: [number, number, number] = [LOGIN_CAMERA_PITCH, LOGIN_CAMERA_YAW, 0];
 onRender(({ delta: frameDelta }) => {
   // A tool holding the witness's clock holds the scene's time too, so one view draws one frame
   const delta = witness?.isClockHeld.value ? 0 : frameDelta;
@@ -543,8 +557,8 @@ onUnmounted(() => {
   <TresPerspectiveCamera
     :far="LOGIN_CAMERA_FAR"
     :fov="cameraFov"
-    :position="[0, cameraHeight, cameraZ]"
-    :rotation="[LOGIN_CAMERA_PITCH, LOGIN_CAMERA_YAW, 0]"
+    :position="cameraPosition"
+    :rotation="cameraRotation"
     rotation-order="YXZ"
   />
   <primitive :object="light" />
@@ -552,23 +566,23 @@ onUnmounted(() => {
   <primitive :object="hemisphere" />
   <primitive v-if="!witness?.isAlone.value" :object="loginClouds.group" />
   <primitive v-if="exportedParts" :object="exportedParts" />
-  <primitive v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Walkway)" :object="walkwayBatch" />
+  <primitive v-if="isWalkwayDrawn" :object="walkwayBatch" />
   <!-- The towers' row, with their bridges and pillars, each copy its length ahead of the last -->
   <primitive :object="towersGroup">
     <template v-for="copy in towersRow.count" :key="copy">
       <TresMesh
-        v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Towers)"
+        v-if="isTowersDrawn"
         :geometry="towersGeometry"
-        :user-data="{ [SCENE_FAMILY_KEY]: LoginPartFamily.Towers }"
+        :user-data="towersUserData"
         cast-shadow
         receive-shadow
         :material="towersMaterial"
         :position="[0, 0, (copy - 1) * towersRow.length]"
       />
       <TresMesh
-        v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Bridges)"
+        v-if="isBridgesDrawn"
         :geometry="hullsGeometry"
-        :user-data="{ [SCENE_FAMILY_KEY]: LoginPartFamily.Bridges }"
+        :user-data="bridgesUserData"
         cast-shadow
         receive-shadow
         :material="bridgesMaterial"
@@ -586,9 +600,9 @@ onUnmounted(() => {
   <TresMesh
     v-if="!witness?.isAlone.value"
     :material="cloudSeaMaterial"
-    :position="[0, LOGIN_CLOUD_SEA_HEIGHT, 0]"
-    :rotation="[-Math.PI / 2, 0, 0]"
+    :position="cloudSeaPosition"
+    :rotation="cloudSeaRotation"
   >
-    <TresPlaneGeometry :args="[LOGIN_CLOUD_SEA_SIZE, LOGIN_CLOUD_SEA_SIZE]" />
+    <TresPlaneGeometry :args="cloudSeaGeometryArgs" />
   </TresMesh>
 </template>

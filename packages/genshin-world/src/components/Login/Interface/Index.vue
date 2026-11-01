@@ -6,7 +6,7 @@ import type { LoginStatusStep } from "#src/models/login/LoginStatusStep";
 import type { GameLanguage, GameText } from "genshin-text";
 
 import LoginStatus from "#src/components/Login/Status/Index.vue";
-import { LoginInterfaceClip } from "#src/models/login/LoginInterfaceClip";
+import { useLoginStageClips } from "#src/composables/useLoginStageClips";
 import { LoginInterfaceClipTarget } from "#src/models/login/LoginInterfaceClipTarget";
 import { LoginInterfaceRectName } from "#src/models/login/LoginInterfaceRectName";
 import { LoginStage } from "#src/models/login/LoginStage";
@@ -19,7 +19,6 @@ import {
   LOGIN_WELCOME_FADE_MS,
 } from "#src/services/login/constants";
 import { GameClientVersionTextMap } from "#src/services/login/GameClientVersionTextMap";
-import { createLoginInterfaceClipMap } from "#src/services/login/interface/createLoginInterfaceClipMap";
 import { InterfaceIconGameTextKeyMap } from "#src/services/login/InterfaceIconGameTextKeyMap";
 import { GameLanguageGameClientMap } from "#src/services/splash/GameLanguageGameClientMap";
 import {
@@ -28,7 +27,6 @@ import {
   InterfaceIcon,
   LoadingSpinner,
   OrnamentDivider,
-  playInterfaceClip,
   PromptBand,
   RoundButton,
   ServerBar,
@@ -89,46 +87,14 @@ const cornerIcons = computed(() => {
     return [InterfaceIcon.Settings, InterfaceIcon.Repair, InterfaceIcon.Notice, InterfaceIcon.Exit];
   else return [];
 });
-const isFooterShown = computed(() => stage !== LoginStage.Arriving);
 // The page the game's clips play on, each piece they move named by its path under the game's page
 const page = useTemplateRef("page");
-// Whether the title is still fading out after its click, which keeps it drawn until the fade has run
-const isStartLeaving = ref(false);
-const isStartShown = computed(() => stage === LoginStage.Title || isStartLeaving.value);
-// The game's own clips made playable once, the white the scene fades up out of among them
-const clipMap = createLoginInterfaceClipMap(interfaceClips);
-const playClip = (clip: LoginInterfaceClip): Animation[] =>
-  page.value ? playInterfaceClip(page.value, clipMap[clip]) : [];
-// Each stage's clips as the game plays them: the white curtain then the page fading in on arriving, the title fading in
-// At the title and out on its click, and the page fading into white on entering. A clip's tracks share its length, so
-// Any one of them ending is the clip's end
-const playStageClips = (newStage: LoginStage, oldStage?: LoginStage): void => {
-  if (oldStage === LoginStage.Title) {
-    const [startFadeOut] = playClip(LoginInterfaceClip.StartFadeOut);
-    if (startFadeOut) startFadeOut.addEventListener("finish", () => (isStartLeaving.value = false), { once: true });
-    else isStartLeaving.value = false;
-  }
-
-  if (newStage === LoginStage.Arriving) {
-    playClip(LoginInterfaceClip.WhiteCurtain);
-    playClip(LoginInterfaceClip.FadeIn);
-  } else if (newStage === LoginStage.Title) playClip(LoginInterfaceClip.StartFadeIn);
-  else if (newStage === LoginStage.Entering) {
-    const [fadeOut] = playClip(LoginInterfaceClip.FadeOut);
-    if (fadeOut) fadeOut.addEventListener("finish", () => emit("whiten"), { once: true });
-    else emit("whiten");
-  }
-};
-onMounted(() => playStageClips(stage));
-watch(
-  () => stage,
-  async (newStage, oldStage) => {
-    // The title is kept before the new stage's render would drop it, and the clips play once that render is drawn
-    if (oldStage === LoginStage.Title) isStartLeaving.value = true;
-    await nextTick();
-    playStageClips(newStage, oldStage);
-  },
-);
+const { isStartShown } = useLoginStageClips({
+  interfaceClips,
+  onWhiten: () => emit("whiten"),
+  page,
+  stage: () => stage,
+});
 </script>
 
 <template>
@@ -224,7 +190,7 @@ watch(
         <!-- The foot, anchored to the screen's bottom as the game's is, so everything in it stays there on any window:
              The loading row, the account and the build string, and both button columns -->
         <GameRect
-          v-if="isFooterShown"
+          v-if="stage !== LoginStage.Arriving"
           #default="{ rect: bottomRect }"
           :parent="loginRect"
           :rect="interfaceRects[LoginInterfaceRectName.Bottom]"

@@ -108,8 +108,6 @@ const tabCells = computed(() =>
 const pickedTabId = computed(() =>
   tabCells.value.some((tab) => tab.id === tabId.value) ? tabId.value : (tabCells.value.at(0)?.id ?? 0),
 );
-// Whether the player has picked the Mystic Offering's tab, which takes the bench's screen with its panel
-const isMysticOfferingPicked = computed(() => pickedTabId.value === MYSTIC_OFFERING_TAB_ID);
 const tabRecipes = computed(() => openRecipes.value.filter((recipe) => getCraftingTabId(recipe) === pickedTabId.value));
 const recipeCells = computed(() =>
   computeLearnedRecipeCells(recipes, {
@@ -134,7 +132,6 @@ const amountMaximum = computed(() => {
 });
 // The amount the player picked, kept to the most the bag and wallet still pay for once a craft has spent them
 const pickedAmount = computed(() => Math.min(amount.value, amountMaximum.value));
-const requiredCoins = computed(() => (pickedRecipe.value?.mora ?? 0) * pickedAmount.value);
 // The picked recipe's materials, each with the count the bag holds (Original Resin from the wallet, regenerated to now)
 // And the count one craft takes
 const materials = computed<CraftingMaterial[]>(() =>
@@ -195,7 +192,7 @@ const craft = () => {
        and the party's crafter who may pass a talent's extra on to the bag. Its last tab is the Mystic Offering, whose panel
        takes the screen while that tab is picked -->
   <CraftingStrongbox
-    v-if="isMysticOfferingPicked"
+    v-if="pickedTabId === MYSTIC_OFFERING_TAB_ID"
     :artifact-drop-tables
     :game-text
     :inventory
@@ -224,7 +221,7 @@ const craft = () => {
       :crafters
       :recipe-id="pickedRecipe?.id ?? 0"
       :recipes="recipeCells"
-      :required-coins
+      :required-coins="(pickedRecipe?.mora ?? 0) * pickedAmount"
       :required-label="gameText[GameTextKey.CraftingRequired]"
       :tab-id="pickedTabId"
       :tabs="tabCells"
