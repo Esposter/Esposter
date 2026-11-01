@@ -147,13 +147,9 @@ describe(advanceQuest, () => {
     expect.hasAssertions();
 
     const newHorizons: Quest = {
-      descriptionTextId: "descriptionTextId",
+      ...quest,
       id: "22111",
-      kind: QuestKind.World,
       mainId: "22111",
-      offerTalkIds: [],
-      parentQuestIds: [],
-      rewards: [],
       steps: [
         {
           id: "2211101",
@@ -166,8 +162,6 @@ describe(advanceQuest, () => {
           textId: "textId",
         },
       ],
-      talks: [],
-      titleTextId: "titleTextId",
     };
     const afterFirstStep = advanceQuest(
       newHorizons,
