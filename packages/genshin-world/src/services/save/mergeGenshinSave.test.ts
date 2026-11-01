@@ -85,6 +85,12 @@ describe(mergeGenshinSave, () => {
   // One key in the game day that starts at the 04:00 reset (UTC+8), which the epoch falls in, and one in the next day
   const EARLIER_DAY_KEY = Temporal.Instant.fromEpochMilliseconds(0).toString();
   const NEXT_GAME_DAY_KEY = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 21 }).toString();
+  // Three claims an hour apart, the first an hour past the epoch, shared by the bounty and request claim tests
+  const claimedAts = Array.from({ length: 3 }, (_value, index) =>
+    Temporal.Instant.fromEpochMilliseconds(0)
+      .add({ hours: index + 1 })
+      .toString(),
+  );
   // A character as a save holds it, the fields a test reads set by its own overrides
   const characterSave = (overrides: Partial<CharacterSave>): CharacterSave => ({
     artifacts: [],
@@ -422,11 +428,6 @@ describe(mergeGenshinSave, () => {
 
   test("keeps the account's bounty claims, and not a claim only the guest made", () => {
     expect.hasAssertions();
-    const claimedAts = Array.from({ length: 3 }, (_value, index) =>
-      Temporal.Instant.fromEpochMilliseconds(0)
-        .add({ hours: index + 1 })
-        .toString(),
-    );
     const account = { ...EMPTY_GENSHIN_SAVE, reputationBountyClaimedAts: claimedAts.slice(0, 1) };
     const guest = { ...EMPTY_GENSHIN_SAVE, reputationBountyClaimedAts: claimedAts.slice(1) };
 
@@ -435,11 +436,6 @@ describe(mergeGenshinSave, () => {
 
   test("keeps the account's request claims, apart from the bounty claims", () => {
     expect.hasAssertions();
-    const claimedAts = Array.from({ length: 3 }, (_value, index) =>
-      Temporal.Instant.fromEpochMilliseconds(0)
-        .add({ hours: index + 1 })
-        .toString(),
-    );
     const account = { ...EMPTY_GENSHIN_SAVE, reputationRequestClaimedAts: claimedAts.slice(0, 1) };
     const guest = { ...EMPTY_GENSHIN_SAVE, reputationRequestClaimedAts: claimedAts.slice(1) };
     const merged = mergeGenshinSave(account, guest);

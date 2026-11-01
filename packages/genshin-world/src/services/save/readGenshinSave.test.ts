@@ -11,7 +11,6 @@ import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
-import { Currency } from "#src/models/inventory/Currency";
 import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
@@ -504,7 +503,9 @@ describe(readGenshinSave, () => {
     );
     const save: GenshinSave = { ...EMPTY_GENSHIN_SAVE, wallet: { ...EMPTY_GENSHIN_SAVE.wallet, currencies } };
 
-    expect(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map(), new Map()).wallet[Currency.AnemoSigil]).toBe(0);
+    const { wallet } = readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map(), new Map());
+
+    expect(SIGIL_CURRENCIES.map((currency) => wallet[currency])).toStrictEqual(SIGIL_CURRENCIES.map(() => 0));
   });
 
   test("a bounty taken and the week's bounty and request claims survive a reload", () => {
