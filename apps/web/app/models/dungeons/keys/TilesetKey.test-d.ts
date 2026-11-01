@@ -5,7 +5,7 @@ import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import { describe, expect, expectTypeOf, test } from "vitest";
 
 describe("tilesetKey type", () => {
-  test("no conflicting values between ImageKey and SpritesheetKey", () => {
+  test("TilesetKey shares no value with ImageKey or SpritesheetKey", () => {
     expect.hasAssertions();
 
     expectTypeOf(TilesetKey).toExtend<

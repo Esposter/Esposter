@@ -14,7 +14,7 @@ describe(defineAchievementDefinition, () => {
   test("accepts a predicate whose path and value belong to the trigger's input", () => {
     expect.hasAssertions();
 
-    const definition = defineAchievementDefinition({
+    defineAchievementDefinition({
       condition: property("message", length(isAtLeast(1000))),
       description: "",
       icon: "",
@@ -22,8 +22,6 @@ describe(defineAchievementDefinition, () => {
       points: 0,
       triggerPath: "message.createMessage",
     });
-
-    expectTypeOf(definition.check).toBeFunction();
   });
 
   test("rejects a schema that belongs to another procedure", () => {

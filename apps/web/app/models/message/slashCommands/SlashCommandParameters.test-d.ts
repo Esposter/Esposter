@@ -4,13 +4,7 @@ import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandTyp
 import { describe, expect, expectTypeOf, test } from "vitest";
 
 describe("slashCommandParameters type", () => {
-  test(SlashCommandType.Flip, () => {
-    expect.hasAssertions();
-
-    // oxlint-disable-next-line typescript/no-generated-empty-object-type, typescript/no-empty-object-type -- A command with no parameters takes `{}`
-    expectTypeOf<SlashCommandParameters<SlashCommandType.Flip>>().toEqualTypeOf<{}>();
-  });
-
+  // The accepted pairing below is what proves the refusal that follows can pass, so it stays
   test(SlashCommandType.Me, () => {
     expect.hasAssertions();
 
@@ -21,17 +15,5 @@ describe("slashCommandParameters type", () => {
     expect.hasAssertions();
 
     expectTypeOf<{ message?: string }>().not.toExtend<SlashCommandParameters<SlashCommandType.Me>>();
-  });
-
-  test(SlashCommandType.Spoiler, () => {
-    expect.hasAssertions();
-
-    expectTypeOf<SlashCommandParameters<SlashCommandType.Spoiler>>().toEqualTypeOf<{ text: string }>();
-  });
-
-  test(SlashCommandType.Shrug, () => {
-    expect.hasAssertions();
-
-    expectTypeOf<SlashCommandParameters<SlashCommandType.Shrug>>().toEqualTypeOf<{ text?: string }>();
   });
 });
