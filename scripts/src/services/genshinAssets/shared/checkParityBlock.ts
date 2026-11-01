@@ -1,3 +1,4 @@
+import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
 import {
   GAME_BLOCKS_DIRECTORY,
   GENSHIN_ANIMESTUDIO_OPTIONS,
@@ -34,7 +35,7 @@ export const checkParityBlock = (
         type,
         ...exportArguments,
         "--group_assets",
-        "ByType",
+        AnimeStudioGroupType.ByType,
         "--game",
         GENSHIN_ANIMESTUDIO_OPTIONS.game,
         "--logger_flags",
