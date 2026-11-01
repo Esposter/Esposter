@@ -84,21 +84,6 @@ const createSwitchDuel = (): GcgDuel => {
   return duel;
 };
 
-const KABUKI: GcgSkill = {
-  costs: [],
-  effect: "Effect_Damage_Physic_2",
-  energyGain: 1,
-  id: 11_051,
-  kind: GcgSkillKind.NormalAttack,
-};
-const HYOUKA: GcgSkill = {
-  costs: [],
-  effect: "Effect_Damage_Ice_3",
-  energyGain: 1,
-  id: 11_052,
-  kind: GcgSkillKind.ElementalSkill,
-};
-
 describe("springSpiritSummoning", () => {
   test("it deals 2 Cryo DMG, then creates an Icy Quill on its side", () => {
     expect.hasAssertions();
@@ -129,6 +114,21 @@ describe("springSpiritSummoning", () => {
 });
 
 describe("icyQuill", () => {
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Physic_2",
+    energyGain: 1,
+    id: 11_051,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const HYOUKA: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Ice_3",
+    energyGain: 1,
+    id: 11_052,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+
   test("it deals 1 more Cryo DMG to a Cryo hit, spending a usage", () => {
     expect.hasAssertions();
 
@@ -616,6 +616,20 @@ describe("lithicSpear", () => {
 });
 
 describe("vermillionHereafter", () => {
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Physic_2",
+    energyGain: 1,
+    id: 11_051,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const HYOUKA: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Ice_3",
+    energyGain: 1,
+    id: 11_052,
+    kind: GcgSkillKind.ElementalSkill,
+  };
   const TALENT_CARD = createTalentCard();
   const EVENT_CARD: GcgCard = { ...TALENT_CARD, id: 331_802, kind: GcgCardKind.Event };
 
@@ -702,6 +716,14 @@ describe("stoneAndContracts", () => {
 });
 
 describe("shatteringIce", () => {
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Physic_2",
+    energyGain: 1,
+    id: 11_051,
+    kind: GcgSkillKind.NormalAttack,
+  };
+
   test("it can be played only with two Cryo characters on its side", () => {
     expect.hasAssertions();
 
@@ -868,6 +890,21 @@ describe("dunyarzad", () => {
 });
 
 describe("rana", () => {
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Physic_2",
+    energyGain: 1,
+    id: 11_051,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const HYOUKA: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Ice_3",
+    energyGain: 1,
+    id: 11_052,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+
   test("after an Elemental Skill, it creates a die of the next off-field character's element, once per Round", () => {
     expect.hasAssertions();
 

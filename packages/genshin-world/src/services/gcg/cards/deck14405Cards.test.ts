@@ -71,21 +71,9 @@ const withSkills = (character: GcgCharacterState, skills: GcgSkill[]): GcgCharac
   character: { ...character.character, skills },
 });
 const ITTO_ID = 1605;
-const KOKOMI_ID = 1205;
-const ELECTRO_DIE: GcgCost = { count: 2, element: Element.Electro, kind: GcgCostKind.Dice };
-const MASATSU_ZETSUGI_ID = 16_052;
-const MASATSU = createSkill(MASATSU_ZETSUGI_ID, "Char_Skill_16052", GcgSkillKind.ElementalSkill);
-const ITTO_NORMAL_ATTACK = createSkill(16_051, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
-const TENKO = createSkill(TENKO_KENSHIN_ID, "Char_Skill_14083", GcgSkillKind.ElementalBurst);
-const YAKAN = createSkill(YAKAN_EVOCATION_ID, "Char_Skill_14082", GcgSkillKind.ElementalSkill);
-const KURAGE_OATH_ID = 12_052;
-const KURAGE = createSkill(KURAGE_OATH_ID, "Char_Skill_12052", GcgSkillKind.ElementalSkill);
-const NEREID_ASCENSION_ID = 12_053;
-const NEREID = createSkill(NEREID_ASCENSION_ID, "Char_Skill_12053", GcgSkillKind.ElementalBurst);
-const ROYAL_DESCENT_ID = 16_053;
-const ROYAL = createSkill(ROYAL_DESCENT_ID, "Char_Skill_16053", GcgSkillKind.ElementalBurst);
 
 describe("capriciousVisage", () => {
+  const ELECTRO_DIE: GcgCost = { count: 2, element: Element.Electro, kind: GcgCostKind.Dice };
   const TALENT_CARD = createTalentCard();
   const EVENT_CARD: GcgCard = { ...TALENT_CARD, id: 331_803, kind: GcgCardKind.Event };
   const ELEMENTAL_SKILL: GcgSkill = createSkill(14_082, "Effect_Damage_Electro_2", GcgSkillKind.ElementalSkill);
@@ -151,6 +139,7 @@ describe("capriciousVisage", () => {
 });
 
 describe("thunderAndEternity", () => {
+  const KOKOMI_ID = 1205;
   const INAZUMA = "INAZUMA";
   const LIYUE = "LIYUE";
 
@@ -188,6 +177,10 @@ describe("thunderAndEternity", () => {
 });
 
 describe("bakeKurage", () => {
+  const KOKOMI_ID = 1205;
+  const KURAGE_OATH_ID = 12_052;
+  const KURAGE = createSkill(KURAGE_OATH_ID, "Char_Skill_12052", GcgSkillKind.ElementalSkill);
+
   test("it deals 1 Hydro DMG and heals its active character 1 HP at the End Phase, spending a usage", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -219,6 +212,7 @@ describe("bakeKurage", () => {
 });
 
 describe("ceremonialGarment", () => {
+  const KOKOMI_ID = 1205;
   const KOKOMI_NORMAL_ATTACK = createSkill(12_051, "Effect_Damage_Water_1", GcgSkillKind.NormalAttack);
 
   test("its character's Normal Attacks deal 1 more DMG, and heal every character 1 HP after the attack", () => {
@@ -281,6 +275,8 @@ describe("sesshouSakura", () => {
 });
 
 describe("yakan Evocation: Sesshou Sakura", () => {
+  const YAKAN = createSkill(YAKAN_EVOCATION_ID, "Char_Skill_14082", GcgSkillKind.ElementalSkill);
+
   test("it summons a Sesshou Sakura", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -309,6 +305,8 @@ describe("yakan Evocation: Sesshou Sakura", () => {
 });
 
 describe("great Secret Art: Tenko Kenshin", () => {
+  const TENKO = createSkill(TENKO_KENSHIN_ID, "Char_Skill_14083", GcgSkillKind.ElementalBurst);
+
   test("it deals 4 Electro DMG and, with a Sesshou Sakura on its side, destroys it and creates Tenko Thunderbolts", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -360,6 +358,9 @@ describe("tenkoThunderbolts", () => {
 });
 
 describe("ushi", () => {
+  const MASATSU_ZETSUGI_ID = 16_052;
+  const MASATSU = createSkill(MASATSU_ZETSUGI_ID, "Char_Skill_16052", GcgSkillKind.ElementalSkill);
+
   test("the active character takes 1 less DMG, once", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -429,6 +430,8 @@ describe("ushi", () => {
 });
 
 describe("ragingOniKing", () => {
+  const ITTO_NORMAL_ATTACK = createSkill(16_051, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
+
   test("its character's Normal Attacks deal 1 more DMG, and its Physical DMG becomes Geo DMG", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -468,6 +471,8 @@ describe("ragingOniKing", () => {
 });
 
 describe("superlativeSuperstrength", () => {
+  const ITTO_NORMAL_ATTACK = createSkill(16_051, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
+
   test("a Charged Attack deals 1 more DMG and spends a usage", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -549,6 +554,13 @@ describe("superlativeSuperstrength", () => {
 });
 
 describe("emblemOfSeveredFate", () => {
+  const KOKOMI_ID = 1205;
+  const TENKO = createSkill(TENKO_KENSHIN_ID, "Char_Skill_14083", GcgSkillKind.ElementalBurst);
+  const NEREID_ASCENSION_ID = 12_053;
+  const NEREID = createSkill(NEREID_ASCENSION_ID, "Char_Skill_12053", GcgSkillKind.ElementalBurst);
+  const ROYAL_DESCENT_ID = 16_053;
+  const ROYAL = createSkill(ROYAL_DESCENT_ID, "Char_Skill_16053", GcgSkillKind.ElementalBurst);
+
   test("after another character of its side uses an Elemental Burst, its character gains 1 Energy", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -625,6 +637,8 @@ describe("emblemOfSeveredFate", () => {
 });
 
 describe("hanachirusato", () => {
+  const KOKOMI_ID = 1205;
+  const ELECTRO_DIE: GcgCost = { count: 2, element: Element.Electro, kind: GcgCostKind.Dice };
   const TALENT_CARD = createTalentCard();
   const WEAPON_CARD: GcgCard = { ...TALENT_CARD, id: 311_401, kind: GcgCardKind.Weapon };
 
@@ -690,6 +704,8 @@ describe("hanachirusato", () => {
 });
 
 describe("kidKujirai", () => {
+  const KOKOMI_ID = 1205;
+
   test("at the Action Phase it creates an Omni die and moves to the opposing Support Zone when it has room", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -722,6 +738,9 @@ describe("kidKujirai", () => {
 });
 
 describe("theShrinesSacredShade", () => {
+  const ELECTRO_DIE: GcgCost = { count: 2, element: Element.Electro, kind: GcgCostKind.Dice };
+  const TENKO = createSkill(TENKO_KENSHIN_ID, "Char_Skill_14083", GcgSkillKind.ElementalBurst);
+  const YAKAN = createSkill(YAKAN_EVOCATION_ID, "Char_Skill_14082", GcgSkillKind.ElementalSkill);
   const SHRINE_TALENT_ID = 214_081;
 
   test("it is played on Yae Miko and uses Great Secret Art: Tenko Kenshin at once", () => {
@@ -769,6 +788,9 @@ describe("theShrinesSacredShade", () => {
 });
 
 describe("masatsu Zetsugi: Akaushi Burst!", () => {
+  const MASATSU_ZETSUGI_ID = 16_052;
+  const MASATSU = createSkill(MASATSU_ZETSUGI_ID, "Char_Skill_16052", GcgSkillKind.ElementalSkill);
+
   test("it deals 1 Geo DMG, summons Ushi and gains Superlative Superstrength", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -786,6 +808,9 @@ describe("masatsu Zetsugi: Akaushi Burst!", () => {
 });
 
 describe("royal Descent: Behold, Itto the Evil!", () => {
+  const ROYAL_DESCENT_ID = 16_053;
+  const ROYAL = createSkill(ROYAL_DESCENT_ID, "Char_Skill_16053", GcgSkillKind.ElementalBurst);
+
   test("it deals 4 Geo DMG and gains Raging Oni King", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -802,6 +827,10 @@ describe("royal Descent: Behold, Itto the Evil!", () => {
 });
 
 describe("nereidsAscension", () => {
+  const KOKOMI_ID = 1205;
+  const NEREID_ASCENSION_ID = 12_053;
+  const NEREID = createSkill(NEREID_ASCENSION_ID, "Char_Skill_12053", GcgSkillKind.ElementalBurst);
+
   test("it deals 2 Hydro DMG, heals all its characters 1 HP and gains Ceremonial Garment", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -822,6 +851,10 @@ describe("nereidsAscension", () => {
 });
 
 describe("kurage's Oath", () => {
+  const KOKOMI_ID = 1205;
+  const KURAGE_OATH_ID = 12_052;
+  const KURAGE = createSkill(KURAGE_OATH_ID, "Char_Skill_12052", GcgSkillKind.ElementalSkill);
+
   test("it applies Hydro to its character and summons Bake-Kurage", () => {
     expect.hasAssertions();
     const duel = createDuel([

@@ -108,33 +108,6 @@ const createWeaponCard = (id: number, weapon: string): GcgCard => ({
   weapon,
 });
 
-const STARTING_HP = 10;
-const KABUKI_DAMAGE = 2;
-const HYOUKA_DAMAGE = 3;
-const FLARE_UP_DAMAGE = 2;
-// The skills' ids are synthetic, each only needing an id of its own that no other skill of the suite has
-const KABUKI: GcgSkill = {
-  costs: [],
-  effect: createDamageEffect(GcgDamageKind.Physical, KABUKI_DAMAGE),
-  energyGain: 1,
-  id: 1,
-  kind: GcgSkillKind.NormalAttack,
-};
-const HYOUKA: GcgSkill = {
-  costs: [],
-  effect: createDamageEffect(Element.Cryo, HYOUKA_DAMAGE),
-  energyGain: 1,
-  id: 2,
-  kind: GcgSkillKind.ElementalSkill,
-};
-const FIREWORK_FLARE_UP: GcgSkill = {
-  costs: [],
-  effect: createDamageEffect(GcgDamageKind.Physical, FLARE_UP_DAMAGE),
-  energyGain: 1,
-  id: 3,
-  kind: GcgSkillKind.NormalAttack,
-};
-
 describe("frostflakeSekiNoTo", () => {
   test("it deals 2 Cryo DMG at each End Phase, for two usages", () => {
     expect.hasAssertions();
@@ -149,6 +122,7 @@ describe("frostflakeSekiNoTo", () => {
 });
 
 describe("kamisatoArtSoumetsu", () => {
+  const STARTING_HP = 10;
   // The damage the skill below deals is a fixture input, and the hp the tests expect is derived from it
   const SOUMETSU_DAMAGE = 4;
 
@@ -203,6 +177,16 @@ describe("cryoElementalInfusion", () => {
 });
 
 describe("kamisatoArtSenho", () => {
+  const STARTING_HP = 10;
+  const KABUKI_DAMAGE = 2;
+  // The skills' ids are synthetic, each only needing an id of its own that no other skill of the suite has
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(GcgDamageKind.Physical, KABUKI_DAMAGE),
+    energyGain: 1,
+    id: 1,
+    kind: GcgSkillKind.NormalAttack,
+  };
   const CRYO_INFUSION_BONUS = 1;
 
   const SENHO_PASSIVE: GcgSkill = {
@@ -284,6 +268,33 @@ describe("kamisatoArtSenho", () => {
 });
 
 describe("the skills whose damage is parsed from their effect name", () => {
+  const STARTING_HP = 10;
+  const KABUKI_DAMAGE = 2;
+  const HYOUKA_DAMAGE = 3;
+  const FLARE_UP_DAMAGE = 2;
+  // The skills' ids are synthetic, each only needing an id of its own that no other skill of the suite has
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(GcgDamageKind.Physical, KABUKI_DAMAGE),
+    energyGain: 1,
+    id: 1,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const HYOUKA: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(Element.Cryo, HYOUKA_DAMAGE),
+    energyGain: 1,
+    id: 2,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+  const FIREWORK_FLARE_UP: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(GcgDamageKind.Physical, FLARE_UP_DAMAGE),
+    energyGain: 1,
+    id: 3,
+    kind: GcgSkillKind.NormalAttack,
+  };
+
   test("kamisato Art: Kabuki deals 2 Physical DMG, with no aura", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -325,6 +336,23 @@ describe("the skills whose damage is parsed from their effect name", () => {
 });
 
 describe("adventurersBandana", () => {
+  const KABUKI_DAMAGE = 2;
+  const HYOUKA_DAMAGE = 3;
+  // The skills' ids are synthetic, each only needing an id of its own that no other skill of the suite has
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(GcgDamageKind.Physical, KABUKI_DAMAGE),
+    energyGain: 1,
+    id: 1,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const HYOUKA: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(Element.Cryo, HYOUKA_DAMAGE),
+    energyGain: 1,
+    id: 2,
+    kind: GcgSkillKind.ElementalSkill,
+  };
   // The hp a character is wounded to, so a heal has room to land, and the heals the two weapons below give
   const WOUNDED_HP = 5;
   const BANDANA_HEAL = 1;
@@ -366,6 +394,24 @@ describe("adventurersBandana", () => {
 });
 
 describe("aquilaFavonia", () => {
+  const STARTING_HP = 10;
+  const KABUKI_DAMAGE = 2;
+  const HYOUKA_DAMAGE = 3;
+  // The skills' ids are synthetic, each only needing an id of its own that no other skill of the suite has
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(GcgDamageKind.Physical, KABUKI_DAMAGE),
+    energyGain: 1,
+    id: 1,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const HYOUKA: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(Element.Cryo, HYOUKA_DAMAGE),
+    energyGain: 1,
+    id: 2,
+    kind: GcgSkillKind.ElementalSkill,
+  };
   const WOUNDED_HP = 5;
   const AQUILA_BONUS = 1;
   const AQUILA_HEAL = 1;
@@ -466,6 +512,24 @@ describe("aquilaFavonia", () => {
 });
 
 describe("parametricTransformer", () => {
+  const HYOUKA_DAMAGE = 3;
+  const FLARE_UP_DAMAGE = 2;
+  // The skills' ids are synthetic, each only needing an id of its own that no other skill of the suite has
+  const HYOUKA: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(Element.Cryo, HYOUKA_DAMAGE),
+    energyGain: 1,
+    id: 2,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+  const FIREWORK_FLARE_UP: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(GcgDamageKind.Physical, FLARE_UP_DAMAGE),
+    energyGain: 1,
+    id: 3,
+    kind: GcgSkillKind.NormalAttack,
+  };
+
   test("it gains 1 Qualitative Progress when either side's Skill deals Elemental DMG, and not for Physical DMG", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -501,6 +565,24 @@ describe("parametricTransformer", () => {
 });
 
 describe("kantenSenmyouBlessing", () => {
+  const STARTING_HP = 10;
+  const KABUKI_DAMAGE = 2;
+  const HYOUKA_DAMAGE = 3;
+  // The skills' ids are synthetic, each only needing an id of its own that no other skill of the suite has
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(GcgDamageKind.Physical, KABUKI_DAMAGE),
+    energyGain: 1,
+    id: 1,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const HYOUKA: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(Element.Cryo, HYOUKA_DAMAGE),
+    energyGain: 1,
+    id: 2,
+    kind: GcgSkillKind.ElementalSkill,
+  };
   const KANTEN_BONUS = 1;
 
   const INFUSED = [createGcgZoneCard(CRYO_ELEMENTAL_INFUSION_ID, cryoElementalInfusion)];

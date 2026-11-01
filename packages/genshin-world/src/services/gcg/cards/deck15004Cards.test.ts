@@ -85,17 +85,12 @@ const createSideState = (
 const defenderOf = (duel: GcgDuel): GcgCharacterState => takeOne(takeOne(duel.sides, 1).characters, 0);
 const attackerOf = (duel: GcgDuel): GcgCharacterState => takeOne(takeOne(duel.sides, 0).characters, 0);
 
-const EREMITE_ID = 2303;
 const ITTO_ID = 1605;
-const CARD_ID = 999_999;
-const BOW = "BOW";
-const INUZAKA = createSkill(16_062, "Char_Skill_16062", GcgSkillKind.ElementalSkill);
-const BURNING = BURNING_ASSAULT_SKILL;
-const PYRO_SKILL = createSkill(12_002, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill, [
-  { count: 3, element: Element.Pyro, kind: GcgCostKind.Dice },
-]);
 
 describe("inuzakaAllRoundDefense", () => {
+  const BOW = "BOW";
+  const INUZAKA = createSkill(16_062, "Char_Skill_16062", GcgSkillKind.ElementalSkill);
+
   test("should deal 2 Geo DMG and create a General's War Banner once the damage lands", () => {
     expect.hasAssertions();
 
@@ -234,6 +229,9 @@ describe("generalsGlory", () => {
 });
 
 describe("rushingHound", () => {
+  const CARD_ID = 999_999;
+  const INUZAKA = createSkill(16_062, "Char_Skill_16062", GcgSkillKind.ElementalSkill);
+
   test("should draw 1 card when a Geo DMG skill lands while the banner is in play, once per Round", () => {
     expect.hasAssertions();
 
@@ -258,6 +256,7 @@ describe("rushingHound", () => {
 });
 
 describe("searingGlare", () => {
+  const EREMITE_ID = 2303;
   const SEARING = createSkill(23_031, "Char_Skill_23031", GcgSkillKind.NormalAttack);
 
   test("should deal 1 Pyro DMG", () => {
@@ -278,6 +277,7 @@ describe("searingGlare", () => {
 });
 
 describe("blazingStrike", () => {
+  const EREMITE_ID = 2303;
   const BLAZING = createSkill(23_032, "Char_Skill_23032", GcgSkillKind.ElementalSkill);
 
   test("should deal 3 Pyro DMG and create a Scorpion Blessing stack each time", () => {
@@ -302,6 +302,7 @@ describe("blazingStrike", () => {
 });
 
 describe("spiritOfOmensAwakening", () => {
+  const EREMITE_ID = 2303;
   const AWAKENING = createSkill(23_033, "Char_Skill_23033", GcgSkillKind.ElementalBurst);
 
   test("should deal 3 Pyro DMG and add one Pyro Scorpion to the hand once per Match", () => {
@@ -326,6 +327,7 @@ describe("spiritOfOmensAwakening", () => {
 });
 
 describe("spiritOfOmensPower", () => {
+  const EREMITE_ID = 2303;
   const SPIRIT_POWER = createSkill(23_034, "Char_Skill_23034", GcgSkillKind.Passive);
 
   test("should gain 1 Energy after the Eremite takes DMG at 7 HP or less, once per Round", () => {
@@ -369,6 +371,8 @@ describe("spiritOfOmensPower", () => {
 });
 
 describe("pyroScorpion", () => {
+  const EREMITE_ID = 2303;
+
   test("should negate 1 DMG for 1 Energy and create a Scorpion Blessing, spending its usage", () => {
     expect.hasAssertions();
 
@@ -394,6 +398,9 @@ describe("pyroScorpion", () => {
 });
 
 describe("burningAssault", () => {
+  const EREMITE_ID = 2303;
+  const BURNING = BURNING_ASSAULT_SKILL;
+
   test("should deal 2 Pyro DMG plus one per Scorpion Blessing stack, and spend the stacks", () => {
     expect.hasAssertions();
 
@@ -444,6 +451,9 @@ describe("burningAssault", () => {
 });
 
 describe("scorpocalypse", () => {
+  const EREMITE_ID = 2303;
+  const BURNING = BURNING_ASSAULT_SKILL;
+
   test("should add a Pyro Scorpion to the hand when Burning Assault defeats an opposing character", () => {
     expect.hasAssertions();
 
@@ -508,6 +518,11 @@ describe("scorpocalypse", () => {
 });
 
 describe("kingsSquire", () => {
+  const BOW = "BOW";
+  const PYRO_SKILL = createSkill(12_002, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill, [
+    { count: 3, element: Element.Pyro, kind: GcgCostKind.Dice },
+  ]);
+
   test("should spend 2 fewer Elemental Dice on the next Elemental Skill of the Round, once", () => {
     expect.hasAssertions();
 
@@ -563,6 +578,9 @@ describe("beaconOfTheReedSea", () => {
 });
 
 describe("vourukashasGlow", () => {
+  const EREMITE_ID = 2303;
+  const CARD_ID = 999_999;
+
   test("should draw 1 card when its character takes DMG while active, and heal 1 HP at the End Phase, once per Round", () => {
     expect.hasAssertions();
 
@@ -619,6 +637,8 @@ describe("tenshukaku", () => {
 });
 
 describe("grandNarukamiShrine", () => {
+  const INUZAKA = createSkill(16_062, "Char_Skill_16062", GcgSkillKind.ElementalSkill);
+
   test("should generate an Omni Elemental Die after a skill while the dice are odd, twice per Round", () => {
     expect.hasAssertions();
 
@@ -670,6 +690,12 @@ describe("sangonomiyaShrine", () => {
 });
 
 describe("sumeruCity", () => {
+  const EREMITE_ID = 2303;
+  const CARD_ID = 999_999;
+  const PYRO_SKILL = createSkill(12_002, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill, [
+    { count: 3, element: Element.Pyro, kind: GcgCostKind.Dice },
+  ]);
+
   test("should spend 1 fewer Elemental Die on a skill once per Round, while the dice do not outnumber the hand", () => {
     expect.hasAssertions();
 
@@ -701,6 +727,8 @@ describe("sumeruCity", () => {
 });
 
 describe("weepingWillowOfTheLake", () => {
+  const CARD_ID = 999_999;
+
   test("should draw 2 cards at the End Phase with at most 2 cards in hand, and spend a usage", () => {
     expect.hasAssertions();
 

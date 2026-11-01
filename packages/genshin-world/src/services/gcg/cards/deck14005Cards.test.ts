@@ -33,14 +33,6 @@ const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 // A random source that throws the Cryo face for every die it rolls
 const cryoRandom = (): number => (GCG_DIE_FACES.indexOf(Element.Cryo) + 0.5) / GCG_DIE_FACES.length;
 
-const FLORAL_BRUSH_SKILL: GcgSkill = {
-  costs: [],
-  effect: "Char_Skill_17012",
-  energyGain: 1,
-  id: 17_012,
-  kind: GcgSkillKind.ElementalSkill,
-};
-
 describe("cuileinAnbar", () => {
   const FULL_HP = 10;
   const COLLEI_ID = 1701;
@@ -65,6 +57,13 @@ describe("cuileinAnbar", () => {
 });
 
 describe("floralBrush", () => {
+  const FLORAL_BRUSH_SKILL: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_17012",
+    energyGain: 1,
+    id: 17_012,
+    kind: GcgSkillKind.ElementalSkill,
+  };
   const FULL_HP = 10;
   const COLLEI_ID = 1701;
   const OPPOSING_CHARACTER_ID = 1203;
@@ -82,6 +81,13 @@ describe("floralBrush", () => {
 });
 
 describe("gamblersEarrings", () => {
+  const FLORAL_BRUSH_SKILL: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_17012",
+    energyGain: 1,
+    id: 17_012,
+    kind: GcgSkillKind.ElementalSkill,
+  };
   const COLLEI_ID = 1701;
   const OPPOSING_CHARACTER_ID = 1203;
   const OTHER_CHARACTER_ID = 1401;
@@ -150,6 +156,13 @@ describe("gamblersEarrings", () => {
 });
 
 describe("instructorsCap", () => {
+  const FLORAL_BRUSH_SKILL: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_17012",
+    energyGain: 1,
+    id: 17_012,
+    kind: GcgSkillKind.ElementalSkill,
+  };
   const FULL_HP = 10;
   const COLLEI_ID = 1701;
   const OPPOSING_CHARACTER_ID = 1203;

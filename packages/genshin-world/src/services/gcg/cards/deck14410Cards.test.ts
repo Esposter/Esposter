@@ -73,13 +73,10 @@ const createChinjuDuel = (dice: Element[]) => {
   return duel;
 };
 
-const ABYSS_LECTOR_ID = 2302;
-const ELEMENTAL_SKILL = createSkill(23_022, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill);
-const TENGU_STORMCALL = createSkill(14_062, "Char_Skill_14062", GcgSkillKind.ElementalSkill);
-const KOUKOU_SENDOU = createSkill(14_063, "Char_Skill_14063", GcgSkillKind.ElementalBurst);
-const SARA_NORMAL_ATTACK = createSkill(14_061, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
-
 describe("fieryRebirth", () => {
+  const ABYSS_LECTOR_ID = 2302;
+  const ELEMENTAL_SKILL = createSkill(23_022, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill);
+
   test("a lethal hit restores the character to 4 HP, and a second lethal hit defeats it", () => {
     expect.hasAssertions();
 
@@ -222,6 +219,9 @@ describe("rockPaperScissorsCombo", () => {
 });
 
 describe("chainsOfWardingThunder", () => {
+  const ABYSS_LECTOR_ID = 2302;
+  const ELEMENTAL_SKILL = createSkill(23_022, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill);
+
   test("while it is on the field, the opposing side's first switch of a round spends 1 more die, and a later switch that round does not", () => {
     expect.hasAssertions();
 
@@ -308,6 +308,8 @@ describe("lightningLockdown", () => {
 });
 
 describe("aegisOfAbyssalFlame", () => {
+  const ABYSS_LECTOR_ID = 2302;
+
   test("the shield takes a hit first, and once its points are depleted, 1 piercing DMG reaches every opposing character", () => {
     expect.hasAssertions();
 
@@ -378,6 +380,7 @@ describe("aegisOfAbyssalFlame", () => {
 });
 
 describe("embersRekindled", () => {
+  const ABYSS_LECTOR_ID = 2302;
   const EMBERS_TALENT: GcgCard = {
     costs: [],
     descriptionTextId: 1,
@@ -442,6 +445,7 @@ describe("embersRekindled", () => {
 });
 
 describe("absorbingPrism", () => {
+  const ABYSS_LECTOR_ID = 2302;
   const ABSORBING_PRISM_CARD: GcgCard = {
     costs: [],
     descriptionTextId: 1,
@@ -495,6 +499,8 @@ describe("absorbingPrism", () => {
 });
 
 describe("tenguStormcall", () => {
+  const TENGU_STORMCALL = createSkill(14_062, "Char_Skill_14062", GcgSkillKind.ElementalSkill);
+
   test("it deals 1 Electro DMG and summons Tengu Juurai: Ambush for its one use", () => {
     expect.hasAssertions();
 
@@ -558,6 +564,8 @@ describe("tenguJuuraiStormcluster", () => {
 });
 
 describe("darkfireFurnace", () => {
+  const ABYSS_LECTOR_ID = 2302;
+
   test("end Phase deals 1 Pyro DMG to the active character and 1 piercing DMG to each character on standby", () => {
     expect.hasAssertions();
 
@@ -585,6 +593,7 @@ describe("darkfireFurnace", () => {
 });
 
 describe("ominousStar", () => {
+  const ABYSS_LECTOR_ID = 2302;
   const OMINOUS_STAR = createSkill(23_023, "Char_Skill_23023", GcgSkillKind.ElementalBurst);
 
   test("it deals 3 Pyro DMG and summons Darkfire Furnace for its two usages", () => {
@@ -607,6 +616,10 @@ describe("ominousStar", () => {
 });
 
 describe("crowfeatherCover", () => {
+  const TENGU_STORMCALL = createSkill(14_062, "Char_Skill_14062", GcgSkillKind.ElementalSkill);
+  const KOUKOU_SENDOU = createSkill(14_063, "Char_Skill_14063", GcgSkillKind.ElementalBurst);
+  const SARA_NORMAL_ATTACK = createSkill(14_061, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
+
   test.each([
     ["Elemental Skill", TENGU_STORMCALL, 8],
     ["Elemental Burst", KOUKOU_SENDOU, 7],
@@ -652,6 +665,7 @@ describe("crowfeatherCover", () => {
 });
 
 describe("abyssalSummons", () => {
+  const ABYSS_LECTOR_ID = 2302;
   const ABYSSAL_SUMMONS_CARD: GcgCard = {
     costs: [],
     descriptionTextId: 1,
@@ -687,6 +701,8 @@ describe("abyssalSummons", () => {
 });
 
 describe("hilichurl summons", () => {
+  const ABYSS_LECTOR_ID = 2302;
+
   test.each([
     ["Cryo Hilichurl Shooter", CRYO_HILICHURL_SHOOTER_ID, cryoHilichurlShooter],
     ["Hilichurl Berserker", HILICHURL_BERSERKER_ID, hilichurlBerserker],
@@ -715,6 +731,8 @@ describe("hilichurl summons", () => {
 });
 
 describe("sinOfPride", () => {
+  const TENGU_STORMCALL = createSkill(14_062, "Char_Skill_14062", GcgSkillKind.ElementalSkill);
+  const KOUKOU_SENDOU = createSkill(14_063, "Char_Skill_14063", GcgSkillKind.ElementalBurst);
   const SIN_OF_PRIDE_CARD: GcgCard = {
     costs: [],
     descriptionTextId: 1,
@@ -794,6 +812,10 @@ describe("sinOfPride", () => {
 });
 
 describe("shimenawasReminiscence", () => {
+  const ABYSS_LECTOR_ID = 2302;
+  const TENGU_STORMCALL = createSkill(14_062, "Char_Skill_14062", GcgSkillKind.ElementalSkill);
+  const SARA_NORMAL_ATTACK = createSkill(14_061, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
+
   test("once per round, a Talent card or Elemental Skill spends one Elemental Die less", () => {
     expect.hasAssertions();
 
@@ -859,6 +881,7 @@ describe("shimenawasReminiscence", () => {
 });
 
 describe("chinjuForest", () => {
+  const SARA_NORMAL_ATTACK = createSkill(14_061, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
   const NORMAL_ATTACK_COSTS: GcgCost[] = [{ count: 2, kind: GcgCostKind.Unaligned }];
 
   test("with an even number of dice, a normal attack costs 1 fewer Unaligned die, and the card spends a usage", () => {
@@ -885,6 +908,7 @@ describe("chinjuForest", () => {
 });
 
 describe("elementalResonanceHighVoltage", () => {
+  const ABYSS_LECTOR_ID = 2302;
   const HIGH_VOLTAGE_CARD: GcgCard = {
     costs: [],
     descriptionTextId: 1,
