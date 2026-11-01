@@ -150,7 +150,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `marked`                                | —                     | Keep — engine    | the client's markdown parser                                                                           |
 | `mime-db`                               | —                     | Keep — data      | the IANA-derived dataset our `@esposter/shared` lookup reads, which changes without us                 |
 | `minisearch`                            | —                     | Keep — engine    | the search index                                                                                       |
-| `mjml`                                  | 2026-10-18 · Opus 5.5 | Keep — engine    | the MJML compiler, which mjml-blocks' tests compile under strict validation                            |
+| `mjml`                                  | 2026-10-18 · Opus 5.5 | Keep — engine    | the MJML compiler, which the email editor's server and mjml-blocks' tests run under strict validation  |
 | `mjml-preset-core`                      | 2026-10-18 · Opus 5.5 | Keep — data      | MJML's component set and nesting map, which mjml-blocks' tables and slots are held equal to            |
 | `mlly`                                  | —                     | Keep — tooling   | the static export reader the module lists a package's exports with, never importing it                 |
 | `mocked-exports`                        | —                     | Keep — hold      | Nitro 3 resolves it from the app (`@TODO` in the catalog)                                              |
