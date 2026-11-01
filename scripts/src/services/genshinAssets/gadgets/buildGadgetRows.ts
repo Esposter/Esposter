@@ -5,7 +5,7 @@ import { CONFIG_WIDGET_PATH, SERENITEA_POT_ITEM_ID } from "#src/services/genshin
 import { toGadgetRows } from "#src/services/genshinAssets/gadgets/toGadgetRows";
 import { toSereniteaPotGadgetRow } from "#src/services/genshinAssets/gadgets/toSereniteaPotGadgetRow";
 import { GATHER_TABLE_NAME } from "#src/services/genshinAssets/gathering/constants";
-import { MATERIAL_TABLE_NAME } from "#src/services/genshinText/constants";
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { GameDataset } from "genshin-world";

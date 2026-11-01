@@ -32,7 +32,6 @@ export const DIALOG_TABLE_NAME = "DialogExcelConfigData";
 // City table naming each city by its id, and the material table giving each item its rarity in stars
 export const CHAPTER_TABLE_NAME = "ChapterExcelConfigData";
 export const CITY_TABLE_NAME = "CityConfigData";
-export const MATERIAL_TABLE_NAME = "MaterialExcelConfigData";
 // The shop goods table, each good by its id with its shop, its price and its limit, which the shops and the items builds read
 export const SHOP_GOODS_TABLE_NAME = "ShopGoodsExcelConfigData";
 // The series the world carries whole, by the chapter table's id: the first whose first quest a placed resident offers.

@@ -4,13 +4,13 @@ import type { DumpedCity } from "#src/models/genshinText/DumpedCity";
 import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
 import type { QuestChapter, QuestReward } from "genshin-world";
 
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import {
   CARRIED_CHAPTER_IDS,
   CHAPTER_TABLE_NAME,
   CITY_TABLE_NAME,
   MAIN_QUEST_TABLE_NAME,
-  MATERIAL_TABLE_NAME,
 } from "#src/services/genshinText/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { toQuestChapter } from "#src/services/genshinText/toQuestChapter";
