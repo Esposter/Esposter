@@ -4,6 +4,7 @@ import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 import type { GatheringItem } from "genshin-world";
 
 import {
+  GATHER_EXCLUDED_ITEM_IDS,
   GATHER_POINT_LOCATION_GROUND,
   GATHER_SAVE_TYPE_NONE,
   GATHER_TABLE_NAME,
@@ -21,7 +22,8 @@ import { MaterialType } from "genshin-world";
 // The plants, specialties and ores the gathering points give. An item is one when the gather table picks it off the ground, and
 // Its English name is the name of a label the official map files under a category that respawns, which is the label
 // Its points are marked by. Returns the items, and each label's item by the label's id, the first item of a name taking
-// The label where two items share one. An item of a material type the world does not name is left out
+// The label where two items share one. An item no label names, or of a material type the world does not name, is
+// Left out only when `GATHER_EXCLUDED_ITEM_IDS` lists it, and refused otherwise
 export const readGatheringItems = (
   labels: InteractiveMapLabel[],
 ): { items: GatheringItem[]; labelItemIdMap: Map<number, number> } => {
@@ -55,7 +57,15 @@ export const readGatheringItems = (
     const respawn = firstLabel && getLabelRespawn(firstLabel);
     const { materialType: materialTypeName = MATERIAL_TYPE_NONE } = materialRow;
     const materialType = Object.values(MaterialType).find((type) => type === materialTypeName);
-    if (!firstLabel || !respawn || !materialType) continue;
+    if (!firstLabel || !respawn || !materialType) {
+      if (GATHER_EXCLUDED_ITEM_IDS.has(itemId)) continue;
+      throw new InvalidOperationError(
+        Operation.Read,
+        String(itemId),
+        "is left out and is not in GATHER_EXCLUDED_ITEM_IDS",
+      );
+    }
+
     items.push({
       id: itemId,
       materialType,

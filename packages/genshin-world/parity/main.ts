@@ -30,11 +30,14 @@ import { computeWitnessPoints } from "#parity/witness/computeWitnessPoints";
 import { getWitnessFamilyOffsets } from "#parity/witness/getWitnessFamilyOffsets";
 import { renderWitnessTargets } from "#parity/witness/renderWitnessTargets";
 import { setWitnessView } from "#parity/witness/setWitnessView";
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { useCharacterPackPreload } from "#src/composables/useCharacterPackPreload";
+import { CharacterPackPreloadStatus } from "#src/models/character/CharacterPackPreloadStatus";
 import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
 import { loadWitness } from "#src/services/scene/loadWitness";
 import { SceneContextKey } from "#src/services/scene/SceneContextKey";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
-import { capitalize, InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
+import { capitalize, InvalidOperationError, jsonDateParse, noop, Operation } from "@esposter/shared";
 import { StoneNodeMaterial } from "genshin-engine";
 import { checkIsGameLanguage, GameTextLoaderMap } from "genshin-text";
 
@@ -70,6 +73,7 @@ const name = searchParameters.get("screen");
 const motion = searchParameters.get("motion");
 const screen = screens.find((candidate) => candidate.name === name);
 const root = window.document.querySelector("#app");
+const sceneContext = shallowRef<SceneContext>();
 if (screen && root) {
   const { component } = screen;
   // A reference judging the screen in another state than its fixture's hands its own props, as JSON, over the fixture's
@@ -123,7 +127,14 @@ if (screen && root) {
         parts,
       }
     : undefined;
-  const sceneContext = shallowRef<SceneContext>();
+  // A world screen draws its characters from the packs the cache holds, so the page fills the cache before the screen
+  // Mounts. A download that fails throws, so the page records it and the screen never mounts with no character in it
+  if (screen.directory.startsWith("World/")) {
+    const { preload, status } = useCharacterPackPreload(GAME_DATA_LOCAL_BASE_URL, noop);
+    await preload();
+    if (status.value === CharacterPackPreloadStatus.Failed)
+      throw new InvalidOperationError(Operation.Read, "character packs", "failed to download");
+  }
   const app = createApp({
     setup: () => {
       /* oxlint-disable no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see */
@@ -221,4 +232,7 @@ if (screen && root) {
   root.innerHTML = screens
     .map(({ name: screenName }) => `<a href="?screen=${screenName}">${screenName}</a>`)
     .join("<br>");
+// The load as the page signals ready, taken at that moment so a fetch the page issues after it is not in the reading
+// Which a tool reads back
+Reflect.set(window, "loadAtReady", { bench: benchLoad(sceneContext.value, longFrames, 0), readyMs: performance.now() });
 window.document.body.dataset.parityReady = screen?.name ?? "";

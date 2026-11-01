@@ -11,7 +11,14 @@ import { GOOD_HUNTER_SHOP_TYPE } from "#src/services/genshinAssets/shops/constan
 import { SHOP_GOODS_TABLE_NAME } from "#src/services/genshinText/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { takeOne } from "@esposter/shared";
-import { CookingFoodType, CookingQuality, EnemyDropFamilyDropTableMap, GadgetKind, GameDataset } from "genshin-world";
+import {
+  CookingFoodType,
+  CookingQuality,
+  DestroyRule,
+  EnemyDropFamilyDropTableMap,
+  GadgetKind,
+  GameDataset,
+} from "genshin-world";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/gameData/readPublishedGameData"), () => ({
@@ -45,6 +52,8 @@ describe(buildItems, () => {
 
   const BATCH_CONSUMABLE_ITEM_ID = 7001;
   const QUEST_CONSUMABLE_ITEM_ID = 7002;
+
+  const DESTROYABLE_ITEM_ID = 100_001;
 
   const FISH_ITEM_ID = 3001;
   const FONTAINE_FISHING_SHOP_TYPE = 1090;
@@ -234,6 +243,40 @@ describe(buildItems, () => {
 
     expect(items.filter(({ id }) => id === GADGET_ITEM_ID)).toStrictEqual([
       { id: GADGET_ITEM_ID, materialType: "MATERIAL_WIDGET", nameTextId: "5", rank: 1, rarity: 1, stackLimit: 1 },
+    ]);
+  });
+
+  test("publishes a material's destroy rule as its table gives it", async () => {
+    expect.hasAssertions();
+    itemTables[MATERIAL_TABLE_NAME] = [
+      ...materialTable,
+      {
+        destroyRule: DestroyRule.ReturnMaterial,
+        foodQuality: "",
+        id: DESTROYABLE_ITEM_ID,
+        itemUse: [],
+        materialType: "MATERIAL_CONSUME",
+        nameTextMapHash: 8,
+        rank: 1,
+        rankLevel: 1,
+        stackLimit: 99,
+      },
+    ];
+
+    const built = await buildItems();
+
+    const items = built[`${GameDataset.Items}/materials`] as { id: number }[];
+
+    expect(items.filter(({ id }) => id === DESTROYABLE_ITEM_ID)).toStrictEqual([
+      {
+        destroyRule: DestroyRule.ReturnMaterial,
+        id: DESTROYABLE_ITEM_ID,
+        materialType: "MATERIAL_CONSUME",
+        nameTextId: "8",
+        rank: 1,
+        rarity: 1,
+        stackLimit: 99,
+      },
     ]);
   });
 

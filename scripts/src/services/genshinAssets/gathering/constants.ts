@@ -40,3 +40,15 @@ export const LABEL_RESPAWN_MAP: Record<number, GatheringRespawn> = {
   // Condessence Crystal
   507: GatheringRespawn.ThreeDays,
 };
+// The ground items the builder leaves out, each with its reason. An item left out for a label or a material type the
+// World does not name is refused unless it is listed here, so no item goes missing without a name
+export const GATHER_EXCLUDED_ITEM_IDS: ReadonlySet<number> = new Set([
+  // A poise exclusion: the Mineral page's Breaking Ores table does not list Scarlet Quartz
+  101005,
+  // A poise exclusion: the Mineral page's Breaking Ores table does not list Rainbowdrop Crystal
+  101010,
+  // Its official label is the singular, "Rukkhashava Mushroom", which the name match does not reach
+  101213,
+  // A Quest Item, which the world holds no material type for, and which the official map labels no point of
+  121183,
+]);

@@ -23,7 +23,7 @@ describe(loadScreen, () => {
     totalBytes: 7,
   } satisfies LoadBench;
 
-  test("opens the page at its load event and reads ready and the bench together at the ready signal", async () => {
+  test("opens the page at its load event and reads back the reading it took at ready", async () => {
     expect.hasAssertions();
 
     const evaluate = vi.fn<() => Promise<unknown>>().mockResolvedValue({ bench: BENCH, readyMs: 250 });

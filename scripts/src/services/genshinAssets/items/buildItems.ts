@@ -125,6 +125,7 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
     }
     return [
       {
+        ...(materialRow.destroyRule !== undefined && { destroyRule: materialRow.destroyRule }),
         id: materialRow.id,
         materialType: toBagMaterialType(materialType),
         nameTextId: String(materialRow.nameTextMapHash),

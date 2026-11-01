@@ -1,7 +1,6 @@
 import type { LoadReading } from "#src/models/genshinParity/page/LoadReading";
 import type { ScreenCrossing } from "#src/models/genshinParity/ScreenCrossing";
 import type { ParityPageOptions } from "#src/models/genshinParity/shared/ParityPageOptions";
-import type { LoadBench } from "genshin-world/parity/models/LoadBench";
 
 import { crossScreen } from "#src/services/genshinParity/page/crossScreen";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
@@ -14,11 +13,8 @@ export const loadScreen = async (options: ParityPageOptions, crossing?: ScreenCr
   const { close, page } = await openParityPage({ ...options, isFrameRateUnlimited: false });
   return withFinalizerAsync(
     async () => {
-      // Both readings in one evaluate, so the bench and the ready milliseconds are taken together at the ready signal
-      const { bench, readyMs } = await page.evaluate(() => ({
-        bench: (Reflect.get(window, "benchLoad") as () => LoadBench)(),
-        readyMs: performance.now(),
-      }));
+      // The page takes both readings as it signals ready, so a fetch it issues after the signal is not in them
+      const { bench, readyMs } = await page.evaluate(() => Reflect.get(window, "loadAtReady") as LoadReading);
       if (!crossing) return { bench, readyMs };
       return { bench, crossing: await crossScreen(page, crossing), readyMs };
     },

@@ -6,10 +6,11 @@ import { readBookBody } from "#src/services/genshinAssets/archive/readBookBody";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguages } from "genshin-text";
-import { GameDataset } from "genshin-world";
+import { bookBodySchema, GameDataset } from "genshin-world";
 
 // Every language's text of each book's body, read from the readable file its localization row names in that language, and
-// Published as one index a language, each body keyed by its id. Returns the publication and a note of the count
+// Published as one index a language, each body keyed by its id once `bookBodySchema` parses it.
+// Returns the publication and a note of the count
 export const buildBookBodyPublication = (
   bodyIds: readonly number[],
 ): { note: string; publication: GameDataPublication } => {
@@ -30,7 +31,10 @@ export const buildBookBodyPublication = (
     GameLanguages.map((language) => [
       `${GameDataset.BookBody}/${language}`,
       Object.fromEntries(
-        localizationRows.map(([bodyId, localizationRow]) => [String(bodyId), readBookBody(localizationRow, language)]),
+        localizationRows.map(([bodyId, localizationRow]) => [
+          String(bodyId),
+          bookBodySchema.parse(readBookBody(localizationRow, language)),
+        ]),
       ),
     ]),
   );

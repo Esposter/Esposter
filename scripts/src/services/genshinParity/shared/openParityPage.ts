@@ -125,8 +125,8 @@ export const openParityPage = async ({
     // A faked clock runs only as far as the caller moves it, frame by frame, so a motion is shot at exact moments
     if (isClockFaked) await page.clock.install({ time: 0 });
     const pageUrl = pageRoot ?? (await resolveParityPageRoot());
-    // Opened at its load event rather than once idle, so a fetch the page issues after ready is not in the readings a
-    // Caller takes at the ready signal
+    // Opened at its load event rather than once idle, so a fetch the page issues after ready is not in the readings the
+    // Page takes at the ready signal
     await page.goto(
       `${pageUrl}?screen=${screen}${motionQuery}${propsQuery}${variantQuery}${backdropQuery}${windowLeftQuery}${witnessQuery}`,
     );

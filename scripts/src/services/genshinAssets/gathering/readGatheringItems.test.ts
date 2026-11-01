@@ -2,7 +2,11 @@ import type { InteractiveMapLabel } from "#src/models/genshinAssets/points/Inter
 import type { GatherRow } from "#src/models/genshinAssets/shared/GatherRow";
 import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 
-import { GATHER_POINT_LOCATION_GROUND, GATHER_TABLE_NAME } from "#src/services/genshinAssets/gathering/constants";
+import {
+  GATHER_EXCLUDED_ITEM_IDS,
+  GATHER_POINT_LOCATION_GROUND,
+  GATHER_TABLE_NAME,
+} from "#src/services/genshinAssets/gathering/constants";
 import { readGatheringItems } from "#src/services/genshinAssets/gathering/readGatheringItems";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
@@ -75,5 +79,24 @@ describe(readGatheringItems, () => {
     expect.hasAssertions();
     readGatherRows([{ itemId: ITEM_ID, pointLocation: GATHER_POINT_LOCATION_GROUND, pointType: 1001 }]);
     expect(readGatheringItems(labels)).toStrictEqual({ items: [], labelItemIdMap: new Map() });
+  });
+
+  test("should refuse a ground row no label names and no exclusion lists, rather than drop it", () => {
+    expect.hasAssertions();
+    readGatherRows([{ itemId: ITEM_ID, pointType: 1001, saveType: "GATHER_SAVE_TYPE_OWN" }]);
+    expect(() => readGatheringItems([])).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: 101, is left out and is not in GATHER_EXCLUDED_ITEM_IDS]`,
+    );
+  });
+
+  test("should leave out a ground row that no label names when the exclusions list its item", () => {
+    expect.hasAssertions();
+    const [excludedItemId] = GATHER_EXCLUDED_ITEM_IDS;
+    vi.mocked(readExcelTable).mockImplementation((name) =>
+      name === GATHER_TABLE_NAME
+        ? [{ itemId: excludedItemId, pointType: 1001, saveType: "GATHER_SAVE_TYPE_OWN" }]
+        : [{ ...materialRow, id: excludedItemId }],
+    );
+    expect(readGatheringItems([])).toStrictEqual({ items: [], labelItemIdMap: new Map() });
   });
 });

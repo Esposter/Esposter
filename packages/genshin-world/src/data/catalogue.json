@@ -3620,15 +3620,6 @@
           "weathers": ["Clear", "Cloudy", "Rain", "Thunderstorm"]
         },
         {
-          "id": "three-realms-gateway-offering",
-          "layer": "Surface",
-          "name": "Three Realms Gateway Offering",
-          "outline": [],
-          "subareas": [],
-          "subregion": "",
-          "weathers": ["Clear"]
-        },
-        {
           "id": "tsurumi-island",
           "layer": "Surface",
           "name": "Tsurumi Island",

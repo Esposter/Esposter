@@ -6,7 +6,8 @@ import { get } from "node:https";
 import { buffer } from "node:stream/consumers";
 import { zstdDecompressSync } from "node:zlib";
 
-// One object's JSON bytes as the account stores it, its zstd frame decoded here, since a plain request decodes nothing
+// One hosted object's bytes as the account stores it, a data file's JSON or a pack file's binary, its zstd frame decoded
+// Here, since a plain request decodes nothing
 export const downloadGameDataObject = async (url: string): Promise<Buffer> => {
   const response = await new Promise<IncomingMessage>((resolve, reject) => {
     get(url, { signal: AbortSignal.timeout(DATA_FETCH_TIMEOUT_MS) }, resolve).on("error", reject);
