@@ -1,22 +1,19 @@
 <script setup lang="ts">
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
+import type { GameText } from "genshin-text";
+
+import { GameTextKey } from "genshin-text";
 
 interface Props {
-  // The text of the row that leaves the choice unmade
-  cancelLabel: string;
   // Whether a row restores Original Resin with a Fragile Resin, where the held Original Resin covers no claim
-  canRestore: boolean;
-  // The text of a row paid in Condensed Resin
-  condensedLabel: string;
+  canRestore?: boolean;
+  // The text of the rows: the one that leaves the choice unmade, the two resins a row is paid in and the restore row
+  gameText: GameText;
   // The claims the held resin affords, one row each
   offers: BlossomClaimOffer[];
-  // The text of a row paid in Original Resin
-  originalLabel: string;
-  // The text of the restore row
-  restoreLabel: string;
 }
 
-const { cancelLabel, canRestore, condensedLabel, offers, originalLabel, restoreLabel } = defineProps<Props>();
+const { canRestore = false, gameText, offers } = defineProps<Props>();
 const emit = defineEmits<{
   // A row chosen, which spends its resin and grants its rewards
   choose: [offer: BlossomClaimOffer];
@@ -39,10 +36,12 @@ const emit = defineEmits<{
       type="button"
       @click="emit('choose', offer)"
     >
-      {{ offer.condensedResinCount > 0 ? condensedLabel : originalLabel }}
+      {{ gameText[offer.condensedResinCount > 0 ? GameTextKey.UseCondensedResin : GameTextKey.UseOriginalResin] }}
     </button>
-    <button v-if="canRestore" class="offer" type="button" @click="emit('restore')">{{ restoreLabel }}</button>
-    <button class="offer" type="button" @click="emit('close')">{{ cancelLabel }}</button>
+    <button v-if="canRestore" class="offer" type="button" @click="emit('restore')">
+      {{ gameText[GameTextKey.FragileResinRestore] }}
+    </button>
+    <button class="offer" type="button" @click="emit('close')">{{ gameText[GameTextKey.Cancel] }}</button>
   </div>
 </template>
 

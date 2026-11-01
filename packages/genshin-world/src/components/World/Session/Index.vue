@@ -118,7 +118,6 @@ import { MAP_REFERENCE_ZOOM_METRES, TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } 
 import { findAreaAt } from "#src/services/map/findAreaAt";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
 import { GENSHIN_SETTINGS_DEFAULTS } from "#src/services/menu/constants";
-import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
@@ -579,6 +578,7 @@ const abyssBonusLines = shallowRef<AttributeLine[]>([]);
 const { characterIdConstellationsMap, stellaFortunaNameTextIdMap } = useWorldConstellations(gameDataBaseUrl);
 // The party, the characters, the enemies and the kit's effects, which a defeat places drops among and a team's fall revives
 const {
+  activeCharacterId,
   characterIdKitMap,
   characterIdSkillGlyphsMap,
   characters,
@@ -940,7 +940,7 @@ const { characterPassiveGroupIdMap, downCharacterIds, expeditionCharacters, expe
 const craftingArtifactDropTables = { artifactMainAffixPools, artifactRarityDataMap, reliquarySets };
 // The party's crafters, each named by the game's text, and the one on the field, who is picked as the bench opens
 const crafting = computed(() =>
-  computeCraftingCrafters(getDeployedCharacterIds(party), getActiveCharacterId(party), getCharacterName),
+  computeCraftingCrafters(getDeployedCharacterIds(party), activeCharacterId.value, getCharacterName),
 );
 // The ley line outcrops the world draws: a touch starts a blossom's fight, a camp's last enemy reveals it, and F claims it
 // With resin, and each day's are drawn at the daily reset
@@ -1245,7 +1245,7 @@ const { pointedLandmark } = useWorldPointedLandmark({ lockedJumpLandmarks, mapCa
 // The character on the field's locomotion and max HP, which the sheer cold gauge reads each frame
 const getCharacter = () => {
   const phase = character.value?.phase;
-  const maxHealth = getMemberMaxHealth(getActiveCharacterId(party));
+  const maxHealth = getMemberMaxHealth(activeCharacterId.value);
   return phase && maxHealth !== undefined ? { maxHealth, phase } : undefined;
 };
 const getAntiColdRatio = () => getTeamAntiColdRatio(kitContext.kitEffectState.effects);
@@ -1392,7 +1392,7 @@ useWorldSaveSync({
         :trounce-blossoms
         :mining-outcrop-places="standingMiningOutcrops"
         :oculus-places="unfoundOculusPlaces"
-        :active-character-id="getActiveCharacterId(party)"
+        :active-character-id
         :catalogue
         :character-body="cameraPose || witness || !locomotion ? undefined : characterBody"
         :character-locomotion="locomotion"
@@ -1516,35 +1516,24 @@ useWorldSaveSync({
         />
         <OfferChoice
           v-if="claimPrompt"
-          :cancel-label="gameText[GameTextKey.Cancel]"
           :can-restore="claimPrompt.canRestore"
-          :condensed-label="gameText[GameTextKey.UseCondensedResin]"
+          :game-text
           :offers="claimPrompt.offers"
-          :original-label="gameText[GameTextKey.UseOriginalResin]"
-          :restore-label="gameText[GameTextKey.FragileResinRestore]"
           @choose="(offer) => chooseOutcropClaim(offer, getWorldNow(), worldLevel, kitContext.random)"
           @close="closeOutcropClaim()"
           @restore="restoreOutcropClaim(getWorldNow())"
         />
         <OfferChoice
           v-if="trounceClaimPrompt"
-          :cancel-label="gameText[GameTextKey.Cancel]"
-          :can-restore="false"
-          :condensed-label="gameText[GameTextKey.UseCondensedResin]"
+          :game-text
           :offers="trounceClaimPrompt.offers"
-          :original-label="gameText[GameTextKey.UseOriginalResin]"
-          restore-label=""
           @choose="() => chooseTrounceBlossomClaim(getWorldNow(), worldLevel, kitContext.random)"
           @close="closeTrounceBlossomClaim()"
         />
         <OfferChoice
           v-if="domainClaimOffers"
-          :cancel-label="gameText[GameTextKey.Cancel]"
-          :can-restore="false"
-          :condensed-label="gameText[GameTextKey.UseCondensedResin]"
+          :game-text
           :offers="domainClaimOffers"
-          :original-label="gameText[GameTextKey.UseOriginalResin]"
-          restore-label=""
           @choose="(offer) => chooseDomainTreeClaim(offer, getWorldNow())"
           @close="closeDomainTreeClaim()"
         />
@@ -1688,7 +1677,7 @@ useWorldSaveSync({
         <CharacterScreen
           v-model:characters="characters"
           v-model:wallet="wallet"
-          :active-character-id="getActiveCharacterId(party)"
+          :active-character-id
           :adventure-rank="rank"
           :character-talent-kits
           :character-id-constellations-map
@@ -1896,14 +1885,14 @@ useWorldSaveSync({
       v-if="screenKind === ScreenKind.Cooking && cookingRecipe"
       v-model:progress="cookingProgress"
       v-model:recipe="cookingRecipe"
-      :avatar-id="getActiveCharacterId(party)"
+      :avatar-id="activeCharacterId"
       :game-text
       :inventory
       :material-data-map
       :name-text
       :random="kitContext.random"
       :recipes="openCookingRecipes"
-      :talent="cookingTalents[getActiveCharacterId(party)]"
+      :talent="cookingTalents[activeCharacterId]"
       @close="closeScreen()"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
     />

@@ -173,7 +173,9 @@ export const useWorldCombat = ({
     }
     return combatantMap;
   });
-  const activeCombatant = computed(() => characterIdCombatantMap.value.get(getActiveCharacterId(party)));
+  // The character on the field, which the screens and the HUD name the active member by
+  const activeCharacterId = computed(() => getActiveCharacterId(party));
+  const activeCombatant = computed(() => characterIdCombatantMap.value.get(activeCharacterId.value));
   const activePartyMember = computed(() => getPartyMember(party, getActiveCharacterId(party)));
   // The deployed team's skill and burst icons the HUD's buttons carry, by character id, each carried by its kit
   const characterIdSkillGlyphsMap = computed(
@@ -326,6 +328,7 @@ export const useWorldCombat = ({
       : undefined;
   };
   return {
+    activeCharacterId,
     characterIdKitMap,
     characterIdSkillGlyphsMap,
     characters,
