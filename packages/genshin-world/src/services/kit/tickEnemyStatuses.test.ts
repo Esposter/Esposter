@@ -12,17 +12,18 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 describe(tickEnemyStatuses, () => {
+  const baseStatus = { damageTakenBonus: 0, id: "", nextTickSeconds: 1, secondsRemaining: 3, tickIntervalSeconds: 1 };
+
   test("a status falls due once each interval while it lasts, and a refresh keeps its schedule", () => {
     expect.hasAssertions();
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    const status = { damageTakenBonus: 0, id: "", nextTickSeconds: 1, secondsRemaining: 3, tickIntervalSeconds: 1 };
-    addEnemyStatus(enemy, { ...status });
+    addEnemyStatus(enemy, { ...baseStatus });
     const tickCounts = [0.5, 0.5, 2.5].map((stepSeconds) => {
       const outbox: KitEvent[] = [];
       tickEnemyStatuses([enemy], stepSeconds, outbox);
       return outbox.length;
     });
-    addEnemyStatus(enemy, { ...status });
+    addEnemyStatus(enemy, { ...baseStatus });
 
     expect(tickCounts).toStrictEqual([0, 1, 2]);
     expect(enemy.statuses[0]?.nextTickSeconds).toBe(0.5);
@@ -31,13 +32,7 @@ describe(tickEnemyStatuses, () => {
   test("a status that has run out falls due no more", () => {
     expect.hasAssertions();
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    addEnemyStatus(enemy, {
-      damageTakenBonus: 0,
-      id: "",
-      nextTickSeconds: 1,
-      secondsRemaining: 0,
-      tickIntervalSeconds: 1,
-    });
+    addEnemyStatus(enemy, { ...baseStatus, secondsRemaining: 0 });
 
     const outbox: KitEvent[] = [];
     tickEnemyStatuses([enemy], 1, outbox);
@@ -48,13 +43,7 @@ describe(tickEnemyStatuses, () => {
   test("a tick falls due on the step its seconds run out, not one step late", () => {
     expect.hasAssertions();
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    addEnemyStatus(enemy, {
-      damageTakenBonus: 0,
-      id: "",
-      nextTickSeconds: 5,
-      secondsRemaining: 100,
-      tickIntervalSeconds: 100,
-    });
+    addEnemyStatus(enemy, { ...baseStatus, nextTickSeconds: 5, secondsRemaining: 100, tickIntervalSeconds: 100 });
     const outbox: KitEvent[] = [];
     for (let step = 0; step < 300; step++) tickEnemyStatuses([enemy], FIXED_STEP_SECONDS, outbox);
 
