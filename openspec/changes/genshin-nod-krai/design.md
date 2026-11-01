@@ -26,12 +26,6 @@ flowchart TD
 
 The catalogue holds Nod-Krai's areas as the game names them: Lempo Isle, Hiisi Island, Paha Isle, the Moontide Sea, the Lunar Highlands, Wavechaser Plain, Ashveil Peak, Dunanna Pit, Voidsea Outlook and the Dark Side of the Moon. Subareas include Nasha Town, the Frostmoon Enclave, Blue Amber Lake, Silvermoon Hall, Golden Hall, Favonius Keep, Cliffwatch Camp, the Nuur Stone Circle, the Pillar of Embla, Piramida, Traveler's Crater and Starsand Shoal.
 
-## Build order
-
-1. **Nasha Town** and its isle, where the game enters.
-2. **The Frostmoon Enclave** and the Scions' sites.
-3. **The other isles** and the Moontide Sea, then the rest in the catalogue's order.
-
 ## Reference checklist
 
 Nasha Town's port and main street, a Statue of the New Moon, the Frostmoon Enclave, Blue Amber Lake, a Fatui works, the moon at night from each isle, and the sea between the isles.
@@ -41,8 +35,6 @@ Nasha Town's port and main street, a Statue of the New Moon, the Frostmoon Encla
 | File                                                      | Role after the change                     |
 | :-------------------------------------------------------- | :---------------------------------------- |
 | `packages/genshin-engine/src/noise/createSimplexNoise.ts` | The detail noise each isle's ground tunes |
-
-The kits' fitted values are not yet: the step below reads them from the passes.
 
 **Still to build, in order:**
 
