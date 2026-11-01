@@ -12,9 +12,8 @@ Alyosha's kit is its record and one behaviour module, `createAlyoshaKitBehaviour
 
 ## Not built
 
-- **Hunter's Advance is waiting on its module.** Its field and Tugarin hits are not spawned, so her burst deals no damage yet.
+- **Hunter's Advance is waiting on its module.** Her burst deals no damage until that module is built, as the Decisions section above sets out.
 - **Thunderbolt Strike's hold is not built.** Her skill's hold has no record, so the skill deals its tap alone.
-- **The hitmark frames are open.** Her animation totals are read from the installed game's clips, which are on disk under `{data-root}/genshin-parity/extracted/timings/`; the open list below names the hitmark values that stand unchecked against them.
 
 ## Key files
 
