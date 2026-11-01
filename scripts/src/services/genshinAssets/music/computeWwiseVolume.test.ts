@@ -6,13 +6,9 @@ import { WwiseCurveParameter } from "#src/models/genshinAssets/music/WwiseCurveP
 import { WwiseCurveScaling } from "#src/models/genshinAssets/music/WwiseCurveScaling";
 import { WwiseProperty } from "#src/models/genshinAssets/music/WwiseProperty";
 import { computeWwiseVolume } from "#src/services/genshinAssets/music/computeWwiseVolume";
+import { createWords } from "#src/services/genshinAssets/music/createWords.test";
 import { describe, expect, test } from "vitest";
 
-const createWords = (...words: number[]): Buffer => {
-  const buffer = Buffer.alloc(words.length * 4);
-  for (const [index, word] of words.entries()) buffer.writeUInt32LE(word, index * 4);
-  return buffer;
-};
 const createProperties = (propertyValueMap: ReadonlyMap<number, number>): Buffer => {
   const values = Buffer.alloc(propertyValueMap.size * 4);
   for (const [index, value] of [...propertyValueMap.values()].entries()) values.writeFloatLE(value, index * 4);

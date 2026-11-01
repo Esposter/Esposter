@@ -2,14 +2,10 @@ import type { SoundBankObject } from "#src/models/genshinAssets/music/SoundBankO
 
 import { MusicPlaylistType } from "#src/models/genshinAssets/music/MusicPlaylistType";
 import { SoundBankObjectType } from "#src/models/genshinAssets/music/SoundBankObjectType";
+import { createWords } from "#src/services/genshinAssets/music/createWords.test";
 import { parseMusicHierarchy } from "#src/services/genshinAssets/music/parseMusicHierarchy";
 import { describe, expect, test } from "vitest";
 
-const createWords = (...words: number[]): Buffer => {
-  const buffer = Buffer.alloc(words.length * 4);
-  for (const [index, word] of words.entries()) buffer.writeUInt32LE(word, index * 4);
-  return buffer;
-};
 const createDoubles = (...doubles: number[]): Buffer => {
   const buffer = Buffer.alloc(doubles.length * 8);
   for (const [index, double] of doubles.entries()) buffer.writeDoubleLE(double, index * 8);

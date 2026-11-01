@@ -3,6 +3,7 @@ import type { WwiseNode } from "#src/models/genshinAssets/music/WwiseNode";
 
 import { BankReader } from "#src/models/genshinAssets/music/BankReader";
 import { SoundBankObjectType } from "#src/models/genshinAssets/music/SoundBankObjectType";
+import { CLIP_LENGTH } from "#src/services/genshinAssets/music/constants";
 import { readCurves } from "#src/services/genshinAssets/music/readCurves";
 import { readProperties } from "#src/services/genshinAssets/music/readProperties";
 import { skipAuxiliary } from "#src/services/genshinAssets/music/skipAuxiliary";
@@ -12,8 +13,6 @@ import { skipSource } from "#src/services/genshinAssets/music/skipSource";
 import { skipStateChunk } from "#src/services/genshinAssets/music/skipStateChunk";
 import { exhaustiveGuard } from "@esposter/shared";
 
-// A track's clip: its track index, its source, an event, then where it plays and its trims as doubles
-const CLIP_LENGTH = 44;
 // A node's effect in its slot: its index, its id, whether it is a share set and whether it is rendered
 const EFFECT_LENGTH = 7;
 // A bus's duck: the bus it ducks, the volume, its fades, its curve and the property it ducks

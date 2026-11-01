@@ -4,11 +4,8 @@ import type { SoundBankObject } from "#src/models/genshinAssets/music/SoundBankO
 import type { MusicClip } from "#src/models/genshinAssets/shared/MusicClip";
 
 import { SoundBankObjectType } from "#src/models/genshinAssets/music/SoundBankObjectType";
+import { CLIP_LENGTH, SOURCE_LENGTH } from "#src/services/genshinAssets/music/constants";
 
-// A track's source: its plugin, how it streams, its id, its size in memory and its bits; and a clip of one: its track
-// Index, its source, an event, then where it plays, its trims and its source's duration as doubles
-const SOURCE_LENGTH = 14;
-const CLIP_LENGTH = 44;
 // After a container's children, its meter (grid period and offset as doubles, a tempo and the time signature's two
 // Bytes) and a flag, then its stingers, six words each
 const METER_LENGTH = 23;
