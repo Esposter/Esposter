@@ -136,14 +136,15 @@ const steps = computed(() => {
   list-style: none;
 }
 
-/* The list's overflow clips at its padding edge, so the padding below holds the chosen portrait's underline, which sits
-   below the portrait's own 69 units */
+/* The list's overflow clips at its padding edge, so the padding holds what the portraits draw outside their own 69 units:
+   the chosen one's underline below, and above and left of the first one the 1 unit ring a hover or focus lights. The
+   list stands that unit up and left, so the portraits stay where they were */
 .characters {
-  top: calc(var(--unit) * 12.5);
-  left: calc(var(--unit) * 608);
+  top: calc(var(--unit) * 11.5);
+  left: calc(var(--unit) * 607);
   display: flex;
   gap: calc(var(--unit) * 27);
-  padding-bottom: calc(var(--unit) * 14);
+  padding: calc(var(--unit) * 1) 0 calc(var(--unit) * 14) calc(var(--unit) * 1);
   overflow-x: auto;
 }
 
@@ -171,7 +172,7 @@ const steps = computed(() => {
 }
 
 /* A portrait lights a white ring when hovered or focused (`ringButton.css`), and a press dims it, its size held */
-.character:is(:active, [data-interaction-state="Pressed"] *) {
+.character:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
   filter: brightness(0.9);
 }
@@ -254,7 +255,7 @@ const steps = computed(() => {
 }
 
 /* A press tints the row at once, over the tint `fillTint.css` draws behind its word and its diamond */
-.tab:is(:active, [data-interaction-state="Pressed"] *) {
+.tab:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
   background-color: v-bind(GAME_ROW_PRESS);
 }
@@ -406,7 +407,7 @@ const steps = computed(() => {
   }
 }
 
-.step:is(:active, [data-interaction-state="Pressed"] *) {
+.step:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
   filter: brightness(0.9);
 }

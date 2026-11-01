@@ -53,7 +53,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   }
 }
 
-.member:is(:active, [data-interaction-state="Pressed"] *) {
+.member:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
   filter: brightness(0.9);
 }

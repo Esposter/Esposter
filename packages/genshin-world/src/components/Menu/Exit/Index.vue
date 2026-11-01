@@ -240,7 +240,7 @@ onMounted(() => {
   border-radius: 50%;
 }
 
-.exit .confirm:enabled:is(:active, [data-interaction-state="Pressed"]) .icon-confirm::after {
+.exit .confirm:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"]) .icon-confirm::after {
   border-color: #fbf08f;
 }
 </style>

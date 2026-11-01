@@ -100,7 +100,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 }
 
 /* A press dims the card at once, its size held, as a press resizes nothing the game does not */
-.card:is(:active, [data-interaction-state="Pressed"] *) {
+.card:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
   filter: brightness(0.92);
 }

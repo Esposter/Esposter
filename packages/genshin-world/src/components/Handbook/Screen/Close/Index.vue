@@ -68,7 +68,7 @@ const emit = defineEmits<{ close: [] }>();
   stroke: v-bind(GAME_CREAM);
 }
 
-.close:enabled:is(:active, [data-interaction-state="Pressed"] *) svg {
+.close:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) svg {
   fill: v-bind(GAME_GOLD);
   stroke: v-bind(GAME_GOLD);
 }

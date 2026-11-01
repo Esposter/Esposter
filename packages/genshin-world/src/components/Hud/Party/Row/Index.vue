@@ -123,7 +123,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   }
 }
 
-.member:is(:active, [data-interaction-state="Pressed"] *)::after {
+.member:is(:active, [data-pressed], [data-interaction-state="Pressed"] *)::after {
   background-color: v-bind(GAME_ROW_PRESS);
   opacity: 1;
   transition-duration: 0s;

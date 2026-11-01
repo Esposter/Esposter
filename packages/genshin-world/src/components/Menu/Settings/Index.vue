@@ -543,14 +543,15 @@ onMounted(() => {
 
 /* Provisional: the white rim a row takes under the pointer or the keyboard's focus, about 4 across and centred on its
    Edge, read off the clip's rows lit one at a time from 176 to 179 seconds. A pointer's hover is guarded by
-   `(hover: hover)`, so a touch screen leaves no rim after a tap */
+   `(hover: hover)` and the focus is a child's `:focus-visible`, so a touch screen leaves no rim after a tap or a drag
+   That focuses one */
 @media (hover: hover) {
   .row:hover {
     box-shadow: var(--lit-shadow);
   }
 }
 
-.row:focus-within {
+.row:has(:focus-visible) {
   box-shadow: var(--lit-shadow);
 }
 

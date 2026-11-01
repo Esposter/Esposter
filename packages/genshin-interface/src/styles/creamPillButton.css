@@ -30,10 +30,10 @@
   pointer-events: none;
 }
 
-.cream-pill-button:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+.cream-pill-button:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   background-color: transparent;
 }
 
-.cream-pill-button:enabled:is(:active, [data-interaction-state="Pressed"] *)::before {
+.cream-pill-button:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *)::before {
   opacity: 1;
 }

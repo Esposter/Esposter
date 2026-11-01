@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GAME_CREAM, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
+import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
 
 interface Props {
   // What the button does, for a screen reader, since it shows its content alone
@@ -16,7 +16,12 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 
 <template>
   <!-- A white disc under a soft dark rim, its content centred on it as the game centres its icons -->
-  <button class="disc-button ring-button" :aria-label="label" type="button" :style="{ '--size': size }">
+  <button
+    class="disc-button cream-disc-press ring-button"
+    :aria-label="label"
+    type="button"
+    :style="{ '--size': size }"
+  >
     <slot />
   </button>
 </template>
@@ -37,12 +42,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   cursor: inherit;
   place-items: center;
 }
-
-.disc-button:enabled:is(:active, [data-interaction-state="Pressed"] *) {
-  --state-duration: 0s;
-  background-color: rgb(73 83 103 / 0.5);
-  color: v-bind(GAME_CREAM);
-}
 </style>
 
+<style scoped src="../../styles/creamDiscPress.css"></style>
 <style scoped src="../../styles/ringButton.css"></style>

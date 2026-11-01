@@ -56,7 +56,7 @@ const emit = defineEmits<{ select: [] }>();
   background-image: linear-gradient(v-bind(GAME_ROW_HOVER), v-bind(GAME_ROW_HOVER));
 }
 
-.category:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+.category:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   background-image: linear-gradient(v-bind(GAME_ROW_PRESS), v-bind(GAME_ROW_PRESS));
 }
 

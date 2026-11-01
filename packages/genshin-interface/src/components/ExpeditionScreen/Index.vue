@@ -323,7 +323,7 @@ const act = () => {
   }
 }
 
-.pin:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+.pin:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   background: v-bind(GAME_CREAM);
 }
 

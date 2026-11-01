@@ -40,7 +40,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   }
 }
 
-.mark:active {
+.mark:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   fill: v-bind(GAME_CREAM);
   transition-duration: 0s;
 }

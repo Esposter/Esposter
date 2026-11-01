@@ -2,7 +2,7 @@
 import type { CloseButtonMark } from "#src/models/CloseButtonMark";
 
 import { CloseButtonMarkGlyphMap } from "#src/services/CloseButtonMarkGlyphMap";
-import { GAME_CREAM, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
+import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
 
 interface Props {
   // What the button does, for a screen reader, since it shows its own glyph alone
@@ -20,7 +20,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   <!-- The way out of a screen: a disc 58 units across at its top right, its fill and ring left to the screen that places
        it, and the mark its glyph draws over them in the same units. The ring is an inset shadow, not a border, so the
        mark's box is the disc's -->
-  <button class="close-button ring-button" :aria-label="label" type="button">
+  <button class="close-button cream-disc-press ring-button" :aria-label="label" type="button">
     <svg class="mark" :viewBox="CloseButtonMarkGlyphMap[mark].viewBox" aria-hidden="true">
       <path :d="CloseButtonMarkGlyphMap[mark].path" />
     </svg>
@@ -42,14 +42,6 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   border-radius: 50%;
 }
 
-/* Provisional: no reference frame shows a close under the pointer, so its press is the cream pill's own: the disc tinted
-   Slate with its mark cream */
-.close-button:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
-  --state-duration: 0s;
-  background-color: rgb(73 83 103 / 0.5);
-  color: v-bind(GAME_CREAM);
-}
-
 .mark {
   position: absolute;
   top: 0;
@@ -61,4 +53,5 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 }
 </style>
 
+<style scoped src="../../styles/creamDiscPress.css"></style>
 <style scoped src="../../styles/ringButton.css"></style>

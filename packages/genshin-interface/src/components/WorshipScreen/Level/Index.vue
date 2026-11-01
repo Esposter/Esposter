@@ -65,7 +65,7 @@ const lines = computed(() => [
   }
 }
 
-.reward-list:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+.reward-list:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
 }
 
@@ -104,7 +104,7 @@ const lines = computed(() => [
   }
 }
 
-.reward-list:enabled:is(:active, [data-interaction-state="Pressed"] *) .reward::after {
+.reward-list:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) .reward::after {
   background-color: v-bind(GAME_ROW_PRESS);
   opacity: 1;
 }

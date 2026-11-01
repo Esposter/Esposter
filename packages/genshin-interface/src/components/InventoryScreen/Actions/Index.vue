@@ -74,7 +74,7 @@ const { detailsLabel, isDestroying, isSortable, selectedCell, useLabel } = defin
   transform: translateY(-50%);
 }
 
-.use:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+.use:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   background-image: linear-gradient(v-bind(GAME_ROW_PRESS), v-bind(GAME_ROW_PRESS));
 }
 </style>

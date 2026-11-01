@@ -91,9 +91,9 @@
   background-image: linear-gradient(rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.2));
 }
 
-.commission-claim:enabled:is(:active, [data-interaction-state="Pressed"] *),
-.encounter-points-use:enabled:is(:active, [data-interaction-state="Pressed"] *),
-.domain-action:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+.commission-claim:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *),
+.encounter-points-use:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *),
+.domain-action:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   background-image: linear-gradient(rgb(255 255 255 / 0.3), rgb(255 255 255 / 0.3));
 }
 

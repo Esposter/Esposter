@@ -50,14 +50,14 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   filter: brightness(1.2);
 }
 
-.die:is(:active, [data-interaction-state="Pressed"] *) {
-  --state-duration: 0s;
-  filter: brightness(0.9);
-}
-
 .die.selected {
   transform: translateX(calc(var(--unit) * -8));
   filter: brightness(1.35);
+}
+
+.die:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
+  --state-duration: 0s;
+  filter: brightness(0.9);
 }
 
 .die[data-face="Pyro"],

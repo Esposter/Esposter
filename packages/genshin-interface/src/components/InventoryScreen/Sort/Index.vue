@@ -72,7 +72,7 @@ const { orderLabel, sortLabels } = defineProps<Props>();
   font-weight: 600;
 }
 
-.sort-select:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+.sort-select:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   background-image: linear-gradient(v-bind(GAME_ROW_PRESS), v-bind(GAME_ROW_PRESS));
 }
 

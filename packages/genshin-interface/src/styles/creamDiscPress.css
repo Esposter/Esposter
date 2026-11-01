@@ -1,0 +1,8 @@
+/* A cream disc's press, at once: the disc tinted slate with its mark cream. Provisional: no reference frame shows a close
+   or a disc under the pointer, so the press is the cream pill's own. The cream is `GAME_CREAM`, restated because this
+   sheet is plain CSS. It is worn by the close and the disc button, which pull `ringButton.css` for the rest */
+.cream-disc-press:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
+  --state-duration: 0s;
+  background-color: rgb(73 83 103 / 0.5);
+  color: #ece5d8;
+}

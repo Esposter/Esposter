@@ -157,7 +157,7 @@ const emit = defineEmits<{
 }
 
 /* A press tints the row stronger at once, over either */
-.option:is(:active, [data-interaction-state="Pressed"] *) {
+.option:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
   background-color: v-bind(GAME_ROW_PRESS);
 }

@@ -95,7 +95,7 @@ const statusText = computed(() => {
   background-image: linear-gradient(v-bind(GAME_ROW_HOVER), v-bind(GAME_ROW_HOVER));
 }
 
-.entry:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+.entry:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   background-image: linear-gradient(v-bind(GAME_ROW_PRESS), v-bind(GAME_ROW_PRESS));
 }
 

@@ -546,7 +546,7 @@ onMounted(() => {
   }
 }
 
-.teleport-close:is(:active, [data-interaction-state="Pressed"] *) {
+.teleport-close:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   background: v-bind(GAME_CREAM);
   color: v-bind(GAME_INK);
   transition-duration: 0s;
@@ -671,13 +671,13 @@ onMounted(() => {
   }
 }
 
-.close:is(:active, [data-interaction-state="Pressed"] *) {
+.close:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   border-color: v-bind(GAME_INK);
   background: v-bind(GAME_INK);
   transition-duration: 0s;
 }
 
-.close:is(:active, [data-interaction-state="Pressed"] *) svg {
+.close:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) svg {
   stroke: v-bind(GAME_CREAM);
 }
 </style>

@@ -44,7 +44,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   background: none;
 }
 
-.paimon-button:is(:active, [data-interaction-state="Pressed"] *) .emblem {
+.paimon-button:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) .emblem {
   scale: 0.94;
 }
 

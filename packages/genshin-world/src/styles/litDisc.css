@@ -29,7 +29,7 @@
   }
 }
 
-.lit-disc:is(:active, [data-interaction-state="Pressed"] *)::before {
+.lit-disc:is(:active, [data-pressed], [data-interaction-state="Pressed"] *)::before {
   background-color: var(--lit-press-color);
   transition-duration: 0s;
 }

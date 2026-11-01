@@ -56,7 +56,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   outline-color: #fff;
 }
 
-.skill:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+.skill:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
   filter: brightness(0.9);
 }

@@ -140,8 +140,8 @@ onUnmounted(() => {
   touch-action: none;
 }
 
-.skill:is(:active, [data-interaction-state="Pressed"] *) .glyph,
-.burst:is(:active, [data-interaction-state="Pressed"] *) .glyph {
+.skill:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) .glyph,
+.burst:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) .glyph {
   fill: v-bind(GAME_INK);
 }
 

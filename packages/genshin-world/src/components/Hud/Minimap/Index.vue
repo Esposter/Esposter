@@ -145,7 +145,7 @@ watch(
   }
 }
 
-.minimap:is(:active, [data-interaction-state="Pressed"] *)::after {
+.minimap:is(:active, [data-pressed], [data-interaction-state="Pressed"] *)::after {
   box-shadow: inset 0 0 0 calc(var(--canvas-unit) * 1.25) v-bind(GAME_CREAM);
   transition-duration: 0s;
 }

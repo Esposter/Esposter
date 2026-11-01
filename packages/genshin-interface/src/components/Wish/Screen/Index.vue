@@ -596,11 +596,11 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
   }
 }
 
-.results:is(:active, [data-interaction-state="Pressed"] *) {
+.results:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
 }
 
-.results:is(:active, [data-interaction-state="Pressed"] *) .result {
+.results:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) .result {
   filter: brightness(0.9);
 }
 

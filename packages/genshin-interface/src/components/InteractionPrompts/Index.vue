@@ -162,7 +162,7 @@ const selectionDuration = `${INTERACTION_HOVER_MS}ms`;
   }
 }
 
-.pill:is(:active, [data-interaction-state="Pressed"] *)::before {
+.pill:is(:active, [data-pressed], [data-interaction-state="Pressed"] *)::before {
   background-image: linear-gradient(v-bind(GAME_ROW_PRESS), v-bind(GAME_ROW_PRESS));
 }
 

@@ -101,7 +101,7 @@ const checkIsCharacterChoosable = (characterIndex: number): boolean => {
   const character = takeOne(playerSide.value.characters, characterIndex);
   if (duel.phase === GcgPhase.Preparation) return true;
   else if (playerSide.value.isReplacementPending) return character.hp > 0;
-  return isPlayerTurn.value && characterIndex !== playerSide.value.activeIndex;
+  return isPlayerTurn.value && characterIndex !== playerSide.value.activeIndex && character.hp > 0;
 };
 const selectCard = (handIndex: number) => {
   const card = playerHandCards.value[handIndex];
@@ -500,7 +500,7 @@ const playRerollChoice = () => {
   outline-color: #fff;
 }
 
-.end-round:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+.end-round:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
   filter: brightness(0.9);
 }
@@ -582,8 +582,8 @@ const playRerollChoice = () => {
   outline-color: #fff;
 }
 
-.synchro:enabled:is(:active, [data-interaction-state="Pressed"] *),
-.confirm button:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+.synchro:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *),
+.confirm button:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
   filter: brightness(0.9);
 }
@@ -627,7 +627,7 @@ const playRerollChoice = () => {
     outline-color var(--state-duration);
 }
 
-.concede:is(:active, [data-interaction-state="Pressed"] *) {
+.concede:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
   filter: brightness(0.9);
 }

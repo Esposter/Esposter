@@ -233,9 +233,9 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   background-image: linear-gradient(v-bind(GAME_ROW_HOVER), v-bind(GAME_ROW_HOVER));
 }
 
-.back:enabled:is(:active, [data-interaction-state="Pressed"] *),
-.accept:enabled:is(:active, [data-interaction-state="Pressed"] *),
-.level:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+.back:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *),
+.accept:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *),
+.level:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   background-image: linear-gradient(v-bind(GAME_ROW_PRESS), v-bind(GAME_ROW_PRESS));
 }
 

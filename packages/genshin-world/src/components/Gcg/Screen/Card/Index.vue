@@ -61,7 +61,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   outline-color: #f6e3a1;
 }
 
-.card:is(:active, [data-interaction-state="Pressed"] *) {
+.card:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
   filter: brightness(0.9);
 }

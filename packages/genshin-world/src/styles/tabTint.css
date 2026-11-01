@@ -14,6 +14,6 @@
   background-image: linear-gradient(var(--tab-hover), var(--tab-hover));
 }
 
-.tab:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+.tab:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   background-image: linear-gradient(var(--tab-press), var(--tab-press));
 }

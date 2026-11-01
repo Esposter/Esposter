@@ -112,7 +112,7 @@ onUnmounted(() => {
   touch-action: none;
 }
 
-.action:is(:active, [data-interaction-state="Pressed"] *) .glyph {
+.action:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) .glyph {
   fill: v-bind(GAME_INK);
 }
 

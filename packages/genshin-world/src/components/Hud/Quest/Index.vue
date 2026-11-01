@@ -108,7 +108,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   }
 }
 
-.quest-tracker:is(:active, [data-interaction-state="Pressed"] *)::before {
+.quest-tracker:is(:active, [data-pressed], [data-interaction-state="Pressed"] *)::before {
   background-color: v-bind(GAME_ROW_PRESS);
   opacity: 1;
   transition-duration: 0s;

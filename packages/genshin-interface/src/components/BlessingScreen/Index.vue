@@ -362,7 +362,7 @@ const emit = defineEmits<{
 
 /* A threshold's round button lights a white ring when hovered or focused (`ringButton.css`), and a press dims it
    At once */
-.step:is(:active, [data-interaction-state="Pressed"] *) {
+.step:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
   filter: brightness(0.9);
 }

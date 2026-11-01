@@ -80,7 +80,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   box-shadow: 0 0 0 calc(var(--unit) * 3) #f6e3a1;
 }
 
-.character.choosable:is(:active, [data-interaction-state="Pressed"] *) {
+.character.choosable:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   --state-duration: 0s;
   filter: brightness(0.9);
 }
