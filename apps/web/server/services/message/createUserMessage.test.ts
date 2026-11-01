@@ -8,7 +8,15 @@ import { readFollowedThreadRootRowKeys } from "#server/services/message/thread/r
 import { upsertThreadUnfollow } from "#server/services/message/thread/upsertThreadUnfollow";
 import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { createMessage, createThreadFollow } from "@esposter/db";
-import { AzureTable, MessageType, roomsInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
+import {
+  AzureTable,
+  MessageType,
+  RoomPermission,
+  roomRolesInMessage,
+  roomsInMessage,
+  usersInAuth,
+  usersToRoomsInMessage,
+} from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
 import { MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
@@ -46,6 +54,10 @@ describe(createUserMessage, () => {
       { roomId: room.id, userId: rootAuthor.user.id },
       { roomId: room.id, userId: replier.user.id },
     ]);
+    // The @everyone role the replier holds, seeded with the send permission `createRoom` gives it
+    await mockContext.db
+      .insert(roomRolesInMessage)
+      .values({ isEveryone: true, name, permissions: RoomPermission.SendMessages, roomId: room.id });
     return room;
   };
   const createReply = (roomId: string, replyRowKey: MessageEntity["rowKey"]) =>

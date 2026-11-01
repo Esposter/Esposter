@@ -12,7 +12,9 @@ import {
   AzureTable,
   DatabaseEntityType,
   getReverseTickedTimestamp,
+  RoomPermission,
   roomFiltersInMessage,
+  roomRolesInMessage,
   roomsInMessage,
   scheduledMessageJobsInMessage,
   ScheduledMessageJobType,
@@ -106,6 +108,10 @@ describe(processScheduledMessageJobHandler, () => {
       { roomId, userId },
       { roomId, userId: memberUserId },
     ]);
+    // The @everyone role a member of this room holds, seeded with the send permission `createRoom` gives it
+    await mockDb
+      .insert(roomRolesInMessage)
+      .values({ isEveryone: true, name, permissions: RoomPermission.SendMessages, roomId });
   });
 
   // Every timestamp this handler writes comes from `new Date()`, so a frozen clock is what lets them be asserted
