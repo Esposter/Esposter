@@ -42,3 +42,5 @@ export const MACHINE_LOCK_PATH: string = join(MACHINE_STATE_DIRECTORY, "watcher.
 export const MACHINE_LOCK_TAKEOVER_PATH: string = join(MACHINE_STATE_DIRECTORY, "watcher.lock.takeover");
 // A claim is created empty and its process id written in just after, so one still empty is its writer's for this long
 export const EMPTY_LOCK_GRACE_MILLISECONDS: number = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
+// The code a create-only write gives when its file is already there
+export const FILE_EXISTS_ERROR_CODE = "EEXIST";
