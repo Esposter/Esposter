@@ -56,9 +56,10 @@ flowchart LR
 
 ## Open
 
+The stick's placement and its appearance on the recordings are the [spec's](spec.md) open item, and the recordings are named in the reference above.
+
 - [ ] **The stick's area is a third of the screen across, 340 canvas units up, with an 80 unit strip over it, and scales with the screen** — no source yet: the extracted `MoveJoystick_H4` transform (`{data-root}/genshin-parity/extracted/character/interface/json/RectTransform/RectTransform#324403.json`) holds only its local position, rotation, scale and hierarchy, with no size delta or anchor to read back.
 - [ ] **The tree's own rect puts the stick 102 units in and up** — no source yet: the extracted `MoveJoystick_H4` rect (`RectTransform#324403.json`) has a zero local position and no size or anchor, so the 102 is not read back.
-- [ ] **On the mobile client's three recordings the stick never moves to the thumb and its head never travels, its head is a faint ring with four chevrons, and its push shows a mark on a quarter of the rim, with a teal arc below the push and a cyan arc above it** — no source yet: the three recordings are not in `{data-root}/genshin-parity/captures/`, so none of it is read back.
 - [ ] **The action buttons stand in the HUD's rect beside the skill and burst, measured off the recording** — no source yet: `touch-controls-mobile.mkv` is in the captures, but no measure of its buttons is recorded.
 - [ ] **The stick's rings and arcs are measured on the newest recording, which another phone draws 0.9 times as large** — no source yet: the recordings are not in `{data-root}/genshin-parity/captures/`, so the 0.9 is not read back.
 - [ ] **The game's stick stands 87 units further in on a 19.5:9 recording and 95 on a 20:9 one** — no source yet: the recordings "HqQob991B8Q" and "quYgZtHhIa4" are not in `{data-root}/genshin-parity/captures/`.
