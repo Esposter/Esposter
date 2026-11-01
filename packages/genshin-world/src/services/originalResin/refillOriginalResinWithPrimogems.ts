@@ -11,14 +11,19 @@ import { regenerateOriginalResin } from "#src/services/originalResin/regenerateO
 import { computeGameDay } from "#src/services/time/computeGameDay";
 
 // The wallet after Original Resin is refilled with Primogems at `now`, or undefined where the day's refills are used up.
-// The Primogems held fall short of the next price, or the resin is at the refill cap already. The day's refills count
+// The Primogems held fall short of the next price, or the refill would pass the refill cap, as the game refuses it above
+// The cap less one refill. The day's refills count
 // From the game's day, which starts at its hour in the game's time zone, and restart when that day changes
 export const refillOriginalResinWithPrimogems = (wallet: Wallet, now: Temporal.Instant): undefined | Wallet => {
   const gameDay = computeGameDay(now);
   const refillCount = wallet.primogemResinRefillDay.equals(gameDay) ? wallet.primogemResinRefillCount : 0;
   const price = PRIMOGEM_RESIN_REFILL_PRICES[refillCount];
   const originalResin = regenerateOriginalResin(wallet, now)[Currency.OriginalResin];
-  if (price === undefined || wallet[Currency.Primogem] < price || originalResin >= ORIGINAL_RESIN_REFILL_CAP)
+  if (
+    price === undefined ||
+    wallet[Currency.Primogem] < price ||
+    originalResin + PRIMOGEM_RESIN_RESTORE > ORIGINAL_RESIN_REFILL_CAP
+  )
     return undefined;
   return {
     ...refillOriginalResin(wallet, PRIMOGEM_RESIN_RESTORE, now),

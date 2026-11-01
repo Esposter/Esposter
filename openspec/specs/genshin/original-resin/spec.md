@@ -34,7 +34,7 @@ The wallet SHALL regenerate one Original Resin every eight minutes, counted from
 
 ### Requirement: Primogems refill Original Resin up to 2000
 
-The player SHALL be able to refill Original Resin with Primogems, restoring 60 at the day's next price, with the count filling to a cap of 2000.
+The player SHALL be able to refill Original Resin with Primogems, restoring 60 at the day's next price, unless the count would pass a cap of 2000.
 
 #### Scenario: Refill with Primogems
 
@@ -50,11 +50,12 @@ The player SHALL be able to refill Original Resin with Primogems, restoring 60 a
 - **THEN** the refill is refused
 - **AND** the count and the Primogems are unchanged
 
-#### Scenario: Refill at the cap
+#### Scenario: Refill that would pass the cap
 
-- **GIVEN** the count is 2000
+- **GIVEN** the count is above 1940
 - **WHEN** the player refills Original Resin
 - **THEN** the refill is refused
+- **AND** a count of 1940 is refilled to 2000
 
 #### Scenario: Refills used up for the day
 

@@ -70,12 +70,26 @@ describe(refillOriginalResinWithPrimogems, () => {
     });
   });
 
-  test("a refill short of its price, or at the refill cap, is refused", () => {
+  test("a refill short of its price, or that would pass the refill cap, is refused", () => {
     expect.hasAssertions();
 
     expect(refillOriginalResinWithPrimogems({ ...wallet, [Currency.Primogem]: 0 }, epoch)).toBeUndefined();
     expect(
-      refillOriginalResinWithPrimogems({ ...wallet, [Currency.OriginalResin]: ORIGINAL_RESIN_REFILL_CAP }, epoch),
+      refillOriginalResinWithPrimogems(
+        { ...wallet, [Currency.OriginalResin]: ORIGINAL_RESIN_REFILL_CAP - PRIMOGEM_RESIN_RESTORE + 1 },
+        epoch,
+      ),
     ).toBeUndefined();
+  });
+
+  test("a refill that reaches the refill cap exactly is made", () => {
+    expect.hasAssertions();
+
+    expect(
+      refillOriginalResinWithPrimogems(
+        { ...wallet, [Currency.OriginalResin]: ORIGINAL_RESIN_REFILL_CAP - PRIMOGEM_RESIN_RESTORE },
+        epoch,
+      )?.[Currency.OriginalResin],
+    ).toBe(ORIGINAL_RESIN_REFILL_CAP);
   });
 });
