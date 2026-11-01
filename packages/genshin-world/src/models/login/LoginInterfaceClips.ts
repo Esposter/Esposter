@@ -1,6 +1,6 @@
 import type { FittedInterfaceClip } from "genshin-interface";
 
-import { fittedInterfaceClipSchema } from "#src/models/interface/fittedInterfaceClipSchema";
+import { fittedInterfaceClipSchema } from "#src/models/login/fittedInterfaceClipSchema";
 import { LoginInterfaceClip } from "#src/models/login/LoginInterfaceClip";
 import { z } from "zod";
 
