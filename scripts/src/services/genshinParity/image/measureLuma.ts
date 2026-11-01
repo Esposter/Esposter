@@ -3,6 +3,11 @@ import { readdir, stat } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 
+// The table's columns, each as wide as its heading and its values need: the path, the mean darkness, the darkest pixel
+const PATH_WIDTH = 28;
+const DARK_WIDTH = 6;
+const MIN_WIDTH = 4;
+
 // How dark one region is in each image of a run, one line per image: its mean darkness (0 is white) and its darkest
 // Pixel, so a fade or a fill is read across the frames of the game and the shots of ours alike. A folder
 // Stands for its frames in order, since a second of frames at 60 a second outruns Windows' command line, each labelled
@@ -39,9 +44,9 @@ export const measureLuma = async (
         sum += value;
         darkest = Math.min(darkest, value);
       }
-      return `${path.padEnd(28)} ${(BYTE - sum / data.length).toFixed(1).padStart(6)} ${String(darkest).padStart(4)}`;
+      return `${path.padEnd(PATH_WIDTH)} ${(BYTE - sum / data.length).toFixed(1).padStart(DARK_WIDTH)} ${String(darkest).padStart(MIN_WIDTH)}`;
     }),
   );
-  console.log(`${"image".padEnd(28)} ${"dark".padStart(6)} ${"min".padStart(4)}`);
+  console.log(`${"image".padEnd(PATH_WIDTH)} ${"dark".padStart(DARK_WIDTH)} ${"min".padStart(MIN_WIDTH)}`);
   for (const line of lines) console.log(line);
 };
