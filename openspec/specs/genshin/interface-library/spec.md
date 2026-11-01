@@ -1,6 +1,6 @@
 ## Purpose
 
-genshin-interface, the game's 2D interface as presentational Vue components. Every screen is drawn inside its GameScreen root, which carries the game's unit, its canvas's unit and inset, face and pointer. Every button is a GameButton, drawn in its game template's look for each state. Each piece is a folder holding its component, its fixture and the images a browser suite holds it to. Each is measured from the English client's recordings, with an overlay compared over the recording's own frame.
+The game's 2D interface as presentational Vue components, each screen drawn in one sized root and each button in its game template's look for each state.
 
 ## Requirements
 
@@ -137,7 +137,7 @@ The pointer SHALL be drawn as the game's four-pointed star with its gold centre,
 
 ## Open
 
-- [ ] **The pointer is the game's four-pointed star at the size the game draws it on a screen of the same height** — no source yet: the wiki's Tutorial System Show Cursor image is not in the genshin-wiki cache, and the 25 px size is in no file read.
+- [ ] **The pointer is the game's four-pointed star at the size the game draws it on a screen of the same height** — no source yet: the wiki's Tutorial System Show Cursor image is not in the genshin-wiki cache, and the 25 px size is in no file read, and the cache holds no Tutorial, Archive or Controls page to give a pointer shape or size.
 - [ ] **The game fits its interface to a 1920 by 1080 screen, with a 1600 by 900 canvas inset up to 71 units, and its touch scale is the mobile client's** — no source yet: the 2560 and 3440 wide recordings are not among the captures, and the canvas size and touch scale are in no file read.
-- [ ] **The fade back to rest over 0.1 s (`INTERACTION_REST_MS`) is unread** — no source yet: no rest clip is read, and the hover clip in `{data-root}/genshin-parity/extracted/interface-states/states-07356235.json` runs longer than `INTERACTION_HOVER_MS` holds.
-- [ ] **A dialogue reply turns a white pill with slate words when hovered** — no source yet: a 60 fps PC recording of the dialogue choices hovered, as the roadmap asks; no recording shows a reply under the pointer.
+- [ ] **The hover and rest fades' durations are the game's button clips' durations** — no source yet: the hover clip in `{data-root}/genshin-parity/extracted/interface-states/states-07356235.json` runs longer than `INTERACTION_HOVER_MS` holds, and no rest clip is read, so the fade back to rest over `INTERACTION_REST_MS` is unread.
+- [ ] **A dialogue reply turns a white pill with slate words when hovered** — no source yet: a 60 fps PC recording of the dialogue choices hovered, as the roadmap asks; no recording shows a reply under the pointer, so the white pill is the look a lit reply took before the kind, and its rest is fitted to the frame's pills (`dialogue-choices-replies`).
