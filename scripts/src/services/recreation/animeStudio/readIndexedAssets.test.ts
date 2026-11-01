@@ -1,4 +1,5 @@
-import { parseIndexLine, readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
+import { parseIndexLine } from "#src/services/recreation/animeStudio/parseIndexLine";
+import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";

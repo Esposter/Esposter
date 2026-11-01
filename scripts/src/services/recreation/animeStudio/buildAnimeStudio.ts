@@ -1,4 +1,6 @@
-import { checkIsOodlePatchPending } from "#src/services/recreation/animeStudio/checkIsOodlePatchPending";
+import { applyOodlePatch } from "#src/services/recreation/animeStudio/applyOodlePatch";
+import { buildAclLibrary } from "#src/services/recreation/animeStudio/buildAclLibrary";
+import { buildCmakeLibrary } from "#src/services/recreation/animeStudio/buildCmakeLibrary";
 import {
   ACL_MHY_DIRECTORY,
   ACL_MHY_LIBRARY_FILE_NAME,
@@ -7,189 +9,22 @@ import {
   CLI_EXECUTABLE_NAME,
   CLI_PROJECT_PATH,
   MAPS_DIRECTORY_NAME,
-  OODLE_HELPER_PATCH_PATH,
   OOZ_LIBRARY_FILE_NAME,
   PUBLISH_DIRECTORY_NAME,
   RUNTIME_IDENTIFIER,
   STAGING_DIRECTORY_NAME,
-  TARGET_FRAMEWORK,
   TEXTURE2DDECODER_LIBRARY_FILE_NAME,
   TEXTURE2DDECODER_REPOSITORY,
   TEXTURE2DDECODER_SHA,
   WORK_DIRECTORY_NAME,
 } from "#src/services/recreation/animeStudio/constants";
-import { fetchOk } from "#src/services/shared/fetchOk";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawnSync } from "@esposter/shared-node/child-process";
-import {
-  copyFileSync,
-  existsSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  renameSync,
-  rmSync,
-  writeFileSync,
-} from "node:fs";
-import { availableParallelism } from "node:os";
+import { fetchSource } from "#src/services/recreation/animeStudio/fetchSource";
+import { patchOozCopies } from "#src/services/recreation/animeStudio/patchOozCopies";
+import { patchOozSignedOffsets } from "#src/services/recreation/animeStudio/patchOozSignedOffsets";
+import { retargetProjects } from "#src/services/recreation/animeStudio/retargetProjects";
+import { run } from "#src/services/recreation/animeStudio/run";
+import { copyFileSync, existsSync, mkdirSync, renameSync, rmSync } from "node:fs";
 import { join, resolve } from "node:path";
-
-const run = (command: string, args: string[], cwd?: string): void => {
-  const result = spawnSync(command, args, { cwd, stdio: "inherit" });
-  if (result.status !== 0)
-    throw new InvalidOperationError(Operation.Create, command, `exited with status ${result.status ?? "none"}`);
-};
-
-// A commit's tree as codeload serves it: fetched by its SHA, so a moved branch changes nothing
-const fetchSource = async (repository: string, sha: string, workDirectory: string, name: string): Promise<string> => {
-  const response = await fetchOk(`https://codeload.github.com/${repository}/tar.gz/${sha}`);
-  const archive = join(workDirectory, `${name}.tar.gz`);
-  const destination = join(workDirectory, name);
-  writeFileSync(archive, Buffer.from(await response.arrayBuffer()));
-  mkdirSync(destination, { recursive: true });
-  run("tar", ["-xzf", archive, "-C", destination, "--strip-components=1"]);
-  return destination;
-};
-
-// The edits the Windows build's projects need to publish on macOS: every target framework moved to the one the
-// Build uses, and the Windows runtime identifier dropped so the publish's own runtime decides
-const retargetProjects = (root: string): void => {
-  const projectPaths = readdirSync(root, { recursive: true })
-    .map(String)
-    .filter((path) => path.endsWith(".csproj"));
-  for (const projectPath of projectPaths) {
-    const absolutePath = join(root, projectPath);
-    const retargeted = readFileSync(absolutePath, "utf8")
-      .replaceAll(
-        /<TargetFrameworks>[^<]*<\/TargetFrameworks>/gu,
-        `<TargetFramework>${TARGET_FRAMEWORK}</TargetFramework>`,
-      )
-      .replaceAll(
-        /<TargetFramework>net[^<]*<\/TargetFramework>/gu,
-        `<TargetFramework>${TARGET_FRAMEWORK}</TargetFramework>`,
-      )
-      .replaceAll(/^[ \t]*<RuntimeIdentifier>win-x64<\/RuntimeIdentifier>\r?\n/gmu, "");
-    writeFileSync(absolutePath, retargeted);
-  }
-};
-
-// Whether a patch applies to a tree, forward or with the given options: `git apply --check` exits 0 only when it does
-const checkIsPatchApplicable = (directory: string, patchPath: string, ...options: string[]): boolean =>
-  spawnSync("git", ["apply", "--check", ...options, patchPath], { cwd: directory, stdio: "ignore" }).status === 0;
-
-// The Oodle patch goes into the checked-out tree unless the tree already carries it, so a rebuild over one is idempotent
-const applyOodlePatch = (directory: string): void => {
-  const isPending = checkIsOodlePatchPending({
-    appliesForward: checkIsPatchApplicable(directory, OODLE_HELPER_PATCH_PATH),
-    appliesReverse: checkIsPatchApplicable(directory, OODLE_HELPER_PATCH_PATH, "--reverse"),
-  });
-  if (isPending) run("git", ["apply", OODLE_HELPER_PATCH_PATH], directory);
-};
-
-// Ooz copies a match eight bytes at a time, which reads unwritten bytes when the match is closer than eight bytes.
-// Such copies take a byte at a time, so the output no longer depends on what the buffer held before.
-const OOZ_COPY_64 = `static inline void oozCopy64(void *destination, const void *source) {
-  uint8_t *d = (uint8_t *)destination;
-  const uint8_t *s = (const uint8_t *)source;
-  if ((uintptr_t)(d - s) < 8) {
-    for (int i = 0; i < 8; i++)
-      d[i] = s[i];
-  } else {
-    uint64_t value;
-    memcpy(&value, s, 8);
-    memcpy(d, &value, 8);
-  }
-}
-
-static inline void oozCopy64Add(void *destination, const void *literals, const void *window) {
-  uint8_t *d = (uint8_t *)destination;
-  const uint8_t *t = (const uint8_t *)window;
-  if ((uintptr_t)(d - t) < 8) {
-    for (int i = 0; i < 8; i++)
-      d[i] = (uint8_t)(((const uint8_t *)literals)[i] + t[i]);
-  } else {
-    simde_mm_storel_epi64((simde__m128i *)destination, simde_mm_add_epi8(simde_mm_loadl_epi64((simde__m128i *)literals), simde_mm_loadl_epi64((simde__m128i *)window)));
-  }
-}
-
-#define COPY_64(d, s) oozCopy64((d), (s))\n`;
-const OOZ_COPY_64_ADD = "#define COPY_64_ADD(d, s, t) oozCopy64Add((d), (s), (t))\n";
-
-const replaceOnce = (source: string, pattern: RegExp, replacement: string): string => {
-  if (!pattern.test(source))
-    throw new InvalidOperationError(Operation.Update, "kraken.cpp", "has no copy macro to replace at this commit");
-  return source.replace(pattern, replacement);
-};
-
-// The one edit to Ooz's own source, replacing its match copy macros with the overlap-safe copies above.
-// The pinned commit's macro text is matched exactly, so a bumped commit that moved them fails here.
-const patchOozCopies = (oozDirectory: string): void => {
-  const path = join(oozDirectory, "kraken.cpp");
-  const source = readFileSync(path, "utf8");
-  const patched = replaceOnce(
-    replaceOnce(source, /#define COPY_64\(d, s\)[\s\S]*?\n {4}\}\n/u, OOZ_COPY_64),
-    /#define COPY_64_ADD\(d, s, t\) [^\n]*\n/u,
-    OOZ_COPY_64_ADD,
-  );
-  writeFileSync(path, patched);
-};
-
-const replaceCounted = (source: string, search: string, replacement: string, expected: number): string => {
-  const occurrences = source.split(search).length - 1;
-  if (occurrences !== expected)
-    throw new InvalidOperationError(
-      Operation.Update,
-      "kraken.cpp",
-      `has ${occurrences} of ${JSON.stringify(search)} where ${expected} were expected at this commit`,
-    );
-  return source.replaceAll(search, replacement);
-};
-
-// The Leviathan decoder keeps each match's offset as a size_t, so its copy source, dst + offset, wraps for every backward match.
-// That overflow is undefined: the optimizer may move a copy's load above the store of the copy before it, reading a stale byte.
-// Windows' build never reads one, so the offset is signed.
-const patchOozSignedOffsets = (oozDirectory: string): void => {
-  const path = join(oozDirectory, "kraken.cpp");
-  const source = readFileSync(path, "utf8");
-  const patched = replaceCounted(
-    replaceCounted(source, "size_t last_offset", "ptrdiff_t last_offset", 12),
-    "  size_t offset = -8;\n",
-    "  ptrdiff_t offset = -8;\n",
-    1,
-  );
-  writeFileSync(path, patched);
-};
-
-const buildCmakeLibrary = (source: string, build: string, options: string[], output: string): string => {
-  run("cmake", ["-S", source, "-B", build, "-DCMAKE_BUILD_TYPE=Release", ...options]);
-  run("cmake", ["--build", build, "--config", "Release", "-j", String(availableParallelism())]);
-  return join(build, output);
-};
-
-// ACL's Windows projects also build under clang with its own flags; only the MHY library's source compiles unmodified
-const buildAclLibrary = (projectDirectory: string, output: string): string => {
-  const sources = readdirSync(projectDirectory).filter((file) => file.endsWith(".cpp"));
-  run(
-    "clang++",
-    [
-      "-std=c++14",
-      "-fms-extensions",
-      "-O2",
-      "-fPIC",
-      "-shared",
-      "-DNDEBUG",
-      "-D_AS_DLL",
-      "-DACLMHY_EXPORTS",
-      "-I.",
-      "-I..",
-      ...sources,
-      "-o",
-      output,
-    ],
-    projectDirectory,
-  );
-  return output;
-};
 
 // Builds the CLI and its natives for macOS, and returns the path the CLI is published to. The CLI carries its own runtime,
 // So it starts wherever .NET was installed from, with no DOTNET_ROOT for the asset runs to pass it. The directory is
