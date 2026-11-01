@@ -2,6 +2,8 @@ import type { ExcelMailRow } from "#src/models/genshinAssets/mail/ExcelMailRow";
 import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 import type { Mail } from "genshin-world";
 
+import { toRewardItems } from "#src/services/genshinAssets/rewards/toRewardItems";
+
 // The keys of a mail row this reader names; a row carrying any other key is one whose meaning is not known. Typed by
 // The row, so a key the row gains is an error here until it is named
 const MAIL_NAMED_KEYS: Record<keyof ExcelMailRow, true> = {
@@ -36,9 +38,7 @@ export const toMails = (
       expireDays: row.expireDays,
       id: row.id,
       isStar: row.isStar ?? false,
-      items: (reward?.rewardItemList ?? [])
-        .filter(({ itemId }) => itemId !== 0)
-        .map(({ itemCount, itemId }) => ({ itemId, quantity: itemCount })),
+      items: (reward ? toRewardItems(reward) : []).map(({ itemCount, itemId }) => ({ itemId, quantity: itemCount })),
       senderTextId: String(row.senderTextMapHash),
       titleTextId: String(row.titleTextMapHash),
     });
