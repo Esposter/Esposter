@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's expeditions as pure state. A character but the Traveler is sent to one of Mondstadt's places for 4, 8, 12 or 20 hours, kept by the moment it left so it returns while the page is closed, its items and Mora claimed into the bag and wallet, or forfeited by a recall. Two may be out at first, and Adventure Ranks 26, 31 and 36 each add one. Katheryne and the expedition screen are not built.
+The game's expeditions as pure state. A character but the Traveler is sent to one of Mondstadt's places for 4, 8, 12 or 20 hours, kept by the moment it left so it returns while the page is closed, its items and Mora claimed into the bag and wallet, or forfeited by a recall. Two may be out at first, and Adventure Ranks 26, 31 and 36 each add one.
 
 ## Requirements
 
@@ -184,22 +184,6 @@ Every character except the Traveler SHALL stay usable in the party while on expe
 - **WHEN** the player sets the party
 - **THEN** the character can be chosen for the party
 
-### Requirement: A place opens once its statue is resonated
-
-An expedition place SHALL be open only once its named statue has been resonated.
-
-#### Scenario: A place opens when its statue is resonated
-
-- **GIVEN** a place's named statue has not been resonated
-- **WHEN** the player resonates that statue
-- **THEN** the place is open for expeditions
-
-#### Scenario: A place whose statue is not resonated stays closed
-
-- **GIVEN** a place's named statue has not been resonated
-- **WHEN** the player looks at the expedition screen
-- **THEN** the place is not open for expeditions
-
 ### Requirement: The expedition bonus chance follows the sent character's level
 
 The chance of an expedition bonus SHALL rise with the level of the character sent.
@@ -240,7 +224,7 @@ A character's expedition talent SHALL apply to the expedition on which that char
 
 ## Open
 
-- [ ] **Two expeditions out at first** — no source yet: the wiki's Expedition page is not cached and the dump holds no base limit.
+- [ ] **Two expeditions out at first** — no source yet: the wiki's Expedition page is not cached and the dump holds no base limit; the clip's "Expedition Limit: 1/2" does not show its player's Adventure Rank.
 - [ ] **A claim whose items would overflow the bag is refused** — no source yet: no test in `claimExpedition.test.ts` holds an overflowing bag.
 - [ ] **A recall forfeits the reward** — no source yet: no test holds `recallExpedition`.
 - [ ] **A reload empties the expedition list** — no source yet: no test holds the session-only list.
