@@ -103,5 +103,4 @@ The edges are emitted by `packages/genshin-world/src/composables/useWorldPickups
 
 ## Open
 
-- [ ] **A device missing the frame budget gets a lower tier** — no source yet: the tier is a prop the host passes (`packages/genshin-engine/src/models/renderer/QualityTierSettings.ts` is its shape). A grep of `tier` lines in `packages/genshin-engine/src` and `packages/genshin-world/src` that name a frame or a budget finds no code that lowers it.
-- [ ] **The engine's code loads only when the world needs it** — no source yet: the app's lazy mount of the world is not checked; the engine's source holds no dynamic import, since three's Inspector left it (`packages/genshin-engine/src/renderer/createGenshinRenderer.ts`).
+The open checks for the quality tier and the lazy loading are recorded with their requirements in [the spec](spec.md).

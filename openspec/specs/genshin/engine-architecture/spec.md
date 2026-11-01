@@ -148,4 +148,4 @@ A module SHALL be added only by the proposal that first needs it, never as an em
 - [ ] **A steady frame allocates nothing for its objects** — no source yet: no allocation test or measurement is in the repo.
 - [ ] **A region of thousands of parts is drawn in tens of calls** — no source yet: `packages/genshin-engine/src/renderer/createInstancedMesh.ts` shows the instancing, but no draw-call count is recorded.
 - [ ] **A device missing the frame budget gets a lower tier** — no source yet: the tier is a prop the host passes (`packages/genshin-world/src/models/world/WorldScreenProps.ts`), and no code lowers it when a frame misses its budget.
-- [ ] **The engine's code loads only when the world needs it** — no source yet: no lazy import of the engine code is found under `packages/genshin-world/src/components/World`.
+- [ ] **The engine's code loads only when the world needs it** — no source yet: no lazy import of the engine code is found under `packages/genshin-world/src/components/World`, the app's lazy mount of the world is not checked, and the engine's `packages/genshin-engine/src/renderer/createGenshinRenderer.ts` holds no dynamic import.
