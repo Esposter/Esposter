@@ -95,6 +95,37 @@ const run = () => {
 </template>
 ```
 
+`src/PlainChild.vue` is the child for row 2 of the Isolation table. That row registers it as `MinPlain` and uses `<MinPlain ref="child" @click="run" />` in `Parent.vue`.
+
+```vue
+<script setup lang="ts">
+const reset = () => {};
+
+defineExpose({ reset });
+</script>
+
+<template>
+  <div />
+</template>
+```
+
+`src/ParentNope.vue` is the proof file for the Expected section. Run it in place of `Parent.vue`, as the control row of the Isolation table does:
+
+```vue
+<script setup lang="ts">
+import { useTemplateRef } from "vue";
+
+const child = useTemplateRef("child");
+const run = () => {
+  child.value?.nope();
+};
+</script>
+
+<template>
+  <MinChild ref="child" @click="run" />
+</template>
+```
+
 ```sh
 npm i && npm run typecheck ; npm run typecheck:oracle
 ```
@@ -115,7 +146,7 @@ No diagnostic, as with `vue-tsc` 3.3.11. The ref has the type `{ reset: () => vo
 No output. The command exits 0.
 ```
 
-`vue-tsc` types the ref. In `ParentNope.vue`, a call to a method that does not exist is an error in both checkers.
+`vue-tsc` types the ref. With `ParentNope.vue` in place of `Parent.vue`, a call to a method that does not exist is an error in both checkers. `vue-tsc` reports `src/ParentNope.vue(6,16): error TS2339: Property 'nope' does not exist on type '{ reset: () => void; }'.`
 
 ## Isolation
 
