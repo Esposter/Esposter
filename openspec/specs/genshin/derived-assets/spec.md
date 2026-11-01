@@ -167,6 +167,5 @@ A screen's motion SHALL be played from the game's exported animation clips, not 
 - [ ] **A screen whose atlas names say little is measured from the wiki's copies and public recordings** — no source yet: no checked file names the copies or recordings used for a given screen.
 - [ ] **A light, haze or motion with no game asset is measured from captures of the game** — no source yet: no checked capture or measurement file is cited for such a setting.
 - [ ] **No export is included in the repository, the build or the deployment** — no source yet: no build or deployment check is cited that excludes the exports.
-- [ ] **A search refuses an index written before it kept each asset's offset, until it is written again** — no source yet: the search's refusal is not located in a checked file; `writeAssetIndex.ts` writes the offsets but holds no refusal.
 - [ ] **A camera path set in a script is measured from a capture of the game** — no source yet: no capture or measurement of the camera path is cited in a checked file.
 - [ ] **The clips' sampled curves drive a screen's motion** — no source yet: no checked consumer of the exported clips is cited.

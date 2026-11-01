@@ -40,8 +40,9 @@ flowchart TD
 
 ## Open
 
+The gate that keeps Windows-only steps off Apple silicon is open in [the spec](spec.md).
+
 - [ ] **All six reference blocks match Windows AnimeStudio's file counts on the current build** — no source yet: no parity run output is on disk, and `{data-root}/tools` holds no `animestudio-parity` folder.
 - [ ] **The game-running check passes on macOS, where the game has no build** — no source yet: no macOS run of the check is recorded in a checked file.
 - [ ] **Windows' build does not overflow the backward match offset** — no source yet: no Windows build or run is checked for it.
 - [ ] **The other ACL libraries (SR, ZZZ, DB) fail to compile under clang, and ZZZV2 needs `windows.h`** — no source yet: no build log of those libraries is checked.
-- [ ] **FMOD audio, FBX export and HLSL decompilation are Windows-only, so the steps needing them do not run here** — no source yet: no gating code for those steps is located.

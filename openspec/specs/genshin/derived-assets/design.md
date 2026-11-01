@@ -203,7 +203,8 @@ The CLI that exports the game's blocks is built on macOS by its own page, [Anime
 
 ## Open
 
-- [ ] **Nothing the game draws is bundled, and the exports never enter a build or deployment** — no source yet: no build or deployment check is cited that keeps the exports out of the bundle.
+The open check that the exports stay out of the build and deployment is recorded with its requirement in [the spec](spec.md).
+
 - [ ] **A DXIL program is shader model 6, with no SHDR/SHEX chunk** — no source yet: no DXIL program is among the uber listings [cited on the shading page](../characters/shading/design.md), so no DXIL header is read.
 - [ ] **`vkd3d-compiler` 2.1 disassembles every carved program, and `d3dcompiler_47` only the DXBC ones** — no source yet: the 2.1 install is at `{data-root}/cache/vkd3d/vkd3d-2.1`, but no run log records the disassembly.
 - [ ] **The walkway's parent is `BridgeBeginNode`, set by hand at the door's 0.4 scale and 5 metres down** — no source yet: a dump or code that sets the walkway's parent by hand.
