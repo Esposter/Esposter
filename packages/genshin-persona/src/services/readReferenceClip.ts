@@ -10,8 +10,8 @@ import { readWikiFile } from "#src/services/readWikiFile";
 import { readWikiFileUrls } from "#src/services/readWikiFileUrls";
 import { readWikiStoryLines } from "#src/services/readWikiStoryLines";
 import { resampleClip } from "#src/services/resampleClip";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname } from "node:path";
+import { writeStateFile } from "#src/services/writeStateFile";
+import { existsSync, readFileSync } from "node:fs";
 
 // A character the reference selection could not measure is spoken from the longest story line the wiki lists —
 // Spoken, never silent; a stem is the same in every dub, so the English page names it
@@ -42,8 +42,7 @@ export const readReferenceClip = async (
     const bytes = await readWikiFile(url);
     if (!bytes) return undefined;
 
-    mkdirSync(dirname(referencePath), { recursive: true });
-    writeFileSync(referencePath, bytes);
+    writeStateFile(referencePath, bytes);
   }
 
   const clip = await decode(readFileSync(referencePath));
