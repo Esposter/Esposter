@@ -8,14 +8,16 @@ interface Props {
 
 const { emoji } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
+
+const emojiDescription = computed(() => getEmojiDescription(emoji));
 </script>
 
 <template>
-  <UiTooltip :label="getEmojiDescription(emoji)">
+  <UiTooltip :label="emojiDescription">
     <template #default="{ activatorProps }">
       <UiButton
         :="activatorProps"
-        :aria-label="`React with ${getEmojiDescription(emoji)}`"
+        :aria-label="`React with ${emojiDescription}`"
         :variant="UiButtonVariant.Quiet"
         px-0
         @click="emit('select')"
@@ -25,7 +27,7 @@ const emit = defineEmits<{ select: [] }>();
     </template>
     <template #content>
       <span text-center flex flex-col>
-        <span>{{ getEmojiDescription(emoji) }}</span>
+        <span>{{ emojiDescription }}</span>
         <span text-sm text-muted>Click to react</span>
       </span>
     </template>
