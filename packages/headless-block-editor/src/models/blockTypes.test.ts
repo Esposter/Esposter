@@ -19,6 +19,11 @@ const children = (
   node.type === "section" ? { children: node.props.children } : {};
 
 describe("block types", () => {
+  interface RenderedNode {
+    children: RenderedNode[];
+    id: string;
+  }
+
   const heading: HeadingNode = { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" };
   const section: SectionNode = { props: { children: [heading], id: TEST_SECTION_ID, title: "" }, type: "section" };
   const registry: BlockRegistry<
@@ -33,10 +38,6 @@ describe("block types", () => {
     ],
   };
   const renderedNodes = [{ children: [{ children: [], id: TEST_HEADING_ID }], id: TEST_SECTION_ID }];
-  interface RenderedNode {
-    children: RenderedNode[];
-    id: string;
-  }
   const renderNode = (
     node: HeadingNode | ListNode | SectionNode,
     _definition: BlockTypeDefinition<HeadingNode> | BlockTypeDefinition<SectionNode>,
