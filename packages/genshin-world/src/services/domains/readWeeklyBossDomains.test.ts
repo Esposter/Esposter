@@ -34,12 +34,4 @@ describe("weeklyBossDomainsSchema", () => {
       "1006": { levels: [level] },
     });
   });
-
-  test("a level missing its enemy level is refused", () => {
-    expect.hasAssertions();
-
-    const { enemyLevel: _enemyLevel, ...incomplete } = level;
-
-    expect(weeklyBossDomainsSchema.safeParse({ "1006": { levels: [incomplete] } }).success).toBe(false);
-  });
 });

@@ -143,8 +143,21 @@ describe(claimPetrifiedTree, () => {
         epoch,
         { [REWARD_NAME_TEXT_ID]: REWARD_NAME },
         materialDataMap,
-      )?.inventory.items[0]?.quantity,
-    ).toBe(4);
+      )?.inventory.items,
+    ).toStrictEqual([
+      {
+        definition: {
+          category: ItemCategory.Material,
+          id: REWARD_ITEM_ID,
+          name: REWARD_NAME,
+          rank: 0,
+          rarity: 0,
+          stackLimit: REWARD_STACK_LIMIT,
+        },
+        id: 0,
+        quantity: 4,
+      },
+    ]);
   });
 
   test("claiming the tree with too little resin is refused", () => {
