@@ -9,7 +9,6 @@ import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { Trial } from "#src/models/trial/Trial";
-import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
@@ -112,13 +111,10 @@ import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
-import { LandmarkKind } from "#src/models/world/LandmarkKind";
-import { checkIsWeeklyBossEntryOpen } from "#src/services/bosses/checkIsWeeklyBossEntryOpen";
 import { getCharacterIdConstellationsMap } from "#src/services/character/getCharacterIdConstellationsMap";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
 import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
-import { toHandbookDomains } from "#src/services/handbook/toHandbookDomains";
 import { HOME_REALM_GROUND_HEIGHT } from "#src/services/home/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
@@ -1091,6 +1087,7 @@ const {
 // Whose talk the world holds, named by its text, each locked jump landmark, a domain entrance among them, which it
 // Resonates with, and the Crafting bench, named by its title. Each stands on the ground beneath its point
 const {
+  challengeWeeklyBoss,
   chooseDomainTreeClaim,
   claimWeeklyBossFirstClearReward,
   closeDomainTreeClaim,
@@ -1098,12 +1095,12 @@ const {
   domainCamps,
   domainClaimOffers,
   domainLevelRows,
-  enterDomain,
+  enterDomainLevel,
+  handbookDomains,
   isDomainTreeRaised,
   leaveDomain,
   openDomain,
   openDomainTreeClaim,
-  quickChallengeDomain,
   stepDomainChallenge,
   unlockedDomainEntrances,
 } = useWorldDomains({
@@ -1118,6 +1115,7 @@ const {
   gameDataBaseUrl,
   getWorldNow,
   inventory,
+  jumpLandmarks,
   jumpTo,
   kitEffectState: kitContext.kitEffectState,
   materialDataMap,
@@ -1127,6 +1125,7 @@ const {
   rank,
   reliquaryPieceEntryMap,
   reliquarySets,
+  screenKind,
   setInventory,
   setWallet,
   unlockedLandmarks,
@@ -1230,11 +1229,6 @@ const pressInteractable = (id: string) => {
   selectInteractable(id);
   tapActionKey(input, InputAction.Interact);
 };
-// A level entered from a domain's screen leaves the screen for the world, where its challenge begins at the stand-in arena
-const enterDomainLevel = (dungeonId: number) => {
-  screenKind.value = ScreenKind.World;
-  enterDomain(dungeonId);
-};
 // A banner's trial, opened from the Wish screen: the trial takes the player's roster and the world opens on its stand-in arena,
 // East of where the player stands (PROVISIONAL until the trial's scene is read)
 const openTrial = async (trial: Trial) => {
@@ -1251,30 +1245,6 @@ const openTrial = async (trial: Trial) => {
       rotation: characterBody.rotation.y,
     }),
   );
-};
-// The Domains tab lists every domain entrance the map has, the locked and the unlocked alike, each with what the player can do
-const handbookDomains = computed(() =>
-  toHandbookDomains(
-    jumpLandmarks.value.filter(
-      (landmark): landmark is DomainEntranceLandmark => landmark.kind === LandmarkKind.DomainEntrance,
-    ),
-    {
-      adventureRank: rank.value,
-      clearedDomainIds: clearedDomainIds.value,
-      completedMainQuestIds: completedMainQuestIds.value,
-      unlockedLandmarkIds: new Set(unlockedLandmarks.value.map(({ id }) => id)),
-    },
-  ),
-);
-// A locked weekly boss is challenged from the handbook. Its quick challenge enters the domain at the tier the rank reaches
-// And the world opens once that fight has started
-const challengeWeeklyBoss = async (landmark: DomainEntranceLandmark) => {
-  const isEntered = await quickChallengeDomain(
-    landmark,
-    rank.value,
-    !checkIsWeeklyBossEntryOpen(landmark.entryId, completedMainQuestIds.value),
-  );
-  if (isEntered) screenKind.value = ScreenKind.World;
 };
 // A quest's talk chosen on a standing talk's opening line runs in its place, and offers no duel of its own
 const beginTalk = (talkId: string) => {

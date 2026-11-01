@@ -31,7 +31,9 @@ import { DomainKind } from "#src/models/domains/DomainKind";
 import { domainScheduleSchema } from "#src/models/domains/DomainSchedule";
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
+import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { checkIsWeeklyBossEntryOpen } from "#src/services/bosses/checkIsWeeklyBossEntryOpen";
 import { checkIsWeeklyBossFirstClaimable } from "#src/services/bosses/checkIsWeeklyBossFirstClaimable";
 import { claimWeeklyBossFirstClear } from "#src/services/bosses/claimWeeklyBossFirstClear";
 import { computeWeeklyBossQuickChallengeDungeonId } from "#src/services/bosses/computeWeeklyBossQuickChallengeDungeonId";
@@ -52,6 +54,7 @@ import { readWeeklyBossDomains } from "#src/services/domains/readWeeklyBossDomai
 import { resolveDomainChallenge } from "#src/services/domains/resolveDomainChallenge";
 import { toWeeklyBossSchedule } from "#src/services/domains/toWeeklyBossSchedule";
 import { triggerDomainDisorder } from "#src/services/domains/triggerDomainDisorder";
+import { toHandbookDomains } from "#src/services/handbook/toHandbookDomains";
 import { addDroppedItem } from "#src/services/inventory/addDroppedItem";
 import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
@@ -107,6 +110,7 @@ export const useWorldDomains = ({
   gameDataBaseUrl,
   getWorldNow,
   inventory,
+  jumpLandmarks,
   jumpTo,
   kitEffectState,
   materialDataMap,
@@ -116,6 +120,7 @@ export const useWorldDomains = ({
   rank,
   reliquaryPieceEntryMap,
   reliquarySets,
+  screenKind,
   setInventory,
   setWallet,
   unlockedLandmarks,
@@ -133,6 +138,7 @@ export const useWorldDomains = ({
   events: WorldEvents;
   gameDataBaseUrl: string;
   getWorldNow: () => Temporal.Instant;
+  jumpLandmarks: Readonly<Ref<Landmark[]>>;
   jumpTo: (pose: WorldJumpPose) => void;
   kitEffectState: KitEffectState;
   party: Party;
@@ -140,6 +146,7 @@ export const useWorldDomains = ({
   rank: Ref<number>;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   reliquarySets: readonly ReliquarySetData[];
+  screenKind: Ref<ScreenKind>;
   unlockedLandmarks: Ref<Landmark[]>;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
   worldNow: Readonly<Ref<Temporal.Instant>>;
@@ -387,6 +394,35 @@ export const useWorldDomains = ({
         return false;
       },
     );
+  // A level entered from a domain's screen leaves the screen for the world, where its challenge begins at the stand-in arena
+  const enterDomainLevel = (dungeonId: number) => {
+    screenKind.value = ScreenKind.World;
+    enterDomain(dungeonId);
+  };
+  // The Domains tab lists every domain entrance the map has, the locked and the unlocked alike, each with what the player can do
+  const handbookDomains = computed(() =>
+    toHandbookDomains(
+      jumpLandmarks.value.filter(
+        (landmark): landmark is DomainEntranceLandmark => landmark.kind === LandmarkKind.DomainEntrance,
+      ),
+      {
+        adventureRank: rank.value,
+        clearedDomainIds: clearedDomainIds.value,
+        completedMainQuestIds: completedMainQuestIds.value,
+        unlockedLandmarkIds: new Set(unlockedLandmarks.value.map(({ id }) => id)),
+      },
+    ),
+  );
+  // A locked weekly boss is challenged from the handbook. Its quick challenge enters the domain at the tier the rank reaches
+  // And the world opens once that fight has started
+  const challengeWeeklyBoss = async (landmark: DomainEntranceLandmark) => {
+    const isEntered = await quickChallengeDomain(
+      landmark,
+      rank.value,
+      !checkIsWeeklyBossEntryOpen(landmark.entryId, completedMainQuestIds.value),
+    );
+    if (isEntered) screenKind.value = ScreenKind.World;
+  };
   // Pressing F at the raised tree offers the claims the held resin affords, and offers none where it affords none
   const openDomainTreeClaim = (now: Temporal.Instant) => {
     if (!isDomainTreeRaised.value) return;
@@ -440,6 +476,7 @@ export const useWorldDomains = ({
   };
 
   return {
+    challengeWeeklyBoss,
     chooseDomainTreeClaim,
     claimWeeklyBossFirstClearReward,
     closeDomainTreeClaim,
@@ -449,6 +486,8 @@ export const useWorldDomains = ({
     domainEntrance,
     domainLevelRows,
     enterDomain,
+    enterDomainLevel,
+    handbookDomains,
     isDomainTreeRaised,
     leaveDomain,
     openDomain,

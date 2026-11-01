@@ -15,6 +15,7 @@ import { EnemyFamily } from "#src/models/enemy/EnemyFamily";
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { PoiseType } from "#src/models/enemy/PoiseType";
+import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { STORMTERROR_FINALE_ATTACK } from "#src/services/bosses/stormterror";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -104,6 +105,7 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
   };
   const events = createWorldEvents();
   const jumpTo = vi.fn<(pose: WorldJumpPose) => void>();
+  const screenKind = ref(ScreenKind.AdventurerHandbook);
   const domains = useWorldDomains({
     adventureExp: ref(0),
     adventureRankTables: { levels: [], locks: [], worldLevelRows: [] },
@@ -116,6 +118,7 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
     gameDataBaseUrl: "",
     getWorldNow: clock.getWorldNow,
     inventory: ref<Inventory>({ items: [], nextId: 0, quickSwapItemIds: [] }),
+    jumpLandmarks: ref<Landmark[]>([createDomainEntrance()]),
     jumpTo,
     kitEffectState: { effects: [] },
     materialDataMap: new Map(),
@@ -125,6 +128,7 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
     rank: ref(40),
     reliquaryPieceEntryMap: new Map(),
     reliquarySets: [],
+    screenKind,
     setInventory: vi.fn<() => void>(),
     setWallet: vi.fn<() => void>(),
     unlockedLandmarks: ref<Landmark[]>([createDomainEntrance()]),
@@ -132,7 +136,7 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
     weaponDataMap: new Map(),
     worldNow: clock.worldNow,
   });
-  return { domains, events, jumpTo };
+  return { domains, events, jumpTo, screenKind };
 };
 
 describe(useWorldDomains, () => {
@@ -193,6 +197,26 @@ describe(useWorldDomains, () => {
     const { domains, jumpTo } = createDomains();
     await expect(domains.quickChallengeDomain(domainEntrance, 40, true)).resolves.toBe(true);
     expect(jumpTo).toHaveBeenCalledExactlyOnceWith(computeDomainScenePose(domainEntrance.arrival));
+  });
+
+  test("a weekly boss challenged from the handbook opens the world once its fight has started", async () => {
+    expect.hasAssertions();
+
+    const { domains, screenKind } = createDomains();
+    await domains.challengeWeeklyBoss(domainEntrance);
+
+    expect(screenKind.value).toBe(ScreenKind.World);
+  });
+
+  test("a level entered from a domain's screen leaves the screen for the world", async () => {
+    expect.hasAssertions();
+
+    const { domains, screenKind } = createDomains();
+    await domains.quickChallengeDomain(domainEntrance, 40, true);
+    screenKind.value = ScreenKind.Domain;
+    domains.enterDomainLevel(1006);
+
+    expect(screenKind.value).toBe(ScreenKind.World);
   });
 
   test("leaving a domain fades back to its entrance", async () => {
