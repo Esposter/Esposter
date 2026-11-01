@@ -1,6 +1,6 @@
 import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 
-import { offeringLevelItemSchema } from "#src/models/offering/OfferingLevel";
+import { offeringLevelItemSchema } from "#src/models/offering/OfferingLevelItem";
 import { offeringRewardSchema } from "#src/models/offering/OfferingReward";
 import { readGameData } from "#src/services/data/readGameData";
 import { z } from "zod";

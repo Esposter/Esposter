@@ -1,4 +1,5 @@
-import type { OfferingLevel, OfferingLevelItem } from "#src/models/offering/OfferingLevel";
+import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
+import type { OfferingLevelItem } from "#src/models/offering/OfferingLevelItem";
 import type { OfferingProgress } from "#src/models/offering/OfferingProgress";
 
 // Sets the count held of an item, an item held none of being left out of the counts
