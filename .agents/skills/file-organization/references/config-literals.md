@@ -7,7 +7,7 @@ literal is repeated on purpose, and what pins it.
 ## A config that cannot import repeats what it needs, and is pinned by a test
 
 Some files are read by a tool that has no module resolution for a workspace package: JSON (`tsconfig.json`),
-`.gitignore`, the linter's and formatter's own configs (`oxlint.config.ts`, `oxfmt.config.ts`) — TypeScript, but
+`.gitignore`, the linter's and formatter's own configs (`oxlint.config.ts` and the `oxlint/` modules it imports, `oxfmt.config.ts`) — TypeScript, but
 loaded by the tool itself, and the CI format job installs the root project alone with no package built, so they
 import their own tool and nothing of ours — and, the one that fails loudly and late, anything a `postinstall` evaluates, which runs before any workspace package is built, so importing one fails the install
 itself on a fresh clone. **That set is wider than the scripts that name it**: the app's `postinstall` is

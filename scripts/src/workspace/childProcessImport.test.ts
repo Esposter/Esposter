@@ -13,9 +13,9 @@ interface OxlintDiagnostic {
 }
 
 /**
- * The child process ban is written twice in `oxlint.config.ts`: a value import of either spelling of node's module is
- * restricted outside the wrappers. The probe lives outside the repo, so the root pass never lints it, and it is linted
- * with the repo's own config, so the test reads the entries as they are rather than a copy of them.
+ * The child process ban is written twice in `oxlint/importRestrictions.ts`: a value import of either spelling of node's
+ * module is restricted outside the wrappers. The probe lives outside the repo, so the root pass never lints it, and it is
+ * linted with the repo's own config, so the test reads the entries as they are rather than a copy of them.
  */
 describe("childProcessImport", () => {
   const OXLINT_BIN = join(REPOSITORY_ROOT, "node_modules", "oxlint", "bin", "oxlint");

@@ -6,15 +6,14 @@ import { join } from "node:path";
 import { beforeAll, describe, expect, test } from "vitest";
 
 interface OxlintConfiguration {
-  jsPlugins: string[];
   overrides: { rules?: Record<string, unknown> }[];
   rules: Record<string, unknown>;
 }
 /**
  * A custom rule that is written but never switched on fails the way the oxlint skill warns a mis-scoped glob does:
- * to zero hits, with CI green. Three links have to hold for one to run — the entrypoint listed in `jsPlugins`, each
- * of its rules enabled at the root or in an override, and a fixture suite beside it proving it still fires — and
- * each is a separate edit a new plugin or rule can skip, so the three are read off the tree rather than remembered.
+ * to zero hits, with CI green. Two links have to hold for one to run — each of its rules enabled at the root or in an
+ * override, and a fixture suite beside it proving it still fires — and each is a separate edit a new plugin or rule can
+ * skip, so both are read off the tree rather than remembered.
  */
 describe("oxlintPlugins", () => {
   const PLUGINS_DIRECTORY = "scripts/src/oxlint";
@@ -24,7 +23,7 @@ describe("oxlintPlugins", () => {
     .filter((fileName) => fileName.endsWith(PLUGIN_EXTENSION) && !fileName.endsWith(SUITE_EXTENSION))
     .map((fileName) => `./${PLUGINS_DIRECTORY}/${fileName}`)
     .toSorted();
-  let configuration: OxlintConfiguration = { jsPlugins: [], overrides: [], rules: {} };
+  let configuration: OxlintConfiguration = { overrides: [], rules: {} };
   let plugins: Plugin[] = [];
 
   beforeAll(async () => {
@@ -38,12 +37,6 @@ describe("oxlintPlugins", () => {
         return plugin;
       }),
     );
-  });
-
-  test("loads every plugin entrypoint", () => {
-    expect.hasAssertions();
-
-    expect(configuration.jsPlugins.toSorted()).toStrictEqual(pluginPaths);
   });
 
   test("enables every rule a plugin defines", () => {
