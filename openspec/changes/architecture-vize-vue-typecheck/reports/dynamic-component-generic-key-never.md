@@ -1,8 +1,8 @@
-# content-mapper: a `<component :is>` picked from a map by a generic-typed key gets `never` for `onUpdate:modelValue` and an empty required-slots object
+# content-mapper: `<component :is="map[foo]" v-model>` with a generic-typed key fails the generated component check (TS2345 and TS2322)
 
 I was trying to adopt vize for Nuxt type checking and ran into this, among a few others.
 
-`<component :is="map[foo]" v-model="model" />` gives TS2345 and TS2322 when `foo` has a generic type. With a non-generic key the same file passes. `vue-tsc` accepts both.
+`<component :is="map[foo]" v-model="model" />` gives TS2345 on the props argument and TS2322 on the required slots when `foo` has a generic type. With a non-generic key the same file passes. `vue-tsc` accepts both.
 
 ## Environment
 
@@ -91,7 +91,7 @@ No diagnostic, as with `vue-tsc`. `vue-tsc` reads the file: `defineModel<number>
 
 ## Cause
 
-The cause is not known. The generated code shows where the types go wrong. The component expression is `map[foo]`, an indexed access on a generic key that TypeScript cannot resolve, and the mapper builds its check types from it:
+The cause is not known. The generated code shows which assignments fail. The component expression is `map[foo]`, an indexed access on a generic key, and the mapper builds its check types from it:
 
 ```ts
   const __vize_dynamic_is_3 = (map[foo]);
@@ -103,7 +103,13 @@ The cause is not known. The generated code shows where the types go wrong. The c
   const __vize_required_slots_0: import("vize:virtual-ts").$RequiredSlots<$SlotContract_0, {}> = {};
 ```
 
-The helper `$EmitListeners<____vize_dynamic_is_3_Component_0>` and `$StructuralSlots<typeof __vize_dynamic_is_3>` are conditional types over the deferred component type. They likely resolve to `never` and to a non-empty slot contract. I did not find the line that writes `"onUpdate:modelValue": never`.
+The `never` entry is not the defect. It is a witness that the mapper writes for each static listener, so that a required `onFoo` key is satisfied (`crates/vize_canon/src/virtual_ts/expressions/props_literal.rs:81-88`):
+
+```rust
+append!(*ts, "{expr_indent}  ...{{}} as {{ ");
+```
+
+It only appears in the message. The failing assignments are the argument to `____vize_dynamic_is_3_Check_0` (`$PropChecker`, with `$ComponentCheckTail<C>` from `scope/component_prop_checker/check_helpers.rs:152`) and `{}` to `$RequiredSlots<$StructuralSlots<…>>`. Both helpers are conditional types over the type of `map[foo]`. A model of these helpers in plain TypeScript, with a generic indexed access as the component type, did not reproduce the error, so the helper that stays unresolved is not identified.
 
 ## Real occurrence
 
