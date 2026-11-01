@@ -91,7 +91,13 @@
   "hits.sprintPhantom.0.element": { "file": "asc.go", "line": 54, "source": "Gcsim", "value": "Water" },
   "hits.sprintPhantom.0.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.sprintPhantom.0.hitmarkFrames": { "file": "asc.go", "line": 58, "source": "Gcsim", "value": 120 },
-  "hits.sprintPhantom.0.multiplier": { "cause": "Unsourced", "value": 0.664 },
+  "hits.sprintPhantom.0.multiplier": { "cause": "Unclassified", "value": 0.664 },
   "hits.sprintPhantom.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
-  "hits.mirrorReflectionPhantom.4.element": { "cause": "Unsourced", "value": "Water" }
+  "hits.mirrorReflectionPhantom.4.element": { "cause": "Unsourced", "value": "Water" },
+  "hits.sprintPhantom.0.area": {
+    "file": "asc.go",
+    "line": 58,
+    "source": "Gcsim",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  }
 }
