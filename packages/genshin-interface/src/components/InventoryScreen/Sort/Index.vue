@@ -36,17 +36,13 @@ const { orderLabel, sortLabels } = defineProps<Props>();
    dropdown is the game's own pill, its list drawn by the browser until its open motion is measured */
 .order {
   position: absolute;
+  top: calc(var(--unit) * 992);
+  left: calc(var(--unit) * 483);
   width: calc(var(--unit) * 50);
   height: calc(var(--unit) * 50);
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: rgb(255 255 255 / 0.14);
-}
-
-.order {
-  top: calc(var(--unit) * 992);
-  left: calc(var(--unit) * 483);
   background: #ece3d8;
 }
 
