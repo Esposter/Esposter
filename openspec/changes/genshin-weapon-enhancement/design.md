@@ -152,4 +152,4 @@ packages/genshin-world/src/models/weapon/WeaponData.ts
 
 ## Reference
 
-- `yt-jXrYcFHiVnI-weapon-levelling.mkv` — the Weapons tab on the English PC client: a three-star weapon at level 1 with no EXP fed one Enhancement Ore, with the Mora its change costs; then a weapon at its phase's cap fed ores past it, with the ores returned. 30 seconds at most. It settles the EXP each level takes, the Mora per ten points, and the EXP under the smallest ore that the game returns. On the wiki and YouTube, none found.
+- `yt-jXrYcFHiVnI-weapon-levelling.mkv` — the Weapons tab on the English PC client: a three-star weapon at level 1 with no EXP fed one Enhancement Ore, with the Mora its change costs; then a weapon at its phase's cap fed ores past it, with the ores returned. 30 seconds at most. It settles the EXP each level takes, the Mora per ten points, and the EXP under the smallest ore that the game returns. Found as a near match: https://www.youtube.com/watch?v=jXrYcFHiVnI (1920 by 864 at 60 frames a second, 115 seconds). Its Enhance tab at level one and a level 80 cap are in it, but it is a five-star Silver Light, and the ore fed past the cap and returned is not seen.
