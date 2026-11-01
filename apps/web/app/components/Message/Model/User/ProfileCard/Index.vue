@@ -33,6 +33,8 @@ const { checkHasSentFriendRequest } = friendRequestStore;
 const moderationNoteStore = useModerationNoteStore();
 const { currentTargetUserId } = storeToRefs(moderationNoteStore);
 const isSelf = computed(() => session.value?.user.id === user.id);
+const isFriend = computed(() => checkIsFriend(user.id));
+const hasSentFriendRequest = computed(() => checkHasSentFriendRequest(user.id));
 const { copyUserIdItem, friendItem, isKickable, moderationItems } = useMemberActionItems(
   () => user,
   currentRoomId,
@@ -81,10 +83,10 @@ watchImmediate(isKickable, async (newIsKickable) => {
       <p text-muted>{{ getStatusMessage(user.id) || getUserStatus(user.id) }}</p>
     </div>
     <template v-if="!isSelf">
-      <div v-if="checkIsFriend(user.id)">
+      <div v-if="isFriend">
         <UiChip :meaning="UiIconMeaning.Success">Friends</UiChip>
       </div>
-      <div v-else-if="checkHasSentFriendRequest(user.id)">
+      <div v-else-if="hasSentFriendRequest">
         <UiChip :meaning="UiIconMeaning.Awaiting">Request sent</UiChip>
       </div>
     </template>
