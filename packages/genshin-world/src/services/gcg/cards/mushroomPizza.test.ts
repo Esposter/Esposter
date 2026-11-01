@@ -55,6 +55,7 @@ describe("mushroomPizza", () => {
     const side = createSide();
     const context: GcgEffectContext = { duel: createDuel(side), sideIndex: 0 };
     mushroomPizza.play?.(context, TARGET_INDEX);
+
     expect(side.characters.map(({ hp }) => hp)).toStrictEqual([MAX_HP, WOUNDED_HP + 1]);
   });
 
@@ -63,6 +64,7 @@ describe("mushroomPizza", () => {
     const side = createSide();
     const context: GcgEffectContext = { duel: createDuel(side), sideIndex: 0 };
     mushroomPizza.play?.(context, TARGET_INDEX);
+
     expect(side.characters[TARGET_INDEX]?.statuses).toStrictEqual([
       { cardId: 333_007, counter: 0, rounds: 1, usages: 0 },
       { cardId: 303_305, counter: 0, rounds: 0, usages: 2 },
@@ -75,6 +77,7 @@ describe("mushroomPizza", () => {
     const duel = createDuel(side);
     mushroomPizza.play?.({ duel, sideIndex: 0 }, TARGET_INDEX);
     runGcgEndPhase(duel);
+
     expect({
       hp: side.characters.map(({ hp }) => hp),
       statuses: side.characters[TARGET_INDEX]?.statuses,
@@ -83,6 +86,7 @@ describe("mushroomPizza", () => {
       statuses: [{ cardId: 303_305, counter: 0, rounds: 0, usages: 1 }],
     });
     runGcgEndPhase(duel);
+
     expect({
       hp: side.characters.map(({ hp }) => hp),
       statuses: side.characters[TARGET_INDEX]?.statuses,
@@ -104,6 +108,7 @@ describe("mushroomPizza", () => {
   test("should be played on a character that holds no food this Round", () => {
     expect.hasAssertions();
     const side = createSide();
+
     expect(mushroomPizza.canPlay?.({ duel: createDuel(side), sideIndex: 0 }, TARGET_INDEX)).toBe(true);
   });
 });

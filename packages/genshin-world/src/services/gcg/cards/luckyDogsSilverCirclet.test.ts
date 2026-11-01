@@ -55,6 +55,7 @@ describe("luckyDogsSilverCirclet", () => {
     const side = createSide(5);
     const duel = createDuel(side);
     luckyDogsSilverCirclet.onSkillUsed?.({ characterIndex: 0, duel, sideIndex: 0 }, ELEMENTAL_SKILL, zoneCard, []);
+
     expect(side.characters.map(({ hp }) => hp)).toStrictEqual([7]);
   });
 
@@ -89,6 +90,7 @@ describe("luckyDogsSilverCirclet", () => {
     const context = { characterIndex: 0, duel, sideIndex: 0 };
     luckyDogsSilverCirclet.onSkillUsed?.(context, ELEMENTAL_SKILL, zoneCard, []);
     luckyDogsSilverCirclet.onSkillUsed?.(context, ELEMENTAL_SKILL, zoneCard, []);
+
     expect({ hp: side.characters.map(({ hp }) => hp), usedCardIds: side.usedCardIds }).toStrictEqual({
       hp: [7],
       usedCardIds: [CIRCLET_ID],

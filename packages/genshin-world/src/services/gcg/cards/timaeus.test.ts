@@ -92,6 +92,7 @@ describe("timaeus", () => {
     const zoneCard = createGcgZoneCard(TIMAEUS_ID, timaeus);
     const context: GcgEffectContext = { duel: createDuel(createSide([], []), () => 0), sideIndex: 0 };
     timaeus.onEndPhase?.(context, zoneCard);
+
     expect(zoneCard).toStrictEqual({ cardId: TIMAEUS_ID, counter: 3, rounds: 0, usages: 0 });
   });
 
@@ -100,6 +101,7 @@ describe("timaeus", () => {
     const side = createSide(ARTIFACT_IDS, [ACTION_ID, takeOne(ARTIFACT_IDS, 1), takeOne(ARTIFACT_IDS, 2)]);
     const duel = createDuel(side, () => 0);
     timaeus.play?.({ duel, sideIndex: 0 }, undefined);
+
     expect({ drawPile: side.drawPile, hand: side.hand }).toStrictEqual({
       drawPile: [ACTION_ID, takeOne(ARTIFACT_IDS, 2)],
       hand: [takeOne(ARTIFACT_IDS, 1)],
@@ -110,6 +112,7 @@ describe("timaeus", () => {
     expect.hasAssertions();
     const side = createSide(ARTIFACT_IDS.slice(0, 5), [takeOne(ARTIFACT_IDS, 1)]);
     timaeus.play?.({ duel: createDuel(side, () => 0), sideIndex: 0 }, undefined);
+
     expect({ drawPile: side.drawPile, hand: side.hand }).toStrictEqual({
       drawPile: [takeOne(ARTIFACT_IDS, 1)],
       hand: [],
@@ -123,8 +126,10 @@ describe("timaeus", () => {
     const context: GcgEffectContext = { duel, sideIndex: 0 };
     const zoneCard = { ...createGcgZoneCard(TIMAEUS_ID, timaeus), counter: ARTIFACT_COST };
     const subject = createArtifactSubject();
+
     expect(timaeus.reduceCost?.(context, subject, zoneCard)).toStrictEqual({ count: ARTIFACT_COST });
     timaeus.onCostPaid?.(context, subject, zoneCard);
+
     expect({ counter: zoneCard.counter, usedCardIds: side.usedCardIds }).toStrictEqual({
       counter: 0,
       usedCardIds: [TIMAEUS_ID],
@@ -136,6 +141,7 @@ describe("timaeus", () => {
     expect.hasAssertions();
     const context: GcgEffectContext = { duel: createDuel(createSide([], []), () => 0), sideIndex: 0 };
     const zoneCard = { ...createGcgZoneCard(TIMAEUS_ID, timaeus), counter: ARTIFACT_COST - 1 };
+
     expect(timaeus.reduceCost?.(context, createArtifactSubject(), zoneCard)).toBeUndefined();
   });
 });

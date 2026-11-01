@@ -75,7 +75,7 @@ const playResonance = (module: GcgCardModule, elements: Element[]) => {
   return { dice: takeOne(duel.sides, 0).dice, isPlayable };
 };
 
-describe("woven Ice", () => {
+describe("elementalResonanceWovenIce", () => {
   test("is refused with one Cryo character, and with two it creates a Cryo die", () => {
     expect.hasAssertions();
     expect(playResonance(elementalResonanceWovenIce, [Element.Cryo, Element.Hydro])).toStrictEqual({
@@ -89,7 +89,7 @@ describe("woven Ice", () => {
   });
 });
 
-describe("woven Thunder", () => {
+describe("elementalResonanceWovenThunder", () => {
   test("is refused with one Electro character, and with two it creates an Electro die", () => {
     expect.hasAssertions();
     expect(playResonance(elementalResonanceWovenThunder, [Element.Electro, Element.Hydro])).toStrictEqual({
@@ -102,7 +102,7 @@ describe("woven Thunder", () => {
   });
 });
 
-describe("woven Flames", () => {
+describe("elementalResonanceWovenFlames", () => {
   test("is refused with one Pyro character, and with two it creates a Pyro die", () => {
     expect.hasAssertions();
     expect(playResonance(elementalResonanceWovenFlames, [Element.Pyro, Element.Hydro])).toStrictEqual({

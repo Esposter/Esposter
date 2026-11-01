@@ -47,7 +47,7 @@ const createDuel = (characters: GcgCharacterState[]): GcgDuel => ({
   winnerSideIndex: undefined,
 });
 
-describe("lotus Flower Crisp", () => {
+describe("lotusFlowerCrisp", () => {
   test("the target takes 3 less DMG the next time, and eats no other food that round", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -55,9 +55,11 @@ describe("lotus Flower Crisp", () => {
       createGcgCharacterState({ character: { id: 2 } }),
     ]);
     const context: GcgEffectContext = { duel, sideIndex: 0 };
+
     expect(lotusFlowerCrisp.canPlay?.(context, 1)).toBe(true);
     lotusFlowerCrisp.play?.(context, 1);
     const statuses = takeOne(takeOne(duel.sides, 0).characters, 1).statuses;
+
     expect(statuses.map(({ cardId }) => cardId)).toStrictEqual([333_003]);
     expect(lotusFlowerCrisp.canPlay?.(context, 1)).toBe(false);
     expect(lotusFlowerCrisp.modifyDamageReceived?.(context, 5, takeOne(statuses, 0), Element.Pyro)).toBe(2);
@@ -65,7 +67,7 @@ describe("lotus Flower Crisp", () => {
   });
 });
 
-describe("teyvat Fried Egg", () => {
+describe("teyvatFriedEgg", () => {
   test("a defeated character is revived to 1 HP and healed 1 HP, and holds the food for the round", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -73,9 +75,11 @@ describe("teyvat Fried Egg", () => {
       createGcgCharacterState({ character: { id: 2 }, hp: 0 }),
     ]);
     const context: GcgEffectContext = { duel, sideIndex: 0 };
+
     expect(teyvatFriedEgg.canPlay?.(context, 1)).toBe(true);
     teyvatFriedEgg.play?.(context, 1);
     const side = takeOne(duel.sides, 0);
+
     expect({
       hp: takeOne(side.characters, 1).hp,
       statuses: takeOne(side.characters, 1).statuses.map(({ cardId }) => cardId),
@@ -92,6 +96,7 @@ describe("teyvat Fried Egg", () => {
     ]);
     const context: GcgEffectContext = { duel, sideIndex: 0 };
     teyvatFriedEgg.play?.(context, 1);
+
     expect([teyvatFriedEgg.canPlay?.(context, 2), teyvatFriedEgg.canPlay?.(context, 0)]).toStrictEqual([false, false]);
   });
 });

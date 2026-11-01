@@ -62,6 +62,7 @@ describe("changTheNinth", () => {
     expect.hasAssertions();
     const zoneCard = createGcgZoneCard(CHANG_THE_NINTH_ID, changTheNinth);
     hearSkill(createSide([]), zoneCard, [{ damageType: GcgDamageKind.Physical }]);
+
     expect({ counter: zoneCard.counter, usages: zoneCard.usages }).toStrictEqual({ counter: 1, usages: 1 });
   });
 
@@ -69,6 +70,7 @@ describe("changTheNinth", () => {
     expect.hasAssertions();
     const zoneCard = createGcgZoneCard(CHANG_THE_NINTH_ID, changTheNinth);
     hearSkill(createSide([]), zoneCard, [{ damageType: GcgDamageKind.Piercing }]);
+
     expect({ counter: zoneCard.counter, usages: zoneCard.usages }).toStrictEqual({ counter: 1, usages: 1 });
   });
 
@@ -76,6 +78,7 @@ describe("changTheNinth", () => {
     expect.hasAssertions();
     const zoneCard = createGcgZoneCard(CHANG_THE_NINTH_ID, changTheNinth);
     hearSkill(createSide([]), zoneCard, [{ damageType: Element.Pyro, reaction: GcgReactionKind.Melt }]);
+
     expect({ counter: zoneCard.counter, usages: zoneCard.usages }).toStrictEqual({ counter: 1, usages: 1 });
   });
 
@@ -83,6 +86,7 @@ describe("changTheNinth", () => {
     expect.hasAssertions();
     const zoneCard = createGcgZoneCard(CHANG_THE_NINTH_ID, changTheNinth);
     hearSkill(createSide([]), zoneCard, [{ damageType: Element.Pyro }]);
+
     expect({ counter: zoneCard.counter, usages: zoneCard.usages }).toStrictEqual({ counter: 0, usages: 1 });
   });
 
@@ -91,6 +95,7 @@ describe("changTheNinth", () => {
     const zoneCard = { ...createGcgZoneCard(CHANG_THE_NINTH_ID, changTheNinth), counter: 2 };
     const side = createSide([801, 802, 803]);
     hearSkill(side, zoneCard, [{ damageType: GcgDamageKind.Physical }]);
+
     expect({ drawPile: side.drawPile, hand: side.hand, usages: zoneCard.usages }).toStrictEqual({
       drawPile: [803],
       hand: [801, 802],

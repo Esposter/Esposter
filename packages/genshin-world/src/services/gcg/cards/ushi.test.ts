@@ -30,6 +30,7 @@ describe("ushi", () => {
 
     const reduced = reduceGcgReceivedDamage(duel, 0, { damageType: GcgDamageKind.Physical, value: 1 });
     const side = takeOne(duel.sides, 0);
+
     expect({
       damage: reduced.value,
       ittoStatusCount: takeOne(side.characters, 1).statuses.length,

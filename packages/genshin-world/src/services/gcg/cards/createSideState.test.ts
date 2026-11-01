@@ -3,12 +3,12 @@ import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
 import { describe } from "vitest";
 
-export const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
+export const createSideState = (characters: GcgCharacterState[], dice: GcgSideState["dice"] = []): GcgSideState => ({
   activeIndex: 0,
   cards: [],
   characters,
   deckCardIds: [],
-  dice: [],
+  dice,
   drawPile: [],
   hand: [],
   hasDeclaredEnd: false,

@@ -60,6 +60,7 @@ describe("tossUp", () => {
     expect.hasAssertions();
     const side = createSide([Element.Hydro, Element.Pyro, Element.Cryo]);
     playTossUp(side, createFaceRandom([1, 2]), { rerollDiceIndices: [[0], [2]] });
+
     expect(side.dice).toStrictEqual([takeOne(GCG_DIE_FACES, 1), Element.Pyro, takeOne(GCG_DIE_FACES, 2)]);
   });
 
@@ -67,6 +68,7 @@ describe("tossUp", () => {
     expect.hasAssertions();
     const side = createSide([Element.Hydro, Element.Pyro, Element.Cryo]);
     playTossUp(side, createFaceRandom([1, 2, 3]), { rerollDiceIndices: [[0], [1], [2]] });
+
     expect(side.dice).toStrictEqual([takeOne(GCG_DIE_FACES, 1), takeOne(GCG_DIE_FACES, 2), Element.Cryo]);
   });
 
@@ -74,6 +76,7 @@ describe("tossUp", () => {
     expect.hasAssertions();
     const side = createSide([Element.Hydro, Element.Pyro, Element.Cryo]);
     playTossUp(side, createFaceRandom([1, 2]), { rerollDiceIndices: [[5], [0], [1]] });
+
     expect(side.dice).toStrictEqual([takeOne(GCG_DIE_FACES, 1), takeOne(GCG_DIE_FACES, 2), Element.Cryo]);
   });
 
@@ -81,6 +84,7 @@ describe("tossUp", () => {
     expect.hasAssertions();
     const side = createSide([Element.Hydro, Element.Pyro]);
     playTossUp(side, createFaceRandom([]));
+
     expect(side.dice).toStrictEqual([Element.Hydro, Element.Pyro]);
   });
 });

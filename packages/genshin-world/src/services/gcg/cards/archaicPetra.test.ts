@@ -69,11 +69,12 @@ const createTalentSubject = (costs: GcgCostSubject["costs"]): GcgCostSubject => 
   element: Element.Geo,
 });
 
-describe("archaic Petra", () => {
+describe("archaicPetra", () => {
   test("the two starting dice rolled are Geo, and the others are left as rolled", () => {
     expect.hasAssertions();
     const duel = createDuel([Element.Hydro, Element.Pyro, Element.Electro]);
     runGcgRollPhase(duel);
+
     expect(duel.sides[0].dice).toStrictEqual([Element.Geo, Element.Geo, Element.Electro]);
   });
 
@@ -83,8 +84,10 @@ describe("archaic Petra", () => {
     const context: GcgEffectContext = { duel, sideIndex: 0 };
     const subject = createTalentSubject([{ count: 2, element: Element.Geo, kind: GcgCostKind.Dice }]);
     const zoneCard = createGcgZoneCard(ARCHAIC_PETRA_ID, archaicPetra);
+
     expect(archaicPetra.reduceCost?.(context, subject, zoneCard)).toStrictEqual({ count: 1, element: Element.Geo });
     archaicPetra.onCostPaid?.(context, subject, zoneCard);
+
     expect(archaicPetra.reduceCost?.(context, subject, zoneCard)).toBeUndefined();
   });
 
@@ -93,6 +96,7 @@ describe("archaic Petra", () => {
     const duel = createDuel([]);
     const context: GcgEffectContext = { duel, sideIndex: 0 };
     const subject = createTalentSubject([{ count: 2, element: Element.Pyro, kind: GcgCostKind.Dice }]);
+
     expect(
       archaicPetra.reduceCost?.(context, subject, createGcgZoneCard(ARCHAIC_PETRA_ID, archaicPetra)),
     ).toBeUndefined();

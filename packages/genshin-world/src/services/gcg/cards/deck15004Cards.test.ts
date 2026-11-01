@@ -2,7 +2,6 @@ import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgRule } from "#src/models/gcg/GcgRule";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
-import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
@@ -33,6 +32,7 @@ import {
   VOURUKASHAS_GLOW_ID,
   WEEPING_WILLOW_OF_THE_LAKE_ID,
 } from "#src/services/gcg/cards/constants";
+import { createSkill } from "#src/services/gcg/cards/createSkill.test";
 import { elementalResonanceEnduringRock } from "#src/services/gcg/cards/elementalResonanceEnduringRock";
 import { elementalResonanceWovenStone } from "#src/services/gcg/cards/elementalResonanceWovenStone";
 import { ellin } from "#src/services/gcg/cards/ellin";
@@ -63,13 +63,6 @@ import { describe, expect, test } from "vitest";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
-const createSkill = (id: number, effect: string, kind: GcgSkillKind, costs: GcgSkill["costs"] = []): GcgSkill => ({
-  costs,
-  effect,
-  energyGain: 0,
-  id,
-  kind,
-});
 const createSideState = (
   characters: GcgCharacterState[],
   options: Partial<Pick<GcgSideState, "dice" | "drawPile" | "hand" | "onstages" | "summons" | "supports">> = {},
@@ -108,10 +101,17 @@ const createDuel = (attacker: GcgSideState, defender: GcgSideState): GcgDuel => 
 const defenderOf = (duel: GcgDuel): GcgCharacterState => takeOne(takeOne(duel.sides, 1).characters, 0);
 const attackerOf = (duel: GcgDuel): GcgCharacterState => takeOne(takeOne(duel.sides, 0).characters, 0);
 
-describe("inuzaka All-Round Defense", () => {
-  const BOW = "BOW";
-  const INUZAKA = createSkill(16_062, "Char_Skill_16062", GcgSkillKind.ElementalSkill);
+const EREMITE_ID = 2303;
+const ITTO_ID = 1605;
+const CARD_ID = 999_999;
+const BOW = "BOW";
+const INUZAKA = createSkill(16_062, "Char_Skill_16062", GcgSkillKind.ElementalSkill);
+const BURNING = BURNING_ASSAULT_SKILL;
+const PYRO_SKILL = createSkill(12_002, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill, [
+  { count: 3, element: Element.Pyro, kind: GcgCostKind.Dice },
+]);
 
+describe("inuzakaAllRoundDefense", () => {
   test("should deal 2 Geo DMG and create a General's War Banner once the damage lands", () => {
     expect.hasAssertions();
 
@@ -149,7 +149,7 @@ describe("inuzaka All-Round Defense", () => {
   });
 });
 
-describe("juuga Forward Unto Victory", () => {
+describe("juugaForwardUntoVictory", () => {
   const JUUGA = createSkill(16_063, "Char_Skill_16063", GcgSkillKind.ElementalBurst);
 
   test("should deal 2 Geo DMG, create a General's War Banner and summon General's Glory", () => {
@@ -205,9 +205,7 @@ describe("juuga Forward Unto Victory", () => {
   });
 });
 
-describe("general's Glory", () => {
-  const ITTO_ID = 1605;
-
+describe("generalsGlory", () => {
   test("should deal 1 Geo DMG at the End Phase, and create a Crystallize shield with 2 Geo characters", () => {
     expect.hasAssertions();
 
@@ -251,10 +249,7 @@ describe("general's Glory", () => {
   });
 });
 
-describe("rushing Hound: Swift as the Wind", () => {
-  const CARD_ID = 999_999;
-  const INUZAKA = createSkill(16_062, "Char_Skill_16062", GcgSkillKind.ElementalSkill);
-
+describe("rushingHound", () => {
   test("should draw 1 card when a Geo DMG skill lands while the banner is in play, once per Round", () => {
     expect.hasAssertions();
 
@@ -278,8 +273,7 @@ describe("rushing Hound: Swift as the Wind", () => {
   });
 });
 
-describe("searing Glare", () => {
-  const EREMITE_ID = 2303;
+describe("searingGlare", () => {
   const SEARING = createSkill(23_031, "Char_Skill_23031", GcgSkillKind.NormalAttack);
 
   test("should deal 1 Pyro DMG", () => {
@@ -299,8 +293,7 @@ describe("searing Glare", () => {
   });
 });
 
-describe("blazing Strike", () => {
-  const EREMITE_ID = 2303;
+describe("blazingStrike", () => {
   const BLAZING = createSkill(23_032, "Char_Skill_23032", GcgSkillKind.ElementalSkill);
 
   test("should deal 3 Pyro DMG and create a Scorpion Blessing stack each time", () => {
@@ -324,8 +317,7 @@ describe("blazing Strike", () => {
   });
 });
 
-describe("spirit of Omen's Awakening", () => {
-  const EREMITE_ID = 2303;
+describe("spiritOfOmensAwakening", () => {
   const AWAKENING = createSkill(23_033, "Char_Skill_23033", GcgSkillKind.ElementalBurst);
 
   test("should deal 3 Pyro DMG and add one Pyro Scorpion to the hand once per Match", () => {
@@ -349,9 +341,7 @@ describe("spirit of Omen's Awakening", () => {
   });
 });
 
-describe("spirit of Omen's Power", () => {
-  const EREMITE_ID = 2303;
-  const ITTO_ID = 1605;
+describe("spiritOfOmensPower", () => {
   const SPIRIT_POWER = createSkill(23_034, "Char_Skill_23034", GcgSkillKind.Passive);
 
   test("should gain 1 Energy after the Eremite takes DMG at 7 HP or less, once per Round", () => {
@@ -394,9 +384,7 @@ describe("spirit of Omen's Power", () => {
   });
 });
 
-describe("spirit of Omen: Pyro Scorpion", () => {
-  const EREMITE_ID = 2303;
-
+describe("pyroScorpion", () => {
   test("should negate 1 DMG for 1 Energy and create a Scorpion Blessing, spending its usage", () => {
     expect.hasAssertions();
 
@@ -421,10 +409,7 @@ describe("spirit of Omen: Pyro Scorpion", () => {
   });
 });
 
-describe("burning Assault", () => {
-  const EREMITE_ID = 2303;
-  const BURNING = BURNING_ASSAULT_SKILL;
-
+describe("burningAssault", () => {
   test("should deal 2 Pyro DMG plus one per Scorpion Blessing stack, and spend the stacks", () => {
     expect.hasAssertions();
 
@@ -475,9 +460,6 @@ describe("burning Assault", () => {
 });
 
 describe("scorpocalypse", () => {
-  const EREMITE_ID = 2303;
-  const BURNING = BURNING_ASSAULT_SKILL;
-
   test("should add a Pyro Scorpion to the hand when Burning Assault defeats an opposing character", () => {
     expect.hasAssertions();
 
@@ -541,13 +523,7 @@ describe("scorpocalypse", () => {
   });
 });
 
-describe("king's Squire", () => {
-  const ITTO_ID = 1605;
-  const BOW = "BOW";
-  const PYRO_SKILL = createSkill(12_002, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill, [
-    { count: 3, element: Element.Pyro, kind: GcgCostKind.Dice },
-  ]);
-
+describe("kingsSquire", () => {
   test("should spend 2 fewer Elemental Dice on the next Elemental Skill of the Round, once", () => {
     expect.hasAssertions();
 
@@ -577,8 +553,7 @@ describe("king's Squire", () => {
   });
 });
 
-describe("beacon of the Reed Sea", () => {
-  const ITTO_ID = 1605;
+describe("beaconOfTheReedSea", () => {
   const ELECTRO_SKILL = createSkill(12_001, "Effect_Damage_Elec_3", GcgSkillKind.ElementalSkill);
   const CLAYMORE = "CLAYMORE";
 
@@ -603,10 +578,7 @@ describe("beacon of the Reed Sea", () => {
   });
 });
 
-describe("vourukasha's Glow", () => {
-  const EREMITE_ID = 2303;
-  const CARD_ID = 999_999;
-
+describe("vourukashasGlow", () => {
   test("should draw 1 card when its character takes DMG while active, and heal 1 HP at the End Phase, once per Round", () => {
     expect.hasAssertions();
 
@@ -662,9 +634,7 @@ describe("tenshukaku", () => {
   });
 });
 
-describe("grand Narukami Shrine", () => {
-  const INUZAKA = createSkill(16_062, "Char_Skill_16062", GcgSkillKind.ElementalSkill);
-
+describe("grandNarukamiShrine", () => {
   test("should generate an Omni Elemental Die after a skill while the dice are odd, twice per Round", () => {
     expect.hasAssertions();
 
@@ -689,9 +659,7 @@ describe("grand Narukami Shrine", () => {
   });
 });
 
-describe("sangonomiya Shrine", () => {
-  const ITTO_ID = 1605;
-
+describe("sangonomiyaShrine", () => {
   test("should heal every character 1 HP at each End Phase, for 2 Rounds", () => {
     expect.hasAssertions();
 
@@ -717,13 +685,7 @@ describe("sangonomiya Shrine", () => {
   });
 });
 
-describe("sumeru City", () => {
-  const EREMITE_ID = 2303;
-  const CARD_ID = 999_999;
-  const PYRO_SKILL = createSkill(12_002, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill, [
-    { count: 3, element: Element.Pyro, kind: GcgCostKind.Dice },
-  ]);
-
+describe("sumeruCity", () => {
   test("should spend 1 fewer Elemental Die on a skill once per Round, while the dice do not outnumber the hand", () => {
     expect.hasAssertions();
 
@@ -754,9 +716,7 @@ describe("sumeru City", () => {
   });
 });
 
-describe("weeping Willow of the Lake", () => {
-  const CARD_ID = 999_999;
-
+describe("weepingWillowOfTheLake", () => {
   test("should draw 2 cards at the End Phase with at most 2 cards in hand, and spend a usage", () => {
     expect.hasAssertions();
 
@@ -796,9 +756,7 @@ describe("weeping Willow of the Lake", () => {
   });
 });
 
-describe("elemental Resonance: Woven Stone", () => {
-  const ITTO_ID = 1605;
-
+describe("elementalResonanceWovenStone", () => {
   test("should be playable with 2 Geo characters, and create a Geo Elemental Die", () => {
     expect.hasAssertions();
 
@@ -830,9 +788,7 @@ describe("elemental Resonance: Woven Stone", () => {
   });
 });
 
-describe("elemental Resonance: Enduring Rock", () => {
-  const ITTO_ID = 1605;
-
+describe("elementalResonanceEnduringRock", () => {
   test("should grant 3 shield points to the active character, up to the shield limit", () => {
     expect.hasAssertions();
 

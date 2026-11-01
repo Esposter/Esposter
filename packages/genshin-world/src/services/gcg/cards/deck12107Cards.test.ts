@@ -1,10 +1,8 @@
 import type { GcgCharacter } from "#src/models/gcg/GcgCharacter";
-import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgCostSubject } from "#src/models/gcg/GcgCostSubject";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 import type { GcgRule } from "#src/models/gcg/GcgRule";
-import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 
@@ -13,7 +11,6 @@ import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
-import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import {
@@ -24,9 +21,9 @@ import {
   STONEHIDE_ID,
   SWEEPING_TIME_ID,
 } from "#src/services/gcg/cards/constants";
+import { createDuel } from "#src/services/gcg/cards/createDuel.test";
+import { createSideState } from "#src/services/gcg/cards/createSideState.test";
 import { fullPlate } from "#src/services/gcg/cards/fullPlate";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { rainbowBladework } from "#src/services/gcg/cards/rainbowBladework";
 import { rainSword } from "#src/services/gcg/cards/rainSword";
 import { stoneForce } from "#src/services/gcg/cards/stoneForce";
@@ -41,40 +38,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
-
-const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
-  activeIndex: 0,
-  cards: [],
-  characters,
-  deckCardIds: [],
-  dice: [],
-  drawPile: [],
-  hand: [],
-  hasDeclaredEnd: false,
-  hasPrepared: true,
-  hasRolled: true,
-  isReplacementPending: false,
-  onstages: [],
-  summons: [],
-  supports: [],
-  usedCardIds: [],
-  usedSkillIds: [],
-});
-
-const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
-  actingSideIndex: 0,
-  cardModules: GcgCardIdModuleMap,
-  firstSideIndex: 0,
-  nextFirstSideIndex: 0,
-  outcome: undefined,
-  phase: GcgPhase.Action,
-  random: () => 0,
-  round: 1,
-  rule: TEST_RULE,
-  sides,
-  skillModules: GcgEffectNameSkillModuleMap,
-  winnerSideIndex: undefined,
-});
 
 const createShieldedDuel = (shield: number): GcgDuel =>
   createDuel([
@@ -97,7 +60,7 @@ const createSweepingTimeContext = (): GcgEffectContext => ({
   sideIndex: 0,
 });
 
-describe("rain Sword", () => {
+describe("rainSword", () => {
   test("the active character takes one less DMG when it receives at least 3, for two usages", () => {
     expect.hasAssertions();
     const context: GcgEffectContext = {
@@ -105,6 +68,7 @@ describe("rain Sword", () => {
       sideIndex: 0,
     };
     const zoneCard = createGcgZoneCard(RAIN_SWORD_ID, rainSword);
+
     expect(rainSword.modifyDamageReceived?.(context, 2, zoneCard, GcgDamageKind.Physical)).toBe(2);
     expect(zoneCard.usages).toBe(2);
     expect(rainSword.modifyDamageReceived?.(context, 3, zoneCard, GcgDamageKind.Physical)).toBe(2);
@@ -114,7 +78,7 @@ describe("rain Sword", () => {
   });
 });
 
-describe("rainbow Bladework", () => {
+describe("rainbowBladework", () => {
   const NORMAL_ATTACK: GcgSkill = {
     costs: [],
     effect: "Char_Skill_12021",
@@ -137,6 +101,7 @@ describe("rainbow Bladework", () => {
       sideIndex: 0,
     };
     const zoneCard = createGcgZoneCard(RAINBOW_BLADEWORK_ID, rainbowBladework);
+
     expect(rainbowBladework.onSkillUsed?.(context, NORMAL_ATTACK, zoneCard, [])).toStrictEqual({
       damageType: Element.Hydro,
       value: 1,
@@ -144,6 +109,7 @@ describe("rainbow Bladework", () => {
     expect(zoneCard.usages).toBe(2);
     rainbowBladework.onSkillUsed?.(context, NORMAL_ATTACK, zoneCard, []);
     rainbowBladework.onSkillUsed?.(context, NORMAL_ATTACK, zoneCard, []);
+
     expect(zoneCard.usages).toBe(0);
     expect(rainbowBladework.onSkillUsed?.(context, NORMAL_ATTACK, zoneCard, [])).toBeUndefined();
   });
@@ -155,12 +121,13 @@ describe("rainbow Bladework", () => {
       sideIndex: 0,
     };
     const zoneCard = createGcgZoneCard(RAINBOW_BLADEWORK_ID, rainbowBladework);
+
     expect(rainbowBladework.onSkillUsed?.(context, ELEMENTAL_SKILL, zoneCard, [])).toBeUndefined();
     expect(zoneCard.usages).toBe(3);
   });
 });
 
-describe("fatal Rainscreen", () => {
+describe("fatalRainscreen", () => {
   const FATAL_RAINSCREEN_SKILL: GcgSkill = {
     costs: [],
     effect: "Char_Skill_12022",
@@ -176,6 +143,7 @@ describe("fatal Rainscreen", () => {
       createSideState([createGcgCharacterState({ character: { id: 1203 } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, FATAL_RAINSCREEN_SKILL);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([8]);
     expect(takeOne(duel.sides, 0).characters.map(({ aura }) => aura)).toStrictEqual([Element.Hydro]);
     expect(takeOne(duel.sides, 0).onstages.map(({ cardId }) => cardId)).toStrictEqual([RAIN_SWORD_ID]);
@@ -223,17 +191,19 @@ describe("raincutter", () => {
       createSideState([createGcgCharacterState({ character: { id: 1203 } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, RAINCUTTER_SKILL);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([8]);
     expect(takeOne(duel.sides, 0).characters.map(({ aura }) => aura)).toStrictEqual([Element.Hydro]);
     expect(takeOne(duel.sides, 0).onstages.map(({ cardId }) => cardId)).toStrictEqual([RAINBOW_BLADEWORK_ID]);
   });
 });
 
-describe("full Plate", () => {
+describe("fullPlate", () => {
   test("while its active character holds a shield, the Physical DMG it takes is halved, rounded up", () => {
     expect.hasAssertions();
     const context: GcgEffectContext = { duel: createShieldedDuel(2), sideIndex: 0 };
     const zoneCard = createGcgZoneCard(FULL_PLATE_ID, fullPlate);
+
     expect(fullPlate.modifyDamageReceived?.(context, 3, zoneCard, GcgDamageKind.Physical)).toBe(2);
     expect(fullPlate.modifyDamageReceived?.(context, 3, zoneCard, Element.Pyro)).toBe(3);
   });
@@ -242,6 +212,7 @@ describe("full Plate", () => {
     expect.hasAssertions();
     const context: GcgEffectContext = { duel: createShieldedDuel(0), sideIndex: 0 };
     const zoneCard = createGcgZoneCard(FULL_PLATE_ID, fullPlate);
+
     expect(fullPlate.modifyDamageReceived?.(context, 3, zoneCard, GcgDamageKind.Physical)).toBe(3);
   });
 
@@ -253,8 +224,10 @@ describe("full Plate", () => {
     ]);
     takeOne(duel.sides, 0).onstages.push(createGcgZoneCard(FULL_PLATE_ID, fullPlate));
     applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Physical, value: 2 }, TEST_RULE);
+
     expect(takeOne(duel.sides, 0).onstages.map(({ cardId }) => cardId)).toStrictEqual([FULL_PLATE_ID]);
     applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Physical, value: 4 }, TEST_RULE);
+
     expect(takeOne(duel.sides, 0).onstages).toStrictEqual([]);
   });
 });
@@ -274,6 +247,7 @@ describe("breastplate", () => {
       createSideState([createGcgCharacterState({ character: { id: 1203 } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, BREASTPLATE_SKILL);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([9]);
     expect(takeOne(duel.sides, 0).characters.map(({ shield }) => shield)).toStrictEqual([2]);
     expect(takeOne(duel.sides, 0).onstages.map(({ cardId }) => cardId)).toStrictEqual([FULL_PLATE_ID]);
@@ -285,6 +259,7 @@ describe("stonehide", () => {
     expect.hasAssertions();
     const context: GcgEffectContext = { duel: createStonehideDuel(), sideIndex: 0 };
     const zoneCard = createGcgZoneCard(STONEHIDE_ID, stonehide);
+
     expect(stonehide.modifyDamageReceived?.(context, 3, zoneCard, Element.Pyro)).toBe(2);
     expect(zoneCard.usages).toBe(2);
   });
@@ -293,6 +268,7 @@ describe("stonehide", () => {
     expect.hasAssertions();
     const context: GcgEffectContext = { duel: createStonehideDuel(), sideIndex: 0 };
     const zoneCard = createGcgZoneCard(STONEHIDE_ID, stonehide);
+
     expect(stonehide.modifyDamageReceived?.(context, 3, zoneCard, Element.Geo)).toBe(2);
     expect(zoneCard.usages).toBe(1);
   });
@@ -301,16 +277,18 @@ describe("stonehide", () => {
     expect.hasAssertions();
     const context: GcgEffectContext = { duel: createStonehideDuel(), sideIndex: 0 };
     const zoneCard = createGcgZoneCard(STONEHIDE_ID, stonehide);
+
     expect(stonehide.modifyDamageReceived?.(context, 0, zoneCard, Element.Geo)).toBe(0);
     expect(zoneCard.usages).toBe(3);
   });
 });
 
-describe("stone Force", () => {
+describe("stoneForce", () => {
   test("the character's Physical DMG is converted to Geo, and its first DMG of the round is one more", () => {
     expect.hasAssertions();
     const zoneCard = createGcgZoneCard(STONE_FORCE_ID, stoneForce);
     const context: GcgEffectContext = { duel: createStoneForceDuel([zoneCard]), sideIndex: 0 };
+
     expect(
       stoneForce.modifyDamageDealt?.(context, { damageType: GcgDamageKind.Physical, value: 2 }, zoneCard),
     ).toStrictEqual({ damageType: Element.Geo, value: 3 });
@@ -327,13 +305,15 @@ describe("stone Force", () => {
     ]);
     applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Physical, value: 2 }, TEST_RULE);
     const holder = takeOne(duel.sides, 0).characters.at(0);
+
     expect(holder?.statuses.map(({ cardId }) => cardId)).toStrictEqual([STONEHIDE_ID, STONE_FORCE_ID]);
     applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Physical, value: 2 }, TEST_RULE);
+
     expect(holder?.statuses).toStrictEqual([]);
   });
 });
 
-describe("infused Stonehide", () => {
+describe("infusedStonehide", () => {
   test("when the battle begins its character gains Stonehide and Stone Force", () => {
     expect.hasAssertions();
     const INFUSED_STONEHIDE_PASSIVE: GcgSkill = {
@@ -351,7 +331,7 @@ describe("infused Stonehide", () => {
   });
 });
 
-describe("sweeping Time", () => {
+describe("sweepingTime", () => {
   const NORMAL_ATTACK: GcgSkill = {
     costs: [],
     effect: "Char_Skill_16021",
@@ -371,6 +351,7 @@ describe("sweeping Time", () => {
     expect.hasAssertions();
     const zoneCard = createGcgZoneCard(SWEEPING_TIME_ID, sweepingTime);
     const context: GcgEffectContext = { ...createSweepingTimeContext(), skill: NORMAL_ATTACK };
+
     expect(
       sweepingTime.modifyDamageDealt?.(context, { damageType: GcgDamageKind.Physical, value: 2 }, zoneCard),
     ).toStrictEqual({ damageType: Element.Geo, value: 4 });
@@ -380,6 +361,7 @@ describe("sweeping Time", () => {
     expect.hasAssertions();
     const zoneCard = createGcgZoneCard(SWEEPING_TIME_ID, sweepingTime);
     const context: GcgEffectContext = { ...createSweepingTimeContext(), skill: ELEMENTAL_SKILL };
+
     expect(
       sweepingTime.modifyDamageDealt?.(context, { damageType: GcgDamageKind.Physical, value: 2 }, zoneCard),
     ).toStrictEqual({ damageType: Element.Geo, value: 2 });
@@ -400,6 +382,7 @@ describe("sweeping Time", () => {
     };
     expect(sweepingTime.reduceCost?.(context, subject, zoneCard)).toStrictEqual({ count: 1, element: Element.Geo });
     sweepingTime.onCostPaid?.(context, subject, zoneCard);
+
     expect(sweepingTime.reduceCost?.(context, subject, zoneCard)).toBeUndefined();
   });
 
@@ -415,7 +398,7 @@ describe("sweeping Time", () => {
   });
 });
 
-describe("sweeping Time skill", () => {
+describe("sweepingTimeSkill", () => {
   const SWEEPING_TIME_SKILL: GcgSkill = {
     costs: [],
     effect: "Char_Skill_16023",
@@ -431,6 +414,7 @@ describe("sweeping Time skill", () => {
       createSideState([createGcgCharacterState({ character: { id: 1203 } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, SWEEPING_TIME_SKILL);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([6]);
     expect(
       takeOne(duel.sides, 0)
@@ -449,6 +433,7 @@ describe("sweeping Time skill", () => {
     takeOne(takeOne(takeOne(duel.sides, 0).characters, 0).statuses, 0).rounds = 1;
     runGcgSkillUse({ duel, sideIndex: 0 }, SWEEPING_TIME_SKILL);
     const statuses = takeOne(takeOne(duel.sides, 0).characters, 0).statuses;
+
     expect(statuses.map(({ cardId }) => cardId)).toStrictEqual([SWEEPING_TIME_ID]);
     expect(statuses.map(({ rounds }) => rounds)).toStrictEqual([2]);
   });

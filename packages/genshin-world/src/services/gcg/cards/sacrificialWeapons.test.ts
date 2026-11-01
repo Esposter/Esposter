@@ -70,7 +70,7 @@ const useWeapon = (module: GcgCardModule, cardId: number, element: Element) => {
   return { damage, dice: takeOne(duel.sides, 0).dice, usedCardIds: takeOne(duel.sides, 0).usedCardIds };
 };
 
-describe("sacrificial Greatsword", () => {
+describe("sacrificialGreatsword", () => {
   test("the character deals +1 DMG, and a die of its element is made once per round after an elemental skill", () => {
     expect.hasAssertions();
     expect(useWeapon(sacrificialGreatsword, 311_302, Element.Electro)).toStrictEqual({
@@ -81,7 +81,7 @@ describe("sacrificial Greatsword", () => {
   });
 });
 
-describe("sacrificial Sword", () => {
+describe("sacrificialSword", () => {
   test("the character deals +1 DMG, and a die of its element is made once per round after an elemental skill", () => {
     expect.hasAssertions();
     expect(useWeapon(sacrificialSword, 311_502, Element.Hydro)).toStrictEqual({
@@ -92,7 +92,7 @@ describe("sacrificial Sword", () => {
   });
 });
 
-describe("sacrificial Bow", () => {
+describe("sacrificialBow", () => {
   test("the character deals +1 DMG, and a die of its element is made once per round after an elemental skill", () => {
     expect.hasAssertions();
     expect(useWeapon(sacrificialBow, 311_202, Element.Cryo)).toStrictEqual({

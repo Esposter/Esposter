@@ -1,21 +1,16 @@
 import type { GcgCard } from "#src/models/gcg/GcgCard";
-import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
-import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
-import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
-import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { ELECTRO_INFUSION_ID, KEQING_ID, LIGHTNING_STILETTO_ID } from "#src/services/gcg/cards/constants";
+import { createDuel } from "#src/services/gcg/cards/createDuel.test";
+import { createSideState } from "#src/services/gcg/cards/createSideState.test";
 import { electroInfusion } from "#src/services/gcg/cards/electroInfusion";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { iceLotus } from "#src/services/gcg/cards/iceLotus";
 import { icicle } from "#src/services/gcg/cards/icicle";
 import { jadeScreen } from "#src/services/gcg/cards/jadeScreen";
@@ -24,49 +19,12 @@ import { stellarRestoration } from "#src/services/gcg/cards/stellarRestoration";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { playGcgCard } from "#src/services/gcg/playGcgCard";
-import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
-
-const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
-  activeIndex: 0,
-  cards: [],
-  characters,
-  deckCardIds: [],
-  dice: [],
-  drawPile: [],
-  hand: [],
-  hasDeclaredEnd: false,
-  hasPrepared: true,
-  hasRolled: true,
-  isReplacementPending: false,
-  onstages: [],
-  summons: [],
-  supports: [],
-  usedCardIds: [],
-  usedSkillIds: [],
-});
-
-const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
-  actingSideIndex: 0,
-  cardModules: GcgCardIdModuleMap,
-  firstSideIndex: 0,
-  nextFirstSideIndex: 0,
-  outcome: undefined,
-  phase: GcgPhase.Action,
-  random: () => 0,
-  round: 1,
-  rule: TEST_RULE,
-  sides,
-  skillModules: GcgEffectNameSkillModuleMap,
-  winnerSideIndex: undefined,
-});
-
-describe("sacred Cryo Pearl", () => {
+describe("sacredCryoPearl", () => {
   const FULL_HP = 10;
   const OTHER_CHARACTER_ID = 1401;
   const OPPOSING_CHARACTER_ID = 1203;
@@ -83,16 +41,18 @@ describe("sacred Cryo Pearl", () => {
     ]);
     duel.sides[0] = { ...takeOne(duel.sides, 0), summons: [zoneCard] };
     runGcgEndPhase(duel);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 1, FULL_HP - 1]);
     expect(zoneCard.usages).toBe(1);
   });
 });
 
-describe("electro Infusion", () => {
+describe("electroInfusion", () => {
   test("converts the Physical DMG its character deals to Electro, and lasts two rounds", () => {
     expect.hasAssertions();
     const context: GcgEffectContext = { duel: createDuel([createSideState([]), createSideState([])]), sideIndex: 0 };
     const zoneCard = createGcgZoneCard(114_032, electroInfusion);
+
     expect(zoneCard.rounds).toBe(2);
     expect(
       electroInfusion.modifyDamageDealt?.(context, { damageType: GcgDamageKind.Physical, value: 2 }, zoneCard),
@@ -103,11 +63,12 @@ describe("electro Infusion", () => {
   });
 });
 
-describe("ice Lotus", () => {
+describe("iceLotus", () => {
   test("the active character takes one less DMG, and the lotus is spent after two", () => {
     expect.hasAssertions();
     const context: GcgEffectContext = { duel: createDuel([createSideState([]), createSideState([])]), sideIndex: 0 };
     const zoneCard = createGcgZoneCard(111_012, iceLotus);
+
     expect(iceLotus.modifyDamageReceived?.(context, 3, zoneCard, Element.Cryo)).toBe(2);
     expect(zoneCard.usages).toBe(1);
     expect(iceLotus.modifyDamageReceived?.(context, 3, zoneCard, Element.Cryo)).toBe(2);
@@ -115,11 +76,12 @@ describe("ice Lotus", () => {
   });
 });
 
-describe("jade Screen", () => {
+describe("jadeScreen", () => {
   test("damage below 2 passes unchanged, and damage of 2 or more is cut by one", () => {
     expect.hasAssertions();
     const context: GcgEffectContext = { duel: createDuel([createSideState([]), createSideState([])]), sideIndex: 0 };
     const zoneCard = createGcgZoneCard(116_011, jadeScreen);
+
     expect(jadeScreen.modifyDamageReceived?.(context, 1, zoneCard, Element.Cryo)).toBe(1);
     expect(zoneCard.usages).toBe(2);
     expect(jadeScreen.modifyDamageReceived?.(context, 2, zoneCard, Element.Cryo)).toBe(1);
@@ -127,7 +89,7 @@ describe("jade Screen", () => {
   });
 });
 
-describe("stellar Restoration", () => {
+describe("stellarRestoration", () => {
   const FULL_HP = 10;
   const OTHER_CHARACTER_ID = 1401;
   const OPPOSING_CHARACTER_ID = 1203;
@@ -153,11 +115,13 @@ describe("stellar Restoration", () => {
       ]),
     ]);
     takeOne(duel.sides, 0).activeIndex = 1;
+
     expect(stellarRestoration.getDamage?.({ duel, sideIndex: 0 })).toStrictEqual({
       damageType: Element.Electro,
       value: 3,
     });
     runGcgSkillUse({ duel, sideIndex: 0 }, NORMAL_SKILL);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 3]);
     expect(takeOne(duel.sides, 0).hand).toStrictEqual([114_031]);
   });
@@ -177,6 +141,7 @@ describe("stellar Restoration", () => {
     side.activeIndex = 1;
     side.hand.push(114_031, 114_031);
     runGcgSkillUse({ duel, sideIndex: 0 }, NORMAL_SKILL);
+
     expect({
       hand: side.hand,
       keqingStatuses: takeOne(side.characters, 1).statuses.map(({ cardId }) => cardId),
@@ -201,13 +166,14 @@ describe("stellar Restoration", () => {
     takeOne(takeOne(side.characters, 1).statuses, 0).rounds = 1;
     side.hand.push(LIGHTNING_STILETTO_ID);
     runGcgSkillUse({ duel, sideIndex: 0 }, NORMAL_SKILL);
+
     expect(takeOne(side.characters, 1).statuses).toStrictEqual([
       { cardId: ELECTRO_INFUSION_ID, counter: 0, rounds: 2, usages: 0 },
     ]);
   });
 });
 
-describe("lightning Stiletto", () => {
+describe("lightningStiletto", () => {
   const OTHER_CHARACTER_ID = 1401;
   const OPPOSING_CHARACTER_ID = 1203;
 
@@ -236,6 +202,7 @@ describe("lightning Stiletto", () => {
     side.cards.push(card);
     side.hand.push(card.id);
     side.onstages.push(icicleZoneCard);
+
     expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
     expect({
       activeIndex: side.activeIndex,

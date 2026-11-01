@@ -1,6 +1,3 @@
-import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
-import type { GcgDuel } from "#src/models/gcg/GcgDuel";
-import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -11,10 +8,10 @@ import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { CUILEIN_ANBAR_ID, KEQING_ID } from "#src/services/gcg/cards/constants";
+import { createDuel } from "#src/services/gcg/cards/createDuel.test";
+import { createSideState } from "#src/services/gcg/cards/createSideState.test";
 import { cuileinAnbar } from "#src/services/gcg/cards/cuileinAnbar";
 import { gamblersEarrings } from "#src/services/gcg/cards/gamblersEarrings";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { instructorsCap } from "#src/services/gcg/cards/instructorsCap";
 import { knightsOfFavoniusLibrary } from "#src/services/gcg/cards/knightsOfFavoniusLibrary";
 import { liben } from "#src/services/gcg/cards/liben";
@@ -33,44 +30,18 @@ import { describe, expect, test } from "vitest";
 
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
-const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
-  activeIndex: 0,
-  cards: [],
-  characters,
-  deckCardIds: [],
-  dice: [],
-  drawPile: [],
-  hand: [],
-  hasDeclaredEnd: false,
-  hasPrepared: true,
-  hasRolled: true,
-  isReplacementPending: false,
-  onstages: [],
-  summons: [],
-  supports: [],
-  usedCardIds: [],
-  usedSkillIds: [],
-});
-
-const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
-  actingSideIndex: 0,
-  cardModules: GcgCardIdModuleMap,
-  firstSideIndex: 0,
-  nextFirstSideIndex: 0,
-  outcome: undefined,
-  phase: GcgPhase.Action,
-  random: () => 0,
-  round: 1,
-  rule: TEST_RULE,
-  sides,
-  skillModules: GcgEffectNameSkillModuleMap,
-  winnerSideIndex: undefined,
-});
-
 // A random source that throws the Cryo face for every die it rolls
 const cryoRandom = (): number => (GCG_DIE_FACES.indexOf(Element.Cryo) + 0.5) / GCG_DIE_FACES.length;
 
-describe("cuilein-Anbar", () => {
+const FLORAL_BRUSH_SKILL: GcgSkill = {
+  costs: [],
+  effect: "Char_Skill_17012",
+  energyGain: 1,
+  id: 17_012,
+  kind: GcgSkillKind.ElementalSkill,
+};
+
+describe("cuileinAnbar", () => {
   const FULL_HP = 10;
   const COLLEI_ID = 1701;
   const OPPOSING_CHARACTER_ID = 1203;
@@ -87,22 +58,16 @@ describe("cuilein-Anbar", () => {
     ]);
     duel.sides[0] = { ...takeOne(duel.sides, 0), summons: [zoneCard] };
     runGcgEndPhase(duel);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 2, FULL_HP]);
     expect(zoneCard.usages).toBe(1);
   });
 });
 
-describe("floral Brush", () => {
+describe("floralBrush", () => {
   const FULL_HP = 10;
   const COLLEI_ID = 1701;
   const OPPOSING_CHARACTER_ID = 1203;
-  const FLORAL_BRUSH_SKILL: GcgSkill = {
-    costs: [],
-    effect: "Char_Skill_17012",
-    energyGain: 1,
-    id: 17_012,
-    kind: GcgSkillKind.ElementalSkill,
-  };
 
   test("the skill deals 3 Dendro", () => {
     expect.hasAssertions();
@@ -111,20 +76,14 @@ describe("floral Brush", () => {
       createSideState([createGcgCharacterState({ character: { element: Element.Dendro, id: OPPOSING_CHARACTER_ID } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 3]);
   });
 });
 
-describe("gambler's Earrings", () => {
+describe("gamblersEarrings", () => {
   const COLLEI_ID = 1701;
   const OPPOSING_CHARACTER_ID = 1203;
-  const FLORAL_BRUSH_SKILL: GcgSkill = {
-    costs: [],
-    effect: "Char_Skill_17012",
-    energyGain: 1,
-    id: 17_012,
-    kind: GcgSkillKind.ElementalSkill,
-  };
   const OTHER_CHARACTER_ID = 1401;
 
   test("after an opposing character is defeated while the equipped character is active, two Omni dice are created", () => {
@@ -142,6 +101,7 @@ describe("gambler's Earrings", () => {
       ]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
+
     expect(takeOne(duel.sides, 0).dice).toStrictEqual([GcgDieFace.Omni, GcgDieFace.Omni]);
   });
 
@@ -161,6 +121,7 @@ describe("gambler's Earrings", () => {
       ]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
+
     expect(takeOne(duel.sides, 0).dice).toStrictEqual([]);
   });
 
@@ -188,17 +149,10 @@ describe("gambler's Earrings", () => {
   });
 });
 
-describe("instructor's Cap", () => {
+describe("instructorsCap", () => {
   const FULL_HP = 10;
   const COLLEI_ID = 1701;
   const OPPOSING_CHARACTER_ID = 1203;
-  const FLORAL_BRUSH_SKILL: GcgSkill = {
-    costs: [],
-    effect: "Char_Skill_17012",
-    energyGain: 1,
-    id: 17_012,
-    kind: GcgSkillKind.ElementalSkill,
-  };
 
   test("after the equipped character's skill triggers a reaction, an Elemental Die of its element is created", () => {
     expect.hasAssertions();
@@ -217,6 +171,7 @@ describe("instructor's Cap", () => {
       ]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
+
     expect(takeOne(duel.sides, 0).dice).toStrictEqual([Element.Dendro]);
   });
 
@@ -232,6 +187,7 @@ describe("instructor's Cap", () => {
       createSideState([createGcgCharacterState({ character: { element: Element.Dendro, id: OPPOSING_CHARACTER_ID } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
+
     expect(takeOne(duel.sides, 0).dice).toStrictEqual([]);
   });
 
@@ -259,7 +215,7 @@ describe("instructor's Cap", () => {
   });
 });
 
-describe("starward Sword", () => {
+describe("starwardSword", () => {
   const FULL_HP = 10;
   const COLLEI_ID = 1701;
   const OPPOSING_CHARACTER_ID = 1203;
@@ -282,11 +238,12 @@ describe("starward Sword", () => {
       ]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, STARWARD_SWORD_SKILL);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 4, FULL_HP - 3]);
   });
 });
 
-describe("trump-Card Kitty", () => {
+describe("trumpCardKitty", () => {
   const FULL_HP = 10;
   const COLLEI_ID = 1701;
   const OPPOSING_CHARACTER_ID = 1203;
@@ -306,6 +263,7 @@ describe("trump-Card Kitty", () => {
       createSideState([createGcgCharacterState({ character: { element: Element.Dendro, id: OPPOSING_CHARACTER_ID } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, TRUMP_CARD_KITTY_SKILL);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 2]);
     expect(takeOne(duel.sides, 0).summons.map(({ cardId }) => cardId)).toStrictEqual([CUILEIN_ANBAR_ID]);
   });
@@ -329,6 +287,7 @@ describe("liben", () => {
       createSideState([createGcgCharacterState({ character: { element: Element.Dendro, id: OPPOSING_CHARACTER_ID } })]),
     ]);
     runGcgEndPhase(duel);
+
     expect(takeOne(duel.sides, 0).dice).toStrictEqual([Element.Pyro, GcgDieFace.Omni]);
     expect(zoneCard.elements).toStrictEqual([Element.Pyro, Element.Hydro]);
     expect(zoneCard.usages).toBe(1);
@@ -348,6 +307,7 @@ describe("liben", () => {
     ]);
     runGcgActionPhase(duel);
     const side = takeOne(duel.sides, 0);
+
     expect(side.hand).toStrictEqual([1, 2]);
     expect(side.dice).toStrictEqual([GcgDieFace.Omni, GcgDieFace.Omni]);
     expect(side.supports).toStrictEqual([]);
@@ -367,13 +327,14 @@ describe("liben", () => {
     ]);
     runGcgActionPhase(duel);
     const side = takeOne(duel.sides, 0);
+
     expect(side.supports).toStrictEqual([zoneCard]);
     expect(side.hand).toStrictEqual([]);
     expect(side.dice).toStrictEqual([]);
   });
 });
 
-describe("knights of Favonius Library", () => {
+describe("knightsOfFavoniusLibrary", () => {
   const COLLEI_ID = 1701;
   const OPPOSING_CHARACTER_ID = 1203;
 
@@ -390,6 +351,7 @@ describe("knights of Favonius Library", () => {
     ]);
     duel.random = cryoRandom;
     knightsOfFavoniusLibrary.play?.({ duel, sideIndex: 0 }, undefined, { rerollDiceIndices: [[0]] });
+
     expect(takeOne(duel.sides, 0).dice).toStrictEqual([Element.Cryo, Element.Pyro]);
   });
 
@@ -412,6 +374,7 @@ describe("knights of Favonius Library", () => {
     duel.phase = GcgPhase.Roll;
     duel.random = cryoRandom;
     runGcgRollPhase(duel);
+
     expect(rerollGcgDice(duel, 0, [0])).toBe(GcgActionResult.Done);
     expect(takeOne(duel.sides, 0).dice).toStrictEqual([Element.Cryo, Element.Pyro]);
     expect(takeOne(duel.sides, 0).hasRolled).toBe(false);
@@ -429,6 +392,7 @@ describe("knights of Favonius Library", () => {
     duel.phase = GcgPhase.Roll;
     duel.random = cryoRandom;
     startGcgRound(duel);
+
     expect(rerollGcgDice(duel, 0, [0])).toBe(GcgActionResult.Done);
     expect(takeOne(duel.sides, 0).hasRolled).toBe(true);
     expect(rerollGcgDice(duel, 0, [])).toBe(GcgActionResult.WrongPhase);

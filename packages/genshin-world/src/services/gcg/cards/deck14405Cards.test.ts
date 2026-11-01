@@ -2,10 +2,8 @@ import type { GcgCard } from "#src/models/gcg/GcgCard";
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgCost } from "#src/models/gcg/GcgCost";
 import type { GcgCostSubject } from "#src/models/gcg/GcgCostSubject";
-import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 import type { GcgRule } from "#src/models/gcg/GcgRule";
-import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 
@@ -15,7 +13,6 @@ import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
-import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { bakeKurage } from "#src/services/gcg/cards/bakeKurage";
@@ -38,9 +35,11 @@ import {
   YAE_MIKO_ID,
   YAKAN_EVOCATION_ID,
 } from "#src/services/gcg/cards/constants";
+import { createDuel } from "#src/services/gcg/cards/createDuel.test";
+import { createSideState } from "#src/services/gcg/cards/createSideState.test";
+import { createSkill } from "#src/services/gcg/cards/createSkill.test";
+import { createTalentCard } from "#src/services/gcg/cards/createTalentCard.test";
 import { emblemOfSeveredFate } from "#src/services/gcg/cards/emblemOfSeveredFate";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { hanachirusato } from "#src/services/gcg/cards/hanachirusato";
 import { kidKujirai } from "#src/services/gcg/cards/kidKujirai";
 import { ragingOniKing } from "#src/services/gcg/cards/ragingOniKing";
@@ -65,63 +64,28 @@ import { describe, expect, test } from "vitest";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
-const createSideState = (characters: GcgCharacterState[], dice: GcgSideState["dice"] = []): GcgSideState => ({
-  activeIndex: 0,
-  cards: [],
-  characters,
-  deckCardIds: [],
-  dice,
-  drawPile: [],
-  hand: [],
-  hasDeclaredEnd: false,
-  hasPrepared: true,
-  hasRolled: true,
-  isReplacementPending: false,
-  onstages: [],
-  summons: [],
-  supports: [],
-  usedCardIds: [],
-  usedSkillIds: [],
-});
-const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
-  actingSideIndex: 0,
-  cardModules: GcgCardIdModuleMap,
-  firstSideIndex: 0,
-  nextFirstSideIndex: 0,
-  outcome: undefined,
-  phase: GcgPhase.Action,
-  random: () => 0,
-  round: 1,
-  rule: TEST_RULE,
-  sides,
-  skillModules: GcgEffectNameSkillModuleMap,
-  winnerSideIndex: undefined,
-});
 const createZoneCard = (cardId: number): GcgZoneCard => ({ cardId, counter: 0, rounds: 0, usages: 0 });
 const withHp = (character: GcgCharacterState, hp: number): GcgCharacterState => ({ ...character, hp });
 const withSkills = (character: GcgCharacterState, skills: GcgSkill[]): GcgCharacterState => ({
   ...character,
   character: { ...character.character, skills },
 });
-const createSkill = (id: number, effect: string, kind: GcgSkillKind): GcgSkill => ({
-  costs: [],
-  effect,
-  energyGain: 0,
-  id,
-  kind,
-});
-const createTalentCard = (): GcgCard => ({
-  costs: [],
-  descriptionTextId: 1,
-  effects: [],
-  id: 211_031,
-  isLocation: false,
-  kind: GcgCardKind.Talent,
-  nameTextId: 1,
-});
+const ITTO_ID = 1605;
+const KOKOMI_ID = 1205;
+const ELECTRO_DIE: GcgCost = { count: 2, element: Element.Electro, kind: GcgCostKind.Dice };
+const MASATSU_ZETSUGI_ID = 16_052;
+const MASATSU = createSkill(MASATSU_ZETSUGI_ID, "Char_Skill_16052", GcgSkillKind.ElementalSkill);
+const ITTO_NORMAL_ATTACK = createSkill(16_051, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
+const TENKO = createSkill(TENKO_KENSHIN_ID, "Char_Skill_14083", GcgSkillKind.ElementalBurst);
+const YAKAN = createSkill(YAKAN_EVOCATION_ID, "Char_Skill_14082", GcgSkillKind.ElementalSkill);
+const KURAGE_OATH_ID = 12_052;
+const KURAGE = createSkill(KURAGE_OATH_ID, "Char_Skill_12052", GcgSkillKind.ElementalSkill);
+const NEREID_ASCENSION_ID = 12_053;
+const NEREID = createSkill(NEREID_ASCENSION_ID, "Char_Skill_12053", GcgSkillKind.ElementalBurst);
+const ROYAL_DESCENT_ID = 16_053;
+const ROYAL = createSkill(ROYAL_DESCENT_ID, "Char_Skill_16053", GcgSkillKind.ElementalBurst);
 
-describe("capricious Visage", () => {
-  const ELECTRO_DIE: GcgCost = { count: 2, element: Element.Electro, kind: GcgCostKind.Dice };
+describe("capriciousVisage", () => {
   const TALENT_CARD = createTalentCard();
   const EVENT_CARD: GcgCard = { ...TALENT_CARD, id: 331_803, kind: GcgCardKind.Event };
   const ELEMENTAL_SKILL: GcgSkill = createSkill(14_082, "Effect_Damage_Electro_2", GcgSkillKind.ElementalSkill);
@@ -136,11 +100,13 @@ describe("capricious Visage", () => {
     const context: GcgEffectContext = { characterIndex: 0, duel, sideIndex: 0 };
     const zoneCard = createZoneCard(CAPRICIOUS_VISAGE_ID);
     const subject: GcgCostSubject = { card: TALENT_CARD, costs: [{ ...ELECTRO_DIE }], element: Element.Electro };
+
     expect(capriciousVisage.reduceCost?.(context, subject, zoneCard)).toStrictEqual({
       count: 1,
       kind: GcgCostKind.Dice,
     });
     capriciousVisage.onCostPaid?.(context, subject, zoneCard);
+
     expect(capriciousVisage.reduceCost?.(context, subject, zoneCard)).toBeUndefined();
   });
 
@@ -151,6 +117,7 @@ describe("capricious Visage", () => {
       createSideState([]),
     ]);
     const subject: GcgCostSubject = { costs: [{ ...ELECTRO_DIE }], element: Element.Electro, skill: ELEMENTAL_SKILL };
+
     expect(
       capriciousVisage.reduceCost?.(
         { characterIndex: 0, duel, sideIndex: 0 },
@@ -183,9 +150,7 @@ describe("capricious Visage", () => {
   });
 });
 
-describe("thunder and Eternity", () => {
-  const KOKOMI_ID = 1205;
-
+describe("thunderAndEternity", () => {
   const INAZUMA = "INAZUMA";
   const LIYUE = "LIYUE";
 
@@ -197,6 +162,7 @@ describe("thunder and Eternity", () => {
     );
     const duel = createDuel([side, createSideState([])]);
     thunderAndEternity.play?.({ duel, sideIndex: 0 }, undefined);
+
     expect(side.dice).toStrictEqual([GcgDieFace.Omni, GcgDieFace.Omni, GcgDieFace.Omni]);
   });
 
@@ -221,11 +187,7 @@ describe("thunder and Eternity", () => {
   });
 });
 
-describe("bake-Kurage", () => {
-  const KOKOMI_ID = 1205;
-  const KURAGE_OATH_ID = 12_052;
-  const KURAGE = createSkill(KURAGE_OATH_ID, "Char_Skill_12052", GcgSkillKind.ElementalSkill);
-
+describe("bakeKurage", () => {
   test("it deals 1 Hydro DMG and heals its active character 1 HP at the End Phase, spending a usage", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -234,6 +196,7 @@ describe("bake-Kurage", () => {
     ]);
     takeOne(duel.sides, 0).summons.push({ ...createGcgZoneCard(BAKE_KURAGE_ID, bakeKurage), usages: 2 });
     runGcgEndPhase(duel);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([9]);
     expect(takeOne(duel.sides, 0).characters.map(({ hp }) => hp)).toStrictEqual([10]);
     expect(takeOne(duel.sides, 0).summons.map(({ usages }) => usages)).toStrictEqual([1]);
@@ -248,14 +211,14 @@ describe("bake-Kurage", () => {
     runGcgSkillUse({ duel, sideIndex: 0 }, KURAGE);
     runGcgSkillUse({ duel, sideIndex: 0 }, KURAGE);
     runGcgSkillUse({ duel, sideIndex: 0 }, KURAGE);
+
     expect(takeOne(duel.sides, 0).summons.map(({ cardId, usages }) => ({ cardId, usages }))).toStrictEqual([
       { cardId: BAKE_KURAGE_ID, usages: 4 },
     ]);
   });
 });
 
-describe("ceremonial Garment", () => {
-  const KOKOMI_ID = 1205;
+describe("ceremonialGarment", () => {
   const KOKOMI_NORMAL_ATTACK = createSkill(12_051, "Effect_Damage_Water_1", GcgSkillKind.NormalAttack);
 
   test("its character's Normal Attacks deal 1 more DMG, and heal every character 1 HP after the attack", () => {
@@ -271,12 +234,13 @@ describe("ceremonial Garment", () => {
       createSideState([createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, KOKOMI_NORMAL_ATTACK);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([8]);
     expect(takeOne(duel.sides, 0).characters.map(({ hp }) => hp)).toStrictEqual([10, 6]);
   });
 });
 
-describe("sesshou Sakura", () => {
+describe("sesshouSakura", () => {
   test("it deals 1 Electro DMG at the End Phase and spends a usage", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -285,6 +249,7 @@ describe("sesshou Sakura", () => {
     ]);
     takeOne(duel.sides, 0).summons.push({ ...createGcgZoneCard(SESSHOU_SAKURA_ID, sesshouSakura), usages: 3 });
     runGcgEndPhase(duel);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([9]);
     expect(takeOne(duel.sides, 0).summons.map(({ usages }) => usages)).toStrictEqual([2]);
   });
@@ -297,6 +262,7 @@ describe("sesshou Sakura", () => {
     ]);
     takeOne(duel.sides, 0).summons.push({ ...createGcgZoneCard(SESSHOU_SAKURA_ID, sesshouSakura), usages: 4 });
     declareGcgRoundEnd(duel, 0, TEST_RULE);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([9]);
     expect(takeOne(duel.sides, 0).summons.map(({ usages }) => usages)).toStrictEqual([3]);
   });
@@ -309,13 +275,12 @@ describe("sesshou Sakura", () => {
     ]);
     takeOne(duel.sides, 0).summons.push({ ...createGcgZoneCard(SESSHOU_SAKURA_ID, sesshouSakura), usages: 3 });
     declareGcgRoundEnd(duel, 0, TEST_RULE);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([10]);
   });
 });
 
 describe("yakan Evocation: Sesshou Sakura", () => {
-  const YAKAN = createSkill(YAKAN_EVOCATION_ID, "Char_Skill_14082", GcgSkillKind.ElementalSkill);
-
   test("it summons a Sesshou Sakura", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -323,6 +288,7 @@ describe("yakan Evocation: Sesshou Sakura", () => {
       createSideState([]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, YAKAN);
+
     expect(takeOne(duel.sides, 0).summons.map(({ cardId }) => cardId)).toStrictEqual([SESSHOU_SAKURA_ID]);
   });
 
@@ -334,15 +300,15 @@ describe("yakan Evocation: Sesshou Sakura", () => {
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, YAKAN);
     runGcgSkillUse({ duel, sideIndex: 0 }, YAKAN);
+
     expect(takeOne(duel.sides, 0).summons.map(({ usages }) => usages)).toStrictEqual([6]);
     runGcgEndPhase(duel);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([8]);
   });
 });
 
 describe("great Secret Art: Tenko Kenshin", () => {
-  const TENKO = createSkill(TENKO_KENSHIN_ID, "Char_Skill_14083", GcgSkillKind.ElementalBurst);
-
   test("it deals 4 Electro DMG and, with a Sesshou Sakura on its side, destroys it and creates Tenko Thunderbolts", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -353,6 +319,7 @@ describe("great Secret Art: Tenko Kenshin", () => {
     ]);
     takeOne(duel.sides, 0).summons.push({ ...createGcgZoneCard(SESSHOU_SAKURA_ID, sesshouSakura), usages: 3 });
     runGcgSkillUse({ duel, sideIndex: 0 }, TENKO);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([6]);
     expect(takeOne(duel.sides, 0).summons).toStrictEqual([]);
     expect(takeOne(duel.sides, 0).onstages.map(({ cardId }) => cardId)).toStrictEqual([TENKO_THUNDERBOLTS_ID]);
@@ -365,12 +332,13 @@ describe("great Secret Art: Tenko Kenshin", () => {
       createSideState([createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, TENKO);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([6]);
     expect(takeOne(duel.sides, 0).onstages).toStrictEqual([]);
   });
 });
 
-describe("tenko Thunderbolts", () => {
+describe("tenkoThunderbolts", () => {
   test("before its side chooses its action it deals 3 Electro DMG, once", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -380,20 +348,18 @@ describe("tenko Thunderbolts", () => {
     duel.actingSideIndex = 1;
     takeOne(duel.sides, 0).onstages.push({ ...createGcgZoneCard(TENKO_THUNDERBOLTS_ID, tenkoThunderbolts), usages: 1 });
     passGcgTurn(duel, 1);
+
     expect(duel.actingSideIndex).toBe(0);
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([7]);
     expect(takeOne(duel.sides, 0).onstages).toStrictEqual([]);
     passGcgTurn(duel, 0);
     passGcgTurn(duel, 1);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([7]);
   });
 });
 
 describe("ushi", () => {
-  const ITTO_ID = 1605;
-  const MASATSU_ZETSUGI_ID = 16_052;
-  const MASATSU = createSkill(MASATSU_ZETSUGI_ID, "Char_Skill_16052", GcgSkillKind.ElementalSkill);
-
   test("the active character takes 1 less DMG, once", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -402,8 +368,10 @@ describe("ushi", () => {
     ]);
     takeOne(duel.sides, 0).summons.push(createGcgZoneCard(USHI_ID, ushi));
     applyGcgDamage(duel, 1, { damageType: Element.Hydro, value: 3 }, TEST_RULE);
+
     expect(takeOne(duel.sides, 0).characters.map(({ hp }) => hp)).toStrictEqual([8]);
     applyGcgDamage(duel, 1, { damageType: Element.Hydro, value: 3 }, TEST_RULE);
+
     expect(takeOne(duel.sides, 0).characters.map(({ hp }) => hp)).toStrictEqual([5]);
   });
 
@@ -415,12 +383,14 @@ describe("ushi", () => {
     ]);
     takeOne(duel.sides, 0).summons.push(createGcgZoneCard(USHI_ID, ushi));
     applyGcgDamage(duel, 1, { damageType: Element.Hydro, value: 3 }, TEST_RULE);
+
     expect(takeOne(takeOne(duel.sides, 0).characters, 0).statuses.map(({ cardId }) => cardId)).toStrictEqual([
       SUPERLATIVE_SUPERSTRENGTH_ID,
     ]);
     expect(takeOne(takeOne(duel.sides, 0).characters, 0).statuses.map(({ usages }) => usages)).toStrictEqual([1]);
     takeOne(takeOne(takeOne(duel.sides, 0).characters, 0).statuses, 0).usages = 3;
     applyGcgDamage(duel, 1, { damageType: Element.Hydro, value: 3 }, TEST_RULE);
+
     expect(takeOne(takeOne(duel.sides, 0).characters, 0).statuses.map(({ usages }) => usages)).toStrictEqual([3]);
   });
 
@@ -436,6 +406,7 @@ describe("ushi", () => {
     applyGcgDamage(duel, 1, { damageType: Element.Hydro, value: 3 }, TEST_RULE);
     runGcgSkillUse({ duel, sideIndex: 0 }, MASATSU);
     applyGcgDamage(duel, 1, { damageType: Element.Hydro, value: 3 }, TEST_RULE);
+
     expect(takeOne(takeOne(duel.sides, 0).characters, 0).hp).toBe(6);
     expect(takeOne(takeOne(duel.sides, 0).characters, 0).statuses.map(({ usages }) => usages)).toStrictEqual([2]);
   });
@@ -448,6 +419,7 @@ describe("ushi", () => {
     ]);
     takeOne(duel.sides, 0).summons.push(createGcgZoneCard(USHI_ID, ushi));
     runGcgEndPhase(duel);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([9]);
     expect(takeOne(duel.sides, 0).summons).toStrictEqual([]);
     expect(takeOne(takeOne(duel.sides, 0).characters, 0).statuses.map(({ cardId }) => cardId)).toStrictEqual([
@@ -456,10 +428,7 @@ describe("ushi", () => {
   });
 });
 
-describe("raging Oni King", () => {
-  const ITTO_ID = 1605;
-  const ITTO_NORMAL_ATTACK = createSkill(16_051, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
-
+describe("ragingOniKing", () => {
   test("its character's Normal Attacks deal 1 more DMG, and its Physical DMG becomes Geo DMG", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -472,6 +441,7 @@ describe("raging Oni King", () => {
       createSideState([createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, ITTO_NORMAL_ATTACK);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([7]);
   });
 
@@ -488,6 +458,7 @@ describe("raging Oni King", () => {
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, ITTO_NORMAL_ATTACK);
     runGcgSkillUse({ duel, sideIndex: 0 }, ITTO_NORMAL_ATTACK);
+
     expect(
       takeOne(takeOne(duel.sides, 0).characters, 0)
         .statuses.filter(({ cardId }) => cardId === SUPERLATIVE_SUPERSTRENGTH_ID)
@@ -496,10 +467,7 @@ describe("raging Oni King", () => {
   });
 });
 
-describe("superlative Superstrength", () => {
-  const ITTO_ID = 1605;
-  const ITTO_NORMAL_ATTACK = createSkill(16_051, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
-
+describe("superlativeSuperstrength", () => {
   test("a Charged Attack deals 1 more DMG and spends a usage", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -513,6 +481,7 @@ describe("superlative Superstrength", () => {
     ]);
     takeOne(duel.sides, 0).hasChargedAttack = true;
     runGcgSkillUse({ duel, sideIndex: 0 }, ITTO_NORMAL_ATTACK);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([7]);
     expect(takeOne(takeOne(duel.sides, 0).characters, 0).statuses.map(({ usages }) => usages)).toStrictEqual([1]);
   });
@@ -529,6 +498,7 @@ describe("superlative Superstrength", () => {
       createSideState([createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, ITTO_NORMAL_ATTACK);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([8]);
   });
 
@@ -545,6 +515,7 @@ describe("superlative Superstrength", () => {
       createSideState([]),
     ]);
     runGcgActionPhase(duel);
+
     expect(takeOne(duel.sides, 0).hasChargedAttack).toBe(isCharged);
   });
 
@@ -561,6 +532,7 @@ describe("superlative Superstrength", () => {
       skill: ITTO_NORMAL_ATTACK,
     };
     const context: GcgEffectContext = { characterIndex: 0, duel, sideIndex: 0 };
+
     expect(
       superlativeSuperstrength.reduceCost?.(context, subject, {
         ...createGcgZoneCard(SUPERLATIVE_SUPERSTRENGTH_ID, superlativeSuperstrength),
@@ -576,15 +548,7 @@ describe("superlative Superstrength", () => {
   });
 });
 
-describe("emblem of Severed Fate", () => {
-  const KOKOMI_ID = 1205;
-  const ITTO_ID = 1605;
-  const TENKO = createSkill(TENKO_KENSHIN_ID, "Char_Skill_14083", GcgSkillKind.ElementalBurst);
-  const NEREID_ASCENSION_ID = 12_053;
-  const NEREID = createSkill(NEREID_ASCENSION_ID, "Char_Skill_12053", GcgSkillKind.ElementalBurst);
-  const ROYAL_DESCENT_ID = 16_053;
-  const ROYAL = createSkill(ROYAL_DESCENT_ID, "Char_Skill_16053", GcgSkillKind.ElementalBurst);
-
+describe("emblemOfSeveredFate", () => {
   test("after another character of its side uses an Elemental Burst, its character gains 1 Energy", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -598,6 +562,7 @@ describe("emblem of Severed Fate", () => {
       createSideState([createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, TENKO);
+
     expect(takeOne(takeOne(duel.sides, 0).characters, 1).energy).toBe(1);
   });
 
@@ -616,6 +581,7 @@ describe("emblem of Severed Fate", () => {
       ]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, TENKO);
+
     expect(takeOne(takeOne(duel.sides, 1).characters, 0).energy).toBe(0);
   });
 
@@ -637,6 +603,7 @@ describe("emblem of Severed Fate", () => {
     runGcgSkillUse({ duel, sideIndex: 0 }, ROYAL);
     takeOne(duel.sides, 0).activeIndex = 1;
     runGcgSkillUse({ duel, sideIndex: 0 }, NEREID);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([10]);
   });
 
@@ -652,13 +619,12 @@ describe("emblem of Severed Fate", () => {
       createSideState([createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, ROYAL);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([4]);
   });
 });
 
 describe("hanachirusato", () => {
-  const KOKOMI_ID = 1205;
-  const ELECTRO_DIE: GcgCost = { count: 2, element: Element.Electro, kind: GcgCostKind.Dice };
   const TALENT_CARD = createTalentCard();
   const WEAPON_CARD: GcgCard = { ...TALENT_CARD, id: 311_401, kind: GcgCardKind.Weapon };
 
@@ -671,6 +637,7 @@ describe("hanachirusato", () => {
     takeOne(duel.sides, 0).supports.push(createGcgZoneCard(HANACHIRUSATO_ID, hanachirusato));
     takeOne(duel.sides, 0).summons.push({ ...createGcgZoneCard(BAKE_KURAGE_ID, bakeKurage), usages: 1 });
     runGcgEndPhase(duel);
+
     expect(takeOne(duel.sides, 0).supports.map(({ counter }) => counter)).toStrictEqual([1]);
   });
 
@@ -683,6 +650,7 @@ describe("hanachirusato", () => {
     takeOne(duel.sides, 0).supports.push({ ...createGcgZoneCard(HANACHIRUSATO_ID, hanachirusato), counter: 3 });
     takeOne(duel.sides, 0).summons.push({ ...createGcgZoneCard(BAKE_KURAGE_ID, bakeKurage), usages: 1 });
     runGcgEndPhase(duel);
+
     expect(takeOne(duel.sides, 0).supports.map(({ counter }) => counter)).toStrictEqual([3]);
   });
 
@@ -698,6 +666,7 @@ describe("hanachirusato", () => {
     side.summons.push(createGcgZoneCard(BAKE_KURAGE_ID, bakeKurage));
     side.cards.push(oath);
     side.hand.push(oath.id);
+
     expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
     expect(side.supports.map(({ counter }) => counter)).toStrictEqual([1]);
   });
@@ -712,15 +681,15 @@ describe("hanachirusato", () => {
     takeOne(duel.sides, 0).supports.push(zoneCard);
     const subject: GcgCostSubject = { card: WEAPON_CARD, costs: [{ ...ELECTRO_DIE }], element: Element.Hydro };
     const context: GcgEffectContext = { duel, sideIndex: 0 };
+
     expect(hanachirusato.reduceCost?.(context, subject, zoneCard)).toStrictEqual({ count: 2, kind: GcgCostKind.Dice });
     hanachirusato.onCostPaid?.(context, subject, zoneCard);
+
     expect(zoneCard.usages).toBe(0);
   });
 });
 
-describe("kid Kujirai", () => {
-  const KOKOMI_ID = 1205;
-
+describe("kidKujirai", () => {
   test("at the Action Phase it creates an Omni die and moves to the opposing Support Zone when it has room", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -729,6 +698,7 @@ describe("kid Kujirai", () => {
     ]);
     takeOne(duel.sides, 0).supports.push(createGcgZoneCard(KID_KUJIRAI_ID, kidKujirai));
     runGcgActionPhase(duel);
+
     expect(takeOne(duel.sides, 0).dice).toStrictEqual([GcgDieFace.Omni]);
     expect(takeOne(duel.sides, 0).supports).toStrictEqual([]);
     expect(takeOne(duel.sides, 1).supports.map(({ cardId }) => cardId)).toStrictEqual([KID_KUJIRAI_ID]);
@@ -745,16 +715,13 @@ describe("kid Kujirai", () => {
       createGcgZoneCard(HANACHIRUSATO_ID, hanachirusato),
     );
     runGcgActionPhase(duel);
+
     expect(takeOne(duel.sides, 0).supports.map(({ cardId }) => cardId)).toStrictEqual([KID_KUJIRAI_ID]);
     expect(takeOne(duel.sides, 0).dice).toStrictEqual([GcgDieFace.Omni]);
   });
 });
 
-describe("the Shrine's Sacred Shade", () => {
-  const ELECTRO_DIE: GcgCost = { count: 2, element: Element.Electro, kind: GcgCostKind.Dice };
-  const TENKO = createSkill(TENKO_KENSHIN_ID, "Char_Skill_14083", GcgSkillKind.ElementalBurst);
-  const YAKAN = createSkill(YAKAN_EVOCATION_ID, "Char_Skill_14082", GcgSkillKind.ElementalSkill);
-
+describe("theShrinesSacredShade", () => {
   const SHRINE_TALENT_ID = 214_081;
 
   test("it is played on Yae Miko and uses Great Secret Art: Tenko Kenshin at once", () => {
@@ -766,6 +733,7 @@ describe("the Shrine's Sacred Shade", () => {
       createSideState([]),
     ]);
     const context: GcgEffectContext = { duel, sideIndex: 0 };
+
     expect(theShrinesSacredShade.canPlay?.(context, 0)).toBe(true);
     expect(theShrinesSacredShade.skillOnPlay?.(context, 0)?.id).toBe(TENKO_KENSHIN_ID);
   });
@@ -789,20 +757,18 @@ describe("the Shrine's Sacred Shade", () => {
     const shrine = takeOne(takeOne(takeOne(duel.sides, 0).characters, 0).equipments, 0);
     const context: GcgEffectContext = { duel, sideIndex: 0 };
     const subject: GcgCostSubject = { costs: [{ ...ELECTRO_DIE }], element: Element.Electro, skill: YAKAN };
+
     expect(theShrinesSacredShade.reduceCost?.(context, subject, shrine)).toStrictEqual({
       count: 2,
       kind: GcgCostKind.Dice,
     });
     theShrinesSacredShade.onCostPaid?.(context, subject, shrine);
+
     expect(theShrinesSacredShade.reduceCost?.(context, subject, shrine)).toBeUndefined();
   });
 });
 
 describe("masatsu Zetsugi: Akaushi Burst!", () => {
-  const ITTO_ID = 1605;
-  const MASATSU_ZETSUGI_ID = 16_052;
-  const MASATSU = createSkill(MASATSU_ZETSUGI_ID, "Char_Skill_16052", GcgSkillKind.ElementalSkill);
-
   test("it deals 1 Geo DMG, summons Ushi and gains Superlative Superstrength", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -810,6 +776,7 @@ describe("masatsu Zetsugi: Akaushi Burst!", () => {
       createSideState([createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, MASATSU);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([9]);
     expect(takeOne(duel.sides, 0).summons.map(({ cardId }) => cardId)).toStrictEqual([USHI_ID]);
     expect(takeOne(takeOne(duel.sides, 0).characters, 0).statuses.map(({ cardId }) => cardId)).toStrictEqual([
@@ -819,10 +786,6 @@ describe("masatsu Zetsugi: Akaushi Burst!", () => {
 });
 
 describe("royal Descent: Behold, Itto the Evil!", () => {
-  const ITTO_ID = 1605;
-  const ROYAL_DESCENT_ID = 16_053;
-  const ROYAL = createSkill(ROYAL_DESCENT_ID, "Char_Skill_16053", GcgSkillKind.ElementalBurst);
-
   test("it deals 4 Geo DMG and gains Raging Oni King", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -830,6 +793,7 @@ describe("royal Descent: Behold, Itto the Evil!", () => {
       createSideState([createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, ROYAL);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([6]);
     expect(takeOne(takeOne(duel.sides, 0).characters, 0).statuses.map(({ cardId }) => cardId)).toStrictEqual([
       RAGING_ONI_KING_ID,
@@ -837,11 +801,7 @@ describe("royal Descent: Behold, Itto the Evil!", () => {
   });
 });
 
-describe("nereid's Ascension", () => {
-  const KOKOMI_ID = 1205;
-  const NEREID_ASCENSION_ID = 12_053;
-  const NEREID = createSkill(NEREID_ASCENSION_ID, "Char_Skill_12053", GcgSkillKind.ElementalBurst);
-
+describe("nereidsAscension", () => {
   test("it deals 2 Hydro DMG, heals all its characters 1 HP and gains Ceremonial Garment", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -852,6 +812,7 @@ describe("nereid's Ascension", () => {
       createSideState([createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } })]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, NEREID);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([8]);
     expect(takeOne(duel.sides, 0).characters.map(({ hp }) => hp)).toStrictEqual([10, 6]);
     expect(takeOne(takeOne(duel.sides, 0).characters, 0).statuses.map(({ cardId }) => cardId)).toStrictEqual([
@@ -861,10 +822,6 @@ describe("nereid's Ascension", () => {
 });
 
 describe("kurage's Oath", () => {
-  const KOKOMI_ID = 1205;
-  const KURAGE_OATH_ID = 12_052;
-  const KURAGE = createSkill(KURAGE_OATH_ID, "Char_Skill_12052", GcgSkillKind.ElementalSkill);
-
   test("it applies Hydro to its character and summons Bake-Kurage", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -872,6 +829,7 @@ describe("kurage's Oath", () => {
       createSideState([]),
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, KURAGE);
+
     expect(takeOne(takeOne(duel.sides, 0).characters, 0).aura).toBe(Element.Hydro);
     expect(takeOne(duel.sides, 0).summons.map(({ cardId }) => cardId)).toStrictEqual([BAKE_KURAGE_ID]);
   });

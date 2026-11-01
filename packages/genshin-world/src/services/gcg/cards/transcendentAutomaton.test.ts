@@ -43,6 +43,7 @@ describe("transcendentAutomaton", () => {
     transcendentAutomaton.onSkillUsed?.({ characterIndex: 0, duel, sideIndex: 0 }, BLUSTERING_BLADE, zoneCard, []);
 
     const side = takeOne(duel.sides, 0);
+
     expect({
       activeIndex: side.activeIndex,
       statusIds: side.characters.map(({ statuses }) => statuses.map(({ cardId }) => cardId)),

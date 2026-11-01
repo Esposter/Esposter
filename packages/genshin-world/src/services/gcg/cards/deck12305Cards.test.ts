@@ -1,8 +1,6 @@
 import type { GcgCard } from "#src/models/gcg/GcgCard";
-import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgRule } from "#src/models/gcg/GcgRule";
-import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -12,7 +10,6 @@ import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
-import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { baneOfAllEvil } from "#src/services/gcg/cards/baneOfAllEvil";
@@ -31,11 +28,12 @@ import {
   XIAO_ID,
   YAKSHAS_MASK_ID,
 } from "#src/services/gcg/cards/constants";
+import { createDuel } from "#src/services/gcg/cards/createDuel.test";
+import { createSideState } from "#src/services/gcg/cards/createSideState.test";
+import { createTalentCard } from "#src/services/gcg/cards/createTalentCard.test";
 import { divineMaidensDeliverance } from "#src/services/gcg/cards/divineMaidensDeliverance";
 import { dunyarzad } from "#src/services/gcg/cards/dunyarzad";
 import { frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { icyQuill } from "#src/services/gcg/cards/icyQuill";
 import { lithicSpear } from "#src/services/gcg/cards/lithicSpear";
 import { liuSu } from "#src/services/gcg/cards/liuSu";
@@ -62,50 +60,6 @@ import { describe, expect, test } from "vitest";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
-const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
-  activeIndex: 0,
-  cards: [],
-  characters,
-  deckCardIds: [],
-  dice: [],
-  drawPile: [],
-  hand: [],
-  hasDeclaredEnd: false,
-  hasPrepared: true,
-  hasRolled: true,
-  isReplacementPending: false,
-  onstages: [],
-  summons: [],
-  supports: [],
-  usedCardIds: [],
-  usedSkillIds: [],
-});
-
-const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
-  actingSideIndex: 0,
-  cardModules: GcgCardIdModuleMap,
-  firstSideIndex: 0,
-  nextFirstSideIndex: 0,
-  outcome: undefined,
-  phase: GcgPhase.Action,
-  random: () => 0,
-  round: 1,
-  rule: TEST_RULE,
-  sides,
-  skillModules: GcgEffectNameSkillModuleMap,
-  winnerSideIndex: undefined,
-});
-
-const createTalentCard = (): GcgCard => ({
-  costs: [],
-  descriptionTextId: 1,
-  effects: [],
-  id: 211_031,
-  isLocation: false,
-  kind: GcgCardKind.Talent,
-  nameTextId: 1,
-});
-
 // A companion Support Card, with no cost of its own
 const createCompanion = (id: number): GcgCard => ({
   ...createTalentCard(),
@@ -130,7 +84,22 @@ const createSwitchDuel = (): GcgDuel => {
   return duel;
 };
 
-describe("spring Spirit Summoning", () => {
+const KABUKI: GcgSkill = {
+  costs: [],
+  effect: "Effect_Damage_Physic_2",
+  energyGain: 1,
+  id: 11_051,
+  kind: GcgSkillKind.NormalAttack,
+};
+const HYOUKA: GcgSkill = {
+  costs: [],
+  effect: "Effect_Damage_Ice_3",
+  energyGain: 1,
+  id: 11_052,
+  kind: GcgSkillKind.ElementalSkill,
+};
+
+describe("springSpiritSummoning", () => {
   test("it deals 2 Cryo DMG, then creates an Icy Quill on its side", () => {
     expect.hasAssertions();
 
@@ -142,6 +111,7 @@ describe("spring Spirit Summoning", () => {
 
     expect(springSpiritSummoning.getDamage?.(context)).toStrictEqual({ damageType: Element.Cryo, value: 2 });
     springSpiritSummoning.afterDamage?.(context);
+
     expect(takeOne(duel.sides, 0).onstages).toStrictEqual([createGcgZoneCard(ICY_QUILL_ID, icyQuill)]);
   });
 
@@ -153,26 +123,12 @@ describe("spring Spirit Summoning", () => {
     const duel = createDuel([side, createSideState([])]);
 
     springSpiritSummoning.afterDamage?.({ duel, sideIndex: 0 });
+
     expect(side.onstages).toStrictEqual([createGcgZoneCard(ICY_QUILL_ID, icyQuill)]);
   });
 });
 
-describe("icy Quill", () => {
-  const KABUKI: GcgSkill = {
-    costs: [],
-    effect: "Effect_Damage_Physic_2",
-    energyGain: 1,
-    id: 11_051,
-    kind: GcgSkillKind.NormalAttack,
-  };
-  const HYOUKA: GcgSkill = {
-    costs: [],
-    effect: "Effect_Damage_Ice_3",
-    energyGain: 1,
-    id: 11_052,
-    kind: GcgSkillKind.ElementalSkill,
-  };
-
+describe("icyQuill", () => {
   test("it deals 1 more Cryo DMG to a Cryo hit, spending a usage", () => {
     expect.hasAssertions();
 
@@ -221,6 +177,7 @@ describe("icy Quill", () => {
     const context = { duel, sideIndex: 0, skill: KABUKI };
 
     icyQuill.modifyDamageDealt?.(context, { damageType: Element.Cryo, value: 2 }, zoneCard);
+
     expect(zoneCard.usages).toBe(1);
   });
 
@@ -262,6 +219,7 @@ describe("icy Quill", () => {
     ]);
 
     applyGcgDamage(duel, 0, { damageType: Element.Anemo, value: 1 }, TEST_RULE, { duel, sideIndex: 0 });
+
     expect(takeOne(takeOne(duel.sides, 1).characters, 1).hp).toBe(10 - GCG_SPREAD_DAMAGE - 1);
     expect(takeOne(takeOne(duel.sides, 1).characters, 2).hp).toBe(10 - GCG_SPREAD_DAMAGE - 1);
     expect(takeOne(duel.sides, 0).onstages.map(({ usages }) => usages)).toStrictEqual([1]);
@@ -282,12 +240,13 @@ describe("icy Quill", () => {
     ]);
 
     applyGcgDamage(duel, 0, { damageType: Element.Anemo, value: 1 }, TEST_RULE, { duel, sideIndex: 0 });
+
     expect(takeOne(takeOne(duel.sides, 1).characters, 1).hp).toBe(10 - GCG_SPREAD_DAMAGE - 1);
     expect(takeOne(duel.sides, 0).onstages.map(({ usages }) => usages)).toStrictEqual([1]);
   });
 });
 
-describe("divine Maiden's Deliverance", () => {
+describe("divineMaidensDeliverance", () => {
   test("it deals 1 Cryo DMG, then summons a Talisman Spirit on its side", () => {
     expect.hasAssertions();
 
@@ -299,6 +258,7 @@ describe("divine Maiden's Deliverance", () => {
 
     expect(divineMaidensDeliverance.getDamage?.(context)).toStrictEqual({ damageType: Element.Cryo, value: 1 });
     divineMaidensDeliverance.afterDamage?.(context);
+
     expect(takeOne(duel.sides, 0).summons).toStrictEqual([createGcgZoneCard(TALISMAN_SPIRIT_ID, talismanSpirit)]);
   });
 
@@ -310,11 +270,12 @@ describe("divine Maiden's Deliverance", () => {
     const duel = createDuel([side, createSideState([])]);
 
     divineMaidensDeliverance.afterDamage?.({ duel, sideIndex: 0 });
+
     expect(side.summons).toStrictEqual([createGcgZoneCard(TALISMAN_SPIRIT_ID, talismanSpirit)]);
   });
 });
 
-describe("talisman Spirit", () => {
+describe("talismanSpirit", () => {
   test("it deals 1 Cryo DMG at each End Phase, for two usages", () => {
     expect.hasAssertions();
 
@@ -342,6 +303,7 @@ describe("talisman Spirit", () => {
     ]);
 
     runGcgEndPhase(duel);
+
     expect(takeOne(takeOne(duel.sides, 1).characters, 0).hp).toBe(10 - 2 - 3);
   });
 
@@ -354,6 +316,7 @@ describe("talisman Spirit", () => {
     ]);
 
     runGcgEndPhase(duel);
+
     expect(takeOne(takeOne(duel.sides, 1).characters, 0).hp).toBe(8);
   });
 
@@ -373,7 +336,7 @@ describe("talisman Spirit", () => {
   });
 });
 
-describe("mystical Abandon", () => {
+describe("mysticalAbandon", () => {
   const SPRING_SPIRIT_SUMMONING: GcgSkill = {
     costs: [],
     effect: "Char_Skill_11072",
@@ -394,7 +357,7 @@ describe("mystical Abandon", () => {
   });
 });
 
-describe("bane of All Evil", () => {
+describe("baneOfAllEvil", () => {
   test("it deals 4 Anemo DMG, then Xiao gains Yaksha's Mask for two Rounds", () => {
     expect.hasAssertions();
 
@@ -404,6 +367,7 @@ describe("bane of All Evil", () => {
 
     expect(baneOfAllEvil.getDamage?.(context)).toStrictEqual({ damageType: Element.Anemo, value: 4 });
     baneOfAllEvil.afterDamage?.(context);
+
     expect(xiao.statuses).toStrictEqual([createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)]);
     expect(takeOne(xiao.statuses, 0).rounds).toBe(2);
     expect(takeOne(xiao.statuses, 0).usages).toBe(2);
@@ -419,11 +383,12 @@ describe("bane of All Evil", () => {
     const duel = createDuel([createSideState([xiao]), createSideState([])]);
 
     baneOfAllEvil.afterDamage?.({ duel, sideIndex: 0 });
+
     expect(xiao.statuses).toStrictEqual([createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)]);
   });
 });
 
-describe("yaksha's Mask", () => {
+describe("yakshasMask", () => {
   test.each([
     [GcgDamageKind.Physical, Element.Anemo, 3],
     [Element.Anemo, Element.Anemo, 3],
@@ -490,14 +455,16 @@ describe("yaksha's Mask's switch clause", () => {
 
     expect(switchGcgCharacter(duel, 0, 1, [])).toBe(GcgActionResult.Done);
     duel.actingSideIndex = 0;
+
     expect(switchGcgCharacter(duel, 0, 0, [0])).toBe(GcgActionResult.Done);
     duel.actingSideIndex = 0;
+
     expect(switchGcgCharacter(duel, 0, 1, [])).toBe(GcgActionResult.Unpayable);
     expect(switchGcgCharacter(duel, 0, 1, [0])).toBe(GcgActionResult.Done);
   });
 });
 
-describe("conqueror of Evil: Guardian Yaksha", () => {
+describe("conquerorOfEvilGuardianYaksha", () => {
   const CONQUEROR_OF_EVIL_ID = 215_041;
   const BANE_OF_ALL_EVIL: GcgSkill = {
     costs: [],
@@ -540,8 +507,10 @@ describe("conqueror of Evil: Guardian Yaksha", () => {
 
     expect(conquerorOfEvilGuardianYaksha.reduceCost?.(context, subject, zoneCard)).toStrictEqual(reduction);
     conquerorOfEvilGuardianYaksha.onCostPaid?.(context, subject, zoneCard);
+
     expect(conquerorOfEvilGuardianYaksha.reduceCost?.(context, subject, zoneCard)).toStrictEqual(reduction);
     conquerorOfEvilGuardianYaksha.onCostPaid?.(context, subject, zoneCard);
+
     expect(conquerorOfEvilGuardianYaksha.reduceCost?.(context, subject, zoneCard)).toBeUndefined();
   });
 
@@ -553,6 +522,7 @@ describe("conqueror of Evil: Guardian Yaksha", () => {
       createSideState([]),
     ]);
     const zoneCard = createGcgZoneCard(CONQUEROR_OF_EVIL_ID, conquerorOfEvilGuardianYaksha);
+
     expect(
       conquerorOfEvilGuardianYaksha.reduceCost?.(
         { characterIndex: 0, duel: bare, sideIndex: 0 },
@@ -566,6 +536,7 @@ describe("conqueror of Evil: Guardian Yaksha", () => {
       statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
     };
     const masked = createDuel([createSideState([xiao]), createSideState([])]);
+
     expect(
       conquerorOfEvilGuardianYaksha.reduceCost?.(
         { characterIndex: 0, duel: masked, sideIndex: 0 },
@@ -576,7 +547,7 @@ describe("conqueror of Evil: Guardian Yaksha", () => {
   });
 });
 
-describe("lithic Spear", () => {
+describe("lithicSpear", () => {
   const LITHIC_SPEAR_ID = 311_402;
 
   test("it deals 1 more DMG to its pole user", () => {
@@ -618,6 +589,7 @@ describe("lithic Spear", () => {
     ]);
 
     lithicSpear.play?.({ duel, sideIndex: 0 }, 0, undefined);
+
     expect(takeOne(duel.sides, 0).characters.map(({ shield }) => shield)).toStrictEqual([2, 0, 0]);
   });
 
@@ -638,26 +610,13 @@ describe("lithic Spear", () => {
     ]);
 
     lithicSpear.play?.({ duel, sideIndex: 0 }, 0, undefined);
+
     expect(takeOne(takeOne(duel.sides, 0).characters, 0).shield).toBe(GCG_SHIELD_LIMIT);
   });
 });
 
-describe("vermillion Hereafter", () => {
+describe("vermillionHereafter", () => {
   const TALENT_CARD = createTalentCard();
-  const KABUKI: GcgSkill = {
-    costs: [],
-    effect: "Effect_Damage_Physic_2",
-    energyGain: 1,
-    id: 11_051,
-    kind: GcgSkillKind.NormalAttack,
-  };
-  const HYOUKA: GcgSkill = {
-    costs: [],
-    effect: "Effect_Damage_Ice_3",
-    energyGain: 1,
-    id: 11_052,
-    kind: GcgSkillKind.ElementalSkill,
-  };
   const EVENT_CARD: GcgCard = { ...TALENT_CARD, id: 331_802, kind: GcgCardKind.Event };
 
   test("a Normal Attack spends one die less, once per Round", () => {
@@ -675,6 +634,7 @@ describe("vermillion Hereafter", () => {
 
     expect(vermillionHereafter.reduceCost?.(context, subject, zoneCard)).toStrictEqual({ count: 1 });
     vermillionHereafter.onCostPaid?.(context, subject, zoneCard);
+
     expect(vermillionHereafter.reduceCost?.(context, subject, zoneCard)).toBeUndefined();
   });
 
@@ -715,11 +675,12 @@ describe("vermillion Hereafter", () => {
 
     switchGcgActiveCharacter(duel, 0, 1);
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([7]);
   });
 });
 
-describe("stone and Contracts", () => {
+describe("stoneAndContracts", () => {
   const DRAWN_CARD_ID = 213_011;
 
   test("when the next Action Phase begins, it creates 3 Omni dice and draws a card", () => {
@@ -730,23 +691,17 @@ describe("stone and Contracts", () => {
     const duel = createDuel([side, createSideState([])]);
 
     stoneAndContracts.play?.({ duel, sideIndex: 0 }, undefined);
+
     expect(side.onstages).toStrictEqual([createGcgZoneCard(STONE_AND_CONTRACTS_ID, stoneAndContracts)]);
     runGcgActionPhase(duel);
+
     expect(side.dice).toStrictEqual([GcgDieFace.Omni, GcgDieFace.Omni, GcgDieFace.Omni]);
     expect(side.hand).toStrictEqual([DRAWN_CARD_ID]);
     expect(side.onstages).toStrictEqual([]);
   });
 });
 
-describe("elemental Resonance: Shattering Ice", () => {
-  const KABUKI: GcgSkill = {
-    costs: [],
-    effect: "Effect_Damage_Physic_2",
-    energyGain: 1,
-    id: 11_051,
-    kind: GcgSkillKind.NormalAttack,
-  };
-
+describe("shatteringIce", () => {
   test("it can be played only with two Cryo characters on its side", () => {
     expect.hasAssertions();
 
@@ -780,11 +735,12 @@ describe("elemental Resonance: Shattering Ice", () => {
     shatteringIce.play?.({ duel, sideIndex: 0 }, undefined);
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([4]);
   });
 });
 
-describe("liu Su", () => {
+describe("liuSu", () => {
   test("after a switch to a character with no Energy, she gives that character 1 Energy, once per Round", () => {
     expect.hasAssertions();
 
@@ -796,8 +752,10 @@ describe("liu Su", () => {
     const duel = createDuel([side, createSideState([])]);
 
     switchGcgActiveCharacter(duel, 0, 1);
+
     expect(side.characters.map(({ energy }) => energy)).toStrictEqual([0, 1]);
     switchGcgActiveCharacter(duel, 0, 0);
+
     expect(side.characters.map(({ energy }) => energy)).toStrictEqual([0, 1]);
     expect(takeOne(side.supports, 0).usages).toBe(1);
   });
@@ -814,6 +772,7 @@ describe("liu Su", () => {
     const duel = createDuel([side, createSideState([])]);
 
     switchGcgActiveCharacter(duel, 0, 1);
+
     expect({
       energies: side.characters.map(({ energy }) => energy),
       usages: takeOne(side.supports, 0).usages,
@@ -836,6 +795,7 @@ describe("dunyarzad", () => {
 
     expect(dunyarzad.reduceCost?.(context, companionSubject, zoneCard)).toStrictEqual({ count: 1 });
     dunyarzad.onCostPaid?.(context, companionSubject, zoneCard);
+
     expect(dunyarzad.reduceCost?.(context, companionSubject, zoneCard)).toBeUndefined();
     expect(
       dunyarzad.reduceCost?.(
@@ -898,6 +858,7 @@ describe("dunyarzad", () => {
     const duel = createDuel([side, createSideState([])]);
 
     dunyarzad.onCardPlayed?.({ duel, sideIndex: 0 }, createCompanion(LIU_SU_ID), takeOne(side.supports, 1));
+
     expect({
       counters: side.supports.map(({ counter }) => counter),
       drawPile: side.drawPile,
@@ -907,21 +868,6 @@ describe("dunyarzad", () => {
 });
 
 describe("rana", () => {
-  const KABUKI: GcgSkill = {
-    costs: [],
-    effect: "Effect_Damage_Physic_2",
-    energyGain: 1,
-    id: 11_051,
-    kind: GcgSkillKind.NormalAttack,
-  };
-  const HYOUKA: GcgSkill = {
-    costs: [],
-    effect: "Effect_Damage_Ice_3",
-    energyGain: 1,
-    id: 11_052,
-    kind: GcgSkillKind.ElementalSkill,
-  };
-
   test("after an Elemental Skill, it creates a die of the next off-field character's element, once per Round", () => {
     expect.hasAssertions();
 
@@ -936,8 +882,10 @@ describe("rana", () => {
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
+
     expect(side.dice).toStrictEqual([Element.Anemo]);
     runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
+
     expect(side.dice).toStrictEqual([Element.Anemo]);
   });
 
@@ -956,6 +904,7 @@ describe("rana", () => {
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
+
     expect(side.dice).toStrictEqual([Element.Anemo]);
   });
 
@@ -973,9 +922,11 @@ describe("rana", () => {
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+
     expect(side.dice).toStrictEqual([]);
     duel.actingSideIndex = 1;
     runGcgSkillUse({ duel, sideIndex: 1 }, HYOUKA);
+
     expect(side.dice).toStrictEqual([]);
   });
 });
