@@ -1,10 +1,9 @@
+import { MAX_ALTERNATIVES } from "#src/services/genshinAssets/kits/gcsim/constants";
 import { readEnclosingLoopIndices } from "#src/services/genshinAssets/kits/gcsim/readEnclosingLoopIndices";
 import { readGcsimTableRows } from "#src/services/genshinAssets/kits/gcsim/readGcsimTableRows";
 
 // A module table indexed by a bare name, `name[i]`, `name[i][k]`
 const TABLE_ROW_INDEX_REGEX = /(?<name>[A-Za-z_]\w*)\[\s*(?<index>[A-Za-z_]\w*)\s*\]/gu;
-// The most texts a line's loop indices may give between them
-const MAX_ALTERNATIVES = 16;
 
 // The texts a line is with each `for` loop index of the loops it sits in, where the index picks a row of a module table,
 // Replaced by a row of every table it indexes in turn, so a loop's constructor reads the row of each of its turns. The
@@ -23,7 +22,7 @@ export const substituteGoLoopIndices = (text: string, lines: readonly string[], 
   for (const [index, rowCount] of countMap) {
     const indexRegex = new RegExp(`\\[\\s*${index}\\s*\\]`, "gu");
     texts = texts.flatMap((current) =>
-      Array.from({ length: rowCount }, (_, row) => current.replaceAll(indexRegex, `[${row}]`)),
+      Array.from({ length: rowCount }, (_value, row) => current.replaceAll(indexRegex, `[${row}]`)),
     );
     if (texts.length > MAX_ALTERNATIVES) return [text];
   }

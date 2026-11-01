@@ -1,5 +1,6 @@
 import { checkIsInScope } from "#src/services/genshinAssets/kits/gcsim/checkIsInScope";
 import { checkIsWholeArgument } from "#src/services/genshinAssets/kits/gcsim/checkIsWholeArgument";
+import { MAX_ALTERNATIVES } from "#src/services/genshinAssets/kits/gcsim/constants";
 import { readBindings } from "#src/services/genshinAssets/kits/gcsim/readBindings";
 import { readFunctionLines } from "#src/services/genshinAssets/kits/gcsim/readFunctionLines";
 import { readGetterCenter } from "#src/services/genshinAssets/kits/gcsim/readGetterCenter";
@@ -13,8 +14,6 @@ const OPERATOR_REGEX = /[-!%&*+/<=>^|]/u;
 const CALL_REGEX = /^[A-Za-z_][\w.]*\(.*\)$/u;
 // A `for` header, whose variable is the loop's and takes the value of each of its turns
 const LOOP_HEADER_REGEX = /^\s*for\s/u;
-// The most texts a constructor's locals may give between them, as each name bound more than once multiplies them
-const MAX_ALTERNATIVES = 16;
 
 // The values a local name may hold where it is used: the expression it is declared with, by `:=` or `var` in a block
 // That is still open at the use, and each expression a plain `=` before the use writes to it. None where the name is
