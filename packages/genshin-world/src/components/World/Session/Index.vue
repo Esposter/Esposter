@@ -5,7 +5,6 @@ import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { Expedition } from "#src/models/expedition/Expedition";
 import type { HomeRealmVisit } from "#src/models/home/HomeRealmVisit";
 import type { HudFrame } from "#src/models/hud/HudFrame";
-import type { Interactable } from "#src/models/interaction/Interactable";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { MapSubareaLabel } from "#src/models/map/MapSubareaLabel";
@@ -68,7 +67,6 @@ import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldRealm from "#src/components/World/Realm/Index.vue";
 import TipPopup from "#src/components/World/Tip/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
-import { useInteraction } from "#src/composables/useInteraction";
 import { useMiningOutcrops } from "#src/composables/useMiningOutcrops";
 import { useStoredGenshinSettings } from "#src/composables/useStoredGenshinSettings";
 import { useWorldAchievements } from "#src/composables/useWorldAchievements";
@@ -86,6 +84,7 @@ import { useWorldFishing } from "#src/composables/useWorldFishing";
 import { useWorldForging } from "#src/composables/useWorldForging";
 import { useWorldFriendship } from "#src/composables/useWorldFriendship";
 import { useWorldGadgets } from "#src/composables/useWorldGadgets";
+import { useWorldInteractables } from "#src/composables/useWorldInteractables";
 import { useWorldMail } from "#src/composables/useWorldMail";
 import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
@@ -113,36 +112,26 @@ import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
-import { computeViewpointInteractables } from "#src/services/archive/computeViewpointInteractables";
 import { getViewpointInteractableId } from "#src/services/archive/getViewpointInteractableId";
 import { checkIsWeeklyBossEntryOpen } from "#src/services/bosses/checkIsWeeklyBossEntryOpen";
 import { EnemyKindMovesMap } from "#src/services/bosses/EnemyKindMovesMap";
 import { startBossMove } from "#src/services/bosses/startBossMove";
 import { getCharacterIdConstellationsMap } from "#src/services/character/getCharacterIdConstellationsMap";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
-import { computeCookingStoveInteractables } from "#src/services/cooking/computeCookingStoveInteractables";
 import { COOKING_PROCESSING_INTERACTABLE_ID, COOKING_STOVE_INTERACTABLE_ID } from "#src/services/cooking/constants";
 import { listOpenCookingRecipes } from "#src/services/cooking/listOpenCookingRecipes";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
-import { CRAFTING_BENCH_INTERACTABLE_ID } from "#src/services/crafting/constants";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
 import { getTalkVendorShopId } from "#src/services/dialogue/getTalkVendorShopId";
 import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
-import {
-  DOMAIN_ARENA_PROMPT_OFFSET,
-  DOMAIN_LEAVE_INTERACTABLE_ID,
-  DOMAIN_TREE_INTERACTABLE_ID,
-} from "#src/services/domains/constants";
+import { DOMAIN_LEAVE_INTERACTABLE_ID, DOMAIN_TREE_INTERACTABLE_ID } from "#src/services/domains/constants";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
 import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
 import { checkIsExpeditionTalk } from "#src/services/expedition/checkIsExpeditionTalk";
-import { computeFishingInteractables } from "#src/services/fishing/computeFishingInteractables";
 import { FORGE_INTERACTABLE_ID } from "#src/services/forging/constants";
 import { grantGcgGameReward } from "#src/services/gcg/grantGcgGameReward";
 import { toGcgWeekGameRewards } from "#src/services/gcg/toGcgWeekGameRewards";
 import { toHandbookDomains } from "#src/services/handbook/toHandbookDomains";
-import { computeHomePotInteractable } from "#src/services/home/computeHomePotInteractable";
-import { computeHomeRealmInteractables } from "#src/services/home/computeHomeRealmInteractables";
 import { computeHomeRealmVisit } from "#src/services/home/computeHomeRealmVisit";
 import {
   HOME_POT_GADGET_ID,
@@ -153,12 +142,10 @@ import {
 } from "#src/services/home/constants";
 import { leaveHomeRealm } from "#src/services/home/leaveHomeRealm";
 import { placeHomePot } from "#src/services/home/placeHomePot";
-import { computePlaceInteractables } from "#src/services/interaction/computePlaceInteractables";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
-import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { computeStandingPose } from "#src/services/map/computeStandingPose";
 import { MAP_REFERENCE_ZOOM_METRES, TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
@@ -190,7 +177,6 @@ import { checkIsVendorShopOpen } from "#src/services/shop/checkIsVendorShopOpen"
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { VendorShopTypeMap } from "#src/services/shop/VendorShopTypeMap";
 import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
-import { computeStatueInteractables } from "#src/services/statue/computeStatueInteractables";
 import { OCULUS_MINIMAP_DISTANCE, OCULUS_REGION_ID, OCULUS_TOUCH_RADIUS } from "#src/services/statue/constants";
 import { getNearOculusPlaces } from "#src/services/statue/getNearOculusPlaces";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
@@ -1236,108 +1222,34 @@ const fightingCamps = computed(() => [
   ...abyssCamps.value,
   ...bountyCamps.value,
 ]);
-// The arena's leave prompt, and the Petrified Tree's prompt once a clear has raised it, both beside the arena's centre
-const domainArenaInteractables = computed<Interactable[]>(() => {
-  if (!domainArena.value) return [];
-  const { x, z } = domainArena.value.center;
-  const y = getGroundHeight(x, z);
-  return [
-    {
-      id: DOMAIN_LEAVE_INTERACTABLE_ID,
-      kind: InteractionKind.Activate,
-      name: gameText[GameTextKey.DomainLeave],
-      position: { x: x - DOMAIN_ARENA_PROMPT_OFFSET, y, z },
-    },
-    ...(isDomainTreeRaised.value
-      ? [
-          {
-            id: DOMAIN_TREE_INTERACTABLE_ID,
-            kind: InteractionKind.Activate,
-            name: gameText[GameTextKey.PetrifiedTree],
-            position: { x: x + DOMAIN_ARENA_PROMPT_OFFSET, y, z },
-          },
-        ]
-      : []),
-  ];
-});
-// The offered viewpoints, each a prompt on the ground beneath its place, named by its own name in the reader's language
-const viewpointInteractables = computed<Interactable[]>(() =>
-  archiveData.value
-    ? computeViewpointInteractables(
-        offeredViewpoints.value,
-        viewpointPlaceMap.value,
-        archiveData.value.textMap,
-        getGroundHeight,
-      )
-    : [],
-);
-const interactables = computed<Interactable[]>(() => {
-  if (homeRealmVisit.value) return computeHomeRealmInteractables(gameText);
-  // The Spiral Abyss's entrance is offered on the key as the Moon Spire's, standing provisionally at the centre of Cape Oath
-  const { x: abyssX, z: abyssZ } = ABYSS_ENTRANCE_POSITION;
-  const abyssEntrance: Interactable = {
-    id: ABYSS_ENTRANCE_INTERACTABLE_ID,
-    kind: InteractionKind.Activate,
-    name: gameText[GameTextKey.AbyssMoonSpire],
-    position: { x: abyssX, y: getGroundHeight(abyssX, abyssZ), z: abyssZ },
-  };
-  // Each Frostbearing Tree is named by its game text and offered to on the key, so its row is an activation like a
-  // Statue's
-  const frostbearingTrees = frostbearingTreePlaces.map(({ id, position: { x, z } }) => ({
-    id,
-    kind: InteractionKind.Activate,
-    name: gameText[GameTextKey.FrostbearingTree],
-    position: { x, y: getGroundHeight(x, z), z },
-  }));
-  // A locked landmark is resonated with on the key, named by the game's text for its kind
-  const toLandmarkInteractable = ({ id, position: { x, z } }: Landmark, textKey: GameTextKey): Interactable => ({
-    id,
-    kind: InteractionKind.Activate,
-    name: gameText[textKey],
-    position: { x, y: getGroundHeight(x, z), z },
-  });
-  return [
-    ...pickUpInteractables.value,
-    ...residentInteractables.value,
-    ...chestInteractables.value,
-    ...shrineInteractables.value,
-    ...outcropInteractables.value,
-    ...trounceBlossomInteractables.value,
-    ...frostbearingTrees,
-    ...viewpointInteractables.value,
-    abyssEntrance,
-    ...computeStatueInteractables(unlockedLandmarks.value, gameText[GameTextKey.StatueWorship], getGroundHeight),
-    ...lockedJumpLandmarks.value.map((landmark) =>
-      toLandmarkInteractable(landmark, computeJumpLandmarkTextKey(landmark)),
-    ),
-    // An unlocked domain entrance is entered on the key, its screen opened with its levels
-    ...unlockedDomainEntrances.value.map((landmark) => toLandmarkInteractable(landmark, GameTextKey.DomainEnter)),
-    ...domainArenaInteractables.value,
-    ...computePlaceInteractables(
-      CRAFTING_BENCH_INTERACTABLE_ID,
-      craftingBenchPlace,
-      gameText[GameTextKey.CraftingTitle],
-      getGroundHeight,
-    ),
-    ...computeCookingStoveInteractables(
-      cookingStovePlace.value,
-      { cooking: gameText[GameTextKey.CookingTitle], processing: gameText[GameTextKey.ProcessingStart] },
-      getGroundHeight,
-    ),
-    ...computePlaceInteractables(
-      FORGE_INTERACTABLE_ID,
-      blacksmithPlace.value,
-      gameText[GameTextKey.ForgeTitle],
-      getGroundHeight,
-    ),
-    ...computeFishingInteractables(fishingPointPlaces.value, isFishingOpen.value, gameText, getGroundHeight),
-    ...(homePotPoint.value ? [computeHomePotInteractable(gameText, homePotPoint.value, getGroundHeight)] : []),
-  ];
-});
-const { interactionPrompts, readInteraction, selectInteractable } = useInteraction(
-  () => interactables.value,
+// The prompts beside the character, joined from every source that offers one
+const { interactables, interactionPrompts, readInteraction, selectInteractable } = useWorldInteractables({
+  archiveData,
+  blacksmithPlace,
   characterBody,
-);
+  chestInteractables,
+  cookingStovePlace,
+  craftingBenchPlace,
+  domainArena,
+  fishingPointPlaces,
+  frostbearingTreePlaces,
+  gameText,
+  getGroundHeight,
+  homePotPoint,
+  homeRealmVisit,
+  isDomainTreeRaised,
+  isFishingOpen,
+  lockedJumpLandmarks,
+  offeredViewpoints,
+  outcropInteractables,
+  pickUpInteractables,
+  residentInteractables,
+  shrineInteractables,
+  trounceBlossomInteractables,
+  unlockedDomainEntrances,
+  unlockedLandmarks,
+  viewpointPlaceMap,
+});
 // A prompt's row pressed itself, by a tap or a click with the cursor shown: it is selected and Interact tapped
 const pressInteractable = (id: string) => {
   selectInteractable(id);

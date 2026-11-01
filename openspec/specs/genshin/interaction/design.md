@@ -4,7 +4,7 @@ In the game, whatever the character can act on shows as a row of prompts beside 
 
 ## How it works
 
-The rules are `packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`, `stepInteractionSelection.ts` and `getHeldPickUp.ts`, read by `packages/genshin-world/src/composables/useInteraction.ts`.
+The rules are `packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`, `stepInteractionSelection.ts` and `getHeldPickUp.ts`, read by `packages/genshin-world/src/composables/useInteraction.ts` over the list `packages/genshin-world/src/composables/useWorldInteractables.ts` joins from every source that offers a row.
 
 ```mermaid
 flowchart TD
@@ -74,6 +74,7 @@ Provisional and unmeasured: the pill's right end (the column's 318 units, since 
 | `packages/genshin-world/src/services/interaction/pickUpDroppedItem.ts`         | A pick up into the wallet or the bag, and what the bag leaves behind                |
 | `packages/genshin-world/src/services/interaction/constants.ts`                 | The reach, the window's rows, the held F's interval and the stand-ins               |
 | `packages/genshin-world/src/composables/useInteraction.ts`                     | The prompts read each frame, a press and a held F's repeat                          |
+| `packages/genshin-world/src/composables/useWorldInteractables.ts`              | Every source's rows joined into the one list the prompts are read from              |
 | `packages/genshin-world/src/models/interaction/Interactable.ts`                | A thing the character can act on: its prompt and its place                          |
 | `packages/genshin-world/src/models/world/WorldDrop.ts`                         | A drop lying on the ground: its item, count, id and point                           |
 | `packages/genshin-world/src/components/World/Session/Index.vue`                | Holds the drops, the residents and the jump landmarks, and acts on the selected row |
