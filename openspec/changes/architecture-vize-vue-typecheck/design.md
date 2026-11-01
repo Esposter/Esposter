@@ -70,6 +70,72 @@ The first package after the pilot is `packages/genshin-interface`, also compared
 
 **The comparison, run.** `nuxt typecheck` is clean on the app. The same app project through `tsrs --runExternalCode` is a tsconfig that extends `.nuxt/tsconfig.app.json`, adds `contentMappers` for `vize` and the `useTemplateRef` composable, and checks several times faster. It does not match: the app's own files report tens of diagnostics across tens of files that `vue-tsc` does not, in a handful of classes listed under "Landmines". The third-party components in `node_modules` check clean.
 
+**The comparison, run again on `vize` 0.637.0.** `nuxt typecheck` (`vue-tsc` 3.3.11 on the native bridge) is clean on the app in 91 seconds, and the same app project through `tsrs` 0.20.1 (`--runExternalCode --noEmit`, a scratch tsconfig that extends `.nuxt/tsconfig.app.json`, names `vize` as the `.vue` mapper and `useTemplateRef` as Vue's composable) finishes in 10 seconds on the same macOS machine, so the prize is a check nine times shorter. The mapper ran over the whole program: no `TS18069` or `TS18070`, no syntax error in any virtual file. It reports 103 diagnostics in 63 files that `vue-tsc` does not, none in `node_modules`, and by shape they are the classes under "Landmines": 29 `TS7053` (a `defineModel` beside `defineProps<Props>()`), 28 `TS2339` (a generic component's slot payload typed `any`), 20 `TS6133` and 1 `TS6196` (the dotted tag's import read as unused), 7 `TS7006` and `TS7031` (a callback nested in an inline callback prop), 6 `TS18048` (`possibly 'undefined'` in a template closure), 4 `TS2353` (the strictness difference, an unknown attribute on a generic component), and single diagnostics that are the `onUpdate:modelValue: never` key class (`User/ProfileCard/Row.vue`), the `Event`-typed `@select` class (`Message/RightSideBar/Search/Input.vue`), the unexplained test cast (`TS2590` and `TS2352` in `Search/Input.test.ts`) and the 7.1 DOM typings (`TS2488`). Two shapes are not in the list and are not yet reduced: `Type '{}' is not assignable to type '$RequiredSlots<…>'` at `User/ProfileCard/Row.vue(26,4)`, and `Type 'string' is not assignable to type 'T'` at `Ui/Tabs.vue(31,42)`. The per-file diff, as `line code` pairs:
+
+- `app/components/App/Dock/CommandMenu.vue`: 35 TS2353
+- `app/components/Clicker/Model/ItemList.vue`: 329 TS2339, 350 TS2339, 371 TS2339, 553 TS2339, 587 TS2339, 615 TS2339
+- `app/components/Dungeons/World/Character/Index.vue`: 297 TS7006, 307 TS7006, 315 TS7006, 325 TS7006, 336 TS7031
+- `app/components/Dungeons/World/Character/Player.vue`: 383 TS18048, 383 TS18048
+- `app/components/Genshin/Dev/Console/Index.vue`: 211 TS7053
+- `app/components/Genshin/Dev/Panel/Index.vue`: 255 TS7053
+- `app/components/Message/Content/Header/CreateDirectMessageParticipantDialog.vue`: 51 TS2339, 227 TS7053, 227 TS2339
+- `app/components/Message/DraftsAndSent/DeleteConfirmDialog.vue`: 176 TS7053, 176 TS2339
+- `app/components/Message/LeftSideBar/CollapsibleHeader.vue`: 205 TS7053
+- `app/components/Message/Model/Member/ActionDialog/Confirm.vue`: 180 TS7053, 180 TS2339
+- `app/components/Message/Model/Member/ActionDialog/Shell.vue`: 189 TS7053, 189 TS2339
+- `app/components/Message/Model/Member/ActionDialog/Timeout.vue`: 184 TS7053, 184 TS2339
+- `app/components/Message/Model/Message/Input/Composer.vue`: 221 TS7053
+- `app/components/Message/Model/Room/ConfirmDeleteDialog.vue`: 180 TS7053, 180 TS2339
+- `app/components/Message/Model/Room/Create/DirectMessageDialog.vue`: 292 TS2339, 21 TS2339
+- `app/components/Message/Model/Room/Emoji/NameField.vue`: 184 TS7053
+- `app/components/Message/Model/Room/Settings/LeftSideBar.vue`: 261 TS7053, 261 TS2339
+- `app/components/Message/Model/Settings/Dialog.vue`: 170 TS7053, 170 TS2339
+- `app/components/Message/Model/Status/PickerForm.vue`: 90 TS7053
+- `app/components/Message/RightSideBar/Search/Input.test.ts`: 23 TS2590, 23 TS2352
+- `app/components/Message/RightSideBar/Search/Input.vue`: 50 TS2322
+- `app/components/Resource/AskClaudeDialog.vue`: 252 TS7053, 252 TS2339
+- `app/components/Resource/RenameDialog.vue`: 190 TS7053, 190 TS2339
+- `app/components/Resource/ShareDialog.vue`: 264 TS7053, 264 TS2339
+- `app/components/Resource/Sheet/Column/ChartDialog.vue`: 178 TS7053, 178 TS2339
+- `app/components/Resource/Sheet/ExportDialog.vue`: 220 TS7053, 220 TS2339
+- `app/components/Resource/Sheet/Row/Field/Input/Date.vue`: 27 TS2339
+- `app/components/Resource/Sheet/Row/Table.vue`: 150 TS7006, 150 TS7006
+- `app/components/Resource/Sheet/SelectionToolbar.vue`: 175 TS7053
+- `app/components/Resource/TagsEditorDialog.vue`: 207 TS7053, 207 TS2339
+- `app/components/RichTextEditor/Suggestions.vue`: 219 TS18048, 219 TS18048, 219 TS18048, 220 TS18048
+- `app/components/Styled/Dialog.vue`: 208 TS7053, 208 TS2339
+- `app/components/Styled/EditFormDialog/ConfirmCloseDialog.vue`: 204 TS7053
+- `app/components/Styled/EmojiPicker/CategoryRail.vue`: 24 TS2353
+- `app/components/Styled/EmojiPicker/SkinToneMenu.vue`: 28 TS2353
+- `app/components/Styled/FormDialog.vue`: 226 TS7053, 226 TS2339
+- `app/components/Ui/Alert.vue`: 5 TS6133
+- `app/components/Ui/Avatar.vue`: 2 TS6133
+- `app/components/Ui/Breadcrumbs.vue`: 6 TS6133
+- `app/components/Ui/Button.vue`: 4 TS6133
+- `app/components/Ui/Checkbox.vue`: 3 TS6133
+- `app/components/Ui/Collapsible.vue`: 2 TS6133, 205 TS7053
+- `app/components/Ui/ConfirmDialog.vue`: 203 TS7053, 203 TS2339
+- `app/components/Ui/Dialog.vue`: 6 TS6133, 221 TS7053, 221 TS2339
+- `app/components/Ui/FormDialogFooter.vue`: 174 TS7053
+- `app/components/Ui/List/Index.vue`: 10 TS6196
+- `app/components/Ui/LoadingBar.vue`: 3 TS6133
+- `app/components/Ui/LoadingLine.vue`: 2 TS6133
+- `app/components/Ui/OverflowMenu.vue`: 27 TS2353
+- `app/components/Ui/RadioGroup.vue`: 4 TS6133
+- `app/components/Ui/ResizeHandle.vue`: 212 TS7053
+- `app/components/Ui/Select/Activator.vue`: 7 TS6133
+- `app/components/Ui/Select/Index.vue`: 6 TS6133
+- `app/components/Ui/Slider.vue`: 2 TS6133
+- `app/components/Ui/Switch.vue`: 2 TS6133
+- `app/components/Ui/Tabs.vue`: 4 TS6133, 31 TS2322
+- `app/components/Ui/TextField.vue`: 7 TS6133
+- `app/components/Ui/ToggleGroup.vue`: 5 TS6133
+- `app/components/Ui/Tooltip/Index.vue`: 5 TS6133
+- `app/components/Ui/Tree/Index.vue`: 4 TS6133, 198 TS7053
+- `app/components/Ui/Tree/Item.vue`: 5 TS6133
+- `app/components/User/ProfileCard/Row.vue`: 26 TS2345, 26 TS2322
+- `app/services/capture/inlineFontFace.ts`: 17 TS2488
+
 **Decision: `apps/web` stays on `nuxt typecheck`.** Running the mapper beside it today would add a red check that is mostly mapper defects, and a check that is red on every run gets ignored. The comparison is repeated when the classes below are fixed upstream. The scratch tsconfig is not committed.
 
 ## Mechanism
