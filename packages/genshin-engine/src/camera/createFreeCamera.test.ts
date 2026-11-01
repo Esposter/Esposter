@@ -3,6 +3,7 @@ import type { InputState } from "#src/models/input/InputState";
 import { FREE_CAMERA_BASE_SPEED, FREE_CAMERA_CLEARANCE, FREE_CAMERA_SPEED_PER_HEIGHT } from "#src/camera/constants";
 import { createFreeCamera } from "#src/camera/createFreeCamera";
 import { createGroundQuery } from "#src/collision/createGroundQuery";
+import { createIdleInputState } from "#src/input/createIdleInputState";
 import { PerspectiveCamera, Vector3 } from "three";
 import { describe, expect, test } from "vitest";
 
@@ -10,16 +11,7 @@ describe(createFreeCamera, () => {
   const WATER_LEVEL = 0;
   const HEIGHT = 10;
   const STEP_SECONDS = 1;
-  const STILL_INPUT: InputState = {
-    heldActions: new Set(),
-    lookPitch: 0,
-    lookYaw: 0,
-    moveForward: 0,
-    moveRight: 0,
-    moveUp: 0,
-    pressedActions: new Set(),
-    zoomSteps: 0,
-  };
+  const STILL_INPUT: InputState = createIdleInputState();
   const FORWARD_INPUT: InputState = { ...STILL_INPUT, moveForward: 1 };
 
   test("flies along the view faster the higher it is above the ground", () => {

@@ -3,6 +3,7 @@ import type { Locomotion } from "#src/models/locomotion/Locomotion";
 
 import { createGroundQuery } from "#src/collision/createGroundQuery";
 import { createLandmarkCollider } from "#src/collision/createLandmarkCollider";
+import { createIdleInputState } from "#src/input/createIdleInputState";
 import { STAMINA_MAX } from "#src/locomotion/constants";
 import { createCharacterController } from "#src/locomotion/createCharacterController";
 import { InputAction } from "#src/models/input/InputAction";
@@ -37,16 +38,7 @@ describe(createCharacterController, () => {
     swimSpeed: 1,
     walkSpeed: 1,
   };
-  const STILL_INPUT: InputState = {
-    heldActions: new Set(),
-    lookPitch: 0,
-    lookYaw: 0,
-    moveForward: 0,
-    moveRight: 0,
-    moveUp: 0,
-    pressedActions: new Set(),
-    zoomSteps: 0,
-  };
+  const STILL_INPUT: InputState = createIdleInputState();
   const FORWARD_INPUT: InputState = { ...STILL_INPUT, moveForward: 1 };
   const DRY_LEVEL = -10;
 

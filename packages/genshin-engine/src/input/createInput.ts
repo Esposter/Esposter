@@ -9,7 +9,6 @@ import {
   FOCUS_KEY_CODES,
   GAMEPAD_BUTTONS,
   GAMEPAD_LOOK_RADIANS_PER_SECOND,
-  GAMEPAD_STICK_DEADZONE,
   KEY_CODE_BACKWARD,
   KEY_CODE_DOWN,
   KEY_CODE_FORWARD,
@@ -20,12 +19,13 @@ import {
   MOUSE_LOOK_MAX_PIXELS_PER_EVENT,
   MOUSE_LOOK_RADIANS_PER_PIXEL,
 } from "#src/input/constants";
+import { createIdleInputState } from "#src/input/createIdleInputState";
 import { InputActionBindingMap } from "#src/input/InputActionBindingMap";
+import { toAxis } from "#src/input/toAxis";
+import { toClamped } from "#src/input/toClamped";
+import { toDeadzoned } from "#src/input/toDeadzoned";
+import { GamepadButton } from "#src/models/input/GamepadButton";
 import { InputActions } from "#src/models/input/InputAction";
-
-const toAxis = (positive: boolean, negative: boolean): number => Number(positive) - Number(negative);
-
-const toDeadzoned = (stickAxis: number): number => (Math.abs(stickAxis) < GAMEPAD_STICK_DEADZONE ? 0 : stickAxis);
 
 // The keys and mouse buttons held, the pointer's movement while it is locked, and the first gamepad's sticks and
 // Buttons, all read through the window handed in, once a frame. The look is what the pointer moved since the last read,
@@ -54,16 +54,7 @@ export const createInput = (target: InputTarget): Input => {
   let touchStickY = 0;
   const heldActions = new Set<InputAction>();
   const pressedActions = new Set<InputAction>();
-  const inputState: InputState = {
-    heldActions,
-    lookPitch: 0,
-    lookYaw: 0,
-    moveForward: 0,
-    moveRight: 0,
-    moveUp: 0,
-    pressedActions,
-    zoomSteps: 0,
-  };
+  const inputState: InputState = { ...createIdleInputState(), heldActions, pressedActions };
   const press = (code: string) => {
     if (!heldCodes.has(code)) pressedCodes.add(code);
     heldCodes.add(code);
@@ -160,21 +151,25 @@ export const createInput = (target: InputTarget): Input => {
       pendingLookYaw = 0;
       pendingLookPitch = 0;
       pendingZoomSteps = 0;
-      inputState.moveForward = Math.max(
-        -1,
-        Math.min(
-          1,
-          toAxis(heldCodes.has(KEY_CODE_FORWARD), heldCodes.has(KEY_CODE_BACKWARD)) - toDeadzoned(stickY) - touchStickY,
-        ),
+      inputState.moveForward = toClamped(
+        toAxis(heldCodes.has(KEY_CODE_FORWARD), heldCodes.has(KEY_CODE_BACKWARD)) - toDeadzoned(stickY) - touchStickY,
       );
-      inputState.moveRight = Math.max(
-        -1,
-        Math.min(
-          1,
-          toAxis(heldCodes.has(KEY_CODE_RIGHT), heldCodes.has(KEY_CODE_LEFT)) + toDeadzoned(stickX) + touchStickX,
-        ),
+      inputState.moveRight = toClamped(
+        toAxis(heldCodes.has(KEY_CODE_RIGHT), heldCodes.has(KEY_CODE_LEFT)) + toDeadzoned(stickX) + touchStickX,
       );
       inputState.moveUp = toAxis(heldCodes.has(KEY_CODE_UP), heldCodes.has(KEY_CODE_DOWN));
+      inputState.menuDown = toClamped(
+        toAxis(heldCodes.has(GamepadButton.DirectionalPadDown), heldCodes.has(GamepadButton.DirectionalPadUp)) +
+          toDeadzoned(stickY),
+      );
+      inputState.menuRight = toClamped(
+        toAxis(heldCodes.has(GamepadButton.DirectionalPadRight), heldCodes.has(GamepadButton.DirectionalPadLeft)) +
+          toDeadzoned(stickX),
+      );
+      inputState.menuTabSteps = toAxis(
+        pressedCodes.has(GamepadButton.RightBumper),
+        pressedCodes.has(GamepadButton.LeftBumper),
+      );
       codeChordLengthMap.clear();
       for (const action of InputActions)
         for (const chord of InputActionBindingMap[action]) {

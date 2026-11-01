@@ -190,4 +190,29 @@ describe(createInput, () => {
 
     expect({ moveForward, moveRight }).toStrictEqual({ moveForward: 0, moveRight: STICK_AXIS });
   });
+
+  test("reads the directional pad as a menu's direction, and a bumper's press as one tab step", () => {
+    expect.hasAssertions();
+
+    const pressedButtons = [GamepadButton.DirectionalPadRight, GamepadButton.RightBumper];
+    const target = createTarget([
+      {
+        axes: [],
+        get buttons() {
+          return GAMEPAD_BUTTONS.map((button) => ({ pressed: pressedButtons.includes(button) }));
+        },
+      },
+    ]);
+    const { readInput } = createInput(target);
+    const { menuDown, menuRight, menuTabSteps } = readInput(0);
+    const heldRead = readInput(0);
+
+    expect({
+      heldMenuRight: heldRead.menuRight,
+      heldTabSteps: heldRead.menuTabSteps,
+      menuDown,
+      menuRight,
+      menuTabSteps,
+    }).toStrictEqual({ heldMenuRight: 1, heldTabSteps: 0, menuDown: 0, menuRight: 1, menuTabSteps: 1 });
+  });
 });

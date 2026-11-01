@@ -12,6 +12,7 @@ import {
 import { createFollowCamera } from "#src/camera/createFollowCamera";
 import { createGroundQuery } from "#src/collision/createGroundQuery";
 import { createLandmarkCollider } from "#src/collision/createLandmarkCollider";
+import { createIdleInputState } from "#src/input/createIdleInputState";
 import { Euler, PerspectiveCamera, Vector3 } from "three";
 import { describe, expect, test } from "vitest";
 
@@ -36,16 +37,7 @@ describe(createFollowCamera, () => {
   const SLOPE_FRAMES = 60;
   // A look up that the slope pitch leaves alone
   const SLOPE_LOOK_PITCH = 0.1;
-  const STILL_INPUT: InputState = {
-    heldActions: new Set(),
-    lookPitch: 0,
-    lookYaw: 0,
-    moveForward: 0,
-    moveRight: 0,
-    moveUp: 0,
-    pressedActions: new Set(),
-    zoomSteps: 0,
-  };
+  const STILL_INPUT: InputState = createIdleInputState();
 
   const lookYawAt = (horizontalSensitivity: number): number => {
     const followCamera = createFollowCamera({
