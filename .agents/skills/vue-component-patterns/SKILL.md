@@ -54,7 +54,7 @@ For state-sync emits, use the `update:x` form where `x` is the state name (`"upd
 
 ## Template Handlers Stay Inline
 
-A multi-statement handler is written inline in the template binding (`@submit="async (_event, onComplete) => { … }"`), where the emit's parameter types are inferred. It moves to `<script setup>` only where the template cannot express it: a global the template cannot reach, a handler shared by several bindings, or generics the template cannot carry.
+A multi-statement handler is written inline in the template binding (`@submit="async (_event, onComplete) => { … }"`), and it stays there unless one of the exceptions the `vue` skill's inline-handler page holds applies (`references/inline-handlers.md`).
 
 ## Component Folder Naming — `references/component-naming.md`
 
