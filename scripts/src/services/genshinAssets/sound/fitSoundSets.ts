@@ -1,19 +1,9 @@
-import { computeSoundSetResidual } from "#src/services/genshinAssets/sound/computeSoundSetResidual";
-import { sumSoundBandPowers } from "#src/services/genshinAssets/sound/sumSoundBandPowers";
+import type { PlacedSound } from "#src/models/genshinAssets/sound/PlacedSound";
 
-interface PlacedSound {
-  id: number;
-  powers: number[][];
-  startFrame: number;
-}
+import { computeResidual } from "#src/services/genshinAssets/sound/computeResidual";
+
 // How many frames either side of its start a sound in a set is tried at, each step of the refinement
 const REFINE_FRAMES = 4;
-const computeResidual = (window: readonly number[][], set: readonly PlacedSound[], bands: readonly number[]): number =>
-  computeSoundSetResidual(
-    window,
-    sumSoundBandPowers(set.map(({ powers, startFrame }) => ({ offsetFrames: startFrame, powers }))),
-    bands,
-  );
 // The candidates played together in every set of them, each set's starts refined from each sound's own best start
 // (`findSoundStart`) one sound at a time, a few frames either way, until no move lowers what the set leaves of the
 // Window unexplained (`computeSoundSetResidual`). The best set of each size, smallest first, so a reader sees what

@@ -1,23 +1,11 @@
 import type { StereoSoundBandPowers } from "#src/models/genshinAssets/sound/StereoSoundBandPowers";
 
 import { SOUND_HOP_LENGTH, SOUND_SAMPLE_RATE } from "#src/services/genshinAssets/shared/constants";
-import { getSoundEffectBandBins, SOUND_EFFECT_FRAME_LENGTH, transformFourier } from "genshin-engine";
+import { transformFrame } from "#src/services/genshinAssets/sound/transformFrame";
+import { getSoundEffectBandBins, SOUND_EFFECT_FRAME_LENGTH } from "genshin-engine";
 
 // A Hann window's power over its samples, three eighths, and a real signal's spectrum mirrored
 const POWER_SCALE = 2 / (SOUND_EFFECT_FRAME_LENGTH * SOUND_EFFECT_FRAME_LENGTH * (3 / 8));
-const window = Float64Array.from(
-  { length: SOUND_EFFECT_FRAME_LENGTH },
-  (_value, index) => 0.5 - 0.5 * Math.cos((2 * Math.PI * index) / SOUND_EFFECT_FRAME_LENGTH),
-);
-// One channel's spectrum in one frame, its window centred on the frame by leading the sound with half a window
-const transformFrame = (samples: Float32Array, start: number): [Float64Array, Float64Array] => {
-  const real = new Float64Array(SOUND_EFFECT_FRAME_LENGTH);
-  const imaginary = new Float64Array(SOUND_EFFECT_FRAME_LENGTH);
-  for (let index = 0; index < SOUND_EFFECT_FRAME_LENGTH; index++)
-    real[index] = (samples[start + index] ?? 0) * (window[index] ?? 0);
-  transformFourier(real, imaginary);
-  return [real, imaginary];
-};
 // Two channels' powers in each band of `SOUND_EFFECT_BAND_EDGES` every `hopLength` samples, a Hann window's band of bins
 // Over the window's own power so a power is its noise's variance, split as the engine plays them
 // (`computeSoundEffectSamples`): the channels' cross power is what they share, no less than none and no more than
