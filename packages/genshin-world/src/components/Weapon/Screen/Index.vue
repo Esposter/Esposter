@@ -118,10 +118,6 @@ const getLevelText = (level: number, maxLevel: number) =>
   fillGameTextValues(gameText[GameTextKey.LevelFormat], `${level}/${maxLevel}`);
 const getRankText = (refinement: number) => fillGameTextValues(gameText[GameTextKey.WeaponRefinementRank], refinement);
 const maxLevel = computed(() => getMaxLevel(weapon.value));
-const nextMaxLevel = computed(
-  () => weaponData.value.ascensionPhases[weapon.value.ascension + 1]?.maxLevel ?? maxLevel.value,
-);
-const isAtCap = computed(() => weapon.value.level >= maxLevel.value);
 // The level Enhance's header shows alone; the Ascend header writes its own level pair over the cap of each phase
 const levelText = computed(() => fillGameTextValues(gameText[GameTextKey.LevelFormat], `${weapon.value.level}`));
 const getAttributeTotals = (ascension: number) =>
@@ -147,7 +143,9 @@ const secondaryLabel = computed(() =>
 // The EXP the weapon holds towards the next level over what that level takes; a weapon at its cap has no next level
 const requiredExps = computed(() => getRarityRequiredExps(rarityRequiredExpsMap, weaponData.value.rarity));
 const requiredExp = computed(() => requiredExps.value[weapon.value.level - 1] ?? 0);
-const experienceText = computed(() => (isAtCap.value ? "" : `${weapon.value.experience}/${requiredExp.value}`));
+const experienceText = computed(() =>
+  weapon.value.level >= maxLevel.value ? "" : `${weapon.value.experience}/${requiredExp.value}`,
+);
 const name = computed(() => nameText[weaponData.value.nameTextId] || "");
 // The weapon's kind in the reader's language, the word its header puts before the slash
 const kind = computed(() => gameText[WeaponTypeNameGameTextKeyMap[weaponData.value.weaponType]]);
@@ -225,12 +223,6 @@ const copyCells = computed(() =>
     .filter((item) => item.definition.id === weapon.value.id)
     .map((item) => ({ id: item.id, levelText: getEntryLevelText(item.id), name: item.definition.name })),
 );
-const pickCopy = (id: number) => {
-  pickedCopyId.value = pickedCopyId.value === id ? undefined : id;
-};
-const pickMaterial = () => {
-  pickedCopyId.value = undefined;
-};
 // The refinement material the Refine tab offers, which a copy stands in for where the player picks one
 const refinementMaterial = computed(() => {
   if (weaponData.value.refinementMaterialId === 0) return undefined;
@@ -250,7 +242,6 @@ const emptySlotCount = computed(() =>
     ? Math.max(0, ENHANCE_SLOT_COUNT - oreCells.value.length - fodderCells.value.length)
     : Math.max(0, refineSlotCount.value - copyCells.value.length - (isRefinementMaterialHeld.value ? 1 : 0)),
 );
-const actionLabel = computed(() => tabLabels.value[openTab.value]);
 // The materials the Enhance tab holds picked, the ores' counts and the fodder weapons, which its consumed line counts
 const pickedMaterialCount = computed(
   () => pickedOres.value.reduce((count, ore) => count + ore.count, 0) + pickedFodderIds.value.length,
@@ -375,7 +366,7 @@ const nextPhaseCosts = computed(() =>
   <GameScreen class="weapon-screen" role="dialog" aria-modal="true" :aria-label="name">
     <WeaponMenu
       v-model:tab="openTab"
-      :action-label
+      :action-label="tabLabels[openTab]"
       :close-label="gameText[GameTextKey.Back]"
       :details-label="gameText[GameTextKey.CharacterDetails]"
       :is-action-disabled
@@ -432,7 +423,7 @@ const nextPhaseCosts = computed(() =>
         <span class="arrow level-arrow" aria-hidden="true" />
         <p class="level-next">
           <span class="level-word">{{ gameText[GameTextKey.LevelShort] }}</span> {{ weapon.level }} /
-          <span class="next-max">{{ nextMaxLevel }}</span>
+          <span class="next-max">{{ weaponData.ascensionPhases[weapon.ascension + 1]?.maxLevel ?? maxLevel }}</span>
         </p>
         <p class="stat ascend-base-attack">{{ gameText[GameTextKey.AttributeBaseAttack] }}</p>
         <p class="stat-value base-current">{{ baseAttackText }}</p>
@@ -501,14 +492,24 @@ const nextPhaseCosts = computed(() =>
         </template>
         <template v-else>
           <div v-if="refinementMaterial && isRefinementMaterialHeld" class="cell">
-            <button class="pick" :aria-pressed="pickedCopyId === undefined" type="button" @click="pickMaterial()">
+            <button
+              class="pick"
+              :aria-pressed="pickedCopyId === undefined"
+              type="button"
+              @click="pickedCopyId = undefined"
+            >
               <span class="cell-name">{{ refinementMaterial.name }}</span>
               <span class="plus" aria-hidden="true" />
               <span class="caption" aria-hidden="true">{{ refinementMaterial.count }}</span>
             </button>
           </div>
           <div v-for="copy of copyCells" :key="copy.id" class="cell">
-            <button class="pick" :aria-pressed="pickedCopyId === copy.id" type="button" @click="pickCopy(copy.id)">
+            <button
+              class="pick"
+              :aria-pressed="pickedCopyId === copy.id"
+              type="button"
+              @click="pickedCopyId = pickedCopyId === copy.id ? undefined : copy.id"
+            >
               <span class="cell-name">{{ copy.name }}</span>
               <span class="plus" aria-hidden="true" />
               <span class="caption" aria-hidden="true">{{ copy.levelText }}</span>
