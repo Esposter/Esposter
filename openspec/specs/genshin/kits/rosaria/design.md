@@ -13,7 +13,7 @@ Rosaria's kit is its record and one behaviour module, `createRosariaKitBehaviour
 ## Provisional constants
 
 - **The plunges' frames are provisional.** `rosaria.json` carries no plunge entry, so the plunges' timings are not read from gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/rosaria/plunge.go`, whose hitmarks are 42 and 43 frames (`{data-root}/cache/gcsim-v2.47.2/internal/characters/rosaria/plunge.go:21`, `{data-root}/cache/gcsim-v2.47.2/internal/characters/rosaria/plunge.go:22`) and whose animations are 78 and 80 frames (`{data-root}/cache/gcsim-v2.47.2/internal/characters/rosaria/plunge.go:38`, `{data-root}/cache/gcsim-v2.47.2/internal/characters/rosaria/plunge.go:47`). Their poise is the wiki's, 100 and 150 for the low and high plunges and 25 for the collision, from the Spear of the Church page (`{data-root}/cache/genshin-wiki/Category_Rosaria_Talents.json`).
-- **The tick's shape is open.** The kit centres each tick on the body and reaches 9.5 metres, where gcsim's tick is a circle of radius 6.5 three metres ahead of it. The record's area is gcsim's reach from the body, and no source settles which shape the game draws.
+- The tick's shape is open: [the spec's Open list](spec.md#open) holds the question.
 
 ## Key files
 
