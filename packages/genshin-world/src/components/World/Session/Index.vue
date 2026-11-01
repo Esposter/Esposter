@@ -4,9 +4,7 @@ import type { CharacterConstellationKit } from "#src/models/character/CharacterC
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { Expedition } from "#src/models/expedition/Expedition";
 import type { HomeRealmVisit } from "#src/models/home/HomeRealmVisit";
-import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
-import type { MapCamera } from "#src/models/map/MapCamera";
 import type { MapSubareaLabel } from "#src/models/map/MapSubareaLabel";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { QuestMark } from "#src/models/quest/QuestMark";
@@ -84,6 +82,7 @@ import { useWorldFishing } from "#src/composables/useWorldFishing";
 import { useWorldForging } from "#src/composables/useWorldForging";
 import { useWorldFriendship } from "#src/composables/useWorldFriendship";
 import { useWorldGadgets } from "#src/composables/useWorldGadgets";
+import { useWorldHudFrame } from "#src/composables/useWorldHudFrame";
 import { useWorldInteractables } from "#src/composables/useWorldInteractables";
 import { useWorldMail } from "#src/composables/useWorldMail";
 import { useWorldMap } from "#src/composables/useWorldMap";
@@ -188,12 +187,11 @@ import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { getResultAsync } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
-import { useIntervalFn, useMediaQuery, useRafFn } from "@vueuse/core";
+import { useIntervalFn, useMediaQuery } from "@vueuse/core";
 import {
   createGrassTrail,
   createInput,
   createLandmarkCollider,
-  FOLLOW_CAMERA_PIVOT_SHARE,
   GENSHIN_TONE_MAPPING,
   InputAction,
   QualityTierSettingsMap,
@@ -1330,9 +1328,15 @@ const {
 } = useWorldShortcutWheel({ screenKind });
 // Whether the device's main pointer is a finger, which the HUD draws the touch layout for
 const isTouch = useMediaQuery("(pointer: coarse)");
-// The character's ground point in world metres, the yaw the view faces and the yaw the character faces, for the map and
-// The minimap, read each frame and handed on only when one moved, so a still player re-renders nothing
-const mapCamera = shallowRef<MapCamera>({ facing: 0, x: 0, yaw: 0, z: 0 });
+// The camera the world is drawn through, which the enemies' name tags project their enemies through
+const getCamera = () => canvas.value?.context?.camera.activeCamera.value;
+const { hudFrame, mapCamera } = useWorldHudFrame({
+  characterBody,
+  getCamera,
+  getCapsuleHeight: () => locomotion.value.capsuleHeight,
+  getStamina: () => character.value?.stamina.value ?? STAMINA_MAX,
+  origin,
+});
 // The zoom the open map is at, in metres across its width, which the map's slider and wheel change and the world keeps
 // From one opening of the map to the next
 const mapZoom = shallowRef(MAP_REFERENCE_ZOOM_METRES);
@@ -1366,7 +1370,6 @@ watch(mapCamera, (newCamera, oldCamera) => {
   for (const questEvent of getEnteredGoToEvents([...windrise.value.regionDataMap.values()], oldCamera, newCamera))
     events.emit("questEvent", questEvent);
 });
-const cameraEuler = new Euler();
 // The locomotion phase of the character on the field, which Windrise's Sheer Cold gauge reads its swimming off
 // The character on the field's locomotion and max HP, which the sheer cold gauge reads each frame
 const getCharacter = () => {
@@ -1375,34 +1378,6 @@ const getCharacter = () => {
   return phase && maxHealth !== undefined ? { maxHealth, phase } : undefined;
 };
 const getAntiColdRatio = () => getTeamAntiColdRatio(kitContext.kitEffectState.effects);
-// What the HUD's pieces read each frame. The stamina meter's pivot is projected only while the pool is spent or
-// Refilling, and once it is full the meter fades out where it stood
-const hudFrame = reactive<HudFrame>({
-  gadgetCooldown: 0,
-  pivotX: 0,
-  pivotY: 0,
-  seconds: 0,
-  sheerCold: 0,
-  stamina: STAMINA_MAX,
-});
-const pivot = new Vector3();
-useRafFn(() => {
-  const activeCamera = canvas.value?.context?.camera.activeCamera.value;
-  if (!activeCamera) return;
-  const { x, y, z } = characterBody.position;
-  const { y: facing } = characterBody.rotation;
-  const { y: yaw } = cameraEuler.setFromQuaternion(activeCamera.quaternion, "YXZ");
-  const { facing: lastFacing, x: lastX, yaw: lastYaw, z: lastZ } = mapCamera.value;
-  if (x !== lastX || yaw !== lastYaw || z !== lastZ || facing !== lastFacing) mapCamera.value = { facing, x, yaw, z };
-  const stamina = character.value?.stamina.value ?? STAMINA_MAX;
-  if (stamina >= STAMINA_MAX && hudFrame.stamina >= STAMINA_MAX) return;
-  hudFrame.stamina = stamina;
-  pivot
-    .set(x - origin.x, y + locomotion.value.capsuleHeight * FOLLOW_CAMERA_PIVOT_SHARE, z - origin.z)
-    .project(activeCamera);
-  hudFrame.pivotX = (pivot.x + 1) / 2;
-  hudFrame.pivotY = (1 - pivot.y) / 2;
-});
 // How far each quest in progress's objective stands from the character's ground point, in metres, which the quest
 // Screen lists. It is read only while that screen is drawn, and a quest whose target no region in reach places has none
 const questDistanceMap = computed(() => {
@@ -1436,8 +1411,6 @@ const readCameraPosition = (): Vector3 => {
   const activeCamera = canvas.value?.context?.camera.activeCamera.value;
   return activeCamera ? activeCamera.position.clone().add(origin) : origin.clone();
 };
-// The camera the world is drawn through, which the enemies' name tags project their enemies through
-const getCamera = () => canvas.value?.context?.camera.activeCamera.value;
 const cameraRotation = computed(() =>
   cameraPose
     ? new Euler(MathUtils.degToRad(cameraPose.pitch), MathUtils.degToRad(cameraPose.heading), 0, "YXZ")
