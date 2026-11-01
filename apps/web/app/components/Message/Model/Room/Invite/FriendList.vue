@@ -59,12 +59,7 @@ const { isPending: isFriendsPending } = useQuery(useReadFriends(), {
         :room
       />
     </ul>
-    <ul v-else-if="isFriendsPending" aria-busy="true" flex flex-col>
-      <li v-for="i in 3" :key="i" ui-row>
-        <UiSkeleton shrink-0 size-6 />
-        <UiSkeleton flex-1 h-4 />
-      </li>
-    </ul>
+    <MessageFriendsListSkeleton v-else-if="isFriendsPending" />
     <UiEmptyState
       v-else
       :description="searchQuery ? 'No friend or group of yours goes by that name.' : undefined"
