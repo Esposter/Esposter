@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MenuEntryIcon } from "#src/models/menu/MenuEntryIcon";
-import type { ProfileNamecard } from "#src/models/profile/ProfileNamecard";
+import type { ProfileNamecard } from "#src/models/menu/ProfileNamecard";
 import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
 import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
 import type { InteractionState } from "genshin-interface";

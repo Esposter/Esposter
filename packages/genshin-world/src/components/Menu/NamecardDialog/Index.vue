@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ProfileNamecard } from "#src/models/profile/ProfileNamecard";
+import type { ProfileNamecard } from "#src/models/menu/ProfileNamecard";
 import type { GameText } from "genshin-text";
 
 import MenuDialog from "#src/components/Menu/Dialog/Index.vue";
