@@ -22,7 +22,9 @@ export const PANZOOM_DEFAULT_OVERFLOW = "hidden";
 export const PANZOOM_DEFAULT_PAN_THRESHOLD = 0;
 export const PANZOOM_DEFAULT_START_PAN = 0;
 export const PANZOOM_DEFAULT_TOUCH_ACTION = "none";
-export const PANZOOM_DEFAULT_TRANSFORM_ORIGIN = "50% 50%";
+// The origin every transform is written about, the element's centre, which the focal zoom, containment and fit all
+// Measure from
+export const PANZOOM_TRANSFORM_ORIGIN = "50% 50%";
 export const PANZOOM_SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 export const PANZOOM_DEFAULT_OPTIONS: Readonly<PanzoomOptions> = Object.freeze({
   animate: false,

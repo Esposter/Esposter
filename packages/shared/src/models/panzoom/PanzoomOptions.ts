@@ -21,7 +21,6 @@ export interface PanzoomOptions {
   maxScale?: number;
   minScale?: number;
   noBind?: boolean;
-  origin?: string;
   overflow?: string;
   panCursor?: string;
   panOnlyWhenZoomed?: boolean;

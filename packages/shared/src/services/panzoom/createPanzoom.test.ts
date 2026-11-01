@@ -155,6 +155,18 @@ describe(createPanzoom, () => {
     expect(getParent().style.getPropertyValue("touch-action")).toBe("none");
   });
 
+  test("the transform origin is the element's centre, whatever origin the element was styled with", () => {
+    expect.hasAssertions();
+
+    const element = getElement();
+    stubPanzoomLayout(element, { height: 100, left: 0, top: 0, width: 100 });
+    stubPanzoomParent(getParent(), { height: 200, left: 0, top: 0, width: 200 });
+    element.style.setProperty("transform-origin", "0 0");
+    createPanzoom(element);
+
+    expect(element.style.getPropertyValue("transform-origin")).toBe("50% 50%");
+  });
+
   test("#627 writes the scale to the --panzoom-scale custom property", () => {
     expect.hasAssertions();
 

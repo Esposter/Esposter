@@ -6,7 +6,7 @@ import type { PanzoomOptions } from "#src/models/panzoom/PanzoomOptions";
 import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
 import { PanzoomZoomDirection } from "#src/models/panzoom/PanzoomZoomDirection";
 import { Operation } from "#src/models/shared/Operation";
-import { PANZOOM_DEFAULT_OPTIONS, PANZOOM_DEFAULT_TRANSFORM_ORIGIN } from "#src/services/panzoom/constants";
+import { PANZOOM_DEFAULT_OPTIONS, PANZOOM_TRANSFORM_ORIGIN } from "#src/services/panzoom/constants";
 import { applyPanzoomStyles } from "#src/services/panzoom/applyPanzoomStyles";
 import { bindPanzoom } from "#src/services/panzoom/bindPanzoom";
 import { checkIsZoomRefused } from "#src/services/panzoom/checkIsZoomRefused";
@@ -51,7 +51,7 @@ export const createPanzoom = (element: PanzoomElement, options: PanzoomOptions =
   writePanzoomState(context, context.state, { animate: false });
   const start = getPanzoomStartState(context.state, getPanzoomMeasure(element, parent, context.state), context.options);
   writePanzoomState(context, start, { animate: false });
-  writePanzoomStyle(context, element, "transform-origin", options.origin ?? PANZOOM_DEFAULT_TRANSFORM_ORIGIN);
+  writePanzoomStyle(context, element, "transform-origin", PANZOOM_TRANSFORM_ORIGIN);
   applyPanzoomStyles(context);
 
   let controller: AbortController | undefined;
