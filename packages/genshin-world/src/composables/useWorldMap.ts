@@ -1,4 +1,5 @@
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { MapSubareaLabel } from "#src/models/map/MapSubareaLabel";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { ReputationReward } from "#src/models/reputation/ReputationReward";
@@ -20,6 +21,7 @@ import { placeExplorationDoings } from "#src/services/exploration/placeExplorati
 import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
 import { checkIsWeeklyBossEntrance } from "#src/services/map/checkIsWeeklyBossEntrance";
 import { computeUnlockedJumpLandmarks } from "#src/services/map/computeUnlockedJumpLandmarks";
+import { readMapSubareaLabels } from "#src/services/map/readMapSubareaLabels";
 import { addReputationExp } from "#src/services/reputation/addReputationExp";
 import { computeReputationExploresReached } from "#src/services/reputation/computeReputationExploresReached";
 import { getFinishedReputationRewards } from "#src/services/reputation/getFinishedReputationRewards";
@@ -91,6 +93,18 @@ export const useWorldMap = ({
     getResultAsync(() => readMondstadtReputation(gameDataBaseUrl)).match(
       (reputationCity) => {
         mondstadtReputation.value = reputationCity;
+      },
+      (error) => {
+        console.error(error);
+      },
+    ),
+  )();
+  // The subarea labels the open world publishes, read as the world starts, each named by its text id in the world's names
+  const subareaLabels = shallowRef<MapSubareaLabel[]>([]);
+  getSynchronizedFunction(() =>
+    getResultAsync(() => readMapSubareaLabels(gameDataBaseUrl)).match(
+      (labels) => {
+        subareaLabels.value = labels;
       },
       (error) => {
         console.error(error);
@@ -261,6 +275,7 @@ export const useWorldMap = ({
     payReputationReward,
     reputationCity: mondstadtReputation,
     requestClaimedAts,
+    subareaLabels,
     unlockedLandmarkIds,
     unlockedLandmarks,
   };

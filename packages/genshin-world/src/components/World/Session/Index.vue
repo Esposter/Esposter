@@ -4,8 +4,6 @@ import type { CharacterConstellationKit } from "#src/models/character/CharacterC
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { Expedition } from "#src/models/expedition/Expedition";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
-import type { MapSubareaLabel } from "#src/models/map/MapSubareaLabel";
-import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
@@ -88,6 +86,7 @@ import { useWorldInteractables } from "#src/composables/useWorldInteractables";
 import { useWorldInteractionDispatch } from "#src/composables/useWorldInteractionDispatch";
 import { useWorldMail } from "#src/composables/useWorldMail";
 import { useWorldMap } from "#src/composables/useWorldMap";
+import { useWorldOculi } from "#src/composables/useWorldOculi";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldOutcrops } from "#src/composables/useWorldOutcrops";
 import { useWorldPickups } from "#src/composables/useWorldPickups";
@@ -129,7 +128,6 @@ import { MAP_REFERENCE_ZOOM_METRES, TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } 
 import { findAreaAt } from "#src/services/map/findAreaAt";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
-import { readMapSubareaLabels } from "#src/services/map/readMapSubareaLabels";
 import { GENSHIN_SETTINGS_DEFAULTS } from "#src/services/menu/constants";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
@@ -143,10 +141,7 @@ import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { getTeamAntiColdRatio } from "#src/services/sheerCold/getTeamAntiColdRatio";
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
-import { OCULUS_MINIMAP_DISTANCE, OCULUS_REGION_ID, OCULUS_TOUCH_RADIUS } from "#src/services/statue/constants";
-import { getNearOculusPlaces } from "#src/services/statue/getNearOculusPlaces";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
-import { readOculusPlaces } from "#src/services/statue/readOculusPlaces";
 import { WORLD_CLOCK_INTERVAL_MS } from "#src/services/time/constants";
 import { getServerNow } from "#src/services/time/getServerNow";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
@@ -878,18 +873,13 @@ const acceptReputationOffer = () => {
   if (reputationBountyOffer.value === ReputationBountyOffer.Offer) return takeBounty();
   return acceptReputationRequest();
 };
-// The Oculi of the region published, read as the world starts. Those not yet found are stood in, a touch within the
-// Touch radius finds one, and those near the camera within the minimap's distance are marked on it
-const oculusPlaces = shallowRef<OculusPlace[]>([]);
-// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-getResultAsync(() => readOculusPlaces(gameDataBaseUrl, `oculi/${OCULUS_REGION_ID}`)).match(
-  (places) => {
-    oculusPlaces.value = places;
-  },
-  (error) => {
-    console.error(error);
-  },
-);
+// The Oculi of the region published: those not found, those near the camera and the one the body touches
+const { findTouchedOculus, nearOculusPlaces, oculusPlaces, unfoundOculusPlaces } = useWorldOculi({
+  characterBody,
+  foundOculusIds,
+  gameDataBaseUrl,
+  getMapCamera: () => mapCamera.value,
+});
 // The doings the world places, each counted toward the area its point stands in: the chests, the Oculi, the puzzles' marks
 // And Seelies at their courts, and the camps the save records as cleared
 const placedDoings = computed<PlacedDoing[]>(() => [
@@ -924,6 +914,7 @@ const {
   payReputationReward,
   reputationCity,
   requestClaimedAts,
+  subareaLabels,
   unlockedLandmarkIds,
   unlockedLandmarks,
 } = useWorldMap({
@@ -1326,24 +1317,6 @@ const { hudFrame, mapCamera } = useWorldHudFrame({
 // The zoom the open map is at, in metres across its width, which the map's slider and wheel change and the world keeps
 // From one opening of the map to the next
 const mapZoom = shallowRef(MAP_REFERENCE_ZOOM_METRES);
-// The subarea labels the open world publishes, read as the world starts, each named by its text id in the world's names
-const subareaLabels = shallowRef<MapSubareaLabel[]>([]);
-// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-getResultAsync(() => readMapSubareaLabels(gameDataBaseUrl)).match(
-  (labels) => {
-    subareaLabels.value = labels;
-  },
-  (error) => {
-    console.error(error);
-  },
-);
-const unfoundOculusPlaces = computed(() => oculusPlaces.value.filter(({ id }) => !foundOculusIds.value.has(id)));
-const nearOculusPlaces = computed(() =>
-  getNearOculusPlaces(oculusPlaces.value, foundOculusIds.value, mapCamera.value, OCULUS_MINIMAP_DISTANCE),
-);
-// The unfound Oculus the body is touching, if it is touching one, which the frame collects
-const findTouchedOculus = () =>
-  getNearOculusPlaces(oculusPlaces.value, foundOculusIds.value, characterBody.position, OCULUS_TOUCH_RADIUS)[0];
 // The frame run before each draw, which reads the input and steps each feature that moves on its own
 const { stepFrame } = useWorldFrame({
   abyssChoices,
