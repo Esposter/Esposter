@@ -1,8 +1,5 @@
 import { getUnattributedPresses } from "#src/services/sweeps/hoverGuard/getUnattributedPresses";
-import { readGenshinStyleBlocks } from "#src/services/sweeps/hoverGuard/readGenshinStyleBlocks";
+import { readStyleFindings } from "#src/services/sweeps/hoverGuard/readStyleFindings";
 
 // One `path:line: selector` per press rule of the Genshin stylesheets that names `:active` and not `[data-pressed]`
-export const readUnattributedPressFindings = (): string[] =>
-  readGenshinStyleBlocks().flatMap(({ css, firstLine, path }) =>
-    getUnattributedPresses(css, firstLine).map((finding) => `${path}:${finding}`),
-  );
+export const readUnattributedPressFindings = (): string[] => readStyleFindings(getUnattributedPresses);
