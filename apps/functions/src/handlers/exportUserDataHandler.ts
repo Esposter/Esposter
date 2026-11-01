@@ -11,9 +11,8 @@ import { eq } from "drizzle-orm";
 
 // Builds one export's archive into the blob named for its row. The row is marked building with the blob's name.
 // It is marked ready only after the upload commits, so a link is never offered for an archive still being written.
-// A build that fails is recorded on the row with its reason.
-// The event is not rethrown, since the person sees that reason on their
-// Settings page. A replayed event rebuilds the same blob
+// A build that fails is recorded on the row with its reason, which the owner's read returns.
+// The event is not rethrown, since the failure is already on the row. A replayed event rebuilds the same blob
 export const exportUserDataHandler = async (
   context: InvocationContext,
   { dataExportId }: ExportUserDataEventGridData,

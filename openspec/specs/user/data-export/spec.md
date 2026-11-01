@@ -70,7 +70,7 @@ The settings page SHALL say that the archive omits other people's data and messa
 
 ### Requirement: A failed build is reported and not hidden
 
-A build that fails SHALL mark its export failed with the reason, and SHALL NOT leave it looking ready.
+A build that fails SHALL mark its export failed and store its reason, which the owner's read returns but the settings page does not show, and SHALL NOT leave it looking ready.
 
 #### Scenario: A failed build offers no link
 
