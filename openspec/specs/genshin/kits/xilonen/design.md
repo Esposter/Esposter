@@ -23,7 +23,7 @@ flowchart TD
 
 ## Provisional constants
 
-- **The Blessing's point maximum is open.** gcsim sets it at 90 (`{data-root}/cache/gcsim-v2.47.2/internal/characters/xilonen/xilonen.go` line 42, where the wiki's nightsoul point limit is also 90), and the kit caps the Blessing at the 45 it starts with (`xilonenKit.ts`, `maximum: NIGHTSOUL_POINTS`). No points are gained yet: the gain comes from the Ascension passive Netotiliztli's Echoes, which needs two Samplers converted and is not built (the wiki's Netotiliztli's Echoes page in `{data-root}/cache/genshin-wiki/Category_Xilonen_Talents.json`), so no press shows the difference.
+- **The Blessing's point maximum is open,** see [Open](#open). No points are gained yet: the gain comes from the Ascension passive Netotiliztli's Echoes, which needs two Samplers converted and is not built (the wiki's Netotiliztli's Echoes page in `{data-root}/cache/genshin-wiki/Category_Xilonen_Talents.json`), so no press shows the difference.
 - **Where the skill's cooldown starts is open.** The wiki gives a 7-second cooldown and no start, and gcsim starts it at the Blessing's end (`{data-root}/cache/gcsim-v2.47.2/internal/characters/xilonen/skill.go` line 82), where this kit starts it at the press.
 
 ## Not built
