@@ -48,7 +48,7 @@ Salon Solitaire SHALL bring out Gentilhomme Usher, Surintendante Chevalmarin and
 - **GIVEN** no enemy stands within a member's reach
 - **WHEN** the member's turn comes
 - **THEN** it neither drains the team nor strikes
-- **AND** this reading stays provisional until a recording settles it
+- **AND** this reading stays provisional until a recording settles it, as [the design](design.md) sets out
 
 ### Requirement: Salon Solitaire brings out Pneuma's Singer
 
@@ -100,7 +100,7 @@ Let the People Rejoice SHALL build Fanfare from changes to team members' HP, up 
 - **GIVEN** a member's HP changes
 - **WHEN** the first point lands 6 frames later
 - **THEN** the window opens a frame after it and changes inside it land as it closes
-- **AND** the window is an estimate of the game's debounce that stays provisional until a recording settles it
+- **AND** the window is an estimate of the game's debounce that stays provisional until a recording settles it, as [the design](design.md) sets out
 
 #### Scenario: A new Let the People Rejoice ends the Fanfare before it
 
@@ -190,8 +190,3 @@ Furina's fourth constellation SHALL change her energy as set out in its scenario
 - **WHEN** a Salon member's hit lands or the Singer heals
 - **THEN** Furina gains 4 energy
 - **AND** a second such event within five seconds gives no energy
-
-## Open
-
-- [ ] **A member with no enemy in reach neither drains the team nor strikes** — no source yet: no recording of a Salon member with no enemy in reach is in `{data-root}/genshin-parity/captures/`, and the reading is provisional.
-- [ ] **The Fanfare's debounce matches the game's: a 6-frame first point and a debounce window** — no source yet: gcsim marks the 6-frame delay and the debounce window as estimates (`{data-root}/cache/gcsim-v2.47.2/internal/characters/furina/burst.go` lines 25 to 26), and no recording settles them.
