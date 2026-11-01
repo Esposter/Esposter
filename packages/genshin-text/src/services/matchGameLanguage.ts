@@ -1,9 +1,7 @@
 import { GameLanguage, GameLanguages } from "#src/models/GameLanguage";
 import { GameLanguageTagMap } from "#src/services/GameLanguageTagMap";
-import { getResult } from "@esposter/shared";
+import { getMaximizedLocale } from "#src/services/getMaximizedLocale";
 
-const getMaximizedLocale = (tag: string): Intl.Locale | undefined =>
-  getResult(() => new Intl.Locale(tag).maximize()).unwrapOr(undefined);
 const GAME_LANGUAGE_LOCALES = GameLanguages.map(
   (gameLanguage) => [gameLanguage, new Intl.Locale(GameLanguageTagMap[gameLanguage]).maximize()] as const,
 );
