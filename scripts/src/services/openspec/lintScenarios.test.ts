@@ -99,4 +99,19 @@ describe(lintScenarios, () => {
 
     expect(lintScenarios(SPEC_PATH, markdown)).toStrictEqual([]);
   });
+
+  test("ends a scenario at a deeper heading, so the prose under it is never read as steps", () => {
+    expect.hasAssertions();
+
+    const markdown = [
+      "#### Scenario: Opens",
+      "- **GIVEN** the page is open",
+      "- **WHEN** the page loads",
+      "- **THEN** the list is shown",
+      "##### Notes",
+      "Closing prose under a deeper heading.",
+    ].join("\n");
+
+    expect(lintScenarios(SPEC_PATH, markdown)).toStrictEqual([]);
+  });
 });

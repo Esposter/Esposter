@@ -21,6 +21,9 @@ export const ADDRESS_REGEX: RegExp = /https?:\/\/\S+|\]\([^)]*\)/gu;
 export const CODE_SPAN_REGEX: RegExp = /`[^`]*`/gu;
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
 export const FENCE_REGEX: RegExp = /^\s*(?:```|~~~)/u;
+// A Markdown heading of any level, which ends a requirement's body and a scenario alike
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
+export const HEADING_REGEX: RegExp = /^#{1,6}\s/u;
 // An archived delta is shipped history that nothing rewrites, so neither the citation rule nor the dated-prose scan reads it
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const ARCHIVED_DELTA_PREFIX: string = `${PROPOSALS_DIRECTORY}/${ARCHIVE_FOLDER}/`;

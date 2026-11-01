@@ -1,5 +1,6 @@
+import { HEADING_REGEX } from "#src/services/openspec/constants";
+
 const REQUIREMENT_REGEX = /^###\s+Requirement:\s*(?<title>.*)$/u;
-const HEADING_REGEX = /^#{1,6}\s/u;
 // A backticked path, or a backticked file name with a source's extension. A span holds no whitespace, so the text
 // Between two spans is never read as a path. Scenarios are outside a requirement's body, so their citations are never
 // Read here.

@@ -1,20 +1,10 @@
-interface ScenarioBlock {
-  keywords: string[];
-  line: number;
-  title: string;
-}
+import type { ScenarioBlock } from "#src/models/openspec/ScenarioBlock";
+
+import { checkScenario } from "#src/services/openspec/checkScenario";
+import { HEADING_REGEX } from "#src/services/openspec/constants";
 
 const SCENARIO_HEADING_REGEX = /^####\s+Scenario:\s*(?<title>.*)$/u;
-const HEADING_REGEX = /^#{1,4}\s/u;
 const STEP_REGEX = /^-\s+\*\*(?<keyword>GIVEN|WHEN|THEN|AND)\*\*\s+\S/u;
-// One behaviour per scenario: an optional GIVEN, one WHEN, one THEN. AND may follow any step, so it is ignored here.
-const SEQUENCE_REGEX = /^(?:GIVEN )?WHEN THEN$/u;
-
-const checkScenario = (path: string, { keywords, line, title }: ScenarioBlock): string[] => {
-  const sequence = keywords.filter((keyword) => keyword !== "AND").join(" ");
-  if (SEQUENCE_REGEX.test(sequence)) return [];
-  return [`${path}:${line}: scenario "${title}" must read GIVEN? WHEN THEN, found "${sequence}"`];
-};
 
 // Returns one finding per broken scenario or stray line, formatted `path:line: message`. A scenario ends at the next
 // Heading of any level, so requirement bodies and the prose around them are never read as steps.
