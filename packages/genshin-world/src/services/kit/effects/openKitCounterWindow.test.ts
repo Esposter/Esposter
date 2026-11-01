@@ -62,7 +62,9 @@ describe(openKitCounterWindow, () => {
       struckCharacterId: TRAVELER_CHARACTER_ID,
     };
 
-    expect(openWindow(shieldAbsorbed)).toHaveLength(1);
+    expect(openWindow(shieldAbsorbed)).toStrictEqual([
+      { characterId: TRAVELER_CHARACTER_ID, id: WINDOW_ID, kind: "status", secondsRemaining: WINDOW_SECONDS },
+    ]);
   });
 
   test("a strike opens nothing unless the character struck is the one on the field, holding its skill", () => {
