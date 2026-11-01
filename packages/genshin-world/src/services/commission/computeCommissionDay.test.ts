@@ -51,7 +51,12 @@ describe(computeCommissionDay, () => {
     expect.hasAssertions();
     const day = { claimedCommissionIds: [], dealtAt: dailyReset, dealtCommissions: [], isBonusClaimed: false };
     const dealtDay = computeCommissionDay(day, now, commissions, new Set(), RANK, () => 0);
-    expect(dealtDay.dealtCommissions).toHaveLength(4);
+    expect(dealtDay.dealtCommissions).toStrictEqual([
+      { commissionId: 2, count: 0, dealtRank: RANK },
+      { commissionId: 3, count: 0, dealtRank: RANK },
+      { commissionId: 4, count: 0, dealtRank: RANK },
+      { commissionId: 5, count: 0, dealtRank: RANK },
+    ]);
   });
 
   test("a day dealt at or after the daily reset is kept", () => {
