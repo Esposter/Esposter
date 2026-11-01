@@ -5,7 +5,7 @@ import { createHash } from "node:crypto";
 import { BASE_URL } from "../app/services/desmos/constants.ts";
 import { MEDIAPIPE_TASKS_VISION_URL } from "../app/services/message/room/liveKit/constants.ts";
 import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE } from "../shared/services/app/constants.ts";
-import { NONCE_SOURCE, NUXT_IMAGE_ERROR_HANDLER } from "./constants.ts";
+import { NUXT_IMAGE_ERROR_HANDLER } from "./constants.ts";
 
 export const security: NuxtConfig["security"] = {
   headers: {
@@ -45,8 +45,9 @@ export const security: NuxtConfig["security"] = {
         `'sha256-${createHash("sha256").update(NUXT_IMAGE_ERROR_HANDLER).digest("base64")}'`,
       ],
       "script-src-elem": [
-        // The inline scripts Nuxt renders, each carrying the response's nonce
-        NONCE_SOURCE,
+        // Nuxt data hydration, and the inline scripts a published page's sandboxed srcdoc iframe carries, which inherits
+        // This policy and has no nonce of the response to carry
+        "'unsafe-inline'",
         // Nuxt vite client
         "'self'",
         // Desmos
