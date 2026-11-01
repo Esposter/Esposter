@@ -3,6 +3,7 @@ import type { Mail } from "#src/models/mail/Mail";
 import type { MailSave } from "#src/models/mail/MailSave";
 import type { GameText } from "genshin-text";
 
+import { checkIsClaimable } from "#src/services/mail/checkIsClaimable";
 import { checkIsGiftBoxed } from "#src/services/mail/checkIsGiftBoxed";
 import { getMailExpiry } from "#src/services/mail/getMailExpiry";
 import { MailExpiryUnitGameTextKeyMap } from "#src/services/mail/MailExpiryUnitGameTextKeyMap";
@@ -33,8 +34,6 @@ const statusText = computed(() => {
   const { count, unit } = getMailExpiry(mail.deliveredAt, row.expireDays, now);
   return fillGameTextValues(gameText[MailExpiryUnitGameTextKeyMap[unit]], count);
 });
-// A mail with items it has not paid out yet is marked in the list, as the game's red mark does
-const checkIsClaimable = (): boolean => !mail.isClaimed && row.items.length > 0;
 </script>
 
 <template>
@@ -51,7 +50,7 @@ const checkIsClaimable = (): boolean => !mail.isClaimed && row.items.length > 0;
     <span class="entry-sender">{{ textMap[row.senderTextId] }}</span>
     <span class="entry-status">{{ statusText }}</span>
     <span v-if="!mail.isRead" class="new" aria-hidden="true">{{ gameText[GameTextKey.New] }}</span>
-    <span v-if="checkIsClaimable()" class="unread" aria-hidden="true">!</span>
+    <span v-if="checkIsClaimable(mail, row)" class="unread" aria-hidden="true">!</span>
   </button>
 </template>
 

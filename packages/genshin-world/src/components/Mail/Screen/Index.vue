@@ -9,6 +9,7 @@ import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
 import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
+import { checkIsClaimable } from "#src/services/mail/checkIsClaimable";
 import { checkIsGiftBoxed } from "#src/services/mail/checkIsGiftBoxed";
 import { checkIsSameHeldMail } from "#src/services/mail/checkIsSameHeldMail";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
@@ -86,9 +87,7 @@ const visibleEntries = computed(() =>
 const selectedEntry = computed(
   () => visibleEntries.value.find(({ mail }) => checkIsSelected(mail)) ?? visibleEntries.value[0],
 );
-const hasClaimable = computed(() =>
-  mails.some(({ id, isClaimed }) => !isClaimed && (mailRows.get(id)?.items.length ?? 0) > 0),
-);
+const hasClaimable = computed(() => sortedEntries.value.some(({ mail, row }) => checkIsClaimable(mail, row)));
 const hasDeletableMail = computed(() => deleteReadMails(mails, mailRows, birthdayMailIds).length < mails.length);
 // The date line's words either side of the date, since the game's line holds the date as {0} and the date is a NuxtTime
 const dateLine = computed(() => gameText[GameTextKey.MailDetailDate].split("{0}"));
