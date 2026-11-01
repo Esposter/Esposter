@@ -9,7 +9,8 @@ export const patchOozSignedOffsets = (oozDirectory: string): void => {
   const path = join(oozDirectory, "kraken.cpp");
   const source = readFileSync(path, "utf8");
   const patched = replaceCounted(
-    replaceCounted(source, "size_t last_offset", "ptrdiff_t last_offset", 12),
+    replaceCounted(source, path, "size_t last_offset", "ptrdiff_t last_offset", 12),
+    path,
     "  size_t offset = -8;\n",
     "  ptrdiff_t offset = -8;\n",
     1,

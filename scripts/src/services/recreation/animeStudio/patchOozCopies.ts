@@ -37,7 +37,8 @@ export const patchOozCopies = (oozDirectory: string): void => {
   const path = join(oozDirectory, "kraken.cpp");
   const source = readFileSync(path, "utf8");
   const patched = replaceOnce(
-    replaceOnce(source, /#define COPY_64\(d, s\)[\s\S]*?\n {4}\}\n/u, OOZ_COPY_64),
+    replaceOnce(source, path, /#define COPY_64\(d, s\)[\s\S]*?\n {4}\}\n/u, OOZ_COPY_64),
+    path,
     /#define COPY_64_ADD\(d, s, t\) [^\n]*\n/u,
     OOZ_COPY_64_ADD,
   );
