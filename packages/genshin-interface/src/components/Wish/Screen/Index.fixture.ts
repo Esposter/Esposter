@@ -8,8 +8,8 @@ const BANNER_LABELS = {
   [BannerKind.WeaponEvent]: [{ text: "Weapon Event Wish" }],
 };
 
-// The weapon wish open with its pool and its Epitomized Path, one Intertwined Fate held, and a draw shown over it, the
-// Highest rarity first
+// The weapon wish open with its pool and its Epitomized Path and one Intertwined Fate held, before any draw: the base
+// Shot with no results. The shot with a draw over it is `variants.results`
 export const props = {
   backLabel: "Back",
   bannerId: "weapon-event",
