@@ -3,7 +3,7 @@ import type { RegionData } from "#src/models/genshinAssets/world/RegionData";
 import type { GroundPoint } from "genshin-engine";
 
 import { RegionCapitalMap } from "#src/services/genshinAssets/fit/RegionCapitalMap";
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { REGION_DATA_DIRECTORY } from "#src/services/genshinAssets/residents/constants";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { toCapitalWorldPlace } from "#src/services/genshinAssets/world/toCapitalWorldPlace";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
@@ -17,7 +17,7 @@ export const readCapitalWorldPlace = async (component: DerivedAssetComponent): P
   const capital = RegionCapitalMap[component];
   if (!capital) throw new InvalidOperationError(Operation.Read, component, "has no capital in the region capital map");
   const regionData = parseMachineJson<RegionData>(
-    await readFile(join(WORLD_DATA_DIRECTORY, "regions", `${component}.json`), "utf8"),
+    await readFile(join(REGION_DATA_DIRECTORY, `${component}.json`), "utf8"),
   );
   const landmark = regionData.landmarks.find(({ id }) => id === capital.landmarkId);
   if (!landmark) throw new InvalidOperationError(Operation.Read, component, `has no landmark ${capital.landmarkId}`);
