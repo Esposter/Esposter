@@ -10,7 +10,38 @@ I was trying to adopt vize for Nuxt type checking and ran into this, among a few
 
 ## Reproduction
 
-`package.json` and `tsconfig.json` are the ones of the `defineModel` issue, with `include` naming `src/**/*.ts` and `src/**/*.vue`.
+`package.json`:
+
+```json
+{
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "tsrs": "0.20.1-ts7.1.0-beta",
+    "typescript": "6.0.3",
+    "vize": "0.638.0",
+    "vue": "3.5.44",
+    "vue-tsc": "3.3.11"
+  }
+}
+```
+
+`tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ESNext"
+  },
+  "contentMappers": [{ "package": "vize", "extensions": [".vue"] }],
+  "include": ["src/**/*.ts", "src/**/*.vue"]
+}
+```
 
 `src/Child.vue`:
 
