@@ -49,6 +49,7 @@ flowchart TD
 
 ## Open
 
-- [ ] **Genshin's ground carries small flowers and pebbles that no placement record holds** — no source yet: the placements read off the streams (`scripts/src/services/genshinAssets/fit/readWindrisePlantPlacements.ts`) are not checked for flowers or pebbles, and no capture is named for them.
-- [ ] **A draw for each finest tile round the eye, with tens of tiles and a few dozen flowers each** — no source yet: no count of the tiles drawn round the eye or of the flowers kept per tile is recorded; `FLOWER_CANDIDATE_COUNT` (48, `packages/genshin-world/src/services/windrise/constants.ts`) caps a tile's candidates but gives no kept count.
+The flowers no record places are open on the [spec](spec.md). The pebbles are open here alone: no capture names them.
+
+- [ ] **A draw for each finest tile round the eye, with tens of tiles and a few dozen flowers each** — no source yet: no count of the tiles drawn round the eye or of the flowers kept per tile is recorded; `FLOWER_CANDIDATE_COUNT` (`packages/genshin-world/src/services/windrise/constants.ts`) caps a tile's candidates but gives no kept count.
 - [ ] **The ground under a flower moves a few centimetres as its tile morphs** — no source yet: the height gap between a finest tile and the next level at the far end of its morph range is not measured.
