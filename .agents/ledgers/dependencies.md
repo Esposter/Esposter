@@ -85,7 +85,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@types/three`                          | —                     | Keep — types     | declarations for `three`                                                                               |
 | `@types/web-push`                       | —                     | Keep — types     | declarations for `web-push`                                                                            |
 | `@types/ws`                             | —                     | Keep — types     | declarations for `ws`                                                                                  |
-| `@typesafe-ai/sdk`                      | —                     | Keep — SDK       | the persona's model client                                                                             |
+| `@typesafe-ai/sdk`                      | —                     | Keep — SDK       | the typed-decision client behind the scripts' Jev and triage tools; the persona pins its own copy      |
 | `@unocss/eslint-config`                 | —                     | Keep — framework | the styling engine's integration                                                                       |
 | `@unocss/nuxt`                          | —                     | Keep — framework | the styling engine's integration                                                                       |
 | `@vite-pwa/nuxt`                        | —                     | Keep — framework | the PWA module                                                                                         |
