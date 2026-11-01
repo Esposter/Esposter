@@ -7,7 +7,6 @@ import type { InventoryDestruction } from "#src/models/inventory/InventoryDestru
 import type { MapSubareaLabel } from "#src/models/map/MapSubareaLabel";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { QuestMark } from "#src/models/quest/QuestMark";
-import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
@@ -141,7 +140,6 @@ import { computeProfileNamecardItemIds } from "#src/services/profile/computeProf
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { getEnteredGoToEvents } from "#src/services/quest/getEnteredGoToEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
-import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { createTresRenderer } from "#src/services/scene/createTresRenderer";
@@ -868,8 +866,6 @@ const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameI
   });
 // The Mondstadt Reputation the player holds, which the exploration thresholds a statue's unlock crosses raise
 const reputation = shallowRef<ReputationProgress>(savedState.reputation);
-// Mondstadt's levels and their rewards, which the keeper's Reputation screen draws, and the level it is picked at
-const reputationCity = shallowRef<ReputationCity>();
 const shopId = shallowRef(0);
 const shopPurchases = shallowRef<ShopPurchase[]>(savedState.shopPurchases);
 // The Spiral Abyss on the world: its entry, its chambers in the arena beside the entrance, and the Benediction a Corridor chamber offers
@@ -909,15 +905,6 @@ const acceptReputationOffer = () => {
   if (reputationBountyOffer.value === ReputationBountyOffer.Offer) return takeBounty();
   return acceptReputationRequest();
 };
-// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-getResultAsync(() => readMondstadtReputation(gameDataBaseUrl)).match(
-  (city) => {
-    reputationCity.value = city;
-  },
-  (error) => {
-    console.error(error);
-  },
-);
 // The Oculi of the region published, read as the world starts. Those not yet found are stood in, a touch within the
 // Touch radius finds one, and those near the camera within the minimap's distance are marked on it
 const oculusPlaces = shallowRef<OculusPlace[]>([]);
@@ -962,6 +949,7 @@ const {
   jumpTo,
   lockedJumpLandmarks,
   payReputationReward,
+  reputationCity,
   requestClaimedAts,
   unlockedLandmarkIds,
   unlockedLandmarks,

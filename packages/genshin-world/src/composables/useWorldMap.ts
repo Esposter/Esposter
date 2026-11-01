@@ -259,6 +259,7 @@ export const useWorldMap = ({
     jumpTo,
     lockedJumpLandmarks,
     payReputationReward,
+    reputationCity: mondstadtReputation,
     requestClaimedAts,
     unlockedLandmarkIds,
     unlockedLandmarks,
