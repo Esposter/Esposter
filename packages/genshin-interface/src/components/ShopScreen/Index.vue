@@ -96,7 +96,7 @@ const setCount = (event: Event) => {
         min="1"
         type="range"
         :value="pickedCount"
-        @input="setCount"
+        @input="(event) => setCount(event)"
       />
       <p class="amount-value">{{ pickedCount }}</p>
       <button class="cancel" :aria-label="closeLabel" type="button" @click="goodId = 0">
