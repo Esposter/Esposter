@@ -1,6 +1,6 @@
 # Artifact enhancement
 
-An artifact's attributes are summed by [character attributes](../character-attributes/design.md): its main affix at its rarity and level, its minor affixes and its set's unconditional bonuses. This page is how an artifact comes to have them, and what a set's bonus that waits on combat does. A drop is rolled by the game's pools, an enhancement feeds it EXP and Mora, and a lock keeps a piece from being fed away. A bonus that waits on combat, such as a four-piece effect a reaction sets off, is a module of its set's answering the [character kits](../kits/README.md)' events. Instructor's, The Exile's, Traveling Doctor's, Berserker's, Lucky Dog's and Adventurer's are built, Adventurer's answering a chest opened in the world (`packages/genshin-world/src/services/artifact/sets/createInstructorSetModule.ts`, `packages/genshin-world/src/services/artifact/sets/createExileSetModule.ts`, `packages/genshin-world/src/services/artifact/sets/createTravelingDoctorSetModule.ts`, `packages/genshin-world/src/services/artifact/sets/createBerserkerSetModule.ts`, `packages/genshin-world/src/services/artifact/sets/createLuckyDogSetModule.ts`, `packages/genshin-world/src/services/artifact/sets/createAdventurerSetModule.ts`).
+An artifact's attributes are summed by [character attributes](../character-attributes/design.md): its main affix at its rarity and level, its minor affixes and its set's unconditional bonuses. This page is how an artifact comes to have them, and what a set's bonus that waits on combat does. A drop is rolled by the game's pools, an enhancement feeds it EXP and Mora, and a lock keeps a piece from being fed away. A bonus that waits on combat, such as a four-piece effect a reaction sets off, is a module of its set's answering the [character kits](../kits/README.md)' events. The sets the Set bonuses in combat section describes have their modules built, Adventurer's answering a chest opened in the world (`packages/genshin-world/src/services/artifact/sets/createAdventurerSetModule.ts`).
 
 ## How it works
 
@@ -247,16 +247,14 @@ The weights are not in the tables. They are cited as the wiki's: each slot's mai
 
 ## Open
 
+Open items the [spec](spec.md) also holds are listed there, not here.
+
 - [ ] **An artifact holds at most four minor affixes** — no source yet: the wiki's Artifact page is not in the cache.
-- [ ] **The main and minor affix weights, and each tier being as likely as the next** — no source yet: the Artifact/Distribution page is not in the cache, so the constants in `packages/genshin-world/src/services/artifact/constants.ts` cannot be checked against it.
 - [ ] **A drop starts with three minor affixes at 80% and four at 20% for a domain's five-star, and at 66% and 34% for a boss's** — no source yet: the wiki's Loot System page is not in the cache.
 - [ ] **A character wears one piece of each slot** — no source yet: the wiki's Artifact page is not in the cache.
-- [ ] **Enhancing costs a Mora a point, and a fodder returns 80% of what it was levelled with** — no source yet: the wiki's Artifact EXP page is not in the cache.
-- [ ] **The EXP is multiplied by five one time in a hundred, and by two nine times in a hundred** — no source yet: the wiki's Artifact EXP page is not in the cache.
 - [ ] **A Stellar-Conduct counts as a Stellar Glimmer reaction for Heart of the Furnace's four-piece** — no source yet: the wiki's Stellar Glimmer Reaction page is not in the cache.
 - [ ] **Instructor's Elemental Mastery reaches the reactions after the one that gave it, as the game does** — no source yet: the wiki's Instructor page is not in the cache.
 - [ ] **Set 15004 is named on no wiki page** — no source yet: no wiki page for set 15004 is on disk.
-- [ ] **Instructor's gives no Elemental Mastery for a summon's reaction after the wearer leaves** — no source yet: the wiki's Instructor page is not in the cache.
 - [ ] **The heals of Traveling Doctor and the other sets are raised by the Healing Bonuses** — no source yet: the wiki's Healing Bonus page is not in the cache, and gcsim has no Traveling Doctor module.
 - [ ] **A failed Valley Rite check raises the next chance only while the wearer is on the field** — no source yet: the wiki's off-field note is not in the cache, and the game's text states no such limit.
 - [ ] **A defeat by wildlife counts for Bloodstained Chivalry, and a swap off the field does not end its status** — no source yet: the wiki's Bloodstained Chivalry page is not in the cache.
