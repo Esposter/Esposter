@@ -3,14 +3,15 @@ import type { ConstellationDepot } from "#src/models/character/ConstellationDepo
 import { getCharacterIdDepotMap } from "#src/services/character/getCharacterIdDepotMap";
 import { describe, expect, test } from "vitest";
 
+const createDepot = (depotId: number): ConstellationDepot => ({
+  constellations: [],
+  depotId,
+  stellaFortuna: { itemId: 1, nameTextId: "name" },
+});
+
 describe(getCharacterIdDepotMap, () => {
   const CHARACTER_ID = 1001;
   const TRAVELER_ID = 1002;
-  const createDepot = (depotId: number): ConstellationDepot => ({
-    constellations: [],
-    depotId,
-    stellaFortuna: { itemId: 1, nameTextId: "name" },
-  });
 
   test("a character with one set has it and one with a set for each element has none", () => {
     expect.hasAssertions();
