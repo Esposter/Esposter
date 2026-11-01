@@ -22,11 +22,10 @@ interface SourceModule {
   owner: PackageSource;
 }
 
-const SPECIFIER_REGEX = /(?:from|import\()\s*"(?<specifier>[^"]+)"/gu;
-const WILDCARD = "*";
-
-const readSpecifiers = (file: string): string[] =>
-  Array.from(readFileSync(file, "utf8").matchAll(SPECIFIER_REGEX), ({ groups }) => groups?.specifier ?? "");
+const readSpecifiers = (file: string): string[] => {
+  const specifierRegex = /(?:from|import\()\s*"(?<specifier>[^"]+)"/gu;
+  return Array.from(readFileSync(file, "utf8").matchAll(specifierRegex), ({ groups }) => groups?.specifier ?? "");
+};
 const readPackageSources = (): PackageSource[] =>
   readWorkspacePackages(REPOSITORY_ROOT)
     .filter(({ workspaceDirectory }) => workspaceDirectory === "packages")
@@ -58,13 +57,14 @@ const resolveWorkspaceSpecifier = (specifier: string, packages: PackageSource[])
 
 // A package's own `#` imports, by the most specific pattern its manifest's `imports` has for the specifier
 const resolveImportSpecifier = (specifier: string, owner: PackageSource): SourceModule | undefined => {
+  const wildcard = "*";
   const matches = Object.entries(owner.imports).flatMap(([pattern, target]) => {
-    const [prefix = "", suffix = ""] = pattern.split(WILDCARD);
+    const [prefix = "", suffix = ""] = pattern.split(wildcard);
     return specifier.startsWith(prefix) && specifier.endsWith(suffix) && specifier.length >= pattern.length - 1
       ? [
           {
             length: pattern.length,
-            path: target.replace(WILDCARD, specifier.slice(prefix.length, specifier.length - suffix.length)),
+            path: target.replace(wildcard, specifier.slice(prefix.length, specifier.length - suffix.length)),
           },
         ]
       : [];
