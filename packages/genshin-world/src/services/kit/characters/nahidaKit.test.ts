@@ -308,6 +308,8 @@ describe("tri-Karma Purification", () => {
 });
 
 describe("illusory Heart's field", () => {
+  const WINDOW_STATUS_ID = "nahida-illusory-heart-within";
+
   test("the field lasts 15 seconds plus the Hydro count's extension, with a radius of 20 metres", () => {
     expect.hasAssertions();
     const combatant = createCombatant(NAHIDA_CHARACTER_ID, Element.Dendro);
@@ -332,8 +334,13 @@ describe("illusory Heart's field", () => {
     const context = createKitTestContext(combatant);
     KIT.elementalBurst.onStart?.(context);
     getField(context.kitEffectState.effects)?.onTick(context, 0);
-    const window = findKitStatus(context.kitEffectState.effects, NAHIDA_CHARACTER_ID, "nahida-illusory-heart-within");
+    const window = findKitStatus(context.kitEffectState.effects, NAHIDA_CHARACTER_ID, WINDOW_STATUS_ID);
 
-    expect(window?.secondsRemaining).toBe(1);
+    expect(window).toStrictEqual({
+      characterId: NAHIDA_CHARACTER_ID,
+      id: WINDOW_STATUS_ID,
+      kind: "status",
+      secondsRemaining: 1,
+    });
   });
 });

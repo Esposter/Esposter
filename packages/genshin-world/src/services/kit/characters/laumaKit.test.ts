@@ -308,6 +308,13 @@ describe("pale hymn", () => {
   });
 });
 
+// The party's effects with a Pale Hymn of the given id held at the given stacks, by the burst or by Moon Song
+const createPaleHymnEffects = (id: string, stacks: number): KitEffectState => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  addKitStatus(kitEffectState, LAUMA_CHARACTER_ID, { id, secondsRemaining: 15, stacks });
+  return kitEffectState;
+};
+
 // The base damage Pale Hymn adds to a reaction of the given kind, with Lauma at the given Elemental Mastery and the
 // Party's effects as given
 const readPaleHymnBaseDamageBonus = (
@@ -338,12 +345,7 @@ describe("pale hymn's base damage bonus", () => {
 
   test("adds her Elemental Mastery times the Bloom increase to each Bloom, Hyperbloom and Burgeon while the party holds Pale Hymn", () => {
     expect.hasAssertions();
-    const kitEffectState = { effects: [] };
-    addKitStatus(kitEffectState, LAUMA_CHARACTER_ID, {
-      id: LAUMA_PALE_HYMN_BURST_ID,
-      secondsRemaining: 15,
-      stacks: 18,
-    });
+    const kitEffectState = createPaleHymnEffects(LAUMA_PALE_HYMN_BURST_ID, 18);
 
     expect(
       [TransformativeReactionType.Bloom, TransformativeReactionType.Hyperbloom, TransformativeReactionType.Burgeon].map(
@@ -358,12 +360,7 @@ describe("pale hymn's base damage bonus", () => {
 
   test("adds her Elemental Mastery times the Lunar-Bloom increase to each Lunar-Bloom while the party holds Pale Hymn", () => {
     expect.hasAssertions();
-    const kitEffectState = { effects: [] };
-    addKitStatus(kitEffectState, LAUMA_CHARACTER_ID, {
-      id: LAUMA_PALE_HYMN_BURST_ID,
-      secondsRemaining: 15,
-      stacks: 18,
-    });
+    const kitEffectState = createPaleHymnEffects(LAUMA_PALE_HYMN_BURST_ID, 18);
 
     expect(readPaleHymnBaseDamageBonus(1000, LunarReactionType.LunarBloom, kitEffectState)).toBeCloseTo(
       1000 * LUNAR_BLOOM_INCREASE,
@@ -388,12 +385,7 @@ describe("pale hymn's base damage bonus", () => {
 
   test("holds the bonus from Moon Song's Pale Hymn alone, once the burst's is spent", () => {
     expect.hasAssertions();
-    const kitEffectState = { effects: [] };
-    addKitStatus(kitEffectState, LAUMA_CHARACTER_ID, {
-      id: LAUMA_PALE_HYMN_MOON_SONG_ID,
-      secondsRemaining: 15,
-      stacks: 6,
-    });
+    const kitEffectState = createPaleHymnEffects(LAUMA_PALE_HYMN_MOON_SONG_ID, 6);
 
     expect(readPaleHymnBaseDamageBonus(1000, TransformativeReactionType.Bloom, kitEffectState)).toBeCloseTo(
       1000 * BLOOM_INCREASE,
@@ -402,12 +394,7 @@ describe("pale hymn's base damage bonus", () => {
 
   test("adds 5 more Elemental Mastery to each Bloom from Constellation 2, and none from Constellation 1", () => {
     expect.hasAssertions();
-    const kitEffectState = { effects: [] };
-    addKitStatus(kitEffectState, LAUMA_CHARACTER_ID, {
-      id: LAUMA_PALE_HYMN_BURST_ID,
-      secondsRemaining: 15,
-      stacks: 18,
-    });
+    const kitEffectState = createPaleHymnEffects(LAUMA_PALE_HYMN_BURST_ID, 18);
 
     expect({
       constellation1: readPaleHymnBaseDamageBonus(1000, TransformativeReactionType.Bloom, kitEffectState, 1),
@@ -420,12 +407,7 @@ describe("pale hymn's base damage bonus", () => {
 
   test("adds 4 more Elemental Mastery to each Lunar-Bloom from Constellation 2", () => {
     expect.hasAssertions();
-    const kitEffectState = { effects: [] };
-    addKitStatus(kitEffectState, LAUMA_CHARACTER_ID, {
-      id: LAUMA_PALE_HYMN_BURST_ID,
-      secondsRemaining: 15,
-      stacks: 18,
-    });
+    const kitEffectState = createPaleHymnEffects(LAUMA_PALE_HYMN_BURST_ID, 18);
 
     expect(readPaleHymnBaseDamageBonus(1000, LunarReactionType.LunarBloom, kitEffectState, 2)).toBeCloseTo(
       1000 * (LUNAR_BLOOM_INCREASE + C2_LUNAR_BLOOM_INCREASE),

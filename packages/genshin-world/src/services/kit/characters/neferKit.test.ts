@@ -109,8 +109,10 @@ describe(createNeferKitBehaviour, () => {
 
     expect(performance?.canStart?.(context)).toBe(true);
 
-    while (verdantDew() > 0) performance?.onStart?.(context);
+    performance?.onStart?.(context);
+    performance?.onStart?.(context);
 
+    expect(verdantDew()).toBe(0);
     expect(performance?.canStart?.(context)).toBe(false);
   });
 });

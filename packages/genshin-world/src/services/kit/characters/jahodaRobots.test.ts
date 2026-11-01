@@ -83,7 +83,7 @@ describe(startJahodaRobots, () => {
     startJahodaRobots(context, COMBATANT, BURST_SECONDS, { ...SETTINGS, robotCount: 1 });
     const strikes = readStrikes(context, 800);
     expect(strikes.map(({ frame }) => frame)).toStrictEqual([47, 187, 327, 467, 607, 747]);
-    expect(strikes.every(({ element }) => element === Element.Pyro)).toBe(true);
+    expect(strikes.map(({ element }) => element)).toStrictEqual(Array.from({ length: 6 }, () => Element.Pyro));
   });
 
   test("a robot that finds no aura checks again 46 frames later, and absorbs the aura then", () => {
@@ -97,7 +97,7 @@ describe(startJahodaRobots, () => {
       if (frame === 30) applyElement(enemy.elementalState, Element.Hydro, 1, { auraDecayRateScale: 1 });
     });
     expect(strikes.map(({ frame }) => frame)).toStrictEqual([93, 233, 373, 513, 653]);
-    expect(strikes.every(({ element }) => element === Element.Hydro)).toBe(true);
+    expect(strikes.map(({ element }) => element)).toStrictEqual(Array.from({ length: 5 }, () => Element.Hydro));
   });
 
   test("a strike lands on the three nearest enemies, nearest first", () => {
@@ -121,40 +121,6 @@ describe(startJahodaRobots, () => {
     const strikeFrames = readStrikes(context, 800).map(({ frame }) => frame);
     expect(strikeFrames).toStrictEqual([47, 88, 187, 228, 327, 368, 467, 508, 607, 648, 747, 788]);
   });
-});
-
-describe("jahoda's robots and Constellation 4", () => {
-  const FRAME_SECONDS = 1 / 60;
-  const BURST_SECONDS = 790 / 60;
-  const SETTINGS = {
-    absorbArea: { angle: 2 * Math.PI, height: 5, radius: 5 },
-    absorbEnergy: 0,
-    absorbFirstSeconds: 6 * FRAME_SECONDS,
-    absorbIntervalSeconds: 46 * FRAME_SECONDS,
-    absorbSpacingSeconds: 41 * FRAME_SECONDS,
-    robotCount: 2,
-    strikeFirstSeconds: 41 * FRAME_SECONDS,
-    strikeHit: {
-      gauge: 1,
-      hitArea: { angle: 2 * Math.PI, height: 2, radius: 1.2 },
-      hitmarkSeconds: 0,
-      poiseDamage: 0,
-      talentMultiplier: 0.172664,
-    },
-    strikeIntervalSeconds: 140 * FRAME_SECONDS,
-    strikeTargetCount: 3,
-  };
-  const COMBATANT: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 90,
-  };
-  const createRobotContext = (enemies: ReturnType<typeof createEnemyAt>[]): KitContext =>
-    createKitTestContext(COMBATANT, { enemyMap: new Map(enemies.map((enemy) => [enemy.id, enemy])) });
 
   test("an absorb gives her the energy the settings name", () => {
     expect.hasAssertions();

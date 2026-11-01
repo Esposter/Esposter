@@ -69,9 +69,7 @@ describe(createKeqingKitBehaviour, () => {
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
 
-    expect(
-      castStarwardSword(4).map(({ amount, attribute, secondsRemaining }) => ({ amount, attribute, secondsRemaining })),
-    ).toStrictEqual([
+    expect(castStarwardSword(4).map((buff) => pickBuffTerms(buff))).toStrictEqual([
       { amount: 0.15, attribute: Attribute.CriticalRate, secondsRemaining: 8 },
       { amount: 0.15, attribute: Attribute.EnergyRecharge, secondsRemaining: 8 },
     ]);

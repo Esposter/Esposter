@@ -16,14 +16,14 @@ describe("jahoda's Ascension 1", () => {
       getJahodaElementEffects(1, 0, false, [Element.Electro, Element.Electro, Element.Pyro, Element.Anemo]),
     ).toStrictEqual({ ...NO_EFFECTS, extraRobots: 1 });
     expect(
-      getJahodaElementEffects(1, 0, false, [Element.Pyro, Element.Pyro, Element.Hydro, Element.Anemo]).damageMultiplier,
-    ).toBe(1.3);
+      getJahodaElementEffects(1, 0, false, [Element.Pyro, Element.Pyro, Element.Hydro, Element.Anemo]),
+    ).toStrictEqual({ ...NO_EFFECTS, damageMultiplier: 1.3 });
     expect(
-      getJahodaElementEffects(1, 0, false, [Element.Hydro, Element.Hydro, Element.Cryo, Element.Anemo]).healMultiplier,
-    ).toBe(1.2);
+      getJahodaElementEffects(1, 0, false, [Element.Hydro, Element.Hydro, Element.Cryo, Element.Anemo]),
+    ).toStrictEqual({ ...NO_EFFECTS, healMultiplier: 1.2 });
     expect(
-      getJahodaElementEffects(1, 0, false, [Element.Cryo, Element.Cryo, Element.Geo, Element.Anemo]).intervalMultiplier,
-    ).toBe(0.9);
+      getJahodaElementEffects(1, 0, false, [Element.Cryo, Element.Cryo, Element.Geo, Element.Anemo]),
+    ).toStrictEqual({ ...NO_EFFECTS, intervalMultiplier: 0.9 });
   });
 
   test("a passive does not take effect below its ascension phase", () => {
@@ -35,7 +35,10 @@ describe("jahoda's Ascension 1", () => {
 
   test("a tie goes to the element gcsim ranks first, Pyro over Hydro", () => {
     expect.hasAssertions();
-    expect(getJahodaElementEffects(1, 0, false, [Element.Hydro, Element.Pyro]).damageMultiplier).toBe(1.3);
+    expect(getJahodaElementEffects(1, 0, false, [Element.Hydro, Element.Pyro])).toStrictEqual({
+      ...NO_EFFECTS,
+      damageMultiplier: 1.3,
+    });
   });
 
   test("a team with no element gcsim counts takes no effect", () => {

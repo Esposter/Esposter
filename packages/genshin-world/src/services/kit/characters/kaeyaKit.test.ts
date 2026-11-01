@@ -145,7 +145,9 @@ describe("kaeya kit", () => {
 
     const icicles = stepKitTestEffects(9, context);
     expect(icicles).toHaveLength(13);
-    expect(icicles.every(({ hit }) => hit.talentMultiplier === 0.776 && hit.element === "Ice")).toBe(true);
+    expect(icicles.map(({ hit }) => [hit.talentMultiplier, hit.element])).toStrictEqual(
+      Array.from({ length: 13 }, () => [0.776, "Ice"]),
+    );
     expect(context.kitEffectState.effects).toStrictEqual([]);
   });
 

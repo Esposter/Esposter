@@ -190,7 +190,12 @@ describe(createNaviaKitBehaviour, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     strikeHit(getBlastHit(), kitEffectState);
 
-    expect(getStatus(kitEffectState, BURST_SHRAPNEL_ICD_STATUS_ID)?.secondsRemaining).toBe(2.4);
+    expect(getStatus(kitEffectState, BURST_SHRAPNEL_ICD_STATUS_ID)).toStrictEqual({
+      characterId: NAVIA_CHARACTER_ID,
+      id: BURST_SHRAPNEL_ICD_STATUS_ID,
+      kind: "status",
+      secondsRemaining: 2.4,
+    });
   });
 
   test("rosula shardshot spends the crystal shrapnel it has, and constellation 6 keeps the stacks past three", () => {

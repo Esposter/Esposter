@@ -104,7 +104,7 @@ describe("lisa kit", () => {
 
     const discharges = stepKitTestEffects(17, context);
     expect(discharges).toHaveLength(30);
-    expect(discharges.every(({ hit }) => hit.talentMultiplier === 0.3656)).toBe(true);
+    expect(discharges.map(({ hit }) => hit.talentMultiplier)).toStrictEqual(Array.from({ length: 30 }, () => 0.3656));
     expect(kitEffectState.effects).toStrictEqual([]);
   });
 
@@ -112,9 +112,8 @@ describe("lisa kit", () => {
     expect.hasAssertions();
     const statuses = readDischargeEnemyStatuses(4);
 
-    expect(statuses.length).toBeGreaterThan(1);
     expect(statuses).toStrictEqual(
-      statuses.map(() => ({
+      Array.from({ length: 30 }, () => ({
         damageTakenBonus: 0,
         defenseReduction: 0.15,
         id: "lisa-lightning-rose",
@@ -126,7 +125,7 @@ describe("lisa kit", () => {
   test("a passive does not take effect below its ascension phase", () => {
     expect.hasAssertions();
 
-    expect(readDischargeEnemyStatuses(3).every((status) => status === undefined)).toBe(true);
+    expect(readDischargeEnemyStatuses(3)).toStrictEqual(Array.from({ length: 30 }, () => undefined));
   });
 
   test("stacks Conductive on each enemy its press strikes, up to three", () => {
@@ -150,8 +149,7 @@ describe("lisa kit", () => {
 
     const read = readKitStackedHit(enemy, hit);
 
-    expect(read.talentMultiplier).toBeCloseTo(4.24, 2);
-    expect(read.poiseDamage).toBe(240);
+    expect(read).toStrictEqual({ poiseDamage: 240, talentMultiplier: expect.closeTo(4.24, 2) });
     expect(enemy.statuses).toStrictEqual([]);
   });
 

@@ -269,7 +269,7 @@ describe("bloodline of the Crimson Oni", () => {
     expect.hasAssertions();
     const { bonuses, defense } = readKesagiriDamageBonuses(4);
 
-    expect(bonuses).toStrictEqual(bonuses.map(() => 0.35 * defense));
+    expect(bonuses).toStrictEqual(Array.from({ length: 3 }, () => 0.35 * defense));
     expect(defense).toBeGreaterThan(0);
   });
 

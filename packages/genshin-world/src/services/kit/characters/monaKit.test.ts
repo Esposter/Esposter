@@ -1,6 +1,7 @@
 import type { ReactionType } from "#src/models/combat/ReactionType";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitInput } from "#src/models/kit/KitInput";
 
@@ -56,6 +57,19 @@ const createOmenedEnemy = (): Enemy => ({
   ...createSturdyEnemy(),
   statuses: [{ damageTakenBonus: 0, id: "mona-omen", secondsRemaining: 10 }],
 });
+
+// The Electro-Charged DMG bonus the party reads for a reaction of another member's, with Mona on the team
+const readElectroChargedBonus = (mona: Combatant, other: Combatant, context: KitContext) =>
+  MONA_KIT.getPartyReactionBonus?.(
+    mona,
+    {
+      combatant: other,
+      element: Element.Electro,
+      enemy: createSturdyEnemy(),
+      reactionType: TransformativeReactionType.ElectroCharged,
+    },
+    context,
+  )?.damageBonus ?? 0;
 
 // Constellation 6's stacks are read at the Charged Attack's damage hook, as her sprint and her attack play out, one step at a time
 const createConstellation6Fixture = (constellationCount = 6) => {
@@ -230,8 +244,7 @@ describe("mona kit", () => {
 
     // The phantom's explosion lands once its 2 seconds run out, at 0.5 of the explosion's multiplier of 1.328
     const strikes = stepKitTestEffects(2, context);
-    expect(strikes.map(({ hit }) => hit.talentMultiplier)).toHaveLength(1);
-    expect(strikes[0]?.hit.talentMultiplier).toBeCloseTo(0.664, 3);
+    expect(strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([expect.closeTo(0.664, 3)]);
   });
 
   test("holds each enemy its Stellaris Phantasm strikes in a bubble, with no Omen on it until the bubble bursts", () => {
@@ -260,7 +273,7 @@ describe("mona kit", () => {
     expect(enemy.statuses).toStrictEqual([{ damageTakenBonus: 0.42, id: "mona-omen", secondsRemaining: 4 }]);
     const strikes = stepKitTestEffects(0.5, createKitTestContext(combatant, { kitEffectState }));
     expect(strikes.map(({ target }) => target)).toStrictEqual([enemy]);
-    expect(strikes[0]?.hit.talentMultiplier).toBeCloseTo(4.424, 3);
+    expect(strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([expect.closeTo(4.424, 3)]);
     expect(kitEffectState.effects).toStrictEqual([]);
   });
 
@@ -384,18 +397,7 @@ describe("mona kit", () => {
         context,
         mona,
       );
-      return (
-        MONA_KIT.getPartyReactionBonus?.(
-          mona,
-          {
-            combatant: other,
-            element: Element.Electro,
-            enemy: createSturdyEnemy(),
-            reactionType: TransformativeReactionType.ElectroCharged,
-          },
-          context,
-        )?.damageBonus ?? 0
-      );
+      return readElectroChargedBonus(mona, other, context);
     };
 
     expect({ below: readAfterHit(0, createOmenedEnemy()), plain: readAfterHit(1, createSturdyEnemy()) }).toStrictEqual({
@@ -422,18 +424,7 @@ describe("mona kit", () => {
         context,
         mona,
       );
-      return (
-        MONA_KIT.getPartyReactionBonus?.(
-          mona,
-          {
-            combatant: other,
-            element: Element.Electro,
-            enemy: createSturdyEnemy(),
-            reactionType: TransformativeReactionType.ElectroCharged,
-          },
-          context,
-        )?.damageBonus ?? 0
-      );
+      return readElectroChargedBonus(mona, other, context);
     };
 
     expect({
