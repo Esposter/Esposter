@@ -115,5 +115,10 @@
     "value": { "index": 4, "proudSkillGroupId": 12032 }
   },
   "stances.manifestFlame.normalAttacks.4.hits.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
-  "stances.manifestFlame.normalAttacks.4.targeting": { "cause": "Unsourced", "value": "Strike" }
+  "stances.manifestFlame.normalAttacks.4.targeting": { "cause": "Unsourced", "value": "Strike" },
+  "burst.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 12039 } },
+  "burst.hits.2.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 12039 } },
+  "burst.hits.3.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 12039 } },
+  "burst.hits.4.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 12039 } },
+  "burst.hits.5.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 12039 } }
 }

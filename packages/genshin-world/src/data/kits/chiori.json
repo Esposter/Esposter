@@ -96,5 +96,7 @@
   "skillHolds.0.action.hits.0.element": { "cause": "Unsourced", "value": "Rock" },
   "skillHolds.0.action.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 37 },
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 9432 } },
-  "skillHolds.0.cooldownSeconds": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 9432 } }
+  "skillHolds.0.cooldownSeconds": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 9432 } },
+  "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 5, "proudSkillGroupId": 9431 } },
+  "chargedAttack.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 6, "proudSkillGroupId": 9431 } }
 }
