@@ -20,6 +20,7 @@ describe(getMessageCreationRejection, () => {
   let db: Database;
   const name = "name";
   const roomId = crypto.randomUUID();
+  const directMessageRoomId = crypto.randomUUID();
   const everyoneRoleId = crypto.randomUUID();
   const administratorRoleId = crypto.randomUUID();
   const ownerUserId = crypto.randomUUID();
@@ -32,6 +33,19 @@ describe(getMessageCreationRejection, () => {
       .insert(usersInAuth)
       .values([ownerUserId, memberUserId, administratorUserId].map((id) => createUser(id, new Date(0), name)));
     await db.insert(roomsInMessage).values({ id: roomId, name, type: RoomType.Room, userId: ownerUserId });
+    // A direct message carries no roles at all, so neither of its members is granted anything through one
+    await db
+      .insert(roomsInMessage)
+      .values({
+        id: directMessageRoomId,
+        name: "",
+        participantKey: "directMessage",
+        type: RoomType.DirectMessage,
+        userId: ownerUserId,
+      });
+    await db
+      .insert(usersToRoomsInMessage)
+      .values([ownerUserId, memberUserId].map((userId) => ({ roomId: directMessageRoomId, userId })));
     // The @everyone role gives every member the read permission alone, so a member holding no other role cannot send
     await db.insert(roomRolesInMessage).values([
       { id: everyoneRoleId, isEveryone: true, name, permissions: RoomPermission.ReadMessages, roomId },
@@ -60,6 +74,12 @@ describe(getMessageCreationRejection, () => {
     await expect(getMessageCreationRejection(db, memberUserId, roomId)).resolves.toStrictEqual({
       type: MessageCreationRejectionType.MissingPermission,
     });
+  });
+
+  test("passes a direct message participant, who holds no role", async () => {
+    expect.hasAssertions();
+
+    await expect(getMessageCreationRejection(db, memberUserId, directMessageRoomId)).resolves.toBeUndefined();
   });
 
   test("passes the owner, who holds every permission", async () => {

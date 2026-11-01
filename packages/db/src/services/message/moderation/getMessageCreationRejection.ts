@@ -2,7 +2,7 @@ import type { MessageCreationRejection } from "#src/models/message/moderation/Me
 import type { Database } from "@esposter/db-schema";
 
 import { checkHasPermission } from "#src/services/room/rbac/checkHasPermission";
-import { MessageCreationRejectionType, RoomPermission } from "@esposter/db-schema";
+import { MessageCreationRejectionType, RoomPermission, RoomType } from "@esposter/db-schema";
 import { getOrCreate } from "@esposter/shared";
 
 // The gate every message-producing path decides with, in precedence order: a timeout outranks everything,
@@ -27,7 +27,7 @@ export const getMessageCreationRejection = async (
 ): Promise<MessageCreationRejection | undefined> => {
   const [room, member, filter] = await Promise.all([
     db.query.roomsInMessage.findFirst({
-      columns: { isReadOnly: true, slowmodeMs: true },
+      columns: { isReadOnly: true, slowmodeMs: true, type: true },
       where: { id: { eq: roomId } },
     }),
     db.query.usersToRoomsInMessage.findFirst({
@@ -51,7 +51,8 @@ export const getMessageCreationRejection = async (
     getOrCreate(permissionPromiseMap, permission, () => checkHasPermission(db, userId, roomId, permission));
   // A timeout outranks every permission — a moderator who times themselves out stays timed out
   if (member.timeoutUntil && member.timeoutUntil > new Date()) return { type: MessageCreationRejectionType.Timeout };
-  else if (!(await checkHasRoomPermission(RoomPermission.SendMessages)))
+  // A direct message has no roles to grant anything: its two members are the only ones, and blocking is what it has instead
+  else if (room.type !== RoomType.DirectMessage && !(await checkHasRoomPermission(RoomPermission.SendMessages)))
     return { type: MessageCreationRejectionType.MissingPermission };
   else if (room.isReadOnly && !(await checkHasRoomPermission(RoomPermission.ManageMessages)))
     return { type: MessageCreationRejectionType.ReadOnly };
