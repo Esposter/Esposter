@@ -1,6 +1,6 @@
 import type { PlantedTerrainTile } from "#src/models/shared/PlantedTerrainTile";
-import type { TerrainTileRequest } from "#src/models/TerrainTileRequest";
 import type { RegionGround } from "#src/models/world/RegionGround";
+import type { TerrainTileRequest } from "#src/models/world/TerrainTileRequest";
 import type { TerrainWorkerContext } from "#src/models/world/TerrainWorkerContext";
 import type { TerrainWorkerFailure } from "#src/models/world/TerrainWorkerFailure";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";

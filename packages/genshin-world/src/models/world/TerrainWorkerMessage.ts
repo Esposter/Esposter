@@ -1,5 +1,5 @@
-import type { TerrainTileRequest } from "#src/models/TerrainTileRequest";
 import type { RegionGround } from "#src/models/world/RegionGround";
+import type { TerrainTileRequest } from "#src/models/world/TerrainTileRequest";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
 import type { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMessageKind";
 
