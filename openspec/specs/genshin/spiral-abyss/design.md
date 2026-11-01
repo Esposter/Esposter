@@ -87,8 +87,7 @@ flowchart TD
 
 ## Open
 
-- [ ] **Each chamber's clock is five minutes on the Corridor's first four floors and ten minutes above** — no source yet: the dump's tower tables hold no clock length, and the wiki's Spiral Abyss page is not cached.
-- [ ] **The Abyss opens at Adventure Rank 20** — no source yet: the wiki's Spiral Abyss page is not cached, and no open-state row in the dump names the Abyss.
+The checks of the clock and the rank are the [spec's](spec.md) open items.
+
 - [ ] **The combine and forge tables match the dump byte for byte** — no source yet: no copy of the AnimeGameData tables is in the checkout to compare against.
-- [ ] **A two-team chamber can have no second wave in the table, as the monolith chambers have none** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/TowerLevelExcelConfigData.json`: 20 of 43 monolith levels hold a second wave.
 - [ ] **The Moon Spire floors' reward columns differ from the reward table for some floors** — no source yet: the floor-to-group mapping for Moon Spire floors is not checked.
