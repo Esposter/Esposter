@@ -1,5 +1,6 @@
 import type { TerrainResidualGrid } from "#src/models/genshinAssets/fit/TerrainResidualGrid";
 
+import { createTerrainResidualGrid } from "#src/services/genshinAssets/fit/createTerrainResidualGrid.test";
 import { fitTerrainPlateaus } from "#src/services/genshinAssets/fit/fitTerrainPlateaus";
 import { getPlateauBlend, TerrainFeatureKind } from "genshin-engine";
 import { describe, expect, test } from "vitest";
@@ -9,13 +10,8 @@ describe(fitTerrainPlateaus, () => {
   const SIZE = 41;
   const ORIGIN = -80;
   const PLATEAU_RADIUS = 24;
-  const createGrid = (getValue: (x: number, z: number) => number): TerrainResidualGrid => {
-    const values = new Float64Array(SIZE * SIZE);
-    for (let row = 0; row < SIZE; row++)
-      for (let column = 0; column < SIZE; column++)
-        values[row * SIZE + column] = getValue(ORIGIN + column * STEP, ORIGIN + row * STEP);
-    return { originX: ORIGIN, originZ: ORIGIN, size: SIZE, step: STEP, values };
-  };
+  const createGrid = (getValue: (x: number, z: number) => number): TerrainResidualGrid =>
+    createTerrainResidualGrid(getValue, { origin: ORIGIN, size: SIZE, step: STEP });
 
   test("finds a plateau the residual is one of, at its centre and height", () => {
     expect.hasAssertions();
