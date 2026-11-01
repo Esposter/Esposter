@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's domains' opening rules as pure checks. A kind opens at its Adventure Rank, Forgery at 16, Blessing at 22 and Mastery at 27, as the proposal states them. A Domain of Forgery or Mastery is open every Sunday and on the two days its table sets, a Domain of Blessing every day. Entrances, levels and challenges wait on the proposal.
+The game's domains' opening rules as pure checks. A kind opens at its Adventure Rank, Forgery at 16, Blessing at 22 and Mastery at 27, as the proposal states them. A Domain of Forgery or Mastery is open every Sunday and on the two days its table sets. A Domain of Blessing is checked against every weekday, since its table gives all seven until its set days are read. Entrances, levels and challenges wait on the proposal.
 
 ## Requirements
 
@@ -20,15 +20,15 @@ A domain kind SHALL be open once the player's Adventure Rank reaches its rank: F
 - **WHEN** a Domain of Mastery is checked
 - **THEN** it is closed
 
-### Requirement: A Domain of Blessing opens every day
+### Requirement: A Domain of Blessing's levels list every weekday
 
-A Domain of Blessing SHALL be open on every game day once its rank is reached.
+The domain table SHALL give every Domain of Blessing level all seven weekdays, so a check of the kind on any weekday finds it open once its rank is reached.
 
-#### Scenario: A Domain of Blessing is open on any weekday
+#### Scenario: A Domain of Blessing's levels list all seven weekdays
 
-- **GIVEN** an Adventure Rank that reaches the Domain of Blessing's rank
-- **WHEN** it is checked on any weekday
-- **THEN** it is open
+- **GIVEN** the domain table is built
+- **WHEN** a Domain of Blessing level is read
+- **THEN** it lists all seven weekdays
 
 ### Requirement: A Domain of Forgery or Mastery opens on Sundays and its two set days
 

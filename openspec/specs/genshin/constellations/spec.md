@@ -82,13 +82,13 @@ A skill set with a constellation the game data gives no config for SHALL be left
 - **THEN** that set is left out of the table
 - **AND** a note names the set
 
-### Requirement: A skill set's six constellations spend one item of its own character
+### Requirement: A skill set's six constellations spend one shared item
 
-The six constellations of a skill set SHALL all spend one Stella Fortuna of the set's own character.
+The table build SHALL refuse a skill set whose six constellations do not all spend one item, each costing one of it.
 
 #### Scenario: A set whose six constellations spend different items is refused
 
-- **GIVEN** a skill set whose six constellations do not all spend one item of its character
+- **GIVEN** a skill set whose six constellations do not all spend one item
 - **WHEN** the table is built
 - **THEN** the build refuses that set
 
