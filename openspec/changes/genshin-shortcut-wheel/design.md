@@ -14,7 +14,7 @@ flowchart LR
   RELEASE -->|"at the centre"| NONE["Nothing opens"]
 ```
 
-The default entries are the wiki's, in its order clockwise from the top. An 8-direction wheel is Wish, Adventurer Handbook, Inventory, Character, Map, Quests, Events and Battle Pass. A 4-direction wheel is Wish, Inventory, Map and Events.
+The default entries are the wiki's, in the order the spec's first requirement gives them.
 
 ## Decisions
 
