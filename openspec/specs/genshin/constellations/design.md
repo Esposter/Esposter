@@ -69,7 +69,8 @@ A non-raising constellation is a switch its character's kit module reads off the
 
 ## Open
 
-- [ ] **All six of a set spend one item, the character's own** — no source yet: a source that names each set's item as the character's own; `scripts/src/services/genshinAssets/stats/getCharacterConstellationKits.ts` checks that the six share one item, that each costs one, and that the item is in the materials table, but does not compare the item with the character.
+The open source for a set's item being the character's own is recorded with its requirement in [the spec](spec.md).
+
 - [ ] **Aloy's constellations cannot be activated, as the game's rule** — no source yet: the wiki's Aloy talent pages in the cache name no constellation rule. Checked the cached Aloy talent page Category_Aloy_Talents (titled Frozen Wilds, Aloy's Elemental Skill): it names no constellation and no activation rule.
 - [ ] **A few talent configs are missing from the revision the talent table matches** — no source yet: no listing of the configs against the matched revision is kept; the fetch from the default branch is in `scripts/src/services/genshinText/listRemoteDirectory.ts`, which reads `ANIME_GAME_DATA_BRANCH` from `scripts/src/services/genshinText/constants.ts`.
 - [ ] **A character has one set for each element form, and the Traveler's own form holds none** — no source yet: the other characters' `candSkillDepotIds` in `{data-root}/genshin-parity/text/ExcelBinOutput/AvatarExcelConfigData.json` were not counted (the Traveler's, 10000005, is checked above).

@@ -138,4 +138,4 @@ A newly created character SHALL start with no constellation active and no Stella
 
 ## Open
 
-- [ ] **The six constellations of a set spend one item of the set's own character** — no source yet: a game table naming the item each constellation spends, since the writer checks only that the six share one item, not that it is the character's own.
+- [ ] **The six constellations of a set spend one item of the set's own character** — no source yet: a game table naming the item each constellation spends. The writer (`scripts/src/services/genshinAssets/stats/getCharacterConstellationKits.ts`) checks that the six share one item, that each costs one, and that the item is in the materials table, but does not compare the item with the character.
