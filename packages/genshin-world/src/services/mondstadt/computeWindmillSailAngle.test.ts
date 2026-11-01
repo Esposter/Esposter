@@ -12,7 +12,7 @@ describe(computeWindmillSailAngle, () => {
     const calm = computeWindmillSailAngle(0, 1, breeze, radiansPerSecondPerWind);
     const gusted = computeWindmillSailAngle(0, 1, breeze + gust, radiansPerSecondPerWind);
 
-    expect(calm).toBeGreaterThan(0);
-    expect(gusted).toBeGreaterThan(calm);
+    expect(calm).toBe(0.5);
+    expect(gusted).toBe(1.5);
   });
 });
