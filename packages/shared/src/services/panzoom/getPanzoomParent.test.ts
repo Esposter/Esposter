@@ -24,6 +24,20 @@ describe(getPanzoomParent, () => {
     expect(getPanzoomParent(element)).toBe(host);
   });
 
+  test("a direct child of a shadow root from another window resolves to the root's host", () => {
+    expect.hasAssertions();
+
+    const host = document.createElement("div");
+    const shadowRoot = host.attachShadow({ mode: "open" });
+    const element = document.createElement("div");
+    shadowRoot.append(element);
+    // A root from another window is not an instance of this window's ShadowRoot, so only its node type and host identify it
+    Object.setPrototypeOf(shadowRoot, DocumentFragment.prototype);
+    Object.defineProperty(shadowRoot, "host", { value: host });
+
+    expect(getPanzoomParent(element)).toBe(host);
+  });
+
   test("an element with no parent resolves to none", () => {
     expect.hasAssertions();
 
