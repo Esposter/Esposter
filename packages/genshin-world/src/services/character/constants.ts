@@ -54,10 +54,9 @@ export const CHARACTER_PACK_MODEL_NAME_LANGUAGES: readonly GameLanguage[] = [
 // Request cannot leave a character loading for good
 export const CHARACTER_PACK_FETCH_TIMEOUT_MS = 60_000;
 // The folder the published packs sit in under the hosted game data, and the cache their files are kept in, each under
-// Its url with the leading characters of its hash as a version, so a republished file is a key of its own
+// Its url with its whole sha256 as a query, so a republished file is a key of its own
 export const CHARACTER_PACKS_FOLDER = "characterPacks";
 export const CHARACTER_PACK_CACHE_NAME = "genshin-character-pack-files";
-export const CHARACTER_PACK_VERSION_LENGTH = 16;
 // The files fetched at once, and the attempts each gets, with the wait before each retry growing from the base to the max
 export const CHARACTER_PACK_DOWNLOAD_CONCURRENCY = 6;
 export const CHARACTER_PACK_DOWNLOAD_ATTEMPTS = 3;

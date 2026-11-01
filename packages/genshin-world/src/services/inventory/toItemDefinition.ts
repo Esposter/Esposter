@@ -11,6 +11,7 @@ export const toItemDefinition = (
   names: Readonly<Record<string, string>>,
 ): ItemDefinition => ({
   category: MaterialTypeItemCategoryMap[materialData.materialType],
+  ...(materialData.destroyRule !== undefined && { destroyRule: materialData.destroyRule }),
   id: materialData.id,
   name: getItemName(materialData.nameTextId, names),
   rank: materialData.rank,

@@ -12,23 +12,32 @@ import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
-// Eats one of a dish from the bag: one is taken out, a revive lifts the eater where it is down to the HP it restores, a
-// Heal is applied to its target, the eater alone or every member the party holds, each healed by the share of Max HP and
-// The flat amount over its own Max HP, never past full, a bonus is given to the same targets for the seconds it lasts,
-// An anti-cold is held by the team for its own. Undefined, with nothing changed, where the bag holds none of the dish,
-// Or a target's Max HP is not known yet, which `getMaxHealth` gives as zero
+// Eats a count of a dish from the bag, never more than the bag holds: that many are taken out, a revive lifts the eater
+// Where it is down to the HP it restores, a heal is applied to its target, the eater alone or every member the party
+// Holds, each healed by the share of Max HP and the flat amount over its own Max HP for every dish eaten, never past
+// Full. A bonus is given to the same targets for the seconds it lasts, once however many are eaten, and an anti-cold is
+// Held by the team for its own. Undefined, with nothing changed, where the bag holds none of the dish, or a target's
+// Max HP is not known yet, which `getMaxHealth` gives as zero
 export const eatDish = (
   inventory: Inventory,
   itemId: number,
   dishUse: DishUse,
   {
+    count,
     eaterId,
     getMaxHealth,
     kitEffectState,
     party,
-  }: { eaterId: number; getMaxHealth: (characterId: number) => number; kitEffectState: KitEffectState; party: Party },
+  }: {
+    count: number;
+    eaterId: number;
+    getMaxHealth: (characterId: number) => number;
+    kitEffectState: KitEffectState;
+    party: Party;
+  },
 ): Inventory | undefined => {
-  if (countInventoryItem(inventory.items, itemId) === 0) return undefined;
+  const eatenCount = Math.min(count, countInventoryItem(inventory.items, itemId));
+  if (eatenCount <= 0) return undefined;
   const targetIds = dishUse.target === DishTarget.Party ? [...party.characterIdMemberMap.keys()] : [eaterId];
   if (targetIds.some((characterId) => getMaxHealth(characterId) === 0)) return undefined;
   if (dishUse.revive !== undefined) {
@@ -38,7 +47,7 @@ export const eatDish = (
   if (dishUse.heal !== undefined) {
     const { flat, healthShare } = dishUse.heal;
     for (const characterId of targetIds)
-      healPartyMember(party, characterId, healthShare + flat / getMaxHealth(characterId), eaterId);
+      healPartyMember(party, characterId, (healthShare + flat / getMaxHealth(characterId)) * eatenCount, eaterId);
   }
   if (dishUse.bonus !== undefined) {
     const { attributes, seconds, source } = dishUse.bonus;
@@ -54,5 +63,5 @@ export const eatDish = (
       ratio: dishUse.antiCold.ratio,
       secondsRemaining: dishUse.antiCold.seconds,
     });
-  return { ...inventory, items: takeInventoryItems(inventory.items, itemId, 1) };
+  return { ...inventory, items: takeInventoryItems(inventory.items, itemId, eatenCount) };
 };

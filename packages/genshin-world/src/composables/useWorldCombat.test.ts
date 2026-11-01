@@ -16,7 +16,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { STAMINA_MAX } from "genshin-engine";
 import { assert, describe, expect, test, vi } from "vitest";
-import { shallowRef } from "vue";
+import { nextTick, shallowRef } from "vue";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -33,6 +33,7 @@ const createCombat = (overrides: Partial<Parameters<typeof useWorldCombat>[0]> =
     placeWorldDrops: () => {},
     savedCharacters: [],
     savedParty: createParty([TRAVELER_CHARACTER_ID]),
+    staminaMaximum: shallowRef(STAMINA_MAX),
     startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
     statTables,
     travelerBonusLines: shallowRef([]),
@@ -77,6 +78,21 @@ describe(useWorldCombat, () => {
     kitContext.stamina.spend(amount);
 
     expect(kitContext.stamina.value).toBe(STAMINA_MAX - amount * IMPETUOUS_WINDS_STAMINA_CONSUMPTION_MULTIPLIER);
+  });
+
+  test("a raised maximum reaches the pool, and a pool full at the old maximum stays full at the new one", async () => {
+    expect.hasAssertions();
+    // Mondstadt's levels 2 to 10 raise the maximum by 70 in all
+    const STAMINA_RAISE = 70;
+    const staminaMaximum = shallowRef(STAMINA_MAX);
+    const { kitContext } = createCombat({ staminaMaximum });
+    staminaMaximum.value = STAMINA_MAX + STAMINA_RAISE;
+    await nextTick();
+
+    expect([kitContext.stamina.maximum, kitContext.stamina.value]).toStrictEqual([
+      STAMINA_MAX + STAMINA_RAISE,
+      STAMINA_MAX + STAMINA_RAISE,
+    ]);
   });
 
   test("a buff that raises Max HP shows on the HUD and lapses off it, with no party member written", () => {

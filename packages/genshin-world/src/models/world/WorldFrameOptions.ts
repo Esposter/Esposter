@@ -55,6 +55,7 @@ export interface WorldFrameOptions {
   }) => void;
   stepDomainChallenge: (step: WorldChallengeStep) => string[];
   stepFishing: (step: { isReeling: boolean; isStruck: boolean; seconds: number }) => void;
+  stepMenuNavigation: (deltaSeconds: number) => void;
   stepQuickUse: (step: {
     isActive: boolean;
     isHeld: boolean;

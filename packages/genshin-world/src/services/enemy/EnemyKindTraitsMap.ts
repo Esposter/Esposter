@@ -10,10 +10,16 @@ import { createParticleDrops } from "#src/services/enemy/createParticleDrops";
 
 // What the wiki gives of each kind the world places, its energy drops in falling order with the drop on its defeat last
 export const EnemyKindTraitsMap: Record<EnemyKindId, EnemyKindTraits> = {
-  [EnemyKindId.AbyssHeraldFrostFall]: { element: Element.Cryo, energyDrops: [], poiseType: PoiseType.HumanoidDemiboss },
+  [EnemyKindId.AbyssHeraldFrostFall]: {
+    element: Element.Cryo,
+    energyDrops: [],
+    isAirStaggerImmune: true,
+    poiseType: PoiseType.HumanoidDemiboss,
+  },
   [EnemyKindId.AeonblightDrake]: { energyDrops: [], poiseType: PoiseType.Boss },
   [EnemyKindId.AlgorithmOfSemiIntransientMatrixOfOverseerNetwork]: {
     energyDrops: [],
+    isAirStaggerImmune: true,
     poiseType: PoiseType.OtherDemiboss,
   },
   [EnemyKindId.AnemoHilichurlRogue]: { element: Element.Anemo, energyDrops: [], poiseType: PoiseType.HumanoidDemiboss },
@@ -42,6 +48,7 @@ export const EnemyKindTraitsMap: Record<EnemyKindId, EnemyKindTraits> = {
   [EnemyKindId.AnemoSpecter]: {
     element: Element.Anemo,
     energyDrops: createParticleDrops([60, 0]),
+    isAirStaggerImmune: true,
     poiseType: PoiseType.HumanoidGrunt,
   },
   [EnemyKindId.AnnihilationSpecialistMek]: { energyDrops: [], poiseType: PoiseType.Minion },
@@ -144,6 +151,7 @@ export const EnemyKindTraitsMap: Record<EnemyKindId, EnemyKindTraits> = {
   [EnemyKindId.PraetorianGolem]: { energyDrops: createParticleDrops([75, 50, 25]), poiseType: PoiseType.Boss },
   [EnemyKindId.PrimalConstructProspector]: {
     energyDrops: createParticleDrops([75, 50, 25, 0]),
+    isAirStaggerImmune: true,
     poiseType: PoiseType.OtherDemiboss,
   },
   [EnemyKindId.PrimoGeovishap]: {

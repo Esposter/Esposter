@@ -5,11 +5,11 @@ import { listHeldCharacterPackUrls } from "#src/services/character/listHeldChara
 import { planCharacterPackDownload } from "#src/services/character/planCharacterPackDownload";
 import { readCharacterPackIndex } from "#src/services/character/readCharacterPackIndex";
 import { getResultAsync, noop } from "@esposter/shared";
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 
-// The download of the published character packs, started when the host mounts: the index read, the files the browser's
-// Cache lacks planned, and each of those fetched into the cache with the bytes loaded and pending that the loading
-// Screen shows, and `onHeld` is called once every file is held. A retry plans again, so the files already held are not fetched twice
+// The download of the published character packs: the index read, the files the browser's Cache lacks planned, and each
+// Of those fetched into the cache with the bytes loaded and pending that the loading screen shows. `onHeld` is called
+// Once every file is held. Each call plans again, so the files already held are not fetched twice
 export const useCharacterPackPreload = (gameDataBaseUrl: string, onHeld: () => void) => {
   const status = ref(CharacterPackPreloadStatus.Idle);
   const loadedBytes = ref(0);
@@ -42,6 +42,5 @@ export const useCharacterPackPreload = (gameDataBaseUrl: string, onHeld: () => v
       },
     );
   };
-  onMounted(preload);
-  return { loadedBytes, pendingBytes, retry: preload, status };
+  return { loadedBytes, pendingBytes, preload, status };
 };

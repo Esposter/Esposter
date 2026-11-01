@@ -2,6 +2,10 @@
 export const GAME_TIME_ZONE = "Asia/Shanghai";
 // The hour in that zone the daily, weekly and monthly resets fall on, and a moment before it still belongs to the day before
 export const GAME_DAY_START_HOUR = 4;
+// The hour in that zone a picked daily gathering point comes back at: the game's midnight, four hours before the reset
+export const GATHERING_DAILY_RESPAWN_HOUR = 0;
+// The hour in that zone a mined mining outcrop comes back at, two hours after the reset that draws the day's outcrops
+export const MINING_OUTCROP_RESPAWN_HOUR = 6;
 // The day of the week the weekly reset falls on, numbered as Temporal numbers the days from Monday
 export const WEEKLY_RESET_DAY_OF_WEEK = 1;
 // The day of the month the monthly reset falls on

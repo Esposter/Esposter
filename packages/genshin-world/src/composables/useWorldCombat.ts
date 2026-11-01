@@ -51,7 +51,7 @@ import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
 import { getResultAsync, getSynchronizedFunction, InvalidOperationError, Operation } from "@esposter/shared";
 import { useTimeoutFn } from "@vueuse/core";
-import { createSeededRandom, createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
+import { createSeededRandom, createStamina, LocomotionState } from "genshin-engine";
 import { computed, shallowReactive, shallowRef, watch } from "vue";
 
 // The party the player fields, the characters it is made of and their combat, and the world's combat state the kit on the
@@ -68,6 +68,7 @@ export const useWorldCombat = ({
   placeWorldDrops,
   savedCharacters,
   savedParty,
+  staminaMaximum,
   startingCharacterIdKitMap,
   statTables,
   travelerBonusLines,
@@ -85,6 +86,8 @@ export const useWorldCombat = ({
   placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
   savedCharacters: Character[];
   savedParty: Party;
+  // The most the party's stamina holds, which the statues raise as their levels are reached
+  staminaMaximum: Readonly<Ref<number>>;
   startingCharacterIdKitMap: ReadonlyMap<number, Kit>;
   statTables: StatTables;
   // The bonuses the Traveler holds from the elements it resonated with, once Welkin Moon's Homecoming is done
@@ -191,9 +194,15 @@ export const useWorldCombat = ({
     throw new InvalidOperationError(Operation.Read, useWorldCombat.name, `${activeCharacterId.value}`);
   // The party's stamina pool, which the character on the field spends from and the kit restores to, held across swaps.
   // Impetuous Winds cuts every spend from it, the body's and the kit's, read from the field's resonances at each spend
-  const stamina = createStamina(STAMINA_MAX, () =>
+  const stamina = createStamina(staminaMaximum.value, () =>
     getImpetuousWindsStaminaConsumptionMultiplier(activeCombatant.value?.elementalResonances ?? []),
   );
+  // A level reached raises the pool's maximum, and a pool full at the old maximum stays full at the new one
+  watch(staminaMaximum, (maximum) => {
+    const isFull = stamina.value >= stamina.maximum;
+    stamina.maximum = maximum;
+    if (isFull) stamina.refill();
+  });
   // The world's combat state, which the character on the field steps into: it starts with the active character standing at
   // The origin, its enemies are written in as their Camps load and as they die, and its random source is the world's one
   // Seeded source, so a session's rolls repeat

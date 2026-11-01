@@ -47,13 +47,9 @@ describe(useInventoryEntry, () => {
     specialties: [],
     unlockItemIds: [INSTRUCTION_ITEM_ID],
   };
-  const createInventory = (category: ItemCategory): Inventory => ({
+  const createInventory = (category: ItemCategory, quantity = 1): Inventory => ({
     items: [
-      {
-        definition: { category, id: DISH_ID, name: "", rank: 0, rarity: 0, stackLimit: 99 },
-        id: ENTRY_ID,
-        quantity: 1,
-      },
+      { definition: { category, id: DISH_ID, name: "", rank: 0, rarity: 0, stackLimit: 99 }, id: ENTRY_ID, quantity },
     ],
     nextId: 2,
     quickSwapItemIds: [],
@@ -89,6 +85,20 @@ describe(useInventoryEntry, () => {
 
     expect(use?.inventory.items).toStrictEqual([]);
     expect(getPartyMember(party, EATER_ID).healthShare).toBeCloseTo(0.7);
+  });
+
+  test("a food's use eats the count it is given", () => {
+    expect.hasAssertions();
+
+    const party = createParty([EATER_ID]);
+    getPartyMember(party, EATER_ID).healthShare = 0.5;
+    const use = useInventoryEntry(createInventory(ItemCategory.Food, 3), ENTRY_ID, {
+      ...createContext(new Map([[DISH_ID, dishUse]]), party),
+      count: 2,
+    });
+
+    expect(use?.inventory.items.map(({ quantity }) => quantity)).toStrictEqual([1]);
+    expect(getPartyMember(party, EATER_ID).healthShare).toBeCloseTo(0.9);
   });
 
   test("using an instruction teaches its dish", () => {

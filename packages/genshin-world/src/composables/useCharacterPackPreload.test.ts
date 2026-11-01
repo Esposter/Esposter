@@ -42,8 +42,8 @@ describe(useCharacterPackPreload, () => {
     expect.hasAssertions();
 
     const onHeld = vi.fn<() => void>();
-    const { retry, status } = useCharacterPackPreload(gameDataBaseUrl, onHeld);
-    const run = retry();
+    const { preload, status } = useCharacterPackPreload(gameDataBaseUrl, onHeld);
+    const run = preload();
     await vi.runAllTimersAsync();
     await run;
 
@@ -62,8 +62,8 @@ describe(useCharacterPackPreload, () => {
     vi.stubGlobal("caches", { open: () => Promise.resolve(cache) });
 
     const onHeld = vi.fn<() => void>();
-    const { retry, status } = useCharacterPackPreload(gameDataBaseUrl, onHeld);
-    const run = retry();
+    const { preload, status } = useCharacterPackPreload(gameDataBaseUrl, onHeld);
+    const run = preload();
     await vi.runAllTimersAsync();
     await run;
 

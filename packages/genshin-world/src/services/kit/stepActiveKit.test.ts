@@ -25,11 +25,13 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { setEnemyState } from "#src/services/enemy/setEnemyState";
 import { readOreHit } from "#src/services/gathering/readOreHit";
 import { readReactionOreHit } from "#src/services/gathering/readReactionOreHit";
+import { BEIDOU_CHARACTER_ID } from "#src/services/kit/characters/beidouKit";
 import { FISCHL_CHARACTER_ID } from "#src/services/kit/characters/fischlKit";
 import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
 import { createParty } from "#src/services/party/createParty";
@@ -52,6 +54,7 @@ const characterIdKitMap = await readCharacterKits(
   GAME_DATA_LOCAL_BASE_URL,
   new Map([[TRAVELER_CHARACTER_ID, TALENT_START_LEVELS]]),
 );
+const BEIDOU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, BEIDOU_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 // The combat state the kit on the field steps in, its party the characters given with the first on the field
 const createContext = (combatants: Combatant[], kitEffectState: KitEffectState = { effects: [] }): KitContext => ({
@@ -386,6 +389,19 @@ describe(stepActiveKit, () => {
     stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, createControls());
 
     expect(context.kitEffectState.effects).toStrictEqual([keptBuff]);
+  });
+
+  test("a fall ends the Thunderbeast's Targe that Beidou cast, so it lands nothing after her fall", () => {
+    expect.hasAssertions();
+    const context = createContext([createKitCombatant(BEIDOU_CHARACTER_ID, BEIDOU_KIT)]);
+    BEIDOU_KIT.elementalBurst.onStart?.(context);
+    damagePartyMember(context.party, BEIDOU_CHARACTER_ID, 1);
+    const kitState = createKitState();
+    const controls = createControls();
+    stepActiveKit(kitState, IDLE_INPUT, 0.1, context, controls);
+    stepActiveKit(kitState, IDLE_INPUT, 0.1, context, controls);
+
+    expect(context.kitEffectState.effects).toStrictEqual([]);
   });
 
   // A strike whose one hit lands at twice the seconds it plays for

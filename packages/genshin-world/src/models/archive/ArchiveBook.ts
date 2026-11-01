@@ -13,3 +13,5 @@ export const archiveBookSchema = archiveEntrySchema.extend({
   bodyId: z.int().positive(),
   materialId: z.int().positive(),
 }) satisfies z.ZodType<ArchiveBook>;
+
+export const bookBodySchema = z.string();

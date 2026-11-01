@@ -5,6 +5,7 @@ import { getFollowCameraSettings } from "#src/services/menu/getFollowCameraSetti
 import {
   createFollowCamera,
   createGroundQuery,
+  createIdleInputState,
   createLandmarkCollider,
   FOLLOW_CAMERA_NEUTRAL_SENSITIVITY,
 } from "genshin-engine";
@@ -15,16 +16,7 @@ describe(getFollowCameraSettings, () => {
   const WATER_LEVEL = -10;
   const LOOK_YAW = 0.5;
   const SET_HORIZONTAL_SENSITIVITY = 5;
-  const STILL_INPUT: InputState = {
-    heldActions: new Set(),
-    lookPitch: 0,
-    lookYaw: 0,
-    moveForward: 0,
-    moveRight: 0,
-    moveUp: 0,
-    pressedActions: new Set(),
-    zoomSteps: 0,
-  };
+  const STILL_INPUT: InputState = createIdleInputState();
 
   test("the sensitivity and distance a player sets reach the follow camera", () => {
     expect.hasAssertions();

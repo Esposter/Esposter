@@ -3,7 +3,7 @@ import type { InputState } from "genshin-engine";
 
 import { useInteraction } from "#src/composables/useInteraction";
 import { INTERACTION_HELD_REPEAT_SECONDS } from "#src/services/interaction/constants";
-import { InputAction } from "genshin-engine";
+import { createIdleInputState, InputAction } from "genshin-engine";
 import { InteractionKind } from "genshin-interface";
 import { Object3D } from "three";
 import { describe, expect, test } from "vitest";
@@ -21,16 +21,7 @@ describe(useInteraction, () => {
     name: "Amber",
     position: { x: 0, y: 0, z: 1 },
   };
-  const idleInput: InputState = {
-    heldActions: new Set(),
-    lookPitch: 0,
-    lookYaw: 0,
-    moveForward: 0,
-    moveRight: 0,
-    moveUp: 0,
-    pressedActions: new Set(),
-    zoomSteps: 0,
-  };
+  const idleInput: InputState = createIdleInputState();
 
   test("a press returns the selected row", () => {
     expect.hasAssertions();

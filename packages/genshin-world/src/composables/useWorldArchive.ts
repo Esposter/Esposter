@@ -11,6 +11,7 @@ import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { GameLanguage } from "genshin-text";
 import type { ComputedRef, Ref, ShallowRef } from "vue";
 
+import { bookBodySchema } from "#src/models/archive/ArchiveBook";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { GameDataset } from "#src/models/data/GameDataset";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
@@ -32,7 +33,6 @@ import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readSceneGroups } from "#src/services/sceneGroup/readSceneGroups";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
-import { z } from "zod";
 
 // The Archive's entries, the volumes it reads and the defeats it counts. Its entries are read once the quest it opens after
 // Is done, as the game opens it, and its progress and defeats are the save's, the bag's items and the defeats opening its
@@ -82,7 +82,7 @@ export const useWorldArchive = ({
     if (!book) return;
     loadingBookId = bookId;
     await getResultAsync(() =>
-      readGameDataEntry(gameDataBaseUrl, `${GameDataset.BookBody}/${language}`, String(book.bodyId), z.string()),
+      readGameDataEntry(gameDataBaseUrl, `${GameDataset.BookBody}/${language}`, String(book.bodyId), bookBodySchema),
     ).match(
       (body) => {
         if (loadingBookId !== bookId) return;

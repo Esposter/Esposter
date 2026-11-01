@@ -10,6 +10,7 @@ import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
 import { payOfferingLevels } from "#src/services/offering/payOfferingLevels";
 import { claimStatueLevel } from "#src/services/statue/claimStatueLevel";
+import { computeMaximumStamina } from "#src/services/statue/computeMaximumStamina";
 import { computeStatueLevelEvents } from "#src/services/statue/computeStatueLevelEvents";
 import { findOculus } from "#src/services/statue/findOculus";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
@@ -63,10 +64,15 @@ export const useWorldStatues = ({
     placeWorldDrops(source, paid.overflowItems);
     return paid.adventureExp;
   };
-  // A region's statue levels, read by the key its publish wrote. A region no publish wrote has no levels to pay
-  const readRegionStatueLevels = (regionId: string): Promise<StatueLevel[]> => {
+  // The levels each region's statues were last read to take, by region, which the maximum stamina rises with
+  const regionLevelsMap = shallowRef<ReadonlyMap<string, StatueLevel[]>>(new Map());
+  // A region's statue levels, read by the key its publish wrote and kept as the region's levels. A region no publish
+  // Wrote has no levels to pay
+  const readRegionStatueLevels = async (regionId: string): Promise<StatueLevel[]> => {
     const key: `statueLevels/${string}` = `statueLevels/${regionId}`;
-    return checkIsGameDataKey(key) ? readStatueLevels(gameDataBaseUrl, key) : Promise.resolve([]);
+    const levels = checkIsGameDataKey(key) ? await readStatueLevels(gameDataBaseUrl, key) : [];
+    regionLevelsMap.value = new Map([...regionLevelsMap.value, [regionId, levels]]);
+    return levels;
   };
   // The levels a region's statues take, handed to the caller once they have arrived, so the Worship Statue opens with its
   // Screen showing each level and its rewards, and a resonance reads them before it acts
@@ -75,6 +81,19 @@ export const useWorldStatues = ({
       console.error(error);
     }),
   );
+  // The party's maximum stamina, raised by the levels each region has reached, from the levels read so far
+  const staminaMaximum = computed(() =>
+    computeMaximumStamina(
+      [...regionStatueProgressMap.value].map(([regionId, progress]) =>
+        toStatueRegionProgress(progress, regionLevelsMap.value.get(regionId) ?? []),
+      ),
+    ),
+  );
+  // A region the save has started reads its levels on load, so the maximum stamina it raised holds from the start, not
+  // From the region's next read
+  for (const [regionId, { level }] of regionStatueProgressMap.value) {
+    if (level > 0) readRegionLevels(regionId, () => undefined);
+  }
   // Touching an Oculus collects it once, holding it in its region, and gives its Adventure EXP
   // A touch that lands while an Oculus's levels are still arriving waits for them, rather than reading them again
   const collectingOculusIds = new Set<string>();
@@ -167,6 +186,7 @@ export const useWorldStatues = ({
     offerWorship,
     openWorship,
     resonateStatue,
+    staminaMaximum,
     worshipLevels,
     worshipRegionId,
   };

@@ -51,6 +51,7 @@ export const useWorldFrame = ({
   stepAutoRecover,
   stepDomainChallenge,
   stepFishing,
+  stepMenuNavigation,
   stepQuickUse,
   stepShortcutWheel,
   stepTrial,
@@ -92,6 +93,7 @@ export const useWorldFrame = ({
       screenKind.value = getNextScreenKind(screenKind.value, inputState.pressedActions, {
         isPaimonMenuLocked: checkIsSpecialStoryModeActive(questsInProgress.value, questProgressMap.value),
       });
+    stepMenuNavigation(delta);
     if (checkIsWorldInPlay())
       stepShortcutWheel(
         inputState.heldActions.has(InputAction.OpenShortcutWheel),

@@ -11,6 +11,7 @@ import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
 import { checkKitActionLanded } from "#src/services/kit/checkKitActionLanded";
 import { copyKitBody } from "#src/services/kit/copyKitBody";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
+import { endKitFallEffects } from "#src/services/kit/effects/endKitFallEffects";
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
@@ -30,6 +31,7 @@ import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { strikeLunarChargedCloud } from "#src/services/kit/strikeLunarChargedCloud";
 import { strikeMoondriftHarmonyHits } from "#src/services/kit/strikeMoondriftHarmonyHits";
 import { tickEnemyStatuses } from "#src/services/kit/tickEnemyStatuses";
+import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { lightAscendantGleam } from "#src/services/party/lightAscendantGleam";
@@ -206,6 +208,9 @@ export const stepActiveKit = (
   for (let index = 0; index < sentCount; index++) {
     const healthChange = takeOne(healthChanges, index);
     triggerHealthChange(healthChange);
+    // A fall ends the summons its character's fall ends, before the kits hear of the change
+    if (healthChange.healthShare < 0 && checkIsCharacterDown(party, healthChange.characterId))
+      endKitFallEffects(kitEffectState.effects, healthChange.characterId);
     emitKitEvent({ ...healthChange, kind: KitEventKind.HealthChanged }, context);
     // A fall a kit refused is heard just after the change that left its member standing
     if (healthChange.isFallRefused)

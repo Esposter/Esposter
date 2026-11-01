@@ -10,8 +10,9 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(downloadCharacterPackFiles, () => {
   const gameDataBaseUrl = "http://a.test";
-  const modelUrl = "http://a.test/characterPacks/1/model.pmx?v=0000000000000000";
-  const termsUrl = "http://a.test/characterPacks/1/terms.txt?v=0000000000000000";
+  const sha256 = "0".repeat(64);
+  const modelUrl = `http://a.test/characterPacks/1/model.pmx?sha256=${sha256}`;
+  const termsUrl = `http://a.test/characterPacks/1/terms.txt?sha256=${sha256}`;
   const modelText = "model";
   const termsText = "terms";
   const failedMessage = "Invalid operation: Read, name: terms.txt, failed after its attempts";
@@ -20,8 +21,8 @@ describe(downloadCharacterPackFiles, () => {
       {
         avatarId: 1,
         files: [
-          { bytes: 5, path: CHARACTER_MODEL_PATH, sha256: "0".repeat(64) },
-          { bytes: 5, path: CHARACTER_TERMS_PATH, sha256: "0".repeat(64) },
+          { bytes: 5, path: CHARACTER_MODEL_PATH, sha256 },
+          { bytes: 5, path: CHARACTER_TERMS_PATH, sha256 },
         ],
         name: "a",
       },

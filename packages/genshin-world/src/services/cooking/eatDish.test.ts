@@ -1,5 +1,7 @@
+import type { DishUse } from "#src/models/cooking/DishUse";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { Party } from "#src/models/party/Party";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { DishTarget } from "#src/models/cooking/DishTarget";
@@ -8,7 +10,7 @@ import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { ItemCategory } from "genshin-interface";
-import { describe, expect, test } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(eatDish, () => {
   const DISH_ID = 108_011;
@@ -27,19 +29,23 @@ describe(eatDish, () => {
     nextId: 2,
     quickSwapItemIds: [],
   });
+  let kitEffectState: KitEffectState;
+  let party: Party;
+
+  beforeEach(() => {
+    kitEffectState = { effects: [] };
+    party = createParty([EATER_ID, ALLY_ID]);
+  });
+
+  const eat = (inventory: Inventory, dishUse: DishUse, count = 1) =>
+    eatDish(inventory, DISH_ID, dishUse, { count, eaterId: EATER_ID, getMaxHealth, kitEffectState, party });
 
   test("using a recovery dish heals the selected character", () => {
     expect.hasAssertions();
 
-    const party = createParty([EATER_ID, ALLY_ID]);
     getPartyMember(party, EATER_ID).healthShare = 0.5;
     getPartyMember(party, ALLY_ID).healthShare = 0.5;
-    const inventory = eatDish(
-      createInventory(2),
-      DISH_ID,
-      { heal: { flat: 0, healthShare: 0.2 }, target: DishTarget.Selected },
-      { eaterId: EATER_ID, getMaxHealth, kitEffectState: { effects: [] }, party },
-    );
+    const inventory = eat(createInventory(2), { heal: { flat: 0, healthShare: 0.2 }, target: DishTarget.Selected });
 
     expect(countInventoryItem(inventory?.items ?? [], DISH_ID)).toBe(1);
     expect(getPartyMember(party, EATER_ID).healthShare).toBeCloseTo(0.7);
@@ -49,31 +55,41 @@ describe(eatDish, () => {
   test("using a party dish heals every party member", () => {
     expect.hasAssertions();
 
-    const party = createParty([EATER_ID, ALLY_ID]);
     getPartyMember(party, EATER_ID).healthShare = 0.5;
     getPartyMember(party, ALLY_ID).healthShare = 0.5;
-    eatDish(
-      createInventory(1),
-      DISH_ID,
-      { heal: { flat: 100, healthShare: 0.1 }, target: DishTarget.Party },
-      { eaterId: EATER_ID, getMaxHealth, kitEffectState: { effects: [] }, party },
-    );
+    eat(createInventory(1), { heal: { flat: 100, healthShare: 0.1 }, target: DishTarget.Party });
 
     expect(getPartyMember(party, EATER_ID).healthShare).toBeCloseTo(0.7);
     expect(getPartyMember(party, ALLY_ID).healthShare).toBeCloseTo(0.7);
   });
 
+  test("eating several of a dish heals for each one eaten and takes that many", () => {
+    expect.hasAssertions();
+
+    getPartyMember(party, EATER_ID).healthShare = 0.5;
+    const inventory = eat(createInventory(3), { heal: { flat: 0, healthShare: 0.1 }, target: DishTarget.Selected }, 2);
+
+    assert.exists(inventory);
+    expect(countInventoryItem(inventory.items, DISH_ID)).toBe(1);
+    expect(getPartyMember(party, EATER_ID).healthShare).toBeCloseTo(0.7);
+  });
+
+  test("a count above what the bag holds eats only what it holds", () => {
+    expect.hasAssertions();
+
+    getPartyMember(party, EATER_ID).healthShare = 0.5;
+    const inventory = eat(createInventory(2), { heal: { flat: 0, healthShare: 0.1 }, target: DishTarget.Selected }, 3);
+
+    assert.exists(inventory);
+    expect(countInventoryItem(inventory.items, DISH_ID)).toBe(0);
+    expect(getPartyMember(party, EATER_ID).healthShare).toBeCloseTo(0.7);
+  });
+
   test("a heal stops at full health", () => {
     expect.hasAssertions();
 
-    const party = createParty([EATER_ID]);
     getPartyMember(party, EATER_ID).healthShare = 0.9;
-    eatDish(
-      createInventory(1),
-      DISH_ID,
-      { heal: { flat: 0, healthShare: 0.3 }, target: DishTarget.Selected },
-      { eaterId: EATER_ID, getMaxHealth, kitEffectState: { effects: [] }, party },
-    );
+    eat(createInventory(1), { heal: { flat: 0, healthShare: 0.3 }, target: DishTarget.Selected });
 
     expect(getPartyMember(party, EATER_ID).healthShare).toBe(1);
   });
@@ -81,14 +97,8 @@ describe(eatDish, () => {
   test("a revive dish revives a fallen party member", () => {
     expect.hasAssertions();
 
-    const party = createParty([EATER_ID]);
     getPartyMember(party, EATER_ID).healthShare = 0;
-    eatDish(
-      createInventory(1),
-      DISH_ID,
-      { revive: { flat: 500 }, target: DishTarget.Selected },
-      { eaterId: EATER_ID, getMaxHealth, kitEffectState: { effects: [] }, party },
-    );
+    eat(createInventory(1), { revive: { flat: 500 }, target: DishTarget.Selected });
 
     expect(getPartyMember(party, EATER_ID).healthShare).toBeCloseTo(0.5);
   });
@@ -96,16 +106,10 @@ describe(eatDish, () => {
   test("a food with none in the bag cannot be used", () => {
     expect.hasAssertions();
 
-    const party = createParty([EATER_ID]);
     getPartyMember(party, EATER_ID).healthShare = 0.5;
 
     expect(
-      eatDish(
-        createInventory(0),
-        DISH_ID,
-        { heal: { flat: 0, healthShare: 0.2 }, target: DishTarget.Selected },
-        { eaterId: EATER_ID, getMaxHealth, kitEffectState: { effects: [] }, party },
-      ),
+      eat(createInventory(0), { heal: { flat: 0, healthShare: 0.2 }, target: DishTarget.Selected }),
     ).toBeUndefined();
     expect(getPartyMember(party, EATER_ID).healthShare).toBe(0.5);
   });
@@ -113,18 +117,11 @@ describe(eatDish, () => {
   test("an anti-cold dish holds the team's anti-cold for its seconds, restarting the one it holds", () => {
     expect.hasAssertions();
 
-    const kitEffectState: KitEffectState = { effects: [] };
-    const party = createParty([EATER_ID]);
-    const eat = (antiCold: { ratio: number; seconds: number }) =>
-      eatDish(
-        createInventory(2),
-        DISH_ID,
-        { antiCold, target: DishTarget.Party },
-        { eaterId: EATER_ID, getMaxHealth, kitEffectState, party },
-      );
+    const eatAntiCold = (antiCold: { ratio: number; seconds: number }) =>
+      eat(createInventory(2), { antiCold, target: DishTarget.Party });
 
-    eat({ ratio: -0.3, seconds: 900 });
-    eat({ ratio: -0.5, seconds: 1500 });
+    eatAntiCold({ ratio: -0.3, seconds: 900 });
+    eatAntiCold({ ratio: -0.5, seconds: 1500 });
 
     expect(kitEffectState.effects).toStrictEqual([{ kind: "antiCold", ratio: -0.5, secondsRemaining: 1500 }]);
   });
@@ -132,20 +129,14 @@ describe(eatDish, () => {
   test("a bonus dish lasts as its description says", () => {
     expect.hasAssertions();
 
-    const kitEffectState: KitEffectState = { effects: [] };
-    eatDish(
-      createInventory(1),
-      DISH_ID,
-      {
-        bonus: {
-          attributes: [{ amount: 0.06, attribute: Attribute.CriticalRate }],
-          seconds: 300,
-          source: "Critical_Team",
-        },
-        target: DishTarget.Selected,
+    eat(createInventory(1), {
+      bonus: {
+        attributes: [{ amount: 0.06, attribute: Attribute.CriticalRate }],
+        seconds: 300,
+        source: "Critical_Team",
       },
-      { eaterId: EATER_ID, getMaxHealth, kitEffectState, party: createParty([EATER_ID]) },
-    );
+      target: DishTarget.Selected,
+    });
 
     expect(kitEffectState.effects).toStrictEqual([
       {

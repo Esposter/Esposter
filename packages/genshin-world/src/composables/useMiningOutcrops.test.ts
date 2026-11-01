@@ -42,7 +42,7 @@ describe(useMiningOutcrops, () => {
     return { breakOre, mining, now };
   };
 
-  test("a claymore break drops the outcrop's ore and leaves it gone until the next reset", () => {
+  test("a claymore break drops the outcrop's ore and leaves it gone until its 06:00 respawn", () => {
     expect.hasAssertions();
     const { breakOre, mining, now } = setup();
     mining.refreshMiningOutcrops(now.value, random);
@@ -51,17 +51,20 @@ describe(useMiningOutcrops, () => {
     expect(breakOre).toHaveBeenCalledExactlyOnceWith(places[0], random);
     mining.refreshMiningOutcrops(now.value, random);
     expect(mining.standingMiningOutcrops.value.map(({ id }) => id)).toStrictEqual(["b"]);
-    now.value = resetDay2;
+    now.value = resetDay2.add({ hours: 2 });
     mining.refreshMiningOutcrops(now.value, random);
     expect(mining.standingMiningOutcrops.value.map(({ id }) => id)).toStrictEqual(["a", "b"]);
   });
 
-  test("a reload keeps a mined outcrop gone until the next reset", () => {
+  test("a reload keeps a mined outcrop gone past the next day's draw until its 06:00 respawn", () => {
     expect.hasAssertions();
     const { mining, now } = setup([{ id: "a", minedAt: resetDay1.add({ hours: 5 }) }]);
     mining.refreshMiningOutcrops(now.value, random);
     expect(mining.standingMiningOutcrops.value.map(({ id }) => id)).toStrictEqual(["b"]);
     now.value = resetDay2;
+    mining.refreshMiningOutcrops(now.value, random);
+    expect(mining.standingMiningOutcrops.value.map(({ id }) => id)).toStrictEqual(["b"]);
+    now.value = resetDay2.add({ hours: 2 });
     mining.refreshMiningOutcrops(now.value, random);
     expect(mining.standingMiningOutcrops.value.map(({ id }) => id)).toStrictEqual(["a", "b"]);
   });

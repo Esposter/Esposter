@@ -8,9 +8,9 @@ describe(planCharacterPackDownload, () => {
   const gameDataBaseUrl = "http://a.test";
   const sha256 = "0".repeat(64);
   const republishedSha256 = "1".repeat(64);
-  const modelUrl = "http://a.test/characterPacks/1/model.pmx?v=0000000000000000";
-  const termsUrl = "http://a.test/characterPacks/1/terms.txt?v=0000000000000000";
-  const republishedModelUrl = "http://a.test/characterPacks/1/model.pmx?v=1111111111111111";
+  const modelUrl = `http://a.test/characterPacks/1/model.pmx?sha256=${sha256}`;
+  const termsUrl = `http://a.test/characterPacks/1/terms.txt?sha256=${sha256}`;
+  const republishedModelUrl = `http://a.test/characterPacks/1/model.pmx?sha256=${republishedSha256}`;
   const index: CharacterPackIndex = {
     avatars: [
       {

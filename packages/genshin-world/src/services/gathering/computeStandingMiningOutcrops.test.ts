@@ -34,10 +34,13 @@ describe(computeStandingMiningOutcrops, () => {
     expect(computeStandingMiningOutcrops(places, drawnAt(resetDay1), new Map(), resetDay2)).toStrictEqual([]);
   });
 
-  test("a mined outcrop stands again from the next day's draw", () => {
+  test("a mined outcrop stands again at its 06:00 respawn, after the next day's draw", () => {
     expect.hasAssertions();
     const minedAt = new Map([["a", resetDay1.add({ hours: 6 })]]);
 
-    expect(computeStandingMiningOutcrops(places, drawnAt(resetDay2), minedAt, resetDay2)).toStrictEqual(places);
+    expect(computeStandingMiningOutcrops(places, drawnAt(resetDay2), minedAt, resetDay2)).toStrictEqual([places[1]]);
+    expect(
+      computeStandingMiningOutcrops(places, drawnAt(resetDay2), minedAt, resetDay2.add({ hours: 2 })),
+    ).toStrictEqual(places);
   });
 });

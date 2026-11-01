@@ -25,6 +25,7 @@ import { InvalidOperationError, noop, Operation } from "@esposter/shared";
 import {
   createCharacterController,
   createGroundQuery,
+  createIdleInputState,
   createLandmarkCollider,
   createSeededRandom,
   createStamina,
@@ -98,16 +99,7 @@ export const replayScriptedMinute = ({
     staminaMaximum: STAMINA_MAX,
   });
   // The body stands still, so the input it steps on holds nothing
-  const inputState: InputState = {
-    heldActions: new Set(),
-    lookPitch: 0,
-    lookYaw: 0,
-    moveForward: 0,
-    moveRight: 0,
-    moveUp: 0,
-    pressedActions: new Set(),
-    zoomSteps: 0,
-  };
+  const inputState: InputState = createIdleInputState();
   const startingCombatant = characterIdCombatantMap.get(getActiveCharacterId(party));
   if (!startingCombatant)
     throw new InvalidOperationError(Operation.Read, replayScriptedMinute.name, `${getActiveCharacterId(party)}`);

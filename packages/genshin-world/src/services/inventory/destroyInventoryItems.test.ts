@@ -1,4 +1,5 @@
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
+import type { MaterialData } from "#src/models/inventory/MaterialData";
 
 import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -6,6 +7,7 @@ import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { Currency } from "#src/models/inventory/Currency";
 import { DestroyRule } from "#src/models/inventory/DestroyRule";
+import { MaterialType } from "#src/models/inventory/MaterialType";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { destroyInventoryItems } from "#src/services/inventory/destroyInventoryItems";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
@@ -19,6 +21,8 @@ describe(destroyInventoryItems, () => {
   const ORE_ID = 104_011;
   const MORA_ID = 202;
   const ORE_STACK_LIMIT = 99_999;
+  const APPLE_ID = 100_001;
+  const APPLE_NAME_TEXT_ID = "2483588484";
 
   const createWeapon = (id: number, rarity: number, destroyRule: DestroyRule): InventoryItem => ({
     definition: {
@@ -161,5 +165,34 @@ describe(destroyInventoryItems, () => {
       destroyInventoryItems(inventory, EMPTY_WALLET, [weapon.id], englishNameText, materialDataMap),
     ).toBeUndefined();
     expect(inventory.items).toStrictEqual([weapon, fullOreStack]);
+  });
+
+  test("destroys a material whose rule returns materials, and returns none", () => {
+    expect.hasAssertions();
+
+    const appleData: MaterialData = {
+      destroyRule: DestroyRule.ReturnMaterial,
+      id: APPLE_ID,
+      materialType: MaterialType.NoticeAddHp,
+      nameTextId: APPLE_NAME_TEXT_ID,
+      rank: 0,
+      rarity: 0,
+      stackLimit: 1,
+    };
+    const apple: InventoryItem = {
+      definition: getItemDefinition(APPLE_ID, englishNameText, new Map([[APPLE_ID, appleData]])),
+      id: 0,
+      quantity: 1,
+    };
+
+    expect(
+      destroyInventoryItems(
+        { items: [apple], nextId: 1, quickSwapItemIds: [] },
+        EMPTY_WALLET,
+        [apple.id],
+        englishNameText,
+        materialDataMap,
+      ),
+    ).toStrictEqual({ inventory: { items: [], nextId: 1, quickSwapItemIds: [] }, wallet: EMPTY_WALLET });
   });
 });

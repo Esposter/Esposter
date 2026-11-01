@@ -12,6 +12,7 @@ import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import { Element } from "#src/models/Element";
+import { EnemyState } from "#src/models/enemy/EnemyState";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -582,6 +583,20 @@ describe(strikeEnemy, () => {
     strikeEnemy(enemy, { ...TRAVELER_KIT.plungeCollision, ...launch }, combatant, context);
 
     expect(enemy.statuses).toStrictEqual([]);
+  });
+
+  test("a launching hit that staggers an Air-immune enemy leaves it staggered and unlaunched", () => {
+    expect.hasAssertions();
+
+    const enemy = createSturdyEnemy();
+    enemy.traits = { ...enemy.traits, isAirStaggerImmune: true };
+    const hit: KitHit = { ...TRAVELER_KIT.plungeCollision, isLaunching: true, poiseDamage: STURDY_HEALTH };
+    const combatant = createCombatant();
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+
+    strikeEnemy(enemy, hit, combatant, context);
+
+    expect([enemy.state, enemy.statuses]).toStrictEqual([EnemyState.Stagger, []]);
   });
 
   test("adds a hit's additive base DMG bonus, read from its striker, to the base damage it is priced at", () => {

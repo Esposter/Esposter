@@ -7,6 +7,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { ExpeditionPassiveKind } from "#src/models/expedition/ExpeditionPassiveKind";
 import { ExpeditionRegion } from "#src/models/expedition/ExpeditionRegion";
 import { Currency } from "#src/models/inventory/Currency";
+import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { claimExpedition } from "#src/services/expedition/claimExpedition";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
@@ -80,6 +81,7 @@ describe(claimExpedition, () => {
       {
         definition: {
           category: ItemCategory.Material,
+          destroyRule: DestroyRule.ReturnMaterial,
           id: IRON_CHUNK_ITEM_ID,
           name: ENGLISH_GAME_TEXT[GameTextKey.IronChunk],
           rank: 301,

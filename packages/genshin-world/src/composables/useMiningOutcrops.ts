@@ -12,6 +12,7 @@ import { readMiningOutcropPlaces } from "#src/services/gathering/readMiningOutcr
 import { strikeOre } from "#src/services/gathering/strikeOre";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { checkIsMiningOutcropStanding } from "#src/services/leyLine/checkIsMiningOutcropStanding";
+import { computeNextMiningOutcropRespawn } from "#src/services/leyLine/computeNextMiningOutcropRespawn";
 import { computeShopRefreshTime } from "#src/services/shop/computeShopRefreshTime";
 import { checkIsDailyResetDayCurrent } from "#src/services/time/checkIsDailyResetDayCurrent";
 import { getResultAsync } from "@esposter/shared";
@@ -20,7 +21,7 @@ import { computed, shallowRef } from "vue";
 
 // The mining outcrops of each region the world has loaded: a region's places are read once, and its daily reset draws
 // Its outcrops to stand at them until the next reset. A strike breaks one like an ore, dropping its Magical Crystal Chunks
-// And leaving it gone until the next reset's draw. The mined ones are the save's, held until their respawn
+// And leaving it gone until its respawn. The mined ones are the save's, held until then
 export const useMiningOutcrops = ({
   breakOre,
   gameDataBaseUrl,
@@ -78,14 +79,21 @@ export const useMiningOutcrops = ({
     }
   };
   // Read each frame, so a place drawn at a reset or come back from its respawn shows at once. A reset reaches the standing
-  // Places only through its day's draw, which replaces the draws, so they are worked out again only when the places, the
-  // Draws or the mined map is replaced, and the list is replaced only when its places change
+  // Places only through its day's draw, which replaces the draws, and a respawn comes between draws, so they are worked
+  // Out again when the places, the draws or the mined map is replaced or the next respawn has come, and the list is
+  // Replaced only when its places change
   let standingInputs: readonly unknown[] | undefined;
+  let nextRespawnAt: Temporal.Instant | undefined;
   const refreshMiningOutcrops = (now: Temporal.Instant, random: () => number) => {
     drawDayMiningOutcrops(now, random);
     const inputs = [placesMap.value, drawnMap.value, minedAtMap.value];
-    if (standingInputs?.every((input, index) => input === inputs[index])) return;
+    if (
+      standingInputs?.every((input, index) => input === inputs[index]) &&
+      (nextRespawnAt === undefined || Temporal.Instant.compare(now, nextRespawnAt) < 0)
+    )
+      return;
     standingInputs = inputs;
+    nextRespawnAt = computeNextMiningOutcropRespawn(minedAtMap.value.values(), now);
     const standing = [...placesMap.value].flatMap(([regionId, places]) =>
       computeStandingMiningOutcrops(places, drawnMap.value.get(regionId), minedAtMap.value, now),
     );
@@ -95,7 +103,7 @@ export const useMiningOutcrops = ({
     if (!isSameStanding) standingMiningOutcrops.value = standing;
   };
   // A strike on a standing mining outcrop wears its break share down as an ore's does. A break drops its ore into the
-  // World, and the outcrop is gone until the reset that brings it back
+  // World, and the outcrop is gone until the respawn that brings it back
   const strikeMiningOutcrops = (body: KitBody, hit: OreHit, random: () => number) => {
     const now = getWorldNow();
     for (const { id, kind, position } of standingMiningOutcrops.value) {

@@ -126,3 +126,14 @@ export const GRAPHICS_QUALITY_TIERS: readonly QualityTier[] = [QualityTier.Low, 
 // The keys the list screens step between their tabs with, by their physical code, as the Q and E marks on their band show
 export const LIST_SCREEN_TAB_PREVIOUS_CODE = "KeyQ";
 export const LIST_SCREEN_TAB_NEXT_CODE = "KeyE";
+// The event a gamepad's bumper steps a list screen's tab with, carrying the step as its detail, which the Q and E
+// Keys' handler takes as well
+export const LIST_SCREEN_TAB_STEP_EVENT = "listScreenTabStep";
+// The controls a menu's focus can rest on, which the gamepad's directional pad and stick walk between
+export const MENU_FOCUSABLE_SELECTOR =
+  'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])';
+// The seconds a held direction waits before its focus repeats, and the seconds between repeats after the first
+export const MENU_REPEAT_DELAY_SECONDS = 0.4;
+export const MENU_REPEAT_INTERVAL_SECONDS = 0.12;
+// The attribute a pad's press sets on the focused control while the press shows, which draws the control's pressed look
+export const MENU_PRESSED_ATTRIBUTE = "data-pressed";

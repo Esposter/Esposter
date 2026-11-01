@@ -104,7 +104,7 @@ export const createBeidouKitBehaviour = ({
   };
   return {
     // The Thunderbeast's Targe stands from the cast for the group's seconds as a summon that follows the body on the
-    // Field, whoever it is, as the wiki's notes give it
+    // Field, whoever it is, and ends as Beidou falls, as the wiki's notes give it
     burst: {
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         castKitSummon(
@@ -112,7 +112,7 @@ export const createBeidouKitBehaviour = ({
           { facing, height, position },
           combatant,
           combatant.constellationCount >= BANE_OF_EVIL_CONSTELLATION ? baneOfEvilTicks : [],
-          { isFollowing: true, secondsRemaining: targeSeconds },
+          { isEndedOnFall: true, isFollowing: true, secondsRemaining: targeSeconds },
         );
       },
     },

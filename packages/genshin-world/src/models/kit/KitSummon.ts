@@ -19,6 +19,8 @@ export interface KitSummon extends KitSwapEndable {
   hits: KitHit[];
   // The name its character's kit finds it by among the team's effects, if the kit reads it again
   id?: string;
+  // Whether the fall of its character, the one that cast it, ends it
+  isEndedOnFall?: true;
   // Whether the summon moves with the body on the field, standing where that body stands on each step, whoever it is
   isFollowing?: true;
   kind: "summon";

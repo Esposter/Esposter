@@ -8,9 +8,9 @@ import { describe, expect, test } from "vitest";
 describe(createCharacterPackReader, () => {
   const gameDataBaseUrl = "http://a.test";
   const sha256 = "0".repeat(64);
-  const modelUrl = "http://a.test/characterPacks/1/folder/model.pmx?v=0000000000000000";
-  const textureUrl = "http://a.test/characterPacks/1/folder/tex.png?v=0000000000000000";
-  const termsUrl = "http://a.test/characterPacks/1/terms.txt?v=0000000000000000";
+  const modelUrl = `http://a.test/characterPacks/1/folder/model.pmx?sha256=${sha256}`;
+  const textureUrl = `http://a.test/characterPacks/1/folder/tex.png?sha256=${sha256}`;
+  const termsUrl = `http://a.test/characterPacks/1/terms.txt?sha256=${sha256}`;
   const modelText = "model";
   const textureText = "texture";
   const termsText = "terms";

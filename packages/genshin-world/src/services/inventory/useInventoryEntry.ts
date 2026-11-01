@@ -13,15 +13,16 @@ import { checkIsFragileResin } from "#src/services/inventory/checkIsFragileResin
 import { refillOriginalResinWithFragileResin } from "#src/services/originalResin/refillOriginalResinWithFragileResin";
 import { ItemCategory } from "genshin-interface";
 
-// The bag, wallet and cooking progress after one of its entries is used, routed by the entry's kind: a food is eaten through
-// Its dish's use by the Character on the field, Fragile Resin is routed by its id, since the published material table does not
-// Yet carry the item, and an instruction is routed by the dish it teaches. Undefined, with nothing changed, where the bag holds
-// No such entry or its kind has no use yet
+// The bag, wallet and cooking progress after one of its entries is used, routed by the entry's kind: a food is eaten,
+// Up to `count` of it, through its dish's use by the Character on the field, Fragile Resin is routed by its id, since
+// The published material table does not yet carry the item, and an instruction is routed by the dish it teaches.
+// Undefined, with nothing changed, where the bag holds no such entry or its kind has no use yet
 export const useInventoryEntry = (
   inventory: Inventory,
   entryId: number,
   {
     cookingProgress,
+    count = 1,
     dishUseMap,
     eaterId,
     getMaxHealth,
@@ -31,6 +32,7 @@ export const useInventoryEntry = (
     party,
     wallet,
   }: {
+    count?: number;
     cookingProgress: CookingProgress;
     dishUseMap: ReadonlyMap<number, DishUse>;
     eaterId: number;
@@ -55,6 +57,7 @@ export const useInventoryEntry = (
       const dishUse = dishUseMap.get(item.definition.id);
       if (dishUse === undefined) return undefined;
       const eatenInventory = eatDish(inventory, item.definition.id, dishUse, {
+        count,
         eaterId,
         getMaxHealth,
         kitEffectState,
