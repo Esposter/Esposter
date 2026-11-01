@@ -51,6 +51,7 @@ import { generateWriteSasUrl } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
+  DEFAULT_EVERYONE_PERMISSIONS,
   getDisplayNameExpression,
   getPublicUserColumns,
   invitesInMessage,
@@ -94,11 +95,7 @@ export const baseRoomRouter = router({
           .values({
             isEveryone: true,
             name: "@everyone",
-            permissions:
-              RoomPermission.ReadMessages |
-              RoomPermission.SendMessages |
-              RoomPermission.MentionEveryone |
-              RoomPermission.ManageInvites,
+            permissions: DEFAULT_EVERYONE_PERMISSIONS,
             position: 0,
             roomId: newRoom.id,
           }),

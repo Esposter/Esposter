@@ -1,3 +1,12 @@
+import { RoomPermission } from "#src/models/message/RoomPermission";
+
+// The permissions a new server room's `@everyone` role holds. The backfill migration cannot import this, so it states the
+// Same value in SQL and names this constant; change both together
+export const DEFAULT_EVERYONE_PERMISSIONS =
+  RoomPermission.ReadMessages |
+  RoomPermission.SendMessages |
+  RoomPermission.MentionEveryone |
+  RoomPermission.ManageInvites;
 export const DISPLAY_NAME_MAX_LENGTH = 32;
 export const ROOM_CATEGORY_NAME_MAX_LENGTH = 100;
 export const ROOM_EMOJI_NAME_MAX_LENGTH = 32;
