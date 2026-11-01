@@ -6,7 +6,7 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.8 }
   },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 10539 } },
-  "frames.constellation4SoundwaveTick": { "cause": "Unclassified", "value": 45 },
+  "frames.constellation4SoundwaveTick": { "cause": "Unsourced", "value": 45 },
   "frames.soundwaveTick": { "file": "burst.go", "line": 19, "source": "Gcsim", "value": 60 },
   "hits.soundwave.area": {
     "file": "burst.go",
