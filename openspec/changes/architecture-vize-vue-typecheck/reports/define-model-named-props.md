@@ -1,16 +1,12 @@
-# content-mapper: `defineModel()` beside `defineProps<Props>()` gives TS7053 on the model's key when no variable has that name
+# content-mapper: `defineModel()` beside `defineProps<Props>()` reads the model key from a type that lacks it (TS7053)
 
-A `<script setup>` block calls `defineProps<Props>()` with a type named `Props`. It also calls `defineModel()` and has no variable named like the model's key (`modelValue`, or the name passed to `defineModel`). `tsrs --runExternalCode` reports TS7053 for it. `vue-tsc` accepts the same file. `vize check` reports nothing for it.
+I was trying to adopt vize for Nuxt type checking and ran into this, among a few others.
 
-## Context
-
-The type check of a Nuxt app moved from `vue-tsc` to `tsrs --runExternalCode` with the vize mapper. Many components in the app declare `interface Props` and store a model in a variable with another name, such as `isOpen`. All of them give this error. A component that has a variable named like the model's key does not.
-
-The error is in the generated code. It has no position in the source file, so the user cannot act on it.
+`defineProps<Props>()` with a type named `Props`, plus `defineModel()`, gives TS7053 on the model key. `vue-tsc` accepts the same file.
 
 ## Environment
 
-`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
+`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Nuxt 5.0.0-2611010234-c709ec8, Node 26.13.0, Windows 11. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error.
 
 ## Reproduction
 
@@ -20,10 +16,6 @@ The error is in the generated code. It has no position in the source file, so th
 {
   "private": true,
   "type": "module",
-  "scripts": {
-    "typecheck": "tsrs --runExternalCode --noEmit -p tsconfig.json",
-    "typecheck:oracle": "vue-tsc --noEmit -p tsconfig.json"
-  },
   "devDependencies": {
     "tsrs": "0.20.1-ts7.1.0-beta",
     "typescript": "6.0.3",
@@ -47,7 +39,7 @@ The error is in the generated code. It has no position in the source file, so th
     "target": "ESNext"
   },
   "contentMappers": [{ "package": "vize", "extensions": [".vue"] }],
-  "include": ["src/**/*.ts", "src/**/*.vue"]
+  "include": ["src/**/*.vue"]
 }
 ```
 
@@ -56,7 +48,7 @@ The error is in the generated code. It has no position in the source file, so th
 ```vue
 <script setup lang="ts">
 interface Props {
-  label: string;
+  foo: string;
 }
 
 defineProps<Props>();
@@ -69,80 +61,60 @@ defineModel<boolean>();
 ```
 
 ```sh
-npm i && npm run typecheck ; npm run typecheck:oracle
+npm i && npx tsrs --runExternalCode --noEmit -p tsconfig.json
+npx vue-tsc --noEmit -p tsconfig.json
 ```
 
 ## Actual
 
-`npm run typecheck` gives one error for the file:
+`tsrs` reports one error. The position is in the generated code, which has no place in the source file:
 
 ```
 src/Probe.vue(62,22): error TS7053: Element implicitly has an 'any' type because expression of type '"modelValue"' can't be used to index type '__DefineProps<Props, never>'.
 ```
 
-Line 62 is a line of the generated code. `vize check --save-virtual-ts-for src/Probe.vue` writes the same generated code. These are its lines 16 to 19 and 58 to 62:
-
-```ts
-type $ResolvedProps = Props & { modelValue?: boolean; modelModifiers?: Partial<Record<string, true>> };
-
-const props: __DefineProps<Props> = {} as __DefineProps<Props>;
-void props; // Mark as used to avoid TS6133
-const label = props["label"];
-void label;
-const modelValue = props["modelValue"];
-```
-
-`$ResolvedProps` holds `modelValue`. The type of `props` does not.
-
-`vize check src/Probe.vue` reports no error for this file. It does report a real error in a file of this shape: `isOpen.value = "no"` after `const isOpen = defineModel<boolean>()` gives TS2322. The cause of the difference is not known. `vize check` may drop a diagnostic that has no source position.
-
 ## Expected
 
-No diagnostic, as with `vue-tsc` 3.3.11. A component can call `defineProps<Props>()` and `defineModel()` together.
+No diagnostic, as with `vue-tsc`. `vue-tsc` reads the file: adding `const bar = defineModel<boolean>(); bar.value = "baz";` gives TS2322 in both tools.
 
-```
-No output. The command exits 0.
+## Cause
+
+The template reads `Props`, and the model key exists only in `$ResolvedProps`.
+
+`hoisted_props_alias_replaced` returns false when the `defineProps` argument is exactly `Props` (`crates/vize_canon/src/virtual_ts/props.rs:156`):
+
+```rust
+let names_props = inner == "Props"
 ```
 
-`vue-tsc` checks the file. The statement `isOpen.value = "no"` after `const isOpen = defineModel<boolean>()` gives TS2322 in both checkers.
+So `template_model.rs:67` takes the `else` branch and the template contract is `Props`. The same case in `props.rs:117` puts the model into a different alias:
+
+```rust
+ts.push_str("type $ResolvedProps = Props & ");
+```
+
+The model loop at `template_model.rs:321-335` still emits `const modelValue = props["modelValue"]` against `Props`, which has no such key. A type with another name takes the `export type Props = … & model` branch, so the key exists. A generic component reads `$SetupProps`, and a setup variable with the key's name skips the emission. These two cases remove the error too.
+
+The fix is likely to make the template read `$ResolvedProps` when the SFC has a model and `defineProps` names `Props`.
+
+## Real occurrence
+
+The shape in a real Nuxt app: [`Resource/RenameDialog.vue` lines 8 to 14](https://github.com/Esposter/Esposter/blob/49df4394844218f957290581ab2090a56f7a4f3d/apps/web/app/components/Resource/RenameDialog.vue#L8-L14) has `interface Props`, `defineModel` and `defineProps<Props>()`. `vue-tsc` accepts it. Many components in the app have this shape.
 
 ## Isolation
 
-One change at a time from the reproduction. The first row is `src/Probe.vue`.
+One change at a time from `src/Probe.vue`. Errors on `vize` 0.638.0, `tsrs` and `vue-tsc`:
 
-| Change                                                                                                                                  | `tsrs` errors | `vue-tsc` errors |
-| :-------------------------------------------------------------------------------------------------------------------------------------- | ------------: | ---------------: |
-| None (`interface Props`, `defineProps<Props>()`, `defineModel<boolean>()`)                                                              |             1 |                0 |
-| `const isOpen = defineModel<boolean>()`                                                                                                 |             1 |                0 |
-| `defineModel<boolean>({ required: true })`                                                                                              |             1 |                0 |
-| `defineModel<boolean>("open")` (the error names `"open"`)                                                                               |             1 |                0 |
-| `defineModel()` written before `defineProps()`                                                                                          |             1 |                0 |
-| `const { label } = defineProps<Props>()`                                                                                                |             1 |                0 |
-| `const { label } = defineProps<Props>()` and `defineModel<boolean>({ default: false })` (two errors: TS7053 and TS2339 on `modelValue`) |             2 |                0 |
-| `type Props = { label: string }` in place of the interface                                                                              |             1 |                0 |
-| `Props` imported from another file                                                                                                      |             1 |                0 |
-| `const modelValue = defineModel<boolean>()` (a variable has the model's key)                                                            |             0 |                0 |
-| `const open = defineModel<boolean>("open")` (a variable has the model's key)                                                            |             0 |                0 |
-| `const isOpenModel = defineModel<boolean>("isOpen")` and `const isOpen = true`                                                          |             0 |                0 |
-| The same, with `const { isOpen } = { isOpen: true }`                                                                                    |             0 |                0 |
-| The same, with `import { isOpen } from "./flag"`                                                                                        |             0 |                0 |
-| The interface is named `CardProps`                                                                                                      |             0 |                0 |
-| `CardProps` imported from another file                                                                                                  |             0 |                0 |
-| `Props` imported as `Base` (`import type { Props as Base }`)                                                                            |             0 |                0 |
-| `generic="T extends string"` on the script tag                                                                                          |             0 |                0 |
-| Inline type: `defineProps<{ label: string }>()`                                                                                         |             0 |                0 |
-| Runtime declaration: `defineProps({ label: String })`                                                                                   |             0 |                0 |
-| No `defineModel()` call                                                                                                                 |             0 |                0 |
-| No `defineProps()` call                                                                                                                 |             0 |                0 |
-
-`vize` 0.606.0, 0.627.0, 0.628.0, 0.630.0, 0.631.0 and 0.638.0 give the same error for the first row. Earlier versions are not tested.
-
-## Not known
-
-The cause is not known. The rows show that the type must be named `Props`, so the mapper may match on that name. The generated code suggests that the mapper skips the line `const modelValue = props["modelValue"]` when a variable already has that name. That reading fits the rows. It is not confirmed in the source.
-
-In a Nuxt app, every component that matches these three conditions gives the error, and no other component gives it.
+| Change                                        | `tsrs` | `vue-tsc` |
+| :-------------------------------------------- | -----: | --------: |
+| None                                          |      1 |         0 |
+| The interface is named `FooProps`             |      0 |         0 |
+| `generic="T extends string"` and `foo: T`     |      0 |         0 |
+| `const modelValue = defineModel<boolean>()`   |      0 |         0 |
+| Inline type: `defineProps<{ foo: string }>()` |      0 |         0 |
 
 ## Not a duplicate of
 
-Searched open and closed issues and pull requests for `defineModel`, `modelValue`, TS7053 and `__DefineProps`. The search matches words, not meaning. The nearest results are #7949 (every `defineModel()` is `never` for a `.vue` outside the tsconfig directory) and #10196 (a binding named `props` collides with the mapper's own `props`). Both are closed. #7949 has a different input. #10196 is the same kind of name clash with a different name and a different trigger.
+Searched open and closed issues and pull requests for `defineModel`, `modelValue`, TS7053 and `__DefineProps`. The search matches words, not meaning. The nearest are #7949 (closed; every `defineModel()` is `never` for a file outside the tsconfig directory) and #10196 (closed; a binding named `props` collides with the mapper's own name). The inputs differ.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)

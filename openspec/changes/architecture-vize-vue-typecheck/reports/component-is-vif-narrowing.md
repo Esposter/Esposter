@@ -1,110 +1,75 @@
-# content-mapper: TS18048 for `<component :is="x.component" v-if="x" />`, outside the `v-if` guard, in unmapped virtual code
+# content-mapper: `<component :is="foo.bar" v-if="foo">` reports `possibly 'undefined'` because the generated type aliases sit outside the `v-if` guard
 
-A `<component>` element reads a property of `x` in its `:is` binding and has `v-if="x"` on the same element. `tsrs --runExternalCode` reports that `x` is possibly `undefined` four times, at positions in generated code. `vue-tsc` narrows `x` by the guard and reports nothing.
+I was trying to adopt vize for Nuxt type checking and ran into this, among a few others.
 
-## Context
-
-The type check of a Nuxt app moved from `vue-tsc` to `tsrs --runExternalCode` with the vize mapper. A suggestion popup renders a component that a computed value holds. The element reads `ownSuggestion.component` and has `v-if="ownSuggestion"`. The mapper reports the computed value as possibly `undefined` several times.
+A `<component>` whose `:is` reads a property of a value that `v-if` narrows gives TS18048. `vue-tsc` accepts the same file.
 
 ## Environment
 
-`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
+`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Nuxt 5.0.0-2611010234-c709ec8, Node 26.13.0, Windows 11. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error.
 
 ## Reproduction
 
-`package.json`:
-
-```json
-{
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "typecheck": "tsrs --runExternalCode --noEmit -p tsconfig.json",
-    "typecheck:oracle": "vue-tsc --noEmit -p tsconfig.json"
-  },
-  "devDependencies": {
-    "tsrs": "0.20.1-ts7.1.0-beta",
-    "typescript": "6.0.3",
-    "vize": "0.638.0",
-    "vue": "3.5.44",
-    "vue-tsc": "3.3.11"
-  }
-}
-```
-
-`tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "noEmit": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "ESNext"
-  },
-  "contentMappers": [{ "package": "vize", "extensions": [".vue"] }],
-  "include": ["src/**/*.ts", "src/**/*.vue"]
-}
-```
+`package.json` and `tsconfig.json` are the ones of the `defineModel` issue.
 
 `src/Probe.vue`:
 
 ```vue
 <script setup lang="ts">
-const x = undefined as { component: string } | undefined;
+const foo = undefined as { bar: string } | undefined;
 </script>
 
 <template>
-  <component :is="x.component" v-if="x" />
+  <component :is="foo.bar" v-if="foo" />
 </template>
 ```
 
 ```sh
-npm i && npm run typecheck ; npm run typecheck:oracle
+npm i && npx tsrs --runExternalCode --noEmit -p tsconfig.json
+npx vue-tsc --noEmit -p tsconfig.json
 ```
 
 ## Actual
 
-`npm run typecheck` gives these errors for the file. The four positions are in generated code:
+All four positions are in the generated code:
 
 ```
-src/Probe.vue(68,39): error TS18048: 'x' is possibly 'undefined'.
-src/Probe.vue(68,193): error TS18048: 'x' is possibly 'undefined'.
-src/Probe.vue(68,287): error TS18048: 'x' is possibly 'undefined'.
-src/Probe.vue(69,43): error TS18048: 'x' is possibly 'undefined'.
+src/Probe.vue(68,35): error TS18048: 'foo' is possibly 'undefined'.
+src/Probe.vue(68,185): error TS18048: 'foo' is possibly 'undefined'.
+src/Probe.vue(68,275): error TS18048: 'foo' is possibly 'undefined'.
+src/Probe.vue(69,39): error TS18048: 'foo' is possibly 'undefined'.
 ```
 
 ## Expected
 
-No diagnostic, as with `vue-tsc` 3.3.11. The guard `v-if="x"` narrows `x` in the `:is` binding.
+No diagnostic, as with `vue-tsc`. `vue-tsc` reads the file: removing `v-if="foo"` gives TS18048 in both tools, at `Probe.vue(6,19)`.
 
+## Cause
+
+The mapper declares the type aliases of a `:is` member chain at the template root, outside the `v-if` guard. The guard wraps only the value call.
+
+`:is="foo.bar"` is a static member chain, so the mapper keeps the name `foo.bar` and writes its aliases as `typeof foo.bar`. `generate_usage_declarations` writes them with no guard (`crates/vize_canon/src/virtual_ts/scope/component_props.rs:113`):
+
+```rust
+generate_usage_declarations(ts, mappings, ctx, &shared_contracts, idx, usage);
 ```
-No output. The command exits 0.
+
+The guard is applied later, for the value call only (`crates/vize_canon/src/virtual_ts/expressions/generic_props_call.rs:55`):
+
+```rust
+if let Some(ref guard) = usage.vif_guard {
 ```
 
-`vue-tsc` checks the file. Without the guard (`NoGuard.vue`), it reports the real error.
+So `typeof foo.bar` is evaluated where `foo` is not narrowed.
 
-## Isolation
+The fix is likely to write the declarations of a usage that has a `vif_guard` inside that guard.
 
-One change at a time from `Probe.vue`.
+## Real occurrence
 
-| Change                                                                  | `tsrs` errors | `vue-tsc` errors |
-| :---------------------------------------------------------------------- | ------------: | ---------------: |
-| None (`<component :is="x.component" v-if="x" />`)                       |             4 |                0 |
-| The guard on a parent `<template v-if>`                                 |             4 |                0 |
-| A plain element: `<div :a="x.component" v-if="x" />`                    |             0 |                0 |
-| `<component :foo="x.component" v-if="x" />`                             |             0 |                0 |
-| `<component :is="x" v-if="x" />` where `x` is a `string` or `undefined` |             0 |                0 |
-| Control: no `v-if` (a real error)                                       |             5 |                1 |
-
-`vize` 0.631.0 and 0.638.0 give the same result. Earlier versions are not tested.
-
-## Not known
-
-The generated code from `vize check --show-virtual-ts` declares type aliases of the form `typeof x.component` at template scope. They sit outside the `if` block that holds the guard. A type query there sees the declared type of `x`. This is likely the cause. It is not confirmed that `tsrs --runExternalCode` uses the same text.
+The shape in a real Nuxt app: [`RichTextEditor/Suggestions.vue` line 25](https://github.com/Esposter/Esposter/blob/49df4394844218f957290581ab2090a56f7a4f3d/apps/web/app/components/RichTextEditor/Suggestions.vue#L25) has `:is` reading `.component` of the value that its own `v-if` guards. `vue-tsc` accepts it.
 
 ## Not a duplicate of
 
-Searched open and closed issues and pull requests for narrowing, `component :is` and TS18048. The search matches words, not meaning. The nearest are #10251 (closed; a ref on a dynamic component loses the instance type), #10198 (closed; a ref on `<component :is>` gives TS2304) and #9360 (closed; `v-else` narrowing lost inside a parent `v-if`). None has a property read in `:is` under `v-if`.
+Searched open and closed issues and pull requests for `v-if`, narrowing and dynamic components. The search matches words, not meaning. The nearest are #9360 (closed; `v-else` narrowing lost in a parent `v-if`), #1520 (closed; narrowing of a `v-for` source) and #10198 (closed; TS2304 on a `<component :is>` ref). The inputs differ.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)

@@ -1,72 +1,35 @@
-# content-mapper: TS7006 for a callback nested in an inline callback prop, in unmapped virtual code
+# content-mapper: a callback nested in an inline callback prop gets an implicit `any` (TS7006) in the inference-only copy
 
-A template passes an inline callback to a component prop. The body of the callback calls a function with a second callback that has an untyped parameter. `tsrs --runExternalCode` reports TS7006 for that parameter, at a position in generated code. `vue-tsc` reports nothing.
+I was trying to adopt vize for Nuxt type checking and ran into this, among a few others.
 
-## Context
-
-The type check of a Nuxt app moved from `vue-tsc` to `tsrs --runExternalCode` with the vize mapper. A game component of the app passes `:on-complete` callbacks to a component. The body subscribes to an event stream with `.subscribe((movement) => …)`. Several such parameters give TS7006 or TS7031.
+An inline callback prop with a block body that holds a second callback gives TS7006 on the second callback's parameter. `vue-tsc` accepts the same file.
 
 ## Environment
 
-`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
+`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Nuxt 5.0.0-2611010234-c709ec8, Node 26.13.0, Windows 11. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error.
 
 ## Reproduction
 
-`package.json`:
+`package.json` and `tsconfig.json` are the ones of the `defineModel` issue.
 
-```json
-{
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "typecheck": "tsrs --runExternalCode --noEmit -p tsconfig.json",
-    "typecheck:oracle": "vue-tsc --noEmit -p tsconfig.json"
-  },
-  "devDependencies": {
-    "tsrs": "0.20.1-ts7.1.0-beta",
-    "typescript": "6.0.3",
-    "vize": "0.638.0",
-    "vue": "3.5.44",
-    "vue-tsc": "3.3.11"
-  }
-}
-```
-
-`tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "noEmit": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "ESNext"
-  },
-  "contentMappers": [{ "package": "vize", "extensions": [".vue"] }],
-  "include": ["src/**/*.ts", "src/**/*.vue"]
-}
-```
-
-`src/Reduced.vue`:
+`src/Probe.vue`:
 
 ```vue
 <script setup lang="ts">
-interface Scene {
-  run: (callback: (value: number) => void) => void;
+interface Foo {
+  bar: (callback: (baz: number) => void) => void;
 }
 
-function Child(props: { onComplete?: (scene: Scene) => void }) {
+function Child(props: { onQux?: (foo: Foo) => void }) {
   return null;
 }
 </script>
 
 <template>
   <Child
-    :on-complete="
-      (scene) => {
-        scene.run((value) => console.log(value));
+    :on-qux="
+      (foo) => {
+        foo.bar((baz) => console.log(baz));
       }
     "
   />
@@ -74,47 +37,63 @@ function Child(props: { onComplete?: (scene: Scene) => void }) {
 ```
 
 ```sh
-npm i && npm run typecheck ; npm run typecheck:oracle
+npm i && npx tsrs --runExternalCode --noEmit -p tsconfig.json
+npx vue-tsc --noEmit -p tsconfig.json
 ```
 
 ## Actual
 
-`npm run typecheck` gives one error for the file. The position is in generated code. The file has fewer lines than the number in the message.
+The position is in the generated code:
 
 ```
-src/Reduced.vue(55,20): error TS7006: Parameter 'value' implicitly has an 'any' type.
+src/Probe.vue(55,18): error TS7006: Parameter 'baz' implicitly has an 'any' type.
 ```
 
 ## Expected
 
-No diagnostic, as with `vue-tsc` 3.3.11. The parameter `scene` has the type `Scene`, so `value` has the contextual type `number`.
+No diagnostic, as with `vue-tsc`. `vue-tsc` reads the file: adding `foo.nope();` to the body gives TS2339 in both tools.
 
-```
-No output. The command exits 0.
+## Cause
+
+The mapper writes each inline callback prop twice. The first copy only infers types and carries a one-line `@ts-ignore`. The generated code is:
+
+```ts
+const __vize_resolved_Child_props_0 = (undefined as unknown as import("vize:virtual-ts").$ResolvedContextProps)(
+  (undefined as unknown as import("vize:virtual-ts").$PropsResolver<typeof Child>)({
+    // @ts-ignore Inference-only callback prop; mapped prop owner checks diagnostics.
+    onQux: (foo) => {
+      foo.bar((baz) => console.log(baz));
+    },
+  }),
+);
 ```
 
-`vue-tsc` checks the file. In the last row, a read of a field that does not exist is an error in both checkers.
+`@ts-ignore` covers only the next line, which is line 54. The error is on line 55, in the body of the same copy. The code that writes the comment knows this (`crates/vize_canon/src/virtual_ts/expressions/callback_prop_resolution.rs:181-183`):
+
+```rust
+// This copy is intentionally unmapped. `@ts-ignore` covers only the
+// next line, so the parameter tokens have to sit on the property line
+```
+
+`callback_parameters_on_ignored_line_with_ranges` (`expressions/ts_suppression_comments.rs:39-48`) finds the first `=>`, joins the lines before it, and keeps the rest of the text as it is. So the parameters of the callback itself sit on the covered line, and the parameters of a callback nested in the body stay on a later line.
+
+The fix is likely to cover every line of the inference-only copy, or to emit the copy without the body.
+
+## Real occurrence
+
+The shape in a real Nuxt app: [`Dungeons/World/Character/Index.vue` lines 44 to 85](https://github.com/Esposter/Esposter/blob/49df4394844218f957290581ab2090a56f7a4f3d/apps/web/app/components/Dungeons/World/Character/Index.vue#L44-L85) has an inline `:on-complete` callback with a block body, and a `.subscribe((positionChange) => …)` callback in that body. `vue-tsc` accepts it.
 
 ## Isolation
 
-One change at a time from `Reduced.vue`. A row for the control counts only TS2339 errors.
+One change at a time. Errors on `vize` 0.638.0, `tsrs` and `vue-tsc`:
 
-| Change                                                                             | `tsrs` errors | `vue-tsc` errors |
-| :--------------------------------------------------------------------------------- | ------------: | ---------------: |
-| None (the callback is spread over several lines)                                   |             1 |                0 |
-| The callback written on one line                                                   |             0 |                0 |
-| The inner parameter has a type: `(value: number)`                                  |             0 |                0 |
-| The callback is a typed `const` in the script                                      |             0 |                0 |
-| The component is a `.vue` file imported from another file                          |             1 |                0 |
-| A plain `.ts` file: the receiver of the inner callback is `any`                    |             1 |                1 |
-| Control: the same file with a read of a field that does not exist (`scene.nope()`) |             1 |                1 |
-
-`vize` 0.631.0 and 0.638.0 give the same result. Earlier versions are not tested.
-
-## Not known
-
-The generated code from `vize check --show-virtual-ts` holds the callback twice. The first copy is inside a call to a props resolver, after the comment `// @ts-ignore Inference-only callback prop; mapped prop owner checks diagnostics.`. The comment covers only the next line. The resolver in that call falls back to a function that takes `any` when it cannot read the component's props. In that copy, `scene` is likely `any`, so the nested parameter has no contextual type. This fits the rows: a plain `.ts` file with an `any` receiver gives the same TS7006 in both checkers. It is not confirmed that `tsrs --runExternalCode` uses the same text.
+| Change                                                        | `tsrs` | `vue-tsc` |
+| :------------------------------------------------------------ | -----: | --------: |
+| None                                                          |      1 |         0 |
+| Expression body on one line: `(foo) => foo.bar((baz) => baz)` |      0 |         0 |
 
 ## Not a duplicate of
 
-Searched open and closed issues and pull requests for TS7006, callbacks and inference. The search matches words, not meaning. The nearest are #10191 (closed; a callback prop whose parameters are not on the first line, with the same one-line `@ts-ignore`), #10739 (closed) and #10879 (merged, and in 0.630.0 and 0.631.0; event-inference callbacks are kept out of the mapper's unowned copies). The input here is a bound callback prop whose body holds a second callback. It reproduces on 0.638.0. The input of #10191 gives no diagnostic on 0.638.0, so its fix holds, and the parameter that still fails here is the one of the nested callback.
+Searched open and closed issues and pull requests for TS7006, callbacks and inference. The search matches words, not meaning. The nearest are #10191 (closed; a callback whose own parameters are on a later line, fixed by #10220) and #10879 (merged; event-inference callbacks stay out of unowned copies). The input of #10191 gives no diagnostic on 0.638.0. This report is the same mechanism for the parameters of a nested callback.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)

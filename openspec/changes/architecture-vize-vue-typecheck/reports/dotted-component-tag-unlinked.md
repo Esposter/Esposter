@@ -1,63 +1,22 @@
-# content-mapper: a dotted component tag (`<Parts.Child />`) is not linked to its import, so the import is reported unused and the tag's props and events are not checked
+# content-mapper: a dotted component tag (`<Parts.Foo>`) is not linked to its import, so `noUnusedLocals` reports it unused and its props are not checked
 
-A `<script setup>` block imports a namespace (`import * as Parts`) and uses it only as a dotted tag, `<Parts.Child />`. `tsrs --runExternalCode` reports TS6133 for the import when `noUnusedLocals` is on. It also checks neither the props nor the event payloads of the tag. `vue-tsc` reports no TS6133 and reports both kinds of error.
+I was trying to adopt vize for Nuxt type checking and ran into this, among a few others.
 
-## Context
-
-The type check of a Nuxt app moved from `vue-tsc` to `tsrs --runExternalCode` with the vize mapper. The app wraps compound components in its own UI layer. Each wrapper writes the parts of the compound component as dotted tags. All wrappers give the TS6133 error.
-
-A second effect is harder to see. In a dotted tag, the parameter of an event handler has the type `any`. In a generic component, a `typeof` guard on that parameter then gives a false TS2322 on the assignment that follows. The guard likely narrows `any` to `string` and not to the type parameter. That effect needs a generic parent and is not part of the files below.
+A component used as `<Parts.Foo>` from `import * as Parts` is not linked to `Parts`. `tsrs` reports `Parts` as unused under `noUnusedLocals`, does not check the props, and types an event payload as `any`, which gives false errors. `vue-tsc` checks all three.
 
 ## Environment
 
-`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
+`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Nuxt 5.0.0-2611010234-c709ec8, Node 26.13.0, Windows 11. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error.
 
 ## Reproduction
 
-`package.json`:
+`package.json` is the one of the `defineModel` issue. `tsconfig.json` is the same with `"noUnusedLocals": true` added to `compilerOptions`, and `include` naming `src/**/*.ts` and `src/**/*.vue`.
 
-```json
-{
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "typecheck": "tsrs --runExternalCode --noEmit -p tsconfig.json",
-    "typecheck:oracle": "vue-tsc --noEmit -p tsconfig.json"
-  },
-  "devDependencies": {
-    "tsrs": "0.20.1-ts7.1.0-beta",
-    "typescript": "6.0.3",
-    "vize": "0.638.0",
-    "vue": "3.5.44",
-    "vue-tsc": "3.3.11"
-  }
-}
-```
-
-`tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "noEmit": true,
-    "noUnusedLocals": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "ESNext"
-  },
-  "contentMappers": [{ "package": "vize", "extensions": [".vue"] }],
-  "include": ["src/**/*.ts", "src/**/*.vue"]
-}
-```
-
-`src/Child.vue`:
+`src/Foo.vue`:
 
 ```vue
 <script setup lang="ts">
-defineProps<{ count: number }>();
-defineEmits<{ pick: [value: number] }>();
+defineProps<{ bar: number }>();
 </script>
 
 <template>
@@ -68,38 +27,10 @@ defineEmits<{ pick: [value: number] }>();
 `src/parts.ts`:
 
 ```ts
-export { default as Child } from "./Child.vue";
+export { default as Foo } from "./Foo.vue";
 ```
 
-`src/Dotted.vue` (the handler passes a number where a string is expected, which is an error):
-
-```vue
-<script setup lang="ts">
-import * as Parts from "./parts";
-
-const show = (value: string) => value;
-</script>
-
-<template>
-  <Parts.Child :count="1" @pick="(value) => show(value)" />
-</template>
-```
-
-`src/Plain.vue` (the same as `Dotted.vue` with a plain import):
-
-```vue
-<script setup lang="ts">
-import { Child } from "./parts";
-
-const show = (value: string) => value;
-</script>
-
-<template>
-  <Child :count="1" @pick="(value) => show(value)" />
-</template>
-```
-
-`src/DottedProp.vue` (a string where the prop wants a number, which is an error):
+`src/Probe.vue`:
 
 ```vue
 <script setup lang="ts">
@@ -107,87 +38,74 @@ import * as Parts from "./parts";
 </script>
 
 <template>
-  <Parts.Child count="not a number" />
-</template>
-```
-
-`src/PlainProp.vue` (the same as `DottedProp.vue` with a plain import):
-
-```vue
-<script setup lang="ts">
-import { Child } from "./parts";
-</script>
-
-<template>
-  <Child count="not a number" />
-</template>
-```
-
-`src/DottedClean.vue` (no error in the source):
-
-```vue
-<script setup lang="ts">
-import * as Parts from "./parts";
-
-const show = (value: number) => value;
-</script>
-
-<template>
-  <Parts.Child :count="1" @pick="(value) => show(value)" />
+  <Parts.Foo bar="baz" />
 </template>
 ```
 
 ```sh
-npm i && npm run typecheck ; npm run typecheck:oracle
+npm i && npx tsrs --runExternalCode --noEmit -p tsconfig.json
+npx vue-tsc --noEmit -p tsconfig.json
 ```
 
 ## Actual
 
-`npm run typecheck` gives these errors:
-
 ```
-src/Dotted.vue(2,13): error TS6133: 'Parts' is declared but its value is never read.
-src/DottedClean.vue(2,13): error TS6133: 'Parts' is declared but its value is never read.
-src/DottedProp.vue(2,13): error TS6133: 'Parts' is declared but its value is never read.
-src/Plain.vue(8,44): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
-src/PlainProp.vue(6,10): error TS2322: Type 'string' is not assignable to type 'number'.
+src/Probe.vue(2,13): error TS6133: 'Parts' is declared but its value is never read.
 ```
 
 ## Expected
 
-The mapper should report the same four errors as `vue-tsc` and no TS6133. The template reads `Parts` in `<Parts.Child />`, so the import is used. `vue-tsc` 3.3.11 (`npm run typecheck:oracle`) gives these errors:
+`vue-tsc` reports the wrong prop and no unused import:
 
 ```
-src/Dotted.vue(8,50): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
-src/DottedProp.vue(6,16): error TS2322: Type 'string' is not assignable to type 'number'.
-src/Plain.vue(8,44): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
-src/PlainProp.vue(6,10): error TS2322: Type 'string' is not assignable to type 'number'.
+src/Probe.vue(6,14): error TS2322: Type 'string' is not assignable to type 'number'.
 ```
 
-`Dotted.vue` and `DottedProp.vue` each have a real error. The mapper reports neither. `DottedClean.vue` has no error, and the mapper reports TS6133 for it.
+A plain import gives the same TS2322 in both tools: `import Foo from "./Foo.vue"` with `<Foo bar="baz" />`.
 
-## Isolation
+## Second symptom: an event payload typed `any`
 
-The first group has no error in the source, so every error is a TS6133. The second group has one real error in each file.
+The stub is `any`, so a listener parameter is `any`. A `typeof` check then narrows it to `string`, which a generic target rejects. With `Child.vue` of `generic="T"`, `defineProps<{ modelValue?: T | T[] }>()` and `defineEmits<{ "update:modelValue": [value: T | T[] | undefined] }>()`, `parts.ts` exporting it as `Child` (`export { default as Child } from "./Child.vue";`), and `Probe.vue` of `generic="TFoo extends string"` with `import * as Parts from "./parts"` and `const model = defineModel<TFoo>({ required: true });`, the template is:
 
-| Change                                                                                       | `tsrs` errors | `vue-tsc` errors |
-| :------------------------------------------------------------------------------------------- | ------------: | ---------------: |
-| `import * as Parts`, `<Parts.Child />`                                                       |             1 |                0 |
-| `import { Parts } from "./partsObject"`, where that module exports `const Parts = { Child }` |             1 |                0 |
-| `import { Child } from "./parts"` and `<Child />`                                            |             0 |                0 |
-| `import * as Parts` and `void Parts;` in the script                                          |             0 |                0 |
-| `import * as Parts` and no use at all                                                        |             1 |                1 |
-| Real error in an event payload, dotted tag (rows count errors other than TS6133)             |             0 |                1 |
-| Real error in an event payload, plain import                                                 |             1 |                1 |
-| Real error in a prop, dotted tag                                                             |             0 |                1 |
-| Real error in a prop, plain import                                                           |             1 |                1 |
+```vue
+<Parts.Child
+  :model-value="model"
+  @update:model-value="
+    (value) => {
+      if (typeof value === 'string') model = value;
+    }
+  "
+/>
+```
 
-`vize` 0.606.0, 0.627.0, 0.628.0, 0.630.0, 0.631.0 and 0.638.0 give the same results for the files shown. Earlier versions are not tested. With `noUnusedLocals` off, there is no TS6133.
+`tsrs` reports `Probe.vue(12,40): error TS2322: Type 'string' is not assignable to type 'TFoo'.` `vue-tsc` reports nothing. With `import Child from "./Child.vue"` and `<Child …>`, both tools report nothing.
 
-## Not known
+## Cause
 
-The generated code declares the tag as `$GlobalComponent<"Parts.Child"> & $GlobalComponentFallback`. It does not name the import. That is likely the reason for both effects. It is not confirmed in the source.
+The mapper resolves a tag by its whole string, so `Parts.Foo` never matches the `Parts` binding.
+
+`resolve` tries three candidates, none of which is the root segment of a dotted name (`crates/vize_canon/src/virtual_ts/component_reference.rs:144`):
+
+```rust
+for candidate in [pascal_name.as_str(), camel_name.as_str(), template_name] {
+```
+
+The stub generator for unresolved tags uses the same whole-name candidates (`crates/vize_canon/src/virtual_ts/generator/global_components.rs:155`):
+
+```rust
+let candidates = [name, camel_name.as_str(), pascal_name.as_str()];
+```
+
+The result is a stub typed `any` named `Parts_Foo`. No generated line names `Parts`, which gives TS6133, and the props are checked against `any`. The member-chain resolver runs only for `<component :is="Parts.Foo">`, and that form reports the wrong prop correctly.
+
+The fix is likely to resolve the root segment of a dotted tag against the script bindings and use the member reference `Parts.Foo`.
+
+## Real occurrence
+
+The shape in a real Nuxt app: [`Ui/Alert.vue` line 17](https://github.com/Esposter/Esposter/blob/49df4394844218f957290581ab2090a56f7a4f3d/apps/web/app/components/Ui/Alert.vue#L17) uses `<Alert.Root>`. `Alert` is a named import of a namespace object on line 5 (`import { Alert } from "@vuetify/v0"`), and the mapper reports it unused. `vue-tsc` accepts the file.
 
 ## Not a duplicate of
 
-Searched open and closed issues and pull requests for dotted components, namespace imports, TS6133 and `noUnusedLocals`. The search matches words, not meaning. The nearest are #1896 (mark template bindings as used for `noUnusedLocals`), #4050 and #4051 (honor `noUnusedLocals` in Vue transforms) and #3931 (a `defineProps` result read only by the template reports TS6133). All are closed or merged. They fix other template reads, not the dotted tag.
+Searched open and closed issues and pull requests for dotted and member tags and TS6133. The search matches words, not meaning. The nearest are #4050, #4051 and #3931 (closed or merged; fixes for TS6133 on names read only in the template). None of them names a dotted tag.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)

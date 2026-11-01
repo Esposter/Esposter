@@ -1,188 +1,119 @@
-# content-mapper: the `@select` listener of `<component :is>` inside an explicit slot template is typed as a DOM `Event`
+# content-mapper: a listener on `<component :is="map[key]">` inside a slot is typed as the DOM `Event` when its name is also a DOM event name
 
-A template renders a member of a component map with `<component :is="PickerMap[key]">` inside `<template #panel>` and listens to `@select`. The mapper types the handler's parameter as a DOM `Event`, so assigning it to the picker's declared payload type gives TS2322. `vue-tsc` types the parameter as the payload type that the picker declares.
+I was trying to adopt vize for Nuxt type checking and ran into this, among a few others.
 
-## Context
-
-The type check of a Nuxt app moved from `vue-tsc` to `tsrs --runExternalCode` with the vize mapper. A search input renders one picker per filter type from a component map. Every picker declares `select: [value: SerializableValue]`. The assignment in the handler gives TS2322 under the mapper.
+`<component :is="map[key]" @select="(value) => …">` inside a named slot types `value` as `Event` and not as the child's emitted payload. `vue-tsc` types it as the payload.
 
 ## Environment
 
-`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
+`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Nuxt 5.0.0-2611010234-c709ec8, Node 26.13.0, Windows 11. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error.
 
 ## Reproduction
 
-`package.json`:
+`package.json` and `tsconfig.json` are the ones of the `defineModel` issue, with `include` naming `src/**/*.ts` and `src/**/*.vue`.
 
-```json
-{
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "typecheck": "tsrs --runExternalCode --noEmit -p tsconfig.json",
-    "typecheck:oracle": "vue-tsc --noEmit -p tsconfig.json"
-  },
-  "devDependencies": {
-    "tsrs": "0.20.1-ts7.1.0-beta",
-    "typescript": "6.0.3",
-    "vize": "0.638.0",
-    "vue": "3.5.44",
-    "vue-tsc": "3.3.11"
-  }
-}
-```
-
-`tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "noEmit": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "ESNext"
-  },
-  "contentMappers": [{ "package": "vize", "extensions": [".vue"] }],
-  "include": ["src/**/*.ts", "src/**/*.vue"]
-}
-```
-
-`src/SerializableValue.ts`:
-
-```ts
-export type SerializableValue = boolean | Date | null | number | string;
-```
-
-`src/DatePicker.vue`:
+`src/Child.vue`:
 
 ```vue
 <script setup lang="ts">
-import type { SerializableValue } from "./SerializableValue";
-
-const emit = defineEmits<{ select: [value: SerializableValue] }>();
+const emit = defineEmits<{ select: [value: number] }>();
 </script>
 
 <template>
-  <button type="button" @click="emit('select', new Date(0))">pick</button>
+  <button @click="emit('select', 1)" />
 </template>
 ```
 
-`src/PanelPlain.vue`:
+`src/Panel.vue`:
 
 ```vue
 <script setup lang="ts">
-import type { VNode } from "vue";
-
-defineSlots<{ panel: (props: { focus: () => void }) => VNode }>();
-const focus = () => {};
+defineSlots<{ foo: (props: { bar: number }) => unknown }>();
 </script>
 
 <template>
-  <div>
-    <slot name="panel" :focus />
-  </div>
+  <slot name="foo" :bar="1" />
 </template>
 ```
 
-`src/InputMapLocal.vue`:
+`src/Probe.vue`:
 
 ```vue
 <script setup lang="ts">
-import type { SerializableValue } from "./SerializableValue";
+import Child from "./Child.vue";
+import Panel from "./Panel.vue";
 
-import { ref } from "vue";
-
-import DatePicker from "./DatePicker.vue";
-import PanelPlain from "./PanelPlain.vue";
-
-const PickerMap = { after: DatePicker } as const;
-const current = ref<SerializableValue>(null);
-const key = ref<"after">("after");
+const map = { foo: Child };
+const key = "foo";
 </script>
 
 <template>
-  <PanelPlain>
-    <template #panel>
-      <component
-        :is="PickerMap[key]"
-        @select="
-          (value) => {
-            current = value;
-          }
-        "
-      />
+  <Panel>
+    <template #foo>
+      <component :is="map[key]" @select="(value) => value.toFixed()" />
     </template>
-  </PanelPlain>
-</template>
-```
-
-`src/ControlNoSlot.vue` is the proof file for the Expected section. Run it in place of `InputMapLocal.vue`, as the control row of the Isolation table does:
-
-```vue
-<script setup lang="ts">
-import { ref } from "vue";
-
-import DatePicker from "./DatePicker.vue";
-
-const count = ref<number>(0);
-</script>
-
-<template>
-  <DatePicker
-    @select="
-      (value) => {
-        count = value;
-      }
-    "
-  />
+  </Panel>
 </template>
 ```
 
 ```sh
-npm i && npm run typecheck ; npm run typecheck:oracle
+npm i && npx tsrs --runExternalCode --noEmit -p tsconfig.json
+npx vue-tsc --noEmit -p tsconfig.json
 ```
 
 ## Actual
 
-`npm run typecheck` gives one error for the input:
-
 ```
-src/InputMapLocal.vue(21,13): error TS2322: Type 'Event' is not assignable to type 'SerializableValue'.
+src/Probe.vue(12,59): error TS2339: Property 'toFixed' does not exist on type 'Event'.
 ```
 
 ## Expected
 
-No diagnostic, as with `vue-tsc` 3.3.11. The parameter `value` has the type `SerializableValue`, which `DatePicker` declares for `select`.
+No diagnostic, as with `vue-tsc`. `vue-tsc` reads the file: `value.nope()` in place of `value.toFixed()` gives TS2339 in both tools, on type `number`, when the `<component>` is outside the slot.
 
-```
-No output. The command exits 0.
+## Cause
+
+The mapper gives a computed `:is` no component target inside a slot. The listener then takes the native-element branch, which types it by event name.
+
+The alias for a computed `:is` expression exists only at the template root. Under a `v-slot` scope the mapper refuses it (`crates/vize_croquis/src/drawer/template/visit_element/dynamic_component_alias.rs:22`):
+
+```rust
+| ScopeKind::VSlot
 ```
 
-`vue-tsc` checks the handler. With `ControlNoSlot.vue` in place of `InputMapLocal.vue`, assigning the payload to a `number` is an error in both checkers. Both report this first line: `src/ControlNoSlot.vue(13,9): error TS2322: Type 'SerializableValue' is not assignable to type 'number'.`
+and `second_pass.rs:245` requires the root scope:
+
+```rust
+(self.in_template_root_scope()
+```
+
+With no target, the listener is typed by its name (`crates/vize_canon/src/virtual_ts/scope/event_scope.rs:276`):
+
+```rust
+let event_type = get_dom_event_type(data.event_name.as_str());
+```
+
+`select` is a DOM event name, so the result is `Event`. A name that is not a DOM event, such as `pick`, gets `any`.
+
+The fix is likely to allow the alias inside a slot when the `:is` expression reads no slot binding, and to emit it inside the slot closure.
+
+## Real occurrence
+
+The shape in a real Nuxt app: [`Message/RightSideBar/Search/Input.vue` lines 43 to 52](https://github.com/Esposter/Esposter/blob/49df4394844218f957290581ab2090a56f7a4f3d/apps/web/app/components/Message/RightSideBar/Search/Input.vue#L43-L52) has `<component :is="SearchFilterComponentMap[…]">` with `@select` inside `<template #panel>`. `vue-tsc` types the handler value as the payload.
 
 ## Isolation
 
-One change at a time from `InputMapLocal.vue`.
+One change at a time from `src/Probe.vue`. Results on `vize` 0.638.0 with `tsrs`:
 
-| Change                                                     | `tsrs` errors | `vue-tsc` errors |
-| :--------------------------------------------------------- | ------------: | ---------------: |
-| None (map member, explicit `<template #panel>`, `@select`) |             1 |                0 |
-| The tag in the implicit default slot                       |             0 |                0 |
-| The tag in an explicit `<template #default>`               |             1 |                0 |
-| The tag outside any slot                                   |             0 |                0 |
-| A static `<DatePicker @select>` in `#panel`                |             0 |                0 |
-| `:is="DatePicker"` in `#panel`                             |             0 |                0 |
-| The event is named `pick` in place of `select`             |             0 |                0 |
-| Control: no slot, and the payload assigned to a `number`   |             1 |                1 |
-
-`vize` 0.631.0 and 0.638.0 give the same result. Earlier versions are not tested.
-
-## Not known
-
-The generated code for the failing case holds a listener of the form `(__vize_event: Event) => …`. That is the type of a DOM listener. The rows suggest that the mapper falls back to a DOM event type when the target is unresolved and the event has a DOM name, and only inside an explicit slot template. This is a guess. It is not confirmed in the source.
+| Change                           | Result        |
+| :------------------------------- | :------------ |
+| None                             | `Event` error |
+| `<component>` outside the slot   | no error      |
+| `:is="map.foo"` (a static chain) | no error      |
+| `@pick` in place of `@select`    | no error      |
 
 ## Not a duplicate of
 
-Searched open and closed issues and pull requests for dynamic components, events and TS2322. The search matches words, not meaning. The nearest are #10026 (closed) and #10048 (merged), which fix a dynamic component union with an attribute and a listener. Here the target is a map member, and the wrong type is `Event`, only inside an explicit slot template.
+Searched open and closed issues and pull requests for dynamic components, listeners and `Event`. The search matches words, not meaning. The nearest are #2915 (merged; DOM-event fallback for a static member chain) and #2630 (merged; kebab-case dynamic events). Neither names a computed expression inside a slot.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)

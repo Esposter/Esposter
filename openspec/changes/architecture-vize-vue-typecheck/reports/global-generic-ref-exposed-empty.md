@@ -1,61 +1,24 @@
-# content-mapper: the template ref of a globally registered generic component has the exposed type `{}`
+# content-mapper: the template ref of a generic component registered in `GlobalComponents` is typed `{}` in place of its exposed members
 
-A generic component calls `defineExpose({ reset })` and is registered in `GlobalComponents`, as Nuxt does in `.nuxt/types/components.d.ts`. A template ref to it has the exposed type `{}`, so `child.value?.reset()` gives TS2339. `vue-tsc` types the ref as `{ reset: () => void }`.
+I was trying to adopt vize for Nuxt type checking and ran into this, among a few others.
 
-## Context
-
-The type check of a Nuxt app moved from `vue-tsc` to `tsrs --runExternalCode` with the vize mapper. Nuxt writes every component of the app into `GlobalComponents`. The app has generic components that expose methods and fields, and their parents call them through template refs. All of those calls give TS2339 on `{}`.
+A generic component is registered in `GlobalComponents`. A template ref to it has the type `{}`, so a call to an exposed method gives TS2339. A component that is not generic works, and `vue-tsc` accepts both.
 
 ## Environment
 
-`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Node 26, Windows 10. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3.
+`vize` 0.638.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Nuxt 5.0.0-2611010234-c709ec8, Node 26.13.0, Windows 11. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error.
 
 ## Reproduction
 
-`package.json`:
-
-```json
-{
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "typecheck": "tsrs --runExternalCode --noEmit -p tsconfig.json",
-    "typecheck:oracle": "vue-tsc --noEmit -p tsconfig.json"
-  },
-  "devDependencies": {
-    "tsrs": "0.20.1-ts7.1.0-beta",
-    "typescript": "6.0.3",
-    "vize": "0.638.0",
-    "vue": "3.5.44",
-    "vue-tsc": "3.3.11"
-  }
-}
-```
-
-`tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "noEmit": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "ESNext"
-  },
-  "contentMappers": [{ "package": "vize", "extensions": [".vue"] }],
-  "include": ["src/**/*.ts", "src/**/*.vue"]
-}
-```
+`package.json` and `tsconfig.json` are the ones of the `defineModel` issue, with `include` naming `src/**/*.ts` and `src/**/*.vue`.
 
 `src/Child.vue`:
 
 ```vue
 <script setup lang="ts" generic="T">
-const reset = () => {};
+const foo = () => {};
 
-defineExpose({ reset });
+defineExpose({ foo });
 </script>
 
 <template>
@@ -63,108 +26,76 @@ defineExpose({ reset });
 </template>
 ```
 
-`src/components.d.ts` (the registry that Nuxt generates):
+`src/components.d.ts`:
 
 ```ts
-interface _GlobalComponents {
-  MinChild: typeof import("./Child.vue").default;
-  MinPlain: typeof import("./PlainChild.vue").default;
-}
-
 declare module "vue" {
-  export interface GlobalComponents extends _GlobalComponents {}
+  export interface GlobalComponents {
+    Child: typeof import("./Child.vue").default;
+  }
 }
 
 export {};
 ```
 
-`src/Parent.vue`:
+`src/Probe.vue`:
 
 ```vue
 <script setup lang="ts">
 import { useTemplateRef } from "vue";
 
 const child = useTemplateRef("child");
-const run = () => {
-  child.value?.reset();
-};
+child.value?.foo();
 </script>
 
 <template>
-  <MinChild ref="child" @click="run" />
-</template>
-```
-
-`src/PlainChild.vue` is the child for row 2 of the Isolation table. That row registers it as `MinPlain` and uses `<MinPlain ref="child" @click="run" />` in `Parent.vue`.
-
-```vue
-<script setup lang="ts">
-const reset = () => {};
-
-defineExpose({ reset });
-</script>
-
-<template>
-  <div />
-</template>
-```
-
-`src/ParentNope.vue` is the proof file for the Expected section. Run it in place of `Parent.vue`, as the control row of the Isolation table does:
-
-```vue
-<script setup lang="ts">
-import { useTemplateRef } from "vue";
-
-const child = useTemplateRef("child");
-const run = () => {
-  child.value?.nope();
-};
-</script>
-
-<template>
-  <MinChild ref="child" @click="run" />
+  <Child ref="child" />
 </template>
 ```
 
 ```sh
-npm i && npm run typecheck ; npm run typecheck:oracle
+npm i && npx tsrs --runExternalCode --noEmit -p tsconfig.json
+npx vue-tsc --noEmit -p tsconfig.json
 ```
 
 ## Actual
 
-`npm run typecheck` gives one error for the parent:
-
 ```
-src/Parent.vue(6,16): error TS2339: Property 'reset' does not exist on type '{}'.
+src/Probe.vue(5,14): error TS2339: Property 'foo' does not exist on type '{}'.
 ```
 
 ## Expected
 
-No diagnostic, as with `vue-tsc` 3.3.11. The ref has the type `{ reset: () => void } | null`.
+No diagnostic, as with `vue-tsc`. `vue-tsc` reads the file: `child.value?.nope()` gives TS2339 in both tools, and `vue-tsc` names the type `{ foo: () => void; }`. Removing `generic="T"` from `Child.vue` removes the error.
 
+## Cause
+
+The mapper intersects every global component with a fallback call signature, and the intersection decides the type of the ref.
+
+`$GlobalComponentFallback` is declared in `crates/vize_canon/src/virtual_ts/generator/global_components.rs:242`:
+
+```ts
+type $GlobalComponentFallback = (props: Record<string, unknown>, ...args: any[]) => any;
 ```
-No output. The command exits 0.
+
+It is intersected into the component type at `global_components.rs:296` (`> & $GlobalComponentFallback;`). The ref helper in `generator/setup_helpers.rs:123` reads the exposed type from the last call signature:
+
+```ts
+_C extends (props: any, ctx: any, expose: (exposed: infer _E) => any, ...args: any[]) => any ? NonNullable<_E> : any
 ```
 
-`vue-tsc` types the ref. With `ParentNope.vue` in place of `Parent.vue`, a call to a method that does not exist is an error in both checkers. `vue-tsc` reports `src/ParentNope.vue(6,16): error TS2339: Property 'nope' does not exist on type '{ reset: () => void; }'.`
+A generic component has no construct signature (`generator/component_constructors/generic_function.rs:1`), so the construct branch of the helper does not apply. The last signature of the intersection is the fallback. Its `...args: any[]` gives `_E` no candidate, so `_E` is `unknown` and `NonNullable<unknown>` is `{}`.
 
-## Isolation
+A TypeScript check of the two types outside vize shows this. With `type Ref<_C> = <the helper above>`, `Ref<typeof Generic>` has `foo` and `Ref<typeof Generic & Fallback>` is `{}`, where `Generic` is `<T>(props: { a?: T }, ctx?: any, expose?: (exposed: { foo: () => void }) => void, setup?: any) => any` and `Fallback` is the fallback above.
 
-One change at a time from `Parent.vue`.
+The fix is likely to leave the fallback out of the intersection for a generic component.
 
-| Change                                                | `tsrs` errors | `vue-tsc` errors |
-| :---------------------------------------------------- | ------------: | ---------------: |
-| None (generic child, global registration)             |             1 |                0 |
-| A child that is not generic, global registration      |             0 |                0 |
-| The generic child imported in the parent              |             0 |                0 |
-| Control: the generic global child, a call to `nope()` |             1 |                1 |
+## Real occurrence
 
-`vize` 0.631.0 and 0.638.0 give the same result. Earlier versions are not tested.
-
-## Not known
-
-The cause is not known. In the code that `vize check --show-virtual-ts` writes, the global component is a bare name (`typeof MinChild`) with no declaration, so that code does not show the type that `tsrs --runExternalCode` uses. For a tag that the mapper cannot link to an import, the generated code declares `$GlobalComponent<'…'> & $GlobalComponentFallback`, where the fallback is a function type that takes `Record<string, unknown>`. If a global generic component gets the same intersection, TypeScript may read the exposed type from the last call signature, which is the fallback. This is a guess and is not tested.
+The shape in a real Nuxt app: [`Message/Content/Header/CreateDirectMessageParticipantDialog.vue` line 51](https://github.com/Esposter/Esposter/blob/49df4394844218f957290581ab2090a56f7a4f3d/apps/web/app/components/Message/Content/Header/CreateDirectMessageParticipantDialog.vue#L51) calls `friendPicker.value?.reset()` on a ref to [a generic component](https://github.com/Esposter/Esposter/blob/49df4394844218f957290581ab2090a56f7a4f3d/apps/web/app/components/Message/Model/Room/DirectMessage/FriendPicker.vue#L1) that exposes `reset`. `vue-tsc` accepts it.
 
 ## Not a duplicate of
 
-Searched open and closed issues and pull requests for template refs, global components and generic components. The search matches words, not meaning. The nearest are #10210 (merged; unresolved global components fall back to a permissive type, which is likely where the fallback comes from), #9797 (merged; infer generic event payloads of globally registered components) and #10251 (closed; a ref on a dynamic component loses the instance type). None covers the ref of a generic global component.
+Searched open and closed issues and pull requests for global components, template refs and exposed members. The search matches words, not meaning. The nearest are #10210 (merged; accept unresolved global components) and #9797 (merged; generic event payloads of global components). The inputs differ: neither reports the type of a ref.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
