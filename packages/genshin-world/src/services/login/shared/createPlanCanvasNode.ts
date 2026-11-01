@@ -1,5 +1,5 @@
-import type { PlanCanvasNode } from "#src/models/scene/PlanCanvasNode";
-import type { PlanCanvasOptions } from "#src/models/scene/PlanCanvasOptions";
+import type { PlanCanvasNode } from "#src/models/login/PlanCanvasNode";
+import type { PlanCanvasOptions } from "#src/models/login/PlanCanvasOptions";
 
 import { createShadeCanvasTexture } from "#src/services/login/shared/createShadeCanvasTexture";
 import { RepeatWrapping } from "three";

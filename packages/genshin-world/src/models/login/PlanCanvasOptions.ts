@@ -1,4 +1,4 @@
-import type { SceneAxis } from "#src/models/scene/SceneAxis";
+import type { SceneAxis } from "#src/models/login/SceneAxis";
 
 // A rectangle of a part's own geometry a plan is drawn over: its two axes, across the canvas and up it, its corner and
 // Size along them, the axis it is looked along, and how many pixels it draws a metre at

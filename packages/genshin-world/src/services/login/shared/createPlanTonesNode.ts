@@ -1,5 +1,5 @@
-import type { PlanCanvasOptions } from "#src/models/scene/PlanCanvasOptions";
-import type { PlanTones } from "#src/models/scene/PlanTones";
+import type { PlanCanvasOptions } from "#src/models/login/PlanCanvasOptions";
+import type { PlanTones } from "#src/models/login/PlanTones";
 import type { Node } from "three/webgpu";
 
 import { createPlanCanvasNode } from "#src/services/login/shared/createPlanCanvasNode";

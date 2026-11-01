@@ -1,7 +1,7 @@
 import type { LoginDoor } from "#src/models/login/LoginDoor";
 import type { Node } from "three/webgpu";
 
-import { SceneAxis } from "#src/models/scene/SceneAxis";
+import { SceneAxis } from "#src/models/login/SceneAxis";
 import { LOGIN_DOOR_RELIEF_PIXELS_PER_METRE } from "#src/services/login/door/constants";
 import { createPlanTonesNode } from "#src/services/login/shared/createPlanTonesNode";
 
