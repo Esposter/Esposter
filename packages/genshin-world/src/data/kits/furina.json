@@ -63,14 +63,8 @@
   "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 57.1707 },
   "normalAttacks.3.hits.0.poiseDamage": { "source": "Wiki", "value": 79.6608 },
   "parameters.arkheHitCooldownSeconds.length": { "cause": "Unsourced", "value": 2 },
-  "parameters.arkheHitCooldownSeconds.0": {
-    "cause": "Unclassified",
-    "value": { "index": 11, "proudSkillGroupId": 8931 }
-  },
-  "parameters.arkheHitCooldownSeconds.1": {
-    "cause": "Unclassified",
-    "value": { "index": 10, "proudSkillGroupId": 8931 }
-  },
+  "parameters.arkheHitCooldownSeconds.0": { "cause": "Unsourced", "value": { "index": 11, "proudSkillGroupId": 8931 } },
+  "parameters.arkheHitCooldownSeconds.1": { "cause": "Unsourced", "value": { "index": 10, "proudSkillGroupId": 8931 } },
   "parameters.salonMemberDrainedMaxHealthShares.length": { "cause": "Unsourced", "value": 3 },
   "parameters.salonMemberDrainedMaxHealthShares.0": {
     "file": "skill.go",
