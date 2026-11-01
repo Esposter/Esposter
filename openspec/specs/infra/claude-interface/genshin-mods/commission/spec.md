@@ -20,6 +20,12 @@ A commission SHALL open when a turn first creates a task, with its goal read fro
 - **WHEN** the conversation is cleared
 - **THEN** the commission closes
 
+#### Scenario: A commission closed by resuming the conversation
+
+- **GIVEN** an open commission
+- **WHEN** the conversation is resumed
+- **THEN** the commission closes
+
 ### Requirement: The band shows the goal, progress and elapsed time
 
 The band SHALL show the goal, the tasks done, the share complete and the whole minutes since the commission opened, with the task in progress beneath.

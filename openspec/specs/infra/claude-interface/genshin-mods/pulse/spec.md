@@ -42,15 +42,16 @@ At most one machine watcher SHALL sample the machine at a time.
 - **WHEN** a new watcher starts
 - **THEN** it takes the lock over and samples the machine
 
-### Requirement: Pulse is on by default and read at session start
+### Requirement: Pulse is on by default and read at each start
 
-Pulse SHALL be on by default, the pulse off command SHALL stop it, and a change SHALL take effect at the next session.
+Pulse SHALL be on by default, and the pulse off command SHALL stop the watcher's starts and restarts, so the next session starts no watcher and a running session restarts none.
 
 #### Scenario: Turning pulse off
 
 - **GIVEN** pulse on
 - **WHEN** the person sends the off command
 - **THEN** the next session starts no watcher
+- **AND** a running session's watcher is not restarted once it exits
 
 #### Scenario: Turning pulse back on
 

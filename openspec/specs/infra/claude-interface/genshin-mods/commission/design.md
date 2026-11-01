@@ -24,4 +24,4 @@ The row reads `goal · 3 of 4 · 75% · 12m`, the clock counting whole minutes f
 
 ## Notes
 
-- The goal meter in the walkthrough this comes from also lists goals running in other sessions. A mod cannot read another session's state, so that view belongs to the [agent console](../../agent-console/README.md), which already sees every session on a machine.
+- The goal meter in the walkthrough the [Genshin mods](../README.md) page cites also lists goals running in other sessions. A mod cannot read another session's state, so that view belongs to the [agent console](../../agent-console/README.md), which already sees every session on a machine.

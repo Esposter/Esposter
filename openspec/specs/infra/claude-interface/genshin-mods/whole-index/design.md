@@ -1,6 +1,6 @@
 # Whole-index guard
 
-Part of [Genshin mods](../README.md). Several sessions share one checkout, so the index is shared too: `git add .` stages a peer's work, `git reset` unstages it and `git stash` sets it aside. A `git add -N .` followed by `git reset -q` unstages a peer's staged files, and prose alone does not hold against it, so the rule the git skill states is enforced at the call itself. The guard refuses the call while another session is live in the same checkout.
+Part of [Genshin mods](../README.md). Several sessions share one checkout, so the index is shared too: `git add .` stages a peer's work, `git reset` unstages it and `git stash` sets it aside. A `git add -N .` followed by `git reset -q` unstages a peer's staged files, and prose alone does not hold against it, so the rule the git skill states is enforced at the call itself. The guard refuses the call while another session has edited the same checkout in the last half hour.
 
 ## How it works
 
