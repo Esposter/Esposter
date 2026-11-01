@@ -9,7 +9,7 @@ Each character's official model is drawn at rest in the game's character shader 
 Characters move as the game's characters do, stand at the game's scale, and show their terms where they are chosen.
 
 - The Traveler's standing, walk, run and sprint motion is fitted to the game's own locomotion clips, and other characters follow.
-- Each character's scale is measured from the game's own model, replacing the reckoned eight-centimetre unit.
+- Each character's scale is measured from the game's own model, replacing the reckoned unit.
 - The Character screen shows the terms and credit of the character it shows, beside that character.
 
 ## Capabilities
