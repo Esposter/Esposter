@@ -37,6 +37,7 @@ import {
 } from "#src/services/genshinAssets/shared/constants";
 import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
+import { LUMINANCE } from "#src/services/genshinParity/shared/constants";
 import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
 import { toLinear } from "#src/services/shared/toLinear";
 import { settleAll } from "@esposter/shared";
@@ -213,7 +214,7 @@ export const fitLoginTowerFacades = async (
     // The paint on the face: a cell darker or lighter than its band's mean by the paint's contrast
     const getLuminance = (cell: number): number => {
       const [red = 0, green = 0, blue = 0] = paint.colors[cell] ?? [];
-      return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+      return LUMINANCE[0] * red + LUMINANCE[1] * green + LUMINANCE[2] * blue;
     };
     const bandLuminanceMap = new Map(
       Array.from(faceBandCellsMap, ([band, bandCells]) => [
