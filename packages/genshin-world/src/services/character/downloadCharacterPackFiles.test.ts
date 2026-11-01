@@ -1,3 +1,5 @@
+import type { MockInstance } from "vitest";
+
 import { CHARACTER_MODEL_PATH, CHARACTER_TERMS_PATH } from "#src/services/character/constants";
 import { createCharacterPackCacheStub } from "#src/services/character/createCharacterPackCacheStub.test";
 import { downloadCharacterPackFiles } from "#src/services/character/downloadCharacterPackFiles";
@@ -25,13 +27,14 @@ describe(downloadCharacterPackFiles, () => {
       },
     ],
   };
-  const fetchSpy = vi.spyOn(globalThis, "fetch");
   // The host answers the model, and fails the terms file with a server error until a test lets it through
+  let fetchSpy: MockInstance<typeof fetch>;
   let isTermsServed: boolean;
 
   beforeEach(() => {
     vi.useFakeTimers({ now: 0 });
     isTermsServed = false;
+    fetchSpy = vi.spyOn(globalThis, "fetch");
     fetchSpy.mockImplementation((url) => {
       if (url === termsUrl && !isTermsServed) return Promise.resolve(new Response(null, { status: 500 }));
       return Promise.resolve(new Response(url === modelUrl ? modelText : termsText));
@@ -40,7 +43,7 @@ describe(downloadCharacterPackFiles, () => {
 
   afterEach(() => {
     vi.useRealTimers();
-    fetchSpy.mockClear();
+    vi.restoreAllMocks();
   });
 
   test("retry fetches only what is missing", async () => {

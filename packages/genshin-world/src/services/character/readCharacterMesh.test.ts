@@ -116,13 +116,14 @@ describe(readCharacterMesh, () => {
   test("a model is drawn at its character's unit", async () => {
     expect.hasAssertions();
 
-    vi.mocked(parsePmx).mockReturnValue({ materials: [], textures: [] } as unknown as PmxModel);
+    const pmxModel = { materials: [], textures: [] } as unknown as PmxModel;
+    vi.mocked(parsePmx).mockReturnValue(pmxModel);
 
     await readCharacterMesh(characterPackReader, meshOptions);
 
-    expect(createPmxMesh).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.anything(),
+    expect(createPmxMesh).toHaveBeenCalledExactlyOnceWith(
+      pmxModel,
+      [],
       getCharacterPmxUnitMetres(TRAVELER_CHARACTER_ID),
     );
   });
