@@ -108,9 +108,10 @@ describe(strikeKitDendroCores, () => {
   ])("leaves %s as it is", (_description, core, strike) => {
     expect.hasAssertions();
 
+    const { x } = core.position;
     const { secondsRemaining } = core;
     strikeKitDendroCores({ effects: [core] }, createParty([TRAVELER_CHARACTER_ID]), strike, combatant);
 
-    expect(core).toStrictEqual({ ...createCore(core.position.x), secondsRemaining });
+    expect(core).toStrictEqual({ ...createCore(x), secondsRemaining });
   });
 });
