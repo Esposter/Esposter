@@ -9,10 +9,10 @@
     "cause": "BoxAsCircle",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9.899494936611665 }
   },
-  "burst.hits.5.element": { "cause": "Unsourced", "value": "Ice" },
-  "burst.hits.5.hitmarkFrames": { "cause": "Unsourced", "value": 158 },
+  "burst.hits.5.element": { "file": "burst.go", "line": 63, "source": "Gcsim", "value": "Ice" },
+  "burst.hits.5.hitmarkFrames": { "file": "burst.go", "line": 21, "source": "Gcsim", "value": 158 },
   "burst.hits.5.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 11439 } },
-  "burstEnergyCost": { "cause": "Unsourced", "value": 0 },
+  "burstEnergyCost": { "file": "skirk.go", "line": 35, "source": "Gcsim", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 60 },
   "chargedAttack.hits.1.poiseDamage": { "source": "Wiki", "value": 60 },
   "frames.sevenPhaseFlash": { "file": "skill.go", "line": 25, "source": "Gcsim", "value": 754 },
@@ -35,10 +35,15 @@
   "skill.hits.length": { "cause": "Unsourced", "value": 0 },
   "skillCooldownSeconds": { "cause": "DiffersFromSource", "value": 20.883333333333333 },
   "skillHolds.length": { "cause": "DiffersFromSource", "value": 0 },
-  "stances.sevenPhaseFlash.burst.animationFrames": { "cause": "Unsourced", "value": 41 },
+  "stances.sevenPhaseFlash.burst.animationFrames": { "file": "burst.go", "line": 37, "source": "Gcsim", "value": 41 },
   "stances.sevenPhaseFlash.burst.hits.length": { "cause": "Unsourced", "value": 0 },
   "stances.sevenPhaseFlash.burst.targeting": { "cause": "Unsourced", "value": "Skill" },
-  "stances.sevenPhaseFlash.chargedAttack.animationFrames": { "cause": "Unsourced", "value": 54 },
+  "stances.sevenPhaseFlash.chargedAttack.animationFrames": {
+    "file": "charge.go",
+    "line": 32,
+    "source": "Gcsim",
+    "value": 54
+  },
   "stances.sevenPhaseFlash.chargedAttack.hits.length": { "cause": "Unsourced", "value": 3 },
   "stances.sevenPhaseFlash.chargedAttack.hits.0.hitmarkFrames": {
     "file": "charge.go",
@@ -72,7 +77,12 @@
   },
   "stances.sevenPhaseFlash.chargedAttack.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.sevenPhaseFlash.normalAttacks.length": { "cause": "Unsourced", "value": 5 },
-  "stances.sevenPhaseFlash.normalAttacks.0.animationFrames": { "cause": "Unsourced", "value": 30 },
+  "stances.sevenPhaseFlash.normalAttacks.0.animationFrames": {
+    "file": "attack.go",
+    "line": 61,
+    "source": "Gcsim",
+    "value": 30
+  },
   "stances.sevenPhaseFlash.normalAttacks.0.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.0.hits.0.area": {
     "cause": "Unsourced",
@@ -92,7 +102,12 @@
   },
   "stances.sevenPhaseFlash.normalAttacks.0.hits.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "stances.sevenPhaseFlash.normalAttacks.0.targeting": { "cause": "Unsourced", "value": "Strike" },
-  "stances.sevenPhaseFlash.normalAttacks.1.animationFrames": { "cause": "Unsourced", "value": 43 },
+  "stances.sevenPhaseFlash.normalAttacks.1.animationFrames": {
+    "file": "attack.go",
+    "line": 65,
+    "source": "Gcsim",
+    "value": 43
+  },
   "stances.sevenPhaseFlash.normalAttacks.1.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.1.hits.0.area": {
     "cause": "Unsourced",
@@ -112,7 +127,12 @@
   },
   "stances.sevenPhaseFlash.normalAttacks.1.hits.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "stances.sevenPhaseFlash.normalAttacks.1.targeting": { "cause": "Unsourced", "value": "Strike" },
-  "stances.sevenPhaseFlash.normalAttacks.2.animationFrames": { "cause": "Unsourced", "value": 42 },
+  "stances.sevenPhaseFlash.normalAttacks.2.animationFrames": {
+    "file": "attack.go",
+    "line": 69,
+    "source": "Gcsim",
+    "value": 42
+  },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.length": { "cause": "Unsourced", "value": 2 },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.0.area": {
     "cause": "Unsourced",
@@ -149,7 +169,12 @@
   },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.1.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "stances.sevenPhaseFlash.normalAttacks.2.targeting": { "cause": "Unsourced", "value": "Strike" },
-  "stances.sevenPhaseFlash.normalAttacks.3.animationFrames": { "cause": "Unsourced", "value": 60 },
+  "stances.sevenPhaseFlash.normalAttacks.3.animationFrames": {
+    "file": "attack.go",
+    "line": 73,
+    "source": "Gcsim",
+    "value": 60
+  },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.length": { "cause": "Unsourced", "value": 2 },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.0.area": {
     "cause": "Unsourced",
@@ -186,7 +211,12 @@
   },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.1.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "stances.sevenPhaseFlash.normalAttacks.3.targeting": { "cause": "Unsourced", "value": "Strike" },
-  "stances.sevenPhaseFlash.normalAttacks.4.animationFrames": { "cause": "Unsourced", "value": 72 },
+  "stances.sevenPhaseFlash.normalAttacks.4.animationFrames": {
+    "file": "attack.go",
+    "line": 77,
+    "source": "Gcsim",
+    "value": 72
+  },
   "stances.sevenPhaseFlash.normalAttacks.4.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.4.hits.0.area": {
     "cause": "Unsourced",

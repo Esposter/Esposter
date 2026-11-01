@@ -1,8 +1,8 @@
 {
-  "frames.judicationFirst": { "cause": "Unsourced", "value": 328 },
-  "frames.endseer": { "cause": "Unsourced", "value": 84 },
+  "frames.judicationFirst": { "file": "burst.go", "line": 48, "source": "Gcsim", "value": 328 },
+  "frames.endseer": { "file": "asc.go", "line": 28, "source": "Gcsim", "value": 84 },
   "frames.burstDurationCast": { "cause": "Unsourced", "value": 112 },
-  "frames.judicationInterval": { "cause": "Unsourced", "value": 234 },
+  "frames.judicationInterval": { "file": "asc.go", "line": 29, "source": "Gcsim", "value": 234 },
   "hits.mortuaryRiteDuststalkerBolts.length": { "file": "skill.go", "line": 127, "source": "Gcsim", "value": 3 },
   "hits.mortuaryRiteDuststalkerBolts.0.area": {
     "cause": "Unsourced",
