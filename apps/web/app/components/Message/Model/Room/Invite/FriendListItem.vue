@@ -22,26 +22,27 @@ const inviteStore = useInviteStore();
 const { getUsableInviteLink } = inviteStore;
 const checkIsRecipientPending = ({ id, isGroup }: InviteRecipient) =>
   isGroup ? checkIsInviteDirectMessagePending(id) : checkIsInviteFriendPending(id);
-// The invite can lapse or run out of uses while the dialog is open, so the send rechecks it and mints a fresh one
-// Before a link is sent
-const sendInvite = async () => {
-  const inviteLink = await getUsableInviteLink(room);
-  if (!inviteLink) return;
-  if (recipient.isGroup) await inviteDirectMessage(recipient.id, inviteLink);
-  else await inviteFriend(recipient.id, inviteLink);
-};
 </script>
 
 <template>
   <MessageFriendsUserListItem :image="recipient.image" :name="recipient.name">
     <template #append>
       <UiButton v-if="memberIdSet.has(recipient.id)" disabled>Joined</UiButton>
+      <!-- The invite can lapse or run out of uses while the dialog is open, so the send rechecks it and mints a fresh one
+      Before a link is sent -->
       <UiButton
         v-else
         :disabled="!isInviteSendable"
         :is-pending="checkIsRecipientPending(recipient)"
         :variant="UiButtonVariant.Accent"
-        @click="sendInvite()"
+        @click="
+          async () => {
+            const inviteLink = await getUsableInviteLink(room);
+            if (!inviteLink) return;
+            if (recipient.isGroup) await inviteDirectMessage(recipient.id, inviteLink);
+            else await inviteFriend(recipient.id, inviteLink);
+          }
+        "
       >
         Invite
       </UiButton>
