@@ -4,20 +4,9 @@ import type { LuaFunction } from "#src/models/recreation/lua/LuaFunction";
 import type { LuaValue } from "#src/models/recreation/lua/LuaValue";
 
 import { LuaTable } from "#src/models/recreation/lua/LuaTable";
-import { LUA_CHUNK_NAME } from "#src/services/recreation/lua/constants";
 import { executeLuaDataInstruction } from "#src/services/recreation/lua/executeLuaDataInstruction";
+import { readGlobalName } from "#src/services/recreation/lua/readGlobalName";
 import { readLuaValue } from "#src/services/recreation/lua/readLuaValue";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-
-// A global's name is a string or a number constant, the only keys a global assignment sets
-const readGlobalName = (name: LuaValue): string => {
-  if (typeof name === "string" || typeof name === "number") return String(name);
-  throw new InvalidOperationError(
-    Operation.Read,
-    LUA_CHUNK_NAME,
-    "sets a global with a key that is neither a string nor a number",
-  );
-};
 
 // Runs a data-only chunk's main function in its dialect and returns the globals it set, each as a JS value
 export const evaluateLuaDataChunk = (luaFunction: LuaFunction, dialect: LuaDialect): Record<string, unknown> => {

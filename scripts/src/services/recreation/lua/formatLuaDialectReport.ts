@@ -1,6 +1,7 @@
 import type { LuaDialect } from "#src/models/recreation/lua/LuaDialect";
 
 import { flattenLuaFunctions } from "#src/services/recreation/lua/flattenLuaFunctions";
+import { formatRange } from "#src/services/recreation/lua/formatRange";
 import { proposeLuaOpcodeMapping } from "#src/services/recreation/lua/proposeLuaOpcodeMapping";
 import { readLengthPrefixedChunk } from "#src/services/recreation/lua/readLengthPrefixedChunk";
 import { readLuaOpcodeName } from "#src/services/recreation/lua/readLuaOpcodeName";
@@ -8,8 +9,6 @@ import { readLuaOpcodeStatistics } from "#src/services/recreation/lua/readLuaOpc
 
 // The six-bit opcode field's every number, the ones a chunk never uses listed as unknown rather than guessed
 const OPCODE_FIELD_COUNT = 64;
-
-const formatRange = (minimum: number, maximum: number): string => `${minimum}..${maximum}`;
 
 // A report on a raw export's instructions, read in the dialect given without a mapping: each opcode number's operand ranges, how often
 // Its B and C carry the constant flag, and the stock opcode the constraints give it, with the constraint that decided it
