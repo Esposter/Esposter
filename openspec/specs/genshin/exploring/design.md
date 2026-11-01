@@ -75,4 +75,4 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 
 ## Open
 
-Nothing open.
+The open check for a jump's arrival outside scene 3 is recorded with its requirement in [the spec](spec.md).
