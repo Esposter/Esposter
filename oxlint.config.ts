@@ -1,171 +1,32 @@
-import type { OxlintConfig, OxlintOverride } from "oxlint";
+import type { OxlintConfig } from "oxlint";
 
-import { ok } from "node:assert/strict";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { defineConfig } from "oxlint";
+
+import { AUTO_IMPORT_PACKAGE_OVERRIDES } from "./oxlint/autoImportPackageOverrides.ts";
+import {
+  BROWSER_GLOBALS,
+  FETCH_GLOBAL,
+  RESTRICTED_GLOBALS,
+  USE_ROUTE_GLOBAL,
+  USE_UI_STYLE_GLOBAL,
+} from "./oxlint/globals.ts";
+import {
+  APP_RESTRICTED_IMPORT_PATHS,
+  MOD_IMPORT_PATTERN,
+  OTHER_RESTRICTED_IMPORT_PATHS,
+  PACKAGE_IMPORT_PATTERNS,
+  RESTRICTED_IMPORT_PATHS,
+  SHARED_APP_IMPORT_PATTERN,
+  VUETIFY_IMPORT_PATH,
+  VUETIFY_IMPORT_PATTERN,
+  WORKSPACE_LIBRARY_IMPORT_PATTERN,
+} from "./oxlint/importRestrictions.ts";
+import { JS_PLUGINS } from "./oxlint/jsPlugins.ts";
+import { POLLING_MESSAGE, USE_ROUTER_PAGE_MESSAGE } from "./oxlint/messages.ts";
 
 // The Tiled tileset `.tsx` files are XML, not code. ESLint's ignores import this glob too,
 // So the two passes never ignore different trees.
 export const TILESET_IGNORE_PATTERN = "**/assets/dungeons/tilesets/**/*.tsx";
-const BROWSER_GLOBAL_MESSAGE = "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.";
-const CONTEXT_MESSAGE =
-  "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent) disables this with its reason.";
-const POLLING_MESSAGE =
-  "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.";
-const USE_ROUTER_PAGE_MESSAGE =
-  "A page reads its route through its own `useRoute()`, which the typed router narrows to the page's params, and navigates with `navigateTo`. See the routing skill.";
-const USE_ROUTE_MESSAGE =
-  "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.";
-const VUETIFY_MESSAGE =
-  "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See openspec/specs/architecture/ui-library/design.md.";
-// An override replaces a rule's options wholesale, so each scope's list is the root's entries with its own lifted or
-// Added by identity, and a ban added here reaches every scope that does not lift it
-const BROWSER_GLOBALS = [
-  "document",
-  "history",
-  "localStorage",
-  "location",
-  "matchMedia",
-  "navigator",
-  "screen",
-  "sessionStorage",
-].map((name) => ({ message: BROWSER_GLOBAL_MESSAGE, name }));
-const USE_ROUTE_GLOBAL = { message: USE_ROUTE_MESSAGE, name: "useRoute" };
-const USE_UI_STYLE_GLOBAL = {
-  message:
-    "Only the UI library reads the design style: a feature that differs by style asks the library to draw it. See openspec/specs/architecture/design-language/design.md#design-styles.",
-  name: "useUiStyle",
-};
-const FETCH_GLOBAL = {
-  message:
-    "A script's request goes through `fetchOk` (`scripts/src/services/shared/fetchOk.ts`), which refuses a non-2xx answer, `fetchJson` for a JSON body, or `fetchResponse` (`scripts/src/services/shared/fetchResponse.ts`) for a caller that reads a status as an answer; each bounds the request with a timeout, and a bare `fetch` does neither.",
-  name: "fetch",
-};
-const RESTRICTED_GLOBALS = [
-  ...BROWSER_GLOBALS,
-  { message: CONTEXT_MESSAGE, name: "inject" },
-  { message: CONTEXT_MESSAGE, name: "provide" },
-  USE_ROUTE_GLOBAL,
-  { message: POLLING_MESSAGE, name: "waitFor" },
-  { message: POLLING_MESSAGE, name: "waitUntil" },
-  USE_UI_STYLE_GLOBAL,
-];
-// Banned in every tree, the child process ones aside: the Vuetify 0 bans hold everywhere but the UI library and the packages
-const OTHER_RESTRICTED_IMPORT_PATHS = [
-  {
-    importNames: ["randomUUID"],
-    message:
-      "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
-    name: "node:crypto",
-  },
-  {
-    importNames: ["parseArgs"],
-    message:
-      "A command line is a citty command (the `cli` skill): `parseArgs` stops at parsing, with no usage, help or subcommands to go with it.",
-    name: "node:util",
-  },
-  { importNames: ["useRoute"], message: USE_ROUTE_MESSAGE, name: "vue-router" },
-  { importNames: ["inject", "provide"], message: CONTEXT_MESSAGE, name: "vue" },
-];
-// A console child of a windowless parent, or any `detached` child, opens its own terminal window on Windows unless
-// `windowsHide` is set. The wrappers force it, so every child process goes through them; a type import stays free.
-const CHILD_PROCESS_MESSAGE =
-  "Import the hidden-window wrappers from `@esposter/shared-node/child-process` — a child process spawned without `windowsHide` opens its own terminal window on Windows.";
-const CHILD_PROCESS_IMPORT_PATHS = [
-  { allowTypeImports: true, message: CHILD_PROCESS_MESSAGE, name: "child_process" },
-  { allowTypeImports: true, message: CHILD_PROCESS_MESSAGE, name: "node:child_process" },
-];
-const RESTRICTED_IMPORT_PATHS = [...OTHER_RESTRICTED_IMPORT_PATHS, ...CHILD_PROCESS_IMPORT_PATHS];
-// What a tree has auto-imported is written by the tool that does it, as `const name: typeof import('module').name` and its
-// Types as `export type { … }` followed by the module they come from. Reading that file makes the ban follow the tool, so a
-// Name it starts auto-importing is banned with no list kept here. A module that starts with a dot or a hash is a local file
-const RUNTIME_DECLARATION_REGEX = /typeof import\('(?<module>[^'#.][^']*)'\)\.(?<name>\w+)/gu;
-const TYPE_DECLARATION_REGEX =
-  /export type \{(?<names>[^}]*)\}\s*(?:from '(?<fromModule>[^'#.][^']*)'|import\('(?<importModule>[^'#.][^']*)'\))/gu;
-const getAutoImportedPaths = (declarationsPath: string, source: string, allowTypeImports: boolean) => {
-  const declarationsUrl = new URL(declarationsPath, import.meta.url);
-  // A tree that has not run `nuxt prepare` (a fresh worktree) has no generated file yet, and every command that loads the
-  // Configuration, formatting included, would fail on it. CI installs first, so the ban always holds there
-  if (!existsSync(declarationsUrl)) return [];
-
-  const declarations = readFileSync(declarationsUrl, "utf8");
-  const moduleNamesMap = new Map<string, string[]>();
-  const addNames = (module: string, names: string[]) => {
-    moduleNamesMap.set(module, [...(moduleNamesMap.get(module) ?? []), ...names]);
-  };
-  for (const { groups } of declarations.matchAll(RUNTIME_DECLARATION_REGEX))
-    addNames(groups?.module ?? "", [groups?.name ?? ""]);
-  for (const { groups } of declarations.matchAll(TYPE_DECLARATION_REGEX))
-    addNames(
-      groups?.fromModule ?? groups?.importModule ?? "",
-      (groups?.names ?? "").split(",").map((name) => name.trim()),
-    );
-  // A file the regexes read nothing from would leave the ban empty and silent, as a format the tool changes does
-  ok(moduleNamesMap.size > 0, `${declarationsPath} declares no auto-import this ban can read.`);
-
-  return Array.from(moduleNamesMap, ([name, importNames]) => ({
-    allowTypeImports,
-    importNames: importNames.filter(Boolean),
-    message: `${source} auto-imports this, so it is never imported by hand — drop the import. The names are its generated \`${declarationsPath}\`.`,
-    name,
-  }));
-};
-// The app's imports are Nuxt's, written on `nuxt prepare` (the install's postinstall)
-const APP_RESTRICTED_IMPORT_PATHS = [
-  ...RESTRICTED_IMPORT_PATHS,
-  ...getAutoImportedPaths("apps/web/.nuxt/types/imports.d.ts", "Nuxt", false),
-];
-const VUETIFY_IMPORT_PATH = { message: VUETIFY_MESSAGE, name: "@vuetify/v0" };
-const VUETIFY_IMPORT_PATTERN = { group: ["@vuetify/v0/*"], message: VUETIFY_MESSAGE };
-const WORKSPACE_LIBRARY_IMPORT_PATTERN = {
-  allowTypeImports: true,
-  group: ["@esposter/*", "agent-console-server", "azure-mock", "keyframe-store", "parse-tmx", "vue-phaserjs"],
-  message:
-    "The Nuxt configuration loads in `nuxt prepare`, the app's postinstall, before any workspace library is built — a runtime import of one fails every fresh install. Import the npm package the library wraps instead; types are fine.",
-};
-const SHARED_APP_IMPORT_PATTERN = {
-  group: ["@/**", "~/**"],
-  message:
-    "`shared/` is parsed by the server too, so it may not reach into the client-only app tree — see openspec/specs/architecture/module-boundaries/design.md. Move the code to `shared/`, or give the client concern its own twin under `app/`.",
-};
-const PACKAGE_ALIAS_IMPORT_PATTERN = {
-  group: ["@/**", "~/**"],
-  message:
-    "A package addresses its own source through the `#src/*` subpath imports its manifest declares, never a tsconfig `paths` alias — a `paths` entry re-points into whichever package is compiling, so a sibling bundling this one from source resolves it to nothing. See openspec/specs/architecture/build-pipeline/design.md. (`apps/web` is the only tree that keeps `@/` — those are Nuxt's own aliases.)",
-};
-const PACKAGE_RELATIVE_IMPORT_PATTERN = {
-  group: ["./*", "./**", "../*", "../**"],
-  message:
-    "A package addresses its own source through `#src/*`, never a relative specifier — a relative path breaks the moment the file moves, and `#src` is resolved from the importing file's own package.json so it survives being compiled by a sibling. See openspec/specs/architecture/build-pipeline/design.md.",
-};
-const PACKAGE_IMPORT_PATTERNS = [PACKAGE_ALIAS_IMPORT_PATTERN, PACKAGE_RELATIVE_IMPORT_PATTERN];
-// A package that builds with the shared Vue plugin has its own `auto-imports.d.ts`, committed beside its manifest, so the
-// Packages are the ones that have one. The plugin's imports are ambient in its components. Its `.ts` files are left out: a
-// Unit suite runs under the plain Vitest configuration, which applies no plugin, so a module it loads keeps the imports it
-// Needs there. A type import stays allowed: the declaration build writes a prop, slot or emit type into the shipped `.d.ts`
-// Only through an import, and an ambient name there fails it as a private name (`TS4033`)
-const AUTO_IMPORT_PACKAGE_OVERRIDES: OxlintOverride[] = readdirSync(new URL("packages/", import.meta.url))
-  .filter((name) => existsSync(new URL(`packages/${name}/auto-imports.d.ts`, import.meta.url)))
-  .map((name) => ({
-    files: [`packages/${name}/**/*.vue`],
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          paths: [
-            ...RESTRICTED_IMPORT_PATHS,
-            ...getAutoImportedPaths(`packages/${name}/auto-imports.d.ts`, "The package's Vue plugin", true),
-          ],
-          patterns: PACKAGE_IMPORT_PATTERNS,
-        },
-      ],
-    },
-  }));
-const MOD_IMPORT_PATTERN = {
-  group: ["#src/*", "@/**", "~/**"],
-  message:
-    "A Claude Code hooks module imports its own files by relative path alone: the engine refuses any other specifier at load. See the claude-mods skill.",
-};
 
 const oxlintConfiguration: OxlintConfig = defineConfig({
   categories: {
@@ -177,26 +38,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     suspicious: "error",
   },
   ignorePatterns: ["public", TILESET_IGNORE_PATTERN, ".agents/worktrees", ".claude", "**/auto-imports.d.ts"],
-  jsPlugins: [
-    "./scripts/src/oxlint/comments.ts",
-    "./scripts/src/oxlint/countWriteAfterSettle.ts",
-    "./scripts/src/oxlint/enumMap.ts",
-    "./scripts/src/oxlint/errorAlert.ts",
-    "./scripts/src/oxlint/errorHandling.ts",
-    "./scripts/src/oxlint/immutability.ts",
-    "./scripts/src/oxlint/literalUnion.ts",
-    "./scripts/src/oxlint/naming.ts",
-    "./scripts/src/oxlint/passThroughHelper.ts",
-    "./scripts/src/oxlint/persistThenNotify.ts",
-    "./scripts/src/oxlint/piniaStore.ts",
-    "./scripts/src/oxlint/propsInterface.ts",
-    "./scripts/src/oxlint/routing.ts",
-    "./scripts/src/oxlint/setupScope.ts",
-    "./scripts/src/oxlint/templateRef.ts",
-    "./scripts/src/oxlint/testing.ts",
-    "./scripts/src/oxlint/testValues.ts",
-    "./scripts/src/oxlint/trpcProcedure.ts",
-  ],
+  jsPlugins: JS_PLUGINS,
   options: { typeAware: true },
   overrides: [
     {
