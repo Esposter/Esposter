@@ -118,6 +118,28 @@ const key = ref<"after">("after");
 </template>
 ```
 
+`src/ControlNoSlot.vue` is the proof file for the Expected section. Run it in place of `InputMapLocal.vue`, as the control row of the Isolation table does:
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+
+import DatePicker from "./DatePicker.vue";
+
+const count = ref<number>(0);
+</script>
+
+<template>
+  <DatePicker
+    @select="
+      (value) => {
+        count = value;
+      }
+    "
+  />
+</template>
+```
+
 ```sh
 npm i && npm run typecheck ; npm run typecheck:oracle
 ```
@@ -138,7 +160,7 @@ No diagnostic, as with `vue-tsc` 3.3.11. The parameter `value` has the type `Ser
 No output. The command exits 0.
 ```
 
-`vue-tsc` checks the handler. In `ControlNoSlot.vue`, assigning the payload to a `number` is an error in both checkers.
+`vue-tsc` checks the handler. With `ControlNoSlot.vue` in place of `InputMapLocal.vue`, assigning the payload to a `number` is an error in both checkers. Both report this first line: `src/ControlNoSlot.vue(13,9): error TS2322: Type 'SerializableValue' is not assignable to type 'number'.`
 
 ## Isolation
 
