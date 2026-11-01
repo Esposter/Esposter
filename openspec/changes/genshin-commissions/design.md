@@ -41,7 +41,7 @@ packages/genshin-world/src/
    - Tests: the reset clock's `computeLastDailyReset.test.ts` (a moment before 04:00 reads the day before's reset, one at 04:00 reads its own) and `checkIsDailyResetDayCurrent.test.ts` (dealt before the reset is stale, after it current), beside each; `readGenshinSave.test.ts` gains a day read back from its save with its `dealtAt`.
    - No caller deals yet, so nothing in the session changes.
 2. **Scene tasks**, swapping their area's camp while open. Waits on the area's camps, placed from the official map's enemy marks as the [spawned places](../genshin-spawned-places/design.md) proposal sets out.
-3. **Quest tasks**: a quest's completion reaching its commission, once the quests report a completion.
+3. **Quest tasks**: a quest's completion reaching its commission.
 4. **The handbook's Commissions tab** and the commissions' words.
 5. **Routing and the other regions**: a claim's Mora, items and EXP each sent where it is kept, Companionship EXP through the [friendship grant](../../specs/genshin/companionship/design.md), and the other regions' pools.
 6. **Encounter Points earned**: the quests' points, the storage they are held in, the daily reset they are kept to, and the save field. The other sources follow with their amounts ([tasks](tasks.md), section 6).
