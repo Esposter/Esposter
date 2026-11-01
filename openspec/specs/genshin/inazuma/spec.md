@@ -79,4 +79,4 @@ Each mesh of Inazuma City's exported scene that the parity witness does not draw
 
 ## Open
 
-- [ ] **Each area of the region takes the game's own outline** — no source yet: the catalogue's Inazuma outlines are not matched here to the game's dumped area polygons.
+- [ ] **Each area of the region takes the game's own outline** — no source yet: the catalogue's Inazuma outlines are not matched here to the game's dumped area polygons; `{data-root}/genshin-parity/city-areas.json` gives each area code only a centroid and an extent, no outline.

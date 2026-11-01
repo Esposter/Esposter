@@ -49,10 +49,10 @@ The parity commands read three further measures from the same frames.
 
 ## Open
 
-- [ ] **Pitch agreement falls to about a quarter once the game is two seconds or more off itself, and under a fifth for one piece against the other** — no source yet: no self-shift run of the score is recorded.
-- [ ] **A render holding above four in five names nearly the right notes at nearly the right time** — no source yet: no checked run supports this reading.
-- [ ] **The game a quarter second off itself is a few decibels from itself, two seconds off well over twice that, and the other piece about twice the distance of the nearer end** — no source yet: no self-shift distance run is recorded.
-- [ ] **A band gain fitted to half a segment's frames leaves about as much distance as none** — no source yet: no half-frame fit run is recorded.
-- [ ] **Solved in the score's own bands, the solve's distance came within a few tenths of a decibel of what `listen` measured** — no source yet: no solve-against-`listen` comparison is recorded.
-- [ ] **The game's noise reading reproduces what ships** — no source yet: no noise read-back output is recorded.
-- [ ] **A step is approved by ear once its numbers improve** — no source yet: no approval record is cited.
+- [ ] **Pitch agreement falls to about a quarter once the game is two seconds or more off itself, and under a fifth for one piece against the other** — no source yet: no self-shift run of the score is recorded; `scoreMusicSegment` (`scripts/src/services/genshinParity/music/scoreMusicSegment.ts`) run on the game's segment shifted two seconds would show the first half.
+- [ ] **A render holding above four in five names nearly the right notes at nearly the right time** — no source yet for the time half: the committed snapshot's pitch agreements of 0.893 and 0.877 (`scripts/src/services/genshinParity/shared/ParityMusicScores.snapshot.md`, lines 11 and 12) are above four in five, but closer than the game a quarter second off itself needs a shifted run.
+- [ ] **The game a quarter second off itself is a few decibels from itself, two seconds off well over twice that, and the other piece about twice the distance of the nearer end** — no source yet: no self-shift distance run is recorded; the distance `scoreMusicSegment` gives the game's segment shifted a quarter second and two seconds would show it.
+- [ ] **A band gain fitted to half a segment's frames leaves about as much distance as none** — no source yet: no half-frame fit run is recorded; `fitBandGain` (`scripts/src/services/genshinParity/music/fitBandGain.ts`) fitted on half a segment's frames and scored on the rest would show it.
+- [ ] **Solved in the score's own bands, the solve's distance came within a few tenths of a decibel of what `listen` measured** — no source yet: no solve-against-`listen` comparison is recorded; `pnpm -C scripts genshin:parity listen` printing the same render's distance beside the solve's would show it.
+- [ ] **The game's noise reading reproduces what ships** — no source yet: no noise read-back output is recorded; `pnpm -C scripts genshin:parity noise` must print each band's reading of the game beside what ships, the two agreeing.
+- [ ] **A step is approved by ear once its numbers improve** — no source yet: no approval record is cited, and none is in the music pages or the parity scripts; a dated listening note per step would settle it.

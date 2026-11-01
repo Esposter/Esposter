@@ -25,6 +25,6 @@ flowchart TD
 
 ## Open
 
-- [ ] **The self check's margin** — no source yet: a recorded run that states the residual, since `calibrateCommand.ts` prints the error and its scale but sets no threshold for `--self`.
+- [ ] **The self check's margin** — no source yet: a recorded run of `pnpm --filter @esposter/scripts genshin:parity calibrate <reference> --self` that states the residual, since `calibrateCommand.ts` prints the error and its scale but sets no threshold for `--self`.
 - [ ] **The self check finds the haze's blend, the rim's glow, the grade and the bloom** — no source yet: no commit, snapshot or report records those finds.
-- [ ] **Left free, the lights cancel one another, a fading light goes red below none, and each tower takes a colour rising through its height** — no source yet: no solve run without these constraints is kept, so the reason is the page's own reading of it.
+- [ ] **Left free, the lights cancel one another, a fading light goes red below none, and each tower takes a colour rising through its height** — no source yet: no solve run without these constraints is kept (the solver's comment at `scripts/src/services/genshinParity/witness/solveStoneLight.ts` lines 37 to 38 narrates one with no output); the night case in `scripts/src/services/genshinParity/witness/solveStoneLight.test.ts` line 134, run with the constraints off, would settle it.

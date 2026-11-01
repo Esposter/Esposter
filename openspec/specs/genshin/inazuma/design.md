@@ -43,4 +43,4 @@ In the [witness](../parity/witness/design.md) of Inazuma City, the post-and-beam
 
 The open check for each area's outline is recorded with its requirement in [the spec](spec.md).
 
-- [ ] **The Tenshukaku's tiers are among the meshes named `Area_Dq_Build_`** — no source yet: no mesh name in the witness export is the Tenshukaku, and the cached wiki holds no Tenshukaku page.
+- [ ] **The Tenshukaku's tiers are among the meshes named `Area_Dq_Build_`** — no source yet: no mesh name in the witness export is the Tenshukaku, and the cached wiki holds no Tenshukaku page; a search of `{data-root}/genshin-parity/extracted/` for "tenshu" finds nothing, and the `Area_Dq_Build_` names there are roofs and houses with no tier named, so the Tenshukaku's place in the mesh list would settle it.

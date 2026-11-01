@@ -4,10 +4,10 @@ A domain is an instance behind a temple-like entrance, challenged for a reward. 
 
 ## Decisions
 
-- **Each kind opens at its rank.** `DomainOpenRankMap` holds Forgery at 16, Blessing at 22 and Mastery at 27, the ranks the proposal states. `checkIsDomainKindOpenAtRank` is open from the rank on. The wiki's Domain page is not yet read for them (see Open).
+- **Each kind opens at its rank.** `DomainOpenRankMap` holds Forgery at 16, Blessing at 22 and Mastery at 27, the ranks the proposal states. `checkIsDomainKindOpenAtRank` is open from the rank on. The wiki's Domain page gives the same ranks (`{data-root}/cache/genshin-wiki/Page_Domain.json` wikitext lines 29, 35 and 41), and says a Domain of Trounce opens on every day of the week (line 47).
 - **A Domain of Blessing opens every day.** Its set days are not read: the builder gives every Blessing level all seven weekdays (`scripts/src/services/genshinAssets/domains/toDomainLevels.ts`), so a caller passing those seven weekdays to `checkIsDomainKindOpenOnDay` opens it every day.
-- **A Domain of Forgery or Mastery opens every Sunday and on its two set days.** `checkIsDomainKindOpenOnDay` takes the moment checked and the two weekdays the table sets for the kind, and reads the moment's game day from the reset clock. A Sunday opens every kind. Weekdays are Temporal's, Monday 1 to Sunday 7, with `SUNDAY_DAY_OF_WEEK` for Sunday.
-- **The day is the game's day.** The moment checked is read on the reset clock, so its game day turns at 04:00 in UTC+8 as the game's server does and as [Original Resin](../original-resin/design.md) counts its Primogem refills. A moment before that reset is still the previous game day, and a Domain of Forgery's day turns at the reset, not at midnight. This call is settled from the resin page's rule, not from a new source.
+- **A Domain of Forgery or Mastery opens every Sunday and on its two set days.** `checkIsDomainKindOpenOnDay` takes the moment checked and the two weekdays the table sets for the kind, and reads the moment's game day from the reset clock. A Sunday opens every kind, as the wiki's Domain page gives it for each challenge domain (`{data-root}/cache/genshin-wiki/Page_Domain.json` wikitext line 25). Weekdays are Temporal's, Monday 1 to Sunday 7, with `SUNDAY_DAY_OF_WEEK` for Sunday.
+- **The day is the game's day.** The moment checked is read on the reset clock, so its game day turns at 04:00 in UTC+8 as the game's server does and as [Original Resin](../original-resin/design.md) counts its Primogem refills. A moment before that reset is still the previous game day, and a Domain of Forgery's day turns at the reset, not at midnight. The wiki's Reset page gives the 04:00 reset (`{data-root}/cache/genshin-wiki/Page_Reset.json` wikitext line 2) and names the Domains of Forgery and Mastery among what it rotates (line 15); the wiki's Escoffier talent page puts the Asia server's Monday 4:00 AM reset at GMT+8 (`{data-root}/cache/genshin-wiki/Category_Escoffier_Talents.json` wikitext line 5), the weekly reset the Reset page times at the same 04:00.
 
 ## How it works
 
@@ -41,11 +41,5 @@ flowchart TD
 
 ## Sources
 
-- [Domains](https://genshin-impact.fandom.com/wiki/Domains), Genshin Impact Wiki: the unlocking ranks, not yet read (see Open). The quest unlocks and the weekday schedule are not read yet.
-- [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: the Domains of Forgery and Mastery turning at the reset. Not yet read, for the same reason.
-
-## Open
-
-The sources for the ranks, the days and the day's reset are recorded with their requirements in [the spec](spec.md).
-
-- [ ] **A Domain of Trounce opens every day** — no source yet: the wiki's Domain page is not in the cache.
+- [Domains](https://genshin-impact.fandom.com/wiki/Domains), Genshin Impact Wiki: the unlocking ranks and the every-day Trounce, read from the cached page (see Decisions). The quest unlocks and the weekday schedule are not read yet.
+- [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: the Domains of Forgery and Mastery turning at the reset, read from the cached Reset page; the Asia offset is on the cached Escoffier talent page (see Decisions).

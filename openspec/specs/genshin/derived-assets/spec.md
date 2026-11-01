@@ -163,9 +163,9 @@ A screen's motion SHALL be played from the game's exported animation clips, not 
 
 ## Open
 
-- [ ] **The deployed build holds no game mesh, texture or material** — no source yet: no build check is cited that inspects the deployed output.
+- [ ] **The deployed build holds no game mesh, texture or material** — no source yet: no build check is cited that inspects the deployed output; `pnpm build` in `apps/web`, then a search of `apps/web/.output` for any file name under `{data-root}/genshin-parity/extracted` must print nothing.
 - [ ] **A screen whose atlas names say little is measured from the wiki's copies and public recordings** — no source yet: no checked file names the copies or recordings used for a given screen.
 - [ ] **A light, haze or motion with no game asset is measured from captures of the game** — no source yet: no checked capture or measurement file is cited for such a setting.
-- [ ] **No export is included in the repository, the build or the deployment** — no source yet: no build or deployment check is cited that excludes the exports.
+- [ ] **No export is included in the build or the deployment** — no source yet: `pnpm build` in `apps/web`, then a search of `apps/web/.output` for any file name under `{data-root}/genshin-parity/extracted` must print nothing. The default folder is outside the repository (`apps/web/server/services/genshin/sceneExport/constants.ts` line 7).
 - [ ] **A camera path set in a script is measured from a capture of the game** — no source yet: no capture or measurement of the camera path is cited in a checked file.
 - [ ] **The clips' sampled curves drive a screen's motion** — no source yet: no checked consumer of the exported clips is cited.

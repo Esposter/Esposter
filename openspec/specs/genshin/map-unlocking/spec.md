@@ -1,6 +1,6 @@
 ## Purpose
 
-The map filled in as the game fills it. A Statue of The Seven is resonated with on F, which fills its area in on the map and the minimap and unlocks it as a jump. Only unlocked statues and waypoints are offered by the jump list and the map (`packages/genshin-world/src/services/map/computeUnlockedJumpLandmarks.ts`), a revive goes to the unlocked Teleport Waypoint nearest the body (`packages/genshin-world/src/services/map/findNearestTeleportWaypoint.ts`), and no statue is unlocked for a new player. A statue's first unlock pays its Primogems and Adventure EXP. A Teleport Waypoint unlocks the same way and pays its transport point's reward on its first unlock, and a domain entrance unlocks the same way as a landmark of the world (`packages/genshin-world/src/composables/useWorldMap.ts`, `packages/genshin-world/src/services/map/computeUnlockedJumpLandmarks.ts`).
+The map filled in as the game fills it. A Statue of The Seven is resonated with on F, which fills its area in on the map and the minimap and unlocks it as a jump. Only unlocked statues and waypoints are offered by the jump list and the map (`packages/genshin-world/src/services/map/computeUnlockedJumpLandmarks.ts`), a revive goes to the unlocked Teleport Waypoint nearest the body (`packages/genshin-world/src/services/map/findNearestTeleportWaypoint.ts`), and no statue is unlocked for a new player. A statue's first unlock pays its Primogems and Adventure EXP (`{data-root}/cache/genshin-wiki/Page_Statue_of_The_Seven.json` wikitext line 125: 50 Adventure EXP and 5 Primogem). A Teleport Waypoint unlocks the same way and pays its transport point's reward on its first unlock, and a domain entrance unlocks the same way as a landmark of the world (`packages/genshin-world/src/composables/useWorldMap.ts`, `packages/genshin-world/src/services/map/computeUnlockedJumpLandmarks.ts`).
 
 ## Requirements
 
@@ -100,5 +100,4 @@ A Teleport Waypoint's first unlock SHALL pay the Primogems and Adventure EXP its
 
 ## Open
 
-- [ ] **A statue's first unlock pays its Primogems and Adventure EXP** — no source yet: the wiki page Statue of The Seven is not on disk, so its Statue Levels section (50 Adventure EXP and 5 Primogem) is unchecked.
-- [ ] **A domain entrance unlocks the same way as a landmark of the world** — no source yet: the wiki page Domain is not on disk, so its Permanent and Challenge Domains sections, which may name no resonating, are unchecked; the owner decides.
+- [ ] **A domain entrance unlocks the same way as a landmark of the world** — no source yet: no line of the wiki's Domain page (`{data-root}/cache/genshin-wiki/Page_Domain.json`) names resonating, and its Permanent Domains section (wikitext line 20) says only that they are landmarks that can be waypoints once unlocked; the owner decides.

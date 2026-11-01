@@ -27,8 +27,8 @@ The book is scored whole-frame against `handbook-experience`, the wiki's screens
 
 ## Sources
 
-- [Adventurer Handbook](https://genshin-impact.fandom.com/wiki/Adventurer_Handbook), Genshin Impact Wiki: the Experience, Commissions, Domains, Enemies, Guide and Embattle tabs and what each shows.
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: F1 opens the Adventurer Handbook.
+- [Adventurer Handbook](https://genshin-impact.fandom.com/wiki/Adventurer_Handbook), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Adventurer_Handbook.json`: the Experience, Commissions, Domains, Enemies, Guide and Embattle tabs and what each shows, the features the handbook tracks being its opening lines (wikitext lines 7 to 13, and 16 to 121 for the tabs).
+- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Controls.json`: F1 opens the Adventurer Handbook (wikitext lines 170 and 171).
 - Requirement "Six tabs listed in the English client's order", scenario "Tabs read top to bottom": `{data-root}/genshin-parity/references/handbook-experience.png`
 - Requirement "The Experience page shows the chapter and its commissions", scenario "Layout of the Experience page": `{data-root}/genshin-parity/references/handbook-experience.png`
 - Requirement "The Experience page shows the chapter and its commissions", scenario "Reward tile takes its rarity's colours" (tile colours): `{data-root}/genshin-parity/references/handbook-experience.png`
@@ -41,9 +41,7 @@ The book is scored whole-frame against `handbook-experience`, the wiki's screens
 
 ## Open
 
-- [ ] **The handbook tracks the experience chapters, the day's commissions, the open domains, the enemies and their spawns, the recommended quests and the party's elemental lineup, and each tab's pages come with the feature named for it** — no source yet: the cached Adventurer Handbook wiki page is not on disk.
-- [ ] **F1 opens the Adventurer Handbook in the game** — no source yet: the cached Controls wiki page is not on disk.
 - [ ] **The open and close timings and the blur behind the book are read off the reference clip** — no source yet: `handbook-open-close.mkv` is not on disk. The book keeps its gradient for the blur: the layer `GameScreen` draws for a menu over a world (`isWorldBlurred`, see the [interface library](../interface-library/design.md)) scores the book 4.18 to 5.07 without it, so the layer stays off here.
 - [ ] **The world keeps no investigations yet, so the Experience page opens on an empty panel** — no source yet: a grep of `packages/genshin-world/src/services/world` and `components/World` for "investigation" lists `Character` reference files first (the first three listed, not read), and no investigation state for the handbook was found in a source read.
 - [ ] **The handbook's whole-frame score is over the bar** — its mean difference is 4.18%, 3.18 points over the 1% default approval bar (`APPROVAL_MEAN_DIFFERENCE_BAR`, `scripts/src/services/genshinParity/reference/constants.ts:19`), read off the `handbook-experience` row of `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md:42`. Its entry at `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts:438` records no approval of its own, so the score is a report and not a pass.
-- [ ] **The game's face is HYWenHei** — no source yet: the repository's comments at `Index.vue:472` and `:638` name the game's face only as wider than Signika; no source read names HYWenHei.
+- [ ] **The game's face is HYWenHei** — no source yet: the repository's comments at `Index.vue:472` and `:638` name the game's face only as wider than Signika, and `packages/genshin-interface/src/services/constants.ts:9` names HYWenHei 85W as the face a reader installs, which is the repository's own choice; no game font file is on disk.

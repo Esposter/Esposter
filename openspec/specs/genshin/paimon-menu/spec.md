@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's pause menu, opened over the world by Escape or a pad's Start, with its contents and side bar in the game's own order, the entries of screens not yet built drawn disabled and the entries of systems not yet open left out, and the quit prompt and World Level dialog it opens (`packages/genshin-world/src/components/Menu/Paimon/Index.vue`, `packages/genshin-world/src/components/Menu/Exit/Index.vue`, `packages/genshin-world/src/components/Menu/WorldLevelDialog/Index.vue`).
+The game's pause menu, opened over the world by Escape or a pad's Start, with its contents and side bar in the game's own order, the entries of screens not yet built drawn disabled and the entries of systems not yet open left out, and the quit prompt and World Level dialog it opens (`packages/genshin-world/src/components/Menu/Paimon/Index.vue`, `packages/genshin-world/src/components/Menu/Exit/Index.vue`, `packages/genshin-world/src/components/Menu/WorldLevelDialog/Index.vue`). Its opening keys are the wiki's (`{data-root}/cache/genshin-wiki/Page_Paimon_Menu.json`, wikitext line 10).
 
 ## Requirements
 
@@ -197,5 +197,5 @@ The Settings screen SHALL list its tabs down the left in the game's order and dr
 ## Open
 
 - [ ] **Single-player pauses everything except particles and music** — no source yet: no game data or snapshot checked holds the single-player pause; `MENU_SCREEN_BEHAVIOUR` holds the world with no particle or music carve-out.
-- [ ] **The Paimon menu opens over the world from Escape or Start, and the quit prompt and World Level dialog open from it** — no source yet: the Paimon Menu wiki page, which the wiki cache at `{data-root}/cache/genshin-wiki/` does not hold (it holds only the talent categories and the cached talent pages).
+- [ ] **The quit prompt and the World Level dialog open from the Paimon menu** — no source yet: the wiki's Paimon Menu page (`{data-root}/cache/genshin-wiki/Page_Paimon_Menu.json`) lists Quit Game as a side bar entry (wikitext line 80) and World Level only as a profile field (line 24), with no prompt or dialog text; a recording of the Quit Game row and the info icon would settle it.
 - [ ] **A locked account's menu does not draw the contents its system has not opened** — no source yet: a recording of a locked account's Paimon menu. The frame at Adventure Rank 2 is the only witness, and the install's `OpenStateConfigData` has no field that says hidden or drawn.

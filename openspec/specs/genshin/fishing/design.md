@@ -37,7 +37,7 @@ The fishing tables are not in the community dump the repository reads, so they w
 
 ## The rules
 
-- **Day and night.** A pool's day stock is drawn from six o'clock to eighteen on the game's clock, which runs in `Asia/Shanghai` as the world's daily resets do, and its night stock otherwise. A stock held at every hour is drawn at any time (`pickFishingStock`).
+- **Day and night.** A pool's day stock is drawn from six o'clock to eighteen on the game's clock, which runs in `Asia/Shanghai` as the world's daily resets do, and its night stock otherwise. The night's indicator shows only from 18:00 to 6:00 in-game time (`{data-root}/cache/genshin-wiki/Page_Fishing.json`, wikitext line 223), so the day is the rest of the clock. A stock held at every hour is drawn at any time (`pickFishingStock`).
 - **Seventy-two hours.** An emptied stock is back in full seventy-two hours on, the day's and the night's kept apart by their own emptying (`checkIsFishingStockRefilled`).
 - **A draw.** A roll in one unit picks a fish by its share of the stock's total weight, and a stock weighing nothing draws none (`drawFishingWeight`).
 - **A lure.** A fish inside its flee range flees whatever the bait. A fish turns toward the bait it takes within its attract range, and every other lure is ignored (`computeFishReaction`).
@@ -63,15 +63,15 @@ The fishing tables are not in the community dump the repository reads, so they w
 
 ## Sources
 
-- [Fishing](https://genshin-impact.fandom.com/wiki/Fishing), Genshin Impact Wiki: the day and night stocks, the seventy-two hour refill and the bite. Not cached, so none of its claims is checked (see Open).
+- [Fishing](https://genshin-impact.fandom.com/wiki/Fishing), Genshin Impact Wiki, cached as `{data-root}/cache/genshin-wiki/Page_Fishing.json`: the day and night stocks and the seventy-two hour respawn, read against the rules (see Open). Its bite is not checked.
 - [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the Fishing Point label whose points the fit places. Grounds the requirement "Fishing points stand at their fitted places" and the scenario "Region's points are placed from the official map" (the place the official map marks for it).
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the fish, pool, stock and rod tables read here. Grounds the requirement "A pool stock with no record is an error" and the scenario "Stock with no record fails the build".
 
 ## Open
 
 - [ ] **The fishing points stand where the official map marks them** — no source yet: no comparison of the fitted points against the official map is saved in the parity folders.
-- [ ] **A pool's day stock is drawn from six to eighteen on the game's clock, in `Asia/Shanghai`** — no source yet: the pool table holds no time window and the Fishing wiki page is not in `{data-root}/cache/genshin-wiki/`.
-- [ ] **An emptied stock is back in full seventy-two hours on** — no source yet: no decoded fishing table holds a refill time, and the Fishing wiki page is not cached.
+- [ ] **The game's clock runs in `Asia/Shanghai`** — no source yet: the English text names no zone, only the offset "UTC+8" in its notices (`{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json` line 154177) and the placeholder "{TIMEZONE}".
+- [ ] **An emptied stock is back in full seventy-two hours on** — contradicted by `{data-root}/cache/genshin-wiki/Page_Fishing.json` wikitext line 23: each fish respawns every 72 hours, and the ripple returns once at least one has, where the page has the whole stock back at once.
 - [ ] **A fish flees any lure within its flee range, and turns toward the bait it takes** — no source yet: the reaction rule is not in the decoded tables, and no recording of it is checked.
-- [ ] **A draw picks a fish by its share of the stock's weight** — no source yet: the stock table holds the weights, not the draw rule.
+- [ ] **A draw picks a fish by its share of the stock's weight** — no source yet: the stock table holds the weights, not the draw rule, and the Fishing wiki page gives no catch shares; a tally of catches over many casts at one stock would settle it.
 - [ ] **The reel's tension holds in its zone until the fish is caught or the line breaks** — no source yet: `{data-root}/genshin-parity/captures/yt-iKr-nF1P7xQ-fishing-reel.mkv` is not yet read against the rule.

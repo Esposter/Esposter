@@ -35,8 +35,8 @@ flowchart TD
 
 ## Open
 
-- [ ] **The burst's hit lands at 18 frames** — no source yet: her record tags the hitmark `NoGcsimUnit`, and neither the clip (which carries no events) nor a source gives the frame; gcsim has no Kachina folder, no wiki page or dump table gives a hitmark frame, and only a recording of the burst would settle it.
-- [ ] **Her charged attack's clip "ExtraAttack_AS" and her high plunge's clip "FallingAttack_Strike_As" are each 102 frames** — no source yet: neither clip is in `{data-root}/genshin-parity/extracted/timings/11290214/AnimationClip/`, whose "ExtraAttack" clip is 32 frames; no gcsim, wiki or dump file names either clip, and only a clip file or a recording would settle it.
+- [ ] **The burst's hit lands at 18 frames** — no source yet: her record tags the hitmark `NoGcsimUnit`, and neither the clip (which carries no events) nor a source gives the frame; gcsim has no Kachina folder, no wiki page or dump table gives a hitmark frame, and only a recording of the burst would settle it, and `{data-root}/genshin-parity/captures/` holds none.
+- [ ] **Her charged attack's clip "ExtraAttack_AS" and her high plunge's clip "FallingAttack_Strike_As" are each 102 frames** — no source yet: neither clip is in `{data-root}/genshin-parity/extracted/timings/11290214/AnimationClip/`, whose "ExtraAttack" clip is 32 frames; no gcsim, wiki or dump file names either clip, and only a clip file or a recording would settle it; `genshin:assets timings` would extract the clips from the installed game, and none of the 1,860 clips extracted under `{data-root}/genshin-parity/extracted/timings/` is a Kachina "_AS" clip.
 
 ## Key files
 

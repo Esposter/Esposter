@@ -39,7 +39,7 @@ flowchart TD
 
 ## Decisions
 
-- **White is the colour of what no element affects.** The wiki's colour key gives white to things with no element on them, which covers interactables and an enemy with no element (`packages/genshin-world/src/services/elementalSight/constants.ts`, `SIGHT_UNAFFECTED_COLOR`).
+- **White is the colour of what no element affects.** The wiki's colour key gives white to things with no element on them (`{data-root}/cache/genshin-wiki/Page_Elemental_Sight.json` wikitext lines 44 and 45), which covers interactables and an enemy with no element (`packages/genshin-world/src/services/elementalSight/constants.ts`, `SIGHT_UNAFFECTED_COLOR`).
 
 ## Notes
 
@@ -80,7 +80,6 @@ flowchart TD
 
 - [ ] **things that cannot be acted on go dark, and interactables and residents show lit white** — no source yet: the wiki's Elemental Sight page, which the cache does not hold, or a recording of the sight.
 - [ ] **an enemy shows its aura's element, with Burning as Pyro and Freeze as Cryo** — no source yet: the wiki's colour key, which the cache does not hold, or a recording of an aura on an enemy.
-- [ ] **white is the colour of what no element affects** — no source yet: the wiki's colour key, which the cache does not hold.
 - [ ] **a walk past the limit ends the sight, as the game does** — no source yet: the wiki's Elemental Sight page, which the cache does not hold, or a recording of the walk.
-- [ ] **the element colours are the game's interface colours** — no source yet: the game's interface colour for each element, which no dump table holds (the repo keeps the table by hand in `genshin-text`).
+- [ ] **the element colours are the game's interface colours** — no source yet: the game's interface colour for each element, which no dump table holds (the repo keeps the table by hand in `genshin-text`); the wiki's table names each element only by a hue (`{data-root}/cache/genshin-wiki/Page_Elemental_Sight.json` wikitext lines 47–73), so a recording frame of an element's interface colour would settle it.
 - [ ] **enemies within the range show their names over their heads** — no source yet: the wiki's Elemental Sight page, which the cache does not hold, or a recording of the sight.

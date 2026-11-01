@@ -33,6 +33,8 @@ flowchart LR
 - **MMD's unit is reckoned, not measured.** Eight centimetres is the community's reckoning from a model's height (`packages/genshin-world/src/services/character/constants.ts`, `CHARACTER_PMX_RECKONED_UNIT_METRES`, and the Traveler's entry in `CHARACTER_PMX_UNIT_METRES`, not yet measured). The scale the game draws a character at is measured from its own models, as the [proposal](../../../../changes/genshin-characters/design.md) lists.
 - **Where the drawing departs from MMD's loader, on purpose.** The oracle for the pose and the mesh is three-stdlib's `MMDLoader`, since three's own examples no longer ship one. A pack does not carry MMD's shared toon bmps (the local releases hold only "toon_defo.bmp", as in `{data-root}/character-packs/extracted/10000030/`), so the world's ten ramps stand in for them, and the oracle reads a material's colours as linear where the drawing decodes the file's sRGB colours. The lighting is the game's, not MMD's: the drawing takes the game's shader, so the oracle covers the mesh and the pose alone, and a character's look is measured against a frame of the game ([Lumine's shading](../shading/design.md), [parity](../../parity/README.md)).
 
+- **A witness render draws no character.** `packages/genshin-world/src/services/scene/loadWitness.ts` draws each mesh at every placement of a component's layout (line 39), and none of the ten layouts under `{data-root}/genshin-parity/extracted/` places a character. Their only character-shaped names are 49 Nod-Krai placements of props with "Ani" in their names, such as "Area_Ndkl_Prop_LJC_Ani_Jiqiren_05_01_Lod0" in `{data-root}/genshin-parity/extracted/nod-krai/witness.json`. The Traveler is drawn from `{data-root}/genshin-parity/extracted/playergirl/avatar.json` instead, never from a layout.
+
 ## Key files
 
 | File                                                                                | Role                                                                                                                                                                                |
@@ -65,10 +67,8 @@ flowchart LR
 
 ## Open
 
-- [ ] **The face's depth term is 0.5** — no source yet: a face-depth default of 0.5 in `packages/genshin-engine/src/character/shading/constants.ts` or `packages/genshin-engine/src/character/shading/createFaceShadeNode.ts`; neither holds it.
-- [ ] **The pose and mesh oracle is three-stdlib's `MMDLoader`** — no source yet: a test or script that loads `MMDLoader`; none is in `packages`, `apps` or `scripts`.
-- [ ] **The avatar's modules are a separate chunk the export index gates, so nothing reaches production** — no source yet: the production build's chunk graph for the avatar modules.
-- [ ] **A witness render draws no character** — no source yet: the witness render's scene composition.
+- [ ] **The pose and mesh oracle is three-stdlib's `MMDLoader`** — no source yet: a test or script that loads `MMDLoader`; none is in `packages`, `apps`, `scripts` or the data root, and only a run that loads a pack through it and compares its bones and vertices with `createPmxMesh` settles it.
+- [ ] **The avatar's modules are a separate chunk the export index gates, so nothing reaches production** — no source yet: the production build's chunk graph for the avatar modules; `pnpm -C apps/web build` must list them as their own chunk, and the scene export's index must not name "playergirl" in production.
 - [ ] **The game's characters do not darken in the rain** — no source yet: a captured frame of a character standing in rain, which the weather turn's frames (`{data-root}/genshin-parity/frames/world-weather-turn@0/`) have not been checked for.
 - [ ] **The Traveler's unit is measured at 0.0909** — no source yet: a measured height for the Traveler's game model; `packages/genshin-world/src/services/character/constants.ts` records a measured height of 1.5667 metres over 17.2332 units in a comment, and no file under `{data-root}/genshin-parity/extracted/playergirl/` holds that height.
 - [ ] **A character's parsed model is drawn as one skinned mesh, each material in the game's shading** — no source yet: a comparison of the drawn material against the body shader `{data-root}/genshin-parity/extracted/shaders/Shader/Shader#0.dat` has not been run; the shader is on disk

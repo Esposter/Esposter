@@ -62,7 +62,7 @@ A weather change SHALL blend over nine seconds, eased in and out, starting from 
 
 - **GIVEN** the world is loading
 - **WHEN** the first frame is drawn
-- **THEN** the weather is already set with no blend
+- **THEN** the weather is already set with no blend (`packages/genshin-world/src/components/World/Weather/Index.vue`, line 112 blends it in at amount 1 and line 113 starts the transition full, so the blend at line 138 does nothing)
 
 ### Requirement: One kind of particle falls at a time
 
@@ -168,7 +168,6 @@ Under the water's surface the water's haze SHALL replace the weather's colour, a
 
 ## Open
 
-- [ ] **The weather the world loads with is set at once** — no source yet: no load path was read.
 - [ ] **A strike's second pulse is dimmer than the first** — no source yet: a measure of the second pulse's strength on the thunderstorm recording, since the 0.6 in `LIGHTNING_FLASH_PULSES` is provisional.
 - [ ] **A weather change blends over nine seconds, eased in and out, from where the sky had reached** — no source yet: the same recording, `{data-root}/genshin-parity/captures/world-weather-turn.mkv`, read for a change begun part way through another.
 - [ ] **A sandstorm tints the haze toward the colour of sand** — no source yet: the haze's colour read off the Desert of Hadramaveth clip `{data-root}/genshin-parity/captures/yt-k_FKK0qcYHw-0-40.mp4`, which is on disk but was not viewed; the Weather page gives no colour.

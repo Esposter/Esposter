@@ -101,4 +101,4 @@ A segment SHALL NOT have reverb added unless its rendered notes end sooner than 
 
 ## Open
 
-- [ ] **Each sample library is dedicated to the public domain** — no source yet: the libraries' licence files are not kept locally, only the hashed sample downloads in the shared cache.
+- [ ] **Each sample library is dedicated to the public domain** — no source yet: the libraries' licence files are not kept locally, only the hashed sample downloads in the shared cache; the LICENSE at each library's pinned commit (`scripts/src/services/genshinAssets/music/SampleLibraryCommitMap.ts`) would settle it.

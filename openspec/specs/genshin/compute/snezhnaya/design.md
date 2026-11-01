@@ -31,6 +31,6 @@
 
 ## Open
 
-- [ ] **Snezhnaya: the fit's ground key** — no source yet: the hosted key `ground/snezhnaya/everfrozen-earth` is not in `packages/genshin-world/src/generated/gameDataLock.json`
-- [ ] **everfrozen-earth-location's pose image** — no source yet: the pose image the pass would write is an output target, not on disk, so it is not evidence
-- [ ] **Snezhnaya's display and shape passes wait on two facts no source reads yet** — the post profile's grading and bloom, and the kit parts through `BuildingKitPartsMap`; see [compute's Open](../README.md#open), where both are written once.
+- [ ] **Snezhnaya: the fit's ground key** — contradicted by `scripts/src/services/genshinAssets/fit/readRegionGroundFits.ts` line 23: each area's piece is keyed `ground/<area>`, and the area's catalogue id is "everfrozen-earth" (`packages/genshin-world/src/data/catalogue.json` line 7791), so the key is not `ground/snezhnaya/everfrozen-earth`. The lock holds `ground/snezhnaya` at `packages/genshin-world/src/generated/gameDataLock.json` line 186, the region's record that `scripts/src/services/genshinAssets/fit/fitRegionCapitals.ts` line 36 names `ground/<region>`.
+- [ ] **everfrozen-earth-location's pose image** — no source yet: the pose image the pass would write is an output target, not on disk, so it is not evidence; `pnpm -C scripts genshin:parity pose everfrozen-earth-location --witness snezhnaya` writes `{data-root}/genshin-parity/pose/everfrozen-earth-location.png` once its landmark shares exist (`scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts` line 106 is `{}`).
+- [ ] **Snezhnaya's display and shape passes wait on two facts no source reads yet** — the post profile's grading and bloom, and the kit parts through `BuildingKitPartsMap`; see [compute's Open](../README.md#open), where both are written once, and `scripts/src/services/genshinParity` holds no reader of either, by search.

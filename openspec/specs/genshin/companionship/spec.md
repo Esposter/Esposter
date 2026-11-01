@@ -69,7 +69,10 @@ A character SHALL hold its namecard once its total reaches level 10.
 - **WHEN** its profile is shown
 - **THEN** its namecard is not held
 
+## Sources
+
+- The wiki's Companionship EXP page, `{data-root}/cache/genshin-wiki/Page_Companionship_EXP.json`: every character in the current party receives the full amount regardless of whether it is fallen, the Traveler excepted, and its sources list the Original Resin claims at Ley Line Outcrops, Normal Bosses, Weekly Bosses and Challenge Domains. The Traveler's exclusion is held in code by `packages/genshin-world/src/services/friendship/gainCompanionshipExp.ts` line 16.
+
 ## Open
 
-- [ ] **The Original Resin claims give Companionship EXP to the deployed team but the Traveler** — no source yet: the cached Original Resin wiki page is not on disk.
-- [ ] **A character holds its namecard at the level its namecard row names, not a fixed level 10** — no source yet: a game capture or client record of a namecard held below level 10 at its row's level, since `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/FetterCharacterCardExcelConfigData.json` names level 6 or level 1 for four characters and the repo holds a fixed level 10 (`packages/genshin-world/src/services/friendship/constants.ts`).
+- [ ] **A character holds its namecard at the level its namecard row names, not a fixed level 10** — contradicted by `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/FetterCharacterCardExcelConfigData.json` line 605: the level-6 row for Ineffa names reward 240101, which gives "Krumkake Bolt" rather than a namecard, and all 115 namecard rows name level 10, where the repo holds a fixed level 10 (`packages/genshin-world/src/services/friendship/constants.ts`).

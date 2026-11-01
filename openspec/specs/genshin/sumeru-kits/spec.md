@@ -61,14 +61,10 @@ The rainforest city SHALL stand in for the houses the game draws in Sumeru City,
 
 - **GIVEN** the world shows Sumeru City
 - **WHEN** the city is drawn
-- **THEN** the rainforest city stands where the game's houses stand
+- **THEN** the rainforest city stands where the game's houses stand (the house mesh nearest the landmark, "Area_Xm_Build_XKC_Comp_House_02_Lod0", is placed at (-2313.2, 37.0, -4050.7) against the landmark's (-2306.31, -4053.85), `packages/genshin-world/src/data/regions/sumeru.json` line 26615, the placement in `{data-root}/genshin-parity/extracted/sumeru/witness.json`, its placements)
 
 #### Scenario: Bridges and common buildings left undrawn
 
 - **GIVEN** Sumeru City's export holds bridges, common buildings and plants
 - **WHEN** the city is drawn
 - **THEN** those meshes are not drawn yet
-
-## Open
-
-- [ ] **The rainforest city stands where the game's houses stand** — no source yet: the game's house positions in the Sumeru export, against which the city's place is not compared.

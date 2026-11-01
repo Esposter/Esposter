@@ -39,7 +39,7 @@ flowchart TD
 ## Open
 
 - [ ] **The Meowball's reach of 19 metres, with the nearest living enemy as its target** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/jahoda/skill.go` line 335, `combat.NewCircleHitOnTarget(c.Core.Combat.PrimaryTarget(), nil, 4)`: a circle of radius 4 on the primary target, where the record holds radius 19 (`areas.meowballCircle`); the wiki's Savvy Strategy page gives no reach
-- [ ] **The plunges' timing** — no source yet: the Jahoda plunge frames, which no gcsim file (there is no plunge file) or cached page gives; her gcsim folder, the shared plunge hooks (`{data-root}/cache/gcsim-v2.47.2/internal/template/character/character.go` lines 157 to 162, "not implemented"), the wiki page and the dump's tables give none either
+- [ ] **The plunges' timing** — no source yet: the Jahoda plunge frames, which no gcsim file (there is no plunge file) or cached page gives; her gcsim folder, the shared plunge hooks (`{data-root}/cache/gcsim-v2.47.2/internal/template/character/character.go` lines 157 to 162, "not implemented"), the wiki page and the dump's tables give none either; a recording of a Jahoda plunge settles it, and `{data-root}/genshin-parity/captures/` holds none
 
 ## Key files
 

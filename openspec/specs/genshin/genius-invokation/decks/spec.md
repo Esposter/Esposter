@@ -36,7 +36,7 @@ Every damage a side deals SHALL pass every additive bonus on its field before an
 
 ### Requirement: A card's bonus applies only to the skills it names
 
-A card's damage bonus SHALL apply only to the skills it names, such as the next Normal Attack alone.
+A card's damage bonus SHALL apply only to the skills it names, such as the next Normal Attack alone. Jueyun Guoba's status reads "this character's next Normal Attack deals +1 DMG" (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/GCGCardExcelConfigData.json` line 114933, card 303301).
 
 #### Scenario: Bonus applies to the next Normal Attack only
 
@@ -210,7 +210,7 @@ A character SHALL eat no more than one food a round, and a second food in the sa
 
 ### Requirement: Opponent decks are legal decks
 
-An opponent deck SHALL be legal, meaning every talent card it holds has its character in the same deck.
+An opponent deck SHALL be legal, meaning every talent card it holds has its character in the same deck. The game's card text says so on 135 of its 140 talent cards, such as card 215041 (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/GCGCardExcelConfigData.json` line 33967), and the other five name their character in their own text.
 
 #### Scenario: Deck with a talent but no character is not legal
 
@@ -348,7 +348,5 @@ A character still standing that loses HP or shield SHALL hear the DMG it takes t
 
 ## Open
 
-- [ ] **A card's damage bonus applies only to the skills it names** — no source yet: the game's text for Jueyun Guoba's Normal Attack limit is not checked here; the repo check in the card's module `jueyunGuoba.ts`, line 15, reads `context.skill?.kind`, which is repo code, not game evidence.
-- [ ] **An opponent deck is legal only when every talent card it holds has its character in the deck** — no source yet: no legality check was found in the deck build or read scripts.
-- [ ] **While the opponent has declared its end, the side's prepared skills wait** — no source yet: the named source is repo code, which is not game evidence, and the wiki's rules page is not in `{data-root}/cache/genshin-wiki`.
-- [ ] **The card values and card behaviours in the scenarios match the game** — no source yet: the scenarios' card values are not yet checked against `{data-root}/genshin-parity/text/ExcelBinOutput/GCGCardExcelConfigData.json`, the wiki's card pages are not in the cache, the medium text map holds no card texts, and no cached page is a Genius Invokation card page.
+- [ ] **The card values and card behaviours in the scenarios match the game** — partly settled: Fiery Rebirth's 4 HP (card 123022, `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/GCGCardExcelConfigData.json` line 53618), Electro Crystal Core's 1 HP (line 56073), Aegis of Abyssal Flame's 2 points (line 53794), Flowfire Edge's 3 usages (line 66501) and Chains of Warding Thunder's one die (line 55985) match. No source yet for the Rock-Paper-Scissors Combo damage (skills 24015 and 24016 print only "$[D__KEY__DAMAGE]"), the characters' HP, or the Spirit of Omen's Power passive's text.
+- [ ] **While the opponent has declared its end, the side's prepared skills wait** — needs a recording: the cached wiki rules page (`{data-root}/cache/genshin-wiki/Page_Genius_Invokation_TCG%2FRules.json`) says only that the other side keeps taking actions, and card 124011's "The next time this character acts" (line 55809 of the card table) does not say whether those actions count; a frame of a duel where a prepared skill is due after the opponent's declared end would settle it.

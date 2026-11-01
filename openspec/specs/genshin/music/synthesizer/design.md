@@ -17,10 +17,10 @@ The synthesizer is `genshin-engine`'s audio module `packages/genshin-engine/src/
 
 ## Open
 
-The noise loop's seam and band levels, and the player's loop, are open in the [spec](spec.md).
+The noise loop's seam and band levels are open in the [spec](spec.md).
 
-- [ ] **The shared noise phases overfill the lowest band** — no source yet: the overfill is recorded only in the music page's narrative, with no checked measurement file.
-- [ ] **Firefox lacks `cancelAndHoldAtTime`** — no source yet: no browser compatibility record is cited.
+- [ ] **The shared noise phases overfill the lowest band** — no source yet for the cause: the committed snapshot's 63 Hz bias is 3.5 and 1.7 dB, ours louder (`scripts/src/services/genshinParity/shared/ParityMusicScores.snapshot.md`, lines 16 and 17), so the overfill is measured; `pnpm -C scripts genshin:parity listen` run with one phase per note would show whether the shared phases cause it.
+- [ ] **Firefox lacks `cancelAndHoldAtTime`** — no source yet: no browser compatibility record is cited, and the workspace holds no "@mdn/browser-compat-data" package; a Firefox run printing whether `cancelAndHoldAtTime` exists on the audio parameter type would settle it.
 
 ## Key files
 

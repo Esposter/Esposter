@@ -55,7 +55,7 @@ flowchart TD
 
 ## Open
 
-- [ ] **Two components' passes can run at once** — no source yet: no concurrent run was traced.
+- [ ] **Two components' passes can run at once** — no source yet: no concurrent run was traced. Each report is its own file (`scripts/src/services/genshinParity/passes/writeParityPasses.ts`) and a command probes ports up from `PARITY_DEFAULT_PORT` (`scripts/src/services/genshinParity/shared/constants.ts` line 44); two `pnpm --filter @esposter/scripts genshin:parity passes <component>` runs started together, each printing its own rows, would settle it.
 - [ ] **The surface's finest scale reads detail and its coarsest reads layout** — no source yet: the scale naming, since `scripts/src/services/shared/computeDetailStatistics.ts` reads each octave band's detail from the finest up (line 5), but no layout reading at the coarsest scale was traced in `scripts/src/services/genshinParity/passes/computeStatisticalStructure.ts`.
 - [ ] **The frame gate's pixel shift is not checked against a reference's measured softness** — no source yet: `FRAME_GATE_PIXELS` (`scripts/src/services/genshinParity/passes/constants.ts`, line 31) is a fixed constant that `scripts/src/services/genshinParity/passes/measureGlow.ts` (lines 55 and 56) shifts the reference by; `compare` measures each recording-sourced reference's blur with `scripts/src/services/genshinParity/reference/getReferenceSoftness.ts` and applies it to our shot, but the passes never read that sigma, so the two are not compared.
 - [ ] **Only the rows of the passes run are rewritten** — contradicted by `scripts/src/services/genshinParity/passes/writeParityPasses.ts`: a whole run writes only its own results, so unreached passes' rows are dropped.

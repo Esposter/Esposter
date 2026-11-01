@@ -46,4 +46,4 @@ stateDiagram-v2
 
 ## Open
 
-- [ ] **The black burst's 9-frame travel** — no source yet: the game's travel for the black Dragon's ticks, since gcsim's 9 frames is its own default (`burst.go:51`). Searched gcsim's durin folder and the dump's Excel and text (no travel or projectile entry); gcsim's own `internal/characters/durin/config.yml` line 122 documents the default as "Default 10 frames", against `burst.go` line 51's 9, so gcsim does not agree with itself, and the game's value remains unsourced.
+- [ ] **The black burst's 9-frame travel** — no source yet: the game's travel for the black Dragon's ticks, since gcsim's 9 frames is its own default (`burst.go:51`). Searched gcsim's durin folder and the dump's Excel and text (no travel or projectile entry); gcsim's own `internal/characters/durin/config.yml` line 122 documents the default as "Default 10 frames", against `burst.go` line 51's 9, so gcsim does not agree with itself, and the game's value remains unsourced; a recording of a black Dragon's ticks after a Durin burst settles it, and `{data-root}/genshin-parity/captures/` holds none.

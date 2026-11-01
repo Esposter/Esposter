@@ -65,7 +65,7 @@ The fit report SHALL list each region in turn, Mondstadt first, with its matched
 - **GIVEN** the fit has run
 - **WHEN** the report is printed
 - **THEN** Mondstadt is listed first with about fifty matched statues and waypoints
-- **AND** its Anemoculi count is compared with sixty-six (see Open)
+- **AND** its Anemoculi count is compared with sixty-six (the wiki's Oculus page gives Mondstadt's Anemoculi as 66, `{data-root}/cache/genshin-wiki/Page_Oculus.json`, wikitext line 16)
 
 #### Scenario: Shortfall kept as it stands
 
@@ -100,5 +100,4 @@ The published Oculi SHALL be those on the ground, each with its map id, its kind
 
 ## Open
 
-- [ ] **The wiki's Oculus counts the report compares against** — no source yet: no cached Oculus wiki page is in `{data-root}/cache/genshin-wiki/`.
 - [ ] **Snezhnaya holds no transport points in the scene** — no source yet: the dump's transport points for Snezhnaya's areas were not counted, and `{data-root}/genshin-parity/references/interactive-map/fit.json` shows only its zero matches.

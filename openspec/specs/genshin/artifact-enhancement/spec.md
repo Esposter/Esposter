@@ -6,7 +6,7 @@ An artifact rolled, enhanced and locked as the game does it: a drop's main and m
 
 ### Requirement: A new artifact's main affix comes from its slot
 
-A new artifact's main affix SHALL be drawn from the attributes its slot may carry, in proportion to the game's weights.
+A new artifact's main affix SHALL be drawn from the attributes its slot may carry, in proportion to the game's weights. The weights are the wiki's: each slot's chances on the wiki's Artifact/Distribution page (`{data-root}/cache/genshin-wiki/Page_Artifact%2FDistribution.json`, wikitext lines 16 to 92) match `ArtifactMainAffixWeightMap` in `packages/genshin-world/src/services/artifact/constants.ts` value for value.
 
 #### Scenario: Plume of Death rolls flat ATK
 
@@ -41,13 +41,13 @@ A new artifact's minor affixes SHALL be drawn from its rarity's pool, never repe
 
 - **GIVEN** a minor affix is drawn
 - **WHEN** its value is set
-- **THEN** the value is one of the tiers of that affix
+- **THEN** the value is one of the tiers of that affix, and each tier is as likely as the next (`{data-root}/cache/genshin-wiki/Page_Artifact%2FDistribution.json`, wikitext lines 11 and 137 to 168)
 
 ### Requirement: Enhancing costs Mora per EXP point and the recovered share is free
 
-The Mora an enhancement costs SHALL be one for each point of EXP its materials give and each fodder's base EXP.
+The Mora an enhancement costs SHALL be one for each point of EXP its materials give and each fodder's base EXP (`{data-root}/cache/genshin-wiki/Page_Artifact_EXP.json`, wikitext line 143).
 
-The recovered share of a fodder's levelling SHALL cost nothing.
+The recovered share of a fodder's levelling SHALL cost nothing. An enhanced fodder costs only its base EXP in Mora (`{data-root}/cache/genshin-wiki/Page_Artifact_EXP.json`, wikitext line 175).
 
 #### Scenario: Recovered share of a fodder costs no Mora
 
@@ -64,7 +64,7 @@ The recovered share of a fodder's levelling SHALL cost nothing.
 
 ### Requirement: Each enhancement's EXP has a chance of a bonus
 
-Each enhancement's EXP SHALL be multiplied by five one time in a hundred, by two nine times in a hundred, and otherwise left as it is.
+Each enhancement's EXP SHALL be multiplied by five one time in a hundred, by two nine times in a hundred, and otherwise left as it is. The wiki's Artifact EXP page gives the same chances (`{data-root}/cache/genshin-wiki/Page_Artifact_EXP.json`, wikitext lines 185 and 187).
 
 #### Scenario: Five-times bonus
 
@@ -86,7 +86,7 @@ Each enhancement's EXP SHALL be multiplied by five one time in a hundred, by two
 
 ### Requirement: Levels follow the table and EXP past the top is lost
 
-An artifact's level SHALL rise as far as its EXP reaches the table's costs, and EXP beyond its highest level SHALL be lost.
+An artifact's level SHALL rise as far as its EXP reaches the table's costs, and EXP beyond its highest level SHALL be lost. The wiki's Artifact EXP page calls that excess "wasted overflow" (`{data-root}/cache/genshin-wiki/Page_Artifact_EXP.json`, wikitext line 189), and its table ends at level 20 (wikitext lines 139 to 141).
 
 #### Scenario: EXP past the highest level is wasted
 
@@ -133,7 +133,7 @@ A locked artifact SHALL never be used as fodder for another artifact.
 
 ### Requirement: Instructor's four-piece gives the team Elemental Mastery on a reaction
 
-A reaction the Instructor's wearer triggers on the field SHALL give every deployed member of the team the bonus's Elemental Mastery for its seconds.
+A reaction the Instructor's wearer triggers on the field SHALL give every deployed member of the team the bonus's Elemental Mastery for its seconds. The wiki's Instructor page requires the wearer on the field for the bonus (`{data-root}/cache/genshin-wiki/Page_Instructor.json`, wikitext line 33), and gcsim returns before adding the bonus unless the wearer is the active character (`{data-root}/cache/gcsim-v2.47.2/internal/artifacts/instructor/instructor.go`, line 48).
 
 #### Scenario: Reaction on the field gives the team the buff
 
@@ -149,7 +149,7 @@ A reaction the Instructor's wearer triggers on the field SHALL give every deploy
 
 ### Requirement: Instructor's four-piece buff is restarted rather than stacked
 
-The Elemental Mastery buff SHALL be restarted rather than stacked.
+The Elemental Mastery buff SHALL be restarted rather than stacked. The wiki's Instructor page says the buff does not stack with itself and that another reaction refreshes its duration (`{data-root}/cache/genshin-wiki/Page_Instructor.json`, wikitext line 36).
 
 #### Scenario: Repeated reaction restarts the buff
 
@@ -159,7 +159,7 @@ The Elemental Mastery buff SHALL be restarted rather than stacked.
 
 ### Requirement: The Exile's four-piece regenerates the others' energy after a burst
 
-A burst the wearer of The Exile's four-piece uses SHALL start a field that gives every other deployed member energy at three ticks, two seconds apart.
+A burst the wearer of The Exile's four-piece uses SHALL start a field that gives every other deployed member energy at three ticks, two seconds apart. The wiki's The Exile page says Energy Recharge does not affect the field (`{data-root}/cache/genshin-wiki/Page_The_Exile.json`, wikitext line 31), and gcsim adds a flat two energy per tick (`{data-root}/cache/gcsim-v2.47.2/internal/artifacts/exile/exile.go`, line 69).
 
 #### Scenario: Burst starts the energy field
 
@@ -250,14 +250,6 @@ The Adventurer's four-piece restoration SHALL apply only to the character wearin
 
 ## Open
 
-- [ ] **Each enhancement's EXP is multiplied by five at one in a hundred and by two at nine in a hundred** — no source yet: the wiki's Artifact EXP page is not in the cache, and no dump table holds the chance.
-- [ ] **Enhancing costs one Mora per EXP point, and a fodder's recovered share costs none** — no source yet: the wiki's Artifact EXP page is not in the cache.
-- [ ] **EXP past the highest level is lost** — no source yet: the wiki's Artifact page is not in the cache.
-- [ ] **The main affix weights are the wiki's, and each minor affix tier is as likely as the next** — no source yet: the Artifact/Distribution page is not in the cache.
-- [ ] **A locked artifact is never fodder** — no source yet: no cached wiki page or capture shows a lock refusing fodder.
-- [ ] **Instructor's buff restarts rather than stacks, and gives nothing for a summon's reaction after the wearer leaves** — no source yet: the wiki's Instructor page is not in the cache.
-- [ ] **The Exile's energy is not raised by Energy Recharge** — no source yet: the wiki's The Exile page is not in the cache, and the game's text says only that the effect cannot stack.
-- [ ] **Traveling Doctor's restore is raised by the Healing Bonuses** — no source yet: the wiki's Healing Bonus page is not in the cache.
-- [ ] **Mora is charged on the EXP before the bonus is applied** — no source yet: the wiki's Artifact EXP page is not in the cache.
-- [ ] **A new artifact's minor affixes never repeat its main affix or an attribute it already holds** — no source yet: the wiki's Artifact page is not in the cache.
-- [ ] **A drop gives its piece a starting count of minor affixes** — no source yet: the wiki's Artifact page is not in the cache.
+- [ ] **A locked artifact is never fodder** — no source yet: the wiki's Artifact page bars locked artifacts from salvage (`{data-root}/cache/genshin-wiki/Page_Artifact.json`, wikitext line 94) and names no fodder rule; a capture of the enhancement's fodder list with a locked artifact selected would settle it.
+- [ ] **Traveling Doctor's restore is raised by the Healing Bonuses** — no source yet: the Healing Bonus page defines only outgoing healing (`{data-root}/cache/genshin-wiki/Page_Healing%2FHealing_Bonus.json`, wikitext line 11), gcsim has no module for the set, and the Traveling Doctor page is not in the cache.
+- [ ] **Mora is charged on the EXP before the bonus is applied** — no source yet: the wiki's Artifact EXP page charges "the EXP value gained" (`{data-root}/cache/genshin-wiki/Page_Artifact_EXP.json`, wikitext line 175) and does not say whether the bonus is in it; a recording of an enhancement that draws the two- or five-times bonus, with the Mora before and after, would settle it.

@@ -85,7 +85,7 @@ A dish SHALL be cookable only once it is known, either from the start or after o
 
 ### Requirement: Auto Cook makes a whole batch of Delicious dishes once proficiency is full
 
-Once a dish's proficiency is full, Auto Cook SHALL make up to 99 dishes in one batch, every one Delicious, or refuse the whole batch.
+Once a dish's proficiency is full, Auto Cook SHALL make up to 99 dishes in one batch, every one Delicious, or refuse the whole batch. The wiki's Cooking page allows up to 99 of one food to be cooked at once (`{data-root}/cache/genshin-wiki/Page_Cooking.json` line 25).
 
 #### Scenario: Auto Cook makes as many dishes as the ingredients allow
 
@@ -123,7 +123,7 @@ A character named in a dish's specialties SHALL have their special dish made in 
 
 ### Requirement: No dish is made with Raiden Shogun
 
-The cooking SHALL make no dish with Raiden Shogun, by hand or by Auto Cook.
+The cooking SHALL make no dish with Raiden Shogun, by hand or by Auto Cook. The wiki's Cooking page says the game answers her selection with "This character cannot cook." (`{data-root}/cache/genshin-wiki/Page_Cooking.json` line 10).
 
 #### Scenario: A dish naming Raiden Shogun makes no dish with her
 
@@ -227,7 +227,7 @@ A city with no stove SHALL offer neither the cooking screen nor the processing s
 
 ### Requirement: Pyro lights a campfire and the other elements put it out
 
-A campfire SHALL be lit by Pyro, put out by Anemo, Cryo, Electro, Geo and Hydro, and left as it was by Dendro.
+A campfire SHALL be lit by Pyro, put out by Anemo, Cryo, Electro, Geo and Hydro, and left as it was by Dendro. The Cooking page names Pyro lighting and the five elements putting out (`{data-root}/cache/genshin-wiki/Page_Cooking.json` line 54), and the Fire page gives the same elements, with gauge units to put a lit fire out (`{data-root}/cache/genshin-wiki/Page_Fire.json` line 8). On a lit fire the Fire page names Dendro only as the trigger of Burning ("Page_Fire.json" line 21).
 
 #### Scenario: Pyro lights an unlit campfire
 
@@ -249,7 +249,7 @@ A campfire SHALL be lit by Pyro, put out by Anemo, Cryo, Electro, Geo and Hydro,
 
 ### Requirement: Rain puts out a campfire in the open
 
-A campfire in the open SHALL be put out by rain and by thunderstorms.
+A campfire in the open SHALL be put out by rain and by thunderstorms. The Cooking page says rain extinguishes campfires out in the open (`{data-root}/cache/genshin-wiki/Page_Cooking.json` line 54), the Weather page says rain douses campfires (`{data-root}/cache/genshin-wiki/Page_Weather.json` line 24), and that a thunderstorm applies all rain conditions (line 36).
 
 #### Scenario: Rain puts out an open campfire
 
@@ -407,9 +407,5 @@ Auto Cook SHALL be offered on the cooking screen once a dish's proficiency is fu
 
 ## Open
 
-- [ ] **Auto Cook makes up to 99 dishes** — no source yet: a batch limit in the game's data or text, since `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/CookRecipeExcelConfigData.json` and `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/CookBonusExcelConfigData.json` hold none, the English text's Auto Cook line (key `1879414003`) names none, and no cooking wiki page is cached.
-- [ ] **The game refuses Raiden Shogun as a cook** — no source yet: a dump table or cached wiki page naming the refusal; the cached Raiden Shogun talents page does not mention cooking, and the code's check asserts it.
-- [ ] **A cook's passive bonuses each matching dish** — no source yet: a game table naming each passive's food type, which no dump table holds; the cooking services apply no passive bonus, and the talent roll only adds a dish.
-- [ ] **A stove offers no prompt out of reach** — no source yet: a capture or game table of the stove's prompt range.
-- [ ] **A campfire is lit by Pyro, put out by Anemo, Cryo, Electro, Geo and Hydro, and left as it was by Dendro** — no source yet: no campfire row in the game's exports, no cached Campfire wiki page is on disk, and no recording of the campfire under each element was captured.
-- [ ] **Rain and thunderstorms put out a campfire in the open** — no source yet: no campfire row in the game's exports and the cached Weather wiki page is not on disk.
+- [ ] **A stove offers no prompt out of reach** — no source yet: a capture or game table of the stove's prompt range; the cached Cooking page names no range.
+- [ ] **A campfire is left as it was by Dendro** — no source yet for an unlit campfire: the Fire page names Dendro only on a lit one (`{data-root}/cache/genshin-wiki/Page_Fire.json` line 21), and no recording of an unlit campfire under Dendro was captured.

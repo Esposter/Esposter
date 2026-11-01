@@ -151,5 +151,5 @@ A region's ground SHALL be published only when its fit holds the bar set for it 
 ## Open
 
 - [ ] **The classing of each piece, the least-representation order and the reference-camera judgement** — no source yet: no recorded run sorts a piece into exact, fieldless or on-screen-only, walks the loss order, or judges the reference camera beyond each reference's own measure.
-- [ ] **Each object of a region is rebuilt once, one stand-in at a time** — no source yet: no recorded run replaces a stand-in with its own object pass one at a time.
+- [ ] **Each object of a region is rebuilt once, one stand-in at a time** — no source yet: no recorded run replaces a stand-in with its own object pass one at a time; a run of the `rank` command (`scripts/src/services/genshinParity/commands/rankCommand.ts`) printing each rebuild's gap in turn would settle it.
 - [ ] **A landmark moving more than five centimetres fails the fit** — no source yet: the five-centimetre gate was not found in `fitGroundPieces.ts` or `fitGroundPiece.ts` in this pass.

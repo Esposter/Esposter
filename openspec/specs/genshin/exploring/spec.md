@@ -34,4 +34,4 @@ A jump SHALL land the character at the landmark's arrival place, facing the arri
 
 ## Open
 
-- [ ] **A jump to a statue or a waypoint lands the character at the game's arrival place, facing its turn** — no source yet: the arrival of each statue and waypoint outside scene 3 is not read from its scene's point file.
+- [ ] **A jump to a statue or a waypoint lands the character at the game's arrival place, facing its turn** — no source yet: the arrival of each statue and waypoint outside scene 3 is not read from its scene's point file; `scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts` reads only the Windrise point's file (`scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts` line 110), and the dump holds no other scene's point file (`{data-root}/genshin-dump-backup-6.6/BinOutput/Scene/Point/`), so a statue or waypoint outside scene 3 with its own point file settles it.

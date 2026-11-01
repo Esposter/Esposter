@@ -72,8 +72,6 @@ A screen SHALL keep only the pieces of its published record that it places by na
 
 ## Open
 
-- [ ] **A nested piece moves and resizes with its parent** — no source yet: no test holds the nesting, and `GameRect` has no fixture.
-- [ ] **A scaled piece keeps its pivot corner where the layout places it** — no source yet: the export holds `GrpMap`'s scale of 0.6 but no pivot, and no test holds the scale origin.
 - [ ] **A layout group's children are stacked and spaced as the recording shows** — no source yet: the recording is not named, and the children's rects are not checked against one.
 - [ ] **A clip that moves a parent piece moves every piece nested in it** — no source yet: no test holds `data-clip-target`, and no run of the page was read to show the tag on a rendered piece.
 - [ ] **A run-time prefab stays in its place inside its container on any window** — no source yet: no recording or test holds the prefab's place, and the recordings for `BtnPressStart` and the age rating's layout adaptor are not named.

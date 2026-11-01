@@ -124,7 +124,7 @@ A claim SHALL put each rolled item into the bag and the Mora into the wallet, an
 
 - **GIVEN** a returned expedition whose items would overflow the bag
 - **WHEN** it is claimed
-- **THEN** the claim is refused
+- **THEN** the claim is refused (`packages/genshin-world/src/services/expedition/claimExpedition.ts` line 48 returns before the list is filtered at line 53)
 - **AND** the expedition stays on the list
 
 ### Requirement: A recall forfeits the reward
@@ -136,7 +136,7 @@ Recalling an expedition SHALL take its character off the list and give no reward
 - **GIVEN** an expedition away
 - **WHEN** it is recalled
 - **THEN** its character is taken off the list
-- **AND** no reward is given
+- **AND** no reward is given (`packages/genshin-world/src/services/expedition/recallExpedition.ts` lines 5 to 6 return the list alone)
 
 ### Requirement: Each reward item's count is drawn between its least and most
 
@@ -156,7 +156,7 @@ Expeditions SHALL be held for the session only, so that a reload of the page emp
 
 - **GIVEN** an expedition away
 - **WHEN** the page is reloaded
-- **THEN** the expedition is no longer on the list
+- **THEN** the expedition is no longer on the list (`packages/genshin-world/src/composables/useWorldExpeditionRoster.ts` line 15 holds the list in a `shallowRef`, and no save service holds an expedition)
 
 ### Requirement: Katheryne's talk opens the expedition screen
 
@@ -225,6 +225,3 @@ A character's expedition talent SHALL apply to the expedition on which that char
 ## Open
 
 - [ ] **Two expeditions out at first** — no source yet: the wiki's Expedition page is not cached and the dump holds no base limit; the clip's "Expedition Limit: 1/2" does not show its player's Adventure Rank.
-- [ ] **A claim whose items would overflow the bag is refused** — no source yet: no test in `claimExpedition.test.ts` holds an overflowing bag.
-- [ ] **A recall forfeits the reward** — no source yet: no test holds `recallExpedition`.
-- [ ] **A reload empties the expedition list** — no source yet: no test holds the session-only list.

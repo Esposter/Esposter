@@ -79,7 +79,9 @@ A puzzle of monuments SHALL count as solved only when every monument of it is li
 - **WHEN** the puzzle is checked
 - **THEN** the puzzle is not solved
 
-## Open
+## Sources
 
-- [ ] **A Swirl that spreads an element lights a monument of that element, and Burning ticks Pyro and auras decay on each step, as the game does** — no source yet: the wiki's Elemental Monument page and its elemental pages are not in the genshin-wiki cache.
-- [ ] **the Elemental Monument is a state machine, lit by its element or a reaction and going out after its time when timed** — no source yet: the wiki's Elemental Monument page is not in the genshin-wiki cache, so its activation and timing rules are unchecked.
+- [Elemental Monument](https://genshin-impact.fandom.com/wiki/Elemental_Monument), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Elemental_Monument.json`, line 8: a monument is activated by striking it with its element, and talents and elemental reactions count as strikes; line 10: a permanent monument stays lit once activated, and a temporary one deactivates after a certain amount of time.
+- [Swirl](https://genshin-impact.fandom.com/wiki/Swirl), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Swirl.json`, line 13: the Swirl reaction applies its non-Anemo element to every target in an area.
+- [Burning](https://genshin-impact.fandom.com/wiki/Burning), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Burning.json`, line 10: Burning is a Pyro aura that coexists with the Dendro aura, and line 14: its damage over time pauses while the affected character is off the field.
+- [Elemental Gauge Theory](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Elemental_Gauge_Theory.json`, line 33: elemental auras decay linearly over time, at a rate set by their Gauge Units.

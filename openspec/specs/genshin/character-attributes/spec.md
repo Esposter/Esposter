@@ -112,11 +112,6 @@ The Traveler SHALL have no element until it resonates with a statue.
 ## Open
 
 - [ ] **The Traveler at level 90 matches the wiki's Max HP and DEF** — no source yet: the wiki's Traveler page is not cached, and the test holds the pair as the wiki's without a recording.
-- [ ] **A conditional set bonus adds no line** — no source yet: no test holds that a conditional bonus adds nothing.
-- [ ] **The world opens once its tables load, and a failed table keeps it shut** — no source yet: no test holds the load order or the failure path.
-- [ ] **A new character starts at level 1 with its weapon at level 1 and no artifacts** — no source yet: no test holds `createCharacter`'s starting state.
-- [ ] **The Fatui count as Snezhnaya's region** — no source yet: the wiki's count is not cached, and the dump's two Fatui associations name no region of their own.
-- [ ] **The Traveler has no element in the world before its statue resonance** — no source yet: no test holds the Traveler's element before resonance; the element test holds only its alignment mark.
 - [ ] **Max HP, ATK and DEF are each built from base, percentage and flat** — no source yet: the wiki's Attributes page (title Attributes) is not in the wiki cache, and the Attributes tab in `{data-root}/genshin-parity/references/character-attributes.png` (Xilonen at level 90) is not yet summed from her lines.
 - [ ] **A weapon's ATK percentage raises the character's and the weapon's ATK bases** — no source yet: the wiki's Attributes page (title Attributes) is not in the wiki cache, and no weapon's ATK percentage is yet summed against an Attributes tab, the reference `{data-root}/genshin-parity/references/character-attributes.png` among them.
 - [ ] **Every line a character carries counts toward its attributes** — no source yet: the Attributes tab in `{data-root}/genshin-parity/references/character-attributes.png` (Xilonen at level 90) is not yet summed from every line she carries.

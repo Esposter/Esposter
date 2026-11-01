@@ -1,6 +1,6 @@
 ## Purpose
 
-The engine's synthesizer that plays a music record. Each note is an oscillator over its instrument's harmonics and its noise from a looped buffer, through one gain following its envelope, and a player schedules the notes ahead of the audio clock `packages/genshin-engine/src/audio/createMusicPlayer.ts`.
+The engine's synthesizer that plays a music record. Each note is an oscillator over its instrument's harmonics and its noise from a looped buffer, through one gain following its envelope, and a player schedules the notes ahead of the audio clock `packages/genshin-engine/src/audio/createMusicPlayer.ts`, looping the playlist while its `isLooping` flag is set (`packages/genshin-engine/src/audio/collectMusicSegments.ts`, lines 14 and 15); the login's playlist sets that flag (`{data-root}/genshin-parity/extracted/login/music/playlist.json`, line 2).
 
 ## Requirements
 
@@ -71,5 +71,4 @@ A chord ringing past its segment's end SHALL fade from the level it ended at rat
 
 ## Open
 
-- [ ] **The noise loop has no audible seam and each band holds its own level** — no source yet: no seam or level measurement is recorded.
-- [ ] **The player loops the playlist** — no source yet: the loop is not located in `createMusicPlayer.ts`; the playlist's `isLooping` flag is the only checked source.
+- [ ] **The noise loop has no audible seam and each band holds its own level** — no source yet: no seam or level measurement is recorded, and no test covers the seam; a render of `computeNoiseSamples` (`packages/genshin-engine/src/audio/computeNoiseSamples.ts`) read across its loop boundary, with each band's level, would show it.

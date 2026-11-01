@@ -87,7 +87,7 @@ A hit that leaves the enemy unstaggered, or does not launch, SHALL leave it unla
 
 #### Scenario: A launching hit that staggers an enemy leaves it launched while the stagger lasts
 
-- **GIVEN** a launching hit whose poise damage breaks an enemy's poise
+- **GIVEN** a launching hit, one whose stagger level is Air (the wiki's common impulse types 5 to 9 are Air, `{data-root}/cache/genshin-wiki/Page_Interruption_Resistance%2FStagger.json`, wikitext lines 123 to 131, and `packages/genshin-world/src/models/kit/KitHit.ts` line 60 names them too), whose poise damage breaks an enemy's poise
 - **WHEN** the hit lands
 - **THEN** the enemy carries the launched status for the stagger's seconds
 
@@ -133,7 +133,7 @@ An enemy whose health reaches zero SHALL be defeated and drop Mora, Character EX
 
 - **GIVEN** a common enemy at a level
 - **WHEN** it is defeated
-- **THEN** it drops Mora, Character EXP and materials by its level's band
+- **THEN** it drops Mora, Character EXP and materials by its level's band (the wiki's drops data, `{data-root}/cache/genshin-wiki/Page_Module:Drops_Table%2Fdata.json`, wikitext lines 4, 7 to 26, 29 to 50 and 51, gives the shares and an "EXP" column by level band; `packages/genshin-world/src/services/enemy/constants.ts` lines 49 to 80 hold the same rows, and `packages/genshin-world/src/services/enemy/computeEnemyDrops.ts` line 28 takes the band)
 
 ### Requirement: A boss drops nothing
 
@@ -174,19 +174,19 @@ A defeated enemy SHALL NOT return before its respawn time, which depends on its 
 
 - **GIVEN** a camp of common enemies with a member defeated
 - **WHEN** twelve hours pass
-- **THEN** the member returns
+- **THEN** the member returns (`{data-root}/cache/genshin-wiki/Page_Reset.json`, wikitext lines 36 and 40, under a stub banner at line 1 that asks for these timers to be verified)
 
 #### Scenario: An elite camp member returns at the next daily reset
 
 - **GIVEN** a camp with an elite and a member defeated
-- **WHEN** the next daily reset at 04:00 on the server's clock arrives
-- **THEN** the member returns
+- **WHEN** the next daily reset at 04:00 on the server's clock arrives (`{data-root}/cache/genshin-wiki/Page_Reset.json`, line 2; the Asia server's clock is GMT+8, which is UTC+8, as `{data-root}/cache/genshin-wiki/Category_Escoffier_Talents.json` line 5 gives, naming its weekly reset at 4:00 AM GMT+8)
+- **THEN** the member returns (`{data-root}/cache/genshin-wiki/Page_Reset.json`, lines 14 and 40)
 
 #### Scenario: A boss camp returns five seconds after its reward is claimed
 
 - **GIVEN** a camp with a normal boss whose reward is claimed
 - **WHEN** five seconds pass after the claim
-- **THEN** the boss's camp is spawned again
+- **THEN** the boss's camp is spawned again (`{data-root}/cache/genshin-wiki/Page_Normal_Boss.json`, wikitext line 16, which gives roughly 5 seconds; its Normal Bosses title redirects to it)
 
 ### Requirement: A camp wakes together
 
@@ -247,13 +247,13 @@ An enemy within aggro range of a live taunt SHALL strike the nearest such taunt 
 
 ### Requirement: An enemy drops its energy once at each health threshold for its life
 
-An enemy SHALL drop its energy at each health threshold it falls to, once for its life however it is healed.
+An enemy SHALL drop its energy at each health threshold it falls to, once for its life however it is healed, except a Weekly Boss, which drops none at a threshold (`{data-root}/cache/genshin-wiki/Page_Energy%2FData.json`, wikitext line 391; the Stormterror kind holds no energy drop at `packages/genshin-world/src/services/enemy/EnemyKindTraitsMap.ts` line 179).
 
 #### Scenario: Falling to a threshold drops energy
 
 - **GIVEN** an enemy falling to a health threshold
 - **WHEN** the threshold is passed
-- **THEN** its energy drops
+- **THEN** its energy drops (`{data-root}/cache/genshin-wiki/Page_Energy%2FData.json`, wikitext line 390, which counts an HP% threshold once per instance of an enemy, healed or not; `packages/genshin-world/src/services/enemy/damageEnemy.ts` lines 25 to 29 take each threshold once)
 
 #### Scenario: Falling to the same threshold again drops no energy
 
@@ -306,12 +306,5 @@ Each enemy SHALL be tinted white with a small flash at its middle for a moment a
 
 ## Open
 
-- [ ] **A defeated common enemy returns twelve hours after its defeat** — no source yet: the wiki's Reset page is not in the wiki cache.
-- [ ] **An elite camp's member returns at the next daily reset** — no source yet: the wiki's Reset page is not in the wiki cache, which gives the elite's rule.
-- [ ] **The server's clock is UTC+8** — no source yet: no row of the game's exports names the zone, and the wiki's Reset page is not in the wiki cache.
-- [ ] **A camp with a normal boss returns five seconds after its reward is claimed** — no source yet: the wiki's Normal Bosses page is not in the wiki cache.
-- [ ] **A boss stays down across a reload until its Trounce Blossom is claimed or the first teleport after its defeat** — no source yet: the wiki's Normal Bosses page is not in the wiki cache.
-- [ ] **An enemy drops its energy at each health threshold, once for its life** — no source yet: the wiki's Energy/Data page is not in the wiki cache; `packages/genshin-world/src/services/enemy/damageEnemy.ts` takes each threshold once through `droppedThresholdCount`.
-- [ ] **Each level band's Mora and Character EXP follow the wiki's table** — no source yet: the wiki's Module:Drops Table page, which reads its values from the Module:Drops Table/data page, is not in the wiki cache, and neither is that data page.
-- [ ] **No enemy gives Adventure EXP** — no source yet: the wiki's Adventure EXP page is not in the wiki cache.
-- [ ] **A hit that launches is one whose stagger level is Air, the common impulse table's Air rows being impulse types 5 to 9** — no source yet: the wiki's Interruption Resistance/Stagger page is not in the wiki cache; `packages/genshin-world/src/models/kit/KitHit.ts` (`isLaunching`) names those rows.
+- [ ] **A boss stays down across a reload until its Trounce Blossom is claimed or the first teleport after its defeat** — contradicted by `{data-root}/cache/genshin-wiki/Page_Normal_Boss.json` wikitext line 16: the boss stays down "unless the player teleports out of the area", where the page's value is the first teleport after its defeat, which `packages/genshin-world/src/composables/useWorldMap.ts` line 266 emits for every jump.
+- [ ] **No enemy gives Adventure EXP** — contradicted by `{data-root}/cache/genshin-wiki/Page_Adventure_EXP.json` wikitext line 77: each defeated Unusual Hilichurl gives 18 Adventure Rank EXP, where the page's value is that no enemy gives Adventure EXP.

@@ -178,7 +178,8 @@ A guest's save SHALL merge into a signed-in account's save by fixed rules, with 
 
 - **GIVEN** the guest has claimed a level of a statue region that the account has not claimed, its rewards paid into the guest's bag
 - **WHEN** the guest signs in
-- **THEN** the account claims that level again, and is paid for it once from its own bag
+- **THEN** the merge keeps the account's statue record as it was, so the level is not claimed on the account by the merge (`packages/genshin-world/src/services/save/mergeGenshinSave.ts`)
+- **AND** the account claims that level only when the player claims it there, and is paid for it once from its own bag (`packages/genshin-world/src/composables/useWorldStatues.ts`)
 - **AND** the rewards the guest's copy paid are lost with the guest's bag
 
 #### Scenario: A rank reward claimed only in the guest's copy is claimed again on the account
@@ -332,7 +333,3 @@ The save SHALL hold each mined outcrop by its place's id with the instant it was
 - **GIVEN** an outcrop mined on the server's clock
 - **WHEN** the page is reloaded before the outcrop's respawn
 - **THEN** the outcrop is still gone, and it stands again from its respawn
-
-## Open
-
-- [ ] **Save: a guest's claimed statue level is paid again on the account from its own bag** — no source yet: a run of the merge over a guest and an account save with a claimed statue level, which no record holds.

@@ -6,7 +6,7 @@ How each kind of the game's data reads once the community's asset extractor has 
 
 ### Requirement: Game files stay local and are never bundled
 
-Game files read for derivation SHALL stay on the developer's machine, and SHALL NOT be bundled with the product or committed to the repository. The one exception is game text: its strings and dialogue SHALL be committed as the generated slices the package that reads them loads.
+Game files read for derivation SHALL stay on the developer's machine, and SHALL NOT be bundled with the product or committed to the repository. Two kinds are the exceptions: game text, whose strings and dialogue SHALL be committed as generated slices, and the reference screenshots the parity page compares, which SHALL be committed as lossless WebP beside their snapshots.
 
 #### Scenario: Derived assets publish only derived values
 
@@ -14,11 +14,11 @@ Game files read for derivation SHALL stay on the developer's machine, and SHALL 
 - **WHEN** a reviewer checks what the publish contains
 - **THEN** only derived values are present and no game file is included
 
-#### Scenario: Game text slices are committed, binaries are not
+#### Scenario: Game text slices and reference screenshots are committed, other binaries are not
 
 - **GIVEN** the repository is checked for game-derived files
 - **WHEN** a reviewer lists them
-- **THEN** the text slices of `genshin-text` and the persona plugin are present, and no image, audio, model, mesh or table is
+- **THEN** the text slices of `genshin-text` and the persona plugin are present, the reference screenshots are present beside their snapshots, and no audio, model, mesh or table is
 
 #### Scenario: Missing community table is fetched locally, never committed
 
@@ -38,7 +38,7 @@ A reader of a game data structure whose layout no longer matches its expected fi
 
 ### Requirement: Every derived value names its source
 
-A derived value SHALL name the key of the source it is taken from, so that any value can be traced back to the game data it came from.
+A derived value SHALL name the key of the source it is taken from, or, where no source gives it, the provisional cause it is held under (`scripts/src/models/shared/KitProvisionalCause.ts`), so that any value can be traced back to the game data it came from or to the reason none gives it.
 
 #### Scenario: Source of a derived value can be opened again
 
@@ -140,8 +140,6 @@ A session deriving game data SHALL look for a scene's parts from its roots and f
 
 ## Open
 
-- [ ] **Repository: no image, audio, model, mesh or table of the game is committed** — no source yet: a `git ls-files` check for game binaries and tables, which no record keeps.
-- [ ] **Derived values: every derived value names the key of its source** — no source yet: a check over every derived data file for its source key, which no record holds.
-- [ ] **Open world: an unnamed prefab is counted with its placements in the extract report** — no source yet: the extract report's line for an unnamed prefab, which no record keeps.
+- [ ] **Open world: an unnamed prefab is counted with its placements in the extract report** — no source yet: the extract report's line for an unnamed prefab, which no record keeps; `pnpm -C scripts genshin:assets extract <capital>` must print the line that `scripts/src/services/genshinAssets/world/deriveCapitalWorld.ts` writes at line 117.
 - [ ] **Scripts: a field with no known shape is measured off the captures** — no source yet: a measured value of such a field, which no record holds.
-- [ ] **Scripts: a group script looked up by path in the client's scripts is found** — no source yet: a lookup run over the client's Lua block, as the scan under "Scripts" in `openspec/specs/genshin/game-data-formats/design.md` describes; no game source is cited for it.
+- [ ] **Scripts: a group script looked up by path in the client's scripts is found** — no source yet: a lookup run over the client's Lua block, as the scan under "Scripts" in `openspec/specs/genshin/game-data-formats/design.md` describes; no game source is cited for it, and the only Lua export kept is scene 3's, under `{data-root}/genshin-parity/extracted/lua/raw/`.

@@ -49,7 +49,7 @@ The maximum stamina SHALL never exceed two hundred and forty.
 
 - **GIVEN** the reached levels would raise the maximum past two hundred and forty
 - **WHEN** the maximum stamina is computed
-- **THEN** the maximum is two hundred and forty
+- **THEN** the maximum is two hundred and forty (the wiki's Statue of The Seven page gives the same cap, `{data-root}/cache/genshin-wiki/Page_Statue_of_The_Seven.json`, wikitext lines 27 and 129)
 
 ### Requirement: Restorative Power pool refills over time
 
@@ -59,7 +59,7 @@ The Restorative Power SHALL hold five thousand for each unlocked statue as its m
 
 - **GIVEN** the pool is below its maximum
 - **WHEN** fifteen seconds pass
-- **THEN** one percent of the maximum is added to the pool
+- **THEN** one percent of the maximum is added to the pool (the wiki gives the same 1% every 15 seconds, on 5,000 for each unlocked statue, `{data-root}/cache/genshin-wiki/Page_Statue_of_The_Seven.json`, wikitext line 37)
 
 #### Scenario: Full pool stops refilling
 
@@ -75,7 +75,7 @@ A click SHALL heal a standing party member who is hurt by a tenth of their maxim
 
 - **GIVEN** a hurt standing party member and a pool holding at least a tenth of their maximum HP
 - **WHEN** the member is clicked
-- **THEN** the member is healed by a tenth of their maximum HP
+- **THEN** the member is healed by a tenth of their maximum HP (the wiki's Statue's Blessing section gives a click's 10% of Max HP, `{data-root}/cache/genshin-wiki/Page_Statue_of_The_Seven.json`, wikitext line 39)
 - **AND** that amount is taken from the pool
 
 #### Scenario: Pool runs short
@@ -100,7 +100,7 @@ Auto-recover SHALL revive the deployed team's fallen members at thirty-five perc
 
 - **GIVEN** a deployed team member has fallen
 - **WHEN** auto-recover runs
-- **THEN** the member is revived at thirty-five percent of their HP
+- **THEN** the member is revived at thirty-five percent of their HP (the wiki's Auto-Recover section gives the same share, which uses no Restorative Power, `{data-root}/cache/genshin-wiki/Page_Statue_of_The_Seven.json`, wikitext line 44)
 - **AND** the pool is unchanged by the revival
 
 #### Scenario: Pool runs out part way
@@ -120,9 +120,3 @@ The world screen SHALL hold each region's levels, claimed level, held count and 
 - **WHEN** Oculi are offered at the Worship Statue
 - **THEN** the Oculi are offered to that region
 - **AND** its level and held count are kept in the save
-
-## Open
-
-- [ ] **The maximum stamina stops at 240, as the game's statues raise it** — no source yet: the Statue of The Seven wiki page is not on disk, and no dump table read holds the cap.
-- [ ] **The Restorative Power holds 5,000 for each unlocked statue and refills 1% every 15 seconds** — no source yet: the Statue of The Seven wiki page is not on disk, and no dump table read holds these numbers.
-- [ ] **A click heals a tenth of Max HP, and auto-recover revives the fallen at 35%** — no source yet: the Statue of The Seven wiki page is not on disk.

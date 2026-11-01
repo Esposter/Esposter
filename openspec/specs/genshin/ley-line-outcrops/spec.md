@@ -1,12 +1,12 @@
 ## Purpose
 
-Genshin's ley line outcrops as built — each region's Blossom of Revelation and Blossom of Wealth read from the game's tables into genshin-world, opened by Adventure Rank and by a nation's unlocked area, started at a drawn section's first place and moved along the places each names (`scripts/src/services/genshinAssets/leyLine/buildLeyLineRegions.ts`, `packages/genshin-world/src/services/leyLine/computeOutcropKindOpen.ts`, `packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts`). Touching, fighting and claiming them is the proposal's still.
+Genshin's ley line outcrops as built — each region's Blossom of Revelation and Blossom of Wealth read from the game's tables into genshin-world, opened by Adventure Rank and by a nation's unlocked area, started at a fitted place drawn at random from those no kind before it holds, and moved to the nearest free fitted place (`scripts/src/services/genshinAssets/leyLine/buildLeyLineRegions.ts`, `packages/genshin-world/src/services/leyLine/computeOutcropKindOpen.ts`, `packages/genshin-world/src/services/leyLine/computeDailyOutcrops.ts`, `packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts`). Touching, fighting and claiming them is the proposal's still.
 
 ## Requirements
 
 ### Requirement: Two kinds per region
 
-Each region's ley line SHALL offer two outcrop kinds, the Blossom of Revelation, which gives Character EXP materials, and the Blossom of Wealth, which gives Mora.
+Each region's ley line SHALL offer two outcrop kinds, the Blossom of Revelation, which gives Character EXP materials, and the Blossom of Wealth, which gives Mora. The Revelation's reward preview gives its EXP fruits, and the Wealth's gives Mora (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/RewardPreviewExcelConfigData.json`, id 4001 at line 35642 and id 4101 at line 37702, with item 202 named Mora in `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/MaterialExcelConfigData.json`).
 
 #### Scenario: Seven cities each have both kinds
 
@@ -47,41 +47,41 @@ In every region except Mondstadt and Liyue, each kind SHALL also need a nation's
 - **WHEN** a player in Inazuma reaches Adventure Rank 18
 - **THEN** its kinds stay closed
 
-### Requirement: Start at a drawn section's first place
+### Requirement: Start at a drawn fitted place
 
-Each kind SHALL start, each daily draw, at the lowest numbered place of a section drawn at random from its region's sections.
+Each kind SHALL start, each daily draw, at a fitted place drawn at random from those no kind before it holds (`packages/genshin-world/src/services/leyLine/computeDailyOutcrops.ts` lines 23 to 27, `packages/genshin-world/src/services/leyLine/drawPlaceIds.ts` lines 6 to 14).
 
 #### Scenario: Draw starts each kind
 
-- **WHEN** the daily draw runs for a region with sections
-- **THEN** each kind starts at the lowest numbered place of a drawn section
+- **WHEN** the daily draw runs for a region with fitted places
+- **THEN** each kind starts at a drawn fitted place, and no two kinds share one
 
-#### Scenario: Region without sections
+#### Scenario: Region without fitted places
 
-- **WHEN** the daily draw runs for Fontaine, Natlan or Snezhnaya
+- **WHEN** the daily draw runs for a region with no fitted place
 - **THEN** no outcrop starts
 
-### Requirement: Moving on along the named places
+### Requirement: Moving on to the nearest free place
 
-A claimed outcrop SHALL move to the next place its place names, or to the place after when the other kind stands there.
+A claimed outcrop SHALL move to the nearest fitted place of its region that is neither its own nor the other kind's, the lower id winning a tie (`packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts` lines 15 to 23).
 
-#### Scenario: Next place is free
+#### Scenario: Nearest place is free
 
-- **WHEN** an outcrop is claimed and its next place is free
-- **THEN** it moves to that place
+- **WHEN** an outcrop is claimed and a fitted place of its region is free
+- **THEN** it moves to the nearest such place
 
-#### Scenario: Other kind stands at the next place
+#### Scenario: Other kind stands at the nearest place
 
-- **WHEN** an outcrop is claimed and the other kind stands at its next place
-- **THEN** it moves to the place after that
+- **WHEN** an outcrop is claimed and the other kind stands at the nearest fitted place
+- **THEN** it moves to the next nearest free place
 
-### Requirement: Staying where it is when neither place is free
+### Requirement: Staying where it is when no place is free
 
-A claimed outcrop SHALL stay where it is when neither its next place nor the place after is free or no next place is named.
+A claimed outcrop SHALL stay where it is when no fitted place of its region is left but its own and the other kind's (`packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts` line 16 and lines 18 to 23, which give nothing when no place is left).
 
-#### Scenario: Neither place is free
+#### Scenario: No place is free
 
-- **WHEN** an outcrop is claimed and neither its next place nor the place after is free
+- **WHEN** an outcrop is claimed and no fitted place of its region is left but its own and the other kind's
 - **THEN** it stays where it is until the daily reset
 
 ### Requirement: Daily reset at 04:00
@@ -101,9 +101,3 @@ Ley line outcrops SHALL not be placed, fought or claimed in the world yet.
 
 - **WHEN** a player enters a region with ley line kinds
 - **THEN** no outcrop is drawn and no claim is offered
-
-## Open
-
-- [ ] **The Blossom of Revelation gives Character EXP materials, and the Blossom of Wealth gives Mora** — no source yet: the refresh rows' reward previews do not resolve to item names in the dump.
-- [ ] **Each kind starts at the lowest numbered place of a drawn section** — no source yet: `computeDailyOutcrops` draws from every fitted place, and no section first-place step is found in the code.
-- [ ] **A claimed outcrop moves to the next place its place names** — no source yet: `computeNextOutcropPlace` takes the nearest free fitted place, and no place-chain link is read.

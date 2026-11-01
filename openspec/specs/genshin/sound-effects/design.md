@@ -58,7 +58,7 @@ flowchart TD
 
 The check that the deployed product holds no game sound is the [spec's](spec.md) open item.
 
-- [ ] **A noise of a band built in one long transform would cost most of a second on the login's thread** — no source yet: no timing of either build is recorded in the repo.
+- [ ] **A noise of a band built in one long transform would cost most of a second on the login's thread** — contradicted by `packages/genshin-engine/src/audio/transformFourier.bench.md` line 29: a 2^16-sample transform takes 4.8351 milliseconds, and the door's 91,200 samples (76 frames of 0.025 seconds in `{data-root}/cache/content/5523c4b4cee27020c460a2a08a930025fe6b69c05e10ffada78f373da3b8df97`) fit one 2^17-sample transform, about 10 milliseconds at that scale.
 - [ ] **our login door sounds as it opens, as the game's does** — no source yet: the game's door audio in `{data-root}/genshin-parity/captures/yt-rBnfA4pXw6U-audio.webm`, named in Sources, not yet compared with our door's audio.
 - [ ] **the door is the rumble and a broadband rush 75 milliseconds after it, leaving 3.31 decibels** — no source yet: the game's door audio in `{data-root}/genshin-parity/captures/yt-rBnfA4pXw6U-audio.webm`, not yet re-measured for the rush's delay and level.
 - [ ] **the door sits about two decibels off the game's, its channels correlate 0.58 against the game's 0.53, its mono downmix reads about 3 decibels over each channel, and the sounds run to 20 kilohertz** — no source yet: the capture `{data-root}/genshin-parity/captures/yt-rBnfA4pXw6U-audio.webm` is on disk, but no command in the repository reproduces the 2.18 decibels or the 0.58 and 0.53 correlations, and the downmix level and bandwidth are not yet re-measured.

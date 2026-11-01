@@ -51,5 +51,5 @@ flowchart TD
 
 The flowers no record places are open on the [spec](spec.md). The pebbles are open here alone: no capture names them.
 
-- [ ] **A draw for each finest tile round the eye, with tens of tiles and a few dozen flowers each** — no source yet: no count of the tiles drawn round the eye or of the flowers kept per tile is recorded; `FLOWER_CANDIDATE_COUNT` (`packages/genshin-world/src/services/windrise/constants.ts`) caps a tile's candidates but gives no kept count.
+- [ ] **A draw for each finest tile round the eye, with tens of tiles and a few dozen flowers each** — no source yet: no count of the tiles drawn round the eye or of the flowers kept per tile is recorded; `FLOWER_CANDIDATE_COUNT` (`packages/genshin-world/src/services/windrise/constants.ts`) caps a tile's candidates at 48, so it keeps at most 48; a run of `computeWindrisePlants` over each finest tile round an eye, counting its plant matrices, would settle the count.
 - [ ] **The ground under a flower moves a few centimetres as its tile morphs** — no source yet: the height gap between a finest tile and the next level at the far end of its morph range is not measured.

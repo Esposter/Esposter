@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's Original Resin as pure state. It regenerates a point each eight minutes to 200, counted from the moment it last changed so it fills while the page is closed, refills from Primogems at six daily prices up to 2,000, and pays a claim five Adventure EXP a point (`packages/genshin-world/src/services/originalResin/constants.ts`). Its count is on the map's top bar (`packages/genshin-world/src/components/Map/Overlay/Index.vue`). The blossoms that spend it wait on the challenges that leave them.
+The game's Original Resin as pure state. It regenerates a point each eight minutes to 200, counted from the moment it last changed so it fills while the page is closed, refills from Primogems at six daily prices up to 2,000, and pays a claim five Adventure EXP a point (`packages/genshin-world/src/services/originalResin/constants.ts`). The wiki's Original Resin page gives each of these numbers (`{data-root}/cache/genshin-wiki/Page_Original_Resin.json`, wikitext lines 16, 23 to 29, 41, 48 and 50 to 51), its Weekly Boss page the first three weekly claims at 30 (`{data-root}/cache/genshin-wiki/Page_Weekly_Boss.json`, line 5), and its Escoffier talent page and its Reset page the 04:00 day in GMT+8 (`{data-root}/cache/genshin-wiki/Category_Escoffier_Talents.json`, line 5; `{data-root}/cache/genshin-wiki/Page_Reset.json`, line 2). Its count is on the map's top bar (`packages/genshin-world/src/components/Map/Overlay/Index.vue`). The blossoms that spend it wait on the challenges that leave them.
 
 ## Requirements
 
@@ -235,10 +235,4 @@ Using Fragile Resin from the bag SHALL restore sixty Original Resin and remove o
 
 ## Open
 
-- [ ] **the wallet regenerates one Original Resin every eight minutes, up to 200** — no source yet: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **Primogems refill 60 Original Resin at six daily prices, filling to 2,000** — no source yet: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **the Primogem refill day starts at 04:00 in UTC+8** — no source yet: the time zone of the dump's daily refresh of 14400 seconds (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, ids 1002 and 101000), which names none.
-- [ ] **a claim costs by its blossom kind, with a weekly boss at 30 and then 60** — no source yet: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **a ley line or a domain offers two claims at twice the price, or a Condensed Resin for three claims** — no source yet: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **a claim gives five Adventure EXP a point** — no source yet: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **a new player's wallet holds 200 Original Resin** — no source yet: the game's own design, which the dump does not hold; the page marks it settled, not checked.
+- [ ] **a new player's wallet holds 200 Original Resin** — no source yet: the game's own design, which the dump does not hold, and no cached wiki page states a starting stock (the dump's table names and the cached pages were searched); a recording of a fresh account's wallet would settle it. The page marks it settled, not checked.

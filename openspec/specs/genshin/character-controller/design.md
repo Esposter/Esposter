@@ -95,7 +95,7 @@ One pool, shared by the party, starts at 100 (`STAMINA_MAX`) and refills at 25 a
 
 A kit's action spends its own stamina as it starts, through `spend`, which takes the amount at once and restarts the refill's rest, so the pool refills only once the delay has passed from that spend. A kit's effect gives stamina back through `restore`, which adds the amount up to the most and takes no consumption multiplier, and leaves the rest as it was. A sword's charged attack spends 20 (`{data-root}/cache/gcsim-v2.47.2/internal/template/character/stam.go`, lines 19 to 21), and a catalyst's 50 (the same file, line 25). Every spend is multiplied by the pool's consumption multiplier, `createStamina`'s second argument, read at each spend and 1 when none is given, which is how the party's Impetuous Winds cuts the stamina it takes ([party](../party/design.md)); a charged attack is gated by `checkCanSpend` at that same multiplied cost, so the gate and the spend agree. The controller takes either the party's pool or the means to build its own (`staminaMaximum` and an optional `getStaminaConsumptionMultiplier`), never both, so a pool it is given is never handed a multiplier or a maximum it would ignore: the pool's owner builds it with both (`packages/genshin-engine/src/models/locomotion/CharacterControllerOptions.ts`).
 
-Running out stops what costs: a sprint drops to a run, a climb lets go and falls, a glide closes, and a swim drowns. A drowned body comes back where its stamina was last full on foot, refilled, as the game returns its party. The pool's most is the maximum it is built with, held at 100 by `useWorldCombat`, which builds the party's pool, since no statue's level is reached in the world yet ([Statues of The Seven](../statues-of-the-seven/design.md)) (`packages/genshin-world/src/composables/useWorldCombat.ts`).
+Running out stops what costs: a sprint drops to a run, a climb lets go and falls (`{data-root}/cache/genshin-wiki/Page_Climbing.json`, wikitext line 6), a glide closes, and a swim drowns. A drowned body comes back where its stamina was last full on foot, refilled, as the game returns its party. The pool's most is the maximum it is built with, held at 100 by `useWorldCombat`, which builds the party's pool, since no statue's level is reached in the world yet ([Statues of The Seven](../statues-of-the-seven/design.md)) (`packages/genshin-world/src/composables/useWorldCombat.ts`).
 
 ## The numbers
 
@@ -166,6 +166,10 @@ Every speed, height and threshold is a body type's, since how far a character sp
 - `{data-root}/genshin-parity/extracted/locomotion/Girl/locomotion.json`, whose swim-dash clip covers 3.6 m in a second; grounds scenario "Sprint while swimming makes a swim dash".
 - `{data-root}/genshin-parity/extracted/locomotion/Girl/locomotion.json`, whose drowning clip, SwimDie, lasts 3 s; grounds scenario "Running out of stamina in water drowns the character".
 - `{data-root}/cache/gcsim-v2.47.2/internal/template/character/stam.go`, lines 19 to 21; grounds scenario "Charged attack spends 20".
+- `{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext line 348: the walk switch's key under the keyboard's general controls is "Left Ctrl"; grounds scenario "Walk switch walks instead of running".
+- `{data-root}/cache/genshin-wiki/Page_Gliding.json`, wikitext line 8: a jump opens the glider once the body is high enough off the ground, and a jump again or a plunged attack from it closes it; grounds the two glider requirements.
+- `{data-root}/cache/genshin-wiki/Page_Team_Bonus.json`, wikitext line 51: the Impetuous Winds team bonus takes 15% off stamina consumption; grounds scenario "Party effect reduces what each action costs".
+- `{data-root}/cache/genshin-wiki/Page_Stamina.json`, wikitext lines 5 and 12: a base of 100 stamina, and 25 a second back once 1.5 seconds pass with no spend; grounds the requirement on the shared pool's refill after a rest.
 
 ## Reference
 
@@ -175,4 +179,4 @@ Every speed, height and threshold is a body type's, since how far a character sp
 
 The open items the [spec](spec.md) also holds are listed there, not here.
 
-- [ ] **Running out of stamina stops the costing states** — no source yet: the Stamina wiki page is not on disk, and the spec holds only the drowning half of the item.
+- [ ] **Running out of stamina drops a sprint to a run, closes a glide and drowns a swim, as the game does** — no source yet: the cached Sprinting, Gliding and Swimming pages say nothing of an empty pool, and the Fallen Character page, which would settle the drowning, is not cached.

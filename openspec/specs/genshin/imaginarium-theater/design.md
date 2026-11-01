@@ -28,13 +28,13 @@ A season names its difficulties by id, and the writer refuses a season that name
 
 ## The rules
 
-- **The season.** The Theater plays the latest season that began before now, read in the game's time zone, UTC+8 (`packages/genshin-world/src/services/time/constants.ts`, `GAME_TIME_ZONE`). A season is never played before it begins, and after the last one ends the last begun season is held, so a dump read months on plays its final season rather than none.
+- **The season.** The Theater plays the latest season that began before now, read in the game's time zone, UTC+8 (`packages/genshin-world/src/services/time/constants.ts`, `GAME_TIME_ZONE`); the game's own notices give their dates in UTC+8 (`{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`, line 154177). A season is never played before it begins, and after the last one ends the last begun season is held, so a dump read months on plays its final season rather than none.
 - **The difficulties.** A season's difficulties are the rows its ids name, ordered from the lowest level.
-- **Vigor.** Each character has two Vigor for a run. A stage is performed by a Principal Cast of four, each with Vigor left, and performing it spends one Vigor from each. A cast of fewer than four, or one with a member out of Vigor, performs nothing (`packages/genshin-world/src/services/imaginarium/checkIsImaginariumStageReady.ts`).
-- **Blessing Level.** Each Alternate Cast member past the number its difficulty asks adds two, and each Brilliant Blessing adds the levels it has been gained and raised to, one each. A short Alternate Cast adds nothing (`packages/genshin-world/src/services/imaginarium/computeImaginariumBlessingLevel.ts`).
-- **Blessing stats.** Each level of Blessing adds the stats `IMAGINARIUM_BLESSING_LEVEL_STATS` gives to a cast member, and a special guest's stats are doubled by `IMAGINARIUM_SPECIAL_GUEST_BLESSING_MULTIPLIER` (`packages/genshin-world/src/services/imaginarium/getImaginariumBlessingStats.ts`).
-- **The opening character.** An owned opening character's Max HP, ATK and DEF rise by a fifth, rounded down to whole units. Its Elemental Mastery is unchanged (`packages/genshin-world/src/services/imaginarium/applyImaginariumOpeningBonus.ts`).
-- **Stellas.** Every three Stellas in a run give one reward, so five Stellas give one and six give two (`packages/genshin-world/src/services/imaginarium/countImaginariumStellaRewards.ts`).
+- **Vigor.** Each character has two Vigor for a run. A stage is performed by a Principal Cast of four, each with Vigor left, and performing it spends one Vigor from each. A cast of fewer than four, or one with a member out of Vigor, performs nothing (`packages/genshin-world/src/services/imaginarium/checkIsImaginariumStageReady.ts`). The wiki gives the same two Vigor and four stage members (`{data-root}/cache/genshin-wiki/Page_Imaginarium_Theater.json`, wikitext line 23).
+- **Blessing Level.** Each Alternate Cast member past the number its difficulty asks adds two, and each Brilliant Blessing adds the levels it has been gained and raised to, one each. A short Alternate Cast adds nothing (`packages/genshin-world/src/services/imaginarium/computeImaginariumBlessingLevel.ts`). The wiki gives two levels per Alternate Cast member past the count and one per Brilliant Blessing gained or upgraded (`{data-root}/cache/genshin-wiki/Page_Imaginarium_Theater.json`, wikitext line 78).
+- **Blessing stats.** Each level of Blessing adds the stats `IMAGINARIUM_BLESSING_LEVEL_STATS` gives to a cast member, and a special guest's stats are doubled by `IMAGINARIUM_SPECIAL_GUEST_BLESSING_MULTIPLIER` (`packages/genshin-world/src/services/imaginarium/getImaginariumBlessingStats.ts`). The constants hold the wiki's per-level values, 800 Max HP, 50 ATK, 50 DEF and 20 Elemental Mastery (`packages/genshin-world/src/services/imaginarium/constants.ts`, lines 10-15; `{data-root}/cache/genshin-wiki/Page_Imaginarium_Theater.json`, wikitext lines 79-82), and the wiki's special guest stats are increased by 100%, which is the doubling (same page, wikitext line 83).
+- **The opening character.** An owned opening character's Max HP, ATK and DEF rise by a fifth, rounded down to whole units. Its Elemental Mastery is unchanged (`packages/genshin-world/src/services/imaginarium/applyImaginariumOpeningBonus.ts`). The wiki gives the bonus as 20% of HP, ATK and DEF (`{data-root}/cache/genshin-wiki/Page_Imaginarium_Theater.json`, wikitext line 38).
+- **Stellas.** Every three Stellas in a run give one reward, so five Stellas give one and six give two (`packages/genshin-world/src/services/imaginarium/countImaginariumStellaRewards.ts`). The wiki gives the same count of three (`{data-root}/cache/genshin-wiki/Page_Imaginarium_Theater.json`, wikitext line 99).
 
 ## Decisions
 
@@ -75,20 +75,14 @@ A season names its difficulties by id, and the writer refuses a season that name
 
 ## Notes
 
-- **The wiki's numbers are unverified.** The Vigor, the Blessing Level stats, the opening bonus and the three-Stella reward are the proposal's statements, from the wiki, which could not be read when this was built. They are constants in `packages/genshin-world/src/services/imaginarium/constants.ts` and need no measure from the game, but a reader who finds them wrong changes that file.
+- **The wiki's numbers are checked.** The Vigor, the Blessing Level stats, the opening bonus and the three-Stella reward are constants in `packages/genshin-world/src/services/imaginarium/constants.ts`, and each is the value its rule's citation gives on the wiki page. They need no measure from the game, but a reader who finds them wrong changes that file.
 
 ## Sources
 
-- [Imaginarium Theater](https://genshin-impact.fandom.com/wiki/Imaginarium_Theater), Genshin Impact Wiki: the Vigor, the Blessing Level stats, the opening character's bonus and the Stella rewards this page builds. The source could not be read, so these are the proposal's statements.
+- [Imaginarium Theater](https://genshin-impact.fandom.com/wiki/Imaginarium_Theater), Genshin Impact Wiki: the Vigor, the Blessing Level stats, the opening character's bonus and the Stella rewards this page builds, cached as `{data-root}/cache/genshin-wiki/Page_Imaginarium_Theater.json` and cited by line in the rules.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `RoleCombatScheduleExcelConfigData` and `RoleCombatDifficultyExcelConfigData`, the two tables the slices are written from. Their revision matches the dump's tower tables.
 - `{data-root}/genshin-parity/text/ExcelBinOutput/RoleCombatDifficultyExcelConfigData.json`, field `OHDBPBMODLP`. Grounds the requirement "Each difficulty carries a level floor".
 
 ## Open
 
-- [ ] **the AnimeGameData master matches the dump's tower tables byte for byte** — no source yet: the repository's revision, which the cache does not hold.
-- [ ] **each character has two Vigor for a run, and a stage takes four performers** — no source yet: the Imaginarium Theater wiki page is not on disk.
-- [ ] **each Alternate Cast member past the required count adds two Blessing Levels, and each Brilliant Blessing its levels** — no source yet: the Imaginarium Theater wiki page is not on disk.
-- [ ] **each Blessing Level's stats are those of `IMAGINARIUM_BLESSING_LEVEL_STATS`, doubled for a special guest** — no source yet: the Imaginarium Theater wiki page is not on disk.
-- [ ] **an owned opening character gains a fifth of its Max HP, ATK and DEF** — no source yet: the Imaginarium Theater wiki page is not on disk.
-- [ ] **every three Stellas in a run give one reward** — no source yet: the Imaginarium Theater wiki page is not on disk.
-- [ ] **the Theater's season times are in UTC+8** — no source yet: the game's own server time zone, which the dump does not state.
+- [ ] **the AnimeGameData master matches the dump's tower tables byte for byte** — no source yet: the repository's revision, which the cache does not hold. NEEDS-RUN: a byte comparison (cmp) of the five Tower tables under `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/` against the AnimeGameData branch the fetch reads (`scripts/src/services/genshinText/constants.ts`, line 171, which names no pinned commit), which must print nothing for each.

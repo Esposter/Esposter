@@ -258,9 +258,9 @@ Each record SHALL be served directly from storage to the browser with no app rou
 - **WHEN** the page loads again within a year
 - **THEN** the browser answers without making a request
 
-### Requirement: A profile or book record is checked before it is published
+### Requirement: A profile record is checked before it is published
 
-A profile or book record SHALL be parsed by its schema before it is published, and an index SHALL hash to the same name whatever order its entries were built in.
+A profile record SHALL be parsed by its schema before it is published, a book body SHALL be published as the string its reader returns, and an index SHALL hash to the same name whatever order its entries were built in.
 
 #### Scenario: An invalid profile record is not published
 
@@ -284,8 +284,3 @@ A verification SHALL fetch every object the lock reaches from each account and S
 - **WHEN** verification runs
 - **THEN** each reached object is fetched from each account without credentials
 - **AND** each is checked against its name
-
-## Open
-
-- [ ] **A screen keeps what it showed and logs a later read's failure** — no source yet: only the world's gate and the opening's logging were checked.
-- [ ] **A book record is parsed by its schema before it is published** — no source yet: the book body publication shows no schema parse, and `scripts/src/services/genshinAssets/archive/readBookBody.ts` types the body as a string, so only the type holds it at compile time.

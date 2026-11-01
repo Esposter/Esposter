@@ -51,8 +51,8 @@ static inline void oozCopy64(void *destination, const void *source) {
 
 The open item that nothing is filed upstream is recorded with its requirement in [the spec](spec.md).
 
-- [ ] **The stock Ooz copy on `00/10850306.blk` logs 398 exception lines and no textures, and the byte-wise copy logs none and exports 91** — no source yet: no run log or output of this repro is on disk.
+- [ ] **The stock Ooz copy on `00/10850306.blk` logs 398 exception lines and no textures, and the byte-wise copy logs none and exports 91** — no source yet: no run log or output of this repro is on disk under `{data-root}/tools` or the parity folder; the repro's own `AnimeStudio.CLI` run settles it.
 - [ ] **The stock decoder with a zero-filled buffer differs from the patched output in 226 of 466 Oodle calls** — no source yet: no comparison output is on disk.
-- [ ] **The stock Leviathan build on `00/06104869.blk` makes 604 Oodle calls, differs from x64 at offset 152 of call 601, and exports 483 textures where Windows exports 485** — no source yet: no run log or output of this repro is on disk.
-- [ ] **After the Leviathan patch, calls 595 to 603 match the x64 fingerprints and the run logs no exception** — no source yet: no patched run output is on disk.
-- [ ] **The x64 build of the Leviathan source does not show the defect, and the arm64 build does** — no source yet: no x64 run output is on disk to compare.
+- [ ] **The stock Leviathan build on `00/06104869.blk` makes 604 Oodle calls, differs from x64 at offset 152 of call 601, and exports 483 textures where Windows exports 485** — no source yet: no run log or output of this repro is on disk; the stock run on `00/06104869.blk` settles it.
+- [ ] **After the Leviathan patch, calls 595 to 603 match the x64 fingerprints and the run logs no exception** — no source yet: no patched run output is on disk; a run of the patched CLI on `00/06104869.blk` with `ANIMESTUDIO_OODLE_LOG` set settles it.
+- [ ] **The x64 build of the Leviathan source does not show the defect, and the arm64 build does** — no source yet: no x64 run output is on disk to compare; an x64 build of that source run on the same block settles it.

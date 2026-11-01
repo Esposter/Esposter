@@ -335,15 +335,18 @@ The world's HUD SHALL redraw as members' HP, energy and cooldowns change and as 
 - **WHEN** the member's HP changes
 - **THEN** the HUD redraws the member's HP
 
-## Open
+## Sources
 
-- [ ] **Left Alt with a member's key uses that member's burst, and a refused switch uses none** — no source yet: no test holds the chord or the fixed step's read.
-- [ ] **A character keeps its HP, energy and cooldowns when moved into another team, and its HP keeps its share of Max HP** — no source yet: no test holds the move or the share.
-- [ ] **A fallen deployed team is revived at 35 percent of each member's Max HP** — no source yet: no 35% revive wording is in the English game text, and the revive clip is not measured.
-- [ ] **A fallen team is jumped to the nearest unlocked Teleport Waypoint, or revived where it fell with none unlocked** — no source yet: no test holds it.
-- [ ] **A drowning takes a tenth of each member's Max HP** — no source yet: no 10% drowning wording is in the English game text, and the wiki's Fallen Character page is not cached.
-- [ ] **The switch cooldown is one second** — no source yet: the wiki's Party page is not cached.
-- [ ] **A skill's cooldown is shortened and each stamina spend is lowered on the field's Anemo team** — no source yet: no test holds the skill cooldown multiplier or the stamina pool.
-- [ ] **A statue's heal is not recorded for the kits** — no source yet: no test holds it.
-- [ ] **Only the character on the field takes an enemy's strike** — no source yet: no test holds it, and the wiki's Party page is not cached.
-- [ ] **A new player's first team is deployed with its first member on the field** — no source yet: no test holds `createParty`'s default deployment.
+- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Controls.json`, lines 143 and 144: "Switch to Party Member and Use Elemental Burst" is bound to Left Alt with a party member's key.
+- [Party](https://genshin-impact.fandom.com/wiki/Party), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Party.json`, line 8: the cooldown for switching between characters is 1 second.
+- [Fallen Character](https://genshin-impact.fandom.com/wiki/Fallen_Character), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Fallen_Character.json`: the party respawns at the nearest Teleport Waypoint with 35% HP remaining (line 54), and drowning makes every character lose 10% of its maximum HP and resets its energy (line 393).
+- [Energy](https://genshin-impact.fandom.com/wiki/Energy), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Energy.json`, line 17: a drowning takes all the energy of the whole team.
+- [Statue of The Seven](https://genshin-impact.fandom.com/wiki/Statue_of_The_Seven), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Statue_of_The_Seven.json`, line 44: auto-recover revives fallen characters at 35% of their maximum HP.
+- [Team Bonus](https://genshin-impact.fandom.com/wiki/Team_Bonus), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Team_Bonus.json`, line 51: Impetuous Winds shortens a skill's cooldown by 5% and lowers stamina consumption by 15%, and [Stamina](https://genshin-impact.fandom.com/wiki/Stamina), cached at `{data-root}/cache/genshin-wiki/Page_Stamina.json`, line 43, gives the same 15%.
+- `packages/genshin-world/src/services/party/constants.ts`, lines 12, 51, 57, 73 and 75: the switch cooldown of one second, the factors 0.95 and 0.85 under Impetuous Winds, and the shares 0.35 and 0.1 that the revive and the drowning use.
+- `packages/genshin-world/src/services/party/switchPartyMember.ts`, lines 21 to 29, refuses a switch before the field changes. `packages/genshin-world/src/components/World/Character/Index.vue`, lines 149 to 153, uses the burst only when the member the chord names is already on the field, so a refused switch uses none. `packages/genshin-world/src/composables/useWorldFrame.ts`, lines 150 to 156, makes the switch from the chord.
+- `packages/genshin-world/src/models/party/Party.ts`, lines 9 and 10, and `packages/genshin-world/src/models/party/PartyMember.ts`, lines 3 to 6, with `packages/genshin-world/src/services/party/setPartyTeamCharacters.ts`, lines 28 to 30: each character's HP share, energy and cooldowns are kept by its id, so a move between teams changes none of them.
+- `packages/genshin-world/src/components/World/Session/Index.vue`, lines 618 to 621: a revived team jumps to the nearest unlocked Teleport Waypoint, and stays where it fell when none is unlocked.
+- `packages/genshin-world/src/services/statue/healPartyMemberWithPower.ts`, lines 23 and 24, and `packages/genshin-world/src/services/statue/autoRecoverParty.ts`, lines 17 to 25: a statue's heal and revive add no entry to the party's `healthChanges`, which `packages/genshin-world/src/services/kit/stepActiveKit.ts`, lines 204 to 215, sends to the kits.
+- `packages/genshin-world/src/composables/useWorldCombat.ts`, lines 288 and 289, and `packages/genshin-world/src/services/kit/strikePartyMember.ts`, lines 34 to 45: an enemy's strike lands on the active combatant, the character on the field.
+- `packages/genshin-world/src/services/party/createParty.ts`, lines 20 to 22 and 31 to 34: a new party's first team is deployed with its first member on the field.

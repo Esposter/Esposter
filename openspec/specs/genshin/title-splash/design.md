@@ -37,7 +37,7 @@ flowchart LR
 The login interface's logo choice and the placement of the logos other than English are the [spec's](spec.md) open items.
 
 - [ ] **A patch that changes a logo is one run** — no source yet: the fit has not been rerun against a patched install.
-- [ ] **The English trace agrees with the wiki's render to a tenth of a percent** — no source yet: no render of the English logo is in `{data-root}/cache/genshin-wiki/`.
+- [ ] **The English trace agrees with the wiki's render to a tenth of a percent** — no source yet: no render of the English logo is in `{data-root}/cache/genshin-wiki/`, which holds only pages; a measurement of the trace's ink against the wiki's logo image settles it.
 - [ ] **The licence's forty-unit spacing, its 400 ms fade and the splash's own hold** — no source yet: the bili recording has not been read frame by frame for these timings.
 - [ ] **The licence's second line runs narrower than the recording's** — no source yet: the licence line's width has not been measured against the recording.
 - [ ] **253 on the user's own recording** — no source yet: no still of the PC splash from the user's own recording is in `{data-root}/genshin-parity/references/`. `references/title-splash.png` may show the same background, but its pixel value was not read here, so it is not cited for the reading.

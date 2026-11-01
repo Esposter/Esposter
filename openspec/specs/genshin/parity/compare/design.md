@@ -37,7 +37,7 @@ flowchart TD
 
 ## Open
 
-- [ ] **The Jueyun label's box and ring split** — no source yet: no measurement record for the Jueyun label is in the repository, so the split stands as the page's own.
-- [ ] **The startup screen's remainder is antialiasing along the lit marks' edges** — no source yet: no diff image for `loading-startup` was read to show where its remainder sits.
+- [ ] **The Jueyun label's box and ring split** — no source yet: the label's snapshot row (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md` line 51) holds only its scores, so the split stands as the page's own until a measurement of its box and ring is recorded.
+- [ ] **The startup screen's remainder is antialiasing along the lit marks' edges** — no source yet: the difference panel, the right third of `{data-root}/genshin-parity/comparisons/loading-startup.png`, is too small at the sheet's size to show where the remainder sits; a crop of that third at full resolution would settle it.
 - [ ] **A title logo sized without a reference would come out nearly twice the size** — no source yet: no commit, snapshot or report records that size.
 - [ ] **Splitting from the colour at a box's corners would take a map's water for ink, since water stands further from the terrain than a white name does** — no source yet: no comparison of the corner split on a water region is kept.

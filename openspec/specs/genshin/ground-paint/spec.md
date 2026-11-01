@@ -96,15 +96,9 @@ A tile morphing to the next level SHALL morph toward the colour that level paint
 - **WHEN** the morph runs
 - **THEN** the colour morphs toward the colour the next level paints
 
-### Requirement: Grass grows only where the grass layer dominates
+### Requirement: Flowers grow only where the grass layer dominates
 
-Grass blades SHALL grow only on the grass layer, and flowers SHALL grow only where the weights are nearly all grass.
-
-#### Scenario: Earth, rock, sand and path stay bare of blades
-
-- **GIVEN** a point is painted as earth, rock, sand or path
-- **WHEN** grass is placed
-- **THEN** no grass blade grows there
+Flowers SHALL grow only where the weights are nearly all grass. Grass blades follow the captured ground's green rather than the layers, as [vegetation](../vegetation/spec.md) states.
 
 #### Scenario: Flowers grow only on nearly all grass
 
@@ -134,9 +128,7 @@ A region whose base maps are not exported SHALL keep its layer colours unpainted
 
 ## Open
 
-- [ ] **The game places its layers by cell, never by slope** — no source yet: no checked game data shows that placement ignores slope.
-- [ ] **No grass blade grows on earth, rock, sand or path** — no source yet: no vegetation placement check is cited here.
-- [ ] **Flowers grow only where the weights are nearly all grass** — no source yet: no scatter placement check is cited here.
+- [ ] **The game places its layers by cell, never by slope** — no source yet: `packages/genshin-world/src/components/World/Screen/Ground.reference.ts` line 76 measures the Ground colour "from 9.10 under the slope bands" against the cell field, which compares two placements and tests no tile; binning each tile's layer cells by its slope would settle "never".
 - [ ] **The layer field is fitted from the layer the game's tiles paint each four-metre cell** — no source yet: the layer each cell is painted in, which the `BigWorldTerrain_*.bin.dat` tiles under `{data-root}/genshin-parity/extracted/mondstadt/world/TerrainData/` would settle, is not read here; the four-metre span of a tile is not read from the game.
-- [ ] **Genshin's terrain blends its layers per texel in its shader** — no source yet: the extracted shaders spell no terrain, splat or ground in any file.
-- [ ] **Genshin's tiles hold a weight per layer at every texel** — no source yet: the tiles' per-texel weights are not read here.
+- [ ] **Genshin's terrain blends its layers per texel in its shader** — no source yet: the extracted shaders spell no terrain, splat or ground in any file, and `{data-root}/genshin-parity/extracted/windrise/assets/Material` exports no terrain material; the shader that draws the tiles would settle it.
+- [ ] **Genshin's tiles hold a weight per layer at every texel** — contradicted by `{data-root}/genshin-parity/extracted/windrise/world/TerrainData/BigWorldTerrain_1_-1.bin.dat` at byte 872: a count of 65,536 followed by one layer index per 4-metre cell, values 0 to 6; the page's own value is a weight per layer at every texel. Its layers name their masks by pointer, and no mask is in the extract.

@@ -135,7 +135,7 @@ Columbina SHALL turn her team's Electro-Charged, Bloom and Hydro-Crystallize rea
 
 - **GIVEN** Columbina is in the party and a party member's Bloom forms
 - **WHEN** the reaction is recorded
-- **THEN** it is Lunar-Bloom, consuming as Bloom does
+- **THEN** it is Lunar-Bloom, consuming as Bloom does (`{data-root}/cache/gcsim-v2.47.2/pkg/reactable/bloom.go` lines 13 to 49, where the Lunar flag only adds a call and an event)
 
 ### Requirement: Her Moonsign Benediction adds Base DMG from her max HP
 
@@ -233,7 +233,3 @@ Moondew Cleanse SHALL strike three Dendro hits that ignore all of each enemy's D
 - **GIVEN** Moondew Cleanse is playing
 - **WHEN** each of its three hits strikes an enemy
 - **THEN** each hit ignores all of that enemy's DEF, and her normal charged attack ignores none
-
-## Open
-
-- [ ] **A Lunar-Bloom consumes its auras as Bloom does** — no source yet: no cached line states how a Lunar-Bloom consumes its element.

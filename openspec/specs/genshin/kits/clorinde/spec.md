@@ -100,4 +100,4 @@ From her sixth constellation, Hunter's Vigil SHALL raise Clorinde's CRIT Rate by
 
 ## Open
 
-- [ ] **Her plunges land as their action starts** — no source yet: no Clorinde plunge recording is in `{data-root}/genshin-parity/captures/`, and gcsim's clorinde package holds plunge damage tables but no plunge timing.
+- [ ] **Her plunges land as their action starts** — no source yet: no Clorinde plunge recording is in `{data-root}/genshin-parity/captures/`, and gcsim's clorinde package holds plunge damage tables but no plunge timing; no Clorinde clip is in `{data-root}/genshin-parity/extracted/timings/` either, so a recording of a Clorinde plunge settles it.

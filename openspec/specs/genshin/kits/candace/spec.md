@@ -170,4 +170,4 @@ At constellation 4, Sacred Rite: Heron's Sanctum's charged hold SHALL share the 
 
 ## Open
 
-- [ ] **the Prayer's infusion lasts 1 second** — no source yet: the game's own duration; gcsim's 60-frame infusion (`{data-root}/cache/gcsim-v2.47.2/internal/characters/candace/burst.go`) is a simulator's value, not the game's.
+- [ ] **the Prayer's infusion lasts 1 second** — no source yet: the game's own duration; gcsim's 60-frame infusion (`{data-root}/cache/gcsim-v2.47.2/internal/characters/candace/burst.go`) is a simulator's value, not the game's. The cached Wagtail's Tide text gives the Prayer's 9 seconds and no infusion time (`{data-root}/cache/genshin-wiki/Category_Candace_Talents.json`), and no game ability config for it is on disk.

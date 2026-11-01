@@ -80,7 +80,7 @@ A card attached to a character whose text names its holder SHALL reduce a cost o
 
 ### Requirement: A switch costs one die, less any reduction from the field
 
-A switch SHALL cost one die of any face, less any reduction the field's cards give to switches.
+A switch SHALL cost one die of any face, less any reduction the field's cards give to switches. Leave It to Me!'s text makes the switch a Fast Action instead of a Combat Action (the keywords "$[K2]" and "$[K1]", at lines 13 and 6 of `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/GCGKeywordExcelConfigData.json`).
 
 #### Scenario: Switch with a field reduction may cost no die
 
@@ -310,6 +310,5 @@ A character at no health SHALL be defeated: its equipment and statuses SHALL be 
 
 ## Open
 
-- [ ] **A duel ends with no winner once the fifteenth round's end phase has closed** — contradicted by `{data-root}/genshin-parity/text/TextMap/TextMapEN.json`: no winner by the start of Round 15 means both sides lose.
-- [ ] **Leave It to Me makes the next switch a fast action and is spent** — no source yet: the keywords `$[K1]` and `$[K2]` in card 332006's text are not resolved; the card is in `{data-root}/genshin-parity/text/ExcelBinOutput/GCGCardExcelConfigData.json`.
-- [ ] **A second reaction of the same kind joins the card already there** — no source yet: the join in the effect that places the reaction's card was not read.
+- [ ] **A duel ends with no winner once the fifteenth round's end phase has closed** — contradicted by `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json` line 24456 (`#6016`): "If a winner has not been decided by the start of Round 15, both sides will lose", which ends the duel before Round 15's roll, not after the fifteenth round's draws.
+- [ ] **A second reaction of the same kind joins the card already there** — no source yet beyond Burning Flame: `#5015` (line 278124 of `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`) gives "Max 2 stacks", and the join is repo code (`packages/genshin-world/src/services/gcg/effects/applyGcgNonDamageReactionEffects.ts` lines 45 to 49); the TCG texts give Dendro Core and Catalyzing Field their usages with no maximum (`#5016` line 1585, `#5017` line 362170), so the repo's maximums of 1 and 2 (`packages/genshin-world/src/services/gcg/constants.ts` lines 105 and 107) are unchecked.

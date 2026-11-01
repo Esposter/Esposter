@@ -44,7 +44,11 @@ A Seelie that has settled at its court SHALL stay settled.
 - **WHEN** it is left unfollowed
 - **THEN** it stays settled at its court
 
+## Sources
+
+- [Seelie](https://genshin-impact.fandom.com/wiki/Seelie), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Seelie.json`, line 10: a Seelie's chests appear once it has settled back into its court, and a Seelie not led back to its court within a set time goes to its starting location.
+
 ## Open
 
-- [ ] **A Seelie rests until followed, is led to its court, and goes back to rest when left unfollowed, as the game does** — no source yet: the wiki's Seelie page is not in the genshin-wiki cache.
-- [ ] **A settled Seelie stays settled at its court** — no source yet: the wiki's Seelie page is not in the genshin-wiki cache, and a recording of a settled Seelie left unfollowed would settle it.
+- [ ] **A Seelie rests until followed, as the game does** — NEEDS-RECORDING: no line of `{data-root}/cache/genshin-wiki/Page_Seelie.json` gives the rest before the first follow, and the led-home capture's sheet (`{data-root}/genshin-parity/frames/yt-sN0MlNE-ByM-seelie-led-home@0/sheet.png`) does not isolate that moment; a recording of a Seelie before any follow would settle it.
+- [ ] **A settled Seelie stays settled at its court** — NEEDS-RECORDING: line 10 of the same wiki page gives the return only for a Seelie not led back to its court, which a settled one already is, and no line says a settled one stays; a recording of a settled Seelie left unfollowed would settle it.

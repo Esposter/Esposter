@@ -35,4 +35,4 @@ flowchart LR
 
 ## Open
 
-- [ ] **Gaze of the Deep's area is a radius of 1 metre** — no source yet: gcsim's box is 0.1 by 1 metres, and no source gives a radius; the dump's constellation 1 text (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`, talent 311) gives 22% of Fischl's ATK and no area.
+- [ ] **Gaze of the Deep's area is a radius of 1 metre** — no source yet: gcsim's box is 0.1 by 1 metres, and no source gives a radius; the dump's constellation 1 text (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`, talent 311) gives 22% of Fischl's ATK and no area; a recording of a Gaze of the Deep strike settles it, and `{data-root}/genshin-parity/captures/` holds none.

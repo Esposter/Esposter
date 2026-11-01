@@ -20,7 +20,7 @@ stateDiagram-v2
 
 `getNextScreenKind` is the rule, a pure function of what is open and the frame's pressed actions:
 
-- **From the world, a shortcut opens its screen.** `InputActionScreenKindMap` names the screen each opening action opens (`packages/genshin-world/src/services/screen/InputActionScreenKindMap.ts`); `Escape` and a pad's `Start` open the Paimon menu, as the game's controls bind them ([controls](../controls/design.md)).
+- **From the world, a shortcut opens its screen.** `InputActionScreenKindMap` names the screen each opening action opens (`packages/genshin-world/src/services/screen/InputActionScreenKindMap.ts`); `Escape` and a pad's `Start` open the Paimon menu, as the game's controls bind them ([controls](../controls/design.md)). Each key is the one `packages/genshin-engine/src/input/InputActionBindingMap.ts` binds on lines 21 to 34, and the Menus rows of "Page_Controls.json" give every screen the same key (B, C, Escape, M, F1 to F5, J, L, O and Enter).
 - **Over a screen, the way back is to the world.** `Escape`, `Start` and a pad's cancel close any screen, and a screen's own shortcut closes it again, as `M` closes the map it opened (`packages/genshin-world/src/services/screen/getNextScreenKind.ts`).
 - **One screen at a time.** Over a screen, every other screen's shortcut waits; the Paimon menu's entries are the one way from a screen to another, and they replace the menu with the screen chosen (`packages/genshin-world/src/services/screen/getNextScreenKind.ts`).
 - **A talk stays open.** Over a talk, every key waits, Escape and a pad's Start among them; only the talk's own end sets the world back (`packages/genshin-world/src/services/screen/getNextScreenKind.ts`). A talk is begun from the world by F on a resident, as the [dialogue](../dialogue/design.md) page describes.
@@ -80,6 +80,5 @@ A talk is none of these: `MenuScreen` draws nothing for it, and the world screen
 
 ## Open
 
-- [ ] **Each screen's shortcut is the game's binding (M, C, L, B, J, F1 to F5, O, Enter)** — no source yet, as the [character controller page](../character-controller/design.md) records.
-- [ ] **The menus pause the world's simulation while their music and particles run on** — no source yet: the Time wiki page is not on disk.
-- [ ] **Windrise's clock and clouds stand still under a menu and run on under a talk and in photo mode** — no source yet: a recording of Windrise's clock under each screen.
+- [ ] **The menus pause the world's simulation while their music and particles run on** — no source yet: the "Time" wiki page (cached as "Page_Time.json", section "Pausing Time") pauses the in-game clock under the Paimon Menu and its screens in single player, except Photo Mode, while gadget cooldowns and bounty clocks keep ticking; it names no music or particle, so a recording of a menu with its music and particles would settle it.
+- [ ] **Windrise's clock and clouds stand still under a menu and run on under a talk and in photo mode** — no source yet: a recording of Windrise's clock under each screen; `{data-root}/genshin-parity/captures/` lists no Windrise recording.

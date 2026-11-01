@@ -30,7 +30,7 @@ The title splash SHALL show the title logo the game's client shows in the reader
 
 - **GIVEN** the reader's language is any other language
 - **WHEN** the title splash is shown
-- **THEN** the logo is the English "GENSHIN IMPACT"
+- **THEN** the logo is the English "GENSHIN IMPACT" (the login interface's logo table gives every other language ENG, with Simplified and Traditional Chinese, Japanese and Korean their own, `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/LocalizationExcelConfigData.json`, row 100001 at lines 2 to 21)
 
 ### Requirement: Mainland China's splash carries its publishing licence
 
@@ -105,4 +105,3 @@ The title splash SHALL be named to a screen reader by the game's own window titl
 
 - [ ] **The licence's lines fade in behind the logo** — no source yet: the fade was not measured on the Bilibili capture.
 - [ ] **The Traditional Chinese, Japanese and Korean logos stand where their own clients' do** — no source yet: the parity snapshot measures only the English and the Simplified Chinese mainland splashes.
-- [ ] **The title splash shows the logo the game's login interface picks for the reader's language** — no source yet: the login interface's language-to-logo choice is not in the extracted login data (mapping is the repository's own).

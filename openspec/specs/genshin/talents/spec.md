@@ -85,11 +85,11 @@ A passive SHALL be open once the character's ascension phase reaches the phase i
 
 - **GIVEN** a character with a utility passive that opens at phase 0
 - **WHEN** the character is created
-- **THEN** the utility passive is open
+- **THEN** the utility passive is open (Xilonen's utility passive opens at phase 0 in its depot's passive list, `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarSkillDepotExcelConfigData.json`, line 7359, and the wiki's Character Menu page gives every character but the Traveler a utility passive, `{data-root}/cache/genshin-wiki/Page_Character%2FMenu.json`, wikitext line 47)
 
 #### Scenario: Ascension passive waits for its phase
 
-- **GIVEN** a character at ascension phase 1 with a passive opening at phase 4
+- **GIVEN** a character at ascension phase 1 with a passive opening at phase 4 (Ayaka's fourth ascension passive opens at phase 4, `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarSkillDepotExcelConfigData.json`, line 90, and no passive in the roster opens at any other phase than 0, 1 or 4)
 - **WHEN** the passive is checked
 - **THEN** the passive is not open
 
@@ -101,7 +101,7 @@ The alternate sprint SHALL never be levelled, and no upgrade SHALL be offered fo
 
 - **GIVEN** a character with an alternate sprint
 - **WHEN** its talents are read
-- **THEN** the alternate sprint has no level and no upgrade
+- **THEN** the alternate sprint has no level and no upgrade (Ayaka's alternate sprint, the wiki's "Kamisato Art: Senho" in its Alternate Sprint type, `{data-root}/cache/genshin-wiki/Category_Kamisato_Ayaka_Talents.json`, sits in the third skill slot of her depot, `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarSkillDepotExcelConfigData.json`, line 125, whose proud skill group holds one row, `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, line 3497)
 
 ### Requirement: The Talents tab shows each talent's level, next phase and cost
 
@@ -180,11 +180,4 @@ A talent SHALL play at the level the character holds for it plus the levels its 
 
 - **GIVEN** a character at ten in a talent with a constellation that adds levels to it
 - **WHEN** the talent is played
-- **THEN** it plays at the level above ten that the constellation adds
-
-## Open
-
-- [ ] **The alternate sprint has no level and no upgrade** — no source yet: the wiki pages cached here do not name it, and its skill row is not read.
-- [ ] **The utility passive opens at phase 0** — no source yet: the Character/Menu wiki page, which would give the Ascension Passives' phases, is not in the wiki cache, so no phase is given for the Utility Passive.
-- [ ] **Across the roster the passives open at phases 0, 1 and 4** — no source yet: only Xilonen's and the Traveler's wiki pages are cached, so the other characters' passives are unchecked.
-- [ ] **A constellation adds levels above ten to its own talent** — no source yet: the table's rows 11 to 15 are checked, but no constellation's row naming the talent it raises is read.
+- **THEN** it plays at the level above ten that the constellation adds (the wiki's Constellation page gives the third and fifth constellations a three-level increase to one specific Combat Talent, `{data-root}/cache/genshin-wiki/Page_Constellation.json`, wikitext line 16)

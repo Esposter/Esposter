@@ -14,4 +14,4 @@ The card game is a rules engine of its own in `genshin-world`: a duel is a plain
 
 ## Open
 
-- [ ] **The plain fields carry everything a duel reads** — no source yet: the duel's reads of the built records, across the files under `packages/genshin-world/src/models/gcg/`, were not traced to their plain keys.
+- [ ] **The plain fields carry everything a duel reads** — no source yet: the duel's reads of the built records, across the files under `packages/genshin-world/src/models/gcg/`, were not traced to their plain keys; the builders under `scripts/src/services/genshinAssets/gcg/` read no obfuscated key, and `pnpm -C scripts genshin:assets gcg` followed by `pnpm -C packages/genshin-world test src/services/gcg --run`, with no schema error, settles the rest.

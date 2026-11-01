@@ -1,6 +1,6 @@
 ## Purpose
 
-The official map's fleeing birds and beasts, the White Pigeon, the Crimson Fox and the Squirrel, fitted into each region's slice of the game data and stood in Windrise's scene, each running from the character when it comes within its escape radius. Striking them, their drops and the material sources wait on the proposal's later steps.
+The official map's fleeing birds and beasts, the White Pigeon, the Crimson Fox and the Squirrel, fitted into each region's slice of the game data and stood in Windrise's scene, each running from the character when it comes within its escape radius. Striking them and their drops is built, as is picking up a material source, a point such as a crystalfly that is not an animal (`packages/genshin-world/src/services/kit/strikeKitEnemies.ts`, line 221; `packages/genshin-world/src/services/wildlife/pickUpMaterialSource.ts`); only the boar's drop waits, on the wiki's entry for the boar (`packages/genshin-world/src/services/wildlife/WildlifeKindDropMap.ts`, lines 5 to 7).
 
 ## Requirements
 
@@ -60,21 +60,20 @@ Every animal of Mondstadt's slice SHALL exist in Windrise's scene from the scene
 - **WHEN** Windrise's scene loads
 - **THEN** every one of those animals is present in the scene
 
-### Requirement: Animals carry no drops or material sources yet
+### Requirement: Struck animals fall and give their drops
 
-Animals SHALL carry no drops and offer no material sources yet, and striking one SHALL have no effect on the world.
+Striking an animal SHALL make it fall and give its drop where it fell: a Crimson Fox two Raw Meat, a Squirrel one Raw Meat and a White Pigeon one Fowl. A Boar SHALL give nothing until its drop is read. An animal SHALL offer no material source.
 
 #### Scenario: Striking an animal
 
 - **GIVEN** an animal stands in Windrise's scene
-- **WHEN** the player strikes it
-- **THEN** nothing drops from it
+- **WHEN** the player strikes it with an area hit that reaches it (`packages/genshin-world/src/services/kit/strikeKitEnemies.ts`, line 220)
+- **THEN** it falls and gives its drop where it fell (`packages/genshin-world/src/services/wildlife/strikeKitWildlife.ts`, lines 20 to 25; `packages/genshin-world/src/services/wildlife/WildlifeKindDropMap.ts`, lines 9 to 11)
 - **AND** no material source appears
+- **AND** striking it again gives nothing (`packages/genshin-world/src/services/wildlife/strikeWildlife.ts`, line 10)
 
 ## Open
 
-- [ ] **Striking, drops and material sources wait on the proposal's later steps** — contradicted by `packages/genshin-world/src/services/kit/strikeKitEnemies.ts`: the code strikes animals, gives drops and picks up material sources.
 - [ ] **An animal under the ground is left out** — no source yet: an animal point marked below the ground in `{data-root}/genshin-parity/references/interactive-map/points.json`, which the scenario's given needs and which that file does not hold on another layer.
-- [ ] **Animals carry no drops or material sources, and striking one has no effect** — contradicted by `packages/genshin-world/src/services/kit/strikeKitEnemies.ts`: it strikes animals; their drops are deferred by the owner.
 - [ ] **Mondstadt's slice holds about a hundred animals** — no source yet: the published Mondstadt slice, which is in hosted storage and not on disk, is not counted against the map's animal points in `{data-root}/genshin-parity/references/interactive-map/points.json`.
 - [ ] **The White Pigeon, the Crimson Fox and the Squirrel are placed where the official map marks them** — no source yet: the published Mondstadt slice's placements, which are not set against the map's animal points in `{data-root}/genshin-parity/references/interactive-map/points.json`, since the slice is in hosted storage and not on disk.

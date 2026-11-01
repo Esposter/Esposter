@@ -48,6 +48,5 @@ The gains SHALL be fitted after the instruments against the game's sound, and a 
 
 ## Open
 
-- [ ] **The whole segment swells or fades by about twenty decibels across its voices** — no source yet: no level measurement of a swell is recorded.
-- [ ] **The gains change little when the expression is fitted a second time** — no source yet: no second run's output is recorded.
-- [ ] **The gains are fitted after the instruments against the game's sound** — no source yet: the game's sound in `{data-root}/genshin-parity/extracted/music/` has no file named for expression, so its levels are not yet read against the gains.
+- [ ] **The whole segment swells or fades by about twenty decibels across its voices** — no source yet: no level measurement of a swell is recorded; a per-window level readout of `{data-root}/genshin-parity/extracted/login/music/1045584607.wav`, its spread in decibels, would settle it.
+- [ ] **The gains change little when the expression is fitted a second time** — no source yet: no second run's output is recorded; `pnpm -C scripts genshin:parity expression` run twice, with the two fitted gain sets compared, would show it.

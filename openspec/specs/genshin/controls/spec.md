@@ -6,7 +6,7 @@ The game's default bindings on a PC and a gamepad, stated once in the engine's i
 
 ### Requirement: Every bound action keeps the game's default controls
 
-The world SHALL bind each action to the game's own default keys and buttons on a PC and a gamepad, and SHALL remap none of them (see the open list).
+The world SHALL bind each action to the game's own default keys and buttons on a PC and a gamepad, and SHALL remap none of them. The wiki's Controls page gives the PC and Xbox defaults of every action the world binds, and each matches the map in `packages/genshin-engine/src/input/InputActionBindingMap.ts` (`{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext lines 23 to 262).
 
 #### Scenario: The map key opens the map
 
@@ -134,7 +134,7 @@ Every action the game binds SHALL stay bound and read every frame, whether or no
 
 ### Requirement: Keys of places and modes the world does not have stay unbound
 
-The world SHALL leave unbound the keys of places and modes it does not have (which binds no `F6`, `F7` or `F8`).
+The world SHALL leave unbound the keys of places and modes it does not have (which binds no `F6`, `F7` or `F8`). The wiki's Controls page gives `F6` as the settings menu within the Serenitea Pot and The Cat's Tail, `F7` as the Furnishing screen inside the Serenitea Pot, and `F8` as Stellar Reunion (`{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext lines 188, 193 and 197).
 
 #### Scenario: F6 presses no world action
 
@@ -144,8 +144,6 @@ The world SHALL leave unbound the keys of places and modes it does not have (whi
 
 ## Open
 
-- [ ] **The game's default key for each action on a PC and a gamepad, M, F1, F3 and F5 among them** — no source yet: the wiki's Controls page is not in `{data-root}/cache/genshin-wiki/`, and no capture shows the game's controls list.
-- [ ] **A pad's bumper turns the face buttons into the shortcut wheel's while held** — no source yet: a capture of the pad's bumper held in the game, not on this machine.
-- [ ] **The browser keeps Escape for a pointer lock and takes no lock from it** — no source yet: the Pointer Lock and user-activation specs, which this pass did not open.
-- [ ] **Chromium reports one spurious, very large pointer move after a lock** — no source yet: a recording of the first move after a lock, not taken here.
-- [ ] **F6, F7 and F8 are the Serenitea Pot, the Cat's Tail and Stellar Reunion** — no source yet: the game's controls list for those screens, which the wiki cache does not hold.
+- [ ] **A pad's bumper turns the face buttons into the shortcut wheel's while held** — contradicted by `{data-root}/cache/genshin-wiki/Page_Controls.json` lines 96 and 147 to 149: the bumper alone opens the shortcut wheel, and held with a face button it gives Quick-Use Gadget and other chords of the game, not the wheel's actions.
+- [ ] **The browser keeps Escape for a pointer lock and takes no lock from it** — no source yet: the Pointer Lock and user-activation specs, which are not on disk and not in the wiki cache.
+- [ ] **Chromium reports one spurious, very large pointer move after a lock** — no source yet: a recording of the first move after a lock, not taken here, or a logged "movementX" and "movementY" sequence from the events after `requestPointerLock`.

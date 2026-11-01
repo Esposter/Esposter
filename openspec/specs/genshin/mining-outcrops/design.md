@@ -14,11 +14,11 @@ flowchart TD
 
 ## Rules
 
-- **Opened at `MINING_OUTCROP_ADVENTURE_RANK`.** `checkIsMiningOutcropOpen` compares the rank with the constant (`packages/genshin-world/src/services/leyLine/checkIsMiningOutcropOpen.ts`; the constant is in `packages/genshin-world/src/services/leyLine/constants.ts`). The rank only opens the outcrops; Reputation's mining outcrop search, at level 2 of a nation, is what marks them.
+- **Opened at `MINING_OUTCROP_ADVENTURE_RANK`.** `checkIsMiningOutcropOpen` compares the rank with the constant (`packages/genshin-world/src/services/leyLine/checkIsMiningOutcropOpen.ts`; the constant is in `packages/genshin-world/src/services/leyLine/constants.ts`). The rank only opens the outcrops; Reputation's mining outcrop search, at level 2 of a nation, is what marks them: the wiki's search section says that level lets a nation's NPCs mark nearby outcrops on the map (`{data-root}/cache/genshin-wiki/Page_Mining_Outcrop.json`, wikitext line 108), and Mondstadt's level 2 row carries the search as "functionId" 1001 (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ReputationLevelExcelConfigData.json`, line 19).
 - **A mined outcrop comes back at the next draw.** The respawn is the first daily reset strictly after the mining, as the [reset clock](../reset-clock/design.md) defines it. A mining before a day's draw is back at that draw, and one at or after it at the next day's.
 - **Standing once the respawn has come.** One never mined stands. A mined one stands from its respawn, and gone before it. The day's unmined outcrops are gone with the next day's draw: `computeStandingMiningOutcrops` stands a place only in the day's draw (`packages/genshin-world/src/services/leyLine/checkIsMiningOutcropStanding.ts`; `packages/genshin-world/src/services/gathering/computeStandingMiningOutcrops.ts`).
 - **Mined outcrops are the save's.** A mined outcrop is saved as `minedOutcrops`, absent while none is mined, each by its place's id and the instant it was mined, so a reload keeps it gone until its respawn (`packages/genshin-world/src/models/save/GenshinSave.ts`). A mining drops the outcrops whose respawn has come, so the save holds the day's mined ones only ([save data](../save-data/design.md); `packages/genshin-world/src/composables/useMiningOutcrops.ts`).
-- **Struck as an ore.** A standing outcrop breaks as an ore does, and a break drops one to three Magical Crystal Chunks, provisional from the wiki, since the dump's gather rows hold no count field (`{data-root}/genshin-parity/text/ExcelBinOutput/GatherExcelConfigData.json`); the code drops `ORE_CERTAIN_DROP_COUNT` for certain and rolls up to `ORE_EXTRA_DROP_DRAW_COUNT` more at `ORE_EXTRA_DROP_CHANCE` each (`packages/genshin-world/src/services/gathering/rollOreDropCount.ts`). The break sets the outcrop's instant, so the respawn above applies (`packages/genshin-world/src/composables/useMiningOutcrops.ts`, which strikes with `strikeOre` and records the mined instant).
+- **Struck as an ore.** A standing outcrop breaks as an ore does, and a break drops one to three Magical Crystal Chunks, the wiki's count (`{data-root}/cache/genshin-wiki/Page_Magical_Crystal_Chunk.json`, wikitext line 17), since the ore rows of the dump's gather table hold no count field (`{data-root}/genshin-parity/text/ExcelBinOutput/GatherExcelConfigData.json`); the code drops `ORE_CERTAIN_DROP_COUNT` for certain and rolls up to `ORE_EXTRA_DROP_DRAW_COUNT` more at `ORE_EXTRA_DROP_CHANCE` each, which its constants make one to three (`packages/genshin-world/src/services/gathering/constants.ts`, lines 10 to 12; `packages/genshin-world/src/services/gathering/rollOreDropCount.ts`). The break sets the outcrop's instant, so the respawn above applies (`packages/genshin-world/src/composables/useMiningOutcrops.ts`, which strikes with `strikeOre` and records the mined instant).
 
 ## Key files
 
@@ -37,15 +37,12 @@ flowchart TD
 
 ## Sources
 
-- [Mining Outcrop](https://genshin-impact.fandom.com/wiki/Mining_Outcrop), Genshin Impact Wiki: Magical Crystal Chunks from rank 30, and the respawn at 06:00, two hours after the reset.
-- [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: what comes back at the daily reset and around it.
+- [Mining Outcrop](https://genshin-impact.fandom.com/wiki/Mining_Outcrop), Genshin Impact Wiki: Magical Crystal Chunks from rank 30 (`{data-root}/cache/genshin-wiki/Page_Mining_Outcrop.json`, wikitext line 17), and the respawn at 06:00, two hours after the reset (the same page, line 23). The rules above keep the code's 04:00 draw, so the two disagree.
+- [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: what comes back at the daily reset and around it. Its cached copy is `{data-root}/cache/genshin-wiki/Page_Reset.json`, wikitext line 18, which gives the outcrops' 06:00 respawn too.
 - `{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, policy 101000, the 04:00 as "REFRESH_DAILY" at `14400` seconds. Grounds the requirement "Mined outcrop returns at the next 04:00".
 
 ## Open
 
 The rank that opens them is open on the [spec](spec.md).
 
-- [ ] **Reputation's mining outcrop search at level 2 of a nation marks them** — no source: no reputation source was checked for the search or its level.
-- [ ] **The respawn is at 06:00 on the wiki, two hours after the reset** — no source: the wiki's Mining Outcrop page is not in the cache.
-- [ ] **A break drops one to three Magical Crystal Chunks** — no source: the figure is the wiki's and provisional, its page is not cached, and the dump's gather rows hold no count.
-- [ ] **The 04:00 reset is read in UTC+8, the server's clock** — no source: a game row that names the zone, since the dump's refresh row gives 14400 seconds with none; it is the question [Domains](../domains/design.md) also leaves open.
+- [ ] **The 04:00 reset is read in UTC+8, the server's clock** — no source: a game row that names the zone, since the dump's refresh row gives 14400 seconds with none; the reset text names only "{TIMEZONE}" (`{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`, line 131856), so a capture of that Wish count line with the zone filled in would settle it. It is the question [Domains](../domains/design.md) also leaves open.

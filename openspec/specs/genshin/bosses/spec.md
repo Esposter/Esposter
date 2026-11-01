@@ -6,7 +6,7 @@ The game's bosses as pure rules in genshin-world. A normal boss stays defeated u
 
 ### Requirement: A normal boss stays defeated until its blossom is claimed
 
-A normal boss SHALL stay defeated until its Trounce Blossom is claimed.
+A normal boss SHALL stay defeated until its Trounce Blossom is claimed. The wiki's Normal Boss page says an unclaimed blossom keeps the boss defeated unless the player teleports out of the area (`{data-root}/cache/genshin-wiki/Page_Normal_Boss.json`, wikitext line 16).
 
 #### Scenario: Unclaimed boss stays defeated
 
@@ -44,7 +44,7 @@ The weekly reset SHALL fall on Monday at 04:00 on the server's clock.
 
 The first three weekly-boss claims of each week SHALL cost 30 resin each.
 
-Every later claim SHALL cost 60 resin, and the count SHALL cover all weekly bosses together.
+Every later claim SHALL cost 60 resin, and the count SHALL cover all weekly bosses together. The wiki's Weekly Boss page prices the first three claims, for any weekly bosses the player chooses, at 30 resin and each later one at 60 (`{data-root}/cache/genshin-wiki/Page_Weekly_Boss.json`, wikitext line 5), and its Domain page says the same (`{data-root}/cache/genshin-wiki/Page_Domain.json`, wikitext line 50).
 
 #### Scenario: First claim of the week costs 30 resin
 
@@ -66,9 +66,5 @@ Every later claim SHALL cost 60 resin, and the count SHALL cover all weekly boss
 
 ## Open
 
-- [ ] **A normal boss stays defeated until the player teleports away** — no source yet: the wiki's Normal Bosses page is not in the wiki cache.
-- [ ] **A normal boss stays defeated until its Trounce Blossom is claimed** — no source yet: the wiki's Normal Bosses page is not in the wiki cache.
-- [ ] **A claimed normal boss returns five seconds after its claim** — no source yet: the wiki's Normal Bosses page is not in the wiki cache, and no respawn row in the game's exports holds the five seconds.
-- [ ] **The weekly reset is read on the server's UTC+8 clock** — no source yet: no row of the game's exports names the zone, and the wiki's Domains page is not in the wiki cache.
-- [ ] **A fourth weekly claim costs 60 resin, and the first three cost 30 each** — no source yet: the export's weekly discount row gives three claims at 0.5 but no base price of 60, and the wiki's Weekly Bosses page is not in the wiki cache.
-- [ ] **The first three weekly claims count across every weekly boss together** — no source yet: the export's weekly discount row does not say the cheap claims count across bosses, and the wiki's Weekly Bosses page is not in the wiki cache.
+- [ ] **A claimed normal boss returns five seconds after its claim** — no source yet: the wiki's Normal Boss page says the boss returns "in roughly 5 seconds" (`{data-root}/cache/genshin-wiki/Page_Normal_Boss.json`, wikitext line 16), and no respawn row in the game's exports holds a figure; a recording of a claimed boss's respawn would settle the exact five seconds.
+- [ ] **The weekly reset is read on the server's UTC+8 clock** — no source yet: the wiki's Reset page says the reset follows "the player's server's time zone" with no offset (`{data-root}/cache/genshin-wiki/Page_Reset.json`, wikitext line 3), and the game's text writes that zone as a placeholder (`{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`, line 9072); a capture of the in-game "Query Server Time Zone" screen on an Asia-server account would settle it.

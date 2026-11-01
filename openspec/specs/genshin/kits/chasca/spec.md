@@ -139,4 +139,4 @@ Chasca's high plunge SHALL land with the low plunge's timing in a circle of radi
 
 ## Open
 
-- [ ] **Fully-charged Aimed Shot costs no stamina** — no source yet: a game value for her charged attack's stamina, since the wiki has no stamina row for her and the dump's 0 comes from the candidate builder's rule.
+- [ ] **Fully-charged Aimed Shot costs no stamina** — no source yet: a game value for her charged attack's stamina, since the wiki has no stamina row for her and the dump's 0 comes from the candidate builder's rule. Her skill rows in the parity, `11041`, `11043` and `11044` (`{data-root}/genshin-parity/text/ExcelBinOutput/AvatarSkillExcelConfigData.json`), hold no "costStamina" but name no charged shot, and gcsim's chasca folder gives no stamina either.

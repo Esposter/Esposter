@@ -36,7 +36,7 @@ Xinyan's skill SHALL set a shield at its press when none stands, and the shield 
 #### Scenario: Breaking the shield ends its level
 
 - **WHEN** the shield breaks
-- **THEN** its level goes with it
+- **THEN** its level goes with it, back to 1 as gcsim resets it on a break (`{data-root}/cache/gcsim-v2.47.2/internal/characters/xinyan/shield.go` line 36)
 
 #### Scenario: Ascension 1 lowers each threshold
 
@@ -83,4 +83,3 @@ Xinyan's Ascension 1, Ascension 4 and her Constellations 2 and 4 SHALL take effe
 ## Open
 
 - [ ] **The shield is set at the press when none stands** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/xinyan/skill.go`: sets the level-1 shield 28 frames after the press (`skillShieldStart = 28`).
-- [ ] **The shield's level ends when the shield breaks** — no source yet: the end of the shield's level on a break, which the cached Sweeping Fervor page does not give.

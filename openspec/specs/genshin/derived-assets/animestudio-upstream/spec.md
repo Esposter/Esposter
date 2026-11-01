@@ -47,4 +47,4 @@ A defect draft SHALL mark any cause it has not verified as not established or as
 
 ## Open
 
-- [ ] **Nothing is filed or posted upstream** — no source yet: no issue-tracker record is cited.
+- [ ] **Nothing is filed or posted upstream** — no source yet: no issue-tracker record is cited; `gh issue list -R Escartem/AnimeStudio --state all --author <owner login>` must print nothing.

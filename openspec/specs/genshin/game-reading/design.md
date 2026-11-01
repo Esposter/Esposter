@@ -26,6 +26,7 @@ This page links them and does not restate them.
   - _Rejected: fitting a whole shading model to the captures._ It settles at the minimum nearest its start.
 - **A material's values are read at run time from the developer's own exports, never committed as numbers.**
   - The development world reads a material's floats and colours from the exports: the avatar's `avatar.json` (`packages/genshin-world/src/services/scene/constants.ts`) and the witness layout.
+  - The witness layout is `{data-root}/genshin-parity/extracted/login/witness.json` (line 1), which gives each material its floats and colours. For the four LoginScene materials every float equals the export's "m_Floats" (`{data-root}/genshin-parity/extracted/login/Material/LoginScene_Bridge01.json` line 76), and their 24 colours equal the exports' "m_Colors" for 16 and that colour decoded from sRGB to linear light for 8, as the [game data formats](../game-data-formats/design.md) page gives the decode.
   - What ships takes its defaults from public references or from a derivation.
   - _Rejected: the game's values as committed constants._ That would ship the game's data inside our source.
 - **A read runs on the machine that holds its source and the tool it needs.**
@@ -151,9 +152,8 @@ The PC runs no SSH server, so a transfer between the two runs from the PC to the
 ## Open
 
 - [ ] **What ships takes its defaults from public references or a derivation** — no source yet: the shipped defaults and the references or derivations they come from are not listed in the repository.
-- [ ] **The witness layout gives a material's floats and colours** — no source yet: the witness layout's reader is repo code, which is not game evidence, and no game material file is read against the claim.
-- [ ] **The PC runs no SSH server, and its transfers run by `ai:fleet:data push`** — no source yet: the PC's SSH server state, which no record keeps.
+- [ ] **The PC runs no SSH server, and its transfers run by `ai:fleet:data push`** — no source yet: the PC's SSH server state, which no record keeps; on the PC, "Get-Service sshd" must report no running service.
 - [ ] **Most of the dump matched the 6.6 branch** — no source yet: the size comparison of the dump's tables against each branch is kept in neither the repository nor the cache.
-- [ ] **The Windows PC holds its own install** — no source yet: the PC's install is not on this machine, and no record of it is in the repository.
+- [ ] **The Windows PC holds its own install** — no source yet: the PC's install is not on this machine, and no record of it is in the repository; on the PC, `pnpm ai:fleet:profile` must list `game-install` in the capabilities it writes (`openspec/specs/architecture/fleet/design.md`, line 39).
 - [ ] **The parity page, the witness and the passes run on both machines** — no source yet: which machine holds the `parity-page` capability is not recorded in the repository.
-- [ ] **The client holds no scene group script** — no source yet: no listing of the client's script files is kept to show that none is a scene group script.
+- [ ] **The client holds no scene group script** — no source yet: no listing of the client's script files is kept to show that none is a scene group script; the lookup in the "Scripts" section of `openspec/specs/genshin/game-data-formats/design.md` must find no group in block "35323818".

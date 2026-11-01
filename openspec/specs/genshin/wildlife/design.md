@@ -22,7 +22,7 @@ Its ground-layer and mapped-region checks are `scripts/src/services/genshinAsset
 
 ## The kinds
 
-`WildlifeKind` names four: `Boar`, `CrimsonFox`, `Squirrel` and `WhitePigeon`, of which `Boar` charges and the other three flee. Each is one of the map's own labels under its Animals group, and `WildlifeKindLabelIdMap` gives its label id, so a point takes its kind by its label (`scripts/src/services/genshinAssets/wildlife/WildlifeKindLabelIdMap.ts`). The archive files each as an animal or aviary monster, and the capture table's rows and the monster rows hold the rest of what each one is.
+`WildlifeKind` names four: `Boar`, `CrimsonFox`, `Squirrel` and `WhitePigeon`, of which `Boar` charges and the other three flee. Each is one of the map's own labels under its Animals group, and `WildlifeKindLabelIdMap` gives its label id, so a point takes its kind by its label (`scripts/src/services/genshinAssets/wildlife/WildlifeKindLabelIdMap.ts`). The archive files each as an animal or as an aviary, each entry of type "CODEX_ANIMAL" (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AnimalCodexExcelConfigData.json`, lines 9615 for the Crimson Fox, 9690 for the Squirrel, 9765 for the Snowboar, the Boar's label, and 8540 for the White Pigeon), and the capture table's rows and the monster rows hold the rest of what each one is.
 
 ## The flight
 
@@ -64,6 +64,5 @@ Every animal of the slice exists from the scene's load (`packages/genshin-world/
 
 ## Open
 
-- [ ] **The archive files each kind as an animal or aviary monster** — no source yet: the dump's Monster and Gadget rows were not matched to the kinds' names.
 - [ ] **No table gives a flight's speed** — no source yet: the environment table's eight keys (`{data-root}/genshin-parity/text/ExcelBinOutput/EnvAnimalGatherExcelConfigData.json`) carry no speed, checked; no other table was read.
-- [ ] **Mondstadt's slice holds about a hundred animals, and the other regions hold the same kinds where their labels are marked** — no source yet: the published slices are in hosted storage, not the local dump, so neither count was checked.
+- [ ] **Mondstadt's slice holds about a hundred animals, and the other regions hold the same kinds where their labels are marked** — no source yet: the published slices are in hosted storage, not the local dump, so neither count was checked; the hosted slices, counted by kind, would settle both (`packages/genshin-world/src/generated/gameDataLock.json`, `wildlife/mondstadt`).

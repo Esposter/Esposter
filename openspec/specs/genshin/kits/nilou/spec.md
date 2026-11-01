@@ -226,7 +226,3 @@ Lingering Aeon, Tranquility Aura and the Whirling Steps' later presses SHALL NOT
 - **GIVEN** Nilou has one of these effects unlocked
 - **WHEN** the player fights with Nilou
 - **THEN** that effect has no effect
-
-## Open
-
-- [ ] **An Electro or Pyro hit leaves a Bountiful Core standing** — no source yet: design.md names no element rule for the core, and gcsim's core takes a hit of any element alike.

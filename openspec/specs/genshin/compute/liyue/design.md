@@ -25,6 +25,6 @@
 
 ## Open
 
-- [ ] **The liyue-harbor-location camera pose image is written** — no source yet: the pose run's image, and the parity folder's `pose` directory it writes to, are not on disk.
-- [ ] **The liyue-harbor-location shadow image is written** — no source yet: the shadow run's image, and the parity folder's `shadows` directory it writes to, are not on disk.
-- [ ] **Liyue's display and shape passes wait on two facts no source reads yet** — the post profile's grading and bloom, and the kit parts through `BuildingKitPartsMap`; their one record is [compute's Open](../README.md#open).
+- [ ] **The liyue-harbor-location camera pose image is written** — no source yet: the pose run's image, and the parity folder's `pose` directory it writes to, are not on disk; `pnpm -C scripts genshin:parity pose liyue-harbor-location --witness liyue` writes `{data-root}/genshin-parity/pose/liyue-harbor-location.png` once its landmark shares exist (`scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts` line 52 is `{}`).
+- [ ] **The liyue-harbor-location shadow image is written** — no source yet: the shadow run's image, and the parity folder's `shadows` directory it writes to, are not on disk; `pnpm -C scripts genshin:parity shadows liyue-harbor-location --witness liyue` writes `{data-root}/genshin-parity/shadows/liyue-harbor-location.png` (`scripts/src/services/genshinParity/witness/solveReferenceShadows.ts` lines 192 to 194).
+- [ ] **Liyue's display and shape passes wait on two facts no source reads yet** — the post profile's grading and bloom, and the kit parts through `BuildingKitPartsMap`; their one record is [compute's Open](../README.md#open), and a grep of `scripts/src/services/genshinParity` turns up no reader for either.

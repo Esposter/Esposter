@@ -57,4 +57,4 @@ flowchart LR
 
 ## Open
 
-- [ ] **Ellin stands at the Knights of Favonius headquarters' point, and Kimiya beside Sumeru's crafting bench** — no source yet: the scene group records for the two points, which are not yet read.
+- [ ] **Ellin stands at the Knights of Favonius headquarters' point, and Kimiya beside Sumeru's crafting bench** — no source yet: the scene group record that places NPC 9704 or 9715 is in none of the files searched, `{data-root}/genshin-dump-backup-6.6/BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json`, the GCG scene tables, `{data-root}/genshin-parity/extracted/lua/raw` and `{data-root}/genshin-parity/extracted/mondstadt/world/world.json` (its matches are path ids), each holds no NPC record for either id.

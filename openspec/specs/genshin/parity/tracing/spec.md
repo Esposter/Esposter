@@ -6,13 +6,13 @@ How a glyph or a game mark is traced from its reference into the SVG path the co
 
 ### Requirement: A vector mark is drawn from its published paths as it is
 
-A mark that is already a vector SHALL be drawn from its published paths unchanged, so that no edge of it can chip (see Open).
+A mark that is already a vector SHALL be drawn from its published paths unchanged, so that no edge of it can chip (see the [design's Open](design.md)).
 
 #### Scenario: Vector logo drawn
 
 - **GIVEN** a game logo published as a vector
 - **WHEN** the screen draws it
-- **THEN** its published paths are drawn as they are (see Open)
+- **THEN** its published paths are drawn as they are (`packages/genshin-world/src/components/Splash/Publisher/Index.vue` lines 42 to 47)
 
 ### Requirement: A glyph is traced from the game's own mark at full resolution
 
@@ -69,5 +69,4 @@ A screen SHALL ship only shapes derived from the game's marks through this traci
 
 ## Open
 
-- [ ] **Only traced shapes or published vectors ship with a screen** — no source yet: no check of the screens' shipped shapes against their source was run.
-- [ ] **A vector mark's published paths are drawn unchanged** — no source yet: the component that draws the Commons SVGs was not traced.
+- [ ] **Only traced shapes or published vectors ship with a screen** — no source yet: no check of the screens' shipped shapes against their source was run; `rg` for "Commons" in `packages` and `scripts` finds only the publisher's splash constants, so a script matching each shipped path to a trace SVG or a Commons file would settle it.

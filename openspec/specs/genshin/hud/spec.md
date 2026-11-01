@@ -27,7 +27,7 @@ The heads-up display SHALL hide while a menu, the map, a talk or photo mode is o
 #### Scenario: The backslash key hides and shows the HUD
 
 - **GIVEN** the heads-up display is shown in the world
-- **WHEN** the player presses the backslash key
+- **WHEN** the player presses the backslash key (the wiki's Controls page binds "Hide UI" to it, `{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext line 246)
 - **THEN** the heads-up display hides
 - **AND** pressing the backslash key again shows it
 
@@ -35,7 +35,7 @@ The heads-up display SHALL hide while a menu, the map, a talk or photo mode is o
 
 - **GIVEN** the heads-up display is shown in the world
 - **WHEN** the player opens a menu, the map, a talk or photo mode
-- **THEN** the heads-up display is hidden for as long as that screen is open
+- **THEN** the heads-up display is hidden for as long as that screen is open (the Paimon menu still, `{data-root}/genshin-parity/captures/menu-paimon-current.png`, draws no heads-up display piece beside it)
 
 ### Requirement: The corner buttons open the screens the game opens from them
 
@@ -45,13 +45,13 @@ The Paimon button and the minimap SHALL each open the screen the game opens from
 
 - **GIVEN** the heads-up display is shown
 - **WHEN** the player presses the Paimon button
-- **THEN** the Paimon menu opens
+- **THEN** the Paimon menu opens (the wiki's Paimon Menu page puts its icon at the top left of the screen, `{data-root}/cache/genshin-wiki/Page_Paimon_Menu.json`, wikitext line 10)
 
 #### Scenario: Pressing the minimap opens the map
 
 - **GIVEN** the heads-up display is shown
 - **WHEN** the player presses the minimap
-- **THEN** the map opens
+- **THEN** the map opens (the wiki's Map page opens it from the minimap at the top left, `{data-root}/cache/genshin-wiki/Page_Map.json`, wikitext line 7)
 
 ### Requirement: A shortcut opens the screen its key opens
 
@@ -61,7 +61,7 @@ Each shortcut in the top right SHALL open the screen that its own key opens when
 
 - **GIVEN** the heads-up display is shown
 - **WHEN** the player presses a shortcut
-- **THEN** the screen opens as its key would open it
+- **THEN** the screen opens as its key would open it (the wiki's Controls page gives B for the Inventory, C for the Character screen, F1 for the Adventurer Handbook and F3 for the Wish screen, `{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext lines 154, 158, 170 and 178)
 
 ### Requirement: A portrait press switches to that member
 
@@ -76,7 +76,7 @@ Pressing a portrait in the deployed team SHALL switch to that member as the memb
 #### Scenario: Other portraits darken during the switch cooldown
 
 - **GIVEN** the player has just switched members
-- **WHEN** the cooldown is still running
+- **WHEN** the cooldown is still running (the cooldown is one second, `{data-root}/cache/genshin-wiki/Page_Party.json`, wikitext line 8)
 - **THEN** every other portrait is darkened by the share of the cooldown left
 
 ### Requirement: The member on the field shows its level and health
@@ -131,13 +131,13 @@ The stamina meter SHALL stand beside the character while the stamina pool is not
 - **GIVEN** the stamina pool is not full
 - **WHEN** the character is on screen
 - **THEN** the meter stands beside the character
-- **AND** the meter is divided into sections, each representing 100 Stamina
+- **AND** the meter is divided into sections, each representing 100 Stamina (`{data-root}/cache/genshin-wiki/Page_Stamina.json`, wikitext line 5)
 
 #### Scenario: The meter fades out when the pool is full
 
 - **GIVEN** the meter is shown
 - **WHEN** the stamina pool becomes full
-- **THEN** the meter fades out where it stood
+- **THEN** the meter fades out where it stood (the wiki's Stamina page says only that the meter hides itself once fully charged, `{data-root}/cache/genshin-wiki/Page_Stamina.json`, wikitext line 5)
 
 #### Scenario: The meter pulses red once stamina runs low
 
@@ -153,9 +153,9 @@ The quest tracker SHALL show the quest that V navigates to, with its step and ho
 #### Scenario: Pressing V navigates to the tracked quest
 
 - **GIVEN** a quest is in progress
-- **WHEN** the player presses V in the world or presses the tracker
+- **WHEN** the player presses V in the world or presses the tracker (V is "Quest Navigation" on the wiki's Controls page, `{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext line 109)
 - **THEN** the tracker's quest is navigated to
-- **AND** a beam rises over its first objective
+- **AND** a beam rises over its first objective once the character is 50 metres or more from it (`packages/genshin-world/src/components/Quest/Beam/Index.vue`, line 48; the wiki's Quest page gives the same distance, `{data-root}/cache/genshin-wiki/Page_Quest.json`, wikitext line 33)
 
 #### Scenario: With no quest loaded the tracker stays empty
 
@@ -235,14 +235,10 @@ A mouse press on a heads-up display piece SHALL NOT act in the world, while a cl
 
 ## Open
 
-- [ ] **The backslash hides and shows the HUD, and every menu hides it** — no source yet: the wiki's Controls page is not in the cache.
-- [ ] **V navigates to the tracked quest, and a beam rises over its objective** — no source yet: the wiki's Controls and Quest pages are not in the wiki cache.
-- [ ] **The stamina meter is divided into sections of 100 Stamina** — no source yet: the two cut lines in `{data-root}/genshin-parity/references/hud-stamina-climb.png` are not checked against a 100-Stamina section.
-- [ ] **The stamina meter pulses red once the pool falls under an eighth of its full amount** — no source yet: no on-disk frame of the meter at a low pool is checked.
+- [ ] **The backslash hides the HUD under every other menu, the map, a talk and a photo mode** — no source yet: the wiki's Controls and Paimon Menu pages say nothing of the HUD under a menu, and the Paimon menu still is the only menu frame read here; a recording of the map, a talk and a photo mode would settle it.
+- [ ] **The stamina meter pulses red once the pool falls under an eighth of its full amount** — no source yet: no on-disk frame of the meter at a low pool is checked; `packages/genshin-world/src/services/hud/constants.ts` (lines 10-13) reads the eighth off the climb clip's frames at 32.75 and 32.83 seconds, which are not in `{data-root}/genshin-parity/frames/`.
 - [ ] **A charged burst's disc takes its element's colour** — no source yet: no on-disk frame of a charged burst button is checked.
-- [ ] **A cooling skill's countdown runs in tenths of a second** — no source yet: no on-disk frame of a cooldown countdown is checked.
+- [ ] **A cooling skill's countdown runs in tenths of a second** — no source yet: no on-disk frame of a cooldown countdown is checked; the frames in `{data-root}/genshin-parity/frames/yt-_d3TQI7UBL4-gadget-cooldown-pause/` are a gadget's, not a skill's.
 - [ ] **Buttons carry the game's own icons** — no source yet: the wiki's icon renders, which the cache does not hold (it holds no File pages).
-- [ ] **The Paimon button and the minimap open the Paimon menu and the map** — no source yet: the wiki's Paimon Menu and Map pages are not in the cache.
-- [ ] **A shortcut opens the screen its key opens, as F3, F1, B and C do** — no source yet: the wiki's Controls page is not in the cache, and `{data-root}/genshin-key-map` holds none of these bindings.
-- [ ] **Other portraits darken for a one-second cooldown after a switch** — no source yet: the wiki's Party page is not in the cache.
-- [ ] **The stamina meter stands beside the character and fades when full** — no source yet: the wiki's Stamina page is not in the cache.
+- [ ] **Other portraits darken during that cooldown** — no source yet: the wiki's Party page gives the one-second cooldown and no darkening; a recording of the portrait row straight after a switch would settle it.
+- [ ] **The stamina meter fades out when full** — no source yet: the wiki's Stamina page says only that the meter hides itself once fully charged; a frame of the climb clip after its pool fills would show the fade.

@@ -22,7 +22,7 @@ flowchart LR
 
 - **The grant is whole, not split.** Every deployed member but the Traveler gets the full amount, a fallen one included, since the grant reads the team rather than their health (`packages/genshin-world/src/services/friendship/gainCompanionshipExp.ts`).
 - **Past the top, nothing is kept.** The total stops at the top level's, so a character there gains nothing and a claim that would pass it is cut short (`packages/genshin-world/src/services/friendship/gainCompanionshipExp.ts`).
-- **Provisional amounts.** Each claim kind is given the low end of the wiki's range for it, and two clips on the roadmap's References sought list, one per pair of kinds, measure what a claim gives.
+- **Provisional amounts.** Each claim kind is given the low end of the wiki's range for it (`{data-root}/cache/genshin-wiki/Page_Companionship_EXP.json`, its How to Obtain list: ley line outcrops 10 to 20, challenge domains 10 to 20, normal bosses 30 to 45, weekly bosses 55 to 70), and two clips on the roadmap's References sought list, one per pair of kinds, measure what a claim gives.
 - **A namecard is derived, not stored.** The held list is read from the same levels, so no save keeps it (`packages/genshin-world/src/services/friendship/computeHeldNamecardItemIds.ts`), and the profile's held list adds each finished category's namecard beside it (`packages/genshin-world/src/services/profile/computeProfileNamecardItemIds.ts`). Its art is the game's texture and is never served, so the profile sets its name on a plate of its own (`packages/genshin-world/src/components/Character/Profile/Index.vue`), and its description is the [proposal](../../../changes/genshin-companionship/design.md)'s.
 - **Not built.** The quest gate a friendship dialogue waits on, `checkIsFriendshipDialogueOpen`, is built and waits for the pot dialogue to call it (`packages/genshin-world/src/services/friendship/checkIsFriendshipDialogueOpen.ts`). No caller of it exists yet, and the ley line claim does not call it: its outcrops' composable grants Companionship EXP without the gate (`packages/genshin-world/src/composables/useWorldOutcrops.ts`, which calls `gainCompanionshipExp` and not the gate).
 
@@ -53,7 +53,3 @@ flowchart LR
 - [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the `AvatarFettersLevelExcelConfigData` rows the level totals are summed from.
 - [Companionship EXP](https://genshin-impact.fandom.com/wiki/Companionship_EXP), Genshin Impact Wiki: the per-claim ranges the provisional amounts take their low end from.
 - `{data-root}/genshin-parity/text/ExcelBinOutput/AvatarFettersLevelExcelConfigData.json`: grounds the requirement "Each character's Friendship Level".
-
-## Open
-
-- [ ] **Each claim kind's amount is the low end of the wiki's range** — no source yet: the wiki's Companionship EXP page is not in `{data-root}/cache/genshin-wiki/`, so the ranges in the map's comment cannot be checked.

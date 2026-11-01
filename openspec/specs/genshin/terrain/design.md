@@ -88,9 +88,9 @@ flowchart TD
 ## Open
 
 - [ ] **A frame's selection allocates nothing** — no source yet: an allocation count for `selectTerrainTiles` and `resolveTerrainDraws`, since the benches time cost, not allocation.
-- [ ] **The draws are a few dozen tiles in the view, each costing a bounding-sphere test per pass** — no source yet: a count of tiles drawn per pass on the Windrise view.
+- [ ] **The draws are a few dozen tiles in the view, each costing a bounding-sphere test per pass** — no source yet: a count of tiles drawn per pass on the Windrise view (the timings hold animation clips only; a Windrise-view run printing each pass's drawn count settles it).
 - [ ] **The far rings trim the scene's meshes by about a third and the frame's main thread by a few tenths of a millisecond at Windrise's view** — no source yet: a WorldScreen trace with the rings on and off.
 - [ ] **Windrise's ground is several thousand Gaussian hills fitted by `genshin:assets fit windrise`** — no source yet: the hill count of the published Windrise ground, which is not in the repository.
 - [ ] **The fit leaves an error under a metre round the oak and a few metres at the valley's edge** — no source yet: the error a `genshin:assets fit windrise` run prints.
-- [ ] **At a share of a range as wide as the CDLOD paper's, the ground would draw several times the tiles** — no source yet: a count of the tiles drawn at that range share.
+- [ ] **At a share of a range as wide as the CDLOD paper's, the ground would draw several times the tiles** — no source yet: a count of the tiles drawn at that range share (the paper's share is in no cached source, and its link is not fetched here).
 - [ ] **Every region's ground is fitted with its hills, sharp features and residual held to a gate its own ground sets** — no source yet: the per-region fit gates in the scene-derivation records.

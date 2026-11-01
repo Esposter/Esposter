@@ -32,6 +32,6 @@ The investigation count SHALL be the one kept from the game's daily reset at fou
 
 ## Open
 
-- [ ] **The daily cap is one hundred investigations** — no source yet: no decoded table or cached wiki page holds the cap, since the Investigation page is not in `{data-root}/cache/genshin-wiki/`.
-- [ ] **The reset is read in the game's time zone, `Asia/Shanghai`** — no source yet: the English text gives the reset as "4:00 AM ({TIMEZONE})" without naming the zone.
-- [ ] **The Mysterious Conch spots near Takashi are exempt from the cap** — no source yet: the Investigation wiki page's note that they "do not count towards the daily cap", which is not in `{data-root}/cache/genshin-wiki/`; the built rule has no exemption, and `design.md` names the gap.
+- [ ] **The daily cap is one hundred investigations** — no source yet: no decoded table or cached wiki page holds the cap, since the Investigation page is not in `{data-root}/cache/genshin-wiki/`, and the dump's ManualTextMap, Gadget and Quest tables and its English text name no cap.
+- [ ] **The reset is read in the game's time zone, `Asia/Shanghai`** — no source yet: the English text gives the reset as "4:00 AM ({TIMEZONE})" without naming the zone; the English text holds only the placeholder "{TIMEZONE}", and every offset it gives is UTC+8 (`{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`, line 67895, a store notice, among them), which names no zone.
+- [ ] **The Mysterious Conch spots near Takashi are exempt from the cap** — no source yet: the Investigation wiki page's note that they "do not count towards the daily cap", which is not in `{data-root}/cache/genshin-wiki/`; the built rule has no exemption, and `design.md` names the gap; the English text names the "Mysterious Conch" (`{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`, line 200916) but no exemption.

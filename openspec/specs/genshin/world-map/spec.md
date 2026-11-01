@@ -163,4 +163,4 @@ A region's landmarks SHALL appear when its data arrives and SHALL be removed whe
 
 ## Open
 
-- [ ] **Entering an area starts its first weather again** — no source yet: the cached Weather wiki page is not on disk.
+- [ ] **Entering an area starts its first weather again** — no source yet: the cached Weather page gives only the voice-over on entering an area with other weather (`{data-root}/cache/genshin-wiki/Page_Weather.json`, wikitext line 16), not a first weather to start again.

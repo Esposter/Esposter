@@ -78,5 +78,3 @@ The cloud layer SHALL draw no settings for an hour until that hour's solve beats
 - **THEN** the layer is drawn with none
 
 ## Open
-
-- [ ] **The cloud layer draws no settings for an hour until that hour's solve beats none** — no source yet: the code gate that holds the layer's settings back until the solve beats none, which no code read so far has located.

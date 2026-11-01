@@ -116,7 +116,7 @@ The base URL is the `PublicGenshinAssets` path of the account the page reads (`g
 - **The opening.** The app's game page and the agent console pass the base to `GameOpening`, which reads its title logo before the first splash and the login screen's records while the splashes play (`readTitleLogoPath`, `readLoginData`; `packages/genshin-world/src/components/Game/Opening/Index.vue`). A phase whose read has not arrived holds the splashes' white, and the login screen hands each of its parts the records it draws.
 - **The terrain worker's `Load`.** A function cannot cross to a worker, so the terrain posts each worker the ground's records the gate read (`TerrainWorkerGround`) as it starts, ahead of its first `Tile`, and the regions' grounds in a `RegionGrounds` message (`packages/genshin-world/src/models/world/TerrainWorkerMessage.ts`) as each arrives, and the worker builds its own ground from them ([terrain](../terrain/design.md)).
 
-Everything else is read as it is needed, from the base the Session hands down: the character screen's Profile tab, the Archive and a volume's body, the achievements screen, the card game, the quests, the residents' standing talks, the gathering points, the exploration areas, a statue's rewards and the Frostbearing Tree's levels. A read that fails is logged; at the gate the world stays shut, at the opening the white stays, and anywhere else the screen shows what it had.
+Everything else is read as it is needed, from the base the Session hands down: the character screen's Profile tab, the Archive and a volume's body, the achievements screen, the card game, the quests, the residents' standing talks, the gathering points, the exploration areas, a statue's rewards and the Frostbearing Tree's levels. A read that fails is logged; at the gate the world stays shut, at the opening the white stays, and anywhere else the screen shows what it had: each later read is a `getResultAsync` whose failure branch logs and leaves the value as it was (`packages/genshin-world/src/composables/useWorldFriendship.ts` lines 16-22, `packages/genshin-world/src/components/Character/Profile/Index.vue` lines 30-42).
 
 ```mermaid
 flowchart TD
@@ -254,7 +254,7 @@ There is no client-side hash check: TLS, the immutable keys and the schema parse
 - **A ground's features are any of the three kinds.** The ground fits draw plateaus, cliffs and ridges, so the schema takes the union of the three kinds' schemas (`terrainFeatureSchema`), and a region's authored ground, which holds plateaus alone, parses under the same union.
 - **A record keyed by an id refuses duplicates.** Plant names and wildlife place ids are unique in the records, so their arrays take `createUniqueArraySchema`. A residual's clearings repeat in the record, so theirs stay a plain array.
 - **A statue section is the engine's `StatueSection`.** Its centre, height and radii are not a lathe section's, so no lathe schema is reused (`packages/genshin-world/src/models/windrise/WindriseStatue.ts`).
-- **A surface part's palette is not read.** The surfaces' parts carry a palette no reader uses, and its schema drops it.
+- **A surface part's palette is not read.** The surfaces' parts carry a palette no reader uses (`{data-root}/cache/content/3c3b88800bfee0a250fa09106005e0367e0904777730db964127f5bf987e82ef`, line 1, where each part holds a `palette`), and `packages/genshin-world/src/models/windrise/WindriseSurface.ts` lines 29-32 keep no palette key, so its schema drops it.
 
 ## Notes
 
@@ -351,7 +351,6 @@ There is no client-side hash check: TLS, the immutable keys and the schema parse
 
 The open check for a book record's runtime check is recorded with its requirement in [the spec](spec.md).
 
-- [ ] **The surfaces' parts carry a palette no reader uses** — no source yet: the surfaces' published record was not read for a palette key; `packages/genshin-world/src/models/windrise/WindriseSurface.ts` is repo code, not game evidence.
-- [ ] **The number of entries the mirror fill reads from the indexes** — no source yet: `packages/genshin-world/src/generated/gameDataLock.json` names 454 object keys, so the lock's objects are a few hundred, and 37 index keys; the entries inside those indexes are in the account's index blobs, not on disk, and no count of them is kept.
-- [ ] **A publish changes a handful of objects** — no source yet: the count a publish changes is printed by its dry run and is not kept in the repository.
+- [ ] **The number of entries the mirror fill reads from `domains` and `kitSources`** — no source yet: their objects are not in `{data-root}/cache/content`, while the other 35 indexes of `packages/genshin-world/src/generated/gameDataLock.json` hold 6,827 entries there; `pnpm game-data:mirror` in `packages/genshin-world` would store the two, and their entries would then be counted.
+- [ ] **A publish changes a handful of objects** — no source yet: the count a publish changes is printed by its dry run, and `openspec/specs/genshin/hosted-game-data/design.md` line 95 says each lock commit carries that report in its body, which `git log` of `packages/genshin-world/src/generated/gameDataLock.json` would print.
 - [ ] **Run in parallel, a record another fit was fetching outwaited its ten-second timeout** — no source yet: no record of the parallel run's timings is kept; the timeout is `DATA_FETCH_TIMEOUT_MS` in `packages/genshin-world/src/services/constants.ts` line 32.

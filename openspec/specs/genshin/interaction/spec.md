@@ -169,7 +169,7 @@ Pressing a row SHALL select its thing and act on it as F would, with a touch scr
 
 ### Requirement: F is the interact key on every platform
 
-The pick up and interact action SHALL be bound to F on a keyboard, to the X button on an Xbox controller and to the Square button on a PlayStation controller (see Open).
+The pick up and interact action SHALL be bound to F on a keyboard, to the X button on an Xbox controller and to the Square button on a PlayStation controller.
 
 #### Scenario: The interact action is bound on each device
 
@@ -179,7 +179,5 @@ The pick up and interact action SHALL be bound to F on a keyboard, to the X butt
 
 ## Open
 
-- [ ] **F unlocks a locked statue, and Windrise's then has its Worship row** — no source yet: a recording of F at Windrise's own statue while it is locked; `{data-root}/genshin-parity/captures/statue-resonance.mkv` is White Birch Snowgrave's, not Windrise's, per `openspec/changes/genshin-roadmap/tasks.md`.
-- [ ] **The wheel steps the selection one row per notch** — no source yet: the still's caption says the mouse scroll speeds looting but shows no wheel step, the GameStegy tip is a player's note, and the pickup-scroll clip is still sought.
-- [ ] **Interact is X on an Xbox controller and Square on a PlayStation one** — no source yet: no cached Controls page is in `{data-root}/cache/genshin-wiki/`, and the binding in `packages/genshin-engine/src/input/InputActionBindingMap.ts` names `GamepadButton.FaceLeft`, not the buttons.
-- [ ] **A held F repeats its pick up every 0.45 seconds** — no source yet: the 27-frame spacing in `{data-root}/genshin-parity/captures/world-pickup.mkv` between 38.5 and 39.6 seconds was not extracted and counted here.
+- [ ] **The wheel steps the selection one row per notch** — no source yet: the still's caption says the mouse scroll speeds looting but shows no wheel step, the GameStegy tip is a player's note, the pickup-scroll clip is still sought, and the wiki's Controls page lists no wheel binding.
+- [ ] **A held F repeats its pick up every 0.45 seconds** — no source yet: the 27-frame spacing in `{data-root}/genshin-parity/captures/world-pickup.mkv` between 38.5 and 39.6 seconds was not extracted and counted here; `{data-root}/genshin-parity/frames/world-pickup/` samples one frame a second, too sparse to count it. NEEDS-RECORDING: a frame run at 60 a second of that clip from 38.5 seconds.

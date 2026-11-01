@@ -29,9 +29,9 @@ The player plays each segment's notes through a gain of their own `packages/gens
 
 ## Open
 
-The swell's level, the second fit's movement and the fit's place after the instruments are open in the [spec](spec.md).
+The swell's level and the second fit's movement are open in the [spec](spec.md).
 
-- [ ] **The transcription's velocities read each note's amplitude much alike from section to section** — no source yet: no velocity readout is on disk.
-- [ ] **The expression is the largest gain of any step on the score, with pitch agreement unchanged** — no source yet: the score snapshot holds only final scores, not each step's gain.
-- [ ] **Gains fitted to half the bands and scored on the others leave nearly the same distance** — no source yet: no half-band fit run is recorded.
-- [ ] **Each segment carries one gain a window over every voice, which swells and fades a section** — no source yet: a decoded reading of the game's expression curves for the gains, since `{data-root}/genshin-parity/extracted/music/` holds only its chroma and decoding bins.
+- [ ] **The transcription's velocities read each note's amplitude much alike from section to section** — no source yet: no velocity readout is on disk; a run printing each section's mean note velocity from `packages/pitch-transcription`, over `{data-root}/genshin-parity/extracted/login/music/1045584607.wav`, would settle it.
+- [ ] **The expression is the largest gain of any step on the score, with pitch agreement unchanged** — no source yet: the score snapshot holds only final scores, not each step's gain; `pnpm -C scripts genshin:parity listen` with each step's gain removed in turn would show it.
+- [ ] **Gains fitted to half the bands and scored on the others leave nearly the same distance** — no source yet: no half-band fit run is recorded; a refit on half the bands, scored by `pnpm -C scripts genshin:parity listen` on the rest, would show it.
+- [ ] **Each segment carries one gain a window over every voice, which swells and fades a section** — no source yet: a decoded reading of the game's expression curves for the gains, since `{data-root}/genshin-parity/extracted/music/` holds only its chroma and decoding bins; a per-window level readout of `{data-root}/genshin-parity/extracted/login/music/1045584607.wav` would give it.

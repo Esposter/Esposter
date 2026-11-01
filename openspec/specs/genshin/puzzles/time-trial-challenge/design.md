@@ -24,8 +24,8 @@ stateDiagram-v2
 ## Sources
 
 - `{data-root}/genshin-parity/captures/yt-B_l5b_KXt-o-time-trial-limit.mp4` — a Time Trial Challenge started at its marker and filmed to its end, with its clock in view, 3 minutes at most; the limit the clock is set to is read from it, since the wiki gives none for each challenge. Found: https://www.youtube.com/watch?v=B_l5b_KXt-o at 0–55 s.
+- `{data-root}/genshin-parity/frames/yt-B_l5b_KXt-o-time-trial-limit@0/sheet.png`, the contact sheet of the recording's frames: the banner "Open the chest in 45s" stands over the clock at 2.00 s (`{data-root}/genshin-parity/frames/yt-B_l5b_KXt-o-time-trial-limit@0/0002.png`, which reads "Time Remaining: 42s"), and "Challenge Completed" shows at 44.00 s.
 
 ## Open
 
-- [ ] **The map gives no limit or target count per challenge** — no source yet: the official map's point data is not among the caches read, so the absence is unchecked.
-- [ ] **The recording shows a challenge started at its marker and filmed to its end, with its clock in view, and the limit is read from it** — no source yet: `{data-root}/genshin-parity/captures/yt-B_l5b_KXt-o-time-trial-limit.mp4` exists, and `packages/genshin-world/src/services/puzzle/constants.ts` cites its banner for the 45 seconds, but no frame of the recording was opened to see the banner, the clock or the end.
+- [ ] **The map gives no limit or target count per challenge** — no source yet: the official map's point data is not among the caches read. The cached wiki pages name chests from time trials but no limit (`{data-root}/cache/genshin-wiki/Page_Chest.json`, lines 25, 33 and 42), and no "TimeTrial" name is in the dump's tables under `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput`; the map's challenge point records would settle it.
