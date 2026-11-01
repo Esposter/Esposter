@@ -81,3 +81,7 @@ Each built task names the test it was written first in, and each test is a scena
       locked artifact. Tests: `toggleCharacterArtifactLock.test.ts`, `toggleInventoryArtifactLock.test.ts`,
       `getArtifactDetailStats.test.ts`. The lock's words are `ArtifactActionLock` and `ArtifactActionUnlock`, whose chunks
       the main session writes.
+
+## 7. The picker's reset
+
+- [ ] 7.1 Decide which component clears the Enhance picker's fodder and ore choice when its Enhance button opens it. Open: `Character/Screen/Artifacts/Index.vue` declares `enhanceFodderIds` and `enhanceMaterialCounts` only to clear them in its Enhance handler, while `Character/Screen/Index.vue` already sets `enhanceSlot` at that point. Moving the reset to the parent would drop the two pass-through bindings from the panel, but the parent and panel comments record the panel as the owner on purpose, so the move is a design call and is not made here.
