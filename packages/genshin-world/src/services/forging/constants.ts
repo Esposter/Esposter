@@ -1,6 +1,6 @@
 import type { ForgeTalent } from "#src/models/forging/ForgeTalent";
 
-import { ForgeTalentKind } from "#src/models/forging/ForgeTalent";
+import { ForgeTalentKind } from "#src/models/forging/ForgeTalentKind";
 
 // The most forge points a player may forge in one game day, counted across the enhancement ores together. A recipe past it
 // Is refused until the daily reset, which the game's own words say

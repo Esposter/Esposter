@@ -7,7 +7,7 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { ForgeRecipeKind } from "#src/models/forging/ForgeRecipeKind";
-import { ForgeTalentKind } from "#src/models/forging/ForgeTalent";
+import { ForgeTalentKind } from "#src/models/forging/ForgeTalentKind";
 import { computeForgeOrderDoneCount } from "#src/services/forging/computeForgeOrderDoneCount";
 import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
 import { drawForgeResult } from "#src/services/forging/drawForgeResult";

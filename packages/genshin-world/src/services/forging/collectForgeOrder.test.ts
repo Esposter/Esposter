@@ -5,7 +5,7 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { ForgeRecipeKind } from "#src/models/forging/ForgeRecipeKind";
-import { ForgeTalentKind } from "#src/models/forging/ForgeTalent";
+import { ForgeTalentKind } from "#src/models/forging/ForgeTalentKind";
 import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { collectForgeOrder } from "#src/services/forging/collectForgeOrder";

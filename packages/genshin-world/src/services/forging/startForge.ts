@@ -4,7 +4,7 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { Wallet } from "#src/models/inventory/Wallet";
 
-import { ForgeTalentKind } from "#src/models/forging/ForgeTalent";
+import { ForgeTalentKind } from "#src/models/forging/ForgeTalentKind";
 import { Currency } from "#src/models/inventory/Currency";
 import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { checkIsForgeDailyCapReached } from "#src/services/forging/checkIsForgeDailyCapReached";

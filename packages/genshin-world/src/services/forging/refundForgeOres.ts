@@ -3,7 +3,7 @@ import type { ForgeTalent } from "#src/models/forging/ForgeTalent";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
-import { ForgeTalentKind } from "#src/models/forging/ForgeTalent";
+import { ForgeTalentKind } from "#src/models/forging/ForgeTalentKind";
 import { FORGE_ORE_ITEM_IDS } from "#src/services/forging/constants";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { InvalidOperationError, Operation } from "@esposter/shared";
