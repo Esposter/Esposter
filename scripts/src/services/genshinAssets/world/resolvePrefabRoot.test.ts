@@ -1,3 +1,4 @@
+import { ROOT_PARENT_ID } from "#src/services/genshinAssets/shared/constants";
 import { createSceneObject } from "#src/services/genshinAssets/shared/createSceneObject.test";
 import { resolvePrefabRoot } from "#src/services/genshinAssets/world/resolvePrefabRoot";
 import { describe, expect, test } from "vitest";
@@ -7,8 +8,8 @@ describe(resolvePrefabRoot, () => {
     expect.hasAssertions();
 
     const objects = [
-      createSceneObject("1", "0", { block: "00010731", name: "Area_MdProps_Flower03_Vo" }),
-      createSceneObject("2", "0", { block: "00999999", name: "Area_MdProps_Flower03_Vo" }),
+      createSceneObject("1", ROOT_PARENT_ID, { block: "00010731", name: "Area_MdProps_Flower03_Vo" }),
+      createSceneObject("2", ROOT_PARENT_ID, { block: "00999999", name: "Area_MdProps_Flower03_Vo" }),
     ];
 
     expect(resolvePrefabRoot("Area_MdProps_Flower03_Vo", ["00/00010731.blk"], objects)).toStrictEqual({
@@ -32,7 +33,7 @@ describe(resolvePrefabRoot, () => {
   test("roots a name at its game object in a block its own index rows do not name, once that block is a candidate", () => {
     expect.hasAssertions();
 
-    const objects = [createSceneObject("1", "0", { block: "09102146", name: "Stages_MDSRock11_Vo" })];
+    const objects = [createSceneObject("1", ROOT_PARENT_ID, { block: "09102146", name: "Stages_MDSRock11_Vo" })];
 
     expect(resolvePrefabRoot("Stages_MDSRock11_Vo", ["00/00495653.blk"], objects)).toBeUndefined();
     expect(resolvePrefabRoot("Stages_MDSRock11_Vo", ["00/00495653.blk", "00/09102146.blk"], objects)).toStrictEqual({
