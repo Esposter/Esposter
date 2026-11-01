@@ -11,10 +11,6 @@ interface Props {
 const { editor } = defineProps<Props>();
 const isLinkMenuOpen = ref(false);
 const linkUrl = ref("");
-// Prefill from the mark under the cursor so opening the menu on an existing link edits it rather than replacing it
-const onOpenLinkMenu = () => {
-  linkUrl.value = String(editor?.getAttributes("link").href ?? "");
-};
 const applyLink = () => {
   if (linkUrl.value) editor?.chain().focus().extendMarkRange("link").setLink({ href: linkUrl.value }).run();
   else editor?.chain().focus().extendMarkRange("link").unsetLink().run();
@@ -23,13 +19,15 @@ const applyLink = () => {
 </script>
 
 <template>
+  <!-- Prefill from the mark under the cursor so opening the menu on an existing link edits it rather than replacing
+       it -->
   <UiPopover
     v-model:is-open="isLinkMenuOpen"
     :aria-pressed="editor?.isActive('link')"
     label="Link"
     :variant="UiButtonVariant.Quiet"
     px-0
-    @click="onOpenLinkMenu()"
+    @click="linkUrl = String(editor?.getAttributes('link').href ?? '')"
   >
     <template #trigger>
       <UiIcon :meaning="UiIconMeaning.Link" />

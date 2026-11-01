@@ -20,7 +20,6 @@ const { data: surveyContent, refresh: refreshSurveyContent } = useQuery(
   () => $trpc.survey.readResourceContent.query({ id: programResource.value.surveyId }),
   { isLazy: true },
 );
-const isAnonymousSurvey = computed(() => surveyContent.value?.settings.responseMode === SurveyResponseMode.Anonymous);
 // A participant is keyed by the key column's value, which the program dedupes on
 const items = computed(() => statusRows.value.map((row) => ({ ...row, id: row.keyValue })));
 const itemsPerPage = ref(DATA_TABLE_ITEMS_PER_PAGE_OPTIONS[0]);
@@ -57,7 +56,9 @@ await Promise.all([readStatus(), programResource.value.surveyId ? refreshSurveyC
       :value="respondedPercentage"
       :value-text="`${isRespondedPartial ? 'at least ' : ''}${respondedPercentage}% responded`"
     />
-    <ResourceProgramSurveyModeWarning v-if="isAnonymousSurvey && respondedCount === 0" />
+    <ResourceProgramSurveyModeWarning
+      v-if="surveyContent?.settings.responseMode === SurveyResponseMode.Anonymous && respondedCount === 0"
+    />
     <!-- The undercount is in the table too — a participant past the response cap renders as Awaiting — so the
       warning sits above both rather than beside the count -->
     <UiAlert v-if="isRespondedPartial" status="warning">

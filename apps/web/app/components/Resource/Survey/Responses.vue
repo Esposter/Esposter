@@ -8,6 +8,7 @@ import type { UiTabItem } from "@/models/ui/UiTabItem";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { SurveyResponseView } from "@/models/resource/survey/SurveyResponseView";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { NO_ACTION_ITEMS } from "@/services/shared/constants";
 import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS } from "@/services/ui/constants";
 import { useSurveyResponseDialogStore } from "@/store/resource/surveyResponseDialog";
 import { getRouteParam } from "@/util/router/getRouteParam";
@@ -62,6 +63,8 @@ const getActionItems = (rowKey: string): Item[] => [
     title: "Delete response",
   },
 ];
+// A cell's menu reads its commands from one map, so the list is not rebuilt for every row on every render
+const actionItemsMap = computed(() => new Map(items.value.map(({ id }) => [id, getActionItems(id)])));
 const truncation = computed(() => (records.value ? getDatasetTruncation(records.value) : undefined));
 
 await refreshResponses();
@@ -103,7 +106,7 @@ await refreshResponses();
             <template #cell="{ column, item, value }">
               <!-- The cell is the menu's, so a click that misses its button does not open the response -->
               <div v-if="column.key === 'actions'" data-nested-interaction="true" flex justify-end>
-                <UiOverflowMenu :items="getActionItems(item.id)" label="Response actions" />
+                <UiOverflowMenu :items="actionItemsMap.get(item.id) ?? NO_ACTION_ITEMS" label="Response actions" />
               </div>
               <template v-else>{{ value }}</template>
             </template>

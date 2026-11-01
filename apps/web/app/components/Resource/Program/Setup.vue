@@ -37,8 +37,10 @@ const isAnonymousSurvey = computed(
     surveyContent.value?.settings.responseMode === SurveyResponseMode.Anonymous,
 );
 // The key column can only be one the audience actually has, so it is picked, never typed
-const keyColumnItems = computed<UiSelectItem<string>[]>(
-  () => dataset.value?.columns.map(({ name }) => ({ meaning: UiIconMeaning.Columns, title: name, value: name })) ?? [],
+const keyColumnItems = computed<UiSelectItem<string>[]>(() =>
+  prependNoneSelectItem(
+    dataset.value?.columns.map(({ name }) => ({ meaning: UiIconMeaning.Columns, title: name, value: name })) ?? [],
+  ),
 );
 // Absent until read, so a failed read never claims every binding is missing
 const emailResources = ref<OffsetPaginationData<UiSelectItem<string>>>();
@@ -80,11 +82,7 @@ watchAutosave(programResource, saveProgram);
       <DatasetReferencePicker v-model="audience" :error />
       <div flex flex-col gap-1>
         <span text-sm text-muted>Key column</span>
-        <UiSelect
-          v-model="programResource.keyColumn"
-          :items="prependNoneSelectItem(keyColumnItems)"
-          label="Key column"
-        />
+        <UiSelect v-model="programResource.keyColumn" :items="keyColumnItems" label="Key column" />
       </div>
     </UiFrame>
     <UiFrame title="Bindings">

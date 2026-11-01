@@ -11,10 +11,6 @@ interface Props {
 const { editor } = defineProps<Props>();
 const isAltTextMenuOpen = ref(false);
 const altText = ref("");
-// Prefill from the selected image so opening the popover on an image that has alt text edits it rather than blanking it
-const onOpenAltTextMenu = () => {
-  altText.value = String(editor?.getAttributes("image").alt ?? "");
-};
 const applyAltText = () => {
   editor?.chain().focus().updateAttributes("image", { alt: altText.value }).run();
   isAltTextMenuOpen.value = false;
@@ -22,13 +18,15 @@ const applyAltText = () => {
 </script>
 
 <template>
+  <!-- Prefill from the selected image so opening the popover on an image that has alt text edits it rather than
+       blanking it -->
   <UiPopover
     v-if="editor?.isActive('image')"
     v-model:is-open="isAltTextMenuOpen"
     label="Alt text"
     :variant="UiButtonVariant.Quiet"
     px-0
-    @click="onOpenAltTextMenu()"
+    @click="altText = String(editor?.getAttributes('image').alt ?? '')"
   >
     <template #trigger>
       <UiIcon :meaning="UiIconMeaning.Edit" />
