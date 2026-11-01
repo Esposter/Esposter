@@ -15,6 +15,7 @@ import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createLegacyOfLangGanPassiveModule } from "#src/services/weapon/passives/createLegacyOfLangGanPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -26,7 +27,7 @@ describe(createLegacyOfLangGanPassiveModule, () => {
   // Legacy of Lang-Gan at its first rank: the Lunar-Crystallize DMG its wielder deals rises by 64% for five seconds
   // After its Elemental Skill
   const passiveModule = createLegacyOfLangGanPassiveModule([0.64, 5]);
-  const wielder = createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT);
+  const wielder = createWielderCombatant();
   const other = createKitCombatant(OTHER_CHARACTER_ID, TRAVELER_KIT);
   const priceReaction = (
     context: KitContext,
